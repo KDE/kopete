@@ -279,7 +279,7 @@ void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSessio
 		else
 		{
 			m_messagesSent.insert( id, message );
-			message.setBg(QColor()); // clear the bgColor
+			message.setBackgroundColor(QColor()); // clear the bgColor
 			message.setPlainBody(message.plainBody() ); //clear every custom tag which are not sent
 			appendMessage(message); // send the own msg to chat window
 		}
@@ -299,7 +299,7 @@ void MSNChatSession::slotMessageReceived( Kopete::Message &msg )
 	if( msg.plainBody().startsWith( "AutoMessage: " ) )
 	{
 		//FIXME: HardCodded color are not so good
-		msg.setFg( QColor( "SlateGray3" ) );
+		msg.setForegroundColor( QColor( "SlateGray3" ) );
 		QFont f;
 		f.setItalic( true );
 		msg.setFont( f );
@@ -418,7 +418,10 @@ void MSNChatSession::slotAcknowledgement(unsigned int id, bool ack)
 	{
 		Kopete::Message m = m_messagesSent[ id ];
 		QString body = i18n( "The following message has not been sent correctly:\n%1", m.plainBody() );
-		Kopete::Message msg = Kopete::Message( m.to().first(), members(), body, Kopete::Message::Internal, Qt::PlainText );
+		Kopete::Message msg = Kopete::Message( m.to().first(), members() );
+		msg.setDirection( Kopete::Message::Internal );
+		msg.setPlainBody( body );
+
 		appendMessage( msg );
 		//stop the stupid animation
 		messageSucceeded();
@@ -477,7 +480,10 @@ void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 					"%1 has sent an unimplemented invitation, the invitation was rejected.\n"
 					"The invitation was: %2",
 						c->property( Kopete::Global::Properties::self()->nickName()).value().toString(), inviteName );
-				Kopete::Message tmpMsg = Kopete::Message( c , members() , body , Kopete::Message::Internal, Qt::PlainText);
+				Kopete::Message tmpMsg = Kopete::Message( c , members() );
+				tmpMsg.setDirection( Kopete::Message::Internal );
+				tmpMsg.setPlainBody( body );
+
 				appendMessage(tmpMsg);
 
 				m_chatService->sendCommand( "MSG" , "N", true, MSNInvitation::unimplemented(cookie) );
@@ -640,7 +646,9 @@ void MSNChatSession::receivedTypingMsg( const QString &contactId, bool b )
 		{
 			// this internal message should open the window if they not exist
 			QString body = i18n( "%1 has started a chat with you", c->metaContact()->displayName() );
-			Kopete::Message tmpMsg = Kopete::Message( c, members(), body, Kopete::Message::Internal, Qt::PlainText );
+			Kopete::Message tmpMsg = Kopete::Message( c, members() );
+			tmpMsg.setDirection( Kopete::Message::Internal );
+			tmpMsg.setPlainBody( body );
 			appendMessage( tmpMsg );
 		}
 	}
@@ -654,8 +662,11 @@ void MSNChatSession::slotSendNudge()
 	if(m_chatService)
 	{
 		m_chatService->sendNudge();
-		Kopete::Message msg = Kopete::Message( myself(), members() , i18n ( "has sent a nudge" ),  Kopete::Message::Outbound,
-											   Qt::PlainText, QString(), Kopete::Message::TypeAction );
+		Kopete::Message msg = Kopete::Message( myself(), members() );
+		msg.setDirection( Kopete::Message::Outbound );
+		msg.setType( Kopete::Message::TypeAction );
+		msg.setPlainBody( i18n("has sent a nudge") );
+
 		appendMessage( msg );
 
 	}
@@ -667,8 +678,10 @@ void MSNChatSession::slotNudgeReceived(const QString& handle)
 	Kopete::Contact *c = account()->contacts()[ handle ] ;
 	if(!c)
 		c=members().first();
-	Kopete::Message msg = Kopete::Message(c, myself(), i18n ( "has sent you a nudge" ), Kopete::Message::Inbound,
-										  Qt::PlainText, QString(), Kopete::Message::TypeAction );
+	Kopete::Message msg = Kopete::Message(c, myself() );
+	msg.setDirection( Kopete::Message::Inbound );
+	msg.setType( Kopete::Message::TypeAction );
+	msg.setPlainBody( i18n("has sent you a nudge") );
 	appendMessage( msg );
 	// Emit the nudge/buzz notification (configured by user).
 	emitNudgeNotification();
@@ -734,7 +747,9 @@ void MSNChatSession::cleanMessageQueue( const QString & reason )
 			m=m_messagesSent.begin().value();
 
 		QString body=i18n("The following message has not been sent correctly  (%1): \n%2", reason, m.plainBody());
-		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Qt::PlainText);
+		Kopete::Message msg = Kopete::Message(m.to().first(), members() );
+		msg.setDirection( Kopete::Message::Internal );
+		msg.setPlainBody( body );
 		appendMessage(msg);
 	}
 	else
@@ -757,7 +772,9 @@ void MSNChatSession::cleanMessageQueue( const QString & reason )
 			m_messagesQueue.erase(messageIt);
 		}
 		body+="</ul>";
-		Kopete::Message msg = Kopete::Message(m.to().first() , members() , body , Kopete::Message::Internal, Qt::RichText);
+		Kopete::Message msg = Kopete::Message(m.to().first(), members());
+		msg.setDirection( Kopete::Message::Internal );
+		msg.setHtmlBody( body );
 		appendMessage(msg);
 
 	}

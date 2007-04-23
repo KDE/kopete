@@ -491,8 +491,10 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 			QString msg = engine()->statusMessage();
 			kDebug(14152) << k_funcinfo << "Got away message: " << msg << endl;
 			// Create the message
-			Kopete::Message chatMessage( myself(), aimSender, msg, Kopete::Message::Outbound,
-					Qt::RichText );
+			Kopete::Message chatMessage( myself(), aimSender );
+			chatMessage.setHtmlBody( msg );
+			chatMessage.setDirection( Kopete::Message::Outbound );
+			
 			kDebug(14152) << k_funcinfo << "Sending autoresponse" << endl;
 			// Send the message
 			aimSender->sendAutoResponse( chatMessage );
@@ -520,10 +522,10 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 				//sanitize;
 				QString sanitizedMsg = ocSender->sanitizedMessage( message.text( defaultCodec() ) );
 
-				Kopete::ContactPtrList me;
-				me.append( myself() );
-				Kopete::Message chatMessage( message.timestamp(), ocSender, me, sanitizedMsg,
-						Kopete::Message::Inbound, Qt::RichText );
+				Kopete::Message chatMessage( ocSender, myself() );
+				chatMessage.setDirection( Kopete::Message::Inbound );
+				chatMessage.setHtmlBody( sanitizedMsg );
+				chatMessage.setTimestamp( message.timestamp() );
 
 				session->appendMessage( chatMessage );
 			}

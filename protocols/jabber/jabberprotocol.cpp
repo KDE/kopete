@@ -244,7 +244,7 @@ Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resou
 			status = JabberKOSDND;
 		}
 		else if (resource.status ().show () == "online")
-		{ // the ApaSMSAgent sms gateway report status as "online" even if it's not in the RFC 3921 § 2.2.2.1 
+		{ // the ApaSMSAgent sms gateway report status as "online" even if it's not in the RFC 3921 ï¿½ 2.2.2.1 
 			// See Bug 129059
 			status = JabberKOSOnline;
 		}
@@ -427,8 +427,12 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 			Kopete::ChatSession *kcs=contact->manager(Kopete::Contact::CanCreate);
 			if(!kcs)
 				return;
-			Kopete::Message msg(account->myself(),kcs->members(), url.queryItemValue("body"),url.queryItemValue("subject"),
-								Kopete::Message::Outbound, Qt::PlainText);
+
+			Kopete::Message msg(account->myself(), kcs->members());
+			msg.setPlainBody( url.queryItemValue("body") );
+			msg.setSubject( url.queryItemValue("subject") );
+			msg.setDirection( Kopete::Message::Outbound );
+
 			KopeteView *kv=kcs->view(true);
 			if(kv)
 				kv->setCurrentMessage(msg);

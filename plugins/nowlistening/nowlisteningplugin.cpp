@@ -171,12 +171,9 @@ void NowListeningPlugin::slotMediaCommand( const QString &args, Kopete::ChatSess
 		advert = i18nc("Message from Kopete user to another user; used when sending media information even though there are no songs playing or no media players running", "Now Listening for Kopete - it would tell you what I am listening to, if I was listening to something on a supported media player.");
 	}
 
-	Kopete::Message msg( theChat->myself(),
-			theChat->members(),
-			advert + ' ' + args,
-			Kopete::Message::Outbound,
-			Qt::RichText
-	);
+	Kopete::Message msg( theChat->myself(),theChat->members() );
+	msg.setHtmlBody( advert + ' ' + args );
+	msg.setDirection( Kopete::Message::Outbound );
 
 	theChat->sendMessage( msg );
 }
@@ -485,11 +482,10 @@ void NowListeningPlugin::advertiseToChat( Kopete::ChatSession *theChat, QString 
 	// any message
 	if ( pl.isEmpty() )
 		return;
-	Kopete::Message msg( theChat->myself(),
-			pl,
-			message,
-			Kopete::Message::Outbound,
-			Qt::RichText );
+	Kopete::Message msg( theChat->myself(), pl );
+	msg.setHtmlBody( message );
+	msg.setDirection( Kopete::Message::Outbound );
+
 	theChat->sendMessage( msg );
 }
 

@@ -18,6 +18,7 @@
 #ifndef CHATVIEW_H
 #define CHATVIEW_H
 
+
 #include "kopeteview.h"
 #include "kopeteviewplugin.h"
 #include <k3dockwidget.h>
@@ -51,6 +52,7 @@ namespace Kopete
 {
 	class Contact;
 	class ChatSession;
+	class OnlineStatus;
 }
 
 /**

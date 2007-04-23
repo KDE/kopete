@@ -42,7 +42,7 @@ Task::Status EchoTask::doMessage(Message msg)
 {
 	Event event;
 	event.setMessage(msg);
-//	event.setMessageType(messageType);
+//	event.setType(messageType);
 //	event.setFrom(msg.prefix());
 //	event.setCc(msg.socket().owner()); // server instead ?
 

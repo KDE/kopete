@@ -384,9 +384,9 @@ void ChatMessagePart::slotAppearanceChanged()
 
 void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 {
-	message.setBgOverride( d->bgOverride );
-	message.setFgOverride( d->fgOverride );
-	message.setRtfOverride( d->rtfOverride );
+	message.setBackgroundOverride( d->bgOverride );
+	message.setForegroundOverride( d->fgOverride );
+	message.setRichTextOverride( d->rtfOverride );
 
 	// parse emoticons and URL now.
 	// Do not reparse emoticons on restoring, because it cause very intensive CPU usage on long chats.

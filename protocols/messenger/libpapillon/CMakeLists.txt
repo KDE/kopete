@@ -23,6 +23,8 @@ ${QCA2_INCLUDE_DIR}
 
 add_subdirectory( tests )
 
+add_definitions( ${QCA2_DEFINITIONS} )
+
 include_directories(${PAPILLON_INCLUDES})
 
 include(PapillonMoc.cmake)

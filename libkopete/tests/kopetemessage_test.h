@@ -25,10 +25,13 @@
 #include "kopetemessage.h"
 #undef private
 
-class Kopete::Protocol;
-class Kopete::Account;
-class Kopete::MetaContact;
-class Kopete::Contact;
+namespace Kopete
+{
+class Protocol;
+class Account;
+class MetaContact;
+class Contact;
+}
 
 // change to SlotTester when it works
 class KopeteMessage_Test : public QObject
@@ -42,7 +45,6 @@ private slots:
 	void testLinkParser();
 
 private:
-	Kopete::Message *m_message;
 	Kopete::Protocol *m_protocol;
 	Kopete::Account *m_account;
 	Kopete::MetaContact *m_metaContactMyself;

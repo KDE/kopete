@@ -241,11 +241,11 @@ void KopeteEmailWindow::initActions(void)
 
 	action = new KAction( KIcon("pencil"), i18n( "Set Text &Color..." ), coll );
         coll->addAction( "format_color", action );
-	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setFgColor()) );
+	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setForegroundColorColor()) );
 
 	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll );
         coll->addAction( "format_bgcolor", action );
-	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBgColor()) );
+	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBackgroundColorColor()) );
 
 	KStandardAction::showMenubar( this, SLOT( slotViewMenuBar() ), coll );
 	setStandardToolBarMenuEnabled( true );

@@ -363,11 +363,11 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 			emit userJoined( m_msgHandle , m_msgHandle , false);
 		}
 
-		Kopete::Message kmsg( m_account->contacts()[ m_msgHandle ], others,
-			message,
-			Kopete::Message::Inbound , Qt::PlainText );
+		Kopete::Message kmsg( m_account->contacts()[ m_msgHandle ], others );
+		kmsg.setPlainBody( message );
+		kmsg.setDirection( Kopete::Message::Inbound );
 
-		kmsg.setFg( fontColor );
+		kmsg.setForegroundColor( fontColor );
 		kmsg.setFont( font );
 
 		rx=QRegExp("Chunks: ([0-9]*)");
@@ -745,9 +745,9 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	 */
 
 	// Color support
-	if (msg.fg().isValid())
+	if (msg.foregroundColor().isValid())
 	{
-		QString colorCode = QColor(msg.fg().blue(),msg.fg().green(),msg.fg().red()).name().remove(0,1);  //colors aren't sent in RGB but in BGR (O.G.)
+		QString colorCode = QColor(msg.foregroundColor().blue(),msg.foregroundColor().green(),msg.foregroundColor().red()).name().remove(0,1);  //colors aren't sent in RGB but in BGR (O.G.)
 		head += "CO=" + colorCode;
 	}
 	else
@@ -957,8 +957,9 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QS
 			emit userJoined( m_msgHandle , m_msgHandle , false);
 		}
 
-		Kopete::Message kmsg( m_account->contacts()[ m_msgHandle ], others,
-			msg, Kopete::Message::Inbound , Qt::RichText );
+		Kopete::Message kmsg( m_account->contacts()[ m_msgHandle ], others );
+		kmsg.setHtmlBody( msg );
+		kmsg.setDirection( Kopete::Message::Inbound );
 
 		emit msgReceived(  kmsg  );
 	}
@@ -993,7 +994,9 @@ void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const Q
 	}
 	QString invite = "Incoming file transfer.";
 	Kopete::Message msg =
-		Kopete::Message(m_account->contacts()[from], others, invite, Kopete::Message::Internal, Qt::PlainText);
+		Kopete::Message(m_account->contacts()[from], others);
+	msg.setDirection( Kopete::Message::Internal );
+	msg.setPlainBody( invite );
 	emit msgReceived(msg);
 }
 

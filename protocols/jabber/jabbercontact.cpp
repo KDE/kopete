@@ -315,9 +315,10 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			{
 				if(mManager->view( Kopete::Contact::CannotCreate ))
 				{   //show an internal message if the user has not already closed his window
-					Kopete::Message m=Kopete::Message ( this, mManager->members(),
-						i18n("%1 has ended their participation in the chat session.", metaContact()->displayName()),
-						Kopete::Message::Internal  );
+					Kopete::Message m=Kopete::Message ( this, mManager->members() );
+					m.setPlainBody( i18n("%1 has ended their participation in the chat session.", metaContact()->displayName()) );
+					m.setDirection( Kopete::Message::Internal );
+
 					mManager->appendMessage ( m, message.from().resource () );
 				}
 			}
@@ -352,10 +353,13 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	// check for errors
 	if ( message.type () == "error" )
 	{
-		newMessage = new Kopete::Message( message.timeStamp (), this, contactList,
-										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
-										  message.body (), message.error().text ),
-										message.subject(), Kopete::Message::Inbound, Qt::PlainText, viewPlugin );
+		newMessage = new Kopete::Message( this, contactList );
+		newMessage->setTimestamp( message.timeStamp() );
+		newMessage->setPlainBody( i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
+										  message.body (), message.error().text ) );
+		newMessage->setSubject( message.subject() );
+		newMessage->setDirection( Kopete::Message::Inbound );
+		newMessage->setRequestedPlugin( viewPlugin );
 	}
 	else
 	{
@@ -372,16 +376,22 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		else if( message.containsHTML() )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a xHTML message" << endl;
-			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, message.html().toString(),
-											 message.subject (), Kopete::Message::Inbound,
-											 Qt::RichText, viewPlugin );
+			newMessage = new Kopete::Message ( this, contactList );
+			newMessage->setTimestamp( message.timeStamp() );
+			newMessage->setHtmlBody( message.html().toString() );
+			newMessage->setSubject( message.subject() );
+			newMessage->setDirection( Kopete::Message::Inbound );
+			newMessage->setRequestedPlugin( viewPlugin );
 		}
 		else if ( !body.isEmpty () )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a plain text message" << endl;
-			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, body,
-											 message.subject (), Kopete::Message::Inbound,
-											 Qt::PlainText, viewPlugin );
+			newMessage = new Kopete::Message ( this, contactList );
+			newMessage->setTimestamp( message.timeStamp() );
+			newMessage->setPlainBody( body );
+			newMessage->setSubject( message.subject() );
+			newMessage->setDirection( Kopete::Message::Inbound );
+			newMessage->setRequestedPlugin( viewPlugin );
 		}
 	}
 
@@ -405,10 +415,12 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	{
 		QString description = !xurl.desc().isEmpty() ? Qt::escape ( xurl.desc() ) : xurl.url();
 
-		Kopete::Message msg ( message.timeStamp (), this, contactList,
-				QString ( "<a href=\"%1\">%2</a>" ).arg ( xurl.url(), description ),
-				message.subject (), Kopete::Message::Inbound,
-				Qt::RichText, viewPlugin );
+		Kopete::Message msg ( this, contactList );
+		msg.setTimestamp( message.timeStamp() );
+		msg.setHtmlBody( QString ( "<a href=\"%1\">%2</a>" ).arg ( xurl.url(), description ) );
+		msg.setSubject( message.subject() );
+		msg.setDirection( Kopete::Message::Inbound );
+		msg.setRequestedPlugin( viewPlugin );
 
 		mManager->appendMessage ( msg, message.from().resource () );
 	}

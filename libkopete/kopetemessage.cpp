@@ -4,6 +4,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2006 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2006-2007 by Charles Connell        <charles@connells.org>
+    Copyright (c) 2007      by Michaël Larouche      <larouche@kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -19,22 +20,16 @@
 
 #include <stdlib.h>
 
-#include <qcolor.h>
-#include <qbuffer.h>
-#include <qimage.h>
-#include <QTextDocument>
-#include <qregexp.h>
-#include <qtextcodec.h>
-#include <QByteArray>
-#include <QSharedData>
-#include <QPointer>
+#include <QtCore/QDateTime>
 #include <QtCore/QLatin1String>
+#include <QtCore/QPointer>
+#include <QtCore/QRegExp>
+#include <QtCore/QTextCodec>
+#include <QtGui/QTextDocument>
+#include <QtGui/QColor>
 
 #include <kdebug.h>
-#include <klocale.h>
-#include <kiconloader.h>
 #include <kstringhandler.h>
-#include <kcodecs.h>
 
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
@@ -51,46 +46,39 @@ class Message::Private
 	: public QSharedData
 {
 public:
-	Private( const QDateTime &timeStamp, const Contact *from, const ContactPtrList &to,
-	         const QString &subject, MessageDirection direction,
-	         const QString &requestedPlugin, MessageType type );
+	Private()
+		: direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), backgroundOverride(false),
+		  foregroundOverride(false), richTextOverride(false), isRightToLeft(false), timeStamp( QDateTime::currentDateTime() ),
+		  body(new QTextDocument), escapedBodyDirty(true)
+	{}
 	Private (const Private &other);
-	~Private ();
+	~Private();
 
 	QPointer<Contact> from;
 	ContactPtrList to;
-	ChatSession *manager;
+	QPointer<ChatSession> manager;
 
 	MessageDirection direction;
 	Qt::TextFormat format;
 	MessageType type;
 	QString requestedPlugin;
 	MessageImportance importance;
-	bool bgOverride;
-	bool fgOverride;
-	bool rtfOverride;
+	bool backgroundOverride;
+	bool foregroundOverride;
+	bool richTextOverride;
 	bool isRightToLeft;
 	QDateTime timeStamp;
 	QFont font;
 	QStringList classes;
 
-	QColor fgColor;
-	QColor bgColor;
+	QColor foregroundColor;
+	QColor backgroundColor;
 	QString subject;
 
 	QTextDocument* body;
 	mutable QString escapedBody;
 	mutable bool escapedBodyDirty;
 };
-
-Message::Private::Private( const QDateTime &timeStamp, const Contact *from,
-		const ContactPtrList &to, const QString &subject,
-		MessageDirection direction, const QString &requestedPlugin, MessageType type )
-	: from( const_cast<Contact*>(from) ), to(to), manager(0), direction(direction), format(Qt::PlainText), type(type)
-	, requestedPlugin(requestedPlugin), importance( (to.count() <= 1) ? Normal : Low ), bgOverride(false), fgOverride(false)
-	, rtfOverride(false), isRightToLeft (false), timeStamp(timeStamp), subject(subject), body(new QTextDocument()), escapedBodyDirty(true)
-{
-}
 
 Message::Private::Private (const Message::Private &other)
 	: QSharedData (other)
@@ -104,16 +92,16 @@ Message::Private::Private (const Message::Private &other)
 	type = other.type;
 	requestedPlugin = other.requestedPlugin;
 	importance = other.importance;
-	bgOverride = other.bgOverride;
-	fgOverride = other.fgOverride;
-	rtfOverride = other.rtfOverride;
+	backgroundOverride = other.backgroundOverride;
+	foregroundOverride = other.foregroundOverride;
+	richTextOverride = other.richTextOverride;
 	isRightToLeft = other.isRightToLeft;
 	timeStamp = other.timeStamp;
 	font = other.font;
 	classes = other.classes;
 
-	fgColor = other.fgColor;
-	bgColor = other.bgColor;
+	foregroundColor = other.foregroundColor;
+	backgroundColor = other.backgroundColor;
 	subject = other.subject;
 
 	body = other.body->clone();
@@ -127,47 +115,25 @@ Message::Private::~Private ()
 }
 
 Message::Message()
-    : d( new Private( QDateTime::currentDateTime(), 0L, ContactPtrList(), QString(), Internal,
-	QString(), TypeNormal ) )
+ : d( new Private )
 {
 }
 
-Message::Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
-		  MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
-    : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, QString(), direction, requestedPlugin, type ) )
+Message::Message( const Contact *fromKC, const Contact *toKC )
+ : d(new Private)
 {
-	doSetBody(body, f);
+	d->from = const_cast<Contact*>(fromKC);
+	QList<Contact *> contacts;
+	contacts << const_cast<Contact*>(toKC);
+
+	d->to = contacts;
 }
 
-Message::Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-		  MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
+Message::Message( const Contact *fromKC, const QList<Contact*> &toKC )
+ : d( new Private )
 {
-	QList<Contact*> to;
-	to.append((Kopete::Contact*)toKC);
-	d = new Private( QDateTime::currentDateTime(), fromKC, to, QString(), direction, requestedPlugin, type );
-	doSetBody(body, f);
-}
-
-Message::Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
-		  const QString &subject, MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
-    : d( new Private( QDateTime::currentDateTime(), fromKC, toKC, subject, direction, requestedPlugin, type ) )
-{
-	doSetBody(body, f);
-}
-
-Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
-		  const QString &body, MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
-    : d( new Private( timeStamp, fromKC, toKC, QString(), direction, requestedPlugin, type ) )
-{
-	doSetBody(body, f);
-}
-
-
-Message::Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
-		  const QString &body, const QString &subject, MessageDirection direction, Qt::TextFormat f, const QString &requestedPlugin, MessageType type )
-    : d( new Private( timeStamp, fromKC, toKC, subject, direction, requestedPlugin, type ) )
-{
-	doSetBody(body, f);
+	d->from = const_cast<Contact*>(fromKC);
+	d->to = toKC;
 }
 
 Message::Message( const Message &other )
@@ -185,29 +151,29 @@ Message::~Message()
 {
 }
 
-void Message::setBgOverride( bool enabled )
+void Message::setBackgroundOverride( bool enabled )
 {
-	d->bgOverride = enabled;
+	d->backgroundOverride = enabled;
 }
 
-void Message::setFgOverride( bool enabled )
+void Message::setForegroundOverride( bool enabled )
 {
-	d->fgOverride = enabled;
+	d->foregroundOverride = enabled;
 }
 
-void Message::setRtfOverride( bool enabled )
+void Message::setRichTextOverride( bool enabled )
 {
-	d->rtfOverride = enabled;
+	d->richTextOverride = enabled;
 }
 
-void Message::setFg( const QColor &color )
+void Message::setForegroundColor( const QColor &color )
 {
-	d->fgColor=color;
+	d->foregroundColor=color;
 }
 
-void Message::setBg( const QColor &color )
+void Message::setBackgroundColor( const QColor &color )
 {
-	d->bgColor=color;
+	d->backgroundColor=color;
 }
 
 void Message::setFont( const QFont &font )
@@ -342,7 +308,7 @@ QString Message::plainBody() const
 
 QString Message::escapedBody() const
 {
-//	kDebug(14010) << k_funcinfo << escapedBody() << " " << d->rtfOverride << endl;
+//	kDebug(14010) << k_funcinfo << escapedBody() << " " << d->richTextOverride << endl;
 
 //	the escaped body is cached because QRegExp is very expensive, so it shouldn't be used any more than nescessary
 	if (!d->escapedBodyDirty)
@@ -360,7 +326,7 @@ QString Message::escapedBody() const
 		badStuff.setPattern ("</?body[^<>]*>");
 		html = html.remove (badStuff);
 //		remove newlines that may be present, since they end up being displayed in the chat window. real newlines are represented with <br>, so we know \n's are meaningless (I hope this is true, could anybody confirm? (C Connell))
-		html.remove ("\n");
+		html = html.remove ("\n");
 		d->escapedBody = html;
 		d->escapedBodyDirty = false;
 		return html;
@@ -370,13 +336,9 @@ QString Message::escapedBody() const
 QString Message::parsedBody() const
 {
 	//kDebug(14000) << k_funcinfo << "messageformat: " << d->format << endl;
-#ifdef __GNUC__
-#warning Disable Emoticon parsing for now, it make QString cause a ASSERT error. (DarkShock)
-#endif
-#if 0
+
+	// TODO: Maybe cache parsed body ?
 	return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), Qt::RichText));
-#endif
-	return escapedBody();
 }
 
 static QString makeRegExp( const char *pattern )
@@ -459,6 +421,11 @@ QDateTime Message::timestamp() const
 	return d->timeStamp;
 }
 
+void Message::setTimestamp(const QDateTime &timestamp)
+{
+	d->timeStamp = timestamp;
+}
+
 const Contact *Message::from() const
 {
 	return d->from;
@@ -474,25 +441,36 @@ Message::MessageType Message::type() const
 	return d->type;
 }
 
+void Message::setType(MessageType type)
+{
+	d->type = type;
+}
+
 QString Message::requestedPlugin() const
 {
 	return d->requestedPlugin;
 }
 
-QColor Message::fg() const
+void Message::setRequestedPlugin(const QString &requestedPlugin)
 {
-	return d->fgColor;
+	d->requestedPlugin = requestedPlugin;
 }
 
-QColor Message::bg() const
+QColor Message::foregroundColor() const
 {
-	return d->bgColor;
+	return d->foregroundColor;
+}
+
+QColor Message::backgroundColor() const
+{
+	return d->backgroundColor;
 }
 
 bool Message::isRightToLeft() const
 {
 	return d->isRightToLeft;
 }
+
 QFont Message::font() const
 {
 	return d->font;
@@ -501,6 +479,11 @@ QFont Message::font() const
 QString Message::subject() const
 {
 	return d->subject;
+}
+
+void Message::setSubject(const QString &subject)
+{
+	d->subject = subject;
 }
 
 const QTextDocument *Message::body() const
@@ -516,6 +499,11 @@ Qt::TextFormat Message::format() const
 Message::MessageDirection Message::direction() const
 {
 	return d->direction;
+}
+
+void Message::setDirection(MessageDirection direction)
+{
+	d->direction = direction;
 }
 
 Message::MessageImportance Message::importance() const
@@ -540,17 +528,17 @@ QString Message::getHtmlStyleAttribute() const
 	styleAttribute = QString::fromUtf8("style=\"");
 
 	// Affect foreground(color) and background color to message.
-	if( !d->fgOverride && d->fgColor.isValid() )
+	if( !d->foregroundOverride && d->foregroundColor.isValid() )
 	{
-		styleAttribute += QString::fromUtf8("color: %1; ").arg(d->fgColor.name());
+		styleAttribute += QString::fromUtf8("color: %1; ").arg(d->foregroundColor.name());
 	}
-	if( !d->bgOverride && d->bgColor.isValid() )
+	if( !d->backgroundOverride && d->backgroundColor.isValid() )
 	{
-		styleAttribute += QString::fromUtf8("background-color: %1; ").arg(d->bgColor.name());
+		styleAttribute += QString::fromUtf8("background-color: %1; ").arg(d->backgroundColor.name());
 	}
 	
 	// Affect font parameters.
-	if( !d->rtfOverride && d->font!=QFont() )
+	if( !d->richTextOverride && d->font!=QFont() )
 	{
 		QString fontstr;
 		if(!d->font.family().isNull())

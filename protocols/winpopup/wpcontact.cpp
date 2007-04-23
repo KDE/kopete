@@ -160,12 +160,15 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 	contactList.append(account()->myself());
 
 	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
-	Kopete::Message msg;
+	Kopete::Message msg(this, contactList);
+	msg.setDirection( Kopete::Message::Inbound );
 
 	if(subj.indexIn(Body) == -1) {
-		msg = Kopete::Message(this, contactList, Body, Kopete::Message::Inbound);
+		msg.setPlainBody( Body );
+
 	} else {
-		msg = Kopete::Message(this, contactList, subj.cap(2), subj.cap(1), Kopete::Message::Inbound);
+		msg.setPlainBody( subj.cap(2) );
+		msg.setSubject( subj.cap(1) );
 	}
 
 	manager(Kopete::Contact::CannotCreate)->appendMessage(msg);

@@ -236,7 +236,7 @@ void ChatView::clear()
 
 void ChatView::setBgColor( const QColor &newColor )
 {
-// 	editPart()->setBgColor( newColor );
+// 	editPart()->setBackgroundColorColor( newColor );
 }
 
 void ChatView::setFont()
@@ -701,7 +701,19 @@ void ChatView::sendInternalMessage(const QString &msg, Qt::TextFormat format )
 {
 	// When closing kopete, some internal message may be sent because some contact are deleted
 	// these contacts can already be deleted
-	Kopete::Message message = Kopete::Message( 0L /*m_manager->myself()*/ , 0L /*m_manager->members()*/, msg, Kopete::Message::Internal, format );
+	Kopete::Message message = Kopete::Message();
+	message.setDirection( Kopete::Message::Internal );
+	switch(format)
+	{
+		default:
+		case Qt::PlainText:
+			message.setPlainBody( msg );
+			break;
+		case Qt::RichText:
+			message.setHtmlBody( msg );
+			break;
+	}
+	
 	// (in many case, this is useless to set myself as contact)
 	// TODO: set the contact which initiate the internal message,
 	// so we can later show a icon of it (for example, when he join a chat)

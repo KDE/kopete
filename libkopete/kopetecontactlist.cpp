@@ -585,7 +585,10 @@ void Kopete::ContactList::messageContact( const QString &contactId, const QStrin
 	Kopete::Contact *c = mc->execute(); //We need to know which contact was chosen as the preferred in order to message it
 	if (!c) return;
 
-	Kopete::Message msg(c->account()->myself(), c, messageText, Kopete::Message::Outbound);
+	Kopete::Message msg(c->account()->myself(), c);
+	msg.setPlainBody( messageText );
+	msg.setDirection( Kopete::Message::Outbound );
+	
 	c->manager(Contact::CanCreate)->sendMessage(msg);
 
 }

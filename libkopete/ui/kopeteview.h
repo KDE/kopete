@@ -19,6 +19,8 @@
 #ifndef KOPETEVIEW_H
 #define KOPETEVIEW_H
 
+#include <QtGui/QWidget>
+
 #include "kopetemessage.h"
 #include "kopete_export.h"
 

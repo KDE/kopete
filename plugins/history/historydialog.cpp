@@ -22,6 +22,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
+#include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopeteappearancesettings.h"
 

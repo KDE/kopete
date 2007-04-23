@@ -653,8 +653,12 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 	}
 
 	contactsListTmp.append( myself() );
-	Kopete::Message msg( gaduMessage->sendTime, contact, contactsListTmp,
-			gaduMessage->message, Kopete::Message::Inbound, Qt::RichText );
+
+	Kopete::Message msg( contact, contactsListTmp );
+	msg.setTimestamp( gaduMessage->sendTime );
+	msg.setHtmlBody( gaduMessage->message );
+	msg.setDirection( Kopete::Message::Inbound );
+
 	contact->messageReceived( msg );
 }
 

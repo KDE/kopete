@@ -1031,8 +1031,10 @@ void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListV
 					if (!c)
 						return;
 
-					Kopete::Message msg(c->account()->myself(), c, url.url(),
-						Kopete::Message::Outbound);
+					Kopete::Message msg(c->account()->myself(), c);
+					msg.setPlainBody( url.url() );
+					msg.setDirection( Kopete::Message::Outbound );
+
 					c->manager(Kopete::Contact::CanCreate)->sendMessage(msg);
 				}
 			}

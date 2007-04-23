@@ -3,7 +3,8 @@
 
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@kde.org>
-	Copyright (c) 2006-2007 by Charles Connell       <charles@connells.org>
+    Copyright (c) 2006-2007 by Charles Connell       <charles@connells.org>
+    Copyright (c) 2007      by Michaël Larouche      <larouche@kde.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -20,23 +21,19 @@
 #ifndef __KOPETE_MESSAGE_H__
 #define __KOPETE_MESSAGE_H__
 
-#include "kopetecontact.h"
-
-#include <qstring.h>
-#include <qdom.h>
-#include <qcolor.h>
-#include <qfont.h>
-#include <qdatetime.h>
-#include <QByteArray>
-#include <QSharedDataPointer>
-#include <QList>
-#include <QByteArray>
+#include <QtCore/QSharedData>
+#include <QtCore/QList>
+#include <QtCore/Qt>
 
 #include "kopete_export.h"
 
-
+class QByteArray;
+class QColor;
 class QDateTime;
+class QFont;
+class QTextCodec;
 class QTextDocument;
+class QStringList;
 
 namespace Kopete {
 
@@ -46,51 +43,76 @@ class Contact;
 
 
 /**
+ * @brief Representation of a message in Kopete
+ *
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@kde.org>
  * @author Charles Connell <charles@connells.org>
+ * @author Michaël Larouche <larouche@kde.org>
  *
  * Message represents any kind of messages shown on a chat view.
+ * The message may contain a simple plain text string, or a rich text HTML
+ * message. Also, Message can use a QTextDocument to structure the message.
  *
- * The message may be a simple plaintext string, or a Richtext HTML like message,
- * this is indicated by the @ref format() flag.
- * PlainText message can however have a color, or specific fonts with the flag
- * @ref bg(), @ref fg(), @ref font()
- * It is recommended to use these flags, even for RichText messages, so the user can disable
- * custom colors in the chat window style.
+ * Message in plain text can however have a color or a specific font. You can
+ * set color with setForegroundColor() and setBackgroundColor() and change the font
+ * with setFont()
+ *
+ * Message have a direction from where the message come from. By default, the direction
+ * is Internal but it is strongly advised to set the direction explicitly.
+ * 
+ * @section plainMessage Creating a plain text message
+ * @code
+Kopete::Message newMessage(sourceContact, destionationContact);
+newMessage.setPlainBody( QString("A plain text message") );
+newMessage.setDirection( Kopete::Message::Inbound );
+ * @endcode
+ *
+ * @section richTextMessage Creating a complete rich text message
+ * @code
+Kopete::Message richTextMessage(sourceContact, destinationContactList);
+richTextMessage.setTimestamp( QDateTime::currentDateTime() );
+richTextMessage.setDirection( Kopete::Message::Outbound );
+richTextMessage.setSubjet( QString("Kopete API documentation thread") );
+richTextMessage.setHtmlBody( QString("<b>A bold text</b>") );
+ * @endcode
  */
 class KOPETE_EXPORT Message
 {
 public:
 	/**
 	 * Direction of a message.
-	 * - Inbound: Message is from the chat partner
-	 * - Outbound: Message sent by the user.
-	 * - Internal: Messages which are not sent via the network. This is just a notification a plugin can show in a chat view
-	 * - Action: For the /me command , like on irc
 	 */
-	enum MessageDirection { Inbound = 0, Outbound = 1, Internal= 2 };
+	enum MessageDirection
+	{
+		Inbound = 0, ///< Message is from the chat partner
+		Outbound = 1, ///< Message sent by the user
+		Internal= 2 ///< (Default) Message which are not sent via the network. This is just a notification a plugin can show in a chat view
+	};
 
 	/**
 	 * Specifies the type of the message.
-	 * Currently supported types are:
-	 * - Normal: a message
-	 * - Action: an IRC-style DESCRIBE action.
 	 */
-	enum MessageType { TypeNormal, TypeAction };
+	enum MessageType
+	{
+		TypeNormal, ///< A typical message
+		TypeAction ///< An IRC-style action.
+	};
 
 	/**
 	 * Specifies the type of notification that will be sent with this message
-	 * - Low: almost no notifications. automatically used in groupChat
-	 * - Normal: Default notification, for normal message
-	 * - Highlight: Highlight notification, for most important messages, which require particular attentions.
 	 */
-	enum MessageImportance { Low = 0, Normal = 1, Highlight = 2 };
+	enum MessageImportance
+	{
+		Low = 0, ///< almost no notifications. automatically used in groupChat
+		Normal = 1, ///< Default notification, for normal message
+		Highlight = 2 ///< Highlight notification, for most important messages, which require particular attentions.
+	};
 
 	/**
 	 * Constructs a new empty message
 	 */
-	Message();
+	explicit Message();
 
 	/**
 	 * Deref and clean private object if refcount == 0
@@ -98,79 +120,20 @@ public:
 	~Message();
 
 	/**
-	 * Constructs a new message. See @ref setBody() to more information about the format
-	 * @param fromKC The Contact that the message is coming from
-	 * @param toKC List of Contacts the message is going to
-	 * @param body Message body
-	 * @param direction The direction of the message, Message::Inbound, Message::Outbound, Message::Internal
-	 * @param format Format of the message
-	 * @param requestedPlugin Requested view plugin for the message
-	 * @param type Type of the message, see @ref MessageType
+	 * @brief Constructs a new message with a from and to contact
+	 *
+	 * This constructor is a convience of the constructor who
+	 * take a list of contacts for destination
+	 * @param fromKC Contact who send the message
+	 * @param toKC Contact which the message is destined.
 	 */
-	Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
-		 MessageDirection direction, Qt::TextFormat format = Qt::PlainText,
-		 const QString &requestedPlugin = QString(), MessageType type = TypeNormal );
-
+	explicit Message( const Contact *fromKC, const Contact *toKC );
 	/**
-	 * Constructs a new message. See @ref setBody() to more information about the format
-	 * @param fromKC The Contact that the message is coming from
-	 * @param toKC List of Contacts the message is going to
-	 * @param body Message body
-	 * @param direction The direction of the message, Message::Inbound, Message::Outbound, Message::Internal
-	 * @param format Format of the message
-	 * @param requestedPlugin Requested view plugin for the message
-	 * @param type Type of the message, see @ref MessageType
+	 * @brief Constructs a new message with many contacts as the destination.
+	 * @param fromKC Contact who send the message
+	 * @param contacts List of Contact to send the message
 	 */
-	Message( const Contact *fromKC, const Contact *toKC, const QString &body,
-		 MessageDirection direction, Qt::TextFormat format = Qt::PlainText,
-		 const QString &requestedPlugin = QString(), MessageType type = TypeNormal );
-
-	/**
-	 * Constructs a new message. See @ref setBody() to more information about the format
-	 * @param fromKC The Contact that the message is coming from
-	 * @param toKC List of Contacts the message is going to
-	 * @param body Message body
-	 * @param subject The subject of the message
-	 * @param direction The direction of the message, Message::Inbound, Message::Outbound, Message::Internal
-	 * @param format Format of the message
-	 * @param requestedPlugin Requested view plugin for the message
-	 * @param type Type of the message, see @ref MessageType
-	 */
-	Message( const Contact *fromKC, const QList<Contact*> &toKC, const QString &body,
-		 const QString &subject, MessageDirection direction, Qt::TextFormat format = Qt::PlainText,
-		 const QString &requestedPlugin = QString(), MessageType type = TypeNormal );
-
-	/**
-	 * Constructs a new message. See @ref setBody() to more information about the format
-	 * @param timeStamp Timestamp for the message
-	 * @param fromKC The Contact that the message is coming from
-	 * @param toKC List of Contacts the message is going to
-	 * @param body Message body
-	 * @param direction The direction of the message, Message::Inbound, Message::Outbound, Message::Internal
-	 * @param format Format of the message
-	 * @param requestedPlugin Requested view plugin for the message
-	 * @param type Type of the message, see @ref MessageType
-	 */
-	Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
-		 const QString &body, MessageDirection direction, Qt::TextFormat format = Qt::PlainText,
-		 const QString &requestedPlugin = QString(), MessageType type = TypeNormal );
-
-	/**
-	 * Constructs a new message. See @ref setBody() to more information about the format
-	 * @param timeStamp Timestamp for the message
-	 * @param fromKC The Contact that the message is coming from
-	 * @param toKC List of Contacts the message is going to
-	 * @param body Message body
-	 * @param subject The subject of the message
-	 * @param direction The direction of the message, Message::Inbound, Message::Outbound, Message::Internal
-	 * @param format Format of the message
-	 * @param requestedPlugin Requested view plugin for the message
-	 * @param type Type of the message, see @ref MessageType
-	 */
-	Message( const QDateTime &timeStamp, const Contact *fromKC, const QList<Contact*> &toKC,
-		const QString &body, const QString &subject, MessageDirection direction,
-		Qt::TextFormat format = Qt::PlainText, const QString &requestedPlugin = QString(),
-		MessageType type = TypeNormal );
+	explicit Message( const Contact *fromKC, const QList<Contact*> &contacts);
 
 	/**
 	 * Copy constructor.
@@ -189,6 +152,12 @@ public:
 	 * @return The message's timestamp
 	 */
 	QDateTime timestamp() const;
+
+	/**
+	 * @brief Set the message timestamp
+	 * @param timestamp timestamp as QDateTime. By default the current date and time.
+	 */
+	void setTimestamp(const QDateTime &timestamp);
 
 	/**
 	 * @brief Accessor method for the Contact that sent this message
@@ -210,6 +179,13 @@ public:
 	MessageType type() const;
 
 	/**
+	 * @brief Set message type
+	 * @param type The type of the message
+	 * @see MessageType
+	 */
+	void setType(MessageType type);
+
+	/**
 	 * @brief Accessor method for the preferred plugin
 	 * If null, Kopete will use the user's preferred plugin.
 	 * @return The preferred plugin
@@ -217,16 +193,26 @@ public:
 	QString requestedPlugin() const;
 
 	/**
+	 * @brief Set a view plugin which will display the message
+	 *
+	 * This is used mostly by Jabber plugin to select between
+	 * the email window or the chat window depending of the
+	 * type of message.
+	 * @param requesedPlugin View plugin name
+	 */
+	void setRequestedPlugin(const QString &requestedPlugin);
+
+	/**
 	 * @brief Accessor method for the foreground color
 	 * @return The message's foreground color
 	 */
-	QColor fg() const;
+	QColor foregroundColor() const;
 
 	/**
 	 * @brief Accessor method for the background color of the message
 	 * @return The message's background color
 	 */
-	QColor bg() const;
+	QColor backgroundColor() const;
 
 	/**
 	 * @brief Accesssor method for the direction of the text based on what language it is in
@@ -245,6 +231,12 @@ public:
 	 * @return The message subject
 	 */
 	QString subject() const;
+
+	/**
+	 * @brief Set message subject
+	 * @param subject Message's subject
+	 */
+	void setSubject(const QString &subject);
 
 	/**
 	 * @brief Accessor method for the body of the message
@@ -266,6 +258,13 @@ public:
 	MessageDirection direction() const;
 
 	/**
+	 * @brief Set the message direction
+	 * @param direction The message direction
+	 * @see MessageDirection
+	 */
+	void setDirection(MessageDirection direction);
+
+	/**
 	 * @brief Accessor method for the importance
 	 * @see setImportance
 	 * @return The message importance (low/normal/highlight)
@@ -281,17 +280,17 @@ public:
 
 	/**
 	 * @brief Sets the foreground color for the message
-	 * @see fg
+	 * @see foregroundColor
 	 * @param color The color
 	 */
-	void setFg( const QColor &color );
+	void setForegroundColor( const QColor &color );
 
 	/**
 	 * @brief Sets the background color for the message
-	 * @see bg
+	 * @see backgroundColor
 	 * @param color The color
 	 */
-	void setBg( const QColor &color );
+	void setBackgroundColor( const QColor &color );
 
 	/**
 	 * @brief Sets the font for the message
@@ -362,24 +361,21 @@ public:
 
 	/**
 	 * @brief Enables the use of a background for a message
-	 * @see bgOverride
 	 * @param enable A flag to indicate if the background should be enabled or disabled.
 	 */
-	void setBgOverride( bool enable );
+	void setBackgroundOverride( bool enable );
 
 	/**
 	 * @brief Enables the use of a foreground for a message
-	 * @see fgOverride
 	 * @param enable A flag to indicate if the foreground should be enabled or disabled.
 	 */
-	void setFgOverride( bool enable );
+	void setForegroundOverride( bool enable );
 
 	/**
 	 * @brief Enables the use of a RTF formatting for a message
-	 * @see rtfOverride
 	 * @param enable A flag to indicate if the RTF formatting should be enabled or disabled.
 	 */
-	void setRtfOverride( bool enable );
+	void setRichTextOverride( bool enable );
 
 	/**
 	 * @brief Return HTML style attribute for this message.

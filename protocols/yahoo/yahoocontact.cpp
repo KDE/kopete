@@ -541,9 +541,11 @@ void YahooContact::buzzContact()
 	if ( view )
 	{
 		Kopete::Message msg = Kopete::Message( manager(Kopete::Contact::CannotCreate)->myself() ,
-					manager(Kopete::Contact::CannotCreate)->members(), i18n("Buzz"),
-					Kopete::Message::Outbound, Qt::PlainText,
-					QString::null , Kopete::Message::TypeAction);
+					manager(Kopete::Contact::CannotCreate)->members() );
+		msg.setPlainBody( i18n("Buzz") );
+		msg.setDirection( Kopete::Message::Outbound );
+		msg.setType( Kopete::Message::TypeAction );
+		
 		view->appendMessage( msg );
 	}
 }

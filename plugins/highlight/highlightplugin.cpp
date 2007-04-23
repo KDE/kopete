@@ -68,9 +68,9 @@ void HighlightPlugin::slotIncomingMessage( Kopete::Message& msg )
 			msg.plainBody().contains(f->search , f->caseSensitive?Qt::CaseSensitive:Qt::CaseInsensitive) )
 		{
 			if(f->setBG)
-				msg.setBg(f->BG);
+				msg.setBackgroundColor(f->BG);
 			if(f->setFG)
-				msg.setFg(f->FG);
+				msg.setForegroundColor(f->FG);
 			if(f->setImportance)
 				msg.setImportance((Kopete::Message::MessageImportance)f->importance);
 			msg.addClass( f->className()   );

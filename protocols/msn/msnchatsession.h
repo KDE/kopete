@@ -29,6 +29,7 @@ class MSNInvitation;
 class MSNContact;
 class KActionMenu;
 class QLabel;
+class KAction;
 
 
 /**

@@ -26,6 +26,7 @@
 #include <QTimer>
 #include <QTextStream>
 #include <QList>
+#include <QtCore/QDate>
 
 #include <kdebug.h>
 #include <kstandarddirs.h>
@@ -384,9 +385,12 @@ QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 					Kopete::ContactPtrList to;
 					to.append( dir==Kopete::Message::Inbound ? contact->account()->myself() : contact );
 
-					Kopete::Message msg(dt, from, to, msgElem2.text(), dir);
+					Kopete::Message msg(from, to);
+					msg.setHtmlBody( msgElem2.text() );
 					msg.setHtmlBody( QString::fromLatin1("<span title=\"%1\">%2</span>")
 							.arg( dt.toString(Qt::LocalDate), msg.escapedBody() ));
+					msg.setTimestamp( dt );
+					msg.setDirection( dir );
 				
 
 					// We insert it at the good place, given its date
@@ -600,12 +604,15 @@ QList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 						timestamp=QDateTime( QDate(d.year() , d.month() , rxTime.cap(1).toUInt()), QTime( rxTime.cap(2).toUInt() , rxTime.cap(3).toUInt() , rxTime.cap(5).toUInt() ) );
 					}
 
-					Kopete::Message msg(timestamp, from, to, msgElem.text(), dir);
+					Kopete::Message msg(from, to);
+					msg.setTimestamp( timestamp );
+					msg.setDirection( dir );
+					msg.setHtmlBody( msgElem.text() );
 					if (colorize)
 					{
 						msg.setHtmlBody( QString::fromLatin1("<span style=\"color:%1\" title=\"%2\">%3</span>")
 							.arg( fgColor.name(), timestamp.toString(Qt::LocalDate), msg.escapedBody() ));
-						msg.setFg( fgColor );
+						msg.setForegroundColor( fgColor );
 						msg.addClass( "history" );
 					}
 					else

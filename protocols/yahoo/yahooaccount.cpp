@@ -1045,10 +1045,12 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 
 	justMe.append(myself());
 
-	Kopete::Message kmsg(msgDT, contact(who), justMe, newMsgText,
-	                     Kopete::Message::Inbound , Qt::RichText);
+	Kopete::Message kmsg(contact(who), justMe);
+	kmsg.setTimestamp( msgDT );
+	kmsg.setHtmlBody( newMsgText );
+	kmsg.setDirection( Kopete::Message::Inbound );
 
-	kmsg.setFg( fgColor );
+	kmsg.setForegroundColor( fgColor );
 	mm->appendMessage(kmsg);
 }
 
@@ -1073,10 +1075,14 @@ void YahooAccount::slotGotBuzz( const QString &who, long tm )
 
 	QString buzzMsgText = i18nc("This string is shown when the user is buzzed by a contact", "Buzz");
 
-	Kopete::Message kmsg(msgDT, contact(who), justMe, buzzMsgText, Kopete::Message::Inbound,
-	                     Qt::PlainText, QString::null, Kopete::Message::TypeAction);
+	Kopete::Message kmsg(contact(who), justMe);
+	kmsg.setTimestamp( msgDT );
+	kmsg.setDirection( Kopete::Message::Inbound );
+	kmsg.setPlainBody( buzzMsgText );
+	kmsg.setType( Kopete::Message::TypeAction );
+	
 	QColor fgColor( "gold" );
-	kmsg.setFg( fgColor );
+	kmsg.setForegroundColor( fgColor );
 
 	Kopete::ChatSession *mm = contact(who)->manager(Kopete::Contact::CanCreate);
 	mm->appendMessage(kmsg);
@@ -1203,7 +1209,9 @@ void YahooAccount::slotConfUserDecline( const QString &who, const QString &room,
 	YahooConferenceChatSession *session = m_conferences[room];
 
 	QString body = i18n( "%1 declined to join the conference: \"%2\"", who, msg );
-	Kopete::Message message = Kopete::Message( contact( who ), myself(), body, Kopete::Message::Internal, Qt::PlainText );
+	Kopete::Message message = Kopete::Message( contact( who ), myself() );
+	message.setPlainBody( body );
+	message.setDirection( Kopete::Message::Internal );
 
 	session->appendMessage( message );
 }
@@ -1292,10 +1300,12 @@ void YahooAccount::slotConfMessage( const QString &who, const QString &room, con
 
 	justMe.append(myself());
 
-	Kopete::Message kmsg(msgDT, contact(who), justMe, newMsgText,
-	                     Kopete::Message::Inbound , Qt::RichText);
+	Kopete::Message kmsg( contact(who), justMe );
+	kmsg.setTimestamp( msgDT );
+	kmsg.setHtmlBody( newMsgText );
+	kmsg.setDirection( Kopete::Message::Inbound );
 
-	kmsg.setFg( fgColor );
+	kmsg.setForegroundColor( fgColor );
 	session->appendMessage(kmsg);
 }
 
@@ -1904,8 +1914,10 @@ void YahooAccount::slotChatJoined( int /*roomId*/, int /*categoryId*/, const QSt
 
 	m_chatChatSession->view( true )->raise( false );
 
-	Kopete::Message msg(myself(), m_chatChatSession->members(), i18n("You are now in %1 (%2)", handle, comment),
-	                     Kopete::Message::Internal, Qt::RichText);
+	Kopete::Message msg( myself(), m_chatChatSession->members() );
+	msg.setHtmlBody( i18n("You are now in %1 (%2)", handle, comment) );
+	msg.setDirection( Kopete::Message::Internal );
+	
 	m_chatChatSession->appendMessage( msg );
 }
 
@@ -1976,10 +1988,12 @@ void YahooAccount::slotChatMessageReceived( const QString &nick, const QString &
 
 	justMe.append(myself());
 
-	Kopete::Message kmsg(msgDT, contact(nick), justMe, newMsgText,
-	                     Kopete::Message::Inbound, Qt::RichText);
+	Kopete::Message kmsg( contact(nick), justMe );
+	kmsg.setTimestamp( msgDT );
+	kmsg.setHtmlBody( newMsgText );
+	kmsg.setDirection( Kopete::Message::Inbound );
 
-	kmsg.setFg( fgColor );
+	kmsg.setForegroundColor( fgColor );
 	m_chatChatSession->appendMessage(kmsg);
 }
 

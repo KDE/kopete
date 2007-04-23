@@ -438,8 +438,10 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 
 	Kopete::ContactPtrList me;
 	me.append( myself() );
-	Kopete::Message chatMessage( message.timestamp(), ocSender, me, sanitizedMsg,
-	                             Kopete::Message::Inbound, Qt::RichText );
+	Kopete::Message chatMessage( ocSender, me );
+	chatMessage.setHtmlBody( sanitizedMsg );
+	chatMessage.setTimestamp( message.timestamp() );
+	chatMessage.setDirection( Kopete::Message::Inbound );
 
 	chatSession->appendMessage( chatMessage );
 }

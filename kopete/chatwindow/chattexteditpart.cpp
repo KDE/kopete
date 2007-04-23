@@ -17,6 +17,7 @@
 
 #include "chattexteditpart.h"
 
+#include "kopetecontact.h"
 #include "kopetechatsession.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
@@ -418,18 +419,18 @@ void ChatTextEditPart::setContents( const Kopete::Message &message )
 	textEdit()->setText( useRichText() ? message.escapedBody() : message.plainBody() );
 
 	setFont( message.font() );
-	setTextColor( message.fg() );
-// 	setBgColor( message.bg() );
+	setTextColor( message.foregroundColor() );
+// 	setBackgroundColorColor( message.backgroundColor() );
 }
 
 Kopete::Message ChatTextEditPart::contents()
 {
-	Kopete::Message currentMsg( m_session->myself(), m_session->members(), text(),
-	                            Kopete::Message::Outbound, useRichText() ?
-	                            Qt::RichText : Qt::PlainText );
+	Kopete::Message currentMsg( m_session->myself(), m_session->members() );
+	currentMsg.setDirection( Kopete::Message::Outbound );
+	useRichText() ? currentMsg.setHtmlBody( text() ) : currentMsg.setPlainBody( text() );
 	
-// 	currentMsg.setBg( bgColor() );
-	currentMsg.setFg( textColor() );
+// 	currentMsg.setBackgroundColor( bgColor() );
+	currentMsg.setForegroundColor( textColor() );
 	currentMsg.setFont( font() );
 	
 	return currentMsg;

@@ -18,6 +18,7 @@
 #define QQACCOUNT_H
 
 #include <kopetechatsessionmanager.h>
+#include <kopetecontact.h>
 
 #include "kopetepasswordedaccount.h"
 #include "qqwebcamdialog.h"
