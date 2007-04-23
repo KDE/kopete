@@ -280,7 +280,7 @@ class LIBOSCAR_EXPORT Buffer
 		 * Gets a block form the buffer with the length in front of it.
 		 * Length is little-endian WORD.
 		 */
-		QByteArray addLEBlock();
+		QByteArray getLEBlock();
 
 		/**
 		 * Adds the given block to the buffer with the length in front of it.
