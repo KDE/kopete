@@ -316,7 +316,7 @@ void QQChatSession::slotInviteContact( Kopete::Contact * contact )
 		QRegExpValidator validator( rx, this );
 		QString inviteMessage = KInputDialog::getText( i18n( "Enter Invitation Message" ),
 		    i18n( "Enter the reason for the invitation, or leave blank for no reason:" ), QString(),
-				&ok, w ? w : Kopete::UI::Global::mainWidget(), &validator, QString::null, "invitemessagedlg" );
+				&ok, w ? w : Kopete::UI::Global::mainWidget(), &validator, QString(), "invitemessagedlg" );
 		if ( ok )
 		{
 			QQContact * qqc = static_cast< QQContact *>( contact );
@@ -402,7 +402,7 @@ void QQChatSession::joined( QQContact * c )
 	{
 		if ( (*pending)->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( *pending, QString::null, Qt::PlainText, true );
+			removeContact( *pending, QString(), Qt::PlainText, true );
 			break;
 		}
 	}
@@ -444,7 +444,7 @@ void QQChatSession::inviteDeclined( QQContact * c )
 	{
 		if ( (*pending)->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( *pending, QString::null, Qt::PlainText, true );
+			removeContact( *pending, QString(), Qt::PlainText, true );
 			break;
 		}
 	}

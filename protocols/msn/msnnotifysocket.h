@@ -62,7 +62,7 @@ public:
 	void removeGroup( const QString& group );
 	void renameGroup( const QString& groupName, const QString& groupGuid );
 
-	void changePublicName( const QString& publicName , const QString &handle=QString::null );
+	void changePublicName( const QString& publicName , const QString &handle=QString() );
 	void changePersonalMessage( const Kopete::StatusMessage &personalMessage );
 
 	void changePhoneNumber( const QString &key, const QString &data );

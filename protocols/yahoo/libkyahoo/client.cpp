@@ -400,7 +400,7 @@ void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::
 	cst->go( true );
 	
 	if( status == Yahoo::StatusInvisible )
-		stealthContact( QString::null, Yahoo::StealthOnline, Yahoo::StealthClear );
+		stealthContact( QString(), Yahoo::StealthOnline, Yahoo::StealthClear );
 
 	setStatus( status );
 }

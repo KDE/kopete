@@ -856,7 +856,7 @@ void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QStri
 		hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
 
 	Kopete::UI::ContactAddedNotifyDialog *dialog=
-		new Kopete::UI::ContactAddedNotifyDialog( user,QString::null,this, hideFlags );
+		new Kopete::UI::ContactAddedNotifyDialog( user,QString(),this, hideFlags );
 	QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
 	                 this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
 	dialog->show();
@@ -869,7 +869,7 @@ void YahooAccount::slotContactAddedNotifyDialogClosed( const QString &user )
 	if(!dialog || !isConnected())
 		return;
 
-	m_session->sendAuthReply( user, dialog->authorized(), QString::null );
+	m_session->sendAuthReply( user, dialog->authorized(), QString() );
 
 	if(dialog->added())
 	{

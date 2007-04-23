@@ -173,9 +173,9 @@ void JabberClient::cleanUp ()
 	setFileTransfersEnabled ( false );
 	setS5BServerPort ( 8010 );
 
-	setClientName ( QString::null );
-	setClientVersion ( QString::null );
-	setOSName ( QString::null );
+	setClientName ( QString() );
+	setClientVersion ( QString() );
+	setOSName ( QString() );
 
 	setTimeZone ( "UTC", 0 );
 

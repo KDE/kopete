@@ -24,7 +24,7 @@
 #include "gwerror.h" //debug area
 
 GWContactList::GWContactList( QObject * parent )
- : QObject( parent ), rootFolder( new GWFolder( this, 0, 0, QString::null ) )
+ : QObject( parent ), rootFolder( new GWFolder( this, 0, 0, QString() ) )
 {  }
 
 GWFolder * GWContactList::addFolder( unsigned int id, unsigned int sequence, const QString & displayName )

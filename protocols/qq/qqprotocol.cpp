@@ -31,21 +31,21 @@ QQProtocol *QQProtocol::s_protocol = 0L;
 
 QQProtocol::QQProtocol( QObject* parent, const QStringList &/*args*/ )
 	: Kopete::Protocol( QQProtocolFactory::componentData(), parent ),
-	  qqOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString::null),  
+	  qqOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),  
 			  i18n( "Online" ),   i18n( "O&nline" ) ),
 	  qqAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),  
 			  i18n( "Away" ),   i18n( "&Away" ) ),
-	  qqOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QStringList(QString::null), 
+	  qqOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QStringList(QString()), 
 			  i18n( "Offline" ),   i18n( "O&ffline" ) ),
 	  propNickName(Kopete::Global::Properties::self()->nickName()),
 	  propFullName(Kopete::Global::Properties::self()->fullName()),
-	  propCountry("QQVCardCountry", i18n("Country"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ), 
-	  propState("QQVCardState", i18n("State"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ), 
-	  propCity("QQVCardCity", i18n("State"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ),
-	  propStreet("QQVCardAddress", i18n("Home Address"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ),
-	  propZipcode("QQVCardZipcode", i18n("Zipcode"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty ), 
+	  propCountry("QQVCardCountry", i18n("Country"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ), 
+	  propState("QQVCardState", i18n("State"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ), 
+	  propCity("QQVCardCity", i18n("State"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ),
+	  propStreet("QQVCardAddress", i18n("Home Address"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ),
+	  propZipcode("QQVCardZipcode", i18n("Zipcode"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ), 
 	  propEmail(Kopete::Global::Properties::self()->emailAddress()),
-	  propAge("QQVCardAge", i18n("Age"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty )
+	  propAge("QQVCardAge", i18n("Age"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty )
 {
 	kDebug( 14210 ) << k_funcinfo << endl;
 	s_protocol = this;

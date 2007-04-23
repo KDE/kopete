@@ -84,7 +84,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 	if( t->status() == Yahoo::StatusDisconnected && 
 		t->service() == Yahoo::ServiceLogoff )
 	{
-		emit loginResponse( Yahoo::LoginDupl, QString::null );
+		emit loginResponse( Yahoo::LoginDupl, QString() );
 	}
 
 	QString	myNick;		/* key = 1 */
@@ -119,7 +119,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 			message = t->nthParamSeparated( 19, i, 7 );
 
 		if( t->service() == Yahoo::ServiceLogoff || ( state != 0 && flags == 0 ) )
-			emit statusChanged( nick, Yahoo::StatusOffline, QString::null, 0, 0, 0 );
+			emit statusChanged( nick, Yahoo::StatusOffline, QString(), 0, 0, 0 );
 		else
 			emit statusChanged( nick, state, message, away, idle, pictureChecksum );
 	}

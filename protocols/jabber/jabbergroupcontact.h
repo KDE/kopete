@@ -72,7 +72,7 @@ public slots:
 	 *                 a nondeterminate file size (such as over a socket)
 	 */
 	virtual void sendFile( const KUrl &sourceURL = KUrl(),
-		const QString &fileName = QString::null, uint fileSize = 0L );
+		const QString &fileName = QString(), uint fileSize = 0L );
 
 private slots:
 

@@ -185,7 +185,7 @@ GaduPublicDir::initConnections()
 void
 GaduPublicDir::inputChanged( bool )
 {
-	inputChanged( QString::null );
+	inputChanged( QString() );
 }
 
 void
@@ -232,7 +232,7 @@ GaduPublicDir::validateData()
 		CHECK_INT( fAgeTo );
 	}
 	else {
-		fSurname = QString::null;
+		fSurname = QString();
 		CHECK_INT( fUin );
 	}
 	return false;

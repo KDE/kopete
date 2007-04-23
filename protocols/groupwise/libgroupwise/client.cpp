@@ -320,7 +320,7 @@ void Client::lt_loginFinished()
 		debug( "Client::lt_loginFinished() LOGIN SUCCEEDED" );
 		// set our initial status
 		SetStatusTask * sst = new SetStatusTask( d->root );
-		sst->status( GroupWise::Available, QString::null, QString::null );
+		sst->status( GroupWise::Available, QString(), QString() );
 		sst->go( true );
 		emit loggedIn();
 		// fetch details for any privacy list items that aren't in our contact list.

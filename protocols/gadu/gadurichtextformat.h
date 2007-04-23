@@ -39,7 +39,7 @@ public:
 	KGaduMessage* convertToGaduMessage( const Kopete::Message& );
 
 private:
-	QString formatOpeningTag( const QString& , const QString& = QString::null );
+	QString formatOpeningTag( const QString& , const QString& = QString() );
 	QString formatClosingTag( const QString& );
 	bool insertRtf( uint );
 	QString unescapeGaduMessage( QString& );

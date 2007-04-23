@@ -45,7 +45,7 @@ class GWSearchResultsLVI : public Q3ListViewItem
 {
 public:
 	GWSearchResultsLVI( Q3ListView * parent, GroupWise::ContactDetails details, int status, const QPixmap & statusPM/*, const QString & userId */)
-	: Q3ListViewItem( parent, QString::null, details.givenName, details.surname, GroupWiseProtocol::protocol()->dnToDotted( details.dn ) ), m_details( details ), m_status( status )
+	: Q3ListViewItem( parent, QString(), details.givenName, details.surname, GroupWiseProtocol::protocol()->dnToDotted( details.dn ) ), m_details( details ), m_status( status )
 	{
 		setPixmap( 0, statusPM );
 	}

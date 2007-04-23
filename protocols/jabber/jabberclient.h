@@ -219,7 +219,7 @@ public:
 	 * @param flag Whether to enable file transfers.
 	 * @param localAddress Local address to receive file transfers at. Will be determined automatically if not specified.
 	 */
-	void setFileTransfersEnabled ( bool flag, const QString &localAddress = QString::null );
+	void setFileTransfersEnabled ( bool flag, const QString &localAddress = QString() );
 
 	/**
 	 * Returns the address of the local interface.

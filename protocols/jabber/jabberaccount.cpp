@@ -1165,7 +1165,7 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 			hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
 		
 		Kopete::UI::ContactAddedNotifyDialog *dialog=
-				new Kopete::UI::ContactAddedNotifyDialog( jid.full() ,QString::null,this, hideFlags );
+				new Kopete::UI::ContactAddedNotifyDialog( jid.full() ,QString(),this, hideFlags );
 		QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
 						this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
 		dialog->show();

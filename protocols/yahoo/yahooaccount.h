@@ -175,7 +175,7 @@ protected slots:
 	void slotJoinChatRoom();
 	void slotChatCategorySelected( const Yahoo::ChatCategory &category );
 
-	void slotGoStatus(int status, const QString &awayMessage = QString::null);
+	void slotGoStatus(int status, const QString &awayMessage = QString());
 	void slotLoginResponse(int succ, const QString &url);
 	void slotDisconnected();
 	void slotLoginFailed();

@@ -188,14 +188,14 @@ void MSNContact::slotBlockUser()
 
 	if( m_blocked )
 	{
-		notify->removeContact( contactId(), MSNProtocol::BL, QString::null, QString::null );
+		notify->removeContact( contactId(), MSNProtocol::BL, QString(), QString() );
 	}
 	else
 	{
 		if(m_allowed)
-			notify->removeContact( contactId(), MSNProtocol::AL, QString::null, QString::null );
+			notify->removeContact( contactId(), MSNProtocol::AL, QString(), QString() );
 		else
-			notify->addContact( contactId(), MSNProtocol::BL, QString::null, QString::null, QString::null );
+			notify->addContact( contactId(), MSNProtocol::BL, QString(), QString(), QString() );
 	}
 }
 
@@ -251,7 +251,7 @@ void MSNContact::deleteContact()
 			// Then trully remove it from server contact list,
 			// because only removing the contact from his groups isn't sufficient from MSNP11.
 			kDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
-			notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString::null);
+			notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString());
 		}
 		else
 		{
@@ -476,8 +476,8 @@ void MSNContact::sync( unsigned int changed )
 			  //     This shouln't be possible anymore  2004-06-10 -Olivier
 
 				//repair the problem
-				group->setPluginData( protocol() , account()->accountId() + " id" , QString::null);
-				group->setPluginData( protocol() , account()->accountId() + " displayName" , QString::null);
+				group->setPluginData( protocol() , account()->accountId() + " id" , QString());
+				group->setPluginData( protocol() , account()->accountId() + " displayName" , QString());
 				kWarning( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
 
 				if(!group->displayName().isEmpty() && group->type() == Kopete::Group::Normal) //not the top-level
@@ -491,7 +491,7 @@ void MSNContact::sync( unsigned int changed )
 			else if( !m_serverGroups.contains(Gid) )
 			{
 				//Add the contact to the group on the server
-				notify->addContact( contactId(), MSNProtocol::FL, QString::null, guid(), Gid );
+				notify->addContact( contactId(), MSNProtocol::FL, QString(), guid(), Gid );
 				count++;
 				m_moving=true;
 			}

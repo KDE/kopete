@@ -105,7 +105,7 @@ namespace P2P{
 			void error();
 			virtual void processMessage(const P2P::Message& message) = 0;
 			void sendDataPreparation();
-			void sendMessage(MessageType type, const QString& content=QString::null, qint32 flag=0, qint32 appId=0);
+			void sendMessage(MessageType type, const QString& content=QString(), qint32 flag=0, qint32 appId=0);
 			void setType(TransferType type);
 
 		public:

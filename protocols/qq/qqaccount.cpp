@@ -335,9 +335,9 @@ void QQAccount::slotNewContactList()
 			c->setAllowed( false );
 			c->setReversed( false );
 			c->setDeleted( true );
-			c->setInfo( "PHH", QString::null );
-			c->setInfo( "PHW", QString::null );
-			c->setInfo( "PHM", QString::null );
+			c->setInfo( "PHH", QString() );
+			c->setInfo( "PHW", QString() );
+			c->setInfo( "PHM", QString() );
 			// c->removeProperty( QQProtocol::protocol()->propGuid );
 		}
 		m_newContactList=true;
