@@ -40,8 +40,8 @@ void HistoryPlugin::convertOldHistory()
 	bool deleteFiles=  KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 		i18n( "Would you like to remove old history files?" ) , i18n( "History Converter" ), KStandardGuiItem::del(), KGuiItem( i18n("Keep") ) ) == KMessageBox::Yes;
 
-	KProgressDialog *progressDlg=new KProgressDialog(Kopete::UI::Global::mainWidget() , i18n( "History converter" ) ,
-		 QString::null , true); //modal  to  make sure the user will not doing stupid things (we have a qApp->processEvents())
+	KProgressDialog *progressDlg=new KProgressDialog(Kopete::UI::Global::mainWidget() , i18n( "History converter" ));
+	progressDlg->setModal(true); //modal  to  make sure the user will not doing stupid things (we have a qApp->processEvents())
 	progressDlg->setAllowCancel(false); //because i am too lazy to allow to cancel
 
 
