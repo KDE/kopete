@@ -136,7 +136,7 @@ void SSIListTask::handleContactListReply()
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SSI List complete" << endl;
 			client()->ssiManager()->setListComplete( true );
-			setSuccess( 0, QString::null );
+			setSuccess( 0, QString() );
 		}
 		else
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Awaiting another SSI packet" << endl;
@@ -154,7 +154,7 @@ void SSIListTask::handleSSIUpToDate()
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Number of items in SSI list: " << ssiItems << endl;
 
 	client()->ssiManager()->setListComplete( true );
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 }
 
 void SSIListTask::checkContactTimestamp()

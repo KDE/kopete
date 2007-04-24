@@ -93,7 +93,7 @@ void MSNNotifySocket::disconnect()
 	if(	m_disconnectReason==Kopete::Account::Unknown )
 		m_disconnectReason=Kopete::Account::Manual;
 	if( onlineStatus() == Connected )
-		sendCommand( "OUT", QString::null, false );
+		sendCommand( "OUT", QString(), false );
 
 	if( m_keepaliveTimer )
 		m_keepaliveTimer->stop();
@@ -1290,7 +1290,7 @@ void MSNNotifySocket::slotSendKeepAlive()
 	{
 		// Send a dummy command to fake activity. This makes sure MSN doesn't
 		// disconnect you when the notify socket is idle.
-		sendCommand( "PNG" , QString::null , false );
+		sendCommand( "PNG" , QString(), false );
 		m_ping=true;
 	}
 

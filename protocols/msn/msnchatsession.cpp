@@ -214,7 +214,7 @@ void MSNChatSession::slotUserJoined( const QString &handle, const QString &publi
 	m_timeoutTimer=0L;
 
 	if( !account()->contacts()[ handle ] )
-		account()->addContact( handle, QString::null, 0L, Kopete::Account::Temporary);
+		account()->addContact( handle, QString(), 0L, Kopete::Account::Temporary);
 
 	MSNContact *c = static_cast<MSNContact*>( account()->contacts()[ handle ] );
 
@@ -363,7 +363,7 @@ void MSNChatSession::slotInviteOtherContact()
 	bool ok;
 	QString handle = KInputDialog::getText(i18n( "MSN Plugin" ),
 			i18n( "Please enter the email address of the person you want to invite:" ),
-			QString::null, &ok );
+			QString(), &ok );
 	if( !ok )
 		return;
 

@@ -355,7 +355,7 @@ void MSNFileTransferSocket::parseInvitation(const QString& msg)
 
 		MSNInvitation::parseInvitation(msg); //for the cookie
 
-		Kopete::TransferManager::transferManager()->askIncomingTransfer( m_contact , filename, filesize, QString::null, QString::number( cookie() ) );
+		Kopete::TransferManager::transferManager()->askIncomingTransfer( m_contact , filename, filesize, QString(), QString::number( cookie() ) );
 
 		QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),this, SLOT( slotFileTransferAccepted( Kopete::Transfer *, const QString& ) ) );
 		QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( refused( const Kopete::FileTransferInfo & ) ), this, SLOT( slotFileTransferRefused( const Kopete::FileTransferInfo & ) ) );

@@ -204,7 +204,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 		cleanQueue(); //in case some message are waiting their emoticons, never mind, send them
 
 		QString handle = data.section( ' ', 0, 0 ).replace( "\r\n" , "" );
-		userLeftChat( handle,  (data.section( ' ', 1, 1 ) == "1" ) ? i18n("timeout") : QString::null   );
+		userLeftChat( handle,  (data.section( ' ', 1, 1 ) == "1" ) ? i18n("timeout") : QString()   );
 	}
 	else if( cmd == "MSG" )
 	{
@@ -862,7 +862,7 @@ void MSNSwitchBoardSocket::slotSocketClosed( )
 
 void MSNSwitchBoardSocket::slotCloseSession()
 {
-	sendCommand( "OUT", QString::null, false );
+	sendCommand( "OUT", QString(), false );
 	disconnect();
 }
 

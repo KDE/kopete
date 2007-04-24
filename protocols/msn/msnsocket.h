@@ -114,7 +114,7 @@ public slots:
 	 *
 	 * return the id
 	 */
-	int sendCommand( const QString &cmd, const QString &args = QString::null,
+	int sendCommand( const QString &cmd, const QString &args = QString(),
 		bool addId = true, const QByteArray &body = QByteArray() , bool binary=false );
 
 signals:

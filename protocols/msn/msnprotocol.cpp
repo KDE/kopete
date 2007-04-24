@@ -47,7 +47,7 @@ MSNProtocol *MSNProtocol::s_protocol = 0L;
 MSNProtocol::MSNProtocol( QObject *parent, const QStringList & /* args */ )
 : Kopete::Protocol( MSNProtocolFactory::componentData(), parent ),
 
-	NLN( Kopete::OnlineStatus::Online, 25, this, 1, QStringList(QString::null),
+	NLN( Kopete::OnlineStatus::Online, 25, this, 1, QStringList(QString()),
 			i18n( "Online" ), i18n( "O&nline" ), Kopete::OnlineStatusManager::Online, 
 			Kopete::OnlineStatusManager::HasStatusMessage ),
 	
@@ -69,7 +69,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const QStringList & /* args */ )
 	LUN( Kopete::OnlineStatus::Away, 15, this, 6, QStringList(QString::fromLatin1("contact_food_overlay")),   
 			i18n( "Out to Lunch" ), i18n( "Out To &Lunch" ), 0, Kopete::OnlineStatusManager::HasStatusMessage ),
 	
-	FLN( Kopete::OnlineStatus::Offline, 0, this, 7, QStringList(QString::null),
+	FLN( Kopete::OnlineStatus::Offline, 0, this, 7, QStringList(QString()),
 			i18n( "Offline" ), i18n( "&Offline" ), Kopete::OnlineStatusManager::Offline,
 			Kopete::OnlineStatusManager::DisabledIfOffline ),
 	

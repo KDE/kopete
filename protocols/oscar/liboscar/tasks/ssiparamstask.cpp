@@ -79,7 +79,7 @@ void SSIParamsTask::handleParamReply()
 	//manually parse the TLV out of the packet, since we only want certain things
 	if ( buf->getWord() != 0x0004 )
 	{
-		setError( -1, QString::null );
+		setError( -1, QString() );
 		return; //no TLV of type 0x0004, bad packet. do nothing.
 	}
 	else
@@ -93,7 +93,7 @@ void SSIParamsTask::handleParamReply()
 		Oscar::WORD maxIgnore = buf->getWord();
 		client()->ssiManager()->setParameters( maxContacts, maxGroups, maxVisible, maxInvisible, maxIgnore );
 	}
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 }
 
 // kate: tab-width 4; indent-mode csands;

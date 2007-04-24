@@ -98,7 +98,7 @@ void Dispatcher::requestDisplayIcon(const QString& from, const QString& msnObjec
 	QString context = QString::fromUtf8(KCodecs::base64Encode(msnObject.toUtf8()));
 	// NOTE remove the \0 character automatically
 	// appended to a QCString.
-	context.replace("=", QString::null);
+	context.replace("=", QString());
 	QString content =
 			"EUF-GUID: {A4268EEC-FEC5-49E5-95C3-F126696BDBF6}\r\n"
 			"SessionID: " + QString::number(sessionId) + "\r\n"
@@ -505,7 +505,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 					QObject::connect(Kopete::TransferManager::transferManager(), SIGNAL(refused(const Kopete::FileTransferInfo&)), transfer, SLOT(slotTransferRefused(const Kopete::FileTransferInfo&)));
 
 					// Show the file transfer accept/decline dialog.
-					Kopete::TransferManager::transferManager()->askIncomingTransfer(contact, fileName, fileSize, QString::null, sessionId);
+					Kopete::TransferManager::transferManager()->askIncomingTransfer(contact, fileName, fileSize, QString(), sessionId);
 				}
 				else
 				{

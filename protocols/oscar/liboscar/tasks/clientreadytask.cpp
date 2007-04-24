@@ -85,7 +85,7 @@ void ClientReadyTask::onGo()
 	//with the hell that is oscar login. (just wait until you get a message)
 	Transfer* t = createTransfer( f, s, buffer );
 	send( t );
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 
 }
 

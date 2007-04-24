@@ -300,7 +300,7 @@ void MSNP2P::sendP2PAck( const char* originalHeader )
 void MSNP2P::error()
 {
 	kDebug(14140) << k_funcinfo   << endl;
-	makeMSNSLPMessage( ERROR, QString::null );
+	makeMSNSLPMessage( ERROR, QString() );
 	m_parent->finished(this);
 }
 

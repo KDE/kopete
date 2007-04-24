@@ -230,7 +230,7 @@ private:
 public: //FIXME: should be private
 	QMap<QString, Kopete::Group*> m_groupList;
 
-	void addGroup( const QString &groupName, const QString &contactToAdd = QString::null );
+	void addGroup( const QString &groupName, const QString &contactToAdd = QString() );
 
 	/**
 	 * Find and retrive a MSNContact by its contactGuid. (Helper function)

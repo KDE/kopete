@@ -69,7 +69,7 @@ bool OwnUserInfoTask::take( Transfer* transfer )
 			ud.fill( b );
 			m_details = ud;
 			emit gotInfo();
-			setSuccess( 0, QString::null );
+			setSuccess( 0, QString() );
 			return true;
 		}
 		else
@@ -107,7 +107,7 @@ bool OwnUserInfoTask::take( Transfer* transfer )
 				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "self available message: " << endl;
 			}
 			
-			setSuccess( 0, QString::null );
+			setSuccess( 0, QString() );
 			return true;
 		}
 		

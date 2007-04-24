@@ -96,7 +96,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 			delete m_file;*/
 
 				//send the bye message
-			makeMSNSLPMessage(BYE, QString::null);
+			makeMSNSLPMessage(BYE, QString());
 
 			m_parent->finished(this);
 				//deleteLater();

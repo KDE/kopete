@@ -66,7 +66,7 @@ namespace P2P{
 			void messageAcknowledged(unsigned int correlationId, bool fullReceive);
 
 		signals:
-			void sendCommand(const QString &cmd, const QString &args = QString::null, bool addId = true, const QByteArray &body = QByteArray(), bool binary=false);
+			void sendCommand(const QString &cmd, const QString &args = QString(), bool addId = true, const QByteArray &body = QByteArray(), bool binary=false);
 			void displayIconReceived(KTemporaryFile* file, const QString& msnObject);
 			void incomingTransfer(const QString& from, const QString& fileName, qint64 fileSize);
 

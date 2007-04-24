@@ -141,7 +141,7 @@ void SMSSend::loadProviders(const QString &prefix)
 	QDir d(prefix + "/share/smssend");
 	if (!d.exists())
 	{
-		setOptions(QString::null);
+		setOptions(QString());
 		return;
 	}
 

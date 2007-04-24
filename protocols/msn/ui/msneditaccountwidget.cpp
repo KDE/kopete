@@ -273,7 +273,7 @@ void MSNEditAccountWidget::slotBlock()
 	if ( !notify )
 		return;
 
-	notify->removeContact( handle, MSNProtocol::AL, QString::null, QString::null );
+	notify->removeContact( handle, MSNProtocol::AL, QString(), QString() );
 
 	d->ui->m_AL->takeItem( item );
 	d->ui->m_BL->insertItem( item );
