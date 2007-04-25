@@ -2,6 +2,7 @@
     cryptographypreferences.h
 
     Copyright (c) 2002      by Olivier Goffart <ogoffart@kde.org>
+    Copyright (c) 2007      by Charles Connell <charles@connells.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -15,25 +16,30 @@
     ***************************************************************************
 */
 
-#ifndef CryptographyPREFERENCES_H
-#define CryptographyPREFERENCES_H
+#ifndef CRYPTOGRAPHYPREFERENCES_H
+#define CRYPTOGRAPHYPREFERENCES_H
 
 #include "kcmodule.h"
 
 namespace Ui { class CryptographyPrefsUI; }
 
-// TODO: Port to KConfigXT
 /**
  * Preference widget for the Cryptography plugin
  * @author Olivier Goffart
  */
+
+//class CryptographyConfig;
+
 class CryptographyPreferences : public KCModule  {
 
    Q_OBJECT
 
 public:
 	explicit CryptographyPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
-	~CryptographyPreferences();
+    virtual ~CryptographyPreferences();
+    virtual void save();
+    virtual void load();
+    virtual void defaults();
 
 private:
 	Ui::CryptographyPrefsUI *preferencesDialog;

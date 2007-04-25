@@ -30,7 +30,7 @@
     <number>6</number>
    </property>
    <item row="1" column="0" colspan="3" >
-    <widget class="QCheckBox" name="encryptOutgoing" >
+    <widget class="QCheckBox" name="kcfg_EncryptOutgoing" >
      <property name="whatsThis" >
       <string>&lt;qt>Check this box if you want to encrypt outgoing messages with this key, so that you will be able to decrypt them yourself later.&lt;br>
 &lt;b>Warning:&lt;/b> This can increase the size of messages, and some protocols will refuse to send your messages because they are too large.</string>
@@ -41,7 +41,7 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="3" >
-    <widget class="QGroupBox" name="cacheGroupBox" >
+    <widget class="QGroupBox" name="kcfg_CacheBehavior" >
      <property name="title" >
       <string>Cache Passphrase</string>
      </property>
@@ -65,7 +65,7 @@
        <number>6</number>
       </property>
       <item row="2" column="0" colspan="3" >
-       <widget class="QRadioButton" name="neverCache" >
+       <widget class="QRadioButton" name="kcfg_Never" >
         <property name="text" >
          <string>Never</string>
         </property>
@@ -88,7 +88,7 @@
        </widget>
       </item>
       <item row="1" column="1" >
-       <widget class="QSpinBox" name="cacheTime" >
+       <widget class="QSpinBox" name="kcfg_CacheTime" >
         <property name="enabled" >
          <bool>false</bool>
         </property>
@@ -110,7 +110,7 @@
        </widget>
       </item>
       <item row="1" column="0" >
-       <widget class="QRadioButton" name="cacheForTime" >
+       <widget class="QRadioButton" name="kcfg_Time" >
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
           <horstretch>0</horstretch>
@@ -123,7 +123,7 @@
        </widget>
       </item>
       <item row="0" column="0" colspan="3" >
-       <widget class="QRadioButton" name="neverCache" >
+       <widget class="QRadioButton" name="kcfg_Never" >
         <property name="text" >
          <string>Until Kopete closes</string>
         </property>
@@ -150,7 +150,7 @@
     </widget>
    </item>
    <item row="0" column="1" >
-    <widget class="KLineEdit" name="privateKey" >
+    <widget class="KLineEdit" name="kcfg_PrivateKeyId" >
      <property name="readOnly" >
       <bool>true</bool>
      </property>
@@ -173,7 +173,7 @@
     </spacer>
    </item>
    <item row="2" column="0" colspan="3" >
-    <widget class="QCheckBox" name="dontAskForPassphrase" >
+    <widget class="QCheckBox" name="kcfg_DontAskForPassphrase" >
      <property name="text" >
       <string>Do not ask for the passphrase</string>
      </property>
@@ -191,21 +191,21 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>privateKey</tabstop>
+  <tabstop>kcfg_PrivateKeyId</tabstop>
   <tabstop>selectKey</tabstop>
-  <tabstop>encryptOutgoing</tabstop>
-  <tabstop>dontAskForPassphrase</tabstop>
-  <tabstop>neverCache</tabstop>
-  <tabstop>cacheForTime</tabstop>
-  <tabstop>cacheTime</tabstop>
-  <tabstop>neverCache</tabstop>
+  <tabstop>kcfg_EncryptOutgoing</tabstop>
+  <tabstop>kcfg_DontAskForPassphrase</tabstop>
+  <tabstop>kcfg_Never</tabstop>
+  <tabstop>kcfg_Time</tabstop>
+  <tabstop>kcfg_CacheTime</tabstop>
+  <tabstop>kcfg_Never</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>cacheForTime</sender>
+   <sender>kcfg_Time</sender>
    <signal>toggled(bool)</signal>
-   <receiver>cacheTime</receiver>
+   <receiver>kcfg_CacheTime</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -219,7 +219,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>cacheForTime</sender>
+   <sender>kcfg_Time</sender>
    <signal>toggled(bool)</signal>
    <receiver>minutesLabel</receiver>
    <slot>setEnabled(bool)</slot>
@@ -235,9 +235,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>dontAskForPassphrase</sender>
+   <sender>kcfg_DontAskForPassphrase</sender>
    <signal>toggled(bool)</signal>
-   <receiver>cacheGroupBox</receiver>
+   <receiver>kcfg_CacheBehavior</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >

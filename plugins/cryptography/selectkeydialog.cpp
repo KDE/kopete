@@ -1,11 +1,6 @@
-//Code from KGPG
-
 /***************************************************************************
-                          listkeys.cpp  -  description
-                             -------------------
-    begin                : Thu Jul 4 2002
-    copyright            : (C) 2002 by y0k0
-    email                : bj@altern.org
+   Copyright (c) 2002      by y0k0            <bj@altern.org>
+   Copyright (c) 2007      by Charles Connell <charles@connells.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -16,8 +11,6 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
-////////////////////////////////////////////////////// code for the key management
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -41,9 +34,6 @@
 
 #include <cstdio>
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-////////////////   Secret key selection dialog, used when user wants to sign a key
 SelectKeyDialog::SelectKeyDialog(QWidget *parent, const char *name,bool showlocal)
  : KDialog( parent )
 {
@@ -102,7 +92,7 @@ void SelectKeyDialog::slotReadKey (K3ProcIO * pio)
     if (expr.isEmpty())
       expr = i18nc ("adj", "Unlimited");
     QString id = QString("0x"+line.section(':',4,4).right(8));
-    K3ListViewItem *item = new K3ListViewItem (keysListpr,extractKeyName(line));
+    K3ListViewItem *item = new K3ListViewItem (keysListpr, line.section (':', 9, 9) );
     K3ListViewItem *sub = new K3ListViewItem (item,i18n("ID: %1, expiration: %2", id, expr));
     sub->setSelectable(false);
     KIconLoader *loader = KIconLoader::global();
@@ -110,12 +100,6 @@ void SelectKeyDialog::slotReadKey (K3ProcIO * pio)
     item->setPixmap(0,keyPair);
   }
   pio->ackRead();
-}
-
-QString SelectKeyDialog::extractKeyName(QString fullName)
-{
-  QString name = fullName.section (':', 9, 9);
-  return name;
 }
 
 void SelectKeyDialog::slotpreOk()

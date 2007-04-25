@@ -1,11 +1,6 @@
-//Code from KGPG
-
 /***************************************************************************
-                          listkeys.h  -  description
-                             -------------------
-    begin                : Thu Jul 4 2002
-    copyright            : (C) 2002 by y0k0
-    email                : bj@altern.org
+   Copyright (c) 2002      by y0k0            <bj@altern.org>
+   Copyright (c) 2007      by Charles Connell <charles@connells.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -28,18 +23,6 @@ class K3ListView;
 class QCheckBox;
 class Q3ListViewItem;
 
-struct gpgKey{
-  QString gpgkeymail;
-  QString gpgkeyname;
-  QString gpgkeyid;
-  QString gpgkeytrust;
-  QString gpgkeyvalidity;
-  QString gpgkeysize;
-  QString gpgkeycreation;
-  QString gpgkeyexpiration;
-  QString gpgkeyalgo;
-};
-
 class SelectKeyDialog : public KDialog
 {
     Q_OBJECT
@@ -47,16 +30,12 @@ class SelectKeyDialog : public KDialog
 public:
     explicit SelectKeyDialog( QWidget *parent = 0, const char *name = 0,bool showlocal=true);
     ~SelectKeyDialog();
-    K3ListView *keysListpr;
-    QPixmap keyPair;
-    QCheckBox *local;
 
 private slots:
     void slotReadKey(K3ProcIO*);
     void slotOk();
     void slotpreOk();
     void slotSelect(Q3ListViewItem *item);
-    QString extractKeyName(QString fullName);
 
 public:
     QString getkeyID();
@@ -64,6 +43,9 @@ public:
     bool getlocal();
 
 private:
+    K3ListView *keysListpr;
+    QPixmap keyPair;
+    QCheckBox *local;
     K3ProcIO * fp;
 };
 
