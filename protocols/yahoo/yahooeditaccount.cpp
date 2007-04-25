@@ -93,9 +93,9 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 	optionSendBuddyIcon->setEnabled( account() );
 
 	/* Set tab order to password custom widget correctly */
-	QWidget::setTabOrder( mAutoConnect, mPasswordWidget->mRemembered );
+	QWidget::setTabOrder( mScreenName, mPasswordWidget->mRemembered );
 	QWidget::setTabOrder( mPasswordWidget->mRemembered, mPasswordWidget->mPassword );
-	QWidget::setTabOrder( mPasswordWidget->mPassword, buttonRegister );
+	QWidget::setTabOrder( mPasswordWidget->mPassword, mAutoConnect );
 
 	show();
 }
