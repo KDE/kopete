@@ -13,10 +13,12 @@ Name=Chatwindow
 Name[sv]=Chattfönster
 Name[uk]=Вікно балачки
 Name[x-test]=xxChatwindowxx
+Name[zh_TW]=聊天視窗
 Comment=Configure Chat Window Look And Feel
 Comment[sv]=Anpassa chattfönstrets känsla och utseende
 Comment[uk]=Налаштувати вигляд і поведінку вікна балачки
 Comment[x-test]=xxConfigure Chat Window Look And Feelxx
+Comment[zh_TW]=設定聊天視窗的外觀與感覺
 
 
 

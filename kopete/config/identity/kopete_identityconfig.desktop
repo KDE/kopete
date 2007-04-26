@@ -57,5 +57,6 @@ Comment=Manage Your Global Identity
 Comment[sv]=Hantera din generella identitet
 Comment[uk]=Керування вашим глобальним профілем
 Comment[x-test]=xxManage Your Global Identityxx
+Comment[zh_TW]=管理您的全域身份
 
 DocPath=kopete/configure-dialog.html#configuring-identity

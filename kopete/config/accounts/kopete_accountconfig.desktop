@@ -64,6 +64,7 @@ Comment=Manage Your Accounts
 Comment[sv]=Hantera dina konton
 Comment[uk]=Керування вашими рахунками
 Comment[x-test]=xxManage Your Accountsxx
+Comment[zh_TW]=管理您的帳號
 DocPath=kopete/configure-dialog.html#configuring-accounts
 
 
