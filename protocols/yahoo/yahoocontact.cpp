@@ -308,6 +308,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 	newMsg.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
 	newMsg.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
 	newMsg.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
+	newMsg.replace( QString::fromLatin1( "<br />" ), QString::fromLatin1( "\r" ) );
 	newMsg.replace( QString::fromLatin1( "<br/>" ), QString::fromLatin1( "\r" ) );
 	
 	return newMsg;
