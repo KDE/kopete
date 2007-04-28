@@ -19,6 +19,7 @@ Name[uk]=Конфіденційність
 Name[x-test]=xxPrivacyxx
 Name[zh_TW]=隱私
 Comment=Filters incoming messages
+Comment[kk]=Хабарларды бояулау
 Comment[sv]=Filtrerar inkommande meddelanden
 Comment[uk]=Фільтрує вхідні повідомлення
 Comment[x-test]=xxFilters incoming messagesxx
