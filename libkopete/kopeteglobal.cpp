@@ -298,7 +298,7 @@ void installEmoticonTheme(const QString &archiveName)
 	{
 		const QString &theme = foundThemes[themeIndex];
 
-		progressDlg->setLabel(
+		progressDlg->setLabelText(
 			i18n("<qt>Installing <strong>%1</strong> emoticon theme</qt>",
 			theme));
 		progressDlg->progressBar()->setValue(themeIndex);

@@ -108,7 +108,7 @@ void HistoryPlugin::convertOldHistory()
 
 			progressDlg->progressBar()->reset();
 			progressDlg->progressBar()->setMaximum(d2.count());
-			progressDlg->setLabel(i18n("Parsing old history in %1", fi.fileName()));
+			progressDlg->setLabelText(i18n("Parsing old history in %1", fi.fileName()));
 			progressDlg->show(); //if it was not already showed...
 
 			foreach(fi2, list)
@@ -118,7 +118,7 @@ void HistoryPlugin::convertOldHistory()
 
 				if(!contactId.isEmpty() )
 				{
-					progressDlg->setLabel(i18n("Parsing old history in %1:\n%2", fi.fileName(), contactId));
+					progressDlg->setLabelText(i18n("Parsing old history in %1:\n%2", fi.fileName(), contactId));
 					qApp->processEvents(0); //make sure the text is updated in the progressDlg
 
 					int month=0;
