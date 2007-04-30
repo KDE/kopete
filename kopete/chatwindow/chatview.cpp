@@ -39,7 +39,7 @@
 #include <kmessagebox.h>
 #include <kmenu.h>
 #include <kstringhandler.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
@@ -269,11 +269,11 @@ void ChatView::raise( bool activate )
 	if ( !m_mainWindow || !m_mainWindow->isActiveWindow() || activate )
 		makeVisible();
 #ifdef Q_WS_X11
-	if ( !KWM::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
+	if ( !KWindowSystem::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
 		if( Kopete::BehaviorSettings::self()->trayflashNotifySetCurrentDesktopToChatView() && activate )
-			KWM::setCurrentDesktop( KWM::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).desktop() );
+			KWindowSystem::setCurrentDesktop( KWindowSystem::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).desktop() );
 		else
-			KWM::setOnDesktop( m_mainWindow->winId(), KWM::currentDesktop() );
+			KWindowSystem::setOnDesktop( m_mainWindow->winId(), KWindowSystem::currentDesktop() );
 #endif
 	if(m_mainWindow->isMinimized())
 	{
@@ -293,7 +293,7 @@ void ChatView::raise( bool activate )
 	*/
 	//Will not activate window if user was typing
 	if ( activate )
-		KWM::activateWindow( m_mainWindow->winId() );
+		KWindowSystem::activateWindow( m_mainWindow->winId() );
 
 }
 

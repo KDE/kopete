@@ -24,7 +24,7 @@
 #include <kplugininfo.h>
 #include <knotification.h>
 #include <kglobal.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 
 #include "kopetebehaviorsettings.h"
 #include "kopeteaccount.h"
@@ -248,7 +248,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			// ...and chat window is on another desktop
 			appendMessageEvent = appendMessageEvent && (!d->queueOnlyMessagesOnAnotherDesktop 
 #ifdef Q_WS_X11
-					||!KWM::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop());
+					||!KWindowSystem::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop());
 #else
 					);
 #endif					

@@ -49,7 +49,7 @@
 #include <kmenu.h>
 #include <kpushbutton.h>
 #include <ktextedit.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kgenericfactory.h>
 #include <kxmlguifactory.h>
 #include <kvbox.h>
@@ -541,8 +541,8 @@ void KopeteEmailWindow::raise(bool activate)
 {
 	makeVisible();
 #ifdef Q_WS_X11
-	if ( !KWM::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
-		KWM::setOnDesktop( winId(), KWM::currentDesktop() );
+	if ( !KWindowSystem::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
+		KWindowSystem::setOnDesktop( winId(), KWindowSystem::currentDesktop() );
 #endif
 	KXmlGuiWindow::raise();
 
@@ -556,7 +556,7 @@ void KopeteEmailWindow::raise(bool activate)
 	*/
 	//Will not activate window if user was typing
 	if(activate)
-		KWM::activateWindow( winId() );
+		KWindowSystem::activateWindow( winId() );
 }
 
 void KopeteEmailWindow::windowActivationChange( bool )
