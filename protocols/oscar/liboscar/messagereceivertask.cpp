@@ -237,6 +237,12 @@ void MessageReceiverTask::handleType2Message()
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got a TLV 2711" << endl;
 			Buffer tlv2711Buffer( tlv.data );
 			parseRendezvousData( &tlv2711Buffer, &msg );
+			if ( msg.messageType() == 0x1A )
+			{
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received plugin message" << endl;
+				break;
+			}
+
 			switch ( requestType )
 			{
 			case 0x00: // some request
@@ -404,7 +410,8 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		int fgcolor = 0x00000000;
 		int bgcolor = 0x00ffffff;
 
-		if ( b->length() >= 8 )
+		// Don't parse plugin message
+		if ( b->length() >= 8 && messageType != 0x1A )
 		{
 			fgcolor = b->getLEDWord();
 			bgcolor = b->getLEDWord();
