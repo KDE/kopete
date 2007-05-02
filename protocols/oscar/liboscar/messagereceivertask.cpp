@@ -116,8 +116,7 @@ bool MessageReceiverTask::take( Transfer* transfer )
 			return true;
 		}
 	}
-	else
-		return false;
+        return false;
 }
 
 void MessageReceiverTask::handleType1Message()
