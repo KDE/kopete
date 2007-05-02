@@ -69,13 +69,13 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
 
 	QString raw;
-	raw = t->firstParam( 87 );
-	
-	if( raw.isEmpty() )
+	m_list.append( t->firstParam( 87 ) );
+
+	if( t->firstParam( 59 ).isEmpty() )
 		return;
 
 	QStringList groups;
-	groups = QStringList::split( "\n", raw );
+	groups = QStringList::split( "\n", m_list );
 
 	for ( QStringList::Iterator groupIt = groups.begin(); groupIt != groups.end(); ++groupIt ) 
 	{
@@ -88,6 +88,7 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 			emit gotBuddy( *buddyIt, QString::null, group );
 		}
 	}
+	m_list.truncate( 0 );
 }
 
 void ListTask::parseStealthList( YMSGTransfer *t )

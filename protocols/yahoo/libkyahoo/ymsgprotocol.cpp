@@ -357,9 +357,10 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			if (accept)
 				value[x++] = data[pos++];
 		}
-		if (accept)
+		if (accept) {
 			value[x] = 0;
-		pos += 2;
+			pos += 2;
+		}
 
 		if (accept) 
 		{
@@ -375,8 +376,8 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	}
 
 	// Packets consisting of several YMSG-packets sometimes contain padding chars (0x00) -> filter out
- 	while( (BYTE)data[pos] == (BYTE) 0x00 && pos <= len + 20)
- 		pos++;
+	while( (BYTE)data[pos] == (BYTE) 0x00 && pos <= len + 20)
+		pos++;
 
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Returning transfer" << endl;
 	// tell them we have parsed offset bytes

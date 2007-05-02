@@ -184,7 +184,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		}
 		else 
 		{ 
-			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - not a valid YMSG packet. Trying to recover." << endl;
+			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - not a valid YMSG packet. Trying to recover: " << wire << endl;
 			QTextStream s( wire, IO_ReadOnly );
 			QString remaining = s.read();
 			int pos = remaining.find( "YMSG", bytesParsed );
