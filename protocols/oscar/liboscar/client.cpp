@@ -599,6 +599,18 @@ void Client::receivedMessage( const Oscar::Message& msg )
 					}
 				}
 			}
+			else if ( type == Oscar::MessagePlugin::StatusMsgExt )
+			{
+				Buffer buffer;
+
+				QTextCodec* codec = d->codecProvider->codecForContact( msg.sender() );
+				buffer.addLEDBlock( codec->fromUnicode( statusMessage() ) );
+				//TODO: Change this to text/x-aolrtf
+				buffer.addLEDBlock( "text/plain" );
+
+				msg.plugin()->setData( buffer.buffer() );
+				emit userReadsStatusMessage( msg.sender() );
+			}
 		}
 		else
 		{
@@ -642,6 +654,16 @@ void Client::receivedMessage( const Oscar::Message& msg )
 							                             service->description(), service->message() );
 					}
 				}
+			}
+			else if ( type == Oscar::MessagePlugin::StatusMsgExt )
+			{
+				// we got a response to a status message request.
+				Buffer buffer( msg.plugin()->data() );
+
+				QTextCodec* codec = d->codecProvider->codecForContact( msg.sender() );
+				QString awayMessage = codec->toUnicode( buffer.getLEDBlock() );
+				kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << awayMessage << endl;
+				emit receivedAwayMessage( msg.sender(), awayMessage );
 			}
 		}
 	}
@@ -996,38 +1018,82 @@ void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactSta
 	Oscar::Message msg;
 	msg.setChannel( 2 );
 	msg.setReceiver( contact );
-	msg.addProperty( Oscar::Message::StatusMessageRequest );
-	switch ( contactStatus )
-	{
-	case ICQAway:
-		msg.setMessageType( Oscar::MessageType::AutoAway ); // away
-		break;
-	case ICQOccupied:
-		msg.setMessageType( Oscar::MessageType::AutoBusy ); // occupied
-		break;
-	case ICQNotAvailable:
-		msg.setMessageType( Oscar::MessageType::AutoNA ); // not awailable
-		break;
-	case ICQDoNotDisturb:
-		msg.setMessageType( Oscar::MessageType::AutoDND ); // do not disturb
-		break;
-	case ICQFreeForChat:
-		msg.setMessageType( Oscar::MessageType::AutoFFC ); // free for chat
-		break;
-	case ICQXStatus:
-		{
-			msg.setMessageType( Oscar::MessageType::Plugin ); // plugin message
-			msg.addProperty( ~ Oscar::Message::StatusMessageRequest );
 
-			Xtraz::XtrazNotify xNotify;
-			xNotify.setSenderUni( userId() );
-			msg.setPlugin( xNotify.statusRequest() );
+	if ( (contactStatus & ICQXStatus) == ICQXStatus )
+	{
+		Xtraz::XtrazNotify xNotify;
+		xNotify.setSenderUni( userId() );
+
+		msg.setMessageType( Oscar::MessageType::Plugin ); // plugin message
+		msg.setPlugin( xNotify.statusRequest() );
+	}
+	else if ( (contactStatus & ICQPluginStatus) == ICQPluginStatus )
+	{
+		Oscar::WORD subTypeId = 0xFFFF;
+		QByteArray subTypeText;
+
+		switch ( contactStatus & ICQStatusMask )
+		{
+		case ICQOnline:
+		case ICQFreeForChat:
+		case ICQAway:
+			subTypeId = 1;
+			subTypeText = "Away Status Message";
 			break;
+		case ICQOccupied:
+		case ICQDoNotDisturb:
+			subTypeId = 2;
+			subTypeText = "Busy Status Message";
+			break;
+		case ICQNotAvailable:
+			subTypeId = 3;
+			subTypeText = "N/A Status Message";
+			break;
+		default:
+			// may be a good way to deal with possible error and lack of online status message?
+			emit receivedAwayMessage( contact, "Sorry, this protocol does not support this type of status message" );
+			return;
 		}
-	default:
-		// may be a good way to deal with possible error and lack of online status message?
-		emit receivedAwayMessage( contact, "Sorry, this protocol does not support this type of status message" );
-		return;
+
+		Oscar::MessagePlugin *plugin = new Oscar::MessagePlugin();
+		plugin->setType( Oscar::MessagePlugin::StatusMsgExt );
+		plugin->setSubTypeId( subTypeId );
+		plugin->setSubTypeText( subTypeText );
+
+		Buffer buffer;
+		buffer.addLEDWord( 0x00000000 );
+		//TODO: Change this to text/x-aolrtf
+		buffer.addLEDBlock( "text/plain" );
+		plugin->setData( buffer.buffer() );
+
+		msg.setMessageType( Oscar::MessageType::Plugin ); // plugin message
+		msg.setPlugin( plugin );
+	}
+	else
+	{
+		msg.addProperty( Oscar::Message::StatusMessageRequest );
+		switch ( contactStatus & ICQStatusMask )
+		{
+		case ICQAway:
+			msg.setMessageType( Oscar::MessageType::AutoAway ); // away
+			break;
+		case ICQOccupied:
+			msg.setMessageType( Oscar::MessageType::AutoBusy ); // occupied
+			break;
+		case ICQNotAvailable:
+			msg.setMessageType( Oscar::MessageType::AutoNA ); // not awailable
+			break;
+		case ICQDoNotDisturb:
+			msg.setMessageType( Oscar::MessageType::AutoDND ); // do not disturb
+			break;
+		case ICQFreeForChat:
+			msg.setMessageType( Oscar::MessageType::AutoFFC ); // free for chat
+			break;
+		default:
+			// may be a good way to deal with possible error and lack of online status message?
+			emit receivedAwayMessage( contact, "Sorry, this protocol does not support this type of status message" );
+			return;
+		}
 	}
 	sendMessage( msg );
 }

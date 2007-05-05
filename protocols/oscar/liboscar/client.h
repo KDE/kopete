@@ -75,7 +75,20 @@ public:
 		FatalProtocolError = 3
 	};
 
-	enum ICQStatus { ICQOnline = 0, ICQAway, ICQNotAvailable, ICQOccupied, ICQDoNotDisturb, ICQFreeForChat, ICQXStatus };
+	enum ICQStatusFlags {
+		ICQOnline       = 0x00,
+		ICQAway         = 0x01,
+		ICQNotAvailable = 0x02,
+		ICQOccupied     = 0x03,
+		ICQDoNotDisturb = 0x04,
+		ICQFreeForChat  = 0x05,
+
+		ICQXStatus      = 0x10,
+		ICQPluginStatus = 0x20,
+
+		ICQStatusMask   = 0x0F
+	};
+	Q_DECLARE_FLAGS(ICQStatus, ICQStatusFlags)
 
 	/*************
 	  EXTERNAL API
@@ -570,6 +583,7 @@ private:
 	StageOneLoginTask* m_loginTask;
 	StageTwoLoginTask* m_loginTaskTwo;
 };
+Q_DECLARE_OPERATORS_FOR_FLAGS(Client::ICQStatus)
 
 #endif
 

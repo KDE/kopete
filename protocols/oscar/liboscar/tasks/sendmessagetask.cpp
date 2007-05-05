@@ -269,7 +269,7 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 	// protocol version
 	// miranda,licq use 8, gaim,icq5 use 9, icq2003b uses 10.
 	// 9 seems to make things a little difficult, 10 seems a little more like 8, but still more difficult
-	b->addLEWord( 0x0008 ); // so stick with 8 for now :)
+	b->addLEWord( ICQ_TCP_VERSION ); // so stick with 8 for now :)
 
 	for ( int i = 0; i < 16; i++)
 	{
