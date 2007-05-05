@@ -3,8 +3,9 @@
     logintask.cpp - Handles logging into to the AIM or ICQ service
 
     Copyright (c) 2004 Matt Rogers <mattr@kde.org>
+    Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,10 +23,9 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include "aimlogintask.h"
 #include "connection.h"
 #include "closeconnectiontask.h"
-#include "icqlogintask.h"
+#include "oscarlogintask.h"
 #include "oscarutils.h"
 #include "rateinfotask.h"
 #include "serverversionstask.h"
@@ -40,15 +40,13 @@
 StageOneLoginTask::StageOneLoginTask( Task* parent )
 	: Task ( parent )
 {
-	m_aimTask = 0L;
-	m_icqTask = 0L;
+	m_loginTask = 0L;
 	m_closeTask = 0L;
 }
 
 StageOneLoginTask::~StageOneLoginTask()
 {
-	delete m_aimTask;
-	delete m_icqTask;
+	delete m_loginTask;
 	delete m_closeTask;
 }
 
@@ -56,33 +54,22 @@ bool StageOneLoginTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		if ( client()->isIcq() )
-		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting ICQ login" << endl;
-			m_icqTask = new IcqLoginTask( client()->rootTask() );
-			m_closeTask = new CloseConnectionTask( client()->rootTask() );
-			
-			//connect finished signal
-			connect( m_closeTask, SIGNAL( finished() ), this, SLOT( closeTaskFinished() ) );
-			m_icqTask->go( true );
-		}
-		else
-		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting AIM login" << endl;
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending the FLAP version back" << endl;
-			
-			//send the flap version response
-			FLAP f = { 0x01, 0 , 0 };
-			Buffer *outbuf = new Buffer;
-			outbuf->addDWord(0x00000001); //flap version
-			f.length = outbuf->length();
-			Transfer* ft = createTransfer( f, outbuf );
-			send( ft );
-			
-			m_aimTask = new AimLoginTask( client()->rootTask() );
-			connect( m_aimTask, SIGNAL( finished() ), this, SLOT( aimTaskFinished() ) );
-			m_aimTask->go( true );
-		}
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting login" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending the FLAP version back" << endl;
+
+		//send the flap version response
+		FLAP f = { 0x01, 0 , 0 };
+		Buffer *outbuf = new Buffer;
+		outbuf->addDWord(0x00000001); //flap version
+		f.length = outbuf->length();
+		Transfer* ft = createTransfer( f, outbuf );
+		send( ft );
+
+		m_loginTask = new OscarLoginTask( client()->rootTask() );
+		m_closeTask = new CloseConnectionTask( client()->rootTask() );
+		connect( m_loginTask, SIGNAL(finished()), this, SLOT(loginTaskFinished()) );
+		connect( m_closeTask, SIGNAL(finished()), this, SLOT(closeTaskFinished()) );
+		m_loginTask->go( true );
 		return true;
 	}
 	return false;
@@ -91,21 +78,16 @@ bool StageOneLoginTask::take( Transfer* transfer )
 void StageOneLoginTask::closeTaskFinished()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	m_cookie = m_closeTask->cookie();
-	m_bosPort = m_closeTask->bosPort();
-	m_bosServer = m_closeTask->bosHost();
-	m_closeTask->safeDelete();
 	setSuccess( m_closeTask->statusCode(), m_closeTask->statusString() );
 }
 
-void StageOneLoginTask::aimTaskFinished()
+void StageOneLoginTask::loginTaskFinished()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	m_cookie = m_aimTask->cookie();
-	m_bosPort = m_aimTask->bosPort();
-	m_bosServer = m_aimTask->bosHost();
-	
-	setSuccess( m_aimTask->statusCode(), m_aimTask->statusString() );
+	m_cookie = m_loginTask->cookie();
+	m_bosPort = m_loginTask->bosPort();
+	m_bosServer = m_loginTask->bosHost();
+	m_loginTask = 0L;
 }
 
 bool StageOneLoginTask::forMe( Transfer* transfer ) const

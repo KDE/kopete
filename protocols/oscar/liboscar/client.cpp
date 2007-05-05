@@ -2,11 +2,12 @@
 	client.cpp - Kopete Oscar Protocol
 
 	Copyright (c) 2004-2005 Matt Rogers <mattr@kde.org>
+    Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
 
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
 	Based on Iris, Copyright (C) 2003  Justin Karneges
 
-	Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+	Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
 	*************************************************************************
 	*                                                                       *
@@ -67,6 +68,7 @@
 #include "oscarmessageplugin.h"
 #include "xtrazxtraznotify.h"
 #include "xtrazxawayservice.h"
+#include "closeconnectiontask.h"
 
 
 namespace
@@ -227,6 +229,10 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 
 void Client::close()
 {
+	QList<Connection*> cList = d->connections.connections();
+	for ( int i = 0; i < cList.size(); i++ )
+		(new CloseConnectionTask( cList.at(i)->rootTask() ))->go( true );
+
 	d->active = false;
 	d->awayMsgRequestTimer->stop();
 	d->awayMsgRequestQueue.clear();

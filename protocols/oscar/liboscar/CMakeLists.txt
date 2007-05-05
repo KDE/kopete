@@ -47,8 +47,7 @@ set(liboscar_SRCS
     xtrazxrandomizerservice.cpp
     tasks/task.cpp
     tasks/logintask.cpp
-    tasks/aimlogintask.cpp
-    tasks/icqlogintask.cpp
+    tasks/oscarlogintask.cpp
     tasks/closeconnectiontask.cpp
     tasks/serverversionstask.cpp
     tasks/rateinfotask.cpp 

@@ -3,8 +3,9 @@
     closeconnectiontask.h - Handles the closing of the connection to the server
 
     Copyright (c) 2004 Matt Rogers <mattr@kde.org>
+    Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,7 +23,6 @@
 #include <task.h>
 
 class Transfer;
-class QString;
 
 /**
 @author Matt Rogers
@@ -35,25 +35,11 @@ public:
 	~CloseConnectionTask();
 	
 	virtual bool take(Transfer* transfer);
-	
-	//Protocol specific stuff
-	const QByteArray& cookie() const;
-	const QString& bosHost() const;
-	const QString& bosPort() const;
-
 
 protected:
 	virtual bool forMe(const Transfer* transfer) const;
+	virtual void onGo();
 
-private:
-	bool parseDisconnectCode( int error, QString& reason );
-
-private:
-	QByteArray m_cookie;
-	QString m_bosHost;
-	QString m_bosPort;
-	
-	
 };
 
 #endif

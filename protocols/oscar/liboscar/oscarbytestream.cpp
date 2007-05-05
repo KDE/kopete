@@ -86,7 +86,11 @@ KNetwork::KBufferedSocket *KNetworkByteStream::socket() const
 
 KNetworkByteStream::~KNetworkByteStream()
 {
-	delete mSocket;
+	// If socket is open than it has data in buffer, so delete socket later
+	if ( mSocket->isOpen() )
+		QObject::connect( mSocket, SIGNAL(closed()), mSocket, SLOT(deleteLater()) );
+	else
+		delete mSocket;
 }
 
 void KNetworkByteStream::slotConnected()
