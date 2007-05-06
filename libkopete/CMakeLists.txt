@@ -48,10 +48,15 @@ set(kopete_contactlist_SRCS
   contactlist/xmlcontactstorage.cpp
 )
 
+set(kopete_tasks_SRCS
+  tasks/kopetetask.cpp
+)
+
 set(kopete_LIB_SRCS
    ${kopete_private_SRCS}
    ${kopete_ui_SRCS}
    ${kopete_contactlist_SRCS}
+   ${kopete_tasks_SRCS}
    kabcpersistence.cpp
    kopeteaccount.cpp
    kopeteaccountmanager.cpp
@@ -87,7 +92,6 @@ set(kopete_LIB_SRCS
    kopeteprotocol.cpp
    kopetesimplemessagehandler.cpp
    kopetestatusmessage.cpp
-   kopetetask.cpp
    kopetetransfermanager.cpp
    kopeteuiglobal.cpp
    kopeteutils.cpp
@@ -197,10 +201,10 @@ install( FILES
   kopeteprotocol.h
   kopetesimplemessagehandler.h
   kopetestatusmessage.h
-  kopetetask.h
   kopetetransfermanager.h
   kopeteuiglobal.h
   kopeteversion.h
+  tasks/kopetetask.h
 DESTINATION ${INCLUDE_INSTALL_DIR}/kopete )
 
 install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_DIR} )
