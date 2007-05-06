@@ -311,7 +311,8 @@ void cs_dump( const QByteArray &bytes )
 void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 {
 	// take formatted bytes from CoreProtocol and put them on the wire
-	d->bs->write( outgoingBytes );
+	if ( d->bs )
+		d->bs->write( outgoingBytes );
 }
 
 void ClientStream::cp_incomingData()
@@ -377,7 +378,8 @@ void ClientStream::bs_readyRead()
 {
 	QByteArray a;
 	//qDebug( "size of storage for incoming data is %i bytes.", a.size() );
-	a = d->bs->read();
+	if ( d->bs )
+		a = d->bs->read();
 
 #if LIBOSCAR_DEBUG
 	QByteArray cs(a.data(), a.size()+1);

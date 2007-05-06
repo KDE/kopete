@@ -46,8 +46,6 @@ StageOneLoginTask::StageOneLoginTask( Task* parent )
 
 StageOneLoginTask::~StageOneLoginTask()
 {
-	delete m_loginTask;
-	delete m_closeTask;
 }
 
 bool StageOneLoginTask::take( Transfer* transfer )
@@ -78,7 +76,10 @@ bool StageOneLoginTask::take( Transfer* transfer )
 void StageOneLoginTask::closeTaskFinished()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
-	setSuccess( m_closeTask->statusCode(), m_closeTask->statusString() );
+	if ( m_closeTask->success() )
+		setSuccess( m_closeTask->statusCode(), m_closeTask->statusString() );
+	else
+		setError( m_closeTask->statusCode(), m_closeTask->statusString() );
 }
 
 void StageOneLoginTask::loginTaskFinished()
@@ -87,7 +88,12 @@ void StageOneLoginTask::loginTaskFinished()
 	m_cookie = m_loginTask->cookie();
 	m_bosPort = m_loginTask->bosPort();
 	m_bosServer = m_loginTask->bosHost();
-	m_loginTask = 0L;
+
+	if ( !m_loginTask->success() )
+	{
+		disconnect( m_closeTask, SIGNAL(finished()), this, SLOT(closeTaskFinished()) );
+		setError( m_loginTask->statusCode(), m_loginTask->statusString() );
+	}
 }
 
 bool StageOneLoginTask::forMe( Transfer* transfer ) const
