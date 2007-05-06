@@ -16,9 +16,7 @@
   *************************************************************************
 */
 
-#ifdef HAVE_CONFIG_H
 #include "config-kopete.h"
-#endif
 
 #include <qcombobox.h>
 #include <kdialog.h>

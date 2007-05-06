@@ -19,9 +19,7 @@
 
 #include "msnaccount.h"
 
-#ifdef HAVE_CONFIG_H
 #include <config-kopete.h>
-#endif
 
 #include <kaction.h>
 #include <kactionmenu.h>
