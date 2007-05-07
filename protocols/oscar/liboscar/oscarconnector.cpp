@@ -17,24 +17,24 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <k3bufferedsocket.h>
-#include <kdebug.h>
-#include <k3resolver.h>
-
 #include "oscarconnector.h"
 #include "oscarbytestream.h"
+
+#include <kdebug.h>
+
+#include <QtNetwork/QTcpSocket>
 
 KNetworkConnector::KNetworkConnector( QObject *parent )
 		: Connector( parent )
 {
 	kDebug( 14151 ) << k_funcinfo << "New KNetwork connector." << endl;
 
-	mErrorCode = KNetwork::KSocketBase::NoError;
+	mErrorCode = QAbstractSocket::UnknownSocketError;   // no 'NoError' here :(
 
 	mByteStream = new KNetworkByteStream( this );
 
 	connect( mByteStream, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
-	connect( mByteStream, SIGNAL ( error ( int ) ), this, SLOT ( slotError ( int ) ) );
+	connect( mByteStream, SIGNAL ( error ( QAbstractSocket::SocketError ) ), this, SLOT ( slotError ( QAbstractSocket::SocketError ) ) );
 	mPort = 0;
 }
 
@@ -49,9 +49,9 @@ void KNetworkConnector::connectToServer( const QString &server )
 	Q_ASSERT( !mHost.isEmpty() );
 	Q_ASSERT( mPort );
 
-	mErrorCode = KNetwork::KSocketBase::NoError;
+	mErrorCode = QAbstractSocket::UnknownSocketError;
 
-	if ( !mByteStream->connect ( mHost, QString::number ( mPort ) ) )
+	if ( !mByteStream->connect ( mHost, mPort ) )
 	{
 		// Houston, we have a problem
 		mErrorCode = mByteStream->socket()->error();
@@ -70,7 +70,7 @@ void KNetworkConnector::slotConnected()
 	emit connected ();
 }
 
-void KNetworkConnector::slotError( int code )
+void KNetworkConnector::slotError( QAbstractSocket::SocketError code )
 {
 	kDebug( 14151 ) << k_funcinfo << "Error detected: " << code << endl;
 
@@ -78,7 +78,7 @@ void KNetworkConnector::slotError( int code )
 	emit error ();
 }
 
-int KNetworkConnector::errorCode()
+QAbstractSocket::SocketError KNetworkConnector::errorCode()
 {
 	return mErrorCode;
 }

@@ -337,7 +337,7 @@ void ClientStream::cr_connected()
 	connect(d->bs, SIGNAL(delayedCloseFinished()), SLOT(bs_delayedCloseFinished()));
 	connect(d->bs, SIGNAL(readyRead()), SLOT(bs_readyRead()));
 	connect(d->bs, SIGNAL(bytesWritten(int)), SLOT(bs_bytesWritten(int)));
-	connect(d->bs, SIGNAL(error(int)), SLOT(bs_error(int)));
+	connect(d->bs, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(bs_error(QAbstractSocket::SocketError)));
 
 	d->state = Active;
 	if ( d->noop_time )
@@ -369,7 +369,7 @@ void ClientStream::bs_delayedCloseFinished()
 	// we don't care about this (we track all important data ourself)
 }
 
-void ClientStream::bs_error(int)
+void ClientStream::bs_error(QAbstractSocket::SocketError)
 {
 	// TODO
 }

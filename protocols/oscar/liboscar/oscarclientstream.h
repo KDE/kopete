@@ -24,6 +24,8 @@
 #include "stream.h"
 #include "liboscar_export.h"
 
+#include <QtNetwork/QAbstractSocket>
+
 // forward defines
 class ByteStream;
 class Client;
@@ -117,15 +119,15 @@ public:
 /*#	void writeDirect(const QString &s); // must be for debug testing*/
 	void setNoopTime(int mills);
 
-signals:
+Q_SIGNALS:
 	void connected();
 	void securityLayerActivated(int);
 	void authenticated(); // this signal is ordinarily emitted in processNext
 	void warning(int);
-public slots:
+public Q_SLOTS:
 	void continueAfterWarning();
 
-private slots:
+private Q_SLOTS:
 	void cr_connected();
 	void cr_error();
 	/**
@@ -139,7 +141,7 @@ private slots:
 
 	void bs_connectionClosed();
 	void bs_delayedCloseFinished();
-	void bs_error(int); // server only
+	void bs_error(QAbstractSocket::SocketError); // server only
 	void bs_readyRead();
 	void bs_bytesWritten(int);
 

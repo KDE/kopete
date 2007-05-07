@@ -19,7 +19,7 @@
  */
 
 #include"bytestream.h"
-//Added by qt3to4:
+
 #include <QByteArray>
 
 // CS_NAMESPACE_BEGIN
@@ -238,7 +238,7 @@ QByteArray ByteStream::takeArray(QByteArray *from, int size, bool del)
 	void delayedCloseFinished();
 	void readyRead();
 	void bytesWritten(int);
-	void error(int);
+	void error(QAbstractSocket::SocketError);
 
 //! \fn void ByteStream::connectionClosed()
 //! This signal is emitted when the remote end of the stream closes.
@@ -254,7 +254,7 @@ QByteArray ByteStream::takeArray(QByteArray *from, int size, bool del)
 //! This signal is emitted when data has been successfully written to the stream.
 //! \a x is the number of bytes written.
 
-//! \fn void ByteStream::error(int code)
+//! \fn void ByteStream::error(QAbstractSocket::SocketError code)
 //! This signal is emitted when an error occurs in the stream.  The reason for
 //! error is indicated by \a code.
 */

@@ -49,16 +49,16 @@ public:
 
 	void setOptHostPort( const QString &host, quint16 port );
 
-	int errorCode();
+	QAbstractSocket::SocketError errorCode();
 
 private slots:
 	void slotConnected();
-	void slotError( int );
+	void slotError( QAbstractSocket::SocketError );
 
 private:
 	QString mHost;
 	quint16 mPort;
-	int mErrorCode;
+	QAbstractSocket::SocketError mErrorCode;
 
 	KNetworkByteStream *mByteStream;
 

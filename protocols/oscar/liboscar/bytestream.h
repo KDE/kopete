@@ -21,7 +21,8 @@
 #ifndef CS_BYTESTREAM_H
 #define CS_BYTESTREAM_H
 
-#include <qobject.h>
+#include <QtCore/QObject>
+#include <QtNetwork/QAbstractSocket>
 
 // CS_NAMESPACE_BEGIN
 
@@ -44,12 +45,12 @@ public:
 	static void appendArray(QByteArray *a, const QByteArray &b);
 	static QByteArray takeArray(QByteArray *from, int size=0, bool del=true);
 
-signals:
+Q_SIGNALS:
 	void connectionClosed();
 	void delayedCloseFinished();
 	void readyRead();
 	void bytesWritten(int);
-	void error(int);
+	void error(QAbstractSocket::SocketError);
 
 protected:
 	void clearReadBuffer();

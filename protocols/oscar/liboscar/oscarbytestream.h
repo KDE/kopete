@@ -21,8 +21,7 @@
 #ifndef KNETWORKBYTESTREAM_H
 #define KNETWORKBYTESTREAM_H
 
-#include <k3bufferedsocket.h>
-
+#include "ksocketfactory.h"
 #include "bytestream.h"
 
 
@@ -41,27 +40,28 @@ public:
 
 	~KNetworkByteStream ();
 
-	bool connect ( QString host, QString service );
+	bool connect ( QString host, unsigned short port );
 	virtual bool isOpen () const;
 	virtual void close ();
 
-	KNetwork::KBufferedSocket *socket () const;
+	// can be NULL !
+    QTcpSocket *socket () const;
 
-signals:
+Q_SIGNALS:
 	void connected ();
 
 protected:
 	virtual int tryWrite ();
 
-private slots:
+private Q_SLOTS:
 	void slotConnected ();
-	void slotConnectionClosed ();
+	void slotDisconnected ();
 	void slotReadyRead ();
 	void slotBytesWritten ( qint64 );
-	void slotError ( int );
+	void slotError ( QAbstractSocket::SocketError );
 
 private:
-	KNetwork::KBufferedSocket *mSocket;
+	class QTcpSocket *mSocket;
 	bool mClosing;
 
 };
