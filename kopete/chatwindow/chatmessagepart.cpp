@@ -234,8 +234,8 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( this, SIGNAL(popupMenu(const QString &, const QPoint &)),
 	         this, SLOT(slotRightClick(const QString &, const QPoint &)) );
-	connect( view(), SIGNAL(contentsMoving(int,int)),
-	         this, SLOT(slotScrollingTo(int,int)) );
+	connect( view()->horizontalScrollBar(), SIGNAL(sliderMoved(int)),
+	         this, SLOT(slotScrollingTo(int)) );
 
 	//initActions
 	d->copyAction = KStandardAction::copy( this, SLOT(copy()), actionCollection() );
@@ -257,7 +257,7 @@ ChatMessagePart::~ChatMessagePart()
 	delete d;
 }
 
-void ChatMessagePart::slotScrollingTo( int /*x*/, int y )
+void ChatMessagePart::slotScrollingTo( int y )
 {
 	int scrolledTo = y + view()->visibleHeight();
 	if ( scrolledTo >= ( view()->contentsHeight() - 10 ) )

@@ -423,7 +423,7 @@ void KopeteChatWindow::initActions(void)
 
 	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), coll );
         coll->addAction( "options_membersleft", membersLeft );
-	connect( membersLeft, SLOT(toggled(bool)), this, SLOT(slotViewMembersLeft()) );
+	connect( membersLeft, SLOT(triggered(bool)), this, SLOT(slotViewMembersLeft()) );
 
 	membersRight = new KToggleAction( i18n( "Place to Right of Chat Area" ), coll );
         coll->addAction( "options_membersright", membersRight );
