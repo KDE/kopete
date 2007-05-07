@@ -139,7 +139,7 @@ void KNetworkByteStream::slotBytesWritten( qint64 bytes )
 }
 void KNetworkByteStream::slotError( QAbstractSocket::SocketError code )
 {
-	kDebug( 14151 ) << k_funcinfo << "Socket error " << code << endl;
+	kDebug( 14151 ) << k_funcinfo << "Socket error " << (int)code << endl;
 
     emit error ( code );
 }

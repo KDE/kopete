@@ -72,7 +72,7 @@ void KNetworkConnector::slotConnected()
 
 void KNetworkConnector::slotError( QAbstractSocket::SocketError code )
 {
-	kDebug( 14151 ) << k_funcinfo << "Error detected: " << code << endl;
+	kDebug( 14151 ) << k_funcinfo << "Error detected: " << (int)code << endl;
 
 	mErrorCode = code;
 	emit error ();
