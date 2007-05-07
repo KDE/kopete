@@ -121,9 +121,9 @@ public slots:
 
 protected:
 	/**
-	 * Setup a connection for a derived account based on the host and port
+	 * Setup a connection for a derived account
 	 */
-	Connection* setupConnection( const QString& server, uint port );
+	Connection* setupConnection();
 
 	/**
 	 * Adds a contact to a meta contact

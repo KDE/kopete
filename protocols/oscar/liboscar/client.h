@@ -106,15 +106,17 @@ public:
 	 * Start a connection to the server using the supplied @ref ClientStream.
 	 * This is only a transport layer connection.
 	 * @param s initialised connection object to use for the connection.
-	 * @param server the server to connect to - but this is also set on the connector used to construct the clientstream??
+	 * @param host the host name of server to connect to
+	 * @param port the port of server to connect to
 	 * @param auth indicate whether we're connecting to the authorizer or the bos server
 	 */
-	void connectToServer( Connection *c, const QString& server, bool auth = true );
+	void connectToServer( Connection *c, const QString& host, quint16 port, bool auth = true );
 
 	/**
 	 * Start the login process for Oscar
-	 * @param host - probably could obtain this back from the connector - used for outgoing tasks to determine destination
+	 * @param host Used for outgoing tasks to determine destination
 	 * @param user The user name to log in as.
+	 * @param port The port of server to connect to
 	 * @param pass The password to use when logging in
 	 */
 	void start( const QString &host, const uint port, const QString &userId, const QString &pass );
@@ -567,7 +569,7 @@ private:
 	/** Delete the static tasks */
 	void deleteStaticTasks();
 
-	Connection* createConnection( const QString& host, const QString& port );
+	Connection* createConnection();
 
 	/**
 	 * Request the icq away message

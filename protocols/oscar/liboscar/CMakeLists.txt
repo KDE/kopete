@@ -11,7 +11,6 @@ ${KOPETE_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/utils ${CMAKE_CURRENT_SOURCE_DIR}
 set(liboscar_SRCS 
     oscarutils.cpp
     client.cpp 
-    connector.cpp
     inputprotocolbase.cpp
     coreprotocol.cpp
     flapprotocol.cpp 
@@ -19,12 +18,9 @@ set(liboscar_SRCS
     oftprotocol.cpp
     ofttransfer.cpp
     transfer.cpp 
-    bytestream.cpp
     oscarclientstream.cpp
     safedelete.cpp
     stream.cpp
-    oscarconnector.cpp
-    oscarbytestream.cpp
     buffer.cpp
     rateclassmanager.cpp
     contactmanager.cpp

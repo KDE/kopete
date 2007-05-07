@@ -20,8 +20,8 @@
 
 #include <qobject.h>
 
-#ifndef OSCAR_STREAM_H
-#define OSCAR_STREAM_H
+#ifndef OSCARSTREAM_H
+#define OSCARSTREAM_H
 
 class Transfer;
 
@@ -29,30 +29,18 @@ class Stream : public QObject
 {
 	Q_OBJECT
 public:
-	enum Error { ErrParse, ErrProtocol, ErrStream, ErrCustom = 10 };
-	enum StreamCond {
-		GenericStreamError,
-		Conflict,
-		ConnectionTimeout,
-		InternalServerError,
-		InvalidFrom,
-/*#		InvalidXml,  // not required*/
-		PolicyViolation,
-		ResourceConstraint,
-		SystemShutdown
-	};
-
-	Stream(QObject *parent=0);
+	Stream( QObject *parent = 0 );
 	virtual ~Stream();
 
-	virtual void close()=0;
-	virtual int errorCondition() const=0;
-	virtual QString errorText() const=0;
+	virtual void close() = 0;
+	virtual int error() const = 0;
+	virtual QString errorString() const = 0;
 
 	/**
 	 * Are there any messages waiting to be read
 	 */
 	virtual bool transfersAvailable() const = 0;	// adapt to messages
+
 	/**
 	 * Read a message received from the server
 	 */
@@ -61,15 +49,12 @@ public:
 	/**
 	 * Send a message to the server
 	 */
-	virtual void write( Transfer *request) = 0;
-	
+	virtual void write( Transfer *request ) = 0;
 
 signals:
-	void connectionClosed();
-	void delayedCloseFinished();
+	void disconnected();
 	void readyRead(); //signals that there is a transfer ready to be read
-//	void stanzaWritten();
-	void error(int);
+	void error( int );
 };
 
 #endif

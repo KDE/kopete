@@ -647,7 +647,6 @@ void AIMAccount::connectWithPassword( const QString &password )
 		QString screenName = accountId();
 		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
 		uint port = configGroup()->readEntry( "Port", 5190 );
-		Connection* c = setupConnection( server, port );
 
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
@@ -659,8 +658,10 @@ void AIMAccount::connectWithPassword( const QString &password )
 		Oscar::DWORD status = protocol()->statusManager()->oscarStatusOf( pres );
 		engine()->setStatus( status, mInitialStatusMessage );
 		updateVersionUpdaterStamp();
+
+		Connection* c = setupConnection();
 		engine()->start( server, port, accountId(), password.left(16) );
-		engine()->connectToServer( c, server, true /* doAuth */ );
+		engine()->connectToServer( c, server, port, true /* doAuth */ );
 
 		mInitialStatusMessage.clear();
 	}

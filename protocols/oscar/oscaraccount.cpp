@@ -38,6 +38,7 @@
 #include <qimage.h>
 #include <qfile.h>
 #include <QHash>
+#include <QtNetwork/QTcpSocket>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -53,7 +54,6 @@
 #include "oscarmessage.h"
 #include "oscarutils.h"
 #include "oscarclientstream.h"
-#include "oscarconnector.h"
 #include "contactmanager.h"
 #include "oscarlistnonservercontacts.h"
 #include "kopetetransfermanager.h"
@@ -559,16 +559,12 @@ bool OscarAccount::changeContactGroupInSSI( const QString& contact, const QStrin
 	return true;
 }
 
-Connection* OscarAccount::setupConnection( const QString& server, uint port )
+Connection* OscarAccount::setupConnection()
 {
-	//set up the connector
-	KNetworkConnector* knc = new KNetworkConnector( 0 );
-	knc->setOptHostPort( server, port );
-
 	//set up the clientstream
-	ClientStream* cs = new ClientStream( knc, 0 );
+	ClientStream* cs = new ClientStream( new QTcpSocket(), 0 );
 
-	Connection* c = new Connection( knc, cs, "AUTHORIZER" );
+	Connection* c = new Connection( cs, "AUTHORIZER" );
 	c->setClient( d->engine );
 
 	return c;

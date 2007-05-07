@@ -227,7 +227,6 @@ void ICQAccount::connectWithPassword( const QString &password )
 		kDebug(14153) << k_funcinfo << "Logging in as " << icqNumber << endl ;
 		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
 		uint port = configGroup()->readEntry( "Port", 5190 );
-		Connection* c = setupConnection( server, port );
 
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
@@ -249,8 +248,10 @@ void ICQAccount::connectWithPassword( const QString &password )
 
 		engine()->setStatus( status, mInitialStatusMessage, pres.xtrazStatus(), pres.description() );
 		updateVersionUpdaterStamp();
+
+		Connection* c = setupConnection();
 		engine()->start( server, port, accountId(), password.left(8) );
-		engine()->connectToServer( c, server, true /* doAuth */ );
+		engine()->connectToServer( c, server, port, true /* doAuth */ );
 
 		mInitialStatusMessage.clear();
 	}

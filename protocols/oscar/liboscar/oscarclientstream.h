@@ -2,11 +2,12 @@
 	oscarclientstream.h - Kopete Oscar Protocol
 	
 	Copyright (c) 2004 Matt Rogers <mattr@kde.org>
+	Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
 	
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
 	Based on Iris, Copyright (C) 2003  Justin Karneges
 	
-	Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+	Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 	
 	*************************************************************************
 	*                                                                       *
@@ -18,90 +19,38 @@
 	*************************************************************************
 */
 
-#ifndef OSCAR_CLIENTSTREAM_H
-#define OSCAR_CLIENTSTREAM_H
+#ifndef OSCARCLIENTSTREAM_H
+#define OSCARCLIENTSTREAM_H
 
 #include "stream.h"
 #include "liboscar_export.h"
 
 #include <QtNetwork/QAbstractSocket>
 
-// forward defines
-class ByteStream;
-class Client;
-class Connector;
 class Connection;
-class Transfer;
-class QHostAddress;
 
 class LIBOSCAR_EXPORT ClientStream : public Stream
 {
 	Q_OBJECT
 public:
-	enum Error {
-		ErrConnection = ErrCustom,  // Connection error, ask Connector-subclass what's up
-		ErrNeg,                     // Negotiation error, see condition
-		ErrAuth,                    // Auth error, see condition
-		ErrBind                     // Resource binding error
-	};
-	
-	enum Warning {
-		WarnOldVersion,             // server uses older XMPP/Jabber "0.9" protocol  // can be customized for novell versions
-		WarnNoTLS                   // there is no chance for TLS at this point
-	};
-	
-	enum NegCond {
-		HostGone,                   // host no longer hosted
-		HostUnknown,                // unknown host
-		RemoteConnectionFailed,     // unable to connect to a required remote resource
-		SeeOtherHost,               // a 'redirect', see errorText() for other host
-		UnsupportedVersion          // unsupported XMPP version
-	};
-
-	enum AuthCond {
-		GenericAuthError,           // all-purpose "can't login" error
-		NoMech,                     // No appropriate auth mech available
-		BadProto,                   // Bad SASL auth protocol
-		BadServ,                    // Server failed mutual auth
-		InvalidUserId,             // bad user id
-		InvalidMech,                // bad mechanism
-		InvalidRealm,               // bad realm
-		MechTooWeak,                // can't use mech with this authzid
-		NotAuthorized,              // bad user, bad password, bad creditials
-		TemporaryAuthFailure        // please try again later!
-	};
-	
-	enum BindCond {
-		BindNotAllowed,             // not allowed to bind a resource
-		BindConflict                // resource in-use
-	};
-
-	explicit ClientStream(Connector *conn, QObject *parent=0);
+	explicit ClientStream( QAbstractSocket *socket, QObject *parent = 0 );
 	~ClientStream();
 
-	void connectToServer(const QString& server, bool auth=true);
-	void accept(); // server
-	bool isActive() const;
-	bool isAuthenticated() const;
+	void connectToServer( const QString& host, quint16 port );
 
-	// login params
-	void setUsername(const QString &s);
-	void setPassword(const QString &s);
-
-	void setLocalAddr(const QHostAddress &addr, quint16 port);
+	bool isOpen() const;
 
 	void close();
-	
+
 	/** Connection related stuff */
 	void setConnection( Connection* c );
 	Connection* connection() const;
-	
-	
+
 	/**
 	 * Are there any messages waiting to be read
 	 */
 	bool transfersAvailable() const;
-	
+
 	/**
 	 * Read a message received from the server
 	 */
@@ -112,24 +61,15 @@ public:
 	 */
 	void write( Transfer* request );
 
-	int errorCondition() const;
-	QString errorText() const;
+	int error() const;
+	QString errorString() const;
 
-	// extrahttp://bugs.kde.org/show_bug.cgi?id=85158
-/*#	void writeDirect(const QString &s); // must be for debug testing*/
-	void setNoopTime(int mills);
+	void setNoopTime( int mills );
 
 Q_SIGNALS:
 	void connected();
-	void securityLayerActivated(int);
-	void authenticated(); // this signal is ordinarily emitted in processNext
-	void warning(int);
-public Q_SLOTS:
-	void continueAfterWarning();
 
 private Q_SLOTS:
-	void cr_connected();
-	void cr_error();
 	/**
 	 * collects wire ready outgoing data from the core protocol and sends
 	 */ 
@@ -139,11 +79,11 @@ private Q_SLOTS:
 	 */
 	void cp_incomingData();
 
-	void bs_connectionClosed();
-	void bs_delayedCloseFinished();
-	void bs_error(QAbstractSocket::SocketError); // server only
-	void bs_readyRead();
-	void bs_bytesWritten(int);
+	void socketConnected();
+	void socketDisconnected();
+	void socketError( QAbstractSocket::SocketError );
+	void socketReadyRead();
+	void socketBytesWritten( qint64 );
 
 	void doNoop();
 	void doReadyRead();
@@ -152,16 +92,7 @@ private:
 	class Private;
 	Private *d;
 
-	void reset(bool all=false);
 	void processNext();
-	bool handleNeed();
-	void handleError();
-	void srvProcessNext();
-	
-	/** 
-	 * convert internal method representation to wire
-	 */
-	static char* encode_method(quint8 method);
 };
 
 #endif

@@ -25,6 +25,7 @@
 #include <QList>
 #include <QByteArray>
 #include <qtextcodec.h>
+#include <QtNetwork/QTcpSocket>
 
 #include <kdebug.h> //for kDebug()
 #include <klocale.h>
@@ -43,7 +44,6 @@
 #include "messagereceivertask.h"
 #include "onlinenotifiertask.h"
 #include "oscarclientstream.h"
-#include "oscarconnector.h"
 #include "oscarsettings.h"
 #include "oscarutils.h"
 #include "ownuserinfotask.h"
@@ -204,7 +204,7 @@ Oscar::Settings* Client::clientSettings() const
 	return d->settings;
 }
 
-void Client::connectToServer( Connection *c, const QString& server, bool auth )
+void Client::connectToServer( Connection *c, const QString& host, quint16 port, bool auth )
 {
 	d->connections.append( c );
 	if ( auth == true )
@@ -214,7 +214,7 @@ void Client::connectToServer( Connection *c, const QString& server, bool auth )
 	}
 
 	connect( c, SIGNAL( socketError( int, const QString& ) ), this, SLOT( determineDisconnection( int, const QString& ) ) );
-	c->connectToServer(server, auth);
+	c->connectToServer( host, port );
 }
 
 void Client::start( const QString &host, const uint port, const QString &userId, const QString &pass )
@@ -404,7 +404,7 @@ void Client::lt_loginFinished()
 void Client::startStageTwo()
 {
 	//create a new connection and set it up
-	Connection* c = createConnection( d->host, QString::number( d->port ) );
+	Connection* c = createConnection();
 	new CloseConnectionTask( c->rootTask() );
 
 	//create the new login task
@@ -415,7 +415,7 @@ void Client::startStageTwo()
 
 	//connect
 	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
-	connectToServer( c, d->host, false ) ;
+	connectToServer( c, d->host, d->port, false ) ;
 
 }
 
@@ -1358,14 +1358,14 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 		realPort = QString::fromLatin1("5190");
 	}
 
-	Connection* c = createConnection( realHost, realPort );
+	Connection* c = createConnection();
 	//create the new login task
 	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
 	m_loginTaskTwo->setCookie( cookie );
 	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
 
 	//connect
-	connectToServer( c, d->host, false );
+	connectToServer( c, realHost, realPort.toInt(), false );
   	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
 
     if ( srt )
@@ -1523,13 +1523,11 @@ void Client::disconnectChatRoom( Oscar::WORD exchange, const QString& room )
     c = 0;
 }
 
-Connection* Client::createConnection( const QString& host, const QString& port )
+Connection* Client::createConnection()
 {
-	KNetworkConnector* knc = new KNetworkConnector( 0 );
-	knc->setOptHostPort( host, port.toUInt() );
-	ClientStream* cs = new ClientStream( knc, 0 );
+	ClientStream* cs = new ClientStream( new QTcpSocket(), 0 );
 	cs->setNoopTime( 60000 );
-	Connection* c = new Connection( knc, cs, "BOS" );
+	Connection* c = new Connection( cs, "BOS" );
 	cs->setConnection( c );
 	c->setClient( this );
 	return c;
