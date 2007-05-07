@@ -1,4 +1,5 @@
 project(kopete)
+KDE4_NO_ENABLE_FINAL(kopete)
 add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 # Configure checks
