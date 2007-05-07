@@ -184,13 +184,7 @@ void FileTransferTask::parseReq( Buffer b )
 			break;
 			}
 		 case 0x2712:
-			if ( tlv.data == "iso-8859-1" || tlv.data == "us-ascii" )
-				c = QTextCodec::codecForName( "ISO 8859-1" );
-			else if ( tlv.data == "utf-8" )
-				c = QTextCodec::codecForName( "UTF-8" );
-			else
-				c = QTextCodec::codecForName( tlv.data );
-
+			c = Oscar::codecForName( tlv.data );
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "filename encoding " << tlv.data << endl;
 			break;
 		 case 2:

@@ -51,6 +51,8 @@ private:
 	void handleAuthReplied();
 	void handleAddedMessage();
 	
+	QString parseReason( Buffer* buffer );
+	
 private:
 	ContactManager* m_manager;
 };

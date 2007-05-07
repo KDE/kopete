@@ -332,6 +332,15 @@ QString Oscar::getDottedDecimal( Oscar::DWORD address )
 	return addr.toString();
 }
 
+QTextCodec * Oscar::codecForName( const QByteArray& name )
+{
+	if ( name == "iso-8859-1" || name == "us-ascii" )
+		return QTextCodec::codecForName( "ISO 8859-1" );
+	else if ( name == "utf-8" )
+		return QTextCodec::codecForName( "UTF-8" );
+	else
+		return QTextCodec::codecForName( name );
+}
 
 
 //kate: tab-width 4; indent-mode csands;

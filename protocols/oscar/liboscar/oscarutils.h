@@ -80,6 +80,12 @@ Oscar::DWORD getNumericalIP( const QString& address );
  */
 QString getDottedDecimal( Oscar::DWORD address );
 
+/**
+ * Searches all QTextCodec objects and returns the one which best matches name.
+ * Returns 0 if no codec matching the name name could be found.
+ */
+QTextCodec * codecForName( const QByteArray& name );
+
 }
 
 #endif
