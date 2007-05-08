@@ -279,7 +279,7 @@ void ClientStream::socketDisconnected()
 
 void ClientStream::socketError( QAbstractSocket::SocketError socketError )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << " error: " << socketError << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << " error: " << int(socketError) << endl;
 
 	d->noopTimer.stop();
 	d->socket->close();
