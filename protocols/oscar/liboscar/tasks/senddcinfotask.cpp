@@ -62,10 +62,10 @@ void SendDCInfoTask::onGo()
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting web aware on" << endl;
 		statusFlag |= 0x00010000;
 	}
-	if ( !client()->settings()->hideIP() )
+	if ( client()->settings()->hideIP() )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting show ip on" << endl;
-		statusFlag |= 0x00020000;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting hide ip on" << endl;
+		statusFlag |= 0x10000000;  // Direct connection upon authorization, hides IP
 	}
 	Buffer tlv06;
 	tlv06.addDWord( statusFlag | mStatus );
