@@ -226,7 +226,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 	int pos = 0;
 	regExp.setMinimal( true );
 	// find and replace <p>-formattings
-	regExp.setPattern( "<p style=\"([^\"]*)\">(.*)" );
+	regExp.setPattern( "<p style=\"([^\"]*)\">(.*)</p>" );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.indexIn( messageText, pos );
