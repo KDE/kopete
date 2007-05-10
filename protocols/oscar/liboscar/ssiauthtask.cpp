@@ -93,7 +93,7 @@ void SSIAuthTask::grantFutureAuth( const QString& uin, const QString& reason )
 	
 	Buffer* buf = new Buffer();
 	buf->addBUIN( uin.latin1() );
-	buf->addBSTR( reason.latin1() );
+	buf->addBSTR( reason.utf8() );
 	buf->addWord( 0x0000 ); // Unknown
 	
 	Transfer* t = createTransfer( f, s, buf );
@@ -107,7 +107,7 @@ void SSIAuthTask::sendAuthRequest( const QString& uin, const QString& reason )
 	
 	Buffer* buf = new Buffer();
 	buf->addBUIN( uin.latin1() );
-	buf->addBSTR( reason.latin1() );
+	buf->addBSTR( reason.utf8() );
 	buf->addWord( 0x0000 ); // Unknown
 	
 	Transfer* t = createTransfer( f, s, buf );
@@ -122,7 +122,7 @@ void SSIAuthTask::sendAuthReply( const QString& uin, const QString& reason, bool
 	Buffer* buf = new Buffer();
 	buf->addBUIN( uin.latin1() );
 	buf->addByte( auth ? 0x01 : 0x00 ); // accepted / declined
-	buf->addBSTR( reason.latin1() );
+	buf->addBSTR( reason.utf8() );
 	
 	Transfer* t = createTransfer( f, s, buf );
 	send( t );
@@ -133,13 +133,13 @@ void SSIAuthTask::handleFutureAuthGranted()
 	Buffer* buf = transfer()->buffer();
 	
 	QString uin = Oscar::normalize( buf->getBUIN() );
-	QString reason = buf->getBSTR();
+	QByteArray reason = buf->getBSTR();
 	
 	buf->getWord(); // 0x0000 - Unknown
 	
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Future authorization granted from " << uin << endl;
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
-	emit futureAuthGranted( uin, reason );
+	emit futureAuthGranted( uin, QString::fromUtf8( reason.data(), reason.size() ) );
 }
 
 void SSIAuthTask::handleAuthRequested()
@@ -147,14 +147,14 @@ void SSIAuthTask::handleAuthRequested()
 	Buffer* buf = transfer()->buffer();
 	
 	QString uin = Oscar::normalize( buf->getBUIN() );
-	QString reason = buf->getBSTR();
+	QByteArray reason = buf->getBSTR();
 	
 	buf->getWord(); // 0x0000 - Unknown
 	
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization requested from " << uin << endl;
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
 	
-	emit authRequested( uin, reason );
+	emit authRequested( uin, QString::fromUtf8( reason.data(), reason.size() ) );
 }
 
 void SSIAuthTask::handleAuthReplied()
@@ -163,7 +163,7 @@ void SSIAuthTask::handleAuthReplied()
 	
 	QString uin = Oscar::normalize( buf->getBUIN() );
 	bool accepted = buf->getByte();
-	QString reason = buf->getBSTR();
+	QByteArray reason = buf->getBSTR();
 	
 	if ( accepted )
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization request accepted by " << uin << endl;
@@ -171,7 +171,7 @@ void SSIAuthTask::handleAuthReplied()
 		kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization request declined by " << uin << endl;
 		
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
-	emit authReplied( uin, reason, accepted );
+	emit authReplied( uin, QString::fromUtf8( reason.data(), reason.size() ), accepted );
 }
 
 void SSIAuthTask::handleAddedMessage()
