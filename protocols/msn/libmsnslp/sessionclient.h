@@ -54,6 +54,8 @@ class SessionClient : public QObject
 		bool isActive() const;
 		/** @brief Creates a session to request the specified msn object. */
 		void requestObject(const QString& object);
+		/** @brief Sends a gif image message to the peer endpoint. */
+		void sendImage(const QString& path);
 		/** @brief Creates a session to send the specified file. */
 		void sendFile(const QString& path);
 
@@ -82,8 +84,6 @@ class SessionClient : public QObject
 	private slots:
 		/** @brief Called when a session has been accepted by the user. */
 		void onSessionAccept();
-		/** @brief Called when a session has been canceled by the user. */
-		void onSessionCancel();
 		/** @brief Called when a session has been declined by the user. */
 		void onSessionDecline();
 		/** @brief Called when a session has ended. */
@@ -92,6 +92,8 @@ class SessionClient : public QObject
 		void onSessionSendMessage(const QByteArray& bytes);
 		void onSessionSendData(const QByteArray& bytes);
 		void onSessionSendFile(QFile *file);
+
+		void onTransportInitialConnect();
 
 	private:
 		/** @brief Accepts a session invitation. */
@@ -116,10 +118,11 @@ class SessionClient : public QObject
 		void createSessionInternal(const QUuid& uuid, const Q_UINT32 sessionId, const Q_UINT32 appId, const QString& context);
 		/** @brief Tries to create a direct transport for the supplied session using the specified information. */
 		void createDirectConnection(const QString& type, const QValueList<QString> & ipAddresses, const QString& port, const QUuid& nonce, const QString& sessionId);
+		bool createDirectConnectionListener(const QString& ipAddress, const Q_UINT16 port, const QUuid& nonce);
 		/** @brief Declines a session invitation. */
 		void declineSession(const Q_UINT32 sessionId);
 		/** @brief Terminates a session. */
-		void closeSessionInternal(const Q_UINT32 sessionId);
+		void closeSession(const Q_UINT32 sessionId);
 		/** @brief Ends a dialog transaction. */
 		void endTransaction(Transaction *transaction);
 		/** @brief Gets a dialog based on the call id.*/
@@ -174,15 +177,13 @@ class SessionClient : public QObject
 		void removeDialogFromCallMap(const QUuid& callId);
 		/** @brief Sends a direct connection setup request to the peer endpoint. */
 		void requestDirectConnection(const Q_UINT32 sessionId);
-		/** @brief Sends a gif image message to the peer endpoint. */
-		void sendImage(const QString& path);
 		/** @brief Sends the supplied message to the specified destination. */
 		void send(SlpMessage& message, const Q_UINT32 destination, const Q_UINT32 priority=1);
 		/** @brief Indicates whether the parameters sent by the peer in a direct connection
 		 *		   setup request would support the possible scenarios to establish a direct
          *         connection.
 		 */
-		bool supportsDirectConnectivity(const QString& connectionType, bool behindFirewall, bool uPnpNAT, bool sameNetwork);
+		bool supportsDirectConnectivity(const QString& connectionType, bool behindFirewall, bool upnpNatPresent);
 		/** @brief Gets the next ,unique session id. */
 		Q_UINT32 nextSessionId() const;
 

@@ -55,6 +55,11 @@ void SessionNotifier::fireDataReceived(const QByteArray& data, bool lastChunk)
 	emit dataReceived(data, lastChunk);
 }
 
+void SessionNotifier::fireDataSendProgress(const Q_UINT32 progress)
+{
+	emit dataSendProgress(progress);
+}
+
 void SessionNotifier::fireMessageAcknowledged(const Q_INT32 id)
 {
 	emit messageAcknowledged(id);

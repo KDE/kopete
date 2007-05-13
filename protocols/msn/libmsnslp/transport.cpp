@@ -33,12 +33,13 @@ namespace PeerToPeer
 class Transport::TransportPrivate
 {
 	public:
-		TransportPrivate() : currentBridgeId(0), defaultBridgeId(2), nextBridgeId(64) {}
+		TransportPrivate() : currentBridgeId(0), defaultBridgeId(2), initiallyConnected(false), nextBridgeId(64) {}
 
 		QMap<Q_UINT32, TransportBridge*> bridges;
 		QMap<Q_UINT32, QBuffer*> buffers;
 		Q_UINT32 currentBridgeId;
 		Q_UINT32 defaultBridgeId;
+		bool initiallyConnected;
 		Q_UINT32 nextBridgeId;
 		Q_UINT32 nextPacketNumber;
 		QMap<Q_UINT32, QUuid> nonces;
@@ -61,8 +62,6 @@ Transport::Transport(QObject *parent) : QObject(parent), d(new TransportPrivate(
 	d->sentPackets.setAutoDelete(true);
 	// Automatically delete the packets in the unacknowledged packets list.
 	d->unacknowledgedPackets.setAutoDelete(true);
-
-	d->currentBridgeId = d->defaultBridgeId;
 }
 
 Transport::~Transport()
@@ -352,6 +351,11 @@ void Transport::removeBridge(const Q_UINT32 id)
 	}
 }
 
+bool Transport::isConnected() const
+{
+	return d->initiallyConnected;
+}
+
 //END
 
 
@@ -412,9 +416,18 @@ void Transport::onBridgeConnect()
 		{
 			// If the transport bridge is a direct bridge, we need to send
 			// the handshake nonce to authenticate the use of the bridge.
-			const QUuid nonce = d->nonces[bridge->id()];
+			const QUuid& nonce = d->nonces[bridge->id()];
 			// Send the bridge handshake nonce.
 			sendBridgeHandshake(nonce, bridge->id());
+		}
+
+		if (bridge->inherits("PeerToPeer::SwitchboardBridge") && !d->initiallyConnected)
+		{
+			d->initiallyConnected = true;
+			d->currentBridgeId = bridge->id();
+
+			// Signal that the transport layer is connected.
+			emit connected();
 		}
 	}
 }
@@ -432,7 +445,8 @@ void Transport::onBridgeDisconnect()
 		{
 			// Disconnect the signal/slot.
 			QObject::disconnect(bridge, 0, this, 0);
-
+			// Move the packets, if any, from the disconnected
+			// bridge's list to the next best bridge found.
 			movePacketsBetweenBridges(bridge->id(), findBestBridge());
 			// Remove the direct bridge from the list.
 			removeBridge(bridge->id());
@@ -448,7 +462,8 @@ void Transport::onBridgeError()
 	TransportBridge *bridge = dynamic_cast<TransportBridge*>(const_cast<QObject*>(sender()));
 	if (bridge != 0)
 	{
-		kdDebug() << k_funcinfo << "disconnecting bridge " << bridge->id() << endl;
+		kdDebug() << k_funcinfo << "Disconnecting bridge " << bridge->id() << endl;
+		// Disconnect the bridge.
 		bridge->disconnect();
 	}
 }
@@ -456,23 +471,35 @@ void Transport::onBridgeError()
 void Transport::onBridgeHandshake(const QUuid& cnonce, const Q_UINT32 bridgeId)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
-
+	// Determine whether the handshake nonce was received via the
+	// default (switchboard) bridge or via a direct bridge.
 	if (bridgeId == d->defaultBridgeId)
 	{
+		// If the nonce was received via the switchboard bridge,
+		// do nothing as the switchboard bridge does not use
+		// authentication.
 		kdDebug() << k_funcinfo << "Got nonce " << cnonce.toString().upper() << " via indirect bridge. "
 			<<  "Must have not been sent via direct bridge -- ignoring." << endl;
 	}
 	else
 	{
 		// Otherwise, get the handshake nonce associated with the direct bridge.
-		const QUuid nonce = d->nonces[bridgeId];
+		const QUuid& nonce = d->nonces[bridgeId];
 
+		// TODO SHA1 hash the nonce to support "Hashed-Nonce"
 		if (cnonce == nonce)
 		{
+			// If the nonce received is the same as that assigned to
+			// the bridge, then we have successfully authenticated
+			// the transport bridge.
+
+			// Move the current bridge's packet list to the newly
+			// authenticated bridge's list.
 			movePacketsBetweenBridges(d->currentBridgeId, bridgeId);
 		}
 		else
 		{
+			// Otherwise, the authentication handshake failed.
 			kdDebug() << k_funcinfo << "Got nonce " << cnonce.toString().upper() << " excepted "
 			<< nonce.toString().upper() <<  ".  Disconnecting bridge " << bridgeId << endl;
 
@@ -494,6 +521,8 @@ void Transport::onReceive(const QByteArray& datachunk)
 		return;
 	}
 
+	// TODO drop datachunks < sizeof(Packet::Header)
+
 	Q_UINT32 appId = 0;
 
 	QDataStream stream(datachunk, IO_ReadOnly);
@@ -503,12 +532,13 @@ void Transport::onReceive(const QByteArray& datachunk)
 	// was received via the switchboard bridge.
 	if (bridge->inherits("PeerToPeer::SwitchboardBridge"))
 	{
-		// If the packet was received via the switchboard bridge,
-		// deserialize the application id that is appended after
-		// a serialized packet.
+		// If so, deserialize the application id that is
+		// appended after a serialized packet.
 		stream.setByteOrder(QDataStream::BigEndian);
 		stream >> appId;
 	}
+
+	// TODO inspect packet before dispatching
 
 	// Add the packet to the list of received packets.
 	d->receivedPackets.append(packet);
@@ -565,7 +595,7 @@ void Transport::onReceive(const QByteArray& datachunk)
 		{
 			// If the data is not chunked, there
 			// is no need to try to reassemble it.
-			data = static_cast<QBuffer*>(packet->payload())->buffer();
+			data = packet->payload()->readAll();
 		}
 		else
 		{
@@ -581,7 +611,7 @@ void Transport::onReceive(const QByteArray& datachunk)
 			kdDebug() << k_funcinfo << "Received all data from packet " << h.identifier
 				<< ". Sending ACK." << endl;
 			// Send an acknowledge to the other side.
-			sendAcknowledge(h.destination, h.identifier, h.lprcvd, h.lpsize);
+			sendAcknowledge(h.destination, h.identifier, h.lprcvd, h.window);
 
 			// Determine if there is a registered notifier.
 			if (d->notifiers.contains(h.destination))
@@ -632,7 +662,7 @@ void Transport::onReceive(const QByteArray& datachunk)
 		if (isLastChunk)
 		{
 			// Send an acknowledge to the peer endpoint.
-			sendAcknowledge(h.destination, h.identifier, h.lprcvd, h.lpsize);
+			sendAcknowledge(h.destination, h.identifier, h.lprcvd, h.window);
 		}
 
 		// Remove and delete the received packet from the list.
@@ -644,7 +674,7 @@ void Transport::onReceive(const QByteArray& datachunk)
 		kdDebug() << k_funcinfo << "Received unknown packet " << h.identifier
 			<< ". Sending fault." << endl;
 		// Send a transport error control packet.
-		sendFault(h.destination, h.identifier, h.lprcvd, h.lpsize);
+		sendFault(h.destination, h.identifier, h.lprcvd, h.window);
 
 		// Remove and delete the received packet from the list.
 		d->receivedPackets.removeRef(packet);
@@ -732,15 +762,15 @@ void Transport::onSent(const Q_UINT32 packetId)
 	}
 
 
-	bool canStopScheduling = true;
+	Q_UINT32 count = 0;
 	QMap<Q_UINT32, PacketList*>::ConstIterator it;
 	// Determine whether there are more packets to schedule.
 	for(it = d->packetLists.begin(); it != d->packetLists.end(); ++it)
 	{
-		canStopScheduling &= it.data()->isEmpty();
+		count += it.data()->count();
 	}
 
-	if (canStopScheduling)
+	if (count == 0)
 	{
 		// If there are no more packets to schedule,
 		// stop the packet scheduler.
@@ -771,8 +801,8 @@ void Transport::queuePacket(Packet *packet, const Q_UINT32 bridgeId, bool prepen
 		PacketList *list = d->packetLists[bridgeId];
 		prepend ? list->prepend(packet) : list->append(packet);
 
-		kdDebug() << k_funcinfo << "Queued packet " << h.identifier << " for session "
-		<< h.destination << " on bridge " << bridgeId << " (size " << (Q_UINT32)h.window << ")" << endl;
+		kdDebug() << k_funcinfo << "Queued packet " << h.identifier << " on bridge "
+			<< bridgeId << " (size " << (Q_UINT32)h.window << ")" << endl;
 
 		if (!d->scheduler->isRunning())
 		{
@@ -819,6 +849,7 @@ void Transport::sendInternal(Packet* packet, const Q_UINT32 bridgeId)
 	// specified bridge is a switchboard bridge.
 	if (bridge->inherits("PeerToPeer::SwitchboardBridge"))
 	{
+		// If so, write the application id to the stream.
 		Q_UINT32 appId = 0;
 		// Determine app id based on the session notifier type.
 		if (h.destination != 0 || h.destination != 64)
@@ -829,17 +860,21 @@ void Transport::sendInternal(Packet* packet, const Q_UINT32 bridgeId)
 			}
 		}
 
-		// Serialize and append the application
-		// id to the datachunk.
+		// Serialize the application id to the datachunk.
 		stream.setByteOrder(QDataStream::BigEndian);
 		stream << appId;
 	}
 
-	// Send the datachunk via the selected transport bridge.
-	bridge->send(datachunk, h.identifier);
-
 	// Add the packet to the sent packets list.
 	d->sentPackets.append(packet);
+
+	if (d->notifiers.contains(h.destination) && h.type == Packet::FileDataType)
+	{
+		d->notifiers[h.destination]->fireDataSendProgress(h.offset+h.payloadSize);
+	}
+
+	// Send the datachunk via the selected transport bridge.
+	bridge->send(datachunk, h.identifier);
 }
 
 //END
@@ -889,8 +924,6 @@ void Transport::sendTimeout(const Q_UINT32 destination, const Q_UINT32 lprcvd, c
 
 void Transport::sendControlPacket(const Packet::Type type, const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
 {
-	kdDebug() << k_funcinfo << "enter" << endl;
-
 	Packet *packet = new Packet();
 
 	// Get the header field of the packet.
@@ -913,9 +946,7 @@ void Transport::sendControlPacket(const Packet::Type type, const Q_UINT32 destin
 	h.lpsize = lpsize;
 
 	// Queue the control packet.
-	queuePacket(packet, d->currentBridgeId/*, true*/);
-
-	kdDebug() << k_funcinfo << "leave" << endl;
+	queuePacket(packet, d->currentBridgeId);
 }
 
 //END
@@ -957,8 +988,14 @@ void Transport::onNonAcknowledgeControlPacketReceive(Packet *packet)
 
 		case Packet::ResetType:
 		{
-			kdDebug() << k_funcinfo << "Transport layer error, session = "
+			kdDebug() << k_funcinfo << "Transport layer error, reset session = "
 				<< h.destination << endl;
+			// Stop all sending of data to this destination.
+			stopAllSends(h.destination);
+			// Notify the session layer that there
+			// has been an error.
+// 			emit error(h.destination);
+
 			break;
 		}
 	}
@@ -982,6 +1019,10 @@ void Transport::unregisterPort(const Q_UINT32 port)
 {
 	if (d->notifiers.contains(port))
 	{
+		// Stop all sending of packets to the
+		// supplied destination address port.
+		stopAllSends(port);
+		// Remove the session notifier.
 		d->notifiers.remove(port);
 	}
 }
@@ -1023,7 +1064,8 @@ void Transport::reassembleData(Packet *packet, QByteArray& data)
 		// Seek to the offset in the buffer where the
 		// received data chunk will be written.
 		buffer->at(h.offset);
-		QByteArray bytes = static_cast<QBuffer*>(packet->payload())->buffer();
+		// Read the data from the packet payload
+		QByteArray bytes = packet->payload()->readAll();
 		// Write the data into the buffer.
 		buffer->writeBlock(bytes.data(), bytes.size());
 
@@ -1031,15 +1073,46 @@ void Transport::reassembleData(Packet *packet, QByteArray& data)
 		// of packets that contain chunked data.
 		if (h.payloadSize + h.offset == h.window)
 		{
-			// Close the buffer.
-			buffer->close();
 			// Remove the reassembled datagram from the pending datagram collection.
 			d->buffers.remove(h.identifier);
 			// We assume that the data has been reassembled.
 			data = buffer->buffer();
+			// Close the buffer.
+			buffer->close();
 			// Dispose of the data buffer.
 			delete buffer;
 			buffer = 0l;
+		}
+	}
+
+	kdDebug() << k_funcinfo << "leave" << endl;
+}
+
+void Transport::stopAllSends(const Q_UINT32 session)
+{
+	kdDebug() << k_funcinfo << "enter" << endl;
+
+	QMap<Q_UINT32, TransportBridge*>::ConstIterator bridge;
+	// Get the transport layer packet lists.
+	const QMap<Q_UINT32, PacketList*> & lists = d->packetLists;
+
+	for (bridge = d->bridges.begin(); bridge != d->bridges.end(); ++bridge)
+	{
+		// Get the packet list assigned to the bridge.
+		PacketList *list = lists[bridge.key()];
+		QPtrListIterator<Packet> it(*list);
+		Packet *packet;
+		while((packet = it.current()) != 0l)
+		{
+			if (packet->header().destination == session)
+			{
+				kdDebug() << k_funcinfo << "Removing packet " << packet->header().identifier << " for session "
+					<< packet->header().destination << endl;
+				list->removeRef(packet);
+				delete packet;
+			}
+
+			++it;
 		}
 	}
 
@@ -1056,7 +1129,7 @@ void Transport::addPacketToUnacknowledgedList(Packet *packet)
 		return;
 	}
 
-	kdDebug() << k_funcinfo << "Packet id "
+	kdDebug() << k_funcinfo << "Packet "
 		<< packet->header().identifier << endl;
 	delete packet;
 
@@ -1066,7 +1139,7 @@ void Transport::addPacketToUnacknowledgedList(Packet *packet)
 void Transport::removePacketFromUnacknowledgedList(const Q_UINT32 packetId)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
-	kdDebug() << k_funcinfo << "Packet id " << packetId << endl;
+	kdDebug() << k_funcinfo << "Packet " << packetId << endl;
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 

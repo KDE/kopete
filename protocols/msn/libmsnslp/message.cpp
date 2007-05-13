@@ -52,7 +52,7 @@ Message::~Message()
 	delete d;
 }
 
-const QString Message::body() const
+const QString& Message::body() const
 {
 	return d->body;
 }

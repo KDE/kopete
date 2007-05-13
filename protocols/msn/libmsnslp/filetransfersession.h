@@ -61,8 +61,10 @@ class FileTransferSession : public Session
 	public slots:
 		void onDataReceived(const QByteArray& data, bool lastChunk);
 		void onSend(const Q_INT32 identifier);
+		void onDataSendProgress(const Q_UINT32 progress);
 
 	private slots:
+		void onSessionEndTimeout();
 		void sessionAccepted(Kopete::Transfer *transfer, const QString& file);
 		void sessionDeclined(const Kopete::FileTransferInfo& info);
 

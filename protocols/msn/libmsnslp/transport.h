@@ -51,6 +51,7 @@ class Transport : public QObject
 		DirectTransportBridge* createDirectBridge(const QString& type, const QValueList<QString>& addresses, const Q_UINT16 port, const QUuid& nonce);
 		SwitchboardBridge* createIndirectBridge();
 		bool listen(const QString& address, const Q_UINT16 port);
+		bool isConnected() const;
 		void registerPort(const Q_UINT32 port, SessionNotifier* notifier);
 		Q_UINT32 send(const QByteArray& message, const Q_UINT32 destination, const Q_UINT32 correlationId);
 		void sendBytes(const QByteArray& bytes, const Q_UINT32 destination, const Q_UINT32 correlationId);
@@ -87,6 +88,10 @@ class Transport : public QObject
 		void sendInternal(Packet* packet, const Q_UINT32 bridgeId);
 		void sendReset(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
 		void sendTimeout(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
+		void stopAllSends(const Q_UINT32 session);
+
+	signals:
+		void connected();
 
 	private: // internal
 		const QMap<Q_UINT32, TransportBridge*> & getBridges();

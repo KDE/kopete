@@ -31,25 +31,22 @@ namespace PeerToPeer
 class TcpTransportBridge::TcpTransportBridgePrivate
 {
 	public:
-		TcpTransportBridgePrivate() : bytesToRead(0), length(0), endpoint(0l), maxSendBufferSize(1352),
-			port(0), socket(0l) {}
+		TcpTransportBridgePrivate() : bytesToRead(0), connectivityVerified(false), length(0),
+			endpoint(0l), maxSendBufferSize(1305), socket(0l) {}
 
-		QValueList<QString> addresses;
 		QByteArray buffer;
 		Q_UINT32 bytesToRead;
+		bool connectivityVerified;
 		Q_UINT32 length;
 		KServerSocket *endpoint;
 		Q_UINT32 bridgeId;
 		Q_UINT32 maxSendBufferSize;
-		Q_INT16 port;
 		KStreamSocket *socket;
 		Q_INT32 socketId;
 };
 
 TcpTransportBridge::TcpTransportBridge(const QValueList<QString>& addresses, const Q_UINT16 port, const Q_UINT32 bridgeId, QObject *parent) : DirectTransportBridge(addresses, port, parent), d(new TcpTransportBridgePrivate())
 {
-	d->addresses = addresses;
-	d->port = port;
 	d->bridgeId = bridgeId;
 }
 
@@ -70,7 +67,6 @@ Q_UINT32 TcpTransportBridge::maxSendBufferSize() const
 
 void TcpTransportBridge::send(const QByteArray& datachunk, const Q_UINT32 id)
 {
-
 	QByteArray bytes(4 + datachunk.size());
 	QDataStream stream(bytes, IO_WriteOnly);
 	stream.setByteOrder(QDataStream::LittleEndian);
@@ -81,8 +77,14 @@ void TcpTransportBridge::send(const QByteArray& datachunk, const Q_UINT32 id)
 	kdDebug() << k_funcinfo << "About to send datachunk of size "
 		<< datachunk.size() << " bytes" << endl;
 
-	Q_UINT32 bytesWritten = d->socket->writeBlock(bytes.data(), bytes.size());
-	kdDebug() << k_funcinfo << "Sent " << bytesWritten << " bytes on socket " << d->socketId << endl;
+	const Q_UINT32 size = bytes.size();
+	Q_UINT32 bytesWritten = 0, offset = 0;
+	while(bytesWritten < size)
+	{
+		bytesWritten += d->socket->writeBlock(bytes.data() + offset, size - bytesWritten);
+		kdDebug() << k_funcinfo << "Sent " << bytesWritten << " bytes on socket " << d->socketId << endl;
+		offset += bytesWritten;
+	}
 
 	emit dataSent(id);
 }
@@ -99,7 +101,7 @@ void TcpTransportBridge::onConnect()
 	if (d->endpoint == 0l)
 	{
 		// If the bridge is not connected, connect the bridge.
-		d->socket = new KStreamSocket(d->addresses[0], QString::number(d->port), this);
+		d->socket = new KStreamSocket(addresses()[0], QString::number(port()), this);
 		// Set the socket to non blocking.
 		d->socket->setBlocking(false);
 		// Enable asynchronous read operations.
@@ -142,14 +144,19 @@ void TcpTransportBridge::onDisconnect()
 //////////////////////////////////////////////////////////////////////
 void TcpTransportBridge::doUpnpPortMappingIfNecessary()
 {
+	const QString address = *DirectTransportBridge::addresses().at(0);
+
+// 	Kopete::Network::UPnPNatPortMapper *portMapper = Kopete::Network::UPnPNatPortMapper::self();
+// 	portMapper->mapPort(address, port(), QString::fromLatin1("TCP"), port());
+
 	QByteArray data, replyData;
 	QDataStream request( data, IO_WriteOnly );
-	request << d->addresses[0];
-	request << (Q_INT32)d->port;
+	request << address;
+	request << (Q_INT32)port();
 	request << QString::fromLatin1("TCP");
-	request << (Q_INT32)d->port;
+	request << (Q_INT32)port();
 	request << true;
-	request << QString("Transfer (%1:%2) %3 %4").arg(d->addresses[0]).arg(d->port).arg(d->port).arg("TCP");
+	request << QString("Transfer (%1:%2) %3 %4").arg(address).arg(port()).arg(port()).arg("TCP");
 	request << (Q_INT32)0;
 
 	QCString method = "addPortMapping(QString,int,QString,int,bool,QString,int)";
@@ -163,8 +170,9 @@ void TcpTransportBridge::doUpnpPortMappingIfNecessary()
 
 bool TcpTransportBridge::listen()
 {
+	const QString address = *DirectTransportBridge::addresses().at(0);
 	// Create a listening socket for direct file transfer.
-	d->endpoint = new KServerSocket(d->addresses[0], QString::number(d->port), this);
+	d->endpoint = new KServerSocket(address, QString::number(port()), this);
 	d->endpoint->setResolutionEnabled(false);
 	d->endpoint->setAcceptBuffered(false);
 	// Create the callback that will try to accept incoming connections.
@@ -176,7 +184,7 @@ bool TcpTransportBridge::listen()
 	if (listening)
 	{
 		kdDebug() << k_funcinfo << "Listening on socket " << d->endpoint->socketDevice()->socket()
-		<< " (addr=" << d->addresses[0] << " port=" << d->port << ")" << endl;
+		<< " (addr=" << address << " port=" << port() << ")" << endl;
 	}
 
 	return listening;
@@ -210,9 +218,7 @@ void TcpTransportBridge::onSocketAccept()
 
 void TcpTransportBridge::onListenEndpointError(int errorCode)
 {
-	Q_UNUSED(errorCode);
-
-	kdDebug() << k_funcinfo << d->endpoint->errorString() << endl;
+	kdDebug() << k_funcinfo << errorCode << ": " << d->endpoint->errorString() << endl;
 	QObject::disconnect(d->endpoint, SIGNAL(gotError(int)), this,
 	SLOT(onListenEndpointError(int)));
 	emit error();
@@ -237,7 +243,7 @@ void TcpTransportBridge::onSocketConnected()
 	d->socketId = d->socket->socketDevice()->socket();
 
 	kdDebug() << k_funcinfo << "Connected on socket " << d->socketId
-	<< " (addr=" << d->addresses[0] << " port=" << d->port << ")" << endl;
+	<< " (addr=" << addresses()[0] << " port=" << port() << ")" << endl;
 
 	if (d->endpoint == 0l)
 	{
@@ -264,6 +270,8 @@ void TcpTransportBridge::onSocketConnected()
 
 		kdDebug() << k_funcinfo << "Sent " << bytesWritten << " bytes on socket "
 		<< d->socketId << endl;
+
+		d->connectivityVerified = true;
 	}
 
 	emit connected();
@@ -318,13 +326,34 @@ void TcpTransportBridge::onSocketRead()
 
 			if (d->length > 0 && d->bytesToRead >= d->length)
 			{
-				QByteArray bytes(d->length);
-				// Read the bytes of data from the stream.
-				d->socket->readBlock(bytes.data(), bytes.size());
 				kdDebug() << k_funcinfo << "Received " << d->length << " bytes on socket "
-				<< d->socketId << endl;
+					<< d->socketId << endl;
 
-				emit dataReceived(bytes);
+				if (!d->connectivityVerified)
+				{
+					QByteArray preamble(4);
+					// Read the preamble bytes of data from the stream.
+					d->socket->readBlock(preamble.data(), preamble.size());
+					if (preamble[0] == 0x66 && preamble[1] == 0x6f && preamble[2] == 0x6f && preamble[3] == 0x00)
+					{
+						kdDebug() << k_funcinfo << "preamble " << preamble << " -- connectivity verified" << endl;
+						d->connectivityVerified = true;
+					}
+					else
+					{
+						kdDebug() << k_funcinfo << "Invalid preamble -- disconnecting" << endl;
+						emit error();
+						break;
+					}
+				}
+				else
+				{
+					QByteArray bytes(d->length);
+					// Read the bytes of data from the stream.
+					d->socket->readBlock(bytes.data(), bytes.size());
+					// Signal that we have received data.
+					emit dataReceived(bytes);
+				}
 
 				d->bytesToRead -= d->length;
 				d->length = 0;

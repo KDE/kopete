@@ -45,9 +45,11 @@ class SessionNotifier : public QObject
 		void dataReceived(const QByteArray& data, bool lastChunk);
 		void messageAcknowledged(const Q_INT32 id);
 		void messageReceived(const QByteArray& message, const Q_INT32 id, const Q_INT32 correlationId);
+		void dataSendProgress(const Q_UINT32 progress);
 
 	private:
 		void fireDataReceived(const QByteArray& data, bool lastChunk);
+		void fireDataSendProgress(const Q_UINT32 progress);
 		void fireMessageAcknowledged(const Q_INT32 id);
 		void fireMessageReceived(const QByteArray& message, const Q_INT32 id, const Q_INT32 correlationId);
 

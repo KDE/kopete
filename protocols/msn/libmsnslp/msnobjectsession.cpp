@@ -176,10 +176,12 @@ void MsnObjectSession::onStart()
 
 void MsnObjectSession::onEnd()
 {
-	kdDebug() << k_funcinfo << endl;
+	kdDebug() << k_funcinfo << "Session " << id() << endl;
+
 	if (direction() == Session::Incoming)
 	{
-		emit ended();
+		// Signal that the object has been received.
+		emit objectReceived(d->object, d->temporaryFile);
 	}
 }
 
@@ -195,9 +197,8 @@ void MsnObjectSession::onDataReceived(const QByteArray& data, bool lastChunk)
 	if (lastChunk)
 	{
 		kdDebug() << k_funcinfo << "Session " << id() << ", END OF DATA" << endl;
-
-		emit objectReceived(d->object, d->temporaryFile);
-		end();
+		// End the session.
+		end(true);
 	}
 }
 

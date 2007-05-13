@@ -36,7 +36,9 @@ class Packet
 			// until all data is received before delivering to the
 			// session client.
 			MessageDataType = 0x00,
-			// Indicates that the last message was received.
+			// Indicates that the last message packet was not received.
+			NonAcknowledgeType = 0x01,
+			// Indicates that the last message packet was received.
 			AcknowledgeType = 0x02,
 			// Indicates that a timeout has occurred at the receiver
 			// due to the absence of a response ACK from the sender.
@@ -49,7 +51,8 @@ class Packet
 			ObjectDataType = 0x20,
 			// Indicates that the sender cancelled the data exchange.
 			CancelType = 0x40,
-			// Used to ungracefully end a data exchange.
+			// Used to ungracefully end all data exchanges.
+			// Some really bad must have happened.
 			ResetType = 0x80,
 			// Indicates a direct connection handshake nonce.
 			HandshakeNonceType = 0x100,

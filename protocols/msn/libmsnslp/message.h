@@ -36,7 +36,7 @@ class Message
 		Message & operator=(const Message& other);
 		virtual ~Message();
 
-		const QString body() const;
+		const QString& body() const;
 		const Q_INT32 contentLength() const;
 		const QString contentType() const;
 		QMap<QString, QVariant> & context();

@@ -35,6 +35,16 @@ DirectTransportBridge::~DirectTransportBridge()
 	delete d;
 }
 
+QValueList<QString> & DirectTransportBridge::addresses() const
+{
+	return d->addresses;
+}
+
+Q_UINT16 DirectTransportBridge::port() const
+{
+	return d->port;
+}
+
 }
 
 #include "directtransportbridge.moc"

@@ -31,6 +31,10 @@ class DirectTransportBridge : public TransportBridge
 		/** @brief Finalizer. */
 		virtual ~DirectTransportBridge();
 
+	protected:
+		QValueList<QString> & addresses() const;
+		Q_UINT16 port() const;
+
 	private:
 		class DirectTransportBridgePrivate;
 		DirectTransportBridgePrivate *d;

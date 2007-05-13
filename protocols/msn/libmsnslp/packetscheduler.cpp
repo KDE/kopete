@@ -41,6 +41,7 @@ class PacketScheduler::PacketSchedulerPrivate
 PacketScheduler::PacketScheduler(Transport *transport) : QObject(transport), d(new PacketSchedulerPrivate())
 {
 	d->transport = transport;
+
 	d->timer = new QTimer(this);
 	// Connect the signal/slot.
 	QObject::connect(d->timer, SIGNAL(timeout()), this, SLOT(onSchedulePacketsToSend()));
@@ -250,8 +251,6 @@ Packet * PacketScheduler::getNextPacket(PacketList *list)
 
 			packet = packets.at(random);
 		}
-
-		kdDebug() << k_funcinfo << "packet " << packet->header().identifier << endl;
 	}
 
 	kdDebug() << k_funcinfo << "leave" << endl;

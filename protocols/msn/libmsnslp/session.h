@@ -35,7 +35,7 @@ class Session : public QObject
 		/** @brief Indicates which side of the communication the session is implemented on. */
 		enum Direction { Incoming, Outgoing };
 		/** @brief Defines the states of a session during its lifecycle. */
-		enum SessionState { Created, Established, Terminated, Canceled, Faulted };
+		enum SessionState { Created, Accepted, Declined, Established, Faulted, Terminated };
 
 	public :
 		virtual ~Session();
@@ -47,6 +47,8 @@ class Session : public QObject
 		const SessionState state() const;
 		/** @brief Handles a session invitation. */
 		virtual void handleInvite(const Q_UINT32 appId, const QByteArray& context) = 0;
+		/** @brief Ends a session. */
+		void end(bool sendBye=false);
 
 	public slots:
 		/** @brief Accepts a session. */
@@ -55,8 +57,6 @@ class Session : public QObject
 		void cancel();
 		/** @brief Declines a session. */
 		void decline();
-		/** @brief Ends a session. */
-		void end();
 		/** @brief Starts a session. */
 		void start();
 
@@ -65,6 +65,8 @@ class Session : public QObject
 		Session(const Q_UINT32 id, Direction direction, QObject *parent);
 
 		void fault();
+		/** @brief When overriden by a derived class, cancels a session. */
+		virtual void onCancel();
 		/** @brief When overriden by a derived class, starts a session. */
 		virtual void onStart() = 0;
 		/** @brief When overriden by a derived class, ends a session. */
@@ -77,14 +79,14 @@ class Session : public QObject
 	signals:
 		/** @brief Indicates that a session has been accepted by the user. */
 		void accepted();
-		/** @brief Indicates that a session has been cancelled by the user. */
-		void cancelled();
 		/** @brief Indicates that a session has been declined by the user. */
 		void declined();
 		/** @brief Indicates that a session has encountered a fault. */
 		void faulted();
 		/** @brief Indicates that a session has ended. */
 		void ended();
+		/** @brief Indicates that a session is ending. */
+		void ending();
 
 		void sendData(const QByteArray& bytes);
 		void sendMessage(const QByteArray& bytes);

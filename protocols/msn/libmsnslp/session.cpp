@@ -56,29 +56,74 @@ const Session::SessionState Session::state() const
 
 void Session::accept()
 {
-	// Signal that the session was accepted, locally.
-	emit accepted();
+	if (d->state == Session::Terminated ||
+		d->state == Session::Declined ||
+		d->state == Session::Established ||
+		d->state == Session::Faulted)
+	{
+		/// @note Invalid operation in these state.
+		return;
+	}
+
+	if (d->state != Session::Accepted)
+	{
+		d->state = Session::Accepted;
+		// Signal that the session was accepted, locally.
+		emit accepted();
+	}
 }
 
 void Session::cancel()
 {
-	// Set the session state to cancelled.
-	d->state = Session::Canceled;
-	// Signal that the session was cancelled, locally.
-	emit cancelled();
+	if (d->state == Session::Terminated)
+	{
+		return;
+	}
+
+	// Set the session state to terminated.
+	d->state = Session::Terminated;
+
+	onCancel();
+	// Signal that the session has ended.
+	emit ended();
 }
 
 void Session::decline()
 {
-	// Signal that the session was declined, locally.
-	emit declined();
+	if (d->state == Session::Terminated ||
+		d->state == Session::Accepted ||
+		d->state == Session::Established ||
+		d->state == Session::Faulted)
+	{
+		/// @note Invalid operation in these state.
+		return;
+	}
+
+	if (d->state != Session::Declined)
+	{
+		d->state = Session::Declined;
+		// Signal that the session was declined, locally.
+		emit declined();
+	}
 }
 
-void Session::end()
+void Session::end(bool sendBye)
 {
+	if (d->state == Session::Terminated)
+	{
+		return;
+	}
+
 	// Set the session state to terminated.
 	d->state = Session::Terminated;
+
 	onEnd();
+
+	if (sendBye)
+	{
+		// Signal that the session has ended.
+		emit ended();
+	}
 }
 
 void Session::fault()
@@ -97,9 +142,26 @@ void Session::setState(const SessionState& state)
 
 void Session::start()
 {
-	// Set the session state to established.
-	d->state = Session::Established;
-	onStart();
+	if (d->state == Session::Terminated ||
+		d->state == Session::Declined ||
+		d->state == Session::Established ||
+		d->state == Session::Faulted)
+	{
+		/// @note Invalid operation in these state.
+		return;
+	}
+
+	if (d->state != Session::Established)
+	{
+		// Set the session state to established.
+		d->state = Session::Established;
+		onStart();
+	}
+}
+
+void Session::onCancel()
+{
+	/// @note Default implementation does nothing.
 }
 
 }

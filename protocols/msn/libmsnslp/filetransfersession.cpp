@@ -15,6 +15,7 @@
 #include "filetransfersession.h"
 #include <qdatastream.h>
 #include <qfile.h>
+#include <qtimer.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kopetecontact.h>
@@ -128,6 +129,10 @@ void FileTransferSession::onStart()
 
 		kdDebug() << k_funcinfo << "Session " << id() << ", sending DATA size(" << d->file->size() << ")" << endl;
 		emit sendFile(d->file);
+
+		d->transfer = Kopete::TransferManager::transferManager()->addTransfer(d->contact, d->file->name(), d->file->size(), d->contact->contactId(), Kopete::FileTransferInfo::Outgoing);
+		// Connect the signal/slot
+		QObject::connect(d->transfer , SIGNAL(transferCanceled()), this, SLOT(cancel()));
 	}
 	else
 	if (direction() == Session::Incoming)
@@ -144,10 +149,7 @@ void FileTransferSession::onStart()
 void FileTransferSession::onEnd()
 {
 	kdDebug() << k_funcinfo << endl;
-	if (direction() == Session::Incoming)
-	{
-		emit ended();
-	}
+	d->file->close();
 }
 
 void FileTransferSession::onFaulted()
@@ -168,11 +170,21 @@ void FileTransferSession::onDataReceived(const QByteArray& data, bool lastChunk)
 	if (lastChunk)
 	{
 		kdDebug() << k_funcinfo << "Session " << id() << ", END OF DATA" << endl;
-
-		d->file->close();
 		d->transfer->slotComplete();
 
-		end();
+		// End the session.
+		end(true);
+	}
+}
+
+void FileTransferSession::onDataSendProgress(const Q_UINT32 progress)
+{
+	d->transfer->slotProcessed(progress);
+	kdDebug() << k_funcinfo << "Session " << id() << ", sent DATA size(" << progress << ")" << endl;
+
+	if (progress == d->file->size())
+	{
+		d->transfer->slotComplete();
 	}
 }
 
@@ -181,8 +193,16 @@ void FileTransferSession::onSend(const Q_INT32 id)
 	Q_UNUSED(id);
 	kdDebug() << k_funcinfo << endl;
 
-	// TODO Start a timer. if the BYE request is not received in 5 sec send one.
-// 	emit ended();
+	if (direction() == Session::Outgoing)
+	{
+		// End the session if a BYE request is not received within 3 sec.
+		QTimer::singleShot(3000, this, SLOT(onSessionEndTimeout()));
+	}
+}
+
+void FileTransferSession::onSessionEndTimeout()
+{
+	end(true);
 }
 
 void FileTransferSession::sessionAccepted(Kopete::Transfer *transfer, const QString& file)
