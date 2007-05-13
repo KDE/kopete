@@ -11,7 +11,6 @@ X-KDE-ParentComponents=kopete_alias
 
 Name=Alias
 Name[ar]=اسم مستعار
-Name[bg]=Запазени думи
 Name[br]=Lesanv
 Name[ca]=Àlies
 Name[cy]=Ffugenw
@@ -44,7 +43,6 @@ Name[zh_HK]=別名
 Name[zh_TW]=別名
 Comment=Adds custom aliases for commands
 Comment[ar]=يضيف أسماء مستعارة للأوامر
-Comment[bg]=Приставка за добавяне на запазени думи, при въвеждането на които ще се изпълняват зададени команди
 Comment[ca]=Afegeix àlies personalitzats als vostres comandaments
 Comment[cs]=Přidává vlastní přezdívky pro příkazy
 Comment[cy]=Ychwanegu ffugenwau addasiedig ar gyfer gorchmynion

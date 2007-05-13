@@ -11,7 +11,6 @@ X-KDE-ParentComponents=kopete_highlight
 
 Name=Highlight
 Name[ar]=تمييز
-Name[bg]=Открояване
 Name[br]=Splannadur
 Name[ca]=Ressaltat
 Name[cs]=Zvýraznění
@@ -62,7 +61,6 @@ Name[zh_HK]=加強顯示
 Name[zh_TW]=高亮度
 Comment=Highlights text based on filters
 Comment[ar]=تميز النصوص بناءا على التصفية
-Comment[bg]=Открояване на текст в съобщенията на базата на ключови думи
 Comment[ca]=Ressalta el text basant-se en filtres
 Comment[cs]=Zvýraznit text podle filtrů
 Comment[cy]=Amlygu testun ar sail hidlau

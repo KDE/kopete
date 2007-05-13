@@ -11,7 +11,6 @@ X-KDE-ParentComponents=kopete_translator
 
 Name=Translator
 Name[ar]=المترجم
-Name[bg]=Автоматичен превод
 Name[br]=Troer
 Name[ca]=Traductor
 Name[cs]=Překladač
@@ -63,7 +62,6 @@ Name[zh_HK]=翻譯者
 Name[zh_TW]=翻譯器
 Comment=Translates messages from your native language to another language
 Comment[ar]=يترجم رسائل من لغتك اﻷم إلى لغة أخرى
-Comment[bg]=Приставка за превод от един език на друг в реално време
 Comment[ca]=Tradueix els missatges des del vostre idioma natiu cap a un altre
 Comment[cs]=Překládá zprávy z vašeho rodného jazyka do jiného
 Comment[cy]=Cyfieithu negeseuon o'ch iaith gyntaf i iaith arall
