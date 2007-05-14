@@ -556,26 +556,21 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 			int photoSize = d->iconSize;
 
 			photoImg = photoImg.scaled( photoSize, photoSize, Qt::KeepAspectRatio, Qt::SmoothTransformation );
-			KImageEffect *effect = 0L;
 			switch ( m_metaContact->status() )
 			{
 				case Kopete::OnlineStatus::Online:
 				break;
 				case Kopete::OnlineStatus::Away:
-					effect = new KImageEffect();
-					effect->fade(photoImg, 0.5, Qt::white);
+					photoImg = KImageEffect::fade(photoImg, 0.5, Qt::white);
 				break;
 				case Kopete::OnlineStatus::Offline:
-					effect = new KImageEffect();
-					effect->fade(photoImg, 0.4, Qt::white);
-					effect->toGray(photoImg);
+					photoImg = KImageEffect::fade(photoImg, 0.4, Qt::white);
+					photoImg = KImageEffect::toGray(photoImg);
 				break;
 				case Kopete::OnlineStatus::Unknown:
 				default:
-					effect = new KImageEffect();
-					effect->fade(photoImg, 0.8, Qt::white);
+					photoImg = KImageEffect::fade(photoImg, 0.8, Qt::white);
 			}
-			delete effect;
 			photoPixmap = QPixmap::fromImage(photoImg);
 			QPainter p(&photoPixmap);
 			p.setPen(Qt::black);
