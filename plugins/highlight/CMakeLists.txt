@@ -31,7 +31,7 @@ kde4_automoc(${kcm_kopete_highlight_PART_SRCS})
 kde4_add_plugin(kcm_kopete_highlight ${kcm_kopete_highlight_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_highlight ${KDE4_KUTILS_LIBS}  ${KDE4_KNOTIFYCONFIG_LIBS} )
+target_link_libraries(kcm_kopete_highlight ${KDE4_KUTILS_LIBS}  ${KDE4_KNOTIFYCONFIG_LIBS} ${QT_QT3SUPPORT_LIBRARY} )
 
 install(TARGETS kcm_kopete_highlight  DESTINATION ${PLUGIN_INSTALL_DIR})
 
