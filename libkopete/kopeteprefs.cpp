@@ -135,7 +135,6 @@ void KopetePrefs::load()
                                   QString::fromLatin1("IconDefault"));
 	mContactListIconMode = (IconDisplayMode) metaObject()->property( n )->keyToValue( value.latin1() );
 	mContactListIndentContacts = config->readBoolEntry("IndentContacts", false);
-	mContactListHideVerticalScrollBar = config->readBoolEntry("HideVerticalScrollBar", false );
 	mContactListUseCustomFonts = config->readBoolEntry("UseCustomFonts", false);
 	QFont font = KGlobalSettings::generalFont();
 	mContactListNormalFont = config->readFontEntry("NormalFont", &font);
@@ -150,7 +149,6 @@ void KopetePrefs::load()
 	mContactListFolding = config->readBoolEntry("FoldItems", true);
 	mContactListMouseNavigation = config->readBoolEntry("MouseNavigation", false );
 	mContactListAutoHide = config->readBoolEntry("AutoHide", false);
-	mContactListAutoHideVScroll = config->readBoolEntry("AutoHideVScroll", true );
 	mContactListAutoHideTimeout = config->readUnsignedNumEntry("AutoHideTimeout", 30);
 
 	// Load the reconnection setting
@@ -234,7 +232,6 @@ void KopetePrefs::save()
 	n = metaObject()->findProperty( "contactListIconMode" );
 	config->writeEntry("IconMode", metaObject()->property( n )->valueToKey( mContactListIconMode ));
 	config->writeEntry("IndentContacts", mContactListIndentContacts);
-	config->writeEntry("HideVerticalScrollBar", mContactListHideVerticalScrollBar );
 	config->writeEntry("UseCustomFonts", mContactListUseCustomFonts);
 	config->writeEntry("NormalFont", mContactListNormalFont);
 	config->writeEntry("SmallFont", mContactListSmallFont);
@@ -244,7 +241,6 @@ void KopetePrefs::save()
 	config->writeEntry("FoldItems", mContactListFolding);
 	config->writeEntry("MouseNavigation", mContactListMouseNavigation );
 	config->writeEntry("AutoHide", mContactListAutoHide);
-	config->writeEntry("AutoHideVScroll", mContactListAutoHideVScroll );
 	config->writeEntry("AutoHideTimeout", mContactListAutoHideTimeout);
 
 	//Save the reconnection setting
@@ -572,12 +568,6 @@ void KopetePrefs::setContactListIndentContacts( bool v )
 	mContactListIndentContacts = v;
 }
 
-void KopetePrefs::setContactListHideVerticalScrollBar( bool v )
-{
-	if( v != mContactListHideVerticalScrollBar ) mContactListAppearanceChanged = true;
-	mContactListHideVerticalScrollBar = v;
-}
-
 void KopetePrefs::setContactListDisplayMode( ContactDisplayMode v )
 {
 	if( v != mContactListDisplayMode ) mContactListAppearanceChanged = true;
@@ -654,12 +644,6 @@ void KopetePrefs::setContactListAutoHide( bool n )
 {
 	if( n != mContactListAutoHide ) mContactListAppearanceChanged = true;
 	mContactListAutoHide = n;
-}
-
-void KopetePrefs::setContactListAutoHideVScroll( bool n )
-{
-	if( n != mContactListAutoHideVScroll ) mContactListAppearanceChanged = true;
-	mContactListAutoHideVScroll = n;
 }
 
 void KopetePrefs::setContactListAutoHideTimeout( unsigned int n )

@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>495</width>
+            <width>707</width>
             <height>445</height>
         </rect>
     </property>
@@ -81,17 +81,6 @@
                         </widget>
                     </hbox>
                 </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mHideVerticalScrollBar</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Hide vertical scrollbar</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>&lt;b&gt;Always&lt;/b&gt; disables the vertical scrollbar</string>
-                    </property>
-                </widget>
             </vbox>
         </widget>
         <widget class="QGroupBox" row="0" column="1">
@@ -102,57 +91,57 @@
                 <string>Contact Display Mode</string>
             </property>
             <vbox>
-            	<property name="name">
-            	    <cstring>unnamed</cstring>
-            	</property>
-            	<widget class="QButtonGroup">
-            	    <property name="name">
-            	        <cstring>mDisplayMode</cstring>
-            	    </property>
-            	    <property name="title">
-            	        <string>List Style</string>
-            	    </property>
-            	    <vbox>
-            	        <property name="name">
-            	            <cstring>unnamed</cstring>
-            	        </property>
-            	        <widget class="QRadioButton">
-            	            <property name="name">
-            	                <cstring>radioButton8</cstring>
-            	            </property>
-            	            <property name="text">
-            	                <string>&amp;Classic, left-aligned status icons</string>
-            	            </property>
-            	            <property name="checked">
-            	                <bool>true</bool>
-            	            </property>
-            	        </widget>
-            	        <widget class="QRadioButton">
-            	            <property name="name">
-            	                <cstring>radioButton9</cstring>
-            	            </property>
-            	            <property name="text">
-            	                <string>&amp;Right-aligned status icons</string>
-            	            </property>
-            	        </widget>
-            	        <widget class="QRadioButton">
-            	            <property name="name">
-            	                <cstring>radioButton10</cstring>
-            	            </property>
-            	            <property name="text">
-            	                <string>Detailed &amp;view</string>
-            	            </property>
-            	        </widget>
-            	    </vbox>
-            	</widget>
-	    	<widget class="QCheckBox">
-            	    <property name="name">
-            	        <cstring>mIconMode</cstring>
-            	    </property>
-            	    <property name="text">
-            	        <string>Use contact photos when available</string>
-            	    </property>
-            	</widget>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QButtonGroup">
+                    <property name="name">
+                        <cstring>mDisplayMode</cstring>
+                    </property>
+                    <property name="title">
+                        <string>List Style</string>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>radioButton8</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Classic, left-aligned status icons</string>
+                            </property>
+                            <property name="checked">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>radioButton9</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Right-aligned status icons</string>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>radioButton10</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Detailed &amp;view</string>
+                            </property>
+                        </widget>
+                    </vbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mIconMode</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use contact photos when available</string>
+                    </property>
+                </widget>
             </vbox>
         </widget>
         <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="2">
@@ -175,18 +164,6 @@
                     </property>
                     <property name="text">
                         <string>A&amp;uto-hide contact list</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mAutoHideVScroll</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Auto-hide vertical &amp;scrollbar</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Since vertical scrollbars occupy space, we introduced this auto-hide feature. The vertical scrollbar will not be available until you move your mouse over the contact list.&lt;br&gt;
-(&lt;b&gt;Disabled&lt;/b&gt; if "&lt;b&gt;Hide vertical scrollbar&lt;/b&gt;" option is selected above.)</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget">
@@ -365,12 +342,6 @@
         <sender>mTreeContactList</sender>
         <signal>toggled(bool)</signal>
         <receiver>mIndentContacts</receiver>
-        <slot>setDisabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>mHideVerticalScrollBar</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>mAutoHideVScroll</receiver>
         <slot>setDisabled(bool)</slot>
     </connection>
 </connections>

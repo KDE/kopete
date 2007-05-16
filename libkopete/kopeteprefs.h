@@ -112,7 +112,6 @@ public:
 	///
 	enum IconDisplayMode { IconPic, PhotoPic, IconDefault = IconPic };
 	bool contactListIndentContacts() const { return mContactListIndentContacts; }
-	bool contactListHideVerticalScrollBar() const { return mContactListHideVerticalScrollBar; }
 	ContactDisplayMode contactListDisplayMode() const { return mContactListDisplayMode; }
 	IconDisplayMode contactListIconMode() const { return mContactListIconMode; }
 	bool contactListUseCustomFonts() const { return mContactListUseCustomFonts; }
@@ -125,7 +124,6 @@ public:
 	bool contactListFolding() const { return mContactListFolding; }
 	bool contactListMouseNavigation() const { return mContactListMouseNavigation; }
 	bool contactListAutoHide() const { return mContactListAutoHide; }
-	bool contactListAutoHideVScroll() const { return mContactListAutoHideVScroll; }
 	unsigned int contactListAutoHideTimeout() const { return mContactListAutoHideTimeout; }
 
 	bool reconnectOnDisconnect() const { return mReconnectOnDisconnect; }
@@ -179,7 +177,6 @@ public:
 	void setRememberedMessages(int);
 	void setToolTipContents(const QStringList &);
 	void setContactListIndentContacts( bool v );
-	void setContactListHideVerticalScrollBar( bool v );
 	void setContactListDisplayMode( ContactDisplayMode v );
 	void setContactListIconMode( IconDisplayMode v );
 	void setContactListUseCustomFonts( bool v );
@@ -191,7 +188,6 @@ public:
 	void setContactListFolding( bool );
 	void setContactListMouseNavigation( bool );
 	void setContactListAutoHide( bool );
-	void setContactListAutoHideVScroll( bool );
 	void setContactListAutoHideTimeout( unsigned int );
 	void setReconnectOnDisconnect( bool newSetting );
 	void setTruncateContactNames( bool );
@@ -301,7 +297,6 @@ private:
 	QStringList mToolTipContents;
 
 	bool mContactListIndentContacts;
-	bool mContactListHideVerticalScrollBar;
 	ContactDisplayMode mContactListDisplayMode;
 	IconDisplayMode mContactListIconMode;
 	bool mContactListUseCustomFonts;
@@ -313,7 +308,6 @@ private:
 	bool mContactListFolding;
 	bool mContactListMouseNavigation;
 	bool mContactListAutoHide;
-	bool mContactListAutoHideVScroll;
 	unsigned int mContactListAutoHideTimeout;
 
 	bool mReconnectOnDisconnect;
