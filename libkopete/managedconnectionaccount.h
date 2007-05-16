@@ -18,7 +18,7 @@
 #ifndef MANAGEDCONNECTIONACCOUNT_H
 #define MANAGEDCONNECTIONACCOUNT_H
 
-#include "networkstatuscommon.h"
+#include <networkstatuscommon.h>
 
 #include "kopetepasswordedaccount.h"
 
@@ -28,7 +28,7 @@ class Protocol;
 
 /**
  * A ManagedConnectionAccount queries the NetworkStatus KDED Module before trying to connect using 
- * connectwithPassword, starting a network connection if needed.  If the network is not available, 
+ * connectwithPassword.  If the network is not available, 
  * it delays calling performConnectWithPassword until it receives notification from the daemon 
  * that the network is up.  The account receiveds notifications from the daemon of network failures
  * and calls disconnect to set the account offline in a timely manner.
@@ -68,7 +68,7 @@ class KOPETE_EXPORT ManagedConnectionAccount : public PasswordedAccount
 		 * @param host For future expansion.
 		 * @param status the new status of the network
 		 */
-		virtual void slotConnectionStatusChanged( const QString & host, NetworkStatus::EnumStatus status );
+		virtual void slotConnectionStatusChanged( NetworkStatus::Status status );
 	private:
 		QString m_password;
 		bool m_waitingForConnection;

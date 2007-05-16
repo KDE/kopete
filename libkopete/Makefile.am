@@ -19,7 +19,7 @@ AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CA
 
 lib_LTLIBRARIES = libkopete.la
 
-libkopete_la_SOURCES = knotification.cpp connectionmanager.cpp kopeteonlinestatus.cpp kopeteonlinestatusmanager.cpp \
+libkopete_la_SOURCES = knotification.cpp kopeteonlinestatus.cpp kopeteonlinestatusmanager.cpp \
 	kopeteprotocol.cpp kopetecontact.cpp kopetepluginmanager.cpp kopeteplugin.cpp \
 	kopetemessage.cpp kopetechatsession.cpp kopetechatsessionmanager.cpp \
 	kopetecontactlist.cpp kopetemetacontact.cpp kopeteawaydialog.cpp kopetetransfermanager.cpp \
@@ -30,12 +30,12 @@ libkopete_la_SOURCES = knotification.cpp connectionmanager.cpp kopeteonlinestatu
 	kopetemimetypehandler.cpp kopetetask.cpp kopetemimesourcefactory.cpp \
 	kopeteeventpresentation.cpp kopetenotifyevent.cpp kopetenotifydataobject.cpp kopeteblacklister.cpp \
 	kopetemessageevent.cpp kopetemessagehandler.cpp kopetemessagehandlerchain.cpp \
-	kopetesimplemessagehandler.cpp kopeteproperties.cpp kabcpersistence.cpp connectionmanager.skel \
-	clientiface.stub managedconnectionaccount.cpp networkstatuscommon.h kopeteconfig.kcfgc kopeteutils.cpp \
+	kopetesimplemessagehandler.cpp kopeteproperties.cpp kabcpersistence.cpp \
+	clientiface.stub managedconnectionaccount.cpp kopeteconfig.kcfgc kopeteutils.cpp \
 	kopeteprefs.cpp kopetepicture.cpp webcamwidget.cpp
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
-libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(COMPAT_LIBS) $(LIB_KIO) $(LIB_XSS) $(LIB_XRENDER)
+libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(COMPAT_LIBS) $(LIB_KIO) $(LIB_XSS) $(LIB_XRENDER) -lconnectionmanager
 
 kde_kcfg_DATA = kopete.kcfg
 
