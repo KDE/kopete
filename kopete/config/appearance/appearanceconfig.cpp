@@ -256,8 +256,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(slotEditTooltips()));
 	connect(d->mPrfsContactList->mIndentContacts, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
-	connect(d->mPrfsContactList->mHideVerticalScrollBar, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()) );
 	connect(d->mPrfsContactList->mDisplayMode, SIGNAL(clicked(int)),
 		this, SLOT(emitChanged()));
 	connect(d->mPrfsContactList->mIconMode, SIGNAL(toggled(bool)),
@@ -269,8 +267,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	connect(d->mPrfsContactList->mFoldVisibility, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 	connect(d->mPrfsContactList->mAutoHide, SIGNAL(toggled(bool)),
-		this, SLOT(emitChanged()));
-	connect(d->mPrfsContactList->mAutoHideVScroll, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 	connect(d->mPrfsContactList->mAutoHideTimeout, SIGNAL(valueChanged(int)),
 		this, SLOT(emitChanged()));
@@ -368,7 +364,6 @@ void AppearanceConfig::save()
 	p->setTreeView(d->mPrfsContactList->mTreeContactList->isChecked());
 	p->setSortByGroup(d->mPrfsContactList->mSortByGroup->isChecked());
 	p->setContactListIndentContacts(d->mPrfsContactList->mIndentContacts->isChecked());
-	p->setContactListHideVerticalScrollBar(d->mPrfsContactList->mHideVerticalScrollBar->isChecked());
 	p->setContactListDisplayMode(KopetePrefs::ContactDisplayMode(d->mPrfsContactList->mDisplayMode->selectedId()));
 	p->setContactListIconMode(KopetePrefs::IconDisplayMode((d->mPrfsContactList->mIconMode->isChecked()) ? KopetePrefs::PhotoPic : KopetePrefs::IconPic));
 	p->setContactListAnimation(d->mPrfsContactList->mAnimateChanges->isChecked());
@@ -389,7 +384,6 @@ void AppearanceConfig::save()
 	p->setContactListCustomNormalFont(d->mPrfsColors->mNormalFont->font());
 	p->setContactListGroupNameColor(d->mPrfsColors->mGroupNameColor->color());
 	p->setContactListAutoHide(d->mPrfsContactList->mAutoHide->isChecked());
-	p->setContactListAutoHideVScroll(d->mPrfsContactList->mAutoHideVScroll->isChecked());
 	p->setContactListAutoHideTimeout(d->mPrfsContactList->mAutoHideTimeout->value());
 
 	p->setBgOverride( d->mPrfsColors->mBgOverride->isChecked() );
@@ -423,7 +417,6 @@ void AppearanceConfig::load()
 	d->mPrfsContactList->mTreeContactList->setChecked( p->treeView() );
 	d->mPrfsContactList->mSortByGroup->setChecked( p->sortByGroup() );
 	d->mPrfsContactList->mIndentContacts->setChecked( p->contactListIndentContacts() );
-	d->mPrfsContactList->mHideVerticalScrollBar->setChecked( p->contactListHideVerticalScrollBar() );
 
         // convert old single value display mode to dual display/icon modes
         if (p->contactListDisplayMode() == KopetePrefs::Yagami) {
@@ -443,7 +436,6 @@ void AppearanceConfig::load()
 #endif
 	d->mPrfsContactList->mFoldVisibility->setChecked( p->contactListFolding() );
 	d->mPrfsContactList->mAutoHide->setChecked( p->contactListAutoHide() );
-	d->mPrfsContactList->mAutoHideVScroll->setChecked( p->contactListAutoHideVScroll() );
 	d->mPrfsContactList->mAutoHideTimeout->setValue( p->contactListAutoHideTimeout() );
 
 	// "Colors & Fonts" TAB =====================================================
