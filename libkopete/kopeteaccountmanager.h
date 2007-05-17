@@ -208,6 +208,10 @@ private:
 	AccountManager();
 
 private slots:
+    /**
+     * Slot called by ConnectionManager to connect everything
+     */
+    void doConnect();
 	void slotPluginLoaded( Kopete::Plugin *plugin );
 	void slotAccountOnlineStatusChanged(Kopete::Contact *c,
 		const Kopete::OnlineStatus &oldStatus, const Kopete::OnlineStatus &newStatus);

@@ -27,6 +27,8 @@
 #include <kglobal.h>
 #include <kplugininfo.h>
 
+#include <connectionmanager.h>
+
 #include "kopeteaccount.h"
 #include "kopeteaway.h"
 #include "kopeteprotocol.h"
@@ -78,6 +80,8 @@ AccountManager::AccountManager()
 : QObject( qApp, "KopeteAccountManager" )
 {
 	d = new Private;
+    ConnectionManager::self()->registerConnectSlot( this, SLOT( doConnect() ) );
+    ConnectionManager::self()->registerDisconnectSlot( this, SLOT( disconnectAll() ) );
 }
 
 
@@ -431,6 +435,11 @@ void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 
 	//kdDebug(14010) << k_funcinfo << endl;
 	emit accountOnlineStatusChanged(account, oldStatus, newStatus);
+}
+
+void AccountManager::doConnect()
+{
+    setAvailableAll();
 }
 
 } //END namespace Kopete
