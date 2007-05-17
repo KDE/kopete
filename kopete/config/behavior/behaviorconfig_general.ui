@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>348</width>
-            <height>302</height>
+            <width>454</width>
+            <height>318</height>
         </rect>
     </property>
     <property name="caption">
@@ -151,13 +151,16 @@
                         <cstring>mAutoConnect</cstring>
                     </property>
                     <property name="text">
-                        <string>Connect automatically at &amp;startup</string>
+                        <string>Connect automatically</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Connect all your accounts automatically when starting Kopete</string>
+                        <string>Connect on startup and when a network is available</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>When starting Kopete all your accounts will be connected automatically. Note: You can exclude accounts individually in their properties.</string>
+                        <string>When starting Kopete, and whenever a network is online, all your accounts will be connected automatically. Note: You can exclude accounts individually in their properties.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">

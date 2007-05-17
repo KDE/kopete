@@ -35,6 +35,7 @@
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetepluginmanager.h"
+#include "kopeteprefs.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteonlinestatusmanager.h"
 #include "kopetemetacontact.h"
@@ -80,8 +81,8 @@ AccountManager::AccountManager()
 : QObject( qApp, "KopeteAccountManager" )
 {
 	d = new Private;
-    ConnectionManager::self()->registerConnectSlot( this, SLOT( doConnect() ) );
-    ConnectionManager::self()->registerDisconnectSlot( this, SLOT( disconnectAll() ) );
+	ConnectionManager::self()->registerConnectSlot( this, SLOT( doConnect() ) );
+	ConnectionManager::self()->registerDisconnectSlot( this, SLOT( disconnectAll() ) );
 }
 
 
@@ -439,7 +440,8 @@ void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 
 void AccountManager::doConnect()
 {
-    setAvailableAll();
+	if ( KopetePrefs::prefs()->autoConnect() )
+		setAvailableAll();
 }
 
 } //END namespace Kopete
