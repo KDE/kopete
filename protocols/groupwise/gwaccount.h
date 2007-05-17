@@ -27,7 +27,7 @@
 
 #include "gwerror.h"
 
-#include <managedconnectionaccount.h>
+#include <kopetepasswordedaccount.h>
 
 class KActionMenu;
 
