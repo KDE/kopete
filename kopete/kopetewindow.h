@@ -24,6 +24,7 @@
 
 #include <kmainwindow.h>
 #include <qlabel.h>
+#include <networkstatuscommon.h>
 
 class QHBox;
 class QTimer;
@@ -192,6 +193,8 @@ private slots:
 	 * We need both to uniquely identify an account, but QSignalMapper only emits one QString.
 	 */
 	void slotAddContactDialogInternal( const QString & accountIdentifier );
+
+    void networkStatusChanged( NetworkStatus::Status );
 	
 public:
 	KopeteContactListView *contactlist;
@@ -240,6 +243,7 @@ private:
 	int deskRight;
 	QPoint position;
 	QHBox *m_statusBarWidget;
+	QHBox *m_statusBarOfflineModeWidget;
 	KopeteSystemTray *m_tray;
 	bool m_autoHide;
 	unsigned int m_autoHideTimeout;
@@ -259,6 +263,7 @@ private:
 	KPopupMenu * m_globalStatusMessageMenu;
 	QLineEdit * m_newMessageEdit;
 	QString m_globalStatusMessageStored;
+    QLabel * m_offlineModeLabel;
 };
 
 
