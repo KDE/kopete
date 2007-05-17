@@ -31,7 +31,7 @@ libkopete_la_SOURCES = knotification.cpp kopeteonlinestatus.cpp kopeteonlinestat
 	kopeteeventpresentation.cpp kopetenotifyevent.cpp kopetenotifydataobject.cpp kopeteblacklister.cpp \
 	kopetemessageevent.cpp kopetemessagehandler.cpp kopetemessagehandlerchain.cpp \
 	kopetesimplemessagehandler.cpp kopeteproperties.cpp kabcpersistence.cpp \
-	clientiface.stub managedconnectionaccount.cpp kopeteconfig.kcfgc kopeteutils.cpp \
+	clientiface.stub kopeteconfig.kcfgc kopeteutils.cpp \
 	kopeteprefs.cpp kopetepicture.cpp webcamwidget.cpp
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
@@ -62,7 +62,7 @@ kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.
 	kopetechatsession.h kopetechatsessionmanager.h kopetemetacontact.h kopetemimetypehandler.h \
 	kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h \
 	kopetepassword.h kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h \
-	kopetetransfermanager.h kopeteuiglobal.h kabcpersistence.h managedconnectionaccount.h \
+	kopetetransfermanager.h kopeteuiglobal.h kabcpersistence.h \
 	kopetenotifydataobject.h kopeteversion.h kopeteprefs.h kopetepicture.h webcamwidget.h
 
 # vim: set noet:

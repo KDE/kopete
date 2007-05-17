@@ -54,7 +54,7 @@ using namespace GroupWise;
 /**
  * This represents an account on a Novell GroupWise Messenger Server
  */
-class GroupWiseAccount : public Kopete::ManagedConnectionAccount
+class GroupWiseAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
 public:
@@ -146,7 +146,7 @@ public slots:
 	void slotTestRTFize();
 
 	/* Connects to the server. */
-	void performConnectWithPassword ( const QString &password );
+	void connectWithPassword ( const QString &password );
 
 	/* Disconnects from the server. */
 	virtual void disconnect();

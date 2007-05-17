@@ -66,7 +66,7 @@
 #include "gwaccount.h"
 
 GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& accountID, const char *name )
-: Kopete::ManagedConnectionAccount ( parent, accountID, 0, "groupwiseaccount" )
+: Kopete::PasswordedAccount ( parent, accountID, 0, "groupwiseaccount" )
 {
 	Q_UNUSED( name );
 	// Init the myself contact
@@ -231,7 +231,7 @@ void GroupWiseAccount::setAway( bool away, const QString & reason )
 		setOnlineStatus( protocol()->groupwiseAvailable );
 }
 
-void GroupWiseAccount::performConnectWithPassword( const QString &password )
+void GroupWiseAccount::connectWithPassword( const QString &password )
 {
 	if ( password.isEmpty() )
 	{
