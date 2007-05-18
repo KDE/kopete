@@ -47,9 +47,9 @@ void OscarLoginTask::onGo()
 	connect( this, SIGNAL( haveAuthKey() ), this, SLOT( sendLoginRequest() ) );
 }
 
-bool OscarLoginTask::forMe( Transfer* transfer ) const
+bool OscarLoginTask::forMe( const Transfer* transfer ) const
 {
-	SnacTransfer* st = dynamic_cast<SnacTransfer*>( transfer );
+	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
 
 	if (!st)
 		return false;

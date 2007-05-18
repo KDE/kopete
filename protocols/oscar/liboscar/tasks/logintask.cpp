@@ -96,9 +96,9 @@ void StageOneLoginTask::loginTaskFinished()
 	}
 }
 
-bool StageOneLoginTask::forMe( Transfer* transfer ) const
+bool StageOneLoginTask::forMe( const Transfer* transfer ) const
 {
-	FlapTransfer* ft = dynamic_cast<FlapTransfer*> ( transfer );
+	const FlapTransfer* ft = dynamic_cast<const FlapTransfer*> ( transfer );
 	
 	if (!ft)
 		return false;

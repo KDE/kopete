@@ -39,7 +39,7 @@ public:
 	const QString& bosPort() const;
 
 protected:
-	bool forMe( Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const;
 
 signals:
 	void haveAuthKey();

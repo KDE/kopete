@@ -71,7 +71,7 @@ public slots:
 	void loginTaskFinished();
 
 protected:
-	bool forMe( Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const;
 
 private:
 	
