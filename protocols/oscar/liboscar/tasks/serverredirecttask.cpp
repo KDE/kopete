@@ -56,7 +56,7 @@ void ServerRedirectTask::onGo()
 		requestNewService();
 }
 
-bool ServerRedirectTask::forMe( const Transfer* transfer )
+bool ServerRedirectTask::forMe( const Transfer* transfer ) const
 {
 	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
 	if ( !st )

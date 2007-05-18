@@ -28,28 +28,28 @@ class Transfer;
 
 class ServerRedirectTask : public Task
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	ServerRedirectTask( Task* parent );
+    ServerRedirectTask( Task* parent );
 
-	void setService( Oscar::WORD family );
+    void setService( Oscar::WORD family );
     void setChatParams( Oscar::WORD exchange, QByteArray cookie, Oscar::WORD instance );
     void setChatRoom( const QString& roomName );
 
     Oscar::WORD chatExchange() const;
     QString chatRoomName() const;
 
-	//Task implementation
-	void onGo();
-	bool forMe( const Transfer* transfer );
-	bool take( Transfer* transfer );
+    //Task implementation
+    void onGo();
+    bool forMe( const Transfer* transfer ) const;
+    bool take( Transfer* transfer );
 
-	void requestNewService();
-	bool handleRedirect();
+    void requestNewService();
+    bool handleRedirect();
 
-	QByteArray cookie() const;
-	QString newHost() const;
-	Oscar::WORD service() const;
+    QByteArray cookie() const;
+    QString newHost() const;
+    Oscar::WORD service() const;
 
 signals:
 	void haveServer( const QString&, const QByteArray&, Oscar::WORD );
