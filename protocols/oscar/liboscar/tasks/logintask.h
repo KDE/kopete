@@ -126,7 +126,7 @@ public slots:
 	void rateTaskFinished();
 	
 protected:
-	bool forMe( Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const;
 
 private:
 	QByteArray m_cookie;
