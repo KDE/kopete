@@ -39,7 +39,7 @@ public:
 
 	//! Task implementation
 	void onGo();
-	bool forMe( const Transfer* transfer );
+	bool forMe( const Transfer* transfer ) const;
 	bool take( Transfer* transfer );
 
 signals:

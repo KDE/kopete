@@ -78,7 +78,7 @@ void BuddyIconTask::onGo()
 		sendIcon();
 }
 
-bool BuddyIconTask::forMe( const Transfer* transfer )
+bool BuddyIconTask::forMe( const Transfer* transfer ) const
 {
 	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
 	if ( !st )
