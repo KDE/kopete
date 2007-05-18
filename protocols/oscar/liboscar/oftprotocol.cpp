@@ -39,7 +39,7 @@ OftProtocol::~OftProtocol()
 
 Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 {
-	QDataStream* m_din = new QDataStream( const_cast<QByteArray*>( &packet ), QIODevice::ReadOnly );
+	QDataStream m_din( const_cast<QByteArray*>( &packet ), QIODevice::ReadOnly );
 
 	Oscar::BYTE b;
 	Oscar::WORD w;
@@ -48,67 +48,67 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 	OFT data;
 	//first 4 bytes should be "OFT2"
 	//TODO: find a nicer way of checking this
-	*m_din >> b;
+	m_din >> b;
 	if( b != 'O' )
 		return 0;
-	*m_din >> b;
+	m_din >> b;
 	if( b != 'F' )
 		return 0;
-	*m_din >> b;
+	m_din >> b;
 	if( b != 'T' )
 		return 0;
-	*m_din >> b;
+	m_din >> b;
 	if( b != '2' )
 		return 0;
 
-	*m_din >> w;
+	m_din >> w;
 	int length = w;
-	*m_din >> w;
+	m_din >> w;
 	data.type = w;
 	//next 8 bytes are cookie
 	char cookie[8];
-	m_din->readRawData( cookie, 8 );
+	m_din.readRawData( cookie, 8 );
 	data.cookie = cookie;
-	*m_din >> w;
+	m_din >> w;
 	if( w != 0 )
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "other side wants encryption" << endl;
-	*m_din >> w;
+	m_din >> w;
 	if( w != 0 )
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "other side wants compression" << endl;
-	*m_din >> w;
+	m_din >> w;
 	if( w > 1 )
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "more than one file to send" << endl;
 	data.fileCount = w;
 
-	*m_din >> w;
+	m_din >> w;
 	data.filesLeft = w;
-	*m_din >> w;
+	m_din >> w;
 	data.partCount = w;
-	*m_din >> w;
+	m_din >> w;
 	data.partsLeft = w;
 
-	*m_din >> d;
+	m_din >> d;
 	data.totalSize = d;
-	*m_din >> d;
+	m_din >> d;
 	data.fileSize = d;
-	*m_din >> d;
+	m_din >> d;
 	data.modTime = d;
-	*m_din >> d;
+	m_din >> d;
 	data.checksum = d;
-	m_din->skipRawData( 16 ); //resource recv'd checksum, resource size, creation time, resource checksum
-	*m_din >> d;
+	m_din.skipRawData( 16 ); //resource recv'd checksum, resource size, creation time, resource checksum
+	m_din >> d;
 	data.bytesSent = d;
-	*m_din >> d;
+	m_din >> d;
 	data.sentChecksum = d;
-	m_din->skipRawData( 32 ); //idstring
-	*m_din >> b;
+	m_din.skipRawData( 32 ); //idstring
+	m_din >> b;
 	data.flags = b;
-	m_din->skipRawData( 87 ); //name offset, size offset, dummy block, mac info
-	*m_din >> d;
+	m_din.skipRawData( 87 ); //name offset, size offset, dummy block, mac info
+	m_din >> d;
 	int namelen = length - 256 +  64;
 	QByteArray name;
 	name.resize( namelen );
-	m_din->readRawData( name.data(), namelen );
+	m_din.readRawData( name.data(), namelen );
 
 	QTextCodec *c=0;
 	switch ( d )
@@ -147,8 +147,6 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 
 	OftTransfer* ft = new OftTransfer( data, fileBuffer );
 	bytes = packet.length();
-	delete m_din; //why not just use a local var?
-	m_din = 0;
 	return ft;
 }
 
