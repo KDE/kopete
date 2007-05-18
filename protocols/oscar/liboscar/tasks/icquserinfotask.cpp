@@ -157,6 +157,7 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 			emit receivedInfoFor( contactId, Short );
 
 		setTransfer( 0 );
+		delete buffer;
 		return true;
 	}
 	return false;
