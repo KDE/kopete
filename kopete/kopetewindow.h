@@ -193,8 +193,6 @@ private slots:
 	 * We need both to uniquely identify an account, but QSignalMapper only emits one QString.
 	 */
 	void slotAddContactDialogInternal( const QString & accountIdentifier );
-
-    void networkStatusChanged( NetworkStatus::Status );
 	
 public:
 	KopeteContactListView *contactlist;

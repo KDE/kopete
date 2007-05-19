@@ -53,6 +53,7 @@
 #include <kstringhandler.h>
 #include <kurl.h>
 #include <connectionmanager.h>
+#include <networkstatusindicator.h>
 
 #include "addcontactpage.h"
 #include "addcontactwizard.h"
@@ -147,11 +148,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	m_globalStatusMessage = new KSqueezedTextLabel( statusBarMessage );
 	statusBar()->addWidget(statusBarMessage, 1, false );
 
-	m_statusBarOfflineModeWidget = new QHBox(statusBar(), "m_statusBarWidget");
-	m_statusBarOfflineModeWidget->setMargin( 2 );
-	m_statusBarOfflineModeWidget->setSpacing( 1 );
-	m_offlineModeLabel = new QLabel("", m_statusBarOfflineModeWidget, "offlinemodelabel" );
-	statusBar()->addWidget( m_statusBarOfflineModeWidget, 0, false );
+	statusBar()->addWidget( new StatusBarNetworkStatusIndicator( this, "netstatusindicator" ), 0, false );
 
 	m_pluginConfig = 0L;
 	m_autoHideTimer = new QTimer( this );
@@ -200,11 +197,6 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
     //install an event filter for the quick search toolbar so we can
     //catch the hide events
     toolBar( "quickSearchBar" )->installEventFilter( this );
-
-    connect( ConnectionManager::self(), SIGNAL( statusChanged( NetworkStatus::Status ) ),
-            SLOT( networkStatusChanged( NetworkStatus::Status) ) );
-
-    networkStatusChanged( ConnectionManager::self()->status());
 }
 
 void KopeteWindow::initView()
@@ -1117,22 +1109,6 @@ void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 		}
 	}
 	addDialog->deleteLater();
-}
-
-void KopeteWindow::networkStatusChanged( NetworkStatus::Status st )
-{
-#if 1
-	if ( st == NetworkStatus::Online || st == NetworkStatus::NoNetworks ) {
-		m_offlineModeLabel->setPixmap( QPixmap() );
-		QToolTip::remove( m_offlineModeLabel );
-		m_statusBarOfflineModeWidget->hide();
-	}
-	else {
-		m_offlineModeLabel->setPixmap( SmallIcon("connect_no") );
-		QToolTip::add( m_offlineModeLabel, i18n( "The desktop is offline" ) );
-		m_statusBarOfflineModeWidget->show();
-	}
-#endif
 }
 
 #include "kopetewindow.moc"
