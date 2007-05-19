@@ -28,6 +28,7 @@
 #include <klocale.h>
 #include <kcmdlineargs.h>
 #include <kmessagebox.h>
+#include <connectionmanager.h>
 
 #include "addaccountwizard.h"
 #include "kabcpersistence.h"
@@ -211,7 +212,9 @@ void KopeteApplication::slotAllPluginsLoaded()
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
 	// --noconnect not specified?
-	if ( args->isSet( "connect" )  && KopetePrefs::prefs()->autoConnect() )
+	if ( args->isSet( "connect" )  && KopetePrefs::prefs()->autoConnect() &&
+            ( ConnectionManager::self()->status() == NetworkStatus::NoNetworks ||
+              ConnectionManager::self()->status() == NetworkStatus::Online ) )
 		Kopete::AccountManager::self()->connectAll();
 
 
