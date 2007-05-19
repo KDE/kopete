@@ -37,11 +37,6 @@
 #include <qstyleoption.h>
 #include <QList>
 
-#ifdef HAVE_XRENDER
-#  include <X11/Xlib.h>
-#  include <X11/extensions/Xrender.h>
-#endif
-
 #include <limits.h>
 
 namespace Kopete {
@@ -949,11 +944,7 @@ public:
 	bool visibilityTarget;
 
 	static const int visibilityFoldSteps = 7;
-#ifdef HAVE_XRENDER
 	static const int visibilityFadeSteps = 7;
-#else
-	static const int visibilityFadeSteps = 0;
-#endif
 	static const int visibilityStepsTotal = visibilityFoldSteps + visibilityFadeSteps;
 
 	bool searchMatch;
@@ -1281,8 +1272,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		comp->paint( &paint, _cg );
 	paint.end();
 
-#ifdef HAVE_XRENDER
-	QColor rgb = cg.base();//backgroundColor();
+	QColor rgba = cg.base();//backgroundColor();
 	float opac = 1.0;
 	if ( d->visibilityTimer.isActive() && Private::fadeVisibility )
 	{
@@ -1293,14 +1283,13 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		opac = float(vis) / Private::visibilityFadeSteps;
 	}
 	opac *= opacity();
-	const int alpha = 257 - int(opac * 257);
+	const int alpha = 255 - int(opac * 255);
 	if ( alpha != 0 )
 	{
-		XRenderColor clr = { alpha * rgb.red(), alpha * rgb.green(), alpha * rgb.blue(), alpha * 0xff };
-		XRenderFillRectangle( back.x11Display(), PictOpOver, back.x11PictureHandle(),
-		                      &clr, 0, 0, width, height() );
+		rgba.setAlpha(alpha);
+		QPainter p(&back);
+		p.fillRect(back.rect(), rgba);
 	}
-#endif
 
 	p->drawPixmap( 0, 0, back );
 }
