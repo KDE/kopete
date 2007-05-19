@@ -845,6 +845,7 @@ QString Kopete::Contact::formattedIdleTime() const
 		}
 		else
 		{
+			// xgettext: no-c-format
 			ret = i18nc( "<minutes>m <seconds>s", "%2m %1s" ,
 				  secs ,
 				  mins );
