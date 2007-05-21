@@ -83,12 +83,9 @@
         </widget>
    </item>
    <item>
-    <widget class="Q3GroupBox" name="m_contactInfoBox" >
+    <widget class="QGroupBox" name="m_contactInfoBox" >
      <property name="title" >
       <string/>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
      </property>
      <layout class="QVBoxLayout" >
       <property name="margin" >
@@ -230,13 +227,6 @@ Leave it empty if you want to see the contact nickname as display name.</string>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends></extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
   <customwidget>
    <class>KComboBox</class>
    <extends></extends>

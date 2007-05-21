@@ -27,13 +27,10 @@
      <property name="orientation" >
                 <enum>Qt::Horizontal</enum>
             </property>
-     <widget class="Q3GroupBox" name="dynamicForm" >
+     <widget class="QGroupBox" name="dynamicForm" >
       <property name="title" >
                     <string>Search For</string>
                 </property>
-      <property name="orientation" >
-       <enum>Qt::Vertical</enum>
-      </property>
       <layout class="QVBoxLayout" >
        <property name="margin" >
         <number>0</number>
@@ -164,13 +161,6 @@
    <extends></extends>
    <header>kpushbutton.h</header>
    <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends></extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>

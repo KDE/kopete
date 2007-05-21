@@ -36,7 +36,7 @@
         <number>6</number>
        </property>
        <item>
-        <widget class="Q3GroupBox" name="grpAddressbook" >
+        <widget class="QGroupBox" name="grpAddressbook" >
          <property name="sizePolicy" >
           <sizepolicy>
            <hsizetype>1</hsizetype>
@@ -412,7 +412,7 @@
         <number>6</number>
        </property>
        <item>
-        <widget class="Q3GroupBox" name="grpIcons" >
+        <widget class="QGroupBox" name="grpIcons" >
          <property name="title" >
           <string>Icons</string>
          </property>
@@ -564,13 +564,6 @@
    <extends>KUrlRequester</extends>
    <header>kurlrequester.h</header>
    <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
