@@ -148,7 +148,9 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	m_globalStatusMessage = new KSqueezedTextLabel( statusBarMessage );
 	statusBar()->addWidget(statusBarMessage, 1, false );
 
-	statusBar()->addWidget( new StatusBarNetworkStatusIndicator( this, "netstatusindicator" ), 0, false );
+	StatusBarNetworkStatusIndicator * indicator = new StatusBarNetworkStatusIndicator( this, "netstatusindicator" );
+	statusBar()->addWidget( indicator, 0, false );
+    indicator->init();
 
 	m_pluginConfig = 0L;
 	m_autoHideTimer = new QTimer( this );
