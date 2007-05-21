@@ -64,10 +64,6 @@ set_target_properties(kopete_bin PROPERTIES OUTPUT_NAME kopete)
 
 target_link_libraries(kopete_bin ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KTEXTEDITOR_LIBS} ${KDE4_KNOTIFYCONFIG_LIBS} kopete kopeteaddaccountwizard)
 
-if(X11_Xrender_FOUND)
-  target_link_libraries(kopete_bin ${X11_Xrender_LIB})
-endif(X11_Xrender_FOUND)
-
 install(TARGETS kopete_bin  DESTINATION ${BIN_INSTALL_DIR} )
 
 
