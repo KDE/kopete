@@ -339,13 +339,13 @@ void ICQSearchDialog::searchFinished( int numLeft )
 
 void ICQSearchDialog::clearFields()
 {
-	m_searchUI->uin->setText( QString::null );
+	m_searchUI->uin->setText( QString() );
 	
-	m_searchUI->firstName->setText( QString::null );
-	m_searchUI->lastName->setText( QString::null );
-	m_searchUI->nickName->setText( QString::null );
-	m_searchUI->email->setText( QString::null );
-	m_searchUI->city->setText( QString::null );
+	m_searchUI->firstName->setText( QString() );
+	m_searchUI->lastName->setText( QString() );
+	m_searchUI->nickName->setText( QString() );
+	m_searchUI->email->setText( QString() );
+	m_searchUI->city->setText( QString() );
 	m_searchUI->gender->setCurrentIndex( 0 ); // Unspecified
 	m_searchUI->country->setCurrentIndex( 0 );
 	m_searchUI->language->setCurrentIndex( 0 );

@@ -374,7 +374,7 @@ void FileTransferTask::readyAccept()
 	if (! m_connection )
 	{ //either it wasn't buffered, or it did something weird
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection failed somehow." << endl;
-		emit error( KIO::ERR_COULD_NOT_ACCEPT, QString::null );
+		emit error( KIO::ERR_COULD_NOT_ACCEPT, QString() );
 		doCancel();
 		return;
 	}

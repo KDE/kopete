@@ -130,7 +130,7 @@ public:
 	 * \param xtraz the Xtraz status
 	 * \param description the Xtraz status description
 	 */
-	void setStatus( Oscar::DWORD status, const QString &message = QString::null, int xtraz = -1, const QString &description = QString::null );
+	void setStatus( Oscar::DWORD status, const QString &message = QString(), int xtraz = -1, const QString &description = QString() );
 
 	/** Retrieve our user info */
 	UserDetails ourInfo() const;
@@ -327,7 +327,7 @@ public:
 
 	//! Start a server redirect for a different service
 	void requestServerRedirect( Oscar::WORD family, Oscar::WORD e = 0, QByteArray c = QByteArray(),
-                                Oscar::WORD instance = 0, const QString& room = QString::null );
+                                Oscar::WORD instance = 0, const QString& room = QString() );
 
 	//! Start uploading a buddy icon
 	void sendBuddyIcon( const QByteArray& imageData );

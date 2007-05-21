@@ -96,7 +96,7 @@ void SendDCInfoTask::onGo()
 
 	Transfer* t = createTransfer( f, s, buffer );
 	send( t );
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 }
 
 

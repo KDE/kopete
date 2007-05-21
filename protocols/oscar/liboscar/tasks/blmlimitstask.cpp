@@ -71,7 +71,7 @@ bool BLMLimitsTask::take(Transfer* transfer)
 					break;
 			}
 		}
-		setSuccess( 0, QString::null );
+		setSuccess( 0, QString() );
 		return true;
 	}
 	else

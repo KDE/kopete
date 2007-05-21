@@ -101,13 +101,13 @@ public slots:
 	 * Sets the topic of this channel
 	 * @param topic The topic you want set
 	 */
-	void setTopic( const QString &topic = QString::null );
+	void setTopic( const QString &topic = QString() );
 
 	/**
 	 * Sets or unsets a mode on this channel
 	 * @param mode The full text of the mode change you want performed
 	 */
-	void setMode( const QString &mode = QString::null );
+	void setMode( const QString &mode = QString() );
 
 	void part();
 

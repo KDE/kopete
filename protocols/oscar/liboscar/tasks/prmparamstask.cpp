@@ -52,7 +52,7 @@ bool PRMParamsTask::take( Transfer* transfer )
 	if ( forMe( transfer ) )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Ignoring PRM Parameters. We don't use them" << endl;
-		setSuccess( 0, QString::null );
+		setSuccess( 0, QString() );
 		return true;
 	}
 

@@ -75,7 +75,7 @@ bool ServerRedirectTask::take( Transfer* transfer )
 
 	setTransfer( transfer );
     bool value = handleRedirect();
-    setSuccess( 0, QString::null );
+    setSuccess( 0, QString() );
     setTransfer( 0 );
 	return value;
 }

@@ -176,7 +176,7 @@ void StageTwoLoginTask::onGo()
 		send( ft );
 	}
 	else
-		setError( -1, QString::null );
+		setError( -1, QString() );
 	return;
 }
 
@@ -198,7 +198,7 @@ void StageTwoLoginTask::versionTaskFinished()
 
 void StageTwoLoginTask::rateTaskFinished()
 {
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 }
 
 #include "logintask.moc"

@@ -256,7 +256,7 @@ void OscarAccount::processSSIList()
 			oc->setSSIItem( item );
 		}
 		else
-			addContact( ( *bit ).name(), QString::null, group, Kopete::Account::DontChangeKABC );
+			addContact( ( *bit ).name(), QString(), group, Kopete::Account::DontChangeKABC );
 	}
 
 	QObject::connect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ),
@@ -357,7 +357,7 @@ void OscarAccount::askIncoming( QString c, QString f, Oscar::DWORD s, QString d,
 	if ( !contacts()[sender] )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "Adding '" << sender << "' as temporary contact" << endl;
-		addContact( sender, QString::null, 0,  Kopete::Account::Temporary );
+		addContact( sender, QString(), 0,  Kopete::Account::Temporary );
 	}
 	Kopete::Contact * ct = contacts()[ sender ];
 	Kopete::TransferManager::transferManager()->askIncomingTransfer( ct, f, s, d, i);
@@ -407,7 +407,7 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	if ( !contacts()[sender] )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "Adding '" << sender << "' as temporary contact" << endl;
-		addContact( sender, QString::null, 0,  Kopete::Account::Temporary );
+		addContact( sender, QString(), 0,  Kopete::Account::Temporary );
 	}
 
 	OscarContact* ocSender = static_cast<OscarContact *> ( contacts()[sender] ); //should exist now

@@ -38,7 +38,7 @@ public:
 
 	/** Normal ICQ constructor */
 	ICQContactBase( Kopete::Account *account, const QString &name, Kopete::MetaContact *parent,
-	            const QString& icon = QString::null, const OContact& ssiItem = OContact()  );
+	            const QString& icon = QString(), const OContact& ssiItem = OContact()  );
 	virtual ~ICQContactBase();
 
 	virtual QString sanitizedMessage( const QString& message );

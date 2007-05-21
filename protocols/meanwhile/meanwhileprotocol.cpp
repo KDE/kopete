@@ -32,13 +32,13 @@ K_EXPORT_COMPONENT_FACTORY(kopete_meanwhile,
 MeanwhileProtocol::MeanwhileProtocol(QObject* parent, const QStringList &/*args*/)
 : Kopete::Protocol(MeanwhileProtocolFactory::componentData(), parent),
 
-    statusOffline(Kopete::OnlineStatus::Offline, 25, this, 0, QString::null,
+    statusOffline(Kopete::OnlineStatus::Offline, 25, this, 0, QString(),
             i18n("Offline"), i18n("Offline"),
             Kopete::OnlineStatusManager::Offline,
 	    Kopete::OnlineStatusManager::DisabledIfOffline),
 
     statusOnline(Kopete::OnlineStatus::Online, 25, this, mwStatus_ACTIVE,
-            QString::null, i18n("Online"), i18n("Online"),
+            QString(), i18n("Online"), i18n("Online"),
             Kopete::OnlineStatusManager::Online, 0),
 
     statusAway(Kopete::OnlineStatus::Away, 20, this, mwStatus_AWAY,
@@ -56,10 +56,10 @@ MeanwhileProtocol::MeanwhileProtocol(QObject* parent, const QStringList &/*args*
             Kopete::OnlineStatusManager::Idle, 0),
 
     statusAccountOffline(Kopete::OnlineStatus::Offline, 0, this, 0,
-            QString::null, i18n("Account Offline")),
+            QString(), i18n("Account Offline")),
 
     statusMessage(QString::fromLatin1("statusMessage"),
-        i18n("Status Message"), QString::null, false, true),
+        i18n("Status Message"), QString(), false, true),
 
     awayMessage(Kopete::Global::Properties::self()->awayMessage())
 {

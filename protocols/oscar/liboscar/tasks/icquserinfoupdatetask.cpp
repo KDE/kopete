@@ -68,12 +68,12 @@ bool ICQUserInfoUpdateTask::take( Transfer* transfer )
 		if ( buffer->getByte() == 0x0A )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Own user info was saved." << endl;
-			setSuccess( 0, QString::null );
+			setSuccess( 0, QString() );
 		}
 		else
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Error saving own user info!!!" << endl;
-			setError( 0, QString::null );
+			setError( 0, QString() );
 		}
 
 		setTransfer( 0 );
@@ -97,7 +97,7 @@ void ICQUserInfoUpdateTask::onGo()
 
 	if ( b.length() == 0 )
 	{
-		setSuccess( 0, QString::null );
+		setSuccess( 0, QString() );
 		return;
 	}
 

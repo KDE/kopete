@@ -60,7 +60,7 @@ static const QColor s_IRC_Colors[17]=
 
 static const QRegExp s_colorsModeRegexp("(\\d{1,2})(?:,(\\d{1,2}))?");
 
-static QString pushTag(ParserData *d, const QString &tag, const QString &attributes = QString::null)
+static QString pushTag(ParserData *d, const QString &tag, const QString &attributes = QString())
 {
 	QString res;
 	d->tags.append(tag);

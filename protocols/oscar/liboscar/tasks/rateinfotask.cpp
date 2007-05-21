@@ -171,7 +171,7 @@ void RateInfoTask::sendRateInfoAck()
 
 	Transfer* st = createTransfer( f, s, buffer );
 	send( st );
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 }
 
 #include "rateinfotask.moc"

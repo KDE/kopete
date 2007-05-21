@@ -120,7 +120,7 @@ void ServiceSetupTask::childTaskFinished()
 	if ( m_finishedTaskCount == 8 )
 	{
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Service setup finished" << endl;
-		setSuccess( 0, QString::null );	
+		setSuccess( 0, QString() );	
 	}
 }
 

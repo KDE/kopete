@@ -61,7 +61,7 @@ public:
 	QString userProfile();
 
     virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate,
-                                          Oscar::WORD exchange = 0, const QString& room = QString::null);
+                                          Oscar::WORD exchange = 0, const QString& room = QString());
 
 public slots:
     void sendMessage( Kopete::Message&, Kopete::ChatSession* session );
@@ -129,9 +129,9 @@ protected:
 private:
 	Oscar::Presence presence();
 
-	void setPresenceFlags( Oscar::Presence::Flags flags, const QString &message = QString::null );
-	void setPresenceType( Oscar::Presence::Type, const QString &awayMessage = QString::null );
-	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString::null );
+	void setPresenceFlags( Oscar::Presence::Flags flags, const QString &message = QString() );
+	void setPresenceType( Oscar::Presence::Type, const QString &awayMessage = QString() );
+	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString() );
 
 	// Set privacy tlv item
 	void setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses );

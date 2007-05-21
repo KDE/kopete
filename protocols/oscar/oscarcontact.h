@@ -72,7 +72,7 @@ Q_OBJECT
 
 public:
 	OscarContact( Kopete::Account* account, const QString& name,
-	              Kopete::MetaContact* parent, const QString& icon = QString::null, const OContact& ssiItem = OContact() );
+	              Kopete::MetaContact* parent, const QString& icon = QString(), const OContact& ssiItem = OContact() );
 	
 	virtual ~OscarContact();
 	
@@ -131,7 +131,7 @@ public slots:
 	virtual void userOffline( const QString& ) = 0;
 
 	/** send a file to this contact */
-	virtual void sendFile( const KUrl &sourceURL = KUrl(), const QString &fileName = QString::null, uint fileSize = 0L );
+	virtual void sendFile( const KUrl &sourceURL = KUrl(), const QString &fileName = QString(), uint fileSize = 0L );
 
 	/** set a away message */
 	virtual void setAwayMessage( const QString &message );

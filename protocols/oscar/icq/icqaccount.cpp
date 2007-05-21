@@ -129,7 +129,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	{
 		kDebug(14153) << k_funcinfo <<
 			"sending status to reflect HideIP and WebAware settings" << endl;
-		//setStatus(mStatus, QString::null);
+		//setStatus(mStatus, QString());
 	}*/
 }
 
@@ -430,7 +430,7 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 {
 	if ( QRegExp("[\\d]+").exactMatch( contactId ) )
 	{
-		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString::null, ssiItem );
+		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString(), ssiItem );
 
 		if ( !ssiItem.alias().isEmpty() )
 			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
@@ -442,7 +442,7 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 	}
 	else
 	{
-		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString::null, ssiItem );
+		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString(), ssiItem );
 
 		if ( !ssiItem.alias().isEmpty() )
 			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );

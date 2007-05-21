@@ -249,7 +249,7 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 {
 	if ( QRegExp("[\\d]+").exactMatch( contactId ) )
 	{
-		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString::null, ssiItem );
+		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString(), ssiItem );
 
 		if ( !ssiItem.alias().isEmpty() )
 			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
@@ -261,7 +261,7 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 	}
 	else
 	{
-		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString::null, ssiItem );
+		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString(), ssiItem );
 
 		if ( !ssiItem.alias().isEmpty() )
 			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
@@ -703,7 +703,7 @@ void AIMAccount::setPrivacySettings( int privacy )
 void AIMAccount::setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses )
 {
 	ContactManager* ssi = engine()->ssiManager();
-	OContact item = ssi->findItem( QString::null, ROSTER_VISIBILITY );
+	OContact item = ssi->findItem( QString(), ROSTER_VISIBILITY );
 
 	QList<Oscar::TLV> tList;
 
@@ -713,7 +713,7 @@ void AIMAccount::setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses )
 	if ( !item )
 	{
 		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Adding new privacy TLV item" << endl;
-		OContact s( QString::null, 0, ssi->nextContactId(), ROSTER_VISIBILITY, tList );
+		OContact s( QString(), 0, ssi->nextContactId(), ROSTER_VISIBILITY, tList );
 		engine()->modifyContactItem( item, s );
 	}
 	else

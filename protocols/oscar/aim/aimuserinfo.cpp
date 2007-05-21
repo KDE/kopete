@@ -88,7 +88,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		if ( aimmc )
 			userInfoEdit->setPlainText( aimmc->userProfile() );
 		else
-			userInfoEdit->setPlainText( QString::null );
+			userInfoEdit->setPlainText( QString() );
 
 		setButtonText(Ok, i18n("&Save Profile"));
 		showButton(User1, false);

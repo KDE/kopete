@@ -95,8 +95,8 @@ public slots:
 
     /** Reimplemented from Kopete::Account */
     void setOnlineStatus(const Kopete::OnlineStatus& status,
-            const QString &reason = QString::null);
-    void setAway(bool away, const QString&reason = QString::null);
+            const QString &reason = QString());
+    void setAway(bool away, const QString&reason = QString());
 
 private:
     /** Current online status */

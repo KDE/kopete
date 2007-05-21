@@ -57,7 +57,7 @@ void IRCAccount::slotJoinChannel()
 
 	KLineEditDlg dlg(
 		i18n("Please enter name of the channel you want to join:"),
-		QString::null,
+		QString(),
 		UI::Global::mainWidget()
 	);
 

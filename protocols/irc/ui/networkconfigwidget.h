@@ -32,7 +32,7 @@ public:
 	explicit IRCNetworkConfigWidget(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~IRCNetworkConfigWidget();
 
-	void editNetworks( const QString &networkName = QString::null );
+	void editNetworks( const QString &networkName = QString() );
 
 signals:
 	void networkSelected(const IRCNetwork &network);

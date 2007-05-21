@@ -140,7 +140,7 @@ KActionMenu * MeanwhileAccount::actionMenu()
     menu->popupMenu()->insertSeparator();
 
 #if 0
-    menu->insert(new KAction(i18n("&Change Status Message"), QString::null, 0,
+    menu->insert(new KAction(i18n("&Change Status Message"), QString(), 0,
                 this, SLOT(meanwhileChangeStatus()), this,
                 "meanwhileChangeStatus"));
     //infoPlugin->addCustomMenus(theMenu);
