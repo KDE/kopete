@@ -175,7 +175,6 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	// Show the available styles when the Manager has finish to load the styles.
 	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadChatStyles()));
 
-	m_styleUi.htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	// Create the fake Chat Session
 	createPreviewChatSession();
 	m_preview = new ChatMessagePart(m_previewChatSession, m_styleUi.htmlFrame);
@@ -190,6 +189,7 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	htmlWidget->setSizePolicy(
 		QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 	layout = new QVBoxLayout(m_styleUi.htmlFrame);
+	layout->setMargin(0);
 	layout->addWidget(htmlWidget);
 	m_styleUi.htmlFrame->setLayout(layout);
 	// Add the preview message to the ChatMessagePart

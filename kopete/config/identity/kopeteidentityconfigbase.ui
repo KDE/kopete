@@ -1,23 +1,30 @@
 <ui version="4.0" >
  <author>Michaël Larouche</author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>KopeteIdentityConfigBase</class>
  <widget class="QWidget" name="KopeteIdentityConfigBase" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>613</width>
-    <height>318</height>
+    <width>623</width>
+    <height>408</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>9</number>
+   </property>
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
    </property>
    <item>
     <widget class="QCheckBox" name="kcfg_EnableGlobalIdentity" >
@@ -28,11 +35,20 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>6</number>
+     </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
      </property>
      <item>
       <widget class="QLabel" name="textLabel1" >
@@ -47,9 +63,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>7</hsizetype>
-         <vsizetype>0</vsizetype>
+        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -60,11 +74,20 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>6</number>
+     </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
      </property>
      <item>
       <widget class="KPushButton" name="buttonNewIdentity" >
@@ -113,17 +136,14 @@
      <property name="enabled" >
       <bool>false</bool>
      </property>
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
        <string>&amp;Nickname</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="QRadioButton" name="radioNicknameCustom" >
          <property name="text" >
@@ -133,11 +153,20 @@
        </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>6</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <spacer>
@@ -176,11 +205,20 @@
        </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>6</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <spacer>
@@ -201,9 +239,7 @@
          <item>
           <widget class="QComboBox" name="comboNameContact" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>7</hsizetype>
-             <vsizetype>0</vsizetype>
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -237,201 +273,244 @@
       <attribute name="title" >
        <string>P&amp;hoto</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item rowspan="6" row="0" column="1" >
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>10</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>36</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QLabel" name="labelPhoto" >
-           <property name="minimumSize" >
-            <size>
-             <width>64</width>
-             <height>92</height>
-            </size>
-           </property>
-           <property name="maximumSize" >
-            <size>
-             <width>64</width>
-             <height>32767</height>
-            </size>
-           </property>
-           <property name="frameShape" >
-            <enum>QFrame::Box</enum>
-           </property>
-           <property name="lineWidth" >
-            <number>1</number>
-           </property>
-           <property name="text" >
-            <string>&lt;center>Photo&lt;/center></string>
-           </property>
-           <property name="textFormat" >
-            <enum>Qt::RichText</enum>
-           </property>
-           <property name="scaledContents" >
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QRadioButton" name="radioPhotoCustom" >
-         <property name="text" >
-          <string>Cus&amp;tom:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" >
+      <layout class="QVBoxLayout" >
+       <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
          <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>16</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
+          <layout class="QVBoxLayout" >
+           <item>
+            <widget class="QRadioButton" name="radioPhotoCustom" >
+             <property name="text" >
+              <string>Cus&amp;tom:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" >
+             <property name="spacing" >
+              <number>6</number>
+             </property>
+             <property name="leftMargin" >
+              <number>0</number>
+             </property>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
+              <number>0</number>
+             </property>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType" >
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>16</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="KUrlComboRequester" name="comboPhotoURL" />
+             </item>
+             <item>
+              <widget class="KPushButton" name="buttonClearPhoto" >
+               <property name="maximumSize" >
+                <size>
+                 <width>32</width>
+                 <height>3232</height>
+                </size>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioPhotoKABC" >
+             <property name="text" >
+              <string>Use a&amp;ddress book photo (needs address book link)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioPhotoContact" >
+             <property name="text" >
+              <string>U&amp;se photo from contact for global photo:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" >
+             <property name="leftMargin" >
+              <number>0</number>
+             </property>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
+              <number>0</number>
+             </property>
+             <property name="horizontalSpacing" >
+              <number>6</number>
+             </property>
+             <property name="verticalSpacing" >
+              <number>6</number>
+             </property>
+             <item row="0" column="1" >
+              <widget class="QComboBox" name="comboPhotoContact" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" >
+              <widget class="QCheckBox" name="checkSyncPhotoKABC" >
+               <property name="text" >
+                <string>S&amp;ync address book photo with global photo</string>
+               </property>
+              </widget>
+             </item>
+             <item rowspan="2" row="0" column="0" >
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType" >
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>16</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>483</width>
+               <height>16</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="KUrlComboRequester" name="comboPhotoURL" />
-         </item>
-         <item>
-          <widget class="KPushButton" name="buttonClearPhoto" >
-           <property name="maximumSize" >
-            <size>
-             <width>32</width>
-             <height>3232</height>
-            </size>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
            </property>
-           <property name="text" >
-            <string/>
+           <property name="leftMargin" >
+            <number>10</number>
            </property>
-          </widget>
+           <property name="topMargin" >
+            <number>10</number>
+           </property>
+           <property name="rightMargin" >
+            <number>10</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>10</number>
+           </property>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>36</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="labelPhoto" >
+             <property name="minimumSize" >
+              <size>
+               <width>64</width>
+               <height>92</height>
+              </size>
+             </property>
+             <property name="maximumSize" >
+              <size>
+               <width>64</width>
+               <height>32767</height>
+              </size>
+             </property>
+             <property name="frameShape" >
+              <enum>QFrame::Box</enum>
+             </property>
+             <property name="lineWidth" >
+              <number>1</number>
+             </property>
+             <property name="text" >
+              <string>&lt;center>Photo&lt;/center></string>
+             </property>
+             <property name="textFormat" >
+              <enum>Qt::RichText</enum>
+             </property>
+             <property name="scaledContents" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
-       <item row="2" column="0" >
-        <widget class="QRadioButton" name="radioPhotoKABC" >
-         <property name="text" >
-          <string>Use a&amp;ddress book photo (needs address book link)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" >
-        <widget class="QRadioButton" name="radioPhotoContact" >
-         <property name="text" >
-          <string>U&amp;se photo from contact for global photo:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" >
-        <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
-         <item row="0" column="1" >
-          <widget class="QComboBox" name="comboPhotoContact" >
-           <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>7</hsizetype>
-             <vsizetype>0</vsizetype>
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" >
-          <widget class="QCheckBox" name="checkSyncPhotoKABC" >
-           <property name="text" >
-            <string>S&amp;ync address book photo with global photo</string>
-           </property>
-          </widget>
-         </item>
-         <item rowspan="2" row="0" column="0" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>16</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item row="5" column="0" >
+       <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
          </property>
          <property name="sizeHint" >
           <size>
@@ -448,19 +527,22 @@
        <string>Address &amp;Book Link</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>6</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="KLineEdit" name="lineAddressee" >
@@ -515,32 +597,24 @@ current user contact.</string>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>KUrlComboRequester</class>
-   <extends></extends>
-   <header>kurlrequester.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>KComboBox</class>
-   <extends></extends>
+   <extends>QComboBox</extends>
    <header>kcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
-   <extends></extends>
+   <extends>QLineEdit</extends>
    <header>klineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>KPushButton</class>
-   <extends></extends>
+   <extends>QPushButton</extends>
    <header>kpushbutton.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KUrlComboRequester</class>
+   <extends>KUrlRequester</extends>
+   <header>kurlrequester.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

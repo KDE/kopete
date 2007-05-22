@@ -262,6 +262,8 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
     //install an event filter for the quick search toolbar so we can
     //catch the hide events
     toolBar( "quickSearchBar" )->installEventFilter( this );
+    //it does not make sense to have a toolbar that does use the half sceen...
+    toolBar( "mainToolBar" )->setToolButtonStyle( Qt::ToolButtonIconOnly );
 }
 
 void KopeteWindow::initView()

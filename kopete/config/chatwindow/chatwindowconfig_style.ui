@@ -1,41 +1,60 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>ChatWindowConfig_Style</class>
  <widget class="QWidget" name="ChatWindowConfig_Style" >
   <property name="geometry" >
-        <rect>
-            <x>0</x>
-            <y>0</y>
-    <width>237</width>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>281</width>
     <height>354</height>
-        </rect>
-    </property>
+   </rect>
+  </property>
   <property name="sizePolicy" >
-        <sizepolicy>
-            <hsizetype>7</hsizetype>
-            <vsizetype>7</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-    </property>
+   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle" >
-        <string>Chat Window Appearance</string>
-    </property>
+   <string>Chat Window Appearance</string>
+  </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>9</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>6</number>
    </property>
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="leftMargin" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>6</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>6</number>
      </property>
      <item row="1" column="0" >
@@ -44,17 +63,29 @@
         <string>Display</string>
        </property>
        <layout class="QGridLayout" >
-        <property name="margin" >
+        <property name="leftMargin" >
          <number>9</number>
         </property>
-        <property name="spacing" >
+        <property name="topMargin" >
+         <number>9</number>
+        </property>
+        <property name="rightMargin" >
+         <number>9</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>9</number>
+        </property>
+        <property name="horizontalSpacing" >
+         <number>6</number>
+        </property>
+        <property name="verticalSpacing" >
          <number>6</number>
         </property>
         <item row="0" column="0" >
          <widget class="QCheckBox" name="kcfg_groupConsecutiveMessages" >
           <property name="text" >
            <string>Group consecuti&amp;ve messages</string>
-            </property>
+          </property>
          </widget>
         </item>
        </layout>
@@ -63,110 +94,143 @@
      <item row="0" column="0" >
       <widget class="QGroupBox" name="stylesGroupBox" >
        <property name="sizePolicy" >
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>7</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="title" >
-                <string>Styles</string>
-            </property>
+        <string>Styles</string>
+       </property>
        <layout class="QGridLayout" >
-        <property name="margin" >
+        <property name="leftMargin" >
          <number>9</number>
         </property>
-        <property name="spacing" >
+        <property name="topMargin" >
+         <number>9</number>
+        </property>
+        <property name="rightMargin" >
+         <number>9</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>9</number>
+        </property>
+        <property name="horizontalSpacing" >
+         <number>6</number>
+        </property>
+        <property name="verticalSpacing" >
          <number>6</number>
         </property>
         <item row="1" column="0" >
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
           </property>
           <item>
            <widget class="QLabel" name="textLabel1" >
             <property name="text" >
              <string>Style Variant:</string>
-                    </property>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QComboBox" name="variantList" >
             <property name="sizePolicy" >
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-              <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    </widget>
+             <sizepolicy vsizetype="Minimum" hsizetype="Expanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
         <item row="0" column="0" >
          <widget class="QSplitter" name="splitter" >
           <property name="sizePolicy" >
-                            <sizepolicy>
-            <hsizetype>7</hsizetype>
-            <vsizetype>3</vsizetype>
+           <sizepolicy vsizetype="MinimumExpanding" hsizetype="Expanding" >
             <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="childrenCollapsible" >
+           <bool>false</bool>
+          </property>
           <widget class="K3ListBox" name="styleList" />
           <widget class="QFrame" name="htmlFrame" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="frameShape" >
             <enum>QFrame::StyledPanel</enum>
-                        </property>
+           </property>
            <property name="frameShadow" >
             <enum>QFrame::Raised</enum>
-                        </property>
-                    </widget>
-                </widget>
+           </property>
+          </widget>
+         </widget>
         </item>
         <item row="2" column="0" >
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-                        </property>
           <property name="spacing" >
            <number>6</number>
-                            </property>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
           <item>
            <widget class="KPushButton" name="btnGetStyles" >
             <property name="enabled" >
-                                <bool>true</bool>
-                            </property>
+             <bool>true</bool>
+            </property>
             <property name="toolTip" >
-                                <string>Get new Chat Window styles over the Internet</string>
-                            </property>
+             <string>Get new Chat Window styles over the Internet</string>
+            </property>
             <property name="text" >
              <string>&amp;Get New...</string>
-                            </property>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="KPushButton" name="installButton" >
             <property name="text" >
-                                <string>&amp;Install...</string>
-                            </property>
-                        </widget>
+             <string>&amp;Install...</string>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="KPushButton" name="deleteButton" >
             <property name="text" >
-                                <string>&amp;Delete</string>
-                            </property>
-                        </widget>
+             <string>&amp;Delete</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -177,27 +241,22 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>KPushButton</class>
    <extends>QPushButton</extends>
    <header>kpushbutton.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>K3ListBox</class>
    <extends>Q3ListBox</extends>
    <header>k3listbox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
-    <tabstop>styleList</tabstop>
-    <tabstop>installButton</tabstop>
-    <tabstop>deleteButton</tabstop>
+  <tabstop>styleList</tabstop>
+  <tabstop>installButton</tabstop>
+  <tabstop>deleteButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>
