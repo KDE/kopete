@@ -66,8 +66,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 
 	mKopeteIcon = loadIcon("kopete");
 
-	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-		this, SLOT(onActivation(QSystemTrayIcon::ActivationReason)));
+	connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(slotAboutToShowMenu()));
 
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
 	connect(Kopete::ChatSessionManager::self() , SIGNAL(newEvent(Kopete::MessageEvent*)),
@@ -104,18 +103,9 @@ KopeteSystemTray::~KopeteSystemTray()
 	delete mMovie;
 }
 
-void KopeteSystemTray::onActivation(QSystemTrayIcon::ActivationReason reason)
+void KopeteSystemTray::slotAboutToShowMenu()
 {
-	kDebug(14010) << k_funcinfo << reason << endl;
-
-	switch(reason)
-	{
-	case Context:
-		emit aboutToShowMenu(qobject_cast<KMenu *>(contextMenu()));
-		break;
-	default:
-		kDebug(14010) << k_funcinfo << "Not handled" << endl;
-	}
+	emit aboutToShowMenu(qobject_cast<KMenu *>(contextMenu()));
 }
 /*
 void KopeteSystemTray::mousePressEvent( QMouseEvent *me )

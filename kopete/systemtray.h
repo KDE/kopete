@@ -63,7 +63,7 @@ Q_SIGNALS:
 	void aboutToShowMenu(KMenu *am);
 
 private Q_SLOTS:
-	void onActivation(QSystemTrayIcon::ActivationReason reason);
+	void slotAboutToShowMenu();
 
 	void slotBlink();
 	void slotNewEvent(Kopete::MessageEvent*);
