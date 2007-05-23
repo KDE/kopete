@@ -143,8 +143,12 @@ void AvatarSelectorWidget::buttonAddAvatarClicked()
 
 void AvatarSelectorWidget::buttonRemoveAvatarClicked()
 {
+	// if no item was selected, just exit
+	if ( !d->mainWidget.listUserAvatar->selectedItems().count() )
+		return;
+
 	// You can't remove from listUserContact, so we can always use listUserAvatar
-	AvatarSelectorWidgetItem *selectedItem = static_cast<AvatarSelectorWidgetItem*>( d->mainWidget.listUserAvatar->selectedItems().first() );
+	AvatarSelectorWidgetItem *selectedItem = dynamic_cast<AvatarSelectorWidgetItem*>( d->mainWidget.listUserAvatar->selectedItems().first() );
 	if( selectedItem )
 	{
 		if( !Kopete::AvatarManager::self()->remove( selectedItem->avatarEntry() ) )
