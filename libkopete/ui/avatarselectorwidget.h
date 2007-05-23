@@ -110,6 +110,13 @@ private Q_SLOTS:
 	 */
 	void listSelectionChanged(QListWidgetItem *item);
 
+	/**
+	 * @internal
+	 * The current tab has changed
+	 * @param index the index of the selected tab
+	 */
+	void currentTabChanged(int index);
+
 private:
 	Q_DISABLE_COPY(AvatarSelectorWidget)
 
