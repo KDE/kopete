@@ -1,7 +1,5 @@
 <ui version="4.0" >
  <author>Olivier Goffart</author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>KopeteAccountConfigBase</class>
  <widget class="QWidget" name="KopeteAccountConfigBase" >
   <property name="geometry" >
@@ -16,14 +14,38 @@
    <string>Manage Accounts</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>9</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>6</number>
    </property>
    <item rowspan="8" row="0" column="0" >
-    <widget class="QTreeWidget" name="mAccountList" />
+    <widget class="QTreeWidget" name="mAccountList" >
+     <property name="alternatingRowColors" >
+      <bool>true</bool>
+     </property>
+     <property name="rootIsDecorated" >
+      <bool>false</bool>
+     </property>
+     <column>
+      <property name="text" >
+       <string>1</string>
+      </property>
+     </column>
+    </widget>
    </item>
    <item row="3" column="2" >
     <spacer>
@@ -59,10 +81,22 @@
    </item>
    <item row="7" column="1" colspan="2" >
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="leftMargin" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>6</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>6</number>
      </property>
      <item row="0" column="0" >
@@ -200,17 +234,13 @@ The icon of every contact of this account will be coloured with this color. Usef
  <customwidgets>
   <customwidget>
    <class>KColorButton</class>
-   <extends></extends>
+   <extends>QPushButton</extends>
    <header>kcolorbutton.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>KPushButton</class>
-   <extends></extends>
+   <extends>QPushButton</extends>
    <header>kpushbutton.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>

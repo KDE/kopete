@@ -20,7 +20,7 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <QString>
+
 #include <QBuffer>
 #include <QFile>
 #include <QTimer>

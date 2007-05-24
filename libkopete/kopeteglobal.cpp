@@ -238,7 +238,8 @@ void installEmoticonTheme(const QString &archiveName)
 	}
 
 	progressDlg = new KProgressDialog(0,
-	 	i18n("Installing Emoticon Themes..."), QString::null, true);
+	 	i18n("Installing Emoticon Themes..."));
+	progressDlg->setModal(true);
 	progressDlg->progressBar()->setMaximum(foundThemes.count());
 	progressDlg->show();
 	qApp->processEvents();
@@ -297,7 +298,7 @@ void installEmoticonTheme(const QString &archiveName)
 	{
 		const QString &theme = foundThemes[themeIndex];
 
-		progressDlg->setLabel(
+		progressDlg->setLabelText(
 			i18n("<qt>Installing <strong>%1</strong> emoticon theme</qt>",
 			theme));
 		progressDlg->progressBar()->setValue(themeIndex);

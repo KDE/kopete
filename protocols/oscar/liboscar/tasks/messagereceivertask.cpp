@@ -406,20 +406,19 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 
 		if ( messageType == Oscar::MessageType::Plugin )
 		{
-			Oscar::WORD pluginHeaderLength = b->getLEWord();
 			Oscar::MessagePlugin *plugin = new MessagePlugin();
 
-			Oscar::Guid pluginGuid = b->getGuid();
-			plugin->setType( pluginGuid );
-			plugin->setSubTypeId( b->getLEWord() );
-			plugin->setSubTypeText( b->getLEDBlock() );
+			Buffer* headerBuffer = new Buffer( b->getLEBlock() );
 
-			// Unknown
-			b->skipBytes( 4 );
-			b->skipBytes( 4 );
-			b->skipBytes( 4 );
-			b->skipBytes( 2 );
-			b->skipBytes( 1 );
+			Oscar::Guid pluginGuid = headerBuffer->getGuid();
+			plugin->setType( pluginGuid );
+			plugin->setSubTypeId( headerBuffer->getLEWord() );
+			plugin->setSubTypeText( headerBuffer->getLEDBlock() );
+
+			// We don't parse unknown bytes
+			// ICQ5 has 15 bytes
+			// ICQ6 has 17 bytes
+			delete headerBuffer;
 
 			if ( b->bytesAvailable() >= 4 )
 				plugin->setData( b->getLEDBlock() );

@@ -127,26 +127,33 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	{
 		if ( selfVisible )
 		{
+			Client::ICQStatus contactStatus = Client::ICQOnline;
 			switch ( presence.type() )
 			{
 			case Oscar::Presence::Away:
-				mAccount->engine()->addICQAwayMessageRequest( contactId(), Client::ICQAway );
+				contactStatus = Client::ICQAway;
 				break;
 			case Oscar::Presence::NotAvailable:
-				mAccount->engine()->addICQAwayMessageRequest( contactId(), Client::ICQNotAvailable );
+				contactStatus = Client::ICQNotAvailable;
 				break;
 			case Oscar::Presence::Occupied:
-				mAccount->engine()->addICQAwayMessageRequest( contactId(), Client::ICQOccupied );
+				contactStatus = Client::ICQOccupied;
 				break;
 			case Oscar::Presence::DoNotDisturb:
-				mAccount->engine()->addICQAwayMessageRequest( contactId(), Client::ICQDoNotDisturb );
+				contactStatus = Client::ICQDoNotDisturb;
 				break;
 			case Oscar::Presence::FreeForChat:
-				mAccount->engine()->addICQAwayMessageRequest( contactId(), Client::ICQFreeForChat );
+				contactStatus = Client::ICQFreeForChat;
 				break;
 			default:
 				break;
 			}
+
+			// FIXME: How can we check if client supports status plugin messages?
+			if ( hasCap( CAP_XTRAZ_MULTIUSER_CHAT ) )
+				contactStatus |= Client::ICQPluginStatus;
+
+			mAccount->engine()->addICQAwayMessageRequest( contactId(), contactStatus );
 		}
 		else
 		{

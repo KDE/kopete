@@ -98,7 +98,7 @@ bool UserSearchTask::take( Transfer* t )
 		{
 			int moreUsersCount = buffer->getLEDWord();
 			emit searchFinished( moreUsersCount );
-			setSuccess( 0, QString::null );
+			setSuccess( 0, QString() );
 		}
 		setTransfer( 0 );
 	}

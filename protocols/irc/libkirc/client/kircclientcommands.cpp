@@ -56,7 +56,7 @@ ClientCommands::~ClientCommands()
 void ClientCommands::postEvent(const Message &msg, Message::Type messageType, const QString &message)
 {
 	Event event;
-//	event.setMessageType(messageType);
+//	event.setType(messageType);
 //	event.setFrom(msg.prefix());
 //	event.setCc(msg.socket().owner()); // server instead ?
 

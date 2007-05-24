@@ -1,7 +1,5 @@
 <ui version="4.0" >
  <author>Olivier Goffart</author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>CryptographyPrefsUI</class>
  <widget class="QWidget" name="CryptographyPrefsUI" >
   <property name="geometry" >
@@ -9,18 +7,30 @@
     <x>0</x>
     <y>0</y>
     <width>345</width>
-    <height>227</height>
+    <height>234</height>
    </rect>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>9</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>6</number>
    </property>
    <item row="1" column="0" colspan="3" >
-    <widget class="QCheckBox" name="Also_my_key" >
+    <widget class="QCheckBox" name="kcfg_EncryptOutgoing" >
      <property name="whatsThis" >
       <string>&lt;qt>Check this box if you want to encrypt outgoing messages with this key, so that you will be able to decrypt them yourself later.&lt;br>
 &lt;b>Warning:&lt;/b> This can increase the size of messages, and some protocols will refuse to send your messages because they are too large.</string>
@@ -31,33 +41,43 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="3" >
-    <widget class="QGroupBox" name="m_cache" >
+    <widget class="QGroupBox" name="kcfg_CacheBehavior" >
      <property name="title" >
       <string>Cache Passphrase</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>9</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>6</number>
       </property>
       <item row="2" column="0" colspan="3" >
-       <widget class="QRadioButton" name="Cache_Never" >
+       <widget class="QRadioButton" name="kcfg_Never" >
         <property name="text" >
          <string>Never</string>
         </property>
        </widget>
       </item>
       <item row="1" column="2" >
-       <widget class="QLabel" name="textLabel1" >
+       <widget class="QLabel" name="minutesLabel" >
         <property name="enabled" >
          <bool>false</bool>
         </property>
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -68,23 +88,21 @@
        </widget>
       </item>
       <item row="1" column="1" >
-       <widget class="QSpinBox" name="Cache_Time" >
+       <widget class="QSpinBox" name="kcfg_CacheTime" >
         <property name="enabled" >
          <bool>false</bool>
         </property>
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="maximum" >
-         <number>999</number>
-        </property>
         <property name="minimum" >
          <number>1</number>
+        </property>
+        <property name="maximum" >
+         <number>999</number>
         </property>
         <property name="value" >
          <number>15</number>
@@ -92,11 +110,9 @@
        </widget>
       </item>
       <item row="1" column="0" >
-       <widget class="QRadioButton" name="Cache_Till_Time" >
+       <widget class="QRadioButton" name="kcfg_Time" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>1</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -107,7 +123,7 @@
        </widget>
       </item>
       <item row="0" column="0" colspan="3" >
-       <widget class="QRadioButton" name="Cache_Till_App_Close" >
+       <widget class="QRadioButton" name="kcfg_Never" >
         <property name="text" >
          <string>Until Kopete closes</string>
         </property>
@@ -120,21 +136,21 @@
     </widget>
    </item>
    <item row="0" column="0" >
-    <widget class="QLabel" name="TextLabel1" >
+    <widget class="QLabel" name="pgpKeyLabel" >
      <property name="text" >
       <string>Your private PGP key:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="2" >
-    <widget class="QPushButton" name="m_selectOwnKey" >
+    <widget class="QPushButton" name="selectKey" >
      <property name="text" >
       <string>Select...</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1" >
-    <widget class="KLineEdit" name="PGP_private_key" >
+    <widget class="KLineEdit" name="kcfg_PrivateKeyId" >
      <property name="readOnly" >
       <bool>true</bool>
      </property>
@@ -157,7 +173,7 @@
     </spacer>
    </item>
    <item row="2" column="0" colspan="3" >
-    <widget class="QCheckBox" name="No_Passphrase_Handling" >
+    <widget class="QCheckBox" name="kcfg_DontAskForPassphrase" >
      <property name="text" >
       <string>Do not ask for the passphrase</string>
      </property>
@@ -170,33 +186,31 @@
  <customwidgets>
   <customwidget>
    <class>KLineEdit</class>
-   <extends></extends>
+   <extends>QLineEdit</extends>
    <header>klineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>PGP_private_key</tabstop>
-  <tabstop>m_selectOwnKey</tabstop>
-  <tabstop>Also_my_key</tabstop>
-  <tabstop>No_Passphrase_Handling</tabstop>
-  <tabstop>Cache_Till_App_Close</tabstop>
-  <tabstop>Cache_Till_Time</tabstop>
-  <tabstop>Cache_Time</tabstop>
-  <tabstop>Cache_Never</tabstop>
+  <tabstop>kcfg_PrivateKeyId</tabstop>
+  <tabstop>selectKey</tabstop>
+  <tabstop>kcfg_EncryptOutgoing</tabstop>
+  <tabstop>kcfg_DontAskForPassphrase</tabstop>
+  <tabstop>kcfg_Never</tabstop>
+  <tabstop>kcfg_Time</tabstop>
+  <tabstop>kcfg_CacheTime</tabstop>
+  <tabstop>kcfg_Never</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>Cache_Till_Time</sender>
+   <sender>kcfg_Time</sender>
    <signal>toggled(bool)</signal>
-   <receiver>Cache_Time</receiver>
+   <receiver>kcfg_CacheTime</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>59</x>
-     <y>140</y>
+     <x>55</x>
+     <y>160</y>
     </hint>
     <hint type="destinationlabel" >
      <x>93</x>
@@ -205,9 +219,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>Cache_Till_Time</sender>
+   <sender>kcfg_Time</sender>
    <signal>toggled(bool)</signal>
-   <receiver>textLabel1</receiver>
+   <receiver>minutesLabel</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -217,6 +231,22 @@
     <hint type="destinationlabel" >
      <x>218</x>
      <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_DontAskForPassphrase</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_CacheBehavior</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>134</x>
+     <y>79</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>90</x>
+     <y>97</y>
     </hint>
    </hints>
   </connection>

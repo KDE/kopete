@@ -60,7 +60,7 @@ public:
 	GaduAccount( Kopete::Protocol*, const QString& accountID );
 	~GaduAccount();
 	//{
-	void setAway( bool isAway, const QString& awayMessage = QString::null );
+	void setAway( bool isAway, const QString& awayMessage = QString() );
 	KActionMenu* actionMenu();
 	void dccRequest( GaduContact* );
 	void sendFile( GaduContact* , QString& );
@@ -78,8 +78,8 @@ public slots:
 	void setStatusMessage( const Kopete::StatusMessage& statusMessage );
 	//}
 
-	void changeStatus( const Kopete::OnlineStatus& status, const QString& descr = QString::null );
-	void slotLogin( int status = GG_STATUS_AVAIL, const QString& dscr = QString::null );
+	void changeStatus( const Kopete::OnlineStatus& status, const QString& descr = QString() );
+	void slotLogin( int status = GG_STATUS_AVAIL, const QString& dscr = QString() );
 	void slotLogoff();
 	void slotGoOnline();
 	void slotGoOffline();

@@ -1,10 +1,11 @@
 /*
     Kopete Oscar Protocol
-    aimlogintask.h - Handles logging into to the AIM service
+    oscarlogintask.h - Handles logging into to the OSCAR service
 
     Copyright (c) 2004 Matt Rogers <mattr@kde.org>
+    Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,19 +17,19 @@
     *************************************************************************
 */
 
-#ifndef _OSCAR_AIMLOGINTASK_H_
-#define _OSCAR_AIMLOGINTASK_H_
+#ifndef OSCARLOGINTASK_H
+#define OSCARLOGINTASK_H
 
 #include "task.h"
 
 using namespace Oscar;
 
-class AimLoginTask : public Task
+class OscarLoginTask : public Task
 {
 Q_OBJECT
 public:
-	AimLoginTask( Task* parent );
-	~AimLoginTask();
+	OscarLoginTask( Task* parent );
+	~OscarLoginTask();
 	bool take( Transfer* transfer );
 	virtual void onGo();
 
@@ -37,11 +38,8 @@ public:
 	const QString& bosHost() const;
 	const QString& bosPort() const;
 
-        static QByteArray parseAuthString( Buffer* );
-
-
 protected:
-	bool forMe( Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const;
 
 signals:
 	void haveAuthKey();

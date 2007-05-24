@@ -140,7 +140,9 @@ void SMSAccount::slotSendMessage(Kopete::Message &msg)
 			{
 				QString text = msg.plainBody();
 				text = text.mid( theService->maxSize() * i, theService->maxSize() );
-				Kopete::Message m( msg.from(), msg.to(), text, Kopete::Message::Outbound);
+				Kopete::Message m( msg.from(), msg.to() );
+				m.setPlainBody( text );
+				m.setDirection( Kopete::Message::Outbound );
 				
 				theService->send(m);
 			}

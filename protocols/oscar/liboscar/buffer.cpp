@@ -391,17 +391,27 @@ void Buffer::expandBuffer(unsigned int inc)
 
 QByteArray Buffer::getLNTS()
 {
-	Oscar::WORD len = getWord() - 1;
-	QByteArray qcs( getBlock(len) );
-	skipBytes( 1 );
+	Oscar::WORD len = getWord();
+	QByteArray qcs;
+	if ( len > 0 )
+	{
+		qcs = getBlock(len - 1);
+		skipBytes( 1 );
+	}
+
 	return qcs;
 }
 
 QByteArray Buffer::getLELNTS()
 {
-	Oscar::WORD len = getLEWord() - 1;
-	QByteArray qcs( getBlock(len) );
-	skipBytes( 1 );
+	Oscar::WORD len = getLEWord();
+	QByteArray qcs;
+	if ( len > 0 )
+	{
+		qcs = getBlock(len - 1);
+		skipBytes( 1 );
+	}
+
 	return qcs;
 }
 
@@ -550,7 +560,7 @@ int Buffer::addLEBlock( const QByteArray& block )
 	return ret;
 }
 
-QByteArray Buffer::addLEBlock()
+QByteArray Buffer::getLEBlock()
 {
 	Oscar::DWORD len = getLEWord();
 	return getBlock( len );

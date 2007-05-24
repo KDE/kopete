@@ -25,13 +25,15 @@
 Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent )
 	    : QWidget( parent )//, d( new Private )
 {
-	    setupUi( this );
+	setupUi( this );
+	mPassword->setPasswordMode(true);
 }
 
 Kopete::UI::PasswordWidget::PasswordWidget( Kopete::Password *from, QWidget *parent )
 	: QWidget( parent )//, d( new Private )
 {
 	setupUi( this );
+	mPassword->setPasswordMode(true);
 
 	load( from );
 }
@@ -51,17 +53,15 @@ void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
 	{
 		mRemembered->setTristate();
 		mRemembered->setCheckState( Qt::Checked );
+		mPassword->setEnabled( true );
 		source->requestWithoutPrompt( this, SLOT( receivePassword( const QString & ) ) );
 	}
 	else
 	{
 		mRemembered->setTristate( false );
 		mRemembered->setCheckState( Qt::Unchecked );
+		mPassword->setEnabled( false );
 	}
-
-
-	mPassword->setEnabled( false );
-    mPassword->setPasswordMode(true);
 
 	connect( mRemembered, SIGNAL( stateChanged( int ) ), this, SLOT( slotRememberChanged() ) );
 	connect( mPassword, SIGNAL( textChanged( const QString & ) ), this, SIGNAL( changed() ) );

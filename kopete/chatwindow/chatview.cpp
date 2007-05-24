@@ -39,7 +39,7 @@
 #include <kmessagebox.h>
 #include <kmenu.h>
 #include <kstringhandler.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
@@ -134,8 +134,8 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	         this, SLOT( slotChatDisplayNameChanged() ) );
 	connect( mgr, SIGNAL( contactAdded(const Kopete::Contact*, bool) ),
 	         this, SLOT( slotContactAdded(const Kopete::Contact*, bool) ) );
-	connect( mgr, SIGNAL( contactRemoved(const Kopete::Contact*, const QString&, Kopete::Message::MessageFormat, bool) ),
-	         this, SLOT( slotContactRemoved(const Kopete::Contact*, const QString&, Kopete::Message::MessageFormat, bool) ) );
+	connect( mgr, SIGNAL( contactRemoved(const Kopete::Contact*, const QString&, Qt::TextFormat, bool) ),
+	         this, SLOT( slotContactRemoved(const Kopete::Contact*, const QString&, Qt::TextFormat, bool) ) );
 	connect( mgr, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 	connect( mgr, SIGNAL( remoteTyping( const Kopete::Contact *, bool) ),
@@ -236,7 +236,7 @@ void ChatView::clear()
 
 void ChatView::setBgColor( const QColor &newColor )
 {
-// 	editPart()->setBgColor( newColor );
+// 	editPart()->setBackgroundColorColor( newColor );
 }
 
 void ChatView::setFont()
@@ -269,11 +269,11 @@ void ChatView::raise( bool activate )
 	if ( !m_mainWindow || !m_mainWindow->isActiveWindow() || activate )
 		makeVisible();
 #ifdef Q_WS_X11
-	if ( !KWM::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
+	if ( !KWindowSystem::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
 		if( Kopete::BehaviorSettings::self()->trayflashNotifySetCurrentDesktopToChatView() && activate )
-			KWM::setCurrentDesktop( KWM::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).desktop() );
+			KWindowSystem::setCurrentDesktop( KWindowSystem::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).desktop() );
 		else
-			KWM::setOnDesktop( m_mainWindow->winId(), KWM::currentDesktop() );
+			KWindowSystem::setOnDesktop( m_mainWindow->winId(), KWindowSystem::currentDesktop() );
 #endif
 	if(m_mainWindow->isMinimized())
 	{
@@ -293,7 +293,7 @@ void ChatView::raise( bool activate )
 	*/
 	//Will not activate window if user was typing
 	if ( activate )
-		KWM::activateWindow( m_mainWindow->winId() );
+		KWindowSystem::activateWindow( m_mainWindow->winId() );
 
 }
 
@@ -701,7 +701,19 @@ void ChatView::sendInternalMessage(const QString &msg, Qt::TextFormat format )
 {
 	// When closing kopete, some internal message may be sent because some contact are deleted
 	// these contacts can already be deleted
-	Kopete::Message message = Kopete::Message( 0L /*m_manager->myself()*/ , 0L /*m_manager->members()*/, msg, Kopete::Message::Internal, format );
+	Kopete::Message message = Kopete::Message();
+	message.setDirection( Kopete::Message::Internal );
+	switch(format)
+	{
+		default:
+		case Qt::PlainText:
+			message.setPlainBody( msg );
+			break;
+		case Qt::RichText:
+			message.setHtmlBody( msg );
+			break;
+	}
+	
 	// (in many case, this is useless to set myself as contact)
 	// TODO: set the contact which initiate the internal message,
 	// so we can later show a icon of it (for example, when he join a chat)

@@ -27,8 +27,6 @@ Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 class ConnectionPrivate;
 class Client;
 class ClientStream;
-class Connector;
-class ByteStream;
 class Transfer;
 class RateClassManager;
 class ContactManager;
@@ -51,12 +49,12 @@ class LIBOSCAR_EXPORT Connection : public QObject
 Q_OBJECT
 public:
 
-	Connection( Connector* connector, ClientStream* cs, const char* name = 0 );
+	Connection( ClientStream* cs, const char* name = 0 );
 	~Connection();
 
 	void setClient( Client* );
 
-	void connectToServer( const QString& server, bool auth = true );
+	void connectToServer( const QString& host, quint16 port );
 	/**
 	 * Close the connection and reset the connection data
 	 */
@@ -151,12 +149,6 @@ public:
 
 	/** Convenience function to get the root task for use in Tasks */
 	Task* rootTask() const;
-
-	/** Get the raw connector for this connection, in case we need it */
-	Connector* connector();
-
-	/** Get the byte stream for this connection, in case we need it */
-	ByteStream* byteStream();
 
 	void send( Transfer* t ) const;
 	void forcedSend( Transfer* t ) const;

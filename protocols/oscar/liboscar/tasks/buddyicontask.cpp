@@ -78,7 +78,7 @@ void BuddyIconTask::onGo()
 		sendIcon();
 }
 
-bool BuddyIconTask::forMe( const Transfer* transfer )
+bool BuddyIconTask::forMe( const Transfer* transfer ) const
 {
 	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
 	if ( !st )
@@ -125,7 +125,7 @@ bool BuddyIconTask::take( Transfer* transfer )
 	else
 		handleICQBuddyIconResponse();
 
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 	setTransfer( 0 );
 	return true;
 }
@@ -153,7 +153,7 @@ void BuddyIconTask::handleUploadResponse()
 	QByteArray hash( b->getBlock( iconHashSize ) );
 	//check the hash
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "hash " << hash << endl;
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 }
 
 

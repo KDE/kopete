@@ -76,12 +76,12 @@ protected slots:
 private:
 	Oscar::Presence presence();
 
-	void setPresenceFlags( Oscar::Presence::Flags flags, const QString &message = QString::null );
+	void setPresenceFlags( Oscar::Presence::Flags flags, const QString &message = QString() );
 
 	//const unsigned long fullStatus( const unsigned long plainStatus );
 
 private slots:
-	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString::null );
+	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString() );
 	
 	void slotToggleInvisible();
 

@@ -249,7 +249,7 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 {
 	if ( QRegExp("[\\d]+").exactMatch( contactId ) )
 	{
-		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString::null, ssiItem );
+		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString(), ssiItem );
 
 		if ( !ssiItem.alias().isEmpty() )
 			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
@@ -261,7 +261,7 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 	}
 	else
 	{
-		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString::null, ssiItem );
+		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString(), ssiItem );
 
 		if ( !ssiItem.alias().isEmpty() )
 			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
@@ -491,8 +491,10 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 			QString msg = engine()->statusMessage();
 			kDebug(14152) << k_funcinfo << "Got away message: " << msg << endl;
 			// Create the message
-			Kopete::Message chatMessage( myself(), aimSender, msg, Kopete::Message::Outbound,
-					Qt::RichText );
+			Kopete::Message chatMessage( myself(), aimSender );
+			chatMessage.setHtmlBody( msg );
+			chatMessage.setDirection( Kopete::Message::Outbound );
+			
 			kDebug(14152) << k_funcinfo << "Sending autoresponse" << endl;
 			// Send the message
 			aimSender->sendAutoResponse( chatMessage );
@@ -520,10 +522,10 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 				//sanitize;
 				QString sanitizedMsg = ocSender->sanitizedMessage( message.text( defaultCodec() ) );
 
-				Kopete::ContactPtrList me;
-				me.append( myself() );
-				Kopete::Message chatMessage( message.timestamp(), ocSender, me, sanitizedMsg,
-						Kopete::Message::Inbound, Qt::RichText );
+				Kopete::Message chatMessage( ocSender, myself() );
+				chatMessage.setDirection( Kopete::Message::Inbound );
+				chatMessage.setHtmlBody( sanitizedMsg );
+				chatMessage.setTimestamp( message.timestamp() );
 
 				session->appendMessage( chatMessage );
 			}
@@ -645,7 +647,6 @@ void AIMAccount::connectWithPassword( const QString &password )
 		QString screenName = accountId();
 		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
 		uint port = configGroup()->readEntry( "Port", 5190 );
-		Connection* c = setupConnection( server, port );
 
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
@@ -657,8 +658,10 @@ void AIMAccount::connectWithPassword( const QString &password )
 		Oscar::DWORD status = protocol()->statusManager()->oscarStatusOf( pres );
 		engine()->setStatus( status, mInitialStatusMessage );
 		updateVersionUpdaterStamp();
+
+		Connection* c = setupConnection();
 		engine()->start( server, port, accountId(), password.left(16) );
-		engine()->connectToServer( c, server, true /* doAuth */ );
+		engine()->connectToServer( c, server, port, true /* doAuth */ );
 
 		mInitialStatusMessage.clear();
 	}
@@ -700,7 +703,7 @@ void AIMAccount::setPrivacySettings( int privacy )
 void AIMAccount::setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses )
 {
 	ContactManager* ssi = engine()->ssiManager();
-	OContact item = ssi->findItem( QString::null, ROSTER_VISIBILITY );
+	OContact item = ssi->findItem( QString(), ROSTER_VISIBILITY );
 
 	QList<Oscar::TLV> tList;
 
@@ -710,7 +713,7 @@ void AIMAccount::setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses )
 	if ( !item )
 	{
 		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "Adding new privacy TLV item" << endl;
-		OContact s( QString::null, 0, ssi->nextContactId(), ROSTER_VISIBILITY, tList );
+		OContact s( QString(), 0, ssi->nextContactId(), ROSTER_VISIBILITY, tList );
 		engine()->modifyContactItem( item, s );
 	}
 	else

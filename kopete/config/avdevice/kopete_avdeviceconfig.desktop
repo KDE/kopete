@@ -10,7 +10,6 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Devices
-Name[bg]=Устройства
 Name[br]=Trobarzhelloù
 Name[ca]=Dispositius
 Name[cs]=Zařízení
@@ -61,4 +60,5 @@ Comment=Kopete Video and Audio Device Settings
 Comment[sv]=Kopetes video- och ljudenhetsinställningar
 Comment[uk]=Параметри відео і аудіо пристроїв у Kopete
 Comment[x-test]=xxKopete Video and Audio Device Settingsxx
+Comment[zh_TW]=Kopete 的影像與聲音裝置設定
 DocPath=kopete/configure-dialog.html#configuring-avdevice

@@ -165,10 +165,13 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	// check for errors
 	if ( message.type () == "error" )
 	{
-		newMessage = new Kopete::Message( message.timeStamp (), this, contactList,
-										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
-										  message.body (), message.error().text ),
-										message.subject(), Kopete::Message::Inbound, Qt::PlainText, viewType );
+		newMessage = new Kopete::Message( this, contactList );
+		newMessage->setPlainBody( i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
+										  message.body (), message.error().text ) );
+		newMessage->setTimestamp( message.timeStamp() );
+		newMessage->setSubject( message.subject() );
+		newMessage->setDirection( Kopete::Message::Inbound );
+		newMessage->setRequestedPlugin( viewType );
 	}
 	else
 	{
@@ -197,10 +200,11 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 		}
 
 		// convert XMPP::Message into Kopete::Message
-		newMessage = new Kopete::Message ( message.timeStamp (), subContact, contactList, body,
-										 message.subject (),
-										 subContact != mManager->myself() ? Kopete::Message::Inbound : Kopete::Message::Outbound,
-										 Qt::PlainText, viewType );
+		newMessage = new Kopete::Message ( subContact, contactList );
+		newMessage->setDirection( subContact != mManager->myself() ? Kopete::Message::Inbound : Kopete::Message::Outbound );
+		newMessage->setTimestamp( message.timeStamp() );
+		newMessage->setPlainBody( body );
+		newMessage->setRequestedPlugin( viewType );
 	}
 
 	// append message to manager

@@ -19,7 +19,7 @@
 #ifndef XTRAZXSERVICE_H
 #define XTRAZXSERVICE_H
 
-#include <QString>
+
 #include <QDomDocument>
 #include <QDomElement>
 

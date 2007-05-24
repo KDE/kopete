@@ -11,7 +11,6 @@ X-KDE-ParentComponents=kopete
 
 Name=Appearance
 Name[ar]=المظهر
-Name[bg]=Външен вид
 Name[br]=Neuziadur
 Name[ca]=Aparença
 Name[cs]=Vzhled
@@ -57,6 +56,7 @@ Name[tg]=Намуди зоҳирӣ
 Name[tr]=Görünüm
 Name[uk]=Вигляд
 Name[uz]=Кўриниши
+Name[wa]=Rivnance
 Name[x-test]=xxAppearancexx
 Name[zh_HK]=外觀
 Name[zh_TW]=外觀
@@ -64,6 +64,7 @@ Comment=Change Kopete Look And Feel
 Comment[sv]=Ändra Kopetes utseende och känsla
 Comment[uk]=Зміна вигляду і поведінки Kopete
 Comment[x-test]=xxChange Kopete Look And Feelxx
+Comment[zh_TW]=改變 Kopete 的外觀與感覺
 DocPath=kopete/configure-dialog.html#configuring-appearance
 
 

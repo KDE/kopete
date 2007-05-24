@@ -41,12 +41,9 @@
         <number>6</number>
        </property>
        <item row="0" column="0" >
-        <widget class="Q3GroupBox" name="groupBox59" >
+        <widget class="QGroupBox" name="groupBox59" >
          <property name="title" >
           <string>Account Information</string>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -274,7 +271,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0" >
-        <widget class="Q3GroupBox" name="groupBox1" >
+        <widget class="QGroupBox" name="groupBox1" >
          <property name="sizePolicy" >
           <sizepolicy>
            <hsizetype>3</hsizetype>
@@ -285,9 +282,6 @@
          </property>
          <property name="title" >
           <string>Connection Preferences</string>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -356,7 +350,7 @@
         </widget>
        </item>
        <item row="2" column="0" >
-        <widget class="Q3GroupBox" name="groupBox60" >
+        <widget class="QGroupBox" name="groupBox60" >
          <property name="sizePolicy" >
           <sizepolicy>
            <hsizetype>3</hsizetype>
@@ -373,9 +367,6 @@
          </property>
          <property name="title" >
           <string>Run Following Commands on Connect</string>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -448,7 +439,7 @@
         <number>6</number>
        </property>
        <item row="1" column="0" >
-        <widget class="Q3GroupBox" name="groupBox6" >
+        <widget class="QGroupBox" name="groupBox6" >
          <property name="sizePolicy" >
           <sizepolicy>
            <hsizetype>3</hsizetype>
@@ -465,9 +456,6 @@
          </property>
          <property name="title" >
           <string>Custom CTCP Replies</string>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -538,12 +526,9 @@
         </widget>
        </item>
        <item row="0" column="0" >
-        <widget class="Q3GroupBox" name="groupBox5" >
+        <widget class="QGroupBox" name="groupBox5" >
          <property name="title" >
           <string>Default Messages</string>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -622,12 +607,9 @@
         </spacer>
        </item>
        <item row="0" column="0" >
-        <widget class="Q3GroupBox" name="groupBox7" >
+        <widget class="QGroupBox" name="groupBox7" >
          <property name="title" >
           <string>Message Destinations</string>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -842,14 +824,6 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>tabWidget2</tabstop>
   <tabstop>nickNames</tabstop>

@@ -1,7 +1,5 @@
 <ui version="4.0" >
  <author>Olivier Goffart</author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>MSNEditAccountUI</class>
  <widget class="QWidget" name="MSNEditAccountUI" >
   <property name="geometry" >
@@ -16,54 +14,73 @@
    <string>Account Preferences - MSN</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
    </property>
+   <property name="leftMargin" >
+    <number>9</number>
+   </property>
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
+   </property>
    <item>
     <widget class="QTabWidget" name="tabWidget3" >
-     <property name="tabShape" >
-      <enum>QTabWidget::Rounded</enum>
+     <property name="currentIndex" >
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_connection" >
       <attribute name="title" >
        <string>&amp;Basic Setup</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="QGroupBox" name="m_accountInfo" >
          <property name="title" >
           <string>Account Information</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
           </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QLabel" name="TextLabel1_3" >
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>1</hsizetype>
-                <vsizetype>5</vsizetype>
+               <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -98,7 +115,7 @@
            </layout>
           </item>
           <item>
-           <widget class="Kopete::UI::PasswordWidget" name="m_password" />
+           <widget class="Kopete::UI::PasswordWidget" native="1" name="m_password" />
           </item>
           <item>
            <widget class="QCheckBox" name="m_autologin" >
@@ -129,18 +146,25 @@
           <string>Registration</string>
          </property>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QLabel" name="textLabel6" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>3</hsizetype>
-              <vsizetype>1</vsizetype>
+             <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -192,23 +216,26 @@
        <string>Accou&amp;nt Preferences</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="QGroupBox" name="groupBox_2" >
          <property name="title" >
           <string>Connection Preferences</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QCheckBox" name="optionOverrideServer" >
@@ -219,19 +246,40 @@
           </item>
           <item>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>6</number>
             </property>
             <item row="0" column="1" >
              <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>3</number>
+              </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
               </property>
               <item>
                <widget class="QLabel" name="labelServer" >
@@ -288,11 +336,11 @@
               <property name="whatsThis" >
                <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
               </property>
-              <property name="maximum" >
-               <number>65535</number>
-              </property>
               <property name="minimum" >
                <number>1</number>
+              </property>
+              <property name="maximum" >
+               <number>65535</number>
               </property>
               <property name="value" >
                <number>1863</number>
@@ -318,9 +366,7 @@
                <bool>false</bool>
               </property>
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>3</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -347,11 +393,20 @@
           <string>Global MSN Options</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QLabel" name="textLabel1_3" >
@@ -366,9 +421,7 @@
           <item>
            <widget class="QCheckBox" name="NotifyNewChat" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>1</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -383,11 +436,20 @@
           </item>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QLabel" name="textLabel1_4" >
@@ -405,9 +467,7 @@
             <item>
              <widget class="QComboBox" name="DownloadPicture" >
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>3</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -473,11 +533,20 @@ Only works for emoticons in the PNG format.</string>
           <string>Privacy</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QCheckBox" name="SendClientInfo" >
@@ -519,11 +588,20 @@ Only works for emoticons in the PNG format.</string>
           </item>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QCheckBox" name="SendJabber" >
@@ -618,26 +696,27 @@ Only works for emoticons in the PNG format.</string>
        <string>U&amp;ser Info</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>6</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="QLabel" name="TextLabel2_2_2" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>4</hsizetype>
-             <vsizetype>4</vsizetype>
+            <sizepolicy vsizetype="Maximum" hsizetype="Maximum" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -671,10 +750,22 @@ Only works for emoticons in the PNG format.</string>
           <string>Phone Numbers</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>9</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>6</number>
           </property>
           <item row="2" column="0" >
@@ -725,18 +816,42 @@ Only works for emoticons in the PNG format.</string>
           <string>Display Picture</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>9</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>6</number>
           </property>
           <item row="1" column="0" >
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>6</number>
             </property>
             <item rowspan="2" row="0" column="0" >
@@ -757,11 +872,20 @@ Only works for emoticons in the PNG format.</string>
             </item>
             <item row="1" column="1" >
              <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>6</number>
+              </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
               </property>
               <item>
                <widget class="QPushButton" name="m_selectImage" >
@@ -797,9 +921,7 @@ Only works for emoticons in the PNG format.</string>
                <bool>false</bool>
               </property>
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>5</hsizetype>
-                <vsizetype>5</vsizetype>
+               <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -839,10 +961,19 @@ Only works for emoticons in the PNG format.</string>
           </item>
           <item rowspan="3" row="0" column="1" >
            <layout class="QVBoxLayout" >
-            <property name="margin" >
+            <property name="spacing" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
              <number>0</number>
             </property>
             <item>
@@ -851,9 +982,7 @@ Only works for emoticons in the PNG format.</string>
                <bool>false</bool>
               </property>
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>0</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -940,12 +1069,6 @@ Only works for emoticons in the PNG format.</string>
        <string>Con&amp;tacts</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="QLabel" name="label_font" >
          <property name="text" >
@@ -957,10 +1080,22 @@ Only works for emoticons in the PNG format.</string>
        </item>
        <item>
         <layout class="QGridLayout" >
-         <property name="margin" >
+         <property name="leftMargin" >
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
           <number>6</number>
          </property>
          <item row="0" column="2" >
@@ -978,11 +1113,20 @@ Only works for emoticons in the PNG format.</string>
          </item>
          <item row="1" column="1" >
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>6</number>
+           </property>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
            </property>
            <item>
             <widget class="QPushButton" name="m_blockButton" >
@@ -1033,11 +1177,20 @@ Only works for emoticons in the PNG format.</string>
        </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>6</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <spacer>
@@ -1085,11 +1238,20 @@ Only works for emoticons in the PNG format.</string>
        </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>6</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <spacer>
@@ -1172,23 +1334,26 @@ Only works for emoticons in the PNG format.</string>
        <string>Co&amp;nnection</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="QGroupBox" name="groupBox_4" >
          <property name="title" >
           <string>Connection Preferences (for advanced users)</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QCheckBox" name="optionOverrideServer" >
@@ -1199,27 +1364,57 @@ Only works for emoticons in the PNG format.</string>
           </item>
           <item>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>6</number>
             </property>
             <item row="0" column="1" >
              <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>6</number>
               </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
+              </property>
               <item>
                <layout class="QHBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
                 <property name="spacing" >
                  <number>3</number>
+                </property>
+                <property name="leftMargin" >
+                 <number>0</number>
+                </property>
+                <property name="topMargin" >
+                 <number>0</number>
+                </property>
+                <property name="rightMargin" >
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin" >
+                 <number>0</number>
                 </property>
                 <item>
                  <widget class="QLabel" name="labelServer" >
@@ -1255,9 +1450,7 @@ Only works for emoticons in the PNG format.</string>
                  <bool>false</bool>
                 </property>
                 <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>3</hsizetype>
-                  <vsizetype>0</vsizetype>
+                 <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -1284,11 +1477,11 @@ Only works for emoticons in the PNG format.</string>
                 <property name="whatsThis" >
                  <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
                 </property>
-                <property name="maximum" >
-                 <number>65535</number>
-                </property>
                 <property name="minimum" >
                  <number>1</number>
+                </property>
+                <property name="maximum" >
+                 <number>65535</number>
                 </property>
                 <property name="value" >
                  <number>1863</number>
@@ -1330,11 +1523,20 @@ Only check this option if the normal connection doesn't work.</string>
             </item>
             <item row="2" column="1" >
              <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>6</number>
+              </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
               </property>
               <item>
                <widget class="QCheckBox" name="m_useWebcamPort" >
@@ -1357,11 +1559,11 @@ Only check this option if the normal connection doesn't work.</string>
                 <property name="whatsThis" >
                  <string>If you are behind a firewall, you may specify a base port to use for the incoming connection, and configure your firewall to accept connections on a range of 10 ports, starting at this one. Incoming connections are used for the webcam. If you don't specify a port yourself, the operating system will choose an available port for you. It is recommended to leave the checkbox unchecked.</string>
                 </property>
-                <property name="maximum" >
-                 <number>65535</number>
-                </property>
                 <property name="minimum" >
                  <number>1</number>
+                </property>
+                <property name="maximum" >
+                 <number>65535</number>
                 </property>
                 <property name="value" >
                  <number>6891</number>
@@ -1421,28 +1623,21 @@ Only check this option if the normal connection doesn't work.</string>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>Q3ListBox</class>
+   <extends>Q3Frame</extends>
+   <header>q3listbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
    <extends></extends>
    <header>kopetepasswordwidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3ListBox</class>
-   <extends></extends>
-   <header>q3listbox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>KComboBox</class>
-   <extends></extends>
-   <header>kcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>

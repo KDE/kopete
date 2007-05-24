@@ -22,7 +22,7 @@
 #define XMPPXDATA_H
 
 #include <QDomElement>
-#include <QString>
+
 #include <QMap>
 #include <QList>
 #include <QSharedDataPointer>

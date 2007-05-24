@@ -17,7 +17,7 @@
 
 #include <qcheckbox.h>
 #include <qlabel.h>
-#include <qtooltip.h>
+
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qpainter.h>

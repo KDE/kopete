@@ -60,7 +60,7 @@ ClientTask::~ClientTask()
 void ClientTask::postEvent(const Message &msg, Event::MessageType messageType, const QString &message)
 {
 	Event event;
-	event.setMessageType(messageType);
+	event.setType(messageType);
 //	event.setFrom(msg.prefix());
 //	event.setCc(msg.socket().owner()); // server instead ?
 

@@ -335,9 +335,9 @@ void QQAccount::slotNewContactList()
 			c->setAllowed( false );
 			c->setReversed( false );
 			c->setDeleted( true );
-			c->setInfo( "PHH", QString::null );
-			c->setInfo( "PHW", QString::null );
-			c->setInfo( "PHM", QString::null );
+			c->setInfo( "PHH", QString() );
+			c->setInfo( "PHW", QString() );
+			c->setInfo( "PHM", QString() );
 			// c->removeProperty( QQProtocol::protocol()->propGuid );
 		}
 		m_newContactList=true;
@@ -450,10 +450,13 @@ void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva
 
 	QQChatSession* sess = chatSession( contactList, guid, Kopete::Contact::CanCreate );
 	Q_ASSERT( sess );
-	Kopete::Message * newMessage =
-			new Kopete::Message( timestamp, sender, contactList, msg,
-								 Kopete::Message::Inbound, Qt::PlainText );
-	sess->appendMessage( *newMessage );
+
+	Kopete::Message newMessage( sender, contactList );
+	newMessage.setTimestamp( timestamp );
+	newMessage.setPlainBody( msg );
+	newMessage.setDirection( Kopete::Message::Inbound );
+
+	sess->appendMessage( newMessage );
 }
 
 

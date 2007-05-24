@@ -22,7 +22,7 @@
 #ifndef _OSCARMESSAGE_H_
 #define _OSCARMESSAGE_H_
 
-#include <QString>
+
 #include <QDateTime>
 #include <QSharedDataPointer>
 

@@ -81,7 +81,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const QStringList& )
 					i18n( "Invisible" ) , i18n( "I&nvisible" )),
 			
 			gaduStatusAvail_(Kopete::OnlineStatus::Online, GG_STATUS_AVAIL, this, GG_STATUS_AVAIL,
-				QStringList(QString::null), i18n( "Online" ) , i18n( "&Online" ) ,  
+				QStringList(QString()), i18n( "Online" ) , i18n( "&Online" ) ,  
 				Kopete::OnlineStatusManager::Online ),
 			
 			gaduStatusAvailDescr_(Kopete::OnlineStatus::Online, GG_STATUS_AVAIL_DESCR, this, GG_STATUS_AVAIL_DESCR,

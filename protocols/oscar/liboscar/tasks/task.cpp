@@ -52,7 +52,7 @@ Task::Task(Task *parent)
 }
 
 Task::Task(Connection* parent, bool)
-:QObject(0)
+:QObject(parent)
 {
 	init();
 	d->client = parent;

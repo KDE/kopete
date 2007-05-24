@@ -65,13 +65,13 @@ bool WarningTask::take( Transfer* transfer )
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Warning level increased " << m_increase 
 			<< " to " << m_newLevel << endl;
 		emit userWarned( m_contact, m_increase, m_newLevel );
-		setSuccess( 0, QString::null );
+		setSuccess( 0, QString() );
 		setTransfer( 0 );
 		return true;
 	}
 	else
 	{
-		setError( 0, QString::null );
+		setError( 0, QString() );
 		return false;
 	}
 }

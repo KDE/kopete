@@ -355,7 +355,7 @@ void MSNP2PDisplatcher::parseMessage( MessageStruct & msgStr)
 					this, SLOT( slotFileTransferRefused( const Kopete::FileTransferInfo & ) ) );
 
 			//show a dialog to ask the transfer.
-			Kopete::TransferManager::transferManager()->askIncomingTransfer(c  , filename , filesize, QString::null, QString::number(m_sessionId));
+			Kopete::TransferManager::transferManager()->askIncomingTransfer(c  , filename , filesize, QString(), QString::number(m_sessionId));
 
 		}
 #if 0
@@ -432,7 +432,7 @@ void MSNP2PDisplatcher::requestDisplayPicture( const QString &myHandle, const QS
 	p2p->m_CallID=randomid();
 
 	msnObject=QString::fromUtf8(KCodecs::base64Encode( msnObject.toUtf8() ));
-	msnObject.replace('=' , QString::null ) ;
+	msnObject.replace('=' , QString() ) ;
 
 
 	QString content="EUF-GUID: {A4268EEC-FEC5-49E5-95C3-F126696BDBF6}\r\n"

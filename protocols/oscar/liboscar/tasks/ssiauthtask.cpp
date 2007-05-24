@@ -93,7 +93,7 @@ void SSIAuthTask::grantFutureAuth( const QString& uin, const QString& reason )
 	
 	Buffer* buf = new Buffer();
 	buf->addBUIN( uin.toLatin1() );
-	buf->addBSTR( reason.toLatin1() );
+	buf->addBSTR( reason.toUtf8() );
 	buf->addWord( 0x0000 ); // Unknown
 	
 	Transfer* t = createTransfer( f, s, buf );
@@ -107,7 +107,7 @@ void SSIAuthTask::sendAuthRequest( const QString& uin, const QString& reason )
 	
 	Buffer* buf = new Buffer();
 	buf->addBUIN( uin.toLatin1() );
-	buf->addBSTR( reason.toLatin1() );
+	buf->addBSTR( reason.toUtf8() );
 	buf->addWord( 0x0000 ); // Unknown
 	
 	Transfer* t = createTransfer( f, s, buf );
@@ -122,7 +122,7 @@ void SSIAuthTask::sendAuthReply( const QString& uin, const QString& reason, bool
 	Buffer* buf = new Buffer();
 	buf->addBUIN( uin.toLatin1() );
 	buf->addByte( auth ? 0x01 : 0x00 ); // accepted / declined
-	buf->addBSTR( reason.toLatin1() );
+	buf->addBSTR( reason.toUtf8() );
 	
 	Transfer* t = createTransfer( f, s, buf );
 	send( t );
@@ -133,9 +133,7 @@ void SSIAuthTask::handleFutureAuthGranted()
 	Buffer* buf = transfer()->buffer();
 	
 	QString uin = Oscar::normalize( buf->getBUIN() );
-	QString reason = buf->getBSTR();
-	
-	buf->getWord(); // 0x0000 - Unknown
+	QString reason = parseReason( buf );
 	
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Future authorization granted from " << uin << endl;
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
@@ -147,9 +145,7 @@ void SSIAuthTask::handleAuthRequested()
 	Buffer* buf = transfer()->buffer();
 	
 	QString uin = Oscar::normalize( buf->getBUIN() );
-	QString reason = buf->getBSTR();
-	
-	buf->getWord(); // 0x0000 - Unknown
+	QString reason = parseReason( buf );
 	
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization requested from " << uin << endl;
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
@@ -163,7 +159,7 @@ void SSIAuthTask::handleAuthReplied()
 	
 	QString uin = Oscar::normalize( buf->getBUIN() );
 	bool accepted = buf->getByte();
-	QString reason = buf->getBSTR();
+	QString reason = parseReason( buf );
 	
 	if ( accepted )
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization request accepted by " << uin << endl;
@@ -182,6 +178,28 @@ void SSIAuthTask::handleAddedMessage()
 	
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "User " << uin << " added you to the contact list" << endl;
 	emit contactAddedYou( uin );
+}
+
+QString SSIAuthTask::parseReason( Buffer* buffer )
+{
+	QTextCodec* codec = 0;
+	
+	QByteArray reasonData = buffer->getBSTR();
+	Oscar::WORD tlvCount = buffer->getWord();
+	
+	if ( tlvCount > 0 )
+	{
+		QList<Oscar::TLV> tlvList = buffer->getTLVList();
+		
+		Oscar::TLV encodingTlv = findTLV( tlvList, 0x0001 );
+		if ( encodingTlv )
+			codec = Oscar::codecForName( encodingTlv.data );
+	}
+	
+	if ( codec )
+		return codec->toUnicode( reasonData );
+	else
+		return QString::fromUtf8( reasonData );
 }
 
 #include "ssiauthtask.moc"

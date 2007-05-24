@@ -20,9 +20,7 @@
 #ifndef KOPETE_AVVIDEODEVICELISTITEM_H
 #define KOPETE_AVVIDEODEVICELISTITEM_H
 
-#ifdef HAVE_CONFIG_H
 #include <config-kopete.h>
-#endif
 
 #include <sys/time.h>
 #include <sys/mman.h>

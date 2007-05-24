@@ -118,17 +118,15 @@ void TestbedContact::sendMessage( Kopete::Message &message )
 
 void TestbedContact::receivedMessage( const QString &message )
 {
-	// Create a Kopete::Message
-	Kopete::Message *newMessage;
 	Kopete::ContactPtrList contactList;
-	account();
 	contactList.append( account()->myself() );
-	newMessage = new Kopete::Message( this, contactList, message, Kopete::Message::Inbound );
+	// Create a Kopete::Message
+	Kopete::Message newMessage( this, contactList );
+	newMessage.setPlainBody( message );
+	newMessage.setDirection( Kopete::Message::Inbound );
 
 	// Add it to the manager
-	manager()->appendMessage (*newMessage);
-
-	delete newMessage;
+	manager()->appendMessage (newMessage);
 }
 
 void TestbedContact::slotChatSessionDestroyed()

@@ -98,9 +98,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received " << incomingBytes.count() << " bytes. " << endl;
 	// store locally
-	int oldsize = m_in.size();
-	m_in.resize( oldsize + incomingBytes.size() );
-	memcpy( m_in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
+	m_in.append( incomingBytes );
 	m_state = Available;
 
 	// convert every event in the chunk to a Transfer, signalling it back to the clientstream
@@ -241,7 +239,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 
 void CoreProtocol::reset()
 {
-	m_in.resize( 0 );
+	m_in.clear();
 }
 
 void CoreProtocol::slotOutgoingData( const QByteArray &out )

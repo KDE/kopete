@@ -23,7 +23,7 @@
 
 #include <QCursor>
 #include <QLayout>
-#include <QToolTip>
+
 #include <QTimer>
 #include <QPixmap>
 #include <QCloseEvent>
@@ -54,7 +54,7 @@
 #include <kmenubar.h>
 #include <kstatusbar.h>
 #include <kglobalaccel.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kdeversion.h>
 #include <kinputdialog.h>
 #include <kplugininfo.h>
@@ -265,6 +265,8 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
     //install an event filter for the quick search toolbar so we can
     //catch the hide events
     toolBar( "quickSearchBar" )->installEventFilter( this );
+    //it does not make sense to have a toolbar that does use the half sceen...
+    toolBar( "mainToolBar" )->setToolButtonStyle( Qt::ToolButtonIconOnly );
 }
 
 void KopeteWindow::initView()
@@ -424,10 +426,10 @@ void KopeteWindow::slotShowHide()
 		//raise() and show() should normaly deIconify the window. but it doesn't do here due
 		// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
 		if(isMinimized())
-			KWM::unminimizeWindow(winId());
+			KWindowSystem::unminimizeWindow(winId());
 
-		if(!KWM::windowInfo(winId(),NET::WMDesktop).onAllDesktops())
-			KWM::setOnDesktop(winId(), KWM::currentDesktop());
+		if(!KWindowSystem::windowInfo(winId(),NET::WMDesktop).onAllDesktops())
+			KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
 #endif
 		raise();
 		activateWindow();

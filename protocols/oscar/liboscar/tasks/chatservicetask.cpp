@@ -57,7 +57,7 @@ void ChatServiceTask::onGo()
 {
     if ( !m_message )
     {
-        setSuccess( true, QString::null );
+        setSuccess( true, QString() );
         return;
     }
 
@@ -159,7 +159,7 @@ bool ChatServiceTask::take( Transfer* t )
         break;
     };
 
-    setSuccess( 0, QString::null );
+    setSuccess( 0, QString() );
     setTransfer( 0 );
     return true;
 }

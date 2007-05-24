@@ -17,7 +17,7 @@
 #ifndef KOPETECHATWINDOWSTYLE_H
 #define KOPETECHATWINDOWSTYLE_H
 
-#include <QString>
+
 #include <QHash>
 
 #include <kopete_export.h>

@@ -18,7 +18,7 @@
     *************************************************************************
 */
 
-#include <QString>
+
 
 #include "logintask.h"
 #include "transfer.h"
@@ -232,7 +232,7 @@ void LoginTask::handleAuthResp(YMSGTransfer *t)
 	{
 		case( Yahoo::ServiceList ):
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting Signal" << endl;
-			emit loginResponse( Yahoo::LoginOk, QString::null );
+			emit loginResponse( Yahoo::LoginOk, QString() );
 		break;
 		case( Yahoo::ServiceAuthResp ):
 			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting Signal" << endl;

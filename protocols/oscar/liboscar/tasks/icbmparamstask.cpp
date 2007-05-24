@@ -137,7 +137,7 @@ void ICBMParamsTask::sendMessageParams( int channel )
 	
 	Transfer* st = createTransfer( f, s, buffer );
 	send( st );
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 }
 //kate: tab-width 4; indent-mode csands;
 

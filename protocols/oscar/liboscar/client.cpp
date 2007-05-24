@@ -2,11 +2,12 @@
 	client.cpp - Kopete Oscar Protocol
 
 	Copyright (c) 2004-2005 Matt Rogers <mattr@kde.org>
+    Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
 
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
 	Based on Iris, Copyright (C) 2003  Justin Karneges
 
-	Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+	Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
 	*************************************************************************
 	*                                                                       *
@@ -24,6 +25,7 @@
 #include <QList>
 #include <QByteArray>
 #include <qtextcodec.h>
+#include <QtNetwork/QTcpSocket>
 
 #include <kdebug.h> //for kDebug()
 #include <klocale.h>
@@ -42,7 +44,6 @@
 #include "messagereceivertask.h"
 #include "onlinenotifiertask.h"
 #include "oscarclientstream.h"
-#include "oscarconnector.h"
 #include "oscarsettings.h"
 #include "oscarutils.h"
 #include "ownuserinfotask.h"
@@ -67,6 +68,7 @@
 #include "oscarmessageplugin.h"
 #include "xtrazxtraznotify.h"
 #include "xtrazxawayservice.h"
+#include "closeconnectiontask.h"
 
 
 namespace
@@ -202,7 +204,7 @@ Oscar::Settings* Client::clientSettings() const
 	return d->settings;
 }
 
-void Client::connectToServer( Connection *c, const QString& server, bool auth )
+void Client::connectToServer( Connection *c, const QString& host, quint16 port, bool auth )
 {
 	d->connections.append( c );
 	if ( auth == true )
@@ -212,7 +214,7 @@ void Client::connectToServer( Connection *c, const QString& server, bool auth )
 	}
 
 	connect( c, SIGNAL( socketError( int, const QString& ) ), this, SLOT( determineDisconnection( int, const QString& ) ) );
-	c->connectToServer(server, auth);
+	c->connectToServer( host, port );
 }
 
 void Client::start( const QString &host, const uint port, const QString &userId, const QString &pass )
@@ -227,6 +229,10 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 
 void Client::close()
 {
+	QList<Connection*> cList = d->connections.connections();
+	for ( int i = 0; i < cList.size(); i++ )
+		(new CloseConnectionTask( cList.at(i)->rootTask() ))->go( true );
+
 	d->active = false;
 	d->awayMsgRequestTimer->stop();
 	d->awayMsgRequestQueue.clear();
@@ -398,7 +404,7 @@ void Client::lt_loginFinished()
 void Client::startStageTwo()
 {
 	//create a new connection and set it up
-	Connection* c = createConnection( d->host, QString::number( d->port ) );
+	Connection* c = createConnection();
 	new CloseConnectionTask( c->rootTask() );
 
 	//create the new login task
@@ -409,7 +415,7 @@ void Client::startStageTwo()
 
 	//connect
 	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
-	connectToServer( c, d->host, false ) ;
+	connectToServer( c, d->host, d->port, false ) ;
 
 }
 
@@ -593,6 +599,18 @@ void Client::receivedMessage( const Oscar::Message& msg )
 					}
 				}
 			}
+			else if ( type == Oscar::MessagePlugin::StatusMsgExt )
+			{
+				Buffer buffer;
+
+				QTextCodec* codec = d->codecProvider->codecForContact( msg.sender() );
+				buffer.addLEDBlock( codec->fromUnicode( statusMessage() ) );
+				//TODO: Change this to text/x-aolrtf
+				buffer.addLEDBlock( "text/plain" );
+
+				msg.plugin()->setData( buffer.buffer() );
+				emit userReadsStatusMessage( msg.sender() );
+			}
 		}
 		else
 		{
@@ -636,6 +654,16 @@ void Client::receivedMessage( const Oscar::Message& msg )
 							                             service->description(), service->message() );
 					}
 				}
+			}
+			else if ( type == Oscar::MessagePlugin::StatusMsgExt )
+			{
+				// we got a response to a status message request.
+				Buffer buffer( msg.plugin()->data() );
+
+				QTextCodec* codec = d->codecProvider->codecForContact( msg.sender() );
+				QString awayMessage = codec->toUnicode( buffer.getLEDBlock() );
+				kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << awayMessage << endl;
+				emit receivedAwayMessage( msg.sender(), awayMessage );
 			}
 		}
 	}
@@ -990,38 +1018,82 @@ void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactSta
 	Oscar::Message msg;
 	msg.setChannel( 2 );
 	msg.setReceiver( contact );
-	msg.addProperty( Oscar::Message::StatusMessageRequest );
-	switch ( contactStatus )
-	{
-	case ICQAway:
-		msg.setMessageType( Oscar::MessageType::AutoAway ); // away
-		break;
-	case ICQOccupied:
-		msg.setMessageType( Oscar::MessageType::AutoBusy ); // occupied
-		break;
-	case ICQNotAvailable:
-		msg.setMessageType( Oscar::MessageType::AutoNA ); // not awailable
-		break;
-	case ICQDoNotDisturb:
-		msg.setMessageType( Oscar::MessageType::AutoDND ); // do not disturb
-		break;
-	case ICQFreeForChat:
-		msg.setMessageType( Oscar::MessageType::AutoFFC ); // free for chat
-		break;
-	case ICQXStatus:
-		{
-			msg.setMessageType( Oscar::MessageType::Plugin ); // plugin message
-			msg.addProperty( ~ Oscar::Message::StatusMessageRequest );
 
-			Xtraz::XtrazNotify xNotify;
-			xNotify.setSenderUni( userId() );
-			msg.setPlugin( xNotify.statusRequest() );
+	if ( (contactStatus & ICQXStatus) == ICQXStatus )
+	{
+		Xtraz::XtrazNotify xNotify;
+		xNotify.setSenderUni( userId() );
+
+		msg.setMessageType( Oscar::MessageType::Plugin ); // plugin message
+		msg.setPlugin( xNotify.statusRequest() );
+	}
+	else if ( (contactStatus & ICQPluginStatus) == ICQPluginStatus )
+	{
+		Oscar::WORD subTypeId = 0xFFFF;
+		QByteArray subTypeText;
+
+		switch ( contactStatus & ICQStatusMask )
+		{
+		case ICQOnline:
+		case ICQFreeForChat:
+		case ICQAway:
+			subTypeId = 1;
+			subTypeText = "Away Status Message";
 			break;
+		case ICQOccupied:
+		case ICQDoNotDisturb:
+			subTypeId = 2;
+			subTypeText = "Busy Status Message";
+			break;
+		case ICQNotAvailable:
+			subTypeId = 3;
+			subTypeText = "N/A Status Message";
+			break;
+		default:
+			// may be a good way to deal with possible error and lack of online status message?
+			emit receivedAwayMessage( contact, "Sorry, this protocol does not support this type of status message" );
+			return;
 		}
-	default:
-		// may be a good way to deal with possible error and lack of online status message?
-		emit receivedAwayMessage( contact, "Sorry, this protocol does not support this type of status message" );
-		return;
+
+		Oscar::MessagePlugin *plugin = new Oscar::MessagePlugin();
+		plugin->setType( Oscar::MessagePlugin::StatusMsgExt );
+		plugin->setSubTypeId( subTypeId );
+		plugin->setSubTypeText( subTypeText );
+
+		Buffer buffer;
+		buffer.addLEDWord( 0x00000000 );
+		//TODO: Change this to text/x-aolrtf
+		buffer.addLEDBlock( "text/plain" );
+		plugin->setData( buffer.buffer() );
+
+		msg.setMessageType( Oscar::MessageType::Plugin ); // plugin message
+		msg.setPlugin( plugin );
+	}
+	else
+	{
+		msg.addProperty( Oscar::Message::StatusMessageRequest );
+		switch ( contactStatus & ICQStatusMask )
+		{
+		case ICQAway:
+			msg.setMessageType( Oscar::MessageType::AutoAway ); // away
+			break;
+		case ICQOccupied:
+			msg.setMessageType( Oscar::MessageType::AutoBusy ); // occupied
+			break;
+		case ICQNotAvailable:
+			msg.setMessageType( Oscar::MessageType::AutoNA ); // not awailable
+			break;
+		case ICQDoNotDisturb:
+			msg.setMessageType( Oscar::MessageType::AutoDND ); // do not disturb
+			break;
+		case ICQFreeForChat:
+			msg.setMessageType( Oscar::MessageType::AutoFFC ); // free for chat
+			break;
+		default:
+			// may be a good way to deal with possible error and lack of online status message?
+			emit receivedAwayMessage( contact, "Sorry, this protocol does not support this type of status message" );
+			return;
+		}
 	}
 	sendMessage( msg );
 }
@@ -1286,14 +1358,14 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 		realPort = QString::fromLatin1("5190");
 	}
 
-	Connection* c = createConnection( realHost, realPort );
+	Connection* c = createConnection();
 	//create the new login task
 	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
 	m_loginTaskTwo->setCookie( cookie );
 	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
 
 	//connect
-	connectToServer( c, d->host, false );
+	connectToServer( c, realHost, realPort.toInt(), false );
   	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
 
     if ( srt )
@@ -1451,13 +1523,11 @@ void Client::disconnectChatRoom( Oscar::WORD exchange, const QString& room )
     c = 0;
 }
 
-Connection* Client::createConnection( const QString& host, const QString& port )
+Connection* Client::createConnection()
 {
-	KNetworkConnector* knc = new KNetworkConnector( 0 );
-	knc->setOptHostPort( host, port.toUInt() );
-	ClientStream* cs = new ClientStream( knc, 0 );
+	ClientStream* cs = new ClientStream( new QTcpSocket(), 0 );
 	cs->setNoopTime( 60000 );
-	Connection* c = new Connection( knc, cs, "BOS" );
+	Connection* c = new Connection( cs, "BOS" );
 	cs->setConnection( c );
 	c->setClient( this );
 	return c;

@@ -33,7 +33,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0" >
-        <widget class="Q3GroupBox" name="groupBox1" >
+        <widget class="QGroupBox" name="groupBox1" >
          <property name="title" >
           <string>Colors</string>
          </property>
@@ -200,13 +200,6 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends></extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
   <customwidget>
    <class>K3ListBox</class>
    <extends></extends>

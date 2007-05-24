@@ -52,7 +52,7 @@
 		<Action name="settings_show_empty_groups"/>
 	</ToolBar>
 
-	<ToolBar fullWidth="true" name="quickSearchBar" noMerge="1"><Text>Quick Search Bar</Text>
+        <ToolBar fullWidth="true" name="quickSearchBar" noMerge="1" newline="true"><Text>Quick Search Bar</Text>
 		<Action name="quicksearch_reset"/>
 		<Action name="quicksearch_label"/>
 		<Action name="quicksearch_bar"/>

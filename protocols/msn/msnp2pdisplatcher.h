@@ -47,7 +47,7 @@ signals:
 	/**
 	 * should be connected to the MSNSwitchBoardSocket's sendCommand function
 	 */
-	void sendCommand( const QString &cmd, const QString &args = QString::null,
+	void sendCommand( const QString &cmd, const QString &args = QString(),
 		bool addId = true, const QByteArray &body = QByteArray() , bool binary=false );
 
 	void fileReceived( KTemporaryFile * , const QString &msnObject );

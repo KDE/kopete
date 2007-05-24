@@ -189,7 +189,7 @@ void OftMetaTransfer::initOft()
 	m_oft.bytesSent = 0;
 	m_oft.sentChecksum = 0xFFFF0000; //checksum of transmitted bytes
 	m_oft.flags = 0x20; //flags; 0x20=not done, 1=done
-	m_oft.fileName = QString::null;
+	m_oft.fileName = QString();
 	m_oft.fileCount = 1;
 	m_oft.filesLeft = 1;
 	m_oft.partCount = 1;

@@ -132,7 +132,7 @@ void ProfileTask::sendProfileUpdate()
 
 	Transfer* st = createTransfer( f, s , buffer );
 	send( st );
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done." << endl;
 }
 

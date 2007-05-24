@@ -17,6 +17,7 @@
 
 #include "chattexteditpart.h"
 
+#include "kopetecontact.h"
 #include "kopetechatsession.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
@@ -64,7 +65,7 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 
 	connect( session, SIGNAL( contactAdded(const Kopete::Contact*, bool) ),
 	         this, SLOT( slotContactAdded(const Kopete::Contact*) ) );
-	connect( session, SIGNAL( contactRemoved(const Kopete::Contact*, const QString&, Kopete::Message::MessageFormat, bool) ),
+	connect( session, SIGNAL( contactRemoved(const Kopete::Contact*, const QString&, Qt::TextFormat, bool) ),
 	         this, SLOT( slotContactRemoved(const Kopete::Contact*) ) );
 	connect( session, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
@@ -418,18 +419,18 @@ void ChatTextEditPart::setContents( const Kopete::Message &message )
 	textEdit()->setText( useRichText() ? message.escapedBody() : message.plainBody() );
 
 	setFont( message.font() );
-	setTextColor( message.fg() );
-// 	setBgColor( message.bg() );
+	setTextColor( message.foregroundColor() );
+// 	setBackgroundColorColor( message.backgroundColor() );
 }
 
 Kopete::Message ChatTextEditPart::contents()
 {
-	Kopete::Message currentMsg( m_session->myself(), m_session->members(), text(),
-	                            Kopete::Message::Outbound, useRichText() ?
-	                            Qt::RichText : Qt::PlainText );
+	Kopete::Message currentMsg( m_session->myself(), m_session->members() );
+	currentMsg.setDirection( Kopete::Message::Outbound );
+	useRichText() ? currentMsg.setHtmlBody( text() ) : currentMsg.setPlainBody( text() );
 	
-// 	currentMsg.setBg( bgColor() );
-	currentMsg.setFg( textColor() );
+// 	currentMsg.setBackgroundColor( bgColor() );
+	currentMsg.setForegroundColor( textColor() );
 	currentMsg.setFont( font() );
 	
 	return currentMsg;

@@ -1,4 +1,5 @@
 project(kopete)
+KDE4_NO_ENABLE_FINAL(kopete)
 add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 # Configure checks
@@ -11,7 +12,6 @@ macro_optional_find_package(Xmms)
 macro_optional_find_package(LibXml2)
 macro_optional_find_package(LibXslt)
 macro_bool_to_01(LIBXSLT_FOUND HAVE_XSLT)
-macro_bool_to_01(X11_Xrender_FOUND HAVE_XRENDER)
 check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
 check_include_files(stdint.h HAVE_STDINT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)
@@ -24,19 +24,20 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 
 set(KOPETE_INCLUDES 
 	${KDE4_INCLUDES}
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/ 
-	${CMAKE_BINARY_DIR}/kopete/libkopete/ 
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/ 
-	${CMAKE_BINARY_DIR}/kopete/libkopete/ui/ 
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/private 
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/contactlist/ 
+	${CMAKE_SOURCE_DIR}/kopete/libkopete/
+	${CMAKE_BINARY_DIR}/kopete/libkopete/
+	${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/
+	${CMAKE_BINARY_DIR}/kopete/libkopete/ui/
+	${CMAKE_SOURCE_DIR}/kopete/libkopete/private/
+	${CMAKE_SOURCE_DIR}/kopete/libkopete/contactlist/
+    ${CMAKE_SOURCE_DIR}/kopete/libkopete/tasks/
 )
 
-add_subdirectory( libkopete ) 
-add_subdirectory( kopete ) 
-add_subdirectory( protocols ) 
-add_subdirectory( plugins ) 
-add_subdirectory( icons ) 
-add_subdirectory( sounds ) 
-add_subdirectory( styles ) 
+add_subdirectory( libkopete )
+add_subdirectory( kopete )
+add_subdirectory( protocols )
+add_subdirectory( plugins )
+add_subdirectory( icons )
+add_subdirectory( sounds )
+add_subdirectory( styles )
 

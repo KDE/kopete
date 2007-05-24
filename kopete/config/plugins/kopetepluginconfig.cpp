@@ -47,6 +47,7 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QStringList &args
 	d->pluginSelector = new KPluginSelector( this );
 	
 	QVBoxLayout *mainLayout = new QVBoxLayout(this);
+	mainLayout->setMargin(0);
 	mainLayout->addWidget( d->pluginSelector );
 
 	connect( d->pluginSelector, SIGNAL(changed(bool)), this, SLOT(changed()) );

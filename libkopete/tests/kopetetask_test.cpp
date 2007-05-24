@@ -48,9 +48,10 @@ void ParseEmoticonTask::parseEmoticon(const QString &value)
 	Kopete::Emoticons emo("Default");
 	m_parsed = emo.parse(value, Kopete::Emoticons::RelaxedParse | Kopete::Emoticons::SkipHTML);
 
-	Kopete::Task::Result jobResult = Kopete::Task::ResultSucceeded;
 	if(m_parsed.isEmpty())
-		jobResult = Kopete::Task::ResultFailed;
+	{
+		setError(100);
+	}
 
 	emitResult();
 }
@@ -64,5 +65,5 @@ void KopeteTaskTest::testEmoticonTask()
 	qApp->processEvents();
 	
 	QCOMPARE(spy.count(), 1);
-	QCOMPARE(task->succeeded(), true);
+	QCOMPARE(task->error(), 0);
 }

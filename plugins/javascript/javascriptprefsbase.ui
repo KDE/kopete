@@ -68,15 +68,12 @@
     </spacer>
    </item>
    <item row="0" column="0" colspan="3" >
-    <widget class="Q3GroupBox" name="groupBox1" >
+    <widget class="QGroupBox" name="groupBox1" >
      <property name="whatsThis" >
       <string>These options enable and disable features that impact the level of access scripts have to the Kopete API. Unless you are installing scripts from untrusted sources, it is usually OK to leave these options enabled.</string>
      </property>
      <property name="title" >
       <string>JavaScript Security Options</string>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
      </property>
      <layout class="QVBoxLayout" >
       <property name="margin" >
@@ -129,12 +126,9 @@
     </widget>
    </item>
    <item row="0" column="3" colspan="2" >
-    <widget class="Q3GroupBox" name="groupBox2" >
+    <widget class="QGroupBox" name="groupBox2" >
      <property name="title" >
       <string>Add / Remove</string>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
      </property>
      <layout class="QVBoxLayout" >
       <property name="margin" >
@@ -255,12 +249,6 @@
    <class>Q3ListView</class>
    <extends>Q3Frame</extends>
    <header>q3listview.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

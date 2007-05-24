@@ -23,7 +23,7 @@
     <number>6</number>
    </property>
    <item row="1" column="3" colspan="4" >
-    <widget class="Q3GroupBox" name="groupBox2" >
+    <widget class="QGroupBox" name="groupBox2" >
      <property name="sizePolicy" >
       <sizepolicy>
        <hsizetype>3</hsizetype>
@@ -312,13 +312,6 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends></extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
   <customwidget>
    <class>Q3ListBox</class>
    <extends></extends>

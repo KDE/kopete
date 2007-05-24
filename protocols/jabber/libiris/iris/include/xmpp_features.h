@@ -22,7 +22,7 @@
 #define XMPP_FEATURES_H
 
 #include <QStringList>
-#include <QString>
+
 
 #include <iris_export.h>
 

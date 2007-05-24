@@ -29,10 +29,12 @@
 
 #include "kopetemessage.h"
 
+class KAction;
+
 namespace Ui { class HistoryViewer; }
 
 //class HistoryWidget;
-namespace Kopete { class MetaContact; }
+namespace Kopete { class MetaContact; class Contact; }
 namespace Kopete { class XSLT; }
 class KHTMLView;
 class KHTMLPart;

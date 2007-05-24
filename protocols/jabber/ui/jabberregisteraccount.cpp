@@ -265,7 +265,7 @@ void JabberRegisterAccount::slotOk ()
 	jabberClient->setOverrideHost ( true, mMainWidget->leServer->text (), mMainWidget->sbPort->value () );
 
 	// start connection, no authentication
-	switch ( jabberClient->connect ( XMPP::Jid ( mMainWidget->leJID->text () ), QString::null, false ) )
+	switch ( jabberClient->connect ( XMPP::Jid ( mMainWidget->leJID->text () ), QString(), false ) )
 	{
 		case JabberClient::NoTLS:
 			// no SSL support, at the connecting stage this means the problem is client-side

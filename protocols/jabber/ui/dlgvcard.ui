@@ -288,7 +288,7 @@
                     </spacer>
        </item>
        <item row="6" column="0" colspan="2" >
-        <widget class="Q3GroupBox" name="groupBox1" >
+        <widget class="QGroupBox" name="groupBox1" >
          <property name="title" >
                             <string>Photo</string>
                         </property>
@@ -898,13 +898,6 @@
    <extends></extends>
    <header>kurllabel.h</header>
    <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends></extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>

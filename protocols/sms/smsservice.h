@@ -17,7 +17,7 @@
 #ifndef SMSSERVICE_H
 #define SMSSERVICE_H
 
-#include <QString>
+
 #include <QObject>
 
 #include "kopetemessage.h"

@@ -447,7 +447,7 @@ Index: iris/include/xmpp_features.h
 +++ iris/include/xmpp_features.h	(working copy)
 @@ -24,9 +24,11 @@
  #include <QStringList>
- #include <QString>
+ 
  
 +#include <iris_export.h>
 +
@@ -480,7 +480,7 @@ Index: iris/include/xmpp_jid.h
 +++ iris/include/xmpp_jid.h	(working copy)
 @@ -23,9 +23,11 @@
  
- #include <QString>
+ 
  
 +#include <iris_export.h>
 +
@@ -514,7 +514,7 @@ Index: iris/include/xmpp_task.h
 +++ iris/include/xmpp_task.h	(working copy)
 @@ -24,6 +24,8 @@
  #include <QObject>
- #include <QString>
+ 
  
 +#include <iris_export.h>
 +

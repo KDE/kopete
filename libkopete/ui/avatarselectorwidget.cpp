@@ -79,6 +79,7 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 	// Connect signals/slots
 	connect(d->mainWidget.buttonAddAvatar, SIGNAL(clicked()), this, SLOT(buttonAddAvatarClicked()));
 	connect(d->mainWidget.buttonRemoveAvatar, SIGNAL(clicked()), this, SLOT(buttonRemoveAvatarClicked()));
+	connect(d->mainWidget.tabAvatar, SIGNAL(currentChanged(int)), this, SLOT(currentTabChanged(int)));
 	connect(d->mainWidget.listUserAvatar, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(listSelectionChanged(QListWidgetItem*)));
 	connect(d->mainWidget.listUserContact, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(listSelectionChanged(QListWidgetItem*)));
 
@@ -91,6 +92,9 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 	queryJob->setQueryFilter( Kopete::AvatarManager::All );
 
 	queryJob->start();
+
+	// select the User tab by default
+	d->mainWidget.tabAvatar->setCurrentWidget( d->mainWidget.tabUser );
 }
 
 AvatarSelectorWidget::~AvatarSelectorWidget()
@@ -137,14 +141,35 @@ void AvatarSelectorWidget::buttonAddAvatarClicked()
 		if( addedEntry.path.isEmpty() )
 		{
 			d->mainWidget.labelErrorMessage->setText( i18n("Kopete can not add this new avatar because it could not save the avatar image in user directory.") );
+			return;
 		}
+
+		// select the added entry and show the user tab
+		QList<QListWidgetItem *> foundItems = d->mainWidget.listUserAvatar->findItems( addedEntry.name, Qt::MatchContains );
+		if( !foundItems.isEmpty() )
+		{
+			AvatarSelectorWidgetItem *item = dynamic_cast<AvatarSelectorWidgetItem*>( foundItems.first() );
+			if ( !item )
+				return;
+
+			item->setSelected( true );	
+			// show the User tab
+			d->mainWidget.tabAvatar->setCurrentWidget(d->mainWidget.tabUser);	
+			listSelectionChanged( item );
+		}
+
+
 	}
 }
 
 void AvatarSelectorWidget::buttonRemoveAvatarClicked()
 {
+	// if no item was selected, just exit
+	if ( !d->mainWidget.listUserAvatar->selectedItems().count() )
+		return;
+
 	// You can't remove from listUserContact, so we can always use listUserAvatar
-	AvatarSelectorWidgetItem *selectedItem = static_cast<AvatarSelectorWidgetItem*>( d->mainWidget.listUserAvatar->selectedItems().first() );
+	AvatarSelectorWidgetItem *selectedItem = dynamic_cast<AvatarSelectorWidgetItem*>( d->mainWidget.listUserAvatar->selectedItems().first() );
 	if( selectedItem )
 	{
 		if( !Kopete::AvatarManager::self()->remove( selectedItem->avatarEntry() ) )
@@ -221,6 +246,17 @@ void AvatarSelectorWidget::listSelectionChanged(QListWidgetItem *item)
 	{
 		d->mainWidget.buttonRemoveAvatar->setEnabled(true);
 	}
+}
+
+void AvatarSelectorWidget::currentTabChanged(int index)
+{
+	
+	// only enable the Remove button when the User tab is selected	
+	if (index == d->mainWidget.tabAvatar->indexOf(d->mainWidget.tabUser)) 
+		d->mainWidget.buttonRemoveAvatar->setEnabled(true);
+	else
+		d->mainWidget.buttonRemoveAvatar->setEnabled(false);
+	
 }
 
 

@@ -22,7 +22,7 @@
 */
 
 #include <kdebug.h>
-#include <QString>
+
 
 #include <QtDBus/QtDBus>
 

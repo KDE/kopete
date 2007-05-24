@@ -17,7 +17,7 @@
 
 #include <qlabel.h>
 #include <qimage.h>
-#include <qtooltip.h>
+
 #include <qfile.h>
 #include <qicon.h>
 //Added by qt3to4:

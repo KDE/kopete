@@ -75,7 +75,20 @@ public:
 		FatalProtocolError = 3
 	};
 
-	enum ICQStatus { ICQOnline = 0, ICQAway, ICQNotAvailable, ICQOccupied, ICQDoNotDisturb, ICQFreeForChat, ICQXStatus };
+	enum ICQStatusFlags {
+		ICQOnline       = 0x00,
+		ICQAway         = 0x01,
+		ICQNotAvailable = 0x02,
+		ICQOccupied     = 0x03,
+		ICQDoNotDisturb = 0x04,
+		ICQFreeForChat  = 0x05,
+
+		ICQXStatus      = 0x10,
+		ICQPluginStatus = 0x20,
+
+		ICQStatusMask   = 0x0F
+	};
+	Q_DECLARE_FLAGS(ICQStatus, ICQStatusFlags)
 
 	/*************
 	  EXTERNAL API
@@ -93,15 +106,17 @@ public:
 	 * Start a connection to the server using the supplied @ref ClientStream.
 	 * This is only a transport layer connection.
 	 * @param s initialised connection object to use for the connection.
-	 * @param server the server to connect to - but this is also set on the connector used to construct the clientstream??
+	 * @param host the host name of server to connect to
+	 * @param port the port of server to connect to
 	 * @param auth indicate whether we're connecting to the authorizer or the bos server
 	 */
-	void connectToServer( Connection *c, const QString& server, bool auth = true );
+	void connectToServer( Connection *c, const QString& host, quint16 port, bool auth = true );
 
 	/**
 	 * Start the login process for Oscar
-	 * @param host - probably could obtain this back from the connector - used for outgoing tasks to determine destination
+	 * @param host Used for outgoing tasks to determine destination
 	 * @param user The user name to log in as.
+	 * @param port The port of server to connect to
 	 * @param pass The password to use when logging in
 	 */
 	void start( const QString &host, const uint port, const QString &userId, const QString &pass );
@@ -115,7 +130,7 @@ public:
 	 * \param xtraz the Xtraz status
 	 * \param description the Xtraz status description
 	 */
-	void setStatus( Oscar::DWORD status, const QString &message = QString::null, int xtraz = -1, const QString &description = QString::null );
+	void setStatus( Oscar::DWORD status, const QString &message = QString(), int xtraz = -1, const QString &description = QString() );
 
 	/** Retrieve our user info */
 	UserDetails ourInfo() const;
@@ -312,7 +327,7 @@ public:
 
 	//! Start a server redirect for a different service
 	void requestServerRedirect( Oscar::WORD family, Oscar::WORD e = 0, QByteArray c = QByteArray(),
-                                Oscar::WORD instance = 0, const QString& room = QString::null );
+                                Oscar::WORD instance = 0, const QString& room = QString() );
 
 	//! Start uploading a buddy icon
 	void sendBuddyIcon( const QByteArray& imageData );
@@ -554,7 +569,7 @@ private:
 	/** Delete the static tasks */
 	void deleteStaticTasks();
 
-	Connection* createConnection( const QString& host, const QString& port );
+	Connection* createConnection();
 
 	/**
 	 * Request the icq away message
@@ -570,6 +585,7 @@ private:
 	StageOneLoginTask* m_loginTask;
 	StageTwoLoginTask* m_loginTaskTwo;
 };
+Q_DECLARE_OPERATORS_FOR_FLAGS(Client::ICQStatus)
 
 #endif
 

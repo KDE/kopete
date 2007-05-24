@@ -79,7 +79,7 @@ void TypingNotifyTask::onGo()
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 	
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 }
 
 void TypingNotifyTask::handleNotification()

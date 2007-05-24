@@ -17,6 +17,7 @@
 
 #include "kopetecommand.h"
 
+#include "kopetecontact.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteview.h"
 #include "kopeteuiglobal.h"
@@ -158,8 +159,10 @@ void Kopete::Command::printError( const QString &error, Kopete::ChatSession *man
 	}
 	else
 	{
-		Kopete::Message msg( manager->myself(), manager->members(), error,
-			Kopete::Message::Internal, Qt::PlainText );
+		Kopete::Message msg( manager->myself(), manager->members() );
+		msg.setPlainBody(error);
+		msg.setDirection( Kopete::Message::Internal );
+
 		manager->appendMessage( msg );
 	}
 }

@@ -33,7 +33,7 @@ Q_OBJECT
 
 public:
 	AIMContactBase( Kopete::Account*, const QString&, Kopete::MetaContact*,
-	            const QString& icon = QString::null, const OContact& ssiItem = OContact() );
+	            const QString& icon = QString(), const OContact& ssiItem = OContact() );
 	virtual ~AIMContactBase();
 
 	virtual QString sanitizedMessage( const QString& message );

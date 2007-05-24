@@ -30,7 +30,7 @@ Q_OBJECT
 public:
     AIMChatSession( const Kopete::Contact* contact, Kopete::ContactPtrList others,
                     Kopete::Protocol* protocol, Oscar::WORD exchange = 0,
-                    const QString& room = QString::null );
+                    const QString& room = QString() );
     virtual ~AIMChatSession();
 
     /**

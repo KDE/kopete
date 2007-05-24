@@ -3,8 +3,9 @@
     logintask.h - Handles logging into to the AIM or ICQ service
 
     Copyright (c) 2004 Matt Rogers <mattr@kde.org>
+    Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,9 +23,8 @@
 #include "oscartypes.h"
 #include "task.h"
 
-#include "aimlogintask.h"
-#include "icqlogintask.h"
-#include "closeconnectiontask.h"
+class OscarLoginTask;
+class CloseConnectionTask;
 
 using namespace Oscar;
 
@@ -68,16 +68,15 @@ public:
 
 public slots:
 	void closeTaskFinished();
-	void aimTaskFinished();
+	void loginTaskFinished();
 
 protected:
-	bool forMe( Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const;
 
 private:
 	
 	//Tasks we want to control
-	AimLoginTask* m_aimTask;
-	IcqLoginTask* m_icqTask;
+	OscarLoginTask* m_loginTask;
 	CloseConnectionTask* m_closeTask;
 
 	//Private data we get from the tasks
@@ -127,7 +126,7 @@ public slots:
 	void rateTaskFinished();
 	
 protected:
-	bool forMe( Transfer* transfer ) const;
+	bool forMe( const Transfer* transfer ) const;
 
 private:
 	QByteArray m_cookie;

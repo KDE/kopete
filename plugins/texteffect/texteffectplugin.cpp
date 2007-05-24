@@ -184,7 +184,7 @@ void TextEffectPlugin::slotOutgoingMessage( Kopete::Message& msg )
 				last_color=0;
 		}
 
-		msg.setFg(QColor (colors[last_color]));
+		msg.setForegroundColor(QColor (colors[last_color]));
 	}
 }
 

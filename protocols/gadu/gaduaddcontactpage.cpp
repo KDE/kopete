@@ -88,7 +88,7 @@ GaduAddContactPage::fillGroups()
 void
 GaduAddContactPage::showEvent( QShowEvent* e )
 {
-	slotUinChanged( QString::null );
+	slotUinChanged( QString() );
 	AddContactPage::showEvent( e );
 }
 

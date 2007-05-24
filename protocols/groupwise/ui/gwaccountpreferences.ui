@@ -36,12 +36,9 @@
         <number>6</number>
        </property>
        <item>
-        <widget class="Q3GroupBox" name="groupBox55" >
+        <widget class="QGroupBox" name="groupBox55" >
          <property name="title" >
           <string>Account Information</string>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
          </property>
          <layout class="QVBoxLayout" >
           <property name="margin" >
@@ -294,12 +291,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
    <extends>QWidget</extends>

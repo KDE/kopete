@@ -44,7 +44,7 @@ void SSIActivateTask::onGo()
 	Buffer* buffer = new Buffer();
 	Transfer* t = createTransfer( f, s, buffer );
 	send( t );
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 }
 
 // kate: tab-width 4; indent-mode csands;

@@ -175,7 +175,6 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	// Show the available styles when the Manager has finish to load the styles.
 	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadChatStyles()));
 
-	m_styleUi.htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	// Create the fake Chat Session
 	createPreviewChatSession();
 	m_preview = new ChatMessagePart(m_previewChatSession, m_styleUi.htmlFrame);
@@ -190,6 +189,7 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	htmlWidget->setSizePolicy(
 		QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 	layout = new QVBoxLayout(m_styleUi.htmlFrame);
+	layout->setMargin(0);
 	layout->addWidget(htmlWidget);
 	m_styleUi.htmlFrame->setLayout(layout);
 	// Add the preview message to the ChatMessagePart
@@ -477,23 +477,50 @@ void ChatWindowConfig::createPreviewChatSession()
 
 void ChatWindowConfig::createPreviewMessages()
 {
-	Kopete::Message msgIn( m_jack,m_myself, i18n( "Hello, this is an incoming message :-)" ), Kopete::Message::Inbound );
-	Kopete::Message msgIn2( m_jack, m_myself, i18n( "Hello, this is an incoming consecutive message." ), Kopete::Message::Inbound );
+	Kopete::Message msgIn( m_jack,m_myself );
+	msgIn.setPlainBody( i18n( "Hello, this is an incoming message :-)" ) );
+	msgIn.setDirection( Kopete::Message::Inbound );
 
-	Kopete::Message msgOut( m_myself, m_jack, i18n( "Ok, this is an outgoing message" ), Kopete::Message::Outbound );
-	Kopete::Message msgOut2( m_myself, m_jack, i18n( "Ok, a outgoing consecutive message." ), Kopete::Message::Outbound );
+	Kopete::Message msgIn2( m_jack, m_myself );
+	msgIn2.setPlainBody( i18n( "Hello, this is an incoming consecutive message." ) );
+	msgIn2.setDirection( Kopete::Message::Inbound );
 
-	Kopete::Message msgCol( m_jack, m_myself, i18n( "Here is an incoming colored message" ), Kopete::Message::Inbound );
-	msgCol.setFg( QColor( "DodgerBlue" ) );
-	msgCol.setBg( QColor( "LightSteelBlue" ) );
-	Kopete::Message msgInt( m_jack, m_myself, i18n( "This is an internal message" ), Kopete::Message::Internal );
-	Kopete::Message msgAct( m_jack, m_myself, i18n( "performed an action" ), Kopete::Message::Inbound,
-				  Qt::PlainText, QString::null, Kopete::Message::TypeAction );
-	Kopete::Message msgHigh( m_jack, m_myself, i18n( "This is a highlighted message" ), Kopete::Message::Inbound );
+	Kopete::Message msgOut( m_myself, m_jack );
+	msgOut.setPlainBody( i18n( "Ok, this is an outgoing message" ) );
+	msgOut.setDirection( Kopete::Message::Outbound );
+
+	Kopete::Message msgOut2( m_myself, m_jack );
+	msgOut2.setPlainBody( i18n( "Ok, a outgoing consecutive message." ) );
+	msgOut2.setDirection( Kopete::Message::Outbound );
+
+	Kopete::Message msgCol( m_jack, m_myself );
+	msgCol.setPlainBody( i18n("Here is an incoming colored message.") );
+	msgCol.setDirection( Kopete::Message::Inbound );
+	msgCol.setForegroundColor( QColor( "DodgerBlue" ) );
+	msgCol.setBackgroundColor( QColor( "LightSteelBlue" ) );
+
+	Kopete::Message msgInt( m_jack, m_myself );
+	msgInt.setPlainBody( i18n( "This is an internal message" ) );
+	msgInt.setDirection( Kopete::Message::Internal );
+
+	Kopete::Message msgAct( m_jack, m_myself );
+	msgAct.setPlainBody( i18n( "performed an action" ) );
+	msgAct.setType( Kopete::Message::TypeAction );
+	msgAct.setDirection( Kopete::Message::Inbound );
+
+	Kopete::Message msgHigh( m_jack, m_myself );
+	msgHigh.setPlainBody( i18n( "This is a highlighted message" ) );
+	msgHigh.setDirection( Kopete::Message::Inbound );
 	msgHigh.setImportance( Kopete::Message::Highlight );
+
 	// This is a UTF-8 string btw.
-	Kopete::Message msgRightToLeft(m_myself, m_jack, i18nc("This special UTF-8 string is to test if the style support Right-to-Left language display.", "הודעות טקסט"), Kopete::Message::Outbound);
-	Kopete::Message msgBye ( m_myself, m_jack,   i18n( "Bye" ), Kopete::Message::Outbound );
+	Kopete::Message msgRightToLeft( m_myself, m_jack );
+	msgRightToLeft.setPlainBody( i18nc("This special UTF-8 string is to test if the style support Right-to-Left language display.", "הודעות טקסט") );
+	msgRightToLeft.setDirection( Kopete::Message::Outbound );
+
+	Kopete::Message msgBye ( m_myself, m_jack );
+	msgBye.setPlainBody( i18n("Bye") );
+	msgBye.setDirection( Kopete::Message::Outbound );
 
 	// Add the messages to ChatMessagePart
 	m_preview->appendMessage(msgIn);

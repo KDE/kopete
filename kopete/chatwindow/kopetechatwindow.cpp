@@ -21,7 +21,7 @@
 
 #include <qtimer.h>
 #include <qlayout.h>
-#include <qtooltip.h>
+
 #include <qfileinfo.h>
 #include <QDockWidget>
 
@@ -44,7 +44,7 @@
 #include <kicon.h>
 #include <kiconloader.h>
 #include <kdebug.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <ktemporaryfile.h>
 #include <kedittoolbar.h>
 #include <kstatusbar.h>
@@ -423,16 +423,16 @@ void KopeteChatWindow::initActions(void)
 
 	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), coll );
         coll->addAction( "options_membersleft", membersLeft );
-	connect( membersLeft, SLOT(toggled(bool)), this, SLOT(slotViewMembersLeft()) );
+	connect( membersLeft, SIGNAL(triggered(bool)), this, SLOT(slotViewMembersLeft()) );
 
 	membersRight = new KToggleAction( i18n( "Place to Right of Chat Area" ), coll );
         coll->addAction( "options_membersright", membersRight );
-	connect( membersRight, SLOT(toggled(bool)), this, SLOT(slotViewMembersRight()) );
+	connect( membersRight, SIGNAL(toggled(bool)), this, SLOT(slotViewMembersRight()) );
 
 	toggleMembers = new KToggleAction( i18n( "Show" ), coll );
         coll->addAction( "options_togglemembers", toggleMembers );
 	toggleMembers->setCheckedState( KGuiItem( i18n("Hide") ) );
-	connect( toggleMembers, SLOT(toggled(bool)), this, SLOT(slotToggleViewMembers()) );
+	connect( toggleMembers, SIGNAL(toggled(bool)), this, SLOT(slotToggleViewMembers()) );
 
 	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), coll );
         coll->addAction( "enable_auto_spell_check", toggleAutoSpellCheck );
@@ -946,7 +946,7 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
 		QPixmap icon32 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 32) :
 		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
-		KWM::setIcons( winId(), icon32, icon16 );
+		KWindowSystem::setIcons( winId(), icon32, icon16 );
 	}
 
 	if ( m_tabBar )

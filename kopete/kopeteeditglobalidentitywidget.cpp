@@ -105,6 +105,7 @@ void KopeteEditGlobalIdentityWidget::setIconSize(const QSize &size)
 void KopeteEditGlobalIdentityWidget::createGUI()
 {
 	d->mainLayout = new QHBoxLayout(this);
+	d->mainLayout->setMargin(0);
 	
 	// The picture label
 	d->labelPicture = new ClickableLabel(this);

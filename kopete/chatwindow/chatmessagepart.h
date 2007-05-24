@@ -141,7 +141,7 @@ private slots:
 	void slotScrollView();
 	void slotAppearanceChanged();
 
-	void slotScrollingTo( int x, int y );
+	void slotScrollingTo( int y );
 
 	void slotRefreshView();
 

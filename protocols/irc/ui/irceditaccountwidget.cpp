@@ -115,7 +115,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 	connect( IRCProtocol::self(), SIGNAL( networkConfigUpdated( const QString & ) ),
 		this, SLOT( slotUpdateNetworks( const QString & ) ) );
 */
-	slotUpdateNetworks( QString::null );
+	slotUpdateNetworks( QString() );
 }
 
 IRCEditAccountWidget::~IRCEditAccountWidget()
@@ -229,7 +229,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 
 	if( !account() )
 	{
-		setAccount( new IRCAccount( generateAccountId(networkName), QString::null, networkName, nickName ) );
+		setAccount( new IRCAccount( generateAccountId(networkName), QString(), networkName, nickName ) );
 	}
 	else
 	{

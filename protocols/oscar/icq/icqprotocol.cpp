@@ -16,9 +16,7 @@
   *************************************************************************
 */
 
-#ifdef HAVE_CONFIG_H
 #include "config-kopete.h"
-#endif
 
 #include <qcombobox.h>
 #include <kdialog.h>
@@ -129,7 +127,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 		i18n("'%1' (%2)", nick, uin);
 
 	if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
-	                               i18n("Do you want to add %1 to your contact list?", nickuin), QString::null,
+	                               i18n("Do you want to add %1 to your contact list?", nickuin), QString(),
 	                               KGuiItem( i18n("Add") ), KGuiItem( i18n("Do Not Add") ))
 	    != KMessageBox::Yes)
 	{

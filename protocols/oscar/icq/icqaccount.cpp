@@ -129,7 +129,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	{
 		kDebug(14153) << k_funcinfo <<
 			"sending status to reflect HideIP and WebAware settings" << endl;
-		//setStatus(mStatus, QString::null);
+		//setStatus(mStatus, QString());
 	}*/
 }
 
@@ -227,7 +227,6 @@ void ICQAccount::connectWithPassword( const QString &password )
 		kDebug(14153) << k_funcinfo << "Logging in as " << icqNumber << endl ;
 		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
 		uint port = configGroup()->readEntry( "Port", 5190 );
-		Connection* c = setupConnection( server, port );
 
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
@@ -249,8 +248,10 @@ void ICQAccount::connectWithPassword( const QString &password )
 
 		engine()->setStatus( status, mInitialStatusMessage, pres.xtrazStatus(), pres.description() );
 		updateVersionUpdaterStamp();
+
+		Connection* c = setupConnection();
 		engine()->start( server, port, accountId(), password.left(8) );
-		engine()->connectToServer( c, server, true /* doAuth */ );
+		engine()->connectToServer( c, server, port, true /* doAuth */ );
 
 		mInitialStatusMessage.clear();
 	}
@@ -429,7 +430,7 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 {
 	if ( QRegExp("[\\d]+").exactMatch( contactId ) )
 	{
-		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString::null, ssiItem );
+		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString(), ssiItem );
 
 		if ( !ssiItem.alias().isEmpty() )
 			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
@@ -441,7 +442,7 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 	}
 	else
 	{
-		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString::null, ssiItem );
+		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString(), ssiItem );
 
 		if ( !ssiItem.alias().isEmpty() )
 			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );

@@ -111,6 +111,11 @@ Connection* ConnectionHandler::defaultConnection() const
 	return d->connections.first();
 }
 
+QList<Connection*> ConnectionHandler::connections() const
+{
+	return d->connections;
+}
+
 void ConnectionHandler::addChatInfoForConnection( Connection* c, Oscar::WORD exchange, const QString& room )
 {
     if ( d->connections.indexOf( c ) == -1 )

@@ -1,11 +1,6 @@
-//Code from KGPG
-
 /***************************************************************************
-                          listkeys.h  -  description
-                             -------------------
-    begin                : Thu Jul 4 2002
-    copyright            : (C) 2002 by y0k0
-    email                : bj@altern.org
+   Copyright (c) 2002      by y0k0            <bj@altern.org>
+   Copyright (c) 2007      by Charles Connell <charles@connells.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,43 +16,37 @@
 #define LISTKEYS_H
 
 #include <kdialog.h>
+#include <k3procio.h>
 #include <QPixmap>
 
 class K3ListView;
 class QCheckBox;
 class Q3ListViewItem;
 
-struct gpgKey{
-  QString gpgkeymail;
-  QString gpgkeyname;
-  QString gpgkeyid;
-  QString gpgkeytrust;
-  QString gpgkeyvalidity;
-  QString gpgkeysize;
-  QString gpgkeycreation;
-  QString gpgkeyexpiration;
-  QString gpgkeyalgo;
-};
-
-class KgpgSelKey : public KDialog
+class SelectKeyDialog : public KDialog
 {
     Q_OBJECT
 
 public:
-    explicit KgpgSelKey( QWidget *parent = 0, const char *name = 0,bool showlocal=true);
-    K3ListView *keysListpr;
-QPixmap keyPair;
-QCheckBox *local;
+    explicit SelectKeyDialog( QWidget *parent = 0, const char *name = 0,bool showlocal=true);
+    ~SelectKeyDialog();
+
 private slots:
-void slotOk();
-void slotpreOk();
-void slotSelect(Q3ListViewItem *item);
-QString extractKeyName(QString fullName);
+    void slotReadKey(K3ProcIO*);
+    void slotOk();
+    void slotpreOk();
+    void slotSelect(Q3ListViewItem *item);
 
 public:
     QString getkeyID();
     QString getkeyMail();
     bool getlocal();
+
+private:
+    K3ListView *keysListpr;
+    QPixmap keyPair;
+    QCheckBox *local;
+    K3ProcIO * fp;
 };
 
 

@@ -60,9 +60,9 @@ void KopeteMessageImp::addBindings( KJS::ExecState *exec, KJS::Object &object )
 		JSProxy::MethodTable methods[] =
 		{
 			{ bgColor, "bgColor"},
-			{ setBgColor, "setbgColor"},
+			{ setBackgroundColor, "setBackgroundColor"},
 			{ fgColor,  "fgColor"},
-			{ setFgColor, "setFgColor"},
+			{ setForegroundColor, "setForegroundColor"},
 			{ font,  "font"},
 			{ setFont, "setFont"},
 			{ plainBody,  "plainBody"},
@@ -113,16 +113,16 @@ KJS::Value KopeteMessageImp::call( KJS::ExecState *exec, KJS::Object &self, cons
 		switch( mid )
 		{
 			case bgColor:
-				return KJS::String( msg->bg().name() );
+				return KJS::String( msg->backgroundColor().name() );
 
-			case setBgColor:
-				msg->setBg( QColor( args[0].toString(exec).qstring() ) );
+			case setBackgroundColor:
+				msg->setBackgroundColor( QColor( args[0].toString(exec).qstring() ) );
 
 			case fgColor:
-				return KJS::String( msg->bg().name() );
+				return KJS::String( msg->backgroundColor().name() );
 
-			case setFgColor:
-				msg->setFg( QColor( args[0].toString(exec).qstring() ) );
+			case setForegroundColor:
+				msg->setForegroundColor( QColor( args[0].toString(exec).qstring() ) );
 
 			case font:
 				return KJS::String( msg->font().toString() );

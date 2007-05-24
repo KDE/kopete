@@ -15,7 +15,6 @@
 #include <qtimer.h>
 
 #include "oscarclientstream.h"
-#include "oscarconnector.h"
 #include "client.h"
 #include "connection.h"
 #include "coreprotocol.h"
@@ -42,7 +41,6 @@ public slots:
 	//void slotsend(int layer);
 
 private:
-	KNetworkConnector *myConnector;
 	ClientStream *myTestObject;
 	Client* myClient;
 	Connection* myConnection;

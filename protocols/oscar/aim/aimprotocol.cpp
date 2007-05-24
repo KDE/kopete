@@ -186,7 +186,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 
 		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
 		                               i18n("Do you want to add '%1' to your contact list?", command),
-		                               QString::null, KGuiItem( i18n("Add") ), KGuiItem( i18n("Do Not Add") ))
+		                               QString(), KGuiItem( i18n("Add") ), KGuiItem( i18n("Do Not Add") ))
 		    != KMessageBox::Yes)
 		{
 			kDebug(14152) << k_funcinfo << "Cancelled" << endl;
@@ -209,7 +209,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 			KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
 			                    i18n( "Unable to connect to the chat room %1 because the account"
 			                          " for %2 is not connected.", firstParam, aimAccount->accountId() ),
-			                    QString::null );
+			                    QString() );
 
 	}
 

@@ -126,7 +126,10 @@ void IconCells::selected( int row, int column )
 	int index = row * columnCount() + column;
 	
 	if ( index < d->icons.count() )
+	{
+		d->selected = index;
 		emit selected( index );
+	}
 }
 
 void IconCells::resizeEvent( QResizeEvent* )

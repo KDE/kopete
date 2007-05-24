@@ -11,9 +11,6 @@
 /* Define if you have the XScreenSaver extension */
 #define HAVE_XSCREENSAVER 1
 
-/* Defined if your system has XRender support */
-#cmakedefine HAVE_XRENDER 1
-
 /* Define if MSN webcam support can be enabled */
 #define MSN_WEBCAM 1
 

@@ -220,7 +220,7 @@ void KRichTextEditPart::createActions()
     //Font Family
     d->action_font = new KFontAction( i18n("&Font"), actionCollection() );
     actionCollection()->addAction( "format_font", d->action_font );
-    connect( d->action_font, SIGNAL(activated(QString)), this, SLOT(setFont(QString)) );
+    connect( d->action_font, SIGNAL(triggered(QString)), this, SLOT(setFont(QString)) );
 
     //Font Size
     d->action_font_size = new KFontSizeAction( i18n("Font &Size"), actionCollection() );

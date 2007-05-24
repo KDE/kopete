@@ -78,6 +78,12 @@ public:
 	Connection* defaultConnection() const;
 
 	/**
+	 * Get all connections.
+	 * @return all connection objects
+	 */
+	QList<Connection*> connections() const;
+
+	/**
 	 * Add chat room information to a connection so that we can track
 	 * connections by chat room
 	 * @param c The connection to add information to

@@ -20,12 +20,14 @@
 
 #include <QObject>
 #include <QList>
+#include <QtCore/QMap>
 #include <QtXml/QDomDocument>
 
 #include "kopetemessage.h" //TODO: REMOVE
 
 namespace Kopete { class Contact; }
 namespace Kopete { class MetaContact; }
+class QDate;
 class QFile;
 class QTimer;
 

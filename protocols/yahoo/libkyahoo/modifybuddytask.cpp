@@ -19,7 +19,7 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <QString>
+
 #include <kdebug.h>
 
 ModifyBuddyTask::ModifyBuddyTask(Task* parent) : Task(parent)

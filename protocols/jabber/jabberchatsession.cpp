@@ -19,7 +19,7 @@
 #include <q3ptrlist.h>
 #include <qlabel.h>
 #include <qimage.h>
-#include <qtooltip.h>
+
 #include <qfile.h>
 #include <qicon.h>
 #include <config-kopete.h>

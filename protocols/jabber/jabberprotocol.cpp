@@ -84,34 +84,34 @@ JabberProtocol::JabberProtocol (QObject * parent, const QStringList &)
 	propWorkPhone(Kopete::Global::Properties::self()->workPhone()),
 	propWorkMobilePhone(Kopete::Global::Properties::self()->workMobilePhone()),
 	propNickName(Kopete::Global::Properties::self()->nickName()),
-	propSubscriptionStatus("jabberSubscriptionStatus", i18n ("Subscription"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAuthorizationStatus("jabberAuthorizationStatus", i18n ("Authorization Status"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propSubscriptionStatus("jabberSubscriptionStatus", i18n ("Subscription"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propAuthorizationStatus("jabberAuthorizationStatus", i18n ("Authorization Status"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
 	propAvailableResources("jabberAvailableResources", i18n ("Available Resources"), "jabber_chatty", Kopete::ContactPropertyTmpl::RichTextProperty),
-	propVCardCacheTimeStamp("jabberVCardCacheTimeStamp", i18n ("vCard Cache Timestamp"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty),
+	propVCardCacheTimeStamp("jabberVCardCacheTimeStamp", i18n ("vCard Cache Timestamp"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty),
 	propPhoto(Kopete::Global::Properties::self()->photo()),
-	propJid("jabberVCardJid", i18n("Jabber ID"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propBirthday("jabberVCardBirthday", i18n("Birthday"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propTimezone("jabberVCardTimezone", i18n("Timezone"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomepage("jabberVCardHomepage", i18n("Homepage"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propCompanyName("jabberVCardCompanyName", i18n("Company name"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propCompanyDepartement("jabberVCardCompanyDepartement", i18n("Company Departement"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propCompanyPosition("jabberVCardCompanyPosition", i18n("Company Position"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propCompanyRole("jabberVCardCompanyRole", i18n("Company Role"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkStreet("jabberVCardWorkStreet", i18n("Work Street"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkExtAddr("jabberVCardWorkExtAddr", i18n("Work Extra Address"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkPOBox("jabberVCardWorkPOBox", i18n("Work PO Box"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkCity("jabberVCardWorkCity", i18n("Work City"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkPostalCode("jabberVCardWorkPostalCode", i18n("Work Postal Code"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkCountry("jabberVCardWorkCountry", i18n("Work Country"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkEmailAddress("jabberVCardWorkEmailAddress", i18n("Work Email Address"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomeStreet("jabberVCardHomeStreet", i18n("Home Street"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomeExtAddr("jabberVCardHomeExt", i18n("Home Extra Address"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomePOBox("jabberVCardHomePOBox", i18n("Home PO Box"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomeCity("jabberVCardHomeCity", i18n("Home City"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomePostalCode("jabberVCardHomePostalCode", i18n("Home Postal Code"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomeCountry("jabberVCardHomeCountry", i18n("Home Country"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propPhoneFax("jabberVCardPhoneFax", i18n("Fax"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAbout("jabberVCardAbout", i18n("About"), QString::null, Kopete::ContactPropertyTmpl::PersistentProperty)
+	propJid("jabberVCardJid", i18n("Jabber ID"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propBirthday("jabberVCardBirthday", i18n("Birthday"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propTimezone("jabberVCardTimezone", i18n("Timezone"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomepage("jabberVCardHomepage", i18n("Homepage"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propCompanyName("jabberVCardCompanyName", i18n("Company name"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propCompanyDepartement("jabberVCardCompanyDepartement", i18n("Company Departement"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propCompanyPosition("jabberVCardCompanyPosition", i18n("Company Position"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propCompanyRole("jabberVCardCompanyRole", i18n("Company Role"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkStreet("jabberVCardWorkStreet", i18n("Work Street"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkExtAddr("jabberVCardWorkExtAddr", i18n("Work Extra Address"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkPOBox("jabberVCardWorkPOBox", i18n("Work PO Box"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkCity("jabberVCardWorkCity", i18n("Work City"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkPostalCode("jabberVCardWorkPostalCode", i18n("Work Postal Code"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkCountry("jabberVCardWorkCountry", i18n("Work Country"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propWorkEmailAddress("jabberVCardWorkEmailAddress", i18n("Work Email Address"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomeStreet("jabberVCardHomeStreet", i18n("Home Street"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomeExtAddr("jabberVCardHomeExt", i18n("Home Extra Address"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomePOBox("jabberVCardHomePOBox", i18n("Home PO Box"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomeCity("jabberVCardHomeCity", i18n("Home City"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomePostalCode("jabberVCardHomePostalCode", i18n("Home Postal Code"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propHomeCountry("jabberVCardHomeCountry", i18n("Home Country"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propPhoneFax("jabberVCardPhoneFax", i18n("Fax"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propAbout("jabberVCardAbout", i18n("About"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty)
 
 {
 
@@ -244,7 +244,7 @@ Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resou
 			status = JabberKOSDND;
 		}
 		else if (resource.status ().show () == "online")
-		{ // the ApaSMSAgent sms gateway report status as "online" even if it's not in the RFC 3921 § 2.2.2.1 
+		{ // the ApaSMSAgent sms gateway report status as "online" even if it's not in the RFC 3921 ï¿½ 2.2.2.1 
 			// See Bug 129059
 			status = JabberKOSOnline;
 		}
@@ -427,8 +427,12 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 			Kopete::ChatSession *kcs=contact->manager(Kopete::Contact::CanCreate);
 			if(!kcs)
 				return;
-			Kopete::Message msg(account->myself(),kcs->members(), url.queryItemValue("body"),url.queryItemValue("subject"),
-								Kopete::Message::Outbound, Qt::PlainText);
+
+			Kopete::Message msg(account->myself(), kcs->members());
+			msg.setPlainBody( url.queryItemValue("body") );
+			msg.setSubject( url.queryItemValue("subject") );
+			msg.setDirection( Kopete::Message::Outbound );
+
 			KopeteView *kv=kcs->view(true);
 			if(kv)
 				kv->setCurrentMessage(msg);
@@ -438,7 +442,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 	{
 		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
 			i18n("Do you want to add '%1' to your contact list?", jid.full()),
-			QString::null, KGuiItem( i18n("Add") ), KGuiItem( i18n("Do Not Add") ))
+			QString(), KGuiItem( i18n("Add") ), KGuiItem( i18n("Do Not Add") ))
 				  != KMessageBox::Yes)
 		{
 			return;
@@ -455,7 +459,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 	
 		if (KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
 			i18n("Do you want to remove '%1' from your contact list?", jid.full()),
-			QString::null, KGuiItem( i18n("Remove") ), KGuiItem( i18n("Do Not Remove") ))
+			QString(), KGuiItem( i18n("Remove") ), KGuiItem( i18n("Do Not Remove") ))
 						!= KMessageBox::Yes)
 		{
 			return;

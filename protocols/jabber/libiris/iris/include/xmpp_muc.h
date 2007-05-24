@@ -22,7 +22,7 @@
 #define XMPP_MUC_H
 
 #include <QDomElement>
-#include <QString>
+
 
 #include "xmpp_jid.h"
 

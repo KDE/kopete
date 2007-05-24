@@ -67,12 +67,12 @@ bool ICQChangePasswordTask::take( Transfer* transfer )
 		if ( buffer->getByte() == 0x0A )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Password changed successfully." << endl;
-			setSuccess( 0, QString::null );
+			setSuccess( 0, QString() );
 		}
 		else
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Error changing password!!!" << endl;
-			setError( 0, QString::null );
+			setError( 0, QString() );
 		}
 
 		setTransfer( 0 );
@@ -88,7 +88,7 @@ void ICQChangePasswordTask::onGo()
 	if ( m_password.length() < 6 || m_password.length() > 8 )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Wrong password length." << endl;
-		setError( 0, QString::null );
+		setError( 0, QString() );
 		return;
 	}
 

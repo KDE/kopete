@@ -83,7 +83,7 @@ public slots:
 	void slotShowPublicProfile();
 	void slotEditContact();
 	virtual void sendFile( const KUrl &sourceURL = KUrl(),
-		const QString &fileName = QString::null, uint fileSize = 0L );
+		const QString &fileName = QString(), uint fileSize = 0L );
 
 
 protected:

@@ -67,7 +67,7 @@ public:
      * @param msg a custom message to use, if required
      */
     void setStatus(Kopete::OnlineStatus status,
-            const QString msg = QString::null);
+            const QString msg = QString());
 
     /**
      * Add a single contact to be registered for status updates

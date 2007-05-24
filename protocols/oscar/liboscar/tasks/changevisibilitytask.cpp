@@ -64,13 +64,13 @@ bool ChangeVisibilityTask::take(Transfer* transfer)
 	if ( forMe( transfer ) )
 	{
 		setTransfer( transfer );
-		setSuccess( 0, QString::null );
+		setSuccess( 0, QString() );
 		setTransfer( 0 );
 		return true;
 	}
 	else
 	{
-		setError( 0, QString::null );
+		setError( 0, QString() );
 		return false;
 	}
 }
@@ -82,7 +82,7 @@ void ChangeVisibilityTask::onGo()
 	if ( !item )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Didn't find a visibility item" << endl;
-		setError( 0, QString::null );
+		setError( 0, QString() );
 		return;
 	}
 	
@@ -97,7 +97,7 @@ void ChangeVisibilityTask::onGo()
 	if ( Oscar::updateTLVs( newContact, tList ) == false )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Visibility didn't change, don't update" << endl;
-		setSuccess( 0, QString::null );
+		setSuccess( 0, QString() );
 		return;
 	}
 	

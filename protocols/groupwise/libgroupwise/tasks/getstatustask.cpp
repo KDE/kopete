@@ -61,7 +61,7 @@ bool GetStatusTask::take( Transfer * transfer )
 		// TODO: Check that the change to sending DNs above has fixed this problem.
 		status = sf->value().toInt();
 		// unfortunately getstatus doesn't give us an away message so we pass QString::null here
-		emit gotStatus( m_userDN, status, QString::null );
+		emit gotStatus( m_userDN, status, QString() );
 		setSuccess();
 	}	
 	else

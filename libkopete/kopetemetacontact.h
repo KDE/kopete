@@ -23,7 +23,7 @@
 
 #include "kopetecontactlistelement.h"
 #include <QList>
-#include <QString>
+
 
 #include <kdemacros.h>
 #include <kurl.h>

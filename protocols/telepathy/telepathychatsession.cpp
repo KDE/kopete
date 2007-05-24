@@ -97,7 +97,10 @@ void TelepathyChatSession::telepathyMessageReceived(const QtTapioca::TextChannel
 		messageType = Kopete::Message::TypeAction;
 	}
 
-	Kopete::Message newMessage( members().first(), myself(), message.contents(), Kopete::Message::Inbound, Qt::PlainText, QString(), messageType );
+	Kopete::Message newMessage( members().first(), myself() );
+	newMessage.setPlainBody( message.contents() );
+	newMessage.setDirection( Kopete::Message::Inbound );
+	newMessage.setType( messageType );
 
 	appendMessage( newMessage );
 }
@@ -113,8 +116,11 @@ void TelepathyChatSession::telepathyMessageSent(const QtTapioca::TextChannel::Me
 		messageType = Kopete::Message::TypeAction;
 	}
 
-	Kopete::Message newMessage( myself(), members(), message.contents(), Kopete::Message::Outbound, Qt::PlainText, QString(), messageType );
-	
+	Kopete::Message newMessage( myself(), members() );
+	newMessage.setPlainBody( message.contents() );
+	newMessage.setDirection( Kopete::Message::Outbound );
+	newMessage.setType( messageType );
+
 	// Append succesfully sent message to chat window and notify other components of success
 	appendMessage( newMessage );
 	messageSucceeded();
@@ -149,7 +155,9 @@ void TelepathyChatSession::telepathyMessageDeliveryError(const QtTapioca::TextCh
 	// could not be delivered. Reason: Contact is offline.
 	errorMessageText = i18n("The following message:\n \"%1\"\ncould not be delivered. Reason: %2", message.contents(), internalErrorMessage);
 
-	Kopete::Message errorMessage( myself(), members(), errorMessageText, Kopete::Message::Internal );
+	Kopete::Message errorMessage( myself(), members() );
+	errorMessage.setPlainBody( errorMessageText );
+	errorMessage.setDirection( Kopete::Message::Internal );
 
 	appendMessage( errorMessage );
 }

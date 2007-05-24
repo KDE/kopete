@@ -425,7 +425,7 @@ void GroupWiseChatSession::joined( GroupWiseContact * c )
 	{
 		if ( pending->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( pending, QString::null, Kopete::Message::PlainText, true );
+			removeContact( pending, QString(), Kopete::Message::PlainText, true );
 			break;
 		}
 	}
@@ -468,7 +468,7 @@ void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 	{
 		if ( pending->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( pending, QString::null, Kopete::Message::PlainText, true );
+			removeContact( pending, QString(), Kopete::Message::PlainText, true );
 			break;
 		}
 	}

@@ -1,10 +1,11 @@
 /*
     Kopete Oscar Protocol
-    aimlogintask.h - Handles logging into to the AIM service
+    oscarlogintask.h - Handles logging into to the OSCAR service
 
     Copyright (c) 2004 Matt Rogers <mattr@kde.org>
+    Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,7 +16,7 @@
     *                                                                       *
     *************************************************************************
 */
-#include "aimlogintask.h"
+#include "oscarlogintask.h"
 
 #include <stdlib.h>
 #include <kdebug.h>
@@ -29,16 +30,16 @@
 
 using namespace Oscar;
 
-AimLoginTask::AimLoginTask( Task* parent )
+OscarLoginTask::OscarLoginTask( Task* parent )
 	: Task ( parent )
 {
 }
 
-AimLoginTask::~AimLoginTask()
+OscarLoginTask::~OscarLoginTask()
 {
 }
 
-void AimLoginTask::onGo()
+void OscarLoginTask::onGo()
 {
 	//send Snac 17,06
 	sendAuthStringRequest();
@@ -46,9 +47,9 @@ void AimLoginTask::onGo()
 	connect( this, SIGNAL( haveAuthKey() ), this, SLOT( sendLoginRequest() ) );
 }
 
-bool AimLoginTask::forMe( Transfer* transfer ) const
+bool OscarLoginTask::forMe( const Transfer* transfer ) const
 {
-	SnacTransfer* st = dynamic_cast<SnacTransfer*>( transfer );
+	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
 
 	if (!st)
 		return false;
@@ -72,22 +73,22 @@ bool AimLoginTask::forMe( Transfer* transfer ) const
 	return false;
 }
 
-const QByteArray& AimLoginTask::cookie() const
+const QByteArray& OscarLoginTask::cookie() const
 {
 	return m_cookie;
 }
 
-const QString& AimLoginTask::bosHost() const
+const QString& OscarLoginTask::bosHost() const
 {
 	return m_bosHost;
 }
 
-const QString& AimLoginTask::bosPort() const
+const QString& OscarLoginTask::bosPort() const
 {
 	return m_bosPort;
 }
 
-bool AimLoginTask::take( Transfer* transfer )
+bool OscarLoginTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
@@ -120,7 +121,7 @@ bool AimLoginTask::take( Transfer* transfer )
 	return false;
 }
 
-void AimLoginTask::sendAuthStringRequest()
+void OscarLoginTask::sendAuthStringRequest()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo
 		<< "SEND CLI_AUTH_REQUEST, sending login request" << endl;
@@ -130,30 +131,22 @@ void AimLoginTask::sendAuthStringRequest()
 
 	Buffer* outbuf = new Buffer;
 	outbuf->addTLV(0x0001, client()->userId().toLatin1() );
-	outbuf->addDWord(0x004B0000); // empty TLV 0x004B
-	outbuf->addDWord(0x005A0000); // empty TLV 0x005A
 
 	Transfer* st = createTransfer( f, s, outbuf );
 	send( st );
 }
 
-QByteArray AimLoginTask::parseAuthString( Buffer* b )
-{
-	Oscar::WORD keylength = b->getWord();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Key length is " << keylength << endl;
-	QByteArray authString = b->getBlock( keylength );
-	return authString;
-}
-
-
-void AimLoginTask::processAuthStringReply()
+void OscarLoginTask::processAuthStringReply()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got the authorization key" << endl;
-	m_authKey = parseAuthString( transfer()->buffer() );
+
+	Buffer* b = transfer()->buffer();
+	m_authKey = b->getBSTR();
+
 	emit haveAuthKey();
 }
 
-void AimLoginTask::sendLoginRequest()
+void OscarLoginTask::sendLoginRequest()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<  "SEND (CLI_MD5_LOGIN) sending AIM login" << endl;
 
@@ -178,14 +171,17 @@ void AimLoginTask::sendLoginRequest()
 	outbuf->addTLV(0x000f, version->lang.toLatin1() );
 	outbuf->addTLV(0x000e, version->country.toLatin1() );
 
-	//if set, old-style buddy lists will not work... you will need to use SSI
-	outbuf->addTLV8(0x004a,0x01);
+	if ( !client()->isIcq() )
+	{
+		//if set, old-style buddy lists will not work... you will need to use SSI
+		outbuf->addTLV8(0x004a,0x01);
+	}
 
 	Transfer *st = createTransfer( f, s, outbuf );
 	send( st );
 }
 
-void AimLoginTask::handleLoginResponse()
+void OscarLoginTask::handleLoginResponse()
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "RECV SNAC 0x17, 0x07 - AIM Login Response" << endl;
 
@@ -193,7 +189,7 @@ void AimLoginTask::handleLoginResponse()
 
 	if ( !st )
 	{
-		setError( -1 , QString::null );
+		setError( -1 , QString() );
 		return;
 	}
 
@@ -205,31 +201,27 @@ void AimLoginTask::handleLoginResponse()
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(1) [SN], SN=" << QString( uin.data ) << endl;
 	}
 
-	TLV err = findTLV( tlvList, 0x0008 );
-
+	TLV err = findTLV( tlvList, 0x0008 );	
 	if ( err )
 	{
 		Oscar::WORD errorNum = ( ( err.data[0] << 8 ) | err.data[1] );
 
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << k_funcinfo << "found TLV(8) [ERROR] error= " <<
-			errorNum << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(8) [ERROR] error= " << errorNum << endl;
 		Oscar::SNAC s = { 0, 0, 0, 0 };
 		client()->fatalTaskError( s, errorNum );
-		setError( errorNum, QString::null );
+		setError( errorNum, QString() );
 		return; //if there's an error, we'll need to disconnect anyways
 	}
 
 	TLV server = findTLV( tlvList, 0x0005 );
 	if ( server )
 	{
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(5) [SERVER] " << QString( server.data ) << endl;
 		QString ip = QString( server.data );
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(5) [SERVER] " << ip << endl;
 		int index = ip.indexOf( ':' );
 		m_bosHost = ip.left( index );
 		ip.remove( 0 , index+1 ); //get rid of the colon and everything before it
-		m_bosPort = ip.left(4); //we only need 4 bytes
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "We should reconnect to server '" << m_bosHost <<
-			"' on port " << m_bosPort << endl;
+		m_bosPort = ip;
 	}
 
 	TLV cookie = findTLV( tlvList, 0x0006 );
@@ -237,12 +229,25 @@ void AimLoginTask::handleLoginResponse()
 	{
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(6) [COOKIE]" << endl;
 		m_cookie = cookie.data;
-		setSuccess( 0, QString::null );
 	}
 	tlvList.clear();
+
+	if ( m_bosHost.isEmpty() )
+	{
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Empty host address!" << endl;
+		
+		Oscar::SNAC s = { 0, 0, 0, 0 };
+		client()->fatalTaskError( s, 0 );
+		setError( 0, QString() );
+		return;
+	}
+	
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "We should reconnect to server '"
+		<< m_bosHost << "' on port " << m_bosPort << endl;
+	setSuccess( 0, QString() );
 }
 
-void AimLoginTask::encodePassword( QByteArray& digest ) const
+void OscarLoginTask::encodePassword( QByteArray& digest ) const
 {
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 	md5_state_t state;
@@ -255,4 +260,4 @@ void AimLoginTask::encodePassword( QByteArray& digest ) const
 
 //kate: indent-mode csands; tab-width 4; replace-tabs off; indent-spaces off;
 
-#include "aimlogintask.moc"
+#include "oscarlogintask.moc"

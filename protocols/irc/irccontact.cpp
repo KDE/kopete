@@ -320,8 +320,8 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 			Message msg(message.from(), message.to(), Kopete::Message::escape(sendMessage(*it)), message.direction(),
 			                    Message::RichText, CHAT_VIEW, message.type());
 
-			msg.setBg(QColor());
-			msg.setFg(QColor());
+			msg.setBackgroundColor(QColor());
+			msg.setForegroundColor(QColor());
 
 			appendMessage(msg);
 			chatSession->messageSucceeded();
@@ -331,8 +331,8 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 	{
 		message.setBody( Kopete::Message::escape(sendMessage( htmlString )), Message::RichText );
 
-		message.setBg( QColor() );
-		message.setFg( QColor() );
+		message.setBackgroundColor( QColor() );
+		message.setForegroundColor( QColor() );
 
 		appendMessage(message);
 		chatSession->messageSucceeded();

@@ -23,7 +23,7 @@ OSCAR_TEST_MAIN( ConnectionTest )
 
 void ConnectionTest::checkSupportedFamiliesSingle()
 {
-    Connection* c = new Connection( 0, 0, 0 );
+    Connection* c = new Connection( 0, 0 );
     QVERIFY( c->supportedFamilies().isEmpty() );
     c->addToSupportedFamilies( 1 );
     QVERIFY( c->supportedFamilies().count() == 1  );
@@ -39,7 +39,7 @@ void ConnectionTest::checkSupportedFamiliesSingle()
 
 void ConnectionTest::checkSupportedFamiliesList()
 {
-    Connection* c = new Connection( 0, 0, 0 );
+    Connection* c = new Connection( 0, 0 );
     QVERIFY( c->supportedFamilies().isEmpty() );
     QList<int> families;
     families.append( 1 );

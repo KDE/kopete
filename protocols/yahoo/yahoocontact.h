@@ -80,7 +80,7 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotSendFile( const KUrl &file );
 	virtual void deleteContact();
-	virtual void sendFile( const KUrl &sourceURL = KUrl(), const QString &fileName = QString::null, uint fileSize = 0L );
+	virtual void sendFile( const KUrl &sourceURL = KUrl(), const QString &fileName = QString(), uint fileSize = 0L );
 	void slotUserProfile();
 	void stealthContact();
 	void requestWebcam();

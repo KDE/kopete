@@ -49,7 +49,7 @@
 #include <kmenu.h>
 #include <kpushbutton.h>
 #include <ktextedit.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kgenericfactory.h>
 #include <kxmlguifactory.h>
 #include <kvbox.h>
@@ -241,11 +241,11 @@ void KopeteEmailWindow::initActions(void)
 
 	action = new KAction( KIcon("pencil"), i18n( "Set Text &Color..." ), coll );
         coll->addAction( "format_color", action );
-	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setFgColor()) );
+	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setForegroundColorColor()) );
 
 	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll );
         coll->addAction( "format_bgcolor", action );
-	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBgColor()) );
+	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBackgroundColorColor()) );
 
 	KStandardAction::showMenubar( this, SLOT( slotViewMenuBar() ), coll );
 	setStandardToolBarMenuEnabled( true );
@@ -541,8 +541,8 @@ void KopeteEmailWindow::raise(bool activate)
 {
 	makeVisible();
 #ifdef Q_WS_X11
-	if ( !KWM::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
-		KWM::setOnDesktop( winId(), KWM::currentDesktop() );
+	if ( !KWindowSystem::windowInfo( winId(), NET::WMDesktop ).onAllDesktops() )
+		KWindowSystem::setOnDesktop( winId(), KWindowSystem::currentDesktop() );
 #endif
 	KXmlGuiWindow::raise();
 
@@ -556,7 +556,7 @@ void KopeteEmailWindow::raise(bool activate)
 	*/
 	//Will not activate window if user was typing
 	if(activate)
-		KWM::activateWindow( winId() );
+		KWindowSystem::activateWindow( winId() );
 }
 
 void KopeteEmailWindow::windowActivationChange( bool )

@@ -22,6 +22,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
+#include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopeteappearancesettings.h"
 
@@ -514,7 +515,7 @@ void HistoryDialog::searchFirstStep()
 				}
 				QTextStream stream(&file);
 				QString textLine;
-				while((textLine = stream.readLine()) != QString::null)
+				while(!(textLine = stream.readLine()).isNull())
 				{
 					if (textLine.contains(mMainWidget->searchLine->text(), Qt::CaseInsensitive))
 					{

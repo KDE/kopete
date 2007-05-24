@@ -653,8 +653,12 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 	}
 
 	contactsListTmp.append( myself() );
-	Kopete::Message msg( gaduMessage->sendTime, contact, contactsListTmp,
-			gaduMessage->message, Kopete::Message::Inbound, Qt::RichText );
+
+	Kopete::Message msg( contact, contactsListTmp );
+	msg.setTimestamp( gaduMessage->sendTime );
+	msg.setHtmlBody( gaduMessage->message );
+	msg.setDirection( Kopete::Message::Inbound );
+
 	contact->messageReceived( msg );
 }
 
@@ -720,7 +724,7 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 		default:
 			if ( p->connectWithSSL ) {
 				if ( useTls() != TLS_only ) {
-					slotCommandDone( QString::null, i18n( "connection using SSL was not possible, retrying without." ) );
+					slotCommandDone( QString(), i18n( "connection using SSL was not possible, retrying without." ) );
 					kDebug( 14100 ) << "try without tls now" << endl;
 					p->connectWithSSL = false;
 					tryReconnect = true;
@@ -932,7 +936,7 @@ GaduAccount::userlist( const QString& contactsListString )
 void
 GaduAccount::userListExportDone()
 {
-	slotCommandDone( QString::null, i18n( "Contacts exported to the server.") );
+	slotCommandDone( QString(), i18n( "Contacts exported to the server.") );
 }
 
 void
@@ -959,7 +963,7 @@ GaduAccount::slotExportContactsListToFile()
 		return;
 	}
 
-	p->saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
+	p->saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString(),
 					Kopete::UI::Global::mainWidget() );
 	p->saveListDialog->setCaption(
 	    i18n("Save Contacts List for Account %1 As",
@@ -1005,7 +1009,7 @@ GaduAccount::slotImportContactsFromFile()
 		return;
 	}
 
-	p->loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
+	p->loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString(),
 					Kopete::UI::Global::mainWidget() );
 	p->loadListDialog->setCaption(
 	    i18n("Load Contacts List for Account %1 As",

@@ -254,23 +254,23 @@ void SSIModifyTask::handleContactAck()
 			break;
 		case 0x0002:
 			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Item to modify not found in list" << endl;
-			setSuccess( 0, QString::null );
+			setSuccess( 0, QString() );
 			break;
 		case 0x0003:
 			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Item already exists in SSI" << endl;
-			setSuccess( 0, QString::null );
+			setSuccess( 0, QString() );
 			break;
 		case 0x000A:
 			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Error adding item ( invalid id, already in list, invalid data )" << endl;
-			setSuccess( 0, QString::null );
+			setSuccess( 0, QString() );
 			break;
 		case 0x000C:
 			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Can't add item. Limit exceeded." << endl;
-			setSuccess( 0, QString::null );
+			setSuccess( 0, QString() );
 			break;
 		case 0x000D:
 			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Can't add ICQ item to AIM list ( and vice versa )" << endl;
-			setSuccess( 0, QString::null );
+			setSuccess( 0, QString() );
 			break;
 		case 0x000E:
 			{
@@ -283,7 +283,7 @@ void SSIModifyTask::handleContactAck()
 			}
 		default:
 			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Unknown acknowledgement code" << endl;
-			setSuccess( 0, QString::null );
+			setSuccess( 0, QString() );
 			break;
 		}
 	};
@@ -466,7 +466,7 @@ void SSIModifyTask::updateContactManager()
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "and adding " << m_newItem.name() << " to contact manager" << endl;
 			m_ssiManager->newItem( m_newItem );
 		}
-		setSuccess( 0, QString::null );
+		setSuccess( 0, QString() );
 		return;
 	}
 
@@ -479,7 +479,7 @@ void SSIModifyTask::updateContactManager()
 			m_ssiManager->removeContact( m_oldItem.name() );
 		else if ( m_opSubject == NoSubject )
 			m_ssiManager->removeItem( m_oldItem );
-		setSuccess( 0, QString::null );
+		setSuccess( 0, QString() );
 		return;
 	}
 
@@ -492,11 +492,11 @@ void SSIModifyTask::updateContactManager()
 			m_ssiManager->newContact( m_newItem );
 		else if ( m_opSubject == NoSubject )
 			m_ssiManager->newItem( m_newItem );
-		setSuccess( 0, QString::null );
+		setSuccess( 0, QString() );
 		return;
 	}
 
-	setSuccess( 0, QString::null );
+	setSuccess( 0, QString() );
 }
 
 void SSIModifyTask::freeIdOnError()

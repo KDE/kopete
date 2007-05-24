@@ -2,6 +2,7 @@
     cryptographypreferences.cpp  -  description
 
     Copyright (c) 2002      by Olivier Goffart <ogoffart@kde.org>
+    Copyright (c) 2007      by Charles Connell <charles@connells.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -21,10 +22,10 @@
 #include <kgenericfactory.h>
 
 #include "ui_cryptographyprefsbase.h"
+//#include "cryptographyconfig.h"
 #include "cryptographypreferences.h"
-#include "kgpgselkey.h"
-
-// TODO: Port to KConfigXT
+#include "cryptographypreferences.moc"
+#include "selectkeydialog.h"
 
 typedef KGenericFactory<CryptographyPreferences> CryptographyPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_cryptography, CryptographyPreferencesFactory("kcm_kopete_cryptography"))
@@ -32,13 +33,18 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_cryptography, CryptographyPreferencesFact
 CryptographyPreferences::CryptographyPreferences(QWidget *parent, const QStringList &args)
 							: KCModule(CryptographyPreferencesFactory::componentData(), parent, args)
 {
-	// Add actuall widget generated from ui file.
-	QWidget* w = new QWidget(this);
+	// Add actual widget generated from ui file.
+    QVBoxLayout* l = new QVBoxLayout(this);
+    QWidget *w = new QWidget;
 	preferencesDialog = new Ui::CryptographyPrefsUI;
-	preferencesDialog->setupUi(this);
+	preferencesDialog->setupUi(w);
+    l->addWidget(w);
+//    addConfig(CryptographyConfig::self(), w);
 
-	connect (preferencesDialog->m_selectOwnKey , SIGNAL(pressed()) , this , SLOT(slotSelectPressed()));
-	//setMainWidget( preferencesDialog ,"Cryptography Plugin");
+    if ( preferencesDialog->kcfg_DontAskForPassphrase->checkState() != QCheckBox::On )
+      preferencesDialog->kcfg_CacheBehavior->setEnabled( false );
+
+	connect (preferencesDialog->selectKey, SIGNAL(pressed()), this, SLOT(slotSelectPressed()));
 }
 
 CryptographyPreferences::~CryptographyPreferences()
@@ -46,14 +52,26 @@ CryptographyPreferences::~CryptographyPreferences()
 	delete preferencesDialog;
 }
 
-void CryptographyPreferences::slotSelectPressed()
+void CryptographyPreferences::load()
 {
-	KgpgSelKey opts(this,0,false);
-	opts.exec();
-	if (opts.result()==QDialog::Accepted)
-		preferencesDialog->PGP_private_key->setText(opts.getkeyID());
+	KCModule::load();
 }
 
-#include "cryptographypreferences.moc"
+void CryptographyPreferences::save()
+{
+	KCModule::save();
+}
+
+void CryptographyPreferences::defaults()
+{
+}
+
+void CryptographyPreferences::slotSelectPressed()
+{
+	SelectKeyDialog opts(this,0,false);
+	opts.exec();
+	if (opts.result()==QDialog::Accepted)
+		preferencesDialog->kcfg_PrivateKeyId->setText(opts.getkeyID());
+}
 
 // vim: set noet ts=4 sts=4 sw=4:

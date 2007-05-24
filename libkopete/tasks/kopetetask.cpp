@@ -1,10 +1,10 @@
 /*
-    Kopete Oscar Protocol
-    icqlogintask.h - Handles logging into to the ICQ service
+    kopetetask.cpp - Kopete Task
 
-    Copyright (c) 2004 Matt Rogers <mattr@kde.org>
+    Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
+    Copyright (c) 2007      by Michaël Larouche      <larouche@kde.org>
 
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,32 +16,28 @@
     *************************************************************************
 */
 
-#ifndef _OSCAR_ICQLOGINTASK_H_
-#define _OSCAR_ICQLOGINTASK_H_
+#include "kopetetask.h"
 
-#include <oscartypes.h>
-#include <task.h>
+#include <kdebug.h>
 
-class QString;
-class Transfer;
-
-using namespace Oscar;
-
-class IcqLoginTask : public Task
+namespace Kopete
 {
-Q_OBJECT
+
+class Task::Private
+{
 public:
-	IcqLoginTask( Task* parent );
-	~IcqLoginTask();
-	bool take( Transfer* transfer );
-	virtual void onGo();
-
-protected:
-	bool forMe( Transfer* transfer ) const;
-
-private:
-	QString encodePassword( const QString& pw );
-
 };
 
-#endif
+Task::Task(QObject *parent)
+ : KCompositeJob(parent), d( new Private )
+{
+}
+
+Task::~Task()
+{
+	delete d;
+}
+
+}
+
+#include "kopetetask.moc"

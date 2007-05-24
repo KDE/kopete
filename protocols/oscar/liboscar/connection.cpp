@@ -21,7 +21,6 @@
 
 #include "connection.h"
 #include "client.h"
-#include "connector.h"
 #include "oscarclientstream.h"
 #include "rateclassmanager.h"
 #include "task.h"
@@ -43,7 +42,6 @@ public:
 	RateClassManager* rateClassManager;
 
 	ClientStream* clientStream;
-	Connector* connector;
 	Client* client;
 
 	Task* root;
@@ -51,14 +49,13 @@ public:
 
 
 
-Connection::Connection( Connector* connector, ClientStream* cs, const char* name )
+Connection::Connection( ClientStream* cs, const char* name )
 : QObject( 0 )
 {
 	setObjectName( QLatin1String(name) );
 	d = new ConnectionPrivate();
 	d->clientStream = cs;
 	d->client = 0;
-	d->connector = connector;
 	d->rateClassManager = new RateClassManager( this );
 	d->root = new Task( this, true /* isRoot */ );
 	m_loggedIn = false;
@@ -70,7 +67,6 @@ Connection::~Connection()
 {
 	delete d->rateClassManager;
 	delete d->clientStream;
-	delete d->connector;
 	delete d;
 }
 
@@ -80,12 +76,12 @@ void Connection::setClient( Client* c )
 	connect( c, SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
 }
 
-void Connection::connectToServer( const QString& host, bool auth )
+void Connection::connectToServer( const QString& host, quint16 port )
 {
 	connect( d->clientStream, SIGNAL( error( int ) ), this, SLOT( streamSocketError( int ) ) );
 	connect( d->clientStream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
 	connect( d->clientStream, SIGNAL( connected() ), this, SIGNAL( connected() ) );
-	d->clientStream->connectToServer( host, auth );
+	d->clientStream->connectToServer( host, port );
 }
 
 void Connection::close()
@@ -241,7 +237,7 @@ void Connection::loggedIn()
 
 void Connection::streamSocketError( int code )
 {
-	emit socketError( code, d->clientStream->errorText() );
+	emit socketError( code, d->clientStream->errorString() );
 }
 
 #include "connection.moc"

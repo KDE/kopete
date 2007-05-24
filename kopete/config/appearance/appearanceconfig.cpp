@@ -16,8 +16,6 @@
     *************************************************************************
 */
 
-#include "config-kopete.h" // HAVE_XRENDER
-
 #include "appearanceconfig.h"
 #include "appearanceconfig_emoticons.h"
 #include "appearanceconfig_colors.h"
@@ -134,13 +132,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QStringList &args )
 	connect(d->mPrfsContactList->mEditTooltips, SIGNAL(clicked()),
 		this, SLOT(slotEditTooltips()));
 
-	// don't enable the checkbox if XRender is not available
-	#ifdef HAVE_XRENDER
-	d->mPrfsContactList->kcfg_contactListFading->setEnabled(true);
-	#else
-	d->mPrfsContactList->kcfg_contactListFading->setEnabled(false);
-	#endif
-
 	d->mAppearanceTabCtl->addTab(d->mPrfsContactList, i18n("Contact List"));
 
 	// "Colors and Fonts" TAB ===================================================
@@ -188,11 +179,6 @@ void AppearanceConfig::load()
 
 	// Look for available emoticons themes
 	updateEmoticonlist();
-
-
-#ifndef HAVE_XRENDER
-	d->mPrfsContactList->kcfg_contactListFading->setChecked( false );
-#endif
 
 //	kDebug(14000) << k_funcinfo << "called" << endl;
 }

@@ -68,8 +68,8 @@ class IRCAccount
 	Q_PROPERTY(bool autoShowServerWindow READ autoShowServerWindow WRITE setAutoShowServerWindow)
 
 public:
-	explicit IRCAccount(const QString &accountid, const QString &autoConnect = QString::null,
-			const QString& networkName = QString::null, const QString &nickName = QString::null);
+	explicit IRCAccount(const QString &accountid, const QString &autoConnect = QString(),
+			const QString& networkName = QString(), const QString &nickName = QString());
 	virtual ~IRCAccount();
 
 public: // READ properties accessors.
@@ -155,14 +155,14 @@ public:
 
 public slots:
 
-	virtual void setAway( bool isAway, const QString &awayMessage = QString::null );
+	virtual void setAway( bool isAway, const QString &awayMessage = QString() );
 
 	virtual void connectWithPassword( const QString & );
 
 	virtual void disconnect() { quit(); } // REMOVE ME ASAP
 
 public slots:
-	void quit( const QString &quitMessage = QString::null );
+	void quit( const QString &quitMessage = QString() );
 
 protected:
 	virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact ) ;

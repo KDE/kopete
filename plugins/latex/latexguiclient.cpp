@@ -65,9 +65,11 @@ void LatexGUIClient::slotPreview()
 		return;
 	}
 
-	msg=Kopete::Message( msg.from() , msg.to() ,
-						 i18n("<b>Preview of the latex message :</b> <br />%1", msg.plainBody()),
-						 Kopete::Message::Internal , Qt::RichText);
+	QString oldBody = msg.plainBody();
+	msg=Kopete::Message( msg.from() , msg.to() );
+	msg.setHtmlBody( i18n("<b>Preview of the latex message :</b> <br />%1", oldBody) );
+	msg.setDirection( Kopete::Message::Internal );
+
 	m_manager->appendMessage(msg) ;
 }
 
