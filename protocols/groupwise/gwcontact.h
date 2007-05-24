@@ -130,6 +130,15 @@ public:
 	 * Mark this contact as being deleted
 	 */
 	void setDeleting( bool deleting );
+	/**
+	 * Marks this contact as having sent a message whilst apparently offline
+	 */
+	void setMessageReceivedOffline( bool on );
+	/**
+	 * Has this contact sent a message whilst apparently offline?
+	 */
+	bool messageReceivedOffline() const;
+
 public slots:
 	/**
 	 * Transmits an outgoing message to the server 
@@ -179,6 +188,7 @@ protected:
 	// HACK: flag used to differentiate between 'all contact list instances gone while we are moving on the server' 
 	// and 'all contact list instances gone because we wanted to delete them all'
 	bool m_deleting;
+    bool m_messageReceivedOffline;
 };
 
 #endif
