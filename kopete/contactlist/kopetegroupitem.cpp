@@ -16,7 +16,7 @@
     *************************************************************************
 */
 
-#include "kopetegroupviewitem.h"
+#include "kopetegroupitem.h"
 
 #include <QtCore/QString>
 
@@ -56,7 +56,7 @@ void KopeteGroupItem::groupNameChanged( Kopete::Group* group, const QString& )
 }
 
 
-#include "kopetegroupviewitem.moc"
+#include "kopetegroupitem.moc"
 // vim: set noet ts=4 sts=4 sw=4:
 
 

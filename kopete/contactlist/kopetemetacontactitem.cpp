@@ -18,7 +18,7 @@
     *************************************************************************
 */
 
-#include "kopetemetacontactlvi.h"
+#include "kopetemetacontactitem.h"
 
 #include "kopetemetacontact.h"
 
@@ -39,6 +39,6 @@ Kopete::MetaContact* KopeteMetaContactItem::metaContact() const
 	return m_metaContact;
 }
 
-#include "kopetemetacontactlvi.moc"
+#include "kopetemetacontactitem.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -22,9 +22,9 @@ ${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard
 
 # Contact List
 set(kopetecontactlist_SRCS 
-contactlist/kopetemetacontactlvi.cpp 
+contactlist/kopetemetacontactitem.cpp 
 contactlist/kopetestatusgroupviewitem.cpp 
-contactlist/kopetegroupviewitem.cpp 
+contactlist/kopetegroupitem.cpp 
 #contactlist/kopetecontactlistview.cpp 
 #contactlist/kopetelviprops.cpp 
 contactlist/kopeteaddrbookexport.cpp 
