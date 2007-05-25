@@ -31,20 +31,24 @@ class Group;
 
 /**
  * @author Olivier Goffart
+ * @author Matt Rogers
  */
-class KopeteGroupItem : public QObject, QStandardItem 
+class KopeteGroupItem : public QObject, public QStandardItem 
 {
 	Q_OBJECT
 public:
 	explicit KopeteGroupItem( Kopete::Group *group );
 	~KopeteGroupItem();
 
-	void setGroup( Kopete::Group* group );
 	Kopete::Group * group() const;
 
 public Q_SLOTS:
 
 	void groupNameChanged( Kopete::Group*, const QString& );
+
+private:
+	void setGroup( Kopete::Group* group );
+
 private:
 	Kopete::Group* m_group;
 };

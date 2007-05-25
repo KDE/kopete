@@ -28,8 +28,7 @@
 KopeteGroupItem::KopeteGroupItem( Kopete::Group *group )
  : QObject(0), QStandardItem()
 {
-	m_group = group;
-
+	setGroup( group );
 }
 
 KopeteGroupItem::~KopeteGroupItem()

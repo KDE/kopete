@@ -21,6 +21,7 @@
 #include "kopetemetacontactitem.h"
 
 #include "kopetemetacontact.h"
+#include "kopetepicture.h"
 
 
 KopeteMetaContactItem::KopeteMetaContactItem( Kopete::MetaContact *contact )
@@ -28,10 +29,14 @@ KopeteMetaContactItem::KopeteMetaContactItem( Kopete::MetaContact *contact )
 
 {
 	m_metaContact = contact;
+	setText( m_metaContact->displayName() );
+	QPixmap iconPixmap = QPixmap::fromImage( m_metaContact->picture().image() );
+	setIcon( QIcon( iconPixmap ) );
 }
 
 KopeteMetaContactItem::~KopeteMetaContactItem()
 {
+	m_metaContact = 0;
 }
 
 Kopete::MetaContact* KopeteMetaContactItem::metaContact() const

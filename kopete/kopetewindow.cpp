@@ -91,6 +91,7 @@
 #include "systemtray.h"
 #include "kopeteonlinestatusmanager.h"
 #include "kopeteeditglobalidentitywidget.h"
+#include "contactlistmodel.h"
 
 //BEGIN GlobalStatusMessageIconLabel
 GlobalStatusMessageIconLabel::GlobalStatusMessageIconLabel(QWidget *parent)
@@ -274,7 +275,7 @@ void KopeteWindow::initView()
 	//d->contactlist = new KopeteContactListView(this);
 	d->contactlist = new QTreeView(this);
 	d->contactlist->header()->hide();
-	//d->contactlist->setModel( Kopete::ContactList::self() );
+	d->contactlist->setModel( new Kopete::UI::ContactListModel(this) );
 	d->contactlist->setAlternatingRowColors( true );
 	setCentralWidget(d->contactlist);
 }
