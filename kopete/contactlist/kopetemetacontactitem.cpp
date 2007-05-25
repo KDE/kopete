@@ -20,6 +20,9 @@
 
 #include "kopetemetacontactitem.h"
 
+#include <K3Icon>
+#include <KIconLoader>
+
 #include "kopetemetacontact.h"
 #include "kopetepicture.h"
 
@@ -36,6 +39,8 @@ KopeteMetaContactItem::KopeteMetaContactItem( Kopete::MetaContact *contact )
 	connect( m_metaContact,
 	         SIGNAL( displayNameChanged( const QString&, const QString& ) ),
 	         this, SLOT( changeDisplayName( const QString&, const QString ) ) );
+	connect( m_metaContact, SIGNAL( photoChanged() ),
+	         this, SLOT( changePhoto() ) );
 
 }
 
@@ -49,11 +54,22 @@ Kopete::MetaContact* KopeteMetaContactItem::metaContact() const
 	return m_metaContact;
 }
 
-void KopeteMetaContactItem::changeDisplayName( const QString& oldName,
+void KopeteMetaContactItem::changeDisplayName( const QString&,
                                                const QString& newName )
 {
 	if ( !newName.isEmpty() )
 		setText( newName );
+}
+
+void KopeteMetaContactItem::changePhoto()
+{
+	QPixmap photoPixmap;
+	if ( m_metaContact->picture().isNull() )
+		photoPixmap = SmallIcon( m_metaContact->statusIcon(), IconSize(K3Icon::Small) );
+	else
+		photoPixmap = QPixmap::fromImage( m_metaContact->picture().image() );
+
+	setIcon( QIcon( photoPixmap ) );
 }
 
 #include "kopetemetacontactitem.moc"
