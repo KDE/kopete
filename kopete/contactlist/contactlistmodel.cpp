@@ -49,7 +49,6 @@ void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
 {
 	//create the metacontact item
 	KopeteMetaContactItem* mcItem = new KopeteMetaContactItem( contact );
-
 	//find the group item for this metacontact
 	Kopete::Group* group = contact->groups().first();
 	QList<QStandardItem*> groupItems = findItems( group->displayName() );
@@ -61,7 +60,7 @@ void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
 		KopeteGroupItem* groupItem = dynamic_cast<KopeteGroupItem*>( standardItem );
 		if ( groupItem != 0 && groupItem->group() == group )
 			//add the metacontact item
-			standardItem->setChild( standardItem->row(), mcItem );
+			standardItem->appendRow( mcItem );
 	}
 }
 
