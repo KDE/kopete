@@ -193,10 +193,13 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 					if( mode & StrictParse )
 					{
 					/* check if the character after this match is space or end of string*/
-						n = message[ pos + needle.length() ];
-						//<br/> marks the end of a line
-						if( n != '<' && !n.isSpace() &&  !n.isNull() && n!= '&') 
-							break;
+						if ( message.length() > pos + needle.length() )
+						{
+							n = message[ pos + needle.length() ];
+							//<br/> marks the end of a line
+							if( n != '<' && !n.isSpace() &&  !n.isNull() && n!= '&') 
+								break;
+						}
 					}
 					/* Perfect match */
 					foundEmoticons.append( EmoticonNode( (*it), pos ) );
