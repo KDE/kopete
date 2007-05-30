@@ -105,6 +105,6 @@ Type=Application
 DocPath=kopete/index.html
 Terminal=false
 Icon=kopete
-Categories=Qt;KDE;Network;
+Categories=Qt;KDE;Network;InstantMessaging;
 X-DBUS-StartupType=Unique
 ServiceTypes=DBUS/InstantMessenger
