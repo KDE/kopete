@@ -41,10 +41,10 @@
 using namespace XMPP;
 
 JingleVoiceSessionDialog::JingleVoiceSessionDialog(const Jid &peerJid, VoiceCaller *caller, QWidget *parent, const char *name)
- : JingleVoiceSessionDialogBase(parent, name), m_session(caller), m_peerJid(peerJid), m_sessionState(Incoming)
+ : Ui::JingleVoiceSessionDialogBase(), m_session(caller), m_peerJid(peerJid), m_sessionState(Incoming)
 {
 	QString contactJid = m_peerJid.full();
-	setCaption( i18n("Voice session with %1", contactJid) );
+	setWindowTitle( i18n("Voice session with %1", contactJid) );
 
 	connect(buttonAccept, SIGNAL(clicked()), this, SLOT(slotAcceptClicked()));
 	connect(buttonDecline, SIGNAL(clicked()), this, SLOT(slotDeclineClicked()));

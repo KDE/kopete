@@ -8,17 +8,17 @@
 #include "talk/base/network.h"
 #include "talk/p2p/base/session.h"
 #include "talk/p2p/base/sessionmanager.h"
-#include "talk/p2p/base/helpers.h"
+#include "talk/base/helpers.h"
 #include "talk/p2p/client/basicportallocator.h"
-#include "talk/p2p/client/sessionclient.h"
+#include "talk/p2p/base/sessionclient.h"
 #include "talk/base/physicalsocketserver.h"
 #include "talk/base/thread.h"
 #include "talk/base/socketaddress.h"
 #include "talk/session/phone/call.h"
 #include "talk/session/phone/phonesessionclient.h"
-#include "talk/session/sessionsendtask.h"
+#include "talk/p2p/client/sessionsendtask.h"
 
-
+#include "talk/base/physicalsocketserver.h"
 
 #include <qstring.h>
 #include <qdom.h>
@@ -112,7 +112,7 @@ void JingleClientSlots::callCreated(cricket::Call *call)
 void JingleClientSlots::callDestroyed(cricket::Call *call)
 {
 	qDebug("JingleClientSlots: Call destroyed");
-	Jid jid(call->sessions()[0]->remote_address().c_str());
+	Jid jid(call->sessions()[0]->remote_name().c_str());
 	if (voiceCaller_->calling(jid)) {
 		qDebug(QString("Removing unterminated call to %1").arg(jid.full()));
 		voiceCaller_->removeCall(jid);
@@ -140,7 +140,7 @@ void JingleClientSlots::stateChanged(cricket::Call *call, cricket::Session *sess
 {
 	qDebug(QString("jinglevoicecaller.cpp: State changed (%1)").arg(state));
 	// Why is c_str() stuff needed to make it compile on OS X ?
-	Jid jid(session->remote_address().c_str());
+	Jid jid(session->remote_name().c_str());
 
 	if (state == cricket::Session::STATE_INIT) { }
 	else if (state == cricket::Session::STATE_SENTINITIATE) { 
@@ -201,20 +201,20 @@ void JingleVoiceCaller::initialize()
 		return;
 	}
 
-	buzz::Jid j(jid.ascii());
+	buzz::Jid j(jid.toAscii().constData());
 	cricket::InitRandom(j.Str().c_str(),j.Str().size());
 
 	// Global variables
 	if (!socket_server_) {
-		socket_server_ = new cricket::PhysicalSocketServer();
-		cricket::Thread *t = new cricket::Thread((cricket::PhysicalSocketServer*)(socket_server_));
-		cricket::ThreadManager::SetCurrent(t);
+		socket_server_ = new talk_base::PhysicalSocketServer();
+		talk_base::Thread *t = new talk_base::Thread((talk_base::PhysicalSocketServer*)(socket_server_));
+		talk_base::ThreadManager::SetCurrent(t);
 		t->Start();
 		thread_ = t;
 
-		stun_addr_ = new cricket::SocketAddress("64.233.167.126",19302);
-		network_manager_ = new cricket::NetworkManager();
-		port_allocator_ = new cricket::BasicPortAllocator((cricket::NetworkManager*)(network_manager_), (cricket::SocketAddress*)(stun_addr_), /* relay server */ NULL);
+		stun_addr_ = new talk_base::SocketAddress("64.233.167.126",19302);
+		network_manager_ = new talk_base::NetworkManager();
+		port_allocator_ = new cricket::BasicPortAllocator((talk_base::NetworkManager*)(network_manager_), (talk_base::SocketAddress*)(stun_addr_), /* relay server */ NULL);
 	}
 
 	// Session manager
@@ -227,7 +227,7 @@ void JingleVoiceCaller::initialize()
 	phone_client_ = new cricket::PhoneSessionClient(j, (cricket::SessionManager*)(session_manager_));
 	phone_client_->SignalCallCreate.connect(slots_, &JingleClientSlots::callCreated);
 	phone_client_->SignalCallDestroy.connect(slots_, &JingleClientSlots::callDestroyed);
-	phone_client_->SignalSendStanza.connect(slots_, &JingleClientSlots::sendStanza);
+	//phone_client_->SignalSendStanza.connect(slots_, &JingleClientSlots::sendStanza);
 
 	// IQ Responder
 	new JingleIQResponder(account()->client()->rootTask());
@@ -273,7 +273,7 @@ void JingleVoiceCaller::call(const Jid& jid)
 {
 	qDebug(QString("jinglevoicecaller.cpp: Calling %1").arg(jid.full()));
 	cricket::Call *c = ((cricket::PhoneSessionClient*)(phone_client_))->CreateCall();
-	c->InitiateSession(buzz::Jid(jid.full().ascii()));
+	c->InitiateSession(buzz::Jid(jid.full().toAscii().constData()), NULL);
 	phone_client_->SetFocus(c);
 }
 
@@ -363,13 +363,13 @@ void JingleVoiceCaller::receiveStanza(const QString& stanza)
 	// Spread the word
 	if (ok) {
 		//qDebug(QString("jinglevoicecaller.cpp: Handing down %1").arg(stanza));
-		buzz::XmlElement *e = buzz::XmlElement::ForStr(stanza.ascii());
-		phone_client_->OnIncomingStanza(e);
+		buzz::XmlElement *e = buzz::XmlElement::ForStr(stanza.toAscii().constData());
+		session_manager_->OnIncomingMessage(e);
 	}
 }
 
-cricket::SocketServer* JingleVoiceCaller::socket_server_ = NULL;
-cricket::Thread* JingleVoiceCaller::thread_ = NULL;
-cricket::NetworkManager* JingleVoiceCaller::network_manager_ = NULL;
+talk_base::SocketServer* JingleVoiceCaller::socket_server_ = NULL;
+talk_base::Thread* JingleVoiceCaller::thread_ = NULL;
+talk_base::NetworkManager* JingleVoiceCaller::network_manager_ = NULL;
 cricket::BasicPortAllocator* JingleVoiceCaller::port_allocator_ = NULL;
-cricket::SocketAddress* JingleVoiceCaller::stun_addr_ = NULL;
+talk_base::SocketAddress* JingleVoiceCaller::stun_addr_ = NULL;

@@ -247,7 +247,10 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	
 	
 #ifdef SUPPORT_JINGLE
-	KAction *actionVoiceCall = new KAction( (i18n ("Voice call"), "voicecall", 0, this, SLOT (voiceCall ()), 0, "jabber_voicecall");
+	//KAction *actionVoiceCall = new KAction( i18n ("Voice call"), "voicecall", 0, this, SLOT (voiceCall ()), 0, "jabber_voicecall");
+  KAction *actionVoiceCall = new KAction(this);
+  actionVoiceCall->setText( i18n("Voice call") );
+  connect(actionVoiceCall, SIGNAL(triggered(bool)),SLOT(voiceCall ()));
 	actionVoiceCall->setEnabled( false );
 
 	actionCollection->append( actionVoiceCall );
@@ -1257,7 +1260,7 @@ void JabberContact::voiceCall( )
 		// Check if the voice caller exist and the current resource support voice.
 		if( account()->voiceCaller() && bestResource->features().canVoice() )
 		{
-			JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog( jid, account()->voiceCaller() );
+			JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog( jid, account()->voiceCaller(), 0, 0 );
 			voiceDialog->show();
 			voiceDialog->start();
 		}

@@ -3,6 +3,9 @@
 add_subdirectory( icons ) 
 add_subdirectory( libiris ) 
 
+
+
+
 # we can't use KDE_FULL_TEMPLATE_EXPORT_INSTANTIATION because libiris is an external lib
 if(MSVC)
   add_definitions(-DIRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION)
@@ -21,9 +24,12 @@ ${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/network/
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/ 
 ${QCA2_INCLUDE_DIR}
+${CMAKE_CURRENT_SOURCE_DIR}/jingle/
 )
 
-link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libiris/ )
+add_subdirectory( jingle ) 
+
+link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libiris/ ${CMAKE_CURRENT_BINARY_DIR}/jingle/ )
 
 ########### next target ###############
 
@@ -55,6 +61,7 @@ kde4_add_ui_files(kopete_jabber_ui_SRCS
    ui/dlgjabbereditaccountwidget.ui
    ui/dlgchatjoin.ui 
    ui/dlgchatroomslist.ui 
+   jingle/jinglevoicesessiondialogbase.ui
 )
 
 set(kopete_jabber_PART_SRCS 
@@ -86,7 +93,8 @@ kde4_automoc(${kopete_jabber_PART_SRCS})
 kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
 
-target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete )
+target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete  jinglebase-0.3 jinglep2pbase-0.3 jinglep2pclient-0.3 jinglesessiontunnel-0.3 jinglexmpp-0.3 kopete_jabberjingle)
+
 
 install(TARGETS kopete_jabber  DESTINATION ${PLUGIN_INSTALL_DIR})
 

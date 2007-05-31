@@ -152,8 +152,8 @@ void JabberAccount::cleanup ()
 	delete m_voiceCaller;
 	m_voiceCaller = 0L;
 
-// 	delete m_jingleSessionManager;
-// 	m_jingleSessionManager = 0L;
+//	delete m_jingleSessionManager;
+//	m_jingleSessionManager = 0L;
 #endif
 }
 

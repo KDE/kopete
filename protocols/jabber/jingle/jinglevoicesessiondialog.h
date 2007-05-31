@@ -17,7 +17,7 @@
 #ifndef JINGLEVOICESESSIONDIALOG_H
 #define JINGLEVOICESESSIONDIALOG_H
 
-#include "jinglevoicesessiondialogbase.h"
+#include "ui_jinglevoicesessiondialogbase.h"
 
 #include <im.h>
 #include <xmpp.h>
@@ -27,7 +27,7 @@ using namespace XMPP;
 class JabberContact;
 class VoiceCaller;
 
-class JingleVoiceSessionDialog : public JingleVoiceSessionDialogBase
+class JingleVoiceSessionDialog : public QDialog, private Ui::JingleVoiceSessionDialogBase
 {
 	Q_OBJECT
 public:

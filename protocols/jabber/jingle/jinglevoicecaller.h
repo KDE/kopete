@@ -14,14 +14,17 @@ using namespace XMPP;
 class PsiAccount;
 
 namespace cricket {
-	class SocketServer;
-	class Thread;
-	class NetworkManager;
 	class BasicPortAllocator;
 	class SessionManager;
 	class PhoneSessionClient;
 	class Call;
+}
+
+namespace talk_base{
+	class Thread;
 	class SocketAddress;
+	class NetworkManager;
+	class SocketServer;
 }
 
 class JingleClientSlots;
@@ -58,11 +61,11 @@ protected slots:
 
 private:
 	bool initialized_;
-	static cricket::SocketServer *socket_server_;
-	static cricket::Thread *thread_;
-	static cricket::NetworkManager *network_manager_;
+	static talk_base::SocketServer *socket_server_;
+	static talk_base::Thread *thread_;
+	static talk_base::NetworkManager *network_manager_;
 	static cricket::BasicPortAllocator *port_allocator_;
-	static cricket::SocketAddress *stun_addr_;
+	static talk_base::SocketAddress *stun_addr_;
 	cricket::SessionManager *session_manager_;
 	cricket::PhoneSessionClient *phone_client_;
 	JingleClientSlots *slots_;
