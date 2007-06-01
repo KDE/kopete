@@ -1,9 +1,10 @@
 /*
-    avatarselectordialog.cpp - Dialog to manage and select user avatar
+    avatardialog.cpp - Dialog to manage and select user avatar
 
-    Copyright (c) 2007      by Michaël Larouche      <larouche@kde.org>
+    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+    Copyright (c) 2007      by Michaël Larouche       <larouche@kde.org>
 
-    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -14,7 +15,7 @@
     *                                                                       *
     *************************************************************************
 */
-#include "avatarselectordialog.h"
+#include "avatardialog.h"
 
 // KDE includes
 #include <kdebug.h>
@@ -30,7 +31,7 @@ namespace Kopete
 namespace UI
 {
 
-class AvatarSelectorDialog::Private
+class AvatarDialog::Private
 {
 public:
 	Private()
@@ -41,7 +42,7 @@ public:
 	QString selectedPath;
 };
 
-AvatarSelectorDialog::AvatarSelectorDialog(QWidget *parent)
+AvatarDialog::AvatarDialog(QWidget *parent)
  : KDialog(parent), d(new Private)
 {
 	setCaption( i18n("Select an avatar") );
@@ -53,26 +54,42 @@ AvatarSelectorDialog::AvatarSelectorDialog(QWidget *parent)
 	connect(this, SIGNAL(okClicked()), this, SLOT(buttonOkClicked()));
 }
 
-AvatarSelectorDialog::~AvatarSelectorDialog()
+AvatarDialog::~AvatarDialog()
 {
 	delete d;
 }
 
-QString AvatarSelectorDialog::selectedAvatarPath() const
+QString AvatarDialog::selectedAvatarPath() const
 {
 	return d->selectedPath;
 }
 
-void AvatarSelectorDialog::buttonOkClicked()
+QString AvatarDialog::getAvatar(QWidget *parent)
 {
-	Kopete::AvatarManager::AvatarEntry selectedEntry = d->mainWidget->selectedEntry();
+	AvatarDialog dialog(parent);
+	dialog.exec();
 
-	d->selectedPath = selectedEntry.path;
+	return dialog.selectedAvatarPath();
+}
+
+void AvatarDialog::slotButtonClicked(int button)
+{
+
+	if (button == KDialog::Ok)
+	{
+		Kopete::AvatarManager::AvatarEntry selectedEntry = d->mainWidget->selectedEntry();
+
+		d->selectedPath = selectedEntry.path;
+	}
+	else
+		d->selectedPath = QString::null;
 
 	emit result(this);
+
+	KDialog::slotButtonClicked(button);
 }
 
 } // namespace UI
 
 } // namespace Kopete
-#include "avatarselectordialog.moc"
+#include "avatardialog.moc"

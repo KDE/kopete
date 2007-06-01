@@ -38,7 +38,7 @@
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetepicture.h"
-#include "avatarselectordialog.h"
+#include "avatardialog.h"
 
 
 ClickableLabel::ClickableLabel(QWidget *parent)
@@ -154,17 +154,13 @@ void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVarian
 
 void KopeteEditGlobalIdentityWidget::photoClicked()
 {
-	Kopete::UI::AvatarSelectorDialog *avatarSelector = new Kopete::UI::AvatarSelectorDialog(this);
-	connect(avatarSelector, SIGNAL(result(Kopete::UI::AvatarSelectorDialog*)), this, SLOT(avatarDialogResult(Kopete::UI::AvatarSelectorDialog*)));
-	avatarSelector->show();
-}
+	QString avatar = Kopete::UI::AvatarDialog::getAvatar(this);
+	if (avatar.isNull())
+		return;
 
-void KopeteEditGlobalIdentityWidget::avatarDialogResult(Kopete::UI::AvatarSelectorDialog *dialog)
-{
-	kDebug(1400) << k_funcinfo << "Setting myself metacontact photo with " << dialog->selectedAvatarPath() << endl;
-
+	kDebug(1400) << k_funcinfo << "Setting myself metacontact photo with " << avatar << endl;
 	d->myself->setPhotoSource( Kopete::MetaContact::SourceCustom );
-	d->myself->setPhoto( KUrl(dialog->selectedAvatarPath()) );
+	d->myself->setPhoto( KUrl(avatar) );
 }
 
 void KopeteEditGlobalIdentityWidget::lineNicknameTextChanged(const QString &text)
