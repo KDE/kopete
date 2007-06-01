@@ -64,6 +64,12 @@ public:
 	 */
 	Kopete::AvatarManager::AvatarEntry selectedEntry() const;
 
+	/**
+	 * @brief Set the avatar currently being used
+	 *
+	 * This is used to select the avatar in the avatar list
+	 */
+	void setCurrentAvatar(const QString &path);
 Q_SIGNALS:
 	/**
 	 * User has selected another avatar in the list.

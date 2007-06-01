@@ -64,9 +64,10 @@ QString AvatarDialog::selectedAvatarPath() const
 	return d->selectedPath;
 }
 
-QString AvatarDialog::getAvatar(QWidget *parent)
+QString AvatarDialog::getAvatar(QWidget *parent, const QString &currentAvatar)
 {
 	AvatarDialog dialog(parent);
+	dialog.d->mainWidget->setCurrentAvatar(currentAvatar);
 	dialog.exec();
 
 	return dialog.selectedAvatarPath();

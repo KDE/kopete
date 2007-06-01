@@ -38,6 +38,7 @@ class YahooEditAccount: public QWidget, private Ui::YahooEditAccountBase, public
 
 private:
 	YahooProtocol *theProtocol;
+	QString m_photoPath;
 
 public:
 	YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0);

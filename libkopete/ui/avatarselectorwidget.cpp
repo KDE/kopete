@@ -67,6 +67,7 @@ public:
 
 	Ui::AvatarSelectorWidget mainWidget;
 	QListWidgetItem *selectedItem;
+	QString currentAvatar;
 
 	void addItem(Kopete::AvatarManager::AvatarEntry entry);
 };
@@ -112,6 +113,28 @@ Kopete::AvatarManager::AvatarEntry AvatarSelectorWidget::selectedEntry() const
 	}
 
 	return result;
+}
+
+void AvatarSelectorWidget::setCurrentAvatar(const QString &path)
+{
+	d->currentAvatar = path;
+
+	//try to find the avatar in the list
+	QList<QListWidgetItem*> itemList = d->mainWidget.listUserAvatar->findItems("", Qt::MatchContains);
+	QList<QListWidgetItem*>::iterator it = itemList.begin();
+	
+	while (it != itemList.end())
+	{
+		AvatarSelectorWidgetItem *item = static_cast<AvatarSelectorWidgetItem*>(*it);
+		if (item->avatarEntry().path == path)
+		{
+			item->setSelected(true);
+			listSelectionChanged( item );
+			return;
+		}
+		++it;
+	}
+
 }
 
 void AvatarSelectorWidget::buttonAddAvatarClicked()
@@ -280,6 +303,8 @@ void AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry e
 
 	AvatarSelectorWidgetItem *item = new AvatarSelectorWidgetItem(listWidget);
 	item->setAvatarEntry(entry);
+	if (entry.path == currentAvatar)
+		item->setSelected(true);
 }
 
 } // Namespace Kopete::UI

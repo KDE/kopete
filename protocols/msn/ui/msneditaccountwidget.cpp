@@ -41,13 +41,13 @@
 #include <kdebug.h>
 #include <ktoolinvocation.h>
 #include <kconfig.h>
-#include <kpixmapregionselectordialog.h>
 #include <kconfiggroup.h>
 
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 
 #include "kopetepasswordwidget.h"
+#include "avatardialog.h"
 
 #include "msnaccount.h"
 #include "msncontact.h"
@@ -130,8 +130,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 		d->ui->m_blp->setChecked( config->readEntry( "BLP" ) == "BL" );
 
-		d->pictureUrl = KStandardDirs::locateLocal( "appdata", "msnpicture-" +
-			account->accountId().toLower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
+		d->pictureUrl = config->readEntry("avatar", QString());
 		d->ui->m_displayPicture->setPixmap( d->pictureUrl );
 
 		d->ui->m_useDisplayPicture->setChecked( config->readEntry( "exportCustomPicture", false ));
@@ -187,21 +186,8 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	config->writeEntry( "ExcludeGlobalIdentity", d->ui->m_globalIdentity->isChecked() );
 
 	// Save the avatar image
-	if( d->ui->m_useDisplayPicture->isChecked() && !d->pictureData.isNull() )
-	{
-		d->pictureUrl = KStandardDirs::locateLocal( "appdata", "msnpicture-" +
-				account()->accountId().toLower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
-		if ( d->pictureData.save( d->pictureUrl, "PNG" ) )
-		{
-			static_cast<MSNAccount *>( account() )->setPictureUrl( d->pictureUrl );
-		}
-		else
-		{
-			KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br>"
-					"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
-		}
-	}
-
+	config->writeEntry("avatar", d->pictureUrl);
+	
 	static_cast<MSNAccount *>( account() )->resetPictureObject();
 
 	if ( account()->isConnected() )
@@ -288,37 +274,19 @@ void MSNEditAccountWidget::slotShowReverseList()
 
 void MSNEditAccountWidget::slotSelectImage()
 {
-	QString path = 0;
-	bool remoteFile = false;
-	KUrl filePath = KFileDialog::getImageOpenUrl( KUrl(), this, i18n( "MSN Display Picture" ) );
-	if( filePath.isEmpty() )
-		return;
-
-	if( !filePath.isLocalFile() ) {
-		if(!KIO::NetAccess::download( filePath, path, this )) {
-			KMessageBox::sorry( this, i18n( "Downloading of display image failed" ), i18n( "MSN Plugin" ) );
-			return;
-		}
-		remoteFile = true;
-	}
-	else path = filePath.path();
-
+	QString path = Kopete::UI::AvatarDialog::getAvatar(this, d->pictureUrl);
 	QImage img( path );
-	img = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(img), 96, 96, this );
-
 	if(!img.isNull()) 
 	{
-		img = MSNProtocol::protocol()->scalePicture(img);
-	
 		d->ui->m_displayPicture->setPixmap( QPixmap::fromImage(img) );
 		d->pictureData = img;
+		d->pictureUrl = path;
 	}
 	else
 	{
 		KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br>"
 			"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
 	}
-	if( remoteFile ) KIO::NetAccess::removeTempFile( path );
 }
 
 void MSNEditAccountWidget::slotOpenRegister()

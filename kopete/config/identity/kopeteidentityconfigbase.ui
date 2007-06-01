@@ -137,7 +137,7 @@
       <bool>false</bool>
      </property>
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
@@ -312,27 +312,31 @@
                </property>
                <property name="sizeHint" >
                 <size>
-                 <width>16</width>
+                 <width>20</width>
                  <height>20</height>
                 </size>
                </property>
               </spacer>
              </item>
              <item>
-              <widget class="KUrlComboRequester" name="comboPhotoURL" />
-             </item>
-             <item>
-              <widget class="KPushButton" name="buttonClearPhoto" >
-               <property name="maximumSize" >
-                <size>
-                 <width>32</width>
-                 <height>3232</height>
-                </size>
-               </property>
+              <widget class="QPushButton" name="buttonChoosePhoto" >
                <property name="text" >
-                <string/>
+                <string>Choose Photo</string>
                </property>
               </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </item>
@@ -415,7 +419,7 @@
              </property>
              <property name="sizeHint" >
               <size>
-               <width>483</width>
+               <width>489</width>
                <height>16</height>
               </size>
              </property>
@@ -514,8 +518,8 @@
          </property>
          <property name="sizeHint" >
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>583</width>
+           <height>16</height>
           </size>
          </property>
         </spacer>
@@ -611,11 +615,6 @@ current user contact.</string>
    <extends>QPushButton</extends>
    <header>kpushbutton.h</header>
   </customwidget>
-  <customwidget>
-   <class>KUrlComboRequester</class>
-   <extends>KUrlRequester</extends>
-   <header>kurlrequester.h</header>
-  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -664,22 +663,6 @@ current user contact.</string>
     <hint type="destinationlabel" >
      <x>337</x>
      <y>39</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioPhotoCustom</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>comboPhotoURL</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>69</x>
-     <y>135</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>110</x>
-     <y>148</y>
     </hint>
    </hints>
   </connection>

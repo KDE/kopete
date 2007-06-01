@@ -37,12 +37,12 @@
 #include <kpassworddialog.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
-#include <kpixmapregionselectordialog.h>
 #include <ktoolinvocation.h>
 
 // Kopete Includes
 #include <addcontactpage.h>
 #include <kopeteuiglobal.h>
+#include <avatardialog.h>
 
 // Local Includes
 #include "yahooaccount.h"
@@ -78,10 +78,9 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		optionSendBuddyIcon->setChecked( sendPicture );
 		buttonSelectPicture->setEnabled( sendPicture );  
 		connect( optionSendBuddyIcon, SIGNAL( toggled( bool ) ), buttonSelectPicture, SLOT( setEnabled( bool ) ) ); 
-		editPictureUrl->setText( iconUrl );
+		m_photoPath = iconUrl;
 		if( !iconUrl.isEmpty() )
-			m_Picture->setPixmap( KUrl( iconUrl ).path() );
-		editPictureUrl->setEnabled( sendPicture );
+			m_Picture->setPixmap( iconUrl );
 
 		// Global Identity
 		mGlobalIdentity->setChecked( account()->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
@@ -141,11 +140,11 @@ Kopete::Account *YahooEditAccount::apply()
 		yahooAccount->setPort( 5050 );
 	}
 
-	account()->configGroup()->writeEntry("pictureUrl", editPictureUrl->text() );
+	account()->configGroup()->writeEntry("pictureUrl", m_photoPath );
 	account()->configGroup()->writeEntry("sendPicture", optionSendBuddyIcon->isChecked() );
 	if ( optionSendBuddyIcon->isChecked() )
 	{
-		yahooAccount->setBuddyIcon( editPictureUrl->text() );
+		yahooAccount->setBuddyIcon( m_photoPath );
 	}
 	else
 	{
@@ -165,31 +164,19 @@ void YahooEditAccount::slotOpenRegister()
 
 void YahooEditAccount::slotSelectPicture()
 {
-	KUrl file = KFileDialog::getImageOpenUrl( KUrl(), this, i18n( "Yahoo Buddy Icon" ) );
+	QString file = Kopete::UI::AvatarDialog::getAvatar( this, m_photoPath );
 
-	if ( file.isEmpty() )
-		return;
-
-	QImage picture(file.path());
-	if( !picture.isNull() )
+	QPixmap pix(file);
+	if( !pix.isNull() )
 	{
-		picture = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(picture), 96, 96, this );
-		QString newlocation( KStandardDirs::locateLocal( "appdata", "yahoopictures/" + file.fileName().toLower() + ".png") ) ;
-		file = KUrl(newlocation);
-		if( !picture.save( newlocation, "PNG" ))
-		{
-			KMessageBox::sorry( this, i18n( "An error occurred when trying to change the display picture." ), i18n( "Yahoo Plugin" ) );
-			return;
-		}
+		m_photoPath =  file;
+		m_Picture->setPixmap( pix );
 	}
 	else
 	{
 		KMessageBox::sorry( this, i18n( "<qt>The selected buddy icon could not be opened. <br>Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
 		return;
 	}
-	editPictureUrl->setText( file.path() );
-	
-	m_Picture->setPixmap( file.path() );
 }
 
 #include "yahooeditaccount.moc"

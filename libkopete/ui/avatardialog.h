@@ -88,7 +88,7 @@ public:
 	 * @return The path of the selected avatar, or QString::null if none avatar
 	 * was choosen or if the Cancel button was pressed.
 	 */
-	static QString getAvatar(QWidget *parent = 0);
+	static QString getAvatar(QWidget *parent = 0, const QString &currentAvatar = QString::null);
 
 Q_SIGNALS:
 	/**

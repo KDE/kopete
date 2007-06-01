@@ -158,7 +158,6 @@ public:
 
 	static MSNProtocol* protocol();
 	static bool validContactId(const QString&);
-	QImage scalePicture(const QImage &picture);
 
 private slots:
 	void slotSyncContactList();
