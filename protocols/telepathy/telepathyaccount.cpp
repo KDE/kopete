@@ -36,7 +36,7 @@
 #include <kopetecontactlist.h>
 #include <kopetechatsessionmanager.h>
 #include <kopeteuiglobal.h>
-#include <avatarselectordialog.h>
+#include <avatardialog.h>
 
 // QtTapioca includes
 #include <QtTapioca/ConnectionManagerFactory>
@@ -446,14 +446,8 @@ void TelepathyAccount::fetchContactList()
 
 void TelepathyAccount::slotChangeAvatar()
 {
-	Kopete::UI::AvatarSelectorDialog *avatarDialog = new Kopete::UI::AvatarSelectorDialog( Kopete::UI::Global::mainWidget() );
-	QObject::connect(avatarDialog, SIGNAL(result(Kopete::UI::AvatarSelectorDialog*)), this, SLOT(avatarDialogFinished(Kopete::UI::AvatarSelectorDialog*)));
-	avatarDialog->show();
-}
+	QString avatarPath = Kopete::UI::AvatarDialog::getAvatar(Kopete::UI::Global::mainWidget());
 
-void TelepathyAccount::avatarDialogFinished(Kopete::UI::AvatarSelectorDialog *dialog)
-{
-	QString avatarPath = dialog->selectedAvatarPath();
 	QtTapioca::Avatar *avatar = new QtTapioca::Avatar( avatarPath );
 	if( d->currentConnection && d->currentConnection->userContact() )
 	{

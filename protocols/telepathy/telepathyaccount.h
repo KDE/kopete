@@ -36,11 +36,6 @@ namespace Kopete
 { 
 	class MetaContact;
 	class StatusMessage;
-
-	namespace UI
-	{
-		class AvatarSelectorDialog;
-	}
 }
 
 class TelepathyProtocol;
@@ -177,11 +172,6 @@ private slots:
 	 * @brief Change the current avatar
 	 */
 	void slotChangeAvatar();
-
-	/**
-	 * @brief Apply avatar on server
-	 */
-	void avatarDialogFinished(Kopete::UI::AvatarSelectorDialog *dialog);
 
 private:
 	class Private;
