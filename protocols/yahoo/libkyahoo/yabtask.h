@@ -21,7 +21,6 @@
 #include "task.h"
 #include "yabentry.h"
 
-class KUrl;
 class KJob;
 class YMSGTransfer;
 
@@ -29,7 +28,6 @@ namespace KIO	{
 	class Job;
 	class TransferJob; 
 }
-class QDomElement;
 
 /**
 @author André Duffeck

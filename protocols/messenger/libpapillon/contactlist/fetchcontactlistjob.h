@@ -17,7 +17,6 @@
 
 #include <QtCore/QObject>
 
-class QStringList;
 
 namespace Papillon
 {

@@ -28,7 +28,6 @@
 namespace Kopete { class Contact; }
 namespace Kopete { class MetaContact; }
 class QDate;
-class QFile;
 class QTimer;
 
 /**

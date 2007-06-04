@@ -38,18 +38,15 @@ namespace AIM
 namespace Kopete
 {
 class Contact;
-class Group;
 class ChatSession;
 class StatusMessage;
 }
 
 class KAction;
 class OscarContact;
-class AIMContact;
 class AIMAccount;
 class AIMProtocol;
 class AIMJoinChatUI;
-class AIMChatSession;
 
 class AIMMyselfContact : public OscarMyselfContact
 {

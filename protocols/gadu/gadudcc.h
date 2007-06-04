@@ -26,8 +26,6 @@
 #include <qobject.h>
 #include <QMap>
 
-class QSocketNotifier;
-class QHostAddress;
 class QString;
 class gg_dcc;
 class GaduDCCTransaction;

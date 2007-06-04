@@ -45,7 +45,6 @@ This class allows kopete to check for the existence, open, configure, test, set 
 
 typedef QVector<Kopete::AV::VideoDevice> VideoDeviceVector;
 
-class VideoDevicePoolPrivate;
 
 class KOPETE_EXPORT VideoDevicePool
 {

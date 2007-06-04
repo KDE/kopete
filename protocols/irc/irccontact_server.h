@@ -27,9 +27,7 @@
 #include <q3valuelist.h>
 #include <qstringlist.h>
 
-class KActionCollection;
 class KAction;
-class KActionMenu;
 class KopeteView;
 
 class IRCContactManager;

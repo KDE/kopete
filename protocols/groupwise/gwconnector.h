@@ -26,7 +26,6 @@
 
 class ByteStream;
 class KNetworkByteStream;
-class KResolverEntry;
 
 /**
 @author Till Gerken

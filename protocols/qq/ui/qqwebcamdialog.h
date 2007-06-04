@@ -28,7 +28,6 @@
 */
 class QPixmap;
 class QWidget;
-class QQContact;
 
 namespace Kopete { 
 	namespace AV	{

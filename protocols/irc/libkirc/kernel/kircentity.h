@@ -30,7 +30,6 @@ class QTextCodec;
 namespace KIrc
 {
 
-class Engine;
 
 class KIRC_EXPORT Entity
 	: public QObject

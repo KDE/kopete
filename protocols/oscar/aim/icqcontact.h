@@ -27,6 +27,7 @@
 class OContact;
 
 class AIMProtocol;
+class KToggleAction;
 
 /**
  * Contact for ICQ over Oscar protocol

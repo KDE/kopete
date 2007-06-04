@@ -22,7 +22,6 @@
 #include <QStringList>
 
 namespace Ui { class PrivacyPrefsUI; }
-class PrivacyConfig;
 class PrivacyAccountListModel;
 
 class PrivacyPreferences : public KCModule

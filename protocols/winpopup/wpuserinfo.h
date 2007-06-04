@@ -27,7 +27,6 @@
 
 // Local Includes
 
-class WPAccount;
 class WPContact;
 namespace Ui { class WPUserInfoWidget; }
 

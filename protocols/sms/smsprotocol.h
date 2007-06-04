@@ -29,13 +29,11 @@
 #include "kopetecontact.h"
 
 class KAction;
-class KActionMenu;
 
 namespace Kopete { class Contact; }
 namespace Kopete { class MetaContact; }
 namespace Kopete { class Message; }
 namespace Kopete { class ChatSession; }
-class SMSContact;
 
 class SMSProtocol : public Kopete::Protocol
 {

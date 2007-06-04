@@ -27,10 +27,7 @@
 #include <qhostaddress.h>
 
 class QSocketNotifier;
-class QString;
 class gg_dcc;
-class GaduDCCTransaction;
-class GaduAccount;
 
 class GaduDCCServer: public QObject {
 	Q_OBJECT

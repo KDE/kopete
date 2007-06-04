@@ -7,7 +7,6 @@
 #include "addcontactpage.h"
 
 namespace Ui { class aimAddContactUI; }
-class AIMAccount;
 namespace Kopete
 {
 class Account; 

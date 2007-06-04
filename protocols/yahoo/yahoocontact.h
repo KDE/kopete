@@ -35,7 +35,6 @@ namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }
 namespace Kopete { class OnlineStatus; }
 namespace Kopete { class Message; }
-class YahooProtocol;
 class YahooAccount;
 class YahooWebcamDialog;
 class YahooChatSession;

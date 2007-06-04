@@ -40,17 +40,13 @@ class KActionMenu;
 class KTemporaryFile;
 class QPixmap;
 class QTabWidget;
-class QDockWidget;
 class KSqueezedTextLabel;
 class KPushButton;
-class KVBox;
 class QVBoxLayout;
 class QFrame;
 class KTabWidget;
 class QLabel;
 class KopeteEmoticonAction;
-class KopeteView;
-class KSelectAction;
 class ChatView;
 class SidebarWidget;
 
@@ -59,7 +55,6 @@ namespace Kopete
 class Message;
 class ChatSession;
 class Contact;
-class Protocol;
 typedef QList<Contact*>  ContactPtrList;
 }
 

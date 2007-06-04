@@ -33,7 +33,7 @@
 
 namespace Kopete { class Contact; }
 class MSNSwitchBoardSocket;
-
+class KTemporaryFile;
 /**
 @author Kopete Developers
 */

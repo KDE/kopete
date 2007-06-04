@@ -25,7 +25,6 @@
 class QString;
 
 class Client;
-class Request;
 class Transfer;
 
 class Task : public QObject

@@ -23,8 +23,6 @@
 namespace Kopete
 {
     class ChatSession;
-    class Protocol;
-    class Contact;
     class MessageEvent;
 }
 

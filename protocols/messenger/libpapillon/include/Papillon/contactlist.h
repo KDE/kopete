@@ -20,7 +20,6 @@
 #include <Papillon/Macros>
 #include <Papillon/Enums>
 
-class QDomDocument;
 
 namespace Papillon 
 {

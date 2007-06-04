@@ -41,7 +41,6 @@ class KNetworkConnector;
 class Task;
 class KTemporaryFile;
 struct YABEntry;
-class SendFileTask;
 
 class LIBKYAHOO_EXPORT Client : public QObject
 {

@@ -23,6 +23,7 @@
 #include "aimcontactbase.h"
 
 class ICQProtocol;
+class KToggleAction;
 
 class AIMContact : public AIMContactBase
 {

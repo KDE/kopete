@@ -41,9 +41,7 @@ class Presence;
 }
 
 class OscarAccount;
-class QTimer;
 class QTextCodec;
-class KToggleAction;
 class OscarEncodingSelectionDialog;
 
 /**

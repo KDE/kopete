@@ -29,9 +29,7 @@
 #include "msnprotocol.h"
 
 
-class MSNDispatchSocket;
 class MSNAccount;
-class KTemporaryFile;
 class MSNSecureLoginHandler;
 class MSNChallengeHandler;
 

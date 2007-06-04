@@ -24,7 +24,6 @@
 #include <QList>
 
 class MSNSwitchBoardSocket;
-class KActionCollection;
 class MSNInvitation;
 class MSNContact;
 class KActionMenu;

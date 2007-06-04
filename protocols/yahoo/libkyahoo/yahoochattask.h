@@ -30,7 +30,6 @@ class KJob;
 class YMSGTransfer;
 namespace KIO {
 	class Job;
-	class TransferJob;
 }
 
 struct YahooChatJob {

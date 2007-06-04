@@ -28,18 +28,13 @@
 #include "ui_addaccountwizardpage1.h"
 #include "ui_addaccountwizardpage2.h"
 
-class QTreeWidgetItem;
 
-class KPluginInfo;
-class KVBox;
-class KPageWidgetItem;
 
 namespace Kopete
 {
 class Protocol;
 }
 
-class KopeteEditAccountWidget;
 
 /**
  * @author Olivier Goffart <ogoffart@kde.org>

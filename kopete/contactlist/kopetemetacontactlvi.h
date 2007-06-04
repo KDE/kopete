@@ -31,8 +31,6 @@
 
 class QVariant;
 
-class KAction;
-class KSelectAction;
 
 namespace Kopete
 {
@@ -43,7 +41,6 @@ class Group;
 class MessageEvent;
 }
 
-class AddContactPage;
 class KopeteGroupViewItem;
 
 

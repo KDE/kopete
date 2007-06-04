@@ -26,7 +26,6 @@
 
 class QString;
 class KAction;
-class KActionCollection;
 
 namespace Kopete { class MetaContact; }
 

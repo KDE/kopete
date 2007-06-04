@@ -28,15 +28,12 @@
 #include "kopetemessagehandler.h"
 
 class KopeteView;
-class KActionCollection;
 
 namespace Kopete
 {
-class MetaContact;
 class ChatSession;
 }
 
-class HistoryPreferences;
 class HistoryGUIClient;
 class HistoryPlugin;
 

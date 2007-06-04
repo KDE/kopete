@@ -22,14 +22,11 @@ namespace Kopete
 }
 
 class JSMessage;
-class JavaScriptConfig;
 class JavaScriptPluginPrivate;
 
 namespace KJSEmbed
 {
 	class Engine;
-//	class JSOpaqueProxy;
-//	class KJSEmbedPart;
 }
 
 class JavaScriptPlugin

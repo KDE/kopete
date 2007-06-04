@@ -30,13 +30,8 @@
 #include "kopeteprotocol.h"
 #include "kopetecontactproperty.h"
 
-class YahooContact;
-class KPopupMenu;
-class KActionMenu;
-class KAction;
 namespace Kopete { class MetaContact; }
 namespace Kopete { class Message; }
-class YahooPreferences;
 namespace Kopete { class OnlineStatus; }
 
 class YahooProtocol : public Kopete::Protocol

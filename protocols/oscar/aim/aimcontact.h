@@ -23,6 +23,7 @@
 
 class AIMProtocol;
 class AIMUserInfoDialog;
+class KToggleAction;
 
 class AIMContact : public AIMContactBase
 {

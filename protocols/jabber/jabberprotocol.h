@@ -42,9 +42,6 @@ namespace XMPP
 	class Status;
 }
 
-class JabberContact;
-class dlgJabberStatus;
-class dlgJabberSendRaw;
 class JabberCapabilitiesManager;
 
 class JabberProtocol:public Kopete::Protocol , private Kopete::MimeTypeHandler

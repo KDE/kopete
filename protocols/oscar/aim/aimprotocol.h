@@ -22,10 +22,6 @@
 #include "kopetemimetypehandler.h"
 #include "kopeteonlinestatus.h"
 
-namespace Kopete
-{
-class OnlineStatus;
-}
 
 class AIMStatusManager;
 
