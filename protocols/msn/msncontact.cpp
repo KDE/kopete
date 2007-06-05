@@ -47,6 +47,7 @@
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
+#include "kopeteavatarmanager.h"
 
 #include "ui_msninfo.h"
 #include "msnchatsession.h"
@@ -684,23 +685,20 @@ void MSNContact::setDisplayPicture(KTemporaryFile *f)
 	//copy the temp file somewere else.
 	// in a better world, the file could be dirrectly wrote at the correct location.
 	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
-	QString newlocation=KStandardDirs::locateLocal( "appdata", "msnpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	Kopete::AvatarManager::AvatarEntry entry;
+	entry.category = Kopete::AvatarManager::Contact;
+	entry.contact = this;
+	entry.image = QImage(f->fileName());
 
-	QString fileName = f->fileName();
-	f->setAutoRemove(false);
+	entry = Kopete::AvatarManager::self()->add(entry);
+
+	f->setAutoRemove(true);
 	delete f;
 
-	KIO::Job *j=KIO::file_move( KUrl( fileName ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	if (entry.path.isNull())
+		return;
 
-
-	//let the time to KIO to copy the file
-	connect(j, SIGNAL(result(KJob *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
-}
-
-void MSNContact::slotEmitDisplayPictureChanged()
-{
-	QString newlocation=KStandardDirs::locateLocal( "appdata", "msnpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
-	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+	setProperty( Kopete::Global::Properties::self()->photo() , entry.path );
 	emit displayPictureChanged();
 }
 

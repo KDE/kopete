@@ -41,6 +41,7 @@
 #include "kopeteuiglobal.h"
 #include <kopeteglobal.h>
 #include "kopetetransfermanager.h"
+#include "kopeteavatarmanager.h"
 
 #include "oscaraccount.h"
 #include "client.h"
@@ -381,21 +382,19 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 	KMD5 buddyIconHash( icon );
 	if ( memcmp( buddyIconHash.rawDigest(), m_details.buddyIconHash().data(), 16 ) == 0 )
 	{
-		QString iconLocation = KStandardDirs::locateLocal( "appdata", "oscarpictures/" + Oscar::normalize( contactId() ) );
+		QImage img;
+		img.loadFromData(icon);
+		Kopete::AvatarManager::AvatarEntry entry;
+		entry.category = Kopete::AvatarManager::Contact;
+		entry.contact = this;
+		entry.image = img;
+		entry = Kopete::AvatarManager::self()->add(entry);
 		
-		QFile iconFile( iconLocation );
-		if ( !iconFile.open( QIODevice::WriteOnly ) )
+		if (!entry.path.isNull())
 		{
-			kDebug(14153) << k_funcinfo << "Cannot open file"
-				<< iconLocation << " for writing!" << endl;
-			return;
+			removeProperty( Kopete::Global::Properties::self()->photo() );
+			setProperty( Kopete::Global::Properties::self()->photo(), entry.path );
 		}
-		
-		iconFile.write( icon );
-		iconFile.close();
-		
-		removeProperty( Kopete::Global::Properties::self()->photo() );
-		setProperty( Kopete::Global::Properties::self()->photo(), iconLocation );
 		m_buddyIconDirty = false;
 	}
 	else

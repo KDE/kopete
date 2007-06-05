@@ -690,6 +690,7 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 
 void JabberAccount::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
+	Q_UNUSED(statusMessage);
 }
 
 void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )

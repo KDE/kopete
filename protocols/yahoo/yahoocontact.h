@@ -106,7 +106,6 @@ private slots:
 	void slotChatSessionDestroyed();
 	void slotSendMessage( Kopete::Message& );
 	void slotTyping( bool );
-	void slotEmitDisplayPictureChanged();
 
 	void closeWebcamDialog();
 	void initWebcamViewer();

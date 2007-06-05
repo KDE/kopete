@@ -148,7 +148,6 @@ private slots:
 	void slotBlockUser();
 	void slotShowProfile();
 	void slotSendMail();
-	void slotEmitDisplayPictureChanged();
 
 	/**
 	 * Workaround to make this checkboxe readonly
