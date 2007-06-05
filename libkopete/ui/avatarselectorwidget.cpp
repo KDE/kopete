@@ -1,3 +1,5 @@
+#ifndef LIBKOPETE_UI/AVATARSELECTORWIDGET.CPP
+#define LIBKOPETE_UI/AVATARSELECTORWIDGET.CPP
 /*
     avatarselectorwidget.cpp - Widget to manage and select user avatar
 
@@ -76,6 +78,8 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
  : QWidget(parent), d(new Private)
 {
 	d->mainWidget.setupUi(this);
+	d->mainWidget.labelErrorMessage->setPixmap(KTitleWidget::ErrorMessage);
+	d->mainWidget.labelErrorMessage->setHidden(true);
 
 	// Connect signals/slots
 	connect(d->mainWidget.buttonAddAvatar, SIGNAL(clicked()), this, SLOT(buttonAddAvatarClicked()));
@@ -312,3 +316,4 @@ void AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry e
 } // Namespace Kopete
 
 #include "avatarselectorwidget.moc"
+#endif // LIBKOPETE_UI/AVATARSELECTORWIDGET.CPP

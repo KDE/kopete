@@ -201,21 +201,11 @@
     </layout>
    </item>
    <item row="1" column="0" colspan="2" >
-    <widget class="KInformationLabel" name="labelErrorMessage" >
-     <property name="iconType" >
-      <enum>KInformationLabel::Error</enum>
-     </property>
+    <widget class="KTitleWidget" name="labelErrorMessage" >
     </widget>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>KInformationLabel</class>
-   <extends>QWidget</extends>
-   <header>kinformationlabel.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
