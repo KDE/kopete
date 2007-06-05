@@ -215,6 +215,11 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 					Eva::uchar* p = body.data()+36;
 					bool hasFontStyle = p[3] != 0;
 					Eva::uchar replyType = p[8];
+					
+					// clear compiler warnings
+					Q_UNUSED(hasFontStyle);
+					Q_UNUSED(replyType);
+
 					Eva::ByteArray msg(body.size());
 					p += 9;
 

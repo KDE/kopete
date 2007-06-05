@@ -381,15 +381,15 @@ void Kopete::Password::writeConfig()
 		return;
 	}
 		  
-	config->setGroup( d->configGroup );
+	KConfigGroup group = config->group( d->configGroup );
 
 	if ( d->remembered && !d->passwordFromKConfig.isNull() )
-		config->writeEntry( "Password", KStringHandler::obscure( d->passwordFromKConfig ) );
+		group.writeEntry( "Password", KStringHandler::obscure( d->passwordFromKConfig ) );
 	else
-		config->deleteEntry( "Password" );
+		group.deleteEntry( "Password" );
 
-	config->writeEntry( "RememberPassword", d->remembered );
-	config->writeEntry( "PasswordIsWrong", d->isWrong );
+	group.writeEntry( "RememberPassword", d->remembered );
+	group.writeEntry( "PasswordIsWrong", d->isWrong );
 }
 
 int Kopete::Password::preferredImageSize()

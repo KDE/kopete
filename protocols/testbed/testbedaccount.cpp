@@ -93,6 +93,7 @@ void TestbedAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const K
 
 void TestbedAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 {
+	Q_UNUSED(statusMessage);
 	/* Not used in testbed */
 }
 
@@ -153,7 +154,10 @@ void TestbedAccount::slotShowVideo ()
 	kDebug ( 14210 ) << k_funcinfo << endl;
 
 	if (isConnected ())
+	{
 		TestbedWebcamDialog *testbedWebcamDialog = new TestbedWebcamDialog(0, 0);
+		Q_UNUSED(testbedWebcamDialog);
+	}
 	updateContactStatus();
 }
 

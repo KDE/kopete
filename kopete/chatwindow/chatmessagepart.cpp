@@ -399,7 +399,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 
 	QString formattedMessageHtml;
 	bool isConsecutiveMessage = false;
-	uint bufferLen = (uint)Kopete::BehaviorSettings::self()->chatWindowBufferViewSize();
+	int bufferLen = Kopete::BehaviorSettings::self()->chatWindowBufferViewSize();
 
 	// Find the "Chat" div element.
 	// If the "Chat" div element is not found, do nothing. It's the central part of Adium format.
@@ -590,7 +590,7 @@ void ChatMessagePart::clear()
 Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 {
 	DOM::Node node = n;
-        unsigned int i;
+	int i;
 	QList<Kopete::Contact*> m;
 
 	if ( node.isNull() )
@@ -645,10 +645,11 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 	{
 		chatWindowPopup = new KMenu();
 
+		QAction *action;
 		if ( d->activeElement.className() == QLatin1String("KopeteDisplayName") )
 		{
-			chatWindowPopup->insertItem( i18n( "User Has Left" ), 1 );
-			chatWindowPopup->setItemEnabled( 1, false );
+			action = chatWindowPopup->addAction( i18n( "User Has Left" ) );
+			action->setEnabled(false);
 			chatWindowPopup->addSeparator();
 		}
 		else if ( d->activeElement.tagName().lower() == QLatin1String( "a" ) )
@@ -941,7 +942,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	static const int nameColorsLen = sizeof(nameColors) / sizeof(nameColors[0]) - 1;
 	// hash contactId to deterministically pick a color for the contact
 	int hash = 0;
-	for( uint f = 0; f < contactId.length(); ++f )
+	for( int f = 0; f < contactId.length(); ++f )
 		hash += contactId[f].unicode() * f;
 	const QString colorName = nameColors[ hash % nameColorsLen ];
 	QString lightColorName;	// Do not initialize, QColor::name() is expensive!

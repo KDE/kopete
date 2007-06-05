@@ -882,7 +882,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		alertDOM.setContent(notificationDOMAsString);
 
 		QDomNodeList msgElements = alertDOM.elementsByTagName("MSG");
-		for (uint i = 0 ; i < msgElements.count() ; i++)
+		for (int i = 0 ; i < msgElements.count() ; i++)
 		{
 			QString subscString;
 			QString actionString;
@@ -1037,7 +1037,7 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 
 	// Replace the formatter in the format string.
 	currentMedia = format;
-	for(uint i=0; i<formatterStrings.size(); i++)
+	for(int i=0; i<formatterStrings.size(); i++)
 	{
 		currentMedia = currentMedia.replace(QString("{%1}").arg(i), formatterStrings[i]);
 	}

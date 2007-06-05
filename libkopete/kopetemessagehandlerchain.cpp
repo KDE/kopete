@@ -174,7 +174,7 @@ void ProcessMessageTask::slotDone()
 
 void ProcessMessageTask::kill(bool quite)
 {
-	
+	Q_UNUSED(quite);
 }
 
 

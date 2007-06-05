@@ -287,7 +287,7 @@ private:
 	/**
 	 * The size of the requested block for block-based reads
 	 */
-	uint m_waitBlockSize;
+	int m_waitBlockSize;
 
 	class Buffer : public QByteArray
 	{
@@ -295,7 +295,7 @@ private:
 		Buffer( unsigned size = 0 );
 		~Buffer();
 		void add( char *str, unsigned size );
-		QByteArray take( unsigned size );
+		QByteArray take( int size );
 	};
 
 	Buffer m_buffer;

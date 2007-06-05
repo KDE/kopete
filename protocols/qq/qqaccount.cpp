@@ -144,6 +144,8 @@ KActionMenu* QQAccount::actionMenu()
 
 void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
+	Q_UNUSED(reason);
+
 	if(status.status()== Kopete::OnlineStatus::Offline)
 		disconnect();
 	else if ( m_notifySocket )
@@ -159,9 +161,9 @@ void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete
 	}
 }
 
-
 void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 {
+	Q_UNUSED(statusMessage);
 	/* Not implemented in qq */
 }
 
@@ -313,7 +315,10 @@ void QQAccount::slotShowVideo ()
 	kDebug ( 14210 ) << k_funcinfo << endl;
 
 	if (isConnected ())
+	{
 		QQWebcamDialog *qqWebcamDialog = new QQWebcamDialog(0, 0);
+		Q_UNUSED(qqWebcamDialog);
+	}
 	updateContactStatus();
 }
 
@@ -324,6 +329,7 @@ void QQAccount::slotNewContactList()
 	// remove the allow list.
 	// TODO: cleanup QQAccount variables.
 	KConfigGroup *config=configGroup();
+	Q_UNUSED(config);
 	// config->writeEntry( "allowList" , QString() );
 
 		// clear all date information which will be received.
@@ -345,6 +351,8 @@ void QQAccount::slotNewContactList()
 
 void QQAccount::slotContactInGroup(const int qqId, const char type, const int groupId )
 {
+	Q_UNUSED(type);
+
 	kDebug ( 14210 ) << k_funcinfo << endl;
 	QString id = QString::number( qqId );
 	QQContact *c = static_cast<QQContact *>( contacts()[ id ] );
@@ -477,6 +485,7 @@ void QQAccount::slotContactDetailReceived( const QString& id, const QMap<const c
 
 void QQAccount::getVCard( QQContact* contact )
 {
+	Q_UNUSED(contact);
 	return ;
 }
 

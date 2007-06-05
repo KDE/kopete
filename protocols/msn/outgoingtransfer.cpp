@@ -61,6 +61,7 @@ OutgoingTransfer::~OutgoingTransfer()
 
 void OutgoingTransfer::sendImage(const QByteArray& image)
 {
+	Q_UNUSED(image);
 
 // 	TODO QByteArray base64 = KCodecs::base64Encode(image);
 //

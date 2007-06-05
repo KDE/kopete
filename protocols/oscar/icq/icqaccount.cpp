@@ -424,6 +424,7 @@ void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kope
 
 void ICQAccount::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
+	Q_UNUSED(statusMessage);
 }
 
 OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem )

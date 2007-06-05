@@ -231,6 +231,8 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
     Oscar::WORD instance = b.getWord();
     b.getByte(); //detail level, which I'm not sure we need
     Oscar::WORD tlvCount = b.getWord();
+    Q_UNUSED(tlvCount);
+
     kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "e: " << exchange
                              << " c: " << cookie << " i: " << instance << endl;
 
@@ -309,6 +311,10 @@ void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
 	Oscar::WORD instance = b.getWord();
 	Oscar::BYTE detailLevel = b.getByte();
 
+	//clear compiler warnings
+	Q_UNUSED(exchange);
+	Q_UNUSED(instance);
+
 	if ( detailLevel != 0x02 )
 	{
 		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "unknown detail level in response" << endl;
@@ -316,6 +322,7 @@ void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
 	}
 
 	Oscar::WORD numberTlvs = b.getWord();
+	Q_UNUSED(numberTlvs);
 	QList<Oscar::TLV> roomTLVList = b.getTLVList();
 	QList<Oscar::TLV>::iterator itEnd = roomTLVList.end();
 	for ( QList<Oscar::TLV>::iterator it = roomTLVList.begin();

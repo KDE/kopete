@@ -1209,6 +1209,8 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 
 void KopeteChatWindow::updateChatState( ChatView* cv, int newState )
 {
+	Q_UNUSED(cv);
+
 	if ( m_tabBar )
 	{
 		switch( newState )

@@ -44,6 +44,7 @@ QVariant variantFromXML(const QDomElement&)
 
 void variantToXML(QVariant v, QDomElement &)
 {
+	Q_UNUSED(v);
 }
 
 } // namespace Properties

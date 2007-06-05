@@ -82,7 +82,7 @@ public:
 ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	 : KVBox( 0l ), KopeteView( mgr, parent )
 {
-	unsigned int i;
+	int i;
 
 	d = new KopeteChatViewPrivate;
 	d->isActive = false;
@@ -236,6 +236,7 @@ void ChatView::clear()
 
 void ChatView::setBgColor( const QColor &newColor )
 {
+	Q_UNUSED(newColor);
 // 	editPart()->setBackgroundColorColor( newColor );
 }
 
@@ -891,7 +892,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 void ChatView::dropEvent ( QDropEvent * event )
 {
 	QList<Kopete::Contact*> cts;
-	unsigned int i;
+	int i;
 
 	if( event->provides( "kopete/x-contact" ) )
 	{

@@ -131,6 +131,8 @@ void KopeteEmoticonAction::setStickyMenu(bool sticky)
 
 int KopeteEmoticonAction::plug( QWidget* widget, int index )
 {
+	Q_UNUSED(widget);
+	Q_UNUSED(index);
 #ifdef __GNUC__
 #warning Port to new KAction
 #endif

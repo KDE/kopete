@@ -495,7 +495,7 @@ int VideoDevice::initDevice()
 	return EXIT_SUCCESS;
 }
 
-unsigned int VideoDevice::inputs()
+int VideoDevice::inputs()
 {
 	return m_input.size();
 }
@@ -1023,7 +1023,7 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 				case PIXELFORMAT_BGR24	:
 					{
 						unsigned char temp;
-						for(unsigned int loop=0;loop < m_currentbuffer.data.size();loop+=3)
+						for(int loop=0;loop < m_currentbuffer.data.size();loop+=3)
 						{
 							temp = m_currentbuffer.data[loop];
 							m_currentbuffer.data[loop] = m_currentbuffer.data[loop+2];
@@ -1035,7 +1035,7 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 				case PIXELFORMAT_BGR32	:
 					{
 						unsigned char temp;
-						for(unsigned int loop=0;loop < m_currentbuffer.data.size();loop+=4)
+						for(int loop=0;loop < m_currentbuffer.data.size();loop+=4)
 						{
 							temp = m_currentbuffer.data[loop];
 							m_currentbuffer.data[loop] = m_currentbuffer.data[loop+2];

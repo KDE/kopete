@@ -1,5 +1,5 @@
-#ifndef LIBKOPETE_UI/AVATARSELECTORWIDGET.CPP
-#define LIBKOPETE_UI/AVATARSELECTORWIDGET.CPP
+#ifndef LIBKOPETE_UI_AVATARSELECTORWIDGET.CPP
+#define LIBKOPETE_UI_AVATARSELECTORWIDGET.CPP
 /*
     avatarselectorwidget.cpp - Widget to manage and select user avatar
 

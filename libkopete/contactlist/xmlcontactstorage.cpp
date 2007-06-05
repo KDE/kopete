@@ -854,6 +854,7 @@ const QList<QDomElement> XmlContactStorage::storeContactListElement( Kopete::Con
 
 void XmlContactStorage::convertContactList( const QString &fileName, uint /* fromVersion */, uint /* toVersion */ )
 {
+	Q_UNUSED(fileName)
     // For now, ignore fromVersion and toVersion. These are meant for future
     // changes to allow incremental (multi-pass) conversion so we don't have
     // to rewrite the whole conversion code for each change.
