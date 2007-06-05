@@ -73,6 +73,7 @@ private slots:
 
 private:
 	class Private;
+	class Item;
 	Private *d;
 
 	friend class NDns;

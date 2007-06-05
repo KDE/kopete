@@ -166,6 +166,8 @@ KActionMenu *JabberTransport::actionMenu ()
 
 bool JabberTransport::createContact (const QString & contactId,  Kopete::MetaContact * metaContact)
 {
+	Q_UNUSED(contactId);
+	Q_UNUSED(metaContact);
 #if 0 //TODO
 	// collect all group names
 	QStringList groupNames;
@@ -190,6 +192,8 @@ bool JabberTransport::createContact (const QString & contactId,  Kopete::MetaCon
 
 void JabberTransport::setOnlineStatus( const Kopete::OnlineStatus& status  , const Kopete::StatusMessage &reason)
 {
+	Q_UNUSED(status);
+	Q_UNUSED(reason);
 #if 0
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
@@ -247,6 +251,7 @@ void JabberTransport::setOnlineStatus( const Kopete::OnlineStatus& status  , con
 
 void JabberTransport::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
+	Q_UNUSED(statusMessage);
 }
 
 JabberProtocol * JabberTransport::protocol( ) const
