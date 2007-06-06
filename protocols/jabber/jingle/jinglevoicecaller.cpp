@@ -17,6 +17,7 @@
 #include "talk/session/phone/call.h"
 #include "talk/session/phone/phonesessionclient.h"
 #include "talk/p2p/client/sessionsendtask.h"
+#include "talk/p2p/client/sessionmanagertask.h"
 
 #include "talk/base/physicalsocketserver.h"
 
@@ -38,6 +39,8 @@
 #include <kdebug.h>
 #define qDebug( X )  kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << X << endl
 #define qWarning( X )  kWarning() <<k_funcinfo<< X << endl
+
+#include "jinglevoicecaller.moc"
 
 // ----------------------------------------------------------------------------
 
@@ -61,6 +64,20 @@ JingleIQResponder::JingleIQResponder(Task *parent) :Task(parent)
 
 JingleIQResponder::~JingleIQResponder()
 {
+}
+
+#warning "This function wouldn't link, so it is copied here"
+QDomElement createIQ(QDomDocument *doc, const QString &type, const QString &to, const QString &id)
+{
+	QDomElement iq = doc->createElement("iq");
+	if(!type.isEmpty())
+		iq.setAttribute("type", type);
+	if(!to.isEmpty())
+		iq.setAttribute("to", to);
+	if(!id.isEmpty())
+		iq.setAttribute("id", id);
+
+	return iq;
 }
 
 bool JingleIQResponder::take(const QDomElement &e)
@@ -93,6 +110,10 @@ public:
 	void sendStanza(cricket::SessionClient*, const buzz::XmlElement *stanza);
 	void requestSignaling();
 	void stateChanged(cricket::Call *call, cricket::Session *session, cricket::Session::State state);
+/*	void jingleInfo(const std::string &relay_token,
+		const std::vector<std::string> &relay_addresses,
+		const std::vector<talk_base::SocketAddress> &stun_addresses);*/
+	
 
 private:
 	JingleVoiceCaller* voiceCaller_;
@@ -177,6 +198,15 @@ void JingleClientSlots::stateChanged(cricket::Call *call, cricket::Session *sess
 	}
 }
 
+/*void JingleClientSlots::jingleInfo(const std::string &relay_token,
+		const std::vector<std::string> &relay_addresses,
+		const std::vector<talk_base::SocketAddress> &stun_addresses)
+{
+	JingleVoiceCaller::port_allocator_->SetStunHosts(stun_addresses);
+	JingleVoiceCaller::port_allocator_->SetRelayHosts(relay_addresses);
+	JingleVoiceCaller::port_allocator_->SetRelayToken(relay_token);
+}*/
+
 // ----------------------------------------------------------------------------
 
 /**
@@ -223,12 +253,21 @@ void JingleVoiceCaller::initialize()
 	session_manager_->SignalRequestSignaling.connect(slots_, &JingleClientSlots::requestSignaling);
 	session_manager_->OnSignalingReady();
 
+	//session_manager_task_ = new cricket::SessionManagerTask(xmpp_client_, session_manager_);
+	//session_manager_task_->EnableOutgoingMessages();
+	//session_manager_task_->Start();
+
 	// Phone Client
 	phone_client_ = new cricket::PhoneSessionClient(j, (cricket::SessionManager*)(session_manager_));
 	phone_client_->SignalCallCreate.connect(slots_, &JingleClientSlots::callCreated);
 	phone_client_->SignalCallDestroy.connect(slots_, &JingleClientSlots::callDestroyed);
-	//phone_client_->SignalSendStanza.connect(slots_, &JingleClientSlots::sendStanza);
 
+/*	// Jingle network addresses
+	buzz::JingleInfoTask *jit = new buzz::JingleInfoTask(xmpp_client_);
+	jit->RefreshJingleInfoNow();
+	jit->SignalJingleInfo.connect(this, &CallClient::OnJingleInfo);
+	jit->Start();*/
+	
 	// IQ Responder
 	new JingleIQResponder(account()->client()->rootTask());
 

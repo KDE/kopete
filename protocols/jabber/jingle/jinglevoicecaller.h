@@ -67,6 +67,7 @@ private:
 	static cricket::BasicPortAllocator *port_allocator_;
 	static talk_base::SocketAddress *stun_addr_;
 	cricket::SessionManager *session_manager_;
+//	cricket::SessionManagerTask *session_manager_task_;
 	cricket::PhoneSessionClient *phone_client_;
 	JingleClientSlots *slots_;
 	QMap<QString,cricket::Call*> calls_;

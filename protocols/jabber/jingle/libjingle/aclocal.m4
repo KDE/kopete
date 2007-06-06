@@ -13,7 +13,7 @@
 
 # libtool.m4 - Configure libtool for the host system. -*-Autoconf-*-
 
-# serial 48 Debian 1.5.22-2 AC_PROG_LIBTOOL
+# serial 48 AC_PROG_LIBTOOL
 
 
 # AC_PROVIDE_IFELSE(MACRO-NAME, IF-PROVIDED, IF-NOT-PROVIDED)
@@ -219,11 +219,54 @@ AC_ARG_WITH([pic],
     [pic_mode=default])
 test -z "$pic_mode" && pic_mode=default
 
+# Check if we have a version mismatch between libtool.m4 and ltmain.sh.
+#
+# Note:  This should be in AC_LIBTOOL_SETUP, _after_ $ltmain have been defined.
+#        We also should do it _before_ AC_LIBTOOL_LANG_C_CONFIG that actually
+#        calls AC_LIBTOOL_CONFIG and creates libtool.
+#
+_LT_VERSION_CHECK
+
 # Use C for the default configuration in the libtool script
 tagname=
 AC_LIBTOOL_LANG_C_CONFIG
 _LT_AC_TAGCONFIG
 ])# AC_LIBTOOL_SETUP
+
+
+# _LT_VERSION_CHECK
+# -----------------
+AC_DEFUN([_LT_VERSION_CHECK],
+[AC_MSG_CHECKING([for correct ltmain.sh version])
+if test "x$ltmain" = "x" ; then
+  AC_MSG_RESULT(no)
+  AC_MSG_ERROR([
+
+*** @<:@Gentoo@:>@ sanity check failed! ***
+*** \$ltmain is not defined, please check the patch for consistency! ***
+])
+fi
+gentoo_lt_version="1.5.22"
+gentoo_ltmain_version=`sed -n '/^[[ 	]]*VERSION=/{s/^[[ 	]]*VERSION=//;p;q;}' "$ltmain"`
+if test "x$gentoo_lt_version" != "x$gentoo_ltmain_version" ; then
+  AC_MSG_RESULT(no)
+  AC_MSG_ERROR([
+
+*** @<:@Gentoo@:>@ sanity check failed! ***
+*** libtool.m4 and ltmain.sh have a version mismatch! ***
+*** (libtool.m4 = $gentoo_lt_version, ltmain.sh = $gentoo_ltmain_version) ***
+
+Please run:
+
+  libtoolize --copy --force
+
+if appropriate, please contact the maintainer of this
+package (or your distribution) for help.
+])
+else
+  AC_MSG_RESULT(yes)
+fi
+])# _LT_VERSION_CHECK
 
 
 # _LT_AC_SYS_COMPILER
@@ -1356,6 +1399,30 @@ cygwin* | mingw* | pw32*)
     esac
     ;;
 
+  linux*)
+    if $LD --help 2>&1 | egrep ': supported targets:.* elf' > /dev/null; then
+      archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
+      supports_anon_versioning=no
+      case `$LD -v 2>/dev/null` in
+        *\ [01].* | *\ 2.[[0-9]].* | *\ 2.10.*) ;; # catch versions < 2.11
+        *\ 2.11.93.0.2\ *) supports_anon_versioning=yes ;; # RH7.3 ...
+        *\ 2.11.92.0.12\ *) supports_anon_versioning=yes ;; # Mandrake 8.2 ...
+        *\ 2.11.*) ;; # other 2.11 versions
+        *) supports_anon_versioning=yes ;;
+      esac
+      if test $supports_anon_versioning = yes; then
+        archive_expsym_cmds='$echo "{ global:" > $output_objdir/$libname.ver~
+cat $export_symbols | sed -e "s/\(.*\)/\1;/" >> $output_objdir/$libname.ver~
+$echo "local: *; };" >> $output_objdir/$libname.ver~
+        $CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
+      else
+        $archive_expsym_cmds="$archive_cmds"
+      fi
+    else
+      ld_shlibs=no
+    fi
+    ;;
+
   *)
     library_names_spec='${libname}`echo ${release} | $SED -e 's/[[.]]/-/g'`${versuffix}${shared_ext} $libname.lib'
     ;;
@@ -1420,7 +1487,14 @@ freebsd* | dragonfly*)
     *) objformat=elf ;;
     esac
   fi
-  version_type=freebsd-$objformat
+  # Handle Gentoo/FreeBSD as it was Linux
+  case $host_vendor in
+    gentoo)
+      version_type=linux ;;
+    *)
+      version_type=freebsd-$objformat ;;
+  esac
+
   case $version_type in
     freebsd-elf*)
       library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext} $libname${shared_ext}'
@@ -1430,6 +1504,12 @@ freebsd* | dragonfly*)
     freebsd-*)
       library_names_spec='${libname}${release}${shared_ext}$versuffix $libname${shared_ext}$versuffix'
       need_version=yes
+      ;;
+    linux)
+      library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major ${libname}${shared_ext}'
+      soname_spec='${libname}${release}${shared_ext}$major'
+      need_lib_prefix=no
+      need_version=no
       ;;
   esac
   shlibpath_var=LD_LIBRARY_PATH
@@ -1591,18 +1671,6 @@ linux*)
   # people can always --disable-shared, the test was removed, and we
   # assume the GNU/Linux dynamic linker is in use.
   dynamic_linker='GNU/Linux ld.so'
-  ;;
-
-netbsdelf*-gnu)
-  version_type=linux
-  need_lib_prefix=no
-  need_version=no
-  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major ${libname}${shared_ext}'
-  soname_spec='${libname}${release}${shared_ext}$major'
-  shlibpath_var=LD_LIBRARY_PATH
-  shlibpath_overrides_runpath=no
-  hardcode_into_libs=yes
-  dynamic_linker='NetBSD ld.elf_so'
   ;;
 
 knetbsd*-gnu)
@@ -2380,7 +2448,7 @@ linux*)
   lt_cv_deplibs_check_method=pass_all
   ;;
 
-netbsd* | netbsdelf*-gnu | knetbsd*-gnu)
+netbsd*)
   if echo __ELF__ | $CC -E - | grep __ELF__ > /dev/null; then
     lt_cv_deplibs_check_method='match_pattern /lib[[^/]]+(\.so\.[[0-9]]+\.[[0-9]]+|_pic\.a)$'
   else
@@ -3389,7 +3457,7 @@ case $host_os in
 	;;
     esac
     ;;
-  netbsd* | netbsdelf*-gnu | knetbsd*-gnu)
+  netbsd*)
     if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
       _LT_AC_TAGVAR(archive_cmds, $1)='$LD -Bshareable  -o $lib $predep_objects $libobjs $deplibs $postdep_objects $linker_flags'
       wlarc=
@@ -5013,7 +5081,7 @@ AC_MSG_CHECKING([for $compiler option to produce PIC])
 	    ;;
 	esac
 	;;
-      netbsd* | netbsdelf*-gnu | knetbsd*-gnu)
+      netbsd*)
 	;;
       osf3* | osf4* | osf5*)
 	case $cc_basename in
@@ -5365,12 +5433,6 @@ ifelse([$1],[CXX],[
   cygwin* | mingw*)
     _LT_AC_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[[BCDGRS]] /s/.* \([[^ ]]*\)/\1 DATA/;/^.* __nm__/s/^.* __nm__\([[^ ]]*\) [[^ ]]*/\1 DATA/;/^I /d;/^[[AITW]] /s/.* //'\'' | sort | uniq > $export_symbols'
   ;;
-  kfreebsd*-gnu)
-    _LT_AC_TAGVAR(link_all_deplibs, $1)=no
-  ;;
-  linux*)
-    _LT_AC_TAGVAR(link_all_deplibs, $1)=no
-  ;;
   *)
     _LT_AC_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED '\''s/.* //'\'' | sort | uniq > $export_symbols'
   ;;
@@ -5567,13 +5629,12 @@ EOF
   $echo "local: *; };" >> $output_objdir/$libname.ver~
 	  $CC -shared'"$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
 	fi
-	_LT_AC_TAGVAR(link_all_deplibs, $1)=no
       else
 	_LT_AC_TAGVAR(ld_shlibs, $1)=no
       fi
       ;;
 
-    netbsd* | netbsdelf*-gnu | knetbsd*-gnu)
+    netbsd*)
       if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
 	_LT_AC_TAGVAR(archive_cmds, $1)='$LD -Bshareable $libobjs $deplibs $linker_flags -o $lib'
 	wlarc=
@@ -5903,20 +5964,11 @@ _LT_EOF
       ;;
 
     # FreeBSD 3 and greater uses gcc -shared to do shared libraries.
-    freebsd* | dragonfly*)
+    freebsd* | kfreebsd*-gnu | dragonfly*)
       _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -o $lib $libobjs $deplibs $compiler_flags'
       _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
       _LT_AC_TAGVAR(hardcode_direct, $1)=yes
       _LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=no
-      ;;
-      
-    # GNU/kFreeBSD uses gcc -shared to do shared libraries.
-    kfreebsd*-gnu)
-      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -o $lib $libobjs $deplibs $compiler_flags'
-      _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
-      _LT_AC_TAGVAR(hardcode_direct, $1)=yes
-      _LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=no
-      _LT_AC_TAGVAR(link_all_deplibs, $1)=no
       ;;
 
     hpux9*)
@@ -6014,7 +6066,7 @@ _LT_EOF
       _LT_AC_TAGVAR(link_all_deplibs, $1)=yes
       ;;
 
-    netbsd* | netbsdelf*-gnu | knetbsd*-gnu)
+    netbsd*)
       if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
 	_LT_AC_TAGVAR(archive_cmds, $1)='$LD -Bshareable -o $lib $libobjs $deplibs $linker_flags'  # a.out
       else
@@ -6415,6 +6467,164 @@ done
 SED=$lt_cv_path_SED
 AC_MSG_RESULT([$SED])
 ])
+
+# pkg.m4 - Macros to locate and utilise pkg-config.            -*- Autoconf -*-
+# 
+# Copyright © 2004 Scott James Remnant <scott@netsplit.com>.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+# As a special exception to the GNU General Public License, if you
+# distribute this file as part of a program that contains a
+# configuration script generated by Autoconf, you may include it under
+# the same distribution terms that you use for the rest of that program.
+
+# PKG_PROG_PKG_CONFIG([MIN-VERSION])
+# ----------------------------------
+AC_DEFUN([PKG_PROG_PKG_CONFIG],
+[m4_pattern_forbid([^_?PKG_[A-Z_]+$])
+m4_pattern_allow([^PKG_CONFIG(_PATH)?$])
+AC_ARG_VAR([PKG_CONFIG], [path to pkg-config utility])dnl
+if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
+	AC_PATH_TOOL([PKG_CONFIG], [pkg-config])
+fi
+if test -n "$PKG_CONFIG"; then
+	_pkg_min_version=m4_default([$1], [0.9.0])
+	AC_MSG_CHECKING([pkg-config is at least version $_pkg_min_version])
+	if $PKG_CONFIG --atleast-pkgconfig-version $_pkg_min_version; then
+		AC_MSG_RESULT([yes])
+	else
+		AC_MSG_RESULT([no])
+		PKG_CONFIG=""
+	fi
+		
+fi[]dnl
+])# PKG_PROG_PKG_CONFIG
+
+# PKG_CHECK_EXISTS(MODULES, [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+#
+# Check to see whether a particular set of modules exists.  Similar
+# to PKG_CHECK_MODULES(), but does not set variables or print errors.
+#
+#
+# Similar to PKG_CHECK_MODULES, make sure that the first instance of
+# this or PKG_CHECK_MODULES is called, or make sure to call
+# PKG_CHECK_EXISTS manually
+# --------------------------------------------------------------
+AC_DEFUN([PKG_CHECK_EXISTS],
+[AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
+if test -n "$PKG_CONFIG" && \
+    AC_RUN_LOG([$PKG_CONFIG --exists --print-errors "$1"]); then
+  m4_ifval([$2], [$2], [:])
+m4_ifvaln([$3], [else
+  $3])dnl
+fi])
+
+
+# _PKG_CONFIG([VARIABLE], [COMMAND], [MODULES])
+# ---------------------------------------------
+m4_define([_PKG_CONFIG],
+[if test -n "$PKG_CONFIG"; then
+    if test -n "$$1"; then
+        pkg_cv_[]$1="$$1"
+    else
+        PKG_CHECK_EXISTS([$3],
+                         [pkg_cv_[]$1=`$PKG_CONFIG --[]$2 "$3" 2>/dev/null`],
+			 [pkg_failed=yes])
+    fi
+else
+	pkg_failed=untried
+fi[]dnl
+])# _PKG_CONFIG
+
+# _PKG_SHORT_ERRORS_SUPPORTED
+# -----------------------------
+AC_DEFUN([_PKG_SHORT_ERRORS_SUPPORTED],
+[AC_REQUIRE([PKG_PROG_PKG_CONFIG])
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi[]dnl
+])# _PKG_SHORT_ERRORS_SUPPORTED
+
+
+# PKG_CHECK_MODULES(VARIABLE-PREFIX, MODULES, [ACTION-IF-FOUND],
+# [ACTION-IF-NOT-FOUND])
+#
+#
+# Note that if there is a possibility the first call to
+# PKG_CHECK_MODULES might not happen, you should be sure to include an
+# explicit call to PKG_PROG_PKG_CONFIG in your configure.ac
+#
+#
+# --------------------------------------------------------------
+AC_DEFUN([PKG_CHECK_MODULES],
+[AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
+AC_ARG_VAR([$1][_CFLAGS], [C compiler flags for $1, overriding pkg-config])dnl
+AC_ARG_VAR([$1][_LIBS], [linker flags for $1, overriding pkg-config])dnl
+
+pkg_failed=no
+AC_MSG_CHECKING([for $1])
+
+_PKG_CONFIG([$1][_CFLAGS], [cflags], [$2])
+_PKG_CONFIG([$1][_LIBS], [libs], [$2])
+
+m4_define([_PKG_TEXT], [Alternatively, you may set the environment variables $1[]_CFLAGS
+and $1[]_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.])
+
+if test $pkg_failed = yes; then
+        _PKG_SHORT_ERRORS_SUPPORTED
+        if test $_pkg_short_errors_supported = yes; then
+	        $1[]_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "$2"`
+        else 
+	        $1[]_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "$2"`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$$1[]_PKG_ERRORS" >&AS_MESSAGE_LOG_FD
+
+	ifelse([$4], , [AC_MSG_ERROR(dnl
+[Package requirements ($2) were not met:
+
+$$1_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+_PKG_TEXT
+])],
+		[AC_MSG_RESULT([no])
+                $4])
+elif test $pkg_failed = untried; then
+	ifelse([$4], , [AC_MSG_FAILURE(dnl
+[The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+_PKG_TEXT
+
+To get pkg-config, see <http://www.freedesktop.org/software/pkgconfig>.])],
+		[$4])
+else
+	$1[]_CFLAGS=$pkg_cv_[]$1[]_CFLAGS
+	$1[]_LIBS=$pkg_cv_[]$1[]_LIBS
+        AC_MSG_RESULT([yes])
+	ifelse([$3], , :, [$3])
+fi[]dnl
+])# PKG_CHECK_MODULES
 
 # Copyright (C) 2002, 2003, 2005  Free Software Foundation, Inc.
 #
@@ -7265,4 +7475,3 @@ AC_SUBST([am__tar])
 AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
-m4_include([talk/pkg.m4])

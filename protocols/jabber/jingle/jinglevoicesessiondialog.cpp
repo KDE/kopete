@@ -41,8 +41,11 @@
 using namespace XMPP;
 
 JingleVoiceSessionDialog::JingleVoiceSessionDialog(const Jid &peerJid, VoiceCaller *caller, QWidget *parent, const char *name)
- : Ui::JingleVoiceSessionDialogBase(), m_session(caller), m_peerJid(peerJid), m_sessionState(Incoming)
+ : Ui::JingleVoiceSessionDialogBase(),QDialog(parent), m_session(caller), m_peerJid(peerJid), m_sessionState(Incoming)
 {
+	
+	setupUi(this);
+	
 	QString contactJid = m_peerJid.full();
 	setWindowTitle( i18n("Voice session with %1", contactJid) );
 
@@ -85,6 +88,8 @@ void JingleVoiceSessionDialog::setContactInformation(JabberContact *contact)
 	{
 		labelDisplayName->setText( contact->metaContact()->displayName() );
 		labelContactPhoto->setPixmap( QPixmap(contact->metaContact()->photo()) );
+		labelDisplayName->setText( QString("foo") );
+		labelContactPhoto->setPixmap( QPixmap("bar" ));
 	}
 	else
 	{
