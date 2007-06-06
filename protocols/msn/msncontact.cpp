@@ -686,6 +686,7 @@ void MSNContact::setDisplayPicture(KTemporaryFile *f)
 	// in a better world, the file could be dirrectly wrote at the correct location.
 	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
 	Kopete::AvatarManager::AvatarEntry entry;
+	entry.name = contactId();
 	entry.category = Kopete::AvatarManager::Contact;
 	entry.contact = this;
 	entry.image = QImage(f->fileName());

@@ -385,6 +385,7 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 		QImage img;
 		img.loadFromData(icon);
 		Kopete::AvatarManager::AvatarEntry entry;
+		entry.name = contactId();
 		entry.category = Kopete::AvatarManager::Contact;
 		entry.contact = this;
 		entry.image = img;
