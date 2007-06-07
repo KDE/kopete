@@ -43,7 +43,6 @@
 #include <kglobal.h>
 #include <kurlrequester.h>
 #include <kinputdialog.h>
-#include <kpixmapregionselectordialog.h>
 #include <kcodecs.h>
 
 // KDE KIO includes
@@ -64,6 +63,7 @@
 #include "kopetecontactlist.h"
 #include "addressbookselectordialog.h"
 #include "kopetegeneralsettings.h"
+#include "avatardialog.h"
 
 // Local includes
 #include "globalidentitiesmanager.h"
@@ -80,6 +80,7 @@ public:
 	
 	QMap<int, Kopete::Contact*> contactPhotoSourceList;
 	QString selectedIdentity;
+	QString customPhotoPath;
 };
 
 typedef KGenericFactory<KopeteIdentityConfig, QWidget> KopeteIdentityConfigFactory;
@@ -124,7 +125,6 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const QStringList &a
 	buttonCopyIdentity->setIcon(KIcon("edit-copy"));
 	buttonRenameIdentity->setIcon(KIcon("edit"));
 	buttonRemoveIdentity->setIcon(KIcon("delete-user"));
-	buttonClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar-erase" : "clear-left" ) );
 
 	load(); // Load Configuration
 
@@ -135,8 +135,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const QStringList &a
 	connect(buttonCopyIdentity, SIGNAL(clicked()), this, SLOT(slotCopyIdentity()));
 	connect(buttonRenameIdentity, SIGNAL(clicked()), this, SLOT(slotRenameIdentity()));
 	connect(buttonRemoveIdentity, SIGNAL(clicked()), this, SLOT(slotRemoveIdentity()));
-	connect(comboPhotoURL, SIGNAL(urlSelected(const KUrl& )), this, SLOT(slotChangePhoto(const KUrl&)));
-	connect(buttonClearPhoto, SIGNAL(clicked()), this, SLOT(slotClearPhoto()));
+	connect(buttonChoosePhoto, SIGNAL(clicked()), this, SLOT(slotChangePhoto()));
 
 	// Settings signal/slots
 	connect(radioNicknameContact, SIGNAL(toggled(bool )), this, SLOT(slotEnableAndDisableWidgets()));
@@ -199,8 +198,8 @@ void KopeteIdentityConfig::save()
 		// Photo settings
 		d->myself->setPhotoSource(selectedPhotoSource());
 		d->myself->setPhotoSourceContact(selectedPhotoSourceContact());
-		if(!comboPhotoURL->url().isEmpty())
-			d->myself->setPhoto(comboPhotoURL->url());
+		if(!d->customPhotoPath.isEmpty())
+			d->myself->setPhoto(d->customPhotoPath);
 		else
 			d->myself->setPhoto( KUrl() );
 		d->myself->setPhotoSyncedWithKABC(checkSyncPhotoKABC->isChecked());
@@ -255,8 +254,8 @@ void KopeteIdentityConfig::saveCurrentIdentity()
 	// Photo settings
 	d->currentIdentity->setPhotoSource(selectedPhotoSource());
 	d->currentIdentity->setPhotoSourceContact(selectedPhotoSourceContact());
-	if(!comboPhotoURL->url().isEmpty())
-		d->currentIdentity->setPhoto(comboPhotoURL->url());
+	if(!d->customPhotoPath.isEmpty())
+		d->currentIdentity->setPhoto(d->customPhotoPath);
 	else
 		d->currentIdentity->setPhoto( KUrl() );
 	d->currentIdentity->setPhotoSyncedWithKABC(checkSyncPhotoKABC->isChecked());
@@ -302,7 +301,6 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 	QList<Kopete::Contact*>::iterator it;
 
 	comboPhotoContact->clear();
-	comboPhotoURL->clear();
 	d->contactPhotoSourceList.clear();
 
 	for( it = contactList.begin(); it != contactList.end(); ++it)
@@ -324,7 +322,7 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 		}
 	}
 
-	comboPhotoURL->setUrl(d->currentIdentity->customPhoto().pathOrUrl());
+	d->customPhotoPath = d->currentIdentity->customPhoto().path();
 	Kopete::MetaContact::PropertySource photoSource = d->currentIdentity->photoSource();
 
 	radioPhotoCustom->setChecked(photoSource == Kopete::MetaContact::SourceCustom);
@@ -360,7 +358,7 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 	lineNickname->setEnabled(selectedNameSource() == Kopete::MetaContact::SourceCustom);
 
 	comboPhotoContact->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceContact);
-	comboPhotoURL->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
+	buttonChoosePhoto->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
 
 	if(d->contactPhotoSourceList.isEmpty() )
 	{
@@ -379,7 +377,7 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 			photo = Kopete::photoFromContact(selectedNameSourceContact());
 			break;
 		case Kopete::MetaContact::SourceCustom:
-			photo = QImage(comboPhotoURL->url().url());
+			photo = QImage(d->customPhotoPath);
 			break;
 	}
 
@@ -516,64 +514,14 @@ void KopeteIdentityConfig::slotChangeAddressee()
 	emit changed(true);
 }
 
-void KopeteIdentityConfig::slotChangePhoto(const KUrl &photoUrl)
+void KopeteIdentityConfig::slotChangePhoto()
 {
-	QString saveLocation;
+	QString saveLocation = Kopete::UI::AvatarDialog::getAvatar(this, d->customPhotoPath);
 	
-	QImage photo(photoUrl.path());
-	// use KABC photo size 100x140
-	photo = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(photo), 96, 96, this );
-
-	if(!photo.isNull())
+	QImage photo(saveLocation);
+	if (!photo.isNull())
 	{
-		if(photo.width() > 96 || photo.height() > 96)
-		{
-			// Scale and crop the picture.
-			photo = photo.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
-			// crop image if not square
-			if(photo.width() < photo.height()) 
-				photo = photo.copy((photo.width()-photo.height())/2, 0, 96, 96);
-			else if (photo.width() > photo.height())
-				photo = photo.copy(0, (photo.height()-photo.width())/2, 96, 96);
-
-		}
-		else if (photo.width() < 32 || photo.height() < 32)
-		{
-			// Scale and crop the picture.
-			photo = photo.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
-			// crop image if not square
-			if(photo.width() < photo.height())
-				photo = photo.copy((photo.width()-photo.height())/2, 0, 32, 32);
-			else if (photo.width() > photo.height())
-				photo = photo.copy(0, (photo.height()-photo.width())/2, 32, 32);
-	
-		}
-		else if (photo.width() != photo.height())
-		{
-			if(photo.width() < photo.height())
-				photo = photo.copy((photo.width()-photo.height())/2, 0, photo.height(), photo.height());
-			else if (photo.width() > photo.height())
-				photo = photo.copy(0, (photo.height()-photo.width())/2, photo.height(), photo.height());
-		}
-
-		// Use MD5 hash to save the filename, so no problems will occur with the filename because of non-ASCII characters.
-		// Bug 124175: My personnal picture doesn't appear cause of l10n
-		QByteArray tempArray;
-		QBuffer tempBuffer(&tempArray);
-		tempBuffer.open( QIODevice::WriteOnly );
-		photo.save(&tempBuffer, "PNG");
-		KMD5 context(tempArray);
-		// Save the image to a file.
-		saveLocation = context.hexDigest() + ".png";
-		saveLocation = KStandardDirs::locateLocal( "appdata", QString::fromUtf8("globalidentitiespictures/%1").arg( saveLocation ) );
-
-		if(!photo.save(saveLocation, "PNG"))
-		{
-			KMessageBox::sorry(this, 
-					i18n("An error occurred when trying to save the custom photo for %1 identity.", d->selectedIdentity),
-					i18n("Identity Configuration"));
-		}
-		comboPhotoURL->setUrl(saveLocation);
+		d->customPhotoPath = saveLocation;
 		slotEnableAndDisableWidgets();
 	}
 	else
@@ -582,12 +530,6 @@ void KopeteIdentityConfig::slotChangePhoto(const KUrl &photoUrl)
 					i18n("An error occurred when trying to save the custom photo for %1 identity.", d->selectedIdentity),
 					i18n("Identity Configuration"));
 	}
-}
-
-void KopeteIdentityConfig::slotClearPhoto()
-{
-	comboPhotoURL->setUrl( KUrl() );
-	slotEnableAndDisableWidgets();
 }
 
 void KopeteIdentityConfig::slotSettingsChanged()

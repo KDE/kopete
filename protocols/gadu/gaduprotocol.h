@@ -33,7 +33,6 @@
 #include "gaducommands.h"
 
 class KAction;
-class KActionMenu;
 
 class QWidget;
 class QString;
@@ -41,8 +40,6 @@ class QString;
 namespace Kopete { class Contact; }
 namespace Kopete { class MetaContact; }
 
-class GaduSession;
-class GaduContact;
 class GaduAccount;
 class GaduPreferences;
 

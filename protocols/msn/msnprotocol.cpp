@@ -189,22 +189,6 @@ bool MSNProtocol::validContactId(const QString& userid)
 	return( userid.count("@") ==1 && userid.count(".") >=1 /*&& userid.count(QChar(' ')) == 1*/ );
 }
 
-QImage MSNProtocol::scalePicture(const QImage &picture)
-{
-	QImage img(picture);
-	img = img.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
-	// crop image if not square
-	if(img.width() < img.height())
-	{
-		img = img.copy((img.width()-img.height())/2, 0, 96, 96);
-	}
-	else if(img.width() > img.height())
-	{
-		img = img.copy(0, (img.height()-img.width())/2, 96, 96);
-	}
-
-	return img;
-}
 #include "msnprotocol.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

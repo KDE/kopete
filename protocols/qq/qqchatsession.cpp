@@ -182,6 +182,7 @@ void QQChatSession::slotCreationFailed( const int failedId, const int statusCode
 
 void QQChatSession::slotSendTypingNotification( bool typing )
 {
+	Q_UNUSED(typing);
 	// only send a notification if we've got a conference going and we are not Appear Offline
 	// TODO: implement me later.
 }

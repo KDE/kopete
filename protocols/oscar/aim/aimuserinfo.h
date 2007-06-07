@@ -24,8 +24,6 @@ namespace Kopete { class Contact; }
 namespace Ui { class AIMUserInfoWidget; }
 class KTextBrowser;
 class KTextEdit;
-class OscarAccount;
-class AIMMyselfContact;
 class AIMAccount;
 
 class AIMUserInfoDialog : public KDialog

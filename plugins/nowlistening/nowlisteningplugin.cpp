@@ -394,7 +394,7 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 	QString album = player->album();
 	QString playerName = player->name();
 
-	for ( unsigned int i = 0; i < in.length(); i++ )
+	for ( int i = 0; i < in.length(); i++ )
 	{
 		QChar c = in.at( i );
 		//kDebug(14307) << "Now working on:" << in << " char is: " << c << endl;

@@ -45,14 +45,13 @@ This class allows kopete to check for the existence, open, configure, test, set 
 
 typedef QVector<Kopete::AV::VideoDevice> VideoDeviceVector;
 
-class VideoDevicePoolPrivate;
 
 class KOPETE_EXPORT VideoDevicePool
 {
 public:
 	static VideoDevicePool* self();
 	int open();
-	int open(unsigned int device);
+	int open(int device);
 	bool isOpen();
 	int getFrame();
 	int width();
@@ -78,7 +77,7 @@ public:
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	int fillStandardKComboBox(KComboBox *combobox);
-	unsigned int currentDevice();
+	int currentDevice();
 	int currentInput();
 	unsigned int inputs();
 
@@ -113,7 +112,7 @@ protected:
 	int errnoReturn(const char* s);
 	int showDeviceCapabilities(unsigned int device);
 	void guessDriver();
-	unsigned int m_current_device;
+	int m_current_device;
 	struct imagebuffer m_buffer; // only used when no devices were found
 
 	QMutex m_ready;

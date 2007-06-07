@@ -30,8 +30,7 @@ class QTimer;
 namespace Kopete
 {
 	class Message;
-	class MetaContact;
-	class ChatSession;
+		class ChatSession;
 	class SimpleMessageHandlerFactory;
 }
 

@@ -29,7 +29,6 @@ namespace cricket
 }
 
 class JingleSession;
-class JingleVoiceSession;
 class JabberAccount;
 
 /**

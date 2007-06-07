@@ -31,7 +31,6 @@
 
 // CS_NAMESPACE_BEGIN
 
-class NDnsWorker;
 class NDnsManager;
 
 class NDns : public QObject
@@ -63,8 +62,7 @@ class NDnsManager : public QObject
 	Q_OBJECT
 public:
 	~NDnsManager();
-	class Item;
-
+	
 //! \if _hide_doc_
 protected:
 	bool event(QEvent *);
@@ -75,6 +73,7 @@ private slots:
 
 private:
 	class Private;
+	class Item;
 	Private *d;
 
 	friend class NDns;

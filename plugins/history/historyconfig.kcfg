@@ -17,7 +17,7 @@
 			<default>7</default>
 		</entry>
 
-		<entry name="Number_ChatWindow" type="UInt">
+		<entry name="Number_ChatWindow" type="Int">
 			<label>Number of messages per page</label>
 			<default>20</default>
 		</entry>

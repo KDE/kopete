@@ -225,6 +225,7 @@ void ChatServiceTask::parseJoinNotification()
         QString sender( b->getBUIN() );
         kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user name:" << sender << endl;
         Oscar::WORD warningLevel = b->getWord();
+	Q_UNUSED(warningLevel);
         Oscar::WORD numTLVs = b->getWord();
         for ( int i = 0; i < numTLVs; i++ )
         {
@@ -256,6 +257,7 @@ void ChatServiceTask::parseLeftNotification()
         QString sender( b->getBUIN() );
         kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user name:" << sender << endl;
         Oscar::WORD warningLevel = b->getWord();
+	Q_UNUSED(warningLevel);
         Oscar::WORD numTLVs = b->getWord();
         for ( int i = 0; i < numTLVs; i++ )
         {

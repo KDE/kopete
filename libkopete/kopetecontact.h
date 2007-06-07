@@ -28,7 +28,6 @@
 
 #include "kopete_export.h"
 
-class QImage;
 class KMenu;
 class KAction;
 

@@ -31,15 +31,10 @@
 #include "msnsocket.h"
 
 
-class QImage;
 
 class KAction;
-class KActionMenu;
 
 class MSNContact;
-class MSNAccount;
-class MSNNotifySocket;
-class MSNSwitchBoardSocket;
 class MSNChatSession;
 class MSNInvitation;
 namespace Kopete { class ChatSession; }
@@ -158,7 +153,6 @@ public:
 
 	static MSNProtocol* protocol();
 	static bool validContactId(const QString&);
-	QImage scalePicture(const QImage &picture);
 
 private slots:
 	void slotSyncContactList();

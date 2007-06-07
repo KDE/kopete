@@ -30,7 +30,6 @@
 
 class AddressBookLinkWidget;
 class CustomNotificationProps;
-class KPushButton;
 class KopeteGroupViewItem;
 class KopeteMetaContactLVI;
 class KopeteAddressBookExport;

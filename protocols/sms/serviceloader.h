@@ -21,7 +21,6 @@
 #include <qstring.h>
 #include <qstringlist.h>
 
-class SMSContact;
 
 class ServiceLoader
 {

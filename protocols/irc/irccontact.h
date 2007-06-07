@@ -30,7 +30,6 @@
 #include <QMap>
 
 class IRCAccount;
-class IRCProtocol;
 
 namespace KIrc
 {
@@ -43,7 +42,6 @@ class ChatSession;
 class MetaContact;
 }
 
-class KopeteView;
 
 class QTextCodec;
 

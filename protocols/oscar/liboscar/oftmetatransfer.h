@@ -29,10 +29,6 @@ namespace KNetwork
 	class KBufferedSocket;
 }
 typedef KNetwork::KBufferedSocket KBufferedSocket;
-namespace Kopete
-{
-	class FileTransferInfo;
-}
 
 using namespace Oscar;
 class OftMetaTransfer : public QObject

@@ -24,7 +24,6 @@
 #include "xmpp_vcard.h"
 
 class JabberAccount;
-class JabberContact;
 class JabberBaseContact;
 class QString;
 namespace Ui { class dlgVCard; }

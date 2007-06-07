@@ -25,10 +25,8 @@
 //Added by qt3to4:
 #include <Q3PtrList>
 
-class dlgJabberVCard;
 class JabberProtocol;
 class JabberAccount;
-class JabberResource;
 class JabberTransport;
 namespace Kopete { class MetaContact; }
 namespace XMPP { class VCard; }

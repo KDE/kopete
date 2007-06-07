@@ -74,15 +74,6 @@
 // CS_NAMESPACE_BEGIN
 
 //! \if _hide_doc_
-class NDnsWorkerEvent : public QCustomEvent
-{
-public:
-	enum Type { WorkerEvent = QEvent::User + 100 };
-	NDnsWorkerEvent(NDnsWorker *);
-
-	NDnsWorker *worker;
-};
-
 class NDnsWorker : public QThread
 {
 public:
@@ -99,6 +90,17 @@ private:
 	Q3CString host;
 	QObject *par;
 };
+
+class NDnsWorkerEvent : public QCustomEvent
+{
+public:
+	enum Type { WorkerEvent = QEvent::User + 100 };
+	NDnsWorkerEvent(NDnsWorker *);
+
+	NDnsWorker *worker;
+};
+
+
 //! \endif
 
 //----------------------------------------------------------------------------

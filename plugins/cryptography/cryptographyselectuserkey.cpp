@@ -54,7 +54,7 @@ CryptographySelectUserKey::~CryptographySelectUserKey()
 
 void CryptographySelectUserKey::slotSelectPressed()
 {
-	popupPublic *dialog=new popupPublic(this, QString(), false);
+	PopupPublic *dialog = new PopupPublic(this);
 	connect(dialog,SIGNAL(selectedKey(QString,QString,bool,bool)),this,SLOT(keySelected(QString)));
 	dialog->show();
 }

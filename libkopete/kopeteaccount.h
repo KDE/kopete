@@ -30,14 +30,12 @@
 #include <QHash>
 #include <kconfiggroup.h>
 
-class QDomNode;
 class KActionMenu;
 class KConfigGroup;
 
 namespace Kopete
 {
 class Contact;
-class Plugin;
 class Protocol;
 class MetaContact;
 class Group;

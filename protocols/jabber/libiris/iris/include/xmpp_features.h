@@ -31,6 +31,7 @@ namespace XMPP
 	class IRIS_EXPORT Features
 	{
 	public:
+		class FeatureName;
 		Features();
 		Features(const QStringList &);
 		Features(const QString &);
@@ -80,8 +81,7 @@ namespace XMPP
 		static long id(const QString &feature);
 		static QString feature(long id);
 
-		class FeatureName;
-	private:
+		private:
 		QStringList _list;
 	};
 }

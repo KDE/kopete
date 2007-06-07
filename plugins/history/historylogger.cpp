@@ -412,7 +412,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 	return messages;
 }
 
-QList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
+QList<Kopete::Message> HistoryLogger::readMessages(int lines,
 	const Kopete::Contact *c, Sens sens, bool reverseOrder, bool colorize)
 {
 	//QDate dd =  QDate::currentDate().addMonths(0-m_currentMonth);

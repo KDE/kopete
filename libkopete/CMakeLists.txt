@@ -22,7 +22,7 @@ set(kopete_ui_SRCS
   ui/addressbookselectordialog.cpp
   ui/addressbookselectorwidget.cpp
   ui/addresseeitem.cpp
-  ui/avatarselectordialog.cpp
+  ui/avatardialog.cpp
   ui/avatarselectorwidget.cpp
   ui/contactaddednotifydialog.cpp
   ui/editaccountwidget.cpp
@@ -132,7 +132,7 @@ install(FILES
  ui/addcontactpage.h
  ui/addressbookselectordialog.h
  ui/addressbookselectorwidget.h
- ui/avatarselectordialog.h
+ ui/avatardialog.h
  ui/avatarselectorwidget.h
  ui/editaccountwidget.h
  ui/kopetecontactaction.h

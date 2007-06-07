@@ -49,6 +49,8 @@ namespace Utils
 
 void notify( QPixmap pic, const QString &eventid, const QString &caption, const QString &message, const QString explanation, const QString debugInfo)
 {
+	Q_UNUSED(caption);
+
 	QStringList actions;
 		if ( !explanation.isEmpty() )
 			actions  << i18n( "More Information..." );
@@ -78,6 +80,7 @@ void notifyConnectionLost( const Account *account, const QString caption, const 
 
 bool isHostReachable(const QString &host)
 {
+	Q_UNUSED(host);
 #ifdef __GNUC__
 #warning TODO
 #endif
@@ -106,6 +109,8 @@ bool isHostReachable(const QString &host)
 
 void notifyCannotConnect( const Account *account, const QString explanation, const QString debugInfo)
 {
+	Q_UNUSED(explanation);
+
 	if (!account)
 		return;
 

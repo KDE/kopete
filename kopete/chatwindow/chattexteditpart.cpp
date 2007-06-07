@@ -235,7 +235,7 @@ void ChatTextEditPart::slotContactRemoved( const Kopete::Contact *contact )
 
 bool ChatTextEditPart::canSend()
 {
-	unsigned int i;
+	int i;
 	
 	if ( !m_session ) return false;
 

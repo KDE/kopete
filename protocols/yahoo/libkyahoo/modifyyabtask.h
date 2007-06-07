@@ -28,7 +28,6 @@ namespace KIO	{
 namespace KNetwork	{ 
 	class KBufferedSocket;
 }
-class QDomElement;
 
 /**
 @author André Duffeck

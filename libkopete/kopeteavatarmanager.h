@@ -50,8 +50,8 @@ class Contact;
  * previous avatar you had.
  *
  * Sub-directory Contacts store avatar received from contacts.
- * Avatar are managed by protocol to avoid conflit of avatar between
- * multiple contact with the same ID.
+ * Avatars are managed by account to avoid conflict of avatars between
+ * multiple contacts having the same ID.
  * For example, an user can have the same ID for MSN and Jabber but
  * use a different avatar for each account.
  *

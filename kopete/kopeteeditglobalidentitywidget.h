@@ -22,13 +22,6 @@
 #include <QtGui/QLabel>
 
 class QSize;
-namespace Kopete
-{
-namespace UI
-{
-class AvatarSelectorDialog;
-}
-}
 
 /**
  * @brief This is a simple widget added to a toolbar in KopeteWindow.
@@ -77,13 +70,6 @@ private slots:
 	 * User press Return/Enter in the KLineEdit, commit the new nickname.
 	 */
 	void changeNickname();
-
-	/**
-	 * @internal
-	 * Avatar dialog result.
-	 * @param dialog refering dialog
-	 */
-	void avatarDialogResult(Kopete::UI::AvatarSelectorDialog *dialog);
 
 private:
 	class Private;

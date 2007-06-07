@@ -22,10 +22,6 @@
 #include "Papillon/Client"
 #undef private
 
-namespace Papillon
-{
-	class FetchContactListJob;
-}
 
 namespace PapillonConsole
 {

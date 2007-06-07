@@ -102,7 +102,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
 	m_reverseList = config->readEntry(  "reverseList", QStringList()  ) ;
 
 	// Load the avatar
-	m_pictureFilename = KStandardDirs::locateLocal( "appdata", "msnpicture-"+ accountId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  );
+	m_pictureFilename = config->readEntry( "avatar", QString());
 	resetPictureObject(true);
 
 	static_cast<MSNContact *>( myself() )->setInfo( "PHH", config->readEntry("PHH") );
@@ -1449,42 +1449,16 @@ void MSNAccount::resetPictureObject(bool silent)
 	}
 	else
 	{
-		// Check if the picture is a 96x96 image, if not scale, crop and save.
-		QImage picture(m_pictureFilename);
-		if(picture.isNull())
-		{
-			m_pictureObj="";
-			myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
-		}
-		else
-		{
-			if(picture.width() != 96 || picture.height() != 96)
-			{
-				// Save to a new location in msnpictures.
-				QString newLocation( KStandardDirs::locateLocal( "appdata", "msnpictures/"+ KUrl(m_pictureFilename).fileName().toLower() ) );
-
-				// Scale and crop the picture.
-				picture = MSNProtocol::protocol()->scalePicture(picture);
-
-				// Use the cropped/scaled image now.
-				if(!picture.save(newLocation, "PNG"))
-				{
-					m_pictureObj="";
-					myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
-				}
-				m_pictureFilename = newLocation;
-			}
-		}
-
 		QFile pictFile( m_pictureFilename );
-		if(!pictFile.open(QIODevice::ReadOnly))
+		if (!pictFile.open(QIODevice::ReadOnly))
 		{
 			m_pictureObj="";
 			myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
 		}
 		else
 		{
-			QByteArray ar=pictFile.readAll();
+			QByteArray ar = pictFile.readAll();
+
 			QString sha1d= QString((KCodecs::base64Encode(SHA1::hash(ar))));
 
 			QString size=QString::number( pictFile.size() );

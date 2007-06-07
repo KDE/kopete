@@ -28,7 +28,6 @@
   *@author Daniel Stone
   */
 namespace Ui { class dlgAddContact; }
-class JabberAccount;
 class QLabel;
 
 class JabberAddContactPage:public AddContactPage

@@ -182,7 +182,7 @@ public:
 	int checkDevice();
 	int showDeviceCapabilities();
 	int initDevice();
-	unsigned int inputs();
+	int inputs();
 	int width();
 	int minWidth();
 	int maxWidth();

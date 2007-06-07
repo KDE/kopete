@@ -4,7 +4,8 @@
                           popuppublic.cpp  -  description
                              -------------------
     begin                : Sat Jun 29 2002
-    copyright            : (C) 2002 by Jean-Baptiste Mardelle
+    copyright            : (C) 2007 by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+                           (C) 2002 by Jean-Baptiste Mardelle
     email                : bj@altern.org
  ***************************************************************************/
 
@@ -18,222 +19,48 @@
  ***************************************************************************/
 
 ////////////////////////////////////////////////////////   code  for choosing a public key from a list for encryption
-#include <qlayout.h>
-#include <qpushbutton.h>
 
-#include <qpainter.h>
-#include <qicon.h>
-#include <q3buttongroup.h>
-#include <qcheckbox.h>
-//#include <qhbuttongroup.h>
-#include <qtoolbutton.h>
-#include <qapplication.h>
-#include <qlabel.h>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <Q3WhatsThis>
-
-#include <kdeversion.h>
-#include <k3listview.h>
-#include <k3process.h>
 #include <k3procio.h>
-#include <klocale.h>
-#include <kactioncollection.h>
-
-#include <k3listviewsearchline.h>
-#include <kaction.h>
-#include <kdebug.h>
-#include <kiconloader.h>
-#include <klineedit.h>
-#include <kconfig.h>
-#include <kicon.h>
-
-
+#include <KIconLoader>
+#include <KActionCollection>
+#include <KAction>
 #include "popuppublic.h"
-//#include "kgpgsettings.h"
-//#include "kgpgview.h"
-//#include "kgpg.h"
+#include "ui_popuppublicbase.h"
 #include "kgpginterface.h"
 
 #include <cstdio>
 
-/////////////////   klistviewitem special
-
-class UpdateViewItem2 : public K3ListViewItem
-{
-public:
-        UpdateViewItem2(Q3ListView *parent, QString name,QString mail,QString id,bool isDefault);
-        virtual void paintCell(QPainter *p, const QColorGroup &cg,int col, int width, int align);
-	virtual QString key(int c,bool ) const;
-	bool def;
-};
-
-UpdateViewItem2::UpdateViewItem2(Q3ListView *parent, QString name,QString mail,QString id,bool isDefault)
-                : K3ListViewItem(parent)
-{
-def=isDefault;
-        setText(0,name);
-	setText(1,mail);
-	setText(2,id);
-}
-
-
-void UpdateViewItem2::paintCell(QPainter *p, const QColorGroup &cg,int column, int width, int alignment)
-{
-        if ((def) && (column<2)) {
-                QFont font(p->font());
-                font.setBold(true);
-                p->setFont(font);
-        }
-        K3ListViewItem::paintCell(p, cg, column, width, alignment);
-}
-
-QString UpdateViewItem2 :: key(int c,bool ) const
-{
-        return text(c).toLower();
-}
-
 ///////////////  main view
 
-popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, const KShortcut& goDefaultKey)
+PopupPublic::PopupPublic(QWidget *parent, const KShortcut& goDefaultKey)
  : KDialog( parent )
 {
 	setCaption( i18n("Select Public Key") );
-	setButtons( KDialog::Details | KDialog::Ok | KDialog::Cancel );
+	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
 
-	QWidget *page = new QWidget(this);
-	QVBoxLayout *vbox=new QVBoxLayout(page);
-	vbox->setSpacing(spacingHint());
-	vbox->setMargin(0);
-	vbox->setAutoAdd(true);
+	ui = new Ui::PopupPublicBase();
+	ui->setupUi(mainWidget());
+	
+        keyPair = SmallIcon("kgpg_key2");
+        keySingle = SmallIcon("kgpg_key1");
+	keyGroup = SmallIcon("kgpg_key3");
 
-	setButtonText(KDialog::Details,i18n("Options"));
 
-/*        if (KGpgSettings::allowCustomEncryptionOptions())
-                customOptions=KGpgSettings::customEncryptionOptions();*/
+ 	ui->listSearch->setTreeWidget(ui->keyList);
 
-        KIconLoader *loader = KIconLoader::global();
-
-        keyPair=loader->loadIcon("kgpg_key2",K3Icon::Small,20);
-        keySingle=loader->loadIcon("kgpg_key1",K3Icon::Small,20);
-	keyGroup=loader->loadIcon("kgpg_key3",K3Icon::Small,20);
-
-        if (filemode) setCaption(i18n("Select Public Key for %1", sfile));
-        fmode=filemode;
-
-	Q3HButtonGroup *hBar=new Q3HButtonGroup(page);
-	//hBar->setFrameStyle(QFrame::NoFrame);
-	//hBar->setMargin(0);
-
-	QToolButton *clearSearch = new QToolButton(hBar);
-	clearSearch->setText(i18n("Clear Search"));
-	clearSearch->setToolTip(i18n("Clear Search"));
-	clearSearch->setIcon(SmallIconSet(QApplication::isRightToLeft() ? "clear-left"
-                                            : "locationbar-erase"));
-	(void) new QLabel(i18n("Search: "),hBar);
-	K3ListViewSearchLine* listViewSearch = new K3ListViewSearchLine(hBar);
-	connect(clearSearch, SIGNAL(pressed()), listViewSearch, SLOT(clear()));
-
-        keysList = new K3ListView( page );
-	 keysList->addColumn(i18n("Name"));
-	 keysList->addColumn(i18n("Email"));
-	 keysList->addColumn(i18n("ID"));
-
-	 listViewSearch->setListView(keysList);
-
-        keysList->setRootIsDecorated(false);
-        page->setMinimumSize(540,200);
-        keysList->setShowSortIndicator(true);
-        keysList->setFullWidth(true);
-	keysList->setAllColumnsShowFocus(true);
-        keysList->setSelectionModeExt(K3ListView::Extended);
-	keysList->setColumnWidthMode(0,Q3ListView::Manual);
-	keysList->setColumnWidthMode(1,Q3ListView::Manual);
-	keysList->setColumnWidth(0,210);
-	keysList->setColumnWidth(1,210);
-
-        boutonboxoptions=new Q3ButtonGroup(5,Qt::Vertical ,page,0);
-
-	KActionCollection *actcol=new KActionCollection(this);
+        KActionCollection *actcol=new KActionCollection(this);
 	KAction *defaultKeyAction = new KAction(i18n("&Go to Default Key"), this );
         actcol->addAction( "go_default_key", defaultKeyAction );
 	defaultKeyAction->setShortcut(goDefaultKey);
 	connect( defaultKeyAction, SIGNAL(triggered(bool)), this, SLOT(slotGotoDefaultKey()) );
 
-
-        CBarmor=new QCheckBox(i18n("ASCII armored encryption"),boutonboxoptions);
-        CBuntrusted=new QCheckBox(i18n("Allow encryption with untrusted keys"),boutonboxoptions);
-        CBhideid=new QCheckBox(i18n("Hide user id"),boutonboxoptions);
-        setDetailsWidget(boutonboxoptions);
-        Q3WhatsThis::add
-                (keysList,i18n("<b>Public keys list</b>: select the key that will be used for encryption."));
-        Q3WhatsThis::add
-                (CBarmor,i18n("<b>ASCII encryption</b>: makes it possible to open the encrypted file/message in a text editor"));
-        Q3WhatsThis::add
-                (CBhideid,i18n("<b>Hide user ID</b>: Do not put the keyid into encrypted packets. This option hides the receiver "
-                                "of the message and is a countermeasure against traffic analysis. It may slow down the decryption process because "
-                                "all available secret keys are tried."));
-        Q3WhatsThis::add
-                (CBuntrusted,i18n("<b>Allow encryption with untrusted keys</b>: when you import a public key, it is usually "
-                                  "marked as untrusted and you cannot use it unless you sign it in order to make it 'trusted'. Checking this "
-                                  "box enables you to use any key, even if it has not be signed."));
-
-        if (filemode) {
-		QWidget *parentBox=new QWidget(boutonboxoptions);
-		QHBoxLayout *shredBox=new QHBoxLayout(parentBox);
-		shredBox->setSpacing(0);
-		//shredBox->setFrameStyle(QFrame::NoFrame);
-		//shredBox->setMargin(0);
-	       CBshred=new QCheckBox(i18n("Shred source file"),parentBox);
-                Q3WhatsThis::add
-                        (CBshred,i18n("<b>Shred source file</b>: permanently remove source file. No recovery will be possible"));
-
-		QString shredWhatsThis = i18n( "<qt><b>Shred source file:</b><br /><p>Checking this option will shred (overwrite several times before erasing) the files you have encrypted. This way, it is almost impossible that the source file is recovered.</p><p><b>But you must be aware that this is not secure</b> on all file systems, and that parts of the file may have been saved in a temporary file or in the spooler of your printer if you previously opened it in an editor or tried to print it. Only works on files (not on folders).</p></qt>");
-		  QLabel *warn= new QLabel( i18n("<a href=\"whatsthis:%1\">Read this before using shredding</a>", shredWhatsThis),parentBox );
-		  shredBox->addWidget(CBshred);
-		  shredBox->addWidget(warn);
-        }
-
-	        CBsymmetric=new QCheckBox(i18n("Symmetrical encryption"),boutonboxoptions);
-                Q3WhatsThis::add
-                        (CBsymmetric,i18n("<b>Symmetrical encryption</b>: encryption does not use keys. You just need to give a password "
-                                          "to encrypt/decrypt the file"));
-                QObject::connect(CBsymmetric,SIGNAL(toggled(bool)),this,SLOT(isSymetric(bool)));
-
-//BEGIN modified for Kopete
-
-	setWindowFlags( windowFlags() | Qt::WDestructiveClose );
-
-
-	/*CBarmor->setChecked( KGpgSettings::asciiArmor() );
-	CBuntrusted->setChecked( KGpgSettings::allowUntrustedKeys() );
-	CBhideid->setChecked( KGpgSettings::hideUserID() );
-	if (filemode) CBshred->setChecked( KGpgSettings::shredSource() );*/
 	KConfigGroup config(KGlobal::config(), "Cryptography Plugin");
+	ui->untrustedCheck->setChecked(config.readEntry("UntrustedKeys", true));
 
-	CBarmor->hide();
-	CBuntrusted->setChecked(config.readEntry("UntrustedKeys", true));
-	CBhideid->hide();
-	if (filemode) CBshred->hide();
-	CBsymmetric->hide();
-
-//END modified for Kopete
-
-        /*if (KGpgSettings::allowCustomEncryptionOptions()) {
-                QHButtonGroup *bGroup = new QHButtonGroup(page);
-                //bGroup->setFrameStyle(QFrame::NoFrame);
-                (void) new QLabel(i18n("Custom option:"),bGroup);
-                KLineEdit *optiontxt=new KLineEdit(bGroup);
-                optiontxt->setText(customOptions);
-                QWhatsThis::add
-                        (optiontxt,i18n("<b>Custom option</b>: for experienced users only, allows you to enter a gpg command line option, like: '--armor'"));
-                QObject::connect(optiontxt,SIGNAL(textChanged ( const QString & )),this,SLOT(customOpts(const QString & )));
-        }*/
-        QObject::connect(keysList,SIGNAL(doubleClicked(Q3ListViewItem *,const QPoint &,int)),this,SLOT(slotOk()));
-	connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
-//	QObject::connect(this,SIGNAL(okClicked()),this,SLOT(crypte()));
-        QObject::connect(CBuntrusted,SIGNAL(toggled(bool)),this,SLOT(refresh(bool)));
+        connect(ui->keyList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(slotOk()));
+	connect(this, SIGNAL(okClicked()), this, SLOT(slotOk()));
+        connect(ui->untrustedCheck, SIGNAL(toggled(bool)), this, SLOT(refresh(bool)));
 
         char line[200]="\0";
         FILE *fp2;
@@ -247,27 +74,29 @@ popupPublic::popupPublic(QWidget *parent, const QString& sfile, bool filemode, c
 	}
         pclose(fp2);
 
-        trusted=CBuntrusted->isChecked();
+        trusted = ui->untrustedCheck->isChecked();
 
         refreshkeys();
 	setMinimumSize(550,200);
 	updateGeometry();
-	keysList->setFocus();
+	ui->keyList->setFocus();
 	show();
 }
 
-popupPublic::~popupPublic()
+PopupPublic::~PopupPublic()
 {}
 
 
-void popupPublic::slotAccept()
+void PopupPublic::slotAccept()
 {
 accept();
 }
 
-void popupPublic::enable()
+void PopupPublic::enable()
 {
-        Q3ListViewItem *current = keysList->firstChild();
+	/*
+	FIXME: port this code
+        QListWidgetItem *current = ui->keyList->firstChild();
         if (current==NULL)
                 return;
         current->setVisible(true);
@@ -276,10 +105,13 @@ void popupPublic::enable()
                 current->setVisible(true);
         }
 	keysList->ensureItemVisible(keysList->currentItem());
+	*/
 }
 
-void popupPublic::sort()
+void PopupPublic::sort()
 {
+/*
+	FIXME: port this code
         bool reselect=false;
         Q3ListViewItem *current = keysList->firstChild();
         if (current==NULL)
@@ -316,22 +148,15 @@ void popupPublic::sort()
 		keysList->setCurrentItem(firstvisible);
 		keysList->ensureItemVisible(firstvisible);
         }
+*/
 }
 
-void popupPublic::isSymetric(bool state)
-{
-        keysList->setEnabled(!state);
-        CBuntrusted->setEnabled(!state);
-        CBhideid->setEnabled(!state);
-}
-
-
-void popupPublic::customOpts(const QString &str)
+void PopupPublic::customOpts(const QString &str)
 {
         customOptions=str;
 }
 
-void popupPublic::slotGotoDefaultKey()
+void PopupPublic::slotGotoDefaultKey()
 {
     /*QListViewItem *myDefaulKey = keysList->findItem(KGpgSettings::defaultKey(),2);
     keysList->clearSelection();
@@ -340,7 +165,7 @@ void popupPublic::slotGotoDefaultKey()
     keysList->ensureItemVisible(myDefaulKey);*/
 }
 
-void popupPublic::refresh(bool state)
+void PopupPublic::refresh(bool state)
 {
         if (state)
                 enable();
@@ -348,9 +173,9 @@ void popupPublic::refresh(bool state)
                 sort();
 }
 
-void popupPublic::refreshkeys()
+void PopupPublic::refreshkeys()
 {
-	keysList->clear();
+	ui->keyList->clear();
 	/*QStringList groups= QStringList::split(",", KGpgSettings::groups());
 	if (!groups.isEmpty())
 	{
@@ -371,12 +196,13 @@ void popupPublic::refreshkeys()
         encid->start(K3Process::NotifyOnExit,true);
 }
 
-void popupPublic::slotpreselect()
+void PopupPublic::slotpreselect()
 {
-Q3ListViewItem *it;
+	/* FIXME: port this code
+	QListWidgetItem *it;
         //if (fmode) it=keysList->findItem(KGpgSettings::defaultKey(),2);
         //else {
-                it=keysList->firstChild();
+                it = ui->keyList->item(0);
                 if (it==NULL)
                         return;
                 while (!it->isVisible()) {
@@ -390,15 +216,16 @@ if (!trusted)
 	keysList->setSelected(it,true);
 	keysList->setCurrentItem(it);
 	keysList->ensureItemVisible(it);
+	*/
 emit keyListFilled();
 }
 
-void popupPublic::slotSetVisible()
+void PopupPublic::slotSetVisible()
 {
-	keysList->ensureItemVisible(keysList->currentItem());
+	ui->keyList->scrollToItem(ui->keyList->currentItem());
 }
 
-void popupPublic::slotprocread(K3ProcIO *p)
+void PopupPublic::slotprocread(K3ProcIO *p)
 {
         ///////////////////////////////////////////////////////////////// extract  encryption keys
         bool dead;
@@ -467,26 +294,35 @@ void popupPublic::slotprocread(K3ProcIO *p)
                         if ((!dead) && (!tst.isEmpty())) {
 				bool isDefaultKey=false;
                                 if (id.right(8)==defaultKey) isDefaultKey=true;
-                                        UpdateViewItem2 *item=new UpdateViewItem2(keysList,keyname,keymail,id,isDefaultKey);
-					//K3ListViewItem *sub= new K3ListViewItem(item,i18n("ID: %1, trust: %2, validity: %3").arg(id).arg(tr).arg(val));
-                                        //sub->setSelectable(false);
-                                        if (seclist.indexOf(tst,0,Qt::CaseInsensitive)!=-1)
-                                                item->setPixmap(0,keyPair);
-                                        else
-                                                item->setPixmap(0,keySingle);
+                                QTreeWidgetItem *item=new QTreeWidgetItem(ui->keyList);
+				item->setText(0, keyname);
+				item->setText(1, keymail);
+				item->setText(2, id);
+				if (isDefaultKey)
+				{
+					for (int i = 0; i < 3; ++i)
+					{
+						QFont f = item->font(i);
+						f.setBold(true);
+						item->setFont(i, f);
+					}
+				}
+                                if (seclist.indexOf(tst,0,Qt::CaseInsensitive)!=-1)
+                                     item->setIcon(0,keyPair);
+                                else
+                                     item->setIcon(0,keySingle);
                         }
                 }
         }
 }
 
 
-void popupPublic::slotOk()
+void PopupPublic::slotOk()
 {
 //BEGIN modified for Kopete
 	KConfigGroup config(KGlobal::config(), "Cryptography Plugin");
 
-	config.writeEntry("UntrustedKeys", CBuntrusted->isChecked());
-	config.writeEntry("HideID", CBhideid->isChecked());
+	config.writeEntry("UntrustedKeys", ui->untrustedCheck->isChecked());
 
 //END modified for Kopete
 
@@ -497,32 +333,21 @@ void popupPublic::slotOk()
 kDebug(2100)<<"Ok pressed"<<endl;
         QStringList selectedKeys;
 	QString userid;
-        QList<Q3ListViewItem*> list=keysList->selectedItems();
+	QList<QTreeWidgetItem*> list = ui->keyList->selectedItems();
 
         for ( int i = 0; i < list.count(); ++i )
                 if ( list.at(i) ) {
 			if (!list.at(i)->text(2).isEmpty()) selectedKeys<<list.at(i)->text(2);
 			else selectedKeys<<list.at(i)->text(0);
                 }
-        if (selectedKeys.isEmpty() && !CBsymmetric->isChecked())
+        if (selectedKeys.isEmpty())
                 return;
-kDebug(2100)<<"Selected Key:"<<selectedKeys<<endl;
+	kDebug(2100)<<"Selected Key:"<<selectedKeys<<endl;
         QStringList returnOptions;
-        if (CBuntrusted->isChecked())
+        if (ui->untrustedCheck->isChecked())
                 returnOptions<<"--always-trust";
-        if (CBarmor->isChecked())
-                returnOptions<<"--armor";
-        if (CBhideid->isChecked())
-                returnOptions<<"--throw-keyid";
-        /*if ((KGpgSettings::allowCustomEncryptionOptions()) && (!customOptions.trimmed().isEmpty()))
-                returnOptions.operator+ (QStringList::split(QString(" "),customOptions.simplified()));*/
-	//hide();
-
-//MODIFIED for kopete
-        if (fmode)
-                emit selectedKey(selectedKeys.first(),QString(),CBshred->isChecked(),CBsymmetric->isChecked());
-        else
-                emit selectedKey(selectedKeys.first(),QString(),false,CBsymmetric->isChecked());
+        //MODIFIED for kopete
+        emit selectedKey(selectedKeys.first(),QString(),false,false);
         accept();
 }
 

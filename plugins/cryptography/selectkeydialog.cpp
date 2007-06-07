@@ -34,7 +34,7 @@
 
 #include <cstdio>
 
-SelectKeyDialog::SelectKeyDialog(QWidget *parent, const char *name,bool showlocal)
+SelectKeyDialog::SelectKeyDialog(QWidget *parent, bool showlocal)
  : KDialog( parent )
 {
   setCaption( i18n("Private Key List") );

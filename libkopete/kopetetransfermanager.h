@@ -32,7 +32,6 @@ namespace Kopete
 class Transfer;
 class Contact;
 class Message;
-class ChatSession;
 
 /**
  * @author Nick Betcher. <nbetcher@kde.org>

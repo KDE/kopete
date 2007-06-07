@@ -54,7 +54,7 @@ public slots:
 
 private:
 	static TextEffectPlugin* pluginStatic_;
-	unsigned int last_color;
+	int last_color;
 	TextEffectConfig *m_config;
 };
 

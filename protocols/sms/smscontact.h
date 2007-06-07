@@ -22,7 +22,6 @@
 
 #include <qstring.h>
 
-class SMSAccount;
 namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }
 

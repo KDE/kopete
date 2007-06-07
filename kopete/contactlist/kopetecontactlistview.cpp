@@ -754,7 +754,9 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 					if ( text.length() > 41 )
 						text = text.left( 38 ) + QLatin1String( "..." );
 
-					popup->insertItem( c->onlineStatus().iconFor( c, 16 ), text , contactMenu );
+					contactMenu->setTitle(text);
+					contactMenu->setIcon(c->onlineStatus().iconFor( c, 16 ));
+					popup->addMenu( contactMenu );
 				}
 
 				popup->popup( point );

@@ -32,7 +32,6 @@
 #include "libkyahoo_export.h"
 
 class YMSGTransferPrivate;
-class QString;
 
 typedef QPair< int, QByteArray > Param;
 typedef QList< Param > ParamList;

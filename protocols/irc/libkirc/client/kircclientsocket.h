@@ -26,7 +26,6 @@ namespace KIrc
 {
 
 class ClientCommandHandler;
-class Message;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>

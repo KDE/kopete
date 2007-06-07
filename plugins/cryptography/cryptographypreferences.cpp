@@ -41,7 +41,7 @@ CryptographyPreferences::CryptographyPreferences(QWidget *parent, const QStringL
     l->addWidget(w);
 //    addConfig(CryptographyConfig::self(), w);
 
-    if ( preferencesDialog->kcfg_DontAskForPassphrase->checkState() != QCheckBox::On )
+    if ( preferencesDialog->kcfg_DontAskForPassphrase->checkState() != Qt::Checked )
       preferencesDialog->kcfg_CacheBehavior->setEnabled( false );
 
 	connect (preferencesDialog->selectKey, SIGNAL(pressed()), this, SLOT(slotSelectPressed()));
@@ -68,7 +68,7 @@ void CryptographyPreferences::defaults()
 
 void CryptographyPreferences::slotSelectPressed()
 {
-	SelectKeyDialog opts(this,0,false);
+	SelectKeyDialog opts(this, false);
 	opts.exec();
 	if (opts.result()==QDialog::Accepted)
 		preferencesDialog->kcfg_PrivateKeyId->setText(opts.getkeyID());

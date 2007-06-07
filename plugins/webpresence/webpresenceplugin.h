@@ -30,8 +30,6 @@
 class QTimer;
 class KTemporaryFile;
 namespace Kopete { class MetaContact; }
-class KToggleAction;
-class KActionCollection;
 
 typedef QList<Kopete::Protocol*> ProtocolList;
 

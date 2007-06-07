@@ -35,11 +35,6 @@
 #include "wpaddcontact.h"
 
 namespace Kopete { class Account; }
-class KMenu;
-class KActionMenu;
-class KAction;
-class WPContact;
-class WPAccount;
 
 /**
  * The actual Protocol class used by Kopete.

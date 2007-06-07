@@ -21,7 +21,6 @@
 #include <qlabel.h>
 
 class smsAddUI;
-class SMSProtocol;
 
 class SMSAddContactPage : public AddContactPage
 {

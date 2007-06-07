@@ -22,7 +22,6 @@
 
 #include "kopetemessage.h"
 
-class SMSContact;
 namespace Kopete { class Account; }
 class QGridLayout;
 class QWidget;

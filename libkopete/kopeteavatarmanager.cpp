@@ -37,7 +37,7 @@
 
 // Kopete includes
 #include <kopetecontact.h>
-#include <kopeteprotocol.h>
+#include <kopeteaccount.h>
 
 namespace Kopete
 {
@@ -108,11 +108,11 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 		case AvatarManager::Contact:
 			avatarUrl.addPath( ContactDir );
 			d->createDirectory( avatarUrl );
-			// Use the plugin name for protocol sub directory
-			if( newEntry.contact && newEntry.contact->protocol() )
+			// Use the account id for sub directory
+			if( newEntry.contact && newEntry.contact->account() )
 			{
-				QString protocolName = newEntry.contact->protocol()->pluginId();
-				avatarUrl.addPath( protocolName );
+				QString accountName = newEntry.contact->account()->accountId();
+				avatarUrl.addPath( accountName );
 				d->createDirectory( avatarUrl );
 			}
 			break;
@@ -140,15 +140,24 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	avatar = d->scaleImage(avatar);
 
 	QString avatarFilename;
-	// Find MD5 hash for filename
-	// MD5 always contain ASCII caracteres so it is more save for a filename.
-	// Name can use UTF-8 caracters.
-	QByteArray tempArray;
-	QBuffer tempBuffer(&tempArray);
-	tempBuffer.open( QIODevice::WriteOnly );
-	avatar.save(&tempBuffer, "PNG");
-	KMD5 context(tempArray);
-	avatarFilename = context.hexDigest() + QLatin1String(".png");
+
+	// for the contact avatar, save it with the contactId + .png
+	if (newEntry.category == AvatarManager::Contact && newEntry.contact)
+	{
+		avatarFilename = newEntry.contact->contactId() + ".png";
+	}
+	else
+	{
+		// Find MD5 hash for filename
+		// MD5 always contain ASCII caracteres so it is more save for a filename.
+		// Name can use UTF-8 caracters.
+		QByteArray tempArray;
+		QBuffer tempBuffer(&tempArray);
+		tempBuffer.open( QIODevice::WriteOnly );
+		avatar.save(&tempBuffer, "PNG");
+		KMD5 context(tempArray);
+		avatarFilename = context.hexDigest() + QLatin1String(".png");
+	}
 
 	// Save image on disk	
 	kDebug(14010) << k_funcinfo << "Saving " << avatarFilename << " on disk." << endl;

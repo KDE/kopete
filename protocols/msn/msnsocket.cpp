@@ -977,7 +977,7 @@ void MSNSocket::Buffer::add( char *str, unsigned int sz )
 	delete[] b;
 }
 
-QByteArray MSNSocket::Buffer::take( unsigned blockSize )
+QByteArray MSNSocket::Buffer::take( int blockSize )
 {
 	if ( size() < blockSize )
 	{
@@ -987,11 +987,11 @@ QByteArray MSNSocket::Buffer::take( unsigned blockSize )
 
 	QByteArray rep;
 	rep.reserve( blockSize );	
-	for( uint i = 0; i < blockSize; i++ )
+	for( int i = 0; i < blockSize; i++ )
 		rep[ i ] = data()[ i ];
 
 	char *str = new char[ size() - blockSize ];
-	for ( uint i = 0; i < size() - blockSize; i++ )
+	for ( int i = 0; i < size() - blockSize; i++ )
 		str[ i ] = data()[ blockSize + i ];
 	QByteArray *that = this;
 	*that = QByteArray( str, size() - blockSize );

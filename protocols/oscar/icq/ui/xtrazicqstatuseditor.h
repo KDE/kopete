@@ -26,7 +26,6 @@
 namespace Ui { class XtrazICQStatusEditorUI; }
 
 class ICQStatusManager;
-class QModelIndex;
 
 namespace Xtraz
 {

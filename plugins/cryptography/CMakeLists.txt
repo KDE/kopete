@@ -15,7 +15,9 @@ set(kopete_cryptography_PART_SRCS
    popuppublic.cpp 
    selectkeydialog.cpp )
 
-kde4_add_ui_files(kopete_cryptography_PART_SRCS cryptographyuserkey_ui.ui )
+kde4_add_ui_files(kopete_cryptography_PART_SRCS 
+		  cryptographyuserkey_ui.ui 
+		  popuppublicbase.ui)
 
 kde4_automoc(${kopete_cryptography_PART_SRCS})
 

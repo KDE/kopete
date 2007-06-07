@@ -42,15 +42,11 @@
 class GaduAccountPrivate;
 
 class GaduContact;
-class GaduProtocol;
 namespace Kopete { class Protocol; }
 namespace Kopete { class Message; }
 namespace Kopete { class StatusMessage; }
-class GaduCommand;
-class QTimer;
 class KActionMenu;
 class GaduDCC;
-class GaduDCCTransaction;
 
 class GaduAccount : public Kopete::PasswordedAccount
 {

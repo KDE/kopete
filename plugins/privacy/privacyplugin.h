@@ -24,14 +24,12 @@
 
 namespace Kopete { 
 	class Message;
-	class MetaContact;
 	class ChatSession;
 	class MessageEvent;
 	class Contact;
 }
 class KopeteView;
 class PrivacyMessageHandlerFactory;
-class PrivacyConfig;
 class PrivacyGUIClient;
 
 class PrivacyPlugin : public Kopete::Plugin

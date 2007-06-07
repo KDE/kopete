@@ -115,8 +115,8 @@ void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* ses
 
 	QString msgText( msg.plainBody() );
 	// TODO: More intelligent handling of message length.
-	uint chunk_length = !isOnline() ? 450 : 4096;
-	uint msgPosition = 0;
+	int chunk_length = !isOnline() ? 450 : 4096;
+	int msgPosition = 0;
 
 	do
 	{

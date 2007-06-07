@@ -25,7 +25,7 @@
 namespace KNetwork{
 	class KServerSocket;
 }
-
+class KTemporaryFile;
 /**
 @author Kopete Developers
 */

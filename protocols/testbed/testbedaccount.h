@@ -28,7 +28,6 @@ namespace Kopete
 	class StatusMessage;
 }
 
-class TestbedContact;
 class TestbedProtocol;
 class TestbedFakeServer;
 

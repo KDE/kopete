@@ -28,7 +28,7 @@ class SelectKeyDialog : public KDialog
     Q_OBJECT
 
 public:
-    explicit SelectKeyDialog( QWidget *parent = 0, const char *name = 0,bool showlocal=true);
+    explicit SelectKeyDialog( QWidget *parent = 0, bool showlocal=true);
     ~SelectKeyDialog();
 
 private slots:

@@ -23,7 +23,6 @@
 #include <kcmodule.h>
 
 namespace Ui { class NowListeningPrefsUI; }
-class NowListeningConfig;
 
 /**
   *@author Will Stephenson

@@ -28,8 +28,6 @@
 namespace Kopete { class Transfer; }
 namespace Kopete { struct FileTransferInfo; }
 
-class KTemporaryFile;
-class QFile;
 class MSNP2PDisplatcher;
 
 /**

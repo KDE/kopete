@@ -37,6 +37,8 @@
 SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const char *name )
 	: Kopete::Account( parent, accountID )
 {
+	Q_UNUSED(name);
+
 	setMyself( new SMSContact(this, accountID, accountID, Kopete::ContactList::self()->myself()) );
 	loadConfig();
 	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSOffline );
@@ -198,6 +200,7 @@ void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const Ko
 
 void SMSAccount::setStatusMessage( const Kopete::StatusMessage& msg )
 {
+   Q_UNUSED(msg);
    return;
 }
 

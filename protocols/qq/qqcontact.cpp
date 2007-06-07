@@ -365,6 +365,7 @@ void QQContact::clearServerGroups()
 
 void QQContact::sync( unsigned int changed )
 {
+	Q_UNUSED(changed);
 	return;
 }
 
@@ -387,6 +388,7 @@ void QQContact::contactRemovedFromGroup( const QString& groupId )
 
 void QQContact::rename( const QString &newName )
 {
+	Q_UNUSED(newName);
 	//kDebug( 14140 ) << k_funcinfo << "From: " << displayName() << ", to: " << newName << endl;
 
 /*	if( newName == displayName() )
@@ -407,6 +409,8 @@ void QQContact::slotShowProfile()
  */
 void QQContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint /*fileSize*/ )
 {
+	Q_UNUSED(altFileName);
+
 	QString filePath;
 
 	//If the file location is null, then get it from a file open dialog
@@ -420,6 +424,7 @@ void QQContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uin
 	if ( !filePath.isEmpty() )
 	{
 		quint32 fileSize = QFileInfo(filePath).size();
+		Q_UNUSED(fileSize);
 		//Send the file
 		// static_cast<QQChatSession*>( manager(Kopete::Contact::CanCreate) )->sendFile( filePath, altFileName, fileSize );
 

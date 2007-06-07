@@ -22,7 +22,6 @@
 #include "irccontact.h"
 #include <Q3PtrList>
 
-class KActionCollection;
 class KAction;
 class KActionMenu;
 class KCodecAction;
@@ -32,11 +31,8 @@ class IRCAccount;
 
 namespace Kopete
 {
-	class ChatSession;
-	class Message;
-	class MetaContact;
+class MetaContact;
 }
-class KopeteView;
 
 /**
  * @author Jason Keirstead <jason@keirstead.org>

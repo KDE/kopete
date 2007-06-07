@@ -28,7 +28,6 @@
 
 class QSocketNotifier;
 class gg_dcc;
-class GaduAccount;
 class GaduContact;
 namespace Kopete { class Transfer; }
 namespace Kopete { class FileTransferInfo; }

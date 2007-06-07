@@ -21,9 +21,7 @@
 
 class KActionMenu;
 class SMSProtocol;
-class SMSContact;
 class SMSService;
-class K3Process;
 
 enum SMSMsgAction { ACT_ASK = 0, ACT_CANCEL, ACT_SPLIT };
 

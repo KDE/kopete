@@ -113,7 +113,7 @@ private:
 	QString m_command;
 	QString m_help;
 	QString m_formatString;
-	uint m_minArgs;
+	int m_minArgs;
 	int m_maxArgs;
 	bool m_processing;
 	CommandHandler::CommandType m_type;

@@ -40,8 +40,6 @@
 
 class KopeteMetaContactLVI;
 class KopeteGroupViewItem;
-class KopeteStatusGroupViewItem;
-class KRootPixmap;
 class KActionCollection;
 class KAction;
 class KSelectAction;

@@ -40,8 +40,6 @@
 
 class QTimer;
 class Q3ListView;
-class Q3ListViewItem;
-class KMenu;
 class KAction;
 namespace Kopete { class MetaContact; }
 

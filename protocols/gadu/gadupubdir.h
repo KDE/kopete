@@ -35,7 +35,6 @@ class GaduProtocol;
 class GaduContact;
 class GaduAccount;
 namespace Ui { class GaduPublicDirectory; }
-class Q3ListViewItem;
 class GaduContact;
 
 class GaduPublicDir : public KDialog

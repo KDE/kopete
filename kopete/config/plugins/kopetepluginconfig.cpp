@@ -55,7 +55,7 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QStringList &args
 		KSettings::Dispatcher::self(), SLOT(reparseConfiguration(const QByteArray&)) );
 
 	d->pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ),
-	                               i18n( "General Plugins" ), "Plugins" );
+	                               KPluginSelector::ReadConfigFile, i18n( "General Plugins" ), "Plugins" );
 	d->pluginSelector->load();
 }
 

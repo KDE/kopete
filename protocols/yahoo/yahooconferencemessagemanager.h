@@ -21,10 +21,8 @@
 
 #include "kopetechatsession.h"
 
-class KActionCollection;
 class YahooContact;
 class YahooAccount;
-class KActionMenu;
 
 /**
  * @author Duncan Mac-Vicar Prett

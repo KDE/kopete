@@ -64,7 +64,6 @@ private:
 	class SlotsProxy;
 	SlotsProxy *slotsProxy;
 	
-	class JingleIQResponder;
 };
 
 #endif

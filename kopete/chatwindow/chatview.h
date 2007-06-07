@@ -38,8 +38,6 @@ class ChatMessagePart;
 
 class KopeteChatWindow;
 
-class KTabWidget;
-class KHBox;
 class KopeteChatViewPrivate;
 class ChatWindowPlugin;
 

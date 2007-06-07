@@ -4,7 +4,8 @@
                           popuppublic.h  -  description
                              -------------------
     begin                : Sat Jun 29 2002
-    copyright            : (C) 2002 by Jean-Baptiste Mardelle
+    copyright            : (C) 2007 by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+                           (C) 2002 by Jean-Baptiste Mardelle
     email                : bj@altern.org
  ***************************************************************************/
 
@@ -19,39 +20,36 @@
 #ifndef POPUPPUBLIC_H
 #define POPUPPUBLIC_H
 
-#include <kdialog.h>
-
-//#include <kiconloader.h>
-#include <kshortcut.h>
-//Added by qt3to4:
+#include <KDialog>
+#include <KShortcut>
 #include <QPixmap>
 
+namespace Ui
+{
+	class PopupPublicBase;
+}
 
-class QPushButton;
-class QCheckBox;
-class K3ListView;
-class Q3ButtonGroup;
 class K3ProcIO;
+class KConfig;
 
-class popupPublic : public KDialog
+class PopupPublic : public KDialog
 {
         Q_OBJECT
 public:
 
-        explicit popupPublic(QWidget *parent = 0, const QString& sfile=QString(), bool filemode=false,
-                    const KShortcut& goDefaultKey=KShortcut(QKeySequence(Qt::CTRL+Qt::Key_Home)));
-	~popupPublic();
-        K3ListView *keysList;
-        QCheckBox *CBarmor,*CBuntrusted,*CBshred,*CBsymmetric,*CBhideid;
-        bool fmode,trusted;
-        QPixmap keyPair,keySingle,keyGroup;
+        explicit PopupPublic(QWidget *parent = 0, const KShortcut& goDefaultKey=KShortcut(QKeySequence(Qt::CTRL+Qt::Key_Home)));
+	~PopupPublic();
+        bool trusted;
+        QPixmap keyPair;
+	QPixmap keySingle;
+	QPixmap keyGroup;
         QString seclist;
 	QStringList untrustedList;
 
 private:
         KConfig *config;
-        Q3ButtonGroup *boutonboxoptions;
         QString customOptions;
+	Ui::PopupPublicBase *ui;
 
 private slots:
         void customOpts(const QString &);
@@ -59,7 +57,6 @@ private slots:
         void slotpreselect();
         void refreshkeys();
         void refresh(bool state);
-        void isSymetric(bool state);
         void sort();
         void enable();
 	void slotGotoDefaultKey();

@@ -27,7 +27,6 @@ namespace Kopete
 	class Protocol;
 }
 
-class TelepathyAccount;
 
 /**
  * @brief Managa a single text chat session between 2 peers.

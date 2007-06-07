@@ -21,12 +21,9 @@
 #include <kurl.h>
 #include "kopetemetacontact.h"
 
-class Q3CanvasView;
-class Q3Canvas;
 class QStringList;
 
 class StatisticsWidget;
-class StatisticsPlugin;
 class StatisticsDB;
 class StatisticsContact;
 
