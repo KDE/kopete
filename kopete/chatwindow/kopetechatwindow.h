@@ -208,8 +208,8 @@ private slots:
 
 	void slotPreviousTab();
 	void slotNextTab();
-	void slotDetachChat( int newWindowIndex = -1 );
-	void slotPlaceTabs( int tabPlacement );
+	void slotDetachChat(QAction* = 0);
+	void slotPlaceTabs( QAction* );
 
 	void slotViewMenuBar();
 	void slotToggleStatusBar();

@@ -379,12 +379,12 @@ void KopeteChatWindow::initActions(void)
 	actionDetachMenu->setDelayed( false );
 
 	connect ( actionDetachMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareDetachMenu()) );
-	connect ( actionDetachMenu->menu(), SIGNAL(activated(int)), this, SLOT(slotDetachChat(int)) );
+	connect ( actionDetachMenu->menu(), SIGNAL(triggered(QAction*)), this, SLOT(slotDetachChat(QAction*)) );
 
 	actionTabPlacementMenu = new KActionMenu( i18n( "&Tab Placement" ), coll );
         coll->addAction( "tabs_placement", actionTabPlacementMenu );
 	connect ( actionTabPlacementMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()) );
-	connect ( actionTabPlacementMenu->menu(), SIGNAL(activated(int)), this, SLOT(slotPlaceTabs(int)) );
+	connect ( actionTabPlacementMenu->menu(), SIGNAL(triggered(QAction*)), this, SLOT(slotPlaceTabs(QAction*)) );
 
 	tabDetach->setShortcut( QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_B) );
 
@@ -640,7 +640,10 @@ void KopeteChatWindow::createTabBar()
 			setActiveView( chatViewList.first() );
 
 		int tabPosition = cg.readEntry( QLatin1String("Tab Placement") , 0 );
-		slotPlaceTabs( tabPosition );
+
+		QAction action(this);
+		action.setData(tabPosition);
+		slotPlaceTabs( &action );
 	}
 }
 
@@ -787,7 +790,7 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 	checkDetachEnable();
 }
 
-void KopeteChatWindow::slotDetachChat( int newWindowIndex )
+void KopeteChatWindow::slotDetachChat( QAction *action )
 {
 	KopeteChatWindow *newWindow = 0L;
 	ChatView *detachedView;
@@ -804,13 +807,13 @@ void KopeteChatWindow::slotDetachChat( int newWindowIndex )
 // 	createGUI(0L);
 	guiFactory()->removeClient(detachedView->msgManager());
 
-	if( newWindowIndex == -1 )
+	if( !action )
 	{
 		newWindow = new KopeteChatWindow();
 		newWindow->setObjectName( QLatin1String("KopeteChatWindow") );
 	}
 	else
-		newWindow = windows.at( newWindowIndex );
+		newWindow = windows.at( action->data().toInt() );
 
 	newWindow->show();
 	newWindow->raise();
@@ -968,11 +971,15 @@ void KopeteChatWindow::slotPrepareDetachMenu(void)
 	QMenu *detachMenu = actionDetachMenu->menu();
 	detachMenu->clear();
 
+	QAction *action;
 	for ( unsigned id=0; id < windows.count(); id++ )
 	{
 		KopeteChatWindow *win = windows.at( id );
 		if( win != this )
-			detachMenu->insertItem( win->windowTitle(), id );
+		{
+			action = detachMenu->addAction( win->windowIcon(), win->windowTitle() );
+			action->setData( id );
+		}
 	}
 }
 
@@ -1015,10 +1022,13 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 		connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),
 			p, SLOT(deleteLater() ) );
 
+		p->setIcon( contact->onlineStatus().iconFor( contact ) );
 		if( contact->metaContact() )
-			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->metaContact()->displayName(), p );
+			p->setTitle( contact->metaContact()->displayName() );
 		else
-			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->contactId(), p );
+			p->setTitle( contact->contactId() );
+
+		contactsMenu->addMenu( p );
 
 		//FIXME: This number should be a config option
 		if( ++contactCount == 15 && contact != m_them.last() )
@@ -1038,12 +1048,17 @@ void KopeteChatWindow::slotPreparePlacementMenu()
 	QMenu *placementMenu = actionTabPlacementMenu->menu();
 	placementMenu->clear();
 
-	placementMenu->insertItem( i18n("Top"), 0 );
-	placementMenu->insertItem( i18n("Bottom"), 1 );
+	QAction *action;
+	action = placementMenu->addAction( i18n("Top") );
+	action->setData( 0 );
+
+	action = placementMenu->addAction( i18n("Bottom") );
+	action->setData( 1 );
 }
 
-void KopeteChatWindow::slotPlaceTabs( int placement )
+void KopeteChatWindow::slotPlaceTabs( QAction *action )
 {
+	int placement = action->data().toInt();
 	if( m_tabBar )
 	{
 
