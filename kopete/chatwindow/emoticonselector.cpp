@@ -70,6 +70,7 @@ EmoticonSelector::EmoticonSelector(QWidget *parent)
 	m_emoticonList->setViewMode(QListView::IconMode);
 	m_emoticonList->setSelectionMode(QAbstractItemView::SingleSelection);
 	m_emoticonList->setMouseTracking(true);
+	m_emoticonList->setDragEnabled(false);
 
 	QLabel *m_currentEmoticon  = new QLabel( this );
 	m_currentEmoticon->setFrameShape( QFrame::Box );
@@ -127,6 +128,10 @@ void EmoticonSelector::mouseOverItem(QListWidgetItem *item)
 
 void EmoticonSelector::currentChanged()
 {
+
+	if (!m_emoticonList->selectedItems().count())
+		return;
+
 	EmoticonItem *item = dynamic_cast<EmoticonItem*>(m_emoticonList->selectedItems().first());
 	if (!item)
 		return;
