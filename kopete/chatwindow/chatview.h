@@ -23,10 +23,9 @@
 #include "kopeteviewplugin.h"
 #include <k3dockwidget.h>
 #include <ktextedit.h> // for covariant return type of editWidget
-#include <q3ptrdict.h>
-//Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QMap>
 #include <kvbox.h>
 
 #include <kopete_export.h>
@@ -52,6 +51,8 @@ namespace Kopete
 	class ChatSession;
 	class OnlineStatus;
 }
+
+typedef QMap<const Kopete::Contact*,QTimer*> TypingMap;
 
 /**
  * @author Olivier Goffart
@@ -356,7 +357,7 @@ private:
 	KopeteTabState m_tabState;
 
 	// miscellany
-	Q3PtrDict<QTimer> m_remoteTypingMap;
+	TypingMap m_remoteTypingMap;
 	QString unreadMessageFrom;
 	QString m_status;
 

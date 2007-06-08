@@ -1,6 +1,7 @@
 /*
     kopetechatwindow.cpp - Chat Window
 
+    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2002-2006 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003-2004 by Richard Smith         <kde@metafoo.co.uk>
     Copyright (C) 2002      by James Grant
@@ -29,7 +30,6 @@
 #include <QPixmap>
 #include <QTextStream>
 #include <QCloseEvent>
-#include <Q3PtrList>
 #include <QFrame>
 #include <QLabel>
 #include <QVBoxLayout>
@@ -86,7 +86,7 @@
 typedef QMap<Kopete::Account*,KopeteChatWindow*> AccountMap;
 typedef QMap<Kopete::Group*,KopeteChatWindow*> GroupMap;
 typedef QMap<Kopete::MetaContact*,KopeteChatWindow*> MetaContactMap;
-typedef Q3PtrList<KopeteChatWindow> WindowList;
+typedef QList<KopeteChatWindow*> WindowList;
 
 namespace
 {
@@ -149,12 +149,13 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 				//midstream
 
 				int viewCount = -1;
-				for ( KopeteChatWindow *thisWindow = windows.first(); thisWindow; thisWindow = windows.next() )
+				WindowList::iterator it;
+				for ( it = windows.begin(); it != windows.end(); ++it )
 				{
-					if( thisWindow->chatViewCount() > viewCount )
+					if( (*it)->chatViewCount() > viewCount )
 					{
-						myWindow = thisWindow;
-						viewCount = thisWindow->chatViewCount();
+						myWindow = (*it);
+						viewCount = (*it)->chatViewCount();
 					}
 				}
 			}
@@ -297,7 +298,7 @@ KopeteChatWindow::~KopeteChatWindow()
 void KopeteChatWindow::windowListChanged()
 {
 	// update all windows' Move Tab to Window action
-	for ( Q3PtrListIterator<KopeteChatWindow> it( windows ); *it; ++it )
+	for ( WindowList::iterator it = windows.begin(); it != windows.end(); ++it )
 		(*it)->checkDetachEnable();
 }
 
@@ -630,8 +631,8 @@ void KopeteChatWindow::createTabBar()
 		connect ( m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)) );
 		connect ( m_tabBar, SIGNAL(contextMenu(QWidget *, const QPoint & )), this, SLOT(slotTabContextMenu( QWidget *, const QPoint & )) );
 
-		for( ChatView *view = chatViewList.first(); view; view = chatViewList.next() )
-			addTab( view );
+		for( ChatViewList::iterator it = chatViewList.begin(); it != chatViewList.end(); ++it )
+			addTab( *it );
 
 		if( m_activeView )
 			m_tabBar->setCurrentWidget( m_activeView );
@@ -646,6 +647,7 @@ void KopeteChatWindow::createTabBar()
 void KopeteChatWindow::slotCloseChat( QWidget *chatView )
 {
 	static_cast<ChatView*>( chatView )->closeView();
+	//FIXME: check if we need to remove from the chatViewList
 }
 
 void KopeteChatWindow::addTab( ChatView *view )
@@ -750,8 +752,7 @@ void KopeteChatWindow::checkDetachEnable()
 
 void KopeteChatWindow::detachChatView( ChatView *view )
 {
-	if( !chatViewList.removeRef( view ) )
-		return;
+	chatViewList.removeAt( chatViewList.indexOf( view ) );
 
 	disconnect( view, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
 	disconnect( view, SIGNAL( updateStatusIcon( ChatView* ) ), this, SLOT( slotUpdateCaptionIcons( ChatView* ) ) );
@@ -884,7 +885,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	m_activeView = view;
 
-	if( !chatViewList.contains( view ) )
+	if( chatViewList.indexOf( view ) == -1)
 		attachChatView( view );
 
 	connect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
@@ -1149,11 +1150,10 @@ bool KopeteChatWindow::queryClose()
 //	for( QPtrListIterator<ChatView> it( chatViewList ); it; ++it)
 //		kDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")" << endl;
 
-	for( Q3PtrListIterator<ChatView> it( chatViewList ); it; )
+	while (!chatViewList.isEmpty())
 	{
-		ChatView *view = *it;
-		// move out of the way before view is removed
-		++it;
+
+		ChatView *view = chatViewList.takeFirst();
 
 		// FIXME: This should only check if it *can* close
 		// and not start closing if the close can be aborted halfway, it would
