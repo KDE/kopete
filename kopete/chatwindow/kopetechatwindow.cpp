@@ -280,7 +280,7 @@ KopeteChatWindow::~KopeteChatWindow()
 			mcMap.remove( mayDeleteIt.key() );
 	}
 
-	windows.remove( this );
+	windows.removeAt( windows.indexOf( this ) );
 	windowListChanged();
 
 //	kDebug( 14010 ) << "Open Windows: " << windows.count() << endl;
@@ -972,7 +972,7 @@ void KopeteChatWindow::slotPrepareDetachMenu(void)
 	detachMenu->clear();
 
 	QAction *action;
-	for ( unsigned id=0; id < windows.count(); id++ )
+	for ( int id = 0; id < windows.count(); id++ )
 	{
 		KopeteChatWindow *win = windows.at( id );
 		if( win != this )
