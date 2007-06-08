@@ -440,6 +440,9 @@ void AIMContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 
 	s.replace ( QRegExp ( QString::fromLatin1("<br[ /]*>")), QString::fromLatin1("<br>") );
 
+	// strip left over line break
+	s.remove( QRegExp( QString::fromLatin1( "<br>$" ) ) );
+
 	kdDebug(14190) << k_funcinfo << "sending "
 		<< s << endl;
 
