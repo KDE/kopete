@@ -1604,7 +1604,8 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 				case VIDEO_PALETTE_RGB32	: return PIXELFORMAT_RGB32;	break;
 				case VIDEO_PALETTE_YUYV		: return PIXELFORMAT_YUYV;	break;
 				case VIDEO_PALETTE_UYVY		: return PIXELFORMAT_UYVY;	break;
-				case VIDEO_PALETTE_YUV420	: return PIXELFORMAT_YUV420P;	break;
+				case VIDEO_PALETTE_YUV420	:
+				case VIDEO_PALETTE_YUV420P	: return PIXELFORMAT_YUV420P;	break;
 				case VIDEO_PALETTE_YUV422P	: return PIXELFORMAT_YUV422P;	break;
 			}
 			break;
@@ -1758,7 +1759,8 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 				case VIDEO_PALETTE_RGB32	: returnvalue = pixelFormatName(PIXELFORMAT_RGB32);	break;
 				case VIDEO_PALETTE_YUYV		: returnvalue = pixelFormatName(PIXELFORMAT_YUYV);	break;
 				case VIDEO_PALETTE_UYVY		: returnvalue = pixelFormatName(PIXELFORMAT_UYVY);	break;
-				case VIDEO_PALETTE_YUV420	: returnvalue = pixelFormatName(PIXELFORMAT_YUV420P);	break;
+				case VIDEO_PALETTE_YUV420	:
+				case VIDEO_PALETTE_YUV420P	: returnvalue = pixelFormatName(PIXELFORMAT_YUV420P);	break;
 				case VIDEO_PALETTE_YUV422P	: returnvalue = pixelFormatName(PIXELFORMAT_YUV422P);	break;
 			}
 			break;
