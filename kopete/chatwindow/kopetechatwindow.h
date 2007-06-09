@@ -127,6 +127,8 @@ private:
 	ChatView *m_activeView;
 	ChatView *m_popupView;
 	bool m_alwaysShowTabs;
+	bool m_showFormatToolbar;
+	bool adjustingFormatToolbar;
 	bool updateBg;
 	KTabWidget *m_tabBar;
 	KPushButton *m_button_send;
@@ -200,6 +202,7 @@ private slots:
 
 	void slotViewMenuBar();
 	void slotToggleStatusBar();
+	void slotToggleFormatToolbar( bool );
 
 	void slotConfKeys();
 	void slotConfToolbar();
