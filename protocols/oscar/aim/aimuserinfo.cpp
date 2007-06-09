@@ -99,7 +99,8 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		userInfoEdit=0L;
 		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
-		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame, "userInfoView");
+		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame);
+		userInfoView->setObjectName("userInfoView");
 		userInfoView->setNotifyClick(true);
 		QObject::connect(
 			userInfoView, SIGNAL(urlClick(const QString&)),

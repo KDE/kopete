@@ -41,7 +41,8 @@ ICQReadAway::ICQReadAway(ICQContact *c, QWidget *parent, const char* name)
 
 	KVBox *mMainWidget = makeVBoxMainWidget();
 
-	awayMessageBrowser = new KTextBrowser(mMainWidget, "userInfoView");
+	awayMessageBrowser = new KTextBrowser(mMainWidget);
+	awayMessageBrowser->setObjectName("userInfoView");
 	awayMessageBrowser->setTextFormat(Qt::AutoText);
 	awayMessageBrowser->setNotifyClick(true);
 	awayMessageBrowser->setText(mContact->awayMessage());
