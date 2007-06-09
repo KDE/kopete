@@ -302,7 +302,7 @@ void KopeteSystemTray::addBalloon()
 
 			m_balloon = new KopeteBalloon(
 				i18n( "<qt><nobr><b>New Message from %1:</b></nobr><br><nobr>\"%2\"</nobr></qt>" )
-					.arg( msgFrom, msgText ), QString::null );
+					.arg( QStyleSheet::escape( msgFrom ), msgText ), QString::null );
 			connect(m_balloon, SIGNAL(signalBalloonClicked()), mBalloonEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalButtonClicked()), mBalloonEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalIgnoreButtonClicked()), mBalloonEventList.first() , SLOT(ignore()));
