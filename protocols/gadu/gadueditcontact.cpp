@@ -39,7 +39,6 @@
 #include <qlineedit.h>
 #include <qlayout.h>
 #include <q3listview.h>
-#include <q3ptrlist.h>
 
 #include <krestrictedline.h>
 

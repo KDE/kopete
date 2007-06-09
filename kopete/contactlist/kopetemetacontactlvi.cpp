@@ -176,7 +176,7 @@ public:
 	int currentMode;
 	int currentIconMode;
 
-	Q3PtrList<Kopete::MessageEvent> events;
+	QList<Kopete::MessageEvent*> events;
 };
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, KopeteGroupViewItem *parent )

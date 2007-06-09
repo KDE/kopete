@@ -56,13 +56,13 @@ extern "C" {
 KXv::KXv()
 {
     xv_adaptors = 0;
-    _devs.setAutoDelete(true);
 }
 
 
 KXv::~KXv()
 {
     kDebug() << "KXv::~KXv: Close Xv connection." << endl;
+    qDeleteAll(_devs);
     _devs.clear();
 
 #ifdef HAVE_LIBXV
@@ -357,7 +357,6 @@ KXvDevice::KXvDevice()
     xv_gc = 0;
     xv_last_win = 0;
     videoStarted = false;
-    _attrs.setAutoDelete(true);
     xv_image = 0;
     xv_image_w = 320;
     xv_image_h = 200;
@@ -367,6 +366,7 @@ KXvDevice::KXvDevice()
 KXvDevice::~KXvDevice()
 {
 #ifdef HAVE_LIBXV
+    qDeleteAll(_attrs);
     _attrs.clear();
     if (videoStarted) stopVideo();
     if (xv_encoding_info)
@@ -509,10 +509,10 @@ const KXvDeviceAttributes& KXvDevice::attributes()
 
 bool KXvDevice::getAttributeRange(const QString& attribute, int *min, int *max)
 {
-    for (KXvDeviceAttribute *at = _attrs.first(); at != NULL; at = _attrs.next()) {
-        if (at->name == attribute) {
-            if (min) *min = at->min;
-            if (max) *max = at->max;
+    for (KXvDeviceAttributes::iterator it = _attrs.begin(); it != _attrs.end(); ++it) {
+        if ((*it)->name == attribute) {
+            if (min) *min = (*it)->min;
+            if (max) *max = (*it)->max;
             return true;
         }
     }
@@ -525,10 +525,10 @@ bool KXvDevice::getAttribute(const QString& attribute, int *val)
 #ifndef HAVE_LIBXV
     return false;
 #else
-    for (KXvDeviceAttribute *at = _attrs.first(); at != NULL; at = _attrs.next()) {
-        if (at->name == attribute) {
+    for (KXvDeviceAttributes::iterator it = _attrs.begin(); it != _attrs.end(); ++it) {
+        if ((*it)->name == attribute) {
             if (val)
-                XvGetPortAttribute(QX11Info::display(), xv_port, at->atom(), val);
+                XvGetPortAttribute(QX11Info::display(), xv_port, (*it)->atom(), val);
             return true;
         }
     }
@@ -542,9 +542,9 @@ bool KXvDevice::setAttribute(const QString& attribute, int val)
 #ifndef HAVE_LIBXV
     return false;
 #else
-    for (KXvDeviceAttribute *at = _attrs.first(); at != NULL; at = _attrs.next()) {
-        if (at->name == attribute) {
-            XvSetPortAttribute(QX11Info::display(), xv_port, at->atom(), val);
+    for (KXvDeviceAttributes::iterator it = _attrs.begin(); it != _attrs.end(); ++it) {
+        if ((*it)->name == attribute) {
+            XvSetPortAttribute(QX11Info::display(), xv_port, (*it)->atom(), val);
             XSync(QX11Info::display(), False);
             return true;
         }
@@ -577,9 +577,9 @@ bool KXvDevice::encoding(QString& encoding)
 #else
     XvEncodingID enc;
 
-    for (KXvDeviceAttribute *at = _attrs.first(); at != 0L; at = _attrs.next()) {
-        if (at->name == "XV_ENCODING") {
-            XvGetPortAttribute(QX11Info::display(), xv_port, at->atom(), (int*)&enc);
+    for (KXvDeviceAttributes::iterator it = _attrs.begin(); it != _attrs.end(); ++it) {
+        if ((*it)->name == "XV_ENCODING") {
+            XvGetPortAttribute(QX11Info::display(), xv_port, (*it)->atom(), (int*)&enc);
             kDebug() << "KXvDevice: encoding: " << enc << endl;
             encoding = enc;
             return true;

@@ -277,7 +277,7 @@ void QQChatSession::slotActionInviteAboutToShow()
 	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
 	//  items inserted with insert items are automatically deleted when we call clear
 
-	m_inviteActions.setAutoDelete(true);
+	qDeleteAll(m_inviteActions);
 	m_inviteActions.clear();
 
 	m_actionInvite->popupMenu()->clear();

@@ -16,7 +16,6 @@
 */
 #include "jabberchatsession.h"
 
-#include <q3ptrlist.h>
 #include <qlabel.h>
 #include <qimage.h>
 

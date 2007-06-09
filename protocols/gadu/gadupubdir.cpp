@@ -29,7 +29,6 @@
 
 #include <q3widgetstack.h>
 #include <q3listview.h>
-#include <q3ptrlist.h>
 #include <qradiobutton.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>

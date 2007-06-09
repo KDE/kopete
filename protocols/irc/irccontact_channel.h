@@ -20,7 +20,7 @@
 #define IRCCHANNELCONTACT_H
 
 #include "irccontact.h"
-#include <Q3PtrList>
+#include <QList>
 
 class KAction;
 class KActionMenu;
@@ -70,7 +70,7 @@ public:
 	bool modeEnabled( QChar mode, QString *value = 0 );
 
 	// Kopete::Contact stuff
-	virtual Q3PtrList<KAction> *customContextMenuActions();
+	virtual QList<KAction*> *customContextMenuActions();
 	virtual const QString caption() const;
 
 	//Methods handled by the signal mapper
