@@ -1040,8 +1040,8 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	}
 	//connect( m_globalStatusMessageMenu, SIGNAL( aboutToHide() ), m_globalStatusMessageMenu, SLOT( deleteLater() ) );
 
-	//m_newMessageEdit->setFocus();
-
+	d->newMessageEdit->setFocus(Qt::OtherFocusReason);
+	d->globalStatusMessageMenu->setActiveAction(newMessageAction);
 	//messageMenu->popup( e->globalPos(), 1 );
 }
 
