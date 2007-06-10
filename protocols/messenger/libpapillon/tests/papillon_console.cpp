@@ -114,6 +114,7 @@ PapillonConsole::PapillonConsole(QWidget *parent)
 PapillonConsole::~PapillonConsole()
 {
 	delete d;
+	qInstallMsgHandler(0);
 }
 
 void PapillonConsole::buttonSendClicked()
@@ -193,7 +194,7 @@ void PapillonConsole::buttonConnectClicked()
 			password = d->settings->value( QLatin1String("password") ).toString();
 		}
 	
-		d->client->userContact()->setLoginInformation( passportId, password );
+		d->client->userContact()->setLoginInformation( accountId(), password );
 		d->client->connectToServer();
 	}
 }

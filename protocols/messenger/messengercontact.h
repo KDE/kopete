@@ -36,11 +36,24 @@ class MessengerContact : public Kopete::Contact
 	Q_OBJECT
 public:
 	MessengerContact(MessengerAccount *account, const QString &contactId, Kopete::MetaContact *parent);
+	~MessengerContact();
 
 	virtual bool isReachable();
     virtual void serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData);
 	
 	virtual QList<KAction *> *customContextMenuActions();
 	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
+
+public slots:
+	virtual void slotUserInfo();
+	virtual void deleteContact();
+	virtual void sendFile( const KUrl &sourceURL = KUrl(),
+						   const QString &fileName = QString(), uint fileSize = 0L );
+
+	/**
+	 * Every time the kopete's contact list is modified, we sync the serverlist with it
+	 */
+	virtual void sync( unsigned int cvhanged= 0xff);
+
 };
 #endif

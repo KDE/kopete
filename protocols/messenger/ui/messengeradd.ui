@@ -1,0 +1,108 @@
+<ui version="4.0" >
+ <class>MessengerAddUI</class>
+ <widget class="QWidget" name="MessengerAddUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>397</width>
+    <height>347</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="TextLabel1" >
+       <property name="toolTip" >
+        <string>The user ID of the MSN contact you would like to add.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The user ID of the MSN contact you would like to add.  This should be in the form of a valid E-mail address.</string>
+       </property>
+       <property name="text" >
+        <string>&amp;Windows Live ID:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignTop</set>
+       </property>
+       <property name="buddy" >
+        <cstring>addID</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="addID" >
+       <property name="toolTip" >
+        <string>The user ID of the MSN contact you would like to add.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The Windows Live contact ID you would like to add.  This should be in the form of a valid E-mail address.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="textLabel2" >
+     <property name="text" >
+      <string>&lt;i>(for example: joe@hotmail.com)&lt;/i></string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>160</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <resources/>
+ <connections/>
+</ui>

@@ -43,10 +43,10 @@
 # endif
 #endif
 
-#define PAPILLON_VERSION_STRING "0.0.1"
+#define PAPILLON_VERSION_STRING "0.0.2"
 #define PAPILLON_VERSION_MAJOR 0
 #define PAPILLON_VERSION_MINOR 0
-#define PAPILLON_VERSION_RELEASE 1
+#define PAPILLON_VERSION_RELEASE 2
 #define PAPILLON_MAKE_VERSION( a,b,c ) (((a) << 16) | ((b) << 8) | (c))
 
 /**

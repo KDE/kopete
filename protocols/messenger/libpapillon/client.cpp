@@ -51,6 +51,7 @@ public:
 	Connector *connector;
 	Connection *notificationConnection;
 
+	//notification server
 	QString server;
 	quint16 port;
 	// Convience object that init QCA.

@@ -1,0 +1,246 @@
+<ui version="4.0" >
+ <class>MessengerContactInfoWidget</class>
+ <widget class="QWidget" name="MessengerContactInfoWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>436</width>
+    <height>421</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>9</number>
+   </property>
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="contactGroupBox" >
+     <property name="windowModality" >
+      <enum>Qt::NonModal</enum>
+     </property>
+     <property name="title" >
+      <string>Contact Info</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>9</number>
+      </property>
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="8" column="2" >
+       <widget class="QLabel" name="contact_otherEmailLabel" >
+        <property name="text" >
+         <string>Other e-mail:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="2" colspan="2" >
+       <widget class="QLineEdit" name="otherEmailLineEdit" />
+      </item>
+      <item row="5" column="0" >
+       <widget class="QLineEdit" name="homePhoneLineEdit" />
+      </item>
+      <item row="5" column="2" colspan="2" >
+       <widget class="QLineEdit" name="personalEmailLineEdit" />
+      </item>
+      <item row="4" column="0" >
+       <widget class="QLabel" name="contact_homePhoneLabel" >
+        <property name="text" >
+         <string>Home phone:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2" colspan="2" >
+       <widget class="QLineEdit" name="workEmailLineEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2" >
+       <widget class="QLabel" name="contact_personalEmailLabel" >
+        <property name="text" >
+         <string>Personal e-mail:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLineEdit" name="nickNameEdit" />
+      </item>
+      <item row="9" column="0" >
+       <widget class="QLineEdit" name="otherPhoneLineEdit" />
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLineEdit" name="lastNameEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" >
+       <widget class="QLineEdit" name="workPhoneLineEdit" />
+      </item>
+      <item row="0" column="2" >
+       <widget class="QLabel" name="firstNameLabel" >
+        <property name="text" >
+         <string>First Name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" colspan="2" >
+       <widget class="QLineEdit" name="firstNameEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0" >
+       <widget class="QLabel" name="contact_otherphoneLabel" >
+        <property name="text" >
+         <string>Other phone:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="contactNicknameLabel" >
+        <property name="text" >
+         <string>Nickname:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="lastNameLabel" >
+        <property name="text" >
+         <string>Last Name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2" >
+       <widget class="QLabel" name="contact_workemailLabel" >
+        <property name="text" >
+         <string>Work e-mail:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0" >
+       <widget class="QLabel" name="contact_otherIMLabel" >
+        <property name="text" >
+         <string>Other instant messaging address:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" >
+       <widget class="QLabel" name="contact_workphoneLabel" >
+        <property name="text" >
+         <string>Work phone:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0" >
+       <widget class="QLineEdit" name="otherIMLineEdit" />
+      </item>
+      <item row="10" column="2" >
+       <widget class="QLabel" name="contact_primaryEmailLabel" >
+        <property name="text" >
+         <string>Primary e-mail address:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="2" colspan="2" >
+       <widget class="QComboBox" name="primaryEmailComboBox" >
+        <item>
+         <property name="text" >
+          <string>Personal</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Work</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Other</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Instant Message Address</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>51</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <tabstops>
+  <tabstop>lastNameEdit</tabstop>
+  <tabstop>firstNameEdit</tabstop>
+  <tabstop>workEmailLineEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

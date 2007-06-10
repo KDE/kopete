@@ -19,7 +19,8 @@
 
 #include <kopetepasswordedaccount.h>
 
-
+#define MESSENGER_DEFAULT_SERVER	"muser.messenger.hotmail.com"
+#define MESSENGER_DEFAULT_PORT		1863
 class KActionMenu;
 
 namespace Kopete 
@@ -30,9 +31,8 @@ namespace Kopete
 
 class MessengerProtocol;
 
-/**
- * @author Michaël Larouche <larouche@kde.org>
- */
+class MessengerAccountPrivate;
+
 class MessengerAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
@@ -53,6 +53,6 @@ protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);
 	
 private:
-	
+	MessengerAccountPrivate *d;
 };
 #endif

@@ -46,7 +46,51 @@ public:
 
 	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
+
+	const QMap<int, QString> &countries() { return mCountries; }
+	const QMap<int, QString> &months() { return mMonths; }
+	const QMap<int, QString> &days() { return mDays; }
+
+	void MessengerProtocol::fillComboFromTable(QComboBox *box, const QMap<int, QString> &map);
+	void MessengerProtocol::setComboFromTable(QComboBox *box, const QMap<int, QString> &map, int value);
+	int MessengerProtocol::getCodeForCombo(QComboBox *cmb, const QMap<int, QString> &map);
+
+	/**
+	 * The possible Messenger online statuses
+	 */
+	const Kopete::OnlineStatus NLN;  //online
+	const Kopete::OnlineStatus BSY;  //busy
+	const Kopete::OnlineStatus BRB;  //be right back
+	const Kopete::OnlineStatus AWY;  //away
+	const Kopete::OnlineStatus PHN;  //on the phone
+	const Kopete::OnlineStatus LUN;  //out to lunch
+	const Kopete::OnlineStatus FLN;  //offline
+	const Kopete::OnlineStatus HDN;  //invisible
+	const Kopete::OnlineStatus IDL;  //idle
+	const Kopete::OnlineStatus UNK;  //inknown (internal)
+	const Kopete::OnlineStatus CNT;  //connecting (internal)
+
+	const Kopete::ContactPropertyTmpl propEmail;
+	const Kopete::ContactPropertyTmpl propPhoneHome;
+	const Kopete::ContactPropertyTmpl propPhoneWork;
+	const Kopete::ContactPropertyTmpl propPhoneMobile;
+	const Kopete::ContactPropertyTmpl propClient;
+	const Kopete::ContactPropertyTmpl propGuid;
+	const Kopete::ContactPropertyTmpl propPersonalMessage; // it's the equivalent of away message.
+
+
+
 private:
 	static MessengerProtocol *s_self;
+	QMap<int, QString> mCountries;
+	QMap<int, QString> mMonths;
+	QMap<int, QString> mDays;
+
+private:
+	void initCountries();
+	void initMonths();
+	void initDays();
+
 };
+
 #endif

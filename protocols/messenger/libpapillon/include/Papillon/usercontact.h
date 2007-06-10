@@ -56,7 +56,7 @@ public:
 	 *
 	 * This is used during login process to store login information.
 	 * @param passportId Microsoft Passport identifier (ex: test@passport.com)
-	 * @param password Password (TODO: Use QSecureArray ?)
+	 * @param password Password (TODO: Use QCA::SecureArray ?)
 	 */
 	void setLoginInformation(const QString &passportId, const QString &password);
 

@@ -51,6 +51,7 @@ MimeHeader &MimeHeader::operator=(const MimeHeader &other)
 	return *this;
 }
 
+/*Convert String to MimeHeader*/
 MimeHeader MimeHeader::parseMimeHeader(const QString &data)
 {
 	MimeHeader parsedMimeHeader;
@@ -115,6 +116,7 @@ QString MimeHeader::mimeVersion() const
 {
 	return value( QLatin1String("MIME-Version") ).toString();
 }
+
 void MimeHeader::setMimeVersion(const QString &mimeVersion)
 {
 	setValue( QLatin1String("MIME-Version"), mimeVersion );
@@ -133,11 +135,13 @@ QString MimeHeader::charset() const
 {
 	return d->charset;
 }
+
 void MimeHeader::setCharset(const QString &charset)
 {
 	d->charset = charset;
 }
 
+/*Convert MimeHeader object to QString*/
 QString MimeHeader::toString() const
 {
 	QString result;
