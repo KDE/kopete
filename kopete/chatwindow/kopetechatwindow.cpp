@@ -216,6 +216,8 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 
 	KGlobal::config()->setGroup( QString::fromLatin1("ChatWindowSettings") );
 	m_alwaysShowTabs = KGlobal::config()->readBoolEntry( QString::fromLatin1("AlwaysShowTabs"), false );
+	m_showFormatToolbar = KGlobal::config()->readBoolEntry( QString::fromLatin1("Show Format Toolbar"), true );
+	adjustingFormatToolbar = false;
 //	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
 	kapp->ref();
 }
@@ -418,6 +420,9 @@ void KopeteChatWindow::initActions(void)
 
 	setXMLFile( QString::fromLatin1( "kopetechatwindow.rc" ) );
 	createGUI( 0L );
+
+	// Special handling for remembering whether the format toolbar is visible or not
+	connect ( toolBar("formatToolBar"), SIGNAL(visibilityChanged(bool)), this, SLOT(slotToggleFormatToolbar(bool)) );
 }
 
 const QString KopeteChatWindow::fileContents( const QString &path ) const
@@ -1029,6 +1034,7 @@ void KopeteChatWindow::readOptions()
 	KConfig *config = KGlobal::config();
 	applyMainWindowSettings( config, QString::fromLatin1( "KopeteChatWindow" ) );
 	config->setGroup( QString::fromLatin1("ChatWindowSettings") );
+	m_showFormatToolbar = config->readBoolEntry( QString::fromLatin1("Show Format Toolbar"), true );
 }
 
 void KopeteChatWindow::saveOptions()
@@ -1043,6 +1049,7 @@ void KopeteChatWindow::saveOptions()
 	if( m_tabBar )
 		config->writeEntry ( QString::fromLatin1("Tab Placement"), m_tabBar->tabPosition() );
 
+	config->writeEntry( QString::fromLatin1("Show Format Toolbar"), m_showFormatToolbar );
 	config->sync();
 }
 
@@ -1072,6 +1079,13 @@ void KopeteChatWindow::slotToggleStatusBar()
 		statusBar()->show();
 }
 
+void KopeteChatWindow::slotToggleFormatToolbar(bool visible)
+{
+	if ( adjustingFormatToolbar )
+		return;
+	m_showFormatToolbar = visible;
+}
+
 void KopeteChatWindow::slotViewMenuBar()
 {
 	if( !menuBar()->isHidden() )
@@ -1092,10 +1106,12 @@ void KopeteChatWindow::slotRTFEnabled( ChatView* cv, bool enabled)
 	if ( cv != m_activeView )
 		return;
 
-	if ( enabled )
+	adjustingFormatToolbar = true;
+	if ( enabled && m_showFormatToolbar )
 		toolBar( "formatToolBar" )->show();
 	else
 		toolBar( "formatToolBar" )->hide();
+	adjustingFormatToolbar = false;
 	updateSpellCheckAction();
 }
 

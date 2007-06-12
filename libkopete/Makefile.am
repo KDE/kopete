@@ -63,7 +63,8 @@ kopeteinclude_HEADERS = kopeteaccount.h kopeteaccountmanager.h kopeteawayaction.
 	kopeteonlinestatus.h kopeteonlinestatusmanager.h kopetepasswordedaccount.h \
 	kopetepassword.h kopeteplugin.h kopeteprotocol.h kopetesimplemessagehandler.h kopetetask.h \
 	kopetetransfermanager.h kopeteuiglobal.h kabcpersistence.h \
-	kopetenotifydataobject.h kopeteversion.h kopeteprefs.h kopetepicture.h webcamwidget.h
+	kopetenotifydataobject.h kopeteversion.h kopeteprefs.h kopetepicture.h webcamwidget.h \
+	kopetepluginmanager.h
 
 # vim: set noet:
 

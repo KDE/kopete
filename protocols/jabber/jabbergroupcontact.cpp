@@ -181,7 +181,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 		if ( !subContact )
 		{
 			kdWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "the contact is not in the list   : " <<  message.from().full()<< endl;
-			return;
+
 			/**
 			 * We couldn't find the contact for this message. That most likely means
 			 * that it originated from a history backlog or something similar and

@@ -790,6 +790,13 @@ void GroupWiseAccount::handleIncomingMessage( const ConferenceEvent & message )
 	if ( !sender )
 		sender = createTemporaryContact( message.user );
 
+    // if we receive a message from an Offline contact, they are probably blocking us
+    // but we have to set their status to Unknown so that we can reply to them.
+    kdDebug( GROUPWISE_DEBUG_GLOBAL) << "sender is: " << sender->onlineStatus().description() << endl;
+    if ( sender->onlineStatus() == protocol()->groupwiseOffline ) {
+        sender->setMessageReceivedOffline( true );
+    }
+
 	Kopete::ContactPtrList contactList;
 	contactList.append( sender );
 	// FIND A MESSAGE MANAGER FOR THIS CONTACT
@@ -1352,6 +1359,11 @@ void GroupWiseAccount::slotLeavingConference( GroupWiseChatSession * sess )
 		m_client->leaveConference( sess->guid() );
 	m_chatSessions.remove( sess );
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "m_chatSessions now contains:" << m_chatSessions.count() << " managers" << endl;
+	Kopete::ContactPtrList members = sess->members();
+	for ( Kopete::Contact * contact = members.first(); contact; contact = members.next() )
+	{
+		static_cast< GroupWiseContact * >( contact )->setMessageReceivedOffline( false );
+	}
 }
 
 void GroupWiseAccount::slotSetAutoReply()
