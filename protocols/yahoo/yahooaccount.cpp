@@ -675,6 +675,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		setBuddyIcon( myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString() );
 		m_session->getYABEntries( m_YABLastMerge, m_YABLastRemoteRevision );
 		m_lastDisconnectCode = 0;
+		theHaveContactList = true;
 		return;
 	}
 	else if(succ == Yahoo::LoginPasswd)
