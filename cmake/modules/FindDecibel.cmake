@@ -49,7 +49,7 @@ if (DECIBEL_FOUND)
   endif (NOT Decibel_FIND_QUIETLY)
 else (DECIBEL_FOUND)
   if (Decibel_FIND_REQUIRED)
-    message(SEND_ERROR "Could NOT find Decibel")
+    message(FATALERROR "Could NOT find Decibel")
   endif (Decibel_FIND_REQUIRED)
 endif (DECIBEL_FOUND)
 

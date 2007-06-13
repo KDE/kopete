@@ -9,10 +9,11 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
-
+IF (NOT WIN32)
 INCLUDE(UsePkgConfig)
 
 PKGCONFIG(libidn _IDNIncDir _IDNLinkDir _IDNLinkFlags _IDNCflags)
+ENDIF (NOT WIN32)
 
 FIND_PATH(IDN_INCLUDE_DIR idna.h
   PATHS
@@ -39,7 +40,7 @@ if (IDN_FOUND)
   endif (NOT IDN_FIND_QUIETLY)
 else (IDN_FOUND)
   if (IDN_FIND_REQUIRED)
-    message(SEND_ERROR "Could NOT find IDN")
+    message(FATAL_ERROR "Could NOT find IDN")
   endif (IDN_FIND_REQUIRED)
 endif (IDN_FOUND)
 
