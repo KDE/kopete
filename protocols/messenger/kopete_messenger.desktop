@@ -20,6 +20,7 @@ Name[sv]=Windows Live (MSN)-meddelandeklient
 Name[uk]=Кур'єр Windows Live(MSN)
 Name[x-test]=xxWindows Live(MSN) Messengerxx
 Comment=Protocol to connect to Windows Live(MSN) Messenger
+Comment[el]=Πρωτόκολλο σύνδεσης στο Windows Live(MSN) Messenger
 Comment[sv]=Protokoll för att ansluta till Windows Live (MSN)-meddelandeklient
 Comment[uk]=Протокол для з'єднання з кур'єром Windows Live(MSN)
 Comment[x-test]=xxProtocol to connect to Windows Live(MSN) Messengerxx
