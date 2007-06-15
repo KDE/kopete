@@ -389,15 +389,21 @@ public slots:
 	 * menu.
 	 */
 	void changeMetaContact();
-
-	/**
+	/*
 	 * Method to retrieve user information.  Should be implemented by
 	 * the protocols, and popup some sort of dialog box
 	 *
 	 * reimplement it to show the informlation
 	 * @todo rename and make it pure virtual
-	 */
+ 	 */
 	virtual void slotUserInfo() {};
+
+	/**
+	 * Method to retrieve contact information.
+	 * Derived classes should reimplement @ref Kopete::PropertyContainer::customInfoPages()
+	 * to add protocol specific contact info
+	 */
+	void slotContactInfo();
 
 	/**
 	 * @brief Syncronise the server and the metacontact.

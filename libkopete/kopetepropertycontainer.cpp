@@ -19,10 +19,11 @@
 */
 
 #include "kopetepropertycontainer.h"
+#include "generalinfopage.h"
+#include "kopeteinfopage.h"
 
 #include <QStringList>
-
-#include <kdebug.h>
+#include <KDebug>
 
 #include <kdeversion.h>
 
@@ -175,6 +176,23 @@ void PropertyContainer::notifyPropertyChanged( const QString &key,
 {
 	// do nothing
 }
+
+Kopete::UI::InfoPage::List PropertyContainer::infoPages() const
+{
+	// TODO implement
+	Kopete::UI::InfoPage::List list;
+	list.append( new Kopete::UI::GeneralInfoPage(this) );
+	list.append( new Kopete::UI::GeneralInfoPage(this) );
+	return list + customInfoPages();
+}
+
+Kopete::UI::InfoPage::List PropertyContainer::customInfoPages() const
+{
+	// TODO implement
+	Kopete::UI::InfoPage::List list;
+	return list;
+}
+
 } //END namespace Kopete
 
 #include "kopetepropertycontainer.moc"

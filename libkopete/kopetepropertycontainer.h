@@ -23,7 +23,7 @@
 
 #include <kdemacros.h>
 #include "kopeteglobal.h"
-
+#include "kopeteinfopage.h"
 #include "kopete_export.h"
 
 namespace Kopete
@@ -107,6 +107,24 @@ public:
 	 * @param tmpl the template this property is based on
 	 **/
 	void removeProperty(const Kopete::ContactPropertyTmpl &tmpl);
+
+	/**
+	 * @brief Get the contact info pages for this contact
+	 *
+	 * This includes generic info pages and custom info pages provided by the child
+	 * contact classes.
+	 * This should create the pages. The code that is calling this function should be
+	 * responsible by deleting the widgets after they are used.
+	 */
+	Kopete::UI::InfoPage::List infoPages() const;
+
+	/**
+	 * @brief Returns a list of user info widgets
+	 *
+	 * This function should be implemented in derived classes if you want to get custom 
+	 * info pages to be displayed in the contact info dialog
+	 */
+	virtual Kopete::UI::InfoPage::List customInfoPages() const;
 
 protected:
 	virtual void notifyPropertyChanged( const QString &key, 

@@ -19,10 +19,11 @@
 
 #include "kopetecontact.h"
 
-#include <qapplication.h>
+#include <QApplication>
 #include <QTextDocument>
+#include <QTimer>
 
-#include <kdebug.h>
+#include <KDebug>
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
@@ -49,6 +50,7 @@
 #include "metacontactselectorwidget.h"
 #include "kopeteemoticons.h"
 #include "kopetestatusmessage.h"
+#include "userinfodialog.h"
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
@@ -271,7 +273,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 		menu->addAction( changeMetaContact );
 	}
 
-	menu->addAction( KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), 0, "actionUserInfo" ) );
+	menu->addAction( KopeteStdAction::contactInfo( this, SLOT( slotContactInfo() ), 0, "actionUserInfo" ) );
 
 #if 0 //this is not fully implemented yet (and doesn't work).  disable for now   - Olivier 2005-01-11
 	if ( account()->isBlocked( d->contactId ) )
@@ -375,6 +377,15 @@ void Contact::setMetaContact( MetaContact *m )
 		protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
 	}
 	sync();
+}
+
+void Contact::slotContactInfo()
+{
+	//FIXME: this is here just to compare the old and the new dialogs
+	QTimer::singleShot(0, this, SLOT(slotUserInfo()));
+	Kopete::UI::UserInfoDialog *dialog = new Kopete::UI::UserInfoDialog( this );
+
+	dialog->show();
 }
 
 void Contact::serialize( QMap<QString, QString> &/*serializedData*/,
@@ -487,7 +498,6 @@ QList<KAction*> *Contact::customContextMenuActions( ChatSession * /* manager */ 
 {
 	return customContextMenuActions();
 }
-
 
 bool Contact::isOnline() const
 {
