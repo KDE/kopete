@@ -18,16 +18,29 @@
 #ifndef KBYTEARRAYESCAPER_H
 #define KBYTEARRAYESCAPER_H
 
-#include <QByteArray>
+#include <QtCore/QByteArray>
+#include <QtCore/QList>
+#include <QtCore/QPair>
 
-class KByteArrayEscaper {
-
+class KByteArrayEscaper
+{
 public:
-	KByteArrayEscaper();
+	typedef QPair<char, char> Escape;
+	typedef QList<Escape> EscapeList;
+
+	KByteArrayEscaper(char escape_char = '\0', const KByteArrayEscaper::EscapeList &escapes = KByteArrayEscaper::EscapeList());
 	~KByteArrayEscaper();
 
+	void reset(char escape_char = '\0');
+	void addEscape(char escaped, char replacement);
+	void addEscape(const KByteArrayEscaper::EscapeList &escapes);
+	void removeEscape(char escape);
+
 	QByteArray escape(const QByteArray &buffer) const;
+	QList<QByteArray> escape(const QList<QByteArray> &buffer) const;
+
 	QByteArray unescape(const QByteArray &buffer) const;
+	QList<QByteArray> unescape(const QList<QByteArray> &buffer) const;
 
 private:
 	class Private;
