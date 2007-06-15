@@ -821,7 +821,7 @@ void OscarAccount::updateBuddyIconInSSI()
 	if ( !engine()->isActive() )
 		return;
 	
-	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	QString photoPath = myself()->getProperty( Kopete::Global::Properties::self()->photo() ).value().toString();
 	
 	ContactManager* ssi = engine()->ssiManager();
 	OContact item = ssi->findItemForIconByRef( 1 );
@@ -906,7 +906,7 @@ void OscarAccount::slotSendBuddyIcon()
 {
 	//need to disconnect because we could end up with many connections
 	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotSendBuddyIcon() ) );
-	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	QString photoPath = myself()->getProperty( Kopete::Global::Properties::self()->photo() ).value().toString();
 	if ( photoPath.isEmpty() )
 		return;
 	

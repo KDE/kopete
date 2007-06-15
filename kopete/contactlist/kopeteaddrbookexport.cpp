@@ -150,7 +150,7 @@ void KopeteAddressBookExport::fetchIMData()
 
 void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const QPixmap &icon, QComboBox *combo, const Kopete::ContactPropertyTmpl &property )
 {
-	Kopete::ContactProperty prop = contact->property( property );
+	Kopete::ContactProperty prop = contact->getProperty( property );
 	if ( !prop.isNull() )
 	{
 		combo->addItem( QIcon(icon), prop.value().toString() );
@@ -159,7 +159,7 @@ void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const 
 
 void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const QPixmap &icon, K3ListBox *listBox, const Kopete::ContactPropertyTmpl &property )
 {
-	Kopete::ContactProperty prop = contact->property( property );
+	Kopete::ContactProperty prop = contact->getProperty( property );
 	if ( !prop.isNull() )
 	{
 		listBox->insertItem( icon, prop.value().toString() );

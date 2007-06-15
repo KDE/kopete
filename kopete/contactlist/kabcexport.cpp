@@ -182,7 +182,7 @@ void KabcExportWizard::accept()
 					if ( contacts.count() == 1 )
 					{
 						Kopete::ContactProperty prop;
-						prop = contacts.first()->property(
+						prop = contacts.first()->getProperty(
 								Kopete::Global::Properties::self()->fullName() );
 						if ( prop.isNull() )
 							addr.setNameFromString( item->mc->displayName() );
@@ -220,22 +220,22 @@ void KabcExportWizard::exportDetails( Kopete::MetaContact * mc, KABC::Addressee 
 	for( cit = contacts.begin(); cit != citEnd; ++cit )
 	{
 		Kopete::ContactProperty prop;
-		prop = (*cit)->property( Kopete::Global::Properties::self()->emailAddress() );
+		prop = (*cit)->getProperty( Kopete::Global::Properties::self()->emailAddress() );
 		if ( !prop.isNull() )
 		{
 			addr.insertEmail( prop.value().toString() );
 		}
-		prop = (*cit)->property( Kopete::Global::Properties::self()->privatePhone() );
+		prop = (*cit)->getProperty( Kopete::Global::Properties::self()->privatePhone() );
 		if ( !prop.isNull() )
 		{
 			addr.insertPhoneNumber( KABC::PhoneNumber( prop.value().toString(), KABC::PhoneNumber::Home ) );
 		}
-		prop = (*cit)->property( Kopete::Global::Properties::self()->workPhone() );
+		prop = (*cit)->getProperty( Kopete::Global::Properties::self()->workPhone() );
 		if ( !prop.isNull() )
 		{
 			addr.insertPhoneNumber( KABC::PhoneNumber( prop.value().toString(), KABC::PhoneNumber::Work ) );
 		}
-		prop = (*cit)->property( Kopete::Global::Properties::self()->privateMobilePhone() );
+		prop = (*cit)->getProperty( Kopete::Global::Properties::self()->privateMobilePhone() );
 		if ( !prop.isNull() )
 		{
 			addr.insertPhoneNumber( KABC::PhoneNumber( prop.value().toString(), KABC::PhoneNumber::Cell ) );

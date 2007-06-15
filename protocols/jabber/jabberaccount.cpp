@@ -1652,7 +1652,7 @@ void JabberAccount::slotGlobalIdentityChanged (const QString &key, const QVarian
 		JabberContact *jabberMyself = static_cast<JabberContact *>( myself() );
 		if( key == Kopete::Global::Properties::self()->nickName().key() )
 		{
-			QString oldNick = jabberMyself->property( protocol()->propNickName ).value().toString();
+			QString oldNick = jabberMyself->getProperty( protocol()->propNickName ).value().toString();
 			QString newNick = value.toString();
 		
 			if( newNick != oldNick && isConnected() )

@@ -220,7 +220,7 @@ void ChatTextEditPart::slotContactAdded( const Kopete::Contact *contact )
 	connect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
 	         this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 	
-	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+	QString contactName = contact->getProperty(Kopete::Global::Properties::self()->nickName()).value().toString();
 	mComplete->addItem( contactName );
 }
 
@@ -229,7 +229,7 @@ void ChatTextEditPart::slotContactRemoved( const Kopete::Contact *contact )
 	disconnect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
 	            this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 	
-	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+	QString contactName = contact->getProperty(Kopete::Global::Properties::self()->nickName()).value().toString();
 	mComplete->removeItem( contactName );
 }
 

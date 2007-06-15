@@ -454,7 +454,7 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 	if ( !isOffline )
 	{
 		d->restoreStatus = newStatus;
-		d->restoreMessage = myself()->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
+		d->restoreMessage = myself()->getProperty( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
 //		kDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage << endl;
 	}
 

@@ -98,7 +98,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		
 		MSNContact *myself = static_cast<MSNContact *>( account->myself() );
 
-		d->ui->m_displayName->setText( myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() );
+		d->ui->m_displayName->setText( myself->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString() );
 		d->ui->m_phw->setText( config->readEntry("PHW") );
 		d->ui->m_phm->setText( config->readEntry("PHM") );
 		d->ui->m_phh->setText( config->readEntry("PHH") );
@@ -194,7 +194,7 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	{
 		MSNContact *myself = static_cast<MSNContact *>( account()->myself() );
 		MSNNotifySocket *notify = static_cast<MSNAccount *>( account() )->notifySocket();
-		if ( d->ui->m_displayName->text() != myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() )
+		if ( d->ui->m_displayName->text() != myself->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString() )
 			static_cast<MSNAccount *>( account() )->setPublicName( d->ui->m_displayName->text() );
 
 		if ( notify )

@@ -205,8 +205,8 @@ void MSNContact::slotUserInfo()
 	KDialog *infoDialog=new KDialog;
 	infoDialog->setButtons( KDialog::Close );
 	infoDialog->setDefaultButton( KDialog::Close );
-	QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
-	QString personalMessage=property( MSNProtocol::protocol()->propPersonalMessage).value().toString();
+	QString nick=getProperty( Kopete::Global::Properties::self()->nickName()).value().toString();
+	QString personalMessage=getProperty( MSNProtocol::protocol()->propPersonalMessage).value().toString();
 	QWidget* w=new QWidget( infoDialog );
 	Ui::MSNInfo info;
 	info.setupUi( w );
@@ -407,7 +407,7 @@ void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString
 }
 
 
-QString MSNContact::guid(){ return property(MSNProtocol::protocol()->propGuid).value().toString(); }
+QString MSNContact::guid(){ return getProperty(MSNProtocol::protocol()->propGuid).value().toString(); }
 
 QString MSNContact::phoneHome(){ return m_phoneHome ;}
 QString MSNContact::phoneWork(){ return m_phoneWork ;}

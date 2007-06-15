@@ -124,7 +124,7 @@ KActionMenu *JabberTransport::actionMenu ()
 {
 	KIcon icon = KIcon(QIcon(myself()->onlineStatus().iconFor( this ) ) );
 	KActionMenu *menu = new KActionMenu( icon, accountId(), this );
-	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
+	QString nick = myself()->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString();
 
 	menu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
 	nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )

@@ -118,7 +118,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_YABLastRemoteRevision = configGroup()->readEntry( "YABLastRemoteRevision", 0 );
 
 	m_session->setUserId( accountId.toLower() );
-	m_session->setPictureChecksum( myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
+	m_session->setPictureChecksum( myself()->getProperty( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
 
 	setupActions( false );
 }
@@ -709,7 +709,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		}
 
 
-		setBuddyIcon( myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString() );
+		setBuddyIcon( myself()->getProperty( Kopete::Global::Properties::self()->photo() ).value().toString() );
 		m_session->getYABEntries( m_YABLastMerge, m_YABLastRemoteRevision );
 		m_lastDisconnectCode = 0;
 		theHaveContactList = true;
@@ -1608,7 +1608,7 @@ void YahooAccount::slotGotBuddyIconChecksum(const QString &who, int checksum)
 		return;
 	}
 
-	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() &&
+	if ( checksum == kc->getProperty( YahooProtocol::protocol()->iconCheckSum ).value().toInt() &&
 	     QFile::exists( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ) )
 	{
 		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Icon already exists. I will not request it again." << endl;
@@ -1626,7 +1626,7 @@ void YahooAccount::slotGotBuddyIconInfo(const QString &who, KUrl url, int checks
 		return;
 	}
 
-	if ( checksum == kc->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()  &&
+	if ( checksum == kc->getProperty( YahooProtocol::protocol()->iconCheckSum ).value().toInt()  &&
 	     QFile::exists( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ who.toLower().replace(QRegExp("[./~]"),"-")  +".png" ) ))
 	{
 		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Icon already exists. I will not download it again." << endl;
@@ -1648,8 +1648,8 @@ void YahooAccount::slotGotBuddyIcon( const QString &who, KTemporaryFile *file, i
 void YahooAccount::slotGotBuddyIconRequest( const QString & who )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	m_session->sendPictureInformation( who, myself()->property( YahooProtocol::protocol()->iconRemoteUrl ).value().toString(),
-	                                   myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
+	m_session->sendPictureInformation( who, myself()->getProperty( YahooProtocol::protocol()->iconRemoteUrl ).value().toString(),
+	                                   myself()->getProperty( YahooProtocol::protocol()->iconCheckSum ).value().toInt() );
 }
 
 void YahooAccount::setBuddyIcon( const KUrl &url )
@@ -1671,7 +1671,7 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 		QString newlocation( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ url.fileName().toLower() ) ) ;
 		QFile iconFile( newlocation );
 		QByteArray data;
-		uint expire = myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt();
+		uint expire = myself()->getProperty( YahooProtocol::protocol()->iconExpire ).value().toInt();
 
 		if ( image.isNull() ) {
 			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n( "<qt>The selected buddy icon could not be opened. <br>Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
@@ -1712,7 +1712,7 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 		configGroup()->writeEntry( "iconLocalUrl", newlocation );
 
-		if ( checksum != static_cast<uint>(myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt()) ||
+		if ( checksum != static_cast<uint>(myself()->getProperty( YahooProtocol::protocol()->iconCheckSum ).value().toInt()) ||
 		     QDateTime::currentDateTime().toTime_t() > expire )
 		{
 			myself()->setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
@@ -1726,7 +1726,7 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 void YahooAccount::slotBuddyIconChanged( const QString &url, int expires )
 {
 	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	int checksum = myself()->property( YahooProtocol::protocol()->iconCheckSum ).value().toInt();
+	int checksum = myself()->getProperty( YahooProtocol::protocol()->iconCheckSum ).value().toInt();
 
 	if( !url.isEmpty() )
 	{

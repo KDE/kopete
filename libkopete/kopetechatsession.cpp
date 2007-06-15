@@ -164,7 +164,7 @@ void Kopete::ChatSession::slotUpdateDisplayName()
 			d->displayName.append( c->metaContact()->displayName() );
 		else
 		{
-			QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+			QString nick=c->getProperty(Kopete::Global::Properties::self()->nickName()).value().toString();
 			d->displayName.append( nick.isEmpty() ? c->contactId() : nick );
 		}
 	}
@@ -274,7 +274,7 @@ void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 
 	if ( msg.direction() == Kopete::Message::Inbound )
 	{
-		QString nick=myself()->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+		QString nick=myself()->getProperty(Kopete::Global::Properties::self()->nickName()).value().toString();
 		if ( Kopete::BehaviorSettings::self()->highlightEnabled() && !nick.isEmpty() &&
 			msg.plainBody().contains( QRegExp( QString::fromLatin1( "\\b(%1)\\b" ).arg( nick ), Qt::CaseInsensitive ) ) )
 		{

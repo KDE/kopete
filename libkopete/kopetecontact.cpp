@@ -77,13 +77,13 @@ public:
 	QTime idleTimer;
 	unsigned long int idleTime;
 
-	Kopete::ContactProperty::Map properties;
 	Kopete::StatusMessage statusMessage;
 };
 
 Contact::Contact( Account *account, const QString &contactId,
 	MetaContact *parent, const QString &icon )
 	: ContactListElement( parent )
+	, PropertyContainer()
 {
 	d = new Private;
 
@@ -217,7 +217,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	KMenu *menu = new KMenu();
 
 	QString titleText;
-	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	QString nick = getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( nick.isEmpty() )
 		titleText = QString::fromLatin1( "%1 (%2)" ).arg( contactId(), onlineStatus().description() );
 	else
@@ -382,64 +382,6 @@ void Contact::serialize( QMap<QString, QString> &/*serializedData*/,
 {
 }
 
-
-void Contact::serializeProperties(QMap<QString, QString> &serializedData)
-{
-
-	Kopete::ContactProperty::Map::ConstIterator it;// = d->properties.ConstIterator;
-	for (it=d->properties.begin(); it != d->properties.end(); ++it)
-	{
-		if (!it.value().tmpl().persistent())
-			continue;
-
-		QVariant val = it.value().value();
-		QString key = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(val.typeName()), it.key());
-
-		serializedData[key] = val.toString();
-
-	} // end for()
-} // end serializeProperties()
-
-void Contact::deserializeProperties(
-	QMap<QString, QString> &serializedData )
-{
-	QMap<QString, QString>::ConstIterator it;
-	for ( it=serializedData.begin(); it != serializedData.end(); ++it )
-	{
-		QString key = it.key();
-
-		if ( !key.startsWith( QString::fromLatin1("prop_") ) ) // avoid parsing other serialized data
-			continue;
-
-		QStringList keyList = key.split( QChar('_'), QString::SkipEmptyParts );
-		if( keyList.count() < 3 ) // invalid key, not enough parts in string "prop_X_Y"
-			continue;
-
-		key = keyList[2]; // overwrite key var with the real key name this property has
-		QString type( keyList[1] ); // needed for QVariant casting
-
-		QVariant variant( it.value() );
-		if( !variant.convert(QVariant::nameToType(type.toLatin1())) )
-		{
-			kDebug(14010) << k_funcinfo <<
-				"Casting QVariant to needed type FAILED" <<
-				"key=" << key << ", type=" << type << endl;
-			continue;
-		}
-
-		Kopete::ContactPropertyTmpl tmpl = Kopete::Global::Properties::self()->tmpl(key);
-		if( tmpl.isNull() )
-		{
-			kDebug( 14010 ) << k_funcinfo << "no ContactPropertyTmpl defined for" \
-				" key " << key << ", cannot restore persistent property" << endl;
-			continue;
-		}
-
-		setProperty(tmpl, variant);
-	} // end for()
-}
-
-
 bool Contact::isReachable()
 {
 	// The default implementation returns false when offline and true
@@ -592,76 +534,6 @@ void Contact::setIdleTime( unsigned long int t )
 		emit idleStateChanged(this);
 }
 
-
-QStringList Contact::properties() const
-{
-	return d->properties.keys();
-}
-
-bool Contact::hasProperty(const QString &key) const
-{
-	return d->properties.contains(key);
-}
-
-const ContactProperty &Contact::property(const QString &key) const
-{
-	if(hasProperty(key))
-		return d->properties[key];
-	else
-		return Kopete::ContactProperty::null;
-}
-
-const Kopete::ContactProperty &Contact::property(
-	const Kopete::ContactPropertyTmpl &tmpl) const
-{
-	if(hasProperty(tmpl.key()))
-		return d->properties[tmpl.key()];
-	else
-		return Kopete::ContactProperty::null;
-}
-
-
-void Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
-	const QVariant &value)
-{
-	if(tmpl.isNull() || tmpl.key().isEmpty())
-	{
-		kDebug(14000) << k_funcinfo <<
-			"No valid template for property passed!" << endl;
-		return;
-	}
-
-	if(value.isNull() || value.canConvert(QVariant::String) && value.toString().isEmpty())
-	{
-		removeProperty(tmpl);
-	}
-	else
-	{
-		QVariant oldValue = property(tmpl.key()).value();
-
-		if(oldValue != value)
-		{
-			Kopete::ContactProperty prop(tmpl, value);
-			d->properties.remove(tmpl.key());
-			d->properties.insert(tmpl.key(), prop);
-
-			emit propertyChanged(this, tmpl.key(), oldValue, value);
-		}
-	}
-}
-
-void Contact::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
-{
-	if(!tmpl.isNull() && !tmpl.key().isEmpty())
-	{
-
-		QVariant oldValue = property(tmpl.key()).value();
-		d->properties.remove(tmpl.key());
-		emit propertyChanged(this, tmpl.key(), oldValue, QVariant());
-	}
-}
-
-
 QString Contact::toolTip() const
 {
 	Kopete::ContactProperty p;
@@ -677,7 +549,7 @@ QString Contact::toolTip() const
 				QString(QUrl::toPercentEncoding( contactId() )) );
 
 	// TODO:  the nickname should be a configurable properties, like others. -Olivier
-	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	QString nick = getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( nick.isEmpty() )
 	{
 		tip = i18nc( "<b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
@@ -720,7 +592,7 @@ QString Contact::toolTip() const
 		}
 		else if ((*it) == QString::fromLatin1("homePage"))
 		{
-			QString url = property(*it).value().toString();
+			QString url = getProperty(*it).value().toString();
 			if(!url.isEmpty())
 			{
 				tip += i18nc("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
@@ -730,7 +602,7 @@ QString Contact::toolTip() const
 		}
 		else if ((*it) == Kopete::Global::Properties::self()->statusMessage().key() )
 		{
-			QString statusmsg = property(*it).value().toString();
+			QString statusmsg = getProperty(*it).value().toString();
 			if(!statusmsg.isEmpty())
 			{
 				tip += i18nc("<br><b>Status Message:</b>&nbsp;FORMATTED STATUS MESSAGE",
@@ -739,7 +611,7 @@ QString Contact::toolTip() const
 		}
 		else
 		{
-			p = property(*it);
+			p = getProperty(*it);
 			if(!p.isNull())
 			{
 				QVariant val = p.value();
@@ -783,13 +655,13 @@ QString Contact::toolTip() const
 QString Kopete::Contact::formattedName() const
 {
 	if( hasProperty( Kopete::Global::Properties::self()->fullName().key() ) )
-		return property( Kopete::Global::Properties::self()->fullName() ).value().toString();
+		return getProperty( Kopete::Global::Properties::self()->fullName() ).value().toString();
 
 	QString ret;
 	Kopete::ContactProperty first, last;
 
-	first = property( Kopete::Global::Properties::self()->firstName() );
-	last = property( Kopete::Global::Properties::self()->lastName() );
+	first = getProperty( Kopete::Global::Properties::self()->firstName() );
+	last = getProperty( Kopete::Global::Properties::self()->lastName() );
 	if(!first.isNull())
 	{
 		if(!last.isNull()) // contact has both first and last name
@@ -872,7 +744,7 @@ void Kopete::Contact::setNickName( const QString &name )
 
 QString Kopete::Contact::nickName() const
 {
-	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	QString nick = getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( !nick.isEmpty() )
 		return nick;
 
@@ -882,6 +754,17 @@ QString Kopete::Contact::nickName() const
 void Kopete::Contact::setPhoto(const QString &photoPath)
 {
 	setProperty( Kopete::Global::Properties::self()->photo(), photoPath );
+}
+
+void Kopete::Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value)
+{
+	PropertyContainer::setProperty( tmpl, value );
+}
+
+void Kopete::Contact::notifyPropertyChanged( const QString &key, 
+		const QVariant &oldValue, const QVariant &newValue )
+{
+	emit propertyChanged( this, key, oldValue, newValue );
 }
 
 } //END namespace Kopete

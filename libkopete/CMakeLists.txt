@@ -85,6 +85,7 @@ set(kopete_LIB_SRCS
    kopeteplugin.cpp
    kopetepluginmanager.cpp
    kopeteproperties.cpp
+   kopetepropertycontainer.cpp
    kopeteprotocol.cpp
    kopetesimplemessagehandler.cpp
    kopetestatusmessage.cpp
@@ -191,6 +192,7 @@ install( FILES
   kopetepicture.h
   kopeteplugin.h
   kopeteprotocol.h
+  kopetepropertycontainer.h
   kopetesimplemessagehandler.h
   kopetestatusmessage.h
   kopetetransfermanager.h

@@ -188,7 +188,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 		// them, or use its own format, it can call clear() on the provided list
 		sd[ QString::fromLatin1( "contactId" ) ] =   c->contactId();
 		//TODO(nick) remove
-		sd[ QString::fromLatin1( "displayName" ) ] = c->property(Global::Properties::self()->nickName()).value().toString();
+		sd[ QString::fromLatin1( "displayName" ) ] = c->getProperty(Global::Properties::self()->nickName()).value().toString();
 		if(c->account())
 			sd[ QString::fromLatin1( "accountId" ) ] = c->account()->accountId();
 

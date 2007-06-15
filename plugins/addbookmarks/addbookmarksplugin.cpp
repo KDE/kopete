@@ -59,7 +59,7 @@ void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 				//kDebug (14501) << "name:" << msg.from()->metaContact()->displayName() << endl;
 			}
 			else {
-				addKopeteBookmark(*it, msg.from()->property(Kopete::Global::Properties::self()->nickName()).value().toString() );
+				addKopeteBookmark(*it, msg.from()->getProperty(Kopete::Global::Properties::self()->nickName()).value().toString() );
 				//kDebug (14501) << "name:" << msg.from()->property(Kopete::Global::Properties::self()->nickName()).value().toString() << endl;
 			}
 		}

@@ -98,12 +98,12 @@ void dlgQQVCard::assignContactProperties ()
 {
 	QQProtocol* proto = static_cast<QQProtocol*>(m_account->protocol());
 	// general tab
-	m_mainWidget->leNick->setText (m_contact->property(proto->propNickName).value().toString());
-	m_mainWidget->leName->setText (m_contact->property(proto->propFullName).value().toString());
+	m_mainWidget->leNick->setText (m_contact->getProperty(proto->propNickName).value().toString());
+	m_mainWidget->leName->setText (m_contact->getProperty(proto->propFullName).value().toString());
 	// Guess the JID from the Kopete::Contact if the propJid is empty.
 	m_mainWidget->leQQId->setText (m_contact->contactId());
 
-	QString homepage = m_contact->property(proto->propHomepage).value().toString();
+	QString homepage = m_contact->getProperty(proto->propHomepage).value().toString();
 	m_mainWidget->leHomepage->setText (homepage);
 	/*
 	m_mainWidget->urlHomepage->setText (homepage);
@@ -121,10 +121,10 @@ void dlgQQVCard::assignContactProperties ()
 	*/
 
 	// addresses
-	m_mainWidget->leStreet->setText (m_contact->property(proto->propStreet).value().toString());
-	m_mainWidget->leCity->setText (m_contact->property(proto->propCity).value().toString());
-	m_mainWidget->leZipcode->setText (m_contact->property(proto->propZipcode).value().toString());
-	m_mainWidget->leCountry->setText (m_contact->property(proto->propCountry).value().toString());
+	m_mainWidget->leStreet->setText (m_contact->getProperty(proto->propStreet).value().toString());
+	m_mainWidget->leCity->setText (m_contact->getProperty(proto->propCity).value().toString());
+	m_mainWidget->leZipcode->setText (m_contact->getProperty(proto->propZipcode).value().toString());
+	m_mainWidget->leCountry->setText (m_contact->getProperty(proto->propCountry).value().toString());
 
 	// email
 	/*

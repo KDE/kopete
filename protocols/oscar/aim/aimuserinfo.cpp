@@ -40,7 +40,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 	: KDialog( parent )
 {
 	setCaption( i18n( "User Information on %1" ,
-	                  c->property( Kopete::Global::Properties::self()->nickName() ).value().toString() ) );
+	                  c->getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString() ) );
 	setButtons( KDialog::Cancel | KDialog::Ok );
 	
 	setDefaultButton(KDialog::Ok);
@@ -62,7 +62,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 
 	mMainWidget->txtScreenName->setText( c->contactId() );
 
-	QString nickName = c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	QString nickName = c->getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( nickName.isEmpty() )
 		mMainWidget->txtNickName->setText( c->contactId() );
 	else
@@ -132,7 +132,7 @@ void AIMUserInfoDialog::slotUpdateClicked()
 {
 	kDebug(14200) << k_funcinfo << "Called." << endl;
 	QString newNick = mMainWidget->txtNickName->text();
-	QString currentNick = m_contact->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	QString currentNick = m_contact->getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( !newNick.isEmpty() && ( newNick != currentNick ) )
 	{
 		//m_contact->rename(newNick);
@@ -149,7 +149,7 @@ void AIMUserInfoDialog::slotSaveClicked()
 	if (userInfoEdit)
 	{ // editable mode, set profile
 		QString newNick = mMainWidget->txtNickName->text();
-		QString currentNick = m_contact->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+		QString currentNick = m_contact->getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
 		if(!newNick.isEmpty() && ( newNick != currentNick ) )
 		{
 			//m_contact->rename(newNick);
@@ -173,7 +173,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 {
 	kDebug(14152) << k_funcinfo << "Got User Profile." << endl;
 	AIMProtocol* p = static_cast<AIMProtocol*>( mAccount->protocol() );
-	QString awayMessage = m_contact->property( p->awayMessage ).value().toString();
+	QString awayMessage = m_contact->getProperty( p->awayMessage ).value().toString();
 	mMainWidget->txtAwayMessage->setHtml( awayMessage );
 
 	if ( awayMessage.isNull() )
@@ -187,7 +187,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 		mMainWidget->lblAwayMessage->show();
 	}
 
-	QString onlineSince =  m_contact->property("onlineSince").value().toString();
+	QString onlineSince =  m_contact->getProperty("onlineSince").value().toString();
 	//QString onlineSince = m_details.onlineSinceTime().toString();
 	mMainWidget->txtOnlineSince->setText( onlineSince );
 
@@ -195,7 +195,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 	mMainWidget->txtIdleTime->setText(c->formattedIdleTime());
 	mMainWidget->txtWarnLevel->setText(QString::number(c->warningLevel()));
 
-	QString contactProfile = m_contact->property( p->clientProfile ).value().toString();
+	QString contactProfile = m_contact->getProperty( p->clientProfile ).value().toString();
 	if ( contactProfile.isNull() )
 	{
 		contactProfile =

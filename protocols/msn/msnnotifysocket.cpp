@@ -380,7 +380,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		{
 			QString publicName=unescape( data.section( ' ', 2, 2 ) );
 			if ( (publicName!=c->contactId() ||  c->hasProperty(Kopete::Global::Properties::self()->nickName().key())  ) &&
-						 publicName!=c->property( Kopete::Global::Properties::self()->nickName()).value().toString() )
+						 publicName!=c->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString() )
 
 				changePublicName(publicName,c->contactId());
 			QString obj=unescape(data.section( ' ', 4, 4 ));

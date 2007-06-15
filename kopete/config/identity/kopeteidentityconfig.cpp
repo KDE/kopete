@@ -273,7 +273,7 @@ void KopeteIdentityConfig::slotLoadNameSources()
 	for( it = contactList.begin(); it != contactList.end(); ++it)
 	{
 		
-		QString account = (*it)->property(Kopete::Global::Properties::self()->nickName()).value().toString() + " <" + (*it)->contactId() + '>';
+		QString account = (*it)->getProperty(Kopete::Global::Properties::self()->nickName()).value().toString() + " <" + (*it)->contactId() + '>';
 		QPixmap accountIcon = (*it)->account()->accountIcon();
 		comboNameContact->addItem( QIcon(accountIcon),  account);
 
@@ -308,7 +308,7 @@ void KopeteIdentityConfig::slotLoadPhotoSources()
 		Kopete::Contact *currentContact = (*it);
 		if(currentContact->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 		{
-			QString account = currentContact->property(Kopete::Global::Properties::self()->nickName()).value().toString() + " <" + currentContact->contactId() + '>';
+			QString account = currentContact->getProperty(Kopete::Global::Properties::self()->nickName()).value().toString() + " <" + currentContact->contactId() + '>';
 			QPixmap accountIcon = currentContact->account()->accountIcon();
 
 			comboPhotoContact->addItem( QIcon(accountIcon),  account);

@@ -273,7 +273,7 @@ void OscarContact::slotTyping( bool typing )
 QTextCodec* OscarContact::contactCodec() const
 {
 	if ( hasProperty( "contactEncoding" ) )
-		return QTextCodec::codecForMib( property( "contactEncoding" ).value().toInt() );
+		return QTextCodec::codecForMib( getProperty( "contactEncoding" ).value().toInt() );
 	else
 		return mAccount->defaultCodec();
 }
@@ -331,7 +331,7 @@ void OscarContact::changeContactEncoding()
 		return;
 
 	OscarProtocol* p = static_cast<OscarProtocol*>( protocol() );
-	m_oesd = new OscarEncodingSelectionDialog( Kopete::UI::Global::mainWidget(), property(p->contactEncoding).value().toInt() );
+	m_oesd = new OscarEncodingSelectionDialog( Kopete::UI::Global::mainWidget(), getProperty(p->contactEncoding).value().toInt() );
 	connect( m_oesd, SIGNAL(closing(int)), this, SLOT(changeEncodingDialogClosed(int)) );
 	m_oesd->show();
 }

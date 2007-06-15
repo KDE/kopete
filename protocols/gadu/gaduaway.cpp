@@ -60,7 +60,7 @@ GaduAway::GaduAway( GaduAccount* account, QWidget* parent )
 		ui_->statusGroup_->setButton( s );
 	}
 
-	ui_->textEdit_->setText( account->myself()->property( "awayMessage" ).value().toString() );
+	ui_->textEdit_->setText( account->myself()->getProperty( "awayMessage" ).value().toString() );
 	connect( this, SIGNAL( applyClicked() ), SLOT( slotApply() ) );
 }
 

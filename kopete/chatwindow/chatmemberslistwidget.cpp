@@ -73,7 +73,7 @@ private:
 ChatMembersListWidget::ContactItem::ContactItem( ChatMembersListWidget *parent, Kopete::Contact *contact )
 	: K3ListViewItem( parent ), m_contact( contact )
 {
-	QString nick = m_contact->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
+	QString nick = m_contact->getProperty(Kopete::Global::Properties::self()->nickName().key()).value().toString();
 	if ( nick.isEmpty() )
 		nick = m_contact->contactId();
 	setText( 0, nick );

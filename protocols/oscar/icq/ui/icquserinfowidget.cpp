@@ -310,7 +310,7 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	}
 
 	m_genInfoWidget->uinEdit->setText( m_contact->contactId() );
-	m_genInfoWidget->ipEdit->setText( m_contact->property( "ipAddress" ).value().toString() );
+	m_genInfoWidget->ipEdit->setText( m_contact->getProperty( "ipAddress" ).value().toString() );
 }
 
 QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const

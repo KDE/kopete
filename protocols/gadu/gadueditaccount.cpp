@@ -70,7 +70,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 
 		passwordWidget_->load( &account_->password() );
 
-		QString nick = account()->myself()->property(
+		QString nick = account()->myself()->getProperty(
 				Kopete::Global::Properties::self()->nickName() ).value().toString();
 		if ( nick.isEmpty() ) {
 			nick = account_->myself()->contactId();

@@ -276,7 +276,7 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 	QDomElement msgElem = doc.createElement( "msg" );
 	msgElem.setAttribute( "in",  msg.direction()==Kopete::Message::Outbound ? "0" : "1" );
 	msgElem.setAttribute( "from",  msg.from()->contactId() );
-	msgElem.setAttribute( "nick",  msg.from()->property( Kopete::Global::Properties::self()->nickName() ).value().toString() ); //do we have to set this?
+	msgElem.setAttribute( "nick",  msg.from()->getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString() ); //do we have to set this?
 	msgElem.setAttribute( "time", msg.timestamp().toString("d h:m:s") );
 
 	QDomText msgNode = doc.createTextNode( msg.plainBody() );

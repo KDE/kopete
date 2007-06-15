@@ -31,6 +31,4 @@ Some points:
 - The user info interface will get/set properties from the identity, not from the 
   contact
 
-- The property framework should (probably) be moved to the identity
-
 - The Akonady support will probably be implemented on top of the identity
