@@ -175,4 +175,11 @@
 			<default>true</default>
 		</entry>
 	</group>
+
+	<group name="ChatWindowSettings">
+		<entry key="AlwaysShowTabs" type="Bool">
+			<label>Always show tabs.</label>
+			<default>false</default>
+		</entry>
+	</group>
 </kcfg>
