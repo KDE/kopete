@@ -21,6 +21,7 @@
 
 #include <QStringList>
 #include <KDebug>
+#include <KConfigGroup>
 
 #include <kdeversion.h>
 
@@ -46,6 +47,11 @@ Identity::~Identity()
 	delete d;
 }
 
+QString Identity::identityId() const
+{
+	return d->id;
+}
+
 void Identity::setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value)
 {
 	PropertyContainer::setProperty( tmpl, value );
@@ -56,6 +62,31 @@ Kopete::UI::InfoPage::List Identity::customInfoPages() const
 	// TODO implement
 	Kopete::UI::InfoPage::List list;
 	return list;
+}
+
+bool Identity::excludeConnect() const
+{
+	//TODO implement
+}
+
+void Identity::setOnlineStatus( uint category, const QString &awayMessage )
+{
+	//TODO implement
+}
+
+void Identity::addAccount( Kopete::Account *account )
+{
+	//TODO implement
+}
+
+void Identity::removeAccount( Kopete::Account *account )
+{
+	//TODO implement
+}
+
+KConfigGroup *Identity::configGroup() const
+{
+	//TODO implement
 }
 
 void Identity::notifyPropertyChanged( const QString &key, 

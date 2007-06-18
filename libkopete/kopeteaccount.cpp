@@ -38,6 +38,7 @@
 #include <kconfiggroup.h>
 
 #include "kopeteaccount.h"
+#include "kopeteidentity.h"
 #include "kabcpersistence.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
@@ -63,7 +64,7 @@ public:
 	Private( Protocol *protocol, const QString &accountId )
 	 : protocol( protocol ), id( accountId )
 	 , excludeconnect( true ), priority( 0 )
-	 , connectionTry(0), myself( 0 )
+	 , connectionTry(0), identity( 0 ), myself( 0 )
 	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
 	 , blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
 	{ }
@@ -79,6 +80,7 @@ public:
 	QHash<QString, Contact*> contacts;
 	QColor color;
 	uint connectionTry;
+	Identity *identity;
 	Contact *myself;
 	QTimer suppressStatusTimer;
 	bool suppressStatusNotification;
@@ -397,6 +399,17 @@ bool Account::isConnected() const
 bool Account::isAway() const
 {
 	return d->myself && ( d->myself->onlineStatus().status() == Kopete::OnlineStatus::Away );
+}
+Identity * Account::identity() const
+{
+	return d->identity;
+}
+
+void Account::setIdentity( Identity *ident )
+{
+	d->identity->removeAccount( this );
+	ident->addAccount( this );
+	d->identity = ident;
 }
 
 Contact * Account::myself() const

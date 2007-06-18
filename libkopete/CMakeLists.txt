@@ -75,6 +75,7 @@ set(kopete_LIB_SRCS
    kopeteglobal.cpp
    kopetegroup.cpp
    kopeteidentity.cpp
+   kopeteidentitymanager.cpp
    kopetemessage.cpp
    kopetemessageevent.cpp
    kopetemessagehandlerchain.cpp
@@ -187,6 +188,7 @@ install( FILES
   kopeteglobal.h
   kopetegroup.h
   kopeteidentity.h
+  kopeteidentitymanager.h
   kopetemessageevent.h
   kopetemessage.h
   kopetemessagehandlerchain.h

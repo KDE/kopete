@@ -38,6 +38,7 @@
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
+#include "kopeteidentitymanager.h"
 #include "kopetemimesourcefactory.h"
 #include "kopetemimetypehandler.h"
 #include "kopetepluginmanager.h"
@@ -111,6 +112,10 @@ void KopeteApplication::slotLoadPlugins()
 	//Create the view manager
 	KopeteViewManager::viewManager();
 
+	//Create the identity manager
+	Kopete::IdentityManager::self()->load();
+
+	// the account manager should be created after the identity manager is created
 	Kopete::AccountManager::self()->load();
 	Kopete::ContactList::self()->load();
 

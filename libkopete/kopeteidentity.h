@@ -24,8 +24,12 @@
 #include "kopetepropertycontainer.h"
 #include "kopete_export.h"
 
+class KConfigGroup;
+
 namespace Kopete
 {
+
+class Account;
 
 /**
  * @author Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
@@ -45,6 +49,8 @@ public:
 
 	~Identity();
 
+	QString identityId() const;
+
 	/**
 	 * Sets a property
 	 * FIXME: this is just to fix the ambiguation of PropertyContainer::setProperty() 
@@ -60,6 +66,38 @@ public:
 	 */
 	virtual Kopete::UI::InfoPage::List customInfoPages() const;
 
+	/**
+	 * This identity should be connected when connect all is called?
+	 */
+	bool excludeConnect() const;
+
+	/**
+	 * @brief Sets the online status for this identity
+	 *
+	 * FIXME: describe a bit more
+	 */
+	void setOnlineStatus( uint category, const QString &awayMessage );
+
+	/**
+	 * @brief Adds an account to the identity
+	 *
+	 * @param account the account to be added
+	 */
+	void addAccount( Kopete::Account *account );
+
+	/**
+	 * @brief Removes an account from the identity
+	 *
+	 * @param account the account to be removed
+	 */
+	void removeAccount( Kopete::Account *account );
+
+	/**
+	 * Returns the @ref KConfigGroup that should be used to read/write settings 
+	 * of this identity
+	 */
+	KConfigGroup *configGroup() const;
+
 protected:
 	virtual void notifyPropertyChanged( const QString &key, 
 		const QVariant &oldValue, const QVariant &newValue );
@@ -69,7 +107,6 @@ private:
 	Private *d;
 
 };
-
 
 } //END namespace Kopete
 
