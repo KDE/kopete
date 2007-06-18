@@ -39,6 +39,7 @@
 
 #include "kopeteaccount.h"
 #include "kopeteidentity.h"
+#include "kopeteidentitymanager.h"
 #include "kabcpersistence.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
@@ -100,6 +101,11 @@ Account::Account( Protocol *parent, const QString &accountId )
 	d->color = d->configGroup->readEntry( "Color" , QColor() );
 	d->customIcon = d->configGroup->readEntry( "Icon", QString() );
 	d->priority = d->configGroup->readEntry( "Priority", 0 );
+
+	Identity *identity = Kopete::IdentityManager::self()->findIdentity( d->configGroup->readEntry("Identity", QString()) );
+	//FIXME: we should have a dialog to assign orphan accounts but for now an assertion is fine
+	Q_ASSERT( identity );
+	setIdentity( identity );
 
 	d->restoreStatus = Kopete::OnlineStatus::Online;
 	d->restoreMessage = "";
@@ -407,7 +413,9 @@ Identity * Account::identity() const
 
 void Account::setIdentity( Identity *ident )
 {
-	d->identity->removeAccount( this );
+	if (d->identity)
+		d->identity->removeAccount( this );
+
 	ident->addAccount( this );
 	d->identity = ident;
 }

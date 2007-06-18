@@ -31,7 +31,7 @@ namespace Kopete {
 class IdentityManager::Private
 {
 public:
-	QList<Identity *> identities;
+	Identity::List identities;
 };
 
 IdentityManager * IdentityManager::s_self = 0L;
@@ -111,7 +111,7 @@ void IdentityManager::unregisterIdentity( const Identity *identity )
 	d->identities.removeAll( const_cast<Identity*>(identity) );
 }
 
-const QList<Identity *>& IdentityManager::identities() const
+const Identity::List& IdentityManager::identities() const
 {
 	return d->identities;
 }
@@ -171,6 +171,7 @@ void IdentityManager::load()
 								 "Failed to create identity for '" << identityId << "'" << endl;
 			continue;
 		}
+		kDebug() << "Created identity " << identityId << endl;
 	}
 }
 

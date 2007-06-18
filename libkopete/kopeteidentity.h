@@ -40,6 +40,7 @@ class KOPETE_EXPORT Identity : public QObject, public PropertyContainer
 {
 	Q_OBJECT
 public:	
+	typedef QList<Identity*> List;
 	/**
 	 * @brief A container for properties. 
 	 *

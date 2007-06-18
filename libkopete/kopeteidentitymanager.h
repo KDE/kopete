@@ -21,12 +21,11 @@
 #include <QObject>
 #include "kopete_export.h"
 #include "kopeteonlinestatus.h"
+#include "kopeteidentity.h"
 
 
 namespace Kopete 
 {
-
-class Identity;
 
 /**
  * IdentityManager manages all defined identities in Kopete. You can
@@ -58,7 +57,7 @@ public:
 	 * \brief Retrieve the list of identities
 	 * \return a list of all the identities
 	 */
-	const QList<Identity *> & identities() const;
+	const Identity::List & identities() const;
 
 	/**
 	 * \brief Return the identity asked

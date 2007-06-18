@@ -22,6 +22,8 @@
 #include <QStringList>
 #include <KDebug>
 #include <KConfigGroup>
+#include <KGlobal>
+#include <KSharedConfigPtr>
 
 #include <kdeversion.h>
 
@@ -33,6 +35,7 @@ class Identity::Private
 public:
 	QList<Kopete::Account*> accounts;
 	QString id;
+	KConfigGroup *configGroup;
 };
 
 Identity::Identity(const QString &id)
@@ -40,6 +43,7 @@ Identity::Identity(const QString &id)
 	d = new Private;
 	d->id = id;
 
+	d->configGroup = new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Identity_%1" ).arg( id ));
 }
 
 Identity::~Identity()
@@ -67,26 +71,40 @@ Kopete::UI::InfoPage::List Identity::customInfoPages() const
 bool Identity::excludeConnect() const
 {
 	//TODO implement
+	return false;
 }
 
 void Identity::setOnlineStatus( uint category, const QString &awayMessage )
 {
-	//TODO implement
+	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
+
+	foreach( Account *account ,  d->accounts )
+	{
+		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor);
+		if ( !account->excludeConnect() )
+			account->setOnlineStatus( status , awayMessage );
+	}
 }
 
 void Identity::addAccount( Kopete::Account *account )
 {
-	//TODO implement
+	// check if we already have this account
+	if ( d->accounts.indexOf( account ) != -1 )
+		return;
+
+	d->accounts.append( account );
+	//TODO implement the signals for status changes and so
 }
 
 void Identity::removeAccount( Kopete::Account *account )
 {
-	//TODO implement
+	//TODO disconnect signals and so on
+	d->accounts.removeAll( account );
 }
 
 KConfigGroup *Identity::configGroup() const
 {
-	//TODO implement
+	return d->configGroup;
 }
 
 void Identity::notifyPropertyChanged( const QString &key, 
@@ -94,7 +112,6 @@ void Identity::notifyPropertyChanged( const QString &key,
 {
 	//TODO implement
 }
-
 
 } //END namespace Kopete
 
