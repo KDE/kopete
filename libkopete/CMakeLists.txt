@@ -74,6 +74,7 @@ set(kopete_LIB_SRCS
    kopetecontactproperty.cpp
    kopeteglobal.cpp
    kopetegroup.cpp
+   kopeteidentity.cpp
    kopetemessage.cpp
    kopetemessageevent.cpp
    kopetemessagehandlerchain.cpp
@@ -185,6 +186,7 @@ install( FILES
   kopete_export.h
   kopeteglobal.h
   kopetegroup.h
+  kopeteidentity.h
   kopetemessageevent.h
   kopetemessage.h
   kopetemessagehandlerchain.h

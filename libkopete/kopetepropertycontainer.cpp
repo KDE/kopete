@@ -1,5 +1,5 @@
 /*
-    kopetepropertycontainer.cpp - Kopete Contact
+    kopetepropertycontainer.cpp - Kopete Property Container
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kemail.net>
     Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
