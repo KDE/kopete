@@ -36,7 +36,7 @@ class Account;
  *
  * An identity that might contain one or more accounts associated to it 
  */
-class KOPETE_EXPORT Identity : public QObject, public PropertyContainer
+class KOPETE_EXPORT Identity : public PropertyContainer
 {
 	Q_OBJECT
 public:	
@@ -98,10 +98,6 @@ public:
 	 * of this identity
 	 */
 	KConfigGroup *configGroup() const;
-
-protected:
-	virtual void notifyPropertyChanged( const QString &key, 
-		const QVariant &oldValue, const QVariant &newValue );
 
 private:
 	class Private;

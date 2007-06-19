@@ -107,12 +107,6 @@ KConfigGroup *Identity::configGroup() const
 	return d->configGroup;
 }
 
-void Identity::notifyPropertyChanged( const QString &key, 
-				      const QVariant &oldValue, const QVariant &newValue )
-{
-	//TODO implement
-}
-
 } //END namespace Kopete
 
 #include "kopeteidentity.moc"

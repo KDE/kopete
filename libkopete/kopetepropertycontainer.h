@@ -21,6 +21,7 @@
 #ifndef KOPETEPROPERTYCONTAINER_H
 #define KOPETEPROPERTYCONTAINER_H
 
+#include <QObject>
 #include <kdemacros.h>
 #include "kopeteglobal.h"
 #include "kopeteinfopage.h"
@@ -35,8 +36,9 @@ namespace Kopete
  * This class abstracts a generic contact
  * Use it for inserting contacts in the contact list for example.
  */
-class KOPETE_EXPORT PropertyContainer
+class KOPETE_EXPORT PropertyContainer : public QObject
 {
+	Q_OBJECT
 
 public:	
 	/**
@@ -44,7 +46,7 @@ public:
 	 *
 	 * This class provides an interface for reading and writing properties.
 	 */
-	PropertyContainer();
+	PropertyContainer( QObject *parent = 0 );
 
 	virtual ~PropertyContainer();
 
@@ -126,8 +128,8 @@ public:
 	 */
 	virtual Kopete::UI::InfoPage::List customInfoPages() const;
 
-protected:
-	virtual void notifyPropertyChanged( const QString &key, 
+signals:
+	void propertyChanged( PropertyContainer *container, const QString &key, 
 		const QVariant &oldValue, const QVariant &newValue );
 
 private:

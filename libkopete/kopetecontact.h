@@ -55,7 +55,7 @@ typedef QList<Group *> GroupList;
  * Use it for inserting contacts in the contact list for example.
  */
 class KOPETE_EXPORT Contact
-	: public ContactListElement, public PropertyContainer
+	: public ContactListElement
 {
 	Q_OBJECT
 
@@ -448,9 +448,6 @@ public slots:
 	 * versus QObject::setProperty(). We should check for a better name
 	 */
 	void setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value);
-protected:
-	void notifyPropertyChanged( const QString &key, 
-		const QVariant &oldValue, const QVariant &newValue );
 
 private slots:
 

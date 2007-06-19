@@ -85,7 +85,6 @@ public:
 Contact::Contact( Account *account, const QString &contactId,
 	MetaContact *parent, const QString &icon )
 	: ContactListElement( parent )
-	, PropertyContainer()
 {
 	d = new Private;
 
@@ -769,12 +768,6 @@ void Kopete::Contact::setPhoto(const QString &photoPath)
 void Kopete::Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value)
 {
 	PropertyContainer::setProperty( tmpl, value );
-}
-
-void Kopete::Contact::notifyPropertyChanged( const QString &key, 
-		const QVariant &oldValue, const QVariant &newValue )
-{
-	emit propertyChanged( this, key, oldValue, newValue );
 }
 
 } //END namespace Kopete

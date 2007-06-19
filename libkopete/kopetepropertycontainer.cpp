@@ -35,7 +35,8 @@ public:
 	Kopete::ContactProperty::Map properties;
 };
 
-PropertyContainer::PropertyContainer()
+PropertyContainer::PropertyContainer(QObject *parent)
+: QObject(parent)
 {
 	d = new Private;
 
@@ -154,7 +155,7 @@ void PropertyContainer::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 			d->properties.remove(tmpl.key());
 			d->properties.insert(tmpl.key(), prop);
 
-			notifyPropertyChanged(tmpl.key(), oldValue, value);
+			propertyChanged(this, tmpl.key(), oldValue, value);
 		}
 	}
 }
@@ -166,15 +167,8 @@ void PropertyContainer::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
 
 		QVariant oldValue = getProperty(tmpl.key()).value();
 		d->properties.remove(tmpl.key());
-		notifyPropertyChanged(tmpl.key(), oldValue, QVariant());
+		propertyChanged(this, tmpl.key(), oldValue, QVariant());
 	}
-}
-
-
-void PropertyContainer::notifyPropertyChanged( const QString &key, 
-		const QVariant &oldValue, const QVariant &newValue )
-{
-	// do nothing
 }
 
 Kopete::UI::InfoPage::List PropertyContainer::infoPages() const
