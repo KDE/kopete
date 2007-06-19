@@ -885,7 +885,7 @@ void KopeteMetaContactLVI::slotContactAdded( Kopete::Contact *c )
 
 void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
 {
-	disconnect( c, SIGNAL( getPropertyChanged( Kopete::Contact *, const QString &,
+	disconnect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &,
 			const QVariant &, const QVariant & ) ),
 		this, SLOT( slotContactPropertyChanged( Kopete::Contact *,
 			const QString &, const QVariant &, const QVariant & ) ) );
