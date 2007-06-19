@@ -21,6 +21,7 @@
 #include "kopeteonlinestatus.h"
 #include "kopeteonlinestatusmanager.h"
 
+#include "kopeteidentity.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
@@ -260,6 +261,18 @@ QString OnlineStatus::mimeSourceFor( const Account *account, int size ) const
 	return mimeSource( iconName, size, account->color(), false );
 }
 
+QPixmap OnlineStatus::iconFor( const Identity *identity, int size ) const
+{
+	return OnlineStatusManager::self()->cacheLookupByMimeSource( mimeSourceFor( identity, size ) );
+}
+
+QString OnlineStatus::mimeSourceFor( const Identity *identity, int size ) const
+{
+	QString iconName = identity->customIcon();
+	kDebug() << "Icon Name: " << iconName << endl;
+
+	return mimeSource( iconName, size, Qt::black, false );
+}
 QPixmap OnlineStatus::iconFor( const QString &mimeSource ) const
 {
 	return OnlineStatusManager::self()->cacheLookupByMimeSource( mimeSource );

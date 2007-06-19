@@ -108,6 +108,18 @@ public slots:
 	void load();
 
 signals:
+	/**
+	 * \brief Signals when an identity is ready for use
+	 */
+	void identityRegistered( Kopete::Identity *identity );
+
+	/**
+	 * \brief Signals when an identity has been unregistered
+	 *
+	 * At this state, we are already in the Identity destructor.
+	 */
+	void identityUnregistered( const Kopete::Identity *identity );
+
 	void identityOnlineStatusChanged(Kopete::Identity *identity,
 		const Kopete::OnlineStatus &oldStatus, const Kopete::OnlineStatus &newStatus);
 

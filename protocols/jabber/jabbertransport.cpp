@@ -25,6 +25,7 @@
 #include <kopeteaccountmanager.h>
 #include <kopetecontact.h>
 #include <kopetecontactlist.h>
+#include <kopeteidentity.h>
 #include <kopetestatusmessage.h>
 #include <kopeteversion.h>
 
@@ -124,7 +125,12 @@ KActionMenu *JabberTransport::actionMenu ()
 {
 	KIcon icon = KIcon(QIcon(myself()->onlineStatus().iconFor( this ) ) );
 	KActionMenu *menu = new KActionMenu( icon, accountId(), this );
-	QString nick = myself()->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString();
+
+	QString nick;
+	if ( identity()->hasProperty( Kopete::Global::Properties::self()->nickName().key() ))
+		nick = identity()->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString();
+	else
+		nick = myself()->nickName();
 
 	menu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
 	nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )

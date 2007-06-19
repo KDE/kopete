@@ -34,6 +34,7 @@ class KMenu;
 
 namespace Kopete
 {
+	class Identity;
 	class Account;
 	class Contact;
 	class Plugin;
@@ -104,32 +105,45 @@ private slots:
 	void slotPluginLoaded( Kopete::Plugin *p );
 
 	/**
-	 * Get a notification when an account is created, so we can add a status bar
+	 * Get a notification when an identity is created, so we can add a status bar
 	 * icon
+	 * @param identity the registered identity 
 	 */
-	void slotAccountRegistered( Kopete::Account *a );
+	void slotIdentityRegistered( Kopete::Identity *identity );
 
 	/**
-	 * Cleanup the status bar icon when the account is destroyed
+	 * Cleanup the status bar icon when the identity is destroyed
+	 * @param identity the unregistered identity
 	 */
-	void slotAccountUnregistered( const Kopete::Account *a);
+	void slotIdentityUnregistered( const Kopete::Identity *identity );
 
 	/**
 	 * The status icon got changed, update it.
-	 * @param contact The account's contact that changed.
+	 * @param identity the identity that has changed
 	 */
-	void slotAccountStatusIconChanged( Kopete::Contact * contact);
+	void slotIdentityStatusIconChanged( Kopete::Identity *identity );
 
 	/**
-	 * The status icon of some account changed. Must be sent by the account in question.
+	 * The status icon of some identity changed. Must be sent by the identity in question.
 	 */
-	void slotAccountStatusIconChanged();
+	void slotIdentityStatusIconChanged();
 
 	/**
-	 * Show a context menu for an account
+	 * Show a context menu for an identity
 	 */
-	void slotAccountStatusIconRightClicked( Kopete::Account *a,
+	void slotIdentityStatusIconRightClicked( Kopete::Identity *i,
 		const QPoint &p );
+
+
+	/**
+	 * This is used to add the account to the "Add Contact" submenu
+	 */
+	void slotAccountRegistered( const Kopete::Account *account );
+
+	/**
+	 * This is used to add the account to the "Add Contact" submenu
+	 */
+	void slotAccountUnregistered( const Kopete::Account *account );
 
 	void slotTrayAboutToShowMenu(KMenu *);
 

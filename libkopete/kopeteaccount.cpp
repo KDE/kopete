@@ -454,6 +454,9 @@ void Account::setMyself( Contact *myself )
 	QObject::connect( d->myself, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
 		this, SLOT( slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) );
 
+	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
+		identity(), SLOT( updateOnlineStatus()));
+
 	if ( isConnected() != wasConnected )
 		emit isConnectedChanged();
 }

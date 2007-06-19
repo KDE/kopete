@@ -22,6 +22,7 @@
 #include "kopeteglobal.h"
 #include "kopeteinfopage.h"
 #include "kopetepropertycontainer.h"
+#include "kopeteonlinestatus.h"
 #include "kopete_export.h"
 
 class KConfigGroup;
@@ -73,6 +74,29 @@ public:
 	void setOnlineStatus( uint category, const QString &awayMessage );
 
 	/**
+	 * @brief Get the online status of the identity
+	 * @return the online status of the identity
+	 */
+	OnlineStatus onlineStatus() const;
+	
+	/**
+	 * \brief Get the tooltip for this identity
+	 * \return an RTF tooltip depending on Kopete::AppearanceSettings settings
+	 **/
+	QString toolTip() const;
+
+	/**
+	 * \brief Return the icon for this identity
+	 */
+	QString customIcon() const;
+
+	/**
+	 * @brief Return the menu for this identity
+	 *
+	 * @see OnlineStatusManager::registerOnlineStatus
+	 */
+	KActionMenu* actionMenu();
+	/**
 	 * @brief Adds an account to the identity
 	 *
 	 * @param account the account to be added
@@ -101,6 +125,13 @@ public:
 	 * Save the identity information
 	 */
 	void save();
+
+public slots:
+	void updateOnlineStatus();
+
+signals:
+	void onlineStatusChanged(Kopete::Identity*,Kopete::OnlineStatus,Kopete::OnlineStatus);
+	void identityDestroyed( const Kopete::Identity *identity );
 
 private:
 	class Private;

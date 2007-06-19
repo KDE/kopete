@@ -23,6 +23,7 @@
 #include "kopeteaway.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
+#include "kopeteidentity.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include "kopetecontactlist.h"
@@ -444,7 +445,6 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	chatSession->appendMessage( chatMessage );
 }
 
-
 void OscarAccount::setServerAddress(const QString &server)
 {
 	configGroup()->writeEntry( QString::fromLatin1( "Server" ), server );
@@ -477,40 +477,6 @@ QTextCodec* OscarAccount::contactCodec( const QString& contactName ) const
 	// XXX  method is not const for some strange reason.
 	OscarContact* contact = static_cast<OscarContact *> ( const_cast<OscarAccount *>(this)->contacts()[contactName] );
 	return contactCodec( contact );
-}
-
-void OscarAccount::setBuddyIcon( KUrl url )
-{
-	if ( url.path().isEmpty() )
-	{
-		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
-	}
-	else
-	{
-		QImage image( url.path() );
-		if ( image.isNull() )
-			return;
-		
-		const QSize size = ( d->engine->isIcq() ) ? QSize( 52, 64 ) : QSize( 48, 48 );
-		
-		image = image.scaled( size, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
-		if( image.width() > size.width())
-			image = image.copy( ( image.width() - size.width() ) / 2, 0, size.width(), image.height() );
-		
-		if( image.height() > size.height())
-			image = image.copy( 0, ( image.height() - size.height() ) / 2, image.width(), size.height() );
-		
-		QString newlocation( KStandardDirs::locateLocal( "appdata", "oscarpictures/"+ accountId() + ".jpg" ) );
-		
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Saving buddy icon: " << newlocation << endl;
-		if ( !image.save( newlocation, "JPEG" ) )
-			return;
-		
-		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
-	}
-	
-	d->buddyIconDirty = true;
-	updateBuddyIconInSSI();
 }
 
 bool OscarAccount::addContactToSSI( const QString& contactName, const QString& groupName, bool autoAddGroup )
@@ -798,11 +764,12 @@ void OscarAccount::updateBuddyIconInSSI()
 	if ( !engine()->isActive() )
 		return;
 	
-	QString photoPath = myself()->getProperty( Kopete::Global::Properties::self()->photo() ).value().toString();
+	QString photoPath = identity()->getProperty( Kopete::Global::Properties::self()->photo() ).value().toString();
 	
 	ContactManager* ssi = engine()->ssiManager();
 	OContact item = ssi->findItemForIconByRef( 1 );
 	
+	// FIXME: we need to resize the photo before sending it
 	if ( photoPath.isEmpty() )
 	{
 		if ( item )
@@ -883,7 +850,7 @@ void OscarAccount::slotSendBuddyIcon()
 {
 	//need to disconnect because we could end up with many connections
 	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotSendBuddyIcon() ) );
-	QString photoPath = myself()->getProperty( Kopete::Global::Properties::self()->photo() ).value().toString();
+	QString photoPath = identity()->getProperty( Kopete::Global::Properties::self()->photo() ).value().toString();
 	if ( photoPath.isEmpty() )
 		return;
 	

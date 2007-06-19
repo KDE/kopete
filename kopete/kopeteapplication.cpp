@@ -209,6 +209,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 {
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
+	//FIXME: this should probably ask for the identities to connect instead of all accounts
 	// --noconnect not specified?
 	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() )
 		Kopete::AccountManager::self()->connectAll();

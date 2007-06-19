@@ -102,6 +102,8 @@ Identity* IdentityManager::registerIdentity( Identity *identity )
 
 	connect(identity, SIGNAL(identityDestroyed(const Kopete::Identity *)) , this, SLOT( unregisterIdentity(const Kopete::Identity *) ));
 
+	emit identityRegistered( identity );
+
 	return identity;
 }
 
@@ -109,6 +111,8 @@ void IdentityManager::unregisterIdentity( const Identity *identity )
 {
 	kDebug( 14010 ) << k_funcinfo << "Unregistering identity " << identity->identityId() << endl;
 	d->identities.removeAll( const_cast<Identity*>(identity) );
+
+	emit identityUnregistered( identity );
 }
 
 const Identity::List& IdentityManager::identities() const

@@ -18,6 +18,7 @@
 #include "kopetepropertycontainer.h"
 #include "kopeteidentity.h"
 #include "kopeteaccount.h"
+#include "kopetecontact.h"
 
 #include <QStringList>
 #include <KDebug>
@@ -36,6 +37,7 @@ public:
 	QList<Kopete::Account*> accounts;
 	QString id;
 	KConfigGroup *configGroup;
+	OnlineStatus onlineStatus;
 };
 
 Identity::Identity(const QString &id)
@@ -48,6 +50,9 @@ Identity::Identity(const QString &id)
 
 Identity::~Identity()
 {
+	emit identityDestroyed(this);
+
+	delete d->configGroup;
 	delete d;
 }
 
@@ -79,6 +84,31 @@ void Identity::setOnlineStatus( uint category, const QString &awayMessage )
 		if ( !account->excludeConnect() )
 			account->setOnlineStatus( status , awayMessage );
 	}
+}
+
+OnlineStatus Identity::onlineStatus() const
+{
+	//TODO implement
+	return d->onlineStatus;
+}
+
+QString Identity::toolTip() const
+{
+	//TODO implement
+	return QString("Identity %1").arg(d->id);
+}
+
+QString Identity::customIcon() const
+{
+	//TODO implement
+	return "identity";
+}
+
+
+KActionMenu* Identity::actionMenu()
+{
+	//TODO implement
+	return new KActionMenu(d->id, this);
 }
 
 void Identity::addAccount( Kopete::Account *account )
@@ -127,7 +157,26 @@ void Identity::save()
 	}
 }
 
+void Identity::updateOnlineStatus()
+{
+	Kopete::OnlineStatus mostSignificantStatus;
+
+	foreach(Account *account, d->accounts)
+	{
+		// find most significant status
+		if ( account->myself()->onlineStatus() > mostSignificantStatus )
+			mostSignificantStatus = account->myself()->onlineStatus();
+	}
+
+	if( mostSignificantStatus != d->onlineStatus )
+	{
+		emit onlineStatusChanged( this, d->onlineStatus, mostSignificantStatus );
+		d->onlineStatus = mostSignificantStatus;
+	}
+}
+
 } //END namespace Kopete
 
 #include "kopeteidentity.moc"
 
+// vim: set noet ts=4 sts=4 sw=4:

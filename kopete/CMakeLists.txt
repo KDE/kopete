@@ -49,7 +49,7 @@ set(kopete_SRCS
    kopeteapplication.cpp 
    systemtray.cpp 
    kopetewindow.cpp 
-   kopeteaccountstatusbaricon.cpp 
+   kopeteidentitystatusbaricon.cpp 
 #   kopeteiface.cpp 
 #   kimifaceimpl.cpp 
    kopeteeditglobalidentitywidget.cpp )
