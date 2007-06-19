@@ -27,7 +27,7 @@
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
 #include "kopeteglobal.h"
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 #include "kopetemetacontact.h"
 
 namespace Kopete
@@ -42,8 +42,8 @@ public:
 	 * Make sure we always have a lastSeen and a fullname property as long as
 	 * a protocol is loaded
 	 */
-	ContactPropertyTmpl mStickLastSeen;
-	ContactPropertyTmpl mStickFullName;
+	PropertyTmpl mStickLastSeen;
+	PropertyTmpl mStickFullName;
 
 	Kopete::OnlineStatus accountNotConnectedStatus;
 };

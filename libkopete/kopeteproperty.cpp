@@ -1,12 +1,13 @@
 /*
-    kopetecontactproperty.cpp
+    kopeteproperty.cpp
 
-    Kopete::Contact Property class
+    Kopete::Property class
 
+    Copyright (c) 2007    by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2004    by Stefan Gehn <metz AT gehn.net>
     Copyright (c) 2006    by Michaël Larouche <larouche@kde.org>
 
-    Kopete    (c) 2004-2006    by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2004-2007    by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -18,27 +19,27 @@
     *************************************************************************
 */
 
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 #include <kdebug.h>
 #include "kopeteglobal.h"
 
 namespace Kopete
 {
 
-class ContactPropertyTmpl::Private
+class PropertyTmpl::Private
 {
 public:
 	QString key;
 	QString label;
 	QString icon;
-	ContactPropertyOptions options;
+	PropertyOptions options;
 	unsigned int refCount;
 };
 
-ContactPropertyTmpl ContactPropertyTmpl::null;
+PropertyTmpl PropertyTmpl::null;
 
 
-ContactPropertyTmpl::ContactPropertyTmpl()
+PropertyTmpl::PropertyTmpl()
 {
 	d = new Private;
 	d->refCount = 1;
@@ -46,10 +47,10 @@ ContactPropertyTmpl::ContactPropertyTmpl()
 	// Don't register empty template
 }
 
-ContactPropertyTmpl::ContactPropertyTmpl(const QString &key,
-	const QString &label, const QString &icon, ContactPropertyOptions options)
+PropertyTmpl::PropertyTmpl(const QString &key,
+	const QString &label, const QString &icon, PropertyOptions options)
 {
-	ContactPropertyTmpl other = Kopete::Global::Properties::self()->tmpl(key);
+	PropertyTmpl other = Kopete::Global::Properties::self()->tmpl(key);
 	if(other.isNull())
 	{
 //		kDebug(14000) << k_funcinfo << "Creating new template for key = '" << key << "'" << endl;
@@ -70,14 +71,14 @@ ContactPropertyTmpl::ContactPropertyTmpl(const QString &key,
 	}
 }
 
-ContactPropertyTmpl::ContactPropertyTmpl(const ContactPropertyTmpl &other)
+PropertyTmpl::PropertyTmpl(const PropertyTmpl &other)
 {
 	d = other.d;
 	d->refCount++;
 }
 
-ContactPropertyTmpl &ContactPropertyTmpl::operator=(
-	const ContactPropertyTmpl &other)
+PropertyTmpl &PropertyTmpl::operator=(
+	const PropertyTmpl &other)
 {
 	if (this == &other)
 	{
@@ -103,7 +104,7 @@ ContactPropertyTmpl &ContactPropertyTmpl::operator=(
 	return *this;
 }
 
-ContactPropertyTmpl::~ContactPropertyTmpl()
+PropertyTmpl::~PropertyTmpl()
 {
 	d->refCount--;
 	if(d->refCount == 0)
@@ -114,7 +115,7 @@ ContactPropertyTmpl::~ContactPropertyTmpl()
 	}
 }
 
-bool ContactPropertyTmpl::operator==(const ContactPropertyTmpl &other) const
+bool PropertyTmpl::operator==(const PropertyTmpl &other) const
 {
 	return (d && other.d &&
 		d->key == other.d->key &&
@@ -123,7 +124,7 @@ bool ContactPropertyTmpl::operator==(const ContactPropertyTmpl &other) const
 		d->options == other.d->options);
 }
 
-bool ContactPropertyTmpl::operator!=(const ContactPropertyTmpl &other) const
+bool PropertyTmpl::operator!=(const PropertyTmpl &other) const
 {
 	return (!d || !other.d ||
 		d->key != other.d->key ||
@@ -133,42 +134,42 @@ bool ContactPropertyTmpl::operator!=(const ContactPropertyTmpl &other) const
 }
 
 
-const QString &ContactPropertyTmpl::key() const
+const QString &PropertyTmpl::key() const
 {
 	return d->key;
 }
 
-const QString &ContactPropertyTmpl::label() const
+const QString &PropertyTmpl::label() const
 {
 	return d->label;
 }
 
-const QString &ContactPropertyTmpl::icon() const
+const QString &PropertyTmpl::icon() const
 {
 	return d->icon;
 }
 
-ContactPropertyTmpl::ContactPropertyOptions ContactPropertyTmpl::options() const
+PropertyTmpl::PropertyOptions PropertyTmpl::options() const
 {
 	return d->options;
 }
 
-bool ContactPropertyTmpl::persistent() const
+bool PropertyTmpl::persistent() const
 {
 	return d->options & PersistentProperty;
 }
 
-bool ContactPropertyTmpl::isRichText() const
+bool PropertyTmpl::isRichText() const
 {
 	return d->options & RichTextProperty;
 }
 
-bool ContactPropertyTmpl::isPrivate() const
+bool PropertyTmpl::isPrivate() const
 {
 	return d->options & PrivateProperty;
 }
 
-bool ContactPropertyTmpl::isNull() const
+bool PropertyTmpl::isNull() const
 {
 	return (!d || d->key.isNull());
 }
@@ -177,21 +178,21 @@ bool ContactPropertyTmpl::isNull() const
 // -----------------------------------------------------------------------------
 
 
-ContactProperty ContactProperty::null;
+Property Property::null;
 
-class ContactProperty::Private
+class Property::Private
 {
 public:
 	QVariant value;
-	ContactPropertyTmpl propertyTemplate;
+	PropertyTmpl propertyTemplate;
 };
 
-ContactProperty::ContactProperty()
+Property::Property()
  : d(new Private)
 {
 }
 
-ContactProperty::ContactProperty(const ContactPropertyTmpl &tmpl,
+Property::Property(const PropertyTmpl &tmpl,
 	const QVariant &val)
  : d(new Private)
 {
@@ -199,19 +200,19 @@ ContactProperty::ContactProperty(const ContactPropertyTmpl &tmpl,
 	d->value = val;
 }
 
-ContactProperty::ContactProperty(const ContactProperty& other)
+Property::Property(const Property& other)
  : d(new Private)
 {
 	d->propertyTemplate = other.d->propertyTemplate;
 	d->value = other.d->value;
 }
 
-ContactProperty::~ContactProperty()
+Property::~Property()
 {
 	delete d;
 }
 
-ContactProperty& ContactProperty::operator=(const ContactProperty& other)
+Property& Property::operator=(const Property& other)
 {
 	if (this == &other)
 	{
@@ -225,22 +226,22 @@ ContactProperty& ContactProperty::operator=(const ContactProperty& other)
 	return *this;
 }
 
-const QVariant &ContactProperty::value() const
+const QVariant &Property::value() const
 {
 	return d->value;
 }
 
-const ContactPropertyTmpl &ContactProperty::tmpl() const
+const PropertyTmpl &Property::tmpl() const
 {
 	return d->propertyTemplate;
 }
 
-bool ContactProperty::isNull() const
+bool Property::isNull() const
 {
 	return d->value.isNull();
 }
 
-bool ContactProperty::isRichText() const
+bool Property::isRichText() const
 {
 	return d->propertyTemplate.isRichText();
 }

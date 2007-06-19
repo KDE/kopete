@@ -442,15 +442,7 @@ public slots:
 	 */
 	virtual void sendFile( const KUrl &sourceURL = KUrl(),
 			       const QString &fileName = QString::null, uint fileSize = 0L );
-	/**
-	 * Sets a property
-	 * FIXME: this is just to fix the ambiguation of PropertyContainer::setProperty() 
-	 * versus QObject::setProperty(). We should check for a better name
-	 */
-	void setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value);
-
 private slots:
-
 	/**
 	 * This add the contact totally in the list if it was a temporary contact
 	 */

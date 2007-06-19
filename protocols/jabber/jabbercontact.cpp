@@ -429,7 +429,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 void JabberContact::slotCheckVCard ()
 {
 	QDateTime cacheDate;
-	Kopete::ContactProperty cacheDateString = getProperty ( protocol()->propVCardCacheTimeStamp );
+	Kopete::Property cacheDateString = getProperty ( protocol()->propVCardCacheTimeStamp );
 
 	// don't do anything while we are offline
 	if ( !account()->myself()->onlineStatus().isDefinitelyOnline () )

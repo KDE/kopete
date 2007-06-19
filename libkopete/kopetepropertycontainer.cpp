@@ -32,7 +32,7 @@ namespace Kopete {
 class PropertyContainer::Private
 {
 public:
-	Kopete::ContactProperty::Map properties;
+	Kopete::Property::Map properties;
 };
 
 PropertyContainer::PropertyContainer(QObject *parent)
@@ -50,7 +50,7 @@ PropertyContainer::~PropertyContainer()
 void PropertyContainer::serializeProperties(QMap<QString, QString> &serializedData)
 {
 
-	Kopete::ContactProperty::Map::ConstIterator it;// = d->properties.ConstIterator;
+	Kopete::Property::Map::ConstIterator it;// = d->properties.ConstIterator;
 	for (it=d->properties.begin(); it != d->properties.end(); ++it)
 	{
 		if (!it.value().tmpl().persistent())
@@ -91,10 +91,10 @@ void PropertyContainer::deserializeProperties(
 			continue;
 		}
 
-		Kopete::ContactPropertyTmpl tmpl = Kopete::Global::Properties::self()->tmpl(key);
+		Kopete::PropertyTmpl tmpl = Kopete::Global::Properties::self()->tmpl(key);
 		if( tmpl.isNull() )
 		{
-			kDebug( 14010 ) << k_funcinfo << "no ContactPropertyTmpl defined for" \
+			kDebug( 14010 ) << k_funcinfo << "no PropertyTmpl defined for" \
 				" key " << key << ", cannot restore persistent property" << endl;
 			continue;
 		}
@@ -113,25 +113,25 @@ bool PropertyContainer::hasProperty(const QString &key) const
 	return d->properties.contains(key);
 }
 
-const ContactProperty &PropertyContainer::getProperty(const QString &key) const
+const Property &PropertyContainer::getProperty(const QString &key) const
 {
 	if(hasProperty(key))
 		return d->properties[key];
 	else
-		return Kopete::ContactProperty::null;
+		return Kopete::Property::null;
 }
 
-const Kopete::ContactProperty &PropertyContainer::getProperty(
-	const Kopete::ContactPropertyTmpl &tmpl) const
+const Kopete::Property &PropertyContainer::getProperty(
+	const Kopete::PropertyTmpl &tmpl) const
 {
 	if(hasProperty(tmpl.key()))
 		return d->properties[tmpl.key()];
 	else
-		return Kopete::ContactProperty::null;
+		return Kopete::Property::null;
 }
 
 
-void PropertyContainer::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
+void PropertyContainer::setProperty(const Kopete::PropertyTmpl &tmpl,
 	const QVariant &value)
 {
 	if(tmpl.isNull() || tmpl.key().isEmpty())
@@ -151,7 +151,7 @@ void PropertyContainer::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 
 		if(oldValue != value)
 		{
-			Kopete::ContactProperty prop(tmpl, value);
+			Kopete::Property prop(tmpl, value);
 			d->properties.remove(tmpl.key());
 			d->properties.insert(tmpl.key(), prop);
 
@@ -160,7 +160,7 @@ void PropertyContainer::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
 	}
 }
 
-void PropertyContainer::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
+void PropertyContainer::removeProperty(const Kopete::PropertyTmpl &tmpl)
 {
 	if(!tmpl.isNull() && !tmpl.key().isEmpty())
 	{

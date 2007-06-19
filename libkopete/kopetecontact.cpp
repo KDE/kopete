@@ -545,7 +545,7 @@ void Contact::setIdleTime( unsigned long int t )
 
 QString Contact::toolTip() const
 {
-	Kopete::ContactProperty p;
+	Kopete::Property p;
 	QString tip;
 	QStringList shownProps = Kopete::AppearanceSettings::self()->toolTipContents();
 
@@ -578,7 +578,7 @@ QString Contact::toolTip() const
 	// --------------------------------------------------------------------------
 	// Configurable part of tooltip
 
-	// FIXME: It shouldn't use QString to identity the properties. Instead it should use ContactPropertyTmpl::key()
+	// FIXME: It shouldn't use QString to identity the properties. Instead it should use PropertyTmpl::key()
 	for(QStringList::Iterator it=shownProps.begin(); it!=shownProps.end(); ++it)
 	{
 		if((*it) == Kopete::Global::Properties::self()->fullName().key() )
@@ -667,7 +667,7 @@ QString Kopete::Contact::formattedName() const
 		return getProperty( Kopete::Global::Properties::self()->fullName() ).value().toString();
 
 	QString ret;
-	Kopete::ContactProperty first, last;
+	Kopete::Property first, last;
 
 	first = getProperty( Kopete::Global::Properties::self()->firstName() );
 	last = getProperty( Kopete::Global::Properties::self()->lastName() );
@@ -763,11 +763,6 @@ QString Kopete::Contact::nickName() const
 void Kopete::Contact::setPhoto(const QString &photoPath)
 {
 	setProperty( Kopete::Global::Properties::self()->photo(), photoPath );
-}
-
-void Kopete::Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value)
-{
-	PropertyContainer::setProperty( tmpl, value );
 }
 
 } //END namespace Kopete

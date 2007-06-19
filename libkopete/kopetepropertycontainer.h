@@ -51,7 +51,7 @@ public:
 	virtual ~PropertyContainer();
 
 	/**
-	 * @brief Serialize the contacts persistent properties for storage in the contact list.
+	 * @brief Serialize the persistent properties for storage in the contact list.
 	 *
 	 * Does the same as @ref serialize() does but for KopeteContactProperties
 	 * set in this contact with their persistency flag turned on.
@@ -84,8 +84,8 @@ public:
 	 * to check for it.
 	 * \return the value of the property
 	 **/
-	const Kopete::ContactProperty &getProperty(const QString &key) const;
-	const Kopete::ContactProperty &getProperty(const Kopete::ContactPropertyTmpl &tmpl) const;
+	const Kopete::Property &getProperty(const QString &key) const;
+	const Kopete::Property &getProperty(const Kopete::PropertyTmpl &tmpl) const;
 
 	/**
 	 * \brief Add or Set a property for this contact.
@@ -101,14 +101,14 @@ public:
 	 * The Removal is done to clean up the list of properties and to purge them
 	 * from UI.
 	 **/
-	void setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value);
+	void setProperty(const Kopete::PropertyTmpl &tmpl, const QVariant &value);
 
 	/**
 	 * \brief Remove a property if it exists
 	 *
 	 * @param tmpl the template this property is based on
 	 **/
-	void removeProperty(const Kopete::ContactPropertyTmpl &tmpl);
+	void removeProperty(const Kopete::PropertyTmpl &tmpl);
 
 	/**
 	 * @brief Get the contact info pages for this contact

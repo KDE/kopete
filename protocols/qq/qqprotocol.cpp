@@ -39,13 +39,13 @@ QQProtocol::QQProtocol( QObject* parent, const QStringList &/*args*/ )
 			  i18n( "Offline" ),   i18n( "O&ffline" ) ),
 	  propNickName(Kopete::Global::Properties::self()->nickName()),
 	  propFullName(Kopete::Global::Properties::self()->fullName()),
-	  propCountry("QQVCardCountry", i18n("Country"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ), 
-	  propState("QQVCardState", i18n("State"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ), 
-	  propCity("QQVCardCity", i18n("State"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ),
-	  propStreet("QQVCardAddress", i18n("Home Address"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ),
-	  propZipcode("QQVCardZipcode", i18n("Zipcode"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ), 
+	  propCountry("QQVCardCountry", i18n("Country"), QString(), Kopete::PropertyTmpl::PersistentProperty ), 
+	  propState("QQVCardState", i18n("State"), QString(), Kopete::PropertyTmpl::PersistentProperty ), 
+	  propCity("QQVCardCity", i18n("State"), QString(), Kopete::PropertyTmpl::PersistentProperty ),
+	  propStreet("QQVCardAddress", i18n("Home Address"), QString(), Kopete::PropertyTmpl::PersistentProperty ),
+	  propZipcode("QQVCardZipcode", i18n("Zipcode"), QString(), Kopete::PropertyTmpl::PersistentProperty ), 
 	  propEmail(Kopete::Global::Properties::self()->emailAddress()),
-	  propAge("QQVCardAge", i18n("Age"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty )
+	  propAge("QQVCardAge", i18n("Age"), QString(), Kopete::PropertyTmpl::PersistentProperty )
 {
 	kDebug( 14210 ) << k_funcinfo << endl;
 	s_protocol = this;

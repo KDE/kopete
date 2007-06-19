@@ -53,13 +53,6 @@ public:
 	QString identityId() const;
 
 	/**
-	 * Sets a property
-	 * FIXME: this is just to fix the ambiguation of PropertyContainer::setProperty() 
-	 * versus QObject::setProperty(). We should check for a better name
-	 */
-	void setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value);
-
-	/**
 	 * @brief Returns a list of user info widgets
 	 *
 	 * This function should be implemented in derived classes if you want to get custom 
@@ -98,6 +91,16 @@ public:
 	 * of this identity
 	 */
 	KConfigGroup *configGroup() const;
+
+	/**
+	 * Load the identity information
+	 */
+	void load();
+
+	/**
+	 * Save the identity information
+	 */
+	void save();
 
 private:
 	class Private;

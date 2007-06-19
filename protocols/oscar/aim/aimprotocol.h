@@ -53,7 +53,7 @@ public:
 
 	OscarStatusManager *statusManager() const;
 
-	const Kopete::ContactPropertyTmpl clientProfile;
+	const Kopete::PropertyTmpl clientProfile;
 
 private:
 	/** The active instance of oscarprotocol */

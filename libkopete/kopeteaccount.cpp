@@ -380,7 +380,11 @@ KActionMenu * Account::actionMenu()
 #ifdef __GNUC__
 #warning No icon shown, we should go away from QPixmap genered icons with overlays.
 #endif
-	QString nick = myself()->nickName();
+	QString nick;
+       	if (identity()->hasProperty( Kopete::Global::Properties::self()->nickName().key() ))
+		nick = identity()->getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	else
+		nick = myself()->nickName();
 
 	menu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
 		nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
@@ -475,7 +479,7 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 	if ( !isOffline )
 	{
 		d->restoreStatus = newStatus;
-		d->restoreMessage = myself()->getProperty( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
+		d->restoreMessage = identity()->getProperty( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
 //		kDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage << endl;
 	}
 

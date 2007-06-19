@@ -56,11 +56,6 @@ QString Identity::identityId() const
 	return d->id;
 }
 
-void Identity::setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value)
-{
-	PropertyContainer::setProperty( tmpl, value );
-}
-
 Kopete::UI::InfoPage::List Identity::customInfoPages() const
 {
 	// TODO implement
@@ -105,6 +100,31 @@ void Identity::removeAccount( Kopete::Account *account )
 KConfigGroup *Identity::configGroup() const
 {
 	return d->configGroup;
+}
+
+void Identity::load()
+{
+	QStringList properties = d->configGroup->readEntry("Properties", QStringList());
+	QMap<QString,QString> props;
+
+	foreach(QString prop, properties)
+	{
+		props[ prop ] = d->configGroup->readEntry( prop, QString() );
+	}
+}
+
+void Identity::save()
+{
+	// FIXME: using kconfig for now, but I guess this is going to change
+	d->configGroup->writeEntry("Properties", properties());
+	
+	QMap<QString,QString> props;
+	serializeProperties(props);
+	QMap<QString,QString>::iterator it;
+	for (it = props.begin(); it != props.end();  ++it)
+	{
+		d->configGroup->writeEntry(it.key(), *it);
+	}
 }
 
 } //END namespace Kopete

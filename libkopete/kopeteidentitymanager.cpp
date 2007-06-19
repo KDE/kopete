@@ -148,6 +148,7 @@ void IdentityManager::save()
 		KConfigGroup *config = identity->configGroup();
 
 		config->writeEntry( "IdentityId", identity->identityId() );
+		identity->save();
 	}
 
 	KGlobal::config()->sync();

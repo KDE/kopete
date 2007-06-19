@@ -71,7 +71,7 @@ set(kopete_LIB_SRCS
    kopetecontact.cpp
    kopetecontactlist.cpp
    kopetecontactlistelement.cpp
-   kopetecontactproperty.cpp
+   kopeteproperty.cpp
    kopeteglobal.cpp
    kopetegroup.cpp
    kopeteidentity.cpp
@@ -183,7 +183,7 @@ install( FILES
   kopetecontact.h
   kopetecontactlistelement.h
   kopetecontactlist.h
-  kopetecontactproperty.h
+  kopeteproperty.h
   kopete_export.h
   kopeteglobal.h
   kopetegroup.h

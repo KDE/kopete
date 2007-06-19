@@ -28,7 +28,7 @@
 #include "kopeteonlinestatus.h"
 #include "kopeteonlinestatusmanager.h"
 #include "kopeteprotocol.h"
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 
 #include "gaducommands.h"
 
@@ -74,12 +74,12 @@ public:
 	uint statusToWithDescription( Kopete::OnlineStatus status );
 	uint statusToWithoutDescription( Kopete::OnlineStatus status );
 	
-	const Kopete::ContactPropertyTmpl propFirstName;
-	const Kopete::ContactPropertyTmpl propLastName;
-	const Kopete::ContactPropertyTmpl propEmail;
-	const Kopete::ContactPropertyTmpl propAwayMessage;
-	const Kopete::ContactPropertyTmpl propPhoneNr;
-	//const Kopete::ContactPropertyTmpl propIgnore;
+	const Kopete::PropertyTmpl propFirstName;
+	const Kopete::PropertyTmpl propLastName;
+	const Kopete::PropertyTmpl propEmail;
+	const Kopete::PropertyTmpl propAwayMessage;
+	const Kopete::PropertyTmpl propPhoneNr;
+	//const Kopete::PropertyTmpl propIgnore;
 
 private slots:
 	void settingsChanged();

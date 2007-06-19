@@ -36,7 +36,7 @@
 #include <kabcpersistence.h>
 #include <kopetecontact.h>
 #include <kopetecontactlist.h>
-#include <kopetecontactproperty.h>
+#include <kopeteproperty.h>
 #include <kopeteglobal.h>
 #include <kopetemetacontact.h>
 #include <kopetepicture.h>
@@ -181,7 +181,7 @@ void KabcExportWizard::accept()
 					QList<Kopete::Contact*> contacts = item->mc->contacts();
 					if ( contacts.count() == 1 )
 					{
-						Kopete::ContactProperty prop;
+						Kopete::Property prop;
 						prop = contacts.first()->getProperty(
 								Kopete::Global::Properties::self()->fullName() );
 						if ( prop.isNull() )
@@ -219,7 +219,7 @@ void KabcExportWizard::exportDetails( Kopete::MetaContact * mc, KABC::Addressee 
 	QList<Kopete::Contact*>::iterator cit, citEnd = contacts.begin();
 	for( cit = contacts.begin(); cit != citEnd; ++cit )
 	{
-		Kopete::ContactProperty prop;
+		Kopete::Property prop;
 		prop = (*cit)->getProperty( Kopete::Global::Properties::self()->emailAddress() );
 		if ( !prop.isNull() )
 		{
