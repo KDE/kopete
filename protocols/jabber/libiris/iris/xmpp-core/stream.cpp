@@ -1338,9 +1338,9 @@ void ClientStream::sasl_needParams(const QCA::SASL::Params& p)
 		d->sasl->setAuthzid(d->jid.bare());
 		//d->sasl->setAuthzid("infiniti.homelesshackers.org");
 	}*/
-	if(p.needUserName() || p.needPassword() || p.canSendRealm()) {
+	if(p.needUsername() || p.needPassword() || p.canSendRealm()) {
 		d->state = NeedParams;
-		needAuthParams(p.needUserName(), p.needPassword(), p.canSendRealm());
+		needAuthParams(p.needUsername(), p.needPassword(), p.canSendRealm());
 	}
 	else
 		d->sasl->continueAfterParams();
