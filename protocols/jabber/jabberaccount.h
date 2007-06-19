@@ -298,9 +298,6 @@ private slots:
 	/* Get the services list from the server for management. */
 	void slotGetServices ();
 
-	/* Update the myself information if the global identity changes. */
-	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
-
 	/* we received a voice invitation */
 	void slotIncomingVoiceCall(const Jid&);
 

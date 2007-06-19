@@ -81,8 +81,6 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ),
 		SLOT( slotKopeteGroupRemoved( Kopete::Group * ) ) );
 
-	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
-
 	m_openInboxAction = new KAction( KIcon("mail"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect( m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()) );
@@ -1257,29 +1255,6 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 	}
 
 
-}
-
-void MSNAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &value )
-{
-	if( !configGroup()->readEntry("ExcludeGlobalIdentity", false) )
-	{
-		if(key == Kopete::Global::Properties::self()->nickName().key())
-		{
-			QString oldNick = myself()->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString();
-			QString newNick = value.toString();
-
-			if(newNick != oldNick)
-			{
-				setPublicName( value.toString() );
-			}
-		}
-		else if(key == Kopete::Global::Properties::self()->photo().key())
-		{
-			m_pictureFilename = value.toString();
-			kDebug( 14140 ) << k_funcinfo << m_pictureFilename << endl;
-			resetPictureObject(false);
-		}
-	}
 }
 
 void MSNAccount::slotErrorMessageReceived( int type, const QString &msg )

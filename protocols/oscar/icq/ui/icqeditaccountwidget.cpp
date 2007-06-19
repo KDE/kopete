@@ -114,9 +114,6 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		configValue = mAccount->configGroup()->readEntry( "Timeout", 10 );
 		mAccountSettings->sbxTimeout->setValue( configValue );
 
-		// Global Identity
-		mAccountSettings->chkGlobalIdentity->setChecked( mAccount->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
-
 		if ( mAccount->engine()->isActive() )
 		{
 			m_visibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Visible );
@@ -240,9 +237,6 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	configValue = mAccountSettings->sbxTimeout->value();
 	mAccount->configGroup()->writeEntry( "Timeout", configValue );
 	oscarSettings->setTimeout( configValue );
-
-	// Global Identity
-	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mAccountSettings->chkGlobalIdentity->isChecked() );
 
 	if ( mAccount->engine()->isActive() )
 	{

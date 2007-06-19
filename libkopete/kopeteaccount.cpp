@@ -418,7 +418,9 @@ Identity * Account::identity() const
 void Account::setIdentity( Identity *ident )
 {
 	if (d->identity)
+	{
 		d->identity->removeAccount( this );
+	}
 
 	ident->addAccount( this );
 	d->identity = ident;

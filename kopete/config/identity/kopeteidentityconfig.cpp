@@ -210,7 +210,7 @@ void KopeteIdentityConfig::save()
 	GlobalIdentitiesManager::self()->saveXML();
 
 	// (Re)made slot connections to apply Global Identity in protocols
-	Kopete::ContactList::self()->loadGlobalIdentity();
+	//Kopete::ContactList::self()->loadGlobalIdentity();
 
 	load();
 }

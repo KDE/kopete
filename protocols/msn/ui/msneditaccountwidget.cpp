@@ -135,8 +135,6 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 		d->ui->m_useDisplayPicture->setChecked( config->readEntry( "exportCustomPicture", false ));
 
-		// Global Identity
-		d->ui->m_globalIdentity->setChecked( config->readEntry("ExcludeGlobalIdentity", false) );
 	}
 	else
 	{
@@ -181,9 +179,6 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	}
 
 	config->writeEntry( "useHttpMethod", d->ui->optionUseHttpMethod->isChecked() );
-
-	// Global Identity
-	config->writeEntry( "ExcludeGlobalIdentity", d->ui->m_globalIdentity->isChecked() );
 
 	// Save the avatar image
 	config->writeEntry("avatar", d->pictureUrl);

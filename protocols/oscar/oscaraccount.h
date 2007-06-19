@@ -190,8 +190,6 @@ private slots:
 	/** Handle task errors from the client */
 	void slotTaskError( const Oscar::SNAC& s, int errCode, bool fatal ) ;
 
-	void slotGlobalIdentityChanged( const QString& key, const QVariant& value );
-
 	/** Sends buddy icon to server */
 	void slotSendBuddyIcon();
 

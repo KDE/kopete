@@ -114,8 +114,6 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 
-	QObject::connect(Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ) );
-
 	m_initialPresence = XMPP::Status ( "", "", 5, true );
 
 }
@@ -1642,34 +1640,6 @@ void JabberAccount::slotResourceUnavailable (const XMPP::Jid & jid, const XMPP::
 void JabberAccount::slotEditVCard ()
 {
 	static_cast<JabberContact *>( myself() )->slotUserInfo ();
-}
-
-void JabberAccount::slotGlobalIdentityChanged (const QString &key, const QVariant &value)
-{
-	// Check if this account is excluded from Global Identity.
-	if( !configGroup()->readEntry("ExcludeGlobalIdentity", false) )
-	{
-		JabberContact *jabberMyself = static_cast<JabberContact *>( myself() );
-		if( key == Kopete::Global::Properties::self()->nickName().key() )
-		{
-			QString oldNick = jabberMyself->getProperty( protocol()->propNickName ).value().toString();
-			QString newNick = value.toString();
-		
-			if( newNick != oldNick && isConnected() )
-			{
-				jabberMyself->setProperty( protocol()->propNickName, newNick );
-				jabberMyself->slotSendVCard();
-			}
-		}
-		if( key == Kopete::Global::Properties::self()->photo().key() )
-		{
-			if( isConnected() )
-			{
-				jabberMyself->setPhoto( value.toString() );
-				jabberMyself->slotSendVCard();
-			}
-		}
-	}
 }
 
 const QString JabberAccount::resource () const

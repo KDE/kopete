@@ -200,11 +200,6 @@ private slots:
 	 */
 	void createNotificationServer( const QString &host, uint port );
 
-	/**
- 	 * When a global identity key get changed.
-	 */
-	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
-
 private:
 	MSNNotifySocket *m_notifySocket;
 	KAction *m_openInboxAction;

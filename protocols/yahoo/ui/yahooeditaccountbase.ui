@@ -37,7 +37,7 @@
       </size>
      </property>
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
@@ -135,13 +135,6 @@
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="mGlobalIdentity" >
-            <property name="text" >
-             <string>Exclude from &amp;Global Identity</string>
             </property>
            </widget>
           </item>
@@ -624,7 +617,6 @@
  <tabstops>
   <tabstop>mScreenName</tabstop>
   <tabstop>mAutoConnect</tabstop>
-  <tabstop>mGlobalIdentity</tabstop>
   <tabstop>buttonRegister</tabstop>
   <tabstop>tabWidget11</tabstop>
   <tabstop>optionOverrideServer</tabstop>

@@ -133,8 +133,6 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	                  this, SLOT( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ) );
 	QObject::connect( d->engine, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
 	                  this, SLOT( getTransferManager( Kopete::TransferManager ** ) ) );
-	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged( const QString&, const QVariant& ) ),
-	                  this, SLOT( slotGlobalIdentityChanged( const QString&, const QVariant& ) ) );
 }
 
 OscarAccount::~OscarAccount()
@@ -793,27 +791,6 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 	                        Kopete::UI::Global::mainWidget() );
 	if ( fatal )
 		logOff( Kopete::Account::ConnectionReset );
-}
-
-void OscarAccount::slotGlobalIdentityChanged( const QString& key, const QVariant& value )
-{
-	//do something with the photo
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Global identity changed" << endl;
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "key: " << key << endl;
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "value: " << value << endl;
-	
-	if( !configGroup()->readEntry("ExcludeGlobalIdentity", false) )
-	{
-		if ( key == Kopete::Global::Properties::self()->nickName().key() )
-		{
-			//edit ssi item to change alias (if possible)
-		}
-		
-		if ( key == Kopete::Global::Properties::self()->photo().key() )
-		{
-			setBuddyIcon( value.toString() );
-		}
-	}
 }
 
 void OscarAccount::updateBuddyIconInSSI()

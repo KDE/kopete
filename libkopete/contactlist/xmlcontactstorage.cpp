@@ -198,20 +198,6 @@ void XmlContactStorage::load()
                 addGroup( group );
             }
         }
-        // Only load myself metacontact information when Global Identity is enabled.
-#if 0
-        else if( element.tagName() == QString::fromLatin1("myself-meta-contact") && Kopete::GeneralSettings::self()->enableGlobalIdentity() )
-        {
-            //TODO: Add to internal contactlist item list.
-
-            if( !myself()->fromXML( element ) )
-            {
-                delete d->myself;
-                d->myself = 0;
-            }
-
-        }
-#endif
         else
         {
             kWarning(14010) << k_funcinfo
@@ -273,16 +259,6 @@ void XmlContactStorage::save()
             doc.documentElement().appendChild( node );
         }
     }
-
-    // Save myself metacontact information
-#if 0
-    if( Kopete::GeneralSettings::self()->enableGlobalIdentity() )
-    {
-        QDomElement myselfElement = myself()->toXML(true); // Save minimal information.
-        myselfElement.setTagName( QLatin1String("myself-meta-contact") );
-        doc.documentElement().appendChild( doc.importNode( myselfElement, true ) );
-    }
-#endif
 
     QTextStream stream ( &contactListFile );
     stream.setCodec(QTextCodec::codecForName("UTF-8"));
