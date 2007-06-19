@@ -36,7 +36,7 @@ Plugin::Plugin( const KComponentData &instance, QObject *parent )
 : QObject( parent ), KXMLGUIClient(), d(new Private)
 {
 	setComponentData( instance );
-	KSettings::Dispatcher::self()->registerComponent( instance, this, SIGNAL( settingsChanged() ) );
+	KSettings::Dispatcher::registerComponent( instance, this, SIGNAL( settingsChanged() ) );
 }
 
 Plugin::~Plugin()
