@@ -1721,9 +1721,9 @@ bool ClientStream::handleNeed()
 			connect(d->sasl, SIGNAL(error()), SLOT(sasl_error()));
 
 			if(d->haveLocalAddr)
-				d->sasl->setLocalAddr(d->localAddr.toString(), d->localPort);
+				d->sasl->setLocalAddress(d->localAddr.toString(), d->localPort);
 			if(d->conn->havePeerAddress())
-				d->sasl->setRemoteAddr(d->conn->peerAddress().toString(), d->conn->peerPort());
+				d->sasl->setRemoteAddress(d->conn->peerAddress().toString(), d->conn->peerPort());
 
 			//d->sasl_mech = "ANONYMOUS";
 			//d->sasl->setRequirePassCredentials(true);
@@ -1783,11 +1783,11 @@ bool ClientStream::handleNeed()
 int ClientStream::convertedSASLCond() const
 {
 	int x = d->sasl->authCondition();
-	if(x == QCA::SASL::NoMech)
+	if(x == QCA::SASL::NoMechanism)
 		return NoMech;
-	else if(x == QCA::SASL::BadProto)
+	else if(x == QCA::SASL::BadProtocol)
 		return BadProto;
-	else if(x == QCA::SASL::BadServ)
+	else if(x == QCA::SASL::BadServer)
 		return BadServ;
 	else if(x == QCA::SASL::TooWeak)
 		return MechTooWeak;
