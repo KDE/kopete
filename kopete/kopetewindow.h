@@ -138,7 +138,7 @@ private slots:
 	/**
 	 * This is used to add the account to the "Add Contact" submenu
 	 */
-	void slotAccountRegistered( const Kopete::Account *account );
+	void slotAccountRegistered( Kopete::Account *account );
 
 	/**
 	 * This is used to add the account to the "Add Contact" submenu

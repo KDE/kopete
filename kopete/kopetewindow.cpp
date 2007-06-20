@@ -853,7 +853,7 @@ void KopeteWindow::slotIdentityStatusIconRightClicked( Kopete::Identity *identit
 	actionMenu->menu()->popup( p );
 }
 
-void KopeteWindow::slotAccountRegistered( const Kopete::Account *account )
+void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 {
 
 	//enable the connect all toolbar button
