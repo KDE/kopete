@@ -19,12 +19,14 @@
 #include "kopeteidentity.h"
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
+#include "kopeteprotocol.h"
 
 #include <QStringList>
 #include <KDebug>
 #include <KConfigGroup>
 #include <KGlobal>
 #include <KSharedConfigPtr>
+#include <KLocale>
 
 #include <kdeversion.h>
 
@@ -94,8 +96,29 @@ OnlineStatus Identity::onlineStatus() const
 
 QString Identity::toolTip() const
 {
-	//TODO implement
-	return QString("Identity %1").arg(d->id);
+
+	QString tt = QLatin1String("<qt>");
+
+	QString nick;
+	if ( hasProperty(Kopete::Global::Properties::self()->nickName().key()) )
+		nick = getProperty(Kopete::Global::Properties::self()->nickName()).value().toString();
+	else
+		nick = d->id;
+
+	tt+= i18nc( "Identity tooltip information: <nobr>ICON <b>NAME</b><br/></br>",
+				"<nobr><img src=\"kopete-identity-icon:%1\"> <b>%2</b><br/<br/>",
+				QString(QUrl::toPercentEncoding( d->id )), nick );
+
+	foreach(Account *a, d->accounts)
+	{
+		Kopete::Contact *self = a->myself();
+		tt += i18nc( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)<br/>",
+					 "<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 (<i>%5</i>)<br/>",
+					 a->protocol()->displayName(), a->accountLabel(), QString(QUrl::toPercentEncoding( a->protocol()->pluginId() )),
+					 QString(QUrl::toPercentEncoding( a->accountId() )), self->onlineStatus().description() );
+	}
+	tt += QLatin1String("</qt>");
+	return tt;
 }
 
 QString Identity::customIcon() const
@@ -107,8 +130,21 @@ QString Identity::customIcon() const
 
 KActionMenu* Identity::actionMenu()
 {
-	//TODO implement
-	return new KActionMenu(d->id, this);
+	//TODO check what layout we want to have for this menu
+	// for now if there is only on account, return the account menu
+	if (d->accounts.count() == 1)
+		return d->accounts.first()->actionMenu();
+
+	// if there is more than one account, add them as submenus of this identity menu
+	KActionMenu *menu = new KActionMenu(d->id, this);
+
+	foreach(Account *account, d->accounts)
+	{
+		KActionMenu *accountMenu = account->actionMenu();
+		accountMenu->setIcon( account->myself()->onlineStatus().iconFor(account->myself()) );
+		menu->addAction( accountMenu );
+	}
+	return menu;
 }
 
 void Identity::addAccount( Kopete::Account *account )
