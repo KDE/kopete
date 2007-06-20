@@ -367,6 +367,26 @@ public:
 	 */
 	void setPhoto(const QString &photoPath);
 
+	/**
+	 * @brief Get the contact info pages for this contact
+	 *
+	 * This includes generic info pages and custom info pages provided by the child
+	 * contact classes.
+	 * This function should create the pages. The code that is calling this function
+	 * is responsible for deleting the widgets after they are used.
+	 * @sa customInfoPages()
+	 */
+	Kopete::UI::InfoPage::List infoPages() const;
+
+protected:
+	/**
+	 * @brief Returns a list of user info widgets
+	 *
+	 * This function should be implemented in derived classes if you want to get custom 
+	 * info pages to be displayed in the contact info dialog
+	 */
+	virtual Kopete::UI::InfoPage::List customInfoPages() const;
+
 public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow

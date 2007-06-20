@@ -1,5 +1,6 @@
 /*
-    contactinfodialog.cpp - A dialog for configuring user info
+    kopeteinfodialog.cpp - A dialog to configure information for contacts, 
+                           metacontacts, groups, identities, etc
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
 
@@ -15,7 +16,7 @@
     *************************************************************************
 */
 
-#include "userinfodialog.h"
+#include "kopeteinfodialog.h"
 #include "kopeteinfopage.h"
 #include "collapsiblewidget.h"
 #include <kopetepropertycontainer.h>
@@ -30,7 +31,7 @@ namespace Kopete
 namespace UI
 {
 
-class UserInfoDialog::Private
+class InfoDialog::Private
 {
 public:
 	QVBoxLayout *layout;
@@ -39,7 +40,14 @@ public:
 	InfoPage::List pageList;
 };
 
-UserInfoDialog::UserInfoDialog(const Kopete::PropertyContainer *properties)
+InfoDialog::InfoDialog(	const Kopete::PropertyContainer *properties, 
+			const QString &title, const QString &icon)
+{
+	InfoDialog( properties, title, KIcon(icon) );
+}
+
+InfoDialog::InfoDialog(	const Kopete::PropertyContainer *properties,
+			const QString &title, const KIcon &icon)
 : KDialog()
 {
 	resize(500,500);
@@ -47,8 +55,12 @@ UserInfoDialog::UserInfoDialog(const Kopete::PropertyContainer *properties)
 	d->layout = new QVBoxLayout(mainWidget());
 	
 	d->title = new KTitleWidget();
-	d->title->setText( i18n("User Information") );
-	d->title->setPixmap( "identity" ); 
+	if (!title.isEmpty())
+		setTitle( title );
+	else
+		setTitle( i18n( "Information" ) );
+
+	setIcon( icon );
 	d->layout->addWidget( d->title );
 
 	d->container = new SettingsContainer();
@@ -61,23 +73,37 @@ UserInfoDialog::UserInfoDialog(const Kopete::PropertyContainer *properties)
 		(*it)->load();
 		CollapsibleWidget *c = d->container->insertWidget( *it, (*it)->pageName() );
 		c->setExpanded(true);
-
 	}
 
 }
 
-UserInfoDialog::~UserInfoDialog()
+InfoDialog::~InfoDialog()
 {
 }
 
-void UserInfoDialog::slotSave()
+void InfoDialog::slotSave()
 {
 	InfoPage::List::const_iterator it;
 	for (it = d->pageList.begin(); it != d->pageList.end(); ++it)
 		(*it)->save();
 }
 
+void InfoDialog::setTitle(const QString &title)
+{
+	d->title->setText( title );
+}
+
+void InfoDialog::setIcon(const QString &icon)
+{
+	d->title->setPixmap( icon );
+}
+
+	void InfoDialog::setIcon(const KIcon &icon)
+{
+	d->title->setPixmap( icon );
+}
+
 } // namespace UI
 } // namespace Kopete
 
-#include "userinfodialog.moc"
+#include "kopeteinfodialog.moc"

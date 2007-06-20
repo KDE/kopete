@@ -111,22 +111,12 @@ public:
 	void removeProperty(const Kopete::PropertyTmpl &tmpl);
 
 	/**
-	 * @brief Get the contact info pages for this contact
+	 * @brief Get the info pages for this property container
 	 *
-	 * This includes generic info pages and custom info pages provided by the child
-	 * contact classes.
-	 * This should create the pages. The code that is calling this function should be
-	 * responsible by deleting the widgets after they are used.
+	 * The default implementation does not add any page. This should be reimplemenbted
+	 * in derived classes
 	 */
-	Kopete::UI::InfoPage::List infoPages() const;
-
-	/**
-	 * @brief Returns a list of user info widgets
-	 *
-	 * This function should be implemented in derived classes if you want to get custom 
-	 * info pages to be displayed in the contact info dialog
-	 */
-	virtual Kopete::UI::InfoPage::List customInfoPages() const;
+	virtual Kopete::UI::InfoPage::List infoPages() const;
 
 signals:
 	void propertyChanged( PropertyContainer *container, const QString &key, 

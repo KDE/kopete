@@ -25,12 +25,12 @@ set(kopete_ui_SRCS
   ui/avatardialog.cpp
   ui/avatarselectorwidget.cpp
   ui/contactaddednotifydialog.cpp
-  ui/userinfodialog.cpp
   ui/collapsiblewidget.cpp
   ui/editaccountwidget.cpp
   ui/generalinfopage.cpp
   ui/kopetecontactaction.cpp
   ui/kopetefileconfirmdialog.cpp
+  ui/kopeteinfodialog.cpp
   ui/kopeteinfopage.cpp
   ui/kopetelistview.cpp
   ui/kopetelistviewitem.cpp
@@ -145,6 +145,7 @@ install(FILES
  ui/editaccountwidget.h
  ui/kopetecontactaction.h
  ui/kopetefileconfirmdialog.h
+ ui/kopeteinfodialog.h
  ui/kopeteinfopage.h
  ui/kopetelistview.h
  ui/kopetelistviewitem.h

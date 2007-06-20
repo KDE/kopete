@@ -50,7 +50,9 @@
 #include "metacontactselectorwidget.h"
 #include "kopeteemoticons.h"
 #include "kopetestatusmessage.h"
-#include "userinfodialog.h"
+#include "kopeteinfodialog.h"
+#include "kopeteinfopage.h"
+#include "generalinfopage.h"
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
@@ -382,7 +384,8 @@ void Contact::slotContactInfo()
 {
 	//FIXME: this is here just to compare the old and the new dialogs
 	QTimer::singleShot(0, this, SLOT(slotUserInfo()));
-	Kopete::UI::UserInfoDialog *dialog = new Kopete::UI::UserInfoDialog( this );
+	Kopete::UI::InfoDialog *dialog = new Kopete::UI::InfoDialog( this, nickName(), KIcon(onlineStatus().iconFor(this)) );
+	dialog->setWindowTitle( i18n("Contact Information") );
 
 	dialog->show();
 }
@@ -764,6 +767,23 @@ void Kopete::Contact::setPhoto(const QString &photoPath)
 {
 	setProperty( Kopete::Global::Properties::self()->photo(), photoPath );
 }
+
+Kopete::UI::InfoPage::List Contact::infoPages() const
+{
+	Kopete::UI::InfoPage::List list;
+	list.append( new Kopete::UI::GeneralInfoPage(this) );
+	return list + customInfoPages();
+}
+
+Kopete::UI::InfoPage::List Contact::customInfoPages() const
+{
+	// the default implementadion
+	Kopete::UI::InfoPage::List list;
+	return list;
+}
+
+
+
 
 } //END namespace Kopete
 

@@ -1,5 +1,6 @@
 /*
-    userinfodialog.h - A dialog to configure user information
+    kopeteinfodialog.h - A dialog to configure information for contacts, 
+                         metacontacts, groups, identities, etc
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
 
@@ -15,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef USERINFODIALOG_H
-#define USERINFODIALOG_H
+#ifndef KOPETEINFODIALOG_H
+#define KOPETEINFODIALOG_H
 
 #include <KDialog>
 #include "kopete_export.h"
@@ -34,7 +35,7 @@ namespace UI
  * A user can be a contact from the contact list, a metacontact or an identity.
  * @author Gustavo Pichorim Boiko <gustavo.boiko AT kdemail.net>
  */
-class KOPETE_EXPORT UserInfoDialog : public KDialog
+class KOPETE_EXPORT InfoDialog : public KDialog
 {
 Q_OBJECT
 
@@ -42,14 +43,30 @@ public:
 	/**
 	 * Constructor.
 	 *
-	 * The parameter @p contact is the contact this widget will display info
+	 * @param properties is the property container this widget will display info
+	 * @param title the title to be shown in the dialog
+	 * @param icon the name of the icon to be used
 	 */
-	UserInfoDialog(const Kopete::PropertyContainer *properties);
+	InfoDialog(const Kopete::PropertyContainer *properties, 
+			   const QString &title = QString(), const QString &icon = QString());
+	/**
+	 * Constructor.
+	 *
+	 * @param properties is the property container this widget will display info
+	 * @param title the title to be shown in the dialog
+	 * @param icon the icon to be used
+	 */
+	InfoDialog(const Kopete::PropertyContainer *properties, 
+			   const QString &title, const KIcon &icon);
 
 	/**
 	 * Destructor.
 	 */
-	~UserInfoDialog();
+	~InfoDialog();
+
+	void setTitle(const QString &title);
+	void setIcon(const QString &icon);
+	void setIcon(const KIcon &icon);
 
 private slots:
 	void slotSave();
