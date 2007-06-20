@@ -18,6 +18,7 @@ X-KDE-PluginInfo-EnabledByDefault=false
 Name=Telepathy
 Name[x-test]=xxTelepathyxx
 Comment=Protocol to connect to Telepathy connections managers.
+Comment[de]=Protokoll zur Verbindung mit Telepathy
 Comment[el]=Πρωτόκολλο σύνδεσης σε διαχειριστές συνδέσεων Telepathy.
 Comment[es]=Protocolo para conectar con gestores de conexiones Telepathy
 Comment[sv]=Protokoll för att ansluta till Telepathy-anslutningshanterare.

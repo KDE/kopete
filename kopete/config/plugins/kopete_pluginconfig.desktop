@@ -10,6 +10,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Plugins
+Name[de]=Module
 Name[el]=Πρόσθετα
 Name[es]=Complementos
 Name[ga]=Breiseáin
@@ -19,6 +20,7 @@ Name[uk]=Втулки
 Name[x-test]=xxPluginsxx
 Name[zh_TW]=外掛程式
 Comment=Configure Plugins
+Comment[de]=Module einrichten
 Comment[el]=Ρύθμιση προσθέτων
 Comment[sv]=Anpassa insticksprogram
 Comment[uk]=Налаштувати втулки
