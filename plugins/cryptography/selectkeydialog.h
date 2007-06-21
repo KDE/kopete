@@ -16,7 +16,7 @@
 #define LISTKEYS_H
 
 #include <kdialog.h>
-#include <k3procio.h>
+#include <QProcess>
 #include <QPixmap>
 
 class K3ListView;
@@ -25,28 +25,22 @@ class Q3ListViewItem;
 
 class SelectKeyDialog : public KDialog
 {
-    Q_OBJECT
+		Q_OBJECT
 
-public:
-    explicit SelectKeyDialog( QWidget *parent = 0, bool showlocal=true);
-    ~SelectKeyDialog();
+	public:
+		explicit SelectKeyDialog ( QString &keyId, QWidget *parent = 0 );
+		~SelectKeyDialog();
 
-private slots:
-    void slotReadKey(K3ProcIO*);
-    void slotOk();
-    void slotpreOk();
-    void slotSelect(Q3ListViewItem *item);
-
-public:
-    QString getkeyID();
-    QString getkeyMail();
-    bool getlocal();
-
-private:
-    K3ListView *keysListpr;
-    QPixmap keyPair;
-    QCheckBox *local;
-    K3ProcIO * fp;
+	private slots:
+		void slotReadKey ();
+		void slotOk();
+		void slotSelect ( Q3ListViewItem *item );
+		
+	private:
+		QProcess* fp;
+		K3ListView *mKeysListpr;
+		QPixmap mKeyPair;
+		QString * mKeyId;
 };
 
 
