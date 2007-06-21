@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 // QT Includes
-#include <qregexp.h>
+#include <QRegExp>
 
 // KDE Includes
 #include <kdebug.h>
@@ -73,38 +73,34 @@ void WPUserInfo::startDetailsProcess(const QString &host)
 	KConfigGroup group = KGlobal::config()->group("WinPopup");
 	QString theSMBClientPath = group.readEntry("SMBClientPath", "/usr/bin/smbclient");
 
-	K3ProcIO *details = new K3ProcIO;
-	*details << theSMBClientPath << "-N" << "-E" << "-g" << "-L" << host << "-";
+	detailsProcess = new QProcess(this);
+	QStringList args;
+	args << "-N" << "-E" << "-g" << "-L" << host << "-";
 
-	connect(details, SIGNAL(readReady(K3ProcIO *)), this, SLOT(slotDetailsProcessReady(K3ProcIO *)));
-	connect(details, SIGNAL(processExited(K3Process *)), this, SLOT(slotDetailsProcessExited(K3Process *)));
+	connect(detailsProcess, SIGNAL(finished()), this, SLOT(slotDetailsProcessFinished()));
 
-	if (!details->start(K3Process::NotifyOnExit, true)) {
-		slotDetailsProcessExited(details);
-		kDebug(14170) << "DetailsProcess not started!" << endl;
-	}
+	detailsProcess->start(theSMBClientPath, args);
 }
 
-void WPUserInfo::slotDetailsProcessReady(K3ProcIO *d)
+void WPUserInfo::slotDetailsProcessFinished()
 {
-	QString tmpLine = QString();
+	QByteArray outputData = detailsProcess->readAll();
 	QRegExp info("^Domain=\\[(.*)\\]\\sOS=\\[(.*)\\]\\sServer=\\[(.*)\\]$"), host("^Server\\|(.*)\\|(.*)$");
 
-	while (d->readln(tmpLine) > -1) {
-		if (info.indexIn(tmpLine) != -1) {
+	if (!outputData.isEmpty()) {
+		QString output = QString::fromUtf8(outputData.data());
+		if (info.indexIn(output) != -1) {
 			Workgroup = info.cap(1);
 			OS = info.cap(2);
 			Software = info.cap(3);
 		}
-		if (host.indexIn(tmpLine) != -1) {
+		if (host.indexIn(output) != -1) {
 			Comment = host.cap(2);
 		}
 	}
-}
 
-void WPUserInfo::slotDetailsProcessExited(K3Process *d)
-{
-	delete d;
+	delete detailsProcess;
+	detailsProcess = 0;
 
 	m_mainWidget->sComment->setText(Comment);
 	m_mainWidget->sWorkgroup->setText(Workgroup);
