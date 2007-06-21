@@ -90,7 +90,6 @@
 #include "kopeteuiglobal.h"
 #include "systemtray.h"
 #include "kopeteonlinestatusmanager.h"
-#include "kopeteeditglobalidentitywidget.h"
 
 //BEGIN GlobalStatusMessageIconLabel
 GlobalStatusMessageIconLabel::GlobalStatusMessageIconLabel(QWidget *parent)
@@ -115,8 +114,8 @@ public:
 	 : contactlist(0), actionAddContact(0), actionDisconnect(0), actionExportContacts(0),
 	actionAwayMenu(0), actionDockMenu(0), selectAway(0), selectBusy(0), actionSetAvailable(0),
 	actionSetInvisible(0), actionPrefs(0), actionQuit(0), actionSave(0), menubarAction(0),
-	statusbarAction(0), actionShowOffliners(0), actionShowEmptyGroups(0), editGlobalIdentityWidget(0),
-	docked(0), hidden(false), deskRight(0), statusBarWidget(0), tray(0), autoHide(false),
+	statusbarAction(0), actionShowOffliners(0), actionShowEmptyGroups(0), docked(0), 
+	hidden(false), deskRight(0), statusBarWidget(0), tray(0), autoHide(false),
 	autoHideTimeout(0), autoHideTimer(0), addContactMapper(0),
 	globalStatusMessage(0), globalStatusMessageMenu(0), newMessageEdit(0)
 	{}
@@ -147,8 +146,6 @@ public:
 	KToggleAction *statusbarAction;
 	KToggleAction *actionShowOffliners;
 	KToggleAction *actionShowEmptyGroups;
-
-	KopeteEditGlobalIdentityWidget *editGlobalIdentityWidget;
 
 	int docked;
 	bool hidden;
@@ -378,13 +375,6 @@ void KopeteWindow::initActions()
         actionCollection()->addAction( "quicksearch_label", searchLabelAction );
 	searchLabelAction->setDefaultWidget( searchLabel );
 
-	// Edit global identity widget/bar
-	d->editGlobalIdentityWidget = new KopeteEditGlobalIdentityWidget(this);
-	d->editGlobalIdentityWidget->setObjectName( QLatin1String("editglobalBar") );
-	KAction *editGlobalAction = new KAction( i18n("Edit Global Identity Widget"), this );
-        actionCollection()->addAction( "editglobal_widget", editGlobalAction );
-	editGlobalAction->setDefaultWidget( d->editGlobalIdentityWidget );
-
 	// KActionMenu for selecting the global status message
 	KActionMenu * setStatusMenu = new KActionMenu( KIcon("kopeteeditstatusmessage"), i18n( "Set Status Message" ), this );
         actionCollection()->addAction( "SetStatusMessage", setStatusMenu );
@@ -497,11 +487,6 @@ void KopeteWindow::loadOptions()
 
 	toolBar("mainToolBar")->applySettings( config->group( "ToolBar Settings" ) );
 	toolBar("quickSearchBar")->applySettings( config->group( "QuickSearchBar Settings" ) );
-	toolBar("editGlobalIdentityBar")->applySettings( config->group( "EditGlobalIdentityBar Settings" ) );
-
-	// FIXME: HACK: Is there a way to do that automatic ?
-	d->editGlobalIdentityWidget->setIconSize( toolBar("editGlobalIdentityBar")->iconSize() );
-	connect(toolBar("editGlobalIdentityBar"), SIGNAL(iconSizeChanged(const QSize &)), d->editGlobalIdentityWidget, SLOT(setIconSize(const QSize &)));
 
 	applyMainWindowSettings( config->group( "General Options" ) );
         KConfigGroup cg( config, "General Options");
@@ -541,8 +526,6 @@ void KopeteWindow::saveOptions()
 	toolBar("mainToolBar")->saveSettings ( cg );
         cg.changeGroup( "QuickSearchBar Settings" );
 	toolBar("quickSearchBar")->saveSettings( cg );
-        cg.changeGroup( "EditGlobalIdentityBar Settings" );
-	toolBar("editGlobalIdentityBar")->saveSettings( cg );
 
         cg.changeGroup( "General Options" );
 	saveMainWindowSettings( cg );

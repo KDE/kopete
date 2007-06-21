@@ -117,7 +117,7 @@ kde4_add_ui_files(kopete_LIB_SRCS
 
 kde4_automoc(${kopete_LIB_SRCS})
 
-kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
+kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
 
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 
@@ -156,7 +156,6 @@ DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui )
 install( FILES
   kopeteappearancesettings.kcfg
   kopetebehaviorsettings.kcfg
-  kopetegeneralsettings.kcfg
 DESTINATION ${KCFG_INSTALL_DIR})
 
 install( FILES kopetecommandui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete)

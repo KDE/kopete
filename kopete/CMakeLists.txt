@@ -56,7 +56,7 @@ set(kopete_SRCS
    kopeteidentitystatusbaricon.cpp 
 #   kopeteiface.cpp 
 #   kimifaceimpl.cpp 
-   kopeteeditglobalidentitywidget.cpp )
+   )
 
 kde4_automoc(${kopete_SRCS})
 
