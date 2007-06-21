@@ -229,6 +229,7 @@ void BehaviorConfig::load()
 	// "General" TAB ============================================================
 	mPrfsGeneral->mShowTrayChk->setChecked( p->showTray() );
 	mPrfsGeneral->mStartDockedChk->setChecked( p->startDocked() );
+	mPrfsGeneral->mInstantMessageOpeningChk->setChecked( !p->useQueue() && !p->useStack());
 	mPrfsGeneral->mUseQueueChk->setChecked( p->useQueue() );
 	mPrfsGeneral->mUseStackChk->setChecked( p->useStack() );
 	mPrfsGeneral->mQueueUnreadMessagesChk->setChecked ( p->queueUnreadMessages() );
