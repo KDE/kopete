@@ -1,0 +1,72 @@
+<ui version="4.0" >
+ <class>AddIdentityWizardPage1</class>
+ <widget class="QWidget" name="AddIdentityWizardPage1" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Add Identity Assistant</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QLabel" name="identityNameLabel" >
+       <property name="text" >
+        <string>New identity:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>identityName</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="identityName" />
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="newOption" >
+     <property name="text" >
+      <string>Create an empty identity</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="duplicateOption" >
+     <property name="text" >
+      <string>Duplicate an existent identity</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTreeWidget" name="identityList" >
+     <property name="alternatingRowColors" >
+      <bool>true</bool>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
+     <property name="rootIsDecorated" >
+      <bool>false</bool>
+     </property>
+     <column>
+      <property name="text" >
+       <string>Identity to Duplicate</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

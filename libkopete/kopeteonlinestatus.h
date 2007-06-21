@@ -332,32 +332,6 @@ public:
 	QString mimeSourceFor( const Account *account, int size = 16 ) const;
 
 	/**
-	 * \brief Return a status icon generated for the given Identity
-	 *
-	 * This will draw an overlay representing the online status
-	 * of the identity the OnlineStatus applies to
-	 * over the base icon.
-	 * A cache is employed to reduce CPU and memory usage.
-	 * @param identity is the identity the icon should apply to.
-	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
-	 */
-	QPixmap iconFor( const Identity *identity, int size = 16 ) const;
-
-	/**
-	 * \brief Return the mime source for a status icon generated for the given Identity
-	 *
-	 * This behaves essentially like the method above, except for that
-	 * it returns a mime source string that can be used to render the
-	 * image in richtext components and the like. The returned key
-	 * is only valid until the cache is cleared for the next time,
-	 * so no assumptions should be made about long-time availability
-	 * of the referenced data.
-	 * @param identity is the identity the icon should apply to.
-	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
-	 */
-	QString mimeSourceFor( const Identity *identity, int size = 16 ) const;
-
-	/**
 	 * \brief Return a previously rendered status icon for a mime source key
 	 *
 	 * You can access icons with this method that have previously been rendered

@@ -20,7 +20,6 @@
 
 #include <kdemacros.h>
 #include "kopeteglobal.h"
-#include "kopeteinfopage.h"
 #include "kopetepropertycontainer.h"
 #include "kopeteonlinestatus.h"
 #include "kopete_export.h"
@@ -54,14 +53,6 @@ public:
 	QString identityId() const;
 
 	/**
-	 * @brief Returns a list of user info widgets
-	 *
-	 * This function should be implemented in derived classes if you want to get custom 
-	 * info pages to be displayed in the contact info dialog
-	 */
-	virtual Kopete::UI::InfoPage::List customInfoPages() const;
-
-	/**
 	 * This identity should be connected when connect all is called?
 	 */
 	bool excludeConnect() const;
@@ -77,7 +68,7 @@ public:
 	 * @brief Get the online status of the identity
 	 * @return the online status of the identity
 	 */
-	OnlineStatus onlineStatus() const;
+	OnlineStatus::StatusType onlineStatus() const;
 	
 	/**
 	 * \brief Get the tooltip for this identity
@@ -92,8 +83,6 @@ public:
 
 	/**
 	 * @brief Return the menu for this identity
-	 *
-	 * @see OnlineStatusManager::registerOnlineStatus
 	 */
 	KActionMenu* actionMenu();
 	/**
@@ -130,7 +119,7 @@ public slots:
 	void updateOnlineStatus();
 
 signals:
-	void onlineStatusChanged(Kopete::Identity*,Kopete::OnlineStatus,Kopete::OnlineStatus);
+	void onlineStatusChanged(Kopete::Identity*,Kopete::OnlineStatus::StatusType,Kopete::OnlineStatus::StatusType);
 	void identityDestroyed( const Kopete::Identity *identity );
 
 private:

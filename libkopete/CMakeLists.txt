@@ -27,11 +27,9 @@ set(kopete_ui_SRCS
   ui/contactaddednotifydialog.cpp
   ui/collapsiblewidget.cpp
   ui/editaccountwidget.cpp
-  ui/generalinfopage.cpp
   ui/kopetecontactaction.cpp
   ui/kopetefileconfirmdialog.cpp
   ui/kopeteinfodialog.cpp
-  ui/kopeteinfopage.cpp
   ui/kopetelistview.cpp
   ui/kopetelistviewitem.cpp
   ui/kopetelistviewsearchline.cpp
@@ -112,7 +110,6 @@ kde4_add_ui_files(kopete_LIB_SRCS
  ui/avatarselectorwidget.ui
  ui/contactaddednotifywidget.ui 
  ui/fileconfirmbase.ui
- ui/generalinfobase.ui
  ui/kopeteawaydialogbase.ui
  ui/kopetepasswordwidgetbase.ui
  ui/metacontactselectorwidget_base.ui
@@ -146,7 +143,6 @@ install(FILES
  ui/kopetecontactaction.h
  ui/kopetefileconfirmdialog.h
  ui/kopeteinfodialog.h
- ui/kopeteinfopage.h
  ui/kopetelistview.h
  ui/kopetelistviewitem.h
  ui/kopetelistviewsearchline.h

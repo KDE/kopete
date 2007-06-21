@@ -746,7 +746,8 @@ void KopeteWindow::slotIdentityRegistered( Kopete::Identity *identity )
 	if ( !identity )
 		return;
 
-	connect( identity, SIGNAL(onlineStatusChanged( Kopete::Identity *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ),
+	connect( identity, SIGNAL(onlineStatusChanged( Kopete::Identity *, 
+												   const Kopete::OnlineStatus::StatusType &, const Kopete::OnlineStatus::StatusType &) ),
 			this, SLOT( slotIdentityStatusIconChanged( Kopete::Identity * ) ) );
 
 	KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon( identity, d->statusBarWidget );
@@ -811,7 +812,8 @@ void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 	// over one protocol
 	i->setToolTip( identity->toolTip() );
 
-	QPixmap pm = status.iconFor( identity );
+	// FIXME: should add the status to the icon
+	QPixmap pm = SmallIcon(identity->customIcon());
 
 	// No Pixmap found, fallback to Unknown
 	if( pm.isNull() )

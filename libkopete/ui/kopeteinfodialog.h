@@ -1,6 +1,5 @@
 /*
-    kopeteinfodialog.h - A dialog to configure information for contacts, 
-                         metacontacts, groups, identities, etc
+    kopeteinfodialog.h - A dialog to display and configure information 
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
 
@@ -24,15 +23,13 @@
 
 namespace Kopete
 {
-class PropertyContainer;
 
 namespace UI
 {
 
 /**
- * \brief a dialog for configuring user information
+ * \brief a dialog for displaying and configuring information
  *
- * A user can be a contact from the contact list, a metacontact or an identity.
  * @author Gustavo Pichorim Boiko <gustavo.boiko AT kdemail.net>
  */
 class KOPETE_EXPORT InfoDialog : public KDialog
@@ -43,20 +40,20 @@ public:
 	/**
 	 * Constructor.
 	 *
-	 * @param properties is the property container this widget will display info
+	 * @param parent the parent of this widget
 	 * @param title the title to be shown in the dialog
 	 * @param icon the name of the icon to be used
 	 */
-	InfoDialog(const Kopete::PropertyContainer *properties, 
+	InfoDialog(QWidget *parent, 
 			   const QString &title = QString(), const QString &icon = QString());
 	/**
 	 * Constructor.
 	 *
-	 * @param properties is the property container this widget will display info
+	 * @param parent the parent of this widget
 	 * @param title the title to be shown in the dialog
 	 * @param icon the icon to be used
 	 */
-	InfoDialog(const Kopete::PropertyContainer *properties, 
+	InfoDialog(QWidget *parent, 
 			   const QString &title, const KIcon &icon);
 
 	/**
@@ -67,13 +64,20 @@ public:
 	void setTitle(const QString &title);
 	void setIcon(const QString &icon);
 	void setIcon(const KIcon &icon);
+	
+	void addWidget(QWidget *w, const QString &caption);
 
-private slots:
-	void slotSave();
+protected slots:
+	/**
+	 * This should be reimplemented in derived dialogs to enable saving info
+	 */
+	virtual void slotSave();
 
 private:
 	class Private;
 	Private *d;
+
+	void initialize();
 
 };
 

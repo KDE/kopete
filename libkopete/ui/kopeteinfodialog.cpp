@@ -17,7 +17,6 @@
 */
 
 #include "kopeteinfodialog.h"
-#include "kopeteinfopage.h"
 #include "collapsiblewidget.h"
 #include <kopetepropertycontainer.h>
 #include <KLocale>
@@ -37,44 +36,47 @@ public:
 	QVBoxLayout *layout;
 	KTitleWidget *title;
 	SettingsContainer *container;
-	InfoPage::List pageList;
 };
 
-InfoDialog::InfoDialog(	const Kopete::PropertyContainer *properties, 
-			const QString &title, const QString &icon)
+InfoDialog::InfoDialog(QWidget *parent, const QString &title, const QString &icon)
+: KDialog(parent)
 {
-	InfoDialog( properties, title, KIcon(icon) );
-}
 
-InfoDialog::InfoDialog(	const Kopete::PropertyContainer *properties,
-			const QString &title, const KIcon &icon)
-: KDialog()
-{
-	resize(500,500);
-	d = new Private();
-	d->layout = new QVBoxLayout(mainWidget());
-	
-	d->title = new KTitleWidget();
+	initialize();
+
 	if (!title.isEmpty())
 		setTitle( title );
 	else
 		setTitle( i18n( "Information" ) );
-
 	setIcon( icon );
+}
+
+InfoDialog::InfoDialog(QWidget *parent, const QString &title, const KIcon &icon)
+: KDialog(parent)
+{
+	initialize();
+
+	if (!title.isEmpty())
+		setTitle( title );
+	else
+		setTitle( i18n( "Information" ) );
+	setIcon( icon );
+
+}
+
+void InfoDialog::initialize()
+{
+	//FIXME: this should be changed
+	resize(500,500);
+
+	d = new Private();
+	d->layout = new QVBoxLayout(mainWidget());
+	
+	d->title = new KTitleWidget();
 	d->layout->addWidget( d->title );
 
 	d->container = new SettingsContainer();
 	d->layout->addWidget( d->container );
-	
-	d->pageList = properties->infoPages();
-	InfoPage::List::const_iterator it;
-	for (it = d->pageList.begin(); it != d->pageList.end(); ++it)
-	{
-		(*it)->load();
-		CollapsibleWidget *c = d->container->insertWidget( *it, (*it)->pageName() );
-		c->setExpanded(true);
-	}
-
 }
 
 InfoDialog::~InfoDialog()
@@ -83,9 +85,6 @@ InfoDialog::~InfoDialog()
 
 void InfoDialog::slotSave()
 {
-	InfoPage::List::const_iterator it;
-	for (it = d->pageList.begin(); it != d->pageList.end(); ++it)
-		(*it)->save();
 }
 
 void InfoDialog::setTitle(const QString &title)
@@ -98,9 +97,17 @@ void InfoDialog::setIcon(const QString &icon)
 	d->title->setPixmap( icon );
 }
 
-	void InfoDialog::setIcon(const KIcon &icon)
+void InfoDialog::setIcon(const KIcon &icon)
 {
 	d->title->setPixmap( icon );
+}
+
+void InfoDialog::addWidget(QWidget *w, const QString &caption)
+{
+	CollapsibleWidget *c = d->container->insertWidget(w, caption);
+	// FIXME: maybe we could check for pages that were collapsed by the user the 
+	// last time the dialog was shown
+	c->setExpanded(true);
 }
 
 } // namespace UI

@@ -19,7 +19,6 @@
 */
 
 #include "kopetepropertycontainer.h"
-#include "kopeteinfopage.h"
 
 #include <QStringList>
 #include <KDebug>
@@ -168,13 +167,6 @@ void PropertyContainer::removeProperty(const Kopete::PropertyTmpl &tmpl)
 		d->properties.remove(tmpl.key());
 		propertyChanged(this, tmpl.key(), oldValue, QVariant());
 	}
-}
-
-Kopete::UI::InfoPage::List PropertyContainer::infoPages() const
-{
-	// TODO implement
-	Kopete::UI::InfoPage::List list;
-	return list;
 }
 
 } //END namespace Kopete

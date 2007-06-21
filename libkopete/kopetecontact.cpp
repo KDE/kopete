@@ -51,8 +51,6 @@
 #include "kopeteemoticons.h"
 #include "kopetestatusmessage.h"
 #include "kopeteinfodialog.h"
-#include "kopeteinfopage.h"
-#include "generalinfopage.h"
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
@@ -274,7 +272,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 		menu->addAction( changeMetaContact );
 	}
 
-	menu->addAction( KopeteStdAction::contactInfo( this, SLOT( slotContactInfo() ), 0, "actionUserInfo" ) );
+	menu->addAction( KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), 0, "actionUserInfo" ) );
 
 #if 0 //this is not fully implemented yet (and doesn't work).  disable for now   - Olivier 2005-01-11
 	if ( account()->isBlocked( d->contactId ) )
@@ -378,16 +376,6 @@ void Contact::setMetaContact( MetaContact *m )
 		protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
 	}
 	sync();
-}
-
-void Contact::slotContactInfo()
-{
-	//FIXME: this is here just to compare the old and the new dialogs
-	QTimer::singleShot(0, this, SLOT(slotUserInfo()));
-	Kopete::UI::InfoDialog *dialog = new Kopete::UI::InfoDialog( this, nickName(), KIcon(onlineStatus().iconFor(this)) );
-	dialog->setWindowTitle( i18n("Contact Information") );
-
-	dialog->show();
 }
 
 void Contact::serialize( QMap<QString, QString> &/*serializedData*/,
@@ -767,23 +755,6 @@ void Kopete::Contact::setPhoto(const QString &photoPath)
 {
 	setProperty( Kopete::Global::Properties::self()->photo(), photoPath );
 }
-
-Kopete::UI::InfoPage::List Contact::infoPages() const
-{
-	Kopete::UI::InfoPage::List list;
-	list.append( new Kopete::UI::GeneralInfoPage(this) );
-	return list + customInfoPages();
-}
-
-Kopete::UI::InfoPage::List Contact::customInfoPages() const
-{
-	// the default implementadion
-	Kopete::UI::InfoPage::List list;
-	return list;
-}
-
-
-
 
 } //END namespace Kopete
 

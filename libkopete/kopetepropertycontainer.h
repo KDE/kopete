@@ -24,7 +24,6 @@
 #include <QObject>
 #include <kdemacros.h>
 #include "kopeteglobal.h"
-#include "kopeteinfopage.h"
 #include "kopete_export.h"
 
 namespace Kopete
@@ -109,14 +108,6 @@ public:
 	 * @param tmpl the template this property is based on
 	 **/
 	void removeProperty(const Kopete::PropertyTmpl &tmpl);
-
-	/**
-	 * @brief Get the info pages for this property container
-	 *
-	 * The default implementation does not add any page. This should be reimplemenbted
-	 * in derived classes
-	 */
-	virtual Kopete::UI::InfoPage::List infoPages() const;
 
 signals:
 	void propertyChanged( PropertyContainer *container, const QString &key, 

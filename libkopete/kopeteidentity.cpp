@@ -39,7 +39,7 @@ public:
 	QList<Kopete::Account*> accounts;
 	QString id;
 	KConfigGroup *configGroup;
-	OnlineStatus onlineStatus;
+	OnlineStatus::StatusType onlineStatus;
 };
 
 Identity::Identity(const QString &id)
@@ -63,13 +63,6 @@ QString Identity::identityId() const
 	return d->id;
 }
 
-Kopete::UI::InfoPage::List Identity::customInfoPages() const
-{
-	// TODO implement
-	Kopete::UI::InfoPage::List list;
-	return list;
-}
-
 bool Identity::excludeConnect() const
 {
 	//TODO implement
@@ -88,9 +81,8 @@ void Identity::setOnlineStatus( uint category, const QString &awayMessage )
 	}
 }
 
-OnlineStatus Identity::onlineStatus() const
+OnlineStatus::StatusType Identity::onlineStatus() const
 {
-	//TODO implement
 	return d->onlineStatus;
 }
 
@@ -196,6 +188,7 @@ void Identity::save()
 void Identity::updateOnlineStatus()
 {
 	Kopete::OnlineStatus mostSignificantStatus;
+	Kopete::OnlineStatus::StatusType newStatus = Kopete::OnlineStatus::Unknown; 
 
 	foreach(Account *account, d->accounts)
 	{
@@ -204,10 +197,11 @@ void Identity::updateOnlineStatus()
 			mostSignificantStatus = account->myself()->onlineStatus();
 	}
 
-	if( mostSignificantStatus != d->onlineStatus )
+	newStatus = mostSignificantStatus.status();
+	if( newStatus != d->onlineStatus )
 	{
-		emit onlineStatusChanged( this, d->onlineStatus, mostSignificantStatus );
-		d->onlineStatus = mostSignificantStatus;
+		emit onlineStatusChanged( this, d->onlineStatus, newStatus );
+		d->onlineStatus = newStatus;
 	}
 }
 
