@@ -420,8 +420,8 @@ public:
 		return result_;
 	}
 
-	virtual QString mechlist() const {
-		return QString();
+	virtual QStringList mechlist() const {
+		return QStringList();
 	}
 	
 	virtual QString mech() const {
