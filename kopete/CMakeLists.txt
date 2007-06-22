@@ -1,6 +1,6 @@
 
 add_subdirectory( addaccountwizard ) 
-add_subdirectory( addidentitywizard ) 
+add_subdirectory( identity ) 
 add_subdirectory( config )
 add_subdirectory( chatwindow )
 add_subdirectory( kconf_update ) 
@@ -9,8 +9,8 @@ include_directories(
 ${KOPETE_INCLUDES} 
 ${CMAKE_CURRENT_SOURCE_DIR}/addaccountwizard 
 ${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard
-${CMAKE_CURRENT_SOURCE_DIR}/addidentitywizard 
-${CMAKE_CURRENT_BINARY_DIR}/addidentitywizard
+${CMAKE_CURRENT_SOURCE_DIR}/identity 
+${CMAKE_CURRENT_BINARY_DIR}/identity
 ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/ 
 ${CMAKE_CURRENT_BINARY_DIR}/contactlist/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/ 
@@ -19,7 +19,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/
 link_directories( 
 ${CMAKE_BINARY_DIR}/kopete/libkopete/ 
 ${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard 
-${CMAKE_CURRENT_BINARY_DIR}/addidentitywizard 
+${CMAKE_CURRENT_BINARY_DIR}/identity 
 )
 
 ########### next target ###############
@@ -72,7 +72,7 @@ target_link_libraries(kopete_bin
 	${KDE4_KNOTIFYCONFIG_LIBS} 
 	kopete 
 	kopeteaddaccountwizard
-	kopeteaddidentitywizard)
+	kopeteidentity)
 
 install(TARGETS kopete_bin  DESTINATION ${BIN_INSTALL_DIR} )
 

@@ -6,12 +6,12 @@ ${KOPETE_INCLUDES}
 
 ########### next target ###############
 
-set( kopeteaddidentitywizard_SRCS 
-addidentitywizard.cpp 
+set( kopeteidentity_SRCS 
+addidentitydialog.cpp identityconfigdialog.cpp 
 )
 
-kde4_add_ui_files( kopeteaddidentitywizard_SRCS
-    addidentitywizardpage1.ui 
+kde4_add_ui_files( kopeteidentity_SRCS
+    addidentitybase.ui 
 )
 
 kde4_automoc(${kopeteaddidentitywizard_SRCS})

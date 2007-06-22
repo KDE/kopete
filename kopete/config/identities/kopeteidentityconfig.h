@@ -1,5 +1,5 @@
 /*
-    identityconfig.h  -  Kopete identity config page
+    kopeteidentityconfig.h  -  Kopete identity config page
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
 
@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef __IDENTITYCONFIG_H
-#define __IDENTITYCONFIG_H
+#ifndef __KOPETEIDENTITYCONFIG_H
+#define __KOPETEIDENTITYCONFIG_H
 
 #include <kcmodule.h>
 #include <qmap.h>
