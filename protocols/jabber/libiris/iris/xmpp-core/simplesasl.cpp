@@ -286,8 +286,8 @@ public:
 					need.user = true;
 				if(!have.pass)
 					need.pass = true;
-				if(need.user || need.pass) {
-					result_ = NeedParams;
+				if(need.needUsername() || need.needPassword()) {
+					result_ = Params;
 					return;
 				}
 
@@ -305,21 +305,21 @@ public:
 		}
 		else if(step == 1) {
 			// if we still need params, then the app has failed us!
-			if(need.user || need.authzid || need.pass || need.realm) {
+			if(need.needUsername() || need.canSendAuthzid() || need.needPassword() || need.canSendRealm()) {
 				qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
 				result_ = Error;
 				return;
 			}
 
 			// see if some params are needed
-			if(!have.user)
+			if(!have.needUsername())
 				need.user = true;
 			//if(!have.authzid)
 			//	need.authzid = true;
-			if(!have.pass)
+			if(!have.needPassword())
 				need.pass = true;
-			if(need.user || need.authzid || need.pass) {
-				result_ = NeedParams;
+			if(need.needUsername() || need.canSendAuthzid() || need.needPassword()) {
+				result_ = Params;
 				return;
 			}
 
@@ -327,7 +327,7 @@ public:
 			QByteArray cs(in_buf);
 			PropList in;
 			if(!in.fromString(cs)) {
-				authCondition_ = QCA::SASL::BadProto;
+				authCondition_ = QCA::SASL::BadProtocol;
 				result_ = Error;
 				return;
 			}
