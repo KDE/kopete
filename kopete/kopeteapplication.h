@@ -26,11 +26,11 @@
 
 class KopeteWindow;
 class QSessionManager;
-class Q3MimeSourceFactory;
 
 namespace Kopete
 {
 	class MimeTypeHandler;
+	class FileEngineHandler;
 }
 
 /**
@@ -78,8 +78,7 @@ private:
 	QPointer<KopeteWindow> m_mainWindow;
 	bool m_isShuttingDown;
 	Kopete::MimeTypeHandler *m_emoticonHandler;
-	Q3MimeSourceFactory *m_mimeFactory;
-
+	Kopete::FileEngineHandler *m_fileEngineHandler;
 private:
 	void handleURLArgs();
 };
