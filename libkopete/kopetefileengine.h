@@ -1,21 +1,21 @@
 /*
- *	kopetefileengine.h - Kopete file engine
- *
- *	Copyright (c) 2007      by Guillermo A. Amaral B <me@guillermoamaral.com>
- *	Kopete    (c) 2007      by the Kopete developers <kopete-devel@kde.org>
- *
- *	Based on Kopete Mime Source Factory
- *	Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
- *
- *************************************************************************
- *                                                                       *
- * This library is free software; you can redistribute it and/or         *
- * modify it under the terms of the GNU Lesser General Public            *
- * License as published by the Free Software Foundation; either          *
- * version 2 of the License, or (at your option) any later version.      *
- *                                                                       *
- *************************************************************************
- */
+*	kopetefileengine.h - Kopete file engine
+*
+*	Copyright (c) 2007      by Guillermo A. Amaral B <me@guillermoamaral.com>
+*	Kopete    (c) 2007      by the Kopete developers <kopete-devel@kde.org>
+*
+*	Based on Kopete Mime Source Factory
+*	Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
+*
+*************************************************************************
+*                                                                       *
+* This library is free software; you can redistribute it and/or         *
+* modify it under the terms of the GNU Lesser General Public            *
+* License as published by the Free Software Foundation; either          *
+* version 2 of the License, or (at your option) any later version.      *
+*                                                                       *
+*************************************************************************
+*/
 
 #ifndef KOPETEFILEENGINE_H
 #define KOPETEFILEENGINE_H
@@ -73,4 +73,5 @@ namespace Kopete
 			QBuffer m_buffer;
 	};
 } // Kopete
+
 #endif
