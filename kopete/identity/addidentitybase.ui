@@ -1,18 +1,37 @@
 <ui version="4.0" >
- <class>AddIdentityWizardPage1</class>
- <widget class="QWidget" name="AddIdentityWizardPage1" >
+ <class>AddIdentityBase</class>
+ <widget class="QWidget" name="AddIdentityBase" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>333</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Add Identity Assistant</string>
   </property>
   <layout class="QVBoxLayout" >
+   <item>
+    <widget class="KTitleWidget" name="title" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>6</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>42</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string>Add New Identity</string>
+     </property>
+    </widget>
+   </item>
    <item>
     <layout class="QHBoxLayout" >
      <item>
@@ -67,6 +86,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KTitleWidget</class>
+   <extends>QWidget</extends>
+   <header>ktitlewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

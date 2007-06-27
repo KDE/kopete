@@ -27,6 +27,7 @@
 #include <QLabel>
 #include <QDebug>
 #include <QAbstractButton>
+#include <kopete_export.h>
 
 class QScrollArea;
 
@@ -61,7 +62,7 @@ class ArrowButton : public QAbstractButton
   @short A widget that has a caption and a collapsible widget
   @author Daniel Molkentin <molkentin@kde.org>
  */
-class Q_GUI_EXPORT CollapsibleWidget : public QWidget
+class KOPETE_EXPORT CollapsibleWidget : public QWidget
 {
     Q_OBJECT
   public:
@@ -100,7 +101,7 @@ class Q_GUI_EXPORT CollapsibleWidget : public QWidget
          usually in the form of CollapsibleWidgets.
   @author Daniel Molkentin <molkentin@kde.org>
  */
-class Q_GUI_EXPORT SettingsContainer : public QScrollArea
+class KOPETE_EXPORT SettingsContainer : public QScrollArea
 {
     Q_ENUMS( CollapseState )
     Q_OBJECT

@@ -22,7 +22,8 @@
 #include <KGenericFactory>
 #include <KMessageBox>
 
-#include "addidentitywizard.h"
+#include "addidentitydialog.h"
+#include "identitydialog.h"
 #include "kopeteidentitymanager.h"
 #include "kopeteidentity.h"
 
@@ -113,10 +114,14 @@ void KopeteIdentityConfig::slotItemSelected()
 
 void KopeteIdentityConfig::slotAddIdentity()
 {
+	Kopete::Identity *newId = AddIdentityDialog::getIdentity(this);
 
-	AddIdentityWizard *m_addwizard = new AddIdentityWizard( this );
-	connect( m_addwizard, SIGNAL(finished()), this, SLOT(slotAddWizardDone()) );
-	m_addwizard->show();
+	if (!newId)
+		return;
+
+	Kopete::IdentityManager::self()->registerIdentity(newId);
+	//TODO show the config dialog for this ID
+	save();
 }
 
 void KopeteIdentityConfig::slotEditIdentity()
@@ -128,7 +133,8 @@ void KopeteIdentityConfig::slotEditIdentity()
 
 	Kopete::Identity *ident = lvi->identity();
 
-	//TODO implement
+	IdentityDialog dialog(ident, this);
+	dialog.exec();
 
 	load();
 	Kopete::IdentityManager::self()->save();
@@ -150,11 +156,6 @@ void KopeteIdentityConfig::slotRemoveIdentity()
 		Kopete::IdentityManager::self()->removeIdentity( i );
 		delete lvi;
 	}
-}
-
-void KopeteIdentityConfig::slotAddWizardDone()
-{
-	save();
 }
 
 #include "kopeteidentityconfig.moc"

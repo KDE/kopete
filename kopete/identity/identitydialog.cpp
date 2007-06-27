@@ -1,5 +1,5 @@
 /*
-    kopeteidentityconfig.h  -  Kopete identity config page
+    identitydialog.cpp  -  Kopete identity configuration dialog
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
 
@@ -15,48 +15,38 @@
     *************************************************************************
 */
 
-#ifndef __KOPETEIDENTITYCONFIG_H
-#define __KOPETEIDENTITYCONFIG_H
 
-#include <kcmodule.h>
-#include <qmap.h>
-#include <qcolor.h>
+#include "identitydialog.h"
+#include "ui_identitygeneral.h"
 
-#include "kopeteonlinestatus.h"
-#include "ui_kopeteidentityconfigbase.h"
+#include <KIcon>
+#include <kopeteidentity.h>
 
-namespace Kopete
+class IdentityDialog::Private
 {
-class Identity;
+public:
+	Kopete::Identity *identity;
+	Ui::IdentityGeneral general;
+};
+
+IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
+: Kopete::UI::InfoDialog(parent, i18n("Identity Information"), "identity")
+{
+	d = new Private();
+	d->identity = identity;
+	
+	// add the general page
+	QWidget *w = new QWidget(this);
+	d->general.setupUi(w);
+	d->general.selectPhoto->setIcon(KIcon("fileview-preview"));
+	d->general.clearPhoto->setIcon(KIcon("clear-left"));
+	addWidget(w, i18n("General Information"));
 }
 
-class KopeteIdentityLVI;
-
-/**
- * @author Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
- */
-class KopeteIdentityConfig : public KCModule, private Ui::KopeteIdentityConfigBase
+IdentityDialog::~IdentityDialog()
 {
-	Q_OBJECT
+	delete d;
+}
 
-public:
-	KopeteIdentityConfig(QWidget *parent, const QStringList &args );
-
-public slots:
-	virtual void save();
-	virtual void load();
-
-private:
-	KopeteIdentityLVI* selectedIdentity();
-
-	bool m_protected;
-
-private slots:
-	void slotRemoveIdentity();
-	void slotEditIdentity();
-	void slotAddIdentity();
-	void slotItemSelected();
-};
-#endif
-
+#include "identitydialog.moc"
 // vim: set noet ts=4 sts=4 sw=4:

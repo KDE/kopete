@@ -1,11 +1,11 @@
 
 include_directories(
 	${KOPETE_INCLUDES}
-	${CMAKE_SOURCE_DIR}/kopete/kopete/addidentitywizard
-	${CMAKE_BINARY_DIR}/kopete/kopete/addidentitywizard
+	${CMAKE_SOURCE_DIR}/kopete/kopete/identity
+	${CMAKE_BINARY_DIR}/kopete/kopete/identity
 	)
 
-link_directories( ${CMAKE_BINARY_DIR}/kopete/kopete/addidentitywizard )
+link_directories( ${CMAKE_BINARY_DIR}/kopete/kopete/identity )
 
 ########### next target ###############
 
@@ -18,7 +18,7 @@ kde4_automoc(${kcm_kopete_identityconfig_PART_SRCS})
 kde4_add_plugin(kcm_kopete_identityconfig ${kcm_kopete_identityconfig_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_identityconfig  ${KDE4_KUTILS_LIBS} ${KDE4_KABC_LIBS} kopete kopeteaddidentitywizard)
+target_link_libraries(kcm_kopete_identityconfig  ${KDE4_KUTILS_LIBS} ${KDE4_KABC_LIBS} kopete kopeteidentity)
 
 install(TARGETS kcm_kopete_identityconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 

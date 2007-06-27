@@ -1,9 +1,9 @@
 /*
-    addidentitywizard.h - Kopete Add Identity Wizard
+    identitydialog.h  -  Kopete identity configuration dialog
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
 
-    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,45 +15,31 @@
     *************************************************************************
 */
 
-#ifndef ADDIDENTITYWIZARD_H
-#define ADDIDENTITYWIZARD_H
+#ifndef __KOPETEIDENTITYDIALOG_H
+#define __KOPETEIDENTITYDIALOG_H
 
-#include <QMap>
-
-#include <KAssistantDialog>
-
+#include <kopeteinfodialog.h>
 #include <kopete_export.h>
 
-#include "ui_addidentitywizardpage1.h"
-//#include "ui_addidentitywizardpage2.h"
+namespace Kopete
+{
+class Identity;
+}
 
-/**
- * @author Gustavo Pichorim Boiko <gustavo.boiko@kemail.net>
- */
-class KOPETEADDIDENTITYWIZARD_EXPORT AddIdentityWizard : public KAssistantDialog
+class KOPETE_IDENTITY_EXPORT IdentityDialog : public Kopete::UI::InfoDialog
 {
 	Q_OBJECT
-
 public:
-	explicit AddIdentityWizard( QWidget *parent = 0 );
-	~AddIdentityWizard();
-
-private slots:
-	void slotValidate();
-	void slotIdentityListDoubleClicked();
-
-protected slots:
-	virtual void back();
-	virtual void next();
-	virtual void accept();
-	virtual void reject();
+	IdentityDialog(Kopete::Identity *identity, QWidget *parent = 0);
+	~IdentityDialog();
 
 private:
 	class Private;
 	Private *d;
+
 };
+
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

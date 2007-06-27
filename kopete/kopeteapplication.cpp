@@ -58,6 +58,9 @@ KopeteApplication::KopeteApplication()
 
 	Kopete::UI::Global::setMainWidget( m_mainWindow );
 
+	//Create the identity manager
+	Kopete::IdentityManager::self()->load();
+
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:
 	 * When starting up kopete and the msn plugin gets loaded it can bring up
@@ -111,9 +114,6 @@ void KopeteApplication::slotLoadPlugins()
 
 	//Create the view manager
 	KopeteViewManager::viewManager();
-
-	//Create the identity manager
-	Kopete::IdentityManager::self()->load();
 
 	// the account manager should be created after the identity manager is created
 	Kopete::AccountManager::self()->load();
