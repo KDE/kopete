@@ -40,7 +40,6 @@
 #include "kopetecontact.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
-#include "kopetegeneralsettings.h"
 #include "kopetepluginmanager.h"
 
 namespace Kopete

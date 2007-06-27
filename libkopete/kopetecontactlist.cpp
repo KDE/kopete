@@ -42,7 +42,6 @@
 #include "kopeteaccountmanager.h"
 #include "kopetegroup.h"
 #include "kopetepicture.h"
-#include "kopetegeneralsettings.h"
 #include "xmlcontactstorage.h"
 
 namespace  Kopete
