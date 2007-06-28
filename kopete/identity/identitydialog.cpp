@@ -32,6 +32,11 @@ public:
 IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 : Kopete::UI::InfoDialog(parent, i18n("Identity Information"), "identity")
 {
+	Q_ASSERT(identity);
+
+	setTitle(identity->identityId());
+	setWindowTitle(i18n("Identity Information"));
+
 	d = new Private();
 	d->identity = identity;
 	

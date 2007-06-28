@@ -103,8 +103,12 @@ Account::Account( Protocol *parent, const QString &accountId )
 	d->priority = d->configGroup->readEntry( "Priority", 0 );
 
 	Identity *identity = Kopete::IdentityManager::self()->findIdentity( d->configGroup->readEntry("Identity", QString()) );
-	//FIXME: we should have a dialog to assign orphan accounts but for now an assertion is fine
-	Q_ASSERT( identity );
+
+	// if the identity was not found, use the default one which will for sure exist
+	// FIXME: maybe it could show a passive dialog telling that to the user
+	if (!identity)
+		identity = Kopete::IdentityManager::self()->defaultIdentity();
+
 	setIdentity( identity );
 
 	d->restoreStatus = Kopete::OnlineStatus::Online;

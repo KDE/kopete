@@ -38,8 +38,8 @@ class Identity::Private
 public:
 	Private(const QString &i)
 	{
-		configGroup = new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Identity_%1" ).arg( id ));
 		id = i;
+		configGroup = new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Identity_%1" ).arg( id ));
 	}
 	QList<Kopete::Account*> accounts;
 	QString id;

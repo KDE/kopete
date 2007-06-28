@@ -24,6 +24,7 @@
 #include <KGlobal>
 #include <KSharedConfig>
 #include <KSharedConfigPtr>
+#include <KLocale>
 
 
 namespace Kopete {
@@ -32,6 +33,7 @@ class IdentityManager::Private
 {
 public:
 	Identity::List identities;
+	QString defaultIdentity;
 };
 
 IdentityManager * IdentityManager::s_self = 0L;
@@ -120,7 +122,7 @@ const Identity::List& IdentityManager::identities() const
 	return d->identities;
 }
 
-Identity * IdentityManager::findIdentity( const QString &identityId )
+Identity *IdentityManager::findIdentity( const QString &identityId )
 {
 	foreach( Identity *identity , d->identities )	
 	{
@@ -128,6 +130,55 @@ Identity * IdentityManager::findIdentity( const QString &identityId )
 			return identity;
 	}
 	return 0L;
+}
+
+Identity *IdentityManager::defaultIdentity()
+{
+	Identity *ident = 0;
+
+	if (!d->defaultIdentity.isEmpty())
+		ident = findIdentity(d->defaultIdentity);
+
+	if (ident)
+		return ident;
+
+	// if the identity set as the default identity does not exist, try using another one
+	
+	// if there is no identity registered, create a default identity
+	if (!d->identities.count())
+	{
+		ident = new Identity(i18n("Default Identity"));
+		ident = registerIdentity(ident);
+		emit defaultIdentityChanged( ident );
+		setDefaultIdentity( ident );
+		if (ident)
+			return ident;
+	}
+	else
+	{
+		// use any identity available
+		ident = d->identities.first();
+		setDefaultIdentity( ident );
+		return ident;
+	}
+
+}
+
+void IdentityManager::setDefaultIdentity( Identity *identity )
+{
+	Q_ASSERT(identity);
+
+	// if the default identity didn't change, just return
+	if (identity->identityId() == d->defaultIdentity)
+		return;
+
+	// if the given identity is not registered, does nothing
+	if (d->identities.indexOf( identity ) == -1)
+		return;
+
+	d->defaultIdentity = identity->identityId();
+	save();
+	emit defaultIdentityChanged( identity );
 }
 
 void IdentityManager::removeIdentity( Identity *identity )
@@ -146,6 +197,10 @@ void IdentityManager::removeIdentity( Identity *identity )
 
 void IdentityManager::save()
 {
+	// save the default identity
+	KConfigGroup group = KGlobal::config()->group("IdentityManager");
+	group.writeEntry("DefaultIdentity", d->defaultIdentity);
+
 	//kDebug( 14010 ) << k_funcinfo << endl;
 	foreach( Identity *identity , d->identities )
 	{
@@ -162,6 +217,11 @@ void IdentityManager::load()
 {
 	// Iterate over all groups that start with "Identity_" as those are identities.
 	KSharedConfig::Ptr config = KGlobal::config();
+
+	// get the default identity
+	KConfigGroup group = config->group("IdentityManager");
+	d->defaultIdentity = group.readEntry("DefaultIdentity", QString());
+
 	QStringList identityGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Identity_" ) ) );
 	for ( QStringList::Iterator it = identityGroups.begin(); it != identityGroups.end(); ++it )
 	{

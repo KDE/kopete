@@ -66,6 +66,27 @@ public:
 	 */
 	Identity* findIdentity( const QString &identityId );
 
+
+	/**
+	 * \brief Returs the default identity to be used
+	 *
+	 * This is the default identity configured in kopete. If no identity was created
+	 * yet, this function will create a new identity, set it as the default identity
+	 * and return it.
+	 * If there are identities already created, but none of them was set as the default,
+	 * it will return the first identity of the list.
+	 * @return the default identity
+	 */
+	Identity* defaultIdentity();
+
+	/**
+	 * @brief Sets a new default identity
+	 *
+	 * By changing the default identity, you do NOT change the accounts' identity
+	 * association. They are kept as if nothing has changed
+	 */
+	void setDefaultIdentity(Identity *ident);
+	
 	/**
 	 * \brief Delete the identity and clean the config data
 	 *
@@ -120,6 +141,11 @@ signals:
 	 */
 	void identityUnregistered( const Kopete::Identity *identity );
 
+	/**
+	 * \brief Signals when the default identity has changed
+	 */
+	void defaultIdentityChanged( Kopete::Identity *identity );
+	
 	void identityOnlineStatusChanged(Kopete::Identity *identity,
 		const Kopete::OnlineStatus &oldStatus, const Kopete::OnlineStatus &newStatus);
 

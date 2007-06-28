@@ -52,11 +52,19 @@ KopeteIdentityConfig::KopeteIdentityConfig( QWidget *parent, const QStringList &
 	mButtonNew->setIcon( KIcon("edit-add") );
 	mButtonRemove->setIcon( KIcon("edit-delete") );
 
-	connect( mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddIdentity() ) );
-	connect( mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEditIdentity() ) );
-	connect( mButtonRemove, SIGNAL( clicked() ), this, SLOT( slotRemoveIdentity() ) );
+	connect( mButtonNew,     SIGNAL( clicked() ), this, SLOT( slotAddIdentity() ) );
+	connect( mButtonEdit,    SIGNAL( clicked() ), this, SLOT( slotEditIdentity() ) );
+	connect( mButtonDefault, SIGNAL( clicked() ), this, SLOT( slotSetDefaultIdentity() ) );
+	connect( mButtonRemove,  SIGNAL( clicked() ), this, SLOT( slotRemoveIdentity() ) );
 	connect( mIdentityList,  SIGNAL( itemSelectionChanged() ), this, SLOT( slotItemSelected() ) );
 	connect( mIdentityList,  SIGNAL( itemDoubleClicked(QTreeWidgetItem*, int) ), this, SLOT( slotEditIdentity() ) );
+
+	// identity manager signals
+	Kopete::IdentityManager *manager = Kopete::IdentityManager::self();
+	connect( manager, SIGNAL(identityRegistered(Kopete::Identity*)), this, SLOT(load()));
+	connect( manager, SIGNAL(identityUnregistered(Kopete::Identity*)), this, SLOT(load()));
+	connect( manager, SIGNAL(defaultIdentityChanged(Kopete::Identity*)), this, SLOT(load()));
+
 	setButtons( Help );
 	load();
 }
@@ -81,15 +89,20 @@ void KopeteIdentityConfig::load()
 
 	mIdentityList->clear();
 
+	Kopete::Identity *defaultIdentity = Kopete::IdentityManager::self()->defaultIdentity();
 	foreach(Kopete::Identity *i, Kopete::IdentityManager::self()->identities())
 	{
 		// Insert the item after the previous one
 		lvi = new KopeteIdentityLVI( i, mIdentityList );
 		lvi->setText( 0, i->identityId() );
 		lvi->setIcon( 0, KIcon( i->customIcon()) );
-		QFont font = lvi->font( 0 );
-		font.setBold( true );
-		lvi->setFont( 0, font );
+		
+		if (i == defaultIdentity)
+		{
+			QFont font = lvi->font( 0 );
+			font.setBold( true );
+			lvi->setFont( 0, font );
+		}
 
 		lvi->setSizeHint( 0, QSize(0, 42) );
 		
@@ -105,6 +118,7 @@ void KopeteIdentityConfig::slotItemSelected()
 	KopeteIdentityLVI *itemSelected = selectedIdentity();
 
 	mButtonEdit->setEnabled( itemSelected );
+	mButtonDefault->setEnabled( itemSelected );
 	mButtonRemove->setEnabled( itemSelected );
 
 	m_protected=false;
@@ -141,6 +155,16 @@ void KopeteIdentityConfig::slotEditIdentity()
 
 	load();
 	Kopete::IdentityManager::self()->save();
+}
+
+void KopeteIdentityConfig::slotSetDefaultIdentity()
+{
+	KopeteIdentityLVI *lvi = selectedIdentity();
+	
+	if ( !lvi || !lvi->identity() )
+		return;
+
+	Kopete::IdentityManager::self()->setDefaultIdentity( lvi->identity() );
 }
 
 void KopeteIdentityConfig::slotRemoveIdentity()

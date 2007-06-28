@@ -79,6 +79,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="mButtonDefault" >
+       <property name="text" >
+        <string>Set as &amp;Default</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="mButtonEdit" >
        <property name="toolTip" >
         <string>Modify selected account</string>

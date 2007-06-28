@@ -54,6 +54,7 @@ private:
 private slots:
 	void slotRemoveIdentity();
 	void slotEditIdentity();
+	void slotSetDefaultIdentity();
 	void slotAddIdentity();
 	void slotItemSelected();
 };
