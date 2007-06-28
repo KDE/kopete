@@ -93,6 +93,12 @@ public:
 	 * @brief Return the menu for this identity
 	 */
 	KActionMenu* actionMenu();
+
+	/**
+	 * Returns the accounts assigned to this identity
+	 */
+	QList<Account*> accounts() const;
+
 	/**
 	 * @brief Adds an account to the identity
 	 *
@@ -129,6 +135,7 @@ public slots:
 signals:
 	void onlineStatusChanged(Kopete::Identity*,Kopete::OnlineStatus::StatusType,Kopete::OnlineStatus::StatusType);
 	void identityDestroyed( const Kopete::Identity *identity );
+	void identityChanged(Kopete::Identity *identity);
 
 private:
 	class Private;

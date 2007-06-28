@@ -8,11 +8,13 @@ ${KOPETE_INCLUDES}
 
 set( kopeteidentity_SRCS 
 addidentitydialog.cpp 
+accountidentitydialog.cpp
 identitydialog.cpp
 )
 
 kde4_add_ui_files( kopeteidentity_SRCS
     addidentitybase.ui 
+    accountidentitybase.ui
     identitygeneral.ui
 )
 

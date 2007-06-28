@@ -732,6 +732,8 @@ void KopeteWindow::slotIdentityRegistered( Kopete::Identity *identity )
 	connect( identity, SIGNAL(onlineStatusChanged( Kopete::Identity *, 
 												   const Kopete::OnlineStatus::StatusType &, const Kopete::OnlineStatus::StatusType &) ),
 			this, SLOT( slotIdentityStatusIconChanged( Kopete::Identity * ) ) );
+	connect( identity, SIGNAL(identityChanged( Kopete::Identity * )),
+			 this, SLOT( slotIdentityStatusIconChanged( Kopete::Identity * ) ) );
 
 	KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon( identity, d->statusBarWidget );
 	connect( sbIcon, SIGNAL( rightClicked( Kopete::Identity *, const QPoint & ) ),

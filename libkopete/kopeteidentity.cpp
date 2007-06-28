@@ -113,16 +113,17 @@ QString Identity::toolTip() const
 		nick = d->id;
 
 	tt+= i18nc( "Identity tooltip information: <nobr>ICON <b>NAME</b><br/></br>",
-				"<nobr><img src=\"kopete-identity-icon:%1\"> <b>%2</b><br/<br/>",
+				"<nobr><img src=\"kopete-identity-icon:%1\"> <b>%2</b><br/><br/>",
 				QString(QUrl::toPercentEncoding( d->id )), nick );
 
 	foreach(Account *a, d->accounts)
 	{
 		Kopete::Contact *self = a->myself();
+		QString onlineStatus = self ? self->onlineStatus().description() : i18n("Offline");
 		tt += i18nc( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)<br/>",
 					 "<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 (<i>%5</i>)<br/>",
 					 a->protocol()->displayName(), a->accountLabel(), QString(QUrl::toPercentEncoding( a->protocol()->pluginId() )),
-					 QString(QUrl::toPercentEncoding( a->accountId() )), self->onlineStatus().description() );
+					 QString(QUrl::toPercentEncoding( a->accountId() )), onlineStatus );
 	}
 	tt += QLatin1String("</qt>");
 	return tt;
@@ -154,6 +155,11 @@ KActionMenu* Identity::actionMenu()
 	return menu;
 }
 
+QList<Account*> Identity::accounts() const
+{
+	return d->accounts;
+}
+
 void Identity::addAccount( Kopete::Account *account )
 {
 	// check if we already have this account
@@ -162,12 +168,16 @@ void Identity::addAccount( Kopete::Account *account )
 
 	d->accounts.append( account );
 	//TODO implement the signals for status changes and so
+	
+	emit identityChanged( this );
 }
 
 void Identity::removeAccount( Kopete::Account *account )
 {
 	//TODO disconnect signals and so on
 	d->accounts.removeAll( account );
+	
+	emit identityChanged( this );
 }
 
 KConfigGroup *Identity::configGroup() const
@@ -208,7 +218,8 @@ void Identity::updateOnlineStatus()
 	foreach(Account *account, d->accounts)
 	{
 		// find most significant status
-		if ( account->myself()->onlineStatus() > mostSignificantStatus )
+		if ( account->myself() && 
+			 account->myself()->onlineStatus() > mostSignificantStatus )
 			mostSignificantStatus = account->myself()->onlineStatus();
 	}
 

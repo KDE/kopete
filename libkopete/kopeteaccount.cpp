@@ -428,6 +428,7 @@ void Account::setIdentity( Identity *ident )
 
 	ident->addAccount( this );
 	d->identity = ident;
+	d->configGroup->writeEntry("Identity", ident->identityId());
 }
 
 Contact * Account::myself() const

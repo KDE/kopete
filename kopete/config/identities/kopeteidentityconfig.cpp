@@ -22,6 +22,7 @@
 #include <KMessageBox>
 
 #include "addidentitydialog.h"
+#include "accountidentitydialog.h"
 #include "identitydialog.h"
 #include "kopeteidentitymanager.h"
 #include "kopeteidentity.h"
@@ -119,7 +120,10 @@ void KopeteIdentityConfig::slotItemSelected()
 
 	mButtonEdit->setEnabled( itemSelected );
 	mButtonDefault->setEnabled( itemSelected );
-	mButtonRemove->setEnabled( itemSelected );
+	if ( Kopete::IdentityManager::self()->identities().count() <= 1 )
+		mButtonRemove->setEnabled( false );
+	else
+		mButtonRemove->setEnabled( itemSelected );
 
 	m_protected=false;
 }
@@ -175,14 +179,30 @@ void KopeteIdentityConfig::slotRemoveIdentity()
 		return;
 
 	Kopete::Identity *i = lvi->identity();
-	if ( KMessageBox::warningContinueCancel( this, i18n( "Are you sure you want to remove the identity \"%1\"?", i->identityId() ),
-		i18n( "Remove Identity" ), KGuiItem(i18n( "Remove Identity" ), "edit-delete"), KStandardGuiItem::cancel(),
-		 "askRemoveIdentity", KMessageBox::Notify | KMessageBox::Dangerous ) == KMessageBox::Continue )
+
+	if (!i->accounts().count())
 	{
-		//FIXME: should handle account moving to another identity
-		Kopete::IdentityManager::self()->removeIdentity( i );
-		delete lvi;
+		if ( KMessageBox::warningContinueCancel( this, i18n( "Are you sure you want to remove the identity \"%1\"?", i->identityId() ),
+			i18n( "Remove Identity" ), KGuiItem(i18n( "Remove Identity" ), "edit-delete"), KStandardGuiItem::cancel(),
+			"askRemoveIdentity", KMessageBox::Notify | KMessageBox::Dangerous ) == KMessageBox::Continue )
+		{
+			Kopete::IdentityManager::self()->removeIdentity( i );
+			delete lvi;
+		}
 	}
+	else
+	{
+		// if there are any accounts linked to this identity, need to change them before removing the identity
+		if ( AccountIdentityDialog::changeAccountIdentity( this, i->accounts(), i, 
+					i18n("Before removing the identity %1, the following accounts must be" 
+						 "assigned to another identity:", i->identityId())) )
+		{
+			Kopete::IdentityManager::self()->removeIdentity( i );
+			delete lvi;
+		}
+	}
+	// if we removed the default identity, this will trigger an update
+	Kopete::IdentityManager::self()->defaultIdentity();
 }
 
 #include "kopeteidentityconfig.moc"
