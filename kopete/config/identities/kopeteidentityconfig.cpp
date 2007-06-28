@@ -17,7 +17,6 @@
 
 #include "kopeteidentityconfig.h"
 
-#include <QPointer>
 #include <QHeaderView>
 #include <KGenericFactory>
 #include <KMessageBox>
@@ -35,8 +34,7 @@ class KopeteIdentityLVI : public QTreeWidgetItem
 		Kopete::Identity *identity() { return m_identity; }
 
 	private:
-		//need to be guarded because some identitys may be linked (that's the case of jabber transports)
-		QPointer<Kopete::Identity> m_identity;
+		Kopete::Identity *m_identity;
 };
 
 typedef KGenericFactory<KopeteIdentityConfig, QWidget> KopeteIdentityConfigFactory;
@@ -114,13 +112,18 @@ void KopeteIdentityConfig::slotItemSelected()
 
 void KopeteIdentityConfig::slotAddIdentity()
 {
-	Kopete::Identity *newId = AddIdentityDialog::getIdentity(this);
+	Kopete::Identity *ident = AddIdentityDialog::getIdentity(this);
 
-	if (!newId)
+	if (!ident)
 		return;
 
-	Kopete::IdentityManager::self()->registerIdentity(newId);
-	//TODO show the config dialog for this ID
+	ident = Kopete::IdentityManager::self()->registerIdentity(ident);
+	if (ident)
+	{
+		IdentityDialog dialog(ident, this);
+		dialog.exec();
+	}
+
 	save();
 }
 

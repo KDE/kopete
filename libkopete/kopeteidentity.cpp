@@ -36,6 +36,11 @@ namespace Kopete
 class Identity::Private
 {
 public:
+	Private(const QString &i)
+	{
+		configGroup = new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Identity_%1" ).arg( id ));
+		id = i;
+	}
 	QList<Kopete::Account*> accounts;
 	QString id;
 	KConfigGroup *configGroup;
@@ -44,10 +49,20 @@ public:
 
 Identity::Identity(const QString &id)
 {
-	d = new Private;
-	d->id = id;
+	d = new Private(id);
+}
 
-	d->configGroup = new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Identity_%1" ).arg( id ));
+Identity::Identity(const QString &id, Identity &existing)
+{
+	d = new Private(id);
+
+	QMap<QString,QString> props;
+	
+	//read properties from the existing identity
+	existing.serializeProperties(props);
+
+	//write them in this identity
+	deserializeProperties(props);	
 }
 
 Identity::~Identity()

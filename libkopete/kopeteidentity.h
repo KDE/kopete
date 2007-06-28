@@ -42,11 +42,19 @@ class KOPETE_EXPORT Identity : public PropertyContainer
 public:	
 	typedef QList<Identity*> List;
 	/**
-	 * @brief A container for properties. 
+	 * @brief The main constructor for Kopete Identities 
 	 *
-	 * This class provides an interface for reading and writing properties.
+	 * This will create an empty identity name @param id
 	 */
 	Identity(const QString &id);
+
+	/**
+	 * @brief Duplicates an existing identity
+	 *
+	 * This will create a new identity name @param id, that will clone all properties
+	 * of the identity @param existing.
+	 */
+	Identity(const QString &id, Identity &existing);
 
 	~Identity();
 

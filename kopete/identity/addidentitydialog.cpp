@@ -20,6 +20,7 @@
 #include <QHeaderView>
 #include <QMap>
 #include <KIcon>
+#include <KMessageBox>
 
 #include "kopeteidentity.h"
 #include "kopeteidentitymanager.h"
@@ -109,9 +110,30 @@ void AddIdentityDialog::slotIdentityListDoubleClicked()
 void AddIdentityDialog::accept()
 {
 	Kopete::IdentityManager *manager = Kopete::IdentityManager::self();
+	Kopete::Identity *ident = manager->findIdentity(d->ui.identityName->text());
 
-	//TODO implement
-	
+	// if the returned identity is valid, this means an identity already exists 
+	if (ident)
+	{
+		d->ui.identityName->setFocus();
+		KMessageBox::error(this, i18n("An identity name %1 already exists. Please choose another name for the identity.", 
+									  d->ui.identityName->text()), i18n("Identity Already Exists"));
+		return;
+	}
+
+	if (d->ui.newOption->isChecked())
+	{
+		ident = new Kopete::Identity(d->ui.identityName->text());
+	}
+	else if (d->ui.duplicateOption->isChecked())
+	{
+		ident = d->identityItems[d->selectedIdentity()]; 
+		if (!ident)
+			return;
+		ident = new Kopete::Identity(d->ui.identityName->text(), *ident);
+	}
+
+	d->identity = ident;
 	KDialog::accept();
 }
 

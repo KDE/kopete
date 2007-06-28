@@ -164,7 +164,6 @@ install( FILES kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop  DES
 install( FILES
   ${CMAKE_CURRENT_BINARY_DIR}/kopeteappearancesettings.h
   ${CMAKE_CURRENT_BINARY_DIR}/kopetebehaviorsettings.h
-  ${CMAKE_CURRENT_BINARY_DIR}/kopetegeneralsettings.h
   kabcpersistence.h
   kopeteaccount.h
   kopeteaccountmanager.h
