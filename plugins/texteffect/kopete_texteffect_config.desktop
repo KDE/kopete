@@ -10,7 +10,6 @@ X-KDE-ParentApp=kopete_texteffect
 X-KDE-ParentComponents=kopete_texteffect
 
 Name=Text Effect
-Name[ar]=التأثير النصي
 Name[ca]=Efecte de text
 Name[cs]=Textový efekt
 Name[cy]=Effaith Testun
@@ -59,7 +58,6 @@ Name[x-test]=xxText Effectxx
 Name[zh_HK]=文字效果
 Name[zh_TW]=文字效果
 Comment=Adds special effects to your text
-Comment[ar]=يضيف مؤثرات خاصة لنصوصك
 Comment[ca]=Afegeix bonics efectes al vostre text
 Comment[cs]=Přidává speciální efekty do vašeho textu
 Comment[cy]=Ychwanegu effeithiau arbennig i'ch testun

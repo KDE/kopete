@@ -19,7 +19,6 @@ Name=IRC
 Name[ne]=आई आर सी
 Name[x-test]=xxIRCxx
 Comment=Protocol to connect to IRC
-Comment[ar]=البروتوكل سيتصل بـ IRC
 Comment[br]=Komenad kevreañ ouzh IRC
 Comment[ca]=Protocol per a connectar-se a l'IRC
 Comment[cs]=Protokol k připojení k IRC

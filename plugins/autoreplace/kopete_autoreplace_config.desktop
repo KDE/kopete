@@ -10,7 +10,6 @@ X-KDE-ParentApp=kopete_autoreplace
 X-KDE-ParentComponents=kopete_autoreplace
 
 Name=Auto Replace
-Name[ar]=الاستبدال التلقائي
 Name[ca]=Auto-substitució
 Name[cs]=Automatické nahrazení
 Name[cy]=Hunan-Amnewid
@@ -58,7 +57,6 @@ Name[x-test]=xxAuto Replacexx
 Name[zh_HK]=自動取代
 Name[zh_TW]=自動取代
 Comment=Autoreplaces some text you can choose
-Comment[ar]=تقوم بتغييرتلقائي لبعض النصوص التي يمكنك الاختيار منها
 Comment[ca]=Auto-substitueix algun text que podreu escollir
 Comment[cs]=Automaticky nahrazuje zvolený text
 Comment[cy]=Hunan-amnewid testun y gallwch ei ddewis
