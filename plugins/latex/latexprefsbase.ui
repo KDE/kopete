@@ -1,7 +1,5 @@
 <ui version="4.0" >
  <author>Duncan Mac-Vicar</author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>LatexPrefsUI</class>
  <widget class="QWidget" name="LatexPrefsUI" >
   <property name="geometry" >
@@ -13,11 +11,20 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>9</number>
+   </property>
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
    </property>
    <item>
     <widget class="QLabel" name="textLabel1" >
@@ -25,8 +32,8 @@
       <enum>QFrame::Box</enum>
      </property>
      <property name="text" >
-      <string>&lt;p>The &lt;font size="+1">KopeTeX&lt;/font> plugin allows &lt;font size="+1">Kopet&lt;/font>e to render Latex formulas in the chat window. The sender must enclose the formula between two $ signs. ie: $$formula$$&lt;/p>
-&lt;p>This plugin requires ImageMagick convert program installed in order to work.&lt;/p></string>
+      <string>The KopeTeX plugin allows Kopete to render Latex formulas in the chat window. The sender must enclose the formula between two $ signs. ie: $$formula$$
+This plugin requires ImageMagick convert program installed in order to work.</string>
      </property>
     </widget>
    </item>
@@ -36,19 +43,40 @@
       <string>Options</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>9</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>6</number>
       </property>
       <item row="1" column="0" >
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
         </property>
         <item>
          <widget class="KIntNumInput" name="horizontalDPI" />
@@ -99,11 +127,20 @@
       </item>
       <item row="0" column="0" >
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
         </property>
         <item>
          <widget class="QLabel" name="textLabel2" >
@@ -156,10 +193,8 @@
  <customwidgets>
   <customwidget>
    <class>KIntNumInput</class>
-   <extends></extends>
+   <extends>QWidget</extends>
    <header>knuminput.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <resources/>
