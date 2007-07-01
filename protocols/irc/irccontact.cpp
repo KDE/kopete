@@ -219,7 +219,7 @@ QTextCodec *IRCContact::codec()
 		if (test)
 			codec = QTextCodec::codecForMib(mib);
 		else
-			codec = QTextCodec::codecForName(codecId.latin1());
+			codec = QTextCodec::codecForName(codecId.toLatin1());
 	}
 
 	if (!codec)

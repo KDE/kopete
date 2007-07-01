@@ -402,7 +402,7 @@ int VideoDevice::showDeviceCapabilities()
 		kDebug() <<  k_funcinfo << "    Max res: " << maxWidth() << " x " << maxHeight() << endl;
 		kDebug() <<  k_funcinfo << "    Min res: " << minWidth() << " x " << minHeight() << endl;
 		kDebug() <<  k_funcinfo << "    Inputs : " << inputs() << endl;
-		for (unsigned int loop=0; loop < inputs(); loop++)
+		for (int loop=0; loop < inputs(); loop++)
 			kDebug() <<  k_funcinfo << "Input " << loop << ": " << m_input[loop].name << " (tuner: " << m_input[loop].hastuner << ")" << endl;
 		kDebug() <<  k_funcinfo << "showDeviceCapabilities() exited successfuly." << endl;
 		return EXIT_SUCCESS;
@@ -1083,7 +1083,10 @@ int VideoDevice::getImage(QImage *qimage)
 {
     /// @todo implement me
 
-	qimage->create(width(), height(),32, QImage::IgnoreEndian);
+	// not sure if this is the way to handle this (gamaral)
+	delete qimage;
+	qimage = new QImage(width(), height(), QImage::Format_RGB32);
+
 	uchar *bits=qimage->bits();
 // kDebug() <<  k_funcinfo << "Capturing in " << pixelFormatName(m_currentbuffer.pixelformat) << endl;
 	switch(m_currentbuffer.pixelformat)
@@ -1312,7 +1315,7 @@ float VideoDevice::setBrightness(float brightness)
 				struct video_picture V4L_picture;
 				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
 					kDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
-				V4L_picture.brightness   = (65535*getBrightness());
+				V4L_picture.brightness = uint(65535 * getBrightness());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
 					kDebug() <<  k_funcinfo << "Card seems to not support adjusting image brightness. Fallback to it is not yet implemented." << endl;
 			}
@@ -1350,7 +1353,7 @@ float VideoDevice::setContrast(float contrast)
 				struct video_picture V4L_picture;
 				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
 					kDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
-				V4L_picture.contrast   = (65535*getContrast());
+				V4L_picture.contrast = uint(65535*getContrast());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
 					kDebug() <<  k_funcinfo << "Card seems to not support adjusting image contrast. Fallback to it is not yet implemented." << endl;
 			}
@@ -1388,7 +1391,7 @@ float VideoDevice::setSaturation(float saturation)
 				struct video_picture V4L_picture;
 				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
 					kDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
-				V4L_picture.colour   = (65535*getSaturation());
+				V4L_picture.colour = uint(65535*getSaturation());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
 					kDebug() <<  k_funcinfo << "Card seems to not support adjusting image saturation. Fallback to it is not yet implemented." << endl;
 			}
@@ -1426,7 +1429,7 @@ float VideoDevice::setWhiteness(float whiteness)
 				struct video_picture V4L_picture;
 				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
 					kDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
-				V4L_picture.whiteness   = (65535*getWhiteness());
+				V4L_picture.whiteness = uint(65535*getWhiteness());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
 					kDebug() <<  k_funcinfo << "Card seems to not support adjusting white level. Fallback to it is not yet implemented." << endl;
 			}
@@ -1464,7 +1467,7 @@ float VideoDevice::setHue(float hue)
 				struct video_picture V4L_picture;
 				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
 					kDebug() <<  k_funcinfo << "VIDIOCGPICT failed (" << errno << ")." << endl;
-				V4L_picture.hue   = (65535*getHue());
+				V4L_picture.hue = uint(65535*getHue());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
 					kDebug() <<  k_funcinfo << "Card seems to not support adjusting image hue. Fallback to it is not yet implemented." << endl;
 			}

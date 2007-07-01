@@ -1025,7 +1025,7 @@ void ClientTask::CtcpQuery_dcc(Message msg)
 //	Message &ctcpMsg = msg.ctcpMessage();
 	Message ctcpMsg;
 
-	QString dccCommand = ctcpMsg.arg(0).upper();
+	QString dccCommand = ctcpMsg.arg(0).toUpper();
 
 	if (dccCommand == QString::fromLatin1("CHAT"))
 	{

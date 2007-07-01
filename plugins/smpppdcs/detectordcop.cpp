@@ -21,10 +21,10 @@
 
 #include "detectordcop.h"
 #include "iconnector.h"
-//Added by qt3to4:
-#include <Q3CString>
 
-Q3CString DetectorDCOP::m_kinternetApp = "";
+#include <QByteArray>
+
+QByteArray DetectorDCOP::m_kinternetApp = "";
 
 DetectorDCOP::DetectorDCOP(IConnector * connector)
 	: Detector(connector) {}
@@ -34,7 +34,7 @@ DetectorDCOP::~DetectorDCOP() {}
 /*!
     \fn DetectorDCOP::getKInternetDCOP()
  */
-Q3CString DetectorDCOP::getKInternetDCOP() const {
+QByteArray DetectorDCOP::getKInternetDCOP() const {
     DCOPClient * client = kapp->dcopClient();
     if(m_kinternetApp.isEmpty() && client && client->isAttached()) {
         // get all registered dcop apps and search for kinternet

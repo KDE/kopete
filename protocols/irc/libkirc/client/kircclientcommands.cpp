@@ -199,7 +199,7 @@ void ClientCommands::nick(Message msg)
 
 	QString message;
 
-	if (oldNick.lower() == m_Nickname.lower())
+	if (oldNick.toLower() == m_Nickname.toLower())
 	{
 		m_Nickname = msg.suffix();
 		message = i18n("Your nick has changed from %1 to %2");
@@ -1003,7 +1003,7 @@ void ClientCommands::CtcpQuery_dcc(Message msg)
 //	Message &ctcpMsg = msg.ctcpMessage();
 	Message ctcpMsg;
 
-	QString dccCommand = ctcpMsg.arg(0).upper();
+	QString dccCommand = ctcpMsg.arg(0).toUpper();
 
 	if (dccCommand == QString::fromLatin1("CHAT"))
 	{

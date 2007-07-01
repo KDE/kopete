@@ -163,7 +163,7 @@ void I18nTask::nick(Event *e)
 
 	QString message;
 
-	if (oldNick.lower() == m_Nickname->message().lower())
+	if (oldNick.toLower() == m_Nickname->message().toLower())
 	{
 		m_Nickname = e->message().suffix();
 		message = i18n("Your nick has changed from %1 to %2");
@@ -948,7 +948,7 @@ void I18nTask::CtcpQuery_dcc(Event *e)
 //	Event *&ctcpMsg = e->message().ctcpMessage();
 	Event *ctcpMsg;
 
-	QString dccCommand = ctcpMsg.arg(0).upper();
+	QString dccCommand = ctcpMsg.arg(0).toUpper();
 
 	if (dccCommand == QString::fromLatin1("CHAT"))
 	{
