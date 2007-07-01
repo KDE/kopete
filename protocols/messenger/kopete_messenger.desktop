@@ -23,6 +23,7 @@ Name[x-test]=xxWindows Live(MSN) Messengerxx
 Comment=Protocol to connect to Windows Live(MSN) Messenger
 Comment[de]=Protokoll zur Verbindung mit Windows Live(MSN) Messenger
 Comment[el]=Πρωτόκολλο σύνδεσης στο Windows Live(MSN) Messenger
+Comment[fa]=قرارداد برای اتصال به پیام‌رسان Windows Live(MSN)
 Comment[ga]=Prótacal chun ceangal le Windows Live(MSN) Messenger
 Comment[ja]=Windows Live (MSN) メッセンジャーに接続するプロトコル
 Comment[sv]=Protokoll för att ansluta till Windows Live (MSN)-meddelandeklient
