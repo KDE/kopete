@@ -10,12 +10,14 @@ set( kopeteidentity_SRCS
 addidentitydialog.cpp 
 accountidentitydialog.cpp
 identitydialog.cpp
+identitystatuswidget.cpp
 )
 
 kde4_add_ui_files( kopeteidentity_SRCS
     addidentitybase.ui 
     accountidentitybase.ui
     identitygeneral.ui
+    identitystatusbase.ui
 )
 
 kde4_automoc(${kopeteidentity_SRCS})

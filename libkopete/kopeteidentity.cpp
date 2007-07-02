@@ -50,6 +50,9 @@ public:
 Identity::Identity(const QString &id)
 {
 	d = new Private(id);
+	load();
+	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
+			this, SLOT(slotSaveProperty(PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
 }
 
 Identity::Identity(const QString &id, Identity &existing)
@@ -63,6 +66,9 @@ Identity::Identity(const QString &id, Identity &existing)
 
 	//write them in this identity
 	deserializeProperties(props);	
+
+	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
+			this, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
 }
 
 Identity::~Identity()
@@ -190,23 +196,25 @@ void Identity::load()
 	QStringList properties = d->configGroup->readEntry("Properties", QStringList());
 	QMap<QString,QString> props;
 
+	kDebug() << "Properties: " << properties << endl;
+	Kopete::Global::Properties *p = Kopete::Global::Properties::self();
 	foreach(QString prop, properties)
 	{
-		props[ prop ] = d->configGroup->readEntry( prop, QString() );
+		setProperty(  p->tmpl(prop), d->configGroup->readEntry(prop, QString()) );
 	}
 }
 
 void Identity::save()
 {
 	// FIXME: using kconfig for now, but I guess this is going to change
-	d->configGroup->writeEntry("Properties", properties());
+	d->configGroup->writeEntry("Properties", properties().join(","));
 	
 	QMap<QString,QString> props;
 	serializeProperties(props);
 	QMap<QString,QString>::iterator it;
 	for (it = props.begin(); it != props.end();  ++it)
 	{
-		d->configGroup->writeEntry(it.key(), *it);
+		d->configGroup->writeEntry(it.key(), it.value());
 	}
 }
 
@@ -229,6 +237,14 @@ void Identity::updateOnlineStatus()
 		emit onlineStatusChanged( this, d->onlineStatus, newStatus );
 		d->onlineStatus = newStatus;
 	}
+}
+
+void Identity::slotSaveProperty( PropertyContainer *container, const QString &key,
+		                const QVariant &oldValue, const QVariant &newValue )
+{
+	kDebug() << "Identity saving property " << key << "value: " << newValue << endl;
+	d->configGroup->writeEntry("Properties", properties().join(","));
+	d->configGroup->writeEntry(key, newValue.toString());
 }
 
 } //END namespace Kopete

@@ -132,6 +132,10 @@ public:
 public slots:
 	void updateOnlineStatus();
 
+protected slots:
+	void slotSaveProperty( PropertyContainer *container, const QString &key,
+				const QVariant &oldValue, const QVariant &newValue );
+
 signals:
 	void onlineStatusChanged(Kopete::Identity*,Kopete::OnlineStatus::StatusType,Kopete::OnlineStatus::StatusType);
 	void identityDestroyed( const Kopete::Identity *identity );

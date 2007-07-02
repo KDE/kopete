@@ -115,8 +115,6 @@ Contact::Contact( Account *account, const QString &contactId,
 
 		parent->addContact( this );
 	}
-
-
 }
 
 Contact::~Contact()

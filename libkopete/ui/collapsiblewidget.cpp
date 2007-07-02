@@ -180,7 +180,7 @@ QWidget* CollapsibleWidget::innerWidget() const
   return d->innerWidget;
 }
 
-#define SIMPLE
+//#define SIMPLE
 
 void CollapsibleWidget::setInnerWidget(QWidget *w)
 {
@@ -200,6 +200,7 @@ void CollapsibleWidget::setInnerWidget(QWidget *w)
 #else
   if ( !d->expander ) {
       d->expander = new QWidget( this );
+      d->expander->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum));
       d->gridLayout->addWidget( d->expander, 2, 2 );
       d->gridLayout->setRowStretch( 2, 1 );
       d->expanderLayout = new QVBoxLayout( d->expander );
@@ -266,6 +267,8 @@ void CollapsibleWidget::animateCollapse( qreal showAmount )
   }
 #else
   d->expander->setFixedHeight( pixels );
+  if (parentWidget() && parentWidget()->layout())
+	  parentWidget()->layout()->update();
 #endif
 }
 

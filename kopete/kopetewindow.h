@@ -133,6 +133,11 @@ private slots:
 	 */
 	void slotIdentityStatusIconRightClicked( Kopete::Identity *i,
 		const QPoint &p );
+	/**
+	 * Show a in-place widget for an identity
+	 */
+	void slotIdentityStatusIconLeftClicked( Kopete::Identity *i,
+		const QPoint &p );
 
 
 	/**

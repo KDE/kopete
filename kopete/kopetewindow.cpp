@@ -90,6 +90,7 @@
 #include "kopeteuiglobal.h"
 #include "systemtray.h"
 #include "kopeteonlinestatusmanager.h"
+#include "identitystatuswidget.h"
 
 //BEGIN GlobalStatusMessageIconLabel
 GlobalStatusMessageIconLabel::GlobalStatusMessageIconLabel(QWidget *parent)
@@ -116,7 +117,7 @@ public:
 	actionSetInvisible(0), actionPrefs(0), actionQuit(0), actionSave(0), menubarAction(0),
 	statusbarAction(0), actionShowOffliners(0), actionShowEmptyGroups(0), docked(0), 
 	hidden(false), deskRight(0), statusBarWidget(0), tray(0), autoHide(false),
-	autoHideTimeout(0), autoHideTimer(0), addContactMapper(0),
+	autoHideTimeout(0), autoHideTimer(0), addContactMapper(0), identitywidget(0),
 	globalStatusMessage(0), globalStatusMessageMenu(0), newMessageEdit(0)
 	{}
 
@@ -124,6 +125,8 @@ public:
 	{}
 
 	KopeteContactListView *contactlist;
+
+	IdentityStatusWidget *identitywidget;
 
 	// Some Actions
 	KActionMenu *actionAddContact;
@@ -278,8 +281,18 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 
 void KopeteWindow::initView()
 {
-	d->contactlist = new KopeteContactListView(this);
-	setCentralWidget(d->contactlist);
+	QWidget *w = new QWidget(this);
+	QVBoxLayout *l = new QVBoxLayout(w);
+	d->contactlist = new KopeteContactListView(w);
+	l->addWidget(d->contactlist);
+	l->setSpacing( 0 );
+	l->setContentsMargins(0,0,0,0);
+	d->identitywidget = new IdentityStatusWidget(0, w);
+	d->identitywidget->setSizePolicy( QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum) ); 
+	d->identitywidget->setVisible( false );
+	l->addWidget(d->identitywidget);
+
+	setCentralWidget(w);
 }
 
 void KopeteWindow::initActions()
@@ -739,7 +752,7 @@ void KopeteWindow::slotIdentityRegistered( Kopete::Identity *identity )
 	connect( sbIcon, SIGNAL( rightClicked( Kopete::Identity *, const QPoint & ) ),
 					 SLOT( slotIdentityStatusIconRightClicked( Kopete::Identity *, const QPoint & ) ) );
 	connect( sbIcon, SIGNAL( leftClicked( Kopete::Identity *, const QPoint & ) ),
-					 SLOT( slotIdentityStatusIconRightClicked( Kopete::Identity *, const QPoint & ) ) );
+					 SLOT( slotIdentityStatusIconLeftClicked( Kopete::Identity *, const QPoint & ) ) );
 
 	d->identityStatusBarIcons.insert( identity, sbIcon );
 	slotIdentityStatusIconChanged( identity );
@@ -839,6 +852,20 @@ void KopeteWindow::slotIdentityStatusIconRightClicked( Kopete::Identity *identit
 	connect( actionMenu->menu(), SIGNAL( aboutToHide() ), actionMenu, SLOT( deleteLater() ) );
 	actionMenu->menu()->popup( p );
 }
+
+void KopeteWindow::slotIdentityStatusIconLeftClicked( Kopete::Identity *identity, const QPoint &p )
+{
+	if (d->identitywidget->isVisible() && d->identitywidget->identity() == identity)
+	{
+		d->identitywidget->setIdentity(0);
+		d->identitywidget->setVisible(false);
+		return;
+	}
+
+	d->identitywidget->setIdentity(identity);
+	d->identitywidget->setVisible(true);
+}
+
 
 void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 {
