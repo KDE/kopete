@@ -40,6 +40,11 @@ public:
 	{
 		id = i;
 		configGroup = new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Identity_%1" ).arg( id ));
+
+		//FIXME: this is just to get the properties we use initialized
+		Kopete::Global::Properties::self()->nickName();
+		Kopete::Global::Properties::self()->photo();
+
 	}
 	QList<Kopete::Account*> accounts;
 	QString id;
@@ -193,22 +198,15 @@ KConfigGroup *Identity::configGroup() const
 
 void Identity::load()
 {
-	QStringList properties = d->configGroup->readEntry("Properties", QStringList());
-	QMap<QString,QString> props;
+	QMap<QString,QString>::iterator it;
 
-	kDebug() << "Properties: " << properties << endl;
-	Kopete::Global::Properties *p = Kopete::Global::Properties::self();
-	foreach(QString prop, properties)
-	{
-		setProperty(  p->tmpl(prop), d->configGroup->readEntry(prop, QString()) );
-	}
+	QMap<QString,QString> props = d->configGroup->entryMap();
+	deserializeProperties(props);
 }
 
 void Identity::save()
 {
 	// FIXME: using kconfig for now, but I guess this is going to change
-	d->configGroup->writeEntry("Properties", properties().join(","));
-	
 	QMap<QString,QString> props;
 	serializeProperties(props);
 	QMap<QString,QString>::iterator it;
@@ -242,9 +240,7 @@ void Identity::updateOnlineStatus()
 void Identity::slotSaveProperty( PropertyContainer *container, const QString &key,
 		                const QVariant &oldValue, const QVariant &newValue )
 {
-	kDebug() << "Identity saving property " << key << "value: " << newValue << endl;
-	d->configGroup->writeEntry("Properties", properties().join(","));
-	d->configGroup->writeEntry(key, newValue.toString());
+	save();
 }
 
 } //END namespace Kopete
