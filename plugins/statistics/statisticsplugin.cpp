@@ -44,7 +44,7 @@
 typedef KGenericFactory<StatisticsPlugin> StatisticsPluginFactory;
 
 
-static const KAboutData aboutdata("kopete_statistics", I18N_NOOP("Statistics") , "0.1" );
+static const KAboutData aboutdata("kopete_statistics", 0, ki18n("Statistics") , "0.1" );
 K_EXPORT_COMPONENT_FACTORY( kopete_statistics, StatisticsPluginFactory( &aboutdata )  )
 
 StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QStringList &)

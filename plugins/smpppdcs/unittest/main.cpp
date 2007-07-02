@@ -24,13 +24,13 @@
 
 static const char description[] = I18N_NOOP("SMPPPDClientTests");
 static const char version[] = "0.1";
-static KCmdLineOptions options[] = { KCmdLineLastOption };
-
 int main( int argc, char** argv ) {
-    KAboutData about("SMPPPDClientTests", I18N_NOOP("SMPPPDClientTests"), version, description,
-                     KAboutData::License_BSD, "(C) 2006 Heiko Schäfer", 0, 0, "heiko@rangun.de");
+    KAboutData about("SMPPPDClientTests", 0, ki18n("SMPPPDClientTests"), version, ki18n(description),
+                     KAboutData::License_BSD, ki18n("(C) 2006 Heiko Schäfer"), KLocalizedString(), 0, "heiko@rangun.de");
 
     KCmdLineArgs::init(argc, argv, &about);
+
+    KCmdLineOptions options;
     KCmdLineArgs::addCmdLineOptions(options);
     KApplication app;
 
