@@ -52,7 +52,7 @@
 const QRegExp CryptographyPlugin::isHTML( QString::fromLatin1( "^[^<>]*(</?(html|body|br|p|font|center|b|i|u|span|div|pre)(>|[\\s/][^><]*>)[^><]*)+$" ) , Qt::CaseInsensitive );
 
 typedef KGenericFactory<CryptographyPlugin> CryptographyPluginFactory;
-static const KAboutData aboutdata("kopete_cryptography", I18N_NOOP("Cryptography") , "1.0" );
+static const KAboutData aboutdata("kopete_cryptography", 0, ki18n("Cryptography") , "1.0" );
 K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, CryptographyPluginFactory( &aboutdata )  )
 
 CryptographyPlugin::CryptographyPlugin( QObject *parent, const QStringList & /* args */ )

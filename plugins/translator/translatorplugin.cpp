@@ -48,7 +48,7 @@
 #include <kactioncollection.h>
 
 typedef KGenericFactory<TranslatorPlugin> TranslatorPluginFactory;
-static const KAboutData aboutdata("kopete_translator", I18N_NOOP("Translator") , "1.0" );
+static const KAboutData aboutdata("kopete_translator", 0, ki18n("Translator") , "1.0" );
 K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( &aboutdata )  )
 
 TranslatorPlugin::TranslatorPlugin( QObject *parent, const QStringList & /* args */ )

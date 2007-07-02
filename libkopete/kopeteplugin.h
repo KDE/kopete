@@ -63,7 +63,7 @@ Comment=Plugin that do some nice stuff
  *
  * \code
 	typedef KGenericFactory<MyPlugin> MyPluginFactory;
-	static const KAboutData aboutdata("kopete_myplugin", I18N_NOOP("MyPlugin") , "1.0" );
+	static const KAboutData aboutdata("kopete_myplugin", 0, ki18n("MyPlugin") , "1.0" );
 	K_EXPORT_COMPONENT_FACTORY( kopete_myplugin, MyPluginFactory( &aboutdata )  )
 
 	MyPlugin::MyPlugin( QObject *parent, const char *name, const QStringList &  args  )

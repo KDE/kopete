@@ -214,14 +214,14 @@ void KopeteApplication::slotAllPluginsLoaded()
 	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() )
 		Kopete::AccountManager::self()->connectAll();
 
-	QByteArrayList connectArgs = args->getOptionList( "autoconnect" );
-	for ( QByteArrayList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
+	QStringList connectArgs = args->getOptionList( "autoconnect" );
+	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
 	{
-		foreach ( const QString connectArg, QString::fromLocal8Bit(*i).split(','))
-			connectArgs.append( connectArg.toLocal8Bit() );
+		foreach ( const QString connectArg, (*i).split(','))
+			connectArgs.append( connectArg );
 	}
 
-	for ( QByteArrayList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
+	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
 	{
 		QRegExp rx( QLatin1String( "([^\\|]*)\\|\\|(.*)" ) );
 		rx.indexIn( *i );

@@ -39,7 +39,7 @@
 #include "msnchatsession.h"
 
 typedef KGenericFactory<MSNProtocol> MSNProtocolFactory;
-static const KAboutData aboutdata("kopete_msn", I18N_NOOP("MSN Messenger") , "1.0" );
+static const KAboutData aboutdata("kopete_msn", 0, ki18n("MSN Messenger") , "1.0" );
 K_EXPORT_COMPONENT_FACTORY( libkopete_msn_shared, MSNProtocolFactory( &aboutdata ) )
 
 MSNProtocol *MSNProtocol::s_protocol = 0L;

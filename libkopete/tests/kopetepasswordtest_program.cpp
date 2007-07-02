@@ -30,16 +30,6 @@
 
 static QTextStream _out( stdout, QIODevice::WriteOnly );
 
-static KCmdLineOptions opts[] =
-{
- { "id <id>", I18N_NOOP("Config group to store password in"), "TestAccount" },
- { "set <new>", I18N_NOOP("Set password to new"), 0 },
- { "error", I18N_NOOP("Claim password was erroneous"), 0 },
- { "prompt <prompt>", I18N_NOOP("Password prompt"), "Enter a password" },
- { "image <filename>", I18N_NOOP("Image to display in password dialog"), 0 },
- KCmdLineLastOption
-};
-
 using namespace Kopete;
 
 QString retrieve( Password &pwd, const QPixmap &image, const QString &prompt )
@@ -66,8 +56,15 @@ void PasswordRetriever::timer()
 
 int main( int argc, char *argv[] )
 {
-	KAboutData aboutData( "kopetepasswordtest", "kopetepasswordtest", "version" );
+	KAboutData aboutData( "kopetepasswordtest", 0, ki18n("kopetepasswordtest"), "version" );
 	KCmdLineArgs::init( argc, argv, &aboutData );
+
+	KCmdLineOptions opts;
+	opts.add("id <id>", ki18n("Config group to store password in"), "TestAccount");
+	opts.add("set <new>", ki18n("Set password to new"));
+	opts.add("error", ki18n("Claim password was erroneous"));
+	opts.add("prompt <prompt>", ki18n("Password prompt"), "Enter a password");
+	opts.add("image <filename>", ki18n("Image to display in password dialog"));
 	KCmdLineArgs::addCmdLineOptions( opts );
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
