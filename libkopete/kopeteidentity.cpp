@@ -40,11 +40,6 @@ public:
 	{
 		id = i;
 		configGroup = new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Identity_%1" ).arg( id ));
-
-		//FIXME: this is just to get the properties we use initialized
-		Kopete::Global::Properties::self()->nickName();
-		Kopete::Global::Properties::self()->photo();
-
 	}
 	QList<Kopete::Account*> accounts;
 	QString id;

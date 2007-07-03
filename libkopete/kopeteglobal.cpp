@@ -54,6 +54,22 @@ Properties *Properties::self()
 	{
 		//kDebug(14000) << k_funcinfo << endl;
 		mSelf = new Properties();
+		// create the templates
+		mSelf->fullName();
+		mSelf->idleTime();
+		mSelf->onlineSince();
+		mSelf->lastSeen();
+		mSelf->statusMessage();
+		mSelf->firstName();
+		mSelf->lastName();
+		mSelf->emailAddress();
+		mSelf->privatePhone();
+		mSelf->privateMobilePhone();
+		mSelf->workPhone();
+		mSelf->workMobilePhone();
+		mSelf->nickName();
+		mSelf->photo();
+
 	}
 	return mSelf;
 }
