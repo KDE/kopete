@@ -88,7 +88,7 @@ bool WinPopupLib::checkHost(const QString &Name)
 	bool ret = false;
 
 	QMap<QString, WorkGroup>::Iterator end = theGroups.end();
-	for(QMap<QString, WorkGroup>::Iterator i = theGroups.begin(); i != end && !ret; i++) {
+	for (QMap<QString, WorkGroup>::Iterator i = theGroups.begin(); i != end && !ret; i++) {
 		if ((*i).Hosts().contains(Name.toUpper())) {
 			ret = true;
 			break;
@@ -162,9 +162,9 @@ void WinPopupLib::startReadProcess(const QString &Host)
 	// for Samba 3
 	readGroupsProcess = new QProcess;
 	QStringList args;
-	args << "-U kde" << "-N" << "-g" << "-L" << Host << "-";
+	args << "-N" << "-g" << "-L" << Host << "-";
 
-	connect(readGroupsProcess, SIGNAL(finished(int,  QProcess::ExitStatus)), this, SLOT(slotReadProcessExited(int,  QProcess::ExitStatus)));
+	connect(readGroupsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotReadProcessExited(int,  QProcess::ExitStatus)));
 
 	readGroupsProcess->setProcessChannelMode(QProcess::MergedChannels);
 	readGroupsProcess->start(smbClientBin, args);
@@ -174,11 +174,12 @@ void WinPopupLib::slotReadProcessExited(int i,  QProcess::ExitStatus status)
 {
 	QByteArray outputData = readGroupsProcess->readAll();
 	if (!outputData.isEmpty()) {
-		QList<QByteArray> outputList = outputData.split('\n');
+		QString outputString = QString::fromUtf8(outputData.data());
+		QStringList outputList = outputString.split('\n');
 		QRegExp group("Workgroup\\|(.[^\\|]+)\\|(.+)"), host("Server\\|(.[^\\|]+)\\|(.+)"),
 				info("Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]"),
 				error("Connection.*failed");
-		foreach (QByteArray line, outputList) {
+		foreach (QString line, outputList) {
 			if (info.indexIn(line) != -1) currentGroup = info.cap(1);
 			if (host.indexIn(line) != -1) currentHosts += host.cap(1);
 			if (group.indexIn(line) != -1) currentGroups[group.cap(1)] = group.cap(2);
