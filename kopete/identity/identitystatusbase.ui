@@ -55,7 +55,10 @@
         <enum>QFrame::Box</enum>
        </property>
        <property name="text" >
-        <string>No Photo</string>
+        <string>&lt;a href="identity::getavatar">No Photo&lt;/a></string>
+       </property>
+       <property name="textFormat" >
+        <enum>Qt::RichText</enum>
        </property>
        <property name="scaledContents" >
         <bool>true</bool>

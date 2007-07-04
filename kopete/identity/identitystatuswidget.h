@@ -55,6 +55,8 @@ private slots:
 	void slotLoad();
 	void slotSave();
 
+	void slotPhotoLinkActivated(const QString &link);
+
 private:
 	class Private;
 	Private *d;

@@ -25,6 +25,7 @@
 #include <kopeteaccount.h>
 #include <kopetecontact.h>
 #include <kopeteprotocol.h>
+#include <avatardialog.h>
 #include <KDebug>
 
 class IdentityStatusWidget::Private
@@ -55,6 +56,8 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 
 	// user input signals
 	connect( d->ui.nickName, SIGNAL(editingFinished()), this, SLOT(slotSave()) );
+	connect( d->ui.photo, SIGNAL(linkActivated(const QString&)), 
+			 this, SLOT(slotPhotoLinkActivated(const QString &)));
 }
 
 IdentityStatusWidget::~IdentityStatusWidget()
@@ -109,7 +112,7 @@ void IdentityStatusWidget::slotAnimate(qreal amount)
 void IdentityStatusWidget::slotLoad()
 {
 	// clear
-	d->ui.photo->setText(i18n("No Photo"));
+	d->ui.photo->setText(QString("<a href=\"identity::getavatar\">%1</a>").arg(i18n("No Photo")));
 	d->ui.nickName->clear();
 	d->ui.identityStatus->clear();
 	d->ui.identityName->clear();
@@ -124,7 +127,8 @@ void IdentityStatusWidget::slotLoad()
 	if (d->identity->hasProperty(props->photo().key()))
 	{
 		d->photoPath = d->identity->getProperty(props->photo()).value().toString();
-		d->ui.photo->setPixmap( QPixmap(d->photoPath) );
+		d->ui.photo->setText(QString("<a href=\"identity::getavatar\"><img src=\"%1\" width=48 height=48></a>")
+								.arg(d->photoPath));
 	}
 
 	// nickname
@@ -174,6 +178,16 @@ void IdentityStatusWidget::slotSave()
 
 	//TODO check what more to do
 
+}
+
+void IdentityStatusWidget::slotPhotoLinkActivated(const QString &link)
+{
+	if (link == "identity::getavatar")
+	{
+		d->photoPath = Kopete::UI::AvatarDialog::getAvatar(this, d->photoPath);
+		slotSave();
+		slotLoad();
+	}
 }
 
 #include "identitystatuswidget.moc"
