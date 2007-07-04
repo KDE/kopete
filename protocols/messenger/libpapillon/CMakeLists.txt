@@ -83,6 +83,10 @@ papillonstatusmessage.cpp
 usercontact.cpp
 )
 
+foreach(_src_FILE ${libpapillon_SRCS})
+   set_source_files_properties(${_src_FILE} PROPERTIES SKIP_AUTOMOC TRUE)  # don't run automoc on this file
+endforeach(_src_FILE)
+
 kde4_add_library(papillon_kopete SHARED ${libpapillon_SRCS})
 
 target_link_libraries( papillon_kopete ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QCA2_LIBRARIES} )
