@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=tutorial_plugin
+Type=Service
+ServiceTypes=KCModule
+Name=Tutorial
+Comment=Turns normal people into Super Kopete Developer
+X-KDE-Library=kopete_tutorialplugin
+X-KDE-FactoryName=kcm_kopete_tutorialplugin
+X-KDE-ParentApp=kopete_tutorialplugin
+X-KDE-ParentComponents=kopete_tutorialplugin
+
