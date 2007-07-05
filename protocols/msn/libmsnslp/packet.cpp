@@ -120,7 +120,7 @@ const QString Packet::toString() const
 
 			if (j == 47)
 			{
-				s += QString("    Last Rcvd: %1, Last Sent: %2, last Len: %3\n").arg(h.lprcvd)
+				s += QString("    Last Rcvd: %1, Last Sent: %2, Last Len: %3\n").arg(h.lprcvd)
 						.arg(h.lpsent).arg((Q_UINT32)h.lpsize);
 			}
 

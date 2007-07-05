@@ -51,7 +51,7 @@ PacketScheduler::PacketScheduler(Transport *transport) : QObject(transport), d(n
 
 	// Control
 	QValueList<Q_UINT32> controlPacketClassTypes;
-	controlPacketClassTypes.append(Packet::TimeoutType);
+	controlPacketClassTypes.append(Packet::NonAcknowledgeType);
 	controlPacketClassTypes.append(Packet::FaultType);
 	controlPacketClassTypes.append(Packet::ResetType);
 	controlPacketClassTypes.append(Packet::CancelType);
@@ -86,7 +86,7 @@ bool PacketScheduler::isRunning() const
 
 void PacketScheduler::start()
 {
-	// Start the timer with a 1500 msec interval.
+	// Start the timer with a 1 sec interval.
 	d->timer->start(1000);
 	d->isRunning = true;
 }
@@ -126,7 +126,7 @@ void PacketScheduler::onSchedulePacketsToSend()
 		}
 
 		// Get the mtu of the current transport bridge.
-		const Q_UINT32 chunkSize = (*bridge)->maxSendBufferSize();
+		const Q_UINT32 maxDataChunkSize = (*bridge)->getProperties()["mtu"].toUInt();
 
 		// If the packet list is not empty, try to send the packets.
 		while(!list->isEmpty() && d->transport->getSentPackets().count() < d->maxPendingPackets)
@@ -136,11 +136,11 @@ void PacketScheduler::onSchedulePacketsToSend()
 
 			// If the packet payload exceeds the mtu of the transport
 			// bridge we have to fragment the payload into chunks.
-			if (packet->header().window > chunkSize)
+			if (packet->header().window > maxDataChunkSize)
 			{
 				Packet *chunkedPacket = packet;
 				// Get the next chunk of the packet to send.
-				packet = PacketChunker::getNextChunk(chunkedPacket, chunkSize);
+				packet = PacketChunker::getNextChunk(chunkedPacket, maxDataChunkSize);
 				// Check whether this is the last chunk of the chunked packet.
 				if (packet->header().offset + packet->header().payloadSize == packet->header().window)
 				{
@@ -160,7 +160,7 @@ void PacketScheduler::onSchedulePacketsToSend()
 			}
 
 			// Send the packet via the specified transport bridge.
-			d->transport->sendInternal(packet, bridge.key());
+			d->transport->sendPacket(packet, bridge.key());
 		}
 	}
 
@@ -175,7 +175,7 @@ Packet * PacketScheduler::getNextPacket(PacketList *list)
 
 	Packet *packet = 0l;
 	Q_UINT32 selectedPacketClass = 0;
-	QPtrList<Packet> packets;
+	PacketList packets;
 
 	const Q_UINT32 controlPacketClass = 0;
 	const Q_UINT32 messageDataPacketClass = 1;
@@ -194,7 +194,7 @@ Packet * PacketScheduler::getNextPacket(PacketList *list)
 		}
 	}
 
-	kdDebug() << k_funcinfo << "scheduling packets of class " << QString::number(selectedPacketClass, 16) << endl;
+	kdDebug() << k_funcinfo << "scheduling packets of class: " << selectedPacketClass << endl;
 	QPtrListIterator<Packet> it2(packets);
 	while(it2.current() != 0l)
 	{
@@ -257,9 +257,9 @@ Packet * PacketScheduler::getNextPacket(PacketList *list)
 	return packet;
 }
 
-QPtrList<Packet> PacketScheduler::selectPacketsByClass(const QValueList<Q_UINT32> & packetClass, PacketList* list)
+PacketList PacketScheduler::selectPacketsByClass(const QValueList<Q_UINT32> & packetClass, PacketList* list)
 {
-	QPtrList<Packet> packets;
+	PacketList packets;
 	QPtrListIterator<Packet> it(*list);
 
 	Packet *packet = 0l;

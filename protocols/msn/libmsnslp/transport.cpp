@@ -13,19 +13,21 @@
 */
 
 #include "transport.h"
+#include "cryptohelper.h"
 #include "packetscheduler.h"
 #include "binarypacketformatter.h"
 #include "sessionnotifier.h"
 #include "switchboardbridge.h"
 #include "tcptransportbridge.h"
+#include "network/upnpnatportmapper.h"
 #include <qbuffer.h>
 #include <qfile.h>
 #include <qregexp.h>
 #include <qtimer.h>
+#include <qvariant.h>
 #include <kdebug.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
-#include <ctype.h>
 
 namespace PeerToPeer
 {
@@ -33,21 +35,22 @@ namespace PeerToPeer
 class Transport::TransportPrivate
 {
 	public:
-		TransportPrivate() : currentBridgeId(0), defaultBridgeId(2), initiallyConnected(false), nextBridgeId(64) {}
+		TransportPrivate() : currentBridgeId(0), defaultBridgeId(2), directlyConnected(false), nextBridgeId(64), transportType(Transport::None) {}
 
 		QMap<Q_UINT32, TransportBridge*> bridges;
 		QMap<Q_UINT32, QBuffer*> buffers;
 		Q_UINT32 currentBridgeId;
 		Q_UINT32 defaultBridgeId;
-		bool initiallyConnected;
+		bool directlyConnected;
 		Q_UINT32 nextBridgeId;
 		Q_UINT32 nextPacketNumber;
-		QMap<Q_UINT32, QUuid> nonces;
 		QMap<Q_UINT32, SessionNotifier*> notifiers;
 		QMap<Q_UINT32, PacketList*> packetLists;
 		QPtrList<Packet> receivedPackets;
 		PacketScheduler *scheduler;
 		QPtrList<Packet> sentPackets;
+		QMap<Q_UINT32, QMap<QString, QVariant> > transportInfo;
+		Transport::Type transportType;
 		QPtrList<Packet> unacknowledgedPackets;
 };
 
@@ -198,9 +201,25 @@ void Transport::sendFile(QFile *file, const Q_UINT32 destination)
 
 //BEGIN Transport Bridge Functions
 
-DirectTransportBridge* Transport::createDirectBridge(const QString& type, const QValueList<QString>& addresses, const Q_UINT16 port, const QUuid& nonce)
+DirectTransportBridge* Transport::createDirectBridge(const QMap<QString, QVariant> & transportInfo)
 {
 	DirectTransportBridge *bridge = 0l;
+
+	const QString type = transportInfo["Bridge"].toString();
+	QValueList<QString> addresses;
+	Q_UINT16 port;
+
+	if (transportInfo.contains("IPv4External-Addrs"))
+	{
+		addresses = QStringList::split(' ', transportInfo["IPv4External-Addrs"].toString());
+		port = transportInfo["IPv4External-Port"].toInt();
+	}
+	else
+	{
+		addresses = QStringList::split(' ', transportInfo["IPv4Internal-Addrs"].toString());
+		port = transportInfo["IPv4Internal-Port"].toInt();
+	}
+
 	if (type == QString::fromLatin1("TCPv1"))
 	{
 		bridge = new TcpTransportBridge(addresses, port, nextBridgeId(), this);
@@ -208,12 +227,13 @@ DirectTransportBridge* Transport::createDirectBridge(const QString& type, const 
 
 	if (bridge != 0l)
 	{
-		d->nonces.insert(bridge->id(), nonce);
+		d->transportInfo.insert(bridge->id(), transportInfo);
 		// Add the direct transport bridge to the list.
 		addBridge(bridge);
-	}
 
-	bridge->connect();
+		// Try to connect the direct bridge.
+		bridge->connect();
+	}
 
 	return bridge;
 }
@@ -227,10 +247,12 @@ SwitchboardBridge* Transport::createIndirectBridge()
 	return bridge;
 }
 
-bool Transport::listen(const QString& address, const Q_UINT16 port)
+Q_INT16 Transport::listen(const QMap<QString, QVariant> & transportInfo)
 {
-	QValueList<QString> addresses;
-	addresses.append(address);
+	Q_INT16 listeningPort = -1;
+
+	QValueList<QString> addresses = QStringList::split(' ', transportInfo["IPv4Internal-Addrs"].toString());
+	Q_INT16 port = transportInfo["IPv4Internal-Port"].toInt();
 
 	TcpTransportBridge *bridge = new TcpTransportBridge(addresses, port, nextBridgeId(), this);
 	bool listening = bridge->listen();
@@ -239,8 +261,23 @@ bool Transport::listen(const QString& address, const Q_UINT16 port)
 		bridge->deleteLater();
 		bridge = 0l;
 	}
+	else
+	{
+		// Performs UPnP port mapping if it is necessary to establish
+		// an underlying socket connection.
 
-	return listening;
+		Kopete::Network::UpnpNatPortMapper *portMapper = Kopete::Network::UpnpNatPortMapper::self();
+		bool successful = portMapper->addPortMapping(port, QString::fromLatin1("TCP"), port, addresses[0], "blah");
+		if (successful)
+		{
+			kdDebug() << k_funcinfo << "mapped external address " << QString("(%1:%2)").arg(addresses[0]).arg(port)
+				<< " to internal address " << QString("(%1:%2)").arg(addresses[0]).arg(port) << endl;
+		}
+
+		listeningPort = port;
+	}
+
+	return listeningPort;
 }
 
 void Transport::addBridge(TransportBridge *bridge)
@@ -265,6 +302,8 @@ void Transport::addBridge(TransportBridge *bridge)
 		SLOT(onSent(const Q_UINT32)));
 		QObject::connect(bridge, SIGNAL(disconnected()), this,
 		SLOT(onBridgeDisconnect()));
+// 		QObject::connect(bridge, SIGNAL(timeout()), this,
+// 		SLOT(onBridgeError()));
 		QObject::connect(bridge, SIGNAL(error()), this,
 		SLOT(onBridgeError()));
 
@@ -287,7 +326,7 @@ Q_UINT32 Transport::findBestBridge() const
 		}
 	}
 
-	if (bridgeId == 0)
+	if (bridgeId == 0 && d->bridges.contains(d->defaultBridgeId))
 	{
 		bridgeId = d->defaultBridgeId;
 	}
@@ -319,7 +358,7 @@ void Transport::movePacketsBetweenBridges(const Q_UINT32 oldBridgeId, const Q_UI
 	}
 	else
 	{
-		kdDebug() << k_funcinfo << "bridge " << oldBridgeId << "'s list is empty -- returning" << endl;
+		kdDebug() << k_funcinfo << "bridge " << oldBridgeId << "'s list is empty" << endl;
 	}
 
 	d->currentBridgeId = newBridgeId;
@@ -345,30 +384,37 @@ void Transport::removeBridge(const Q_UINT32 id)
 		delete d->packetLists[id];
 		// Remove the packet list assigned to the bridge.
 		d->packetLists.remove(id);
-		// Remove the handshake nonce assigned
-		// to the bridge.
-		d->nonces.remove(id);
+		// Remove the transport information associated
+		// with the bridge.
+		d->transportInfo.remove(id);
 	}
 }
 
 bool Transport::isConnected() const
 {
-	return d->initiallyConnected;
+	return (d->currentBridgeId != 0);
+}
+
+bool Transport::isDirectlyConnected() const
+{
+	return d->directlyConnected;
 }
 
 //END
 
 
-void Transport::sendBridgeHandshake(const QUuid& nonce, const Q_UINT32 bridgeId)
+void Transport::sendBridgeAuthenticationKey(const QUuid& key, const Q_UINT32 bridgeId)
 {
-	// Convert the nonce to byte parameters.
-	const QString cnonce = nonce.toString().remove(QRegExp("[\\-\\{\\}]")).upper();
+	kdDebug() << k_funcinfo << "enter" << endl;
 
-	const Q_UINT32 l  = cnonce.mid(0, 8).toUInt(0, 16);
-	const Q_UINT16 w1 = cnonce.mid(12, 4).toUShort(0, 16);
-	const Q_UINT16 w2 = cnonce.mid(8, 4).toUShort(0, 16);
-	const Q_UINT32 b1_4 = cnonce.mid(24, 8).toUInt(0, 16);
-	const Q_UINT32 b5_8 = cnonce.mid(16, 8).toUInt(0, 16);
+	// Convert the nonce key to byte parameters.
+	const QString nonceKey = key.toString().remove(QRegExp("[\\-\\{\\}]")).upper();
+
+	const Q_UINT32 l  = nonceKey.mid(0, 8).toUInt(0, 16);
+	const Q_UINT16 w1 = nonceKey.mid(12, 4).toUShort(0, 16);
+	const Q_UINT16 w2 = nonceKey.mid(8, 4).toUShort(0, 16);
+	const Q_UINT32 b1_4 = nonceKey.mid(24, 8).toUInt(0, 16);
+	const Q_UINT32 b5_8 = nonceKey.mid(16, 8).toUInt(0, 16);
 
 	const Q_UINT32 lprcvd = l;
 	const Q_UINT32 lpsent = (Q_UINT32(w1) << 16) + w2;
@@ -397,6 +443,8 @@ void Transport::sendBridgeHandshake(const QUuid& nonce, const Q_UINT32 bridgeId)
 
 	// Queue the handshake nonce packet.
 	queuePacket(packet, bridgeId, true);
+
+	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
 //END
@@ -416,18 +464,36 @@ void Transport::onBridgeConnect()
 		{
 			// If the transport bridge is a direct bridge, we need to send
 			// the handshake nonce to authenticate the use of the bridge.
-			const QUuid& nonce = d->nonces[bridge->id()];
-			// Send the bridge handshake nonce.
-			sendBridgeHandshake(nonce, bridge->id());
+
+			QUuid nonceKey;
+			QMap<QString, QVariant> & transportInfo = d->transportInfo[bridge->id()];
+			if (false && transportInfo.contains("Hashed-Nonce"))
+			{
+				nonceKey = QUuid(transportInfo["Me-Nonce"].toString());
+				kdDebug() << k_funcinfo << "Bridge " << bridge->id() << " supports hashed nonce." << endl;
+			}
+			else
+			{
+				nonceKey = QUuid(transportInfo["Nonce"].toString());
+			}
+
+			// Send the bridge authentication nonce key.
+			sendBridgeAuthenticationKey(nonceKey, bridge->id());
 		}
-
-		if (bridge->inherits("PeerToPeer::SwitchboardBridge") && !d->initiallyConnected)
+		else
+		if (bridge->inherits("PeerToPeer::SwitchboardBridge"))
 		{
-			d->initiallyConnected = true;
-			d->currentBridgeId = bridge->id();
+			if (d->currentBridgeId == 0)
+			{
+				d->currentBridgeId = bridge->id();
 
-			// Signal that the transport layer is connected.
-			emit connected();
+				// Signal that the transport layer is connected.
+				emit connected();
+			}
+		}
+		else
+		{
+			kdDebug() << k_funcinfo << "Unknown bridge type" << endl;
 		}
 	}
 }
@@ -443,6 +509,8 @@ void Transport::onBridgeDisconnect()
 		// a switchboard bridge or a direct transport bridge.
 		if (bridge->inherits("PeerToPeer::DirectTransportBridge"))
 		{
+			d->directlyConnected = false;
+
 			// Disconnect the signal/slot.
 			QObject::disconnect(bridge, 0, this, 0);
 			// Move the packets, if any, from the disconnected
@@ -468,7 +536,7 @@ void Transport::onBridgeError()
 	}
 }
 
-void Transport::onBridgeHandshake(const QUuid& cnonce, const Q_UINT32 bridgeId)
+void Transport::onBridgeAuthenticationKeyReceive(const QUuid& nonce, const Q_UINT32 bridgeId)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
 	// Determine whether the handshake nonce was received via the
@@ -478,21 +546,45 @@ void Transport::onBridgeHandshake(const QUuid& cnonce, const Q_UINT32 bridgeId)
 		// If the nonce was received via the switchboard bridge,
 		// do nothing as the switchboard bridge does not use
 		// authentication.
-		kdDebug() << k_funcinfo << "Got nonce " << cnonce.toString().upper() << " via indirect bridge. "
+		kdDebug() << k_funcinfo << "Got nonce " << nonce.toString().upper() << " via indirect bridge. "
 			<<  "Must have not been sent via direct bridge -- ignoring." << endl;
 	}
 	else
 	{
 		// Otherwise, get the handshake nonce associated with the direct bridge.
-		const QUuid& nonce = d->nonces[bridgeId];
 
-		// TODO SHA1 hash the nonce to support "Hashed-Nonce"
-		if (cnonce == nonce)
+		QUuid expectedKey;
+		QUuid peerKey;
+
+		QMap<QString, QVariant> & transportInfo = d->transportInfo[bridgeId];
+		// Check whether hashed nonce is supported
+		bool supportsHashedNonce = transportInfo.contains("Hashed-Nonce");
+
+		if (false && supportsHashedNonce)
 		{
-			// If the nonce received is the same as that assigned to
+			// The bridge authentication scheme supports hashed nonce key.
+			kdDebug() << k_funcinfo << "Bridge " << bridgeId << " supports hashed nonce." << endl;
+			// Retrieve the expected authentication key.
+			expectedKey = QUuid(transportInfo["Hashed-Nonce"].toString());
+			// Hash the peer's bridge authentication key.
+			peerKey = CryptoHelper::hashNonce(nonce);
+		}
+		else
+		{
+			// Retrieve the expected authentication key.
+			expectedKey = QUuid(transportInfo["Nonce"].toString());
+			// Set the nonce key sent by the peer.
+			peerKey = nonce;
+		}
+
+		if (peerKey == expectedKey)
+		{
+			// If the key received is the same as that assigned to
 			// the bridge, then we have successfully authenticated
 			// the transport bridge.
+			d->directlyConnected = true;
 
+			kdDebug() << k_funcinfo << "Bridge " << bridgeId << " is now authenticated." << endl;
 			// Move the current bridge's packet list to the newly
 			// authenticated bridge's list.
 			movePacketsBetweenBridges(d->currentBridgeId, bridgeId);
@@ -500,8 +592,8 @@ void Transport::onBridgeHandshake(const QUuid& cnonce, const Q_UINT32 bridgeId)
 		else
 		{
 			// Otherwise, the authentication handshake failed.
-			kdDebug() << k_funcinfo << "Got nonce " << cnonce.toString().upper() << " excepted "
-			<< nonce.toString().upper() <<  ".  Disconnecting bridge " << bridgeId << endl;
+			kdDebug() << k_funcinfo << "Got nonce " << peerKey.toString().upper() << " excepted "
+			<< expectedKey.toString().upper() <<  ".  Disconnecting bridge " << bridgeId << endl;
 
 			// Disconnect the transport bridge.
 			TransportBridge *bridge = d->bridges[bridgeId];
@@ -521,7 +613,12 @@ void Transport::onReceive(const QByteArray& datachunk)
 		return;
 	}
 
-	// TODO drop datachunks < sizeof(Packet::Header)
+	if (datachunk.size() < sizeof(Packet::Header))
+	{
+		kdDebug() << k_funcinfo << "Received datachunk whose size is less than "
+				  <<  sizeof(Packet::Header) << " bytes -- dropping." << endl;
+		return;
+	}
 
 	Q_UINT32 appId = 0;
 
@@ -539,6 +636,7 @@ void Transport::onReceive(const QByteArray& datachunk)
 	}
 
 	// TODO inspect packet before dispatching
+	// bool dropPacket = PacketInspector::processIncomingPacket(packet);
 
 	// Add the packet to the list of received packets.
 	d->receivedPackets.append(packet);
@@ -552,8 +650,9 @@ void Transport::onReceive(const QByteArray& datachunk)
 	// Get the packet type from the packet header.
 	const Packet::Type packetType = (Packet::Type)h.type;
 
-	if (Packet::TimeoutType == packetType || Packet::FaultType == packetType ||
-		Packet::ResetType == packetType || Packet::CancelType == packetType)
+	if (Packet::NonAcknowledgeType == packetType || Packet::FaultType == packetType ||
+		Packet::ResetType == packetType || Packet::CancelType == packetType ||
+		Packet::RetransmitType == packetType)
 	{
 		// We received a non ACK control packet.
 		onNonAcknowledgeControlPacketReceive(packet);
@@ -643,7 +742,7 @@ void Transport::onReceive(const QByteArray& datachunk)
 		// Create the comparison nonce from the byte parameters.
 		const QUuid nonce = QUuid(l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8);
 
-		onBridgeHandshake(nonce, bridge->id());
+		onBridgeAuthenticationKeyReceive(nonce, bridge->id());
 
 		// Remove and delete the received packet from the list.
 		d->receivedPackets.removeRef(packet);
@@ -745,8 +844,9 @@ void Transport::onSent(const Q_UINT32 packetId)
 		d->sentPackets.take();
 	}
 	else
-	if (Packet::TimeoutType == packetType || Packet::FaultType == packetType ||
-		Packet::ResetType == packetType || Packet::CancelType == packetType)
+	if (Packet::NonAcknowledgeType == packetType || Packet::FaultType == packetType ||
+		Packet::ResetType == packetType || Packet::CancelType == packetType ||
+		Packet::RetransmitType == packetType)
 	{
 		kdDebug() << k_funcinfo << "Removing sent packet " << h.identifier
 		<< " non ACK control packet" << endl;
@@ -822,7 +922,7 @@ void Transport::queuePacket(Packet *packet, const Q_UINT32 bridgeId, bool prepen
 	}
 }
 
-void Transport::sendInternal(Packet* packet, const Q_UINT32 bridgeId)
+void Transport::sendPacket(Packet* packet, const Q_UINT32 bridgeId)
 {
 	if (packet == 0l)
 	{
@@ -865,7 +965,7 @@ void Transport::sendInternal(Packet* packet, const Q_UINT32 bridgeId)
 		stream << appId;
 	}
 
-	// Add the packet to the sent packets list.
+	// Add the packet to the list of sent packets.
 	d->sentPackets.append(packet);
 
 	if (d->notifiers.contains(h.destination) && h.type == Packet::FileDataType)
@@ -914,11 +1014,11 @@ void Transport::sendReset(const Q_UINT32 destination, const Q_UINT32 lprcvd, con
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
-void Transport::sendTimeout(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
+void Transport::sendNonAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
-	// Send a no acknowledge timeout control packet.
-	sendControlPacket(Packet::TimeoutType, destination, lprcvd, lpsent, lpsize);
+	// Send a non acknowledge control packet.
+	sendControlPacket(Packet::NonAcknowledgeType, destination, lprcvd, lpsent, lpsize);
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
@@ -970,11 +1070,11 @@ void Transport::onNonAcknowledgeControlPacketReceive(Packet *packet)
 	{
 		case Packet::CancelType:
 		{
-			kdDebug() << k_funcinfo << "Cancel data receive for session " << h.identifier << endl;
+			kdDebug() << k_funcinfo << "Cancel data receive for session " << h.destination << endl;
 			break;
 		}
 
-		case Packet::TimeoutType:
+		case Packet::NonAcknowledgeType:
 		{
 			kdDebug() << k_funcinfo << "Received NAK for packet " << h.lpsent << endl;
 			break;
@@ -983,6 +1083,12 @@ void Transport::onNonAcknowledgeControlPacketReceive(Packet *packet)
 		case Packet::FaultType:
 		{
 			kdDebug() << k_funcinfo << "Transport layer error" << endl;
+			break;
+		}
+
+		case Packet::RetransmitType:
+		{
+			kdDebug() << k_funcinfo << "Received RAK for packet" << h.lprcvd << endl;
 			break;
 		}
 
@@ -1129,8 +1235,7 @@ void Transport::addPacketToUnacknowledgedList(Packet *packet)
 		return;
 	}
 
-	kdDebug() << k_funcinfo << "Packet "
-		<< packet->header().identifier << endl;
+	kdDebug() << k_funcinfo << "Packet " << packet->header().identifier << endl;
 	delete packet;
 
 	kdDebug() << k_funcinfo << "leave" << endl;

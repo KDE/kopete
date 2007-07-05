@@ -1,4 +1,3 @@
-
 /*
     webcamsession.cpp - Peer to Peer Webcam Session
 

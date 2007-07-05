@@ -37,12 +37,12 @@ class Packet
 			// session client.
 			MessageDataType = 0x00,
 			// Indicates that the last message packet was not received.
-			NonAcknowledgeType = 0x01,
+			RetransmitType = 0x01,
 			// Indicates that the last message packet was received.
 			AcknowledgeType = 0x02,
 			// Indicates that a timeout has occurred at the receiver
 			// due to the absence of a response ACK from the sender.
-			TimeoutType = 0x04,
+			NonAcknowledgeType = 0x04,
 			// Indicates that an error has occurred.
 			FaultType = 0x08,
 			// Indicates PUSHed object data.  Data should be delivered

@@ -21,15 +21,15 @@ namespace PeerToPeer
 {
 
 /**
- * @brief Represents a session layer protocol response.
+ * @brief Represents a session layer protocol response message.
  *
  * @author Gregg Edghill <gregg.edghill@gmail.com>
  */
 class SlpResponse : public SlpMessage
 {
 	public :
-		/** @brief Represents the possible status codes for a given request. */
-		enum StatusCode {OK=200, NotFound=404, NoSuchCall=481, InternalError=500, Decline=603};
+		/** @brief Defines the status codes returned for a given request. */
+		enum StatusCode {OK=200, NotFound=404, NoSuchCall=481, InternalError=500, VersionNotSupported=505, Decline=603};
 
 	public :
 		/** @brief Creates a new instance of the SlpResponse class. */
@@ -39,8 +39,10 @@ class SlpResponse : public SlpMessage
 		SlpResponse & operator=(const SlpResponse& other);
 		virtual ~SlpResponse();
 
+		/** @brief Get the status code returned with the response. */
 		const Q_INT32 statusCode() const;
 		void setStatusCode(Q_INT32 statusCode);
+		/** @brief Get the text that describes the status code returned with the response. */
 		const QString statusDescription() const;
 		void setStatusDescription(const QString& statusDescription);
 		virtual const QString startLine() const;

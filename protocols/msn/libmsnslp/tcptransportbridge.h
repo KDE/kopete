@@ -36,12 +36,11 @@ class TcpTransportBridge : public DirectTransportBridge
 		TcpTransportBridge(const QValueList<QString>& addresses, const Q_UINT16 port, const Q_UINT32 bridgeId, QObject *parent);
 		virtual ~TcpTransportBridge();
 
+		/** @brief Gets the properties of the transport bridge. */
+		virtual const QMap<QString, QVariant> & getProperties() const;
 		/** @brief Gets a value that uniquely identifies the transport bridge. */
 		virtual Q_UINT32 id() const;
-		/** @brief Gets the MTU for the transport bridge. */
-		virtual Q_UINT32 maxSendBufferSize() const;
 
-		void doUpnpPortMappingIfNecessary();
 		bool listen();
 		/** @brief Sends the specified byte array. */
 		virtual void send(const QByteArray& bytes, const Q_UINT32 id);
@@ -58,6 +57,10 @@ class TcpTransportBridge : public DirectTransportBridge
 		void onSocketConnectTimeout();
 		void onSocketError(int errorCode);
 		void onSocketRead();
+
+	private:
+		void processPseudoHello();
+		void sendPseudoHello();
 
 	private:
 		class TcpTransportBridgePrivate;

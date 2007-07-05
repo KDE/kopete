@@ -32,15 +32,15 @@ class TcpTransportBridge::TcpTransportBridgePrivate
 {
 	public:
 		TcpTransportBridgePrivate() : bytesToRead(0), connectivityVerified(false), length(0),
-			endpoint(0l), maxSendBufferSize(1305), socket(0l) {}
+			endpoint(0l), socket(0l) {}
 
 		QByteArray buffer;
-		Q_UINT32 bytesToRead;
+		Q_INT32 bytesToRead;
 		bool connectivityVerified;
 		Q_UINT32 length;
 		KServerSocket *endpoint;
 		Q_UINT32 bridgeId;
-		Q_UINT32 maxSendBufferSize;
+		QMap<QString, QVariant> properties;
 		KStreamSocket *socket;
 		Q_INT32 socketId;
 };
@@ -48,6 +48,8 @@ class TcpTransportBridge::TcpTransportBridgePrivate
 TcpTransportBridge::TcpTransportBridge(const QValueList<QString>& addresses, const Q_UINT16 port, const Q_UINT32 bridgeId, QObject *parent) : DirectTransportBridge(addresses, port, parent), d(new TcpTransportBridgePrivate())
 {
 	d->bridgeId = bridgeId;
+	d->properties.insert("mtu", 1352);
+	d->properties.insert("throttle", 15);
 }
 
 TcpTransportBridge::~TcpTransportBridge()
@@ -55,14 +57,14 @@ TcpTransportBridge::~TcpTransportBridge()
 	delete d;
 }
 
+const QMap<QString, QVariant> & TcpTransportBridge::getProperties() const
+{
+	return d->properties;
+}
+
 Q_UINT32 TcpTransportBridge::id() const
 {
 	return d->bridgeId;
-}
-
-Q_UINT32 TcpTransportBridge::maxSendBufferSize() const
-{
-	return d->maxSendBufferSize;
 }
 
 void TcpTransportBridge::send(const QByteArray& datachunk, const Q_UINT32 id)
@@ -77,13 +79,22 @@ void TcpTransportBridge::send(const QByteArray& datachunk, const Q_UINT32 id)
 	kdDebug() << k_funcinfo << "About to send datachunk of size "
 		<< datachunk.size() << " bytes" << endl;
 
+	// Get the size of the datachunk to send.
 	const Q_UINT32 size = bytes.size();
-	Q_UINT32 bytesWritten = 0, offset = 0;
-	while(bytesWritten < size)
+	Q_UINT32 offset = 0;
+	while(offset < size)
 	{
-		bytesWritten += d->socket->writeBlock(bytes.data() + offset, size - bytesWritten);
-		kdDebug() << k_funcinfo << "Sent " << bytesWritten << " bytes on socket " << d->socketId << endl;
-		offset += bytesWritten;
+		Q_INT32 bytesWritten = d->socket->writeBlock(bytes.data() + offset, size - offset);
+		if (bytesWritten > 0)
+		{
+			kdDebug() << k_funcinfo << "Sent " << bytesWritten << " bytes on socket " << d->socketId << endl;
+			offset += bytesWritten;
+		}
+		else
+		{
+			// Otherwise, an error has occurred, bail.
+			break;
+		}
 	}
 
 	emit dataSent(id);
@@ -93,8 +104,7 @@ void TcpTransportBridge::onConnect()
 {
 	if (state() == TransportBridge::Connected)
 	{
-		kdDebug() << k_funcinfo << "Already connected on socket "
-		<< d->socketId << endl;
+		kdDebug() << k_funcinfo << "Already connected on socket " << d->socketId << endl;
 		return;
 	}
 
@@ -135,34 +145,6 @@ void TcpTransportBridge::onDisconnect()
 			// Close the socket.
 			d->socket->close();
 		}
-	}
-}
-
-//////////////////////////////////////////////////////////////////////
-// Performs UPnP port mapping if it is necessary to establish
-// an underlying socket connection.
-//////////////////////////////////////////////////////////////////////
-void TcpTransportBridge::doUpnpPortMappingIfNecessary()
-{
-	const QString address = *DirectTransportBridge::addresses().at(0);
-
-// 	Kopete::Network::UPnPNatPortMapper *portMapper = Kopete::Network::UPnPNatPortMapper::self();
-// 	portMapper->mapPort(address, port(), QString::fromLatin1("TCP"), port());
-
-	QByteArray data, replyData;
-	QDataStream request( data, IO_WriteOnly );
-	request << address;
-	request << (Q_INT32)port();
-	request << QString::fromLatin1("TCP");
-	request << (Q_INT32)port();
-	request << true;
-	request << QString("Transfer (%1:%2) %3 %4").arg(address).arg(port()).arg(port()).arg("TCP");
-	request << (Q_INT32)0;
-
-	QCString method = "addPortMapping(QString,int,QString,int,bool,QString,int)";
-	QCString replyType;
-	if (kapp->dcopClient()->call( "kopete", "UPnP", method, data, replyType, replyData ) )
-	{
 	}
 }
 
@@ -219,8 +201,10 @@ void TcpTransportBridge::onSocketAccept()
 void TcpTransportBridge::onListenEndpointError(int errorCode)
 {
 	kdDebug() << k_funcinfo << errorCode << ": " << d->endpoint->errorString() << endl;
+	// Disconnect the signal/slot
 	QObject::disconnect(d->endpoint, SIGNAL(gotError(int)), this,
 	SLOT(onListenEndpointError(int)));
+
 	emit error();
 }
 
@@ -232,6 +216,7 @@ void TcpTransportBridge::onSocketClosed()
 {
 	setState(TransportBridge::Disconnected);
 	kdDebug() << k_funcinfo << "Socket " << d->socketId << " closed" << endl;
+	// Disconnect the signal/slot
 	QObject::disconnect(d->socket, 0, this, 0);
 
 	emit disconnected();
@@ -247,33 +232,12 @@ void TcpTransportBridge::onSocketConnected()
 
 	if (d->endpoint == 0l)
 	{
-		QByteArray bytes(8);
-		QDataStream stream(bytes, IO_WriteOnly);
-		stream.setByteOrder(QDataStream::LittleEndian);
-
-		QByteArray preamble(4);
-		preamble[0] = 0x66;
-		preamble[1] = 0x6f;
-		preamble[2] = 0x6f;
-		preamble[3] = 0x00;
-
-		kdDebug() << k_funcinfo << "Sending preamble " << preamble
-		<< " on socket " << d->socketId << endl;
-
-		// Write the length preamble to the network stream
-		stream << preamble.size();
-		// Write the connection check data to the stream.
-		stream.writeRawBytes(preamble.data(), preamble.size());
-
-		// Write the data bytes to the network stream.
-		Q_UINT32 bytesWritten = d->socket->writeBlock(bytes.data(), bytes.size());
-
-		kdDebug() << k_funcinfo << "Sent " << bytesWritten << " bytes on socket "
-		<< d->socketId << endl;
-
-		d->connectivityVerified = true;
+		// If the transport bridge is not a listener,
+		// send the pseudo hello preamble.
+		sendPseudoHello();
 	}
 
+	// Signal that we are connected.
 	emit connected();
 }
 
@@ -282,7 +246,7 @@ void TcpTransportBridge::onSocketConnectTimeout()
 	kdDebug() << k_funcinfo << "Connect timeout on socket " << d->socketId << endl;
 	d->socket->disconnect();
 
-	emit timeout();
+	emit error();
 }
 
 void TcpTransportBridge::onSocketError(int errorCode)
@@ -309,13 +273,14 @@ void TcpTransportBridge::onSocketRead()
 	if (bytesAvailable > 0)
 	{
 		d->bytesToRead += bytesAvailable;
+		kdDebug() << k_funcinfo << d->bytesToRead << " bytes to read" << endl;
 
 		QDataStream binaryReader(d->socket);
 		binaryReader.setByteOrder(QDataStream::LittleEndian);
 
-		while(d->bytesToRead > 0)
+		while((d->bytesToRead >= (Q_INT32)d->length) && d->bytesToRead >= 4 && state() == TransportBridge::Connected)
 		{
-			if (d->bytesToRead >= 4 && d->length == 0)
+			if (d->length == 0)
 			{
 				// Read the byte array length prefix from the stream.
 				binaryReader >> d->length;
@@ -324,30 +289,21 @@ void TcpTransportBridge::onSocketRead()
 				d->bytesToRead -= 4;
 			}
 
-			if (d->length > 0 && d->bytesToRead >= d->length)
+			if (d->length > 0 && d->bytesToRead >= (Q_INT32)d->length)
 			{
 				kdDebug() << k_funcinfo << "Received " << d->length << " bytes on socket "
 					<< d->socketId << endl;
 
 				if (!d->connectivityVerified)
 				{
-					QByteArray preamble(4);
-					// Read the preamble bytes of data from the stream.
-					d->socket->readBlock(preamble.data(), preamble.size());
-					if (preamble[0] == 0x66 && preamble[1] == 0x6f && preamble[2] == 0x6f && preamble[3] == 0x00)
-					{
-						kdDebug() << k_funcinfo << "preamble " << preamble << " -- connectivity verified" << endl;
-						d->connectivityVerified = true;
-					}
-					else
-					{
-						kdDebug() << k_funcinfo << "Invalid preamble -- disconnecting" << endl;
-						emit error();
-						break;
-					}
+					// If the connectivity has not been verified,
+					// try to process the pseudo hello sent by
+					// a connector transport bridge.
+					processPseudoHello();
 				}
 				else
 				{
+					// Otherwise, read the raw data received.
 					QByteArray bytes(d->length);
 					// Read the bytes of data from the stream.
 					d->socket->readBlock(bytes.data(), bytes.size());
@@ -370,6 +326,55 @@ void TcpTransportBridge::onSocketRead()
 }
 
 //END
+
+void TcpTransportBridge::processPseudoHello()
+{
+	QByteArray preamble(4);
+	// Read the preamble bytes of data from the stream.
+	d->socket->readBlock(preamble.data(), preamble.size());
+
+	kdDebug() << k_funcinfo << "Received " << preamble.size() << " bytes on socket "
+					<< d->socketId << endl;
+
+	if (preamble[0] == 0x66 && preamble[1] == 0x6f && preamble[2] == 0x6f && preamble[3] == 0x00)
+	{
+		kdDebug() << k_funcinfo << "preamble " << preamble << " -- connectivity verified" << endl;
+		d->connectivityVerified = true;
+	}
+	else
+	{
+		kdDebug() << k_funcinfo << "Invalid preamble -- disconnecting" << endl;
+		d->bytesToRead = -1;
+		// Signal that an error has occurred.
+		emit error();
+	}
+}
+
+void TcpTransportBridge::sendPseudoHello()
+{
+	QByteArray bytes(8);
+	QDataStream stream(bytes, IO_WriteOnly);
+	stream.setByteOrder(QDataStream::LittleEndian);
+
+	QByteArray preamble(4);
+	preamble[0] = 0x66; preamble[1] = 0x6f; preamble[2] = 0x6f; preamble[3] = 0x00;
+
+	kdDebug() << k_funcinfo << "Sending preamble " << preamble
+	<< " on socket " << d->socketId << endl;
+
+	// Write the length preamble to the network stream
+	stream << preamble.size();
+	// Write the connection check data to the stream.
+	stream.writeRawBytes(preamble.data(), preamble.size());
+
+	// Write the data bytes to the network stream.
+	Q_UINT32 bytesWritten = d->socket->writeBlock(bytes.data(), bytes.size());
+
+	kdDebug() << k_funcinfo << "Sent " << bytesWritten << " bytes on socket "
+	<< d->socketId << endl;
+
+	d->connectivityVerified = true;
+}
 
 }
 

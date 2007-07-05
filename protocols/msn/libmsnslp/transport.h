@@ -44,14 +44,23 @@ class Transport : public QObject
 	Q_OBJECT
 
 	public :
+		/** @brief Represents the type of connection between peer-to-peer transport layers.
+		 * None - There is no connection between the peer-to-peer transport layers
+		 * Indirect - There is a connection facilitated by the switchboard network between the peer-to-peer transport layers.
+		 * Direct - There is a direct connection between the peer-to-peer transport layers
+		 */
+		enum Type { None=0, Indirect=1, Direct=2 };
+
+	public :
 		/** @brief Creates a new instance of the Transport class. */
 		Transport(QObject *parent);
 		~Transport();
 
-		DirectTransportBridge* createDirectBridge(const QString& type, const QValueList<QString>& addresses, const Q_UINT16 port, const QUuid& nonce);
+		DirectTransportBridge* createDirectBridge(const QMap<QString, QVariant> & transportInfo);
 		SwitchboardBridge* createIndirectBridge();
-		bool listen(const QString& address, const Q_UINT16 port);
+		Q_INT16 listen(const QMap<QString, QVariant> & transportInfo);
 		bool isConnected() const;
+		bool isDirectlyConnected() const;
 		void registerPort(const Q_UINT32 port, SessionNotifier* notifier);
 		Q_UINT32 send(const QByteArray& message, const Q_UINT32 destination, const Q_UINT32 correlationId);
 		void sendBytes(const QByteArray& bytes, const Q_UINT32 destination, const Q_UINT32 correlationId);
@@ -62,7 +71,7 @@ class Transport : public QObject
 		void onBridgeConnect();
 		void onBridgeDisconnect();
 		void onBridgeError();
-		void onBridgeHandshake(const QUuid& cnonce, const Q_UINT32 bridgeId);
+		void onBridgeAuthenticationKeyReceive(const QUuid& nonce, const Q_UINT32 bridgeId);
 		void onReceive(const QByteArray& bytes);
 		void onSendFailed(Packet* packet);
 		void onSent(const Q_UINT32 id);
@@ -70,7 +79,6 @@ class Transport : public QObject
 	private:
 		void addBridge(TransportBridge *bridge);
 		void addPacketToUnacknowledgedList(Packet *packet);
-		DirectTransportBridge* createDirectBridge(const QString& type, const QValueList<QString>& addresses, const Q_UINT16 port);
 		Q_UINT32 findBestBridge() const;
 		void movePacketsBetweenBridges(const Q_UINT32 oldBridgeId, const Q_UINT32 newBridgeId);
 		Q_UINT32 nextBridgeId() const;
@@ -81,13 +89,13 @@ class Transport : public QObject
 		void removePacketFromUnacknowledgedList(const Q_UINT32 packetId);
 		void removeBridge(const Q_UINT32 id);
 		void sendAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
-		void sendBridgeHandshake(const QUuid& nonce, const Q_UINT32 bridgeId);
+		void sendBridgeAuthenticationKey(const QUuid& key, const Q_UINT32 bridgeId);
 		void sendCancelData(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
 		void sendControlPacket(const Packet::Type type, const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
 		void sendFault(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
-		void sendInternal(Packet* packet, const Q_UINT32 bridgeId);
+		void sendPacket(Packet* packet, const Q_UINT32 bridgeId);
+		void sendNonAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
 		void sendReset(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
-		void sendTimeout(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
 		void stopAllSends(const Q_UINT32 session);
 
 	signals:

@@ -37,10 +37,10 @@ class SwitchboardBridge : public TransportBridge
 		SwitchboardBridge(const Q_UINT32 bridgeId, QObject *parent);
 		virtual ~SwitchboardBridge();
 
+		/** @brief Gets the properties of the transport bridge. */
+		virtual const QMap<QString, QVariant> & getProperties() const;
 		/** @brief Gets a value that uniquely identifies the transport bridge. */
 		virtual Q_UINT32 id() const;
-		/** @brief Gets the MTU for the transport bridge. */
-		virtual Q_UINT32 maxSendBufferSize() const;
 		/** @brief Attachs the switchboard bridge to the switchboard network. */
 		void connectTo(MSNChatSession *switchboard);
 		/** @brief Sends the specified byte array. */

@@ -16,6 +16,8 @@
 #define CLASS_P2P__TRANSPORTBRIDGE_H
 
 #include <qobject.h>
+#include <qmap.h>
+#include <qvariant.h>
 
 namespace PeerToPeer
 {
@@ -37,10 +39,10 @@ class TransportBridge : public QObject
 		/** @brief Creates a new instance of the class Transport Bridge. */
 		TransportBridge(QObject *parent);
 		virtual ~TransportBridge();
+		/** @brief When overriden in a derived class, gets the properties of the transport bridge. */
+		virtual const QMap<QString, QVariant> & getProperties() const = 0;
 		/** @brief When overriden in a derived class, returns a value that uniquely identifies the transport bridge. */
 		virtual Q_UINT32 id() const = 0;
-		/** @brief When overriden in a derived class, returns the MTU for the transport bridge. */
-		virtual Q_UINT32 maxSendBufferSize() const = 0;
 		/** @brief Gets the state of the transport bridge. */
 		const TransportBridgeState & state() const;
 		/** @brief Connects a transport bridge. */

@@ -1,11 +1,11 @@
 METASOURCES = AUTO
 
-AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/protocols/msn/ $(all_includes)
+AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/protocols/msn/ -I$(srcdir)/../qca/src $(all_includes)
 
 noinst_LTLIBRARIES =  libkopete_msnslp.la
 
 libkopete_msnslp_la_SOURCES = \
-	binarypacketformatter.cpp dialog.cpp \
+	binarypacketformatter.cpp cryptohelper.cpp dialog.cpp \
 	directtransportbridge.cpp \
 	sessionclient.cpp \
 	sessionnotifier.cpp switchboardbridge.cpp \
@@ -18,7 +18,7 @@ libkopete_msnslp_la_SOURCES = \
 	msnobjectstore.cpp webcamsession.cpp
 
 noinst_HEADERS = \
-	binarypacketformatter.h dialog.h \
+	binarypacketformatter.h cryptohelper.h dialog.h \
 	directtransportbridge.h \
 	sessionclient.h \
 	sessionnotifier.h switchboardbridge.h \

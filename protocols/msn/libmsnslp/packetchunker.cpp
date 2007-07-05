@@ -20,7 +20,7 @@
 namespace PeerToPeer
 {
 
-PacketChunker:: PacketChunker()
+PacketChunker::PacketChunker()
 {
 }
 

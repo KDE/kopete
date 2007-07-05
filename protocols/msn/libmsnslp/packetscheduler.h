@@ -61,7 +61,7 @@ class PacketScheduler: public QObject
 		/** @brief Gets a list of packets from the supplied packet list
 		  * that match the specified packet class.
 		  */
-		QPtrList<Packet> selectPacketsByClass(const QValueList<Q_UINT32> & packetClass, PacketList* list);
+		PacketList selectPacketsByClass(const QValueList<Q_UINT32> & packetClass, PacketList* list);
 
 	private:
 		class PacketSchedulerPrivate;

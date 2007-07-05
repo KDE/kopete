@@ -19,6 +19,9 @@
 #define MSNMESSAGEMANAGER_H
 
 #include "kopetechatsession.h"
+#include "mimemessage.h"
+#include <qfont.h>
+#include <qcolor.h>
 
 class MSNSwitchBoardSocket;
 class KActionCollection;
@@ -140,7 +143,6 @@ private:
 	PeerToPeer::SwitchboardBridge *bridge;
 	PeerToPeer::SessionClient* client;
 
-	void traceBufferInfo(const QByteArray& data);
 signals:
 	/*
 	 * This signal is relayed to the protocol and after, to plugins
@@ -148,6 +150,18 @@ signals:
 	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNChatSession* msnMM , MSNContact* c );
 	void dataReceived(const QByteArray& data);
 	void onSend(const Q_INT32 id);
+
+private slots:
+	void onEmoticonKeyAndObjectReceive(const QString& key, const QString& object);
+
+private:
+	QString buildIMFormatString(QFont font, QColor color, bool isRightToLeft);
+	Q_INT32 sendMessage(Kopete::Message &message);
+	Q_INT32 sendMessage(MimeMessage& message, const QString& type);
+
+private:
+	class MSNChatSessionPrivate;
+	MSNChatSessionPrivate *d;
 };
 
 #endif

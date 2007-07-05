@@ -70,15 +70,6 @@ MsnObjectSession::MsnObjectSession(const QString& s, const Q_UINT32 id, Directio
 			kdDebug() << d->location << endl;
 			break;
 		}
-
-		case(11):
-		{
-			// We are requesting the peer's voice clip.
-			d->temporaryFile = new KTempFile(locateLocal("tmp", "msnvoiceclip--"), ".wav");
-			d->location = d->temporaryFile->name();
-			kdDebug() << d->location << endl;
-			break;
-		}
 	}
 }
 

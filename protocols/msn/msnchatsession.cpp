@@ -19,12 +19,15 @@
 
 #include <qlabel.h>
 #include <qimage.h>
+#include <qmap.h>
+#include <qpair.h>
 #include <qtooltip.h>
 #include <qfile.h>
 #include <qiconset.h>
 #include <qbuffer.h>
 
-
+#include <kaboutdata.h>
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
@@ -42,17 +45,16 @@
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopeteview.h"
+#include "private/kopeteemoticons.h"
 
 #include "msncontact.h"
 #include "msnfiletransfersocket.h"
 #include "msnaccount.h"
 #include "msnswitchboardsocket.h"
 #include "msnnotifysocket.h"
-
 #include "sessionclient.h"
 #include "switchboardbridge.h"
 #include "transport.h"
-#include <ctype.h>
 
 #include "config.h"
 
@@ -60,9 +62,13 @@
 #include "msndebugrawcmddlg.h"
 #endif
 
-MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user,
-	Kopete::ContactPtrList others, const char *name )
-: Kopete::ChatSession( user, others, protocol,  name )
+class MSNChatSession::MSNChatSessionPrivate
+{
+	public:
+		QMap<QString, QPair<QString, KTempFile*> > emoticons;
+};
+
+MSNChatSession::MSNChatSession(Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others, const char *name) : Kopete::ChatSession(user, others, protocol,  name), d(new MSNChatSessionPrivate())
 {
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 	m_chatService = 0l;
@@ -125,6 +131,8 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 		m_image = 0L;
 	}
 
+	MSNNotifySocket *notificationService = static_cast<MSNAccount*>( myself()->account() )->notifySocket();
+
 	transport = new PeerToPeer::Transport(this);
 	bridge = transport->createIndirectBridge();
 	// Connect the signal/slot
@@ -133,8 +141,10 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	bridge->connectTo(this);
 
 	QMap<QString, QVariant> properties;
-	properties["localIpAddress"] = static_cast<MSNAccount*>( myself()->account() )->notifySocket()->getLocalIP();
-	properties["externalIpAddress"] = static_cast<MSNAccount*>( myself()->account() )->notifySocket()->localIP();
+	properties["localIpAddress"] = notificationService->getLocalIP();
+	properties["connectionType"] = QString::fromLatin1("Unknown-NAT");
+	// properties["connectionType"] = notificationService->getEchoedClientConnectionType();
+	properties["externalIpAddress"] = notificationService->localIP();
 
 	Kopete::Contact *me = const_cast<Kopete::Contact*>(user);
 	Kopete::Contact *peer = const_cast<Kopete::Contact*>(members().getFirst());
@@ -165,6 +175,8 @@ MSNChatSession::~MSNChatSession()
 		delete *it;
 		m_invitations.remove( it );
 	}
+
+	delete d;
 }
 
 void MSNChatSession::createChat( const QString &handle,
@@ -223,6 +235,8 @@ void MSNChatSession::createChat( const QString &handle,
 	m_timeoutTimer->start(20000,true);
 
 	QObject::connect(m_chatService, SIGNAL(p2pData(const QString&, const QByteArray&)), this, SLOT(onP2pData(const QString&, const QByteArray&)));
+	QObject::connect(m_chatService, SIGNAL(incomingEmoticon(const QString&, const QString&)), this,
+	SLOT(onEmoticonKeyAndObjectReceive(const QString&, const QString&)));
 }
 
 void MSNChatSession::slotUserJoined( const QString &handle, const QString &publicName, bool IRO )
@@ -286,41 +300,32 @@ void MSNChatSession::slotSwitchBoardClosed()
 		setCanBeDeleted( true );
 }
 
-void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSession *)
+void MSNChatSession::slotMessageSent(Kopete::Message &message, Kopete::ChatSession *)
 {
 	m_newSession=false;
  	if(m_chatService)
 	{
-		int id = m_chatService->sendMsg(message);
-		if(id == -1)
+		if (members().count() == 0 || m_chatService->onlineStatus() != MSNSwitchBoardSocket::Connected)
 		{
 			m_messagesQueue.append(message);
 			kdDebug(14140) << k_funcinfo << "Message added to the queue" <<endl;
+			return;
 		}
-		else if( id== -2 ) //the message has not been sent
-		{
-			//FIXME:  tell the what window the message has been processed. but we havent't sent it
-			messageSucceeded();  //that should stop the blonking icon.
-		}
-		else if( id == -3) //the message has been sent as an immge
-		{
-			appendMessage(message);
-			messageSucceeded();
-		}
-		else
-		{
-			m_messagesSent.insert( id, message );
-			message.setBg(QColor()); // clear the bgColor
-			message.setBody(message.plainBody() , Kopete::Message::PlainText ); //clear every custom tag which are not sent
-			appendMessage(message); // send the own msg to chat window
-		}
+
+		Q_INT32 id = m_chatService->sendMsg(message);
+		// Send the message.
+// 		id = sendMessage(message);
+
+		m_messagesSent.insert( id, message );
+		message.setBg(QColor()); // clear the bgColor
+		message.setBody(message.plainBody() , Kopete::Message::PlainText ); //clear every custom tag which are not sent
+
+		appendMessage(message);
 	}
 	else // There's no switchboard available, so we must create a new one!
 	{
 		startChatSession();
 		m_messagesQueue.append(message);
-//		sendMessageQueue();
-		//m_msgQueued=new Kopete::Message(message);
 	}
 }
 
@@ -721,8 +726,8 @@ void MSNChatSession::slotWebcamSend()
 
 void MSNChatSession::slotSendFile()
 {
-		QPtrList<Kopete::Contact>contacts = members();
-		static_cast<MSNContact *>(contacts.first())->sendFile();
+	QPtrList<Kopete::Contact>contacts = members();
+	static_cast<MSNContact *>(contacts.first())->sendFile();
 }
 
 void MSNChatSession::startChatSession()
@@ -809,6 +814,233 @@ void MSNChatSession::slotConnectionTimeout()
 
 
 
+
+
+
+
+
+
+
+
+
+
+//BEGIN Switchboard Event Handling Functions
+
+void MSNChatSession::onEmoticonKeyAndObjectReceive(const QString& key, const QString& msnobject)
+{
+	if (!d->emoticons.contains(msnobject) || d->emoticons[msnobject].second == 0l)
+	{
+		KTempFile *file = 0l;
+		d->emoticons.insert(msnobject, qMakePair(key, file));
+
+		client->requestObject(msnobject);
+	}
+}
+
+// void MSNChatSession::onIncomingTextMessage(const MimeMessage& message, const QString& userFrom)
+// {
+// 	Kopete::Contact *contact = account()->contacts()[userFrom];
+// 	if (!contact)
+// 	{
+// 		contact = members().getFirst();
+// 	}
+//	// Get the mime message message id header value.
+// 	const QString messageId = message.headers().getValue("Message-ID");
+	// Get the mime message body as a string.
+// 	const QString textMessage = QString::fromUtf8(message.body());
+// 	Kopete::Message m(contact, myself(), members(), textMessage, Kopete::Message::Inbound , Kopete::Message::PlainText);
+//
+// 	if (message.headers().contains("Chunks"))
+// 	{
+// 		m.setBody(textMessage, Kopete::Message::PlainText);
+// 		d->partialMessages.insert(messageId, m);
+// 	}
+// 	else
+// 	if (message.headers().contains("Chunk") && !d->partialMessages.isEmpty())
+// 	{
+// 		if (d->partialMessages.contains(messageId))
+// 		{
+// 			m.setBody(d->partialMessages[messageId].plainBody() + textMessage, Kopete::Message::PlainText);
+// 		}
+// 	}
+// }
+
+//END
+
+//BEGIN Instant Message Functions
+
+QString MSNChatSession::buildIMFormatString(QFont font, QColor color, bool isRightToLeft)
+{
+	QString format;
+	QString space = QString::fromLatin1(" ");
+	if (font != QFont())
+	{
+		/// @note font name cannot be larger than 31 characters.
+		format += QString("FN=%1;").arg(font.family().left(31));
+
+		QString effect;
+		if (font.strikeOut())
+		{
+			effect = QString::fromLatin1("S");
+		}
+
+		if (font.bold())
+		{
+			effect = QString::fromLatin1("B");
+		}
+
+		if (font.italic())
+		{
+			effect = QString::fromLatin1("I");
+		}
+
+		if (font.underline())
+		{
+			effect = QString::fromLatin1("U");
+		}
+
+		format += QString("EF=%1;").arg(effect);
+	}
+	else
+	{
+		/// @bug 82734 Don't know what to set as the default.
+		format += QString::fromLatin1("FN=; EF=;");
+	}
+
+	format += space;
+
+	if (color.isValid())
+	{
+		/// @note colors are sent as BGR format not RGB.
+		QColor bgr = QColor(color.blue(), color.green(), color.red());
+		format += QString("CO=%1;").arg(bgr.name().remove(0, 1));
+	}
+	else
+	{
+		format += QString::fromLatin1("CO=0;");
+	}
+
+	format += space;
+	format += QString::fromLatin1("CS=0; PF=0");
+	if (isRightToLeft)
+	{
+		format += QString::fromLatin1("; RL=1");
+	}
+
+	return format;
+}
+
+Q_INT32 MSNChatSession::sendMessage(Kopete::Message &message)
+{
+	// Get the msn plugin's configuration settings.
+	KConfig *config = KGlobal::config();
+	config->setGroup("MSN");
+
+	// Check whether the sending of emotions is allowed.
+	if (config->readBoolEntry("exportEmoticons", false))
+	{
+		// If so, get the current kopete emoticon collection.
+		QMap<QString, QStringList> emotions = Kopete::Emoticons::self()->emoticonAndPicList();
+		QMap<QString, QStringList>::ConstIterator it;
+		// Check whether the outbound message contains any of
+		// the emotions from the kopete emotions collection.
+		for(it = emotions.begin(); it != emotions.end(); ++it)
+		{
+			QStringList::ConstIterator item;
+			for(item = it.data().constBegin(); item != it.data().constEnd(); ++item)
+			{
+				if (message.plainBody().contains(*item))
+				{
+					// If the message contains emoticons, notify the contact.
+// 					sendEmoticonKeyAndObject(*item, it.key());
+				}
+			}
+		}
+	}
+
+	// Get the text message body.
+	QString textBody = message.plainBody().replace("\n", "\r\n").utf8();
+
+	// Create a new outbound mime message.
+	MimeMessage outbound;
+
+	// Get the mime message header collection.
+	QMap<QString, QVariant> & headers = outbound.headers();
+	// Set the mime message content type header.
+	headers["Content-Type"] = QString::fromLatin1("text/plain; charset=UTF-8");
+	// Set the mime message IM format header.
+	headers["X-MMS-IM-Format"] = buildIMFormatString(message.font(), message.fg(), textBody.isRightToLeft());
+
+	/// @note "User-Agent" is not an official header but GAIM used it.
+	// Check whether the sending of the user agent header is allowed.
+	if (config->readBoolEntry("SendClientInfo", false))
+	{
+		// If so, set the mime message user agent header.
+		headers["User-Agent"] = "Kopete/" + kapp->aboutData()->version();
+	}
+
+	/// @todo Verify what the max chunk size for a chunked text message is.
+	const Q_UINT32 chunkSize = 1305;
+
+	// Convert the text message body into a byte array.
+	QByteArray messageBody = textBody.utf8();
+	// Get the size of the byte array.
+	const Q_UINT32 messageSize = messageBody.size();
+
+	Q_INT32 value = -1;
+
+	if (messageSize > chunkSize)
+	{
+		// Set the mime message message id header.
+		headers["Message-ID"] = QUuid::createUuid().toString();
+
+		// Determine the number of chunks that will be sent.
+		Q_UINT32 chunks = messageSize / chunkSize;
+		if((messageSize % chunkSize) > 0) chunks += 1;
+
+		Q_UINT32 offset = 0, chunkId  = 1;
+
+		while(offset < messageSize)
+		{
+			headers[offset == 0 ? "Chunks" : "Chunk"] = (offset == 0 ? chunks : chunkId);
+
+			const Q_UINT32 count = messageSize - offset;
+			// Determine the size of the message chunk.
+			const Q_UINT32 length = QMIN(chunkSize, count);
+
+			QByteArray chunk;
+			chunk.duplicate(messageBody.data() + offset, length);
+			// Set the mime message body.
+			outbound.setBody(chunk);
+
+			// Send the mime message.
+			value = sendMessage(outbound, "A");
+
+			offset += length;
+			chunkId  += 1;
+		}
+	}
+	else
+	{
+		// Set the mime message body.
+		outbound.setBody(messageBody);
+
+		// Send the mime message.
+		value = sendMessage(outbound, "A");
+	}
+
+	return value;
+}
+
+Q_INT32 MSNChatSession::sendMessage(MimeMessage& message, const QString& type)
+{
+	return 0;
+}
+
+//END
+
+//BEGIN P2P Event Handling Functions
+
 void MSNChatSession::onP2pData(const QString& from, const QByteArray& bytes)
 {
 	Q_UNUSED(from);
@@ -835,8 +1067,6 @@ void MSNChatSession::onP2pData(const QString& from, const QByteArray& bytes)
 		return;
 	}
 
-// 	traceBufferInfo(bytes);
-
 	QByteArray buffer;
 	buffer.duplicate(index + bytes.data(), bytes.size() - index);
 	emit dataReceived(buffer);
@@ -857,7 +1087,28 @@ void MSNChatSession::onObjectReceived(const QString& object, KTempFile *temporar
 	{
 		contact->setDisplayPicture(temporaryFile);
 	}
+	else
+	if (d->emoticons.contains(object))
+	{
+		d->emoticons[object].second = temporaryFile;
+
+// 		QValueList<const Kopete::Message>::Iterator it;
+// 		for(it = d->messageQueue.begin(); it != d->messageQueue.end(); ++it)
+// 		{
+// 		 	Kopete::Message message = parseCustomEmoticons(it*);
+// 		}
+// 		d->messageQueue.clear();
+	}
+	else
+	{
+		// Otherwise, delete the temporary file.
+		delete temporaryFile;
+	}
 }
+
+//END
+
+//BEGIN P2P Functions
 
 void MSNChatSession::onRequestSwitchboard()
 {
@@ -871,57 +1122,23 @@ Q_INT32 MSNChatSession::send(const QByteArray& bytes)
 			"P2P-Dest: " + members().getFirst()->contactId() + "\r\n"
 			"\r\n");
 
-	QByteArray data;
-	QBuffer buffer(data);
+	QBuffer buffer;
 	buffer.open(IO_WriteOnly);
 	buffer.writeBlock(h.ascii(), h.length());
 	buffer.writeBlock(bytes.data(), bytes.size());
 
-// 	traceBufferInfo(data);
-
 	Q_INT32 tId = -1;
 	if (m_chatService)
 	{
-		tId = m_chatService->sendCommand("MSG", "D", true, data, true);
+		tId = m_chatService->sendCommand("MSG", "D", true, buffer.buffer(), true);
 	}
+
+	buffer.close();
 
 	return tId;
 }
 
-void MSNChatSession::traceBufferInfo(const QByteArray& data)
-{
-	int i = 0;
-	QString output = "\n";
-	QString hex, ascii;
-
-	QByteArray::ConstIterator it;
-	for ( it = data.begin(); it != data.end(); ++it )
-	{
-		i++;
-
-		unsigned char c = static_cast<unsigned char>(*it);
-
-		if ( c < 0x10 )
-			hex.append("0");
-		hex.append(QString("%1 ").arg(c, 0, 16));
-
-		ascii.append(isprint(c) ? c : '.');
-
-		if (i == 16)
-		{
-			output += hex + "   " + ascii + "\n";
-			i=0;
-			hex=QString::null;
-			ascii=QString::null;
-		}
-	}
-
-	if(!hex.isEmpty())
-		output += hex.leftJustify(48, ' ') + "   " + ascii.leftJustify(16, ' ');
-	output.append('\n');
-
-	kdDebug() << "\n" + output << endl;
-}
+//END
 
 #include "msnchatsession.moc"
 

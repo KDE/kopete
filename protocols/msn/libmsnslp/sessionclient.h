@@ -88,11 +88,14 @@ class SessionClient : public QObject
 		void onSessionDecline();
 		/** @brief Called when a session has ended. */
 		void onSessionEnd();
-
+		/** @brief Called when a session wants to send a message. */
 		void onSessionSendMessage(const QByteArray& bytes);
+		/** @brief Called when a session wants to send raw data. */
 		void onSessionSendData(const QByteArray& bytes);
+		/** @brief Called when a session wants to send a file. */
 		void onSessionSendFile(QFile *file);
 
+		/** @brief Called when the transport's default bridge initially connects. */
 		void onTransportInitialConnect();
 
 	private:
@@ -103,9 +106,9 @@ class SessionClient : public QObject
 		/** @brief Begins a dialog transaction. */
 		void beginTransaction(Transaction *transaction);
 		/** @brief Builds the parameters of a direct connection setup request message body. */
-		const QString buildDirectConnectionSetupRequestBody(const Q_UINT32 sessionId);
+		const QString buildDirectConnectionSetupRequestBody(const QUuid& nonce, const Q_UINT32 sessionId);
 		/** @brief Builds the parameters of a direct connection setup response message body. */
-		const QString buildDirectConnectionSetupResponseBody(const QUuid& nonce);
+		const QString buildDirectConnectionSetupOrOfferResponseBody(const QString& sessionId, const QUuid& nonce, bool supportsHashedNonce, bool isOffer=false);
 		/** @brief Builds a request using the specified method, content type and dialog. */
 		SlpRequest buildRequest(const QString& method, const QString& contentType, Dialog *dialog);
 		/** @brief Builds a response using the specified status code, status description, content type and request. */
@@ -117,8 +120,8 @@ class SessionClient : public QObject
 		/** @brief Creates a locally initiated session. */
 		void createSessionInternal(const QUuid& uuid, const Q_UINT32 sessionId, const Q_UINT32 appId, const QString& context);
 		/** @brief Tries to create a direct transport for the supplied session using the specified information. */
-		void createDirectConnection(const QString& type, const QValueList<QString> & ipAddresses, const QString& port, const QUuid& nonce, const QString& sessionId);
-		bool createDirectConnectionListener(const QString& ipAddress, const Q_UINT16 port, const QUuid& nonce);
+		void createDirectConnection(const QMap<QString, QVariant> & transportInfo);
+		Q_INT16 createDirectConnectionListener(const QUuid& nonce, const QUuid& peerNonce, const bool supportsHashedNonce);
 		/** @brief Declines a session invitation. */
 		void declineSession(const Q_UINT32 sessionId);
 		/** @brief Terminates a session. */
@@ -140,8 +143,8 @@ class SessionClient : public QObject
 
 		bool parseSessionCloseBody(const QString& requestBody, QMap<QString, QVariant> & parameters);
 		bool parseSessionRequestBody(const QString& requestBody, QMap<QString, QVariant> & parameters);
-		bool parseDirectConnectionDescription(const QString& responseBody, QMap<QString, QVariant> & parameters);
-		bool parseDirectConnectionRequestBody(const QString& requestBody, QMap<QString, QVariant> & parameters);
+		bool parseDirectConnectionRequestBody(const QString& requestBody, QMap<QString, QVariant> & transportInfo);
+		bool parseDirectConnectionResponseBody(const QString& responseBody, QMap<QString, QVariant> & transportInfo);
 
 		/** @brief Called when the remote endpoint wants to terminates the dialog. */
 		void onByeRequest(const SlpRequest& request);
@@ -179,6 +182,7 @@ class SessionClient : public QObject
 		void requestDirectConnection(const Q_UINT32 sessionId);
 		/** @brief Sends the supplied message to the specified destination. */
 		void send(SlpMessage& message, const Q_UINT32 destination, const Q_UINT32 priority=1);
+		void sendErrorResponse(const Q_INT32 statusCode, const QString& statusDescription, const QString& contentType, const SlpRequest& request, const QString& responseBody=QByteArray());
 		/** @brief Indicates whether the parameters sent by the peer in a direct connection
 		 *		   setup request would support the possible scenarios to establish a direct
          *         connection.

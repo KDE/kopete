@@ -27,18 +27,20 @@ namespace PeerToPeer
 class SwitchboardBridge::SwitchboardBridgePrivate
 {
 	public :
-		SwitchboardBridgePrivate() : maxSendBufferSize(1202), switchboard(0l) {}
+		SwitchboardBridgePrivate() : switchboard(0l) {}
 
 		Q_UINT32 bridgeId;
 		QMap<Q_INT32, Q_UINT32> cookies;
-		Q_UINT32 maxSendBufferSize;
 		QValueList< QPair<Q_UINT32, QByteArray> > pendingChunks;
+		QMap<QString, QVariant> properties;
 		MSNChatSession *switchboard;
 };
 
 SwitchboardBridge::SwitchboardBridge(const Q_UINT32 bridgeId, QObject* parent) : TransportBridge(parent), d(new SwitchboardBridgePrivate())
 {
 	d->bridgeId = bridgeId;
+	d->properties.insert("mtu", 1202);
+	d->properties.insert("throttle", 5);
 }
 
 SwitchboardBridge::~SwitchboardBridge()
@@ -46,14 +48,14 @@ SwitchboardBridge::~SwitchboardBridge()
 	delete d;
 }
 
+const QMap<QString, QVariant> & SwitchboardBridge::getProperties() const
+{
+	return d->properties;
+}
+
 Q_UINT32 SwitchboardBridge::id() const
 {
 	return d->bridgeId;
-}
-
-Q_UINT32 SwitchboardBridge::maxSendBufferSize() const
-{
-	return d->maxSendBufferSize;
 }
 
 void SwitchboardBridge::connectTo(MSNChatSession *switchboard)
@@ -127,10 +129,11 @@ void SwitchboardBridge::onDataReceived(const QByteArray& bytes)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
 
-	if (bytes.size() > (sizeof(Packet::Header) + d->maxSendBufferSize + 4))
+	const Q_INT32 maxDataChunkSize = d->properties["mtu"].toInt();
+	if (bytes.size() > (sizeof(Packet::Header) + maxDataChunkSize + 4))
 	{
 		kdDebug() << k_funcinfo << "Got data whose size exceeds mtu size="
-			<< d->maxSendBufferSize << " bytes -- ignoring it." << endl;
+			<< maxDataChunkSize << " bytes -- ignoring it." << endl;
 		return;
 	}
 
@@ -190,13 +193,14 @@ void SwitchboardBridge::onConnect()
 
 	setState(TransportBridge::Connected);
 	kdDebug() << k_funcinfo << endl;
-	// Raise the connected event signal.
-	emit connected();
 
 	if (d->pendingChunks.size() > 0)
 	{
 		QTimer::singleShot(0, this, SLOT(onSendPendingPackets()));
 	}
+
+	// Raise the connected event signal.
+	emit connected();
 }
 
 void SwitchboardBridge::onDisconnect()

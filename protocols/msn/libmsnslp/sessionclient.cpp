@@ -13,6 +13,7 @@
 */
 
 #include "sessionclient.h"
+#include "cryptohelper.h"
 #include "dialog.h"
 #include "filetransfersession.h"
 #include "msnobjectsession.h"
@@ -21,6 +22,7 @@
 #include "transport.h"
 #include "kopetecontact.h"
 #include "network/upnpnatportmapper.h"
+// #include "network/networkutils.h"
 
 #include <qdom.h>
 #include <qfile.h>
@@ -40,8 +42,6 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 
-using namespace Kopete::Network;
-
 namespace PeerToPeer
 {
 
@@ -59,6 +59,7 @@ class SessionClient::SessionClientPrivate
 		Kopete::Contact *peer;
 		QString peerUri;
 		Q_UINT32 nextSessionId;
+		QMap<Q_UINT32, QUuid> nonces;
 		QPtrList<Transaction> pendingTransactions;
 		QMap<Q_INT32, Session*> sessions;
 		QString supportedBridgeTypes;
@@ -72,18 +73,20 @@ SessionClient::SessionClient(const QMap<QString, QVariant> & properties, Kopete:
 {
 	// Configure the client using the supplied properties
 
-	// TODO Get the ICF configuration settings of the machine.
-	d->behindFirewall = false; // NetworkUtils()::isBehindFirewall();
+	// TODO Get the firewall configuration settings of the computer.
+	d->behindFirewall = false; // Kopete::Network::NetworkUtils()::isSystemBehindFirewall();
 
 	d->externalIpAddress = properties["externalIpAddress"].toString();
-	d->internalIpAddress = properties["internalIpAddress"].toString();
+	d->internalIpAddress = properties["localIpAddress"].toString();
 	// Set the transport bridge types supported by the client.
 	d->supportedBridgeTypes = QString::fromLatin1("TCPv1");
-	d->connectionType = QString::fromLatin1("Unknown-NAT");
-	d->upnpNatPresent = true;//properties["upnpNatPresent"].toBool();
+	d->connectionType = properties["connectionType"].toString();
 
+	// Configure the session client based on connection type.
 	if (d->connectionType.contains("NAT"))
 	{
+		// If a NAT has been detected, determine whether it supports UPnP.
+		d->upnpNatPresent = Kopete::Network::UpnpNatPortMapper::self()->isUpnpNatPresent();
 		QHostAddress address;
 		address.setAddress(d->externalIpAddress);
 		const Q_INT32 netId = address.toIPv4Address();
@@ -91,11 +94,11 @@ SessionClient::SessionClient(const QMap<QString, QVariant> & properties, Kopete:
 	}
 	else
 	{
-		d->connectionType = QString::fromLatin1("Unknown-Connect");
+		d->upnpNatPresent = false;
 		d->netId = 0;
 	}
 
-	// Set the client/protocol version.
+	// Set the supported client/protocol version.
 	d->version = QString::fromLatin1("1.0");
 
 	d->me = me;
@@ -143,7 +146,7 @@ void SessionClient::initialize()
 bool SessionClient::isActive() const
 {
 	kdDebug() << k_funcinfo << "Active dialogs, " << d->dialogs.size() << endl;
-	return (d->dialogs.size() != 0);
+	return (d->dialogs.count() != 0);
 }
 
 Q_UINT32 SessionClient::nextSessionId() const
@@ -191,7 +194,8 @@ void SessionClient::createSessionInternal(const QUuid& uuid, const Q_UINT32 sess
 
 	if (d->transport->isConnected())
 	{
-		// Begin the transaction.
+		// If the underlying transport is connected, begin
+		// the transaction.
 		beginTransaction(transaction);
 
 		// Send the transaction request.
@@ -199,6 +203,7 @@ void SessionClient::createSessionInternal(const QUuid& uuid, const Q_UINT32 sess
 	}
 	else
 	{
+		// Otherwise, queue the transaction until it is.
 		d->pendingTransactions.append(transaction);
 	}
 }
@@ -331,7 +336,8 @@ void SessionClient::onReceived(const QByteArray& content, const Q_INT32 id, cons
 	if (startLine.startsWith("INVITE") || startLine.startsWith("BYE"))
 	{
 		// If the start line pattern matchs that of a request,
-		// try to parse the request from the raw data.
+		// try to parse the request from the raw data if the
+		// method is supported.
 		QRegExp regex("^(\\w+) MSNMSGR:([\\w@.]*) MSNSLP/(\\d\\.\\d)");
 		if (regex.search(startLine) != -1)
 		{
@@ -373,7 +379,7 @@ void SessionClient::onReceived(const QByteArray& content, const Q_INT32 id, cons
 		QRegExp regex("^MSNSLP/(\\d\\.\\d) ([0-9]{3}) ([A-Za-z ]*)");
 		if (regex.search(startLine) != -1)
 		{
-			// Get the request message version.
+			// Get the response message version.
 			const QString version = regex.cap(1);
 			// Get the response status code.
 			const Q_UINT32 statusCode = regex.cap(2).toUInt();
@@ -488,6 +494,7 @@ Dialog* SessionClient::getDialogByCallId(const QUuid& callId)
 {
 	Dialog *dialog = 0l;
 	if (d->dialogs.contains(callId)) dialog = d->dialogs[callId];
+
 	return dialog;
 }
 
@@ -545,9 +552,13 @@ void SessionClient::onDialogEstablish()
 	{
 		kdDebug() << "Dialog ESTABLISHED, call id = " << dialog->callId().toString().upper() << endl;
 
-		// Request a direct connection because we want to
-		// transfer the session data efficiently.
-// 		requestDirectConnection(dialog->session);
+// 		if (d->transport->type() != Transport::Direct && d->pendingTransportSetupRequests.count() == 0)
+		if (!d->transport->isDirectlyConnected())
+		{
+			// Request a direct connection because we want to
+			// transfer the session data efficiently.
+			requestDirectConnection(dialog->session);
+		}
 
 		// Try to retrieve the session associated with the dialog.
 		Session *session = d->sessions[dialog->session];
@@ -600,6 +611,11 @@ void SessionClient::onDialogTerminate()
 			// Delete the session as its lifetime has ended.
 			session->deleteLater();
 			session = 0l;
+		}
+
+		if (d->nonces.contains(sessionId))
+		{
+			d->nonces.remove(sessionId);
 		}
 
 		// Remove the dialog from the call map.
@@ -812,12 +828,17 @@ void SessionClient::requestDirectConnection(const Q_UINT32 sessionId)
 	if (dialog == 0l)
 		return;
 
-	kdDebug() << k_funcinfo << "Requesting Direct Connection for session " << sessionId << endl;
+	kdDebug() << k_funcinfo << "Requesting DIRECT CONNECTION for session " << sessionId << endl;
+
+	// Create a new nonce to use for bridge authentication; it will be hashed for security.
+	QUuid nonce = QUuid::createUuid();
+	// Store the authentication nonce.
+	d->nonces[sessionId] = nonce;
 
 	// Build the INVITE request.
 	SlpRequest request = buildRequest("INVITE", "application/x-msnmsgr-transreqbody", dialog);
 	// Build the Direct Connection setup body.
-	const QString requestBody = buildDirectConnectionSetupRequestBody(sessionId);
+	const QString requestBody = buildDirectConnectionSetupRequestBody(nonce, sessionId);
 	// Set the request body.
 	request.setBody(requestBody);
 	//Set the request context information.
@@ -846,14 +867,18 @@ void SessionClient::onRequestMessage(const SlpRequest& request)
 	{
 		kdDebug() << k_funcinfo << "Got request which is not for me -- responding with 404" << endl;
 
-		// Generate a Not Found response
-		SlpResponse response = buildResponse(SlpResponse::NotFound, "Not Found", "null", request);
-		// Set the response context information.
-		response.setId(0);
-		response.setCorrelationId(request.id());
-
 		// Send the 404 Not Found status response message.
-		send(response, 0);
+		sendErrorResponse(SlpResponse::NotFound, "Not Found", "null", request);
+		return;
+	}
+
+	// Check whether the message version is supported.
+	if (request.version() != d->version)
+	{
+		kdDebug() << k_funcinfo << "Got request whose protocol version is not supported" << endl;
+
+		// Send the 505 Not Supported status response message.
+		sendErrorResponse(SlpResponse::VersionNotSupported, "Not Supported", "null", request);
 		return;
 	}
 
@@ -883,14 +908,8 @@ void SessionClient::onRequestMessage(const SlpRequest& request)
 		{
 			kdDebug() << k_funcinfo << "Got unknown content-type on INVITE request -- responding with 500" << endl;
 
-			// Generate an Internal Error response
-			SlpResponse response = buildResponse(SlpResponse::InternalError, "Internal Error", "null", request);
-			// Set the response context information.
-			response.setId(0);
-			response.setCorrelationId(request.id());
-
 			// Send the 500 Internal Error status response message.
-			send(response, 0);
+			sendErrorResponse(SlpResponse::InternalError, "Internal Error", "null", request);
 		}
 	}
 
@@ -935,17 +954,11 @@ void SessionClient::onByeRequest(const SlpRequest& request)
 	{
 		kdDebug() << k_funcinfo << "Got unknown call id on BYE request -- responding with 481" << endl;
 
-		// Generate a No Such Call response
-		SlpResponse response = buildResponse(SlpResponse::NoSuchCall, "No Such Call", "application/x-msnmsgr-session-failure-respbody", request);
 		// Set the response body.
 		const QString responseBody = QString::fromLatin1("SessionID: 0\r\n\r\n");
-		response.setBody(responseBody);
-		// Set the response context information.
-		response.setId(0);
-		response.setCorrelationId(request.id());
-
+		const QString contentType = QString::fromLatin1("application/x-msnmsgr-session-failure-respbody");
 		// Send the 481 No Such Call status response message.
-		send(response, 0);
+		sendErrorResponse(SlpResponse::NoSuchCall, "No Such Call", contentType, request, responseBody);
 	}
 
 	if (dialog != 0l && dialog->state() != Dialog::Terminated)
@@ -955,14 +968,8 @@ void SessionClient::onByeRequest(const SlpRequest& request)
 		{
 			kdDebug() << k_funcinfo << "Got unknown content type on BYE request -- responding with 500" << endl;
 
-			// Generate an Internal Error response
-			SlpResponse response = buildResponse(SlpResponse::InternalError, "Internal Error", "null", request);
-			// Set the response context information.
-			response.setId(0);
-			response.setCorrelationId(request.id());
-
 			// Send the 500 Internal Error status response message.
-			send(response, 0);
+			sendErrorResponse(SlpResponse::InternalError, "Internal Error", "null", request);
 		}
 		else
 		{
@@ -981,7 +988,7 @@ void SessionClient::onByeRequest(const SlpRequest& request)
 	}
 }
 
-bool SessionClient::parseDirectConnectionRequestBody(const QString& requestBody, QMap<QString, QVariant> & parameters)
+bool SessionClient::parseDirectConnectionRequestBody(const QString& requestBody, QMap<QString, QVariant> & transportInfo)
 {
 	bool parseError = false;
 	QRegExp regex("Bridges: ([a-zA-Z0-9 ]*)");
@@ -993,7 +1000,7 @@ bool SessionClient::parseDirectConnectionRequestBody(const QString& requestBody,
 	}
 	else
 	{
-		parameters.insert("Bridges", regex.cap(1));
+		transportInfo.insert("Bridges", regex.cap(1));
 	}
 
 	regex = QRegExp("NetID: (\\-?\\d+)");
@@ -1005,7 +1012,7 @@ bool SessionClient::parseDirectConnectionRequestBody(const QString& requestBody,
 	}
 	else
 	{
-		parameters.insert("NetID", regex.cap(1));
+		transportInfo.insert("NetID", regex.cap(1));
 	}
 
 	regex = QRegExp("UPnPNat: ([a-z]*)");
@@ -1017,7 +1024,7 @@ bool SessionClient::parseDirectConnectionRequestBody(const QString& requestBody,
 	}
 	else
 	{
-		parameters.insert("UPnPNat", (QString::fromLatin1("true") == regex.cap(1)));
+		transportInfo.insert("UPnPNat", (QString::fromLatin1("true") == regex.cap(1)));
 	}
 
 	regex = QRegExp("Conn-Type: ([a-zA-Z\\-]*)");
@@ -1029,14 +1036,14 @@ bool SessionClient::parseDirectConnectionRequestBody(const QString& requestBody,
 	}
 	else
 	{
-		parameters.insert("Conn-Type", regex.cap(1));
+		transportInfo.insert("Conn-Type", regex.cap(1));
 	}
 
 	regex = QRegExp("SessionID: (\\d+)");
 	// Check if the 'SessionID' field is valid.
 	if (regex.search(requestBody) != -1)
 	{
-		parameters.insert("SessionID", regex.cap(1));
+		transportInfo.insert("SessionID", regex.cap(1));
 	}
 
 	regex = QRegExp("ICF: ([a-z]*)");
@@ -1048,20 +1055,22 @@ bool SessionClient::parseDirectConnectionRequestBody(const QString& requestBody,
 	}
 	else
 	{
-		parameters.insert("ICF", (QString::fromLatin1("true") == regex.cap(1)));
+		transportInfo.insert("ICF", (QString::fromLatin1("true") == regex.cap(1)));
 	}
 
-// 	regex = QRegExp("Nonce: \\{([0-9A-F\\-]*)\\}");
-// 	// Check if the 'Nonce' field is valid.
-// 	if (regex.search(requestBody) == -1)
-// 	{
-// 		kdDebug() << k_funcinfo << "Got an invalid or no Nonce field" << endl;
-// 		parseError = true;
-// 	}
-// 	else
-// 	{
-// 		parameters.insert("Nonce", regex.cap(1));
-// 	}
+	regex = QRegExp("Hashed-Nonce: \\{([0-9A-F\\-]*)\\}");
+	// Check if the 'Hashed-Nonce' field is valid/present.
+	if (regex.search(requestBody) != -1)
+	{
+		transportInfo.insert("Hashed-Nonce", regex.cap(1));
+	}
+
+	regex = QRegExp("IPv6-global: ([0-9a-f]{4}:[0-9a-f]{4}:[0-9a-f]{4}::[0-9a-f]{4}:[0-9a-f]{4})");
+	// Check if the 'IPv6-global' field is valid/present.
+	if (regex.search(requestBody) != -1)
+	{
+		transportInfo.insert("IPv6-global", regex.cap(1));
+	}
 
 	return parseError;
 }
@@ -1087,23 +1096,17 @@ void SessionClient::onDirectConnectionSetupRequest(const SlpRequest& request)
 		// Get the request body.
 		const QString & requestBody = request.body();
 
-		QMap<QString, QVariant> parameters;
+		QMap<QString, QVariant> transportInfo;
 		// Parse the direct connection setup description from the request body
-		bool parseError = parseDirectConnectionRequestBody(requestBody, parameters);
+		bool parseError = parseDirectConnectionRequestBody(requestBody, transportInfo);
 		if (parseError)
 		{
 			// If a parse error is encountered, inform the peer
 			// by responding with an internal error.
 			kdDebug() << k_funcinfo << "Got invalid direct connection setup description on INVITE request -- responding with 500" << endl;
 
-			// Generate an Internal Error response
-			SlpResponse response = buildResponse(SlpResponse::InternalError, "Internal Error", "null", request);
-			// Set the response context information.
-			response.setId(0);
-			response.setCorrelationId(request.id());
-
 			// Send the 500 Internal Error response message.
-			send(response, 0);
+			sendErrorResponse(SlpResponse::InternalError, "Internal Error", "null", request);
 
 			// Wait 5 seconds for an acknowledge before termining the dialog.
 			// If a timeout occurs, terminate the dialog anyway.
@@ -1114,14 +1117,14 @@ void SessionClient::onDirectConnectionSetupRequest(const SlpRequest& request)
 		////////////////////////////////////////////
 		// Supported bridge types: TRUDPv1 or TCPv1
 		////////////////////////////////////////////
-		const QValueList<QString> supportedBridgeTypes = QStringList::split(' ', parameters["Bridges"].toString());
+		const QValueList<QString> supportedBridgeTypes = QStringList::split(' ', transportInfo["Bridges"].toString());
 
 		//////////////////////////////////////////////////////////////////////////////////
 		// NetID is the big endian version of the sender's internet visible (external)
 		// ip address.  For connection types Direct-Connect, Unknown-Connect and Firewall
 		// however, NetID is always 0.
 		//////////////////////////////////////////////////////////////////////////////////
-		const Q_UINT32 netId = parameters["NetID"].toInt();
+		const Q_UINT32 netId = transportInfo["NetID"].toInt();
 		const QHostAddress peerIpAddress(ntohl(netId));
 
 		//////////////////////////////////////////////////////////////////
@@ -1129,11 +1132,11 @@ void SessionClient::onDirectConnectionSetupRequest(const SlpRequest& request)
 		// through a router that supports the Universal Plug and Play
 		// (UPnp) specification.
 		//////////////////////////////////////////////////////////////////
-		const bool upnpNatPresent = parameters["UPnPNat"].toBool();
+		const bool upnpNatPresent = transportInfo["UPnPNat"].toBool();
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 		// Unknown-Connect  (0)	The peer's connection scheme to the internet is unknown.
-		// Direct-Connect		The peer is directly connected to the internet
+		// Direct-Connect	(1) The peer is directly connected to the internet
 		// Unknown-NAT		(3)	The peer is connected to the internet through a NAT but the type is unknown.
 		// IP-Restrict-NAT	(4)	The peer is connected to the internet through an IP restricted NAT
 		// 						External address does not match internal address but external and internal port are the same.
@@ -1141,16 +1144,16 @@ void SessionClient::onDirectConnectionSetupRequest(const SlpRequest& request)
 		// 						External and internal address match but external and internal port are different.
 		// Symmetric-NAT    (6)	The peer is connected to the internet through a Symmetric NAT
 		// 						Both external and internal address and external and internal port are different
-		// Firewall				The peer is behind a firewall.
-		// ISALike				The peer is connected using a Internet Security and Acceleration server.
+		// Firewall			(2)	The peer is behind a firewall.
+		// ISALike			(7)	The peer is connected using a Internet Security and Acceleration server.
 		///////////////////////////////////////////////////////////////////////////////////////////
-		const QString connectionType = parameters["Conn-Type"].toString();
+		const QString connectionType = transportInfo["Conn-Type"].toString();
 
 		QString sessionId;
-		if (parameters.contains("SessionID"))
+		if (transportInfo.contains("SessionID"))
 		{
 			// The SessionID field was sent in the request body.
-			sessionId = parameters["SessionID"].toString();
+			sessionId = transportInfo["SessionID"].toString();
 		}
 		else
 		{
@@ -1161,22 +1164,31 @@ void SessionClient::onDirectConnectionSetupRequest(const SlpRequest& request)
 		// Indicates whether the peer is behind an internet
 		// connection firewall.
 		/////////////////////////////////////////////////////
-		const bool behindFirewall = parameters["ICF"].toBool();
+		const bool behindFirewall = transportInfo["ICF"].toBool();
 
-		// TODO Handle Hashed-Nonce field
-		QUuid nonce;
+		/////////////////////////////////////////////////////////
+		// Hashed nonce used in transport bridge authentication.
+		/////////////////////////////////////////////////////////
+		QUuid hashedNonce;
+		bool supportsHashedNonce = false;
+		if (transportInfo.contains("Hashed-Nonce"))
+		{
+			hashedNonce = transportInfo["Hashed-Nonce"].toString();
+			supportsHashedNonce = true;
+		}
 
 		SlpResponse response;
 		// Check the peer's direct connectivity parameters and ours to determine
 		// whether we can establish a direct connection.
 		bool allowDirect = supportsDirectConnectivity(connectionType, behindFirewall, upnpNatPresent);
-		if (false && allowDirect && supportedBridgeTypes.contains("TCPv1"))
+		if (allowDirect && supportedBridgeTypes.contains("TCPv1"))
 		{
 			// If the peer's connectivity scheme is good enough to establish
 			// a direct connection, accept the direct connection setup request.
 			response = buildResponse(SlpResponse::OK, "OK", "application/x-msnmsgr-transrespbody", request);
 			// Build the direct connection response description.
-			const QString dccResponseBody = buildDirectConnectionSetupResponseBody(nonce);
+			const QString dccResponseBody =
+				buildDirectConnectionSetupOrOfferResponseBody(sessionId, hashedNonce, supportsHashedNonce);
 			response.setBody(dccResponseBody);
 		}
 		else
@@ -1200,7 +1212,7 @@ void SessionClient::onDirectConnectionSetupRequest(const SlpRequest& request)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Once a dialog has been established, any participant (peer) can initiate a Direct Connection setup request.
 // For this reason, it is required to check if an overlapping Direct Connection setup request occurs. This
-// is done my comparing the NetID fields in both request bodies.  The NetID which is greater determines who
+// is done by comparing the NetID fields in both request bodies.  The NetID which is greater determines who
 // wins and therefore who must discard their request.
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool SessionClient::isMyDirectConnectionSetupRequestLoser(Dialog *dialog, const SlpRequest& request)
@@ -1216,6 +1228,9 @@ bool SessionClient::isMyDirectConnectionSetupRequestLoser(Dialog *dialog, const 
 		QRegExp regex("NetID: (\\-?\\d+)");
 		regex.search(request.body());
 		const Q_INT32 peerNetId = regex.cap(1).toInt();
+
+		// TODO What happens if peers are on the same network; i.e. have same public ip addresses
+		// NOTE Not sure if this is the correct way to evaluate who drops their request.
 
 		// Compare the peer's Net ID to ours.
 		isMyRequestLoser = (d->netId < peerNetId);
@@ -1234,43 +1249,64 @@ bool SessionClient::isMyDirectConnectionSetupRequestLoser(Dialog *dialog, const 
 	return isMyRequestLoser;
 }
 
-const QString SessionClient::buildDirectConnectionSetupResponseBody(const QUuid& nonce)//, bool supportsHashedNonce)
+const QString SessionClient::buildDirectConnectionSetupOrOfferResponseBody(const QString& sessionId, const QUuid& peerHashedNonce, bool supportsHashedNonce, bool isOffer)
 {
-	// TODO Handle the hashed nonce field.
-	Q_UNUSED(nonce);
-
 	const QString CrLf = QString::fromLatin1("\r\n");
 
 	QString responseBody;
 	QTextStream stream(responseBody, IO_WriteOnly);
-	Q_UINT16 port = 50050;
 
-	//TODO Create the nonce here and pass it to the transport.Listen() function
+	// If isOffer is true, get the nonce we sent in our original
+	// setup request instead of creating a new authentication nonce.
+	QUuid nonce = (false && isOffer ? d->nonces[sessionId.toInt()] : QUuid::createUuid());
 
 	// Try to get the transport to listen for incoming transport bridge connections.
-	bool isListening = createDirectConnectionListener(d->internalIpAddress, port, nonce);
+	Q_INT16 port = 0;//createDirectConnectionListener(nonce, peerHashedNonce, false);// supportsHashedNonce);
+	bool isListening = false;//(port != -1);
 
 	stream << QString::fromLatin1("Bridge: ") << QString::fromLatin1("TCPv1") << CrLf;
 	stream << QString::fromLatin1("Listening: ") << (isListening ? "true" : "false") << CrLf;
+
+	// Determine whether the peer supports authentication
+	// using the hashed nonce parameter.
+	if (false && supportsHashedNonce)
+	{
+		// If so, add the hashed nonce parameter.
+		// Hash the nonce for security.
+		const QUuid hashedNonce = CryptoHelper::hashNonce(nonce);
+
+		stream << QString::fromLatin1("Hashed-Nonce: ") << hashedNonce.toString().upper() << CrLf;
+	}
+
 	if (isListening)
 	{
 		// If the listening endpoint has been established, write the listening
 		// endpoint information to the stream including a nonce to uniquely
 		// authenticate incoming direct connections for this endpoint.
-		stream << QString::fromLatin1("Nonce: ") << QUuid::createUuid().toString().upper() << CrLf;
-		stream << QString::fromLatin1("IPv4External-Addrs: ") << d->externalIpAddress << CrLf;
-		stream << QString::fromLatin1("IPv4External-Port: ") << QString::number(port) << CrLf;
+		if (true)// !supportsHashedNonce)
+		{
+			// Otherwise, add the nonce parameter.
+			stream << QString::fromLatin1("Nonce: ") << nonce.toString().upper() << CrLf;
+		}
+
 		if (d->internalIpAddress != d->externalIpAddress)
 		{
-			stream << QString::fromLatin1("IPv4Internal-Addrs: ") << d->internalIpAddress << CrLf;
-			stream << QString::fromLatin1("IPv4Internal-Port: ") << QString::number(port) << CrLf;
+			// If we are behind a NAT, provide the external endpoint information.
+			stream << QString::fromLatin1("IPv4External-Addrs: ") << d->externalIpAddress << CrLf;
+			stream << QString::fromLatin1("IPv4External-Port: ") << QString::number((Q_UINT16)port) << CrLf;
 		}
+
+		stream << QString::fromLatin1("IPv4Internal-Addrs: ") << d->internalIpAddress << CrLf;
+		stream << QString::fromLatin1("IPv4Internal-Port: ") << QString::number((Q_UINT16)port) << CrLf;
 	}
 	else
 	{
-		stream << QString::fromLatin1("Nonce: ") << QUuid().toString().upper() << CrLf;
+		// Otherwise, write an empty guid nonce to the stream.
+		QUuid empty;
+		stream << QString::fromLatin1("Nonce: ") << empty.toString().upper() << CrLf;
 	}
 
+	stream << QString::fromLatin1("SessionID: ") << sessionId << CrLf;
 	stream << CrLf;
 
 	return responseBody;
@@ -1281,6 +1317,8 @@ const QString SessionClient::buildDirectConnectionSetupResponseBody(const QUuid&
 // and specified that we were not listening on any port because we could not establish a listening
 // endpoint.  For this reason, the peer offers to be the listening endpoint and the received request
 // contains the peer's listening endpoint information.
+//
+// ** The Direct Connection offer request message has a transport response as it's body.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void SessionClient::onDirectConnectionOfferRequest(const SlpRequest& request)
 {
@@ -1294,8 +1332,8 @@ void SessionClient::onDirectConnectionOfferRequest(const SlpRequest& request)
 		const QString & requestBody = request.body();
 
 		// Parse the direct connection description from the request body.
-		QMap<QString, QVariant> parameters;
-		bool parseError = parseDirectConnectionDescription(requestBody, parameters);
+		QMap<QString, QVariant> transportInfo;
+		bool parseError = parseDirectConnectionResponseBody(requestBody, transportInfo);
 		if (parseError)
 		{
 			kdDebug() << k_funcinfo << "Got invalid direct connection description on INVITE offer request - responding with 603" << endl;
@@ -1316,23 +1354,33 @@ void SessionClient::onDirectConnectionOfferRequest(const SlpRequest& request)
 			return;
 		}
 
-		kdDebug() << "************* BEGIN Direct Connection setup information *************" << endl;
+		kdDebug() << "************* BEGIN Direct Connection setup (offer) information *************" << endl;
 
 		// NOTE The bridge type will be the one that we selected
 		// associated with the received DCC setup request.
-		const QString bridge = parameters["Bridge"].toString();
+		const QString bridge = transportInfo["Bridge"].toString();
 		kdDebug() << k_funcinfo << "Got bridge, " << bridge << endl;
 
 		// NOTE Indicates whether the peer's transport endpoint is
 		// listening for incoming connections.
-		const bool isListening = parameters["Listening"].toBool();
+		const bool isListening = transportInfo["Listening"].toBool();
 		kdDebug() << k_funcinfo << "Got bridge listening, " << isListening << endl;
 
-		const QUuid nonce = QUuid(parameters["Nonce"].toString());
-		kdDebug() << k_funcinfo << "Got nonce, " << nonce.toString().upper() << endl;
+		QUuid nonce;
+		if (transportInfo.contains("Hashed-Nonce"))
+		{
+			nonce = QUuid(transportInfo["Hashed-Nonce"].toString());
+			kdDebug() << k_funcinfo << "Got hashed nonce, " << nonce.toString().upper() << endl;
+		}
+
+		if (transportInfo.contains("Nonce"))
+		{
+			nonce = QUuid(transportInfo["Nonce"].toString());
+			kdDebug() << k_funcinfo << "Got nonce, " << nonce.toString().upper() << endl;
+		}
 
 		const QValueList<QString> externalIpAddresses =
-			QStringList::split(' ', parameters["IPv4External-Addrs"].toString());
+			QStringList::split(' ', transportInfo["IPv4External-Addrs"].toString());
 		kdDebug() << k_funcinfo << "Got external ip address range, " << externalIpAddresses[0] << endl;
 
 		if (d->externalIpAddress == externalIpAddresses[0])
@@ -1340,29 +1388,30 @@ void SessionClient::onDirectConnectionOfferRequest(const SlpRequest& request)
 			kdDebug() << k_funcinfo << "Detected peer is on same network" << endl;
 		}
 
-		const QString externalPort = parameters["IPv4External-Port"].toString();
+		const QString externalPort = transportInfo["IPv4External-Port"].toString();
 		kdDebug() << k_funcinfo << "Got external port, " << externalPort << endl;
 
 		const QValueList<QString> internalIpAddresses =
-			QStringList::split(' ', parameters["IPv4Internal-Addrs"].toString());
+			QStringList::split(' ', transportInfo["IPv4Internal-Addrs"].toString());
 		kdDebug() << k_funcinfo << "Got internal ip address range, " << internalIpAddresses[0] << endl;
 
-		const QString internalPort = parameters["IPv4Internal-Port"].toString();
+		const QString internalPort = transportInfo["IPv4Internal-Port"].toString();
 		kdDebug() << k_funcinfo << "Got internal port, " << internalPort << endl;
 
 		QString sessionId;
-		if (parameters.contains("SessionID"))
+		if (transportInfo.contains("SessionID"))
 		{
 			// The SessionID field was sent in the request body.
-			sessionId = parameters["SessionID"].toString();
+			sessionId = transportInfo["SessionID"].toString();
 			kdDebug() << k_funcinfo << "Got session id, " << sessionId << endl;
 		}
 		else
 		{
+			transportInfo["SessionID"] = dialog->session;
 			sessionId = QString::number(dialog->session);
 		}
 
-		kdDebug() << "************* END Direct Connection setup information   *************" << endl;
+		kdDebug() << "************* END Direct Connection setup (offer) information   *************" << endl;
 
 		if (isListening)
 		{
@@ -1379,7 +1428,7 @@ void SessionClient::onDirectConnectionOfferRequest(const SlpRequest& request)
 			send(response, 0, 0);
 
 			// Try to create a transport for the session to send/receive its data more efficiently.
-			createDirectConnection(bridge, externalIpAddresses, externalPort, nonce, sessionId);
+			createDirectConnection(transportInfo);
 		}
 		else
 		{
@@ -1448,19 +1497,26 @@ bool SessionClient::supportsDirectConnectivity(const QString& connectionType, bo
 	return bSupportsDirectConnectivity;
 }
 
-const QString SessionClient::buildDirectConnectionSetupRequestBody(const Q_UINT32 sessionId)
+const QString SessionClient::buildDirectConnectionSetupRequestBody(const QUuid& nonce, const Q_UINT32 sessionId)
 {
 	const QString CrLf = QString::fromLatin1("\r\n");
 
 	QString requestBody;
 	QTextStream stream(requestBody, IO_WriteOnly);
 
-	// Write the body content to the stream
+	// Write the body content to the stream.
 	stream << QString::fromLatin1("Bridges: ") << d->supportedBridgeTypes << CrLf;
 	stream << QString::fromLatin1("NetID: ") << d->netId << CrLf;
 	stream << QString::fromLatin1("Conn-Type: ") << d->connectionType << CrLf;
 	stream << QString::fromLatin1("UPnPNat: ") << (d->upnpNatPresent ? "true" : "false") << CrLf;
 	stream << QString::fromLatin1("ICF: ") << (d->behindFirewall ? "true" : "false") << CrLf;
+
+	// TODO Add 'IPv6-global: <ipv6 address>' if IPv6 is available.
+
+	// Hash the nonce for security.
+	const QUuid hashedNonce = CryptoHelper::hashNonce(nonce);
+
+// 	stream << QString::fromLatin1("Hashed-Nonce: ") << hashedNonce.toString().upper() << CrLf;
 	stream << QString::fromLatin1("SessionID: ") << sessionId << CrLf;
 
 	return requestBody;
@@ -1560,14 +1616,8 @@ void SessionClient::onInitialInviteRequest(const SlpRequest& request)
 		// by responding with an internal error.
 		kdDebug() << k_funcinfo << "Got invalid session description on initial INVITE request -- responding with 500" << endl;
 
-		// Generate an Internal Error response
-		SlpResponse response = buildResponse(SlpResponse::InternalError, "Internal Error", "null", request);
-		// Set the response context information.
-		response.setId(0);
-		response.setCorrelationId(request.id());
-
 		// Send the 500 Internal Error response message.
-		send(response, 0);
+		sendErrorResponse(SlpResponse::InternalError, "Internal Error", "null", request);
 
 		// Wait 5 seconds for an acknowledge before termining the dialog.
 		// If a timeout occurs, terminate the dialog anyway.
@@ -1640,8 +1690,9 @@ Session* SessionClient::createSession(const Q_UINT32 sessionId, const QUuid& uui
 
 	if (session != 0 && notifier != 0l)
 	{
+// 		TODO SessionNotifier *notifier = new SessionNotifier(session->id(), session->applicationId(), this);
 		// Register the notifier for the session
-		d->transport->registerPort(notifier->session(), notifier);
+		d->transport->registerPort(session->id(), notifier);
 	}
 
 	return session;
@@ -1657,14 +1708,20 @@ Session* SessionClient::createSession(const Q_UINT32 sessionId, const QUuid& uui
 //////////////////////////////////////////////////////////////////////
 void SessionClient::onResponseMessage(const SlpResponse& response)
 {
-	// Try to match the received response to a locally
-	// initiated transaction (request).
+	// Try to match the received response to a locally initiated transaction (request).
 	if (!d->transactions.contains(getTransactionBranchFrom(response)))
 	{
 		// If no transaction is found, ignore the received
 		// response message as the client did not initiate
-		// the transaction with a sent request.
+		// an in-dialog transaction with a sent request.
 		kdDebug() << k_funcinfo << "Got a transactionless response -- ignoring" << endl;
+		return;
+	}
+
+	// Check whether the message version is supported.
+	if (response.version() != d->version)
+	{
+		kdDebug() << k_funcinfo << "Got response whose protocol version is not supported -- ignoring" << endl;
 		return;
 	}
 
@@ -1705,6 +1762,12 @@ void SessionClient::onResponseMessage(const SlpResponse& response)
 		onInternalError(response);
 	}
 	else
+	if (statusCode == SlpResponse::VersionNotSupported)
+	{
+		// NOTE MSNSLP/1.0 505 Not Supported
+		// TODO Implementation
+	}
+	else
 	if (statusCode == SlpResponse::Decline)
 	{
 		// NOTE MSNSLP/1.0 603 Decline
@@ -1728,7 +1791,7 @@ void SessionClient::onResponseMessage(const SlpResponse& response)
 	}
 }
 
-bool SessionClient::parseDirectConnectionDescription(const QString& messageBody, QMap<QString, QVariant> & parameters)
+bool SessionClient::parseDirectConnectionResponseBody(const QString& messageBody, QMap<QString, QVariant> & transportInfo)
 {
 	bool parseError = false;
 
@@ -1741,7 +1804,7 @@ bool SessionClient::parseDirectConnectionDescription(const QString& messageBody,
 	}
 	else
 	{
-		parameters.insert("Bridge", regex.cap(1));
+		transportInfo.insert("Bridge", regex.cap(1));
 	}
 
 	regex = QRegExp("Listening: ([a-z]*)");
@@ -1753,67 +1816,80 @@ bool SessionClient::parseDirectConnectionDescription(const QString& messageBody,
 	}
 	else
 	{
-		parameters.insert("Listening", (QString::fromLatin1("true") == regex.cap(1)));
+		transportInfo.insert("Listening", (QString::fromLatin1("true") == regex.cap(1)));
 	}
 
-	regex = QRegExp("Nonce: \\{([0-9A-F\\-]*)\\}");
-	// Check if the nonce field is valid.
-	if (regex.search(messageBody) == -1)
+	regex = QRegExp("Hashed-Nonce: \\{([0-9A-F\\-]*)\\}");
+	// Check if the hashed nonce field is valid.
+	if (regex.search(messageBody) != -1)
 	{
-		kdDebug() << k_funcinfo << "Got an invalid or no Nonce field" << endl;
-		parseError = true;
+		transportInfo.insert("Hashed-Nonce", regex.cap(1));
 	}
 	else
 	{
-		parameters.insert("Nonce", regex.cap(1));
+		regex = QRegExp("Nonce: \\{([0-9A-F\\-]*)\\}");
+		// Check if the nonce field is valid.
+		if (regex.search(messageBody) != -1)
+		{
+			transportInfo.insert("Nonce", regex.cap(1));
+		}
+		else
+		{
+			kdDebug() << k_funcinfo << "Got an invalid or no Hashed-Nonce or Nonce field" << endl;
+			parseError = true;
+		}
 	}
 
-	regex = QRegExp("IP[Vv]4External-Addrs: ([^\r\n]*)");
-	// Check if the external ipv4 addresses field is valid.
-	if (regex.search(messageBody) == -1)
+	//NOTE If Listening is true, the following fields will be included.
+	if (transportInfo.contains("Listening") && transportInfo["Listening"].toBool() == true)
 	{
-		kdDebug() << k_funcinfo << "Got an invalid or no IPv4External-Addrs field" << endl;
-		parseError = true;
-	}
-	else
-	{
-		parameters.insert("IPv4External-Addrs", regex.cap(1));
-	}
+		regex = QRegExp("IPv4External-Addrs: ([^\r\n]*)", false);
+		// Check if the external ipv4 addresses field is valid.
+		if (regex.search(messageBody) == -1)
+		{
+			kdDebug() << k_funcinfo << "Got an invalid or no IPv4External-Addrs field" << endl;
+			parseError = true;
+		}
+		else
+		{
+			transportInfo.insert("IPv4External-Addrs", regex.cap(1));
+		}
 
-	regex = QRegExp("IP[Vv]4External-Port: (\\d+)");
-	// Check if the external ipv4 port field is valid.
-	if (regex.search(messageBody) == -1)
-	{
-		kdDebug() << k_funcinfo << "Got an invalid or no IPv4External-Port field" << endl;
-		parseError = true;
-	}
-	else
-	{
-		parameters.insert("IPv4External-Port", regex.cap(1));
-	}
+		regex = QRegExp("IPv4External-Port: (\\d+)", false);
+		// Check if the external ipv4 port field is valid.
+		if (regex.search(messageBody) == -1)
+		{
+			kdDebug() << k_funcinfo << "Got an invalid or no IPv4External-Port field" << endl;
+			parseError = true;
+		}
+		else
+		{
+			transportInfo.insert("IPv4External-Port", regex.cap(1));
+		}
 
-	regex = QRegExp("IP[Vv]4Internal-Addrs: ([^\r\n]*)");
-	// Check if the internal ipv4 addresses field is valid.
-	if (regex.search(messageBody) == -1)
-	{
-		kdDebug() << k_funcinfo << "Got an invalid or no IPv4Internal-Addrs field" << endl;
-		parseError = true;
-	}
-	else
-	{
-		parameters.insert("IPv4Internal-Addrs", regex.cap(1));
-	}
+		regex = QRegExp("IPv4Internal-Addrs: ([^\r\n]*)", false);
+		// Check if the internal ipv4 addresses field is valid.
+		if (regex.search(messageBody) == -1)
+		{
+			kdDebug() << k_funcinfo << "Got an invalid or no IPv4Internal-Addrs field" << endl;
+			parseError = true;
+		}
+		else
+		{
+			transportInfo.insert("IPv4Internal-Addrs", regex.cap(1));
+		}
 
-	regex = QRegExp("IP[Vv]4Internal-Port: (\\d+)");
-	// Check if the internal ipv4 port field is valid.
-	if (regex.search(messageBody) == -1)
-	{
-		kdDebug() << k_funcinfo << "Got an invalid or no IPv4Internal-Port field" << endl;
-		parseError = true;
-	}
-	else
-	{
-		parameters.insert("IPv4Internal-Port", regex.cap(1));
+		regex = QRegExp("IPv4Internal-Port: (\\d+)", false);
+		// Check if the internal ipv4 port field is valid.
+		if (regex.search(messageBody) == -1)
+		{
+			kdDebug() << k_funcinfo << "Got an invalid or no IPv4Internal-Port field" << endl;
+			parseError = true;
+		}
+		else
+		{
+			transportInfo.insert("IPv4Internal-Port", regex.cap(1));
+		}
 	}
 
 	regex = QRegExp("SessionID: (\\d+)");
@@ -1821,11 +1897,10 @@ bool SessionClient::parseDirectConnectionDescription(const QString& messageBody,
 	if (regex.search(messageBody) == -1)
 	{
 		kdDebug() << k_funcinfo << "Got an invalid or no SessionID field" << endl;
-		parseError = true;
 	}
 	else
 	{
-		parameters.insert("SessionID", regex.cap(1));
+		transportInfo.insert("SessionID", regex.cap(1));
 	}
 
 	return parseError;
@@ -1861,8 +1936,8 @@ void SessionClient::onDirectConnectionRequestAccepted(const SlpResponse& respons
 			kdDebug() << k_funcinfo << "Got Direct Connection setup request accepted" << endl;
 
 			// Parse the direct connection description from the response body.
-			QMap<QString, QVariant> parameters;
-			bool parseError = parseDirectConnectionDescription(responseBody, parameters);
+			QMap<QString, QVariant> transportInfo;
+			bool parseError = parseDirectConnectionResponseBody(responseBody, transportInfo);
 			if (parseError)
 			{
 				kdDebug() << k_funcinfo << "Got invalid direct connection description" << endl;
@@ -1873,19 +1948,32 @@ void SessionClient::onDirectConnectionRequestAccepted(const SlpResponse& respons
 
 			// NOTE The bridge type will be the one that we offered
 			// associated with the received Direct Connection setup request.
-			const QString bridge = parameters["Bridge"].toString();
-			kdDebug() << k_funcinfo << "Got bridge, " << bridge << endl;
+			kdDebug() << k_funcinfo << "Got bridge, " << transportInfo["Bridge"].toString() << endl;
 
 			// NOTE Indicates whether the peer's transport endpoint is
 			// listening for incoming connections.
-			const bool isListening = parameters["Listening"].toBool();
+			const bool isListening = transportInfo["Listening"].toBool();
 			kdDebug() << k_funcinfo << "Got bridge listening, " << isListening << endl;
 
-			const QUuid nonce = QUuid(parameters["Nonce"].toString());
-			kdDebug() << k_funcinfo << "Got nonce, " << nonce.toString().upper() << endl;
+			QUuid nonce;
+			bool supportsHashedNonce = false;
+			if (transportInfo.contains("Hashed-Nonce"))
+			{
+				transportInfo["Me-Nonce"] = d->nonces[dialog->session].toString();
+
+				nonce = QUuid(transportInfo["Hashed-Nonce"].toString());
+				supportsHashedNonce = true;
+				kdDebug() << k_funcinfo << "Got hashed nonce, " << nonce.toString().upper() << endl;
+			}
+
+			if (transportInfo.contains("Nonce"))
+			{
+				nonce = QUuid(transportInfo["Nonce"].toString());
+				kdDebug() << k_funcinfo << "Got nonce, " << nonce.toString().upper() << endl;
+			}
 
 			const QValueList<QString> externalIpAddresses =
-				QStringList::split(' ', parameters["IPv4External-Addrs"].toString());
+				QStringList::split(' ', transportInfo["IPv4External-Addrs"].toString());
 			kdDebug() << k_funcinfo << "Got external ip address range, " << externalIpAddresses[0] << endl;
 
 			bool isOnSameNetwork = false;
@@ -1895,25 +1983,26 @@ void SessionClient::onDirectConnectionRequestAccepted(const SlpResponse& respons
 				isOnSameNetwork = true;
 			}
 
-			const QString externalPort = parameters["IPv4External-Port"].toString();
+			const QString externalPort = transportInfo["IPv4External-Port"].toString();
 			kdDebug() << k_funcinfo << "Got external port, " << externalPort << endl;
 
 			QValueList<QString> internalIpAddresses =
-				QStringList::split(' ', parameters["IPv4Internal-Addrs"].toString());
+				QStringList::split(' ', transportInfo["IPv4Internal-Addrs"].toString());
 			kdDebug() << k_funcinfo << "Got internal ip address range, " << internalIpAddresses[0] << endl;
 
-			const QString internalPort = parameters["IPv4Internal-Port"].toString();
+			const QString internalPort = transportInfo["IPv4Internal-Port"].toString();
 			kdDebug() << k_funcinfo << "Got internal port, " << internalPort << endl;
 
 			QString sessionId;
-			if (parameters.contains("SessionID"))
+			if (transportInfo.contains("SessionID"))
 			{
 				// The SessionID field was sent in the response body.
-				sessionId = parameters["SessionID"].toString();
+				sessionId = transportInfo["SessionID"].toString();
 				kdDebug() << k_funcinfo << "Got session id, " << sessionId << endl;
 			}
 			else
 			{
+				transportInfo["SessionID"] = dialog->session;
 				sessionId = QString::number(dialog->session);
 			}
 
@@ -1921,23 +2010,23 @@ void SessionClient::onDirectConnectionRequestAccepted(const SlpResponse& respons
 
 			if (isListening)
 			{
-				if (isOnSameNetwork && d->upnpNatPresent)
-				{
+				if (false && isOnSameNetwork && d->upnpNatPresent)
+				{ // TODO move into createDirectConnection()
 					// Get the port mapping of the peer.
 					QMap<QString, QVariant> portMapping =
-						UPnPNatPortMapper::self()->getPortMapping(externalPort.toInt(), "TCP");
-					// Get the real ip address of the peer.
+						Kopete::Network::UpnpNatPortMapper::self()->getPortMapping(externalPort.toInt(), "TCP");
+					// Get the real ip address of the local peer.
 					internalIpAddresses[0] = portMapping["internalClient"].toString();
 
 					// Try to create a direct connection for the session
 					// to send/receive its data more efficiently.
-					createDirectConnection(bridge, internalIpAddresses, internalPort, nonce, sessionId);
-				}
+// 					createDirectConnection(bridge, internalIpAddresses, internalPort, nonce, sessionId);
+				} // TODO
 				else
 				{
 					// Try to create a direct connection for the session
 					// to send/receive its data more efficiently.
-					createDirectConnection(bridge, externalIpAddresses, externalPort, nonce, sessionId);
+					createDirectConnection(transportInfo);
 				}
 			}
 			else
@@ -1951,14 +2040,14 @@ void SessionClient::onDirectConnectionRequestAccepted(const SlpResponse& respons
 				// endpoint information.
 				SlpRequest request = buildRequest("INVITE", QString::fromLatin1("application/x-msnmsgr-transrespbody"), dialog);
 
-				const QUuid dummy;
-				const QString responseBody = buildDirectConnectionSetupResponseBody(dummy);
+				const QString responseBody =
+					buildDirectConnectionSetupOrOfferResponseBody(sessionId, nonce, supportsHashedNonce, true);
 				// Set the request body.
 				request.setBody(responseBody);
 
 				// Create a new transaction for the request.
 				Transaction *t = new Transaction(request, true);
-				// Add the transaction to the dialod's collection.
+				// Add the transaction to the dialog's collection.
 				dialog->transactions().append(t);
 
 				// Begin the transaction.
@@ -1998,7 +2087,7 @@ void SessionClient::onDirectConnectionRequestDeclined(const SlpResponse& respons
 		const QString sessionId = regex.cap(1);
 
 		// TODO Update the session state information.
-// 		directConnectionSetupRequestFailed(sessionId);
+// 		directConnectionSetupFailed(sessionId);
 
 		// Get the transaction branch identifier.
 		const QUuid branch = getTransactionBranchFrom(response);
@@ -2237,20 +2326,47 @@ void SessionClient::send(SlpMessage& message, const Q_UINT32 destination, const 
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
-//BEGIN Transport Handling Functions
-
-void SessionClient::createDirectConnection(const QString& type, const QValueList<QString> & ipAddresses, const QString& port, const QUuid& nonce, const QString& sessionId)
+void SessionClient::sendErrorResponse(const Q_INT32 statusCode, const QString& statusDescription, const QString& contentType, const SlpRequest& request, const QString& responseBody)
 {
-	kdDebug() << k_funcinfo << "enter" << endl;
-	kdDebug() << k_funcinfo << "Session " << sessionId << endl;
+	// Generate the error response
+	SlpResponse response = buildResponse(statusCode, statusDescription, contentType, request);
+	// Set the response body.
+	response.setBody(responseBody);
+	// Set the response context information.
+	response.setId(0);
+	response.setCorrelationId(request.id());
 
-	d->transport->createDirectBridge(type, ipAddresses, port.toInt(), nonce);
-	kdDebug() << k_funcinfo << "leave" << endl;
+	// Send the error response message.
+	send(response, 0);
 }
 
-bool SessionClient::createDirectConnectionListener(const QString& ipAddress, const Q_UINT16 port, const QUuid& nonce)
+//BEGIN Direct Connection Functions
+
+void SessionClient::createDirectConnection(const QMap<QString, QVariant> & transportInfo)
 {
-	return d->transport->listen(ipAddress, port);
+	kdDebug() << k_funcinfo << "Session " << transportInfo["SessionID"].toString() << endl;
+	d->transport->createDirectBridge(transportInfo);
+}
+
+Q_INT16 SessionClient::createDirectConnectionListener(const QUuid& nonce, const QUuid& peerNonce, const bool supportsHashedNonce)
+{
+	QMap<QString, QVariant> transportInfo;
+	if (supportsHashedNonce)
+	{
+		transportInfo["Me-Nonce"] = nonce.toString();
+		transportInfo["Hashed-Nonce"] = peerNonce.toString();
+	}
+	else
+	{
+		transportInfo["Nonce"] = nonce.toString();
+	}
+
+	transportInfo["IPv4External-Addrs"] = d->externalIpAddress;
+	transportInfo["IPv4External-Port"] = 50050;
+	transportInfo["IPv4Internal-Addrs"] = d->internalIpAddress;
+	transportInfo["IPv4Internal-Port"] = 50050;
+
+	return d->transport->listen(transportInfo);
 }
 
 //END

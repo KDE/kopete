@@ -149,7 +149,10 @@ void FileTransferSession::onStart()
 void FileTransferSession::onEnd()
 {
 	kdDebug() << k_funcinfo << endl;
-	d->file->close();
+	if (d->file && d->file->isOpen())
+	{
+		d->file->close();
+	}
 }
 
 void FileTransferSession::onFaulted()
