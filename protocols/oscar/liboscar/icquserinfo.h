@@ -255,6 +255,56 @@ public:
 	bool onlineOnly;
 };
 
+class LIBOSCAR_EXPORT ICQFullInfo : public ICQInfoBase
+{
+public:
+	ICQFullInfo();
+	~ICQFullInfo() {}
+	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
+	
+public:
+	ICQInfoValue<QByteArray>	uin;
+	ICQInfoValue<QByteArray>	firstName;
+	ICQInfoValue<QByteArray>	lastName;
+	ICQInfoValue<QByteArray>	nickName;
+	ICQInfoValue<QByteArray>	homepage;
+
+	ICQInfoValue<QByteArray>	homeAddress;
+	ICQInfoValue<QByteArray>	homeCity;
+	ICQInfoValue<QByteArray>	homeState;
+	ICQInfoValue<QByteArray>	homeZip;
+	ICQInfoValue<quint32>		homeCountry;
+
+	ICQInfoValue<QByteArray>	originAddress;
+	ICQInfoValue<QByteArray>	originCity;
+	ICQInfoValue<QByteArray>	originState;
+	ICQInfoValue<QByteArray>	originZip;
+	ICQInfoValue<quint32>		originCountry;
+
+	ICQInfoValue<QByteArray>	workPosition;
+	ICQInfoValue<QByteArray>	workCompanyName;
+	ICQInfoValue<QByteArray>	workDepartment;
+	ICQInfoValue<QByteArray>	workHomepage;
+	
+	ICQInfoValue<QByteArray>	workAddress;
+	ICQInfoValue<QByteArray>	workCity;
+	ICQInfoValue<QByteArray>	workState;
+	ICQInfoValue<QByteArray>	workZip;
+	ICQInfoValue<quint32>		workCountry;
+
+
+	ICQInfoValue<QByteArray>	statusDescription;
+
+	ICQInfoValue<quint16>		timezone;
+	ICQInfoValue<QByteArray>	notes;
+
+private:
+	void fillHomeInfo( const QByteArray& data );
+	void fillOriginInfo( const QByteArray& data );
+	void fillWorkInfo( const QByteArray& data );
+};
+
 /*
 class ICQInfoItem
 {

@@ -69,6 +69,7 @@
 #include "xtrazxtraznotify.h"
 #include "xtrazxawayservice.h"
 #include "closeconnectiontask.h"
+#include "icqtlvinforequesttask.h"
 
 
 namespace
@@ -117,6 +118,7 @@ public:
 	MessageReceiverTask* messageReceiverTask;
 	SSIAuthTask* ssiAuthTask;
 	ICQUserInfoRequestTask* icqInfoTask;
+	ICQTlvInfoRequestTask* icqTlvInfoTask;
 	UserInfoTask* userInfoTask;
 	TypingNotifyTask * typingNotifyTask;
 	SSIModifyTask* ssiModifyTask;
@@ -174,6 +176,7 @@ Client::Client( QObject* parent )
 	d->messageReceiverTask = 0L;
 	d->ssiAuthTask = 0L;
 	d->icqInfoTask = 0L;
+	d->icqTlvInfoTask = 0L;
 	d->userInfoTask = 0L;
 	d->stage = ClientPrivate::StageOne;
 	d->typingNotifyTask = 0L;
@@ -739,6 +742,7 @@ void Client::initializeStaticTasks()
 	d->messageReceiverTask = new MessageReceiverTask( c->rootTask() );
 	d->ssiAuthTask = new SSIAuthTask( c->rootTask() );
 	d->icqInfoTask = new ICQUserInfoRequestTask( c->rootTask() );
+	d->icqTlvInfoTask = new ICQTlvInfoRequestTask( c->rootTask() );
 	d->userInfoTask = new UserInfoTask( c->rootTask() );
 	d->typingNotifyTask = new TypingNotifyTask( c->rootTask() );
 	d->ssiModifyTask = new SSIModifyTask( c->rootTask(), true );
@@ -764,6 +768,8 @@ void Client::initializeStaticTasks()
 
 	connect( d->icqInfoTask, SIGNAL( receivedInfoFor( const QString&, unsigned int ) ),
 	         this, SLOT( receivedIcqInfo( const QString&, unsigned int ) ) );
+	connect( d->icqTlvInfoTask, SIGNAL(receivedInfoFor(const QString&)),
+	         this, SIGNAL(receivedIcqFullInfo(const QString&)) );
 
 	connect( d->userInfoTask, SIGNAL( receivedProfile( const QString&, const QString& ) ),
 	         this, SIGNAL( receivedProfile( const QString&, const QString& ) ) );
@@ -897,6 +903,17 @@ void Client::changeContactGroup( const QString& contact, const QString& newGroup
 		delete ssimt;
 }
 
+void Client::requestFullTlvInfo( const QString& contactId, const QByteArray &metaInfoId )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0015 );
+	if ( !c )
+		return;
+
+	d->icqTlvInfoTask->setUser( Oscar::normalize( contactId ) );
+	d->icqTlvInfoTask->setMetaInfoId( metaInfoId );
+	d->icqTlvInfoTask->go();
+}
+
 void Client::requestFullInfo( const QString& contactId )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0015 );
@@ -950,6 +967,11 @@ void Client::changeICQPasswordFinished()
 		d->pass = task->password();
 
 	emit icqPasswordChanged( !task->success() );
+}
+
+ICQFullInfo Client::getFullInfo( const QString& contact )
+{
+	return d->icqTlvInfoTask->fullInfoFor( contact );
 }
 
 ICQGeneralUserInfo Client::getGeneralInfo( const QString& contact )
@@ -1541,6 +1563,7 @@ void Client::deleteStaticTasks()
 	delete d->messageReceiverTask;
 	delete d->ssiAuthTask;
 	delete d->icqInfoTask;
+	delete d->icqTlvInfoTask;
 	delete d->userInfoTask;
 	delete d->typingNotifyTask;
 	delete d->ssiModifyTask;
@@ -1551,6 +1574,7 @@ void Client::deleteStaticTasks()
 	d->messageReceiverTask = 0;
 	d->ssiAuthTask = 0;
 	d->icqInfoTask = 0;
+	d->icqTlvInfoTask = 0;
 	d->userInfoTask = 0;
 	d->typingNotifyTask = 0;
 	d->ssiModifyTask = 0;

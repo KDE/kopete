@@ -206,6 +206,13 @@ public:
 	void sendAuth( const QString& contactid, const QString& reason, bool auth=true );
 
 	/**
+	 * Request full user info from an ICQ contact (new TLV based format)
+	 * \param contactId the UIN of the contact to get info for
+	 * \param metaInfoId the id of the info (TLV 0x015C in SSI)
+	 */
+	void requestFullTlvInfo( const QString& contactId, const QByteArray &metaInfoId );
+
+	/**
 	 * Request full user info from an ICQ contact
 	 * \param contactId the UIN of the contact to get info for
 	 */
@@ -230,6 +237,12 @@ public:
 	 */
 	bool changeICQPassword( const QString& password );
 
+	/**
+	 * Get the full ICQ info for a client
+	 * \param contact the contact to get info for
+	 */
+	ICQFullInfo getFullInfo( const QString& contact );
+	
 	/**
 	 * Get the general ICQ info for a client
 	 * \param contact the contact to get info for
@@ -463,6 +476,7 @@ signals:
 
 	void receivedIcqShortInfo( const QString& contact );
 	void receivedIcqLongInfo( const QString& contact );
+	void receivedIcqFullInfo( const QString& contact );
 
 	void receivedProfile( const QString& contact, const QString& profile );
 	void receivedAwayMessage( const QString& contact, const QString& message );

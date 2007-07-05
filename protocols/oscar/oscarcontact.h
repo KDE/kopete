@@ -82,8 +82,8 @@ public:
 	OscarAccount *account() const { return mAccount; };
 	
 	bool isOnServer() const;
-	
-	void setSSIItem( const OContact& item );
+
+	virtual void setSSIItem( const OContact& item );
 	OContact ssiItem() const;
 	
 	/** we received a typing notification from this contact, tell any message manager */
@@ -109,10 +109,7 @@ public:
 
 	virtual QString sanitizedMessage( const QString& message ) = 0;
 
-public slots:
-	/** slot so that properties can be updated based on a new SSI item */
-	virtual void updateSSIItem() = 0;
-	
+public slots:	
 	/** Remove this contact from the server. Reimplemented from Kopete::Contact */
 	virtual void deleteContact();
 
@@ -139,9 +136,6 @@ public slots:
 
 protected slots:
 	void slotTyping( bool typing );
-
-signals:
-	void updatedSSI();
 
 protected:
 	OscarAccount *mAccount;

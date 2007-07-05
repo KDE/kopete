@@ -42,8 +42,9 @@ public:
 	 */
 	virtual QList<KAction*> *customContextMenuActions();
 
+	virtual void setSSIItem( const OContact& ssiItem );
+
 public slots:
-	void updateSSIItem();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
 	void userOnline( const QString& userId );
 	void userOffline( const QString& userId );

@@ -55,8 +55,9 @@ public:
 	/** Return whether or not this contact is reachable. */
 	virtual bool isReachable();
 
+	virtual void setSSIItem( const OContact& ssiItem );
+
 public slots:
-	virtual void updateSSIItem();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
 
 	void userOnline( const QString& userId );

@@ -676,6 +676,321 @@ ICQWPSearchInfo::ICQWPSearchInfo()
 	onlineOnly = false;
 }
 
+ICQFullInfo::ICQFullInfo()
+{
+	uin.init( 0 );
+	homeCountry.init( 0 );
+	originCountry.init( 0 );
+	workCountry.init( 0 );
+	timezone.init( 0 );
+}
+
+void ICQFullInfo::fill( Buffer* buffer )
+{
+	Buffer tlvListBuffer( buffer->getBSTR() );
+	QList<TLV> tlvList = tlvListBuffer.getTLVList();
+	
+	QList<TLV>::const_iterator it;
+	for ( it = tlvList.begin(); it != tlvList.end(); ++it )
+	{
+		switch ( (*it).type )
+		{
+		case 0x0032:
+			uin = (*it).data;
+			break;
+		case 0x0046:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0050:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0055:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0064:
+			firstName = (*it).data;
+			break;
+		case 0x006e:
+			lastName = (*it).data;
+			break;
+		case 0x0078:
+			nickName = (*it).data;
+			break;
+		case 0x0082:
+// 			 unknown = (*it).data;
+			break;
+		case 0x008c:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0096:
+			fillHomeInfo( (*it).data );
+			break;
+		case 0x00A0:
+			fillOriginInfo( (*it).data );
+			break;
+		case 0x00AA:
+// 			 unknown = (*it).data;
+			break;
+		case 0x00B4:
+// 			 unknown = (*it).data;
+			break;
+		case 0x00BE:
+// 			 unknown = (*it).data;
+			break;
+		case 0x00C8:  // phones info => parse
+			/*= (*it).data;*/
+			break;
+		case 0x00FA:
+			homepage = (*it).data;
+			break;
+		case 0x0104:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0118:
+			fillWorkInfo( (*it).data );
+			break;
+		case 0x012C:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0136:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0140:
+// 			 unknown = (*it).data;
+			break;
+		case 0x014A:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0154:
+// 			 unknown = (*it).data;
+			break;
+		case 0x015E:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0168:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0172:
+// 			 unknown = (*it).data;
+			break;
+		case 0x017C:
+			timezone = Buffer( (*it).data ).getWord();
+			break;
+		case 0x0186:
+			notes = (*it).data;
+			break;
+		case 0x0190:
+// 			 unknown = (*it).data;
+			break;
+		case 0x019A:
+// 			 unknown = (*it).data;
+			break;
+		case 0x01A4:
+// 			 unknown = (*it).data;
+			break;
+		case 0x01AE:
+// 			 unknown = (*it).data;
+			break;
+		case 0x01B8:
+// 			 unknown = (*it).data;
+			break;
+		case 0x01C2:
+// 			 unknown = (*it).data;
+			break;
+		case 0x01CC:
+// 			 unknown = (*it).data;
+			break;
+		case 0x01D6:
+// 			 unknown = (*it).data;
+			break;
+		case 0x01E0:
+// 			 unknown = (*it).data;
+			break;
+		case 0x01EA:
+// 			 unknown = (*it).data;
+			break;
+		case 0x01F4:
+// 			 unknown = (*it).data;
+			break;
+		case 0x01F9:
+// 			 unknown = (*it).data;
+			break;
+		case 0x01FE:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0208:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0212:
+// 			 unknown = (*it).data;
+			break;
+		case 0x021C:
+// 			 unknown = (*it).data;
+			break;
+		case 0x0226:
+			statusDescription = (*it).data;
+			break;
+		case 0x0230:
+// 			 unknown = (*it).data;
+			break;
+		case 0x003C:
+// 			 unknown = (*it).data;
+			break;
+		default:
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data << endl;
+			break;
+		}
+	}
+}
+
+void ICQFullInfo::store( Buffer* buffer )
+{
+	buffer->startBlock( Buffer::BWord );
+
+	if ( statusDescription.hasChanged() )
+		buffer->addTLV( 0x0046, statusDescription.get() );
+
+	buffer->endBlock();
+}
+
+void ICQFullInfo::fillHomeInfo( const QByteArray& data )
+{
+	Buffer buffer( data );
+	buffer.skipBytes( 2 ); // probably count of blocks
+	
+	QList<TLV> tlvList = Buffer( buffer.getBSTR() ).getTLVList();
+	
+	QList<TLV>::const_iterator it;
+	for ( it = tlvList.begin(); it != tlvList.end(); ++it )
+	{
+		switch ( (*it).type )
+		{
+		case 0x0064:
+			homeAddress = (*it).data;
+			break;
+		case 0x006E:
+			homeCity = (*it).data;
+			break;
+		case 0x0078:
+			homeState = (*it).data;
+			break;
+		case 0x0082:
+			homeZip = (*it).data;
+			break;
+		case 0x008C:
+			{
+			Buffer b( (*it).data );
+			originCountry = b.getDWord();
+			break;
+			}
+		default:
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data << endl;
+			break;
+		}
+	}
+}
+
+void ICQFullInfo::fillOriginInfo( const QByteArray& data )
+{
+	Buffer buffer( data );
+	buffer.skipBytes( 2 ); // probably count of blocks
+	
+	QList<TLV> tlvList = Buffer( buffer.getBSTR() ).getTLVList();
+	
+	QList<TLV>::const_iterator it;
+	for ( it = tlvList.begin(); it != tlvList.end(); ++it )
+	{
+		switch ( (*it).type )
+		{
+		case 0x0064:
+			originAddress = (*it).data;
+			break;
+		case 0x006E:
+			originCity = (*it).data;
+			break;
+		case 0x0078:
+			originState = (*it).data;
+			break;
+		case 0x0082:
+			homeZip = (*it).data;
+			break;
+		case 0x008C:
+			{
+			Buffer b( (*it).data );
+			originCountry = b.getDWord();
+			break;
+			}
+		default:
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data << endl;
+			break;
+		}
+	}
+}
+
+void ICQFullInfo::fillWorkInfo( const QByteArray& data )
+{
+	Buffer buffer( data );
+	buffer.skipBytes( 2 ); // probably count of blocks
+	
+	QList<TLV> tlvList = Buffer( buffer.getBSTR() ).getTLVList();
+	
+	QList<TLV>::const_iterator it;
+	for ( it = tlvList.begin(); it != tlvList.end(); ++it )
+	{
+		switch ( (*it).type )
+		{
+		case 0x0064:
+			workPosition = (*it).data;
+			break;
+		case 0x006E:
+			workCompanyName = (*it).data;
+			break;
+		case 0x007D:
+			workDepartment = (*it).data;
+			break;
+		case 0x0078:
+			workHomepage = (*it).data;
+			break;
+		case 0x0082:
+// 			 unknown = (*it).data;
+   kDebug() << "tlv: " << hex << (*it).type << " data: " << hex << (*it).data << "  " << QString::fromUtf8( (*it).data ) << endl;
+			break;
+		case 0x008C:
+// 			 unknown = (*it).data;
+   kDebug() << "tlv: " << hex << (*it).type << " data: " << hex << (*it).data << "  " << QString::fromUtf8( (*it).data ) << endl;
+			break;
+		case 0x0096:
+// 			 unknown = (*it).data;
+   kDebug() << "tlv: " << hex << (*it).type << " data: " << hex << (*it).data << "  " << QString::fromUtf8( (*it).data ) << endl;
+			break;
+		case 0x00A0:
+// 			 unknown = (*it).data;
+   kDebug() << "tlv: " << hex << (*it).type << " data: " << hex << (*it).data << "  " << QString::fromUtf8( (*it).data ) << endl;
+			break;
+		case 0x00AA:
+			workAddress = (*it).data;
+			break;
+		case 0x00B4:
+			workCity = (*it).data;
+			break;
+		case 0x00BE:
+			workState = (*it).data;
+			break;
+		case 0x00C8:
+			workZip = (*it).data;
+			break;
+		case 0x00D2:
+			{
+			Buffer b( (*it).data );
+			workCountry = b.getDWord();
+			break;
+			}
+		default:
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data << endl;
+			break;
+		}
+	}
+}
 
 
 //kate: space-indent off; tab-width 4; replace-tabs off; indent-mode csands;

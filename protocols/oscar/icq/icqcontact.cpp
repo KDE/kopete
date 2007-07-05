@@ -63,6 +63,8 @@ ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::M
 	                  this, SLOT( receivedLongInfo( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqFullInfo(const QString&)),
+	                  this, SLOT(receivedFullInfo(const QString&)) );
 }
 
 ICQContact::~ICQContact()
@@ -70,24 +72,32 @@ ICQContact::~ICQContact()
 	delete m_infoWidget;
 }
 
-void ICQContact::updateSSIItem()
+void ICQContact::setSSIItem( const OContact& ssiItem )
 {
-	//kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << endl;
-	if ( m_ssiItem.waitingAuth() )
+	if ( ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
-	if ( m_ssiItem.type() != 0xFFFF && m_ssiItem.waitingAuth() == false &&
+	if ( ssiItem.type() != 0xFFFF && ssiItem.waitingAuth() == false &&
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 	}
-}
 
+	if ( mAccount->isConnected() && m_ssiItem.metaInfoId() != ssiItem.metaInfoId() )
+	{
+		// User info has changed, check nickname or status description if needed
+		if ( m_details.onlineStatusMsgSupport() )
+			mAccount->engine()->requestFullTlvInfo( contactId(), ssiItem.metaInfoId() );
+		else if ( ssiItem.alias().isEmpty() )
+			requestShortInfo();
+	}
+
+	ICQContactBase::setSSIItem( ssiItem );
+}
 
 void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& details )
 {
-	//kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << contact << contactId() << endl;
 	if ( Oscar::normalize( contact  ) != Oscar::normalize( contactId() ) )
 		return;
 
@@ -98,69 +108,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
 
-	if ( details.xtrazStatusSpecified() )
-	{
-		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
-		presence.setDescription( i18n("Online") );
-		presence.setXtrazStatus( details.xtrazStatus() );
-	}
-	setPresenceTarget( presence );
-
-	Oscar::Presence selfPres( mProtocol->statusManager()->presenceOf( account()->myself()->onlineStatus() ) );
-	bool selfVisible = !(selfPres.flags() & Oscar::Presence::Invisible);
-	if ( presence.type() == Oscar::Presence::Online )
-	{
-		if ( details.xtrazStatusSpecified() )
-		{
-			if ( selfVisible )
-				mAccount->engine()->addICQAwayMessageRequest( contactId(), Client::ICQXStatus );
-			else
-				mAccount->engine()->removeICQAwayMessageRequest( contactId() );
-		}
-		else
-		{
-			mAccount->engine()->removeICQAwayMessageRequest( contactId() );
-			removeProperty( mProtocol->awayMessage );
-		}
-	}
-	else
-	{
-		if ( selfVisible )
-		{
-			Client::ICQStatus contactStatus = Client::ICQOnline;
-			switch ( presence.type() )
-			{
-			case Oscar::Presence::Away:
-				contactStatus = Client::ICQAway;
-				break;
-			case Oscar::Presence::NotAvailable:
-				contactStatus = Client::ICQNotAvailable;
-				break;
-			case Oscar::Presence::Occupied:
-				contactStatus = Client::ICQOccupied;
-				break;
-			case Oscar::Presence::DoNotDisturb:
-				contactStatus = Client::ICQDoNotDisturb;
-				break;
-			case Oscar::Presence::FreeForChat:
-				contactStatus = Client::ICQFreeForChat;
-				break;
-			default:
-				break;
-			}
-
-			// FIXME: How can we check if client supports status plugin messages?
-			if ( hasCap( CAP_XTRAZ_MULTIUSER_CHAT ) )
-				contactStatus |= Client::ICQPluginStatus;
-
-			mAccount->engine()->addICQAwayMessageRequest( contactId(), contactStatus );
-		}
-		else
-		{
-			mAccount->engine()->removeICQAwayMessageRequest( contactId() );
-		}
-	}
-
+	refreshStatus( details, presence );
 
 	if ( details.dcOutsideSpecified() )
 	{
@@ -181,6 +129,84 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	OscarContact::userInfoUpdated( contact, details );
 }
 
+void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence presence )
+{
+	// Filter our XStatus and ExtStatus
+	presence.setFlags( presence.flags() & ~Oscar::Presence::StatusTypeMask );
+
+	// XStatus don't support offline status so don't show it (xtrazStatusSpecified can be true if contact was online)
+	if ( details.xtrazStatusSpecified() && presence.type() != Oscar::Presence::Offline )
+	{
+		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
+		presence.setXtrazStatus( details.xtrazStatus() );
+	}
+	else if ( !m_statusDescription.isEmpty() )
+	{
+		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
+		presence.setDescription( m_statusDescription );
+	}
+
+	setPresenceTarget( presence );
+
+	Oscar::Presence selfPres( mProtocol->statusManager()->presenceOf( account()->myself()->onlineStatus() ) );
+	bool selfVisible = !(selfPres.flags() & Oscar::Presence::Invisible);
+
+	if ( selfVisible && isReachable() && presence.type() != Oscar::Presence::Offline )
+	{
+		Client::ICQStatus contactStatus = Client::ICQOnline;
+		if ( details.xtrazStatusSpecified() )
+		{
+			contactStatus = Client::ICQXStatus;
+		}
+		else
+		{
+			switch ( presence.type() )
+			{
+			case Oscar::Presence::Online:
+				contactStatus = Client::ICQOnline;
+				break;
+			case Oscar::Presence::Away:
+				contactStatus = Client::ICQAway;
+				break;
+			case Oscar::Presence::NotAvailable:
+				contactStatus = Client::ICQNotAvailable;
+				break;
+			case Oscar::Presence::Occupied:
+				contactStatus = Client::ICQOccupied;
+				break;
+			case Oscar::Presence::DoNotDisturb:
+				contactStatus = Client::ICQDoNotDisturb;
+				break;
+			case Oscar::Presence::FreeForChat:
+				contactStatus = Client::ICQFreeForChat;
+				break;
+			default:
+				break;
+			}
+		}
+
+		// FIXME: How can we check if client supports status plugin messages?
+		if ( details.onlineStatusMsgSupport() )
+			contactStatus |= Client::ICQPluginStatus;
+
+		// If contact is online and doesn't support status plugin messages than
+		// this contact can't have online status message.
+		if ( contactStatus == Client::ICQOnline && !details.onlineStatusMsgSupport() )
+		{
+			mAccount->engine()->removeICQAwayMessageRequest( contactId() );
+			removeProperty( mProtocol->awayMessage );
+		}
+		else
+		{
+			mAccount->engine()->addICQAwayMessageRequest( contactId(), contactStatus );
+		}
+	}
+	else
+	{
+		mAccount->engine()->removeICQAwayMessageRequest( contactId() );
+	}
+}
+
 void ICQContact::userOnline( const QString& userId )
 {
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
@@ -199,7 +225,7 @@ void ICQContact::userOffline( const QString& userId )
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 	else
-		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
+		refreshStatus( m_details, Oscar::Presence( Oscar::Presence::Offline ) );
 	
 	removeProperty( mProtocol->awayMessage );
 }
@@ -212,10 +238,16 @@ void ICQContact::loggedIn()
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
-	if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() )
-	         && nickName() == contactId() )
-	       || !hasProperty( Kopete::Global::Properties::self()->nickName().key() ) )
-	     && !m_requestingNickname && m_ssiItem.alias().isEmpty() )
+	if ( !m_ssiItem.metaInfoId().isEmpty() )
+	{
+		m_requestingNickname = true;
+		int time = ( KRandom::random() % 20 ) * 1000;
+		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname and status description in " << time/1000 << " seconds" << endl;
+		QTimer::singleShot( time, this, SLOT( requestFullInfo() ) );
+	}
+	else if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() ) && nickName() == contactId() )
+	            || !hasProperty( Kopete::Global::Properties::self()->nickName().key() ) )
+	          && !m_requestingNickname && m_ssiItem.alias().isEmpty() )
 	{
 		m_requestingNickname = true;
 		int time = ( KRandom::random() % 20 ) * 1000;
@@ -326,6 +358,30 @@ void ICQContact::receivedLongInfo( const QString& contact )
 
 	ICQOrgAffInfo orgAffInfo = mAccount->engine()->getOrgAffInfo( contact );
 	emit haveOrgAffInfo( orgAffInfo );
+}
+
+void ICQContact::requestFullInfo()
+{
+	if ( mAccount->isConnected() && !m_ssiItem.metaInfoId().isEmpty() )
+		mAccount->engine()->requestFullTlvInfo( contactId(), m_ssiItem.metaInfoId() );
+}
+
+void ICQContact::receivedFullInfo( const QString& contact )
+{
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
+		return;
+
+	ICQFullInfo info = mAccount->engine()->getFullInfo( contact );
+
+	m_requestingNickname = false; //done requesting nickname
+	if ( m_ssiItem.alias().isEmpty() && !info.nickName.get().isEmpty() )
+		setNickName( QString::fromUtf8( info.nickName.get() ) );
+
+	m_statusDescription = QString::fromUtf8( info.statusDescription.get() );
+
+	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( onlineStatus() );
+	
+	refreshStatus( m_details, presence );
 }
 
 #if 0

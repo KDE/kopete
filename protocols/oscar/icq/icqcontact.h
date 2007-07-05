@@ -52,9 +52,10 @@ public:
 	/** Return whether or not this contact is reachable. */
 	virtual bool isReachable();
 
+	virtual void setSSIItem( const OContact& ssiItem );
+
 public slots:
 	virtual void slotUserInfo();
-	virtual void updateSSIItem();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
 
 	void userOnline( const QString& userId );
@@ -82,7 +83,12 @@ private:
 	KToggleAction *m_actionVisibleTo;
 	KToggleAction *m_actionInvisibleTo;
 
+	QString m_statusDescription;
+
 private slots:
+	/** Refresh status from this contact */
+	void refreshStatus( const UserDetails& details, Oscar::Presence presence );
+
 	/** Request authorization from this contact */
 	void slotRequestAuth();
 
@@ -100,6 +106,9 @@ private slots:
 	void closeUserInfoDialog();
 
 	void receivedLongInfo( const QString& contact );
+
+	void requestFullInfo();
+	void receivedFullInfo( const QString& contact );
 
 	void slotIgnore();
 	void slotVisibleTo();

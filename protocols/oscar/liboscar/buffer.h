@@ -24,6 +24,7 @@
 #include "oscarguid.h"
 #include <QList>
 #include <QByteArray>
+#include <QStack>
 #include "liboscar_export.h"
 class QString;
 
@@ -294,6 +295,24 @@ class LIBOSCAR_EXPORT Buffer
 		 */
 		QByteArray getLEDBlock();
 
+		/**
+		 * A block types.
+		 */
+		enum ByteOrder { BigEndian, LittleEndian };
+		enum BlockType { BWord, BDWord };
+
+		/**
+		 * Start a block
+		 * @param type is a type of block length
+		 * @param byteOrder is a byte order of block length
+		 */
+		void startBlock( BlockType type, ByteOrder byteOrder = BigEndian );
+
+		/**
+		 * End a block.
+		 */
+		void endBlock();
+
 		operator QByteArray() const;
 
 	private:
@@ -306,6 +325,13 @@ class LIBOSCAR_EXPORT Buffer
 		QByteArray mBuffer;
 		int mReadPos;
 
+		struct Block
+		{
+			BlockType type;
+			ByteOrder byteOrder;
+			int pos;
+		};
+		QStack<Block> mBlockStack;
 };
 
 #endif
