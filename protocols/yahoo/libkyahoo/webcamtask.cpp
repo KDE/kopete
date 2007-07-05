@@ -26,7 +26,7 @@
 #include <QTimer>
 #include <QPixmap>
 #include <ktemporaryfile.h>
-#include <k3process.h>
+#include <kprocess.h>
 #include <k3streamsocket.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -463,14 +463,14 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			jpcTmpImageFile.write((info->buffer->buffer()).data(), info->buffer->size());
 			jpcTmpImageFile.close();
 			
-			K3Process p;
+			KProcess p;
 			p << "jasper";
 			p << "--input" << jpcTmpImageFile.fileName() << "--output" << bmpTmpImageFile.fileName() << "--output-format" << "bmp";
 			
-			p.start( K3Process::Block );
-			if( p.exitStatus() != 0 )
+			int ec = p.execute();
+			if( ec != 0 )
 			{
-				kDebug(YAHOO_RAW_DEBUG) << " jasper exited with status " << p.exitStatus() << " " << info->sender << endl;
+				kDebug(YAHOO_RAW_DEBUG) << " jasper exited with status " << ec << " " << info->sender << endl;
 			}
 			else
 			{
