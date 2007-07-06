@@ -15,6 +15,7 @@ macro_bool_to_01(LIBXSLT_FOUND HAVE_XSLT)
 check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
 check_include_files(stdint.h HAVE_STDINT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)
+macro_bool_to_01(X11_Xss_FOUND HAVE_XSCREENSAVER)
 
 # Generate config-kopete.h
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kopete.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kopete.h )
