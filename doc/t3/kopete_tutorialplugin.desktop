@@ -2,7 +2,13 @@
 Encoding=UTF-8
 Type=Service
 Name=Tutorial Plugin
+Name[pt]='Plugin' de Tutorial
+Name[pt_BR]='Plugin' de Tutorial
+Name[sv]=Handledningsinsticksprogram
 Comment=Demonstration plugin for teaching Kopete development
+Comment[pt]='Plugin' de demonstração para ensinar a programar no Kopete
+Comment[pt_BR]='Plugin' de demonstração para ensinar a programar no Kopete
+Comment[sv]=Demonstrationsinsticksprogram för att lära ut utveckling av Kopete
 Icon=tutorial_plugin
 ServiceTypes=Kopete/Plugin
 X-Kopete-Version=1000900
