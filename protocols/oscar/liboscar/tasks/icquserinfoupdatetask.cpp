@@ -60,12 +60,12 @@ bool ICQUserInfoUpdateTask::take( Transfer* transfer )
 	{
 		setTransfer( transfer );
 		TLV tlv1 = transfer->buffer()->getTLV();
-		Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
+		Buffer buffer( tlv1.data, tlv1.length );
 		
 		//FIXME this is silly. parseInitialData should take care of this for me.
-		buffer->skipBytes( 12 );
+		buffer.skipBytes( 12 );
 		
-		if ( buffer->getByte() == 0x0A )
+		if ( buffer.getByte() == 0x0A )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Own user info was saved." << endl;
 			setSuccess( 0, QString() );

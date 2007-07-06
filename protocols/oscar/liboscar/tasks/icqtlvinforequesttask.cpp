@@ -59,24 +59,23 @@ bool ICQTlvInfoRequestTask::take( Transfer* transfer )
 	{
 		setTransfer( transfer );
 		TLV tlv1 = transfer->buffer()->getTLV();
-		Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
+		Buffer buffer( tlv1.data, tlv1.length );
 
 		//FIXME this is silly. parseInitialData should take care of this for me.
-		buffer->skipBytes( 12 );
+		buffer.skipBytes( 12 );
 
-		if ( buffer->getByte() == 0x0A )
+		if ( buffer.getByte() == 0x0A )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Title changed successfully." << endl;
-			parse( buffer->getLEBlock() );
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received user info" << endl;
+			parse( buffer.getLEBlock() );
 			setSuccess( 0, QString() );
 		}
 		else
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Error changing title!!!" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't receive user info!!!" << endl;
 			setError( 0, QString() );
 		}
 
-		delete buffer;
 		setTransfer( 0 );
 		return true;
 	}
@@ -85,7 +84,7 @@ bool ICQTlvInfoRequestTask::take( Transfer* transfer )
 
 void ICQTlvInfoRequestTask::onGo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requsting status for: " << m_userToRequestFor << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requsting full TLV user info for: " << m_userToRequestFor << endl;
 
 	m_goSequence = client()->snacSequence();
 	setSequence( m_goSequence );
