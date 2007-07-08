@@ -1,6 +1,6 @@
 /*
   Kopete Oscar Protocol
-  icqtlvinforequesttask.cpp - SNAC 0x15 parsing for full user info (TLV based)
+  icqtlvinfoupdatetask.cpp - SNAC 0x15 update user info (TLV based)
 
   Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
 
@@ -16,7 +16,7 @@
   *************************************************************************
 */
 
-#include "icqtlvinforequesttask.h"
+#include "icqtlvinfoupdatetask.h"
 
 #include <kdebug.h>
 
@@ -24,17 +24,16 @@
 #include "transfer.h"
 #include "buffer.h"
 
-ICQTlvInfoRequestTask::ICQTlvInfoRequestTask( Task* parent ) : ICQTask( parent )
+ICQTlvInfoUpdateTask::ICQTlvInfoUpdateTask( Task* parent ) : ICQTask( parent )
 {
 	m_goSequence = 0;
-	m_type = Short;
 }
 
-ICQTlvInfoRequestTask::~ICQTlvInfoRequestTask()
+ICQTlvInfoUpdateTask::~ICQTlvInfoUpdateTask()
 {
 }
 
-bool ICQTlvInfoRequestTask::forMe( const Transfer* transfer ) const
+bool ICQTlvInfoUpdateTask::forMe( const Transfer* transfer ) const
 {
 	const SnacTransfer * st = dynamic_cast<const SnacTransfer*>( transfer );
 
@@ -45,16 +44,16 @@ bool ICQTlvInfoRequestTask::forMe( const Transfer* transfer ) const
 		return false;
 
 	Buffer buf( *( st->buffer() ) );
-	const_cast<ICQTlvInfoRequestTask*>( this )->parseInitialData( buf );
+	const_cast<ICQTlvInfoUpdateTask*>( this )->parseInitialData( buf );
 
-	if ( requestType() == 0x07DA && requestSubType() == 0x0FB4
+	if ( requestType() == 0x07DA && requestSubType() == 0x0FDC
 	     && m_goSequence == sequence() )
 		return true;
 
 	return false;
 }
 
-bool ICQTlvInfoRequestTask::take( Transfer* transfer )
+bool ICQTlvInfoUpdateTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
@@ -67,13 +66,12 @@ bool ICQTlvInfoRequestTask::take( Transfer* transfer )
 
 		if ( buffer.getByte() == 0x0A )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received user info" << endl;
-			parse( buffer.getLEBlock() );
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "User info was saved." << endl;
 			setSuccess( 0, QString() );
 		}
 		else
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't receive user info!!!" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Error saving user info!!!" << endl;
 			setError( 0, QString() );
 		}
 
@@ -83,69 +81,39 @@ bool ICQTlvInfoRequestTask::take( Transfer* transfer )
 	return false;
 }
 
-void ICQTlvInfoRequestTask::onGo()
+void ICQTlvInfoUpdateTask::onGo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requsting full TLV user info for: " << m_userToRequestFor << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Updating user info." << endl;
 
 	m_goSequence = client()->snacSequence();
 	setSequence( m_goSequence );
 	setRequestType( 0x07D0 );
-	setRequestSubType( 0x0FA0 );
+	setRequestSubType( 0x0FD2 );
 
 	Buffer b;
 
 	b.startBlock( Buffer::BWord, Buffer::LittleEndian );
 	// Magic numbers
-	b.addDWord( 0x05b90002 );
+	b.addDWord( 0x05b90003 );
 	b.addDWord( 0x80000000 );
 	b.addDWord( 0x00000006 );
 	b.addDWord( 0x00010002 );
 	b.addDWord( 0x00020000 );
 	b.addDWord( 0x04e20000 );
-	b.addWord( 0x0002 );
-	b.addWord( m_type );
-	b.addDWord( 0x00000001 );
+	b.addDWord( 0x00020003 );
 
-	b.startBlock( Buffer::BWord );
-	b.addTLV( 0x003C, m_metaInfoId );
-	b.addTLV( 0x0032, m_userToRequestFor.toLatin1() );
-	b.endBlock();
+	m_info.store( &b );
 
 	b.endBlock();
 
 	Buffer *sendBuf = addInitialData( &b );
-
-	m_contactSequenceMap[sequence()] = m_userToRequestFor;
-
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0015, 0x0002, 0, client()->snacSequence() };
 	Transfer* t = createTransfer( f, s, sendBuf );
 	send( t );
 }
 
-ICQFullInfo ICQTlvInfoRequestTask::fullInfoFor( const QString& contact )
+void ICQTlvInfoUpdateTask::setInfo( const ICQFullInfo& info )
 {
-	ICQFullInfo info = m_fullInfoMap.value( contact );
-	m_fullInfoMap.remove( contact );
-	return info;
+	m_info = info;
 }
-
-void ICQTlvInfoRequestTask::parse( const QByteArray &data )
-{
-	Buffer buf( data );
-
-	buf.skipBytes( 45 );
-
-	Oscar::WORD seq = sequence();
-	QString contact = m_contactSequenceMap[seq];
-
-	ICQFullInfo info;
-	info.setSequenceNumber( seq );
-	info.fill( &buf );
-	m_fullInfoMap[contact] = info;
-
-	emit receivedInfoFor( contact );
-	m_contactSequenceMap.remove( seq );
-}
-
-#include "icqtlvinforequesttask.moc"

@@ -258,64 +258,91 @@ public:
 class LIBOSCAR_EXPORT ICQFullInfo : public ICQInfoBase
 {
 public:
-	ICQFullInfo();
+	/**
+	 * ICQFullInfo constructor
+	 * @param assumeDirty if false only values that where explicitly set with set method will be stored.
+	 */
+	ICQFullInfo( bool assumeDirty = true );
 	~ICQFullInfo() {}
+
 	void fill( Buffer* buffer );
 	void store( Buffer* buffer );
-	
+
 public:
-	ICQInfoValue<QByteArray>	uin;
-	ICQInfoValue<QByteArray>	firstName;
-	ICQInfoValue<QByteArray>	lastName;
-	ICQInfoValue<QByteArray>	nickName;
-	ICQInfoValue<QByteArray>	homepage;
+	class AddressItem
+	{
+	public:
+		AddressItem() : country(0) {}
 
-	ICQInfoValue<QByteArray>	homeAddress;
-	ICQInfoValue<QByteArray>	homeCity;
-	ICQInfoValue<QByteArray>	homeState;
-	ICQInfoValue<QByteArray>	homeZip;
-	ICQInfoValue<quint32>		homeCountry;
+		QByteArray	address;
+		QByteArray	city;
+		QByteArray	state;
+		QByteArray	zip;
+		quint32		country;
+	};
+	typedef QList<AddressItem> AddressItemList;
 
-	ICQInfoValue<QByteArray>	originAddress;
-	ICQInfoValue<QByteArray>	originCity;
-	ICQInfoValue<QByteArray>	originState;
-	ICQInfoValue<QByteArray>	originZip;
-	ICQInfoValue<quint32>		originCountry;
+	class WorkItem
+	{
+	public:
+		WorkItem() : country(0) {}
 
-	ICQInfoValue<QByteArray>	workPosition;
-	ICQInfoValue<QByteArray>	workCompanyName;
-	ICQInfoValue<QByteArray>	workDepartment;
-	ICQInfoValue<QByteArray>	workHomepage;
-	
-	ICQInfoValue<QByteArray>	workAddress;
-	ICQInfoValue<QByteArray>	workCity;
-	ICQInfoValue<QByteArray>	workState;
-	ICQInfoValue<QByteArray>	workZip;
-	ICQInfoValue<quint32>		workCountry;
+		QByteArray position;
+		QByteArray companyName;
+		QByteArray department;
+		QByteArray homepage;
+		QByteArray address;
+		QByteArray city;
+		QByteArray state;
+		QByteArray zip;
+		quint32 country;
+	};
+	typedef QList<WorkItem> WorkItemList;
 
+	class InfoItem {
+	public:
+		InfoItem() : category(0) {}
 
-	ICQInfoValue<QByteArray>	statusDescription;
+		quint16 category;
+		QByteArray description;
+	};
+	typedef QList<InfoItem> InfoItemList;
 
-	ICQInfoValue<quint16>		timezone;
-	ICQInfoValue<QByteArray>	notes;
+	ICQInfoValue<QByteArray>		uin;
+	ICQInfoValue<QByteArray>		firstName;
+	ICQInfoValue<QByteArray>		lastName;
+	ICQInfoValue<QByteArray>		nickName;
+	ICQInfoValue<QByteArray>		homepage;
+	ICQInfoValue<char>				gender;				//0x00 - None, 0x01 - Female, 0x02 - Male
+	ICQInfoValue<bool>				webAware;
+	ICQInfoValue<quint16>			privacyProfile;		//0x00 - Low, 0x01 - Medium, 0x02 - High
+
+	ICQInfoValue<quint16>			language1;
+	ICQInfoValue<quint16>			language2;
+	ICQInfoValue<quint16>			language3;
+
+	ICQInfoValue<QByteArray>		statusDescription;
+
+	ICQInfoValue<quint16>			timezone;
+	ICQInfoValue<QByteArray>		notes;
+
+	ICQInfoValue<AddressItemList>	homeList;
+	ICQInfoValue<AddressItemList>	originList;
+	ICQInfoValue<WorkItemList>		workList;
+
+	ICQInfoValue<InfoItemList>		interestList;
+	ICQInfoValue<InfoItemList>		organizationList;
+	ICQInfoValue<InfoItemList>		pastAffliationList;
+	ICQInfoValue<InfoItemList>		phoneList;
 
 private:
-	void fillHomeInfo( const QByteArray& data );
-	void fillOriginInfo( const QByteArray& data );
-	void fillWorkInfo( const QByteArray& data );
+	AddressItemList parseAddressItemList( const QByteArray& data ) const;
+	QByteArray storeAddressItemList( const AddressItemList& infoList ) const;
+	WorkItemList parseWorkItemList( const QByteArray& data ) const;
+	QByteArray storeWorkItemList( const WorkItemList& infoList ) const;
+	InfoItemList parseInfoItemList( const QByteArray& data ) const;
+	QByteArray storeInfoItemList( const InfoItemList& infoList ) const;
 };
-
-/*
-class ICQInfoItem
-{
-public:
-	int category;
-	QCString description;
-};
-
-
-typedef QValueList<ICQInfoItem> ICQInfoItemList;
-*/
 
 #endif
 //kate: space-indent off; tab-width 4; replace-tabs off; indent-mode csands;

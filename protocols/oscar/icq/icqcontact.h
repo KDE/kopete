@@ -107,8 +107,8 @@ private slots:
 
 	void receivedLongInfo( const QString& contact );
 
-	void requestFullInfo();
-	void receivedFullInfo( const QString& contact );
+	void requestMediumTlvInfo();
+	void receivedTlvInfo( const QString& contact );
 
 	void slotIgnore();
 	void slotVisibleTo();

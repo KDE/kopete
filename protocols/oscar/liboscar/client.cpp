@@ -70,6 +70,7 @@
 #include "xtrazxawayservice.h"
 #include "closeconnectiontask.h"
 #include "icqtlvinforequesttask.h"
+#include "icqtlvinfoupdatetask.h"
 
 
 namespace
@@ -138,6 +139,7 @@ public:
 		QString message;     // for away-,DND-message etc., and for Xtraz status
 		int xtraz;           // Xtraz status
 		QString description; // Xtraz description
+		bool sent;
 	} status;
 
 	//away messages
@@ -168,6 +170,7 @@ Client::Client( QObject* parent )
     d->currentRedirect = 0;
 	d->status.status = 0x0; // default to online
 	d->status.xtraz = -1; // default to no Xtraz
+	d->status.sent = false;
 	d->ssiManager = new ContactManager( this );
 	d->settings = new Oscar::Settings();
 	d->errorTask = 0L;
@@ -247,6 +250,7 @@ void Client::close()
 	{
 		d->status.status = 0x0;
 		d->status.xtraz = -1;
+		d->status.sent = false;
 		d->status.message.clear();
 		d->status.description.clear();
 	}
@@ -264,10 +268,12 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 
 	// remember the values to reply with, when requested
 	bool xtrazChanged = (xtraz > -1 || d->status.xtraz != xtraz);
+	bool statusInfoChanged = ( !d->status.sent || message != d->status.message || description != d->status.description );
 	d->status.status = status;
 	d->status.message = message;
 	d->status.xtraz = xtraz;
 	d->status.description = description;
+	d->status.sent = false;
 
 	if ( d->active )
 	{
@@ -322,6 +328,17 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 			pt->setXtrazStatus( xtraz );
 
 		pt->go( true );
+
+		if ( d->isIcq && statusInfoChanged )
+		{
+			ICQFullInfo info( false );
+			info.statusDescription.set( description.toUtf8() );
+
+			ICQTlvInfoUpdateTask* infoUpdateTask = new ICQTlvInfoUpdateTask( c->rootTask() );
+			infoUpdateTask->setInfo( info );
+			infoUpdateTask->go( true );
+		}
+		d->status.sent = true;
 	}
 }
 
@@ -769,7 +786,7 @@ void Client::initializeStaticTasks()
 	connect( d->icqInfoTask, SIGNAL( receivedInfoFor( const QString&, unsigned int ) ),
 	         this, SLOT( receivedIcqInfo( const QString&, unsigned int ) ) );
 	connect( d->icqTlvInfoTask, SIGNAL(receivedInfoFor(const QString&)),
-	         this, SIGNAL(receivedIcqFullInfo(const QString&)) );
+	         this, SIGNAL(receivedIcqTlvInfo(const QString&)) );
 
 	connect( d->userInfoTask, SIGNAL( receivedProfile( const QString&, const QString& ) ),
 	         this, SIGNAL( receivedProfile( const QString&, const QString& ) ) );
@@ -903,7 +920,7 @@ void Client::changeContactGroup( const QString& contact, const QString& newGroup
 		delete ssimt;
 }
 
-void Client::requestFullTlvInfo( const QString& contactId, const QByteArray &metaInfoId )
+void Client::requestShortTlvInfo( const QString& contactId, const QByteArray &metaInfoId )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0015 );
 	if ( !c )
@@ -911,6 +928,31 @@ void Client::requestFullTlvInfo( const QString& contactId, const QByteArray &met
 
 	d->icqTlvInfoTask->setUser( Oscar::normalize( contactId ) );
 	d->icqTlvInfoTask->setMetaInfoId( metaInfoId );
+	d->icqTlvInfoTask->setType( ICQTlvInfoRequestTask::Short );
+	d->icqTlvInfoTask->go();
+}
+
+void Client::requestMediumTlvInfo( const QString& contactId, const QByteArray &metaInfoId )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0015 );
+	if ( !c )
+		return;
+
+	d->icqTlvInfoTask->setUser( Oscar::normalize( contactId ) );
+	d->icqTlvInfoTask->setMetaInfoId( metaInfoId );
+	d->icqTlvInfoTask->setType( ICQTlvInfoRequestTask::Medium );
+	d->icqTlvInfoTask->go();
+}
+
+void Client::requestLongTlvInfo( const QString& contactId, const QByteArray &metaInfoId )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0015 );
+	if ( !c )
+		return;
+
+	d->icqTlvInfoTask->setUser( Oscar::normalize( contactId ) );
+	d->icqTlvInfoTask->setMetaInfoId( metaInfoId );
+	d->icqTlvInfoTask->setType( ICQTlvInfoRequestTask::Long );
 	d->icqTlvInfoTask->go();
 }
 

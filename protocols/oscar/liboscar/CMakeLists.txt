@@ -83,6 +83,7 @@ set(liboscar_SRCS
     tasks/icquserinfoupdatetask.cpp
     tasks/icqchangepasswordtask.cpp
     tasks/icqtlvinforequesttask.cpp
+    tasks/icqtlvinfoupdatetask.cpp
     utils/rtf.cc
     utils/md5.c
 )

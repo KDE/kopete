@@ -63,8 +63,8 @@ ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::M
 	                  this, SLOT( receivedLongInfo( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqFullInfo(const QString&)),
-	                  this, SLOT(receivedFullInfo(const QString&)) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqTlvInfo(const QString&)),
+	                  this, SLOT(receivedTlvInfo(const QString&)) );
 }
 
 ICQContact::~ICQContact()
@@ -88,7 +88,7 @@ void ICQContact::setSSIItem( const OContact& ssiItem )
 	{
 		// User info has changed, check nickname or status description if needed
 		if ( m_details.onlineStatusMsgSupport() )
-			mAccount->engine()->requestFullTlvInfo( contactId(), ssiItem.metaInfoId() );
+			mAccount->engine()->requestMediumTlvInfo( contactId(), ssiItem.metaInfoId() );
 		else if ( ssiItem.alias().isEmpty() )
 			requestShortInfo();
 	}
@@ -243,7 +243,7 @@ void ICQContact::loggedIn()
 		m_requestingNickname = true;
 		int time = ( KRandom::random() % 20 ) * 1000;
 		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname and status description in " << time/1000 << " seconds" << endl;
-		QTimer::singleShot( time, this, SLOT( requestFullInfo() ) );
+		QTimer::singleShot( time, this, SLOT( requestMediumTlvInfo() ) );
 	}
 	else if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() ) && nickName() == contactId() )
 	            || !hasProperty( Kopete::Global::Properties::self()->nickName().key() ) )
@@ -360,13 +360,13 @@ void ICQContact::receivedLongInfo( const QString& contact )
 	emit haveOrgAffInfo( orgAffInfo );
 }
 
-void ICQContact::requestFullInfo()
+void ICQContact::requestMediumTlvInfo()
 {
 	if ( mAccount->isConnected() && !m_ssiItem.metaInfoId().isEmpty() )
-		mAccount->engine()->requestFullTlvInfo( contactId(), m_ssiItem.metaInfoId() );
+		mAccount->engine()->requestMediumTlvInfo( contactId(), m_ssiItem.metaInfoId() );
 }
 
-void ICQContact::receivedFullInfo( const QString& contact )
+void ICQContact::receivedTlvInfo( const QString& contact )
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;

@@ -129,6 +129,9 @@ public:
 	 * \param message the status message or Xtraz status message
 	 * \param xtraz the Xtraz status
 	 * \param description the Xtraz status description
+	 * @note If you want XStatus you have to set status, message, xtraz and description,
+	 * for ExtStatus (ICQ6 status) you have to set status, message and description, xtraz have to be -1.
+	 * If you want normal status than you should set only status and message.
 	 */
 	void setStatus( Oscar::DWORD status, const QString &message = QString(), int xtraz = -1, const QString &description = QString() );
 
@@ -206,11 +209,13 @@ public:
 	void sendAuth( const QString& contactid, const QString& reason, bool auth=true );
 
 	/**
-	 * Request full user info from an ICQ contact (new TLV based format)
+	 * Request Short/Medium/Long user info from an ICQ contact (new TLV based format)
 	 * \param contactId the UIN of the contact to get info for
 	 * \param metaInfoId the id of the info (TLV 0x015C in SSI)
 	 */
-	void requestFullTlvInfo( const QString& contactId, const QByteArray &metaInfoId );
+	void requestShortTlvInfo( const QString& contactId, const QByteArray &metaInfoId );
+	void requestMediumTlvInfo( const QString& contactId, const QByteArray &metaInfoId );
+	void requestLongTlvInfo( const QString& contactId, const QByteArray &metaInfoId );
 
 	/**
 	 * Request full user info from an ICQ contact
@@ -476,7 +481,7 @@ signals:
 
 	void receivedIcqShortInfo( const QString& contact );
 	void receivedIcqLongInfo( const QString& contact );
-	void receivedIcqFullInfo( const QString& contact );
+	void receivedIcqTlvInfo( const QString& contact );
 
 	void receivedProfile( const QString& contact, const QString& profile );
 	void receivedAwayMessage( const QString& contact, const QString& message );
