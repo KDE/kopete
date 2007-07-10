@@ -48,7 +48,7 @@ kde4_add_kcfg_files(kcm_kopete_smpppdcs_PART_SRCS smpppdcsconfig.kcfgc )
 kde4_add_plugin(kcm_kopete_smpppdcs ${kcm_kopete_smpppdcs_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_smpppdcs  ${KDE4_KDECORE_LIBS} smpppdclient kopete ${KDE4_KUTILS_LIBS} )
+target_link_libraries(kcm_kopete_smpppdcs  smpppdclient kopete ${KDE4_KUTILS_LIBS} )
 
 install(TARGETS kcm_kopete_smpppdcs  DESTINATION ${PLUGIN_INSTALL_DIR})
 

@@ -12,7 +12,7 @@ set(kopetemessageplugin_PART_SRCS
 
 kde4_add_plugin(kopetemessageplugin ${kopetemessageplugin_PART_SRCS})
 
-target_link_libraries(kopetemessageplugin  ${KDE4_KDECORE_LIBS} ${KDE4_KPARTS_LIBS} kjsembed kopete )
+target_link_libraries(kopetemessageplugin  ${KDE4_KPARTS_LIBS} kjsembed kopete )
 
 install(TARGETS kopetemessageplugin DESTINATION ${PLUGIN_INSTALL_DIR})
 

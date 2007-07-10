@@ -32,7 +32,7 @@ set(krichtexteditpart_PART_SRCS krichtexteditpart.cpp )
 kde4_add_plugin(krichtexteditpart WITH_PREFIX ${krichtexteditpart_PART_SRCS})
 
 
-target_link_libraries(krichtexteditpart  ${KDE4_KDECORE_LIBS} kopete ${KDE4_KPARTS_LIBS} ${KDE4_KSPELL2_LIBS} ${KDE4_KDEPRINT_LIBS} )
+target_link_libraries(krichtexteditpart  kopete ${KDE4_KDEPRINT_LIBS} )
 
 install(TARGETS krichtexteditpart  DESTINATION ${PLUGIN_INSTALL_DIR})
 
