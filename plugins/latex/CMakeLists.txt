@@ -12,8 +12,6 @@ set(kopete_latex_PART_SRCS latexplugin.cpp latexguiclient.cpp )
 
 kde4_add_kcfg_files(kopete_latex_PART_SRCS latexconfig.kcfgc )
 
-kde4_automoc(${kopete_latex_PART_SRCS})
-
 kde4_add_plugin(kopete_latex ${kopete_latex_PART_SRCS})
 
 

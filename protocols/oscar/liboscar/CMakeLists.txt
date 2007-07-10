@@ -88,8 +88,6 @@ set(liboscar_SRCS
     utils/md5.c
 )
 
-kde4_automoc(${liboscar_SRCS} )
-
 kde4_add_library( oscar SHARED ${liboscar_SRCS} )
 
 target_link_libraries( oscar ${KDE4_KDECORE_LIBS} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} kopete )

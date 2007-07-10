@@ -16,8 +16,6 @@ set(kopete_smpppdcs_PART_SRCS
    detectornetstat.cpp 
    detectornetworkstatus.cpp )
 
-kde4_automoc(${kopete_smpppdcs_PART_SRCS})
-
 message(FATAL_ERROR "DCOP stuff was removed in kde4, convert it to dbus please")
 
 #kde4_add_dcop_skels(kopete_smpppdcs_PART_SRCS smpppdcsiface.h )

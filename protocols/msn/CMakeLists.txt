@@ -60,8 +60,6 @@ set(kopete_msn_shared_LIB_SRCS
    outgoingtransfer.cpp 
 )
 
-kde4_automoc(${kopete_msn_shared_LIB_SRCS})
-
 kde4_add_library(kopete_msn_shared SHARED ${kopete_msn_shared_LIB_SRCS})
 
 if(WIN32)

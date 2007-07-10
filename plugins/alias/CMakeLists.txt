@@ -8,8 +8,6 @@ ${KOPETE_INCLUDES}
 
 set(kopete_alias_PART_SRCS aliasplugin.cpp )
 
-kde4_automoc(${kopete_alias_PART_SRCS})
-
 kde4_add_plugin(kopete_alias ${kopete_alias_PART_SRCS})
 
 

@@ -12,8 +12,6 @@ set(kopete_translator_PART_SRCS
    translatorguiclient.cpp 
    translatorlanguages.cpp )
 
-kde4_automoc(${kopete_translator_PART_SRCS})
-
 kde4_add_plugin(kopete_translator ${kopete_translator_PART_SRCS})
 
 

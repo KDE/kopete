@@ -10,8 +10,6 @@ ${KOPETE_INCLUDES}
 
 set(kopete_texteffect_PART_SRCS texteffectplugin.cpp texteffectconfig.cpp )
 
-kde4_automoc(${kopete_texteffect_PART_SRCS})
-
 kde4_add_plugin(kopete_texteffect ${kopete_texteffect_PART_SRCS})
 
 

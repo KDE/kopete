@@ -16,8 +16,6 @@ set(LIBOSCAR_TEST_LIBRARIES ${KDE4_KDECORE_LIBS} oscar ${QT_QTTEST_LIBRARY})
 
 set(buffertest_SRCS buffertest.cpp )
 
-kde4_automoc(${buffertest_SRCS})
-
 kde4_add_unit_test(buffertest  ${buffertest_SRCS})
 
 target_link_libraries(buffertest ${LIBOSCAR_TEST_LIBRARIES} )

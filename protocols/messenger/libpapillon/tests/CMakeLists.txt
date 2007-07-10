@@ -20,8 +20,6 @@ target_link_libraries(connection_test ${PAPILLON_TEST_LIBRARIES} )
 ####
 set(connector_test_SRCS connector_test.cpp)
 
-kde4_automoc(${connector_test_SRCS})
-
 kde4_add_test_executable(connector_test  ${connector_test_SRCS})
 
 target_link_libraries(connector_test ${PAPILLON_TEST_LIBRARIES} )
@@ -31,8 +29,7 @@ target_link_libraries(connector_test ${PAPILLON_TEST_LIBRARIES} )
 if(NOT WIN32)
         set(papillon_console_SRCS papillon_console.cpp)
         
-        kde4_automoc(${papillon_console_SRCS})
-        
+                
         kde4_add_test_executable(papillon_console  ${papillon_console_SRCS})
         
         target_link_libraries(papillon_console ${QT_QTGUI_LIBRARY} ${PAPILLON_TEST_LIBRARIES})
@@ -41,8 +38,6 @@ endif(NOT WIN32)
 ########### Automated tests ###############
 
 set(transfer_test_SRCS transfer_test.cpp )
-
-kde4_automoc(${transfer_test_SRCS})
 
 kde4_add_test_executable(transfer_test  ${transfer_test_SRCS})
 
@@ -79,8 +74,6 @@ add_test(mimeheader_test ${EXECUTABLE_OUTPUT_PATH}/mimeheader_test)
 
 set( httptransfer_test_SRCS httptransfer_test.cpp )
 
-kde4_automoc(${httptransfer_test_SRCS})
-
 kde4_add_test_executable(httptransfer_test  ${httptransfer_test_SRCS})
 
 target_link_libraries(httptransfer_test ${PAPILLON_TEST_LIBRARIES})
@@ -116,8 +109,7 @@ add_test(statusmessage_test ${EXECUTABLE_OUTPUT_PATH}/statusmessage_test)
 if(NOT WIN32)
         set( challenge_test_SRCS challengetest.cpp )
         
-        kde4_automoc(${challenge_test_SRCS})
-        
+                
         kde4_add_test_executable(challenge_test  ${challenge_test_SRCS})
         
         target_link_libraries(challenge_test ${PAPILLON_TEST_LIBRARIES} ${QCA2_LIBRARIES})

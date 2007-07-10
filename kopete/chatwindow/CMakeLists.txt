@@ -30,8 +30,6 @@ install(TARGETS kopetechatwindow_shared  DESTINATION ${LIB_INSTALL_DIR})
 
 set(krichtexteditpart_PART_SRCS krichtexteditpart.cpp )
 
-kde4_automoc(${krichtexteditpart_PART_SRCS})
-
 kde4_add_plugin(krichtexteditpart WITH_PREFIX ${krichtexteditpart_PART_SRCS})
 
 

@@ -10,8 +10,6 @@ ${KOPETE_INCLUDES}
 
 set(kopete_autoreplace_PART_SRCS autoreplaceplugin.cpp autoreplaceconfig.cpp )
 
-kde4_automoc(${kopete_autoreplace_PART_SRCS})
-
 kde4_add_plugin(kopete_autoreplace ${kopete_autoreplace_PART_SRCS})
 
 

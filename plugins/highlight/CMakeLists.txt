@@ -10,8 +10,6 @@ ${KOPETE_INCLUDES}
 
 set(kopete_highlight_PART_SRCS highlightplugin.cpp highlightconfig.cpp filter.cpp )
 
-kde4_automoc(${kopete_highlight_PART_SRCS})
-
 kde4_add_plugin(kopete_highlight ${kopete_highlight_PART_SRCS})
 
 

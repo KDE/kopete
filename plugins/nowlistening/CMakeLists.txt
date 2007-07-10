@@ -16,8 +16,6 @@ set(kopete_nowlistening_PART_SRCS
 
 kde4_add_kcfg_files(kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
 
-kde4_automoc(${kopete_nowlistening_PART_SRCS})
-
 kde4_add_plugin(kopete_nowlistening ${kopete_nowlistening_PART_SRCS})
 
 
