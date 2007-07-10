@@ -34,7 +34,6 @@ set(kcm_kopete_cryptography_PART_SRCS cryptographypreferences.cpp selectkeydialo
 
 kde4_add_ui_files(kcm_kopete_cryptography_PART_SRCS cryptographyprefsbase.ui )
 
-kde4_automoc(${kcm_kopete_cryptography_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_cryptography ${kcm_kopete_cryptography_PART_SRCS})
 

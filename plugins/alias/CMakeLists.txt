@@ -22,7 +22,6 @@ set(kcm_kopete_alias_PART_SRCS aliaspreferences.cpp editaliasdialog.cpp )
 
 kde4_add_ui_files(kcm_kopete_alias_PART_SRCS aliasdialogbase.ui aliasdialog.ui )
 
-kde4_automoc(${kcm_kopete_alias_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_alias ${kcm_kopete_alias_PART_SRCS})
 

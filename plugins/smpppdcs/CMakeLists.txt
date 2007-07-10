@@ -40,7 +40,6 @@ set(kcm_kopete_smpppdcs_PART_SRCS
    smpppdcsprefsimpl.cpp 
    smpppdlocationwidget.cpp )
 
-kde4_automoc(${kcm_kopete_smpppdcs_PART_SRCS})
 
 kde4_add_ui_files(kcm_kopete_smpppdcs_PART_SRCS smpppdcsprefs.ui smpppdlocationui.ui )
 

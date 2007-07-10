@@ -24,7 +24,6 @@ set(kcm_kopete_autoreplace_PART_SRCS autoreplacepreferences.cpp autoreplaceconfi
 
 kde4_add_ui_files(kcm_kopete_autoreplace_PART_SRCS autoreplaceprefs.ui )
 
-kde4_automoc(${kcm_kopete_autoreplace_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_autoreplace ${kcm_kopete_autoreplace_PART_SRCS})
 

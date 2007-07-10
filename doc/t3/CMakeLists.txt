@@ -23,7 +23,6 @@ include_directories(${KOPETE_INCLUDES})
 set(kopete_tutorialplugin_PART_SRCS tutorialplugin.cpp )
 
 # create moc files as needed
-kde4_automoc(${kopete_tutorialplugin_PART_SRCS})
 
 # declare the plugin library
 kde4_add_plugin(kopete_tutorialplugin ${kopete_tutorialplugin_PART_SRCS})
@@ -41,7 +40,6 @@ set(kcm_kopete_tutorialplugin_PART_SRCS tutorialpreferences.cpp )
 
 kde4_add_ui_files(kcm_kopete_tutorialplugin_PART_SRCS tutorialprefs.ui )
 
-kde4_automoc(${kcm_kopete_tutorialplugin_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_tutorialplugin ${kcm_kopete_tutorialplugin_PART_SRCS})
 

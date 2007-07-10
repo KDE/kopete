@@ -28,7 +28,6 @@ kde4_add_ui_files(kcm_kopete_latex_PART_SRCS latexprefsbase.ui )
 
 kde4_add_kcfg_files(kcm_kopete_latex_PART_SRCS latexconfig.kcfgc )
 
-kde4_automoc(${kcm_kopete_latex_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_latex ${kcm_kopete_latex_PART_SRCS})
 

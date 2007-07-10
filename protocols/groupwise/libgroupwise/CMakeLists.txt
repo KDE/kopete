@@ -75,7 +75,6 @@ set( libqgroupwise_SRCS
 	chatroommanager.cpp
 )
 
-kde4_automoc( ${libqgroupwise_tasks_SRCS} ${libqgroupwise_SRCS} )
 
 kde4_add_library( qgroupwise SHARED ${libqgroupwise_tasks_SRCS} ${libqgroupwise_SRCS} )
 

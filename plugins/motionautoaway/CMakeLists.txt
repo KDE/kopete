@@ -20,7 +20,6 @@ install(TARGETS kopete_motionaway  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_motionaway_PART_SRCS motionawaypreferences.cpp )
 
-kde4_automoc(${kcm_kopete_motionaway_PART_SRCS})
 
 kde4_add_ui_files(kcm_kopete_motionaway_PART_SRCS motionawayprefs.ui )
 

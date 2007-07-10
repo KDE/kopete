@@ -24,7 +24,6 @@ set(kcm_kopete_highlight_PART_SRCS highlightpreferences.cpp filter.cpp highlight
 
 kde4_add_ui_files(kcm_kopete_highlight_PART_SRCS highlightprefsbase.ui )
 
-kde4_automoc(${kcm_kopete_highlight_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_highlight ${kcm_kopete_highlight_PART_SRCS})
 

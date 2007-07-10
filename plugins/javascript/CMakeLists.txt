@@ -15,7 +15,6 @@ set( kopete_javascript_PART_SRCS
     javascriptplugin.cpp
 )
 
-kde4_automoc(${kopete_javascript_PART_SRCS})
 
 kde4_add_plugin(kopete_javascript ${kopete_javascript_PART_SRCS})
 

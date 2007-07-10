@@ -5,7 +5,6 @@
 ########### next target ###############
 set(kopetetabwidgettest_SRCS kopetetabwidgettest.cpp )
 
-kde4_automoc(${kopetetabwidgettest_SRCS})
 
 
 kde4_add_test_executable(kopetetabwidgettest ${kopetetabwidgettest_SRCS})

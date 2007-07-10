@@ -11,7 +11,6 @@ kde4_add_ui_files(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfigbase.u
 
 kde4_add_kcfg_files(kcm_kopete_identityconfig_PART_SRCS kopeteidentityconfigpreferences.kcfgc )
 
-kde4_automoc(${kcm_kopete_identityconfig_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_identityconfig ${kcm_kopete_identityconfig_PART_SRCS})
 

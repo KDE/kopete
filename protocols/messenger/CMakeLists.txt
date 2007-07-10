@@ -11,7 +11,6 @@ ${KOPETE_INCLUDES}
 
 set(kopete_messenger_PART_SRCS messengerprotocol.cpp messengeraccount.cpp messengercontact.cpp )
 
-kde4_automoc(${kopete_messenger_PART_SRCS})
 
 kde4_add_plugin(kopete_messenger ${kopete_messenger_PART_SRCS})
 

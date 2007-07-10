@@ -11,7 +11,6 @@ add_definitions(-DPAPILLON_TESTS_DATA="\\"${CMAKE_CURRENT_SOURCE_DIR}/\\"")
 
 set(connection_test_SRCS connection_test.cpp )
 
-kde4_automoc(${connection_test_SRCS})
 
 kde4_add_test_executable(connection_test  ${connection_test_SRCS})
 
@@ -49,7 +48,6 @@ add_test(transfer_test ${EXECUTABLE_OUTPUT_PATH}/transfer_test)
 
 set( coreprotocol_test_SRCS coreprotocol_test.cpp )
 
-kde4_automoc(${coreprotocol_test_SRCS} )
 
 kde4_add_test_executable(coreprotocol_test  ${coreprotocol_test_SRCS})
 
@@ -61,7 +59,6 @@ add_test(coreprotocol_test ${EXECUTABLE_OUTPUT_PATH}/coreprotocol_test)
 
 set( mimeheader_test_SRCS mimeheader_test.cpp )
 
-kde4_automoc(${mimeheader_test_SRCS} )
 
 kde4_add_test_executable(mimeheader_test  ${mimeheader_test_SRCS})
 
@@ -84,7 +81,6 @@ add_test(httptransfer_test ${EXECUTABLE_OUTPUT_PATH}/httptransfer_test)
 
 set( httpcoreprotocol_test_SRCS httpcoreprotocol_test.cpp )
 
-kde4_automoc(${httpcoreprotocol_test_SRCS})
 
 kde4_add_test_executable(httpcoreprotocol_test  ${httpcoreprotocol_test_SRCS})
 
@@ -96,7 +92,6 @@ add_test(httpcoreprotocol_test ${EXECUTABLE_OUTPUT_PATH}/httpcoreprotocol_test)
 
 set( statusmessage_test_SRCS statusmessage_test.cpp )
 
-kde4_automoc(${statusmessage_test_SRCS})
 
 kde4_add_test_executable(statusmessage_test  ${statusmessage_test_SRCS})
 
