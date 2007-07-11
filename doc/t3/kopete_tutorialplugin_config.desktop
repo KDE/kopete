@@ -6,6 +6,7 @@ ServiceTypes=KCModule
 Name=Tutorial
 Name[de]=Anleitung
 Name[fa]=خودآموز
+Name[ga]=Cúrsa Teagaisc
 Name[sv]=Handledning
 Name[zh_TW]=教學
 Comment=Turns normal people into Super Kopete Developer
