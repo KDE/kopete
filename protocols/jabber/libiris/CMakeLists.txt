@@ -124,8 +124,8 @@ set(libiris_needmoc_HDRS
 	iris/xmpp-im/xmpp_tasks.h
 )
 
-QMAKE_WRAP_CPP(libiris_SRCS ${libiris_needmoc_SRCS})
-QMAKE_WRAP_H(libiris_SRCS ${libiris_needmoc_HDRS})
+#QMAKE_WRAP_CPP(libiris_SRCS ${libiris_needmoc_SRCS})
+#QMAKE_WRAP_H(libiris_SRCS ${libiris_needmoc_HDRS})
 
 kde4_add_library(iris_kopete SHARED ${libiris_SRCS})
 
