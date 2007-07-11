@@ -21,7 +21,7 @@ kde4_add_kcfg_files(kopete_history_PART_SRCS historyconfig.kcfgc )
 kde4_add_plugin(kopete_history ${kopete_history_PART_SRCS})
 
 
-target_link_libraries(kopete_history  ${KDE4_KDECORE_LIBS} ${KDE4_KHTML_LIBS} kopete )
+target_link_libraries(kopete_history  ${KDE4_KHTML_LIBS} kopete )
 
 install(TARGETS kopete_history  DESTINATION ${PLUGIN_INSTALL_DIR})
 
