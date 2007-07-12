@@ -1,25 +1,22 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="6" >
-  <Doc0 NumberOfViews="1" URL="file:///home/taupter/Projects/Software/kde/kopete/avdevice_overhaul/V4L/kdenetwork/kopete/libkopete/avdevice/videodevice.cpp" >
-   <View0 Encoding="ISO 8859-1" Type="Source" />
-  </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/taupter/Projects/Software/kde/kopete/avdevice_overhaul/V4L/kdenetwork/kopete/libkopete/avdevice/videodevice.h" >
-   <View0 Encoding="ISO 8859-1" Type="Source" />
-  </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/taupter/Projects/Software/kde/kopete/avdevice_overhaul/V4L/kdenetwork/kopete/libkopete/avdevice/videodevicemodelpool.cpp" >
-   <View0 Encoding="ISO 8859-1" Type="Source" />
-  </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/taupter/Projects/Software/kde/kopete/avdevice_overhaul/V4L/kdenetwork/kopete/libkopete/avdevice/videodevicemodelpool.h" >
-   <View0 Encoding="ISO 8859-1" Type="Source" />
-  </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/taupter/Projects/Software/kde/kopete/avdevice_overhaul/V4L/kdenetwork/kopete/libkopete/avdevice/videodevicepool.cpp" >
-   <View0 Encoding="ISO 8859-1" Type="Source" />
-  </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///home/taupter/Projects/Software/kde/kopete/avdevice_overhaul/V4L/kdenetwork/kopete/libkopete/avdevice/videodevicepool.h" >
+ <DocsAndViews NumberOfDocuments="5" >
+  <Doc0 NumberOfViews="1" URL="file:///home/taupter/Projects/Software/kde/kopete/comunip/kdenetwork/kopete/protocols/lig/kopete_lig.desktop" >
    <View0 Encoding="ISO 8859-1" line="0" Type="Source" />
-  </Doc5>
+  </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///home/taupter/Projects/Software/kde/kopete/comunip/kdenetwork/kopete/protocols/testbed/kopete_testbed.desktop" >
+   <View0 Encoding="ISO 8859-1" line="0" Type="Source" />
+  </Doc1>
+  <Doc2 NumberOfViews="1" URL="file:///home/taupter/Projects/Software/kde/kopete/comunip/kdenetwork/kopete/protocols/testbed/Makefile.am" >
+   <View0 Encoding="ISO 8859-1" line="15" Type="Source" />
+  </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///home/taupter/Projects/Software/kde/kopete/comunip/kdenetwork/kopete/protocols/lig/Makefile.am" >
+   <View0 Encoding="ISO 8859-1" line="8" Type="Source" />
+  </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:///home/taupter/Projects/Software/kde/kopete/comunip/kdenetwork/kopete/protocols/msn/Makefile.am" >
+   <View0 Encoding="ISO 8859-1" line="0" Type="Source" />
+  </Doc4>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

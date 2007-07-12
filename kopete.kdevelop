@@ -10,7 +10,7 @@
       <keyword>Qt</keyword>
       <keyword>KDE</keyword>
     </keywords>
-    <projectdirectory>../../</projectdirectory>
+    <projectdirectory>./</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
     <description/>
     <ignoreparts>
@@ -133,7 +133,7 @@
     </make>
     <general>
       <useconfiguration>default</useconfiguration>
-      <activetarget>protocols/groupwise/kopete_groupwise.la</activetarget>
+      <activetarget>protocols/lig/libkopete_lig.la</activetarget>
     </general>
     <run>
       <mainprogram/>
