@@ -1,10 +1,14 @@
-INCLUDES = 
 METASOURCES = AUTO
+
 SUBDIRS = icons
-kde_module_LTLIBRARIES = libkopete_lig.la
-libkopete_lig_la_LDFLAGS = $(all_libraries) -module
+
+AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(srcdir)/ui -Iui $(all_includes)
+
 noinst_HEADERS = ligprotocol.h
-libkopete_lig_la_SOURCES = ligprotocol.cpp
+kde_module_LTLIBRARIES = libkopete_lig.la
+kopete_lig_la_SOURCES = ligprotocol.cpp
+kopete_lig_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
+kopete_testbed_la_LIBADD = 
 
 service_DATA = kopete_lig.desktop
 servicedir= $(kde_servicesdir)

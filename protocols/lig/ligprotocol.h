@@ -17,7 +17,7 @@
 #ifndef LIGPROTOCOL_H
 #define LIGPROTOCOL_H
 
-#include "kopeteprotocol.h"
+#include <kopeteprotocol.h>
 
 /**
 	@author Kopete Developers <kopete-devel@kde.org>
