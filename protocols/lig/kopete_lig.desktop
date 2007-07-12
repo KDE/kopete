@@ -1,0 +1,21 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+X-Kopete-Version=1000900
+Icon=lig_protocol
+ServiceTypes=Kopete/Protocol
+X-KDE-Library=kopete_lig
+X-Kopete-Messaging-Protocol=messaging/lig
+X-KDE-PluginInfo-Author=Cláudio da Silveira Pinheiro
+X-KDE-PluginInfo-Email=taupter@gmail.com
+X-KDE-PluginInfo-Name=kopete_lig
+X-KDE-PluginInfo-Version=0.8.0
+X-KDE-PluginInfo-Website=http://kopete.kde.org
+X-KDE-PluginInfo-Category=Protocols
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=false
+Name=Lig
+Comment=Protocol to connect to Lig
+Comment[pt]=Um protocolo para se ligar ao Lig
+Comment[pt_BR]=Protocolo para conexão ao Lig
