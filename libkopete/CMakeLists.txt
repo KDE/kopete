@@ -46,6 +46,8 @@ set(kopete_contactlist_SRCS
 
 set(kopete_tasks_SRCS
   tasks/kopetetask.cpp
+  tasks/kopetecontacttaskbase.cpp
+  tasks/kopetedeletecontacttask.cpp
 )
 
 set(kopete_LIB_SRCS
@@ -198,6 +200,8 @@ install( FILES
   kopeteuiglobal.h
   kopeteversion.h
   tasks/kopetetask.h
+  tasks/kopetecontacttaskbase.h
+  tasks/kopetedeletecontacttask.h
 DESTINATION ${INCLUDE_INSTALL_DIR}/kopete )
 
 install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_DIR} )

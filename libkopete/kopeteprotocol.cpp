@@ -22,6 +22,7 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <klocale.h>
+#include <kjob.h>
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
@@ -368,6 +369,11 @@ Contact *Protocol::deserializeContact(
 	return 0;
 }
 
+KJob *Protocol::createProtocolTask(const QString &taskType)
+{
+	// Default implementation does nothing
+	return 0;
+}
 
 } //END namespace Kopete
 
