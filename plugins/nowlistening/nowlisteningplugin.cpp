@@ -3,10 +3,10 @@
 
     Kopete Now Listening To plugin
 
-    Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
+    Copyright (c) 2002,2003,2004,2005,2006,2007 by Will Stephenson <wstephenson@kde.org>
     Copyright (c) 2005-2006           by Michaël Larouche <larouche@kde.org>
 
-    Kopete    (c) 2002-2006      by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002,2003,2004,2005,2006,2007      by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -45,6 +45,8 @@
 #include "nljuk.h"
 #include "nlamarok.h"
 #include "nlkaffeine.h"
+#include "nlquodlibet.h"
+
 #include "nowlisteningguiclient.h"
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
@@ -113,6 +115,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const QStringList& /*ar
 	d->m_mediaPlayerList.append( new NLJuk() );
 	d->m_mediaPlayerList.append( new NLamaroK() );
 	d->m_mediaPlayerList.append( new NLKaffeine() );
+	d->m_mediaPlayerList.append( new NLQuodLibet() );
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && HAVE_XMMS
 	d->m_mediaPlayerList.append( new NLXmms() );

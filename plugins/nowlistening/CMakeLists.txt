@@ -12,6 +12,7 @@ set(kopete_nowlistening_PART_SRCS
    nowlisteningguiclient.cpp 
    nljuk.cpp 
    nlamarok.cpp 
+   nlquodlibet.cpp
    nlkaffeine.cpp )
 
 kde4_add_kcfg_files(kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
