@@ -69,7 +69,7 @@ ${papillon_http_SRCS}
 ${papillon_tasks_SRCS}
 task.cpp
 messengercoreprotocol.cpp
-transfer.cpp
+networkmessage.cpp
 papillonclientstream.cpp
 qtconnector.cpp
 qtbytestream.cpp

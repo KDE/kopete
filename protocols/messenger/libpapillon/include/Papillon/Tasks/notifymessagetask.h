@@ -41,7 +41,7 @@ public:
 	explicit NotifyMessageTask(Papillon::Task *parent);
 	virtual ~NotifyMessageTask();
 
-	virtual bool take(Papillon::Transfer *transfer);
+	virtual bool take(Papillon::NetworkMessage *networkMessage);
 	
 signals:
 	/**
@@ -51,7 +51,7 @@ signals:
 	void profileMessage(const Papillon::MimeHeader &profileMessage);
 
 private:
-	virtual bool forMe(Papillon::Transfer *transfer) const;
+	virtual bool forMe(Papillon::NetworkMessage *networkMessage) const;
 
 	class Private;
 	Private *d;

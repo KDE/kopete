@@ -26,7 +26,7 @@
 namespace Papillon
 {
 
-class Transfer;
+class NetworkMessage;
 
 /**
  * @class Stream stream.h <Papillon/Base/Stream>
@@ -57,22 +57,22 @@ public:
 	/**
 	 * Are there any messages waiting to be read
 	 */
-	virtual bool transfersAvailable() const = 0;
+	virtual bool networkMessagesAvailable() const = 0;
 	/**
 	 * Read a message received from the server
 	 */
-	virtual Transfer *read() = 0;
+	virtual NetworkMessage *read() = 0;
 
 	/**
 	 * Send a message to the server
 	 */
-	virtual void write(Transfer *request) = 0;
+	virtual void write(NetworkMessage *request) = 0;
 	
 
 signals:
 	void connectionClosed();
 	void delayedCloseFinished();
-	void readyRead(); //signals that there is a transfer ready to be read
+	void readyRead(); //signals that there is a networkMessage ready to be read
 	void error(int);
 };
 

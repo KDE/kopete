@@ -1,7 +1,7 @@
 /*
-   transfer.h - Represent a transfer between the Messenger server.
+   networkmessage.h - Represent a network message between the Messenger server.
 
-   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
+   Copyright (c) 2006-2007 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -12,8 +12,8 @@
    *                                                                       *
    *************************************************************************
 */
-#ifndef PAPILLONTRANSFER_H
-#define PAPILLONTRANSFER_H
+#ifndef PAPILLONNETWORKMESSAGE_H
+#define PAPILLONNETWORKMESSAGE_H
 
 // Qt includes
 #include <QtCore/QFlags>
@@ -28,42 +28,43 @@ namespace Papillon
 {
 
 /**
- * @class Transfer transfer.h <Papillon/Transfer>
- * @brief A transfer represent a information from/to the protocol. This can be a command or a message.
+ * @class NetworkMessage networkmessage.h <Papillon/NetworkMessage>
+ * @brief A network message is the data received and transmitted from/to the Messenger server.
  *
- * A transfer have always a command and arguments. It can have a transaction ID, a payload length, and the payload data.
+ * A NetworkMessage have always a command and arguments.
+ * It can have a transaction ID, a payload length, and the payload data.
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
-class PAPILLON_EXPORT Transfer
+class PAPILLON_EXPORT NetworkMessage
 {
 public:
 	/**
-	 * - NormalTransfer: A normal transfer without transaction id neither payload.
-	 * - TransactionTransfer: The transfer has a transaction ID.
-	 * - PayloadTransfer: The transfer contains payload data.
+	 * NetworkMessageTypeValues is the possible type of message
+	 * that we can build.
 	 */
-	enum TransferTypeValues
+	enum NetworkMessageTypeValues
 	{
-		NormalTransfer,
-		TransactionTransfer,
-		PayloadTransfer
+		NormalMessage, ///< A basic network message
+		TransactionMessage, ///<A network message with a transaction ID attached to it
+		PayloadMessage ///<A network message with data attaced to it.
 	};
-	Q_DECLARE_FLAGS(TransferType, TransferTypeValues)
+	Q_DECLARE_FLAGS(NetworkMessageType, NetworkMessageTypeValues)
 	
 	/**
-	 * @brief Build a new transfer
-	 * By default, the transfert is set to NormalTransfer type.
+	 * @brief Build a new NetworkMessage
 	 *
-	 * @param type Type of the transfer. See TransferTypeValues for possibled values.
+	 * The default type for NetworkMessage is NormalMessage.
+	 *
+	 * @param type The type of NetworkMessage. Default is NormalMessage
 	 */
-	Transfer(const TransferType &type = NormalTransfer);
-	~Transfer();
+	NetworkMessage(const NetworkMessageType &type = NormalMessage);
+	~NetworkMessage();
 
 	/**
-	 * Return the transfer type.
+	 * Return the NetworkMessage type
 	 */
-	TransferType type() const;
+	NetworkMessageType type() const;
 
 	/**
 	 * Return the command name.
@@ -139,7 +140,7 @@ private:
 	Private *d;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Transfer::TransferType)
+Q_DECLARE_OPERATORS_FOR_FLAGS(NetworkMessage::NetworkMessageType)
 
 }
 

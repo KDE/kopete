@@ -22,7 +22,7 @@
 // Papillon includes
 #include "Papillon/ClientStream"
 #include "Papillon/QtConnector"
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/Macros"
 
 #define PASSPORT_ID "klj345sdas765d@passport.com"
@@ -61,50 +61,50 @@ void Connector_Test::connectToServer()
 
 void Connector_Test::slotConnected()
 {
-	connect(d->stream, SIGNAL(readyRead()), this, SLOT(slotReadTransfer()));
+	connect(d->stream, SIGNAL(readyRead()), this, SLOT(slotReadNetworkMessage()));
 	
 	doLoginProcess();
 }
 
 void Connector_Test::doLoginProcess()
 {
-	Transfer *usrTransfer = new Transfer(Transfer::TransactionTransfer);
-	usrTransfer->setCommand( QLatin1String("VER") );
-	usrTransfer->setTransactionId( QString::number(++d->trId) );
-	usrTransfer->setArguments( QString("MSNP11 MSNP10 CVR0") );
+	NetworkMessage *usrNetworkMessage = new NetworkMessage(NetworkMessage::TransactionMessage);
+	usrNetworkMessage->setCommand( QLatin1String("VER") );
+	usrNetworkMessage->setTransactionId( QString::number(++d->trId) );
+	usrNetworkMessage->setArguments( QString("MSNP11 MSNP10 CVR0") );
 
-	d->stream->write(usrTransfer);
+	d->stream->write(usrNetworkMessage);
 }
 
 void Connector_Test::loginProcessCvr()
 {
-	Transfer *cvrTransfer = new Transfer(Transfer::TransactionTransfer);
-	cvrTransfer->setCommand( QLatin1String("CVR") );
-	cvrTransfer->setTransactionId( QString::number(++d->trId) );
-	cvrTransfer->setArguments( QString("0x040c winnt 5.1 i386 MSNMSGR 7.0.0777 msmsgs "PASSPORT_ID) );
+	NetworkMessage *cvrNetworkMessage = new NetworkMessage(NetworkMessage::TransactionMessage);
+	cvrNetworkMessage->setCommand( QLatin1String("CVR") );
+	cvrNetworkMessage->setTransactionId( QString::number(++d->trId) );
+	cvrNetworkMessage->setArguments( QString("0x040c winnt 5.1 i386 MSNMSGR 7.0.0777 msmsgs "PASSPORT_ID) );
 
-	d->stream->write(cvrTransfer);
+	d->stream->write(cvrNetworkMessage);
 }
 
 void Connector_Test::loginProcessTwnI()
 {
-	Transfer *twnTransfer = new Transfer(Transfer::TransactionTransfer);
-	twnTransfer->setCommand("USR");
-	twnTransfer->setTransactionId( QString::number(++d->trId) );
-	twnTransfer->setArguments( QString("TWN I "PASSPORT_ID) );
+	NetworkMessage *twnNetworkMessage = new NetworkMessage(NetworkMessage::TransactionMessage);
+	twnNetworkMessage->setCommand("USR");
+	twnNetworkMessage->setTransactionId( QString::number(++d->trId) );
+	twnNetworkMessage->setArguments( QString("TWN I "PASSPORT_ID) );
 
-	d->stream->write(twnTransfer);
+	d->stream->write(twnNetworkMessage);
 }
 
 void Connector_Test::loginProcessTwnS()
 {
-	Transfer *twnTransfer = new Transfer(Transfer::TransactionTransfer);
-	twnTransfer->setCommand("USR");
-	twnTransfer->setTransactionId( QString::number(++d->trId) );
+	NetworkMessage *twnNetworkMessage = new NetworkMessage(NetworkMessage::TransactionMessage);
+	twnNetworkMessage->setCommand("USR");
+	twnNetworkMessage->setTransactionId( QString::number(++d->trId) );
 	QString args = QString("TWN S t=7tLSuqR92Bo*17x76PDg87IVMA5FKqxccJDUocFzfCXbipUMZuMv4HatazUwTBVqsFkTxkS0qFCSbzA9SUFjM*SHzGKIIC7kgZAEikfzfAUufs*L!3B5i0aSrNo03BAeQP&p=7nhP1TIX4BGQ*k4JKZw0JHP5rb3A9wk8fw!ZYadtXN0OFiN*yZr6UaFwBAdUOKwoQkYfK1gEzWE*Op16WDcE*9J3Hv4JWG1TF3eSoAq71CITPmkZONAReXYlGz5Rk5l7ZFwbAPq6NxxqxzK24mx74JkLst2Z7gEm*hbz9gfIUu!0M$");
-	twnTransfer->setArguments(args);
+	twnNetworkMessage->setArguments(args);
 
-	d->stream->write(twnTransfer);
+	d->stream->write(twnNetworkMessage);
 }
 
 void Connector_Test::slotExit()
@@ -112,39 +112,39 @@ void Connector_Test::slotExit()
 	deleteLater();
 }
 
-void Connector_Test::slotReadTransfer()
+void Connector_Test::slotReadNetworkMessage()
 {
-	Transfer *readTransfer = d->stream->read();
-	if(readTransfer)
+	NetworkMessage *readNetworkMessage = d->stream->read();
+	if(readNetworkMessage)
 	{
-		qDebug() << PAPILLON_FUNCINFO << "Data received: " << readTransfer->toString().replace("\r\n", "");
-		if(readTransfer->command() == QLatin1String("VER"))
+		qDebug() << PAPILLON_FUNCINFO << "Data received: " << readNetworkMessage->toString().replace("\r\n", "");
+		if(readNetworkMessage->command() == QLatin1String("VER"))
 		{
 			loginProcessCvr();
 		}
-		if(readTransfer->command() == QLatin1String("CVR"))
+		if(readNetworkMessage->command() == QLatin1String("CVR"))
 		{
 			loginProcessTwnI();
 		}
-		if(readTransfer->command() == QLatin1String("XFR"))
+		if(readNetworkMessage->command() == QLatin1String("XFR"))
 		{
-			QString server = readTransfer->arguments()[1].section(":", 0, 0);
-			QString port = readTransfer->arguments()[1].section(":", 1, 1);
+			QString server = readNetworkMessage->arguments()[1].section(":", 0, 0);
+			QString port = readNetworkMessage->arguments()[1].section(":", 1, 1);
 			bool dummy;
 
 			d->stream->close();
 			d->stream->connectToServer(server, port.toUInt(&dummy));
 		}
-		if(readTransfer->command() == QLatin1String("USR"))
+		if(readNetworkMessage->command() == QLatin1String("USR"))
 		{
-			if(readTransfer->arguments()[0] == QLatin1String("TWN") && readTransfer->arguments()[1] == QLatin1String("S"))
+			if(readNetworkMessage->arguments()[0] == QLatin1String("TWN") && readNetworkMessage->arguments()[1] == QLatin1String("S"))
 			{
 				loginProcessTwnS();
 			}
 		}
 
 		bool isNumber;
-		int errorCode = readTransfer->command().toUInt(&isNumber);
+		int errorCode = readNetworkMessage->command().toUInt(&isNumber);
 		if(isNumber)
 		{
 			qDebug() << PAPILLON_FUNCINFO << "Received error code" << errorCode << ". Closing...";

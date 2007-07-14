@@ -66,11 +66,11 @@ public:
 	//TODO: void setMsnObject();
 
 	/**
-	 * @brief Check if the transfer is for us.
+	 * @brief Check if the networkMessage is for us.
 	 * In this case, emit finished() signal when we receive a acknowledge of the command.
-	 * @param transfer Transfer to check.
+	 * @param networkMessage NetworkMessage to check.
 	 */
-	virtual bool take(Papillon::Transfer *transfer);
+	virtual bool take(Papillon::NetworkMessage *networkMessage);
 
 protected:
 	/**

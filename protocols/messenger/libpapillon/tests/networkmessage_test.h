@@ -1,5 +1,5 @@
 /*
-   transfer_test.h - Unittest for Papillon::Transfer
+   networkmessage_test.h - Unittest for Papillon::Transfer
 
    Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
@@ -12,18 +12,18 @@
    *                                                                       *
    *************************************************************************
  */
-#ifndef TRANSFER_TEST_H
-#define TRANSFER_TEST_H
+#ifndef NETWORKMESSAGE_TEST_H
+#define NETWORKMESSAGE_TEST_H
 
 #include <QObject>
 
-class Transfer_Test : public QObject
+class NetworkMessage_Test : public QObject
 {
 	Q_OBJECT
 private slots:
-	void testNormalTransfer();
-	void testTransactionTransfer();
-	void testPayloadTransfer();
+	void testNormalMessage();
+	void testTransactionMessage();
+	void testPayloadMessage();
 	void testStringArguments();
 };
 #endif

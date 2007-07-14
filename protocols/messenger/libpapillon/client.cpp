@@ -25,7 +25,7 @@
 #include "Papillon/Base/Connector"
 #include "Papillon/Http/SecureStream"
 #include "Papillon/ClientStream"
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/MimeHeader"
 #include "Papillon/ContactList"
 #include "Papillon/UserContact"
@@ -236,7 +236,7 @@ void Client::slotContactStatusMessageChanged(const QString &contactId, const Pap
 	emit contactStatusMessageChanged(contactId, newStatusMessage);
 }
 
-void Client::writeCommand(Transfer *command)
+void Client::writeCommand(NetworkMessage *command)
 {
 	d->notificationConnection->send(command);
 }
