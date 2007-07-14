@@ -5,7 +5,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart@kde.org>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -53,7 +53,7 @@ KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent )
 }
 
 KopeteSystemTray::KopeteSystemTray(QWidget* parent)
-	: KSystemTrayIcon(parent)
+	: KAnimatedSystemTrayIcon(parent)
 	, mMovie(0)
 {
 	kDebug(14010) <<  k_funcinfo << endl;
@@ -100,7 +100,6 @@ KopeteSystemTray::~KopeteSystemTray()
 	kDebug(14010) <<  k_funcinfo << endl;
 //	delete mBlinkTimer;
 	Kopete::UI::Global::setSysTrayWId( 0 );
-	delete mMovie;
 }
 
 void KopeteSystemTray::slotAboutToShowMenu()
@@ -176,21 +175,6 @@ void KopeteSystemTray::startBlink( const QIcon &icon )
 	}
 }
 
-void KopeteSystemTray::startBlink( QMovie *movie )
-{
-	Q_UNUSED(movie);
-#ifdef __GNUC__
-#warning PORT ME
-#endif
-#if 0
-	//kDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
-	kDebug( 14010 ) << "Movie is " << movie->loopCount() << " loops, " << movie->frameCount() << " frames " << endl;
-	movie->setPaused(false);
-	setMovie( movie );
-	mIsBlinking = true;
-#endif
-}
-
 void KopeteSystemTray::startBlink()
 {
 	if ( !mMovie )
@@ -198,7 +182,9 @@ void KopeteSystemTray::startBlink()
 	// KIconLoader already checked isValid()
 	if ( !mMovie) return;
 	
-	startBlink( mMovie );
+	if (!movie())
+		setMovie( mMovie );
+	startMovie();
 }
 
 void KopeteSystemTray::stopBlink()

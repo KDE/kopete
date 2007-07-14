@@ -47,6 +47,7 @@ set(kopete_SRCS
    ${kopetepluginconfig_SRCS}
    main.cpp 
    kopeteapplication.cpp 
+   kanimatedsystemtrayicon.cpp
    systemtray.cpp 
    kopetewindow.cpp 
    kopeteaccountstatusbaricon.cpp 
