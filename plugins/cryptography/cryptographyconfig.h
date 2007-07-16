@@ -34,21 +34,18 @@ public:
 	void save();
 
 	//accessor functions
-	QString privateKeyId() const;
-	bool alsoMyKey() const;
+	QString fingerprint() const;
 	bool askPassPhrase() const;
 	CacheMode cacheMode() const;
 	uint cacheTime() const;
 	
-	void setPrivateKeyId(QString id);
-	void setAlsoMyKey(bool b);
+	void setFingerprint(QString f);
 	void setAskPassPhrase(bool b);
 	void setCacheMode(CacheMode mode);
 	void setCacheTime(uint time);
 
 private:
-	QString mPrivateKeyId;
-	bool mAlsoMyKey;
+	QString mFingerprint;
 	bool mAskPassPhrase;
 	CacheMode mCacheMode;
 	uint mCacheTime;

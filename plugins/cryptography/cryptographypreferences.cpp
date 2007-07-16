@@ -24,7 +24,6 @@
 #include "ui_cryptographyprefsbase.h"
 #include "cryptographypreferences.h"
 #include "cryptographypreferences.moc"
-#include "selectkeydialog.h"
 
 #include "cryptographyconfig.h"
 
@@ -39,14 +38,19 @@ CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QStrin
 	QWidget *w = new QWidget;
 	mPreferencesDialog = new Ui::CryptographyPrefsUI;
 	mPreferencesDialog->setupUi ( w );
+	
+	key = new Kleo::EncryptionKeyRequester (false, Kleo::EncryptionKeyRequester::OpenPGP, this, true, true);
+	key->setDialogMessage (i18n ("Select the secret key you want to use encrypt and or decrypt messages"));
+	key->setDialogCaption (i18n ("Select the secret key you want to use encrypt and or decrypt messages"));
+	
+	l->addWidget (key);
 	l->addWidget ( w );
 	mConfig = new CryptographyConfig;
 
-	connect ( mPreferencesDialog->selectKey, SIGNAL ( pressed() ), this, SLOT ( slotSelectPressed() ) );
 	connect ( mPreferencesDialog->askPassPhrase, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotAskPressed ( bool ) ) );
 
-	connect ( mPreferencesDialog->privateKeyId, SIGNAL ( textChanged ( QString ) ), this, SLOT ( slotModified() ) );
-	connect ( mPreferencesDialog->alsoMyKey, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotModified() ) );
+	connect ( key->dialogButton(), SIGNAL ( clicked() ), this, SLOT ( slotModified() ) );
+	connect ( key->eraseButton(), SIGNAL ( clicked() ), this, SLOT (slotModified() ) );
 	connect ( mPreferencesDialog->askPassPhrase, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotModified() ) );
 	connect ( mPreferencesDialog->onClose, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotModified() ) );
 	connect ( mPreferencesDialog->time, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotModified() ) );
@@ -66,8 +70,7 @@ void CryptographyPreferences::load()
 {
 	mConfig->load();
 
-	mPreferencesDialog->privateKeyId->setText ( mConfig->privateKeyId() );
-	mPreferencesDialog->alsoMyKey->setChecked ( mConfig->alsoMyKey() );
+	key->setFingerprint ( mConfig->fingerprint() );
 	mPreferencesDialog->askPassPhrase->setChecked ( mConfig->askPassPhrase() );
 	mPreferencesDialog->cacheTime->setValue ( mConfig->cacheTime() );
 
@@ -85,8 +88,7 @@ void CryptographyPreferences::load()
 
 void CryptographyPreferences::save()
 {
-	mConfig->setPrivateKeyId ( mPreferencesDialog->privateKeyId->text() );
-	mConfig->setAlsoMyKey ( mPreferencesDialog->alsoMyKey->isChecked() );
+	mConfig->setFingerprint ( key->fingerprint() );
 	mConfig->setAskPassPhrase ( mPreferencesDialog->askPassPhrase->isChecked() );
 	mConfig->setCacheTime ( mPreferencesDialog->cacheTime->value() );
 
@@ -105,21 +107,11 @@ void CryptographyPreferences::save()
 
 void CryptographyPreferences::defaults()
 {
-	mPreferencesDialog->privateKeyId->clear();
-	mPreferencesDialog->alsoMyKey->setChecked(false);
+	key->eraseButton()->click();
 	mPreferencesDialog->askPassPhrase->setChecked(false);
 	mPreferencesDialog->onClose->setChecked(true);
 	mPreferencesDialog->cacheTime->setValue(15);
 	slotModified();
-}
-
-void CryptographyPreferences::slotSelectPressed()
-{
-	QString id;
-	SelectKeyDialog opts ( id, this );
-	opts.exec();
-	if ( opts.result() ==QDialog::Accepted )
-		mPreferencesDialog->privateKeyId->setText ( id );
 }
 
 void CryptographyPreferences::slotAskPressed ( bool b )
