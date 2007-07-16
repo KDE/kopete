@@ -21,7 +21,7 @@
 
 #include "kcmodule.h"
 
-#include <libkleo/keyrequester.h>
+#include <kleo/ui/keyrequester.h>
 
 namespace Ui { class CryptographyPrefsUI; }
 class CryptographyConfig;
