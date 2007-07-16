@@ -150,4 +150,4 @@ QString GpgInterface::checkForUtf8(QString txt)
 	else
 		return QString::fromUtf8(QString::fromUtf8(txt.ascii()).ascii());  // perform Utf8 twice, or some keys display badly
 }
-#include "kgpginterface.moc"
+#include "gpginterface.moc"

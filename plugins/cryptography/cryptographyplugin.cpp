@@ -42,7 +42,7 @@
 #include "cryptographyselectuserkey.h"
 #include "cryptographyguiclient.h"
 
-#include "kgpginterface.h"
+#include "gpginterface.h"
 #include <kactioncollection.h>
 
 //This regexp try to match an HTML text,  but only some authorized tags.
