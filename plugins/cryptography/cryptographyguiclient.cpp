@@ -113,7 +113,8 @@ void CryptographyGUIClient::slotToggled()
 		m_action->setChecked( false );
 	}
 
-	first->setPluginData( CryptographyPlugin::plugin() , "encrypt_messages" ,
+        if (first)
+            first->setPluginData( CryptographyPlugin::plugin() , "encrypt_messages" ,
 						  m_action->isChecked() ? "on" : "off" );
 }
 

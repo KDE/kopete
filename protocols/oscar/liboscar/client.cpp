@@ -69,6 +69,8 @@
 #include "xtrazxtraznotify.h"
 #include "xtrazxawayservice.h"
 #include "closeconnectiontask.h"
+#include "icqtlvinforequesttask.h"
+#include "icqtlvinfoupdatetask.h"
 
 
 namespace
@@ -117,6 +119,7 @@ public:
 	MessageReceiverTask* messageReceiverTask;
 	SSIAuthTask* ssiAuthTask;
 	ICQUserInfoRequestTask* icqInfoTask;
+	ICQTlvInfoRequestTask* icqTlvInfoTask;
 	UserInfoTask* userInfoTask;
 	TypingNotifyTask * typingNotifyTask;
 	SSIModifyTask* ssiModifyTask;
@@ -136,6 +139,7 @@ public:
 		QString message;     // for away-,DND-message etc., and for Xtraz status
 		int xtraz;           // Xtraz status
 		QString description; // Xtraz description
+		bool sent;
 	} status;
 
 	//away messages
@@ -166,6 +170,7 @@ Client::Client( QObject* parent )
     d->currentRedirect = 0;
 	d->status.status = 0x0; // default to online
 	d->status.xtraz = -1; // default to no Xtraz
+	d->status.sent = false;
 	d->ssiManager = new ContactManager( this );
 	d->settings = new Oscar::Settings();
 	d->errorTask = 0L;
@@ -174,6 +179,7 @@ Client::Client( QObject* parent )
 	d->messageReceiverTask = 0L;
 	d->ssiAuthTask = 0L;
 	d->icqInfoTask = 0L;
+	d->icqTlvInfoTask = 0L;
 	d->userInfoTask = 0L;
 	d->stage = ClientPrivate::StageOne;
 	d->typingNotifyTask = 0L;
@@ -244,6 +250,7 @@ void Client::close()
 	{
 		d->status.status = 0x0;
 		d->status.xtraz = -1;
+		d->status.sent = false;
 		d->status.message.clear();
 		d->status.description.clear();
 	}
@@ -261,10 +268,12 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 
 	// remember the values to reply with, when requested
 	bool xtrazChanged = (xtraz > -1 || d->status.xtraz != xtraz);
+	bool statusInfoChanged = ( !d->status.sent || message != d->status.message || description != d->status.description );
 	d->status.status = status;
 	d->status.message = message;
 	d->status.xtraz = xtraz;
 	d->status.description = description;
+	d->status.sent = false;
 
 	if ( d->active )
 	{
@@ -319,6 +328,17 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 			pt->setXtrazStatus( xtraz );
 
 		pt->go( true );
+
+		if ( d->isIcq && statusInfoChanged )
+		{
+			ICQFullInfo info( false );
+			info.statusDescription.set( description.toUtf8() );
+
+			ICQTlvInfoUpdateTask* infoUpdateTask = new ICQTlvInfoUpdateTask( c->rootTask() );
+			infoUpdateTask->setInfo( info );
+			infoUpdateTask->go( true );
+		}
+		d->status.sent = true;
 	}
 }
 
@@ -739,6 +759,7 @@ void Client::initializeStaticTasks()
 	d->messageReceiverTask = new MessageReceiverTask( c->rootTask() );
 	d->ssiAuthTask = new SSIAuthTask( c->rootTask() );
 	d->icqInfoTask = new ICQUserInfoRequestTask( c->rootTask() );
+	d->icqTlvInfoTask = new ICQTlvInfoRequestTask( c->rootTask() );
 	d->userInfoTask = new UserInfoTask( c->rootTask() );
 	d->typingNotifyTask = new TypingNotifyTask( c->rootTask() );
 	d->ssiModifyTask = new SSIModifyTask( c->rootTask(), true );
@@ -764,6 +785,8 @@ void Client::initializeStaticTasks()
 
 	connect( d->icqInfoTask, SIGNAL( receivedInfoFor( const QString&, unsigned int ) ),
 	         this, SLOT( receivedIcqInfo( const QString&, unsigned int ) ) );
+	connect( d->icqTlvInfoTask, SIGNAL(receivedInfoFor(const QString&)),
+	         this, SIGNAL(receivedIcqTlvInfo(const QString&)) );
 
 	connect( d->userInfoTask, SIGNAL( receivedProfile( const QString&, const QString& ) ),
 	         this, SIGNAL( receivedProfile( const QString&, const QString& ) ) );
@@ -897,6 +920,42 @@ void Client::changeContactGroup( const QString& contact, const QString& newGroup
 		delete ssimt;
 }
 
+void Client::requestShortTlvInfo( const QString& contactId, const QByteArray &metaInfoId )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0015 );
+	if ( !c )
+		return;
+
+	d->icqTlvInfoTask->setUser( Oscar::normalize( contactId ) );
+	d->icqTlvInfoTask->setMetaInfoId( metaInfoId );
+	d->icqTlvInfoTask->setType( ICQTlvInfoRequestTask::Short );
+	d->icqTlvInfoTask->go();
+}
+
+void Client::requestMediumTlvInfo( const QString& contactId, const QByteArray &metaInfoId )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0015 );
+	if ( !c )
+		return;
+
+	d->icqTlvInfoTask->setUser( Oscar::normalize( contactId ) );
+	d->icqTlvInfoTask->setMetaInfoId( metaInfoId );
+	d->icqTlvInfoTask->setType( ICQTlvInfoRequestTask::Medium );
+	d->icqTlvInfoTask->go();
+}
+
+void Client::requestLongTlvInfo( const QString& contactId, const QByteArray &metaInfoId )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0015 );
+	if ( !c )
+		return;
+
+	d->icqTlvInfoTask->setUser( Oscar::normalize( contactId ) );
+	d->icqTlvInfoTask->setMetaInfoId( metaInfoId );
+	d->icqTlvInfoTask->setType( ICQTlvInfoRequestTask::Long );
+	d->icqTlvInfoTask->go();
+}
+
 void Client::requestFullInfo( const QString& contactId )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0015 );
@@ -950,6 +1009,11 @@ void Client::changeICQPasswordFinished()
 		d->pass = task->password();
 
 	emit icqPasswordChanged( !task->success() );
+}
+
+ICQFullInfo Client::getFullInfo( const QString& contact )
+{
+	return d->icqTlvInfoTask->fullInfoFor( contact );
 }
 
 ICQGeneralUserInfo Client::getGeneralInfo( const QString& contact )
@@ -1541,6 +1605,7 @@ void Client::deleteStaticTasks()
 	delete d->messageReceiverTask;
 	delete d->ssiAuthTask;
 	delete d->icqInfoTask;
+	delete d->icqTlvInfoTask;
 	delete d->userInfoTask;
 	delete d->typingNotifyTask;
 	delete d->ssiModifyTask;
@@ -1551,6 +1616,7 @@ void Client::deleteStaticTasks()
 	d->messageReceiverTask = 0;
 	d->ssiAuthTask = 0;
 	d->icqInfoTask = 0;
+	d->icqTlvInfoTask = 0;
 	d->userInfoTask = 0;
 	d->typingNotifyTask = 0;
 	d->ssiModifyTask = 0;

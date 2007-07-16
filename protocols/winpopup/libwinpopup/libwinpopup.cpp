@@ -85,11 +85,10 @@ const QStringList WinPopupLib::getHosts(const QString &Group)
  */
 bool WinPopupLib::checkHost(const QString &Name)
 {
-//	kDebug() << "WP checkHost: " << Name << endl;
 	bool ret = false;
 
 	QMap<QString, WorkGroup>::Iterator end = theGroups.end();
-	for(QMap<QString, WorkGroup>::Iterator i = theGroups.begin(); i != end && !ret; i++) {
+	for (QMap<QString, WorkGroup>::Iterator i = theGroups.begin(); i != end && !ret; i++) {
 		if ((*i).Hosts().contains(Name.toUpper())) {
 			ret = true;
 			break;
@@ -161,39 +160,34 @@ void WinPopupLib::startReadProcess(const QString &Host)
 	currentGroup = QString();
 
 	// for Samba 3
-	K3ProcIO *reader = new K3ProcIO;
-	*reader << smbClientBin << "-N" << "-g" << "-L" << Host << "-";
+	readGroupsProcess = new QProcess;
+	QStringList args;
+	args << "-N" << "-g" << "-L" << Host << "-";
 
-	connect(reader, SIGNAL(readReady(K3ProcIO *)), this, SLOT(slotReadProcessReady(K3ProcIO *)));
-	connect(reader, SIGNAL(processExited(K3Process *)), this, SLOT(slotReadProcessExited(K3Process *)));
+	connect(readGroupsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotReadProcessExited(int,  QProcess::ExitStatus)));
 
-	if (!reader->start(K3Process::NotifyOnExit, true)) {
-		// still to come
-		kDebug(14170) << "ReadProcess not started!" << endl;
-	}
+	readGroupsProcess->setProcessChannelMode(QProcess::MergedChannels);
+	readGroupsProcess->start(smbClientBin, args);
 }
 
-void WinPopupLib::slotReadProcessReady(K3ProcIO *r)
+void WinPopupLib::slotReadProcessExited(int i,  QProcess::ExitStatus status)
 {
-	QString tmpLine = QString();
-	QRegExp group("^Workgroup\\|(.*)\\|(.*)$"), host("^Server\\|(.*)\\|(.*)$"),
-			info("^Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]"),
-			error("Connection.*failed");
-
-	while (r->readln(tmpLine) > -1) {
-		if (info.indexIn(tmpLine) != -1) currentGroup = info.cap(1);
-		if (host.indexIn(tmpLine) != -1) currentHosts += host.cap(1);
-		if (group.indexIn(tmpLine) != -1) currentGroups[group.cap(1)] = group.cap(2);
-		if (error.indexIn(tmpLine) != -1) {
-			kDebug(14170) << "Connection to " << currentHost << " failed!" << endl;
-			if (currentHost == QString::fromLatin1("LOCALHOST")) currentHost = QString::fromLatin1("failed"); // to be sure
+	QByteArray outputData = readGroupsProcess->readAll();
+	if (!outputData.isEmpty()) {
+		QString outputString = QString::fromUtf8(outputData.data());
+		QStringList outputList = outputString.split('\n');
+		QRegExp group("Workgroup\\|(.[^\\|]+)\\|(.+)"), host("Server\\|(.[^\\|]+)\\|(.+)"),
+				info("Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]"),
+				error("Connection.*failed");
+		foreach (QString line, outputList) {
+			if (info.indexIn(line) != -1) currentGroup = info.cap(1);
+			if (host.indexIn(line) != -1) currentHosts += host.cap(1);
+			if (group.indexIn(line) != -1) currentGroups[group.cap(1)] = group.cap(2);
 		}
 	}
-}
 
-void WinPopupLib::slotReadProcessExited(K3Process *r)
-{
-	delete r;
+	delete readGroupsProcess;
+	readGroupsProcess = 0;
 
 	// Drop the first cycle - it's only the initial search host,
 	// the next round are the real masters. GF
@@ -240,7 +234,7 @@ void WinPopupLib::slotReadProcessExited(K3Process *r)
 
 	// maybe restart cycle
 	if (todo.count()) {
-		currentHost = todo[0];
+		currentHost = todo.at(0);
 		startReadProcess(currentHost);
 	} else {
 		theGroups = currentGroupsMap;
@@ -327,26 +321,20 @@ void WinPopupLib::readMessages(const KFileItemList &items)
  */
 void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 {
-	K3Process *sender = new K3Process(this);
-	*sender << smbClientBin << "-M" << Destination;
-	*sender << "-N" << "-";
+	QProcess *sender = new QProcess(this);
+	QStringList args;
+	args << "-M" << Destination << "-N" << "-";
 
-	connect(sender, SIGNAL(processExited(K3Process *)), this, SLOT(slotSendProcessExited(K3Process *)));
+	connect(sender, SIGNAL(finished()), this, SLOT(slotSendProcessExited()));
 
-	if (sender->start(K3Process::NotifyOnExit, K3Process::Stdin)) {
-		sender->writeStdin(Body.toLocal8Bit(), Body.toLocal8Bit().length());
-		if (!sender->closeStdin()) {
-			delete sender;
-		}
-	} else {
-		delete sender;
-	}
+	sender->start(smbClientBin);
+	sender->write(Body.toLocal8Bit());
 }
 
-void WinPopupLib::slotSendProcessExited(K3Process *p)
+void WinPopupLib::slotSendProcessExited()
 {
-//	emit sendJobDone(p->pid());
-	delete p;
+//	how long does the process lives then? GF
+//	delete p;
 }
 
 void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq)

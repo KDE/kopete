@@ -21,9 +21,9 @@ class CoreProtocol_Test : public QObject
 {
 	Q_OBJECT
 private slots:
-	void testNormalTransfer();
-	void testFullPayloadTransfer();
-	void testFragmentPayloadTransfer();
+	void testNormalNetworkMessage();
+	void testFullPayloadNetworkMessage();
+	void testFragmentPayloadNetworkMessage();
 };
 
 #endif

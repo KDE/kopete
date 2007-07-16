@@ -133,7 +133,7 @@ bool GSMLibThread::doConnect()
 	{
 		kDebug( 14160 ) << "Connecting to: '"<<m_device<<"'"<<endl;
 
-		gsmlib::Ref<gsmlib::Port> port = new gsmlib::KopeteUnixSerialPort(m_device.latin1(), 9600, gsmlib::DEFAULT_INIT_STRING, false);
+		gsmlib::Ref<gsmlib::Port> port = new gsmlib::KopeteUnixSerialPort(m_device.toLatin1(), 9600, gsmlib::DEFAULT_INIT_STRING, false);
 
 		kDebug( 14160 ) << "Port created"<<endl;
 
@@ -218,7 +218,7 @@ void GSMLibThread::pollForMessages( )
 			// Do we need to fetch it from the ME?
 			if( m.Message.isnull() )
 			{
-				gsmlib::SMSStoreRef store = m_MeTa->getSMSStore(m.StoreName.latin1());
+				gsmlib::SMSStoreRef store = m_MeTa->getSMSStore(m.StoreName.toLatin1());
 				store->setCaching(false);
 
 				m.Message = (*store.getptr())[m.Index].message();
@@ -273,9 +273,9 @@ void GSMLibThread::sendMessage(const Kopete::Message& msg)
 	try
 	{
 		gsmlib::Ref<gsmlib::SMSSubmitMessage> submitSMS = new gsmlib::SMSSubmitMessage();
-		gsmlib::Address destAddr( nr.latin1() );
+		gsmlib::Address destAddr( nr.toLatin1() );
 		submitSMS->setDestinationAddress(destAddr);
-		m_MeTa->sendSMSs(submitSMS, message.latin1(), true);
+		m_MeTa->sendSMSs(submitSMS, message.toLatin1(), true);
 
 		GSMLibEvent* e = new GSMLibEvent( GSMLibEvent::MSG_SENT );
 		e->Message = msg;

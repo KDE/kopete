@@ -82,7 +82,7 @@ void IRCChannelContact::slotChannelListed( const QString &channel, uint members,
 {
 	if (!manager(Kopete::Contact::CannotCreate) &&
 		onlineStatus() == m_protocol->m_ChannelStatusOnline &&
-		channel.lower() == m_nickName.lower())
+		channel.toLower() == m_nickName.toLower())
 	{
 		mTopic = topic;
 		setProperty(m_protocol->propChannelMembers, members);
@@ -152,7 +152,7 @@ void IRCChannelContact::slotAddNicknames()
 
 		IRCContact *user;
 
-		if ( nickToAdd.lower() != account->mySelf()->nickName().lower() )
+		if ( nickToAdd.toLower() != account->mySelf()->nickName().toLower() )
 		{
 			//kDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
 			user = account->contactManager()->findUser(nickToAdd);
@@ -221,7 +221,7 @@ void IRCChannelContact::slotIncomingUserIsAway( const QString &nick, const QStri
 {
 	IRCAccount *account = ircAccount();
 
-	if( nick.lower() == account->mySelf()->nickName().lower() )
+	if( nick.toLower() == account->mySelf()->nickName().toLower() )
 	{
 		IRCUserContact *c = account->mySelf();
 		if (manager(Kopete::Contact::CannotCreate) && manager()->members().contains(c))
@@ -247,7 +247,7 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 {
 	IRCAccount *account = ircAccount();
 
-	if (nickname.lower() == account->mySelf()->nickName().lower())
+	if (nickname.toLower() == account->mySelf()->nickName().toLower())
 	{
 		kDebug() << k_funcinfo << "Me:" << this << endl;
 		kDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
@@ -279,7 +279,7 @@ void IRCChannelContact::userPartedChannel(const QString &nickname,const QString 
 {
 	IRCAccount *account = ircAccount();
 
-	if (nickname.lower() != account->engine()->nickName().lower())
+	if (nickname.toLower() != account->engine()->nickName().toLower())
 	{
 		Kopete::Contact *c = locateUser( nickname );
 		if ( c )
@@ -299,7 +299,7 @@ void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicke
 	if (reason != nick)
 		r.append( i18n(" Reason: %2").arg( reason ) );
 
-	if( nickKicked.lower() != account->engine()->nickName().lower() )
+	if( nickKicked.toLower() != account->engine()->nickName().toLower() )
 	{
 		Kopete::Contact *c = locateUser( nickKicked );
 		if (c)

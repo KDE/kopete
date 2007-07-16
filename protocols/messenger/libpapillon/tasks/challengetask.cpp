@@ -28,7 +28,7 @@
 #include <QtCrypto>
 
 // Papillon includes
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/Connection"
 
 namespace Papillon
@@ -62,15 +62,15 @@ ChallengeTask::~ChallengeTask()
 	delete d;
 }
 
-bool ChallengeTask::take(Transfer *transfer)
+bool ChallengeTask::take(NetworkMessage *networkMessage)
 {
-	if( transfer->command() == QLatin1String("CHL") )
+	if( networkMessage->command() == QLatin1String("CHL") )
 	{
-		QString challenge = transfer->arguments()[0];
+		QString challenge = networkMessage->arguments()[0];
 		
 		QString challengeHash = createChallengeHash(challenge);
 
-		Transfer *challengeResult = new Transfer(Transfer::PayloadTransfer | Transfer::TransactionTransfer);
+		NetworkMessage *challengeResult = new NetworkMessage(NetworkMessage::PayloadMessage | NetworkMessage::TransactionMessage);
 		challengeResult->setCommand( QLatin1String("QRY") );
 		challengeResult->setTransactionId( QString::number( connection()->transactionId() ) );
 		challengeResult->setPayloadData( challengeHash.toUtf8() );
@@ -97,7 +97,7 @@ QString ChallengeTask::createChallengeHash(const QString &challengeString)
 	Q_ASSERT( QCA::isSupported("md5") );
 
   	// Combine the received challenge string with the product key.
- 	QByteArray digest = QCA::arrayToHex( QCA::Hash("md5").hash( (challengeString + challengeProductKey).toUtf8() ) ).toUtf8();
+ 	QByteArray digest = QCA::arrayToHex( QCA::Hash("md5").hash( (challengeString + challengeProductKey).toUtf8() ).toByteArray() ).toUtf8();
 
  	qDebug() << PAPILLON_FUNCINFO << "md5: " << digest;
 

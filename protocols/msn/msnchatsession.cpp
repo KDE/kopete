@@ -17,8 +17,8 @@
 
 #include "msnchatsession.h"
 
-#include <qlabel.h>
-#include <qimage.h>
+#include <QLabel>
+#include <QImage>
 
 #include <qfile.h>
 #include <qiconset.h>
@@ -35,6 +35,8 @@
 #include <kmenu.h>
 #include <ktemporaryfile.h>
 #include <kxmlguiwindow.h>
+#include <kcomponentdata.h>
+#include <kactioncollection.h>
 #include <ktoolbar.h>
 #include <krun.h>
 #include <kicon.h>
@@ -54,7 +56,6 @@
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
-#include <kactioncollection.h>
 #endif
 
 MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user,

@@ -4,7 +4,6 @@ Type=ServiceType
 X-KDE-ServiceType=Kopete/Protocol
 X-KDE-Derived=Kopete/Plugin
 Comment=Kopete Protocol Plugin
-Comment[ar]=توصيلة بروتوكول KDE
 Comment[br]=Lugent komenad Kopete
 Comment[ca]=Connector de protocol per a Kopete
 Comment[cs]=Modul protokolu aplikace Kopete

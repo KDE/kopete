@@ -26,7 +26,7 @@
 #include <KAction>
 #include "popuppublic.h"
 #include "ui_popuppublicbase.h"
-#include "kgpginterface.h"
+#include "gpginterface.h"
 
 #include <cstdio>
 
@@ -289,7 +289,7 @@ void PopupPublic::slotprocread(K3ProcIO *p)
                 keyname=tst;//.section('(',0,0);
         }
 
-	keyname=KgpgInterface::checkForUtf8(keyname);
+	keyname=GpgInterface::checkForUtf8(keyname);
 
                         if ((!dead) && (!tst.isEmpty())) {
 				bool isDefaultKey=false;

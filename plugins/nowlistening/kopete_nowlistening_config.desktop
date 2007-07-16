@@ -10,7 +10,6 @@ X-KDE-ParentApp=kopete_nowlistening
 X-KDE-ParentComponents=kopete_nowlistening
 
 Name=Now Listening
-Name[ar]=الاستماع جار
 Name[ca]=Ara s'escolta
 Name[cs]=Nyní poslouchám
 Name[cy]=Rwan yn Gwrando ar
@@ -57,7 +56,6 @@ Name[x-test]=xxNow Listeningxx
 Name[zh_HK]=現正聆聽
 Name[zh_TW]=正在收聽
 Comment=Tells your buddies what you're listening to
-Comment[ar]=تخبر أصدقائك بما تستمع إليه
 Comment[ca]=Li diu als vostres companys què esteu escoltant
 Comment[cs]=Sdělí vašim kamarádům, co právě posloucháte
 Comment[cy]=Dweud wrth eich cyfeillion be y gwrandwch arnodd

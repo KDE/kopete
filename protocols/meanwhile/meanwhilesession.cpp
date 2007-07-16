@@ -425,7 +425,7 @@ void MeanwhileSession::slotSocketDataAvailable()
     }
 
     while (socket && socket->bytesAvailable() > 0) {
-        bytesRead = socket->readBlock((char *)buf, MEANWHILE_SESSION_BUFSIZ);
+        bytesRead = socket->read((char *)buf, MEANWHILE_SESSION_BUFSIZ);
         if (bytesRead < 0)
             break;
         mwSession_recv(session, buf, (unsigned int)bytesRead);
@@ -595,7 +595,7 @@ int MeanwhileSession::handleSessionIOWrite(const guchar *buffer,
 
     int remaining, retval = 0;
     for (remaining = count; remaining > 0; remaining -= retval) {
-        retval = socket->writeBlock((char *)buffer, count);
+        retval = socket->write((char *)buffer, count);
         if (retval <= 0)
             return 1;
     }

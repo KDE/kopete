@@ -26,7 +26,7 @@ class Connector;
 class Connection;
 class SecureStream;
 class Task;
-class Transfer;
+class NetworkMessage;
 class MimeHeader;
 class StatusMessage;
 class ContactList;
@@ -265,7 +265,7 @@ private:
 	 * Write a command on Notification server. 
 	 * @param command the command.
 	 */
-	void writeCommand(Transfer *command);
+	void writeCommand(NetworkMessage *command);
 
 	/**
 	 * @internal

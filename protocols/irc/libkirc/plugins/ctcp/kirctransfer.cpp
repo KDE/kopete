@@ -284,11 +284,11 @@ void Transfer::readyReadFileIncoming()
 {
 	kDebug(14121) << k_funcinfo << endl;
 
-	m_bufferLength = m_socket->readBlock(m_buffer, sizeof(m_buffer));
+	m_bufferLength = m_socket->read(m_buffer, sizeof(m_buffer));
 
 	if(m_bufferLength > 0)
 	{
-		int written = m_file.writeBlock(m_buffer, m_bufferLength);
+		int written = m_file.write(m_buffer, m_bufferLength);
 		if(m_bufferLength == written)
 		{
 			m_fileSizeCur += written;
@@ -331,10 +331,10 @@ void Transfer::writeFileOutgoing()
 
 	if (m_fileSizeAck < m_fileSize)
 	{
-		m_bufferLength = m_file.readBlock(m_buffer, sizeof(m_buffer));
+		m_bufferLength = m_file.read(m_buffer, sizeof(m_buffer));
 		if (m_bufferLength > 0)
 		{
-			quint32 read = m_socket->writeBlock(m_buffer, m_bufferLength); // should check written == read
+			quint32 read = m_socket->write(m_buffer, m_bufferLength); // should check written == read
 
 //			if(read != m_buffer_length)
 //				buffer is not cleared still

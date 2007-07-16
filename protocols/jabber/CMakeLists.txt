@@ -81,7 +81,6 @@ set(kopete_jabber_PART_SRCS
    jabberbytestream.cpp 
 )
 
-kde4_automoc(${kopete_jabber_PART_SRCS})
 
 kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 

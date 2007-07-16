@@ -24,7 +24,7 @@
 #include <kgenericfactory.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <k3process.h>
+#include <kprocess.h>
 #include <ktemporaryfile.h>
 #include <kcodecs.h>
 #include <kmessagebox.h>
@@ -224,7 +224,7 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 	m_tempFiles.append(tempFile);
 	QString fileName = tempFile->fileName();
 
-	K3Process p;
+	KProcess p;
 			
 	QString argumentRes = "-r %1x%2";
 	QString argumentOut = "-o %1";
@@ -237,7 +237,7 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 	kDebug() << k_funcinfo  << " Rendering " << m_convScript << " " <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << " " << argumentOut.arg(fileName) << endl;
 			
 	// FIXME our sucky sync filter API limitations :-)
-	p.start(K3Process::Block);
+	p.execute();
 	return fileName;
 }
 

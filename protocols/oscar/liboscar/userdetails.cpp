@@ -46,6 +46,8 @@ UserDetails::UserDetails()
 	m_dcLastInfoUpdateTime = 0;
 	m_dcLastExtInfoUpdateTime = 0;
 	m_dcLastExtStatusUpdateTime = 0;
+	m_onlineStatusMsgSupport = false;
+
 	m_userClassSpecified = false;
 	m_memberSinceSpecified = false;
 	m_onlineSinceSpecified = false;
@@ -191,6 +193,12 @@ void UserDetails::fill( Buffer * buffer )
 				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Extended status is " << QString::number( m_extendedStatus, 16 ) << endl;
 #endif
                 break;
+			case 0x0008:
+				m_onlineStatusMsgSupport = (b.getWord() == 0x0A06);
+#ifdef OSCAR_USERINFO_DEBUG
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Online status messages support" << endl;
+#endif
+				break;
 			case 0x000A: //external IP address
 				m_dcOutsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
 				m_dcOutsideSpecified = true;
@@ -484,6 +492,11 @@ bool UserDetails::hasCap( int capNumber ) const
 	return capPresent;
 }
 
+bool UserDetails::onlineStatusMsgSupport() const
+{
+	return m_onlineStatusMsgSupport;
+}
+
 void UserDetails::merge( const UserDetails& ud )
 {
 	m_userId = ud.m_userId;
@@ -556,6 +569,7 @@ void UserDetails::merge( const UserDetails& ud )
 		m_iconSpecified = true;
 	}
 	m_availableMessage = ud.m_availableMessage;
+	m_onlineStatusMsgSupport = ud.m_onlineStatusMsgSupport;
 }
 
 //kate: tab-width 4; indent-mode csands;

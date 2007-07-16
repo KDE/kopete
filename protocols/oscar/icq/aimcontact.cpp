@@ -91,14 +91,16 @@ QList<KAction*> *AIMContact::customContextMenuActions()
 	return actionCollection;
 }
 
-void AIMContact::updateSSIItem()
+void AIMContact::setSSIItem( const OContact& ssiItem )
 {
-	if ( m_ssiItem.type() != 0xFFFF && m_ssiItem.waitingAuth() == false &&
+	if ( ssiItem.type() != 0xFFFF && ssiItem.waitingAuth() == false &&
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::AIM ) );
 	}
+
+	AIMContactBase::setSSIItem( ssiItem );
 }
 
 void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& details )

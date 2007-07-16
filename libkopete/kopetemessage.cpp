@@ -317,15 +317,9 @@ QString Message::escapedBody() const
 		QString html = d->body->toHtml();
 //		all this regex business is to take off the outer HTML document provided by QTextDocument
 //		remove the head
-		QRegExp badStuff ("<head[^<>]*>.*</head[^<>]*>");
+		QRegExp badStuff ("<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>");
 		html = html.remove (badStuff);
-//		remove the <html> and </html> tags
-		badStuff.setPattern ("</?html[^<>]*>");
-		html = html.remove (badStuff);
-//		remove the <body> and </body> tags
-		badStuff.setPattern ("</?body[^<>]*>");
-		html = html.remove (badStuff);
-//		remove newlines that may be present, since they end up being displayed in the chat window. real newlines are represented with <br>, so we know \n's are meaningless (I hope this is true, could anybody confirm? (C Connell))
+//		remove newlines that may be present, since they end up being displayed in the chat window. real newlines are represented with <br>, so we know \n's are meaningless
 		html = html.remove ("\n");
 		d->escapedBody = html;
 		d->escapedBodyDirty = false;
@@ -337,7 +331,6 @@ QString Message::parsedBody() const
 {
 	//kDebug(14000) << k_funcinfo << "messageformat: " << d->format << endl;
 
-	// TODO: Maybe cache parsed body ?
 	return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), Qt::RichText));
 }
 

@@ -22,7 +22,7 @@
 // Papillon includes
 #include "Papillon/Client"
 #include "Papillon/Connection"
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/Global"
 
 namespace Papillon
@@ -62,9 +62,9 @@ void SetPresenceTask::setClientFeatures(Papillon::ClientInfo::Features features)
 	d->features = features;
 }
 
-bool SetPresenceTask::take(Transfer *transfer)
+bool SetPresenceTask::take(NetworkMessage *networkMessage)
 {
-	if( transfer->command() == QLatin1String("CHG") && transfer->transactionId() == d->currentTransactionId )
+	if( networkMessage->command() == QLatin1String("CHG") && networkMessage->transactionId() == d->currentTransactionId )
 	{
 		// End this task
 		setSuccess();
@@ -78,9 +78,9 @@ void SetPresenceTask::onGo()
 {
 	d->currentTransactionId = QString::number( connection()->transactionId() );
 
-	Transfer *setPresenceTransfer = new Transfer(Transfer::TransactionTransfer);
-	setPresenceTransfer->setCommand( QLatin1String("CHG") );
-	setPresenceTransfer->setTransactionId( d->currentTransactionId );
+	NetworkMessage *setPresenceMessage = new NetworkMessage(NetworkMessage::TransactionMessage);
+	setPresenceMessage->setCommand( QLatin1String("CHG") );
+	setPresenceMessage->setTransactionId( d->currentTransactionId );
 	
 	// Set arguments
 	QStringList args;
@@ -90,11 +90,11 @@ void SetPresenceTask::onGo()
 	args << QString::number( static_cast<int>(d->features) );
 	// TODO: Add MSNObject
 
-	setPresenceTransfer->setArguments( args );
+	setPresenceMessage->setArguments( args );
 
 	qDebug() << PAPILLON_FUNCINFO << "Changing our own presence to:" << Papillon::Global::presenceToString(d->presence);
 
-	send(setPresenceTransfer);
+	send(setPresenceMessage);
 }
 
 }

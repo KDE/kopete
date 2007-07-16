@@ -58,6 +58,8 @@ OContact::OContact( const OContact& other )
 	m_alias = other.m_alias;
 	m_waitingAuth = other.m_waitingAuth;
 	m_caps = other.m_caps;
+	m_hash = other.m_hash;
+	m_metaInfoId = other.m_metaInfoId;
 
 	//deepcopy the tlvs
 	m_tlvList = other.m_tlvList;
@@ -156,6 +158,13 @@ void OContact::checkTLVs()
 	TLV infoTLV = findTLV( m_tlvList, 0x00CC );
 	if ( infoTLV )
 		kDebug(14151) << k_funcinfo << "Found 'allow others to see...' options " << infoTLV.data << endl;
+
+	TLV metaInfoIdTLV = findTLV( m_tlvList, 0x015C );
+	if ( metaInfoIdTLV )
+	{
+		m_metaInfoId = metaInfoIdTLV.data;
+		kDebug( 14151 ) << k_funcinfo << "Got an meta info id '" << m_metaInfoId << "' for contact '" << m_name << "'" << endl;
+	}
 }
 
 QString OContact::alias() const
@@ -186,6 +195,11 @@ void OContact::setIconHash( QByteArray hash )
 QByteArray OContact::iconHash( ) const
 {
 	return m_hash;
+}
+
+QByteArray OContact::metaInfoId() const
+{
+	return m_metaInfoId;
 }
 
 QString OContact::toString() const

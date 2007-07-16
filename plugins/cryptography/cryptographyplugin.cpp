@@ -28,6 +28,8 @@
 #include <kdeversion.h>
 #include <kaboutdata.h>
 #include <kicon.h>
+#include <kiconloader.h>
+#include <kmessagebox.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -40,7 +42,7 @@
 #include "cryptographyselectuserkey.h"
 #include "cryptographyguiclient.h"
 
-#include "kgpginterface.h"
+#include "gpginterface.h"
 #include <kactioncollection.h>
 
 //This regexp try to match an HTML text,  but only some authorized tags.
@@ -101,19 +103,12 @@ CryptographyPlugin::~CryptographyPlugin()
 
 void CryptographyPlugin::loadSettings()
 {
-	KConfigGroup config(KGlobal::config(), "Cryptography Plugin");
+	CryptographyConfig c;
 
-	mPrivateKeyID = config.readEntry("PGP_private_key", QString() );
-	mAlsoMyKey = config.readEntry("Also_my_key", false);
-
-	if(config.readEntry("Cache_Till_App_Close", false))
-	  mCachePassPhrase = Keep;
-	if(config.readEntry("Cache_Till_Time", false))
-	  mCachePassPhrase = Time;
-	if(config.readEntry("Cache_Never", false))
-	  mCachePassPhrase = Never;
-	mCacheTime = config.readEntry("Cache_Time", 15);
-	mAskPassPhrase = config.readEntry("No_Passphrase_Handling", false);
+	mPrivateKeyID = c.fingerprint();
+	mAskPassPhrase = c.askPassPhrase();
+	mCachePassPhrase = c.cacheMode();
+	mCacheTime = c.cacheTime();
 }
 
 CryptographyPlugin* CryptographyPlugin::plugin()
@@ -123,16 +118,16 @@ CryptographyPlugin* CryptographyPlugin::plugin()
 
 CryptographyPlugin* CryptographyPlugin::pluginStatic_ = 0L;
 
-QByteArray CryptographyPlugin::cachedPass()
+QString CryptographyPlugin::cachedPass()
 {
 	return pluginStatic_->m_cachedPass;
 }
 
 void CryptographyPlugin::setCachedPass(const QByteArray& p)
 {
-	if(pluginStatic_->mCacheMode==Never)
+	if(pluginStatic_->mCachePassPhrase == CryptographyConfig::Never)
 		return;
-	if(pluginStatic_->mCacheMode==Time)
+	if(pluginStatic_->mCachePassPhrase == CryptographyConfig::Time)
 	{
 		pluginStatic_->m_cachedPass_timer->setSingleShot( false );
 		pluginStatic_->m_cachedPass_timer->start(pluginStatic_->mCacheTime * 60000);
@@ -169,41 +164,25 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 
 	if( msg.direction() != Kopete::Message::Inbound )
 	{
-		QString plainBody;
-		if ( m_cachedMessages.contains( body ) )
+/*		if ( m_cachedMessages.contains( body ) )
 		{
 			plainBody = m_cachedMessages[ body ];
 			m_cachedMessages.remove( body );
 		}
 		else
 		{
-			plainBody = KgpgInterface::KgpgDecryptText( body, mPrivateKeyID );
-		}
+		*/			body = GpgInterface::decryptText( msg.plainBody(), mPrivateKeyID );
+//		}
 
-		if( !plainBody.isEmpty() )
+		if( !body.isEmpty() )
 		{
-			//Check if this is a RTF message before escaping it
-			if( !isHTML.exactMatch( plainBody ) )
-			{
-				plainBody = Qt::escape( plainBody );
-
-				//this is the same algoritm as in Kopete::Message::escapedBody();
-				plainBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
-					.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
-					.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
-			}
-
-			msg.setHtmlBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td class=\"highlight\"><font size=\"-1\"><b>")
-				+ i18n("Outgoing Encrypted Message: ")
-				+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
-				+ plainBody
-				+ QString::fromLatin1(" </td></tr></table>")
-				);
-
+			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ("encrypted", K3Icon::Small) + "\">" );
+			kDebug (14303) << k_funcinfo << "body is " << body << endl;
+			msg.setHtmlBody(body);
 			msg.addClass("cryptography:encrypted");
 		}
 
-		//if there are too messages in cache, clear the cache
+		//if there are too many messages in cache, clear the cache
 		if(m_cachedMessages.count() > 5)
 			m_cachedMessages.clear();
 
@@ -211,31 +190,22 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 	}
 
 
-	//the Message::unescape is there because client like fire replace linebreak by <BR> to work even if the protocol doesn't allow newlines (IRC)
+	//the Message::unescape is there because client like fire replace linebreak with <BR> to work even if the protocol doesn't allow newlines (IRC)
 	// cf http://fire.sourceforge.net/forums/viewtopic.php?t=174  and Bug #96052
-	if(body.contains("<"))
-		body= Kopete::Message::unescape(body);
+	// Note: I believe Message's smart HTML handling makes this irrelvant. We shall see. (C Connell)
+	// TODO remove this code
+//	if(body.contains("<"))
+//		body= Kopete::Message::unescape(body);
 
-	body = KgpgInterface::KgpgDecryptText( body, mPrivateKeyID );
+	body = GpgInterface::decryptText( msg.plainBody(), mPrivateKeyID );
 
 	if( !body.isEmpty() )
 	{
-		//Check if this is a RTF message before escaping it
-		if( !isHTML.exactMatch( body ) )
-		{
-			body = Kopete::Message::escape( body );
-		}
-
-		msg.setHtmlBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td class=\"highlight\"><font size=\"-1\"><b>")
-			+ i18n("Incoming Encrypted Message: ")
-			+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
-			+ body
-			+ QString::fromLatin1(" </td></tr></table>")
-			);
-
+		body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ("encrypted", K3Icon::Small) + "\">" );
+		kDebug (14303) << k_funcinfo << "body is " << body << endl;
+		msg.setHtmlBody(body);
 		msg.addClass("cryptography:encrypted");
 	}
-
 }
 
 void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
@@ -256,43 +226,29 @@ void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
 		}
 		if( tmpKey.isEmpty() )
 		{
-		//	kDebug( 14303 ) << "CryptographyPlugin::slotOutgoingMessage: no key selected for one contact" <<endl;
 			return;
 		}
 		keys.append( tmpKey );
 	}
-	if(mAlsoMyKey) //encrypt also with the self key
-		keys.append( mPrivateKeyID );
-
+	// encrypt to self so we can decrypt during slotIncomingMessage()
+	keys.append( mPrivateKeyID );
+	
 	QString key = keys.join( " " );
 
 	if(key.isEmpty())
 	{
-		kDebug(14303) << "CryptographyPlugin::slotOutgoingMessage: empty key" <<endl;
+		kDebug(14303) << k_funcinfo << "empty key" << endl;
+		KMessageBox::sorry (Kopete::UI::Global::mainWidget(), i18n("You have not chosen an encryption key for one or more recipients") );
 		return;
 	}
 
 	QString original=msg.plainBody();
 
-	/* Code From KGPG */
-
-	//////////////////              encode from editor
 	QString encryptOptions="";
+	encryptOptions+=" --always-trust ";
+	encryptOptions+=" --armor ";
 
-	//if (utrust==true)
-		encryptOptions+=" --always-trust ";
-	//if (arm==true)
-		encryptOptions+=" --armor ";
-
-	/* if (pubcryptography==true)
-	{
-		if (gpgversion<120) encryptOptions+=" --compress-algo 1 --cipher-algo cast5 ";
-		else encryptOptions+=" --cryptography6 ";
-	}*/
-
-// if (selec==NULL) {KMessageBox::sorry(Kopete::UI::Global::mainWidget(),i18n("You have not chosen an encryption key..."));return;}
-
-	QString resultat=KgpgInterface::KgpgEncryptText(original,key,encryptOptions);
+	QString resultat = GpgInterface::encryptText(original,key,encryptOptions);
 	if (!resultat.isEmpty())
 	{
 		msg.setPlainBody(resultat);
@@ -300,7 +256,6 @@ void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
 	}
 	else
 		kDebug(14303) << "CryptographyPlugin::slotOutgoingMessage: empty result" <<endl;
-
 }
 
 void CryptographyPlugin::slotSelectContactKey()
@@ -330,8 +285,6 @@ void CryptographyPlugin::slotNewKMM(Kopete::ChatSession *KMM)
 	connect(this , SIGNAL( destroyed(QObject*)) ,
 			new CryptographyGUIClient(KMM) , SLOT(deleteLater()));
 }
-
-
 
 #include "cryptographyplugin.moc"
 

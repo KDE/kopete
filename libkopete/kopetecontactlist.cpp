@@ -1,7 +1,7 @@
 /*
     kopetecontactlist.cpp - Kopete's Contact List backend
 
-    Copyright (c) 2005      by Michael Larouche       <larouche@kde.org>
+    Copyright (c) 2005-2007 by Michael Larouche       <larouche@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -20,28 +20,31 @@
 
 #include "kopetecontactlist.h"
 
-#include <qdir.h>
-#include <qregexp.h>
-#include <qtimer.h>
-//Added by qt3to4:
-#include <QTextStream>
+// Qt includes
+#include <QtCore/QDir>
+#include <QtCore/QRegExp>
+#include <QtCore/QTimer>
+#include <QtCore/QTextStream>
 
-#include <kapplication.h>
+// KDE includes
 #include <kabc/stdaddressbook.h>
+#include <kapplication.h>
 #include <kdebug.h>
+#include <kglobal.h>
 #include <ksavefile.h>
 #include <kstandarddirs.h>
-#include <kglobal.h>
-#include "kopetemetacontact.h"
-#include "kopetecontact.h"
-#include "kopetechatsession.h"
-//#include "kopetemessage.h"
-#include "kopetepluginmanager.h"
-#include "kopeteprotocol.h"
+
+// Kopete includes
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
+#include "kopetechatsession.h"
+#include "kopetecontact.h"
+#include "kopetedeletecontacttask.h"
 #include "kopetegroup.h"
+#include "kopetemetacontact.h"
 #include "kopetepicture.h"
+#include "kopetepluginmanager.h"
+#include "kopeteprotocol.h"
 #include "xmlcontactstorage.h"
 
 namespace  Kopete
@@ -252,11 +255,12 @@ void ContactList::removeMetaContact(MetaContact *m)
 	}
 
 	//removes subcontact from server here and now.
-	QList<Contact *> cts = m->contacts();
-	QListIterator<Contact *> it(cts);
-	while( it.hasNext() )
+	Kopete::Contact *contactToDelete = 0;
+	foreach( contactToDelete, m->contacts() )
 	{
-		it.next()->deleteContact();
+		// TODO: Check for good execution of task
+		Kopete::DeleteContactTask *deleteTask = new Kopete::DeleteContactTask(contactToDelete);
+		deleteTask->start();
 	}
 
 	d->contacts.removeAll( m );

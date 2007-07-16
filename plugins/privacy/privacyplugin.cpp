@@ -186,6 +186,9 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 	{
 		foreach(QString word, PrivacyConfig::dropIfAny().split(',') )
 		{
+			if( word.isEmpty() )
+				continue;
+
 			if( msg.plainBody().contains( word ) )
 			{
 				kDebug(14313) << k_funcinfo << "Message dropped because it contained: " << word << endl;
@@ -201,6 +204,9 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 		bool drop = true;
 		foreach(QString word, PrivacyConfig::dropIfAll().split(',') )
 		{
+			if( word.isEmpty() )
+				continue;
+
 			if( !msg.plainBody().contains( word ) )
 			{
 				drop = false;

@@ -25,7 +25,7 @@
 #include <QtCore/QStringList>
 
 // Papillon includes
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 
 namespace Papillon
 {
@@ -34,18 +34,18 @@ class MessengerCoreProtocol::Private
 {
 public:
 	Private()
-		: inTransfer(0), state(MessengerCoreProtocol::NoData)
+		: inNetworkMessage(0), state(MessengerCoreProtocol::NoData)
 	{}
 	
 	~Private()
 	{
-		delete inTransfer;
+		delete inNetworkMessage;
 	}
 	
 	// buffer containing unprocessed bytes we received
 	QByteArray in;
 	// the transfer that is being received
-	Transfer *inTransfer;
+	NetworkMessage *inNetworkMessage;
 	// represents the protocol's overall state
 	int state;
 	// Represend the length of payload data to read.
@@ -71,11 +71,11 @@ void MessengerCoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 	// Append incoming bytes to incoming buffer
 	d->in += incomingBytes;
 	
-	// convert every event in the chunk to a Transfer, signalling it back to the ClientStream
+	// convert every event in the chunk to a NetworkMessage, signalling it back to the ClientStream
 	int parsedBytes = 0;
 	int transferCount = 0;
 	// while there is data left in the input buffer, and we are able to parse something out of it
-	while ( d->in.size() && ( parsedBytes = rawToTransfer( d->in ) ) )
+	while ( d->in.size() && ( parsedBytes = rawToNetworkMessage( d->in ) ) )
 	{
 		transferCount++;
 		int size =  d->in.size();
@@ -91,12 +91,12 @@ void MessengerCoreProtocol::addIncomingData(const QByteArray &incomingBytes )
 	}
 }
 
-Transfer *MessengerCoreProtocol::incomingTransfer()
+NetworkMessage *MessengerCoreProtocol::incomingNetworkMessage()
 {
 	if ( d->state == Available )
 	{
 		d->state = NoData;
-		return d->inTransfer;
+		return d->inNetworkMessage;
 	}
 	else
 	{
@@ -104,14 +104,14 @@ Transfer *MessengerCoreProtocol::incomingTransfer()
 	}
 }
 
-void MessengerCoreProtocol::outgoingTransfer(Transfer *outgoing)
+void MessengerCoreProtocol::outgoingNetworkMessage(NetworkMessage *outgoing)
 {
 	emit outgoingData( outgoing->toRawCommand() );
 	// Clear the transfer.
 	delete outgoing;
 }
 
-int MessengerCoreProtocol::rawToTransfer(const QByteArray &raw)
+int MessengerCoreProtocol::rawToNetworkMessage(const QByteArray &raw)
 {
 	uint bytesParsed = 0;
 
@@ -138,7 +138,7 @@ int MessengerCoreProtocol::rawToTransfer(const QByteArray &raw)
 			QString command;
 			QStringList arguments;
 			
-			Transfer::TransferType transferType;
+			NetworkMessage::NetworkMessageType transferType;
 			bool dummy, isNumber;
 			int trId = 0, payloadLength = 0;
 			
@@ -147,7 +147,7 @@ int MessengerCoreProtocol::rawToTransfer(const QByteArray &raw)
 			// Determine the transfer type.
 			if(isPayloadCommand(command))
 			{
-				transferType |= Transfer::PayloadTransfer;
+				transferType |= NetworkMessage::PayloadMessage;
 				// Remove the last parameter from the command list and set the payload length.
 				// So it will not be in the arguments.
 				payloadLength = commandList.takeLast().toUInt(&dummy);
@@ -160,7 +160,7 @@ int MessengerCoreProtocol::rawToTransfer(const QByteArray &raw)
 			{
 				trId = commandList[1].toUInt(&isNumber);
 				if(isNumber)
-					transferType |= Transfer::TransactionTransfer;
+					transferType |= NetworkMessage::TransactionMessage;
 			}
 			
 			// Begin at the third command arguments if we have a transaction ID.
@@ -171,14 +171,14 @@ int MessengerCoreProtocol::rawToTransfer(const QByteArray &raw)
 				arguments << commandList[i];
 			}
 			
-			Transfer *receivedTransfer = new Transfer(transferType);
-			receivedTransfer->setCommand(command);
-			receivedTransfer->setArguments(arguments);
+			NetworkMessage *receivedNetworkMessage = new NetworkMessage(transferType);
+			receivedNetworkMessage->setCommand(command);
+			receivedNetworkMessage->setArguments(arguments);
 			
 			if(isNumber)
-				receivedTransfer->setTransactionId( QString::number(trId) );
+				receivedNetworkMessage->setTransactionId( QString::number(trId) );
 			
-			d->inTransfer = receivedTransfer;
+			d->inNetworkMessage = receivedNetworkMessage;
 			
 			if(payloadLength > 0)
 			{
@@ -207,11 +207,11 @@ int MessengerCoreProtocol::rawToTransfer(const QByteArray &raw)
 			// Retrieve the full payload data from raw data (do a shared copy)
 			QByteArray payloadData = raw.left(d->payloadLength);
 			
-			d->inTransfer->setPayloadData(payloadData);
+			d->inNetworkMessage->setPayloadData(payloadData);
 			qDebug() << PAPILLON_FUNCINFO << "Byte data length:" << payloadData.size();
 // 			qDebug() << PAPILLON_FUNCINFO << "Payload data read(from CoreProtocol):" << raw;
 			// Show full payload command to output
-			qDebug() << PAPILLON_FUNCINFO << d->inTransfer->toRawCommand();
+			qDebug() << PAPILLON_FUNCINFO << d->inNetworkMessage->toRawCommand();
 			d->state = Available;
 			
 			bytesParsed = payloadData.size();

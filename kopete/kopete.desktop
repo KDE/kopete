@@ -1,12 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
-MimeType=application/x-kopete-emoticons;application/x-icq
+MimeType=application/x-kopete-emoticons;application/x-icq;
 Name=Kopete
 Name[ne]=कोपेट
 Name[pa]=ਕੋਪੀਟੀ
 Name[x-test]=xxKopetexx
 GenericName=Instant Messenger
-GenericName[ar]=المرسال الفوري
 GenericName[br]=Posteler a-benn-kaer
 GenericName[ca]=Missatger a l'instant
 GenericName[cs]=Komunikátor
@@ -54,7 +53,6 @@ GenericName[x-test]=xxInstant Messengerxx
 GenericName[zh_HK]=即時通訊程式
 GenericName[zh_TW]=即時訊息客戶端程式
 Comment=Instant Messenger
-Comment[ar]=المرسال الفوري
 Comment[br]=Posteler a-benn-kaer
 Comment[ca]=Missatger a l'instant
 Comment[cs]=Komunikátor

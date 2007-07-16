@@ -69,7 +69,7 @@ ${papillon_http_SRCS}
 ${papillon_tasks_SRCS}
 task.cpp
 messengercoreprotocol.cpp
-transfer.cpp
+networkmessage.cpp
 papillonclientstream.cpp
 qtconnector.cpp
 qtbytestream.cpp
@@ -82,6 +82,10 @@ papillonglobal.cpp
 papillonstatusmessage.cpp
 usercontact.cpp
 )
+
+foreach(_src_FILE ${libpapillon_SRCS})
+   set_source_files_properties(${_src_FILE} PROPERTIES SKIP_AUTOMOC TRUE)  # don't run automoc on this file
+endforeach(_src_FILE)
 
 kde4_add_library(papillon_kopete SHARED ${libpapillon_SRCS})
 

@@ -20,7 +20,6 @@ kde4_add_ui_files( kopeteidentity_SRCS
     identitystatusbase.ui
 )
 
-kde4_automoc(${kopeteidentity_SRCS})
 kde4_add_library( kopeteidentity SHARED ${kopeteidentity_SRCS} )
 target_link_libraries( kopeteidentity kopete ${KDE4_KDEUI_LIBS} )
 set_target_properties( kopeteidentity PROPERTIES VERSION 1.0.0 SOVERSION 1 )

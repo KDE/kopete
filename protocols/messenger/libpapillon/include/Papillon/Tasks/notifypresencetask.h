@@ -46,11 +46,11 @@ public:
 	~NotifyPresenceTask();
 
 	/**
-	 * @brief Check the given Transfer for presence change.
-	 * @param transfer Given Transfer
+	 * @brief Check the given NetworkMessage for presence change.
+	 * @param networkMessage Given NetworkMessage
 	 * @return true if this task need to proceed this transfer.
 	 */
-	virtual bool take(Papillon::Transfer *transfer);
+	virtual bool take(Papillon::NetworkMessage *networkMessage);
 
 signals:
 	// TODO: Maybe add nickname, features and MsnObject to this signal
@@ -64,10 +64,10 @@ signals:
 protected:
 	/**
 	 * @brief Check if the transfer is a presence change command.
-	 * @param transfer Transfer to evaluate
+	 * @param networkMessage NetworkMessage to evaluate
 	 * @return true if it's a presence change command.
 	 */
-	virtual bool forMe(Papillon::Transfer *transfer) const;
+	virtual bool forMe(Papillon::NetworkMessage *networkMessage) const;
 	
 private:
 	class Private;

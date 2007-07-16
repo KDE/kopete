@@ -22,7 +22,7 @@ namespace Papillon
 {
 
 class ClientStream;
-class Transfer;
+class NetworkMessage;
 class Task;
 class Client;
 /**
@@ -102,20 +102,20 @@ public slots:
 	/**
 	 * Send a transfer to the current Messenger service.
 	 */
-	void send(Transfer *transfer);
+	void send(NetworkMessage *transfer);
 
 private slots:
 	/**
 	 * @internal
-	 * Called when the stream has received a new Papillon::Transfer.
+	 * Called when the stream has received a new Papillon::NetworkMessage.
 	 */
-	void transferReceived();
+	void networkMessageReceived();
 	/**
 	 * @internal
 	 * Dispatch a transfer through the task.
 	 * After, the transfer gets deleted.
 	 */
-	void dispatchTransfer(Transfer *currentTransfer);
+	void dispatchNetworkMessage(NetworkMessage *currentNetworkMessage);
 
 	/**
 	 * @internal

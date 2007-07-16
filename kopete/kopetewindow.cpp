@@ -196,6 +196,8 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KXmlGuiWindow( parent, Qt::WType_TopLevel ), d(new Private)
 {
 	setObjectName( name );
+	setAttribute (Qt::WA_DeleteOnClose, false);
+	setAttribute (Qt::WA_QuitOnClose, false);
 	// Applications should ensure that their StatusBar exists before calling createGUI()
 	// so that the StatusBar is always correctly positioned when KDE is configured to use
 	// a MacOS-style MenuBar.
@@ -416,7 +418,7 @@ void KopeteWindow::initActions()
 	connect( globalSetAway, SIGNAL( triggered(bool) ), this, SLOT( slotToggleAway() ) );
 	globalSetAway->setGlobalShortcut( KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W) );
 
-	KGlobalAccel::self()->readSettings();
+	//KGlobalAccel::self()->readSettings();
 }
 
 void KopeteWindow::slotShowHide()

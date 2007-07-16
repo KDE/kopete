@@ -103,14 +103,16 @@ int AIMContact::warningLevel() const
 	return m_warningLevel;
 }
 
-void AIMContact::updateSSIItem()
+void AIMContact::setSSIItem( const OContact& ssiItem )
 {
-	if ( m_ssiItem.type() != 0xFFFF && m_ssiItem.waitingAuth() == false &&
+	if ( ssiItem.type() != 0xFFFF && ssiItem.waitingAuth() == false &&
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 	}
+
+	AIMContactBase::setSSIItem( ssiItem );
 }
 
 void AIMContact::slotUserInfo()

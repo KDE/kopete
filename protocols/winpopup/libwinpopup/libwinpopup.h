@@ -19,11 +19,12 @@
 #define LIBWINPOPUP_H
 
 //QT includes
-#include <qobject.h>
-#include <qmap.h>
-#include <qstringlist.h>
-#include <qtimer.h>
-#include <qdatetime.h>
+#include <QObject>
+#include <QMap>
+#include <QStringList>
+#include <QTimer>
+#include <QDateTime>
+#include <QProcess>
 
 // KDE Includes
 #include <k3procio.h>
@@ -68,6 +69,7 @@ private:
 	QString smbClientBin;
 	int groupCheckFreq;
 	KDirLister *dirLister;
+	QProcess *readGroupsProcess;
 
 	void readMessages(const KFileItemList &items);
 	bool checkMessageDir();
@@ -75,9 +77,8 @@ private:
 private slots:
 	void slotUpdateGroupData();
 	void startReadProcess(const QString &Host);
-	void slotReadProcessReady(K3ProcIO *r);
-	void slotReadProcessExited(K3Process *r);
-	void slotSendProcessExited(K3Process *p);
+	void slotReadProcessExited(int, QProcess::ExitStatus);
+	void slotSendProcessExited();
 	void slotStartDirLister();
 	void slotListCompleted();
 	void slotNewMessages(const KFileItemList &items);

@@ -21,31 +21,37 @@
 
 #include "kcmodule.h"
 
+#include <kleo/ui/keyrequester.h>
+
 namespace Ui { class CryptographyPrefsUI; }
+class CryptographyConfig;
 
 /**
  * Preference widget for the Cryptography plugin
  * @author Olivier Goffart
+ * @author Charles Connell
  */
 
-//class CryptographyConfig;
+class CryptographyPreferences : public KCModule
+{
 
-class CryptographyPreferences : public KCModule  {
+		Q_OBJECT
 
-   Q_OBJECT
+	public:
+		explicit CryptographyPreferences ( QWidget *parent = 0, const QStringList &args = QStringList() );
+		virtual ~CryptographyPreferences();
+		virtual void save();
+		virtual void load();
+		virtual void defaults();
 
-public:
-	explicit CryptographyPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
-    virtual ~CryptographyPreferences();
-    virtual void save();
-    virtual void load();
-    virtual void defaults();
+	private:
+		Kleo::EncryptionKeyRequester * key;
+		Ui::CryptographyPrefsUI *mPreferencesDialog;
+		CryptographyConfig *mConfig;
 
-private:
-	Ui::CryptographyPrefsUI *preferencesDialog;
-
-private slots:
-	void slotSelectPressed();
+	private slots:
+		void slotModified();
+		void slotAskPressed (bool b);
 };
 
 #endif

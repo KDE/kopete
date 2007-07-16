@@ -51,14 +51,13 @@ set(kopete_SRCS
    ${kopetepluginconfig_SRCS}
    main.cpp 
    kopeteapplication.cpp 
+   kanimatedsystemtrayicon.cpp
    systemtray.cpp 
    kopetewindow.cpp 
    kopeteidentitystatusbaricon.cpp 
 #   kopeteiface.cpp 
 #   kimifaceimpl.cpp 
    )
-
-kde4_automoc(${kopete_SRCS})
 
 kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui )
 

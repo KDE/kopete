@@ -38,8 +38,7 @@
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
-#include "kopeteidentitymanager.h"
-#include "kopetemimesourcefactory.h"
+#include "kopetefileengine.h"
 #include "kopetemimetypehandler.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
@@ -47,6 +46,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetewindow.h"
 #include "kopeteviewmanager.h"
+#include "kopeteidentitymanager.h"
 
 KopeteApplication::KopeteApplication()
 : KUniqueApplication( true, true )
@@ -85,8 +85,7 @@ KopeteApplication::KopeteApplication()
 	 */
 	QTimer::singleShot( 0, this, SLOT( slotLoadPlugins() ) );
 
-	m_mimeFactory = new Kopete::MimeSourceFactory;
-	Q3MimeSourceFactory::addFactory( m_mimeFactory );
+	m_fileEngineHandler = new Kopete::FileEngineHandler();
 
 	//Create the emoticon installer
 	m_emoticonHandler = new Kopete::EmoticonMimeTypeHandler;
@@ -96,9 +95,9 @@ KopeteApplication::~KopeteApplication()
 {
 	kDebug( 14000 ) << k_funcinfo << endl;
 
-	delete m_mainWindow;
+	delete m_fileEngineHandler;
 	delete m_emoticonHandler;
-	delete m_mimeFactory;
+	delete m_mainWindow;
 	//kDebug( 14000 ) << k_funcinfo << "Done" << endl;
 }
 

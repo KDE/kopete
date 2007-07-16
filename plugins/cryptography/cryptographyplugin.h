@@ -22,6 +22,7 @@
 #include "kopeteplugin.h"
 //Added by qt3to4:
 #include <QByteArray>
+#include "cryptographyconfig.h"
 
 class QStringList;
 class QString;
@@ -43,15 +44,8 @@ class CryptographyPlugin : public Kopete::Plugin
 	Q_OBJECT
 
 public:
-	enum CacheMode
-	{
-		Keep	= 0,
-		Time	= 1,
-		Never	= 2
-	};
-
 	static CryptographyPlugin  *plugin();
-	static QByteArray cachedPass();
+	static QString cachedPass();
 	static void setCachedPass(const QByteArray &pass);
 	static bool passphraseHandling();
 	static const QRegExp isHTML;
@@ -71,11 +65,11 @@ private slots:
 	void loadSettings();
 	
 	void slotNewKMM(Kopete::ChatSession *);
-
+	
 private:
 	static CryptographyPlugin* pluginStatic_;
 	Kopete::SimpleMessageHandlerFactory *m_inboundHandler;
-	QByteArray m_cachedPass;
+	QString m_cachedPass;
 	QTimer *m_cachedPass_timer;
 
 	//cache messages for showing
@@ -83,11 +77,9 @@ private:
 
 	//Settings
 	QString mPrivateKeyID;
-	int mCacheMode;
 	unsigned int mCacheTime;
-	bool mAlsoMyKey;
 	bool mAskPassPhrase;
-	CacheMode mCachePassPhrase;
+	CryptographyConfig::CacheMode mCachePassPhrase;
 };
 
 #endif

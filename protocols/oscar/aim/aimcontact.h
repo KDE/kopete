@@ -39,8 +39,9 @@ public:
 
 	int warningLevel() const;
 
+	virtual void setSSIItem( const OContact& ssiItem );
+
 public slots:
-	void updateSSIItem();
 	void slotUserInfo();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
 	void userOnline( const QString& userId );

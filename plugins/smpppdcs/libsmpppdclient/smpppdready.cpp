@@ -89,7 +89,7 @@ bool Ready::statusInterface(Client * client, const QString& ifcfg) {
 	
 	QString cmd = "list-status " + ifcfg;
 	
-	write(client, cmd.latin1());
+	write(client, cmd.toLatin1());
 	socket(client)->waitForMore(0);
 	
 	QStringList stream = read(client);

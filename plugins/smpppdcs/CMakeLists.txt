@@ -16,8 +16,6 @@ set(kopete_smpppdcs_PART_SRCS
    detectornetstat.cpp 
    detectornetworkstatus.cpp )
 
-kde4_automoc(${kopete_smpppdcs_PART_SRCS})
-
 message(FATAL_ERROR "DCOP stuff was removed in kde4, convert it to dbus please")
 
 #kde4_add_dcop_skels(kopete_smpppdcs_PART_SRCS smpppdcsiface.h )
@@ -42,7 +40,6 @@ set(kcm_kopete_smpppdcs_PART_SRCS
    smpppdcsprefsimpl.cpp 
    smpppdlocationwidget.cpp )
 
-kde4_automoc(${kcm_kopete_smpppdcs_PART_SRCS})
 
 kde4_add_ui_files(kcm_kopete_smpppdcs_PART_SRCS smpppdcsprefs.ui smpppdlocationui.ui )
 
@@ -51,7 +48,7 @@ kde4_add_kcfg_files(kcm_kopete_smpppdcs_PART_SRCS smpppdcsconfig.kcfgc )
 kde4_add_plugin(kcm_kopete_smpppdcs ${kcm_kopete_smpppdcs_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_smpppdcs  ${KDE4_KDECORE_LIBS} smpppdclient kopete ${KDE4_KUTILS_LIBS} )
+target_link_libraries(kcm_kopete_smpppdcs  smpppdclient kopete ${KDE4_KUTILS_LIBS} )
 
 install(TARGETS kcm_kopete_smpppdcs  DESTINATION ${PLUGIN_INSTALL_DIR})
 

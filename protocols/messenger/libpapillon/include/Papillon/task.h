@@ -29,18 +29,18 @@ class QString;
 namespace Papillon
 {
 
-class Transfer;
+class NetworkMessage;
 class Connection;
 /**
  * @class Task task.h <Papillon/Task>
  * @brief Task is the base class for all Task accros Papillon.
  *
  * Derived class must implement these following methods: <br>
- * take() - Used to listen and proceed incoming Transfer. <br>
+ * take() - Used to listen and proceed incoming NetworkMessage. <br>
  * onGo() - Called by go(), start the task. <br>
  * 
  * Devired class may implement these following methods: <br>
- * forMe() - Used to check if the incoming Transfer is for us. <br>
+ * forMe() - Used to check if the incoming NetworkMessage is for us. <br>
  * onDisconnect() - If you need to do something special when a Connection disconnect. <br>
  *
  * @author Michaël Larouche <larouche@kde.org>
@@ -102,17 +102,17 @@ public:
 
 	/**
 	 * Get the current transfer if any.
-	 * Need to be set with setTransfer().
-	 * @return the current Transfer or 0 if this Task do not store any Transfer.
+	 * Need to be set with setNetworkMessage().
+	 * @return the current NetworkMessage or 0 if this Task do not store any NetworkMessage.
 	 * TODO: Remove ?
 	 */
-	Transfer *transfer() const;
+	NetworkMessage *networkMessage() const;
 	/**
 	 * Direct setter for Tasks which don't have any fields
-	 * @param transfer Transfer to set.
+	 * @param transfer NetworkMessage to set.
 	 * TODO: Remove ?
 	 */
-	void setTransfer(Transfer *transfer);
+	void setNetworkMessage(NetworkMessage *transfer);
 
 	/**
 	 * Call this the resulting slot of finished() signal.
@@ -138,10 +138,10 @@ public:
 	void go(GoParameters args = GoNothing);
 
 	/**
-	 * Allows a task to examine an incoming Transfer and decide whether to 'take' it
+	 * Allows a task to examine an incoming NetworkMessage and decide whether to 'take' it
 	 * for further processing.
 	 */
-	virtual bool take(Transfer *transfer);
+	virtual bool take(NetworkMessage *transfer);
 	/**
 	 * Delete safetely this Task.
 	 */
@@ -169,9 +169,9 @@ protected:
 	virtual void onDisconnect();
 
 	/**
-	 * Helper method for derived Task to send a Transfer through the Connection.
+	 * Helper method for derived Task to send a NetworkMessage through the Connection.
 	 */
-	void send(Transfer *request);
+	void send(NetworkMessage *request);
 	/**
 	 * Helper method to terminate this Task successfully.
 	 * @param code status code.
@@ -192,9 +192,9 @@ protected:
 
 	/**
 	 * Used in take() to check if the offered transfer is for this Task
-	 * @return true if this Task should take the Transfer.  Default impl always returns false.
+	 * @return true if this Task should take the NetworkMessage.  Default impl always returns false.
 	 */
-	virtual bool forMe(Transfer *transfer) const;
+	virtual bool forMe(NetworkMessage *transfer) const;
 
 private slots:
 	/**

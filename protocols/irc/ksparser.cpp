@@ -193,7 +193,7 @@ QString KSParser::parse(QString message)
 			break;
 		default:
 			if (car < QChar(' ')) // search for control characters
-				ret += QString::fromLatin1("&lt;%1&gt;").arg(car, 2, 16).upper();
+				ret += QString::fromLatin1("&lt;%1&gt;").arg(car, 2, 16).toUpper();
 			else
 				ret += car;
 		}

@@ -17,51 +17,48 @@
 
 #include "kbytearrayescaper.h"
 
-KByteArrayEscaper::Private
+class KByteArrayEscaper::Private
 {
 public:
-	Private()
-		: escape(0)
-	{
-		reset();
-	}
-
-	void reset();
-	void setEscape(char escape, char escaped);
-
-	char escape;
-	char escaped[256];
+	char escape_char;
+	char escape[256];
 	char reverse[256];
 };
 
-void KByteArrayEscape::Private::reset(char escape = '\0')
-{
-	this->escape = escape;
-	for (int i=0; i<256; ++i)
-	{
-	      escaped[i] = reverse[i] = (char)i;
-	}
-}
-
-void KByteArrayEscape::Private::setEscape(char escape, char escaped)
-{
-	this->escaped[escape] = escaped;
-	this->reverse[escaped] = escape;
-}
-
-KByteArrayQuoter::KByteArrayQuoter()
+KByteArrayEscaper::KByteArrayEscaper(char escape_char, const KByteArrayEscaper::EscapeList &escapes)
 	: d(new KByteArrayEscaper::Private)
 {
+	reset(escape_char);
+	addEscape(escapes);
 }
-#if 0
-KByteArrayEscaper::KByteArrayEscaper(char escaped)
-	: d(new KByteArrayEscaper::Private)
-{
-}
-#endif
+
 KByteArrayEscaper::~KByteArrayEscaper()
 {
 	delete d;
+}
+
+void KByteArrayEscaper::reset(char escape_char)
+{
+	d->escape_char = escape_char;
+	for (int i=0; i<256; ++i)
+		removeEscape((char)i);
+}
+
+void KByteArrayEscaper::addEscape(char escape, char replacement)
+{
+	d->escape[escape] = replacement;
+	d->reverse[replacement] = escape;
+}
+
+void KByteArrayEscaper::addEscape(const KByteArrayEscaper::EscapeList &escapeds)
+{
+	Q_FOREACH(const KByteArrayEscaper::Escape &escaped, escapeds)
+		addEscape(escaped.first, escaped.second);
+}
+
+void KByteArrayEscaper::removeEscape(char escape)
+{
+	addEscape(escape, escape);
 }
 
 QByteArray KByteArrayEscaper::escape(const QByteArray &buffer) const
@@ -85,6 +82,14 @@ QByteArray KByteArrayEscaper::escape(const QByteArray &buffer) const
 	}
 	return quoted;
 #endif
+}
+
+QList<QByteArray> KByteArrayEscaper::escape(const QList<QByteArray> &buffers) const
+{
+	QList<QByteArray> ret;
+	Q_FOREACH(const QByteArray &buffer, buffers)
+		ret.append(escape(buffer));
+	return ret;
 }
 
 QByteArray KByteArrayEscaper::unescape(const QByteArray &buffer) const
@@ -112,4 +117,12 @@ QByteArray KByteArrayEscaper::unescape(const QByteArray &buffer) const
 
 	return quoted;
 #endif
+}
+
+QList<QByteArray> KByteArrayEscaper::unescape(const QList<QByteArray> &buffers) const
+{
+	QList<QByteArray> ret;
+	Q_FOREACH(const QByteArray &buffer, buffers)
+		ret.append(unescape(buffer));
+	return ret;
 }

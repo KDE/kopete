@@ -23,7 +23,7 @@
 #include <QtDebug>
 
 // Papillon includes
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/Base/SafeDelete"
 #include "Papillon/Connection"
 
@@ -41,7 +41,7 @@ public:
 	Connection *connection;
 	bool insignificant, deleteme, autoDelete;
 	bool done;
-	Transfer *transfer;
+	NetworkMessage *networkMessage;
 };
 
 Task::Task(Task *parent)
@@ -73,7 +73,7 @@ void Task::init()
 	d->deleteme = false;
 	d->autoDelete = false;
 	d->done = false;
-	d->transfer = 0;
+	d->networkMessage = 0;
 }
 
 Task *Task::parent() const
@@ -86,14 +86,14 @@ Connection *Task::connection() const
 	return d->connection;
 }
 
-Transfer *Task::transfer() const
+NetworkMessage *Task::networkMessage() const
 {
-	return d->transfer;
+	return d->networkMessage;
 }
 
-void Task::setTransfer(Transfer *transfer)
+void Task::setNetworkMessage(NetworkMessage *networkMessage)
 {
-	d->transfer = transfer;
+	d->networkMessage = networkMessage;
 }
 
 bool Task::success() const
@@ -118,14 +118,14 @@ void Task::go(GoParameters args)
 	onGo();
 }
 
-bool Task::take(Transfer *transfer)
+bool Task::take(NetworkMessage *networkMessage)
 {
 	const QList<Task*> taskList = findChildren<Task*>();
 
 	// pass along the transfer to our children
 	foreach( Task* task, taskList )
 	{
-		if ( task->take( transfer ) )
+		if ( task->take( networkMessage ) )
 			return true;
 	}
 
@@ -160,7 +160,7 @@ void Task::onDisconnect()
 	}
 }
 
-void Task::send(Transfer *request)
+void Task::send(NetworkMessage *request)
 {
 	connection()->send( request );
 }
@@ -217,9 +217,9 @@ void Task::debug(const QString &str)
 	//client()->debug(QString("%1: ").arg(className()) + str);
 }
 
-bool Task::forMe(Transfer *transfer) const
+bool Task::forMe(NetworkMessage *networkMessage) const
 {
-	Q_UNUSED( transfer );
+	Q_UNUSED( networkMessage );
 	return false;
 }
 

@@ -90,24 +90,24 @@ Oscar::Message OfflineMessagesTask::parseOfflineMessage(Buffer *b)
 {
 
 	TLV tlv1 = b->getTLV();
-	Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
+	Buffer buffer( tlv1.data, tlv1.length );
 
-	buffer->getLEWord(); // data chunk size
-	Oscar::DWORD receiverUin = buffer->getLEDWord(); // target uin
-	buffer->getLEWord(); // request type
-	buffer->getLEWord(); // request sequence number: 0x0002
+	buffer.getLEWord(); // data chunk size
+	Oscar::DWORD receiverUin = buffer.getLEDWord(); // target uin
+	buffer.getLEWord(); // request type
+	buffer.getLEWord(); // request sequence number: 0x0002
 
-	Oscar::DWORD senderUin = buffer->getLEDWord();
-	Oscar::WORD year = buffer->getLEWord();
-	Oscar::BYTE month = buffer->getByte();
-	Oscar::BYTE day = buffer->getByte();
-	Oscar::BYTE hour = buffer->getByte();
-	Oscar::BYTE minute = buffer->getByte();
+	Oscar::DWORD senderUin = buffer.getLEDWord();
+	Oscar::WORD year = buffer.getLEWord();
+	Oscar::BYTE month = buffer.getByte();
+	Oscar::BYTE day = buffer.getByte();
+	Oscar::BYTE hour = buffer.getByte();
+	Oscar::BYTE minute = buffer.getByte();
 
-	Oscar::BYTE type = buffer->getByte(); // msg type
-	Oscar::BYTE flags = buffer->getByte(); // msg flags
+	Oscar::BYTE type = buffer.getByte(); // msg type
+	Oscar::BYTE flags = buffer.getByte(); // msg flags
 
-	QByteArray msg = buffer->getLELNTS();
+	QByteArray msg = buffer.getLELNTS();
 
 	QDateTime utcTime( QDate(year, month, day), QTime(hour, minute), Qt::UTC );
 
@@ -136,10 +136,10 @@ void OfflineMessagesTask::endOfMessages()
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "End of Offline Messages" << endl;
 
 	TLV tlv1 = transfer()->buffer()->getTLV();
-	Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
+	Buffer buffer( tlv1.data, tlv1.length );
 
-	buffer->skipBytes( 8 );
-	m_sequence = buffer->getLEWord();
+	buffer.skipBytes( 8 );
+	m_sequence = buffer.getLEWord();
 
 	deleteOfflineMessages();
 
