@@ -128,7 +128,7 @@ KActionMenu *JabberTransport::actionMenu ()
 
 	QString nick;
 	if ( identity()->hasProperty( Kopete::Global::Properties::self()->nickName().key() ))
-		nick = identity()->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString();
+		nick = identity()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
 	else
 		nick = myself()->nickName();
 

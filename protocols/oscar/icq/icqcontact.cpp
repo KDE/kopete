@@ -238,7 +238,7 @@ void ICQContact::slotSendAuth()
 	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Sending auth reply" << endl;
 	ICQAuthReplyDialog replyDialog( 0, false );
 
-	replyDialog.setUser( getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString() );
+	replyDialog.setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
 	if ( replyDialog.exec() )
 		mAccount->engine()->sendAuth( contactId(), replyDialog.reason(), replyDialog.grantAuth() );
 }
@@ -253,7 +253,7 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 	if( granted )
 	{
 		message = i18n( "User %1 has granted your authorization request.\nReason: %2" ,
-			  getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString() ,
+			  property( Kopete::Global::Properties::self()->nickName() ).value().toString() ,
 			  reason );
 
 		// remove the unknown status
@@ -262,7 +262,7 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 	else
 	{
 		message = i18n( "User %1 has rejected the authorization request.\nReason: %2" ,
-			  getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString() ,
+			  property( Kopete::Global::Properties::self()->nickName() ).value().toString() ,
 			  reason );
 	}
 	KNotification::event( QString::fromLatin1("icq_authorization"), message );
@@ -276,7 +276,7 @@ void ICQContact::slotGotAuthRequest( const QString& contact, const QString& reas
 	ICQAuthReplyDialog *replyDialog = new ICQAuthReplyDialog();
 
 	connect( replyDialog, SIGNAL( okClicked() ), this, SLOT( slotAuthReplyDialogOkClicked() ) );
-	replyDialog->setUser( getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString() );
+	replyDialog->setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
 	replyDialog->setRequestReason( reason );
 	replyDialog->setModal( true );
 	replyDialog->show();

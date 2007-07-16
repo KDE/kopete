@@ -615,7 +615,7 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 	{
 		QString nick = element.innerText().string().trimmed();
 		for ( i = 0; i != m.size(); i++)
-			if ( m[i]->getProperty( Kopete::Global::Properties::self()->nickName().key() ).value().toString() == nick )
+			if ( m[i]->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString() == nick )
 				return m[i];
 	}
 

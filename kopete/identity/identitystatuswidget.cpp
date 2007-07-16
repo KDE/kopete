@@ -126,14 +126,14 @@ void IdentityStatusWidget::slotLoad()
 	// photo
 	if (d->identity->hasProperty(props->photo().key()))
 	{
-		d->photoPath = d->identity->getProperty(props->photo()).value().toString();
+		d->photoPath = d->identity->property(props->photo()).value().toString();
 		d->ui.photo->setText(QString("<a href=\"identity::getavatar\"><img src=\"%1\" width=48 height=48></a>")
 								.arg(d->photoPath));
 	}
 
 	// nickname
 	if (d->identity->hasProperty(props->nickName().key()))
-		d->ui.nickName->setText( d->identity->getProperty(props->nickName()).value().toString() );
+		d->ui.nickName->setText( d->identity->property(props->nickName()).value().toString() );
 
 	d->ui.identityName->setText(d->identity->identityId());
 
@@ -164,14 +164,14 @@ void IdentityStatusWidget::slotSave()
 
 	// photo
 	if (!d->identity->hasProperty(props->photo().key()) ||
-		d->identity->getProperty(props->photo()).value().toString() != d->photoPath)
+		d->identity->property(props->photo()).value().toString() != d->photoPath)
 	{
 		d->identity->setProperty(props->photo(), d->photoPath);
 	}
 
 	// nickname
 	if (!d->identity->hasProperty(props->nickName().key()) ||
-		d->identity->getProperty(props->photo()).value().toString() != d->ui.nickName->text())
+		d->identity->property(props->photo()).value().toString() != d->ui.nickName->text())
 	{
 		d->identity->setProperty(props->nickName(), d->ui.nickName->text());
 	}
@@ -192,3 +192,4 @@ void IdentityStatusWidget::slotPhotoLinkActivated(const QString &link)
 
 #include "identitystatuswidget.moc"
 // vim: set noet ts=4 sts=4 sw=4:
+

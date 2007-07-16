@@ -747,7 +747,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 
 					KMenu *contactMenu = c->popupMenu();
 					connect( popup, SIGNAL( aboutToHide() ), contactMenu, SLOT( deleteLater() ) );
-					QString nick=c->getProperty(Kopete::Global::Properties::self()->nickName()).value().toString();
+					QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 					QString text= nick.isEmpty() ?  c->contactId() : i18nc( "Translators: format: '<displayName> (<id>)'", "%2 <%1>", c->contactId(), nick );
 					text=text.replace("&","&&"); // cf BUG 115449
 

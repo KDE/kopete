@@ -141,7 +141,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	//if they don't have an SSI alias, make sure we use the capitalization from the
 	//server so their contact id looks all pretty.
-	QString nickname = getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	QString nickname = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( nickname.isEmpty() || Oscar::normalize( nickname ) == Oscar::normalize( contact ) )
 		setNickName( contact );
 
@@ -214,7 +214,7 @@ void AIMContact::closeUserInfoDialog()
 
 void AIMContact::warnUser()
 {
-	QString nick = getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	QString message = i18n( "<qt>Would you like to warn %1 anonymously or with your name?<br>" \
 	                        "(Warning a user on AIM will result in a \"Warning Level\"" \
 	                        " increasing for the user you warn. Once this level has reached a" \

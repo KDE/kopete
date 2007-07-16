@@ -145,7 +145,7 @@ public:
 
 			toolTip += i18nc("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
 							"<tr><td><img src=\"%1\">&nbsp;<nobr><b>%2</b></nobr>&nbsp;<nobr>(%3)</nobr></td><td align=\"right\"><nobr>%4</nobr></td></tr>",
-						iconName, Kopete::Emoticons::parseEmoticons(c->getProperty(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
+						iconName, Kopete::Emoticons::parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
 		}
 
 		return toolTip + QLatin1String("</table></td></tr></table></qt>");
@@ -841,7 +841,7 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
 			foreach ( Kopete::Contact *c, contacts )
 			{
 //				kDebug( 14000 ) << k_funcinfo << "ccontact=" << c->contactId() << ", isonline=" << c->isOnline() << ", awaymsg=" << c->property( key ).value().toString() << endl;
-				QString awayMessage( c->getProperty( key ).value().toString() );
+				QString awayMessage( c->property( key ).value().toString() );
 				if ( ( allOffline || c->isOnline() ) && !awayMessage.isEmpty() )
 				{
 					// display this contact's away message when:
@@ -880,7 +880,7 @@ void KopeteMetaContactLVI::slotContactAdded( Kopete::Contact *c )
 	updateContactIcon( c );
 
 	slotContactPropertyChanged( c, QLatin1String("awayMessage"),
-		QVariant(), c->getProperty( QLatin1String("awayMessage") ).value() );
+		QVariant(), c->property( QLatin1String("awayMessage") ).value() );
 }
 
 void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
@@ -895,7 +895,7 @@ void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
 		delete comp;
 
 	slotContactPropertyChanged( c, QLatin1String("awayMessage"),
-		c->getProperty( QLatin1String("awayMessage") ).value(), QVariant() );
+		c->property( QLatin1String("awayMessage") ).value(), QVariant() );
 }
 
 void KopeteMetaContactLVI::updateContactIcons()

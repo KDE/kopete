@@ -479,7 +479,7 @@ void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 				QString body = i18n(
 					"%1 has sent an unimplemented invitation, the invitation was rejected.\n"
 					"The invitation was: %2",
-						c->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString(), inviteName );
+						c->property( Kopete::Global::Properties::self()->nickName()).value().toString(), inviteName );
 				Kopete::Message tmpMsg = Kopete::Message( c , members() );
 				tmpMsg.setDirection( Kopete::Message::Internal );
 				tmpMsg.setPlainBody( body );
@@ -547,7 +547,7 @@ void MSNChatSession::slotRequestPicture()
 	}
 	else
 	{ //we already have the picture, just show it.
-		KRun::runUrl( KUrl( c->getProperty(Kopete::Global::Properties::self()->photo()).value().toString() ), "image/png" , 0l );
+		KRun::runUrl( KUrl( c->property(Kopete::Global::Properties::self()->photo()).value().toString() ), "image/png" , 0l );
 	}
 
 }

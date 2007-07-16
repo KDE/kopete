@@ -429,7 +429,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 void JabberContact::slotCheckVCard ()
 {
 	QDateTime cacheDate;
-	Kopete::Property cacheDateString = getProperty ( protocol()->propVCardCacheTimeStamp );
+	Kopete::Property cacheDateString = property ( protocol()->propVCardCacheTimeStamp );
 
 	// don't do anything while we are offline
 	if ( !account()->myself()->onlineStatus().isDefinitelyOnline () )
@@ -631,34 +631,34 @@ void JabberContact::slotSendVCard()
 	}
 
 	// General information
-	vCard.setNickName (getProperty(protocol()->propNickName).value().toString());
-	vCard.setFullName (getProperty(protocol()->propFullName).value().toString());
-	vCard.setJid (getProperty(protocol()->propJid).value().toString());
-	vCard.setBdayStr (getProperty(protocol()->propBirthday).value().toString());
-	vCard.setTimezone (getProperty(protocol()->propTimezone).value().toString());
-	vCard.setUrl (getProperty(protocol()->propHomepage).value().toString());
+	vCard.setNickName (property(protocol()->propNickName).value().toString());
+	vCard.setFullName (property(protocol()->propFullName).value().toString());
+	vCard.setJid (property(protocol()->propJid).value().toString());
+	vCard.setBdayStr (property(protocol()->propBirthday).value().toString());
+	vCard.setTimezone (property(protocol()->propTimezone).value().toString());
+	vCard.setUrl (property(protocol()->propHomepage).value().toString());
 
 	// home address tab
 	XMPP::VCard::Address homeAddress;
 
 	homeAddress.home = true;
-	homeAddress.street = getProperty(protocol()->propHomeStreet).value().toString();
-	homeAddress.extaddr = getProperty(protocol()->propHomeExtAddr).value().toString();
-	homeAddress.pobox = getProperty(protocol()->propHomePOBox).value().toString();
-	homeAddress.locality = getProperty(protocol()->propHomeCity).value().toString();
-	homeAddress.pcode = getProperty(protocol()->propHomePostalCode).value().toString();
-	homeAddress.country = getProperty(protocol()->propHomeCountry).value().toString();
+	homeAddress.street = property(protocol()->propHomeStreet).value().toString();
+	homeAddress.extaddr = property(protocol()->propHomeExtAddr).value().toString();
+	homeAddress.pobox = property(protocol()->propHomePOBox).value().toString();
+	homeAddress.locality = property(protocol()->propHomeCity).value().toString();
+	homeAddress.pcode = property(protocol()->propHomePostalCode).value().toString();
+	homeAddress.country = property(protocol()->propHomeCountry).value().toString();
 
 	// work address tab
 	XMPP::VCard::Address workAddress;
 
 	workAddress.work = true;
-	workAddress.street = getProperty(protocol()->propWorkStreet).value().toString();
-	workAddress.extaddr = getProperty(protocol()->propWorkExtAddr).value().toString();
-	workAddress.pobox = getProperty(protocol()->propWorkPOBox).value().toString();
-	workAddress.locality = getProperty(protocol()->propWorkCity).value().toString();
-	workAddress.pcode = getProperty(protocol()->propWorkPostalCode).value().toString();
-	workAddress.country = getProperty(protocol()->propWorkCountry).value().toString();
+	workAddress.street = property(protocol()->propWorkStreet).value().toString();
+	workAddress.extaddr = property(protocol()->propWorkExtAddr).value().toString();
+	workAddress.pobox = property(protocol()->propWorkPOBox).value().toString();
+	workAddress.locality = property(protocol()->propWorkCity).value().toString();
+	workAddress.pcode = property(protocol()->propWorkPostalCode).value().toString();
+	workAddress.country = property(protocol()->propWorkCountry).value().toString();
 
 	addressList.append(homeAddress);
 	addressList.append(workAddress);
@@ -669,13 +669,13 @@ void JabberContact::slotSendVCard()
 	XMPP::VCard::Email homeEmail;
 
 	homeEmail.home = true;
-	homeEmail.userid = getProperty(protocol()->propEmailAddress).value().toString();
+	homeEmail.userid = property(protocol()->propEmailAddress).value().toString();
 
 	// work email
 	XMPP::VCard::Email workEmail;
 
 	workEmail.work = true;
-	workEmail.userid = getProperty(protocol()->propWorkEmailAddress).value().toString();
+	workEmail.userid = property(protocol()->propWorkEmailAddress).value().toString();
 
 	emailList.append(homeEmail);
 	emailList.append(workEmail);
@@ -684,28 +684,28 @@ void JabberContact::slotSendVCard()
 
 	// work information tab
 	XMPP::VCard::Org org;
-	org.name = getProperty(protocol()->propCompanyName).value().toString();
-	org.unit = getProperty(protocol()->propCompanyDepartement).value().toString().split(',');
+	org.name = property(protocol()->propCompanyName).value().toString();
+	org.unit = property(protocol()->propCompanyDepartement).value().toString().split(',');
 	vCard.setOrg(org);
-	vCard.setTitle (getProperty(protocol()->propCompanyPosition).value().toString());
-	vCard.setRole (getProperty(protocol()->propCompanyRole).value().toString());
+	vCard.setTitle (property(protocol()->propCompanyPosition).value().toString());
+	vCard.setRole (property(protocol()->propCompanyRole).value().toString());
 
 	// phone numbers tab
 	XMPP::VCard::Phone phoneHome;
 	phoneHome.home = true;
-	phoneHome.number = getProperty(protocol()->propPrivatePhone).value().toString();
+	phoneHome.number = property(protocol()->propPrivatePhone).value().toString();
 
 	XMPP::VCard::Phone phoneWork;
 	phoneWork.work = true;
-	phoneWork.number = getProperty(protocol()->propWorkPhone).value().toString();
+	phoneWork.number = property(protocol()->propWorkPhone).value().toString();
 
 	XMPP::VCard::Phone phoneFax;
 	phoneFax.fax = true;
-	phoneFax.number = getProperty(protocol()->propPhoneFax).value().toString();
+	phoneFax.number = property(protocol()->propPhoneFax).value().toString();
 
 	XMPP::VCard::Phone phoneCell;
 	phoneCell.cell = true;
-	phoneCell.number = getProperty(protocol()->propPrivateMobilePhone).value().toString();
+	phoneCell.number = property(protocol()->propPrivateMobilePhone).value().toString();
 
 	phoneList.append(phoneHome);
 	phoneList.append(phoneWork);
@@ -715,12 +715,12 @@ void JabberContact::slotSendVCard()
 	vCard.setPhoneList(phoneList);
 
 	// about tab
-	vCard.setDesc(getProperty(protocol()->propAbout).value().toString());
+	vCard.setDesc(property(protocol()->propAbout).value().toString());
 
 	// Set contact photo as a binary value (if he has set a photo)
 	if( hasProperty( protocol()->propPhoto.key() ) )
 	{
-		QString photoPath = getProperty( protocol()->propPhoto ).value().toString();
+		QString photoPath = property( protocol()->propPhoto ).value().toString();
 		QImage image( photoPath );
 		QByteArray ba;
 		QBuffer buffer( &ba );

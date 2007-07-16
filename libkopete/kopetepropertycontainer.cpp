@@ -111,7 +111,7 @@ bool PropertyContainer::hasProperty(const QString &key) const
 	return d->properties.contains(key);
 }
 
-const Property &PropertyContainer::getProperty(const QString &key) const
+const Property &PropertyContainer::property(const QString &key) const
 {
 	if(hasProperty(key))
 		return d->properties[key];
@@ -119,7 +119,7 @@ const Property &PropertyContainer::getProperty(const QString &key) const
 		return Kopete::Property::null;
 }
 
-const Kopete::Property &PropertyContainer::getProperty(
+const Kopete::Property &PropertyContainer::property(
 	const Kopete::PropertyTmpl &tmpl) const
 {
 	if(hasProperty(tmpl.key()))
@@ -145,7 +145,7 @@ void PropertyContainer::setProperty(const Kopete::PropertyTmpl &tmpl,
 	}
 	else
 	{
-		QVariant oldValue = getProperty(tmpl.key()).value();
+		QVariant oldValue = property(tmpl.key()).value();
 
 		if(oldValue != value)
 		{
@@ -163,7 +163,7 @@ void PropertyContainer::removeProperty(const Kopete::PropertyTmpl &tmpl)
 	if(!tmpl.isNull() && !tmpl.key().isEmpty())
 	{
 
-		QVariant oldValue = getProperty(tmpl.key()).value();
+		QVariant oldValue = property(tmpl.key()).value();
 		d->properties.remove(tmpl.key());
 		emit propertyChanged(this, tmpl.key(), oldValue, QVariant());
 	}

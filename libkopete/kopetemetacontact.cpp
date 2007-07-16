@@ -644,7 +644,7 @@ QString nameFromContact( Kopete::Contact *c) /*const*/
 
 	QString contactName;
 	if ( c->hasProperty( Kopete::Global::Properties::self()->nickName().key() ) )
-		contactName = c->getProperty( Global::Properties::self()->nickName()).value().toString();
+		contactName = c->property( Global::Properties::self()->nickName()).value().toString();
 
 				//the replace is there to workaround the Bug 95444
 	return contactName.isEmpty() ? c->contactId() : contactName.replace('\n',QString::fromUtf8(""));
@@ -703,7 +703,7 @@ QImage photoFromContact( Kopete::Contact *contact) /*const*/
 
 	QVariant photoProp;
 	if ( contact->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
-		photoProp = contact->getProperty( Kopete::Global::Properties::self()->photo().key() ).value();
+		photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
 
 	QImage img;
 	if(photoProp.canConvert( QVariant::Image ))
@@ -777,7 +777,7 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 		QVariant photoProp;
 		if ( contact->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
 		{
-			photoProp = contact->getProperty( Kopete::Global::Properties::self()->photo().key() ).value();
+			photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
 		
 			if(photoProp.canConvert( QVariant::Image ))
 			{
@@ -1066,7 +1066,7 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 			{
 				Contact *source = photoSourceContact();
 				if(source != 0L)
-					newValue = source->getProperty( Kopete::Global::Properties::self()->photo() ).value();
+					newValue = source->property( Kopete::Global::Properties::self()->photo() ).value();
 				break;
 			}
 			case SourceCustom:

@@ -386,7 +386,7 @@ KActionMenu * Account::actionMenu()
 #endif
 	QString nick;
        	if (identity()->hasProperty( Kopete::Global::Properties::self()->nickName().key() ))
-		nick = identity()->getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
+		nick = identity()->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	else
 		nick = myself()->nickName();
 
@@ -489,7 +489,7 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 	if ( !isOffline )
 	{
 		d->restoreStatus = newStatus;
-		d->restoreMessage = identity()->getProperty( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
+		d->restoreMessage = identity()->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
 //		kDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage << endl;
 	}
 

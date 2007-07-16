@@ -256,10 +256,10 @@ GaduContact::deleteContact()
 void
 GaduContact::serialize( QMap<QString, QString>& serializedData, QMap<QString, QString>& )
 {
-	serializedData[ "email" ]	= getProperty( GaduProtocol::protocol()->propEmail ).value().toString();
-	serializedData[ "FirstName"  ]	= getProperty( GaduProtocol::protocol()->propFirstName ).value().toString();
-	serializedData[ "SecondName" ]	= getProperty( GaduProtocol::protocol()->propLastName ).value().toString();
-	serializedData[ "telephone" ]	= getProperty( GaduProtocol::protocol()->propPhoneNr ).value().toString();
+	serializedData[ "email" ]	= property( GaduProtocol::protocol()->propEmail ).value().toString();
+	serializedData[ "FirstName"  ]	= property( GaduProtocol::protocol()->propFirstName ).value().toString();
+	serializedData[ "SecondName" ]	= property( GaduProtocol::protocol()->propLastName ).value().toString();
+	serializedData[ "telephone" ]	= property( GaduProtocol::protocol()->propPhoneNr ).value().toString();
 	serializedData[ "ignored" ]	= ignored_ ? "true" : "false";
 }
 
@@ -285,11 +285,11 @@ GaduContact::contactDetails()
 
 	GaduContactsList::ContactLine* cl = new GaduContactsList::ContactLine;
 
-	cl->firstname	= getProperty( GaduProtocol::protocol()->propFirstName ).value().toString();
-	cl->surname	= getProperty( GaduProtocol::protocol()->propLastName ).value().toString();
+	cl->firstname	= property( GaduProtocol::protocol()->propFirstName ).value().toString();
+	cl->surname	= property( GaduProtocol::protocol()->propLastName ).value().toString();
 	//cl->nickname	= property( "nickName" ).value().toString();
-	cl->email	= getProperty( GaduProtocol::protocol()->propEmail ).value().toString();
-	cl->phonenr	= getProperty( GaduProtocol::protocol()->propPhoneNr ).value().toString();
+	cl->email	= property( GaduProtocol::protocol()->propEmail ).value().toString();
+	cl->phonenr	= property( GaduProtocol::protocol()->propPhoneNr ).value().toString();
 	cl->ignored	= ignored_; //( property( "ignored" ).value().toString() == "true" );
 
 	cl->uin		= QString::number( uin_ );

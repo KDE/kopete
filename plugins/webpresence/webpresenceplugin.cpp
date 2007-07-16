@@ -262,7 +262,7 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 			acc.appendChild( protoName );
 
 			Kopete::Contact* me = account->myself();
-			QString displayName = me->getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
+			QString displayName = me->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 			QDomElement accName = doc.createElement( "accountname" );
 			QDomText accNameText = doc.createTextNode( ( me )
 					? displayName
@@ -282,9 +282,9 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 
 				// Add away message as an attribute, if one exists.
 				if ( me->onlineStatus().status() == Kopete::OnlineStatus::Away &&
-						!me->getProperty("awayMessage").value().toString().isEmpty() ) {
+						!me->property("awayMessage").value().toString().isEmpty() ) {
 					accStatus.setAttribute( "awayreason",
-							me->getProperty("awayMessage").value().toString() );
+							me->property("awayMessage").value().toString() );
 				}
 
 				// Add the online status description as an attribute, if one exits.

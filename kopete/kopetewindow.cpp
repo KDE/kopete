@@ -782,7 +782,7 @@ void KopeteWindow::slotIdentityStatusIconChanged()
 
 void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 {
-	kDebug( 14000 ) << k_funcinfo << identity->getProperty( Kopete::Global::Properties::self()->statusMessage() ).value() << endl;
+	kDebug( 14000 ) << k_funcinfo << identity->property( Kopete::Global::Properties::self()->statusMessage() ).value() << endl;
 	// update the global status label if the change doesn't
 //	QString newAwayMessage = contact->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
 	Kopete::OnlineStatus status = identity->onlineStatus();
@@ -797,7 +797,7 @@ void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 
 	if ( status != Kopete::OnlineStatus::Connecting )
 	{
-		d->globalStatusMessageStored = identity->getProperty( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
+		d->globalStatusMessageStored = identity->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
 		d->globalStatusMessage->setText( d->globalStatusMessageStored );
 	}
 

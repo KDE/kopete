@@ -83,8 +83,8 @@ public:
 	 * to check for it.
 	 * \return the value of the property
 	 **/
-	const Kopete::Property &getProperty(const QString &key) const;
-	const Kopete::Property &getProperty(const Kopete::PropertyTmpl &tmpl) const;
+	const Kopete::Property &property(const QString &key) const;
+	const Kopete::Property &property(const Kopete::PropertyTmpl &tmpl) const;
 
 	/**
 	 * \brief Add or Set a property for this contact.
@@ -123,4 +123,5 @@ private:
 } //END namespace Kopete
 
 #endif
+
 

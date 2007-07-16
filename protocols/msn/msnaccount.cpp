@@ -392,7 +392,7 @@ void MSNAccount::slotChangePublicName()
 	bool ok;
 	QString name = KInputDialog::getText( i18n( "Change Display Name - MSN Plugin" ),
 		i18n( "Enter the new display name by which you want to be visible to your friends on MSN:" ),
-		myself()->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString(), &ok );
+		myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), &ok );
 
 	if ( ok )
 	{

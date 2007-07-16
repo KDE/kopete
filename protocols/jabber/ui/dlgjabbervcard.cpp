@@ -120,50 +120,50 @@ void dlgJabberVCard::slotClose()
 void dlgJabberVCard::assignContactProperties ()
 {
 	// general tab
-	m_mainWidget->leNick->setText (m_contact->getProperty(m_account->protocol()->propNickName).value().toString());
-	m_mainWidget->leName->setText (m_contact->getProperty(m_account->protocol()->propFullName).value().toString());
+	m_mainWidget->leNick->setText (m_contact->property(m_account->protocol()->propNickName).value().toString());
+	m_mainWidget->leName->setText (m_contact->property(m_account->protocol()->propFullName).value().toString());
 	// Guess the JID from the Kopete::Contact if the propJid is empty.
-	if( m_contact->getProperty( m_account->protocol()->propJid ).value().toString().isEmpty() )
+	if( m_contact->property( m_account->protocol()->propJid ).value().toString().isEmpty() )
 		m_mainWidget->leJID->setText (m_contact->rosterItem().jid().full());
 	else
-		m_mainWidget->leJID->setText (m_contact->getProperty(m_account->protocol()->propJid).value().toString());
-	m_mainWidget->leBirthday->setText (m_contact->getProperty(m_account->protocol()->propBirthday).value().toString());
-	m_mainWidget->leTimezone->setText (m_contact->getProperty(m_account->protocol()->propTimezone).value().toString());
+		m_mainWidget->leJID->setText (m_contact->property(m_account->protocol()->propJid).value().toString());
+	m_mainWidget->leBirthday->setText (m_contact->property(m_account->protocol()->propBirthday).value().toString());
+	m_mainWidget->leTimezone->setText (m_contact->property(m_account->protocol()->propTimezone).value().toString());
 
-	QString homepage = m_contact->getProperty(m_account->protocol()->propHomepage).value().toString();
+	QString homepage = m_contact->property(m_account->protocol()->propHomepage).value().toString();
 	m_mainWidget->leHomepage->setText (homepage);
 	m_mainWidget->urlHomepage->setText (homepage);
 	m_mainWidget->urlHomepage->setUrl (homepage);
 	m_mainWidget->urlHomepage->setUseCursor ( !homepage.isEmpty () );
 
 	// Set photo
-	m_photoPath = m_contact->getProperty(m_account->protocol()->propPhoto).value().toString();
+	m_photoPath = m_contact->property(m_account->protocol()->propPhoto).value().toString();
 	if( !m_photoPath.isEmpty() )
 	{
 		m_mainWidget->lblPhoto->setPixmap( QPixmap(m_photoPath) );
 	}
 
 	// addresses
-	m_mainWidget->leWorkStreet->setText (m_contact->getProperty(m_account->protocol()->propWorkStreet).value().toString());
-	m_mainWidget->leWorkExtAddr->setText (m_contact->getProperty(m_account->protocol()->propWorkExtAddr).value().toString());
-	m_mainWidget->leWorkPOBox->setText (m_contact->getProperty(m_account->protocol()->propWorkPOBox).value().toString());
-	m_mainWidget->leWorkCity->setText (m_contact->getProperty(m_account->protocol()->propWorkCity).value().toString());
-	m_mainWidget->leWorkPostalCode->setText (m_contact->getProperty(m_account->protocol()->propWorkPostalCode).value().toString());
-	m_mainWidget->leWorkCountry->setText (m_contact->getProperty(m_account->protocol()->propWorkCountry).value().toString());
+	m_mainWidget->leWorkStreet->setText (m_contact->property(m_account->protocol()->propWorkStreet).value().toString());
+	m_mainWidget->leWorkExtAddr->setText (m_contact->property(m_account->protocol()->propWorkExtAddr).value().toString());
+	m_mainWidget->leWorkPOBox->setText (m_contact->property(m_account->protocol()->propWorkPOBox).value().toString());
+	m_mainWidget->leWorkCity->setText (m_contact->property(m_account->protocol()->propWorkCity).value().toString());
+	m_mainWidget->leWorkPostalCode->setText (m_contact->property(m_account->protocol()->propWorkPostalCode).value().toString());
+	m_mainWidget->leWorkCountry->setText (m_contact->property(m_account->protocol()->propWorkCountry).value().toString());
 
-	m_mainWidget->leHomeStreet->setText (m_contact->getProperty(m_account->protocol()->propHomeStreet).value().toString());
-	m_mainWidget->leHomeExtAddr->setText (m_contact->getProperty(m_account->protocol()->propHomeExtAddr).value().toString());
-	m_mainWidget->leHomePOBox->setText (m_contact->getProperty(m_account->protocol()->propHomePOBox).value().toString());
-	m_mainWidget->leHomeCity->setText (m_contact->getProperty(m_account->protocol()->propHomeCity).value().toString());
-	m_mainWidget->leHomePostalCode->setText (m_contact->getProperty(m_account->protocol()->propHomePostalCode).value().toString());
-	m_mainWidget->leHomeCountry->setText (m_contact->getProperty(m_account->protocol()->propHomeCountry).value().toString());
+	m_mainWidget->leHomeStreet->setText (m_contact->property(m_account->protocol()->propHomeStreet).value().toString());
+	m_mainWidget->leHomeExtAddr->setText (m_contact->property(m_account->protocol()->propHomeExtAddr).value().toString());
+	m_mainWidget->leHomePOBox->setText (m_contact->property(m_account->protocol()->propHomePOBox).value().toString());
+	m_mainWidget->leHomeCity->setText (m_contact->property(m_account->protocol()->propHomeCity).value().toString());
+	m_mainWidget->leHomePostalCode->setText (m_contact->property(m_account->protocol()->propHomePostalCode).value().toString());
+	m_mainWidget->leHomeCountry->setText (m_contact->property(m_account->protocol()->propHomeCountry).value().toString());
 
 	// email
 	m_mainWidget->urlWorkEmail->setUseCursor ( false );
 	m_mainWidget->urlHomeEmail->setUseCursor ( false );
 
-	QString workEmail = m_contact->getProperty(m_account->protocol()->propWorkEmailAddress).value().toString();
-	QString homeEmail = m_contact->getProperty(m_account->protocol()->propEmailAddress).value().toString();
+	QString workEmail = m_contact->property(m_account->protocol()->propWorkEmailAddress).value().toString();
+	QString homeEmail = m_contact->property(m_account->protocol()->propEmailAddress).value().toString();
 	m_mainWidget->leWorkEmail->setText (workEmail);
 	m_mainWidget->urlWorkEmail->setText (workEmail);
 	m_mainWidget->urlWorkEmail->setUrl ("mailto:" + workEmail);
@@ -179,19 +179,19 @@ void dlgJabberVCard::assignContactProperties ()
 	m_mainWidget->urlHomeEmail->setEnabled ( enableMail );
 
 	// work information tab
-	m_mainWidget->leCompany->setText (m_contact->getProperty(m_account->protocol()->propCompanyName).value().toString());
-	m_mainWidget->leDepartment->setText (m_contact->getProperty(m_account->protocol()->propCompanyDepartement).value().toString());
-	m_mainWidget->lePosition->setText (m_contact->getProperty(m_account->protocol()->propCompanyPosition).value().toString());
-	m_mainWidget->leRole->setText (m_contact->getProperty(m_account->protocol()->propCompanyRole).value().toString());
+	m_mainWidget->leCompany->setText (m_contact->property(m_account->protocol()->propCompanyName).value().toString());
+	m_mainWidget->leDepartment->setText (m_contact->property(m_account->protocol()->propCompanyDepartement).value().toString());
+	m_mainWidget->lePosition->setText (m_contact->property(m_account->protocol()->propCompanyPosition).value().toString());
+	m_mainWidget->leRole->setText (m_contact->property(m_account->protocol()->propCompanyRole).value().toString());
 
 	// phone numbers tab
-	m_mainWidget->lePhoneFax->setText(m_contact->getProperty(m_account->protocol()->propPhoneFax).value().toString());
-	m_mainWidget->lePhoneWork->setText(m_contact->getProperty(m_account->protocol()->propWorkPhone).value().toString());
-	m_mainWidget->lePhoneCell->setText(m_contact->getProperty(m_account->protocol()->propPrivateMobilePhone).value().toString());
-	m_mainWidget->lePhoneHome->setText(m_contact->getProperty(m_account->protocol()->propPrivatePhone).value().toString());
+	m_mainWidget->lePhoneFax->setText(m_contact->property(m_account->protocol()->propPhoneFax).value().toString());
+	m_mainWidget->lePhoneWork->setText(m_contact->property(m_account->protocol()->propWorkPhone).value().toString());
+	m_mainWidget->lePhoneCell->setText(m_contact->property(m_account->protocol()->propPrivateMobilePhone).value().toString());
+	m_mainWidget->lePhoneHome->setText(m_contact->property(m_account->protocol()->propPrivatePhone).value().toString());
 
 	// about tab
-	m_mainWidget->teAbout->setText (m_contact->getProperty(m_account->protocol()->propAbout).value().toString());
+	m_mainWidget->teAbout->setText (m_contact->property(m_account->protocol()->propAbout).value().toString());
 
 	if(m_account->myself() == m_contact)
 		setReadOnly (false);

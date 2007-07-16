@@ -268,7 +268,7 @@ GaduAccount::actionMenu()
 	p->actionMenu_ = new KActionMenu( accountId(), this );
         p->actionMenu_->setIcon( myself()->onlineStatus().iconFor( this ) );
 	p->actionMenu_->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> ",
-	    myself()->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
+	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 
 	if ( p->session_->isConnected() ) {
 		p->searchAction->setEnabled( true );
@@ -966,7 +966,7 @@ GaduAccount::slotExportContactsListToFile()
 					Kopete::UI::Global::mainWidget() );
 	p->saveListDialog->setCaption(
 	    i18n("Save Contacts List for Account %1 As",
-	    myself()->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
+	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->saveListDialog->exec() == QDialog::Accepted ) {
 		QByteArray list = p->textcodec_->fromUnicode( userlist()->asString() );
@@ -1012,7 +1012,7 @@ GaduAccount::slotImportContactsFromFile()
 					Kopete::UI::Global::mainWidget() );
 	p->loadListDialog->setCaption(
 	    i18n("Load Contacts List for Account %1 As",
-	    myself()->getProperty( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
+	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( p->loadListDialog->exec() == QDialog::Accepted ) {
 		url = p->loadListDialog->selectedUrl();

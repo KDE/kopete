@@ -114,7 +114,7 @@ QString Identity::toolTip() const
 
 	QString nick;
 	if ( hasProperty(Kopete::Global::Properties::self()->nickName().key()) )
-		nick = getProperty(Kopete::Global::Properties::self()->nickName()).value().toString();
+		nick = property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	else
 		nick = d->id;
 
@@ -243,3 +243,4 @@ void Identity::slotSaveProperty( PropertyContainer *container, const QString &ke
 #include "kopeteidentity.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+

@@ -782,58 +782,58 @@ void YahooContact::readYABEntry()
 	m_YABEntry = new YABEntry;
 	m_YABEntry->yahooId = userId();
 	// Personal
-	m_YABEntry->firstName = getProperty( YahooProtocol::protocol()->propfirstName ).value().toString();
-	m_YABEntry->secondName = getProperty( YahooProtocol::protocol()->propSecondName ).value().toString();
-	m_YABEntry->lastName = getProperty( YahooProtocol::protocol()->propLastName ).value().toString();
-	m_YABEntry->nickName = getProperty( YahooProtocol::protocol()->propNickName ).value().toString();
-	m_YABEntry->title = getProperty( YahooProtocol::protocol()->propTitle ).value().toString();
+	m_YABEntry->firstName = property( YahooProtocol::protocol()->propfirstName ).value().toString();
+	m_YABEntry->secondName = property( YahooProtocol::protocol()->propSecondName ).value().toString();
+	m_YABEntry->lastName = property( YahooProtocol::protocol()->propLastName ).value().toString();
+	m_YABEntry->nickName = property( YahooProtocol::protocol()->propNickName ).value().toString();
+	m_YABEntry->title = property( YahooProtocol::protocol()->propTitle ).value().toString();
 
 	// Primary Information
-	m_YABEntry->phoneMobile = getProperty( YahooProtocol::protocol()->propPhoneMobile ).value().toString();
-	m_YABEntry->email = getProperty( YahooProtocol::protocol()->propEmail ).value().toString();
-	m_YABEntry->YABId = getProperty( YahooProtocol::protocol()->propYABId ).value().toInt();
+	m_YABEntry->phoneMobile = property( YahooProtocol::protocol()->propPhoneMobile ).value().toString();
+	m_YABEntry->email = property( YahooProtocol::protocol()->propEmail ).value().toString();
+	m_YABEntry->YABId = property( YahooProtocol::protocol()->propYABId ).value().toInt();
 
 	// Additional Information
-	m_YABEntry->pager = getProperty( YahooProtocol::protocol()->propPager ).value().toString();
-	m_YABEntry->fax = getProperty( YahooProtocol::protocol()->propFax ).value().toString();
-	m_YABEntry->additionalNumber = getProperty( YahooProtocol::protocol()->propAdditionalNumber ).value().toString();
-	m_YABEntry->altEmail1 = getProperty( YahooProtocol::protocol()->propAltEmail1 ).value().toString();
-	m_YABEntry->altEmail2 = getProperty( YahooProtocol::protocol()->propAltEmail2 ).value().toString();
-	m_YABEntry->imAIM = getProperty( YahooProtocol::protocol()->propImAIM ).value().toString();
-	m_YABEntry->imICQ = getProperty( YahooProtocol::protocol()->propImICQ ).value().toString();
-	m_YABEntry->imMSN = getProperty( YahooProtocol::protocol()->propImMSN ).value().toString();
-	m_YABEntry->imGoogleTalk = getProperty( YahooProtocol::protocol()->propImGoogleTalk ).value().toString();
-	m_YABEntry->imSkype = getProperty( YahooProtocol::protocol()->propImSkype ).value().toString();
-	m_YABEntry->imIRC = getProperty( YahooProtocol::protocol()->propImIRC ).value().toString();
-	m_YABEntry->imQQ = getProperty( YahooProtocol::protocol()->propImQQ ).value().toString();
+	m_YABEntry->pager = property( YahooProtocol::protocol()->propPager ).value().toString();
+	m_YABEntry->fax = property( YahooProtocol::protocol()->propFax ).value().toString();
+	m_YABEntry->additionalNumber = property( YahooProtocol::protocol()->propAdditionalNumber ).value().toString();
+	m_YABEntry->altEmail1 = property( YahooProtocol::protocol()->propAltEmail1 ).value().toString();
+	m_YABEntry->altEmail2 = property( YahooProtocol::protocol()->propAltEmail2 ).value().toString();
+	m_YABEntry->imAIM = property( YahooProtocol::protocol()->propImAIM ).value().toString();
+	m_YABEntry->imICQ = property( YahooProtocol::protocol()->propImICQ ).value().toString();
+	m_YABEntry->imMSN = property( YahooProtocol::protocol()->propImMSN ).value().toString();
+	m_YABEntry->imGoogleTalk = property( YahooProtocol::protocol()->propImGoogleTalk ).value().toString();
+	m_YABEntry->imSkype = property( YahooProtocol::protocol()->propImSkype ).value().toString();
+	m_YABEntry->imIRC = property( YahooProtocol::protocol()->propImIRC ).value().toString();
+	m_YABEntry->imQQ = property( YahooProtocol::protocol()->propImQQ ).value().toString();
 
 	// Private Information
-	m_YABEntry->privateAdress = getProperty( YahooProtocol::protocol()->propPrivateAddress ).value().toString();
-	m_YABEntry->privateCity = getProperty( YahooProtocol::protocol()->propPrivateCity ).value().toString();
-	m_YABEntry->privateState = getProperty( YahooProtocol::protocol()->propPrivateState ).value().toString();
-	m_YABEntry->privateZIP = getProperty( YahooProtocol::protocol()->propPrivateZIP ).value().toString();
-	m_YABEntry->privateCountry = getProperty( YahooProtocol::protocol()->propPrivateCountry ).value().toString();
-	m_YABEntry->privatePhone = getProperty( YahooProtocol::protocol()->propPrivatePhone ).value().toString();
-	m_YABEntry->privateURL = getProperty( YahooProtocol::protocol()->propPrivateURL ).value().toString();
+	m_YABEntry->privateAdress = property( YahooProtocol::protocol()->propPrivateAddress ).value().toString();
+	m_YABEntry->privateCity = property( YahooProtocol::protocol()->propPrivateCity ).value().toString();
+	m_YABEntry->privateState = property( YahooProtocol::protocol()->propPrivateState ).value().toString();
+	m_YABEntry->privateZIP = property( YahooProtocol::protocol()->propPrivateZIP ).value().toString();
+	m_YABEntry->privateCountry = property( YahooProtocol::protocol()->propPrivateCountry ).value().toString();
+	m_YABEntry->privatePhone = property( YahooProtocol::protocol()->propPrivatePhone ).value().toString();
+	m_YABEntry->privateURL = property( YahooProtocol::protocol()->propPrivateURL ).value().toString();
 
 	// Work Information
-	m_YABEntry->corporation = getProperty( YahooProtocol::protocol()->propCorporation ).value().toString();
-	m_YABEntry->workAdress = getProperty( YahooProtocol::protocol()->propWorkAddress ).value().toString();
-	m_YABEntry->workCity = getProperty( YahooProtocol::protocol()->propWorkCity ).value().toString();
-	m_YABEntry->workState = getProperty( YahooProtocol::protocol()->propWorkState ).value().toString();
-	m_YABEntry->workZIP = getProperty( YahooProtocol::protocol()->propWorkZIP ).value().toString();
-	m_YABEntry->workCountry = getProperty( YahooProtocol::protocol()->propWorkCountry ).value().toString();
-	m_YABEntry->workPhone = getProperty( YahooProtocol::protocol()->propWorkPhone ).value().toString();
-	m_YABEntry->workURL = getProperty( YahooProtocol::protocol()->propWorkURL ).value().toString();
+	m_YABEntry->corporation = property( YahooProtocol::protocol()->propCorporation ).value().toString();
+	m_YABEntry->workAdress = property( YahooProtocol::protocol()->propWorkAddress ).value().toString();
+	m_YABEntry->workCity = property( YahooProtocol::protocol()->propWorkCity ).value().toString();
+	m_YABEntry->workState = property( YahooProtocol::protocol()->propWorkState ).value().toString();
+	m_YABEntry->workZIP = property( YahooProtocol::protocol()->propWorkZIP ).value().toString();
+	m_YABEntry->workCountry = property( YahooProtocol::protocol()->propWorkCountry ).value().toString();
+	m_YABEntry->workPhone = property( YahooProtocol::protocol()->propWorkPhone ).value().toString();
+	m_YABEntry->workURL = property( YahooProtocol::protocol()->propWorkURL ).value().toString();
 
 	// Miscellaneous
-	m_YABEntry->birthday = QDate::fromString( getProperty( YahooProtocol::protocol()->propBirthday ).value().toString(), Qt::ISODate );
-	m_YABEntry->anniversary = QDate::fromString( getProperty( YahooProtocol::protocol()->propAnniversary ).value().toString(), Qt::ISODate );
-	m_YABEntry->notes = getProperty( YahooProtocol::protocol()->propNotes ).value().toString();
-	m_YABEntry->additional1 = getProperty( YahooProtocol::protocol()->propAdditional1 ).value().toString();
-	m_YABEntry->additional2 = getProperty( YahooProtocol::protocol()->propAdditional2 ).value().toString();
-	m_YABEntry->additional3 = getProperty( YahooProtocol::protocol()->propAdditional3 ).value().toString();
-	m_YABEntry->additional4 = getProperty( YahooProtocol::protocol()->propAdditional4 ).value().toString();
+	m_YABEntry->birthday = QDate::fromString( property( YahooProtocol::protocol()->propBirthday ).value().toString(), Qt::ISODate );
+	m_YABEntry->anniversary = QDate::fromString( property( YahooProtocol::protocol()->propAnniversary ).value().toString(), Qt::ISODate );
+	m_YABEntry->notes = property( YahooProtocol::protocol()->propNotes ).value().toString();
+	m_YABEntry->additional1 = property( YahooProtocol::protocol()->propAdditional1 ).value().toString();
+	m_YABEntry->additional2 = property( YahooProtocol::protocol()->propAdditional2 ).value().toString();
+	m_YABEntry->additional3 = property( YahooProtocol::protocol()->propAdditional3 ).value().toString();
+	m_YABEntry->additional4 = property( YahooProtocol::protocol()->propAdditional4 ).value().toString();
 }
 
 #include "yahoocontact.moc"

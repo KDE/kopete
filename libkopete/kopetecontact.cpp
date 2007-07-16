@@ -216,7 +216,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	KMenu *menu = new KMenu();
 
 	QString titleText;
-	QString nick = getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( nick.isEmpty() )
 		titleText = QString::fromLatin1( "%1 (%2)" ).arg( contactId(), onlineStatus().description() );
 	else
@@ -547,7 +547,7 @@ QString Contact::toolTip() const
 				QString(QUrl::toPercentEncoding( contactId() )) );
 
 	// TODO:  the nickname should be a configurable properties, like others. -Olivier
-	QString nick = getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( nick.isEmpty() )
 	{
 		tip = i18nc( "<b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
@@ -590,7 +590,7 @@ QString Contact::toolTip() const
 		}
 		else if ((*it) == QString::fromLatin1("homePage"))
 		{
-			QString url = getProperty(*it).value().toString();
+			QString url = property(*it).value().toString();
 			if(!url.isEmpty())
 			{
 				tip += i18nc("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
@@ -600,7 +600,7 @@ QString Contact::toolTip() const
 		}
 		else if ((*it) == Kopete::Global::Properties::self()->statusMessage().key() )
 		{
-			QString statusmsg = getProperty(*it).value().toString();
+			QString statusmsg = property(*it).value().toString();
 			if(!statusmsg.isEmpty())
 			{
 				tip += i18nc("<br><b>Status Message:</b>&nbsp;FORMATTED STATUS MESSAGE",
@@ -609,7 +609,7 @@ QString Contact::toolTip() const
 		}
 		else
 		{
-			p = getProperty(*it);
+			p = property(*it);
 			if(!p.isNull())
 			{
 				QVariant val = p.value();
@@ -653,13 +653,13 @@ QString Contact::toolTip() const
 QString Kopete::Contact::formattedName() const
 {
 	if( hasProperty( Kopete::Global::Properties::self()->fullName().key() ) )
-		return getProperty( Kopete::Global::Properties::self()->fullName() ).value().toString();
+		return property( Kopete::Global::Properties::self()->fullName() ).value().toString();
 
 	QString ret;
 	Kopete::Property first, last;
 
-	first = getProperty( Kopete::Global::Properties::self()->firstName() );
-	last = getProperty( Kopete::Global::Properties::self()->lastName() );
+	first = property( Kopete::Global::Properties::self()->firstName() );
+	last = property( Kopete::Global::Properties::self()->lastName() );
 	if(!first.isNull())
 	{
 		if(!last.isNull()) // contact has both first and last name
@@ -742,7 +742,7 @@ void Kopete::Contact::setNickName( const QString &name )
 
 QString Kopete::Contact::nickName() const
 {
-	QString nick = getProperty( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( !nick.isEmpty() )
 		return nick;
 
