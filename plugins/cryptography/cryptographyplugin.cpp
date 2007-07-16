@@ -51,46 +51,46 @@
 //In Jabber, the JEP says it's not. so we don't use richtext in our message, but some client did.
 //We limit the html to some basis tag to limit security problem (bad links)
 //    - Olivier
-const QRegExp CryptographyPlugin::isHTML( QString::fromLatin1( "^[^<>]*(</?(html|body|br|p|font|center|b|i|u|span|div|pre)(>|[\\s/][^><]*>)[^><]*)+$" ) , Qt::CaseInsensitive );
+const QRegExp CryptographyPlugin::isHTML ( QString::fromLatin1 ( "^[^<>]*(</?(html|body|br|p|font|center|b|i|u|span|div|pre)(>|[\\s/][^><]*>)[^><]*)+$" ) , Qt::CaseInsensitive );
 
 typedef KGenericFactory<CryptographyPlugin> CryptographyPluginFactory;
-static const KAboutData aboutdata("kopete_cryptography", 0, ki18n("Cryptography") , "1.0" );
-K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, CryptographyPluginFactory( &aboutdata )  )
+static const KAboutData aboutdata ( "kopete_cryptography", 0, ki18n ( "Cryptography" ) , "1.1" );
+K_EXPORT_COMPONENT_FACTORY ( kopete_cryptography, CryptographyPluginFactory ( &aboutdata ) )
 
-CryptographyPlugin::CryptographyPlugin( QObject *parent, const QStringList & /* args */ )
-: Kopete::Plugin( CryptographyPluginFactory::componentData(), parent ),
+CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QStringList & /* args */ )
+		: Kopete::Plugin ( CryptographyPluginFactory::componentData(), parent ),
 		m_cachedPass()
 {
-	if( !pluginStatic_ )
+	if ( !pluginStatic_ )
 		pluginStatic_=this;
 
-	m_inboundHandler = new Kopete::SimpleMessageHandlerFactory( Kopete::Message::Inbound,
-		Kopete::MessageHandlerFactory::InStageToSent, this, SLOT( slotIncomingMessage( Kopete::Message& ) ) );
-	connect( Kopete::ChatSessionManager::self(),
-		SIGNAL( aboutToSend( Kopete::Message & ) ),
-		SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
+	m_inboundHandler = new Kopete::SimpleMessageHandlerFactory ( Kopete::Message::Inbound,
+	                   Kopete::MessageHandlerFactory::InStageToSent, this, SLOT ( slotIncomingMessage ( Kopete::Message& ) ) );
+	connect ( Kopete::ChatSessionManager::self(),
+	          SIGNAL ( aboutToSend ( Kopete::Message & ) ),
+	          SLOT ( slotOutgoingMessage ( Kopete::Message & ) ) );
 
-	m_cachedPass_timer = new QTimer(this);
-	m_cachedPass_timer->setObjectName("m_cachedPass_timer");
-	QObject::connect(m_cachedPass_timer, SIGNAL(timeout()), this, SLOT(slotForgetCachedPass() ));
+	m_cachedPass_timer = new QTimer ( this );
+	m_cachedPass_timer->setObjectName ( "m_cachedPass_timer" );
+	QObject::connect ( m_cachedPass_timer, SIGNAL ( timeout() ), this, SLOT ( slotForgetCachedPass() ) );
 
 
-	KAction *action=new KAction( KIcon("encrypted"), i18n("&Select Cryptography Public Key..."), this );
-        actionCollection()->addAction( "contactSelectKey", action );
-	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSelectContactKey()) );
-	connect ( Kopete::ContactList::self() , SIGNAL( metaContactSelected(bool)) , action , SLOT(setEnabled(bool)));
-	action->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count()==1 );
+	KAction *action=new KAction ( KIcon ( "encrypted" ), i18n ( "&Select Cryptography Public Key..." ), this );
+	actionCollection()->addAction ( "contactSelectKey", action );
+	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotSelectContactKey() ) );
+	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
+	action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() ==1 );
 
-	setXMLFile("cryptographyui.rc");
+	setXMLFile ( "cryptographyui.rc" );
 	loadSettings();
-	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
+	connect ( this, SIGNAL ( settingsChanged() ), this, SLOT ( loadSettings() ) );
 
-	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * )) , SLOT( slotNewKMM( Kopete::ChatSession * ) ) );
+	connect ( Kopete::ChatSessionManager::self(), SIGNAL ( chatSessionCreated ( Kopete::ChatSession * ) ) , SLOT ( slotNewKMM ( Kopete::ChatSession * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
 	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
-	foreach(Kopete::ChatSession *session, sessions)
+	foreach ( Kopete::ChatSession *session, sessions )
 	{
-		slotNewKMM(session);
+		slotNewKMM ( session );
 	}
 
 }
@@ -123,14 +123,14 @@ QString CryptographyPlugin::cachedPass()
 	return pluginStatic_->m_cachedPass;
 }
 
-void CryptographyPlugin::setCachedPass(const QByteArray& p)
+void CryptographyPlugin::setCachedPass ( const QByteArray& p )
 {
-	if(pluginStatic_->mCachePassPhrase == CryptographyConfig::Never)
+	if ( pluginStatic_->mCachePassPhrase == CryptographyConfig::Never )
 		return;
-	if(pluginStatic_->mCachePassPhrase == CryptographyConfig::Time)
+	if ( pluginStatic_->mCachePassPhrase == CryptographyConfig::Time )
 	{
-		pluginStatic_->m_cachedPass_timer->setSingleShot( false );
-		pluginStatic_->m_cachedPass_timer->start(pluginStatic_->mCacheTime * 60000);
+		pluginStatic_->m_cachedPass_timer->setSingleShot ( false );
+		pluginStatic_->m_cachedPass_timer->start ( pluginStatic_->mCacheTime * 60000 );
 	}
 
 	pluginStatic_->m_cachedPass=p;
@@ -141,135 +141,98 @@ bool CryptographyPlugin::passphraseHandling()
 	return !pluginStatic_->mAskPassPhrase;
 }
 
-
-/*KActionCollection *CryptographyPlugin::customChatActions(Kopete::ChatSession *KMM)
+void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 {
-	delete m_actionCollection;
-
-	m_actionCollection = new KActionCollection(this);
-	KAction *actionTranslate = new KAction( i18n ("Translate"), 0,
-		this, SLOT( slotTranslateChat() ), m_actionCollection, "actionTranslate" );
-	m_actionCollection->insert( actionTranslate );
-
-	m_currentChatSession=KMM;
-	return m_actionCollection;
-}*/
-
-void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
-{
- 	QString body = msg.plainBody();
-	if( !body.startsWith( QString::fromLatin1("-----BEGIN PGP MESSAGE----") )
-		 || !body.contains( QString::fromLatin1("-----END PGP MESSAGE----") ) )
+	QString body = msg.plainBody();
+	int opState;
+	if ( !body.startsWith ( QString::fromLatin1 ( "-----BEGIN PGP MESSAGE----" ) )
+	        || !body.contains ( QString::fromLatin1 ( "-----END PGP MESSAGE----" ) ) )
 		return;
 
-	if( msg.direction() != Kopete::Message::Inbound )
+	body = GpgInterface::decryptText ( msg.plainBody(), mPrivateKeyID, opState );
+	if ( !body.isEmpty() )
 	{
-/*		if ( m_cachedMessages.contains( body ) )
-		{
-			plainBody = m_cachedMessages[ body ];
-			m_cachedMessages.remove( body );
-		}
-		else
-		{
-		*/			body = GpgInterface::decryptText( msg.plainBody(), mPrivateKeyID );
-//		}
-
-		if( !body.isEmpty() )
-		{
-			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ("encrypted", K3Icon::Small) + "\">" );
-			kDebug (14303) << k_funcinfo << "body is " << body << endl;
-			msg.setHtmlBody(body);
-			msg.addClass("cryptography:encrypted");
-		}
-
-		//if there are too many messages in cache, clear the cache
-		if(m_cachedMessages.count() > 5)
-			m_cachedMessages.clear();
-
-		return;
+		if (opState & GpgInterface::GoodSig)
+			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", K3Icon::Small ) + "\">&nbsp;&nbsp;" );
+			
+		if (opState & GpgInterface::Decrypted)
+			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", K3Icon::Small ) + "\">&nbsp;&nbsp;" );
+		
+		msg.setHtmlBody ( body );
+		msg.addClass ( "cryptography:encrypted" );
 	}
 
-
-	//the Message::unescape is there because client like fire replace linebreak with <BR> to work even if the protocol doesn't allow newlines (IRC)
-	// cf http://fire.sourceforge.net/forums/viewtopic.php?t=174  and Bug #96052
-	// Note: I believe Message's smart HTML handling makes this irrelvant. We shall see. (C Connell)
-	// TODO remove this code
-//	if(body.contains("<"))
-//		body= Kopete::Message::unescape(body);
-
-	body = GpgInterface::decryptText( msg.plainBody(), mPrivateKeyID );
-
-	if( !body.isEmpty() )
-	{
-		body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ("encrypted", K3Icon::Small) + "\">" );
-		kDebug (14303) << k_funcinfo << "body is " << body << endl;
-		msg.setHtmlBody(body);
-		msg.addClass("cryptography:encrypted");
-	}
+	return;
 }
 
-void CryptographyPlugin::slotOutgoingMessage( Kopete::Message& msg )
+void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 {
-	if(msg.direction() != Kopete::Message::Outbound)
+	if ( msg.direction() != Kopete::Message::Outbound )
 		return;
 
 	QStringList keys;
 	QList<Kopete::Contact*> contactlist = msg.to();
-	foreach(Kopete::Contact *c, contactlist)
+	bool signing = mGui->signing();
+	bool encrypting = mGui->encrypting();
+
+	if ( encrypting )
 	{
-		QString tmpKey;
-		if( c->metaContact() )
+		foreach ( Kopete::Contact *c, contactlist )
 		{
-			if(c->metaContact()->pluginData( this, "encrypt_messages"  ) == "off" )
+			QString tmpKey;
+			if ( c->metaContact() )
+			{
+				if ( c->metaContact()->pluginData ( this, "encrypt_messages" ) == "off" )
+					return;
+				tmpKey = c->metaContact()->pluginData ( this, "gpgKey" );
+			}
+			if ( tmpKey.isEmpty() )
+			{
+				kDebug ( 14303 ) << k_funcinfo << "empty key" << endl;
+				KMessageBox::sorry ( Kopete::UI::Global::mainWidget(), i18n ( "You have not chosen an encryption key for one or more recipients" ) );
 				return;
-			tmpKey = c->metaContact()->pluginData( this, "gpgKey" );
+			}
+			keys.append ( tmpKey );
 		}
-		if( tmpKey.isEmpty() )
-		{
+		// encrypt to self so we can decrypt during slotIncomingMessage()
+		keys.append ( mPrivateKeyID );
+		QString key = keys.join ( " " );
+
+		if ( key.isEmpty() )
 			return;
-		}
-		keys.append( tmpKey );
-	}
-	// encrypt to self so we can decrypt during slotIncomingMessage()
-	keys.append( mPrivateKeyID );
-	
-	QString key = keys.join( " " );
 
-	if(key.isEmpty())
+		QString original = msg.plainBody();
+
+		QString encryptOptions;
+		encryptOptions+=" --always-trust ";
+		encryptOptions+=" --armor ";
+
+		QString resultat = GpgInterface::encryptText ( original,key,encryptOptions, signing, mPrivateKeyID );
+		if ( !resultat.isEmpty() )
+			msg.setPlainBody ( resultat );
+		else
+			kDebug ( 14303 ) << "CryptographyPlugin::slotOutgoingMessage: empty result" <<endl;
+	}
+	else if ( signing )
 	{
-		kDebug(14303) << k_funcinfo << "empty key" << endl;
-		KMessageBox::sorry (Kopete::UI::Global::mainWidget(), i18n("You have not chosen an encryption key for one or more recipients") );
-		return;
+		QString result = GpgInterface::signText ( msg.plainBody(), mPrivateKeyID );
+		if ( !result.isEmpty() )
+			msg.setPlainBody ( result );
 	}
-
-	QString original=msg.plainBody();
-
-	QString encryptOptions="";
-	encryptOptions+=" --always-trust ";
-	encryptOptions+=" --armor ";
-
-	QString resultat = GpgInterface::encryptText(original,key,encryptOptions);
-	if (!resultat.isEmpty())
-	{
-		msg.setPlainBody(resultat);
-		m_cachedMessages.insert(resultat,original);
-	}
-	else
-		kDebug(14303) << "CryptographyPlugin::slotOutgoingMessage: empty result" <<endl;
 }
 
 void CryptographyPlugin::slotSelectContactKey()
 {
 	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
-	if(!m)
+	if ( !m )
 		return;
-	QString key = m->pluginData( this, "gpgKey" );
-	CryptographySelectUserKey *opts = new CryptographySelectUserKey( key, m );
+	QString key = m->pluginData ( this, "gpgKey" );
+	CryptographySelectUserKey *opts = new CryptographySelectUserKey ( key, m );
 	opts->exec();
-	if( opts->result() )
+	if ( opts->result() )
 	{
 		key = opts->publicKey();
-		m->setPluginData( this, "gpgKey", key );
+		m->setPluginData ( this, "gpgKey", key );
 	}
 	delete opts;
 }
@@ -280,10 +243,10 @@ void CryptographyPlugin::slotForgetCachedPass()
 	m_cachedPass_timer->stop();
 }
 
-void CryptographyPlugin::slotNewKMM(Kopete::ChatSession *KMM)
+void CryptographyPlugin::slotNewKMM ( Kopete::ChatSession *KMM )
 {
-	connect(this , SIGNAL( destroyed(QObject*)) ,
-			new CryptographyGUIClient(KMM) , SLOT(deleteLater()));
+	connect ( this , SIGNAL ( destroyed ( QObject* ) ) ,
+	          mGui = new CryptographyGUIClient ( KMM ) , SLOT ( deleteLater() ) );
 }
 
 #include "cryptographyplugin.moc"

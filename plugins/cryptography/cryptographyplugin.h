@@ -28,6 +28,8 @@ class QStringList;
 class QString;
 class QTimer;
 
+class CryptographyGUIClient;
+
 namespace Kopete
 {
 	class Message;
@@ -67,13 +69,11 @@ private slots:
 	void slotNewKMM(Kopete::ChatSession *);
 	
 private:
+	CryptographyGUIClient* mGui;
 	static CryptographyPlugin* pluginStatic_;
 	Kopete::SimpleMessageHandlerFactory *m_inboundHandler;
 	QString m_cachedPass;
 	QTimer *m_cachedPass_timer;
-
-	//cache messages for showing
-	QMap<QString, QString> m_cachedMessages;
 
 	//Settings
 	QString mPrivateKeyID;

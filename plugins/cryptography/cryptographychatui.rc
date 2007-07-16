@@ -3,7 +3,8 @@
 	<MenuBar>
 		<Menu name="tools" >
 			<text>&amp;Tools</text>
-			<Action name="cryptographyToggle" />
+			<Action name="encryptionToggle" />
+			<Action name="signToggle" />
 		</Menu>
 	</MenuBar>
 </kpartgui>
