@@ -26,7 +26,7 @@
 #include <KAction>
 #include "popuppublic.h"
 #include "ui_popuppublicbase.h"
-#include "kgpginterface.h"
+#include "gpginterface.h"
 
 #include <cstdio>
 
