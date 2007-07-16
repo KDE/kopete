@@ -1,5 +1,7 @@
-
-add_subdirectory( latex ) 
+# Laurent this plugins use shell script which will not work on windows
+if (UNIX)
+  add_subdirectory( latex ) 
+endif (UNIX)
 add_subdirectory( autoreplace ) 
 add_subdirectory( history ) 
 add_subdirectory( contactnotes ) 
