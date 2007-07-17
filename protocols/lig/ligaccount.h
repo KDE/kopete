@@ -17,8 +17,11 @@
 #ifndef LIGACCOUNT_H
 #define LIGACCOUNT_H
 
-#include <kopeteaccount.h>
 #include "ligwebcamdialog.h"
+
+#include "kopetepasswordedaccount.h"
+
+#include "ligprotocol.h"
 
 class KActionMenu;
 namespace Kopete { class Contact; }
@@ -29,10 +32,14 @@ class LigProtocol;
 class LigServer;
 
 /**
- * This represents an account connected to the lig
- * @author Will Stephenson
+ * This represents an account connected to the Lig network.
+ * LigAccount encapsulates everything that is account-based, as opposed to
+ * protocol based. This basically means sockets, current status, and account
+ * info are stored in the account, whereas the protocol is only the
+ * 'manager' class that creates and manages accounts.
+ * @author Cláudio da Silveira Pinheiro
 */
-class LigAccount : public Kopete::Account
+class LigAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
 public:
@@ -56,19 +63,40 @@ public:
 	 * Called when Kopete status is changed globally
 	 */
 	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const QString &reason = QString::null);
-	/**
-	 * 'Connect' to the lig server.  Only sets myself() online.
-	 */
-	virtual void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus::OnlineStatus() );
-	/**
-	 * Disconnect from the server.  Only sets myself() offline.
-	 */
-	virtual void disconnect();
+//	/**
+//	 * 'Connect' to the lig server.  Only sets myself() online.
+//	 */
+//	virtual void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus::OnlineStatus() );
+//	/**
+//	 * Disconnect from the server.  Only sets myself() offline.
+//	 */
+//	virtual void disconnect();
 	/**
 	 * Return a reference to the server stub
 	 */
 	LigServer* server();
+	/**
+	 * Returns the address of the Lig SIP server
+	 */
+	QString sipServerName();
+	/**
+	 * Returns the port of the Lig SIP server
+	 */
+	uint sipServerPort();
+	/**
+	 * Returns the address of the Lig STUN server
+	 */
+	QString stunServerName();
+	/**
+	 * Returns the port of the Lig STUN server
+	 */
+	uint stunServerPort();
+
 public slots:
+	virtual void connectWithPassword( const QString &password ) ;
+	virtual void disconnect() ;
+//	virtual void setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason = QString::null);
+
 	/**
 	 * Called by the server when it has a message for us.
 	 * This identifies the sending Kopete::Contact and passes it a Kopete::Message
@@ -99,7 +127,8 @@ protected slots:
 	 * Show webcam.  Called by KActions and internally.
 	 */
 	void slotShowVideo();
-
+private:
+	QString m_password;
 };
 
 #endif

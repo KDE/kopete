@@ -22,7 +22,7 @@
 /**
 	@author Cláudio da Silveira Pinheiro <taupter@gmail.com>
 */
-class LigProtocol : public Kopete::Protocol
+class KOPETE_EXPORT LigProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:

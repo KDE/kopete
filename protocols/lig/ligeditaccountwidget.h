@@ -1,8 +1,10 @@
 /*
     ligeditaccountwidget.h - Kopete Lig Protocol
 
-    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2007      by Cláudio da Silveira Pinheiro	<taupter@gmail.com>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -14,27 +16,29 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDEDITACCOUNTWIDGET_H
-#define TESTBEDEDITACCOUNTWIDGET_H
+#ifndef LIGEDITACCOUNTWIDGET_H
+#define LIGEDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
-#include <editaccountwidget.h>
 
-class QVBoxLayout;
+#include "editaccountwidget.h"
+
 namespace Kopete { class Account; }
-class LigAccountPreferences;
+
+class LigProtocol;
+
+class LigEditAccountWidgetPrivate;
 
 /**
- * A widget for editing this protocol's accounts
- * @author Will Stephenson
+ * @author Cláudio da Silveira Pinheiro
 */
 class LigEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
-Q_OBJECT
-public:
-    LigEditAccountWidget( QWidget* parent, Kopete::Account* account);
+	Q_OBJECT
 
-    ~LigEditAccountWidget();
+public:
+	LigEditAccountWidget( QWidget* parent, Kopete::Account* account);
+	~LigEditAccountWidget();
 
 	/**
 	 * Make an account out of the entered data
@@ -46,7 +50,17 @@ public:
 	virtual bool validateData();
 protected:
 	Kopete::Account *m_account;
-	LigAccountPreferences *m_preferencesWidget;
+//	LigAccountPreferences *m_preferencesWidget;
+
+private slots:
+/*	void slotAllow();
+	void slotBlock();
+	void slotShowReverseList();
+	void slotSelectImage();*/
+	void slotOpenRegister();
+
+private:
+	LigEditAccountWidgetPrivate *d;
 };
 
 #endif

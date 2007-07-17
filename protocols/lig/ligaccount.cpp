@@ -20,22 +20,25 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
+#include <kconfig.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
+#include "kopetepassword.h"
 
 #include "ligcontact.h"
 #include "ligserver.h"
 #include "ligprotocol.h"
 
-
 LigAccount::LigAccount( LigProtocol *parent, const QString& accountID, const char *name )
-: Kopete::Account ( parent, accountID , name )
+: Kopete::PasswordedAccount ( parent, accountID.lower() , 0, name )
 {
 	// Init the myself contact
 	setMyself( new LigContact( this, accountId(), LigContact::Null, accountId(), Kopete::ContactList::self()->myself() ) );
 	myself()->setOnlineStatus( LigProtocol::protocol()->ligOffline );
 	m_server = new LigServer();;
+
+	KConfigGroup *config=configGroup();
 }
 
 LigAccount::~LigAccount()
@@ -86,12 +89,49 @@ void LigAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const QStri
 		slotGoAway( /* reason */ );
 }
 
-void LigAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
-{
+//void LigAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
+/*{
 	kdDebug ( 14210 ) << k_funcinfo << endl;
 	myself()->setOnlineStatus( LigProtocol::protocol()->ligOnline );
 	QObject::connect ( m_server, SIGNAL ( messageReceived( const QString & ) ),
 			this, SLOT ( receivedMessage( const QString & ) ) );
+}*/
+
+void LigAccount::connectWithPassword( const QString &passwd )
+{
+//	m_newContactList=false;
+	if ( isConnected() )
+	{
+		kdDebug( 14140 ) << k_funcinfo <<"Ignoring Connect request "
+			<< "(Already Connected)" << endl;
+		return;
+	}
+
+//	if ( m_notifySocket )
+	{
+		kdDebug( 14140 ) << k_funcinfo <<"Ignoring Connect request (Already connecting)"  << endl;
+		return;
+	}
+
+	m_password = passwd;
+
+//	if ( m_password.isNull() )
+	{
+		kdDebug( 14140 ) << k_funcinfo <<"Abort connection (null password)"  << endl;
+		return;
+	}
+
+
+	if ( contacts().count() <= 1 )
+	{
+		// Maybe the contactlist.xml has been removed, and the serial number not updated
+		// ( the 1 is for the myself contact )
+		configGroup()->writeEntry( "serial", 0 );
+	}
+
+//	m_openInboxAction->setEnabled( false );
+
+//	createNotificationServer(sipServerName(), sipServerPort());
 }
 
 void LigAccount::disconnect()
@@ -170,6 +210,26 @@ void LigAccount::updateContactStatus()
 	QDictIterator<Kopete::Contact> itr( contacts() );
 	for ( ; itr.current(); ++itr )
 		itr.current()->setOnlineStatus( myself()->onlineStatus() );
+}
+
+QString LigAccount::sipServerName()
+{
+	return configGroup()->readEntry(  "sipServerName" , "sip.melig.com.br" );
+}
+
+uint LigAccount::sipServerPort()
+{
+	return configGroup()->readNumEntry(  "sipServerPort" , 5060 );
+}
+
+QString LigAccount::stunServerName()
+{
+	return configGroup()->readEntry(  "stunServerName" , "stun.melig.com.br" );
+}
+
+uint LigAccount::stunServerPort()
+{
+	return configGroup()->readNumEntry(  "stunServerPort" , 3478 );
 }
 
 
