@@ -61,14 +61,20 @@ public:
 //	QImage pictureData;
 };
 
-LigEditAccountWidget::LigEditAccountWidget( QWidget* parent, Kopete::Account* account): QWidget( parent ), KopeteEditAccountWidget( account )
+LigEditAccountWidget::LigEditAccountWidget( LigProtocol *proto, Kopete::Account *account, QWidget *parent, const char * /* name */ )
+: QWidget( parent ), KopeteEditAccountWidget( account )
+//LigEditAccountWidget::LigEditAccountWidget( QWidget* parent, Kopete::Account* account): QWidget( parent ), KopeteEditAccountWidget( account )
 {
 	d = new LigEditAccountWidgetPrivate;
+	d->protocol=proto;
 
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 				kdDebug(14210) << k_funcinfo << endl;
 //	m_preferencesWidget = new LigAccountPreferences( this );
 	d->ui = new LigAccountPreferences( this );
+
+	d->autoConfig = new KAutoConfig( d->ui );
+	d->autoConfig->retrieveSettings( true );
 
 	if ( account )
 	{
@@ -108,21 +114,15 @@ LigEditAccountWidget::~LigEditAccountWidget()
 
 Kopete::Account* LigEditAccountWidget::apply()
 {
-kdDebug(14210) << k_funcinfo << "started" << endl;
-//	d->autoConfig->saveSettings();
-kdDebug(14210) << k_funcinfo << "1 - Setting group Lig" << endl;
+	d->autoConfig->saveSettings();
 	KGlobal::config()->setGroup("Lig");
-kdDebug(14210) << k_funcinfo << "2 - Checking existence of account" << endl;
 
 	if ( !account() )
 	{
-kdDebug(14210) << k_funcinfo << "2.1 - Instantiating LigAccount" << endl;
 		setAccount( new LigAccount( d->protocol, d->ui->m_login->text() ) );
 	}
 
-kdDebug(14210) << k_funcinfo << "3 - Checking existence of account" << endl;
 	KConfigGroup *config=account()->configGroup();
-kdDebug(14210) << k_funcinfo << "4 - Saving settings" << endl;
 
 // Password
 	d->ui->m_password->save( &static_cast<LigAccount *>(account())->password() );

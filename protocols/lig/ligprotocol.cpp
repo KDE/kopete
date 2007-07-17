@@ -83,7 +83,7 @@ AddContactPage * LigProtocol::createAddContactWidget( QWidget *parent, Kopete::A
 KopeteEditAccountWidget * LigProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
 	kdDebug(14210) << "Creating Edit Account Page" << endl;
-	return new LigEditAccountWidget( parent, account );
+	return new LigEditAccountWidget( this, account, parent );
 }
 
 Kopete::Account *LigProtocol::createNewAccount( const QString &accountId )

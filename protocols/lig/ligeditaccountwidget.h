@@ -37,7 +37,8 @@ class LigEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 	Q_OBJECT
 
 public:
-	LigEditAccountWidget( QWidget* parent, Kopete::Account* account);
+	LigEditAccountWidget( LigProtocol *proto, Kopete::Account *account, QWidget *parent = 0, const char *name = 0 );
+//	LigEditAccountWidget( QWidget* parent, Kopete::Account* account);
 	~LigEditAccountWidget();
 
 	/**
