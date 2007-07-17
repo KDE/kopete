@@ -31,6 +31,8 @@
 #include <ktemporaryfile.h>
 #include "gpginterface.h"
 
+#include "kopeteuiglobal.h"
+
 QString GpgInterface::encryptText ( QString text, QString userIDs, QString options, bool signAlso, QString privateKey )
 {
 	int counter = 0;
@@ -54,7 +56,7 @@ QString GpgInterface::encryptText ( QString text, QString userIDs, QString optio
 		while ( ( counter < 3 ) && ( encResult.isEmpty() ) )
 		{
 			counter++;
-			password = getPassword(password, privateKey, counter);
+			password = getPassword ( password, privateKey, counter );
 			gpgcmd = "gpg --no-secmem-warning --no-tty " + options.toLocal8Bit() + " -e " + dests.toLocal8Bit(); gpgcmd += " --passphrase " + password + " -s ";
 
 			QProcess fp;
@@ -87,7 +89,6 @@ QString GpgInterface::signText ( QString text, QString privateKey )
 	QString gpgcmd, encResult;
 	int counter = 0;
 	QString password = CryptographyPlugin::cachedPass();
-	bool passphraseHandling = CryptographyPlugin::passphraseHandling();
 	while ( ( counter<3 ) && ( encResult.isEmpty() ) )
 	{
 		counter++;
@@ -113,7 +114,6 @@ QString GpgInterface::decryptText ( QString text, QString userID, int &opState )
 
 	int counter = 0;
 	QString password = CryptographyPlugin::cachedPass();
-	bool passphraseHandling = CryptographyPlugin::passphraseHandling();
 
 	// give them three tries on passphrase
 	while ( ( counter<3 ) && ( encResult.isEmpty() ) )
@@ -135,20 +135,20 @@ QString GpgInterface::decryptText ( QString text, QString userID, int &opState )
 		fp.closeWriteChannel();
 		fp.waitForFinished();
 		encResult = fp.readAll();
-		
+
 		status = tempfile.readAll();
-		if (status.contains ("GOODSIG") )
+		if ( status.contains ( "GOODSIG" ) )
 			opState = GoodSig;
-		else if (status.contains ("BADSIG") )
+		else if ( status.contains ( "BADSIG" ) )
 			opState = BadSig;
-		else if (status.contains ("ERRSIG") )
+		else if ( status.contains ( "ERRSIG" ) )
 			opState = ErrorSig;
 		else
 			opState = NoSig;
-		
-		if (status.contains ("DECRYPTION_OKAY") )
-			opState = (opState | Decrypted);
-		
+
+		if ( status.contains ( "DECRYPTION_OKAY" ) )
+			opState = ( opState | Decrypted );
+
 		status.clear();
 		password.clear();
 		gpgcmd.clear();
@@ -189,20 +189,35 @@ QString GpgInterface::checkForUtf8 ( QString txt )
 		return QString::fromUtf8 ( QString::fromUtf8 ( txt.ascii() ).ascii() );  // perform Utf8 twice, or some keys display badly
 }
 
+class CryptographyPasswordDialog : public KPasswordDialog
+{
+		Q_OBJECT
+	public:
+		CryptographyPasswordDialog ( QWidget *parent=0L, const KPasswordDialogFlags &flags=0, const KDialog::ButtonCodes otherButtons=0 ) : KPasswordDialog ( parent, flags, otherButtons ) {}};
+
 QString GpgInterface::getPassword ( QString password, QString userID, int counter )
 {
-	if (!password.isEmpty() && counter <= 1)
+	if ( !password.isEmpty() && counter <= 1 )
 		return password;
 	bool passphraseHandling = CryptographyPlugin::passphraseHandling();
 	QString passdlg=i18n ( "Enter passphrase for secret key %1:", "0x" + userID.right ( 8 ) );
 	if ( counter>1 )
 		passdlg.prepend ( i18n ( "<b>Bad passphrase</b><br> You have %1 tries left.<br>", 4-counter ) );
-	KPasswordDialog dlg ( 0L, KPasswordDialog::NoFlags );
+	CryptographyPasswordDialog dlg ( Kopete::UI::Global::mainWidget(), KPasswordDialog::NoFlags );
 	dlg.setPrompt ( passdlg );
 	if ( !dlg.exec() )
 		return QString(); //the user canceled
 	if ( passphraseHandling )
 		CryptographyPlugin::setCachedPass ( dlg.password().toLocal8Bit() );
+	
+	// if there is already a password dialog open, get password and send it to that
+	QList<CryptographyPasswordDialog*> otherDialogs = Kopete::UI::Global::mainWidget()->findChildren <CryptographyPasswordDialog *> ();
+	if ( otherDialogs.size() > 1){
+		foreach ( CryptographyPasswordDialog *otherDialog, otherDialogs ){
+			otherDialog->setPassword ( dlg.password());
+			otherDialog->accept();
+		}
+	}
 	return dlg.password();
 }
 
