@@ -69,7 +69,7 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 
 	m_encAction = new KToggleAction( KIcon("encrypted"), i18n("Encrypt Messages" ), this );
         actionCollection()->addAction( "encryptionToggle", m_encAction );
-	m_signAction = new KToggleAction ( KIcon ("signature"), i18n("Sign Message" ), this );
+	m_signAction = new KToggleAction ( KIcon ("signature"), i18n("Sign Messages" ), this );
 	actionCollection()->addAction ("signToggle", m_signAction );
 	
 	m_encAction->setChecked(wantEncrypt && keysAvailable);

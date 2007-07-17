@@ -6,5 +6,10 @@
 			<Action name="encryptionToggle" />
 			<Action name="signToggle" />
 		</Menu>
+		<ToolBar name="cryptographyToolBar" fullWidth="false">
+			<text>Cryptography Toolbar</text>
+			<Action name="encryptionToggle" />
+			<Action name="signToggle" />
+		</ToolBar>
 	</MenuBar>
 </kpartgui>
