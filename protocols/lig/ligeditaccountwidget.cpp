@@ -80,9 +80,18 @@ LigEditAccountWidget::LigEditAccountWidget( QWidget* parent, Kopete::Account* ac
 		//remove me after we can change account ids (Matt)
 		d->ui->m_login->setDisabled( true );
 		d->ui->m_autologin->setChecked( account->excludeConnect()  );
-		if ( ( static_cast<LigAccount*>(account)->sipServerName() != "sip.melig.com.br" ) || ( static_cast<LigAccount*>(account)->sipServerPort() != 5060)
-			|| ( static_cast<LigAccount*>(account)->stunServerName() != "stun.melig.com.br" ) || ( static_cast<LigAccount*>(account)->stunServerPort() != 3478) ) {
+		d->ui->m_globalIdentity->setChecked( config->readBoolEntry("ExcludeGlobalIdentity", false) );
+
+		// Should override server
+		LigAccount *m_account = static_cast<LigAccount*>( account );
+		if ( ( m_account->sipServerName() != "sip.melig.com.br" ) || ( m_account->sipServerPort() != 5060) ||
+		     ( m_account->stunServerName() != "stun.melig.com.br" ) || ( m_account->stunServerPort() != 3478) )
+		{
 			d->ui->optionOverrideServer->setChecked( true );
+			d->ui->m_sipServerName->setText( m_account->sipServerName() );
+			d->ui->m_sipServerPort->setValue( m_account->sipServerPort() );
+			d->ui->m_stunServerName->setText( m_account->stunServerName() );
+			d->ui->m_stunServerPort->setValue( m_account->stunServerPort() );
 		}
 	}
 
@@ -99,18 +108,43 @@ LigEditAccountWidget::~LigEditAccountWidget()
 
 Kopete::Account* LigEditAccountWidget::apply()
 {
-	QString accountName;
-	if ( d->ui->m_login->text().isEmpty() )
-		accountName = "Lig Account";
-	else
-		accountName = d->ui->m_login->text();
-	
-	if ( account() )
-		// FIXME: ? account()->setAccountLabel(accountName);
-		account()->myself()->setProperty( Kopete::Global::Properties::self()->nickName(), accountName );
-	else
-		setAccount( new LigAccount( LigProtocol::protocol(), accountName ) );
+kdDebug(14210) << k_funcinfo << "started" << endl;
+//	d->autoConfig->saveSettings();
+kdDebug(14210) << k_funcinfo << "1 - Setting group Lig" << endl;
+	KGlobal::config()->setGroup("Lig");
+kdDebug(14210) << k_funcinfo << "2 - Checking existence of account" << endl;
 
+	if ( !account() )
+	{
+kdDebug(14210) << k_funcinfo << "2.1 - Instantiating LigAccount" << endl;
+		setAccount( new LigAccount( d->protocol, d->ui->m_login->text() ) );
+	}
+
+kdDebug(14210) << k_funcinfo << "3 - Checking existence of account" << endl;
+	KConfigGroup *config=account()->configGroup();
+kdDebug(14210) << k_funcinfo << "4 - Saving settings" << endl;
+
+// Password
+	d->ui->m_password->save( &static_cast<LigAccount *>(account())->password() );
+
+//Auto-connect
+	account()->setExcludeConnect( d->ui->m_autologin->isChecked() );
+// Global Identity
+	config->writeEntry( "ExcludeGlobalIdentity", d->ui->m_globalIdentity->isChecked() );
+
+	if (d->ui->optionOverrideServer->isChecked() ) {
+		config->writeEntry( "sipServerName", d->ui->m_sipServerName->text() );
+		config->writeEntry( "sipServerPort", d->ui->m_sipServerPort->value()  );
+		config->writeEntry( "stunServerName", d->ui->m_stunServerName->text() );
+		config->writeEntry( "stunServerPort", d->ui->m_stunServerPort->value()  );
+	}
+	else {
+		config->writeEntry( "sipServerName", "sip.melig.com.br" );
+		config->writeEntry( "sipServerPort", "5060" );
+		config->writeEntry( "stunServerName", "stun.melig.com.br" );
+		config->writeEntry( "stunServerPort", "3478" );
+	}
+kdDebug(14210) << k_funcinfo << "ended" << endl;
 	return account();
 }
 
