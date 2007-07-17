@@ -19,7 +19,6 @@
 #include <qtimer.h>
 #include <qregexp.h>
 #include <QList>
-#include <QByteArray>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -30,6 +29,8 @@
 #include <kicon.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <kpassworddialog.h>
+#include <kleo/ui/keylistview.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -86,6 +87,9 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QStringList & /*
 	connect ( this, SIGNAL ( settingsChanged() ), this, SLOT ( loadSettings() ) );
 
 	connect ( Kopete::ChatSessionManager::self(), SIGNAL ( chatSessionCreated ( Kopete::ChatSession * ) ) , SLOT ( slotNewKMM ( Kopete::ChatSession * ) ) );
+	
+	slotAskPassphraseOnStartup();
+	
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
 	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
 	foreach ( Kopete::ChatSession *session, sessions )
@@ -106,7 +110,7 @@ void CryptographyPlugin::loadSettings()
 	CryptographyConfig c;
 
 	mPrivateKeyID = c.fingerprint();
-	mAskPassPhrase = c.askPassPhrase();
+	mAskPassPhraseOnStartup = c.askPassphraseOnStartup();
 	mCachePassPhrase = c.cacheMode();
 	mCacheTime = c.cacheTime();
 }
@@ -123,7 +127,7 @@ QString CryptographyPlugin::cachedPass()
 	return pluginStatic_->m_cachedPass;
 }
 
-void CryptographyPlugin::setCachedPass ( const QByteArray& p )
+void CryptographyPlugin::setCachedPass ( const QString& p )
 {
 	if ( pluginStatic_->mCachePassPhrase == CryptographyConfig::Never )
 		return;
@@ -134,11 +138,6 @@ void CryptographyPlugin::setCachedPass ( const QByteArray& p )
 	}
 
 	pluginStatic_->m_cachedPass=p;
-}
-
-bool CryptographyPlugin::passphraseHandling()
-{
-	return !pluginStatic_->mAskPassPhrase;
 }
 
 void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
@@ -221,6 +220,13 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 	}
 }
 
+class MyColumnStrategy : public Kleo::KeyListView::ColumnStrategy
+{
+	public:
+		QString title () { return "Select Key"; }
+	
+};
+
 void CryptographyPlugin::slotSelectContactKey()
 {
 	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
@@ -239,8 +245,18 @@ void CryptographyPlugin::slotSelectContactKey()
 
 void CryptographyPlugin::slotForgetCachedPass()
 {
-	m_cachedPass=QByteArray();
+	m_cachedPass=QString();
 	m_cachedPass_timer->stop();
+}
+
+void CryptographyPlugin::slotAskPassphraseOnStartup()
+{
+	if (mAskPassPhraseOnStartup && !mPrivateKeyID.isEmpty() ){
+		KPasswordDialog dialog ( Kopete::UI::Global::mainWidget() );
+		dialog.setPrompt ( i18n ("Enter password for GPG private key") );
+		dialog.exec ();
+		setCachedPass( dialog.password() );
+	}
 }
 
 void CryptographyPlugin::slotNewKMM ( Kopete::ChatSession *KMM )

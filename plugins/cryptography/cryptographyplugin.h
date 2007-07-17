@@ -20,8 +20,7 @@
 
 
 #include "kopeteplugin.h"
-//Added by qt3to4:
-#include <QByteArray>
+
 #include "cryptographyconfig.h"
 
 class QStringList;
@@ -48,8 +47,7 @@ class CryptographyPlugin : public Kopete::Plugin
 public:
 	static CryptographyPlugin  *plugin();
 	static QString cachedPass();
-	static void setCachedPass(const QByteArray &pass);
-	static bool passphraseHandling();
+	static void setCachedPass(const QString &pass);
 	static const QRegExp isHTML;
 
 	CryptographyPlugin( QObject *parent, const QStringList &args );
@@ -61,7 +59,8 @@ public slots:
 	void slotOutgoingMessage( Kopete::Message& msg );
 
 private slots:
-
+	// implemented as a slot so it can be hooked to a timer
+	void slotAskPassphraseOnStartup ();
 	void slotSelectContactKey();
 	void slotForgetCachedPass();
 	void loadSettings();
@@ -78,7 +77,7 @@ private:
 	//Settings
 	QString mPrivateKeyID;
 	unsigned int mCacheTime;
-	bool mAskPassPhrase;
+	bool mAskPassPhraseOnStartup;
 	CryptographyConfig::CacheMode mCachePassPhrase;
 };
 

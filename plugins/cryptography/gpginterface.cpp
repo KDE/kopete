@@ -57,7 +57,8 @@ QString GpgInterface::encryptText ( QString text, QString userIDs, QString optio
 		{
 			counter++;
 			password = getPassword ( password, privateKey, counter );
-			gpgcmd = "gpg --no-secmem-warning --no-tty " + options.toLocal8Bit() + " -e " + dests.toLocal8Bit(); gpgcmd += " --passphrase " + password + " -s ";
+			gpgcmd = "gpg --no-secmem-warning --no-tty " + options + " -e " + dests;
+			gpgcmd += " --passphrase " + password + " -s ";
 
 			QProcess fp;
 			fp.start ( gpgcmd, QIODevice::ReadWrite );
@@ -72,7 +73,7 @@ QString GpgInterface::encryptText ( QString text, QString userIDs, QString optio
 	}
 	else
 	{
-		gpgcmd = "gpg --no-secmem-warning --no-tty " + options.toLocal8Bit() + " -e " + dests.toLocal8Bit();
+		gpgcmd = "gpg --no-secmem-warning --no-tty " + options + " -e " + dests;
 		QProcess fp;
 		fp.start ( gpgcmd, QIODevice::ReadWrite );
 		fp.waitForStarted();
@@ -193,22 +194,20 @@ class CryptographyPasswordDialog : public KPasswordDialog
 {
 		Q_OBJECT
 	public:
-		CryptographyPasswordDialog ( QWidget *parent=0L, const KPasswordDialogFlags &flags=0, const KDialog::ButtonCodes otherButtons=0 ) : KPasswordDialog ( parent, flags, otherButtons ) {}};
+		CryptographyPasswordDialog ( QWidget *parent=0L, const KPasswordDialogFlags &flags=0, const KDialog::ButtonCodes otherButtons=0 ) : KPasswordDialog ( parent, flags, otherButtons ) {}
+};
 
 QString GpgInterface::getPassword ( QString password, QString userID, int counter )
 {
 	if ( !password.isEmpty() && counter <= 1 )
 		return password;
-	bool passphraseHandling = CryptographyPlugin::passphraseHandling();
-	QString passdlg=i18n ( "Enter passphrase for secret key %1:", "0x" + userID.right ( 8 ) );
-	if ( counter>1 )
-		passdlg.prepend ( i18n ( "<b>Bad passphrase</b><br> You have %1 tries left.<br>", 4-counter ) );
+	
+	QString passdlg=i18n ( "Enter passphrase for secret key %1:\nYou have %2 tries left.", "0x" + userID.right ( 8 ), 4 - counter );
 	CryptographyPasswordDialog dlg ( Kopete::UI::Global::mainWidget(), KPasswordDialog::NoFlags );
 	dlg.setPrompt ( passdlg );
 	if ( !dlg.exec() )
 		return QString(); //the user canceled
-	if ( passphraseHandling )
-		CryptographyPlugin::setCachedPass ( dlg.password().toLocal8Bit() );
+	CryptographyPlugin::setCachedPass ( dlg.password() );
 	
 	// if there is already a password dialog open, get password and send it to that
 	QList<CryptographyPasswordDialog*> otherDialogs = Kopete::UI::Global::mainWidget()->findChildren <CryptographyPasswordDialog *> ();

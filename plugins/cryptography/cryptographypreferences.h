@@ -46,13 +46,13 @@ class CryptographyPreferences : public KCModule
 
 	private:
 		Kleo::EncryptionKeyRequester * key;
-		QCheckBox * mAskPassPhrase;
+		QCheckBox * mAskPassphraseOnStartup;
 		Ui::CryptographyPrefsUI *mPreferencesDialog;
 		CryptographyConfig *mConfig;
 
 	private slots:
 		void slotModified();
-		void slotAskPressed (bool b);
+		void slotAskOnStartupPressed (bool b);
 };
 
 #endif

@@ -63,7 +63,6 @@ class GpgInterface : public QObject
 
 		static QString checkForUtf8 ( QString s );
 		
-	private:
 		static QString getPassword (QString password, QString userID, int counter);
 };
 
