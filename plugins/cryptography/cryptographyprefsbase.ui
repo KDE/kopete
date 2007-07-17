@@ -7,30 +7,10 @@
     <x>0</x>
     <y>0</y>
     <width>345</width>
-    <height>234</height>
+    <height>250</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <item>
-    <widget class="QLabel" name="warning" >
-     <property name="frameShape" >
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="text" >
-      <string>Note: All messages become plain text when used with this plugin</string>
-     </property>
-     <property name="wordWrap" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="askPassPhrase" >
-     <property name="text" >
-      <string>Ask for the passphrase every time</string>
-     </property>
-    </widget>
-   </item>
    <item>
     <widget class="QGroupBox" name="cacheBehavior" >
      <property name="title" >
@@ -126,28 +106,11 @@
      </layout>
     </widget>
    </item>
-   <item>
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
-  <tabstop>askPassPhrase</tabstop>
   <tabstop>never</tabstop>
   <tabstop>time</tabstop>
   <tabstop>cacheTime</tabstop>
