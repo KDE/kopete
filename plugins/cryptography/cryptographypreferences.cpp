@@ -21,7 +21,7 @@
 
 #include <klineedit.h>
 #include <kgenericfactory.h>
-#include <libkleo/keyrequester.h>
+#include <kleo/ui/keyrequester.h>
 
 #include "ui_cryptographyprefsbase.h"
 #include "cryptographypreferences.h"

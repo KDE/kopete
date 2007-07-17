@@ -29,7 +29,7 @@
 
 namespace Ui { class CryptographyPrefsUI; }
 class CryptographyConfig;
-class EncryptionKeyRequester;
+class Kleo::EncryptionKeyRequester;
 class QCheckBox;
 
 class CryptographyPreferences : public KCModule
