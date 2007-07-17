@@ -402,7 +402,11 @@ void KopeteWindow::initActions()
 	connect( globalSetAway, SIGNAL( triggered(bool) ), this, SLOT( slotToggleAway() ) );
 	globalSetAway->setGlobalShortcut( KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W) );
 
-	KGlobalAccel::self()->readSettings();
+#ifdef __GNUC__
+#warning port me - it's probably safe to just remove this line as *global* shortcut setttings
+#warning are now loaded automatically by default.
+#endif
+	//KGlobalAccel::self()->readSettings();
 }
 
 void KopeteWindow::slotShowHide()
