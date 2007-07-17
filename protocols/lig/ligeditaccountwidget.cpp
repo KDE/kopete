@@ -39,10 +39,10 @@ LigEditAccountWidget::~LigEditAccountWidget()
 Kopete::Account* LigEditAccountWidget::apply()
 {
 	QString accountName;
-	if ( m_preferencesWidget->m_acctName->text().isEmpty() )
+	if ( m_preferencesWidget->m_login->text().isEmpty() )
 		accountName = "Lig Account";
 	else
-		accountName = m_preferencesWidget->m_acctName->text();
+		accountName = m_preferencesWidget->m_login->text();
 	
 	if ( account() )
 		// FIXME: ? account()->setAccountLabel(accountName);
