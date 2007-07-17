@@ -49,7 +49,7 @@ SidebarWidget::SidebarWidget( KopeteChatWindow *parent )
 	m_infoZone = new QLabel(pageInfoZone);
 	l->addWidget(m_infoZone);
 	
-	m_tabWidget->addTab(pageInfoZone, i18n("Informations"));
+	m_tabWidget->addTab(pageInfoZone, i18n("Information"));
 
 	// The contact list
 	ChatMembersListWidget *m_membersList = new ChatMembersListWidget(this);

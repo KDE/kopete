@@ -115,7 +115,7 @@ public:
 			}
 			case ChatWindowStyleManager::StyleCannotOpen:
 			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive cannot be opened.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
 				break;
 			}
 			case ChatWindowStyleManager::StyleNoDirectoryValid:
@@ -345,7 +345,7 @@ void ChatWindowConfig::slotInstallChatStyle()
 			{
 				case ChatWindowStyleManager::StyleCannotOpen:
 				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be opened.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
 					break;
 				}
 				case ChatWindowStyleManager::StyleNoDirectoryValid:
@@ -358,7 +358,7 @@ void ChatWindowConfig::slotInstallChatStyle()
 					break;
 				case ChatWindowStyleManager::StyleInstallOk:
 				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window style was successfully installed !"), i18n("Install successful") );
+					KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window style was successfully installed!"), i18n("Install successful") );
 					break;
 				}
 				case ChatWindowStyleManager::StyleUnknow:
