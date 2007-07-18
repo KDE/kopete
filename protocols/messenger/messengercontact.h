@@ -50,6 +50,7 @@ public slots:
 	virtual void sendFile( const KUrl &sourceURL = KUrl(),
 						   const QString &fileName = QString(), uint fileSize = 0L );
 
+	void slotUserProfile();
 	/**
 	 * Every time the kopete's contact list is modified, we sync the serverlist with it
 	 */

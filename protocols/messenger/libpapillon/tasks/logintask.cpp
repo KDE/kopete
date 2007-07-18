@@ -22,7 +22,7 @@
 // Papillon includes
 #include "Papillon/Transfer"
 #include "Papillon/Connection"
-#include "Papillon/Http/TweenerHandler"
+#include "Papillon/Http/SSOHandler"
 #include "Papillon/Client"
 #include "Papillon/UserContact"
 
@@ -41,7 +41,7 @@ public:
 	// Keep track of the expected transaction ID.
 	QString currentTransactionId;
 
-	QString tweenerTicket;
+	QString ssoTicket;
 };
 
 LoginTask::LoginTask(Task *parent)
@@ -80,43 +80,46 @@ bool LoginTask::take(Transfer *transfer)
 			{
 				if( transfer->command() == QLatin1String("CVR") )
 				{
-					d->currentState = StateTweenerInvite;
+					d->currentState = StateSSOInvite;
 					proceeded = true;
-					sendTweenerInviteCommand();
+					sendSSOInviteCommand();
 				}
 				break;
 			}
-			case StateTweenerInvite:
+			case StateSSOInvite:
 			{
 				if( transfer->command() == QLatin1String("USR") )
 				{
-					if( transfer->arguments()[0] == QLatin1String("TWN") && transfer->arguments()[1] == QLatin1String("S") )
+					if( transfer->arguments()[0] == QLatin1String("SSO") && transfer->arguments()[1] == QLatin1String("S") )
 					{
-						d->currentState = StateTweenerConfirmed;
+						d->currentState = StateSSOConfirmed;
 
-						QString tweener = transfer->arguments()[2];
-						TweenerHandler *tweenerHandler = new TweenerHandler( connection()->client()->createSecureStream() );
-						tweenerHandler->setLoginInformation(tweener, passportId(), password());
-						connect(tweenerHandler, SIGNAL(result( TweenerHandler* )), this, SLOT(ticketReceived( TweenerHandler* )));
-						tweenerHandler->start();
+						QString sso = transfer->arguments()[2];
+						SSOHandler *ssoHandler = new SSOHandler( connection()->client()->createSecureStream() );
+						ssoHandler->setLoginInformation(sso, passportId(), password());
+						connect(ssoHandler, SIGNAL(result( SSOHandler* )), this, SLOT(ticketReceived( SSOHandler* )));
+						ssoHandler->start();
 
 						proceeded = true;
 					}
 				}
 				else if( transfer->command() == QLatin1String("XFR") )
 				{
-					QString newServer = transfer->arguments()[1].section(":", 0, 0);
-					QString tempPort = transfer->arguments()[1].section(":", 1, 1);
-					bool dummy;
-					int newPort = tempPort.toUInt(&dummy);
+					if( transfer->arguments()[0] == QLatin1String("NS") )
+					{
+						QString newServer = transfer->arguments()[1].section(":", 0, 0);
+						QString tempPort = transfer->arguments()[1].section(":", 1, 1);
+						bool dummy;
+						int newPort = tempPort.toUInt(&dummy);
 
-					d->currentState = StateRedirection;
-					proceeded = true;
-					emit redirection(newServer, newPort);
+						d->currentState = StateRedirection;
+						proceeded = true;
+						emit redirection(newServer, newPort);
+					}
 				}
 				break;
 			}
-			case StateTweenerConfirmed:
+			case StateSSOConfirmed:
 			{
 				if( transfer->command() == QLatin1String("USR") )
 				{
@@ -168,7 +171,7 @@ void LoginTask::sendVersionCommand()
 	d->currentTransactionId = QString::number( connection()->transactionId() );
 	versionTransfer->setTransactionId( d->currentTransactionId );
 
-	versionTransfer->setArguments( QString("MSNP13 CVR0") );
+	versionTransfer->setArguments( QString("MSNP15 MSNP14 CVR0") );
 
 	send(versionTransfer);
 }
@@ -182,50 +185,50 @@ void LoginTask::sendCvrCommand()
 	d->currentTransactionId = QString::number( connection()->transactionId() );
 	cvrTransfer->setTransactionId( d->currentTransactionId );
 
-	QString arguments = QString("0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %1").arg( passportId() );
+	QString arguments = QString("0x0409 winnt 5.1 i386 MSNMSGR 8.1.0178 msmsgs %1").arg( passportId() );
 	cvrTransfer->setArguments(arguments);
 
 	send(cvrTransfer);
 }
 
-void LoginTask::sendTweenerInviteCommand()
+void LoginTask::sendSSOInviteCommand()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending Tweener Invite Command";
+	qDebug() << PAPILLON_FUNCINFO << "Sending SSO Invite Command";
 	Transfer *twnTransfer = new Transfer(Transfer::TransactionTransfer);
 	twnTransfer->setCommand("USR");
 
 	d->currentTransactionId = QString::number( connection()->transactionId() );
 	twnTransfer->setTransactionId( d->currentTransactionId );
 
-	QString arguments = QString("TWN I %1").arg( passportId() );
+	QString arguments = QString("SSO I %1").arg( passportId() );
 	twnTransfer->setArguments(arguments);
 
 	send(twnTransfer);
 }
 
-void LoginTask::sendTweenerConfirmation()
+void LoginTask::sendSSOConfirmation()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending Tweener confirmation command.";
-	Transfer *twnTransfer = new Transfer(Transfer::TransactionTransfer);
-	twnTransfer->setCommand("USR");
+	qDebug() << PAPILLON_FUNCINFO << "Sending SSO confirmation command.";
+	Transfer *ssoTransfer = new Transfer(Transfer::TransactionTransfer);
+	ssoTransfer->setCommand("USR");
 
 	d->currentTransactionId = QString::number( connection()->transactionId() );
-	twnTransfer->setTransactionId( d->currentTransactionId );
+	ssoTransfer->setTransactionId( d->currentTransactionId );
 
-	QString arguments = QString("TWN S %1").arg(d->tweenerTicket);
-	twnTransfer->setArguments(arguments);
+	QString arguments = QString("SSO S %1").arg(d->SSOTicket);
+	ssoTransfer->setArguments(arguments);
 
-	send(twnTransfer);
+	send(ssoTransfer);
 }
 
-void LoginTask::ticketReceived(TweenerHandler *tweenerHandler)
+void LoginTask::ticketReceived(SSOHandler *ssoHandler)
 {
-	if( tweenerHandler->success() )
+	if( ssoHandler->success() )
 	{
-		d->tweenerTicket = tweenerHandler->ticket();
-		tweenerHandler->deleteLater();
+		d->ssoTicket = ssoHandler->ticket();
+		ssoHandler->deleteLater();
 
-		sendTweenerConfirmation();
+		sendSSOConfirmation();
 	}
 	else
 	{

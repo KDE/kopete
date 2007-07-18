@@ -1,3 +1,4 @@
+
 #ifndef _MESSENGERCONTACTINFO_H_
 #define _MESSENGERCONTACTINFO_H_
 
@@ -6,6 +7,9 @@ class MessengerContactInfo
 public;
 	MessengerContactInfo();
 	~MessengerContactInfo();
+
+	void loadProp();
+	void storeProp();
 
 public:
 	MessengerGeneralUserInfo* m_generalUserInfo;
@@ -20,7 +24,9 @@ class MessengerGeneralUserInfo
 {
 public:
 	MessengerGeneralUserInfo();
-	
+	void loadProp();
+	void storeProp();
+
 	MessengerInfoValue<QString> email; 
 	
 	MessengerInfoValue<QString> ContactType;
@@ -35,6 +41,8 @@ class MessengerAnnotationUserInfo
 {
 public:
 	MessengerAnnotationUserInfo();
+	void loadProp();
+	void storeProp();
 	
 	MessengerInfoValue<QString> JobTitle;
 	MessengerInfoValue<QString> NickName;
@@ -45,6 +53,8 @@ class MessengerEmailUserInfo
 {
 public:
 	MessengerEmailUserInfo();
+	void loadProp();
+	void storeProp();
 	
 	MessengerInfoValue<QString> ContactEmailBusiness;
 	MessengerInfoValue<QString> ContactEmailMessenger;
@@ -56,6 +66,8 @@ class MessengerPhoneUserInfo
 {
 public:
 	MessengerPhoneUserInfo();
+	void loadProp();
+	void storeProp();
 	
 	MessengerInfoValue<QString> ContactPhoneBusiness;
 	MessengerInfoValue<QString> ContactPhoneFax;
@@ -65,43 +77,40 @@ public:
 	MessengerInfoValue<QString> ContactPhonePersonal;	
 }
 
-class MessengerLocation
-{
-public:
-	messengerLocation();
-	
-	MessengerInfoValue<QString> name;
-	MessengerInfoValue<QString> street;
-	MessengerInfoValue<QString> city;
-	MessengerInfoValue<QString> state;
-	MessengerInfoValue<QString> country;
-	MessengerInfoValue<QString> postalCode;
-}
-
 class MessengerLocationUserInfo
 {
 public:
 	MessengerLocationUserInfo()
 	{
-		ContactLocationBusiness = new MessengerLocation();
-		ContactLocationPersonal = new MessengerLocation();
 	};
 
-	~MessengerLocation()
-	{
-		delete ContactLocationBusiness;
-		delete ContactLocationPersonal;
-	};
-	
-	MessengerLocation* ContactLocationBusiness;
-	MessengerLocation* ContactLocationPersonal;
+	void loadProp();
+	void storeProp();
+
+	//Business Location
+	MessengerInfoValue<QString> BusinessName;
+	MessengerInfoValue<QString> BusinessStreet;
+	MessengerInfoValue<QString> BusinessCity;
+	MessengerInfoValue<QString> BusinessState;
+	MessengerInfoValue<QString> BusinessCountry;
+	MessengerInfoValue<QString> BusinessPostalCode;
+
+	//Personal Location
+	MessengerInfoValue<QString> PersonalStreet;
+	MessengerInfoValue<QString> PersonalCity;
+	MessengerInfoValue<QString> PersonalState;
+	MessengerInfoValue<QString> PersonalCountry;
+	MessengerInfoValue<QString> PersonalPostalCode;
+
 }
 
 class MessengerWebSiteUserInfo
 {
 public:
 	MessengerWebSiteUserInfo();
-	
+	void loadProp();
+	void storeProp();
+
 	MessengerInfoValue<QString> ContactWebSiteBusiness;
 	MessengerInfoValue<QString> ContactWebSitePersonal;
 }
