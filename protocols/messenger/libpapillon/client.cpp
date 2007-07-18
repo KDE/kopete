@@ -137,7 +137,6 @@ void Client::connectToServer(Papillon::Presence::Status initialPresence)
 
 void Client::disconnectFromServer()
 {
-	//TODO send "OUT"?
 	d->notificationConnection->disconnectFromServer();
 
 	setConnectionStatus( Client::Disconnected );
@@ -250,12 +249,6 @@ void Client::setConnectionStatus(Papillon::Client::ConnectionStatus newStatus)
 	d->connectionStatus = newStatus;
 
 	emit connectionStatusChanged(newStatus);
-}
-
-void Client::setStatusMessage( const Kopete::StatusMessage &personalMessage )
-{
-	StatusMessage * statusMessage = new StatusMessage(personalMessage->message());
-	d->userContact->setPersonalStatusMessage(statusMessage);
 }
 
 }

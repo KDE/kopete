@@ -16,9 +16,6 @@ private:
 	Ui::MessengerPersonalInfoWidget* m_personalInfoWidget;
 	Ui::MessengerWorkInfoWidget* m_workInfoWidget;
 	Ui::MessengerNotesInfoWidget* m_notesInfoWidget;
-
-private slot:
-	void slotUpdateNickName();
 }
 
 #endif

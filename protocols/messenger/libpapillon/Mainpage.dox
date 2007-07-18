@@ -10,7 +10,6 @@
 \section links Useful links
 <ul>
 <li><a href="http://msnpiki.msnfanatic.com/">MSNPiki</a> is the source of information for the Windows Live Messenger protocol. It is also a wiki so anyone can edit.</li>
-<li><a href="http://"></li>
 <li><a href="http://www.trolltech.com/">Trolltech</a> is the software company behind Qt, one of the best C++ toolkit around here, which is the basic of libpapillon.</li>
 </ul>
 
@@ -23,7 +22,6 @@ The list of projects is short because libpapillon is still in infant stage and n
 \section authors Authors
 Here the list of authors who worked on libpapillon.
 <ul>
-<li>Zhang Panyong(<a href="mailto:pyzhang(at)gmail.com">pyzhang(at)gmail.com</a>): Lead Developer and Project Maitainer</li>
 <li>Michaël Larouche(<a href="mailto:larouche(at)kde.org">larouche(at)kde.org</a>): Founder, Lead Developer and Current Project Maitainer</li>
 </ul>
 */

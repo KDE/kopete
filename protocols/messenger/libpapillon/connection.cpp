@@ -71,14 +71,14 @@ Task *Connection::rootTask()
 	return d->rootTask;
 }
 
-QObject *Connection::parent()
+Client *Connection::client()
 {
-	return d->parent;
+	return d->client;
 }
 
-void Connection::setParent(QObject *parent)
+void Connection::setClient(Client *client)
 {
-	d->parent = parent;
+	d->client = client;
 }
 
 int Connection::transactionId()
