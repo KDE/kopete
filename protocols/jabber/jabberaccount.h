@@ -53,8 +53,8 @@ namespace Kopete
 }
 
 #ifdef SUPPORT_JINGLE
-//class JingleSessionManager;
-//class JingleSession;
+class JingleSessionManager;
+class JingleSession;
 class VoiceCaller;
 #endif
 
@@ -97,10 +97,10 @@ public:
 		return m_voiceCaller;
 	}
 
-// 	JingleSessionManager *sessionManager()  const
-// 	{
-// 		return m_jingleSessionManager;
-// 	}
+ 	JingleSessionManager *sessionManager()  const
+ 	{
+ 		return m_jingleSessionManager;
+ 	}
 #endif
 
 	// change the default S5B server port
@@ -192,7 +192,7 @@ private:
 
 #ifdef SUPPORT_JINGLE
 	VoiceCaller *m_voiceCaller;
-	//JingleSessionManager *m_jingleSessionManager;
+	JingleSessionManager *m_jingleSessionManager;
 #endif
 
 	JabberBookmarks *m_bookmarks;
@@ -308,7 +308,7 @@ private slots:
 	/* the unregister task finished */
 	void slotUnregisterFinished();
 
-	//void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
+	void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
 };
 
 #endif

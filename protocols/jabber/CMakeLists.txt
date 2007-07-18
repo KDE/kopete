@@ -27,7 +27,7 @@ ${QCA2_INCLUDE_DIR}
 ${CMAKE_CURRENT_SOURCE_DIR}/jingle/
 )
 
-add_subdirectory( jingle ) 
+
 
 link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libiris/ ${CMAKE_CURRENT_BINARY_DIR}/jingle/ )
 
@@ -92,6 +92,7 @@ kde4_automoc(${kopete_jabber_PART_SRCS})
 
 kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
+add_subdirectory( jingle ) 
 
 target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete kopete_jabberjingle)
 

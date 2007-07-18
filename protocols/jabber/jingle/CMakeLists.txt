@@ -41,26 +41,26 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../
 ${CMAKE_CURRENT_SOURCE_DIR}/libjingle/ 
 )
 
-#link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libiris/ )
+link_directories( ${CMAKE_CURRENT_BINARY_DIR}/../libiris/iris/xmpp-im )
 
 ########### next target ###############
 
 set(kopete_jingle_PART_SRCS 
-#jinglesession.cpp 
-#  jinglesessionmanager.cpp 
-   jinglevoicecaller.cpp 
-#  jinglevoicesession.cpp 
-   jinglevoicesessiondialog.cpp 
-   voicecaller.h
-#voicecaller.cpp
-#   voicecaller.moc.cpp
-#  jinglewatchsessiontask.cpp 
-#jinglevoicesessiondialogbase.cpp
+  jinglesession.cpp 
+  jinglesessionmanager.cpp 
+  #jinglevoicecaller.cpp 
+  jinglevoicesession.cpp 
+  jinglevoicesessiondialog.cpp 
+  voicecaller.h
+  jinglewatchsessiontask.cpp 
+  jinglenetwork.cpp
+  #${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/xmpp-im/xmpp_xmlcommon.cpp
+  #${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/xmpp-core/stream.cpp
 )
 
 kde4_add_ui_files(
-    kopete_jingle_PART_SRCS
-    jinglevoicesessiondialogbase.ui
+  kopete_jingle_PART_SRCS
+  jinglevoicesessiondialogbase.ui
 )
 
 set(moc_source jinglevoicecaller.cpp)
@@ -69,9 +69,7 @@ set(moc_head voicecaller.h)
 
 QMAKE_WRAP_CPP(kopete_jingle_PART_SRCS ${moc_source})
 QMAKE_WRAP_H(kopete_jingle_PART_SRCS ${moc_head})
-#QT4_WRAP_CPP( ${kopete_jingle_PART_SRCS} ${moc_source})
 
-#kde3_automoc(${moc_source})
 
 kde4_automoc(${kopete_jingle_PART_SRCS})
 
@@ -93,7 +91,7 @@ link_directories(
 
 
 target_link_libraries(kopete_jabberjingle ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES}
-	speex ortp glib-2.0 gmodule-2.0 gthread-2.0 asound expat kopete 
+	speex ortp glib-2.0 gmodule-2.0 gthread-2.0 asound expat kopete iris_kopete 
 	${CMAKE_CURRENT_SOURCE_DIR}/libjingle/talk/session/phone/.libs/libcricketsessionphone.a
 	${CMAKE_CURRENT_SOURCE_DIR}/libjingle/talk/p2p/client/.libs/libcricketp2pclient.a 
 	${CMAKE_CURRENT_SOURCE_DIR}/libjingle/talk/p2p/base/.libs/libcricketp2pbase.a 

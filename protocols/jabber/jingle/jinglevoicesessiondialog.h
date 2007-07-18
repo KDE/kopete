@@ -26,6 +26,7 @@ using namespace XMPP;
 
 class JabberContact;
 class VoiceCaller;
+class JingleVoiceSession;
 
 class JingleVoiceSessionDialog : public QDialog, private Ui::JingleVoiceSessionDialogBase
 {
@@ -33,7 +34,8 @@ class JingleVoiceSessionDialog : public QDialog, private Ui::JingleVoiceSessionD
 public:
 	enum SessionState { Incoming, Waiting, Accepted, Declined, Started, Terminated };
 
-	JingleVoiceSessionDialog(const Jid &peerJid, VoiceCaller *caller, QWidget *parent = 0, const char *name = 0);
+	//JingleVoiceSessionDialog(const Jid &peerJid, VoiceCaller *caller, QWidget *parent = 0, const char *name = 0);
+	JingleVoiceSessionDialog(JingleVoiceSession *session, QWidget *parent = 0);
 	~JingleVoiceSessionDialog();
 
 public slots:
@@ -50,15 +52,15 @@ private slots:
 	void slotDeclineClicked();
 	void slotTerminateClicked();
 
-	void sessionStarted(const Jid &jid);
-	void sessionAccepted(const Jid &jid);
-	void sessionDeclined(const Jid &jid);
-	void sessionTerminated(const Jid &jid);
+	void sessionStarted();
+	void sessionAccepted();
+	void sessionDeclined();
+	void sessionTerminated();
 
 private:
 	void setContactInformation(JabberContact *contact);
 
-	VoiceCaller *m_session;
+	JingleVoiceSession *m_session;
 	Jid m_peerJid;
 	SessionState m_sessionState;
 };

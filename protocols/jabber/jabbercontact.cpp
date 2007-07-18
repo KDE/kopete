@@ -59,8 +59,8 @@
 #include "dlgjabbervcard.h"
 
 #ifdef SUPPORT_JINGLE
-// #include "jinglesessionmanager.h"
-// #include "jinglevoicesession.h"
+ #include "jinglesessionmanager.h"
+ #include "jinglevoicesession.h"
 #include "jinglevoicesessiondialog.h"
 #endif
 
@@ -1256,7 +1256,7 @@ void JabberContact::voiceCall( )
 			// If the jid resource is empty, get the JID from best resource for this contact.
 			jid = bestResource->jid();
 		}
-	
+#if 0
 		// Check if the voice caller exist and the current resource support voice.
 		if( account()->voiceCaller() && bestResource->features().canVoice() )
 		{
@@ -1264,7 +1264,9 @@ void JabberContact::voiceCall( )
 			voiceDialog->show();
 			voiceDialog->start();
 		}
-#if 0
+#endif
+#if 1
+		//TODO iterate through resources until we find one that supports voice
 		if( account()->sessionManager() && bestResource->features().canVoice() )
 		{
 			JingleVoiceSession *session = static_cast<JingleVoiceSession*>(account()->sessionManager()->createSession("http://www.google.com/session/phone", jid));
@@ -1272,12 +1274,14 @@ void JabberContact::voiceCall( )
 			JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog(session);
 			voiceDialog->show();
 			voiceDialog->start();
+		}else{
+			KMessageBox::sorry(0,i18n("The contact you selected does not have a jabber resource with voice support right now."), i18n("Unable to make voice call"));
 		}
 #endif
 	}
 	else
 	{
-		// Shouldn't never go there.
+		// Shouldn't ever go here.
 	}
 #endif
 }

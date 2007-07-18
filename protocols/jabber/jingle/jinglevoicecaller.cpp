@@ -40,7 +40,6 @@
 #define qDebug( X )  kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << X << endl
 #define qWarning( X )  kWarning() <<k_funcinfo<< X << endl
 
-#include "jinglevoicecaller.moc"
 
 // ----------------------------------------------------------------------------
 
@@ -127,7 +126,7 @@ JingleClientSlots::JingleClientSlots(JingleVoiceCaller *voiceCaller) : voiceCall
 void JingleClientSlots::callCreated(cricket::Call *call) 
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
-	call->SignalSessionState.connect(this, &JingleClientSlots::stateChanged);
+	//call->SignalSessionState.connect(this, &JingleClientSlots::stateChanged);
 }
 
 void JingleClientSlots::callDestroyed(cricket::Call *call)
@@ -165,14 +164,17 @@ void JingleClientSlots::stateChanged(cricket::Call *call, cricket::Session *sess
 
 	if (state == cricket::Session::STATE_INIT) { }
 	else if (state == cricket::Session::STATE_SENTINITIATE) { 
+		qDebug(QString("jinglevoicecaller.cpp: SENTINITIATE is now state"));
 		voiceCaller_->registerCall(jid,call);
 	}
 	else if (state == cricket::Session::STATE_RECEIVEDINITIATE) {
+		qDebug(QString("jinglevoicecaller.cpp: REVEIVEDINITIATE is now state"));
 		voiceCaller_->registerCall(jid,call);
 		emit voiceCaller_->incoming(jid);
 	}
 	else if (state == cricket::Session::STATE_SENTACCEPT) { }
 	else if (state == cricket::Session::STATE_RECEIVEDACCEPT) {
+		qDebug(QString("jinglevoicecaller.cpp: REVEIVEDACCEPT is now state"));
 		emit voiceCaller_->accepted(jid);
 	}
 	else if (state == cricket::Session::STATE_SENTMODIFY) { }
@@ -181,19 +183,23 @@ void JingleClientSlots::stateChanged(cricket::Call *call, cricket::Session *sess
 	}
 	else if (state == cricket::Session::STATE_SENTREJECT) { }
 	else if (state == cricket::Session::STATE_RECEIVEDREJECT) {
+		qDebug(QString("jinglevoicecaller.cpp: RECEIVEDREJECT is now state"));
 		voiceCaller_->removeCall(jid);
 		emit voiceCaller_->rejected(jid);
 	}
 	else if (state == cricket::Session::STATE_SENTREDIRECT) { }
 	else if (state == cricket::Session::STATE_SENTTERMINATE) {
-		voiceCaller_->removeCall(jid);
-		emit voiceCaller_->terminated(jid);
+		qDebug(QString("jinglevoicecaller.cpp: SENTTERMINATE is now state"));
+		//voiceCaller_->removeCall(jid);
+		//emit voiceCaller_->terminated(jid);
 	}
 	else if (state == cricket::Session::STATE_RECEIVEDTERMINATE) {
+		qDebug(QString("jinglevoicecaller.cpp: RECIEVEDTERMINATE is now state"));
 		voiceCaller_->removeCall(jid);
 		emit voiceCaller_->terminated(jid);
 	}
 	else if (state == cricket::Session::STATE_INPROGRESS) {
+		qDebug(QString("jinglevoicecaller.cpp: INPROGRESS is now state"));
 		emit voiceCaller_->in_progress(jid);
 	}
 }
@@ -367,6 +373,7 @@ void JingleVoiceCaller::removeCall(const Jid& j)
 {
 	qDebug(QString("JingleVoiceCaller: Removing call to %1").arg(j.full()));
 	calls_.remove(j.full());
+	qDebug(QString("JingleVoiceCaller: Call to %1 removed").arg(j.full()));
 }
 
 void JingleVoiceCaller::receiveStanza(const QString& stanza)
@@ -412,3 +419,5 @@ talk_base::Thread* JingleVoiceCaller::thread_ = NULL;
 talk_base::NetworkManager* JingleVoiceCaller::network_manager_ = NULL;
 cricket::BasicPortAllocator* JingleVoiceCaller::port_allocator_ = NULL;
 talk_base::SocketAddress* JingleVoiceCaller::stun_addr_ = NULL;
+
+#include "jinglevoicecaller.moc"

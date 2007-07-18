@@ -25,15 +25,15 @@
 #include "talk/base/network.h"
 #include "talk/p2p/base/session.h"
 #include "talk/p2p/base/sessionmanager.h"
-#include "talk/p2p/base/helpers.h"
+#include "talk/base/helpers.h"
 #include "talk/p2p/client/basicportallocator.h"
-#include "talk/p2p/client/sessionclient.h"
+#include "talk/p2p/base/sessionclient.h"
 #include "talk/base/physicalsocketserver.h"
 #include "talk/base/thread.h"
 #include "talk/base/socketaddress.h"
 #include "talk/session/phone/call.h"
 #include "talk/session/phone/phonesessionclient.h"
-#include "talk/session/sessionsendtask.h"
+#include "talk/p2p/client/sessionsendtask.h"
 
 #include "jinglevoicesession.h"
 #include "jinglesessionmanager.h"
@@ -90,7 +90,7 @@ public:
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "State changed: " << state << endl;
 
-		XMPP::Jid jid(session->remote_address().c_str());
+		XMPP::Jid jid(session->remote_name().c_str());
 		
 		// Do nothing if the session do not contain a peers.
 		//if( !voiceSession->peers().contains(jid) )
@@ -220,7 +220,7 @@ JingleVoiceSession::JingleVoiceSession(JabberAccount *account, const JidList &pe
 	// Create the phone(voice) session.
 	d->phoneSessionClient = new cricket::PhoneSessionClient( buzzJid, account->sessionManager()->cricketSessionManager() );
 
-	d->phoneSessionClient->SignalSendStanza.connect(slotsProxy, &JingleVoiceSession::SlotsProxy::OnSendingStanza);
+	//d->phoneSessionClient->SignalSendStanza.connect(slotsProxy, &JingleVoiceSession::SlotsProxy::OnSendingStanza);
 	d->phoneSessionClient->SignalCallCreate.connect(slotsProxy, &JingleVoiceSession::SlotsProxy::OnCallCreated);
 
 	// Listen to incoming packets
@@ -248,9 +248,10 @@ void JingleVoiceSession::start()
 
 	QString firstPeerJid = ((XMPP::Jid)peers().first()).full();
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "With peer: " << firstPeerJid << endl;
-	d->currentCall->InitiateSession( buzz::Jid(firstPeerJid.ascii()) );
+	d->currentCall->InitiateSession( buzz::Jid(firstPeerJid.ascii()), NULL );
 
 	d->phoneSessionClient->SetFocus(d->currentCall);
+	emit sessionStarted();
 }
 
 void JingleVoiceSession::accept()
@@ -261,6 +262,7 @@ void JingleVoiceSession::accept()
 
 		d->currentCall->AcceptSession(d->currentCall->sessions()[0]);
 		d->phoneSessionClient->SetFocus(d->currentCall);
+		emit accepted();
 	}
 }
 
@@ -269,6 +271,7 @@ void JingleVoiceSession::decline()
 	if(d->currentCall)
 	{
 		d->currentCall->RejectSession(d->currentCall->sessions()[0]);
+		emit declined();
 	}
 }
 
@@ -277,6 +280,7 @@ void JingleVoiceSession::terminate()
 	if(d->currentCall)
 	{
 		d->currentCall->Terminate();
+		emit terminated();
 	}
 }
 
@@ -326,8 +330,24 @@ void JingleVoiceSession::receiveStanza(const QString &stanza)
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Handing down buzz::stanza" << endl;
 		buzz::XmlElement *e = buzz::XmlElement::ForStr(stanza.ascii());
-		d->phoneSessionClient->OnIncomingStanza(e);
+		//d->phoneSessionClient->OnIncomingStanza(e);
 	}
 }
+
+
+//NOTE getting around linker problem
+QDomElement createIQ(QDomDocument *doc, const QString &type, const QString &to, const QString &id)
+{
+	QDomElement iq = doc->createElement("iq");
+	if(!type.isEmpty())
+		iq.setAttribute("type", type);
+	if(!to.isEmpty())
+		iq.setAttribute("to", to);
+	if(!id.isEmpty())
+		iq.setAttribute("id", id);
+
+	return iq;
+}
+
 
 #include "jinglevoicesession.moc"

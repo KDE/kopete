@@ -16,28 +16,28 @@
 */
 // libjingle before everything else to not clash with Qt
 #define POSIX
-#include "talk/xmpp/constants.h"
+//#include "talk/xmpp/constants.h"
 #include "talk/base/sigslot.h"
-#include "talk/xmpp/jid.h"
-#include "talk/xmllite/xmlelement.h"
-#include "talk/xmllite/xmlprinter.h"
-#include "talk/base/network.h"
+//#include "talk/xmpp/jid.h"
+//#include "talk/xmllite/xmlelement.h"
+//#include "talk/xmllite/xmlprinter.h"
+//#include "talk/base/network.h"
 #include "talk/p2p/base/session.h"
 #include "talk/p2p/base/sessionmanager.h"
-#include "talk/p2p/base/helpers.h"
+#include "talk/base/helpers.h"
 #include "talk/p2p/client/basicportallocator.h"
-#include "talk/p2p/client/sessionclient.h"
+#include "talk/p2p/base/sessionclient.h"
 #include "talk/base/physicalsocketserver.h"
 #include "talk/base/thread.h"
 #include "talk/base/socketaddress.h"
 #include "talk/session/phone/call.h"
 #include "talk/session/phone/phonesessionclient.h"
-#include "talk/session/sessionsendtask.h"
+//#include "talk/p2p/client/sessionsendtask.h"
 
 
 #include "jinglesessionmanager.h"
 
-//#include "jinglesession.h"
+//#include "jinglesession.h" //forward declaration works
 #include "jinglevoicesession.h"
 
 #include "jinglewatchsessiontask.h"
@@ -48,6 +48,8 @@
 #include <kdebug.h>
 //Added by qt3to4:
 #include <Q3ValueList>
+
+#include <QtNetwork>
 
 #define JINGLE_NS "http://www.google.com/session"
 #define JINGLE_VOICE_SESSION_NS "http://www.google.com/session/phone"
@@ -64,7 +66,8 @@ public:
 	void OnSignalingRequest()
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting Jingle signaling." << endl;
-		sessionManager->cricketSessionManager()->OnSignalingReady();
+		//sessionManager->cricketSessionManager()->OnSignalingReady();
+		sessionManager.
 	}
 	
 	
@@ -92,18 +95,19 @@ public:
 	}
 	
 	JabberAccount *account;
-	Q3ValueList<JingleSession*> sessionList;
+	QList<JingleSession*> sessionList;
 	JingleWatchSessionTask *watchSessionTask;
 
-	cricket::NetworkManager *networkManager;
-	cricket::BasicPortAllocator *portAllocator;
-	cricket::Thread *sessionThread;
-	cricket::SessionManager *cricketSessionManager;
+	JingleNetworkManager *networkManager;
+	//cricket::BasicPortAllocator *portAllocator;
+	//talk_base::Thread *sessionThread;
+	//cricket::SessionManager *cricketSessionManager;
+	Jingle
 };
 //END JingleSessionManager::Private
 
 JingleSessionManager::JingleSessionManager(JabberAccount *account)
- : QObject(account, 0), d(new Private(account))
+ : QObject(account), d(new Private(account))
 {
 	// Create slots proxy for libjingle
 	slotsProxy = new SlotsProxy(this);
@@ -117,21 +121,23 @@ JingleSessionManager::JingleSessionManager(JabberAccount *account)
 	QString accountJid = account->client()->jid().full();
 	cricket::InitRandom( accountJid.toAscii(), accountJid.length() );
 
-	// Create the libjingle NetworkManager that manager local network connections
-	d->networkManager = new cricket::NetworkManager();
+	
 	
 	// Init the port allocator(select best ports) with the Google STUN server to help.
-	cricket::SocketAddress *googleStunAddress = new cricket::SocketAddress("64.233.167.126", 19302);
+	//talk_base::SocketAddress *googleStunAddress = new talk_base::SocketAddress("64.233.167.126", 19302);
+	PortAddress *googleStunAddress=new PortAddress(QHostAddress(QString("64.233.167.126")), 19302);
+
+	// Create the JingleNetworkManager that manager local network connections
+	d->networkManager = new JingleNetworkManager(googleStunAddress);
+
 	// TODO: Define a relay server.
-  	d->portAllocator = new cricket::BasicPortAllocator(d->networkManager, googleStunAddress, 0L);
+  	d->networkManager->makeConnection();
 
 	// Create the Session manager that manager peer-to-peer sessions.
-	d->sessionThread = new cricket::Thread();
-	d->cricketSessionManager = new cricket::SessionManager(d->portAllocator, d->sessionThread);
-	d->cricketSessionManager->SignalRequestSignaling.connect(slotsProxy, &JingleSessionManager::SlotsProxy::OnSignalingRequest);
-	d->cricketSessionManager->OnSignalingReady();
+	//d->cricketSessionManager = new cricket::SessionManager(d->portAllocator, d->sessionThread);
+	//d->cricketSessionManager->SignalRequestSignaling.connect(slotsProxy, &JingleSessionManager::SlotsProxy::OnSignalingRequest);
+	//d->cricketSessionManager->OnSignalingReady();//the previous line does this
 
-	d->sessionThread->Start();
 }
 
 JingleSessionManager::~JingleSessionManager()
@@ -202,6 +208,13 @@ void JingleSessionManager::slotIncomingSession(const QString &sessionType, const
 
 	JingleSession *newSession = createSession(sessionType, XMPP::Jid(initiator));
 	emit incomingSession(sessionType, newSession);
+}
+
+void OnSignalingReady()
+{
+	for(int i=0;i<d->sessionList.size();i++){
+		d->sessionList[i].
+
 }
 
 #include "jinglesessionmanager.moc"
