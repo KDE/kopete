@@ -1,0 +1,27 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="12" name="kopete_messenger_chat">
+	<MenuBar>
+		<Menu noMerge="1" name="file">
+			<text>&amp;Chat</text>
+			<Action name="messengerWebcamReceive" />
+			<Action name="messengerWebcamSend" />
+			<Action name="messengerSendFile" />		
+			<Action name="messengerSendNudge" />
+			<Action name="messengerRequestDisplayPicture" />
+			<Action name="messengerInvite" />
+<!--			<Menu name="debug">
+				<text>&amp;Debug</text>
+				<Action name="messengerDebugRawCommand" />
+			</Menu> -->
+		</Menu>
+	</MenuBar>
+
+
+	<ToolBar name="statusToolBar">
+		<Action name="messengerDisplayPicture" />
+		<Action name="messengerWebcamReceive" />	
+		<Action name="messengerWebcamSend" />
+		<Action name="messengerSendFile" />		
+		<Action name="messengerSendNudge" />
+	</ToolBar>
+</kpartgui>
