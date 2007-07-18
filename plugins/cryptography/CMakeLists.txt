@@ -1,5 +1,3 @@
-add_subdirectory( icons ) 
-
 include_directories( 
 ${KOPETE_INCLUDES}
 )
@@ -28,7 +26,7 @@ install(TARGETS kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 ########### next target ###############
 
-set(kcm_kopete_cryptography_PART_SRCS cryptographypreferences.cpp selectkeydialog.cpp cryptographyconfig.cpp )
+set(kcm_kopete_cryptography_PART_SRCS cryptographypreferences.cpp cryptographyconfig.cpp )
 
 kde4_add_ui_files(kcm_kopete_cryptography_PART_SRCS cryptographyprefsbase.ui )
 
