@@ -35,6 +35,7 @@ public:
 	Private() 
 	{
 		hiddenIdentity = 0;
+		currentIdentity = 0;
 	}
 
 	QTreeWidgetItem* selectedIdentity();
@@ -42,6 +43,7 @@ public:
 	QMap<QTreeWidgetItem *, Kopete::Identity *>  identityItems;
 	Ui::AccountIdentityBase ui;
 	Kopete::Identity *hiddenIdentity;
+	Kopete::Identity *currentIdentity;
 	QList<Kopete::Account*> accounts;
 };
 
@@ -115,15 +117,22 @@ void AccountIdentityDialog::slotLoadIdentities()
 		identityItem->setIcon(0, KIcon(ident->customIcon()));
 		identityItem->setText(0, ident->identityId());
 		d->identityItems.insert(identityItem, ident);
+		if (ident == d->currentIdentity)
+			identityItem->setSelected(true);
 	}
 }
 
 void AccountIdentityDialog::slotLoadAccounts()
 {
+	d->currentIdentity = 0;
+
 	// set the accounts label
 	QString text;
 	foreach(Kopete::Account *account, d->accounts)
 	{
+		if (account->identity() != d->currentIdentity)
+			d->currentIdentity = account->identity();
+
 		text += QString("<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 <br/>")
 					.arg(account->protocol()->displayName())
 					.arg(account->accountLabel())
@@ -132,6 +141,7 @@ void AccountIdentityDialog::slotLoadAccounts()
 	}
 
 	d->ui.accounts->setText(text);
+	slotLoadIdentities();
 }
 
 void AccountIdentityDialog::accept()

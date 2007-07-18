@@ -41,6 +41,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
+#include "accountidentitydialog.h"
 
 //FIXME Crashes on "Apply" (thorbenk)
 
@@ -74,6 +75,7 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QStringList &ar
 
 	connect( mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
 	connect( mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEditAccount() ) );
+	connect( mButtonIdentity, SIGNAL( clicked() ), this, SLOT( slotSelectIdentity() ) );
 	connect( mButtonRemove, SIGNAL( clicked() ), this, SLOT( slotRemoveAccount() ) );
 	connect( mAccountList,  SIGNAL( itemSelectionChanged() ), this, SLOT( slotItemSelected() ) );
 	connect( mAccountList,  SIGNAL( itemDoubleClicked(QTreeWidgetItem*, int) ), this, SLOT( slotEditAccount() ) );
@@ -148,6 +150,7 @@ void KopeteAccountConfig::slotItemSelected()
 
 	mButtonEdit->setEnabled( itemSelected );
 	mButtonRemove->setEnabled( itemSelected );
+	mButtonIdentity->setEnabled( itemSelected );
 
 	m_protected=false;
 }
@@ -217,6 +220,18 @@ void KopeteAccountConfig::slotRemoveAccount()
 		Kopete::AccountManager::self()->removeAccount( i );
 		delete lvi;
 	}
+}
+
+void KopeteAccountConfig::slotSelectIdentity()
+{
+	KopeteAccountLVI *lvi = selectedAccount();
+	
+	if ( !lvi || !lvi->account() )
+		return;
+
+	Kopete::Account *a = lvi->account();
+
+	AccountIdentityDialog::changeAccountIdentity( this, a, 0, i18n("Select an identity for the account:"));
 }
 
 void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,
