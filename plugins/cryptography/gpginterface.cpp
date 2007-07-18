@@ -20,12 +20,8 @@
 
 
 #include <klocale.h>
-#include <KDE/KPasswordDialog>
+#include <KPasswordDialog>
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
 #include <QProcess>
 
 #include <ktemporaryfile.h>

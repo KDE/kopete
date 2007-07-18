@@ -24,6 +24,7 @@
 #include <KIconLoader>
 #include <KActionCollection>
 #include <KAction>
+#include <QPixmap>
 #include "popuppublic.h"
 #include "ui_popuppublicbase.h"
 #include "gpginterface.h"

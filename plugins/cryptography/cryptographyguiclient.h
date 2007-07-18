@@ -37,7 +37,6 @@ public:
 	bool signing() { return m_signAction->isChecked(); }
 	bool encrypting() { return m_encAction->isChecked(); }
 
-private:
 	KToggleAction *m_encAction;
 	KToggleAction *m_signAction;
 

@@ -15,8 +15,8 @@
     ***************************************************************************
 */
 
-#ifndef CryptographyPLUGIN_H
-#define CryptographyPLUGIN_H
+#ifndef CRYPTOGRAPHYPLUGIN_H
+#define CRYPTOGRAPHYPLUGIN_H
 
 
 #include "kopeteplugin.h"
@@ -48,7 +48,8 @@ public:
 	static CryptographyPlugin  *plugin();
 	static QString cachedPass();
 	static void setCachedPass(const QString &pass);
-	static const QRegExp isHTML;
+	
+	static QStringList supportedProtocols() { QStringList l; return l << "MSNProtocol" << "MessengerProtocol" << "JabberProtocol"; }
 
 	CryptographyPlugin( QObject *parent, const QStringList &args );
 	~CryptographyPlugin();

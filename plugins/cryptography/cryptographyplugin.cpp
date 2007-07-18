@@ -15,18 +15,13 @@
     ***************************************************************************
 */
 
-#include <QTextDocument>
-#include <qtimer.h>
-#include <qregexp.h>
 #include <QList>
+#include <QTimer>
 
 #include <kdebug.h>
 #include <kaction.h>
-#include <kconfig.h>
 #include <kgenericfactory.h>
-#include <kdeversion.h>
 #include <kaboutdata.h>
-#include <kicon.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kpassworddialog.h>
@@ -38,6 +33,7 @@
 #include "kopetesimplemessagehandler.h"
 #include "kopeteuiglobal.h"
 #include "kopetecontact.h"
+#include "kopeteprotocol.h"
 
 #include "cryptographyplugin.h"
 #include "cryptographyselectuserkey.h"
@@ -52,7 +48,6 @@
 //In Jabber, the JEP says it's not. so we don't use richtext in our message, but some client did.
 //We limit the html to some basis tag to limit security problem (bad links)
 //    - Olivier
-const QRegExp CryptographyPlugin::isHTML ( QString::fromLatin1 ( "^[^<>]*(</?(html|body|br|p|font|center|b|i|u|span|div|pre)(>|[\\s/][^><]*>)[^><]*)+$" ) , Qt::CaseInsensitive );
 
 typedef KGenericFactory<CryptographyPlugin> CryptographyPluginFactory;
 static const KAboutData aboutdata ( "kopete_cryptography", 0, ki18n ( "Cryptography" ) , "1.1" );
@@ -263,6 +258,12 @@ void CryptographyPlugin::slotNewKMM ( Kopete::ChatSession *KMM )
 {
 	connect ( this , SIGNAL ( destroyed ( QObject* ) ) ,
 	          mGui = new CryptographyGUIClient ( KMM ) , SLOT ( deleteLater() ) );
+	
+	QString protocol (KMM->protocol()->metaObject()->className());
+	if ( mGui->m_encAction->isChecked() )
+		if ( ! supportedProtocols().contains (protocol) )
+			if (KMessageBox::warningYesNo ( 0L, i18n ("This protocol may not work with messages that are encrypted. Do you still want to encrypt messages?"), i18n ("Cryptography Plugin"), KStandardGuiItem::yes(), KStandardGuiItem::no(), "Dont warn about unsupported protocols") == KMessageBox::No )
+				mGui->m_encAction->setChecked (false);
 }
 
 #include "cryptographyplugin.moc"

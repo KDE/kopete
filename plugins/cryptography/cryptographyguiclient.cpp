@@ -17,14 +17,14 @@
 #include "cryptographyguiclient.h"
 #include "cryptographyplugin.h"
 
-
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
 #include "kopetechatsession.h"
 #include "kopeteview.h"
+#include "kopeteuiglobal.h"
+#include "kopeteprotocol.h"
 
 #include <kaction.h>
-#include <kconfig.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 #include <kicon.h>
@@ -110,18 +110,27 @@ void CryptographyGUIClient::slotEncryptToggled()
 			keyless.append(mc->displayName());
 	}
 
+	if ( m_encAction->isChecked() )
+	{
+		QString protocol ( csn->protocol()->metaObject()->className());
+		if ( m_encAction->isChecked() )
+			if ( ! CryptographyPlugin::supportedProtocols().contains (protocol) )
+				if (KMessageBox::warningYesNo ( 0L, i18n ("This protocol may not work with messages that are encrypted. Do you still want to encrypt messages?"), i18n ("Cryptography Plugin"), KStandardGuiItem::yes(), KStandardGuiItem::no(), "Dont warn about unsupported protocols") == KMessageBox::No )
+					m_encAction->setChecked (false);
+		
+	}
+	
 	if( m_encAction->isChecked() && !keyless.isEmpty() )
 	{
 		QWidget *w = 0;
 		if ( csn->view() )
 			w = csn->view()->mainWidget();
 
-		KMessageBox::sorry( w,
-							i18np("To send encrypted messages to %2, you still need to select a public key for this contact.", "To send encrypted messages to them, you still need to select a public key for each of these contacts:\n%2", keyless.count() , keyless.join( "\n" ) ),
-							i18np( "Missing public key", "Missing public keys", keyless.count() ) );
+		KMessageBox::sorry( w, i18np("To send encrypted messages to %2, you still need to select a public key for this contact.", "To send encrypted messages to them, you still need to select a public key for each of these contacts:\n%2", keyless.count() , keyless.join( "\n" ) ), i18np( "Missing public key", "Missing public keys", keyless.count() ) );
 
 		m_encAction->setChecked( false );
 	}
+	
 
         if (first)
             first->setPluginData( CryptographyPlugin::plugin() , "encrypt_messages" ,

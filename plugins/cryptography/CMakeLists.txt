@@ -13,7 +13,6 @@ set(kopete_cryptography_PART_SRCS
    cryptographyguiclient.cpp 
    cryptographyselectuserkey.cpp 
    popuppublic.cpp 
-   selectkeydialog.cpp
    cryptographyconfig.cpp )
 
 kde4_add_ui_files(kopete_cryptography_PART_SRCS 
@@ -21,7 +20,6 @@ kde4_add_ui_files(kopete_cryptography_PART_SRCS
 		  popuppublicbase.ui)
 
 kde4_add_plugin(kopete_cryptography ${kopete_cryptography_PART_SRCS})
-
 
 target_link_libraries(kopete_cryptography  ${KDE4_KDECORE_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kopete )
 
@@ -34,9 +32,7 @@ set(kcm_kopete_cryptography_PART_SRCS cryptographypreferences.cpp selectkeydialo
 
 kde4_add_ui_files(kcm_kopete_cryptography_PART_SRCS cryptographyprefsbase.ui )
 
-
 kde4_add_plugin(kcm_kopete_cryptography ${kcm_kopete_cryptography_PART_SRCS})
-
 
 target_link_libraries(kcm_kopete_cryptography ${KDE4_KUTILS_LIBS} kopete kleo-gpl )
 
