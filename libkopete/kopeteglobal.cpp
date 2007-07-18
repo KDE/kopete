@@ -245,7 +245,9 @@ void installEmoticonTheme(const QString &archiveName)
 	qApp->processEvents();
 
 	QString currentBundleMimeType = KMimeType::findByPath(archiveName, 0, false)->name();
-	if( currentBundleMimeType == QLatin1String("application/zip") )
+	if( currentBundleMimeType == QLatin1String("application/zip") ||
+        currentBundleMimeType == QLatin1String("application/x-zip") ||
+        currentBundleMimeType ==  QLatin1String("application/x-zip-compressed"))
 		archive = new KZip(archiveName);
 	else if( currentBundleMimeType == QLatin1String("application/x-compressed-tar") || 
 				currentBundleMimeType == QLatin1String("application/x-bzip-compressed-tar") ||
