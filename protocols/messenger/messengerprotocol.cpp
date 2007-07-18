@@ -1,6 +1,7 @@
 /*
  * messengerprotocol.cpp - Windows Live Messenger Kopete protocol definition.
  *
+ * Copyright (c) 2007 by Zhang Panyong <pyzhang@gmail.com>
  * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
  * 
  * Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
@@ -73,6 +74,55 @@ MessengerProtocol::MessengerProtocol(QObject *parent, const QStringList &/*args*
 	propGuid("guid", i18n("Contact GUID"), 0, Kopete::ContactPropertyTmpl::PersistentProperty),
 
 	propEmail(Kopete::Global::Properties::self()->emailAddress()),
+	propContactType("MessengerContactType", i18n("Contact Type"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propFirstName("MessengerFirstName", i18n("First Name"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propLastName("MessengerLastName", i18n("Last Name"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propComment("MessengerComment", i18n("Comment"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propAnniversary("MessengerAnniversary", i18n("Anniversary"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propBirthday("MessengerBirthday", i18n("Birthday"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+
+	//Annotation
+	propABJobTitle("MessengerABJobTitle", i18n("ABJobTitle"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propABNickName("MessengerABNickName", i18n("ABNickName"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propABJobSpouse("MessengerABJobSpouse", i18n("ABJobSpouse"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+
+	//Email
+	propContactEmailBusiness("MessengerContactEmailBusiness", i18n("ContactEmailBusiness"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propContactEmailMessenger("MessengerContactEmailMessenger", i18n("ContactEmailMessenger"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propContactEmailOther("MessengerContactEmailOther", i18n("ContactEmailOther"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propContactEmailPersonal("MessengerContactEmailPersonal", i18n("ContactEmailPersonal"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+
+	//Phone
+//	propContactPhoneBusiness("MessengerContactPhoneBusiness", i18n("ContactPhoneBusiness"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propContactPhoneBusiness(Kopete::Global::Properties::self()->workPhone()),
+	propContactPhoneFax("MessengerContactPhoneFax", i18n("ContactPhoneFax"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+//	propContactPhoneMobile("MessengerContactPhoneMobile", i18n("ContactPhoneMobile"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propContactPhoneMobile(Kopete::Global::Properties::self()->privateMobilePhone()),
+	propContactPhoneOther("MessengerContactPhoneOther", i18n("ContactPhoneOther"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propContactPhonePager("MessengerContactPhonePager", i18n("ContactPhonePager"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+//	propContactPhonePersonal("MessengerContactPhonePersonal", i18n("ContactPhonePersonal"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propContactPhonePersonal(Kopete::Global::Properties::self()->privatePhone()),
+
+	//Business Location
+	propBusinessName("MessengerBusinessName", i18n("BusinessName"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propBusinessStreet("MessengerBusinessStreet", i18n("BusinessStreet"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propBusinessCity("MessengerBusinessCity", i18n("BusinessCity"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propBusinessState("MessengerBusinessState", i18n("BusinessState"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propBusinessCountry("MessengerBusinessCountry", i18n("BusinessCountry"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propBusinessPostalCode("MessengerBusinessPostalCode", i18n("BusinessPostalCode"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+
+	//Personal Location
+	propPersonalName("MessengerPersonalName", i18n("PersonalName"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propPersonalStreet("MessengerPersonalStreet", i18n("PersonalStreet"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propPersonalCity("MessengerPersonalCity", i18n("PersonalCity"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propPersonalState("MessengerPersonalState", i18n("PersonalState"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propPersonalCountry("MessengerPersonalCountry", i18n("PersonalCountry"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propPersonalPostalCode("MessengerPersonalPostalCode", i18n("PersonalPostalCode"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+
+	//Website
+	propContactWebSiteBusiness("MessengerContactWebSiteBusiness", i18n("ContactWebSiteBusiness"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propContactWebSitePersonal("MessengerContactWebSitePersonal", i18n("ContactWebSitePersonal"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+
 	propPhoneHome(Kopete::Global::Properties::self()->privatePhone()),
 	propPhoneWork(Kopete::Global::Properties::self()->workPhone()),
 	propPhoneMobile(Kopete::Global::Properties::self()->privateMobilePhone()),

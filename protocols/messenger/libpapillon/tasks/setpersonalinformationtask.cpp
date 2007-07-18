@@ -1,5 +1,5 @@
 /*
-   setpersonalinformationtask.h - Set personal information for myself contact.
+   setpersonalinformationtask.cpp - Set personal information for myself contact.
 
    Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 

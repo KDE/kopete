@@ -1,9 +1,7 @@
 /*
-    msneditaccountwidget.h - MSN Account Widget
+    messengereditaccountwidget.h - Messenger Account Widget
 
-    Copyright (c) 2003      by Olivier Goffart       <ogoffart@kde.org>
-    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
-
+    Copyright (c) 2007      by Zhang Panyong		<pyzhang@gmail.com>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -15,9 +13,8 @@
     *                                                                       *
     *************************************************************************
 */
-
-#ifndef MSNEDITACCOUNTWIDEGET_H
-#define MSNEDITACCOUNTWIDEGET_H
+#ifndef MESSENGEREDITACCOUNTWIDEGET_H
+#define MESSENGEREDITACCOUNTWIDEGET_H
 
 #include <qwidget.h>
 
@@ -25,20 +22,18 @@
 
 namespace Kopete { class Account; }
 
-class MSNProtocol;
+class MessengerProtocol;
 
-class MSNEditAccountWidgetPrivate;
+class MessengerEditAccountWidgetPrivate;
 
-/**
- * @author Olivier Goffart <ogoffart@kde.org>
- */
-class MSNEditAccountWidget : public QWidget, public KopeteEditAccountWidget
+/*Messenger Edit Account Widget Class*/
+class MessengerEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 
 public:
-	MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account *account, QWidget *parent = 0 );
-	~MSNEditAccountWidget();
+	MessengerEditAccountWidget( MSNProtocol *proto, Kopete::Account *account, QWidget *parent = 0 );
+	~MessengerEditAccountWidget();
 	virtual bool validateData();
 	virtual Kopete::Account * apply();
 
@@ -50,10 +45,10 @@ private slots:
 	void slotOpenRegister();
 
 private:
-	MSNEditAccountWidgetPrivate *d;
+	MessengerEditAccountWidgetPrivate *d;
+	MessengerAccount	*m_account;
 };
 
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

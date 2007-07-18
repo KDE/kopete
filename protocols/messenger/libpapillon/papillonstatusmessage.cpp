@@ -214,8 +214,11 @@ StatusMessage StatusMessage::fromXml(const QString &xml)
 					}
 					statusMessage.setCurrentMediaArguments(arguments);
 				}
-			}
-			// Ignore other tags such as MachineGuid.
+				else if( psmElement.tagName() == QLatin1String("MachineGuid") )
+				{
+
+				}
+			// Ignore other tags
 
 			psmElement = psmElement.nextSibling().toElement();
 		}

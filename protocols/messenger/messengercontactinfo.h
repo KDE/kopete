@@ -1,3 +1,19 @@
+/*
+    messengercontactinfo.h: Messenger Contact Info header File
+
+    Copyright (c) 2007 			Zhang Panyong <pyzhang@gmail.com>
+	Kopete    (c) 2002-2007 by The Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
+
 #ifndef _MESSENGERCONTACTINFO_H_
 #define _MESSENGERCONTACTINFO_H_
 

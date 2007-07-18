@@ -1,9 +1,8 @@
 /*
-Kopete Messenger Protocol
 messengerinfovalue.h - Messenger Info Value Template
 
-Copyright (c) 2006 Roman Jarosz <kedgedev@centrum.cz>
-
+Copyright	 (c) 2007 Zhang Panyong<pyzhang@gmail.com>
+Copyright	 (c) 2006 Roman Jarosz <kedgedev@centrum.cz>
 Kopete (c) 2006 by the Kopete developers <kopete-devel@kde.org>
 
 *************************************************************************

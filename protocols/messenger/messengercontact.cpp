@@ -50,15 +50,15 @@ QList<KAction *> *MessengerContact::customContextMenuActions()
 	QList<KAction*> *m_actionCollection = new QList<KAction*>;
 
 	// Block/unblock Contact
-	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
+	QString blockLabel = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
 	if( !actionBlock )
 	{
-		actionBlock = new KAction( KIcon("messenger_blocked"), label, this );
+		actionBlock = new KAction( KIcon("messenger_blocked"), blockLabel, this );
                 //, "actionBlock" );
 		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT( slotBlockUser()) );
 
 		//show profile
-		actionShowProfile = new KAction( i18n("Show Profile"), this );
+		actionShowProfile = new KAction( i18n("View User's Live Profile"), this );
                 //, "actionShowProfile" );
 		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
 
@@ -79,7 +79,7 @@ QList<KAction *> *MessengerContact::customContextMenuActions()
 	}
 	else
 	{
-		actionBlock->setText( label );
+		actionBlock->setText( blockLabel );
 	}
 
 	actionSendMail->setEnabled( static_cast<MSNAccount*>(account())->isLivemail());
@@ -142,6 +142,24 @@ void MessengerContact::sendFile( const KUrl &sourceURL, const QString &altFileNa
 
 	//TODO Send the file
 	mAccount->engine()->sendFiles(filePath, altFileName, fileSize);
+}
+
+void MessengerContact::slotUserProfile()
+{   
+	kDebug(MESSENGER_DEBUG) << k_funcinfo << endl;
+
+	QString profileSiteString = QLatin1String("http://spaces.live.com/profile.aspx?mem=") + userId();
+	KToolInvocation::invokeBrowser( profileSiteString );
+} 
+
+void MessengerContact::slotBlockUser()
+{
+
+}
+
+void MessengerContact::slotSendMail()
+{
+
 }
 
 #include "messengercontact.moc"

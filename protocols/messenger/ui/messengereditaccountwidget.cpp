@@ -116,7 +116,7 @@ MessengerEditAccountWidget::MessengerEditAccountWidget( MessengerProtocol *proto
 		d->ui->m_allowButton->setEnabled( connected );
 		d->ui->m_blockButton->setEnabled( connected );
 
-		MessengerAccount *m_account = static_cast<MessengerAccount*>( account );
+		m_account = static_cast<MessengerAccount*>( account );
 		d->ui->m_serverName->setText( m_account->serverName() );
 		d->ui->m_serverPort->setValue( m_account->serverPort() );
 
@@ -254,10 +254,7 @@ void MessengerEditAccountWidget::slotAllow()
 
 	QString handle = item->text();
 
-	MessengerNotifySocket *notify = static_cast<MSNAccount *>( account() )->notifySocket();
-	if ( !notify )
-		return;
-	notify->removeContact( handle, MSNProtocol::BL, QString::null, QString::null );
+	m_account->Client()->removeContact( handle, MessengerProtocol::BL, QString::null, QString::null );
 
 	d->ui->m_BL->takeItem( item );
 	d->ui->m_AL->insertItem( item );
@@ -272,11 +269,7 @@ void MessengerEditAccountWidget::slotBlock()
 
 	QString handle = item->text();
 
-	MSNNotifySocket *notify = static_cast<MSNAccount *>( account() )->notifySocket();
-	if ( !notify )
-		return;
-
-	notify->removeContact( handle, MSNProtocol::AL, QString::null, QString::null );
+	m_account->Client()->removeContact( handle, MessengerProtocol::AL, QString::null, QString::null );
 
 	d->ui->m_AL->takeItem( item );
 	d->ui->m_BL->insertItem( item );
@@ -313,7 +306,7 @@ void MessengerEditAccountWidget::slotSelectImage()
 
 	if(!img.isNull()) 
 	{
-		img = MSNProtocol::protocol()->scalePicture(img);
+		img = MessengerProtocol::protocol()->scalePicture(img);
 	
 		d->ui->m_displayPicture->setPixmap( QPixmap::fromImage(img) );
 		d->pictureData = img;

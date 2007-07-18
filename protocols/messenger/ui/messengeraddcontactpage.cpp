@@ -1,6 +1,6 @@
 /*
-    Messenger Add contact UI
-    Copyright (c) 2007 by pyzhang <pyzhang@gmail.com>
+    messengeraddcontactpage.cpp:	Messenger Add contact Page
+    Copyright (c) 2007				Zhang Panyong <pyzhang@gmail.com>
 
 	Kopete    (c) 2002-2007 by The Kopete developers <kopete-devel@kde.org>
 
@@ -82,4 +82,3 @@ bool MessengerAddContactPage::validateData()
 #include "messengeraddcontactpage.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -1,5 +1,5 @@
 /*
-    Messenger Add contact UI
+    messengeraddcontactpage.h:	Messenger Add contact UI
     Copyright (c) 2007 by pyzhang <pyzhang@gmail.com>
 
 	Kopete    (c) 2002-2007 by The Kopete developers <kopete-devel@kde.org>

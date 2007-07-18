@@ -1,5 +1,5 @@
 /*
-   setpresencetask.h - Set our own presence on Windows Live Messenger service.
+   setpresencetask.cpp - Set our own presence on Windows Live Messenger service.
 
    Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
