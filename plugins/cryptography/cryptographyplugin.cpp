@@ -149,10 +149,15 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 		if (opState & GpgInterface::GoodSig)
 			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", K3Icon::Small ) + "\">&nbsp;&nbsp;" );
 			
+		if ( (opState & GpgInterface::ErrorSig) || (opState & GpgInterface::BadSig) )
+			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "bad_signature", K3Icon::Small ) + "\">&nbsp;&nbsp;" );
+		
 		if (opState & GpgInterface::Decrypted)
 			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", K3Icon::Small ) + "\">&nbsp;&nbsp;" );
 		
 		msg.setHtmlBody ( body );
+		kDebug ( 14303) << k_funcinfo << "body is " << body << endl;
+		kDebug ( 14303) << k_funcinfo << "opState is " << opState << endl;
 		msg.addClass ( "cryptography:encrypted" );
 	}
 

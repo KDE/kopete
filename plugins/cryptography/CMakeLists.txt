@@ -1,3 +1,5 @@
+add_subdirectory ( icons )
+
 include_directories( 
 ${KOPETE_INCLUDES}
 )

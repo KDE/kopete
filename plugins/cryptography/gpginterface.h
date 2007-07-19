@@ -34,7 +34,7 @@ class GpgInterface : public QObject
 		/**
 		* The state of an operation.
 		*/
-		enum OpState { GoodSig = 0x1, BadSig = 0x2, ErrorSig = 0x4, NoSig = 0x8, Decrypted = 0x16 };
+		enum OpState { GoodSig = 0x1, BadSig = 0x2, ErrorSig = 0x4, NoSig = 0x8, Decrypted = 0x128 };
 		
 		/**Encrypt text function
 		* @param text QString text to be encrypted.
