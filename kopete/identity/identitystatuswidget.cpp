@@ -20,9 +20,13 @@
 #include "ui_identitystatusbase.h"
 
 #include <KIcon>
+#include <KMenu>
 #include <QTimeLine>
+#include <QCursor>
+#include <QUrl>
 #include <kopeteidentity.h>
 #include <kopeteaccount.h>
+#include <kopeteaccountmanager.h>
 #include <kopetecontact.h>
 #include <kopeteprotocol.h>
 #include <avatardialog.h>
@@ -58,6 +62,8 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 	connect( d->ui.nickName, SIGNAL(editingFinished()), this, SLOT(slotSave()) );
 	connect( d->ui.photo, SIGNAL(linkActivated(const QString&)), 
 			 this, SLOT(slotPhotoLinkActivated(const QString &)));
+	connect( d->ui.accounts, SIGNAL(linkActivated(const QString&)),
+			 this, SLOT(slotAccountLinkActivated(const QString &)));
 }
 
 IdentityStatusWidget::~IdentityStatusWidget()
@@ -178,6 +184,22 @@ void IdentityStatusWidget::slotSave()
 
 	//TODO check what more to do
 
+}
+
+void IdentityStatusWidget::slotAccountLinkActivated(const QString &link)
+{
+	// Account links are in the form:
+	// accountmenu:protocolId:accountId
+	QStringList args = link.split(":");
+	if (args[0] != "accountmenu")
+		return;
+
+	Kopete::Account *a = Kopete::AccountManager::self()->findAccount(QUrl::fromPercentEncoding(args[1].toAscii()), 
+																	 QUrl::fromPercentEncoding(args[2].toAscii()));
+	if (!a)
+		return;
+
+	a->actionMenu()->menu()->exec(QCursor::pos());
 }
 
 void IdentityStatusWidget::slotPhotoLinkActivated(const QString &link)
