@@ -37,6 +37,8 @@ private:
 	QString initiator;
 	QString responder;
 	QString sid;
+	QDomElement checkPayload(QDomElement stanza);
+	void removeContent(QDomElement stanza);
 	
 };
  

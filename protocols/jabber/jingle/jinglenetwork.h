@@ -6,7 +6,7 @@
 
 #include "jingleinfotask.h"
 
-class JingleNetworkManager
+class JingleNetworkManager : public QObject
 {
 	Q_OBJECT
 public:

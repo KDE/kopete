@@ -1,7 +1,8 @@
 #include jinglefoosession.h
 
 #define JINGLE_NS "http://www.xmpp.org/extensions/xep-0166.html#ns"
-#define JINGLE_VOICE_FOO_NS "http://www.example.com/foo"
+#define JINGLE_FOO_NS "http://www.example.com/foo"
+#define JINGLEFOOTRANSPORT "footransport"
 
 #include <QtXml>
 #include "jinglejabberxml.h"
@@ -44,7 +45,8 @@ bool JingleVoiceSession::JingleIQResponder::take(const QDomElement &e)
 		return false;
 	
 	QDomElement first = e.firstChild().toElement();
-	if (!first.isNull() && first.attribute("xmlns") == JINGLE_NS) {
+	//responding on session-initiate means we accept the codecs, transport, etc.
+	if (!first.isNull() && first.attribute("xmlns") == JINGLE_NS  && first.attribute("action") == "session-initiate") {
 		QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
 		send(iq);
 		return true;
@@ -59,8 +61,8 @@ JingleFooSession::JingleFooSession(JabberAccount *account, const JidList &peers)
 {
 
 	XMPP::Jid jid( account->client()->jid());
-
-	types.push_back(new JingleContentType("Foo","http://www.example.com/jingle/foo.html");
+	state = JingleStateEnum::PENDING;
+	types.push_back(JingleContentType("Foo","http://www.example.com/jingle/foo.html");
 
 	// Listen to incoming packets
 	connect(account->client()->client(), SIGNAL(xmlIncoming(const QString&)), this, SLOT(receiveStanza(const QString&)));
@@ -71,6 +73,7 @@ JingleFooSession::JingleFooSession(JabberAccount *account, const JidList &peers)
 JingleFooSession::~JingleFooSession()
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
+	
 } 
 
 void JingeFooSession::start()
@@ -120,6 +123,7 @@ void JingleVoiceSession::receiveStanza(const QString &stanza)
 	while( !node.isNull() && !ok ) 
 	{
 		QDomElement element = node.toElement();
+		//NOTE doesn't catch <error> messages
 		if( !element.isNull() && element.attribute("xmlns") == JINGLE_NS) 
 		{
 			ok = true;
@@ -154,25 +158,46 @@ void JingleFooSession::processStanza(QDomDocument doc)
 		}else{
 			QString action = jingleElement.attribute("action");
 			if(action == "session-accept"){
+
 				if(state != JingleStateEnum::PENDING){
-					//TODO send error
+					send(createOrderErrorMessage(root));
 				}else{state=JingleStateEnum::ACTIVE;
 					emit accepted();
 				}
+
 			}else if(action == "session-initiate"){
+
 				if(state != JingleStateEnum::PENDING){
-					//TODO send error
+					send(createOrderErrorMessage(root));
 				}
 				initiator = root.attribute("from");
 				responder = jid->full();
 				sid = jingleElement.attribute("sid");
+				send(checkPayload(root));
+
 			}else if(action == "session-terminate"){
+
 				state = JinglsStateEnum::ENDED;
 				emit terminated();
+
 			}else if(action == "session-info"){
+
 			}else if(action == "content-add"){
-			}else if(action == "content-reject"){
+
+				if(state != JingeStateEnum::ACTIVE){
+					send(createOrderErrorMessage(root));
+				}
+
+			}else if(action == "content-remove"){
+
+				removeContent(root);
+
+			}else if(action == "content-modify"){
+
+			}else if(action == "content-accept"){
+
 			}else if(action == "transport-info"){
+				
 			}
 		}
 	}else if(type == "result"){
@@ -213,6 +238,51 @@ void JingleFooSession::terminate()
 		send(terminate);
 		state = JingleStateEnum::ENDED;
 		emit terminated();
+	}
+}
+
+QDomElement checkPayload(QDomElement stanza)
+{
+	QDomElement content = stanza.firstChildElement().firstChildELement(); //NOTE need to check for nulls
+	//NOTE assumes only one type of content.
+	QString name = content.attribute("name");
+	bool rightContent = false;
+	for( int i =0; i< types.length(); i++){
+		if(types[i].name == name) rightContent = true;
+	}
+	if(rightContent){
+		QString transportNS = content.elementsByTagName("transport").item(0).attribute("xmlns");
+		if(transportNS == JINGLEFOOTRANSPORT){
+			return createReceiptMessage(stanza);
+		}else{
+			return createTransportErrorMessage(stanza);
+		}
+	}else{
+		return createContentErrorMessage(stanza);
+	}
+}
+
+/*
+ * Removes designated content type.  If there are none left, closes the session.
+ */
+void removeContent(QDomElement stanza)
+{
+	QDomElement content = stanza.firstChildElement().firstChildELement(); //NOTE need to check for nulls
+	//NOTE assumes only one type of content.
+	QString name = content.attribute("name");
+	bool rightContent = false;
+	int i = -1;
+	do{
+		i++;
+		if(types[i].name == name) rightContent = true;
+	}while( i < types.length() && !rightContent
+// 	for( int i =0; i< types.length(); i++){
+// 		if(types[i].name == name) rightContent = true;
+// 	}
+
+	types.remove(i);
+	if(types.empty()){
+		terminate();
 	}
 }
 

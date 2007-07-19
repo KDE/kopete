@@ -2,6 +2,8 @@
 #ifdef JINGLECONNECTIONCANDIDATE_H
 #define JINGLECONNECTIONCANDIDATE_H
 
+#include <QDomElement>
+
 namespace Solid{
 	class NetworkInterface;
 }
@@ -33,11 +35,17 @@ public:
 	const QString RELAY_TYPE="relay";
 	const QString STUN_TYPE="stun";
 
+	virtual QDomElement getCandidateElement();
+
 private:
 	QAbstractSocket socket_;
 	Solid::NetworkInterface netIface;
 	float quality;
 	QString type_;
+
+	QString ip;
+	QString port;
+	QString protocol;
 
 };
 

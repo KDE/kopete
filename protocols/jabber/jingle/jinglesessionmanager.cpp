@@ -39,6 +39,7 @@
 
 //#include "jinglesession.h" //forward declaration works
 #include "jinglevoicesession.h"
+#include "jinglefoosession.h"
 
 #include "jinglewatchsessiontask.h"
 
@@ -178,6 +179,10 @@ JingleSession *JingleSessionManager::createSession(const QString &sessionType, c
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating a voice session" << endl;
 		newSession = new JingleVoiceSession(account(), peers);
+	}else if (sessionType == JINGLE_FOO_SESSION_NS)
+	{
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating a foo session" <<endl;
+		newSession = new JingleFooSession(account(), peers);
 	}
 	
 	if(newSession)

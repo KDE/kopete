@@ -21,4 +21,16 @@ QDomElement createInitializationMessage(QString* from, QString* to, QString* id,
 QDomElement createAcceptMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QList<JingleContentType> types);
 
 QDomElement createTerminateMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QString* reason);
+
+QDomElement createReceiptMessage(QDomElement stanza);
+
+QDomElement createContentErrorMessage(QDomElement stanza);
+
+QDomElement createTransportErrorMessage(QDomElement stanza);
+
+//NOTE not implemented yet
+QDomElement createTransportCandidateMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QString* contentName, QString* transportNS, JingleConnectionCandidate* candidate);
+
+QDomElement createOrderErrorMessage(QDomElement stanza);
+
 #endif

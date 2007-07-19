@@ -78,3 +78,60 @@ QDomDocument doc;
 	return root;
 
 }
+
+QDomElement createReceiptMessage(QDomElement stanza);
+{
+	QDomElement iq = createIQ(doc(), "result", stanza.attribute("from"), stanza.attribute("id"));
+	return iq;
+}
+
+QDomElement createContentErrorMessage(QDomElement stanza)
+{
+	QDomDocument doc;
+	QDomElement iq = createIQ(doc(), "error", stanza.attribute("from"), stanza.attribute("id"));
+	QDomElement error = doc.createElement("error");
+	error.setAttribute("type","cancel");
+	QDomElement fni = doc.createElement("feature-not-implemented");
+	fni.setAttribute("xmlns","urn:ietf:params:sml:ns:xmpp-stanzas");
+	QDomElement uc = doc.createElement("unsupported-content");
+	uc.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0166.html#ns-errors");
+	error.append(fni);
+	error.append(uc);
+	iq.append(error);
+
+	return (iq);
+}
+
+QDomElement createTransportErrorMessage(QDomElement stanza)
+{
+	QDomDocument doc;
+	QDomElement iq = createIQ(doc(), "error", stanza.attribute("from"), stanza.attribute("id"));
+	QDomElement error = doc.createElement("error");
+	error.setAttribute("type","cancel");
+	QDomElement fni = doc.createElement("feature-not-implemented");
+	fni.setAttribute("xmlns","urn:ietf:params:sml:ns:xmpp-stanzas");
+	QDomElement ut = doc.createElement("unsupported-transports");
+	ut.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0166.html#ns-errors");
+	error.append(fni);
+	error.append(ut);
+	iq.append(error);
+
+	return (iq);
+}
+
+QDomElement createOrderErrorMessage(QDomElement stanza)
+{
+	QDomDocument doc;
+	QDomElement iq = createIQ(doc(), "error", stanza.attribute("from"), stanza.attribute("id"));
+	QDomElement error = doc.createElement("error");
+	error.setAttribute("type","cancel");
+	QDomElement ur = doc.createElement("unexpected-request");
+	ur.setAttribute("xmlns","urn:ietf:params:sml:ns:xmpp-stanzas");
+	QDomElement ooo = doc.createElement("out-of-order");
+	ooo.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0166.html#ns-errors");
+	error.append(ur);
+	error.append(ooo);
+	iq.append(error);
+
+	return (iq);
+}
