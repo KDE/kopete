@@ -17,6 +17,7 @@ kde4_add_ui_files( kopeteidentity_SRCS
     addidentitybase.ui 
     accountidentitybase.ui
     identitygeneral.ui
+    identitydetailed.ui
     identitystatusbase.ui
 )
 

@@ -33,6 +33,17 @@ public:
 	IdentityDialog(Kopete::Identity *identity, QWidget *parent = 0);
 	~IdentityDialog();
 
+protected slots:
+	void load();
+	virtual void slotSave();
+
+private slots:
+	void slotSelectPhoto();
+	void slotClearPhoto();
+
+protected:
+	void setPhoto(QString path);
+
 private:
 	class Private;
 	Private *d;

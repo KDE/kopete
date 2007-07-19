@@ -49,6 +49,8 @@ InfoDialog::InfoDialog(QWidget *parent, const QString &title, const QString &ico
 	else
 		setTitle( i18n( "Information" ) );
 	setIcon( icon );
+
+	connect(this, SIGNAL(okClicked()), this, SLOT(slotSave()));
 }
 
 InfoDialog::InfoDialog(QWidget *parent, const QString &title, const KIcon &icon)

@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>413</width>
+    <width>436</width>
     <height>148</height>
    </rect>
   </property>
@@ -37,6 +37,9 @@
        </property>
        <property name="text" >
         <string>No Photo</string>
+       </property>
+       <property name="textFormat" >
+        <enum>Qt::RichText</enum>
        </property>
        <property name="alignment" >
         <set>Qt::AlignCenter</set>
