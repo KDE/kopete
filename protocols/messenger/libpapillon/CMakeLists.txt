@@ -14,7 +14,7 @@ include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 endif(NOT PAPILLON_INSIDE_KOPETE)
 
 # Propagate includes to tests subdirs
-set(PAPILLON_INCLUDES 
+set(PAPILLON_INCLUDES
 ${CMAKE_CURRENT_SOURCE_DIR}/include/
 ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/
 ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Base/
@@ -33,6 +33,7 @@ include(PapillonMoc.cmake)
 
 set(papillon_base_SRCS
 base/bytestream.cpp
+base/bytestreambase.cpp
 base/connector.cpp
 base/safedelete.cpp
 base/stream.cpp
@@ -51,6 +52,11 @@ http/httpcoreprotocol.cpp
 http/httpconnection.cpp
 )
 
+set(papillon_network_SRCS
+network/ipendpointconnector.cpp
+network/networkstream.cpp
+)
+
 set(papillon_tasks_SRCS
 tasks/challengetask.cpp
 tasks/logintask.cpp
@@ -66,6 +72,7 @@ set(libpapillon_SRCS
 ${papillon_base_SRCS}
 ${papillon_private_contactlist_SRCS}
 ${papillon_http_SRCS}
+${papillon_network_SRCS}
 ${papillon_tasks_SRCS}
 task.cpp
 messengercoreprotocol.cpp
