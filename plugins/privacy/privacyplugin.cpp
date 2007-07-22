@@ -225,7 +225,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 
 void PrivacyPlugin::slotViewCreated( KopeteView *view )
 {
-	if(view->plugin()->pluginInfo()->pluginName() != QString::fromLatin1("kopete_chatwindow") )
+	if(view->plugin()->pluginInfo().pluginName() != QString::fromLatin1("kopete_chatwindow") )
 		return;  //Email chat windows are not supported.
 
 	Kopete::ChatSession *session = view->msgManager();

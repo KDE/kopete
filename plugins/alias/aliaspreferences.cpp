@@ -116,11 +116,11 @@ class AliasItem : public Q3ListViewItem
 class ProtocolItem : public Q3ListViewItem
 {
 	public:
-		ProtocolItem( Q3ListView *parent, KPluginInfo *p ) :
-		Q3ListViewItem( parent, p->name() )
+		ProtocolItem( Q3ListView *parent, const KPluginInfo &p ) :
+		Q3ListViewItem( parent, p.name() )
 		{
-			this->setPixmap( 0, SmallIcon( p->icon() ) );
-			id = p->pluginName();
+			this->setPixmap( 0, SmallIcon( p.icon() ) );
+			id = p.pluginName();
 		}
 
 		QString id;
@@ -385,10 +385,10 @@ const ProtocolList AliasPreferences::selectedProtocols( EditAliasDialog *dialog 
 
 void AliasPreferences::loadProtocols( EditAliasDialog *dialog )
 {
-	foreach(KPluginInfo *pluginInfo, Kopete::PluginManager::self()->availablePlugins("Protocols"))
+	foreach(const KPluginInfo &pluginInfo, Kopete::PluginManager::self()->availablePlugins("Protocols"))
 	{
 		ProtocolItem *item = new ProtocolItem( dialog->protocolList, pluginInfo );
-		itemMap[ (Kopete::Protocol*)Kopete::PluginManager::self()->plugin( (pluginInfo)->pluginName() ) ] = item;
+		itemMap[ (Kopete::Protocol*)Kopete::PluginManager::self()->plugin( pluginInfo.pluginName() ) ] = item;
 	}
 }
 

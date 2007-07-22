@@ -54,7 +54,7 @@ class BehaviorConfig : public KCModule
 		BehaviorConfig_Chat *mPrfsChat;
 		BehaviorConfig_Away *mPrfsAway;
 
-		QList<KPluginInfo*> viewPlugins;
+		QList<KPluginInfo> viewPlugins;
 		Kopete::Away* awayInstance;
 };
 #endif

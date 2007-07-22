@@ -52,16 +52,16 @@ QString Plugin::pluginId() const
 
 QString Plugin::displayName() const
 {
-	return pluginInfo() ? pluginInfo()->name() : QString();
+	return pluginInfo().isValid() ? pluginInfo().name() : QString();
 }
 
 QString Plugin::pluginIcon() const
 {
-	return pluginInfo() ? pluginInfo()->icon() : QString();
+	return pluginInfo().isValid() ? pluginInfo().icon() : QString();
 }
 
 
-KPluginInfo *Plugin::pluginInfo() const 
+KPluginInfo Plugin::pluginInfo() const 
 {
 	return PluginManager::self()->pluginInfo( this );
 }

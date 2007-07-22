@@ -57,11 +57,11 @@ public:
 	Private() : shutdownMode( StartingUp ), isAllPluginsLoaded(false) {}
 
 	// All available plugins, regardless of category, and loaded or not
-	QList<KPluginInfo *> plugins;
+	QList<KPluginInfo> plugins;
 
 	// Dict of all currently loaded plugins, mapping the KPluginInfo to
 	// a plugin
-	typedef QMap<KPluginInfo *, Plugin *> InfoToPluginMap;
+	typedef QMap<KPluginInfo, Plugin *> InfoToPluginMap;
 	InfoToPluginMap loadedPlugins;
 
 	// The plugin manager's mode. The mode is StartingUp until loadAllPlugins()
@@ -120,16 +120,16 @@ PluginManager::~PluginManager()
 	delete d;
 }
 
-QList<KPluginInfo *> PluginManager::availablePlugins( const QString &category ) const
+QList<KPluginInfo> PluginManager::availablePlugins( const QString &category ) const
 {
 	if ( category.isEmpty() )
 		return d->plugins;
 
-	QList<KPluginInfo *> result;
-	QList<KPluginInfo *>::ConstIterator it;
+	QList<KPluginInfo> result;
+	QList<KPluginInfo>::ConstIterator it;
 	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
 	{
-		if ( ( *it )->category() == category )
+		if ( it->category() == category )
 			result.append( *it );
 	}
 
@@ -143,7 +143,7 @@ PluginList PluginManager::loadedPlugins( const QString &category ) const
 	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
 	      it != d->loadedPlugins.end(); ++it )
 	{
-		if ( category.isEmpty() || it.key()->category() == category )
+		if ( category.isEmpty() || it.key().category() == category )
 			result.append( it.value() );
 	}
 
@@ -151,7 +151,7 @@ PluginList PluginManager::loadedPlugins( const QString &category ) const
 }
 
 
-KPluginInfo *PluginManager::pluginInfo( const Plugin *plugin ) const
+KPluginInfo PluginManager::pluginInfo( const Plugin *plugin ) const
 {
 	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
 	      it != d->loadedPlugins.end(); ++it )
@@ -159,7 +159,7 @@ KPluginInfo *PluginManager::pluginInfo( const Plugin *plugin ) const
 		if ( it.value() == plugin )
 			return it.key();
 	}
-	return 0;
+	return KPluginInfo();
 }
 
 void PluginManager::shutdown()
@@ -291,13 +291,13 @@ void PluginManager::loadAllPlugins()
 	else
 	{
 		// we had no config, so we load any plugins that should be loaded by default.
-		QList<KPluginInfo *> plugins = availablePlugins( QString::null );
-		QList<KPluginInfo *>::ConstIterator it = plugins.begin();
-		QList<KPluginInfo *>::ConstIterator end = plugins.end();
+		QList<KPluginInfo> plugins = availablePlugins( QString::null );
+		QList<KPluginInfo>::ConstIterator it = plugins.begin();
+		QList<KPluginInfo>::ConstIterator end = plugins.end();
 		for ( ; it != end; ++it )
 		{
-			if ( (*it)->isPluginEnabledByDefault() )
-				d->pluginsToLoad.push( (*it)->pluginName() );
+			if ( it->isPluginEnabledByDefault() )
+				d->pluginsToLoad.push( it->pluginName() );
 		}
 	}
 	// Schedule the plugins to load
@@ -355,8 +355,8 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 {
 	//kDebug( 14010 ) << k_funcinfo << pluginId << endl;
 
-	KPluginInfo *info = infoForPluginId( pluginId );
-	if ( !info )
+	KPluginInfo info = infoForPluginId( pluginId );
+	if ( !info.isValid() )
 	{
 		kWarning( 14010 ) << k_funcinfo << "Unable to find a plugin named '" << pluginId << "'!" << endl;
 		return 0L;
@@ -372,7 +372,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 	if ( plugin )
 	{
 		d->loadedPlugins.insert( info, plugin );
-		info->setPluginEnabled( true );
+		info.setPluginEnabled( true );
 
 		connect( plugin, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotPluginDestroyed( QObject * ) ) );
 		connect( plugin, SIGNAL( readyForUnload() ), this, SLOT( slotPluginReadyForUnload() ) );
@@ -465,8 +465,8 @@ Plugin* PluginManager::plugin( const QString &_pluginId ) const
 		pluginId = QLatin1String( "kopete_" ) + _pluginId.toLower().remove( QString::fromLatin1( "protocol" ) );
 	// End hack
 
-	KPluginInfo *info = infoForPluginId( pluginId );
-	if ( !info )
+	KPluginInfo info = infoForPluginId( pluginId );
+	if ( !info.isValid() )
 		return 0L;
 
 	if ( d->loadedPlugins.contains( info ) )
@@ -475,16 +475,16 @@ Plugin* PluginManager::plugin( const QString &_pluginId ) const
 		return 0L;
 }
 
-KPluginInfo * PluginManager::infoForPluginId( const QString &pluginId ) const
+KPluginInfo PluginManager::infoForPluginId( const QString &pluginId ) const
 {
-	QList<KPluginInfo *>::ConstIterator it;
+	QList<KPluginInfo>::ConstIterator it;
 	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
 	{
-		if ( ( *it )->pluginName() == pluginId )
+		if ( it->pluginName() == pluginId )
 			return *it;
 	}
 
-	return 0L;
+	return KPluginInfo();
 }
 
 
@@ -498,7 +498,7 @@ bool PluginManager::setPluginEnabled( const QString &_pluginId, bool enabled /* 
 	if ( !pluginId.startsWith( QLatin1String( "kopete_" ) ) )
 		pluginId.prepend( QLatin1String( "kopete_" ) );
 
-	if ( !infoForPluginId( pluginId ) )
+	if ( !infoForPluginId( pluginId ).isValid() )
 		return false;
 
 	config.writeEntry( pluginId + QLatin1String( "Enabled" ), enabled );

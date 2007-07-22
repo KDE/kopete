@@ -143,7 +143,7 @@ void HistoryPlugin::slotViewHistory()
 
 void HistoryPlugin::slotViewCreated( KopeteView* v )
 {
-	if(v->plugin()->pluginInfo()->pluginName() != QString::fromLatin1("kopete_chatwindow") )
+	if(v->plugin()->pluginInfo().pluginName() != QString::fromLatin1("kopete_chatwindow") )
 		return;  //Email chat windows are not supported.
 
 	bool autoChatWindow = HistoryConfig::auto_chatwindow();
