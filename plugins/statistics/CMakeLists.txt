@@ -21,7 +21,7 @@ install(TARGETS kopete_statistics  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
-install( FILES org.kde.kopete.statisticsiface.xml DESTINATION ${DBUS_INTERFACES_DIR} )
+install( FILES org.kde.kopete.statisticsiface.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 install( FILES kopete_statistics.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES statisticsui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_statistics)
 install( FILES images/blue.png images/navy.png images/black.png images/gray.png  DESTINATION ${DATA_INSTALL_DIR}/kopete/pics/statistics)
