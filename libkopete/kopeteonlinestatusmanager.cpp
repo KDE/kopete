@@ -353,7 +353,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 		for( QStringList::iterator it = overlays.begin(), end = overlays.end(); it != end; ++it )
 		{
 			QPixmap overlay = loader->loadIcon(*it, K3Icon::Small, 0 ,
-				K3Icon::DefaultState, 0L, /*canReturnNull=*/ true );
+				K3Icon::DefaultState, QStringList(), 0L, /*canReturnNull=*/ true );
 
 			if ( !overlay.isNull() )
 			{
