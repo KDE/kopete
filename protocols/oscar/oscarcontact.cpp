@@ -212,16 +212,16 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 
 	QStringList capList;
 	// Append client name and version in case we found one
-	if ( m_details.userClass() & 0x0080 /* WIRELESS */ )
-		capList << i18n( "Mobile AIM Client" );
-	else
-	{
-		if ( !m_details.clientName().isEmpty() )
-		{
-			capList << i18nc( "Translators: client name and version",
-			                "%1", m_details.clientName() );
-		}
-	}
+	//if ( m_details.userClass() & 0x0080 /* WIRELESS */ )
+	//	capList << i18n( "Mobile AIM Client" );
+	//else
+	//{
+	//	if ( !m_details.clientName().isEmpty() )
+	//	{
+	//		capList << i18nc( "Translators: client name and version",
+	//		                "%1", m_details.clientName() );
+	//	}
+	//}
 	
 	// and now for some general informative capabilities
 	if ( m_details.hasCap( CAP_BUDDYICON ) )
@@ -242,11 +242,13 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 		capList << i18n( "File transfers" );
 	if ( m_details.hasCap( CAP_GAMES ) || m_details.hasCap( CAP_GAMES2 ) )
 		capList << i18n( "Games" );
-	if ( m_details.hasCap( CAP_TRILLIAN ) )
-		capList << i18n( "Trillian user" );
-	
+
 	m_clientFeatures = capList.join( ", " );
 	setProperty( static_cast<OscarProtocol*>(protocol())->clientFeatures, m_clientFeatures );
+
+	setProperty( static_cast<OscarProtocol*>(protocol())->memberSince, details.memberSinceTime() );
+	setProperty( static_cast<OscarProtocol*>(protocol())->client, details.clientName() );
+	setProperty( static_cast<OscarProtocol*>(protocol())->protocolVersion, QString::number(details.dcProtoVersion()) );
 }
 
 void OscarContact::startedTyping()

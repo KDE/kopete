@@ -21,7 +21,7 @@
 
 #include <qglobal.h>
 #include <QList>
-#include <qstring.h>
+#include <QString>
 #include "oscartypes.h"
 #include "buffer.h"
 #include "contact.h"
@@ -45,23 +45,6 @@ LIBOSCAR_EXPORT TLV findTLV( const QList<TLV>&, int type );
  * \return true if something was updated
  */
 LIBOSCAR_EXPORT bool updateTLVs( OContact& item, const QList<TLV>& list );
-
-/**
- * Parse the character array for validness and a version string
- * \param buffer the buffer we'll be parsing for capabilities
- * \param versionString a QString reference that will contain the
- * version string of the detected client. Will be QString::null if 
- * no client is found
- * \return a DWORD containing a bit array of the capabilities we found
- */
-Oscar::DWORD parseCapabilities( Buffer &inbuf, QString &versionString, int &xStatus );
-
-/**
- * Parse the character array for capabilities (TLV 0x19)
- * \param inbuf the buffer we'll be parsing for capabilities
- * \return a DWORD containing a bit array of the capabilities we found
- */
-Oscar::DWORD parseNewCapabilities( Buffer &inbuf );
 
 /**
  * Get the name of the capability from its number

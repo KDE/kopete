@@ -18,6 +18,7 @@
 #ifndef USERDETAILS_H
 #define USERDETAILS_H
 
+#include <QBitArray>
 #include <k3socketaddress.h>
 #include "oscartypes.h"
 #include "kopete_export.h"
@@ -40,7 +41,8 @@ public:
 	Oscar::WORD idleTime() const; //! Idle time accessor
 	KNetwork::KIpAddress dcInternalIp() const; //! DC local IP accessor
 	KNetwork::KIpAddress dcExternalIp() const; //! DC outside IP accessor
-	Oscar::DWORD dcPort() const; //! DC port number
+	Oscar::DWORD dcPort() const; //! DC port number    
+    Oscar::WORD dcProtoVersion() const;
 	QDateTime onlineSinceTime() const; //! Online since accessor
 	QDateTime memberSinceTime() const; //! Member since accessor
 	int userClass() const; //! User class accessor
@@ -76,8 +78,23 @@ public:
 	bool dcInsideSpecified() const { return m_dcInsideSpecified; }
 	bool iconSpecified() const { return m_iconSpecified; }
 private:
-	//! Do client detection 
-	void detectClient();
+    /**
+     * Parse the character array for validness and a version string
+    * \param buffer the buffer we'll be parsing for capabilities
+    * \param versionString a QString reference that will contain the
+    * version string of the detected client. Will be QString::null if 
+    * no client is found
+     */
+    void parseCapabilities(Buffer &inbuf, int &xStatus);
+
+    /**
+    * Parse the character array for capabilities (TLV 0x19)
+    * \param inbuf the buffer we'll be parsing for capabilities
+    */
+    void parseNewCapabilities(Buffer &inbuf);
+
+    //! Do client detection 
+    void detectClient();
 
 
 private:
@@ -90,7 +107,7 @@ private:
 	Oscar::WORD m_idleTime; /// the idle time of the contact - TLV 0x0F
 	Oscar::DWORD m_extendedStatus; /// the extended status of the contact - TLV 0x06
 	int m_xtrazStatus;
-	Oscar::DWORD m_capabilities; //TLV 0x05
+	QBitArray m_capabilities; //TLV 0x05
 	QString m_clientVersion; /// the version of client they're using
 	QString m_clientName; /// the name of the client they're using
 	KNetwork::KIpAddress m_dcOutsideIp; /// DC Real IP Address - TLV 0x0A
@@ -108,7 +125,8 @@ private:
 	QByteArray m_md5IconHash; /// Buddy Icon MD5 Hash - TLV 0x1D
 	QString m_availableMessage; /// Message a person can have when available - TLV 0x0D
 	bool m_onlineStatusMsgSupport; /// User's client supports online status messages - TLV 0x08
-	
+	Guid m_identCap; /// Save guid for client identification
+
 	bool m_userClassSpecified;
 	bool m_memberSinceSpecified;
 	bool m_onlineSinceSpecified;

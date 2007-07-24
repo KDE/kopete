@@ -37,7 +37,7 @@ public:
 	Guid( const Guid& other );
 
 	/** get the data as a bytearray for decoding */
-	QByteArray data() const;
+	const QByteArray data() const;
 
 	/** set the data from a bytearray */
 	void setData( const QByteArray& data );
@@ -45,6 +45,9 @@ public:
 	/** returns true if the guid is exactly 16 bytes */
 	bool isValid() const;
 
+	bool isEqual( const Guid &rhs, int n = 16 ) const;
+
+	Guid &operator=( const Guid& rhs );
 	bool operator==( const Guid& rhs ) const;
 	operator QByteArray() const;
 
