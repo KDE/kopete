@@ -30,6 +30,9 @@ namespace cricket
 class JabberAccount;
 class JingleSession;
 
+class QDomDocument;
+enum JingleStateEnum;
+
 /**
  * Implement a Jingle voice peer-to-peer session that is compatible with Google Talk voice offering.
  *
@@ -56,8 +59,6 @@ protected slots:
 	void receiveStanza(const QString &stanza);
 
 private:
-	void setCall(cricket::Call *call);
-
 	class Private;
 	Private *d;
 
@@ -65,6 +66,15 @@ private:
 	SlotsProxy *slotsProxy;
 	
 	class JingleIQResponder;
+
+	void processStanza(QDomDocument doc);
+	JingleStateEnum state;
+	QList<JingleContentType> types;
+	QString initiator;
+	QString responder;
+	QString sid;
+	QDomElement checkPayload(QDomElement stanza);
+	void removeContent(QDomElement stanza);
 };
 
 #endif

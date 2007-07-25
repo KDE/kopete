@@ -1,7 +1,8 @@
-#ifdef JINGLEFOOSESSION_H_
+#ifndef JINGLEFOOSESSION_H_
 #define JINGLEFOOSESSION_H_
 
-
+class JabberAccount;
+class JingleSession;
 class QDomDocument;
 enum JingleStateEnum;
 
@@ -31,14 +32,29 @@ protected slots:
 
 private:
 	class JingleIQResponder;
+
+	/**
+	* Process the XMPP stanza, and take appropriate action.
+	* Some parts of this function will die if the stanza is malformed,
+	* checks need to be added
+	*/
 	void processStanza(QDomDocument doc);
+
 	JingleStateEnum state;
 	QList<JingleContentType> types;
+	QList<JingleFooConnectionCandidate> remoteCandidates;
 	QString initiator;
 	QString responder;
 	QString sid;
 	QDomElement checkPayload(QDomElement stanza);
+
+	/**
+	* Removes designated content type.  If there are none left, closes the session.
+	*/
 	void removeContent(QDomElement stanza);
+
+	JingleFooTransport fooTransport;
+	JingleFooConnectionCandidate connection;
 	
 };
  

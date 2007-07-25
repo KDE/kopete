@@ -1,11 +1,12 @@
 #include jinglefoosession.h
 
 #define JINGLE_NS "http://www.xmpp.org/extensions/xep-0166.html#ns"
-#define JINGLE_FOO_NS "http://www.example.com/foo"
+#define JINGLE_FOO_NS "http://www.example.com/jingle/foo.html"
 #define JINGLEFOOTRANSPORT "footransport"
 
 #include <QtXml>
 #include "jinglejabberxml.h"
+#include "jabberaccount.h"
 
 //BEGIN JingleStateEnum
 enum JingleStateEnum{
@@ -43,15 +44,18 @@ bool JingleVoiceSession::JingleIQResponder::take(const QDomElement &e)
 {
 	if(e.tagName() != "iq")
 		return false;
-	
+
 	QDomElement first = e.firstChild().toElement();
 	//responding on session-initiate means we accept the codecs, transport, etc.
-	if (!first.isNull() && first.attribute("xmlns") == JINGLE_NS  && first.attribute("action") == "session-initiate") {
+	//responding on session-accept means we accept the connection candidate as the connection
+	//by looking for a child and NS, errors and results are avoided
+	if (!first.isNull() && first.attribute("xmlns") == JINGLE_NS  && first.attribute("action") != "session-initiate"
+		&& first.attribute("action")  != "session-accept" ){
 		QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
 		send(iq);
 		return true;
 	}
-	
+
 	return false;
 }
 //END JingleIQResponder
@@ -62,7 +66,10 @@ JingleFooSession::JingleFooSession(JabberAccount *account, const JidList &peers)
 
 	XMPP::Jid jid( account->client()->jid());
 	state = JingleStateEnum::PENDING;
-	types.push_back(JingleContentType("Foo","http://www.example.com/jingle/foo.html");
+
+	//create connection candidates:  need them, no matter what
+	types.candidates = JingleFooTransport.getLocalCandidates();
+	types.push_back(JingleContentType("Foo","http://www.example.com/jingle/foo.html","http://www.example.com/jingle/foo-transport.html");
 
 	// Listen to incoming packets
 	connect(account->client()->client(), SIGNAL(xmlIncoming(const QString&)), this, SLOT(receiveStanza(const QString&)));
@@ -78,17 +85,15 @@ JingleFooSession::~JingleFooSession()
 
 void JingeFooSession::start()
 {
-	
+
 	sid = account->client()->genUniqueId();
 	initiator = jid->full();
 	responder = peers->first()->full();
-	
-	QDomElement message = createInitializationMessage(jid->full(), peers()->first()->full() account->client()->genUniqueId(), &sid, &initiator, types);		
-	
 
-	
+	QDomElement message = createInitializationMessage(jid->full(), peers()->first()->full() account->client()->genUniqueId(), &sid, &initiator, types);	
+
 	send(message);
-	
+
 	emit sessionStarted();
 
 }
@@ -116,7 +121,7 @@ void JingleVoiceSession::receiveStanza(const QString &stanza)
 		}
 		return;
 	}
-	
+
 	// Check if the packet is a jingle message.
 	QDomNode node = doc.documentElement().firstChild();
 	bool ok = false;
@@ -130,13 +135,14 @@ void JingleVoiceSession::receiveStanza(const QString &stanza)
 		}
 		node = node.nextSibling();
 	}
-	
+
 	// It's for me
 	if( ok )
 	{
 		processStanza(doc);
 	}
 }
+
 
 void JingleFooSession::processStanza(QDomDocument doc)
 {
@@ -161,8 +167,17 @@ void JingleFooSession::processStanza(QDomDocument doc)
 
 				if(state != JingleStateEnum::PENDING){
 					send(createOrderErrorMessage(root));
-				}else{state=JingleStateEnum::ACTIVE;
-					emit accepted();
+				}else{
+					connection = fooTransport.createCandidateFromElement(
+						jingleElement.firstChildElement().firstChildElement() );
+					if( connection.isUseful() ){
+						send(createReceiptMessage(root));
+						state = JingleStateEnum::ACTIVE;
+						emit accepted();
+					}else{
+						send(createTransportNotAcceptableMessage(root);
+						//the other client should now send a session-terminate
+					}
 				}
 
 			}else if(action == "session-initiate"){
@@ -197,7 +212,8 @@ void JingleFooSession::processStanza(QDomDocument doc)
 			}else if(action == "content-accept"){
 
 			}else if(action == "transport-info"){
-				
+				remoteCandidates.push_back(fooTransport.createCandidateFromElement(
+					jingleElement.firstChildElement().firstChildElement()));
 			}
 		}
 	}else if(type == "result"){
@@ -241,7 +257,7 @@ void JingleFooSession::terminate()
 	}
 }
 
-QDomElement checkPayload(QDomElement stanza)
+QDomElement JingleFooSession::checkPayload(QDomElement stanza)
 {
 	QDomElement content = stanza.firstChildElement().firstChildELement(); //NOTE need to check for nulls
 	//NOTE assumes only one type of content.
@@ -262,10 +278,8 @@ QDomElement checkPayload(QDomElement stanza)
 	}
 }
 
-/*
- * Removes designated content type.  If there are none left, closes the session.
- */
-void removeContent(QDomElement stanza)
+
+void JingleFooSession::removeContent(QDomElement stanza)
 {
 	QDomElement content = stanza.firstChildElement().firstChildELement(); //NOTE need to check for nulls
 	//NOTE assumes only one type of content.

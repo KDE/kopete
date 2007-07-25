@@ -17,7 +17,12 @@ QDomElement createInitializationMessage(QString* from, QString* to, QString* id,
 		QDomElement description = doc.createElement("description");
 		description.setAttribute("xmlns",types[i].xmlns);
 		QDomElement transport = doc.createElement("transport");
-		transport.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0176.html#ns");
+		transport.setAttribute("xmlns",types[i].transportNS);
+
+//		for(int j=0; j<types[i].candidates.length(); j++){
+//			transport.append(types[i].candidates[j].getCandidateElement();
+//		}
+
 		content.append(description);
 		content.append(transport);
 		jingle.append(content);	
@@ -29,10 +34,10 @@ QDomElement createInitializationMessage(QString* from, QString* to, QString* id,
 	return root;
 }
 
-QDomElement createAcceptMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QList<JingleContentType> types)
+QDomElement createAcceptMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QList<JingleContentType> types, JingleConnectionCandidate connection)
 {
 
-QDomDocument doc;
+	QDomDocument doc;
 	QDomElement root = createIQ(&doc,"set",to,id);
 	//root.setAttribute("from", from);
 	QDomElement jingle = doc.createElement("jingle");
@@ -48,7 +53,7 @@ QDomDocument doc;
 		QDomElement description = doc.createElement("description");
 		description.setAttribute("xmlns",types[i].xmlns);
 		QDomElement transport = doc.createElement("transport");
-		transport.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0176.html#ns");
+		transport.setAttribute("xmlns",types[i].transportNS);
 		content.append(description);
 		content.append(transport);
 		jingle.append(content);	
@@ -131,6 +136,20 @@ QDomElement createOrderErrorMessage(QDomElement stanza)
 	ooo.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0166.html#ns-errors");
 	error.append(ur);
 	error.append(ooo);
+	iq.append(error);
+
+	return (iq);
+}
+
+QDomElement createTransportNotAcceptableMessage(QDocument stanza)
+{
+	QDomDocument doc;
+	QDomElement iq = createIQ(doc(), "error", stanza.attribute("from"), stanza.attribute("id"));
+	QDomElement error = doc.createElement("error");
+	error.setAttribute("type","cancel");
+	QDomElement na = doc.createElement("not-acceptable");
+	na.setAttribute("xmlns","urn:ietf:params:sml:ns:xmpp-stanzas");
+	error.append(na);
 	iq.append(error);
 
 	return (iq);

@@ -624,6 +624,8 @@ void JabberAccount::slotConnected ()
 
 	// Set caps extensions
 	m_jabberClient->client()->addExtension("voice-v1", Features(QString("http://www.google.com/xmpp/protocol/voice/v1")));
+	//TODO take me out one day
+	m_jabberClient->client()->addExtention("jinglefoo", Features(QString("http://www.example.com/jabber/foo")));
 #endif
 
 	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;

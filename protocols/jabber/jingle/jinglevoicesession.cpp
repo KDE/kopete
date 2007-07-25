@@ -51,6 +51,8 @@
 #include <xmpp.h>
 #include <xmpp_xmlcommon.h>
 
+#include "jinglejabberxml.h"
+
 #define JINGLE_NS "http://www.google.com/session"
 #define JINGLE_VOICE_SESSION_NS "http://www.google.com/session/phone"
 
@@ -318,6 +320,7 @@ void JingleVoiceSession::receiveStanza(const QString &stanza)
 	while( !node.isNull() && !ok ) 
 	{
 		QDomElement element = node.toElement();
+		//NOTE doesn't catch <error> messages
 		if( !element.isNull() && element.attribute("xmlns") == JINGLE_NS) 
 		{
 			ok = true;
@@ -328,26 +331,81 @@ void JingleVoiceSession::receiveStanza(const QString &stanza)
 	// Spread the word
 	if( ok )
 	{
-		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Handing down buzz::stanza" << endl;
-		buzz::XmlElement *e = buzz::XmlElement::ForStr(stanza.ascii());
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Processing stanza" << endl;
+		processStanza(doc);
 		//d->phoneSessionClient->OnIncomingStanza(e);
 	}
 }
 
 
-//NOTE getting around linker problem
-QDomElement createIQ(QDomDocument *doc, const QString &type, const QString &to, const QString &id)
+void JingleVoiceSession::processStanza(QDomDocument doc)
 {
-	QDomElement iq = doc->createElement("iq");
-	if(!type.isEmpty())
-		iq.setAttribute("type", type);
-	if(!to.isEmpty())
-		iq.setAttribute("to", to);
-	if(!id.isEmpty())
-		iq.setAttribute("id", id);
+	QDomElement root = doc.documentElement();
+	QString type = root.attribute("type");
+	
+	//error
+	if( type == "error"){
+		QDomElement errorElement = root.firstChildElement();
+		if(errorElement != NULL){
+			
 
-	return iq;
+		}
+
+	}else if(type == "set"){
+		QDomElement jingleElement = root.firstChildElement();
+		if(jingleElement == NULL){
+
+		}else{
+			QString action = jingleElement.attribute("action");
+			if(action == "session-accept"){
+
+				if(state != JingleStateEnum::PENDING){
+					send(createOrderErrorMessage(root));
+				}else{state=JingleStateEnum::ACTIVE;
+					emit accepted();
+				}
+
+			}else if(action == "session-initiate"){
+
+				if(state != JingleStateEnum::PENDING){
+					send(createOrderErrorMessage(root));
+				}
+				initiator = root.attribute("from");
+				responder = jid->full();
+				sid = jingleElement.attribute("sid");
+				send(checkPayload(root));
+
+			}else if(action == "session-terminate"){
+
+				state = JinglsStateEnum::ENDED;
+				emit terminated();
+
+			}else if(action == "session-info"){
+
+			}else if(action == "content-add"){
+
+				if(state != JingeStateEnum::ACTIVE){
+					send(createOrderErrorMessage(root));
+				}
+
+			}else if(action == "content-remove"){
+
+				removeContent(root);
+
+			}else if(action == "content-modify"){
+
+			}else if(action == "content-accept"){
+
+			}else if(action == "transport-info"){
+				
+			}
+		}
+	}else if(type == "result"){
+
+	}else if(type == "get"){
+
+	}
+
 }
-
 
 #include "jinglevoicesession.moc"

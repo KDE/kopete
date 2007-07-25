@@ -1,5 +1,5 @@
 
-#ifdef JINGLEINFOTASK_H
+#ifndef JINGLEINFOTASK_H
 #define JINGLEINFOTASK_H
 
 namespace XMPP{

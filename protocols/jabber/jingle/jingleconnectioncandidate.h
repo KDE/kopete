@@ -1,5 +1,5 @@
 
-#ifdef JINGLECONNECTIONCANDIDATE_H
+#ifndef JINGLECONNECTIONCANDIDATE_H
 #define JINGLECONNECTIONCANDIDATE_H
 
 #include <QDomElement>
@@ -37,15 +37,20 @@ public:
 
 	virtual QDomElement getCandidateElement();
 
+	/**
+	 * Returns true if this candidate is a working connection
+	 */
+	virtual bool isUseful();
+
 private:
 	QAbstractSocket socket_;
 	Solid::NetworkInterface netIface;
 	float quality;
 	QString type_;
 
-	QString ip;
-	QString port;
-	QString protocol;
+	QString ip_;
+	int port_;
+
 
 };
 
