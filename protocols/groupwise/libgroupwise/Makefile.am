@@ -19,12 +19,12 @@ noinst_HEADERS = connector.h tlshandler.h qcatlshandler.h bytestream.h \
 
 noinst_LTLIBRARIES = libgroupwise.la libgwtest.la
 libgroupwise_la_COMPILE_FIRST = securestream.moc 
-libgroupwise_la_SOURCES = connector.cpp bytestream.cpp tlshandler.cpp \
-									qcatlshandler.cpp gwclientstream.cpp securestream.cpp stream.cpp coreprotocol.cpp \
-									gwfield.cpp transferbase.cpp usertransfer.cpp eventtransfer.cpp transfer.cpp \
-									request.cpp requestfactory.cpp safedelete.cpp response.cpp client.cpp task.cpp \
-							rtf.cc userdetailsmanager.cpp eventprotocol.cpp inputprotocolbase.cpp \
-				responseprotocol.cpp privacymanager.cpp gwglobal.cpp chatroommanager.cpp
+libgroupwise_la_SOURCES = bytestream.cpp chatroommanager.cpp client.cpp \
+	connector.cpp coreprotocol.cpp eventprotocol.cpp eventtransfer.cpp gwclientstream.cpp \
+	gwerror.cpp gwfield.cpp gwglobal.cpp inputprotocolbase.cpp privacymanager.cpp \
+	qcatlshandler.cpp request.cpp requestfactory.cpp response.cpp responseprotocol.cpp rtf.cc \
+	safedelete.cpp securestream.cpp stream.cpp task.cpp tlshandler.cpp transfer.cpp \
+	transferbase.cpp userdetailsmanager.cpp usertransfer.cpp
 libgroupwise_la_LDFLAGS = -no-undefined $(all_libraries)
 libgroupwise_la_LIBADD = tasks/libgroupwise_tasks.la -lqt-mt qca/src/libqca.la 
 

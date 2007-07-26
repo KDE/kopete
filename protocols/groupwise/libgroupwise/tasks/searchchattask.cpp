@@ -101,8 +101,13 @@ void SearchChatTask::slotGotPollResults()
 			else
 				setSuccess( gcsrt->statusCode() );
 			break;
-		case GetChatSearchResultsTask::DataRetrieved: 
-			m_results = gcsrt->results();
+		case GetChatSearchResultsTask::DataRetrieved:
+			// got some results, there may be more.
+			m_results += gcsrt->results();
+            QTimer::singleShot( 0, this, SLOT( slotPollForResults() ) );
+			break;
+		case GetChatSearchResultsTask::Completed:
+			m_results += gcsrt->results();
 			setSuccess();
 			break;
 		case GetChatSearchResultsTask::Cancelled:

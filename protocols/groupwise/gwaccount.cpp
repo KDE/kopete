@@ -106,6 +106,7 @@ KActionMenu* GroupWiseAccount::actionMenu()
 
 	m_actionAutoReply->setEnabled( isConnected() );
 	m_actionManagePrivacy->setEnabled( isConnected() );
+	m_actionJoinChatRoom->setEnabled( isConnected() );
 	m_actionMenu->insert( m_actionManagePrivacy );
 	m_actionMenu->insert( m_actionAutoReply );
 	m_actionMenu->insert( m_actionJoinChatRoom );
@@ -1183,10 +1184,14 @@ void GroupWiseAccount::receiveContactCreated()
 		Kopete::Contact * c = contacts()[ protocol()->dnToDotted( cct->userId() ) ];
 		if ( c )
 		{
-			if ( c->metaContact()->contacts().count() == 1 )
-				Kopete::ContactList::self()->removeMetaContact( c->metaContact() );
-			else	
-				delete c;
+			// if the contact creation failed because it already exists on the server, don't delete it
+			if (!cct->statusCode() == NMERR_DUPLICATE_CONTACT )
+			{
+				if ( c->metaContact()->contacts().count() == 1 )
+					Kopete::ContactList::self()->removeMetaContact( c->metaContact() );
+				else	
+					delete c;
+			}
 		}
 
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Error,

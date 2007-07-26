@@ -197,7 +197,10 @@ void Task::setError(int code, const QString &str)
 	if(!d->done) {
 		d->success = false;
 		d->statusCode = code;
-		d->statusString = str;
+		if ( str.isEmpty() )
+			d->statusString = GroupWise::errorCodeToString( code );
+		else
+			d->statusString = str;
 		done();
 	}
 }

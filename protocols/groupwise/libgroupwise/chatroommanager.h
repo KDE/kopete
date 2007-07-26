@@ -37,13 +37,12 @@ class ChatroomManager : public QObject
 		~ChatroomManager();
 		GroupWise::ChatroomMap rooms();
 		void requestProperties( const QString & displayName );
-		void update();
+		void updateRooms();
+		void updateCounts();
 	signals:
 		void gotProperties( const GroupWise::Chatroom & );
 		void updated();
-	public slots:
 	protected:
-		void updateCounts();
 		void getChatrooms( bool refresh );
 	protected slots:
 		/**

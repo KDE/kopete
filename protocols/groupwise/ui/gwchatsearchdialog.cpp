@@ -51,7 +51,7 @@ GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account
 	connect( m_widget->m_btnRefresh, SIGNAL( clicked() ), SLOT( slotUpdateClicked() ) );
 	connect( m_widget->m_btnProperties, SIGNAL( clicked() ), SLOT( slotPropertiesClicked() ) );
 
-	m_manager->update();
+	m_manager->updateRooms();
 	show();
 }
 
@@ -62,19 +62,19 @@ GroupWiseChatSearchDialog::~GroupWiseChatSearchDialog()
 void GroupWiseChatSearchDialog::slotUpdateClicked()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "updating chatroom list " << endl;
+	m_widget->m_chatrooms->clear();
 	QListViewItem * first = m_widget->m_chatrooms->firstChild();
 	QString updateMessage = i18n("Updating chatroom list..." );
-	if ( first )
+/*	if ( first )
 		new QListViewItem( first, updateMessage );
-	else
+	else*/
 		new QListViewItem( m_widget->m_chatrooms, updateMessage );
-	m_manager->update();
+	m_manager->updateRooms();
 
 }
 
 void GroupWiseChatSearchDialog::slotManagerUpdated()
 {
-	m_widget->m_chatrooms->clear();
 	ChatroomMap rooms = m_manager->rooms();
 	ChatroomMap::iterator it = rooms.begin();
 	const ChatroomMap::iterator end = rooms.end();
