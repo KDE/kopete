@@ -403,7 +403,7 @@ void KopeteWindow::initActions()
 	globalSetAway->setGlobalShortcut( KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W) );
 
 #ifdef __GNUC__
-#warning port me - it's probably safe to just remove this line as *global* shortcut setttings
+#warning port me - it is probably safe to just remove this line as *global* shortcut setttings
 #warning are now loaded automatically by default.
 #endif
 	//KGlobalAccel::self()->readSettings();
