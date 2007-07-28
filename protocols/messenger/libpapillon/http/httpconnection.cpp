@@ -92,7 +92,7 @@ HttpTransfer *HttpConnection::read()
 
 void HttpConnection::write(HttpTransfer *transfer)
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending an HttpTransfer on the server.";
+	qDebug() << Q_FUNC_INFO << "Sending an HttpTransfer on the server.";
 
 	d->protocol.outgoingTransfer(transfer);
 }

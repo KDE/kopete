@@ -116,7 +116,7 @@ void SecureStream::streamConnected()
 	connect(d->byteStream, SIGNAL(readyRead()), this, SLOT(streamReadyRead()));
 	connect(d->byteStream, SIGNAL(connectionClosed()), this, SLOT(slotDisconnected()));
 
-	qDebug() << PAPILLON_FUNCINFO << "Stream is connected. Begin TLS handshake.";
+	qDebug() << Q_FUNC_INFO << "Stream is connected. Begin TLS handshake.";
 
 	if( QCA::haveSystemStore() )
 	{
@@ -124,7 +124,7 @@ void SecureStream::streamConnected()
 	}
 	else
 	{
-		qDebug() << PAPILLON_FUNCINFO << "No root certification found for TLS/SSL.";
+		qDebug() << Q_FUNC_INFO << "No root certification found for TLS/SSL.";
 	}
 
 	d->tlsHandler->startClient( d->server );
@@ -139,7 +139,7 @@ void SecureStream::tlsHandshaken()
 {
 	QCA::TLS::IdentityResult result = d->tlsHandler->peerIdentityResult();
 	
-	qDebug() << PAPILLON_FUNCINFO << QString("Successful TLS/SSL handshake using %1 (%2 of %3 bits)").arg(d->tlsHandler->cipherSuite()).arg(d->tlsHandler->cipherBits()).arg(d->tlsHandler->cipherMaxBits());
+	qDebug() << Q_FUNC_INFO << QString("Successful TLS/SSL handshake using %1 (%2 of %3 bits)").arg(d->tlsHandler->cipherSuite()).arg(d->tlsHandler->cipherBits()).arg(d->tlsHandler->cipherMaxBits());
  
 	QString errorString;
 	SecureStream::ErrorCode errorCode;
@@ -162,7 +162,7 @@ void SecureStream::tlsHandshaken()
 			errorCode = SecureStream::ErrorNoCertificate;
 			break;
 	}
-	qDebug() << PAPILLON_FUNCINFO << errorString;
+	qDebug() << Q_FUNC_INFO << errorString;
 
 	d->errorString = errorString;
 	d->errorCode = errorCode;

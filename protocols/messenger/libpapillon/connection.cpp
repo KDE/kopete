@@ -114,12 +114,12 @@ void Connection::networkMessageReceived()
 	NetworkMessage *readNetworkMessage = d->stream->read();
 	if(readNetworkMessage)
 	{
-		qDebug() << PAPILLON_FUNCINFO << "Dispatch received NetworkMessage to tasks.";
+		qDebug() << Q_FUNC_INFO << "Dispatch received NetworkMessage to tasks.";
 		dispatchNetworkMessage( readNetworkMessage );
 	}
 	else
 	{
-		qDebug() << PAPILLON_FUNCINFO << "Got a null NetworkMessage, investigate.";
+		qDebug() << Q_FUNC_INFO << "Got a null NetworkMessage, investigate.";
 	}
 }
 
@@ -127,7 +127,7 @@ void Connection::dispatchNetworkMessage(NetworkMessage *networkMessage)
 {
 	if( !d->rootTask->take(networkMessage) )
 	{
-		qDebug() << PAPILLON_FUNCINFO << "Root task refused the NetworkMessage." << "NetworkMessage was:" << networkMessage->toString();
+		qDebug() << Q_FUNC_INFO << "Root task refused the NetworkMessage." << "NetworkMessage was:" << networkMessage->toString();
 	}
 	
 	delete networkMessage;
@@ -135,7 +135,7 @@ void Connection::dispatchNetworkMessage(NetworkMessage *networkMessage)
 
 void Connection::slotConnected()
 {
-	qDebug() << PAPILLON_FUNCINFO << "We are connected to" << d->server;
+	qDebug() << Q_FUNC_INFO << "We are connected to" << d->server;
 
 	d->isConnected = true;
 	emit connected();
@@ -143,7 +143,7 @@ void Connection::slotConnected()
 
 void Connection::slotDisconnected()
 {
-	qDebug() << PAPILLON_FUNCINFO << "We got disconnected from" << d->server;
+	qDebug() << Q_FUNC_INFO << "We got disconnected from" << d->server;
 
 	d->isConnected = false;
 	emit disconnected();

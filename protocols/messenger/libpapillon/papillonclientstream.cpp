@@ -159,7 +159,7 @@ NetworkMessage *ClientStream::read()
 
 void ClientStream::write(NetworkMessage *networkMessage)
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending:" << networkMessage->toString().replace("\r\n", "");
+	qDebug() << Q_FUNC_INFO << "Sending:" << networkMessage->toString().replace("\r\n", "");
 
 	d->protocol.outgoingNetworkMessage(networkMessage);
 }

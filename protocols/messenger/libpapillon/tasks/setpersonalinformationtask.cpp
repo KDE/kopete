@@ -90,7 +90,7 @@ void SetPersonalInformationTask::onGo()
 
 	setInfoMessage->setArguments( args );
 
-	qDebug() << PAPILLON_FUNCINFO << "Setting" << d->infoTypeToString(d->type) << "with value:" << d->value;
+	qDebug() << Q_FUNC_INFO << "Setting" << d->infoTypeToString(d->type) << "with value:" << d->value;
 	send(setInfoMessage);
 }
 

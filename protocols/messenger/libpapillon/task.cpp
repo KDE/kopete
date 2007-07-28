@@ -144,7 +144,7 @@ void Task::safeDelete()
 
 void Task::onGo()
 {
-	qDebug() << PAPILLON_FUNCINFO << "ERROR: calling default NULL onGo() for this task, you should reimplement this!";
+	qDebug() << Q_FUNC_INFO << "ERROR: calling default NULL onGo() for this task, you should reimplement this!";
 }
 
 void Task::onDisconnect()
@@ -197,7 +197,7 @@ void Task::done()
 		d->deleteme = true;
 
 	d->insignificant = true;
-	qDebug() << PAPILLON_FUNCINFO << "emitting finished";
+	qDebug() << Q_FUNC_INFO << "emitting finished";
 	emit finished(this);
 	d->insignificant = false;
 

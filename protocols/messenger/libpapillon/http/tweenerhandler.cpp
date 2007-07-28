@@ -75,7 +75,7 @@ void TweenerHandler::setLoginInformation(const QString &tweener, const QString &
 
 void TweenerHandler::start()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Begin tweener ticket negotiation.";
+	qDebug() << Q_FUNC_INFO << "Begin tweener ticket negotiation.";
 	Q_ASSERT( !d->tweener.isEmpty() );
 	Q_ASSERT( !d->passportId.isEmpty() );
 	Q_ASSERT( !d->password.isEmpty() );
@@ -86,12 +86,12 @@ void TweenerHandler::start()
 
 void TweenerHandler::slotConnected()
 {
-	qDebug() << PAPILLON_FUNCINFO << "We are connected";
+	qDebug() << Q_FUNC_INFO << "We are connected";
 	switch(d->state)
 	{
 		case TwnGetServer:
 		{
-			qDebug() << PAPILLON_FUNCINFO << "Getting real login server host...";
+			qDebug() << Q_FUNC_INFO << "Getting real login server host...";
 			QHttpRequestHeader getLoginServer( QLatin1String("GET"), QLatin1String("/rdr/pprdr.asp"), 1, 0 );
 			sendRequest(getLoginServer);
 
@@ -99,7 +99,7 @@ void TweenerHandler::slotConnected()
 		}
 		case TwnAuth:
 		{
-			qDebug() << PAPILLON_FUNCINFO << "Sending auth...";
+			qDebug() << Q_FUNC_INFO << "Sending auth...";
 			QHttpRequestHeader login( QLatin1String("GET"), d->loginUrl );
 			login.setValue( QLatin1String("Host"), QLatin1String("login.passport.com") );
 
@@ -124,7 +124,7 @@ void TweenerHandler::slotReadyRead()
 	QString temp(read);
 	QHttpResponseHeader httpHeader( temp );
 	if( !httpHeader.isValid() )
-		qDebug() << PAPILLON_FUNCINFO << "QHttpResponseHeader is not valid !";
+		qDebug() << Q_FUNC_INFO << "QHttpResponseHeader is not valid !";
 	
 	// Handle Redirection(302)
 	if( httpHeader.statusCode() == 302 )
@@ -133,18 +133,18 @@ void TweenerHandler::slotReadyRead()
 		QString loginServer = location.section("/", 0, 0);
 		d->loginUrl = QLatin1String("/") + location.section("/", 1);
 
-		qDebug() << PAPILLON_FUNCINFO << "Redirect to" << location;
+		qDebug() << Q_FUNC_INFO << "Redirect to" << location;
 		changeServer(loginServer);
 	}
 	// Handle failure(401 Unauthorized)
 	else if( httpHeader.statusCode() == 401 )
 	{
-		qDebug() << PAPILLON_FUNCINFO << "Passport refused the password.";
+		qDebug() << Q_FUNC_INFO << "Passport refused the password.";
 		emitResult(false);
 	}
 	else if( httpHeader.statusCode() == 400 )
 	{
-		qDebug() << PAPILLON_FUNCINFO << "DEBUG: Bad request.";
+		qDebug() << Q_FUNC_INFO << "DEBUG: Bad request.";
 	}
 	// 200 OK, do the result parsing
 	else if( httpHeader.statusCode() == 200 )
@@ -164,7 +164,7 @@ void TweenerHandler::slotReadyRead()
 	
 				// Change state of negotiation process.
 				d->state = TwnAuth;
-				qDebug() << PAPILLON_FUNCINFO << "Connecting to auth server. Server:" << login;
+				qDebug() << Q_FUNC_INFO << "Connecting to auth server. Server:" << login;
 
 				// Connect to given URL.
 				changeServer(loginServer);
@@ -196,7 +196,7 @@ void TweenerHandler::changeServer(const QString &host)
 
 void TweenerHandler::sendRequest(const QHttpRequestHeader &httpHeader)
 {
-// 	qDebug() << PAPILLON_FUNCINFO << "Sending: " << httpHeader.toString().replace("\r", "(r)").replace("\n", "(n)");
+// 	qDebug() << Q_FUNC_INFO << "Sending: " << httpHeader.toString().replace("\r", "(r)").replace("\n", "(n)");
 	QByteArray data;
 	data += httpHeader.toString().toUtf8();
 	// Insert empty body.

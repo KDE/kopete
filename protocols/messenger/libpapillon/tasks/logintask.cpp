@@ -154,14 +154,14 @@ bool LoginTask::forMe(NetworkMessage *networkMessage)
 // TODO: Send VER, CVR, USR I at the same time
 void LoginTask::onGo()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Begin login process...";
+	qDebug() << Q_FUNC_INFO << "Begin login process...";
 
 	sendVersionCommand();
 }
 
 void LoginTask::sendVersionCommand()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending version command.";
+	qDebug() << Q_FUNC_INFO << "Sending version command.";
 	NetworkMessage *versionNetworkMessage = new NetworkMessage(NetworkMessage::TransactionMessage);
 	versionNetworkMessage->setCommand( QLatin1String("VER") );
 
@@ -175,7 +175,7 @@ void LoginTask::sendVersionCommand()
 
 void LoginTask::sendCvrCommand()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending CVR command.";
+	qDebug() << Q_FUNC_INFO << "Sending CVR command.";
 	NetworkMessage *cvrMessage = new NetworkMessage(NetworkMessage::TransactionMessage);
 	cvrMessage->setCommand( QLatin1String("CVR") );
 	
@@ -190,7 +190,7 @@ void LoginTask::sendCvrCommand()
 
 void LoginTask::sendTweenerInviteCommand()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending Tweener Invite Command";
+	qDebug() << Q_FUNC_INFO << "Sending Tweener Invite Command";
 	NetworkMessage *twnMessage = new NetworkMessage(NetworkMessage::TransactionMessage);
 	twnMessage->setCommand("USR");
 
@@ -205,7 +205,7 @@ void LoginTask::sendTweenerInviteCommand()
 
 void LoginTask::sendTweenerConfirmation()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending Tweener confirmation command.";
+	qDebug() << Q_FUNC_INFO << "Sending Tweener confirmation command.";
 	NetworkMessage *twnMessage = new NetworkMessage(NetworkMessage::TransactionMessage);
 	twnMessage->setCommand("USR");
 
