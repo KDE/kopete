@@ -95,7 +95,7 @@ bool LoginTask::take(NetworkMessage *networkMessage)
 						d->currentState = StateTweenerConfirmed;
 
 						QString tweener = networkMessage->arguments()[2];
-						TweenerHandler *tweenerHandler = new TweenerHandler( connection()->client()->createSecureStream() );
+						TweenerHandler *tweenerHandler = new TweenerHandler;
 						tweenerHandler->setLoginInformation(tweener, passportId(), password());
 						connect(tweenerHandler, SIGNAL(result( TweenerHandler* )), this, SLOT(ticketReceived( TweenerHandler* )));
 						tweenerHandler->start();

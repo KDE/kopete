@@ -30,7 +30,6 @@ papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Base/stream.h ${CMAKE
 
 # Papillon/Http
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Http/httpcoreprotocol.h ${CMAKE_CURRENT_SOURCE_DIR}/http/httpcoreprotocol.cpp )
-papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Http/securestream.h ${CMAKE_CURRENT_SOURCE_DIR}/http/securestream.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Http/tweenerhandler.h ${CMAKE_CURRENT_SOURCE_DIR}/http/tweenerhandler.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Http/httpconnection.h ${CMAKE_CURRENT_SOURCE_DIR}/http/httpconnection.cpp )
 

@@ -4,7 +4,6 @@ project(libpapillon)
 
 # search packages used by KDE (TODO: Use Qt only)
 find_package(KDE4 REQUIRED)
-find_package(QCA2 REQUIRED)
 include (KDE4Defaults)
 include (MacroLibrary)
 
@@ -18,12 +17,9 @@ set(PAPILLON_INCLUDES
 ${CMAKE_CURRENT_SOURCE_DIR}/include/
 ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/
 ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Base/
-${QCA2_INCLUDE_DIR}
 )
 
 add_subdirectory( tests )
-
-add_definitions( ${QCA2_DEFINITIONS} )
 
 include_directories(${PAPILLON_INCLUDES})
 
@@ -45,7 +41,6 @@ contactlist/sharingservicebinding.cpp
 )
 
 set(papillon_http_SRCS
-http/securestream.cpp
 http/tweenerhandler.cpp
 http/httptransfer.cpp
 http/httpcoreprotocol.cpp
@@ -96,7 +91,7 @@ endforeach(_src_FILE)
 
 kde4_add_library(papillon_kopete SHARED ${libpapillon_SRCS})
 
-target_link_libraries( papillon_kopete ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QCA2_LIBRARIES} )
+target_link_libraries( papillon_kopete ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} )
 
 set_target_properties( papillon_kopete PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 

@@ -18,13 +18,13 @@
 #include "Papillon/Tasks/ChallengeTask"
 
 // Qt includes
-#include <QtCore/QLatin1String>
 #include <QtCore/QByteArray>
+#include <QtCore/QCryptographicHash>
 #include <QtCore/QDataStream>
+#include <QtCore/QLatin1String>
+#include <QtCore/QStringList>
 #include <QtCore/QVector>
 #include <QtDebug>
-
-#include <QtCrypto>
 
 // Papillon includes
 #include "Papillon/NetworkMessage"
@@ -89,15 +89,11 @@ QString ChallengeTask::createChallengeHash(const QString &challengeString)
 {
 	// Step One: THe MD5 Hash.
 
-	if( !QCA::isSupported("md5") )
-	{
-		qDebug() << Q_FUNC_INFO << "ERROR: MD5 not supported !";
-	}
-	Q_ASSERT( QCA::isSupported("md5") );
+	// Combine the received challenge string with the product key.
+	QByteArray challengeByteArray = (challengeString + challengeProductKey).toUtf8();
 
-  	// Combine the received challenge string with the product key.
- 	QByteArray digest = QCA::arrayToHex( QCA::Hash("md5").hash( (challengeString + challengeProductKey).toUtf8() ).toByteArray() ).toUtf8();
-
+	// Generate the MD5 digest (as a string of hexadecimal number, not binary data)
+ 	QByteArray digest = QCryptographicHash::hash(challengeByteArray, QCryptographicHash::Md5).toHex();
  	qDebug() << Q_FUNC_INFO << "md5: " << digest;
 
  	QVector<qint32> md5Integers(4);

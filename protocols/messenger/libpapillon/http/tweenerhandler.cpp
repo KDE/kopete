@@ -18,12 +18,14 @@
 #include <QtDebug>
 #include <QtCore/QRegExp>
 #include <QtCore/QUrl>
+#include <QtCore/QEventLoop>
 #include <QtNetwork/QHttpHeader>
 #include <QtNetwork/QHttpRequestHeader>
 #include <QtNetwork/QHttpResponseHeader>
 
 // Papillon includes
-#include "Papillon/Http/SecureStream"
+#include "Papillon/Network/IpEndpointConnector"
+#include "Papillon/Network/NetworkStream"
 
 namespace Papillon 
 {
@@ -32,12 +34,12 @@ class TweenerHandler::Private
 {
 public:
 	Private()
-	 : stream(0), success(false)
+	 : connector(0), success(false), connectionTry(0)
 	{}
 
 	~Private()
 	{
-		delete stream;
+		delete connector;
 	}
 
 	QString tweener;
@@ -47,18 +49,19 @@ public:
 	
 	QString loginUrl;
 
-	SecureStream *stream;
+	IpEndpointConnector *connector;
 	bool success;
 
 	TweenerHandler::TweenerState state;
+	int connectionTry;
 };
 
-TweenerHandler::TweenerHandler(SecureStream *stream)
- : QObject(0), d(new Private)
+TweenerHandler::TweenerHandler(QObject *parent)
+ : QObject(parent), d(new Private)
 {
-	d->stream = stream;
-	connect(d->stream, SIGNAL(connected()), this, SLOT(slotConnected()));
-	connect(d->stream, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
+	d->connector = new IpEndpointConnector(true, this); // Use TLS/SSL
+	connect(d->connector, SIGNAL(connected()), this, SLOT(slotConnected()));
+	connect(d->connector, SIGNAL(faulted()), this, SLOT(connector_OnFaulted()));
 }
 
 TweenerHandler::~TweenerHandler()
@@ -80,13 +83,18 @@ void TweenerHandler::start()
 	Q_ASSERT( !d->passportId.isEmpty() );
 	Q_ASSERT( !d->password.isEmpty() );
 
+	disconnect(d->connector->networkStream());
+
 	d->state = TwnGetServer;
-	d->stream->connectToServer("nexus.passport.com");
+	d->connector->connectWithAddressInfo("nexus.passport.com", 443);	
 }
 
 void TweenerHandler::slotConnected()
 {
 	qDebug() << Q_FUNC_INFO << "We are connected";
+	
+	connect(d->connector->networkStream(), SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
+
 	switch(d->state)
 	{
 		case TwnGetServer:
@@ -120,7 +128,7 @@ void TweenerHandler::slotConnected()
 
 void TweenerHandler::slotReadyRead()
 {
-	QByteArray read = d->stream->read();
+	QByteArray read = d->connector->networkStream()->readAll();
 	QString temp(read);
 	QHttpResponseHeader httpHeader( temp );
 	if( !httpHeader.isValid() )
@@ -178,7 +186,7 @@ void TweenerHandler::slotReadyRead()
 
 				d->ticket = rx.cap(1);
 				
-				d->stream->disconnectFromServer();
+				d->connector->close();
 				emitResult(true);
 				break;
 			}
@@ -188,10 +196,39 @@ void TweenerHandler::slotReadyRead()
 	}
 }
 
+void TweenerHandler::connector_OnFaulted()
+{
+	QEventLoop waiter(this);
+	connect(d->connector, SIGNAL(closed()), &waiter, SLOT(quit()));
+
+	d->connector->close();
+	waiter.exec();
+
+	if( d->connectionTry + 1 > 5 )
+	{
+		// Connection try has failed
+		emitResult(false);
+		return;
+	}
+	else
+	{
+		d->connectionTry++;
+		qDebug() << Q_FUNC_INFO << "IpEndpointConnector has failed. Retry a connection. Try:" << d->connectionTry;
+		// Restart negociation process.
+		start();
+	}
+}
+
 void TweenerHandler::changeServer(const QString &host)
 {
-	d->stream->disconnectFromServer();
-	d->stream->connectToServer(host);
+	d->connector->close();
+	QEventLoop waiter(this);
+	connect(d->connector, SIGNAL(closed()), &waiter, SLOT(quit()));
+
+	d->connector->close();
+	waiter.exec();
+
+	d->connector->connectWithAddressInfo(host, 443); // FIXME: Maybe not hardcode the SSL port
 }
 
 void TweenerHandler::sendRequest(const QHttpRequestHeader &httpHeader)
@@ -202,7 +239,7 @@ void TweenerHandler::sendRequest(const QHttpRequestHeader &httpHeader)
 	// Insert empty body.
 	data += "\r\n";
 
-	d->stream->write( data );
+	d->connector->networkStream()->write( data );
 }
 
 bool TweenerHandler::success() const
@@ -217,7 +254,7 @@ QString TweenerHandler::ticket() const
 
 void TweenerHandler::emitResult(bool success)
 {
-	d->stream->disconnectFromServer();
+	d->connector->close();
 
 	d->success = success;
 	emit result(this);

@@ -17,13 +17,9 @@
 // Qt includes
 #include <QtDebug>
 
-// QCA include
-#include <QtCrypto>
-
 // Papillon includes
 #include "Papillon/Connection"
 #include "Papillon/Base/Connector"
-#include "Papillon/Http/SecureStream"
 #include "Papillon/ClientStream"
 #include "Papillon/NetworkMessage"
 #include "Papillon/MimeHeader"
@@ -53,8 +49,6 @@ public:
 
 	QString server;
 	quint16 port;
-	// Convience object that init QCA.
-	QCA::Initializer qcaInit;
 	Papillon::Client::ConnectionStatus connectionStatus;
 
 	ContactList *contactList;
@@ -78,14 +72,6 @@ Client::Client(Connector *connector, QObject *parent)
 Client::~Client()
 {
 	delete d;
-}
-
-SecureStream *Client::createSecureStream()
-{
-	Connector *newConnector = d->connector->createNewConnector(this);
-	SecureStream *secureStream = new SecureStream(newConnector);
-	
-	return secureStream;
 }
 
 Connection *Client::createConnection()

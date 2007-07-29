@@ -28,7 +28,7 @@ namespace Papillon
 {
 
 class NetworkStream;
-/** @class EndpointConnector <Papillon/Network/IpEndpointConnector>
+/** @class IpEndpointConnector <Papillon/Network/IpEndpointConnector>
 	@brief Provides methods for connecting to an ip endpoint.*/
 class IpEndpointConnector : public QObject
 {

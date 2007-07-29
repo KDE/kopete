@@ -19,7 +19,8 @@
 #include <QtDebug>
 
 // Papillon includes
-#include "Papillon/Http/SecureStream"
+#include "Papillon/Network/IpEndpointConnector"
+#include "Papillon/Network/NetworkStream"
 #include "Papillon/Http/CoreProtocol"
 #include "Papillon/Http/Transfer"
 
@@ -30,28 +31,28 @@ class HttpConnection::Private
 {
 public:
 	Private()
-	 : stream(0)
+	 : connector(0)
 	{}
 
 	~Private()
 	{
-		delete stream;
+		delete connector;
 	}
 	
-	SecureStream *stream;
+	IpEndpointConnector *connector;
 	HttpCoreProtocol protocol;
 	QQueue<HttpTransfer*> transferQueue;
 	QString cookie;
 };
 
-HttpConnection::HttpConnection(SecureStream *stream, QObject *parent)
+HttpConnection::HttpConnection(QObject *parent)
  : QObject(parent), d(new Private)
 {
-	d->stream = stream;
+	d->connector = new IpEndpointConnector(true, this); // Use SSL/TLS
 
-	connect(d->stream, SIGNAL(connected()), this, SIGNAL(connected()));
-	connect(d->stream, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
-	connect(d->stream, SIGNAL(readyRead()), this, SLOT(streamReadyRead()));
+	connect(d->connector, SIGNAL(connected()), this, SIGNAL(connected()));
+	connect(d->connector, SIGNAL(closed()), this, SIGNAL(disconnected()));
+	connect(d->connector->networkStream(), SIGNAL(readyRead()), this, SLOT(streamReadyRead()));
 
 	connect(&d->protocol, SIGNAL(outgoingData(QByteArray)), this, SLOT(protocolOutgoingData(QByteArray)));
 	connect(&d->protocol, SIGNAL(incomingData()), this, SLOT(protocolIncomingData()));
@@ -74,12 +75,12 @@ QString HttpConnection::cookie() const
 
 void HttpConnection::connectToServer(const QString &server)
 {
-	d->stream->connectToServer(server);
+	d->connector->connectWithAddressInfo(server, 443);
 }
 
 void HttpConnection::disconnectFromServer()
 {
-	d->stream->disconnectFromServer();
+	d->connector->close();
 }
 
 HttpTransfer *HttpConnection::read()
@@ -99,12 +100,12 @@ void HttpConnection::write(HttpTransfer *transfer)
 
 void HttpConnection::streamReadyRead()
 {
-	d->protocol.addIncomingData( d->stream->read() );
+	d->protocol.addIncomingData( d->connector->networkStream()->readAll() );
 }
 
 void HttpConnection::protocolOutgoingData(const QByteArray &data)
 {
-	d->stream->write(data);
+	d->connector->networkStream()->write(data);
 }
 
 void HttpConnection::protocolIncomingData()

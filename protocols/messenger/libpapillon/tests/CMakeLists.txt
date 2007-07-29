@@ -107,7 +107,7 @@ if(NOT WIN32)
                 
         kde4_add_test_executable(challenge_test  ${challenge_test_SRCS})
         
-        target_link_libraries(challenge_test ${PAPILLON_TEST_LIBRARIES} ${QCA2_LIBRARIES})
+        target_link_libraries(challenge_test ${PAPILLON_TEST_LIBRARIES})
         
         add_test(challenge_test ${EXECUTABLE_OUTPUT_PATH}/challenge_test)
 endif(NOT WIN32)
