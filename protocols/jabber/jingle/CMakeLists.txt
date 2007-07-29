@@ -54,6 +54,8 @@ set(kopete_jingle_PART_SRCS
   voicecaller.h
   jinglewatchsessiontask.cpp 
   jinglenetwork.cpp
+  jinglefoosession.cpp
+  jinglejabberxml.cpp
   #${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/xmpp-im/xmpp_xmlcommon.cpp
   #${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/xmpp-core/stream.cpp
 )

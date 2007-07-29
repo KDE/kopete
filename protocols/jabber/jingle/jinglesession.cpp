@@ -16,6 +16,9 @@
 */
 #include "jinglesession.h"
 
+#include "jinglejabberxml.h"
+#include "jingletransport.h"
+
 #include <kdebug.h>
 
 #include "jabberaccount.h"
@@ -67,6 +70,105 @@ JabberAccount *JingleSession::account()
 void JingleSession::sendStanza(const QString &stanza)
 {
 	account()->client()->send( stanza );
+}
+
+void JingleSession::processStanza(QDomDocument doc)
+{
+	QDomElement root = doc.documentElement();
+	QString type = root.attribute("type");
+	
+	//error
+	if( type == "error"){
+		QDomElement errorElement = root.firstChildElement();
+		if( !errorElement.isNull() ){
+			
+
+		}
+
+	}else if(type == "set"){
+		QDomElement jingleElement = root.firstChildElement();
+		if( jingleElement.isNull() ){
+
+		}else{
+			QString action = jingleElement.attribute("action");
+			if(action == "session-accept"){
+
+				if(state != PENDING){
+					sendStanza( Jingle::createOrderErrorMessage(root).toString() );
+				}else{
+					connection = transport()->createCandidateFromElement(
+						jingleElement.firstChildElement().firstChildElement() );
+					if( connection.isUseful() ){
+						sendStanza(Jingle::createReceiptMessage(root).toString() );
+						state = ACTIVE;
+						emit accepted();
+					}else{
+						sendStanza(Jingle::createTransportNotAcceptableMessage(root).toString() );
+						//the other client should now send a session-terminate
+					}
+				}
+
+			}else if(action == "session-initiate"){
+
+				if(state != PENDING){
+					sendStanza( Jingle::createOrderErrorMessage(root).toString() );
+				}else{
+					initiator = root.attribute("from");
+					responder = myself().full();
+					sid = jingleElement.attribute("sid");
+					sendStanza( checkPayload(root).toString() );
+				}
+
+			}else if(action == "session-terminate"){
+
+				state = ENDED;
+				sendStanza(Jingle::createReceiptMessage(root).toString() );
+				emit terminated();
+
+			}else if(action == "session-info"){
+
+				sendStanza(Jingle::createReceiptMessage(root).toString() );
+
+			}else if(action == "content-add"){
+
+				if(state != ACTIVE){
+					sendStanza(Jingle::createOrderErrorMessage(root).toString() );
+				}else{
+					sendStanza(Jingle::createReceiptMessage(root).toString() );
+				}
+
+			}else if(action == "content-remove"){
+
+				removeContent(root);
+				sendStanza(Jingle::createReceiptMessage(root).toString() );
+
+			}else if(action == "content-modify"){
+
+				sendStanza(Jingle::createReceiptMessage(root).toString() );
+
+			}else if(action == "content-accept"){
+
+				sendStanza(Jingle::createReceiptMessage(root).toString() );
+
+			}else if(action == "transport-info"){
+
+//				remoteCandidates.push_back(fooTransport.createCandidateFromElement(
+//					jingleElement.firstChildElement().firstChildElement()));
+				//this one should be fine for multiple content types, since only one candidate should
+				//be sent at once
+				if( addRemoteCandidate(jingleElement.elementsByTagName("transport").item(0).toElement() ) ){
+					sendStanza(Jingle::createReceiptMessage(root).toString() );
+				}else{
+					//malformed candidate
+				}
+			}
+		}
+	}else if(type == "result"){
+
+	}else if(type == "get"){
+
+	}
+
 }
 
 #include "jinglesession.moc"

@@ -15,23 +15,23 @@
     *************************************************************************
 */
 // libjingle before everything else to not clash with Qt
-#define POSIX
+//#define POSIX
 //#include "talk/xmpp/constants.h"
-#include "talk/base/sigslot.h"
+//#include "talk/base/sigslot.h"
 //#include "talk/xmpp/jid.h"
 //#include "talk/xmllite/xmlelement.h"
 //#include "talk/xmllite/xmlprinter.h"
 //#include "talk/base/network.h"
-#include "talk/p2p/base/session.h"
-#include "talk/p2p/base/sessionmanager.h"
-#include "talk/base/helpers.h"
-#include "talk/p2p/client/basicportallocator.h"
-#include "talk/p2p/base/sessionclient.h"
-#include "talk/base/physicalsocketserver.h"
-#include "talk/base/thread.h"
-#include "talk/base/socketaddress.h"
-#include "talk/session/phone/call.h"
-#include "talk/session/phone/phonesessionclient.h"
+//#include "talk/p2p/base/session.h"
+//#include "talk/p2p/base/sessionmanager.h"
+//#include "talk/base/helpers.h"
+//#include "talk/p2p/client/basicportallocator.h"
+//#include "talk/p2p/base/sessionclient.h"
+//#include "talk/base/physicalsocketserver.h"
+//#include "talk/base/thread.h"
+//#include "talk/base/socketaddress.h"
+//#include "talk/session/phone/call.h"
+//#include "talk/session/phone/phonesessionclient.h"
 //#include "talk/p2p/client/sessionsendtask.h"
 
 
@@ -53,7 +53,7 @@
 #include <QtNetwork>
 
 #define JINGLE_NS "http://www.google.com/session"
-#define JINGLE_VOICE_SESSION_NS "http://www.google.com/session/phone"
+//#define JINGLE_VOICE_SESSION_NS "http://www.google.com/session/phone"
 
 //BEGIN JingleSessionManager::SlotsProxy
 class JingleSessionManager;
@@ -111,7 +111,7 @@ JingleSessionManager::JingleSessionManager(JabberAccount *account)
  : QObject(account), d(new Private(account))
 {
 	// Create slots proxy for libjingle
-	slotsProxy = new SlotsProxy(this);
+	//slotsProxy = new SlotsProxy(this);
 
 	// Create watch incoming session task.
 	d->watchSessionTask = new JingleWatchSessionTask(account->client()->rootTask());
@@ -120,7 +120,7 @@ JingleSessionManager::JingleSessionManager(JabberAccount *account)
 	// Create global cricket variables common to all sessions.
 	// Seed random generation with the JID of the account.
 	QString accountJid = account->client()->jid().full();
-	cricket::InitRandom( accountJid.toAscii(), accountJid.length() );
+	//cricket::InitRandom( accountJid.toAscii(), accountJid.length() );
 
 	
 	
@@ -132,7 +132,7 @@ JingleSessionManager::JingleSessionManager(JabberAccount *account)
 	d->networkManager = new JingleNetworkManager(googleStunAddress);
 
 	// TODO: Define a relay server.
-  	d->networkManager->makeConnection();
+  	//d->networkManager->makeConnection();
 
 	// Create the Session manager that manager peer-to-peer sessions.
 	//d->cricketSessionManager = new cricket::SessionManager(d->portAllocator, d->sessionThread);

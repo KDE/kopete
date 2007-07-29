@@ -1,6 +1,24 @@
+/*
+    jinglevoicesessiondialog.cpp - GUI for a voice session.
+
+    Copyright (c) 2007      by Joshua Hodosh     <josh.hodosh@gmail.com>
+
+    Kopete    (c) 2001-2007 by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 #include "jinglejabberxml.h"
 
-QDomElement createInitializationMessage(QString* from, QString* to, QString* id, QString* sid, QString* initiator, QList<JingleContentType> types)
+#include jingleconnectioncandidate.h"
+
+QDomDocument Jingle::createInitializationMessage(QString* from, QString* to, QString* id, QString* sid, QString* initiator, QList<JingleContentType> types)
 {
 	QDomDocument doc;
 	QDomElement root = createIQ(&doc,"set",to,id);
@@ -30,11 +48,12 @@ QDomElement createInitializationMessage(QString* from, QString* to, QString* id,
 
 
 	root.appendChild(jingle);
+	doc.appendChild(root);
 
-	return root;
+	return doc;
 }
 
-QDomElement createAcceptMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QList<JingleContentType> types, JingleConnectionCandidate connection)
+QDomDocument Jingle::createAcceptMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QList<JingleContentType> types, JingleConnectionCandidate connection)
 {
 
 	QDomDocument doc;
@@ -61,13 +80,14 @@ QDomElement createAcceptMessage(QString* from, QString* to, QString* initiator, 
 
 
 	root.appendChild(jingle);
+	doc.appendChild(root);
 
-	return root;
+	return doc;
 }
 
-QDomElement createTerminateMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QString* reason)
+QDomDocument Jingle::createTerminateMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QString* reason)
 {
-QDomDocument doc;
+	QDomDocument doc;
 	QDomElement root = createIQ(&doc,"set",to,id);
 	//root.setAttribute("from", from);
 	QDomElement jingle = doc.createElement("jingle");
@@ -79,21 +99,24 @@ QDomDocument doc;
 	jingle.setAttribute("reason", reason);
 
 	root.appendChild(jingle);
+	doc.appendChild(root);
 
-	return root;
+	return doc;
 
 }
 
-QDomElement createReceiptMessage(QDomElement stanza);
+QDomDocument Jingle::createReceiptMessage(QDomElement stanza);
 {
-	QDomElement iq = createIQ(doc(), "result", stanza.attribute("from"), stanza.attribute("id"));
-	return iq;
+	QDomElement doc;
+	QDomElement iq = createIQ(&doc, "result", stanza.attribute("from"), stanza.attribute("id"));
+	doc.appendChild(iq);
+	return doc;
 }
 
-QDomElement createContentErrorMessage(QDomElement stanza)
+QDomDocument Jingle::createContentErrorMessage(QDomElement stanza)
 {
 	QDomDocument doc;
-	QDomElement iq = createIQ(doc(), "error", stanza.attribute("from"), stanza.attribute("id"));
+	QDomElement iq = createIQ(&doc, "error", stanza.attribute("from"), stanza.attribute("id"));
 	QDomElement error = doc.createElement("error");
 	error.setAttribute("type","cancel");
 	QDomElement fni = doc.createElement("feature-not-implemented");
@@ -104,13 +127,14 @@ QDomElement createContentErrorMessage(QDomElement stanza)
 	error.append(uc);
 	iq.append(error);
 
-	return (iq);
+	doc.appendChild(iq);
+	return doc;
 }
 
-QDomElement createTransportErrorMessage(QDomElement stanza)
+QDomDocument Jingle::createTransportErrorMessage(QDomElement stanza)
 {
 	QDomDocument doc;
-	QDomElement iq = createIQ(doc(), "error", stanza.attribute("from"), stanza.attribute("id"));
+	QDomElement iq = createIQ(&doc, "error", stanza.attribute("from"), stanza.attribute("id"));
 	QDomElement error = doc.createElement("error");
 	error.setAttribute("type","cancel");
 	QDomElement fni = doc.createElement("feature-not-implemented");
@@ -121,13 +145,14 @@ QDomElement createTransportErrorMessage(QDomElement stanza)
 	error.append(ut);
 	iq.append(error);
 
-	return (iq);
+	doc.appendChild(iq);
+	return doc;
 }
 
-QDomElement createOrderErrorMessage(QDomElement stanza)
+QDomDocument Jingle::createOrderErrorMessage(QDomElement stanza)
 {
 	QDomDocument doc;
-	QDomElement iq = createIQ(doc(), "error", stanza.attribute("from"), stanza.attribute("id"));
+	QDomElement iq = createIQ(&doc, "error", stanza.attribute("from"), stanza.attribute("id"));
 	QDomElement error = doc.createElement("error");
 	error.setAttribute("type","cancel");
 	QDomElement ur = doc.createElement("unexpected-request");
@@ -138,13 +163,14 @@ QDomElement createOrderErrorMessage(QDomElement stanza)
 	error.append(ooo);
 	iq.append(error);
 
-	return (iq);
+	doc.appendChild(iq);
+	return (doc);
 }
 
-QDomElement createTransportNotAcceptableMessage(QDocument stanza)
+QDomDocument Jingle::createTransportNotAcceptableMessage(QDocument stanza)
 {
 	QDomDocument doc;
-	QDomElement iq = createIQ(doc(), "error", stanza.attribute("from"), stanza.attribute("id"));
+	QDomElement iq = createIQ(&doc, "error", stanza.attribute("from"), stanza.attribute("id"));
 	QDomElement error = doc.createElement("error");
 	error.setAttribute("type","cancel");
 	QDomElement na = doc.createElement("not-acceptable");
@@ -152,5 +178,6 @@ QDomElement createTransportNotAcceptableMessage(QDocument stanza)
 	error.append(na);
 	iq.append(error);
 
-	return (iq);
+	doc.appendChild(iq);
+	return (doc);
 }

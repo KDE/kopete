@@ -23,6 +23,34 @@
 #include <xmpp.h> // XMPP::Jid
 #include <q3valuelist.h>
 
+#include "jingleconnectioncandidate.h"
+
+struct JingleContentType;
+class JingleTransport;
+
+
+//BEGIN JingleStateEnum
+enum JingleStateEnum{
+	PENDING,
+	ACTIVE,
+	ENDED
+};
+//END JingleStateEnum
+
+//BEGIN JingleLastMessageEnum
+enum JingleLastMessageEnum{
+	session-initiate;
+	session-accept;
+	content-accept;
+	session-info;
+	session-terminate;
+	content-add;
+	content-remove;
+	content-modify;
+	transport-info;
+};
+//END JingleLastMessageEnum
+
 class JabberAccount;
 /**
  * @brief Base class for peer-to-peer session that use Jingle signaling
@@ -85,6 +113,35 @@ signals:
 	void accepted();
 	void declined();
 	void terminated();
+
+protected:
+	/**
+	* Process the XMPP stanza, and take appropriate action.
+	* Some parts of this function will die if the stanza is malformed,
+	* checks need to be added
+	*/
+	void processStanza(QDomDocument doc);
+
+	/**
+	* Removes designated content type.  If there are none left, closes the session.
+	*/
+	virtual void removeContent(QDomElement stanza);
+
+	virtual QDomDocument checkPayload(QDomElement stanza);
+
+	virtual bool addRemoteCandidate(QDomElement transportElement);
+
+	virtual JingleTransport* transport();
+
+	//NOTE this does not scale to multiple-content sessions
+	JingleConnectionCandidate connection;
+
+	QList<JingleContentType> types;
+
+	JingleStateEnum state;
+	QString initiator;
+	QString responder;
+	QString sid;
 
 private:
 	class Private;

@@ -1,64 +1,32 @@
-#include jinglefoosession.h
+/*
+    jinglevoicesessiondialog.cpp - GUI for a voice session.
+
+    Copyright (c) 2007      by Joshua Hodosh     <josh.hodosh@gmail.com>
+
+    Kopete    (c) 2001-2007 by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
+#include "jinglefoosession.h"
 
 #define JINGLE_NS "http://www.xmpp.org/extensions/xep-0166.html#ns"
-#define JINGLE_FOO_NS "http://www.example.com/jingle/foo.html"
-#define JINGLEFOOTRANSPORT "footransport"
+#define JINGLE_FOO_NS "http://kopete.kde.com/jingle/foo.html"
+#define JINGLEFOOTRANSPORT "http://kopete.kde.com/jingle/foo-transport.html"
 
 #include <QtXml>
 #include "jinglejabberxml.h"
 #include "jabberaccount.h"
-
-//BEGIN JingleStateEnum
-enum JingleStateEnum{
-	PENDING,
-	ACTIVE,
-	ENDED
-};
-//END JingleStateEnum
+#include "jinglesession.h"
 
 
-//BEGIN JingleIQResponder
-class JingleVoiceSession::JingleIQResponder : public XMPP::Task
-{
-public:
-	JingleIQResponder(XMPP::Task *);
-	~JingleIQResponder();
 
-	bool take(const QDomElement &);
-};
-
-/**
- * \class JingleIQResponder
- * \brief A task that responds to jingle candidate queries with an empty reply.
- */
- 
-JingleVoiceSession::JingleIQResponder::JingleIQResponder(Task *parent) :Task(parent)
-{
-}
-
-JingleVoiceSession::JingleIQResponder::~JingleIQResponder()
-{
-}
-
-bool JingleVoiceSession::JingleIQResponder::take(const QDomElement &e)
-{
-	if(e.tagName() != "iq")
-		return false;
-
-	QDomElement first = e.firstChild().toElement();
-	//responding on session-initiate means we accept the codecs, transport, etc.
-	//responding on session-accept means we accept the connection candidate as the connection
-	//by looking for a child and NS, errors and results are avoided
-	if (!first.isNull() && first.attribute("xmlns") == JINGLE_NS  && first.attribute("action") != "session-initiate"
-		&& first.attribute("action")  != "session-accept" ){
-		QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
-		send(iq);
-		return true;
-	}
-
-	return false;
-}
-//END JingleIQResponder
 
 JingleFooSession::JingleFooSession(JabberAccount *account, const JidList &peers)
  : JingleSession(account, peers)
@@ -103,7 +71,7 @@ QString JingleFooSession::sessionType()
 	return QString(JINGLE_FOO_SESSION_NS);
 }
 
-void JingleVoiceSession::receiveStanza(const QString &stanza)
+void JingleFooSession::receiveStanza(const QString &stanza)
 {
 	QDomDocument doc;
 	doc.setContent(stanza);
@@ -128,8 +96,12 @@ void JingleVoiceSession::receiveStanza(const QString &stanza)
 	while( !node.isNull() && !ok ) 
 	{
 		QDomElement element = node.toElement();
+
+		//NOTE big assumption: we're getting the session-initiate message
+		if( sid.isEmpty() ) sid = element.attribute("sid");
+		// Catch messages that are a) jingle messages and b) for this session
 		//NOTE doesn't catch <error> messages
-		if( !element.isNull() && element.attribute("xmlns") == JINGLE_NS) 
+		if( !element.isNull() && element.attribute("xmlns") == JINGLE_NS && element.attribute("sid") == sid )
 		{
 			ok = true;
 		}
@@ -144,90 +116,10 @@ void JingleVoiceSession::receiveStanza(const QString &stanza)
 }
 
 
-void JingleFooSession::processStanza(QDomDocument doc)
-{
-	QDomElement root = doc.documentElement();
-	QString type = root.attribute("type");
-	
-	//error
-	if( type == "error"){
-		QDomElement errorElement = root.firstChildElement();
-		if(errorElement != NULL){
-			
-
-		}
-
-	}else if(type == "set"){
-		QDomElement jingleElement = root.firstChildElement();
-		if(jingleElement == NULL){
-
-		}else{
-			QString action = jingleElement.attribute("action");
-			if(action == "session-accept"){
-
-				if(state != JingleStateEnum::PENDING){
-					send(createOrderErrorMessage(root));
-				}else{
-					connection = fooTransport.createCandidateFromElement(
-						jingleElement.firstChildElement().firstChildElement() );
-					if( connection.isUseful() ){
-						send(createReceiptMessage(root));
-						state = JingleStateEnum::ACTIVE;
-						emit accepted();
-					}else{
-						send(createTransportNotAcceptableMessage(root);
-						//the other client should now send a session-terminate
-					}
-				}
-
-			}else if(action == "session-initiate"){
-
-				if(state != JingleStateEnum::PENDING){
-					send(createOrderErrorMessage(root));
-				}
-				initiator = root.attribute("from");
-				responder = jid->full();
-				sid = jingleElement.attribute("sid");
-				send(checkPayload(root));
-
-			}else if(action == "session-terminate"){
-
-				state = JinglsStateEnum::ENDED;
-				emit terminated();
-
-			}else if(action == "session-info"){
-
-			}else if(action == "content-add"){
-
-				if(state != JingeStateEnum::ACTIVE){
-					send(createOrderErrorMessage(root));
-				}
-
-			}else if(action == "content-remove"){
-
-				removeContent(root);
-
-			}else if(action == "content-modify"){
-
-			}else if(action == "content-accept"){
-
-			}else if(action == "transport-info"){
-				remoteCandidates.push_back(fooTransport.createCandidateFromElement(
-					jingleElement.firstChildElement().firstChildElement()));
-			}
-		}
-	}else if(type == "result"){
-
-	}else if(type == "get"){
-
-	}
-
-}
-
 void JingleFooSession::accept()
 {
 	if(state == JingleStateEnum::PENDING){
-		QDomElement accept = createAcceptMessage(jid->full(), peers()->first()->full(), &initiator, &responder,  account->client()->genUniqueId(),&sid,types);
+		QDomElement accept = Jingle::createAcceptMessage(jid->full(), peers()->first()->full(), &initiator, &responder,  account->client()->genUniqueId(),&sid,types);
 		send(accept);
 		state = JingleStateEnum::ACTIVE;
 		emit accepted();
@@ -239,7 +131,7 @@ void JingleFooSession::decline()
 	//It SHOULD be "PENDING", but decline and terminate do the same thing. so it doesn't matter.
 	if(state != JingleStateEnum::ENDED)
 	{
-		QDomElement decline = createTerminateMessage(jid->full(), peers()->first()->full(), &initiator, &responder, account->client()->genUniqueId(),&sid,"Declined");
+		QDomElement decline = Jingle::createTerminateMessage(jid->full(), peers()->first()->full(), &initiator, &responder, account->client()->genUniqueId(),&sid,"Declined");
 		send(decline);
 		state = JingleStateEnum::ENDED;
 		emit declined();
@@ -250,16 +142,16 @@ void JingleFooSession::terminate()
 {
 	if(state =! JingleStateEnum::ENDED)
 	{
-		QDomElement terminate = createTerminateMessage(jid->full(), peers()->first()->full(), &initiator, &responder, account->client()->genUniqueId(),&sid,"Bye");
+		QDomElement terminate = Jingle::createTerminateMessage(jid->full(), peers()->first()->full(), &initiator, &responder, account->client()->genUniqueId(),&sid,"Bye");
 		send(terminate);
 		state = JingleStateEnum::ENDED;
 		emit terminated();
 	}
 }
 
-QDomElement JingleFooSession::checkPayload(QDomElement stanza)
+QDomDocument JingleFooSession::checkPayload(QDomElement stanza)
 {
-	QDomElement content = stanza.firstChildElement().firstChildELement(); //NOTE need to check for nulls
+	QDomElement content = stanza.elementsByTagName("content").item(0); //NOTE need to check for nulls
 	//NOTE assumes only one type of content.
 	QString name = content.attribute("name");
 	bool rightContent = false;
@@ -269,12 +161,12 @@ QDomElement JingleFooSession::checkPayload(QDomElement stanza)
 	if(rightContent){
 		QString transportNS = content.elementsByTagName("transport").item(0).attribute("xmlns");
 		if(transportNS == JINGLEFOOTRANSPORT){
-			return createReceiptMessage(stanza);
+			return Jingle::createReceiptMessage(stanza);
 		}else{
-			return createTransportErrorMessage(stanza);
+			return Jingle::createTransportErrorMessage(stanza);
 		}
 	}else{
-		return createContentErrorMessage(stanza);
+		return Jingle::createContentErrorMessage(stanza);
 	}
 }
 
@@ -286,13 +178,11 @@ void JingleFooSession::removeContent(QDomElement stanza)
 	QString name = content.attribute("name");
 	bool rightContent = false;
 	int i = -1;
+
 	do{
 		i++;
 		if(types[i].name == name) rightContent = true;
-	}while( i < types.length() && !rightContent
-// 	for( int i =0; i< types.length(); i++){
-// 		if(types[i].name == name) rightContent = true;
-// 	}
+	}while( i < types.length() && !rightContent);
 
 	types.remove(i);
 	if(types.empty()){

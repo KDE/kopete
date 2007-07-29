@@ -154,44 +154,7 @@ private:
 };
 //END SlotsProxy
 
-//BEGIN JingleIQResponder
-class JingleVoiceSession::JingleIQResponder : public XMPP::Task
-{
-public:
-	JingleIQResponder(XMPP::Task *);
-	~JingleIQResponder();
 
-	bool take(const QDomElement &);
-};
-
-/**
- * \class JingleIQResponder
- * \brief A task that responds to jingle candidate queries with an empty reply.
- */
- 
-JingleVoiceSession::JingleIQResponder::JingleIQResponder(Task *parent) :Task(parent)
-{
-}
-
-JingleVoiceSession::JingleIQResponder::~JingleIQResponder()
-{
-}
-
-bool JingleVoiceSession::JingleIQResponder::take(const QDomElement &e)
-{
-	if(e.tagName() != "iq")
-		return false;
-	
-	QDomElement first = e.firstChild().toElement();
-	if (!first.isNull() && first.attribute("xmlns") == JINGLE_NS) {
-		QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
-		send(iq);
-		return true;
-	}
-	
-	return false;
-}
-//END JingleIQResponder
 
 class JingleVoiceSession::Private
 {
@@ -337,75 +300,5 @@ void JingleVoiceSession::receiveStanza(const QString &stanza)
 	}
 }
 
-
-void JingleVoiceSession::processStanza(QDomDocument doc)
-{
-	QDomElement root = doc.documentElement();
-	QString type = root.attribute("type");
-	
-	//error
-	if( type == "error"){
-		QDomElement errorElement = root.firstChildElement();
-		if(errorElement != NULL){
-			
-
-		}
-
-	}else if(type == "set"){
-		QDomElement jingleElement = root.firstChildElement();
-		if(jingleElement == NULL){
-
-		}else{
-			QString action = jingleElement.attribute("action");
-			if(action == "session-accept"){
-
-				if(state != JingleStateEnum::PENDING){
-					send(createOrderErrorMessage(root));
-				}else{state=JingleStateEnum::ACTIVE;
-					emit accepted();
-				}
-
-			}else if(action == "session-initiate"){
-
-				if(state != JingleStateEnum::PENDING){
-					send(createOrderErrorMessage(root));
-				}
-				initiator = root.attribute("from");
-				responder = jid->full();
-				sid = jingleElement.attribute("sid");
-				send(checkPayload(root));
-
-			}else if(action == "session-terminate"){
-
-				state = JinglsStateEnum::ENDED;
-				emit terminated();
-
-			}else if(action == "session-info"){
-
-			}else if(action == "content-add"){
-
-				if(state != JingeStateEnum::ACTIVE){
-					send(createOrderErrorMessage(root));
-				}
-
-			}else if(action == "content-remove"){
-
-				removeContent(root);
-
-			}else if(action == "content-modify"){
-
-			}else if(action == "content-accept"){
-
-			}else if(action == "transport-info"){
-				
-			}
-		}
-	}else if(type == "result"){
-
-	}else if(type == "get"){
-
-	}
-
-}
 
 #include "jinglevoicesession.moc"

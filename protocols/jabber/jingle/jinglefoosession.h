@@ -1,3 +1,19 @@
+/*
+    jinglevoicesessiondialog.cpp - GUI for a voice session.
+
+    Copyright (c) 2007      by Joshua Hodosh     <josh.hodosh@gmail.com>
+
+    Kopete    (c) 2001-2007 by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 #ifndef JINGLEFOOSESSION_H_
 #define JINGLEFOOSESSION_H_
 
@@ -30,31 +46,23 @@ public slots:
 protected slots:
 	void receiveStanza(const QString &stanza);
 
+protected:
+
+	virtual JingleTransport* transport()  { return & fooTransport; }
+
+	//virtual JingleConnectionCandidate* connection() { return connection; }
+
 private:
-	class JingleIQResponder;
 
-	/**
-	* Process the XMPP stanza, and take appropriate action.
-	* Some parts of this function will die if the stanza is malformed,
-	* checks need to be added
-	*/
-	void processStanza(QDomDocument doc);
 
-	JingleStateEnum state;
-	QList<JingleContentType> types;
 	QList<JingleFooConnectionCandidate> remoteCandidates;
-	QString initiator;
-	QString responder;
-	QString sid;
-	QDomElement checkPayload(QDomElement stanza);
 
-	/**
-	* Removes designated content type.  If there are none left, closes the session.
-	*/
-	void removeContent(QDomElement stanza);
+	virtual QDomDocument checkPayload(QDomElement stanza);
+
+	virtual void removeContent(QDomElement stanza);
 
 	JingleFooTransport fooTransport;
-	JingleFooConnectionCandidate connection;
+	//JingleFooConnectionCandidate connection;
 	
 };
  

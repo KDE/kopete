@@ -1,12 +1,28 @@
+/*
+    jinglevoicesessiondialog.cpp - GUI for a voice session.
 
+    Copyright (c) 2007      by Joshua Hodosh     <josh.hodosh@gmail.com>
+
+    Kopete    (c) 2001-2007 by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 #ifndef JINGLECONNECTIONCANDIDATE_H
 #define JINGLECONNECTIONCANDIDATE_H
 
 #include <QDomElement>
 
-namespace Solid{
-	class NetworkInterface;
-}
+#include <solid/networkinterface.h>
+//namespace Solid{
+//	class NetworkInterface;
+//}
 
 /**
  * A Jingle connection candidate has a
@@ -19,21 +35,22 @@ namespace Solid{
 class JingleConnectionCandidate
 {
 public:
-	JingleConnectionCandidate(QAbstractSocket socket, Solid::NetworkInterface nic, float qual, QString type):
-		socket_(socket),netIFace(nic),quality(qual),type_(type);
+//	JingleConnectionCandidate(QAbstractSocket socket, Solid::NetworkInterface nic, float qual):
+//		socket_(socket),netIface(nic),quality(qual);
+
 	//NOTE const?
-	const QAbstractSocket getSocket(){return socket_;}
-	const Solid::NetworkInterface getNIC(){return netIface;}
+	//const QAbstractSocket getSocket(){return socket_;}
+	//const Solid::NetworkInterface getNIC(){return netIface;}
 	float getQuality(){return quality;}
-	const QString type(){return type_;}
+	//const QString type(){return type_;}
 
-	void setSocket(QAbstractSocket socket){socket_= socket;}
-	void setNIC(Solid::NetworkInterface nic){ netIface = nic; }
-	void setQuality(float qual){quality = qual);
+	//void setSocket(QAbstractSocket socket){socket_= socket;}
+	//void setNIC(Solid::NetworkInterface nic){ netIface = nic; }
+	void setQuality(float qual){quality = qual;}
 
-	const QString LOCAL_TYPE="local";
-	const QString RELAY_TYPE="relay";
-	const QString STUN_TYPE="stun";
+	//static const QString LOCAL_TYPE="local";
+	//static const QString RELAY_TYPE="relay";
+	//static const QString STUN_TYPE="stun";
 
 	virtual QDomElement getCandidateElement();
 
@@ -43,10 +60,10 @@ public:
 	virtual bool isUseful();
 
 private:
-	QAbstractSocket socket_;
-	Solid::NetworkInterface netIface;
+	//QAbstractSocket socket_;
+	//Solid::NetworkInterface netIface;
 	float quality;
-	QString type_;
+	//QString type_;
 
 	QString ip_;
 	int port_;

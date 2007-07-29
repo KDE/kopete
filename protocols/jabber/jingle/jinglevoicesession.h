@@ -64,17 +64,14 @@ private:
 
 	class SlotsProxy;
 	SlotsProxy *slotsProxy;
-	
-	class JingleIQResponder;
 
-	void processStanza(QDomDocument doc);
 	JingleStateEnum state;
 	QList<JingleContentType> types;
 	QString initiator;
 	QString responder;
 	QString sid;
-	QDomElement checkPayload(QDomElement stanza);
-	void removeContent(QDomElement stanza);
+	virtual QDomElement checkPayload(QDomElement stanza);
+	virtual void removeContent(QDomElement stanza);
 };
 
 #endif

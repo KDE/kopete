@@ -48,7 +48,7 @@ public:
 	/**
 	 * Get the (single) instance of the cricket session manager.
 	 */
-	cricket::SessionManager *cricketSessionManager();
+	//cricket::SessionManager *cricketSessionManager();
 
 	/**
 	 * Return the JabberAccount associated with this session manager.
