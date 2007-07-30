@@ -55,11 +55,12 @@ void JingeFooSession::start()
 {
 
 	sid = account->client()->genUniqueId();
-	initiator = jid->full();
+	initiator = myself().full();
 	responder = peers->first()->full();
 
-	QDomElement message = createInitializationMessage(jid->full(), peers()->first()->full() account->client()->genUniqueId(), &sid, &initiator, types);	
+	QDomElement message = createInitializationMessage(myself().full(), peers()->first()->full() account->client()->genUniqueId(), &sid, &initiator, types);	
 
+	lastMessage = sessionInitiate;
 	send(message);
 
 	emit sessionStarted();
@@ -122,6 +123,7 @@ void JingleFooSession::accept()
 		QDomElement accept = Jingle::createAcceptMessage(jid->full(), peers()->first()->full(), &initiator, &responder,  account->client()->genUniqueId(),&sid,types);
 		send(accept);
 		state = JingleStateEnum::ACTIVE;
+		lastMessage = sessionAccept;
 		emit accepted();
 	}
 }
@@ -188,6 +190,13 @@ void JingleFooSession::removeContent(QDomElement stanza)
 	if(types.empty()){
 		terminate();
 	}
+}
+
+bool JingleFooSession::addRemoteCandidate(QDomElement transportElement)
+{
+	JingleFooConnectionCandidate candidate = fooTransport.getCandidateFromElement(transportElement);
+
+
 }
 
 #include "jinglefoosession.moc"

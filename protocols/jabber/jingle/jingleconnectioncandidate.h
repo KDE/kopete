@@ -19,7 +19,7 @@
 
 #include <QDomElement>
 
-#include <solid/networkinterface.h>
+//#include <solid/networkinterface.h>
 //namespace Solid{
 //	class NetworkInterface;
 //}
@@ -32,12 +32,17 @@
  * <li>relative quality</li></ul>
  *
  */
-class JingleConnectionCandidate
+class JingleConnectionCandidate : public QObject
 {
+	Q_OBJECT
 public:
 //	JingleConnectionCandidate(QAbstractSocket socket, Solid::NetworkInterface nic, float qual):
 //		socket_(socket),netIface(nic),quality(qual);
+JingleConnectionCandidate();
+JingleConnectionCandidate(const JingleConnectionCandidate &c);
+JingleConnectionCandidate &operator=(const JingleConnectionCandidate &other);
 
+virtual ~JingleConnectionCandidate();
 	//NOTE const?
 	//const QAbstractSocket getSocket(){return socket_;}
 	//const Solid::NetworkInterface getNIC(){return netIface;}

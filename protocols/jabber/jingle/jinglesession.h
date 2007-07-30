@@ -17,13 +17,13 @@
 #ifndef JINGLESESSION_H
 #define JINGLESESSION_H
 
-#include <qobject.h>
-#include <qstring.h>
+//#include <qobject.h>
+//#include <qstring.h>
 
 #include <xmpp.h> // XMPP::Jid
-#include <q3valuelist.h>
+//#include <q3valuelist.h>
 
-#include "jingleconnectioncandidate.h"
+//#include "jingleconnectioncandidate.h"
 
 struct JingleContentType;
 class JingleTransport;
@@ -39,15 +39,15 @@ enum JingleStateEnum{
 
 //BEGIN JingleLastMessageEnum
 enum JingleLastMessageEnum{
-	session-initiate;
-	session-accept;
-	content-accept;
-	session-info;
-	session-terminate;
-	content-add;
-	content-remove;
-	content-modify;
-	transport-info;
+	sessionInitiate,
+	sessionAccept,
+	contentAccept,
+	sessionInfo,
+	sessionTerminate,
+	contentAdd,
+	contentRemove,
+	contentModify,
+	transportInfo
 };
 //END JingleLastMessageEnum
 
@@ -125,13 +125,13 @@ protected:
 	/**
 	* Removes designated content type.  If there are none left, closes the session.
 	*/
-	virtual void removeContent(QDomElement stanza);
+	virtual void removeContent(QDomElement stanza) = 0;
 
-	virtual QDomDocument checkPayload(QDomElement stanza);
+	virtual QDomDocument checkPayload(QDomElement stanza) = 0;
 
-	virtual bool addRemoteCandidate(QDomElement transportElement);
+	virtual bool addRemoteCandidate(QDomElement transportElement) = 0;
 
-	virtual JingleTransport* transport();
+	virtual JingleTransport* transport() = 0;
 
 	//NOTE this does not scale to multiple-content sessions
 	JingleConnectionCandidate connection;
@@ -139,6 +139,7 @@ protected:
 	QList<JingleContentType> types;
 
 	JingleStateEnum state;
+	JingleLastMessageEnum lastMessage;
 	QString initiator;
 	QString responder;
 	QString sid;
@@ -146,6 +147,8 @@ protected:
 private:
 	class Private;
 	Private *d;
+
+	void handleError(QDomElement errorElement);
 };
 
 #endif

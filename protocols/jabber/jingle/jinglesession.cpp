@@ -81,8 +81,7 @@ void JingleSession::processStanza(QDomDocument doc)
 	if( type == "error"){
 		QDomElement errorElement = root.firstChildElement();
 		if( !errorElement.isNull() ){
-			
-
+			handleError(errorElement);
 		}
 
 	}else if(type == "set"){
@@ -101,6 +100,7 @@ void JingleSession::processStanza(QDomDocument doc)
 					if( connection.isUseful() ){
 						sendStanza(Jingle::createReceiptMessage(root).toString() );
 						state = ACTIVE;
+						lastMessage = sessionAccept;
 						emit accepted();
 					}else{
 						sendStanza(Jingle::createTransportNotAcceptableMessage(root).toString() );
@@ -171,4 +171,35 @@ void JingleSession::processStanza(QDomDocument doc)
 
 }
 
+void JingleSession::handleError(QDomElement errorElement)
+{
+	if ( lastMessage == sessionInitiate ){
+		/* possible errors:
+			service-unavailable
+			redirect
+			feature-not-implemented and unsupported-transport
+			feature-not-implemented and unsupported-content
+			bad-request (malformed)
+		*/
+		if ( !( errorElement.elementsByTagName("service-unavailable").isEmpty() ) ){
+			//no jingle support, or jingle connection not permitted
+			//state = ENDED;
+			//emit terminated();
+		}else if( !( errorElement.elementsByTagName("redirect").isEmpty() ) ){
+			//change the TO
+			peers()[0] = XMPP::Jid( errorElement.firstChildElement().text() );
+			responder = errorElement.firstChildElement().text();
+		}else if( !( errorElement.elementsByTagName("bad-request").isEmpty() ) ){
+			//syntax error.
+			kDebug(JABBER_DEBUG_GLOBAL) << "our session-initiate syntax stanza was malformed" << endl;
+		}else if( !(errorElement.elementsByTagName("unsupported-transport").isEmpty() ) ){
+			//state = ENDED;
+			//emit terminated();
+		}else if( !(errorElement.elementsByTagName("unsupported-content").isEmpty() ) ){
+			//state = ENDED;
+			//emit terminated();
+		}
+	}
+
+}
 #include "jinglesession.moc"

@@ -52,6 +52,8 @@ protected:
 
 	//virtual JingleConnectionCandidate* connection() { return connection; }
 
+	virtual bool addRemoteCandidate(QDomElement transportElement);
+
 private:
 
 
