@@ -129,6 +129,13 @@ KUrl Kopete::Transfer::destinationURL()
 	return mTarget;
 }
 
+void Kopete::Transfer::emitCopying(const KUrl &src, const KUrl &dest)
+{
+    emit description(this, i18n("Copying"),
+                     qMakePair(i18n("Source"), src.prettyUrl()),
+                     qMakePair(i18n("Destination"), dest.prettyUrl()));
+}
+
 void Kopete::Transfer::slotProcessed(unsigned int bytes)
 {
 	emitPercent( bytes, mInfo.size() );
