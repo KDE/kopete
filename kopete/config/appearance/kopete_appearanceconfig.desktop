@@ -10,6 +10,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Appearance
+Name[bg]=Външен вид
 Name[br]=Neuziadur
 Name[ca]=Aparença
 Name[cs]=Vzhled
@@ -60,6 +61,7 @@ Name[x-test]=xxAppearancexx
 Name[zh_HK]=外觀
 Name[zh_TW]=外觀
 Comment=Change Kopete Look And Feel
+Comment[bg]=Настройване външния вид на програмата
 Comment[de]=Hier können Sie Kopetes Erscheinungsbild anpassen
 Comment[el]=Τροποποίηση όψης και αίσθησης του Kopete
 Comment[es]=Cambie el aspecto de Kopete

@@ -24,6 +24,7 @@ Name[nn]=Vindaugsmeldingar
 Name[pt_BR]=Janela de Contexto
 Name[x-test]=xxWinPopupxx
 Comment=Protocol to send Windows WinPopup messages
+Comment[bg]=Протокол за изпращане на съобщения Windows WinPopup
 Comment[br]=Komenad evit kas kemennadoù Windows WinPopup
 Comment[ca]=Protocol per a enviar missatges de finestres emergents de Windows
 Comment[cs]=Protokol k odesílání WinPopup zpráv

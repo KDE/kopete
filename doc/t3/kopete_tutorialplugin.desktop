@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=Tutorial Plugin
+Name[bg]=Приставка за историята
 Name[de]=Anleitungsmodul
 Name[el]=Πρόσθετο εκμάθησης
 Name[fa]=وصلۀ خودآموز
@@ -13,6 +14,7 @@ Name[pt_BR]='Plugin' de Tutorial
 Name[sv]=Handledningsinsticksprogram
 Name[zh_TW]=教學外掛程式
 Comment=Demonstration plugin for teaching Kopete development
+Comment[bg]=Приставка за демонстрация развитието на Kopete
 Comment[de]=Anleitungs-Modul zum Einfinden in die Kopete-Entwicklung
 Comment[el]=Πρόσθετο επίδειξης για την εκμάθηση της ανάπτυξης του Kopete
 Comment[ja]=Kopete の開発方法を教えるデモプラグイン

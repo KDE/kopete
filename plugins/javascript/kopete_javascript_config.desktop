@@ -13,6 +13,7 @@ Name=JavaScript
 Name[sv]=Javascript
 Name[x-test]=xxJavaScriptxx
 Comment=Add JavaScript bindings
+Comment[bg]=Добавяне на JavaScript
 Comment[de]=JavaScript-Unterstützung aktivieren
 Comment[el]=Προσθήκη συνδέσεων JavaScript
 Comment[ja]=JavaScript バインディングを追加します

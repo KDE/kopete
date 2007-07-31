@@ -10,6 +10,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Accounts
+Name[bg]=Сметки
 Name[br]=Kontoù
 Name[ca]=Comptes
 Name[cs]=Účty
@@ -60,6 +61,7 @@ Name[x-test]=xxAccountsxx
 Name[zh_HK]=帳號
 Name[zh_TW]=帳號
 Comment=Manage Your Accounts
+Comment[bg]=Настройване на сметките
 Comment[de]=Verwaltung Ihrer Zugänge
 Comment[el]=Διαχείριση των λογαριασμών σας
 Comment[es]=Gestione sus cuentas
