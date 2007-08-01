@@ -358,7 +358,7 @@ void ChatWindowConfig::slotInstallChatStyle()
 					break;
 				case ChatWindowStyleManager::StyleInstallOk:
 				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window style was successfully installed!"), i18n("Install successful") );
+					KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window style was successfully installed."), i18n("Install successful") );
 					break;
 				}
 				case ChatWindowStyleManager::StyleUnknow:

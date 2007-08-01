@@ -378,7 +378,7 @@
         <item>
          <widget class="QPushButton" name="m_notifications" >
           <property name="text" >
-           <string>Configure Notifications ...</string>
+           <string>Configure Notifications...</string>
           </property>
          </widget>
         </item>

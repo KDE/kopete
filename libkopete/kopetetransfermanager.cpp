@@ -160,7 +160,7 @@ void Kopete::Transfer::slotResultEmitted()
 {
 	if( error() == KIO::ERR_USER_CANCELED )
 	{
-		showMessage( i18n("You cancelled filetransfer %1", mInfo.file() ) );
+		showMessage( i18n("You cancelled file transfer %1", mInfo.file() ) );
 		emit transferCanceled();
 	}
 }

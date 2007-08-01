@@ -17,7 +17,7 @@
       <enum>QFrame::NoFrame</enum>
      </property>
      <property name="text" >
-      <string>The KopeTeX plugin allows Kopete to render Latex formulas in the chat window. The sender must enclose the formula between two $ signs. ie: $$formula$$
+      <string>The KopeTeX plugin allows Kopete to render LaTeX formulas in the chat window. The sender must enclose the formula between two $ signs. ie: $$formula$$
 This plugin requires ImageMagick convert program installed in order to work.</string>
      </property>
      <property name="wordWrap" >

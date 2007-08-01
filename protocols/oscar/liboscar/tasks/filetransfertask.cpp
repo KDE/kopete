@@ -568,7 +568,7 @@ void FileTransferTask::doConnect()
 	{
 		if ( m_ip.length() != 4 || ! m_port )
 		{
-			emit error( KIO::ERR_COULD_NOT_CONNECT, i18n("missing ip or port") );
+			emit error( KIO::ERR_COULD_NOT_CONNECT, i18n("missing IP or port") );
 			doCancel();
 			return;
 		}
