@@ -95,7 +95,7 @@ void ServiceSetupTask::childTaskFinished()
 	if ( m_finishedTaskCount == 7 )
 	{
 		if ( client()->ssiManager()->listComplete() )
-			m_ssiActivateTask->go( true );
+			m_ssiActivateTask->go( Task::AutoDelete );
 
 		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending DC info and client ready" << endl;
 		SendIdleTimeTask* sitt = new SendIdleTimeTask( client()->rootTask() );
@@ -111,10 +111,10 @@ void ServiceSetupTask::childTaskFinished()
 		familyList.append( 0x0013 );
 		ClientReadyTask* crt = new ClientReadyTask( client()->rootTask() );
 		crt->setFamilies( familyList );
-		sitt->go( true );
-		crt->go( true ); //autodelete
+		sitt->go( Task::AutoDelete );
+		crt->go( Task::AutoDelete ); //autodelete
 		LocalContactListTask* lclt = new LocalContactListTask( client()->rootTask() );
-		lclt->go( true );
+		lclt->go( Task::AutoDelete );
 	}
 	
 	if ( m_finishedTaskCount == 8 )
@@ -131,8 +131,8 @@ void ServiceSetupTask::onGo()
 	m_profileTask->go();
 	m_blmLimitsTask->go();
 	m_icbmTask->go();
-	m_prmTask->go( true );
-	m_ssiParamTask->go( true );
+	m_prmTask->go( Task::AutoDelete );
+	m_ssiParamTask->go( Task::AutoDelete );
 	m_ssiListTask->go();
 }
 

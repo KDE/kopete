@@ -67,7 +67,7 @@ bool StageOneLoginTask::take( Transfer* transfer )
 		m_closeTask = new CloseConnectionTask( client()->rootTask() );
 		connect( m_loginTask, SIGNAL(finished()), this, SLOT(loginTaskFinished()) );
 		connect( m_closeTask, SIGNAL(finished()), this, SLOT(closeTaskFinished()) );
-		m_loginTask->go( true );
+		m_loginTask->go( Task::AutoDelete );
 		return true;
 	}
 	return false;
@@ -193,7 +193,7 @@ const QByteArray& StageTwoLoginTask::cookie()
 void StageTwoLoginTask::versionTaskFinished()
 {
 	//start the rate info task
-	m_rateTask->go(true);
+	m_rateTask->go( Task::AutoDelete );
 }
 
 void StageTwoLoginTask::rateTaskFinished()

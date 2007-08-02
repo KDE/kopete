@@ -124,12 +124,6 @@ void Task::go(AutoDeleteSetting autoDelete)
 	onGo();
 }
 
-void Task::go(bool autoDelete)
-{
-	d->autoDelete = autoDelete ? AutoDelete : DoNotAutoDelete;
-	onGo();
-}
-
 bool Task::take( Transfer * transfer)
 {
 	const QList<Task*> p = findChildren<Task*>();

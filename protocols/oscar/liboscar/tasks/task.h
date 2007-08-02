@@ -55,7 +55,6 @@ public:
 	const QString & statusString() const;
 
 	void go( AutoDeleteSetting autoDelete = DoNotAutoDelete );
-	void go(bool);
 
 	/**
 	 * Allows a task to examine an incoming Transfer and decide whether to 'take' it
