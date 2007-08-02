@@ -237,7 +237,7 @@ void Client::close()
 {
 	QList<Connection*> cList = d->connections.connections();
 	for ( int i = 0; i < cList.size(); i++ )
-		(new CloseConnectionTask( cList.at(i)->rootTask() ))->go( true );
+		(new CloseConnectionTask( cList.at(i)->rootTask() ))->go( Task::AutoDelete );
 
 	d->active = false;
 	d->awayMsgRequestTimer->stop();
@@ -295,7 +295,7 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting visible" << endl;
 				cvt->setVisible( true );
 			}
-			cvt->go( true );
+			cvt->go( Task::AutoDelete );
 		}
 		
 		Connection* c = d->connections.connectionForFamily( 0x0002 );
@@ -303,7 +303,7 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 			return;
 
 		SendDCInfoTask* sdcit = new SendDCInfoTask( c->rootTask(), status );
-		sdcit->go( true ); //autodelete
+		sdcit->go( Task::AutoDelete ); //autodelete
 
 		QString msg;
 		// AIM: you're away exactly when your away message isn't empty.
@@ -327,7 +327,7 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 		if ( d->isIcq && xtrazChanged )
 			pt->setXtrazStatus( xtraz );
 
-		pt->go( true );
+		pt->go( Task::AutoDelete );
 
 		if ( d->isIcq && statusInfoChanged )
 		{
@@ -336,7 +336,7 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 
 			ICQTlvInfoUpdateTask* infoUpdateTask = new ICQTlvInfoUpdateTask( c->rootTask() );
 			infoUpdateTask->setInfo( info );
-			infoUpdateTask->go( true );
+			infoUpdateTask->go( Task::AutoDelete );
 		}
 		d->status.sent = true;
 	}
@@ -389,7 +389,7 @@ void Client::lt_loginFinished()
 		initializeStaticTasks();
 		ServiceSetupTask* ssTask = new ServiceSetupTask( d->connections.defaultConnection()->rootTask() );
 		connect( ssTask, SIGNAL( finished() ), this, SLOT( serviceSetupFinished() ) );
-		ssTask->go( true ); //fire and forget
+		ssTask->go( Task::AutoDelete ); //fire and forget
 		m_loginTaskTwo->deleteLater();
 		m_loginTaskTwo = 0;
 	}
@@ -456,7 +456,7 @@ void Client::serviceSetupFinished()
 		OfflineMessagesTask *offlineMsgTask = new OfflineMessagesTask( c->rootTask() );
 		connect( offlineMsgTask, SIGNAL( receivedOfflineMessage(const Oscar::Message& ) ),
 				this, SIGNAL( messageReceived(const Oscar::Message& ) ) );
-		offlineMsgTask->go( true );
+		offlineMsgTask->go( Task::AutoDelete );
 	}
 
 	emit haveContactList();
@@ -564,7 +564,7 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
         ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), msg.exchange(), msg.chatRoom() );
         cst->setMessage( msg );
         cst->setEncoding( d->codecProvider->codecForAccount()->name() );
-        cst->go( true );
+        cst->go( Task::AutoDelete );
     }
     else
     {
@@ -576,7 +576,7 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
         sendMsgTask->setAutoResponse( isAuto );
         sendMsgTask->setMessage( msg );
         sendMsgTask->setIp( ourInfo().dcExternalIp().IPv4Addr() ); //TODO: switch to internal
-        sendMsgTask->go( true );
+        sendMsgTask->go( Task::AutoDelete );
     }
 }
 
@@ -641,7 +641,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		response.addProperty( Oscar::Message::AutoResponse );
 		SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
 		sendMsgTask->setMessage( response );
-		sendMsgTask->go( true );
+		sendMsgTask->go( Task::AutoDelete );
 	}
 
 	if ( msg.hasProperty( Oscar::Message::AutoResponse ) )
@@ -807,7 +807,7 @@ void Client::removeGroup( const QString& groupName )
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing group " << groupName << " from Contact" << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->removeGroup( groupName ) )
-		ssimt->go( true );
+		ssimt->go( Task::AutoDelete );
 	else
 		delete ssimt;
 }
@@ -821,7 +821,7 @@ void Client::addGroup( const QString& groupName )
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding group " << groupName << " to Contact" << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->addGroup( groupName ) )
-		ssimt->go( true );
+		ssimt->go( Task::AutoDelete );
 	else
 		delete ssimt;
 }
@@ -835,7 +835,7 @@ void Client::addContact( const QString& contactName, const QString& groupName )
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding contact " << contactName << " to ssi in group " << groupName << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->addContact( contactName, groupName )  )
-		ssimt->go( true );
+		ssimt->go( Task::AutoDelete );
 	else
 		delete ssimt;
 }
@@ -849,7 +849,7 @@ void Client::removeContact( const QString& contactName )
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing contact " << contactName << " from ssi" << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->removeContact( contactName ) )
-		ssimt->go( true );
+		ssimt->go( Task::AutoDelete );
 	else
 		delete ssimt;
 }
@@ -863,7 +863,7 @@ void Client::renameGroup( const QString & oldGroupName, const QString & newGroup
 	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Renaming group " << oldGroupName << " to " << newGroupName << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->renameGroup( oldGroupName, newGroupName ) )
-		ssimt->go( true );
+		ssimt->go( Task::AutoDelete );
 	else
 		delete ssimt;
 }
@@ -886,19 +886,19 @@ void Client::modifyContactItem( const OContact& oldItem, const OContact& newItem
 	{
 	case 0:
 		if ( ssimt->modifyItem( oldItem, newItem ) )
-			ssimt->go( true );
+			ssimt->go( Task::AutoDelete );
 		else
 			delete ssimt;
 		break;
 	case 1:
 		if ( ssimt->addItem( newItem ) )
-			ssimt->go( true );
+			ssimt->go( Task::AutoDelete );
 		else
 			delete ssimt;
 		break;
 	case 2:
 		if ( ssimt->removeItem( oldItem ) )
-			ssimt->go( true );
+			ssimt->go( Task::AutoDelete );
 		else
 			delete ssimt;
 		break;
@@ -915,7 +915,7 @@ void Client::changeContactGroup( const QString& contact, const QString& newGroup
 		<< newGroupName << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->changeGroup( contact, newGroupName ) )
-		ssimt->go( true );
+		ssimt->go( Task::AutoDelete );
 	else
 		delete ssimt;
 }
@@ -986,7 +986,7 @@ void Client::sendWarning( const QString& contact, bool anonymous )
 	warnTask->setAnonymous( anonymous );
 	QObject::connect( warnTask, SIGNAL( userWarned( const QString&, quint16, quint16 ) ),
 	                  this, SIGNAL( userWarned( const QString&, quint16, quint16 ) ) );
-	warnTask->go( true );
+	warnTask->go( Task::AutoDelete );
 }
 
 bool Client::changeICQPassword( const QString& password )
@@ -998,7 +998,7 @@ bool Client::changeICQPassword( const QString& password )
 	ICQChangePasswordTask* task = new ICQChangePasswordTask( c->rootTask() );
 	QObject::connect( task, SIGNAL(finished()), this, SLOT(changeICQPasswordFinished()) );
 	task->setPassword( password );
-	task->go( true );
+	task->go( Task::AutoDelete );
 	return true;
 }
 
@@ -1244,7 +1244,7 @@ void Client::whitePagesSearch( const ICQWPSearchInfo& info )
 	connect( ust, SIGNAL( foundUser( const ICQSearchResult& ) ),
 	         this, SIGNAL( gotSearchResults( const ICQSearchResult& ) ) );
 	connect( ust, SIGNAL( searchFinished( int ) ), this, SIGNAL( endOfSearch( int ) ) );
-	ust->go( true ); //onGo does nothing in this task. This is just here so autodelete works
+	ust->go( Task::AutoDelete ); //onGo does nothing in this task. This is just here so autodelete works
 	ust->searchWhitePages( info );
 }
 
@@ -1257,7 +1257,7 @@ void Client::uinSearch( const QString& uin )
 	connect( ust, SIGNAL( foundUser( const ICQSearchResult& ) ),
 	         this, SIGNAL( gotSearchResults( const ICQSearchResult& ) ) );
 	connect( ust, SIGNAL( searchFinished( int ) ), this, SIGNAL( endOfSearch( int ) ) );
-	ust->go( true ); //onGo does nothing in this task. This is just here so autodelete works
+	ust->go( Task::AutoDelete ); //onGo does nothing in this task. This is just here so autodelete works
 	ust->searchUserByUIN( uin );
 }
 
@@ -1268,7 +1268,7 @@ void Client::updateProfile( const QString& profile )
 		return;
 	ProfileTask* pt = new ProfileTask( c->rootTask() );
 	pt->setProfileText( profile );
-	pt->go(true);
+	pt->go( Task::AutoDelete );
 }
 
 bool Client::updateProfile( const QList<ICQInfoBase*>& infoList )
@@ -1279,7 +1279,7 @@ bool Client::updateProfile( const QList<ICQInfoBase*>& infoList )
 
 	ICQUserInfoUpdateTask* ui = new ICQUserInfoUpdateTask( c->rootTask() );
 	ui->setInfo( infoList );
-	ui->go(true);
+	ui->go( Task::AutoDelete );
 	return true;
 }
 
@@ -1289,7 +1289,7 @@ void Client::sendTyping( const QString & contact, bool typing )
 	if ( !c )
 		return;
 	d->typingNotifyTask->setParams( contact, ( typing ? TypingNotifyTask::Begin : TypingNotifyTask::Finished ) );
-	d->typingNotifyTask->go( false ); 	// don't delete the task after sending
+	d->typingNotifyTask->go(); 	// don't delete the task after sending
 }
 
 void Client::connectToIconServer()
@@ -1362,7 +1362,7 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, Osca
 	bit->requestIconFor( user );
 	bit->setHashType( hashType );
 	bit->setHash( hash );
-	bit->go( true );
+	bit->go( Task::AutoDelete );
 }
 
 void Client::requestServerRedirect( Oscar::WORD family, Oscar::WORD exchange,
@@ -1399,7 +1399,7 @@ void Client::requestServerRedirect( Oscar::WORD family, Oscar::WORD exchange,
 	connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, Oscar::WORD ) ),
 	         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, Oscar::WORD ) ) );
 	srt->setService( family );
-	srt->go( true );
+	srt->go( Task::AutoDelete );
 }
 
 void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, Oscar::WORD )
@@ -1445,7 +1445,7 @@ void Client::serverRedirectFinished()
 			return;
 		ClientReadyTask* crt = new ClientReadyTask( c->rootTask() );
 		crt->setFamilies( c->supportedFamilies() );
-		crt->go( true );
+		crt->go( Task::AutoDelete );
 	}
 
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "redirection finished for service "
@@ -1516,7 +1516,7 @@ void Client::requestChatNavLimits()
     cnst->setRequestType( ChatNavServiceTask::Limits );
     QObject::connect( cnst, SIGNAL( haveChatExchanges( const QList<int>& ) ),
                       this, SLOT( setChatExchangeList( const QList<int>& ) ) );
-	cnst->go( true ); //autodelete
+	cnst->go( Task::AutoDelete ); //autodelete
 
 }
 
@@ -1551,7 +1551,7 @@ void Client::sendBuddyIcon( const QByteArray& iconData )
 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icon length is " << iconData.size() << endl;
 	BuddyIconTask* bit = new BuddyIconTask( c->rootTask() );
 	bit->uploadIcon( iconData.size(), iconData );
-	bit->go( true );
+	bit->go( Task::AutoDelete );
 }
 
 void Client::joinChatRoom( const QString& roomName, int exchange )
@@ -1637,7 +1637,7 @@ void Client::sendFiles( const QString& contact, const QStringList& files, Kopete
 	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), files, t );
 	connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 	         this, SLOT( fileMessage( const Oscar::Message& ) ) );
-	ft->go( true );
+	ft->go( Task::AutoDelete );
 }
 
 void Client::gotFileMessage( int type, const QString from, const QByteArray cookie, Buffer buf)
@@ -1665,7 +1665,7 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 				SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ) );
 		connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 				this, SLOT( fileMessage( const Oscar::Message& ) ) );
-		ft->go( true );
+		ft->go( Task::AutoDelete );
 		return;
 	}
 
