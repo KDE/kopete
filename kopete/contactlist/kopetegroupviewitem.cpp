@@ -187,20 +187,20 @@ QString KopeteGroupViewItem::key( int, bool ) const
 
 void KopeteGroupViewItem::startRename( int /*col*/ )
 {
-	//kDebug(14000) << k_funcinfo << endl;
+	//kDebug(14000) << k_funcinfo;
 	K3ListViewItem::startRename( 0 );
 }
 
 void KopeteGroupViewItem::okRename( int col )
 {
-	//kDebug(14000) << k_funcinfo << endl;
+	//kDebug(14000) << k_funcinfo;
 	K3ListViewItem::okRename(col);
 	setRenameEnabled( 0, false );
 }
 
 void KopeteGroupViewItem::cancelRename( int col )
 {
-	//kDebug(14000) << k_funcinfo << endl;
+	//kDebug(14000) << k_funcinfo;
 	K3ListViewItem::cancelRename(col);
 	setRenameEnabled( 0, false );
 }

@@ -49,7 +49,7 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	setCaption( i18n( "ICQ User Information" ) );
 	setDefaultButton( KDialog::Ok );
 	
-	kDebug(14153) << k_funcinfo << "Creating new icq user info widget" << endl;
+	kDebug(14153) << k_funcinfo << "Creating new icq user info widget";
 	
 	QWidget *genInfo = new QWidget(this);
 	m_genInfoWidget = new Ui::ICQGeneralInfoWidget;

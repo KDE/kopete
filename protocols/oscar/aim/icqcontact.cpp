@@ -74,7 +74,7 @@ void ICQContact::setSSIItem( const OContact& ssiItem )
 
 void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& details )
 {
-	//kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << contact << contactId() << endl;
+	//kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << contact << contactId();
 	if ( Oscar::normalize( contact  ) != Oscar::normalize( contactId() ) )
 		return;
 
@@ -82,7 +82,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( !isOnline() )
 		removeProperty( mProtocol->awayMessage );
 
-	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
+	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
 	setPresenceTarget( presence );
 
@@ -125,7 +125,7 @@ void ICQContact::userOnline( const QString& userId )
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " online" << endl;
+	kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " online";
 	setPresenceTarget( Oscar::Presence( Oscar::Presence::Online, Oscar::Presence::ICQ ) );
 }
 
@@ -134,7 +134,7 @@ void ICQContact::userOffline( const QString& userId )
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline" << endl;
+	kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline";
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 	else
@@ -158,7 +158,7 @@ void ICQContact::loggedIn()
 	{
 		m_requestingNickname = true;
 		int time = ( KRandom::random() % 20 ) * 1000;
-		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds" << endl;
+		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds";
 		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
 	}
 

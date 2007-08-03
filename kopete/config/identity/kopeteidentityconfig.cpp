@@ -105,7 +105,7 @@ KopeteIdentityConfig::KopeteIdentityConfig(QWidget *parent, const QStringList &a
 	
 	// Set the latest selected Identity.
 	d->selectedIdentity = KopeteIdentityConfigPreferences::self()->selectedIdentity();
-	kDebug() << k_funcinfo << "Latest loaded identity: " << d->selectedIdentity << endl;
+	kDebug() << k_funcinfo << "Latest loaded identity: " << d->selectedIdentity;
 
 	// If the latest selected Identity is not present anymore, use a fallback identity.
 	if( !GlobalIdentitiesManager::self()->isIdentityPresent(d->selectedIdentity) )
@@ -240,7 +240,7 @@ void KopeteIdentityConfig::loadIdentities()
 
 void KopeteIdentityConfig::saveCurrentIdentity()
 {
-	kDebug() << k_funcinfo << "Saving data of current identity." << endl;
+	kDebug() << k_funcinfo << "Saving data of current identity.";
 	// Ignore saving when removing a identity
 	if(!d->currentIdentity)
 		return;
@@ -391,7 +391,7 @@ void KopeteIdentityConfig::slotEnableAndDisableWidgets()
 
 void KopeteIdentityConfig::slotUpdateCurrentIdentity(const QString &selectedIdentity)
 {
-	kDebug() << k_funcinfo << "Updating current identity." << endl;
+	kDebug() << k_funcinfo << "Updating current identity.";
 
 	// Save the current identity detail, so we don't loose information.
 	saveCurrentIdentity();
@@ -476,7 +476,7 @@ void KopeteIdentityConfig::slotRenameIdentity()
 
 void KopeteIdentityConfig::slotRemoveIdentity()
 {
-	kDebug() << k_funcinfo << "Removing current identity." << endl;
+	kDebug() << k_funcinfo << "Removing current identity.";
 	GlobalIdentitiesManager::self()->removeIdentity(d->selectedIdentity);
 	// Reset the currentIdentity pointer. The currentIdentity object was deleted in GlobalIdentitiesManager.
 	d->currentIdentity = 0;

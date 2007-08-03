@@ -89,7 +89,7 @@ public:
 	 */
 	void begin()
 	{
-		kDebug( 14010 ) << k_funcinfo << endl;
+		kDebug( 14010 ) << k_funcinfo;
 #ifdef __GNUC__
 #warning TODO
 #endif
@@ -99,7 +99,7 @@ public:
 
 	void walletReceived( KWallet::Wallet *wallet )
 	{
-		kDebug( 14010 ) << k_funcinfo << endl;
+		kDebug( 14010 ) << k_funcinfo;
 		mWallet = wallet;
 		processRequest();
 	}
@@ -178,7 +178,7 @@ public:
 
 	void doPasswordDialog()
 	{
-		kDebug( 14010 ) << k_funcinfo << endl;
+		kDebug( 14010 ) << k_funcinfo;
 
 		KPasswordDialog *passwdDialog = new KPasswordDialog( Kopete::UI::Global::mainWidget() );
 		passwdDialog->setWindowTitle( i18n( "Password Required" ) );
@@ -241,7 +241,7 @@ public:
 	~KopetePasswordSetRequest()
 	{
 		KGlobal::deref();
-		kDebug( 14010 ) << k_funcinfo << "job complete" << endl;
+		kDebug( 14010 ) << k_funcinfo << "job complete";
 	}
 	void processRequest()
 	{
@@ -254,7 +254,7 @@ public:
 	}
 	bool setPassword()
 	{
-		kDebug( 14010 ) << k_funcinfo << " setting password for " << mPassword.d->configGroup << endl;
+		kDebug( 14010 ) << k_funcinfo << " setting password for " << mPassword.d->configGroup;
 
 		if ( mWallet && mWallet->writePassword( mPassword.d->configGroup, mNewPass ) == 0 )
 		{
@@ -303,7 +303,7 @@ public:
 	~KopetePasswordClearRequest()
 	{
 		KGlobal::deref();
-		kDebug( 14010 ) << k_funcinfo << "job complete" << endl;
+		kDebug( 14010 ) << k_funcinfo << "job complete";
 	}
 	void processRequest()
 	{
@@ -317,7 +317,7 @@ public:
 	}
 	bool clearPassword()
 	{
-		kDebug( 14010 ) << k_funcinfo << " clearing password" << endl;
+		kDebug( 14010 ) << k_funcinfo << " clearing password";
 
 		mPassword.d->remembered = false;
 		mPassword.d->passwordFromKConfig.clear();

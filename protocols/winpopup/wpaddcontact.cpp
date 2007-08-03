@@ -40,7 +40,7 @@
 
 WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount) : AddContactPage(parent)
 {
-//	kDebug(14170) << "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")" << endl;
+//	kDebug(14170) << "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")";
 
 	QWidget* w = new QWidget( this );
 	theDialog = new Ui::WPAddContactBase();
@@ -63,7 +63,7 @@ WPAddContact::~WPAddContact()
 
 void WPAddContact::slotUpdateGroups()
 {
-	kDebug(14170) << "WPAddContact::slotUpdateGroups()" << endl;
+	kDebug(14170) << "WPAddContact::slotUpdateGroups()";
 
 	theDialog->mHostGroup->clear();
 	QStringList Groups = theAccount->getGroups();
@@ -75,7 +75,7 @@ void WPAddContact::slotUpdateGroups()
 
 void WPAddContact::slotSelected(const QString &Group)
 {
-	kDebug(14170) << "WPAddContact::slotSelected(" << Group << ")" << endl;
+	kDebug(14170) << "WPAddContact::slotSelected(" << Group << ")";
 
 	theDialog->mHostName->clear();
 	QStringList Hosts = theAccount->getHosts(Group);
@@ -87,7 +87,7 @@ void WPAddContact::slotSelected(const QString &Group)
 
 bool WPAddContact::validateData()
 {
-	kDebug(14170) << "WPAddContact::validateData()" << endl;
+	kDebug(14170) << "WPAddContact::validateData()";
 
 	QString tmpHostName = theDialog->mHostName->currentText();
 
@@ -108,7 +108,7 @@ bool WPAddContact::validateData()
 
 bool WPAddContact::apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact)
 {
-	kDebug(14170) << "WPAddContact::apply(" << theAccount << ", " << theMetaContact << ")" << endl;
+	kDebug(14170) << "WPAddContact::apply(" << theAccount << ", " << theMetaContact << ")";
 
 	// TODO: make the nickname an option
 	return theAccount->addContact(theDialog->mHostName->currentText(), theMetaContact, Kopete::Account::ChangeKABC );

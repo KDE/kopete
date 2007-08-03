@@ -35,7 +35,7 @@ ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const QStringList & /* 
 : Kopete::Plugin( ContactNotesPluginFactory::componentData(), parent )
 {
 	if ( pluginStatic_ )
-		kDebug(14302)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized"<<endl;
+		kDebug(14302)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized";
 	else
 		pluginStatic_ = this;
 

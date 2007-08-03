@@ -93,7 +93,7 @@ void NLKscd::update()
 
 	}
 //	else
-//		kDebug( 14307 ) << "NLKscd::update() - kscd not found" << endl;
+//		kDebug( 14307 ) << "NLKscd::update() - kscd not found";
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

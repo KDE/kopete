@@ -93,7 +93,7 @@ void dlgJabberSendRaw::slotCreateMessage(int index)
 
 void dlgJabberSendRaw::slotSend()
 {
-	kDebug (14130) << "[dlgJabberSendRaw] Sending RAW message" << endl;
+	kDebug (14130) << "[dlgJabberSendRaw] Sending RAW message";
 
 	// Tell our engine to send
 	m_client->send (tePacket->text ());

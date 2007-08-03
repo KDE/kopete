@@ -219,7 +219,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 					{
 						// Apparently this HTML entity isn't ended, something is wrong, try skip the '&'
 						// and continue
-						kDebug( 14000 ) << k_funcinfo << "Broken HTML entity, trying to recover." << endl;
+						kDebug( 14000 ) << k_funcinfo << "Broken HTML entity, trying to recover.";
 						inHTMLEntity = false;
 						pos++;
 					}
@@ -273,7 +273,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 Emoticons::Emoticons( const QString &theme ) : QObject( kapp )
 {
 	setObjectName( "KopeteEmoticons" );
-//	kDebug(14010) << "KopeteEmoticons::KopeteEmoticons" << endl;
+//	kDebug(14010) << "KopeteEmoticons::KopeteEmoticons";
 	d=new Private;
 	if(theme.isNull())
 	{
@@ -361,7 +361,7 @@ void Emoticons::initEmoticons( const QString &theme )
 		d->theme = theme;
 	}
 
-//	kDebug(14010) << k_funcinfo << "Called" << endl;
+//	kDebug(14010) << k_funcinfo << "Called";
 	d->emoticonAndPicList.clear();
 	d->emoticonMap.clear();
 
@@ -371,7 +371,7 @@ void Emoticons::initEmoticons( const QString &theme )
 	filename= KGlobal::dirs()->findResource( "emoticons",  d->theme + QLatin1String( "/icondef.xml" ) );
 	if(!filename.isEmpty())
 		return initEmoticon_JEP0038( filename );
-	kWarning(14010) << k_funcinfo << "emotiucon XML theme description not found" <<endl;
+	kWarning(14010) << k_funcinfo << "emotiucon XML theme description not found";
 }
 
 void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
@@ -471,7 +471,7 @@ void Emoticons::initEmoticon_JEP0038( const QString & filename)
 							}
 							else
 							{
-								kDebug(14010) << k_funcinfo <<	"Warning: Unsupported format '" << mime << endl;
+								kDebug(14010) << k_funcinfo <<	"Warning: Unsupported format '" << mime;
 							}
 						}
 						/*else
@@ -532,10 +532,10 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 		break;
 		case Image:
 			result += token.picHTMLCode;
-			kDebug( 14010 ) << k_funcinfo << "Emoticon html code: " << result << endl;
+			kDebug( 14010 ) << k_funcinfo << "Emoticon html code: " << result;
 		break;
 		default:
-			kDebug( 14010 ) << k_funcinfo << "Unknown token type. Something's broken." << endl;
+			kDebug( 14010 ) << k_funcinfo << "Unknown token type. Something's broken.";
 		}
 	}
 	return result;

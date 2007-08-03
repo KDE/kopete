@@ -736,7 +736,7 @@ QString RTF2HTML::Parse(const char *rtf, const char *_encoding)
 					if (n < 16)
 						PrintUnquoted(" %s ", smiles[n] );
                 }else{
-						kDebug(14200) << "Unknown image " << yytext << endl;
+						kDebug(14200) << "Unknown image " << yytext;
                 }
                 break;
             }

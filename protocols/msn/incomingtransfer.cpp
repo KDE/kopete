@@ -48,7 +48,7 @@ IncomingTransfer::IncomingTransfer(const QString& from, P2P::Dispatcher *dispatc
 
 IncomingTransfer::~IncomingTransfer()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo;
 	if(m_listener)
 	{
 		delete m_listener;
@@ -96,7 +96,7 @@ void IncomingTransfer::slotTransferRefused(const Kopete::FileTransferInfo& info)
 
 void IncomingTransfer::acknowledged()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo;
 	
 	switch(m_state)
 	{
@@ -145,7 +145,7 @@ void IncomingTransfer::processMessage(const Message& message)
 	{
 		// UserDisplayIcon data or File data is in this message.
 		// Write the received data to the file.
-		kDebug(14140) << k_funcinfo << QString("Received, %1 bytes").arg(message.header.dataSize) << endl;
+		kDebug(14140) << k_funcinfo << QString("Received, %1 bytes").arg(message.header.dataSize);
 		
 		m_file->write(message.body.data(), message.header.dataSize);
 		if(m_transfer){
@@ -194,7 +194,7 @@ void IncomingTransfer::processMessage(const Message& message)
 	{
 		QString body =
 			QByteArray(message.body.data(), message.header.dataSize);
-//		kDebug(14140) << k_funcinfo << "received, " << body << endl;
+//		kDebug(14140) << k_funcinfo << "received, " << body;
 
 		if(body.startsWith("INVITE"))
 		{
@@ -216,7 +216,7 @@ void IncomingTransfer::processMessage(const Message& message)
 			regex = QRegExp("NetID: (\\-?\\d+)\r\n");
 			regex.indexIn(body);
 			QString netId = regex.cap(1);
-			kDebug(14140) << "net id, " << netId << endl;
+			kDebug(14140) << "net id, " << netId;
 			// Connection Types
 			// - Direct-Connect
 			// - Port-Restrict-NAT
@@ -250,7 +250,7 @@ void IncomingTransfer::processMessage(const Message& message)
 				QObject::connect(m_listener, SIGNAL(gotError(int)), this, SLOT(slotListenError(int)));
 				// Listen for incoming connections.
 				bool isListening = m_listener->listen(1);
-				kDebug(14140) << k_funcinfo << (isListening ? "listening" : "not listening") << endl;
+				kDebug(14140) << k_funcinfo << (isListening ? "listening" : "not listening");
 				kDebug(14140) << k_funcinfo
 					<< "local endpoint, " << m_listener->localAddress().nodeName()
 					<< endl;
@@ -323,7 +323,7 @@ void IncomingTransfer::processMessage(const Message& message)
 
 void IncomingTransfer::slotListenError(int /*errorCode*/)
 {
-	kDebug(14140) << k_funcinfo << m_listener->errorString() << endl;
+	kDebug(14140) << k_funcinfo << m_listener->errorString();
 }
 
 void IncomingTransfer::slotAccept()
@@ -335,13 +335,13 @@ void IncomingTransfer::slotAccept()
 		// NOTE If direct connection fails, the sending
 		// client wil transfer the file data through the
 		// existing session.
-		kDebug(14140) << k_funcinfo << "Direct connection failed." << endl;
+		kDebug(14140) << k_funcinfo << "Direct connection failed.";
 		// Close the listening endpoint.
 		m_listener->close();
 		return;
 	}
 
-	kDebug(14140) << k_funcinfo << "Direct connection established." << endl;
+	kDebug(14140) << k_funcinfo << "Direct connection established.";
 
 	// Set the socket to non blocking,
 	// enable the ready read signal and disable
@@ -362,7 +362,7 @@ void IncomingTransfer::slotAccept()
 void IncomingTransfer::slotSocketRead()
 {
 	int available = m_socket->bytesAvailable();
-	kDebug(14140) << k_funcinfo << available << ", bytes available." << endl;
+	kDebug(14140) << k_funcinfo << available << ", bytes available.";
 	if(available > 0)
 	{
 		QByteArray buffer;
@@ -370,19 +370,19 @@ void IncomingTransfer::slotSocketRead()
 		m_socket->read(buffer.data(), buffer.size());
 
 		if(QString(buffer) == "foo"){
-			kDebug(14140) << "Connection Check." << endl;
+			kDebug(14140) << "Connection Check.";
 		}
 	}
 }
 
 void IncomingTransfer::slotSocketClosed()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo;
 }
 
 void IncomingTransfer::slotSocketError(int errorCode)
 {
-	kDebug(14140) << k_funcinfo << errorCode << endl;
+	kDebug(14140) << k_funcinfo << errorCode;
 }
 
 #include "incomingtransfer.moc"

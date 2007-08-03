@@ -164,7 +164,7 @@ void OscarContact::sync(unsigned int flags)
 	if ( (flags & Kopete::Contact::MovedBetweenGroup) == Kopete::Contact::MovedBetweenGroup )
 	{
 		
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups" << endl;
+		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups";
 		ContactManager* ssiManager = mAccount->engine()->ssiManager();
 		
 		OContact oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
@@ -304,10 +304,10 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 
 	if( files.isEmpty() )
 	{
-		kDebug(OSCAR_GEN_DEBUG) << "files empty, assuming cancel" << endl;
+		kDebug(OSCAR_GEN_DEBUG) << "files empty, assuming cancel";
 		return;
 	}
-	kDebug(OSCAR_GEN_DEBUG) << "files: '" << files << "' " << endl;
+	kDebug(OSCAR_GEN_DEBUG) << "files: '" << files << "' ";
 
 	Kopete::Transfer *t = Kopete::TransferManager::transferManager()->addTransfer( this, files.at(0), QFile( files.at(0) ).size(), mName, Kopete::FileTransferInfo::Outgoing);
 	mAccount->engine()->sendFiles( mName, files, t );
@@ -376,7 +376,7 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
 		return;
 	
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
+	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating icon for " << contactId();
 	
 	KMD5 buddyIconHash( icon );
 	if ( memcmp( buddyIconHash.rawDigest(), m_details.buddyIconHash().data(), 16 ) == 0 )
@@ -399,7 +399,7 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 	}
 	else
 	{
-		kDebug(14153) << k_funcinfo << "Buddy icon hash does not match!" << endl;
+		kDebug(14153) << k_funcinfo << "Buddy icon hash does not match!";
 		removeProperty( Kopete::Global::Properties::self()->photo() );
 	}
 }

@@ -28,7 +28,7 @@ DetectorNetstat::~DetectorNetstat() {
 }
 
 void DetectorNetstat::checkStatus() const {
-    kDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo;
 
     if(m_process) {
         kWarning(14312) << k_funcinfo << "Previous netstat process is still running!" << endl
@@ -49,7 +49,7 @@ void DetectorNetstat::checkStatus() const {
     connect(m_process, SIGNAL(processExited(K3Process *)), this, SLOT(slotProcessExited(K3Process *)));
 
     if(!m_process->start(K3Process::NotifyOnExit, K3Process::Stdout)) {
-        kWarning(14312) << k_funcinfo << "Unable to start netstat process!" << endl;
+        kWarning(14312) << k_funcinfo << "Unable to start netstat process!";
 
         delete m_process;
         m_process = 0L;
@@ -58,13 +58,13 @@ void DetectorNetstat::checkStatus() const {
 
 void DetectorNetstat::slotProcessStdout(K3Process *, char *buffer, int buflen) {
     // Look for a default gateway
-    kDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo;
     m_buffer += QString::fromLatin1(buffer, buflen);
-    kDebug(14312) << m_buffer << endl;
+    kDebug(14312) << m_buffer;
 }
 
 void DetectorNetstat::slotProcessExited(K3Process *process) {
-    kDebug(14312) << k_funcinfo << m_buffer << endl;
+    kDebug(14312) << k_funcinfo << m_buffer;
     if(process == m_process) {
         m_connector->setConnectedStatus(m_buffer.contains("default"));
         m_buffer.clear();

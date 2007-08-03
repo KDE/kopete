@@ -49,7 +49,7 @@ YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent )
 	setButtonGuiItem( KDialog::User2, KGuiItem( i18n("Merge with existing entry") ) );
 	showButton( KDialog::User2, false );
 
-	kDebug(14180) << k_funcinfo << "Creating new yahoo user info widget" << endl;
+	kDebug(14180) << k_funcinfo << "Creating new yahoo user info widget";
 	
 	QWidget *genInfo = new QWidget(this);
 	m_genInfoWidget = new Ui::YahooGeneralInfoWidget;

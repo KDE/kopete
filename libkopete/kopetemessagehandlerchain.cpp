@@ -79,7 +79,7 @@ MessageHandlerChain::Ptr MessageHandlerChain::create( ChatSession *manager, Mess
 		}
 	}
 	
-	kDebug(14010) << k_funcinfo << "got " << count << " handlers for chain" << endl;
+	kDebug(14010) << k_funcinfo << "got " << count << " handlers for chain";
 	
 	// add the handlers to the chain
 	MessageHandler *curr = 0;
@@ -113,7 +113,7 @@ MessageHandlerChain::MessageHandlerChain()
 
 MessageHandlerChain::~MessageHandlerChain()
 {
-	kDebug(14010) << k_funcinfo << endl;
+	kDebug(14010) << k_funcinfo;
 	MessageHandler *handler = d->first;
 	while( handler )
 	{

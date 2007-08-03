@@ -142,7 +142,7 @@ void TooltipEditDialog::slotOkClicked()
 	{
 		Kopete::AppearanceSettings::self()->setToolTipContents(newList);
 		emit changed(true);
-		kDebug(14000) << k_funcinfo << "tooltip fields changed, emitting changed()" << endl;
+		kDebug(14000) << k_funcinfo << "tooltip fields changed, emitting changed()";
 	}
 }
 

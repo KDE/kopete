@@ -106,7 +106,7 @@ Kopete::OnlineStatus OscarStatusManager::onlineStatusOf( const Oscar::Presence &
 	
 	if ( (pres.flags() & Oscar::Presence::XStatus) == Oscar::Presence::XStatus )
 	{
-		kDebug() << k_funcinfo << "Creating Kopete::OnlineStatus for XStatus, internal status: " << pres.internalStatus() << endl;
+		kDebug() << k_funcinfo << "Creating Kopete::OnlineStatus for XStatus, internal status: " << pres.internalStatus();
 		// XStatus, we have to create new KOS
 		Oscar::PresenceOverlay overlay = pscOverlayForFlags( pres.flags() );
 
@@ -117,7 +117,7 @@ Kopete::OnlineStatus OscarStatusManager::onlineStatusOf( const Oscar::Presence &
 	}
 	else if ( (pres.flags() & Oscar::Presence::ExtStatus) == Oscar::Presence::ExtStatus )
 	{
-		kDebug() << k_funcinfo << "Creating Kopete::OnlineStatus for ExtStatus, internal status: " << pres.internalStatus() << endl;
+		kDebug() << k_funcinfo << "Creating Kopete::OnlineStatus for ExtStatus, internal status: " << pres.internalStatus();
 		// ExtStatus, we have to create new KOS
 		Oscar::PresenceOverlay overlay = pscOverlayForFlags( pres.flags() );
 		const Oscar::PresenceType &type = pscTypeForType( pres.type() );
@@ -140,7 +140,7 @@ Kopete::OnlineStatus OscarStatusManager::onlineStatusOf( const Oscar::Presence &
 		}
 		else
 		{
-			kWarning() << k_funcinfo << "Kopete::OnlineStatus doesn't exists for internal status " << pres.internalStatus() << endl;
+			kWarning() << k_funcinfo << "Kopete::OnlineStatus doesn't exists for internal status " << pres.internalStatus();
 			return unknownStatus();
 		}
 	}
@@ -236,7 +236,7 @@ const Oscar::PresenceType &OscarStatusManager::pscTypeForType( Oscar::Presence::
 			return d->presenceTypeList.at(n);
 	}
 
-	kWarning(14153) << k_funcinfo << "type " << (int)type << " not found! Returning Offline" << endl;
+	kWarning(14153) << k_funcinfo << "type " << (int)type << " not found! Returning Offline";
 	return d->presenceTypeList.at(0);
 }
 
@@ -249,7 +249,7 @@ const Oscar::PresenceType &OscarStatusManager::pscTypeForStatus( unsigned long s
 			return d->presenceTypeList.at(n);
 	}
 
-	kWarning(14153) << k_funcinfo << "status " << (int)status << " not found! Returning Offline. This should not happen." << endl;
+	kWarning(14153) << k_funcinfo << "status " << (int)status << " not found! Returning Offline. This should not happen.";
 	return d->presenceTypeList.at(0);
 }
 
@@ -262,7 +262,7 @@ const Oscar::PresenceType &OscarStatusManager::pscTypeForOnlineStatusType( const
 			return d->presenceTypeList.at(n);
 	}
 
-	kWarning(14153) << k_funcinfo << "online status " << (int)statusType << " not found! Returning Offline. This should not happen." << endl;
+	kWarning(14153) << k_funcinfo << "online status " << (int)statusType << " not found! Returning Offline. This should not happen.";
 	return d->presenceTypeList.at(0);
 }
 

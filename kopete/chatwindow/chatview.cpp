@@ -538,7 +538,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 
 void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Qt::TextFormat format, bool suppressNotification )
 {
-// 	kDebug(14000) << k_funcinfo << endl;
+// 	kDebug(14000) << k_funcinfo;
 	if ( contact != m_manager->myself() )
 	{
 		TypingMap::iterator it = m_remoteTypingMap.find( contact );
@@ -595,7 +595,7 @@ QString& ChatView::caption() const
 
 void ChatView::setCaption( const QString &text, bool modified )
 {
-// 	kDebug(14000) << k_funcinfo << endl;
+// 	kDebug(14000) << k_funcinfo;
 	QString newCaption = text;
 
 	//Save this caption
@@ -671,7 +671,7 @@ void ChatView::slotToggleRtfToolbar( bool enabled )
 
 void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus )
 {
- 	kDebug(14000) << k_funcinfo << contact << endl;
+ 	kDebug(14000) << k_funcinfo << contact;
 	bool inhibitNotification = ( newStatus.status() == Kopete::OnlineStatus::Unknown ||
 	                             oldStatus.status() == Kopete::OnlineStatus::Unknown );
 	if ( contact && Kopete::BehaviorSettings::self() && !inhibitNotification )
@@ -811,7 +811,7 @@ void ChatView::readOptions()
 	}
 
 	dockKey.append( QLatin1String( ",editDock:sepPos" ) );
-	//kDebug(14000) << k_funcinfo << "reading splitterpos from key: " << dockKey << endl;
+	//kDebug(14000) << k_funcinfo << "reading splitterpos from key: " << dockKey;
 	int splitterPos = config->readEntry( dockKey, 70 );
 	editDock->manualDock( viewDock, K3DockWidget::DockBottom, splitterPos );
 	viewDock->setDockSite( K3DockWidget::DockLeft | K3DockWidget::DockRight );

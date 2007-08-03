@@ -24,7 +24,7 @@
 
 LogoffTask::LogoffTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 }
 
 LogoffTask::~LogoffTask()
@@ -33,7 +33,7 @@ LogoffTask::~LogoffTask()
 
 void LogoffTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceLogoff);
 	t->setId( client()->sessionID() );

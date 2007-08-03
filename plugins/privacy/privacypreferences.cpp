@@ -39,7 +39,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_privacy, PrivacyPreferencesFactory( "kcm_
 PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 	: KCModule(PrivacyPreferencesFactory::componentData(), parent, args)
 {
-	kDebug(14313) << k_funcinfo << "called." << endl;
+	kDebug(14313) << k_funcinfo << "called.";
 	
 	QVBoxLayout* layout = new QVBoxLayout( this );
 	QWidget* widget = new QWidget;
@@ -89,7 +89,7 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
 
 PrivacyPreferences::~PrivacyPreferences()
 {
-	kDebug(14313) << k_funcinfo << "called." << endl;
+	kDebug(14313) << k_funcinfo << "called.";
 	delete prefUi;
 	delete m_whiteListModel;
 	delete m_blackListModel;

@@ -52,8 +52,8 @@ bool StageOneLoginTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting login" << endl;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending the FLAP version back" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting login";
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending the FLAP version back";
 
 		//send the flap version response
 		FLAP f = { 0x01, 0 , 0 };
@@ -75,7 +75,7 @@ bool StageOneLoginTask::take( Transfer* transfer )
 
 void StageOneLoginTask::closeTaskFinished()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	if ( m_closeTask->success() )
 		setSuccess( m_closeTask->statusCode(), m_closeTask->statusString() );
 	else
@@ -84,7 +84,7 @@ void StageOneLoginTask::closeTaskFinished()
 
 void StageOneLoginTask::loginTaskFinished()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	m_cookie = m_loginTask->cookie();
 	m_bosPort = m_loginTask->bosPort();
 	m_bosServer = m_loginTask->bosHost();
@@ -172,7 +172,7 @@ void StageTwoLoginTask::onGo()
 		outbuf->addDWord( 0x00000001 );
 		outbuf->addTLV( 0x06, m_cookie );
 		Transfer* ft = createTransfer( f, outbuf );
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending the login cookie back" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending the login cookie back";
 		send( ft );
 	}
 	else

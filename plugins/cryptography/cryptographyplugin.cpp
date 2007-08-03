@@ -156,8 +156,8 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", K3Icon::Small ) + "\">&nbsp;&nbsp;" );
 		
 		msg.setHtmlBody ( body );
-		kDebug ( 14303) << k_funcinfo << "body is " << body << endl;
-		kDebug ( 14303) << k_funcinfo << "opState is " << opState << endl;
+		kDebug ( 14303) << k_funcinfo << "body is " << body;
+		kDebug ( 14303) << k_funcinfo << "opState is " << opState;
 		msg.addClass ( "cryptography:encrypted" );
 	}
 
@@ -187,7 +187,7 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 			}
 			if ( tmpKey.isEmpty() )
 			{
-				kDebug ( 14303 ) << k_funcinfo << "empty key" << endl;
+				kDebug ( 14303 ) << k_funcinfo << "empty key";
 				KMessageBox::sorry ( Kopete::UI::Global::mainWidget(), i18n ( "You have not chosen an encryption key for one or more recipients" ) );
 				return;
 			}
@@ -210,7 +210,7 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 		if ( !resultat.isEmpty() )
 			msg.setPlainBody ( resultat );
 		else
-			kDebug ( 14303 ) << "CryptographyPlugin::slotOutgoingMessage: empty result" <<endl;
+			kDebug ( 14303 ) << "CryptographyPlugin::slotOutgoingMessage: empty result";
 	}
 	else if ( signing )
 	{

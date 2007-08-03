@@ -38,7 +38,7 @@ OfflineMessagesTask::~OfflineMessagesTask()
 
 void OfflineMessagesTask::onGo()
 {
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Requesting offline messages" << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Requesting offline messages";
 
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0015, 0x0002, 0x0000, client()->snacSequence() };
@@ -120,7 +120,7 @@ Oscar::Message OfflineMessagesTask::parseOfflineMessage(Buffer *b)
 	message.setSender( QString::number( senderUin ) );
 	message.setReceiver( QString::number( receiverUin ) );
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received offline message '" << msg.data() << "' from " << senderUin << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received offline message '" << msg.data() << "' from " << senderUin;
 
 	return message;
 }
@@ -133,7 +133,7 @@ void OfflineMessagesTask::handleOfflineMessage()
 
 void OfflineMessagesTask::endOfMessages()
 {
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "End of Offline Messages" << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "End of Offline Messages";
 
 	TLV tlv1 = transfer()->buffer()->getTLV();
 	Buffer buffer( tlv1.data, tlv1.length );

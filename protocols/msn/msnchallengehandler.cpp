@@ -34,7 +34,7 @@ MSNChallengeHandler::MSNChallengeHandler(const QString& productKey, const QStrin
 
 MSNChallengeHandler::~MSNChallengeHandler()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo;
 }
 
 QString MSNChallengeHandler::computeHash(const QString& challengeString)
@@ -45,13 +45,13 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
  	KMD5 md5((challengeString + m_productKey).toUtf8());
  	QByteArray digest = md5.hexDigest();
 
- 	kDebug(14140) << k_funcinfo << "md5: " << digest << endl;
+ 	kDebug(14140) << k_funcinfo << "md5: " << digest;
 
  	QVector<qint32> md5Integers(4);
  	for(int i=0; i < md5Integers.count(); i++)
  	{
  		md5Integers[i] = hexSwap(digest.mid(i*8, 8)).toUInt(0, 16) & 0x7FFFFFFF;
- 		kDebug(14140) << k_funcinfo << ("0x" + hexSwap(digest.mid(i*8, 8))) << " " << md5Integers[i] << endl;
+ 		kDebug(14140) << k_funcinfo << ("0x" + hexSwap(digest.mid(i*8, 8))) << " " << md5Integers[i];
  	}
 
 	// Step Two: Create the challenge string key
@@ -60,7 +60,7 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 	// Pad to multiple of 8.
 	challengeKey = challengeKey.leftJustified(challengeKey.length() + (8 - challengeKey.length() % 8), '0');
 
-	kDebug(14140) << k_funcinfo << "challenge key: " << challengeKey << endl;
+	kDebug(14140) << k_funcinfo << "challenge key: " << challengeKey;
 
 	QVector<qint32> challengeIntegers(challengeKey.length() / 4);
 	for(int i=0; i < challengeIntegers.count(); i++)
@@ -77,14 +77,14 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 		sNumHex = hexSwap(sNumHex);
 		// Assign the converted number.
 		challengeIntegers[i] = sNumHex.toInt(0, 16);
-		kDebug(14140) << k_funcinfo << sNum << (": 0x"+sNumHex) << " " << challengeIntegers[i] << endl;
+		kDebug(14140) << k_funcinfo << sNum << (": 0x"+sNumHex) << " " << challengeIntegers[i];
 	}
 
 	// Step Three: Create the 64-bit hash key.
 
 	// Get the hash key using the specified arrays.
 	qint64 key = createHashKey(md5Integers, challengeIntegers);
-	kDebug(14140) << k_funcinfo << "key: " << key << endl;
+	kDebug(14140) << k_funcinfo << "key: " << key;
 
 	// Step Four: Create the final hash key.
 
@@ -102,7 +102,7 @@ QString MSNChallengeHandler::computeHash(const QString& challengeString)
 qint64 MSNChallengeHandler::createHashKey(const QVector<qint32>& md5Integers,
 	const QVector<qint32>& challengeIntegers)
 {
-	kDebug(14140) << k_funcinfo << "Creating 64-bit key." << endl;
+	kDebug(14140) << k_funcinfo << "Creating 64-bit key.";
 
 	qint64 magicNumber = 0x0E79A9C1L, high = 0L, low = 0L;
 		

@@ -111,7 +111,7 @@ FileTransferTask::~FileTransferTask()
 		delete m_connection;
 		m_connection = 0;
 	}
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done";
 }
 
 void FileTransferTask::onGo()
@@ -175,76 +175,76 @@ void FileTransferTask::parseReq( Buffer b )
 				break;
 
 			bool multipleFiles = (b2.getWord() == 0x02);
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "multiple file flag: " << multipleFiles << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "multiple file flag: " << multipleFiles;
 			m_oftRendezvous.fileCount = b2.getWord();
 			m_oftRendezvous.totalSize = b2.getDWord();
 			fileName = b2.getBlock( b2.bytesAvailable() - 1 ); //null terminated
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file: " << fileName << endl;
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "total size: " << m_oftRendezvous.totalSize << " files: " << m_oftRendezvous.fileCount << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "file: " << fileName;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "total size: " << m_oftRendezvous.totalSize << " files: " << m_oftRendezvous.fileCount;
 			break;
 			}
 		 case 0x2712:
 			c = Oscar::codecForName( tlv.data );
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "filename encoding " << tlv.data << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "filename encoding " << tlv.data;
 			break;
 		 case 2:
 		 	proxy_ip = tlv.data;
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy ip " << proxy_ip << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy ip " << proxy_ip;
 			break;
 		 case 3:
 		 	client_ip = tlv.data;
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "client ip " << client_ip << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "client ip " << client_ip;
 			break;
 		 case 4:
 		 	verified_ip = tlv.data;
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "verified ip " << verified_ip << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "verified ip " << verified_ip;
 			break;
 		 case 5:
 		 	m_port = b2.getWord();
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "port " << m_port << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "port " << m_port;
 			break;
 		 case 0x0c:
 			m_desc = tlv.data; //FIXME: what codec?
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user message: " << tlv.data << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "user message: " << tlv.data;
 			break;
 		 case 0x0d:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "default encoding " << tlv.data << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "default encoding " << tlv.data;
 			break;
 		 case 0x0e:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "language " << tlv.data << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "language " << tlv.data;
 			break;
 		 case 0x10:
 		 	m_proxy = true;
 			break;
 		 default:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ignoring tlv type " << tlv.type << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ignoring tlv type " << tlv.type;
 		}
 	}
 
 	if ( !c )
 	{
 		c = QTextCodec::codecForName( "UTF-8" );
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no codec, assuming utf8" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no codec, assuming utf8";
 	}
 
 	if ( c )
 		m_oftRendezvous.fileName = c->toUnicode( fileName );
 	else
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't get any codec! " << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't get any codec! ";
 		m_oftRendezvous.fileName = fileName;
 	}
 
 	if( m_proxy )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy requested" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy requested";
 		m_ip = proxy_ip;
 	}
 	else if ( client_ip.isEmpty() )
 		m_ip = verified_ip;
 	else if ( client_ip == "\0\0\0\0" )
 	{ //ip is all 0's
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy??" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "proxy??";
 		//wtf... I guess it wants *me* to request a proxy?
 		m_proxy = 1;
 		m_proxyRequester = 1;
@@ -328,7 +328,7 @@ bool FileTransferTask::take( Transfer* transfer )
 
 bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 {
-	kDebug(14151) << k_funcinfo << "comparing to " << m_oftRendezvous.cookie << endl;
+	kDebug(14151) << k_funcinfo << "comparing to " << m_oftRendezvous.cookie;
 	if ( cookie != m_oftRendezvous.cookie )
 		return false;
 
@@ -336,10 +336,10 @@ bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 	switch( type )
 	{
 	 case 0: //direct transfer ain't good enough
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "redirect or proxy request" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "redirect or proxy request";
 		if ( m_state != Listening )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "other client is insane." << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "other client is insane.";
 			break;
 		}
 
@@ -349,31 +349,31 @@ bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 		doConnect();
 		break;
 	 case 1:
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "other user cancelled filetransfer :(" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "other user cancelled filetransfer :(";
 		emit gotCancel(); //FIXME: what if it's not hooked up?
 		emit cancelOft();
 		m_timer.stop();
 		setSuccess( true );
 		break;
 	 case 2:
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "other user acceptetd filetransfer :)" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "other user acceptetd filetransfer :)";
 		break;
 	 default:
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "bad request type: " << type << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "bad request type: " << type;
 	}
 	return true;
 }
 
 void FileTransferTask::readyAccept()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "******************" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "******************";
 	m_connection = dynamic_cast<KBufferedSocket*>( m_ss->accept() );
 	m_ss->close(); //free up the port so others can listen
 	m_ss->deleteLater();
 	m_ss = 0;
 	if (! m_connection )
 	{ //either it wasn't buffered, or it did something weird
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection failed somehow." << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection failed somehow.";
 		emit error( KIO::ERR_COULD_NOT_ACCEPT, QString() );
 		doCancel();
 		return;
@@ -385,7 +385,7 @@ void FileTransferTask::readyAccept()
 
 void FileTransferTask::doOft()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "******************" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "******************";
 	QObject::disconnect( m_connection, 0, 0, 0 ); //disconnect signals
 	OftMetaTransfer *oft;
 
@@ -417,7 +417,7 @@ void FileTransferTask::socketError( int e )
 		desc = m_ss->errorString();
 	else if ( m_connection )
 		desc = m_connection->errorString();
-	kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "socket error: " << e << " : " << desc << endl;
+	kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "socket error: " << e << " : " << desc;
 	if ( m_state == Connecting )
 	{ //connection failed, try another way
 		if ( m_proxy )
@@ -437,16 +437,16 @@ void FileTransferTask::proxyRead()
 {
 	if ( m_state != ProxySetup )
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "reading non-proxy data!" << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "reading non-proxy data!";
 	}
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	QByteArray raw = m_connection->readAll(); //is this safe?
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	Buffer b( raw );
 	Oscar::WORD length = b.getWord();
 	if ( b.bytesAvailable() != length )
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "length is " << length << " but we have " << b.bytesAvailable() << "bytes!" << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "length is " << length << " but we have " << b.bytesAvailable() << "bytes!";
 	b.skipBytes( 2 ); //protocol version
 	Oscar::WORD command = b.getWord();
 	b.skipBytes( 6 ); //4 unknown, 2 flags
@@ -480,7 +480,7 @@ void FileTransferTask::proxyRead()
 		case 3: //ack
 			m_port = b.getWord();
 			m_ip = b.getBlock( 4 );
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got port " << m_port << " ip " << m_ip << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got port " << m_port << " ip " << m_ip;
 			//now we send a proxy request to the other side
 			sendReq();
 			break;
@@ -499,7 +499,7 @@ void FileTransferTask::initOft()
 
 void FileTransferTask::doCancel()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	//tell the other side
 	Oscar::Message msg = makeFTMsg();
 	msg.setRequestType( 1 );
@@ -513,23 +513,23 @@ void FileTransferTask::doCancel()
 
 void FileTransferTask::doCancel( const Kopete::FileTransferInfo &info )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	//check that it's really for us
 	if ( info.internalId() == QString( m_oftRendezvous.cookie ) )
 		doCancel();
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ID mismatch" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ID mismatch";
 }
 
 void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	//check that it's really for us
 	//XXX because qt is retarded, I can't simply compare a qstring and bytearray any more.
 	//if there are 0's in hte cookie then the qstring will only contain part of it - but it should at least be consistent about that. it just slightly increases the tiny chance of a conflict
 	if ( t->info().internalId() != QString( m_oftRendezvous.cookie ) )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ID mismatch" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ID mismatch";
 		return;
 	}
 
@@ -559,7 +559,7 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 
 void FileTransferTask::doConnect()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 
 	QString host;
 	if ( m_proxyRequester )
@@ -575,7 +575,7 @@ void FileTransferTask::doConnect()
 
 		//ksockets demand a qstring
 		host = KNetwork::KIpAddress( m_ip.constData(), 4 ).toString();
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ip: " << host << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "ip: " << host;
 	}
 
 	//proxies *always* use port 5190; the "port" value is some retarded check
@@ -595,7 +595,7 @@ void FileTransferTask::doConnect()
 
 void FileTransferTask::socketConnected()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	m_timer.stop();
 	if( m_proxy )
 	//we need to send an init recv first
@@ -645,13 +645,13 @@ void FileTransferTask::proxyInit()
 	int written = m_connection->write( header.buffer() );
 
 	if( written == -1 ) //FIXME: handle this properly
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "failed to write :(";
 
 }
 
 void FileTransferTask::timeout()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	m_timer.stop();
 	if ( m_state == Connecting )
 	{ //kbufferedsocket took too damn long
@@ -700,7 +700,7 @@ void FileTransferTask::connectFailed()
 
 bool FileTransferTask::listen()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	m_state = Default;
 	//listen for connections
 	m_ss = new KServerSocket( this );
@@ -725,13 +725,13 @@ bool FileTransferTask::listen()
 	}
 	if (! success )
 	{ //uhoh... what do we do? FIXME: maybe tell the user too many filetransfers
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening failed. abandoning" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening failed. abandoning";
 		emit error( KIO::ERR_COULD_NOT_LISTEN, QString::number( last ) );
 		setSuccess(false);
 		return false;
 	}
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening for connections on port " << m_port << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "listening for connections on port " << m_port;
 	m_state = Listening;
 	return true;
 }

@@ -123,7 +123,7 @@ void SMSAccount::slotDisconnected()
 
 void SMSAccount::slotSendMessage(Kopete::Message &msg)
 {
-	kWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
+	kWarning( 14160 ) << k_funcinfo << " this = " << this;
 
 	if(theService == 0L)
 		return;

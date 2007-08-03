@@ -33,7 +33,7 @@ DetectorSMPPPD::~DetectorSMPPPD() {}
     \fn DetectorSMPPPD::checkStatus()
  */
 void DetectorSMPPPD::checkStatus() const {
-    kDebug(14312) << k_funcinfo << "Checking for online status..." << endl;
+    kDebug(14312) << k_funcinfo << "Checking for online status...";
 
 #ifndef NOKINTERNETDCOP
     m_kinternetApp = getKInternetDCOP();
@@ -53,7 +53,7 @@ void DetectorSMPPPD::checkStatus() const {
 #ifdef __GNUC__
 #warning DCOP inquiry disabled
 #endif
-	kDebug(14312) << k_funcinfo << "DCOP inquiry disabled" << endl;
+	kDebug(14312) << k_funcinfo << "DCOP inquiry disabled";
 #endif
 
     SMPPPD::Client c;
@@ -66,7 +66,7 @@ void DetectorSMPPPD::checkStatus() const {
     if(c.connect(server, port)) {
         m_connector->setConnectedStatus(c.isOnline());
     } else {
-        kDebug(14312) << k_funcinfo << "not connected to smpppd => I'll try again later" << endl;
+        kDebug(14312) << k_funcinfo << "not connected to smpppd => I'll try again later";
         m_connector->setConnectedStatus(false);
     }
 }

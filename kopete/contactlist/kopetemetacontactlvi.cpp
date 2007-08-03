@@ -368,7 +368,7 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 		slotDisplayNameChanged();
 	}
 
-	kDebug( 14000 ) << k_funcinfo << "newName=" << newName << endl;
+	kDebug( 14000 ) << k_funcinfo << "newName=" << newName;
 }
 
 void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
@@ -413,7 +413,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 				{
 					if ( newStatus.status() != Kopete::OnlineStatus::Offline )
 					{
-						//kDebug( 14000 ) << "signed in" << endl;
+						//kDebug( 14000 ) << "signed in";
 						t = signedIn;	// contact has gone from offline to something else, it's a sign-in
 					}
 				}
@@ -423,7 +423,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 				{
 					if ( newStatus.status() == Kopete::OnlineStatus::Offline )
 					{
-						//kDebug( 14000 ) << "signed OUT" << endl;
+						//kDebug( 14000 ) << "signed OUT";
 						t = signedOut;	// contact has gone from an online state to an offline state, it's a sign out
 					}
 					else if ( m_oldStatus > newStatus || m_oldStatus < newStatus ) // operator!= is useless because it's an identity operator, not an equivalence operator
@@ -431,13 +431,13 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 						// contact has changed online states, it's a status change,
 						// and the preferredContact changed status, or there is a new preferredContacat
 						// so it's worth notifying
-						//kDebug( 14000 ) << "changed status" << endl;
+						//kDebug( 14000 ) << "changed status";
 						t = changedStatus;
 					}
 				}
 				else if ( m_oldStatus != newStatus )
 				{
-					//kDebug( 14000 ) << "non-event" << endl;
+					//kDebug( 14000 ) << "non-event";
 					// catch-all for any other status change we don't know about
 					t = noEvent;
 				}
@@ -592,7 +592,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 /*
 void KopeteMetaContactLVI::slotRemoveThisUser()
 {
-	kDebug( 14000 ) << k_funcinfo << " Removing user" << endl;
+	kDebug( 14000 ) << k_funcinfo << " Removing user";
 	//m_metaContact->removeThisUser();
 
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
@@ -654,7 +654,7 @@ void KopeteMetaContactLVI::slotAddToGroup()
 {
 	if ( m_actionCopy )
 	{
-		kDebug( 14000 ) << "KopeteMetaContactLVI::slotAddToGroup " << endl;
+		kDebug( 14000 ) << "KopeteMetaContactLVI::slotAddToGroup ";
 		if ( m_actionCopy->currentItem() == 0 )
 		{
 			// we are adding to top-level
@@ -840,7 +840,7 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
 			QList<Kopete::Contact*> contacts = m_metaContact->contacts();
 			foreach ( Kopete::Contact *c, contacts )
 			{
-//				kDebug( 14000 ) << k_funcinfo << "ccontact=" << c->contactId() << ", isonline=" << c->isOnline() << ", awaymsg=" << c->property( key ).value().toString() << endl;
+//				kDebug( 14000 ) << k_funcinfo << "ccontact=" << c->contactId() << ", isonline=" << c->isOnline() << ", awaymsg=" << c->property( key ).value().toString();
 				QString awayMessage( c->property( key ).value().toString() );
 				if ( ( allOffline || c->isOnline() ) && !awayMessage.isEmpty() )
 				{

@@ -270,13 +270,13 @@ void KopeteMessage_Test::testLinkParser()
 			// otherwise use QCOMPARE
 			if ( fileName.section("-", 0, 0) == QString::fromLatin1("broken") )
 			{
-				//kDebug() << "checking known-broken testcase: " << fileName << endl;
+				//kDebug() << "checking known-broken testcase: " << fileName;
 				QEXPECT_FAIL("", "Checking know-broken testcase", Continue);
 				QCOMPARE(result, expectedData);
 			}
 			else
 			{
-				//kDebug() << "checking known-working testcase: " << fileName << endl;
+				//kDebug() << "checking known-working testcase: " << fileName;
 				QCOMPARE(result, expectedData);
 			}
 		}

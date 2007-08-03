@@ -90,14 +90,14 @@ void ServiceSetupTask::childTaskFinished()
 {
 	m_finishedTaskCount++;
 	
-// 	kDebug( OSCAR_RAW_DEBUG ) << "Finished count is " << m_finishedTaskCount << endl;
+// 	kDebug( OSCAR_RAW_DEBUG ) << "Finished count is " << m_finishedTaskCount;
 	
 	if ( m_finishedTaskCount == 7 )
 	{
 		if ( client()->ssiManager()->listComplete() )
 			m_ssiActivateTask->go( Task::AutoDelete );
 
-		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending DC info and client ready" << endl;
+		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending DC info and client ready";
 		SendIdleTimeTask* sitt = new SendIdleTimeTask( client()->rootTask() );
 		QList<int> familyList;
 		familyList.append( 0x0001 );
@@ -119,7 +119,7 @@ void ServiceSetupTask::childTaskFinished()
 	
 	if ( m_finishedTaskCount == 8 )
 	{
-		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Service setup finished" << endl;
+		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Service setup finished";
 		setSuccess( 0, QString() );	
 	}
 }

@@ -209,20 +209,20 @@ ChatWindowConfig::~ChatWindowConfig()
 void ChatWindowConfig::save()
 {
 	KCModule::save();
-//	kDebug(14000) << k_funcinfo << "called." << endl;
+//	kDebug(14000) << k_funcinfo << "called.";
 
 	KopeteChatWindowSettings *settings = KopeteChatWindowSettings::self();
 
 	// Get the stylePath
 	if(m_currentStyle)
 	{
-		kDebug(14000) << k_funcinfo << m_currentStyle->getStylePath() << endl;
+		kDebug(14000) << k_funcinfo << m_currentStyle->getStylePath();
 		settings->setStylePath( m_currentStyle->getStylePath() );
 	}
 	// Get and save the styleVariant
 	if( !m_currentVariantMap.empty() )
 	{
-		kDebug(14000) << k_funcinfo << m_currentVariantMap[ m_styleUi.variantList->currentText()] << endl;
+		kDebug(14000) << k_funcinfo << m_currentVariantMap[ m_styleUi.variantList->currentText()];
 		settings->setStyleVariant( m_currentVariantMap[m_styleUi.variantList->currentText()] );
 	}
 
@@ -255,7 +255,7 @@ void ChatWindowConfig::slotLoadChatStyles()
 	ChatWindowStyleManager::StyleList availableStyles;
 	availableStyles = ChatWindowStyleManager::self()->getAvailableStyles();
 	if( availableStyles.empty() )
-		kDebug(14000) << k_funcinfo << "Warning, available styles is empty !" << endl;
+		kDebug(14000) << k_funcinfo << "Warning, available styles is empty !";
 
 	ChatWindowStyleManager::StyleList::ConstIterator it, itEnd = availableStyles.constEnd();
 	for(it = availableStyles.constBegin(); it != itEnd; ++it)
@@ -267,7 +267,7 @@ void ChatWindowConfig::slotLoadChatStyles()
 
 		if( it.value() == KopeteChatWindowSettings::self()->stylePath() )
 		{
-			kDebug(14000) << k_funcinfo << "Restoring saved style: " << it.key() << endl;
+			kDebug(14000) << k_funcinfo << "Restoring saved style: " << it.key();
 
 			m_styleUi.styleList->setSelected( m_styleUi.styleList->firstItem(), true );
 		}
@@ -286,7 +286,7 @@ void ChatWindowConfig::slotChatStyleSelected()
 	if(m_currentStyle)
 	{
 		m_currentVariantMap = m_currentStyle->getVariants();
-		kDebug(14000) << k_funcinfo << "Loading style: " << m_currentStyle->getStylePath() << endl;
+		kDebug(14000) << k_funcinfo << "Loading style: " << m_currentStyle->getStylePath();
 
 		// Update the variant list based on current style.
 		m_styleUi.variantList->clear();
@@ -322,8 +322,8 @@ void ChatWindowConfig::slotChatStyleSelected()
 
 void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 {
-// 	kDebug(14000) << k_funcinfo << variantName << endl;
-// 	kDebug(14000) << k_funcinfo << m_currentVariantMap[variantName] << endl;
+// 	kDebug(14000) << k_funcinfo << variantName;
+// 	kDebug(14000) << k_funcinfo << m_currentVariantMap[variantName];
 
 	// Update the preview
 	m_preview->setStyleVariant(m_currentVariantMap[variantName]);

@@ -88,7 +88,7 @@ Contact::Contact( Account *account, const QString &contactId,
 {
 	d = new Private;
 
-	//kDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId << endl;
+	//kDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId;
 
 	d->contactId = contactId;
 	d->metaContact = parent;
@@ -121,7 +121,7 @@ Contact::Contact( Account *account, const QString &contactId,
 
 Contact::~Contact()
 {
-	//kDebug(14010) << k_funcinfo << endl;
+	//kDebug(14010) << k_funcinfo;
 	emit( contactDestroyed( this ) );
 	delete d;
 }
@@ -178,7 +178,7 @@ void Contact::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
 	d->statusMessage = statusMessage;
 
-	kDebug(14010) << k_funcinfo << "Setting up the status message property with this: " << statusMessage.message() << endl;
+	kDebug(14010) << k_funcinfo << "Setting up the status message property with this: " << statusMessage.message();
 	if( !statusMessage.message().isEmpty() )
 		setProperty( Kopete::Global::Properties::self()->statusMessage(), statusMessage.message() );
 	else

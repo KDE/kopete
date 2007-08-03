@@ -146,7 +146,7 @@ QString GpgInterface::decryptText ( QString text, QString userID, int &opState )
 		if ( status.contains ( "DECRYPTION_OKAY" ) )
 			opState = ( opState | Decrypted );
 			
-		kDebug (14303) << k_funcinfo << "status file is: " << status << endl;
+		kDebug (14303) << k_funcinfo << "status file is: " << status;
 		
 		status.clear();
 		password.clear();

@@ -331,7 +331,7 @@ void PopupPublic::slotOk()
 
 
         //////   emit selected data
-kDebug(2100)<<"Ok pressed"<<endl;
+kDebug(2100)<<"Ok pressed";
         QStringList selectedKeys;
 	QString userid;
 	QList<QTreeWidgetItem*> list = ui->keyList->selectedItems();
@@ -343,7 +343,7 @@ kDebug(2100)<<"Ok pressed"<<endl;
                 }
         if (selectedKeys.isEmpty())
                 return;
-	kDebug(2100)<<"Selected Key:"<<selectedKeys<<endl;
+	kDebug(2100)<<"Selected Key:"<<selectedKeys;
         QStringList returnOptions;
         if (ui->untrustedCheck->isChecked())
                 returnOptions<<"--always-trust";
