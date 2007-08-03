@@ -1,9 +1,9 @@
 /*
     gwerror.h - Kopete Groupwise Protocol
   
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+    Copyright (c) 2004-2007     Novell, Inc http://www.novell.com/linux
     
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -93,6 +93,8 @@ namespace GroupWise
 							Secure  = 0x00000002,
 							Closed  = 0x10000000
 						 };
+	
+	QString errorCodeToString( int errorCode );
 	
 	// helpful structs used to pass data between the client library and the application using it
 	class ConferenceGuid : public QString 

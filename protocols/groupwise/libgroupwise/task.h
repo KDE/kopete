@@ -64,6 +64,9 @@ protected:
 	virtual void onDisconnect();
 	void send( Request * request );
 	void setSuccess( int code=0, const QString &str="" );
+	/**
+	 * If an empty string is passed, this sets the error string based on the error code using GroupWise::errorCodeToString
+	 */
 	void setError( int code=0, const QString &str="" );
 // 	void debug( const char *, ... );
 	void debug( const QString & );
