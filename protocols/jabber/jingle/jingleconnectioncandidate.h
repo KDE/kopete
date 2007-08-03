@@ -18,6 +18,7 @@
 #define JINGLECONNECTIONCANDIDATE_H
 
 #include <QDomElement>
+#include <QObject>
 
 //#include <solid/networkinterface.h>
 //namespace Solid{
@@ -39,6 +40,7 @@ public:
 //	JingleConnectionCandidate(QAbstractSocket socket, Solid::NetworkInterface nic, float qual):
 //		socket_(socket),netIface(nic),quality(qual);
 JingleConnectionCandidate();
+JingleConnectionCandidate(QString ip, int port){ ip_=(ip); port_=(port);}
 JingleConnectionCandidate(const JingleConnectionCandidate &c);
 JingleConnectionCandidate &operator=(const JingleConnectionCandidate &other);
 
@@ -64,7 +66,7 @@ virtual ~JingleConnectionCandidate();
 	 */
 	virtual bool isUseful();
 
-private:
+protected:
 	//QAbstractSocket socket_;
 	//Solid::NetworkInterface netIface;
 	float quality;

@@ -40,8 +40,10 @@
 //#include "jinglesession.h" //forward declaration works
 #include "jinglevoicesession.h"
 #include "jinglefoosession.h"
+#include "jinglenetwork.h"
 
 #include "jinglewatchsessiontask.h"
+#include "jingleinfotask.h" //for portaddress
 
 #include "jabberaccount.h"
 #include "jabberprotocol.h"
@@ -53,8 +55,10 @@
 #include <QtNetwork>
 
 #define JINGLE_NS "http://www.google.com/session"
-//#define JINGLE_VOICE_SESSION_NS "http://www.google.com/session/phone"
+#define JINGLE_VOICE_SESSION_NS "http://www.google.com/session/phone"
+#define JINGLE_FOO_NS "http://kopete.kde.com/jingle/foo.html"
 
+/*
 //BEGIN JingleSessionManager::SlotsProxy
 class JingleSessionManager;
 class JingleSessionManager::SlotsProxy : public sigslot::has_slots<>
@@ -77,6 +81,7 @@ private:
 };
 
 //END JingleSessionManager::SlotsProxy
+*/
 
 //BEGIN JingleSessionManager::Private
 class JingeSession;
@@ -90,9 +95,6 @@ public:
 	~Private()
 	{
 		delete networkManager;
-		delete portAllocator;
-		delete sessionThread;
-		delete cricketSessionManager;
 	}
 	
 	JabberAccount *account;
@@ -100,10 +102,6 @@ public:
 	JingleWatchSessionTask *watchSessionTask;
 
 	JingleNetworkManager *networkManager;
-	//cricket::BasicPortAllocator *portAllocator;
-	//talk_base::Thread *sessionThread;
-	//cricket::SessionManager *cricketSessionManager;
-	Jingle
 };
 //END JingleSessionManager::Private
 
@@ -146,7 +144,7 @@ JingleSessionManager::~JingleSessionManager()
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
 
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Cleaning up Jingle sessions." << endl;
-	Q3ValueList<JingleSession*>::Iterator it, itEnd = d->sessionList.end();
+	QList<JingleSession*>::Iterator it, itEnd = d->sessionList.end();
 	for(it = d->sessionList.begin(); it != itEnd; ++it)
 	{
 		JingleSession *deletedSession = *it;
@@ -159,11 +157,6 @@ JingleSessionManager::~JingleSessionManager()
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Done Cleaning up Jingle sessions." << endl;
 
 	delete d;
-}
-
-cricket::SessionManager *JingleSessionManager::cricketSessionManager()
-{
-	return d->cricketSessionManager;
 }
 
 JabberAccount *JingleSessionManager::account()
@@ -179,7 +172,7 @@ JingleSession *JingleSessionManager::createSession(const QString &sessionType, c
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating a voice session" << endl;
 		newSession = new JingleVoiceSession(account(), peers);
-	}else if (sessionType == JINGLE_FOO_SESSION_NS)
+	}else if (sessionType == JINGLE_FOO_NS)
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating a foo session" <<endl;
 		newSession = new JingleFooSession(account(), peers);
@@ -203,7 +196,7 @@ void JingleSessionManager::removeSession(JingleSession *session)
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing a jingle session." << endl;
 
-	d->sessionList.remove(session);
+	d->sessionList.removeAll(session);
 	delete session;	
 }
 
@@ -215,11 +208,11 @@ void JingleSessionManager::slotIncomingSession(const QString &sessionType, const
 	emit incomingSession(sessionType, newSession);
 }
 
-void OnSignalingReady()
+/*void OnSignalingReady()
 {
 	for(int i=0;i<d->sessionList.size();i++){
 		d->sessionList[i].
 
-}
+}*/
 
 #include "jinglesessionmanager.moc"

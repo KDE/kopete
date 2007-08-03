@@ -625,7 +625,7 @@ void JabberAccount::slotConnected ()
 	// Set caps extensions
 	m_jabberClient->client()->addExtension("voice-v1", Features(QString("http://www.google.com/xmpp/protocol/voice/v1")));
 	//TODO take me out one day
-	m_jabberClient->client()->addExtention("jinglefoo", Features(QString("http://www.example.com/jabber/foo")));
+	m_jabberClient->client()->addExtension("jinglefoo", Features(QString("http://kopete.kde.com/jingle/foo.html")));
 #endif
 
 	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Requesting roster..." << endl;
@@ -1730,7 +1730,7 @@ void JabberAccount::slotIncomingJingleSession( const QString &sessionType, Jingl
 	}else if(sessionType == "foo")
 	{
 		QString from = ((XMPP::Jid)session->peers().first()).full();
-		JingleFooSessionDialog *foodialog = new JingleFooSessionDialog( static_cast<JingleFooSession*>(session) );
+		JingleVoiceSessionDialog *foodialog = new JingleVoiceSessionDialog( static_cast<JingleVoiceSession*>(session) );
 		foodialog->show();
 	}
 #else

@@ -24,8 +24,12 @@
 #include "jinglejabberxml.h"
 #include "jabberaccount.h"
 #include "jinglesession.h"
+#include "jabberprotocol.h"
+#include "jinglefooconnectioncandidate.h"
 
+#include <kdebug.h>
 
+#define GEN_ID (account()->client()->client()->genUniqueId())
 
 
 JingleFooSession::JingleFooSession(JabberAccount *account, const JidList &peers)
@@ -33,16 +37,19 @@ JingleFooSession::JingleFooSession(JabberAccount *account, const JidList &peers)
 {
 
 	XMPP::Jid jid( account->client()->jid());
-	state = JingleStateEnum::PENDING;
+	state = PENDING;
+	JingleContentType fooType;
+	fooType.name = "Foo";
+	fooType.xmlns = "http://www.example.com/jingle/foo.html";
+	fooType.transportNS = "http://www.example.com/jingle/foo-transport.html";
 
 	//create connection candidates:  need them, no matter what
-	types.candidates = JingleFooTransport.getLocalCandidates();
-	types.push_back(JingleContentType("Foo","http://www.example.com/jingle/foo.html","http://www.example.com/jingle/foo-transport.html");
+	fooType.candidates = fooTransport.getLocalCandidates();
+	types.push_back(fooType);
 
 	// Listen to incoming packets
 	connect(account->client()->client(), SIGNAL(xmlIncoming(const QString&)), this, SLOT(receiveStanza(const QString&)));
 
-	new JingleIQResponder(account->client()->rootTask());
 }
 
 JingleFooSession::~JingleFooSession()
@@ -51,17 +58,21 @@ JingleFooSession::~JingleFooSession()
 	
 } 
 
-void JingeFooSession::start()
+void JingleFooSession::start()
 {
 
-	sid = account->client()->genUniqueId();
+	sid = account()->client()->client()->genUniqueId();
 	initiator = myself().full();
-	responder = peers->first()->full();
+	amIInitiator = true;
+	responder = peers().first().full();
 
-	QDomElement message = createInitializationMessage(myself().full(), peers()->first()->full() account->client()->genUniqueId(), &sid, &initiator, types);	
+	transactionID = GEN_ID;
+
+	QDomDocument message = Jingle::createInitializationMessage(initiator, responder, transactionID, sid, initiator, types);	
 
 	lastMessage = sessionInitiate;
-	send(message);
+	sendStanza( message.toString() );
+	amIInitiator = true;
 
 	emit sessionStarted();
 
@@ -69,9 +80,21 @@ void JingeFooSession::start()
 
 QString JingleFooSession::sessionType()
 {
-	return QString(JINGLE_FOO_SESSION_NS);
+	return QString(JINGLE_FOO_NS);
 }
 
+//NOTE this function needs a better place, to to be replaced.
+static bool hasPeer(const JingleFooSession::JidList &jidList, const XMPP::Jid &peer)
+{
+	JingleFooSession::JidList::ConstIterator it, itEnd = jidList.constEnd();
+	for(it = jidList.constBegin(); it != itEnd; ++it)
+	{
+		if( (*it).compare(peer, true) )
+			return true;
+	}
+
+	return false;
+}
 void JingleFooSession::receiveStanza(const QString &stanza)
 {
 	QDomDocument doc;
@@ -85,7 +108,7 @@ void JingleFooSession::receiveStanza(const QString &stanza)
 		if( type == "unavailable" && hasPeer(peers(), from) ) 
 		{
 			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "User went offline without closing a call." << endl;
-			state = JingleStateEnum::ENDED;
+			state = ENDED;
 			emit terminated();
 		}
 		return;
@@ -101,12 +124,17 @@ void JingleFooSession::receiveStanza(const QString &stanza)
 		//NOTE big assumption: we're getting the session-initiate message
 		if( sid.isEmpty() ) sid = element.attribute("sid");
 		// Catch messages that are a) jingle messages and b) for this session
-		//NOTE doesn't catch <error> messages
-		if( !element.isNull() && element.attribute("xmlns") == JINGLE_NS && element.attribute("sid") == sid )
+		if( !element.isNull() && ((element.attribute("xmlns") == JINGLE_NS && element.attribute("sid") == sid ) 
+			|| (doc.documentElement().attribute("id") == transactionID )) )
 		{
 			ok = true;
 		}
 		node = node.nextSibling();
+	}
+
+	// they're responding to something: might be an error or response
+	if(doc.documentElement().attribute("id") == transactionID ){
+		ok=true;
 	}
 
 	// It's for me
@@ -119,10 +147,14 @@ void JingleFooSession::receiveStanza(const QString &stanza)
 
 void JingleFooSession::accept()
 {
-	if(state == JingleStateEnum::PENDING){
-		QDomElement accept = Jingle::createAcceptMessage(jid->full(), peers()->first()->full(), &initiator, &responder,  account->client()->genUniqueId(),&sid,types);
-		send(accept);
-		state = JingleStateEnum::ACTIVE;
+	if(state == PENDING){
+		QString me = myself().full();
+		QString them = peers().first().full();
+		transactionID = GEN_ID;
+		//QDomDocument accept = Jingle::createAcceptMessage(myself().full(), peers().first().full(), initiator, responder,  transactionID,&sid,types);
+		QDomDocument accept = Jingle::createAcceptMessage(me, them, initiator, responder,  transactionID, sid,types, connection);
+		sendStanza(accept.toString());
+		state = ACTIVE;
 		lastMessage = sessionAccept;
 		emit accepted();
 	}
@@ -131,52 +163,59 @@ void JingleFooSession::accept()
 void JingleFooSession::decline()
 {
 	//It SHOULD be "PENDING", but decline and terminate do the same thing. so it doesn't matter.
-	if(state != JingleStateEnum::ENDED)
+	if(state != ENDED)
 	{
-		QDomElement decline = Jingle::createTerminateMessage(jid->full(), peers()->first()->full(), &initiator, &responder, account->client()->genUniqueId(),&sid,"Declined");
-		send(decline);
-		state = JingleStateEnum::ENDED;
+		QString me = myself().full();
+		QString them = peers().first().full();
+		//QString declined(declined);
+		transactionID = GEN_ID;
+		//QDomDocument decline = Jingle::createTerminateMessage(myself().full(), peers().first().full(), initiator, responder, transactionID,sid,"Declined");
+		QDomDocument decline = Jingle::createTerminateMessage(me, them, initiator, responder, transactionID,sid, "Declined");
+		sendStanza(decline.toString());
+		state = ENDED;
 		emit declined();
 	}
 }
 
 void JingleFooSession::terminate()
 {
-	if(state =! JingleStateEnum::ENDED)
+	if(state != ENDED)
 	{
-		QDomElement terminate = Jingle::createTerminateMessage(jid->full(), peers()->first()->full(), &initiator, &responder, account->client()->genUniqueId(),&sid,"Bye");
-		send(terminate);
-		state = JingleStateEnum::ENDED;
+		transactionID = GEN_ID;
+		QDomDocument terminate = Jingle::createTerminateMessage(myself().full(), peers().first().full(), initiator, responder, transactionID,sid,"Bye");
+		sendStanza(terminate.toString());
+		state = ENDED;
 		emit terminated();
 	}
 }
 
-QDomDocument JingleFooSession::checkPayload(QDomElement stanza)
+void JingleFooSession::checkNewContent(QDomElement stanza)
 {
-	QDomElement content = stanza.elementsByTagName("content").item(0); //NOTE need to check for nulls
-	//NOTE assumes only one type of content.
+	QDomElement content = stanza.elementsByTagName("content").item(0).toElement(); //NOTE need to check for nulls
+	//NOTE assumes only one type of content.  Since this handles session-initiate, there could be multiple
 	QString name = content.attribute("name");
 	bool rightContent = false;
-	for( int i =0; i< types.length(); i++){
+	for( int i =0; i< types.size(); i++){
 		if(types[i].name == name) rightContent = true;
 	}
 	if(rightContent){
-		QString transportNS = content.elementsByTagName("transport").item(0).attribute("xmlns");
+		QString transportNS = content.elementsByTagName("transport").item(0).toElement().attribute("xmlns");
 		if(transportNS == JINGLEFOOTRANSPORT){
-			return Jingle::createReceiptMessage(stanza);
+			sendStanza( Jingle::createReceiptMessage(stanza).toString() );
+			int i;//TODO add candidate, set i to its index
+			sendTransportCandidates(i);
 		}else{
-			return Jingle::createTransportErrorMessage(stanza);
+			sendStanza( Jingle::createTransportErrorMessage(stanza).toString() );
 		}
 	}else{
-		return Jingle::createContentErrorMessage(stanza);
+		sendStanza( Jingle::createContentErrorMessage(stanza).toString() );
 	}
 }
 
 
 void JingleFooSession::removeContent(QDomElement stanza)
 {
-	QDomElement content = stanza.firstChildElement().firstChildELement(); //NOTE need to check for nulls
-	//NOTE assumes only one type of content.
+	QDomElement content = stanza.firstChildElement().firstChildElement(); //NOTE need to check for nulls (bad requests)
 	QString name = content.attribute("name");
 	bool rightContent = false;
 	int i = -1;
@@ -184,19 +223,72 @@ void JingleFooSession::removeContent(QDomElement stanza)
 	do{
 		i++;
 		if(types[i].name == name) rightContent = true;
-	}while( i < types.length() && !rightContent);
+	}while( i < types.size() && !rightContent);
 
-	types.remove(i);
+	types.removeAt(i);
+
+	//send reciept here, in case of termination
+	sendStanza(Jingle::createReceiptMessage(stanza).toString() );
+
 	if(types.empty()){
 		terminate();
+	}else{
+		//NOTE the standard is fuzzy; is this message supposed to be sent?
+// 		transactionID = GEN_ID;
+// 		lastMessage = contentAccept;
+// 		sendStanza(Jingle::createContentAcceptMessage(myself().full(), peers().first().full(), initiator, responder, transactionID, sid, types).toString() );
 	}
+}
+
+void JingleFooSession::updateContent(QDomElement stanza)
+{
+	QDomElement content = stanza.elementsByTagName("content").item(0).toElement();
+	QString name = content.attribute("name");
+	int i = 0;
+	while( i < types.size() ){
+		if (types[i].name == name) break; //breaks are bad.
+	}
+	//TODO replace stuff in types[i]
+
+}
+
+void JingleFooSession::checkContent(QDomElement stanza)
+{
+	QDomElement content = stanza.elementsByTagName("content").item(0).toElement();
+	QString name = content.attribute("name");
+	//if (magic FooContent checks)
+		int i = 0;
+		while( i < types.size() ){
+			if (types[i].name == name) break; //breaks are bad.
+		}
+		if(i == types.size() ){
+			//what kind of error does this send?
+		}
+		//TODO replace stuff in types[i]
+		//QString transNS = content.elementsByTagName("transport").item(0).toElement().attribute("xmlns");
+		//NOTE standard implies here we should again send transport candidates based on transNS
+	//else (new FooContent isn't receiveable)
+		//again, standard is fuzzy. used to be content-decline.
+	//endif
 }
 
 bool JingleFooSession::addRemoteCandidate(QDomElement transportElement)
 {
-	JingleFooConnectionCandidate candidate = fooTransport.getCandidateFromElement(transportElement);
+	JingleConnectionCandidate candidate = fooTransport.createCandidateFromElement(transportElement);
 
-
+	return true;
 }
 
+void JingleFooSession::sendTransportCandidates(int contentIndex)
+{
+	//NOTE instead of a foreach, this could pass the ContentType and index of the ConnectionCandidate
+	foreach (JingleConnectionCandidate candidate, types[contentIndex].candidates){
+		lastMessage = transportInfo;
+		transactionID = GEN_ID; //TODO make this a queue
+		sendStanza( Jingle::createTransportCandidateMessage(
+			myself().full(), peers().first().full(), initiator, responder, transactionID, sid,
+			types[contentIndex].name, types[contentIndex].creator, types[contentIndex].transportNS,
+			&candidate).toString() ) ;
+	}
+}
 #include "jinglefoosession.moc"

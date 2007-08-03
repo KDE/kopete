@@ -24,6 +24,12 @@
 #include "jabberaccount.h"
 #include "jabberprotocol.h"
 
+bool inline JingleSession::isModifying(){
+	if(lastMessage == contentAdd || lastMessage == contentRemove || lastMessage == contentModify
+		|| lastMessage == descriptionModify || lastMessage == transportModify ) return true;
+	return false;
+}
+
 class JingleSession::Private
 {
 public:
@@ -40,6 +46,7 @@ JingleSession::JingleSession(JabberAccount *account, const JidList &peers)
  : QObject(account, 0), d(new Private(account, peers))
 {
 	d->myself = account->client()->jid();
+	state = PENDING;
 }
 
 JingleSession::~JingleSession()
@@ -88,6 +95,8 @@ void JingleSession::processStanza(QDomDocument doc)
 		QDomElement jingleElement = root.firstChildElement();
 		if( jingleElement.isNull() ){
 
+		}else if( state == ENDED){ //session is already over
+			sendStanza( Jingle::createUnknownSessionError(root).toString() );
 		}else{
 			QString action = jingleElement.attribute("action");
 			if(action == "session-accept"){
@@ -114,9 +123,10 @@ void JingleSession::processStanza(QDomDocument doc)
 					sendStanza( Jingle::createOrderErrorMessage(root).toString() );
 				}else{
 					initiator = root.attribute("from");
+					amIInitiator = false;
 					responder = myself().full();
 					sid = jingleElement.attribute("sid");
-					sendStanza( checkPayload(root).toString() );
+					checkNewContent(root);
 				}
 
 			}else if(action == "session-terminate"){
@@ -131,24 +141,34 @@ void JingleSession::processStanza(QDomDocument doc)
 
 			}else if(action == "content-add"){
 
-				if(state != ACTIVE){
+				//out of order if still pending or if session being modified
+				if(state != ACTIVE  || ( isModifying() && amIInitiator ) ){
 					sendStanza(Jingle::createOrderErrorMessage(root).toString() );
 				}else{
-					sendStanza(Jingle::createReceiptMessage(root).toString() );
+					//sendStanza(Jingle::createReceiptMessage(root).toString() );
+					checkNewContent(root);
 				}
 
 			}else if(action == "content-remove"){
-
-				removeContent(root);
-				sendStanza(Jingle::createReceiptMessage(root).toString() );
+				if ( isModifying() && amIInitiator ){
+					sendStanza( Jingle::createOrderErrorMessage(root).toString() );
+				}else{
+					removeContent(root); //remove content and send accept or terminate
+				}
 
 			}else if(action == "content-modify"){
 
-				sendStanza(Jingle::createReceiptMessage(root).toString() );
+				if ( isModifying() && amIInitiator ){
+					sendStanza( Jingle::createOrderErrorMessage(root).toString() );
+				}else{
+					sendStanza( Jingle::createReceiptMessage(root).toString() );
+					checkContent(root);
+				}
 
 			}else if(action == "content-accept"){
 
 				sendStanza(Jingle::createReceiptMessage(root).toString() );
+				updateContent(root);
 
 			}else if(action == "transport-info"){
 
@@ -161,7 +181,21 @@ void JingleSession::processStanza(QDomDocument doc)
 				}else{
 					//malformed candidate
 				}
-			}
+			}/*else if (action == "description-modify"){
+				if ( isModifying() && amIInitiator ){
+					sendStanza( Jingle::createOrderErrorMessage(root).toString() );
+				}else{
+					sendStanza( Jingle::createReceiptMessage(root).toString() );
+					//TODO do something
+				}
+			}else if (action == "transport-modify"){
+				if ( isModifying() && amIInitiator ){
+					sendStanza( Jingle::createOrderErrorMessage(root).toString() );
+				}else{
+					sendStanza( Jingle::createReceiptMessage(root).toString() );
+					//TODO do something
+				}
+			}*/
 		}
 	}else if(type == "result"){
 
@@ -183,21 +217,28 @@ void JingleSession::handleError(QDomElement errorElement)
 		*/
 		if ( !( errorElement.elementsByTagName("service-unavailable").isEmpty() ) ){
 			//no jingle support, or jingle connection not permitted
-			//state = ENDED;
-			//emit terminated();
+			state = ENDED;
+			emit terminated();
 		}else if( !( errorElement.elementsByTagName("redirect").isEmpty() ) ){
 			//change the TO
 			peers()[0] = XMPP::Jid( errorElement.firstChildElement().text() );
 			responder = errorElement.firstChildElement().text();
+			start(); //NOTE this emits sessionStarted() again
 		}else if( !( errorElement.elementsByTagName("bad-request").isEmpty() ) ){
 			//syntax error.
 			kDebug(JABBER_DEBUG_GLOBAL) << "our session-initiate syntax stanza was malformed" << endl;
 		}else if( !(errorElement.elementsByTagName("unsupported-transport").isEmpty() ) ){
-			//state = ENDED;
-			//emit terminated();
+			state = ENDED;
+			emit terminated();
 		}else if( !(errorElement.elementsByTagName("unsupported-content").isEmpty() ) ){
-			//state = ENDED;
-			//emit terminated();
+			state = ENDED;
+			emit terminated();
+		}
+	}else if( lastMessage == sessionAccept) {
+		
+	}else if( isModifying() && !amIInitiator ){
+		if (!(errorElement.elementsByTagName("unexpected-request").isEmpty() ) ){
+			//their modification takes precedence.
 		}
 	}
 

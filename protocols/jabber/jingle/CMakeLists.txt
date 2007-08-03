@@ -46,16 +46,16 @@ link_directories( ${CMAKE_CURRENT_BINARY_DIR}/../libiris/iris/xmpp-im )
 ########### next target ###############
 
 set(kopete_jingle_PART_SRCS 
+
+  jinglefoosession.cpp
+  jinglejabberxml.cpp
   jinglesession.cpp 
   jinglesessionmanager.cpp 
-  #jinglevoicecaller.cpp 
-  jinglevoicesession.cpp 
+  #jinglevoicesession.cpp  this one'll get put back
   jinglevoicesessiondialog.cpp 
   voicecaller.h
   jinglewatchsessiontask.cpp 
-  jinglenetwork.cpp
-  jinglefoosession.cpp
-  jinglejabberxml.cpp
+  #jinglenetwork.cpp
   #${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/xmpp-im/xmpp_xmlcommon.cpp
   #${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/xmpp-core/stream.cpp
 )

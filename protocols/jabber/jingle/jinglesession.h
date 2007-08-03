@@ -21,9 +21,9 @@
 //#include <qstring.h>
 
 #include <xmpp.h> // XMPP::Jid
-//#include <q3valuelist.h>
+#include <q3valuelist.h>
 
-//#include "jingleconnectioncandidate.h"
+#include "jingleconnectioncandidate.h"
 
 struct JingleContentType;
 class JingleTransport;
@@ -47,6 +47,8 @@ enum JingleLastMessageEnum{
 	contentAdd,
 	contentRemove,
 	contentModify,
+	descriptionModify,
+	transportModify,
 	transportInfo
 };
 //END JingleLastMessageEnum
@@ -106,7 +108,7 @@ protected slots:
 	
 signals:
 	/**
-	 * Session is started(negocation and connection test are done).
+	 * Session is started(negotiation and connection test are done).
 	 */
 	void sessionStarted();
 
@@ -124,14 +126,45 @@ protected:
 
 	/**
 	* Removes designated content type.  If there are none left, closes the session.
+	* Otherwise, sends content-accept message.
 	*/
 	virtual void removeContent(QDomElement stanza) = 0;
 
-	virtual QDomDocument checkPayload(QDomElement stanza) = 0;
+	/**
+	* Updates the <tt>JingleContentType</tt> in <tt>types</tt> with the 
+	* same name as in the message with the properties from the message.
+	*/
+	virtual void updateContent(QDomElement stanza) = 0;
+
+	/**
+	* Checks modifications to a JingleContentType in types.
+	* If the changes are acceptable, sends an accept-content
+	* or beings transport negociations.
+	*/
+	virtual void checkContent(QDomElement stanza) = 0;
+
+	/**
+	* Checks a new content type (from session-initiate or add-content).
+	* Sends an error or a reciept, and then begins negociations.
+	*/
+	virtual void checkNewContent(QDomElement stanza) = 0;
+
+	/**
+	* Sends all local candidates for the transport connection
+	* for content <tt>contentIndex</tt> in <tt>types</tt>
+	* to the remote machine.
+	*/
+	virtual void sendTransportCandidates(int contentIndex) = 0;
 
 	virtual bool addRemoteCandidate(QDomElement transportElement) = 0;
 
 	virtual JingleTransport* transport() = 0;
+
+	/**
+	 * Returns true if the session is being modified.  Used to determine
+	 * whether both parties are trying to modify the session at once.
+	 */
+	bool isModifying();
 
 	//NOTE this does not scale to multiple-content sessions
 	JingleConnectionCandidate connection;
@@ -143,6 +176,10 @@ protected:
 	QString initiator;
 	QString responder;
 	QString sid;
+	bool amIInitiator;
+	QString transactionID;
+
+	
 
 private:
 	class Private;

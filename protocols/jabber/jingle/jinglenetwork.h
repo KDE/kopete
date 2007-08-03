@@ -21,6 +21,8 @@
 
 #include "jingleinfotask.h"
 
+#include <solid/networkinterface.h>
+
 class JingleNetworkManager : public QObject
 {
 	Q_OBJECT
@@ -44,7 +46,7 @@ protected slots:
 
 
 private:
-	QAbstractSocket socket*;
+	QAbstractSocket* socket;
 	QMap<QString,Solid::NetworkInterface> networks_; 
 	void connectWithCandiate(JingleConnectionCandidate);
 	int currentCandidate;

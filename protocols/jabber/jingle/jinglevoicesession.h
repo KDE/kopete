@@ -70,8 +70,13 @@ private:
 	QString initiator;
 	QString responder;
 	QString sid;
-	virtual QDomElement checkPayload(QDomElement stanza);
 	virtual void removeContent(QDomElement stanza);
+	virtual bool addRemoteCandidate(QDomElement transportElement);
+	virtual void updateContent(QDomElement stanza);
+	virtual void checkContent(QDomElement stanza);
+	virtual void checkNewContent(QDomElement stanza);
+	virtual void sendTransportCandidates(int contentIndex);
+	virtual JingleTransport* transport();
 };
 
 #endif

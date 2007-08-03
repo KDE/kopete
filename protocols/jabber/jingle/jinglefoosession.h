@@ -17,10 +17,13 @@
 #ifndef JINGLEFOOSESSION_H_
 #define JINGLEFOOSESSION_H_
 
+#include "jinglefootransport.h"
+#include "jinglesession.h"
+
 class JabberAccount;
-class JingleSession;
 class QDomDocument;
-enum JingleStateEnum;
+class JingleFooConnectionCandidate;
+
 
 /**
  * Session which sends ASCII text "foo"
@@ -55,11 +58,14 @@ protected:
 	virtual bool addRemoteCandidate(QDomElement transportElement);
 
 private:
+	virtual void updateContent(QDomElement stanza);
+	virtual void sendTransportCandidates(int contentIndex);
 
+	virtual void checkContent(QDomElement stanza);
 
 	QList<JingleFooConnectionCandidate> remoteCandidates;
 
-	virtual QDomDocument checkPayload(QDomElement stanza);
+	virtual void checkNewContent(QDomElement stanza);
 
 	virtual void removeContent(QDomElement stanza);
 

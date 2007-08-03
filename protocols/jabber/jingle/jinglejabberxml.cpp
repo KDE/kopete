@@ -16,19 +16,22 @@
 */
 #include "jinglejabberxml.h"
 
-#include jingleconnectioncandidate.h"
+#include "jingleconnectioncandidate.h"
 
-QDomDocument Jingle::createInitializationMessage(QString* from, QString* to, QString* id, QString* sid, QString* initiator, QList<JingleContentType> types)
+#include <QList>
+#include <QtXml>
+
+QDomDocument Jingle::createInitializationMessage(QString from, QString to, QString id, QString sid, QString initiator, QList<JingleContentType> types)
 {
 	QDomDocument doc;
-	QDomElement root = createIQ(&doc,"set",to,id);
+	QDomElement root = createIQ(&doc,"set", to, id);
 	//root.setAttribute("from", from);
 	QDomElement jingle = doc.createElement("jingle");
 	jingle.setAttribute("xmlns", "http://www.xmpp.org/extensions/xep-0166.html#ns");
 	jingle.setAttribute("action", "session-initiate");
 	jingle.setAttribute("initiator", from);
 	jingle.setAttribute("sid", sid);
-	for(int i=0; i<types.length();i++){
+	for(int i=0; i<types.size();i++){
 		QDomElement content= doc.createElement("content");
 		content.setAttribute("creator",initiator);
 		content.setAttribute("name",types[i].name);
@@ -38,12 +41,12 @@ QDomDocument Jingle::createInitializationMessage(QString* from, QString* to, QSt
 		transport.setAttribute("xmlns",types[i].transportNS);
 
 //		for(int j=0; j<types[i].candidates.length(); j++){
-//			transport.append(types[i].candidates[j].getCandidateElement();
+//			transport.appendChild(types[i].candidates[j].getCandidateElement();
 //		}
 
-		content.append(description);
-		content.append(transport);
-		jingle.append(content);	
+		content.appendChild(description);
+		content.appendChild(transport);
+		jingle.appendChild(content);	
 	}
 
 
@@ -53,7 +56,7 @@ QDomDocument Jingle::createInitializationMessage(QString* from, QString* to, QSt
 	return doc;
 }
 
-QDomDocument Jingle::createAcceptMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QList<JingleContentType> types, JingleConnectionCandidate connection)
+QDomDocument Jingle::createAcceptMessage(QString from, QString to, QString initiator, QString responder, QString id, QString sid, QList<JingleContentType> types, JingleConnectionCandidate connection)
 {
 
 	QDomDocument doc;
@@ -64,8 +67,8 @@ QDomDocument Jingle::createAcceptMessage(QString* from, QString* to, QString* in
 	jingle.setAttribute("action", "session-accept");
 	jingle.setAttribute("initiator", initiator);
 	jingle.setAttribute("responder", responder);
-	jingle.setAttribute("sid", id);
-	for(int i=0; i<types.length();i++){
+	jingle.setAttribute("sid", sid);
+	for(int i=0; i<types.size();i++){
 		QDomElement content= doc.createElement("content");
 		content.setAttribute("creator",initiator);
 		content.setAttribute("name",types[i].name);
@@ -73,19 +76,20 @@ QDomDocument Jingle::createAcceptMessage(QString* from, QString* to, QString* in
 		description.setAttribute("xmlns",types[i].xmlns);
 		QDomElement transport = doc.createElement("transport");
 		transport.setAttribute("xmlns",types[i].transportNS);
-		content.append(description);
-		content.append(transport);
-		jingle.append(content);	
+		content.appendChild(description);
+		content.appendChild(transport);
+		jingle.appendChild(content);	
 	}
-
+	//TODO add candidate element
 
 	root.appendChild(jingle);
 	doc.appendChild(root);
 
+	Q_UNUSED(from);
 	return doc;
 }
 
-QDomDocument Jingle::createTerminateMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QString* reason)
+QDomDocument Jingle::createTerminateMessage(QString from, QString to, QString initiator, QString responder, QString id, QString sid, QString reason)
 {
 	QDomDocument doc;
 	QDomElement root = createIQ(&doc,"set",to,id);
@@ -95,7 +99,7 @@ QDomDocument Jingle::createTerminateMessage(QString* from, QString* to, QString*
 	jingle.setAttribute("action", "session-terminate");
 	jingle.setAttribute("initiator", initiator);
 	jingle.setAttribute("responder", responder);
-	jingle.setAttribute("sid", id);
+	jingle.setAttribute("sid", sid);
 	jingle.setAttribute("reason", reason);
 
 	root.appendChild(jingle);
@@ -105,9 +109,9 @@ QDomDocument Jingle::createTerminateMessage(QString* from, QString* to, QString*
 
 }
 
-QDomDocument Jingle::createReceiptMessage(QDomElement stanza);
+QDomDocument Jingle::createReceiptMessage(QDomElement stanza)
 {
-	QDomElement doc;
+	QDomDocument doc;
 	QDomElement iq = createIQ(&doc, "result", stanza.attribute("from"), stanza.attribute("id"));
 	doc.appendChild(iq);
 	return doc;
@@ -123,9 +127,9 @@ QDomDocument Jingle::createContentErrorMessage(QDomElement stanza)
 	fni.setAttribute("xmlns","urn:ietf:params:sml:ns:xmpp-stanzas");
 	QDomElement uc = doc.createElement("unsupported-content");
 	uc.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0166.html#ns-errors");
-	error.append(fni);
-	error.append(uc);
-	iq.append(error);
+	error.appendChild(fni);
+	error.appendChild(uc);
+	iq.appendChild(error);
 
 	doc.appendChild(iq);
 	return doc;
@@ -141,9 +145,9 @@ QDomDocument Jingle::createTransportErrorMessage(QDomElement stanza)
 	fni.setAttribute("xmlns","urn:ietf:params:sml:ns:xmpp-stanzas");
 	QDomElement ut = doc.createElement("unsupported-transports");
 	ut.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0166.html#ns-errors");
-	error.append(fni);
-	error.append(ut);
-	iq.append(error);
+	error.appendChild(fni);
+	error.appendChild(ut);
+	iq.appendChild(error);
 
 	doc.appendChild(iq);
 	return doc;
@@ -159,15 +163,15 @@ QDomDocument Jingle::createOrderErrorMessage(QDomElement stanza)
 	ur.setAttribute("xmlns","urn:ietf:params:sml:ns:xmpp-stanzas");
 	QDomElement ooo = doc.createElement("out-of-order");
 	ooo.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0166.html#ns-errors");
-	error.append(ur);
-	error.append(ooo);
-	iq.append(error);
+	error.appendChild(ur);
+	error.appendChild(ooo);
+	iq.appendChild(error);
 
 	doc.appendChild(iq);
 	return (doc);
 }
 
-QDomDocument Jingle::createTransportNotAcceptableMessage(QDocument stanza)
+QDomDocument Jingle::createTransportNotAcceptableMessage(QDomElement stanza)
 {
 	QDomDocument doc;
 	QDomElement iq = createIQ(&doc, "error", stanza.attribute("from"), stanza.attribute("id"));
@@ -175,8 +179,50 @@ QDomDocument Jingle::createTransportNotAcceptableMessage(QDocument stanza)
 	error.setAttribute("type","cancel");
 	QDomElement na = doc.createElement("not-acceptable");
 	na.setAttribute("xmlns","urn:ietf:params:sml:ns:xmpp-stanzas");
-	error.append(na);
-	iq.append(error);
+	error.appendChild(na);
+	iq.appendChild(error);
+
+	doc.appendChild(iq);
+	return (doc);
+}
+
+QDomDocument Jingle::createUnknownSessionError(QDomElement stanza)
+{
+	QDomDocument doc;
+	QDomElement iq = createIQ(&doc, "error", stanza.attribute("from"), stanza.attribute("id"));
+	QDomElement error = doc.createElement("error");
+	error.setAttribute("type","cancel");
+	QDomElement  br= doc.createElement("bad-request");
+	br.setAttribute("xmlns","urn:ietf:params:sml:ns:xmpp-stanzas");
+	error.appendChild(br);
+	QDomElement us = doc.createElement("unknown-session");
+	us.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0166.html#ns-errors");
+	error.appendChild(us);
+	iq.appendChild(error);
+
+	doc.appendChild(iq);
+	return (doc);
+}
+
+QDomDocument Jingle::createTransportCandidateMessage(QString from, QString to, QString initiator, QString responder, QString id, QString sid, QString contentName, QString contentCreator, QString transportNS, JingleConnectionCandidate *candidate)
+{
+	QDomDocument doc;
+	QDomElement iq = createIQ(&doc, "set", to, id);
+	QDomElement jingle = doc.createElement("jingle");
+	jingle.setAttribute("xmlns", "http://www.xmpp.org/extensions/xep-0166.html#ns");
+	jingle.setAttribute("action", "transport-info");
+	jingle.setAttribute("initiator", initiator);
+	jingle.setAttribute("responder", responder);
+	jingle.setAttribute("sid", sid);
+	QDomElement content = doc.createElement("content");
+	content.setAttribute("name",contentName);
+	content.setAttribute("creator", contentCreator);
+	QDomElement transport = doc.createElement("transport");
+	transport.setAttribute("xmlns", transportNS);
+	transport.appendChild(candidate->getCandidateElement());
+	content.appendChild(transport);
+	jingle.appendChild(content);
+	iq.appendChild(jingle);
 
 	doc.appendChild(iq);
 	return (doc);

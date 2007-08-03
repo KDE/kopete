@@ -17,9 +17,7 @@
 #ifndef JINGLEINFOTASK_H
 #define JINGLEINFOTASK_H
 
-namespace XMPP{
-	Task;
-}
+#include "xmpp_task.h"
 
 /**
  * A struct representing a hostname and port.
@@ -27,12 +25,12 @@ namespace XMPP{
  */
 struct PortAddress
 {
-	PortAddress(QString hn, quint16 p):hostname(hn),port(p);
-	PortAddress(QHostAddress ad, quint16 p): address(ad), port(p);
+	PortAddress(QString hn, quint16 p){ hostname=(hn);port=(p);}
+	PortAddress(QHostAddress ad, quint16 p){ address=(ad); port=(p);}
 	QString hostname;
 	QHostAddress address;
 	quint16 port;
-}
+};
 
 class  JingleInfoTask : XMPP::Task
 {
@@ -40,7 +38,7 @@ public:
 	JingleInfoTask(XMPP::Task* parent);
 
 	void updateInfo();
-public signals:
+signals:
 	void signalJingoInfoUpdate(QString relayToken, QList<QHostAddress> relayHosts, QList<PortAddress> stunHosts);
 
 };

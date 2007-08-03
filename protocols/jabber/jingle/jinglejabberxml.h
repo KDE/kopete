@@ -20,10 +20,11 @@
 //#include <QtXml>
 
 #include "xmpp_xmlcommon.h"
+#include <QList>
 
 //#include "jinglecontenttype.h"
+#include "jingleconnectioncandidate.h";
 
-class JingleConnectionCandidate;
 
 //BEGIN JingleContentType
 struct JingleContentType
@@ -34,18 +35,28 @@ struct JingleContentType
 	QString xmlns;
 	QString name;
 	QString transportNS;
+	QString creator;
 //	QList<QDomElement> payloads;
-//	QList<JingleConnectionCandidate> candidates;
+
+	/**
+	 * List of candidates to connect to this machine over the transport
+	 */
+	QList<JingleConnectionCandidate> candidates;
+
+	/**
+	 * Chosen candidate to connect to the other machine
+	 */
+	JingleConnectionCandidate connection;
 };
 //END JingleContentType
 
 namespace Jingle{
 
-QDomDocument createInitializationMessage(QString* from, QString* to, QString* id, QString* sid, QString* initiator, QList<JingleContentType> types);
+QDomDocument createInitializationMessage(QString from, QString to, QString id, QString sid, QString initiator, QList<JingleContentType> types);
 
-QDomDocument createAcceptMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QList<JingleContentType> types, JingleConnectionCandidate connection);
+QDomDocument createAcceptMessage(QString from, QString to, QString initiator, QString responder, QString id, QString sid, QList<JingleContentType> types, JingleConnectionCandidate connection);
 
-QDomDocument createTerminateMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QString* reason);
+QDomDocument createTerminateMessage(QString from, QString to, QString initiator, QString responder, QString id, QString sid, QString reason);
 
 QDomDocument createReceiptMessage(QDomElement stanza);
 
@@ -53,8 +64,7 @@ QDomDocument createContentErrorMessage(QDomElement stanza);
 
 QDomDocument createTransportErrorMessage(QDomElement stanza);
 
-//NOTE not implemented yet
-QDomDocument createTransportCandidateMessage(QString* from, QString* to, QString* initiator, QString* responder, QString* id, QString* sid, QString* contentName, QString* transportNS, JingleConnectionCandidate* candidate);
+QDomDocument createTransportCandidateMessage(QString from, QString to, QString initiator, QString responder, QString id, QString sid, QString contentName, QString contentCreator, QString transportNS, JingleConnectionCandidate *candidate);
 
 QDomDocument createOrderErrorMessage(QDomElement stanza);
 
@@ -62,6 +72,11 @@ QDomDocument createOrderErrorMessage(QDomElement stanza);
  * Sent if the candidate picked on the other side does not work here
  */
 QDomDocument createTransportNotAcceptableMessage(QDomElement stanza);
+
+QDomDocument createUnknownSessionError(QDomElement stanza);
+
+//NOTE not implemented yet
+QDomDocument createContentAcceptMessage(QString from, QString to, QString initiator, QString responder, QString id, QString sid, QList<JingleContentType> types);
 
 }
 #endif
