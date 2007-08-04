@@ -47,6 +47,7 @@ SidebarWidget::SidebarWidget( KopeteChatWindow *parent )
 	QVBoxLayout *l = new QVBoxLayout(pageInfoZone);
 	//m_htmlInfoZone = new KHTMLPart(pageInfoZone);
 	m_infoZone = new QLabel(pageInfoZone);
+        m_infoZone->setWordWrap(true);
 	l->addWidget(m_infoZone);
 	
 	m_tabWidget->addTab(pageInfoZone, i18n("Information"));

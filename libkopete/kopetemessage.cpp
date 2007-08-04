@@ -582,6 +582,7 @@ QString Message::decodeString( const QByteArray &message, const QTextCodec *prov
 		return providedCodec->toUnicode( message );
 	}
 
+        //NOTE see KEncodingDetector@kdecore
 	//Check if it is UTF
 	if( KStringHandler::isUtf8(message) )
 	{
