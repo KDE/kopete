@@ -68,7 +68,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	QRegExp rx("[0-9]{9}");
 	QValidator* validator = new QRegExpValidator( rx, this );
 	mAccountSettings->edtAccountId->setValidator(validator);
-	
+
 	// Read in the settings from the account if it exists
 	if(mAccount)
 	{
@@ -140,9 +140,12 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	}
 	else
 	{
+		int encodingId=4; //see icqprotocol.cpp for mappings
+		if (KGlobal::locale()->language().startsWith("ru"))
+			encodingId=2251;
 		mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
 		                              mProtocol->encodings(),
-		                              4 );
+		                              encodingId );
 	}
 
 	if ( !mAccount || !mAccount->engine()->isActive() )
