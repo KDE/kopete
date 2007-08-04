@@ -82,7 +82,7 @@ typedef enum
 #if defined( __linux__) && defined(ENABLE_AV)
         ,
 	VIDEODEV_DRIVER_V4L
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
         ,
 	VIDEODEV_DRIVER_V4L2
 #endif
@@ -256,7 +256,7 @@ public:
 
 //protected:
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 	struct v4l2_capability V4L2_capabilities;
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;

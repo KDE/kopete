@@ -140,7 +140,7 @@ int VideoDevice::checkDevice()
 
 		m_driver=VIDEODEV_DRIVER_NONE;
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 
 if(!getWorkaroundBrokenDriver())
 {
@@ -426,7 +426,7 @@ int VideoDevice::initDevice()
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 			if(V4L2_capabilities.capabilities & V4L2_CAP_READWRITE)
 			{
@@ -472,7 +472,7 @@ int VideoDevice::initDevice()
 
 // Select video input, video standard and tune here.
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 	cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	if (-1 == xioctl (VIDIOC_CROPCAP, &cropcap))
 	{ // Errors ignored.
@@ -537,20 +537,32 @@ kdDebug() <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") ca
 	if(isOpen())
 	{
 // It should not be there. It must remain in a completely distict place, cause this method should not change the pixelformat.
-		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
+		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV422P))
 		{
-			kdDebug() <<  k_funcinfo << "Card doesn't seem to support YUV420P format. Trying RGB24." << endl;
-			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
+			kdDebug() <<  k_funcinfo << "Card doesn't seem to support YUV422P format. Trying YUYV." << endl;
+			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUYV))
 			{
-				kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying BGR24." << endl;
-				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
+				kdDebug() <<  k_funcinfo << "Card doesn't seem to support YUYV format. Trying UYVY." << endl;
+				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_UYVY))
 				{
-					kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying RGB32." << endl;
-					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
+					kdDebug() <<  k_funcinfo << "Card doesn't seem to support UYVY format. Trying YUV420P." << endl;
+					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
 					{
-						kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB32 format. Trying BGR32." << endl;
-						if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32))
-							kdDebug() <<  k_funcinfo << "Card doesn't seem to support BGR32 format. Fallback to it is not yet implemented." << endl;
+						kdDebug() <<  k_funcinfo << "Card doesn't seem to support YUV420P format. Trying RGB24." << endl;
+						if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
+						{
+							kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying BGR24." << endl;
+							if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
+							{
+								kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying RGB32." << endl;
+								if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
+								{
+									kdDebug() <<  k_funcinfo << "Card doesn't seem to support RGB32 format. Trying BGR32." << endl;
+									if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32))
+										kdDebug() <<  k_funcinfo << "Card doesn't seem to support BGR32 format. Fallback to it is not yet implemented." << endl;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -569,7 +581,7 @@ kdDebug() <<  k_funcinfo << "setSize(" << newwidth << ", " << newheight << ") ca
 		switch(m_driver)
 		{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 			case VIDEODEV_DRIVER_V4L2:
 //				CLEAR (fmt);
 				if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
@@ -671,7 +683,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 //			CLEAR (fmt);
 			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
@@ -757,7 +769,7 @@ int VideoDevice::selectInput(int newinput)
 		switch (m_driver)
 		{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 			case VIDEODEV_DRIVER_V4L2:
 				if (-1 == ioctl (descriptor, VIDIOC_S_INPUT, &newinput))
 				{
@@ -825,7 +837,7 @@ int VideoDevice::startCapturing()
 				break;
 			case IO_METHOD_MMAP:
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 				{
 					unsigned int loop;
 					for (loop = 0; loop < m_streambuffers; ++loop)
@@ -847,7 +859,7 @@ int VideoDevice::startCapturing()
 				break;
 			case IO_METHOD_USERPTR:
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 				{
 					unsigned int loop;
 					for (loop = 0; loop < m_streambuffers; ++loop)
@@ -885,7 +897,7 @@ int VideoDevice::getFrame()
 	ssize_t bytesread;
 
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 	struct v4l2_buffer v4l2buffer;
 #endif
 #endif
@@ -919,7 +931,7 @@ int VideoDevice::getFrame()
 				break;
 			case IO_METHOD_MMAP:
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 				CLEAR (v4l2buffer);
 				v4l2buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 				v4l2buffer.memory = V4L2_MEMORY_MMAP;
@@ -979,7 +991,7 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 				break;
 			case IO_METHOD_USERPTR:
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 				{
 					unsigned int i;
 					CLEAR (v4l2buffer);
@@ -1244,7 +1256,7 @@ int VideoDevice::stopCapturing()
 				break;
 			case IO_METHOD_MMAP:
 			case IO_METHOD_USERPTR:
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 				{
 					enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 					if (-1 == xioctl (VIDIOC_STREAMOFF, &type))
@@ -1305,7 +1317,7 @@ float VideoDevice::setBrightness(float brightness)
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 			break;
 #endif
@@ -1343,7 +1355,7 @@ float VideoDevice::setContrast(float contrast)
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 			break;
 #endif
@@ -1381,7 +1393,7 @@ float VideoDevice::setSaturation(float saturation)
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 			break;
 #endif
@@ -1419,7 +1431,7 @@ float VideoDevice::setWhiteness(float whiteness)
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 			break;
 #endif
@@ -1457,7 +1469,7 @@ float VideoDevice::setHue(float hue)
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 			break;
 #endif
@@ -1570,7 +1582,7 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 			switch(palette)
 			{
@@ -1622,7 +1634,7 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 			switch(pixelformat)
 			{
@@ -1727,7 +1739,7 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 			switch(pixelformat)
 			{
@@ -1777,7 +1789,7 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 			switch(standard)
 			{
@@ -1919,7 +1931,7 @@ QString VideoDevice::signalStandardName(int standard)
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 			switch(standard)
 			{
@@ -1989,7 +2001,7 @@ int VideoDevice::detectSignalStandards()
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		case VIDEODEV_DRIVER_V4L2:
 			break;
 #endif
@@ -2048,7 +2060,7 @@ int VideoDevice::initMmap()
 	if(isOpen())
 	{
 		kdDebug() <<  k_funcinfo << full_filename << " Trying to MMAP" << endl;
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		struct v4l2_requestbuffers req;
 
 		CLEAR (req);
@@ -2120,7 +2132,7 @@ int VideoDevice::initUserptr()
     /// @todo implement me
 	if(isOpen())
 	{
-#ifdef HAVE_V4L2
+#ifdef __LINUX_VIDEODEV2_H
 		struct v4l2_requestbuffers req;
 
 		CLEAR (req);
