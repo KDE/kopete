@@ -74,7 +74,7 @@ ChatWindowStyleManager *ChatWindowStyleManager::self()
 	{
 		ChatWindowStyleManagerstaticDeleter.setObject( s_self, new ChatWindowStyleManager() );
 	}
-	
+
 	return s_self;
 }
 
@@ -86,7 +86,7 @@ ChatWindowStyleManager::ChatWindowStyleManager(QObject *parent)
 }
 
 ChatWindowStyleManager::~ChatWindowStyleManager()
-{	
+{
 	kDebug(14000) << k_funcinfo;
 	delete d;
 }
@@ -102,7 +102,7 @@ void ChatWindowStyleManager::loadStyles()
 		kDebug(14000) << k_funcinfo << style;
 		d->styleDirs.push( KUrl(style) );
 	}
-	
+
 	d->styleDirLister = new KDirLister(this);
 	d->styleDirLister->setDirOnlyMode(true);
 
@@ -121,7 +121,7 @@ QStringList ChatWindowStyleManager::getAvailableStyles() const
 int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 {
 	QString localStyleDir( KStandardDirs::locateLocal( "appdata", QString::fromUtf8("styles/") ) );
-	
+
 	KArchiveEntry *currentEntry = 0L;
 	KArchiveDirectory* currentDir = 0L;
 	KArchive *archive = 0L;
@@ -296,7 +296,7 @@ bool ChatWindowStyleManager::removeStyle(const QString &styleName)
 			d->stylePool.remove(styleName);
 			delete deletedStyle;
 		}
-	
+
 		QStringList styleDirs = KGlobal::dirs()->findDirs("appdata", QString("styles/%1").arg(styleName));
 		if(styleDirs.isEmpty())
 		{
@@ -308,10 +308,10 @@ bool ChatWindowStyleManager::removeStyle(const QString &styleName)
 		int numDeleted = 0;
 		foreach( const QString& stylePath, styleDirs )
 		{
-		KUrl urlStyle(stylePath);
-		// Do the actual deletion of the directory style.
-		if(KIO::NetAccess::del( urlStyle, 0 ))
-			numDeleted++;
+			KUrl urlStyle(stylePath);
+			// Do the actual deletion of the directory style.
+			if(KIO::NetAccess::del( urlStyle, 0 ))
+				numDeleted++;
 		}
 		return numDeleted == styleDirs.count();
 	}
