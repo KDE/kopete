@@ -199,9 +199,9 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	d->manager = mgr;
 
 	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(
-			 KopeteChatWindowSettings::self()->stylePath() );
+			 KopeteChatWindowSettings::self()->styleName() );
 
-	kDebug(14000) << k_funcinfo << d->currentChatStyle->getStylePath();
+	kDebug(14000) << k_funcinfo << d->currentChatStyle->getStyleName();
 
 	//Security settings, we don't need this stuff
 	setJScriptEnabled( false ) ;
@@ -350,10 +350,10 @@ void ChatMessagePart::readOverrides()
 	d->rtfOverride = Kopete::AppearanceSettings::self()->chatRtfOverride();
 }
 
-void ChatMessagePart::setStyle( const QString &stylePath )
+void ChatMessagePart::setStyle( const QString &styleName )
 {
 	// Create a new ChatWindowStyle
-	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(stylePath);
+	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(styleName);
 
 	// Do the actual style switch
 	// Wait for the event loop before switching the style

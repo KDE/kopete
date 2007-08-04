@@ -48,13 +48,6 @@ class KOPETECHATWINDOW_SHARED_EXPORT ChatWindowStyleManager : public QObject
 	Q_OBJECT
 public:
 	/**
-	 * StyleList typedef (a QMap)
-	 * key = Name of the style (currently the directory name)
-	 * value = Path to the style
-	 */
-	typedef QHash<QString, QString> StyleList;
-
-	/**
 	 * The StyleInstallStatus enum. It gives better return value for installStyle().
 	 * - StyleInstallOk : The install went fine.
 	 * - StyleNotValid : The archive didn't contain a valid Chat Window style.
@@ -84,7 +77,7 @@ public:
 	/**
 	 * Get all available styles.
 	 */
-	StyleList getAvailableStyles();
+	QStringList getAvailableStyles() const;
 
 public slots:
 	/**
@@ -102,7 +95,7 @@ public slots:
 	 * @param stylePath the path of the style to remove.
 	 * @return true if the deletion went without problems.
 	 */
-	bool removeStyle(const QString &stylePath);
+	bool removeStyle(const QString &styleName);
 	
 	/**
 	 * Get a instance of a ChatWindowStyle from the pool.
@@ -112,7 +105,7 @@ public slots:
 	 * @param stylePath Path for the specified style. Name can be ambigous.
 	 * @return the instance of ChatWindow for the specified style. DO NOT DELETE IT.
 	 */
-	ChatWindowStyle *getStyleFromPool(const QString &stylePath);
+	ChatWindowStyle *getStyleFromPool(const QString &styleName);
 
 signals:
 	/**

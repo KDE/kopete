@@ -25,12 +25,12 @@
 
 // KDE includes
 #include <kdebug.h>
-
+#include <kstandarddirs.h>
 
 class ChatWindowStyle::Private
 {
 public:
-	QString stylePath;
+	QString styleName;
 	StyleVariants variantsList;
 	QString baseHref;
 	QString currentVariantPath;
@@ -46,23 +46,32 @@ public:
 	QString actionOutgoingHtml;
 };
 
-ChatWindowStyle::ChatWindowStyle(const QString &stylePath, StyleBuildMode styleBuildMode)
+ChatWindowStyle::ChatWindowStyle(const QString &styleName, StyleBuildMode styleBuildMode)
 	: d(new Private)
 {
-	init(stylePath, styleBuildMode);
+	init(styleName, styleBuildMode);
 }
 
-ChatWindowStyle::ChatWindowStyle(const QString &stylePath, const QString &variantPath, StyleBuildMode styleBuildMode)
+ChatWindowStyle::ChatWindowStyle(const QString &styleName, const QString &variantPath, StyleBuildMode styleBuildMode)
 	: d(new Private)
 {
 	d->currentVariantPath = variantPath;
-	init(stylePath, styleBuildMode);
+	init(styleName, styleBuildMode);
 }
 
-void ChatWindowStyle::init(const QString &stylePath, StyleBuildMode styleBuildMode)
+void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMode)
 {
-	d->stylePath = stylePath;
-	d->baseHref = stylePath + QString::fromUtf8("/Contents/Resources/");
+	QStringList styleDirs = KGlobal::dirs()->findDirs("appdata", QString("styles/%1/Contents/Resources/").arg(styleName));
+	if(styleDirs.isEmpty())
+	{
+		kDebug(14000) << k_funcinfo << "Failed to find style" << styleName;
+		return;
+	}
+	d->styleName = styleName;
+	if(styleDirs.count() > 1)
+		kDebug(14000) << k_funcinfo << "found several styles with the same name. using first";
+	d->baseHref = styleDirs.at(0);
+	kDebug(14000) << k_funcinfo << "Using style:" << d->baseHref;
 	readStyleFiles();
 	if(styleBuildMode & StyleBuildNormal)
 	{
@@ -86,9 +95,9 @@ ChatWindowStyle::StyleVariants ChatWindowStyle::getVariants()
 	return d->variantsList;
 }
 
-QString ChatWindowStyle::getStylePath() const
+QString ChatWindowStyle::getStyleName() const
 {
-	return d->stylePath;
+	return d->styleName;
 }
 
 QString ChatWindowStyle::getStyleBaseHref() const

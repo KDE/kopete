@@ -213,11 +213,11 @@ void ChatWindowConfig::save()
 
 	KopeteChatWindowSettings *settings = KopeteChatWindowSettings::self();
 
-	// Get the stylePath
+	// Get the styleName
 	if(m_currentStyle)
 	{
-		kDebug(14000) << k_funcinfo << m_currentStyle->getStylePath();
-		settings->setStylePath( m_currentStyle->getStylePath() );
+		kDebug(14000) << k_funcinfo << m_currentStyle->getStyleName();
+		settings->setStyleName( m_currentStyle->getStyleName() );
 	}
 	// Get and save the styleVariant
 	if( !m_currentVariantMap.empty() )
@@ -250,24 +250,20 @@ void ChatWindowConfig::load()
 void ChatWindowConfig::slotLoadChatStyles()
 {
 	m_styleUi.styleList->clear();
-	m_styleItemMap.clear();
 
-	ChatWindowStyleManager::StyleList availableStyles;
+	QStringList availableStyles;
 	availableStyles = ChatWindowStyleManager::self()->getAvailableStyles();
 	if( availableStyles.empty() )
 		kDebug(14000) << k_funcinfo << "Warning, available styles is empty !";
 
-	ChatWindowStyleManager::StyleList::ConstIterator it, itEnd = availableStyles.constEnd();
-	for(it = availableStyles.constBegin(); it != itEnd; ++it)
+	foreach( const QString& styleName, availableStyles )
 	{
 		// Insert style name into the listbox
-		m_styleUi.styleList->insertItem( it.key(), 0 );
-		// Insert the style class into the internal map for futher access.
-		m_styleItemMap.insert( m_styleUi.styleList->firstItem(), it.value() );
+		m_styleUi.styleList->insertItem( styleName, 0 );
 
-		if( it.value() == KopeteChatWindowSettings::self()->stylePath() )
+		if( styleName == KopeteChatWindowSettings::self()->styleName() )
 		{
-			kDebug(14000) << k_funcinfo << "Restoring saved style: " << it.key();
+			kDebug(14000) << k_funcinfo << "Restoring saved style: " << styleName;
 
 			m_styleUi.styleList->setSelected( m_styleUi.styleList->firstItem(), true );
 		}
@@ -280,13 +276,13 @@ void ChatWindowConfig::slotLoadChatStyles()
 void ChatWindowConfig::slotChatStyleSelected()
 {
 	// Retrieve variant list.
-	QString stylePath = m_styleItemMap[m_styleUi.styleList->selectedItem()];
-	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( stylePath );
+	QString styleName = m_styleUi.styleList->selectedItem()->text();
+	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( styleName );
 
 	if(m_currentStyle)
 	{
 		m_currentVariantMap = m_currentStyle->getVariants();
-		kDebug(14000) << k_funcinfo << "Loading style: " << m_currentStyle->getStylePath();
+		kDebug(14000) << k_funcinfo << "Loading style: " << m_currentStyle->getStyleName();
 
 		// Update the variant list based on current style.
 		m_styleUi.variantList->clear();

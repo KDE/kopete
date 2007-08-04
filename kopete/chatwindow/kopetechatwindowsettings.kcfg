@@ -6,7 +6,6 @@
       xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
       http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
 	<kcfgfile name="kopeterc"/>
-	<include>kstandarddirs.h</include>
 	<include>kglobalsettings.h</include>
 
 	<!-- Define the available signals to emit -->
@@ -18,7 +17,7 @@
 	</signal>
 	<signal name="styleChanged">
 		<label>Emited when the chat window style change.</label>
-		<argument type="String">stylePath</argument>
+		<argument type="String">styleName</argument>
 	</signal>
 	<signal name="styleVariantChanged">
 		<label>Emitted when ChatWindowStyle variant has changed.</label>
@@ -26,11 +25,10 @@
 	</signal>
 
 	<group name="Appearance">
-		
 		<!-- Chat Window Style preferences -->
-		<entry key="stylePath" type="String">
-			<label>Absolute path to a directory containing a Adium/Kopete chat window style.</label>
-			<default code="true">KStandardDirs::locate("appdata", QString("styles/%1/Kopete"))</default>
+		<entry key="styleName" type="String">
+			<label>Name of a Adium/Kopete chat window style.</label>
+			<default>Kopete</default>
 		</entry>
 		<entry key="styleVariant" type="String">
 			<label>Relative path to a CSS variant for the current style.</label>

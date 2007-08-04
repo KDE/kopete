@@ -106,7 +106,7 @@ public slots:
 	 *
 	 * @param stylePath absolute path to the style.
 	 */
-	void setStyle( const QString &stylePath );
+	void setStyle( const QString &styleName );
 	
 	/**
 	 * Change the current style

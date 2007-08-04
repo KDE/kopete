@@ -56,9 +56,9 @@ public:
 	}
 
 	KDirLister *styleDirLister;
-	StyleList availableStyles;
-	
-	// key = style path, value = ChatWindowStyle instance
+	QStringList availableStyles;
+
+	// key = style name, value = ChatWindowStyle instance
 	QHash<QString, ChatWindowStyle*> stylePool;
 
 	QStack<KUrl> styleDirs;
@@ -113,7 +113,7 @@ void ChatWindowStyleManager::loadStyles()
 		d->styleDirLister->openUrl(d->styleDirs.pop(), true);
 }
 
-ChatWindowStyleManager::StyleList ChatWindowStyleManager::getAvailableStyles()
+QStringList ChatWindowStyleManager::getAvailableStyles() const
 {
 	return d->availableStyles;
 }
@@ -279,29 +279,41 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 	return StyleUnknow;
 }
 
-bool ChatWindowStyleManager::removeStyle(const QString &stylePath)
+bool ChatWindowStyleManager::removeStyle(const QString &styleName)
 {
-	kDebug(14000) << k_funcinfo << stylePath;
+	kDebug(14000) << k_funcinfo << styleName;
 	// Find for the current style in avaiableStyles map.
-        KUrl urlStyle(stylePath);
-        QString styleName=urlStyle.fileName();
-        StyleList::Iterator foundStyle = d->availableStyles.find(styleName);
+	int foundStyleIdx = d->availableStyles.indexOf(styleName);
 
-	// QHash iterator return end() if it found no item.
-	if(foundStyle != d->availableStyles.end())
+	if(foundStyleIdx != -1)
 	{
-		d->availableStyles.remove(*foundStyle);
-		
+		d->availableStyles.removeAt(foundStyleIdx);
+
 		// Remove and delete style from pool if needed.
-		if( d->stylePool.contains(stylePath) )
+		if( d->stylePool.contains(styleName) )
 		{
-			ChatWindowStyle *deletedStyle = d->stylePool[stylePath];
-			d->stylePool.remove(stylePath);
+			ChatWindowStyle *deletedStyle = d->stylePool[styleName];
+			d->stylePool.remove(styleName);
 			delete deletedStyle;
 		}
 	
+		QStringList styleDirs = KGlobal::dirs()->findDirs("appdata", QString("styles/%1").arg(styleName));
+		if(styleDirs.isEmpty())
+		{
+			kDebug(14000) << k_funcinfo << "Failed to find style" << styleName;
+			return false;
+		}
+
+		// attempt to delete all dirs with this style
+		int numDeleted = 0;
+		foreach( const QString& stylePath, styleDirs )
+		{
+		KUrl urlStyle(stylePath);
 		// Do the actual deletion of the directory style.
-		return KIO::NetAccess::del( urlStyle, 0 );
+		if(KIO::NetAccess::del( urlStyle, 0 ))
+			numDeleted++;
+		}
+		return numDeleted == styleDirs.count();
 	}
 	else
 	{
@@ -309,12 +321,12 @@ bool ChatWindowStyleManager::removeStyle(const QString &stylePath)
 	}
 }
 
-ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &stylePath)
+ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &styleName)
 {
-	if( d->stylePool.contains(stylePath) )
+	if( d->stylePool.contains(styleName) )
 	{
-		kDebug(14000) << k_funcinfo << stylePath << " was on the pool";
-		
+		kDebug(14000) << k_funcinfo << styleName << " was on the pool";
+
 		// NOTE: This is a hidden config switch for style developers
 		// Check in the config if the cache is disabled.
 		// if the cache is disabled, reload the style every time it's getted.
@@ -322,22 +334,22 @@ ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &stylePa
 		bool disableCache = config.readEntry("disableStyleCache", false);
 		if(disableCache)
 		{
-			d->stylePool[stylePath]->reload();
+			d->stylePool[styleName]->reload();
 		}
 
-		return d->stylePool[stylePath];
+		return d->stylePool[styleName];
 	}
 	else
 	{
 		// Build a chat window style and list its variants, then add it to the pool.
-		ChatWindowStyle *style = new ChatWindowStyle(stylePath, ChatWindowStyle::StyleBuildNormal);
-		d->stylePool.insert(stylePath, style);
-		
-		kDebug(14000) << k_funcinfo << stylePath << " is just created";
+		ChatWindowStyle *style = new ChatWindowStyle(styleName, ChatWindowStyle::StyleBuildNormal);
+		d->stylePool.insert(styleName, style);
+
+		kDebug(14000) << k_funcinfo << styleName << " is just created";
 
 		return style;
 	}
-	
+
 	return 0;
 }
 
@@ -351,20 +363,21 @@ void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
 			kDebug(14000) << k_funcinfo << "Listing: " << item->url().fileName();
 			// If the style path is already in the pool, that's mean the style was updated on disk
 			// Reload the style
-			if( d->stylePool.contains(item->url().path()) )
+			QString styleName = item->url().fileName();
+			if( d->stylePool.contains(styleName) )
 			{
-				kDebug(14000) << k_funcinfo << "Updating style: " << item->url().path();
+				kDebug(14000) << k_funcinfo << "Updating style: " << styleName;
 
-				d->stylePool[item->url().path()]->reload();
+				d->stylePool[styleName]->reload();
 
 				// Add to avaialble if required.
-				if( !d->availableStyles.contains(item->url().fileName()) )
-					d->availableStyles.insert(item->url().fileName(), item->url().path());
+				if( d->availableStyles.indexOf(styleName) == -1 )
+					d->availableStyles.append(styleName);
 			}
 			else
 			{
 				// TODO: Use name from Info.plist
-				d->availableStyles.insert(item->url().fileName(), item->url().path());
+				d->availableStyles.append(styleName);
 			}
 		}
 	}
