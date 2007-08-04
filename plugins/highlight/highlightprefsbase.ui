@@ -10,9 +10,6 @@
     <height>543</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>HighlighPrefsUI</string>
-  </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
     <number>9</number>
