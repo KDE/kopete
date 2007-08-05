@@ -219,7 +219,7 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::ChatSes
 	Kopete::Command *c = mCommands.value(command);
 	if(c)
 	{
-		kDebug(14010) << k_funcinfo << "Handled Command" << endl;
+		kDebug(14010) << k_funcinfo << "Handled Command";
 		if( c->type() != SystemAlias && c->type() != UserAlias )
 			p->inCommand = true;
 
@@ -368,7 +368,7 @@ void Kopete::CommandHandler::slotCloseCommand( const QString &, Kopete::ChatSess
 
 void Kopete::CommandHandler::slotExecReturnedData(K3Process *proc, char *buff, int bufflen )
 {
-	kDebug(14010) << k_funcinfo << endl;
+	kDebug(14010) << k_funcinfo;
 	QString buffer = QString::fromLocal8Bit( buff, bufflen );
 	ManagerPair mgrPair = p->processMap[ proc ];
 	Kopete::Message msg( mgrPair.first->myself(), mgrPair.first->members()  );

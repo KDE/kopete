@@ -35,7 +35,7 @@ class KTextEdit;
 /**
  * @brief Simple WYSIWYG rich text editor part.
  *
- * Technicaly it just a wrapper around KTextEdit which a toolbar of actions.
+ * Technicaly it just a wrapper around KTextEdit with a toolbar of actions.
  * The action toolbar adds buttons to set text bold, italic 
  * or underline, set font size and font familly and set text color.
  *

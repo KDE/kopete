@@ -39,7 +39,6 @@
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <q3listview.h>
-#include <q3ptrlist.h>
 #include <qcombobox.h>
 //Added by qt3to4:
 #include <QShowEvent>
@@ -62,7 +61,7 @@ GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent )
 	addUI_->addEdit_->setText( "" );
 	addUI_->groups->setDisabled( true );
 
-	kDebug(14100) << "filling gropus" << endl;
+	kDebug(14100) << "filling gropus";
 
 	fillGroups();
 }
@@ -80,7 +79,7 @@ GaduAddContactPage::fillGroups()
 	QPtrList<Kopete::Group> gl = Kopete::ContactList::self()->groups();
 	for( g = gl.first(); g; g = gl.next() ) {
 		QCheckListItem* item = new QCheckListItem( addUI_->groups, g->displayName(), QCheckListItem::CheckBox );
-		kDebug(14100) << g->displayName() << " " << g->groupId() << endl;
+		kDebug(14100) << g->displayName() << " " << g->groupId();
 	}
   */
 }

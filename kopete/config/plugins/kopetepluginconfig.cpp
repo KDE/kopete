@@ -28,6 +28,7 @@
 #include <kpluginselector.h>
 #include <kgenericfactory.h>
 #include <ksettings/dispatcher.h>
+#include <KPluginInfo>
 
 // Kopete includes
 #include "kopetepluginmanager.h"
@@ -52,7 +53,7 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QStringList &args
 
 	connect( d->pluginSelector, SIGNAL(changed(bool)), this, SLOT(changed()) );
 	connect( d->pluginSelector, SIGNAL(configCommitted(const QByteArray&) ),
-		KSettings::Dispatcher::self(), SLOT(reparseConfiguration(const QByteArray&)) );
+		this, SLOT(reparseConfiguration(const QByteArray&)) );
 
 	d->pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ),
 	                               KPluginSelector::ReadConfigFile, i18n( "General Plugins" ), "Plugins" );
@@ -62,6 +63,11 @@ KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QStringList &args
 KopetePluginConfig::~KopetePluginConfig()
 {
 	delete d;
+}
+
+void KopetePluginConfig::reparseConfiguration(const QByteArray&conf)
+{
+	KSettings::Dispatcher::reparseConfiguration(conf);
 }
 
 void KopetePluginConfig::load()

@@ -113,7 +113,7 @@ void dlgJabberServices::slotService ()
 	if(leServer->text().isEmpty())
 		leServer->setText(m_account->server());
 
-	kDebug (14130) << "[dlgJabberServices] Trying to fetch a list of services at " << leServer->text () << endl;
+	kDebug (14130) << "[dlgJabberServices] Trying to fetch a list of services at " << leServer->text ();
 
 	serviceTask->get (leServer->text ());
 	serviceTask->go (true);
@@ -123,7 +123,7 @@ void dlgJabberServices::slotService ()
 
 void dlgJabberServices::slotServiceFinished ()
 {
-	kDebug (14130) << "[dlgJabberServices] Query task finished" << endl;
+	kDebug (14130) << "[dlgJabberServices] Query task finished";
 
 	XMPP::JT_GetServices * task = (XMPP::JT_GetServices *) sender ();
 

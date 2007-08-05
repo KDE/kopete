@@ -4,7 +4,6 @@ project(libpapillon)
 
 # search packages used by KDE (TODO: Use Qt only)
 find_package(KDE4 REQUIRED)
-find_package(QCA2 REQUIRED)
 include (KDE4Defaults)
 include (MacroLibrary)
 
@@ -14,16 +13,13 @@ include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 endif(NOT PAPILLON_INSIDE_KOPETE)
 
 # Propagate includes to tests subdirs
-set(PAPILLON_INCLUDES 
+set(PAPILLON_INCLUDES
 ${CMAKE_CURRENT_SOURCE_DIR}/include/
 ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/
 ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Base/
-${QCA2_INCLUDE_DIR}
 )
 
 add_subdirectory( tests )
-
-add_definitions( ${QCA2_DEFINITIONS} )
 
 include_directories(${PAPILLON_INCLUDES})
 
@@ -33,6 +29,7 @@ include(PapillonMoc.cmake)
 
 set(papillon_base_SRCS
 base/bytestream.cpp
+base/bytestreambase.cpp
 base/connector.cpp
 base/safedelete.cpp
 base/stream.cpp
@@ -44,11 +41,15 @@ contactlist/sharingservicebinding.cpp
 )
 
 set(papillon_http_SRCS
-http/securestream.cpp
 http/tweenerhandler.cpp
 http/httptransfer.cpp
 http/httpcoreprotocol.cpp
 http/httpconnection.cpp
+)
+
+set(papillon_network_SRCS
+network/ipendpointconnector.cpp
+network/networkstream.cpp
 )
 
 set(papillon_tasks_SRCS
@@ -66,10 +67,11 @@ set(libpapillon_SRCS
 ${papillon_base_SRCS}
 ${papillon_private_contactlist_SRCS}
 ${papillon_http_SRCS}
+${papillon_network_SRCS}
 ${papillon_tasks_SRCS}
 task.cpp
 messengercoreprotocol.cpp
-transfer.cpp
+networkmessage.cpp
 papillonclientstream.cpp
 qtconnector.cpp
 qtbytestream.cpp
@@ -83,9 +85,13 @@ papillonstatusmessage.cpp
 usercontact.cpp
 )
 
+foreach(_src_FILE ${libpapillon_SRCS})
+   set_source_files_properties(${_src_FILE} PROPERTIES SKIP_AUTOMOC TRUE)  # don't run automoc on this file
+endforeach(_src_FILE)
+
 kde4_add_library(papillon_kopete SHARED ${libpapillon_SRCS})
 
-target_link_libraries( papillon_kopete ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} ${QCA2_LIBRARIES} )
+target_link_libraries( papillon_kopete ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} )
 
 set_target_properties( papillon_kopete PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 

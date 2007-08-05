@@ -6,86 +6,14 @@
     <x>0</x>
     <y>0</y>
     <width>481</width>
-    <height>311</height>
+    <height>353</height>
    </rect>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item row="6" column="3" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Preferred</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>31</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="6" column="2" >
-    <widget class="QPushButton" name="btnRemoveTheme" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>4</hsizetype>
-       <vsizetype>0</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text" >
-      <string>Remove &amp;Theme</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1" >
-    <widget class="QPushButton" name="btnInstallTheme" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>4</hsizetype>
-       <vsizetype>0</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text" >
-      <string>&amp;Install Theme File...</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" >
-    <widget class="QPushButton" name="btnGetThemes" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>4</hsizetype>
-       <vsizetype>0</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="whatsThis" >
-      <string>Download emoticon theme from the Internet</string>
-     </property>
-     <property name="text" >
-      <string>&amp;Get New Themes...</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0" colspan="4" >
     <widget class="QCheckBox" name="kcfg_useEmoticons" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>0</vsizetype>
+      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -104,9 +32,7 @@
    <item row="1" column="0" colspan="4" >
     <widget class="QCheckBox" name="kcfg_emoticonsRequireSpace" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>0</vsizetype>
+      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -122,15 +48,14 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="4" >
-    <widget class="QLabel" name="lblPreview" >
-     <property name="text" >
-      <string>Preview:</string>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0" colspan="4" >
     <widget class="QLabel" name="textLabel1" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="focusPolicy" >
       <enum>Qt::NoFocus</enum>
      </property>
@@ -140,37 +65,124 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="4" >
-    <widget class="K3ListBox" name="icon_theme_list" >
+    <widget class="QSplitter" name="splitter" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <widget class="K3ListBox" name="icon_theme_list" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+        <horstretch>0</horstretch>
+        <verstretch>10</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="previewBox" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title" >
+       <string>Preview</string>
+      </property>
+      <property name="flat" >
+       <bool>true</bool>
+      </property>
+      <layout class="QHBoxLayout" >
+       <property name="leftMargin" >
+        <number>1</number>
+       </property>
+       <property name="topMargin" >
+        <number>1</number>
+       </property>
+       <property name="rightMargin" >
+        <number>1</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>1</number>
+       </property>
+       <item>
+        <widget class="KTextEdit" name="icon_theme_preview" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>32767</width>
+           <height>32767</height>
+          </size>
+         </property>
+         <property name="readOnly" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QPushButton" name="btnGetThemes" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>7</vsizetype>
+      <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="whatsThis" >
+      <string>Download emoticon theme from the Internet</string>
+     </property>
+     <property name="text" >
+      <string>&amp;Get New Themes...</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="4" >
-    <widget class="KTextEdit" name="icon_theme_preview" >
+   <item row="4" column="1" >
+    <widget class="QPushButton" name="btnInstallTheme" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>0</vsizetype>
+      <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="maximumSize" >
-      <size>
-       <width>32767</width>
-       <height>64</height>
-      </size>
-     </property>
-     <property name="readOnly" >
-      <bool>true</bool>
+     <property name="text" >
+      <string>&amp;Install Theme File...</string>
      </property>
     </widget>
+   </item>
+   <item row="4" column="2" >
+    <widget class="QPushButton" name="btnRemoveTheme" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>Remove &amp;Theme</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Preferred</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>31</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -209,39 +221,7 @@
   <connection>
    <sender>kcfg_useEmoticons</sender>
    <signal>toggled(bool)</signal>
-   <receiver>lblPreview</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>kcfg_useEmoticons</sender>
-   <signal>toggled(bool)</signal>
    <receiver>icon_theme_list</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>kcfg_useEmoticons</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>lblPreview</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >

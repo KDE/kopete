@@ -161,7 +161,7 @@ void AppearanceConfig::updateEmoticonsButton(bool _b)
 void AppearanceConfig::save()
 {
 	KCModule::save();
-//	kDebug(14000) << k_funcinfo << "called." << endl;
+//	kDebug(14000) << k_funcinfo << "called.";
 
 	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
 
@@ -180,7 +180,7 @@ void AppearanceConfig::load()
 	// Look for available emoticons themes
 	updateEmoticonlist();
 
-//	kDebug(14000) << k_funcinfo << "called" << endl;
+//	kDebug(14000) << k_funcinfo << "called";
 }
 
 

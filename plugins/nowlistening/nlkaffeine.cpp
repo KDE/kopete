@@ -71,6 +71,6 @@ void NLKaffeine::update()
 		}
 	}
 	else
-		kDebug ( 14307 ) << "Kaffeine is not running!\n" << endl;
+		kDebug ( 14307 ) << "Kaffeine is not running!\n";
 }
 

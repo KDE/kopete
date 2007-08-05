@@ -82,7 +82,7 @@ bool ServerVersionsTask::take( Transfer* transfer )
 				break;
 			case 0x18:
 				setTransfer( transfer );
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Ignoring server versions" << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Ignoring server versions";
 				setSuccess( 0, QString() );
 				setTransfer( 0 );
 				return true;
@@ -129,7 +129,7 @@ void ServerVersionsTask::requestFamilyVersions()
 	Oscar::WORD val;
 	Buffer* outbuf = new Buffer();
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SEND SNAC 0x01, 0x17 - Snac family versions we want" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SEND SNAC 0x01, 0x17 - Snac family versions we want";
 
 	for ( int i = 0; i < listLength; i++ )
 	{

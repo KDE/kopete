@@ -91,8 +91,8 @@ GaduDCCTransaction::setupOutgoing( GaduContact* peerContact, QString& filePath )
 	me = static_cast<GaduContact*>( peerContact->account()->myself() );
 
 	QString aaa =  peerContact->contactIp().toString();
-	kDebug( 14100 ) << "slotOutgoin for UIN: " << peerContact->uin() << " port " << peerContact->contactPort() << " ip " <<aaa<<  endl;
-	kDebug( 14100 ) << "File path is " << filePath << endl;
+	kDebug( 14100 ) << "slotOutgoin for UIN: " << peerContact->uin() << " port " << peerContact->contactPort() << " ip " <<aaa;
+	kDebug( 14100 ) << "File path is " << filePath;
 
 	if ( peerContact->contactPort() >= 10 ) {  
 		dccSock_ = gg_dcc_send_file( htonl( peerContact->contactIp().toIPv4Address() ), peerContact->contactPort(), me->uin(), peerContact->uin() );
@@ -103,7 +103,7 @@ GaduDCCTransaction::setupOutgoing( GaduContact* peerContact, QString& filePath )
 		enableNotifiers( dccSock_->check  );
 	}
 	else {
-		kDebug( 14100 ) << "Peer " << peerContact->uin() << " is passive, requesting reverse connection" << endl;
+		kDebug( 14100 ) << "Peer " << peerContact->uin() << " is passive, requesting reverse connection";
 		metoo = static_cast<GaduAccount*>( me->account() );
 		gaduDCC_->requests[peerContact->uin()]=filePath;
 		metoo->dccRequest( peerContact );
@@ -117,13 +117,13 @@ GaduDCCTransaction::setupIncoming( const unsigned int uin, GaduContact* peerCont
 {
 
 	if ( !peerContact ) {
-		kDebug( 14100 ) << "setupIncoming called with peerContact == NULL " << endl;
+		kDebug( 14100 ) << "setupIncoming called with peerContact == NULL ";
 		return false;
 		return false;
 	}
 
 	QString aaa =  peerContact->contactIp().toString();
-	kDebug( 14100 ) << "setupIncoming for UIN: " << uin << " port " << peerContact->contactPort() << " ip " <<aaa<<  endl;
+	kDebug( 14100 ) << "setupIncoming for UIN: " << uin << " port " << peerContact->contactPort() << " ip " <<aaa;
 
 	peer = peerContact->uin();
 	dccSock_ = gg_dcc_get_file( htonl( peerContact->contactIp().toIPv4Address() ), peerContact->contactPort(), uin, peer );
@@ -137,7 +137,7 @@ bool
 GaduDCCTransaction::setupIncoming( gg_dcc* dccS )
 {
 	if ( !dccS ) {
-		kDebug(14100) << "gg_dcc_get_file failed in GaduDCCTransaction::setupIncoming" << endl;
+		kDebug(14100) << "gg_dcc_get_file failed in GaduDCCTransaction::setupIncoming";
 		return false;
 	}
 
@@ -161,7 +161,7 @@ GaduDCCTransaction::setupIncoming( gg_dcc* dccS )
 void
 GaduDCCTransaction::closeDCC()
 {
-	kDebug(14100) << "closeDCC()" << endl;
+	kDebug(14100) << "closeDCC()";
 
 	disableNotifiers();
 	destroyNotifiers();
@@ -331,13 +331,13 @@ GaduDCCTransaction::watcher() {
 	}
 	switch ( dccEvent->type ) {
 		case GG_EVENT_DCC_CLIENT_ACCEPT:
-			kDebug(14100) << " GG_EVENT_DCC_CLIENT_ACCEPT " << endl;
+			kDebug(14100) << " GG_EVENT_DCC_CLIENT_ACCEPT ";
 			// check dccsock->peer_uin, if unknown, fuck it;
 
 			// is it for us ?
 			account = gaduDCC_->account( dccSock_->uin );
 			if ( !account ) {
-				kDebug( 14100 ) << " this dcc transaction is for uin " << dccSock_->uin << ", which is not quite for me... closing"  << endl;
+				kDebug( 14100 ) << " this dcc transaction is for uin " << dccSock_->uin << ", which is not quite for me... closing";
 				// unknown 'to' ?, we're off
 				gg_free_event( dccEvent );
 				closeDCC();
@@ -354,7 +354,7 @@ GaduDCCTransaction::watcher() {
 
 			if ( contact == NULL ) {
 				// refusing, contact on the list
-				kDebug(14100) << " dcc connection from " << dccSock_->peer_uin << " refused, UIN not on the list " <<endl;
+				kDebug(14100) << " dcc connection from " << dccSock_->peer_uin << " refused, UIN not on the list ";
 				gg_free_event( dccEvent );
 				closeDCC();
 				// emit error
@@ -363,15 +363,15 @@ GaduDCCTransaction::watcher() {
 			}
 			else {
 				// ask user to accept that transfer
-				kDebug(14100) <<  " dcc accepted from " << dccSock_->peer_uin << endl;
+				kDebug(14100) <<  " dcc accepted from " << dccSock_->peer_uin;
 			}
 
 			break;
 		case GG_EVENT_DCC_CALLBACK:
-			kDebug(14100) << "GG_DCC_EVENT_CALLBACK" << endl;
+			kDebug(14100) << "GG_DCC_EVENT_CALLBACK";
 			break;
 		case GG_EVENT_NONE:
-			kDebug(14100) << " GG_EVENT_NONE" << endl;
+			kDebug(14100) << " GG_EVENT_NONE";
 			// update gui with progress
 			if ( transfer_ ) {
 				transfer_->slotProcessed( dccSock_->offset );
@@ -379,7 +379,7 @@ GaduDCCTransaction::watcher() {
 			break;
 
 		case GG_EVENT_DCC_NEED_FILE_ACK:
-			kDebug(14100) << " GG_EVENT_DCC_NEED_FILE_ACK " << endl;
+			kDebug(14100) << " GG_EVENT_DCC_NEED_FILE_ACK ";
 			gg_free_event( dccEvent );
 			askIncommingTransfer();
 			return;
@@ -387,7 +387,7 @@ GaduDCCTransaction::watcher() {
 		case GG_EVENT_DCC_NEED_FILE_INFO:
 			if (gaduDCC_->requests.contains(dccSock_->peer_uin)) {
 			    QString filePath = gaduDCC_->requests[dccSock_->peer_uin];
-			    kDebug() << "Callback request found. Sending " << filePath << endl;
+			    kDebug() << "Callback request found. Sending " << filePath;
 			    gaduDCC_->requests.remove(dccSock_->peer_uin);
 		    	    gg_dcc_fill_file_info(dccSock_,filePath.toAscii());
 			    transfer_ = Kopete::TransferManager::transferManager()->addTransfer ( contact,
@@ -401,7 +401,7 @@ GaduDCCTransaction::watcher() {
 			break;
 
 		case GG_EVENT_DCC_ERROR:
-			kDebug(14100) << " GG_EVENT_DCC_ERROR :" << dccEvent->event.dcc_error  << endl;
+			kDebug(14100) << " GG_EVENT_DCC_ERROR :" << dccEvent->event.dcc_error;
 			if ( transfer_ ) {
 				switch( dccEvent->event.dcc_error ) {
 
@@ -443,7 +443,7 @@ GaduDCCTransaction::watcher() {
 			return;
 
 		default:
-			kDebug(14100) << "unknown/unhandled DCC EVENT: " << dccEvent->type << endl;
+			kDebug(14100) << "unknown/unhandled DCC EVENT: " << dccEvent->type;
 			break;
 	}
 

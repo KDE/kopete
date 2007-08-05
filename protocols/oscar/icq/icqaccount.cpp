@@ -57,7 +57,7 @@ ICQMyselfContact::ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acc
 void ICQMyselfContact::userInfoUpdated()
 {
 	Oscar::DWORD extendedStatus = details().extendedStatus();
-	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << QString::number( extendedStatus, 16 ) << endl;
+	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << QString::number( extendedStatus, 16 );
 
 	ICQProtocol* p = static_cast<ICQProtocol *>(protocol());
 	Oscar::Presence presence = p->statusManager()->presenceOf( extendedStatus, details().userClass() );
@@ -69,9 +69,14 @@ void ICQMyselfContact::userInfoUpdated()
 		presence.setDescription( icqAccount->engine()->statusDescription() );
 		presence.setXtrazStatus( details().xtrazStatus() );
 	}
-	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
+	else if ( !icqAccount->engine()->statusDescription().isEmpty() )
+	{
+		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
+		presence.setDescription( icqAccount->engine()->statusDescription() );
+	}
 
 	setProperty( Kopete::Global::Properties::self()->statusMessage(), icqAccount->engine()->statusMessage() );
+	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
 }
 
 void ICQMyselfContact::receivedShortInfo( const QString& contact )
@@ -108,7 +113,7 @@ void ICQMyselfContact::fetchShortInfo()
 ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	: OscarAccount(parent, accountID, true)
 {
-	kDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
+	kDebug(14152) << k_funcinfo << accountID << ": Called.";
 	setMyself( new ICQMyselfContact( this ) );
 	myself()->setOnlineStatus( protocol()->statusManager()->onlineStatusOf( Oscar::Presence( Oscar::Presence::Offline ) ) );
 
@@ -209,7 +214,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 	if ( password.isNull() )
 		return;
 
-	kDebug(14153) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
+	kDebug(14153) << k_funcinfo << "accountId='" << accountId() << "'";
 
 	Kopete::OnlineStatus status = initialStatus();
 	if ( status == Kopete::OnlineStatus() && status.status() == Kopete::OnlineStatus::Unknown )
@@ -224,7 +229,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 	{
 		myself()->setOnlineStatus( protocol()->statusManager()->connectingStatus() );
 		QString icqNumber = accountId();
-		kDebug(14153) << k_funcinfo << "Logging in as " << icqNumber << endl ;
+		kDebug(14153) << k_funcinfo << "Logging in as " << icqNumber;
 		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
 		uint port = configGroup()->readEntry( "Port", 5190 );
 
@@ -259,7 +264,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 
 void ICQAccount::disconnected( DisconnectReason reason )
 {
-	kDebug(14153) << k_funcinfo << "Attempting to set status offline" << endl;
+	kDebug(14153) << k_funcinfo << "Attempting to set status offline";
 	Oscar::Presence pres( Oscar::Presence::Offline, presence().flags() );
 	myself()->setOnlineStatus( protocol()->statusManager()->onlineStatusOf( pres ) );
 

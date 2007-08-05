@@ -124,7 +124,7 @@ void GWContactList::removeInstanceById( unsigned int id )
 
 void GWContactList::dump()
 {
-	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo;
 	foreach( QObject *obj, children() )
 	{
 		GWFolder * folder = qobject_cast< GWFolder * >( obj );
@@ -135,7 +135,7 @@ void GWContactList::dump()
 
 void GWContactList::clear()
 {
-	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo;
 	foreach ( QObject *obj, children() )
 	{
 		delete obj;
@@ -154,7 +154,7 @@ void GWFolder::dump( unsigned int depth )
 {
 	QString s;
 	s.fill( ' ', ++depth * 2 );
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << s <<"Folder " << displayName << " id: " << id << " contains: " << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << s <<"Folder " << displayName << " id: " << id << " contains: ";
 	foreach ( QObject *obj, children() )
 	{
 		GWContactInstance * instance = qobject_cast< GWContactInstance * >( obj );
@@ -177,7 +177,7 @@ void GWContactInstance::dump( unsigned int depth )
 {
 	QString s;
 	s.fill( ' ', ++depth * 2 );
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << s << "Contact " << displayName << " id: " << id << " dn: " << dn << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << s << "Contact " << displayName << " id: " << id << " dn: " << dn;
 }
 #include "gwcontactlist.moc"
 

@@ -17,8 +17,8 @@
 
 #include "msnchatsession.h"
 
-#include <qlabel.h>
-#include <qimage.h>
+#include <QLabel>
+#include <QImage>
 
 #include <qfile.h>
 #include <qiconset.h>
@@ -35,6 +35,8 @@
 #include <kmenu.h>
 #include <ktemporaryfile.h>
 #include <kxmlguiwindow.h>
+#include <kcomponentdata.h>
+#include <kactioncollection.h>
 #include <ktoolbar.h>
 #include <krun.h>
 #include <kicon.h>
@@ -54,7 +56,6 @@
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
-#include <kactioncollection.h>
 #endif
 
 MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user,
@@ -166,7 +167,7 @@ void MSNChatSession::createChat( const QString &handle,
 
 	if( m_chatService )
 	{
-		kDebug(14140) << k_funcinfo << "Service already exists, disconnect them." << endl;
+		kDebug(14140) << k_funcinfo << "Service already exists, disconnect them.";
 		delete m_chatService;
 	}
 
@@ -245,7 +246,7 @@ void MSNChatSession::slotUserLeft( const QString &handle, const QString& reason 
 
 void MSNChatSession::slotSwitchBoardClosed()
 {
-	//kDebug(14140) << "MSNChatSession::slotSwitchBoardClosed"  << endl;
+	//kDebug(14140) << "MSNChatSession::slotSwitchBoardClosed";
 	m_chatService->deleteLater();
 	m_chatService=0l;
 
@@ -264,7 +265,7 @@ void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSessio
 		if(id == -1)
 		{
 			m_messagesQueue.append(message);
-			kDebug(14140) << k_funcinfo << "Message added to the queue" <<endl;
+			kDebug(14140) << k_funcinfo << "Message added to the queue";
 		}
 		else if( id== -2 ) //the message has not been sent
 		{
@@ -339,7 +340,7 @@ void MSNChatSession::slotActionInviteAboutToShow()
 
 void MSNChatSession::slotCloseSession()
 {
-	kDebug(14140) << k_funcinfo  << m_chatService <<endl;
+	kDebug(14140) << k_funcinfo  << m_chatService;
 	if(m_chatService)
 		m_chatService->slotCloseSession();
 }
@@ -382,10 +383,10 @@ void MSNChatSession::sendMessageQueue()
 {
 	if(!m_chatService)
 	{
-		kDebug(14140) <<k_funcinfo << "Service doesn't exist" <<endl;
+		kDebug(14140) <<k_funcinfo << "Service doesn't exist";
 		return;
 	}
-//	kDebug(14140) << "MSNChatSession::sendMessageQueue: " << m_messagesQueue.count() <<endl;
+//	kDebug(14140) << "MSNChatSession::sendMessageQueue: " << m_messagesQueue.count();
 	QList<Kopete::Message>::Iterator it;
 	for ( it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
 	{
@@ -494,7 +495,7 @@ void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 
 void MSNChatSession::invitationDone(MSNInvitation* MFTS)
 {
-	kDebug(14140) << k_funcinfo <<endl;
+	kDebug(14140) << k_funcinfo;
 	m_invitations.remove(MFTS->cookie());
 //	MFTS->deleteLater();
 	delete MFTS;
@@ -700,7 +701,7 @@ void MSNChatSession::slotWebcamReceive()
 
 void MSNChatSession::slotWebcamSend()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo;
 	if(m_chatService && members().first())
 	{
 #if 0

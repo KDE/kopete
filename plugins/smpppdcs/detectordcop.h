@@ -19,7 +19,7 @@
 
 #include "detector.h"
 
-#include <Q3CString>
+#include <QByteArray>
 
 class IConnector;
 
@@ -40,11 +40,11 @@ protected:
         ERROR
     };
 
-    Q3CString getKInternetDCOP() const;
+    QByteArray getKInternetDCOP() const;
     KInternetDCOPState getConnectionStatusDCOP() const;
 
 protected:
-    static Q3CString  m_kinternetApp;
+    static QByteArray  m_kinternetApp;
 
 private:
     Q_DISABLE_COPY(DetectorDCOP)

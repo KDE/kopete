@@ -101,7 +101,7 @@ GaduContact::sendFile( const KUrl &sourceURL, const QString &/*fileName*/, uint 
 	else
 		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 
-	kDebug(14120) << k_funcinfo << "File chosen to send:" << filePath << endl;
+	kDebug(14120) << k_funcinfo << "File chosen to send:" << filePath;
 
 	account_->sendFile( this, filePath );
 }
@@ -126,7 +126,7 @@ GaduContact::changedStatus( KGaduNotify* newstatus )
 
 	setFileCapable( newstatus->fileCap );
 
-	kDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip.toIPv4Address() << " image size: " << image_size << "  version: "  << version  << endl;
+	kDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip.toIPv4Address() << " image size: " << image_size << "  version: "  << version;
 
 }
 
@@ -153,7 +153,7 @@ GaduContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 		connect( msgManager_, SIGNAL( destroyed() ),  this, SLOT( slotChatSessionDestroyed() ) );
 
 	}
-	kDebug(14100) << "GaduContact::manager returning:  " << msgManager_ << endl;
+	kDebug(14100) << "GaduContact::manager returning:  " << msgManager_;
 	return msgManager_;
 }
 

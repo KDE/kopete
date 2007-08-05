@@ -21,31 +21,38 @@
 
 #include "kcmodule.h"
 
-namespace Ui { class CryptographyPrefsUI; }
-
 /**
  * Preference widget for the Cryptography plugin
  * @author Olivier Goffart
+ * @author Charles Connell
  */
 
-//class CryptographyConfig;
+namespace Ui { class CryptographyPrefsUI; }
+class CryptographyConfig;
+class Kleo::EncryptionKeyRequester;
+class QCheckBox;
 
-class CryptographyPreferences : public KCModule  {
+class CryptographyPreferences : public KCModule
+{
 
-   Q_OBJECT
+		Q_OBJECT
 
-public:
-	explicit CryptographyPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
-    virtual ~CryptographyPreferences();
-    virtual void save();
-    virtual void load();
-    virtual void defaults();
+	public:
+		explicit CryptographyPreferences ( QWidget *parent = 0, const QStringList &args = QStringList() );
+		virtual ~CryptographyPreferences();
+		virtual void save();
+		virtual void load();
+		virtual void defaults();
 
-private:
-	Ui::CryptographyPrefsUI *preferencesDialog;
+	private:
+		Kleo::EncryptionKeyRequester * key;
+		QCheckBox * mAskPassphraseOnStartup;
+		Ui::CryptographyPrefsUI *mPreferencesDialog;
+		CryptographyConfig *mConfig;
 
-private slots:
-	void slotSelectPressed();
+	private slots:
+		void slotModified();
+		void slotAskOnStartupPressed (bool b);
 };
 
 #endif

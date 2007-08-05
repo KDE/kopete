@@ -38,7 +38,7 @@
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
-#include "kopetemimesourcefactory.h"
+#include "kopetefileengine.h"
 #include "kopetemimetypehandler.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
@@ -81,8 +81,7 @@ KopeteApplication::KopeteApplication()
 	 */
 	QTimer::singleShot( 0, this, SLOT( slotLoadPlugins() ) );
 
-	m_mimeFactory = new Kopete::MimeSourceFactory;
-	Q3MimeSourceFactory::addFactory( m_mimeFactory );
+	m_fileEngineHandler = new Kopete::FileEngineHandler();
 
 	//Create the emoticon installer
 	m_emoticonHandler = new Kopete::EmoticonMimeTypeHandler;
@@ -90,12 +89,12 @@ KopeteApplication::KopeteApplication()
 
 KopeteApplication::~KopeteApplication()
 {
-	kDebug( 14000 ) << k_funcinfo << endl;
+	kDebug( 14000 ) << k_funcinfo;
 
-	delete m_mainWindow;
+	delete m_fileEngineHandler;
 	delete m_emoticonHandler;
-	delete m_mimeFactory;
-	//kDebug( 14000 ) << k_funcinfo << "Done" << endl;
+	delete m_mainWindow;
+	//kDebug( 14000 ) << k_funcinfo << "Done";
 }
 
 void KopeteApplication::slotLoadPlugins()
@@ -208,14 +207,14 @@ void KopeteApplication::slotAllPluginsLoaded()
 	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() )
 		Kopete::AccountManager::self()->connectAll();
 
-	QByteArrayList connectArgs = args->getOptionList( "autoconnect" );
-	for ( QByteArrayList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
+	QStringList connectArgs = args->getOptionList( "autoconnect" );
+	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
 	{
-		foreach ( const QString connectArg, QString::fromLocal8Bit(*i).split(','))
-			connectArgs.append( connectArg.toLocal8Bit() );
+		foreach ( const QString connectArg, (*i).split(','))
+			connectArgs.append( connectArg );
 	}
 
-	for ( QByteArrayList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
+	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
 	{
 		QRegExp rx( QLatin1String( "([^\\|]*)\\|\\|(.*)" ) );
 		rx.indexIn( *i );
@@ -252,7 +251,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 
 int KopeteApplication::newInstance()
 {
-//	kDebug(14000) << k_funcinfo << endl;
+//	kDebug(14000) << k_funcinfo;
 	handleURLArgs();
 
 	return KUniqueApplication::newInstance();
@@ -261,7 +260,7 @@ int KopeteApplication::newInstance()
 void KopeteApplication::handleURLArgs()
 {
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-//	kDebug(14000) << k_funcinfo << "called with " << args->count() << " arguments to handle." << endl;
+//	kDebug(14000) << k_funcinfo << "called with " << args->count() << " arguments to handle.";
 
 	if ( args->count() > 0 )
 	{
@@ -278,7 +277,7 @@ void KopeteApplication::handleURLArgs()
 
 void KopeteApplication::quitKopete()
 {
-	kDebug( 14000 ) << k_funcinfo << endl;
+	kDebug( 14000 ) << k_funcinfo;
 
 	m_isShuttingDown = true;
 

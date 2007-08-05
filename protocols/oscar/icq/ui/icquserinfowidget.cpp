@@ -49,7 +49,7 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	setCaption( i18n( "ICQ User Information" ) );
 	setDefaultButton( KDialog::Ok );
 	
-	kDebug(14153) << k_funcinfo << "Creating new icq user info widget" << endl;
+	kDebug(14153) << k_funcinfo << "Creating new icq user info widget";
 	
 	QWidget *genInfo = new QWidget(this);
 	m_genInfoWidget = new Ui::ICQGeneralInfoWidget;
@@ -301,7 +301,7 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	QString timezone;
 	for ( int zone = 24; zone >= -24; zone-- )
 	{
-		timezone = QString( "GTM %1%2:%3" )
+		timezone = QString( "GMT %1%2:%3" )
 			.arg( ( zone > 0 ) ? "-" : "" )
 			.arg( qAbs( zone ) / 2, 2, 10, QLatin1Char('0') )
 			.arg( ( qAbs( zone ) % 2 ) * 30, 2, 10, QLatin1Char('0')  );

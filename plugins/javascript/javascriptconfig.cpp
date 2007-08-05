@@ -48,7 +48,7 @@ JavaScriptConfig::JavaScriptConfig(QObject *parent)
 	, MimeTypeHandler(false)
 	, d(new JavaScriptConfig::Private)
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo;
 
 	d->config = new KConfig("javascriptplugin.rc");
 
@@ -200,7 +200,7 @@ QList<JavaScriptFile *> JavaScriptConfig::scriptsFor( Kopete::Account *account )
 	QList<JavaScriptFile *> retVal;
 	foreach( JavaScriptFile *scriptFile, d->scripts )
 	{
-		kDebug() << scriptFile->accounts << endl;
+		kDebug() << scriptFile->accounts;
 		if( scriptFile->accounts.contains( key ) || scriptFile->accounts.contains( "GLOBAL_SCRIPT" ) )
 			retVal.append( scriptFile );
 	}
@@ -216,7 +216,7 @@ void JavaScriptConfig::setScriptEnabled( Kopete::Account *account, const QString
 	else
 		key = "GLOBAL_SCRIPT";
 
-	kDebug() << k_funcinfo << key << " " << script << " " << enabled << endl;
+	kDebug() << k_funcinfo << key << " " << script << " " << enabled;
 
 	JavaScriptFile *scriptPtr = d->scripts[script];
 	if( scriptPtr )

@@ -47,7 +47,7 @@
 //#include <ksyntaxhighlighter.h>
 
 
-#include <qtimer.h>
+#include <QTimer>
 #include <QSplitter>
 
 //Added by qt3to4:
@@ -126,8 +126,6 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	// I had to disable the acceptDrop in the khtml widget to be able to intercept theses events.
 	setAcceptDrops(true);
 //	viewDock->setAcceptDrops(false);
-
-	m_remoteTypingMap.setAutoDelete( true );
 
 	//Manager signals
 	connect( mgr, SIGNAL( displayNameChanged() ),
@@ -409,28 +407,29 @@ void ChatView::setMainWindow( KopeteChatWindow* parent )
 
 void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 {
-	// Make sure we (re-)add the timer at the end, because the slot will
-	// remove the first timer
-	// And yes, the const_cast is a bit ugly, but it's only used as key
-	// value in this dictionary (no indirections) so it's basically
-	// harmless. Unfortunately there's no QConstPtrDictionary in Qt...
-	void *key = const_cast<Kopete::Contact *>( contact );
-	m_remoteTypingMap.remove( key );
+	TypingMap::iterator it = m_remoteTypingMap.find(contact);
+	if (it != m_remoteTypingMap.end())
+	{
+		if (it.value()->isActive())
+			it.value()->stop();
+		delete it.value();
+		m_remoteTypingMap.erase(it);
+	}
 	if( isTyping )
 	{
-		m_remoteTypingMap.insert( key, new QTimer(this) );
-		connect( m_remoteTypingMap[ key ], SIGNAL( timeout() ), SLOT( slotRemoteTypingTimeout() ) );
-		m_remoteTypingMap[ key ]->setSingleShot( true );
-		m_remoteTypingMap[ key ]->start( 6000 );
+		m_remoteTypingMap.insert( contact, new QTimer(this) );
+		connect( m_remoteTypingMap[ contact ], SIGNAL( timeout() ), SLOT( slotRemoteTypingTimeout() ) );
+
+		m_remoteTypingMap[ contact ]->setSingleShot( true );
+		m_remoteTypingMap[ contact ]->start( 6000 );
 	}
 
 	// Loop through the map, constructing a string of people typing
 	QStringList typingList;
-	Q3PtrDictIterator<QTimer> it( m_remoteTypingMap );
 
-	for( ; it.current(); ++it )
+	for( it = m_remoteTypingMap.begin(); it != m_remoteTypingMap.end(); ++it )
 	{
-		Kopete::Contact *c = static_cast<Kopete::Contact*>( it.currentKey() );
+		const Kopete::Contact *c = it.key();
 		QString nick;
 		if( c->metaContact() && c->metaContact() != Kopete::ContactList::self()->myself() )
 		{
@@ -539,10 +538,17 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 
 void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Qt::TextFormat format, bool suppressNotification )
 {
-// 	kDebug(14000) << k_funcinfo << endl;
+// 	kDebug(14000) << k_funcinfo;
 	if ( contact != m_manager->myself() )
 	{
-		m_remoteTypingMap.remove( const_cast<Kopete::Contact *>( contact ) );
+		TypingMap::iterator it = m_remoteTypingMap.find( contact );
+		if ( it != m_remoteTypingMap.end() )
+		{
+			if ((*it)->isActive())
+				(*it)->stop();
+			delete (*it);
+			m_remoteTypingMap.remove( contact );
+		}
 
 		QString contactName;
 		if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
@@ -589,7 +595,7 @@ QString& ChatView::caption() const
 
 void ChatView::setCaption( const QString &text, bool modified )
 {
-// 	kDebug(14000) << k_funcinfo << endl;
+// 	kDebug(14000) << k_funcinfo;
 	QString newCaption = text;
 
 	//Save this caption
@@ -665,7 +671,7 @@ void ChatView::slotToggleRtfToolbar( bool enabled )
 
 void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus )
 {
- 	kDebug(14000) << k_funcinfo << contact << endl;
+ 	kDebug(14000) << k_funcinfo << contact;
 	bool inhibitNotification = ( newStatus.status() == Kopete::OnlineStatus::Unknown ||
 	                             oldStatus.status() == Kopete::OnlineStatus::Unknown );
 	if ( contact && Kopete::BehaviorSettings::self() && !inhibitNotification )
@@ -805,7 +811,7 @@ void ChatView::readOptions()
 	}
 
 	dockKey.append( QLatin1String( ",editDock:sepPos" ) );
-	//kDebug(14000) << k_funcinfo << "reading splitterpos from key: " << dockKey << endl;
+	//kDebug(14000) << k_funcinfo << "reading splitterpos from key: " << dockKey;
 	int splitterPos = config->readEntry( dockKey, 70 );
 	editDock->manualDock( viewDock, K3DockWidget::DockBottom, splitterPos );
 	viewDock->setDockSite( K3DockWidget::DockLeft | K3DockWidget::DockRight );
@@ -826,8 +832,9 @@ void ChatView::setActive( bool value )
 void ChatView::slotRemoteTypingTimeout()
 {
 	// Remove the topmost timer from the list. Why does QPtrDict use void* keys and not typed keys? *sigh*
+	// FIXME: should remove the right item, not the topmost
 	if ( !m_remoteTypingMap.isEmpty() )
-		remoteTyping( reinterpret_cast<const Kopete::Contact *>( Q3PtrDictIterator<QTimer>(m_remoteTypingMap).currentKey() ), false );
+		remoteTyping( m_remoteTypingMap.begin().key(), false );
 }
 
 void ChatView::dragEnterEvent ( QDragEnterEvent * event )

@@ -199,7 +199,7 @@ void ClientCommands::nick(Message msg)
 
 	QString message;
 
-	if (oldNick.lower() == m_Nickname.lower())
+	if (oldNick.toLower() == m_Nickname.toLower())
 	{
 		m_Nickname = msg.suffix();
 		message = i18n("Your nick has changed from %1 to %2");
@@ -387,7 +387,7 @@ void ClientCommands::bindNumericReplies()
  */
 void ClientCommands::numericReply_001(Message msg)
 {
-	kDebug(14121) << k_funcinfo << endl;
+	kDebug(14121) << k_funcinfo;
 
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
@@ -1003,7 +1003,7 @@ void ClientCommands::CtcpQuery_dcc(Message msg)
 //	Message &ctcpMsg = msg.ctcpMessage();
 	Message ctcpMsg;
 
-	QString dccCommand = ctcpMsg.arg(0).upper();
+	QString dccCommand = ctcpMsg.arg(0).toUpper();
 
 	if (dccCommand == QString::fromLatin1("CHAT"))
 	{
@@ -1021,7 +1021,7 @@ void ClientCommands::CtcpQuery_dcc(Message msg)
 		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
 		if (okayHost && okayPort)
 		{
-			kDebug(14120) << "Starting DCC chat window." << endl;
+			kDebug(14120) << "Starting DCC chat window.";
 //			TransferHandler::self()->createClient(
 //				this, msg.prefix(),
 //				address, port,
@@ -1046,7 +1046,7 @@ void ClientCommands::CtcpQuery_dcc(Message msg)
 		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
 		if (okayHost && okayPort && okaySize)
 		{
-			kDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
+			kDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1);
 //			TransferHandler::self()->createClient(
 //				this, msg.prefix(),
 //				address, port,

@@ -35,7 +35,7 @@ extern "C"
 
 LoginTask::LoginTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 	mState = InitialState;
 }
 
@@ -126,7 +126,7 @@ bool LoginTask::forMe(const Transfer* transfer) const
 
 void LoginTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 	/* initial state, we have to send a ServiceVerify */
 	if (mState == InitialState)
 		sendVerify();
@@ -142,7 +142,7 @@ void LoginTask::reset()
 void LoginTask::sendVerify()
 {
 	/* send a ServiceVerify */
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceVerify);
 	send( t );
 	mState = SentVerify;	
@@ -150,12 +150,12 @@ void LoginTask::sendVerify()
 
 void LoginTask::sendAuth(YMSGTransfer* transfer)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 	// transfer is the verify ack transfer, no useful data in it.
 	Q_UNUSED(transfer);
 	
 	/* got ServiceVerify ACK, send a ServiceAuth with username */
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceAuth );
 	t->setParam( 1 , client()->userId().toLocal8Bit() );
 	send(t);
@@ -164,7 +164,7 @@ void LoginTask::sendAuth(YMSGTransfer* transfer)
 
 void LoginTask::sendAuthResp(YMSGTransfer* t)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 	
 	QString sn = t->firstParam( 1 );
 	QString seed = t->firstParam( 94 );
@@ -175,10 +175,10 @@ void LoginTask::sendAuthResp(YMSGTransfer* t)
 	switch (version)
 	{
 		case 0:
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Version pre 0x0b "<< version_s << endl;	
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Version pre 0x0b "<< version_s;	
 		break;
 		default:
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Version 0x0b "<< version_s << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Version 0x0b "<< version_s;
 		sendAuthResp_0x0b(sn, seed, sessionID);
 		break;
 	}	
@@ -189,11 +189,11 @@ void LoginTask::sendAuthResp(YMSGTransfer* t)
 
 void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint sessionID)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " with seed " << seed << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " with seed " << seed;
 	char *resp_6 = (char *) malloc(100);
 	char *resp_96 = (char *) malloc(100);
 	authresp_0x0b(seed.toLatin1(), sn.toLatin1(), (client()->password()).toLatin1(), resp_6, resp_96);
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "resp_6: " << resp_6 << " resp_69: " << resp_96 << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "resp_6: " << resp_6 << " resp_69: " << resp_96;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuthResp, m_stateOnConnect);
 	t->setId( sessionID );
 	t->setParam( 0 , sn.toLocal8Bit());
@@ -221,21 +221,21 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 
 void LoginTask::sendAuthResp_pre_0x0b(const QString &/*sn*/, const QString &/*seed*/)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 }
 
 void LoginTask::handleAuthResp(YMSGTransfer *t)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	switch( t->service() )
 	{
 		case( Yahoo::ServiceList ):
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting Signal" << endl;
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting Signal";
 			emit loginResponse( Yahoo::LoginOk, QString() );
 		break;
 		case( Yahoo::ServiceAuthResp ):
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting Signal" << endl;
+			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting Signal";
 			emit loginResponse( t->firstParam( 66 ).toInt(), t->firstParam( 20 ) );
 		break;
 		default:
@@ -251,7 +251,7 @@ void LoginTask::setStateOnConnect( Yahoo::Status status )
 
 void LoginTask::parseCookies( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	for( int i = 0; i < t->paramCount( 59 ); ++i)
 	{	

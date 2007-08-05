@@ -120,7 +120,7 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 			break;
 	}
 
-	kDebug(14010) << k_funcinfo << "Base directory: " << avatarUrl.path() << endl;
+	kDebug(14010) << k_funcinfo << "Base directory: " << avatarUrl.path();
 
 	// Second, open the avatar configuration in current directory.
 	KUrl configUrl = avatarUrl;
@@ -160,12 +160,12 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	}
 
 	// Save image on disk	
-	kDebug(14010) << k_funcinfo << "Saving " << avatarFilename << " on disk." << endl;
+	kDebug(14010) << k_funcinfo << "Saving " << avatarFilename << " on disk.";
 	avatarUrl.addPath( avatarFilename );
 
 	if( !avatar.save( avatarUrl.path(), "PNG") )
 	{
-		kDebug(14010) << k_funcinfo << "Saving of " << avatarUrl.path() << " failed !" << endl;
+		kDebug(14010) << k_funcinfo << "Saving of " << avatarUrl.path() << " failed !";
 		return AvatarEntry();
 	}
 	else
@@ -200,7 +200,7 @@ bool AvatarManager::remove(Kopete::AvatarManager::AvatarEntry entryToRemove)
 	// Delete the image file first, file delete is more likely to fail than config group remove.
 	if( KIO::NetAccess::del(KUrl(entryToRemove.path),0) )
 	{
-		kDebug(14010) << k_funcinfo << "Removing avatar from config." << endl;
+		kDebug(14010) << k_funcinfo << "Removing avatar from config.";
 
 		KUrl configUrl(d->baseDir);
 		configUrl.addPath( UserDir );
@@ -222,10 +222,10 @@ void AvatarManager::Private::createDirectory(const KUrl &directory)
 {
 	if( !QFile::exists(directory.path()) )
 	{
-		kDebug(14010) << k_funcinfo << "Creating directory: " << directory.path() << endl;
+		kDebug(14010) << k_funcinfo << "Creating directory: " << directory.path();
 		if( !KIO::NetAccess::mkdir(directory,0) )
 		{
-			kDebug(14010) << "Directory " << directory.path() <<" creating failed." << endl;
+			kDebug(14010) << "Directory " << directory.path() <<" creating failed.";
 		}
 	}
 }
@@ -336,7 +336,7 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 	KUrl avatarDirectory = baseDir;
 	avatarDirectory.addPath(relativeDirectory);
 
-	kDebug(14010) << k_funcinfo << "Listing avatars in " << avatarDirectory.path() << endl;
+	kDebug(14010) << k_funcinfo << "Listing avatars in " << avatarDirectory.path();
 
 	// Look for Avatar configuration
 	KUrl avatarConfigUrl = avatarDirectory;

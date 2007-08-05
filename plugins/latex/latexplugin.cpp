@@ -24,7 +24,7 @@
 #include <kgenericfactory.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <k3process.h>
+#include <kprocess.h>
 #include <ktemporaryfile.h>
 #include <kcodecs.h>
 #include <kmessagebox.h>
@@ -44,7 +44,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_latex, LatexPluginFactory( "kopete_latex" )  
 LatexPlugin::LatexPlugin( QObject *parent, const QStringList &/*args*/ )
 : Kopete::Plugin( LatexPluginFactory::componentData(), parent )
 {
-//	kDebug() << k_funcinfo << endl;
+//	kDebug() << k_funcinfo;
 	if( !s_pluginStatic )
 		s_pluginStatic = this;
 
@@ -105,7 +105,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	if( !messageText.contains("$$"))
 		return;
 
-	//kDebug() << k_funcinfo << " Using converter: " << m_convScript << endl;
+	//kDebug() << k_funcinfo << " Using converter: " << m_convScript;
 
 	// /\[([^]]).*?\[/$1\]/
 	// \$\$.+?\$\$
@@ -121,7 +121,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	QMap<QString, QString> replaceMap;
 	while (pos >= 0 && pos < messageText.length())
 	{
-//		kDebug() << k_funcinfo  << " searching pos: " << pos << endl;
+//		kDebug() << k_funcinfo  << " searching pos: " << pos;
 		pos = rg.indexIn(messageText, pos);
 		
 		if (pos >= 0 )
@@ -224,7 +224,7 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 	m_tempFiles.append(tempFile);
 	QString fileName = tempFile->fileName();
 
-	K3Process p;
+	KProcess p;
 			
 	QString argumentRes = "-r %1x%2";
 	QString argumentOut = "-o %1";
@@ -234,10 +234,10 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 	vDPI = LatexConfig::self()->verticalDPI();
 	p << m_convScript <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << argumentOut.arg(fileName) /*<< argumentFormat*/ << latexFormula  ;
 			
-	kDebug() << k_funcinfo  << " Rendering " << m_convScript << " " <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << " " << argumentOut.arg(fileName) << endl;
+	kDebug() << k_funcinfo  << " Rendering " << m_convScript << " " <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << " " << argumentOut.arg(fileName);
 			
 	// FIXME our sucky sync filter API limitations :-)
-	p.start(K3Process::Block);
+	p.execute();
 	return fileName;
 }
 

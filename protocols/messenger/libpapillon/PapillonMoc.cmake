@@ -23,15 +23,19 @@ ENDMACRO(PAPILLON_MOC)
 
 # Papillon/Base
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Base/bytestream.h ${CMAKE_CURRENT_SOURCE_DIR}/base/bytestream.cpp )
+papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Base/bytestreambase.h ${CMAKE_CURRENT_SOURCE_DIR}/base/bytestreambase.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Base/connector.h ${CMAKE_CURRENT_SOURCE_DIR}/base/connector.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Base/safedelete.h ${CMAKE_CURRENT_SOURCE_DIR}/base/safedelete.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Base/stream.h ${CMAKE_CURRENT_SOURCE_DIR}/base/stream.cpp )
 
 # Papillon/Http
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Http/httpcoreprotocol.h ${CMAKE_CURRENT_SOURCE_DIR}/http/httpcoreprotocol.cpp )
-papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Http/securestream.h ${CMAKE_CURRENT_SOURCE_DIR}/http/securestream.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Http/tweenerhandler.h ${CMAKE_CURRENT_SOURCE_DIR}/http/tweenerhandler.cpp )
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Http/httpconnection.h ${CMAKE_CURRENT_SOURCE_DIR}/http/httpconnection.cpp )
+
+# Papillon/Network
+papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Network/ipendpointconnector.h ${CMAKE_CURRENT_SOURCE_DIR}/network/ipendpointconnector.cpp )
+papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Network/networkstream.h ${CMAKE_CURRENT_SOURCE_DIR}/network/networkstream.cpp )
 
 # Papillon/Tasks
 papillon_moc( ${CMAKE_CURRENT_SOURCE_DIR}/include/Papillon/Tasks/challengetask.h ${CMAKE_CURRENT_SOURCE_DIR}/tasks/challengetask.cpp )

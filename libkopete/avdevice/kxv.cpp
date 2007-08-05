@@ -56,13 +56,13 @@ extern "C" {
 KXv::KXv()
 {
     xv_adaptors = 0;
-    _devs.setAutoDelete(true);
 }
 
 
 KXv::~KXv()
 {
-    kDebug() << "KXv::~KXv: Close Xv connection." << endl;
+    kDebug() << "KXv::~KXv: Close Xv connection.";
+    qDeleteAll(_devs);
     _devs.clear();
 
 #ifdef HAVE_LIBXV
@@ -103,12 +103,12 @@ KXv* KXv::connect(Drawable d)
 
     xvptr = new KXv;
     if (!xvptr->init(d)) {
-        kDebug() << "KXv::connect: Xv init failed." << endl;
+        kDebug() << "KXv::connect: Xv init failed.";
         delete xvptr;
         return NULL;
     }
 
-    kDebug() << "KXv::connect: Xv init completed." << endl;
+    kDebug() << "KXv::connect: Xv init completed.";
     return xvptr;
 }
 
@@ -124,14 +124,14 @@ bool KXv::init(Drawable d)
                                     &xv_request,
                                     &xv_event,
                                     &xv_error)) {
-        kWarning() << "KXv::init: Xv extension not available." << endl;
+        kWarning() << "KXv::init: Xv extension not available.";
         return false;
     }
 
 #ifdef HAVE_LIBXVMC
     // Causes crashes for some people.
     //  if (Success == XvMCQueryExtension(QX11Info::display(),0,0)) {
-    //    kDebug() << "Found XvMC!" << endl;
+    //    kDebug() << "Found XvMC!";
     //  }
 #endif
 
@@ -140,7 +140,7 @@ bool KXv::init(Drawable d)
                                    &xv_adaptors,
                                    (XvAdaptorInfo **)&xv_adaptor_info)) {
         // Note technically fatal... what to do?
-        kWarning() << "KXv::init: XvQueryAdaptors failed." << endl;
+        kWarning() << "KXv::init: XvQueryAdaptors failed.";
     }
 
     XvAdaptorInfo *ai = (XvAdaptorInfo *)xv_adaptor_info;
@@ -212,7 +212,7 @@ int KXvDevice::displayImage(Window win, const unsigned char *const data, int w, 
 
     // Must be a video capable device!
     if (!(xv_type & XvImageMask) || !(xv_type & XvInputMask)) {
-        kWarning() << "KXvDevice::displayImage: This is not a video capable device." << endl;
+        kWarning() << "KXvDevice::displayImage: This is not a video capable device.";
         return -1;
     }
 
@@ -269,14 +269,14 @@ bool KXvDevice::startVideo(Window w, int dw, int dh)
 
     // Must be a video capable device!
     if (!(xv_type & XvVideoMask) || !(xv_type & XvInputMask)) {
-        kWarning() << "KXvDevice::startVideo: This is not a video capable device." << endl;
+        kWarning() << "KXvDevice::startVideo: This is not a video capable device.";
         return false;
     }
 
     if (videoStarted) stopVideo();
 
     if (xv_port == -1) {
-        kWarning() << "KXvDevice::startVideo: No xv_port." << endl;
+        kWarning() << "KXvDevice::startVideo: No xv_port.";
         return false;
     }
 
@@ -318,7 +318,7 @@ bool KXvDevice::stopVideo()
     if (!videoStarted)
         return true;
     if (xv_port == -1) {
-        kWarning() << "KXvDevice::stopVideo: No xv_port." << endl;
+        kWarning() << "KXvDevice::stopVideo: No xv_port.";
         return false;
     }
 
@@ -357,7 +357,6 @@ KXvDevice::KXvDevice()
     xv_gc = 0;
     xv_last_win = 0;
     videoStarted = false;
-    _attrs.setAutoDelete(true);
     xv_image = 0;
     xv_image_w = 320;
     xv_image_h = 200;
@@ -367,6 +366,7 @@ KXvDevice::KXvDevice()
 KXvDevice::~KXvDevice()
 {
 #ifdef HAVE_LIBXV
+    qDeleteAll(_attrs);
     _attrs.clear();
     if (videoStarted) stopVideo();
     if (xv_encoding_info)
@@ -396,7 +396,7 @@ bool KXvDevice::init()
     assert(xv_port != -1);   // make sure we were prepped by KXv already.
 
     if (XvGrabPort(QX11Info::display(), xv_port, CurrentTime)) {
-        kWarning() << "KXvDevice::init(): Unable to grab Xv port." << endl;
+        kWarning() << "KXvDevice::init(): Unable to grab Xv port.";
         return false;
     }
 
@@ -404,13 +404,13 @@ bool KXvDevice::init()
                                     xv_port,
                                     &xv_encodings,
                                     (XvEncodingInfo **)&xv_encoding_info)) {
-        kWarning() << "KXvDevice::init: Xv QueryEncodings failed.  Dropping Xv support for this device." << endl;
+        kWarning() << "KXvDevice::init: Xv QueryEncodings failed.  Dropping Xv support for this device.";
         return false;
     }
 
     // Package the encodings up nicely
     for (unsigned int i = 0; i < xv_encodings; i++) {
-        //kDebug() << "Added encoding: " << ((XvEncodingInfo *)xv_encoding_info)[i].name << endl;
+        //kDebug() << "Added encoding: " << ((XvEncodingInfo *)xv_encoding_info)[i].name;
         _encodingList << ((XvEncodingInfo *)xv_encoding_info)[i].name;
     }
 
@@ -418,7 +418,7 @@ bool KXvDevice::init()
                                     xv_port,
                                     &xv_encoding_attributes);
     XvAttribute *xvattr = (XvAttribute *)xv_attr;
-    kDebug() << "Attributes for port " << xv_port << endl;
+    kDebug() << "Attributes for port " << xv_port;
     for (int i = 0; i < xv_encoding_attributes; i++) {
         assert(xvattr);
         kDebug() << "   -> " << xvattr[i].name
@@ -438,7 +438,7 @@ bool KXvDevice::init()
     XvImageFormatValues  *fo;
     fo = XvListImageFormats(QX11Info::display(), xv_port, &xv_formats);
     xv_formatvalues = (void *)fo;
-    kDebug() << "Image formats for port " << xv_port << endl;
+    kDebug() << "Image formats for port " << xv_port;
     for (int i = 0; i < xv_formats; i++) {
         assert(fo);
         QString imout;
@@ -450,10 +450,10 @@ bool KXvDevice::init()
                       (fo[i].id >> 24) & 0xff,
                       ((fo[i].format == XvPacked) ?
                        "Packed" : "Planar"));
-        kDebug() << imout << endl;
+        kDebug() << imout;
     }
 
-    kDebug() << "Disabling double buffering." << endl;
+    kDebug() << "Disabling double buffering.";
     setAttribute("XV_DOUBLE_BUFFER", 0);
 
     return true;
@@ -509,10 +509,10 @@ const KXvDeviceAttributes& KXvDevice::attributes()
 
 bool KXvDevice::getAttributeRange(const QString& attribute, int *min, int *max)
 {
-    for (KXvDeviceAttribute *at = _attrs.first(); at != NULL; at = _attrs.next()) {
-        if (at->name == attribute) {
-            if (min) *min = at->min;
-            if (max) *max = at->max;
+    for (KXvDeviceAttributes::iterator it = _attrs.begin(); it != _attrs.end(); ++it) {
+        if ((*it)->name == attribute) {
+            if (min) *min = (*it)->min;
+            if (max) *max = (*it)->max;
             return true;
         }
     }
@@ -525,10 +525,10 @@ bool KXvDevice::getAttribute(const QString& attribute, int *val)
 #ifndef HAVE_LIBXV
     return false;
 #else
-    for (KXvDeviceAttribute *at = _attrs.first(); at != NULL; at = _attrs.next()) {
-        if (at->name == attribute) {
+    for (KXvDeviceAttributes::iterator it = _attrs.begin(); it != _attrs.end(); ++it) {
+        if ((*it)->name == attribute) {
             if (val)
-                XvGetPortAttribute(QX11Info::display(), xv_port, at->atom(), val);
+                XvGetPortAttribute(QX11Info::display(), xv_port, (*it)->atom(), val);
             return true;
         }
     }
@@ -542,9 +542,9 @@ bool KXvDevice::setAttribute(const QString& attribute, int val)
 #ifndef HAVE_LIBXV
     return false;
 #else
-    for (KXvDeviceAttribute *at = _attrs.first(); at != NULL; at = _attrs.next()) {
-        if (at->name == attribute) {
-            XvSetPortAttribute(QX11Info::display(), xv_port, at->atom(), val);
+    for (KXvDeviceAttributes::iterator it = _attrs.begin(); it != _attrs.end(); ++it) {
+        if ((*it)->name == attribute) {
+            XvSetPortAttribute(QX11Info::display(), xv_port, (*it)->atom(), val);
             XSync(QX11Info::display(), False);
             return true;
         }
@@ -577,10 +577,10 @@ bool KXvDevice::encoding(QString& encoding)
 #else
     XvEncodingID enc;
 
-    for (KXvDeviceAttribute *at = _attrs.first(); at != 0L; at = _attrs.next()) {
-        if (at->name == "XV_ENCODING") {
-            XvGetPortAttribute(QX11Info::display(), xv_port, at->atom(), (int*)&enc);
-            kDebug() << "KXvDevice: encoding: " << enc << endl;
+    for (KXvDeviceAttributes::iterator it = _attrs.begin(); it != _attrs.end(); ++it) {
+        if ((*it)->name == "XV_ENCODING") {
+            XvGetPortAttribute(QX11Info::display(), xv_port, (*it)->atom(), (int*)&enc);
+            kDebug() << "KXvDevice: encoding: " << enc;
             encoding = enc;
             return true;
         }
@@ -645,7 +645,7 @@ void KXvDevice::rebuildImage(int w, int h, bool shm)
         xv_image = (void*)XvCreateImage(QX11Info::display(), xv_port, xv_imageformat,
                                         0, w, h);
         if (!xv_image) {
-            kWarning() << "KXvDevice::rebuildImage: XvCreateImage failed." << endl;
+            kWarning() << "KXvDevice::rebuildImage: XvCreateImage failed.";
         }
     } else {
 #ifdef HAVE_XSHM
@@ -653,13 +653,13 @@ void KXvDevice::rebuildImage(int w, int h, bool shm)
         xv_image = (void*)XvShmCreateImage(QX11Info::display(), xv_port, xv_imageformat,
                                            0, w, h, static_cast<XShmSegmentInfo*>(xv_shminfo));
         if (!xv_image) {
-            kWarning() << "KXvDevice::rebuildImage: Error using SHM with Xv! Disabling SHM..." << endl;
+            kWarning() << "KXvDevice::rebuildImage: Error using SHM with Xv! Disabling SHM...";
             _haveShm = false;
             _shm = false;
             xv_image = (void*)XvCreateImage(QX11Info::display(), xv_port, xv_imageformat,
                                             0, w, h);
             if (!xv_image) {
-                kWarning() << "KXvDevice::rebuildImage: XvCreateImage failed." << endl;
+                kWarning() << "KXvDevice::rebuildImage: XvCreateImage failed.";
             }
         } else {
             static_cast<XShmSegmentInfo*>(xv_shminfo)->shmid =

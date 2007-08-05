@@ -70,7 +70,7 @@ void RateInfoTask::onGo()
 
 void RateInfoTask::sendRateInfoRequest()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending rate info request (SNAC 0x01, 0x06)" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending rate info request (SNAC 0x01, 0x06)";
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0001, 0x0006, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
@@ -83,16 +83,16 @@ QList<RateClass*> RateInfoTask::parseRateClasses(Buffer *buffer)
 	QList<RateClass*> rates;
 	Oscar::RateInfo ri;
 	
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "handling rate info response (SNAC 0x01, 0x07)" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "handling rate info response (SNAC 0x01, 0x07)";
 	
 	int numClasses = buffer->getWord();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got " << numClasses << " rate classes" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got " << numClasses << " rate classes";
 	for ( int i = 0; i < numClasses; i++ )
 	{
 		RateClass* newClass = new RateClass();
 		//parse rate classes and put them somewhere
 		ri.classId = buffer->getWord();
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Rate class: " << ri.classId << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Rate class: " << ri.classId;
 		//discard the rest (for right now)
 		ri.windowSize = buffer->getDWord(); //window size
 		ri.clearLevel = buffer->getDWord(); //clear level
@@ -115,7 +115,7 @@ QList<RateClass*> RateInfoTask::parseRateClasses(Buffer *buffer)
 	for ( int i = 0; i < numClasses; i++ )
 	{
 		groupNum = buffer->getWord();
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding snac members to group " << groupNum << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding snac members to group " << groupNum;
 		
 		RateClass* rc = 0L;
 		QList<RateClass*>::iterator it = rates.begin();
@@ -156,7 +156,7 @@ void RateInfoTask::handleRateInfoResponse()
 
 void RateInfoTask::sendRateInfoAck()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending rate info acknowledgement" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending rate info acknowledgement";
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0001, 0x0008, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
@@ -165,7 +165,7 @@ void RateInfoTask::sendRateInfoAck()
 	QList<int>::const_iterator end = m_rateGroups.end();
 	for ( cit = m_rateGroups.begin(); cit != end; ++cit )
 	{
-		//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding rate " << (*cit) << " to rate ack" << endl;
+		//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding rate " << (*cit) << " to rate ack";
 		buffer->addWord( (*cit) );
 	}
 

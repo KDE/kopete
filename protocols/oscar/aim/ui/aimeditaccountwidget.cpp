@@ -27,7 +27,7 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
         Kopete::Account *account, QWidget *parent )
 		: QWidget( parent ), KopeteEditAccountWidget( account )
 {
-	//kDebug(14152) << k_funcinfo << "Called." << endl;
+	//kDebug(14152) << k_funcinfo << "Called.";
 
 	mAccount = dynamic_cast<AIMAccount*>( account );
 	mProtocol = protocol;
@@ -140,12 +140,12 @@ AIMEditAccountWidget::~AIMEditAccountWidget()
 
 Kopete::Account *AIMEditAccountWidget::apply()
 {
-	kDebug( 14152 ) << k_funcinfo << "Called." << endl;
+	kDebug( 14152 ) << k_funcinfo << "Called.";
 
 	// If this is a new account, create it
 	if ( !mAccount )
 	{
-		kDebug( 14152 ) << k_funcinfo << "creating a new account" << endl;
+		kDebug( 14152 ) << k_funcinfo << "creating a new account";
 		QString newId = mGui->edtAccountId->text();
 		mAccount = new AIMAccount( mProtocol, newId );
 	}
@@ -209,7 +209,7 @@ Kopete::Account *AIMEditAccountWidget::apply()
 
 bool AIMEditAccountWidget::validateData()
 {
-	//kDebug(14152) << k_funcinfo << "Called." << endl;
+	//kDebug(14152) << k_funcinfo << "Called.";
 
 	QString userName = mGui->edtAccountId->text();
 	QString server = mGui->edtServerAddress->text();
@@ -225,7 +225,7 @@ bool AIMEditAccountWidget::validateData()
 		return false;
 
 	// Seems good to me
-	//kDebug(14152) << k_funcinfo << "Account data validated successfully." << endl;
+	//kDebug(14152) << k_funcinfo << "Account data validated successfully.";
 	return true;
 }
 

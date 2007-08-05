@@ -47,7 +47,7 @@ public:
 
 	QTreeWidgetItem* selectedProtocol();
 
-	QMap<QTreeWidgetItem *, KPluginInfo *>  protocolItems;
+	QMap<QTreeWidgetItem *, KPluginInfo>  protocolItems;
 	KopeteEditAccountWidget *accountPage;
 	KVBox *accountPageWidget;
 	QWidget *selectService;
@@ -86,13 +86,13 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
 	addPage(d->finish,d->finish->windowTitle());
 
 	// add the available messenger services to the dialogs list
-	QList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
-	for (QList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
+	QList<KPluginInfo> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
+	for (QList<KPluginInfo>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
 	{
 		QTreeWidgetItem *pluginItem = new QTreeWidgetItem(d->uiSelectService.protocolListView);
-		pluginItem->setIcon(0, QIcon(SmallIcon((*it)->icon())));
-		pluginItem->setText(0, (*it)->name());
-		pluginItem->setText(1, (*it)->comment());
+		pluginItem->setIcon(0, QIcon(SmallIcon(it->icon())));
+		pluginItem->setText(0, it->name());
+		pluginItem->setText(1, it->comment());
 
 		d->protocolItems.insert(pluginItem, *it);
 	}
@@ -156,15 +156,15 @@ void AddAccountWizard::next()
 	if (currentPage()->widget() == d->selectService)
 	{
 		QTreeWidgetItem *lvi = d->selectedProtocol();
-		if(!d->protocolItems[lvi])
+		if(!d->protocolItems[lvi].isValid())
 		{ //no item selected
 			return;
 		}
-		d->proto = qobject_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->loadPlugin(d->protocolItems[lvi]->pluginName()));
+		d->proto = qobject_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->loadPlugin(d->protocolItems[lvi].pluginName()));
 		if (!d->proto)
 		{
 			KMessageBox::queuedMessageBox(this, KMessageBox::Error,
-				i18n("Cannot load the %1 protocol plugin.", d->protocolItems[lvi]->name()),
+				i18n("Cannot load the %1 protocol plugin.", d->protocolItems[lvi].name()),
 				i18n("Error While Adding Account"));
 			return;
 		}
@@ -196,7 +196,7 @@ void AddAccountWizard::next()
 	}
 	else 
 	{
-		kDebug(14100) << k_funcinfo << "Next pressed on misc page" << endl;
+		kDebug(14100) << k_funcinfo << "Next pressed on misc page";
 		KAssistantDialog::next();
 	}
 

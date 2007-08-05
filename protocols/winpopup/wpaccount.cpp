@@ -40,7 +40,7 @@ class KMenu;
 WPAccount::WPAccount(WPProtocol *parent, const QString &accountID)
 	: Kopete::Account(parent, accountID)
 {
-//	kDebug(14170) <<  "WPAccount::WPAccount()" << endl;
+//	kDebug(14170) <<  "WPAccount::WPAccount()";
 
 	mProtocol = WPProtocol::protocol();
 
@@ -68,7 +68,7 @@ const QStringList WPAccount::getHosts(const QString &Group)
 
 bool WPAccount::checkHost(const QString &Name)
 {
-//	kDebug() << "WPAccount::checkHost: " << Name << endl;
+//	kDebug() << "WPAccount::checkHost: " << Name;
 	if (Name.toUpper() == QString::fromLatin1("LOCALHOST")) {
 		// Assume localhost is always there, but it will not appear in the samba output.
 		// Should never happen as localhost is now forbidden as contact, just for safety. GF
@@ -80,13 +80,13 @@ bool WPAccount::checkHost(const QString &Name)
 
 bool WPAccount::createContact(const QString &contactId, Kopete::MetaContact *parentContact )
 {
-//	kDebug(14170) << "[WPAccount::createContact] contactId: " << contactId << endl;
+//	kDebug(14170) << "[WPAccount::createContact] contactId: " << contactId;
 
 	if (!contacts()[contactId]) {
 		WPContact *newContact = new WPContact(this, contactId, parentContact->displayName(), parentContact);
 		return newContact != 0;
 	} else {
-		kDebug(14170) << "[WPAccount::addContact] Contact already exists" << endl;
+		kDebug(14170) << "[WPAccount::addContact] Contact already exists";
 	}
 
 	return false;
@@ -94,7 +94,7 @@ bool WPAccount::createContact(const QString &contactId, Kopete::MetaContact *par
 
 void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival, const QString &From)
 {
-//	kDebug(14170) <<  "WPAccount::slotGotNewMessage(" << Body << ", " << Arrival.toString() << ", " << From << ")" << endl;
+//	kDebug(14170) <<  "WPAccount::slotGotNewMessage(" << Body << ", " << Arrival.toString() << ", " << From << ")";
 
 	// Ignore messages from own host or IPs.
 	// IPs can not be matched to an account anyway.
@@ -102,10 +102,10 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 	// The reason for this seems to be in ChatSessionManager? GF
 	QRegExp ip("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
 
-//	kDebug(14170) << "ip.search: " << From << " match: " << ip.search(From) << endl;
+//	kDebug(14170) << "ip.search: " << From << " match: " << ip.search(From);
 
 	if (From == accountId() || ip.exactMatch(From)) {
-		kDebug(14170) << "Ignoring message from own host/account or IP." << endl;
+		kDebug(14170) << "Ignoring message from own host/account or IP.";
 		return;
 	}
 
@@ -121,19 +121,19 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 		}
 	 } else {
 		// What to do with offline received messages?
-		kDebug(14170) << "That's strange - we got a message while offline! Ignoring." << endl;
+		kDebug(14170) << "That's strange - we got a message while offline! Ignoring.";
 	}
 }
 
 void WPAccount::connect(const Kopete::OnlineStatus &)
 {
-//	kDebug(14170) <<  "WPAccount::Connect()" << endl;
+//	kDebug(14170) <<  "WPAccount::Connect()";
 	myself()->setOnlineStatus(mProtocol->WPOnline);
 }
 
 void WPAccount::disconnect()
 {
-//	kDebug(14170) <<  "WPAccount::Disconnect()" << endl;
+//	kDebug(14170) <<  "WPAccount::Disconnect()";
 	myself()->setOnlineStatus(mProtocol->WPOffline);
 }
 
@@ -147,7 +147,7 @@ void WPAccount::updateAccountId()
 
 void WPAccount::setAway(bool status, const QString &awayMessage)
 {
-//	kDebug(14170) <<  "WPAccount::setAway()" << endl;
+//	kDebug(14170) <<  "WPAccount::setAway()";
 
 	theAwayMessage = awayMessage;
 
@@ -159,7 +159,7 @@ void WPAccount::setAway(bool status, const QString &awayMessage)
 
 KActionMenu* WPAccount::actionMenu()
 {
-	kDebug(14170) <<  "WPAccount::actionMenu()" << endl;
+	kDebug(14170) <<  "WPAccount::actionMenu()";
 
 	/// How to remove an action from Kopete::Account::actionMenu()? GF
 
@@ -195,7 +195,7 @@ KActionMenu* WPAccount::actionMenu()
 
 void WPAccount::slotSendMessage(const QString &Body, const QString &Destination)
 {
-	kDebug(14170) << "WPAccount::slotSendMessage(" << Body << ", " << Destination << ")" << endl;
+	kDebug(14170) << "WPAccount::slotSendMessage(" << Body << ", " << Destination << ")";
 
 	if (myself()->onlineStatus().status() == Kopete::OnlineStatus::Away) myself()->setOnlineStatus(mProtocol->WPOnline);
 	mProtocol->sendMessage(Body, Destination);

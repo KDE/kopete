@@ -41,7 +41,7 @@ public slots:
 	virtual void save();
 
 	virtual void defaults();
-
+    void reparseConfiguration(const QByteArray&conf);
 private:
 	KopetePluginConfigPrivate *d;
 };

@@ -63,7 +63,7 @@ public:
 
 	void addObject( const QString &name, ObjectT *object )
 	{
-		//kDebug() << k_funcinfo << "Adding object " << name << endl;
+		//kDebug() << k_funcinfo << "Adding object " << name;
 		if( !objectList[name] )
 		{
 			KJS::List arg;

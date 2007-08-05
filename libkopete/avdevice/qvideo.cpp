@@ -97,7 +97,7 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
 				    vi_in[i].green_mask == 0x00ff00 &&
 				    vi_in[i].blue_mask  == 0x0000ff) {
 					p = FORMAT_BGR32;
-					kDebug() << "QVideo: Found BGR32 display." << endl;
+					kDebug() << "QVideo: Found BGR32 display.";
 				}
                 break;
 			case 24:
@@ -105,7 +105,7 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
 				    vi_in[i].green_mask == 0x00ff00 &&
 				    vi_in[i].blue_mask  == 0x0000ff) {
 					p = FORMAT_BGR24;
-					kDebug() << "QVideo: Found BGR24 display." << endl;
+					kDebug() << "QVideo: Found BGR24 display.";
 				}
                 break;
 			case 16:
@@ -113,13 +113,13 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
 				    vi_in[i].green_mask == 0x0007e0 &&
 				    vi_in[i].blue_mask  == 0x00001f) {
 					p = FORMAT_RGB15_LE;
-					kDebug() << "QVideo: Found RGB16_LE display." << endl;
+					kDebug() << "QVideo: Found RGB16_LE display.";
 				} else
                     if (vi_in[i].red_mask   == 0x007c00 &&
                         vi_in[i].green_mask == 0x0003e0 &&
                         vi_in[i].blue_mask  == 0x00001f) {
                         p = FORMAT_RGB15_LE;
-                        kDebug() << "QVideo: Found RGB15_LE display." << endl;
+                        kDebug() << "QVideo: Found RGB15_LE display.";
                     }
                 break;
 			case 8:
@@ -144,7 +144,7 @@ bool QVideo::findDisplayProperties(ImageFormat& fmt, int& depth, unsigned int& b
         depth         = d;
         return true;
     } else {
-        kWarning() << "QVideo: Unable to find out palette. What display do you have????" << endl;
+        kWarning() << "QVideo: Unable to find out palette. What display do you have????";
         fmt           = FORMAT_NONE;
         bitsperpixel  = 0;
         bytesperpixel = 0;

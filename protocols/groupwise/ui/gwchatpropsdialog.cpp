@@ -90,7 +90,7 @@ GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( const GroupWise::Chatroom & 
 
 void GroupWiseChatPropsDialog::initialise()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo;
 	m_widget = new Ui::GroupWiseChatPropsWidget;
 	connect( m_widget->m_topic, SIGNAL( textChanged( const QString & )  ), SLOT( slotWidgetChanged() ) );
 	connect( m_widget->m_owner, SIGNAL( textChanged( const QString & ) ), SLOT( slotWidgetChanged() ) );

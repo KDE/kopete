@@ -227,7 +227,7 @@ void Engine::nick(Message &msg)
 
 	QString message;
 
-	if (oldNick.lower() == m_Nickname.lower())
+	if (oldNick.toLower() == m_Nickname.toLower())
 	{
 		m_Nickname = msg.suffix();
 		message = i18n("Your nick has changed from %1 to %2");
@@ -357,7 +357,7 @@ void Engine::privmsg(Message &msg)
 
 void Engine::quit(const QString &reason, bool /*now*/)
 {
-	kDebug(14120) << k_funcinfo << reason << endl;
+	kDebug(14120) << k_funcinfo << reason;
 
 //	if (isDisconnected())
 //		return;

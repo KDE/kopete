@@ -54,8 +54,9 @@ NowListeningPreferences::NowListeningPreferences(QWidget *parent, const QStringL
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Kscd"));
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Noatun"));
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Juk"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("amaroK"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Amarok"));
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Kaffeine"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Quod Libet"));
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("XMMS"));
 #endif

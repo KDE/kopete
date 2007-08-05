@@ -44,7 +44,7 @@
 typedef KGenericFactory<StatisticsPlugin> StatisticsPluginFactory;
 
 
-static const KAboutData aboutdata("kopete_statistics", I18N_NOOP("Statistics") , "0.1" );
+static const KAboutData aboutdata("kopete_statistics", 0, ki18n("Statistics") , "0.1" );
 K_EXPORT_COMPONENT_FACTORY( kopete_statistics, StatisticsPluginFactory( &aboutdata )  )
 
 StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QStringList &)
@@ -124,7 +124,7 @@ void StatisticsPlugin::slotViewStatistics()
 {
 	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
 	
-	kDebug() << k_funcinfo << "statistics - dialog :"+ m->displayName() << endl;
+	kDebug() << k_funcinfo << "statistics - dialog :"+ m->displayName();
 	
 	if (m && !m->metaContactId().isEmpty())
 	{
@@ -151,7 +151,7 @@ void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 
 void StatisticsPlugin::dbusStatisticsDialog(QString id)
 {
-	kDebug() << k_funcinfo << "statistics - DCOP dialog :" << id << endl;
+	kDebug() << k_funcinfo << "statistics - DCOP dialog :" << id;
 	
 	if (statisticsContactMap[id])
 	{
@@ -199,7 +199,7 @@ bool StatisticsPlugin::dbusWasOffline(QString id, QString dateTime)
 
 bool StatisticsPlugin::dbusWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status)
 {
-	kDebug() << k_funcinfo << "statistics - DCOP wasOnline :" << id << endl;
+	kDebug() << k_funcinfo << "statistics - DCOP wasOnline :" << id;
 	
 	if (dateTime.isValid() && statisticsContactMap[id])
 	{

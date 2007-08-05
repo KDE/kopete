@@ -104,7 +104,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	QString htmlCode;
 	QString fontStyle;
 
-	kDebug(14310) << k_funcinfo << "called." << endl;
+	kDebug(14310) << k_funcinfo << "called.";
 	//setWFlags(Qt::WDestructiveClose);	// send SIGNAL(closing()) on quit
 
 	// Class member initializations
@@ -322,7 +322,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 
 void HistoryDialog::dateSelected(Q3ListViewItem* it)
 {
-	kDebug(14310) << k_funcinfo << endl;
+	kDebug(14310) << k_funcinfo;
 
 	KListViewDateItem *item = static_cast<KListViewDateItem*>(it);
 
@@ -335,7 +335,7 @@ void HistoryDialog::dateSelected(Q3ListViewItem* it)
 
 void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 {
-	kDebug(14310) << k_funcinfo << endl;
+	kDebug(14310) << k_funcinfo;
 
 	// Clear View
 	DOM::HTMLElement htmlBody = mHtmlPart->htmlDocument().body();
@@ -402,7 +402,7 @@ void HistoryDialog::slotFilterChanged(int /*index*/)
 
 void HistoryDialog::slotOpenURLRequest(const KUrl &url, const KParts::URLArgs &/*args*/)
 {
-	kDebug(14310) << k_funcinfo << "url=" << url.url() << endl;
+	kDebug(14310) << k_funcinfo << "url=" << url.url();
 	new KRun(url, 0, false); // false = non-local files
 }
 

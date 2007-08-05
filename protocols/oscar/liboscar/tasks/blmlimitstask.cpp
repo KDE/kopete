@@ -80,7 +80,7 @@ bool BLMLimitsTask::take(Transfer* transfer)
 
 void BLMLimitsTask::onGo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending BLM limits request" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending BLM limits request";
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0003, 0x0002, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();

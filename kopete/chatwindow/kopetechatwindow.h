@@ -26,7 +26,6 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QFrame>
-#include <Q3PtrList>
 #include <QCloseEvent>
 #include <QList>
 #include "kopetecontact.h"
@@ -57,6 +56,8 @@ class ChatSession;
 class Contact;
 typedef QList<Contact*>  ContactPtrList;
 }
+
+typedef QList<ChatView*> ChatViewList;
 
 class KopeteChatWindow : public KXmlGuiWindow
 {
@@ -108,7 +109,7 @@ public:
 	virtual bool queryExit();
 
 	KTemporaryFile *backgroundFile;
-	Q3PtrList<ChatView> chatViewList;
+	ChatViewList chatViewList;
 
 private:
 	// All KopeteChatWindows are created by the window function
@@ -207,8 +208,8 @@ private slots:
 
 	void slotPreviousTab();
 	void slotNextTab();
-	void slotDetachChat( int newWindowIndex = -1 );
-	void slotPlaceTabs( int tabPlacement );
+	void slotDetachChat(QAction* = 0);
+	void slotPlaceTabs( QAction* );
 
 	void slotViewMenuBar();
 	void slotToggleStatusBar();

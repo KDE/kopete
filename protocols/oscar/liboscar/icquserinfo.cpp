@@ -33,7 +33,7 @@ void ICQShortInfo::fill( Buffer* buffer )
 {
 	if ( buffer->getByte() == 0x0A )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ short user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ short user info packet";
 		nickname = buffer->getLELNTS();
 		firstName = buffer->getLELNTS();
 		lastName = buffer->getLELNTS();
@@ -43,7 +43,7 @@ void ICQShortInfo::fill( Buffer* buffer )
 // 		gender = buffer->getByte();
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ short user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ short user info packet";
 }
 
 void ICQShortInfo::store( Buffer* buffer )
@@ -74,7 +74,7 @@ void ICQGeneralUserInfo::fill( Buffer* buffer )
 {
 	if ( buffer->getByte() == 0x0A )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ basic user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ basic user info packet";
 		nickName = buffer->getLELNTS();
 		firstName = buffer->getLELNTS();
 		lastName = buffer->getLELNTS();
@@ -94,7 +94,7 @@ void ICQGeneralUserInfo::fill( Buffer* buffer )
 		publishEmail = ( buffer->getByte() == 0x01 );
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ basic user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ basic user info packet";
 }
 
 void ICQGeneralUserInfo::store( Buffer* buffer )
@@ -208,7 +208,7 @@ void ICQWorkUserInfo::fill( Buffer* buffer )
 		homepage = buffer->getLELNTS();
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet";
 }
 
 void ICQWorkUserInfo::store( Buffer* buffer )
@@ -330,7 +330,7 @@ void ICQMoreUserInfo::fill( Buffer* buffer )
 		sendInfo = buffer->getByte();
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet";
 }
 
 void ICQMoreUserInfo::store( Buffer* buffer )
@@ -344,7 +344,7 @@ void ICQMoreUserInfo::store( Buffer* buffer )
 	{
 		buffer->addLETLV8( 0x017C, gender.get() );
 	}
-	
+
 	if ( homepage.hasChanged() )
 	{
 		Buffer buf;
@@ -390,7 +390,7 @@ void ICQMoreUserInfo::store( Buffer* buffer )
 // 	if ( marital.hasChanged() )
 // 	{
 // 	}
-	
+
 	if ( sendInfo.hasChanged() )
 	{
 		buffer->addLETLV8( 0x0348, sendInfo.get() );
@@ -417,7 +417,7 @@ void ICQEmailInfo::fill( Buffer* buffer )
 		emailList = emails;
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ email user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ email user info packet";
 }
 
 void ICQEmailInfo::store( Buffer* buffer )
@@ -446,7 +446,7 @@ void ICQNotesInfo::fill( Buffer* buffer )
 	if ( buffer->getByte() == 0x0A )
 		notes = buffer->getLELNTS();
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ notes user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ notes user info packet";
 }
 
 void ICQNotesInfo::store( Buffer* buffer )
@@ -480,7 +480,7 @@ void ICQInterestInfo::fill( Buffer* buffer )
 				descriptions[count]=d;
 				count++;
 			} else {
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got more than four interest infos" << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got more than four interest infos";
 			}
 		}
 		if ( count < 4 )
@@ -491,10 +491,10 @@ void ICQInterestInfo::fill( Buffer* buffer )
 				descriptions[i] = QByteArray();
 			}
 		}
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "LEN: "<< len << " COUNT: " << count<< endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "LEN: "<< len << " COUNT: " << count;
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ interest user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ interest user info packet";
 }
 
 void ICQInterestInfo::store( Buffer* buffer )
@@ -540,23 +540,23 @@ void ICQOrgAffInfo::fill( Buffer* buffer )
 	{
 		if ( buffer->getByte() != 0x03 )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ affiliation info packet" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ affiliation info packet";
 			return;
 		}
-		
+
 		pastAff1Category = buffer->getLEWord();
 		pastAff1Keyword = buffer->getLELNTS();
 		pastAff2Category = buffer->getLEWord();
 		pastAff2Keyword = buffer->getLELNTS();
 		pastAff3Category = buffer->getLEWord();
 		pastAff3Keyword = buffer->getLELNTS();
-		
+
 		if ( buffer->getByte() != 0x03 )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ organization info packet" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ organization info packet";
 			return;
 		}
-		
+
 		org1Category = buffer->getLEWord();
 		org1Keyword = buffer->getLELNTS();
 		org2Category = buffer->getLEWord();
@@ -565,7 +565,7 @@ void ICQOrgAffInfo::fill( Buffer* buffer )
 		org3Keyword = buffer->getLELNTS();
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ organization & affiliation info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ organization & affiliation info packet";
 
 }
 
@@ -642,8 +642,8 @@ void ICQSearchResult::fill( Buffer* buffer )
 	buffer->getLEWord(); // data length ( eat it )
 
 	uin = buffer->getLEDWord();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found UIN " << QString::number( uin ) << endl;
-	
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found UIN " << QString::number( uin );
+
 	nickName = buffer->getLELNTS();
 	firstName = buffer->getLELNTS();
 	lastName = buffer->getLELNTS();
@@ -676,6 +676,540 @@ ICQWPSearchInfo::ICQWPSearchInfo()
 	onlineOnly = false;
 }
 
+ICQFullInfo::ICQFullInfo( bool assumeDirty )
+: uin(assumeDirty), firstName(assumeDirty), lastName(assumeDirty), nickName(assumeDirty),
+  homepage(assumeDirty), gender(assumeDirty), webAware(assumeDirty), privacyProfile(assumeDirty),
+  language1(assumeDirty), language2(assumeDirty), language3(assumeDirty),
+  statusDescription(assumeDirty), timezone(assumeDirty), notes(assumeDirty),
+  homeList(assumeDirty), originList(assumeDirty), workList(assumeDirty),
+  interestList(assumeDirty), organizationList(assumeDirty), pastAffliationList(assumeDirty),
+  phoneList(assumeDirty)
+{
+	uin.init( 0 );
+	timezone.init( 0 );
+}
 
+void ICQFullInfo::fill( Buffer* buffer )
+{
+	Buffer tlvListBuffer( buffer->getBSTR() );
+	QList<TLV> tlvList = tlvListBuffer.getTLVList();
+
+	QList<TLV>::const_iterator it;
+	for ( it = tlvList.begin(); it != tlvList.end(); ++it )
+	{
+		switch ( (*it).type )
+		{
+		case 0x0032:
+			uin = (*it).data;
+			break;
+		case 0x0046:
+			break;
+		case 0x0050:
+			break;
+		case 0x0055:
+			break;
+		case 0x0064:
+			firstName = (*it).data;
+			break;
+		case 0x006e:
+			lastName = (*it).data;
+			break;
+		case 0x0078:
+			nickName = (*it).data;
+			break;
+		case 0x0082:
+			{
+			Buffer b( (*it).data );
+			gender = b.getByte();
+			}
+			break;
+		case 0x008c:
+			break;
+		case 0x0096:
+			homeList = parseAddressItemList( (*it).data );
+			break;
+		case 0x00A0:
+			originList = parseAddressItemList( (*it).data );
+			break;
+		case 0x00AA:
+			{
+				Buffer b( (*it).data );
+				language1 = b.getWord();
+			}
+			break;
+		case 0x00B4:
+			{
+				Buffer b( (*it).data );
+				language2 = b.getWord();
+			}
+			break;
+		case 0x00BE:
+			{
+				Buffer b( (*it).data );
+				language3 = b.getWord();
+			}
+			break;
+		case 0x00C8:
+			phoneList = parseInfoItemList( (*it).data );
+			break;
+		case 0x00FA:
+			homepage = (*it).data;
+			break;
+		case 0x0104:
+			break;
+		case 0x010e:
+			break;
+		case 0x0118:
+			workList = parseWorkItemList( (*it).data );
+			break;
+		case 0x0122:
+			interestList = parseInfoItemList( (*it).data );
+			break;
+		case 0x0123:
+			organizationList = parseInfoItemList( (*it).data );
+			break;
+		case 0x0124:
+			pastAffliationList = parseInfoItemList( (*it).data );
+			break;
+		case 0x012C:
+			break;
+		case 0x0136:
+			break;
+		case 0x0140:
+			break;
+		case 0x014A:
+			break;
+		case 0x0154:
+			break;
+		case 0x015E:
+			break;
+		case 0x0168:
+			break;
+		case 0x0172:
+			break;
+		case 0x017C:
+			timezone = Buffer( (*it).data ).getWord();
+			break;
+		case 0x0186:
+			notes = (*it).data;
+			break;
+		case 0x0190:
+			break;
+		case 0x019A:
+			{
+				Buffer b( (*it).data );
+				webAware = (b.getWord() == 0x0001);
+			}
+			break;
+		case 0x01A4:
+			break;
+		case 0x01AE:
+			break;
+		case 0x01B8:
+			break;
+		case 0x01C2:
+			break;
+		case 0x01CC:
+			break;
+		case 0x01D6:
+			break;
+		case 0x01E0:
+			break;
+		case 0x01EA:
+			break;
+		case 0x01F4:
+			break;
+		case 0x01F9:
+			{
+				Buffer b( (*it).data );
+				privacyProfile = b.getWord();
+			}
+			break;
+		case 0x01FE:
+			break;
+		case 0x0208:
+			break;
+		case 0x0212:
+			break;
+		case 0x021C:
+			break;
+		case 0x0226:
+			statusDescription = (*it).data;
+			break;
+		case 0x0230:
+			break;
+		case 0x003C:
+			break;
+		default:
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data;
+			break;
+		}
+	}
+}
+
+void ICQFullInfo::store( Buffer* buffer )
+{
+	buffer->startBlock( Buffer::BWord );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0046, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0050, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0055, unknown.get() );
+
+	if ( firstName.hasChanged() )
+		buffer->addTLV( 0x0064, firstName.get() );
+
+	if ( lastName.hasChanged() )
+		buffer->addTLV( 0x006e, lastName.get() );
+
+	if ( nickName.hasChanged() )
+		buffer->addTLV( 0x0078, nickName.get() );
+
+	if ( gender.hasChanged() )
+		buffer->addTLV8( 0x0082, gender.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x008c, unknown.get() );
+
+	if ( homeList.hasChanged() )
+		buffer->addTLV( 0x0096, storeAddressItemList( homeList.get() ) );
+
+	if ( originList.hasChanged() )
+		buffer->addTLV( 0x00A0, storeAddressItemList( originList.get() ) );
+
+	if ( language1.hasChanged() )
+		buffer->addTLV16( 0x00AA, language1.get() );
+
+	if ( language2.hasChanged() )
+		buffer->addTLV16( 0x00B4, language2.get() );
+
+	if ( language3.hasChanged() )
+		buffer->addTLV16( 0x00BE, language3.get() );
+
+	if ( phoneList.hasChanged() )
+		buffer->addTLV( 0x00C8, storeInfoItemList( phoneList.get() ) );
+
+	if ( homepage.hasChanged() )
+		buffer->addTLV( 0x00FA, homepage.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0104, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x010e, unknown.get() );
+
+	if ( workList.hasChanged() )
+		buffer->addTLV( 0x0118, storeWorkItemList( workList.get() ) );
+
+	if ( interestList.hasChanged() )
+		buffer->addTLV( 0x0122, storeInfoItemList( interestList.get() ) );
+
+	if ( organizationList.hasChanged() )
+		buffer->addTLV( 0x0123, storeInfoItemList( organizationList.get() ) );
+
+	if ( pastAffliationList.hasChanged() )
+		buffer->addTLV( 0x0124, storeInfoItemList( pastAffliationList.get() ) );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x012C, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0136, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0140, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x014A, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0154, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x015E, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0168, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0172, unknown.get() );
+
+	if ( timezone.hasChanged() )
+		buffer->addTLV16( 0x017C, timezone.get() );
+
+	if ( notes.hasChanged() )
+		buffer->addTLV( 0x0186, notes.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0190, unknown.get() );
+
+	if ( webAware.hasChanged() )
+		buffer->addTLV16( 0x019A, webAware.get() ? 0x0001 : 0x0000 );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x01A4, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x01AE, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x01B8, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x01C2, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x01CC, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x01D6, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x01E0, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x01EA, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x01F4, unknown.get() );
+
+	if ( privacyProfile.hasChanged() )
+		buffer->addTLV16( 0x01F9, privacyProfile.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x01FE, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0208, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0212, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x021C, unknown.get() );
+
+	if ( statusDescription.hasChanged() )
+		buffer->addTLV( 0x0226, statusDescription.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x0230, unknown.get() );
+
+// 	if ( unknown.hasChanged() )
+// 		buffer->addTLV( 0x003C, unknown.get() );
+
+	buffer->endBlock();
+}
+
+ICQFullInfo::AddressItemList ICQFullInfo::parseAddressItemList( const QByteArray& data ) const
+{
+	Buffer buffer( data );
+	AddressItemList infoList;
+
+	int count = buffer.getWord();
+	while ( (count--) > 0 )
+	{
+		QList<TLV> tlvList = Buffer( buffer.getBSTR() ).getTLVList();
+
+		AddressItem info;
+		QList<TLV>::const_iterator it;
+		for ( it = tlvList.begin(); it != tlvList.end(); ++it )
+		{
+			switch ( (*it).type )
+			{
+			case 0x0064:
+				info.address = (*it).data;
+				break;
+			case 0x006E:
+				info.city = (*it).data;
+				break;
+			case 0x0078:
+				info.state = (*it).data;
+				break;
+			case 0x0082:
+				info.zip = (*it).data;
+				break;
+			case 0x008C:
+				{
+					Buffer b( (*it).data );
+					info.country = b.getDWord();
+				}
+				break;
+			default:
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data;
+				break;
+			}
+		}
+		infoList.append( info );
+	}
+	return infoList;
+}
+
+QByteArray ICQFullInfo::storeAddressItemList( const ICQFullInfo::AddressItemList& infoList ) const
+{
+	Buffer buffer;
+
+	buffer.addWord( infoList.count() );
+	for ( int i = 0; i < infoList.count(); i++ )
+	{
+		const AddressItem& info = infoList.at( i );
+
+		buffer.startBlock( Buffer::BWord );
+		buffer.addTLV( 0x0064, info.address );
+		buffer.addTLV( 0x006E, info.city );
+		buffer.addTLV( 0x0078, info.state );
+		buffer.addTLV( 0x0082, info.zip );
+		buffer.addTLV32( 0x008C, info.country );
+		buffer.endBlock();
+	}
+	return buffer.buffer();
+}
+
+ICQFullInfo::WorkItemList ICQFullInfo::parseWorkItemList( const QByteArray& data ) const
+{
+	Buffer buffer( data );
+	WorkItemList infoList;
+
+	int count = buffer.getWord();
+	while ( (count--) > 0 )
+	{
+		QList<TLV> tlvList = Buffer( buffer.getBSTR() ).getTLVList();
+
+		WorkItem info;
+		QList<TLV>::const_iterator it;
+		for ( it = tlvList.begin(); it != tlvList.end(); ++it )
+		{
+			switch ( (*it).type )
+			{
+			case 0x0064:
+				info.position = (*it).data;
+				break;
+			case 0x006E:
+				info.companyName = (*it).data;
+				break;
+			case 0x007D:
+				info.department = (*it).data;
+				break;
+			case 0x0078:
+				info.homepage = (*it).data;
+				break;
+			case 0x0082:
+				break;
+			case 0x008C:
+				break;
+			case 0x0096:
+				break;
+			case 0x00A0:
+				break;
+			case 0x00AA:
+				info.address = (*it).data;
+				break;
+			case 0x00B4:
+				info.city = (*it).data;
+				break;
+			case 0x00BE:
+				info.state = (*it).data;
+				break;
+			case 0x00C8:
+				info.zip = (*it).data;
+				break;
+			case 0x00D2:
+				{
+				Buffer b( (*it).data );
+				info.country = b.getDWord();
+				break;
+				}
+			default:
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data;
+				break;
+			}
+		}
+		infoList.append( info );
+	}
+	return infoList;
+}
+
+QByteArray ICQFullInfo::storeWorkItemList( const ICQFullInfo::WorkItemList& infoList ) const
+{
+	Buffer buffer;
+
+	buffer.addWord( infoList.count() );
+	for ( int i = 0; i < infoList.count(); i++ )
+	{
+		const WorkItem& info = infoList.at( i );
+
+		buffer.startBlock( Buffer::BWord );
+		buffer.addTLV( 0x0064, info.position );
+		buffer.addTLV( 0x006E, info.companyName );
+		buffer.addTLV( 0x007D, info.department );
+		buffer.addTLV( 0x0078, info.homepage );
+		buffer.addTLV16( 0x0082, 0x0000 );
+		buffer.addTLV16( 0x008C, 0x0000 );
+		buffer.addTLV( 0x0096, QByteArray( 8, '\0') );
+		buffer.addTLV( 0x00A0, QByteArray( 8, '\0') );
+		buffer.addTLV( 0x00AA, info.address );
+		buffer.addTLV( 0x00B4, info.city );
+		buffer.addTLV( 0x00BE, info.state );
+		buffer.addTLV( 0x00C8, info.zip );
+		buffer.addTLV32( 0x00D2, info.country );
+		buffer.endBlock();
+	}
+	return buffer.buffer();
+}
+
+ICQFullInfo::InfoItemList ICQFullInfo::parseInfoItemList( const QByteArray& data ) const
+{
+	Buffer buffer( data );
+	InfoItemList infoList;
+
+	int count = buffer.getWord();
+	while ( (count--) > 0 )
+	{
+		QList<TLV> tlvList = Buffer( buffer.getBSTR() ).getTLVList();
+
+		InfoItem info;
+		QList<TLV>::const_iterator it;
+		for ( it = tlvList.begin(); it != tlvList.end(); ++it )
+		{
+			switch ( (*it).type )
+			{
+			case 0x0064:
+				info.description = (*it).data;
+				break;
+			case 0x006E:
+				{
+					Buffer b( (*it).data );
+					info.category = b.getWord();
+				}
+				break;
+			default:
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data;
+				break;
+			}
+		}
+		infoList.append( info );
+	}
+	return infoList;
+}
+
+QByteArray ICQFullInfo::storeInfoItemList( const ICQFullInfo::InfoItemList& infoList ) const
+{
+	Buffer buffer;
+
+	buffer.addWord( infoList.count() );
+	for ( int i = 0; i < infoList.count(); i++ )
+	{
+		const InfoItem& info = infoList.at( i );
+
+		buffer.startBlock( Buffer::BWord );
+		buffer.addTLV( 0x0064, info.description );
+		buffer.addTLV16( 0x006E, info.category );
+		buffer.endBlock();
+	}
+	return buffer.buffer();
+}
 
 //kate: space-indent off; tab-width 4; replace-tabs off; indent-mode csands;

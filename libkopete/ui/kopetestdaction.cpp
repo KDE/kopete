@@ -53,11 +53,13 @@ void KopetePreferencesAction::slotShowPreferences()
 {
 	// FIXME: Use static deleter - Martijn
 	if ( !s_settingsDialog )
-		s_settingsDialog = new KSettings::Dialog( KSettings::Dialog::Static, Kopete::UI::Global::mainWidget() );
+	{
+		s_settingsDialog = new KSettings::Dialog( Kopete::UI::Global::mainWidget() );
+	}
 	s_settingsDialog->show();
 
-	s_settingsDialog->dialog()->raise();
-	KWindowSystem::activateWindow( s_settingsDialog->dialog()->winId() );
+	s_settingsDialog->raise();
+	KWindowSystem::activateWindow( s_settingsDialog->winId() );
 }
 
 KAction * KopeteStdAction::preferences( KActionCollection *parent, const char *name )

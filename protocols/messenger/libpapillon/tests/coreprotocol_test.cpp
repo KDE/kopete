@@ -21,7 +21,7 @@
 #include <QtDebug>
 
 // Papillon includes
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/MessengerCoreProtocol"
 
 #ifndef PAPILLON_TESTS_DATA
@@ -42,42 +42,42 @@ QByteArray readDataFromFile(const QString &fileName)
 	return temp;
 }
 
-void CoreProtocol_Test::testNormalTransfer()
+void CoreProtocol_Test::testNormalNetworkMessage()
 {
 	MessengerCoreProtocol protocol;
 	QByteArray data = readDataFromFile( QLatin1String(PAPILLON_TESTS_DATA"wlm_transfer1.transfer") );
 	protocol.addIncomingData(data);
 	
-	Transfer *transfer = protocol.incomingTransfer();
+	NetworkMessage *networkMessage = protocol.incomingNetworkMessage();
 
-	QVERIFY( transfer != 0 );
-	QVERIFY( transfer->type() & Transfer::TransactionTransfer );
-	QCOMPARE( transfer->command(), QString("VER") );
-	QCOMPARE( transfer->transactionId(), QString("1") );
-	QCOMPARE( transfer->arguments().count(), 2 );
-	QCOMPARE( transfer->arguments()[0], QString("MSNP13") );
-	QCOMPARE( transfer->arguments()[1], QString("CVR0") );
+	QVERIFY( networkMessage != 0 );
+	QVERIFY( networkMessage->type() & NetworkMessage::TransactionMessage );
+	QCOMPARE( networkMessage->command(), QString("VER") );
+	QCOMPARE( networkMessage->transactionId(), QString("1") );
+	QCOMPARE( networkMessage->arguments().count(), 2 );
+	QCOMPARE( networkMessage->arguments()[0], QString("MSNP13") );
+	QCOMPARE( networkMessage->arguments()[1], QString("CVR0") );
 }
 
-void CoreProtocol_Test::testFullPayloadTransfer()
+void CoreProtocol_Test::testFullPayloadNetworkMessage()
 {
 	MessengerCoreProtocol protocol;
 	QByteArray data = readDataFromFile( QLatin1String(PAPILLON_TESTS_DATA"wlm_transfer2.transfer") );
 
 	protocol.addIncomingData(data);
 
-	Transfer *transfer = protocol.incomingTransfer();
+	NetworkMessage *networkMessage = protocol.incomingNetworkMessage();
 
-	QVERIFY( transfer != 0 );
-	QVERIFY( transfer->type() & Transfer::PayloadTransfer );
-	QCOMPARE( transfer->command(), QString("GCF") );
-	QCOMPARE( transfer->payloadLength(), 165 );
-	QCOMPARE( transfer->payloadData().size(), 165 );
+	QVERIFY( networkMessage != 0 );
+	QVERIFY( networkMessage->type() & NetworkMessage::PayloadMessage );
+	QCOMPARE( networkMessage->command(), QString("GCF") );
+	QCOMPARE( networkMessage->payloadLength(), 165 );
+	QCOMPARE( networkMessage->payloadData().size(), 165 );
 
-	//delete transfer;
+	//delete networkMessage;
 }
 
-void CoreProtocol_Test::testFragmentPayloadTransfer()
+void CoreProtocol_Test::testFragmentPayloadNetworkMessage()
 {
 	MessengerCoreProtocol protocol;
 	QByteArray data1 = readDataFromFile( QLatin1String(PAPILLON_TESTS_DATA"wlm_transfer3.transfer") );
@@ -85,16 +85,16 @@ void CoreProtocol_Test::testFragmentPayloadTransfer()
 	
 	protocol.addIncomingData(data1);
 
-	QVERIFY( protocol.incomingTransfer() == 0 );
+	QVERIFY( protocol.incomingNetworkMessage() == 0 );
 
 	protocol.addIncomingData(data2);
 
-	Transfer *transfer = protocol.incomingTransfer();
+	NetworkMessage *networkMessage = protocol.incomingNetworkMessage();
 
-	QVERIFY( transfer != 0 );
-	QVERIFY( transfer->type() & Transfer::PayloadTransfer );
-	QCOMPARE( transfer->command(), QString("MSG") );
-	QCOMPARE( transfer->payloadLength(), 553 );
+	QVERIFY( networkMessage != 0 );
+	QVERIFY( networkMessage->type() & NetworkMessage::PayloadMessage );
+	QCOMPARE( networkMessage->command(), QString("MSG") );
+	QCOMPARE( networkMessage->payloadLength(), 553 );
 
 	QByteArray expectedData = QByteArray("MSG Hotmail Hotmail 553\r\n"
 "MIME-Version: 1.0\r\n"
@@ -122,7 +122,7 @@ void CoreProtocol_Test::testFragmentPayloadTransfer()
 "ABCHMigrated: 1\r\n"
 "BetaInvites: 0\r\n\r\n");
 
-	QCOMPARE( transfer->toRawCommand(), expectedData );
+	QCOMPARE( networkMessage->toRawCommand(), expectedData );
 }
 
 QTEST_MAIN(CoreProtocol_Test)

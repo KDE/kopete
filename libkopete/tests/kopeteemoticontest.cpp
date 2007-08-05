@@ -58,7 +58,7 @@ void KopeteEmoticonTest::testEmoticonParser()
 	for ( QStringList::ConstIterator it = inputFileNames.begin(); it != inputFileNames.end(); ++it)
 	{
 		QString fileName = *it;
-		kDebug() << "testcase: " << fileName << endl;
+		kDebug() << "testcase: " << fileName;
 		QString outputFileName = fileName;
 		outputFileName.replace("input","output");
 		// open the input file
@@ -86,7 +86,7 @@ void KopeteEmoticonTest::testEmoticonParser()
 			//Kopete::Emoticons::self();
 			QString result = emo.parse( inputData, Kopete::Emoticons::RelaxedParse | Kopete::Emoticons::SkipHTML ).replace( path, QString::null );	
 			
-			kDebug() << "Parse result: " << result << endl;
+			kDebug() << "Parse result: " << result;
 
 			// HACK to know the test case we applied, concatenate testcase name to both
 			// input and expected string. WIll remove when I can add some sort of metadata
@@ -97,13 +97,13 @@ void KopeteEmoticonTest::testEmoticonParser()
 			// otherwise use CHECK
 			if ( fileName.section("-", 0, 0) == QString::fromLatin1("broken") )
 			{
-				kDebug() << "checking known-broken testcase: " << fileName << endl;
+				kDebug() << "checking known-broken testcase: " << fileName;
 				QEXPECT_FAIL("", "Checking know-broken testcase", Continue);
 				QCOMPARE(result, expectedData);
 			}
 			else
 			{
-				kDebug() << "checking known-working testcase: " << fileName << endl;
+				kDebug() << "checking known-working testcase: " << fileName;
 				QCOMPARE(result, expectedData);
 			}
 		}

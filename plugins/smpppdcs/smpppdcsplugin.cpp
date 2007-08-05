@@ -44,7 +44,7 @@ SMPPPDCSPlugin::SMPPPDCSPlugin(QObject *parent, const char * name, const QString
         m_detectorSMPPPD(NULL), m_detectorNetstat(NULL), m_detectorNetworkStatus(NULL), m_timer(NULL),
 m_onlineInquiry(NULL) {
 
-    kDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo;
 
     m_pluginConnected = false;
 
@@ -69,7 +69,7 @@ m_onlineInquiry(NULL) {
 
 SMPPPDCSPlugin::~SMPPPDCSPlugin() {
 
-    kDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo;
 
     delete m_timer;
     delete m_detectorSMPPPD;
@@ -113,7 +113,7 @@ void SMPPPDCSPlugin::slotCheckStatus() {
 }
 
 void SMPPPDCSPlugin::setConnectedStatus( bool connected ) {
-    kDebug(14312) << k_funcinfo << connected << endl;
+    kDebug(14312) << k_funcinfo << connected;
 
     // We have to handle a few cases here. First is the machine is connected, and the plugin thinks
     // we're connected. Then we don't do anything. Next, we can have machine connected, but plugin thinks
@@ -124,16 +124,16 @@ void SMPPPDCSPlugin::setConnectedStatus( bool connected ) {
 
     if ( connected && !m_pluginConnected ) {
         // The machine is connected and plugin thinks we're disconnected
-        kDebug(14312) << k_funcinfo << "Setting m_pluginConnected to true" << endl;
+        kDebug(14312) << k_funcinfo << "Setting m_pluginConnected to true";
         m_pluginConnected = true;
         connectAllowed();
-        kDebug(14312) << k_funcinfo << "We're connected" << endl;
+        kDebug(14312) << k_funcinfo << "We're connected";
     } else if ( !connected && m_pluginConnected ) {
         // The machine isn't connected and plugin thinks we're connected
-        kDebug(14312) << k_funcinfo << "Setting m_pluginConnected to false" << endl;
+        kDebug(14312) << k_funcinfo << "Setting m_pluginConnected to false";
         m_pluginConnected = false;
         disconnectAllowed();
-        kDebug(14312) << k_funcinfo << "We're offline" << endl;
+        kDebug(14312) << k_funcinfo << "We're offline";
     }
 }
 
@@ -146,9 +146,9 @@ void SMPPPDCSPlugin::connectAllowed()
 	{
 #ifndef NDEBUG
         if(account->inherits("Kopete::ManagedConnectionAccount")) {
-            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + '_' + account->accountId() << " is an managed account!" << endl;
+            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + '_' + account->accountId() << " is an managed account!";
         } else {
-            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + '_' +account->accountId() << " is an unmanaged account!" << endl;
+            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + '_' +account->accountId() << " is an unmanaged account!";
         }
 #endif
 
@@ -166,9 +166,9 @@ void SMPPPDCSPlugin::disconnectAllowed() {
 	{
 #ifndef NDEBUG
         if(account->inherits("Kopete::ManagedConnectionAccount")) {
-            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + '_' + account->accountId() << " is an managed account!" << endl;
+            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + '_' + account->accountId() << " is an managed account!";
         } else {
-            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + '_' +account->accountId() << " is an unmanaged account!" << endl;
+            kDebug(14312) << k_funcinfo << "Account " << account->protocol()->pluginId() + '_' +account->accountId() << " is an unmanaged account!";
         }
 #endi
 		if(!list.contains(account->protocol()->pluginId() + '_' + account->accountId())) {
@@ -193,14 +193,14 @@ void SMPPPDCSPlugin::smpppdServerChanged(const QString& server)
 	QString oldServer = SMPPPDCSConfig::self()->server().utf8();
 	
 	if(oldServer != server) {
-		kDebug(14312) << k_funcinfo << "Detected a server change" << endl;
+		kDebug(14312) << k_funcinfo << "Detected a server change";
 		m_detectorSMPPPD->smpppdServerChange();
 	}
 }
 
 void SMPPPDCSPlugin::aboutToUnload() {
 
-    kDebug(14312) << k_funcinfo << endl;
+    kDebug(14312) << k_funcinfo;
 
     if(m_timer) {
         m_timer->stop();

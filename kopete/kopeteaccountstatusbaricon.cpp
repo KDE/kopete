@@ -30,7 +30,7 @@
 KopeteAccountStatusBarIcon::KopeteAccountStatusBarIcon( Kopete::Account *acc, QWidget *parent )
 : QLabel( parent )
 {
-// 	kDebug(14000) << "[KopeteAccountStatusBarIcon] Setting Initial Protocol Icon" << endl;
+// 	kDebug(14000) << "[KopeteAccountStatusBarIcon] Setting Initial Protocol Icon";
 	//setMask(initialPixmap->mask());
 	//setPixmap( Kopete::OnlineStatus( Kopete::OnlineStatus::Unknown, 0, proto, 0, "status_unknown", QString::null, QString::null ).protocolIcon() );
 	//setPixmap( proto->status().protocolIcon() );

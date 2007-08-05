@@ -87,24 +87,24 @@ bool OwnUserInfoTask::take( Transfer* transfer )
 				{ //buffer might be empty if flags bit 8 = 1
 					Oscar::BYTE checksumLength = b->getByte();
 					qba = b->getBlock( checksumLength );
-					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Self icon checksum: " << qba << endl;
+					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Self icon checksum: " << qba;
 				}
 				
 				if ( needUpload )
 				{
-					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buddy icon upload requested" << endl;
+					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buddy icon upload requested";
 					emit buddyIconUploadRequested();
 				}
 				else
 				{
-					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no item for hash found" << endl;
+					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no item for hash found";
 				}
 			}
 			
 			if ( infoType == 0x0002 )
 			{
 				QString availableMsg( b->getBSTR() );
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "self available message: " << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "self available message: ";
 			}
 			
 			setSuccess( 0, QString() );

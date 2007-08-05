@@ -32,6 +32,7 @@ Buffer::Buffer( const Buffer& other )
 {
 	mBuffer =  other.mBuffer;
 	mReadPos = other.mReadPos;
+	mBlockStack =  other.mBlockStack;
 }
 
 Buffer::Buffer(const char *b, int len)
@@ -579,6 +580,60 @@ QByteArray Buffer::getLEDBlock()
 {
 	Oscar::DWORD len = getLEDWord();
 	return getBlock( len );
+}
+
+void Buffer::startBlock( BlockType type, ByteOrder byteOrder )
+{
+	Block block = { type, byteOrder, mBuffer.size() };
+	mBlockStack.push( block );
+
+	if ( type == BWord )
+		expandBuffer( 2 );
+	else if ( type == BDWord )
+		expandBuffer( 4 );
+}
+
+void Buffer::endBlock()
+{
+	Q_ASSERT( mBlockStack.size() > 0 );
+	Block block = mBlockStack.pop();
+
+	int size = 0;
+	if ( block.type == BWord )
+		size = mBuffer.size() - block.pos - 2;
+	else if ( block.type == BDWord )
+		size = mBuffer.size() - block.pos - 4;
+
+	if ( block.byteOrder == BigEndian )
+	{
+		if ( block.type == BWord )
+		{
+			mBuffer[block.pos++] = (unsigned char) (size & 0x0000ff00) >> 8;
+			mBuffer[block.pos++] = (unsigned char) (size & 0x000000ff) >> 0;
+		}
+		else if ( block.type == BDWord )
+		{
+			mBuffer[block.pos++] = (unsigned char) (size & 0xff000000) >> 24;
+			mBuffer[block.pos++] = (unsigned char) (size & 0x00ff0000) >> 16;
+			mBuffer[block.pos++] = (unsigned char) (size & 0x0000ff00) >> 8;
+			mBuffer[block.pos++] = (unsigned char) (size & 0x000000ff) >> 0;
+		}
+	}
+	else
+	{
+		if ( block.type == BWord )
+		{
+			mBuffer[block.pos++] = (unsigned char) ((size >> 0) & 0xff);
+			mBuffer[block.pos++] = (unsigned char) ((size >> 8) & 0xff);
+		}
+		else if ( block.type == BDWord )
+		{
+			mBuffer[block.pos++] = (unsigned char) ((size >> 0) & 0xff);
+			mBuffer[block.pos++] = (unsigned char) ((size >> 8) & 0xff);
+			mBuffer[block.pos++] = (unsigned char) ((size >> 16) & 0xff);
+			mBuffer[block.pos++] = (unsigned char) ((size >> 24) & 0xff);
+		}
+	}
 }
 
 Buffer::operator QByteArray() const

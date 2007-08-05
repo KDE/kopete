@@ -60,6 +60,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="kcfg_AlwaysShowTabs" >
+     <property name="text" >
+      <string>&amp;Always show tabs</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QGroupBox" name="interfaceGroup" >
      <property name="title" >
       <string>&amp;Interface Preference</string>
@@ -245,7 +252,12 @@
  <tabstops>
   <tabstop>kcfg_showEvents</tabstop>
   <tabstop>kcfg_highlightEnabled</tabstop>
+  <tabstop>kcfg_spellCheck</tabstop>
+  <tabstop>kcfg_AlwaysShowTabs</tabstop>
+  <tabstop>viewPlugin</tabstop>
   <tabstop>kcfg_chatWindowGroupPolicy</tabstop>
+  <tabstop>kcfg_truncateContactName</tabstop>
+  <tabstop>kcfg_truncateContactNameLength</tabstop>
   <tabstop>kcfg_chatWindowBufferViewSize</tabstop>
  </tabstops>
  <resources/>

@@ -48,14 +48,13 @@ set(kopete_SRCS
    ${kopetepluginconfig_SRCS}
    main.cpp 
    kopeteapplication.cpp 
+   kanimatedsystemtrayicon.cpp
    systemtray.cpp 
    kopetewindow.cpp 
    kopeteaccountstatusbaricon.cpp 
 #   kopeteiface.cpp 
 #   kimifaceimpl.cpp 
    kopeteeditglobalidentitywidget.cpp )
-
-kde4_automoc(${kopete_SRCS})
 
 kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui )
 
@@ -70,7 +69,7 @@ install(TARGETS kopete_bin  DESTINATION ${BIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES kopete.desktop  DESTINATION ${XDG_APPS_DIR})
+install( FILES kopete.desktop  DESTINATION ${XDG_APPS_INSTALL_DIR})
 install( FILES kopeteui.rc kopete.notifyrc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
 
 kde4_install_icons( ${ICON_INSTALL_DIR}   )

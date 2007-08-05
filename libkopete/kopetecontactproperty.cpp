@@ -52,7 +52,7 @@ ContactPropertyTmpl::ContactPropertyTmpl(const QString &key,
 	ContactPropertyTmpl other = Kopete::Global::Properties::self()->tmpl(key);
 	if(other.isNull())
 	{
-//		kDebug(14000) << k_funcinfo << "Creating new template for key = '" << key << "'" << endl;
+//		kDebug(14000) << k_funcinfo << "Creating new template for key = '" << key << "'";
 
 		d = new Private;
 		d->refCount = 1;
@@ -64,7 +64,7 @@ ContactPropertyTmpl::ContactPropertyTmpl(const QString &key,
 	}
 	else
 	{
-//		kDebug(14000) << k_funcinfo << "Using existing template for key = '" << key << "'" << endl;
+//		kDebug(14000) << k_funcinfo << "Using existing template for key = '" << key << "'";
 		d = other.d;
 		d->refCount++;
 	}
@@ -81,12 +81,12 @@ ContactPropertyTmpl &ContactPropertyTmpl::operator=(
 {
 	if (this == &other)
 	{
-//		kDebug(14000) << k_funcinfo << "trying to assign this to itself!" << endl;
+//		kDebug(14000) << k_funcinfo << "trying to assign this to itself!";
 		return *this;
 	}
 	if( d == other.d )
 	{
-//		kDebug(14000) << k_funcinfo << "trying to assign d to itself!" << endl;
+//		kDebug(14000) << k_funcinfo << "trying to assign d to itself!";
 		return *this;
 	}
 	d->refCount--;
@@ -215,7 +215,7 @@ ContactProperty& ContactProperty::operator=(const ContactProperty& other)
 {
 	if (this == &other)
 	{
-//		kDebug(14000) << k_funcinfo << "trying to assign this to itself!" << endl;
+//		kDebug(14000) << k_funcinfo << "trying to assign this to itself!";
 		return *this;
 	}
 

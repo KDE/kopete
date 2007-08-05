@@ -82,7 +82,7 @@ void IRCChannelContact::slotChannelListed( const QString &channel, uint members,
 {
 	if (!manager(Kopete::Contact::CannotCreate) &&
 		onlineStatus() == m_protocol->m_ChannelStatusOnline &&
-		channel.lower() == m_nickName.lower())
+		channel.toLower() == m_nickName.toLower())
 	{
 		mTopic = topic;
 		setProperty(m_protocol->propChannelMembers, members);
@@ -152,9 +152,9 @@ void IRCChannelContact::slotAddNicknames()
 
 		IRCContact *user;
 
-		if ( nickToAdd.lower() != account->mySelf()->nickName().lower() )
+		if ( nickToAdd.toLower() != account->mySelf()->nickName().toLower() )
 		{
-			//kDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
+			//kDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd;
 			user = account->contactManager()->findUser(nickToAdd);
 			user->setOnlineStatus(m_protocol->m_UserStatusOnline);
 		}
@@ -194,7 +194,7 @@ void IRCChannelContact::channelTopic(const QString &topic)
 
 void IRCChannelContact::channelHomePage(const QString &url)
 {
-	kDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo;
 	setProperty( m_protocol->propHomepage, url );
 }
 
@@ -203,10 +203,10 @@ void IRCChannelContact::join()
 	if (!manager(Kopete::Contact::CannotCreate) &&
 		onlineStatus().status() == Kopete::OnlineStatus::Online)
 	{
-		kDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
-		kDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
+		kDebug() << k_funcinfo << "My nickname:" << m_nickName;
+		kDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate);
 		if( manager(Kopete::Contact::CannotCreate) )
-			kDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
+			kDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false);
 		startChat();
 	}
 }
@@ -221,7 +221,7 @@ void IRCChannelContact::slotIncomingUserIsAway( const QString &nick, const QStri
 {
 	IRCAccount *account = ircAccount();
 
-	if( nick.lower() == account->mySelf()->nickName().lower() )
+	if( nick.toLower() == account->mySelf()->nickName().toLower() )
 	{
 		IRCUserContact *c = account->mySelf();
 		if (manager(Kopete::Contact::CannotCreate) && manager()->members().contains(c))
@@ -247,13 +247,13 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 {
 	IRCAccount *account = ircAccount();
 
-	if (nickname.lower() == account->mySelf()->nickName().lower())
+	if (nickname.toLower() == account->mySelf()->nickName().toLower())
 	{
-		kDebug() << k_funcinfo << "Me:" << this << endl;
-		kDebug() << k_funcinfo << "My nickname:" << m_nickName << endl;
-		kDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate) << endl;
+		kDebug() << k_funcinfo << "Me:" << this;
+		kDebug() << k_funcinfo << "My nickname:" << m_nickName;
+		kDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate);
 		if (manager(Kopete::Contact::CannotCreate))
-			kDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false) << endl;
+			kDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false);
 
 		Kopete::Message msg((Kopete::Contact *)this, mMyself,
 			i18n("You have joined channel %1").arg(m_nickName),
@@ -279,7 +279,7 @@ void IRCChannelContact::userPartedChannel(const QString &nickname,const QString 
 {
 	IRCAccount *account = ircAccount();
 
-	if (nickname.lower() != account->engine()->nickName().lower())
+	if (nickname.toLower() != account->engine()->nickName().toLower())
 	{
 		Kopete::Contact *c = locateUser( nickname );
 		if ( c )
@@ -299,7 +299,7 @@ void IRCChannelContact::userKicked(const QString &nick, const QString &nickKicke
 	if (reason != nick)
 		r.append( i18n(" Reason: %2").arg( reason ) );
 
-	if( nickKicked.lower() != account->engine()->nickName().lower() )
+	if( nickKicked.toLower() != account->engine()->nickName().toLower() )
 	{
 		Kopete::Contact *c = locateUser( nickKicked );
 		if (c)

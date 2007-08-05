@@ -26,7 +26,6 @@
 #include "kopeteaccount.h"
 
 #include <q3valuelist.h>
-#include <q3ptrlist.h>
 #include <qobject.h>
 #include <qstring.h>
 #include <qstringlist.h>

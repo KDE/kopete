@@ -141,7 +141,7 @@ unsigned int RegisterCommand::newUin()
 void
 RegisterCommand::requestToken()
 {
-	kDebug( 14100 ) << "requestToken Initialisation" << endl;
+	kDebug( 14100 ) << "requestToken Initialisation";
 	state = RegisterStateWaitingForToken;
 
 	if ( !( session_ = gg_token( 1 ) ) ) {
@@ -177,7 +177,7 @@ RegisterCommand::execute()
 {
 	if ( state != RegisterStateGotToken || email_.isEmpty() || password_.isEmpty() || tokenString.isEmpty() ) {
 		// get token first || fill information
-		kDebug(14100) << "not enough info to run execute, state: " << state << " , email: " << email_ << ", password present " << !password_.isEmpty() << ", token string:" << tokenString << endl;
+		kDebug(14100) << "not enough info to run execute, state: " << state << " , email: " << email_ << ", password present " << !password_.isEmpty() << ", token string:" << tokenString;
 		return;
 	}
 	session_ = gg_register3( email_.toAscii(), password_.toAscii(), tokenId.toAscii(), tokenString.toAscii(), 1 );
@@ -209,7 +209,7 @@ void RegisterCommand::watcher()
 		emit operationStatus( i18n( "Token retrieving status: %1", GaduSession::stateDescription( session_->state ) ) );
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
-				kDebug( 14100 ) << "Recreating notifiers " << endl;
+				kDebug( 14100 ) << "Recreating notifiers ";
 				deleteNotifiers();
 				checkSocket( session_->fd, 0);
 				break;
@@ -224,7 +224,7 @@ void RegisterCommand::watcher()
 			case GG_STATE_DONE:
 				struct gg_token* sp = ( struct gg_token* )session_->data;
 				tokenId = (char *)sp->tokenid;
-				kDebug( 14100 ) << "got Token!, ID: " << tokenId << endl;
+				kDebug( 14100 ) << "got Token!, ID: " << tokenId;
 				deleteNotifiers();
 				if ( pubDir->success ) {
 					QPixmap tokenImg;
@@ -259,7 +259,7 @@ void RegisterCommand::watcher()
 		emit operationStatus( i18n( "Registration status: %1", GaduSession::stateDescription( session_->state ) ) );
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
-				kDebug( 14100 ) << "Recreating notifiers " << endl;
+				kDebug( 14100 ) << "Recreating notifiers ";
 				deleteNotifiers();
 				checkSocket( session_->fd, 0);
 				break;

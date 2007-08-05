@@ -52,7 +52,7 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 		: AddContactPage(parent)
 {
 	m_account = static_cast<GroupWiseAccount *>( owner );
-	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo;
 	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
 	if (owner->isConnected ())
 	{

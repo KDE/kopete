@@ -100,6 +100,8 @@ bool UserSearchTask::take( Transfer* t )
 			emit searchFinished( moreUsersCount );
 			setSuccess( 0, QString() );
 		}
+
+		delete buffer;
 		setTransfer( 0 );
 	}
 	return true;

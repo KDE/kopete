@@ -22,6 +22,7 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <klocale.h>
+#include <kjob.h>
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
@@ -172,7 +173,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 	QMap<QString, QString> addressBookData, ad;
 	QMap<QString, QString>::Iterator it;
 
-	//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
+	//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName();
 
 	QListIterator<Contact *> cit(metaContact->contacts());
 	while ( cit.hasNext() )
@@ -230,7 +231,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 
 	for( it = addressBookData.begin(); it != addressBookData.end(); ++it )
 	{
-		//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data() << endl;
+		//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data();
 		// FIXME: This is a terrible hack to check the key name for the phrase "messaging/"
 		//        to indicate what app name to use, but for now it's by far the easiest
 		//        way to get this working.
@@ -241,7 +242,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 		if( it.key().startsWith( QString::fromLatin1( "messaging/" ) ) )
 		{
 			metaContact->setAddressBookField( this, it.key(), QString::fromLatin1( "All" ), it.value() );
-//			kDebug(14010) << k_funcinfo << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );" << endl;
+//			kDebug(14010) << k_funcinfo << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );";
 		}
 		else
 			metaContact->setAddressBookField( this, QString::fromLatin1( "kopete" ), it.key(), it.value() );
@@ -298,7 +299,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 		// So ignore it
 		if(accountId == sd[ QString::fromLatin1( "contactId" ) ] )
 		{
-			kDebug( 14010 ) << k_funcinfo << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it" << endl;
+			kDebug( 14010 ) << k_funcinfo << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it";
 			continue;
 		}
 
@@ -368,6 +369,11 @@ Contact *Protocol::deserializeContact(
 	return 0;
 }
 
+KJob *Protocol::createProtocolTask(const QString &taskType)
+{
+	// Default implementation does nothing
+	return 0;
+}
 
 } //END namespace Kopete
 

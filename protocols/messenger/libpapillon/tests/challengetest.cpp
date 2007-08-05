@@ -16,10 +16,6 @@
 
 // Qt includes
 #include <QtTest/QtTest>
-#include <QtDebug>
-
-// QCA includes
-#include <QtCrypto>
 
 // Papillon includes
 // Use the #define hack to get acces to private methods in ChallengeTask
@@ -31,9 +27,6 @@
 // Values from http://msnpiki.msnfanatic.com/index.php/MSNP13:Challenges
 void Challenge_Test::testChallenge()
 {
-	// Convience object that init QCA.
-	QCA::Initializer qcaInit;
-
 	Papillon::ChallengeTask *challengeTask = new Papillon::ChallengeTask( new Papillon::Task(0, true) );
 	
 	QString resultChallenge1, resultChallenge2, resultChallenge3, resultChallenge4;

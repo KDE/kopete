@@ -55,7 +55,7 @@ WPProtocol::WPProtocol( QObject *parent, const QStringList & /* args */ )
 	WPAway(    Kopete::OnlineStatus::Away,    20, this, 1,  QStringList(QString::fromLatin1("wp_away")),     i18n("Away"),    i18n("Away")),
 	WPOffline( Kopete::OnlineStatus::Offline, 0,  this, 2,  QStringList(), i18n("Offline"), i18n("Offline"))
 {
-//	kDebug(14170) << "WPProtocol::WPProtocol()" << endl;
+//	kDebug(14170) << "WPProtocol::WPProtocol()";
 
 	sProtocol = this;
 
@@ -75,14 +75,14 @@ WPProtocol::WPProtocol( QObject *parent, const QStringList & /* args */ )
 // Destructor
 WPProtocol::~WPProtocol()
 {
-//	kDebug(14170) <<  "WPProtocol::~WPProtocol()" << endl;
+//	kDebug(14170) <<  "WPProtocol::~WPProtocol()";
 
 	sProtocol = 0;
 }
 
 AddContactPage *WPProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *theAccount)
 {
-//	kDebug(14170) << "WPProtocol::createAddContactWidget(<parent>, " << theAccount << ")" << endl;
+//	kDebug(14170) << "WPProtocol::createAddContactWidget(<parent>, " << theAccount << ")";
 
 	return new WPAddContact(parent, dynamic_cast<WPAccount *>(theAccount));
 }
@@ -96,12 +96,12 @@ Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContac
 
 	WPAccount *theAccount = static_cast<WPAccount *>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
 	if(!theAccount)	{
-		kDebug(14170) <<  "Account " << accountId << " not found" << endl;
+		kDebug(14170) <<  "Account " << accountId << " not found";
 		return 0;
 	}
 
 	if(theAccount->contacts()[contactId]) {
-		kDebug(14170) << "User " << contactId << " already in contacts map" << endl;
+		kDebug(14170) << "User " << contactId << " already in contacts map";
 		return 0;
 	}
 
@@ -121,7 +121,7 @@ Kopete::Account *WPProtocol::createNewAccount(const QString &accountId)
 
 void WPProtocol::settingsChanged()
 {
-	kDebug(14170) <<  "WPProtocol::slotSettingsChanged()" << endl;
+	kDebug(14170) <<  "WPProtocol::slotSettingsChanged()";
 
 	readConfig();
 	popupClient->settingsChanged(smbClientBin, groupCheckFreq);
@@ -172,7 +172,7 @@ void WPProtocol::slotReceivedMessage(const QString &Body, const QDateTime &Time,
 		if (theAccount)
 			dynamic_cast<WPAccount *>(theAccount)->slotGotNewMessage(Body, Time, From);
 		else
-			kDebug(14170) << "No contact or connected account found!" << endl;
+			kDebug(14170) << "No contact or connected account found!";
 	}
 }
 

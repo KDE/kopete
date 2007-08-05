@@ -20,7 +20,7 @@
 #include <QtCore/QStringList>
 
 // Papillon includes
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/MimeHeader"
 
 namespace Papillon
@@ -45,11 +45,11 @@ NotifyMessageTask::~NotifyMessageTask()
 }
 
 
-bool NotifyMessageTask::take(Transfer *transfer)
+bool NotifyMessageTask::take(NetworkMessage *networkMessage)
 {
-	if( forMe(transfer) )
+	if( forMe(networkMessage) )
 	{
-		MimeHeader notifyMessage = MimeHeader::parseMimeHeader( QString(transfer->payloadData()) );
+		MimeHeader notifyMessage = MimeHeader::parseMimeHeader( QString(networkMessage->payloadData()) );
 
 		emit profileMessage(notifyMessage);
 
@@ -60,12 +60,12 @@ bool NotifyMessageTask::take(Transfer *transfer)
 }
 
 
-bool NotifyMessageTask::forMe(Transfer *transfer) const
+bool NotifyMessageTask::forMe(NetworkMessage *networkMessage) const
 {
-	if( transfer->command() == QLatin1String("MSG") )
+	if( networkMessage->command() == QLatin1String("MSG") )
 	{
 		// TODO: Temp, shouldn't assume that it's Hotmail there.
-		if( transfer->arguments()[0] == QLatin1String("Hotmail") )
+		if( networkMessage->arguments()[0] == QLatin1String("Hotmail") )
 		{
 			return true;
 		}

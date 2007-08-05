@@ -1,0 +1,40 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Tutorial Plugin
+Name[bg]=Приставка за историята
+Name[de]=Anleitungsmodul
+Name[el]=Πρόσθετο εκμάθησης
+Name[fa]=وصلۀ خودآموز
+Name[ga]=Breiseán Teagaisc
+Name[ja]=チュートリアルプラグイン
+Name[nl]=Oefenplugin
+Name[pt]='Plugin' de Tutorial
+Name[pt_BR]='Plugin' de Tutorial
+Name[sv]=Handledningsinsticksprogram
+Name[zh_TW]=教學外掛程式
+Comment=Demonstration plugin for teaching Kopete development
+Comment[bg]=Приставка за демонстрация развитието на Kopete
+Comment[de]=Anleitungs-Modul zum Einfinden in die Kopete-Entwicklung
+Comment[el]=Πρόσθετο επίδειξης για την εκμάθηση της ανάπτυξης του Kopete
+Comment[ja]=Kopete の開発方法を教えるデモプラグイン
+Comment[nl]=Demonstratieplugin voor het leren van Kopete-ontwikkeling
+Comment[pt]='Plugin' de demonstração para ensinar a programar no Kopete
+Comment[pt_BR]='Plugin' de demonstração para ensinar a programar no Kopete
+Comment[sv]=Demonstrationsinsticksprogram för att lära ut utveckling av Kopete
+Comment[zh_TW]=教導 Kopete 開發的示範外掛程式
+Icon=tutorial_plugin
+ServiceTypes=Kopete/Plugin
+X-Kopete-Version=1000900
+X-KDE-Library=kopete_tutorialplugin
+X-KDE-PluginInfo-Author=Will Stephenson
+X-KDE-PluginInfo-Email=wstephenson@kde.org
+X-KDE-PluginInfo-Name=kopete_tutorialplugin
+X-KDE-PluginInfo-Version=0.0.1
+X-KDE-PluginInfo-Website=http://kopete.kde.org
+X-KDE-PluginInfo-Category=Plugins
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=false
+
+

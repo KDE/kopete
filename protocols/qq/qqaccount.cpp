@@ -52,14 +52,14 @@ QQAccount::QQAccount( QQProtocol *parent, const QString& accountID )
 
 void QQAccount::connectWithPassword( const QString &password )
 {
-	kDebug ( 14210 ) << k_funcinfo << "connect with password" << password << endl;
+	kDebug ( 14210 ) << k_funcinfo << "connect with password" << password;
 	myself()->setOnlineStatus( QQProtocol::protocol()->qqOnline );
 }
 
 /* FIXME: move all things to connectWithPassword */
 void QQAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 {
-	kDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) << k_funcinfo;
 
 	// FIXME: add invisible here!
 
@@ -72,7 +72,7 @@ void QQAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 
 	if ( m_notifySocket )
 	{
-		kDebug( 14210 ) << k_funcinfo <<"Ignoring Connect request (Already connecting)"  << endl;
+		kDebug( 14210 ) << k_funcinfo <<"Ignoring Connect request (Already connecting)";
 		return;
 	}
 	/* Hard-coded password for debug only */
@@ -155,7 +155,7 @@ void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete
 	}
 	else
 	{
-		kDebug( 14140 ) << k_funcinfo << "start connecting !!" << endl;
+		kDebug( 14140 ) << k_funcinfo << "start connecting !!";
 		m_connectstatus = status;
 		connect( status );
 	}
@@ -170,7 +170,7 @@ void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 
 bool QQAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
 {
-	kDebug( 14140 ) << k_funcinfo << endl;
+	kDebug( 14140 ) << k_funcinfo;
 	QQContact* newContact = new QQContact( this, contactId, parentContact );
 	return newContact != 0L;
 
@@ -203,7 +203,7 @@ QQChatSession * QQAccount::chatSession( Kopete::ContactPtrList others, const QSt
 			chatSession = findChatSessionByGuid( guid );
 			if ( chatSession )
 			{
-					kDebug( 14140 ) << k_funcinfo << " found a message manager by GUID: " << guid << endl;
+					kDebug( 14140 ) << k_funcinfo << " found a message manager by GUID: " << guid;
 					break;
 			}
 		}
@@ -212,7 +212,7 @@ QQChatSession * QQAccount::chatSession( Kopete::ContactPtrList others, const QSt
 				Kopete::ChatSessionManager::self()->findChatSession( myself(), others, protocol() ) );
 		if ( chatSession )
 		{
-			kDebug( 14140 ) << k_funcinfo << " found a message manager by members with GUID: " << chatSession->guid() << endl;
+			kDebug( 14140 ) << k_funcinfo << " found a message manager by members with GUID: " << chatSession->guid();
 			// re-add the returning contact(s) (very likely only one) to the chat
 			Kopete::ContactPtrList::const_iterator returningContact;
 			for ( returningContact = others.begin(); returningContact != others.end(); returningContact++ )
@@ -245,7 +245,7 @@ QQChatSession * QQAccount::chatSession( Kopete::ContactPtrList others, const QSt
 
 void QQAccount::sendMessage(const QString& guid, Kopete::Message& message )
 {
-	kDebug(14140) << k_funcinfo << "Sending the message to " << guid << endl;
+	kDebug(14140) << k_funcinfo << "Sending the message to " << guid;
 	// TODO: Add font style, font color, font size, font family here
 	// translate the QT font to Eva::Font.
 	// Currently, just send the plain text.
@@ -261,7 +261,7 @@ void QQAccount::sendMessage(const QString& guid, Kopete::Message& message )
 
 void QQAccount::sendInvitation(const QString& guid, const QString& id, const QString& message )
 {
-	kDebug(14140) << k_funcinfo << "Sending the invitation to" << id << " for group(" << guid  << "):" << message << endl;
+	kDebug(14140) << k_funcinfo << "Sending the invitation to" << id << " for group(" << guid  << "):" << message;
 }
 
 void QQAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
@@ -285,7 +285,7 @@ void QQAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 
 void QQAccount::slotGroupNamesListed(const QStringList& ql )
 {
-	kDebug ( 14210 ) << k_funcinfo << ql << endl;
+	kDebug ( 14210 ) << k_funcinfo << ql;
 	// Create the groups if necessary:
 	QList<Kopete::Group*> groupList = Kopete::ContactList::self()->groups();
 	Kopete::Group *g;
@@ -312,7 +312,7 @@ void QQAccount::slotGroupNamesListed(const QStringList& ql )
 
 void QQAccount::slotShowVideo ()
 {
-	kDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) << k_funcinfo;
 
 	if (isConnected ())
 	{
@@ -325,7 +325,7 @@ void QQAccount::slotShowVideo ()
 
 void QQAccount::slotNewContactList()
 {
-	kDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) << k_funcinfo;
 	// remove the allow list.
 	// TODO: cleanup QQAccount variables.
 	KConfigGroup *config=configGroup();
@@ -353,7 +353,7 @@ void QQAccount::slotContactInGroup(const int qqId, const char type, const int gr
 {
 	Q_UNUSED(type);
 
-	kDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) << k_funcinfo;
 	QString id = QString::number( qqId );
 	QQContact *c = static_cast<QQContact *>( contacts()[ id ] );
 	if( c )
@@ -401,10 +401,10 @@ void QQAccount::slotContactListed( const Eva::ContactInfo& ci )
 
 void QQAccount::slotContactStatusChanged(const Eva::ContactStatus& cs)
 {
-	kDebug(14210) << k_funcinfo << "qqId = " << cs.qqId << " from " << cs.ip << ":" << cs.port << " status = " << cs.status << endl;
+	kDebug(14210) << k_funcinfo << "qqId = " << cs.qqId << " from " << cs.ip << ":" << cs.port << " status = " << cs.status;
 
 	QQContact* c = static_cast<QQContact*> (contacts()[ QString::number( cs.qqId ) ]);
-	kDebug( 14140 ) << "get the status from " << cs.qqId << endl;
+	kDebug( 14140 ) << "get the status from " << cs.qqId;
 	if (c)
 		c->setOnlineStatus( fromEvaStatus(cs.status) );
 }
@@ -470,11 +470,11 @@ void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva
 
 void QQAccount::slotContactDetailReceived( const QString& id, const QMap<const char*, QByteArray>& map)
 {
-	kDebug(14140) << k_funcinfo "contact:" << id << endl;
+	kDebug(14140) << k_funcinfo "contact:" << id;
 	QQContact* contact = dynamic_cast<QQContact*>(contacts()[id]);
 	if(! contact )
 	{
-		kDebug(14140) << k_funcinfo << "unknown contact:" << id << endl;
+		kDebug(14140) << k_funcinfo << "unknown contact:" << id;
 		return;
 	}
 

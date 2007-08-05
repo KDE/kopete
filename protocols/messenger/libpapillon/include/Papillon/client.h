@@ -24,9 +24,8 @@ namespace Papillon
 
 class Connector;
 class Connection;
-class SecureStream;
 class Task;
-class Transfer;
+class NetworkMessage;
 class MimeHeader;
 class StatusMessage;
 class ContactList;
@@ -102,15 +101,6 @@ public:
 	 * d-tor.
 	 */
 	~Client();
-
-	/**
-	 * @brief Create a new SecureStream ready to be used.
-	 *
-	 * You must delete the SecureStream instance yourself.
-	 *
-	 * @return the new SecureStream instance.
-	 */
-	SecureStream *createSecureStream();
 
 	/**
 	 * @brief Create and a setup a new connection
@@ -265,7 +255,7 @@ private:
 	 * Write a command on Notification server. 
 	 * @param command the command.
 	 */
-	void writeCommand(Transfer *command);
+	void writeCommand(NetworkMessage *command);
 
 	/**
 	 * @internal

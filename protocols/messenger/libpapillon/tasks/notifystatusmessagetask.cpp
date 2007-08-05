@@ -19,7 +19,7 @@
 #include <QtCore/QLatin1String>
 
 // Papillon includes
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/StatusMessage"
 
 namespace Papillon
@@ -41,12 +41,12 @@ NotifyStatusMessageTask::~NotifyStatusMessageTask()
 	delete d;
 }
 
-bool NotifyStatusMessageTask::take(Transfer *transfer)
+bool NotifyStatusMessageTask::take(NetworkMessage *networkMessage)
 {
-	if( transfer->command() == QLatin1String("UBX") )
+	if( networkMessage->command() == QLatin1String("UBX") )
 	{
-		QString rawStatusMessage( transfer->payloadData() );
-		QString contactId = transfer->arguments()[0];
+		QString rawStatusMessage( networkMessage->payloadData() );
+		QString contactId = networkMessage->arguments()[0];
 	
 		Papillon::StatusMessage newStatusMessage = Papillon::StatusMessage::fromXml(rawStatusMessage);
 

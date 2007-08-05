@@ -80,18 +80,18 @@ void ClientCommandHandler::handleMessage(Message msg)
 	}
 	else if (msg.isNumeric())
 	{
-		//kWarning(14120) << "Unknown IRC numeric reply for line:" << msg.raw() << endl;
+		//kWarning(14120) << "Unknown IRC numeric reply for line:" << msg.raw();
 		//emit incomingUnknown(msg.raw());
 	}
 	else
 	{
-		//kWarning(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
+		//kWarning(14120) << "Unknown IRC command for line:" << msg.raw();
 		//emit internalError(UnknownCommand, msg);
 	}
 
 	if (!errors.isEmpty())
 	{
-		//kDebug(14120) << "Method error for line:" << msg.raw() << endl;
+		//kDebug(14120) << "Method error for line:" << msg.raw();
 		//emit internalError(MethodFailed, msg);
 	}
 */

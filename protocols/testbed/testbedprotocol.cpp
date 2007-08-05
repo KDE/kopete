@@ -39,7 +39,7 @@ TestbedProtocol::TestbedProtocol( QObject* parent, const QStringList &/*args*/ )
 			  i18n( "Offline" ),   i18n( "O&ffline" ) )
 
 {
-	kDebug( 14210 ) << k_funcinfo << endl;
+	kDebug( 14210 ) << k_funcinfo;
 
 	s_protocol = this;
 }
@@ -75,7 +75,7 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 
 	if ( !account )
 	{
-		kDebug(14210) << "Account doesn't exist, skipping" << endl;
+		kDebug(14210) << "Account doesn't exist, skipping";
 		return 0;
 	}
 
@@ -84,13 +84,13 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 
 AddContactPage * TestbedProtocol::createAddContactWidget( QWidget *parent, Kopete::Account * /* account */ )
 {
-	kDebug( 14210 ) << "Creating Add Contact Page" << endl;
+	kDebug( 14210 ) << "Creating Add Contact Page";
 	return new TestbedAddContactPage( parent );
 }
 
 KopeteEditAccountWidget * TestbedProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
-	kDebug(14210) << "Creating Edit Account Page" << endl;
+	kDebug(14210) << "Creating Edit Account Page";
 	return new TestbedEditAccountWidget( parent, account );
 }
 

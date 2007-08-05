@@ -21,9 +21,9 @@
 
 int main(int argc, char **argv)
 {
-	KAboutData aboutData( "avatarselectortest", "KopeteAvatarSelectorWidgetTest",
-		"0.1.0", "Kopete Avatar Selector Widget Test", KAboutData::License_GPL,
-		"Michaël Larouche", "larouche@kde.org", "http://kopete.kde.org");
+	KAboutData aboutData( "avatarselectortest", 0, ki18n("KopeteAvatarSelectorWidgetTest"),
+		"0.1.0", ki18n("Kopete Avatar Selector Widget Test"), KAboutData::License_GPL,
+		ki18n("Michaël Larouche"), ki18n("larouche@kde.org"), "http://kopete.kde.org");
 
 	KCmdLineArgs::init( argc, argv, &aboutData );
 

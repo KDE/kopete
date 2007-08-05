@@ -158,12 +158,12 @@ void Message::setLine(const QByteArray &line)
 
 	if (regexp.exactMatch(d->raw))
 	{
-//		d->line    = regexp.cap(1).latin1();
-		d->prefix  = regexp.cap(1).latin1();
-		d->command = regexp.cap(2).latin1();
-		d->args    = regexp.cap(3).latin1();
+//		d->line    = regexp.cap(1).toLatin1();
+		d->prefix  = regexp.cap(1).toLatin1();
+		d->command = regexp.cap(2).toLatin1();
+		d->args    = regexp.cap(3).toLatin1();
 //		d->argList = QStringList::split(' ', d->args);
-		d->suffix  = regexp.cap(4).latin1();
+		d->suffix  = regexp.cap(4).toLatin1();
 
 #ifndef KIRC_STRICT
 		extractCtcpCommand();
@@ -416,19 +416,19 @@ bool Message::extractCtcpCommand()
 		message.truncate(0);
 
 				msg.d->ctcpMessage = new Message(msg.d->engine);
-				msg.d->ctcpMessage->d->raw = msg.d->ctcpRaw.latin1();
+				msg.d->ctcpMessage->d->raw = msg.d->ctcpRaw.toLatin1();
 
 				int space = msg.d->ctcpRaw.find(' ');
 				if (!matchForIRCRegExp(msg.d->ctcpMessage->d->raw, codec, *msg.d->ctcpMessage))
 				{
 					if (space > 0)
-						msg.d->ctcpMessage->d->command = msg.d->ctcpRaw.mid(0, space).upper();
+						msg.d->ctcpMessage->d->command = msg.d->ctcpRaw.mid(0, space).toUpper();
 					else
-						msg.d->ctcpMessage->d->command = msg.d->ctcpRaw.upper();
+						msg.d->ctcpMessage->d->command = msg.d->ctcpRaw.toUpper();
 				}
 
 				if (space > 0)
-					msg.d->ctcpMessage->d->ctcpRaw = msg.d->ctcpRaw.mid(space).latin1();
+					msg.d->ctcpMessage->d->ctcpRaw = msg.d->ctcpRaw.mid(space).toLatin1();
 
 		return true;
 	}

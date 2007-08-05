@@ -71,13 +71,13 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 	data.cookie = cookie;
 	m_din >> w;
 	if( w != 0 )
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "other side wants encryption" << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "other side wants encryption";
 	m_din >> w;
 	if( w != 0 )
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "other side wants compression" << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "other side wants compression";
 	m_din >> w;
 	if( w > 1 )
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "more than one file to send" << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "more than one file to send";
 	data.fileCount = w;
 
 	m_din >> w;
@@ -123,13 +123,13 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 			c=QTextCodec::codecForName( "ISO-8859-1" );
 			break;
 		default:
-			kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "unknown codec: " << d << endl;
+			kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "unknown codec: " << d;
 	}
 	if ( c )
 		data.fileName = c->toUnicode( name );
 	else
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't find codec!!!!!! " << d << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo  << "couldn't find codec!!!!!! " << d;
 		data.fileName = name; //pretend it's just ascii
 	}
 
@@ -137,7 +137,7 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 	if ( firstNull != -1 )
 		data.fileName.truncate( firstNull );
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "got OFT" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo  << "got OFT";
 
 	//if there's more data, skip the oft header
 	//so we don't have to do double parsing in the tasks

@@ -15,17 +15,19 @@
     ***************************************************************************
 */
 
-#ifndef CryptographyPLUGIN_H
-#define CryptographyPLUGIN_H
+#ifndef CRYPTOGRAPHYPLUGIN_H
+#define CRYPTOGRAPHYPLUGIN_H
 
 
 #include "kopeteplugin.h"
-//Added by qt3to4:
-#include <QByteArray>
+
+#include "cryptographyconfig.h"
 
 class QStringList;
 class QString;
 class QTimer;
+
+class CryptographyGUIClient;
 
 namespace Kopete
 {
@@ -43,18 +45,11 @@ class CryptographyPlugin : public Kopete::Plugin
 	Q_OBJECT
 
 public:
-	enum CacheMode
-	{
-		Keep	= 0,
-		Time	= 1,
-		Never	= 2
-	};
-
 	static CryptographyPlugin  *plugin();
-	static QByteArray cachedPass();
-	static void setCachedPass(const QByteArray &pass);
-	static bool passphraseHandling();
-	static const QRegExp isHTML;
+	static QString cachedPass();
+	static void setCachedPass(const QString &pass);
+	
+	static QStringList supportedProtocols() { QStringList l; return l << "MSNProtocol" << "MessengerProtocol" << "JabberProtocol"; }
 
 	CryptographyPlugin( QObject *parent, const QStringList &args );
 	~CryptographyPlugin();
@@ -65,29 +60,26 @@ public slots:
 	void slotOutgoingMessage( Kopete::Message& msg );
 
 private slots:
-
+	// implemented as a slot so it can be hooked to a timer
+	void slotAskPassphraseOnStartup ();
 	void slotSelectContactKey();
 	void slotForgetCachedPass();
 	void loadSettings();
 	
 	void slotNewKMM(Kopete::ChatSession *);
-
+	
 private:
+	CryptographyGUIClient* mGui;
 	static CryptographyPlugin* pluginStatic_;
 	Kopete::SimpleMessageHandlerFactory *m_inboundHandler;
-	QByteArray m_cachedPass;
+	QString m_cachedPass;
 	QTimer *m_cachedPass_timer;
-
-	//cache messages for showing
-	QMap<QString, QString> m_cachedMessages;
 
 	//Settings
 	QString mPrivateKeyID;
-	int mCacheMode;
 	unsigned int mCacheTime;
-	bool mAlsoMyKey;
-	bool mAskPassPhrase;
-	CacheMode mCachePassPhrase;
+	bool mAskPassPhraseOnStartup;
+	CryptographyConfig::CacheMode mCachePassPhrase;
 };
 
 #endif

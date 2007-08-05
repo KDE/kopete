@@ -8,8 +8,6 @@ ${KOPETE_INCLUDES}
 
 set(kopete_connectionstatus_PART_SRCS connectionstatusplugin.cpp )
 
-kde4_automoc(${kopete_connectionstatus_PART_SRCS})
-
 kde4_add_plugin(kopete_connectionstatus ${kopete_connectionstatus_PART_SRCS})
 
 

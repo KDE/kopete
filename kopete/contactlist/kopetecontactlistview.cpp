@@ -33,7 +33,7 @@
 #include <QPointer>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3PtrList>
+#include <QList>
 #include <QDropEvent>
 #include <QMouseEvent>
 
@@ -549,7 +549,7 @@ void KopeteContactListView::slotAddSubContactActionNewAccount(Kopete::Account* a
 
 void KopeteContactListView::slotAddSubContactActionAccountDeleted(const Kopete::Account *account)
 {
-	kDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo;
 
 	QMapIterator<KAction *, Kopete::Account *> it(m_addContactAccountMap);
 	while ( it.hasNext() )
@@ -705,7 +705,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 			treeStepSize() * ( item->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
 		int py = mapFromGlobal( point ).y() - itemRect( item ).y() - (header()->isVisible() ? header()->height() : 0) ;
 
-		//kDebug( 14000 ) << k_funcinfo << "x: " << px << ", y: " << py << endl;
+		//kDebug( 14000 ) << k_funcinfo << "x: " << px << ", y: " << py;
 		Kopete::Contact *c = metaLVI->contactForPoint( QPoint( px, py ) ) ;
 		if ( c )
 		{
@@ -911,12 +911,12 @@ void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListV
 
 	if( const_cast<const QWidget *>( e->source() ) == this )
 	{
-		Q3PtrListIterator<KopeteMetaContactLVI> it( m_selectedContacts );
+		MetaContactLVIList::iterator it = m_selectedContacts.begin();
 
-		while ( it.current() )
+		while ( it != m_selectedContacts.end() )
 		{
 			Kopete::Contact *source_contact=0L;
-			KopeteMetaContactLVI *source_metaLVI = it.current();
+			KopeteMetaContactLVI *source_metaLVI = *it;
 			++it;
 
 			if(source_metaLVI)
@@ -1254,7 +1254,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 		{
 			QString text;
 			Q3TextDrag::decode(e, text);
-			kDebug(14000) << k_funcinfo << "drop with mimetype:" << e->format() << " data as text:" << text << endl;
+			kDebug(14000) << k_funcinfo << "drop with mimetype:" << e->format() << " data as text:" << text;
 		}
 	}
 
@@ -1514,7 +1514,7 @@ void KopeteContactListView::slotSendFile()
 		{
 			QString emailAddr = addressee.fullEmail();
 
-			kDebug( 14000 ) << "Email: " << emailAddr << "!" << endl;
+			kDebug( 14000 ) << "Email: " << emailAddr << "!";
 			if ( !emailAddr.isEmpty() )
 				KToolInvocation::invokeMailer( emailAddr, QString::null );
 			else
@@ -1830,7 +1830,7 @@ void KopeteContactListView::slotAddTemporaryContact()
 
 void KopeteContactListView::slotProperties()
 {
-//	kDebug(14000) << k_funcinfo << "Called" << endl;
+//	kDebug(14000) << k_funcinfo << "Called";
 
 	KopeteMetaContactLVI *metaLVI =
 		dynamic_cast<KopeteMetaContactLVI *>( currentItem() );

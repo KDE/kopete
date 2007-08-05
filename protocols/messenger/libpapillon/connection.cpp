@@ -20,7 +20,7 @@
 // Papillon includes
 #include "Papillon/Task"
 #include "Papillon/ClientStream"
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/Client"
 
 namespace Papillon 
@@ -56,7 +56,7 @@ Connection::Connection(ClientStream *stream, QObject *parent)
 	d->rootTask = new Task(this, true);
 	d->stream = stream;
 
-	connect(d->stream, SIGNAL(readyRead()), this, SLOT(transferReceived()));
+	connect(d->stream, SIGNAL(readyRead()), this, SLOT(networkMessageReceived()));
 	connect(d->stream, SIGNAL(connected()), this, SLOT(slotConnected()));
 	connect(d->stream, SIGNAL(connectionClosed()), this, SLOT(slotDisconnected()));
 }
@@ -104,38 +104,38 @@ void Connection::disconnectFromServer()
 	d->stream->close();
 }
 
-void Connection::send(Transfer *transfer)
+void Connection::send(NetworkMessage *transfer)
 {
 	d->stream->write(transfer);
 }
 
-void Connection::transferReceived()
+void Connection::networkMessageReceived()
 {
-	Transfer *readTransfer = d->stream->read();
-	if(readTransfer)
+	NetworkMessage *readNetworkMessage = d->stream->read();
+	if(readNetworkMessage)
 	{
-		qDebug() << PAPILLON_FUNCINFO << "Dispatch received transfer to tasks.";
-		dispatchTransfer( readTransfer );
+		qDebug() << Q_FUNC_INFO << "Dispatch received NetworkMessage to tasks.";
+		dispatchNetworkMessage( readNetworkMessage );
 	}
 	else
 	{
-		qDebug() << PAPILLON_FUNCINFO << "Got a null Transfer, investigate.";
+		qDebug() << Q_FUNC_INFO << "Got a null NetworkMessage, investigate.";
 	}
 }
 
-void Connection::dispatchTransfer(Transfer *transfer)
+void Connection::dispatchNetworkMessage(NetworkMessage *networkMessage)
 {
-	if( !d->rootTask->take(transfer) )
+	if( !d->rootTask->take(networkMessage) )
 	{
-		qDebug() << PAPILLON_FUNCINFO << "Root task refused the transfer." << "Transfer was:" << transfer->toString();
+		qDebug() << Q_FUNC_INFO << "Root task refused the NetworkMessage." << "NetworkMessage was:" << networkMessage->toString();
 	}
 	
-	delete transfer;
+	delete networkMessage;
 }
 
 void Connection::slotConnected()
 {
-	qDebug() << PAPILLON_FUNCINFO << "We are connected to" << d->server;
+	qDebug() << Q_FUNC_INFO << "We are connected to" << d->server;
 
 	d->isConnected = true;
 	emit connected();
@@ -143,7 +143,7 @@ void Connection::slotConnected()
 
 void Connection::slotDisconnected()
 {
-	qDebug() << PAPILLON_FUNCINFO << "We got disconnected from" << d->server;
+	qDebug() << Q_FUNC_INFO << "We got disconnected from" << d->server;
 
 	d->isConnected = false;
 	emit disconnected();

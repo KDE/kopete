@@ -1,9 +1,10 @@
 /*
     accountconfig.h  -  Kopete account config page
 
+    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2003-2004 by Olivier Goffart <ogoffart@kde.org>
 
-    Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,11 +23,13 @@
 #include <qmap.h>
 #include <qcolor.h>
 
+#include "kopeteonlinestatus.h"
 #include "ui_kopeteaccountconfigbase.h"
 
 namespace Kopete
 {
 class Account;
+class Contact;
 }
 
 class KopeteAccountLVI;
@@ -47,8 +50,8 @@ public slots:
 
 private:
 	KopeteAccountLVI* selectedAccount();
+	Kopete::OnlineStatus mStatus;
 
-	QMap<Kopete::Account* , QColor> m_newColors;
 	bool m_protected;
 
 private slots:
@@ -57,9 +60,8 @@ private slots:
 	void slotAddAccount();
 	void slotAddWizardDone();
 	void slotItemSelected();
-	void slotAccountUp();
-	void slotAccountDown();
-	void slotColorChanged();
+	void slotOnlineStatusChanged( Kopete::Contact *contact,
+			                      const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
 };
 #endif
 

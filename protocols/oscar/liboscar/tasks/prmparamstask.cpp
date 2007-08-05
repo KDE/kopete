@@ -51,7 +51,7 @@ bool PRMParamsTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Ignoring PRM Parameters. We don't use them" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Ignoring PRM Parameters. We don't use them";
 		setSuccess( 0, QString() );
 		return true;
 	}
@@ -61,7 +61,7 @@ bool PRMParamsTask::take( Transfer* transfer )
 
 void PRMParamsTask::onGo()
 {
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending PRM Parameters request" << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending PRM Parameters request";
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0009, 0x0002, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();

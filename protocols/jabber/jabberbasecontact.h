@@ -22,8 +22,6 @@
 #include "kopetecontact.h"
 #include "xmpp.h"
 #include "im.h"
-//Added by qt3to4:
-#include <Q3PtrList>
 
 class JabberProtocol;
 class JabberAccount;

@@ -63,7 +63,7 @@ void dlgJabberChatRoomsList::slotJoin()
 
 	if( m_selectedItem )
 	{
-		kDebug (JABBER_DEBUG_GLOBAL) << "join chat room : " <<  m_account->client()->client()->user() << " @ " << m_selectedItem->text() << " on " << m_chatServer << endl;
+		kDebug (JABBER_DEBUG_GLOBAL) << "join chat room : " <<  m_account->client()->client()->user() << " @ " << m_selectedItem->text() << " on " << m_chatServer;
 		m_account->client()->joinGroupChat(m_chatServer, m_selectedItem->text(), m_nick);
 	}
 }

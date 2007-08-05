@@ -39,6 +39,7 @@
 #include <QtGui/QCursor>
 #include <QtGui/QPixmap>
 #include <QtGui/QTextDocument>
+#include <QMimeData>
 #include <QApplication>
 
 // KHTML::DOM includes
@@ -62,12 +63,11 @@
 #include <krun.h>
 #include <kstringhandler.h>
 #include <ktemporaryfile.h>
-#include <kio/netaccess.h>
+#include <kio/copyjob.h>
 #include <kstandarddirs.h>
 #include <kstandardaction.h>
 #include <kiconloader.h>
 #include <kcodecs.h>
-#include <k3multipledrag.h>
 #include <kstandardaction.h>
 #include <kicon.h>
 
@@ -199,9 +199,9 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	d->manager = mgr;
 
 	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(
-			 KopeteChatWindowSettings::self()->stylePath() );
+			 KopeteChatWindowSettings::self()->styleName() );
 
-	kDebug(14000) << k_funcinfo << d->currentChatStyle->getStylePath()  << endl;
+	kDebug(14000) << k_funcinfo << d->currentChatStyle->getStyleName();
 
 	//Security settings, we don't need this stuff
 	setJScriptEnabled( false ) ;
@@ -252,7 +252,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 ChatMessagePart::~ChatMessagePart()
 {
-	kDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo;
 	//delete d->tt;
 	delete d;
 }
@@ -299,14 +299,16 @@ void ChatMessagePart::save()
 	}
 	else
 	{
-		stream << htmlDocument().toHTML() << '\n';
+		stream << htmlDocument().toString().string() << '\n';
 	}
 
 	stream.flush();
 	QString fileName = tempFile->fileName();
 	delete tempFile;
 
-	if ( !KIO::NetAccess::move( KUrl( fileName ), saveURL ) )
+	KIO::CopyJob *moveJob = KIO::move( KUrl( fileName ), saveURL, false );
+
+	if ( !moveJob )
 	{
 		KMessageBox::queuedMessageBox( view(), KMessageBox::Error,
 				i18n("<qt>Could not open <b>%1</b> for writing.</qt>", saveURL.prettyUrl() ), // Message
@@ -326,7 +328,7 @@ void ChatMessagePart::pageDown()
 
 void ChatMessagePart::slotOpenURLRequest(const KUrl &url, const KParts::URLArgs &/*args*/)
 {
-	kDebug(14000) << k_funcinfo << "url=" << url.url() << endl;
+	kDebug(14000) << k_funcinfo << "url=" << url.url();
 	if ( url.protocol() == QLatin1String("kopetemessage") )
 	{
 		Kopete::Contact *contact = d->manager->account()->contacts()[ url.host() ];
@@ -348,10 +350,10 @@ void ChatMessagePart::readOverrides()
 	d->rtfOverride = Kopete::AppearanceSettings::self()->chatRtfOverride();
 }
 
-void ChatMessagePart::setStyle( const QString &stylePath )
+void ChatMessagePart::setStyle( const QString &styleName )
 {
 	// Create a new ChatWindowStyle
-	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(stylePath);
+	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(styleName);
 
 	// Do the actual style switch
 	// Wait for the event loop before switching the style
@@ -407,7 +409,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 
 	if( chatNode.isNull() )
 	{
-		kDebug(14000) << k_funcinfo << "WARNING: Chat Node was null !" << endl;
+		kDebug(14000) << k_funcinfo << "WARNING: Chat Node was null !";
 		return;
 	}
 
@@ -531,7 +533,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 
 #ifdef STYLE_TIMETEST
-	kDebug(14000) << "Message time: " << beforeMessage.msecsTo( QTime::currentTime()) << endl;
+	kDebug(14000) << "Message time: " << beforeMessage.msecsTo( QTime::currentTime());
 #endif
 }
 
@@ -748,9 +750,9 @@ void ChatMessagePart::copy(bool justselection /* default false */)
         htmltext = selectedTextAsHTML();
         text = selectedText();
         //selectedText is now sufficient
-//      text=Kopete::Message::unescape( htmltext ).stripWhiteSpace();
+//      text=Kopete::Message::unescape( htmltext ).trimmed();
         // Message::unsescape will replace image by his title attribute
-        // stripWhiteSpace is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
+        // trimmed is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
 
 	if(text.isEmpty()) return;
 
@@ -759,21 +761,20 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 #ifndef QT_NO_MIMECLIPBOARD
 	if(!justselection)
 	{
-      	Q3TextDrag *textdrag = new Q3TextDrag(text, 0L);
-	    K3MultipleDrag *drag = new K3MultipleDrag( );
-    	drag->addDragObject( textdrag );
-    	if(!htmltext.isEmpty()) {
-	    	htmltext.replace( QChar( 0xa0 ), ' ' );
-    		Q3TextDrag *htmltextdrag = new Q3TextDrag(htmltext, 0L);
-    		htmltextdrag->setSubtype("html");
-            drag->addDragObject( htmltextdrag );
-    	}
-    	QApplication::clipboard()->setData( drag, QClipboard::Clipboard );
+		QMimeData *mimeData = new QMimeData();
+		mimeData->setText(text);
+
+		if(!htmltext.isEmpty()) {
+			htmltext.replace( QChar( 0xa0 ), ' ' );
+			mimeData->setHtml(htmltext);
+		}
+
+		QApplication::clipboard()->setMimeData( mimeData, QClipboard::Clipboard );
 	}
-    QApplication::clipboard()->setText( text, QClipboard::Selection );
+	QApplication::clipboard()->setText( text, QClipboard::Selection );
 #else
 	if(!justselection)
-    	QApplication::clipboard()->setText( text, QClipboard::Clipboard );
+		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
 	QApplication::clipboard()->setText( text, QClipboard::Selection );
 #endif
 	connect( QApplication::clipboard(), SIGNAL( selectionChanged()), SLOT( slotClearSelection()));
@@ -918,7 +919,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	// Build the action message if the currentChatStyle do not have Action template.
 	if( message.type() == Kopete::Message::TypeAction && !d->currentChatStyle->hasActionTemplate() )
 	{
-		kDebug(14000) << k_funcinfo << "Map Action message to Status template. " << endl;
+		kDebug(14000) << k_funcinfo << "Map Action message to Status template. ";
 
 		QString boldNick = QString("%1<b>%2</b></a> ").arg(nickLink,nick);
 		QString newBody = boldNick + message.parsedBody();
@@ -946,7 +947,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 		hash += contactId[f].unicode() * f;
 	const QString colorName = nameColors[ hash % nameColorsLen ];
 	QString lightColorName;	// Do not initialize, QColor::name() is expensive!
-	kDebug(14000) << k_funcinfo << "Hash " << hash << " has color " << colorName << endl;
+	kDebug(14000) << k_funcinfo << "Hash " << hash << " has color " << colorName;
 	QRegExp senderColorRegExp("%senderColor(?:\\{([^}]*)\\})?%");
 	textPos=0;
 	while( (textPos=senderColorRegExp.indexIn(resultHTML, textPos) ) != -1 )
@@ -1097,7 +1098,7 @@ QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
 
 void ChatMessagePart::slotUpdateHeaderDisplayName()
 {
-	kDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo;
 	DOM::HTMLElement kopeteChatNameNode = document().getElementById( QString("KopeteHeaderChatNameInternal") );
 	if( !kopeteChatNameNode.isNull() )
 		kopeteChatNameNode.setInnerText( formatName(d->manager->displayName()) );
@@ -1128,15 +1129,15 @@ void ChatMessagePart::changeStyle()
 		Kopete::Message tempMessage = *it;
 		appendMessage(tempMessage, true); // true means that we are restoring.
 	}
-	kDebug(14000) << k_funcinfo << "Finish changing style." << endl;
+	kDebug(14000) << k_funcinfo << "Finish changing style.";
 #ifdef STYLE_TIMETEST
-	kDebug(14000) << "Change time: " << beforeChange.msecsTo( QTime::currentTime()) << endl;
+	kDebug(14000) << "Change time: " << beforeChange.msecsTo( QTime::currentTime());
 #endif
 }
 
 void ChatMessagePart::writeTemplate()
 {
-	kDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo;
 
 #ifdef STYLE_TIMETEST
 	QTime beforeHeader = QTime::currentTime();
@@ -1187,11 +1188,10 @@ void ChatMessagePart::writeTemplate()
 	write(xhtmlBase);
 	end();
 #ifdef STYLE_TIMETEST
-	kDebug(14000) << "Header time: " << beforeHeader.msecsTo( QTime::currentTime()) << endl;
+	kDebug(14000) << "Header time: " << beforeHeader.msecsTo( QTime::currentTime());
 #endif
 }
 
 #include "chatmessagepart.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -20,33 +20,33 @@
 #ifndef __emoticonselector_h__
 #define __emoticonselector_h__
 
-#include <QLabel>
+#include <QListWidget>
 #include <QWidget>
+#include <QLabel>
+#include <QMovie>
 //Added by qt3to4:
 #include <QMouseEvent>
-#include <QGridLayout>
 //Added by qt3to4:
 #include <QHideEvent>
 #include <QShowEvent>
 #include <QList>
+
 class QGridLayout;
 class QHideEvent;
 class QShowEvent;
 
-class EmoticonLabel : public QLabel
+class EmoticonItem : public QListWidgetItem
 {
-	Q_OBJECT
-
 public:
-	EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent=0);
+	EmoticonItem(const QString &emoticonText, const QString &pixmapPath, QListWidget *parent=0);
 //	~EmoticonLabel();
 
-signals:
-	void clicked(const QString &text);
+	QString text() const;
+	QString pixmapPath() const;
 
-protected:
-	void mouseReleaseEvent(QMouseEvent*);
-	QString mText;
+private:
+	QString m_text;
+	QString m_pixmapPath;
 };
 
 class EmoticonSelector : public QWidget
@@ -58,13 +58,12 @@ public:
 	EmoticonSelector ( QWidget *parent = 0 );
 //	~EmoticonSelector();
 
-	typedef QList<QMovie*> MovieList;
 signals:
 	/**
 	* gets emitted when an emoticon has been selected from the list
 	* the QString holds the emoticon as a string or is 0L if nothing was selected
 	**/
-	void ItemSelected(const QString &);
+	void itemSelected(const QString &);
 
 public slots:
 	void prepareList();
@@ -72,11 +71,16 @@ public slots:
 protected:
 	virtual void hideEvent( QHideEvent* );
 	virtual void showEvent( QShowEvent* );
-	MovieList movieList;
-	QGridLayout *lay;
 
 protected slots:
-	void emoticonClicked(const QString &);
+	void emoticonClicked( QListWidgetItem* );
+	void mouseOverItem( QListWidgetItem* );
+	void currentChanged();
+
+private:
+	QListWidget *m_emoticonList;
+	QLabel *m_currentEmoticon;
+	QMovie *m_currentMovie;
 };
 
 #endif

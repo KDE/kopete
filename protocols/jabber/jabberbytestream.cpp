@@ -27,7 +27,7 @@
 JabberByteStream::JabberByteStream ( QObject *parent )
  : ByteStream ( parent )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Instantiating new Jabber byte stream." << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Instantiating new Jabber byte stream.";
 
 	// reset close tracking flag
 	mClosing = false;
@@ -48,7 +48,7 @@ JabberByteStream::JabberByteStream ( QObject *parent )
 
 bool JabberByteStream::connect ( QString host, QString service )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to " << host << ", service " << service << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to " << host << ", service " << service;
 
 	mClosing = false;
 
@@ -66,7 +66,7 @@ bool JabberByteStream::isOpen () const
 
 void JabberByteStream::close ()
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Closing stream." << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Closing stream.";
 
 	// close the socket and set flag that we are closing it ourselves
 	mClosing = true;
@@ -108,7 +108,7 @@ void JabberByteStream::slotConnected ()
 
 void JabberByteStream::slotConnectionClosed ()
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Socket has been closed." << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Socket has been closed.";
 
 	// depending on who closed the socket, emit different signals
 	if ( !mClosing )
@@ -126,7 +126,7 @@ void JabberByteStream::slotConnectionClosed ()
 
 void JabberByteStream::slotReadyRead ()
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "called:  available: " << socket()->bytesAvailable () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "called:  available: " << socket()->bytesAvailable ();
 	appendRead ( socket()->readAll() );
 
 	emit readyRead ();
@@ -142,7 +142,7 @@ void JabberByteStream::slotBytesWritten ( qint64 bytes )
 
 void JabberByteStream::slotError ( int code )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Socket error '" <<  mSocket->errorString() <<  "' - Code : " << code <<  endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Socket error '" <<  mSocket->errorString() <<  "' - Code : " << code;
 	if(KNetwork::KSocketBase::isFatalError( code ))
 		emit error ( code );
 }

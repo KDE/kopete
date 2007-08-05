@@ -82,11 +82,11 @@ set(liboscar_SRCS
     tasks/chatservicetask.cpp
     tasks/icquserinfoupdatetask.cpp
     tasks/icqchangepasswordtask.cpp
+    tasks/icqtlvinforequesttask.cpp
+    tasks/icqtlvinfoupdatetask.cpp
     utils/rtf.cc
     utils/md5.c
 )
-
-kde4_automoc(${liboscar_SRCS} )
 
 kde4_add_library( oscar SHARED ${liboscar_SRCS} )
 

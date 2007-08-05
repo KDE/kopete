@@ -28,13 +28,12 @@
 #include "kopetemetacontact.h"
 #include <kopetegroup.h>
 
-#include <qpixmap.h>
-#include <q3ptrlist.h>
-#include <qstringlist.h>
-#include <qrect.h>
-#include <qtimer.h>
-#include <qpointer.h>
-//Added by qt3to4:
+#include <QPixmap>
+#include <QList>
+#include <QStringList>
+#include <QRect>
+#include <QTimer>
+#include <QPointer>
 #include <QMouseEvent>
 #include <QDropEvent>
 
@@ -183,9 +182,11 @@ private slots:
 private:
 	bool mShowAsTree;
 
+	typedef QList<KopeteMetaContactLVI*> MetaContactLVIList;
+	typedef QList<KopeteGroupViewItem*> GroupViewItemList;
 	// TODO: do we really need to store these?
-	Q3PtrList<KopeteMetaContactLVI> m_selectedContacts;
-	Q3PtrList<KopeteGroupViewItem> m_selectedGroups;
+	MetaContactLVIList m_selectedContacts;
+	GroupViewItemList m_selectedGroups;
 
 	bool mSortByGroup;
 

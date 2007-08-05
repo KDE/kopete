@@ -65,7 +65,6 @@ OscarContact::OscarContact( Kopete::Account* account, const QString& name,
 	m_haveAwayMessage = false;
 	m_oesd = 0;
 
-	connect( this, SIGNAL(updatedSSI()), this, SLOT(updateSSIItem()) );
 	setFileCapable( true );
 
 	QObject::connect( mAccount->engine(), SIGNAL(haveIconForContact(const QString&, QByteArray)),
@@ -101,12 +100,10 @@ bool OscarContact::isOnServer() const
 
 void OscarContact::setSSIItem( const OContact& ssiItem )
 {
+	if ( !ssiItem.alias().isEmpty() )
+		setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+	
 	m_ssiItem = ssiItem;
-
-	if ( !m_ssiItem.alias().isEmpty() )
-		setProperty( Kopete::Global::Properties::self()->nickName(), m_ssiItem.alias() );
-
-	emit updatedSSI();
 }
 
 OContact OscarContact::ssiItem() const
@@ -167,7 +164,7 @@ void OscarContact::sync(unsigned int flags)
 	if ( (flags & Kopete::Contact::MovedBetweenGroup) == Kopete::Contact::MovedBetweenGroup )
 	{
 		
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups" << endl;
+		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups";
 		ContactManager* ssiManager = mAccount->engine()->ssiManager();
 		
 		OContact oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
@@ -215,16 +212,16 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 
 	QStringList capList;
 	// Append client name and version in case we found one
-	if ( m_details.userClass() & 0x0080 /* WIRELESS */ )
-		capList << i18n( "Mobile AIM Client" );
-	else
-	{
-		if ( !m_details.clientName().isEmpty() )
-		{
-			capList << i18nc( "Translators: client name and version",
-			                "%1", m_details.clientName() );
-		}
-	}
+	//if ( m_details.userClass() & 0x0080 /* WIRELESS */ )
+	//	capList << i18n( "Mobile AIM Client" );
+	//else
+	//{
+	//	if ( !m_details.clientName().isEmpty() )
+	//	{
+	//		capList << i18nc( "Translators: client name and version",
+	//		                "%1", m_details.clientName() );
+	//	}
+	//}
 	
 	// and now for some general informative capabilities
 	if ( m_details.hasCap( CAP_BUDDYICON ) )
@@ -245,11 +242,13 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 		capList << i18n( "File transfers" );
 	if ( m_details.hasCap( CAP_GAMES ) || m_details.hasCap( CAP_GAMES2 ) )
 		capList << i18n( "Games" );
-	if ( m_details.hasCap( CAP_TRILLIAN ) )
-		capList << i18n( "Trillian user" );
-	
+
 	m_clientFeatures = capList.join( ", " );
 	setProperty( static_cast<OscarProtocol*>(protocol())->clientFeatures, m_clientFeatures );
+
+	setProperty( static_cast<OscarProtocol*>(protocol())->memberSince, details.memberSinceTime() );
+	setProperty( static_cast<OscarProtocol*>(protocol())->client, details.clientName() );
+	setProperty( static_cast<OscarProtocol*>(protocol())->protocolVersion, QString::number(details.dcProtoVersion()) );
 }
 
 void OscarContact::startedTyping()
@@ -305,10 +304,10 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 
 	if( files.isEmpty() )
 	{
-		kDebug(OSCAR_GEN_DEBUG) << "files empty, assuming cancel" << endl;
+		kDebug(OSCAR_GEN_DEBUG) << "files empty, assuming cancel";
 		return;
 	}
-	kDebug(OSCAR_GEN_DEBUG) << "files: '" << files << "' " << endl;
+	kDebug(OSCAR_GEN_DEBUG) << "files: '" << files << "' ";
 
 	Kopete::Transfer *t = Kopete::TransferManager::transferManager()->addTransfer( this, files.at(0), QFile( files.at(0) ).size(), mName, Kopete::FileTransferInfo::Outgoing);
 	mAccount->engine()->sendFiles( mName, files, t );
@@ -377,7 +376,7 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
 		return;
 	
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
+	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating icon for " << contactId();
 	
 	KMD5 buddyIconHash( icon );
 	if ( memcmp( buddyIconHash.rawDigest(), m_details.buddyIconHash().data(), 16 ) == 0 )
@@ -400,7 +399,7 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 	}
 	else
 	{
-		kDebug(14153) << k_funcinfo << "Buddy icon hash does not match!" << endl;
+		kDebug(14153) << k_funcinfo << "Buddy icon hash does not match!";
 		removeProperty( Kopete::Global::Properties::self()->photo() );
 	}
 }

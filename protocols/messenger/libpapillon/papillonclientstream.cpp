@@ -20,7 +20,7 @@
 #include <QtDebug>
 
 // Papillon includes.
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/MessengerCoreProtocol"
 #include "Papillon/Base/Connector"
 #include "Papillon/Base/ByteStream"
@@ -42,7 +42,7 @@ public:
 	ByteStream *byteStream;
 	MessengerCoreProtocol protocol;
 
-	QQueue<Transfer*> transferQueue;
+	QQueue<NetworkMessage*> networkMessageQueue;
 };
 
 ClientStream::ClientStream(Connector *connector, QObject *parent)
@@ -95,15 +95,15 @@ void ClientStream::reset(bool all)
 	d->protocol.reset();
 
 	if(all)
-		d->transferQueue.clear();
+		d->networkMessageQueue.clear();
 }
 
 void ClientStream::slotProtocolIncomingData()
 {
-	Transfer * incoming = d->protocol.incomingTransfer();
+	NetworkMessage * incoming = d->protocol.incomingNetworkMessage();
 	if( incoming )
 	{
-		d->transferQueue.enqueue( incoming );
+		d->networkMessageQueue.enqueue( incoming );
 		emit readyRead();
 	}
 }
@@ -144,24 +144,24 @@ QString ClientStream::errorText() const
 }
 
 
-bool ClientStream::transfersAvailable() const
+bool ClientStream::networkMessagesAvailable() const
 {
-	return !d->transferQueue.isEmpty();
+	return !d->networkMessageQueue.isEmpty();
 }
 
-Transfer *ClientStream::read()
+NetworkMessage *ClientStream::read()
 {
-	if( d->transferQueue.isEmpty() )
+	if( d->networkMessageQueue.isEmpty() )
 		return 0;
 	else
-		return d->transferQueue.dequeue();
+		return d->networkMessageQueue.dequeue();
 }
 
-void ClientStream::write(Transfer *transfer)
+void ClientStream::write(NetworkMessage *networkMessage)
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending:" << transfer->toString().replace("\r\n", "");
+	qDebug() << Q_FUNC_INFO << "Sending:" << networkMessage->toString().replace("\r\n", "");
 
-	d->protocol.outgoingTransfer(transfer);
+	d->protocol.outgoingNetworkMessage(networkMessage);
 }
 
 }

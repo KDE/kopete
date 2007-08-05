@@ -47,7 +47,7 @@ QQProtocol::QQProtocol( QObject* parent, const QStringList &/*args*/ )
 	  propEmail(Kopete::Global::Properties::self()->emailAddress()),
 	  propAge("QQVCardAge", i18n("Age"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty )
 {
-	kDebug( 14210 ) << k_funcinfo << endl;
+	kDebug( 14210 ) << k_funcinfo;
 	s_protocol = this;
 }
 
@@ -82,7 +82,7 @@ Kopete::Contact *QQProtocol::deserializeContact(
 
 	if ( !account )
 	{
-		kDebug(14210) << "Account doesn't exist, skipping" << endl;
+		kDebug(14210) << "Account doesn't exist, skipping";
 		return 0;
 	}
 
@@ -91,13 +91,13 @@ Kopete::Contact *QQProtocol::deserializeContact(
 
 AddContactPage * QQProtocol::createAddContactWidget( QWidget *parent, Kopete::Account * /* account */ )
 {
-	kDebug( 14210 ) << "Creating Add Contact Page" << endl;
+	kDebug( 14210 ) << "Creating Add Contact Page";
 	return new QQAddContactPage( parent );
 }
 
 KopeteEditAccountWidget * QQProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
-	kDebug(14210) << "Creating Edit Account Page" << endl;
+	kDebug(14210) << "Creating Edit Account Page";
 	return new QQEditAccountWidget( this, account, parent );
 }
 

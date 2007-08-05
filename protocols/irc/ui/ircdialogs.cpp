@@ -53,7 +53,7 @@ void IRCAccount::slotJoinChannel()
 		return;
 
 	QStringList chans = configGroup()->readListEntry( "Recent Channel list" );
-	//kDebug(14120) << "Recent channel list from config: " << chans << endl;
+	//kDebug(14120) << "Recent channel list from config: " << chans;
 
 	KLineEditDlg dlg(
 		i18n("Please enter name of the channel you want to join:"),
