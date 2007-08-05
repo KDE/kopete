@@ -2,6 +2,7 @@
     Kopete View Item Delegate
 
     Copyright (c) 2007 by Matt Rogers <mattr@kde.org>
+    Based on code by Trolltech.
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -16,7 +17,7 @@
 */
 
 #include "kopeteitemdelegate.h"
-
+#include "kopeteitembase.h"
 #include <QPainter>
 #include <QStyleOptionViewItem>
 #include <QModelIndex>
@@ -38,7 +39,7 @@ QSize KopeteItemDelegate::sizeHint(const QStyleOptionViewItem &option,
     if ( value.isValid() )
         return qvariant_cast<QSize>(value);
     
-    if ( index.data( Qt::UserRole + 1 ).toInt() == 0 )
+    if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
         return QItemDelegate::sizeHint( option, index );
         
     QSize hint;
