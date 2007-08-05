@@ -1,5 +1,5 @@
 /*
-    jinglevoicesessiondialog.cpp - GUI for a voice session.
+    jinglefoosession.h - Definition of a foo session.
 
     Copyright (c) 2007      by Joshua Hodosh     <josh.hodosh@gmail.com>
 
@@ -28,7 +28,7 @@ class JingleFooConnectionCandidate;
 /**
  * Session which sends ASCII text "foo"
  *
-*/
+ */
 class JingleFooSession : public JingleSession
 {
 	Q_OBJECT
@@ -51,23 +51,23 @@ protected slots:
 
 protected:
 
-	virtual JingleTransport* transport()  { return & fooTransport; }
+	//virtual JingleTransport* transport()  { return & fooTransport; }
 
 	//virtual JingleConnectionCandidate* connection() { return connection; }
 
-	virtual bool addRemoteCandidate(QDomElement transportElement);
+	virtual bool addRemoteCandidate(QDomElement contentElement);
 
 private:
-	virtual void updateContent(QDomElement stanza);
-	virtual void sendTransportCandidates(int contentIndex);
-
+	virtual int updateContent(QDomElement stanza);
+	//virtual void sendTransportCandidates(int contentIndex);
+	virtual bool handleSessionAccept(QDomElement stanza);
 	virtual void checkContent(QDomElement stanza);
 
 	QList<JingleFooConnectionCandidate> remoteCandidates;
 
 	virtual void checkNewContent(QDomElement stanza);
 
-	virtual void removeContent(QDomElement stanza);
+	//virtual void removeContent(QDomElement stanza);
 
 	JingleFooTransport fooTransport;
 	//JingleFooConnectionCandidate connection;

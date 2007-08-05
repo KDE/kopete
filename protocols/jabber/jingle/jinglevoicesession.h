@@ -72,11 +72,12 @@ private:
 	QString sid;
 	virtual void removeContent(QDomElement stanza);
 	virtual bool addRemoteCandidate(QDomElement transportElement);
-	virtual void updateContent(QDomElement stanza);
+	virtual int updateContent(QDomElement stanza);
 	virtual void checkContent(QDomElement stanza);
 	virtual void checkNewContent(QDomElement stanza);
 	virtual void sendTransportCandidates(int contentIndex);
-	virtual JingleTransport* transport();
+	//virtual JingleTransport* transport();
+	virtual bool handleSessionAccept(QDomElement stanza);
 };
 
 #endif

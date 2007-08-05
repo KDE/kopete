@@ -1,5 +1,5 @@
 /*
-    jinglevoicesessiondialog.cpp - GUI for a voice session.
+    jingleconnectioncandidate.h - Define a Jingle connection candidate
 
     Copyright (c) 2007      by Joshua Hodosh     <josh.hodosh@gmail.com>
 
@@ -39,12 +39,12 @@ class JingleConnectionCandidate : public QObject
 public:
 //	JingleConnectionCandidate(QAbstractSocket socket, Solid::NetworkInterface nic, float qual):
 //		socket_(socket),netIface(nic),quality(qual);
-JingleConnectionCandidate();
-JingleConnectionCandidate(QString ip, int port){ ip_=(ip); port_=(port);}
-JingleConnectionCandidate(const JingleConnectionCandidate &c);
-JingleConnectionCandidate &operator=(const JingleConnectionCandidate &other);
-
-virtual ~JingleConnectionCandidate();
+	JingleConnectionCandidate();
+	JingleConnectionCandidate(QString ip, int port){ ip_=(ip); port_=(port);}
+	JingleConnectionCandidate(const JingleConnectionCandidate &c);
+	JingleConnectionCandidate &operator=(const JingleConnectionCandidate &other);
+	
+	//virtual ~JingleConnectionCandidate();
 	//NOTE const?
 	//const QAbstractSocket getSocket(){return socket_;}
 	//const Solid::NetworkInterface getNIC(){return netIface;}
@@ -74,7 +74,6 @@ protected:
 
 	QString ip_;
 	int port_;
-
 
 };
 

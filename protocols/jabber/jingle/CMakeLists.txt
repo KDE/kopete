@@ -48,6 +48,7 @@ link_directories( ${CMAKE_CURRENT_BINARY_DIR}/../libiris/iris/xmpp-im )
 set(kopete_jingle_PART_SRCS 
 
   jinglefoosession.cpp
+  jinglefootransport.cpp
   jinglejabberxml.cpp
   jinglesession.cpp 
   jinglesessionmanager.cpp 

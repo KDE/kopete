@@ -25,8 +25,7 @@
 #include "jabberprotocol.h"
 
 bool inline JingleSession::isModifying(){
-	if(lastMessage == contentAdd || lastMessage == contentRemove || lastMessage == contentModify
-		|| lastMessage == descriptionModify || lastMessage == transportModify ) return true;
+	if(lastMessage == contentAdd || lastMessage == contentRemove || lastMessage == contentModify ) return true;
 	return false;
 }
 
@@ -53,6 +52,10 @@ JingleSession::~JingleSession()
 {
 	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
 	delete d;
+	foreach (JingleContentType content, types){
+		if(content.writeConnection != NULL) delete content.writeConnection;
+		if(content.connection != NULL) delete content.connection;
+	}
 }
 
 const XMPP::Jid &JingleSession::myself() const
@@ -104,14 +107,13 @@ void JingleSession::processStanza(QDomDocument doc)
 				if(state != PENDING){
 					sendStanza( Jingle::createOrderErrorMessage(root).toString() );
 				}else{
-					connection = transport()->createCandidateFromElement(
-						jingleElement.firstChildElement().firstChildElement() );
-					if( connection.isUseful() ){
+					if(handleSessionAccept(root)){
 						sendStanza(Jingle::createReceiptMessage(root).toString() );
 						state = ACTIVE;
 						lastMessage = sessionAccept;
 						emit accepted();
 					}else{
+						/*one or more transports is unwriteable*/
 						sendStanza(Jingle::createTransportNotAcceptableMessage(root).toString() );
 						//the other client should now send a session-terminate
 					}
@@ -137,6 +139,11 @@ void JingleSession::processStanza(QDomDocument doc)
 
 			}else if(action == "session-info"){
 
+				if(jingleElement.hasChildNodes()){
+					recieveSessionInfo(root);
+				}else{
+					
+				}
 				sendStanza(Jingle::createReceiptMessage(root).toString() );
 
 			}else if(action == "content-add"){
@@ -171,34 +178,17 @@ void JingleSession::processStanza(QDomDocument doc)
 				updateContent(root);
 
 			}else if(action == "transport-info"){
-
-//				remoteCandidates.push_back(fooTransport.createCandidateFromElement(
-//					jingleElement.firstChildElement().firstChildElement()));
 				//this one should be fine for multiple content types, since only one candidate should
 				//be sent at once
-				if( addRemoteCandidate(jingleElement.elementsByTagName("transport").item(0).toElement() ) ){
+				if( addRemoteCandidate(jingleElement.elementsByTagName("content").item(0).toElement() ) ){
 					sendStanza(Jingle::createReceiptMessage(root).toString() );
 				}else{
 					//malformed candidate
 				}
-			}/*else if (action == "description-modify"){
-				if ( isModifying() && amIInitiator ){
-					sendStanza( Jingle::createOrderErrorMessage(root).toString() );
-				}else{
-					sendStanza( Jingle::createReceiptMessage(root).toString() );
-					//TODO do something
-				}
-			}else if (action == "transport-modify"){
-				if ( isModifying() && amIInitiator ){
-					sendStanza( Jingle::createOrderErrorMessage(root).toString() );
-				}else{
-					sendStanza( Jingle::createReceiptMessage(root).toString() );
-					//TODO do something
-				}
-			}*/
+			}
 		}
 	}else if(type == "result"){
-
+		if(root.attribute("id")==transactionID) acknowledged = true;
 	}else if(type == "get"){
 
 	}
@@ -240,7 +230,64 @@ void JingleSession::handleError(QDomElement errorElement)
 		if (!(errorElement.elementsByTagName("unexpected-request").isEmpty() ) ){
 			//their modification takes precedence.
 		}
+	}else if( !(errorElement.elementsByTagName("unsupported-transport").isEmpty() ) ){
+		//adding content failed
+	}else if( !(errorElement.elementsByTagName("unsupported-content").isEmpty() ) ){
+		//adding content failed
 	}
 
 }
+
+void JingleSession::sendTransportCandidates(int contentIndex)
+{
+	//NOTE instead of a foreach, this could pass the ContentType and index of the ConnectionCandidate
+	/*foreach (JingleConnectionCandidate candidate, types[contentIndex].candidates){
+		lastMessage = transportInfo;
+		transactionID = account()->client()->client()->genUniqueId(); //TODO make this a queue
+		sendStanza( Jingle::createTransportCandidateMessage(
+			myself().full(), peers().first().full(), initiator, responder, transactionID, sid,
+			types[contentIndex].name, types[contentIndex].creator, types[contentIndex].transportNS,
+			&candidate).toString() ) ;
+	}*/
+
+	for(int i = 0; i < types[contentIndex].candidates.size(); i++){
+		lastMessage = transportInfo;
+		transactionID = account()->client()->client()->genUniqueId(); //TODO make this a queue
+		sendStanza( Jingle::createTransportCandidateMessage(
+			myself().full(), peers().first().full(), initiator, responder, transactionID, sid,
+			types[contentIndex].name, types[contentIndex].creator, types[contentIndex].transportNS,
+			&(types[contentIndex].candidates[i])).toString() ) ;
+	}
+}
+
+void JingleSession::removeContent(QDomElement stanza)
+{
+	QDomElement content = stanza.firstChildElement().firstChildElement(); //NOTE need to check for nulls (bad requests)
+	QString name = content.attribute("name");
+	bool rightContent = false;
+	int i = -1;
+
+	do{
+		i++;
+		if(types[i].name == name) rightContent = true;
+	}while( i < types.size() && !rightContent);
+
+	if( types[i].connection != NULL) delete types[i].connection;
+	if( types[i].writeConnection != NULL) delete types[i].writeConnection;
+	
+	types.removeAt(i);
+
+	//send reciept here, in case of termination
+	sendStanza(Jingle::createReceiptMessage(stanza).toString() );
+
+	if(types.empty()){
+		terminate();
+	}//else{
+		
+// 		transactionID = GEN_ID;
+// 		lastMessage = contentAccept;
+// 		sendStanza(Jingle::createContentAcceptMessage(myself().full(), peers().first().full(), initiator, responder, transactionID, sid, types).toString() );
+	//}
+}
+
 #include "jinglesession.moc"

@@ -47,8 +47,6 @@ enum JingleLastMessageEnum{
 	contentAdd,
 	contentRemove,
 	contentModify,
-	descriptionModify,
-	transportModify,
 	transportInfo
 };
 //END JingleLastMessageEnum
@@ -118,29 +116,29 @@ signals:
 
 protected:
 	/**
-	* Process the XMPP stanza, and take appropriate action.
-	* Some parts of this function will die if the stanza is malformed,
-	* checks need to be added
-	*/
+	 * Process the XMPP stanza, and take appropriate action.
+	 * Some parts of this function will die if the stanza is malformed,
+	 * checks need to be added
+	 */
 	void processStanza(QDomDocument doc);
 
 	/**
-	* Removes designated content type.  If there are none left, closes the session.
-	* Otherwise, sends content-accept message.
-	*/
-	virtual void removeContent(QDomElement stanza) = 0;
+	 * Removes designated content type.  If there are none left, closes the session.
+	 * Otherwise, sends content-accept message.
+	 */
+	virtual void removeContent(QDomElement stanza);
 
 	/**
-	* Updates the <tt>JingleContentType</tt> in <tt>types</tt> with the 
-	* same name as in the message with the properties from the message.
-	*/
-	virtual void updateContent(QDomElement stanza) = 0;
+	 * Updates the <tt>JingleContentType</tt> in <tt>types</tt> with the 
+	 * same name as in the message with the properties from the message.
+	 */
+	virtual int updateContent(QDomElement stanza) = 0;
 
 	/**
-	* Checks modifications to a JingleContentType in types.
-	* If the changes are acceptable, sends an accept-content
-	* or beings transport negociations.
-	*/
+	 * Checks modifications to a JingleContentType in types.
+	 * If the changes are acceptable, sends an accept-content
+	 * or beings transport negociations.
+	 */
 	virtual void checkContent(QDomElement stanza) = 0;
 
 	/**
@@ -150,15 +148,19 @@ protected:
 	virtual void checkNewContent(QDomElement stanza) = 0;
 
 	/**
-	* Sends all local candidates for the transport connection
-	* for content <tt>contentIndex</tt> in <tt>types</tt>
-	* to the remote machine.
-	*/
-	virtual void sendTransportCandidates(int contentIndex) = 0;
+	 * Sends all local candidates for the transport connection
+	 * for content <tt>contentIndex</tt> in <tt>types</tt>
+	 * to the remote machine.
+	 */
+	virtual void sendTransportCandidates(int contentIndex);
 
-	virtual bool addRemoteCandidate(QDomElement transportElement) = 0;
+	/**
+	 * Checks a remote candidate. If there is not a working connection,
+	 * and this candidate works, uses it.
+	 */
+	virtual bool addRemoteCandidate(QDomElement contentElement) = 0;
 
-	virtual JingleTransport* transport() = 0;
+	//virtual JingleTransport* transport() = 0;
 
 	/**
 	 * Returns true if the session is being modified.  Used to determine
@@ -167,7 +169,19 @@ protected:
 	bool isModifying();
 
 	//NOTE this does not scale to multiple-content sessions
-	JingleConnectionCandidate connection;
+	//JingleConnectionCandidate connection;
+
+	/**
+	 * Updates all contents with values from accepter,
+	 * including the candidate the acceptor chose.
+	 * If that candidate cannot be written to, 
+	 * immediately returns false. Otherwise, returns true.
+	 */
+	virtual bool handleSessionAccept(QDomElement stanza);
+
+	//this should probably just be checked by namespace.
+	//default: do nothing
+	virtual void recieveSessionInfo(QDomElement stanza);
 
 	QList<JingleContentType> types;
 
@@ -178,13 +192,16 @@ protected:
 	QString sid;
 	bool amIInitiator;
 	QString transactionID;
+	bool acknowledged;
 
-	
 
 private:
 	class Private;
 	Private *d;
 
+	/**
+	 * Deal with an <error> response.
+	 */
 	void handleError(QDomElement errorElement);
 };
 

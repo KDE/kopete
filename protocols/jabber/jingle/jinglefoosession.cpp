@@ -1,5 +1,5 @@
 /*
-    jinglevoicesessiondialog.cpp - GUI for a voice session.
+    jinglefoosession.cpp - Definition of foo session
 
     Copyright (c) 2007      by Joshua Hodosh     <josh.hodosh@gmail.com>
 
@@ -16,9 +16,7 @@
 */
 #include "jinglefoosession.h"
 
-#define JINGLE_NS "http://www.xmpp.org/extensions/xep-0166.html#ns"
-#define JINGLE_FOO_NS "http://kopete.kde.com/jingle/foo.html"
-#define JINGLEFOOTRANSPORT "http://kopete.kde.com/jingle/foo-transport.html"
+
 
 #include <QtXml>
 #include "jinglejabberxml.h"
@@ -38,14 +36,7 @@ JingleFooSession::JingleFooSession(JabberAccount *account, const JidList &peers)
 
 	XMPP::Jid jid( account->client()->jid());
 	state = PENDING;
-	JingleContentType fooType;
-	fooType.name = "Foo";
-	fooType.xmlns = "http://www.example.com/jingle/foo.html";
-	fooType.transportNS = "http://www.example.com/jingle/foo-transport.html";
 
-	//create connection candidates:  need them, no matter what
-	fooType.candidates = fooTransport.getLocalCandidates();
-	types.push_back(fooType);
 
 	// Listen to incoming packets
 	connect(account->client()->client(), SIGNAL(xmlIncoming(const QString&)), this, SLOT(receiveStanza(const QString&)));
@@ -65,6 +56,15 @@ void JingleFooSession::start()
 	initiator = myself().full();
 	amIInitiator = true;
 	responder = peers().first().full();
+
+	JingleContentType fooType;
+	fooType.name = "Foo";
+	fooType.xmlns = "http://www.example.com/jingle/foo.html";
+	fooType.transportNS = "http://www.example.com/jingle/foo-transport.html";
+
+	//create connection candidates:  need them, no matter what
+	fooType.candidates = fooTransport.getLocalCandidates();
+	types.push_back(fooType);
 
 	transactionID = GEN_ID;
 
@@ -124,8 +124,7 @@ void JingleFooSession::receiveStanza(const QString &stanza)
 		//NOTE big assumption: we're getting the session-initiate message
 		if( sid.isEmpty() ) sid = element.attribute("sid");
 		// Catch messages that are a) jingle messages and b) for this session
-		if( !element.isNull() && ((element.attribute("xmlns") == JINGLE_NS && element.attribute("sid") == sid ) 
-			|| (doc.documentElement().attribute("id") == transactionID )) )
+		if( !element.isNull() && element.attribute("xmlns") == JINGLE_NS && element.attribute("sid") == sid  )
 		{
 			ok = true;
 		}
@@ -152,7 +151,7 @@ void JingleFooSession::accept()
 		QString them = peers().first().full();
 		transactionID = GEN_ID;
 		//QDomDocument accept = Jingle::createAcceptMessage(myself().full(), peers().first().full(), initiator, responder,  transactionID,&sid,types);
-		QDomDocument accept = Jingle::createAcceptMessage(me, them, initiator, responder,  transactionID, sid,types, connection);
+		QDomDocument accept = Jingle::createAcceptMessage(me, them, initiator, responder,  transactionID, sid,types);
 		sendStanza(accept.toString());
 		state = ACTIVE;
 		lastMessage = sessionAccept;
@@ -194,16 +193,31 @@ void JingleFooSession::checkNewContent(QDomElement stanza)
 	QDomElement content = stanza.elementsByTagName("content").item(0).toElement(); //NOTE need to check for nulls
 	//NOTE assumes only one type of content.  Since this handles session-initiate, there could be multiple
 	QString name = content.attribute("name");
-	bool rightContent = false;
+	bool alreadyUsed = false;
 	for( int i =0; i< types.size(); i++){
-		if(types[i].name == name) rightContent = true;
+		if(types[i].name == name) alreadyUsed = true;
 	}
+
+	bool rightContent;//TODO check if content NS is acceptable
+	
 	if(rightContent){
 		QString transportNS = content.elementsByTagName("transport").item(0).toElement().attribute("xmlns");
-		if(transportNS == JINGLEFOOTRANSPORT){
+		if(transportNS == JINGLE_FOO_TRANSPORT_NS){
 			sendStanza( Jingle::createReceiptMessage(stanza).toString() );
-			int i;//TODO add candidate, set i to its index
-			sendTransportCandidates(i);
+			JingleContentType t;
+			if(amIInitiator) t.creator="responder";
+			else t.creator="initiator";
+			t.name = name;
+			t.xmlns = content.firstChild().toElement().attribute("xmlns");
+			t.transportNS = transportNS;
+			//TODO set the information about the content
+			t.candidates = fooTransport.getLocalCandidates();
+			types.append(t);
+			lastMessage = contentAccept;
+			transactionID = GEN_ID;
+			sendStanza( Jingle::createContentAcceptMessage( myself().full(), peers().first().full(),
+				initiator, responder, transactionID, sid, t).toString() );
+			sendTransportCandidates(types.size() - 1);
 		}else{
 			sendStanza( Jingle::createTransportErrorMessage(stanza).toString() );
 		}
@@ -213,82 +227,108 @@ void JingleFooSession::checkNewContent(QDomElement stanza)
 }
 
 
-void JingleFooSession::removeContent(QDomElement stanza)
-{
-	QDomElement content = stanza.firstChildElement().firstChildElement(); //NOTE need to check for nulls (bad requests)
-	QString name = content.attribute("name");
-	bool rightContent = false;
-	int i = -1;
 
-	do{
-		i++;
-		if(types[i].name == name) rightContent = true;
-	}while( i < types.size() && !rightContent);
 
-	types.removeAt(i);
-
-	//send reciept here, in case of termination
-	sendStanza(Jingle::createReceiptMessage(stanza).toString() );
-
-	if(types.empty()){
-		terminate();
-	}else{
-		//NOTE the standard is fuzzy; is this message supposed to be sent?
-// 		transactionID = GEN_ID;
-// 		lastMessage = contentAccept;
-// 		sendStanza(Jingle::createContentAcceptMessage(myself().full(), peers().first().full(), initiator, responder, transactionID, sid, types).toString() );
-	}
-}
-
-void JingleFooSession::updateContent(QDomElement stanza)
+int JingleFooSession::updateContent(QDomElement stanza)
 {
 	QDomElement content = stanza.elementsByTagName("content").item(0).toElement();
 	QString name = content.attribute("name");
 	int i = 0;
-	while( i < types.size() ){
-		if (types[i].name == name) break; //breaks are bad.
+	bool found = false;
+	while( i < types.size() && !found){
+		if (types[i].name == name)
+			found = true;
+		else
+			i++;
 	}
 	//TODO replace stuff in types[i]
-
+	return i;
 }
 
 void JingleFooSession::checkContent(QDomElement stanza)
 {
 	QDomElement content = stanza.elementsByTagName("content").item(0).toElement();
 	QString name = content.attribute("name");
-	//if (magic FooContent checks)
+	//if (magic FooContent checks) //for a multi-content session, this could depend on the content NS
 		int i = 0;
-		while( i < types.size() ){
-			if (types[i].name == name) break; //breaks are bad.
+		bool found = false;
+		while( i < types.size() && !found){
+			if (types[i].name == name)
+				found = true;
+			else
+				i++;
 		}
 		if(i == types.size() ){
 			//what kind of error does this send?
 		}
 		//TODO replace stuff in types[i]
+		lastMessage = contentAccept;
+		transactionID = GEN_ID;
+		sendStanza( Jingle::createContentAcceptMessage( myself().full(), peers().first().full(),
+			initiator, responder, transactionID, sid, types[i]).toString() );
 		//QString transNS = content.elementsByTagName("transport").item(0).toElement().attribute("xmlns");
-		//NOTE standard implies here we should again send transport candidates based on transNS
 	//else (new FooContent isn't receiveable)
-		//again, standard is fuzzy. used to be content-decline.
+		//give an error
 	//endif
 }
 
-bool JingleFooSession::addRemoteCandidate(QDomElement transportElement)
+bool JingleFooSession::addRemoteCandidate(QDomElement contentElement)
 {
-	JingleConnectionCandidate candidate = fooTransport.createCandidateFromElement(transportElement);
+	QString name = contentElement.attribute("name");
+	int i = 0;
+	bool found = false;
+	while( i < types.size() && !found){
+		if (types[i].name == name)
+			found = true;
+		else
+			i++;
+	}
+
+	if(!found); //huh?
+	
+	if(types[i].connection != NULL){
+		//already have a connection
+	}else{
+		QDomElement candidateElement = contentElement.elementsByTagName("candidate").item(0).toElement();
+		JingleConnectionCandidate* candidate = fooTransport.createCandidateFromElement(candidateElement);
+		if(candidate->isUseful()){
+			types[i].connection = candidate;
+			if((amIInitiator && types[i].creator == "responder") || (!amIInitiator && types[i].creator == "initiator")){
+				transactionID = GEN_ID;
+				acknowledged = false;
+				if(state == PENDING){
+					lastMessage = sessionAccept;
+					sendStanza(Jingle::createAcceptMessage(myself().full(), peers().first().full(), initiator, responder, transactionID, sid, types).toString() );
+				}else{
+					lastMessage = contentAccept;
+					sendStanza(Jingle::createContentAcceptMessage(myself().full(), peers().first().full(), initiator, responder, transactionID, sid, types[i]).toString() );
+				}
+			}
+		}else delete candidate;
+	}
+	return true;
+}
+
+bool JingleFooSession::handleSessionAccept(QDomElement stanza)
+{
+	QDomNodeList contentElements = stanza.elementsByTagName("content");
+	for(int j=0; j<contentElements.size(); j++){
+		QDomElement contentElement = contentElements.at(j).toElement();
+		QString name = contentElement.attribute("name");
+		int i = updateContent(contentElement);
+
+		QDomElement candidateElement = contentElement.elementsByTagName("candidate").item(0).toElement();
+		//NOTE eventually, createCandidateFromElement should be somewhere in types[i]
+		JingleConnectionCandidate* candidate = fooTransport.createCandidateFromElement(candidateElement);
+		if( !( candidate->isUseful() ) ){ 
+			delete candidate;
+			return false;
+		}	
+		types[i].writeConnection = candidate;
+		
+	}
 
 	return true;
 }
 
-void JingleFooSession::sendTransportCandidates(int contentIndex)
-{
-	//NOTE instead of a foreach, this could pass the ContentType and index of the ConnectionCandidate
-	foreach (JingleConnectionCandidate candidate, types[contentIndex].candidates){
-		lastMessage = transportInfo;
-		transactionID = GEN_ID; //TODO make this a queue
-		sendStanza( Jingle::createTransportCandidateMessage(
-			myself().full(), peers().first().full(), initiator, responder, transactionID, sid,
-			types[contentIndex].name, types[contentIndex].creator, types[contentIndex].transportNS,
-			&candidate).toString() ) ;
-	}
-}
 #include "jinglefoosession.moc"

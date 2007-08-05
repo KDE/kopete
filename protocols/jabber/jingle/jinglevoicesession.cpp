@@ -15,26 +15,6 @@
     *************************************************************************
 */
 
-// libjingle before everything else to not clash with Qt
-// #define POSIX
-// #include "talk/xmpp/constants.h"
-// #include "talk/base/sigslot.h"
-// #include "talk/xmpp/jid.h"
-// #include "talk/xmllite/xmlelement.h"
-// #include "talk/xmllite/xmlprinter.h"
-// #include "talk/base/network.h"
-// #include "talk/p2p/base/session.h"
-// #include "talk/p2p/base/sessionmanager.h"
-// #include "talk/base/helpers.h"
-// #include "talk/p2p/client/basicportallocator.h"
-// #include "talk/p2p/base/sessionclient.h"
-// #include "talk/base/physicalsocketserver.h"
-// #include "talk/base/thread.h"
-// #include "talk/base/socketaddress.h"
-// #include "talk/session/phone/call.h"
-// #include "talk/session/phone/phonesessionclient.h"
-// #include "talk/p2p/client/sessionsendtask.h"
-
 #include "jinglevoicesession.h"
 #include "jinglesessionmanager.h"
 
@@ -53,8 +33,6 @@
 
 #include "jinglejabberxml.h"
 
-#define JINGLE_NS "http://www.google.com/session"
-#define JINGLE_VOICE_SESSION_NS "http://www.google.com/session/phone"
 
 static bool hasPeer(const JingleVoiceSession::JidList &jidList, const XMPP::Jid &peer)
 {
@@ -67,94 +45,6 @@ static bool hasPeer(const JingleVoiceSession::JidList &jidList, const XMPP::Jid 
 
 	return false;
 }
-//BEGIN SlotsProxy
-/**
- * This class is used to receive signals from libjingle, 
- * which is are not compatible with Qt signals.
- * So it's a proxy between JingeVoiceSession(qt)<->linjingle class.
- */
-class JingleVoiceSession::SlotsProxy : public sigslot::has_slots<> 
-{
-public:
-	SlotsProxy(JingleVoiceSession *parent)
-	 : voiceSession(parent)
-	{}
-	
-	void OnCallCreated(cricket::Call* call)
-	{
-		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "SlotsProxy: CallCreated." << endl;
-
-		call->SignalSessionState.connect(this, &JingleVoiceSession::SlotsProxy::PhoneSessionStateChanged);
-		voiceSession->setCall(call);
-	}
-		
-	void PhoneSessionStateChanged(cricket::Call *call, cricket::Session *session, cricket::Session::State state)
-	{
-		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "State changed: " << state << endl;
-
-		XMPP::Jid jid(session->remote_name().c_str());
-		
-		// Do nothing if the session do not contain a peers.
-		//if( !voiceSession->peers().contains(jid) )
-		if( !hasPeer(voiceSession->peers(), jid) )
-			return;
-
-		if (state == cricket::Session::STATE_INIT) 
-		{}
-		else if (state == cricket::Session::STATE_SENTINITIATE) 
-		{}
-		else if (state == cricket::Session::STATE_RECEIVEDINITIATE) 
-		{
-			voiceSession->setCall(call);
-		}
-		else if (state == cricket::Session::STATE_SENTACCEPT) 
-		{}
-		else if (state == cricket::Session::STATE_RECEIVEDACCEPT) 
-		{
-			emit voiceSession->accepted();
-		}
-		else if (state == cricket::Session::STATE_SENTMODIFY) 
-		{}
-		else if (state == cricket::Session::STATE_RECEIVEDMODIFY) 
-		{
-			//qWarning(QString("jinglevoicecaller.cpp: RECEIVEDMODIFY not implemented yet (was from %1)").arg(jid.full()));
-		}
-		else if (state == cricket::Session::STATE_SENTREJECT) 
-		{}
-		else if (state == cricket::Session::STATE_RECEIVEDREJECT) 
-		{
-			emit voiceSession->declined();
-		}
-		else if (state == cricket::Session::STATE_SENTREDIRECT) 
-		{}
-		else if (state == cricket::Session::STATE_SENTTERMINATE) 
-		{
-			emit voiceSession->terminated();
-		}
-		else if (state == cricket::Session::STATE_RECEIVEDTERMINATE) 
-		{
-			emit voiceSession->terminated();
-		}
-		else if (state == cricket::Session::STATE_INPROGRESS) 
-		{
-			emit voiceSession->sessionStarted();
-		}
-	}
-
-	void OnSendingStanza(cricket::SessionClient*, const buzz::XmlElement *buzzStanza)
-	{
-		QString irisStanza(buzzStanza->Str().c_str());
-		irisStanza.replace("cli:iq","iq");
-		irisStanza.replace(":cli=","=");
-	
-		voiceSession->sendStanza(irisStanza);
-	}
-private:
-	JingleVoiceSession *voiceSession;
-};
-//END SlotsProxy
-
-
 
 class JingleVoiceSession::Private
 {

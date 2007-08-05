@@ -1256,15 +1256,6 @@ void JabberContact::voiceCall( )
 			// If the jid resource is empty, get the JID from best resource for this contact.
 			jid = bestResource->jid();
 		}
-#if 0
-		// Check if the voice caller exist and the current resource support voice.
-		if( account()->voiceCaller() && bestResource->features().canVoice() )
-		{
-			JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog( jid, account()->voiceCaller(), 0, 0 );
-			voiceDialog->show();
-			voiceDialog->start();
-		}
-#endif
 #if 1
 		//TODO iterate through resources until we find one that supports voice
 		if( account()->sessionManager() && bestResource->features().canVoice() )
