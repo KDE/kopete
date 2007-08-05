@@ -28,6 +28,7 @@
 KopeteGroupItem::KopeteGroupItem( Kopete::Group *group )
  : QObject(0), QStandardItem()
 {
+    setData( 0, Qt::UserRole + 1 );
 	setGroup( group );
 }
 
