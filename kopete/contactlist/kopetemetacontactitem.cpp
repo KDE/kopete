@@ -33,8 +33,7 @@ KopeteMetaContactItem::KopeteMetaContactItem( Kopete::MetaContact *contact )
 {
 	m_metaContact = contact;
 	setText( m_metaContact->displayName() );
-	QPixmap iconPixmap = QPixmap::fromImage( m_metaContact->picture().image() );
-	setIcon( QIcon( iconPixmap ) );
+    setData( m_metaContact->picture().image(), Qt::DecorationRole );
 
 	connect( m_metaContact,
 	         SIGNAL( displayNameChanged( const QString&, const QString& ) ),
@@ -63,13 +62,7 @@ void KopeteMetaContactItem::changeDisplayName( const QString&,
 
 void KopeteMetaContactItem::changePhoto()
 {
-	QPixmap photoPixmap;
-	if ( m_metaContact->picture().isNull() )
-		photoPixmap = SmallIcon( m_metaContact->statusIcon(), IconSize(K3Icon::Small) );
-	else
-		photoPixmap = QPixmap::fromImage( m_metaContact->picture().image() );
-
-	setIcon( QIcon( photoPixmap ) );
+    setData( m_metaContact->picture().image(), Qt::DecorationRole );
 }
 
 #include "kopetemetacontactitem.moc"
