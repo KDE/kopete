@@ -20,7 +20,7 @@
 #ifndef KOPETE_AVVIDEODEVICELISTITEM_H
 #define KOPETE_AVVIDEODEVICELISTITEM_H
 
-#ifdef HAVE_CONFIG_H
+#if defined HAVE_CONFIG_H
 #include <config.h>
 #endif
 
@@ -262,6 +262,10 @@ public:
 	struct v4l2_crop crop;
 	struct v4l2_format fmt;
 //	struct v4l2_input m_input;
+	struct v4l2_queryctrl queryctrl;
+	struct v4l2_querymenu querymenu;
+void enumerateMenu (void);
+
 #endif
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;

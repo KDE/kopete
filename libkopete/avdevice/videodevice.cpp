@@ -46,6 +46,40 @@ VideoDevice::~VideoDevice()
 {
 }
 
+
+
+
+
+
+
+void VideoDevice::enumerateMenu (void)
+{
+	kdDebug() <<  k_funcinfo << "  Menu items:" << endl;
+
+	memset (&querymenu, 0, sizeof (querymenu));
+	querymenu.id = queryctrl.id;
+
+	for (querymenu.index = queryctrl.minimum; querymenu.index <= queryctrl.maximum; querymenu.index++)
+	{
+		if (0 == xioctl (VIDIOC_QUERYMENU, &querymenu))
+		{
+			kdDebug() <<  k_funcinfo << "  " << QString::fromLocal8Bit((const char*)querymenu.name) << endl;
+                }
+		else
+		{
+			perror ("VIDIOC_QUERYMENU");
+			exit (EXIT_FAILURE);
+		}
+	}
+}
+
+
+
+
+
+
+
+
 /*!
     \fn VideoDevice::xioctl(int fd, int request, void *arg)
  */
@@ -142,8 +176,9 @@ int VideoDevice::checkDevice()
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef __LINUX_VIDEODEV2_H
 
-if(!getWorkaroundBrokenDriver())
+//if(!getWorkaroundBrokenDriver())
 {
+		kdDebug() <<  k_funcinfo << "checkDevice(): " << full_filename << " Trying V4L2 API." << endl;
 		CLEAR(V4L2_capabilities);
 
 		if (-1 != xioctl (VIDIOC_QUERYCAP, &V4L2_capabilities))
@@ -232,6 +267,94 @@ if(!getWorkaroundBrokenDriver())
 					}
 				}
 			}
+
+
+// -----------------------------------------------------------------------------------------------------------------
+CLEAR (queryctrl);
+
+
+
+// v4l2_queryctrl may zero the .id in some cases, even if the IOCTL returns EXIT_SUCCESS (tested with a bttv card, when testing for V4L2_CID_AUDIO_VOLUME).
+// As of 6th Aug 2007, according to the V4L2 specification version 0.21, this behavior is undocumented, and the example 1-8 code found at
+// http://www.linuxtv.org/downloads/video4linux/API/V4L2_API/spec/x519.htm fails because of this behavior with a bttv card.
+
+int currentid = V4L2_CID_BASE;
+int resultado = 0;
+
+kdDebug() <<  k_funcinfo << "Checking CID controls" << endl;
+
+for (currentid = V4L2_CID_BASE; currentid < V4L2_CID_LASTP1; currentid++)
+//for (queryctrl.id = 9963776; queryctrl.id < 9963800; queryctrl.id++)
+{
+	queryctrl.id = currentid;
+	resultado = xioctl (VIDIOC_QUERYCTRL, &queryctrl);
+//kdDebug() <<  k_funcinfo << "Checking CID controls from " << V4L2_CID_BASE << " to " << V4L2_CID_LASTP1 << ". Current: " << queryctrl.id << ". IOCTL returns: " << resultado << endl;
+	if (resultado == 0)
+	{
+		if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+			continue;
+
+//kdDebug() <<  k_funcinfo << " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) << endl;
+kdDebug() <<  k_funcinfo << " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) << " Values from " << queryctrl.minimum << " to " << queryctrl.maximum << " with steps of " << queryctrl.step << ". Default: " << queryctrl.default_value << endl;
+
+/*		switch (queryctrl.type)
+		{
+			case V4L2_CTRL_TYPE_INTEGER : 
+		}*/
+		if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
+			enumerateMenu ();
+	}
+	else
+	{
+		if (errno == EINVAL)
+			continue;
+
+		perror ("VIDIOC_QUERYCTRL");
+//		exit (EXIT_FAILURE);
+	}
+}
+
+kdDebug() <<  k_funcinfo << "Checking CID private controls" << endl;
+
+for (currentid = V4L2_CID_PRIVATE_BASE;; currentid++)
+//for (queryctrl.id = 9963776; queryctrl.id < 9963800; queryctrl.id++)
+{
+	queryctrl.id = currentid;
+	resultado = xioctl (VIDIOC_QUERYCTRL, &queryctrl);
+//kdDebug() <<  k_funcinfo << "Checking CID private controls from " << V4L2_CID_PRIVATE_BASE << ". Current: " << queryctrl.id << ". IOCTL returns: " << resultado << endl;
+	if (resultado == 0)
+	{
+		if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+			continue;
+
+kdDebug() <<  k_funcinfo << " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) << " Values from " << queryctrl.minimum << " to " << queryctrl.maximum << " with steps of " << queryctrl.step << ". Default: " << queryctrl.default_value << endl;
+
+		if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
+			enumerateMenu ();
+	}
+	else
+	{
+		if (errno == EINVAL)
+			break;
+
+		perror ("VIDIOC_QUERYCTRL");
+//		exit (EXIT_FAILURE);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 		}
