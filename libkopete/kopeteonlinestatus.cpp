@@ -29,8 +29,6 @@
 #include <kiconeffect.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kstaticdeleter.h>
-//Added by qt3to4:
 #include <QPixmap>
 
 

@@ -4,6 +4,7 @@ Type=ServiceType
 X-KDE-ServiceType=Kopete/UI
 X-KDE-Derived=Kopete/Plugin
 Comment=A Kopete UI Plugin
+Comment[bg]=Приставка за графичния интерфейс на Kopete
 Comment[ca]=Un connector de IU per a Kopete
 Comment[cs]=Modul rozhraní aplikace Kopete
 Comment[cy]=Ategyn UI Kopete

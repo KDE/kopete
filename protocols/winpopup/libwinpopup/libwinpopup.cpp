@@ -120,7 +120,7 @@ bool WinPopupLib::checkMessageDir()
 
 		if (tmpPerms != 0777) {
 
-			kDebug(14170) << "Perms not ok!" << endl;
+			kDebug(14170) << "Perms not ok!";
 
 			int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(),
 													  i18n("Permissions of the working directory "
@@ -293,7 +293,7 @@ void WinPopupLib::readMessages(const KFileItemList &items)
 				if (!messageFile.remove()) {
 					// QFile::remove() seems to be very persistent, it removes even files with 0444 owned by root
 					// if the directory permissions are 0777 - so this is just for safety. GF
-					kDebug(14170) << "Message file not removed - how that?" << endl;
+					kDebug(14170) << "Message file not removed - how that?";
 					int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(),
 															  i18n("A message file could not be removed; "
 																   "maybe the permissions are wrong.\n"
@@ -310,7 +310,7 @@ void WinPopupLib::readMessages(const KFileItemList &items)
 				if (!sender.isEmpty() && time.isValid())
 					emit signalNewMessage(text, time, sender);
 				else
-					kDebug(14170) << "Received invalid message!" << endl;
+					kDebug(14170) << "Received invalid message!";
 			}
 		} // isFile
 	} // foreach

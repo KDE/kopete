@@ -50,7 +50,7 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const XMPP::Ros
 	JabberContact *myContact = m_account->contactPool()->addContact ( item , Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 	
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact;
 	
 	setColor( account()->color() );
 
@@ -108,7 +108,7 @@ JabberTransport::JabberTransport( JabberAccount * parentAccount, const QString &
 	JabberContact *myContact = m_account->contactPool()->addContact ( contactJID , Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 	
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact;
 	
 	m_status=Normal;
 }
@@ -296,7 +296,7 @@ void JabberTransport::removeAllContacts( )
 									i18n ("Jabber Service Unregistration"));
 	*/ //we don't really care, we remove everithing anyway.
 
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "delete all contacts of the transport"<< endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "delete all contacts of the transport";
 	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd(); 
 	for( it = contacts().constBegin(); it != itEnd; ++it )
 	{
@@ -333,7 +333,7 @@ void JabberTransport::eatContacts( )
 	*            - a new contact will born, with the same characteristics, but owned by the transport
 	* - Olivier 2006-01-17 -
 	*/
-    kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
+    kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo;
 	QHash<QString, Kopete::Contact*> cts=account()->contacts();
 	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = cts.constEnd(); 
 	for( it = cts.constBegin(); it != itEnd; ++it )
@@ -344,7 +344,7 @@ void JabberTransport::eatContacts( )
 			XMPP::RosterItem item=contact->rosterItem();
 			Kopete::MetaContact *mc=contact->metaContact();
 			Kopete::OnlineStatus status = contact->onlineStatus();
-			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << item.jid().full() << " will be soon eat  - " << contact << endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << item.jid().full() << " will be soon eat  - " << contact;
 			delete contact;
 			Kopete::Contact *c2=account()->contactPool()->addContact( item , mc , false ); //not sure this is false;
 			if(c2)

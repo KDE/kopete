@@ -92,7 +92,7 @@ void SetPresenceTask::onGo()
 
 	setPresenceMessage->setArguments( args );
 
-	qDebug() << PAPILLON_FUNCINFO << "Changing our own presence to:" << Papillon::Global::presenceToString(d->presence);
+	qDebug() << Q_FUNC_INFO << "Changing our own presence to:" << Papillon::Global::presenceToString(d->presence);
 
 	send(setPresenceMessage);
 }

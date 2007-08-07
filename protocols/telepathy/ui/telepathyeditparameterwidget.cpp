@@ -108,7 +108,7 @@ TelepathyEditParameterWidget::TelepathyEditParameterWidget(const QList<Connectio
 
 TelepathyEditParameterWidget::~TelepathyEditParameterWidget()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo;
 	delete d;
 }
 
@@ -120,7 +120,7 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyEditParameterWidget::par
 	{
 		if( !lineEdit )
 		{
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: A ParameterLineEdit is null !" << endl;
+			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: A ParameterLineEdit is null !";
 		}
 		ConnectionManager::Parameter updatedParameter(lineEdit->name(), lineEdit->value());
 		parameterList.append(updatedParameter);

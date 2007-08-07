@@ -142,7 +142,7 @@ Client::~Client()
 
 void Client::connect( const QString &host, const uint port, const QString &userId, const QString &pass )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 	d->host = host;
 	d->port = port;
 	d->user = userId;
@@ -166,9 +166,9 @@ void Client::cancelConnect()
 
 void Client::cs_connected()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 	emit connected();
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " starting login task ... "<<  endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " starting login task ... ";
 
 	d->loginTask->setStateOnConnect( (d->statusOnConnect == Yahoo::StatusInvisible) ? Yahoo::StatusInvisible : Yahoo::StatusAvailable );
 	d->loginTask->go();
@@ -177,7 +177,7 @@ void Client::cs_connected()
 
 void Client::close()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 	m_pingTimer->stop();
 	if( d->active )
 	{
@@ -215,7 +215,7 @@ QString Client::errorInformation()
 // SLOTS //
 void Client::streamError( int error )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "CLIENT ERROR (Error " <<  error << ")" << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "CLIENT ERROR (Error " <<  error << ")";
 	QString msg;
 
 	d->active = false;
@@ -247,7 +247,7 @@ void Client::streamReadyRead()
 
 void Client::lt_loginFinished()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	slotLoginResponse( d->loginTask->statusCode(), d->loginTask->statusString() );
 }
@@ -269,13 +269,13 @@ void Client::slotLoginResponse( int response, const QString &msg )
 		close();
 	}
 
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting loggedIn" << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting loggedIn";
 	emit loggedIn( response, msg );
 }
 
 void Client::lt_gotSessionID( uint id )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got SessionID: " << id << endl;	
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got SessionID: " << id;	
 	d->sessionID = id;
 }
 
@@ -420,10 +420,10 @@ void Client::sendPing()
 {
 	if( !d->active )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Disconnected. NOT sending a PING." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Disconnected. NOT sending a PING.";
 		return;
 	}
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Sending a PING." << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Sending a PING.";
 	PingTask *pt = new PingTask( d->root );
 	pt->go( true );
 }
@@ -491,7 +491,7 @@ void Client::downloadPicture(  const QString &userId, KUrl url, int checksum )
 
 void Client::uploadPicture( KUrl url )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "URL: " << url.url() << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "URL: " << url.url();
 	SendPictureTask *spt = new SendPictureTask( d->root );
 	spt->setType( SendPictureTask::UploadPicture );
 	spt->setFilename( url.fileName() );
@@ -504,7 +504,7 @@ void Client::uploadPicture( KUrl url )
 
 void Client::sendPictureChecksum( const QString &userId, int checksum )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "checksum: " << checksum << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "checksum: " << checksum;
 	SendPictureTask *spt = new SendPictureTask( d->root );
 	spt->setType( SendPictureTask::SendChecksum );
 	spt->setChecksum( checksum );
@@ -515,7 +515,7 @@ void Client::sendPictureChecksum( const QString &userId, int checksum )
 
 void Client::sendPictureInformation( const QString &userId, const QString &url, int checksum )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "checksum: " << checksum << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "checksum: " << checksum;
 	SendPictureTask *spt = new SendPictureTask( d->root );
 	spt->setType( SendPictureTask::SendInformation );
 	spt->setChecksum( checksum );
@@ -529,7 +529,7 @@ void Client::setPictureStatus( Yahoo::PictureStatus status )
 	if( d->pictureFlag == status )
 		return;
 
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Setting PictureStatus to: " << status << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Setting PictureStatus to: " << status;
 	d->pictureFlag = status;
 	SendPictureTask *spt = new SendPictureTask( d->root );
 	spt->setType( SendPictureTask::SendStatus );
@@ -754,18 +754,18 @@ QString Client::cCookie()
 
 void Client::distribute( Transfer * transfer )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 	if( !rootTask()->take( transfer ) )
-		kDebug(YAHOO_RAW_DEBUG) << "CLIENT: root task refused transfer" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << "CLIENT: root task refused transfer";
 	delete transfer;
 }
 
 void Client::send( Transfer* request )
 {
-	kDebug(YAHOO_RAW_DEBUG) << "CLIENT::send()"<< endl;
+	kDebug(YAHOO_RAW_DEBUG) << "CLIENT::send()";
 	if( !d->stream )
 	{	
-		kDebug(YAHOO_RAW_DEBUG) << "CLIENT - NO STREAM TO SEND ON!" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << "CLIENT - NO STREAM TO SEND ON!";
 		return;
 	}
 

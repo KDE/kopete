@@ -32,11 +32,11 @@ void BookmarksPrefsSettings::load()
 	m_isfolderforeachcontact = Always;
 	m_contactslist.clear();
 	if( configfile->getConfigState() == KConfigBase::NoAccess ){
-		kDebug( 14501 ) << "load: failed to open config file for reading" << endl;
+		kDebug( 14501 ) << "load: failed to open config file for reading";
 		return;
 	}
 	if( !configfile->hasGroup("Bookmarks Plugin") ){
-		kDebug( 14501 ) << "load: no config found in file" << endl;
+		kDebug( 14501 ) << "load: no config found in file";
 		return;
 	}
 	KConfigGroup group = configfile->group("Bookmarks Plugin");
@@ -49,7 +49,7 @@ void BookmarksPrefsSettings::save()
 	KSharedConfig::Ptr configfile = KGlobal::config();
 
 	if( configfile->getConfigState() != KConfigBase::ReadWrite ){
-		kDebug( 14501 ) << "save: failed to open config file for writing" << endl;
+		kDebug( 14501 ) << "save: failed to open config file for writing";
 		return;
 	}
 	KConfigGroup group = configfile->group("Bookmarks Plugin");

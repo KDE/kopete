@@ -53,7 +53,7 @@
 YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent): QWidget(parent), KopeteEditAccountWidget(theAccount)
 {
 	setupUi(this);
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
 
 	theProtocol = protocol;
 
@@ -99,7 +99,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 
 bool YahooEditAccount::validateData()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
 
 	if(mScreenName->text().isEmpty())
 	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
@@ -116,7 +116,7 @@ bool YahooEditAccount::validateData()
 
 Kopete::Account *YahooEditAccount::apply()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
 
 	if ( !account() )
 		setAccount( new YahooAccount( theProtocol, mScreenName->text().toLower() ) );

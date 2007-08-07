@@ -60,7 +60,7 @@ Dispatcher::Dispatcher(QObject *parent, const QString& contact, const QStringLis
 
 Dispatcher::~Dispatcher()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo;
 
 	if(m_callbackChannel)
 	{
@@ -93,7 +93,7 @@ void Dispatcher::requestDisplayIcon(const QString& from, const QString& msnObjec
 	// Add the transfer to the list.
 	m_sessions.insert(sessionId, current);
 
-	kDebug(14140) << k_funcinfo << "Requesting, " << msnObject << endl;
+	kDebug(14140) << k_funcinfo << "Requesting, " << msnObject;
 
 	QString context = QString::fromUtf8(KCodecs::base64Encode(msnObject.toUtf8()));
 	// NOTE remove the \0 character automatically
@@ -168,7 +168,7 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 
 void Dispatcher::sendImage(const QString& /*fileName*/, const QString& /*to*/)
 {
-// 	TODO kDebug(14140) << k_funcinfo << endl;
+// 	TODO kDebug(14140) << k_funcinfo;
 // 	QFile imageFile(fileName);
 // 	if(!imageFile.open(QIODevice::ReadOnly))
 // 	{
@@ -361,7 +361,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 
 		QString body =
 			QByteArray(message.body.data(), message.header.dataSize);
-		kDebug(14140) << k_funcinfo << "received, " << body << endl;
+		kDebug(14140) << k_funcinfo << "received, " << body;
 
 		if(body.startsWith("INVITE"))
 		{
@@ -441,7 +441,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				// A contact has requested a session to
 				// send a file.
 
-				kDebug(14140) << k_funcinfo << "File transfer invitation." << endl;
+				kDebug(14140) << k_funcinfo << "File transfer invitation.";
 
 				// Create a new transfer context that will handle
 				// the file transfer.
@@ -473,7 +473,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				// 0x02 Background sharing.
 				qint32 flag;
 				reader >> flag;
-				kDebug(14140) << flag << endl;
+				kDebug(14140) << flag;
 				// FileName UTF16 (Unicode) [19..539]
 				QByteArray bytes;
 				bytes.reserve(520);
@@ -525,7 +525,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				regex.search(body);
 				QString GUID=regex.cap(1);
 
-				kDebug(14140) << k_funcinfo << "webcam " << GUID << endl;
+				kDebug(14140) << k_funcinfo << "webcam " << GUID;
 
 				Webcam::Who who;
 				if(GUID=="4BD96FC0-AB17-4425-A14A-439185962DC8")
@@ -539,7 +539,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				else
 				{ //unknown GUID
 					//current->error();
-					kWarning(14140) << k_funcinfo << "Unknown GUID " << GUID << endl;
+					kWarning(14140) << k_funcinfo << "Unknown GUID " << GUID;
 					return;
 				}
 

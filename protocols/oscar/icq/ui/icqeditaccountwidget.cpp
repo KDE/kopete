@@ -50,7 +50,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	Kopete::Account *account, QWidget *parent)
 	: QWidget(parent), KopeteEditAccountWidget(account)
 {
-	kDebug(14153) << k_funcinfo << "Called." << endl;
+	kDebug(14153) << k_funcinfo << "Called.";
 
 	mAccount=dynamic_cast<ICQAccount*>(account);
 	mProtocol=protocol;
@@ -68,7 +68,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	QRegExp rx("[0-9]{9}");
 	QValidator* validator = new QRegExpValidator( rx, this );
 	mAccountSettings->edtAccountId->setValidator(validator);
-	
+
 	// Read in the settings from the account if it exists
 	if(mAccount)
 	{
@@ -137,9 +137,12 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	}
 	else
 	{
+		int encodingId=4; //see icqprotocol.cpp for mappings
+		if (KGlobal::locale()->language().startsWith("ru"))
+			encodingId=2251;
 		mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
 		                              mProtocol->encodings(),
-		                              4 );
+		                              encodingId );
 	}
 
 	if ( !mAccount || !mAccount->engine()->isActive() )
@@ -174,12 +177,12 @@ ICQEditAccountWidget::~ICQEditAccountWidget()
 
 Kopete::Account *ICQEditAccountWidget::apply()
 {
-	kDebug(14153) << k_funcinfo << "Called." << endl;
+	kDebug(14153) << k_funcinfo << "Called.";
 
 	// If this is a new account, create it
 	if (!mAccount)
 	{
-		kDebug(14153) << k_funcinfo << "Creating a new account" << endl;
+		kDebug(14153) << k_funcinfo << "Creating a new account";
 		mAccount = new ICQAccount(mProtocol, mAccountSettings->edtAccountId->text());
 		if(!mAccount)
 			return NULL;
@@ -258,7 +261,7 @@ Kopete::Account *ICQEditAccountWidget::apply()
 
 bool ICQEditAccountWidget::validateData()
 {
-	kDebug(14153) << k_funcinfo << "Called." << endl;
+	kDebug(14153) << k_funcinfo << "Called.";
 	bool bOk;
 	QString userId = mAccountSettings->edtAccountId->text();
 	qulonglong uid = userId.toULongLong( &bOk );

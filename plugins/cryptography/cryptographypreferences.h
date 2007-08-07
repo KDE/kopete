@@ -21,16 +21,16 @@
 
 #include "kcmodule.h"
 
-#include <kleo/ui/keyrequester.h>
-
-namespace Ui { class CryptographyPrefsUI; }
-class CryptographyConfig;
-
 /**
  * Preference widget for the Cryptography plugin
  * @author Olivier Goffart
  * @author Charles Connell
  */
+
+namespace Ui { class CryptographyPrefsUI; }
+class CryptographyConfig;
+class Kleo::EncryptionKeyRequester;
+class QCheckBox;
 
 class CryptographyPreferences : public KCModule
 {
@@ -46,12 +46,13 @@ class CryptographyPreferences : public KCModule
 
 	private:
 		Kleo::EncryptionKeyRequester * key;
+		QCheckBox * mAskPassphraseOnStartup;
 		Ui::CryptographyPrefsUI *mPreferencesDialog;
 		CryptographyConfig *mConfig;
 
 	private slots:
 		void slotModified();
-		void slotAskPressed (bool b);
+		void slotAskOnStartupPressed (bool b);
 };
 
 #endif

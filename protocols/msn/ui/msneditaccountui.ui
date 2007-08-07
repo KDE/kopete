@@ -453,7 +453,7 @@
 &lt;dt>Automatically&lt;/dt>&lt;dd>Always try to download the picture if the contact has one.  &lt;b>Note:&lt;/b> this will open a socket, and let the user know you are downloading their picture.&lt;/dd>&lt;/dl></string>
               </property>
               <property name="text" >
-               <string>Download the msn picture:</string>
+               <string>Download the MSN picture:</string>
               </property>
              </widget>
             </item>

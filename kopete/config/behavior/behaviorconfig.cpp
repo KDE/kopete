@@ -96,7 +96,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
 
 void BehaviorConfig::save()
 {
-//	kDebug(14000) << k_funcinfo << "called." << endl;
+//	kDebug(14000) << k_funcinfo << "called.";
 
 	KCModule::save();
 
@@ -104,7 +104,7 @@ void BehaviorConfig::save()
 	Kopete::BehaviorSettings::self()->setAutoAwayTimeout( mPrfsAway->mAutoAwayTimeout->value() * 60 );
 
 	// "Chat" TAB ===============================================================
-	Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()]->pluginName() );
+	Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()].pluginName() );
 
 	Kopete::BehaviorSettings::self()->writeConfig();
 
@@ -113,7 +113,7 @@ void BehaviorConfig::save()
 
 void BehaviorConfig::load()
 {
-//	kDebug(14000) << k_funcinfo << "called" << endl;
+//	kDebug(14000) << k_funcinfo << "called";
 	awayInstance = Kopete::Away::getInstance();
 
 	KCModule::load();
@@ -123,11 +123,11 @@ void BehaviorConfig::load()
 	// "Chat" TAB ===============================================================
 	mPrfsChat->viewPlugin->clear();
 	int selectedIdx = 0, i = 0;
-	for(  QList<KPluginInfo*>::iterator it = viewPlugins.begin(); it != viewPlugins.end(); ++it )
+	for(  QList<KPluginInfo>::iterator it = viewPlugins.begin(); it != viewPlugins.end(); ++it )
 	{
-		if( (*it)->pluginName() == Kopete::BehaviorSettings::self()->viewPlugin() )
+		if( it->pluginName() == Kopete::BehaviorSettings::self()->viewPlugin() )
 			selectedIdx = i;
-		mPrfsChat->viewPlugin->insertItem( i++, (*it)->name() );
+		mPrfsChat->viewPlugin->insertItem( i++, it->name() );
 	}
 
 	mPrfsChat->viewPlugin->setCurrentIndex(selectedIdx);

@@ -34,7 +34,7 @@ void CryptographyConfig::load()
 	KConfigGroup config(KGlobal::config(), "Cryptography Plugin");
 
 	mFingerprint = config.readEntry ("Private key fingerprint", "");
-	mAskPassPhrase = config.readEntry ("Ask for passphrase", false);
+	mAskPassphraseOnStartup = config.readEntry ("Ask for passphrase on startup", false);
 	mCacheMode = (CryptographyConfig::CacheMode)config.readEntry ("Cache mode", (uint)CryptographyConfig::Close);
 	mCacheTime = config.readEntry ("Cache time", 15);
 }
@@ -44,49 +44,9 @@ void CryptographyConfig::save()
 	KConfigGroup config(KGlobal::config(), "Cryptography Plugin");
 
 	config.writeEntry("Private key fingerprint", mFingerprint );
-	config.writeEntry("Ask for passphrase", mAskPassPhrase);
+	config.writeEntry("Ask for passphrase on startup", mAskPassphraseOnStartup);
 	config.writeEntry("Cache mode", (uint)mCacheMode);
 	config.writeEntry("Cache time", mCacheTime);
 	
 	config.sync();
-}
-
-QString CryptographyConfig::fingerprint() const
-{
-	return mFingerprint;
-}
-
-bool CryptographyConfig::askPassPhrase() const
-{
-	return mAskPassPhrase;
-}
-
-CryptographyConfig::CacheMode CryptographyConfig::cacheMode() const
-{
-	return mCacheMode;
-}
-
-uint CryptographyConfig::cacheTime() const
-{
-	return mCacheTime;
-}
-
-void CryptographyConfig::setFingerprint(QString f) 
-{
-	mFingerprint = f;
-}
-
-void CryptographyConfig::setAskPassPhrase(bool b)
-{
-	mAskPassPhrase = b;
-}
-
-void CryptographyConfig::setCacheMode(CacheMode m)
-{
-	mCacheMode = m;
-}
-
-void CryptographyConfig::setCacheTime(uint t)
-{
-	mCacheTime = t;
 }

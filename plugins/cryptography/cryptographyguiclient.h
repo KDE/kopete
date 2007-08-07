@@ -19,9 +19,10 @@
 
 #include <qobject.h>
 #include <kxmlguiclient.h>
+#include <ktoggleaction.h>
 
 namespace Kopete { class ChatSession; }
-class KToggleAction;
+
 
 /**
  *@author Olivier Goffart
@@ -32,12 +33,16 @@ Q_OBJECT
 public:
 	CryptographyGUIClient(Kopete::ChatSession *parent = 0);
 	~CryptographyGUIClient();
+	
+	bool signing() { return m_signAction->isChecked(); }
+	bool encrypting() { return m_encAction->isChecked(); }
 
-private:
-	KToggleAction *m_action;
+	KToggleAction *m_encAction;
+	KToggleAction *m_signAction;
 
 private slots:
-	void slotToggled();
+	void slotEncryptToggled();
+	void slotSignToggled();
 };
 
 #endif

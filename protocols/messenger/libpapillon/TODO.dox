@@ -16,7 +16,7 @@ Done.
 
 \section todo_milestone1 Milestone 1: Contact list and presence
 <ul>
-<li>\b - Create MimeHeader class</li>
+<li>\b # Create MimeHeader class</li>
 <li>\b # Parse initial Hotmail message</li>
 <li>\b + Do Papillon::ChallengeTask</li>
 <li>\b # Contact list

@@ -92,7 +92,7 @@ static QString squashMessage( const Kopete::Message& msg )
 						fullUrl.length(), shorterUrl );
 		}
 	}
- 	kDebug(14000) << k_funcinfo << msgText << endl;	
+ 	kDebug(14000) << k_funcinfo << msgText;	
 	return msgText;
 }
 
@@ -153,7 +153,7 @@ KopeteViewManager::KopeteViewManager()
 
 KopeteViewManager::~KopeteViewManager()
 {
-// 	kDebug(14000) << k_funcinfo << endl;
+// 	kDebug(14000) << k_funcinfo;
 
     //delete all open chatwindow.
     ManagerMap::Iterator it;
@@ -177,7 +177,7 @@ void KopeteViewManager::slotPrefsChanged()
 
 KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString &requestedPlugin )
 {
-    // kDebug(14000) << k_funcinfo << endl;
+    // kDebug(14000) << k_funcinfo;
 
     if( d->managerMap.contains( session ) && d->managerMap[ session ] )
     {
@@ -228,7 +228,7 @@ KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString
 
 void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSession *manager)
 {
-    // kDebug(14000) << k_funcinfo << endl;
+    // kDebug(14000) << k_funcinfo;
 
     bool outgoingMessage = ( msg.direction() == Kopete::Message::Outbound );
 
@@ -339,7 +339,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 
 void KopeteViewManager::readMessages( Kopete::ChatSession *manager, bool outgoingMessage, bool activate )
 {
-    // kDebug( 14000 ) << k_funcinfo << endl;
+    // kDebug( 14000 ) << k_funcinfo;
     d->foreignMessage=!outgoingMessage; //let know for the view we are about to create
     KopeteView *thisView = manager->view( true );
     d->foreignMessage=false; //the view is created, reset the flag
@@ -360,7 +360,7 @@ void KopeteViewManager::readMessages( Kopete::ChatSession *manager, bool outgoin
 
 void KopeteViewManager::slotEventDeleted( Kopete::MessageEvent *event )
 {
-    // kDebug(14000) << k_funcinfo << endl;
+    // kDebug(14000) << k_funcinfo;
     Kopete::ChatSession *kmm=event->message().manager();
     if(!kmm)
             return;
@@ -389,7 +389,7 @@ void KopeteViewManager::slotEventDeleted( Kopete::MessageEvent *event )
 
 void KopeteViewManager::nextEvent()
 {
-    // kDebug( 14000 ) << k_funcinfo << endl;
+    // kDebug( 14000 ) << k_funcinfo;
 
     if( d->eventList.isEmpty() )
         return;
@@ -402,7 +402,7 @@ void KopeteViewManager::nextEvent()
 
 void KopeteViewManager::slotViewActivated( KopeteView *view )
 {
-    // kDebug( 14000 ) << k_funcinfo << endl;
+    // kDebug( 14000 ) << k_funcinfo;
     d->activeView = view;
 
     foreach (Kopete::MessageEvent *event, d->eventList)
@@ -416,7 +416,7 @@ void KopeteViewManager::slotViewActivated( KopeteView *view )
 
 void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
 {
-    // kDebug( 14000 ) << k_funcinfo << endl;
+    // kDebug( 14000 ) << k_funcinfo;
 
     if( d->managerMap.contains( closingView->msgManager() ) )
     {
@@ -430,7 +430,7 @@ void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
 
 void KopeteViewManager::slotChatSessionDestroyed( Kopete::ChatSession *manager )
 {
-    // kDebug( 14000 ) << k_funcinfo << endl;
+    // kDebug( 14000 ) << k_funcinfo;
 
 	if( d->managerMap.contains( manager ) )
 	{

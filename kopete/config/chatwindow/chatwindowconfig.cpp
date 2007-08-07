@@ -115,7 +115,7 @@ public:
 			}
 			case ChatWindowStyleManager::StyleCannotOpen:
 			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
+				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive cannot be opened.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
 				break;
 			}
 			case ChatWindowStyleManager::StyleNoDirectoryValid:
@@ -209,20 +209,20 @@ ChatWindowConfig::~ChatWindowConfig()
 void ChatWindowConfig::save()
 {
 	KCModule::save();
-//	kDebug(14000) << k_funcinfo << "called." << endl;
+//	kDebug(14000) << k_funcinfo << "called.";
 
 	KopeteChatWindowSettings *settings = KopeteChatWindowSettings::self();
 
-	// Get the stylePath
+	// Get the styleName
 	if(m_currentStyle)
 	{
-		kDebug(14000) << k_funcinfo << m_currentStyle->getStylePath() << endl;
-		settings->setStylePath( m_currentStyle->getStylePath() );
+		kDebug(14000) << k_funcinfo << m_currentStyle->getStyleName();
+		settings->setStyleName( m_currentStyle->getStyleName() );
 	}
 	// Get and save the styleVariant
 	if( !m_currentVariantMap.empty() )
 	{
-		kDebug(14000) << k_funcinfo << m_currentVariantMap[ m_styleUi.variantList->currentText()] << endl;
+		kDebug(14000) << k_funcinfo << m_currentVariantMap[ m_styleUi.variantList->currentText()];
 		settings->setStyleVariant( m_currentVariantMap[m_styleUi.variantList->currentText()] );
 	}
 
@@ -250,24 +250,20 @@ void ChatWindowConfig::load()
 void ChatWindowConfig::slotLoadChatStyles()
 {
 	m_styleUi.styleList->clear();
-	m_styleItemMap.clear();
 
-	ChatWindowStyleManager::StyleList availableStyles;
+	QStringList availableStyles;
 	availableStyles = ChatWindowStyleManager::self()->getAvailableStyles();
 	if( availableStyles.empty() )
-		kDebug(14000) << k_funcinfo << "Warning, available styles is empty !" << endl;
+		kDebug(14000) << k_funcinfo << "Warning, available styles is empty !";
 
-	ChatWindowStyleManager::StyleList::ConstIterator it, itEnd = availableStyles.constEnd();
-	for(it = availableStyles.constBegin(); it != itEnd; ++it)
+	foreach( const QString& styleName, availableStyles )
 	{
 		// Insert style name into the listbox
-		m_styleUi.styleList->insertItem( it.key(), 0 );
-		// Insert the style class into the internal map for futher access.
-		m_styleItemMap.insert( m_styleUi.styleList->firstItem(), it.value() );
+		m_styleUi.styleList->insertItem( styleName, 0 );
 
-		if( it.value() == KopeteChatWindowSettings::self()->stylePath() )
+		if( styleName == KopeteChatWindowSettings::self()->styleName() )
 		{
-			kDebug(14000) << k_funcinfo << "Restoring saved style: " << it.key() << endl;
+			kDebug(14000) << k_funcinfo << "Restoring saved style: " << styleName;
 
 			m_styleUi.styleList->setSelected( m_styleUi.styleList->firstItem(), true );
 		}
@@ -280,13 +276,13 @@ void ChatWindowConfig::slotLoadChatStyles()
 void ChatWindowConfig::slotChatStyleSelected()
 {
 	// Retrieve variant list.
-	QString stylePath = m_styleItemMap[m_styleUi.styleList->selectedItem()];
-	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( stylePath );
+	QString styleName = m_styleUi.styleList->selectedItem()->text();
+	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( styleName );
 
 	if(m_currentStyle)
 	{
 		m_currentVariantMap = m_currentStyle->getVariants();
-		kDebug(14000) << k_funcinfo << "Loading style: " << m_currentStyle->getStylePath() << endl;
+		kDebug(14000) << k_funcinfo << "Loading style: " << m_currentStyle->getStyleName();
 
 		// Update the variant list based on current style.
 		m_styleUi.variantList->clear();
@@ -322,8 +318,8 @@ void ChatWindowConfig::slotChatStyleSelected()
 
 void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 {
-// 	kDebug(14000) << k_funcinfo << variantName << endl;
-// 	kDebug(14000) << k_funcinfo << m_currentVariantMap[variantName] << endl;
+// 	kDebug(14000) << k_funcinfo << variantName;
+// 	kDebug(14000) << k_funcinfo << m_currentVariantMap[variantName];
 
 	// Update the preview
 	m_preview->setStyleVariant(m_currentVariantMap[variantName]);
@@ -345,7 +341,7 @@ void ChatWindowConfig::slotInstallChatStyle()
 			{
 				case ChatWindowStyleManager::StyleCannotOpen:
 				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be opened.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
 					break;
 				}
 				case ChatWindowStyleManager::StyleNoDirectoryValid:
@@ -358,7 +354,7 @@ void ChatWindowConfig::slotInstallChatStyle()
 					break;
 				case ChatWindowStyleManager::StyleInstallOk:
 				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window style was successfully installed !"), i18n("Install successful") );
+					KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window style was successfully installed."), i18n("Install successful") );
 					break;
 				}
 				case ChatWindowStyleManager::StyleUnknow:

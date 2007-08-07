@@ -24,7 +24,6 @@ namespace Papillon
 
 class Connector;
 class Connection;
-class SecureStream;
 class Task;
 class NetworkMessage;
 class MimeHeader;
@@ -102,15 +101,6 @@ public:
 	 * d-tor.
 	 */
 	~Client();
-
-	/**
-	 * @brief Create a new SecureStream ready to be used.
-	 *
-	 * You must delete the SecureStream instance yourself.
-	 *
-	 * @return the new SecureStream instance.
-	 */
-	SecureStream *createSecureStream();
 
 	/**
 	 * @brief Create and a setup a new connection

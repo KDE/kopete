@@ -61,7 +61,7 @@ bool WarningTask::take( Transfer* transfer )
 		Buffer *b = transfer->buffer();
 		m_increase = b->getWord();
 		m_newLevel = b->getWord();
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got warning ack for " << m_contact << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got warning ack for " << m_contact;
 		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Warning level increased " << m_increase 
 			<< " to " << m_newLevel << endl;
 		emit userWarned( m_contact, m_increase, m_newLevel );

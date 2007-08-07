@@ -70,7 +70,7 @@ Webcam::Webcam(Who who, const QString& to, Dispatcher *parent, quint32 sessionId
 
 Webcam::~Webcam()
 {
-	kDebug(14140) << k_funcinfo<< "################################################" << endl;
+	kDebug(14140) << k_funcinfo<< "################################################";
 	m_dispatcher=0l;
 	delete m_mimic;
 	delete m_webcamSocket;
@@ -144,7 +144,7 @@ void Webcam::sendBYEMessage()
 
 void Webcam::acknowledged()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo;
 	
 	switch(m_state)
 	{
@@ -210,7 +210,7 @@ void Webcam::processMessage(const Message& message)
 	if(message.applicationIdentifier != 4l)
 	{
 		QString body = QByteArray(message.body.data(), message.header.dataSize);
-		kDebug(14141) << k_funcinfo << "received, " << body << endl;
+		kDebug(14141) << k_funcinfo << "received, " << body;
 
 		if(body.startsWith("MSNSLP/1.0 200 OK"))
 		{
@@ -278,7 +278,7 @@ void Webcam::processMessage(const Message& message)
 		}
 		f+=16;
 	}
-	kDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
+	kDebug(14141) << k_funcinfo << dataMessage.size() << echoS;
 #endif
 	
 	
@@ -294,7 +294,7 @@ void Webcam::processMessage(const Message& message)
 	if(message.header.dataOffset+message.header.dataSize < message.header.totalDataSize)
 		return;
 
-	kDebug(14141) << k_funcinfo << "Message contents: " << m_content << '\n' << endl;
+	kDebug(14141) << k_funcinfo << "Message contents: " << m_content << '\n';
 	if(m_content.startsWith("syn"))
 	{
 		if(m_direction == Incoming)
@@ -312,9 +312,9 @@ void Webcam::processMessage(const Message& message)
 			uint sess=rand()%1000+5000;
 			uint rid=rand()%100+50;
 			m_myAuth=QString("recipientid=%1&sessionid=%2\r\n\r\n").arg(rid).arg(sess);
-			kDebug(14140) << k_funcinfo << "m_myAuth= " << m_myAuth << endl;
+			kDebug(14140) << k_funcinfo << "m_myAuth= " << m_myAuth;
 			QString  producerxml=xml(sess , rid);
-			kDebug(14140) << k_funcinfo << "producerxml= " << producerxml << endl; 
+			kDebug(14140) << k_funcinfo << "producerxml= " << producerxml; 
 			makeSIPMessage(producerxml);
 		}
 	}
@@ -328,10 +328,10 @@ void Webcam::processMessage(const Message& message)
 		{
 			
 			QString viewerxml=xml(sess.toUInt() , rid.toUInt());
-			kDebug(14140) << k_funcinfo << "vewerxml= " << viewerxml << endl; 
+			kDebug(14140) << k_funcinfo << "vewerxml= " << viewerxml; 
 			makeSIPMessage(  viewerxml ,0x00,0x09,0x00 );
 			m_peerAuth=m_myAuth=QString("recipientid=%1&sessionid=%2\r\n\r\n").arg(rid,sess);
-			kDebug(14140) << k_funcinfo << "m_auth= " << m_myAuth << endl;
+			kDebug(14140) << k_funcinfo << "m_auth= " << m_myAuth;
 		}
 		else
 		{
@@ -347,7 +347,7 @@ void Webcam::processMessage(const Message& message)
 		QObject::connect(m_listener, SIGNAL(gotError(int)), this, SLOT(slotListenError(int)));
 				// Listen for incoming connections.
 		bool isListening = m_listener->listen();
-		kDebug(14140) << k_funcinfo << (isListening ? QString("listening %1").arg(m_listener->localAddress().toString()) : QString("not listening")) << endl;
+		kDebug(14140) << k_funcinfo << (isListening ? QString("listening %1").arg(m_listener->localAddress().toString()) : QString("not listening"));
 		
 		rx=QRegExp("<tcpport>([^<]*)</tcpport>");
 		rx.search(m_content);
@@ -381,17 +381,17 @@ void Webcam::processMessage(const Message& message)
 			
 			if(!port1.isEmpty())
 			{
-				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<':' << port1 << endl;
+				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<':' << port1;
 				KBufferedSocket *sock=new KBufferedSocket( ip, port1, this );
 				m_allSockets.append(sock);
 				QObject::connect( sock, SIGNAL( connected( const KResolverEntry&) ), this, SLOT( slotSocketConnected() ) );
 				QObject::connect( sock, SIGNAL( gotError(int)), this, SLOT(slotSocketError(int)));
 				sock->connect(ip, port1);
-				kDebug(14140) << k_funcinfo << "okok " << sock << " - " << sock->peerAddress().toString() << " ; " << sock->localAddress().toString()  << endl;
+				kDebug(14140) << k_funcinfo << "okok " << sock << " - " << sock->peerAddress().toString() << " ; " << sock->localAddress().toString();
 			}
 			if(!port2.isEmpty())
 			{
-				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<':' << port2 << endl;
+				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<':' << port2;
 				KBufferedSocket *sock=new KBufferedSocket( ip, port2, this );
 				m_allSockets.append(sock);
 				QObject::connect( sock, SIGNAL( connected( const KResolverEntry&) ), this, SLOT( slotSocketConnected() ) );
@@ -400,7 +400,7 @@ void Webcam::processMessage(const Message& message)
 			}
 			if(!port3.isEmpty())
 			{
-				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<':' << port3 << endl;
+				kDebug(14140) << k_funcinfo << "trying to connect on " << ip <<':' << port3;
 				KBufferedSocket *sock=new KBufferedSocket( ip, port3, this );
 				m_allSockets.append(sock);
 				QObject::connect( sock, SIGNAL( connected( const KResolverEntry&) ), this, SLOT( slotSocketConnected() ) );
@@ -414,7 +414,7 @@ void Webcam::processMessage(const Message& message)
 			KBufferedSocket *sock=(*it);
 			
 			//sock->enableRead( false );
-			kDebug(14140) << k_funcinfo << "connect to "  << sock << " - "<< sock->peerAddress().toString() << " ; " << sock->localAddress().toString()  << endl;
+			kDebug(14140) << k_funcinfo << "connect to "  << sock << " - "<< sock->peerAddress().toString() << " ; " << sock->localAddress().toString();
 		}
 	}
 	else if(m_content.contains("receivedViewerData"))
@@ -468,7 +468,7 @@ void Webcam::makeSIPMessage(const QString &message, quint8 XX, quint8 YY , quint
 		}
 		f+=16;
 	}
-	kDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;*/
+	kDebug(14141) << k_funcinfo << dataMessage.size() << echoS;*/
 				
 	
 	sendBigP2PMessage(dataMessage);
@@ -549,7 +549,7 @@ int Webcam::getAvailablePort()
 	delete ss;
 	
 
-    kDebug(14140) << k_funcinfo<< "found available port : " << port << endl;
+    kDebug(14140) << k_funcinfo<< "found available port : " << port;
 
 	return port;
 }
@@ -559,7 +559,7 @@ int Webcam::getAvailablePort()
 
 void Webcam::slotSocketConnected()
 {
-	kDebug(14140) << k_funcinfo <<"##########################" << endl;
+	kDebug(14140) << k_funcinfo <<"##########################";
 	
 	m_webcamSocket=const_cast<KBufferedSocket*>(static_cast<const KBufferedSocket*>(sender()));
 	if(!m_webcamSocket)
@@ -577,7 +577,7 @@ void Webcam::slotSocketConnected()
 	}
 	m_allSockets.clear();
 	
-	kDebug(14140) << k_funcinfo << "Connection established on  " <<  m_webcamSocket->peerAddress().toString() << " ; " << m_webcamSocket->localAddress().toString()  << endl;
+	kDebug(14140) << k_funcinfo << "Connection established on  " <<  m_webcamSocket->peerAddress().toString() << " ; " << m_webcamSocket->localAddress().toString();
 	
 	m_webcamSocket->setBlocking(false);
 	m_webcamSocket->enableRead(true);
@@ -593,7 +593,7 @@ void Webcam::slotSocketConnected()
 	m_webcamState=wsConnected;
 	QByteArray to_send=m_peerAuth.toUtf8();
 	m_webcamSocket->write(to_send.data(), to_send.length());
-	kDebug(14140) << k_funcinfo << "sending "<< m_peerAuth << endl;
+	kDebug(14140) << k_funcinfo << "sending "<< m_peerAuth;
 
 }
 
@@ -607,13 +607,13 @@ void Webcam::slotAccept()
 		// NOTE If direct connection fails, the sending
 		// client wil transfer the file data through the
 		// existing session.
-		kDebug(14140) << k_funcinfo << "Direct connection failed." << endl;
+		kDebug(14140) << k_funcinfo << "Direct connection failed.";
 		// Close the listening endpoint.
 //		m_listener->close();
 		return;
 	}
 
-	kDebug(14140) << k_funcinfo << "Direct connection established." << endl;
+	kDebug(14140) << k_funcinfo << "Direct connection established.";
 
 	// Set the socket to non blocking,
 	// enable the ready read signal and disable
@@ -638,7 +638,7 @@ void Webcam::slotSocketRead()
 	m_webcamSocket=const_cast<KBufferedSocket*>(static_cast<const KBufferedSocket*>(sender()));
 
 	uint available = m_webcamSocket->bytesAvailable();
-	kDebug(14140) << k_funcinfo  <<  m_webcamSocket <<  "############# " << available << " bytes available." << endl;
+	kDebug(14140) << k_funcinfo  <<  m_webcamSocket <<  "############# " << available << " bytes available.";
 	static const QString connected_str("connected\r\n\r\n");
 	switch(m_webcamState)
 	{
@@ -646,18 +646,18 @@ void Webcam::slotSocketRead()
 		{
 			if(available < m_myAuth.length())
 			{
-				kDebug(14140) << k_funcinfo << "waiting more data   ( " << available << "  of  " <<m_myAuth.length()<< " )"<<  endl;
+				kDebug(14140) << k_funcinfo << "waiting more data   ( " << available << "  of  " <<m_myAuth.length()<< " )";
 				break;
 			}
 			QByteArray buffer(available);
 			m_webcamSocket->read(buffer.data(), buffer.size());
 		
-			kDebug(14140) << k_funcinfo << buffer.data() <<  endl;
+			kDebug(14140) << k_funcinfo << buffer.data();
 
 			if(QString(buffer) == m_myAuth )
 			{
 				closeAllOtherSockets();
-				kDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
+				kDebug(14140) << k_funcinfo << "Sending " << connected_str;
 				QByteArray conne=connected_str.toUtf8();
 				m_webcamSocket->write(conne.data(), conne.length());
 				m_webcamState=wsConnecting;
@@ -672,7 +672,7 @@ void Webcam::slotSocketRead()
 					videoDevice->startCapturing();
 					
 					m_timerId=startTimer(1000);
-					kDebug(14140) << k_funcinfo <<  "new timer" << m_timerId << endl;
+					kDebug(14140) << k_funcinfo <<  "new timer" << m_timerId;
 				}
 				m_widget=new MSNWebcamDialog(m_recipient);
 				connect(m_widget, SIGNAL( closingWebcamDialog() ) , this , SLOT(sendBYEMessage()));
@@ -680,7 +680,7 @@ void Webcam::slotSocketRead()
 			}
 			else
 			{
-				kWarning(14140) << k_funcinfo << "Auth failed" << endl;
+				kWarning(14140) << k_funcinfo << "Auth failed";
 				m_webcamSocket->disconnect();
 				m_webcamSocket->deleteLater();
 				m_allSockets.remove(m_webcamSocket);
@@ -694,13 +694,13 @@ void Webcam::slotSocketRead()
 		{
 			if(available < connected_str.length())
 			{
-				kDebug(14140) << k_funcinfo << "waiting more data   ( " << available << "  of  " <<connected_str.length()<< " )"<<  endl;
+				kDebug(14140) << k_funcinfo << "waiting more data   ( " << available << "  of  " <<connected_str.length()<< " )";
 				break;
 			}
 			QByteArray buffer(connected_str.length());
 			m_webcamSocket->read(buffer.data(), buffer.size());
 			
-// 			kDebug(14140) << k_funcinfo << "state " << m_webcamState << " received :" << QCString(buffer) <<  endl;
+// 			kDebug(14140) << k_funcinfo << "state " << m_webcamState << " received :" << QCString(buffer);
 				
 	
 			if(QString(buffer) == connected_str)
@@ -708,7 +708,7 @@ void Webcam::slotSocketRead()
 				if(m_webcamState==wsConnected)
 				{
 					closeAllOtherSockets();
-					kDebug(14140) << k_funcinfo << "Sending " << connected_str << endl;
+					kDebug(14140) << k_funcinfo << "Sending " << connected_str;
 					QByteArray conne=connected_str.toUtf8();
 					m_webcamSocket->write(conne.data(), conne.length());
 												
@@ -722,7 +722,7 @@ void Webcam::slotSocketRead()
 					videoDevice->startCapturing();
 					
 					m_timerId=startTimer(1000);
-					kDebug(14140) << k_funcinfo <<  "new timer" << m_timerId << endl;
+					kDebug(14140) << k_funcinfo <<  "new timer" << m_timerId;
 				}
 				m_widget=new MSNWebcamDialog(m_recipient);
 				connect(m_widget, SIGNAL( closingWebcamDialog() ) , this , SLOT(sendBYEMessage()));
@@ -733,7 +733,7 @@ void Webcam::slotSocketRead()
 			}
 			else
 			{
-				kWarning(14140) << k_funcinfo << "Connecting failed" << endl;
+				kWarning(14140) << k_funcinfo << "Connecting failed";
 				m_webcamSocket->disconnect();
 				m_webcamSocket->deleteLater();
 				m_allSockets.remove(m_webcamSocket);
@@ -745,12 +745,12 @@ void Webcam::slotSocketRead()
 		{
 			if(m_who==wProducer)
 			{
-				kWarning(14140) << k_funcinfo << "data received when we are producer"<<  endl;
+				kWarning(14140) << k_funcinfo << "data received when we are producer";
 				break;
 			}
 			if(available < 24)
 			{
-				kDebug(14140) << k_funcinfo << "waiting more data   ( " << available << "  of  " <<24<< " )"<<  endl;
+				kDebug(14140) << k_funcinfo << "waiting more data   ( " << available << "  of  " <<24<< " )";
 				break;
 			}
 			QByteArray buffer(available);
@@ -760,7 +760,7 @@ void Webcam::slotSocketRead()
 			
 			if(available < (paysize+24))
 			{
-				kDebug(14140) << k_funcinfo << "waiting more data   ( " << available << "  of  " <<paysize<< " )"<<  endl;
+				kDebug(14140) << k_funcinfo << "waiting more data   ( " << available << "  of  " <<paysize<< " )";
 				break;
 			}
 			m_webcamSocket->read(buffer.data(), 24); //flush
@@ -770,7 +770,7 @@ void Webcam::slotSocketRead()
 			QPixmap pix=m_mimic->decode(buffer);
 			if(pix.isNull())
 			{
-				kWarning(14140) << k_funcinfo << "incorrect pixmap returned, better to stop everything"<<  endl;
+				kWarning(14140) << k_funcinfo << "incorrect pixmap returned, better to stop everything";
 				m_webcamSocket->disconnect();
 				sendBYEMessage();
 			}
@@ -785,20 +785,20 @@ void Webcam::slotSocketRead()
 
 void Webcam::slotListenError(int errorCode)
 {
-	kWarning(14140) << k_funcinfo << "Error " << errorCode << " : " << m_listener->errorString() << endl;
+	kWarning(14140) << k_funcinfo << "Error " << errorCode << " : " << m_listener->errorString();
 }
 
 void Webcam::slotSocketClosed()
 {
 	if(!m_dispatcher) //we are in this destructor
 		return; 
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo;
 	sendBYEMessage();
 }
 
 void Webcam::slotSocketError(int errorCode)
 {
-	kDebug(14140) << k_funcinfo <<  errorCode <<  endl;
+	kDebug(14140) << k_funcinfo <<  errorCode;
 	//sendBYEMessage();
 }
 
@@ -823,7 +823,7 @@ void Webcam::timerEvent( QTimerEvent *e )
 	if(e->timerId() != m_timerId)
 		return TransferContext::timerEvent(e);
 	
-//	kDebug(14140) << k_funcinfo << endl;
+//	kDebug(14140) << k_funcinfo;
 		
 	Kopete::AV::VideoDevicePool *videoDevice = Kopete::AV::VideoDevicePool::self();
 	videoDevice->getFrame();
@@ -835,7 +835,7 @@ void Webcam::timerEvent( QTimerEvent *e )
 	
 	if(img.width()!=320 || img.height()!=240)
 	{
-		kWarning(14140) << k_funcinfo << "Bad image size " <<img.width() << 'x' <<  img.height() << endl;
+		kWarning(14140) << k_funcinfo << "Bad image size " <<img.width() << 'x' <<  img.height();
 		return;
 	}
 
@@ -854,7 +854,7 @@ void Webcam::timerEvent( QTimerEvent *e )
 	QByteArray frame=m_mimic->encode(image_data);
 	
 	
-	kDebug(14140) << k_funcinfo << "Sendinf frame of size " << frame.size() << endl;
+	kDebug(14140) << k_funcinfo << "Sendinf frame of size " << frame.size();
 	//build the header.
 	QByteArray header;
 	

@@ -22,17 +22,15 @@ class QHttpRequestHeader;
 namespace Papillon
 {
 
-class SecureStream;
 /**
  * @class TweenerHandler tweenerhandler.h <Papillon/Http/TweenerHandler>
  * @brief Negociation of the Tweener ticket with Passport login server.
  *
  * Using TweenerHandler:
- * TweenerHandler require a SecureStream instance for TLS/SSL connection.
  * Use setLoginInformation() to set required login information and start() to begin negotiation of the tweener.
  *
  * @code
- * TweenerHandler *twn = new TweenerHandler(secureStream);
+ * TweenerHandler *twn = new TweenerHandler();
  * twn->setLoginInformation(tweener, QLatin1String("test@passport.com"), QLatinString("password"));
  * connect(twn, SIGNAL(result(TweenerHandler *)), this, SLOT(tweenerResult(TweenerHandler*)));
  * twn->start();
@@ -62,10 +60,10 @@ public:
 	};
 
 	/**
-	 * Build a new TweenerHandler
-	 * @param stream SecureStream instance.
+	 * @brief Build a new TweenerHandler
+	 * @param parent QObject parent.
 	 */
-	TweenerHandler(SecureStream *stream);
+	TweenerHandler(QObject *parent = 0);
 	/**
 	 * d-tor.
 	 */
@@ -121,6 +119,12 @@ private slots:
 	 */
 	void slotReadyRead();
 
+	/**
+	 * @internal
+	 * The connector has generated an error.
+	 * Try reconnection up to 5 times
+	 */
+	void connector_OnFaulted();
 private:
 	/**
 	 * @internal

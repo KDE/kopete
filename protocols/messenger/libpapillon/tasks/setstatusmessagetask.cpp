@@ -71,7 +71,7 @@ void SetStatusMessageTask::onGo()
 
 	setStatusMessage->setPayloadData( d->statusMessage.toXml().toUtf8() );
 
-	qDebug() << PAPILLON_FUNCINFO << "Setting personal status message on server:" << d->statusMessage.toXml();
+	qDebug() << Q_FUNC_INFO << "Setting personal status message on server:" << d->statusMessage.toXml();
 	send(setStatusMessage);
 }
 

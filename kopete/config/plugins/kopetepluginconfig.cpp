@@ -28,6 +28,7 @@
 #include <kpluginselector.h>
 #include <kgenericfactory.h>
 #include <ksettings/dispatcher.h>
+#include <KPluginInfo>
 
 // Kopete includes
 #include "kopetepluginmanager.h"

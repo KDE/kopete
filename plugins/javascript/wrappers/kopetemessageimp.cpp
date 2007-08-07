@@ -92,13 +92,13 @@ Kopete::Message *KopeteMessageImp::message( KJS::Object &object )
 	JSOpaqueProxy *op = JSProxy::toOpaqueProxy( object.imp() );
 	if ( !op )
 	{
-		kWarning() << "MyCustomObjectImp::call() failed, not a JSOpaqueProxy" << endl;
+		kWarning() << "MyCustomObjectImp::call() failed, not a JSOpaqueProxy";
 		return 0;
 	}
 
 	if ( op->typeName() != "MyCustomObject" )
 	{
-		kWarning() << "MyCustomObjectImp::call() failed, type is " << op->typeName() << endl;
+		kWarning() << "MyCustomObjectImp::call() failed, type is " << op->typeName();
 		return 0;
 	}
 

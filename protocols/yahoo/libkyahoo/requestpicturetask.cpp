@@ -24,7 +24,7 @@
 
 RequestPictureTask::RequestPictureTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 }
 
 RequestPictureTask::~RequestPictureTask()

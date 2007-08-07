@@ -1028,9 +1028,6 @@ If two resources have the same priority, the messages will be sent to the one co
                 <property name="text" >
                  <string>Alwa&amp;ys send delivered notifications</string>
                 </property>
-                <property name="shortcut" >
-                 <string>Alt+Y</string>
-                </property>
                 <property name="checked" >
                  <bool>true</bool>
                 </property>
@@ -1046,9 +1043,6 @@ If two resources have the same priority, the messages will be sent to the one co
                 </property>
                 <property name="text" >
                  <string>Al&amp;ways send displayed notifications</string>
-                </property>
-                <property name="shortcut" >
-                 <string>Alt+W</string>
                 </property>
                 <property name="checked" >
                  <bool>true</bool>
@@ -1066,9 +1060,6 @@ If two resources have the same priority, the messages will be sent to the one co
                 <property name="text" >
                  <string>Always send &amp;typing notifications</string>
                 </property>
-                <property name="shortcut" >
-                 <string>Alt+T</string>
-                </property>
                 <property name="checked" >
                  <bool>true</bool>
                 </property>
@@ -1078,9 +1069,6 @@ If two resources have the same priority, the messages will be sent to the one co
                <widget class="QCheckBox" name="cbSendGoneEvent" >
                 <property name="text" >
                  <string>Always send &amp;gone notifications (closing the window)</string>
-                </property>
-                <property name="shortcut" >
-                 <string>Alt+G</string>
                 </property>
                 <property name="checked" >
                  <bool>true</bool>

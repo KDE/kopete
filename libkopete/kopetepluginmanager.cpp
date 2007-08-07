@@ -57,11 +57,11 @@ public:
 	Private() : shutdownMode( StartingUp ), isAllPluginsLoaded(false) {}
 
 	// All available plugins, regardless of category, and loaded or not
-	QList<KPluginInfo *> plugins;
+	QList<KPluginInfo> plugins;
 
 	// Dict of all currently loaded plugins, mapping the KPluginInfo to
 	// a plugin
-	typedef QMap<KPluginInfo *, Plugin *> InfoToPluginMap;
+	typedef QMap<KPluginInfo, Plugin *> InfoToPluginMap;
 	InfoToPluginMap loadedPlugins;
 
 	// The plugin manager's mode. The mode is StartingUp until loadAllPlugins()
@@ -105,7 +105,7 @@ PluginManager::PluginManager() : QObject( qApp ), d( new Private )
 PluginManager::~PluginManager()
 {
 	if ( d->shutdownMode != Private::DoneShutdown )
-		kWarning( 14010 ) << k_funcinfo << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kBacktrace() << endl;
+		kWarning( 14010 ) << k_funcinfo << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kBacktrace();
 
 	// Quick cleanup of the remaining plugins, hope it helps
 	// Note that deleting it.value() causes slotPluginDestroyed to be called, which
@@ -113,23 +113,23 @@ PluginManager::~PluginManager()
 	while ( !d->loadedPlugins.empty() )
 	{
 		Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
-		kWarning( 14010 ) << k_funcinfo << "Deleting stale plugin '" << it.value()->objectName() << "'" << endl;
+		kWarning( 14010 ) << k_funcinfo << "Deleting stale plugin '" << it.value()->objectName() << "'";
 		delete it.value();
 	}
 
 	delete d;
 }
 
-QList<KPluginInfo *> PluginManager::availablePlugins( const QString &category ) const
+QList<KPluginInfo> PluginManager::availablePlugins( const QString &category ) const
 {
 	if ( category.isEmpty() )
 		return d->plugins;
 
-	QList<KPluginInfo *> result;
-	QList<KPluginInfo *>::ConstIterator it;
+	QList<KPluginInfo> result;
+	QList<KPluginInfo>::ConstIterator it;
 	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
 	{
-		if ( ( *it )->category() == category )
+		if ( it->category() == category )
 			result.append( *it );
 	}
 
@@ -143,7 +143,7 @@ PluginList PluginManager::loadedPlugins( const QString &category ) const
 	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
 	      it != d->loadedPlugins.end(); ++it )
 	{
-		if ( category.isEmpty() || it.key()->category() == category )
+		if ( category.isEmpty() || it.key().category() == category )
 			result.append( it.value() );
 	}
 
@@ -151,7 +151,7 @@ PluginList PluginManager::loadedPlugins( const QString &category ) const
 }
 
 
-KPluginInfo *PluginManager::pluginInfo( const Plugin *plugin ) const
+KPluginInfo PluginManager::pluginInfo( const Plugin *plugin ) const
 {
 	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
 	      it != d->loadedPlugins.end(); ++it )
@@ -159,14 +159,14 @@ KPluginInfo *PluginManager::pluginInfo( const Plugin *plugin ) const
 		if ( it.value() == plugin )
 			return it.key();
 	}
-	return 0;
+	return KPluginInfo();
 }
 
 void PluginManager::shutdown()
 {
 	if(d->shutdownMode != Private::Running)
 	{
-		kDebug( 14010 ) << k_funcinfo << "called when not running.  / state = " << d->shutdownMode << endl;
+		kDebug( 14010 ) << k_funcinfo << "called when not running.  / state = " << d->shutdownMode;
 		return;
 	}
 
@@ -203,7 +203,7 @@ void PluginManager::shutdown()
 	// certainly fire due to valgrind's much slower processing
 #if defined(HAVE_VALGRIND_H) && !defined(NDEBUG) && defined(__i386__)
 	if ( RUNNING_ON_VALGRIND )
-		kDebug(14010) << k_funcinfo << "Running under valgrind, disabling plugin unload timeout guard" << endl;
+		kDebug(14010) << k_funcinfo << "Running under valgrind, disabling plugin unload timeout guard";
 	else
 #endif
 		QTimer::singleShot( 3000, this, SLOT( slotShutdownTimeout() ) );
@@ -219,10 +219,10 @@ void PluginManager::slotPluginReadyForUnload()
 	Plugin *plugin = dynamic_cast<Plugin *>( const_cast<QObject *>( sender() ) );
 	if ( !plugin )
 	{
-		kWarning( 14010 ) << k_funcinfo << "Calling object is not a plugin!" << endl;
+		kWarning( 14010 ) << k_funcinfo << "Calling object is not a plugin!";
 		return;
 	}
-	kDebug( 14010 ) << k_funcinfo << plugin->pluginId() << "ready for unload" << endl;
+	kDebug( 14010 ) << k_funcinfo << plugin->pluginId() << "ready for unload";
 
 	plugin->deleteLater();
 }
@@ -248,7 +248,7 @@ void PluginManager::slotShutdownTimeout()
 
 void PluginManager::slotShutdownDone()
 {
-	kDebug( 14010 ) << k_funcinfo << endl;
+	kDebug( 14010 ) << k_funcinfo;
 
 	d->shutdownMode = Private::DoneShutdown;
 
@@ -270,7 +270,7 @@ void PluginManager::loadAllPlugins()
 			if ( key.endsWith( QLatin1String( "Enabled" ) ) )
 			{
 				key.resize( key.length() - 7 );
-				//kDebug(14010) << k_funcinfo << "Set " << key << " to " << it.value() << endl;
+				//kDebug(14010) << k_funcinfo << "Set " << key << " to " << it.value();
 
 				if ( it.value() == QLatin1String( "true" ) )
 				{
@@ -291,13 +291,13 @@ void PluginManager::loadAllPlugins()
 	else
 	{
 		// we had no config, so we load any plugins that should be loaded by default.
-		QList<KPluginInfo *> plugins = availablePlugins( QString::null );
-		QList<KPluginInfo *>::ConstIterator it = plugins.begin();
-		QList<KPluginInfo *>::ConstIterator end = plugins.end();
+		QList<KPluginInfo> plugins = availablePlugins( QString::null );
+		QList<KPluginInfo>::ConstIterator it = plugins.begin();
+		QList<KPluginInfo>::ConstIterator end = plugins.end();
 		for ( ; it != end; ++it )
 		{
-			if ( (*it)->isPluginEnabledByDefault() )
-				d->pluginsToLoad.push( (*it)->pluginName() );
+			if ( it->isPluginEnabledByDefault() )
+				d->pluginsToLoad.push( it->pluginName() );
 		}
 	}
 	// Schedule the plugins to load
@@ -335,7 +335,7 @@ Plugin * PluginManager::loadPlugin( const QString &_pluginId, PluginLoadMode mod
 	// FIXME: Find any cases causing this, remove them, and remove this too - Richard
 	if ( pluginId.endsWith( QLatin1String( ".desktop" ) ) )
 	{
-		kWarning( 14010 ) << "Trying to use old-style API!" << endl << kBacktrace() << endl;
+		kWarning( 14010 ) << "Trying to use old-style API!" << endl << kBacktrace();
 		pluginId = pluginId.remove( QRegExp( QLatin1String( ".desktop$" ) ) );
 	}
 
@@ -353,12 +353,12 @@ Plugin * PluginManager::loadPlugin( const QString &_pluginId, PluginLoadMode mod
 
 Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 {
-	//kDebug( 14010 ) << k_funcinfo << pluginId << endl;
+	//kDebug( 14010 ) << k_funcinfo << pluginId;
 
-	KPluginInfo *info = infoForPluginId( pluginId );
-	if ( !info )
+	KPluginInfo info = infoForPluginId( pluginId );
+	if ( !info.isValid() )
 	{
-		kWarning( 14010 ) << k_funcinfo << "Unable to find a plugin named '" << pluginId << "'!" << endl;
+		kWarning( 14010 ) << k_funcinfo << "Unable to find a plugin named '" << pluginId << "'!";
 		return 0L;
 	}
 
@@ -372,12 +372,12 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 	if ( plugin )
 	{
 		d->loadedPlugins.insert( info, plugin );
-		info->setPluginEnabled( true );
+		info.setPluginEnabled( true );
 
 		connect( plugin, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotPluginDestroyed( QObject * ) ) );
 		connect( plugin, SIGNAL( readyForUnload() ), this, SLOT( slotPluginReadyForUnload() ) );
 
-		kDebug( 14010 ) << k_funcinfo << "Successfully loaded plugin '" << pluginId << "'" << endl;
+		kDebug( 14010 ) << k_funcinfo << "Successfully loaded plugin '" << pluginId << "'";
 
 		emit pluginLoaded( plugin );
 	}
@@ -391,19 +391,19 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 			break;
 
 		case KLibLoader::ErrServiceProvidesNoLibrary:
-			kDebug( 14010 ) << "the specified service provides no shared library." << endl;
+			kDebug( 14010 ) << "the specified service provides no shared library.";
 			break;
 
 		case KLibLoader::ErrNoLibrary:
-			kDebug( 14010 ) << "the specified library could not be loaded." << endl;
+			kDebug( 14010 ) << "the specified library could not be loaded.";
 			break;
 
 		case KLibLoader::ErrNoFactory:
-			kDebug( 14010 ) << "the library does not export a factory for creating components." << endl;
+			kDebug( 14010 ) << "the library does not export a factory for creating components.";
 			break;
 
 		case KLibLoader::ErrNoComponent:
-			kDebug( 14010 ) << "the factory does not support creating components of the specified type." << endl;
+			kDebug( 14010 ) << "the factory does not support creating components of the specified type.";
 			break;
 		}
 
@@ -416,7 +416,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 
 bool PluginManager::unloadPlugin( const QString &spec )
 {
-	//kDebug(14010) << k_funcinfo << spec << endl;
+	//kDebug(14010) << k_funcinfo << spec;
 	if( Plugin *thePlugin = plugin( spec ) )
 	{
 		thePlugin->aboutToUnload();
@@ -465,8 +465,8 @@ Plugin* PluginManager::plugin( const QString &_pluginId ) const
 		pluginId = QLatin1String( "kopete_" ) + _pluginId.toLower().remove( QString::fromLatin1( "protocol" ) );
 	// End hack
 
-	KPluginInfo *info = infoForPluginId( pluginId );
-	if ( !info )
+	KPluginInfo info = infoForPluginId( pluginId );
+	if ( !info.isValid() )
 		return 0L;
 
 	if ( d->loadedPlugins.contains( info ) )
@@ -475,16 +475,16 @@ Plugin* PluginManager::plugin( const QString &_pluginId ) const
 		return 0L;
 }
 
-KPluginInfo * PluginManager::infoForPluginId( const QString &pluginId ) const
+KPluginInfo PluginManager::infoForPluginId( const QString &pluginId ) const
 {
-	QList<KPluginInfo *>::ConstIterator it;
+	QList<KPluginInfo>::ConstIterator it;
 	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
 	{
-		if ( ( *it )->pluginName() == pluginId )
+		if ( it->pluginName() == pluginId )
 			return *it;
 	}
 
-	return 0L;
+	return KPluginInfo();
 }
 
 
@@ -498,7 +498,7 @@ bool PluginManager::setPluginEnabled( const QString &_pluginId, bool enabled /* 
 	if ( !pluginId.startsWith( QLatin1String( "kopete_" ) ) )
 		pluginId.prepend( QLatin1String( "kopete_" ) );
 
-	if ( !infoForPluginId( pluginId ) )
+	if ( !infoForPluginId( pluginId ).isValid() )
 		return false;
 
 	config.writeEntry( pluginId + QLatin1String( "Enabled" ), enabled );

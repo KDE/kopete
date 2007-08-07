@@ -19,6 +19,7 @@
 
 // Qt includes
 #include <QStack>
+#include <QFileInfo>
 
 // KDE includes
 #include <kstandarddirs.h>
@@ -56,9 +57,9 @@ public:
 	}
 
 	KDirLister *styleDirLister;
-	StyleList availableStyles;
-	
-	// key = style path, value = ChatWindowStyle instance
+	QStringList availableStyles;
+
+	// key = style name, value = ChatWindowStyle instance
 	QHash<QString, ChatWindowStyle*> stylePool;
 
 	QStack<KUrl> styleDirs;
@@ -74,35 +75,32 @@ ChatWindowStyleManager *ChatWindowStyleManager::self()
 	{
 		ChatWindowStyleManagerstaticDeleter.setObject( s_self, new ChatWindowStyleManager() );
 	}
-	
+
 	return s_self;
 }
 
 ChatWindowStyleManager::ChatWindowStyleManager(QObject *parent)
 	: QObject(parent), d(new Private())
 {
-	kDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo;
 	loadStyles();
 }
 
 ChatWindowStyleManager::~ChatWindowStyleManager()
-{	
-	kDebug(14000) << k_funcinfo << endl;
+{
+	kDebug(14000) << k_funcinfo;
 	delete d;
 }
 
 void ChatWindowStyleManager::loadStyles()
 {
         QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QLatin1String( "styles" ) );
-        QString localStyleDir( KStandardDirs::locateLocal( "appdata", QLatin1String("styles/"),true) );
-        if( !chatStyles.contains(localStyleDir))
-                chatStyles<<localStyleDir;
-	foreach(const QString &style, chatStyles)
+	foreach(const QString &styleDir, chatStyles)
 	{
-		kDebug(14000) << k_funcinfo << style << endl;
-		d->styleDirs.push( KUrl(style) );
+		kDebug(14000) << k_funcinfo << styleDir;
+		d->styleDirs.push( KUrl(styleDir) );
 	}
-	
+
 	d->styleDirLister = new KDirLister(this);
 	d->styleDirLister->setDirOnlyMode(true);
 
@@ -113,23 +111,32 @@ void ChatWindowStyleManager::loadStyles()
 		d->styleDirLister->openUrl(d->styleDirs.pop(), true);
 }
 
-ChatWindowStyleManager::StyleList ChatWindowStyleManager::getAvailableStyles()
+QStringList ChatWindowStyleManager::getAvailableStyles() const
 {
 	return d->availableStyles;
 }
 
 int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 {
-	QString localStyleDir( KStandardDirs::locateLocal( "appdata", QString::fromUtf8("styles/") ) );
-	
-	KArchiveEntry *currentEntry = 0L;
-	KArchiveDirectory* currentDir = 0L;
-	KArchive *archive = 0L;
-
-	if( localStyleDir.isEmpty() )
+	QString localStyleDir;
+	QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QLatin1String( "styles" ) );
+	// findDirs returns preferred paths first, let's check if one of them is writable
+	foreach(const QString& styleDir, chatStyles)
+	{
+		if(QFileInfo(styleDir).isWritable())
+		{
+			localStyleDir = styleDir;
+			break;
+		}
+	}
+	if( localStyleDir.isEmpty() ) // none of dirs is writable
 	{
 		return StyleNoDirectoryValid;
 	}
+
+	KArchiveEntry *currentEntry = 0L;
+	KArchiveDirectory* currentDir = 0L;
+	KArchive *archive = 0L;
 
 	// Find mimetype for current bundle. ZIP and KTar need separate constructor
 	QString currentBundleMimeType = KMimeType::findByPath(styleBundlePath, 0, false)->name();
@@ -168,7 +175,7 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 	for(entriesIt = entries.begin(); entriesIt != entries.end(); ++entriesIt)
 	{
 		currentEntry = const_cast<KArchiveEntry*>(rootDir->entry(*entriesIt));
-// 		kDebug() << k_funcinfo << "Current entry name: " << currentEntry->name() << endl;
+// 		kDebug() << k_funcinfo << "Current entry name: " << currentEntry->name();
 		if (currentEntry->isDirectory())
 		{
 			currentDir = dynamic_cast<KArchiveDirectory*>( currentEntry );
@@ -176,58 +183,58 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 			{
 				if( currentDir->entry(QString::fromUtf8("Contents")) )
 				{
-// 					kDebug() << k_funcinfo << "Contents found" << endl;
+// 					kDebug() << k_funcinfo << "Contents found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources")) )
 				{
-// 					kDebug() << k_funcinfo << "Contents/Resources found" << endl;
+// 					kDebug() << k_funcinfo << "Contents/Resources found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Incoming")) )
 				{
-// 					kDebug() << k_funcinfo << "Contents/Resources/Incoming found" << endl;
+// 					kDebug() << k_funcinfo << "Contents/Resources/Incoming found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Outgoing")) )
 				{
-// 					kDebug() << k_funcinfo << "Contents/Resources/Outgoing found" << endl;
+// 					kDebug() << k_funcinfo << "Contents/Resources/Outgoing found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/main.css")) )
 				{
-// 					kDebug() << k_funcinfo << "Contents/Resources/main.css found" << endl;
+// 					kDebug() << k_funcinfo << "Contents/Resources/main.css found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Footer.html")) )
 				{
-// 					kDebug() << k_funcinfo << "Contents/Resources/Footer.html found" << endl;
+// 					kDebug() << k_funcinfo << "Contents/Resources/Footer.html found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Status.html")) )
 				{
-// 					kDebug() << k_funcinfo << "Contents/Resources/Status.html found" << endl;
+// 					kDebug() << k_funcinfo << "Contents/Resources/Status.html found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Header.html")) )
 				{
-// 					kDebug() << k_funcinfo << "Contents/Resources/Header.html found" << endl;
+// 					kDebug() << k_funcinfo << "Contents/Resources/Header.html found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Incoming/Content.html")) )
 				{
-// 					kDebug() << k_funcinfo << "Contents/Resources/Incoming/Content.html found" << endl;
+// 					kDebug() << k_funcinfo << "Contents/Resources/Incoming/Content.html found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Outgoing/Content.html")) )
 				{
-// 					kDebug() << k_funcinfo << "Contents/Resources/Outgoing/Content.html found" << endl;
+// 					kDebug() << k_funcinfo << "Contents/Resources/Outgoing/Content.html found";
 					validResult += 1;
 				}
 			}
 		}
 	}
-// 	kDebug() << k_funcinfo << "Valid result: " << QString::number(validResult) << endl;
+// 	kDebug() << k_funcinfo << "Valid result: " << QString::number(validResult);
 	// The archive is a valid style bundle.
 	if(validResult >= 8)
 	{
@@ -279,29 +286,41 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 	return StyleUnknow;
 }
 
-bool ChatWindowStyleManager::removeStyle(const QString &stylePath)
+bool ChatWindowStyleManager::removeStyle(const QString &styleName)
 {
-	kDebug(14000) << k_funcinfo << stylePath <<  endl;
+	kDebug(14000) << k_funcinfo << styleName;
 	// Find for the current style in avaiableStyles map.
-        KUrl urlStyle(stylePath);
-        QString styleName=urlStyle.fileName();
-        StyleList::Iterator foundStyle = d->availableStyles.find(styleName);
+	int foundStyleIdx = d->availableStyles.indexOf(styleName);
 
-	// QHash iterator return end() if it found no item.
-	if(foundStyle != d->availableStyles.end())
+	if(foundStyleIdx != -1)
 	{
-		d->availableStyles.remove(*foundStyle);
-		
+		d->availableStyles.removeAt(foundStyleIdx);
+
 		// Remove and delete style from pool if needed.
-		if( d->stylePool.contains(stylePath) )
+		if( d->stylePool.contains(styleName) )
 		{
-			ChatWindowStyle *deletedStyle = d->stylePool[stylePath];
-			d->stylePool.remove(stylePath);
+			ChatWindowStyle *deletedStyle = d->stylePool[styleName];
+			d->stylePool.remove(styleName);
 			delete deletedStyle;
 		}
-	
-		// Do the actual deletion of the directory style.
-		return KIO::NetAccess::del( urlStyle, 0 );
+
+		QStringList styleDirs = KGlobal::dirs()->findDirs("appdata", QString("styles/%1").arg(styleName));
+		if(styleDirs.isEmpty())
+		{
+			kDebug(14000) << k_funcinfo << "Failed to find style" << styleName;
+			return false;
+		}
+
+		// attempt to delete all dirs with this style
+		int numDeleted = 0;
+		foreach( const QString& stylePath, styleDirs )
+		{
+			KUrl urlStyle(stylePath);
+			// Do the actual deletion of the directory style.
+			if(KIO::NetAccess::del( urlStyle, 0 ))
+				numDeleted++;
+		}
+		return numDeleted == styleDirs.count();
 	}
 	else
 	{
@@ -309,12 +328,12 @@ bool ChatWindowStyleManager::removeStyle(const QString &stylePath)
 	}
 }
 
-ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &stylePath)
+ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &styleName)
 {
-	if( d->stylePool.contains(stylePath) )
+	if( d->stylePool.contains(styleName) )
 	{
-		kDebug(14000) << k_funcinfo << stylePath << " was on the pool" << endl;
-		
+		kDebug(14000) << k_funcinfo << styleName << " was on the pool";
+
 		// NOTE: This is a hidden config switch for style developers
 		// Check in the config if the cache is disabled.
 		// if the cache is disabled, reload the style every time it's getted.
@@ -322,22 +341,22 @@ ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &stylePa
 		bool disableCache = config.readEntry("disableStyleCache", false);
 		if(disableCache)
 		{
-			d->stylePool[stylePath]->reload();
+			d->stylePool[styleName]->reload();
 		}
 
-		return d->stylePool[stylePath];
+		return d->stylePool[styleName];
 	}
 	else
 	{
 		// Build a chat window style and list its variants, then add it to the pool.
-		ChatWindowStyle *style = new ChatWindowStyle(stylePath, ChatWindowStyle::StyleBuildNormal);
-		d->stylePool.insert(stylePath, style);
-		
-		kDebug(14000) << k_funcinfo << stylePath << " is just created" << endl;
+		ChatWindowStyle *style = new ChatWindowStyle(styleName, ChatWindowStyle::StyleBuildNormal);
+		d->stylePool.insert(styleName, style);
+
+		kDebug(14000) << k_funcinfo << styleName << " is just created";
 
 		return style;
 	}
-	
+
 	return 0;
 }
 
@@ -348,23 +367,24 @@ void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
 		// Ignore data dir(from deprecated XSLT themes)
 		if( !item->url().fileName().contains(QString::fromUtf8("data")) )
 		{
-			kDebug(14000) << k_funcinfo << "Listing: " << item->url().fileName() << endl;
+			kDebug(14000) << k_funcinfo << "Listing: " << item->url().fileName();
 			// If the style path is already in the pool, that's mean the style was updated on disk
 			// Reload the style
-			if( d->stylePool.contains(item->url().path()) )
+			QString styleName = item->url().fileName();
+			if( d->stylePool.contains(styleName) )
 			{
-				kDebug(14000) << k_funcinfo << "Updating style: " << item->url().path() << endl;
+				kDebug(14000) << k_funcinfo << "Updating style: " << styleName;
 
-				d->stylePool[item->url().path()]->reload();
+				d->stylePool[styleName]->reload();
 
 				// Add to avaialble if required.
-				if( !d->availableStyles.contains(item->url().fileName()) )
-					d->availableStyles.insert(item->url().fileName(), item->url().path());
+				if( d->availableStyles.indexOf(styleName) == -1 )
+					d->availableStyles.append(styleName);
 			}
 			else
 			{
 				// TODO: Use name from Info.plist
-				d->availableStyles.insert(item->url().fileName(), item->url().path());
+				d->availableStyles.append(styleName);
 			}
 		}
 	}
@@ -375,7 +395,7 @@ void ChatWindowStyleManager::slotDirectoryFinished()
 	// Start another scanning if the directories stack is not empty
 	if( !d->styleDirs.isEmpty() )
 	{
-		kDebug(14000) << k_funcinfo << "Starting another directory." << endl;
+		kDebug(14000) << k_funcinfo << "Starting another directory.";
 		d->styleDirLister->openUrl(d->styleDirs.pop(), true);
 	}
 	else

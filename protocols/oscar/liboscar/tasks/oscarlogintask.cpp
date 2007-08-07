@@ -138,7 +138,7 @@ void OscarLoginTask::sendAuthStringRequest()
 
 void OscarLoginTask::processAuthStringReply()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got the authorization key" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got the authorization key";
 
 	Buffer* b = transfer()->buffer();
 	m_authKey = b->getBSTR();
@@ -148,7 +148,7 @@ void OscarLoginTask::processAuthStringReply()
 
 void OscarLoginTask::sendLoginRequest()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<  "SEND (CLI_MD5_LOGIN) sending AIM login" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<  "SEND (CLI_MD5_LOGIN) sending AIM login";
 
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0017, 0x0002, 0x0000, client()->snacSequence() };
@@ -183,7 +183,7 @@ void OscarLoginTask::sendLoginRequest()
 
 void OscarLoginTask::handleLoginResponse()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "RECV SNAC 0x17, 0x07 - AIM Login Response" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "RECV SNAC 0x17, 0x07 - AIM Login Response";
 
 	SnacTransfer* st = dynamic_cast<SnacTransfer*> ( transfer() );
 
@@ -198,7 +198,7 @@ void OscarLoginTask::handleLoginResponse()
 	TLV uin = findTLV( tlvList, 0x0001 );
 	if ( uin )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(1) [SN], SN=" << QString( uin.data ) << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(1) [SN], SN=" << QString( uin.data );
 	}
 
 	TLV err = findTLV( tlvList, 0x0008 );	
@@ -206,7 +206,7 @@ void OscarLoginTask::handleLoginResponse()
 	{
 		Oscar::WORD errorNum = ( ( err.data[0] << 8 ) | err.data[1] );
 
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(8) [ERROR] error= " << errorNum << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(8) [ERROR] error= " << errorNum;
 		Oscar::SNAC s = { 0, 0, 0, 0 };
 		client()->fatalTaskError( s, errorNum );
 		setError( errorNum, QString() );
@@ -216,7 +216,7 @@ void OscarLoginTask::handleLoginResponse()
 	TLV server = findTLV( tlvList, 0x0005 );
 	if ( server )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(5) [SERVER] " << QString( server.data ) << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(5) [SERVER] " << QString( server.data );
 		QString ip = QString( server.data );
 		int index = ip.indexOf( ':' );
 		m_bosHost = ip.left( index );
@@ -227,14 +227,14 @@ void OscarLoginTask::handleLoginResponse()
 	TLV cookie = findTLV( tlvList, 0x0006 );
 	if ( cookie )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(6) [COOKIE]" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(6) [COOKIE]";
 		m_cookie = cookie.data;
 	}
 	tlvList.clear();
 
 	if ( m_bosHost.isEmpty() )
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Empty host address!" << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Empty host address!";
 		
 		Oscar::SNAC s = { 0, 0, 0, 0 };
 		client()->fatalTaskError( s, 0 );
@@ -249,7 +249,7 @@ void OscarLoginTask::handleLoginResponse()
 
 void OscarLoginTask::encodePassword( QByteArray& digest ) const
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	md5_state_t state;
 	md5_init( &state );
 	md5_append( &state, ( const md5_byte_t* ) m_authKey.data(), m_authKey.size() );

@@ -45,7 +45,7 @@ NowListeningGUIClient::NowListeningGUIClient( Kopete::ChatSession *parent, NowLi
 
 void NowListeningGUIClient::slotAdvertToCurrentChat()
 {
-	kDebug( 14307 ) << k_funcinfo << endl;
+	kDebug( 14307 ) << k_funcinfo;
 
 	// Sanity check - don't crash if the plugin is unloaded and we get called.
 	if (!NowListeningPlugin::plugin())

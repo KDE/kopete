@@ -215,7 +215,7 @@ GaduRegisterAccount::slotClose()
 
 GaduRegisterAccount::~GaduRegisterAccount( )
 {
-	kDebug( 14100 ) << " register Cancel " << endl;
+	kDebug( 14100 ) << " register Cancel ";
 	delete ui;
 }
 

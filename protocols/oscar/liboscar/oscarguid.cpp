@@ -29,12 +29,12 @@ Oscar::Guid::Guid( const QByteArray& data )
 Oscar::Guid::Guid( const QString& data )
 {
 	//get rid of the const
-	QString d(data);
+	QString d( data );
 	//strip out dashes
 	d.remove( '-' );
 	//get each of the 16 2-char bytes
 	bool ok = 1;
-	for (int i=0; i<32 && ok; i+=2)
+	for ( int i=0; i<32 && ok; i+=2 )
 		m_data.append( d.mid( i, 2 ).toShort( &ok, 16 ) );
 }
 
@@ -43,7 +43,7 @@ Oscar::Guid::Guid( const Guid& other )
 {
 }
 
-QByteArray Oscar::Guid::data() const
+const QByteArray Oscar::Guid::data() const
 {
 	return m_data;
 }
@@ -58,6 +58,20 @@ bool Oscar::Guid::isValid() const
 	return m_data.size() == 16;
 }
 
+bool Oscar::Guid::isEqual( const Guid &rhs, int n ) const
+{
+	if( n > 16 )
+		n = 16;
+	return m_data.left(n) == rhs.m_data.left(n);
+}
+
+Oscar::Guid &Oscar::Guid::operator=( const Oscar::Guid& rhs )
+{
+	m_data = QByteArray( rhs.m_data.data(), 16 );
+    //m_data = rhs.m_data; // has problem, Qt bug?!
+	return *this;
+}
+
 bool Oscar::Guid::operator==( const Oscar::Guid& rhs ) const
 {
 	return m_data == rhs.m_data;
@@ -69,4 +83,3 @@ Oscar::Guid::operator QByteArray() const
 }
 
 //kate: indent-mode csands; auto-insert-doxygen on; tab-width 4;
-

@@ -76,7 +76,7 @@ void MetaContact::addContact( Contact *c )
 {
 	if( d->contacts.contains( c ) )
 	{
-		kWarning(14010) << "Ignoring attempt to add duplicate contact " << c->contactId() << "!" << endl;
+		kWarning(14010) << "Ignoring attempt to add duplicate contact " << c->contactId() << "!";
 	}
 	else
 	{
@@ -144,7 +144,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 {
 	if( !d->contacts.contains( c ) )
 	{
-		kDebug(14010) << k_funcinfo << " Contact is not in this metaContact " << endl;
+		kDebug(14010) << k_funcinfo << " Contact is not in this metaContact ";
 	}
 	else
 	{
@@ -216,7 +216,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 			disconnect( c, SIGNAL( idleStateChanged( Kopete::Contact * ) ),
 				this, SIGNAL( contactIdleStateChanged( Kopete::Contact *) ) );
 
-			kDebug( 14010 ) << k_funcinfo << "Contact disconnected" << endl;
+			kDebug( 14010 ) << k_funcinfo << "Contact disconnected";
 
 			KABCPersistence::self()->write( this );
 		}
@@ -231,7 +231,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 
 Contact *MetaContact::findContact( const QString &protocolId, const QString &accountId, const QString &contactId )
 {
-	//kDebug( 14010 ) << k_funcinfo << "Num contacts: " << d->contacts.count() << endl;
+	//kDebug( 14010 ) << k_funcinfo << "Num contacts: " << d->contacts.count();
 	QListIterator<Contact *> it( d->contacts );
 	while ( it.hasNext() )
 	{
@@ -559,7 +559,7 @@ void MetaContact::setDisplayName( const QString &name )
 {
 	/*kDebug( 14010 ) << k_funcinfo << "Change displayName from " << d->displayName <<
 		" to " << name  << ", d->trackChildNameChanges=" << d->trackChildNameChanges << endl;
-	kDebug(14010) << kBacktrace(6) << endl;*/
+	kDebug(14010) << kBacktrace(6);*/
 
 	if( name == d->displayName )
 		return;
@@ -603,7 +603,7 @@ QString MetaContact::displayName() const
 			if( d->contacts.count() >= 1 )
 			{// don't call setDisplayNameSource , or there will probably be an infinite loop
 				d->displayNameSourceContact=d->contacts.first();
-//				kDebug( 14010 ) << k_funcinfo << " setting displayname source for " << metaContactId()  << endl;
+//				kDebug( 14010 ) << k_funcinfo << " setting displayname source for " << metaContactId();
 			}
 		}
 		if ( displayNameSourceContact() != 0L )
@@ -612,7 +612,7 @@ QString MetaContact::displayName() const
 		}
 		else
 		{
-//			kDebug( 14010 ) << k_funcinfo << " source == SourceContact , but there is no displayNameSourceContact for contact " << metaContactId() << endl;
+//			kDebug( 14010 ) << k_funcinfo << " source == SourceContact , but there is no displayNameSourceContact for contact " << metaContactId();
 		}
 	}
 	return d->displayName;
@@ -626,7 +626,7 @@ QString nameFromKABC( const QString &id ) /*const*/
 		KABC::Addressee theAddressee = ab->findByUid(id);
 		if ( theAddressee.isEmpty() )
 		{
-			kDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
+			kDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book";
 		}
 		else
 		{
@@ -725,7 +725,7 @@ QImage photoFromKABC( const QString &id ) /*const*/
 		KABC::Addressee theAddressee = ab->findByUid(id);
 		if ( theAddressee.isEmpty() )
 		{
-			kDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
+			kDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book";
 		}
 		else
 		{
@@ -864,7 +864,7 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 		return;
 
 
-	//kDebug( 14010 ) << k_funcinfo << from->displayName() << " => " << to->displayName() << endl;
+	//kDebug( 14010 ) << k_funcinfo << from->displayName() << " => " << to->displayName();
 
 	d->groups.removeAll( from );
 	d->groups.append( to );
@@ -970,7 +970,7 @@ void MetaContact::slotUpdateAddressBookPicture()
 		KABC::Addressee theAddressee = ab->findByUid(id);
 		if ( theAddressee.isEmpty() )
 		{
-			kDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
+			kDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book";
 		}
 		else
 		{

@@ -159,13 +159,13 @@ void WebPresencePlugin::slotWriteFile()
 	KUrl dest( resultURL );
 	if ( resultURL.isEmpty() || !dest.isValid() )
 	{
-		kDebug(14309) << "url is empty or not valid. NOT UPDATING!" << endl;
+		kDebug(14309) << "url is empty or not valid. NOT UPDATING!";
 		return;
 	}
 
 	KTemporaryFile* xml = generateFile();
 	xml->setAutoRemove( true );
-	kDebug(14309) << k_funcinfo << " " << xml->fileName() << endl;
+	kDebug(14309) << k_funcinfo << " " << xml->fileName();
 
 	switch( resultFormatting ) {
 	case WEB_XML:
@@ -204,7 +204,7 @@ void WebPresencePlugin::slotWriteFile()
 void WebPresencePlugin::slotUploadJobResult( KJob *job )
 {
 	if ( job->error() ) {
-		kDebug(14309) << "Error uploading presence info." << endl;
+		kDebug(14309) << "Error uploading presence info.";
 		KMessageBox::queuedDetailedError( 0, i18n("An error occurred when uploading your presence page.\nCheck the path and write permissions of the destination."), 0, displayName() );
 		delete m_output;
 		m_output = 0L;
@@ -214,7 +214,7 @@ void WebPresencePlugin::slotUploadJobResult( KJob *job )
 KTemporaryFile* WebPresencePlugin::generateFile()
 {
 	// generate the (temporary) XML file representing the current contactlist
-	kDebug( 14309 ) << k_funcinfo << endl;
+	kDebug( 14309 ) << k_funcinfo;
 	QString notKnown = i18n( "Not yet known" );
 
 	QDomDocument doc;
@@ -360,7 +360,7 @@ bool WebPresencePlugin::transform( KTemporaryFile * src, KTemporaryFile * dest )
 	xmlDocPtr res = 0;
 
 	if ( !sheet.exists() ) {
-		kDebug(14309) << k_funcinfo << "ERROR: Style sheet not found" << endl;
+		kDebug(14309) << k_funcinfo << "ERROR: Style sheet not found";
 		retval = false;
 		goto end;
 	}
@@ -368,28 +368,28 @@ bool WebPresencePlugin::transform( KTemporaryFile * src, KTemporaryFile * dest )
 	// is the cast safe?
 	cur = xsltParseStylesheetFile( (const xmlChar *) sheet.fileName().toLatin1().data() );
 	if ( !cur ) {
-		kDebug(14309) << k_funcinfo << "ERROR: Style sheet parsing failed" << endl;
+		kDebug(14309) << k_funcinfo << "ERROR: Style sheet parsing failed";
 		retval = false;
 		goto end;
 	}
 
 	doc = xmlParseFile( QFile::encodeName( src->fileName() ) );
 	if ( !doc ) {
-		kDebug(14309) << k_funcinfo << "ERROR: XML parsing failed" << endl;
+		kDebug(14309) << k_funcinfo << "ERROR: XML parsing failed";
 		retval = false;
 		goto end;
 	}
 
 	res = xsltApplyStylesheet( cur, doc, 0 );
 	if ( !res ) {
-		kDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed" << endl;
+		kDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed";
 		retval = false;
 		goto end;
 	}
 
 
 	if ( xsltSaveResultToFd(dest->handle(), res, cur) == -1 ) {
-		kDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed" << endl;
+		kDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed";
 		retval = false;
 		goto end;
 	}
@@ -416,7 +416,7 @@ end:
 
 ProtocolList WebPresencePlugin::allProtocols()
 {
-	kDebug( 14309 ) << k_funcinfo << endl;
+	kDebug( 14309 ) << k_funcinfo;
 
 	Kopete::PluginList plugins = Kopete::PluginManager::self()->loadedPlugins( "Protocols" );
 	Kopete::PluginList::ConstIterator it;

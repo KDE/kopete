@@ -418,6 +418,10 @@ void KopeteWindow::initActions()
 	connect( globalSetAway, SIGNAL( triggered(bool) ), this, SLOT( slotToggleAway() ) );
 	globalSetAway->setGlobalShortcut( KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W) );
 
+#ifdef __GNUC__
+#warning port me - it is probably safe to just remove this line as *global* shortcut setttings
+#warning are now loaded automatically by default.
+#endif
 	//KGlobalAccel::self()->readSettings();
 }
 
@@ -689,7 +693,7 @@ bool KopeteWindow::queryExit()
 		|| !Kopete::BehaviorSettings::self()->showSystemTray() /* also close if our tray icon is hidden! */
 		|| isHidden() )
 	{
-		kDebug( 14000 ) << k_funcinfo << " shutting down plugin manager" << endl;
+		kDebug( 14000 ) << k_funcinfo << " shutting down plugin manager";
 		Kopete::PluginManager::self()->shutdown();
 		return true;
 	}
@@ -712,11 +716,11 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 			e->accept();
 		}
 		// END of code borrowed from KMainWindow::closeEvent
-		kDebug( 14000 ) << k_funcinfo << "just closing because we have a system tray icon" << endl;
+		kDebug( 14000 ) << k_funcinfo << "just closing because we have a system tray icon";
 	}
 	else
 	{
-		kDebug( 14000 ) << k_funcinfo << "delegating to KXmlGuiWindow::closeEvent()" << endl;
+		kDebug( 14000 ) << k_funcinfo << "delegating to KXmlGuiWindow::closeEvent()";
 		KXmlGuiWindow::closeEvent( e );
 	}
 }
@@ -762,7 +766,7 @@ void KopeteWindow::slotIdentityRegistered( Kopete::Identity *identity )
 
 void KopeteWindow::slotIdentityUnregistered( const Kopete::Identity *identity)
 {
-	kDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo;
 	
 	KopeteIdentityStatusBarIcon *sbIcon = d->identityStatusBarIcons[identity];
 
@@ -784,7 +788,7 @@ void KopeteWindow::slotIdentityStatusIconChanged()
 
 void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 {
-	kDebug( 14000 ) << k_funcinfo << identity->property( Kopete::Global::Properties::self()->statusMessage() ).value() << endl;
+	kDebug( 14000 ) << k_funcinfo << identity->property( Kopete::Global::Properties::self()->statusMessage() ).value();
 	// update the global status label if the change doesn't
 //	QString newAwayMessage = contact->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
 	Kopete::OnlineStatus status = identity->onlineStatus();
@@ -820,7 +824,6 @@ void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 		i->setPixmap( KIconLoader::unknown() );
 	else
 		i->setPixmap( pm );
-
 	makeTrayToolTip();
 }
 
@@ -1077,7 +1080,7 @@ void KopeteWindow::slotAddContactDialogInternal( const QString & accountIdentifi
 void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 {
 	if ( !account ) {
-		kDebug( 14000 ) << k_funcinfo << "no account given" << endl;
+		kDebug( 14000 ) << k_funcinfo << "no account given";
 		return;
 	}
 

@@ -110,14 +110,14 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 		delete chooser;
 		if (ret == QDialog::Rejected || account == 0)
 		{
-			kDebug(14153) << k_funcinfo << "Cancelled" << endl;
+			kDebug(14153) << k_funcinfo << "Cancelled";
 			return;
 		}
 	}
 
 	if (!account->isConnected())
 	{
-		kDebug(14153) << k_funcinfo << "Can't add contact, we are offline!" << endl;
+		kDebug(14153) << k_funcinfo << "Can't add contact, we are offline!";
 		KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n("You must be online to add a contact."), i18n("ICQ") );
 		return;
 	}
@@ -131,7 +131,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 	                               KGuiItem( i18n("Add") ), KGuiItem( i18n("Do Not Add") ))
 	    != KMessageBox::Yes)
 	{
-		kDebug(14153) << k_funcinfo << "Cancelled" << endl;
+		kDebug(14153) << k_funcinfo << "Cancelled";
 		return;
 	}
 
@@ -164,7 +164,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const QStringList&)
 	ipAddress("ipAddress", i18n("IP Address") )
 {
 	if (protocolStatic_)
-		kWarning(14153) << k_funcinfo << "ICQ plugin already initialized" << endl;
+		kWarning(14153) << k_funcinfo << "ICQ plugin already initialized";
 	else
 		protocolStatic_ = this;
 
@@ -733,7 +733,7 @@ void ICQProtocol::initAffiliations()
 
 void ICQProtocol::fillComboFromTable(QComboBox *box, const QMap<int, QString> &map)
 {
-//	kDebug(14153) << k_funcinfo << "Called." << endl;
+//	kDebug(14153) << k_funcinfo << "Called.";
 
 	QStringList list = map.values();
 	list.sort();
@@ -742,7 +742,7 @@ void ICQProtocol::fillComboFromTable(QComboBox *box, const QMap<int, QString> &m
 
 void ICQProtocol::setComboFromTable(QComboBox *box, const QMap<int, QString> &map, int value)
 {
-//	kDebug(14153) << k_funcinfo << "Called." << endl;
+//	kDebug(14153) << k_funcinfo << "Called.";
 	QMap<int, QString>::ConstIterator it;
 	it = map.find(value);
 	if ( it == map.end() )
@@ -797,7 +797,7 @@ void ICQProtocol::fillTZCombo(QComboBox *combo)
 
 void ICQProtocol::setTZComboValue(QComboBox *combo, const char &tz)
 {
-	kDebug(14153) << k_funcinfo << "tz=" << int(tz) << endl;
+	kDebug(14153) << k_funcinfo << "tz=" << int(tz);
 	if ((tz < -24) || (tz > 24))
 		combo->setCurrentItem(24); // GMT+0:00 as default
 	else
@@ -807,7 +807,7 @@ void ICQProtocol::setTZComboValue(QComboBox *combo, const char &tz)
 char ICQProtocol::getTZComboValue(QComboBox *combo)
 {
 	char ret =  combo->currentItem() - 24;
-// 	kDebug(14153) << k_funcinfo << "return value=" << int(ret) << endl;
+// 	kDebug(14153) << k_funcinfo << "return value=" << int(ret);
 	return ret;
 }
 

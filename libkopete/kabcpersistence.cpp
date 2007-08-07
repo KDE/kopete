@@ -107,7 +107,7 @@ void KABCPersistence::write( MetaContact * mc )
 	// Save any changes in each contact's addressBookFields to KABC
 	KABC::AddressBook* ab = addressBook();
 
-	kDebug( 14010 ) << k_funcinfo << "looking up Addressee for " << mc->displayName() << "..." << endl;
+	kDebug( 14010 ) << k_funcinfo << "looking up Addressee for " << mc->displayName() << "...";
 	// Look up the address book entry
 	KABC::Addressee theAddressee = ab->findByUid( mc->metaContactId() );
 	// Check that if addressee is not deleted or if the link is spurious
@@ -140,7 +140,7 @@ void KABCPersistence::write( MetaContact * mc )
 			// merge without duplicating
 			QString toWrite = unionContents( currentCustomForProtocol, it.value().join( QString( QChar( 0xE000 ) ) ) );
 			// Note if nothing ends up in the KABC data, this is because insertCustom does nothing if any param is empty.
-			kDebug( 14010 ) << k_funcinfo << "Writing: " << it.key() << ", " << "All" << ", " << toWrite << endl;
+			kDebug( 14010 ) << k_funcinfo << "Writing: " << it.key() << ", " << "All" << ", " << toWrite;
 			theAddressee.insertCustom( it.key(), QLatin1String( "All" ), toWrite );
 			QString check = theAddressee.custom( it.key(), QLatin1String( "All" ) );
 		}
@@ -154,7 +154,7 @@ void KABCPersistence::write( MetaContact * mc )
 	// This causes each Kopete::Protocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
 			emit aboutToSave(this);
 
-			kDebug( 14010 ) << k_funcinfo << "...FOUND ONE!" << endl;
+			kDebug( 14010 ) << k_funcinfo << "...FOUND ONE!";
 	// Store address book fields
 			QMap<QString, QMap<QString, QString> >::ConstIterator appIt = d->addressBook.begin();
 			for( ; appIt != d->addressBook.end(); ++appIt )
@@ -168,7 +168,7 @@ void KABCPersistence::write( MetaContact * mc )
 					QString toWrite = unionContents( currentCustom, addrIt.data() );
 			// write the result
 			// Note if nothing ends up in the KABC data, this is because insertCustom does nothing if any param is empty.
-					kDebug( 14010 ) << k_funcinfo << "Writing: " << appIt.key() << ", " << addrIt.key() << ", " << toWrite << endl;
+					kDebug( 14010 ) << k_funcinfo << "Writing: " << appIt.key() << ", " << addrIt.key() << ", " << toWrite;
 					theAddressee.insertCustom( appIt.key(), addrIt.key(), toWrite );
 				}
 			}
@@ -190,24 +190,24 @@ void KABCPersistence::writeAddressBook( KABC::Resource * res)
 
 void KABCPersistence::slotWriteAddressBook()
 {
-	//kDebug(  14010 ) << k_funcinfo << endl;
+	//kDebug(  14010 ) << k_funcinfo;
 	KABC::AddressBook* ab = addressBook();
 	QListIterator<KABC::Resource *> it( d->pendingResources );
 	while ( it.hasNext() )
 	{
-		//kDebug(  14010 )  << "Writing resource " << it.current()->resourceName() << endl;
+		//kDebug(  14010 )  << "Writing resource " << it.current()->resourceName();
 		KABC::Ticket *ticket = ab->requestSaveTicket( it.next() );
 		if ( !ticket )
-			kWarning( 14010 ) << "WARNING: Resource is locked by other application!" << endl;
+			kWarning( 14010 ) << "WARNING: Resource is locked by other application!";
 		else
 		{
 			if ( !ab->save( ticket ) )
 			{
-				kWarning( 14010 ) << "ERROR: Saving failed!" << endl;
+				kWarning( 14010 ) << "ERROR: Saving failed!";
 				ab->releaseSaveTicket( ticket );
 			}
 		}
-		//kDebug( 14010 ) << "Finished writing KABC" << endl;
+		//kDebug( 14010 ) << "Finished writing KABC";
 	}
 	d->pendingResources.clear();
 	d->addrBookWritePending = false;
@@ -227,19 +227,19 @@ void KABCPersistence::removeKABC( MetaContact *)
 	// If the metacontact is linked to a kabc entry
 	if ( !d->metaContactId.isEmpty() )
 	{
-		//kDebug( 14010 ) << k_funcinfo << "looking up Addressee for " << displayName() << "..." << endl;
+		//kDebug( 14010 ) << k_funcinfo << "looking up Addressee for " << displayName() << "...";
 		// Look up the address book entry
 		KABC::Addressee theAddressee = ab->findByUid( metaContactId() );
 
 		if ( theAddressee.isEmpty() )
 		{
 			// remove the link
-			//kDebug( 14010 ) << k_funcinfo << "...not found." << endl;
+			//kDebug( 14010 ) << k_funcinfo << "...not found.";
 			d->metaContactId.clear();
 		}
 		else
 		{
-			//kDebug( 14010 ) << k_funcinfo << "...FOUND ONE!" << endl;
+			//kDebug( 14010 ) << k_funcinfo << "...FOUND ONE!";
 			// Remove address book fields
 			QMap<QString, QMap<QString, QString> >::ConstIterator appIt = d->addressBook.begin();
 			for( ; appIt != d->addressBook.end(); ++appIt )
@@ -248,7 +248,7 @@ void KABCPersistence::removeKABC( MetaContact *)
 				for( ; addrIt != appIt.data().end(); ++addrIt )
 				{
 					// FIXME: This assumes Kopete is the only app writing these fields
-					kDebug( 14010 ) << k_funcinfo << "Removing: " << appIt.key() << ", " << addrIt.key() << endl;
+					kDebug( 14010 ) << k_funcinfo << "Removing: " << appIt.key() << ", " << addrIt.key();
 					theAddressee.removeCustom( appIt.key(), addrIt.key() );
 				}
 			}
@@ -257,12 +257,12 @@ void KABCPersistence::removeKABC( MetaContact *)
 			writeAddressBook();
 		}
 	}
-//	kDebug(14010) << k_funcinfo << kBacktrace() <<endl;*/
+//	kDebug(14010) << k_funcinfo << kBacktrace();*/
 }
 
 bool KABCPersistence::syncWithKABC( MetaContact * mc )
 {
-	kDebug(14010) << k_funcinfo << endl;
+	kDebug(14010) << k_funcinfo;
 	bool contactAdded = false;
 	// check whether the dontShowAgain was checked
 		KABC::AddressBook* ab = addressBook();
@@ -278,13 +278,13 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 		{
 			QString app, name, value;
 			splitField( *it, app, name, value );
-			kDebug( 14010 ) << "app=" << app << " name=" << name << " value=" << value << endl;
+			kDebug( 14010 ) << "app=" << app << " name=" << name << " value=" << value;
 
 			if ( app.startsWith( QLatin1String( "messaging/" ) ) )
 			{
 				if ( name == QLatin1String( "All" ) )
 				{
-					kDebug( 14010 ) << " syncing \"" << app << ":" << name << " with contactlist " << endl;
+					kDebug( 14010 ) << " syncing \"" << app << ":" << name << " with contactlist ";
 					// Get the protocol name from the custom field
 					// by chopping the 'messaging/' prefix from the custom field app name
 					QString protocolName = app.right( app.length() - 10 );
@@ -333,17 +333,17 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 							// Is it already in this metacontact? If so, we needn't do anything
 							if ( otherMc == mc )
 							{
-								kDebug( 14010 ) << *it << " already a child of this metacontact." << endl;
+								kDebug( 14010 ) << *it << " already a child of this metacontact.";
 								continue;
 							}
-							kDebug( 14010 ) << *it << " already exists in OTHER metacontact, move here?" << endl;
+							kDebug( 14010 ) << *it << " already exists in OTHER metacontact, move here?";
 							// find the Kopete::Contact and attempt to move it to this metacontact.
 							otherMc->findContact( proto->pluginId(), QString::null, *it )->setMetaContact( mc );
 						}
 						else
 						{
 							// if not, prompt to add it
-							kDebug( 14010 ) << proto->pluginId() << "://" << *it << " was not found in the contact list.  Prompting to add..." << endl;
+							kDebug( 14010 ) << proto->pluginId() << "://" << *it << " was not found in the contact list.  Prompting to add...";
 							if ( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 									 i18n( "<qt>An address was added to this contact by another application.<br>Would you like to use it in Kopete?<br><b>Protocol:</b> %1<br><b>Address:</b> %2</qt>", proto->displayName(), *it ), i18n( "Import Address From Address Book" ), KGuiItem( i18n("Use") ), KGuiItem( i18n("Do Not Use") ), QLatin1String( "ImportFromKABC" ) ) )
 							{
@@ -403,7 +403,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 								// add the contact to the chosen account
 								if ( chosen )
 								{
-									kDebug( 14010 ) << "Adding " << *it << " to " << chosen->accountId() << endl;
+									kDebug( 14010 ) << "Adding " << *it << " to " << chosen->accountId();
 									if ( chosen->addContact( *it, mc ) )
 										contactAdded = true;
 									else
@@ -413,17 +413,17 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 								}
 							}
 							else
-								kDebug( 14010 ) << " user declined to add " << *it << " to contactlist " << endl;
+								kDebug( 14010 ) << " user declined to add " << *it << " to contactlist ";
 						}
 					}
-					kDebug( 14010 ) << " all " << addresses.count() << " contacts in " << proto->pluginId() << " checked " << endl;
+					kDebug( 14010 ) << " all " << addresses.count() << " contacts in " << proto->pluginId() << " checked ";
 				}
 				else
-					kDebug( 14010 ) << "not interested in name=" << name << endl;
+					kDebug( 14010 ) << "not interested in name=" << name;
 
 			}
 			else
-				kDebug( 14010 ) << "not interested in app=" << app << endl;
+				kDebug( 14010 ) << "not interested in app=" << app;
 		}
 	}
 	return contactAdded;

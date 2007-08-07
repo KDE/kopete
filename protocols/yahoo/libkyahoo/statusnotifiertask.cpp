@@ -26,7 +26,7 @@
 
 StatusNotifierTask::StatusNotifierTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 }
 
 StatusNotifierTask::~StatusNotifierTask()
@@ -79,7 +79,7 @@ bool StatusNotifierTask::forMe( const Transfer* transfer ) const
 
 void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	if( t->status() == Yahoo::StatusDisconnected && 
 		t->service() == Yahoo::ServiceLogoff )
@@ -127,7 +127,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 
 void StatusNotifierTask::parseAuthorization( YMSGTransfer* t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	QString nick;		/* key = 4  */	
 	QString msg;		/* key = 14  */
@@ -158,14 +158,14 @@ void StatusNotifierTask::parseAuthorization( YMSGTransfer* t )
 		if( !fname.isEmpty() || !lname.isEmpty() )
 			name = QString("%1 %2").arg(fname).arg(lname);
 
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting gotAuthorizationRequest( " << nick<< ", " << msg << ", " << name << " )" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting gotAuthorizationRequest( " << nick<< ", " << msg << ", " << name << " )";
 		emit gotAuthorizationRequest( nick, msg, name );
 	}
 }
 
 void StatusNotifierTask::parseStealthStatus( YMSGTransfer* t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	QString nick;		/* key = 7  */
 	int state;		/* key = 31  */

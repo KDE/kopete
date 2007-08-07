@@ -74,7 +74,7 @@ bool MimeTypeHandler::registerAsMimeHandler( const QString &mimeType )
 
 	g_mimeHandlers.insert( mimeType, this );
 	d->mimeTypes.append( mimeType );
-//	kDebug(14010) << k_funcinfo << "Mime type " << mimeType << " registered" << endl;
+//	kDebug(14010) << k_funcinfo << "Mime type " << mimeType << " registered";
 	return true;
 }
 
@@ -89,7 +89,7 @@ bool MimeTypeHandler::registerAsProtocolHandler( const QString &protocol )
 
 	g_protocolHandlers.insert( protocol, this );
 	d->protocols.append( protocol );
-	kDebug(14010) << k_funcinfo << "Mime type " << protocol << " registered" << endl;
+	kDebug(14010) << k_funcinfo << "Mime type " << protocol << " registered";
 	return true;
 }
 
@@ -132,7 +132,7 @@ bool MimeTypeHandler::dispatchURL( const KUrl &url )
 		}
 		else
 		{
-			kDebug(14010) << "No mime type handler can handle this URL: " << url.prettyUrl() << endl;
+			kDebug(14010) << "No mime type handler can handle this URL: " << url.prettyUrl();
 			return false;
 		}
 	}

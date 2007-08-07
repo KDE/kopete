@@ -34,21 +34,21 @@ public:
 	void save();
 
 	//accessor functions
-	QString fingerprint() const;
-	bool askPassPhrase() const;
-	CacheMode cacheMode() const;
-	uint cacheTime() const;
+	QString fingerprint() const { return mFingerprint; }
+	CacheMode cacheMode() const { return mCacheMode; }
+	uint cacheTime() const { return mCacheTime; }
+	bool askPassphraseOnStartup() const { return mAskPassphraseOnStartup; }
 	
-	void setFingerprint(QString f);
-	void setAskPassPhrase(bool b);
-	void setCacheMode(CacheMode mode);
-	void setCacheTime(uint time);
+	void setFingerprint(QString f) { mFingerprint = f; }
+	void setCacheMode(CacheMode mode) { mCacheMode = mode; }
+	void setCacheTime(uint time) { mCacheTime = time; }
+	void setAskPassphraseOnStartup (bool b) { mAskPassphraseOnStartup = b; }
 
 private:
 	QString mFingerprint;
-	bool mAskPassPhrase;
 	CacheMode mCacheMode;
 	uint mCacheTime;
+	bool mAskPassphraseOnStartup;
 
 };
 

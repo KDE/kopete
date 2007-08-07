@@ -91,7 +91,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const QStringList& )
 				QStringList(QLatin1String("gg_con")), i18n( "Connecting" ) )
 {
 	if ( protocolStatic_ ) {
-		kDebug(14100)<<"####"<<"GaduProtocol already initialized"<<endl;
+		kDebug(14100)<<"####"<<"GaduProtocol already initialized";
 	}
 	else {
 		protocolStatic_ = this;

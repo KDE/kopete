@@ -33,7 +33,7 @@ void ICQShortInfo::fill( Buffer* buffer )
 {
 	if ( buffer->getByte() == 0x0A )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ short user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ short user info packet";
 		nickname = buffer->getLELNTS();
 		firstName = buffer->getLELNTS();
 		lastName = buffer->getLELNTS();
@@ -43,7 +43,7 @@ void ICQShortInfo::fill( Buffer* buffer )
 // 		gender = buffer->getByte();
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ short user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ short user info packet";
 }
 
 void ICQShortInfo::store( Buffer* buffer )
@@ -74,7 +74,7 @@ void ICQGeneralUserInfo::fill( Buffer* buffer )
 {
 	if ( buffer->getByte() == 0x0A )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ basic user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Parsing ICQ basic user info packet";
 		nickName = buffer->getLELNTS();
 		firstName = buffer->getLELNTS();
 		lastName = buffer->getLELNTS();
@@ -94,7 +94,7 @@ void ICQGeneralUserInfo::fill( Buffer* buffer )
 		publishEmail = ( buffer->getByte() == 0x01 );
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ basic user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ basic user info packet";
 }
 
 void ICQGeneralUserInfo::store( Buffer* buffer )
@@ -208,7 +208,7 @@ void ICQWorkUserInfo::fill( Buffer* buffer )
 		homepage = buffer->getLELNTS();
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet";
 }
 
 void ICQWorkUserInfo::store( Buffer* buffer )
@@ -330,7 +330,7 @@ void ICQMoreUserInfo::fill( Buffer* buffer )
 		sendInfo = buffer->getByte();
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ work user info packet";
 }
 
 void ICQMoreUserInfo::store( Buffer* buffer )
@@ -417,7 +417,7 @@ void ICQEmailInfo::fill( Buffer* buffer )
 		emailList = emails;
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ email user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ email user info packet";
 }
 
 void ICQEmailInfo::store( Buffer* buffer )
@@ -446,7 +446,7 @@ void ICQNotesInfo::fill( Buffer* buffer )
 	if ( buffer->getByte() == 0x0A )
 		notes = buffer->getLELNTS();
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ notes user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ notes user info packet";
 }
 
 void ICQNotesInfo::store( Buffer* buffer )
@@ -480,7 +480,7 @@ void ICQInterestInfo::fill( Buffer* buffer )
 				descriptions[count]=d;
 				count++;
 			} else {
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got more than four interest infos" << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got more than four interest infos";
 			}
 		}
 		if ( count < 4 )
@@ -491,10 +491,10 @@ void ICQInterestInfo::fill( Buffer* buffer )
 				descriptions[i] = QByteArray();
 			}
 		}
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "LEN: "<< len << " COUNT: " << count<< endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "LEN: "<< len << " COUNT: " << count;
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ interest user info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ interest user info packet";
 }
 
 void ICQInterestInfo::store( Buffer* buffer )
@@ -540,7 +540,7 @@ void ICQOrgAffInfo::fill( Buffer* buffer )
 	{
 		if ( buffer->getByte() != 0x03 )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ affiliation info packet" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ affiliation info packet";
 			return;
 		}
 
@@ -553,7 +553,7 @@ void ICQOrgAffInfo::fill( Buffer* buffer )
 
 		if ( buffer->getByte() != 0x03 )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ organization info packet" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ organization info packet";
 			return;
 		}
 
@@ -565,7 +565,7 @@ void ICQOrgAffInfo::fill( Buffer* buffer )
 		org3Keyword = buffer->getLELNTS();
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ organization & affiliation info packet" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't parse ICQ organization & affiliation info packet";
 
 }
 
@@ -642,7 +642,7 @@ void ICQSearchResult::fill( Buffer* buffer )
 	buffer->getLEWord(); // data length ( eat it )
 
 	uin = buffer->getLEDWord();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found UIN " << QString::number( uin ) << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found UIN " << QString::number( uin );
 
 	nickName = buffer->getLELNTS();
 	firstName = buffer->getLELNTS();
@@ -841,7 +841,7 @@ void ICQFullInfo::fill( Buffer* buffer )
 		case 0x003C:
 			break;
 		default:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data;
 			break;
 		}
 	}
@@ -1039,7 +1039,7 @@ ICQFullInfo::AddressItemList ICQFullInfo::parseAddressItemList( const QByteArray
 				}
 				break;
 			default:
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data;
 				break;
 			}
 		}
@@ -1123,7 +1123,7 @@ ICQFullInfo::WorkItemList ICQFullInfo::parseWorkItemList( const QByteArray& data
 				break;
 				}
 			default:
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data;
 				break;
 			}
 		}
@@ -1186,7 +1186,7 @@ ICQFullInfo::InfoItemList ICQFullInfo::parseInfoItemList( const QByteArray& data
 				}
 				break;
 			default:
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data << endl;
+				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unhandled tlv: " << hex << (*it).type << " data: " << hex << (*it).data;
 				break;
 			}
 		}

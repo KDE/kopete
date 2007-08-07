@@ -431,6 +431,7 @@ public:
 
 		// TODO: for now, all operations block anyway
 		Q_UNUSED(msecs);
+                //return false;
 	}
 
 	virtual Result result() const {

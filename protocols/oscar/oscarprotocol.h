@@ -42,6 +42,9 @@ public:
 	const Kopete::PropertyTmpl clientFeatures;
 	const Kopete::PropertyTmpl buddyIconHash;
 	const Kopete::PropertyTmpl contactEncoding;
+	const Kopete::PropertyTmpl memberSince;
+	const Kopete::PropertyTmpl client;
+	const Kopete::PropertyTmpl protocolVersion;
 
 	virtual OscarStatusManager *statusManager() const = 0;
 };

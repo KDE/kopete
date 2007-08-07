@@ -45,7 +45,7 @@ SMSClient::~SMSClient()
 
 void SMSClient::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 {
-	kWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
+	kWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent;
 	m_parent = parent;
 	m_layout = layout;
 	QWidget *configWidget = configureWidget(parent);
@@ -55,7 +55,7 @@ void SMSClient::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 
 void SMSClient::send(const Kopete::Message& msg)
 {
-	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
+	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)";
 	if (!m_account) return;
 
 	m_msg = msg;
@@ -91,7 +91,7 @@ void SMSClient::send(const Kopete::Message& msg)
 
 QWidget* SMSClient::configureWidget(QWidget* parent)
 {
-	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero!!)" << endl;
+	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero!!)";
 
 	if (prefWidget == 0L)
 		prefWidget = new SMSClientPrefsUI(parent);
@@ -132,7 +132,7 @@ QWidget* SMSClient::configureWidget(QWidget* parent)
 
 void SMSClient::savePreferences()
 {
-	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be work if zero!!)" << endl;
+	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be work if zero!!)";
 
 	if (prefWidget != 0L && m_account != 0L)
 	{

@@ -52,7 +52,7 @@ Properties *Properties::self()
 {
 	if(!mSelf)
 	{
-		//kDebug(14000) << k_funcinfo << endl;
+		//kDebug(14000) << k_funcinfo;
 		mSelf = new Properties();
 		// create the templates
 		mSelf->fullName();
@@ -76,13 +76,13 @@ Properties *Properties::self()
 
 Properties::Properties()
 {
-	kDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo;
 	d = new PropertiesPrivate();
 }
 
 Properties::~Properties()
 {
-	kDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo;
 	delete d;
 }
 
@@ -116,7 +116,7 @@ bool Properties::registerTemplate(const QString &key,
 
 void Properties::unregisterTemplate(const QString &key)
 {
-	kDebug(14000) << k_funcinfo << "called for key: '" << key << "'" << endl;
+	kDebug(14000) << k_funcinfo << "called for key: '" << key << "'";
 	d->mTemplates.remove(key);
 }
 
@@ -261,7 +261,9 @@ void installEmoticonTheme(const QString &archiveName)
 	qApp->processEvents();
 
 	QString currentBundleMimeType = KMimeType::findByPath(archiveName, 0, false)->name();
-	if( currentBundleMimeType == QLatin1String("application/zip") )
+	if( currentBundleMimeType == QLatin1String("application/zip") ||
+        currentBundleMimeType == QLatin1String("application/x-zip") ||
+        currentBundleMimeType ==  QLatin1String("application/x-zip-compressed"))
 		archive = new KZip(archiveName);
 	else if( currentBundleMimeType == QLatin1String("application/x-compressed-tar") || 
 				currentBundleMimeType == QLatin1String("application/x-bzip-compressed-tar") ||
@@ -327,7 +329,7 @@ void installEmoticonTheme(const QString &archiveName)
 		currentEntry = const_cast<KArchiveEntry *>(rootDir->entry(theme));
 		if (currentEntry == 0)
 		{
-			kDebug(14010) << k_funcinfo << "couldn't get next archive entry" << endl;
+			kDebug(14010) << k_funcinfo << "couldn't get next archive entry";
 			continue;
 		}
 

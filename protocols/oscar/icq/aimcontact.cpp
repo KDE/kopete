@@ -108,7 +108,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << contact << endl;
+	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << contact;
 
 	//if they don't have an SSI alias, make sure we use the capitalization from the
 	//server so their contact id looks all pretty.
@@ -116,7 +116,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( nickname.isEmpty() || Oscar::normalize( nickname ) == Oscar::normalize( contact ) )
 		setNickName( contact );
 
-	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
+	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
 	setPresenceTarget( presence );
 
@@ -144,7 +144,7 @@ void AIMContact::userOnline( const QString& userId )
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " online" << endl;
+	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " online";
 	setPresenceTarget( Oscar::Presence( Oscar::Presence::Online, Oscar::Presence::AIM ) );
 }
 
@@ -153,7 +153,7 @@ void AIMContact::userOffline( const QString& userId )
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline" << endl;
+	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline";
 	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::AIM ) );
 }
 

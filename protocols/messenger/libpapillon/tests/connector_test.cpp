@@ -117,7 +117,7 @@ void Connector_Test::slotReadNetworkMessage()
 	NetworkMessage *readNetworkMessage = d->stream->read();
 	if(readNetworkMessage)
 	{
-		qDebug() << PAPILLON_FUNCINFO << "Data received: " << readNetworkMessage->toString().replace("\r\n", "");
+		qDebug() << Q_FUNC_INFO << "Data received: " << readNetworkMessage->toString().replace("\r\n", "");
 		if(readNetworkMessage->command() == QLatin1String("VER"))
 		{
 			loginProcessCvr();
@@ -147,7 +147,7 @@ void Connector_Test::slotReadNetworkMessage()
 		int errorCode = readNetworkMessage->command().toUInt(&isNumber);
 		if(isNumber)
 		{
-			qDebug() << PAPILLON_FUNCINFO << "Received error code" << errorCode << ". Closing...";
+			qDebug() << Q_FUNC_INFO << "Received error code" << errorCode << ". Closing...";
 			d->stream->close();
 			deleteLater();
 			QCoreApplication::exit(0);
@@ -155,7 +155,7 @@ void Connector_Test::slotReadNetworkMessage()
 	}
 	else
 	{
-		qDebug() << PAPILLON_FUNCINFO << "Error in the transfer.";
+		qDebug() << Q_FUNC_INFO << "Error in the transfer.";
 	}
 }
 

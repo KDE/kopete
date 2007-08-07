@@ -117,7 +117,7 @@ bool XtrazNotify::handle( Oscar::MessagePlugin* plugin )
 	QDomDocument xmlDocument;
 	if ( !xmlDocument.setContent( xmlBlock ) )
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Cannot parse xml document!" << endl;
+		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Cannot parse xml document!";
 		return false;
 	}
 	
@@ -228,7 +228,7 @@ bool XtrazNotify::handleResponse( QDomElement eRoot )
 			QDomDocument resDocument;
 			if ( !resDocument.setContent( e.text() ) )
 			{
-				kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Cannot parse xml document!" << endl;
+				kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Cannot parse xml document!";
 				return false;
 			}
 
@@ -253,7 +253,7 @@ bool XtrazNotify::handleRequest( QDomElement eRoot )
 				QDomDocument resDocument;
 				if ( !resDocument.setContent( e.text() ) )
 				{
-					kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Cannot parse xml document!" << endl;
+					kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Cannot parse xml document!";
 					return false;
 				}
 
@@ -267,7 +267,7 @@ bool XtrazNotify::handleRequest( QDomElement eRoot )
 				QDomDocument qDocument;
 				if ( !qDocument.setContent( e.text() ) )
 				{
-					kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Cannot parse xml document!" << endl;
+					kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Cannot parse xml document!";
 					return false;
 				}
 				

@@ -129,6 +129,13 @@ KUrl Kopete::Transfer::destinationURL()
 	return mTarget;
 }
 
+void Kopete::Transfer::emitCopying(const KUrl &src, const KUrl &dest)
+{
+    emit description(this, i18n("Copying"),
+                     qMakePair(i18n("Source"), src.prettyUrl()),
+                     qMakePair(i18n("Destination"), dest.prettyUrl()));
+}
+
 void Kopete::Transfer::slotProcessed(unsigned int bytes)
 {
 	emitPercent( bytes, mInfo.size() );
@@ -153,7 +160,7 @@ void Kopete::Transfer::slotResultEmitted()
 {
 	if( error() == KIO::ERR_USER_CANCELED )
 	{
-		showMessage( i18n("You cancelled filetransfer %1", mInfo.file() ) );
+		showMessage( i18n("You cancelled file transfer %1", mInfo.file() ) );
 		emit transferCanceled();
 	}
 }

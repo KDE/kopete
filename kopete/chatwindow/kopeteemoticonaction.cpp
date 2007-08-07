@@ -94,7 +94,7 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
 
 KopeteEmoticonAction::~KopeteEmoticonAction()
 {
-//	kDebug(14010) << "KopeteEmoticonAction::~KopeteEmoticonAction()" << endl;
+//	kDebug(14010) << "KopeteEmoticonAction::~KopeteEmoticonAction()";
 	delete d;
 	d = 0;
 }

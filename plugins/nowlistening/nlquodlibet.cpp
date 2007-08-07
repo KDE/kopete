@@ -110,15 +110,15 @@ void NLQuodLibet::parseLine( const QString & line )
 	if ( parts.count() == 2 )
 	{
 		if ( parts[0] == "album" ) {
-			kDebug() << "found QL album: " << parts[1] << endl;
+			kDebug() << "found QL album: " << parts[1];
 			m_album = parts[1];
 		}
 		if ( parts[0] == "artist" ) {
-			kDebug() << "found QL artist: " << parts[1] << endl;
+			kDebug() << "found QL artist: " << parts[1];
 			m_artist = parts[1];
 		}
 		if ( parts[0] == "title" ) {
-			kDebug() << "found QL track: " << parts[1] << endl;
+			kDebug() << "found QL track: " << parts[1];
 			m_track = parts[1];
 		}
 	}

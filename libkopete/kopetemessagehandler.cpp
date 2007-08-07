@@ -17,7 +17,7 @@
 #include "kopetemessagehandler.h"
 #include "kopetemessageevent.h"
 
-#include <kstaticdeleter.h>
+#include <kglobal.h>
 
 namespace Kopete
 {
@@ -79,13 +79,10 @@ public:
 	FactoryList::Iterator iterator;
 };
 
+K_GLOBAL_STATIC(MessageHandlerFactory::FactoryList, g_list)
 MessageHandlerFactory::FactoryList& MessageHandlerFactory::Private::factories()
 {
-	static KStaticDeleter<FactoryList> deleter;
-	static FactoryList *list = 0;
-	if( !list )
-		deleter.setObject( list, new FactoryList );
-	return *list;
+	return *g_list;
 }
 
 MessageHandlerFactory::MessageHandlerFactory()

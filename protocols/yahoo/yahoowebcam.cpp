@@ -28,7 +28,7 @@
 YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 {
 	setObjectName( QLatin1String("yahoo_webcam") );
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
 	theAccount = account;
 	theDialog = 0L;
 	origImg = new KTemporaryFile();
@@ -97,7 +97,7 @@ void YahooWebcam::updateImage()
 
 void YahooWebcam::sendImage()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
 
 #ifndef Q_OS_WIN
 	m_devicePool->getFrame();
@@ -117,7 +117,7 @@ void YahooWebcam::sendImage()
 	int ec = p.execute();
 	if( ec != 0 )
 	{
-		kDebug(YAHOO_GEN_DEBUG) << " jasper exited with status " << ec << endl;
+		kDebug(YAHOO_GEN_DEBUG) << " jasper exited with status " << ec;
 	}
 	else
 	{
@@ -128,7 +128,7 @@ void YahooWebcam::sendImage()
 			theAccount->yahooSession()->sendWebcamImage( ar );
 		}
 		else
-			kDebug(YAHOO_GEN_DEBUG) << "Error opening the converted webcam image." << endl;
+			kDebug(YAHOO_GEN_DEBUG) << "Error opening the converted webcam image.";
 	}
 }
 

@@ -97,7 +97,7 @@ TelepathyEditAccountWidget::TelepathyEditAccountWidget(Kopete::Account *account,
 
 TelepathyEditAccountWidget::~TelepathyEditAccountWidget()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo;
 	delete d;
 }
 
@@ -108,7 +108,7 @@ TelepathyAccount *TelepathyEditAccountWidget::account()
 
 bool TelepathyEditAccountWidget::validateData()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo;
 	// You must fill the form to move to the next step
 	if( !d->ui.treeConnectionManager->selectedItems().isEmpty() &&
 		!d->ui.treeProtocol->selectedItems().isEmpty() )
@@ -125,7 +125,7 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
 	// Get parameter list
 	if( d->paramWidget )
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo;
 		d->savedParameterList = d->paramWidget->parameterList();
 	
 		if( !account() )
@@ -137,7 +137,7 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
 				if( parameter.name().startsWith( QLatin1String("account") ) )
 				{
 					newAccountId = parameter.value().toString();
-					kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Found account id: " << newAccountId << endl;
+					kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Found account id: " << newAccountId;
 					break;
 				}
 			}
@@ -153,7 +153,7 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
 
 void TelepathyEditAccountWidget::readConfig()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo;
 	// Restore config not related to ConnectionManager parameters first
 	// so that the UI for the protocol parameters will be generated
 	if( account()->readConfig() )
@@ -191,7 +191,7 @@ void TelepathyEditAccountWidget::readConfig()
 
 void TelepathyEditAccountWidget::writeConfig()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo;
 	QString selectedConnectionManager = d->ui.treeConnectionManager->selectedItems().first()->text(0);
 	QString selectedProtocol = d->ui.treeProtocol->selectedItems().first()->text(0);
 	QString accountId = account()->accountId();

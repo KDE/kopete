@@ -57,7 +57,7 @@ MessengerCoreProtocol::MessengerCoreProtocol() : QObject(), d(new Private)
 
 MessengerCoreProtocol::~MessengerCoreProtocol()
 {
-	qDebug() << PAPILLON_FUNCINFO;
+	qDebug() << Q_FUNC_INFO;
 	delete d;
 }
 
@@ -151,7 +151,7 @@ int MessengerCoreProtocol::rawToNetworkMessage(const QByteArray &raw)
 				// Remove the last parameter from the command list and set the payload length.
 				// So it will not be in the arguments.
 				payloadLength = commandList.takeLast().toUInt(&dummy);
-				qDebug() << PAPILLON_FUNCINFO << "Begin Payload transfer, length:" << payloadLength;
+				qDebug() << Q_FUNC_INFO << "Begin Payload transfer, length:" << payloadLength;
 			}
 			
 			// Check for a transaction ID.
@@ -188,7 +188,7 @@ int MessengerCoreProtocol::rawToNetworkMessage(const QByteArray &raw)
 			else
 			{
 				// Show parsed line here for non-payload messages.
-				qDebug() << PAPILLON_FUNCINFO << parsedLine;
+				qDebug() << Q_FUNC_INFO << parsedLine;
 				d->state = Available;
 				emit incomingData();
 			}
@@ -199,7 +199,7 @@ int MessengerCoreProtocol::rawToNetworkMessage(const QByteArray &raw)
 		{
 			if(raw.size() < d->payloadLength)
 			{
-				qDebug() << PAPILLON_FUNCINFO << "Raw size:" << raw.size() << "Payload length:" << d->payloadLength;
+				qDebug() << Q_FUNC_INFO << "Raw size:" << raw.size() << "Payload length:" << d->payloadLength;
 				d->state = NeedMore;
 				return bytesParsed;
 			}
@@ -208,10 +208,10 @@ int MessengerCoreProtocol::rawToNetworkMessage(const QByteArray &raw)
 			QByteArray payloadData = raw.left(d->payloadLength);
 			
 			d->inNetworkMessage->setPayloadData(payloadData);
-			qDebug() << PAPILLON_FUNCINFO << "Byte data length:" << payloadData.size();
-// 			qDebug() << PAPILLON_FUNCINFO << "Payload data read(from CoreProtocol):" << raw;
+			qDebug() << Q_FUNC_INFO << "Byte data length:" << payloadData.size();
+// 			qDebug() << Q_FUNC_INFO << "Payload data read(from CoreProtocol):" << raw;
 			// Show full payload command to output
-			qDebug() << PAPILLON_FUNCINFO << d->inNetworkMessage->toRawCommand();
+			qDebug() << Q_FUNC_INFO << d->inNetworkMessage->toRawCommand();
 			d->state = Available;
 			
 			bytesParsed = payloadData.size();
