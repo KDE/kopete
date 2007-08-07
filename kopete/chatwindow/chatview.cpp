@@ -108,6 +108,8 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 
 	splitter->addWidget(m_messagePart->view());
 	splitter->addWidget(m_editPart->widget());
+	splitter->setStretchFactor(0, 3);
+	splitter->setStretchFactor(1, 0);
 
 	// FIXME: is this used these days? it seems totally unnecessary
 	connect( editPart(), SIGNAL( toolbarToggled(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
@@ -720,7 +722,7 @@ void ChatView::sendInternalMessage(const QString &msg, Qt::TextFormat format )
 			message.setHtmlBody( msg );
 			break;
 	}
-	
+
 	// (in many case, this is useless to set myself as contact)
 	// TODO: set the contact which initiate the internal message,
 	// so we can later show a icon of it (for example, when he join a chat)
