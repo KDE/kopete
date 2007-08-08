@@ -1,9 +1,9 @@
 /*
     kopeteidentityconfig.h  -  Kopete identity config page
 
-    Copyright (c) 2005 by Michaël Larouche <larouche@kde.org>
+    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
 
-    Kopete    (c) 2003-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,65 +15,48 @@
     *************************************************************************
 */
 
-#ifndef _IDENTITYCONFIG_H
-#define _IDENTITYCONFIG_H
+#ifndef __KOPETEIDENTITYCONFIG_H
+#define __KOPETEIDENTITYCONFIG_H
 
 #include <kcmodule.h>
-#include <kconfigdialog.h>
+#include <qmap.h>
+#include <qcolor.h>
 
-#include "kopetemetacontact.h"
+#include "kopeteonlinestatus.h"
 #include "ui_kopeteidentityconfigbase.h"
 
 namespace Kopete
 {
-class Contact;
+class Identity;
 }
 
-class KopeteIdentityConfigBase;
+class KopeteIdentityLVI;
 
 /**
- * @author Michaël Larouche <shock@shockdev.ca.tc>
+ * @author Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  */
 class KopeteIdentityConfig : public KCModule, private Ui::KopeteIdentityConfigBase
 {
 	Q_OBJECT
+
 public:
 	KopeteIdentityConfig(QWidget *parent, const QStringList &args );
-	~KopeteIdentityConfig();
 
 public slots:
 	virtual void save();
 	virtual void load();
 
 private:
-	void loadIdentities();
-	void saveCurrentIdentity();
+	KopeteIdentityLVI* selectedIdentity();
 
-	Kopete::MetaContact::PropertySource selectedNameSource() const;
-	Kopete::MetaContact::PropertySource selectedPhotoSource() const;
-	Kopete::Contact* selectedNameSourceContact() const;
-	Kopete::Contact* selectedPhotoSourceContact() const;
+	bool m_protected;
 
 private slots:
-	void slotLoadNameSources();
-	void slotLoadPhotoSources();
-	void slotEnableAndDisableWidgets();
-
-	void slotUpdateCurrentIdentity(const QString &selectedIdentity);
-	void slotNewIdentity();
-	void slotCopyIdentity();
-	void slotRenameIdentity();
 	void slotRemoveIdentity();
-
-	void slotChangeAddressee();
-	void slotChangePhoto();
-
-	void slotSettingsChanged();
-
-private:
-	class Private;
-	Private *d;
-
+	void slotEditIdentity();
+	void slotSetDefaultIdentity();
+	void slotAddIdentity();
+	void slotItemSelected();
 };
 #endif
 

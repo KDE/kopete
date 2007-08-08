@@ -427,11 +427,11 @@ public:
 		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 	}
 
-	virtual bool waitForResultsReady(int msecs) {
+	virtual void waitForResultsReady(int msecs) {
 
 		// TODO: for now, all operations block anyway
 		Q_UNUSED(msecs);
-                return false;
+                //return false;
 	}
 
 	virtual Result result() const {

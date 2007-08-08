@@ -19,10 +19,11 @@
 
 #include "kopetecontact.h"
 
-#include <qapplication.h>
+#include <QApplication>
 #include <QTextDocument>
+#include <QTimer>
 
-#include <kdebug.h>
+#include <KDebug>
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
@@ -49,6 +50,7 @@
 #include "metacontactselectorwidget.h"
 #include "kopeteemoticons.h"
 #include "kopetestatusmessage.h"
+#include "kopeteinfodialog.h"
 #include "kopetedeletecontacttask.h"
 
 //For the moving to another metacontact dialog
@@ -78,7 +80,6 @@ public:
 	QTime idleTimer;
 	unsigned long int idleTime;
 
-	Kopete::ContactProperty::Map properties;
 	Kopete::StatusMessage statusMessage;
 };
 
@@ -115,8 +116,6 @@ Contact::Contact( Account *account, const QString &contactId,
 
 		parent->addContact( this );
 	}
-
-
 }
 
 Contact::~Contact()
@@ -383,64 +382,6 @@ void Contact::serialize( QMap<QString, QString> &/*serializedData*/,
 {
 }
 
-
-void Contact::serializeProperties(QMap<QString, QString> &serializedData)
-{
-
-	Kopete::ContactProperty::Map::ConstIterator it;// = d->properties.ConstIterator;
-	for (it=d->properties.begin(); it != d->properties.end(); ++it)
-	{
-		if (!it.value().tmpl().persistent())
-			continue;
-
-		QVariant val = it.value().value();
-		QString key = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(val.typeName()), it.key());
-
-		serializedData[key] = val.toString();
-
-	} // end for()
-} // end serializeProperties()
-
-void Contact::deserializeProperties(
-	QMap<QString, QString> &serializedData )
-{
-	QMap<QString, QString>::ConstIterator it;
-	for ( it=serializedData.begin(); it != serializedData.end(); ++it )
-	{
-		QString key = it.key();
-
-		if ( !key.startsWith( QString::fromLatin1("prop_") ) ) // avoid parsing other serialized data
-			continue;
-
-		QStringList keyList = key.split( QChar('_'), QString::SkipEmptyParts );
-		if( keyList.count() < 3 ) // invalid key, not enough parts in string "prop_X_Y"
-			continue;
-
-		key = keyList[2]; // overwrite key var with the real key name this property has
-		QString type( keyList[1] ); // needed for QVariant casting
-
-		QVariant variant( it.value() );
-		if( !variant.convert(QVariant::nameToType(type.toLatin1())) )
-		{
-			kDebug(14010) << k_funcinfo <<
-				"Casting QVariant to needed type FAILED" <<
-				"key=" << key << ", type=" << type << endl;
-			continue;
-		}
-
-		Kopete::ContactPropertyTmpl tmpl = Kopete::Global::Properties::self()->tmpl(key);
-		if( tmpl.isNull() )
-		{
-			kDebug( 14010 ) << k_funcinfo << "no ContactPropertyTmpl defined for" \
-				" key " << key << ", cannot restore persistent property" << endl;
-			continue;
-		}
-
-		setProperty(tmpl, variant);
-	} // end for()
-}
-
-
 bool Contact::isReachable()
 {
 	// The default implementation returns false when offline and true
@@ -548,7 +489,6 @@ QList<KAction*> *Contact::customContextMenuActions( ChatSession * /* manager */ 
 	return customContextMenuActions();
 }
 
-
 bool Contact::isOnline() const
 {
 	return onlineStatus().isDefinitelyOnline();
@@ -594,79 +534,9 @@ void Contact::setIdleTime( unsigned long int t )
 		emit idleStateChanged(this);
 }
 
-
-QStringList Contact::properties() const
-{
-	return d->properties.keys();
-}
-
-bool Contact::hasProperty(const QString &key) const
-{
-	return d->properties.contains(key);
-}
-
-const ContactProperty &Contact::property(const QString &key) const
-{
-	if(hasProperty(key))
-		return d->properties[key];
-	else
-		return Kopete::ContactProperty::null;
-}
-
-const Kopete::ContactProperty &Contact::property(
-	const Kopete::ContactPropertyTmpl &tmpl) const
-{
-	if(hasProperty(tmpl.key()))
-		return d->properties[tmpl.key()];
-	else
-		return Kopete::ContactProperty::null;
-}
-
-
-void Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
-	const QVariant &value)
-{
-	if(tmpl.isNull() || tmpl.key().isEmpty())
-	{
-		kDebug(14000) << k_funcinfo <<
-			"No valid template for property passed!" << endl;
-		return;
-	}
-
-	if(value.isNull() || value.canConvert(QVariant::String) && value.toString().isEmpty())
-	{
-		removeProperty(tmpl);
-	}
-	else
-	{
-		QVariant oldValue = property(tmpl.key()).value();
-
-		if(oldValue != value)
-		{
-			Kopete::ContactProperty prop(tmpl, value);
-			d->properties.remove(tmpl.key());
-			d->properties.insert(tmpl.key(), prop);
-
-			emit propertyChanged(this, tmpl.key(), oldValue, value);
-		}
-	}
-}
-
-void Contact::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
-{
-	if(!tmpl.isNull() && !tmpl.key().isEmpty())
-	{
-
-		QVariant oldValue = property(tmpl.key()).value();
-		d->properties.remove(tmpl.key());
-		emit propertyChanged(this, tmpl.key(), oldValue, QVariant());
-	}
-}
-
-
 QString Contact::toolTip() const
 {
-	Kopete::ContactProperty p;
+	Kopete::Property p;
 	QString tip;
 	QStringList shownProps = Kopete::AppearanceSettings::self()->toolTipContents();
 
@@ -699,7 +569,7 @@ QString Contact::toolTip() const
 	// --------------------------------------------------------------------------
 	// Configurable part of tooltip
 
-	// FIXME: It shouldn't use QString to identity the properties. Instead it should use ContactPropertyTmpl::key()
+	// FIXME: It shouldn't use QString to identity the properties. Instead it should use PropertyTmpl::key()
 	for(QStringList::Iterator it=shownProps.begin(); it!=shownProps.end(); ++it)
 	{
 		if((*it) == Kopete::Global::Properties::self()->fullName().key() )
@@ -788,7 +658,7 @@ QString Kopete::Contact::formattedName() const
 		return property( Kopete::Global::Properties::self()->fullName() ).value().toString();
 
 	QString ret;
-	Kopete::ContactProperty first, last;
+	Kopete::Property first, last;
 
 	first = property( Kopete::Global::Properties::self()->firstName() );
 	last = property( Kopete::Global::Properties::self()->lastName() );

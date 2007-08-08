@@ -25,9 +25,11 @@ set(kopete_ui_SRCS
   ui/avatardialog.cpp
   ui/avatarselectorwidget.cpp
   ui/contactaddednotifydialog.cpp
+  ui/collapsiblewidget.cpp
   ui/editaccountwidget.cpp
   ui/kopetecontactaction.cpp
   ui/kopetefileconfirmdialog.cpp
+  ui/kopeteinfodialog.cpp
   ui/kopetelistview.cpp
   ui/kopetelistviewitem.cpp
   ui/kopetelistviewsearchline.cpp
@@ -69,9 +71,11 @@ set(kopete_LIB_SRCS
    kopetecontact.cpp
    kopetecontactlist.cpp
    kopetecontactlistelement.cpp
-   kopetecontactproperty.cpp
+   kopeteproperty.cpp
    kopeteglobal.cpp
    kopetegroup.cpp
+   kopeteidentity.cpp
+   kopeteidentitymanager.cpp
    kopetemessage.cpp
    kopetemessageevent.cpp
    kopetemessagehandlerchain.cpp
@@ -87,6 +91,7 @@ set(kopete_LIB_SRCS
    kopeteplugin.cpp
    kopetepluginmanager.cpp
    kopeteproperties.cpp
+   kopetepropertycontainer.cpp
    kopeteprotocol.cpp
    kopetesimplemessagehandler.cpp
    kopetestatusmessage.cpp
@@ -112,7 +117,7 @@ kde4_add_ui_files(kopete_LIB_SRCS
  ui/metacontactselectorwidget_base.ui
 )
 
-kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
+kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
 
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 
@@ -140,6 +145,7 @@ install(FILES
  ui/editaccountwidget.h
  ui/kopetecontactaction.h
  ui/kopetefileconfirmdialog.h
+ ui/kopeteinfodialog.h
  ui/kopetelistview.h
  ui/kopetelistviewitem.h
  ui/kopetelistviewsearchline.h
@@ -153,7 +159,6 @@ DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui )
 install( FILES
   kopeteappearancesettings.kcfg
   kopetebehaviorsettings.kcfg
-  kopetegeneralsettings.kcfg
 DESTINATION ${KCFG_INSTALL_DIR})
 
 install( FILES kopetecommandui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
@@ -162,7 +167,6 @@ install( FILES kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop  DES
 install( FILES
   ${CMAKE_CURRENT_BINARY_DIR}/kopeteappearancesettings.h
   ${CMAKE_CURRENT_BINARY_DIR}/kopetebehaviorsettings.h
-  ${CMAKE_CURRENT_BINARY_DIR}/kopetegeneralsettings.h
   kabcpersistence.h
   kopeteaccount.h
   kopeteaccountmanager.h
@@ -177,10 +181,12 @@ install( FILES
   kopetecontact.h
   kopetecontactlistelement.h
   kopetecontactlist.h
-  kopetecontactproperty.h
+  kopeteproperty.h
   kopete_export.h
   kopeteglobal.h
   kopetegroup.h
+  kopeteidentity.h
+  kopeteidentitymanager.h
   kopetemessageevent.h
   kopetemessage.h
   kopetemessagehandlerchain.h
@@ -194,6 +200,7 @@ install( FILES
   kopetepicture.h
   kopeteplugin.h
   kopeteprotocol.h
+  kopetepropertycontainer.h
   kopetesimplemessagehandler.h
   kopetestatusmessage.h
   kopetetransfermanager.h

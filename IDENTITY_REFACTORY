@@ -1,0 +1,34 @@
+This branch is for the Identity support refactory in Kopete. The main point is 
+supporting multiple identities, and make things easier.
+Some points:
+
+- Each account will belong to exactly one Identity.
+
+- Each identity can have one or more accounts associated to it.
+
+- Accounts can be moved from one identity to another.
+
+- Properties (such as nickname/photo/personal info and so on) will be stored in
+  the identity rather than the account.
+
+- Accounts should get/set properties from the identity rather than having their 
+  own properties.
+
+- Synchronization will be handle in the following way:
+    * If you set a property in the identity, it will be applied to all accounts 
+      belonging to this identity
+    * If a property changes server-side for one of the accounts in the identity, 
+      the user will be asked if he wants to have that property sync from server 
+      to the identity (and therefore to all other accounts), and, of course, provide 
+      the "Do not ask again" option. If there is only one account in the identity, 
+      do not ask and only apply the settings.
+
+- The "Global Identity" will be a convenience for moving all accounts to a single 
+  identity (and maybe show an interface to unify the properties that are different 
+  in the old identities). The old identities will be removed (this can be discussed 
+  though).
+
+- The user info interface will get/set properties from the identity, not from the 
+  contact
+
+- The Akonady support will probably be implemented on top of the identity

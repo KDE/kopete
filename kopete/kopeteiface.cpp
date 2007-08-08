@@ -286,26 +286,5 @@ void KopeteIface::setAutoAway()
 	Kopete::Away::getInstance()->setAutoAway();
 }
 
-void KopeteIface::setGlobalNickname( const QString &nickname )
-{
-	if( Kopete::GeneralSettings::self()->enableGlobalIdentity() )
-	{
-		Kopete::MetaContact *myselfMetaContact = Kopete::ContactList::self()->myself();
-		myselfMetaContact->setDisplayNameSource( Kopete::MetaContact::SourceCustom );
-		myselfMetaContact->setDisplayName( nickname );
-	}
-}
-
-void KopeteIface::setGlobalPhoto( const KUrl &photoUrl )
-{
-	if( Kopete::GeneralSettings::self()->enableGlobalIdentity() )
-	{
-		Kopete::MetaContact *myselfMetaContact = Kopete::ContactList::self()->myself();
-		myselfMetaContact->setPhoto( photoUrl );
-		if( myselfMetaContact->photoSource() != Kopete::MetaContact::SourceCustom )
-			myselfMetaContact->setPhotoSource( Kopete::MetaContact::SourceCustom );
-	}
-}
-
 // vim: set noet ts=4 sts=4 sw=4:
 
