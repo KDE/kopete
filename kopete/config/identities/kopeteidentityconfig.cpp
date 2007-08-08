@@ -87,10 +87,10 @@ void KopeteIdentityConfig::save()
 void KopeteIdentityConfig::load()
 {
 	KopeteIdentityLVI *lvi = 0L;
+	Kopete::Identity *defaultIdentity = Kopete::IdentityManager::self()->defaultIdentity();
 
 	mIdentityList->clear();
 
-	Kopete::Identity *defaultIdentity = Kopete::IdentityManager::self()->defaultIdentity();
 	foreach(Kopete::Identity *i, Kopete::IdentityManager::self()->identities())
 	{
 		// Insert the item after the previous one

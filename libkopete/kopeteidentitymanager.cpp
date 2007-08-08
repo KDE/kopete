@@ -238,6 +238,9 @@ void IdentityManager::load()
 		}
 		kDebug() << "Created identity " << identityId << endl;
 	}
+
+	// just to make sure the default identity gets created when there is no identity registered
+	defaultIdentity();
 }
 
 void IdentityManager::slotIdentityOnlineStatusChanged(Identity *i,
