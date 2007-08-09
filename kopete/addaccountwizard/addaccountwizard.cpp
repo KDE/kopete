@@ -97,13 +97,9 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
 		d->protocolItems.insert(pluginItem, *it);
 	}
 
-	// focus the ListView and select the first item
+	// focus the ListView
 	QTreeWidget *protocol_list = d->uiSelectService.protocolListView;
 	protocol_list->setFocus();
-	if (protocol_list->topLevelItemCount() > 0)
-		protocol_list->setItemSelected( protocol_list->topLevelItem(0), true );
-	else
-		protocol_list->setItemSelected( protocol_list->topLevelItem(0), false );
 	
 	
  
