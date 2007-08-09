@@ -10,6 +10,12 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Identities
+Name[ja]=分身
+Name[sv]=Identiteter
+Name[zh_TW]=身份
 Comment=Manage Your Identities
+Comment[ja]=あなたの分身を管理
+Comment[sv]=Hantera dina identiteter
+Comment[zh_TW]=管理您的身份
 
 DocPath=kopete/configure-dialog.html#configuring-identity
