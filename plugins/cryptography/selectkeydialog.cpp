@@ -25,8 +25,6 @@
 #include <k3listview.h>
 #include <klocale.h>
 #include <qcheckbox.h>
-#include <k3process.h>
-#include <k3procio.h>
 #include <kiconloader.h>
 #include <kicon.h>
 
@@ -34,134 +32,90 @@
 
 #include <cstdio>
 
-SelectKeyDialog::SelectKeyDialog(QWidget *parent, bool showlocal)
- : KDialog( parent )
+SelectKeyDialog::SelectKeyDialog ( QString &keyId, QWidget *parent )
+		: KDialog ( parent )
 {
-  setCaption( i18n("Private Key List") );
-  setButtons( KDialog::Ok | KDialog::Cancel );
+	setCaption ( i18n ( "Private Key List" ) );
+	setButtons ( KDialog::Ok | KDialog::Cancel );
 
-  QWidget *page = new QWidget(this);
-  QLabel *labeltxt;
+	QWidget *page = new QWidget ( this );
+	QLabel *labeltxt;
+	mKeyId = &keyId;
 
-  setMinimumSize(300,200);
-  keysListpr = new K3ListView( page );
-  keysListpr->setRootIsDecorated(true);
-  keysListpr->addColumn( i18n( "Name" ) );
-  keysListpr->setShowSortIndicator(true);
-  keysListpr->setFullWidth(true);
+	setMinimumSize ( 300,200 );
+	mKeysListpr = new K3ListView ( page );
+	mKeysListpr->setRootIsDecorated ( true );
+	mKeysListpr->addColumn ( i18n ( "Name" ) );
+	mKeysListpr->setShowSortIndicator ( true );
+	mKeysListpr->setFullWidth ( true );
 
-  labeltxt=new QLabel(i18n("Choose secret key:"),page);
-  QVBoxLayout *vbox=new QVBoxLayout(page);
-  vbox->setSpacing(3);
+	labeltxt=new QLabel ( i18n ( "Choose secret key:" ),page );
+	QVBoxLayout *vbox=new QVBoxLayout ( page );
+	vbox->setSpacing ( 3 );
 
-  vbox->addWidget(labeltxt);
-  vbox->addWidget(keysListpr);
-  if (showlocal==true)
-  {
-    local = new QCheckBox(i18n("Local signature (cannot be exported)"),page);
-    vbox->addWidget(local);
-  }
+	vbox->addWidget ( labeltxt );
+	vbox->addWidget ( mKeysListpr );
+	
+	fp = new QProcess (this);
+	QStringList args;
+	args << "--no-tty" << "--with-colon" << "--list-secret-keys";
+	fp->setReadChannel (QProcess::StandardOutput);
+	connect ( fp, SIGNAL ( readyRead () ), this, SLOT ( slotReadKey () ) );
+	fp->start("gpg", args);
 
-  fp = new K3ProcIO;
-  *fp << "gpg" << "--no-tty" << "--with-colon" << "--list-secret-keys";
-  connect (fp, SIGNAL(readReady(K3ProcIO*)), this, SLOT(slotReadKey(K3ProcIO*)));
-  fp->start();
+	QObject::connect ( mKeysListpr,SIGNAL ( doubleClicked ( Q3ListViewItem *,const QPoint &,int ) ),this,SLOT ( slotOk() ) );
+	QObject::connect ( mKeysListpr,SIGNAL ( clicked ( Q3ListViewItem * ) ),this,SLOT ( slotSelect ( Q3ListViewItem * ) ) );
 
-  QObject::connect(keysListpr,SIGNAL(doubleClicked(Q3ListViewItem *,const QPoint &,int)),this,SLOT(slotpreOk()));
-  QObject::connect(keysListpr,SIGNAL(clicked(Q3ListViewItem *)),this,SLOT(slotSelect(Q3ListViewItem *)));
+	mKeysListpr->setSelected ( mKeysListpr->firstChild(),true );
 
-  keysListpr->setSelected(keysListpr->firstChild(),true);
-
-  page->show();
-  resize(this->minimumSize());
-  setMainWidget(page);
+	page->show();
+	resize ( this->minimumSize() );
+	setMainWidget ( page );
 }
 
 SelectKeyDialog::~SelectKeyDialog ()
 {
-  delete fp;
+	delete fp;
 }
 
-void SelectKeyDialog::slotReadKey (K3ProcIO * pio)
+void SelectKeyDialog::slotReadKey ( )
 {
-  QString line, expr, id;
-  pio->readln(line, false);
-  if (line.startsWith("sec"))
-  {
-    QString expr = line.section(':',6,6);
-    if (expr.isEmpty())
-      expr = i18nc ("adj", "Unlimited");
-    QString id = QString("0x"+line.section(':',4,4).right(8));
-    K3ListViewItem *item = new K3ListViewItem (keysListpr, line.section (':', 9, 9) );
-    K3ListViewItem *sub = new K3ListViewItem (item,i18n("ID: %1, expiration: %2", id, expr));
-    sub->setSelectable(false);
-    KIconLoader *loader = KIconLoader::global();
-    keyPair=loader->loadIcon("kgpg_key2",K3Icon::Small,20);
-    item->setPixmap(0,keyPair);
-  }
-  pio->ackRead();
-}
+	QString line, expr, id;
+	line = fp->readLine ( 0 );
+	if ( line.startsWith ( "sec" ) )
+	{
+		QString expr = line.section ( ':',6,6 );
+		if ( expr.isEmpty() )
+			expr = i18nc ( "adj", "Unlimited" );
+		QString id = QString ( "0x"+line.section ( ':',4,4 ).right ( 8 ) );
+		K3ListViewItem *item = new K3ListViewItem ( mKeysListpr, line.section ( ':', 9, 9 ) );
+		K3ListViewItem *sub = new K3ListViewItem ( item,i18n ( "ID: %1, expiration: %2", id, expr ) );
+		sub->setSelectable ( false );
+		KIconLoader *loader = KIconLoader::global();
+		mKeyPair=loader->loadIcon ( "kgpg_key2",K3Icon::Small,20 );
+		item->setPixmap ( 0,mKeyPair );
 
-void SelectKeyDialog::slotpreOk()
-{
-  if (keysListpr->currentItem()->depth()!=0)
-    return;
-  else
-    slotOk();
+		*mKeyId = id;
+	}
+//	fp->ackRead();
 }
 
 void SelectKeyDialog::slotOk()
 {
-  if (keysListpr->currentItem()==NULL)
-    reject();
-  else
-    accept();
+	if ( mKeysListpr->currentItem() ==NULL )
+		reject();
+	else
+		accept();
 }
 
-void SelectKeyDialog::slotSelect(Q3ListViewItem *item)
+void SelectKeyDialog::slotSelect ( Q3ListViewItem *item )
 {
-  if (item==NULL) return;
-  if (item->depth()!=0)
-  {
-    keysListpr->setSelected(item->parent(),true);
-    keysListpr->setCurrentItem(item->parent());
-  }
-}
-
-
-QString SelectKeyDialog::getkeyID()
-{
-  QString userid;
-  /////  emit selected key
-  if (keysListpr->currentItem()==NULL) return("");
-  else
-  {
-    userid=keysListpr->currentItem()->firstChild()->text(0);
-    userid=userid.section(',',0,0);
-    userid=userid.section(':',1,1);
-    userid=userid.trimmed();
-    return(userid);
-  }
-}
-
-QString SelectKeyDialog::getkeyMail()
-{
-  QString username;
-  /////  emit selected key
-  if (keysListpr->currentItem()==NULL) return("");
-  else
-  {
-    username=keysListpr->currentItem()->text(0);
-    //username=username.section(' ',0,0);
-    username=username.trimmed();
-    return(username);
-  }
-}
-
-bool SelectKeyDialog::getlocal()
-{
-  /////  emit exportation choice
-  return(local->isChecked());
+	if ( item==NULL ) return;
+	if ( item->depth() !=0 )
+	{
+		mKeysListpr->setSelected ( item->parent(),true );
+		mKeysListpr->setCurrentItem ( item->parent() );
+	}
 }
 
 #include "selectkeydialog.moc"

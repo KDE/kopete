@@ -101,19 +101,13 @@ CryptographyPlugin::~CryptographyPlugin()
 
 void CryptographyPlugin::loadSettings()
 {
-	KConfigGroup config(KGlobal::config(), "Cryptography Plugin");
+	CryptographyConfig c;
 
-	mPrivateKeyID = config.readEntry("PGP_private_key", QString() );
-	mAlsoMyKey = config.readEntry("Also_my_key", false);
-
-	if(config.readEntry("Cache_Till_App_Close", false))
-	  mCachePassPhrase = Keep;
-	if(config.readEntry("Cache_Till_Time", false))
-	  mCachePassPhrase = Time;
-	if(config.readEntry("Cache_Never", false))
-	  mCachePassPhrase = Never;
-	mCacheTime = config.readEntry("Cache_Time", 15);
-	mAskPassPhrase = config.readEntry("No_Passphrase_Handling", false);
+	mPrivateKeyID = c.privateKeyId();
+	mAlsoMyKey = c.alsoMyKey();
+	mAskPassPhrase = c.askPassPhrase();
+	mCachePassPhrase = c.cacheMode();
+	mCacheTime = c.cacheTime();
 }
 
 CryptographyPlugin* CryptographyPlugin::plugin()
@@ -130,9 +124,9 @@ QByteArray CryptographyPlugin::cachedPass()
 
 void CryptographyPlugin::setCachedPass(const QByteArray& p)
 {
-	if(pluginStatic_->mCacheMode==Never)
+	if(pluginStatic_->mCachePassPhrase == CryptographyConfig::Never)
 		return;
-	if(pluginStatic_->mCacheMode==Time)
+	if(pluginStatic_->mCachePassPhrase == CryptographyConfig::Time)
 	{
 		pluginStatic_->m_cachedPass_timer->setSingleShot( false );
 		pluginStatic_->m_cachedPass_timer->start(pluginStatic_->mCacheTime * 60000);

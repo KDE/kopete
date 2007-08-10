@@ -10,6 +10,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Chatwindow
+Name[de]=Chat-Fenster
 Name[el]=Παράθυρο συνομιλίας
 Name[es]=Ventana de charla
 Name[sv]=Chattfönster
@@ -17,6 +18,7 @@ Name[uk]=Вікно балачки
 Name[x-test]=xxChatwindowxx
 Name[zh_TW]=聊天視窗
 Comment=Configure Chat Window Look And Feel
+Comment[de]=Erscheinungsbild des Chat-Fensters einrichten
 Comment[el]=Ρύθμιση όψης και αίσθησης του παραθύρου συνομιλίας
 Comment[es]=Configure el aspecto de la ventana de charla
 Comment[sv]=Anpassa chattfönstrets känsla och utseende

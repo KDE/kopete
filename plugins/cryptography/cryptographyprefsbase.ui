@@ -30,7 +30,7 @@
     <number>6</number>
    </property>
    <item row="1" column="0" colspan="3" >
-    <widget class="QCheckBox" name="kcfg_EncryptOutgoing" >
+    <widget class="QCheckBox" name="alsoMyKey" >
      <property name="whatsThis" >
       <string>&lt;qt>Check this box if you want to encrypt outgoing messages with this key, so that you will be able to decrypt them yourself later.&lt;br>
 &lt;b>Warning:&lt;/b> This can increase the size of messages, and some protocols will refuse to send your messages because they are too large.</string>
@@ -41,7 +41,7 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="3" >
-    <widget class="QGroupBox" name="kcfg_CacheBehavior" >
+    <widget class="QGroupBox" name="cacheBehavior" >
      <property name="title" >
       <string>Cache Passphrase</string>
      </property>
@@ -65,7 +65,7 @@
        <number>6</number>
       </property>
       <item row="2" column="0" colspan="3" >
-       <widget class="QRadioButton" name="kcfg_Never" >
+       <widget class="QRadioButton" name="never" >
         <property name="text" >
          <string>Never</string>
         </property>
@@ -88,7 +88,7 @@
        </widget>
       </item>
       <item row="1" column="1" >
-       <widget class="QSpinBox" name="kcfg_CacheTime" >
+       <widget class="QSpinBox" name="cacheTime" >
         <property name="enabled" >
          <bool>false</bool>
         </property>
@@ -110,7 +110,7 @@
        </widget>
       </item>
       <item row="1" column="0" >
-       <widget class="QRadioButton" name="kcfg_Time" >
+       <widget class="QRadioButton" name="time" >
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
           <horstretch>0</horstretch>
@@ -123,7 +123,7 @@
        </widget>
       </item>
       <item row="0" column="0" colspan="3" >
-       <widget class="QRadioButton" name="kcfg_Never" >
+       <widget class="QRadioButton" name="onClose" >
         <property name="text" >
          <string>Until Kopete closes</string>
         </property>
@@ -150,7 +150,7 @@
     </widget>
    </item>
    <item row="0" column="1" >
-    <widget class="KLineEdit" name="kcfg_PrivateKeyId" >
+    <widget class="KLineEdit" name="privateKeyId" >
      <property name="readOnly" >
       <bool>true</bool>
      </property>
@@ -173,9 +173,9 @@
     </spacer>
    </item>
    <item row="2" column="0" colspan="3" >
-    <widget class="QCheckBox" name="kcfg_DontAskForPassphrase" >
+    <widget class="QCheckBox" name="askPassPhrase" >
      <property name="text" >
-      <string>Do not ask for the passphrase</string>
+      <string>Ask for the passphrase every time</string>
      </property>
     </widget>
    </item>
@@ -191,21 +191,21 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>kcfg_PrivateKeyId</tabstop>
+  <tabstop>privateKeyId</tabstop>
   <tabstop>selectKey</tabstop>
-  <tabstop>kcfg_EncryptOutgoing</tabstop>
-  <tabstop>kcfg_DontAskForPassphrase</tabstop>
-  <tabstop>kcfg_Never</tabstop>
-  <tabstop>kcfg_Time</tabstop>
-  <tabstop>kcfg_CacheTime</tabstop>
-  <tabstop>kcfg_Never</tabstop>
+  <tabstop>alsoMyKey</tabstop>
+  <tabstop>askPassPhrase</tabstop>
+  <tabstop>never</tabstop>
+  <tabstop>time</tabstop>
+  <tabstop>cacheTime</tabstop>
+  <tabstop>never</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>kcfg_Time</sender>
+   <sender>time</sender>
    <signal>toggled(bool)</signal>
-   <receiver>kcfg_CacheTime</receiver>
+   <receiver>cacheTime</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -213,13 +213,13 @@
      <y>160</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>93</x>
-     <y>140</y>
+     <x>158</x>
+     <y>161</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>kcfg_Time</sender>
+   <sender>time</sender>
    <signal>toggled(bool)</signal>
    <receiver>minutesLabel</receiver>
    <slot>setEnabled(bool)</slot>
@@ -231,22 +231,6 @@
     <hint type="destinationlabel" >
      <x>218</x>
      <y>150</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>kcfg_DontAskForPassphrase</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>kcfg_CacheBehavior</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>134</x>
-     <y>79</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>90</x>
-     <y>97</y>
     </hint>
    </hints>
   </connection>

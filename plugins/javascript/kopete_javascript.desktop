@@ -18,6 +18,7 @@ Name=JavaScript
 Name[sv]=Javascript
 Name[x-test]=xxJavaScriptxx
 Comment=Adds JavaScript bindings
+Comment[de]=Fügt JavaScript-Unterstützung hinzu
 Comment[el]=Προσθήκη συνδέσεων JavaScript
 Comment[sv]=Lägger till Javascript-kopplingar
 Comment[uk]=Додає прив'язування JavaScript

@@ -9,13 +9,13 @@ include_directories( ${KOPETE_INCLUDES} )
 
 ########### next target ###############
 
-set(kopete_private_SRCS 
+set(kopete_private_SRCS
   private/kopeteemoticons.cpp
   private/kopeteutils_private.cpp
   private/kopeteviewmanager.cpp
 )
 
-set(kopete_ui_SRCS 
+set(kopete_ui_SRCS
   ui/accountselector.cpp
   ui/addcontactpage.cpp
   ui/addressbooklinkwidget.cpp
@@ -75,7 +75,7 @@ set(kopete_LIB_SRCS
    kopetemessagehandlerchain.cpp
    kopetemessagehandler.cpp
    kopetemetacontact.cpp
-   kopetemimesourcefactory.cpp
+   kopetefileengine.cpp
    kopetemimetypehandler.cpp
    kopeteonlinestatus.cpp
    kopeteonlinestatusmanager.cpp
@@ -103,7 +103,7 @@ kde4_add_ui_files(kopete_LIB_SRCS
  ui/addressbooklinkwidget_base.ui
  ui/addressbookselectorwidget_base.ui
  ui/avatarselectorwidget.ui
- ui/contactaddednotifywidget.ui 
+ ui/contactaddednotifywidget.ui
  ui/fileconfirmbase.ui
  ui/kopeteawaydialogbase.ui
  ui/kopetepasswordwidgetbase.ui
