@@ -49,7 +49,6 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 	}
 
 	QList<Kopete::Contact*> mb=parent->members();
-	Kopete::MetaContact *first=mb.first()->metaContact();
 
 	bool wantCrypto=true, keysAvailable=true;
 
