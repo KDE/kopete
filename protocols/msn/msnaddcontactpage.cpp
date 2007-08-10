@@ -31,6 +31,7 @@
 MSNAddContactPage::MSNAddContactPage(bool connected, QWidget *parent)
 				  : AddContactPage(parent)
 {
+	Q_UNUSED(connected);
 	(new QVBoxLayout(this))->setAutoAdd(true);
 /*	if ( connected )
 	{*/

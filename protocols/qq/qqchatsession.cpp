@@ -182,6 +182,7 @@ void QQChatSession::slotCreationFailed( const int failedId, const int statusCode
 
 void QQChatSession::slotSendTypingNotification( bool typing )
 {
+	Q_UNUSED(typing);
 	// only send a notification if we've got a conference going and we are not Appear Offline
 	// TODO: implement me later.
 }
@@ -276,7 +277,7 @@ void QQChatSession::slotActionInviteAboutToShow()
 	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
 	//  items inserted with insert items are automatically deleted when we call clear
 
-	m_inviteActions.setAutoDelete(true);
+	qDeleteAll(m_inviteActions);
 	m_inviteActions.clear();
 
 	m_actionInvite->popupMenu()->clear();

@@ -104,7 +104,7 @@ int VideoDevicePool::open()
 /*!
     \fn VideoDevicePool::open(int device)
  */
-int VideoDevicePool::open(unsigned int device)
+int VideoDevicePool::open(int device)
 {
     /// @todo implement me
 	kDebug() <<  k_funcinfo << "open(" << device << ") called." << endl;
@@ -447,7 +447,7 @@ int VideoDevicePool::getFrame()
 	else
 	{
 		kDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() fallback for no device." << endl;
-		for(unsigned int loop=0; loop < m_buffer.data.size(); loop+=3)
+		for(int loop=0; loop < m_buffer.data.size(); loop+=3)
 		{
 			m_buffer.data[loop]   = 255;
 			m_buffer.data[loop+1] = 0;
@@ -550,7 +550,7 @@ int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 	combobox->clear();
 	if(m_videodevice.size())
 	{
-		for (unsigned int loop=0; loop < m_videodevice.size(); loop++)
+		for (int loop=0; loop < m_videodevice.size(); loop++)
 		{
 			combobox->addItem(m_videodevice[loop].m_name);
 			kDebug() <<  k_funcinfo << "DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].m_name << endl;
@@ -573,7 +573,7 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 	{
 		if(m_videodevice[currentDevice()].inputs()>0)
 		{
-			for (unsigned int loop=0; loop < m_videodevice[currentDevice()].inputs(); loop++)
+			for (int loop=0; loop < m_videodevice[currentDevice()].inputs(); loop++)
 			{
 				combobox->addItem(m_videodevice[currentDevice()].m_input[loop].name);
 				kDebug() <<  k_funcinfo << "InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")" << endl;
@@ -763,7 +763,7 @@ size_t VideoDevicePool::size()
 /*!
     \fn Kopete::AV::VideoDevicePool::currentDevice()
  */
-unsigned int VideoDevicePool::currentDevice()
+int VideoDevicePool::currentDevice()
 {
     /// @todo implement me
 	return m_current_device;
@@ -820,7 +820,7 @@ void VideoDevicePool::loadConfig()
 			(*vditerator).setWorkaroundBrokenDriver(workaroundbrokendriver);
 			(*vditerator).selectInput(currentinput);
 
-			for (size_t input = 0 ; input < (*vditerator).m_input.size(); input++)
+			for (int input = 0 ; input < (*vditerator).m_input.size(); input++)
 			{
 				const float brightness = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Brightness").arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
 				const float contrast   = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Contrast")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
@@ -891,7 +891,7 @@ void VideoDevicePool::saveConfig()
 			config.writeEntry( disablemmap,            (*vditerator).getDisableMMap());
 			config.writeEntry( workaroundbrokendriver, (*vditerator).getWorkaroundBrokenDriver());
 
-			for (size_t input = 0 ; input < (*vditerator).m_input.size(); input++)
+			for (int input = 0 ; input < (*vditerator).m_input.size(); input++)
 			{
 				kDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Brightness: " << (*vditerator).m_input[input].getBrightness() << endl;
 				kDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Contrast  : " << (*vditerator).m_input[input].getContrast()   << endl;

@@ -1,5 +1,5 @@
-#ifndef LIBKOPETE_UI/AVATARSELECTORWIDGET.CPP
-#define LIBKOPETE_UI/AVATARSELECTORWIDGET.CPP
+#ifndef LIBKOPETE_UI_AVATARSELECTORWIDGET_CPP
+#define LIBKOPETE_UI_AVATARSELECTORWIDGET_CPP
 /*
     avatarselectorwidget.cpp - Widget to manage and select user avatar
 
@@ -316,4 +316,4 @@ void AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry e
 } // Namespace Kopete
 
 #include "avatarselectorwidget.moc"
-#endif // LIBKOPETE_UI/AVATARSELECTORWIDGET.CPP
+#endif // LIBKOPETE_UI/AVATARSELECTORWIDGET_CPP

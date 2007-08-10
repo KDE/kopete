@@ -23,7 +23,6 @@
 
 #include <q3cstring.h>
 #include <qobject.h>
-#include <q3ptrlist.h>
 
 #include "gwfield.h"
 

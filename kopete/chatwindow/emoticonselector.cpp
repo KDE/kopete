@@ -24,126 +24,132 @@
 
 #include <math.h>
 
-#include <QMovie>
-#include <qlayout.h>
-#include <qobject.h>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QMouseEvent>
-#include <QLabel>
-#include <QGridLayout>
-#include <qobject.h>
-//Added by qt3to4:
+#include <QHBoxLayout>
+#include <QObject>
 #include <QHideEvent>
 #include <QShowEvent>
 
 #include <kdebug.h>
 
-EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent)
-	: QLabel(parent)
+EmoticonItem::EmoticonItem(const QString &emoticonText, const QString &pixmapPath, QListWidget *parent)
+	: QListWidgetItem(parent)
 {
-	QMovie qm(pixmapPath);
-	mText = emoticonText;
-	setMovie( &qm );
-	setAlignment(Qt::AlignCenter);
-//	this->setToolTip(emoticonText);
-	// Somehow QLabel doesn't tell a reasonable size when you use setMovie
-	// although it does it correctly for setPixmap. Therefore here is a little workaround
-	// to tell our minimum size.
-	QPixmap p(pixmapPath);
+	m_text = emoticonText;
+	m_pixmapPath = pixmapPath;
+	QPixmap p(m_pixmapPath);
     //
     // Some of the custom icons are rather large
     // so lets limit them to a maximum size for this display panel
     //
     if (p.width() > 32 || p.height() > 32)
-        p = QPixmap(32, 32);
-	setMinimumSize(p.size());
+		p = p.scaled(QSize(32,32), Qt::KeepAspectRatio);
+
+	setIcon(p);
 }
 
-void EmoticonLabel::mouseReleaseEvent(QMouseEvent*)
+QString EmoticonItem::text() const
 {
-	emit clicked(mText);
+	return m_text;
+}
+
+QString EmoticonItem::pixmapPath() const
+{
+	return m_pixmapPath;
 }
 
 EmoticonSelector::EmoticonSelector(QWidget *parent)
 	: QWidget(parent)
 {
-//	kDebug(14000) << k_funcinfo << "called." << endl;
-	lay = 0L;
+	QHBoxLayout *lay = new QHBoxLayout(this);
+	lay->setSpacing( 0 );
+	lay->setContentsMargins( 0, 0, 0, 0 );
+	m_emoticonList = new QListWidget(this);
+	lay->addWidget(m_emoticonList);
+	m_emoticonList->setViewMode(QListView::IconMode);
+	m_emoticonList->setSelectionMode(QAbstractItemView::SingleSelection);
+	m_emoticonList->setMouseTracking(true);
+	m_emoticonList->setDragEnabled(false);
+
+	QLabel *m_currentEmoticon  = new QLabel( this );
+	m_currentEmoticon->setFrameShape( QFrame::Box );
+	m_currentEmoticon->setMinimumSize(QSize(128,128));
+	m_currentEmoticon->setAlignment( Qt::AlignCenter );
+	lay->addWidget(m_currentEmoticon);
+
+	m_currentMovie = new QMovie(this);
+	m_currentEmoticon->setMovie(m_currentMovie);
+
+	connect(m_emoticonList, SIGNAL(itemEntered(QListWidgetItem*)),
+			this, SLOT(mouseOverItem(QListWidgetItem*)));
+	connect(m_emoticonList, SIGNAL(itemSelectionChanged()),
+			this, SLOT(currentChanged()));
+	connect(m_emoticonList, SIGNAL(itemClicked(QListWidgetItem*)),
+			this, SLOT(emoticonClicked(QListWidgetItem*)));
+
+	connect(m_emoticonList, SIGNAL(itemActivated(QListWidgetItem*)),
+			this, SLOT(emoticonClicked(QListWidgetItem*)));
+
 }
 
 void EmoticonSelector::prepareList(void)
 {
 //	kDebug(14000) << k_funcinfo << "called." << endl;
-	int row = 0;
-	int col = 0;
 	QMap<QString, QStringList> list = Kopete::Emoticons::self()->emoticonAndPicList();
-	int emoticonsPerRow = static_cast<int>(sqrt((double)list.count()));
-//	kDebug(14000) << "emoticonsPerRow=" << emoticonsPerRow << endl;
-	if ( lay )
-	{
-// FIXME kde4, no clue what to do with that
-/*		QObjectList list = queryList( "EmoticonLabel" );
-//		kDebug(14000) << k_funcinfo << "There are " << list->count() << " EmoticonLabels to delete." << endl;
-		list->setAutoDelete(true);
-		list.clear();
-		delete list;
-		delete lay;
-*/	}
 
-	lay = new QGridLayout(this);
-	lay->setObjectName("emoticonLayout");
-	lay->setSpacing(4);
-	lay->setMargin(4);
-	movieList.clear();
 	for (QMap<QString, QStringList>::const_iterator it = list.constBegin(); it != list.constEnd(); ++it )
-	{
-		QWidget *w = new EmoticonLabel(it.key(), it.value().first(), this);
-		movieList.push_back( ((QLabel*)w)->movie() );
-		connect(w, SIGNAL(clicked(const QString&)), this, SLOT(emoticonClicked(const QString&)));
-//		kDebug(14000) << "adding Emoticon to row=" << row << ", col=" << col << "." << endl;
-		lay->addWidget(w, row, col);
-		if ( col == emoticonsPerRow )
-		{
-			col = 0;
-			row++;
-		}
-		else
-			col++;
-	}
-	resize(minimumSizeHint());
+		(void) new EmoticonItem(it.value().first(), it.key(), m_emoticonList);
+
+	m_emoticonList->setIconSize(QSize(32,32));
 }
 
-void EmoticonSelector::emoticonClicked(const QString &str)
+void EmoticonSelector::emoticonClicked(QListWidgetItem *i)
 {
-//	kDebug(14000) << "selected emoticon '" << str << "'" << endl;
+	EmoticonItem *item = dynamic_cast<EmoticonItem*>(i);
+	if (!item)
+		return;
+
 	// KDE4/Qt TODO: use qobject_cast instead.
-	emit ItemSelected ( str );
+	emit itemSelected ( item->text() );
 	if ( isVisible() && parentWidget() &&
-		parentWidget()->inherits("QPopupMenu") )
+		parentWidget()->inherits("QMenu") )
 	{
 		parentWidget()->close();
 	}
 }
 
+void EmoticonSelector::mouseOverItem(QListWidgetItem *item)
+{
+	item->setSelected(true);	
+	if (!m_emoticonList->hasFocus())
+		m_emoticonList->setFocus();
+}
+
+void EmoticonSelector::currentChanged()
+{
+
+	if (!m_emoticonList->selectedItems().count())
+		return;
+
+	EmoticonItem *item = dynamic_cast<EmoticonItem*>(m_emoticonList->selectedItems().first());
+	if (!item)
+		return;
+
+	// FIXME: the label is not correctly cleared when changing from a bigger movie to a smaller one
+	m_currentMovie->stop();
+	m_currentMovie->setFileName(item->pixmapPath());
+	m_currentMovie->start();
+}
+
 void EmoticonSelector::hideEvent( QHideEvent* )
 {
-	kDebug( 14000 ) << k_funcinfo << endl;
-	MovieList::iterator it;
-	for( it = movieList.begin(); it != movieList.end(); ++it )
-	{
-		(*it)->setPaused(true);
-	}
+	m_currentMovie->stop();
 }
 
 void EmoticonSelector::showEvent( QShowEvent* )
 {
-	kDebug( 14000 ) << k_funcinfo << endl;
-	MovieList::iterator it;
-	for( it = movieList.begin(); it != movieList.end(); ++it )
-	{
-		(*it)->setPaused(false);
-	}
+	m_currentMovie->start();
 }
 
 #include "emoticonselector.moc"

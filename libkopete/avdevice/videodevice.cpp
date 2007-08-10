@@ -495,7 +495,7 @@ int VideoDevice::initDevice()
 	return EXIT_SUCCESS;
 }
 
-unsigned int VideoDevice::inputs()
+int VideoDevice::inputs()
 {
 	return m_input.size();
 }
@@ -1023,7 +1023,7 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 				case PIXELFORMAT_BGR24	:
 					{
 						unsigned char temp;
-						for(unsigned int loop=0;loop < m_currentbuffer.data.size();loop+=3)
+						for(int loop=0;loop < m_currentbuffer.data.size();loop+=3)
 						{
 							temp = m_currentbuffer.data[loop];
 							m_currentbuffer.data[loop] = m_currentbuffer.data[loop+2];
@@ -1035,7 +1035,7 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 				case PIXELFORMAT_BGR32	:
 					{
 						unsigned char temp;
-						for(unsigned int loop=0;loop < m_currentbuffer.data.size();loop+=4)
+						for(int loop=0;loop < m_currentbuffer.data.size();loop+=4)
 						{
 							temp = m_currentbuffer.data[loop];
 							m_currentbuffer.data[loop] = m_currentbuffer.data[loop+2];
@@ -1602,7 +1602,8 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 				case VIDEO_PALETTE_RGB32	: return PIXELFORMAT_RGB32;	break;
 				case VIDEO_PALETTE_YUYV		: return PIXELFORMAT_YUYV;	break;
 				case VIDEO_PALETTE_UYVY		: return PIXELFORMAT_UYVY;	break;
-				case VIDEO_PALETTE_YUV420	: return PIXELFORMAT_YUV420P;	break;
+				case VIDEO_PALETTE_YUV420	:
+				case VIDEO_PALETTE_YUV420P	: return PIXELFORMAT_YUV420P;	break;
 				case VIDEO_PALETTE_YUV422P	: return PIXELFORMAT_YUV422P;	break;
 			}
 			break;
@@ -1756,7 +1757,8 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 				case VIDEO_PALETTE_RGB32	: returnvalue = pixelFormatName(PIXELFORMAT_RGB32);	break;
 				case VIDEO_PALETTE_YUYV		: returnvalue = pixelFormatName(PIXELFORMAT_YUYV);	break;
 				case VIDEO_PALETTE_UYVY		: returnvalue = pixelFormatName(PIXELFORMAT_UYVY);	break;
-				case VIDEO_PALETTE_YUV420	: returnvalue = pixelFormatName(PIXELFORMAT_YUV420P);	break;
+				case VIDEO_PALETTE_YUV420	:
+				case VIDEO_PALETTE_YUV420P	: returnvalue = pixelFormatName(PIXELFORMAT_YUV420P);	break;
 				case VIDEO_PALETTE_YUV422P	: returnvalue = pixelFormatName(PIXELFORMAT_YUV422P);	break;
 			}
 			break;

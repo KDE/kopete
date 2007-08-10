@@ -552,6 +552,7 @@ namespace XMPP
 		Q_OBJECT
 
 	public:
+		class GroupChat;
 		Client(QObject *parent=0);
 		~Client();
 

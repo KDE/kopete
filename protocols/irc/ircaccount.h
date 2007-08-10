@@ -125,7 +125,7 @@ public:
 
 	QMap< QString, QString > customCtcp() const;
 
-	void setCustomCtcpReplies(const QMap< QString, QString > &replys);
+	void setCustomCtcpReplies( const QMap< QString, QString > &replies );
 
 	const QMap<QString, QString> customCtcpReplies() const;
 

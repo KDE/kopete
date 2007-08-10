@@ -361,6 +361,7 @@ void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kope
 
 void AIMAccount::setStatusMessage( const Kopete::StatusMessage& statusMessage )
 {
+	Q_UNUSED(statusMessage);
 }
 
 void AIMAccount::setUserProfile(const QString &profile)
@@ -486,6 +487,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 			}
 			// Create, or get, a chat session with the contact
 			Kopete::ChatSession* chatSession = aimSender->manager( Kopete::Contact::CanCreate );
+			Q_UNUSED(chatSession);
 
 			// get the away message we have set
 			QString msg = engine()->statusMessage();

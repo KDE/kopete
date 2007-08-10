@@ -187,8 +187,10 @@ void Client::close()
 	if( d->tasksInitialized)
 		deleteTasks();	
 	d->loginTask->reset();
-	if( d->stream )
+	if( d->stream ) {
+		QObject::disconnect( d->stream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
 		d->stream->deleteLater();
+	}
 	d->stream = 0L;
 	if( m_connector )
 		m_connector->deleteLater();

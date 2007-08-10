@@ -21,7 +21,6 @@
 #include <qmovie.h>
 #include <qpixmap.h>
 #include <q3ptrdict.h>
-#include <q3ptrlist.h>
 #include <qstringlist.h>
 
 #include "kopeteprotocol.h"

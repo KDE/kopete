@@ -1180,6 +1180,7 @@ int Item::width( const QFontMetrics &, const Q3ListView *lv, int c ) const
 
 void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align )
 {
+	Q_UNUSED(align);
 	QPixmap back( width, height() );
 	QPainter paint( &back );
 	//K3ListViewItem::paintCell( &paint, cg, column, width, align );
@@ -1206,7 +1207,6 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		// removed text truncating code from Qt - we do that differently, further on
 
 		int marg = lv->itemMargin();
-		int r = marg;
 		p->fillRect( 0, 0, width, height(), _cg.background() );
 	//	const QPixmap * icon = pixmap( column );
 #ifdef __GNUC__

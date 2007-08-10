@@ -60,6 +60,7 @@
 #include "kopeteprotocol.h"
 #include "addressbooklinkwidget.h"
 #include "addressbookselectordialog.h"
+#include "avatardialog.h"
 
 #include "customnotificationprops.h"
 
@@ -204,13 +205,13 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	connect( ui_mainWidget->radioPhotoKABC, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
 	connect( ui_mainWidget->radioPhotoContact, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
 	connect( ui_mainWidget->radioPhotoCustom, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
-	connect( ui_mainWidget->cmbPhotoUrl, SIGNAL(urlSelected(const KUrl&)), SLOT(slotEnableAndDisableWidgets()));
 	connect( ui_mainWidget->cmbAccountPhoto, SIGNAL(activated ( int )), SLOT(slotEnableAndDisableWidgets()));
 	
 
 	ui_mainWidget->btnClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar-erase" : "clear-left" ) );
 	connect( ui_mainWidget->btnClearPhoto, SIGNAL( clicked() ), this, SLOT( slotClearPhotoClicked() ) );
 	connect( ui_mainWidget->widAddresseeLink, SIGNAL( addresseeChanged( const KABC::Addressee & ) ), SLOT( slotAddresseeChanged( const KABC::Addressee & ) ) );
+	connect( ui_mainWidget->btnChoosePhoto, SIGNAL(clicked()), this, SLOT(slotSelectPhoto()));
 	ui_mainWidget->chkUseCustomIcons->setChecked( item->metaContact()->useCustomIcon() );
 
 	QString offlineName = item->metaContact()->icon( Kopete::ContactListElement::Offline );
@@ -334,7 +335,6 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 			m_withPhotoContacts.insert(ui_mainWidget->cmbAccountPhoto->count() - 1  , citem );
 		}
 	}
-	ui_mainWidget->cmbPhotoUrl->setUrl(item->metaContact()->customPhoto().url());
 
 	Kopete::MetaContact::PropertySource photoSource = item->metaContact()->photoSource();
 
@@ -343,6 +343,16 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 	ui_mainWidget->radioPhotoCustom->setChecked(photoSource == Kopete::MetaContact::SourceCustom);
 
 	ui_mainWidget->chkSyncPhoto->setChecked(item->metaContact()->isPhotoSyncedWithKABC());
+}
+
+void KopeteMetaLVIProps::slotSelectPhoto()
+{
+	QString path = Kopete::UI::AvatarDialog::getAvatar(this, m_photoPath);
+	if (path.isNull())
+		return;
+
+	m_photoPath = path;
+	slotEnableAndDisableWidgets();
 }
 
 void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
@@ -372,7 +382,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 	ui_mainWidget->edtDisplayName->setEnabled(selectedNameSource() == Kopete::MetaContact::SourceCustom);
 
 	ui_mainWidget->cmbAccountPhoto->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceContact);
-	ui_mainWidget->cmbPhotoUrl->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
+	ui_mainWidget->btnChoosePhoto->setEnabled(selectedPhotoSource() == Kopete::MetaContact::SourceCustom);
 	
 	if ( m_withPhotoContacts.isEmpty() )
 	{
@@ -391,7 +401,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 		photo = Kopete::photoFromContact(selectedPhotoSourceContact());
 		break;
 		case Kopete::MetaContact::SourceCustom:
-		photo = QImage(ui_mainWidget->cmbPhotoUrl->url().url());
+		photo = QImage(m_photoPath);
 		break;
 	}
 	if( !photo.isNull() )
@@ -454,8 +464,8 @@ void KopeteMetaLVIProps::slotOkClicked()
 	// set photo source
 	item->metaContact()->setPhotoSource(selectedPhotoSource());
 	item->metaContact()->setPhotoSourceContact( selectedPhotoSourceContact() );
-	if ( !ui_mainWidget->cmbPhotoUrl->url().isEmpty())
-		item->metaContact()->setPhoto(KUrl(ui_mainWidget->cmbPhotoUrl->url()));
+	if ( !m_photoPath.isEmpty())
+		item->metaContact()->setPhoto(KUrl(m_photoPath));
 	item->metaContact()->setPhotoSyncedWithKABC( ui_mainWidget->chkSyncPhoto->isChecked() );
 	
 	item->metaContact()->setUseCustomIcon(
@@ -583,7 +593,7 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 
 void KopeteMetaLVIProps::slotClearPhotoClicked()
 {
-	ui_mainWidget->cmbPhotoUrl->setUrl( KUrl() );
+	m_photoPath = QString();
 	item->metaContact()->setPhoto( KUrl() );
 
 	slotEnableAndDisableWidgets();

@@ -176,7 +176,7 @@ public:
 	int currentMode;
 	int currentIconMode;
 
-	Q3PtrList<Kopete::MessageEvent> events;
+	QList<Kopete::MessageEvent*> events;
 };
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, KopeteGroupViewItem *parent )
@@ -520,7 +520,7 @@ void KopeteMetaContactLVI::slotUpdateMetaContact()
 
 void KopeteMetaContactLVI::execute() const
 {
-	if ( d->events.first() )
+	if ( d->events.count() )
 		d->events.first()->apply();
 	else
 		m_metaContact->execute();
@@ -1091,7 +1091,7 @@ void KopeteMetaContactLVI::slotBlink()
 
 void KopeteMetaContactLVI::slotEventDone( Kopete::MessageEvent *event )
 {
-	d->events.remove( event );
+	d->events.removeAt( d->events.indexOf(event) );
 
 	if ( d->events.isEmpty() )
 	{

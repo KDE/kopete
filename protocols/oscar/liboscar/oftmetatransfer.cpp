@@ -294,6 +294,8 @@ void OftMetaTransfer::handelSendSetup( const OFT &oft )
 
 void OftMetaTransfer::handelSendResumeSetup( const OFT &oft )
 {
+	Q_UNUSED(oft);
+
 	if ( m_state != SetupSend )
 		return;
 

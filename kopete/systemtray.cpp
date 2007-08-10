@@ -178,6 +178,7 @@ void KopeteSystemTray::startBlink( const QIcon &icon )
 
 void KopeteSystemTray::startBlink( QMovie *movie )
 {
+	Q_UNUSED(movie);
 #ifdef __GNUC__
 #warning PORT ME
 #endif

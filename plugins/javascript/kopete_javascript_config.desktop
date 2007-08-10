@@ -13,6 +13,7 @@ Name=JavaScript
 Name[sv]=Javascript
 Name[x-test]=xxJavaScriptxx
 Comment=Add JavaScript bindings
+Comment[el]=Προσθήκη συνδέσεων JavaScript
 Comment[sv]=Lägg till Javaskript-kopplingar
 Comment[uk]=Додати прив'язування JavaScript
 Comment[x-test]=xxAdd JavaScript bindingsxx

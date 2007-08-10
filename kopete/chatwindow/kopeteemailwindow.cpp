@@ -88,7 +88,7 @@ public:
 	bool showingMessage;
 	bool sendInProgress;
 	bool visible;
-	uint queuePosition;
+	int queuePosition;
 	KPushButton *btnReplySend;
 	KPushButton *btnReadNext;
 	KPushButton *btnReadPrev;

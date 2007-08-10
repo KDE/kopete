@@ -87,7 +87,7 @@ public:
 	 * read @param lines message from the current position
 	 * from Kopete::Contact @param c in the given @param sens
 	 */
-	QList<Kopete::Message> readMessages(unsigned int lines,
+	QList<Kopete::Message> readMessages(int lines,
 		const Kopete::Contact *c=0, Sens sens=Default,
 		bool reverseOrder=false, bool colorize=true);
 

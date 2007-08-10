@@ -55,7 +55,6 @@
 #include <qdialog.h>
 #include <qtimer.h>
 #include <qtextcodec.h>
-#include <q3ptrlist.h>
 #include <qtextstream.h>
 #include <qhostaddress.h>
 //Added by qt3to4:

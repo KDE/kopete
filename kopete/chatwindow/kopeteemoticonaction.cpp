@@ -38,14 +38,15 @@ class KopeteEmoticonAction::KopeteEmoticonActionPrivate
 public:
 	KopeteEmoticonActionPrivate()
 	{
-		m_delayed = true;
-		m_stickyMenu = true;
 		m_popup = new KMenu(0L);
 		emoticonSelector = new EmoticonSelector( m_popup );
 		emoticonSelector->setObjectName( QLatin1String("KopeteEmoticonActionPrivate::emoticonSelector") );
 //FIXME do it the kde4 way
 //		m_popup->insertItem( static_cast<QObject*>(emoticonSelector) );
 		// TODO: Maybe connect to kopeteprefs and redo list only on config changes
+		QWidgetAction *act = new QWidgetAction(m_popup);
+		act->setDefaultWidget(emoticonSelector);
+		m_popup->addAction(act);
 		connect( m_popup, SIGNAL( aboutToShow() ), emoticonSelector, SLOT( prepareList() ) );
 	}
 
@@ -57,12 +58,10 @@ public:
 
 	KMenu *m_popup;
 	EmoticonSelector *emoticonSelector;
-	bool m_delayed;
-	bool m_stickyMenu;
 };
 
 KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
-  : KAction( i18n( "Add Smiley" ), parent )
+  : KActionMenu( i18n( "Add Smiley" ), parent )
 {
 	d = new KopeteEmoticonActionPrivate;
 
@@ -81,6 +80,7 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
 	}
 
 
+	setMenu( d->m_popup );
 
 	if ( icon.isNull() )
 		setIcon( KIcon("emoticon") );
@@ -88,7 +88,7 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
 		setIcon( KIcon( icon ) );
 
 	setShortcutConfigurable( false );
-	connect( d->emoticonSelector, SIGNAL( ItemSelected( const QString & ) ),
+	connect( d->emoticonSelector, SIGNAL( itemSelected( const QString & ) ),
 		this, SIGNAL( activated( const QString & ) ) );
 }
 
@@ -97,135 +97,6 @@ KopeteEmoticonAction::~KopeteEmoticonAction()
 //	kDebug(14010) << "KopeteEmoticonAction::~KopeteEmoticonAction()" << endl;
 	delete d;
 	d = 0;
-}
-
-void KopeteEmoticonAction::popup( const QPoint& global )
-{
-	popupMenu()->popup( global );
-}
-
-KMenu* KopeteEmoticonAction::popupMenu() const
-{
-	return d->m_popup;
-}
-
-bool KopeteEmoticonAction::delayed() const
-{
-	return d->m_delayed;
-}
-
-void KopeteEmoticonAction::setDelayed(bool _delayed)
-{
-	d->m_delayed = _delayed;
-}
-
-bool KopeteEmoticonAction::stickyMenu() const
-{
-	return d->m_stickyMenu;
-}
-
-void KopeteEmoticonAction::setStickyMenu(bool sticky)
-{
-	d->m_stickyMenu = sticky;
-}
-
-int KopeteEmoticonAction::plug( QWidget* widget, int index )
-{
-#ifdef __GNUC__
-#warning Port to new KAction
-#endif
-#if 0
-	if (kapp && !KAuthorized::authorizeKAction(name()))
-		return -1;
-
-//	kDebug(14010) << "KopeteEmoticonAction::plug( " << widget << ", " << index << " )" << endl;
-
-	// KDE4/Qt TODO: Use qobject_cast instead.
-	if ( widget->inherits("QPopupMenu") )
-	{
-		QMenu* menu = static_cast<QMenu*>( widget );
-		int id;
-		if ( hasIcon() )
-			id = menu->insertItem( iconSet(K3Icon::Small), text(), d->m_popup, -1, index );
-		else
-			id = menu->insertItem( text(), d->m_popup, -1, index );
-
-		if ( !isEnabled() )
-			menu->setItemEnabled( id, false );
-
-		addContainer( menu, id );
-		connect( menu, SIGNAL( destroyed() ), this, SLOT( slotDestroyed() ) );
-
-		if ( m_parentCollection )
-			m_parentCollection->connectHighlight( menu, this );
-
-		return containerCount() - 1;
-	}
-	// KDE4/Qt TODO: Use qobject_cast instead.
-	else if ( widget->inherits( "KToolBar" ) )
-	{
-		KToolBar *bar = static_cast<KToolBar *>( widget );
-
-		int id_ = KAction::getToolButtonID();
-
-		if ( icon().isEmpty() && !iconSet(K3Icon::Small).isNull() )
-		{
-			bar->insertButton(
-				iconSet(K3Icon::Small).pixmap(), id_, SIGNAL(clicked()), this,
-				SLOT(slotActivated()), isEnabled(), plainText(),
-				index );
-		}
-		else
-		{
-			KComponentData instance;
-
-			if ( m_parentCollection )
-			instance = m_parentCollection->componentData();
-			else
-			instance = KGlobal::mainComponent();
-
-			bar->insertButton( icon(), id_, SIGNAL( clicked() ), this,
-									SLOT( slotActivated() ), isEnabled(), plainText(),
-									index, instance );
-		}
-
-		addContainer( bar, id_ );
-//FIXME kde4 doesn't compile, no idea why
-		/*
-		if (!whatsThis().isEmpty())
-			bar->getButton(id_)->setWhatsThis( whatsThis() );
-*/
-		connect( bar, SIGNAL( destroyed() ), this, SLOT( slotDestroyed() ) );
-/*
-		if (delayed())
-			bar->setDelayedPopup(id_, popupMenu(), stickyMenu());
-		else
-			bar->getButton(id_)->setPopup(popupMenu(), stickyMenu());
-*/
-		if ( m_parentCollection )
-			m_parentCollection->connectHighlight(bar, this);
-
-		return containerCount() - 1;
-	}
-	// KDE4/Qt TODO: Use qobject_cast instead.
-	else if ( widget->inherits( "QMenuBar" ) )
-	{
-		QMenuBar *bar = static_cast<QMenuBar *>( widget );
-
-		int id;
-
-		id = bar->insertItem( text(), popupMenu(), -1, index );
-
-		if ( !isEnabled() )
-			bar->setItemEnabled( id, false );
-
-		addContainer( bar, id );
-		connect( bar, SIGNAL( destroyed() ), this, SLOT( slotDestroyed() ) );
-
-		return containerCount() - 1;
-	}
-#endif
-	return -1;
 }
 
 #include "kopeteemoticonaction.moc"

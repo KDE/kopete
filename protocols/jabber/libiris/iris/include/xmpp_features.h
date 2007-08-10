@@ -31,6 +31,7 @@ namespace XMPP
 	class IRIS_EXPORT Features
 	{
 	public:
+		class FeatureName;
 		Features();
 		Features(const QStringList &);
 		Features(const QString &);

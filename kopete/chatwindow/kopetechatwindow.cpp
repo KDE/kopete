@@ -1,6 +1,7 @@
 /*
     kopetechatwindow.cpp - Chat Window
 
+    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2002-2006 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003-2004 by Richard Smith         <kde@metafoo.co.uk>
     Copyright (C) 2002      by James Grant
@@ -29,7 +30,6 @@
 #include <QPixmap>
 #include <QTextStream>
 #include <QCloseEvent>
-#include <Q3PtrList>
 #include <QFrame>
 #include <QLabel>
 #include <QVBoxLayout>
@@ -86,7 +86,7 @@
 typedef QMap<Kopete::Account*,KopeteChatWindow*> AccountMap;
 typedef QMap<Kopete::Group*,KopeteChatWindow*> GroupMap;
 typedef QMap<Kopete::MetaContact*,KopeteChatWindow*> MetaContactMap;
-typedef Q3PtrList<KopeteChatWindow> WindowList;
+typedef QList<KopeteChatWindow*> WindowList;
 
 namespace
 {
@@ -149,12 +149,13 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 				//midstream
 
 				int viewCount = -1;
-				for ( KopeteChatWindow *thisWindow = windows.first(); thisWindow; thisWindow = windows.next() )
+				WindowList::iterator it;
+				for ( it = windows.begin(); it != windows.end(); ++it )
 				{
-					if( thisWindow->chatViewCount() > viewCount )
+					if( (*it)->chatViewCount() > viewCount )
 					{
-						myWindow = thisWindow;
-						viewCount = thisWindow->chatViewCount();
+						myWindow = (*it);
+						viewCount = (*it)->chatViewCount();
 					}
 				}
 			}
@@ -279,7 +280,7 @@ KopeteChatWindow::~KopeteChatWindow()
 			mcMap.remove( mayDeleteIt.key() );
 	}
 
-	windows.remove( this );
+	windows.removeAt( windows.indexOf( this ) );
 	windowListChanged();
 
 //	kDebug( 14010 ) << "Open Windows: " << windows.count() << endl;
@@ -297,7 +298,7 @@ KopeteChatWindow::~KopeteChatWindow()
 void KopeteChatWindow::windowListChanged()
 {
 	// update all windows' Move Tab to Window action
-	for ( Q3PtrListIterator<KopeteChatWindow> it( windows ); *it; ++it )
+	for ( WindowList::iterator it = windows.begin(); it != windows.end(); ++it )
 		(*it)->checkDetachEnable();
 }
 
@@ -378,12 +379,12 @@ void KopeteChatWindow::initActions(void)
 	actionDetachMenu->setDelayed( false );
 
 	connect ( actionDetachMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareDetachMenu()) );
-	connect ( actionDetachMenu->menu(), SIGNAL(activated(int)), this, SLOT(slotDetachChat(int)) );
+	connect ( actionDetachMenu->menu(), SIGNAL(triggered(QAction*)), this, SLOT(slotDetachChat(QAction*)) );
 
 	actionTabPlacementMenu = new KActionMenu( i18n( "&Tab Placement" ), coll );
         coll->addAction( "tabs_placement", actionTabPlacementMenu );
 	connect ( actionTabPlacementMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()) );
-	connect ( actionTabPlacementMenu->menu(), SIGNAL(activated(int)), this, SLOT(slotPlaceTabs(int)) );
+	connect ( actionTabPlacementMenu->menu(), SIGNAL(triggered(QAction*)), this, SLOT(slotPlaceTabs(QAction*)) );
 
 	tabDetach->setShortcut( QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_B) );
 
@@ -630,8 +631,8 @@ void KopeteChatWindow::createTabBar()
 		connect ( m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)) );
 		connect ( m_tabBar, SIGNAL(contextMenu(QWidget *, const QPoint & )), this, SLOT(slotTabContextMenu( QWidget *, const QPoint & )) );
 
-		for( ChatView *view = chatViewList.first(); view; view = chatViewList.next() )
-			addTab( view );
+		for( ChatViewList::iterator it = chatViewList.begin(); it != chatViewList.end(); ++it )
+			addTab( *it );
 
 		if( m_activeView )
 			m_tabBar->setCurrentWidget( m_activeView );
@@ -639,13 +640,17 @@ void KopeteChatWindow::createTabBar()
 			setActiveView( chatViewList.first() );
 
 		int tabPosition = cg.readEntry( QLatin1String("Tab Placement") , 0 );
-		slotPlaceTabs( tabPosition );
+
+		QAction action(this);
+		action.setData(tabPosition);
+		slotPlaceTabs( &action );
 	}
 }
 
 void KopeteChatWindow::slotCloseChat( QWidget *chatView )
 {
 	static_cast<ChatView*>( chatView )->closeView();
+	//FIXME: check if we need to remove from the chatViewList
 }
 
 void KopeteChatWindow::addTab( ChatView *view )
@@ -750,8 +755,7 @@ void KopeteChatWindow::checkDetachEnable()
 
 void KopeteChatWindow::detachChatView( ChatView *view )
 {
-	if( !chatViewList.removeRef( view ) )
-		return;
+	chatViewList.removeAt( chatViewList.indexOf( view ) );
 
 	disconnect( view, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
 	disconnect( view, SIGNAL( updateStatusIcon( ChatView* ) ), this, SLOT( slotUpdateCaptionIcons( ChatView* ) ) );
@@ -786,7 +790,7 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 	checkDetachEnable();
 }
 
-void KopeteChatWindow::slotDetachChat( int newWindowIndex )
+void KopeteChatWindow::slotDetachChat( QAction *action )
 {
 	KopeteChatWindow *newWindow = 0L;
 	ChatView *detachedView;
@@ -803,13 +807,13 @@ void KopeteChatWindow::slotDetachChat( int newWindowIndex )
 // 	createGUI(0L);
 	guiFactory()->removeClient(detachedView->msgManager());
 
-	if( newWindowIndex == -1 )
+	if( !action )
 	{
 		newWindow = new KopeteChatWindow();
 		newWindow->setObjectName( QLatin1String("KopeteChatWindow") );
 	}
 	else
-		newWindow = windows.at( newWindowIndex );
+		newWindow = windows.at( action->data().toInt() );
 
 	newWindow->show();
 	newWindow->raise();
@@ -884,7 +888,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	m_activeView = view;
 
-	if( !chatViewList.contains( view ) )
+	if( chatViewList.indexOf( view ) == -1)
 		attachChatView( view );
 
 	connect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
@@ -967,11 +971,15 @@ void KopeteChatWindow::slotPrepareDetachMenu(void)
 	QMenu *detachMenu = actionDetachMenu->menu();
 	detachMenu->clear();
 
-	for ( unsigned id=0; id < windows.count(); id++ )
+	QAction *action;
+	for ( int id = 0; id < windows.count(); id++ )
 	{
 		KopeteChatWindow *win = windows.at( id );
 		if( win != this )
-			detachMenu->insertItem( win->windowTitle(), id );
+		{
+			action = detachMenu->addAction( win->windowIcon(), win->windowTitle() );
+			action->setData( id );
+		}
 	}
 }
 
@@ -1014,10 +1022,13 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 		connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),
 			p, SLOT(deleteLater() ) );
 
+		p->setIcon( contact->onlineStatus().iconFor( contact ) );
 		if( contact->metaContact() )
-			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->metaContact()->displayName(), p );
+			p->setTitle( contact->metaContact()->displayName() );
 		else
-			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->contactId(), p );
+			p->setTitle( contact->contactId() );
+
+		contactsMenu->addMenu( p );
 
 		//FIXME: This number should be a config option
 		if( ++contactCount == 15 && contact != m_them.last() )
@@ -1037,12 +1048,17 @@ void KopeteChatWindow::slotPreparePlacementMenu()
 	QMenu *placementMenu = actionTabPlacementMenu->menu();
 	placementMenu->clear();
 
-	placementMenu->insertItem( i18n("Top"), 0 );
-	placementMenu->insertItem( i18n("Bottom"), 1 );
+	QAction *action;
+	action = placementMenu->addAction( i18n("Top") );
+	action->setData( 0 );
+
+	action = placementMenu->addAction( i18n("Bottom") );
+	action->setData( 1 );
 }
 
-void KopeteChatWindow::slotPlaceTabs( int placement )
+void KopeteChatWindow::slotPlaceTabs( QAction *action )
 {
+	int placement = action->data().toInt();
 	if( m_tabBar )
 	{
 
@@ -1149,11 +1165,10 @@ bool KopeteChatWindow::queryClose()
 //	for( QPtrListIterator<ChatView> it( chatViewList ); it; ++it)
 //		kDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")" << endl;
 
-	for( Q3PtrListIterator<ChatView> it( chatViewList ); it; )
+	while (!chatViewList.isEmpty())
 	{
-		ChatView *view = *it;
-		// move out of the way before view is removed
-		++it;
+
+		ChatView *view = chatViewList.takeFirst();
 
 		// FIXME: This should only check if it *can* close
 		// and not start closing if the close can be aborted halfway, it would
@@ -1209,6 +1224,8 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 
 void KopeteChatWindow::updateChatState( ChatView* cv, int newState )
 {
+	Q_UNUSED(cv);
+
 	if ( m_tabBar )
 	{
 		switch( newState )

@@ -29,6 +29,7 @@
 
 #include <kopetegroup.h>
 #include <kopetecontactlist.h>
+#include <kopeteavatarmanager.h>
 
 #include "jabberbasecontact.h"
 
@@ -623,8 +624,6 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	removeProperty( protocol()->propPhoto );
 
 	QImage contactPhoto;
-	QString fullJid =  mRosterItem.jid().full();
-	QString finalPhotoPath = KStandardDirs::locateLocal("appdata", "jabberphotos/" + fullJid.replace(QRegExp("[./~]"),"-")  +".png");
 	
 	// photo() is a QByteArray
 	if ( !vCard.photo().isEmpty() )
@@ -646,6 +645,7 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 			return;
 		}
 
+
 		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact photo is a URI." << endl;
 
 		contactPhoto = QImage( tempPhotoPath );
@@ -653,11 +653,19 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		KIO::NetAccess::removeTempFile(  tempPhotoPath );
 	}
 
+	// add the entry using the avatar manager
+	Kopete::AvatarManager::AvatarEntry entry;
+	entry.name = contactId();
+	entry.image = contactPhoto;
+	entry.category = Kopete::AvatarManager::Contact;
+	entry.contact = this;	
+	entry = Kopete::AvatarManager::self()->add(entry);
+
 	// Save the image to the disk, then set the property.
-	if( !contactPhoto.isNull() && contactPhoto.save(finalPhotoPath, "PNG") )
+	if(!entry.path.isNull())
 	{
-		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting photo for contact: " << fullJid << endl;
-		setProperty( protocol()->propPhoto, finalPhotoPath );
+		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting photo for contact: " << contactId() << endl;
+		setProperty( protocol()->propPhoto, entry.path );
 	}
 
 }

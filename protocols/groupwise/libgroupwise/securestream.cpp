@@ -29,8 +29,7 @@
 #include<qpointer.h>
 #include<q3valuelist.h>
 #include<qtimer.h>
-//Added by qt3to4:
-#include <Q3PtrList>
+#include <QList>
 
 #include"securestream.h"
 
@@ -257,11 +256,13 @@ void SecureLayer::tlsHandler_readyReadOutgoing(const QByteArray &a, int plainByt
 }
 #endif
 
+typedef QList<SecureLayer*> SecureLayerList;
+
 class SecureStream::Private
 {
 public:
 	ByteStream *bs;
-	Q3PtrList<SecureLayer> layers;
+	SecureLayerList layers;
 	int pending;
 	int errorCode;
 	bool active;
@@ -269,11 +270,11 @@ public:
 
 	bool haveTLS() const
 	{
-		Q3PtrListIterator<SecureLayer> it(layers);
-		for(SecureLayer *s; (s = it.current()); ++it) {
-			if(s->type == SecureLayer::TLS
+		SecureLayerList::iterator it;
+		for(it = layers.begin(); it != layers.end(); ++it) {
+			if((*it)->type == SecureLayer::TLS
 #ifdef USE_TLSHANDLER
-			|| s->type == SecureLayer::TLSH
+			|| (*it)->type == SecureLayer::TLSH
 #endif
 			) {
 				return true;
@@ -284,9 +285,9 @@ public:
 
 	bool haveSASL() const
 	{
-		Q3PtrListIterator<SecureLayer> it(layers);
-		for(SecureLayer *s; (s = it.current()); ++it) {
-			if(s->type == SecureLayer::SASL)
+		SecureLayerList::iterator it;
+		for(it = layers.begin(); it != layers.end(); ++it) {
+			if((*it)->type == SecureLayer::SASL)
 				return true;
 		}
 		return false;
@@ -302,7 +303,6 @@ SecureStream::SecureStream(ByteStream *s)
 	connect(d->bs, SIGNAL(readyRead()), SLOT(bs_readyRead()));
 	connect(d->bs, SIGNAL(bytesWritten(int)), SLOT(bs_bytesWritten(int)));
 
-	d->layers.setAutoDelete(true);
 	d->pending = 0;
 	d->active = true;
 	d->topInProgress = false;
@@ -325,9 +325,10 @@ void SecureStream::linkLayer(QObject *s)
 int SecureStream::calcPrebytes() const
 {
 	int x = 0;
-	Q3PtrListIterator<SecureLayer> it(d->layers);
-	for(SecureLayer *s; (s = it.current()); ++it)
-		x += s->prebytes;
+
+	SecureLayerList::iterator it;
+	for(it = layers.begin(); it != layers.end(); ++it) {
+		x += (*it)->prebytes;
 	return (d->pending - x);
 }
 
@@ -393,8 +394,8 @@ void SecureStream::startTLSClient(TLSHandler *t, const QString &server, const QB
 
 void SecureStream::closeTLS()
 {
-	SecureLayer *s = d->layers.getLast();
-	if(s) {
+	if (!d->layers.isEmpty()) {
+		SecureLayer *s = d->layers.last();
 		if(s->type == SecureLayer::TLS)
 			s->p.tls->close();
 	}
@@ -418,9 +419,8 @@ void SecureStream::write(const QByteArray &a)
 	d->pending += a.size();
 
 	// send to the last layer
-	SecureLayer *s = d->layers.getLast();
-	if(s)
-		s->write(a);
+	if (!d->layers.isEmpty())
+		d->layers.last()->write(a);
 	else
 		writeRawData(a);
 }
@@ -435,18 +435,17 @@ void SecureStream::bs_readyRead()
 	QByteArray a = d->bs->read();
 
 	// send to the first layer
-	SecureLayer *s = d->layers.getFirst();
-	if(s)
-		s->writeIncoming(a);
+	if (!d->layers.isEmpty())
+		d->layers.first()->writeIncoming(a);
 	else
 		incomingData(a);
 }
 
 void SecureStream::bs_bytesWritten(int bytes)
 {
-	Q3PtrListIterator<SecureLayer> it(d->layers);
-	for(SecureLayer *s; (s = it.current()); ++it)
-		bytes = s->finished(bytes);
+	SecureLayerList::iterator it;
+	for(it = d->layers.begin(); it != d->layers.end(); ++it)
+		bytes = (*it)->finished(bytes);
 
 	if(bytes > 0) {
 		d->pending -= bytes;
@@ -463,6 +462,7 @@ void SecureStream::layer_tlsHandshaken()
 void SecureStream::layer_tlsClosed(const QByteArray &)
 {
 	d->active = false;
+	qDeleteAll(d->layers);
 	d->layers.clear();
 	tlsClosed();
 }
@@ -470,15 +470,20 @@ void SecureStream::layer_tlsClosed(const QByteArray &)
 void SecureStream::layer_readyRead(const QByteArray &a)
 {
 	SecureLayer *s = (SecureLayer *)sender();
-	Q3PtrListIterator<SecureLayer> it(d->layers);
-	while(it.current() != s)
+	SecureLayerList::iterator it = d->layers.begin();
+	while(*it != s && it != d->layers.end())
 		++it;
 
 	// pass upwards
 	++it;
-	s = it.current();
-	if(s)
-		s->writeIncoming(a);
+
+	if (it != d->layers.end()) {
+		s = *it;
+		if(s)
+			s->writeIncoming(a);
+		else
+			incomingData(a);
+	}
 	else
 		incomingData(a);
 }
@@ -486,13 +491,13 @@ void SecureStream::layer_readyRead(const QByteArray &a)
 void SecureStream::layer_needWrite(const QByteArray &a)
 {
 	SecureLayer *s = (SecureLayer *)sender();
-	Q3PtrListIterator<SecureLayer> it(d->layers);
-	while(it.current() != s)
+	SecureLayerList::iterator it = d->layers.begin();
+	while(*it != s && it != d->layers.end())
 		++it;
 
 	// pass downwards
 	--it;
-	s = it.current();
+	s = *it;
 	if(s)
 		s->write(a);
 	else
@@ -505,6 +510,7 @@ void SecureStream::layer_error(int x)
 	int type = s->type;
 	d->errorCode = x;
 	d->active = false;
+	qDeleteAll(d->layers);
 	d->layers.clear();
 	if(type == SecureLayer::TLS)
 		error(ErrTLS);
@@ -519,9 +525,8 @@ void SecureStream::layer_error(int x)
 void SecureStream::insertData(const QByteArray &a)
 {
 	if(!a.isEmpty()) {
-		SecureLayer *s = d->layers.getLast();
-		if(s)
-			s->writeIncoming(a);
+		if (!d->layers.isEmpty())
+			d->layers.last()->writeIncoming(a);
 		else
 			incomingData(a);
 	}

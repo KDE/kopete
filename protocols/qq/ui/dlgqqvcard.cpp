@@ -361,6 +361,7 @@ void dlgQQVCard::slotClearPhoto()
 
 void dlgQQVCard::slotOpenURL(const QString &url)
 {
+	Q_UNUSED(url);
 /*
 	if ( !url.isEmpty () || (url == QString::fromLatin1("mailto:") ) )
 		new KRun( KUrl( url ), this );

@@ -26,6 +26,7 @@
 #include "kopeteuiglobal.h"
 #include "kopeteview.h"
 #include "kopetetransfermanager.h"
+#include "kopeteavatarmanager.h"
 
 // Local Includes
 #include "yahoocontact.h"
@@ -556,17 +557,24 @@ void YahooContact::setDisplayPicture(KTemporaryFile *f, int checksum)
 	if( !f )
 		return;
 	// stolen from msncontact.cpp ;)
-	QString newlocation=KStandardDirs::locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
 
-	QString fileName = f->fileName();
-	f->setAutoRemove(false);
+	Kopete::AvatarManager::AvatarEntry entry;
+	entry.name = contactId();
+	entry.category = Kopete::AvatarManager::Contact;
+	entry.contact = this;
+	entry.image = QImage(f->fileName());
+	entry = Kopete::AvatarManager::self()->add(entry);
+
+	if (!entry.path.isNull())
+	{
+		setProperty( Kopete::Global::Properties::self()->photo(), QString() );
+		setProperty( Kopete::Global::Properties::self()->photo() , entry.path );
+		emit displayPictureChanged();
+	}
+
+	f->setAutoRemove(true);
 	delete f;
-
-	KIO::Job *j=KIO::file_move( KUrl( fileName ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
-
-	//let the time to KIO to copy the file
-	connect(j, SIGNAL(result(KJob *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
 }
 
 
@@ -587,15 +595,6 @@ const YABEntry *YahooContact::yabEntry()
 	if( !m_YABEntry )
 		readYABEntry();
 	return m_YABEntry;
-}
-
-void YahooContact::slotEmitDisplayPictureChanged()
-{
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	QString newlocation=KStandardDirs::locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
-	setProperty( Kopete::Global::Properties::self()->photo(), QString() );
-	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
-	emit displayPictureChanged();
 }
 
 void YahooContact::inviteConference()

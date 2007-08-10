@@ -99,7 +99,8 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		userInfoEdit=0L;
 		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
-		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame, "userInfoView");
+		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame);
+		userInfoView->setObjectName("userInfoView");
 		userInfoView->setNotifyClick(true);
 		QObject::connect(
 			userInfoView, SIGNAL(urlClick(const QString&)),
@@ -215,11 +216,13 @@ void AIMUserInfoDialog::slotUpdateProfile()
 //KRun changed, so comment it so it compiles FIXME
 void AIMUserInfoDialog::slotUrlClicked(const QString &url)
 {
+	Q_UNUSED(url);
 	//new KRun(KUrl(url));
 }
 
 void AIMUserInfoDialog::slotMailClicked(const QString&, const QString &address)
 {
+	Q_UNUSED(address);
 	//new KRun(KUrl(address));
 }
 

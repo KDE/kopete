@@ -39,7 +39,6 @@
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <q3listview.h>
-#include <q3ptrlist.h>
 #include <qcombobox.h>
 //Added by qt3to4:
 #include <QShowEvent>

@@ -1018,20 +1018,18 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	d->globalStatusMessageMenu->addAction( newMessageAction );
 	//END
 
-	// NOTE: The following code still use insertItem because it require the behavior of those (-DarkShock)
-	int i = 0;
-	d->globalStatusMessageMenu->insertItem( SmallIcon( "list-remove" ), i18n( "No Message" ), i++ );
+	d->globalStatusMessageMenu->addAction( SmallIcon( "list-remove" ), i18n( "No Message" ) );
 	d->globalStatusMessageMenu->addSeparator();
 
 	QStringList awayMessages = Kopete::Away::getInstance()->getMessages();
-	foreach(QString message, awayMessages)
+	for (int i = awayMessages.count() - 1; i >= 0; --i)
 	{
-		d->globalStatusMessageMenu->insertItem( KStringHandler::rsqueeze( message ), i );
+		d->globalStatusMessageMenu->addAction( KStringHandler::rsqueeze( awayMessages[i] ) );
 	}
 	//connect( m_globalStatusMessageMenu, SIGNAL( aboutToHide() ), m_globalStatusMessageMenu, SLOT( deleteLater() ) );
 
-	//m_newMessageEdit->setFocus();
-
+	d->newMessageEdit->setFocus(Qt::OtherFocusReason);
+	d->globalStatusMessageMenu->setActiveAction(newMessageAction);
 	//messageMenu->popup( e->globalPos(), 1 );
 }
 

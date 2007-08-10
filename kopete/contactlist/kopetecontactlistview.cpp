@@ -33,7 +33,7 @@
 #include <QPointer>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3PtrList>
+#include <QList>
 #include <QDropEvent>
 #include <QMouseEvent>
 
@@ -754,7 +754,9 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 					if ( text.length() > 41 )
 						text = text.left( 38 ) + QLatin1String( "..." );
 
-					popup->insertItem( c->onlineStatus().iconFor( c, 16 ), text , contactMenu );
+					contactMenu->setTitle(text);
+					contactMenu->setIcon(c->onlineStatus().iconFor( c, 16 ));
+					popup->addMenu( contactMenu );
 				}
 
 				popup->popup( point );
@@ -909,12 +911,12 @@ void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListV
 
 	if( const_cast<const QWidget *>( e->source() ) == this )
 	{
-		Q3PtrListIterator<KopeteMetaContactLVI> it( m_selectedContacts );
+		MetaContactLVIList::iterator it = m_selectedContacts.begin();
 
-		while ( it.current() )
+		while ( it != m_selectedContacts.end() )
 		{
 			Kopete::Contact *source_contact=0L;
-			KopeteMetaContactLVI *source_metaLVI = it.current();
+			KopeteMetaContactLVI *source_metaLVI = *it;
 			++it;
 
 			if(source_metaLVI)

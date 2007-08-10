@@ -41,6 +41,7 @@ bool OscarMyselfContact::isReachable()
 
 Kopete::ChatSession* OscarMyselfContact::manager(CanCreateFlags canCreate )
 {
+	Q_UNUSED(canCreate);
 	return 0;
 }
 
