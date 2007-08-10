@@ -143,7 +143,7 @@ bool LoginTask::take(NetworkMessage *networkMessage)
 	return false;
 }
 
-bool LoginTask::forMe(NetworkMessage *networkMessage)
+bool LoginTask::forMe(NetworkMessage *networkMessage) const
 {
 	if( networkMessage->type() == NetworkMessage::TransactionMessage )
 	{

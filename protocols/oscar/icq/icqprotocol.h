@@ -54,10 +54,10 @@ public:
 	OscarStatusManager *statusManager() const;
 
 
-	const Kopete::ContactPropertyTmpl firstName;
-	const Kopete::ContactPropertyTmpl lastName;
-	const Kopete::ContactPropertyTmpl emailAddress;
-	const Kopete::ContactPropertyTmpl ipAddress;
+	const Kopete::PropertyTmpl firstName;
+	const Kopete::PropertyTmpl lastName;
+	const Kopete::PropertyTmpl emailAddress;
+	const Kopete::PropertyTmpl ipAddress;
 
 	const QMap<int, QString> &genders() { return mGenders; }
 	const QMap<int, QString> &countries() { return mCountries; }

@@ -21,6 +21,7 @@
 #include "kopeteonlinestatus.h"
 #include "kopeteonlinestatusmanager.h"
 
+#include "kopeteidentity.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetecontact.h"

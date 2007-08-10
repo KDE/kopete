@@ -242,11 +242,6 @@ protected slots:
 	void slotFileTransferResult( KJob * );
 	void slotError( int level );
 
-private slots:
-	/**
-	 * When a global identity key get changed.
-	 */
-	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
 private:
 
 	/**

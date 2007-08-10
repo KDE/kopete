@@ -97,9 +97,6 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 		mGui->sbxTimeout->setValue( configValue );
 
 
-		// Global Identity
-		mGui->mGlobalIdentity->setChecked( account->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
-
 		if ( mAccount->engine()->isActive() )
 		{
 			m_visibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Visible );
@@ -193,9 +190,6 @@ Kopete::Account *AIMEditAccountWidget::apply()
 	configValue = mGui->sbxTimeout->value();
 	mAccount->configGroup()->writeEntry( "Timeout", configValue );
 
-	// Global Identity
-	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mGui->mGlobalIdentity->isChecked() );
-	
 	if ( mAccount->engine()->isActive() )
 	{
 		if ( m_visibleEngine )

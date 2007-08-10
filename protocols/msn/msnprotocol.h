@@ -26,7 +26,7 @@
 
 #include "kopeteprotocol.h"
 #include "kopeteonlinestatus.h"
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 
 #include "msnsocket.h"
 
@@ -100,13 +100,13 @@ public:
 	const Kopete::OnlineStatus UNK;  //inknown (internal)
 	const Kopete::OnlineStatus CNT;  //connecting (internal)
 
-	const Kopete::ContactPropertyTmpl propEmail;
-	const Kopete::ContactPropertyTmpl propPhoneHome;
-	const Kopete::ContactPropertyTmpl propPhoneWork;
-	const Kopete::ContactPropertyTmpl propPhoneMobile;
-	const Kopete::ContactPropertyTmpl propClient;
-	const Kopete::ContactPropertyTmpl propGuid;
-	const Kopete::ContactPropertyTmpl propPersonalMessage; // it's the equivalent of away message.
+	const Kopete::PropertyTmpl propEmail;
+	const Kopete::PropertyTmpl propPhoneHome;
+	const Kopete::PropertyTmpl propPhoneWork;
+	const Kopete::PropertyTmpl propPhoneMobile;
+	const Kopete::PropertyTmpl propClient;
+	const Kopete::PropertyTmpl propGuid;
+	const Kopete::PropertyTmpl propPersonalMessage; // it's the equivalent of away message.
 
 	enum List
 	{

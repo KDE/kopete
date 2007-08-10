@@ -1,9 +1,10 @@
 /*
-    kopeteaccounrstatusbaricon.h  -  Kopete Account StatusBar Dock Icon
+    kopeteidentitystatusbaricon.h  -  Kopete Identity StatusBar Dock Icon
 
-    Copyright (c) 2001-2003 by Duncan Mac-Vicar Prett   <duncan@kde.org>
+	Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+    Copyright (c) 2001-2003 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007      by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,24 +16,23 @@
     *************************************************************************
 */
 
-#ifndef KOPETEACCOUNTSTATUSBARICON_H
-#define KOPETEACCOUNTSTATUSBARICON_H
+#ifndef KOPETEIDENTITYSTATUSBARICON_H
+#define KOPETEIDENTITYSTATUSBARICON_H
 
-#include <qevent.h>
-#include <qlabel.h>
-#include <qpoint.h>
-//Added by qt3to4:
+#include <QEvent>
+#include <QLabel>
+#include <QPoint>
 #include <QMouseEvent>
 
 namespace Kopete
 {
-class Account;
+class Identity;
 }
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
-class KopeteAccountStatusBarIcon : public QLabel
+class KopeteIdentityStatusBarIcon : public QLabel
 {
 	Q_OBJECT
 
@@ -40,19 +40,19 @@ public:
 	/**
 	 * Create a statusbar icon.
 	 */
-	KopeteAccountStatusBarIcon( Kopete::Account *acc, QWidget *parent );
+	KopeteIdentityStatusBarIcon( Kopete::Identity *identity, QWidget *parent );
 
-	~KopeteAccountStatusBarIcon();
+	~KopeteIdentityStatusBarIcon();
 
 signals:
-	void rightClicked( Kopete::Account *acc, const QPoint &p );
-	void leftClicked( Kopete::Account *acc, const QPoint &p );
+	void rightClicked( Kopete::Identity *identity, const QPoint &p );
+	void leftClicked( Kopete::Identity *identity, const QPoint &p );
 
 protected:
 	virtual void mousePressEvent( QMouseEvent *me );
 
 private:
-	Kopete::Account *m_account;
+	Kopete::Identity *m_identity;
 };
 
 #endif

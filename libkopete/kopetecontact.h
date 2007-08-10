@@ -21,6 +21,7 @@
 #define KOPETECONTACT_H
 
 #include "kopetecontactlistelement.h"
+#include "kopetepropertycontainer.h"
 
 #include <kurl.h>
 #include <kdemacros.h>
@@ -195,21 +196,6 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
 	/**
-	 * @brief Serialize the contacts persistent properties for storage in the contact list.
-	 *
-	 * Does the same as @ref serialize() does but for KopeteContactProperties
-	 * set in this contact with their persistency flag turned on.
-	 * In contrary to @ref serialize() this does not need to be reimplemented.
-	 *
-	 */
-	void serializeProperties(QMap<QString, QString> &serializedData);
-
-	/**
-	 * @brief Deserialize the contacts persistent properties
-	 */
-	void deserializeProperties(QMap<QString, QString> &serializedData);
-
-	/**
 	 * @brief Get the online status of the contact
 	 * @return the online status of the contact
 	 */
@@ -342,44 +328,6 @@ public:
 	 */
 	void setIdleTime(unsigned long int);
 
-	/**
-	 * @return A QStringList containing all property keys
-	 **/
-	QStringList properties() const;
-
-	/**
-	 * Check for existence of a certain property stored
-	 * using "key".
-	 * \param key the property to check for
-	 **/
-	bool hasProperty(const QString &key) const;
-
-	/**
-	 * \brief Get the value of a property with key "key".
-	 *
-	 * If you don't know the type of the returned QVariant, you will need
-	 * to check for it.
-	 * \return the value of the property
-	 **/
-	const Kopete::ContactProperty &property(const QString &key) const;
-	const Kopete::ContactProperty &property(const Kopete::ContactPropertyTmpl &tmpl) const;
-
-	/**
-	 * \brief Add or Set a property for this contact.
-	 *
-	 * @param tmpl The template this property is based on, key, label etc. are
-	 * taken from this one
-	 * @param value The value to store
-	 *
-	 * \note Setting a NULL value or an empty QString castable value
-	 * removes the property if it already existed.
-	 * <b>Don't</b> abuse this for property-removal, instead use
-	 * @ref removeProperty() if you want to remove on purpose.
-	 * The Removal is done to clean up the list of properties and to purge them
-	 * from UI.
-	 **/
-	void setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value);
-
         /**
 	 * \brief Convenience method to set the nickName property to the specified value
 	 * @param name The nickname to set
@@ -392,13 +340,6 @@ public:
 	 * This method will return the contactId if there has been no nickName property set
 	 */
 	QString nickName() const;
-
-	/**
-	 * \brief Remove a property if it exists
-	 *
-	 * @param tmpl the template this property is based on
-	 **/
-	void removeProperty(const Kopete::ContactPropertyTmpl &tmpl);
 
 	/**
 	 * \brief Get the tooltip for this contact
@@ -448,14 +389,13 @@ public slots:
 	 * menu.
 	 */
 	void changeMetaContact();
-
 	/**
 	 * Method to retrieve user information.  Should be implemented by
 	 * the protocols, and popup some sort of dialog box
 	 *
 	 * reimplement it to show the informlation
 	 * @todo rename and make it pure virtual
-	 */
+ 	 */
 	virtual void slotUserInfo() {};
 
 	/**
@@ -496,9 +436,7 @@ public slots:
 	 */
 	virtual void sendFile( const KUrl &sourceURL = KUrl(),
 			       const QString &fileName = QString::null, uint fileSize = 0L );
-
 private slots:
-
 	/**
 	 * This add the contact totally in the list if it was a temporary contact
 	 */
@@ -547,7 +485,6 @@ signals:
 	 * That mean when activity has been noticed
 	 */
 	void idleStateChanged( Kopete::Contact *contact );
-
 	/**
 	 * One of the contact's properties has changed.
 	 * @param contact this contact, useful for listening to signals from more than one contact

@@ -40,7 +40,6 @@
 #include "kopetechatsession.h"
 #include "kopetecontact.h"
 #include "kopetedeletecontacttask.h"
-#include "kopetegeneralsettings.h"
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetepicture.h"
@@ -64,9 +63,6 @@ class ContactList::Private
 	QTimer *saveTimer;
 
 	MetaContact *myself;
-
-	/** Flag: does the user uses the global identity */
-	bool useGlobalIdentity;
 };
 
 ContactList *ContactList::s_self = 0L;
@@ -319,73 +315,6 @@ MetaContact* ContactList::myself()
 	return d->myself;
 }
 
-void ContactList::loadGlobalIdentity()
-{
- 	// Apply the global identity
-	if(Kopete::GeneralSettings::self()->enableGlobalIdentity())
- 	{
-		// Disconnect to make sure it will not cause duplicate calls.
-		disconnect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
-		disconnect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
-
-		connect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
-		connect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
-
-		// Ensure that the myself metaContactId is always the KABC whoAmI
-		KABC::Addressee a = KABC::StdAddressBook::self()->whoAmI();
-		if(!a.isEmpty() && a.uid() != myself()->metaContactId())
-		{
-			myself()->setMetaContactId(a.uid());
-		}
-
-		// Apply the global identity
-		// Maybe one of the myself contact from a account has a different displayName/photo at startup.
-		slotDisplayNameChanged();
-		slotPhotoChanged();
- 	}
-	else
-	{
-		disconnect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
-		disconnect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
-	}
-}
-
-void ContactList::slotDisplayNameChanged()
-{
-	static bool mutex=false;
-	if(mutex)
-	{
-		kDebug (14010) << k_funcinfo << " mutex blocked";
-		return;
-	}
-	mutex=true;
-
-	kDebug( 14010 ) << k_funcinfo << myself()->displayName();
-
-	emit globalIdentityChanged(Kopete::Global::Properties::self()->nickName().key(), myself()->displayName());
-	mutex=false;
-}
-
-void ContactList::slotPhotoChanged()
-{
-	static bool mutex=false;
-	if(mutex)
-	{
-		kDebug (14010) << k_funcinfo << " mutex blocked";
-		return;
-	}
-	mutex=true;
-	kDebug( 14010 ) << k_funcinfo << myself()->picture().path();
-
-	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), myself()->picture().path());
-	mutex=false;
-	/* The mutex is useful to don't have such as stack overflow 
-	Kopete::ContactList::slotPhotoChanged  ->  Kopete::ContactList::globalIdentityChanged  
-	MSNAccount::slotGlobalIdentityChanged  ->  Kopete::Contact::propertyChanged 
-	Kopete::MetaContact::slotPropertyChanged -> Kopete::MetaContact::photoChanged -> Kopete::ContactList::slotPhotoChanged 
-	*/
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void ContactList::load()
 {
@@ -405,9 +334,6 @@ void ContactList::load()
 	addGroups( storage->groups() );
 	addMetaContacts( storage->contacts() );
 
-	// Apply the global identity when all the protocols plugins are loaded.
-	connect(PluginManager::self(), SIGNAL(allPluginsLoaded()), this, SLOT(loadGlobalIdentity()));
-	
 	d->loaded = true;
 	delete storage;
 }

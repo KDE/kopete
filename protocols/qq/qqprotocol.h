@@ -18,7 +18,7 @@
 #define TESTBEDPROTOCOL_H
 
 #include <kopeteprotocol.h>
-#include <kopetecontactproperty.h>
+#include <kopeteproperty.h>
 
 
 /**
@@ -89,23 +89,23 @@ public:
 	 */
 	const Kopete::OnlineStatus qqOffline;
 
-	const Kopete::ContactPropertyTmpl propNickName;
-	const Kopete::ContactPropertyTmpl propFullName;
-	const Kopete::ContactPropertyTmpl propCountry;
-	const Kopete::ContactPropertyTmpl propState;
-	const Kopete::ContactPropertyTmpl propCity;
-	const Kopete::ContactPropertyTmpl propStreet;
-	const Kopete::ContactPropertyTmpl propZipcode;
-	const Kopete::ContactPropertyTmpl propAge;
-	const Kopete::ContactPropertyTmpl propGender;
-	const Kopete::ContactPropertyTmpl propOccupation;
-	const Kopete::ContactPropertyTmpl propHomepage;
-	const Kopete::ContactPropertyTmpl propIntro;
-	const Kopete::ContactPropertyTmpl propGraduateFrom;
-	const Kopete::ContactPropertyTmpl propHoroscope;
-	const Kopete::ContactPropertyTmpl propZodiac;
-	const Kopete::ContactPropertyTmpl propBloodType;
-	const Kopete::ContactPropertyTmpl propEmail;
+	const Kopete::PropertyTmpl propNickName;
+	const Kopete::PropertyTmpl propFullName;
+	const Kopete::PropertyTmpl propCountry;
+	const Kopete::PropertyTmpl propState;
+	const Kopete::PropertyTmpl propCity;
+	const Kopete::PropertyTmpl propStreet;
+	const Kopete::PropertyTmpl propZipcode;
+	const Kopete::PropertyTmpl propAge;
+	const Kopete::PropertyTmpl propGender;
+	const Kopete::PropertyTmpl propOccupation;
+	const Kopete::PropertyTmpl propHomepage;
+	const Kopete::PropertyTmpl propIntro;
+	const Kopete::PropertyTmpl propGraduateFrom;
+	const Kopete::PropertyTmpl propHoroscope;
+	const Kopete::PropertyTmpl propZodiac;
+	const Kopete::PropertyTmpl propBloodType;
+	const Kopete::PropertyTmpl propEmail;
 
 
 protected:

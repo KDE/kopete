@@ -1,12 +1,13 @@
 /*
-    kopetecontactproperty.h
+    kopeteproperty.h
 
-    Kopete::Contact Property class
+    Kopete::Property class
 
+    Copyright (c) 2007    by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2004    by Stefan Gehn <metz AT gehn.net>
     Copyright (c) 2006    by Michaël Larouche <larouche@kde.org>
 
-    Kopete    (c) 2004-2006    by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2004-2007    by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -18,8 +19,8 @@
     *************************************************************************
 */
 
-#ifndef _KOPETECONTACTPROPERTY_H_
-#define _KOPETECONTACTPROPERTY_H_
+#ifndef _KOPETEPROPERTY_H_
+#define _KOPETEPROPERTY_H_
 
 #include <QVariant>
 #include <QFlags>
@@ -37,49 +38,49 @@ namespace Kopete
  * You need to use this if you want to set properties for a
  * Kopete::Contact
  **/
-class KOPETE_EXPORT ContactPropertyTmpl
+class KOPETE_EXPORT PropertyTmpl
 {
 	public:
-		enum ContactPropertyOption 
+		enum PropertyOption 
 		{ 
 			NoProperty = 0x0,
 			PersistentProperty = 0x1, 
 			RichTextProperty = 0x2, 
 			PrivateProperty = 0x4 
 		};
-		Q_DECLARE_FLAGS(ContactPropertyOptions, ContactPropertyOption)
+		Q_DECLARE_FLAGS(PropertyOptions, PropertyOption)
 
 		/**
-		 * Constructor only used for empty ContactPropertyTmpl objects
+		 * Constructor only used for empty PropertyTmpl objects
 		 *
 		 * Note: Only useful for the null object
 		 **/
-		ContactPropertyTmpl();
+		PropertyTmpl();
 
 		/**
 		 * Constructor
 		 * @param key internal unique key for this template
 		 * @param label a label to show for properties based on this template
 		 * @param icon name of the icon to show for properties based on this template
-		 * @param options set the options for that property. See ContactPropertyOption enum.
+		 * @param options set the options for that property. See PropertyOption enum.
 		 **/
-		ContactPropertyTmpl( const QString &key,
+		PropertyTmpl( const QString &key,
 			const QString &label,
 			const QString &icon = QString::null,
-			ContactPropertyOptions options = NoProperty);
+			PropertyOptions options = NoProperty);
 
 		/**
 		 * Copy constructor
 		 **/
-		ContactPropertyTmpl(const ContactPropertyTmpl &other);
+		PropertyTmpl(const PropertyTmpl &other);
 
 		/** Destructor */
-		~ContactPropertyTmpl();
+		~PropertyTmpl();
 
-		ContactPropertyTmpl &operator=(const ContactPropertyTmpl &other);
+		PropertyTmpl &operator=(const PropertyTmpl &other);
 
-		bool operator==(const ContactPropertyTmpl &other) const;
-		bool operator!=(const ContactPropertyTmpl &other) const;
+		bool operator==(const PropertyTmpl &other) const;
+		bool operator!=(const PropertyTmpl &other) const;
 
 		/**
 		 * Getter for the unique key. Properties based on this template will be
@@ -100,7 +101,7 @@ class KOPETE_EXPORT ContactPropertyTmpl
 		/**
 	 	 * Return the options for that property.
 		 */
-		ContactPropertyOptions options() const;
+		PropertyOptions options() const;
 
 		/**
 		 * Returns true if properties based on this template should
@@ -121,7 +122,7 @@ class KOPETE_EXPORT ContactPropertyTmpl
 		/**
 		 * An empty template, check for it using isNull()
 		 */
-		static ContactPropertyTmpl null;
+		static PropertyTmpl null;
 
 		/**
 		 * Returns true if this object is an empty template
@@ -129,16 +130,16 @@ class KOPETE_EXPORT ContactPropertyTmpl
 		bool isNull() const;
 
 		/**
-		 * A Map of QString and ContactPropertyTmpl objects, based on QMap
+		 * A Map of QString and PropertyTmpl objects, based on QMap
 		 **/
-		typedef QMap<QString, ContactPropertyTmpl>  Map;
+		typedef QMap<QString, PropertyTmpl>  Map;
 
 	private:
 		class Private;
 		Private *d;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(ContactPropertyTmpl::ContactPropertyOptions)
+Q_DECLARE_OPERATORS_FOR_FLAGS(PropertyTmpl::PropertyOptions)
 
 /**
  * @author Stefan Gehn <metz AT gehn.net>
@@ -146,36 +147,36 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(ContactPropertyTmpl::ContactPropertyOptions)
  * A data container for whatever information Kopete or any of its
  * plugins want to store for a Kopete::Contact
  **/
-class KOPETE_EXPORT ContactProperty
+class KOPETE_EXPORT Property
 {
 	public:
 		/**
-		 * Constructor only used for empty ContactProperty objects
+		 * Constructor only used for empty Property objects
 		 *
 		 * Note: you cannot set a label or value later on!
 		 **/
-		ContactProperty();
+		Property();
 
 		/**
 		 * @param tmpl The contact property template this property is based on
 		 * @param value The value this Property holds
 		 **/
-		ContactProperty(const ContactPropertyTmpl &tmpl, const QVariant &value);
+		Property(const PropertyTmpl &tmpl, const QVariant &value);
 
 		/**
 		 * Copy constructor
 		 **/
-		ContactProperty(const ContactProperty &other);
+		Property(const Property &other);
 
 		/** Destructor **/
-		~ContactProperty();
+		~Property();
 
-		ContactProperty &operator=(const ContactProperty &other);
+		Property &operator=(const Property &other);
 
 		/**
 		 * Getter for this properties template
 		 **/
-		const ContactPropertyTmpl &tmpl() const;
+		const PropertyTmpl &tmpl() const;
 
 		/**
 		 * Getter for this properties value
@@ -183,9 +184,9 @@ class KOPETE_EXPORT ContactProperty
 		const QVariant &value() const;
 
 		/**
-		 * The null, i.e. empty, ContactProperty
+		 * The null, i.e. empty, Property
 		 */
-		static ContactProperty null;
+		static Property null;
 
 		/**
 		 * Returns true if this object is an empty Property (i.e. it holds no
@@ -199,9 +200,9 @@ class KOPETE_EXPORT ContactProperty
 		bool isRichText() const;
 
 		/**
-		 * A map of key,ContactProperty items
+		 * A map of key,Property items
 		 **/
-		typedef QMap<QString, ContactProperty> Map;
+		typedef QMap<QString, Property> Map;
 
 	private:
 		class Private;
@@ -210,4 +211,4 @@ class KOPETE_EXPORT ContactProperty
 
 } // END namespace Kopete
 
-#endif //_KOPETECONTACTPROPERTY_H_
+#endif //_KOPETEPROPERTY_H_

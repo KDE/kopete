@@ -57,6 +57,7 @@ private:
 private slots:
 	void slotRemoveAccount();
 	void slotEditAccount();
+	void slotSelectIdentity();
 	void slotAddAccount();
 	void slotAddWizardDone();
 	void slotItemSelected();

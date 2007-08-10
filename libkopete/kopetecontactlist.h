@@ -185,11 +185,6 @@ public slots:
 	 */
 	 void setSelectedItems(QList<MetaContact *> metaContacts , QList<Group *> groups);
 
-	/**
-	  * Apply the global identity.
-	  */
-	void loadGlobalIdentity();
-
 signals:
 	/**
 	 * A meta contact was added to the contact list. Interested classes
@@ -239,43 +234,6 @@ signals:
 	 */
 	void metaContactSelected(bool);
 
-	/**
-	 * This signal is emitted each time a global identity field change.
-	 * HOWTO use:
-	 *
-	 * - Connect signal globalIdentityChanged(const QString &key, const QVariant 
-	 *    &value) to a slot in your derivate Account class (the best 
-	 *    place to put it).
-	 * - In the slot:
-	 *    - Check the key you want to be sync with global identity.
-	 *    - Update the myself contact and/or update on server.
-	 * 
-	 * For now, when photo is changed, it always send the photo file path.
-	 *
-	 * Connect signal in your Account constructor:
-	 * @code
-	 * connect(Kopete::ContactList::self(), SIGNAL(globalIdentityChanged(const QString&, const QVariant&)), SLOT(slotglobalIdentityChanged(const QString&, const QVariant&)));
-	 * @endcode
-	 *
-	 * Example of a typical implemented slot:
-	 * @code
-	 * void slotGlobalIdentityChanged(const QString &key, const QVariant &value)
-	 * {
-	 *	if(key == Kopete::Global::Properties::self()->nickName().key())
-	 *	{
-	 * 	    myself()->setProperty(protocol()->propNickname, value.toString());
-	 * 	    this->slotUpdateUserInfo();
-	 *	}
-	 *	else if(key == Kopete::Global::Properties::self()->photo().key())
-	 *	{
-	 * 	    myself()->setProperty(protocol()->propPhotoUrl, value.toString());
-	 * 	   this->slotUpdateDisplayPicture();
-	 *	}
-	 * }
-	 * @endcode
-	 */
-	void globalIdentityChanged( const QString &key, const QVariant &value );
-
 private slots:
 	/**
 	 * Called when the contact list changes. Flags the list dirty and schedules a save for a little while later.
@@ -286,16 +244,6 @@ private slots:
 	 */
 	void slotKABCChanged();
 	
-	/**
-	 * Called when the myself displayName changed.
-	 */
-	void slotDisplayNameChanged();
-
-	/**
-	 * Called when the myself photo changed.
-	 */
-	void slotPhotoChanged();
-
 private:
 	
 	/**

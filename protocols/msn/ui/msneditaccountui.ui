@@ -130,13 +130,6 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QCheckBox" name="m_globalIdentity" >
-            <property name="text" >
-             <string>Exclu&amp;de from Global Identity</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>

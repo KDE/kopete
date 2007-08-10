@@ -139,7 +139,7 @@ int MessengerCoreProtocol::rawToNetworkMessage(const QByteArray &raw)
 			QStringList arguments;
 			
 			NetworkMessage::NetworkMessageType transferType;
-			bool dummy, isNumber;
+			bool dummy, isNumber = false;
 			int trId = 0, payloadLength = 0;
 			
 			command = commandList.at(0);
