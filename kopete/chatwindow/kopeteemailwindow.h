@@ -27,7 +27,6 @@
 //Added by qt3to4:
 #include <QCloseEvent>
 
-namespace KParts { struct URLArgs; }
 class EmailWindowPlugin;
 
 class KopeteEmailWindow : KParts::MainWindow, public KopeteView

@@ -39,7 +39,7 @@ namespace Kopete { class XSLT; }
 class KHTMLView;
 class KHTMLPart;
 
-namespace KParts { struct URLArgs; class Part; }
+namespace KParts { class BrowserArguments; class OpenUrlArguments; class Part; }
 
 
 class KListViewDateItem;
@@ -78,7 +78,7 @@ class HistoryDialog : public KDialog
 		void closing();
 
 	private slots:
-		void slotOpenURLRequest(const KUrl &url, const KParts::URLArgs &/*args*/);
+		void slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &);
 
 		// Called when a date is selected in the treeview
 		void dateSelected(Q3ListViewItem *);
