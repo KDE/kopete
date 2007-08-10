@@ -10,7 +10,6 @@
   *@author duncan
   */
 namespace Ui { class msnAddUI; }
-class MSNProtocol;
 
 class MSNAddContactPage : public AddContactPage
 {

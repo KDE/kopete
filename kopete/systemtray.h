@@ -28,9 +28,7 @@
 #include "kopetemessageevent.h"
 
 class QTimer;
-class QPoint;
 class KMenu;
-class KActionMenu;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>

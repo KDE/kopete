@@ -42,7 +42,6 @@ class KAction;
 class KActionCollection;
 namespace Kopete { class Account; }
 class GroupWiseAccount;
-class GroupWiseChatSession;
 class GroupWiseProtocol;
 namespace Kopete { class MetaContact; }
 

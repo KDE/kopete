@@ -28,7 +28,6 @@
 #include <QtCrypto>
 
 namespace Ui { class DlgJabberRegisterAccount; }
-class JabberProtocol;
 class JabberClient;
 class JabberEditAccountWidget;
 

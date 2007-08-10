@@ -85,7 +85,6 @@ struct ResLine{
 typedef Q3ValueList<ResLine> SearchResult;
 
 class QSocketNotifier;
-class QStringList;
 namespace Kopete { class Message; }
 class GaduRichTextFormat;
 

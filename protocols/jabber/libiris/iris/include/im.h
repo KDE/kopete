@@ -669,8 +669,7 @@ namespace XMPP
 		void ibb_incomingReady();
 
 	public:
-		class GroupChat;
-	private:
+			private:
 		void cleanup();
 		void distribute(const QDomElement &);
 		void importRoster(const Roster &);

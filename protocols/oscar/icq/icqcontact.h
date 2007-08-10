@@ -24,6 +24,7 @@
 
 class ICQProtocol;
 class ICQUserInfoWidget;
+class KToggleAction;
 
 /**
  * Contact for ICQ over Oscar protocol

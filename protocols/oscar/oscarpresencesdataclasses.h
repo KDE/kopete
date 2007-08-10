@@ -28,7 +28,6 @@
 
 namespace Kopete { class OnlineStatus; }
 
-class OscarProtocol;
 
 namespace Oscar
 {

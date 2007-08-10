@@ -19,9 +19,6 @@
 #include "kopetechatsession.h"
 #include "kopete_export.h"
 
-class KActionCollection;
-class YahooContact;
-class KActionMenu;
 class QLabel;
 
 

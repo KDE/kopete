@@ -26,7 +26,6 @@
 
 class QTimer;
 
-class KActionCollection;
 class KAction;
 class KActionMenu;
 class KCodecAction;

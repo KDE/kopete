@@ -41,7 +41,6 @@ namespace Kopete { class Account; }
 namespace Kopete { class ChatSession; }
 class KGaduNotify;
 class QString;
-class QStringList;
 
 class GaduContact : public Kopete::Contact
 {

@@ -36,7 +36,6 @@ namespace Kopete { class Message; }
 class MSNAccount;
 class QTimer;
 
-class MSNP2PDisplatcher;
 class KTemporaryFile;
 
 namespace P2P { class Dispatcher; }

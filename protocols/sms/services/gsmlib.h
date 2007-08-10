@@ -39,9 +39,7 @@
 #include <QStringList>
 
 class GSMLibPrefsUI;
-class SMSContact;
 class QGridLayout;
-class K3Process;
 class GSMLibThread;
 
 class GSMLib : public SMSService

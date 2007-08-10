@@ -25,7 +25,6 @@ namespace cricket {
 }
 
 class JingleClientSlots;
-class JingleCallSlots;
 
 
 class JingleVoiceCaller : public VoiceCaller

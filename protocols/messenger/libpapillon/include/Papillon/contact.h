@@ -20,8 +20,6 @@
 
 #include <QtCore/QObject>
 
-class QStringList;
-class QDomElement;
 
 namespace Papillon
 {

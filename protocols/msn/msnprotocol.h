@@ -31,15 +31,10 @@
 #include "msnsocket.h"
 
 
-class QImage;
 
 class KAction;
-class KActionMenu;
 
 class MSNContact;
-class MSNAccount;
-class MSNNotifySocket;
-class MSNSwitchBoardSocket;
 class MSNChatSession;
 class MSNInvitation;
 namespace Kopete { class ChatSession; }

@@ -22,7 +22,6 @@
 
 class Kopete::Protocol;
 class Kopete::OnlineStatus;
-class Kopete::MetaContact;
 class Kopete::StatusMessage;
 
 class QString;

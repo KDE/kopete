@@ -30,7 +30,6 @@ namespace Kopete
 	class Account;
 }
 
-class QTreeWidgetItem;
 class TelepathyAccount;
 /**
  * @brief Edit Telepathy account settings.

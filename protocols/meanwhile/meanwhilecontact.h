@@ -25,7 +25,6 @@
 #include "meanwhileaccount.h"
 
 class KAction;
-class KActionCollection;
 namespace Kopete { class Account; }
 namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }

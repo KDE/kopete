@@ -27,9 +27,7 @@ namespace Kopete { class Contact; }
 class JabberContactPoolItem;
 class JabberBaseContact;
 class JabberContact;
-class JabberGroupContact;
 class JabberAccount;
-class JabberTransport;
 
 /**
  * @author Till Gerken <till@tantalo.net>

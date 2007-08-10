@@ -19,7 +19,6 @@
 
 #include "task.h"
 
-class QString;
 
 /**
 @author André Duffeck

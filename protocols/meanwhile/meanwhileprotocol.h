@@ -31,9 +31,6 @@
 #define HERE kDebug(MEANWHILE_DEBUG) << k_funcinfo << endl
 #define mwDebug() kDebug(MEANWHILE_DEBUG)
 
-class MeanwhileAccount;
-class MeanwhileEditAccountWidget;
-class MeanwhileAddContactPage;
 
 class MeanwhileProtocol : public Kopete::Protocol
 {

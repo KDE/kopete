@@ -23,7 +23,6 @@
 #include <kpagedialog.h>
 #include "../libkyahoo/yabentry.h"
 
-class KJanusWidget;
 namespace Ui
 {
 	class YahooWorkInfoWidget;

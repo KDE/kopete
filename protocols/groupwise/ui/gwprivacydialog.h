@@ -26,7 +26,6 @@ class GroupWiseAccount;
 namespace Ui
 {
 	class GroupWisePrivacyWidget;
-	class GroupWiseContactSearchWidget;
 }
 class Q3ListBoxItem;
 

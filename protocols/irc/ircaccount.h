@@ -27,7 +27,6 @@
 #include "kopetepasswordedaccount.h"
 
 class IRCContact;
-class IRCProtocol;
 
 namespace KIrc
 {
@@ -37,7 +36,6 @@ class Event;
 
 namespace Kopete
 {
-class AwayAction;
 class Contact;
 class Message;
 class ChatSession;

@@ -31,11 +31,8 @@
 #include <QList>
 
 class QPixmap;
-class QTimer;
 
-class QQChatSession;
 class KAction;
-class KActionCollection;
 class KTemporaryFile;
 
 namespace Kopete { class Protocol; }

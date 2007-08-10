@@ -22,7 +22,6 @@
 #include "detectordcop.h"
 
 namespace KNetwork {
-class KStreamSocket;
 };
 
 class IConnector;

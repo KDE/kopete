@@ -21,7 +21,6 @@
 #include "jabberbasecontact.h"
 
 namespace Kopete { class MetaContact; }
-class JabberGroupChatManager;
 class JabberChatSession;
 
 class JabberGroupMemberContact : public JabberBaseContact

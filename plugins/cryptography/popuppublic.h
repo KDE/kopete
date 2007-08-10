@@ -27,7 +27,6 @@
 #include <QPixmap>
 
 
-class QPushButton;
 class QCheckBox;
 class K3ListView;
 class Q3ButtonGroup;

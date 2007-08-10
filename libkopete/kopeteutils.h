@@ -23,7 +23,6 @@
 #include "qpixmap.h"
 #include "kopete_export.h"
 
-class KNotification;
 
 namespace Kopete
 {

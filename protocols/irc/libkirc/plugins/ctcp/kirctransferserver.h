@@ -24,8 +24,6 @@
 
 class KExtendedSocket;
 
-class QFile;
-class QTextCodec;
 
 namespace KIrc
 {

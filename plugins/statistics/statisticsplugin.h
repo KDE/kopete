@@ -41,8 +41,6 @@ class StatisticsDB;
 class StatisticsContact;
 class StatisticsDCOPIface;
 
-class KopeteView;
-class KActionCollection;
 
 /** \section Kopete Statistics Plugin
  *

@@ -80,8 +80,7 @@ namespace XMPP
 		static long id(const QString &feature);
 		static QString feature(long id);
 
-		class FeatureName;
-	private:
+		private:
 		QStringList _list;
 	};
 }

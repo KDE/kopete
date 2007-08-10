@@ -31,7 +31,6 @@
 
 class KDialog;
 class K3ListBox;
-class KComboBox;
 
 namespace Kopete
 {

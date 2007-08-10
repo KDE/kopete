@@ -24,7 +24,6 @@
 
 
 class SMSClientPrefsUI;
-class SMSContact;
 class QGridLayout;
 class K3Process;
 

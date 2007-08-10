@@ -31,7 +31,6 @@
 
 class QPixmap;
 class QWidget;
-class MSNContact;
 
 class MSNWebcamDialog : public KDialog
 {

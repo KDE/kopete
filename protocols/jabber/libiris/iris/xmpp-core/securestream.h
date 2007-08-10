@@ -33,7 +33,6 @@ namespace XMPP
 }
 #endif
 
-class CompressionHandler;
 
 class SecureStream : public ByteStream
 {
