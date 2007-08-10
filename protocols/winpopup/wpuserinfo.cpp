@@ -75,27 +75,32 @@ void WPUserInfo::startDetailsProcess(const QString &host)
 
 	detailsProcess = new QProcess(this);
 	QStringList args;
-	args << "-N" << "-E" << "-g" << "-L" << host << "-";
+	args << "-N" << "-g" << "-L" << host << "-";
 
-	connect(detailsProcess, SIGNAL(finished()), this, SLOT(slotDetailsProcessFinished()));
+	connect(detailsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int, QProcess::ExitStatus)));
 
+	detailsProcess->setProcessChannelMode(QProcess::MergedChannels);
 	detailsProcess->start(theSMBClientPath, args);
 }
 
-void WPUserInfo::slotDetailsProcessFinished()
+void WPUserInfo::slotDetailsProcessFinished(int i, QProcess::ExitStatus status)
 {
 	QByteArray outputData = detailsProcess->readAll();
-	QRegExp info("^Domain=\\[(.*)\\]\\sOS=\\[(.*)\\]\\sServer=\\[(.*)\\]$"), host("^Server\\|(.*)\\|(.*)$");
+	QRegExp info("Domain=\\[(.[^\\]]+)\\]\\sOS=\\[(.[^\\]]+)\\]\\sServer=\\[(.[^\\]]+)\\]"),
+			host("Server\\|" + m_contact->contactId() + "\\|(.*)");
 
 	if (!outputData.isEmpty()) {
 		QString output = QString::fromUtf8(outputData.data());
-		if (info.indexIn(output) != -1) {
-			Workgroup = info.cap(1);
-			OS = info.cap(2);
-			Software = info.cap(3);
-		}
-		if (host.indexIn(output) != -1) {
-			Comment = host.cap(2);
+		QStringList outputList = output.split('\n');
+		foreach (QString line, outputList) {
+			if (info.indexIn(line) != -1) {
+				Workgroup = info.cap(1);
+				OS = info.cap(2);
+				Software = info.cap(3);
+			}
+			if (host.indexIn(line) != -1) {
+				Comment = host.cap(1);
+			}
 		}
 	}
 

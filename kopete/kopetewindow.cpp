@@ -194,6 +194,8 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KXmlGuiWindow( parent, Qt::WType_TopLevel ), d(new Private)
 {
 	setObjectName( name );
+	setAttribute (Qt::WA_DeleteOnClose, false);
+	setAttribute (Qt::WA_QuitOnClose, false);
 	// Applications should ensure that their StatusBar exists before calling createGUI()
 	// so that the StatusBar is always correctly positioned when KDE is configured to use
 	// a MacOS-style MenuBar.

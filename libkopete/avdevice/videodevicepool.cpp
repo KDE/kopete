@@ -470,7 +470,11 @@ int VideoDevicePool::getImage(QImage *qimage)
 	else
 	{
 		kDebug() <<  k_funcinfo << "VideoDevicePool::getImage() fallback for no device." << endl;
-		qimage->create(m_buffer.width, m_buffer.height,32, QImage::IgnoreEndian);
+
+		// not sure if this is the way to handle this (gamaral)
+		delete qimage;
+		qimage = new QImage(width(), height(), QImage::Format_RGB32);
+
 		uchar *bits=qimage->bits();
 		switch(m_buffer.pixelformat)
 		{
@@ -511,6 +515,10 @@ int VideoDevicePool::getImage(QImage *qimage)
 			case PIXELFORMAT_RGB32	: memcpy(bits,&m_buffer.data[0], m_buffer.data.size());
 				break;
 			case PIXELFORMAT_BGR32	: break;
+			case PIXELFORMAT_YUYV   : break;
+			case PIXELFORMAT_UYVY   : break;
+			case PIXELFORMAT_YUV420P: break;
+			case PIXELFORMAT_YUV422P: break;
 		}
 	}
 	kDebug() <<  k_funcinfo << "VideoDevicePool::getImage() exited successfuly." << endl;
@@ -846,6 +854,7 @@ void VideoDevicePool::loadConfig()
 				kDebug() <<  k_funcinfo << "AutoColorCorrection   :" << autocolorcorrection    << endl;
 				kDebug() <<  k_funcinfo << "ImageAsMirror         :" << imageasmirror          << endl;
 			}
+			Q_UNUSED(disablemmap);
 		}
 	}
 }

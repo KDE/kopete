@@ -16,8 +16,6 @@ set(LIBOSCAR_TEST_LIBRARIES ${KDE4_KDECORE_LIBS} oscar ${QT_QTTEST_LIBRARY})
 
 set(buffertest_SRCS buffertest.cpp )
 
-kde4_automoc(${buffertest_SRCS})
-
 kde4_add_unit_test(buffertest  ${buffertest_SRCS})
 
 target_link_libraries(buffertest ${LIBOSCAR_TEST_LIBRARIES} )
@@ -28,7 +26,6 @@ target_link_libraries(buffertest ${LIBOSCAR_TEST_LIBRARIES} )
 
 set(serverversionstest_SRCS serverversionstest.cpp oscartestbase.cpp )
 
-kde4_automoc(${serverversionstest_SRCS})
 
 kde4_add_unit_test(serverversionstest  ${serverversionstest_SRCS})
 
@@ -40,7 +37,6 @@ target_link_libraries(serverversionstest ${LIBOSCAR_TEST_LIBRARIES} )
 
 set(connectiontest_SRCS connectiontest.cpp oscartestbase.cpp )
 
-kde4_automoc(${connectiontest_SRCS})
 
 kde4_add_unit_test(connectiontest  ${connectiontest_SRCS})
 
@@ -52,7 +48,6 @@ target_link_libraries(connectiontest ${LIBOSCAR_TEST_LIBRARIES})
 
 set(rateinfotest_SRCS rateinfotest.cpp oscartestbase.cpp )
 
-kde4_automoc(${rateinfotest_SRCS})
 
 kde4_add_unit_test(rateinfotest  ${rateinfotest_SRCS})
 
@@ -64,7 +59,6 @@ target_link_libraries(rateinfotest ${LIBOSCAR_TEST_LIBRARIES})
 
 set(offlinemessagestest_SRCS offlinemessagestest.cpp oscartestbase.cpp )
 
-kde4_automoc(${offlinemessagestest_SRCS})
 
 kde4_add_unit_test(offlinemessagestest  ${offlinemessagestest_SRCS})
 
@@ -76,7 +70,6 @@ target_link_libraries(offlinemessagestest ${LIBOSCAR_TEST_LIBRARIES})
 
 set(filetransfertest_SRCS filetransfertest.cpp oscartestbase.cpp )
 
-kde4_automoc(${filetransfertest_SRCS})
 
 kde4_add_unit_test(filetransfertest  ${filetransfertest_SRCS})
 

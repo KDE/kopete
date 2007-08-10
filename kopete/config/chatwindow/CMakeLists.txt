@@ -14,8 +14,6 @@ set(kcm_kopete_chatwindowconfig_PART_SRCS
 kde4_add_ui_files(kcm_kopete_chatwindowconfig_PART_SRCS 
    chatwindowconfig_style.ui  )
 
-kde4_automoc(${kcm_kopete_chatwindowconfig_PART_SRCS})
-
 kde4_add_plugin(kcm_kopete_chatwindowconfig ${kcm_kopete_chatwindowconfig_PART_SRCS})
 
 

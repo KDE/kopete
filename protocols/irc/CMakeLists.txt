@@ -39,7 +39,6 @@ set(kopete_irc_SRCS
   ksparser.cpp 
 )
 
-kde4_automoc(${kopete_irc_SRCS})
 
 kde4_add_plugin(kopete_irc ${kopete_irc_SRCS})
 

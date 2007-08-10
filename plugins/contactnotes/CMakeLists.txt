@@ -8,8 +8,6 @@ ${KOPETE_INCLUDES}
 
 set(kopete_contactnotes_PART_SRCS contactnotesplugin.cpp contactnotesedit.cpp )
 
-kde4_automoc(${kopete_contactnotes_PART_SRCS})
-
 kde4_add_plugin(kopete_contactnotes ${kopete_contactnotes_PART_SRCS})
 
 

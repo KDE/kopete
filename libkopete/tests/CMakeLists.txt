@@ -19,7 +19,6 @@ set( KOPETE_TEST_LIBRARIES ${QT_QTTEST_LIBRARY} ${KDE4_KIO_LIBS} kopete )
 
 set(kopeteemoticontest_SRCS kopeteemoticontest.cpp )
 
-kde4_automoc(${kopeteemoticontest_SRCS})
 
 kde4_add_unit_test(kopeteemoticontest ${kopeteemoticontest_SRCS})
 
@@ -30,8 +29,7 @@ target_link_libraries(kopeteemoticontest  ${KOPETE_TEST_LIBRARIES} )
 if(NOT WIN32)
         set(kopetemessage_test_SRCS kopetemessage_test.cpp ${kopete_test_mock_SRCS})
         
-        kde4_automoc(${kopetemessage_test_SRCS})
-        
+                
         kde4_add_unit_test(kopetemessage_test ${kopetemessage_test_SRCS})
         
         target_link_libraries(kopetemessage_test  ${KOPETE_TEST_LIBRARIES} )
@@ -41,8 +39,6 @@ endif(NOT WIN32)
 
 set(kopetetask_test_SRCS kopetetask_test.cpp )
 
-kde4_automoc(${kopetetask_test_SRCS})
-
 kde4_add_unit_test(kopetetask_test ${kopetetask_test_SRCS})
 
 target_link_libraries(kopetetask_test  ${KOPETE_TEST_LIBRARIES} )
@@ -51,7 +47,6 @@ target_link_libraries(kopetetask_test  ${KOPETE_TEST_LIBRARIES} )
 
 set(statusmessage_test_SRCS statusmessage_test.cpp )
 
-kde4_automoc(${statusmessage_test_SRCS})
 
 kde4_add_unit_test(statusmessage_test  ${statusmessage_test_SRCS})
 
@@ -61,7 +56,6 @@ target_link_libraries(statusmessage_test  ${KOPETE_TEST_LIBRARIES} )
 
 set(xmlcontactstorage_test_SRCS xmlcontactstorage_test.cpp)
 
-kde4_automoc(${xmlcontactstorage_test_SRCS})
 
 kde4_add_unit_test(xmlcontactstorage_test  ${xmlcontactstorage_test_SRCS})
 

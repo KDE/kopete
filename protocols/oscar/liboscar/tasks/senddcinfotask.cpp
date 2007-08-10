@@ -92,7 +92,7 @@ void SendDCInfoTask::onGo()
 	tlv0C.addWord( 0x0000 );
 	buffer->addTLV( 0x000C, tlv0C.buffer() );
 
-	buffer->addTLV16( 0x0008, 0x0000 ); // error code - 0
+	buffer->addTLV16( 0x0008, 0x0A06 ); // we support online status messages
 
 	Transfer* t = createTransfer( f, s, buffer );
 	send( t );

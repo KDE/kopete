@@ -60,9 +60,11 @@ void WalletReciever::timer()
 
 int main( int argc, char *argv[] )
 {
-	KAboutData aboutData( "kopetewallettest", "kopetewallettest", "version" );
+	KAboutData aboutData( "kopetewallettest", 0, ki18n("kopetewallettest"), "version" );
 	KCmdLineArgs::init( argc, argv, &aboutData );
-	KCmdLineOptions opts[] = { {"+action",0,0}, KCmdLineLastOption };
+
+	KCmdLineOptions opts;
+	opts.add("+action");
 	KCmdLineArgs::addCmdLineOptions( opts );
 	KApplication app( "kopetewallettest" );
 

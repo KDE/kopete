@@ -50,6 +50,7 @@ public:
 	QByteArray buddyIconHash() const; //! Buddy icon md5 hash accessor
 	QString clientName() const; //! Client name and version
 	bool hasCap( int capNumber ) const; //! Tell if we have this capability
+	bool onlineStatusMsgSupport() const; //! Client supports online status messages
 	
 	/** 
 	 * Fill the class with data from a buffer
@@ -106,6 +107,7 @@ private:
 	Oscar::BYTE m_iconChecksumType; /// The OSCAR checksum type for the buddy icon TLV 0x1D
 	QByteArray m_md5IconHash; /// Buddy Icon MD5 Hash - TLV 0x1D
 	QString m_availableMessage; /// Message a person can have when available - TLV 0x0D
+	bool m_onlineStatusMsgSupport; /// User's client supports online status messages - TLV 0x08
 	
 	bool m_userClassSpecified;
 	bool m_memberSinceSpecified;

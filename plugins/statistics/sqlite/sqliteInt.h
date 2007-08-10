@@ -39,7 +39,6 @@
 # define _LARGEFILE_SOURCE 1
 #endif
 
-#include "config.h"
 #include "sqlite3.h"
 #include "hash.h"
 #include "parse.h"

@@ -65,7 +65,6 @@ OscarContact::OscarContact( Kopete::Account* account, const QString& name,
 	m_haveAwayMessage = false;
 	m_oesd = 0;
 
-	connect( this, SIGNAL(updatedSSI()), this, SLOT(updateSSIItem()) );
 	setFileCapable( true );
 
 	QObject::connect( mAccount->engine(), SIGNAL(haveIconForContact(const QString&, QByteArray)),
@@ -101,12 +100,10 @@ bool OscarContact::isOnServer() const
 
 void OscarContact::setSSIItem( const OContact& ssiItem )
 {
+	if ( !ssiItem.alias().isEmpty() )
+		setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+	
 	m_ssiItem = ssiItem;
-
-	if ( !m_ssiItem.alias().isEmpty() )
-		setProperty( Kopete::Global::Properties::self()->nickName(), m_ssiItem.alias() );
-
-	emit updatedSSI();
 }
 
 OContact OscarContact::ssiItem() const

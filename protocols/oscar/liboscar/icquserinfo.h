@@ -255,17 +255,94 @@ public:
 	bool onlineOnly;
 };
 
-/*
-class ICQInfoItem
+class LIBOSCAR_EXPORT ICQFullInfo : public ICQInfoBase
 {
 public:
-	int category;
-	QCString description;
+	/**
+	 * ICQFullInfo constructor
+	 * @param assumeDirty if false only values that where explicitly set with set method will be stored.
+	 */
+	ICQFullInfo( bool assumeDirty = true );
+	~ICQFullInfo() {}
+
+	void fill( Buffer* buffer );
+	void store( Buffer* buffer );
+
+public:
+	class AddressItem
+	{
+	public:
+		AddressItem() : country(0) {}
+
+		QByteArray	address;
+		QByteArray	city;
+		QByteArray	state;
+		QByteArray	zip;
+		quint32		country;
+	};
+	typedef QList<AddressItem> AddressItemList;
+
+	class WorkItem
+	{
+	public:
+		WorkItem() : country(0) {}
+
+		QByteArray position;
+		QByteArray companyName;
+		QByteArray department;
+		QByteArray homepage;
+		QByteArray address;
+		QByteArray city;
+		QByteArray state;
+		QByteArray zip;
+		quint32 country;
+	};
+	typedef QList<WorkItem> WorkItemList;
+
+	class InfoItem {
+	public:
+		InfoItem() : category(0) {}
+
+		quint16 category;
+		QByteArray description;
+	};
+	typedef QList<InfoItem> InfoItemList;
+
+	ICQInfoValue<QByteArray>		uin;
+	ICQInfoValue<QByteArray>		firstName;
+	ICQInfoValue<QByteArray>		lastName;
+	ICQInfoValue<QByteArray>		nickName;
+	ICQInfoValue<QByteArray>		homepage;
+	ICQInfoValue<char>				gender;				//0x00 - None, 0x01 - Female, 0x02 - Male
+	ICQInfoValue<bool>				webAware;
+	ICQInfoValue<quint16>			privacyProfile;		//0x00 - Low, 0x01 - Medium, 0x02 - High
+
+	ICQInfoValue<quint16>			language1;
+	ICQInfoValue<quint16>			language2;
+	ICQInfoValue<quint16>			language3;
+
+	ICQInfoValue<QByteArray>		statusDescription;
+
+	ICQInfoValue<quint16>			timezone;
+	ICQInfoValue<QByteArray>		notes;
+
+	ICQInfoValue<AddressItemList>	homeList;
+	ICQInfoValue<AddressItemList>	originList;
+	ICQInfoValue<WorkItemList>		workList;
+
+	ICQInfoValue<InfoItemList>		interestList;
+	ICQInfoValue<InfoItemList>		organizationList;
+	ICQInfoValue<InfoItemList>		pastAffliationList;
+	ICQInfoValue<InfoItemList>		phoneList;
+
+private:
+	AddressItemList parseAddressItemList( const QByteArray& data ) const;
+	QByteArray storeAddressItemList( const AddressItemList& infoList ) const;
+	WorkItemList parseWorkItemList( const QByteArray& data ) const;
+	QByteArray storeWorkItemList( const WorkItemList& infoList ) const;
+	InfoItemList parseInfoItemList( const QByteArray& data ) const;
+	QByteArray storeInfoItemList( const InfoItemList& infoList ) const;
 };
-
-
-typedef QValueList<ICQInfoItem> ICQInfoItemList;
-*/
 
 #endif
 //kate: space-indent off; tab-width 4; replace-tabs off; indent-mode csands;

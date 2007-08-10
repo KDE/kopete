@@ -190,12 +190,12 @@ void KRichTextEditPart::reloadConfig()
 
 KAboutData *KRichTextEditPart::createAboutData()
 {
-    KAboutData *aboutData = new KAboutData("krichtexteditpart", I18N_NOOP("KRichTextEditPart"), "0.1",
-                        I18N_NOOP("A simple rich text editor part"),
+    KAboutData *aboutData = new KAboutData("krichtexteditpart", 0, ki18n("KRichTextEditPart"), "0.1",
+                        ki18n("A simple rich text editor part"),
                         KAboutData::License_LGPL );
-    aboutData->addAuthor("Richard J. Moore", 0, "rich@kde.org", "http://xmelegance.org/" );
-    aboutData->addAuthor("Jason Keirstead", 0, "jason@keirstead.org", "http://www.keirstead.org/" );
-    aboutData->addAuthor("Michaël Larouche", 0, "larouche@kde.org" "http://www.tehbisnatch.org/" );
+    aboutData->addAuthor(ki18n("Richard J. Moore"), KLocalizedString(), "rich@kde.org", "http://xmelegance.org/" );
+    aboutData->addAuthor(ki18n("Jason Keirstead"), KLocalizedString(), "jason@keirstead.org", "http://www.keirstead.org/" );
+    aboutData->addAuthor(ki18n("Michaël Larouche"), KLocalizedString(), "larouche@kde.org" "http://www.tehbisnatch.org/" );
 
     return aboutData;
 }

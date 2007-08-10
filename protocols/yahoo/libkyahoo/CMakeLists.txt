@@ -53,7 +53,6 @@ receivefiletask.cpp
 yahoochattask.cpp
 )
 
-kde4_automoc(${libkyahoo_SRCS} )
 
 kde4_add_library( kyahoo SHARED ${libkyahoo_SRCS} )
 

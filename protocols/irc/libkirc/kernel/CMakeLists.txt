@@ -13,7 +13,6 @@ set(libkirc_SRCS
   tasks/kircsimpletask.cpp  
 )
 
-kde4_automoc(${libkirc_SRCS})
 
 kde4_add_library(kirc SHARED ${libkirc_SRCS})
 

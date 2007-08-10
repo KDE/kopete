@@ -8,8 +8,6 @@ set(kopete_statistics_PART_SRCS
    statisticsdialog.cpp 
    statisticscontact.cpp )
 
-kde4_automoc(${kopete_statistics_PART_SRCS})
-
 kde4_add_ui_files(kopete_statistics_PART_SRCS statisticswidget.ui )
 
 qt_add_dbus_interfaces(kopete_statistics_PART_SRCS org.kde.kopete.statisticsiface.xml)

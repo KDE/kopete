@@ -3,7 +3,7 @@
 
     Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -49,6 +49,7 @@
 #include "metacontactselectorwidget.h"
 #include "kopeteemoticons.h"
 #include "kopetestatusmessage.h"
+#include "kopetedeletecontacttask.h"
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
@@ -487,7 +488,8 @@ void Contact::slotDelete()
 		QString::fromLatin1("askRemoveContact"), KMessageBox::Notify | KMessageBox::Dangerous )
 		== KMessageBox::Continue )
 	{
-		deleteContact();
+		Kopete::DeleteContactTask *deleteTask = new Kopete::DeleteContactTask(this);
+		deleteTask->start();
 	}
 }
 

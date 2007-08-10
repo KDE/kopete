@@ -472,13 +472,14 @@ public slots:
 	virtual void sync(unsigned int changed = 0xFF);
 
 	/**
+	 * @deprecated Use DeleteContactTask instead.
 	 * Method to delete a contact from the contact list,
 	 * should be implemented by protocol plugin to handle
 	 * protocol-specific actions required to delete a contact
 	 * (ie. messages to the server, etc)
 	 * the default implementation simply call deleteLater()
 	 */
-	virtual void deleteContact();
+	virtual KDE_DEPRECATED void deleteContact();
 
 	/**
 	 * This is the Contact level slot for sending files. It should be

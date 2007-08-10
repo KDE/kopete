@@ -107,7 +107,7 @@ void StdCommands::CtcpRequest_dcc(const QString &nickname, const QString &fileNa
 			TransferServer *server = TransferHandler::self()->createServer(this, nickname, type, fileName, file.size());
 
 			QString ip = m_sock->localAddress()->nodeName();
-			QString ipNumber = QString::number( ntohl( inet_addr( ip.latin1() ) ) );
+			QString ipNumber = QString::number( ntohl( inet_addr( ip.toLatin1() ) ) );
 
 			kDebug(14120) << "Starting DCC file outgoing transfer." << endl;
 

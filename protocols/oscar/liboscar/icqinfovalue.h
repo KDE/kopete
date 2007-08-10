@@ -22,7 +22,12 @@ Kopete (c) 2006 by the Kopete developers <kopete-devel@kde.org>
 template <class T> class ICQInfoValue
 {
 public:
-	ICQInfoValue();
+	/**
+	 * ICQInfoValue constructor
+	 * @param assumeDirty if true hasChanged() will be false only when operator= was used before,
+	 * if loadStore is false hasChanged() will be true only if set was used.
+	 */
+	ICQInfoValue( bool assumeDirty = true );
 
 	void set( const T & value );
 	const T &get() const;
@@ -35,18 +40,20 @@ public:
 private:
 	T m_value;
 	bool m_dirty;
+	bool m_assumeDirty;
 };
 
 template <class T>
-ICQInfoValue<T>::ICQInfoValue()
+ICQInfoValue<T>::ICQInfoValue( bool assumeDirty )
 {
-	m_dirty = true;
+	m_assumeDirty = assumeDirty;
+	m_dirty = assumeDirty;
 }
 
 template <class T>
 void ICQInfoValue<T>::set( const T & value )
 {
-	if ( m_value != value )
+	if ( m_value != value || !m_assumeDirty )
 	{
 		m_value = value;
 		m_dirty = true;

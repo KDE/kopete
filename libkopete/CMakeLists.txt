@@ -46,6 +46,8 @@ set(kopete_contactlist_SRCS
 
 set(kopete_tasks_SRCS
   tasks/kopetetask.cpp
+  tasks/kopetecontacttaskbase.cpp
+  tasks/kopetedeletecontacttask.cpp
 )
 
 set(kopete_LIB_SRCS
@@ -110,13 +112,14 @@ kde4_add_ui_files(kopete_LIB_SRCS
  ui/metacontactselectorwidget_base.ui
 )
 
-kde4_automoc(${kopete_LIB_SRCS})
-
 kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
 
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 
-target_link_libraries(kopete ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS} ${X11_Xss_LIB} )
+target_link_libraries(kopete ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS} )
+if(Q_WS_X11 AND X11_Xss_FOUND)
+   target_link_libraries(kopete ${X11_Xss_LIB})
+endif(Q_WS_X11 AND X11_Xss_FOUND)
 
 set_target_properties(kopete PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS kopete DESTINATION ${LIB_INSTALL_DIR})
@@ -197,6 +200,8 @@ install( FILES
   kopeteuiglobal.h
   kopeteversion.h
   tasks/kopetetask.h
+  tasks/kopetecontacttaskbase.h
+  tasks/kopetedeletecontacttask.h
 DESTINATION ${INCLUDE_INSTALL_DIR}/kopete )
 
 install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_DIR} )

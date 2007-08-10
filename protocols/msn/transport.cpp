@@ -244,7 +244,7 @@ void TcpTransportBridge::slotOnSocketConnect()
 
 	mVerified = true;
 	QString foo = "foo\0";
-	mSocket->writeBlock(foo.toAscii(), foo.length());
+	mSocket->write(foo.toAscii(), foo.length());
 	foo.clear();
 
 	emit bridgeConnect();
@@ -255,7 +255,7 @@ void TcpTransportBridge::slotOnSocketReceive()
 	kDebug (14140) << k_funcinfo << "Bridge (" << name() << ") RECEIVED " << mSocket->bytesAvailable() << " bytes." << endl;
 	
 	QByteArray bytes(mSocket->bytesAvailable());
-	mSocket->readBlock(bytes.data(), bytes.size());
+	mSocket->read(bytes.data(), bytes.size());
 	// Write the data to the buffer.
 	mBuffer.write(bytes);
 

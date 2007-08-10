@@ -83,7 +83,7 @@ ICQStatusManager::ICQStatusManager()
 
 	data << PresenceType( Presence::FreeForChat,  OnlineStatus::Online,  SET_FFC,  IS_FFC,  i18n( "&Free for Chat" ),  i18n("Free For Chat"), QStringList(QString("icq_ffc")), Kopete::OnlineStatusManager::FreeForChat,  0, PresenceType::FlagsList() << Presence::None << Presence::Invisible );
 
-	data << PresenceType( Presence::Online, OnlineStatus::Online, ONLINE, ONLINE, i18n( "O&nline" ), i18n("Online"), QStringList(), Kopete::OnlineStatusManager::Online, 0, PresenceType::FlagsList() << Presence::None << Presence::Invisible << Presence::AIM << (Presence::AIM | Presence::Invisible) << Presence::Wireless << (Presence::Wireless | Presence::Invisible) );
+	data << PresenceType( Presence::Online, OnlineStatus::Online, ONLINE, ONLINE, i18n( "O&nline" ), i18n("Online"), QStringList(), Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasStatusMessage, PresenceType::FlagsList() << Presence::None << Presence::Invisible << Presence::AIM << (Presence::AIM | Presence::Invisible) << Presence::Wireless << (Presence::Wireless | Presence::Invisible) );
 
 	setPresenceType( data );
 

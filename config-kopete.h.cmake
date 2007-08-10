@@ -9,7 +9,7 @@
 #cmakedefine HAVE_XMMS 1
 
 /* Define if you have the XScreenSaver extension */
-#define HAVE_XSCREENSAVER 1
+#cmakedefine HAVE_XSCREENSAVER 1
 
 /* Define if MSN webcam support can be enabled */
 #define MSN_WEBCAM 1

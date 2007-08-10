@@ -50,8 +50,6 @@ set(kopete_groupwise_PART_SRCS
    gwcontactlist.cpp
 )
 
-kde4_automoc(${kopete_groupwise_PART_SRCS})
-
 kde4_add_plugin(kopete_groupwise ${kopete_groupwise_PART_SRCS})
 
 link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libgroupwise )

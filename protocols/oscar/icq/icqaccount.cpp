@@ -69,9 +69,14 @@ void ICQMyselfContact::userInfoUpdated()
 		presence.setDescription( icqAccount->engine()->statusDescription() );
 		presence.setXtrazStatus( details().xtrazStatus() );
 	}
-	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
+	else if ( !icqAccount->engine()->statusDescription().isEmpty() )
+	{
+		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
+		presence.setDescription( icqAccount->engine()->statusDescription() );
+	}
 
 	setProperty( Kopete::Global::Properties::self()->statusMessage(), icqAccount->engine()->statusMessage() );
+	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
 }
 
 void ICQMyselfContact::receivedShortInfo( const QString& contact )

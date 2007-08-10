@@ -37,7 +37,7 @@ TranslatorDialog::~TranslatorDialog()
 
 QString TranslatorDialog::translatedText()
 {
-	return m_textEdit->text();
+	return m_textEdit->toPlainText();
 }
 /*void TranslatorDialog::slotFinished()
 {

@@ -43,7 +43,7 @@
 #include <kactioncollection.h>
 
 typedef KGenericFactory<HistoryPlugin> HistoryPluginFactory;
-static const KAboutData aboutdata("kopete_history", I18N_NOOP("History") , "1.0" );
+static const KAboutData aboutdata("kopete_history", 0, ki18n("History") , "1.0" );
 K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  )
 
 HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )

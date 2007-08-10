@@ -56,19 +56,19 @@ ICQContact::~ICQContact()
 {
 }
 
-void ICQContact::updateSSIItem()
+void ICQContact::setSSIItem( const OContact& ssiItem )
 {
-	//kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << endl;
-
-	if ( m_ssiItem.waitingAuth() )
+	if ( ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
-	if ( m_ssiItem.type() != 0xFFFF && m_ssiItem.waitingAuth() == false &&
+	if ( ssiItem.type() != 0xFFFF && ssiItem.waitingAuth() == false &&
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
 	}
+
+	ICQContactBase::setSSIItem( ssiItem );
 }
 
 

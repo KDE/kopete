@@ -1,0 +1,22 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=tutorial_plugin
+Type=Service
+ServiceTypes=KCModule
+Name=Tutorial
+Name[de]=Anleitung
+Name[fa]=خودآموز
+Name[ga]=Cúrsa Teagaisc
+Name[sv]=Handledning
+Name[zh_TW]=教學
+Comment=Turns normal people into Super Kopete Developer
+Comment[de]=Macht Normalsterbliche zu Super-Kopete-Entwicklern ;-)
+Comment[pt]=Torna as pessoas normais em Super-Programadores do Kopete
+Comment[pt_BR]=Torna as pessoas normais em Super-Programadores do Kopete
+Comment[sv]=Förvandlar vanliga människor till superutvecklare av Kopete
+Comment[zh_TW]=將一般人變成超級 Kopete 開發者
+X-KDE-Library=kopete_tutorialplugin
+X-KDE-FactoryName=kcm_kopete_tutorialplugin
+X-KDE-ParentApp=kopete_tutorialplugin
+X-KDE-ParentComponents=kopete_tutorialplugin
+
