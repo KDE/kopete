@@ -21,7 +21,6 @@
 #include <qstring.h>
 #include <kdebug.h>
 
-#include "kopeteversion.h"
 #include "transfer.h"
 #include "connection.h"
 #include "oscartypes.h"
@@ -123,12 +122,7 @@ void ProfileTask::sendProfileUpdate()
 		capBuf.addGuid( oscar_caps[CAP_SENDFILE] ); // we can do filetransfers! :)
 		capBuf.addGuid( oscar_caps[CAP_UTF8] ); // we can send/receive UTF encoded messages
 		// send version
-		QByteArray kg = oscar_caps[CAP_KOPETE].data();
-		kg[12] = KOPETE_VERSION_MAJOR;
-		kg[13] = KOPETE_VERSION_MINOR;
-		kg[14] = KOPETE_VERSION_RELEASE / 100;
-		kg[15] = KOPETE_VERSION_RELEASE % 100;
-		capBuf.addGuid( Guid(kg) );
+		capBuf.addGuid( client()->versionCap() );
 		capBuf.addGuid( oscar_caps[CAP_TYPING] ); // we know you're typing something to us!
 		capBuf.addGuid( oscar_caps[CAP_BUDDYICON] ); //can you take my picture?
 		capBuf.addGuid( oscar_caps[CAP_INTEROPERATE] ); //AIM can communicate with ICQ users and ICQ with AIM users.

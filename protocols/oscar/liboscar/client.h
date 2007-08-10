@@ -375,9 +375,12 @@ public:
 
 	/** Set codec provider */
 	void setCodecProvider( CodecProvider* codecProvider );
-	
+
 	/** Set pointer to version info */
 	void setVersion( const Oscar::ClientVersion* version );
+
+	/**	Set version capability */
+	void setVersionCap( const QByteArray &cap );
 
 	/** start a filetransfer task */
 	void sendFiles( const QString& contact, const QStringList& files, Kopete::Transfer *t );
@@ -398,6 +401,9 @@ public:
 
 	/** Return version info */
 	const Oscar::ClientVersion* version() const;
+
+	/** Return version capability */
+	Guid versionCap() const;
 
 	/** The current user's user ID */
 	QString userId() const;

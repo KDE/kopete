@@ -144,6 +144,7 @@ public:
 	bool isIcq() const;
 	ContactManager* ssiManager() const;
 	const Oscar::ClientVersion* version() const;
+	Oscar::Guid versionCap() const;
 	RateClassManager* rateManager() const;
 	bool isLoggedIn() const;
 

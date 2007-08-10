@@ -58,6 +58,7 @@
 #include "contactmanager.h"
 #include "oscarlistnonservercontacts.h"
 #include "kopetetransfermanager.h"
+#include "kopeteversion.h"
 #include "oscarversionupdater.h"
 
 class OscarAccountPrivate : public Client::CodecProvider
@@ -106,6 +107,18 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	d = new OscarAccountPrivate( *this );
 	d->engine = new Client( this );
 	d->engine->setIsIcq( isICQ );
+	// Set version capability
+	// last 4 bytes determine version
+	// first number, major version
+	// second number,  minor version
+	// third number, point version 100+
+	// fourth number,  point version 0-99
+	QByteArray kg( "Kopete ICQ     ", 16 );
+	kg[12] = KOPETE_VERSION_MAJOR;
+	kg[13] = KOPETE_VERSION_MINOR;
+	kg[14] = KOPETE_VERSION_RELEASE / 100;
+	kg[15] = KOPETE_VERSION_RELEASE % 100;
+	d->engine->setVersionCap( kg );
 	
 	d->versionAlreadyUpdated = false;
 	d->buddyIconDirty = false;

@@ -153,6 +153,7 @@ public:
 	CodecProvider* codecProvider;
 	
 	const Oscar::ClientVersion* version;
+	Guid versionCap;
 };
 
 Client::Client( QObject* parent )
@@ -367,6 +368,11 @@ const Oscar::ClientVersion* Client::version() const
 	return d->version;
 }
 
+Guid Client::versionCap() const
+{
+	return d->versionCap;
+}
+
 // SLOTS //
 
 void Client::streamConnected()
@@ -501,6 +507,11 @@ void Client::setCodecProvider( Client::CodecProvider* codecProvider )
 void Client::setVersion( const Oscar::ClientVersion* version )
 {
 	d->version = version;
+}
+
+void Client::setVersionCap( const QByteArray &cap )
+{
+	d->versionCap = Guid( cap );
 }
 
 // INTERNALS //
