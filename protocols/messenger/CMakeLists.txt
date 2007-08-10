@@ -36,8 +36,6 @@ set(kopete_messenger_shared_LIB_SRCS
    ${kopete_messenger_ui_SRCS}
    )
 
-kde4_automoc(${kopete_messenger_shared_LIB_SRCS})
-
 kde4_add_library(kopete_messenger_shared SHARED ${kopete_messenger_shared_LIB_SRCS})
 
 ########### install files ###############
