@@ -39,6 +39,7 @@ namespace Kopete
 {
 	class OnlineStatusManager;
 
+	class Identity;
 	class Protocol;
 	class Account;
 	class Contact;

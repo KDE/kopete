@@ -88,8 +88,7 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 		//remove me after we can change account ids (Matt)
 		d->ui->m_login->setDisabled( true );
 		d->ui->m_autologin->setChecked( account->excludeConnect()  );
-		d->ui->m_globalIdentity->setChecked( config->readEntry("ExcludeGlobalIdentity", false) );
-		
+
 		QQContact *myself = static_cast<QQContact *>( account->myself() );
 		if( myself )
 			connect( d->ui->buttonVCard, SIGNAL(clicked()), myself, SLOT(slotUserInfo()));
@@ -133,9 +132,6 @@ Kopete::Account * QQEditAccountWidget::apply()
 		config->writeEntry( "serverName", "tcpconn.tencent.com" );
 		config->writeEntry( "serverPort", "80" );
 	}
-
-	// Global Identity
-	config->writeEntry( "ExcludeGlobalIdentity", d->ui->m_globalIdentity->isChecked() );
 
 		/*
 	if ( account()->isConnected() )

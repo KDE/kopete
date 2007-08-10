@@ -38,6 +38,8 @@
 #include <kconfiggroup.h>
 
 #include "kopeteaccount.h"
+#include "kopeteidentity.h"
+#include "kopeteidentitymanager.h"
 #include "kabcpersistence.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
@@ -63,7 +65,7 @@ public:
 	Private( Protocol *protocol, const QString &accountId )
 	 : protocol( protocol ), id( accountId )
 	 , excludeconnect( true ), priority( 0 )
-	 , connectionTry(0), myself( 0 )
+	 , connectionTry(0), identity( 0 ), myself( 0 )
 	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
 	 , blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
 	{ }
@@ -79,6 +81,7 @@ public:
 	QHash<QString, Contact*> contacts;
 	QColor color;
 	uint connectionTry;
+	Identity *identity;
 	Contact *myself;
 	QTimer suppressStatusTimer;
 	bool suppressStatusNotification;
@@ -98,6 +101,15 @@ Account::Account( Protocol *parent, const QString &accountId )
 	d->color = d->configGroup->readEntry( "Color" , QColor() );
 	d->customIcon = d->configGroup->readEntry( "Icon", QString() );
 	d->priority = d->configGroup->readEntry( "Priority", 0 );
+
+	Identity *identity = Kopete::IdentityManager::self()->findIdentity( d->configGroup->readEntry("Identity", QString()) );
+
+	// if the identity was not found, use the default one which will for sure exist
+	// FIXME: maybe it could show a passive dialog telling that to the user
+	if (!identity)
+		identity = Kopete::IdentityManager::self()->defaultIdentity();
+
+	setIdentity( identity );
 
 	d->restoreStatus = Kopete::OnlineStatus::Online;
 	d->restoreMessage = "";
@@ -372,7 +384,11 @@ KActionMenu * Account::actionMenu()
 #ifdef __GNUC__
 #warning No icon shown, we should go away from QPixmap genered icons with overlays.
 #endif
-	QString nick = myself()->nickName();
+	QString nick;
+       	if (identity()->hasProperty( Kopete::Global::Properties::self()->nickName().key() ))
+		nick = identity()->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	else
+		nick = myself()->nickName();
 
 	menu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
 		nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
@@ -397,6 +413,22 @@ bool Account::isConnected() const
 bool Account::isAway() const
 {
 	return d->myself && ( d->myself->onlineStatus().status() == Kopete::OnlineStatus::Away );
+}
+Identity * Account::identity() const
+{
+	return d->identity;
+}
+
+void Account::setIdentity( Identity *ident )
+{
+	if (d->identity)
+	{
+		d->identity->removeAccount( this );
+	}
+
+	ident->addAccount( this );
+	d->identity = ident;
+	d->configGroup->writeEntry("Identity", ident->identityId());
 }
 
 Contact * Account::myself() const
@@ -427,6 +459,9 @@ void Account::setMyself( Contact *myself )
 	QObject::connect( d->myself, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
 		this, SLOT( slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) );
 
+	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
+		identity(), SLOT( updateOnlineStatus()));
+
 	if ( isConnected() != wasConnected )
 		emit isConnectedChanged();
 }
@@ -454,7 +489,7 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 	if ( !isOffline )
 	{
 		d->restoreStatus = newStatus;
-		d->restoreMessage = myself()->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
+		d->restoreMessage = identity()->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
 //		kDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage;
 	}
 

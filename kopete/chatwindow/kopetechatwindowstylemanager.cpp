@@ -19,6 +19,7 @@
 
 // Qt includes
 #include <QStack>
+#include <QFileInfo>
 
 // KDE includes
 #include <kstandarddirs.h>
@@ -94,13 +95,10 @@ ChatWindowStyleManager::~ChatWindowStyleManager()
 void ChatWindowStyleManager::loadStyles()
 {
         QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QLatin1String( "styles" ) );
-        QString localStyleDir( KStandardDirs::locateLocal( "appdata", QLatin1String("styles/"),true) );
-        if( !chatStyles.contains(localStyleDir))
-                chatStyles<<localStyleDir;
-	foreach(const QString &style, chatStyles)
+	foreach(const QString &styleDir, chatStyles)
 	{
-		kDebug(14000) << k_funcinfo << style;
-		d->styleDirs.push( KUrl(style) );
+		kDebug(14000) << k_funcinfo << styleDir;
+		d->styleDirs.push( KUrl(styleDir) );
 	}
 
 	d->styleDirLister = new KDirLister(this);
@@ -120,16 +118,25 @@ QStringList ChatWindowStyleManager::getAvailableStyles() const
 
 int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 {
-	QString localStyleDir( KStandardDirs::locateLocal( "appdata", QString::fromUtf8("styles/") ) );
+	QString localStyleDir;
+	QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QLatin1String( "styles" ) );
+	// findDirs returns preferred paths first, let's check if one of them is writable
+	foreach(const QString& styleDir, chatStyles)
+	{
+		if(QFileInfo(styleDir).isWritable())
+		{
+			localStyleDir = styleDir;
+			break;
+		}
+	}
+	if( localStyleDir.isEmpty() ) // none of dirs is writable
+	{
+		return StyleNoDirectoryValid;
+	}
 
 	KArchiveEntry *currentEntry = 0L;
 	KArchiveDirectory* currentDir = 0L;
 	KArchive *archive = 0L;
-
-	if( localStyleDir.isEmpty() )
-	{
-		return StyleNoDirectoryValid;
-	}
 
 	// Find mimetype for current bundle. ZIP and KTar need separate constructor
 	QString currentBundleMimeType = KMimeType::findByPath(styleBundlePath, 0, false)->name();

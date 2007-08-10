@@ -2,7 +2,7 @@
     accountconfig.cpp  -  Kopete account config page
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
-    Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart@kde.org>
+    Copyright (c) 2003-2007 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2003      by Martijn Klingens       <klingens@kde.org>
 
     Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
@@ -38,17 +38,19 @@
 #include "addaccountwizard.h"
 #include "editaccountwidget.h"
 #include "kopeteaccountmanager.h"
+#include "kopeteidentitymanager.h"
+#include "kopeteidentity.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
+#include "accountidentitydialog.h"
 
-//FIXME Crashes on "Apply" (thorbenk)
 
 class KopeteAccountLVI : public QTreeWidgetItem
 {
 	public:
-		KopeteAccountLVI( Kopete::Account *a, QTreeWidget* parent) : QTreeWidgetItem(parent) { 
-		m_account = a; }
+		KopeteAccountLVI( Kopete::Account *a, QTreeWidget* parent) : QTreeWidgetItem(parent) , m_account(a) { }
+		KopeteAccountLVI( Kopete::Account *a, QTreeWidgetItem* parent) : QTreeWidgetItem(parent) , m_account(a) { }
 		Kopete::Account *account() { return m_account; }
 
 	private:
@@ -74,6 +76,7 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QStringList &ar
 
 	connect( mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
 	connect( mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEditAccount() ) );
+	connect( mButtonIdentity, SIGNAL( clicked() ), this, SLOT( slotSelectIdentity() ) );
 	connect( mButtonRemove, SIGNAL( clicked() ), this, SLOT( slotRemoveAccount() ) );
 	connect( mAccountList,  SIGNAL( itemSelectionChanged() ), this, SLOT( slotItemSelected() ) );
 	connect( mAccountList,  SIGNAL( itemDoubleClicked(QTreeWidgetItem*, int) ), this, SLOT( slotEditAccount() ) );
@@ -85,13 +88,14 @@ KopeteAccountLVI* KopeteAccountConfig::selectedAccount()
 {
 	QList<QTreeWidgetItem*> selectedItems = mAccountList->selectedItems();
 	if(!selectedItems.empty())
- 		return static_cast<KopeteAccountLVI*>( selectedItems.first() );
+ 		return dynamic_cast<KopeteAccountLVI*>( selectedItems.first() );
 	return 0;
 }
 
 void KopeteAccountConfig::save()
 {
-	uint priority = mAccountList->topLevelItemCount();
+	// The priority is disabled because of identities and because there is no way to edit it anymore
+	/*uint priority = mAccountList->topLevelItemCount();
 	
 	KopeteAccountLVI *i;
 	for( int j=0; j<mAccountList->topLevelItemCount(); ++j )
@@ -100,27 +104,50 @@ void KopeteAccountConfig::save()
 		if(!i->account())
 			continue;
 		i->account()->setPriority( priority-- );
-	}
+	}*/
 
 	Kopete::AccountManager::self()->save();
 
-	load(); //refresh the colred accounts (in case of apply)
+	//load(); //refresh the colred accounts (in case of apply)
 }
 
 void KopeteAccountConfig::load()
 {
-	KopeteAccountLVI *lvi = 0L;
-
 	mAccountList->clear();
-
-	QListIterator<Kopete::Account *> it( Kopete::AccountManager::self()->accounts() );
-	Kopete::Account *i;
-	while ( it.hasNext() )
+		
+	QHash<Kopete::Identity *,QTreeWidgetItem *> identityItemHash;
+//	Kopete::Identity *defaultIdentity = Kopete::IdentityManager::self()->defaultIdentity();
+	foreach(Kopete::Identity *i, Kopete::IdentityManager::self()->identities())
 	{
-		i = it.next();
+		//KopeteIdentityLVI *lvi = new KopeteIdentityLVI( i, mIdentityList );
+		QTreeWidgetItem *identityItem = new QTreeWidgetItem( mAccountList );
 		// Insert the item after the previous one
+		
+		identityItem->setText( 0, i->identityId() );
+		identityItem->setIcon( 0, KIcon( i->customIcon()) );
+		
+		identityItem->setExpanded( true );
+		
+		/*if (i == defaultIdentity)
+		{
+			QFont font = lvi->font( 0 );
+			font.setBold( true );
+			lvi->setFont( 0, font );
+		}*/
+		//lvi->setSizeHint( 0, QSize(0, 42) );
+		
+		identityItemHash.insert(i,identityItem);
+	}
 
-		lvi = new KopeteAccountLVI( i, mAccountList );
+	foreach(Kopete::Account *i , Kopete::AccountManager::self()->accounts() )
+	{
+		Kopete::Identity *idnt = i->identity();
+		
+		KopeteAccountLVI *lvi;
+		if(identityItemHash.contains(idnt))
+			lvi = new KopeteAccountLVI( i, identityItemHash[idnt] );
+		else
+			lvi = new KopeteAccountLVI( i, mAccountList );
 		lvi->setText( 0, i->accountLabel() );
 		lvi->setIcon( 0, QIcon(i->myself()->onlineStatus().iconFor( i, 32)) );
 		QFont font = lvi->font( 0 );
@@ -148,6 +175,7 @@ void KopeteAccountConfig::slotItemSelected()
 
 	mButtonEdit->setEnabled( itemSelected );
 	mButtonRemove->setEnabled( itemSelected );
+	mButtonIdentity->setEnabled( itemSelected );
 
 	m_protected=false;
 }
@@ -217,6 +245,20 @@ void KopeteAccountConfig::slotRemoveAccount()
 		Kopete::AccountManager::self()->removeAccount( i );
 		delete lvi;
 	}
+}
+
+void KopeteAccountConfig::slotSelectIdentity()
+{
+	KopeteAccountLVI *lvi = selectedAccount();
+	
+	if ( !lvi || !lvi->account() )
+		return;
+
+	Kopete::Account *a = lvi->account();
+
+	AccountIdentityDialog::changeAccountIdentity( this, a, 0, i18n("Select an identity for the account:"));
+	
+	load();
 }
 
 void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,

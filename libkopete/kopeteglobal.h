@@ -18,7 +18,7 @@
 #ifndef KOPETEGLOBAL_H
 #define KOPETEGLOBAL_H
 
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 
 #include "kopete_export.h"
 
@@ -50,29 +50,29 @@ namespace Global
 	KOPETE_EXPORT void installEmoticonTheme(const QString &localPath);
 
 	/**
-	 * \brief Global facility to query/store templates that are needed by KopeteContactProperty
+	 * \brief Global facility to query/store templates that are needed by KopeteProperty
 	 *
-	 * Basically all a plugin author needs to worry about is creating ContactPropertyTmpl
+	 * Basically all a plugin author needs to worry about is creating PropertyTmpl
 	 * objects for all the properties he wants to set for a Kopete::Contact,
 	 * everything else is handled behind the scenes.
 	 **/
 	class KOPETE_EXPORT Properties
 	{
-		friend class Kopete::ContactPropertyTmpl;
+		friend class Kopete::PropertyTmpl;
 		public:
 			/**
 			 * \brief Singleton accessor for this class.
 			 *
 			 * Use it to access the global list of property-templates or to get
-			 * a reference to one of the common ContactPropertyTmpl objects
+			 * a reference to one of the common PropertyTmpl objects
 			 */
 			static Properties *self();
 
 			/**
 			 * Return a template with defined by @p key, if no such template has
-			 * been registered ContactPropertyTmpl::null will be returned
+			 * been registered PropertyTmpl::null will be returned
 			 */
-			const ContactPropertyTmpl &tmpl(const QString &key) const;
+			const PropertyTmpl &tmpl(const QString &key) const;
 
 			/**
 			 * @return a ready-to-use template for a contact's full name.
@@ -81,69 +81,69 @@ namespace Global
 			 * firstName() and lastName() to assemble an name that consists of
 			 * both name parts
 			 */
-			const ContactPropertyTmpl &fullName() const;
+			const PropertyTmpl &fullName() const;
 
 			/**
 			 * Return default template for a contact's idle-time
 			 */
-			const ContactPropertyTmpl &idleTime() const;
+			const PropertyTmpl &idleTime() const;
 			/**
 			 * Return default template for a contact's online-since time
 			 * (i.e. time since he went from offline to online)
 			 */
-			const ContactPropertyTmpl &onlineSince() const;
+			const PropertyTmpl &onlineSince() const;
 			/**
 			 * @return default template for a contact's last-seen time
 			 */
-			const ContactPropertyTmpl &lastSeen() const;
+			const PropertyTmpl &lastSeen() const;
 			/**
 			 * @return default template for a contact's status message
 			 */
-			const ContactPropertyTmpl &statusMessage() const;
+			const PropertyTmpl &statusMessage() const;
 			/**
 			 * @return default template for a contact's first name
 			 */
-			const ContactPropertyTmpl &firstName() const;
+			const PropertyTmpl &firstName() const;
 			/**
 			 * @return default template for a contact's last name
 			 */
-			const ContactPropertyTmpl &lastName() const;
+			const PropertyTmpl &lastName() const;
 			/**
 			 * @return default template for a contact's email-address
 			 */
-			const ContactPropertyTmpl &emailAddress() const;
+			const PropertyTmpl &emailAddress() const;
 			/**
 			 * @return default template for a contact's private phone number
 			 */
-			const ContactPropertyTmpl &privatePhone() const;
+			const PropertyTmpl &privatePhone() const;
 			/**
 			 * @return default template for a contact's private mobile number
 			 */
-			const ContactPropertyTmpl &privateMobilePhone() const;
+			const PropertyTmpl &privateMobilePhone() const;
 			/**
 			 * @return default template for a contact's work phone number
 			 */
-			const ContactPropertyTmpl &workPhone() const;
+			const PropertyTmpl &workPhone() const;
 			/**
 			 * @return default template for a contact's work mobile number
 			 */
-			const ContactPropertyTmpl &workMobilePhone() const;
+			const PropertyTmpl &workMobilePhone() const;
 			/**
 			 * @return default template for a contact's nickname (set by the contact)
 			 */
-			const ContactPropertyTmpl &nickName() const;
+			const PropertyTmpl &nickName() const;
 			/**
 			 * default template for a contact's photo.
 			 *
 			 * It could be either a QString or a QImage.
 			 * If it's a QString, it should points to the path the image is stored.
 			 */
-			const ContactPropertyTmpl &photo() const;
+			const PropertyTmpl &photo() const;
 
 			/**
-			 * @return a map of all registered ContactPropertyTmpl object
+			 * @return a map of all registered PropertyTmpl object
 			 */
-			const ContactPropertyTmpl::Map &templateMap() const;
+			const PropertyTmpl::Map &templateMap() const;
 
 			/**
 			 * return true if a template with key @p key is already registered,
@@ -156,10 +156,10 @@ namespace Global
 			~Properties();
 
 			bool registerTemplate(const QString &key,
-				const ContactPropertyTmpl &tmpl);
+				const PropertyTmpl &tmpl);
 			void unregisterTemplate(const QString &key);
 
-			const ContactPropertyTmpl &createProp(const QString &key,
+			const PropertyTmpl &createProp(const QString &key,
 				const QString &label, const QString &icon=QString::null,
 				bool persistent = false) const;
 

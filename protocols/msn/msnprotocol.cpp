@@ -25,7 +25,7 @@
 #include <kconfig.h>
 #include <kdeversion.h>
 #include <kaboutdata.h>
-#include <kopetecontactproperty.h>
+#include <kopeteproperty.h>
 
 #include "kopeteaccountmanager.h"
 #include "kopeteglobal.h"
@@ -90,7 +90,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const QStringList & /* args */ )
 	propPhoneWork(Kopete::Global::Properties::self()->workPhone()),
 	propPhoneMobile(Kopete::Global::Properties::self()->privateMobilePhone()),
 	propClient("client", i18n("Remote Client"), 0),
-	propGuid("guid", i18n("Contact GUID"), 0, Kopete::ContactPropertyTmpl::PersistentProperty),
+	propGuid("guid", i18n("Contact GUID"), 0, Kopete::PropertyTmpl::PersistentProperty),
 	propPersonalMessage(Kopete::Global::Properties::self()->statusMessage())
 {
 	s_protocol = this;

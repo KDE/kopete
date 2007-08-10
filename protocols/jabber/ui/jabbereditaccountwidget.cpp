@@ -131,9 +131,6 @@ void JabberEditAccountWidget::reopen ()
 	cbSendGoneEvent->setChecked( account()->configGroup()->readEntry("SendGoneEvent", true) );
 
 	cbHideSystemInfo->setChecked( account()->configGroup()->readEntry("HideSystemInfo", false) );
-
-	// Global Identity
-	cbGlobalIdentity->setChecked( account()->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
 }
 
 Kopete::Account *JabberEditAccountWidget::apply ()
@@ -195,9 +192,6 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->configGroup()->writeEntry("SendGoneEvent", cbSendGoneEvent->isChecked());
 	
 	account()->configGroup()->writeEntry("HideSystemInfo", cbHideSystemInfo->isChecked());
-
-	// Global Identity
-	account()->configGroup()->writeEntry("ExcludeGlobalIdentity", cbGlobalIdentity->isChecked());
 }
 
 bool JabberEditAccountWidget::validateData ()

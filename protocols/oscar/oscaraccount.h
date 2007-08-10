@@ -92,11 +92,6 @@ public:
 	QTextCodec* contactCodec( const QString& contactName ) const;
 
 	/**
-	 * Sets buddy icon
-	 */
-	void setBuddyIcon( KUrl url );
-
-	/**
 	 * Add a contact to the server site list
 	 * \param contactName the screen name of the new contact to add
 	 * \param groupName the group of the new contact
@@ -189,8 +184,6 @@ private slots:
 
 	/** Handle task errors from the client */
 	void slotTaskError( const Oscar::SNAC& s, int errCode, bool fatal ) ;
-
-	void slotGlobalIdentityChanged( const QString& key, const QVariant& value );
 
 	/** Sends buddy icon to server */
 	void slotSendBuddyIcon();

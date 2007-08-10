@@ -46,6 +46,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetewindow.h"
 #include "kopeteviewmanager.h"
+#include "kopeteidentitymanager.h"
 
 KopeteApplication::KopeteApplication()
 : KUniqueApplication( true, true )
@@ -56,6 +57,9 @@ KopeteApplication::KopeteApplication()
 	Kopete::PluginManager::self();
 
 	Kopete::UI::Global::setMainWidget( m_mainWindow );
+
+	//Create the identity manager
+	Kopete::IdentityManager::self()->load();
 
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:
@@ -110,6 +114,7 @@ void KopeteApplication::slotLoadPlugins()
 	//Create the view manager
 	KopeteViewManager::viewManager();
 
+	// the account manager should be created after the identity manager is created
 	Kopete::AccountManager::self()->load();
 	Kopete::ContactList::self()->load();
 
@@ -203,6 +208,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 {
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
+	//FIXME: this should probably ask for the identities to connect instead of all accounts
 	// --noconnect not specified?
 	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() )
 		Kopete::AccountManager::self()->connectAll();

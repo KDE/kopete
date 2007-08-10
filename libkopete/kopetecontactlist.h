@@ -186,11 +186,6 @@ public slots:
 	 */
 	 void setSelectedItems(QList<MetaContact *> metaContacts , QList<Group *> groups);
 
-	/**
-	  * Apply the global identity.
-	  */
-	void loadGlobalIdentity();
-
 signals:
 	/**
 	 * A meta contact was added to the contact list. Interested classes
@@ -286,16 +281,6 @@ private slots:
 	 * Called on contactlist load or when KABC has changed, to check if we need to update our contactlist from there.
 	 */
 	void slotKABCChanged();
-
-	/**
-	 * Called when the myself displayName changed.
-	 */
-	void slotDisplayNameChanged();
-
-	/**
-	 * Called when the myself photo changed.
-	 */
-	void slotPhotoChanged();
 
 private:
 

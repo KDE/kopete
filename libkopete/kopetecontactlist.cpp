@@ -40,7 +40,6 @@
 #include "kopetechatsession.h"
 #include "kopetecontact.h"
 #include "kopetedeletecontacttask.h"
-#include "kopetegeneralsettings.h"
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetepicture.h"
@@ -64,9 +63,6 @@ class ContactList::Private
 	QTimer *saveTimer;
 
 	MetaContact *myself;
-
-	/** Flag: does the user uses the global identity */
-	bool useGlobalIdentity;
 };
 
 ContactList *ContactList::s_self = 0L;
@@ -404,9 +400,6 @@ void ContactList::load()
 
 	addGroups( storage->groups() );
 	addMetaContacts( storage->contacts() );
-
-	// Apply the global identity when all the protocols plugins are loaded.
-	connect(PluginManager::self(), SIGNAL(allPluginsLoaded()), this, SLOT(loadGlobalIdentity()));
 
 	d->loaded = true;
 	delete storage;

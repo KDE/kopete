@@ -58,10 +58,6 @@
 		<Action name="quicksearch_bar"/>
 	</ToolBar>
 	
-	<ToolBar fullWidth="true" name="editGlobalIdentityBar" noMerge="1" hidden="true" newline="true"><Text>Global Identity Bar</Text>
-		<Action name="editglobal_widget"/>
-	</ToolBar>
-
 	<Menu name="contact_popup">
 		<Action name="contactSendMessage" />
 		<Action name="contactStartChat" />

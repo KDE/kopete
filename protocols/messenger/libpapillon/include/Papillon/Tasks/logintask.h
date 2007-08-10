@@ -115,7 +115,7 @@ protected:
 	 * @param networkMessage give NetworkMessage.
 	 * @return true if the NetworkMessage is for us.
 	 */
-	virtual bool forMe(Papillon::NetworkMessage *networkMessage);
+	virtual bool forMe(Papillon::NetworkMessage *networkMessage) const;
 	/**
 	 * Inherited from Task.
 	 * Start the login process.

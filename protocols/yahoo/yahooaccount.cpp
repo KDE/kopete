@@ -107,7 +107,6 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	myself()->setProperty( YahooProtocol::protocol()->iconCheckSum, configGroup()->readEntry( "iconCheckSum", 0 ) );
 	myself()->setProperty( YahooProtocol::protocol()->iconExpire, configGroup()->readEntry( "iconExpire", 0 ) );
 
-	QObject::connect( Kopete::ContactList::self(), SIGNAL( globalIdentityChanged(const QString&, const QVariant& ) ), SLOT( slotGlobalIdentityChanged(const QString&, const QVariant& ) ));
 // 	initConnectionSignals( MakeConnections );
 
 	QString displayName = configGroup()->readEntry(QLatin1String("displayName"), QString());
@@ -654,17 +653,6 @@ bool YahooAccount::createChatContact(const QString &nick)
 	Kopete::MetaContact *m = new Kopete::MetaContact;
 	m->setTemporary( true );
 	return createContact( nick, m );
-}
-
-void YahooAccount::slotGlobalIdentityChanged( const QString &key, const QVariant &value )
-{
-	if( !configGroup()->readEntry("ExcludeGlobalIdentity", false) )
-	{
-		if ( key == Kopete::Global::Properties::self()->photo().key() )
-		{
-			setBuddyIcon( KUrl( value.toString() ) );
-		}
-	}
 }
 
 void YahooAccount::sendFile( YahooContact *to, const KUrl &url )

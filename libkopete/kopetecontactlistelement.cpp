@@ -37,7 +37,7 @@ public:
 };
 
 ContactListElement::ContactListElement( QObject *parent )
-: QObject( parent )
+: PropertyContainer( parent )
 {
 	d = new Private;
 

@@ -21,10 +21,10 @@
 
 #include <QtCore/QList>
 #include <QtCore/QMap>
-#include <QtCore/QObject>
 #include <QtGui/QStandardItem>
 
 #include "kopete_export.h"
+#include "kopetepropertycontainer.h"
 
 namespace Kopete {
 
@@ -44,7 +44,7 @@ class Plugin;
  * It also allow to store an icon for this element.
  */
 class KOPETE_EXPORT ContactListElement
-	: public QObject
+	: public PropertyContainer  /* public KopeteNotifyDataObject */
 {
 	Q_OBJECT
 

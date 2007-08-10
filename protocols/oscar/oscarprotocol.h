@@ -22,7 +22,7 @@
 
 #include "kopeteprotocol.h"
 #include "kopete_export.h"
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 
 class OscarStatusManager;
 
@@ -38,13 +38,13 @@ public:
 	                                             const QMap<QString, QString> &serializedData,
 	                                             const QMap<QString, QString> &addressBookData );
 	
-	const Kopete::ContactPropertyTmpl awayMessage;
-	const Kopete::ContactPropertyTmpl clientFeatures;
-	const Kopete::ContactPropertyTmpl buddyIconHash;
-	const Kopete::ContactPropertyTmpl contactEncoding;
-	const Kopete::ContactPropertyTmpl memberSince;
-	const Kopete::ContactPropertyTmpl client;
-	const Kopete::ContactPropertyTmpl protocolVersion;
+	const Kopete::PropertyTmpl awayMessage;
+	const Kopete::PropertyTmpl clientFeatures;
+	const Kopete::PropertyTmpl buddyIconHash;
+	const Kopete::PropertyTmpl contactEncoding;
+	const Kopete::PropertyTmpl memberSince;
+	const Kopete::PropertyTmpl client;
+	const Kopete::PropertyTmpl protocolVersion;
 
 	virtual OscarStatusManager *statusManager() const = 0;
 };

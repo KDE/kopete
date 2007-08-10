@@ -254,17 +254,17 @@ void KRichTextEditPart::createActions()
     updateFont();
 
     //Alignment
-    d->action_align_left = new KToggleAction( KIcon("text_left"), i18n("Align &Left"), actionCollection() );
+    d->action_align_left = new KToggleAction( KIcon("text-left"), i18n("Align &Left"), actionCollection() );
     actionCollection()->addAction( "format_align_left", d->action_align_left );
     connect( d->action_align_left, SIGNAL(toggled(bool)),
         this, SLOT(setAlignLeft(bool)) );
 
-    d->action_align_center = new KToggleAction( KIcon("text_center"), i18n("Align &Center"), actionCollection() );
+    d->action_align_center = new KToggleAction( KIcon("text-center"), i18n("Align &Center"), actionCollection() );
     actionCollection()->addAction( "format_align_center", d->action_align_center );
     connect( d->action_align_center, SIGNAL(toggled(bool)),
         this, SLOT(setAlignCenter(bool)) );
 
-    d->action_align_right = new KToggleAction( KIcon("text_right"), i18n("Align &Right"), actionCollection() );
+    d->action_align_right = new KToggleAction( KIcon("text-right"), i18n("Align &Right"), actionCollection() );
     actionCollection()->addAction( "format_align_right", d->action_align_right );
     connect( d->action_align_right, SIGNAL(toggled(bool)),
         this, SLOT(setAlignRight(bool)) );

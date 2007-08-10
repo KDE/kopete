@@ -79,7 +79,7 @@ ChatMembersListWidget::ContactItem::ContactItem( ChatMembersListWidget *parent, 
 	setText( 0, nick );
 	setDragEnabled(true);
 
-	connect( m_contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
+	connect( m_contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
 	         this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
 	setStatus( parent->session()->contactOnlineStatus(m_contact) );

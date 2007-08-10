@@ -1,11 +1,12 @@
 /*
     kopeteaccount.h - Kopete Account
 
+    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003-2004 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -42,6 +43,7 @@ class Group;
 class OnlineStatus;
 class BlackLister;
 class StatusMessage;
+class Identity;
 
 /**
  * The Kopete::Account class handles one account.
@@ -207,6 +209,25 @@ public:
 	 */
 	QString customIcon() const;
 	
+	/**
+	 * \brief Retrieve the identity this account belongs to
+	 *
+	 * \return a pointer to the Identity object this account belongs to.
+	 *
+	 * \see setIdentity().
+	 */
+	Identity * identity() const;
+
+	/**
+	 * \brief Sets the identity this account belongs to
+	 *
+	 * Setting the account to a new identity implies it to be removed from the 
+	 * identity it was previously associated.
+	 *
+	 * @param ident The identity this account should be associated to
+	 */
+	void setIdentity( Identity *ident );
+
 	/**
 	 * \brief Retrieve the 'myself' contact.
 	 *

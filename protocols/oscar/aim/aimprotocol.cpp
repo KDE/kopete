@@ -225,7 +225,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 
 AIMProtocol::AIMProtocol(QObject *parent, const QStringList &)
 : OscarProtocol( AIMProtocolFactory::componentData(), parent ),
-	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::ContactPropertyTmpl::RichTextProperty)
+	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::PropertyTmpl::RichTextProperty)
 {
 	if (protocolStatic_)
 		kDebug(14152) << k_funcinfo << "AIM plugin already initialized";
