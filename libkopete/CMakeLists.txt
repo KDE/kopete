@@ -204,4 +204,4 @@ install( FILES
   tasks/kopetedeletecontacttask.h
 DESTINATION ${INCLUDE_INSTALL_DIR}/kopete )
 
-install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_DIR} )
+install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )

@@ -182,7 +182,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 			groupMap.insert( group, myWindow );
 	}
 
-//	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
+//	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count();
 
 	return myWindow;
 }
@@ -242,7 +242,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 
 	m_alwaysShowTabs = KGlobal::config()->group( "ChatWindowSettings" ).
                            readEntry( QLatin1String("AlwaysShowTabs"), false );
-//	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
+//	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count();
 
 	setupGUI( static_cast<StandardWindowOptions>(ToolBar | Keys | StatusBar | Save | Create) , "kopetechatwindow.rc" );
 
@@ -252,7 +252,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 
 KopeteChatWindow::~KopeteChatWindow()
 {
-	kDebug( 14010 ) << k_funcinfo << endl;
+	kDebug( 14010 ) << k_funcinfo;
 
 	emit( closing( this ) );
 
@@ -283,7 +283,7 @@ KopeteChatWindow::~KopeteChatWindow()
 	windows.removeAt( windows.indexOf( this ) );
 	windowListChanged();
 
-//	kDebug( 14010 ) << "Open Windows: " << windows.count() << endl;
+//	kDebug( 14010 ) << "Open Windows: " << windows.count();
 
 	saveOptions();
 
@@ -533,13 +533,13 @@ void KopeteChatWindow::updateSpellCheckAction()
 		toggleAutoSpellCheck->setEnabled( true );
 		if ( Kopete::BehaviorSettings::self()->spellCheck() )
 		{
-			kDebug(14000) << k_funcinfo << "spell check enabled" << endl;
+			kDebug(14000) << k_funcinfo << "spell check enabled";
 			toggleAutoSpellCheck->setChecked( true );
 			m_activeView->editPart()->toggleAutoSpellCheck(true);
 		}
 		else
 		{
-			kDebug(14000) << k_funcinfo << "spell check disabled" << endl;
+			kDebug(14000) << k_funcinfo << "spell check disabled";
 			toggleAutoSpellCheck->setChecked( false );
 			m_activeView->editPart()->toggleAutoSpellCheck(false);
 		}
@@ -1074,14 +1074,14 @@ void KopeteChatWindow::slotPlaceTabs( QAction *action )
 void KopeteChatWindow::readOptions()
 {
 	// load and apply config file settings affecting the appearance of the UI
-//	kDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) << k_funcinfo;
 	applyMainWindowSettings( KGlobal::config()->group( QLatin1String( "KopeteChatWindow" ) ) );
 	//config->setGroup( QLatin1String("ChatWindowSettings") );
 }
 
 void KopeteChatWindow::saveOptions()
 {
-//	kDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) << k_funcinfo;
 
         KConfigGroup cg( KGlobal::config(), QLatin1String( "KopeteChatWindow" ) );
 
@@ -1096,7 +1096,7 @@ void KopeteChatWindow::saveOptions()
 
 void KopeteChatWindow::slotChatSave()
 {
-//	kDebug(14010) << "KopeteChatWindow::slotChatSave()" << endl;
+//	kDebug(14010) << "KopeteChatWindow::slotChatSave()";
 	if( isActiveWindow() && m_activeView )
 		m_activeView->messagePart()->save();
 }
@@ -1161,9 +1161,9 @@ bool KopeteChatWindow::queryClose()
 {
 	bool canClose = true;
 
-//	kDebug( 14010 ) << " Windows left open:" << endl;
+//	kDebug( 14010 ) << " Windows left open:";
 //	for( QPtrListIterator<ChatView> it( chatViewList ); it; ++it)
-//		kDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")" << endl;
+//		kDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")";
 
 	while (!chatViewList.isEmpty())
 	{
@@ -1177,7 +1177,7 @@ bool KopeteChatWindow::queryClose()
 		// if the view is closed, it is removed from chatViewList for us
 		if ( !view->closeView() )
 		{
-			kDebug() << k_funcinfo << "Closing view failed!" << endl;
+			kDebug() << k_funcinfo << "Closing view failed!";
 			canClose = false;
 		}
 	}

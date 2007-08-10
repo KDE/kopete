@@ -34,7 +34,7 @@
 #include "Papillon/ClientStream"
 #include "Papillon/Tasks/LoginTask"
 #include "Papillon/QtConnector"
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/ContactList"
 #include "Papillon/UserContact"
 
@@ -126,7 +126,7 @@ void PapillonConsole::buttonSendClicked()
 	QStringList arguments;
 	QByteArray payloadData;
 			
-	Transfer::TransferType transferType;
+	NetworkMessage::NetworkMessageType transferType;
 	bool dummy, isNumber;
 	int trId = 0, payloadLength = 0;
 			
@@ -135,7 +135,7 @@ void PapillonConsole::buttonSendClicked()
 	// Determine the transfer type.
 	if(isPayloadCommand(command) && !d->linePayload->text().isEmpty())
 	{
-		transferType |= Transfer::PayloadTransfer;
+		transferType |= NetworkMessage::PayloadMessage;
 		// Remove the last parameter from the command list and set the payload length.
 		// So it will not be in the arguments.
 		payloadLength = commandList.takeLast().toUInt(&dummy);
@@ -148,7 +148,7 @@ void PapillonConsole::buttonSendClicked()
 	{
 		trId = commandList[1].toUInt(&isNumber);
 		if(isNumber)
-			transferType |= Transfer::TransactionTransfer;
+			transferType |= NetworkMessage::TransactionMessage;
 	}
 			
 	// Begin at the third command arguments if we have a transaction ID.
@@ -159,17 +159,17 @@ void PapillonConsole::buttonSendClicked()
 		arguments << commandList[i];
 	}
 			
-	Papillon::Transfer *receivedTransfer = new Transfer(transferType);
-	receivedTransfer->setCommand(command);
-	receivedTransfer->setArguments(arguments);
+	Papillon::NetworkMessage *receivedNetworkMessage = new NetworkMessage(transferType);
+	receivedNetworkMessage->setCommand(command);
+	receivedNetworkMessage->setArguments(arguments);
 			
 	if(isNumber)
-		receivedTransfer->setTransactionId( QString::number(trId) );
+		receivedNetworkMessage->setTransactionId( QString::number(trId) );
 
 	if( !payloadData.isEmpty() )
-		receivedTransfer->setPayloadData(payloadData);
+		receivedNetworkMessage->setPayloadData(payloadData);
 
-	d->client->writeCommand(receivedTransfer);
+	d->client->writeCommand(receivedNetworkMessage);
 
 	d->lineCommand->clear();
 	d->linePayload->clear();

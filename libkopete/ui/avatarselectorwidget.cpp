@@ -202,7 +202,7 @@ void AvatarSelectorWidget::buttonRemoveAvatarClicked()
 		if( !Kopete::AvatarManager::self()->remove( selectedItem->avatarEntry() ) )
 		{
 			d->mainWidget.labelErrorMessage->setText( i18n("Kopete can not remove selected avatar.") );
-			kDebug(14010) << k_funcinfo << "Removing of avatar failed for unknown reason." << endl;
+			kDebug(14010) << k_funcinfo << "Removing of avatar failed for unknown reason.";
 		}
 	}
 }
@@ -236,7 +236,7 @@ void AvatarSelectorWidget::avatarRemoved(Kopete::AvatarManager::AvatarEntry entr
 	QList<QListWidgetItem *> foundItems = d->mainWidget.listUserAvatar->findItems( entryRemoved.name, Qt::MatchContains );
 	if( !foundItems.isEmpty() )
 	{
-		kDebug(14010) << k_funcinfo << "Removing " << entryRemoved.name << " from list." << endl;
+		kDebug(14010) << k_funcinfo << "Removing " << entryRemoved.name << " from list.";
 
 		int deletedRow = d->mainWidget.listUserAvatar->row( foundItems.first() );
 		QListWidgetItem *removedItem = d->mainWidget.listUserAvatar->takeItem( deletedRow );
@@ -289,7 +289,7 @@ void AvatarSelectorWidget::currentTabChanged(int index)
 
 void AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry entry)
 {
-	kDebug(14010) << k_funcinfo << "Entry(" << entry.name << "): " << entry.category << endl;
+	kDebug(14010) << k_funcinfo << "Entry(" << entry.name << "): " << entry.category;
 
 	QListWidget *listWidget  = 0;
 	if( entry.category & Kopete::AvatarManager::User )

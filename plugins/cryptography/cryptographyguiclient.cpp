@@ -17,22 +17,18 @@
 #include "cryptographyguiclient.h"
 #include "cryptographyplugin.h"
 
-
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
 #include "kopetechatsession.h"
 #include "kopeteview.h"
+#include "kopeteuiglobal.h"
+#include "kopeteprotocol.h"
 
 #include <kaction.h>
-#include <ktoggleaction.h>
-#include <kconfig.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 #include <kicon.h>
 #include <kmessagebox.h>
-
-
-
 
 #include <QList>
 #include <kactioncollection.h>
@@ -50,7 +46,7 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 
 	QList<Kopete::Contact*> mb=parent->members();
 
-	bool wantCrypto=true, keysAvailable=true;
+	bool wantEncrypt=true, wantSign=true, keysAvailable=true;
 
 	foreach( Kopete::Contact *c , parent->members() )
 	{
@@ -61,7 +57,9 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 			return;
 		}
 		if( mc->pluginData( CryptographyPlugin::plugin(), "encrypt_messages"  ) == "off" )
-			wantCrypto = false;
+			wantEncrypt = false;
+		if ( mc->pluginData( CryptographyPlugin::plugin(), "sign_messges" ) == "off" )
+			wantSign = false;
 		if( mc->pluginData( CryptographyPlugin::plugin(), "gpgKey" ).isEmpty() )
 			keysAvailable = false;
 	}
@@ -69,10 +67,16 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 
 	setComponentData( KGenericFactory<CryptographyPlugin>::componentData() );
 
-	m_action=new KToggleAction( KIcon("encrypted"), i18n("Encrypt Messages" ), this );
-        actionCollection()->addAction( "cryptographyToggle", m_action );
-	m_action->setChecked(wantCrypto && keysAvailable);
-	connect( m_action, SIGNAL(triggered(bool)), this, SLOT(slotToggled()) );
+	m_encAction = new KToggleAction( KIcon("encrypted"), i18n("Encrypt Messages" ), this );
+        actionCollection()->addAction( "encryptionToggle", m_encAction );
+	m_signAction = new KToggleAction ( KIcon ("signature"), i18n("Sign Messages" ), this );
+	actionCollection()->addAction ("signToggle", m_signAction );
+	
+	m_encAction->setChecked(wantEncrypt && keysAvailable);
+	m_signAction->setChecked(wantSign);
+	
+	connect( m_encAction, SIGNAL(triggered(bool)), this, SLOT(slotEncryptToggled()) );
+	connect( m_signAction, SIGNAL(trigged(bool)), this, SLOT(slotSignToggled()) );
 
 	setXMLFile("cryptographychatui.rc");
 }
@@ -81,7 +85,13 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 CryptographyGUIClient::~CryptographyGUIClient()
 {}
 
-void CryptographyGUIClient::slotToggled()
+void CryptographyGUIClient::slotSignToggled()
+{
+	static_cast<Kopete::ChatSession *>(parent())->members().first()->setPluginData ( CryptographyPlugin::plugin(), "sign_messages", m_signAction->isChecked() ? "on" : "off" );
+	
+}
+
+void CryptographyGUIClient::slotEncryptToggled()
 {
 	Kopete::ChatSession *csn = static_cast<Kopete::ChatSession *>( parent() );
 	QStringList keyless;
@@ -100,22 +110,31 @@ void CryptographyGUIClient::slotToggled()
 			keyless.append(mc->displayName());
 	}
 
-	if( m_action->isChecked() && !keyless.isEmpty() )
+	if ( m_encAction->isChecked() )
+	{
+		QString protocol ( csn->protocol()->metaObject()->className());
+		if ( m_encAction->isChecked() )
+			if ( ! CryptographyPlugin::supportedProtocols().contains (protocol) )
+				if (KMessageBox::warningYesNo ( 0L, i18n ("This protocol may not work with messages that are encrypted. Do you still want to encrypt messages?"), i18n ("Cryptography Plugin"), KStandardGuiItem::yes(), KStandardGuiItem::no(), "Dont warn about unsupported protocols") == KMessageBox::No )
+					m_encAction->setChecked (false);
+		
+	}
+	
+	if( m_encAction->isChecked() && !keyless.isEmpty() )
 	{
 		QWidget *w = 0;
 		if ( csn->view() )
 			w = csn->view()->mainWidget();
 
-		KMessageBox::sorry( w,
-							i18np("To send encrypted messages to %2, you still need to select a public key for this contact.", "To send encrypted messages to them, you still need to select a public key for each of these contacts:\n%2", keyless.count() , keyless.join( "\n" ) ),
-							i18np( "Missing public key", "Missing public keys", keyless.count() ) );
+		KMessageBox::sorry( w, i18np("To send encrypted messages to %2, you still need to select a public key for this contact.", "To send encrypted messages to them, you still need to select a public key for each of these contacts:\n%2", keyless.count() , keyless.join( "\n" ) ), i18np( "Missing public key", "Missing public keys", keyless.count() ) );
 
-		m_action->setChecked( false );
+		m_encAction->setChecked( false );
 	}
+	
 
         if (first)
             first->setPluginData( CryptographyPlugin::plugin() , "encrypt_messages" ,
-						  m_action->isChecked() ? "on" : "off" );
+						  m_encAction->isChecked() ? "on" : "off" );
 }
 
 

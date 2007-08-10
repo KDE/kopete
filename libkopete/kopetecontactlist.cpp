@@ -159,7 +159,7 @@ Contact *ContactList::findContact( const QString &protocolId,
 	Account *i=AccountManager::self()->findAccount(protocolId,accountId);
 	if(!i)
 	{
-		kDebug( 14010 ) << k_funcinfo << "Account not found" << endl;
+		kDebug( 14010 ) << k_funcinfo << "Account not found";
 		return 0L;
 	}
 	return i->contacts()[contactId];
@@ -248,7 +248,7 @@ void ContactList::removeMetaContact(MetaContact *m)
 {
 	if ( !d->contacts.contains(m) )
 	{
-		kDebug(14010) << k_funcinfo << "Trying to remove a not listed MetaContact." << endl;
+		kDebug(14010) << k_funcinfo << "Trying to remove a not listed MetaContact.";
 		return;
 	}
 
@@ -304,7 +304,7 @@ void ContactList::removeGroup( Group *g )
 
 void ContactList::setSelectedItems(QList<MetaContact *> metaContacts , QList<Group *> groups)
 {
-	kDebug( 14010 ) << k_funcinfo << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected" << endl;
+	kDebug( 14010 ) << k_funcinfo << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected";
 	d->selectedMetaContacts=metaContacts;
 	d->selectedGroups=groups;
 
@@ -355,12 +355,12 @@ void ContactList::slotDisplayNameChanged()
 	static bool mutex=false;
 	if(mutex)
 	{
-		kDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
+		kDebug (14010) << k_funcinfo << " mutex blocked";
 		return;
 	}
 	mutex=true;
 
-	kDebug( 14010 ) << k_funcinfo << myself()->displayName() << endl;
+	kDebug( 14010 ) << k_funcinfo << myself()->displayName();
 
 	emit globalIdentityChanged(Kopete::Global::Properties::self()->nickName().key(), myself()->displayName());
 	mutex=false;
@@ -371,11 +371,11 @@ void ContactList::slotPhotoChanged()
 	static bool mutex=false;
 	if(mutex)
 	{
-		kDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
+		kDebug (14010) << k_funcinfo << " mutex blocked";
 		return;
 	}
 	mutex=true;
-	kDebug( 14010 ) << k_funcinfo << myself()->picture().path() << endl;
+	kDebug( 14010 ) << k_funcinfo << myself()->picture().path();
 
 	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), myself()->picture().path());
 	mutex=false;
@@ -396,7 +396,7 @@ void ContactList::load()
 	storage->load();
 	if( !storage->isValid() )
 	{
-		kDebug(14010) << k_funcinfo << "Contact list storage failed. Reason: " << storage->errorMessage() << endl;
+		kDebug(14010) << k_funcinfo << "Contact list storage failed. Reason: " << storage->errorMessage();
 		d->loaded = true;
 		delete storage;
 		return;
@@ -416,7 +416,7 @@ void Kopete::ContactList::save()
 {
 	if( !d->loaded )
 	{
-		kDebug(14010) << "Contact list not loaded, abort saving" << endl;
+		kDebug(14010) << "Contact list not loaded, abort saving";
 		return;
 	}
 
@@ -424,7 +424,7 @@ void Kopete::ContactList::save()
 	storage->save();
 	if( !storage->isValid() )
 	{
-		kDebug(14010) << k_funcinfo << "Contact list storage failed. Reason: " << storage->errorMessage() << endl;
+		kDebug(14010) << k_funcinfo << "Contact list storage failed. Reason: " << storage->errorMessage();
 
 		// Saving the contact list failed. retry every minute until it works.
 		// single-shot: will get restarted by us next time if it's still failing
@@ -607,14 +607,14 @@ QStringList Kopete::ContactList::contactFileProtocols(const QString &displayName
 	if( c )
 	{
 		QList<Kopete::Contact *> mContacts = c->contacts();
-		kDebug(14010) << mContacts.count() << endl;
+		kDebug(14010) << mContacts.count();
 		QListIterator<Kopete::Contact *> jt( mContacts );
 		while ( jt.hasNext() )
 		{
 			Kopete::Contact *c = jt.next();
-			kDebug(14010) << "1" << c->protocol()->pluginId() << endl;
+			kDebug(14010) << "1" << c->protocol()->pluginId();
 			if( c->canAcceptFiles() ) {
-				kDebug(14010) << c->protocol()->pluginId() << endl;
+				kDebug(14010) << c->protocol()->pluginId();
 				protocols.append ( c->protocol()->pluginId() );
 			}
 		}

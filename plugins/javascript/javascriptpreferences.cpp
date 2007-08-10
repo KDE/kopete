@@ -79,7 +79,7 @@ public:
 
 	void stateChange( bool b )
 	{
-		kDebug() << k_funcinfo << endl;
+		kDebug() << k_funcinfo;
 		QCheckListItem::stateChange( b );
 //		if( !lockSig )
 //			sig.activate();
@@ -366,7 +366,7 @@ void JavaScriptPreferences::slotEditDone()
 
 void JavaScriptPreferences::slotEnableScript( const QVariant &scriptItem )
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo;
 /*
 	ScriptItem *i = (ScriptItem*)scriptItem.toInt();
 

@@ -28,7 +28,7 @@ public slots:
 	void connectToServer();
 
 private slots:
-	void slotReadTransfer();
+	void slotReadNetworkMessage();
 	void slotConnected();
 
 	void doLoginProcess();

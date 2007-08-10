@@ -9,9 +9,6 @@
     <height>594</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Form</string>
-  </property>
   <layout class="QGridLayout" >
    <property name="margin" >
     <number>9</number>
@@ -164,7 +161,7 @@
    <item row="1" column="0" >
     <widget class="QGroupBox" name="groupBox_2" >
      <property name="title" >
-      <string>Filter by content (seperate word lists by commas)</string>
+      <string>Filter by content (separate word lists by commas)</string>
      </property>
      <layout class="QGridLayout" >
       <property name="margin" >

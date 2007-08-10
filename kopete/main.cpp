@@ -51,6 +51,7 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( ki18n("Will Stephenson"), ki18n("Lead Developer, GroupWise maintainer"), "lists@stevello.free-online.co.uk" );
 	aboutData.addAuthor ( ki18n("Rafael Fernández López"), ki18n("Developer"), "ereslibre@gmail.com" );
 	aboutData.addAuthor ( ki18n("Roman Jarosz"), ki18n("Developer, AIM and ICQ"), "kedgedev@centrum.cz" );
+	aboutData.addAuthor ( ki18n("Charles Connell"), ki18n("Developer"), "charles@connells.org" );
 
 	aboutData.addCredit ( ki18n("Vally8"), ki18n("Konki style author"), "vally8@gmail.com", "http://vally8.free.fr/" );
 	aboutData.addCredit ( ki18n("Tm_T"), ki18n("Hacker style author"), "jussi.kekkonen@gmail.com");
@@ -60,7 +61,7 @@ int main( int argc, char *argv[] )
 	aboutData.addCredit ( ki18n("Justin Karneges"), ki18n("Iris Jabber Backend Library") );
 	aboutData.addCredit ( ki18n("Tom Linsky"), ki18n("OscarSocket author"), "twl6@po.cwru.edu" );
 	aboutData.addCredit ( ki18n("Olaf Lueg"), ki18n("Kmerlin MSN code") );
-    aboutData.addCredit ( ki18n("Chetan Reddy"), ki18n("Former developer"), "chetan13@gmail.com" );
+	aboutData.addCredit ( ki18n("Chetan Reddy"), ki18n("Former developer"), "chetan13@gmail.com" );
 	aboutData.addCredit ( ki18n("Nick Betcher"), ki18n("Former developer, project co-founder"), "nbetcher@kde.org");
 	aboutData.addCredit ( ki18n("Ryan Cumming"), ki18n("Former developer"), "ryan@kde.org" );
 	aboutData.addCredit ( ki18n("Stefan Gehn"), ki18n("Former developer"), "metz@gehn.net", "http://metz.gehn.net" );

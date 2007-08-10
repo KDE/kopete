@@ -31,7 +31,7 @@ TestbedEditAccountWidget::TestbedEditAccountWidget( QWidget* parent, Kopete::Acc
 : QWidget( parent ), KopeteEditAccountWidget( account )
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
-				kDebug(14210) << k_funcinfo << endl;
+				kDebug(14210) << k_funcinfo;
 	m_preferencesWidget = new Ui::TestbedAccountPreferences();
 	m_preferencesWidget->setupUi( this );
 }

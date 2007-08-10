@@ -40,7 +40,7 @@ void ServerRedirectTask::setChatParams( Oscar::WORD exchange, QByteArray cookie,
 {
     m_chatExchange = exchange;
     m_chatCookie = cookie;
-    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "cookie is" << m_chatCookie << endl;
+    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "cookie is" << m_chatCookie;
     m_chatInstance = instance;
 }
 
@@ -87,7 +87,7 @@ void ServerRedirectTask::requestNewService()
 	SNAC s = { 0x0001, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer();
 	b->addWord( m_service );
-    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting server for service " << m_service << endl;
+    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting server for service " << m_service;
     if ( m_service == 0x000E )
     {
         b->addWord( 0x0001 );
@@ -116,7 +116,7 @@ bool ServerRedirectTask::handleRedirect()
         Oscar::WORD realService = b->getWord();
 		if ( realService != m_service )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "wrong service for this task" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "wrong service for this task";
 			kDebug(OSCAR_RAW_DEBUG ) << k_funcinfo << "should be " << m_service << " is "
 			                          << realService << endl;
 			return false;

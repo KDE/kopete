@@ -16,15 +16,16 @@
     ***************************************************************************
 */
 
-#include <qpushbutton.h>
+#include <QPushButton>
+#include <QCheckBox>
 
 #include <klineedit.h>
 #include <kgenericfactory.h>
+#include <kleo/ui/keyrequester.h>
 
 #include "ui_cryptographyprefsbase.h"
 #include "cryptographypreferences.h"
 #include "cryptographypreferences.moc"
-#include "selectkeydialog.h"
 
 #include "cryptographyconfig.h"
 
@@ -34,25 +35,40 @@ K_EXPORT_COMPONENT_FACTORY ( kcm_kopete_cryptography, CryptographyPreferencesFac
 CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QStringList &args )
 		: KCModule ( CryptographyPreferencesFactory::componentData(), parent, args )
 {
+	mConfig = new CryptographyConfig;
+	
 	// Add actual widget generated from ui file.
 	QVBoxLayout* l = new QVBoxLayout ( this );
 	QWidget *w = new QWidget;
+
+	key = new Kleo::EncryptionKeyRequester ( false, Kleo::EncryptionKeyRequester::OpenPGP, this, true, true );
+	key->setDialogMessage ( i18n ( "Select the secret key you want to use encrypt and or decrypt messages" ) );
+	key->setDialogCaption ( i18n ( "Select the secret key you want to use encrypt and or decrypt messages" ) );
+
+	QLabel * label = new QLabel ( i18n ("With this plugin you can encrypt messages so that nobody but your intended recipient can read them, and you can also sign messages, so that recipients can verify that a given message has actually come from you. <a href=\"http://en.wikipedia.org/wiki/Public-key_cryptography\">How this works</a>.\n\nBefore you can send encrypted messages to someone, you must select their public key by right-clicking on their name in your contact list, and choosing \"Select Public Key.\"\n\nNote: All messages become plain text when used with this plugin"), this );
+	label->setWordWrap (true);
+	
+	mAskPassphraseOnStartup = new QCheckBox ( i18n ("Ask for passphrase on Kopete startup" ), this);
+
 	mPreferencesDialog = new Ui::CryptographyPrefsUI;
 	mPreferencesDialog->setupUi ( w );
+
+	l->addWidget ( key );
+	l->addWidget ( label );
+	l->addWidget ( mAskPassphraseOnStartup );
 	l->addWidget ( w );
-	mConfig = new CryptographyConfig;
+	l->addStretch ();
 
-	connect ( mPreferencesDialog->selectKey, SIGNAL ( pressed() ), this, SLOT ( slotSelectPressed() ) );
-	connect ( mPreferencesDialog->askPassPhrase, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotAskPressed ( bool ) ) );
+	connect ( mAskPassphraseOnStartup, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotAskOnStartupPressed ( bool ) ) );
 
-	connect ( mPreferencesDialog->privateKeyId, SIGNAL ( textChanged ( QString ) ), this, SLOT ( slotModified() ) );
-	connect ( mPreferencesDialog->alsoMyKey, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotModified() ) );
-	connect ( mPreferencesDialog->askPassPhrase, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotModified() ) );
+	connect ( key->dialogButton(), SIGNAL ( clicked() ), this, SLOT ( slotModified() ) );
+	connect ( key->eraseButton(), SIGNAL ( clicked() ), this, SLOT ( slotModified() ) );
+	connect ( mAskPassphraseOnStartup, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotModified() ) );
 	connect ( mPreferencesDialog->onClose, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotModified() ) );
 	connect ( mPreferencesDialog->time, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotModified() ) );
 	connect ( mPreferencesDialog->never, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotModified() ) );
 	connect ( mPreferencesDialog->cacheTime, SIGNAL ( valueChanged ( int ) ), this, SLOT ( slotModified() ) );
-	
+
 	load();
 }
 
@@ -66,9 +82,8 @@ void CryptographyPreferences::load()
 {
 	mConfig->load();
 
-	mPreferencesDialog->privateKeyId->setText ( mConfig->privateKeyId() );
-	mPreferencesDialog->alsoMyKey->setChecked ( mConfig->alsoMyKey() );
-	mPreferencesDialog->askPassPhrase->setChecked ( mConfig->askPassPhrase() );
+	key->setFingerprint ( mConfig->fingerprint() );
+	mAskPassphraseOnStartup->setChecked ( mConfig->askPassphraseOnStartup() );
 	mPreferencesDialog->cacheTime->setValue ( mConfig->cacheTime() );
 
 	if ( mConfig->cacheTime() == CryptographyConfig::Close )
@@ -85,9 +100,8 @@ void CryptographyPreferences::load()
 
 void CryptographyPreferences::save()
 {
-	mConfig->setPrivateKeyId ( mPreferencesDialog->privateKeyId->text() );
-	mConfig->setAlsoMyKey ( mPreferencesDialog->alsoMyKey->isChecked() );
-	mConfig->setAskPassPhrase ( mPreferencesDialog->askPassPhrase->isChecked() );
+	mConfig->setFingerprint ( key->fingerprint() );
+	mConfig->setAskPassphraseOnStartup ( mAskPassphraseOnStartup->isChecked() );
 	mConfig->setCacheTime ( mPreferencesDialog->cacheTime->value() );
 
 	if ( mPreferencesDialog->onClose->isChecked() )
@@ -105,26 +119,18 @@ void CryptographyPreferences::save()
 
 void CryptographyPreferences::defaults()
 {
-	mPreferencesDialog->privateKeyId->clear();
-	mPreferencesDialog->alsoMyKey->setChecked(false);
-	mPreferencesDialog->askPassPhrase->setChecked(false);
-	mPreferencesDialog->onClose->setChecked(true);
-	mPreferencesDialog->cacheTime->setValue(15);
+	key->eraseButton()->click();
+	mAskPassphraseOnStartup->setChecked ( false );
+	mPreferencesDialog->onClose->setChecked ( true );
+	mPreferencesDialog->cacheTime->setValue ( 15 );
 	slotModified();
 }
 
-void CryptographyPreferences::slotSelectPressed()
+void CryptographyPreferences::slotAskOnStartupPressed ( bool b )
 {
-	QString id;
-	SelectKeyDialog opts ( id, this );
-	opts.exec();
-	if ( opts.result() ==QDialog::Accepted )
-		mPreferencesDialog->privateKeyId->setText ( id );
-}
-
-void CryptographyPreferences::slotAskPressed ( bool b )
-{
-	mPreferencesDialog->cacheBehavior->setEnabled ( !b );
+	mPreferencesDialog->never->setEnabled (!b);
+	if (b)
+		mPreferencesDialog->onClose->setChecked (true);
 }
 
 void CryptographyPreferences::slotModified()

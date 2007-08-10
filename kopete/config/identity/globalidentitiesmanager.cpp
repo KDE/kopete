@@ -132,7 +132,7 @@ Kopete::MetaContact *GlobalIdentitiesManager::getIdentity(const QString &identit
 
 void GlobalIdentitiesManager::loadXML()
 {
-	kDebug() << k_funcinfo << "Loading global identities list from XML." << endl;
+	kDebug() << k_funcinfo << "Loading global identities list from XML.";
 
 	QString filename = KStandardDirs::locateLocal( "appdata", QString::fromUtf8("global-identities.xml") );
 	if( filename.isEmpty() )
@@ -177,7 +177,7 @@ void GlobalIdentitiesManager::loadXML()
 
 void GlobalIdentitiesManager::saveXML()
 {
-	kDebug() << k_funcinfo << "Saving global identities list to XML." << endl;
+	kDebug() << k_funcinfo << "Saving global identities list to XML.";
 
 	QString globalIdentitiesListFileName = KStandardDirs::locateLocal( "appdata", QString::fromUtf8("global-identities.xml") );
 	KSaveFile globalIdentitiesListFile(globalIdentitiesListFileName);
@@ -193,7 +193,7 @@ void GlobalIdentitiesManager::saveXML()
 		}
 		else
 		{
-			kDebug(14000) << k_funcinfo << "Failed to write global identities list, error code is: " << globalIdentitiesListFile.error() << endl;
+			kDebug(14000) << k_funcinfo << "Failed to write global identities list, error code is: " << globalIdentitiesListFile.error();
 		}
 	}
 	else
@@ -213,7 +213,7 @@ const QDomDocument GlobalIdentitiesManager::toXML()
 	QMap<QString, Kopete::MetaContact*>::iterator end = d->identitiesList.end();
 	for(it = d->identitiesList.begin(); it != end; ++it)
 	{
-		kDebug(14000) << k_funcinfo << "Saving " << it.key() << endl;
+		kDebug(14000) << k_funcinfo << "Saving " << it.key();
 		QDomElement identityMetaContactElement = storeMetaContact( it.value() ); // Save minimal information.
 		identityMetaContactElement.setTagName(QString::fromUtf8("identity"));
 		identityMetaContactElement.setAttribute(QString::fromUtf8("name"), it.key());
@@ -304,7 +304,7 @@ bool GlobalIdentitiesManager::parseMetaContact( Kopete::MetaContact *metaContact
 			if ( contactElement.hasAttribute(NSCID_ELEM) && contactElement.hasAttribute(NSPID_ELEM) && contactElement.hasAttribute(NSAID_ELEM))
 			{
 				oldNameTracking = true;
-                //kDebug(14010) << k_funcinfo << "old name tracking" << endl;
+                //kDebug(14010) << k_funcinfo << "old name tracking";
                 // retrieve deprecated data (now stored in property-sources)
                 // save temporarely, we will find a Contact* with this later
 				nameSourceCID = contactElement.attribute( NSCID_ELEM );
@@ -312,7 +312,7 @@ bool GlobalIdentitiesManager::parseMetaContact( Kopete::MetaContact *metaContact
 				nameSourceAID = contactElement.attribute( NSAID_ELEM );
 			}
 //          else
-//              kDebug(14010) << k_funcinfo << "no old name tracking" << endl;
+//              kDebug(14010) << k_funcinfo << "no old name tracking";
 		}
 		else if( contactElement.tagName() == QString::fromUtf8( "photo" ) )
 		{
@@ -327,13 +327,13 @@ bool GlobalIdentitiesManager::parseMetaContact( Kopete::MetaContact *metaContact
 			if ( contactElement.hasAttribute(PSCID_ELEM) && contactElement.hasAttribute(PSPID_ELEM) && contactElement.hasAttribute(PSAID_ELEM))
 			{
 				oldPhotoTracking = true;
-//              kDebug(14010) << k_funcinfo << "old photo tracking" << endl;
+//              kDebug(14010) << k_funcinfo << "old photo tracking";
 				photoSourceCID = contactElement.attribute( PSCID_ELEM );
 				photoSourcePID = contactElement.attribute( PSPID_ELEM );
 				photoSourceAID = contactElement.attribute( PSAID_ELEM );
 			}
 //          else
-//              kDebug(14010) << k_funcinfo << "no old photo tracking" << endl;
+//              kDebug(14010) << k_funcinfo << "no old photo tracking";
 		}
 		else if( contactElement.tagName() == QString::fromUtf8( "property-sources" ) )
 		{
@@ -396,7 +396,7 @@ bool GlobalIdentitiesManager::parseMetaContact( Kopete::MetaContact *metaContact
         /* if (displayNameSourceContact() )  <- doesn't work because the contact is only set up when all plugin are loaded (BUG 111956) */
 		if ( !nameSourceCID.isEmpty() )
 		{
-//          kDebug(14010) << k_funcinfo << "Converting old name source" << endl;
+//          kDebug(14010) << k_funcinfo << "Converting old name source";
             // even if the old tracking attributes exists, they could have been null, that means custom
 			metaContact->setDisplayNameSource( Kopete::MetaContact::SourceContact );
 		}
@@ -413,7 +413,7 @@ bool GlobalIdentitiesManager::parseMetaContact( Kopete::MetaContact *metaContact
 	
 	if ( oldPhotoTracking )
 	{
-//      kDebug(14010) << k_funcinfo << "Converting old photo source" << endl;
+//      kDebug(14010) << k_funcinfo << "Converting old photo source";
 		if ( !photoSourceCID.isEmpty() )
 		{
 			metaContact->setPhotoSource( Kopete::MetaContact::SourceContact );
@@ -446,7 +446,7 @@ bool GlobalIdentitiesManager::parseMetaContact( Kopete::MetaContact *metaContact
 //  if (d->contacts.count() > 1) // Does NOT work as intended
 //      d->trackChildNameChanges=false;
 	
-//  kDebug(14010) << k_funcinfo << "END" << endl;
+//  kDebug(14010) << k_funcinfo << "END";
 	metaContact->setLoading( false );
 	return true;
 }
@@ -496,7 +496,7 @@ const QDomElement GlobalIdentitiesManager::storeMetaContact( Kopete::MetaContact
 	
 	if( metaContact->photoSourceContact() )
 	{
-        //kDebug(14010) << k_funcinfo << "serializing photo source " << nameFromContact(photoSourceContact()) << endl;
+        //kDebug(14010) << k_funcinfo << "serializing photo source " << nameFromContact(photoSourceContact());
         // set contact source metadata for photo
 		QDomElement contactPhotoSource = metaContactDoc.createElement( QString::fromUtf8("contact-source") );
 		contactPhotoSource.setAttribute( NSCID_ELEM, metaContact->photoSourceContact()->contactId() );

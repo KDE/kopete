@@ -95,7 +95,7 @@ EmoticonSelector::EmoticonSelector(QWidget *parent)
 
 void EmoticonSelector::prepareList(void)
 {
-//	kDebug(14000) << k_funcinfo << "called." << endl;
+//	kDebug(14000) << k_funcinfo << "called.";
 	QMap<QString, QStringList> list = Kopete::Emoticons::self()->emoticonAndPicList();
 
 	for (QMap<QString, QStringList>::const_iterator it = list.constBegin(); it != list.constEnd(); ++it )

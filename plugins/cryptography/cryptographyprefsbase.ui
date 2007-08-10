@@ -7,40 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>345</width>
-    <height>234</height>
+    <height>250</height>
    </rect>
   </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
-    <number>9</number>
-   </property>
-   <property name="topMargin" >
-    <number>9</number>
-   </property>
-   <property name="rightMargin" >
-    <number>9</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>9</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>6</number>
-   </property>
-   <property name="verticalSpacing" >
-    <number>6</number>
-   </property>
-   <item row="1" column="0" colspan="3" >
-    <widget class="QCheckBox" name="alsoMyKey" >
-     <property name="whatsThis" >
-      <string>&lt;qt>Check this box if you want to encrypt outgoing messages with this key, so that you will be able to decrypt them yourself later.&lt;br>
-&lt;b>Warning:&lt;/b> This can increase the size of messages, and some protocols will refuse to send your messages because they are too large.</string>
-     </property>
-     <property name="text" >
-      <string>Encrypt outgoing messages with this key</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="3" >
+  <layout class="QVBoxLayout" >
+   <item>
     <widget class="QGroupBox" name="cacheBehavior" >
      <property name="title" >
       <string>Cache Passphrase</string>
@@ -135,66 +106,11 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="0" >
-    <widget class="QLabel" name="pgpKeyLabel" >
-     <property name="text" >
-      <string>Your private PGP key:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2" >
-    <widget class="QPushButton" name="selectKey" >
-     <property name="text" >
-      <string>Select...</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" >
-    <widget class="KLineEdit" name="privateKeyId" >
-     <property name="readOnly" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="0" colspan="3" >
-    <widget class="QCheckBox" name="askPassPhrase" >
-     <property name="text" >
-      <string>Ask for the passphrase every time</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
-  <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
-  <tabstop>privateKeyId</tabstop>
-  <tabstop>selectKey</tabstop>
-  <tabstop>alsoMyKey</tabstop>
-  <tabstop>askPassPhrase</tabstop>
   <tabstop>never</tabstop>
   <tabstop>time</tabstop>
   <tabstop>cacheTime</tabstop>

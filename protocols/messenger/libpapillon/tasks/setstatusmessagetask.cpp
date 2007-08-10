@@ -19,7 +19,7 @@
 #include <QtDebug>
 
 // Papillon includes
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/Connection"
 #include "Papillon/StatusMessage"
 
@@ -50,9 +50,9 @@ void SetStatusMessageTask::setStatusMessage(const Papillon::StatusMessage &statu
 	d->statusMessage = statusMessage;
 }
 
-bool SetStatusMessageTask::take(Transfer *transfer)
+bool SetStatusMessageTask::take(NetworkMessage *networkMessage)
 {
-	if( transfer->transactionId() == d->currentTransactionId )
+	if( networkMessage->transactionId() == d->currentTransactionId )
 	{
 		setSuccess();
 		return true;
@@ -65,14 +65,14 @@ void SetStatusMessageTask::onGo()
 {
 	d->currentTransactionId = QString::number( connection()->transactionId() );
 
-	Transfer *setStatusTransfer = new Transfer( Transfer::TransactionTransfer | Transfer::PayloadTransfer );
-	setStatusTransfer->setCommand( QLatin1String("UUX") );
-	setStatusTransfer->setTransactionId( d->currentTransactionId );
+	NetworkMessage *setStatusMessage = new NetworkMessage( NetworkMessage::TransactionMessage | NetworkMessage::PayloadMessage );
+	setStatusMessage->setCommand( QLatin1String("UUX") );
+	setStatusMessage->setTransactionId( d->currentTransactionId );
 
-	setStatusTransfer->setPayloadData( d->statusMessage.toXml().toUtf8() );
+	setStatusMessage->setPayloadData( d->statusMessage.toXml().toUtf8() );
 
-	qDebug() << PAPILLON_FUNCINFO << "Setting personal status message on server:" << d->statusMessage.toXml();
-	send(setStatusTransfer);
+	qDebug() << Q_FUNC_INFO << "Setting personal status message on server:" << d->statusMessage.toXml();
+	send(setStatusMessage);
 }
 
 }

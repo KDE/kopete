@@ -26,7 +26,7 @@
 
 MailNotifierTask::MailNotifierTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 }
 
 MailNotifierTask::~MailNotifierTask()
@@ -61,7 +61,7 @@ bool MailNotifierTask::forMe( const Transfer* transfer ) const
 
 void MailNotifierTask::parseMail( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	QString count = t->firstParam( 9 );
 	QString mail = t->firstParam( 42 );

@@ -17,15 +17,11 @@
 // Qt includes
 #include <QtDebug>
 
-// QCA include
-#include <QtCrypto>
-
 // Papillon includes
 #include "Papillon/Connection"
 #include "Papillon/Base/Connector"
-#include "Papillon/Http/SecureStream"
 #include "Papillon/ClientStream"
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/MimeHeader"
 #include "Papillon/ContactList"
 #include "Papillon/UserContact"
@@ -54,8 +50,6 @@ public:
 	//notification server
 	QString server;
 	quint16 port;
-	// Convience object that init QCA.
-	QCA::Initializer qcaInit;
 	Papillon::Client::ConnectionStatus connectionStatus;
 
 	ContactList *contactList;
@@ -79,14 +73,6 @@ Client::Client(Connector *connector, QObject *parent)
 Client::~Client()
 {
 	delete d;
-}
-
-SecureStream *Client::createSecureStream()
-{
-	Connector *newConnector = d->connector->createNewConnector(this);
-	SecureStream *secureStream = new SecureStream(newConnector);
-	
-	return secureStream;
 }
 
 Connection *Client::createConnection()
@@ -195,7 +181,7 @@ void Client::login()
 
 void Client::loginRedirect(const QString &server, quint16 port)
 {
-	qDebug() << PAPILLON_FUNCINFO << "Redirect to" << QString("%1:%2").arg(server).arg(port);
+	qDebug() << Q_FUNC_INFO << "Redirect to" << QString("%1:%2").arg(server).arg(port);
 
 	d->notificationConnection->disconnectFromServer();
 	d->notificationConnection->connectToServer(server, port);
@@ -225,7 +211,7 @@ void Client::gotInitalProfile(const Papillon::MimeHeader &profileMessage)
 	// Also it contain the MSPAuth cookie REQUIRED to talk with the address book/sharing Web Service
 	setConnectionStatus( Client::LoggedIn );
 
-	qDebug() << PAPILLON_FUNCINFO << "Received auth ticket:" << passportAuthTicket;
+	qDebug() << Q_FUNC_INFO << "Received auth ticket:" << passportAuthTicket;
 }
 
 void Client::slotContactPresenceChanged(const QString &contactId, Papillon::Presence::Status presence)
@@ -238,14 +224,14 @@ void Client::slotContactStatusMessageChanged(const QString &contactId, const Pap
 	emit contactStatusMessageChanged(contactId, newStatusMessage);
 }
 
-void Client::writeCommand(Transfer *command)
+void Client::writeCommand(NetworkMessage *command)
 {
 	d->notificationConnection->send(command);
 }
 
 void Client::setConnectionStatus(Papillon::Client::ConnectionStatus newStatus)
 {
-	qDebug() << PAPILLON_FUNCINFO << "New connection status: " << newStatus;
+	qDebug() << Q_FUNC_INFO << "New connection status: " << newStatus;
 
 	d->connectionStatus = newStatus;
 

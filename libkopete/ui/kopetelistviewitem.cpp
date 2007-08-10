@@ -238,7 +238,7 @@ void Component::layout( const QRect &newRect )
 	else
 		d->startRect = rect();
 	d->targetRect = newRect;
-	//kDebug(14000) << k_funcinfo << "At " << rect << endl;
+	//kDebug(14000) << k_funcinfo << "At " << rect;
 }
 
 void Component::setRect( const QRect &rect )
@@ -736,7 +736,7 @@ void DisplayNameComponent::redraw()
 			ic->scale( INT_MAX, fontHeight, Qt::KeepAspectRatio );
 		break;
 		default:
-			kDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;
+			kDebug( 14010 ) << k_funcinfo << "This should have not happened!";
 		}
 	}
 
@@ -1024,7 +1024,7 @@ void Item::slotLayoutItems()
 
 		int height = component( n )->heightForWidth( width );
 		component( n )->layout( QRect( 0, 0, width, height ) );
-		//kDebug(14000) << k_funcinfo << "Component " << n << " is " << width << " x " << height << endl;
+		//kDebug(14000) << k_funcinfo << "Component " << n << " is " << width << " x " << height;
 	}
 
 	if ( Private::animateChanges && d->animateLayout && !d->visibilityTimer.isActive() )
@@ -1160,7 +1160,7 @@ void Item::setHeight( int )
 	int minHeight = 0;
 	for ( uint n = 0; n < components(); ++n )
 		minHeight = qMax( minHeight, component( n )->rect().height() );
-	//kDebug(14000) << k_funcinfo << "Height is " << minHeight << endl;
+	//kDebug(14000) << k_funcinfo << "Height is " << minHeight;
 	if ( Private::foldVisibility && d->visibilityTimer.isActive() )
 	{
 		int vis = d->visibilityLevel;

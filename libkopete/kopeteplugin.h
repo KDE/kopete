@@ -93,7 +93,7 @@ public:
 	/**
 	 * Returns the KPluginInfo object associated with this plugin
 	 */
-	KPluginInfo *pluginInfo() const;
+	KPluginInfo pluginInfo() const;
 
 	/**
 	 * Get the name of the icon for this plugin. The icon name is taken from the

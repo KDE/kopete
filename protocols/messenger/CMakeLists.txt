@@ -1,9 +1,9 @@
 set(PAPILLON_INSIDE_KOPETE TRUE)
 
-add_subdirectory( libpapillon ) 
+add_subdirectory( libpapillon )
 
-include_directories( 
-${KOPETE_INCLUDES} 
+include_directories(
+${KOPETE_INCLUDES}
 ${CMAKE_CURRENT_BINARY_DIR}/ui/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/ui/ 
 )

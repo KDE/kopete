@@ -61,9 +61,7 @@ private:
 	//----- Style TAB ----------------------
 	Ui::ChatWindowConfig_Style m_styleUi;
 	ChatMessagePart *m_preview;
-	
-	// value is the style path
-	QMap<Q3ListBoxItem*,QString> m_styleItemMap;
+
 	ChatWindowStyle::StyleVariants m_currentVariantMap;
 	ChatWindowStyle *m_currentStyle;
 	bool m_loading;

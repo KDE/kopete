@@ -124,7 +124,7 @@ void StatisticsPlugin::slotViewStatistics()
 {
 	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
 	
-	kDebug() << k_funcinfo << "statistics - dialog :"+ m->displayName() << endl;
+	kDebug() << k_funcinfo << "statistics - dialog :"+ m->displayName();
 	
 	if (m && !m->metaContactId().isEmpty())
 	{
@@ -151,7 +151,7 @@ void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 
 void StatisticsPlugin::dbusStatisticsDialog(QString id)
 {
-	kDebug() << k_funcinfo << "statistics - DCOP dialog :" << id << endl;
+	kDebug() << k_funcinfo << "statistics - DCOP dialog :" << id;
 	
 	if (statisticsContactMap[id])
 	{
@@ -199,7 +199,7 @@ bool StatisticsPlugin::dbusWasOffline(QString id, QString dateTime)
 
 bool StatisticsPlugin::dbusWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status)
 {
-	kDebug() << k_funcinfo << "statistics - DCOP wasOnline :" << id << endl;
+	kDebug() << k_funcinfo << "statistics - DCOP wasOnline :" << id;
 	
 	if (dateTime.isValid() && statisticsContactMap[id])
 	{

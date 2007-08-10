@@ -52,7 +52,7 @@ FetchContactListJob::FetchContactListJob(ContactList *contactList)
 {
 	d->contactList = contactList;
 
-	d->connection = new HttpConnection( d->contactList->client()->createSecureStream(), this );
+	d->connection = new HttpConnection( this );
 
 	QString cookie = QString("MSPAuth=%1").arg( d->contactList->client()->userContact()->loginCookie() );
 	d->connection->setCookie(cookie);

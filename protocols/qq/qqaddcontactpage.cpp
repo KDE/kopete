@@ -30,7 +30,7 @@
 QQAddContactPage::QQAddContactPage( QWidget* parent )
 		: AddContactPage(parent)
 {
-	kDebug(14210) << k_funcinfo << endl;
+	kDebug(14210) << k_funcinfo;
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget();
 	m_qqAddUI = new Ui::QQAddUI;

@@ -1,7 +1,7 @@
 /*
-   transfer.cpp - Represent a transfer between the Messenger server.
+   networkmessage.cpp - Represent a network message between the Messenger server.
 
-   Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
+   Copyright (c) 2006-2007 by Michaël Larouche <larouche@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -12,7 +12,7 @@
    *                                                                       *
    *************************************************************************
  */
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 
 // Qt includes
 #include <QtCore/QStringList>
@@ -20,99 +20,99 @@
 
 namespace Papillon {
 
-class Transfer::Private
+class NetworkMessage::Private
 {
 public:
-	Transfer::TransferType type;
+	NetworkMessage::NetworkMessageType type;
 	QString command;
 	QString transactionId;
 	QStringList arguments;
 	QByteArray payloadData;
 };
 
-Transfer::Transfer(const TransferType &type)
+NetworkMessage::NetworkMessage(const NetworkMessageType &type)
  : d(new Private)
 {
 	d->type = type;
 }
 
-Transfer::~Transfer()
+NetworkMessage::~NetworkMessage()
 {
 	delete d;
 }
 
-Transfer::TransferType Transfer::type() const
+NetworkMessage::NetworkMessageType NetworkMessage::type() const
 {
 	return d->type;
 }
 
-QString Transfer::command() const
+QString NetworkMessage::command() const
 {
 	return d->command;
 }
 
-void Transfer::setCommand(const QString &command)
+void NetworkMessage::setCommand(const QString &command)
 {
 	d->command = command;
 }
 
-QString Transfer::transactionId() const
+QString NetworkMessage::transactionId() const
 {
-	Q_ASSERT(type() & Transfer::TransactionTransfer);
+	Q_ASSERT(type() & NetworkMessage::TransactionMessage);
 
 	return d->transactionId;
 }
 
-void Transfer::setTransactionId(const QString &transactionId)
+void NetworkMessage::setTransactionId(const QString &transactionId)
 {
-	Q_ASSERT(type() & Transfer::TransactionTransfer);
+	Q_ASSERT(type() & NetworkMessage::TransactionMessage);
 	
 	d->transactionId = transactionId;
 }
 
-QStringList Transfer::arguments() const
+QStringList NetworkMessage::arguments() const
 {
 	return d->arguments;
 }
 
-void Transfer::setArguments(const QStringList &arguments)
+void NetworkMessage::setArguments(const QStringList &arguments)
 {
 	d->arguments = arguments;
 }
 
-void Transfer::setArguments(const QString &argumentString)
+void NetworkMessage::setArguments(const QString &argumentString)
 {
 	d->arguments = argumentString.split(" ");
 }
 
-int Transfer::payloadLength() const
+int NetworkMessage::payloadLength() const
 {
-	Q_ASSERT(type() & Transfer::PayloadTransfer);
+	Q_ASSERT(type() & NetworkMessage::PayloadMessage);
 
 	return d->payloadData.size();
 }
 
-QByteArray Transfer::payloadData() const
+QByteArray NetworkMessage::payloadData() const
 {
-	Q_ASSERT(type() & Transfer::PayloadTransfer);
+	Q_ASSERT(type() & NetworkMessage::PayloadMessage);
 
 	return d->payloadData;
 }
 
-void Transfer::setPayloadData(const QByteArray &data)
+void NetworkMessage::setPayloadData(const QByteArray &data)
 {
-	Q_ASSERT(type() & Transfer::PayloadTransfer);
+	Q_ASSERT(type() & NetworkMessage::PayloadMessage);
 
 	d->payloadData = data;
 }
 
-QString Transfer::toString() const
+QString NetworkMessage::toString() const
 {
 	QString result;
 	
 	result += command();
 	
-	if( type() & Transfer::TransactionTransfer && !transactionId().isEmpty() )
+	if( type() & NetworkMessage::TransactionMessage && !transactionId().isEmpty() )
 	{
 		result += ' ' + transactionId();
 	}
@@ -122,7 +122,7 @@ QString Transfer::toString() const
 		result += ' ' + arguments().join(" ");
 	}
 
-	if( type() & Transfer::PayloadTransfer )
+	if( type() & NetworkMessage::PayloadMessage )
 	{
 		result += ' ' + QString::number(payloadLength());
 	}
@@ -132,7 +132,7 @@ QString Transfer::toString() const
 	return result;
 }
 
-QByteArray Transfer::toRawCommand() const
+QByteArray NetworkMessage::toRawCommand() const
 {
 	QByteArray result;
 	

@@ -34,10 +34,10 @@ ContactSelectorWidget::ContactSelectorWidget( QWidget *parent )
 	mUi->setupUi(widget);
 	layout->addWidget(widget);
 
-	QList<KPluginInfo *> plugins = Kopete::PluginManager::self()->availablePlugins("Protocols");
-	for( QList<KPluginInfo *>::Iterator it = plugins.begin(); it != plugins.end(); ++it )
+	QList<KPluginInfo> plugins = Kopete::PluginManager::self()->availablePlugins("Protocols");
+	for( QList<KPluginInfo>::Iterator it = plugins.begin(); it != plugins.end(); ++it )
 	{
-		Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin( (*it)->pluginName() );
+		Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin( it->pluginName() );
 		if( plugin )
 			mUi->comboProtocol->addItem( SmallIcon(plugin->pluginIcon()), plugin->displayName(), plugin->pluginId() );
 	}

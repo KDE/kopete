@@ -402,7 +402,11 @@ void KopeteWindow::initActions()
 	connect( globalSetAway, SIGNAL( triggered(bool) ), this, SLOT( slotToggleAway() ) );
 	globalSetAway->setGlobalShortcut( KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W) );
 
-	KGlobalAccel::self()->readSettings();
+#ifdef __GNUC__
+#warning port me - it is probably safe to just remove this line as *global* shortcut setttings
+#warning are now loaded automatically by default.
+#endif
+	//KGlobalAccel::self()->readSettings();
 }
 
 void KopeteWindow::slotShowHide()
@@ -680,7 +684,7 @@ bool KopeteWindow::queryExit()
 		|| !Kopete::BehaviorSettings::self()->showSystemTray() /* also close if our tray icon is hidden! */
 		|| isHidden() )
 	{
-		kDebug( 14000 ) << k_funcinfo << " shutting down plugin manager" << endl;
+		kDebug( 14000 ) << k_funcinfo << " shutting down plugin manager";
 		Kopete::PluginManager::self()->shutdown();
 		return true;
 	}
@@ -703,11 +707,11 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 			e->accept();
 		}
 		// END of code borrowed from KMainWindow::closeEvent
-		kDebug( 14000 ) << k_funcinfo << "just closing because we have a system tray icon" << endl;
+		kDebug( 14000 ) << k_funcinfo << "just closing because we have a system tray icon";
 	}
 	else
 	{
-		kDebug( 14000 ) << k_funcinfo << "delegating to KXmlGuiWindow::closeEvent()" << endl;
+		kDebug( 14000 ) << k_funcinfo << "delegating to KXmlGuiWindow::closeEvent()";
 		KXmlGuiWindow::closeEvent( e );
 	}
 }
@@ -732,7 +736,7 @@ void KopeteWindow::slotAllPluginsLoaded()
 
 void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 {
-//	kDebug(14000) << k_funcinfo << "Called." << endl;
+//	kDebug(14000) << k_funcinfo << "Called.";
 	if ( !account )
 		return;
 
@@ -777,7 +781,7 @@ void KopeteWindow::slotAccountRegistered( Kopete::Account *account )
 
 void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account)
 {
-	kDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) << k_funcinfo;
 	QList<Kopete::Account *> accounts = Kopete::AccountManager::self()->accounts();
 	if (accounts.isEmpty())
 	{
@@ -800,7 +804,7 @@ void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account)
 	QAction *action = actionCollection()->action( s );
 	if ( action )
 	{
-		kDebug(14000) << " found KAction " << action << " with name: " << action->objectName() << endl;
+		kDebug(14000) << " found KAction " << action << " with name: " << action->objectName();
 		d->addContactMapper->removeMappings( action );
 		d->actionAddContact->removeAction( action );
 	}
@@ -814,7 +818,7 @@ void KopeteWindow::slotAccountStatusIconChanged()
 
 void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 {
-	kDebug( 14000 ) << k_funcinfo << contact->property( Kopete::Global::Properties::self()->statusMessage() ).value() << endl;
+	kDebug( 14000 ) << k_funcinfo << contact->property( Kopete::Global::Properties::self()->statusMessage() ).value();
 	// update the global status label if the change doesn't
 //	QString newAwayMessage = contact->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
 	Kopete::OnlineStatus status = contact->onlineStatus();
@@ -866,7 +870,7 @@ void KopeteWindow::slotAccountStatusIconChanged( Kopete::Contact *contact )
 	}
 	else
 	{
-		//kDebug( 14000 ) << k_funcinfo << "Using movie."  << endl;
+		//kDebug( 14000 ) << k_funcinfo << "Using movie.";
 		i->setMovie( mv );
 	}
 #endif
@@ -1073,7 +1077,7 @@ void KopeteWindow::slotAddContactDialogInternal( const QString & accountIdentifi
 void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 {
 	if ( !account ) {
-		kDebug( 14000 ) << k_funcinfo << "no account given" << endl;
+		kDebug( 14000 ) << k_funcinfo << "no account given";
 		return;
 	}
 

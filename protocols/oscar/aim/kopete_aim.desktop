@@ -19,6 +19,7 @@ Name=AIM
 Name[ne]=एआईएम
 Name[x-test]=xxAIMxx
 Comment=Protocol to connect to AIM
+Comment[bg]=Протокол за връзка с AIM
 Comment[br]=Komenad kevreañ ouzh AIM
 Comment[ca]=Protocol per a connectar-se a AIM
 Comment[cs]=Protokol k připojení k AIM

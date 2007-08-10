@@ -73,7 +73,7 @@ public:
 IRCNetworkConfigWidget::IRCNetworkConfigWidget(QWidget *parent, Qt::WFlags flags)
 	: QWidget(parent, flags)
 {
-//	kDebug(14120) << k_funcinfo << endl;
+//	kDebug(14120) << k_funcinfo;
 
 	m_networks = IRCNetworkList::self()->networks();
 
@@ -196,7 +196,7 @@ void IRCNetworkConfigWidget::storeCurrentNetwork()
 			net->description = description->text(); // crash on 2nd dialog show here!
 		}
 		else
-			kDebug( 14120 ) << m_uiCurrentNetworkSelection << " was already gone from the cache!" << endl;
+			kDebug( 14120 ) << m_uiCurrentNetworkSelection << " was already gone from the cache!";
 	}
 */
 }
@@ -449,7 +449,7 @@ void IRCNetworkConfigWidget::slotMoveServerUp()
 	if( currentPos > 0 )
 	{
 		hostList->removeItem( currentPos );
-		kDebug(14121) << k_funcinfo << selectedHost->host << endl;
+		kDebug(14121) << k_funcinfo << selectedHost->host;
 		hostList->insertItem( selectedHost->host, --currentPos );
 		hostList->setSelected( currentPos, true );
 	}

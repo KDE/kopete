@@ -66,7 +66,7 @@ GroupWiseChatSearchDialog::~GroupWiseChatSearchDialog()
 
 void GroupWiseChatSearchDialog::slotUpdateClicked()
 {
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "updating chatroom list " << endl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "updating chatroom list ";
 	Q3ListViewItem * first = m_widget->m_chatrooms->firstChild();
 	QString updateMessage = i18n("Updating chatroom list..." );
 	if ( first )
@@ -104,7 +104,7 @@ void GroupWiseChatSearchDialog::slotPropertiesClicked()
 
 void GroupWiseChatSearchDialog::slotGotProperties(const GroupWise::Chatroom & room)
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo;
 	new GroupWiseChatPropsDialog( room, true, this, "chatpropsdlg" );
 }
 

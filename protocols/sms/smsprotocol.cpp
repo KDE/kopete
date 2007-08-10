@@ -40,7 +40,7 @@ SMSProtocol::SMSProtocol(QObject *parent, const QStringList &)
 	
 {
 	if (s_protocol)
-		kWarning( 14160 ) << k_funcinfo << "s_protocol already defined!" << endl;
+		kWarning( 14160 ) << k_funcinfo << "s_protocol already defined!";
 	else
 		s_protocol = this;
 
@@ -91,7 +91,7 @@ Kopete::Contact *SMSProtocol::deserializeContact(Kopete::MetaContact *metaContac
 
 	if (!account)
 	{
-		kDebug(14160) << "Account doesn't exist, skipping" << endl;
+		kDebug(14160) << "Account doesn't exist, skipping";
 		return 0;
 	}
 

@@ -115,13 +115,13 @@ JabberProtocol::JabberProtocol (QObject * parent, const QStringList &)
 
 {
 
-	kDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ...";
 
 	/* This is meant to be a singleton, so we will check if we have
 	 * been loaded before. */
 	if (protocolInstance)
 	{
-		kDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Warning: Protocol already " << "loaded, not initializing again." << endl;
+		kDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Warning: Protocol already " << "loaded, not initializing again.";
 		return;
 	}
 
@@ -153,13 +153,13 @@ JabberProtocol::~JabberProtocol ()
 
 AddContactPage *JabberProtocol::createAddContactWidget (QWidget * parent, Kopete::Account * i)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create Add Contact  Widget\n" << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create Add Contact  Widget\n";
 	return new JabberAddContactPage (i, parent);
 }
 
 KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Account * account, QWidget * parent)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Edit Account Widget\n" << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Edit Account Widget\n";
 	JabberAccount *ja=dynamic_cast < JabberAccount * >(account);
 	if(ja || !account)
 		return new JabberEditAccountWidget (this,ja , parent);
@@ -177,7 +177,7 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 
 Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create New Account. ID: " << accountId << "\n" << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create New Account. ID: " << accountId << "\n";
 	if( Kopete::AccountManager::self()->findAccount( pluginId() , accountId ) )
 		return 0L;  //the account may already exist if greated just above
 
@@ -254,7 +254,7 @@ Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resou
 		}
 		else
 		{
-			kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug" << endl;
+			kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug";
 		}
 	}
 
@@ -276,7 +276,7 @@ JabberProtocol *JabberProtocol::protocol ()
 Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaContact,
 										 const QMap < QString, QString > &serializedData, const QMap < QString, QString > & /* addressBookData */ )
 {
-//  kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deserializing data for metacontact " << metaContact->displayName () << "\n" << endl;
+//  kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deserializing data for metacontact " << metaContact->displayName () << "\n";
 
 	QString contactId = serializedData["contactId"];
 	QString displayName = serializedData["displayName"];
@@ -294,7 +294,7 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 
 	if (!account)
 	{
-		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Account for contact does not exist, skipping.";
 		return 0;
 	}
 	
@@ -366,7 +366,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 	XMPP::Jid jid = jid_str;
 	QString action=url.queryItems().isEmpty() ? QString() : url.queryItems().first().first;
 	 
-	kDebug() << k_funcinfo << url.queryItemValue("body") << endl;
+	kDebug() << k_funcinfo << url.queryItemValue("body");
 
 	if(jid.isEmpty())
 	{
@@ -523,7 +523,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 	}//TODO: recvfile
 	else
 	{
-		kWarning(JABBER_DEBUG_GLOBAL) << k_funcinfo << "unable to handle URL "<< kurl.prettyUrl() << endl;
+		kWarning(JABBER_DEBUG_GLOBAL) << k_funcinfo << "unable to handle URL "<< kurl.prettyUrl();
 	}
 
 }

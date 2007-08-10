@@ -133,7 +133,7 @@ int HttpCoreProtocol::rawToTransfer(const QByteArray &raw)
 			}
 			else
 			{
-				qDebug() << PAPILLON_FUNCINFO << "End of HTTP header wasn't found.";
+				qDebug() << Q_FUNC_INFO << "End of HTTP header wasn't found.";
 				d->state = NeedMore;
 				return bytesParsed;
 			}
@@ -141,7 +141,7 @@ int HttpCoreProtocol::rawToTransfer(const QByteArray &raw)
 			// Strip to get only the raw header.
 			QByteArray rawHttpHeader = tempRaw.left(endHeaderPos);
 			QString httpHeader(rawHttpHeader);
-// 			qDebug() << PAPILLON_FUNCINFO << "HTTP header: " << httpHeader;
+// 			qDebug() << Q_FUNC_INFO << "HTTP header: " << httpHeader;
 			
 			// Parse HTTP header
 			QHttpResponseHeader responseHeader(httpHeader);
@@ -154,13 +154,13 @@ int HttpCoreProtocol::rawToTransfer(const QByteArray &raw)
 				d->state = WaitForContent;
 				d->contentLength = responseHeader.contentLength();
 				
-				qDebug() << PAPILLON_FUNCINFO << "Begin content transfer. Length:" << d->contentLength << "State:" << (int)d->state;
+				qDebug() << Q_FUNC_INFO << "Begin content transfer. Length:" << d->contentLength << "State:" << (int)d->state;
 			}
 			// This transfer has no body, so we are available.
 			else
 			{
 				d->state = Available;
-				qDebug() << PAPILLON_FUNCINFO << d->inTransfer->toRawCommand();
+				qDebug() << Q_FUNC_INFO << d->inTransfer->toRawCommand();
 				emit incomingData();
 			}
 			
@@ -170,7 +170,7 @@ int HttpCoreProtocol::rawToTransfer(const QByteArray &raw)
 		{
 			if(raw.size() < d->contentLength)
 			{
-				qDebug() << PAPILLON_FUNCINFO << "Raw size:" << raw.size() << "Content length:" << d->contentLength;
+				qDebug() << Q_FUNC_INFO << "Raw size:" << raw.size() << "Content length:" << d->contentLength;
 				d->state = NeedMore;
 				return bytesParsed;
 			}
@@ -179,10 +179,10 @@ int HttpCoreProtocol::rawToTransfer(const QByteArray &raw)
 			QByteArray bodyData = tempRaw.left(d->contentLength);
 			
 			d->inTransfer->setBody(bodyData);
-			qDebug() << PAPILLON_FUNCINFO << "Byte data length:" << bodyData.size();
-// 			qDebug() << PAPILLON_FUNCINFO << "Payload data read(from Transfer):" << d->inTransfer->payloadLength();
+			qDebug() << Q_FUNC_INFO << "Byte data length:" << bodyData.size();
+// 			qDebug() << Q_FUNC_INFO << "Payload data read(from Transfer):" << d->inTransfer->payloadLength();
 			// Show full payload command to output
-			qDebug() << PAPILLON_FUNCINFO << d->inTransfer->toRawCommand();
+			qDebug() << Q_FUNC_INFO << d->inTransfer->toRawCommand();
 			d->state = Available;
 			emit incomingData();
 			

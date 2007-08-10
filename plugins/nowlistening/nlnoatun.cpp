@@ -89,7 +89,7 @@ void NLNoatun::update()
 
 	}
 	else
-		kDebug( 14307 ) << "NLNoatun::update() - noatun not found" << endl;
+		kDebug( 14307 ) << "NLNoatun::update() - noatun not found";
 }
 
 		

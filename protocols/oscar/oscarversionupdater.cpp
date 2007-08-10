@@ -50,7 +50,7 @@ OscarVersionUpdater *OscarVersionUpdater::self()
 
 bool OscarVersionUpdater::update( unsigned int stamp )
 {
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo;
 	bool doUpdate = false;
 	bool isUpdating = false;
 	
@@ -70,7 +70,7 @@ bool OscarVersionUpdater::update( unsigned int stamp )
 		KConfigGroup config( KGlobal::config(), "Oscar" );
 		QString url = config.readEntry( "NewVersionURL", "http://kopete.kde.org/oscarversions.xml" );
 		mTransferJob = KIO::get ( url );
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Download version info from server."<< endl;
+		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Download version info from server.";
 		
 		connect ( mTransferJob, SIGNAL ( result ( KJob* ) ),
 		          this, SLOT ( slotTransferResult ( KJob* ) ) );
@@ -87,7 +87,7 @@ unsigned int OscarVersionUpdater::stamp() const
 
 void OscarVersionUpdater::initICQVersionInfo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	KConfigGroup config( KGlobal::config(), "ICQVersion" );
 	
 	mICQVersion.clientString = config.readEntry( "ClientString", "ICQBasic" );
@@ -103,7 +103,7 @@ void OscarVersionUpdater::initICQVersionInfo()
 
 void OscarVersionUpdater::initAIMVersionInfo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	
 	KConfigGroup config( KGlobal::config(), "AIMVersion" );
 	
@@ -120,29 +120,29 @@ void OscarVersionUpdater::initAIMVersionInfo()
 
 void OscarVersionUpdater::printDebug()
 {
-	kDebug(OSCAR_RAW_DEBUG) << "*************** AIM VERSION INFO ***************" << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "client string: " << mAIMVersion.clientString << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "client id: "  << QString::number( mAIMVersion.clientId, 16 ) << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "major: "  << QString::number( mAIMVersion.major, 16 ) << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "minor: "  << QString::number( mAIMVersion.minor, 16 ) << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "point: "  << QString::number( mAIMVersion.point, 16 ) << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "build: "  << QString::number( mAIMVersion.build, 16 ) << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "other: "  << QString::number( mAIMVersion.other, 16 ) << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "country: "  << mAIMVersion.country << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "lang: "  << mAIMVersion.lang << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "************************************************" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "*************** AIM VERSION INFO ***************";
+	kDebug(OSCAR_RAW_DEBUG) << "client string: " << mAIMVersion.clientString;
+	kDebug(OSCAR_RAW_DEBUG) << "client id: "  << QString::number( mAIMVersion.clientId, 16 );
+	kDebug(OSCAR_RAW_DEBUG) << "major: "  << QString::number( mAIMVersion.major, 16 );
+	kDebug(OSCAR_RAW_DEBUG) << "minor: "  << QString::number( mAIMVersion.minor, 16 );
+	kDebug(OSCAR_RAW_DEBUG) << "point: "  << QString::number( mAIMVersion.point, 16 );
+	kDebug(OSCAR_RAW_DEBUG) << "build: "  << QString::number( mAIMVersion.build, 16 );
+	kDebug(OSCAR_RAW_DEBUG) << "other: "  << QString::number( mAIMVersion.other, 16 );
+	kDebug(OSCAR_RAW_DEBUG) << "country: "  << mAIMVersion.country;
+	kDebug(OSCAR_RAW_DEBUG) << "lang: "  << mAIMVersion.lang;
+	kDebug(OSCAR_RAW_DEBUG) << "************************************************";
 	
-	kDebug(OSCAR_RAW_DEBUG) << "*************** ICQ VERSION INFO ***************" << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "client string: " << mICQVersion.clientString << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "client id: "  << QString::number( mICQVersion.clientId, 16 ) << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "major: "  << QString::number( mICQVersion.major, 16 ) << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "minor: "  << QString::number( mICQVersion.minor, 16 ) << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "point: "  << QString::number( mICQVersion.point, 16 ) << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "build: "  << QString::number( mICQVersion.build, 16 ) << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "other: "  << QString::number( mICQVersion.other, 16 ) << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "country: "  << mICQVersion.country << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "lang: "  << mICQVersion.lang << endl;
-	kDebug(OSCAR_RAW_DEBUG) << "************************************************" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "*************** ICQ VERSION INFO ***************";
+	kDebug(OSCAR_RAW_DEBUG) << "client string: " << mICQVersion.clientString;
+	kDebug(OSCAR_RAW_DEBUG) << "client id: "  << QString::number( mICQVersion.clientId, 16 );
+	kDebug(OSCAR_RAW_DEBUG) << "major: "  << QString::number( mICQVersion.major, 16 );
+	kDebug(OSCAR_RAW_DEBUG) << "minor: "  << QString::number( mICQVersion.minor, 16 );
+	kDebug(OSCAR_RAW_DEBUG) << "point: "  << QString::number( mICQVersion.point, 16 );
+	kDebug(OSCAR_RAW_DEBUG) << "build: "  << QString::number( mICQVersion.build, 16 );
+	kDebug(OSCAR_RAW_DEBUG) << "other: "  << QString::number( mICQVersion.other, 16 );
+	kDebug(OSCAR_RAW_DEBUG) << "country: "  << mICQVersion.country;
+	kDebug(OSCAR_RAW_DEBUG) << "lang: "  << mICQVersion.lang;
+	kDebug(OSCAR_RAW_DEBUG) << "************************************************";
 }
 
 void OscarVersionUpdater::slotTransferData ( KIO::Job *job, const QByteArray &data )
@@ -152,7 +152,7 @@ void OscarVersionUpdater::slotTransferData ( KIO::Job *job, const QByteArray &da
 	mVersionData.resize ( oldSize + data.size() );
 	memcpy ( &mVersionData.data()[oldSize], data.data(), data.size() );
 	
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Data size " << mVersionData.size() << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Data size " << mVersionData.size();
 }
 
 void OscarVersionUpdater::slotTransferResult ( KJob *job )
@@ -161,11 +161,11 @@ void OscarVersionUpdater::slotTransferResult ( KJob *job )
 	if ( job->error() || mTransferJob->isErrorPage() )
 	{
 		//TODO show error
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Download of version info has faild!" << endl;
+		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Download of version info has faild!";
 	}
 	else
 	{
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating version info" << endl;
+		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating version info";
 		
 		QDomDocument doc;
 		if ( doc.setContent ( mVersionData ) )
@@ -202,7 +202,7 @@ void OscarVersionUpdater::slotTransferResult ( KJob *job )
 
 void OscarVersionUpdater::parseDocument( QDomDocument& doc )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	
 	QDomElement root = doc.documentElement();
 	if ( root.tagName() != "oscar" )
@@ -222,7 +222,7 @@ void OscarVersionUpdater::parseDocument( QDomDocument& doc )
 
 bool OscarVersionUpdater::parseVersion( Oscar::ClientVersion& version, QDomElement& element )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 	
 	// clear structure
 	version.clientString = QString::null;
@@ -265,7 +265,7 @@ bool OscarVersionUpdater::parseVersion( Oscar::ClientVersion& version, QDomEleme
 
 void OscarVersionUpdater::storeVersionInfo( const QString& group, const Oscar::ClientVersion& version ) const
 {
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Storing version info to group: " << group << endl;
+	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Storing version info to group: " << group;
 	KConfigGroup config( KGlobal::config(), group );
 	
 	config.writeEntry( "ClientString", version.clientString );

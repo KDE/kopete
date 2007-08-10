@@ -92,7 +92,7 @@ KopeteEditGlobalIdentityWidget::~KopeteEditGlobalIdentityWidget()
 
 void KopeteEditGlobalIdentityWidget::setIconSize(const QSize &size)
 {
-	kDebug(14000) << k_funcinfo << "Manually changing the icon size." << endl;
+	kDebug(14000) << k_funcinfo << "Manually changing the icon size.";
 
 	// Update the picture (change the size of it)
 	d->iconSize = size;
@@ -126,7 +126,7 @@ void KopeteEditGlobalIdentityWidget::createGUI()
 
 void KopeteEditGlobalIdentityWidget::updateGUI(const QString &key, const QVariant &value)
 {
-	kDebug(14000) << k_funcinfo << "Updating the GUI reflecting the global identity change." << endl;
+	kDebug(14000) << k_funcinfo << "Updating the GUI reflecting the global identity change.";
 	
 	if(key == Kopete::Global::Properties::self()->photo().key())
 	{
@@ -158,7 +158,7 @@ void KopeteEditGlobalIdentityWidget::photoClicked()
 	if (avatar.isNull())
 		return;
 
-	kDebug(1400) << k_funcinfo << "Setting myself metacontact photo with " << avatar << endl;
+	kDebug(1400) << k_funcinfo << "Setting myself metacontact photo with " << avatar;
 	d->myself->setPhotoSource( Kopete::MetaContact::SourceCustom );
 	d->myself->setPhoto( KUrl(avatar) );
 }
@@ -183,7 +183,7 @@ void KopeteEditGlobalIdentityWidget::changeNickname()
 {
 	if( !d->lineNickname->text().isEmpty() && d->lineNickname->text() != d->myself->displayName() )
 	{
-		kDebug(14000) << k_funcinfo << "Updating global nickname..." << endl;
+		kDebug(14000) << k_funcinfo << "Updating global nickname...";
 
 		// Reset the text color since the nickname is now updated.
 		d->lineNickname->setPalette(QPalette());

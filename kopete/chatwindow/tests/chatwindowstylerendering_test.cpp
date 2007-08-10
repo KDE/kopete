@@ -212,7 +212,7 @@ void ChatWindowStyleRendering_Test::testHeaderRendering()
 
 	resultHtml = chatPart->formatStyleKeywords(headerHtml);
 
-	kDebug(14000) << "Result HTML: " << resultHtml << endl;
+	kDebug(14000) << "Result HTML: " << resultHtml;
 
 	CHECK(resultHtml, expectedHtml);
 }
@@ -255,14 +255,14 @@ void ChatWindowStyleRendering_Test::testMessageRendering()
 	tempHtml = d->testStyle->getIncomingHtml();
 	resultHtml = chatPart->formatStyleKeywords(tempHtml, msgIn);
 
-	kDebug(14000) << "Message incoming HTML: " << resultHtml << endl;
+	kDebug(14000) << "Message incoming HTML: " << resultHtml;
 
 	CHECK(resultHtml, expectedIncomingHtml);
 
 	tempHtml = d->testStyle->getOutgoingHtml();
 	resultHtml = chatPart->formatStyleKeywords(tempHtml, msgOut);
 
-	kDebug(14000) << "Message outgoing HTML: " << resultHtml << endl;
+	kDebug(14000) << "Message outgoing HTML: " << resultHtml;
 
 	CHECK(resultHtml, expectedOutgoingHtml);
 }

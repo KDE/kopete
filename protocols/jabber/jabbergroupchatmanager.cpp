@@ -30,7 +30,7 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 											 Kopete::ContactPtrList others, XMPP::Jid roomJid )
 											 : Kopete::ChatSession ( user, others, protocol )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId ();
 
 	mRoomJid = roomJid;
 	
@@ -51,7 +51,7 @@ JabberGroupChatManager::~JabberGroupChatManager()
 
 void JabberGroupChatManager::updateDisplayName ()
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo;
 
 	setDisplayName ( mRoomJid.full () );
 

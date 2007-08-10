@@ -25,7 +25,7 @@
 
 SendMessageTask::SendMessageTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 }
 
 SendMessageTask::~SendMessageTask()
@@ -34,11 +34,11 @@ SendMessageTask::~SendMessageTask()
 
 void SendMessageTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	if( m_text.isEmpty() )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Text to send is empty." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Text to send is empty.";
 		client()->notifyError( i18n( "An error occurred sending the message" ), i18n( "The message is empty." ), Client::Debug );
 		return;
 	}	

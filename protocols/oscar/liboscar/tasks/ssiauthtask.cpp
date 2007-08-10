@@ -135,8 +135,8 @@ void SSIAuthTask::handleFutureAuthGranted()
 	QString uin = Oscar::normalize( buf->getBUIN() );
 	QString reason = parseReason( buf );
 	
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Future authorization granted from " << uin << endl;
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Future authorization granted from " << uin;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason;
 	emit futureAuthGranted( uin, reason );
 }
 
@@ -147,8 +147,8 @@ void SSIAuthTask::handleAuthRequested()
 	QString uin = Oscar::normalize( buf->getBUIN() );
 	QString reason = parseReason( buf );
 	
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization requested from " << uin << endl;
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization requested from " << uin;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason;
 	
 	emit authRequested( uin, reason );
 }
@@ -162,11 +162,11 @@ void SSIAuthTask::handleAuthReplied()
 	QString reason = parseReason( buf );
 	
 	if ( accepted )
-		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization request accepted by " << uin << endl;
+		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization request accepted by " << uin;
 	else
-		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization request declined by " << uin << endl;
+		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Authorization request declined by " << uin;
 		
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Reason: " << reason;
 	emit authReplied( uin, reason, accepted );
 }
 
@@ -176,7 +176,7 @@ void SSIAuthTask::handleAddedMessage()
 	
 	QString uin = Oscar::normalize( buf->getBUIN() );
 	
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "User " << uin << " added you to the contact list" << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "User " << uin << " added you to the contact list";
 	emit contactAddedYou( uin );
 }
 

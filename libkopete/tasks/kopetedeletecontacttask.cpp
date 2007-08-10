@@ -54,7 +54,7 @@ void DeleteContactTask::start()
 
 	if( contact()->account() && !contact()->account()->isConnected() )
 	{
-		kDebug(14010) << k_funcinfo << "ERROR: Network is unavailable" << endl;
+		kDebug(14010) << k_funcinfo << "ERROR: Network is unavailable";
 
 		setError( DeleteContactTask::NetworkUnavailableError );
 		emitResult();
@@ -64,7 +64,7 @@ void DeleteContactTask::start()
 
 	if( subjobs().empty() )
 	{
-		kDebug(14010) << k_funcinfo << "WARNING: This task does not contain protocol delete children task. Using default behavior, calling obsolete deleteContact()" << endl;
+		kDebug(14010) << k_funcinfo << "WARNING: This task does not contain protocol delete children task. Using default behavior, calling obsolete deleteContact()";
 
 		contact()->deleteContact();
 		emitResult();
@@ -84,7 +84,7 @@ void DeleteContactTask::slotResult(KJob *job)
 	// method.
 	if( !job->error() && subjobs().empty() )
 	{
-		kDebug(14010) << k_funcinfo << "Deleting Kopete::Contact from memory" << endl;
+		kDebug(14010) << k_funcinfo << "Deleting Kopete::Contact from memory";
 		contact()->deleteLater();
 		emitResult();
 	}

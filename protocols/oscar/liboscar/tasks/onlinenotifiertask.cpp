@@ -81,7 +81,7 @@ void OnlineNotifierTask::userOnline()
 	UserDetails ud;
 	ud.fill( buffer );
 	QString user = ud.userId();
-	//kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << user << " is now online" << endl;
+	//kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << user << " is now online";
 	emit userIsOnline( user, ud );
 }
 
@@ -91,7 +91,7 @@ void OnlineNotifierTask::userOffline()
 	UserDetails ud;
 	ud.fill( buffer );
 	QString user = ud.userId();
-	//kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << user << " is now offline" << endl;
+	//kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << user << " is now offline";
 	emit userIsOffline( user, ud );
 }
 

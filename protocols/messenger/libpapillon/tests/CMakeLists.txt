@@ -36,13 +36,13 @@ endif(NOT WIN32)
 
 ########### Automated tests ###############
 
-set(transfer_test_SRCS transfer_test.cpp )
+set(networkmessage_test_SRCS networkmessage_test.cpp )
 
-kde4_add_test_executable(transfer_test  ${transfer_test_SRCS})
+kde4_add_test_executable(networkmessage_test  ${networkmessage_test_SRCS})
 
-target_link_libraries(transfer_test ${PAPILLON_TEST_LIBRARIES} )
+target_link_libraries(networkmessage_test ${PAPILLON_TEST_LIBRARIES} )
 
-add_test(transfer_test ${EXECUTABLE_OUTPUT_PATH}/transfer_test)
+add_test(networkmessage_test ${EXECUTABLE_OUTPUT_PATH}/networkmessage_test)
 
 #####
 
@@ -107,7 +107,7 @@ if(NOT WIN32)
                 
         kde4_add_test_executable(challenge_test  ${challenge_test_SRCS})
         
-        target_link_libraries(challenge_test ${PAPILLON_TEST_LIBRARIES} ${QCA2_LIBRARIES})
+        target_link_libraries(challenge_test ${PAPILLON_TEST_LIBRARIES})
         
         add_test(challenge_test ${EXECUTABLE_OUTPUT_PATH}/challenge_test)
 endif(NOT WIN32)

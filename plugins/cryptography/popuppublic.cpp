@@ -24,9 +24,10 @@
 #include <KIconLoader>
 #include <KActionCollection>
 #include <KAction>
+#include <QPixmap>
 #include "popuppublic.h"
 #include "ui_popuppublicbase.h"
-#include "kgpginterface.h"
+#include "gpginterface.h"
 
 #include <cstdio>
 
@@ -289,7 +290,7 @@ void PopupPublic::slotprocread(K3ProcIO *p)
                 keyname=tst;//.section('(',0,0);
         }
 
-	keyname=KgpgInterface::checkForUtf8(keyname);
+	keyname=GpgInterface::checkForUtf8(keyname);
 
                         if ((!dead) && (!tst.isEmpty())) {
 				bool isDefaultKey=false;
@@ -330,7 +331,7 @@ void PopupPublic::slotOk()
 
 
         //////   emit selected data
-kDebug(2100)<<"Ok pressed"<<endl;
+kDebug(2100)<<"Ok pressed";
         QStringList selectedKeys;
 	QString userid;
 	QList<QTreeWidgetItem*> list = ui->keyList->selectedItems();
@@ -342,7 +343,7 @@ kDebug(2100)<<"Ok pressed"<<endl;
                 }
         if (selectedKeys.isEmpty())
                 return;
-	kDebug(2100)<<"Selected Key:"<<selectedKeys<<endl;
+	kDebug(2100)<<"Selected Key:"<<selectedKeys;
         QStringList returnOptions;
         if (ui->untrustedCheck->isChecked())
                 returnOptions<<"--always-trust";

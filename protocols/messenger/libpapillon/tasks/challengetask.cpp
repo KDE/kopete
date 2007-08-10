@@ -18,17 +18,16 @@
 #include "Papillon/Tasks/ChallengeTask"
 
 // Qt includes
-#include <QtCore/QLatin1String>
 #include <QtCore/QByteArray>
+#include <QtCore/QCryptographicHash>
 #include <QtCore/QDataStream>
+#include <QtCore/QLatin1String>
+#include <QtCore/QStringList>
 #include <QtCore/QVector>
 #include <QtDebug>
 
-// QCA includes
-#include <QtCrypto>
-
 // Papillon includes
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/Connection"
 
 namespace Papillon
@@ -62,15 +61,15 @@ ChallengeTask::~ChallengeTask()
 	delete d;
 }
 
-bool ChallengeTask::take(Transfer *transfer)
+bool ChallengeTask::take(NetworkMessage *networkMessage)
 {
-	if( transfer->command() == QLatin1String("CHL") )
+	if( networkMessage->command() == QLatin1String("CHL") )
 	{
-		QString challenge = transfer->arguments()[0];
+		QString challenge = networkMessage->arguments()[0];
 		
 		QString challengeHash = createChallengeHash(challenge);
 
-		Transfer *challengeResult = new Transfer(Transfer::PayloadTransfer | Transfer::TransactionTransfer);
+		NetworkMessage *challengeResult = new NetworkMessage(NetworkMessage::PayloadMessage | NetworkMessage::TransactionMessage);
 		challengeResult->setCommand( QLatin1String("QRY") );
 		challengeResult->setTransactionId( QString::number( connection()->transactionId() ) );
 		challengeResult->setPayloadData( challengeHash.toUtf8() );
@@ -90,22 +89,18 @@ QString ChallengeTask::createChallengeHash(const QString &challengeString)
 {
 	// Step One: THe MD5 Hash.
 
-	if( !QCA::isSupported("md5") )
-	{
-		qDebug() << PAPILLON_FUNCINFO << "ERROR: MD5 not supported !";
-	}
-	Q_ASSERT( QCA::isSupported("md5") );
+	// Combine the received challenge string with the product key.
+	QByteArray challengeByteArray = (challengeString + challengeProductKey).toUtf8();
 
-  	// Combine the received challenge string with the product key.
- 	QByteArray digest = QCA::arrayToHex( QCA::Hash("md5").hash( (challengeString + challengeProductKey).toUtf8() ).toByteArray() ).toUtf8();
-
- 	qDebug() << PAPILLON_FUNCINFO << "md5: " << digest;
+	// Generate the MD5 digest (as a string of hexadecimal number, not binary data)
+ 	QByteArray digest = QCryptographicHash::hash(challengeByteArray, QCryptographicHash::Md5).toHex();
+ 	qDebug() << Q_FUNC_INFO << "md5: " << digest;
 
  	QVector<qint32> md5Integers(4);
  	for(qint32 i=0; i < md5Integers.count(); i++)
  	{
  		md5Integers[i] = d->hexSwap(digest.mid(i*8, 8)).toUInt(0, 16) & 0x7FFFFFFF;
- 		qDebug() << PAPILLON_FUNCINFO << ("0x" + d->hexSwap(digest.mid(i*8, 8))) << " " << md5Integers[i];
+ 		qDebug() << Q_FUNC_INFO << ("0x" + d->hexSwap(digest.mid(i*8, 8))) << " " << md5Integers[i];
  	}
 
 	// Step Two: Create the challenge string key
@@ -114,7 +109,7 @@ QString ChallengeTask::createChallengeHash(const QString &challengeString)
 	// Pad to multiple of 8.
 	challengeKey = challengeKey.leftJustified(challengeKey.length() + (8 - challengeKey.length() % 8), '0');
 
-	qDebug() << PAPILLON_FUNCINFO << "challenge key: " << challengeKey;
+	qDebug() << Q_FUNC_INFO << "challenge key: " << challengeKey;
 
 	QVector<qint32> challengeIntegers(challengeKey.length() / 4);
 	for(qint32 i=0; i < challengeIntegers.count(); i++)
@@ -131,14 +126,14 @@ QString ChallengeTask::createChallengeHash(const QString &challengeString)
 		sNumHex = d->hexSwap(sNumHex);
 		// Assign the converted number.
 		challengeIntegers[i] = sNumHex.toInt(0, 16);
-		qDebug() << PAPILLON_FUNCINFO << sNum << (": 0x"+sNumHex) << " " << challengeIntegers[i];
+		qDebug() << Q_FUNC_INFO << sNum << (": 0x"+sNumHex) << " " << challengeIntegers[i];
 	}
 
 	// Step Three: Create the 64-bit hash key.
 
 	// Get the hash key using the specified arrays.
 	qint64 key = d->createHashKey(md5Integers, challengeIntegers);
-	qDebug() << PAPILLON_FUNCINFO << "key: " << key;
+	qDebug() << Q_FUNC_INFO << "key: " << key;
 
 	// Step Four: Create the final hash key.
 
@@ -155,7 +150,7 @@ QString ChallengeTask::createChallengeHash(const QString &challengeString)
 
 qint64 ChallengeTask::Private::createHashKey(const QVector<qint32>& md5Integers, const QVector<qint32>& challengeIntegers)
 {
-	qDebug() << PAPILLON_FUNCINFO << "Creating 64-bit key.";
+	qDebug() << Q_FUNC_INFO << "Creating 64-bit key.";
 
 	qint64 magicNumber = 0x0E79A9C1L, high = 0L, low = 0L;
 		

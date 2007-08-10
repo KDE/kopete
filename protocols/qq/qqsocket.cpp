@@ -59,7 +59,7 @@ void QQSocket::connect( const QString &server, uint port )
 {
 	if ( m_onlineStatus == Connected || m_onlineStatus == Connecting )
 	{
-		kWarning( 14140 ) << k_funcinfo << "Already connected or connecting! Not connecting again." << endl;
+		kWarning( 14140 ) << k_funcinfo << "Already connected or connecting! Not connecting again.";
 		return;
 	}
 
@@ -67,14 +67,14 @@ void QQSocket::connect( const QString &server, uint port )
 	{
 		// Cleanup first.
 		// FIXME: More generic!!!
-		kWarning( 14140 ) << k_funcinfo << "We're still disconnecting! Deleting socket the hard way first." << endl;
+		kWarning( 14140 ) << k_funcinfo << "We're still disconnecting! Deleting socket the hard way first.";
 		delete m_socket;
 	}
 	setOnlineStatus( Connecting );
 	m_id = 5; // FIXME:Don't use the magic #, use random number instead.
 	m_server = server;
 	m_port = port;
-	kDebug( 14140 ) << k_funcinfo << "connecting to :" << server << ":" << port << endl;
+	kDebug( 14140 ) << k_funcinfo << "connecting to :" << server << ":" << port;
 	m_socket = new KBufferedSocket( server, QString::number(port) );
 	m_socket->enableRead( true );
 
@@ -97,7 +97,7 @@ void QQSocket::connect( const QString &server, uint port )
 
 void QQSocket::disconnect()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo;
 	if ( m_socket )
 	{
 		m_socket->closeNow();
@@ -119,7 +119,7 @@ void QQSocket::doneConnect()
 
 void QQSocket::doneDisconnect()
 {
-	kDebug( 14140 ) << k_funcinfo << "disconnected done" << endl;
+	kDebug( 14140 ) << k_funcinfo << "disconnected done";
 	setOnlineStatus( Disconnected );
 }
 
@@ -129,21 +129,21 @@ void QQSocket::setOnlineStatus( QQSocket::OnlineStatus status )
 		return;
 
 	m_onlineStatus = status;
-	kDebug( 14140 ) << k_funcinfo << ": status = " << m_onlineStatus << endl;
+	kDebug( 14140 ) << k_funcinfo << ": status = " << m_onlineStatus;
 	emit onlineStatusChanged( status );
 }
 
 
 void QQSocket::sendPacket( const QByteArray& data )
 {
-	kDebug(14140) << k_funcinfo << data <<  endl;
+	kDebug(14140) << k_funcinfo << data;
 	m_sendQueue.append( data );
 	m_socket->enableWrite(true);
 }
 
 void QQSocket::slotSocketError( int error )
 {
-	kWarning( 14140 ) << k_funcinfo << "Error: " << error << " (" << m_socket->errorString() << ")" << endl;
+	kWarning( 14140 ) << k_funcinfo << "Error: " << error << " (" << m_socket->errorString() << ")";
 
 	if(!KSocketBase::isFatalError(error))
 		return;
@@ -170,7 +170,7 @@ void QQSocket::slotSocketError( int error )
 
 void QQSocket::slotDataReceived()
 {
-	kDebug(14140) << k_funcinfo << "DATA RECEIVED! " << endl;
+	kDebug(14140) << k_funcinfo << "DATA RECEIVED! ";
 	int avail = m_socket->bytesAvailable();
 	if ( avail < 0 )
 	{
@@ -186,11 +186,11 @@ void QQSocket::slotDataReceived()
 
 	if ( ret < 0 )
 	{
-		kWarning( 14140 ) << k_funcinfo << "read() returned " << ret << "!" <<endl;
+		kWarning( 14140 ) << k_funcinfo << "read() returned " << ret << "!";
 	}
 	else if ( ret == 0 )
 	{
-		kWarning( 14140 ) << k_funcinfo << "read() returned no data!" <<endl;
+		kWarning( 14140 ) << k_funcinfo << "read() returned no data!";
 	}
 	else
 	{
@@ -204,7 +204,7 @@ void QQSocket::slotDataReceived()
 		}
 		else
 		{
-			kDebug( 14140 ) << k_funcinfo << "Read " << ret << " bytes into 4kb block." << endl;
+			kDebug( 14140 ) << k_funcinfo << "Read " << ret << " bytes into 4kb block.";
 		}
 		
 		// FIXME: Here we assume that the packet is fetched in one shot, 
@@ -224,7 +224,7 @@ void QQSocket::slotDataReceived()
 
 void QQSocket::handleError( uint code, uint /* id */ )
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo;
 	QString msg;
 
 	switch ( code )
@@ -245,7 +245,7 @@ void QQSocket::handleError( uint code, uint /* id */ )
 
 void QQSocket::slotReadyWrite()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) << k_funcinfo;
 	if ( !m_sendQueue.isEmpty() )
 	{
 		// If the command queue is not empty, retrieve the first command.
@@ -267,7 +267,7 @@ void QQSocket::slotReadyWrite()
 
 void QQSocket::slotConnectionSuccess()
 {
-	kDebug ( 14140 ) << "slotConnectionSuccess: calling doneConnect()" << endl;
+	kDebug ( 14140 ) << "slotConnectionSuccess: calling doneConnect()";
 	doneConnect();
 }
 
@@ -278,11 +278,11 @@ void QQSocket::slotHostFound()
 
 void QQSocket::slotSocketClosed()
 {
-    kDebug( 14140 ) << k_funcinfo << "Socket closed. " << endl;
+    kDebug( 14140 ) << k_funcinfo << "Socket closed. ";
 
 	if ( !m_socket ||  m_onlineStatus == Disconnected )
 	{
-		kDebug( 14140 ) << k_funcinfo << "Socket already deleted or already disconnected" << endl;
+		kDebug( 14140 ) << k_funcinfo << "Socket already deleted or already disconnected";
 		return;
 	}
 
@@ -303,7 +303,7 @@ QString QQSocket::getLocalIP()
 
 	QString ip = address.nodeName();
 
-	kDebug( 14140 ) << k_funcinfo << "IP: " << ip  <<endl;
+	kDebug( 14140 ) << k_funcinfo << "IP: " << ip;
 	return ip;
 }
 

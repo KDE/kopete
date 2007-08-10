@@ -149,7 +149,7 @@ void JavaScriptPlugin::execScripts( Kopete::Account *account )
         JavaScriptEnginePrivate *ep = d->engineMap[account];
 	foreach( JavaScriptFile *scriptfile, d->config->scriptsFor( account ) )
 	{
-		kDebug() << scriptfile->script() << endl;
+		kDebug() << scriptfile->script();
 		ep->jsEngine->execute( scriptfile->script() );
 		QMap<QString,QString>::iterator it = scriptfile->functions.find( QLatin1String("Init") );
 		if( it != scriptfile->functions.end() )
@@ -229,7 +229,7 @@ void JavaScriptPlugin::slotShowConsole( const QString &, Kopete::ChatSession *ma
 	}
 	else
 	{
-		kDebug() << "No console widget for now" << endl;
+		kDebug() << "No console widget for now";
 //		ep->jsEngine->view()->show();
 	}
 }
@@ -383,14 +383,14 @@ void JavaScriptPlugin::slotContactRemoved( Kopete::Contact *c )
 */
 void JavaScriptPlugin::runScripts( Kopete::Account *a, const QString &scriptType, KJSEmbed::Engine *jsEngine )
 {
-//	kDebug() << k_funcinfo << "Scripts for " << a->accountId() << ", type " << scriptType << " = " << scripts.count() << endl;
+//	kDebug() << k_funcinfo << "Scripts for " << a->accountId() << ", type " << scriptType << " = " << scripts.count();
 	foreach( JavaScriptFile *scriptfile, d->config->scriptsFor( a ) )
 	{
 		QMap<QString,QString>::iterator it = scriptfile->functions.find( scriptType );
 		if( it != scriptfile->functions.end() )
 		{
 			QString functionCall = it.data() + QLatin1String("()");
-			kDebug() << k_funcinfo << "Executing " << functionCall << endl;
+			kDebug() << k_funcinfo << "Executing " << functionCall;
 			jsEngine->execute( functionCall );
 		}
 	}

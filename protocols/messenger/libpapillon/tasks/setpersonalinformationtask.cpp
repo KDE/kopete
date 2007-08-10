@@ -21,7 +21,7 @@
 #include <QtDebug>
 
 // Papillon includes
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/Connection"
 
 namespace Papillon
@@ -55,9 +55,9 @@ SetPersonalInformationTask::~SetPersonalInformationTask()
 	delete d;	
 }
 
-bool SetPersonalInformationTask::take(Transfer *transfer)
+bool SetPersonalInformationTask::take(NetworkMessage *networkMessage)
 {
-	if( transfer->transactionId() == d->currentTransactionId )
+	if( networkMessage->transactionId() == d->currentTransactionId )
 	{
 		setSuccess();
 		return true;
@@ -78,9 +78,9 @@ void SetPersonalInformationTask::onGo()
 
 	d->currentTransactionId = QString::number( connection()->transactionId() );
 
-	Transfer *setInfoTransfer = new Transfer(Transfer::TransactionTransfer);
-	setInfoTransfer->setCommand( QLatin1String("PRP") );
-	setInfoTransfer->setTransactionId( d->currentTransactionId );
+	NetworkMessage *setInfoMessage = new NetworkMessage(NetworkMessage::TransactionMessage);
+	setInfoMessage->setCommand( QLatin1String("PRP") );
+	setInfoMessage->setTransactionId( d->currentTransactionId );
 	
 	QStringList args;
 	// Type of information that we are setting.
@@ -88,10 +88,10 @@ void SetPersonalInformationTask::onGo()
 	// The new value for the information.
 	args << QString( QUrl::toPercentEncoding(d->value) );
 
-	setInfoTransfer->setArguments( args );
+	setInfoMessage->setArguments( args );
 
-	qDebug() << PAPILLON_FUNCINFO << "Setting" << d->infoTypeToString(d->type) << "with value:" << d->value;
-	send(setInfoTransfer);
+	qDebug() << Q_FUNC_INFO << "Setting" << d->infoTypeToString(d->type) << "with value:" << d->value;
+	send(setInfoMessage);
 }
 
 QString SetPersonalInformationTask::Private::infoTypeToString(Papillon::ClientInfo::PersonalInformation type)

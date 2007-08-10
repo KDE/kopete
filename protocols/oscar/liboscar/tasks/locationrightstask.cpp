@@ -79,7 +79,7 @@ void LocationRightsTask::sendLocationRightsRequest()
 
 void LocationRightsTask::handleLocationRightsResponse()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Ignoring location rights response" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Ignoring location rights response";
 	setSuccess( 0, QString() );
 }
 

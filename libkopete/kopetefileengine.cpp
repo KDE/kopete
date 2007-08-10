@@ -50,23 +50,23 @@ namespace Kopete
 	FileEngine::FileEngine()
 	: m_buffer(&m_data)
 	{
-		kDebug(14010) << k_funcinfo << endl;
+		kDebug(14010) << k_funcinfo;
 	}
 
 	FileEngine::FileEngine(const QString& fileName)
 	: m_fileName(fileName), m_buffer(&m_data)
 	{
-		kDebug(14010) << k_funcinfo << fileName << endl;
+		kDebug(14010) << k_funcinfo << fileName;
 	}
 
 	FileEngine::~FileEngine()
 	{
-		kDebug(14010) << k_funcinfo << m_fileName << endl;
+		kDebug(14010) << k_funcinfo << m_fileName;
 	}
 
 	bool FileEngine::open(QIODevice::OpenMode openMode)
 	{
-		kDebug(14010) << k_funcinfo << m_fileName << " " << openMode << endl;
+		kDebug(14010) << k_funcinfo << m_fileName << " " << openMode;
 
 		// flag used to signal something went wrong when creating a mimesource
 		bool completed = false;
@@ -97,17 +97,17 @@ namespace Kopete
 					}
 					else
 					{
-						kDebug(14010) << k_funcinfo << "kopete-contact-icon: contact not found" << endl;
+						kDebug(14010) << k_funcinfo << "kopete-contact-icon: contact not found";
 					}
 				}
 				else
 				{
-					kDebug(14010) << k_funcinfo << "kopete-contact-icon: account not found" << endl;
+					kDebug(14010) << k_funcinfo << "kopete-contact-icon: account not found";
 				}
 			}
 			else
 			{
-				kDebug(14010) << k_funcinfo << "kopete-contact-icon: insufficient information in m_fileName: " << parts << endl;
+				kDebug(14010) << k_funcinfo << "kopete-contact-icon: insufficient information in m_fileName: " << parts;
 			}
 		}
 
@@ -124,12 +124,12 @@ namespace Kopete
 				}
 				else
 				{
-					kDebug(14010) << k_funcinfo << "kopete-account-icon: account not found" << endl;
+					kDebug(14010) << k_funcinfo << "kopete-account-icon: account not found";
 				}
 			}
 			else
 			{
-				kDebug(14010) << k_funcinfo << "kopete-account-icon: insufficient information in m_fileName: " << parts << endl;
+				kDebug(14010) << k_funcinfo << "kopete-account-icon: insufficient information in m_fileName: " << parts;
 			}
 		}
 
@@ -147,7 +147,7 @@ namespace Kopete
 			}
 			else
 			{
-				kDebug(14010) << k_funcinfo << "kopete-metacontact-icon: insufficient information in m_fileName: " << parts << endl;
+				kDebug(14010) << k_funcinfo << "kopete-metacontact-icon: insufficient information in m_fileName: " << parts;
 			}
 		}
 
@@ -165,7 +165,7 @@ namespace Kopete
 			}
 			else
 			{
-				kDebug(14010) << k_funcinfo << "kopete-metacontact-photo: insufficient information in m_fileName: " << parts << endl;
+				kDebug(14010) << k_funcinfo << "kopete-metacontact-photo: insufficient information in m_fileName: " << parts;
 			}
 		}
 
@@ -195,12 +195,12 @@ namespace Kopete
 				}
 				else
 				{
-					kDebug(14010) << k_funcinfo << "kopete-onlinestatus-icon: no active account found" << endl;
+					kDebug(14010) << k_funcinfo << "kopete-onlinestatus-icon: no active account found";
 				}
 			}
 			else
 			{
-				kDebug(14010) << k_funcinfo << "kopete-onlinestatus-icon: insufficient information in m_fileName: " << parts << endl;
+				kDebug(14010) << k_funcinfo << "kopete-onlinestatus-icon: insufficient information in m_fileName: " << parts;
 			}
 		}
 
@@ -234,14 +234,14 @@ namespace Kopete
 			m_buffer.seek(0);
 		}
 
-		kDebug(14010) << k_funcinfo << "return: " << completed << endl;
+		kDebug(14010) << k_funcinfo << "return: " << completed;
 
 		return completed;
 	}
 
 	bool FileEngine::close()
 	{
-		kDebug(14010) << k_funcinfo << endl;
+		kDebug(14010) << k_funcinfo;
 
 		if(m_buffer.isOpen())
 		{

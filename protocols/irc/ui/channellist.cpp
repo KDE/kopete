@@ -269,7 +269,7 @@ void ChannelList::clear()
 
 void ChannelList::search()
 {
-	kDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) << k_funcinfo;
 
 	if( m_client->connectionState() == KIRC::Socket::Open || !channelCache.isEmpty() )
 	{

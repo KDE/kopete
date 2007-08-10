@@ -224,7 +224,7 @@ Account* AccountManager::registerAccount( Account *account )
 
 void AccountManager::unregisterAccount( const Account *account )
 {
-	kDebug( 14010 ) << k_funcinfo << "Unregistering account " << account->accountId() << endl;
+	kDebug( 14010 ) << k_funcinfo << "Unregistering account " << account->accountId();
 	d->accounts.removeAll( const_cast<Account*>(account) );
 	emit accountUnregistered( account );
 }
@@ -314,7 +314,7 @@ void AccountManager::removeAccount( Account *account )
 
 void AccountManager::save()
 {
-	//kDebug( 14010 ) << k_funcinfo << endl;
+	//kDebug( 14010 ) << k_funcinfo;
 	qSort( d->accounts.begin(), d->accounts.end(), compareAccountsByPriority );
 
 	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
@@ -403,7 +403,7 @@ void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 	if (!account)
 		return;
 
-	//kDebug(14010) << k_funcinfo << endl;
+	//kDebug(14010) << k_funcinfo;
 	emit accountOnlineStatusChanged(account, oldStatus, newStatus);
 }
 

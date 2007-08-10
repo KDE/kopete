@@ -27,7 +27,7 @@
 
 PictureNotifierTask::PictureNotifierTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 }
 
 PictureNotifierTask::~PictureNotifierTask()
@@ -86,7 +86,7 @@ bool PictureNotifierTask::forMe( const Transfer* transfer ) const
 
 void PictureNotifierTask::parsePictureStatus( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	QString	nick;		/* key = 4 */
 	int state;		/* key = 213  */
@@ -99,7 +99,7 @@ void PictureNotifierTask::parsePictureStatus( YMSGTransfer *t )
 
 void PictureNotifierTask::parsePictureChecksum( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	QString	nick;		/* key = 4 */
 	int checksum;		/* key = 192  */
@@ -113,7 +113,7 @@ void PictureNotifierTask::parsePictureChecksum( YMSGTransfer *t )
 
 void PictureNotifierTask::parsePicture( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	QString	nick;		/* key = 4 */
 	int type;		/* key = 13: 1 = request, 2 = notification */
@@ -133,7 +133,7 @@ void PictureNotifierTask::parsePicture( YMSGTransfer *t )
 
 void PictureNotifierTask::parsePictureUploadResponse( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
 
 	QString url;
 	QString error;
@@ -148,7 +148,7 @@ void PictureNotifierTask::parsePictureUploadResponse( YMSGTransfer *t )
 
 	if( !url.isEmpty() )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting url: " << url << " Picture expires: " << expires << endl;
+		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting url: " << url << " Picture expires: " << expires;
 		emit pictureUploaded( url, expires );
 	}
 }

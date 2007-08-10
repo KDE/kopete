@@ -156,7 +156,7 @@ int RateClass::timeToNextSend()
 	if ( newLevel < maxPacket || newLevel < m_rateInfo.disconnectLevel )
 	{
 		int waitTime = ( windowSize * maxPacket ) - ( ( windowSize - 1 ) * m_rateInfo.currentLevel );
-		kDebug(OSCAR_RAW_DEBUG) << "We're sending too fast. Will wait " << waitTime << "ms before sending" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "We're sending too fast. Will wait " << waitTime << "ms before sending";
 		return waitTime;
 	}
 	
@@ -197,7 +197,7 @@ void RateClass::setupTimer()
 
 void RateClass::slotSend()
 {
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
 
 	if ( m_packetQueue.isEmpty() )
 		return;
@@ -220,7 +220,7 @@ void RateClass::updateRateInfo()
 	//Update rate info
 	Oscar::DWORD newLevel = calcNewLevel( m_packetTimer.elapsed() );
 	m_rateInfo.currentLevel = newLevel;
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Current Level = " <<  newLevel << endl;
+	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Current Level = " <<  newLevel;
 	
 	//restart the timer
 	m_packetTimer.restart();

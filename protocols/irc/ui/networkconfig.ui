@@ -55,9 +55,6 @@
         <property name="text" >
          <string>&amp;New...</string>
         </property>
-        <property name="shortcut" >
-         <string>Alt+N</string>
-        </property>
        </widget>
       </item>
       <item row="1" column="1" >
@@ -72,9 +69,6 @@
         </property>
         <property name="text" >
          <string>&amp;Remove</string>
-        </property>
-        <property name="shortcut" >
-         <string>Alt+R</string>
         </property>
        </widget>
       </item>
@@ -259,9 +253,6 @@
     <widget class="QPushButton" name="m_newNetworkButton" >
      <property name="text" >
       <string>Ne&amp;w</string>
-     </property>
-     <property name="shortcut" >
-      <string>Alt+W</string>
      </property>
     </widget>
    </item>

@@ -169,6 +169,8 @@ public:
 	 * See @ref sourceURL
 	 */
 	KUrl destinationURL();
+protected:
+        void emitCopying(const KUrl &src, const KUrl &dest);
 
 public slots:
 

@@ -88,7 +88,7 @@ Contact::Contact( Account *account, const QString &contactId,
 {
 	d = new Private;
 
-	//kDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId << endl;
+	//kDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId;
 
 	d->contactId = contactId;
 	d->metaContact = parent;
@@ -121,7 +121,7 @@ Contact::Contact( Account *account, const QString &contactId,
 
 Contact::~Contact()
 {
-	//kDebug(14010) << k_funcinfo << endl;
+	//kDebug(14010) << k_funcinfo;
 	emit( contactDestroyed( this ) );
 	delete d;
 }
@@ -178,7 +178,7 @@ void Contact::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
 	d->statusMessage = statusMessage;
 
-	kDebug(14010) << k_funcinfo << "Setting up the status message property with this: " << statusMessage.message() << endl;
+	kDebug(14010) << k_funcinfo << "Setting up the status message property with this: " << statusMessage.message();
 	if( !statusMessage.message().isEmpty() )
 		setProperty( Kopete::Global::Properties::self()->statusMessage(), statusMessage.message() );
 	else
@@ -682,14 +682,14 @@ QString Contact::toolTip() const
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( nick.isEmpty() )
 	{
-		tip = i18nc( "<b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
+		tip = i18nc( "@label:textbox <b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
 			"<b><nobr>%3</nobr></b><br><img src=\"%2\">&nbsp;%1",
 			Kopete::Message::escape( onlineStatus().description() ), iconName,
 				Kopete::Message::escape( d->contactId ) );
 	}
 	else
 	{
-		tip = i18nc( "<b>DISPLAY NAME</b> (CONTACT ID)<br><img src=\"%2\">&nbsp;CONTACT STATUS",
+		tip = i18nc( "@label:textbox <b>DISPLAY NAME</b> (CONTACT ID)<br><img src=\"%2\">&nbsp;CONTACT STATUS",
 			"<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1",
 				Kopete::Message::escape( onlineStatus().description() ), iconName,
 					Kopete::Message::escape( contactId() ),
@@ -707,7 +707,7 @@ QString Contact::toolTip() const
 			QString name = formattedName();
 			if(!name.isEmpty())
 			{
-				tip += i18nc("<br><b>Full Name:</b>&nbsp;FORMATTED NAME",
+				tip += i18nc("@label:textbox formatted name",
 							"<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>", Qt::escape(name));
 			}
 		}
@@ -716,7 +716,7 @@ QString Contact::toolTip() const
 			QString time = formattedIdleTime();
 			if(!time.isEmpty())
 			{
-				tip += i18nc("<br><b>Idle:</b>&nbsp;FORMATTED IDLE TIME",
+				tip += i18nc("@label:textbox formatted idle time",
 					"<br><b>Idle:</b>&nbsp;<nobr>%1</nobr>", time);
 			}
 		}
@@ -725,7 +725,7 @@ QString Contact::toolTip() const
 			QString url = property(*it).value().toString();
 			if(!url.isEmpty())
 			{
-				tip += i18nc("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
+				tip += i18nc("@label:textbox formatted url",
 					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>",
 						QString(QUrl::toPercentEncoding( url )), Kopete::Message::escape( Qt::escape(url) ) );
 			}
@@ -735,7 +735,7 @@ QString Contact::toolTip() const
 			QString statusmsg = property(*it).value().toString();
 			if(!statusmsg.isEmpty())
 			{
-				tip += i18nc("<br><b>Status Message:</b>&nbsp;FORMATTED STATUS MESSAGE",
+				tip += i18nc("@label:textbox formatted status message",
 							"<br><b>Status&nbsp;Message:</b>&nbsp;%1",  Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusmsg) ) );
 			}
 		}
@@ -772,7 +772,7 @@ QString Contact::toolTip() const
 						}
 				}
 
-				tip += i18nc("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
+				tip += i18nc("@label:textbox <br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
 					"<br><nobr><b>%2:</b></nobr>&nbsp;%1",
 						valueText, Qt::escape(p.tmpl().label()) );
 			}

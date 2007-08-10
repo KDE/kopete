@@ -61,7 +61,7 @@ public:
 	 * You can query all information on the plugins through the KPluginInfo
 	 * interface.
 	 */
-	QList<KPluginInfo *> availablePlugins( const QString &category = QString::null ) const;
+	QList<KPluginInfo> availablePlugins( const QString &category = QString::null ) const;
 
 	/**
 	 * Returns a list of all plugins that are actually loaded.
@@ -85,7 +85,7 @@ public:
 	/**
 	 * @return the KPluginInfo for the specified plugin
 	 */
-	KPluginInfo *pluginInfo( const Kopete::Plugin *plugin ) const;
+	KPluginInfo pluginInfo( const Kopete::Plugin *plugin ) const;
 
 
 	/**
@@ -228,7 +228,7 @@ private:
 	 *
 	 * Returns a null pointer when no plugin info is found.
 	 */
-	KPluginInfo * infoForPluginId( const QString &pluginId ) const;
+	KPluginInfo infoForPluginId( const QString &pluginId ) const;
 
 	PluginManager();
 

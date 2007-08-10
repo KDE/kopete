@@ -63,10 +63,10 @@ public:
 
 	/**
 	 * @brief Check for task acknowledge if the task executed successfully.
-	 * @param transfer the Transfer
+	 * @param networkMessage the NetworkMessage
 	 * @return true if this is the task acknowledge
 	 */
-	virtual bool take(Papillon::Transfer *transfer);
+	virtual bool take(Papillon::NetworkMessage *networkMessage);
 
 protected:
 	/**

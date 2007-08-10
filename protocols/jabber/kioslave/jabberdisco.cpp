@@ -34,7 +34,7 @@
 JabberDiscoProtocol::JabberDiscoProtocol ( const QByteArray &pool_socket, const QByteArray &app_socket )
 	: KIO::SlaveBase ( "kio_jabberdisco", pool_socket, app_socket )
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Slave launched." << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Slave launched.";
 
 	m_jabberClient = 0l;
 	m_connected = false;
@@ -44,7 +44,7 @@ JabberDiscoProtocol::JabberDiscoProtocol ( const QByteArray &pool_socket, const 
 
 JabberDiscoProtocol::~JabberDiscoProtocol ()
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Slave is shutting down." << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Slave is shutting down.";
 
 	delete m_jabberClient;
 
@@ -52,7 +52,7 @@ JabberDiscoProtocol::~JabberDiscoProtocol ()
 
 void JabberDiscoProtocol::setHost ( const QString &host, int port, const QString &user, const QString &pass )
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << " Host " << host << ", port " << port << ", user " << user << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << " Host " << host << ", port " << port << ", user " << user;
 
 	m_host = host;
 	m_port = !port ? 5222 : port;
@@ -63,7 +63,7 @@ void JabberDiscoProtocol::setHost ( const QString &host, int port, const QString
 
 void JabberDiscoProtocol::openConnection ()
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo;
 
 	if ( m_connected )
 	{
@@ -111,7 +111,7 @@ void JabberDiscoProtocol::openConnection ()
 		case JabberClient::Ok:
 		default:
 			// everything alright!
-			kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Waiting for socket to open..." << endl;
+			kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Waiting for socket to open...";
 			break;
 	}
 
@@ -121,7 +121,7 @@ void JabberDiscoProtocol::openConnection ()
 
 void JabberDiscoProtocol::closeConnection ()
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo;
 
 	if ( m_jabberClient )
 	{
@@ -132,7 +132,7 @@ void JabberDiscoProtocol::closeConnection ()
 
 void JabberDiscoProtocol::slave_status ()
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo;
 
 	slaveStatus ( m_host, m_connected );
 
@@ -140,7 +140,7 @@ void JabberDiscoProtocol::slave_status ()
 
 void JabberDiscoProtocol::get ( const KUrl &url )
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo;
 
 	m_command = Get;
 	m_url = url;
@@ -153,7 +153,7 @@ void JabberDiscoProtocol::get ( const KUrl &url )
 
 void JabberDiscoProtocol::listDir ( const KUrl &url )
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo;
 
 	m_command = ListDir;
 	m_url = url;
@@ -164,7 +164,7 @@ void JabberDiscoProtocol::listDir ( const KUrl &url )
 
 void JabberDiscoProtocol::mimetype ( const KUrl &/*url*/ )
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo;
 
 	mimeType("inode/directory");
 
@@ -175,13 +175,13 @@ void JabberDiscoProtocol::mimetype ( const KUrl &/*url*/ )
 void JabberDiscoProtocol::slotClientDebugMessage ( const QString &msg )
 {
 
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << msg << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << msg;
 
 }
 
 void JabberDiscoProtocol::slotHandleTLSWarning ( int validityResult )
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Handling TLS warning..." << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Handling TLS warning...";
 
 	if ( messageBox ( KIO::SlaveBase::WarningContinueCancel,
 					  i18n ( "The server certificate is invalid. Do you want to continue? " ),
@@ -200,7 +200,7 @@ void JabberDiscoProtocol::slotHandleTLSWarning ( int validityResult )
 
 void JabberDiscoProtocol::slotClientError ( JabberClient::ErrorCode errorCode )
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Handling client error..." << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Handling client error...";
 
 	switch ( errorCode )
 	{
@@ -215,7 +215,7 @@ void JabberDiscoProtocol::slotClientError ( JabberClient::ErrorCode errorCode )
 
 void JabberDiscoProtocol::slotConnected ()
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Connected to Jabber server." << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Connected to Jabber server.";
 
 	XMPP::JT_DiscoItems *discoTask;
 
@@ -225,7 +225,7 @@ void JabberDiscoProtocol::slotConnected ()
 	switch ( m_command )
 	{
 		case ListDir:	// list a directory
-						kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Listing directory..." << endl;
+						kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Listing directory...";
 						discoTask = new XMPP::JT_DiscoItems ( m_jabberClient->rootTask () );
 						connect ( discoTask, SIGNAL ( finished () ), this, SLOT ( slotQueryFinished () ) );
 						discoTask->get ( m_host );
@@ -233,11 +233,11 @@ void JabberDiscoProtocol::slotConnected ()
 						break;
 
 		case Get:		// retrieve an item
-						kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Retrieving item..." << endl;
+						kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Retrieving item...";
 						break;
 
 		default:		// do nothing by default
-						kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Unknown command " << m_command << endl;
+						kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Unknown command " << m_command;
 						break;
 	}
 
@@ -245,7 +245,7 @@ void JabberDiscoProtocol::slotConnected ()
 
 void JabberDiscoProtocol::slotQueryFinished ()
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << "Query task finished" << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << "Query task finished";
 
 	XMPP::JT_DiscoItems * task = (XMPP::JT_DiscoItems *) sender ();
 
@@ -293,7 +293,7 @@ void JabberDiscoProtocol::slotQueryFinished ()
 
 void JabberDiscoProtocol::slotCSDisconnected ()
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Disconnected from Jabber server." << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Disconnected from Jabber server.";
 
 	/*
 	 * We should delete the JabberClient instance here,
@@ -306,12 +306,12 @@ void JabberDiscoProtocol::slotCSDisconnected ()
 
 void JabberDiscoProtocol::slotCSError ( int errorCode )
 {
-	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Error in stream signalled." << endl;
+	kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Error in stream signalled.";
 
 	if ( ( errorCode == XMPP::ClientStream::ErrAuth )
 		&& ( m_jabberClient->clientStream()->errorCondition () == XMPP::ClientStream::NotAuthorized ) )
 	{
-		kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Incorrect password, retrying." << endl;
+		kDebug ( JABBER_DISCO_DEBUG ) << k_funcinfo << "Incorrect password, retrying.";
 
 		KIO::AuthInfo authInfo;
 		authInfo.username = m_user;
@@ -381,11 +381,11 @@ int kdemain ( int argc, char **argv )
 {
 	KApplication app(argc, argv, "kio_jabberdisco", false, true);
 
-	kDebug(JABBER_DISCO_DEBUG) << k_funcinfo << endl;
+	kDebug(JABBER_DISCO_DEBUG) << k_funcinfo;
 
 	if ( argc != 4 )
 	{
-		kDebug(JABBER_DISCO_DEBUG) << "Usage: kio_jabberdisco protocol domain-socket1 domain-socket2" << endl;
+		kDebug(JABBER_DISCO_DEBUG) << "Usage: kio_jabberdisco protocol domain-socket1 domain-socket2";
 		exit(-1);
 	}
 

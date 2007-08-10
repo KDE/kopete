@@ -46,11 +46,11 @@ public:
 	~NotifyStatusMessageTask();
 
 	/**
-	 * @brief Watch in given Transfer for status message change from contacts.
-	 * @param transfer Transfer to look for incoming status message change.
-	 * @return true if we accept the Transfer.
+	 * @brief Watch in given NetworkMessage for status message change from contacts.
+	 * @param networkMessage NetworkMessage to look for incoming status message change.
+	 * @return true if we accept the NetworkMessage.
 	 */
-	virtual bool take(Papillon::Transfer *transfer);
+	virtual bool take(Papillon::NetworkMessage *networkMessage);
 
 signals:
 	/**

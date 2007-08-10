@@ -43,7 +43,7 @@ bool CloseConnectionTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "RECV (DISCONNECT)" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "RECV (DISCONNECT)";
 
 		FlapTransfer* ft = dynamic_cast<FlapTransfer*> ( transfer );
 
@@ -61,7 +61,7 @@ bool CloseConnectionTask::take( Transfer* transfer )
 		{
 			Oscar::WORD errorNum = ( ( err.data[0] << 8 ) | err.data[1] );
 
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(8) [ERROR] error= " << errorNum << endl;
+			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found TLV(8) [ERROR] error= " << errorNum;
 
 			Oscar::SNAC s = { 0, 0, 0, 0 };
 			client()->fatalTaskError( s, errorNum );
@@ -92,7 +92,7 @@ void CloseConnectionTask::onGo()
 	FLAP f = { 0x04, 0, 0 };
 	
 	Transfer* ft = createTransfer( f, new Buffer() );
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending channel 0x04 close packet" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending channel 0x04 close packet";
 	send( ft );
 	setSuccess( 0, QString() );
 }

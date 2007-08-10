@@ -36,7 +36,7 @@ SMSContact::SMSContact( Kopete::Account* _account, const QString &phoneNumber,
 	const QString &displayName, Kopete::MetaContact *parent )
 : Kopete::Contact( _account, phoneNumber, parent ), m_phoneNumber( phoneNumber )
 {
-//	kWarning( 14160 ) << k_funcinfo << " this = " << this << ", phone = " << phoneNumber << endl;
+//	kWarning( 14160 ) << k_funcinfo << " this = " << this << ", phone = " << phoneNumber;
 	setNickName( displayName );
 
 	m_msgManager = 0L;

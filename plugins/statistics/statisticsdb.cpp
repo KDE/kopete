@@ -36,7 +36,7 @@
 StatisticsDB::StatisticsDB()
 {
 	QByteArray path = (KStandardDirs::locateLocal("appdata", "kopete_statistics-0.1.db")).toLatin1();
-	kDebug() << "statistics: DB path:" << path << endl;
+	kDebug() << "statistics: DB path:" << path;
 
 	// Open database file and check for correctness
 	bool failOpen = true;
@@ -65,14 +65,14 @@ StatisticsDB::StatisticsDB()
 	sqlite3_open( path, &m_db );
 	}
 
-	kDebug() << "[Statistics] Contructor"<< endl;
+	kDebug() << "[Statistics] Contructor";
 
 	// Creates the tables if they do not exist.
 	QStringList result = query("SELECT name FROM sqlite_master WHERE type='table'");
 	
 	if (!result.contains("contactstatus"))
 	{
-		kDebug() << "[Statistics] Database empty"<< endl;
+		kDebug() << "[Statistics] Database empty";
 		query(QString("CREATE TABLE contactstatus "
 			"(id INTEGER PRIMARY KEY,"
 			"metacontactid TEXT,"
@@ -121,7 +121,7 @@ StatisticsDB::~StatisticsDB()
  {
  
      if ( debug )
-         kDebug() << "query-start: " << statement << endl;
+         kDebug() << "query-start: " << statement;
  
      clock_t start = clock();
  
@@ -162,10 +162,10 @@ StatisticsDB::~StatisticsDB()
                  break;
              }
              ::usleep( 100000 ); // Sleep 100 msec
-             kDebug() << "[CollectionDB] sqlite3_step: BUSY counter: " << busyCnt << endl;
+             kDebug() << "[CollectionDB] sqlite3_step: BUSY counter: " << busyCnt;
          }
          if ( error == SQLITE_MISUSE )
-             kDebug() << "[CollectionDB] sqlite3_step: MISUSE" << endl;
+             kDebug() << "[CollectionDB] sqlite3_step: MISUSE";
          if ( error == SQLITE_DONE || error == SQLITE_ERROR )
              break;
  
@@ -192,7 +192,7 @@ StatisticsDB::~StatisticsDB()
      {
          clock_t finish = clock();
          const double duration = (double) (finish - start) / CLOCKS_PER_SEC;
-         kDebug() << "[CollectionDB] SQL-query (" << duration << "s): " << statement << endl;
+         kDebug() << "[CollectionDB] SQL-query (" << duration << "s): " << statement;
      }
  
  

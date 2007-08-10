@@ -86,13 +86,13 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const QStringList& /*ar
 : Kopete::Plugin( NowListeningPluginFactory::componentData(), parent )
 {
 	if ( pluginStatic_ )
-		kDebug( 14307 )<<"####"<<"Now Listening already initialized"<<endl;
+		kDebug( 14307 )<<"####"<<"Now Listening already initialized";
 	else
 		pluginStatic_ = this;
 
 	d = new Private;
 
-	kDebug(14307) << k_funcinfo << endl;
+	kDebug(14307) << k_funcinfo;
 
 	// Connection for the "/media" command (always needed)
 	connect( Kopete::ChatSessionManager::self(), SIGNAL(
@@ -146,7 +146,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const QStringList& /*ar
 
 NowListeningPlugin::~NowListeningPlugin()
 {
-	//kDebug( 14307 ) << k_funcinfo << endl;
+	//kDebug( 14307 ) << k_funcinfo;
 
 	delete d;
 
@@ -346,7 +346,7 @@ QString NowListeningPlugin::mediaPlayerAdvert(bool update)
 		}
 	}
 
-	kDebug( 14307 ) << k_funcinfo << message << endl;
+	kDebug( 14307 ) << k_funcinfo << message;
 
 	return message;
 }
@@ -359,7 +359,7 @@ void NowListeningPlugin::buildTrackMessage(QString &message, NLMediaPlayer *play
 		player->update();
 	if ( player->playing() )
 	{
-		kDebug( 14307 ) << k_funcinfo << player->name() << " is playing" << endl;
+		kDebug( 14307 ) << k_funcinfo << player->name() << " is playing";
 		if ( message.isEmpty() )
 			message = NowListeningConfig::self()->header();
 
@@ -400,16 +400,16 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 	for ( int i = 0; i < in.length(); i++ )
 	{
 		QChar c = in.at( i );
-		//kDebug(14307) << "Now working on:" << in << " char is: " << c << endl;
+		//kDebug(14307) << "Now working on:" << in << " char is: " << c;
 		if ( c == '(' )
 		{
 			// find matching bracket
 			int depth = 0;
-			//kDebug(14307) << "Looking for ')'" << endl;
+			//kDebug(14307) << "Looking for ')'";
 			for ( unsigned int j = i + 1; j < (uint)in.length(); j++ )
 			{
 				QChar d = in.at( j );
-				//kDebug(14307) << "Got " << d << endl;
+				//kDebug(14307) << "Got " << d;
 				if ( d == '(' )
 					depth++;
 				if ( d == ')' )
@@ -480,7 +480,7 @@ void NowListeningPlugin::advertiseToChat( Kopete::ChatSession *theChat, QString 
 	kDebug(14307) << k_funcinfo <<
 		( pl.isEmpty() ? "has no " : "has " ) << "interested recipients: " << endl;
 /*	for ( pl.first(); pl.current(); pl.next() )
-		kDebug(14307) << "NowListeningPlugin::advertiseNewTracks() " << pl.current()->displayName() << endl; */
+		kDebug(14307) << "NowListeningPlugin::advertiseNewTracks() " << pl.current()->displayName(); */
 	// if no-one in this KMM wants to be advertised to, don't send
 	// any message
 	if ( pl.isEmpty() )
@@ -494,7 +494,7 @@ void NowListeningPlugin::advertiseToChat( Kopete::ChatSession *theChat, QString 
 
 void NowListeningPlugin::updateCurrentMediaPlayer()
 {
-	kDebug(14307) << k_funcinfo << "Update current media player (single mode)" << endl;
+	kDebug(14307) << k_funcinfo << "Update current media player (single mode)";
 
 	d->m_currentMediaPlayer = d->m_mediaPlayerList.at( NowListeningConfig::self()->selectedMediaPlayer() );
 }
@@ -518,7 +518,7 @@ void NowListeningPlugin::slotSettingsChanged()
 
 	if( NowListeningConfig::self()->chatAdvertising() )
 	{
-		kDebug(14307) << k_funcinfo << "Now using chat window advertising." << endl;
+		kDebug(14307) << k_funcinfo << "Now using chat window advertising.";
 
 		connect(Kopete::ChatSessionManager::self(),
 				SIGNAL(aboutToSend(Kopete::Message&)),
@@ -527,7 +527,7 @@ void NowListeningPlugin::slotSettingsChanged()
 	}
 	else if( NowListeningConfig::self()->statusAdvertising() || NowListeningConfig::self()->appendStatusAdvertising() )
 	{
-		kDebug(14307) << k_funcinfo << "Now using status message advertising." << endl;
+		kDebug(14307) << k_funcinfo << "Now using status message advertising.";
 
 		connect(d->advertTimer, SIGNAL(timeout()), this, SLOT(slotAdvertCurrentMusic()));
 		d->advertTimer->start(5000);

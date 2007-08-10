@@ -105,7 +105,7 @@ JingleClientSlots::JingleClientSlots(JingleVoiceCaller *voiceCaller) : voiceCall
 
 void JingleClientSlots::callCreated(cricket::Call *call) 
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo;
 	call->SignalSessionState.connect(this, &JingleClientSlots::stateChanged);
 }
 

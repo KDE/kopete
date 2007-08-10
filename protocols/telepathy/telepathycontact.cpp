@@ -80,7 +80,7 @@ QtTapioca::Contact *TelepathyContact::internalContact()
 
 void TelepathyContact::setInternalContact(QtTapioca::Contact *internalContact)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Updating internal contact pointer for " << contactId() << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Updating internal contact pointer for " << contactId();
 
 	if( !d->internalContact.isNull() )
 	{
@@ -186,8 +186,8 @@ void TelepathyContact::telepathyPresenceUpdated(QtTapioca::ContactBase *contactB
 
 	Kopete::OnlineStatus newStatus = TelepathyProtocol::protocol()->telepathyStatusToKopete(presence);
 
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Updating " << contactId() << " presence to " << newStatus.description() << endl;
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "New Status Message for " << contactId() << ": " << presenceMessage << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Updating " << contactId() << " presence to " << newStatus.description();
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "New Status Message for " << contactId() << ": " << presenceMessage;
 
 	setOnlineStatus( newStatus );
 	setStatusMessage( Kopete::StatusMessage(presenceMessage) );
@@ -197,7 +197,7 @@ void TelepathyContact::telepathyAliasChanged(QtTapioca::ContactBase *contactBase
 {
 	Q_UNUSED(contactBase);
 
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Changing " << contactId() << " alias to " << newAlias << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Changing " << contactId() << " alias to " << newAlias;
 
 	setNickName( newAlias );
 }
@@ -213,12 +213,12 @@ void TelepathyContact::telepathyAvatarChanged(QtTapioca::ContactBase *contactBas
 
 void TelepathyContact::telepathyAvatarReceived(QtTapioca::ContactBase *contactBase, QtTapioca::Avatar *avatar)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Received avatar for " << contactId() << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Received avatar for " << contactId();
 
 	// Remove the avatar if the data is empty and exit the method
 	if( avatar->data().isEmpty() )
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: Avatar image is empty. Removing the avatar" << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: Avatar image is empty. Removing the avatar";
 
 		removeProperty( Kopete::Global::Properties::self()->photo() );
 		removeProperty( TelepathyProtocol::protocol()->propAvatarToken );
@@ -240,7 +240,7 @@ void TelepathyContact::telepathyAvatarReceived(QtTapioca::ContactBase *contactBa
 	
 	if( !result.path.isEmpty() )
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Setting avatar information for " << contactId() << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Setting avatar information for " << contactId();
 
 		// Set avatar in Kopete
 		setProperty( Kopete::Global::Properties::self()->photo(), result.path );
@@ -248,7 +248,7 @@ void TelepathyContact::telepathyAvatarReceived(QtTapioca::ContactBase *contactBa
 	}
 	else
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Removing avatar information for " << contactId() << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Removing avatar information for " << contactId();
 
 		removeProperty( Kopete::Global::Properties::self()->photo() );
 		removeProperty( TelepathyProtocol::protocol()->propAvatarToken );
