@@ -68,6 +68,7 @@
 #include <kcombobox.h>
 
 #include "videoinput.h"
+#include "videocontrol.h"
 
 namespace Kopete {
 
@@ -271,6 +272,7 @@ void enumerateMenu (void);
 	struct video_buffer V4L_videobuffer;
 #endif	
 	QValueVector<Kopete::AV::VideoInput> m_input;
+	QValueVector<Kopete::AV::VideoControl> m_control;
 //	QFile file;
 protected:
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
