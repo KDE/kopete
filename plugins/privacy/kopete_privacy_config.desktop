@@ -3,7 +3,7 @@ Encoding=UTF-8
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_privacy
+X-KDE-Library=kcm_kopete_privacy
 X-KDE-FactoryName=kcm_kopete_privacy
 X-KDE-ParentApp=kopete_privacy
 X-KDE-ParentComponents=kopete_privacy

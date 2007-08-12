@@ -4,7 +4,7 @@ Icon=color
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_alias
+X-KDE-Library=kcm_kopete_alias
 X-KDE-FactoryName=kcm_kopete_alias
 X-KDE-ParentApp=kopete_alias
 X-KDE-ParentComponents=kopete_alias

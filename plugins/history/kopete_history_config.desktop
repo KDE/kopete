@@ -4,7 +4,7 @@ Icon=history
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_history
+X-KDE-Library=kcm_kopete_history
 X-KDE-FactoryName=kcm_kopete_history
 X-KDE-ParentApp=kopete_history
 X-KDE-ParentComponents=kopete_history

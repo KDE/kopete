@@ -4,7 +4,7 @@ Type=Service
 Icon=html
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_webpresence
+X-KDE-Library=kcm_kopete_webpresence
 X-KDE-FactoryName=kcm_kopete_webpresence
 X-KDE-ParentApp=kopete_webpresence
 X-KDE-ParentComponents=kopete_webpresence

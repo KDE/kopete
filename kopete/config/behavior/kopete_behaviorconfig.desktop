@@ -4,7 +4,7 @@ Icon=configure
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_behaviorconfig
+X-KDE-Library=kcm_kopete_behaviorconfig
 X-KDE-FactoryName=kcm_kopete_behaviorconfig
 X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete

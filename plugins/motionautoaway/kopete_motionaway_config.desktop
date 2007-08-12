@@ -3,7 +3,7 @@ Encoding=UTF-8
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_motionaway
+X-KDE-Library=kcm_kopete_motionaway
 X-KDE-FactoryName=kcm_kopete_motionaway
 X-KDE-ParentApp=kopete_motionaway
 X-KDE-ParentComponents=kopete_motionaway
