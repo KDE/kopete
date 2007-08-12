@@ -36,7 +36,7 @@ default_sound=Kopete_Sent.ogg
 Action=None
 
 [Event/kopete_contact_online]
-Name=Contact gone Online
+Name=Contact Gone Online
 Contexts=contact,group
 Comment=A contact has come online
 default_sound=Kopete_User_is_Online.ogg
@@ -64,7 +64,7 @@ Persistant=true
 
 
 [Event/kopete_contact_lowpriority]
-Name=Low priority messages
+Name=Low Priority Messages
 Comment=A message marked with a low priority has been received
 Contexts=contact,group,class
 Action=None
@@ -123,7 +123,7 @@ default_sound=Kopete_Received.ogg
 Action=PassivePopup|Sound|Taskbar
 
 [Event/message_dropped]
-Name=Message dropped
+Name=Message Dropped
 Comment=A message was filtered by the Privacy Plugin
 Action=PassivePopup
 

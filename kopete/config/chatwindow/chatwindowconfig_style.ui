@@ -141,7 +141,7 @@
           <item>
            <widget class="QLabel" name="textLabel1" >
             <property name="text" >
-             <string>Style Variant:</string>
+             <string>Style variant:</string>
             </property>
            </widget>
           </item>
