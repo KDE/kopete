@@ -1,7 +1,7 @@
 /*
    keepalivetask.cpp - Windows Live Messenger keep alive task
 
-    Copyright (c) 2007		by Zhang Panyong  <pyzhang8@gmail.com>
+    Copyright (c) 2007		by Zhang Panyong  <pyzhang@gmail.com>
 
    *************************************************************************
    *                                                                       *
@@ -12,6 +12,12 @@
    *                                                                       *
    *************************************************************************
 */
+
+// Qt includes
+#include <QtDebug>
+
+// Papillon includes
+#include "Papillon/NetworkMessage"
 
 namespace Papillon
 {
@@ -38,7 +44,7 @@ KeepAliveTask::~KeepAliveTask()
 void KeepAliveTask::onGo()
 {
 	bool _userHttpMethond = false;
-	qDebug() << PAPILLON_FUNCINFO << "Begin ping to ensure server alive";
+	qDebug() << Q_FUNC_INFO << "Begin ping to ensure server alive";
 
 	if( _userHttpMethond ) {
 		if( m_keepaliveTimer ) {
@@ -57,13 +63,13 @@ void KeepAliveTask::onGo()
 
 void KeepAliveTask::sendPingCommand()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending PNG command.";
-	Transfer *pingTransfer = new Transfer(Transfer::TransactionTransfer);
+	qDebug() << Q_FUNC_INFO << "Sending PNG command.";
+	NetworkMessage *pingMessage = new NetworkMessage(NetworkMessage::TransactionMessage);
 
-	pingTransfer->setCommand( QLatin1String("PNG") );
-	pingTransfer->setTransactionId( QString() );
+	pingMessage->setCommand( QLatin1String("PNG") );
+	pingMessage->setTransactionId( QString() );
 
-	send(pingTransfer);
+	send(pingMessage);
 }
 
 void KeepAliveTask::slotdisconnect()
@@ -94,9 +100,9 @@ void KeepAliveTask::slotSendKeepAlive()
 	}
 }
 
-bool KeepAliveTask::take(Transfer *transfer)
+bool KeepAliveTask::take(NetworkMessage *networkMessage)
 {
-	if( transfer->command() == QLatin1String("QNG") )
+	if( networkMessage->command() == QLatin1String("QNG") )
 	{
 		m_ping = false;
 		if(m_keepaliveTimer)

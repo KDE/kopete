@@ -1,8 +1,9 @@
 /*
    logintask.cpp - Windows Live Messenger Login Task
 
-    Copyright (c) 2007		by Zhang Panyong  <pyzhang8@gmail.com>
-    Copyright (c) 2006 		by Michaël Larouche <larouche@kde.org>
+   Copyright (c) 2007      by Zhang Panyong  <pyzhang@gmail.com>
+   Copyright (c) 2006 		by Michaël Larouche <larouche@kde.org>
+   Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -95,9 +96,10 @@ bool LoginTask::take(NetworkMessage *networkMessage)
 					{
 						d->currentState = StateSSOConfirmed;
 
-						QString sso = networkMessage->arguments()[2];
+						QString ssoMethod = networkMessage->arguments()[2];
+						QString ssoKey = networkMessage->arguments()[3];
 						SSOHandler *ssoHandler = new SSOHandler( connection()->client()->createSecureStream() );
-						ssoHandler->setLoginInformation(sso, passportId(), password());
+						ssoHandler->setLoginInformation(ssoMethod, passportId(), password());
 						connect(ssoHandler, SIGNAL(result( SSOHandler* )), this, SLOT(ticketReceived( SSOHandler* )));
 						ssoHandler->start();
 
@@ -194,31 +196,31 @@ void LoginTask::sendCvrCommand()
 void LoginTask::sendSSOInviteCommand()
 {
 	qDebug() << Q_FUNC_INFO << "Sending SSO Invite Command";
-	NetworkMessage *twnTransfer = new NetworkMessage(Transfer::TransactionTransfer);
-	twnTransfer->setCommand("USR");
+	NetworkMessage *ssoMessage = new NetworkMessage(NetworkMessage::TransactionTransfer);
+	ssoMessage->setCommand("USR");
 
 	d->currentTransactionId = QString::number( connection()->transactionId() );
-	twnMessage->setTransactionId( d->currentTransactionId );
+	ssoMessage->setTransactionId( d->currentTransactionId );
 
 	QString arguments = QString("SSO I %1").arg( passportId() );
-	twnMessage->setArguments(arguments);
+	ssoMessage->setArguments(arguments);
 
-	send(twnMessage);
+	send(ssoMessage);
 }
 
 void LoginTask::sendSSOConfirmation()
 {
 	qDebug() << Q_FUNC_INFO << "Sending SSO confirmation command.";
-	NetworkMessage *ssoTransfer = new NetworkMessage(Transfer::TransactionTransfer);
-	ssoTransfer->setCommand("USR");
+	NetworkMessage *ssoMessage = new NetworkMessage(NetworkMessage::TransactionTransfer);
+	ssoMessage->setCommand("USR");
 
 	d->currentTransactionId = QString::number( connection()->transactionId() );
-	ssoTransfer->setTransactionId( d->currentTransactionId );
+	ssoMessage->setTransactionId( d->currentTransactionId );
 
 	QString arguments = QString("SSO S %1").arg(d->SSOTicket);
-	ssoTransfer->setArguments(arguments);
+	ssoMessage->setArguments(arguments);
 
-	send(ssoTransfer);
+	send(ssoMessage);
 }
 
 void LoginTask::ticketReceived(SSOHandler *ssoHandler)

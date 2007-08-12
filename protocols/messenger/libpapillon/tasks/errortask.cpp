@@ -1,7 +1,8 @@
 /*
    errortask.cpp - Windows Live Messenger error handle  task
 
-    Copyright (c) 2007		by Zhang Panyong  <pyzhang8@gmail.com>
+   Copyright (c) 2007      by Zhang Panyong  <pyzhang@gmail.com>
+   Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -109,11 +110,11 @@ void ErrorMessageTask::handlerError()
 
 }
 
-bool ErrorMessageTask::take(Transfer *transfer)
+bool ErrorMessageTask::take(NetworkMessage *networkMessage)
 {
 	bool isError;
-	uint errorCode =  transfer->command().toUInt(&isError);
-	uint id = transfer->transactionId();
+	uint errorCode =  networkMessage->command().toUInt(&isError);
+	uint id = networkMessage->transactionId();
 
 	if( isError)
 	{

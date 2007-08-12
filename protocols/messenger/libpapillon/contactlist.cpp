@@ -170,6 +170,37 @@ Contact* ContactList::createContact(const QString &contactId)
 	return contact(contactId);
 }
 
+/*Load ContactList from List*/
+ContactList::loadList(const QStringList &list, QString role)
+{
+	ContactListEnums::ListFlags currentFlag;
+
+	if( role == QLatin1String("Allow") )
+	{
+		currentFlag = ContactListEnums::AllowList;
+	}
+	else if( role == QLatin1String("Block") )
+	{
+		currentFlag = ContactListEnums::BlockList;
+	}
+	else if( role == QLatin1String("Reverse") )
+	{
+		currentFlag = ContactListEnums::ReverseList;
+	}
+	else if( role == QLatin1String("Pending") )
+	{
+		currentFlag = ContactListEnums::PendingList;
+	}
+	else
+	{
+	}
+
+	foreach(QString *contactId, list)
+	{
+		Contact *contact = createContact(contactId);
+		contact->setPassportId(contactId);
+		contact->addToList(currentFlag);
+	}
 }
 
 #include "contactlist.moc"

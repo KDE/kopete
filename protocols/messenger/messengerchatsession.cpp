@@ -1,7 +1,7 @@
 /*
     messengerchatsession.cpp - Messenger Message Manager
 
-    Copyright (c) 2007		by Zhang Panyong        <pyzhang8@gmail.com>
+    Copyright (c) 2007		by Zhang Panyong        <pyzhang@gmail.com>
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************

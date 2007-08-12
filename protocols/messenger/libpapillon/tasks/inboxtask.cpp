@@ -1,7 +1,8 @@
 /*
    inboxtask.cpp - Windows Live Messenger inbox  task
 
-    Copyright (c) 2007		by Zhang Panyong  <pyzhang8@gmail.com>
+   Copyright (c) 2007      by Zhang Panyong  <pyzhang@gmail.com>
+   Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -12,6 +13,8 @@
    *                                                                       *
    *************************************************************************
 */
+// Papillon includes
+#include "Papillon/NetworkMessage"
 
 namespace Papillon
 {
@@ -37,15 +40,15 @@ InboxTask::~InboxTask()
 
 void InboxTask::sendInboxCommand()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending URL INBOX command.";
-	Transfer *inboxTransfer = new Transfer(Transfer::TransactionTransfer);
+	qDebug() << Q_FUNC_INFO << "Sending URL INBOX command.";
+	NetworkMessage *inboxMessage = new NetworkMessage(NetworkMessage::TransactionTransfer);
 
-	inboxTransfer->setCommand( QLatin1String("URL") );
+	inboxMessage->setCommand( QLatin1String("URL") );
 	d->currentTransactionId = QString::number(connection()->transactionId()) ;
-	inboxTransfer->setTransactionId( d->currentTransactionId );
-	inboxTransfer->setArguments( QString("INBOX") );
+	inboxMessage->setTransactionId( d->currentTransactionId );
+	inboxMessage->setArguments( QString("INBOX") );
 
-	send(inboxTransfer);
+	send(inboxMessage);
 }
 
 InboxTask::onGo()
@@ -53,9 +56,9 @@ InboxTask::onGo()
 	sendInboxCommand();
 }
 
-bool InboxTask::take(Transfer *transfer)
+bool InboxTask::take(NetworkMessage *networkMessage) const
 {
-	if( forMe(transfer) )
+	if( forMe(networkMessage) )
 	{
 		/*TODO emit signal of URL
 		 * receive format is:  URL 9 /cgi-bin/HoTMaiL https://login.live.com/ppsecure/md5auth.srf?lc=2052 2
@@ -67,9 +70,9 @@ bool InboxTask::take(Transfer *transfer)
 }
 
 
-bool InboxTask::forMe(Transfer *transfer) const
+bool InboxTask::forMe(NetworkMessage *networkMessage) const
 {
-	if( transfer->command() == QLatin1String("URL") )
+	if( networkMessage->command() == QLatin1String("URL") )
 	{
 		return true;
 	}

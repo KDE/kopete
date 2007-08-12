@@ -1,7 +1,7 @@
 /*
     logouttask.cpp - Windows Live Messenger logout task
 
-    Copyright (c) 2007		by Zhang Panyong        <pyzhang8@gmail.com>
+    Copyright (c) 2007		by Zhang Panyong        <pyzhang@gmail.com>
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -13,6 +13,12 @@
     *                                                                       *
     *************************************************************************
 */
+
+// Qt includes
+#include <QtDebug>
+
+// Papillon includes
+#include "Papillon/NetworkMessage"
 
 namespace Papillon 
 {
@@ -35,30 +41,31 @@ LogoutTask::~LogoutTask()
 
 void LogoutTask::onGo()
 {
-	qDebug() << PAPILLON_FUNCINFO << "send out OUT command...";
+	qDebug() << Q_FUNC_INFO << "send out OUT command...";
 	sendLogoutCommand();
 }
 
 void LogoutTask::sendLogoutCommand()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending OUT command.";
-	Transfer *logoutTransfer = new Transfer(Transfer::TransactionTransfer);
-	logoutTransfer->setCommand( QLatin1String("OUT") );
-	logoutTransfer->setTransactionId( QString() );
-	send(logoutTransfer);
+	qDebug() << Q_FUNC_INFO << "Sending OUT command.";
+	NetworkMessage *logoutMessage = new NetworkMessage(NetworkMessage::TransactionTransfer);
+	logoutMessage->setCommand( QLatin1String("OUT") );
+	logoutMessage->setTransactionId( QString() );
+
+	send(logoutMessage);
 }
 
-bool LogoutTask::take(Transfer *transfer)
+bool LogoutTask::take(NetworkMessage *networkMessage)
 {
-	if( forMe(transfer) )
+	if( forMe(networkMessage) )
 	{
 		//Out Error
-		if(transfer->arguments()[0] == QLatin1String("OUH"))
+		if(networkMessage->arguments()[0] == QLatin1String("OUH"))
 		{
 
 		}
 		//Server Down
-		if(transfer->arguments()[0] == QLatin1String("SSD"))
+		if(networkMessage->arguments()[0] == QLatin1String("SSD"))
 		{
 
 		}
@@ -67,9 +74,9 @@ bool LogoutTask::take(Transfer *transfer)
 	return false
 }
 
-bool logoutTask::forMe(Transfer *transfer) const
+bool logoutTask::forMe(NetworkMessage *networkMessage) const
 {
-	if( transfer->command() == QLatin1String("OUT") )
+	if( networkMessage->command() == QLatin1String("OUT") )
 	{
 		return true;
 	}

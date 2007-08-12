@@ -1,6 +1,7 @@
 /*
    challengetask.cpp - Answer to challenge string given by Notification Server.
 
+   Copyright (c) 2007 by Zhang Panyong    <pyzhang@gmail.com>
    Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    Portions used from Kopete with Gregg's approval on LGPL license:
@@ -32,9 +33,26 @@
 
 namespace Papillon
 {
+/*MSNP15 Challenge Key and ID
+ * see http://msnpiki.msnfanatic.com/index.php/MSNP15:Changes#Challenges
+ * */
+#if 0
+/*8.1.0168.00_ClientV8.1*/
+const QString challengeProductKey = QString( "RG@XY*28Q5QHS%Q5" );
+const QString challengeProductId  = QString( "PROD0113H11T8$X_" );
+#endif
 
-const QString challengeProductKey = QString("O4BG@C7BWLYQX?5G");
-const QString challengeProductId = QString("PROD01065C%ZFN6F");
+#if 1
+/*Windows Live Messenger 8.1.0178.00 */
+const QString challengeProductKey = QString("PK}_A_0N_K%O?A9S");
+const QString challengeProductId = QString("PROD0114ES4Z%Q5W");
+#endif
+
+#if 0
+/* Windows Live Messenger Beta 8.5.1235.0517*/
+const QString challengeProductKey = QString( "YIXPX@5I2P0UT*LK");
+const QString challengeProductId = QString( "PROD0118R6%2WYOS");
+#endif
 
 class ChallengeTask::Private
 {

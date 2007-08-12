@@ -1,8 +1,9 @@
 /*
    nudgetask.cpp - Windows Live Messenger send Nudge task
 
-    Copyright (c) 2007		by Zhang Panyong  <pyzhang8@gmail.com>
-    Copyright (c) 2006 		by Michaël Larouche <larouche@kde.org>
+   Copyright (c) 2007      by Zhang Panyong  <pyzhang@gmail.com>
+   Copyright (c) 2006 		by Michaël Larouche <larouche@kde.org>
+   Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -13,6 +14,12 @@
    *                                                                       *
    *************************************************************************
 */
+
+// Qt includes
+#include <QtDebug>
+
+// Papillon includes
+#include "Papillon/NetworkMessage"
 
 namespace Papillon
 {
@@ -34,14 +41,14 @@ NudgeTask::~NudgeTask()
 	delete d;
 }
 
-bool NudgeTask::take(Transfer *transfer)
+bool NudgeTask::take(NetworkMessage *networkMessage)
 {
 	return false;
 }
 
 void NudgeTask::sendNudgeCommand()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending Nudge";
+	qDebug() << Q_FUNC_INFO << "Sending Nudge";
 }
 
 void NudgeTask::onGo()

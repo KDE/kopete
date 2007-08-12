@@ -72,9 +72,18 @@ MessengerAccount::MessengerAccount(MessengerProtocol *protocol, const QString &a
 	d = new MessengerAccountPrivate();
 
 	d->client = new Client(new QtConnector(this),this);
+
+	KConfigGroup *config= configGroup();
+	m_blockList   = config->readEntry(  "blockList", QStringList() ) ;
+	m_allowList   = config->readEntry(  "allowList", QStringList() ) ;
+	m_reverseList = config->readEntry(  "reverseList", QStringList()  ) ;
+
+	d->client->ContactList()->LoadList(&m_blockList, "Block");
+	d->client->ContactList()->LoadList(&m_allowList, "Allow");
+	d->client->ContactList()->LoadList(&m_reverseList, "Reverse");
+
 	// Set the client Id for the myself contact.  It sets what Messenger feature we support.
 	m_clientId = MessengerProtocol::MessengerC4 | MessengerProtocol::InkFormatGIF | MessengerProtocol::SupportMultiPacketMessaging;
-
 }
 
 MessengerAccount::~MessengerAccount()

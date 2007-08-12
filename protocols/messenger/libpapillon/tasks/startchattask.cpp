@@ -1,7 +1,7 @@
 /*
    startchattask.cpp - Windows Live Messenger start chat task
 
-    Copyright (c) 2007		by Zhang Panyong  <pyzhang8@gmail.com>
+    Copyright (c) 2007		by Zhang Panyong  <pyzhang@gmail.com>
 
    *************************************************************************
    *                                                                       *
@@ -12,6 +12,12 @@
    *                                                                       *
    *************************************************************************
 */
+
+// Qt includes
+#include <QtDebug>
+
+// Papillon includes
+#include "Papillon/NetworkMessage"
 
 namespace Papillon
 {
@@ -34,16 +40,16 @@ StartChatTask::~StartChatTask()
 	delete d;
 }
 
-bool StartChatTask::take(Transfer *transfer)
+bool StartChatTask::take(NetworkMessage *networkMessage)
 {
-	if(( transfer->command() == QLatin1String("XFR")) &&
-			(transfer->arguments()[0])== QLatin1String("SB") )
+	if(( networkMessage->command() == QLatin1String("XFR")) &&
+			(networkMessage->arguments()[0])== QLatin1String("SB") )
 	{
-		emit startChat(	transfer->arguments()[1] , transfer->arguments()[3] );
+		emit startChat(	networkMessage->arguments()[1] , networkMessage->arguments()[3] );
 		return true;
 	}
 
-	if(transfer->command() == QLatin1String("RNG"))
+	if(networkMessage->command() == QLatin1String("RNG"))
 	{
 		//TODO finish the invite to chat code
 	}
@@ -52,15 +58,15 @@ bool StartChatTask::take(Transfer *transfer)
 
 void StartChatTask::sendStartChatCommand()
 {
-	qDebug() << PAPILLON_FUNCINFO << "Sending XFR SB command.";
-	Transfer *startChatTransfer = new Transfer(Transfer::TransactionTransfer);
+	qDebug() << Q_FUNC_INFO << "Sending XFR SB command.";
+	NetworkMessage *startChatMessage = new NetworkMessage(NetworkMessage::TransactionTransfer);
 
-	pingTransfer->setCommand( QLatin1String("XFR") );
+	startChatMessage->setCommand( QLatin1String("XFR") );
 	d->currentTransactionId = QString::number( connection()->transactionId());
-	startChatTransfer->setTransactionId( d->currentTransactionId);
-	startChatTransfer->setArguments( QString("SB") );
+	startChatMessage->setTransactionId( d->currentTransactionId);
+	startChatMessage->setArguments( QString("SB") );
 
-	send(startChatTransfer);
+	send(startChatMessage);
 }
 
 void StartChatTask::onGo()
