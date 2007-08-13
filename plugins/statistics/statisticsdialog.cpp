@@ -55,8 +55,8 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	KHBox *hbox = new KHBox(this);
 	
 	generalHTMLPart = new KHTMLPart(hbox);
-	connect ( generalHTMLPart->browserExtension(), SIGNAL( openUrlRequestDelayed( const KUrl &, const KParts::URLArgs & ) ),
-			  this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::URLArgs & ) ) );
+	connect ( generalHTMLPart->browserExtension(), SIGNAL( openUrlRequestDelayed( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ),
+			  this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ) );
 	
 	
 	mainWidget->tabWidget->insertTab(hbox, i18n("General"), 0);
@@ -73,7 +73,7 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 }
 
 // We only generate pages when the user clicks on a link
-void StatisticsDialog::slotOpenURLRequest(const KUrl& url, const KParts::URLArgs&)
+void StatisticsDialog::slotOpenURLRequest(const KUrl& url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
 {
 	if (url.protocol() == "main")
 	{
