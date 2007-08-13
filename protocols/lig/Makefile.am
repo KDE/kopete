@@ -1,6 +1,6 @@
 METASOURCES = AUTO
 
-SUBDIRS = ui . icons
+SUBDIRS = . icons liblig ui
 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(srcdir)/ui -Iui $(all_includes)
 
