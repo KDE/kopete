@@ -78,7 +78,7 @@ public slots:
 private slots:
 	/**
 	 * @brief Called when the contact has updated its presence information.
-	 * @param contactBase Refering ContactBase
+	 * @param contactBase Referring ContactBase
 	 * @param presence New presence.
 	 * @param presenceMessage New presenceMessage, if any.
 	 */
@@ -86,21 +86,21 @@ private slots:
 
 	/**
 	 * @brief Called when contact has changed its alias.
-	 * @param contactBase Refering ContactBase
+	 * @param contactBase Referring ContactBase
 	 * @param alias New alias
 	 */
 	void telepathyAliasChanged(QtTapioca::ContactBase *contactBase, const QString &alias);
 
 	/**
 	 * @brief Called when contact has changed its avatar.
-	 * @param contact Refering ContactBase
+	 * @param contact Referring ContactBase
 	 * @param newToken New token for the avatar update
 	 */
 	void telepathyAvatarChanged(QtTapioca::ContactBase *contact, const QString &newToken);
 
 	/**
 	 * @brief Called when we got avatar from contact.
-	 * @param contact Refering ContactBase
+	 * @param contact Referring ContactBase
 	 * @param avatar New avatar data
 	 */
 	void telepathyAvatarReceived(QtTapioca::ContactBase *contact, QtTapioca::Avatar *avatar);

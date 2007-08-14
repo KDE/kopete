@@ -150,7 +150,7 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	{
 		// Find MD5 hash for filename
 		// MD5 always contain ASCII caracteres so it is more save for a filename.
-		// Name can use UTF-8 caracters.
+		// Name can use UTF-8 characters.
 		QByteArray tempArray;
 		QBuffer tempBuffer(&tempArray);
 		tempBuffer.open( QIODevice::WriteOnly );

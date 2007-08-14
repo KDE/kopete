@@ -996,7 +996,7 @@ static int vdbeCommit(sqlite3 *db){
 
   /* The complex case - There is a multi-file write-transaction active.
   ** This requires a master journal file to ensure the transaction is
-  ** committed atomicly.
+  ** committed atomically.
   */
   else{
     char *zMaster = 0;   /* File-name for the master journal */

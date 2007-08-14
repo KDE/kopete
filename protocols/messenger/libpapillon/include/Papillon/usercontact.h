@@ -32,7 +32,7 @@ class StatusMessage;
  *
  * To connect to Windows Live Messenger service, you need to set
  * login information using setLoginInformation(). This is required to be able
- * to succesfully login. For more information, see Client.
+ * to successfully login. For more information, see Client.
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
@@ -67,7 +67,7 @@ public:
 	QString password() const;
 
 	/**
-	 * @brief Set the authentification cookie obtained during login process.
+	 * @brief Set the authentication cookie obtained during login process.
 	 * @param cookie Authentification cookie
 	 */
 	void setLoginCookie(const QString &cookie);

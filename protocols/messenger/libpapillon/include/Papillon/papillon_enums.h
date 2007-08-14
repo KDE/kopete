@@ -96,7 +96,7 @@ namespace Papillon
 	struct Presence
 	{
 		/**
-		 * Types of online presense.
+		 * Types of online presence.
 	 	 */
 		enum Status
 		{

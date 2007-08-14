@@ -36,7 +36,7 @@ namespace UI
  * Using AvatarDialog is very simple, if you only want to retrieve an avatar, use 
  * the @ref AvatarDialog::getAvatar() static method.
  *
- * If you want the operation to be asyncronous, you can use it like the following 
+ * If you want the operation to be asynchronous, you can use it like the following 
  * example:
  * @code
 Kopete::UI::AvatarDialog *avatarDialog = new Kopete::UI::AvatarDialog(parent);
@@ -85,8 +85,8 @@ public:
 	 * This method will open the avatar dialog for the user to choose
 	 * an avatar.
 	 * @param parent Parent widget
-	 * @return The path of the selected avatar, or QString::null if none avatar
-	 * was choosen or if the Cancel button was pressed.
+	 * @return The path of the selected avatar, or QString::null if no avatar
+	 * was chosen or if the Cancel button was pressed.
 	 */
 	static QString getAvatar(QWidget *parent = 0, const QString &currentAvatar = QString::null);
 

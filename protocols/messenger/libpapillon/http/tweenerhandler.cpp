@@ -214,7 +214,7 @@ void TweenerHandler::connector_OnFaulted()
 	{
 		d->connectionTry++;
 		qDebug() << Q_FUNC_INFO << "IpEndpointConnector has failed. Retry a connection. Try:" << d->connectionTry;
-		// Restart negociation process.
+		// Restart negotiation process.
 		start();
 	}
 }

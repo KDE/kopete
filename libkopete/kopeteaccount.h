@@ -437,7 +437,7 @@ signals:
 	/**
 	 * The color of the account has been changed
 	 * 
-	 * also emited when the icon change
+	 * also emitted when the icon change
 	 * @todo  probably rename to accountIconChanged
 	 */
 	void colorChanged( const QColor & );

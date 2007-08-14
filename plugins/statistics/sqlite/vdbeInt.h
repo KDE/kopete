@@ -216,7 +216,7 @@ typedef struct VdbeFunc VdbeFunc;
 */
 struct sqlite3_context {
   FuncDef *pFunc;   /* Pointer to function information.  MUST BE FIRST */
-  VdbeFunc *pVdbeFunc;  /* Auxilary data, if created. */
+  VdbeFunc *pVdbeFunc;  /* Auxiliary data, if created. */
   Mem s;            /* The return value is stored here */
   void *pAgg;       /* Aggregate context */
   u8 isError;       /* Set to true for an error */

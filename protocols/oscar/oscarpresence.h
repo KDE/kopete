@@ -79,7 +79,7 @@ public:
 
 	/**
 	 * Returns internal status
-	 * @note Internal status is 32-bit int with a folowing structure XX00FFFT where
+	 * @note Internal status is 32-bit int with a following structure XX00FFFT where
 	 * T is status type, FFF are Presence::Flags, XX is Xtraz status,
 	 * 0 are always null
 	 */

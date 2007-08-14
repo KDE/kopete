@@ -62,7 +62,7 @@ Select *sqlite3SelectNew(
 }
 
 /*
-** Given 1 to 3 identifiers preceeding the JOIN keyword, determine the
+** Given 1 to 3 identifiers preceding the JOIN keyword, determine the
 ** type of join.  Return an integer constant that expresses that type
 ** in terms of the following bit values:
 **
@@ -575,7 +575,7 @@ static void generateSortTail(
   pInfo->aSortOrder = (char*)&pInfo->aColl[nCol];
   pInfo->nField = nCol;
   for(i=0; i<nCol; i++){
-    /* If a collation sequence was specified explicity, then it
+    /* If a collation sequence was specified explicitly, then it
     ** is stored in pOrderBy->a[i].zName. Otherwise, use the default
     ** collation type for the expression.
     */
@@ -877,7 +877,7 @@ Table *sqlite3ResultSetOfSelect(Parse *pParse, char *zTabName, Select *pSelect){
 **         without worrying about messing up the presistent representation
 **         of the view.
 **
-**    (2)  Add terms to the WHERE clause to accomodate the NATURAL keyword
+**    (2)  Add terms to the WHERE clause to accommodate the NATURAL keyword
 **         on joins and the ON and USING clause of joins.
 **
 **    (3)  Scan the list of columns in the result set (pEList) looking
@@ -1210,7 +1210,7 @@ Vdbe *sqlite3GetVdbe(Parse *pParse){
 static void computeLimitRegisters(Parse *pParse, Select *p){
   /* 
   ** If the comparison is p->nLimit>0 then "LIMIT 0" shows
-  ** all rows.  It is the same as no limit. If the comparision is
+  ** all rows.  It is the same as no limit. If the comparison is
   ** p->nLimit>=0 then "LIMIT 0" show no rows at all.
   ** "LIMIT -1" always shows all rows.  There is some
   ** contraversy about what the correct behavior should be.
@@ -2398,7 +2398,7 @@ int sqlite3Select(
   }
 
   /* Check to see if this is a subquery that can be "flattened" into its parent.
-  ** If flattening is a possiblity, do so and return immediately.  
+  ** If flattening is a possibility, do so and return immediately.
   */
   if( pParent && pParentAgg &&
       flattenSubquery(pParse, pParent, parentTab, *pParentAgg, isAgg) ){

@@ -74,7 +74,7 @@ public:
 	 * Example:
 	 * @code
 	   if (AccountIdentityDialog::changeAccountIdentity(parent_widget, account))
-		 // it succeded on changing the account identity
+		 // it succeeded on changing the account identity
 	 * @endcode
 	 *
 	 * @param parent the parent widget to be used by the dialog
