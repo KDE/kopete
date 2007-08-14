@@ -12,11 +12,15 @@ X-KDE-ParentComponents=kopete
 Name=Identities
 Name[ga]=Aitheantais
 Name[ja]=分身
+Name[pt]=Identidades
+Name[pt_BR]=Identidades
 Name[sv]=Identiteter
 Name[zh_TW]=身份
 Comment=Manage Your Identities
 Comment[ga]=Bainistigh D'Aitheantais
 Comment[ja]=あなたの分身を管理
+Comment[pt]=Gerir as Suas Identidades
+Comment[pt_BR]=Gerir as Suas Identidades
 Comment[sv]=Hantera dina identiteter
 Comment[zh_TW]=管理您的身份
 
