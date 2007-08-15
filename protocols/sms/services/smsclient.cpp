@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <kconfigbase.h>
 #include <kconfiggroup.h>
-
+#include <k3process.h>
 #include "kopeteaccount.h"
 #include "kopeteuiglobal.h"
 
