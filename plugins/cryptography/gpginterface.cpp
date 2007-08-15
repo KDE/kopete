@@ -164,7 +164,7 @@ QString GpgInterface::checkForUtf8 ( QString txt )
 	/* Make sure the encoding is UTF-8.
 	* Test structure suggested by Werner Koch */
 	if ( txt.isEmpty() )
-		return QString::null;
+		return QString();
 
 	for ( s = txt.ascii(); *s && ! ( *s & 0x80 ); s++ )
 		;

@@ -271,7 +271,7 @@ QString subTagText(const QDomElement &e, const QString &name)
 	QDomElement i = findSubTag(e, name, &found);
 	if ( found )
 		return i.text();
-	return QString::null;
+	return QString();
 }
 
 QDomElement textTag(QDomDocument &doc, const QString &name, const QString &content)
