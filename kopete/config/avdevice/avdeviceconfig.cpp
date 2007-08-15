@@ -17,8 +17,6 @@
 */
 
 #include "avdeviceconfig.h"
-#include "avdeviceconfig_videoconfig.h"
-#include "videodevice.h"
 
 #include <qcheckbox.h>
 #include <qlayout.h>
@@ -41,6 +39,7 @@
 #include <qpixmap.h>
 
 #include <qtabwidget.h>
+#include <qgl.h>
 
 //#include "videodevice.h"
 typedef KGenericFactory<AVDeviceConfig, QWidget> KopeteAVDeviceConfigFactory;
@@ -52,11 +51,12 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
 	kDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::componentData() called. ";
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
-	mAVDeviceTabCtl = new QTabWidget(this, "mAVDeviceTabCtl");
+	mAVDeviceTabCtl = new QTabWidget(this);
 	layout->addWidget( mAVDeviceTabCtl );
 
 // "Video" TAB ============================================================
-	mPrfsVideoDevice = new AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
+	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice();
+//	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
 	connect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mInputKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mStandardKComboBox,            SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
@@ -73,7 +73,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
 
 	// why is this here?
 	// mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
-	mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
+//	mAVDeviceTabCtl->addTab(mPrfsVideoDevice,tr2i18n("&Video",0)); // Problematic. Need to be uncommented after fixing it.
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
 	mVideoDevicePool->open();
 	mVideoDevicePool->setSize(320, 240);
@@ -86,7 +86,8 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
 	mVideoDevicePool->startCapturing();
 	mVideoDevicePool->getFrame();
 	mVideoDevicePool->getImage(&qimage);
-	if (qpixmap.fromImage(qimage,Qt::AutoColor) == true)
+//	if (qpixmap.fromImage(qimage,Qt::AutoColor) != NULL)
+//	if (qpixmap.fromImage(qimage,Qt::AutoColor) == true)
 		mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
 	qtimer.start(0,false);

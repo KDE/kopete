@@ -1,12 +1,17 @@
 
+include_directories(
+${KOPETE_INCLUDES}
 
+)
 
 
 ########### next target ###############
 
-set(kcm_kopete_avdeviceconfig_PART_SRCS avdeviceconfig.cpp )
+set(kcm_kopete_avdeviceconfig_PART_SRCS
+  avdeviceconfig.cpp )
+# avdeviceconfig_videodevicec.cpp )
 
-kde4_add_ui_files(kcm_kopete_avdeviceconfig_PART_SRCS avdeviceconfig_videoconfig.ui )
+kde4_add_ui_files(kcm_kopete_avdeviceconfig_PART_SRCS avdeviceconfig_videodevice.ui )
 
 kde4_add_plugin(kcm_kopete_avdeviceconfig ${kcm_kopete_avdeviceconfig_PART_SRCS})
 
