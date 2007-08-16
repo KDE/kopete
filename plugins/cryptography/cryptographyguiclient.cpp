@@ -76,7 +76,7 @@ CryptographyGUIClient::CryptographyGUIClient(Kopete::ChatSession *parent )
 	m_signAction->setChecked(wantSign);
 	
 	connect( m_encAction, SIGNAL(triggered(bool)), this, SLOT(slotEncryptToggled()) );
-	connect( m_signAction, SIGNAL(trigged(bool)), this, SLOT(slotSignToggled()) );
+	connect( m_signAction, SIGNAL(triggered(bool)), this, SLOT(slotSignToggled()) );
 
 	setXMLFile("cryptographychatui.rc");
 }
@@ -115,7 +115,7 @@ void CryptographyGUIClient::slotEncryptToggled()
 		QString protocol ( csn->protocol()->metaObject()->className());
 		if ( m_encAction->isChecked() )
 			if ( ! CryptographyPlugin::supportedProtocols().contains (protocol) )
-				if (KMessageBox::warningYesNo ( 0L, i18n ("This protocol may not work with messages that are encrypted. Do you still want to encrypt messages?"), i18n ("Cryptography Plugin"), KStandardGuiItem::yes(), KStandardGuiItem::no(), "Dont warn about unsupported protocols") == KMessageBox::No )
+				if (KMessageBox::questionYesNo ( 0L, i18n ("This protocol may not work with messages that are encrypted. Do you still want to encrypt messages?"), i18n ("Cryptography Plugin"), KStandardGuiItem::yes(), KStandardGuiItem::no(), "Dont warn about unsupported protocols") == KMessageBox::No )
 					m_encAction->setChecked (false);
 		
 	}
@@ -126,7 +126,7 @@ void CryptographyGUIClient::slotEncryptToggled()
 		if ( csn->view() )
 			w = csn->view()->mainWidget();
 
-		KMessageBox::sorry( w, i18np("To send encrypted messages to %2, you still need to select a public key for this contact.", "To send encrypted messages to them, you still need to select a public key for each of these contacts:\n%2", keyless.count() , keyless.join( "\n" ) ), i18np( "Missing public key", "Missing public keys", keyless.count() ) );
+		KMessageBox::sorry( w, i18np("To send encrypted messages to %2, you still need to select a public key for this contact.", "To send encrypted messages to them, you still need to select a public key for each of these contacts:\n%2", keyless.count(), keyless.join( "\n" ) ), i18np( "Missing public key", "Missing public keys", keyless.count() ) );
 
 		m_encAction->setChecked( false );
 	}

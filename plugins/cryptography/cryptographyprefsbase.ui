@@ -96,7 +96,7 @@
       <item row="0" column="0" colspan="3" >
        <widget class="QRadioButton" name="onClose" >
         <property name="text" >
-         <string>Until Kopete closes</string>
+         <string>Until Kopete closes (Recommened)</string>
         </property>
         <property name="checked" >
          <bool>true</bool>

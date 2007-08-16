@@ -19,6 +19,8 @@
 #define CRYPTOGRAPHYPLUGIN_H
 
 
+#include <QQueue>
+
 #include "kopeteplugin.h"
 
 #include "cryptographyconfig.h"
