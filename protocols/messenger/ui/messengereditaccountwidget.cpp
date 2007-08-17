@@ -67,7 +67,7 @@ public:
 	QImage pictureData;
 };
 
-MessengerEditAccountWidget::MessengerEditAccountWidget( MessengerProtocol *proto, Kopete::Account *account, QWidget *parent )
+MessengerEditAccountWidget::MessengerEditAccountWidget( Kopete::Account *account )
 : QWidget( parent ), KopeteEditAccountWidget( account )
 {
 	d = new MessengerEditAccountWidgetPrivate;

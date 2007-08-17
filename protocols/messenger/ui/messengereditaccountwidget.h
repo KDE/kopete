@@ -23,7 +23,6 @@
 namespace Kopete { class Account; }
 
 class MessengerProtocol;
-
 class MessengerEditAccountWidgetPrivate;
 
 /*Messenger Edit Account Widget Class*/
@@ -32,7 +31,7 @@ class MessengerEditAccountWidget : public QWidget, public KopeteEditAccountWidge
 	Q_OBJECT
 
 public:
-	MessengerEditAccountWidget( MSNProtocol *proto, Kopete::Account *account, QWidget *parent = 0 );
+	explicit MessengerEditAccountWidget( Kopete::Account *account );
 	~MessengerEditAccountWidget();
 	virtual bool validateData();
 	virtual Kopete::Account * apply();

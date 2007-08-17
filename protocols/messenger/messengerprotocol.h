@@ -18,14 +18,17 @@
 #define MESSENGERPROTOCOL_H
 
 #include <kopeteprotocol.h>
-
+#include <kopeteglobal.h>
 #include <kopete_export.h>
 
 namespace Kopete
 {
 	class Account;
+	class MetaContact;
 }
 
+class QWidget;
+class QComboBox;
 class AddContactPage;
 class KopeteEditAccountWidget;
 
@@ -51,9 +54,9 @@ public:
 	const QMap<int, QString> &months() { return mMonths; }
 	const QMap<int, QString> &days() { return mDays; }
 
-	void MessengerProtocol::fillComboFromTable(QComboBox *box, const QMap<int, QString> &map);
-	void MessengerProtocol::setComboFromTable(QComboBox *box, const QMap<int, QString> &map, int value);
-	int MessengerProtocol::getCodeForCombo(QComboBox *cmb, const QMap<int, QString> &map);
+	void fillComboFromTable(QComboBox *box, const QMap<int, QString> &map);
+	void setComboFromTable(QComboBox *box, const QMap<int, QString> &map, int value);
+	int getCodeForCombo(QComboBox *cmb, const QMap<int, QString> &map);
 
 	/**
 	 * The possible Messenger online statuses
@@ -70,60 +73,61 @@ public:
 	const Kopete::OnlineStatus UNK;  //inknown (internal)
 	const Kopete::OnlineStatus CNT;  //connecting (internal)
 
+	const Kopete::PropertyTmpl propGuid;
+	
 	//general User info
-	const Kopete::ContactPropertyTmpl propEmail;
-	const Kopete::ContactPropertyTmpl propContactType;
-	const Kopete::ContactPropertyTmpl propFirstName;
-	const Kopete::ContactPropertyTmpl propLastName;
-	const Kopete::ContactPropertyTmpl propComment;
-	const Kopete::ContactPropertyTmpl propAnniversary;
-	const Kopete::ContactPropertyTmpl propBirthday;
+	const Kopete::PropertyTmpl propEmail;
+	const Kopete::PropertyTmpl propContactType;
+	const Kopete::PropertyTmpl propFirstName;
+	const Kopete::PropertyTmpl propLastName;
+	const Kopete::PropertyTmpl propComment;
+	const Kopete::PropertyTmpl propAnniversary;
+	const Kopete::PropertyTmpl propBirthday;
 
 	//Annotation
-	const Kopete::ContactPropertyTmpl propABJobTitle;
-	const Kopete::ContactPropertyTmpl propABNickName;
-	const Kopete::ContactPropertyTmpl propABJobSpouse;
+	const Kopete::PropertyTmpl propABJobTitle;
+	const Kopete::PropertyTmpl propABNickName;
+	const Kopete::PropertyTmpl propABJobSpouse;
 
 	//Email
-	const Kopete::ContactPropertyTmpl propContactEmailBusiness;
-	const Kopete::ContactPropertyTmpl propContactEmailMessenger;
-	const Kopete::ContactPropertyTmpl propContactEmailOther;
-	const Kopete::ContactPropertyTmpl propContactEmailPersonal;
+	const Kopete::PropertyTmpl propContactEmailBusiness;
+	const Kopete::PropertyTmpl propContactEmailMessenger;
+	const Kopete::PropertyTmpl propContactEmailOther;
+	const Kopete::PropertyTmpl propContactEmailPersonal;
 
 	//Phone
-	const Kopete::ContactPropertyTmpl propContactPhoneBusiness;
-	const Kopete::ContactPropertyTmpl propContactPhoneFax;
-	const Kopete::ContactPropertyTmpl propContactPhoneMobile;
-	const Kopete::ContactPropertyTmpl propContactPhoneOther;	
-	const Kopete::ContactPropertyTmpl propContactPhonePager;	
-	const Kopete::ContactPropertyTmpl propContactPhonePersonal;	
+	const Kopete::PropertyTmpl propContactPhoneBusiness;
+	const Kopete::PropertyTmpl propContactPhoneFax;
+	const Kopete::PropertyTmpl propContactPhoneMobile;
+	const Kopete::PropertyTmpl propContactPhoneOther;	
+	const Kopete::PropertyTmpl propContactPhonePager;	
+	const Kopete::PropertyTmpl propContactPhonePersonal;	
 
 	//Business Location
-	const Kopete::ContactPropertyTmpl propBusinessName;
-	const Kopete::ContactPropertyTmpl propBusinessStreet;
-	const Kopete::ContactPropertyTmpl propBusinessCity;
-	const Kopete::ContactPropertyTmpl propBusinessState;
-	const Kopete::ContactPropertyTmpl propBusinessCountry;
-	const Kopete::ContactPropertyTmpl propBusinessPostalCode;
+	const Kopete::PropertyTmpl propBusinessName;
+	const Kopete::PropertyTmpl propBusinessStreet;
+	const Kopete::PropertyTmpl propBusinessCity;
+	const Kopete::PropertyTmpl propBusinessState;
+	const Kopete::PropertyTmpl propBusinessCountry;
+	const Kopete::PropertyTmpl propBusinessPostalCode;
 
 	//Personal Location
-	const Kopete::ContactPropertyTmpl propPersonalName;
-	const Kopete::ContactPropertyTmpl propPersonalStreet;
-	const Kopete::ContactPropertyTmpl propPersonalCity;
-	const Kopete::ContactPropertyTmpl propPersonalState;
-	const Kopete::ContactPropertyTmpl propPersonalCountry;
-	const Kopete::ContactPropertyTmpl propPersonalPostalCode;
+	const Kopete::PropertyTmpl propPersonalName;
+	const Kopete::PropertyTmpl propPersonalStreet;
+	const Kopete::PropertyTmpl propPersonalCity;
+	const Kopete::PropertyTmpl propPersonalState;
+	const Kopete::PropertyTmpl propPersonalCountry;
+	const Kopete::PropertyTmpl propPersonalPostalCode;
 
 	//Website
-	const Kopete::ContactPropertyTmpl propContactWebSiteBusiness;
-	const Kopete::ContactPropertyTmpl propContactWebSitePersonal;
+	const Kopete::PropertyTmpl propContactWebSiteBusiness;
+	const Kopete::PropertyTmpl propContactWebSitePersonal;
 
-	const Kopete::ContactPropertyTmpl propPhoneHome;
-	const Kopete::ContactPropertyTmpl propPhoneWork;
-	const Kopete::ContactPropertyTmpl propPhoneMobile;
-	const Kopete::ContactPropertyTmpl propClient;
-	const Kopete::ContactPropertyTmpl propGuid;
-	const Kopete::ContactPropertyTmpl propPersonalMessage; // it's the equivalent of away message.
+	const Kopete::PropertyTmpl propPhoneHome;
+	const Kopete::PropertyTmpl propPhoneWork;
+	const Kopete::PropertyTmpl propPhoneMobile;
+	const Kopete::PropertyTmpl propClient;
+	const Kopete::PropertyTmpl propPersonalMessage; // it's the equivalent of away message.
 
 	// Enums used to build the Kopete's Messenger ClientId.
 	enum MessengerClientInformationFields
@@ -155,6 +159,7 @@ private:
 	void initCountries();
 	void initMonths();
 	void initDays();
+	QMap<QString, int> reverseMap( const QMap<int, QString>& ) const;
 
 };
 

@@ -24,7 +24,7 @@
 /**
   *@author pyzhang
   */
-namespace Ui { class messengerAddUI; }
+namespace Ui { class MessengerAddUI; }
 class MessengerAccount;
 class MessengerProtocol;
 
