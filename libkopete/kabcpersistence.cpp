@@ -338,7 +338,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 							}
 							kDebug( 14010 ) << *it << " already exists in OTHER metacontact, move here?";
 							// find the Kopete::Contact and attempt to move it to this metacontact.
-							otherMc->findContact( proto->pluginId(), QString::null, *it )->setMetaContact( mc );
+							otherMc->findContact( proto->pluginId(), QString::null, *it )->setMetaContact( mc );	//krazy:exclude=nullstrassign for old broken gcc
 						}
 						else
 						{

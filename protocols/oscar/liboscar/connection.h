@@ -124,7 +124,7 @@ public:
 
     /**
      * Get the chat room name for this connection.
-     * @return the name of the room or QString::null if not connected to a room
+     * @return the name of the room or QString() if not connected to a room
      */
 
 	/** Get the user settings object */

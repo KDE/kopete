@@ -52,7 +52,7 @@ public:
     * @param session The Kopete::ChatSession we are viewing.
     * @param requestedPlugin Specifies the view plugin to use.
     */
-    KopeteView *view( Kopete::ChatSession *session, const QString &requestedPlugin = QString::null );
+    KopeteView *view( Kopete::ChatSession *session, const QString &requestedPlugin = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 
     /**
     * Provide access to the list of KopeteChatWindow the class maintains.

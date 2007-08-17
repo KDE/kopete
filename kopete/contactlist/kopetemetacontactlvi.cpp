@@ -853,7 +853,7 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
 				}
 			}
 			if ( allAwayMessagesEmpty )
-				d->extraText->setText( QString::null );
+				d->extraText->setText( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 		}
 		else
 		{

@@ -1104,7 +1104,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 	}
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 				i18n("%1 has invited you to join a conference with %2.\n\nHis message: %3\n\n Accept?",
-				who, m, msg), QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )
+				who, m, msg), QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )	//krazy:exclude=nullstrassign for old broken gcc
 	{
 		m_session->joinConference( room, myMembers );
 		if( !m_conferences[room] )
@@ -1130,7 +1130,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 		}
 	}
 	else
-		m_session->declineConference( room, myMembers, QString::null );
+		m_session->declineConference( room, myMembers, QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 
 	m_pendingConfInvites.removeAll( room );
 }
@@ -1556,7 +1556,7 @@ void YahooAccount::slotGotWebcamInvite( const QString& who )
 	m_pendingWebcamInvites.append( who );
 
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 has invited you to view his/her webcam. Accept?", who),
-                            QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )
+                            QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )	//krazy:exclude=nullstrassign for old broken gcc
 	{
 		m_pendingWebcamInvites.removeAll( who );
 		m_session->requestWebcam( who );
@@ -1723,7 +1723,7 @@ void YahooAccount::slotBuddyIconChanged( const QString &url, int expires )
 		configGroup()->writeEntry( "iconRemoteUrl", url );
 		configGroup()->writeEntry( "iconExpire", expires );
 		m_session->setPictureStatus( Yahoo::Picture );
-		m_session->sendPictureChecksum( QString::null, checksum );
+		m_session->sendPictureChecksum( QString::null, checksum );	//krazy:exclude=nullstrassign for old broken gcc
 	}
 }
 
@@ -1767,7 +1767,7 @@ void YahooAccount::slotWebcamViewerJoined( const QString &viewer )
 void YahooAccount::slotWebcamViewerRequest( const QString &viewer )
 {
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n("%1 wants to view your webcam. Grant access?",
-		viewer), QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )
+		viewer), QString::null, KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )	//krazy:exclude=nullstrassign for old broken gcc
 		m_session->grantWebcamAccess( viewer );
 }
 

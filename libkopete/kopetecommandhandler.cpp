@@ -174,7 +174,7 @@ void Kopete::CommandHandler::registerCommand( QObject *parent, const QString &co
 	QString lowerCommand = command.toLower();
 
 	Kopete::Command *mCommand = new Kopete::Command( parent, lowerCommand, handlerSlot, help,
-		Normal, QString::null, minArgs, maxArgs, cut, pix);
+		Normal, QString::null, minArgs, maxArgs, cut, pix);	//krazy:exclude=nullstrassign for old broken gcc
 	p->pluginCommands[ parent ].insert( lowerCommand, mCommand );
 }
 

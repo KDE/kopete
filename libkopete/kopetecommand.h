@@ -64,9 +64,9 @@ public:
 	 * @param pix The icon to use for the command
 	 */
 	 Command( QObject *parent, const QString &command, const char* handlerSlot,
-	 	const QString &help = QString::null, CommandHandler::CommandType type = CommandHandler::Normal, const QString &formatString = QString::null,
+	 	const QString &help = QString::null, CommandHandler::CommandType type = CommandHandler::Normal, const QString &formatString = QString::null,	//krazy:exclude=nullstrassign for old broken gcc
 		uint minArgs = 0, int maxArgs = -1, const KShortcut &cut = KShortcut(),
-		const QString &pix = QString::null );
+		const QString &pix = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 	~Command();
 
 	/**

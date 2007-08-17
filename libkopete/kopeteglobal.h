@@ -160,7 +160,7 @@ namespace Global
 			void unregisterTemplate(const QString &key);
 
 			const PropertyTmpl &createProp(const QString &key,
-				const QString &label, const QString &icon=QString::null,
+				const QString &label, const QString &icon=QString::null,	//krazy:exclude=nullstrassign for old broken gcc
 				bool persistent = false) const;
 
 		private:

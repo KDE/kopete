@@ -146,7 +146,7 @@ public:
 	 * @param requestedPlugin Specifies the view plugin to use if we have to create one.
 	 */
 	// FIXME: canCreate should definitely be an enum and not a bool - Martijn
-	KopeteView* view( bool canCreate = false, const QString &requestedPlugin = QString::null );
+	KopeteView* view( bool canCreate = false, const QString &requestedPlugin = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 
 	/**
 	 * says if you may invite contact from the same account to this chat with @ref inviteContact
@@ -308,7 +308,7 @@ public slots:
 	 * @param format The format of the message
 	 * @param suppressNotification prevents a notification of the removal in the chat view.  See note in @ref addContact
 	 */
-	void removeContact( const Kopete::Contact *contact, const QString& reason = QString::null, Qt::TextFormat format = Qt::PlainText, bool suppressNotification = false );
+	void removeContact( const Kopete::Contact *contact, const QString& reason = QString::null, Qt::TextFormat format = Qt::PlainText, bool suppressNotification = false );	//krazy:exclude=nullstrassign for old broken gcc
 
 	/**
 	 * Set if the KMM will be deleted when the chatwindow is deleted. It is useful if you want

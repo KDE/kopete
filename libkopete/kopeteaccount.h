@@ -196,7 +196,7 @@ public:
 	/**
 	 * \brief change the account icon.
 	 * by default the icon of an account is the protocol one, but it may be overide it.
-	 * Set QString::null to go back to the default  (the protocol icon)
+	 * Set QString() to go back to the default  (the protocol icon)
 	 * 
 	 * this call will emit colorChanged()
 	 */
@@ -285,13 +285,13 @@ public:
 	 * If @p mode is @c DontChangeKABC, no additional action is carried out.
 	 *
 	 * @param contactId the @ref Contact::contactId of the contact to create
-	 * @param displayName the displayname (alias) of the new metacontact. Leave as QString::null if
+	 * @param displayName the displayname (alias) of the new metacontact. Leave as QString() if
 	 *                    no alias is known, then by default, the nick will be taken as alias and tracked if changed.
 	 * @param group the group to add the created metacontact to, or 0 for the top-level group.
 	 * @param mode the mode used to add the contact. Use DontChangeKABC when deserializing.
 	 * @return the new created metacontact or 0L if the operation failed
 	 */
-	MetaContact* addContact( const QString &contactId, const QString &displayName = QString::null, Group *group = 0, AddMode mode = DontChangeKABC ) ;
+	MetaContact* addContact( const QString &contactId, const QString &displayName = QString::null, Group *group = 0, AddMode mode = DontChangeKABC ) ;	//krazy:exclude=nullstrassign for old broken gcc
 
 	/**
 	 * @brief Create a new contact, adding it to an existing metacontact

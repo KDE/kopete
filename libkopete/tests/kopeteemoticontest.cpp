@@ -81,10 +81,10 @@ void KopeteEmoticonTest::testEmoticonParser()
 			inputFile.close();
 			expectedFile.close();
 
-			QString path = KGlobal::dirs()->findResource( "emoticons", "Default/smile.png" ).replace( "smile.png", QString::null );
+			QString path = KGlobal::dirs()->findResource( "emoticons", "Default/smile.png" ).replace( "smile.png", QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 
 			//Kopete::Emoticons::self();
-			QString result = emo.parse( inputData, Kopete::Emoticons::RelaxedParse | Kopete::Emoticons::SkipHTML ).replace( path, QString::null );	
+			QString result = emo.parse( inputData, Kopete::Emoticons::RelaxedParse | Kopete::Emoticons::SkipHTML ).replace( path, QString::null );	//krazy:exclude=nullstrassign for old broken gcc	
 			
 			kDebug() << "Parse result: " << result;
 

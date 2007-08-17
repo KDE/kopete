@@ -193,7 +193,7 @@ void XData::Field::fromXml(const QDomElement &e)
 		_type = Field_TextSingle;
 
 	_required = false;
-	_desc     = QString::null;
+	_desc     = QString();
 	_options.clear();
 	_value.clear();
 

@@ -61,14 +61,14 @@ public:
 	 * You can query all information on the plugins through the KPluginInfo
 	 * interface.
 	 */
-	QList<KPluginInfo> availablePlugins( const QString &category = QString::null ) const;
+	QList<KPluginInfo> availablePlugins( const QString &category = QString::null ) const;	//krazy:exclude=nullstrassign for old broken gcc
 
 	/**
 	 * Returns a list of all plugins that are actually loaded.
 	 * If you omit the category you get all, otherwise it's a filtered list.
 	 * See also @ref availablePlugins().
 	 */
-	PluginList loadedPlugins( const QString &category = QString::null ) const;
+	PluginList loadedPlugins( const QString &category = QString::null ) const;	//krazy:exclude=nullstrassign for old broken gcc
 
 	/**
 	 * @brief Search by plugin name. This is the key used as X-KDE-PluginInfo-Name in

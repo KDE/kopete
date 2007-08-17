@@ -138,7 +138,7 @@ public:
 
 	/**
 	 * Set the icon in the given state
-	 * To clear an entry, set a QString::null
+	 * To clear an entry, set a QString()
 	 */
 	void setIcon( const QString &icon, IconState = None );
 

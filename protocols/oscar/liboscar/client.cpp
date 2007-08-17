@@ -308,7 +308,7 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 
 		QString msg;
 		// AIM: you're away exactly when your away message isn't empty.
-		// can't use QString::null as a message either; ProfileTask
+		// can't use QString() as a message either; ProfileTask
 		// interprets null as "don't change".
 		if ( (status & 0xFF) == 0x00 ) //is status online?
 		{

@@ -98,7 +98,7 @@ public:
 	 * @param icon is an optional icon
 	 */
 	Contact( Account *account, const QString &id, MetaContact *parent,
-		const QString &icon = QString::null );
+		const QString &icon = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 
 	~Contact();
 
@@ -435,7 +435,7 @@ public slots:
 	 *                file size (such as over  asocket
 	 */
 	virtual void sendFile( const KUrl &sourceURL = KUrl(),
-			       const QString &fileName = QString::null, uint fileSize = 0L );
+			       const QString &fileName = QString::null, uint fileSize = 0L );	//krazy:exclude=nullstrassign for old broken gcc
 private slots:
 	/**
 	 * This add the contact totally in the list if it was a temporary contact

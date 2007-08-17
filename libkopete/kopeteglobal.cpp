@@ -146,7 +146,7 @@ const PropertyTmpl &Properties::onlineSince() const
 const PropertyTmpl &Properties::lastSeen() const
 {
 	return createProp(QLatin1String("lastSeen"),
-		i18n("Last Seen"), QString::null, true);
+		i18n("Last Seen"), QString::null, true);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 const PropertyTmpl &Properties::statusMessage() const
@@ -158,37 +158,37 @@ const PropertyTmpl &Properties::statusMessage() const
 const PropertyTmpl &Properties::firstName() const
 {
 	return createProp(QLatin1String("firstName"),
-		i18n("First Name"), QString::null, true);
+		i18n("First Name"), QString::null, true);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 const PropertyTmpl &Properties::lastName() const
 {
 	return createProp(QLatin1String("lastName"),
-		i18n("Last Name"), QString::null, true);
+		i18n("Last Name"), QString::null, true);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 const PropertyTmpl &Properties::privatePhone() const
 {
 	return createProp(QLatin1String("privatePhoneNumber"),
-		i18n("Private Phone"), QString::null, true);
+		i18n("Private Phone"), QString::null, true);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 const PropertyTmpl &Properties::privateMobilePhone() const
 {
 	return createProp(QLatin1String("privateMobilePhoneNumber"),
-		i18n("Private Mobile Phone"), QString::null, true);
+		i18n("Private Mobile Phone"), QString::null, true);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 const PropertyTmpl &Properties::workPhone() const
 {
 	return createProp(QLatin1String("workPhoneNumber"),
-		i18n("Work Phone"), QString::null, true);
+		i18n("Work Phone"), QString::null, true);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 const PropertyTmpl &Properties::workMobilePhone() const
 {
 	return createProp(QLatin1String("workMobilePhoneNumber"),
-		i18n("Work Mobile Phone"), QString::null, true);
+		i18n("Work Mobile Phone"), QString::null, true);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 const PropertyTmpl &Properties::emailAddress() const
@@ -200,13 +200,13 @@ const PropertyTmpl &Properties::emailAddress() const
 const PropertyTmpl &Properties::nickName() const
 {
 	return createProp(QLatin1String("nickName"),
-		i18n("Nick Name"), QString::null, true);
+		i18n("Nick Name"), QString::null, true);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 const PropertyTmpl &Properties::photo() const
 {
 	return createProp(QLatin1String("photo"),
-					  i18n("Photo"), QString::null, true);
+					  i18n("Photo"), QString::null, true);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 
@@ -243,7 +243,7 @@ void installEmoticonTheme(const QString &archiveName)
 	KProgressDialog *progressDlg = 0L;
 	KArchive *archive = 0L;
 
-	QString localThemesDir(KStandardDirs::locateLocal("emoticons", QString::null) );
+	QString localThemesDir(KStandardDirs::locateLocal("emoticons", QString::null) );	//krazy:exclude=nullstrassign for old broken gcc
 
 	if(localThemesDir.isEmpty())
 	{

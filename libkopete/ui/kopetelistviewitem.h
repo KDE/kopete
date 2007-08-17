@@ -259,7 +259,7 @@ private:
 class KOPETE_EXPORT TextComponent : public Component
 {
 public:
-	explicit TextComponent( ComponentBase *parent, const QFont &font = QFont(), const QString &text = QString::null );
+	explicit TextComponent( ComponentBase *parent, const QFont &font = QFont(), const QString &text = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 	~TextComponent();
 
 	QString text();

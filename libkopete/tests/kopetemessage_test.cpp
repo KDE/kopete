@@ -58,8 +58,8 @@ KopeteMessage_Test::KopeteMessage_Test()
 	m_account = new Kopete::Test::Mock::Account(m_protocol, "testaccount");
 	m_metaContactMyself = new Kopete::Test::Mock::MetaContact();
 	m_metaContactOther = new Kopete::Test::Mock::MetaContact();
-	m_contactFrom = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-myself"), m_metaContactMyself, QString::null);
-	m_contactTo = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-dest"), m_metaContactOther, QString::null);
+	m_contactFrom = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-myself"), m_metaContactMyself, QString::null);	//krazy:exclude=nullstrassign for old broken gcc
+	m_contactTo = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-dest"), m_metaContactOther, QString::null);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 void KopeteMessage_Test::testPrimitives()
@@ -197,7 +197,7 @@ void KopeteMessage_Test::testPrimitives()
 		{
 			Kopete::Message msg2;
 
-//			QCOMPARE(msg2.plainBody(), QString::null);
+//			QCOMPARE(msg2.plainBody(), QString::null);	//krazy:exclude=nullstrassign for old broken gcc
 
 			msg2 = msg1;
 

@@ -524,7 +524,7 @@ void ClientTask::numericReply_305(Message msg)
 {
 /*
 	Entity::Ptr self = this->self();
-	self->setAwayMessage(QString::null);
+	self->setAwayMessage(QString::null);	//krazy:exclude=nullstrassign for old broken gcc
 //	self->setModes("-a");
 	postInfoEvent(msg, i18n("You are no longer marked as being away."));
 */
@@ -1016,8 +1016,8 @@ void ClientTask::CtcpQuery_clientinfo(Message msg)
 			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
 			"ACTION.");
 
-//	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-//				msg.ctcpMessage().command(), QString::null, clientinfo);
+//	writeCtcpReplyMessage(	msg.prefix(), QString::null,	//krazy:exclude=nullstrassign for old broken gcc
+//				msg.ctcpMessage().command(), QString::null, clientinfo);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 void ClientTask::CtcpQuery_dcc(Message msg)
@@ -1099,7 +1099,7 @@ void ClientTask::CtcpQuery_finger( Message /*msg*/)
 
 void ClientTask::CtcpQuery_ping(Message msg)
 {
-//	writeCtcpReplyMessage(	msg.prefix(), QString::null,
+//	writeCtcpReplyMessage(	msg.prefix(), QString::null,	//krazy:exclude=nullstrassign for old broken gcc
 //				msg.ctcpMessage().command(), msg.ctcpMessage().arg(0));
 }
 
@@ -1140,23 +1140,23 @@ void ClientTask::CtcpReply_ping(Message msg)
 
 void ClientTask::CtcpQuery_source(Message msg)
 {
-//	writeCtcpReplyMessage(msg.prefix(), QString::null,
+//	writeCtcpReplyMessage(msg.prefix(), QString::null,	//krazy:exclude=nullstrassign for old broken gcc
 //			      msg.ctcpMessage().command(), m_SourceString);
 }
 
 void ClientTask::CtcpQuery_time(Message msg)
 {
-//	writeCtcpReplyMessage(msg.prefix(), QString::null,
+//	writeCtcpReplyMessage(msg.prefix(), QString::null,	//krazy:exclude=nullstrassign for old broken gcc
 //			      msg.ctcpMessage().command(), QDateTime::currentDateTime().toString(),
-//			      QString::null, false);
+//			      QString::null, false);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 void ClientTask::CtcpQuery_userinfo(Message msg)
 {
 //	QString userinfo = m_UserString;
 
-//	writeCtcpReplyMessage(msg.prefix(), QString::null,
-//			      msg.ctcpMessage().command(), QString::null, userinfo);
+//	writeCtcpReplyMessage(msg.prefix(), QString::null,	//krazy:exclude=nullstrassign for old broken gcc
+//			      msg.ctcpMessage().command(), QString::null, userinfo);	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 void ClientTask::CtcpQuery_version(Message msg)

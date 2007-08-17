@@ -338,7 +338,7 @@ void Contact::setMetaContact( MetaContact *m )
 		{ //only one contact, including this one, that mean the contact will be empty efter the move
 			result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), i18n( "You are moving the contact `%1' to the meta contact `%2'.\n"
 				"`%3' will be empty afterwards. Do you want to delete this contact?",
-					contactId(), m ? m->displayName() : QString::null, old->displayName())
+					contactId(), m ? m->displayName() : QString::null, old->displayName())	//krazy:exclude=nullstrassign for old broken gcc
 				, i18n( "Move Contact" ), KStandardGuiItem::del(), KGuiItem( i18n( "&Keep" ) )
 				, KStandardGuiItem::cancel(), QString::fromLatin1("delete_old_contact_when_move") );
 			if(result==KMessageBox::Cancel)

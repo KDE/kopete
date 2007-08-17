@@ -61,7 +61,7 @@ void KopeteGroupListAction::slotUpdateList()
 	}
 
 	groupList.sort();
-	groupList.prepend(QString::null); //add a separator;
+	groupList.prepend(QString::null); //add a separator;	//krazy:exclude=nullstrassign for old broken gcc
 	groupList.prepend( i18n("Top Level") ); //the top-level group, with the id 0
 	setItems( groupList );
 }

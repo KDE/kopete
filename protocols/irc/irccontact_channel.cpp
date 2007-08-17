@@ -130,7 +130,7 @@ void IRCChannelContact::namesList(const QStringList &nicknames)
 
 void IRCChannelContact::endOfNames()
 {
-	setMode(QString::null);
+	setMode(QString::null);	//krazy:exclude=nullstrassign for old broken gcc
 	slotUpdateInfo();
 }
 
@@ -463,7 +463,7 @@ void IRCChannelContact::failedChankey()
 	bool ok;
 	QString diaPassword = KInputDialog::getText( i18n( "IRC Plugin" ),
 		i18n( "Please enter key for channel %1: ").arg(m_nickName),
-		QString::null,
+		QString::null,	//krazy:exclude=nullstrassign for old broken gcc
 		&ok );
 
 	if ( !ok )

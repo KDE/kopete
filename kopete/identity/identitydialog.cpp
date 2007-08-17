@@ -148,7 +148,7 @@ void IdentityDialog::slotSelectPhoto()
 
 void IdentityDialog::slotClearPhoto()
 {
-	setPhoto( QString::null );
+	setPhoto( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 }
 
 #include "identitydialog.moc"

@@ -86,7 +86,7 @@ public:
 public slots:
 	/**
 	 * Called when your account should attempt to connect.
-	 * @param password The password to connect with, or QString::null
+	 * @param password The password to connect with, or QString()
 	 *        if the user wished to cancel the connection attempt.
 	 */
 	virtual void connectWithPassword( const QString &password ) = 0;

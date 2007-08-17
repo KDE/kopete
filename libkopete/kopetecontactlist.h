@@ -316,12 +316,12 @@ public: //TODO I think all theses method should be moved to the decop interface.
 	 * @param fileSize (Optional) The size of the file
 	 */
 	void sendFile(const QString &displayName, const KUrl &sourceURL,
-		const QString &altFileName = QString::null, const long unsigned int fileSize = 0L);
+		const QString &altFileName = QString::null, const long unsigned int fileSize = 0L);	//krazy:exclude=nullstrassign for old broken gcc
 
 	/**
 	 * Open a chat to a contact, and optionally set some initial text
 	 */
-	void messageContact( const QString &displayName, const QString &messageText = QString::null );
+	void messageContact( const QString &displayName, const QString &messageText = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 
 public slots:
 	/**

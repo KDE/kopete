@@ -173,7 +173,7 @@ public:
 	 * by libkopete and should be unique per protocol.
 	 * @param overlayIcons is a list of QStrings which are the name of status
 	 * icons to be used by the KDE icon loader. (Statuses which don't have icons
-	 * to overlay like Online and Offline should use QString::null as icon
+	 * to overlay like Online and Offline should use QString() as icon
 	 * name ).  NOTE if the string is a movie ( *.mng ) it must be the first string in the list.
 	 * TODO: KDE4 sort out movies and overlay icons.
 	 * @param description is a description in e.g. tooltips.
@@ -207,7 +207,7 @@ public:
 	 * by libkopete and should be unique per protocol.
 	 * @param overlayIcon is a string returning the name of the status icon to be
 	 * used by the KDE icon loader. (Status whiwh doesn't have icon to overlay like
-	 * Online and Offline should use QString::null as icon string)
+	 * Online and Offline should use QString() as icon string)
 	 * @param description is a description in e.g. tooltips.
 	 * @param caption is the text of the action in the menu
 	 * @param categories the categories this online status is in

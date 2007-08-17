@@ -254,7 +254,7 @@ void Engine::numericReply_305(Message &msg)
 {
 /*
 	EntityPtr self = this->self();
-	self->setAwayMessage(QString::null);
+	self->setAwayMessage(QString::null);	//krazy:exclude=nullstrassign for old broken gcc
 //	self->setModes("-a");
 	receivedServerMessage(msg, i18n("You are no longer marked as being away."));
 */

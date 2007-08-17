@@ -291,7 +291,7 @@ void PluginManager::loadAllPlugins()
 	else
 	{
 		// we had no config, so we load any plugins that should be loaded by default.
-		QList<KPluginInfo> plugins = availablePlugins( QString::null );
+		QList<KPluginInfo> plugins = availablePlugins( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 		QList<KPluginInfo>::ConstIterator it = plugins.begin();
 		QList<KPluginInfo>::ConstIterator end = plugins.end();
 		for ( ; it != end; ++it )

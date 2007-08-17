@@ -61,7 +61,7 @@ public:
 	const QString configGroup;
 	/** Is the password being remembered? */
 	bool remembered;
-	/** The current password in the KConfig file, or QString::null if no password there */
+	/** The current password in the KConfig file, or QString() if no password there */
 	QString passwordFromKConfig;
 	/** Is the current password known to be wrong? */
 	bool isWrong;
@@ -201,7 +201,7 @@ public:
 
 	void slotCancelPressed()
 	{
-		finished( QString::null );
+		finished( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 	}
 
 private:

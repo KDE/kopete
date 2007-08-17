@@ -137,10 +137,10 @@ void XmlContactStorage::load()
     QDomElement list = contactList.documentElement();
     //TODO: Check if we remove versioning support from XML file.
 #if 0
-    QString versionString = list.attribute( QString::fromLatin1( "version" ), QString::null );
+    QString versionString = list.attribute( QString::fromLatin1( "version" ), QString::null );	//krazy:exclude=nullstrassign for old broken gcc
     uint version = 0;
     if( QRegExp( QString::fromLatin1( "[0-9]+\\.[0-9]" ) ).exactMatch( versionString ) )
-        version = versionString.replace( QString::fromLatin1( "." ), QString::null ).toUInt();
+        version = versionString.replace( QString::fromLatin1( "." ), QString::null ).toUInt();	//krazy:exclude=nullstrassign for old broken gcc
 
     if( version < Private::ContactListVersion )
     {
@@ -172,7 +172,7 @@ void XmlContactStorage::load()
         if( element.tagName() == QString::fromLatin1("meta-contact") )
         {
             //TODO: id isn't used
-            //QString id = element.attribute( "id", QString::null );
+            //QString id = element.attribute( "id", QString::null );	//krazy:exclude=nullstrassign for old broken gcc
             Kopete::MetaContact *metaContact = new Kopete::MetaContact();
             if ( !parseMetaContact( metaContact, element ) )
             {
@@ -411,8 +411,8 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
         }
         else if( contactElement.tagName() == QString::fromUtf8( "address-book-field" ) )
         {
-            QString app = contactElement.attribute( QString::fromUtf8( "app" ), QString::null );
-            QString key = contactElement.attribute( QString::fromUtf8( "key" ), QString::null );
+            QString app = contactElement.attribute( QString::fromUtf8( "app" ), QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+            QString key = contactElement.attribute( QString::fromUtf8( "key" ), QString::null );	//krazy:exclude=nullstrassign for old broken gcc
             QString val = contactElement.text();
             metaContact->setAddressBookField( 0, app, key , val );
         }
@@ -575,7 +575,7 @@ bool XmlContactStorage::parseContactListElement( Kopete::ContactListElement *con
     if ( element.tagName() == QLatin1String( "plugin-data" ) )
     {
         QMap<QString, QString> pluginData;
-        QString pluginId = element.attribute( QLatin1String( "plugin-id" ), QString::null );
+        QString pluginId = element.attribute( QLatin1String( "plugin-id" ), QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 
         //in kopete 0.6 the AIM protocol was called OSCAR
         if ( pluginId == QLatin1String( "OscarProtocol" ) )
@@ -603,7 +603,7 @@ bool XmlContactStorage::parseContactListElement( Kopete::ContactListElement *con
             QDomElement iconElement = ic.toElement();
             if ( iconElement.tagName() == QLatin1String( "icon" ) )
             {
-                QString stateStr = iconElement.attribute( QLatin1String( "state" ), QString::null );
+                QString stateStr = iconElement.attribute( QLatin1String( "state" ), QString::null );	//krazy:exclude=nullstrassign for old broken gcc
                 QString icon = iconElement.text();
                 ContactListElement::IconState state = ContactListElement::None;
 
@@ -880,7 +880,7 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
                         // be called "aim". MSN, AIM, IRC, Oscar and SMS don't use address
                         // book fields yet; Gadu and ICQ can be converted as-is.
                         // As Yahoo is unfinished we won't try to convert at all.
-                        QString id   = oldContactElement.attribute( QLatin1String( "id" ), QString::null );
+                        QString id   = oldContactElement.attribute( QLatin1String( "id" ), QString::null );	//krazy:exclude=nullstrassign for old broken gcc
                         QString data = oldContactElement.text();
 
                         QString app, key, val;
@@ -961,7 +961,7 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
                         else if( oldContactElement.tagName() == QLatin1String( "plugin-data" ) )
                         {
                             // Convert the plugin data
-                            QString id   = oldContactElement.attribute( QLatin1String( "plugin-id" ), QString::null );
+                            QString id   = oldContactElement.attribute( QLatin1String( "plugin-id" ), QString::null );	//krazy:exclude=nullstrassign for old broken gcc
                             QString data = oldContactElement.text();
 
                             bool convertOldAim = false;
@@ -1172,7 +1172,7 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
                         newGroup.appendChild( groupPluginData );
 
                         groupPluginData.setAttribute( QLatin1String( "plugin-id" ),
-                                oldGroupElement.attribute( QLatin1String( "plugin-id" ), QString::null ) );
+                                oldGroupElement.attribute( QLatin1String( "plugin-id" ), QString::null ) );	//krazy:exclude=nullstrassign for old broken gcc
                         groupPluginData.appendChild( newList.createTextNode( oldGroupElement.text() ) );
                     }
 

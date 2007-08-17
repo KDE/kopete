@@ -161,7 +161,7 @@ void IRCContact::entityUpdated()
 		break;
 	default:
 //		setIcon("irc_unknown");
-		setIcon(QString::null);
+		setIcon(QString::null);	//krazy:exclude=nullstrassign for old broken gcc
 		break;
 	}
 */

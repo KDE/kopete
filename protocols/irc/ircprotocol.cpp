@@ -299,20 +299,20 @@ void IRCProtocol::initOnlineStatus()
 {
 /*
 	OnlineStatus ServerOnline(OnlineStatus::Online, 100, this, 0,
-		QString::null, i18n("Online"));
+		QString::null, i18n("Online"));	//krazy:exclude=nullstrassign for old broken gcc
 
 	OnlineStatus ServerOffline(OnlineStatus::Offline, 90, this, 0,
-		QString::null, i18n("Offline"));
+		QString::null, i18n("Offline"));	//krazy:exclude=nullstrassign for old broken gcc
 
 	m_statusMap.insert(ServerOnline.internalStatus(), ServerOnline);
 	m_statusMap.insert(ServerOffline.internalStatus(), ServerOffline);
 
 	ChannelOnline(OnlineStatus::Online, 80, this, EntityType::Channel|EntityType::Online,
-		QString::null, i18n("Online")),
+		QString::null, i18n("Online")),	//krazy:exclude=nullstrassign for old broken gcc
 	m_statusMap.insert(ChannelOnline.internalStatus(), ChannelOnline);
 
 	ChannelOffline(OnlineStatus::Offline, 70, this, EntityType::Channel|EntityType::OfflineChannel,
-		QString::null, i18n("Offline")),
+		QString::null, i18n("Offline")),	//krazy:exclude=nullstrassign for old broken gcc
 	m_statusMap.insert(ChannelOffline.internalStatus(), ChannelOffline);
 
 	KIrc::EntityStatus status;
@@ -327,7 +327,7 @@ void IRCProtocol::initOnlineStatus()
 	onlineStatusFor(status,  OnlineStatusManager::Away);
 
 	OnlineStatus UserOnline(OnlineStatus::Online, 25, this, 0,
-		QString::null, i18n("Online"), i18n("Online"), OnlineStatusManager::Online);
+		QString::null, i18n("Online"), i18n("Online"), OnlineStatusManager::Online);	//krazy:exclude=nullstrassign for old broken gcc
 
 	OnlineStatus UserAway(OnlineStatus::Away, 2, this, 0,
 		"contact_away_overlay", i18n("Away"), i18n("Away"), OnlineStatusManager::Away);
@@ -336,7 +336,7 @@ void IRCProtocol::initOnlineStatus()
 		"irc_connecting", i18n("Connecting"));
 
 	OnlineStatus UserOffline(OnlineStatus::Offline, 0, this, 0,
-		QString::null, i18n("Offline"), i18n("Offline"), OnlineStatusManager::Offline);
+		QString::null, i18n("Offline"), i18n("Offline"), OnlineStatusManager::Offline);	//krazy:exclude=nullstrassign for old broken gcc
 */
 }
 
@@ -521,7 +521,7 @@ void IRCProtocol::slotCtcpCommand(const QString &args, ChatSession *manager)
 		QString user = args.section( ' ', 0, 0 );
 		QString message = args.section( ' ', 1 );
 //		static_cast<IRCAccount*>(manager->account())->client()->writeCtcpQueryMessage(
-//			user, QString::null, message);
+//			user, QString::null, message);	//krazy:exclude=nullstrassign for old broken gcc
 	}
 }
 

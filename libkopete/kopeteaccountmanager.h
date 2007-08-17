@@ -138,17 +138,17 @@ public slots:
 	 * @param flags is a bitmask of SetOnlineStatusFlag
 	 */
 	void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
-						  const QString& awayMessage = QString::null, uint flags=0);
+						  const QString& awayMessage = QString::null, uint flags=0);	//krazy:exclude=nullstrassign for old broken gcc
 
 	/**
 	 * @deprecated  use setOnlineStatus
 	 */
-	void setAwayAll( const QString &awayReason = QString::null, bool away=true );
+	void setAwayAll( const QString &awayReason = QString::null, bool away=true );	//krazy:exclude=nullstrassign for old broken gcc
 
 	/**
 	 * @deprecated  use setOnlineStatus
 	 */
-	void setAvailableAll( const QString &awayReason = QString::null );
+	void setAvailableAll( const QString &awayReason = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 
 	/**
 	 * \internal
