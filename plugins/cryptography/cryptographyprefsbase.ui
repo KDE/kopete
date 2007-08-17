@@ -1,5 +1,5 @@
 <ui version="4.0" >
- <author>Olivier Goffart</author>
+ <author>Olivier Goffart, Charles Connell</author>
  <class>CryptographyPrefsUI</class>
  <widget class="QWidget" name="CryptographyPrefsUI" >
   <property name="geometry" >

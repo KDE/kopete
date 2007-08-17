@@ -2,6 +2,7 @@
     cryptographyguiclient.cpp
 
     Copyright (c) 2004      by Olivier Goffart        <ogoffart@kde.org>
+    Copyright (c) 2007      by Charles Connell        <charles@connells.org>
 
     Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -115,8 +116,7 @@ void CryptographyGUIClient::slotEncryptToggled()
 		QString protocol ( csn->protocol()->metaObject()->className());
 		if ( m_encAction->isChecked() )
 			if ( ! CryptographyPlugin::supportedProtocols().contains (protocol) )
-				if (KMessageBox::questionYesNo ( 0L, i18n ("This protocol may not work with messages that are encrypted. Do you still want to encrypt messages?"), i18n ("Cryptography Plugin"), KStandardGuiItem::yes(), KStandardGuiItem::no(), "Dont warn about unsupported protocols") == KMessageBox::No )
-					m_encAction->setChecked (false);
+				KMessageBox::information ( 0, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ), i18n ( "Cryptography Unsupported Protocol" ), "Warn about unsupported " + QString (csn->protocol()->metaObject()->className()) );
 		
 	}
 	
