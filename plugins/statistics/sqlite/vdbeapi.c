@@ -223,7 +223,7 @@ void *sqlite3_aggregate_context(sqlite3_context *p, int nByte){
 }
 
 /*
-** Return the auxilary data pointer, if any, for the iArg'th argument to
+** Return the auxiliary data pointer, if any, for the iArg'th argument to
 ** the user-function defined by pCtx.
 */
 void *sqlite3_get_auxdata(sqlite3_context *pCtx, int iArg){
@@ -235,7 +235,7 @@ void *sqlite3_get_auxdata(sqlite3_context *pCtx, int iArg){
 }
 
 /*
-** Set the auxilary data pointer and delete function, for the iArg'th
+** Set the auxiliary data pointer and delete function, for the iArg'th
 ** argument to the user-function defined by pCtx. Any previous value is
 ** deleted by calling the delete function specified when it was set.
 */

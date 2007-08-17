@@ -4,7 +4,7 @@ Icon=highlight
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_highlight
+X-KDE-Library=kcm_kopete_highlight
 X-KDE-FactoryName=kcm_kopete_highlight
 X-KDE-ParentApp=kopete_highlight
 X-KDE-ParentComponents=kopete_highlight

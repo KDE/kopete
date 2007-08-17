@@ -4,7 +4,7 @@ Icon=kaboodle
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_nowlistening
+X-KDE-Library=kcm_kopete_nowlistening
 X-KDE-FactoryName=kcm_kopete_nowlistening
 X-KDE-ParentApp=kopete_nowlistening
 X-KDE-ParentComponents=kopete_nowlistening

@@ -97,7 +97,7 @@ Comment[zh_TW]=自動將接收訊息中的連結加入書籤
 Icon=konqueror
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_addbookmarks
+X-KDE-Library=kcm_kopete_addbookmarks
 X-KDE-FactoryName=kcm_kopete_addbookmarks
 X-KDE-ParentApp=kopete_addbookmarks
 X-KDE-ParentComponents=kopete_addbookmarks

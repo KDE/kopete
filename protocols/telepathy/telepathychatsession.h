@@ -53,8 +53,8 @@ private slots:
 	void telepathyMessageReceived(const QtTapioca::TextChannel::Message &message);
 
 	/**
-	 * @brief Message has been sent sucessfully
-	 * @param message Message succesfully sent.
+	 * @brief Message has been sent successfully
+	 * @param message Message successfully sent.
 	 */
 	void telepathyMessageSent(const QtTapioca::TextChannel::Message &message);
 

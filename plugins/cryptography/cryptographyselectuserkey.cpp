@@ -2,6 +2,7 @@
     cryptographyselectuserkey.cpp  -  description
 
     Copyright (c) 2002      by Olivier Goffart <ogoffart@kde.org>
+    Copyright (c) 2007      by Charles Connell <charles@connells.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -17,12 +18,14 @@
 
 #include <klocale.h>
 #include <klineedit.h>
-#include <qpushbutton.h>
 #include <qlabel.h>
+#include <qboxlayout.h>
 
-#include "ui_cryptographyuserkey_ui.h"
+#include "kopeteuiglobal.h"
+
+#include <kleo/ui/keyrequester.h>
+
 #include "kopetemetacontact.h"
-#include "popuppublic.h"
 
 #include "cryptographyselectuserkey.h"
 
@@ -36,43 +39,29 @@ CryptographySelectUserKey::CryptographySelectUserKey(const QString& key ,Kopete:
 	m_metaContact=mc;
 	
 	QWidget *w = new QWidget(this);
-	view = new Ui::CryptographyUserKey_ui();
-	view->setupUi(w);
+	QLabel * label = new QLabel (w);
+	m_KeyEdit = new Kleo::EncryptionKeyRequester ( false, Kleo::EncryptionKeyRequester::OpenPGP, w, false, true );
+	m_KeyEdit->setDialogMessage ( i18n ( "Select the key you want to use encrypt messages to the recipient" ) );
+	m_KeyEdit->setDialogCaption ( i18n ( "Select the key you want to use encrypt messages to the recipient" ) );
 	setMainWidget(w);
 
-	connect (view->m_selectKey , SIGNAL(clicked()) , this , SLOT(slotSelectPressed()));
-	connect (view->m_removeButton , SIGNAL(clicked()) , this , SLOT(slotRemovePressed()));
-
-	view->m_titleLabel->setText(i18n("Select public key for %1", mc->displayName()));
-	view->m_editKey->setText(key);
+	label->setText ( i18n("Select public key for %1", mc->displayName()) );
+	m_KeyEdit->setFingerprint (key);
+	
+	QVBoxLayout * l = new QVBoxLayout (w);
+	l->addWidget (label);
+	l->addWidget (m_KeyEdit);
+	l->addStretch ();
 }
 
 CryptographySelectUserKey::~CryptographySelectUserKey()
 {
-	delete view;
-}
 
-void CryptographySelectUserKey::slotSelectPressed()
-{
-	PopupPublic *dialog = new PopupPublic(this);
-	connect(dialog,SIGNAL(selectedKey(QString,QString,bool,bool)),this,SLOT(keySelected(QString)));
-	dialog->show();
-}
-
-
-void CryptographySelectUserKey::keySelected(const QString &key)
-{
-	view->m_editKey->setText(key);
-}
-
-void CryptographySelectUserKey::slotRemovePressed()
-{
-	view->m_editKey->setText("");
 }
 
 QString CryptographySelectUserKey::publicKey() const
 {
-	return view->m_editKey->text();
+	return m_KeyEdit->fingerprint();
 }
 
 

@@ -121,7 +121,7 @@ void TelepathyChatSession::telepathyMessageSent(const QtTapioca::TextChannel::Me
 	newMessage.setDirection( Kopete::Message::Outbound );
 	newMessage.setType( messageType );
 
-	// Append succesfully sent message to chat window and notify other components of success
+	// Append successfully sent message to chat window and notify other components of success
 	appendMessage( newMessage );
 	messageSucceeded();
 }

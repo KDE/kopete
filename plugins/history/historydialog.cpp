@@ -170,8 +170,8 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mHtmlPart->end();
 
 
-	connect(mHtmlPart->browserExtension(), SIGNAL(openUrlRequestDelayed(const KUrl &, const KParts::URLArgs &)),
-		this, SLOT(slotOpenURLRequest(const KUrl &, const KParts::URLArgs &)));
+	connect(mHtmlPart->browserExtension(), SIGNAL(openUrlRequestDelayed(const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)),
+		this, SLOT(slotOpenURLRequest(const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)));
 	connect(mMainWidget->dateListView, SIGNAL(clicked(Q3ListViewItem*)), this, SLOT(dateSelected(Q3ListViewItem*)));
 	connect(mMainWidget->searchButton, SIGNAL(clicked()), this, SLOT(slotSearch()));
 	connect(mMainWidget->searchLine, SIGNAL(returnPressed()), this, SLOT(slotSearch()));
@@ -400,7 +400,7 @@ void HistoryDialog::slotFilterChanged(int /*index*/)
 	dateSelected(mMainWidget->dateListView->currentItem());
 }
 
-void HistoryDialog::slotOpenURLRequest(const KUrl &url, const KParts::URLArgs &/*args*/)
+void HistoryDialog::slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
 {
 	kDebug(14310) << k_funcinfo << "url=" << url.url();
 	new KRun(url, 0, false); // false = non-local files

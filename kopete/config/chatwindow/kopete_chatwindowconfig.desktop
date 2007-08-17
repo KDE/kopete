@@ -4,7 +4,7 @@ Icon=view-choose
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_chatwindowconfig
+X-KDE-Library=kcm_kopete_chatwindowconfig
 X-KDE-FactoryName=kcm_kopete_chatwindowconfig
 X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete

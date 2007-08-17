@@ -4,7 +4,7 @@ Icon=latex
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_latex
+X-KDE-Library=kcm_kopete_latex
 X-KDE-FactoryName=kcm_kopete_latex
 X-KDE-ParentApp=kopete_latex
 X-KDE-ParentComponents=kopete_latex

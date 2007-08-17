@@ -34,7 +34,7 @@ void CryptographyConfig::load()
 	KConfigGroup config(KGlobal::config(), "Cryptography Plugin");
 
 	mFingerprint = config.readEntry ("Private key fingerprint", "");
-	mAskPassphraseOnStartup = config.readEntry ("Ask for passphrase on startup", false);
+	mAskPassphraseOnStartup = config.readEntry ("Ask for passphrase on startup", true);
 	mCacheMode = (CryptographyConfig::CacheMode)config.readEntry ("Cache mode", (uint)CryptographyConfig::Close);
 	mCacheTime = config.readEntry ("Cache time", 15);
 }

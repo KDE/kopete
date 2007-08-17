@@ -269,7 +269,7 @@ void YahooChatTask::parseJoin( YMSGTransfer *t )
 		return;
 	} else if( !error.isEmpty() ) {
 		client()->notifyError( i18n("Chat could not be joined"), 
-				i18n("An unknown error occured joining the chat room."), Client::Error );
+				i18n("An unknown error occurred joining the chat room."), Client::Error );
 		return;
 	}
 

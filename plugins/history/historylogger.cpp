@@ -115,7 +115,7 @@ void HistoryLogger::setCurrentMonth(int month)
 QDomDocument HistoryLogger::getDocument(const Kopete::Contact *c, unsigned int month , bool canLoad , bool* contain)
 {
 	if(m_realMonth!=QDate::currentDate().month())
-	{ //We changed month, our indice are not correct anymore, clean memory.
+	{ //We changed month, our index is not correct anymore, clean memory.
 	  // or we will see what i called "the 31 midnight bug"(TM) :-)  -Olivier
 		m_documents.clear();
 		m_cachedMonth=-1;

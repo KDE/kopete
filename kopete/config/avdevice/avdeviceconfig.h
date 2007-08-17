@@ -18,20 +18,23 @@
 #ifndef AVDEVICECONFIG_H
 #define AVDEVICECONFIG_H
 
-#include "kcmodule.h"
-#include "videodevicepool.h"
+#include <kcmodule.h>
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qtimer.h>
 #include <config-kopete.h>
-#ifdef HAVE_GL
-# include <qgl.h>
-#endif
+
+#include "avdevice/videodevicepool.h"
+#include "ui_avdeviceconfig_videodevice.h"
+
+//#ifdef HAVE_GL
+//#include <qgl.h>
+//#endif
 
 class QTabWidget;
 
-class AVDeviceConfig_VideoDevice;
-class AVDeviceConfig_AudioDevice;
+//class Ui_AVDeviceConfig_VideoDevice;
+//class Ui_AVDeviceConfig_AudioDevice;
 
 /**
 @author Cláudio da Silveira Pinheiro
@@ -65,15 +68,15 @@ private slots:
 	void slotUpdateImage();
 private:
 	QTabWidget* mAVDeviceTabCtl;
-	AVDeviceConfig_VideoDevice  *mPrfsVideoDevice;
-	AVDeviceConfig_AudioDevice  *mPrfsAudioDevice;
+	Ui_AVDeviceConfig_VideoDevice  *mPrfsVideoDevice;
+//	AVDeviceConfig_AudioDevice  *mPrfsAudioDevice;
 	Kopete::AV::VideoDevicePool *mVideoDevicePool ;
 	QImage qimage;
 	QPixmap qpixmap;
 	QTimer qtimer;
 	void setVideoInputParameters();
 #ifdef HAVE_GL
-	QGLWidget m_video_gl;
+//	QGLWidget m_video_gl;
 #endif
 };
 

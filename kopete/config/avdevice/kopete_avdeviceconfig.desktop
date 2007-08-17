@@ -4,7 +4,7 @@ Icon=webcam
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_avdeviceconfig
+X-KDE-Library=kcm_kopete_avdeviceconfig
 X-KDE-FactoryName=kcm_kopete_avdeviceconfig
 X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete

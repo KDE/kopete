@@ -121,7 +121,8 @@ void ProfileTask::sendProfileUpdate()
 		}
 		capBuf.addGuid( oscar_caps[CAP_SENDFILE] ); // we can do filetransfers! :)
 		capBuf.addGuid( oscar_caps[CAP_UTF8] ); // we can send/receive UTF encoded messages
-		capBuf.addGuid( oscar_caps[CAP_KOPETE] ); // we are the borg, resistance is futile
+		// send version
+		capBuf.addGuid( client()->versionCap() );
 		capBuf.addGuid( oscar_caps[CAP_TYPING] ); // we know you're typing something to us!
 		capBuf.addGuid( oscar_caps[CAP_BUDDYICON] ); //can you take my picture?
 		capBuf.addGuid( oscar_caps[CAP_INTEROPERATE] ); //AIM can communicate with ICQ users and ICQ with AIM users.

@@ -715,7 +715,7 @@ void DisplayNameComponent::redraw()
 	QList<Kopete::Emoticons::Token> tokens;
 	QList<Kopete::Emoticons::Token>::const_iterator token;
 
-	clear(); // clear childs
+	clear(); // clear childen
 
 	tokens = Kopete::Emoticons::tokenizeEmoticons( d->text );
 	ImageComponent *ic;

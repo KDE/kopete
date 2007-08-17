@@ -81,13 +81,12 @@ void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArra
 		group = getFolder( group, sender );
 
 	if( pos == -1 ){
-		group.addBookmark( mgr, m_map[(KIO::TransferJob*)transfer].url.prettyUrl(), m_map[(KIO::TransferJob*)transfer].url.url() );
+		group.addBookmark( m_map[(KIO::TransferJob*)transfer].url.prettyUrl(), m_map[(KIO::TransferJob*)transfer].url.url() );
 		kDebug( 14501 ) << "failed to extract title from first data chunk";
 	}else {
-		group.addBookmark( mgr, rx.cap( 1 ).simplified(),
-						   m_map[(KIO::TransferJob*)transfer].url.url() );
+		group.addBookmark( rx.cap( 1 ).simplified(),
+                                   m_map[(KIO::TransferJob*)transfer].url.url() );
 	}
-	mgr->save();
 	mgr->emitChanged( group );
 	m_map.remove( (KIO::TransferJob*)transfer );
 	transfer->kill();
@@ -156,7 +155,8 @@ KBookmarkGroup BookmarksPlugin::getFolder( KBookmarkGroup group, QString folder 
 	if( bookmark.isNull() ){
 		KBookmarkManager *mgr = KBookmarkManager::userBookmarksManager();
 		//kDebug (14501) << "GetFolder:" << folder;
-		group = group.createNewFolder( mgr, folder, true);
+		group = group.createNewFolder( folder );
+                mgr->emitChanged(group);
 	}else {
 		group = bookmark.toGroup();
 	}

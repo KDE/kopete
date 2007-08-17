@@ -255,7 +255,7 @@ public:
 	 * commands for the given protocol. This method create the
 	 * required task for the given task type.
 	 *
-	 * If a task type is not availble in the protocol, just return
+	 * If a task type is not available in the protocol, just return
 	 * a null pointer, like the default implementation.
 	 *
 	 * Example of a implementation of createProtocolTask()

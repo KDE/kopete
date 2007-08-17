@@ -459,7 +459,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
         }
     }
 
-    //FIXME if we ensure that XmlContactStorage is still in memory when signal allPluginsLoaded is emited than
+    //FIXME if we ensure that XmlContactStorage is still in memory when signal allPluginsLoaded is emitted than
     // slotAllPluginsLoaded can be in this object with helper QStrings from MetaConctact ( nameSourcePID, nameSourceAID, nameSourceCID,
     // photoSourcePID, photoSourceAID, photoSourceCID ).
     metaContact->setPhotoSource( photoSourcePID, photoSourceAID, photoSourceCID );

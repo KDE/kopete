@@ -4,7 +4,7 @@ Icon=users
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_accountconfig
+X-KDE-Library=kcm_kopete_accountconfig
 X-KDE-FactoryName=kcm_kopete_accountconfig
 X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete

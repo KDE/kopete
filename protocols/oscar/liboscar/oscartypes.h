@@ -117,13 +117,7 @@ const Guid oscar_caps[] =
 	Guid( QLatin1String( "0946134D4C7F11D18222444553540000" ) ),
 
 	// CAP_KOPETE,
-	// last 4 bytes determine version
-	// NOTE change with each Kopete Release!
-	// first number, major version
-	// second number,  minor version
-	// third number, point version 100+
-	// fourth number,  point version 0-99
-	Guid( QByteArray::fromRawData( "Kopete ICQ  \0\xc\0\x1", 16 ) ),
+	Guid( QByteArray::fromRawData( "Kopete ICQ      ", 16 ) ),
 
 	// CAP_MARANDA
 	Guid( QLatin1String( "4d6972616e64614d0000000000000000" ) ),
