@@ -52,9 +52,9 @@
 
 #include "messengeraccount.h"
 #include "messengercontact.h"
-#include "ui_msneditaccountui.h"
-#include "msnnotifysocket.h"
-#include "msnprotocol.h"
+#include "ui_messengereditaccount.h"
+/*#include "msnnotifysocket.h"*/
+#include "messengerprotocol.h"
 
 // TODO: This was using KAutoConfig before, use KConfigXT instead.
 class MessengerEditAccountWidgetPrivate
