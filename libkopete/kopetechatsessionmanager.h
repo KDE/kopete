@@ -95,7 +95,7 @@ public:
 	 * create a new view for the manager.
 	 * only the manager should call this function
 	 */
-	KopeteView *createView( Kopete::ChatSession * , const QString &requestedPlugin = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+	KopeteView *createView( Kopete::ChatSession * , const QString &requestedPlugin = QString() );
 
 	/**
 	 * Post a new event. this will emit the @ref newEvent signal

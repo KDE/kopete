@@ -156,7 +156,7 @@ public slots:
 	 *
 	 * Note: this function is asynchronous; changes will not be instant.
 	 */
-	void set( const QString &pass = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+	void set( const QString &pass = QString() );
 
 	/**
 	 * Unconditionally clears the stored password

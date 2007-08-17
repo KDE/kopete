@@ -42,7 +42,7 @@ k_dcop:
 	QStringList contactFileProtocols(const QString &displayName);
 
 	/*void sendFile(const QString &displayName, const KUrl &sourceURL,
-		const QString &altFileName = QString::null, uint fileSize = 0);*/	//krazy:exclude=nullstrassign for old broken gcc
+		const QString &altFileName = QString(), uint fileSize = 0);*/
 
 	// FIXME: Do we *need* this one? Sounds error prone to me, because
 	// nicknames can contain parentheses too.
@@ -52,7 +52,7 @@ k_dcop:
 	/**
 	 * Open a chat to a contact, and optionally set some initial text
 	 */
-	QString messageContact( const QString &contactId, const QString &messageText = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+	QString messageContact( const QString &contactId, const QString &messageText = QString() );
 
 	/**
 	 * Describe the status of a contact by their metaContactId,
@@ -76,7 +76,7 @@ k_dcop:
 	 * @return Weather or not the contact was added successfully
 	 */
 	bool addContact( const QString &protocolName, const QString &accountId, const QString &contactId,
-		const QString &displayName, const QString &groupName = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+		const QString &displayName, const QString &groupName = QString() );
 
 	/**
 	 * return a list of alls accounts.

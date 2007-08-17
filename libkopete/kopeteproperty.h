@@ -66,7 +66,7 @@ class KOPETE_EXPORT PropertyTmpl
 		 **/
 		PropertyTmpl( const QString &key,
 			const QString &label,
-			const QString &icon = QString::null,	//krazy:exclude=nullstrassign for old broken gcc
+			const QString &icon = QString(),
 			PropertyOptions options = NoProperty);
 
 		/**

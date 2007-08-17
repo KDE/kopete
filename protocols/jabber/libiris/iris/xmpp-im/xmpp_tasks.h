@@ -403,7 +403,7 @@ namespace XMPP
 		JT_DiscoItems(Task *);
 		~JT_DiscoItems();
 	
-		void get(const Jid &, const QString &node = QString::null);	//krazy:exclude=nullstrassign for old broken gcc
+		void get(const Jid &, const QString &node = QString());
 		void get(const DiscoItem &);
 	
 		const DiscoList &items() const;
@@ -423,7 +423,7 @@ namespace XMPP
 		JT_DiscoInfo(Task *);
 		~JT_DiscoInfo();
 	
-		void get(const Jid &, const QString &node = QString::null, const DiscoItem::Identity = DiscoItem::Identity());	//krazy:exclude=nullstrassign for old broken gcc
+		void get(const Jid &, const QString &node = QString(), const DiscoItem::Identity = DiscoItem::Identity());
 		void get(const DiscoItem &);
 	
 		const DiscoItem &item() const;

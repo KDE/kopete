@@ -86,8 +86,8 @@ class KOPETE_EXPORT CommandHandler : public QObject
 		 * @param pix icon name, the icon will be shown in menus
 		 */
 		void registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
-			const QString &help = QString::null, uint minArgs = 0, int maxArgs = -1,	//krazy:exclude=nullstrassign for old broken gcc
-			const KShortcut &cut = KShortcut(), const QString &pix = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+			const QString &help = QString(), uint minArgs = 0, int maxArgs = -1,
+			const KShortcut &cut = KShortcut(), const QString &pix = QString() );
 
 		/**
 		 * \brief Register a command alias.
@@ -109,12 +109,12 @@ class KOPETE_EXPORT CommandHandler : public QObject
 		void registerAlias( QObject *parent,
 			const QString &alias,
 			const QString &formatString,
-			const QString &help = QString::null,	//krazy:exclude=nullstrassign for old broken gcc
+			const QString &help = QString(),
 			CommandType = SystemAlias,
 			uint minArgs = 0,
 			int maxArgs = -1,
 			const KShortcut &cut = KShortcut(),
-			const QString &pix = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+			const QString &pix = QString() );
 
 		/**
 		 * \brief Unregister a command.

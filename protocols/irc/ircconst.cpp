@@ -44,7 +44,7 @@ const QLatin1String REALNAME("RealName");
 
 namespace Properties {
 /*
-const ContactPropertyTmpl ChannelTopic(QLatin1String("channelTopic"), i18n("Topic"), QString::null, false, true );	//krazy:exclude=nullstrassign for old broken gcc
+const ContactPropertyTmpl ChannelTopic(QLatin1String("channelTopic"), i18n("Topic"), QString(), false, true );
 const ContactPropertyTmpl ChannelMembers(QLatin1String("channelMembers"), i18n("Members"));
 const ContactPropertyTmpl ChannelHomepage(QLatin1String("homePage"), i18n("Home Page"));
 

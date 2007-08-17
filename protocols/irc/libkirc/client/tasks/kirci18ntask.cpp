@@ -487,7 +487,7 @@ void I18nTask::numericReply_305(Event *e)
 {
 /*
 	Entity::Ptr self = this->self();
-	self->setAwayMessage(QString::null);	//krazy:exclude=nullstrassign for old broken gcc
+	self->setAwayMessage(QString());
 //	self->setModes("-a");
 	postServerEvent(e, i18n("You are no longer marked as being away."));
 */
@@ -939,8 +939,8 @@ void I18nTask::CtcpQuery_clientinfo(Event *e)
 			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
 			"ACTION.");
 
-//	writeCtcpReplyMessage(	e->message().prefix(), QString::null,	//krazy:exclude=nullstrassign for old broken gcc
-//				e->message().ctcpMessage().command(), QString::null, clientinfo);	//krazy:exclude=nullstrassign for old broken gcc
+//	writeCtcpReplyMessage(	e->message().prefix(), QString(),
+//				e->message().ctcpMessage().command(), QString(), clientinfo);
 }
 
 void I18nTask::CtcpQuery_dcc(Event *e)
@@ -1022,7 +1022,7 @@ void I18nTask::CtcpQuery_finger(Event * /*e*/)
 
 void I18nTask::CtcpQuery_ping(Event *e)
 {
-//	writeCtcpReplyMessage(	e->message().prefix(), QString::null,	//krazy:exclude=nullstrassign for old broken gcc
+//	writeCtcpReplyMessage(	e->message().prefix(), QString(),
 //				e->message().ctcpMessage().command(), e->message().ctcpMessage().arg(0));
 }
 
@@ -1063,23 +1063,23 @@ void I18nTask::CtcpReply_ping(Event *e)
 
 void I18nTask::CtcpQuery_source(Event *e)
 {
-//	writeCtcpReplyMessage(e->message().prefix(), QString::null,	//krazy:exclude=nullstrassign for old broken gcc
+//	writeCtcpReplyMessage(e->message().prefix(), QString(),
 //			      e->message().ctcpMessage().command(), m_SourceString);
 }
 
 void I18nTask::CtcpQuery_time(Event *e)
 {
-//	writeCtcpReplyMessage(e->message().prefix(), QString::null,	//krazy:exclude=nullstrassign for old broken gcc
+//	writeCtcpReplyMessage(e->message().prefix(), QString(),
 //			      e->message().ctcpMessage().command(), QDateTime::currentDateTime().toString(),
-//			      QString::null, false);	//krazy:exclude=nullstrassign for old broken gcc
+//			      QString(), false);
 }
 
 void I18nTask::CtcpQuery_userinfo(Event *e)
 {
 //	QString userinfo = m_UserString;
 
-//	writeCtcpReplyMessage(e->message().prefix(), QString::null,	//krazy:exclude=nullstrassign for old broken gcc
-//			      e->message().ctcpMessage().command(), QString::null, userinfo);	//krazy:exclude=nullstrassign for old broken gcc
+//	writeCtcpReplyMessage(e->message().prefix(), QString(),
+//			      e->message().ctcpMessage().command(), QString(), userinfo);
 }
 
 void I18nTask::CtcpQuery_version(Event *e)

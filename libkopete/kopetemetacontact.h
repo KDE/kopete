@@ -399,7 +399,7 @@ public slots:
 	 *                file size (such as over a socket)
 	 *
 	 */
-	void sendFile( const KUrl &sourceURL, const QString &altFileName = QString::null,	//krazy:exclude=nullstrassign for old broken gcc
+	void sendFile( const KUrl &sourceURL, const QString &altFileName = QString(),
 		unsigned long fileSize = 0L );
 
 	/**

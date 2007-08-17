@@ -242,7 +242,7 @@ void IRCUserContact::slotKick()
 {
 	Kopete::ContactPtrList members = mActiveManager->members();
 	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
-	kircEngine()->kick(m_nickName, channelName, QString::null);	//krazy:exclude=nullstrassign for old broken gcc
+	kircEngine()->kick(m_nickName, channelName, QString());
 }
 
 void IRCUserContact::contactMode(const QString &mode)

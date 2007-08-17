@@ -391,7 +391,7 @@ void ChatTextEditPart::historyDown()
 	
 	historyPos--;
 	
-	QString newText = ( historyPos >= 0 ? historyList[historyPos] : QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+	QString newText = ( historyPos >= 0 ? historyList[historyPos] : QString() );
 	
 	
 // 	TextFormat format=textEdit()->textFormat();

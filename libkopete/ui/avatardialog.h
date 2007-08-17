@@ -85,10 +85,10 @@ public:
 	 * This method will open the avatar dialog for the user to choose
 	 * an avatar.
 	 * @param parent Parent widget
-	 * @return The path of the selected avatar, or QString::null if no avatar
+	 * @return The path of the selected avatar, or QString() if no avatar
 	 * was chosen or if the Cancel button was pressed.
 	 */
-	static QString getAvatar(QWidget *parent = 0, const QString &currentAvatar = QString::null);	//krazy:exclude=nullstrassign for old broken gcc
+	static QString getAvatar(QWidget *parent = 0, const QString &currentAvatar = QString());
 
 Q_SIGNALS:
 	/**

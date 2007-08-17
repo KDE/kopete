@@ -16,7 +16,7 @@ k_dcop:
 	 * @param host 
 	 * @return a NetworkStatus::EnumStatus representing the state of the connection to the given host
 	 */
-	virtual int status( const QString & host = QString::null ) = 0;	//krazy:exclude=nullstrassign for old broken gcc
+	virtual int status( const QString & host = QString() ) = 0;
 	/**
 	 * Request a connection to the named host, registering the application's usage of this connection
 	 * @param host The hostname the client wants to connect to.

@@ -52,10 +52,10 @@ bool isHostReachable( const QString &host );
  * explanation, Kopete will use a default explanation.
  */
 void KOPETE_EXPORT notifyConnectionLost( const Account *account,
-                                         const QString caption = QString::null,	//krazy:exclude=nullstrassign for old broken gcc
-                                         const QString message = QString::null,	//krazy:exclude=nullstrassign for old broken gcc
-                                         const QString explanation = QString::null,	//krazy:exclude=nullstrassign for old broken gcc
-                                         const QString debugInfo = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+                                         const QString caption = QString(),
+                                         const QString message = QString(),
+                                         const QString explanation = QString(),
+                                         const QString debugInfo = QString() );
 
 
 /**
@@ -69,8 +69,8 @@ void KOPETE_EXPORT notifyConnectionLost( const Account *account,
  * explanation, Kopete will use a default explanation.
  */
 void KOPETE_EXPORT notifyCannotConnect( const Account *account,
-                                        const QString explanation = QString::null,	//krazy:exclude=nullstrassign for old broken gcc
-                                        const QString debugInfo = QString::null);	//krazy:exclude=nullstrassign for old broken gcc
+                                        const QString explanation = QString(),
+                                        const QString debugInfo = QString());
 
 } // end ns Utils
 } // end ns Kopete

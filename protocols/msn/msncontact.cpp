@@ -552,7 +552,7 @@ void MSNContact::sync( unsigned int changed )
 	//   we add the contact to the group #0 (the default one)
 	/*if(count==0)
 	{
-//		notify->addContact( contactId(), MSNProtocol::FL, QString::null, guid(), "0");	//krazy:exclude=nullstrassign for old broken gcc
+//		notify->addContact( contactId(), MSNProtocol::FL, QString(), guid(), "0");
 	}*/
 }
 

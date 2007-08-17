@@ -45,7 +45,7 @@ namespace XMPP
 			int type() const;
 
 			// for document open
-			QString nsprefix(const QString &s=QString::null) const;	//krazy:exclude=nullstrassign for old broken gcc
+			QString nsprefix(const QString &s=QString()) const;
 
 			// for document open / close
 			QString namespaceURI() const;

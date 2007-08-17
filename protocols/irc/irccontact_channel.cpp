@@ -463,7 +463,7 @@ void IRCChannelContact::failedChankey()
 	bool ok;
 	QString diaPassword = KInputDialog::getText( i18n( "IRC Plugin" ),
 		i18n( "Please enter key for channel %1: ").arg(m_nickName),
-		QString::null,	//krazy:exclude=nullstrassign for old broken gcc
+		QString(),
 		&ok );
 
 	if ( !ok )

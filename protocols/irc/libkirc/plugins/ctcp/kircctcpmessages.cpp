@@ -89,7 +89,7 @@ void StdCommands::CtcpRequest_dcc(const QString &nickname, const QString &fileNa
 	{
 		case Transfer::Chat:
 		{
-			writeCtcpQueryMessage(nickname, QString::null,	//krazy:exclude=nullstrassign for old broken gcc
+			writeCtcpQueryMessage(nickname, QString(),
 				QString::fromLatin1("DCC"),
 				QStringList(QString::fromLatin1("CHAT")) << QString::fromLatin1("chat") <<
 					m_sock->localAddress()->nodeName() << QString::number(port)
@@ -111,7 +111,7 @@ void StdCommands::CtcpRequest_dcc(const QString &nickname, const QString &fileNa
 
 			kDebug(14120) << "Starting DCC file outgoing transfer.";
 
-			writeCtcpQueryMessage(nickname, QString::null,	//krazy:exclude=nullstrassign for old broken gcc
+			writeCtcpQueryMessage(nickname, QString(),
 				QString::fromLatin1("DCC"),
 				QStringList(QString::fromLatin1("SEND")) << noWhiteSpace << ipNumber <<
 					QString::number(server->port()) << QString::number(file.size())
@@ -140,7 +140,7 @@ void StdCommands::CtcpRequest_ping(const QString &target)
 		else
 		 	timeReply = QString::number( time.tv_sec );
 
-		writeCtcpQueryMessage(	target, QString::null, "PING", timeReply);	//krazy:exclude=nullstrassign for old broken gcc
+		writeCtcpQueryMessage(target, QString(), "PING", timeReply);
 	}
 //	else
 //		((MessageRedirector *)sender())->error("failed to get current time");
@@ -148,6 +148,6 @@ void StdCommands::CtcpRequest_ping(const QString &target)
 
 void StdCommands::CtcpRequest_version(const QString &target)
 {
-//	writeCtcpQueryMessage(target, QString::null, "VERSION");	//krazy:exclude=nullstrassign for old broken gcc
+//	writeCtcpQueryMessage(target, QString(), "VERSION");
 }
 */

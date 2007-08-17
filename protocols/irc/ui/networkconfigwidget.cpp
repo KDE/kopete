@@ -359,7 +359,7 @@ void IRCNetworkConfigWidget::slotNewHost()
 	QString name = KInputDialog::getText(
 			i18n("New Host"),
 			i18n("Enter the hostname of the new server:"),
-			QString::null, &ok, UI::Global::mainWidget() );	//krazy:exclude=nullstrassign for old broken gcc
+			QString(), &ok, UI::Global::mainWidget() );
 	if ( ok )
 	{
 		// dupe check

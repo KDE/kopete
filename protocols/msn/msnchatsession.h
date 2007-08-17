@@ -42,7 +42,7 @@ public:
 	MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others );
 	~MSNChatSession();
 
-	void createChat( const QString &handle, const QString &address, const QString &auth, const QString &ID = QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+	void createChat( const QString &handle, const QString &address, const QString &auth, const QString &ID = QString() );
 
 	MSNSwitchBoardSocket *service() { return m_chatService; };
 

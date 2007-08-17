@@ -100,7 +100,7 @@ void AwayAction::slotSelectAway( int index )
 			break;
 		case 1:
 			bool ok;
-			awayReason = KInputDialog::getText( i18n( "New Away Message" ), i18n( "Please enter your away reason:" ) , QString::null , &ok );	//krazy:exclude=nullstrassign for old broken gcc
+			awayReason = KInputDialog::getText( i18n( "New Away Message" ), i18n( "Please enter your away reason:" ) , QString() , &ok );
 			if(!ok) //the user canceled
 				return;
 			if( !awayReason.isEmpty() )

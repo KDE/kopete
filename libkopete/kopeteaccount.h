@@ -291,7 +291,7 @@ public:
 	 * @param mode the mode used to add the contact. Use DontChangeKABC when deserializing.
 	 * @return the new created metacontact or 0L if the operation failed
 	 */
-	MetaContact* addContact( const QString &contactId, const QString &displayName = QString::null, Group *group = 0, AddMode mode = DontChangeKABC ) ;	//krazy:exclude=nullstrassign for old broken gcc
+	MetaContact* addContact( const QString &contactId, const QString &displayName = QString(), Group *group = 0, AddMode mode = DontChangeKABC );
 
 	/**
 	 * @brief Create a new contact, adding it to an existing metacontact

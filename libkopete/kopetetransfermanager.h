@@ -41,7 +41,7 @@ class KOPETE_EXPORT FileTransferInfo
 public:
 	enum KopeteTransferDirection { Incoming, Outgoing };
 
-	FileTransferInfo( Contact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString::null, const QPixmap &preview=QPixmap() );	//krazy:exclude=nullstrassign for old broken gcc
+	FileTransferInfo( Contact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString(), const QPixmap &preview=QPixmap() );
 	~FileTransferInfo() {}
 	unsigned int transferId() const { return mId; }
 	Contact* contact() const { return mContact; }
@@ -81,7 +81,7 @@ public:
 	 * @brief Adds a file transfer to the Kopete::TransferManager
 	 */
 	Transfer *addTransfer( Contact *contact, const QString& file, const unsigned long size, const QString &recipient , FileTransferInfo::KopeteTransferDirection di);
-	int askIncomingTransfer( Contact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, QString internalId=QString::null, const QPixmap &preview=QPixmap());	//krazy:exclude=nullstrassign for old broken gcc
+	int askIncomingTransfer( Contact *contact, const QString& file, const unsigned long size, const QString& description=QString(), QString internalId=QString(), const QPixmap &preview=QPixmap());
 	void removeTransfer( unsigned int id );
 
 	/**

@@ -114,7 +114,7 @@ public slots:
 	 * @param flags is a bitmask of SetOnlineStatusFlag
 	 */
 	void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
-						  const QString& awayMessage = QString::null, uint flags=0);	//krazy:exclude=nullstrassign for old broken gcc
+						  const QString& awayMessage = QString(), uint flags=0);
 
 	/**
 	 * \internal
