@@ -43,6 +43,7 @@ public:
 	 : connection(0)
 	{}
 
+	QString Compact3;
 	QPointer<ContactList> contactList;
 	HttpConnection *connection;
 };
@@ -63,9 +64,15 @@ FetchContactListJob::~FetchContactListJob()
 	delete d;
 }
 
+void FetchContactListJob::setCompact3(QString &Compact3)
+{
+	d->Compact3 = Compact3;
+}
+
 void FetchContactListJob::execute()
 {
 	Papillon::Internal::SharingServiceBinding *binding = new Papillon::Internal::SharingServiceBinding(d->connection, this);
+	binding->setTicketToken(d->Compact3);
 	connect(binding, SIGNAL(findMembershipResult(Papillon::Internal::FindMembershipResult *)), this, SLOT(bindingFindMembershipResult(Papillon::Internal::FindMembershipResult *)));
 
 	QTimer::singleShot(0, binding, SLOT(findMembership()));

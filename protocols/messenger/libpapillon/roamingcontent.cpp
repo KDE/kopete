@@ -1,5 +1,5 @@
 /*
-	addressbook.cpp: addressbook related class
+	roamingcontent.cpp: Windows Roaming content processing
 
     Copyright (c) 2007		by Zhang Panyong	        <pyzhang@gmail.com>
     Kopete    (c) 2002-2005 by the Kopete developers	<kopete-devel@kde.org>
@@ -13,13 +13,14 @@
     *                                                                       *
     *************************************************************************
 */
+#include "Papillon/RoamingContent"
 
 // Papillon includes
 #include "Papillon/Client"
-
-namespace Papillon 
+namespace Papillon
 {
-Class AddressBook::Private
+
+Class RoamingContent::Private
 {
 public:
 	Private()
@@ -32,29 +33,22 @@ public:
 	QPointer<Client> client;
 }
 
-AddressBook::AddressBook(Client *client)
+RoamingContent::RoamingContent(Client *client)
  : QObject(client), d(new Private)
 {
 	d->client = client;
 }
 
-AddressBook::~AddressBook()
+RoamingContent::~RoamingContent()
 {
 	delete d;
 }
 
-Client *AddressBook::client()
+Client *RoamingContent::client()
 {
 	return d->client;
 }
 
-void AddressBook::load()
-{
-	FetchAddressBookJob *fetchJob = new FetchAddressBookJob(this);
-	// FIXME:
-	connect(fetchJob, SIGNAL(finished(Papillon::FetchAddressBookJob*)), this, SIGNAL(AddressbookLoaded()));
-	fetchJob->execute();
 }
 
-}
 #include "addressbook.moc"

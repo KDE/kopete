@@ -39,6 +39,7 @@ public:
 	QString ssoMethod;
 	QString passportId;
 	QString password;
+	QHash<QString, QString > SecurityTokens;
 
 	HttpConnection *connection;
 	bool success;
@@ -193,7 +194,7 @@ void SSOHandler::parseToken(QDomElement & tokenElement)
 	while(!tNode.isNull())
 	{
 		QDomElement tElement = tNode.toElement();
-//		qDebug()<< "tElement"<< tElement.tagName();
+//		qDebug()<< Q_FUNC_INFO << "tElement"<< tElement.tagName();
 		if(tElement.tagName() == QLatin1String("RequestedSecurityToken"))
 		{
 			QDomNode binaryNode = tElement.firstChild();
@@ -204,9 +205,9 @@ void SSOHandler::parseToken(QDomElement & tokenElement)
 				{
 					QString idKey = binaryElement.attribute("Id");
 					QString data = binaryElement.text();
-					d->Tokens.insert(idKey, data);
-					qDebug()<< "Id" << idKey;
-					qDebug()<< "binaryToken"<<data;
+					d->SecurityTokens.insert(idKey, data);
+					qDebug()<< Q_FUNC_INFO<<"Id" << idKey;
+					qDebug()<< Q_FUNC_INFO<<"binaryToken"<<data;
 				}
 				else if(binaryElement.tagName() == QLatin1String("EncryptedData"))
 				{
@@ -214,11 +215,11 @@ void SSOHandler::parseToken(QDomElement & tokenElement)
 					while(!ciphNode.isNull())
 					{
 						QDomElement ciphElement = ciphNode.toElement();
-//						qDebug()<< "ciphData" << ciphElement.tagName();
+//						qDebug()<< Q_FUNC_INFO<<"ciphData" << ciphElement.tagName();
 						if(ciphElement.tagName() == QLatin1String("CipherData"))
 						{
 							QDomElement ciphValueElement = ciphElement.firstChild().toElement();
-							qDebug()<<"CiphValue"<< ciphValueElement.text();
+							qDebug()<< Q_FUNC_INFO << "CiphValue"<< ciphValueElement.text();
 						}
 						ciphNode = ciphNode.nextSibling();
 					}
@@ -232,7 +233,7 @@ void SSOHandler::parseToken(QDomElement & tokenElement)
 			QDomElement addrElement = endpointElement.firstChild().toElement();
 			if(addrElement.tagName() ==	QLatin1String("Address"))
 			{
-				qDebug() << "Address"<< addrElement.text();
+				qDebug() << Q_FUNC_INFO<< "Address"<< addrElement.text();
 			}
 		}
 		else if(tElement.tagName() == QLatin1String("LifeTime"))
@@ -243,11 +244,11 @@ void SSOHandler::parseToken(QDomElement & tokenElement)
 				QDomElement timeElement = timeNode.toElement();
 				if(timeElement.tagName() ==	QLatin1String("Created"))
 				{
-					qDebug() << "Created"<< timeElement.text();
+					qDebug() << Q_FUNC_INFO << "Created"<< timeElement.text();
 				}
 				if(timeElement.tagName() ==	QLatin1String("Expires"))
 				{
-					qDebug() << "Expires"<< timeElement.text();
+					qDebug() << Q_FUNC_INFO << "Expires"<< timeElement.text();
 				}
 				timeNode = timeNode.nextSibling();
 			}
@@ -264,7 +265,7 @@ void SSOHandler::parseTokens(QDomElement & tokensElement)
 	while(!tokenNode.isNull())
 	{
 		QDomElement tokenElement = tokenNode.toElement();
-//		qDebug() << "tokenElement"<< tokenElement.tagName();
+//		qDebug() << Q_FUNC_INFO << "tokenElement"<< tokenElement.tagName();
 		parseToken(tokenElement);
 		tokenNode = tokenNode.nextSibling();
 	}
@@ -318,18 +319,17 @@ void SSOHandler::emitResult(bool success)
 }
 
 /*derive keys*/
-QByteArray SSOHandler::derive_key(QByteArray sso_key, QString sso_magic)
+QByteArray SSOHandler::derive_key(QByteArray sso_key, QString &sso_magic)
 {
 	QCA::Base64 encoder;
 	QCA::SecureArray key(sso_key);
 
-	qDebug() << "=====================================";
-	qDebug() << "entering derive_key";
-	qDebug() << "key: " << QString(encoder.encode(sso_key).toByteArray());
-	qDebug() << "magic: "<< encoder.encodeString(sso_magic);
+	qDebug() << Q_FUNC_INFO << "entering derive_key";
+	qDebug() << Q_FUNC_INFO << "key: " << QString(encoder.encode(sso_key).toByteArray());
+	qDebug() << Q_FUNC_INFO << "magic: "<< encoder.encodeString(sso_magic);
 
 	if( !QCA::isSupported("hmac(sha1)") ) {
-		qDebug() << "HMAC(SHA1) not supported!";
+		qDebug() << Q_FUNC_INFO << "HMAC(SHA1) not supported!";
 		return NULL;
 	}
 
@@ -341,7 +341,7 @@ QByteArray SSOHandler::derive_key(QByteArray sso_key, QString sso_magic)
 	hmacObject.update(magic);
 	QCA::SecureArray resultArray = hmacObject.final();
 	QByteArray hash1 = resultArray.toByteArray();
-	qDebug() <<"hash1: "<< QString(encoder.encode(hash1).toByteArray());
+	qDebug() <<Q_FUNC_INFO<<"hash1: "<< QString(encoder.encode(hash1).toByteArray());
 
 	/*hash2*/
 	hmacObject.clear();
@@ -351,7 +351,7 @@ QByteArray SSOHandler::derive_key(QByteArray sso_key, QString sso_magic)
 	hmacObject.update(magic2);
 	resultArray = hmacObject.final();
 	QByteArray hash2 = resultArray.toByteArray();
-	qDebug() <<"hash2: "<< QString(encoder.encode(hash2).toByteArray());
+	qDebug() << Q_FUNC_INFO << "hash2: "<< QString(encoder.encode(hash2).toByteArray());
 
 	/*hash3*/
 	hmacObject.clear();
@@ -360,7 +360,7 @@ QByteArray SSOHandler::derive_key(QByteArray sso_key, QString sso_magic)
 	hmacObject.update(magic3);
 	resultArray = hmacObject.final();
 	QByteArray hash3 = resultArray.toByteArray();
-	qDebug() <<"hash3: "<< QString(encoder.encode(hash3).toByteArray());
+	qDebug() << Q_FUNC_INFO << "hash3: "<< QString(encoder.encode(hash3).toByteArray());
 
 	/*hash4*/
 	hmacObject.clear();
@@ -369,12 +369,11 @@ QByteArray SSOHandler::derive_key(QByteArray sso_key, QString sso_magic)
 	hmacObject.update(magic4);
 	resultArray = hmacObject.final();
 	QByteArray hash4 = resultArray.toByteArray();
-	qDebug() <<"hash4: "<< QString(encoder.encode(hash4).toByteArray());
+	qDebug() << Q_FUNC_INFO <<"hash4: "<< QString(encoder.encode(hash4).toByteArray());
 
 	QByteArray result = hash2+ hash4.left(4);
 
-	qDebug() << "finish derive_key...";
-	qDebug() << "=====================================";
+	qDebug() << Q_FUNC_INFO <<"finish derive_key...";
 	return result;
 }
 
@@ -392,7 +391,7 @@ QByteArray SSOHandler::getIVData()
 }
 
 /*mbi_encrypt */
-QString SSOHandler::mbi_encypt(QString key, QString nonce)
+QString SSOHandler::mbi_encypt(QString &key, QString &nonce)
 {
 	QCA::Base64 base64Object;
 	MessengerUserKey_t  msg_user_key;
@@ -406,18 +405,18 @@ QString SSOHandler::mbi_encypt(QString key, QString nonce)
 	msg_user_key.uHashLen		= sizeof (msg_user_key.aHashBytes);
 	msg_user_key.uCipherLen 	= sizeof (msg_user_key.aCipherBytes);
 
-	qDebug() << ("entering mbi_encypt...");
-	qDebug() << "key:"<<key;
-	qDebug() << "nonce:" << nonce;
+	qDebug() << Q_FUNC_INFO << "entering mbi_encypt..." ;
+	qDebug() << Q_FUNC_INFO << "key:"<<key;
+	qDebug() << Q_FUNC_INFO << "nonce:" << nonce;
 
 	QByteArray key1 = base64Object.decode(key.toLatin1()).toByteArray();
 
 	QByteArray key2 = derive_key(key1, 
 			"WS-SecureConversationSESSION KEY HASH");
-	qDebug() << "key2:" << QString(base64Object.encode(key2).toByteArray());
+	qDebug() << Q_FUNC_INFO << "key2:" << QString(base64Object.encode(key2).toByteArray());
 	QByteArray key3 = derive_key(key1, 
 			"WS-SecureConversationSESSION KEY ENCRYPTION");
-	qDebug() << "key3:" << QString(base64Object.encode(key3).toByteArray());
+	qDebug() << Q_FUNC_INFO << "key3:" << QString(base64Object.encode(key3).toByteArray());
 
 	/*compute hash*/
 	if( !QCA::isSupported("hmac(sha1)") ) {
@@ -431,7 +430,7 @@ QString SSOHandler::mbi_encypt(QString key, QString nonce)
 	hmacObject.update(magic);
 	QCA::SecureArray resultArray = hmacObject.final();
 	QByteArray hashArray = resultArray.toByteArray();
-	qDebug() << "hash:" << QString(base64Object.encode(hashArray).toByteArray());
+	qDebug() << Q_FUNC_INFO << "hash:" << QString(base64Object.encode(hashArray).toByteArray());
 
 	memcpy(&msg_user_key.aHashBytes, hashArray.data(), msg_user_key.uHashLen);
 	QString hash = QCA::arrayToHex(resultArray.toByteArray());
@@ -440,7 +439,7 @@ QString SSOHandler::mbi_encypt(QString key, QString nonce)
 	nonce = nonce + "\x08\x08\x08\x08\x08\x08\x08\x08";
 
 	if(!QCA::isSupported("tripledes-cbc")){
-		qDebug()<< "tripledes-cbc not supported!";
+		qDebug()<< Q_FUNC_INFO << "tripledes-cbc not supported!";
 		return NULL;
 	}
 	const QString provider("qca-ossl");
@@ -450,7 +449,7 @@ QString SSOHandler::mbi_encypt(QString key, QString nonce)
 	/*get a random IV key*/
 	QByteArray ivArray = getIVData();
 	memcpy(&msg_user_key.aIVBytes, ivArray.data(), msg_user_key.uIVLen);
-	qDebug() << "iv:" << QString(base64Object.encode(ivArray).toByteArray());
+	qDebug() << Q_FUNC_INFO << "iv:" << QString(base64Object.encode(ivArray).toByteArray());
 	QCA::InitializationVector iv( ivArray );
 
 	/*ciph*/
@@ -463,7 +462,7 @@ QString SSOHandler::mbi_encypt(QString key, QString nonce)
 			provider);
 	QByteArray ciphArray = desCipher.update(nonce.toLatin1()).toByteArray();
 	memcpy(&msg_user_key.aCipherBytes, ciphArray.data(), msg_user_key.uCipherLen);
-	qDebug() << "ciph:" << QString(base64Object.encode(ciphArray).toByteArray());
+	qDebug() << Q_FUNC_INFO << "ciph:" << QString(base64Object.encode(ciphArray).toByteArray());
 
 	QByteArray blob_array = QByteArray::fromRawData((char *)&msg_user_key, 
 														sizeof(msg_user_key));
@@ -471,9 +470,14 @@ QString SSOHandler::mbi_encypt(QString key, QString nonce)
 	return blob_base64;
 }
 
-QString SSOHandler::getToken(QString key)
+QString SSOHandler::getToken(const QString &key)
 {
-	return d->Tokens.value(key);
+	return d->SecurityTokens.value(key);
+}
+
+QHash<QString, QString> * SSOHandler::getSecurityTokens()
+{
+	return &(d->SecurityTokens);
 }
 
 QString SSOHandler::ticket()

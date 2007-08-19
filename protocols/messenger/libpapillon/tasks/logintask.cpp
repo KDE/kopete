@@ -42,8 +42,6 @@ public:
 
 	// Keep track of the expected transaction ID.
 	QString currentTransactionId;
-
-	QString ssoTicket;
 };
 
 LoginTask::LoginTask(Task *parent)
@@ -228,6 +226,8 @@ void LoginTask::ticketReceived(SSOHandler *ssoHandler)
 	if( ssoHandler->success() )
 	{
 		d->ssoTicket = ssoHandler->ticket();
+		//set securityTokens to client
+		connection()->client()->setSecurityTokens(ssoHandler->getSecurityTokens());
 		ssoHandler->deleteLater();
 
 		sendSSOConfirmation();

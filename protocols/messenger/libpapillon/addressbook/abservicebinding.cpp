@@ -94,6 +94,7 @@ public:
 	 : connection(0)
 	{}
 
+	QString TicketToken;
 	QString	abLastChange;
 	QString	gleamsLastChange;
 	//= KDateTime::fromString(str , KDateTime::ISODate);
@@ -117,7 +118,12 @@ ABServiceBinding::~ABServiceBinding()
 	delete d;
 }
 
-ABServiceBinding::setABLastChange(QString abLastChange)
+ABServiceBinding::setTicketToken(const QString &TicketToken)
+{
+	d->TicketToken = TicketToken;
+}
+
+ABServiceBinding::setABLastChange(QString &abLastChange)
 {
 	d->abLastChange = abLastChange;
 }
@@ -172,12 +178,13 @@ void ABServiceBinding::findAddressBook()
 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"
 	"<soap:Header>"
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"
-			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"
+			"<ApplicationId>996CDE1E-AA53-4477-B943-2BE802EA6166</ApplicationId>"
 			"<IsMigration>false</IsMigration>"
 			"<PartnerScenario>Initial</PartnerScenario>"
 		"</ABApplicationHeader>"
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"
+			"<TicketToken>%s</TicketToken>"
 		"</ABAuthHeader>"
 	"</soap:Header>"
 	"<soap:Body>"
@@ -187,7 +194,7 @@ void ABServiceBinding::findAddressBook()
 			"%s"
 		"</ABFindAll>"
 	"</soap:Body>"
-"</soap:Envelope>").args(abStr + gleamStr).toUtf8();
+"</soap:Envelope>").args(d->TicketToken).args(abStr + gleamStr).toUtf8();
 
 	transfer->setBody( soapData );
 
@@ -217,11 +224,41 @@ void ABServiceBinding::connectionReadyRead()
 		if( (!bodyElement.isNull()) && ( bodyElement.tagName() == QLatin1String("Body") ) )
 		{
 			QDomElement abElement = bodyElement.firstChild().toElement();
-			if( (!abElement.isNull()) && (abElement.tagName() == QLatin1String("ABFindAllResponse")) )
+			if( !abElement.isNull() )
 			{
-				parseABResult( abElement );
-			}
+				if( (abElement.tagName() == QLatin1String("ABFindAllResponse")) )
+				{
+					parseABResult( abElement );
+				}
+				else if(abElement.tagName() == QLatin1String("ABGroupAddResponse"))
+				{
 
+				}
+				else if(abElement.tagName() == QLatin1String("ABGroupDeleteResponse"))
+				{
+
+				}
+				else if(abElement.tagName() == QLatin1String("ABContactAddResponse"))
+				{
+
+				}
+				else if(abElement.tagName() == QLatin1String("ABContactDeleteResponse"))
+				{
+
+				}
+				else if(abElement.tagName() == QLatin1String("ABContactUpdateResponse"))
+				{
+
+				}
+				else if(abElement.tagName() == QLatin1String("ABGroupContactAddResponse"))
+				{
+
+				}
+				else if(abElement.tagName() == QLatin1String("ABGroupContactDeleteResponse"))
+				{
+
+				}
+			}
 		}
 		node = node.nextSibling();
 	}
@@ -795,6 +832,182 @@ AddressBook *ABServiceBinding:;parseAB(const QDomElement &abElement)
 		abServiceNode = abServiceNode.nextSibling();
 	}
 	return newAddressBook;
+}
+
+void ABServiceBinding::addGroup(QString &groupName)
+{
+	// Connect to server
+	connectToServer(d->server);
+
+	HttpTransfer *transfer = new HttpTransfer;
+	transfer->setRequest( QLatin1String("POST"), QLatin1String("/abservice/abservice.asmx") );
+	transfer->setContentType( QLatin1String("text/xml") );
+	transfer->setValue( QLatin1String("Host"), server );
+	transfer->setValue( QLatin1String("SOAPAction"), QLatin1String("http://www.msn.com/webservices/AddressBook/ABGroupAdd") );
+	transfer->setValue( QLatin1String("User-Agent"), QLatin1String("libpapillon") );
+	transfer->setValue( QLatin1String("Cookie"), d->connection->cookie() );
+
+	// TODO: Use Papillon Soap classes instead.
+	QByteArray soapData = QString::fromUtf8("<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>996CDE1E-AA53-4477-B943-2BE802EA6166</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>GroupSave</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest><TicketToken>%s</TicketToken></ABAuthHeader></soap:Header><soap:Body><ABGroupAdd xmlns=\"http://www.msn.com/webservices/AddressBook\"><abId>00000000-0000-0000-0000-000000000000</abId><groupAddOptions><fRenameOnMsgrConflict>false</fRenameOnMsgrConflict></groupAddOptions><groupInfo><GroupInfo><name>%s</name><groupType>C8529CE2-6EAD-434d-881F-341E17DB3FF8</groupType><fMessenger>false</fMessenger><annotations><Annotation><Name>MSN.IM.Display</Name><Value>1</Value></Annotation></annotations></GroupInfo></groupInfo></ABGroupAdd></soap:Body></soap:Envelope>").args(d->TicketToken).args(groupName).toUtf8();
+
+	transfer->setBody( soapData );
+
+	d->connection->write(transfer);
+}
+
+void ABServiceBinding::deleteGroup(QString &guid)
+{
+	// Connect to server
+	connectToServer(d->server);
+
+	HttpTransfer *transfer = new HttpTransfer;
+	transfer->setRequest( QLatin1String("POST"), QLatin1String("/abservice/abservice.asmx") );
+	transfer->setContentType( QLatin1String("text/xml") );
+	transfer->setValue( QLatin1String("Host"), server );
+	transfer->setValue( QLatin1String("SOAPAction"), QLatin1String("http://www.msn.com/webservices/AddressBook/ABGroupDelete") );
+	transfer->setValue( QLatin1String("User-Agent"), QLatin1String("libpapillon") );
+	transfer->setValue( QLatin1String("Cookie"), d->connection->cookie() );
+
+	// TODO: Use Papillon Soap classes instead.
+	QByteArray soapData = QString::fromUtf8("<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>996CDE1E-AA53-4477-B943-2BE802EA6166</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>Timer</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest><TicketToken>%s</TicketToken></ABAuthHeader></soap:Header><soap:Body><ABGroupDelete xmlns=\"http://www.msn.com/webservices/AddressBook\"><abId>00000000-0000-0000-0000-000000000000</abId><groupFilter><groupIds><guid>%s</guid></groupIds></groupFilter></ABGroupDelete></soap:Body></soap:Envelope>").args(d->TicketToken).args(guid).toUtf8();
+
+	transfer->setBody( soapData );
+
+	d->connection->write(transfer);
+}
+
+void ABServiceBinding::addContact(QString &contact)
+{
+	// Connect to server
+	connectToServer(d->server);
+
+	HttpTransfer *transfer = new HttpTransfer;
+	transfer->setRequest( QLatin1String("POST"), QLatin1String("/abservice/abservice.asmx") );
+	transfer->setContentType( QLatin1String("text/xml") );
+	transfer->setValue( QLatin1String("Host"), server );
+	transfer->setValue( QLatin1String("SOAPAction"), QLatin1String("http://www.msn.com/webservices/AddressBook/ABContactAdd") );
+	transfer->setValue( QLatin1String("User-Agent"), QLatin1String("libpapillon") );
+	transfer->setValue( QLatin1String("Cookie"), d->connection->cookie() );
+
+	// TODO: Use Papillon Soap classes instead.
+	QByteArray soapData = QString::fromUtf8("<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>996CDE1E-AA53-4477-B943-2BE802EA6166</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>ContactSave</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest><TicketToken>%s</TicketToken></ABAuthHeader></soap:Header><soap:Body><ABContactAdd xmlns=\"http://www.msn.com/webservices/AddressBook\"><abId>00000000-0000-0000-0000-000000000000</abId><contacts>%s</contacts><options><EnableAllowListManagement>true</EnableAllowListManagement></options></ABContactAdd></soap:Body></soap:Envelope>").args(d->TicketToken).args(contactStr).toUtf8();
+
+	transfer->setBody( soapData );
+
+	d->connection->write(transfer);
+}
+
+void ABServiceBinding::addContactToGroup(QString &contact, QString &guid)
+{
+	// Connect to server
+	connectToServer(d->server);
+
+	HttpTransfer *transfer = new HttpTransfer;
+	transfer->setRequest( QLatin1String("POST"), QLatin1String("/abservice/abservice.asmx") );
+	transfer->setContentType( QLatin1String("text/xml") );
+	transfer->setValue( QLatin1String("Host"), server );
+	transfer->setValue( QLatin1String("SOAPAction"), QLatin1String("http://www.msn.com/webservices/AddressBook/ABGroupContactAdd") );
+	transfer->setValue( QLatin1String("User-Agent"), QLatin1String("libpapillon") );
+	transfer->setValue( QLatin1String("Cookie"), d->connection->cookie() );
+
+	// TODO: Use Papillon Soap classes instead.
+	QByteArray soapData = QString::fromUtf8("<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>996CDE1E-AA53-4477-B943-2BE802EA6166</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>ContactSave</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest><TicketToken>%s</TicketToken></ABAuthHeader></soap:Header><soap:Body><ABGroupContactAdd xmlns=\"http://www.msn.com/webservices/AddressBook\"><abId>00000000-0000-0000-0000-000000000000</abId><groupFilter><groupIds><guid>%s</guid></groupIds></groupFilter><contacts>%s</contacts><groupContactAddOptions><fGenerateMissingQuickName>true</fGenerateMissingQuickName><EnableAllowListManagement>true</EnableAllowListManagement></groupContactAddOptions></ABGroupContactAdd></soap:Body></soap:Envelope>").args(d->TicketToken).args(contactStr).args(guid).toUtf8();
+
+	transfer->setBody( soapData );
+
+	d->connection->write(transfer);
+}
+
+void ABServiceBinding::deleteContact(QString &contact)
+{
+	// Connect to server
+	connectToServer(d->server);
+
+	HttpTransfer *transfer = new HttpTransfer;
+	transfer->setRequest( QLatin1String("POST"), QLatin1String("/abservice/abservice.asmx") );
+	transfer->setContentType( QLatin1String("text/xml") );
+	transfer->setValue( QLatin1String("Host"), server );
+	transfer->setValue( QLatin1String("SOAPAction"), QLatin1String("http://www.msn.com/webservices/AddressBook/ABContactDelete") );
+	transfer->setValue( QLatin1String("User-Agent"), QLatin1String("libpapillon") );
+	transfer->setValue( QLatin1String("Cookie"), d->connection->cookie() );
+
+	// TODO: Use Papillon Soap classes instead.
+	QByteArray soapData = QString::fromUtf8("<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>996CDE1E-AA53-4477-B943-2BE802EA6166</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>Timer</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest><TicketToken>%s</TicketToken></ABAuthHeader></soap:Header><soap:Body><ABContactDelete xmlns=\"http://www.msn.com/webservices/AddressBook\"><abId>00000000-0000-0000-0000-000000000000</abId><contacts>%s</contacts></ABContactDelete></soap:Body></soap:Envelope>").args(d->TicketToken).args(contactStr).toUtf8();
+
+	transfer->setBody( soapData );
+
+	d->connection->write(transfer);
+}
+
+void ABServiceBinding::deleteContactGroup(QString &contactId, QString &guId)
+{
+	// Connect to server
+	connectToServer(d->server);
+
+	HttpTransfer *transfer = new HttpTransfer;
+	transfer->setRequest( QLatin1String("POST"), QLatin1String("/abservice/abservice.asmx") );
+	transfer->setContentType( QLatin1String("text/xml") );
+	transfer->setValue( QLatin1String("Host"), server );
+	transfer->setValue( QLatin1String("SOAPAction"), QLatin1String("http://www.msn.com/webservices/AddressBook/ABGroupContactDelete") );
+	transfer->setValue( QLatin1String("User-Agent"), QLatin1String("libpapillon") );
+	transfer->setValue( QLatin1String("Cookie"), d->connection->cookie() );
+
+	// TODO: Use Papillon Soap classes instead.
+	QByteArray soapData = QString::fromUtf8("<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>996CDE1E-AA53-4477-B943-2BE802EA6166</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>ContactSave</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest><TicketToken>%s</TicketToken></ABAuthHeader></soap:Header><soap:Body><ABGroupContactDelete xmlns=\"http://www.msn.com/webservices/AddressBook\"><abId>00000000-0000-0000-0000-000000000000</abId><groupFilter><groupIds><guid>%s</guid></groupIds></groupFilter><contacts><Contact><contactId>%s</contactId></Contact></contacts><groupContactAddOptions><fGenerateMissingQuickName>true</fGenerateMissingQuickName><EnableAllowListManagement>true</EnableAllowListManagement></groupContactAddOptions></ABGroupContactDelete></soap:Body></soap:Envelope>").args(d->TicketToken).args(guId).args(conatctId).toUtf8();
+
+	transfer->setBody( soapData );
+
+	d->connection->write(transfer);
+}
+
+void ABServiceBinding::updateContact(QString &contactStr)
+{
+	// Connect to server
+	connectToServer(d->server);
+
+	HttpTransfer *transfer = new HttpTransfer;
+	transfer->setRequest( QLatin1String("POST"), QLatin1String("/abservice/abservice.asmx") );
+	transfer->setContentType( QLatin1String("text/xml") );
+	transfer->setValue( QLatin1String("Host"), server );
+	transfer->setValue( QLatin1String("SOAPAction"), QLatin1String("http://www.msn.com/webservices/AddressBook/ABContactUpdate") );
+	transfer->setValue( QLatin1String("User-Agent"), QLatin1String("libpapillon") );
+	transfer->setValue( QLatin1String("Cookie"), d->connection->cookie() );
+
+	// TODO: Use Papillon Soap classes instead.
+	QByteArray soapData = QString::fromUtf8(
+			"<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
+"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
+"<soap:Header>"\
+	"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+           "<ApplicationId>996CDE1E-AA53-4477-B943-2BE802EA6166</ApplicationId>"\
+           "<IsMigration>false</IsMigration>"\
+           "<PartnerScenario>Timer</PartnerScenario>"\
+       "</ABApplicationHeader>"\
+       "<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+           "<ManagedGroupRequest>false</ManagedGroupRequest>"\
+			"<TicketToken>%s</TicketToken>"
+       "</ABAuthHeader>"\
+   "</soap:Header>"\
+   "<soap:Body>"\
+       "<ABContactUpdate xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+           "<abId>00000000-0000-0000-0000-000000000000</abId>"\
+           "<contacts>"\
+               "<Contact xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+                   "<contactInfo>"\
+                       "<contactType>Me</contactType>"\
+                       "<displayName>%s</displayName>"\
+                  "</contactInfo>"\
+                   "<propertiesChanged>DisplayName</propertiesChanged>"\
+               "</Contact>"\
+           "</contacts>"\
+       "</ABContactUpdate>"\
+   "</soap:Body>"\
+"</soap:Envelope> "
+		).args(d->TicketToken).args(contactStr).toUtf8();
+
+	transfer->setBody( soapData );
+
+	d->connection->write(transfer);
 }
 
 }

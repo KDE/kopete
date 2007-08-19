@@ -117,6 +117,18 @@ public:
 	void setContentType(const QString &type);
 
 	/**
+	 * @brief Get the User Agent
+	 * @return the User-Agent if the key is present.
+	 */
+	QString userAgent() const;
+
+	/**
+	 * @brief Set the User Agent for the message.
+	 * @param type User-Agent 
+	 */
+	void setUserAgent(const QString &userAgent);
+
+	/**
 	 * @brief Get the charset.
 	 * @return the charset as a string.
 	 */

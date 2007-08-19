@@ -1,7 +1,9 @@
 /*
    mimeheader.cpp - Create/Manage a MIME header.
 
+   Copyright (c) 2007		by Zhang Panyong	        <pyzhang@gmail.com>
    Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
+   Kopete    (c) 2002-2005 by the Kopete developers	<kopete-devel@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -126,9 +128,20 @@ QString MimeHeader::contentType() const
 {
 	return value( QLatin1String("Content-Type") ).toString();
 }
+
 void MimeHeader::setContentType(const QString &contentType)
 {
 	setValue( QLatin1String("Content-Type"), contentType );
+}
+
+QString MimeHeader::userAgent() const
+{
+	return value( QLatin1String("User-Agent") ).toString();
+}
+
+void MimeHeader::setUserAgent(const QString &userAgent)
+{
+	setValue( QLatin1String("User-Agent"), userAgent);
 }
 
 QString MimeHeader::charset() const
@@ -147,6 +160,7 @@ QString MimeHeader::toString() const
 	QString result;
 	QHash<QString, QVariant> generateHash = d->hashMimeHeader;
 	QString currentKey = QLatin1String("MIME-Version");
+
 	// Always put MIME-Version and Content-Type first
 	if( hasKey(currentKey) )
 		result += QString("%1: %2\r\n").arg( currentKey ).arg( generateHash.take(currentKey).toString() );

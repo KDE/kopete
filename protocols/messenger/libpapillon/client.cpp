@@ -47,6 +47,9 @@ public:
 	Connector *connector;
 	Connection *notificationConnection;
 
+	//SecurityTokens
+	QHash <QString, QString> SecurityTokens;
+
 	//notification server
 	QString server;
 	quint16 port;
@@ -127,6 +130,11 @@ void Client::disconnectFromServer()
 	d->notificationConnection->disconnectFromServer();
 
 	setConnectionStatus( Client::Disconnected );
+}
+
+void Client::setSecurityTokens(const QHash<QString, QString> SecurityTokens)
+{
+	d->SecurityTokens = SecurityTokens;
 }
 
 void Client::setServer(const QString &server, quint16 port)
