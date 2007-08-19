@@ -90,11 +90,12 @@ class Transport : public QObject
 		void removeBridge(const Q_UINT32 id);
 		void sendAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
 		void sendBridgeAuthenticationKey(const QUuid& key, const Q_UINT32 bridgeId);
-		void sendCancelData(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
+		void sendCancelTransfer(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
 		void sendControlPacket(const Packet::Type type, const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
-		void sendFault(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
+		void sendError(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
 		void sendPacket(Packet* packet, const Q_UINT32 bridgeId);
-		void sendNonAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
+		void sendNegativeAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
+		void sendRequestForAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
 		void sendReset(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize);
 		void stopAllSends(const Q_UINT32 session);
 

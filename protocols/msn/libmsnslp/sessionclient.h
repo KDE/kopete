@@ -52,8 +52,8 @@ class SessionClient : public QObject
 
 		/** @brief Returns a value indicating whether the client is active. */
 		bool isActive() const;
-		/** @brief Creates a session to request the specified msn object. */
-		void requestObject(const QString& object);
+		/** @brief Creates a session to retrieve the specified msn object. */
+		void retrieveObject(const QString& object);
 		/** @brief Sends a gif image message to the peer endpoint. */
 		void sendImage(const QString& path);
 		/** @brief Creates a session to send the specified file. */
@@ -87,7 +87,7 @@ class SessionClient : public QObject
 		/** @brief Called when a session has been declined by the user. */
 		void onSessionDecline();
 		/** @brief Called when a session has ended. */
-		void onSessionEnd();
+		void onSessionEnd(const QString& info);
 		/** @brief Called when a session wants to send a message. */
 		void onSessionSendMessage(const QByteArray& bytes);
 		/** @brief Called when a session wants to send raw data. */
@@ -125,7 +125,7 @@ class SessionClient : public QObject
 		/** @brief Declines a session invitation. */
 		void declineSession(const Q_UINT32 sessionId);
 		/** @brief Terminates a session. */
-		void closeSession(const Q_UINT32 sessionId);
+		void closeSession(const Q_UINT32 sessionId, const QString& info);
 		/** @brief Ends a dialog transaction. */
 		void endTransaction(Transaction *transaction);
 		/** @brief Gets a dialog based on the call id.*/

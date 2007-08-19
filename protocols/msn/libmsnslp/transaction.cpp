@@ -65,7 +65,7 @@ void Transaction::confirm() const
 	d->transactionState = Transaction::Confirmed;
 	// Stop the transaction timeout timer.
 	d->timer->stop();
-	const Q_INT32 timeSpan = 82 * 600;
+	const Q_INT32 timeSpan = 195 * 600;
 	// Start the transaction timeout timer 2.
 	d->timer->start(timeSpan);
 }
@@ -132,7 +132,8 @@ void Transaction::onCheckTransactionTimeout()
 	// it is still in the calling state, or the transaction
 	// was not completed, raise the transaction
 	// timeout event.
-	if ((d->transactionState == Transaction::Calling) || (d->transactionState < Transaction::Completed))
+	if ((d->transactionState == Transaction::Calling) ||
+		(d->transactionState < Transaction::Completed))
 	{
 		// Signal that a transaction timeout has occured.
 		emit timeout();

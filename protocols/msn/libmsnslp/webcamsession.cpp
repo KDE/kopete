@@ -22,7 +22,7 @@ class WebcamSession::WebcamSessionPrivate
 {
 };
 
-WebcamSession::WebcamSession(const Q_UINT32 id, Direction direction, QObject *parent) : Session(id, direction, parent), d(new WebcamSessionPrivate())
+WebcamSession::WebcamSession(const Q_UINT32 id, DataTransferDirection direction, QObject *parent) : Session(id, direction, parent), d(new WebcamSessionPrivate())
 {
 }
 
@@ -31,9 +31,14 @@ WebcamSession::~WebcamSession()
 	delete d;
 }
 
+const Q_UINT32 WebcamSession::applicationId() const
+{
+	return 4;
+}
+
 void WebcamSession::handleInvite(const Q_UINT32 appId, const QByteArray& context)
 {
-	if (appId == 4)
+	if (appId == applicationId())
 	{
 		accept();
 	}

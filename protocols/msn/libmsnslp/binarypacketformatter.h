@@ -17,6 +17,7 @@
 #define CLASS_P2P__BINARYPACKETFORMATTER_H
 
 #include <qdatastream.h>
+#include <qglobal.h>
 #include "packet.h"
 
 namespace PeerToPeer
@@ -36,7 +37,7 @@ class BinaryPacketFormatter
 		static void serialize(QDataStream* stream, Packet* packet);
 
 	private:
-		BinaryPacketFormatter();
+		inline BinaryPacketFormatter(){}
 
 }; // BinaryPacketFormatter
 }

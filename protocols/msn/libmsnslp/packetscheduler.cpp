@@ -51,12 +51,13 @@ PacketScheduler::PacketScheduler(Transport *transport) : QObject(transport), d(n
 
 	// Control
 	QValueList<Q_UINT32> controlPacketClassTypes;
-	controlPacketClassTypes.append(Packet::NonAcknowledgeType);
-	controlPacketClassTypes.append(Packet::FaultType);
+	controlPacketClassTypes.append(Packet::NegativeAcknowledgeType);
+	controlPacketClassTypes.append(Packet::RequestForAcknowledgeType);
+	controlPacketClassTypes.append(Packet::ErrorType);
 	controlPacketClassTypes.append(Packet::ResetType);
-	controlPacketClassTypes.append(Packet::CancelType);
+	controlPacketClassTypes.append(Packet::CancelTransferType);
 	controlPacketClassTypes.append(Packet::AcknowledgeType);
-	controlPacketClassTypes.append(Packet::HandshakeNonceType);
+	controlPacketClassTypes.append(Packet::AuthenticationKeyType);
 
 	d->packetClasses[0] = controlPacketClassTypes;
 
@@ -98,13 +99,16 @@ void PacketScheduler::stop()
 	d->isRunning = false;
 }
 
-//BEGIN PacketScheduler Event Handling Functions
+//BEGIN Timer Event Handling Functions
 
-///////////////////////////////////////////////////////////////////////////////////
-// The packet scheduler uses a priority scheduling model whereby, it gives priority
-// to packets of a certain class and continues scheduling the packets in a FIFO
-// manner until the list becomes empty.
-///////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+// The packet scheduler uses a priority scheduling model whereby,
+// it gives priority to packets of a certain class and continues
+// scheduling these packets until the list of packets becomes
+// empty.  Priority is given to control and message packets which
+// are scheduled in a FIFO manner and DATA packets are scheduled
+// in a random manner.
+/////////////////////////////////////////////////////////////////
 void PacketScheduler::onSchedulePacketsToSend()
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
@@ -141,7 +145,7 @@ void PacketScheduler::onSchedulePacketsToSend()
 				Packet *chunkedPacket = packet;
 				// Get the next chunk of the packet to send.
 				packet = PacketChunker::getNextChunk(chunkedPacket, maxDataChunkSize);
-				// Check whether this is the last chunk of the chunked packet.
+				// Check whether this is the last chunk of the packet.
 				if (packet->header().offset + packet->header().payloadSize == packet->header().window)
 				{
 					// If so, remove the packet from the list.

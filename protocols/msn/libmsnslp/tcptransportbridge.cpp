@@ -334,11 +334,13 @@ void TcpTransportBridge::processPseudoHello()
 	d->socket->readBlock(preamble.data(), preamble.size());
 
 	kdDebug() << k_funcinfo << "Received " << preamble.size() << " bytes on socket "
-					<< d->socketId << endl;
+		<< d->socketId << endl;
 
-	if (preamble[0] == 0x66 && preamble[1] == 0x6f && preamble[2] == 0x6f && preamble[3] == 0x00)
+	if (preamble[0] == 0x66 && preamble[1] == 0x6f &&
+		preamble[2] == 0x6f && preamble[3] == 0x00)
 	{
-		kdDebug() << k_funcinfo << "preamble " << preamble << " -- connectivity verified" << endl;
+		kdDebug() << k_funcinfo << "preamble " << preamble
+			<< " -- connectivity verified" << endl;
 		d->connectivityVerified = true;
 	}
 	else
@@ -357,7 +359,8 @@ void TcpTransportBridge::sendPseudoHello()
 	stream.setByteOrder(QDataStream::LittleEndian);
 
 	QByteArray preamble(4);
-	preamble[0] = 0x66; preamble[1] = 0x6f; preamble[2] = 0x6f; preamble[3] = 0x00;
+	preamble[0] = 0x66; preamble[1] = 0x6f;
+	preamble[2] = 0x6f; preamble[3] = 0x00;
 
 	kdDebug() << k_funcinfo << "Sending preamble " << preamble
 	<< " on socket " << d->socketId << endl;

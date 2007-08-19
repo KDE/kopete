@@ -19,11 +19,6 @@
 namespace PeerToPeer
 {
 
-BinaryPacketFormatter::BinaryPacketFormatter()
-{}
-
-//BEGIN Static Functions
-
 Packet* BinaryPacketFormatter::deserialize(QDataStream* stream)
 {
 	Packet *packet = 0l;
@@ -99,16 +94,17 @@ void BinaryPacketFormatter::serialize(QDataStream* stream, Packet* packet)
 	{
 		// Get the packet payload.
 		QIODevice *payload = packet->payload();
-		// Seek to the beginning of the payload bytes.
-		payload->at(0);
-		QByteArray buffer(h.payloadSize);
-		// Read the packet payload bytes into the buffer.
-		payload->readBlock(buffer.data(), buffer.size());
-		// Write the packet payload bytes to the stream.
-		stream->writeRawBytes(buffer.data(), buffer.size());
+		if (payload != 0l)
+		{
+			// Seek to the beginning of the payload bytes.
+			payload->at(0);
+			QByteArray buffer(h.payloadSize);
+			// Read the packet payload bytes into the buffer.
+			payload->readBlock(buffer.data(), buffer.size());
+			// Write the packet payload bytes to the stream.
+			stream->writeRawBytes(buffer.data(), buffer.size());
+		}
 	}
 }
-
-//END
 
 }

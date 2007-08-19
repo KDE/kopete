@@ -32,14 +32,14 @@ class MsnObjectSession : public Session
 {
 	Q_OBJECT
 	Q_CLASSINFO("EUF-GUID", "A4268EEC-FEC5-49E5-95C3-F126696BDBF6")
-	Q_CLASSINFO("APP-ID",	"12")
 
 	public :
 		/** @brief Creates a new instance of the MsnObjectSession class. */
-		MsnObjectSession(const Q_UINT32 id, Direction direction, QObject *parent);
-		MsnObjectSession(const QString& s, const Q_UINT32 id, Direction direction, QObject *parent);
+		MsnObjectSession(const Q_UINT32 id, DataTransferDirection direction, QObject *parent);
+		MsnObjectSession(const QString& s, const Q_UINT32 id, DataTransferDirection direction, QObject *parent);
 		virtual ~MsnObjectSession();
-
+		/** @brief Gets the application id of the session. */
+		const Q_UINT32 applicationId() const;
 		virtual void handleInvite(const Q_UINT32 appId, const QByteArray& context);
 
 	protected:

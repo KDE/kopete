@@ -33,14 +33,16 @@ class Session : public QObject
 
 	public :
 		/** @brief Indicates which side of the communication the session is implemented on. */
-		enum Direction { Incoming, Outgoing };
+		enum DataTransferDirection { Incoming, Outgoing };
 		/** @brief Defines the states of a session during its lifecycle. */
 		enum SessionState { Created, Accepted, Declined, Established, Faulted, Terminated };
 
 	public :
 		virtual ~Session();
+		/** @brief Gets the application id of the session. */
+		virtual const Q_UINT32 applicationId() const = 0;
 		/** @brief Gets the direction of data flow for the communication. */
-		const Direction direction() const;
+		const DataTransferDirection direction() const;
 		/** @brief Gets the unique identifier for the session. */
 		const Q_UINT32 id() const;
 		/** @brief Gets the current state of the session. */
@@ -48,7 +50,7 @@ class Session : public QObject
 		/** @brief Handles a session invitation. */
 		virtual void handleInvite(const Q_UINT32 appId, const QByteArray& context) = 0;
 		/** @brief Ends a session. */
-		void end(bool sendBye=false);
+		void end(bool sendBye=false, const QString& info="");
 
 	public slots:
 		/** @brief Accepts a session. */
@@ -62,7 +64,7 @@ class Session : public QObject
 
 	protected:
 		/** @brief Creates a new instance of the Session class. */
-		Session(const Q_UINT32 id, Direction direction, QObject *parent);
+		Session(const Q_UINT32 id, DataTransferDirection direction, QObject *parent);
 
 		void fault();
 		/** @brief When overriden by a derived class, cancels a session. */
@@ -84,7 +86,7 @@ class Session : public QObject
 		/** @brief Indicates that a session has encountered a fault. */
 		void faulted();
 		/** @brief Indicates that a session has ended. */
-		void ended();
+		void ended(const QString& info="");
 		/** @brief Indicates that a session is ending. */
 		void ending();
 

@@ -20,14 +20,14 @@ namespace PeerToPeer
 class SessionNotifier::SessionNotifierPrivate
 {
 	public:
+		Q_UINT32 applicationId;
 		Q_UINT32 session;
-		Type type;
 };
 
-SessionNotifier::SessionNotifier(const Q_UINT32 session, const Type type, QObject *parent) : QObject(parent), d(new SessionNotifierPrivate())
+SessionNotifier::SessionNotifier(const Q_UINT32 session, const Q_UINT32 applicationId, QObject *parent) : QObject(parent), d(new SessionNotifierPrivate())
 {
 	d->session = session;
-	d->type = type;
+	d->applicationId = applicationId;
 }
 
 SessionNotifier::~SessionNotifier()
@@ -35,19 +35,14 @@ SessionNotifier::~SessionNotifier()
 	delete d;
 }
 
+const Q_UINT32 SessionNotifier::applicationId() const
+{
+	return d->applicationId;
+}
+
 const Q_UINT32 SessionNotifier::session() const
 {
 	return d->session;
-}
-
-void SessionNotifier::setType(const Type type)
-{
-	d->type = type;
-}
-
-const SessionNotifier::Type SessionNotifier::type() const
-{
-	return d->type;
 }
 
 void SessionNotifier::fireDataReceived(const QByteArray& data, bool lastChunk)

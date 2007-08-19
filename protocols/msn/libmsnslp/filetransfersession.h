@@ -34,12 +34,13 @@ class FileTransferSession : public Session
 {
 	Q_OBJECT
 	Q_CLASSINFO("EUF-GUID", "5D3E02AB-6190-11D3-BBBB-00C04F795683")
-	Q_CLASSINFO("APP-ID",	"2")
 
 	public :
 		/** @brief Creates a new instance of the FileTransferSession class. */
-		FileTransferSession(const Q_UINT32 id, Direction direction, Kopete::Contact *contact, QObject *parent);
+		FileTransferSession(const Q_UINT32 id, DataTransferDirection direction, Kopete::Contact *contact, QObject *parent);
 		virtual ~FileTransferSession();
+		/** @brief Gets the application id of the session. */
+		const Q_UINT32 applicationId() const;
 		/** @brief Handles a file transfer session invitation. */
 		virtual void handleInvite(const Q_UINT32 appId, const QByteArray& context);
 

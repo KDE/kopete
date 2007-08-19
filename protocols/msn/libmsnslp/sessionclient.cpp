@@ -48,6 +48,7 @@ namespace PeerToPeer
 class SessionClient::SessionClientPrivate
 {
 	public:
+		Q_UINT32 applicationId;
 		bool behindFirewall;
 		QString connectionType;
 		QMap<QUuid, Dialog*> dialogs;
@@ -76,11 +77,11 @@ SessionClient::SessionClient(const QMap<QString, QVariant> & properties, Kopete:
 	// TODO Get the firewall configuration settings of the computer.
 	d->behindFirewall = false; // Kopete::Network::NetworkUtils()::isSystemBehindFirewall();
 
+	d->connectionType = properties["connectionType"].toString();
 	d->externalIpAddress = properties["externalIpAddress"].toString();
 	d->internalIpAddress = properties["localIpAddress"].toString();
 	// Set the transport bridge types supported by the client.
 	d->supportedBridgeTypes = QString::fromLatin1("TCPv1");
-	d->connectionType = properties["connectionType"].toString();
 
 	// Configure the session client based on connection type.
 	if (d->connectionType.contains("NAT"))
@@ -98,6 +99,7 @@ SessionClient::SessionClient(const QMap<QString, QVariant> & properties, Kopete:
 		d->netId = 0;
 	}
 
+	d->applicationId = 0;
 	// Set the supported client/protocol version.
 	d->version = QString::fromLatin1("1.0");
 
@@ -124,7 +126,7 @@ SessionClient::~SessionClient()
 
 void SessionClient::initialize()
 {
-	SessionNotifier *notifier = new SessionNotifier(0, SessionNotifier::Normal, this);
+	SessionNotifier *notifier = new SessionNotifier(0, d->applicationId, this);
 	// Connect the signal/slot
 	QObject::connect(notifier, SIGNAL(messageReceived(const QByteArray&, const Q_INT32, const Q_INT32)), this,
 	SLOT(onReceived(const QByteArray&, const Q_INT32, const Q_INT32)));
@@ -133,7 +135,7 @@ void SessionClient::initialize()
 	// Register the notifier for the session client , session 0
 	d->transport->registerPort(notifier->session(), notifier);
 
-	notifier = new SessionNotifier(64, SessionNotifier::Normal, this);
+	notifier = new SessionNotifier(64, d->applicationId, this);
 	// Connect the signal/slot
 	QObject::connect(notifier, SIGNAL(messageReceived(const QByteArray&, const Q_INT32, const Q_INT32)), this,
 	SLOT(onImageReceived(const QByteArray&, const Q_INT32, const Q_INT32)));
@@ -210,14 +212,14 @@ void SessionClient::createSessionInternal(const QUuid& uuid, const Q_UINT32 sess
 
 //BEGIN Application Functions
 
-void SessionClient::requestObject(const QString& object)
+void SessionClient::retrieveObject(const QString& object)
 {
 	MsnObjectSession *session = new MsnObjectSession(object, nextSessionId(), Session::Incoming, this);
 	// Connect the signal/slot
 	QObject::connect(session, SIGNAL(objectReceived(const QString&, KTempFile*)), this,
 	SIGNAL(objectReceived(const QString&, KTempFile*)));
 
-	SessionNotifier *notifier = new SessionNotifier(session->id(), SessionNotifier::Object, this);
+	SessionNotifier *notifier = new SessionNotifier(session->id(), session->applicationId(), this);
 	// Connect the signal/slot
 	QObject::connect(notifier, SIGNAL(messageReceived(const QByteArray&, const Q_INT32, const Q_INT32)), session,
 	SLOT(onReceive(const QByteArray&, const Q_INT32, const Q_INT32)));
@@ -238,7 +240,7 @@ void SessionClient::requestObject(const QString& object)
 	const QString context = QString::fromUtf8(KCodecs::base64Encode(object.utf8()));
 
 	// Create the session to request the msn object.
-	createSessionInternal(eufguid, session->id(), 12, context);
+	createSessionInternal(eufguid, session->id(), session->applicationId(), context);
 }
 
 void SessionClient::sendFile(const QString& path)
@@ -252,7 +254,7 @@ void SessionClient::sendFile(const QString& path)
 	QFile *file = new QFile(path);
 	session->setDataStore(file);
 
-	SessionNotifier *notifier = new SessionNotifier(session->id(), SessionNotifier::FileTransfer, this);
+	SessionNotifier *notifier = new SessionNotifier(session->id(), session->applicationId(), this);
 	// Connect the signal/slot
 	QObject::connect(notifier, SIGNAL(messageAcknowledged(const Q_INT32)), session,
 	SLOT(onSend(const Q_INT32)));
@@ -299,7 +301,7 @@ void SessionClient::sendFile(const QString& path)
 	const QString context = QString::fromUtf8(KCodecs::base64Encode(info));
 
 	// Create the session to request the file transfer.
-	createSessionInternal(eufguid, session->id(), 2, context);
+	createSessionInternal(eufguid, session->id(), session->applicationId(), context);
 }
 
 //END
@@ -557,7 +559,7 @@ void SessionClient::onDialogEstablish()
 		{
 			// Request a direct connection because we want to
 			// transfer the session data efficiently.
-			requestDirectConnection(dialog->session);
+// 			requestDirectConnection(dialog->session);
 		}
 
 		// Try to retrieve the session associated with the dialog.
@@ -565,8 +567,8 @@ void SessionClient::onDialogEstablish()
 		if (session != 0l)
 		{
 			// Connect the signal/slot.
-			QObject::connect(session, SIGNAL(ended()), this,
-			SLOT(onSessionEnd()));
+			QObject::connect(session, SIGNAL(ended(const QString&)), this,
+			SLOT(onSessionEnd(const QString&)));
 			QObject::connect(session, SIGNAL(sendMessage(const QByteArray&)), this,
 			SLOT(onSessionSendMessage(const QByteArray&)));
 			QObject::connect(session, SIGNAL(sendData(const QByteArray&)), this,
@@ -718,7 +720,7 @@ SlpRequest SessionClient::buildRequest(const QString& method, const QString& con
 	// Set the request headers
 	headers["To"] = QString("<msnmsgr:%1>").arg(d->peerUri);
 	headers["From"] = QString("<msnmsgr:%1>").arg(d->myUri);
-	headers["Via"] = QString("MSNSLP/1.0/TLP ;branch=%1").arg(QUuid::createUuid().toString().upper());
+	headers["Via"] = QString("MSNSLP/%1/TLP ;branch=%2").arg(d->version, QUuid::createUuid().toString().upper());
 	headers["CSeq"] = 0;
 	headers["Call-ID"] = dialog->callId().toString().upper();
 	headers["Max-Forwards"] = 0;
@@ -793,7 +795,7 @@ void SessionClient::declineSession(const Q_UINT32 sessionId)
 	dialog->terminate(5000);
 }
 
-void SessionClient::closeSession(const Q_UINT32 sessionId)
+void SessionClient::closeSession(const Q_UINT32 sessionId, const QString& info)
 {
 	Dialog *dialog = getDialogBySessionId(sessionId);
 	if (dialog == 0l)
@@ -802,10 +804,19 @@ void SessionClient::closeSession(const Q_UINT32 sessionId)
 	// Set the dialog's state to terminating.
 	dialog->setState(Dialog::Terminating);
 
+	const QString CrLf = QString::fromLatin1("\r\n");
+
 	// Build the BYE request.
 	SlpRequest request = buildRequest("BYE", "application/x-msnmsgr-sessionclosebody", dialog);
 	// Create the request body.
-	const QString requestBody = QString("SessionID: %1\r\n\r\n").arg(sessionId);
+	QString requestBody;
+	QTextStream stream(requestBody, IO_WriteOnly);
+	stream << QString::fromLatin1("SessionID: ") << sessionId << CrLf;
+	if (!info.isNull() || !info.isEmpty())
+		stream << info << CrLf;
+
+	stream << CrLf;
+
 	// Set the request body.
 	request.setBody(requestBody);
 	//Set the request context information.
@@ -1180,8 +1191,8 @@ void SessionClient::onDirectConnectionSetupRequest(const SlpRequest& request)
 		SlpResponse response;
 		// Check the peer's direct connectivity parameters and ours to determine
 		// whether we can establish a direct connection.
-		bool allowDirect = supportsDirectConnectivity(connectionType, behindFirewall, upnpNatPresent);
-		if (allowDirect && supportedBridgeTypes.contains("TCPv1"))
+		bool allowDirectConnectivity = supportsDirectConnectivity(connectionType, behindFirewall, upnpNatPresent);
+		if (false && allowDirectConnectivity && supportedBridgeTypes.contains("TCPv1"))
 		{
 			// If the peer's connectivity scheme is good enough to establish
 			// a direct connection, accept the direct connection setup request.
@@ -1230,7 +1241,8 @@ bool SessionClient::isMyDirectConnectionSetupRequestLoser(Dialog *dialog, const 
 		const Q_INT32 peerNetId = regex.cap(1).toInt();
 
 		// TODO What happens if peers are on the same network; i.e. have same public ip addresses
-		// NOTE Not sure if this is the correct way to evaluate who drops their request.
+		// NOTE Not sure if this is the correct way to evaluate who drops their request. Perhaps
+		// we can use the unique CID instead.
 
 		// Compare the peer's Net ID to ours.
 		isMyRequestLoser = (d->netId < peerNetId);
@@ -1667,7 +1679,7 @@ Session* SessionClient::createSession(const Q_UINT32 sessionId, const QUuid& uui
 	if (uuid == QUuid(MsnObjectSession::staticMetaObject()->classInfo("EUF-GUID")))
 	{
 		session = new MsnObjectSession(sessionId, Session::Outgoing, this);
-		notifier = new SessionNotifier(session->id(), SessionNotifier::Object, this);
+		notifier = new SessionNotifier(session->id(), session->applicationId(), this);
 		// Connect the signal/slot
 		QObject::connect(notifier, SIGNAL(messageReceived(const QByteArray&, const Q_INT32, const Q_INT32)), session,
 		SLOT(onReceive(const QByteArray&, const Q_INT32, const Q_INT32)));
@@ -1678,7 +1690,7 @@ Session* SessionClient::createSession(const Q_UINT32 sessionId, const QUuid& uui
 	if (uuid == QUuid(FileTransferSession::staticMetaObject()->classInfo("EUF-GUID")))
 	{
 		session = new FileTransferSession(sessionId, Session::Incoming, d->peer, this);
-		notifier = new SessionNotifier(session->id(), SessionNotifier::FileTransfer, this);
+		notifier = new SessionNotifier(session->id(), session->applicationId(), this);
 		// Connect the signal/slot
 		QObject::connect(notifier, SIGNAL(dataReceived(const QByteArray&, bool)), session,
  		SLOT(onDataReceived(const QByteArray&, bool)));
@@ -2229,13 +2241,13 @@ void SessionClient::onSessionDecline()
 	}
 }
 
-void SessionClient::onSessionEnd()
+void SessionClient::onSessionEnd(const QString& info)
 {
 	const Session *session = dynamic_cast<const Session*>(sender());
 	if (session != 0l)
 	{
 		// Send a session end notification to the peer endpoint.
-		closeSession(session->id());
+		closeSession(session->id(), info);
 	}
 }
 

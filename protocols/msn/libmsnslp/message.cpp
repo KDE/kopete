@@ -33,17 +33,13 @@ Message::Message(const QString& version) : d(new MessagePrivate())
 	d->version = version;
 }
 
-Message::Message(const Message& other) : d(new MessagePrivate())
+Message::Message(const Message& other) : d(new MessagePrivate(*other.d))
 {
-	*this = other;
 }
 
 Message & Message::operator=(const Message& other)
 {
-	d->body = other.body();
-	d->context = other.context();
-	d->headers = other.headers();
-	d->version = other.version();
+	*d = *other.d;
 	return *this;
 }
 

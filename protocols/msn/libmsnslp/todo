@@ -1,10 +1,24 @@
 TODO
 
-- direct connection TCPv1 and UDPv1
-- file transfer resumes
-  Adds the following message headers to the initial invite 200 OK response
-  Transfer-Resume: true
-  Data-Offset: [bytes received]
-- media sessions
-  - video (webcam)
-  - audio
+[sessionclient]
+- fix hashed nonce support
+- add AvatarEUF (manages object retrieval)
+- add P4EUF (manages file transfers, webcam, remote desktop)
+- add better direct connection TCPv1 and TRUDPv1 support
+- add file transfer resumes
+  Adds the following message header to the initial invite 200 OK response
+  Transfer-Resume: true; offset: \d+
+- add better session cancelling support
+- add no timeout for file transfer, webcam invitations
+
+[transport]
+- add packet inspector class
+- add better packet scheduler
+- fix hashed nonce bridge authentication key support
+- add transport listener class (one per transport layer)
+- add better error handling
+- add better control packet handling support
+- verify application id on packet receipt
+
+[utilities]
+- upnp nat port mapper

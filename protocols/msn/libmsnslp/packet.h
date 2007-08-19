@@ -22,47 +22,52 @@ namespace PeerToPeer
 {
 
 /**
- * @brief Represents a transport layer packet.
+ * @brief Represents the unit of communication between transports.
  *
  * @author Gregg Edghill <gregg.edghill@gmail.com>
  */
 class Packet
 {
 	public:
-		/** @brief Represents the types of packets that can be sent via a transport. */
+		/** @brief Defines the types of packets that can be sent via a transport. */
 		enum Type
 		{
-			// Indicates message data.  Data should be buffered
+			// Represents the data type for a message.  Data should be buffered
 			// until all data is received before delivering to the
 			// session client.
 			MessageDataType = 0x00,
-			// Indicates that the last message packet was not received.
-			RetransmitType = 0x01,
-			// Indicates that the last message packet was received.
+			// Used to indicate that the receiving node did not receive
+			// the expected message/data packet in the sequence,
+			// and therefore message/data was received out of order.
+			NegativeAcknowledgeType = 0x01,
+			// Used to indicate that the receiving node successfully
+			// received the entire message data packet.
 			AcknowledgeType = 0x02,
-			// Indicates that a timeout has occurred at the receiver
-			// due to the absence of a response ACK from the sender.
-			NonAcknowledgeType = 0x04,
-			// Indicates that an error has occurred.
-			FaultType = 0x08,
-			// Indicates PUSHed object data.  Data should be delivered
-			// to the application upon arrival and not buffered until
+			// Used to indicate that no ACK was received by the sending
+			// node for transmitted message data; thus, the sending
+			// node is requesting that the receiving node indicate
+			// whether it received the message data successfully.
+			RequestForAcknowledgeType = 0x04,
+			// Used to ungracefully end all data transfers.
+			// Sometime really bad must have happened.
+			ResetType = 0x08,
+			// PUSHed object data.  Data should be delivered to the
+			// application upon arrival and not buffered until
 			// all data is received.
 			ObjectDataType = 0x20,
-			// Indicates that the sender cancelled the data exchange.
-			CancelType = 0x40,
-			// Used to ungracefully end all data exchanges.
-			// Some really bad must have happened.
-			ResetType = 0x80,
-			// Indicates a direct connection handshake nonce.
-			HandshakeNonceType = 0x100,
-			// Indicates PUSHed file data.  Data should be delivered
-			// to the application upon arrival and not buffered until
+			// Used to indicate that the sending node has cancelled a data transfer.
+			CancelTransferType = 0x40,
+			// Indicates that an error has occurred.
+			ErrorType = 0x80,
+			// Indicates a direct connection authentication key.
+			AuthenticationKeyType = 0x100,
+			// PUSHed file data.  Data should be delivered to the
+			// application upon arrival and not buffered until
 			// all data is received.
 			FileDataType = 0x1000000 | 0x30
 		};
 
-		/** @brief Represents the content of a packet header. */
+		/** @brief Defines the structure of a packet header. */
 		struct Header
 		{
 			// Indicates the destination port.

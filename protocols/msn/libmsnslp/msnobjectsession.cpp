@@ -35,11 +35,11 @@ class MsnObjectSession::MsnObjectSessionPrivate
 		QString object;
 };
 
-MsnObjectSession::MsnObjectSession(const Q_UINT32 id, Direction direction, QObject *parent) : Session(id, direction, parent), d(new MsnObjectSessionPrivate())
+MsnObjectSession::MsnObjectSession(const Q_UINT32 id, DataTransferDirection direction, QObject *parent) : Session(id, direction, parent), d(new MsnObjectSessionPrivate())
 {
 }
 
-MsnObjectSession::MsnObjectSession(const QString& s, const Q_UINT32 id, Direction direction, QObject *parent) : Session(id, direction, parent), d(new MsnObjectSessionPrivate())
+MsnObjectSession::MsnObjectSession(const QString& s, const Q_UINT32 id, DataTransferDirection direction, QObject *parent) : Session(id, direction, parent), d(new MsnObjectSessionPrivate())
 {
 	d->object = s;
 
@@ -84,9 +84,14 @@ MsnObjectSession::~MsnObjectSession()
 	delete d;
 }
 
+const Q_UINT32 MsnObjectSession::applicationId() const
+{
+	return 12;
+}
+
 void MsnObjectSession::handleInvite(const Q_UINT32 appId, const QByteArray& context)
 {
-	if (appId == 1 || appId == 12)
+	if (appId == 1 || appId == applicationId())
 	{
 		QDomDocument document;
 		d->object = QString::fromUtf8(context.data(), context.size());

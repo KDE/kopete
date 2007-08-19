@@ -23,12 +23,12 @@ class Session::SessionPrivate
 	public:
 		SessionPrivate() : state(Session::Created) {}
 
-		Direction direction;
+		DataTransferDirection direction;
 		Q_UINT32 id;
 		SessionState state;
 };
 
-Session::Session(const Q_UINT32 id, Direction direction, QObject *parent) : QObject(parent), d(new SessionPrivate())
+Session::Session(const Q_UINT32 id, DataTransferDirection direction, QObject *parent) : QObject(parent), d(new SessionPrivate())
 {
 	d->id = id;
 	d->direction = direction;
@@ -39,7 +39,7 @@ Session::~Session()
 	delete d;
 }
 
-const Session::Direction Session::direction() const
+const Session::DataTransferDirection Session::direction() const
 {
 	return d->direction;
 }
@@ -107,7 +107,7 @@ void Session::decline()
 	}
 }
 
-void Session::end(bool sendBye)
+void Session::end(bool sendBye, const QString& info)
 {
 	if (d->state == Session::Terminated)
 	{
@@ -122,7 +122,7 @@ void Session::end(bool sendBye)
 	if (sendBye)
 	{
 		// Signal that the session has ended.
-		emit ended();
+		emit ended(info);
 	}
 }
 

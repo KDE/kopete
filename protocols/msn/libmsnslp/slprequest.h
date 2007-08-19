@@ -27,7 +27,7 @@ namespace PeerToPeer
  */
 class SlpRequest : public SlpMessage
 {
-	public :
+	public:
 		/** @brief Creates a new instance of the SlpRequest class. */
 		SlpRequest(const QString& version="1.0");
 		SlpRequest(const QString& method, const QString& requestUri, const QString& version="1.0");

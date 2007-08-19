@@ -35,7 +35,8 @@ namespace PeerToPeer
 class Transport::TransportPrivate
 {
 	public:
-		TransportPrivate() : currentBridgeId(0), defaultBridgeId(2), directlyConnected(false), nextBridgeId(64), transportType(Transport::None) {}
+		TransportPrivate() : currentBridgeId(0), defaultBridgeId(2), directlyConnected(false),
+			nextBridgeId(64), transportType(Transport::None) {}
 
 		QMap<Q_UINT32, TransportBridge*> bridges;
 		QMap<Q_UINT32, QBuffer*> buffers;
@@ -435,7 +436,7 @@ void Transport::sendBridgeAuthenticationKey(const QUuid& key, const Q_UINT32 bri
 	// Set the payload size of the packet.
 	h.payloadSize = h.window;
 	// Set the type of the packet.
-	h.type = (Q_UINT32)Packet::HandshakeNonceType;
+	h.type = (Q_UINT32)Packet::AuthenticationKeyType;
 	// Set the correlation info of the packet.
 	h.lprcvd = lprcvd;
 	h.lpsent = lpsent;
@@ -462,8 +463,8 @@ void Transport::onBridgeConnect()
 		// a switchboard bridge or a direct transport bridge.
 		if (bridge->inherits("PeerToPeer::DirectTransportBridge"))
 		{
-			// If the transport bridge is a direct bridge, we need to send
-			// the handshake nonce to authenticate the use of the bridge.
+			// If the transport bridge is a direct bridge, we need to send the
+			// authentication key to authenticate the use of the bridge.
 
 			QUuid nonceKey;
 			QMap<QString, QVariant> & transportInfo = d->transportInfo[bridge->id()];
@@ -539,8 +540,8 @@ void Transport::onBridgeError()
 void Transport::onBridgeAuthenticationKeyReceive(const QUuid& nonce, const Q_UINT32 bridgeId)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
-	// Determine whether the handshake nonce was received via the
-	// default (switchboard) bridge or via a direct bridge.
+	// Determine whether the authentication key (nonce) was received
+	// via the default (switchboard) bridge or via a direct bridge.
 	if (bridgeId == d->defaultBridgeId)
 	{
 		// If the nonce was received via the switchboard bridge,
@@ -554,30 +555,30 @@ void Transport::onBridgeAuthenticationKeyReceive(const QUuid& nonce, const Q_UIN
 		// Otherwise, get the handshake nonce associated with the direct bridge.
 
 		QUuid expectedKey;
-		QUuid peerKey;
+		QUuid sentKey;
 
 		QMap<QString, QVariant> & transportInfo = d->transportInfo[bridgeId];
-		// Check whether hashed nonce is supported
+		// Check whether hashing of the nonce is supported
 		bool supportsHashedNonce = transportInfo.contains("Hashed-Nonce");
 
 		if (false && supportsHashedNonce)
 		{
-			// The bridge authentication scheme supports hashed nonce key.
+			// The bridge authentication scheme supports hashed nonce keys.
 			kdDebug() << k_funcinfo << "Bridge " << bridgeId << " supports hashed nonce." << endl;
 			// Retrieve the expected authentication key.
 			expectedKey = QUuid(transportInfo["Hashed-Nonce"].toString());
-			// Hash the peer's bridge authentication key.
-			peerKey = CryptoHelper::hashNonce(nonce);
+			// Hash the sent authentication key.
+			sentKey = CryptoHelper::hashNonce(nonce);
 		}
 		else
 		{
 			// Retrieve the expected authentication key.
 			expectedKey = QUuid(transportInfo["Nonce"].toString());
 			// Set the nonce key sent by the peer.
-			peerKey = nonce;
+			sentKey = nonce;
 		}
 
-		if (peerKey == expectedKey)
+		if (sentKey == expectedKey)
 		{
 			// If the key received is the same as that assigned to
 			// the bridge, then we have successfully authenticated
@@ -586,13 +587,13 @@ void Transport::onBridgeAuthenticationKeyReceive(const QUuid& nonce, const Q_UIN
 
 			kdDebug() << k_funcinfo << "Bridge " << bridgeId << " is now authenticated." << endl;
 			// Move the current bridge's packet list to the newly
-			// authenticated bridge's list.
+			// authenticated bridge's packet list.
 			movePacketsBetweenBridges(d->currentBridgeId, bridgeId);
 		}
 		else
 		{
-			// Otherwise, the authentication handshake failed.
-			kdDebug() << k_funcinfo << "Got nonce " << peerKey.toString().upper() << " excepted "
+			// Otherwise, the authentication failed.
+			kdDebug() << k_funcinfo << "Got nonce " << sentKey.toString().upper() << " excepted "
 			<< expectedKey.toString().upper() <<  ".  Disconnecting bridge " << bridgeId << endl;
 
 			// Disconnect the transport bridge.
@@ -638,21 +639,32 @@ void Transport::onReceive(const QByteArray& datachunk)
 	// TODO inspect packet before dispatching
 	// bool dropPacket = PacketInspector::processIncomingPacket(packet);
 
-	// Add the packet to the list of received packets.
-	d->receivedPackets.append(packet);
-
 	// Get the header field of the received packet.
 	Packet::Header & h = packet->header();
 
 	kdDebug() << k_funcinfo << "Received packet " << h.identifier << " via bridge " << bridge->id() << endl
 		<< packet->toString() << endl;
 
+	if (!d->notifiers.contains(h.destination))
+	{
+		kdDebug() << k_funcinfo << "Received packet for unknown destination "
+				  << h.destination << " - sending reset." << endl;
+
+		// Send a reset control packet to the other side.
+		sendReset(h.destination, h.identifier, h.lprcvd, h.window);
+		return;
+	}
+
+	// Add the packet to the list of received packets.
+	d->receivedPackets.append(packet);
+
+
 	// Get the packet type from the packet header.
 	const Packet::Type packetType = (Packet::Type)h.type;
 
-	if (Packet::NonAcknowledgeType == packetType || Packet::FaultType == packetType ||
-		Packet::ResetType == packetType || Packet::CancelType == packetType ||
-		Packet::RetransmitType == packetType)
+	if (Packet::NegativeAcknowledgeType == packetType || Packet::ErrorType == packetType ||
+		Packet::ResetType == packetType || Packet::CancelTransferType == packetType ||
+		Packet::RequestForAcknowledgeType == packetType)
 	{
 		// We received a non ACK control packet.
 		onNonAcknowledgeControlPacketReceive(packet);
@@ -722,11 +734,11 @@ void Transport::onReceive(const QByteArray& datachunk)
 		}
 	}
 	else
-	if (Packet::HandshakeNonceType == packetType)
+	if (Packet::AuthenticationKeyType == packetType)
 	{
-		// We received a handshake nonce packet.
-
-		// Get the byte parameters from the last three fields of the packet header.
+		// We received a bridge authentication key packet. Get
+		// the byte parameters from the last three fields of
+		// the packet header.
 		const Q_UINT32 l = h.lprcvd;
 		const Q_UINT16 w1 = h.lpsent & 0xFFFF;
 		const Q_UINT16 w2 = (h.lpsent >> 16) & 0xFFFF;
@@ -741,7 +753,7 @@ void Transport::onReceive(const QByteArray& datachunk)
 
 		// Create the comparison nonce from the byte parameters.
 		const QUuid nonce = QUuid(l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8);
-
+		// Process the bridge authentication key received .
 		onBridgeAuthenticationKeyReceive(nonce, bridge->id());
 
 		// Remove and delete the received packet from the list.
@@ -773,7 +785,7 @@ void Transport::onReceive(const QByteArray& datachunk)
 		kdDebug() << k_funcinfo << "Received unknown packet " << h.identifier
 			<< ". Sending fault." << endl;
 		// Send a transport error control packet.
-		sendFault(h.destination, h.identifier, h.lprcvd, h.window);
+		sendError(h.destination, h.identifier, h.lprcvd, h.window);
 
 		// Remove and delete the received packet from the list.
 		d->receivedPackets.removeRef(packet);
@@ -836,7 +848,7 @@ void Transport::onSent(const Q_UINT32 packetId)
 	if (Packet::MessageDataType == packetType)
 	{
 		kdDebug() << k_funcinfo << "Adding sent packet " << h.identifier
-		<< " to the list of unacknowledged packets" << endl;
+		<< " to the list of unacknowledged message/data packets" << endl;
 
 		// Add the packet to the unacknowledged packet list.
 		addPacketToUnacknowledgedList(packet);
@@ -844,9 +856,9 @@ void Transport::onSent(const Q_UINT32 packetId)
 		d->sentPackets.take();
 	}
 	else
-	if (Packet::NonAcknowledgeType == packetType || Packet::FaultType == packetType ||
-		Packet::ResetType == packetType || Packet::CancelType == packetType ||
-		Packet::RetransmitType == packetType)
+	if (Packet::NegativeAcknowledgeType == packetType || Packet::ErrorType == packetType ||
+		Packet::ResetType == packetType || Packet::CancelTransferType == packetType ||
+		Packet::RequestForAcknowledgeType == packetType)
 	{
 		kdDebug() << k_funcinfo << "Removing sent packet " << h.identifier
 		<< " non ACK control packet" << endl;
@@ -856,7 +868,8 @@ void Transport::onSent(const Q_UINT32 packetId)
 	else
 	{
 		kdDebug() << k_funcinfo << "Removing sent packet " << h.identifier
-		<< endl;
+			<< " (chunk " << h.offset << ".." << h.offset+h.payloadSize
+			<< ")" << endl;
 		// Delete the sent packet.
 		d->sentPackets.removeRef(packet);
 	}
@@ -915,7 +928,7 @@ void Transport::queuePacket(Packet *packet, const Q_UINT32 bridgeId, bool prepen
 	{
 		// Otherwise, delete the packet.
 		kdDebug() << k_funcinfo << "Could not queue packet " << h.identifier << " for session " << h.destination
-		<< " on bridge " << bridgeId << " -- bridge could not be found." << endl;
+		<< " in bridge " << bridgeId << "'s packet list -- bridge not found." << endl;
 
 		delete packet;
 		packet = 0l;
@@ -956,7 +969,7 @@ void Transport::sendPacket(Packet* packet, const Q_UINT32 bridgeId)
 		{
 			if (d->notifiers.contains(h.destination))
 			{
-				appId = d->notifiers[h.destination]->type();
+				appId = d->notifiers[h.destination]->applicationId();
 			}
 		}
 
@@ -989,36 +1002,44 @@ void Transport::sendAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcv
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
-void Transport::sendCancelData(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
+void Transport::sendCancelTransfer(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
-	// Send a cancel data exchange control packet which informs
+	// Send a cancel data transfer control packet which informs
 	// the other side that we have canceled the sending of data.
-	sendControlPacket(Packet::CancelType, destination, lprcvd, lpsent, lpsize);
+	sendControlPacket(Packet::CancelTransferType, destination, lprcvd, lpsent, lpsize);
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
-void Transport::sendFault(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
+void Transport::sendError(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
-	// Send a transport fault control packet.
-	sendControlPacket(Packet::FaultType, destination, lprcvd, lpsent, lpsize);
+	// Send a session error control packet.
+	sendControlPacket(Packet::ErrorType, destination, lprcvd, lpsent, lpsize);
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
 void Transport::sendReset(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
-	// Send a session reset control packet.
+	// Send a transport reset control packet.
 	sendControlPacket(Packet::ResetType, destination, lprcvd, lpsent, lpsize);
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
-void Transport::sendNonAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
+void Transport::sendNegativeAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
 {
 	kdDebug() << k_funcinfo << "enter" << endl;
-	// Send a non acknowledge control packet.
-	sendControlPacket(Packet::NonAcknowledgeType, destination, lprcvd, lpsent, lpsize);
+	// Send a negative acknowledge control packet.
+	sendControlPacket(Packet::NegativeAcknowledgeType, destination, lprcvd, lpsent, lpsize);
+	kdDebug() << k_funcinfo << "leave" << endl;
+}
+
+void Transport::sendRequestForAcknowledge(const Q_UINT32 destination, const Q_UINT32 lprcvd, const Q_UINT32 lpsent, const Q_UINT64 lpsize)
+{
+	kdDebug() << k_funcinfo << "enter" << endl;
+	// Send a request for acknowledge control packet.
+	sendControlPacket(Packet::RequestForAcknowledgeType, destination, lprcvd, lpsent, lpsize);
 	kdDebug() << k_funcinfo << "leave" << endl;
 }
 
@@ -1068,33 +1089,45 @@ void Transport::onNonAcknowledgeControlPacketReceive(Packet *packet)
 
 	switch(h.type)
 	{
-		case Packet::CancelType:
+		case Packet::CancelTransferType:
 		{
-			kdDebug() << k_funcinfo << "Cancel data receive for session " << h.destination << endl;
+			kdDebug() << k_funcinfo << "got CAN transfer for session " << h.destination << endl;
+			// cancelReceive(h.destination)
 			break;
 		}
 
-		case Packet::NonAcknowledgeType:
+		case Packet::NegativeAcknowledgeType:
 		{
-			kdDebug() << k_funcinfo << "Received NAK for packet " << h.lpsent << endl;
+			kdDebug() << k_funcinfo << "got NAK for session " << h.destination
+				<< ", packet " << h.lpsent << " - requesting offset "
+				<< h.lpsize << endl;
+
+			// TODO
+			// Find the packet in the bridge packet list
+			// and set the data offset to the requested
+			// offset.
 			break;
 		}
 
-		case Packet::FaultType:
+		case Packet::ErrorType:
 		{
-			kdDebug() << k_funcinfo << "Transport layer error" << endl;
+			kdDebug() << k_funcinfo << "got error for session " << h.destination
+				<< ", packet " << h.lprcvd << endl;
+
+// 			onSendFailed(h.lprcvd);
 			break;
 		}
 
-		case Packet::RetransmitType:
+		case Packet::RequestForAcknowledgeType:
 		{
-			kdDebug() << k_funcinfo << "Received RAK for packet" << h.lprcvd << endl;
+			kdDebug() << k_funcinfo << "got RAK for session " << h.destination
+				<< ", packet " << h.lpsent << endl;
 			break;
 		}
 
 		case Packet::ResetType:
 		{
-			kdDebug() << k_funcinfo << "Transport layer error, reset session = "
+			kdDebug() << k_funcinfo << "got reset for session "
 				<< h.destination << endl;
 			// Stop all sending of data to this destination.
 			stopAllSends(h.destination);
@@ -1164,30 +1197,42 @@ void Transport::reassembleData(Packet *packet, QByteArray& data)
 
 	if (buffer != 0)
 	{
-		kdDebug() << k_funcinfo << "Received (bytes [" << h.offset << ".." << (h.offset + h.payloadSize) << "] of " << h.window << ")"
-		<< " for packet " << h.identifier << endl;
+		kdDebug() << k_funcinfo << "Received chunk <" << h.offset << ".." << (h.offset + h.payloadSize)
+			<< ">, packet " << h.identifier << endl;
 
-		// Seek to the offset in the buffer where the
-		// received data chunk will be written.
-		buffer->at(h.offset);
-		// Read the data from the packet payload
-		QByteArray bytes = packet->payload()->readAll();
-		// Write the data into the buffer.
-		buffer->writeBlock(bytes.data(), bytes.size());
-
-		// Determine if the received packet is the last in a series
-		// of packets that contain chunked data.
-		if (h.payloadSize + h.offset == h.window)
+		if (buffer->at() != h.offset)
 		{
-			// Remove the reassembled datagram from the pending datagram collection.
-			d->buffers.remove(h.identifier);
-			// We assume that the data has been reassembled.
-			data = buffer->buffer();
-			// Close the buffer.
-			buffer->close();
-			// Dispose of the data buffer.
-			delete buffer;
-			buffer = 0l;
+			kdDebug() << k_funcinfo << "Sending NAK for out-of-order packet (session " << h.destination
+				<< ", packet " << h.identifier << ", offset " << h.offset << ")"
+				<< " expected offset " << buffer->at() << endl;
+
+			// Send a negative acknowledge control packet to the other side.
+			sendNegativeAcknowledge(h.destination, h.identifier, h.lprcvd, h.window);
+		}
+		else
+		{
+			// Seek to the offset in the buffer where the
+			// received data chunk will be written.
+			buffer->at(h.offset);
+			// Read the data from the packet payload
+			QByteArray bytes = packet->payload()->readAll();
+			// Write the data into the buffer.
+			buffer->writeBlock(bytes.data(), bytes.size());
+
+			// Determine if the received packet is the last in a series
+			// of packets that contain chunked data.
+			if (h.payloadSize + h.offset == h.window)
+			{
+				// Remove the reassembled datagram from the pending datagram collection.
+				d->buffers.remove(h.identifier);
+				// We assume that the data has been reassembled.
+				data = buffer->buffer();
+				// Close the buffer.
+				buffer->close();
+				// Dispose of the data buffer.
+				delete buffer;
+				buffer = 0l;
+			}
 		}
 	}
 
@@ -1236,6 +1281,7 @@ void Transport::addPacketToUnacknowledgedList(Packet *packet)
 	}
 
 	kdDebug() << k_funcinfo << "Packet " << packet->header().identifier << endl;
+
 	delete packet;
 
 	kdDebug() << k_funcinfo << "leave" << endl;

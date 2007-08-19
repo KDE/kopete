@@ -37,17 +37,15 @@ SlpResponse::SlpResponse(Q_INT32 statusCode, const QString& statusDescription, c
 	d->statusDescription = statusDescription;
 }
 
-SlpResponse::SlpResponse(const SlpResponse& other) : SlpMessage(other), d(new SlpResponsePrivate())
+SlpResponse::SlpResponse(const SlpResponse& other) : SlpMessage(other), d(new SlpResponsePrivate(*other.d))
 {
-	*this = other;
 }
 
 SlpResponse & SlpResponse::operator=(const SlpResponse& other)
 {
 	SlpMessage::operator=(other);
 
-	d->statusCode = other.statusCode();
-	d->statusDescription = other.statusDescription();
+	*d = *other.d;
 	return *this;
 }
 

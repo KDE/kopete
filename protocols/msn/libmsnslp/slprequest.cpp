@@ -36,17 +36,15 @@ SlpRequest::SlpRequest(const QString& method, const QString& requestUri, const Q
 	d->requestUri = requestUri;
 }
 
-SlpRequest::SlpRequest(const SlpRequest& other) : SlpMessage(other), d(new SlpRequestPrivate())
+SlpRequest::SlpRequest(const SlpRequest& other) : SlpMessage(other), d(new SlpRequestPrivate(*other.d))
 {
-	*this = other;
 }
 
 SlpRequest & SlpRequest::operator=(const SlpRequest& other)
 {
 	SlpMessage::operator=(other);
 
-	d->method = other.method();
-	d->requestUri = other.requestUri();
+	*d = *other.d;
 	return *this;
 }
 

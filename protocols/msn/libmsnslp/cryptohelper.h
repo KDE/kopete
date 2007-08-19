@@ -30,7 +30,7 @@ class CryptoHelper
 		static QUuid hashNonce(const QUuid& nonce);
 
 	private:
-		CryptoHelper();
+		inline CryptoHelper() {}
 
 }; //CryptoHelper
 }

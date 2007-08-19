@@ -21,10 +21,6 @@
 namespace PeerToPeer
 {
 
-CryptoHelper::CryptoHelper()
-{
-}
-
 // FIXME There seems to be an inconsistency in the SHA1 hash on windows
 // and that on linux. e.g. SHA1 hash of nonce {7356BA62-7DE3-4687-A132DC315E8E50F5}
 // on windows is {A1984D80-C440-9353-AF81-F8B7EAB3862B}

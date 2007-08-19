@@ -39,13 +39,13 @@ class WebcamSession : public Session
 	Q_OBJECT
 	Q_CLASSINFO("EUF-GUID-YOU", "1C9AA97E-9C05-4583-A3BD-908A196F1E92") // receiving
 	Q_CLASSINFO("EUF-GUID-ME",  "4BD96FC0-AB17-4425-A14A-439185962DC8") // sending
-	Q_CLASSINFO("APP-ID",		"4")
 
 	public :
 		/** @brief Creates a new instance of the WebcamSession class. */
-		WebcamSession(const Q_UINT32 id, Direction direction, QObject *parent);
+		WebcamSession(const Q_UINT32 id, DataTransferDirection direction, QObject *parent);
 		virtual ~WebcamSession();
-
+		/** @brief Gets the application id of the session. */
+		const Q_UINT32 applicationId() const;
 		virtual void handleInvite(const Q_UINT32 appId, const QByteArray& context);
 
 	protected:

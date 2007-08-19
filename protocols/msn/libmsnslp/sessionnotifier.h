@@ -30,16 +30,12 @@ class SessionNotifier : public QObject
 	Q_OBJECT
 
 	public :
-		enum Type { Normal=0, Object=1, FileTransfer=2, Webcam=4 };
-
-	public :
 		/** @brief Creates a new instance of the SessionNotifier class. */
-		SessionNotifier(const Q_UINT32 session, const Type type, QObject *parent=0l);
+		SessionNotifier(const Q_UINT32 session, const Q_UINT32 applicationId, QObject *parent=0l);
 		~SessionNotifier();
 
+		const Q_UINT32 applicationId() const;
 		const Q_UINT32 session() const;
-		void setType(const Type type);
-		const Type type() const;
 
 	signals:
 		void dataReceived(const QByteArray& data, bool lastChunk);

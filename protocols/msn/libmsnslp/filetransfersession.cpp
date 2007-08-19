@@ -37,7 +37,7 @@ class FileTransferSession::FileTransferSessionPrivate
 		Kopete::Transfer *transfer;
 };
 
-FileTransferSession::FileTransferSession(const Q_UINT32 id, Direction direction, Kopete::Contact *contact, QObject *parent) : Session(id, direction, parent), d(new FileTransferSessionPrivate())
+FileTransferSession::FileTransferSession(const Q_UINT32 id, DataTransferDirection direction, Kopete::Contact *contact, QObject *parent) : Session(id, direction, parent), d(new FileTransferSessionPrivate())
 {
 	d->contact = contact;
 }
@@ -53,9 +53,14 @@ FileTransferSession::~FileTransferSession()
 	delete d;
 }
 
+const Q_UINT32 FileTransferSession::applicationId() const
+{
+	return 2;
+}
+
 void FileTransferSession::handleInvite(const Q_UINT32 appId, const QByteArray& context)
 {
-	if (appId == 2)
+	if (appId == applicationId())
 	{
 		// Retrieve the file information from the context.
 		QDataStream stream(context, IO_ReadOnly);

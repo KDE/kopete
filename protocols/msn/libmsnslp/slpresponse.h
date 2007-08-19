@@ -29,7 +29,7 @@ class SlpResponse : public SlpMessage
 {
 	public :
 		/** @brief Defines the status codes returned for a given request. */
-		enum StatusCode {OK=200, NotFound=404, NoSuchCall=481, InternalError=500, VersionNotSupported=505, Decline=603};
+		enum StatusCode {OK=200, NotFound=404, NoSuchCall=481, InternalError=500, VersionNotSupported=505, Decline=603, Unacceptable=606};
 
 	public :
 		/** @brief Creates a new instance of the SlpResponse class. */
