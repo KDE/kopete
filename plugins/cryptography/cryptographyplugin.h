@@ -50,6 +50,7 @@ public:
 	static void setCachedPass(const QString &pass);
 	
 	static QStringList supportedProtocols() { QStringList l; return l << "MSNProtocol" << "MessengerProtocol" << "JabberProtocol" << "YahooProtocol"; }
+	static QStringList getKabcKeys (QString uid);
 
 	CryptographyPlugin( QObject *parent, const QStringList &args );
 	~CryptographyPlugin();

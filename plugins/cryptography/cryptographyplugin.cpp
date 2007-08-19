@@ -28,6 +28,8 @@
 #include <kmessagebox.h>
 #include <kpassworddialog.h>
 #include <kleo/ui/keylistview.h>
+#include <kabc/addressbook.h>
+#include "kabcpersistence.h"
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -65,6 +67,7 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QStringList & /*
 	m_cachedPass_timer->setObjectName ( "m_cachedPass_timer" );
 	QObject::connect ( m_cachedPass_timer, SIGNAL ( timeout() ), this, SLOT ( slotForgetCachedPass() ) );
 
+	CryptographyPlugin::plugin()->addAddressBookField ( "key" );
 
 	KAction *action=new KAction ( KIcon ( "encrypted" ), i18n ( "&Select Public Key..." ), this );
 	actionCollection()->addAction ( "contactSelectKey", action );
@@ -137,16 +140,24 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 	int opState;
 	if ( !body.startsWith ( QString::fromLatin1 ( "-----BEGIN PGP MESSAGE----" ) )
 	        || !body.contains ( QString::fromLatin1 ( "-----END PGP MESSAGE----" ) ) )
+	{
+		if ( body.contains ( QRegExp ( KIconLoader::global()->iconPath ( "signature", K3Icon::Small ).remove ( QRegExp ( "signature.*" ) ) + "signature\\..*|bad_signature\\..*|encrypted\\..*" ) ) )
+		{
+			msg.setHtmlBody ( i18n ( "Cryptography plugin refuses to show the most recent message because it contains an attempt to forge an encrypted or signed message" ) );
+			msg.setType ( Kopete::Message::TypeAction );
+			msg.addClass ( "cryptography:encrypted" );
+		}
 		return;
+	}
 
 	body = GpgInterface::decryptText ( body, mPrivateKeyID, opState );
-		
+
 	if ( !body.isEmpty() )
 	{
-		if (body.contains ( QRegExp ( KIconLoader::global()->iconPath ( "signature", K3Icon::Small ).remove (QRegExp ("signature.*")) + "signature\\..*|bad_signature\\..*|encrypted\\..*") ) )
+		if ( body.contains ( QRegExp ( KIconLoader::global()->iconPath ( "signature", K3Icon::Small ).remove ( QRegExp ( "signature.*" ) ) + "signature\\..*|bad_signature\\..*|encrypted\\..*" ) ) )
 		{
-			msg.setHtmlBody ( i18n("Cryptography plugin refuses to show the most recent message because it contains an attempt to forge an encrypted or signed message") );
-			msg.setType( Kopete::Message::TypeAction );
+			msg.setHtmlBody ( i18n ( "Cryptography plugin refuses to show the most recent message because it contains an attempt to forge an encrypted or signed message" ) );
+			msg.setType ( Kopete::Message::TypeAction );
 			msg.addClass ( "cryptography:encrypted" );
 			return;
 		}
@@ -263,7 +274,31 @@ void CryptographyPlugin::slotNewKMM ( Kopete::ChatSession *KMM )
 	QString protocol ( KMM->protocol()->metaObject()->className() );
 	if ( mGui->m_encAction->isChecked() )
 		if ( ! supportedProtocols().contains ( protocol ) )
-			KMessageBox::information ( 0, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ), i18n ( "Cryptography Unsupported Protocol" ), "Warn about unsupported " + QString (KMM->protocol()->metaObject()->className()) );
+			KMessageBox::information ( 0, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ), i18n ( "Cryptography Unsupported Protocol" ), "Warn about unsupported " + QString ( KMM->protocol()->metaObject()->className() ) );
+}
+
+QStringList CryptographyPlugin::getKabcKeys ( QString uid )
+{
+	KABC::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid ( uid );
+	QStringList keys;
+	
+	// each 'if' block here is one way of getting a key.
+	
+	// this is the field used by kaddressbook
+	if ( ! ( addressee.custom ( "KADDRESSBOOK", "OPENPGPFP" ) ).isEmpty() )
+		keys << addressee.custom ( "KADDRESSBOOK", "OPENPGPFP" );
+	
+	// this is the standard key field in Addressee, (which no app seems to use, but here it is anyways)
+	if ( ! ( addressee.key ( KABC::Key::PGP ).textData() ).isEmpty() )
+		keys << addressee.key ( KABC::Key::PGP ).textData();
+
+	// remove duplicates
+	if ( keys.at(0) == keys.at(1) )
+		keys.removeAt (1);
+	
+	kDebug ( 14303 ) << "keys found in address book for contact " << addressee.assembledName() << ": " << keys << endl;
+	
+	return keys;
 }
 
 #include "cryptographyplugin.moc"
