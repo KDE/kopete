@@ -209,20 +209,20 @@ ChatWindowConfig::~ChatWindowConfig()
 void ChatWindowConfig::save()
 {
 	KCModule::save();
-//	kDebug(14000) << k_funcinfo << "called.";
+//	kDebug(14000) << "called.";
 
 	KopeteChatWindowSettings *settings = KopeteChatWindowSettings::self();
 
 	// Get the styleName
 	if(m_currentStyle)
 	{
-		kDebug(14000) << k_funcinfo << m_currentStyle->getStyleName();
+		kDebug(14000) << m_currentStyle->getStyleName();
 		settings->setStyleName( m_currentStyle->getStyleName() );
 	}
 	// Get and save the styleVariant
 	if( !m_currentVariantMap.empty() )
 	{
-		kDebug(14000) << k_funcinfo << m_currentVariantMap[ m_styleUi.variantList->currentText()];
+		kDebug(14000) << m_currentVariantMap[ m_styleUi.variantList->currentText()];
 		settings->setStyleVariant( m_currentVariantMap[m_styleUi.variantList->currentText()] );
 	}
 
@@ -254,7 +254,7 @@ void ChatWindowConfig::slotLoadChatStyles()
 	QStringList availableStyles;
 	availableStyles = ChatWindowStyleManager::self()->getAvailableStyles();
 	if( availableStyles.empty() )
-		kDebug(14000) << k_funcinfo << "Warning, available styles is empty !";
+		kDebug(14000) << "Warning, available styles is empty !";
 
 	foreach( const QString& styleName, availableStyles )
 	{
@@ -263,7 +263,7 @@ void ChatWindowConfig::slotLoadChatStyles()
 
 		if( styleName == KopeteChatWindowSettings::self()->styleName() )
 		{
-			kDebug(14000) << k_funcinfo << "Restoring saved style: " << styleName;
+			kDebug(14000) << "Restoring saved style: " << styleName;
 
 			m_styleUi.styleList->setSelected( m_styleUi.styleList->firstItem(), true );
 		}
@@ -282,7 +282,7 @@ void ChatWindowConfig::slotChatStyleSelected()
 	if(m_currentStyle)
 	{
 		m_currentVariantMap = m_currentStyle->getVariants();
-		kDebug(14000) << k_funcinfo << "Loading style: " << m_currentStyle->getStyleName();
+		kDebug(14000) << "Loading style: " << m_currentStyle->getStyleName();
 
 		// Update the variant list based on current style.
 		m_styleUi.variantList->clear();
@@ -318,8 +318,8 @@ void ChatWindowConfig::slotChatStyleSelected()
 
 void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 {
-// 	kDebug(14000) << k_funcinfo << variantName;
-// 	kDebug(14000) << k_funcinfo << m_currentVariantMap[variantName];
+// 	kDebug(14000) << variantName;
+// 	kDebug(14000) << m_currentVariantMap[variantName];
 
 	// Update the preview
 	m_preview->setStyleVariant(m_currentVariantMap[variantName]);

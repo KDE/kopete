@@ -69,7 +69,7 @@ public:
 ByteStream::ByteStream(QObject *parent)
 :QObject(parent)
 {
-// 	kDebug(14181) << k_funcinfo;
+// 	kDebug(14181) ;
 	d = new Private;
 }
 
@@ -100,9 +100,9 @@ void ByteStream::close()
 //! Writes array \a a to the stream.
 void ByteStream::write(const QByteArray &a)
 {
-// 	kDebug(14181) << k_funcinfo << "[data size: " << a.size() << "]";
+// 	kDebug(14181) << "[data size: " << a.size() << "]";
 	
-// 	kDebug(14181) << k_funcinfo << "[Data: " << a << "]";
+// 	kDebug(14181) << "[Data: " << a << "]";
 	
 	if(!isOpen())
 		return;
@@ -118,7 +118,7 @@ void ByteStream::write(const QByteArray &a)
 //! \a read will return all available data.
 QByteArray ByteStream::read(int bytes)
 {
-// 	kDebug(14181) << k_funcinfo << " " << bytes <<" [bytes]";
+// 	kDebug(14181) << " " << bytes <<" [bytes]";
 	return takeRead(bytes);
 }
 
@@ -133,7 +133,7 @@ int ByteStream::bytesAvailable() const
 //! Returns the number of bytes that are waiting to be written.
 int ByteStream::bytesToWrite() const
 {
-// 	kDebug(14181) << k_funcinfo << "[bytes left: " <<  d->writeBuf.size() << " ]";
+// 	kDebug(14181) << "[bytes left: " <<  d->writeBuf.size() << " ]";
 	return d->writeBuf.size();
 }
 
@@ -155,7 +155,7 @@ void ByteStream::clearWriteBuffer()
 //! Appends \a block to the end of the read buffer.
 void ByteStream::appendRead(const QByteArray &block)
 {
-// 	kDebug(14181) << k_funcinfo;
+// 	kDebug(14181) ;
 	appendArray(&d->readBuf, block);
 }
 
@@ -163,7 +163,7 @@ void ByteStream::appendRead(const QByteArray &block)
 //! Appends \a block to the end of the write buffer.
 void ByteStream::appendWrite(const QByteArray &block)
 {
-// 	kDebug(14181) << k_funcinfo << "[data size: " << block.size() << "]";
+// 	kDebug(14181) << "[data size: " << block.size() << "]";
 	
 	appendArray(&d->writeBuf, block);
 }
@@ -174,7 +174,7 @@ void ByteStream::appendWrite(const QByteArray &block)
 //! If \a del is TRUE, then the bytes are also removed.
 QByteArray ByteStream::takeRead(int size, bool del)
 {
-// 	kDebug(14181) << k_funcinfo << "[data size: " << size << "][ delete :" << del << " ]";
+// 	kDebug(14181) << "[data size: " << size << "][ delete :" << del << " ]";
 	return takeArray(&d->readBuf, size, del);
 }
 
@@ -184,7 +184,7 @@ QByteArray ByteStream::takeRead(int size, bool del)
 //! If \a del is TRUE, then the bytes are also removed.
 QByteArray ByteStream::takeWrite(int size, bool del)
 {
-// 	kDebug(14181) << k_funcinfo << "[data size: " << size << "][ delete :" << del << " ]";
+// 	kDebug(14181) << "[data size: " << size << "][ delete :" << del << " ]";
 	return takeArray(&d->writeBuf, size, del);
 }
 
@@ -199,7 +199,7 @@ QByteArray & ByteStream::readBuf()
 //! Returns a reference to the write buffer.
 QByteArray & ByteStream::writeBuf()
 {
-// 	kDebug(14181) << k_funcinfo;
+// 	kDebug(14181) ;
 	return d->writeBuf;
 }
 
@@ -208,7 +208,7 @@ QByteArray & ByteStream::writeBuf()
 //! successfully written or -1 on error.  The default implementation returns -1.
 int ByteStream::tryWrite()
 {
-// 	kDebug(14181) << k_funcinfo << "(THIS RETURNS -1)";
+// 	kDebug(14181) << "(THIS RETURNS -1)";
 	return -1;
 }
 
@@ -216,7 +216,7 @@ int ByteStream::tryWrite()
 //! Append array \a b to the end of the array pointed to by \a a.
 void ByteStream::appendArray(QByteArray *a, const QByteArray &b)
 {
-// 	kDebug(14181) << k_funcinfo;
+// 	kDebug(14181) ;
 	int oldsize = a->size();
 	a->resize(oldsize + b.size());
 	memcpy(a->data() + oldsize, b.data(), b.size());
@@ -228,7 +228,7 @@ void ByteStream::appendArray(QByteArray *a, const QByteArray &b)
 //! If \a del is TRUE, then the bytes are also removed.
 QByteArray ByteStream::takeArray(QByteArray *from, int size, bool del)
 {
-// 	kDebug(14181) << k_funcinfo << "[int size] : " << size << " [bool del] " << del;
+// 	kDebug(14181) << "[int size] : " << size << " [bool del] " << del;
 	
 	QByteArray a;
 	if(size == 0) {

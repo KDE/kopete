@@ -357,7 +357,7 @@ void Engine::privmsg(Message &msg)
 
 void Engine::quit(const QString &reason, bool /*now*/)
 {
-	kDebug(14120) << k_funcinfo << reason;
+	kDebug(14120) << reason;
 
 //	if (isDisconnected())
 //		return;

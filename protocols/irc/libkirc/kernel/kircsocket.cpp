@@ -202,7 +202,7 @@ void Socket::writeMessage(const Message &msg)
 	qint64 wrote = d->socket->write(msg.rawLine() + "\n\r");
 
 //	if (wrote == -1)
-//		kDebug(14121) << k_funcinfo << "Socket write failed!";
+//		kDebug(14121) << "Socket write failed!";
 
 //	kDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg);
 }
@@ -284,7 +284,7 @@ void Socket::socketGotError(QAbstractSocket::SocketError)
 		return;
 
 	QString errStr = d->socket->errorString();
-	kDebug(14121) << k_funcinfo << "Socket error: " << errStr;
+	kDebug(14121) << "Socket error: " << errStr;
 //	postErrorEvent(errStr);
 
 	// ignore non-fatal error
@@ -297,7 +297,7 @@ void Socket::socketGotError(QAbstractSocket::SocketError)
 /*
 QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) const
 {
-	kDebug(14121) << k_funcinfo;
+	kDebug(14121) ;
 	*success = false;
 
 	if (!codec || !codec->canEncode(str))

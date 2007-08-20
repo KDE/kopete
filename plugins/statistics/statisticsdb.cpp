@@ -127,7 +127,7 @@ StatisticsDB::~StatisticsDB()
  
      if ( !m_db )
      {
-         kError() << k_funcinfo << "[CollectionDB] SQLite pointer == NULL.\n";
+         kError() << "[CollectionDB] SQLite pointer == NULL.\n";
          return QStringList();
      }
  
@@ -141,7 +141,7 @@ StatisticsDB::~StatisticsDB()
  
      if ( error != SQLITE_OK )
      {
-         kError() << k_funcinfo << "[CollectionDB] sqlite3_compile error:" << endl;
+         kError() << "[CollectionDB] sqlite3_compile error:" << endl;
          kError() << sqlite3_errmsg( m_db ) << endl;
          kError() << "on query: " << statement << endl;
  
@@ -181,7 +181,7 @@ StatisticsDB::~StatisticsDB()
  
      if ( error != SQLITE_DONE )
      {
-         kError() << k_funcinfo << "sqlite_step error.\n";
+         kError() << "sqlite_step error.\n";
          kError() << sqlite3_errmsg( m_db ) << endl;
          kError() << "on query: " << statement << endl;
  

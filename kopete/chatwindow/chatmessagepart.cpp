@@ -201,7 +201,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(
 			 KopeteChatWindowSettings::self()->styleName() );
 
-	kDebug(14000) << k_funcinfo << d->currentChatStyle->getStyleName();
+	kDebug(14000) << d->currentChatStyle->getStyleName();
 
 	//Security settings, we don't need this stuff
 	setJScriptEnabled( false ) ;
@@ -252,7 +252,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 ChatMessagePart::~ChatMessagePart()
 {
-	kDebug(14000) << k_funcinfo;
+	kDebug(14000) ;
 	//delete d->tt;
 	delete d;
 }
@@ -328,7 +328,7 @@ void ChatMessagePart::pageDown()
 
 void ChatMessagePart::slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
 {
-	kDebug(14000) << k_funcinfo << "url=" << url.url();
+	kDebug(14000) << "url=" << url.url();
 	if ( url.protocol() == QLatin1String("kopetemessage") )
 	{
 		Kopete::Contact *contact = d->manager->account()->contacts()[ url.host() ];
@@ -409,7 +409,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 
 	if( chatNode.isNull() )
 	{
-		kDebug(14000) << k_funcinfo << "WARNING: Chat Node was null !";
+		kDebug(14000) << "WARNING: Chat Node was null !";
 		return;
 	}
 
@@ -919,7 +919,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	// Build the action message if the currentChatStyle do not have Action template.
 	if( message.type() == Kopete::Message::TypeAction && !d->currentChatStyle->hasActionTemplate() )
 	{
-		kDebug(14000) << k_funcinfo << "Map Action message to Status template. ";
+		kDebug(14000) << "Map Action message to Status template. ";
 
 		QString boldNick = QString("%1<b>%2</b></a> ").arg(nickLink,nick);
 		QString newBody = boldNick + message.parsedBody();
@@ -947,7 +947,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 		hash += contactId[f].unicode() * f;
 	const QString colorName = nameColors[ hash % nameColorsLen ];
 	QString lightColorName;	// Do not initialize, QColor::name() is expensive!
-	kDebug(14000) << k_funcinfo << "Hash " << hash << " has color " << colorName;
+	kDebug(14000) << "Hash " << hash << " has color " << colorName;
 	QRegExp senderColorRegExp("%senderColor(?:\\{([^}]*)\\})?%");
 	textPos=0;
 	while( (textPos=senderColorRegExp.indexIn(resultHTML, textPos) ) != -1 )
@@ -1098,7 +1098,7 @@ QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
 
 void ChatMessagePart::slotUpdateHeaderDisplayName()
 {
-	kDebug(14000) << k_funcinfo;
+	kDebug(14000) ;
 	DOM::HTMLElement kopeteChatNameNode = document().getElementById( QString("KopeteHeaderChatNameInternal") );
 	if( !kopeteChatNameNode.isNull() )
 		kopeteChatNameNode.setInnerText( formatName(d->manager->displayName()) );
@@ -1129,7 +1129,7 @@ void ChatMessagePart::changeStyle()
 		Kopete::Message tempMessage = *it;
 		appendMessage(tempMessage, true); // true means that we are restoring.
 	}
-	kDebug(14000) << k_funcinfo << "Finish changing style.";
+	kDebug(14000) << "Finish changing style.";
 #ifdef STYLE_TIMETEST
 	kDebug(14000) << "Change time: " << beforeChange.msecsTo( QTime::currentTime());
 #endif
@@ -1137,7 +1137,7 @@ void ChatMessagePart::changeStyle()
 
 void ChatMessagePart::writeTemplate()
 {
-	kDebug(14000) << k_funcinfo;
+	kDebug(14000) ;
 
 #ifdef STYLE_TIMETEST
 	QTime beforeHeader = QTime::currentTime();

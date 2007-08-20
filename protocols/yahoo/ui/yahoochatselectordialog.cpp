@@ -57,7 +57,7 @@ YahooChatSelectorDialog::~YahooChatSelectorDialog()
 void YahooChatSelectorDialog::slotCategorySelectionChanged( QTreeWidgetItem *newItem, QTreeWidgetItem *oldItem )
 {
 	Q_UNUSED( oldItem );
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Selected Category: " << newItem->text( 0 ) <<  "(" << newItem->data( 0, Qt::UserRole ).toInt() << ")";
+	kDebug(YAHOO_RAW_DEBUG) << "Selected Category: " << newItem->text( 0 ) <<  "(" << newItem->data( 0, Qt::UserRole ).toInt() << ")";
 
 	mUi->treeRooms->clear();
 	
@@ -81,7 +81,7 @@ void YahooChatSelectorDialog::slotChatRoomDoubleClicked( QTreeWidgetItem * item,
 
 void YahooChatSelectorDialog::slotSetChatCategories( const QDomDocument &doc )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << doc.toString();
+	kDebug(YAHOO_RAW_DEBUG) << doc.toString();
 	mUi->treeCategories->takeTopLevelItem(0);
 
 	QTreeWidgetItem *root = new QTreeWidgetItem( mUi->treeCategories );
@@ -118,7 +118,7 @@ void YahooChatSelectorDialog::parseChatCategory( const QDomNode &node, QTreeWidg
 
 void YahooChatSelectorDialog::slotSetChatRooms( const Yahoo::ChatCategory &category, const QDomDocument &doc )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << doc.toString();
+	kDebug(YAHOO_RAW_DEBUG) << doc.toString();
 	Q_UNUSED( category );
 	mUi->treeRooms->clear();
 

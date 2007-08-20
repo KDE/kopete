@@ -245,7 +245,7 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 		}*/
 		//if(!c)
 
-		kWarning(14310) << k_funcinfo << "No contact found in this metacontact to" <<
+		kWarning(14310) << "No contact found in this metacontact to" <<
 			" append in the history" << endl;
 		return;
 	}
@@ -332,13 +332,13 @@ void HistoryLogger::saveToDisk()
 		//on a my machine, (2.4Ghz, but old HD) it should take about 10 ms to save the file.
 		// So that would mean save every 10 seconds, which seems to be ok.
 		// But it may take 500 ms if the file to save becomes too big (1Mb).
-		kDebug(14310) << k_funcinfo << m_toSaveFileName << " saved in " << t.elapsed() << " ms ";
+		kDebug(14310) << m_toSaveFileName << " saved in " << t.elapsed() << " ms ";
 
 		m_toSaveFileName.clear();
 		m_toSaveDocument=QDomDocument();
 	}
 	else
-		kError(14310) << k_funcinfo << "impossible to save the history file " << m_toSaveFileName << endl;
+		kError(14310) << "impossible to save the history file " << m_toSaveFileName << endl;
 
 }
 
@@ -731,7 +731,7 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 
 			if(result < 0)
 			{
-				kWarning(14310) << k_funcinfo << "Kopete only found log file from Kopete 0.7.x made in the future. Check your date!";
+				kWarning(14310) << "Kopete only found log file from Kopete 0.7.x made in the future. Check your date!";
 				break;
 			}
 			return result;
@@ -759,7 +759,7 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 			int result = 12*(QDate::currentDate().year() - rx.cap(1).toUInt()) +QDate::currentDate().month() - rx.cap(2).toUInt();
 			if(result < 0)
 			{
-				kWarning(14310) << k_funcinfo << "Kopete only found log file made in the future. Check your date!";
+				kWarning(14310) << "Kopete only found log file made in the future. Check your date!";
 				break;
 			}
 			return result;

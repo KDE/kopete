@@ -89,7 +89,7 @@ Contact::Contact( Account *account, const QString &contactId,
 {
 	d = new Private;
 
-	//kDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId;
+	//kDebug( 14010 ) << "Creating contact with id " << contactId;
 
 	d->contactId = contactId;
 	d->metaContact = parent;
@@ -120,7 +120,7 @@ Contact::Contact( Account *account, const QString &contactId,
 
 Contact::~Contact()
 {
-	//kDebug(14010) << k_funcinfo;
+	//kDebug(14010) ;
 	emit( contactDestroyed( this ) );
 	delete d;
 }
@@ -150,7 +150,7 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 		status.status() != OnlineStatus::Offline )
 	{
 		setProperty( globalProps->onlineSince(), QDateTime::currentDateTime() );
-		/*kDebug(14010) << k_funcinfo << "REMOVING lastSeen property for " <<
+		/*kDebug(14010) << "REMOVING lastSeen property for " <<
 			d->displayName << endl;*/
 		removeProperty( globalProps->lastSeen() );
 	}
@@ -159,7 +159,7 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 		status.status() == OnlineStatus::Offline ) // Contact went back offline
 	{
 		removeProperty( globalProps->onlineSince() );
-		/*kDebug(14010) << k_funcinfo << "SETTING lastSeen property for " <<
+		/*kDebug(14010) << "SETTING lastSeen property for " <<
 			d->displayName << endl;*/
 		setProperty( globalProps->lastSeen(), QDateTime::currentDateTime() );
 	}
@@ -177,7 +177,7 @@ void Contact::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
 	d->statusMessage = statusMessage;
 
-	kDebug(14010) << k_funcinfo << "Setting up the status message property with this: " << statusMessage.message();
+	kDebug(14010) << "Setting up the status message property with this: " << statusMessage.message();
 	if( !statusMessage.message().isEmpty() )
 		setProperty( Kopete::Global::Properties::self()->statusMessage(), statusMessage.message() );
 	else
@@ -198,7 +198,7 @@ void Contact::slotAccountIsConnectedChanged()
 
 void Contact::sendFile( const KUrl &, const QString &, uint )
 {
-	kWarning( 14010 ) << k_funcinfo << "Plugin "
+	kWarning( 14010 ) << "Plugin "
 		<< protocol()->pluginId() << " has enabled file sending, "
 		<< "but didn't implement it!" << endl;
 }

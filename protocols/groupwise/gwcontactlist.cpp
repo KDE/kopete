@@ -124,7 +124,7 @@ void GWContactList::removeInstanceById( unsigned int id )
 
 void GWContactList::dump()
 {
-	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo;
+	kDebug(GROUPWISE_DEBUG_GLOBAL) ;
 	foreach( QObject *obj, children() )
 	{
 		GWFolder * folder = qobject_cast< GWFolder * >( obj );
@@ -135,7 +135,7 @@ void GWContactList::dump()
 
 void GWContactList::clear()
 {
-	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo;
+	kDebug(GROUPWISE_DEBUG_GLOBAL) ;
 	foreach ( QObject *obj, children() )
 	{
 		delete obj;

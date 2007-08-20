@@ -96,7 +96,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
 
 void BehaviorConfig::save()
 {
-//	kDebug(14000) << k_funcinfo << "called.";
+//	kDebug(14000) << "called.";
 
 	KCModule::save();
 
@@ -113,7 +113,7 @@ void BehaviorConfig::save()
 
 void BehaviorConfig::load()
 {
-//	kDebug(14000) << k_funcinfo << "called";
+//	kDebug(14000) << "called";
 	awayInstance = Kopete::Away::getInstance();
 
 	KCModule::load();

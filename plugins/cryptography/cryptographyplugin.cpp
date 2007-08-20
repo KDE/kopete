@@ -201,7 +201,7 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 			}
 			if ( tmpKey.isEmpty() )
 			{
-				kDebug ( 14303 ) << k_funcinfo << "empty key";
+				kDebug ( 14303 ) << "empty key";
 				KMessageBox::sorry ( Kopete::UI::Global::mainWidget(), i18n ( "You have not chosen an encryption key for one or more recipients" ) );
 				return;
 			}
@@ -224,7 +224,7 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 		if ( !resultat.isEmpty() )
 			msg.setPlainBody ( resultat );
 		else
-			kDebug ( 14303 ) << k_funcinfo << "empty result";
+			kDebug ( 14303 ) << "empty result";
 	}
 	else if ( signing )
 	{

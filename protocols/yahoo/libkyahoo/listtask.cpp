@@ -26,7 +26,7 @@
 
 ListTask::ListTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 ListTask::~ListTask()
@@ -63,7 +63,7 @@ bool ListTask::forMe( const Transfer* transfer ) const
 
 void ListTask::parseBuddyList( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString group;
 
@@ -83,7 +83,7 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 
 void ListTask::parseStealthList( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString raw;
 	raw = t->firstParam( 185 );

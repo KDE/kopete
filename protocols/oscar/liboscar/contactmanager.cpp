@@ -72,7 +72,7 @@ void ContactManager::clear()
 	//delete all Contacts from the list
 	if ( d->contactList.count() > 0 )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Clearing the SSI list";
+		kDebug(OSCAR_RAW_DEBUG) << "Clearing the SSI list";
 		QList<OContact>::iterator it = d->contactList.begin();
 
 		while ( it != d->contactList.end() && d->contactList.count() > 0 )
@@ -95,7 +95,7 @@ Oscar::WORD ContactManager::nextContactId()
 	d->nextContactId = findFreeId( d->itemIdSet, d->nextContactId );
 	if ( d->nextContactId == 0xFFFF )
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "No free id!";
+		kWarning(OSCAR_RAW_DEBUG) << "No free id!";
 		return 0xFFFF;
 	}
 
@@ -111,7 +111,7 @@ Oscar::WORD ContactManager::nextGroupId()
 	d->nextGroupId = findFreeId( d->groupIdSet, d->nextGroupId );
 	if ( d->nextGroupId == 0xFFFF )
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "No free group id!";
+		kWarning(OSCAR_RAW_DEBUG) << "No free group id!";
 		return 0xFFFF;
 	}
 
@@ -205,7 +205,7 @@ OContact ContactManager::findContact( const QString &contact, const QString &gro
 
 	if ( contact.isNull() || group.isNull() )
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo <<
+		kWarning(OSCAR_RAW_DEBUG) <<
 			"Passed NULL name or group string, aborting!" << endl;
 
 		return m_dummyItem;
@@ -214,7 +214,7 @@ OContact ContactManager::findContact( const QString &contact, const QString &gro
 	OContact gr = findGroup( group ); // find the parent group
 	if ( gr.isValid() )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "gr->name= " << gr.name() <<
+		kDebug(OSCAR_RAW_DEBUG) << "gr->name= " << gr.name() <<
 			", gr->gid= " << gr.gid() <<
 			", gr->bid= " << gr.bid() <<
 			", gr->type= " << gr.type() << endl;
@@ -226,7 +226,7 @@ OContact ContactManager::findContact( const QString &contact, const QString &gro
 			if ( ( *it ).type() == ROSTER_CONTACT && (*it ).name() == contact && (*it ).gid() == gr.gid() )
 			{
 				//we have found our contact
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<
+				kDebug(OSCAR_RAW_DEBUG) <<
 					"Found contact " << contact << " in SSI data" << endl;
 				 return ( *it );
 			}
@@ -234,7 +234,7 @@ OContact ContactManager::findContact( const QString &contact, const QString &gro
 	}
 	else
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo <<
+		kDebug(OSCAR_RAW_DEBUG) <<
 			"ERROR: Group '" << group << "' not found!" << endl;
 	}
 	return m_dummyItem;
@@ -410,7 +410,7 @@ OContact ContactManager::visibilityItem() const
 	{
 		if ( ( *it ).type() == 0x0004 )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found visibility setting";
+			kDebug(OSCAR_RAW_DEBUG) << "Found visibility setting";
 			item = ( *it );
 			return item;
 		}
@@ -438,7 +438,7 @@ bool ContactManager::newGroup( const OContact& group )
 
 	if ( !group.name().isEmpty() ) //avoid the group with gid 0 and bid 0
 	{	// the group is really new
-		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding group '" << group.name() << "' to SSI list";
+		kDebug( OSCAR_RAW_DEBUG ) << "Adding group '" << group.name() << "' to SSI list";
 
 		addID( group );
 		d->contactList.append( group );
@@ -460,11 +460,11 @@ bool ContactManager::updateGroup( const OContact& group )
 
 	if ( d->contactList.contains( group ) )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "New group is already in list.";
+		kDebug(OSCAR_RAW_DEBUG) << "New group is already in list.";
 		return false;
 	}
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Updating group '" << group.name() << "' in SSI list";
+	kDebug( OSCAR_RAW_DEBUG ) << "Updating group '" << group.name() << "' in SSI list";
 	addID( group );
 	d->contactList.append( group );
 	emit groupUpdated( group );
@@ -474,12 +474,12 @@ bool ContactManager::updateGroup( const OContact& group )
 bool ContactManager::removeGroup( const OContact& group )
 {
 	QString groupName = group.name();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing group " << group.name();
+	kDebug(OSCAR_RAW_DEBUG) << "Removing group " << group.name();
 	removeID( group );
 	int remcount = d->contactList.removeAll( group );
 	if ( remcount == 0 )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No groups removed";
+		kDebug(OSCAR_RAW_DEBUG) << "No groups removed";
 		return false;
 	}
 
@@ -496,7 +496,7 @@ bool ContactManager::removeGroup( const QString &group )
 		return true;
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Group " << group << " not found.";
+		kDebug(OSCAR_RAW_DEBUG) << "Group " << group << " not found.";
 
 	return false;
 }
@@ -505,11 +505,11 @@ bool ContactManager::newContact( const OContact& contact )
 {
 	if ( d->contactList.contains( contact ) )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "New contact is already in list.";
+		kDebug(OSCAR_RAW_DEBUG) << "New contact is already in list.";
 		return false;
 	}
 		
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding contact '" << contact.name() << "' to SSI list";
+	kDebug( OSCAR_RAW_DEBUG ) << "Adding contact '" << contact.name() << "' to SSI list";
 	addID( contact );
 	d->contactList.append( contact );
 	emit contactAdded( contact );
@@ -528,11 +528,11 @@ bool ContactManager::updateContact( const OContact& contact )
 
 	if ( d->contactList.contains( contact ) )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "New contact is already in list.";
+		kDebug(OSCAR_RAW_DEBUG) << "New contact is already in list.";
 		return false;
 	}
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Updating contact '" << contact.name() << "' in SSI list";
+	kDebug( OSCAR_RAW_DEBUG ) << "Updating contact '" << contact.name() << "' in SSI list";
 	addID( contact );
 	d->contactList.append( contact );
 	emit contactUpdated( contact );
@@ -547,7 +547,7 @@ bool ContactManager::removeContact( const OContact& contact )
 
 	if ( remcount == 0 )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No contacts were removed.";
+		kDebug(OSCAR_RAW_DEBUG) << "No contacts were removed.";
 		return false;
 	}
 
@@ -562,7 +562,7 @@ bool ContactManager::removeContact( const QString &contact )
 	if ( ct.isValid() && removeContact( ct ) )
 		return true;
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Contact " << contact << " not found.";
+		kDebug(OSCAR_RAW_DEBUG) << "Contact " << contact << " not found.";
 
 	return false;
 }
@@ -571,11 +571,11 @@ bool ContactManager::newItem( const OContact& item )
 {
 	if ( d->contactList.contains( item ) )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Item is already in list.";
+		kDebug(OSCAR_RAW_DEBUG) << "Item is already in list.";
 		return false;
 	}
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding item " << item.toString();
+	kDebug(OSCAR_RAW_DEBUG) << "Adding item " << item.toString();
 	addID( item );
 	d->contactList.append( item );
 	return true;
@@ -593,11 +593,11 @@ bool ContactManager::updateItem( const OContact& item )
 
 	if ( d->contactList.contains( item ) )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "New item is already in list.";
+		kDebug(OSCAR_RAW_DEBUG) << "New item is already in list.";
 		return false;
 	}
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Updating item in SSI list";
+	kDebug( OSCAR_RAW_DEBUG ) << "Updating item in SSI list";
 	addID( item );
 	d->contactList.append( item );
 	return true;
@@ -610,7 +610,7 @@ bool ContactManager::removeItem( const OContact& item )
 
 	if ( remcount == 0 )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No items were removed.";
+		kDebug(OSCAR_RAW_DEBUG) << "No items were removed.";
 		return false;
 	}
 

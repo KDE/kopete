@@ -168,7 +168,7 @@ QPixmap OnlineStatusManager::cacheLookupByObject( const OnlineStatus &statusFor,
 	if ( !theIcon )
 	{
 		// cache miss
-		kDebug(14010) << k_funcinfo << "Missed " << fp << " in icon cache!";
+		kDebug(14010) << "Missed " << fp << " in icon cache!";
 		theIcon = renderIcon( statusFor, icon, size, color, idle);
 		d->iconCache[fp] = theIcon;
 	}
@@ -324,7 +324,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
 
-	kDebug( 14010) << k_funcinfo << "overlayIcons size: " << statusFor.overlayIcons().count();
+	kDebug( 14010) << "overlayIcons size: " << statusFor.overlayIcons().count();
 
 	// NOTE: overlayIcons car be empty
 	if ( !statusFor.overlayIcons().empty() && baseIcon == statusFor.overlayIcons().first() )

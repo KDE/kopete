@@ -155,7 +155,7 @@ Contact *ContactList::findContact( const QString &protocolId,
 	Account *i=AccountManager::self()->findAccount(protocolId,accountId);
 	if(!i)
 	{
-		kDebug( 14010 ) << k_funcinfo << "Account not found";
+		kDebug( 14010 ) << "Account not found";
 		return 0L;
 	}
 	return i->contacts()[contactId];
@@ -244,7 +244,7 @@ void ContactList::removeMetaContact(MetaContact *m)
 {
 	if ( !d->contacts.contains(m) )
 	{
-		kDebug(14010) << k_funcinfo << "Trying to remove a not listed MetaContact.";
+		kDebug(14010) << "Trying to remove a not listed MetaContact.";
 		return;
 	}
 
@@ -300,7 +300,7 @@ void ContactList::removeGroup( Group *g )
 
 void ContactList::setSelectedItems(QList<MetaContact *> metaContacts , QList<Group *> groups)
 {
-	kDebug( 14010 ) << k_funcinfo << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected";
+	kDebug( 14010 ) << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected";
 	d->selectedMetaContacts=metaContacts;
 	d->selectedGroups=groups;
 
@@ -325,7 +325,7 @@ void ContactList::load()
 	storage->load();
 	if( !storage->isValid() )
 	{
-		kDebug(14010) << k_funcinfo << "Contact list storage failed. Reason: " << storage->errorMessage();
+		kDebug(14010) << "Contact list storage failed. Reason: " << storage->errorMessage();
 		d->loaded = true;
 		delete storage;
 		return;
@@ -350,7 +350,7 @@ void Kopete::ContactList::save()
 	storage->save();
 	if( !storage->isValid() )
 	{
-		kDebug(14010) << k_funcinfo << "Contact list storage failed. Reason: " << storage->errorMessage();
+		kDebug(14010) << "Contact list storage failed. Reason: " << storage->errorMessage();
 
 		// Saving the contact list failed. retry every minute until it works.
 		// single-shot: will get restarted by us next time if it's still failing

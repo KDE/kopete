@@ -89,7 +89,7 @@ void SMPPPDCSPrefs::determineCSType() {
 }
 
 void SMPPPDCSPrefs::scanStarted(uint total) {
-    kDebug(14312) << k_funcinfo << "Scanning for a SMPPPD started. Will scan " << total << " IPs";
+    kDebug(14312) << "Scanning for a SMPPPD started. Will scan " << total << " IPs";
 
     // setup the scanProgress Dialog
     if(!m_scanProgressDlg) {
@@ -111,13 +111,13 @@ void SMPPPDCSPrefs::scanProgress(uint cur) {
 }
 
 void SMPPPDCSPrefs::cancelScanning() {
-    kDebug(14312) << k_funcinfo;
+    kDebug(14312) ;
     Q_ASSERT(m_curSearcher);
     m_curSearcher->cancelSearch();
 }
 
 void SMPPPDCSPrefs::smpppdFound(const QString& host) {
-    kDebug(14312) << k_funcinfo;
+    kDebug(14312) ;
 
     QString myHost = host;
 
@@ -131,16 +131,16 @@ void SMPPPDCSPrefs::smpppdFound(const QString& host) {
 #ifndef NDEBUG
             switch(h_errno) {
             case HOST_NOT_FOUND:
-                kDebug(14312) << k_funcinfo << "No such host is known in the database.";
+                kDebug(14312) << "No such host is known in the database.";
                 break;
             case TRY_AGAIN:
-                kDebug(14312) << k_funcinfo << "Couldn't contact DNS server.";
+                kDebug(14312) << "Couldn't contact DNS server.";
                 break;
             case NO_RECOVERY:
-                kDebug(14312) << k_funcinfo << "A non-recoverable error occurred.";
+                kDebug(14312) << "A non-recoverable error occurred.";
                 break;
             case NO_ADDRESS:
-                kDebug(14312) << k_funcinfo << "The host database contains an entry for the name, but it doesn't have an associated Internet address.";
+                kDebug(14312) << "The host database contains an entry for the name, but it doesn't have an associated Internet address.";
                 break;
             }
 #endif
@@ -155,7 +155,7 @@ void SMPPPDCSPrefs::smpppdFound(const QString& host) {
 }
 
 void SMPPPDCSPrefs::smpppdNotFound() {
-    kDebug(14312) << k_funcinfo;
+    kDebug(14312) ;
     useNetstat->setChecked(true);
     useSmpppd->setChecked(false);
     autoCSTest->setEnabled(true);

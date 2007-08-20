@@ -77,11 +77,11 @@ void PrivacyMessageHandler::handleMessage( MessageEvent *e )
 	emit handle( e );
 	if( event )
 	{
-		kDebug(14313) << k_funcinfo << "MessageEvent still there!";
+		kDebug(14313) << "MessageEvent still there!";
 		MessageHandler::handleMessage( event );
 	}
 	else
-		kDebug(14313) << k_funcinfo << "MessageEvent destroyed!";
+		kDebug(14313) << "MessageEvent destroyed!";
 }
 
 #include "privacymessagehandler.moc"

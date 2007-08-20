@@ -51,7 +51,7 @@ size_t VideoDeviceModelPool::addModel( QString newmodel )
 		for ( int loop = 0 ; loop < m_devicemodel.size(); loop++)
 		if (newmodel == m_devicemodel[loop].model)
 		{
-			kDebug() << k_funcinfo << "Model " << newmodel << " already exists.";
+			kDebug() << "Model " << newmodel << " already exists.";
 			m_devicemodel[loop].count++;
 			return m_devicemodel[loop].count;
 		}

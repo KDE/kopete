@@ -54,7 +54,7 @@ QByteArray DetectorDCOP::getKInternetDCOP() const {
     \fn DetectorDCOP::getConnectionStatusDCOP()
  */
 DetectorDCOP::KInternetDCOPState DetectorDCOP::getConnectionStatusDCOP() const {
-    kDebug(14312) << k_funcinfo << "Start inquiring " << m_kinternetApp << " via DCOP";
+    kDebug(14312) << "Start inquiring " << m_kinternetApp << " via DCOP";
 	
 	
 	KInternetIface_stub stub = KInternetIface_stub(kapp->dcopClient(), m_kinternetApp, "KInternetIface");
@@ -63,14 +63,14 @@ DetectorDCOP::KInternetDCOPState DetectorDCOP::getConnectionStatusDCOP() const {
 	
 	if(stub.ok()) {
 		if(status) {
-			kDebug(14312) << k_funcinfo << "isOnline() returned true";
+			kDebug(14312) << "isOnline() returned true";
 			return CONNECTED;
 		} else {
-			kDebug(14312) << k_funcinfo << "isOnline() returned false";
+			kDebug(14312) << "isOnline() returned false";
 			return DISCONNECTED;
 		}
 	} else {
-		kWarning(14312) << k_funcinfo << "DCOP call to " << m_kinternetApp << " failed!";
+		kWarning(14312) << "DCOP call to " << m_kinternetApp << " failed!";
 	}
 
 	return ERROR;

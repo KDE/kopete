@@ -108,7 +108,7 @@ void JabberChooseServer::slotTransferData ( KIO::Job */*job*/, const QByteArray 
 
 	memcpy ( &xmlServerList.data()[oldSize], data.data (), data.size () );
 
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Server list now " << xmlServerList.size ();
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Server list now " << xmlServerList.size ();
 
 }
 
@@ -123,7 +123,7 @@ void JabberChooseServer::slotTransferResult ( KJob *kJob )
 	}
 	else
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received server list ok!";
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "Received server list ok!";
 
 		// clear status message
 		mMainWidget->lblStatus->setText ( "" );

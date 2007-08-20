@@ -86,7 +86,7 @@ bool BuddyIconTask::forMe( const Transfer* transfer ) const
 
 	if ( st->snacRequest() != m_seq )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sequences don't match";
+		kDebug(OSCAR_RAW_DEBUG) << "sequences don't match";
 		return false;
 	}
 
@@ -146,20 +146,20 @@ void BuddyIconTask::sendIcon()
 
 void BuddyIconTask::handleUploadResponse()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "server acked icon upload";
+	kDebug(OSCAR_RAW_DEBUG) << "server acked icon upload";
 	Buffer* b = transfer()->buffer();
 	b->skipBytes( 4 );
 	Oscar::BYTE iconHashSize = b->getByte();
 	QByteArray hash( b->getBlock( iconHashSize ) );
 	//check the hash
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "hash " << hash;
+	kDebug(OSCAR_RAW_DEBUG) << "hash " << hash;
 	setSuccess( 0, QString() );
 }
 
 
 void BuddyIconTask::sendAIMBuddyIconRequest()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting buddy icon for " << m_user;
+	kDebug(OSCAR_RAW_DEBUG) << "requesting buddy icon for " << m_user;
 	FLAP f = { 0x02, 0, 0 };
 	m_seq = client()->snacSequence();
 	SNAC s = { 0x0010, 0x0004, 0x0000, m_seq };
@@ -179,7 +179,7 @@ void BuddyIconTask::handleAIMBuddyIconResponse()
 {
 	Buffer* b = transfer()->buffer();
 	QString user = b->getBUIN();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user;
+	kDebug(OSCAR_RAW_DEBUG) << "Receiving buddy icon for " << user;
 	b->skipBytes(2); //unknown field. not used
 	Oscar::BYTE iconType = b->getByte();
 	Q_UNUSED( iconType );
@@ -192,7 +192,7 @@ void BuddyIconTask::handleAIMBuddyIconResponse()
 
 void BuddyIconTask::sendICQBuddyIconRequest()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting buddy icon for " << m_user;
+	kDebug(OSCAR_RAW_DEBUG) << "requesting buddy icon for " << m_user;
 	FLAP f = { 0x02, 0, 0 };
 	m_seq = client()->snacSequence();
 	SNAC s = { 0x0010, 0x0006, 0x0000, m_seq };
@@ -212,7 +212,7 @@ void BuddyIconTask::handleICQBuddyIconResponse()
 {
 	Buffer* b = transfer()->buffer();
 	QString user = b->getBUIN();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user;
+	kDebug(OSCAR_RAW_DEBUG) << "Receiving buddy icon for " << user;
 	
 	b->skipBytes(2); //not used
 	Oscar::BYTE iconType = b->getByte();

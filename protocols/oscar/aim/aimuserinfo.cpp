@@ -45,7 +45,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 	
 	setDefaultButton(KDialog::Ok);
 	showButtonSeparator(true);
-	kDebug(14200) << k_funcinfo << "for contact '" << c->contactId() << "'";
+	kDebug(14200) << "for contact '" << c->contactId() << "'";
 
 	m_contact = c;
 	mAccount = acc;
@@ -125,12 +125,12 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 AIMUserInfoDialog::~AIMUserInfoDialog()
 {
 	delete mMainWidget;
-	kDebug(14200) << k_funcinfo << "Called.";
+	kDebug(14200) << "Called.";
 }
 
 void AIMUserInfoDialog::slotUpdateClicked()
 {
-	kDebug(14200) << k_funcinfo << "Called.";
+	kDebug(14200) << "Called.";
 	QString newNick = mMainWidget->txtNickName->text();
 	QString currentNick = m_contact->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( !newNick.isEmpty() && ( newNick != currentNick ) )
@@ -144,7 +144,7 @@ void AIMUserInfoDialog::slotUpdateClicked()
 
 void AIMUserInfoDialog::slotSaveClicked()
 {
-	kDebug(14200) << k_funcinfo << "Called.";
+	kDebug(14200) << "Called.";
 
 	if (userInfoEdit)
 	{ // editable mode, set profile
@@ -165,13 +165,13 @@ void AIMUserInfoDialog::slotSaveClicked()
 
 void AIMUserInfoDialog::slotCloseClicked()
 {
-	kDebug(14200) << k_funcinfo << "Called.";
+	kDebug(14200) << "Called.";
 	emit closing();
 }
 
 void AIMUserInfoDialog::slotUpdateProfile()
 {
-	kDebug(14152) << k_funcinfo << "Got User Profile.";
+	kDebug(14152) << "Got User Profile.";
 	AIMProtocol* p = static_cast<AIMProtocol*>( mAccount->protocol() );
 	QString awayMessage = m_contact->property( p->awayMessage ).value().toString();
 	mMainWidget->txtAwayMessage->setHtml( awayMessage );

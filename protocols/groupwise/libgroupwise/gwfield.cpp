@@ -71,7 +71,7 @@ void FieldList::dump( bool recursive, int offset )
 {
 	const FieldListIterator myEnd = end();
 	if ( !offset )
-//		kDebug( GROUPWISE_DEBUG_LIBGW ) << k_funcinfo << ( recursive ? ", recursively" : ", non-recursive" );
+//		kDebug( GROUPWISE_DEBUG_LIBGW ) << ( recursive ? ", recursively" : ", non-recursive" );
 	for( FieldListIterator it = begin(); it != myEnd; ++it )
 	{
 		QString s;

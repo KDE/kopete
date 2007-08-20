@@ -76,7 +76,7 @@ void ICQContactBase::receivedShortInfo( const QString& contact )
 	*/
 	if ( m_ssiItem.alias().isEmpty() && !shortInfo.nickname.isEmpty() )
 	{
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo <<
+		kDebug(OSCAR_GEN_DEBUG) <<
 			"setting new displayname for former UIN-only Contact" << endl;
 		setProperty( Kopete::Global::Properties::self()->nickName(), codec->toUnicode( shortInfo.nickname ) );
 	}

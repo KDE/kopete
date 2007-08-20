@@ -28,7 +28,7 @@
 KNetworkConnector::KNetworkConnector ( QObject *parent )
  : Connector ( parent )
 {
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New KNetwork connector.";
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "New KNetwork connector.";
 
 	mErrorCode = KNetwork::KSocketBase::NoError;
 
@@ -48,7 +48,7 @@ KNetworkConnector::~KNetworkConnector ()
 
 void KNetworkConnector::connectToServer ( const QString &server )
 {
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Initiating connection to " << mHost;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Initiating connection to " << mHost;
 	Q_ASSERT( !mHost.isNull() );
 	Q_ASSERT( mPort );
 	/*
@@ -71,7 +71,7 @@ void KNetworkConnector::connectToServer ( const QString &server )
 
 void KNetworkConnector::slotConnected ()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "We are connected.";
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << "We are connected.";
 
 	// FIXME: setPeerAddress() is something different, find out correct usage later
 	//KInetSocketAddress inetAddress = mStreamSocket->address().asInet().makeIPv6 ();
@@ -83,7 +83,7 @@ void KNetworkConnector::slotConnected ()
 
 void KNetworkConnector::slotError ( int code )
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Error detected: " << code;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) << "Error detected: " << code;
 
 	mErrorCode = code;
 	emit error ();
@@ -105,13 +105,13 @@ ByteStream *KNetworkConnector::stream () const
 
 void KNetworkConnector::done ()
 {
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) ;
 	mByteStream->close ();
 }
 
 void KNetworkConnector::setOptHostPort ( const QString &host, quint16 port )
 {
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Manually specifying host " << host << " and port " << port;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Manually specifying host " << host << " and port " << port;
 
 	mHost = host;
 	mPort = port;
@@ -120,7 +120,7 @@ void KNetworkConnector::setOptHostPort ( const QString &host, quint16 port )
 
 void KNetworkConnector::setOptSSL ( bool ssl )
 {
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Setting SSL to " << ssl;
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Setting SSL to " << ssl;
 
 	setUseSSL ( ssl );
 

@@ -48,7 +48,7 @@ JavaScriptConfig::JavaScriptConfig(QObject *parent)
 	, MimeTypeHandler(false)
 	, d(new JavaScriptConfig::Private)
 {
-	kDebug() << k_funcinfo;
+	kDebug() ;
 
 	d->config = new KConfig("javascriptplugin.rc");
 
@@ -216,7 +216,7 @@ void JavaScriptConfig::setScriptEnabled( Kopete::Account *account, const QString
 	else
 		key = "GLOBAL_SCRIPT";
 
-	kDebug() << k_funcinfo << key << " " << script << " " << enabled;
+	kDebug() << key << " " << script << " " << enabled;
 
 	JavaScriptFile *scriptPtr = d->scripts[script];
 	if( scriptPtr )
@@ -233,7 +233,7 @@ void JavaScriptConfig::setScriptEnabled( Kopete::Account *account, const QString
 	}
 	else
 	{
-		kError() << k_funcinfo << script << " is not a valid script!" << endl;
+		kError() << script << " is not a valid script!" << endl;
 	}
 }
 

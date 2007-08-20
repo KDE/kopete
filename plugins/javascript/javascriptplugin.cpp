@@ -383,14 +383,14 @@ void JavaScriptPlugin::slotContactRemoved( Kopete::Contact *c )
 */
 void JavaScriptPlugin::runScripts( Kopete::Account *a, const QString &scriptType, KJSEmbed::Engine *jsEngine )
 {
-//	kDebug() << k_funcinfo << "Scripts for " << a->accountId() << ", type " << scriptType << " = " << scripts.count();
+//	kDebug() << "Scripts for " << a->accountId() << ", type " << scriptType << " = " << scripts.count();
 	foreach( JavaScriptFile *scriptfile, d->config->scriptsFor( a ) )
 	{
 		QMap<QString,QString>::iterator it = scriptfile->functions.find( scriptType );
 		if( it != scriptfile->functions.end() )
 		{
 			QString functionCall = it.data() + QLatin1String("()");
-			kDebug() << k_funcinfo << "Executing " << functionCall;
+			kDebug() << "Executing " << functionCall;
 			jsEngine->execute( functionCall );
 		}
 	}

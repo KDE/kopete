@@ -95,7 +95,7 @@ TextEffectPreferences::~TextEffectPreferences()
 
 void TextEffectPreferences::load()
 {
-	kDebug( 14310 ) << k_funcinfo << "ENTER";
+	kDebug( 14310 ) << "ENTER";
 
 	config->load();
 
@@ -113,13 +113,13 @@ void TextEffectPreferences::load()
 	// Indicate that we have not changed ^_^
 	emit changed( false );
 
-	kDebug( 14310 ) << k_funcinfo << "EXIT";
+	kDebug( 14310 ) << "EXIT";
 
 }
 
 void TextEffectPreferences::save()
 {
-	kDebug() << k_funcinfo << "ENTER";
+	kDebug() << "ENTER";
 	// Save the settings
 	config->setColors(colors());
 	config->setColorRandom(preferencesDialog->m_colorRandom->isChecked());
@@ -140,7 +140,7 @@ void TextEffectPreferences::save()
 
 	// Indicate that we have not changed ^_^
 	emit changed( false );
-	kDebug() << k_funcinfo << "EXIT";
+	kDebug() << "EXIT";
 }
 
 QStringList TextEffectPreferences::colors()
@@ -211,7 +211,7 @@ void TextEffectPreferences::slotDownPressed()
 
 void TextEffectPreferences::slotSettingChanged()
 {
-	kDebug() << k_funcinfo << "Called"
+	kDebug() << "Called"
 			  << endl;
 	// Indicate that our settings have changed
     emit changed( true );

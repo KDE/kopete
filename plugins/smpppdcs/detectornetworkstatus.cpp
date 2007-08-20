@@ -39,28 +39,28 @@ void DetectorNetworkStatus::checkStatus() const {
 void DetectorNetworkStatus::statusChanged(const QString& host, NetworkStatus::EnumStatus status) {
 	switch(status) {
 		case NetworkStatus::Offline:
-			kDebug(14312) << k_funcinfo << host << ": NetworkStatus::Offline";
+			kDebug(14312) << host << ": NetworkStatus::Offline";
 			break;
 		case NetworkStatus::OfflineFailed:
-			kDebug(14312) << k_funcinfo << host << ": NetworkStatus::OfflineFailed";
+			kDebug(14312) << host << ": NetworkStatus::OfflineFailed";
 			break;
 		case NetworkStatus::OfflineDisconnected:
-			kDebug(14312) << k_funcinfo << host << ": NetworkStatus::OfflineDisconnected";
+			kDebug(14312) << host << ": NetworkStatus::OfflineDisconnected";
 			break;
 		case NetworkStatus::ShuttingDown:
-			kDebug(14312) << k_funcinfo << host << ": NetworkStatus::ShuttingDown";
+			kDebug(14312) << host << ": NetworkStatus::ShuttingDown";
 			break;
 		case NetworkStatus::Establishing:
-			kDebug(14312) << k_funcinfo << host << ": NetworkStatus::Establishing";
+			kDebug(14312) << host << ": NetworkStatus::Establishing";
 			break;
 		case NetworkStatus::Online:
-			kDebug(14312) << k_funcinfo << host << ": NetworkStatus::Online";
+			kDebug(14312) << host << ": NetworkStatus::Online";
 			break;
 		case NetworkStatus::NoNetworks:
-			kDebug(14312) << k_funcinfo << host << ": NetworkStatus::NoNetworks";
+			kDebug(14312) << host << ": NetworkStatus::NoNetworks";
 			break;
 		case NetworkStatus::Unreachable:
-			kDebug(14312) << k_funcinfo << host << ": NetworkStatus::Unreachable";
+			kDebug(14312) << host << ": NetworkStatus::Unreachable";
 			break;
 	}
 }

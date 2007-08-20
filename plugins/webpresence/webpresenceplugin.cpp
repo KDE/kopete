@@ -165,7 +165,7 @@ void WebPresencePlugin::slotWriteFile()
 
 	KTemporaryFile* xml = generateFile();
 	xml->setAutoRemove( true );
-	kDebug(14309) << k_funcinfo << " " << xml->fileName();
+	kDebug(14309) << " " << xml->fileName();
 
 	switch( resultFormatting ) {
 	case WEB_XML:
@@ -214,7 +214,7 @@ void WebPresencePlugin::slotUploadJobResult( KJob *job )
 KTemporaryFile* WebPresencePlugin::generateFile()
 {
 	// generate the (temporary) XML file representing the current contactlist
-	kDebug( 14309 ) << k_funcinfo;
+	kDebug( 14309 ) ;
 	QString notKnown = i18n( "Not yet known" );
 
 	QDomDocument doc;
@@ -360,7 +360,7 @@ bool WebPresencePlugin::transform( KTemporaryFile * src, KTemporaryFile * dest )
 	xmlDocPtr res = 0;
 
 	if ( !sheet.exists() ) {
-		kDebug(14309) << k_funcinfo << "ERROR: Style sheet not found";
+		kDebug(14309) << "ERROR: Style sheet not found";
 		retval = false;
 		goto end;
 	}
@@ -368,28 +368,28 @@ bool WebPresencePlugin::transform( KTemporaryFile * src, KTemporaryFile * dest )
 	// is the cast safe?
 	cur = xsltParseStylesheetFile( (const xmlChar *) sheet.fileName().toLatin1().data() );
 	if ( !cur ) {
-		kDebug(14309) << k_funcinfo << "ERROR: Style sheet parsing failed";
+		kDebug(14309) << "ERROR: Style sheet parsing failed";
 		retval = false;
 		goto end;
 	}
 
 	doc = xmlParseFile( QFile::encodeName( src->fileName() ) );
 	if ( !doc ) {
-		kDebug(14309) << k_funcinfo << "ERROR: XML parsing failed";
+		kDebug(14309) << "ERROR: XML parsing failed";
 		retval = false;
 		goto end;
 	}
 
 	res = xsltApplyStylesheet( cur, doc, 0 );
 	if ( !res ) {
-		kDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed";
+		kDebug(14309) << "ERROR: Style sheet apply failed";
 		retval = false;
 		goto end;
 	}
 
 
 	if ( xsltSaveResultToFd(dest->handle(), res, cur) == -1 ) {
-		kDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed";
+		kDebug(14309) << "ERROR: Style sheet apply failed";
 		retval = false;
 		goto end;
 	}
@@ -416,7 +416,7 @@ end:
 
 ProtocolList WebPresencePlugin::allProtocols()
 {
-	kDebug( 14309 ) << k_funcinfo;
+	kDebug( 14309 ) ;
 
 	Kopete::PluginList plugins = Kopete::PluginManager::self()->loadedPlugins( "Protocols" );
 	Kopete::PluginList::ConstIterator it;

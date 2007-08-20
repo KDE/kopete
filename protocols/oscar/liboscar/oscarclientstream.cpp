@@ -88,12 +88,12 @@ ClientStream::~ClientStream()
 
 	if ( d->socket->isOpen() )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Socket open, disconnecting...";
+		kDebug(OSCAR_RAW_DEBUG) << "Socket open, disconnecting...";
 		d->socket->disconnectFromHost();
 	
 		if ( !d->socket->waitForDisconnected( 10000 ) )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Disconnection error!";
+			kDebug(OSCAR_RAW_DEBUG) << "Disconnection error!";
 			d->socket->close();
 		}
 	}
@@ -107,12 +107,12 @@ void ClientStream::connectToServer( const QString& host, quint16 port )
 	d->noopTimer.stop();
 	if ( d->socket->isOpen() )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Socket open, disconnecting...";
+		kDebug(OSCAR_RAW_DEBUG) << "Socket open, disconnecting...";
 		d->socket->disconnectFromHost();
 		
 		if ( !d->socket->waitForDisconnected( 10000 ) )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Disconnection error!";
+			kDebug(OSCAR_RAW_DEBUG) << "Disconnection error!";
 			d->socket->close();
 		}
 	}
@@ -252,7 +252,7 @@ void ClientStream::cp_incomingData()
 		doReadyRead();
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << 
+		kDebug(OSCAR_RAW_DEBUG) << 
 			"client signalled incomingData but none was available, state is: " <<
 			d->client.state() << endl;
 }
@@ -260,7 +260,7 @@ void ClientStream::cp_incomingData()
 
 void ClientStream::socketConnected()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
+	kDebug(OSCAR_RAW_DEBUG) ;
 
 	if ( d->noop_time )
 		d->noopTimer.start( d->noop_time );
@@ -270,7 +270,7 @@ void ClientStream::socketConnected()
 
 void ClientStream::socketDisconnected()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
+	kDebug(OSCAR_RAW_DEBUG) ;
 
 	d->noopTimer.stop();
 	d->client.reset();
@@ -279,7 +279,7 @@ void ClientStream::socketDisconnected()
 
 void ClientStream::socketError( QAbstractSocket::SocketError socketError )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << " error: " << int(socketError);
+	kDebug(OSCAR_RAW_DEBUG) << " error: " << int(socketError);
 
 	d->noopTimer.stop();
 	d->socket->close();
@@ -294,7 +294,7 @@ void ClientStream::socketReadyRead()
 
 #if LIBOSCAR_DEBUG
 	QByteArray cs(buffer.data(), buffer.size()+1);
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "recv: " << buffer.size() << "bytes";
+	kDebug(OSCAR_RAW_DEBUG) << "recv: " << buffer.size() << "bytes";
 	cs_dump( buffer );
 #endif
 
@@ -304,7 +304,7 @@ void ClientStream::socketReadyRead()
 void ClientStream::socketBytesWritten( qint64 bytes )
 {
 #if LIBOSCAR_DEBUG
- 	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << bytes << " bytes written";
+ 	kDebug(OSCAR_RAW_DEBUG) << bytes << " bytes written";
 	Q_UNUSED( bytes );
 #else
 	Q_UNUSED( bytes );

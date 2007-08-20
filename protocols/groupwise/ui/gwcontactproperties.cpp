@@ -138,7 +138,7 @@ void GroupWiseContactProperties::slotShowContextMenu( Q3ListViewItem * item, con
 
 void GroupWiseContactProperties::slotCopy()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
 	if ( m_propsWidget->m_propsView->currentItem() )
 	{
 		QClipboard *cb = QApplication::clipboard();

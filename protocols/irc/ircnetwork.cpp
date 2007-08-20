@@ -114,7 +114,7 @@ bool Networks::slotSaveNetworkConfig() const
 /*
 	// store any changes in the UI
 	storeCurrentNetwork();
-	kDebug( 14120 ) <<  k_funcinfo << m_uiCurrentHostSelection;
+	kDebug( 14120 ) << m_uiCurrentHostSelection;
 	storeCurrentHost();
 
 	QDomDocument doc("irc-networks");
@@ -146,7 +146,7 @@ bool Networks::slotSaveNetworkConfig() const
 		}
 	}
 
-//	kDebug(14121) << k_funcinfo << doc.toString(4);
+//	kDebug(14121) << doc.toString(4);
 	QFile xmlFile( KStandardDirs::locateLocal( "appdata", "ircnetworks.xml" ) );
 
 	if (xmlFile.open(QIODevice::WriteOnly))
@@ -157,7 +157,7 @@ bool Networks::slotSaveNetworkConfig() const
 		return true;
 	}
 */
-	kDebug(14121) << k_funcinfo << "Failed to save the Networks definition file";
+	kDebug(14121) << "Failed to save the Networks definition file";
 	return false;
 }
 /*

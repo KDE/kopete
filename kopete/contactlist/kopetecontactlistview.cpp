@@ -549,7 +549,7 @@ void KopeteContactListView::slotAddSubContactActionNewAccount(Kopete::Account* a
 
 void KopeteContactListView::slotAddSubContactActionAccountDeleted(const Kopete::Account *account)
 {
-	kDebug(14000) << k_funcinfo;
+	kDebug(14000) ;
 
 	QMapIterator<KAction *, Kopete::Account *> it(m_addContactAccountMap);
 	while ( it.hasNext() )
@@ -694,7 +694,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 	KXmlGuiWindow *window = dynamic_cast<KXmlGuiWindow *>(topLevelWidget());
 	if ( !window )
 	{
-		kError( 14000 ) << k_funcinfo << "Main window not found, unable to display context-menu; "
+		kError( 14000 ) << "Main window not found, unable to display context-menu; "
 			<< "Kopete::UI::Global::mainWidget() = " << Kopete::UI::Global::mainWidget() << endl;
 		return;
 	}
@@ -705,7 +705,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 			treeStepSize() * ( item->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
 		int py = mapFromGlobal( point ).y() - itemRect( item ).y() - (header()->isVisible() ? header()->height() : 0) ;
 
-		//kDebug( 14000 ) << k_funcinfo << "x: " << px << ", y: " << py;
+		//kDebug( 14000 ) << "x: " << px << ", y: " << py;
 		Kopete::Contact *c = metaLVI->contactForPoint( QPoint( px, py ) ) ;
 		if ( c )
 		{
@@ -1093,7 +1093,7 @@ void KopeteContactListView::addDraggedContactToMetaContact( Kopete::Contact *con
 void KopeteContactListView::addDraggedContactByInfo( const QString &protocolId, const QString &accountId,
 			      const QString &contactId, Q3ListViewItem *after )
 {
-	kDebug(14000) << k_funcinfo << "protocolId=" << protocolId <<
+	kDebug(14000) << "protocolId=" << protocolId <<
 		", accountId=" << accountId << ", contactId=" << contactId << endl;
 
 	Kopete::Account *account = Kopete::AccountManager::self()->findAccount( protocolId,accountId );
@@ -1254,7 +1254,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 		{
 			QString text;
 			Q3TextDrag::decode(e, text);
-			kDebug(14000) << k_funcinfo << "drop with mimetype:" << e->format() << " data as text:" << text;
+			kDebug(14000) << "drop with mimetype:" << e->format() << " data as text:" << text;
 		}
 	}
 
@@ -1777,7 +1777,7 @@ void KopeteContactListView::slotAddContact()
 
 		if (!addContactPage)
 		{
-			kDebug(14000) << k_funcinfo <<
+			kDebug(14000) <<
 				"Error while creating addcontactpage" << endl;
 		}
 		else
@@ -1830,7 +1830,7 @@ void KopeteContactListView::slotAddTemporaryContact()
 
 void KopeteContactListView::slotProperties()
 {
-//	kDebug(14000) << k_funcinfo << "Called";
+//	kDebug(14000) << "Called";
 
 	KopeteMetaContactLVI *metaLVI =
 		dynamic_cast<KopeteMetaContactLVI *>( currentItem() );
@@ -1882,7 +1882,7 @@ void KopeteContactListView::slotItemRenamed( Q3ListViewItem */*item*/ )
 	else
 	{
 		//group are handled differently in KopeteGroupViewItem
-	//	kWarning( 14000 ) << k_funcinfo << "Unknown list view item '" << item
+	//	kWarning( 14000 ) << "Unknown list view item '" << item
 	//	                   << "' renamed, ignoring item" << endl;
 	}
 	*/

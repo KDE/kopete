@@ -81,7 +81,7 @@ void YahooChatChatSession::left( YahooContact *c )
 
 void YahooChatChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSession * )
 {
-	kDebug ( YAHOO_GEN_DEBUG ) << k_funcinfo;
+	kDebug ( YAHOO_GEN_DEBUG ) ;
 
 	YahooAccount *acc = dynamic_cast< YahooAccount *>( account() );
 	if( acc )

@@ -49,20 +49,20 @@ YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent): AddCont
 // Destructor
 YahooAddContact::~YahooAddContact()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	delete theDialog;
 }
 
 bool YahooAddContact::validateData()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	return !theDialog->contactID->text().isEmpty();
 }
 
 bool YahooAddContact::apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact)
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	QString displayName = theDialog->contactID->text();
 	YahooAccount* myAccount = static_cast<YahooAccount*>(theAccount);

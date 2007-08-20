@@ -80,7 +80,7 @@ QString GroupWiseContact::dn() const
 
 void GroupWiseContact::updateDetails( const ContactDetails & details )
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
 	if ( !details.cn.isNull() )
 		setProperty( protocol()->propCN, details.cn );
 	if ( !details.dn.isNull() )
@@ -149,7 +149,7 @@ void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap
 
 Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
-	//kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "called, canCreate: " << canCreate;
+	//kDebug( GROUPWISE_DEBUG_GLOBAL ) << "called, canCreate: " << canCreate;
 
 	Kopete::ContactPtrList chatMembers;
 	chatMembers.append( this );
@@ -190,7 +190,7 @@ QHash< QString, QString > GroupWiseContact::serverProperties()
 
 void GroupWiseContact::sendMessage( Kopete::Message &message )
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
 	manager()->appendMessage( message );
 	// tell the manager it was sent successfully
 	manager()->messageSucceeded();
@@ -208,7 +208,7 @@ void GroupWiseContact::sync( unsigned int)
 
 void GroupWiseContact::slotBlock()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
 	if ( account()->isConnected() )
 	{
 		if ( account()->isContactBlocked( m_dn ) )
@@ -297,7 +297,7 @@ void GroupWiseContact::renamedOnServer()
 			setProperty( Kopete::Global::Properties::self()->nickName(), uct->displayName() );
 	}
 	else
-		kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "rename failed, return code: " << uct->statusCode();
+		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "rename failed, return code: " << uct->statusCode();
 }
 #include "gwcontact.moc"
 

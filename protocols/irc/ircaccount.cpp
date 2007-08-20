@@ -180,7 +180,7 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 
 IRCAccount::~IRCAccount()
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 //	KIrc::StdMessage::quit(d->client, i18n("Plugin Unloaded"));
 
 	delete d;
@@ -233,7 +233,7 @@ void IRCAccount::clientSetup()
 
 void IRCAccount::clientConnect()
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 
 	if (d->network.name.isEmpty())
 	{
@@ -285,26 +285,26 @@ void IRCAccount::clientConnect()
 
 int IRCAccount::codecMib() const
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	return configGroup()->readEntry(Config::CODECMIB, 0);
 }
 
 void IRCAccount::setCodecFromMib(int mib)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	configGroup()->writeEntry(Config::CODECMIB, mib);
 	d->client->setDefaultCodec(QTextCodec::codecForMib(mib));
 }
 
 QTextCodec *IRCAccount::codec() const
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	return QTextCodec::codecForMib(codecMib());
 }
 
 void IRCAccount::setCodec( QTextCodec *codec )
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	if (codec)
 		setCodecFromMib(codec->mibEnum());
 	else
@@ -390,7 +390,7 @@ void IRCAccount::setAutoShowServerWindow(bool autoShow)
 
 KIrc::ClientSocket *IRCAccount::client() const
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	return d->client;
 }
 
@@ -410,7 +410,7 @@ void IRCAccount::setCustomCtcpReplies(const QMap<QString, QString> &replies)
 
 const QMap<QString, QString> IRCAccount::customCtcpReplies() const
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	QMap< QString, QString > replies;
 /*
 	QStringList replyList;
@@ -435,7 +435,7 @@ const QStringList IRCAccount::connectCommands() const
 
 KActionMenu *IRCAccount::actionMenu()
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( myself()->onlineStatus().description() );
 
 	KActionMenu *mActionMenu = Account::actionMenu();
@@ -460,14 +460,14 @@ KActionMenu *IRCAccount::actionMenu()
 
 void IRCAccount::connectWithPassword(const QString &password)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 //	d->client->setPassword(password);
 	clientConnect();
 }
 
 void IRCAccount::clientConnectionStateChanged(KIrc::Socket::ConnectionState newstate)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 
 	mySelf()->updateStatus();
 
@@ -503,7 +503,7 @@ void IRCAccount::clientConnectionStateChanged(KIrc::Socket::ConnectionState news
 //		break;
 */
 	default:
-		kDebug(14120) << k_funcinfo << "Doing nothing on state" << newstate;
+		kDebug(14120) << "Doing nothing on state" << newstate;
 	}
 }
 /*
@@ -517,7 +517,7 @@ void IRCAccount::slotFailedServerPassword()
 */
 void IRCAccount::slotPerformOnConnectCommands()
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	ChatSession *manager = myServer()->manager(Contact::CanCreate);
 	if (!manager)
 		return;
@@ -539,7 +539,7 @@ void IRCAccount::quit( const QString &quitMessage )
 
 void IRCAccount::setAway(bool isAway, const QString &awayMessage)
 {
-	kDebug(14120) << k_funcinfo << isAway << " " << awayMessage;
+	kDebug(14120) << isAway << " " << awayMessage;
 //	KIrc::StdCommands::away(d->client, awayMessage);
 }
 
@@ -550,13 +550,13 @@ void IRCAccount::slotShowServerWindow()
 
 bool IRCAccount::isConnected()
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	return d->client->isConnected();
 }
 
 void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	d->expectedOnlineStatus = status;
 	//d->expectedReason = reason;
 
@@ -565,7 +565,7 @@ void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessag
 
 	if ( expected != OnlineStatus::Offline && (current == OnlineStatus::Offline || current == OnlineStatus::Unknown) )
 	{
-		kDebug(14120) << k_funcinfo << "Connecting.";
+		kDebug(14120) << "Connecting.";
 		clientSetup();
 //		clientConnect();
 		connect();
@@ -573,19 +573,19 @@ void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessag
 
 	if ( expected == OnlineStatus::Offline && current != OnlineStatus::Offline )
 	{
-		kDebug(14120) << k_funcinfo << "Disconnecting.";
+		kDebug(14120) << "Disconnecting.";
 		//quit(reason);
 	}
 }
 
 void IRCAccount::setStatusMessage(const StatusMessage &messageStatus)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 }
 
 bool IRCAccount::createContact(const QString &contactId, MetaContact *metac)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 /*	if (contactId == mNickName)
 	{
 		KMessageBox::error( UI::Global::mainWidget(),
@@ -612,13 +612,13 @@ bool IRCAccount::createContact(const QString &contactId, MetaContact *metac)
 
 void IRCAccount::setCurrentCommandSource( ChatSession *session )
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	d->commandSource = session;
 }
 
 ChatSession *IRCAccount::currentCommandSource()
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	return d->commandSource;
 }
 
@@ -634,7 +634,7 @@ IRCContact *IRCAccount::mySelf() const
 
 IRCContact *IRCAccount::getContact(const QByteArray &name, MetaContact *metac)
 {
-	kDebug(14120) << k_funcinfo << name;
+	kDebug(14120) << name;
 //	return getContact(d->client->entityManager()->entityByName(name), metac);
 	return 0;
 }
@@ -662,7 +662,7 @@ IRCContact *IRCAccount::getContact(const KIrc::Entity::Ptr &entity, MetaContact 
 
 void IRCAccount::destroyed(IRCContact *contact)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	d->contacts.remove(contact);
 }
 
@@ -731,7 +731,7 @@ void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &ne
 
 void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &newnick)
 {
-//	kDebug(14120) << k_funcinfo << "Changing nick to " << newnick;
+//	kDebug(14120) << "Changing nick to " << newnick;
 //	mNickName = newnick;
 //	mySelf()->setNickName( mNickName );
 //	d->contactManager->removeFromNotifyList( oldnick );

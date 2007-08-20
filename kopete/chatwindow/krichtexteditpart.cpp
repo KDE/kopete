@@ -354,7 +354,7 @@ void KRichTextEditPart::readConfig()
     QColor standardColor = KGlobalSettings::textColor();
     QColor tmpColor;
     tmpColor = config.readEntry("TextColor", standardColor );
-    kDebug() << k_funcinfo << "Text color: " << tmpColor.name();
+    kDebug() << "Text color: " << tmpColor.name();
 
     setTextColor( tmpColor );
 

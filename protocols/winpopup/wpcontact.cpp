@@ -109,7 +109,7 @@ void WPContact::slotChatSessionDestroyed()
 
 void WPContact::slotUserInfo()
 {
-	kDebug( 14170 ) << k_funcinfo;
+	kDebug( 14170 ) ;
 
 	if (!m_infoDialog) {
 		m_infoDialog = new WPUserInfo( this );

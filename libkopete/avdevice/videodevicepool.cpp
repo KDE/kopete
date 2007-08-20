@@ -75,18 +75,18 @@ int VideoDevicePool::open()
 	m_ready.lock();
 	if(!m_videodevice.size())
 	{
-		kDebug() <<  k_funcinfo << "open(): No devices found. Must scan for available devices." << m_current_device;
+		kDebug() << "open(): No devices found. Must scan for available devices." << m_current_device;
 		scanDevices();
 	}
 	if(!m_videodevice.size())
 	{
-		kDebug() <<  k_funcinfo << "open(): No devices found. bailing out." << m_current_device;
+		kDebug() << "open(): No devices found. bailing out." << m_current_device;
 		m_ready.unlock();
 		return EXIT_FAILURE;
 	}
 	if(m_current_device >= m_videodevice.size())
 	{
-		kDebug() <<  k_funcinfo << "open(): Device out of scope (" << m_current_device << "). Defaulting to the first one.";
+		kDebug() << "open(): Device out of scope (" << m_current_device << "). Defaulting to the first one.";
 		m_current_device = 0;
 	}
 	int isopen = m_videodevice[currentDevice()].open();
@@ -96,7 +96,7 @@ int VideoDevicePool::open()
 		
 	}
 	m_clients++;
-	kDebug() << k_funcinfo << "Number of clients: " << m_clients;
+	kDebug() << "Number of clients: " << m_clients;
 	m_ready.unlock();
 	return isopen;
 }
@@ -107,16 +107,16 @@ int VideoDevicePool::open()
 int VideoDevicePool::open(int device)
 {
     /// @todo implement me
-	kDebug() <<  k_funcinfo << "open(" << device << ") called.";
+	kDebug() << "open(" << device << ") called.";
 	if(device >= m_videodevice.size())
 	{
-		kDebug() <<  k_funcinfo << "open(" << device <<"): Device does not exist.";
+		kDebug() << "open(" << device <<"): Device does not exist.";
 		return EXIT_FAILURE;
 	}
 	close();
-	kDebug() <<  k_funcinfo << "open(" << device << ") Setting m_current_Device to " << device;
+	kDebug() << "open(" << device << ") Setting m_current_Device to " << device;
 	m_current_device = device;
-	kDebug() <<  k_funcinfo << "open(" << device << ") Calling open().";
+	kDebug() << "open(" << device << ") Calling open().";
 	saveConfig();
 
 	return open();
@@ -171,12 +171,12 @@ int VideoDevicePool::setSize( int newwidth, int newheight)
 		return m_videodevice[currentDevice()].setSize(newwidth, newheight);
 	else
 	{
-		kDebug() <<  k_funcinfo << "VideoDevicePool::setSize() fallback for no device.";
+		kDebug() << "VideoDevicePool::setSize() fallback for no device.";
 		m_buffer.width=newwidth;
 		m_buffer.height=newheight;
 		m_buffer.pixelformat=	PIXELFORMAT_RGB24;
 		m_buffer.data.resize(m_buffer.width*m_buffer.height*3);
-		kDebug() <<  k_funcinfo << "VideoDevicePool::setSize() buffer size: "<< m_buffer.data.size();
+		kDebug() << "VideoDevicePool::setSize() buffer size: "<< m_buffer.data.size();
 	}
 	return EXIT_SUCCESS;
 }
@@ -192,9 +192,9 @@ int VideoDevicePool::close()
 	if((currentDevice() < m_videodevice.size())&&(!m_clients))
 		return m_videodevice[currentDevice()].close();
 	if(m_clients)
-		kDebug() <<  k_funcinfo << "VideoDevicePool::close() The video device is still in use.";
+		kDebug() << "VideoDevicePool::close() The video device is still in use.";
 	if(currentDevice() >= m_videodevice.size())
-		kDebug() <<  k_funcinfo << "VideoDevicePool::close() Current device out of range.";
+		kDebug() << "VideoDevicePool::close() Current device out of range.";
 	return EXIT_FAILURE;
 }
 
@@ -203,7 +203,7 @@ int VideoDevicePool::close()
  */
 int VideoDevicePool::startCapturing()
 {
-	kDebug() <<  k_funcinfo << "startCapturing() called.";
+	kDebug() << "startCapturing() called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].startCapturing();
 	return EXIT_FAILURE;
@@ -346,7 +346,7 @@ bool VideoDevicePool::getAutoBrightnessContrast()
  */
 bool VideoDevicePool::setAutoBrightnessContrast(bool brightnesscontrast)
 {
-	kDebug() <<  k_funcinfo << "VideoDevicePool::setAutoBrightnessContrast(" << brightnesscontrast << ") called.";
+	kDebug() << "VideoDevicePool::setAutoBrightnessContrast(" << brightnesscontrast << ") called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].setAutoBrightnessContrast(brightnesscontrast);
 	return false;
@@ -367,7 +367,7 @@ bool VideoDevicePool::getAutoColorCorrection()
  */
 bool VideoDevicePool::setAutoColorCorrection(bool colorcorrection)
 {
-	kDebug() <<  k_funcinfo << "VideoDevicePool::setAutoColorCorrection(" << colorcorrection << ") called.";
+	kDebug() << "VideoDevicePool::setAutoColorCorrection(" << colorcorrection << ") called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].setAutoColorCorrection(colorcorrection);
 	return false;
@@ -388,7 +388,7 @@ bool VideoDevicePool::getImageAsMirror()
  */
 bool VideoDevicePool::setImageAsMirror(bool imageasmirror)
 {
-	kDebug() <<  k_funcinfo << "VideoDevicePool::setImageAsMirror(" << imageasmirror << ") called.";
+	kDebug() << "VideoDevicePool::setImageAsMirror(" << imageasmirror << ") called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].setImageAsMirror(imageasmirror);
 	return false;
@@ -409,7 +409,7 @@ bool VideoDevicePool::getDisableMMap()
  */
 bool VideoDevicePool::setDisableMMap(bool disablemmap)
 {
-	kDebug() <<  k_funcinfo << "VideoDevicePool::setDisableMMap(" << disablemmap << ") called.";
+	kDebug() << "VideoDevicePool::setDisableMMap(" << disablemmap << ") called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].setDisableMMap(disablemmap);
 	return false;
@@ -430,7 +430,7 @@ bool VideoDevicePool::getWorkaroundBrokenDriver()
  */
 bool VideoDevicePool::setWorkaroundBrokenDriver(bool workaroundbrokendriver)
 {
-	kDebug() <<  k_funcinfo << "VideoDevicePool::setWorkaroundBrokenDriver(" << workaroundbrokendriver << ") called.";
+	kDebug() << "VideoDevicePool::setWorkaroundBrokenDriver(" << workaroundbrokendriver << ") called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].setWorkaroundBrokenDriver(workaroundbrokendriver);
 	return false;
@@ -441,12 +441,12 @@ bool VideoDevicePool::setWorkaroundBrokenDriver(bool workaroundbrokendriver)
  */
 int VideoDevicePool::getFrame()
 {
-	kDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() called.";
+	kDebug() << "VideoDevicePool::getFrame() called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].getFrame();
 	else
 	{
-		kDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() fallback for no device.";
+		kDebug() << "VideoDevicePool::getFrame() fallback for no device.";
 		for(int loop=0; loop < m_buffer.data.size(); loop+=3)
 		{
 			m_buffer.data[loop]   = 255;
@@ -454,7 +454,7 @@ int VideoDevicePool::getFrame()
 			m_buffer.data[loop+2] = 0;
 		}
 	}
-	kDebug() <<  k_funcinfo << "VideoDevicePool::getFrame() exited successfuly.";
+	kDebug() << "VideoDevicePool::getFrame() exited successfuly.";
 
 	return EXIT_SUCCESS;
 }
@@ -464,12 +464,12 @@ int VideoDevicePool::getFrame()
  */
 int VideoDevicePool::getImage(QImage *qimage)
 {
-	kDebug() <<  k_funcinfo << "VideoDevicePool::getImage() called.";
+	kDebug() << "VideoDevicePool::getImage() called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].getImage(qimage);
 	else
 	{
-		kDebug() <<  k_funcinfo << "VideoDevicePool::getImage() fallback for no device.";
+		kDebug() << "VideoDevicePool::getImage() fallback for no device.";
 
 		// not sure if this is the way to handle this (gamaral)
 		delete qimage;
@@ -487,7 +487,7 @@ int VideoDevicePool::getImage(QImage *qimage)
 			case PIXELFORMAT_RGB565X: break;
 			case PIXELFORMAT_RGB24	:
 				{
-					kDebug() <<  k_funcinfo << "VideoDevicePool::getImage() fallback for no device - RGB24.";
+					kDebug() << "VideoDevicePool::getImage() fallback for no device - RGB24.";
 					int step=0;
 					for(int loop=0;loop < qimage->numBytes();loop+=4)
 					{
@@ -521,7 +521,7 @@ int VideoDevicePool::getImage(QImage *qimage)
 			case PIXELFORMAT_YUV422P: break;
 		}
 	}
-	kDebug() <<  k_funcinfo << "VideoDevicePool::getImage() exited successfuly.";
+	kDebug() << "VideoDevicePool::getImage() exited successfuly.";
 	return EXIT_SUCCESS;
 }
 
@@ -530,7 +530,7 @@ int VideoDevicePool::getImage(QImage *qimage)
  */
 int VideoDevicePool::selectInput(int newinput)
 {
-	kDebug() <<  k_funcinfo << "VideoDevicePool::selectInput(" << newinput << ") called.";
+	kDebug() << "VideoDevicePool::selectInput(" << newinput << ") called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].selectInput(newinput);
 	else
@@ -554,14 +554,14 @@ int VideoDevicePool::setInputParameters()
 int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 {
     /// @todo implement me
-	kDebug() <<  k_funcinfo << "fillInputKComboBox: Called.";
+	kDebug() << "fillInputKComboBox: Called.";
 	combobox->clear();
 	if(m_videodevice.size())
 	{
 		for (int loop=0; loop < m_videodevice.size(); loop++)
 		{
 			combobox->addItem(m_videodevice[loop].m_name);
-			kDebug() <<  k_funcinfo << "DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].m_name;
+			kDebug() << "DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].m_name;
 		}
 		combobox->setCurrentIndex(currentDevice());
 		return EXIT_SUCCESS;
@@ -575,7 +575,7 @@ int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 {
     /// @todo implement me
-	kDebug() <<  k_funcinfo << "fillInputKComboBox: Called.";
+	kDebug() << "fillInputKComboBox: Called.";
 	combobox->clear();
 	if(m_videodevice.size())
 	{
@@ -584,7 +584,7 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 			for (int loop=0; loop < m_videodevice[currentDevice()].inputs(); loop++)
 			{
 				combobox->addItem(m_videodevice[currentDevice()].m_input[loop].name);
-				kDebug() <<  k_funcinfo << "InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")";
+				kDebug() << "InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")";
 			}
 			combobox->setCurrentIndex(currentInput());
 			return EXIT_SUCCESS;
@@ -599,7 +599,7 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 {
     /// @todo implement me
-	kDebug() <<  k_funcinfo << "fillInputKComboBox: Called.";
+	kDebug() << "fillInputKComboBox: Called.";
 	combobox->clear();
 	if(m_videodevice.size())
 	{
@@ -645,7 +645,7 @@ int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 				case STANDARD_ALL	: return V4L2_STD_ALL;		break;
 
 				combobox->insertItem(m_videodevice[currentDevice()].m_input[loop].name);
-				kDebug() <<  k_funcinfo << "StandardKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")";*/
+				kDebug() << "StandardKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")";*/
 			}
 			combobox->setCurrentIndex(currentInput());
 			return EXIT_SUCCESS;
@@ -661,7 +661,7 @@ int VideoDevicePool::scanDevices()
 {
     /// @todo implement me
 
-	kDebug() <<  k_funcinfo << "called";
+	kDebug() << "called";
 #if defined(__linux__) && defined(ENABLE_AV)
 	QDir videodevice_dir;
 	const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/v4l/");
@@ -680,7 +680,7 @@ int VideoDevicePool::scanDevices()
 
 	if (list.isEmpty())
 	{
-		kDebug() << k_funcinfo << "Found no suitable devices in " << videodevice_dir_path;
+		kDebug() << "Found no suitable devices in " << videodevice_dir_path;
 		QDir videodevice_dir;
 		const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/");
 		const QStringList videodevice_dir_filter(QString::fromLocal8Bit("video*"));
@@ -695,21 +695,21 @@ int VideoDevicePool::scanDevices()
 
 		if (list.isEmpty())
 		{
-			kDebug() << k_funcinfo << "Found no suitable devices in " << videodevice_dir_path;
+			kDebug() << "Found no suitable devices in " << videodevice_dir_path;
 			return EXIT_FAILURE;
 		}
 		QFileInfoList::iterator fileiterator, itEnd = list.end();
 
-		kDebug() <<  k_funcinfo << "scanning devices in " << videodevice_dir_path << "...";
+		kDebug() << "scanning devices in " << videodevice_dir_path << "...";
 		for ( fileiterator = list.begin(); fileiterator != itEnd; ++fileiterator )
 		{
 			QFileInfo fileinfo = ( *fileiterator );
 			videodevice.setFileName(fileinfo.absoluteFilePath());
-			kDebug() <<  k_funcinfo << "Found device " << videodevice.full_filename;
+			kDebug() << "Found device " << videodevice.full_filename;
 			videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 			if(videodevice.isOpen())
 			{
-				kDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly";
+				kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
 
 // This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
 				videodevice.close();
@@ -723,16 +723,16 @@ int VideoDevicePool::scanDevices()
 
 	QFileInfoList::iterator fileiterator, itEnd = list.end();
 	m_videodevice.clear();
-	kDebug() <<  k_funcinfo << "scanning devices in " << videodevice_dir_path << "...";
+	kDebug() << "scanning devices in " << videodevice_dir_path << "...";
 	for ( fileiterator = list.begin(); fileiterator != itEnd; ++fileiterator )
 	{
 		QFileInfo fileinfo = ( *fileiterator );
 		videodevice.setFileName(fileinfo.absoluteFilePath());
-		kDebug() <<  k_funcinfo << "Found device " << videodevice.full_filename;
+		kDebug() << "Found device " << videodevice.full_filename;
 		videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
 		if(videodevice.isOpen())
 		{
-			kDebug() <<  k_funcinfo << "File " << videodevice.full_filename << " was opened successfuly";
+			kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
 
 // This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
 			videodevice.close();
@@ -744,7 +744,7 @@ int VideoDevicePool::scanDevices()
 	m_current_device = 0;
 	loadConfig();
 #endif
-	kDebug() <<  k_funcinfo << "exited successfuly";
+	kDebug() << "exited successfuly";
 	return EXIT_SUCCESS;
 }
 
@@ -801,12 +801,12 @@ unsigned int VideoDevicePool::inputs()
 void VideoDevicePool::loadConfig()
 {
     /// @todo implement me
-	kDebug() <<  k_funcinfo << "called";
+	kDebug() << "called";
 	if((hasDevices())&&(m_clients==0))
 	{
 		KConfigGroup config(KGlobal::config(), "Video Device Settings");
 		QString currentdevice = config.readEntry("Current Device", QString());
-		kDebug() << k_funcinfo << "Current device: " << currentdevice;
+		kDebug() << "Current device: " << currentdevice;
 
 //		m_current_device = 0; // Must check this thing because of the fact that multiple loadConfig in other methodas can do bad things. Watch out!
 
@@ -817,14 +817,14 @@ void VideoDevicePool::loadConfig()
 			if(modelindex == currentdevice)
 			{
 				m_current_device = std::distance (m_videodevice.begin(), vditerator);
-//				kDebug() << k_funcinfo << "This place will be used to set " << modelindex << " as the current device ( " << std::distance(m_videodevice.begin(), vditerator ) << " ).";
+//				kDebug() << "This place will be used to set " << modelindex << " as the current device ( " << std::distance(m_videodevice.begin(), vditerator ) << " ).";
 			}
 			const QString name                = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), (*vditerator).m_model);
 			const int currentinput            = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), 0);
 			const bool disablemmap            = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex)), false );
 			const bool workaroundbrokendriver = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex)), false );
-			kDebug() << k_funcinfo << "Device name: " << name;
-			kDebug() << k_funcinfo << "Device current input: " << currentinput;
+			kDebug() << "Device name: " << name;
+			kDebug() << "Device current input: " << currentinput;
 			(*vditerator).setWorkaroundBrokenDriver(workaroundbrokendriver);
 			(*vditerator).selectInput(currentinput);
 
@@ -845,14 +845,14 @@ void VideoDevicePool::loadConfig()
 				(*vditerator).setAutoBrightnessContrast(autobrightnesscontrast);
 				(*vditerator).setAutoColorCorrection(autocolorcorrection);
 				(*vditerator).setImageAsMirror(imageasmirror);
-				kDebug() <<  k_funcinfo << "Brightness:" << brightness;
-				kDebug() <<  k_funcinfo << "Contrast  :" << contrast;
-				kDebug() <<  k_funcinfo << "Saturation:" << saturation;
-				kDebug() <<  k_funcinfo << "Whiteness :" << whiteness;
-				kDebug() <<  k_funcinfo << "Hue       :" << hue;
-				kDebug() <<  k_funcinfo << "AutoBrightnessContrast:" << autobrightnesscontrast;
-				kDebug() <<  k_funcinfo << "AutoColorCorrection   :" << autocolorcorrection;
-				kDebug() <<  k_funcinfo << "ImageAsMirror         :" << imageasmirror;
+				kDebug() << "Brightness:" << brightness;
+				kDebug() << "Contrast  :" << contrast;
+				kDebug() << "Saturation:" << saturation;
+				kDebug() << "Whiteness :" << whiteness;
+				kDebug() << "Hue       :" << hue;
+				kDebug() << "AutoBrightnessContrast:" << autobrightnesscontrast;
+				kDebug() << "AutoColorCorrection   :" << autocolorcorrection;
+				kDebug() << "ImageAsMirror         :" << imageasmirror;
 			}
 			Q_UNUSED(disablemmap);
 		}
@@ -865,7 +865,7 @@ void VideoDevicePool::loadConfig()
 void VideoDevicePool::saveConfig()
 {
     /// @todo implement me
-	kDebug() <<  k_funcinfo << "called";
+	kDebug() << "called";
 	if(hasDevices())
 	{
 		KConfigGroup config(KGlobal::config(), "Video Device Settings");

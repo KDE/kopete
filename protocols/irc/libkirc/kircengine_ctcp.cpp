@@ -255,7 +255,7 @@ void Engine::CtcpQuery_finger( Message &)
 
 void Engine::CtcpRequest_ping(const QString &target)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 /*
 	timeval time;
 	if (gettimeofday(&time, 0) == 0)

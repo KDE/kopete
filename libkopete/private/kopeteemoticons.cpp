@@ -219,7 +219,7 @@ QList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseMode m
 					{
 						// Apparently this HTML entity isn't ended, something is wrong, try skip the '&'
 						// and continue
-						kDebug( 14000 ) << k_funcinfo << "Broken HTML entity, trying to recover.";
+						kDebug( 14000 ) << "Broken HTML entity, trying to recover.";
 						inHTMLEntity = false;
 						pos++;
 					}
@@ -361,7 +361,7 @@ void Emoticons::initEmoticons( const QString &theme )
 		d->theme = theme;
 	}
 
-//	kDebug(14010) << k_funcinfo << "Called";
+//	kDebug(14010) << "Called";
 	d->emoticonAndPicList.clear();
 	d->emoticonMap.clear();
 
@@ -371,7 +371,7 @@ void Emoticons::initEmoticons( const QString &theme )
 	filename= KGlobal::dirs()->findResource( "emoticons",  d->theme + QLatin1String( "/icondef.xml" ) );
 	if(!filename.isEmpty())
 		return initEmoticon_JEP0038( filename );
-	kWarning(14010) << k_funcinfo << "emotiucon XML theme description not found";
+	kWarning(14010) << "emotiucon XML theme description not found";
 }
 
 void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
@@ -407,7 +407,7 @@ void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
 						}
 						else
 						{
-							kDebug(14010) << k_funcinfo <<
+							kDebug(14010) <<
 									"Warning: Unknown element '" << element.tagName() <<
 									"' in emoticon data" << endl;
 						}
@@ -419,7 +419,7 @@ void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
 			}
 			else
 			{
-				kDebug(14010) << k_funcinfo << "Warning: Unknown element '" <<
+				kDebug(14010) << "Warning: Unknown element '" <<
 						element.tagName() << "' in map file" << endl;
 			}
 		}
@@ -471,12 +471,12 @@ void Emoticons::initEmoticon_JEP0038( const QString & filename)
 							}
 							else
 							{
-								kDebug(14010) << k_funcinfo <<	"Warning: Unsupported format '" << mime;
+								kDebug(14010) <<	"Warning: Unsupported format '" << mime;
 							}
 						}
 						/*else
 						{
-							kDebug(14010) << k_funcinfo <<
+							kDebug(14010) <<
 									"Warning: Unknown element '" << element.tagName() <<
 									"' in emoticon data" << endl;
 						}*/
@@ -488,7 +488,7 @@ void Emoticons::initEmoticon_JEP0038( const QString & filename)
 			}
 			else
 			{
-				kDebug(14010) << k_funcinfo << "Warning: Unknown element '" <<
+				kDebug(14010) << "Warning: Unknown element '" <<
 						element.tagName() << "' in map file" << endl;
 			}
 		}
@@ -532,10 +532,10 @@ QString Emoticons::parse( const QString &message, ParseMode mode )
 		break;
 		case Image:
 			result += token.picHTMLCode;
-			kDebug( 14010 ) << k_funcinfo << "Emoticon html code: " << result;
+			kDebug( 14010 ) << "Emoticon html code: " << result;
 		break;
 		default:
-			kDebug( 14010 ) << k_funcinfo << "Unknown token type. Something's broken.";
+			kDebug( 14010 ) << "Unknown token type. Something's broken.";
 		}
 	}
 	return result;

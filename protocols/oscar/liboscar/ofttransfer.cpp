@@ -46,7 +46,7 @@ OftTransfer::~OftTransfer()
 
 QByteArray OftTransfer::toWire()
 {
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buffer length is " << m_buffer.length();
+	//kDebug(OSCAR_RAW_DEBUG) << "Buffer length is " << m_buffer.length();
 
 	//get filename length - the only variable length in the OFT
 	int fileNameEncoding = 0;

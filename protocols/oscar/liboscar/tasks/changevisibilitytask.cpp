@@ -81,7 +81,7 @@ void ChangeVisibilityTask::onGo()
 	OContact item = manager->visibilityItem();
 	if ( !item )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Didn't find a visibility item";
+		kDebug(OSCAR_RAW_DEBUG) << "Didn't find a visibility item";
 		setError( 0, QString() );
 		return;
 	}
@@ -96,7 +96,7 @@ void ChangeVisibilityTask::onGo()
 	OContact newContact(item);
 	if ( Oscar::updateTLVs( newContact, tList ) == false )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Visibility didn't change, don't update";
+		kDebug(OSCAR_RAW_DEBUG) << "Visibility didn't change, don't update";
 		setSuccess( 0, QString() );
 		return;
 	}
@@ -104,7 +104,7 @@ void ChangeVisibilityTask::onGo()
 	//remove the old item and add the new item indicating the
 	//change in visibility.
 	manager->removeItem( item );
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "found visibility item. changing setting";
+	kDebug(OSCAR_RAW_DEBUG) << "found visibility item. changing setting";
 	manager->newItem( newContact );
 	sendEditStart();
 	
@@ -123,7 +123,7 @@ void ChangeVisibilityTask::onGo()
 	for( ; it2 != listEnd2; ++it2 )
 		b->addTLV( ( *it2 ) );
 	
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending visibility update";
+	kDebug(OSCAR_RAW_DEBUG) << "Sending visibility update";
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 	sendEditEnd();

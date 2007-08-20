@@ -40,7 +40,7 @@ WPUserInfo::WPUserInfo( WPContact *contact, QWidget *parent )
 {
 	setButtons( KDialog::Close );
 	setDefaultButton(KDialog::Close);
-//	kDebug( 14170 ) << k_funcinfo;
+//	kDebug( 14170 ) ;
 
 	setCaption( i18n( "User Info for %1", m_contact->nickName() ) );
 
@@ -115,7 +115,7 @@ void WPUserInfo::slotDetailsProcessFinished(int i, QProcess::ExitStatus status)
 
 void WPUserInfo::slotCloseClicked()
 {
-	kDebug( 14170 ) << k_funcinfo;
+	kDebug( 14170 ) ;
 
 	emit closing();
 }

@@ -47,7 +47,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 											 Kopete::ContactPtrList others, const QString &resource )
 											 : Kopete::ChatSession ( user, others, protocol )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId ();
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "New message manager for " << user->contactId ();
 
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );
@@ -109,7 +109,7 @@ JabberChatSession::~JabberChatSession( )
 
 void JabberChatSession::slotUpdateDisplayName ()
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo;
+	kDebug ( JABBER_DEBUG_GLOBAL ) ;
 
 	Kopete::ContactPtrList chatMembers = members ();
 
@@ -235,7 +235,7 @@ void JabberChatSession::slotSendTypingNotification ( bool typing )
 	XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
 	fromJid.setResource ( account()->configGroup()->readEntry( "Resource", QString() ) );
 
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Sending out typing notification (" << typing << ") to all chat members.";
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Sending out typing notification (" << typing << ") to all chat members.";
 
 	typing ? sendNotification( ComposingEvent ) : sendNotification( CancelEvent );
 }

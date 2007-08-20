@@ -345,7 +345,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		debug( QString( "CoreProtocol::fieldsToWire - outgoing data: %1" ).arg( outgoing.data() ) );
 		dout.writeRawData( outgoing.data(), outgoing.length() );
 		// write what we have so far, we may be calling this function recursively
-		//kDebug( 14999 ) << k_funcinfo << "writing \'" << bout << "\'";
+		//kDebug( 14999 ) << "writing \'" << bout << "\'";
 		//debug( " - signalling data" );
 		emit outgoingData( bytesOut );
 

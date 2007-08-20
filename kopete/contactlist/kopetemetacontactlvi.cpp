@@ -368,7 +368,7 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 		slotDisplayNameChanged();
 	}
 
-	kDebug( 14000 ) << k_funcinfo << "newName=" << newName;
+	kDebug( 14000 ) << "newName=" << newName;
 }
 
 void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
@@ -401,7 +401,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			// figure out what's happened
 			enum ChangeType { noChange, noEvent, signedIn, changedStatus, signedOut };
 			ChangeType t = noChange;
-			//kDebug( 14000 ) << k_funcinfo << m_metaContact->displayName() <<
+			//kDebug( 14000 ) << m_metaContact->displayName() <<
 			//" - Old MC Status: " << m_oldStatus.status() << ", New MC Status: " << newStatus.status() << endl;
 			// first, exclude changes due to blocking or subscription changes at the protocol level
 			if ( ( m_oldStatus.status() == Kopete::OnlineStatus::Unknown
@@ -592,7 +592,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 /*
 void KopeteMetaContactLVI::slotRemoveThisUser()
 {
-	kDebug( 14000 ) << k_funcinfo << " Removing user";
+	kDebug( 14000 ) << " Removing user";
 	//m_metaContact->removeThisUser();
 
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
@@ -840,7 +840,7 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
 			QList<Kopete::Contact*> contacts = m_metaContact->contacts();
 			foreach ( Kopete::Contact *c, contacts )
 			{
-//				kDebug( 14000 ) << k_funcinfo << "ccontact=" << c->contactId() << ", isonline=" << c->isOnline() << ", awaymsg=" << c->property( key ).value().toString();
+//				kDebug( 14000 ) << "ccontact=" << c->contactId() << ", isonline=" << c->isOnline() << ", awaymsg=" << c->property( key ).value().toString();
 				QString awayMessage( c->property( key ).value().toString() );
 				if ( ( allOffline || c->isOnline() ) && !awayMessage.isEmpty() )
 				{

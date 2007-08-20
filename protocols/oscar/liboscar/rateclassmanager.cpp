@@ -69,7 +69,7 @@ bool RateClassManager::canSend( Transfer* t ) const
 	SnacTransfer* st = dynamic_cast<SnacTransfer*>( t );
 
 	if ( !st ) //no snac transfer, no rate limiting
-	{ kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Not sending a snac";
+	{ kDebug(OSCAR_RAW_DEBUG) << "Not sending a snac";
 		return true;
 	}
 
@@ -78,18 +78,18 @@ bool RateClassManager::canSend( Transfer* t ) const
 	{
 		if ( rc->timeToNextSend() == 0 )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "rate class " << rc->id() << " said it's okay to send";
+			kDebug(OSCAR_RAW_DEBUG) << "rate class " << rc->id() << " said it's okay to send";
 			return true;
 		}
 		else
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "rate class " << rc->id() << " said it's not okay to send yet";
+			kDebug(OSCAR_RAW_DEBUG) << "rate class " << rc->id() << " said it's not okay to send yet";
 			return false;
 		}
 	}
 	else // no rate class
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no rate class. doing no rate limiting";
+		kDebug(OSCAR_RAW_DEBUG) << "no rate class. doing no rate limiting";
 		return true;
 	}
 }
@@ -131,7 +131,7 @@ void RateClassManager::transferReady( Transfer* t )
 RateClass* RateClassManager::findRateClass( SnacTransfer* st ) const
 {
 	SNAC s = st->snac();
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Looking for SNAC " << s.family << ", " << s.subtype;
+	//kDebug(OSCAR_RAW_DEBUG) << "Looking for SNAC " << s.family << ", " << s.subtype;
 	RateClass* rc = 0L;
 	QList<RateClass*>::const_iterator it;
 	QList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
@@ -140,7 +140,7 @@ RateClass* RateClassManager::findRateClass( SnacTransfer* st ) const
 	{
 		if ( ( *it )->isMember( s.family, s.subtype ) )
 		{
-			//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found SNAC(" << s.family << ", " << s.subtype << ") in class";
+			//kDebug(OSCAR_RAW_DEBUG) << "Found SNAC(" << s.family << ", " << s.subtype << ") in class";
 			rc = ( *it );
 			break;
 		}

@@ -30,7 +30,7 @@
 TestbedAddContactPage::TestbedAddContactPage( QWidget* parent )
 		: AddContactPage(parent)
 {
-	kDebug(14210) << k_funcinfo;
+	kDebug(14210) ;
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget();
 	m_testbedAddUI = new Ui::TestbedAddUI;

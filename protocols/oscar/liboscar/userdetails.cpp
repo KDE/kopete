@@ -195,7 +195,7 @@ void UserDetails::parseCapabilities( Buffer &inbuf, int &xStatus )
 			}
 		}
 	}
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << dbgCaps;
+	kDebug(OSCAR_RAW_DEBUG) << dbgCaps;
 }
 
 void UserDetails::parseNewCapabilities( Buffer &inbuf )
@@ -217,7 +217,7 @@ void UserDetails::parseNewCapabilities( Buffer &inbuf )
 			}
 		}
 	}
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << dbgCaps;
+	kDebug(OSCAR_RAW_DEBUG) << dbgCaps;
 }
 
 void UserDetails::fill( Buffer * buffer )
@@ -228,9 +228,9 @@ void UserDetails::fill( Buffer * buffer )
 	m_warningLevel = buffer->getWord();
 	Oscar::WORD numTLVs = buffer->getWord();
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got user info for " << user;
+	kDebug( OSCAR_RAW_DEBUG ) << "Got user info for " << user;
 #ifdef OSCAR_USERINFO_DEBUG
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Warning level is " << m_warningLevel;
+	kDebug( OSCAR_RAW_DEBUG ) << "Warning level is " << m_warningLevel;
 #endif
 	//start parsing TLVs
 	for( int i = 0; i < numTLVs; ++i  )
@@ -245,7 +245,7 @@ void UserDetails::fill( Buffer * buffer )
 				m_userClass = b.getWord();
 				m_userClassSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "User class is " << m_userClass;
+				kDebug(OSCAR_RAW_DEBUG) << "User class is " << m_userClass;
 #endif
 				break;
 			case 0x0002: //member since
@@ -253,49 +253,49 @@ void UserDetails::fill( Buffer * buffer )
 				m_memberSince.setTime_t( b.getDWord() );
 				m_memberSinceSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Member since " << m_memberSince;
+				kDebug(OSCAR_RAW_DEBUG) << "Member since " << m_memberSince;
 #endif
 				break;
 			case 0x0003: //sigon time
 				m_onlineSince.setTime_t( b.getDWord() );
 				m_onlineSinceSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Signed on at " << m_onlineSince;
+				kDebug(OSCAR_RAW_DEBUG) << "Signed on at " << m_onlineSince;
 #endif
 				break;
 			case 0x0004: //idle time
 				m_idleTime = b.getWord() * 60;
 #ifdef OSCAR_USERINFO_DEBUG
 				m_idleTimeSpecified = true;
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Idle time is " << m_idleTime;
+				kDebug(OSCAR_RAW_DEBUG) << "Idle time is " << m_idleTime;
 #endif
 				break;
 			case 0x0006: //extended user status
 				m_extendedStatus = b.getDWord();
 				m_extendedStatusSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Extended status is " << QString::number( m_extendedStatus, 16 );
+				kDebug(OSCAR_RAW_DEBUG) << "Extended status is " << QString::number( m_extendedStatus, 16 );
 #endif
                 break;
 			case 0x0008:
 				m_onlineStatusMsgSupport = (b.getWord() == 0x0A06);
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Online status messages support";
+				kDebug(OSCAR_RAW_DEBUG) << "Online status messages support";
 #endif
 				break;
 			case 0x000A: //external IP address
 				m_dcOutsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
 				m_dcOutsideSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "External IP address is " << m_dcOutsideIp.toString();
+				kDebug(OSCAR_RAW_DEBUG) << "External IP address is " << m_dcOutsideIp.toString();
 #endif
 				break;
 			case 0x000C: //DC info
 				m_dcInsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
 				m_dcPort = b.getDWord();
 #ifdef OSCAR_USERINFO_DEBUG
-    			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Internal IP address is " << m_dcInsideIp.toString();
-    			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Port number is " << m_dcPort;
+    			kDebug(OSCAR_RAW_DEBUG) << "Internal IP address is " << m_dcInsideIp.toString();
+    			kDebug(OSCAR_RAW_DEBUG) << "Port number is " << m_dcPort;
 #endif
     			m_dcType = b.getByte();
 				m_dcProtoVersion = b.getWord();
@@ -308,7 +308,7 @@ void UserDetails::fill( Buffer * buffer )
   			    b.getWord(); //unknown.
 				m_dcInsideSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got DC info";
+				kDebug(OSCAR_RAW_DEBUG) << "Got DC info";
 #endif
 				break;
 			case 0x000D: //capability info
@@ -321,7 +321,7 @@ void UserDetails::fill( Buffer * buffer )
 				m_numSecondsOnline = b.getDWord();
 				m_numSecondsOnlineSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Online for " << m_numSecondsOnline;
+				kDebug(OSCAR_RAW_DEBUG) << "Online for " << m_numSecondsOnline;
 #endif
 				break;
 			case 0x0019: //new capability info
@@ -336,7 +336,7 @@ void UserDetails::fill( Buffer * buffer )
 				while ( b.bytesAvailable() > 0 )
 				{
 #ifdef OSCAR_USERINFO_DEBUG
-					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Icon and available message info";
+					kDebug(OSCAR_RAW_DEBUG) << "Icon and available message info";
 #endif
 					Oscar::WORD type2 = b.getWord();
 					Oscar::BYTE number = b.getByte();
@@ -353,12 +353,12 @@ void UserDetails::fill( Buffer * buffer )
  							m_md5IconHash = b.getBlock( length );
 							m_iconSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-							kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksum:" << m_md5IconHash;
+							kDebug(OSCAR_RAW_DEBUG) << "checksum:" << m_md5IconHash;
 #endif
 						}
  						else
  						{
-	 						kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "icon checksum indicated"
+	 						kWarning(OSCAR_RAW_DEBUG) << "icon checksum indicated"
 		 						<< " but unable to parse checksum" << endl;
 							b.skipBytes( length );
  						}
@@ -368,12 +368,12 @@ void UserDetails::fill( Buffer * buffer )
 						{
 							m_availableMessage = QString( b.getBSTR() );
 #ifdef OSCAR_USERINFO_DEBUG
-							kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "available message:" << m_availableMessage;
+							kDebug(OSCAR_RAW_DEBUG) << "available message:" << m_availableMessage;
 #endif
 							if ( b.bytesAvailable() >= 4 && b.getWord() == 0x0001 )
 							{
 								b.skipBytes( 2 );
-								kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Encoding:" << b.getBSTR();
+								kDebug(OSCAR_RAW_DEBUG) << "Encoding:" << b.getBSTR();
 							}
 						}
 						else
@@ -386,7 +386,7 @@ void UserDetails::fill( Buffer * buffer )
 				break;
 			}
 			default:
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unknown TLV, type=" << t.type << ", length=" << t.length
+				kDebug(OSCAR_RAW_DEBUG) << "Unknown TLV, type=" << t.type << ", length=" << t.length
 					<< " in userinfo" << endl;
 				break;
 			};
@@ -611,7 +611,7 @@ void UserDetails::detectClient()
 		m_clientName = QString::fromLatin1( "SIM" );
         /*int hiVersion = (cap.data()[15] >> 6) - 1;
 					unsigned loVersion = cap.data()[15] & 0x1F;
-					kDebug(14150) << k_funcinfo << "OLD SIM version : <" <<
+					kDebug(14150) << "OLD SIM version : <" <<
 						hiVersion << ":" << loVersion << endl;
 				    m_capabilities[i] = true;
 					versionString.sprintf("%d.%d", (unsigned int)hiVersion, loVersion);

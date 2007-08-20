@@ -72,19 +72,19 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
  **/
 
 	AIMProtocol *proto = AIMProtocol::protocol();
-	kDebug(14152) << k_funcinfo << "URL url   : '" << url.url() << "'";
-	kDebug(14152) << k_funcinfo << "URL path  : '" << url.path() << "'";
+	kDebug(14152) << "URL url   : '" << url.url() << "'";
+	kDebug(14152) << "URL path  : '" << url.path() << "'";
 	QString command = url.path();
 	QString realCommand, firstParam, secondParam;
 	bool needContactAddition = false;
 	if ( command.indexOf( "goim", 0, Qt::CaseInsensitive ) != -1 )
 	{
 		realCommand = "goim";
-		kDebug(14152) << k_funcinfo << "Handling send IM request";
+		kDebug(14152) << "Handling send IM request";
 		command.remove(0,4);
 		if ( command.indexOf( "?screenname=", 0, Qt::CaseInsensitive ) == -1 )
 		{
-		kWarning(14152) << k_funcinfo << "Unhandled AIM URI:" << url.url();
+		kWarning(14152) << "Unhandled AIM URI:" << url.url();
 			return;
 		}
 		command.remove( 0, 12 );
@@ -100,11 +100,11 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 		if ( command.indexOf( "addbuddy", 0, Qt::CaseInsensitive ) != -1 )
 		{
 			realCommand = "addbuddy";
-			kDebug(14152) << k_funcinfo << "Handling AIM add buddy request";
+			kDebug(14152) << "Handling AIM add buddy request";
 			command.remove( 0, 8 );
 			if ( command.indexOf( "?screenname=", 0, Qt::CaseInsensitive ) == -1 )
 			{
-			kWarning(14152) << k_funcinfo << "Unhandled AIM URI:" << url.url();
+			kWarning(14152) << "Unhandled AIM URI:" << url.url();
 				return;
 			}
 
@@ -121,7 +121,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 	if ( command.indexOf( "gochat", 0, Qt::CaseInsensitive ) != -1 )
 	{
 		realCommand = "gochat";
-		kDebug(14152) << k_funcinfo << "Handling AIM chat room request";
+		kDebug(14152) << "Handling AIM chat room request";
 		command.remove( 0, 6 );
 
 		if ( command.indexOf( "?RoomName=", 0, Qt::CaseInsensitive ) == -1 )
@@ -141,7 +141,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 		kDebug(14152) << "command is now: " << command;
 		command.remove( 0, 10 ); //remove "&Exchange="
 		secondParam = command;
-		kDebug(14152) << k_funcinfo << firstParam << " " << secondParam;
+		kDebug(14152) << firstParam << " " << secondParam;
 		firstParam.replace("+", " ");
 	}
 
@@ -168,7 +168,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 		delete chooser;
 		if (ret == QDialog::Rejected || account == 0)
 		{
-			kDebug(14152) << k_funcinfo << "Cancelled";
+			kDebug(14152) << "Cancelled";
 			return;
 		}
 	}
@@ -178,7 +178,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 	{
 		if ( !account->isConnected() )
 		{
-			kDebug(14152) << k_funcinfo << "Can't add contact, we are offline!";
+			kDebug(14152) << "Can't add contact, we are offline!";
 			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n("You need to be connected to be able to add contacts."),
 			                    i18n("AIM") );
 			return;
@@ -189,11 +189,11 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 		                               QString(), KGuiItem( i18n("Add") ), KGuiItem( i18n("Do Not Add") ))
 		    != KMessageBox::Yes)
 		{
-			kDebug(14152) << k_funcinfo << "Cancelled";
+			kDebug(14152) << "Cancelled";
 			return;
 		}
 
-		kDebug(14152) << k_funcinfo <<
+		kDebug(14152) <<
 			"Adding Contact; screenname = " << firstParam << endl;
 		mc = account->addContact(firstParam, command, 0L, Kopete::Account::Temporary);
 	}
@@ -228,7 +228,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const QStringList &)
 	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::PropertyTmpl::RichTextProperty)
 {
 	if (protocolStatic_)
-		kDebug(14152) << k_funcinfo << "AIM plugin already initialized";
+		kDebug(14152) << "AIM plugin already initialized";
 	else
 		protocolStatic_ = this;
 
@@ -236,7 +236,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const QStringList &)
 	statusManager_ = new AIMStatusManager;
 
 	setCapabilities( Kopete::Protocol::FullRTF ); // setting capabilities
-	kDebug(14152) << k_funcinfo << "capabilities set to FullRTF";
+	kDebug(14152) << "capabilities set to FullRTF";
 	addAddressBookField("messaging/aim", Kopete::Plugin::MakeIndexField);
 
 }

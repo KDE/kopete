@@ -231,7 +231,7 @@ public:
 Kopete::MessageHandlerChain::Ptr Kopete::ChatSession::chainForDirection( Kopete::Message::MessageDirection dir )
 {
 	if( dir < 0 || dir > 2)
-		kFatal(14000) << k_funcinfo << "invalid message direction " << dir;
+		kFatal(14000) << "invalid message direction " << dir;
 	if( !d->chains[dir] )
 	{
 		TempFactory theTempFactory;
@@ -304,17 +304,17 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, const Kopete::On
 
 void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 {
-	//kDebug( 14010 ) << k_funcinfo;
+	//kDebug( 14010 ) ;
 	if ( d->mContactList.contains( (Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)c ) )
 	{
-		kDebug( 14010 ) << k_funcinfo << "Contact already exists";
+		kDebug( 14010 ) << "Contact already exists";
 		emit contactAdded( c, suppress );
 	}
 	else
 	{
 		if ( d->mContactList.count() == 1 && d->isEmpty )
 		{
-			kDebug( 14010 ) << k_funcinfo << " FUCKER ZONE ";
+			kDebug( 14010 ) << " FUCKER ZONE ";
 			/* We have only 1 contact before, so the status of the
 			   message manager was given from that contact status */
 			Kopete::Contact *old = d->mContactList.first();
@@ -359,13 +359,13 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 
 void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString& reason, Qt::TextFormat format, bool suppressNotification )
 {
-	kDebug( 14010 ) << k_funcinfo;
+	kDebug( 14010 ) ;
 	if ( !c || !d->mContactList.contains( (Kopete::Contact*)c ) )
 		return;
 
 	if ( d->mContactList.count() == 1 )
 	{
-		kDebug( 14010 ) << k_funcinfo << "Contact not removed. Keep always one contact";
+		kDebug( 14010 ) << "Contact not removed. Keep always one contact";
 		d->isEmpty = true;
 	}
 	else

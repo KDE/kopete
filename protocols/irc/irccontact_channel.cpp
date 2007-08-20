@@ -154,7 +154,7 @@ void IRCChannelContact::slotAddNicknames()
 
 		if ( nickToAdd.toLower() != account->mySelf()->nickName().toLower() )
 		{
-			//kDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd;
+			//kDebug(14120) << m_nickName << " NICK: " << nickToAdd;
 			user = account->contactManager()->findUser(nickToAdd);
 			user->setOnlineStatus(m_protocol->m_UserStatusOnline);
 		}
@@ -194,7 +194,7 @@ void IRCChannelContact::channelTopic(const QString &topic)
 
 void IRCChannelContact::channelHomePage(const QString &url)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 	setProperty( m_protocol->propHomepage, url );
 }
 
@@ -203,10 +203,10 @@ void IRCChannelContact::join()
 	if (!manager(Kopete::Contact::CannotCreate) &&
 		onlineStatus().status() == Kopete::OnlineStatus::Online)
 	{
-		kDebug() << k_funcinfo << "My nickname:" << m_nickName;
-		kDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate);
+		kDebug() << "My nickname:" << m_nickName;
+		kDebug() << "My manager:" << manager(Kopete::Contact::CannotCreate);
 		if( manager(Kopete::Contact::CannotCreate) )
-			kDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false);
+			kDebug() << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false);
 		startChat();
 	}
 }
@@ -249,11 +249,11 @@ void IRCChannelContact::userJoinedChannel(const QString &nickname)
 
 	if (nickname.toLower() == account->mySelf()->nickName().toLower())
 	{
-		kDebug() << k_funcinfo << "Me:" << this;
-		kDebug() << k_funcinfo << "My nickname:" << m_nickName;
-		kDebug() << k_funcinfo << "My manager:" << manager(Kopete::Contact::CannotCreate);
+		kDebug() << "Me:" << this;
+		kDebug() << "My nickname:" << m_nickName;
+		kDebug() << "My manager:" << manager(Kopete::Contact::CannotCreate);
 		if (manager(Kopete::Contact::CannotCreate))
-			kDebug() << k_funcinfo << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false);
+			kDebug() << "My view:" << manager(Kopete::Contact::CannotCreate)->view(false);
 
 		Kopete::Message msg((Kopete::Contact *)this, mMyself,
 			i18n("You have joined channel %1").arg(m_nickName),

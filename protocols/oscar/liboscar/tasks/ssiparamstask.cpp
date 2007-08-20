@@ -74,7 +74,7 @@ void SSIParamsTask::onGo()
 
 void SSIParamsTask::handleParamReply()
 {
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Getting SSI parameters";
+	kDebug( OSCAR_RAW_DEBUG ) << "Getting SSI parameters";
 	Buffer* buf = transfer()->buffer();
 	//manually parse the TLV out of the packet, since we only want certain things
 	if ( buf->getWord() != 0x0004 )

@@ -88,7 +88,7 @@ MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::Met
 
 MSNContact::~MSNContact()
 {
-	kDebug(14140) << k_funcinfo;
+	kDebug(14140) ;
 }
 
 bool MSNContact::isReachable()
@@ -235,7 +235,7 @@ void MSNContact::slotUserInfoDialogReversedToggled()
 
 void MSNContact::deleteContact()
 {
-	kDebug( 14140 ) << k_funcinfo;
+	kDebug( 14140 ) ;
 
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
@@ -245,18 +245,18 @@ void MSNContact::deleteContact()
 			// Remove from all groups he belongs (if applicable)
 			for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 			{
-				kDebug(14140) << k_funcinfo << "Removing contact from group \"" << it.key() << "\"";
+				kDebug(14140) << "Removing contact from group \"" << it.key() << "\"";
 				notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
 			}
 
 			// Then trully remove it from server contact list,
 			// because only removing the contact from his groups isn't sufficient from MSNP11.
-			kDebug( 14140 ) << k_funcinfo << "Removing contact from top-level.";
+			kDebug( 14140 ) << "Removing contact from top-level.";
 			notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString());
 		}
 		else
 		{
-			kDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it";
+			kDebug( 14140 ) << "The contact is already removed from server, just delete it";
 			deleteLater();
 		}
 	}
@@ -364,7 +364,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 		else if( data == "N" )
 			m_phone_mob = false;
 		else
-			kDebug( 14140 ) << k_funcinfo << "Unknown MOB " << data;
+			kDebug( 14140 ) << "Unknown MOB " << data;
 	}
 	else if( type == "MFN" )
 	{
@@ -372,7 +372,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 	}
 	else
 	{
-		kDebug( 14140 ) << k_funcinfo << "Unknow info " << type << ' ' << data;
+		kDebug( 14140 ) << "Unknow info " << type << ' ' << data;
 	}
 }
 
@@ -440,7 +440,7 @@ void MSNContact::sync( unsigned int changed )
 		// FIXME: if this method is called a seconds times, that mean change can be
 		//        done in the contact list. we should found a way to recall this
 		//        method later. (a QTimer?)
-		kDebug( 14140 ) << k_funcinfo << " This contact is already moving. Abort sync    id: " << contactId();
+		kDebug( 14140 ) << " This contact is already moving. Abort sync    id: " << contactId();
 		return;
 	}
 
@@ -479,7 +479,7 @@ void MSNContact::sync( unsigned int changed )
 				//repair the problem
 				group->setPluginData( protocol() , account()->accountId() + " id" , QString());
 				group->setPluginData( protocol() , account()->accountId() + " displayName" , QString());
-				kWarning( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server";
+				kWarning( 14140 ) << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server";
 
 				if(!group->displayName().isEmpty() && group->type() == Kopete::Group::Normal) //not the top-level
 				{
@@ -528,7 +528,7 @@ void MSNContact::sync( unsigned int changed )
 			removinglist.append(it.key());
 			count--;
 
-			kDebug( 14140 ) << k_funcinfo << "the group marked with id #" << it.key() << " does not seems to be anymore on the server";
+			kDebug( 14140 ) << "the group marked with id #" << it.key() << " does not seems to be anymore on the server";
 
 			continue;
 		}
@@ -575,7 +575,7 @@ void MSNContact::contactRemovedFromGroup( const QString& groupId )
 
 void MSNContact::rename( const QString &newName )
 {
-	//kDebug( 14140 ) << k_funcinfo << "From: " << displayName() << ", to: " << newName;
+	//kDebug( 14140 ) << "From: " << displayName() << ", to: " << newName;
 
 /*	if( newName == displayName() )
 		return;*/

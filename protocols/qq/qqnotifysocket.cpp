@@ -52,7 +52,7 @@ QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 
 QQNotifySocket::~QQNotifySocket()
 {
-	kDebug(14140) << k_funcinfo;
+	kDebug(14140) ;
 	if( m_heartbeat->isActive() )
 		m_heartbeat->stop();
 
@@ -65,7 +65,7 @@ void QQNotifySocket::doneConnect()
 	// setup the status first
 	QQSocket::doneConnect();
 
-	kDebug( 14140 ) << k_funcinfo << "Negotiating server protocol version";
+	kDebug( 14140 ) << "Negotiating server protocol version";
 	if( m_token.size() )
 		sendPacket( Eva::login( m_qqId, m_id++, m_passwordKey, m_token, m_loginMode ) );
 	else
@@ -75,7 +75,7 @@ void QQNotifySocket::doneConnect()
 
 void QQNotifySocket::disconnect()
 {
-	kDebug(14140) << k_funcinfo << "online status =" <<
+	kDebug(14140) << "online status =" <<
 		onlineStatus() << endl;
 	// FIXME: double check the logic, please.
 	if(	m_disconnectReason==Kopete::Account::Unknown )
@@ -93,7 +93,7 @@ void QQNotifySocket::disconnect()
 
 void QQNotifySocket::handleError( uint code, uint id )
 {
-	kDebug(14140) << k_funcinfo;
+	kDebug(14140) ;
 
 	// TODO: Add support for all of these!
 	switch( code )
@@ -107,7 +107,7 @@ void QQNotifySocket::handleError( uint code, uint id )
 // Core functions
 void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 {
-	kDebug( 14140 ) << k_funcinfo << rawData;
+	kDebug( 14140 ) << rawData;
 	Eva::Packet packet( rawData.data(), rawData.size() );
 	Eva::ByteArray text;
 
@@ -428,13 +428,13 @@ void QQNotifySocket::groupNames( const Eva::ByteArray& text )
 	for( std::list<std::string>::const_iterator it = l.begin(); it != l.end(); it++ )
 		ql.append( QString( (*it).c_str() ) );
 
-	kDebug(14140) << k_funcinfo;
+	kDebug(14140) ;
 	emit groupNames( ql );
 }
 
 void QQNotifySocket::groupInfos( const Eva::ByteArray& text )
 {
-	kDebug(14140) << k_funcinfo;
+	kDebug(14140) ;
 	std::list< Eva::GroupInfo > gis = Eva::Packet::groupInfos( text );
 	// TODO: send it one by one.
 	for( std::list< Eva::GroupInfo >::const_iterator it = gis.begin();
@@ -452,7 +452,7 @@ void QQNotifySocket::groupInfos( const Eva::ByteArray& text )
 
 void QQNotifySocket::doGetContactStatuses( const Eva::ByteArray& text )
 {
-	kDebug(14140) << k_funcinfo;
+	kDebug(14140) ;
 	Eva::uchar pos = Eva::ContactListBegin;
 	std::list< Eva::ContactStatus > css = Eva::Packet::onlineContacts( text, pos );
 	for( std::list< Eva::ContactStatus >::const_iterator it = css.begin();

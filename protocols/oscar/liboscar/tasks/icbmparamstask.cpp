@@ -60,7 +60,7 @@ bool ICBMParamsTask::take( Transfer* transfer )
 
 void ICBMParamsTask::onGo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM Parameters request";
+	kDebug(OSCAR_RAW_DEBUG) << "Sending ICBM Parameters request";
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0004, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
@@ -73,7 +73,7 @@ void ICBMParamsTask::handleICBMParameters()
 	Buffer* buffer = transfer()->buffer();
 	
 	Oscar::WORD channel = buffer->getWord();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "channel=" << channel;
+	kDebug(OSCAR_RAW_DEBUG) << "channel=" << channel;
 	
 	/**
 	 * bit1: messages allowed for specified channel
@@ -87,11 +87,11 @@ void ICBMParamsTask::handleICBMParameters()
 	Oscar::WORD minMsgInterval = buffer->getWord(); // minimum message interval (msec)
 	
 	
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "messageFlags       = " << messageFlags;
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "maxMessageSnacSize = " << maxMessageSnacSize;
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "maxSendWarnLvl     = " << maxSendWarnLvl;
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "maxRecvWarnLvl     = " << maxRecvWarnLvl;
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "minMsgInterval     = " << minMsgInterval;
+	kDebug(OSCAR_RAW_DEBUG) << "messageFlags       = " << messageFlags;
+	kDebug(OSCAR_RAW_DEBUG) << "maxMessageSnacSize = " << maxMessageSnacSize;
+	kDebug(OSCAR_RAW_DEBUG) << "maxSendWarnLvl     = " << maxSendWarnLvl;
+	kDebug(OSCAR_RAW_DEBUG) << "maxRecvWarnLvl     = " << maxRecvWarnLvl;
+	kDebug(OSCAR_RAW_DEBUG) << "minMsgInterval     = " << minMsgInterval;
 	
 	/*WORD unknown = */buffer->getWord();
 
@@ -105,7 +105,7 @@ void ICBMParamsTask::handleICBMParameters()
 
 void ICBMParamsTask::sendMessageParams( int channel )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM parameters for channel " << channel;
+	kDebug(OSCAR_RAW_DEBUG) << "Sending ICBM parameters for channel " << channel;
 	
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0004, 0x0002, 0x0000, client()->snacSequence() };

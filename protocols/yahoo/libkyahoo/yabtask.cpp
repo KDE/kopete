@@ -29,7 +29,7 @@
 
 YABTask::YABTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 YABTask::~YABTask()
@@ -64,7 +64,7 @@ bool YABTask::forMe( const Transfer* transfer ) const
 
 void YABTask::parseContactDetails( YMSGTransfer* t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString from;		/* key = 7  */
 	int count;
@@ -92,7 +92,7 @@ void YABTask::parseContactDetails( YMSGTransfer* t )
 
 void YABTask::getAllEntries( long lastMerge, long lastRemoteRevision )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "LastMerge: " << lastMerge << " LastRemoteRevision: " << lastRemoteRevision;
+	kDebug(YAHOO_RAW_DEBUG) << "LastMerge: " << lastMerge << " LastRemoteRevision: " << lastRemoteRevision;
 	m_data.clear();
 	QString url = QString::fromLatin1("http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&diffs=1&t=%1&tags=short&rt=%2&prog-ver=%3")
 		.arg( lastMerge ).arg( lastRemoteRevision ).arg( YMSG_PROGRAM_VERSION_STRING );
@@ -107,7 +107,7 @@ void YABTask::getAllEntries( long lastMerge, long lastRemoteRevision )
 
 void YABTask::slotData( KIO::Job* /*job*/, const QByteArray &info  )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	m_data += info;
 }
 
@@ -115,12 +115,12 @@ void YABTask::slotResult( KJob* job )
 {
 	if( job->error () || m_transferJob->isErrorPage () )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Could not retrieve server side addressbook for user info.";
+		kDebug(YAHOO_RAW_DEBUG) << "Could not retrieve server side addressbook for user info.";
 		client()->notifyError( i18n( "Could not retrieve server side addressbook for user info." ), job->errorString(), Client::Info );
 	}
 	else 
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Server side addressbook retrieved.";
+		kDebug(YAHOO_RAW_DEBUG) << "Server side addressbook retrieved.";
 		QDomDocument doc;
 		QDomNodeList list;
 		QDomElement e;

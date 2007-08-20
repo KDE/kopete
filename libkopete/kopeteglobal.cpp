@@ -52,7 +52,7 @@ Properties *Properties::self()
 {
 	if(!mSelf)
 	{
-		//kDebug(14000) << k_funcinfo;
+		//kDebug(14000) ;
 		mSelf = new Properties();
 		// create the templates
 		mSelf->fullName();
@@ -76,13 +76,13 @@ Properties *Properties::self()
 
 Properties::Properties()
 {
-	kDebug(14000) << k_funcinfo;
+	kDebug(14000) ;
 	d = new PropertiesPrivate();
 }
 
 Properties::~Properties()
 {
-	kDebug(14000) << k_funcinfo;
+	kDebug(14000) ;
 	delete d;
 }
 
@@ -90,7 +90,7 @@ const PropertyTmpl &Properties::tmpl(const QString &key) const
 {
 	if(d->mTemplates.contains(key))
 	{
-		/*kDebug(14000) << k_funcinfo <<
+		/*kDebug(14000) <<
 			"Found template for key = '" << key << "'" << endl;*/
 		return d->mTemplates[key];
 	}
@@ -103,7 +103,7 @@ bool Properties::registerTemplate(const QString &key,
 {
 	if(d->mTemplates.contains(key))
 	{
-		kDebug(14000) << k_funcinfo <<
+		kDebug(14000) <<
 			"Called for EXISTING key = '" << key << "'" << endl;
 		return false;
 	}
@@ -116,7 +116,7 @@ bool Properties::registerTemplate(const QString &key,
 
 void Properties::unregisterTemplate(const QString &key)
 {
-	kDebug(14000) << k_funcinfo << "called for key: '" << key << "'";
+	kDebug(14000) << "called for key: '" << key << "'";
 	d->mTemplates.remove(key);
 }
 
@@ -213,12 +213,12 @@ const PropertyTmpl &Properties::photo() const
 const PropertyTmpl &Properties::createProp(const QString &key,
 	const QString &label, const QString &icon, bool persistent) const
 {
-	/*kDebug(14000) << k_funcinfo <<
+	/*kDebug(14000) <<
 		"key = " << key  << ", label = " << label << endl;*/
 
 	if(!d->mTemplates.contains(key))
 	{
-/*		kDebug(14000) << k_funcinfo <<
+/*		kDebug(14000) <<
 			"CREATING NEW PropertyTmpl WITH key = " << key  <<
 			", label = " << label << ", persisten = " << persistent << endl;*/
 		d->mTemplates.insert(key,  PropertyTmpl(key, label, icon, persistent ? PropertyTmpl::PersistentProperty : PropertyTmpl::NoProperty));
@@ -329,7 +329,7 @@ void installEmoticonTheme(const QString &archiveName)
 		currentEntry = const_cast<KArchiveEntry *>(rootDir->entry(theme));
 		if (currentEntry == 0)
 		{
-			kDebug(14010) << k_funcinfo << "couldn't get next archive entry";
+			kDebug(14010) << "couldn't get next archive entry";
 			continue;
 		}
 
@@ -338,7 +338,7 @@ void installEmoticonTheme(const QString &archiveName)
 			currentDir = dynamic_cast<KArchiveDirectory*>(currentEntry);
 			if (currentDir == 0)
 			{
-				kDebug(14010) << k_funcinfo <<
+				kDebug(14010) <<
 					"couldn't cast archive entry to KArchiveDirectory" << endl;
 				continue;
 			}

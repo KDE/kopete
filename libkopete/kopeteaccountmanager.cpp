@@ -224,7 +224,7 @@ Account* AccountManager::registerAccount( Account *account )
 
 void AccountManager::unregisterAccount( const Account *account )
 {
-	kDebug( 14010 ) << k_funcinfo << "Unregistering account " << account->accountId();
+	kDebug( 14010 ) << "Unregistering account " << account->accountId();
 	d->accounts.removeAll( const_cast<Account*>(account) );
 	emit accountUnregistered( account );
 }
@@ -314,7 +314,7 @@ void AccountManager::removeAccount( Account *account )
 
 void AccountManager::save()
 {
-	//kDebug( 14010 ) << k_funcinfo;
+	//kDebug( 14010 ) ;
 	qSort( d->accounts.begin(), d->accounts.end(), compareAccountsByPriority );
 
 	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
@@ -377,19 +377,19 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 		QString accountId = cg.readEntry( "AccountId", QString() );
 		if ( accountId.isEmpty() )
 		{
-			kWarning( 14010 ) << k_funcinfo <<
+			kWarning( 14010 ) <<
 				"Not creating account for empty accountId." << endl;
 			continue;
 		}
 
-		kDebug( 14010 ) << k_funcinfo <<
+		kDebug( 14010 ) <<
 			"Creating account for '" << accountId << "'" << endl;
 
 		Account *account = 0L;
 		account = registerAccount( protocol->createNewAccount( accountId ) );
 		if ( !account )
 		{
-			kWarning( 14010 ) << k_funcinfo <<
+			kWarning( 14010 ) <<
 				"Failed to create account for '" << accountId << "'" << endl;
 			continue;
 		}
@@ -403,7 +403,7 @@ void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 	if (!account)
 		return;
 
-	//kDebug(14010) << k_funcinfo;
+	//kDebug(14010) ;
 	emit accountOnlineStatusChanged(account, oldStatus, newStatus);
 }
 

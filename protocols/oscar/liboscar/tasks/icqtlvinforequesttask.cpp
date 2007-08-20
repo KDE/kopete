@@ -67,13 +67,13 @@ bool ICQTlvInfoRequestTask::take( Transfer* transfer )
 
 		if ( buffer.getByte() == 0x0A )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received user info";
+			kDebug(OSCAR_RAW_DEBUG) << "Received user info";
 			parse( buffer.getLEBlock() );
 			setSuccess( 0, QString() );
 		}
 		else
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Couldn't receive user info!!!";
+			kDebug(OSCAR_RAW_DEBUG) << "Couldn't receive user info!!!";
 			setError( 0, QString() );
 		}
 
@@ -85,7 +85,7 @@ bool ICQTlvInfoRequestTask::take( Transfer* transfer )
 
 void ICQTlvInfoRequestTask::onGo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requsting full TLV user info for: " << m_userToRequestFor;
+	kDebug(OSCAR_RAW_DEBUG) << "Requsting full TLV user info for: " << m_userToRequestFor;
 
 	m_goSequence = client()->snacSequence();
 	setSequence( m_goSequence );

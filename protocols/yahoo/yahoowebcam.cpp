@@ -28,7 +28,7 @@
 YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 {
 	setObjectName( QLatin1String("yahoo_webcam") );
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	theAccount = account;
 	theDialog = 0L;
 	origImg = new KTemporaryFile();
@@ -97,7 +97,7 @@ void YahooWebcam::updateImage()
 
 void YahooWebcam::sendImage()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 #ifndef Q_OS_WIN
 	m_devicePool->getFrame();

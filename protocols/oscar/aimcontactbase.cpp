@@ -46,23 +46,23 @@ QString AIMContactBase::sanitizedMessage( const QString& message )
 	doc.setContent( message, false, &domError, &errLine, &errCol );
 	if ( !domError.isEmpty() ) //error parsing, do nothing
 	{
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "error from dom document conversion: "
+		kDebug(OSCAR_GEN_DEBUG) << "error from dom document conversion: "
 			<< domError << endl;
 		return message;
 	}
 	else
 	{
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "conversion to dom document successful."
+		kDebug(OSCAR_GEN_DEBUG) << "conversion to dom document successful."
 			<< "looking for font tags" << endl;
 		QDomNodeList fontTagList = doc.elementsByTagName( "font" );
 		if ( fontTagList.count() == 0 )
 		{
-			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "No font tags found. Returning normal message";
+			kDebug(OSCAR_GEN_DEBUG) << "No font tags found. Returning normal message";
 			return message;
 		}
 		else
 		{
-			kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Found font tags. Attempting replacement";
+			kDebug(OSCAR_GEN_DEBUG) << "Found font tags. Attempting replacement";
 			uint numFontTags = fontTagList.count();
 			for ( uint i = 0; i < numFontTags; i++ )
 			{
@@ -74,7 +74,7 @@ QString AIMContactBase::sanitizedMessage( const QString& message )
 					continue;
 				if ( fontEl.hasAttribute( "back" ) )
 				{
-					kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Found attribute to replace. Doing replacement";
+					kDebug(OSCAR_GEN_DEBUG) << "Found attribute to replace. Doing replacement";
 					QString backgroundColor = fontEl.attribute( "back" );
 					backgroundColor.insert( 0, "background-color: " );
 					backgroundColor.append( ';' );
@@ -84,7 +84,7 @@ QString AIMContactBase::sanitizedMessage( const QString& message )
 			}
 		}
 	}
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "sanitized message is " << doc.toString();
+	kDebug(OSCAR_GEN_DEBUG) << "sanitized message is " << doc.toString();
 	return doc.toString();
 }
 
@@ -92,13 +92,13 @@ void AIMContactBase::sendAutoResponse(Kopete::Message& msg)
 {
 	// The target time is 2 minutes later than the last message
 	int delta = m_lastAutoresponseTime.secsTo( QDateTime::currentDateTime() );
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Last autoresponse time: " << m_lastAutoresponseTime;
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Current time: " << QDateTime::currentDateTime();
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Difference: " << delta;
+	kDebug(OSCAR_GEN_DEBUG) << "Last autoresponse time: " << m_lastAutoresponseTime;
+	kDebug(OSCAR_GEN_DEBUG) << "Current time: " << QDateTime::currentDateTime();
+	kDebug(OSCAR_GEN_DEBUG) << "Difference: " << delta;
 	// Check to see if we're past that time
 	if(delta > 120)
 	{
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Sending auto response";
+		kDebug(OSCAR_GEN_DEBUG) << "Sending auto response";
 		
 		// This code was yoinked straight from OscarContact::slotSendMsg()
 		// If only that slot wasn't private, but I'm not gonna change it right now.
@@ -121,7 +121,7 @@ void AIMContactBase::sendAutoResponse(Kopete::Message& msg)
 		
 		// isAuto defaults to false
 		mAccount->engine()->sendMessage( message, true);
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Sent auto response";
+		kDebug(OSCAR_GEN_DEBUG) << "Sent auto response";
 		manager(Kopete::Contact::CanCreate)->appendMessage(msg);
 		manager(Kopete::Contact::CanCreate)->messageSucceeded();
 		// Update the last autoresponse time
@@ -129,7 +129,7 @@ void AIMContactBase::sendAutoResponse(Kopete::Message& msg)
 	}
 	else
 	{
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Not enough time since last autoresponse, NOT sending";
+		kDebug(OSCAR_GEN_DEBUG) << "Not enough time since last autoresponse, NOT sending";
 	}
 }
 
@@ -201,7 +201,7 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 
 	s.remove ( QRegExp ( QString::fromLatin1("<br>$") ) ); 
 	
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "sending " << s;
+	kDebug(OSCAR_GEN_DEBUG) << "sending " << s;
 	
 	// XXX Need to check for message size?
 	

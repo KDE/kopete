@@ -176,7 +176,7 @@ void ChatMembersListWidget::slotContactAdded( const Kopete::Contact *contact )
 
 void ChatMembersListWidget::slotContactRemoved( const Kopete::Contact *contact )
 {
-	kDebug(14000) << k_funcinfo;
+	kDebug(14000) ;
 	if ( m_members.contains( contact ) && contact != session()->myself() )
 	{
 		delete m_members[ contact ];

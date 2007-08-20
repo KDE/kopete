@@ -63,7 +63,7 @@ IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, Met
 	: Contact(account, entity->name(), metac, icon),
 	  d (new IRCContact::Private)
 {
-	kDebug(14120) << k_funcinfo << entity->name();
+	kDebug(14120) << entity->name();
 
 	d->entity = entity;
 
@@ -91,7 +91,7 @@ IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, Met
 
 IRCContact::~IRCContact()
 {
-//	kDebug(14120) << k_funcinfo << entity->name();
+//	kDebug(14120) << entity->name();
 //	if (metaContact() && metaContact()->isTemporary() && !isChatting(m_chatSession))
 //		metaContact()->deleteLater();
 

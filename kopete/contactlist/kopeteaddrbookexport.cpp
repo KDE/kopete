@@ -258,16 +258,16 @@ void KopeteAddressBookExport::exportData()
 	
 		KABC::Ticket *ticket = mAddressBook->requestSaveTicket();
 		if ( !ticket )
-			kWarning( 14000 ) << k_funcinfo << "WARNING: Resource is locked by other application!";
+			kWarning( 14000 ) << "WARNING: Resource is locked by other application!";
 		else
 		{
 			if ( !mAddressBook->save( ticket ) )
 			{
-				kWarning( 14000 ) << k_funcinfo << "ERROR: Saving failed!";
+				kWarning( 14000 ) << "ERROR: Saving failed!";
 				mAddressBook->releaseSaveTicket( ticket );
 			}
 		}
-		kDebug( 14000 ) << k_funcinfo << "Finished writing KABC";
+		kDebug( 14000 ) << "Finished writing KABC";
 	}
 }
 

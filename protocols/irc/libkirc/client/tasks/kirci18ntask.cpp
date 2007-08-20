@@ -338,7 +338,7 @@ void I18nTask::bindNumericReplies()
  */
 void I18nTask::numericReply_001(Event *e)
 {
-	kDebug(14121) << k_funcinfo;
+	kDebug(14121) ;
 
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.

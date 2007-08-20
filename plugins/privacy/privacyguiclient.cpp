@@ -64,11 +64,11 @@ PrivacyGUIClient::~PrivacyGUIClient()
 
 void PrivacyGUIClient::slotAddToBlackList()
 {
-	kDebug(14313) << k_funcinfo;
+	kDebug(14313) ;
 	Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin("kopete_privacy");
 	if( !plugin )
 		return;
-	kDebug(14313) << k_funcinfo << "Plugin found";
+	kDebug(14313) << "Plugin found";
 
 	QList<Kopete::Contact*> members = m_manager->members();
 
@@ -84,7 +84,7 @@ void PrivacyGUIClient::slotAddToBlackList()
 
 void PrivacyGUIClient::slotAddToWhiteList()
 {
-	kDebug(14313) << k_funcinfo;
+	kDebug(14313) ;
 	Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin("kopete_privacy");
 	if( !plugin )
 		return;

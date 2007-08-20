@@ -79,7 +79,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QStringList &/*args
 	  propEmail( Kopete::Global::Properties::self()->emailAddress() )
 {
 	// ^^ That is all member initialiser syntax, not broken indentation!
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo;
+	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
 
 	s_protocol = this;
 
@@ -165,7 +165,7 @@ Kopete::OnlineStatus GroupWiseProtocol::gwStatusToKOS( const int gwInternal )
 			break;
 		default:
 			status = groupwiseInvalid;
-			kWarning( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Got unrecognised status value" << gwInternal;
+			kWarning( GROUPWISE_DEBUG_GLOBAL ) << "Got unrecognised status value" << gwInternal;
 	}
 	return status;
 }
@@ -253,7 +253,7 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 			}
 			else
 			{
-				kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "bogus utf-8 lead byte: 0x" << Q3TextStream::hex << current;
+				kDebug( GROUPWISE_DEBUG_GLOBAL ) << "bogus utf-8 lead byte: 0x" << Q3TextStream::hex << current;
 				ucs4Char = 0x003F;
 				bytesEncoded = 1;
 			}

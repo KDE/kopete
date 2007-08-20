@@ -28,7 +28,7 @@
 
 #include <kdebug.h>
 #define MEANWHILE_DEBUG 14200
-#define HERE kDebug(MEANWHILE_DEBUG) << k_funcinfo << endl
+#define HERE kDebug(MEANWHILE_DEBUG) << endl
 #define mwDebug() kDebug(MEANWHILE_DEBUG)
 
 

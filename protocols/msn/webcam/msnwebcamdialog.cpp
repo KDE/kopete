@@ -52,7 +52,7 @@ MSNWebcamDialog::MSNWebcamDialog( const QString& contact, QWidget * parent, cons
 	setMainWidget(page);
 	if ( page )
 	{
-		kDebug(14180) << k_funcinfo << "Adding webcam image container";
+		kDebug(14180) << "Adding webcam image container";
 		//m_imageContainer.setText( i18n( "No webcam image received" ) );
 		//m_imageContainer.setAlignment( Qt::AlignCenter );
 		m_imageContainer.setMinimumSize(320,240);
@@ -67,7 +67,7 @@ MSNWebcamDialog::~ MSNWebcamDialog( )
 
 void MSNWebcamDialog::newImage( const QPixmap & image )
 {
-	kDebug(14180) << k_funcinfo << "New image received";
+	kDebug(14180) << "New image received";
 	//	kDebug(14180) << image;
 	//m_imageContainer.clear();
 	m_imageContainer.updatePixmap( image );
@@ -76,7 +76,7 @@ void MSNWebcamDialog::newImage( const QPixmap & image )
 
 void MSNWebcamDialog::webcamClosed( int reason  )
 {
-	kDebug(14180) << k_funcinfo << "webcam closed with reason?? " <<  reason;
+	kDebug(14180) << "webcam closed with reason?? " <<  reason;
 // 	m_imageContainer.clear();
 // 	m_imageContainer.setText( i18n( "Webcam closed with reason %1", reason ) );
 // 	m_imageContainer.setAlignment( Qt::AlignCenter );

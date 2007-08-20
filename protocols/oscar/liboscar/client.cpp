@@ -265,7 +265,7 @@ void Client::close()
 
 void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, const QString &description )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting status message to "<< message;
+	kDebug(OSCAR_RAW_DEBUG) << "Setting status message to "<< message;
 
 	// remember the values to reply with, when requested
 	bool xtrazChanged = (xtraz > -1 || d->status.xtraz != xtraz);
@@ -288,12 +288,12 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 			ChangeVisibilityTask* cvt = new ChangeVisibilityTask( c->rootTask() );
 			if ( ( status & 0x0100 ) == 0x0100 )
 			{
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting invisible";
+				kDebug(OSCAR_RAW_DEBUG) << "Setting invisible";
 				cvt->setVisible( false );
 			}
 			else
 			{
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Setting visible";
+				kDebug(OSCAR_RAW_DEBUG) << "Setting visible";
 				cvt->setVisible( true );
 			}
 			cvt->go( Task::AutoDelete );
@@ -377,7 +377,7 @@ Guid Client::versionCap() const
 
 void Client::streamConnected()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
+	kDebug(OSCAR_RAW_DEBUG) ;
 	d->stage = ClientPrivate::StageTwo;
 	if ( m_loginTaskTwo )
 		m_loginTaskTwo->go();
@@ -391,7 +391,7 @@ void Client::lt_loginFinished()
 	if ( d->stage == ClientPrivate::StageTwo )
 	{
 		//we've finished logging in. start the services setup
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "stage two done. setting up services";
+		kDebug(OSCAR_RAW_DEBUG) << "stage two done. setting up services";
 		initializeStaticTasks();
 		ServiceSetupTask* ssTask = new ServiceSetupTask( d->connections.defaultConnection()->rootTask() );
 		connect( ssTask, SIGNAL( finished() ), this, SLOT( serviceSetupFinished() ) );
@@ -401,12 +401,12 @@ void Client::lt_loginFinished()
 	}
 	else if ( d->stage == ClientPrivate::StageOne )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "stage one login done";
+		kDebug(OSCAR_RAW_DEBUG) << "stage one login done";
 		disconnect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 
 		if ( m_loginTask->statusCode() == 0 ) //we can start stage two
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "no errors from stage one. moving to stage two";
+			kDebug(OSCAR_RAW_DEBUG) << "no errors from stage one. moving to stage two";
 
 			//cache these values since they'll be deleted when we close the connections (which deletes the tasks)
 			d->host = m_loginTask->bosServer();
@@ -417,7 +417,7 @@ void Client::lt_loginFinished()
 		}
 		else
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "errors reported. not moving to stage two";
+			kDebug(OSCAR_RAW_DEBUG) << "errors reported. not moving to stage two";
 			close(); //deletes the connections for us
 		}
 
@@ -471,7 +471,7 @@ void Client::serviceSetupFinished()
 
 void Client::receivedIcqInfo( const QString& contact, unsigned int type )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "received icq info for " << contact
+	kDebug(OSCAR_RAW_DEBUG) << "received icq info for " << contact
 		<< " of type " << type << endl;
 
 	if ( type == ICQUserInfoRequestTask::Short )
@@ -493,7 +493,7 @@ void Client::offlineUser( const QString& user, const UserDetails& )
 
 void Client::haveOwnUserInfo()
 {
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo;
+	kDebug( OSCAR_RAW_DEBUG ) ;
 	UserDetails ud = d->ownStatusTask->getInfo();
 	d->ourDetails = ud;
 	emit haveOwnInfo();
@@ -571,7 +571,7 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
         if ( !c )
             return;
 
-        kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending message to chat room";
+        kDebug(OSCAR_RAW_DEBUG) << "sending message to chat room";
         ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), msg.exchange(), msg.chatRoom() );
         cst->setMessage( msg );
         cst->setEncoding( d->codecProvider->codecForAccount()->name() );
@@ -661,12 +661,12 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		{
 			// we got a response to a status message request.
 			QString awayMessage( msg.text( d->codecProvider->codecForContact( msg.sender() ) ) );
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << awayMessage;
+			kDebug( OSCAR_RAW_DEBUG ) << "Received an away message: " << awayMessage;
 			emit receivedAwayMessage( msg.sender(), awayMessage );
 		}
 		else if ( msg.messageType() == Oscar::MessageType::Plugin )
 		{
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an plugin message response.";
+			kDebug( OSCAR_RAW_DEBUG ) << "Received an plugin message response.";
 
 			Oscar::MessagePlugin::Types type = msg.plugin()->type();
 			Oscar::WORD subType = msg.plugin()->subTypeId();
@@ -693,7 +693,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 
 				QTextCodec* codec = d->codecProvider->codecForContact( msg.sender() );
 				QString awayMessage = codec->toUnicode( buffer.getLEDBlock() );
-				kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received an away message: " << awayMessage;
+				kDebug( OSCAR_RAW_DEBUG ) << "Received an away message: " << awayMessage;
 				emit receivedAwayMessage( msg.sender(), awayMessage );
 			}
 		}
@@ -702,12 +702,12 @@ void Client::receivedMessage( const Oscar::Message& msg )
 	{
 		if ( msg.messageType() == Oscar::MessageType::Plugin )
 		{
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received a plugin message.";
+			kDebug( OSCAR_RAW_DEBUG ) << "Received a plugin message.";
 		}
 		else if ( !msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
 		{
 			// let application handle it
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Emitting receivedMessage";
+			kDebug( OSCAR_RAW_DEBUG ) << "Emitting receivedMessage";
 			emit messageReceived( msg );
 		}
 	}
@@ -715,8 +715,8 @@ void Client::receivedMessage( const Oscar::Message& msg )
 
 void Client::fileMessage( const Oscar::Message& msg )
 {
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "internal ip: " << ourInfo().dcInternalIp().toString();
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "external ip: " << ourInfo().dcExternalIp().toString();
+	kDebug( OSCAR_RAW_DEBUG ) << "internal ip: " << ourInfo().dcInternalIp().toString();
+	kDebug( OSCAR_RAW_DEBUG ) << "external ip: " << ourInfo().dcExternalIp().toString();
 
 	sendMessage( msg );
 }
@@ -815,7 +815,7 @@ void Client::removeGroup( const QString& groupName )
 	if ( !c )
 		return;
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing group " << groupName << " from Contact";
+	kDebug( OSCAR_RAW_DEBUG ) << "Removing group " << groupName << " from Contact";
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->removeGroup( groupName ) )
 		ssimt->go( Task::AutoDelete );
@@ -829,7 +829,7 @@ void Client::addGroup( const QString& groupName )
 	if ( !c )
 		return;
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding group " << groupName << " to Contact";
+	kDebug( OSCAR_RAW_DEBUG ) << "Adding group " << groupName << " to Contact";
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->addGroup( groupName ) )
 		ssimt->go( Task::AutoDelete );
@@ -843,7 +843,7 @@ void Client::addContact( const QString& contactName, const QString& groupName )
 	if ( !c )
 		return;
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Adding contact " << contactName << " to ssi in group " << groupName;
+	kDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << contactName << " to ssi in group " << groupName;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->addContact( contactName, groupName )  )
 		ssimt->go( Task::AutoDelete );
@@ -857,7 +857,7 @@ void Client::removeContact( const QString& contactName )
 	if ( !c )
 		return;
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Removing contact " << contactName << " from ssi";
+	kDebug( OSCAR_RAW_DEBUG ) << "Removing contact " << contactName << " from ssi";
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->removeContact( contactName ) )
 		ssimt->go( Task::AutoDelete );
@@ -871,7 +871,7 @@ void Client::renameGroup( const QString & oldGroupName, const QString & newGroup
 	if ( !c )
 		return;
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Renaming group " << oldGroupName << " to " << newGroupName;
+	kDebug( OSCAR_RAW_DEBUG ) << "Renaming group " << oldGroupName << " to " << newGroupName;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->renameGroup( oldGroupName, newGroupName ) )
 		ssimt->go( Task::AutoDelete );
@@ -891,7 +891,7 @@ void Client::modifyContactItem( const OContact& oldItem, const OContact& newItem
 	if ( oldItem && !newItem )
 		action = 2;
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Add/Mod/Del item on server";
+	kDebug(OSCAR_RAW_DEBUG) << "Add/Mod/Del item on server";
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	switch ( action )
 	{
@@ -922,7 +922,7 @@ void Client::changeContactGroup( const QString& contact, const QString& newGroup
 	if ( !c )
 		return;
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Changing " << contact << "'s group to "
+	kDebug(OSCAR_RAW_DEBUG) << "Changing " << contact << "'s group to "
 		<< newGroupName << endl;
 	SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 	if ( ssimt->changeGroup( contact, newGroupName ) )
@@ -1089,7 +1089,7 @@ void Client::requestAIMAwayMessage( const QString& contact )
 
 void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactStatus )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting away message for " << contact;
+	kDebug(OSCAR_RAW_DEBUG) << "requesting away message for " << contact;
 	Oscar::Message msg;
 	msg.setChannel( 2 );
 	msg.setReceiver( contact );
@@ -1175,7 +1175,7 @@ void Client::requestICQAwayMessage( const QString& contact, ICQStatus contactSta
 
 void Client::addICQAwayMessageRequest( const QString& contact, ICQStatus contactStatus )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding away message request for "
+	kDebug(OSCAR_RAW_DEBUG) << "adding away message request for "
 	                         << contact << " to queue" << endl;
 
 	//remove old request if still exists
@@ -1190,7 +1190,7 @@ void Client::addICQAwayMessageRequest( const QString& contact, ICQStatus contact
 
 void Client::removeICQAwayMessageRequest( const QString& contact )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "removing away message request for "
+	kDebug(OSCAR_RAW_DEBUG) << "removing away message request for "
 	                         << contact << " from queue" << endl;
 
 	QList<ClientPrivate::AwayMsgRequest>::iterator it = d->awayMsgRequestQueue.begin();
@@ -1205,7 +1205,7 @@ void Client::removeICQAwayMessageRequest( const QString& contact )
 
 void Client::nextICQAwayMessageRequest()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "request queue count " << d->awayMsgRequestQueue.count();
+	kDebug(OSCAR_RAW_DEBUG) << "request queue count " << d->awayMsgRequestQueue.count();
 
 	if ( d->awayMsgRequestQueue.empty() )
 	{
@@ -1318,12 +1318,12 @@ void Client::setIgnore( const QString& user, bool ignore )
 	OContact item = ssiManager()->findItem( user,  ROSTER_IGNORE );
 	if ( item && !ignore )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from ignore list";
+		kDebug(OSCAR_RAW_DEBUG) << "Removing " << user << " from ignore list";
 		this->modifyContactItem( item, OContact() );
 	}
 	else if ( !item && ignore )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to ignore list";
+		kDebug(OSCAR_RAW_DEBUG) << "Adding " << user << " to ignore list";
 		OContact s( user, 0, ssiManager()->nextContactId(), ROSTER_IGNORE, QList<TLV>() );
 		this->modifyContactItem( OContact(), s );
 	}
@@ -1334,12 +1334,12 @@ void Client::setVisibleTo( const QString& user, bool visible )
 	OContact item = ssiManager()->findItem( user,  ROSTER_VISIBLE );
 	if ( item && !visible )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from visible list";
+		kDebug(OSCAR_RAW_DEBUG) << "Removing " << user << " from visible list";
 		this->modifyContactItem( item, OContact() );
 	}
 	else if ( !item && visible )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to visible list";
+		kDebug(OSCAR_RAW_DEBUG) << "Adding " << user << " to visible list";
 		OContact s( user, 0, ssiManager()->nextContactId(), ROSTER_VISIBLE, QList<TLV>() );
 		this->modifyContactItem( OContact(), s );
 	}
@@ -1350,12 +1350,12 @@ void Client::setInvisibleTo( const QString& user, bool invisible )
 	OContact item = ssiManager()->findItem( user,  ROSTER_INVISIBLE );
 	if ( item && !invisible )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing " << user << " from invisible list";
+		kDebug(OSCAR_RAW_DEBUG) << "Removing " << user << " from invisible list";
 		this->modifyContactItem( item, OContact() );
 	}
 	else if ( !item && invisible )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Adding " << user << " to invisible list";
+		kDebug(OSCAR_RAW_DEBUG) << "Adding " << user << " to invisible list";
 		OContact s( user, 0, ssiManager()->nextContactId(), ROSTER_INVISIBLE, QList<TLV>() );
 		this->modifyContactItem( OContact(), s );
 	}
@@ -1459,7 +1459,7 @@ void Client::serverRedirectFinished()
 		crt->go( Task::AutoDelete );
 	}
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "redirection finished for service "
+	kDebug(OSCAR_RAW_DEBUG) << "redirection finished for service "
 	                         << d->currentRedirect << endl;
 
 	if ( d->currentRedirect == 0x0010 )
@@ -1477,7 +1477,7 @@ void Client::serverRedirectFinished()
         //HACK! such abuse! think of a better way
         if ( !m_loginTaskTwo )
         {
-            kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "no login task to get connection from!";
+            kWarning(OSCAR_RAW_DEBUG) << "no login task to get connection from!";
             emit redirectionFinished( d->currentRedirect );
             return;
         }
@@ -1487,7 +1487,7 @@ void Client::serverRedirectFinished()
         Oscar::WORD exchange = d->connections.exchangeForConnection( c );
         if ( c )
         {
-            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting up chat connection";
+            kDebug(OSCAR_RAW_DEBUG) << "setting up chat connection";
             ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), exchange, roomName );
             connect( cst, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
                      this, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
@@ -1505,12 +1505,12 @@ void Client::serverRedirectFinished()
 
 void Client::checkRedirectionQueue( Oscar::WORD family )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checking redirection queue";
+	kDebug(OSCAR_RAW_DEBUG) << "checking redirection queue";
 	d->redirectionServices.removeAll( family );
     d->currentRedirect = 0;
 	if ( !d->redirectionServices.isEmpty() )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "scheduling new redirection";
+		kDebug(OSCAR_RAW_DEBUG) << "scheduling new redirection";
 		requestServerRedirect( d->redirectionServices.front() );
 	}
 }
@@ -1522,7 +1522,7 @@ void Client::requestChatNavLimits()
 	if ( !c )
 		return;
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting chat nav service limits";
+	kDebug(OSCAR_RAW_DEBUG) << "requesting chat nav service limits";
 	ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
     cnst->setRequestType( ChatNavServiceTask::Limits );
     QObject::connect( cnst, SIGNAL( haveChatExchanges( const QList<int>& ) ),
@@ -1559,7 +1559,7 @@ void Client::sendBuddyIcon( const QByteArray& iconData )
 	if ( !c )
 		return;
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icon length is " << iconData.size();
+	kDebug(OSCAR_RAW_DEBUG) << "icon length is " << iconData.size();
 	BuddyIconTask* bit = new BuddyIconTask( c->rootTask() );
 	bit->uploadIcon( iconData.size(), iconData );
 	bit->go( Task::AutoDelete );
@@ -1571,7 +1571,7 @@ void Client::joinChatRoom( const QString& roomName, int exchange )
     if ( !c )
         return;
 
-    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "joining the chat room '" << roomName
+    kDebug(OSCAR_RAW_DEBUG) << "joining the chat room '" << roomName
                              << "' on exchange " << exchange << endl;
     ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
     connect( cnst, SIGNAL( connectChat( Oscar::WORD, QByteArray, Oscar::WORD, const QString& ) ),
@@ -1582,9 +1582,9 @@ void Client::joinChatRoom( const QString& roomName, int exchange )
 
 void Client::setupChatConnection( Oscar::WORD exchange, QByteArray cookie, Oscar::WORD instance, const QString& room )
 {
-    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "cookie is:" << cookie;
+    kDebug(OSCAR_RAW_DEBUG) << "cookie is:" << cookie;
     QByteArray realCookie( cookie );
-    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "connection to chat room";
+    kDebug(OSCAR_RAW_DEBUG) << "connection to chat room";
     requestServerRedirect( 0x000E, exchange, realCookie, instance, room );
 }
 
@@ -1668,7 +1668,7 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 	//maybe it's a new request!
 	if ( type == 0 )
 	{
-		kDebug(14151) << k_funcinfo << "new request :)";
+		kDebug(14151) << "new request :)";
 		FileTransferTask *ft = new FileTransferTask( c->rootTask(), from, ourInfo().userId(), cookie, buf );
 		connect( ft, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
 				SIGNAL( getTransferManager( Kopete::TransferManager ** ) ) );
@@ -1680,7 +1680,7 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 		return;
 	}
 
-	kDebug(14151) << k_funcinfo << "nobody wants it :(";
+	kDebug(14151) << "nobody wants it :(";
 }
 
 #include "client.moc"

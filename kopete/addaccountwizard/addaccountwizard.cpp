@@ -192,7 +192,7 @@ void AddAccountWizard::next()
 	}
 	else 
 	{
-		kDebug(14100) << k_funcinfo << "Next pressed on misc page";
+		kDebug(14100) << "Next pressed on misc page";
 		KAssistantDialog::next();
 	}
 

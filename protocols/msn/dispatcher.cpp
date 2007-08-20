@@ -60,7 +60,7 @@ Dispatcher::Dispatcher(QObject *parent, const QString& contact, const QStringLis
 
 Dispatcher::~Dispatcher()
 {
-	kDebug(14140) << k_funcinfo;
+	kDebug(14140) ;
 
 	if(m_callbackChannel)
 	{
@@ -93,7 +93,7 @@ void Dispatcher::requestDisplayIcon(const QString& from, const QString& msnObjec
 	// Add the transfer to the list.
 	m_sessions.insert(sessionId, current);
 
-	kDebug(14140) << k_funcinfo << "Requesting, " << msnObject;
+	kDebug(14140) << "Requesting, " << msnObject;
 
 	QString context = QString::fromUtf8(KCodecs::base64Encode(msnObject.toUtf8()));
 	// NOTE remove the \0 character automatically
@@ -168,11 +168,11 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 
 void Dispatcher::sendImage(const QString& /*fileName*/, const QString& /*to*/)
 {
-// 	TODO kDebug(14140) << k_funcinfo;
+// 	TODO kDebug(14140) ;
 // 	QFile imageFile(fileName);
 // 	if(!imageFile.open(QIODevice::ReadOnly))
 // 	{
-// 		kDebug(14140) << k_funcinfo << "Error opening image file."
+// 		kDebug(14140) << "Error opening image file."
 // 			<< endl;
 // 		return;
 // 	}
@@ -244,7 +244,7 @@ void Dispatcher::slotReadMessage(const QString &from, const QByteArray& stream)
 			}
 			else
 			{
-				kDebug(14140) << k_funcinfo
+				kDebug(14140) 
 					<< "no transfer context with identifier, "
 					<< receivedMessage.header.ackSessionIdentifier
 					<< endl;
@@ -254,7 +254,7 @@ void Dispatcher::slotReadMessage(const QString &from, const QByteArray& stream)
 
 		if(m_messageBuffer.contains(receivedMessage.header.identifier))
 		{
-			kDebug(14140) << k_funcinfo
+			kDebug(14140) 
 				<< QString("retrieving buffered messsage, %1").arg(receivedMessage.header.identifier)
 				<< endl;
 
@@ -352,7 +352,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 		{
 			// The entire message has not been received;
 			// buffer the recevied portion of the original message.
-			kDebug(14140) << k_funcinfo
+			kDebug(14140) 
 				<< QString("Buffering messsage, %1").arg(message.header.identifier)
 				<< endl;
 			m_messageBuffer.insert(message.header.identifier, message);
@@ -361,7 +361,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 
 		QString body =
 			QByteArray(message.body.data(), message.header.dataSize);
-		kDebug(14140) << k_funcinfo << "received, " << body;
+		kDebug(14140) << "received, " << body;
 
 		if(body.startsWith("INVITE"))
 		{
@@ -399,7 +399,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 
 				// Decode the msn object from base64 encoding.
 				KCodecs::base64Decode(regex.cap(1).toUtf8() , msnobj);
-				kDebug(14140) << k_funcinfo << "Contact requested, "
+				kDebug(14140) << "Contact requested, "
 					<< msnobj << endl;
 
 				// Create a new transfer context that will handle
@@ -441,7 +441,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				// A contact has requested a session to
 				// send a file.
 
-				kDebug(14140) << k_funcinfo << "File transfer invitation.";
+				kDebug(14140) << "File transfer invitation.";
 
 				// Create a new transfer context that will handle
 				// the file transfer.
@@ -525,7 +525,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				regex.search(body);
 				QString GUID=regex.cap(1);
 
-				kDebug(14140) << k_funcinfo << "webcam " << GUID;
+				kDebug(14140) << "webcam " << GUID;
 
 				Webcam::Who who;
 				if(GUID=="4BD96FC0-AB17-4425-A14A-439185962DC8")
@@ -539,7 +539,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				else
 				{ //unknown GUID
 					//current->error();
-					kWarning(14140) << k_funcinfo << "Unknown GUID " << GUID;
+					kWarning(14140) << "Unknown GUID " << GUID;
 					return;
 				}
 

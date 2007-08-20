@@ -69,7 +69,7 @@ void IRCServerContact::slotDumpMessages()
 
 void IRCServerContact::slotViewCreated( KopeteView *v )
 {
-	kDebug(14121) << k_funcinfo << "Created: " << v << ", mgr: " << v->msgManager() << ", Mine: " << m_chatSession;
+	kDebug(14121) << "Created: " << v << ", mgr: " << v->msgManager() << ", Mine: " << m_chatSession;
 	if (m_chatSession && v->msgManager() == m_chatSession)
 		QTimer::singleShot(500, this, SLOT(slotDumpMessages()));
 }

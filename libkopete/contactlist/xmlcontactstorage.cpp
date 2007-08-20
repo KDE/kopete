@@ -146,7 +146,7 @@ void XmlContactStorage::load()
     {
         // The version string is invalid, or we're using an older version.
         // Convert first and reparse the file afterwards
-        kDebug( 14010 ) << k_funcinfo << "Contact list version " << version
+        kDebug( 14010 ) << "Contact list version " << version
                 << " is older than current version " <<  Private::ContactListVersion
                 << ". Converting first." << endl;
 
@@ -199,7 +199,7 @@ void XmlContactStorage::load()
         }
         else
         {
-            kWarning(14010) << k_funcinfo
+            kWarning(14010) 
                     << "Unknown element '" << element.tagName()
                     << "' in XML contact list storage!" << endl;
         }
@@ -311,7 +311,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
             if ( contactElement.hasAttribute(NSCID_ELEM) && contactElement.hasAttribute(NSPID_ELEM) && contactElement.hasAttribute(NSAID_ELEM))
             {
                 oldNameTracking = true;
-                //kDebug(14010) << k_funcinfo << "old name tracking";
+                //kDebug(14010) << "old name tracking";
                 // retrieve deprecated data (now stored in property-sources)
                 // save temporarely, we will find a Contact* with this later
                 nameSourceCID = contactElement.attribute( NSCID_ELEM );
@@ -319,7 +319,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
                 nameSourceAID = contactElement.attribute( NSAID_ELEM );
             }
 //          else
-//              kDebug(14010) << k_funcinfo << "no old name tracking";
+//              kDebug(14010) << "no old name tracking";
         }
         else if( contactElement.tagName() == QString::fromUtf8( "photo" ) )
         {
@@ -334,13 +334,13 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
             if ( contactElement.hasAttribute(PSCID_ELEM) && contactElement.hasAttribute(PSPID_ELEM) && contactElement.hasAttribute(PSAID_ELEM))
             {
                 oldPhotoTracking = true;
-//              kDebug(14010) << k_funcinfo << "old photo tracking";
+//              kDebug(14010) << "old photo tracking";
                 photoSourceCID = contactElement.attribute( PSCID_ELEM );
                 photoSourcePID = contactElement.attribute( PSPID_ELEM );
                 photoSourceAID = contactElement.attribute( PSAID_ELEM );
             }
 //          else
-//              kDebug(14010) << k_funcinfo << "no old photo tracking";
+//              kDebug(14010) << "no old photo tracking";
         }
         else if( contactElement.tagName() == QString::fromUtf8( "property-sources" ) )
         {
@@ -428,7 +428,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
         /* if (displayNameSourceContact() )  <- doesn't work because the contact is only set up when all plugin are loaded (BUG 111956) */
         if ( !nameSourceCID.isEmpty() )
         {
-//          kDebug(14010) << k_funcinfo << "Converting old name source";
+//          kDebug(14010) << "Converting old name source";
             // even if the old tracking attributes exists, they could have been null, that means custom
             metaContact->setDisplayNameSource( Kopete::MetaContact::SourceContact );
         }
@@ -445,7 +445,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
 
     if ( oldPhotoTracking )
     {
-//      kDebug(14010) << k_funcinfo << "Converting old photo source";
+//      kDebug(14010) << "Converting old photo source";
         if ( !photoSourceCID.isEmpty() )
         {
             metaContact->setPhotoSource( Kopete::MetaContact::SourceContact );
@@ -481,7 +481,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
 //  if (d->contacts.count() > 1) // Does NOT work as intended
 //      d->trackChildNameChanges=false;
 
-//  kDebug(14010) << k_funcinfo << "END";
+//  kDebug(14010) << "END";
     metaContact->setLoading( false );
     return true;
 }
@@ -677,7 +677,7 @@ const QDomElement XmlContactStorage::storeMetaContact( Kopete::MetaContact *meta
 
     if( metaContact->photoSourceContact() )
     {
-        //kDebug(14010) << k_funcinfo << "serializing photo source " << nameFromContact(photoSourceContact());
+        //kDebug(14010) << "serializing photo source " << nameFromContact(photoSourceContact());
         // set contact source metadata for photo
         QDomElement contactPhotoSource = metaContactDoc.createElement( QString::fromUtf8("contact-source") );
         contactPhotoSource.setAttribute( NSCID_ELEM, metaContact->photoSourceContact()->contactId() );
@@ -1181,7 +1181,7 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
             }
             else
             {
-                kWarning( 14010 ) << k_funcinfo << "Unknown element '" << oldElement.tagName()
+                kWarning( 14010 ) << "Unknown element '" << oldElement.tagName()
                         << "' in contact list!" << endl;
             }
         }
@@ -1193,7 +1193,7 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
 
     QDir().rename( fileName, fileName + QLatin1String( ".bak" ) );
 
-    // kDebug( 14010 ) << k_funcinfo << "XML output:\n" << newList.toString( 2 );
+    // kDebug( 14010 ) << "XML output:\n" << newList.toString( 2 );
 
     contactListFile.open( QIODevice::WriteOnly );
     QTextStream stream( &contactListFile );

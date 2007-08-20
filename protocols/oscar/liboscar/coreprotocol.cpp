@@ -96,7 +96,7 @@ int CoreProtocol::state()
 
 void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received " << incomingBytes.count() << " bytes. ";
+	kDebug(OSCAR_RAW_DEBUG) << "Received " << incomingBytes.count() << " bytes. ";
 	// store locally
 	m_in.append( incomingBytes );
 	m_state = Available;
@@ -112,11 +112,11 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 	}
 
 	if ( m_state == NeedMore )
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "message was incomplete, waiting for more...";
+		kDebug(OSCAR_RAW_DEBUG) << "message was incomplete, waiting for more...";
 
 	if ( m_snacProtocol->state() == OutOfSync || m_flapProtocol->state() == OutOfSync )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "protocol thinks it's out of sync. "
+		kDebug(OSCAR_RAW_DEBUG) << "protocol thinks it's out of sync. "
 			<< "discarding the rest of the buffer and hoping the server regains sync soon..." << endl;
 		m_in.truncate( 0 );
 	}
@@ -132,7 +132,7 @@ Transfer* CoreProtocol::incomingTransfer()
 	}
 	else
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "we shouldn't be here!" << kBacktrace();
+		kDebug(OSCAR_RAW_DEBUG) << "we shouldn't be here!" << kBacktrace();
 		return 0;
 	}
 }
@@ -172,12 +172,12 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 	Oscar::WORD s1, s2 = 0;
 	uint bytesParsed = 0;
 
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Current packet" << toString(wire);
+	//kDebug(OSCAR_RAW_DEBUG) << "Current packet" << toString(wire);
 	if ( wire.size() < 6 ) //check for valid flap length
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo
+		kDebug(OSCAR_RAW_DEBUG) 
 				<< "packet not long enough! couldn't parse FLAP!" << endl;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "packet size is " << wire.size();
+		kDebug(OSCAR_RAW_DEBUG) << "packet size is " << wire.size();
 		m_state = NeedMore;
 		return bytesParsed;
 	}
@@ -197,7 +197,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 			din >> flapLength;
 			if ( wire.size() < flapLength )
 			{
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo
+				kDebug(OSCAR_RAW_DEBUG) 
 					<< "Not enough bytes to make a correct transfer. Have " << wire.size()
 					<< " bytes. need " << flapLength + 6 << " bytes" << endl;
 				m_state = NeedMore;
@@ -228,9 +228,9 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		}
 		else
 		{ //unknown wire format
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unknown wire format detected!";
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "start byte is " << flapStart;
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Packet is " << endl << toString( wire );
+			kDebug(OSCAR_RAW_DEBUG) << "unknown wire format detected!";
+			kDebug(OSCAR_RAW_DEBUG) << "start byte is " << flapStart;
+			kDebug(OSCAR_RAW_DEBUG) << "Packet is " << endl << toString( wire );
 		}
 
 	}
@@ -252,7 +252,7 @@ bool CoreProtocol::okToProceed( const QDataStream &din )
 	if ( din.atEnd() )
 	{
 		m_state = NeedMore;
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Server message ended prematurely!";
+		kDebug(OSCAR_RAW_DEBUG) << "Server message ended prematurely!";
 		return false;
 	}
 	else
