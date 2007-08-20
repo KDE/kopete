@@ -4,7 +4,7 @@
 #
 #  IDN_FOUND - Test has found IDN dependencies
 #  IDN_INCLUDES - Include needed for IDN
-#  IDN_LIBRARIES - Libraries needed for IDN
+#  IDN_LIBRARY - Libraries needed for IDN
 #  IDN_DEFINITIONS - Compiler swithces required for using IDN
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
@@ -29,20 +29,8 @@ FIND_LIBRARY(IDN_LIBRARY NAMES idn
   ${_IDNLinkDir} 
   NO_DEFAULT_PATH 
 )
-
-if (IDN_INCLUDES AND IDN_LIBRARY)
-   set(IDN_FOUND TRUE)
-endif (IDN_INCLUDES AND IDN_LIBRARY)
-
-if (IDN_FOUND)
-  if (NOT IDN_FIND_QUIETLY)
-    message(STATUS "Found IDN: ${IDN_LIBRARY}")
-  endif (NOT IDN_FIND_QUIETLY)
-else (IDN_FOUND)
-  if (IDN_FIND_REQUIRED)
-    message(FATAL_ERROR "Could NOT find IDN")
-  endif (IDN_FIND_REQUIRED)
-endif (IDN_FOUND)
+include(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(IDN DEFAULT_MSG IDN_INCLUDES AND IDN_LIBRARY )
 
 MARK_AS_ADVANCED(IDN_INCLUDE_DIR IDN_LIBRARY)
 
