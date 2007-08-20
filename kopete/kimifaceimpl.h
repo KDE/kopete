@@ -73,7 +73,7 @@ public:
 	 * Send the file to the contact
 	 */
 	void sendFile(const QString &uid, const KUrl &sourceURL,
-		const QString &altFileName = QString::null, uint fileSize = 0);
+		const QString &altFileName = QString(), uint fileSize = 0);
 
 // MUTATORS
 // Contact list

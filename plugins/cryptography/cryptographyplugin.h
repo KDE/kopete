@@ -1,7 +1,8 @@
 /*
     cryptographyplugin.h  -  description
 
-    Copyright (c) 2002-2004 by Olivier Goffart <ogoffart@kde.org>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@kde.org>
+    Copyright (c) 2007      by Charles Connell        <charles@connells.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -17,7 +18,6 @@
 
 #ifndef CRYPTOGRAPHYPLUGIN_H
 #define CRYPTOGRAPHYPLUGIN_H
-
 
 #include "kopeteplugin.h"
 
@@ -49,7 +49,8 @@ public:
 	static QString cachedPass();
 	static void setCachedPass(const QString &pass);
 	
-	static QStringList supportedProtocols() { QStringList l; return l << "MSNProtocol" << "MessengerProtocol" << "JabberProtocol"; }
+	static QStringList supportedProtocols() { QStringList l; return l << "MSNProtocol" << "MessengerProtocol" << "JabberProtocol" << "YahooProtocol"; }
+	static QStringList getKabcKeys (QString uid);
 
 	CryptographyPlugin( QObject *parent, const QStringList &args );
 	~CryptographyPlugin();

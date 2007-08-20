@@ -170,6 +170,11 @@ const Oscar::ClientVersion* Connection::version() const
 	return d->client->version();
 }
 
+Oscar::Guid Connection::versionCap() const
+{
+	return d->client->versionCap();
+}
+
 bool Connection::isLoggedIn() const
 {
 	return m_loggedIn;

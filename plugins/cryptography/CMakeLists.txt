@@ -12,16 +12,13 @@ set(kopete_cryptography_PART_SRCS
    gpginterface.cpp 
    cryptographyguiclient.cpp 
    cryptographyselectuserkey.cpp 
-   popuppublic.cpp 
    cryptographyconfig.cpp )
 
-kde4_add_ui_files(kopete_cryptography_PART_SRCS 
-		  cryptographyuserkey_ui.ui 
-		  popuppublicbase.ui)
+kde4_add_ui_files(kopete_cryptography_PART_SRCS kabckeyselectorbase.ui)
 
 kde4_add_plugin(kopete_cryptography ${kopete_cryptography_PART_SRCS})
 
-target_link_libraries(kopete_cryptography  ${KDE4_KDECORE_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kopete )
+target_link_libraries(kopete_cryptography  ${KDE4_KDECORE_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kopete kleo )
 
 install(TARGETS kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
 

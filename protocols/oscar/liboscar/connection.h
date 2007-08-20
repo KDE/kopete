@@ -124,7 +124,7 @@ public:
 
     /**
      * Get the chat room name for this connection.
-     * @return the name of the room or QString::null if not connected to a room
+     * @return the name of the room or QString() if not connected to a room
      */
 
 	/** Get the user settings object */
@@ -144,6 +144,7 @@ public:
 	bool isIcq() const;
 	ContactManager* ssiManager() const;
 	const Oscar::ClientVersion* version() const;
+	Oscar::Guid versionCap() const;
 	RateClassManager* rateManager() const;
 	bool isLoggedIn() const;
 

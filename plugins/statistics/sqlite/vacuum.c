@@ -141,7 +141,7 @@ int sqlite3RunVacuum(char **pzErrMsg, sqlite3 *db){
   ** (possibly synchronous) transaction opened on the main database before
   ** sqlite3BtreeCopyFile() is called.
   **
-  ** An optimisation would be to use a non-journaled pager.
+  ** An optimization would be to use a non-journaled pager.
   */
   zSql = sqlite3MPrintf("ATTACH '%q' AS vacuum_db;", zTemp);
   if( !zSql ){

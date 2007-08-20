@@ -145,7 +145,7 @@ void AddressBookSelectorWidget::setLabelMessage( const QString &msg )
 void AddressBookSelectorWidget::slotAddAddresseeClicked()
 {
 	// Pop up add addressee dialog
-	QString addresseeName = KInputDialog::getText( i18n( "New Address Book Entry" ), i18n( "Name the new entry:" ), QString::null, 0, this );
+	QString addresseeName = KInputDialog::getText( i18n( "New Address Book Entry" ), i18n( "Name the new entry:" ), QString::null, 0, this );	//krazy:exclude=nullstrassign for old broken gcc
 
 	if ( !addresseeName.isEmpty() )
 	{

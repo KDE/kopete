@@ -392,7 +392,7 @@ void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
 			if( element.tagName() == QLatin1String( "emoticon" ) )
 			{
 				QString emoticon_file = element.attribute(
-						QLatin1String( "file" ), QString::null );
+						QLatin1String( "file" ), QString() );
 				QStringList items;
 
 				QDomNode emoticonNode = node.firstChild();

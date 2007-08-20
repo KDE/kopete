@@ -4,7 +4,7 @@ Icon=view-choose
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_chatwindowconfig
+X-KDE-Library=kcm_kopete_chatwindowconfig
 X-KDE-FactoryName=kcm_kopete_chatwindowconfig
 X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
@@ -21,6 +21,7 @@ Name[pt]=Janela de Conversação
 Name[pt_BR]=Janela de Conversação
 Name[sv]=Chattfönster
 Name[uk]=Вікно балачки
+Name[vi]=Cửa sổ trò chuyện
 Name[x-test]=xxChatwindowxx
 Name[zh_TW]=聊天視窗
 Comment=Configure Chat Window Look And Feel
@@ -34,6 +35,7 @@ Comment[pt]=Configurar a Aparência e Comportamento da Janela de Conversação
 Comment[pt_BR]=Configurar a Aparência e Comportamento da Janela de Conversação
 Comment[sv]=Anpassa chattfönstrets känsla och utseende
 Comment[uk]=Налаштувати вигляд і поведінку вікна балачки
+Comment[vi]=Cấu hình Giao diện và Cảm nhận của cửa sổ trò chuyện
 Comment[x-test]=xxConfigure Chat Window Look And Feelxx
 Comment[zh_TW]=設定聊天視窗的外觀與感覺
 

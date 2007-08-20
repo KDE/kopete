@@ -19,7 +19,6 @@
 #include <kconfigbase.h>
 #include <kaction.h>
 #include <kmenu.h>
-#include <k3process.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>

@@ -50,7 +50,7 @@ public:
 	/**
 	 * This method should be called after the dialog was accepted to get the identity 
 	 * that was just created. The identity will already have the properties cloned 
-	 * (if the duplicate identity option was choosed), but it is not automatically
+	 * (if the duplicate identity option was chosen), but it is not automatically
 	 * registered in the @ref Kopete::IdentityManager, because the caller may want
 	 * to do some operations before registering.
 	 */

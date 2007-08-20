@@ -60,7 +60,7 @@ bool GetStatusTask::take( Transfer * transfer )
 		// This must be because the sender is not on our contact list but has sent us a message.
 		// TODO: Check that the change to sending DNs above has fixed this problem.
 		status = sf->value().toInt();
-		// unfortunately getstatus doesn't give us an away message so we pass QString::null here
+		// unfortunately getstatus doesn't give us an away message so we pass QString() here
 		emit gotStatus( m_userDN, status, QString() );
 		setSuccess();
 	}	

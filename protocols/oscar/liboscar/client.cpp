@@ -153,6 +153,7 @@ public:
 	CodecProvider* codecProvider;
 	
 	const Oscar::ClientVersion* version;
+	Guid versionCap;
 };
 
 Client::Client( QObject* parent )
@@ -307,7 +308,7 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 
 		QString msg;
 		// AIM: you're away exactly when your away message isn't empty.
-		// can't use QString::null as a message either; ProfileTask
+		// can't use QString() as a message either; ProfileTask
 		// interprets null as "don't change".
 		if ( (status & 0xFF) == 0x00 ) //is status online?
 		{
@@ -365,6 +366,11 @@ ContactManager* Client::ssiManager() const
 const Oscar::ClientVersion* Client::version() const
 {
 	return d->version;
+}
+
+Guid Client::versionCap() const
+{
+	return d->versionCap;
 }
 
 // SLOTS //
@@ -501,6 +507,11 @@ void Client::setCodecProvider( Client::CodecProvider* codecProvider )
 void Client::setVersion( const Oscar::ClientVersion* version )
 {
 	d->version = version;
+}
+
+void Client::setVersionCap( const QByteArray &cap )
+{
+	d->versionCap = Guid( cap );
 }
 
 // INTERNALS //

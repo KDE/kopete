@@ -106,7 +106,7 @@ public:
 	 * @param receiver The object to notify when the password request finishes
 	 * @param slot The slot on receiver to call at the end of the request. The signature
 	 *        of this function should be slot( const QString &password ). password will
-	 *        be the password if successful, or QString::null if failed.
+	 *        be the password if successful, or QString() if failed.
 	 * @param image The icon to display in the dialog when asking for the password
 	 * @param prompt The message to display to the user, asking for a
 	 *        password. Can be any Qt RichText string.
@@ -142,7 +142,7 @@ public:
 
 	/**
 	 * When a password request succeeds, the password is cached. This function
-	 * returns the cached password, if there is one, or QString::null if there
+	 * returns the cached password, if there is one, or QString() if there
 	 * is not.
 	 */
 	QString cachedValue();
@@ -150,13 +150,13 @@ public:
 public slots:
 	/**
 	 * Set the password for this account.
-	 * @param pass If set to QString::null, the password is forgotten unless you
+	 * @param pass If set to QString(), the password is forgotten unless you
 	 *	specified to allow blank passwords. Otherwise, sets the password to
 	 *	this value.
 	 *
 	 * Note: this function is asynchronous; changes will not be instant.
 	 */
-	void set( const QString &pass = QString::null );
+	void set( const QString &pass = QString() );
 
 	/**
 	 * Unconditionally clears the stored password

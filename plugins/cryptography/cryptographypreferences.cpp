@@ -42,13 +42,15 @@ CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QStrin
 	QWidget *w = new QWidget;
 
 	key = new Kleo::EncryptionKeyRequester ( false, Kleo::EncryptionKeyRequester::OpenPGP, this, true, true );
-	key->setDialogMessage ( i18n ( "Select the secret key you want to use encrypt and or decrypt messages" ) );
-	key->setDialogCaption ( i18n ( "Select the secret key you want to use encrypt and or decrypt messages" ) );
+	key->setDialogMessage ( i18n ( "Select the key you want to use encrypt and decrypt messages" ) );
+	key->setDialogCaption ( i18n ( "Select the key you want to use encrypt and decrypt messages" ) );
 
-	QLabel * label = new QLabel ( i18n ("With this plugin you can encrypt messages so that nobody but your intended recipient can read them, and you can also sign messages, so that recipients can verify that a given message has actually come from you. <a href=\"http://en.wikipedia.org/wiki/Public-key_cryptography\">How this works</a>.\n\nBefore you can send encrypted messages to someone, you must select their public key by right-clicking on their name in your contact list, and choosing \"Select Public Key.\"\n\nNote: All messages become plain text when used with this plugin"), this );
+	QLabel * label = new QLabel ( i18n ("With this plugin you can encrypt messages so that nobody but your intended recipient can read them, and you can also sign messages, so that recipients can verify that a given message has actually come from you. <a href=\"http://en.wikipedia.org/wiki/Public-key_cryptography\">How this works</a>.\n\nBefore you can send encrypted messages to someone, you must select their public key by right-clicking on their name in your contact list, and choosing \"Select Public Key.\"\n\nAll messages become plain text when used with this plugin"), this );
 	label->setWordWrap (true);
 	
-	mAskPassphraseOnStartup = new QCheckBox ( i18n ("Ask for passphrase on Kopete startup" ), this);
+	// We want the password available ASAP and forever so that upon decryption time, we can do it without prompting for password.
+	// If another message arrives while the password prompt is still up, the second message will prompt again, and go above the first messages's prompt. upon decryption, messages will be displayed in a backwards order (VERY BAD)
+	mAskPassphraseOnStartup = new QCheckBox ( i18n ("Ask for passphrase on Kopete startup (Recommended)" ), this);
 
 	mPreferencesDialog = new Ui::CryptographyPrefsUI;
 	mPreferencesDialog->setupUi ( w );
@@ -120,7 +122,7 @@ void CryptographyPreferences::save()
 void CryptographyPreferences::defaults()
 {
 	key->eraseButton()->click();
-	mAskPassphraseOnStartup->setChecked ( false );
+	mAskPassphraseOnStartup->setChecked ( true );
 	mPreferencesDialog->onClose->setChecked ( true );
 	mPreferencesDialog->cacheTime->setValue ( 15 );
 	slotModified();

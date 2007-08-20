@@ -34,7 +34,7 @@ ManagedConnectionAccount::ManagedConnectionAccount( Protocol *parent, const QStr
 void ManagedConnectionAccount::connectWithPassword( const QString &password )
 {
 	m_password = password;
-	NetworkStatus::EnumStatus status = ConnectionManager::self()->status( QString::null );
+	NetworkStatus::EnumStatus status = ConnectionManager::self()->status( QString() );
 	if ( status == NetworkStatus::NoNetworks )
 		performConnectWithPassword( password );
 	else
@@ -42,7 +42,7 @@ void ManagedConnectionAccount::connectWithPassword( const QString &password )
 		m_waitingForConnection = true;
 		// need to adapt libkopete so we know the hostname in this class and whether the connection was user initiated
 		// for now, these are the default parameters to always bring up a connection to "the internet".
-		NetworkStatus::EnumRequestResult response = ConnectionManager::self()->requestConnection( Kopete::UI::Global::mainWidget(), QString::null, true );
+		NetworkStatus::EnumRequestResult response = ConnectionManager::self()->requestConnection( Kopete::UI::Global::mainWidget(), QString(), true );
 		if ( response == NetworkStatus::Connected )
 		{
 			m_waitingForConnection = false;

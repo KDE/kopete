@@ -31,7 +31,7 @@ class Contact;
  * for all contact tasks.
  *
  * Derived must implement tastType() to allow setContact()
- * to automaticly add the correct subtask from the protocol.
+ * to automatically add the correct subtask from the protocol.
  *
  * @author Michaël Larouche <larouche@kde.org>
  */

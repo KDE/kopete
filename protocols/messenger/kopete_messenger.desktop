@@ -21,6 +21,7 @@ Name[ja]=Windows Live (MSN) メッセンジャー
 Name[nl]=Windows Live (MSN) Messenger
 Name[sv]=Windows Live (MSN)-meddelandeklient
 Name[uk]=Кур'єр Windows Live(MSN)
+Name[vi]=Trình gửi/nhận tin nhắn Live(MSN)
 Name[x-test]=xxWindows Live(MSN) Messengerxx
 Comment=Protocol to connect to Windows Live(MSN) Messenger
 Comment[bg]=Протокол за връзка с MSN Messenger
@@ -34,6 +35,7 @@ Comment[pt]=Um protocolo para ser ligar ao Windows Live (MSN) Messenger
 Comment[pt_BR]=Um protocolo para ser ligar ao Windows Live (MSN) Messenger
 Comment[sv]=Protokoll för att ansluta till Windows Live (MSN)-meddelandeklient
 Comment[uk]=Протокол для з'єднання з кур'єром Windows Live(MSN)
+Comment[vi]=Giao thức để kết nối tới mạng Live(MSN)
 Comment[x-test]=xxProtocol to connect to Windows Live(MSN) Messengerxx
 Comment[zh_TW]=連線到 Windows Live(MSN) Messenger 的協定
 

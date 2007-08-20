@@ -68,7 +68,7 @@ void ConnectionManager::initialise()
 
 void ConnectionManager::updateStatus()
 {
-	NetworkStatus::EnumStatus daemonStatus = (NetworkStatus::EnumStatus)d->m_stub->status( QString::null );
+	NetworkStatus::EnumStatus daemonStatus = (NetworkStatus::EnumStatus)d->m_stub->status( QString() );
 	kDebug() << k_funcinfo;
 	switch ( daemonStatus )
 	{

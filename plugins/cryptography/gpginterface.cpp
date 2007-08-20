@@ -144,9 +144,7 @@ QString GpgInterface::decryptText ( QString text, QString userID, int &opState )
 			opState = NoSig;
 
 		if ( status.contains ( "DECRYPTION_OKAY" ) )
-			opState = ( opState | Decrypted );
-			
-		kDebug (14303) << k_funcinfo << "status file is: " << status;
+			opState = ( opState | Decrypted );		
 		
 		status.clear();
 		password.clear();
@@ -164,7 +162,7 @@ QString GpgInterface::checkForUtf8 ( QString txt )
 	/* Make sure the encoding is UTF-8.
 	* Test structure suggested by Werner Koch */
 	if ( txt.isEmpty() )
-		return QString::null;
+		return QString();
 
 	for ( s = txt.ascii(); *s && ! ( *s & 0x80 ); s++ )
 		;
@@ -207,7 +205,7 @@ QString GpgInterface::getPassword ( QString password, QString userID, int counte
 		return QString(); //the user canceled
 	CryptographyPlugin::setCachedPass ( dlg.password() );
 	
-	// if there is already a password dialog open, get password and send it to that
+	// if there is already a password dialog open, get password from user and send it to that
 	QList<CryptographyPasswordDialog*> otherDialogs = Kopete::UI::Global::mainWidget()->findChildren <CryptographyPasswordDialog *> ();
 	if ( otherDialogs.size() > 1){
 		foreach ( CryptographyPasswordDialog *otherDialog, otherDialogs ){
@@ -215,6 +213,7 @@ QString GpgInterface::getPassword ( QString password, QString userID, int counte
 			otherDialog->accept();
 		}
 	}
+	
 	return dlg.password();
 }
 

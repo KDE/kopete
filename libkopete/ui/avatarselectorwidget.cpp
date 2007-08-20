@@ -261,6 +261,10 @@ void AvatarSelectorWidget::listSelectionChanged(QListWidgetItem *item)
 		d->mainWidget.labelAvatarImage->setPixmap( item->icon().pixmap(96, 96) );
 		d->selectedItem = item;
 	}
+	else
+	{
+		d->selectedItem = 0;
+	}
 
 	// I know sender() is evil
 	// Disable Remove Avatar button when selecting an item in listUserContact.

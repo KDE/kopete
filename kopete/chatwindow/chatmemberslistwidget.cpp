@@ -143,7 +143,7 @@ ChatMembersListWidget::ChatMembersListWidget( QWidget *parent, Kopete::ChatSessi
 
 	// set up display: no header
 	setAllColumnsShowFocus( true );
-	addColumn( QString::null, -1 );
+	addColumn( QString::null, -1 );	//krazy:exclude=nullstrassign for old broken gcc
 	header()->setStretchEnabled( true, 0 );
 	header()->hide();
 

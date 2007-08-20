@@ -98,7 +98,7 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 			d->widget->m_groupList->addItem(groupname);
 		}
 	}
-	d->widget->m_groupList->setEditText(QString::null); //default to top-level
+	d->widget->m_groupList->setEditText(QString()); //default to top-level
 
 	connect( d->widget->widAddresseeLink, SIGNAL( addresseeChanged( const KABC::Addressee& ) ), this, SLOT( slotAddresseeSelected( const KABC::Addressee& ) ) );
 	connect( d->widget->m_infoButton, SIGNAL( clicked() ), this, SLOT( slotInfoClicked() ) );

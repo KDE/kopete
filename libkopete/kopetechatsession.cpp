@@ -332,7 +332,7 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 			else
 				disconnect( old, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 			emit contactAdded( c, suppress );
-			emit contactRemoved( old, QString::null );
+			emit contactRemoved( old, QString() );
 		}
 		else
 		{
@@ -484,7 +484,7 @@ void Kopete::ChatSession::slotContactDestroyed( Kopete::Contact *contact )
 	// in the best case, we should ask the protocol to recreate a temporary contact.
 	// (remember: the contact may be deleted when the users removes it from the contactlist, or when closing kopete )
 	d->mContactList.removeAll( contact );
-	emit contactRemoved( contact, QString::null );
+	emit contactRemoved( contact, QString() );
 
 	if ( d->mContactList.isEmpty() )
 		deleteLater();

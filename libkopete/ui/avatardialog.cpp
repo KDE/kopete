@@ -83,7 +83,7 @@ void AvatarDialog::slotButtonClicked(int button)
 		d->selectedPath = selectedEntry.path;
 	}
 	else
-		d->selectedPath = QString::null;
+		d->selectedPath = QString();
 
 	emit result(this);
 

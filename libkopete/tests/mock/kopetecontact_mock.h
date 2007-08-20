@@ -35,7 +35,7 @@ namespace Mock
 class Contact : public Kopete::Contact
 {
 public:
-	Contact( Kopete::Account *account, const QString &id, Kopete::MetaContact *parent, const QString &icon = QString::null );
+	Contact( Kopete::Account *account, const QString &id, Kopete::MetaContact *parent, const QString &icon = QString() );
 	~Contact();
 	virtual Kopete::ChatSession* manager( CanCreateFlags canCreate = CannotCreate );
 };

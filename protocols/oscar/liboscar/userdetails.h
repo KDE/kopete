@@ -82,7 +82,7 @@ private:
      * Parse the character array for validness and a version string
     * \param buffer the buffer we'll be parsing for capabilities
     * \param versionString a QString reference that will contain the
-    * version string of the detected client. Will be QString::null if 
+    * version string of the detected client. Will be QString() if 
     * no client is found
      */
     void parseCapabilities(Buffer &inbuf, int &xStatus);

@@ -747,7 +747,7 @@ static void test_auxdata(
       if( zAux ){
         zRet[i*2] = '1';
         if( strcmp(zAux, z) ){
-          sqlite3_result_error(pCtx, "Auxilary data corruption", -1);
+          sqlite3_result_error(pCtx, "Auxiliary data corruption", -1);
           return;
         }
       }else{

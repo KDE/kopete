@@ -2,6 +2,8 @@
     cryptographyselectuserkey.h  -  description
 
     Copyright (C) 2002      by Olivier Goffart <ogoffart@kde.org>
+    Copyright (c) 2007      by Charles Connell <charles@connells.org>
+
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -21,30 +23,24 @@
 #include <kdialog.h>
 
 namespace Kopete { class MetaContact; }
-namespace Ui { class CryptographyUserKey_ui; }
+namespace Kleo { class EncryptionKeyRequester; }
 
 /**
-  *@author OlivierGoffart
+  *@author Olivier Goffart
   */
 
-class CryptographySelectUserKey : public KDialog {
-	Q_OBJECT
-public:
-	CryptographySelectUserKey(const QString &key, Kopete::MetaContact *mc);
-	~CryptographySelectUserKey();
+class CryptographySelectUserKey : public KDialog
+{
+		Q_OBJECT
+	public:
+		CryptographySelectUserKey ( const QString &key, Kopete::MetaContact *mc );
+		~CryptographySelectUserKey();
 
+		QString publicKey() const;
 
-  QString publicKey() const;
-
-private slots:
-	void keySelected(const QString &);
-	void slotSelectPressed();
-  /** No descriptions */
-  void slotRemovePressed();
-
-private:
-	Ui::CryptographyUserKey_ui *view;
-	Kopete::MetaContact *m_metaContact;
+	private:
+		Kleo::EncryptionKeyRequester *m_KeyEdit;
+		Kopete::MetaContact *m_metaContact;
 
 };
 

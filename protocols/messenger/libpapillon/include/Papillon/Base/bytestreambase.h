@@ -41,13 +41,13 @@ class ByteStreamBase : public QObject
 		virtual qint64 bytesAvailable() const;
 		/** @brief Returns the number of bytes that are waiting to be written. */
 		virtual qint64 bytesToWrite() const;
-		/** @brief When overriden in a derived class, returns a value indicating whether the ByteStream is open. */
+		/** @brief When overridden in a derived class, returns a value indicating whether the ByteStream is open. */
 		virtual bool isOpen() const = 0;
 		/** @brief Closes the stream. */
 		virtual void close();
-		/** @brief When overriden in a derived class, returns a byte array containing count bytes read from the stream. */
+		/** @brief When overridden in a derived class, returns a byte array containing count bytes read from the stream. */
 		virtual QByteArray read(qint64 count) = 0;
-		/** @brief When overriden in a derived class, writes the contents of the buufer to the stream. */
+		/** @brief When overridden in a derived class, writes the contents of the buufer to the stream. */
 		virtual qint64 write(const QByteArray & buffer) = 0;
 
 	signals:

@@ -315,7 +315,7 @@ protected:
 	/**
 	 * Sends a status message to the server - called by the status specific slotGoAway etc
 	 */
-	//void setStatus( GroupWise::Status status, const QString & reason = QString::null );
+	//void setStatus( GroupWise::Status status, const QString & reason = QString() );
 
 	int handleTLSWarning (QCA::TLS::IdentityResult identityResult,
 		QCA::Validity validityResult, QString server, QString accountId);

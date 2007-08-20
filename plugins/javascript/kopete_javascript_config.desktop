@@ -4,7 +4,7 @@ Icon=color
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=kopete_javascript
+X-KDE-Library=kcm_kopete_javascript
 X-KDE-FactoryName=kcm_kopete_javascript
 X-KDE-ParentApp=kopete_javascript
 X-KDE-ParentComponents=kopete_javascript
@@ -22,6 +22,7 @@ Comment[pt]=Adicionar uma interface de JavaScript
 Comment[pt_BR]=Adicionar uma interface de JavaScript
 Comment[sv]=Lägg till Javaskript-kopplingar
 Comment[uk]=Додати прив'язування JavaScript
+Comment[vi]=Thêm sự đóng kết JavaScript
 Comment[x-test]=xxAdd JavaScript bindingsxx
 Comment[zh_TW]=新增 JavaScript 組合
 

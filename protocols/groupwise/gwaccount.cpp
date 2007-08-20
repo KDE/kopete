@@ -115,7 +115,7 @@ KActionMenu* GroupWiseAccount::actionMenu()
 	m_actionMenu->addAction( m_actionJoinChatRoom );
 	/* Used for debugging */
 	/*
-	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
+	theActionMenu->insert( new KAction ( "Test rtfize()", QString(), 0, this,
 		SLOT( slotTestRTFize() ), this,
 		"actionTestRTFize") );
 	*/
@@ -1413,13 +1413,13 @@ void GroupWiseAccount::slotTestRTFize()
 {
 /*	bool ok;
 	const QString query = QString::fromLatin1("Enter a string to rtfize:");
-	QString testText = KLineEditDlg::getText( query, QString::null, &ok, Kopete::UI::Global::mainWidget() );
+	QString testText = KLineEditDlg::getText( query, QString(), &ok, Kopete::UI::Global::mainWidget() );
 	if ( ok )
 		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "Converted text is: '" << protocol()->rtfizeText( testText ) << "'";*/
 
 // 	bool ok;
 // 	const QString query = i18n("Enter a contactId:");
-// 	QString testText = KInputDialog::getText( query, i18n("This is a test dialog and will not be in the final product!" ), QString::null, &ok, Kopete::UI::Global::mainWidget() );
+// 	QString testText = KInputDialog::getText( query, i18n("This is a test dialog and will not be in the final product!" ), QString(), &ok, Kopete::UI::Global::mainWidget() );
 // 	if ( !ok )
 // 		return;
 // 	kDebug( GROUPWISE_DEBUG_GLOBAL ) << "Trying to add contact: '" << protocol()->rtfizeText( testText ) << "'";

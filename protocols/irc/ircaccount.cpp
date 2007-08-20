@@ -447,7 +447,7 @@ KActionMenu *IRCAccount::actionMenu()
 	mActionMenu->addAction(d->joinChannelAction);
 	mActionMenu->addAction(d->searchChannelAction);
 /*
-	mActionMenu->insert( new KAction ( i18n("Show Server Window"), QString::null, 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Show Server Window"), QString(), 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
 
 //	if (d->client->isConnected() && d->client->useSSL())
 	{

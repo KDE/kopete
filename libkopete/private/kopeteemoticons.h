@@ -41,7 +41,7 @@ public:
 	 * chosen by the user.
 	 * Instead, use @ref Kopete::Emoticons::self()
 	 **/
-	Emoticons( const QString &theme = QString::null );
+	Emoticons( const QString &theme = QString() );
 
 	~Emoticons();
 
@@ -181,7 +181,7 @@ private slots:
 	 * Fills the map with paths and emoticons
 	 * This needs to be done on every emoticon-theme change
 	 **/
-	void initEmoticons ( const QString &theme = QString::null );
+	void initEmoticons ( const QString &theme = QString() );
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Emoticons::ParseMode)

@@ -391,7 +391,7 @@ void ChatTextEditPart::historyDown()
 	
 	historyPos--;
 	
-	QString newText = ( historyPos >= 0 ? historyList[historyPos] : QString::null );
+	QString newText = ( historyPos >= 0 ? historyList[historyPos] : QString() );
 	
 	
 // 	TextFormat format=textEdit()->textFormat();

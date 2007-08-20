@@ -39,7 +39,7 @@ CustomNotificationProps::CustomNotificationProps( QWidget *parent, const QPair<Q
 {
 	setObjectName( name );
 	m_notifyWidget = new KNotifyConfigWidget( parent );
-	m_notifyWidget->setApplication(QString::null , m_item.first , m_item.second);
+	m_notifyWidget->setApplication(QString() , m_item.first , m_item.second);
 }
 
 

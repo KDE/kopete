@@ -183,7 +183,7 @@ int KopeteAddressBookExport::showDialog()
 		setupUi( w );
 		mDialog->setMainWidget( w );
 		mDialog->setButtonGuiItem( KDialog::Ok, KGuiItem( i18n( "Export" ), 
-							  QString::null, i18n( "Set address book fields using the selected data from Kopete" ) ) ); 
+							  QString(), i18n( "Set address book fields using the selected data from Kopete" ) ) );
 
 		initLabels();
 		// fetch existing data from kabc

@@ -31,7 +31,8 @@ class KHTMLPart;
 
 namespace KParts
 {
-	class URLArgs;
+	class BrowserArguments;
+	class OpenUrlArguments;
 }
 
 class StatisticsDialog : public KDialog
@@ -69,7 +70,7 @@ private slots:
 		 * We manage the openUrlRequestDelayed signal from the generalHTMLPart->browserExtension() in order to
 		 * generate requested pages on the flow.
 		 */
-		void slotOpenURLRequest(const KUrl& url, const KParts::URLArgs&);
+		void slotOpenURLRequest(const KUrl& url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
 		void slotAskButtonClicked();
 
 };

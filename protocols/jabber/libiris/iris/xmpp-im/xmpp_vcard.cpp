@@ -82,7 +82,7 @@ static QString subTagText(const QDomElement &e, const QString &name)
 	QDomElement i = findSubTag(e, name, &found);
 	if ( found )
 		return i.text().stripWhiteSpace();
-	return QString::null;
+	return QString();
 }
 
 using namespace XMPP;
