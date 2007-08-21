@@ -345,7 +345,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 							// if not, prompt to add it
 							kDebug( 14010 ) << proto->pluginId() << "://" << *it << " was not found in the contact list.  Prompting to add...";
 							if ( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-									 i18n( "<qt>An address was added to this contact by another application.<br>Would you like to use it in Kopete?<br><b>Protocol:</b> %1<br><b>Address:</b> %2</qt>", proto->displayName(), *it ), i18n( "Import Address From Address Book" ), KGuiItem( i18n("Use") ), KGuiItem( i18n("Do Not Use") ), QLatin1String( "ImportFromKABC" ) ) )
+									 i18n( "<qt>An address was added to this contact by another application.<br />Would you like to use it in Kopete?<br /><b>Protocol:</b> %1<br /><b>Address:</b> %2</qt>", proto->displayName(), *it ), i18n( "Import Address From Address Book" ), KGuiItem( i18n("Use") ), KGuiItem( i18n("Do Not Use") ), QLatin1String( "ImportFromKABC" ) ) )
 							{
 								// Check the accounts for this protocol are all connected
 								// Most protocols do not allow you to add contacts while offline

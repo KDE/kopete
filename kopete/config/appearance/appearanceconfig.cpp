@@ -284,8 +284,8 @@ void AppearanceConfig::removeSelectedEmoticonTheme()
 	QString themeName = selected->text();
 
 	QString question=i18n("<qt>Are you sure you want to remove the "
-			"<strong>%1</strong> emoticon theme?<br>"
-			"<br>"
+			"<strong>%1</strong> emoticon theme?<br />"
+			"<br />"
 			"This will delete the files installed by this theme.</qt>",
 		themeName);
 

@@ -152,7 +152,7 @@ bool MimeTypeHandler::dispatchToHandler( const KUrl &url, const QString &mimeTyp
 			}
 			else
 			{
-				sorryText = i18n( "<qt>Unable to download the requested file;<br>"
+				sorryText = i18n( "<qt>Unable to download the requested file;<br />"
 				                  "please check that address %1 is correct.</qt>",
 				                  url.prettyUrl() );
 			}
