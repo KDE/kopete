@@ -1,9 +1,0 @@
-/**
-\page libpapillon_design Design
-
-\section architecture Main Architecture
-It use a task-based architecture for asynchronus operation. The main architecture is based on libiris(Jabber),
-libkyahoo, libgroupwise and liboscar, which are all used in Kopete.
-
-To be continued...
-*/
