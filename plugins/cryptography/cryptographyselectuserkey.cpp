@@ -4,7 +4,7 @@
     Copyright (c) 2002      by Olivier Goffart <ogoffart@kde.org>
     Copyright (c) 2007      by Charles Connell <charles@connells.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     ***************************************************************************
     *                                                                         *
@@ -16,6 +16,7 @@
     ***************************************************************************
 */
 
+#include <kiconloader.h>
 #include <klocale.h>
 #include <klineedit.h>
 #include <qlabel.h>
@@ -59,42 +60,44 @@ CryptographySelectUserKey::CryptographySelectUserKey ( const QString& key ,Kopet
 	l->addWidget ( m_KeyEdit );
 	l->addStretch ();
 
-	QStringList keys;
-	keys = CryptographyPlugin::getKabcKeys(m_metaContact->metaContactId());
-
-	// if there is one key found, use it automatically
-	if ( keys.count() == 1 )
+	if ( key.isEmpty() )
 	{
-		mc->setPluginData ( CryptographyPlugin::plugin(), "gpgKey", keys.first() );
-		m_KeyEdit->setFingerprint ( keys.first() );
-	}
+		// find keys in address book and possibly use them (this same code is in cryptographyguiclient.cpp)
+		QStringList keys;
+		keys = CryptographyPlugin::getKabcKeys ( m_metaContact->metaContactId() );
 
-	// if more than one if found, let the user choose which one
-	if ( keys.count() > 1 )
-	{
-		KABC::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid ( mc->metaContactId() );
-		KDialog dialog ( this );
-		QWidget w ( &dialog );
-		Ui::KabcKeySelectorBase ui;
-		ui.setupUi ( &w );
-		dialog.setCaption ( i18n ( "Public Keys Found" ) );
-		dialog.setButtons ( KDialog::Ok | KDialog::Cancel );
-		dialog.setMainWidget ( &w );
-		ui.label->setText ( i18n ( QString ( "Cryptography plugin has found multiple encryption keys for " + mc->displayName() + " (" + addressee.assembledName() + ")" + " in your KDE address book. To use one of these keys, select it and choose OK." ).toLocal8Bit() ) );
-		for (int i = 0; i < keys.count(); i++)
-			keys[i] = keys[i].right ( 8 ).prepend ( "0x" );
-		ui.keyList->addItems ( keys );
-		if ( dialog.exec() )
+		// if there is one key found, use it automatically
+		if ( keys.count() == 1 )
 		{
-			mc->setPluginData ( CryptographyPlugin::plugin(), "gpgKey", ui.keyList->currentItem()->text() );
-			m_KeyEdit->setFingerprint ( ui.keyList->currentItem()->text() );
+			mc->setPluginData ( CryptographyPlugin::plugin(), "gpgKey", keys.first() );
+			m_KeyEdit->setFingerprint ( keys.first() );
+		}
+
+		// if more than one if found, let the user choose which one
+		if ( keys.count() > 1 )
+		{
+			KABC::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid ( mc->metaContactId() );
+			KDialog dialog ( this );
+			QWidget w ( &dialog );
+			Ui::KabcKeySelectorUI ui;
+			ui.setupUi ( &w );
+			dialog.setCaption ( i18n ( "Public Keys Found" ) );
+			dialog.setButtons ( KDialog::Ok | KDialog::Cancel );
+			dialog.setMainWidget ( &w );
+			ui.label->setText ( i18n ( QString ( "Cryptography plugin has found multiple encryption keys for " + mc->displayName() + " (" + addressee.assembledName() + ")" + " in your KDE address book. To use one of these keys, select it and choose OK." ).toLocal8Bit() ) );
+			for ( int i = 0; i < keys.count(); i++ ) 
+				ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ("kgpg-key1-kopete", K3Icon::Small), keys[i].right(8).prepend("0x"), ui.keyList) );
+			if ( dialog.exec() )
+			{
+				mc->setPluginData ( CryptographyPlugin::plugin(), "gpgKey", ui.keyList->currentItem()->text() );
+				m_KeyEdit->setFingerprint ( ui.keyList->currentItem()->text() );
+			}
 		}
 	}
 }
 
 CryptographySelectUserKey::~CryptographySelectUserKey()
-{
-}
+{}
 
 QString CryptographySelectUserKey::publicKey() const
 {

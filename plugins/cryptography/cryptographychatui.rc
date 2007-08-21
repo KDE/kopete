@@ -5,6 +5,7 @@
 			<text>&amp;Tools</text>
 			<Action name="encryptionToggle" />
 			<Action name="signToggle" />
+			<Action name="export" />
 		</Menu>
 		<ToolBar name="cryptographyToolBar" fullWidth="false">
 			<text>Cryptography Toolbar</text>

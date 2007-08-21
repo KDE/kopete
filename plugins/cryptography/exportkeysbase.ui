@@ -1,13 +1,13 @@
 <ui version="4.0" >
  <author>Charles Connell</author>
- <class>KabcKeySelectorUI</class>
- <widget class="QWidget" name="KabcKeySelectorUI" >
+ <class>ExportKeysUI</class>
+ <widget class="QWidget" name="ExportKeysUI" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>306</height>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="label" >
      <property name="text" >
-      <string/>
+      <string>Cryptography plugin will export keys for the chosen meta-contacts. If no address book entry has been linked to each meta-contact, one will be created.</string>
      </property>
      <property name="wordWrap" >
       <bool>true</bool>
@@ -25,11 +25,7 @@
     </widget>
    </item>
    <item>
-    <widget class="KListWidget" name="keyList" >
-     <property name="editTriggers" >
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
-    </widget>
+    <widget class="KListWidget" name="keyList" />
    </item>
   </layout>
  </widget>

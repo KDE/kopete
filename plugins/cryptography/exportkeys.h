@@ -1,7 +1,6 @@
 /*
-    cryptographyguiclient.h
+    exportkeys.cpp
 
-    Copyright (c) 2004      by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2007      by Charles Connell        <charles@connells.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
@@ -15,37 +14,35 @@
     *                                                                       *
     *************************************************************************
 */
-#ifndef CRYPTOGUICLIENT_H
-#define CRYPTOGUICLIENT_H
+#ifndef EXPORTKEYS_H
+#define EXPORTKEYS_H
 
-#include <qobject.h>
-#include <kxmlguiclient.h>
-#include <ktoggleaction.h>
+#include <kdialog.h>
+
+#include <kabc/addresseelist.h>
 
 namespace Kopete { class ChatSession; }
-
+namespace Ui { class ExportKeysUI; }
 
 /**
- *@author Olivier Goffart
- */
-class CryptographyGUIClient : public QObject, public KXMLGUIClient
+Dialog that exports public keys from Kopete to KABC
+
+	@author Charles Connell <charles@connells.org>
+*/
+class ExportKeys : public KDialog
 {
-Q_OBJECT
-public:
-	CryptographyGUIClient(Kopete::ChatSession *parent = 0);
-	~CryptographyGUIClient();
-	
-	bool signing() { return m_signAction->isChecked(); }
-	bool encrypting() { return m_encAction->isChecked(); }
+		Q_OBJECT
+	public:
+		ExportKeys ( Kopete::ChatSession * cs, QWidget *parent = 0 );
 
-	KToggleAction *m_encAction;
-	KToggleAction *m_signAction;
-	KAction *m_exportAction;
+		~ExportKeys();
+		
+	protected slots:
+		void accept();
 
-private slots:
-	void slotEncryptToggled();
-	void slotSignToggled();
-	void slotExport();
+	private:
+		Ui::ExportKeysUI * mUi;
+		KABC::AddresseeList mAddressees;
 };
 
 #endif
