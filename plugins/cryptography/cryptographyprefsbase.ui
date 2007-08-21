@@ -37,6 +37,15 @@
       </property>
       <item row="2" column="0" colspan="3" >
        <widget class="QRadioButton" name="never" >
+        <property name="toolTip" >
+         <string>Do not cache the passphrase.</string>
+        </property>
+        <property name="statusTip" >
+         <string/>
+        </property>
+        <property name="whatsThis" >
+         <string>Do not cache the passphrase, requiring it to be re-entered every time it needs to be used.</string>
+        </property>
         <property name="text" >
          <string>Never</string>
         </property>
@@ -69,6 +78,12 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="toolTip" >
+         <string>How long to cache the passphrase.</string>
+        </property>
+        <property name="whatsThis" >
+         <string>How long to cache the passphrase.</string>
+        </property>
         <property name="minimum" >
          <number>1</number>
         </property>
@@ -88,6 +103,15 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="toolTip" >
+         <string>Cache the passphrase for the time specified.</string>
+        </property>
+        <property name="statusTip" >
+         <string/>
+        </property>
+        <property name="whatsThis" >
+         <string>Cache the passphrase for the time specified, then require re-entry.</string>
+        </property>
         <property name="text" >
          <string>For</string>
         </property>
@@ -95,8 +119,17 @@
       </item>
       <item row="0" column="0" colspan="3" >
        <widget class="QRadioButton" name="onClose" >
+        <property name="toolTip" >
+         <string>Cache the passphrase in memory until Kopete closes or the Cryptography plugin is disabled.</string>
+        </property>
+        <property name="statusTip" >
+         <string/>
+        </property>
+        <property name="whatsThis" >
+         <string>Cache the passphrase in memory until Kopete closes or the Cryptography plugin is disabled. This is dangerous because the memory Kopete uses could be stored on the hard drive, thereby exposing the password.</string>
+        </property>
         <property name="text" >
-         <string>Until Kopete closes (Recommened)</string>
+         <string>Until Kopete closes (Dangerous)</string>
         </property>
         <property name="checked" >
          <bool>true</bool>
