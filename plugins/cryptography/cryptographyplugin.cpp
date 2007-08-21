@@ -47,7 +47,7 @@
 #include <kactioncollection.h>
 
 typedef KGenericFactory<CryptographyPlugin> CryptographyPluginFactory;
-static const KAboutData aboutdata ( "kopete_cryptography", 0, ki18n ( "Cryptography" ) , "1.1" );
+static const KAboutData aboutdata ( "kopete_cryptography", 0, ki18n ( "Cryptography" ) , "1.2" );
 K_EXPORT_COMPONENT_FACTORY ( kopete_cryptography, CryptographyPluginFactory ( &aboutdata ) )
 
 CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QStringList & /* args */ )
