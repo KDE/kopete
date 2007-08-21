@@ -26,7 +26,7 @@
 
 MessageReceiverTask::MessageReceiverTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 MessageReceiverTask::~MessageReceiverTask()
@@ -69,7 +69,7 @@ bool MessageReceiverTask::forMe( const Transfer* transfer ) const
 
 void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	int cnt = t->paramCount( 5 );
 	for( int i = 0; i < cnt; ++i )
@@ -94,7 +94,7 @@ void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 	
 		if( msg.isEmpty() )
 		{
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got a empty message. Dropped.";
+			kDebug(YAHOO_RAW_DEBUG) << "Got a empty message. Dropped.";
 			continue;
 		}
 	
@@ -115,7 +115,7 @@ void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 
 void MessageReceiverTask::parseNotify( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString from = t->firstParam( 4 );
 	//QString to = t->firstParam( 5 );
@@ -131,12 +131,12 @@ void MessageReceiverTask::parseNotify( YMSGTransfer *t )
 	{
 		if( ind.startsWith(" ") )
 		{
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got a WebcamInvitation.";
+			kDebug(YAHOO_RAW_DEBUG) << "Got a WebcamInvitation.";
 			emit gotWebcamInvite( from );
 		}
 		else
 		{
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got a WebcamRequest-Response: " << ind.toInt();
+			kDebug(YAHOO_RAW_DEBUG) << "Got a WebcamRequest-Response: " << ind.toInt();
 		}
 	}
 }

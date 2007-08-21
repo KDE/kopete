@@ -247,7 +247,7 @@ void JabberRegisterAccount::slotOk ()
 
 	mMainWidget->lblStatusMessage->setText ( "" );
 
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Registering a new Jabber account.";
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Registering a new Jabber account.";
 
 	enableButtonOk ( false );
 
@@ -298,7 +298,7 @@ void JabberRegisterAccount::slotHandleTLSWarning (
 		QCA::TLS::IdentityResult identityResult,
 		QCA::Validity validityResult )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Handling TLS warning...";
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Handling TLS warning...";
 
 	if ( JabberAccount::handleTLSWarning ( jabberClient, identityResult, validityResult ) )
 	{
@@ -315,7 +315,7 @@ void JabberRegisterAccount::slotHandleTLSWarning (
 
 void JabberRegisterAccount::slotCSError (int error)
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled, disconnecting.";
+	kDebug(JABBER_DEBUG_GLOBAL) << "Error in stream signalled, disconnecting.";
 
 	Kopete::Account::DisconnectReason errorClass;
 
@@ -330,7 +330,7 @@ void JabberRegisterAccount::slotCSError (int error)
 
 void JabberRegisterAccount::slotConnected ()
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Launching registration task...";
+	kDebug (JABBER_DEBUG_GLOBAL) << "Launching registration task...";
 
 	mMainWidget->lblStatusMessage->setText ( i18n ( "Connected successfully, registering new account..." ) );
 

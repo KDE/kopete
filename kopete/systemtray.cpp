@@ -56,7 +56,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	: KAnimatedSystemTrayIcon(parent)
 	, mMovie(0)
 {
-	kDebug(14010) <<  k_funcinfo;
+	kDebug(14010) ;
 	setToolTip(KGlobal::mainComponent().aboutData()->shortDescription());
 
 	mIsBlinkIcon = false;
@@ -97,7 +97,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 
 KopeteSystemTray::~KopeteSystemTray()
 {
-	kDebug(14010) <<  k_funcinfo;
+	kDebug(14010) ;
 //	delete mBlinkTimer;
 	Kopete::UI::Global::setSysTrayWId( 0 );
 }
@@ -146,7 +146,7 @@ void KopeteSystemTray::mouseDoubleClickEvent( QMouseEvent *me )
 
 void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
 {
-	//kDebug(14010) << k_funcinfo << "Called.";
+	//kDebug(14010) << "Called.";
 	emit aboutToShowMenu( me );
 }
 */
@@ -190,7 +190,7 @@ void KopeteSystemTray::startBlink()
 void KopeteSystemTray::stopBlink()
 {
 	if ( mMovie )
-		kDebug( 14010 ) << k_funcinfo << "stopping movie.";
+		kDebug( 14010 ) << "stopping movie.";
 	else if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
 
@@ -235,7 +235,7 @@ void KopeteSystemTray::slotEventDone(Kopete::MessageEvent *event)
 
 void KopeteSystemTray::slotConfigChanged()
 {
-//	kDebug(14010) << k_funcinfo << "called.";
+//	kDebug(14010) << "called.";
 	if ( Kopete::BehaviorSettings::self()->showSystemTray() )
 		show();
 	else
@@ -250,7 +250,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 		return;
 
 	
-	//kDebug(14010) << k_funcinfo;
+	//kDebug(14010) ;
 	bool bOnline = false;
 	bool bAway = false;
 	bool bOffline = false;
@@ -297,7 +297,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 	}
 	else // none away and none online -> all offline
 	{
-		//kDebug(14010) << k_funcinfo << "All Accounts offline!";
+		//kDebug(14010) << "All Accounts offline!";
 		setIcon(loadIcon("kopete_offline"));
 	}
 }

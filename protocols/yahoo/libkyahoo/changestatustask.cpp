@@ -24,7 +24,7 @@
 
 ChangeStatusTask::ChangeStatusTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 ChangeStatusTask::~ChangeStatusTask()
@@ -33,7 +33,7 @@ ChangeStatusTask::~ChangeStatusTask()
 
 void ChangeStatusTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	if( m_status == Yahoo::StatusInvisible )			// status --> Invisible
 	{

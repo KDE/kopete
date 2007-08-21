@@ -82,7 +82,7 @@ QtTapioca::Contact *TelepathyContactManager::addContact(const QString &contactId
 
 void TelepathyContactManager::removeContact(TelepathyContact *contact)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo;
+	kDebug(TELEPATHY_DEBUG_AREA) ;
 
 	if( contact->internalContact() )
 	{
@@ -91,7 +91,7 @@ void TelepathyContactManager::removeContact(TelepathyContact *contact)
 	}
 	else
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: Internal contact in " << contact->contactId() << " is null. Removing in Kopete only.";
+		kDebug(TELEPATHY_DEBUG_AREA) << "WARNING: Internal contact in " << contact->contactId() << " is null. Removing in Kopete only.";
 	}
 
 	// Then delete the contact from Kopete
@@ -115,12 +115,12 @@ void TelepathyContactManager::setContactList(QtTapioca::ContactList *contactList
 
 void TelepathyContactManager::loadContacts()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Loading contact list into Kopete.";
+	kDebug(TELEPATHY_DEBUG_AREA) << "Loading contact list into Kopete.";
 
 	QList<Contact*> contacts = contactList()->knownContacts();
 	if( contacts.isEmpty() )
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "WARNING: Contact list from Telepathy is empty !";
+		kDebug(TELEPATHY_DEBUG_AREA) << "WARNING: Contact list from Telepathy is empty !";
 	}
 
 	Contact *tempContact;
@@ -133,7 +133,7 @@ void TelepathyContactManager::loadContacts()
 
 		if( tempContact->authorizationStatus() == QtTapioca::Contact::LocalPending )
 		{
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Found a local pending contact. Adding it";
+			kDebug(TELEPATHY_DEBUG_AREA) << "Found a local pending contact. Adding it";
 
 			// Add the pending contact
 			TelepathyAddPendingContactJob *addPendingContactJob = new TelepathyAddPendingContactJob( account() );
@@ -150,7 +150,7 @@ void TelepathyContactManager::loadContacts()
 			// else, set the internal telepathy object in the existing contact.
 			else
 			{
-				kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Set internal information from Telepathy to " << contactId;
+				kDebug(TELEPATHY_DEBUG_AREA) << "Set internal information from Telepathy to " << contactId;
 				TelepathyContact *contact = static_cast<TelepathyContact*>( account()->contacts()[contactId] );
 				contact->setInternalContact(tempContact);
 			}
@@ -160,7 +160,7 @@ void TelepathyContactManager::loadContacts()
 
 void TelepathyContactManager::telepathyAuthorizationRequired(QtTapioca::Contact *newContact)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "A contact want authorization";
+	kDebug(TELEPATHY_DEBUG_AREA) << "A contact want authorization";
 	
 	QString contactUri = newContact->uri();
 
@@ -176,14 +176,14 @@ void TelepathyContactManager::telepathyAuthorizationRequired(QtTapioca::Contact 
 
 void TelepathyContactManager::telepathySubscriptionAccepted(QtTapioca::Contact *contact)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Contact " << contact->uri() << " has accepted your subscription request.";
+	kDebug(TELEPATHY_DEBUG_AREA) << "Contact " << contact->uri() << " has accepted your subscription request.";
 }
 
 void TelepathyContactManager::createContact(QtTapioca::Contact *telepathyContact)
 {
 	QString contactId = telepathyContact->uri();
 
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Creating Telepathy contact \"" << contactId << "\" in Kopete.";
+	kDebug(TELEPATHY_DEBUG_AREA) << "Creating Telepathy contact \"" << contactId << "\" in Kopete.";
 
 	Kopete::MetaContact *metaContact = new Kopete::MetaContact();
 

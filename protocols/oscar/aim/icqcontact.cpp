@@ -74,7 +74,7 @@ void ICQContact::setSSIItem( const OContact& ssiItem )
 
 void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& details )
 {
-	//kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << contact << contactId();
+	//kDebug(OSCAR_AIM_DEBUG) << contact << contactId();
 	if ( Oscar::normalize( contact  ) != Oscar::normalize( contactId() ) )
 		return;
 
@@ -82,7 +82,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( !isOnline() )
 		removeProperty( mProtocol->awayMessage );
 
-	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus();
+	kDebug( OSCAR_AIM_DEBUG ) << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
 	setPresenceTarget( presence );
 
@@ -158,7 +158,7 @@ void ICQContact::loggedIn()
 	{
 		m_requestingNickname = true;
 		int time = ( KRandom::random() % 20 ) * 1000;
-		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds";
+		kDebug(OSCAR_AIM_DEBUG) << "updating nickname in " << time/1000 << " seconds";
 		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
 	}
 

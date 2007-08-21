@@ -134,7 +134,7 @@ void TooltipEditDialog::slotOkClicked()
 		QStandardItem *item = mUsedEntries->item( i, 0 );
 		keyname = item->data().value<QString>();
 		newList += keyname;
-		// kDebug(14000) << k_funcinfo <<
+		// kDebug(14000) <<
 		//	"Adding key '" << keyname << "' to tooltip list" << endl;
 	}
 
@@ -142,7 +142,7 @@ void TooltipEditDialog::slotOkClicked()
 	{
 		Kopete::AppearanceSettings::self()->setToolTipContents(newList);
 		emit changed(true);
-		kDebug(14000) << k_funcinfo << "tooltip fields changed, emitting changed()";
+		kDebug(14000) << "tooltip fields changed, emitting changed()";
 	}
 }
 

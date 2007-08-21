@@ -254,7 +254,7 @@ Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resou
 		}
 		else
 		{
-			kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug";
+			kDebug (JABBER_DEBUG_GLOBAL) << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug";
 		}
 	}
 
@@ -276,7 +276,7 @@ JabberProtocol *JabberProtocol::protocol ()
 Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaContact,
 										 const QMap < QString, QString > &serializedData, const QMap < QString, QString > & /* addressBookData */ )
 {
-//  kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deserializing data for metacontact " << metaContact->displayName () << "\n";
+//  kDebug (JABBER_DEBUG_GLOBAL) << "Deserializing data for metacontact " << metaContact->displayName () << "\n";
 
 	QString contactId = serializedData["contactId"];
 	QString displayName = serializedData["displayName"];
@@ -294,7 +294,7 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 
 	if (!account)
 	{
-		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Account for contact does not exist, skipping.";
+		kDebug(JABBER_DEBUG_GLOBAL) << "WARNING: Account for contact does not exist, skipping.";
 		return 0;
 	}
 	
@@ -366,7 +366,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 	XMPP::Jid jid = jid_str;
 	QString action=url.queryItems().isEmpty() ? QString() : url.queryItems().first().first;
 	 
-	kDebug() << k_funcinfo << url.queryItemValue("body");
+	kDebug() << url.queryItemValue("body");
 
 	if(jid.isEmpty())
 	{
@@ -523,7 +523,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 	}//TODO: recvfile
 	else
 	{
-		kWarning(JABBER_DEBUG_GLOBAL) << k_funcinfo << "unable to handle URL "<< kurl.prettyUrl();
+		kWarning(JABBER_DEBUG_GLOBAL) << "unable to handle URL "<< kurl.prettyUrl();
 	}
 
 }

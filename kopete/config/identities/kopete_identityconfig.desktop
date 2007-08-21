@@ -10,6 +10,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Identities
+Name[de]=Identitäten
 Name[fa]=هویتها
 Name[ga]=Aitheantais
 Name[ja]=分身
@@ -18,6 +19,7 @@ Name[pt_BR]=Identidades
 Name[sv]=Identiteter
 Name[zh_TW]=身份
 Comment=Manage Your Identities
+Comment[de]=Hier können Sie Ihre Identitäten verwalten
 Comment[fa]=مدیریت هویتهای خود
 Comment[ga]=Bainistigh D'Aitheantais
 Comment[ja]=あなたの分身を管理

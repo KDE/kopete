@@ -50,7 +50,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	Kopete::Account *account, QWidget *parent)
 	: QWidget(parent), KopeteEditAccountWidget(account)
 {
-	kDebug(14153) << k_funcinfo << "Called.";
+	kDebug(14153) << "Called.";
 
 	mAccount=dynamic_cast<ICQAccount*>(account);
 	mProtocol=protocol;
@@ -177,12 +177,12 @@ ICQEditAccountWidget::~ICQEditAccountWidget()
 
 Kopete::Account *ICQEditAccountWidget::apply()
 {
-	kDebug(14153) << k_funcinfo << "Called.";
+	kDebug(14153) << "Called.";
 
 	// If this is a new account, create it
 	if (!mAccount)
 	{
-		kDebug(14153) << k_funcinfo << "Creating a new account";
+		kDebug(14153) << "Creating a new account";
 		mAccount = new ICQAccount(mProtocol, mAccountSettings->edtAccountId->text());
 		if(!mAccount)
 			return NULL;
@@ -261,7 +261,7 @@ Kopete::Account *ICQEditAccountWidget::apply()
 
 bool ICQEditAccountWidget::validateData()
 {
-	kDebug(14153) << k_funcinfo << "Called.";
+	kDebug(14153) << "Called.";
 	bool bOk;
 	QString userId = mAccountSettings->edtAccountId->text();
 	qulonglong uid = userId.toULongLong( &bOk );
@@ -278,7 +278,7 @@ bool ICQEditAccountWidget::validateData()
 		return false;
 
 	// Seems good to me
-	kDebug(14153) << k_funcinfo <<
+	kDebug(14153) <<
 		"Account data validated successfully." << endl;
 	return true;
 }

@@ -75,23 +75,23 @@ bool ChatNavServiceTask::take( Transfer* transfer )
         switch ( t.type )
         {
         case 0x0001:
-            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got chat redirect TLV";
+            kDebug(OSCAR_RAW_DEBUG) << "got chat redirect TLV";
             break;
         case 0x0002:
         {
-            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "got max concurrent rooms TLV";
+            kDebug(OSCAR_RAW_DEBUG) << "got max concurrent rooms TLV";
             Buffer tlvTwo(t.data);
-            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "max concurrent rooms is " << tlvTwo.getByte();
+            kDebug(OSCAR_RAW_DEBUG) << "max concurrent rooms is " << tlvTwo.getByte();
             break;
         }
         case 0x0003:
-            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "exchange info TLV found";
+            kDebug(OSCAR_RAW_DEBUG) << "exchange info TLV found";
 			handleExchangeInfo( t );
             //set the exchanges for the client
             emit haveChatExchanges( m_exchanges );
             break;
         case 0x0004:
-            kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "room info TLV found";
+            kDebug(OSCAR_RAW_DEBUG) << "room info TLV found";
             handleBasicRoomInfo( t );
             break;
         };
@@ -145,7 +145,7 @@ void ChatNavServiceTask::createRoom( Oscar::WORD exchange, const QString& name )
 	b->addWord( lang.length() );
 	b->addString( lang.toLatin1() );
 
-    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sending join room packet";
+    kDebug(OSCAR_RAW_DEBUG) << "sending join room packet";
 	Transfer* t = createTransfer( f, s, b );
 	send( t );
 }
@@ -158,7 +158,7 @@ void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
     ChatExchangeInfo exchangeInfo;
 
 	exchangeInfo.number = b.getWord();
-    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "exchange id is: " << exchangeInfo.number;
+    kDebug(OSCAR_RAW_DEBUG) << "exchange id is: " << exchangeInfo.number;
     b.getWord();
 	while ( b.bytesAvailable() > 0 )
 	{
@@ -175,7 +175,7 @@ void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 			break;
 		case 0x04:
             exchangeInfo.maxRoomNameLength = tmp.getWord();
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "max room name length is " << exchangeInfo.maxRoomNameLength;
+			kDebug(OSCAR_RAW_DEBUG) << "max room name length is " << exchangeInfo.maxRoomNameLength;
 			break;
 		case 0x05:
 			//kDebug(OSCAR_RAW_DEBUG) << "received root rooms info";
@@ -211,7 +211,7 @@ void ChatNavServiceTask::handleExchangeInfo( const TLV& t )
 			break;
 		case 0xD5:
             exchangeInfo.canCreate = tmp.getByte();
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "creation permissions " << exchangeInfo.canCreate;
+			kDebug(OSCAR_RAW_DEBUG) << "creation permissions " << exchangeInfo.canCreate;
 			break;
 		default:
 			kDebug(OSCAR_RAW_DEBUG) << "unknown TLV type " << t.type;
@@ -233,7 +233,7 @@ void ChatNavServiceTask::handleBasicRoomInfo( const TLV& t )
     Oscar::WORD tlvCount = b.getWord();
     Q_UNUSED(tlvCount);
 
-    kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "e: " << exchange
+    kDebug(OSCAR_RAW_DEBUG) << "e: " << exchange
                              << " c: " << cookie << " i: " << instance << endl;
 
     QList<Oscar::TLV> tlvList = b.getTLVList();
@@ -317,7 +317,7 @@ void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
 
 	if ( detailLevel != 0x02 )
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "unknown detail level in response";
+		kWarning(OSCAR_RAW_DEBUG) << "unknown detail level in response";
 		return;
 	}
 
@@ -333,26 +333,26 @@ void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
 		case 0x006A:
 		{
 			QString fqcn = QString( ( *it ).data );
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "fqcn: " << fqcn;
+			kDebug(OSCAR_RAW_DEBUG) << "fqcn: " << fqcn;
 			break;
 		}
 		case 0x00C9:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "flags: " << t.data;
+			kDebug(OSCAR_RAW_DEBUG) << "flags: " << t.data;
 			break;
 		case 0x00CA:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "create time: " << t.data;
+			kDebug(OSCAR_RAW_DEBUG) << "create time: " << t.data;
 			break;
 		case 0x00D1:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "max msg len: " << t.data;
+			kDebug(OSCAR_RAW_DEBUG) << "max msg len: " << t.data;
 			break;
 		case 0x00D2:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "max occupancy: " << t.data;
+			kDebug(OSCAR_RAW_DEBUG) << "max occupancy: " << t.data;
 			break;
 		case 0x00D3:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "name: " << QString( t.data );
+			kDebug(OSCAR_RAW_DEBUG) << "name: " << QString( t.data );
 			break;
 		case 0x00D5:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "create perms: " << t.data;
+			kDebug(OSCAR_RAW_DEBUG) << "create perms: " << t.data;
 			break;
 		};
 	}

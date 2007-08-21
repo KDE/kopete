@@ -1,8 +1,8 @@
 /*
     cryptographyplugin.cpp  -  description
 
-	Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@kde.org>
-	Copyright (c) 2007      by Charles Connell        <charles@connells.org>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@kde.org>
+    Copyright (c) 2007      by Charles Connell        <charles@connells.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -69,11 +69,17 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QStringList & /*
 
 	CryptographyPlugin::plugin()->addAddressBookField ( "key" );
 
-	KAction *action=new KAction ( KIcon ( "encrypted" ), i18n ( "&Select Public Key..." ), this );
+	KAction *action = new KAction ( KIcon ( "encrypted" ), i18n ( "&Select Public Key..." ), this );
 	actionCollection()->addAction ( "contactSelectKey", action );
 	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotSelectContactKey() ) );
 	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
-	action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() ==1 );
+	action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
+	
+	action = new KAction ( KIcon ( "kgpg-export-kgpg" ), i18n ( "&Export Public Key To Address Book..." ), this );
+	actionCollection()->addAction ( "exportKey", action );
+	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotExportOneKey() ) );
+	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
+	action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
 
 	setXMLFile ( "cryptographyui.rc" );
 	loadSettings();
@@ -136,12 +142,15 @@ void CryptographyPlugin::setCachedPass ( const QString& p )
 void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 {
 	QString body = msg.plainBody();
+	QString iconFolder = KIconLoader::global()->iconPath ( "signature", K3Icon::Small );
+	iconFolder = iconFolder.remove ( iconFolder.lastIndexOf ( "/" ) +1, 100 );
 
+	kDebug ( 14303 ) << "icon folder is " << iconFolder << endl;
 	int opState;
 	if ( !body.startsWith ( QString::fromLatin1 ( "-----BEGIN PGP MESSAGE----" ) )
 	        || !body.contains ( QString::fromLatin1 ( "-----END PGP MESSAGE----" ) ) )
 	{
-		if ( body.contains ( QRegExp ( KIconLoader::global()->iconPath ( "signature", K3Icon::Small ).remove ( QRegExp ( "signature.*" ) ) + "signature\\..*|bad_signature\\..*|encrypted\\..*" ) ) )
+		if ( body.contains ( QRegExp ( iconFolder + "signature\\..*|" + iconFolder + "bad_signature\\..*|" + iconFolder + "encrypted\\..*" ) ) )
 		{
 			msg.setHtmlBody ( i18n ( "Cryptography plugin refuses to show the most recent message because it contains an attempt to forge an encrypted or signed message" ) );
 			msg.setType ( Kopete::Message::TypeAction );
@@ -154,7 +163,7 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 
 	if ( !body.isEmpty() )
 	{
-		if ( body.contains ( QRegExp ( KIconLoader::global()->iconPath ( "signature", K3Icon::Small ).remove ( QRegExp ( "signature.*" ) ) + "signature\\..*|bad_signature\\..*|encrypted\\..*" ) ) )
+		if ( body.contains ( QRegExp ( iconFolder + "signature\\..*|" + iconFolder + "bad_signature\\..*|" + iconFolder + "encrypted\\..*" ) ) )
 		{
 			msg.setHtmlBody ( i18n ( "Cryptography plugin refuses to show the most recent message because it contains an attempt to forge an encrypted or signed message" ) );
 			msg.setType ( Kopete::Message::TypeAction );
@@ -201,7 +210,7 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 			}
 			if ( tmpKey.isEmpty() )
 			{
-				kDebug ( 14303 ) << k_funcinfo << "empty key";
+				kDebug ( 14303 ) << "empty key";
 				KMessageBox::sorry ( Kopete::UI::Global::mainWidget(), i18n ( "You have not chosen an encryption key for one or more recipients" ) );
 				return;
 			}
@@ -224,7 +233,7 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 		if ( !resultat.isEmpty() )
 			msg.setPlainBody ( resultat );
 		else
-			kDebug ( 14303 ) << k_funcinfo << "empty result";
+			kDebug ( 14303 ) << "empty result";
 	}
 	else if ( signing )
 	{
@@ -246,6 +255,31 @@ void CryptographyPlugin::slotSelectContactKey()
 	{
 		key = opts.publicKey();
 		m->setPluginData ( this, "gpgKey", key );
+	}
+}
+
+void CryptographyPlugin::slotExportOneKey()
+{
+	Kopete::MetaContact * mc = Kopete::ContactList::self()->selectedMetaContacts().first();
+	QString key;
+	KABC::Addressee addressee;
+	key = mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" );
+	if ( key.isEmpty() )
+	{
+		KMessageBox::sorry ( Kopete::UI::Global::mainWidget(), i18n ( "No key has been set for this meta-contact" ), i18n ( "No Key" ) );
+		return;
+	}
+
+	addressee = Kopete::KABCPersistence::addressBook()->findByUid ( mc->metaContactId() );
+	if ( addressee.isEmpty() )
+		addressee.setName ( mc->displayName() );
+	addressee.insertCustom ( "KADDRESSBOOK", "OPENPGPFP", key );
+
+	key = key.right ( 8 ).prepend ( "0x" );
+	key = key + " " + mc->displayName() + " (" + addressee.assembledName() + ")";
+	if ( KMessageBox::warningContinueCancel ( Kopete::UI::Global::mainWidget(), i18n ( QString ( "The key \"" + key + "\" will be exported. If no address book has been linked to this meta-contact, one will be created.").toAscii().constData() ), i18n ( "Export Public Key" ) ) == KMessageBox::Continue) {
+		Kopete::KABCPersistence::self()->addressBook()->insertAddressee (addressee);
+		Kopete::KABCPersistence::self()->writeAddressBook(addressee.resource());
 	}
 }
 
@@ -281,23 +315,23 @@ QStringList CryptographyPlugin::getKabcKeys ( QString uid )
 {
 	KABC::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid ( uid );
 	QStringList keys;
-	
+
 	// each 'if' block here is one way of getting a key.
-	
+
 	// this is the field used by kaddressbook
 	if ( ! ( addressee.custom ( "KADDRESSBOOK", "OPENPGPFP" ) ).isEmpty() )
 		keys << addressee.custom ( "KADDRESSBOOK", "OPENPGPFP" );
-	
+
 	// this is the standard key field in Addressee, (which no app seems to use, but here it is anyways)
 	if ( ! ( addressee.key ( KABC::Key::PGP ).textData() ).isEmpty() )
 		keys << addressee.key ( KABC::Key::PGP ).textData();
 
 	// remove duplicates
-	if ( keys.at(0) == keys.at(1) )
-		keys.removeAt (1);
-	
+	if ( keys.at ( 0 ) == keys.at ( 1 ) )
+		keys.removeAt ( 1 );
+
 	kDebug ( 14303 ) << "keys found in address book for contact " << addressee.assembledName() << ": " << keys << endl;
-	
+
 	return keys;
 }
 

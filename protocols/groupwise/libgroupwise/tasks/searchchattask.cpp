@@ -68,7 +68,7 @@ bool SearchChatTask::take( Transfer * transfer )
 		return false;
 	if ( response->resultCode() )
 	{
-//		kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "got return code in response << " << response->resultCode();
+//		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "got return code in response << " << response->resultCode();
 		setError( response->resultCode() );
 		return true;
 	}
@@ -93,7 +93,7 @@ void SearchChatTask::slotPollForResults()
 void SearchChatTask::slotGotPollResults()
 {
 	GetChatSearchResultsTask * gcsrt = (GetChatSearchResultsTask *)sender();
-//	kDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "status code is " << gcsrt->queryStatus();
+//	kDebug( GROUPWISE_DEBUG_GLOBAL ) << "status code is " << gcsrt->queryStatus();
 	m_polls++;
 	switch ( gcsrt->queryStatus() )
 	{

@@ -63,7 +63,7 @@ public:
      * 
      * if( !storage->isValid() )
      * {
-     *     kDebug() << k_funcinfo << "Contact list storage failed. Reason: " << storage->errorMessage();
+     *     kDebug() << "Contact list storage failed. Reason: " << storage->errorMessage();
      * }
      * @endcode
      * 

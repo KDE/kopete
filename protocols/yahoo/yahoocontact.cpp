@@ -65,7 +65,7 @@
 YahooContact::YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact )
 	: Kopete::Contact( account, userId, metaContact )
 {
-	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	//kDebug(YAHOO_GEN_DEBUG) ;
 
 	m_userId = userId;
 	if ( metaContact )
@@ -140,14 +140,14 @@ bool YahooContact::stealthed()
 
 void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
-	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	//kDebug(YAHOO_GEN_DEBUG) ;
 
 	Kopete::Contact::serialize(serializedData, addressBookData);
 }
 
 void YahooContact::syncToServer()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	if(!m_account->isConnected()) return;
 
 	if ( !m_account->isOnServer(m_userId) && !metaContact()->isTemporary() )
@@ -161,14 +161,14 @@ void YahooContact::syncToServer()
 
 void YahooContact::sync(unsigned int flags)
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	if ( !m_account->isConnected() )
 		return;
 
 	if ( !m_account->isOnServer( contactId() ) )
 	{
 		//TODO: Share this code with the above function
-		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact isn't on the server. Adding...";
+		kDebug(YAHOO_GEN_DEBUG) << "Contact isn't on the server. Adding...";
 		Kopete::GroupList groupList = metaContact()->groups();
 		foreach(Kopete::Group *g, groupList)
 			m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
@@ -178,7 +178,7 @@ void YahooContact::sync(unsigned int flags)
 		QString newGroup = metaContact()->groups().first()->displayName();
 		if ( flags & Kopete::Contact::MovedBetweenGroup )
 		{
-			kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact changed groups. moving on server";
+			kDebug(YAHOO_GEN_DEBUG) << "contact changed groups. moving on server";
 			m_account->yahooSession()->moveBuddy( contactId(), m_groupName, newGroup );
 			m_groupName = newGroup;
 		}
@@ -188,13 +188,13 @@ void YahooContact::sync(unsigned int flags)
 
 bool YahooContact::isOnline() const
 {
-	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	//kDebug(YAHOO_GEN_DEBUG) ;
 	return onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown;
 }
 
 bool YahooContact::isReachable()
 {
-	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	//kDebug(YAHOO_GEN_DEBUG) ;
 	if ( m_account->isConnected() )
 		return true;
 	else
@@ -328,7 +328,7 @@ QString YahooContact::prepareMessage( const QString &messageText )
 
 void YahooContact::slotSendMessage( Kopete::Message &message )
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	QString messageText = message.escapedBody();
 	kDebug(YAHOO_GEN_DEBUG) << "Original message: " << messageText;
@@ -450,7 +450,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 
 void YahooContact::slotUserInfo()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	if( !m_YABEntry )
 	{
 		readYABEntry();	// No YABEntry was set, so read the one from contactlist.xml
@@ -465,7 +465,7 @@ void YahooContact::slotUserInfo()
 
 void YahooContact::slotUserProfile()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	QString profileSiteString = QLatin1String("http://profiles.yahoo.com/") + userId();
 	KToolInvocation::invokeBrowser(  profileSiteString );
@@ -473,13 +473,13 @@ void YahooContact::slotUserProfile()
 
 void YahooContact::slotSendFile( const KUrl &url)
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	m_account->sendFile( this, url );
 }
 
 void YahooContact::stealthContact()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	KDialog *stealthSettingDialog = new KDialog( Kopete::UI::Global::mainWidget() );
 	stealthSettingDialog->setCaption( i18n("Stealth Setting") );
@@ -553,7 +553,7 @@ void YahooContact::buzzContact()
 
 void YahooContact::setDisplayPicture(KTemporaryFile *f, int checksum)
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	if( !f )
 		return;
 	// stolen from msncontact.cpp ;)
@@ -580,7 +580,7 @@ void YahooContact::setDisplayPicture(KTemporaryFile *f, int checksum)
 
 void YahooContact::setYABEntry( YABEntry *entry, bool show )
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << userId();
+	kDebug(YAHOO_GEN_DEBUG) << userId();
 	if( m_YABEntry )
 		delete m_YABEntry;
 
@@ -693,15 +693,15 @@ void YahooContact::closeWebcamDialog()
 
 void YahooContact::deleteContact()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	if( !m_account->isOnServer( contactId() ) )
 	{
-		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact does not exist on server-side. Not removing...";
+		kDebug(YAHOO_GEN_DEBUG) << "Contact does not exist on server-side. Not removing...";
 	}
 	else
 	{
-		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact is getting remove from server side contactlist....";
+		kDebug(YAHOO_GEN_DEBUG) << "Contact is getting remove from server side contactlist....";
 		// Delete from YAB first
 		if( !m_YABEntry )
 			readYABEntry();
@@ -716,7 +716,7 @@ void YahooContact::deleteContact()
 
 void YahooContact::writeYABEntry()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	// Personal
 	setProperty( YahooProtocol::protocol()->propfirstName, m_YABEntry->firstName );
@@ -775,7 +775,7 @@ void YahooContact::writeYABEntry()
 
 void YahooContact::readYABEntry()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	if( m_YABEntry )
 		delete m_YABEntry;
 

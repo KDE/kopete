@@ -77,7 +77,7 @@ void YahooWebcamDialog::webcamPaused()
 
 void YahooWebcamDialog::webcamClosed( int reason  )
 {
-	kDebug(14180) << k_funcinfo << "webcam closed with reason?? " <<  reason;
+	kDebug(14180) << "webcam closed with reason?? " <<  reason;
 	QString closeReason;
 	switch ( reason )
 	{

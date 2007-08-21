@@ -66,12 +66,12 @@ bool ICQTlvInfoUpdateTask::take( Transfer* transfer )
 
 		if ( buffer.getByte() == 0x0A )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "User info was saved.";
+			kDebug(OSCAR_RAW_DEBUG) << "User info was saved.";
 			setSuccess( 0, QString() );
 		}
 		else
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Error saving user info!!!";
+			kDebug(OSCAR_RAW_DEBUG) << "Error saving user info!!!";
 			setError( 0, QString() );
 		}
 
@@ -83,7 +83,7 @@ bool ICQTlvInfoUpdateTask::take( Transfer* transfer )
 
 void ICQTlvInfoUpdateTask::onGo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Updating user info.";
+	kDebug(OSCAR_RAW_DEBUG) << "Updating user info.";
 
 	m_goSequence = client()->snacSequence();
 	setSequence( m_goSequence );

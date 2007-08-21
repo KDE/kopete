@@ -83,7 +83,7 @@ void PropertyContainer::deserializeProperties(
 		QVariant variant( it.value() );
 		if( !variant.convert(QVariant::nameToType(type.toLatin1())) )
 		{
-			kDebug(14010) << k_funcinfo <<
+			kDebug(14010) <<
 				"Casting QVariant to needed type FAILED" <<
 				"key=" << key << ", type=" << type << endl;
 			continue;
@@ -92,7 +92,7 @@ void PropertyContainer::deserializeProperties(
 		Kopete::PropertyTmpl tmpl = Kopete::Global::Properties::self()->tmpl(key);
 		if( tmpl.isNull() )
 		{
-			kDebug( 14010 ) << k_funcinfo << "no PropertyTmpl defined for" \
+			kDebug( 14010 ) << "no PropertyTmpl defined for" \
 				" key " << key << ", cannot restore persistent property" << endl;
 			continue;
 		}
@@ -134,7 +134,7 @@ void PropertyContainer::setProperty(const Kopete::PropertyTmpl &tmpl,
 {
 	if(tmpl.isNull() || tmpl.key().isEmpty())
 	{
-		kDebug(14000) << k_funcinfo <<
+		kDebug(14000) <<
 			"No valid template for property passed!" << endl;
 		return;
 	}

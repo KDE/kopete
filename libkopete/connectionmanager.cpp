@@ -69,7 +69,7 @@ void ConnectionManager::initialise()
 void ConnectionManager::updateStatus()
 {
 	NetworkStatus::EnumStatus daemonStatus = (NetworkStatus::EnumStatus)d->m_stub->status( QString() );
-	kDebug() << k_funcinfo;
+	kDebug() ;
 	switch ( daemonStatus )
 	{
 		case NetworkStatus::Offline:
@@ -120,7 +120,7 @@ NetworkStatus::EnumStatus ConnectionManager::status( const QString & host )
 
 NetworkStatus::EnumRequestResult ConnectionManager::requestConnection( QWidget * mainWidget, const QString & host, bool userInitiated )
 {
-	kDebug() << k_funcinfo;
+	kDebug() ;
 	NetworkStatus::EnumRequestResult result;
 	// if offline and the user has previously indicated they didn't want any new connections, suppress it
 	if ( d->m_state == Offline && !userInitiated && d->m_userInitiatedOnly )
@@ -148,7 +148,7 @@ void ConnectionManager::relinquishConnection( const QString & host )
 
 void ConnectionManager::slotStatusChanged( QString host, int status )
 {
-	kDebug() << k_funcinfo;
+	kDebug() ;
 	updateStatus();
 	// reset user initiated only flag if we are now online
 	if ( d->m_state == Online )

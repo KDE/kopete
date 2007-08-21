@@ -74,9 +74,9 @@ bool MessageReceiverTask::take( Transfer* transfer )
 
 		Buffer* b = transfer->buffer();
 		m_icbmCookie = b->getBlock( 8 );
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "icbm cookie is " << m_icbmCookie;
+		kDebug(OSCAR_RAW_DEBUG) << "icbm cookie is " << m_icbmCookie;
 		m_channel = b->getWord();
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "channel is " << m_channel;
+		kDebug(OSCAR_RAW_DEBUG) << "channel is " << m_channel;
 
 		if ( m_currentSnacSubtype == 0x0007 )
 		{
@@ -130,7 +130,7 @@ void MessageReceiverTask::handleType1Message()
 	TLV t = Oscar::findTLV( messageTLVList, 0x0002 );
 	if ( !t )
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Received a message packet with no message!";
+		kWarning(OSCAR_RAW_DEBUG) << "Received a message packet with no message!";
 		return;
 	}
 	Buffer messageBuffer( t.data );
@@ -141,7 +141,7 @@ void MessageReceiverTask::handleType1Message()
 		switch ( ( *it ).type )
 		{
 		case 0x0501:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got features tlv. length: "
+			kDebug(OSCAR_RAW_DEBUG) << "Got features tlv. length: "
 				<< ( *it ).length << " data: " << ( *it ).data << endl;
 			break;
 		case 0x0101:
@@ -149,7 +149,7 @@ void MessageReceiverTask::handleType1Message()
 			Buffer message( ( *it ).data );
 			m_charSet = message.getWord();
 			m_subCharSet = message.getWord();
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message charset: " << m_charSet
+			kDebug(OSCAR_RAW_DEBUG) << "Message charset: " << m_charSet
 				<< " message subcharset: " << m_subCharSet << endl;
 			if ( m_charSet == 0x0002 )
 				msg.setEncoding( Oscar::Message::UCS2 );
@@ -188,22 +188,22 @@ void MessageReceiverTask::handleType1Message()
 
 void MessageReceiverTask::handleType2Message()
 {
-	kDebug(14151) << k_funcinfo << "Received Type 2 message. Trying to handle it...";
+	kDebug(14151) << "Received Type 2 message. Trying to handle it...";
 
 	Oscar::Message msg;
 	QList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
 	TLV t = Oscar::findTLV( messageTLVList, 0x0005 );
 	if ( !t )
 	{
-		kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "Received a channel 2 message packet with no message!";
+		kWarning(OSCAR_RAW_DEBUG) << "Received a channel 2 message packet with no message!";
 		return;
 	}
 	Buffer messageBuffer( t.data );
-	kDebug(14151) << k_funcinfo << "Buffer length is " << messageBuffer.length();
+	kDebug(14151) << "Buffer length is " << messageBuffer.length();
 
 	// request type
 	int requestType = messageBuffer.getWord();
-	kDebug(14151) << k_funcinfo << "Request type (0 - request, 1 - cancel, 2 - accept): " << requestType;
+	kDebug(14151) << "Request type (0 - request, 1 - cancel, 2 - accept): " << requestType;
 
 	// skip the message id cookie, already handled above
 	messageBuffer.skipBytes( 8 );
@@ -212,7 +212,7 @@ void MessageReceiverTask::handleType2Message()
 	Oscar::Guid g = messageBuffer.getGuid();
 	if ( g == oscar_caps[CAP_SENDFILE] )
 	{
-		kDebug(14151) << k_funcinfo << "**************this is a filetransfer message************";
+		kDebug(14151) << "**************this is a filetransfer message************";
 		emit fileMessage( requestType, m_fromUser, m_icbmCookie, messageBuffer);
 		return;
 	}
@@ -223,27 +223,27 @@ void MessageReceiverTask::handleType2Message()
 		switch ( tlv.type )
 		{
 		case 0x0004:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got external ip: "
+			kDebug(OSCAR_RAW_DEBUG) << "Got external ip: "
 				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x0005:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got listening port: "
+			kDebug(OSCAR_RAW_DEBUG) << "Got listening port: "
 				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x000A:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got request #: "
+			kDebug(OSCAR_RAW_DEBUG) << "Got request #: "
 				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x000B:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown TLV 0x000B: "
+			kDebug(OSCAR_RAW_DEBUG) << "Got unknown TLV 0x000B: "
 				<< tlv.length << " data: " << tlv.data << endl;
 			break;
 		case 0x000F:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown empty TLV 0x000F";
+			kDebug(OSCAR_RAW_DEBUG) << "Got unknown empty TLV 0x000F";
 			break;
 		case 0x2711:
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got a TLV 2711";
+			kDebug(OSCAR_RAW_DEBUG) << "Got a TLV 2711";
 			Buffer tlv2711Buffer( tlv.data );
 			parseRendezvousData( &tlv2711Buffer, &msg );
 			switch ( requestType )
@@ -252,13 +252,13 @@ void MessageReceiverTask::handleType2Message()
 				emit receivedMessage( msg );
 				break;
 			case 0x01:
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received Abort Mesage";
+				kDebug(OSCAR_RAW_DEBUG) << "Received Abort Mesage";
 				break;
 			case 0x02:
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received OK Message";
+				kDebug(OSCAR_RAW_DEBUG) << "Received OK Message";
 				break;
 			default:
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Received unknown request type: " << requestType;
+			kDebug(OSCAR_RAW_DEBUG) << "Received unknown request type: " << requestType;
 				break;
 			}
 
@@ -274,10 +274,10 @@ void MessageReceiverTask::handleType2Message()
 void MessageReceiverTask::handleType4Message()
 {
 	TLV tlv5 = transfer()->buffer()->getTLV();
-	kDebug(14151) << k_funcinfo << "The first TLV is of type " << tlv5.type;
+	kDebug(14151) << "The first TLV is of type " << tlv5.type;
 	if (tlv5.type != 0x0005)
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Aborting because first TLV != TLV(5)";
+		kDebug(OSCAR_RAW_DEBUG) << "Aborting because first TLV != TLV(5)";
 		return;
 	}
 
@@ -285,12 +285,12 @@ void MessageReceiverTask::handleType4Message()
 
 	Oscar::DWORD uin = tlv5buffer.getLEDWord(); // little endian for no sane reason!
 	if ( QString::number(uin) != m_fromUser )
-		kWarning(14151) << k_funcinfo << "message uin does not match uin found in packet header!";
+		kWarning(14151) << "message uin does not match uin found in packet header!";
 
 	Oscar::BYTE msgType = tlv5buffer.getByte();
 	Oscar::BYTE msgFlags = tlv5buffer.getByte();
 
-	kDebug(14151) << k_funcinfo << "Received server message. type = " << msgType
+	kDebug(14151) << "Received server message. type = " << msgType
 		<< ", flags = " << msgFlags << endl;
 
 	//handle the special user types
@@ -324,7 +324,7 @@ void MessageReceiverTask::handleType4Message()
 		msg.addProperty( Oscar::Message::Normal );
 		break;
 	default:
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Not handling message flag " << msgFlags;
+		kDebug(OSCAR_RAW_DEBUG) << "Not handling message flag " << msgFlags;
 		break;
 	}
 
@@ -339,7 +339,7 @@ void MessageReceiverTask::handleType4Message()
 
 void MessageReceiverTask::handleAutoResponse()
 {
-	kDebug(14151) << k_funcinfo << "Received auto response. Trying to handle it...";
+	kDebug(14151) << "Received auto response. Trying to handle it...";
 
 	Oscar::Message msg;
 	msg.addProperty( Oscar::Message::AutoResponse );
@@ -347,7 +347,7 @@ void MessageReceiverTask::handleAutoResponse()
 
 	// reason code
 	int reasonCode = b->getWord();
-	kDebug(14151) << k_funcinfo << "Reason code (1 - channel not supported, 2 - busted payload, 3 - channel specific data): " << reasonCode;
+	kDebug(14151) << "Reason code (1 - channel not supported, 2 - busted payload, 3 - channel specific data): " << reasonCode;
 
 	parseRendezvousData( b, &msg );
 	emit receivedMessage( msg );
@@ -358,7 +358,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 	int length1 =  b->getLEWord();
 	if ( length1 != 0x001B )
 	{	// all real messages (actually their header) seem to have length 0x1B
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Weired Message length. Bailing out!";
+		kDebug(OSCAR_RAW_DEBUG) << "Weired Message length. Bailing out!";
 		return;
 	}
 
@@ -399,7 +399,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		*/
 		b->skipBytes(5); //same as above
 
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Message type is: " << messageType;
+		kDebug(OSCAR_RAW_DEBUG) << "Message type is: " << messageType;
 
 		QByteArray msgText( b->getLELNTS() );
 		Oscar::Message::Encoding encoding = Oscar::Message::UserDefined;
@@ -468,7 +468,7 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 		break;
 	}
 	default:
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got unknown message with length2 " << length2;
+		kDebug(OSCAR_RAW_DEBUG) << "Got unknown message with length2 " << length2;
 	}
 }
 

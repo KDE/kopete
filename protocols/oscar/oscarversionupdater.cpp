@@ -50,7 +50,7 @@ OscarVersionUpdater *OscarVersionUpdater::self()
 
 bool OscarVersionUpdater::update( unsigned int stamp )
 {
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo;
+	kDebug(OSCAR_GEN_DEBUG) ;
 	bool doUpdate = false;
 	bool isUpdating = false;
 	
@@ -70,7 +70,7 @@ bool OscarVersionUpdater::update( unsigned int stamp )
 		KConfigGroup config( KGlobal::config(), "Oscar" );
 		QString url = config.readEntry( "NewVersionURL", "http://kopete.kde.org/oscarversions.xml" );
 		mTransferJob = KIO::get ( url );
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Download version info from server.";
+		kDebug(OSCAR_GEN_DEBUG) << "Download version info from server.";
 		
 		connect ( mTransferJob, SIGNAL ( result ( KJob* ) ),
 		          this, SLOT ( slotTransferResult ( KJob* ) ) );
@@ -87,7 +87,7 @@ unsigned int OscarVersionUpdater::stamp() const
 
 void OscarVersionUpdater::initICQVersionInfo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
+	kDebug(OSCAR_RAW_DEBUG) ;
 	KConfigGroup config( KGlobal::config(), "ICQVersion" );
 	
 	mICQVersion.clientString = config.readEntry( "ClientString", "ICQBasic" );
@@ -103,7 +103,7 @@ void OscarVersionUpdater::initICQVersionInfo()
 
 void OscarVersionUpdater::initAIMVersionInfo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
+	kDebug(OSCAR_RAW_DEBUG) ;
 	
 	KConfigGroup config( KGlobal::config(), "AIMVersion" );
 	
@@ -152,7 +152,7 @@ void OscarVersionUpdater::slotTransferData ( KIO::Job *job, const QByteArray &da
 	mVersionData.resize ( oldSize + data.size() );
 	memcpy ( &mVersionData.data()[oldSize], data.data(), data.size() );
 	
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Data size " << mVersionData.size();
+	kDebug(OSCAR_RAW_DEBUG) << "Data size " << mVersionData.size();
 }
 
 void OscarVersionUpdater::slotTransferResult ( KJob *job )
@@ -161,11 +161,11 @@ void OscarVersionUpdater::slotTransferResult ( KJob *job )
 	if ( job->error() || mTransferJob->isErrorPage() )
 	{
 		//TODO show error
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Download of version info has faild!";
+		kDebug(OSCAR_GEN_DEBUG) << "Download of version info has faild!";
 	}
 	else
 	{
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating version info";
+		kDebug(OSCAR_GEN_DEBUG) << "Updating version info";
 		
 		QDomDocument doc;
 		if ( doc.setContent ( mVersionData ) )
@@ -202,7 +202,7 @@ void OscarVersionUpdater::slotTransferResult ( KJob *job )
 
 void OscarVersionUpdater::parseDocument( QDomDocument& doc )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
+	kDebug(OSCAR_RAW_DEBUG) ;
 	
 	QDomElement root = doc.documentElement();
 	if ( root.tagName() != "oscar" )
@@ -222,7 +222,7 @@ void OscarVersionUpdater::parseDocument( QDomDocument& doc )
 
 bool OscarVersionUpdater::parseVersion( Oscar::ClientVersion& version, QDomElement& element )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
+	kDebug(OSCAR_RAW_DEBUG) ;
 	
 	// clear structure
 	version.clientString = QString();
@@ -265,7 +265,7 @@ bool OscarVersionUpdater::parseVersion( Oscar::ClientVersion& version, QDomEleme
 
 void OscarVersionUpdater::storeVersionInfo( const QString& group, const Oscar::ClientVersion& version ) const
 {
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Storing version info to group: " << group;
+	kDebug(OSCAR_GEN_DEBUG) << "Storing version info to group: " << group;
 	KConfigGroup config( KGlobal::config(), group );
 	
 	config.writeEntry( "ClientString", version.clientString );

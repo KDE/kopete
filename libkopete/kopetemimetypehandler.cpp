@@ -67,14 +67,14 @@ bool MimeTypeHandler::registerAsMimeHandler( const QString &mimeType )
 {
 	if( g_mimeHandlers[ mimeType ] )
 	{
-		kWarning(14010) << k_funcinfo << "Warning: Two mime type handlers attempting"
+		kWarning(14010) << "Warning: Two mime type handlers attempting"
 			" to handle " << mimeType << endl;
 		return false;
 	}
 
 	g_mimeHandlers.insert( mimeType, this );
 	d->mimeTypes.append( mimeType );
-//	kDebug(14010) << k_funcinfo << "Mime type " << mimeType << " registered";
+//	kDebug(14010) << "Mime type " << mimeType << " registered";
 	return true;
 }
 
@@ -82,14 +82,14 @@ bool MimeTypeHandler::registerAsProtocolHandler( const QString &protocol )
 {
 	if( g_protocolHandlers[ protocol ] )
 	{
-		kWarning(14010) << k_funcinfo << "Warning: Two protocol handlers attempting"
+		kWarning(14010) << "Warning: Two protocol handlers attempting"
 			" to handle " << protocol << endl;
 		return false;
 	}
 
 	g_protocolHandlers.insert( protocol, this );
 	d->protocols.append( protocol );
-	kDebug(14010) << k_funcinfo << "Mime type " << protocol << " registered";
+	kDebug(14010) << "Mime type " << protocol << " registered";
 	return true;
 }
 

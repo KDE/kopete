@@ -47,7 +47,7 @@ QQProtocol::QQProtocol( QObject* parent, const QStringList &/*args*/ )
 	  propEmail(Kopete::Global::Properties::self()->emailAddress()),
 	  propAge("QQVCardAge", i18n("Age"), QString(), Kopete::PropertyTmpl::PersistentProperty )
 {
-	kDebug( 14210 ) << k_funcinfo;
+	kDebug( 14210 ) ;
 	s_protocol = this;
 }
 

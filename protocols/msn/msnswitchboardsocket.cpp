@@ -80,7 +80,7 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 {
-	kDebug(14140) << k_funcinfo;
+	kDebug(14140) ;
 
 	QMap<QString , QPair<QString , KTemporaryFile*> >::Iterator it;
 	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
@@ -113,7 +113,7 @@ void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QSt
 
 void MSNSwitchBoardSocket::handleError( uint code, uint id )
 {
-	kDebug(14140) << k_funcinfo;
+	kDebug(14140) ;
 	switch( code )
 	{
 		case 208:
@@ -267,7 +267,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 			uint dataCastId = rx.cap(1).toUInt();
 			if( dataCastId == 1 )
 			{
-				kDebug(14140) << k_funcinfo << "Received a nudge !";
+				kDebug(14140) << "Received a nudge !";
 				emit nudgeReceived(m_msgHandle);
 			}
 		}
@@ -357,7 +357,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		if(!m_account->contacts()[m_msgHandle])
 		{
 			//this may happens if the contact has been deleted.
-			kDebug(14140) << k_funcinfo <<"WARNING: contact is null, adding it";
+			kDebug(14140) <<"WARNING: contact is null, adding it";
 			if( !m_chatMembers.contains( m_msgHandle ) )
 				m_chatMembers.append( m_msgHandle );
 			emit userJoined( m_msgHandle , m_msgHandle , false);
@@ -392,7 +392,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		if ( m_recvIcons > 0  || m_chunks > 0)
 		{ //Some custom emoticons are waiting to be received. so append the message to the queue
 		  //Or the message has not been fully received, so same thing
-			kDebug(14140) << k_funcinfo << "Message not fully received => append to queue.  Emoticon left: " << m_recvIcons << "  chunks: " << chunk+1 << " of " << m_chunks;
+			kDebug(14140) << "Message not fully received => append to queue.  Emoticon left: " << m_recvIcons << "  chunks: " << chunk+1 << " of " << m_chunks;
 			m_msgQueue.append( kmsg );
 			if(!m_emoticonTimer) //to be sure no message will be lost, we will appends message to
 			{                    // the queue in 15 secondes even if we have not received emoticons
@@ -419,7 +419,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 			{
 				QString msnobj=rx.cap(2);
 				QString txt=rx.cap(1);
-				kDebug(14140) << k_funcinfo << "emoticon: " <<  txt << "    msnobj: " << msnobj;
+				kDebug(14140) << "emoticon: " <<  txt << "    msnobj: " << msnobj;
 
 				if( !m_emoticons.contains(msnobj) || !m_emoticons[msnobj].second )
 				{
@@ -566,7 +566,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	}
 	else
 	{
-		kDebug(14140) << k_funcinfo <<" Unknown type '" << type << "' message: \n"<< msg;
+		kDebug(14140) <<" Unknown type '" << type << "' message: \n"<< msg;
 	}
 }
 
@@ -817,7 +817,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 					chunk_str="Chunk: "+QString::number(chunk)+"\r\n";
 				else
 				{
-					kDebug(14140) << k_funcinfo <<"The message is slit in more than initially estimated";
+					kDebug(14140) <<"The message is slit in more than initially estimated";
 				}
 				result=sendCommand( "MSG", "A", true, (head+chunk_str+"\r\n"+m).toUtf8() );
 				chunk++;
@@ -826,7 +826,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 
 			while(chunk<nb)
 			{
-				kDebug(14140) << k_funcinfo <<"The message is plit in less than initially estimated.  Sending empty message to complete";
+				kDebug(14140) <<"The message is plit in less than initially estimated.  Sending empty message to complete";
 				QString chunk_str="Chunk: "+QString::number(chunk);
 				sendCommand( "MSG", "A", true, (head+chunk_str+"\r\n").toUtf8() );
 				chunk++;
@@ -917,7 +917,7 @@ void MSNSwitchBoardSocket::requestDisplayPicture()
 
 void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QString &msnObj )
 {
-	kDebug(14141) << k_funcinfo << msnObj;
+	kDebug(14141) << msnObj;
 
 	if(m_emoticons.contains(msnObj))
 	{ //it's an emoticon
@@ -925,7 +925,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QS
 
 		if( m_recvIcons > 0 )
 			m_recvIcons--;
-		kDebug(14140) << k_funcinfo << "emoticons received queue is now: " << m_recvIcons;
+		kDebug(14140) << "emoticons received queue is now: " << m_recvIcons;
 
 		if ( m_recvIcons <= 0 )
 			cleanQueue();
@@ -934,7 +934,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QS
 	{
 		QString msg=i18n("<img src=\"%1\" alt=\"Typewrited message\" />", file->fileName() );
 
-		kDebug(14140) << k_funcinfo << file->fileName();
+		kDebug(14140) << file->fileName();
 
 		m_typewrited.append(file);
 
@@ -951,7 +951,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QS
 		if(!m_account->contacts()[m_msgHandle])
 		{
 			//this may happens if the contact has been deleted.
-			kDebug(14140) << k_funcinfo <<"WARNING: contact is null, adding it";
+			kDebug(14140) <<"WARNING: contact is null, adding it";
 			if( !m_chatMembers.contains( m_msgHandle ) )
 				m_chatMembers.append( m_msgHandle );
 			emit userJoined( m_msgHandle , m_msgHandle , false);
@@ -987,7 +987,7 @@ void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const Q
 	if(!m_account->contacts()[m_msgHandle])
 	{
 		//this may happens if the contact has been deleted.
-		kDebug(14140) << k_funcinfo <<"WARNING: contact is null, adding it";
+		kDebug(14140) <<"WARNING: contact is null, adding it";
 		if( !m_chatMembers.contains( m_msgHandle ) )
 			m_chatMembers.append( m_msgHandle );
 		emit userJoined( m_msgHandle , m_msgHandle , false);
@@ -1008,7 +1008,7 @@ void MSNSwitchBoardSocket::cleanQueue()
 		m_emoticonTimer->deleteLater();
 		m_emoticonTimer=0L;
 	}
-	kDebug(14141) << k_funcinfo << m_msgQueue.count();
+	kDebug(14141) << m_msgQueue.count();
 
 	QList<Kopete::Message>::Iterator it_msg;
 	for ( it_msg = m_msgQueue.begin(); it_msg != m_msgQueue.end(); ++it_msg )

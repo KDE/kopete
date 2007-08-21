@@ -109,7 +109,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const QStringList & /* args */ )
 	: Protocol(IRCProtocolFactory::componentData(), parent)
 //	, m_StatusUnknown(OnlineStatus::Unknown, 999, this, 999, "status_unknown", i18n("Status not available"))
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 
 	s_protocol = this;
 
@@ -360,7 +360,7 @@ OnlineStatus IRCProtocol::onlineStatusFor(const KIrc::Entity::Ptr &entity, unsig
 	OnlineStatus ret = m_statusMap[status];
 	if (ret.status() == OnlineStatus::Unknown)
 	{
-		kDebug(14120) << k_funcinfo << "New online status.";
+		kDebug(14120) << "New online status.";
 
 		OnlineStatus::StatusType statusType;
 		unsigned weight = 0;
@@ -480,7 +480,7 @@ Account *IRCProtocol::createNewAccount(const QString &accountId)
 Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/*addressBookData*/)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 
 	QString contactId = serializedData[ "contactId" ];
 	QString displayName = serializedData[ "displayName" ];
@@ -498,11 +498,11 @@ Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QS
 			return a->contacts()[contactId];
 		}
 		else
-			kDebug(14120) << k_funcinfo << serializedData[ "accountId" ] << " was a contact's account,"
+			kDebug(14120) << serializedData[ "accountId" ] << " was a contact's account,"
 				" but we don't have it in the accounts list" << endl; */
 	}
 	else
-		kDebug(14120) << k_funcinfo << "No accounts loaded!";
+		kDebug(14120) << "No accounts loaded!";
 
 	return 0;
 }

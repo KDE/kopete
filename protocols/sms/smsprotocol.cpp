@@ -40,7 +40,7 @@ SMSProtocol::SMSProtocol(QObject *parent, const QStringList &)
 	
 {
 	if (s_protocol)
-		kWarning( 14160 ) << k_funcinfo << "s_protocol already defined!";
+		kWarning( 14160 ) << "s_protocol already defined!";
 	else
 		s_protocol = this;
 

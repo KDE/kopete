@@ -43,7 +43,7 @@
 ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent)
 	: AddContactPage(parent)
 {
-	kDebug(14153) << k_funcinfo << "called";
+	kDebug(14153) << "called";
 	mAccount = owner;
 	m_searchDialog = 0L;
 
@@ -73,7 +73,7 @@ void ICQAddContactPage::showEvent(QShowEvent *e)
 
 bool ICQAddContactPage::apply(Kopete::Account* , Kopete::MetaContact *parentContact  )
 {
-	kDebug(14153) << k_funcinfo << "called; adding contact...";
+	kDebug(14153) << "called; adding contact...";
 
 	if ( addUI->icqRadioButton->isChecked() )
 	{

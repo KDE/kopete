@@ -64,6 +64,7 @@ private slots:
 	// implemented as a slot so it can be hooked to a timer
 	void slotAskPassphraseOnStartup ();
 	void slotSelectContactKey();
+	void slotExportOneKey();
 	void slotForgetCachedPass();
 	void loadSettings();
 	

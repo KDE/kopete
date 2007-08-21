@@ -192,7 +192,7 @@ void Task::setError(int code, const QString &str)
 
 void Task::done()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo;
+	kDebug(OSCAR_RAW_DEBUG) ;
 	if(d->done || d->insignificant)
 		return;
 	d->done = true;
@@ -201,7 +201,7 @@ void Task::done()
 		d->deleteme = true;
 
 	d->insignificant = true;
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "emitting finished";
+	kDebug(OSCAR_RAW_DEBUG) << "emitting finished";
 	finished();
 	d->insignificant = false;
 

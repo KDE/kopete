@@ -696,7 +696,7 @@ bool KopeteWindow::queryExit()
 		|| !Kopete::BehaviorSettings::self()->showSystemTray() /* also close if our tray icon is hidden! */
 		|| isHidden() )
 	{
-		kDebug( 14000 ) << k_funcinfo << " shutting down plugin manager";
+		kDebug( 14000 ) << " shutting down plugin manager";
 		Kopete::PluginManager::self()->shutdown();
 		return true;
 	}
@@ -719,11 +719,11 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 			e->accept();
 		}
 		// END of code borrowed from KMainWindow::closeEvent
-		kDebug( 14000 ) << k_funcinfo << "just closing because we have a system tray icon";
+		kDebug( 14000 ) << "just closing because we have a system tray icon";
 	}
 	else
 	{
-		kDebug( 14000 ) << k_funcinfo << "delegating to KXmlGuiWindow::closeEvent()";
+		kDebug( 14000 ) << "delegating to KXmlGuiWindow::closeEvent()";
 		KXmlGuiWindow::closeEvent( e );
 	}
 }
@@ -769,7 +769,7 @@ void KopeteWindow::slotIdentityRegistered( Kopete::Identity *identity )
 
 void KopeteWindow::slotIdentityUnregistered( const Kopete::Identity *identity)
 {
-	kDebug(14000) << k_funcinfo;
+	kDebug(14000) ;
 	
 	KopeteIdentityStatusBarIcon *sbIcon = d->identityStatusBarIcons[identity];
 
@@ -791,7 +791,7 @@ void KopeteWindow::slotIdentityStatusIconChanged()
 
 void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 {
-	kDebug( 14000 ) << k_funcinfo << identity->property( Kopete::Global::Properties::self()->statusMessage() ).value();
+	kDebug( 14000 ) << identity->property( Kopete::Global::Properties::self()->statusMessage() ).value();
 	// update the global status label if the change doesn't
 //	QString newAwayMessage = contact->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
 	Kopete::OnlineStatus status = identity->onlineStatus();
@@ -801,7 +801,7 @@ void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 // 		if ( newAwayMessage != globalMessage )
 // 			m_globalStatusMessage->setText( ""i18n("status message to show when different accounts have different status messages", "(multiple)" );
 // 	}
-//	kDebug(14000) << k_funcinfo << "Icons: '" <<
+//	kDebug(14000) << "Icons: '" <<
 //		status.overlayIcons() << "'" << endl;
 
 	if ( status != Kopete::OnlineStatus::Connecting )
@@ -1083,7 +1083,7 @@ void KopeteWindow::slotAddContactDialogInternal( const QString & accountIdentifi
 void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 {
 	if ( !account ) {
-		kDebug( 14000 ) << k_funcinfo << "no account given";
+		kDebug( 14000 ) << "no account given";
 		return;
 	}
 
@@ -1118,7 +1118,7 @@ void KopeteWindow::showAddContactDialog( Kopete::Account * account )
 
 	if (!addContactPage)
 	{
-		kDebug(14000) << k_funcinfo <<
+		kDebug(14000) <<
 			"Error while creating addcontactpage" << endl;
 	}
 	else

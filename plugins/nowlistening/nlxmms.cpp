@@ -62,10 +62,10 @@ void NLXmms::update()
 		}
 		else
 			m_newTrack = false;
-		kDebug( 14307 ) << k_funcinfo << " - found xmms - " << m_track;
+		kDebug( 14307 ) << " - found xmms - " << m_track;
 	}
 	else
-		kDebug( 14307 ) << k_funcinfo << " - xmms not found";
+		kDebug( 14307 ) << " - xmms not found";
 }
 
 #endif 

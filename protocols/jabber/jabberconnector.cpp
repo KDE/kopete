@@ -25,7 +25,7 @@
 JabberConnector::JabberConnector ( QObject *parent )
  : XMPP::Connector ( parent )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New Jabber connector.";
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "New Jabber connector.";
 
 	mErrorCode = KNetwork::KSocketBase::NoError;
 
@@ -45,7 +45,7 @@ JabberConnector::~JabberConnector ()
 
 void JabberConnector::connectToServer ( const QString &server )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Initiating connection to " << server;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Initiating connection to " << server;
 
 	/*
 	 * FIXME: we should use a SRV lookup to determine the
@@ -67,7 +67,7 @@ void JabberConnector::connectToServer ( const QString &server )
 
 void JabberConnector::slotConnected ()
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "We are connected.";
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "We are connected.";
 
 	// FIXME: setPeerAddress() is something different, find out correct usage later
 	//KInetSocketAddress inetAddress = mStreamSocket->address().asInet().makeIPv6 ();
@@ -79,7 +79,7 @@ void JabberConnector::slotConnected ()
 
 void JabberConnector::slotError ( int code )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Error detected: " << code;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Error detected: " << code;
 
 	mErrorCode = code;
 	emit error ();
@@ -109,7 +109,7 @@ void JabberConnector::done ()
 
 void JabberConnector::setOptHostPort ( const QString &host, quint16 port )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Manually specifying host " << host << " and port " << port;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Manually specifying host " << host << " and port " << port;
 
 	mHost = host;
 	mPort = port;
@@ -118,7 +118,7 @@ void JabberConnector::setOptHostPort ( const QString &host, quint16 port )
 
 void JabberConnector::setOptSSL ( bool ssl )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting SSL to " << ssl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Setting SSL to " << ssl;
 
 	setUseSSL ( ssl );
 

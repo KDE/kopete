@@ -52,7 +52,7 @@ TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::
 
 TelepathyChatSession::~TelepathyChatSession()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo;
+	kDebug(TELEPATHY_DEBUG_AREA) ;
 
 	// End text channel session
 	d->textChannel->close();
@@ -87,7 +87,7 @@ void TelepathyChatSession::setTextChannel(QtTapioca::TextChannel *textChannel)
 
 void TelepathyChatSession::telepathyMessageReceived(const QtTapioca::TextChannel::Message &message)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo;
+	kDebug(TELEPATHY_DEBUG_AREA) ;
 
 	// Create a new Kopete::Message
 	Kopete::Message::MessageType messageType = Kopete::Message::TypeNormal;
@@ -107,7 +107,7 @@ void TelepathyChatSession::telepathyMessageReceived(const QtTapioca::TextChannel
 
 void TelepathyChatSession::telepathyMessageSent(const QtTapioca::TextChannel::Message &message)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Message contents: " << message.contents();
+	kDebug(TELEPATHY_DEBUG_AREA) << "Message contents: " << message.contents();
 
 	Kopete::Message::MessageType messageType = Kopete::Message::TypeNormal;
 	
@@ -128,7 +128,7 @@ void TelepathyChatSession::telepathyMessageSent(const QtTapioca::TextChannel::Me
 
 void TelepathyChatSession::telepathyMessageDeliveryError(const QtTapioca::TextChannel::Message &message, QtTapioca::TextChannel::Message::DeliveryError error)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo;
+	kDebug(TELEPATHY_DEBUG_AREA) ;
 	QString internalErrorMessage, errorMessageText;
 	switch(error)
 	{
@@ -164,7 +164,7 @@ void TelepathyChatSession::telepathyMessageDeliveryError(const QtTapioca::TextCh
 
 void TelepathyChatSession::sendMessage(Kopete::Message &message)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Sending: " << message.plainBody();
+	kDebug(TELEPATHY_DEBUG_AREA) << "Sending: " << message.plainBody();
 
 	// TODO: Support other type of message (when QtTapioca will support it)
 	QtTapioca::TextChannel::Message messageSend( message.plainBody() );

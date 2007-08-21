@@ -105,7 +105,7 @@ PluginManager::PluginManager() : QObject( qApp ), d( new Private )
 PluginManager::~PluginManager()
 {
 	if ( d->shutdownMode != Private::DoneShutdown )
-		kWarning( 14010 ) << k_funcinfo << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kBacktrace();
+		kWarning( 14010 ) << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kBacktrace();
 
 	// Quick cleanup of the remaining plugins, hope it helps
 	// Note that deleting it.value() causes slotPluginDestroyed to be called, which
@@ -113,7 +113,7 @@ PluginManager::~PluginManager()
 	while ( !d->loadedPlugins.empty() )
 	{
 		Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin();
-		kWarning( 14010 ) << k_funcinfo << "Deleting stale plugin '" << it.value()->objectName() << "'";
+		kWarning( 14010 ) << "Deleting stale plugin '" << it.value()->objectName() << "'";
 		delete it.value();
 	}
 
@@ -166,7 +166,7 @@ void PluginManager::shutdown()
 {
 	if(d->shutdownMode != Private::Running)
 	{
-		kDebug( 14010 ) << k_funcinfo << "called when not running.  / state = " << d->shutdownMode;
+		kDebug( 14010 ) << "called when not running.  / state = " << d->shutdownMode;
 		return;
 	}
 
@@ -203,7 +203,7 @@ void PluginManager::shutdown()
 	// certainly fire due to valgrind's much slower processing
 #if defined(HAVE_VALGRIND_H) && !defined(NDEBUG) && defined(__i386__)
 	if ( RUNNING_ON_VALGRIND )
-		kDebug(14010) << k_funcinfo << "Running under valgrind, disabling plugin unload timeout guard";
+		kDebug(14010) << "Running under valgrind, disabling plugin unload timeout guard";
 	else
 #endif
 		QTimer::singleShot( 3000, this, SLOT( slotShutdownTimeout() ) );
@@ -219,10 +219,10 @@ void PluginManager::slotPluginReadyForUnload()
 	Plugin *plugin = dynamic_cast<Plugin *>( const_cast<QObject *>( sender() ) );
 	if ( !plugin )
 	{
-		kWarning( 14010 ) << k_funcinfo << "Calling object is not a plugin!";
+		kWarning( 14010 ) << "Calling object is not a plugin!";
 		return;
 	}
-	kDebug( 14010 ) << k_funcinfo << plugin->pluginId() << "ready for unload";
+	kDebug( 14010 ) << plugin->pluginId() << "ready for unload";
 
 	plugin->deleteLater();
 }
@@ -239,7 +239,7 @@ void PluginManager::slotShutdownTimeout()
 	for ( Private::InfoToPluginMap::ConstIterator it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
 		remaining.append( it.value()->pluginId() );
 
-	kWarning( 14010 ) << k_funcinfo << "Some plugins didn't shutdown in time!" << endl
+	kWarning( 14010 ) << "Some plugins didn't shutdown in time!" << endl
 		<< "Remaining plugins: " << remaining.join( QLatin1String( ", " ) ) << endl
 		<< "Forcing Kopete shutdown now." << endl;
 
@@ -248,7 +248,7 @@ void PluginManager::slotShutdownTimeout()
 
 void PluginManager::slotShutdownDone()
 {
-	kDebug( 14010 ) << k_funcinfo;
+	kDebug( 14010 ) ;
 
 	d->shutdownMode = Private::DoneShutdown;
 
@@ -270,7 +270,7 @@ void PluginManager::loadAllPlugins()
 			if ( key.endsWith( QLatin1String( "Enabled" ) ) )
 			{
 				key.resize( key.length() - 7 );
-				//kDebug(14010) << k_funcinfo << "Set " << key << " to " << it.value();
+				//kDebug(14010) << "Set " << key << " to " << it.value();
 
 				if ( it.value() == QLatin1String( "true" ) )
 				{
@@ -353,12 +353,12 @@ Plugin * PluginManager::loadPlugin( const QString &_pluginId, PluginLoadMode mod
 
 Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 {
-	//kDebug( 14010 ) << k_funcinfo << pluginId;
+	//kDebug( 14010 ) << pluginId;
 
 	KPluginInfo info = infoForPluginId( pluginId );
 	if ( !info.isValid() )
 	{
-		kWarning( 14010 ) << k_funcinfo << "Unable to find a plugin named '" << pluginId << "'!";
+		kWarning( 14010 ) << "Unable to find a plugin named '" << pluginId << "'!";
 		return 0L;
 	}
 
@@ -377,7 +377,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 		connect( plugin, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotPluginDestroyed( QObject * ) ) );
 		connect( plugin, SIGNAL( readyForUnload() ), this, SLOT( slotPluginReadyForUnload() ) );
 
-		kDebug( 14010 ) << k_funcinfo << "Successfully loaded plugin '" << pluginId << "'";
+		kDebug( 14010 ) << "Successfully loaded plugin '" << pluginId << "'";
 
 		emit pluginLoaded( plugin );
 	}
@@ -386,7 +386,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 		switch( error )
 		{
 		case KLibLoader::ErrNoServiceFound:
-			kDebug( 14010 ) << k_funcinfo << "No service implementing the given mimetype "
+			kDebug( 14010 ) << "No service implementing the given mimetype "
 				<< "and fullfilling the given constraint expression can be found." << endl;
 			break;
 
@@ -407,7 +407,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 			break;
 		}
 
-		kDebug( 14010 ) << k_funcinfo << "Loading plugin '" << pluginId << "' failed, KLibLoader reported error: '" << endl <<
+		kDebug( 14010 ) << "Loading plugin '" << pluginId << "' failed, KLibLoader reported error: '" << endl <<
 			KLibLoader::self()->lastErrorMessage() << "'" << endl;
 	}
 
@@ -416,7 +416,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 
 bool PluginManager::unloadPlugin( const QString &spec )
 {
-	//kDebug(14010) << k_funcinfo << spec;
+	//kDebug(14010) << spec;
 	if( Plugin *thePlugin = plugin( spec ) )
 	{
 		thePlugin->aboutToUnload();

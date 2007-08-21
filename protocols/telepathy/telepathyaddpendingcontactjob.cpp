@@ -72,7 +72,7 @@ void TelepathyAddPendingContactJob::setAuthorizeOnly(bool value)
 
 void TelepathyAddPendingContactJob::start()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo;
+	kDebug(TELEPATHY_DEBUG_AREA) ;
 
 	Q_ASSERT( !d->pendingContact.isNull() );
 
@@ -114,7 +114,7 @@ void TelepathyAddPendingContactJob::contactDialogDone()
 			}
 			else
 			{
-				kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Could not find new Telepathy contact " << contactUri;
+				kDebug(TELEPATHY_DEBUG_AREA) << "Could not find new Telepathy contact " << contactUri;
 				setError( KJob::UserDefinedError );
 			}
 		}

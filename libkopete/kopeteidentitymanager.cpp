@@ -79,7 +79,7 @@ Identity* IdentityManager::registerIdentity( Identity *identity )
 
 	if( identity->identityId().isEmpty() )
 	{
-		kDebug() << k_funcinfo << "OOps, this shouldn't happen: the identityId should not be empty" << endl;
+		kDebug() << "OOps, this shouldn't happen: the identityId should not be empty" << endl;
 		identity->deleteLater();
 		return 0L;
 	}
@@ -111,7 +111,7 @@ Identity* IdentityManager::registerIdentity( Identity *identity )
 
 void IdentityManager::unregisterIdentity( const Identity *identity )
 {
-	kDebug( 14010 ) << k_funcinfo << "Unregistering identity " << identity->identityId() << endl;
+	kDebug( 14010 ) << "Unregistering identity " << identity->identityId() << endl;
 	d->identities.removeAll( const_cast<Identity*>(identity) );
 
 	emit identityUnregistered( identity );
@@ -201,7 +201,7 @@ void IdentityManager::save()
 	KConfigGroup group = KGlobal::config()->group("IdentityManager");
 	group.writeEntry("DefaultIdentity", d->defaultIdentity);
 
-	//kDebug( 14010 ) << k_funcinfo << endl;
+	//kDebug( 14010 ) << endl;
 	foreach( Identity *identity , d->identities )
 	{
 		KConfigGroup *config = identity->configGroup();
@@ -232,7 +232,7 @@ void IdentityManager::load()
 		Identity *identity = registerIdentity( new Identity( identityId ) );
 		if ( !identity )
 		{
-			kWarning( 14010 ) << k_funcinfo <<
+			kWarning( 14010 ) <<
 								 "Failed to create identity for '" << identityId << "'" << endl;
 			continue;
 		}
@@ -247,7 +247,7 @@ void IdentityManager::slotIdentityOnlineStatusChanged(Identity *i,
 	const OnlineStatus &oldStatus, const OnlineStatus &newStatus)
 {
 	//TODO: check if we need to do something more on status changes
-	//kDebug(14010) << k_funcinfo << endl;
+	//kDebug(14010) << endl;
 	emit identityOnlineStatusChanged(i, oldStatus, newStatus);
 }
 

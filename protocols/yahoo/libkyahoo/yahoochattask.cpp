@@ -29,7 +29,7 @@
 
 YahooChatTask::YahooChatTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	m_loggedIn = false;
 }
 
@@ -88,7 +88,7 @@ void YahooChatTask::onGo()
 
 void YahooChatTask::getYahooChatCategories()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	KIO::TransferJob *transfer;
 
 	transfer = KIO::get( KUrl("http://insider.msg.yahoo.com/ycontent/?chatcat=0"), false, false );
@@ -104,7 +104,7 @@ void YahooChatTask::getYahooChatCategories()
 
 void YahooChatTask::getYahooChatRooms( const Yahoo::ChatCategory &category )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Category Id: " << category.id;
+	kDebug(YAHOO_RAW_DEBUG) << "Category Id: " << category.id;
 	KIO::TransferJob *transfer;
 
 	transfer = KIO::get( KUrl(QString("http://insider.msg.yahoo.com/ycontent/?chatroom_%1=0").arg( category.id )), false, false );
@@ -122,19 +122,19 @@ void YahooChatTask::getYahooChatRooms( const Yahoo::ChatCategory &category )
 
 void YahooChatTask::slotData( KIO::Job *job, const QByteArray& data)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	m_jobs[job].data.append( data );
 }
 
 void YahooChatTask::slotCategoriesComplete( KJob *job )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
 	if ( job->error () || transfer->isErrorPage () )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occurred while downloading the chat categories list.";
+		kDebug(YAHOO_RAW_DEBUG) << "An error occurred while downloading the chat categories list.";
 	}
 	else
 	{
@@ -148,19 +148,19 @@ void YahooChatTask::slotCategoriesComplete( KJob *job )
 
 void YahooChatTask::slotChatRoomsComplete( KJob *job )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
 	if ( job->error () || transfer->isErrorPage () )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "An error occurred while downloading the chat categories list.";
+		kDebug(YAHOO_RAW_DEBUG) << "An error occurred while downloading the chat categories list.";
 	}
 	else
 	{
 		QDomDocument doc;
 		doc.setContent( m_jobs[ transfer ].data );
-// 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << doc.toString();
+// 		kDebug(YAHOO_RAW_DEBUG) << doc.toString();
 		emit gotYahooChatRooms( m_jobs[ transfer ].category, doc );
 	}
 
@@ -169,7 +169,7 @@ void YahooChatTask::slotChatRoomsComplete( KJob *job )
 
 void YahooChatTask::joinRoom( const Yahoo::ChatRoom &room )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Joining room " << room.name << " (" << room.id << ")...";
+	kDebug(YAHOO_RAW_DEBUG) << "Joining room " << room.name << " (" << room.id << ")...";
 	if( !m_loggedIn )
 	{
 		m_pendingJoins.append( room );
@@ -189,7 +189,7 @@ void YahooChatTask::joinRoom( const Yahoo::ChatRoom &room )
 
 void YahooChatTask::sendYahooChatMessage( const QString &msg, const QString &handle )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	if( !m_loggedIn )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "Error: trying to send, but not logged in.";
@@ -208,7 +208,7 @@ void YahooChatTask::sendYahooChatMessage( const QString &msg, const QString &han
 
 void YahooChatTask::login()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceChatOnline);
 	t->setId( client()->sessionID() );
@@ -220,7 +220,7 @@ void YahooChatTask::login()
 
 void YahooChatTask::logout()
 {	
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceChatLogout);
 	t->setId( client()->sessionID() );
@@ -291,7 +291,7 @@ void YahooChatTask::parseJoin( YMSGTransfer *t )
 
 void YahooChatTask::parseChatMessage( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString handle;
 	QString msg;
@@ -308,7 +308,7 @@ void YahooChatTask::parseChatMessage( YMSGTransfer *t )
 
 void YahooChatTask::parseChatExit( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString handle;
 	QString nick;
@@ -323,7 +323,7 @@ void YahooChatTask::parseChatExit( YMSGTransfer *t )
 
 void YahooChatTask::parseLogout( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString nick = t->firstParam( 1 );
 	if( nick == client()->userId() )

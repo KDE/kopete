@@ -51,14 +51,14 @@ YahooInviteListImpl::~YahooInviteListImpl()
 
 void YahooInviteListImpl::setRoom( const QString &room )
 {
-	kDebug(14180) << k_funcinfo << "Setting roomname to: " << room;
+	kDebug(14180) << "Setting roomname to: " << room;
 
 	m_room = room;
 }
 
 void YahooInviteListImpl::fillFriendList( const QStringList &buddies )
 {	
-	kDebug(14180) << k_funcinfo << "Adding friends: " << buddies;
+	kDebug(14180) << "Adding friends: " << buddies;
 
 	m_buddyList = buddies;
 	updateListBoxes();
@@ -66,7 +66,7 @@ void YahooInviteListImpl::fillFriendList( const QStringList &buddies )
 
 void YahooInviteListImpl::updateListBoxes()
 {
-	kDebug(14180) << k_funcinfo;
+	kDebug(14180) ;
 
 	m_inviteWidget->listFriends->clear();
 	m_inviteWidget->listInvited->clear();
@@ -78,7 +78,7 @@ void YahooInviteListImpl::updateListBoxes()
 
 void YahooInviteListImpl::addInvitees( const QStringList &invitees )
 {
-	kDebug(14180) << k_funcinfo << "Adding invitees: " << invitees;
+	kDebug(14180) << "Adding invitees: " << invitees;
 
 	for( QStringList::const_iterator it = invitees.begin(); it != invitees.end(); it++ )
 	{
@@ -93,7 +93,7 @@ void YahooInviteListImpl::addInvitees( const QStringList &invitees )
 
 void YahooInviteListImpl::removeInvitees( const QStringList &invitees )
 {
-	kDebug(14180) << k_funcinfo << "Removing invitees: " << invitees;
+	kDebug(14180) << "Removing invitees: " << invitees;
 
 	for( QStringList::const_iterator it = invitees.begin(); it != invitees.end(); it++ )
 	{
@@ -113,7 +113,7 @@ void YahooInviteListImpl::addParticipant( const QString &p )
 
 void YahooInviteListImpl::slotInvite()
 {
-	kDebug(14180) << k_funcinfo;
+	kDebug(14180) ;
 
 	if( m_inviteeList.count() )
 		emit readyToInvite( m_room, m_inviteeList,m_participants, m_inviteWidget->editMessage->text() );
@@ -123,7 +123,7 @@ void YahooInviteListImpl::slotInvite()
 
 void YahooInviteListImpl::slotCancel()
 {
-	kDebug(14180) << k_funcinfo;
+	kDebug(14180) ;
 
 	reject();
 }
@@ -131,7 +131,7 @@ void YahooInviteListImpl::slotCancel()
 
 void YahooInviteListImpl::slotAddCustom()
 {
-	kDebug(14180) << k_funcinfo;
+	kDebug(14180) ;
 
 	QString userId;
 	userId = m_inviteWidget->editBuddyAdd->text();
@@ -145,7 +145,7 @@ void YahooInviteListImpl::slotAddCustom()
 
 void YahooInviteListImpl::slotRemove()
 {
-	kDebug(14180) << k_funcinfo;
+	kDebug(14180) ;
 
 	QStringList buddies;
 	QList<QListWidgetItem *> items = m_inviteWidget->listInvited->selectedItems();
@@ -159,7 +159,7 @@ void YahooInviteListImpl::slotRemove()
 
 void YahooInviteListImpl::slotAdd()
 {
-	kDebug(14180) << k_funcinfo;
+	kDebug(14180) ;
 
 	QStringList buddies;
 	QList<QListWidgetItem *> items = m_inviteWidget->listFriends->selectedItems();

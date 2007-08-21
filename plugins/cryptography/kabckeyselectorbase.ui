@@ -1,13 +1,13 @@
 <ui version="4.0" >
  <author>Charles Connell</author>
- <class>KabcKeySelectorBase</class>
- <widget class="QWidget" name="KabcKeySelectorBase" >
+ <class>KabcKeySelectorUI</class>
+ <widget class="QWidget" name="KabcKeySelectorUI" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -25,15 +25,21 @@
     </widget>
    </item>
    <item>
-    <widget class="QListWidget" name="keyList" >
-     <property name="currentRow" >
-      <number>-1</number>
+    <widget class="KListWidget" name="keyList" >
+     <property name="editTriggers" >
+      <set>QAbstractItemView::NoEditTriggers</set>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
- <includes/>
+ <customwidgets>
+  <customwidget>
+   <class>KListWidget</class>
+   <extends>QListWidget</extends>
+   <header>klistwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -105,7 +105,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( !isOnline() )
 		removeProperty( mProtocol->awayMessage );
 
-	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus();
+	kDebug( OSCAR_ICQ_DEBUG ) << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
 
 	refreshStatus( details, presence );
@@ -242,7 +242,7 @@ void ICQContact::loggedIn()
 	{
 		m_requestingNickname = true;
 		int time = ( KRandom::random() % 20 ) * 1000;
-		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname and status description in " << time/1000 << " seconds";
+		kDebug(OSCAR_ICQ_DEBUG) << "updating nickname and status description in " << time/1000 << " seconds";
 		QTimer::singleShot( time, this, SLOT( requestMediumTlvInfo() ) );
 	}
 	else if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() ) && nickName() == contactId() )
@@ -251,7 +251,7 @@ void ICQContact::loggedIn()
 	{
 		m_requestingNickname = true;
 		int time = ( KRandom::random() % 20 ) * 1000;
-		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds";
+		kDebug(OSCAR_ICQ_DEBUG) << "updating nickname in " << time/1000 << " seconds";
 		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
 	}
 
@@ -267,7 +267,7 @@ void ICQContact::slotRequestAuth()
 
 void ICQContact::slotSendAuth()
 {
-	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Sending auth reply";
+	kDebug(OSCAR_ICQ_DEBUG) << "Sending auth reply";
 	ICQAuthReplyDialog replyDialog( 0, false );
 
 	replyDialog.setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
@@ -280,7 +280,7 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo;
+	kDebug(OSCAR_ICQ_DEBUG) ;
 	QString message;
 	if( granted )
 	{
@@ -334,7 +334,7 @@ void ICQContact::receivedLongInfo( const QString& contact )
 
 	QTextCodec* codec = contactCodec();
 
-	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "received long info from engine";
+	kDebug(OSCAR_ICQ_DEBUG) << "received long info from engine";
 
 	ICQGeneralUserInfo genInfo = mAccount->engine()->getGeneralInfo( contact );
 	if ( m_ssiItem.alias().isEmpty() && !genInfo.nickName.get().isEmpty() )
@@ -393,7 +393,7 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 	// update mInfo and general stuff from OscarContact
 	slotParseUserInfo(u);
 
-	/*kDebug(14190) << k_funcinfo << "Called for '"
+	/*kDebug(14190) << "Called for '"
 		<< displayName() << "', contactName()=" << contactName() << endl;*/
 	QStringList capList;
 	// Append client name and version in case we found one
@@ -607,7 +607,7 @@ void ICQContact::slotInvisibleTo()
 
 void ICQContact::slotReadAwayMessage()
 {
-	kDebug(14153) << k_funcinfo << "account='" << account()->accountId() <<
+	kDebug(14153) << "account='" << account()->accountId() <<
 		"', contact='" << displayName() << "'" << endl;
 
 	if (!awayMessageDialog)
@@ -634,14 +634,14 @@ void ICQContact::slotCloseAwayMessageDialog()
 
 const QString ICQContact::awayMessage()
 {
-	kDebug(14150) << k_funcinfo <<  property(mProtocol->awayMessage).value().toString();
+	kDebug(14150) <<  property(mProtocol->awayMessage).value().toString();
 	return property(mProtocol->awayMessage).value().toString();
 }
 
 
 void ICQContact::setAwayMessage(const QString &message)
 {
-	/*kDebug(14150) << k_funcinfo <<
+	/*kDebug(14150) <<
 		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
 	setProperty(mProtocol->awayMessage, message);
 	emit awayMessageChanged();
@@ -688,7 +688,7 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 
 	if(contactName() == displayName() && !generalInfo.nickName.isEmpty())
 	{
-		kDebug(14153) << k_funcinfo << "setting new displayname for former UIN-only Contact";
+		kDebug(14153) << "setting new displayname for former UIN-only Contact";
 		setDisplayName(generalInfo.nickName);
 	}
 
@@ -699,7 +699,7 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 void ICQContact::slotSnacFailed(WORD snacID)
 {
 	if (userinfoRequestSequence != 0)
-		kDebug(14153) << k_funcinfo << "snacID = " << snacID << " seq = " << userinfoRequestSequence;
+		kDebug(14153) << "snacID = " << snacID << " seq = " << userinfoRequestSequence;
 
 	//TODO: ugly interaction between snacID and request sequence, see OscarSocket::sendCLI_TOICQSRV
 	if (snacID == (0x0000 << 16) | userinfoRequestSequence)
@@ -711,14 +711,14 @@ void ICQContact::slotSnacFailed(WORD snacID)
 
 void ICQContact::slotIgnore()
 {
-	kDebug(14150) << k_funcinfo <<
+	kDebug(14150) <<
 		"Called; ignore = " << actionIgnore->isChecked() << endl;
 	setIgnore(actionIgnore->isChecked(), true);
 }
 
 void ICQContact::slotVisibleTo()
 {
-	kDebug(14150) << k_funcinfo <<
+	kDebug(14150) <<
 		"Called; visible = " << actionVisibleTo->isChecked() << endl;
 	setVisibleTo(actionVisibleTo->isChecked(), true);
 }

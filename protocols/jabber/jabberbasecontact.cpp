@@ -91,7 +91,7 @@ bool JabberBaseContact::isReachable ()
 
 void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing local copy of " << contactId() << " with information received from server.  (name='" << item.name() << "' groups='" << item.groups() << "')";
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Synchronizing local copy of " << contactId() << " with information received from server.  (name='" << item.name() << "' groups='" << item.groups() << "')";
 
 	mRosterItem = item;
 
@@ -113,7 +113,7 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		// only update the alias if its not empty
 		if ( !item.name().isEmpty () && item.name() != item.jid().bare() )
 		{
-			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "setting display name of " << contactId () << " to " << item.name();
+			kDebug ( JABBER_DEBUG_GLOBAL ) << "setting display name of " << contactId () << " to " << item.name();
 			metaContact()->setDisplayName ( item.name () );
 		}
 	}
@@ -195,13 +195,13 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	
 		foreach ( Kopete::Group *group, groupsToRemoveFrom )
 		{
-			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing " << contactId() << " from group " << group->displayName ();
+			kDebug ( JABBER_DEBUG_GLOBAL ) << "Removing " << contactId() << " from group " << group->displayName ();
 			metaContact()->removeFromGroup ( group );
 		}
 	
 		foreach ( Kopete::Group *group, groupsToAddTo )
 		{
-			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding " << contactId() << " to group " << group->displayName ();
+			kDebug ( JABBER_DEBUG_GLOBAL ) << "Adding " << contactId() << " to group " << group->displayName ();
 			metaContact()->addToGroup ( group );
 		}
 	}
@@ -292,7 +292,7 @@ void JabberBaseContact::updateResourceList ()
 
 void JabberBaseContact::reevaluateStatus ()
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Determining new status for " << contactId ();
+	kDebug (JABBER_DEBUG_GLOBAL) << "Determining new status for " << contactId ();
 
 	Kopete::OnlineStatus status;
 	XMPP::Resource resource = account()->resourcePool()->bestResource ( mRosterItem.jid () );
@@ -315,7 +315,7 @@ void JabberBaseContact::reevaluateStatus ()
 
 	updateResourceList ();
 
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description ();
+	kDebug (JABBER_DEBUG_GLOBAL) << "New status for " << contactId () << " is " << status.description ();
 	setOnlineStatus ( status );
 
 	/*
@@ -404,7 +404,7 @@ void JabberBaseContact::slotUserInfo( )
 
 void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Updating vCard for " << contactId ();
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Updating vCard for " << contactId ();
 
 	// update vCard cache timestamp if this is not a temporary contact
 	if ( metaContact() && !metaContact()->isTemporary () )
@@ -628,7 +628,7 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	// photo() is a QByteArray
 	if ( !vCard.photo().isEmpty() )
 	{
-		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact has a photo embedded into his vCard.";
+		kDebug( JABBER_DEBUG_GLOBAL ) << "Contact has a photo embedded into his vCard.";
 
 		// QImage is used to save to disk in PNG later.
 		contactPhoto = QImage::fromData( vCard.photo() );
@@ -646,7 +646,7 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		}
 
 
-		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact photo is a URI.";
+		kDebug( JABBER_DEBUG_GLOBAL ) << "Contact photo is a URI.";
 
 		contactPhoto = QImage( tempPhotoPath );
 		
@@ -664,7 +664,7 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	// Save the image to the disk, then set the property.
 	if(!entry.path.isNull())
 	{
-		kDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Setting photo for contact: " << contactId();
+		kDebug( JABBER_DEBUG_GLOBAL ) << "Setting photo for contact: " << contactId();
 		setProperty( protocol()->propPhoto, entry.path );
 	}
 

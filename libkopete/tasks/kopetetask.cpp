@@ -45,7 +45,7 @@ void Task::addSubTask(KJob *task)
 
 void Task::start()
 {
-	kDebug(14010) << k_funcinfo << "Executing children tasks for this task.";
+	kDebug(14010) << "Executing children tasks for this task.";
 	KJob *subTask = 0;
 	foreach( subTask, subjobs() )
 	{

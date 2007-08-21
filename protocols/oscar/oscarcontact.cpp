@@ -115,7 +115,7 @@ Kopete::ChatSession* OscarContact::manager( CanCreateFlags canCreate )
 {
 	if ( !mMsgManager && canCreate )
 	{
-		/*kDebug(14190) << k_funcinfo <<
+		/*kDebug(14190) <<
 			"Creating new ChatSession for contact '" << displayName() << "'" << endl;*/
 
 		QList<Kopete::Contact*> theContact;
@@ -164,7 +164,7 @@ void OscarContact::sync(unsigned int flags)
 	if ( (flags & Kopete::Contact::MovedBetweenGroup) == Kopete::Contact::MovedBetweenGroup )
 	{
 		
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups";
+		kDebug(OSCAR_GEN_DEBUG) << "Moving a contact between groups";
 		ContactManager* ssiManager = mAccount->engine()->ssiManager();
 		
 		OContact oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
@@ -196,7 +196,7 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 			else
 			{
 				int time = ( KRandom::random() % 10 ) * 1000;
-				kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "updating buddy icon in "
+				kDebug(OSCAR_GEN_DEBUG) << "updating buddy icon in "
 					<< time/1000 << " seconds" << endl;
 				QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
 			}
@@ -292,7 +292,7 @@ void OscarContact::setPresenceTarget( const Oscar::Presence &presence )
 //could be called by a KAction or our dcop code or something
 void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint fileSize )
 {
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "file: '" << sourceURL 
+	kDebug(OSCAR_GEN_DEBUG) << "file: '" << sourceURL 
 		<< "' '" << altFileName << "' size " << fileSize << endl;
 	QStringList files;
 
@@ -315,7 +315,7 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 
 void OscarContact::setAwayMessage( const QString &message )
 {
-	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo <<
+	kDebug(OSCAR_AIM_DEBUG) <<
 		"Called for '" << contactId() << "', away msg='" << message << "'" << endl;
 	
 	if ( !message.isEmpty() )
@@ -343,13 +343,13 @@ void OscarContact::changeEncodingDialogClosed( int result )
 		int mib = m_oesd->selectedEncoding();
 		if ( mib != 0 )
 		{
-			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "setting encoding mib to "
+			kDebug(OSCAR_ICQ_DEBUG) << "setting encoding mib to "
 				<< m_oesd->selectedEncoding() << endl;
 			setProperty( p->contactEncoding, m_oesd->selectedEncoding() );
 		}
 		else
 		{
-			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo
+			kDebug(OSCAR_ICQ_DEBUG) 
 				<< "setting encoding to default" << endl;
 			removeProperty( p->contactEncoding );
 		}
@@ -376,7 +376,7 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
 		return;
 	
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating icon for " << contactId();
+	kDebug(OSCAR_GEN_DEBUG) << "Updating icon for " << contactId();
 	
 	KMD5 buddyIconHash( icon );
 	if ( memcmp( buddyIconHash.rawDigest(), m_details.buddyIconHash().data(), 16 ) == 0 )
@@ -399,7 +399,7 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 	}
 	else
 	{
-		kDebug(14153) << k_funcinfo << "Buddy icon hash does not match!";
+		kDebug(14153) << "Buddy icon hash does not match!";
 		removeProperty( Kopete::Global::Properties::self()->photo() );
 	}
 }
@@ -443,7 +443,7 @@ bool OscarContact::cachedBuddyIcon( QByteArray hash )
 	
 	if ( memcmp( buddyIconHash.rawDigest(), hash.data(), 16 ) == 0 )
 	{
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating icon for "
+		kDebug(OSCAR_GEN_DEBUG) << "Updating icon for "
 			<< contactId() << " from local cache" << endl;
 		
 		setProperty( Kopete::Global::Properties::self()->photo(), iconLocation );

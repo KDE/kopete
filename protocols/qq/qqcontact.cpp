@@ -86,7 +86,7 @@ QQContact::QQContact( Kopete::Account *account, const QString &id, Kopete::MetaC
 
 QQContact::~QQContact()
 {
-	kDebug(14140) << k_funcinfo;
+	kDebug(14140) ;
 }
 
 bool QQContact::isReachable()
@@ -187,7 +187,7 @@ void QQContact::slotUserInfoDialogReversedToggled()
 
 void QQContact::deleteContact()
 {
-	kDebug( 14140 ) << k_funcinfo;
+	kDebug( 14140 ) ;
 }
 
 bool QQContact::isBlocked() const
@@ -288,7 +288,7 @@ void QQContact::setInfo(const  QString &type,const QString &data )
 		else if( data == "N" )
 			m_phone_mob = false;
 		else
-			kDebug( 14140 ) << k_funcinfo << "Unknown MOB " << data;
+			kDebug( 14140 ) << "Unknown MOB " << data;
 	}
 	else if( type == "MFN" )
 	{
@@ -296,7 +296,7 @@ void QQContact::setInfo(const  QString &type,const QString &data )
 	}
 	else
 	{
-		kDebug( 14140 ) << k_funcinfo << "Unknown info " << type << ' ' << data;
+		kDebug( 14140 ) << "Unknown info " << type << ' ' << data;
 	}
 }
 
@@ -389,7 +389,7 @@ void QQContact::contactRemovedFromGroup( const QString& groupId )
 void QQContact::rename( const QString &newName )
 {
 	Q_UNUSED(newName);
-	//kDebug( 14140 ) << k_funcinfo << "From: " << displayName() << ", to: " << newName;
+	//kDebug( 14140 ) << "From: " << displayName() << ", to: " << newName;
 
 /*	if( newName == displayName() )
 		return;*/

@@ -134,18 +134,18 @@ Kopete::Away::Away() : QObject( kapp )
 #ifdef Q_WS_X11
 	d->xIdleTime = 0;
 #endif
-	kDebug(14010) << k_funcinfo << "Idle detection methods:";
-	kDebug(14010) << k_funcinfo << "\tKScreensaverIface::isBlanked()";
+	kDebug(14010) << "Idle detection methods:";
+	kDebug(14010) << "\tKScreensaverIface::isBlanked()";
 #ifdef Q_WS_X11
-	kDebug(14010) << k_funcinfo << "\tX11 XQueryPointer()";
+	kDebug(14010) << "\tX11 XQueryPointer()";
 #endif
 	if (d->useXidle)
 	{
-		kDebug(14010) << k_funcinfo << "\tX11 Xidle extension";
+		kDebug(14010) << "\tX11 Xidle extension";
 	}
 	if (d->useMit)
 	{
-		kDebug(14010) << k_funcinfo << "\tX11 MIT Screensaver extension";
+		kDebug(14010) << "\tX11 MIT Screensaver extension";
 	}
 
 	load();
@@ -201,7 +201,7 @@ void Kopete::Away::setGlobalAwayMessage(const QString &message)
 {
 	if( !message.isEmpty() )
 	{
-		kDebug(14010) << k_funcinfo <<
+		kDebug(14010) <<
 			"Setting global away message: " << message << endl;
 		d->awayMessage = message;
 	}
@@ -211,7 +211,7 @@ void Kopete::Away::setAutoAwayMessage(const QString &message)
 {
 	if( !message.isEmpty() )
 	{
-		kDebug(14010) << k_funcinfo <<
+		kDebug(14010) <<
 			"Setting auto away message: " << message << endl;
 		d->autoAwayMessage = message;
 
@@ -433,7 +433,7 @@ bool Kopete::Away::isActivity()
 
 void Kopete::Away::setActive()
 {
-//	kDebug(14010) << k_funcinfo << "Found activity on desktop, resetting away timer";
+//	kDebug(14010) << "Found activity on desktop, resetting away timer";
 	d->idleTime.start();
 
 	if(d->autoaway)
@@ -469,7 +469,7 @@ void Kopete::Away::setAutoAway()
 	// that should be ignored.
 	d->mouse_x = -1;
 
-//	kDebug(14010) << k_funcinfo << "Going AutoAway!";
+//	kDebug(14010) << "Going AutoAway!";
 	d->autoaway = true;
 
 	// Set all accounts that are not away already to away.

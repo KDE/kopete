@@ -32,7 +32,7 @@ MSNSecureLoginHandler::MSNSecureLoginHandler(const QString &accountId, const QSt
 
 MSNSecureLoginHandler::~MSNSecureLoginHandler()
 {
-//	kDebug(14140) << k_funcinfo;
+//	kDebug(14140) ;
 }
 
 void MSNSecureLoginHandler::login()
@@ -64,7 +64,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KJob *job)
 		QString loginUrl = rx.cap(2);
 		QString loginServer = loginUrl.section('/', 0, 0);
 
-		kDebug(14140) << k_funcinfo << loginServer;
+		kDebug(14140) << loginServer;
 
 		QString authURL = "https://" + loginUrl;
 
@@ -79,7 +79,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KJob *job)
 								',' + m_authentification + "\r\n";
 
 //   warning, this debug contains the password
-//		kDebug(14140) << k_funcinfo << "Auth request: " << authRequest;
+//		kDebug(14140) << "Auth request: " << authRequest;
 
 		authJob->addMetaData("customHTTPHeader", authRequest);
 		authJob->addMetaData("SendLanguageSettings", "false");
@@ -91,7 +91,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KJob *job)
 	}
 	else
 	{
-		kDebug(14140) << k_funcinfo << loginJob->errorString();
+		kDebug(14140) << loginJob->errorString();
 
 		emit loginFailed();
 	}	
@@ -104,12 +104,12 @@ void MSNSecureLoginHandler::slotTweenerReceived(KJob *job)
 	{
 		QString httpHeaders = authJob->queryMetaData("HTTP-Headers");
 
-// 		kDebug(14140) << k_funcinfo << "HTTP headers: " << httpHeaders;
+// 		kDebug(14140) << "HTTP headers: " << httpHeaders;
 
 		// Check if we get "401 Unauthorized", thats means it's a bad password.
 		if(httpHeaders.contains(QString::fromUtf8("401 Unauthorized")))
 		{
-// 			kDebug(14140) << k_funcinfo << "MSN Login Bad password.";
+// 			kDebug(14140) << "MSN Login Bad password.";
 			emit loginBadPassword();
 		}
 		else
@@ -118,14 +118,14 @@ void MSNSecureLoginHandler::slotTweenerReceived(KJob *job)
 			rx.indexIn(httpHeaders);
 			QString ticket = rx.cap(1);
 		
-	//		kDebug(14140) << k_funcinfo << "Received ticket: " << ticket;
+	//		kDebug(14140) << "Received ticket: " << ticket;
 	
 			emit loginSuccesful(ticket);
 		}
 	}
 	else
 	{
-		kDebug(14140) << k_funcinfo << authJob->errorString();
+		kDebug(14140) << authJob->errorString();
 
 		emit loginFailed();
 	}

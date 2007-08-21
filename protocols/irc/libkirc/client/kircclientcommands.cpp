@@ -387,7 +387,7 @@ void ClientCommands::bindNumericReplies()
  */
 void ClientCommands::numericReply_001(Message msg)
 {
-	kDebug(14121) << k_funcinfo;
+	kDebug(14121) ;
 
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.

@@ -39,7 +39,7 @@ TestbedProtocol::TestbedProtocol( QObject* parent, const QStringList &/*args*/ )
 			  i18n( "Offline" ),   i18n( "O&ffline" ) )
 
 {
-	kDebug( 14210 ) << k_funcinfo;
+	kDebug( 14210 ) ;
 
 	s_protocol = this;
 }

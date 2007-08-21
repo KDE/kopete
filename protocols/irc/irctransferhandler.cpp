@@ -51,7 +51,7 @@ IRCTransferHandler::IRCTransferHandler()
 
 void IRCTransferHandler::transferCreated(KIRC::Transfer *t)
 {/*
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 
 	IRCContact *contact = IRCContactManager::existContact(t->engine(), t->nick());
 	QString fileName = t->fileName();
@@ -59,7 +59,7 @@ void IRCTransferHandler::transferCreated(KIRC::Transfer *t)
 
 	if(!contact)
 	{
-		kDebug(14120) << k_funcinfo << "Trying to create transfer for a non existing contact(" << t->nick() << ").";
+		kDebug(14120) << "Trying to create transfer for a non existing contact(" << t->nick() << ").";
 		return;
 	}
 
@@ -82,14 +82,14 @@ void IRCTransferHandler::transferCreated(KIRC::Transfer *t)
 		}
 		break;
 	default:
-		kDebug(14120) << k_funcinfo << "Unknown transfer type";
+		kDebug(14120) << "Unknown transfer type";
 		t->deleteLater();
 	}*/
 }
 
 void IRCTransferHandler::transferAccepted(Kopete::Transfer *kt, const QString &file)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 
 	KIRC::Transfer *t = getKIRCTransfer(kt->info());
 	if(t)
@@ -100,7 +100,7 @@ void IRCTransferHandler::transferAccepted(Kopete::Transfer *kt, const QString &f
 }
 void IRCTransferHandler::transferRefused(const Kopete::FileTransferInfo &info)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 
 	KIRC::Transfer *t = getKIRCTransfer(info);
 	if(t)
@@ -111,7 +111,7 @@ void IRCTransferHandler::transferRefused(const Kopete::FileTransferInfo &info)
 
 void IRCTransferHandler::connectKopeteTransfer(Kopete::Transfer *kt, KIRC::Transfer *t)
 {
-	kDebug(14120) << k_funcinfo;
+	kDebug(14120) ;
 
 	if(kt && t)
 	{
@@ -124,7 +124,7 @@ void IRCTransferHandler::connectKopeteTransfer(Kopete::Transfer *kt, KIRC::Trans
 				kt, SLOT(slotProcessed(unsigned int)));
 			break;
 		default:
-			kDebug(14120) << k_funcinfo << "Unknown transfer connections for type";
+			kDebug(14120) << "Unknown transfer connections for type";
 			t->deleteLater();
 			return;
 		}
@@ -149,7 +149,7 @@ void IRCTransferHandler::kioresult(KJob *job)
 	Kopete::Transfer *kt= (Kopete::Transfer *)job; // FIXME: move to *_cast
 	if(!kt)
 	{
-		kDebug(14120) << k_funcinfo << "Kopete::Transfer not found from kio:" << job;
+		kDebug(14120) << "Kopete::Transfer not found from kio:" << job;
 		return;
 	}
 
@@ -158,7 +158,7 @@ void IRCTransferHandler::kioresult(KJob *job)
 		case 0:	// 0 means no error
 			break;
 		case KIO::ERR_USER_CANCELED:
-			kDebug(14120) << k_funcinfo << "User canceled transfer.";
+			kDebug(14120) << "User canceled transfer.";
 			// KIO::buildErrorString form error don't provide a result string ...
 //			if (t->)
 //				kt->userAbort(i18n("User canceled transfer."));
@@ -166,7 +166,7 @@ void IRCTransferHandler::kioresult(KJob *job)
 //				kt->userAbort(i18n("User canceled transfer for file:%1").arg(t->fileName()));
 			break;
 		default:
-			kDebug(14120) << k_funcinfo << "Transfer halted:" << kt->error();
+			kDebug(14120) << "Transfer halted:" << kt->error();
 //			kt->userAbort(KIO::buildErrorString(kt->error(), kt->fileName()));
 			break;
 	}

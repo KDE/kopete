@@ -33,7 +33,7 @@ using namespace KNetwork;
 
 SendPictureTask::SendPictureTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	m_socket = 0;
 }
 
@@ -63,7 +63,7 @@ void SendPictureTask::onGo()
 
 void SendPictureTask::initiateUpload()
 {	
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	m_socket = new KBufferedSocket( "filetransfer.msg.yahoo.com", QString::number(80) );
 	connect( m_socket, SIGNAL( connected( const KNetwork::KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
 	connect( m_socket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
@@ -74,7 +74,7 @@ void SendPictureTask::initiateUpload()
 
 void SendPictureTask::connectFailed( int i)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << i << ": " << static_cast<const KBufferedSocket*>( sender() )->errorString();
+	kDebug(YAHOO_RAW_DEBUG) << i << ": " << static_cast<const KBufferedSocket*>( sender() )->errorString();
 
 	client()->notifyError(i18n("The picture was not successfully uploaded"), QString("%1 - %2").arg(i).arg(static_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
 	setError();
@@ -82,7 +82,7 @@ void SendPictureTask::connectFailed( int i)
 
 void SendPictureTask::connectSucceeded()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	YMSGTransfer t(Yahoo::ServicePictureUpload);
 
 	QFile file( m_path );
@@ -100,17 +100,17 @@ void SendPictureTask::connectSucceeded()
 
 	if ( file.open(QIODevice::ReadOnly ) )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "File successfully opened. Reading...";
+		kDebug(YAHOO_RAW_DEBUG) << "File successfully opened. Reading...";
 	}
 	else
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Error opening file: " << file.errorString();
+		kDebug(YAHOO_RAW_DEBUG) << "Error opening file: " << file.errorString();
 		client()->notifyError(i18n("Error opening file: %1", m_path), file.errorString(), Client::Error );
 		return;
 	}
 
 	paket = t.serialize();
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Sizes: File (" << m_path << "): " << file.size() << " - paket: " << paket.size();
+	kDebug(YAHOO_RAW_DEBUG) << "Sizes: File (" << m_path << "): " << file.size() << " - paket: " << paket.size();
 	QString header = QString::fromLatin1("POST /notifyft HTTP/1.1\r\n"
 			"Cookie: Y=%1; T=%2; C=%3 ;\r\n"
 			"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
@@ -122,23 +122,23 @@ void SendPictureTask::connectSucceeded()
 	stream << (qint8)0x32 << (qint8)0x39 << (qint8)0xc0 << (qint8)0x80;
 	stream.writeRawData( file.readAll(), file.size() );
 
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Buffersize: " << buffer.size();
+	kDebug(YAHOO_RAW_DEBUG) << "Buffersize: " << buffer.size();
 	if( m_socket->write( buffer, buffer.size() ) )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Successful!";
+		kDebug(YAHOO_RAW_DEBUG) << "Upload Successful!";
 		m_socket->enableRead( true );
 // 		setSuccess();
 	}
 	else
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Upload Failed!";
+		kDebug(YAHOO_RAW_DEBUG) << "Upload Failed!";
 		setError();
 	}
 }
 
 void SendPictureTask::readResult()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << m_socket->bytesAvailable();
+	kDebug(YAHOO_RAW_DEBUG) << m_socket->bytesAvailable();
 	m_socket->enableRead( false );
 	QByteArray buf;
 	buf.resize( m_socket->bytesAvailable() );
@@ -146,12 +146,12 @@ void SendPictureTask::readResult()
 
 	if( buf.indexOf( "error", 0 ) >= 0 )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Picture upload failed";
+		kDebug(YAHOO_RAW_DEBUG) << "Picture upload failed";
 		setError();
 	}
 	else
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Picture upload acknowledged.";
+		kDebug(YAHOO_RAW_DEBUG) << "Picture upload acknowledged.";
 		setSuccess();
 	}
 
@@ -159,7 +159,7 @@ void SendPictureTask::readResult()
 
 void SendPictureTask::sendChecksum()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePictureChecksum);
 	t->setId( client()->sessionID() );
@@ -175,7 +175,7 @@ void SendPictureTask::sendChecksum()
 
 void SendPictureTask::sendInformation()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePicture);
 	t->setId( client()->sessionID() );
@@ -192,7 +192,7 @@ void SendPictureTask::sendInformation()
 
 void SendPictureTask::sendStatus()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePictureStatus);
 	t->setId( client()->sessionID() );

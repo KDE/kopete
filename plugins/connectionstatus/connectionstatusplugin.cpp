@@ -31,7 +31,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_connectionstatus, ConnectionStatusPluginFacto
 ConnectionStatusPlugin::ConnectionStatusPlugin( QObject *parent, const QStringList& /* args */ )
 : Kopete::Plugin( ConnectionStatusPluginFactory::componentData(), parent )
 {
-	kDebug( 14301 ) << k_funcinfo;
+	kDebug( 14301 ) ;
 
 	m_process = 0L;
 
@@ -44,18 +44,18 @@ ConnectionStatusPlugin::ConnectionStatusPlugin( QObject *parent, const QStringLi
 
 ConnectionStatusPlugin::~ConnectionStatusPlugin()
 {
-	kDebug( 14301 ) << k_funcinfo;
+	kDebug( 14301 ) ;
 	delete m_timer;
 	delete m_process;
 }
 
 void ConnectionStatusPlugin::slotCheckStatus()
 {
-	kDebug( 14301 ) << k_funcinfo;
+	kDebug( 14301 ) ;
 
 	if ( m_process )
 	{
-		kWarning( 14301 ) << k_funcinfo << "Previous netstat process is still running!" << endl
+		kWarning( 14301 ) << "Previous netstat process is still running!" << endl
 			<< "Not starting new netstat. Perhaps your system is under heavy load?" << endl;
 
 		return;
@@ -74,7 +74,7 @@ void ConnectionStatusPlugin::slotCheckStatus()
 
 	if ( !m_process->start( K3Process::NotifyOnExit, K3Process::Stdout ) )
 	{
-		kWarning( 14301 ) << k_funcinfo << "Unable to start netstat process!";
+		kWarning( 14301 ) << "Unable to start netstat process!";
 
 		delete m_process;
 		m_process = 0L;
@@ -97,14 +97,14 @@ void ConnectionStatusPlugin::slotProcessExited( K3Process *process )
 void ConnectionStatusPlugin::slotProcessStdout( K3Process *, char *buffer, int buflen )
 {
 	// Look for a default gateway
-	//kDebug( 14301 ) << k_funcinfo;
+	//kDebug( 14301 ) ;
 	m_buffer += QString::fromLatin1( buffer, buflen );
 	//kDebug( 14301 ) << qsBuffer;
 }
 
 void ConnectionStatusPlugin::setConnectedStatus( bool connected )
 {
-	//kDebug( 14301 ) << k_funcinfo;
+	//kDebug( 14301 ) ;
 
 	// We have to handle a few cases here. First is the machine is connected, and the plugin thinks
 	// we're connected. Then we don't do anything. Next, we can have machine connected, but plugin thinks
@@ -116,18 +116,18 @@ void ConnectionStatusPlugin::setConnectedStatus( bool connected )
 	if ( connected && !m_pluginConnected )
 	{
 		// The machine is connected and plugin thinks we're disconnected
-		kDebug( 14301 ) << k_funcinfo << "Setting m_pluginConnected to true";
+		kDebug( 14301 ) << "Setting m_pluginConnected to true";
 		m_pluginConnected = true;
 		Kopete::AccountManager::self()->connectAll();
-		kDebug( 14301 ) << k_funcinfo << "We're connected";
+		kDebug( 14301 ) << "We're connected";
 	}
 	else if ( !connected && m_pluginConnected )
 	{
 		// The machine isn't connected and plugin thinks we're connected
-		kDebug( 14301 ) << k_funcinfo << "Setting m_pluginConnected to false";
+		kDebug( 14301 ) << "Setting m_pluginConnected to false";
 		m_pluginConnected = false;
 		Kopete::AccountManager::self()->disconnectAll();
-		kDebug( 14301 ) << k_funcinfo << "We're offline";
+		kDebug( 14301 ) << "We're offline";
 	}
 }
 

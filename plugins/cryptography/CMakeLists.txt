@@ -12,9 +12,10 @@ set(kopete_cryptography_PART_SRCS
    gpginterface.cpp 
    cryptographyguiclient.cpp 
    cryptographyselectuserkey.cpp 
-   cryptographyconfig.cpp )
+   cryptographyconfig.cpp 
+   exportkeys.cpp )
 
-kde4_add_ui_files(kopete_cryptography_PART_SRCS kabckeyselectorbase.ui)
+kde4_add_ui_files(kopete_cryptography_PART_SRCS kabckeyselectorbase.ui exportkeysbase.ui )
 
 kde4_add_plugin(kopete_cryptography ${kopete_cryptography_PART_SRCS})
 

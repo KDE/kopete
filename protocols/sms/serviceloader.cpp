@@ -30,7 +30,7 @@
 
 SMSService* ServiceLoader::loadService(const QString& name, Kopete::Account* account)
 {
-	kWarning( 14160 ) << k_funcinfo;
+	kWarning( 14160 ) ;
 
 	SMSService* s;
 	if (name == "SMSSend")

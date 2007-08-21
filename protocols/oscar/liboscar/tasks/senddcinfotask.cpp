@@ -41,7 +41,7 @@ void SendDCInfoTask::onGo()
 	SNAC s = { 0x0001, 0x001E, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 	
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending DC Info";
+	kDebug(OSCAR_RAW_DEBUG) << "Sending DC Info";
 
 	/** \TODO Support something more than online in the status flags
 	 *  \TODO Support something more than DC Disabled in the status flags
@@ -59,12 +59,12 @@ void SendDCInfoTask::onGo()
 	Oscar::DWORD statusFlag = 0x01000000;
 	if ( client()->settings()->webAware() )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting web aware on";
+		kDebug(OSCAR_RAW_DEBUG) << "setting web aware on";
 		statusFlag |= 0x00010000;
 	}
 	if ( client()->settings()->hideIP() )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting hide ip on";
+		kDebug(OSCAR_RAW_DEBUG) << "setting hide ip on";
 		statusFlag |= 0x10000000;  // Direct connection upon authorization, hides IP
 	}
 	Buffer tlv06;

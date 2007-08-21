@@ -51,7 +51,7 @@ void MSNP2POutgoing::parseMessage(MessageStruct &msgStr)
 	MSNP2P::parseMessage(msgStr);
 
 	QString dataMessage=QByteArray((msgStr.message.data()+48) , msgStr.dataMessageSize);
-	kDebug(14141) << k_funcinfo <<" dataMessage: "  << dataMessage;
+	kDebug(14141) <<" dataMessage: "  << dataMessage;
 
 	if (dataMessage.contains("BYE"))
 	{
@@ -76,7 +76,7 @@ void MSNP2POutgoing::parseMessage(MessageStruct &msgStr)
 			m_footer='\2';
 			m_totalDataSize=m_Sfile->size();
 			m_offset=0;
-			kDebug(14140) << k_funcinfo <<" ok "  << m_Sfile->size();
+			kDebug(14140) <<" ok "  << m_Sfile->size();
 			slotSendData();
 			//start to send
 			
@@ -89,7 +89,7 @@ void MSNP2POutgoing::parseMessage(MessageStruct &msgStr)
 
 void MSNP2POutgoing::slotSendData()
 {
-	kDebug(14140) << k_funcinfo;
+	kDebug(14140) ;
 	char ptr[1200];
 	char *data;
 	int bytesRead =0;

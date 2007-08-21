@@ -138,7 +138,7 @@ void IRCUserContact::sendFile(const KUrl &sourceURL, const QString&, unsigned in
 	else
 		filePath = sourceURL.path(-1);
 
-	kDebug(14120) << k_funcinfo << "File chosen to send:" << filePath;
+	kDebug(14120) << "File chosen to send:" << filePath;
 
 	if (!filePath.isEmpty())
 		kircEngine()->CtcpRequest_dcc( m_nickName, filePath, 0, KIRC::Transfer::FileOutgoing);
@@ -496,7 +496,7 @@ void IRCUserContact::slotIncomingModeChange( const QString &channel, const QStri
 	if( chan->locateUser( m_nickName ) )
 	{
 		QString user = mode.section(' ', 1, 1);
-		kDebug(14120) << k_funcinfo << mode << ", " << user << ", " << m_nickName;
+		kDebug(14120) << mode << ", " << user << ", " << m_nickName;
 		if( user == m_nickName )
 		{
 			QString modeChange = mode.section(' ', 0, 0);

@@ -22,11 +22,11 @@
 #include <QTextStream>
 
 // KDE Includes
-#include <kdebug.h>
-#include <kmessagebox.h>
-#include <klocale.h>
-#include <kdirlister.h>
-#include <ktoolinvocation.h>
+#include <KDebug>
+#include <KMessageBox>
+#include <KLocale>
+#include <KDirLister>
+#include <KToolInvocation>
 
 // Kopete Includes
 #include "kopeteuiglobal.h"
@@ -53,7 +53,7 @@ void WinPopupLib::slotStartDirLister()
 	if (checkMessageDir()) {
 		dirLister = new KDirLister();
 		dirLister->setAutoUpdate(true);
-		connect(dirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotNewMessages(const KFileItemList &)));
+		connect(dirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotReadMessages(const KFileItemList &)));
 		connect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
 		dirLister->openUrl(KUrl(WP_POPUP_DIR));
 	}
@@ -62,11 +62,11 @@ void WinPopupLib::slotStartDirLister()
 /**
  * return the group list
  */
-const QStringList WinPopupLib::getGroups()
+QStringList WinPopupLib::getGroups() const
 {
 	QStringList ret;
-	QMap<QString, WorkGroup>::ConstIterator end = theGroups.end();
-	for (QMap<QString, WorkGroup>::ConstIterator i = theGroups.begin(); i != end; i++)
+	QMap<QString, WorkGroup>::const_iterator i;
+	for (i = theGroups.constBegin(); i != theGroups.constEnd(); ++i)
 		ret += i.key();
 
 	return ret;
@@ -75,7 +75,7 @@ const QStringList WinPopupLib::getGroups()
 /**
  * return the host list
  */
-const QStringList WinPopupLib::getHosts(const QString &Group)
+QStringList WinPopupLib::getHosts(const QString &Group) const
 {
 	return theGroups[Group].Hosts();
 }
@@ -83,13 +83,14 @@ const QStringList WinPopupLib::getHosts(const QString &Group)
 /**
  * return if a host is in the host list
  */
-bool WinPopupLib::checkHost(const QString &Name)
+bool WinPopupLib::checkHost(const QString &Name) const
 {
 	bool ret = false;
 
-	QMap<QString, WorkGroup>::Iterator end = theGroups.end();
-	for (QMap<QString, WorkGroup>::Iterator i = theGroups.begin(); i != end && !ret; i++) {
-		if ((*i).Hosts().contains(Name.toUpper())) {
+	QMap<QString, WorkGroup>::const_iterator i;
+	for (i = theGroups.constBegin(); i != theGroups.constEnd(); ++i) {
+		WorkGroup tmpGroup = i.value();
+		if (tmpGroup.Hosts().contains(Name.toUpper())) {
 			ret = true;
 			break;
 		}
@@ -164,71 +165,76 @@ void WinPopupLib::startReadProcess(const QString &Host)
 	QStringList args;
 	args << "-N" << "-g" << "-L" << Host << "-";
 
-	connect(readGroupsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotReadProcessExited(int,  QProcess::ExitStatus)));
+	connect(readGroupsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotReadProcessExited(int, QProcess::ExitStatus)));
 
 	readGroupsProcess->setProcessChannelMode(QProcess::MergedChannels);
 	readGroupsProcess->start(smbClientBin, args);
 }
 
-void WinPopupLib::slotReadProcessExited(int i,  QProcess::ExitStatus status)
+void WinPopupLib::slotReadProcessExited(int, QProcess::ExitStatus status)
 {
-	QByteArray outputData = readGroupsProcess->readAll();
-	if (!outputData.isEmpty()) {
-		QString outputString = QString::fromUtf8(outputData.data());
-		QStringList outputList = outputString.split('\n');
-		QRegExp group("Workgroup\\|(.[^\\|]+)\\|(.+)"), host("Server\\|(.[^\\|]+)\\|(.+)"),
-				info("Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]"),
-				error("Connection.*failed");
-		foreach (QString line, outputList) {
-			if (info.indexIn(line) != -1) currentGroup = info.cap(1);
-			if (host.indexIn(line) != -1) currentHosts += host.cap(1);
-			if (group.indexIn(line) != -1) currentGroups[group.cap(1)] = group.cap(2);
-		}
-	}
-
-	delete readGroupsProcess;
-	readGroupsProcess = 0;
-
-	// Drop the first cycle - it's only the initial search host,
-	// the next round are the real masters. GF
-
-	if (passedInitialHost) {
-
-		// move currentHost from todo to done
+	if (status == QProcess::CrashExit) {
 		todo.removeAll(currentHost);
 		done += currentHost;
-
-		if (!currentGroups.isEmpty()) {
-			QMap<QString, WorkGroup> newGroups;
-			//loop through the read groups and check for new ones
-			QMap<QString, QString>::ConstIterator end = currentGroups.end();
-			for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
-				QString groupMaster = i.value();
-				if (!done.contains(groupMaster)) todo += groupMaster;
-			}
-		}
-
-		if (!currentGroup.isEmpty() && !currentHosts.isEmpty()) {
-			// create a workgroup object and put the hosts in
-			WorkGroup nWG;
-			nWG.addHosts(currentHosts);
-
-			currentGroupsMap.remove(currentGroup);
-			currentGroupsMap.insert(currentGroup, nWG);
-		}
-
 	} else {
-		passedInitialHost = true;
-		if (!currentGroups.isEmpty()) {
-			foreach (QString groupMaster, currentGroups) {
-				todo += groupMaster;
+		QByteArray outputData = readGroupsProcess->readAll();
+		if (!outputData.isEmpty()) {
+			QString outputString = QString::fromUtf8(outputData.data());
+			QStringList outputList = outputString.split('\n');
+			QRegExp group("Workgroup\\|(.[^\\|]+)\\|(.+)"), host("Server\\|(.[^\\|]+)\\|(.+)"),
+					info("Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]"),
+					error("Connection.*failed");
+			foreach (QString line, outputList) {
+				if (info.indexIn(line) != -1) currentGroup = info.cap(1);
+				if (host.indexIn(line) != -1) currentHosts += host.cap(1);
+				if (group.indexIn(line) != -1) currentGroups[group.cap(1)] = group.cap(2);
 			}
+		}
+
+		delete readGroupsProcess;
+		readGroupsProcess = 0;
+
+		// Drop the first cycle - it's only the initial search host,
+		// the next round are the real masters. GF
+
+		if (passedInitialHost) {
+
+			// move currentHost from todo to done
+			todo.removeAll(currentHost);
+			done += currentHost;
+
+			if (!currentGroups.isEmpty()) {
+				QMap<QString, WorkGroup> newGroups;
+				//loop through the read groups and check for new ones
+				QMap<QString, QString>::ConstIterator end = currentGroups.end();
+				for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
+					QString groupMaster = i.value();
+					if (!done.contains(groupMaster)) todo += groupMaster;
+				}
+			}
+
+			if (!currentGroup.isEmpty() && !currentHosts.isEmpty()) {
+				// create a workgroup object and put the hosts in
+				WorkGroup nWG;
+				nWG.addHosts(currentHosts);
+
+				currentGroupsMap.remove(currentGroup);
+				currentGroupsMap.insert(currentGroup, nWG);
+			}
+
 		} else {
-			if (currentHost == QString::fromLatin1("failed"))
-				KMessageBox::error(Kopete::UI::Global::mainWidget(),
-								   i18n("Connection to localhost failed.\n"
-									    "Is your samba server running?"),
-								   QString::fromLatin1("Winpopup"));
+			passedInitialHost = true;
+			if (!currentGroups.isEmpty()) {
+				foreach (QString groupMaster, currentGroups) {
+					todo += groupMaster;
+				}
+			} else {
+				if (currentHost == QString::fromLatin1("failed"))
+					KMessageBox::error(Kopete::UI::Global::mainWidget(),
+									i18n("Connection to localhost failed.\n"
+											"Is your samba server running?"),
+									QString::fromLatin1("Winpopup"));
+			}
 		}
 	}
 
@@ -247,18 +253,13 @@ void WinPopupLib::slotListCompleted()
 {
 	/// only to check received messages during start up, then we use newItems. GF
 	disconnect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
-	readMessages(dirLister->items());
-}
-
-void WinPopupLib::slotNewMessages(const KFileItemList &items)
-{
-	readMessages(items);
+	slotReadMessages(dirLister->items());
 }
 
 /**
  * read new arrived messages
  */
-void WinPopupLib::readMessages(const KFileItemList &items)
+void WinPopupLib::slotReadMessages(const KFileItemList &items)
 {
 	KFileItem *tmpItem;
 	foreach (tmpItem, items) {
@@ -324,17 +325,8 @@ void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 	QProcess *sender = new QProcess(this);
 	QStringList args;
 	args << "-M" << Destination << "-N" << "-";
-
-	connect(sender, SIGNAL(finished()), this, SLOT(slotSendProcessExited()));
-
 	sender->start(smbClientBin);
 	sender->write(Body.toLocal8Bit());
-}
-
-void WinPopupLib::slotSendProcessExited()
-{
-//	how long does the process lives then? GF
-//	delete p;
 }
 
 void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq)

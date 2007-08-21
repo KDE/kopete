@@ -59,7 +59,7 @@ void ContactTaskBase::setContact(Kopete::Contact *contact)
 	KJob *subTask = d->contact->protocol()->createProtocolTask( taskType() );
 	if( subTask )
 	{
-		kDebug(14010) << k_funcinfo << "Adding protocol subtask for " << taskType();
+		kDebug(14010) << "Adding protocol subtask for " << taskType();
 		addSubTask(subTask);
 	}
 }

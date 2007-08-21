@@ -66,7 +66,7 @@ Protocol::~Protocol()
 	{
 		if( a->protocol() == this )
 		{
-			kWarning( 14010 ) << k_funcinfo << "Deleting protocol with existing accounts! Did the account unloading go wrong?  account: " 
+			kWarning( 14010 ) << "Deleting protocol with existing accounts! Did the account unloading go wrong?  account: " 
 					<< a->accountId() << endl;
 		
 			delete a;
@@ -137,7 +137,7 @@ void Protocol::aboutToUnload()
 			
 			if ( a->myself() && a->myself()->isOnline() )
 			{
-				kDebug( 14010 ) << k_funcinfo << a->accountId() <<
+				kDebug( 14010 ) << a->accountId() <<
 						" is still connected, disconnecting..." << endl;
 
 				QObject::connect( a->myself(),
@@ -148,7 +148,7 @@ void Protocol::aboutToUnload()
 			else
 			{
 				// Remove account, it's already disconnected
-				kDebug( 14010 ) << k_funcinfo << a->accountId() <<
+				kDebug( 14010 ) << a->accountId() <<
 						" is already disconnected, deleting..." << endl;
 
 				QObject::connect( a, SIGNAL( destroyed( ) ),
@@ -242,7 +242,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 		if( it.key().startsWith( QString::fromLatin1( "messaging/" ) ) )
 		{
 			metaContact->setAddressBookField( this, it.key(), QString::fromLatin1( "All" ), it.value() );
-//			kDebug(14010) << k_funcinfo << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );";
+//			kDebug(14010) << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );";
 		}
 		else
 			metaContact->setAddressBookField( this, QString::fromLatin1( "kopete" ), it.key(), it.value() );
@@ -299,7 +299,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 		// So ignore it
 		if(accountId == sd[ QString::fromLatin1( "contactId" ) ] )
 		{
-			kDebug( 14010 ) << k_funcinfo << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it";
+			kDebug( 14010 ) << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it";
 			continue;
 		}
 
@@ -341,7 +341,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 			}
 			else
 			{
-				kWarning( 14010 ) << k_funcinfo <<
+				kWarning( 14010 ) <<
 					"No account available and account not set in " \
 					"contactlist.xml either!" << endl
 					<< "Not deserializing this contact." << endl;

@@ -87,7 +87,7 @@ dlgQQVCard::~dlgQQVCard ()
  */
 void dlgQQVCard::slotClose()
 {
-	kDebug(14140) << k_funcinfo << "Deleting dialog.";
+	kDebug(14140) << "Deleting dialog.";
 	deleteLater();
 }
 

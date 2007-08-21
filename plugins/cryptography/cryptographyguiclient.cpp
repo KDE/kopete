@@ -4,7 +4,7 @@
     Copyright (c) 2004      by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2007      by Charles Connell        <charles@connells.org>
 
-    Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -29,11 +29,13 @@
 #include <kabc/addressee.h>
 #include <kabc/addressbook.h>
 #include "ui_kabckeyselectorbase.h"
+#include "exportkeys.h"
 
 #include <kaction.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 #include <kicon.h>
+#include <kiconloader.h>
 #include <kmessagebox.h>
 
 #include <QList>
@@ -77,12 +79,15 @@ CryptographyGUIClient::CryptographyGUIClient ( Kopete::ChatSession *parent )
 	actionCollection()->addAction ( "encryptionToggle", m_encAction );
 	m_signAction = new KToggleAction ( KIcon ( "signature" ), i18n ( "Sign Messages" ), this );
 	actionCollection()->addAction ( "signToggle", m_signAction );
+	m_exportAction = new KAction ( i18n ("Export Contact's Key to Address Book" ), this );
+	actionCollection()->addAction ( "export", m_exportAction );
 
 	m_encAction->setChecked ( wantEncrypt && keysAvailable );
 	m_signAction->setChecked ( wantSign );
 
 	connect ( m_encAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotEncryptToggled() ) );
 	connect ( m_signAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotSignToggled() ) );
+	connect ( m_exportAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotExport() ) );
 
 	setXMLFile ( "cryptographychatui.rc" );
 }
@@ -112,9 +117,9 @@ void CryptographyGUIClient::slotEncryptToggled()
 		if ( !first )
 			first=mc;
 
-		if ( mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" ).isEmpty() )
+		if ( mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" ).isEmpty() && m_encAction->isChecked() )
 		{
-			// to grab the public key from KABC
+			// to grab the public key from KABC (this same code is in crytographyselectuserkey.cpp)
 			KABC::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid ( mc->metaContactId() );
 
 			if ( ! addressee.isEmpty() )
@@ -133,14 +138,14 @@ void CryptographyGUIClient::slotEncryptToggled()
 				{
 					KDialog dialog (csn->view()->mainWidget());
 					QWidget w (&dialog);
-					Ui::KabcKeySelectorBase ui;
+					Ui::KabcKeySelectorUI ui;
 					ui.setupUi (&w);
 					dialog.setCaption ( i18n ("Public Keys Found") );
 					dialog.setButtons ( KDialog::Ok | KDialog::Cancel );
 					dialog.setMainWidget (&w);
 					ui.label->setText ( i18n ( QString("Cryptography plugin has found multiple encryption keys for " + mc->displayName() + " (" + addressee.assembledName() + ")" + " in your KDE address book. To use one of these keys, select it and choose OK." ).toLocal8Bit() ) );
 					for (int i = 0; i < keys.count(); i++)
-						keys[i] = keys[i].right ( 8 ).prepend ( "0x" );
+						ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ("kgpg-key1-kopete", K3Icon::Small), keys[i].right(8).prepend("0x"), ui.keyList) );
 					ui.keyList->addItems (keys);
 					if (dialog.exec())
 						mc->setPluginData ( CryptographyPlugin::plugin(), "gpgKey", ui.keyList->currentItem()->text());
@@ -174,6 +179,13 @@ void CryptographyGUIClient::slotEncryptToggled()
 	if ( first )
 		first->setPluginData ( CryptographyPlugin::plugin() , "encrypt_messages" ,
 		                       m_encAction->isChecked() ? "on" : "off" );
+}
+
+void CryptographyGUIClient::slotExport()
+{
+	Kopete::ChatSession *csn = static_cast<Kopete::ChatSession *> ( parent() );
+	ExportKeys dialog (csn, csn->view()->mainWidget() );
+	dialog.exec();	
 }
 
 

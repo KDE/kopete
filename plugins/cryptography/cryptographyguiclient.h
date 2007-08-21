@@ -4,7 +4,7 @@
     Copyright (c) 2004      by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2007      by Charles Connell        <charles@connells.org>
 
-    Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -40,10 +40,12 @@ public:
 
 	KToggleAction *m_encAction;
 	KToggleAction *m_signAction;
+	KAction *m_exportAction;
 
 private slots:
 	void slotEncryptToggled();
 	void slotSignToggled();
+	void slotExport();
 };
 
 #endif

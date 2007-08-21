@@ -101,7 +101,7 @@ GaduContact::sendFile( const KUrl &sourceURL, const QString &/*fileName*/, uint 
 	else
 		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 
-	kDebug(14120) << k_funcinfo << "File chosen to send:" << filePath;
+	kDebug(14120) << "File chosen to send:" << filePath;
 
 	account_->sendFile( this, filePath );
 }

@@ -37,7 +37,7 @@ SendIdleTimeTask::~SendIdleTimeTask()
 
 void SendIdleTimeTask::onGo()
 {
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending idle time of " << m_idleTime;
+	kDebug( OSCAR_RAW_DEBUG ) << "Sending idle time of " << m_idleTime;
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0001, 0x0011, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();

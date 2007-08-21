@@ -153,7 +153,7 @@ bool GSMLibThread::doConnect()
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kWarning( 14160 ) << k_funcinfo<< e.what();
+		kWarning( 14160 ) << e.what();
 		m_run = false;
 		return false;
 	}
@@ -171,14 +171,14 @@ void GSMLibThread::SMSReception(gsmlib::SMSMessageRef newMessage, SMSMessageType
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kWarning( 14160 ) << k_funcinfo<< e.what();
+		kWarning( 14160 ) << e.what();
 		m_run = false;
 	}
 }
 
 void GSMLibThread::SMSReceptionIndication(std::string storeName, unsigned int index, SMSMessageType messageType)
 {
-	kDebug( 14160 ) << k_funcinfo << "New Message in store: "<<storeName.c_str();
+	kDebug( 14160 ) << "New Message in store: "<<storeName.c_str();
 
 	try
 	{
@@ -193,7 +193,7 @@ void GSMLibThread::SMSReceptionIndication(std::string storeName, unsigned int in
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kWarning( 14160 ) << k_funcinfo<< e.what();
+		kWarning( 14160 ) << e.what();
 		m_run = false;
 	}
 }
@@ -236,7 +236,7 @@ void GSMLibThread::pollForMessages( )
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kWarning( 14160 ) << k_funcinfo<< e.what();
+		kWarning( 14160 ) << e.what();
 		m_run = false;
 	}
 }
@@ -340,7 +340,7 @@ void GSMLib::connect()
 
 void GSMLib::disconnect()
 {
-	kDebug( 14160 ) << k_funcinfo;
+	kDebug( 14160 ) ;
 
 	if( m_thread )
 	{

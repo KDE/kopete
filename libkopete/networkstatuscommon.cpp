@@ -3,7 +3,7 @@
 
 QDataStream & operator<< ( QDataStream & s, const NetworkStatus::Properties p )
 {
-	kDebug() << k_funcinfo << "status is: " << (int)p.status;
+	kDebug() << "status is: " << (int)p.status;
 	s << (int)p.status;
 	s << (int)p.onDemandPolicy;
 	s << p.service;
@@ -16,7 +16,7 @@ QDataStream & operator>> ( QDataStream & s, NetworkStatus::Properties &p )
 {
 	int status, onDemandPolicy, internet;
 	s >> status;
-	kDebug() << k_funcinfo << "status is: " << status;
+	kDebug() << "status is: " << status;
 	p.status = ( NetworkStatus::EnumStatus )status;
 	s >> onDemandPolicy;
 	p.onDemandPolicy = ( NetworkStatus::EnumOnDemandPolicy )onDemandPolicy;
@@ -27,6 +27,6 @@ QDataStream & operator>> ( QDataStream & s, NetworkStatus::Properties &p )
 	else
 		p.internet = false;
 	s >> p.netmasks;
-	kDebug() << k_funcinfo << "enum converted status is: " << p.status;
+	kDebug() << "enum converted status is: " << p.status;
 	return s;
 }
