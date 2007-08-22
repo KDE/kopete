@@ -15,4 +15,6 @@ X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=true
 Name=Statistics
+Name[sv]=Statistik
 Comment=Gather some meaningful statistics
+Comment[sv]=Samla in en del användbar statistik
