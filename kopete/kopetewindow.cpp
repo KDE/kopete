@@ -511,7 +511,7 @@ void KopeteWindow::loadOptions()
 	toolBar("quickSearchBar")->applySettings( config->group( "QuickSearchBar Settings" ) );
 
 	applyMainWindowSettings( config->group( "General Options" ) );
-        KConfigGroup cg( config, "General Options");
+	KConfigGroup cg( config, "General Options");
 	QPoint pos = cg.readEntry("Position", QPoint());
 	move(pos);
 
@@ -546,10 +546,10 @@ void KopeteWindow::saveOptions()
         KConfigGroup cg( KGlobal::config(), "ToolBar Settings" );
 
 	toolBar("mainToolBar")->saveSettings ( cg );
-        cg.changeGroup( "QuickSearchBar Settings" );
+	cg.changeGroup( "QuickSearchBar Settings" );
 	toolBar("quickSearchBar")->saveSettings( cg );
 
-        cg.changeGroup( "General Options" );
+	cg.changeGroup( "General Options" );
 	saveMainWindowSettings( cg );
 
 	cg.writeEntry("Position", pos());
@@ -601,7 +601,8 @@ void KopeteWindow::slotToggleShowEmptyGroups()
 
 void KopeteWindow::slotConfigChanged()
 {
-	if( isHidden() && !Kopete::BehaviorSettings::self()->showSystemTray()) // user disabled systray while kopete is hidden, show it!
+	// user disabled systray while kopete is hidden, show it!
+	if( isHidden() && !Kopete::BehaviorSettings::self()->showSystemTray())
 		show();
 
 	d->actionShowOffliners->setChecked( Kopete::AppearanceSettings::self()->showOfflineUsers() );
@@ -628,7 +629,7 @@ void KopeteWindow::slotConfGlobalKeys()
 
 void KopeteWindow::slotConfToolbar()
 {
-        KConfigGroup cg( KGlobal::config(), "General Options");
+	KConfigGroup cg( KGlobal::config(), "General Options");
 	saveMainWindowSettings( cg );
 	KEditToolBar *dlg = new KEditToolBar(factory());
 	connect( dlg, SIGNAL(newToolbarConfig()), this, SLOT(slotUpdateToolbar()) );
@@ -752,16 +753,16 @@ void KopeteWindow::slotIdentityRegistered( Kopete::Identity *identity )
 		return;
 
 	connect( identity, SIGNAL(onlineStatusChanged( Kopete::Identity *, 
-												   const Kopete::OnlineStatus::StatusType &, const Kopete::OnlineStatus::StatusType &) ),
-			this, SLOT( slotIdentityStatusIconChanged( Kopete::Identity * ) ) );
+	         const Kopete::OnlineStatus::StatusType &, const Kopete::OnlineStatus::StatusType &) ),
+	         this, SLOT( slotIdentityStatusIconChanged( Kopete::Identity * ) ) );
 	connect( identity, SIGNAL(identityChanged( Kopete::Identity * )),
-			 this, SLOT( slotIdentityStatusIconChanged( Kopete::Identity * ) ) );
+	         this, SLOT( slotIdentityStatusIconChanged( Kopete::Identity * ) ) );
 
 	KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon( identity, d->statusBarWidget );
 	connect( sbIcon, SIGNAL( rightClicked( Kopete::Identity *, const QPoint & ) ),
-					 SLOT( slotIdentityStatusIconRightClicked( Kopete::Identity *, const QPoint & ) ) );
+	         SLOT( slotIdentityStatusIconRightClicked( Kopete::Identity *, const QPoint & ) ) );
 	connect( sbIcon, SIGNAL( leftClicked( Kopete::Identity *, const QPoint & ) ),
-					 SLOT( slotIdentityStatusIconLeftClicked( Kopete::Identity *, const QPoint & ) ) );
+	         SLOT( slotIdentityStatusIconLeftClicked( Kopete::Identity *, const QPoint & ) ) );
 
 	d->identityStatusBarIcons.insert( identity, sbIcon );
 	slotIdentityStatusIconChanged( identity );
