@@ -29,7 +29,7 @@ set(kopetecontactlist_SRCS
 contactlist/kopetemetacontactitem.cpp 
 contactlist/kopetestatusgroupviewitem.cpp 
 contactlist/kopetegroupitem.cpp 
-#contactlist/kopetecontactlistview.cpp 
+contactlist/kopetecontactlistview.cpp 
 #contactlist/kopetelviprops.cpp 
 contactlist/kopeteaddrbookexport.cpp 
 contactlist/customnotificationprops.cpp 
