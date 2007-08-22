@@ -9,4 +9,6 @@ X-KDE-ParentApp=kopete_motionaway
 X-KDE-ParentComponents=kopete_motionaway
 
 Name=Motion Auto-Away
+Name[sv]=Automatisk rörelsefrånvaro
 Comment=Sets away status when not detecting movement near the computer
+Comment[sv]=Ställer automatisk in frånvarostatus när ingen rörelse märks nära datorn
