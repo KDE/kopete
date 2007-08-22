@@ -470,7 +470,7 @@ void KopeteWindow::initSystray()
 {
 	d->tray = KopeteSystemTray::systemTray( this );
 #ifdef __GNUC__
-#warning PORT ME
+#warning Port away from winId usage
 #endif
 //	Kopete::UI::Global::setSysTrayWId( d->tray->winId() );
 
