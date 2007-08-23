@@ -257,16 +257,16 @@ void LoginTask::parseCookies( YMSGTransfer *t )
 	{	
 		QString cookie;
 		cookie = t->nthParam( 59, i );
-        	if( cookie.startsWith( "Y" ) )
+        	if( cookie.startsWith( 'Y' ) )
 		{
 			m_yCookie = getcookie( cookie.toLatin1() );
 			m_loginCookie = getlcookie( cookie.toLatin1() );
 		}
-		else if( cookie.startsWith( "T" ) )
+		else if( cookie.startsWith( 'T' ) )
 		{
 			m_tCookie = getcookie( cookie.toLatin1() );
 		}
-		else if( cookie.startsWith( "C" ) )
+		else if( cookie.startsWith( 'C' ) )
 		{
 			m_cCookie = getcookie( cookie.toLatin1() );
 		}

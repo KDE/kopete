@@ -430,7 +430,7 @@ static QString getMirandaVersion( Oscar::DWORD iver, Oscar::DWORD mver, bool isU
 			ver = mirandaVersionToString( mver );
 		if ( isUnicode )
 			ver += " Unicode";
-		ver += " (ICQ v" + mirandaVersionToString( iver ) + ")";
+		ver += " (ICQ v" + mirandaVersionToString( iver ) + ')';
 	}
 	return ver;
 }
@@ -473,14 +473,14 @@ void UserDetails::detectClient()
 		else
 		{
 			m_clientName = QString::fromLatin1( "Miranda IM" );
-			m_clientName += " " + getMirandaVersion( m_dcLastExtInfoUpdateTime, 0, false );
+			m_clientName += ' ' + getMirandaVersion( m_dcLastExtInfoUpdateTime, 0, false );
 		}
 	}
 	else if ( m_dcLastInfoUpdateTime == 0x7FFFFFFF )
 	{
 		// Miranda with unicode core
 		m_clientName = QString::fromLatin1( "Miranda IM" );
-		m_clientName += " " + getMirandaVersion( m_dcLastExtInfoUpdateTime, 0, true );
+		m_clientName += ' ' + getMirandaVersion( m_dcLastExtInfoUpdateTime, 0, true );
 	}
 	else if ( m_dcLastInfoUpdateTime & 0xFF7F0000 == 0x7D000000 )
 	{
@@ -527,14 +527,14 @@ void UserDetails::detectClient()
         // this is R&Q (Rapid Edition)
 		m_clientName = QString::fromLatin1( "R&Q" );
 		m_clientVersion.sprintf( "%u", m_dcLastExtInfoUpdateTime );
-		m_clientName += " " + m_clientVersion;
+		m_clientName += ' ' + m_clientVersion;
 	}
     // parse capabilities
 	if ( hasCap( CAP_KOPETE ) )
 	{
 		m_clientName = i18n( "Kopete" );
 		m_clientVersion.sprintf( "%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(13), m_identCap.data().at(14) * 100 + m_identCap.data().at(15) );
-		m_clientName += " " + m_clientVersion;
+		m_clientName += ' ' + m_clientVersion;
 		return;
 	}
 	if ( hasCap ( CAP_MIRANDA ) )
@@ -542,7 +542,7 @@ void UserDetails::detectClient()
 		m_clientName = QString::fromLatin1( "Miranda IM" );
 		Oscar::DWORD iver = m_identCap.data().at(12) << 0x18 | m_identCap.data().at(13) << 0x10 | m_identCap.data().at(14) << 0x08 | m_identCap.data().at(15);
 		Oscar::DWORD mver = m_identCap.data().at(8) << 0x18 | m_identCap.data().at(9) << 0x10 | m_identCap.data().at(10) << 0x08 | m_identCap.data().at(11);
-		m_clientName += " " + getMirandaVersion( iver, mver, m_dcLastInfoUpdateTime == 0x7FFFFFFF );
+		m_clientName += ' ' + getMirandaVersion( iver, mver, m_dcLastInfoUpdateTime == 0x7FFFFFFF );
 		return;
 	}
 	if  ( hasCap( CAP_QIP ) )
@@ -557,7 +557,7 @@ void UserDetails::detectClient()
 		{
 			build.sprintf( "(%d%d%d%d)", m_dcLastInfoUpdateTime >> 0x18, (m_dcLastInfoUpdateTime >> 0x10) & 0xFF, (m_dcLastInfoUpdateTime >> 0x08) & 0xFF, m_dcLastInfoUpdateTime & 0xFF );
 		}
-		m_clientName += " " + m_clientVersion + " " + build;
+		m_clientName += ' ' + m_clientVersion + ' ' + build;
 		return;
 	}
 	if ( hasCap( CAP_QIPINFIUM ) )
@@ -591,7 +591,7 @@ void UserDetails::detectClient()
 	if ( hasCap( CAP_JIMM ) )
 	{
 		m_clientName = QString::fromLatin1( "Jimm" );
-		m_clientName += " " + getVersionFromCap( m_identCap, 5 );
+		m_clientName += ' ' + getVersionFromCap( m_identCap, 5 );
 		return;
 	}
 	if ( hasCap( CAP_SIMNEW ) )
@@ -603,7 +603,7 @@ void UserDetails::detectClient()
 		else if ( m_identCap.data().at(15) & 0x40 )
 			m_clientVersion += QString::fromLatin1( " (MacOS X)" );
         // Linux version? Fix last number
-		m_clientName += " " + m_clientVersion;
+		m_clientName += ' ' + m_clientVersion;
 		return;
 	}
 	if ( hasCap( CAP_SIMOLD ) )
@@ -629,21 +629,21 @@ void UserDetails::detectClient()
 		m_clientVersion.sprintf( "%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(13) % 100, m_identCap.data().at(14) );
 		if ( m_identCap.data().at(15) )
 			m_clientVersion += " SSL";
-		m_clientName += " " + m_clientVersion;
+		m_clientName += ' ' + m_clientVersion;
 		return;
 	}
 	if ( hasCap( CAP_ANDRQ ) )
 	{
 		m_clientName = QString::fromLatin1( "&RQ" );
 		m_clientVersion.sprintf( "%d.%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(11), m_identCap.data().at(10), m_identCap.data().at(9) );
-		m_clientName += " " + m_clientVersion;
+		m_clientName += ' ' + m_clientVersion;
 		return;
 	}
 	if ( hasCap( CAP_RANDQ ) )
 	{
 		m_clientName = QString::fromLatin1("R&Q");
 		m_clientVersion.sprintf("%d.%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(11), m_identCap.data().at(10), m_identCap.data().at(9));
-		m_clientName += " " + m_clientVersion;
+		m_clientName += ' ' + m_clientVersion;
 		return;
 	}
 	

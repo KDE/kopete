@@ -84,7 +84,7 @@ CryptographySelectUserKey::CryptographySelectUserKey ( const QString& key ,Kopet
 			dialog.setCaption ( i18n ( "Public Keys Found" ) );
 			dialog.setButtons ( KDialog::Ok | KDialog::Cancel );
 			dialog.setMainWidget ( &w );
-			ui.label->setText ( i18n ( QString ( "Cryptography plugin has found multiple encryption keys for " + mc->displayName() + " (" + addressee.assembledName() + ")" + " in your KDE address book. To use one of these keys, select it and choose OK." ).toLocal8Bit() ) );
+			ui.label->setText ( i18n ( QString ( "Cryptography plugin has found multiple encryption keys for " + mc->displayName() + " (" + addressee.assembledName() + ')' + " in your KDE address book. To use one of these keys, select it and choose OK." ).toLocal8Bit() ) );
 			for ( int i = 0; i < keys.count(); i++ ) 
 				ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ("kgpg-key1-kopete", K3Icon::Small), keys[i].right(8).prepend("0x"), ui.keyList) );
 			if ( dialog.exec() )

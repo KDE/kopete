@@ -129,7 +129,7 @@ void CryptographyGUIClient::slotEncryptToggled()
 				
 				// ask user if they want to use key found in address book
 				if ( keys.count() == 1 ) {
-					if ( KMessageBox::questionYesNo ( csn->view()->mainWidget(), i18n ( QString ("Cryptography plugin has found an encryption key for " + mc->displayName() + " (" + addressee.assembledName() + ")" + " in your KDE address book. Do you want to use key " + keys.first().right ( 8 ).prepend ( "0x" ) + " as this contact's public key?").toLocal8Bit() ), i18n ( "Public Key Found" ) ) == KMessageBox::Yes ) {
+					if ( KMessageBox::questionYesNo ( csn->view()->mainWidget(), i18n ( QString ("Cryptography plugin has found an encryption key for " + mc->displayName() + " (" + addressee.assembledName() + ')' + " in your KDE address book. Do you want to use key " + keys.first().right ( 8 ).prepend ( "0x" ) + " as this contact's public key?").toLocal8Bit() ), i18n ( "Public Key Found" ) ) == KMessageBox::Yes ) {
 						mc->setPluginData ( CryptographyPlugin::plugin(), "gpgKey", keys.first() );
 					}
 				}
@@ -143,7 +143,7 @@ void CryptographyGUIClient::slotEncryptToggled()
 					dialog.setCaption ( i18n ("Public Keys Found") );
 					dialog.setButtons ( KDialog::Ok | KDialog::Cancel );
 					dialog.setMainWidget (&w);
-					ui.label->setText ( i18n ( QString("Cryptography plugin has found multiple encryption keys for " + mc->displayName() + " (" + addressee.assembledName() + ")" + " in your KDE address book. To use one of these keys, select it and choose OK." ).toLocal8Bit() ) );
+					ui.label->setText ( i18n ( QString("Cryptography plugin has found multiple encryption keys for " + mc->displayName() + " (" + addressee.assembledName() + ')' + " in your KDE address book. To use one of these keys, select it and choose OK." ).toLocal8Bit() ) );
 					for (int i = 0; i < keys.count(); i++)
 						ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ("kgpg-key1-kopete", K3Icon::Small), keys[i].right(8).prepend("0x"), ui.keyList) );
 					ui.keyList->addItems (keys);

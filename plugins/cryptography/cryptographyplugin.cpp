@@ -276,7 +276,7 @@ void CryptographyPlugin::slotExportOneKey()
 	addressee.insertCustom ( "KADDRESSBOOK", "OPENPGPFP", key );
 
 	key = key.right ( 8 ).prepend ( "0x" );
-	key = key + " " + mc->displayName() + " (" + addressee.assembledName() + ")";
+	key = key + ' ' + mc->displayName() + " (" + addressee.assembledName() + ')';
 	if ( KMessageBox::warningContinueCancel ( Kopete::UI::Global::mainWidget(), i18n ( QString ( "The key \"" + key + "\" will be exported. If no address book has been linked to this meta-contact, one will be created.").toAscii().constData() ), i18n ( "Export Public Key" ) ) == KMessageBox::Continue) {
 		Kopete::KABCPersistence::self()->addressBook()->insertAddressee (addressee);
 		Kopete::KABCPersistence::self()->writeAddressBook(addressee.resource());
