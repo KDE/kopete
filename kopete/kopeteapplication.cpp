@@ -51,6 +51,7 @@
 KopeteApplication::KopeteApplication()
 : KUniqueApplication( true, true )
 {
+	setQuitOnLastWindowClosed( false );
 	m_isShuttingDown = false;
 	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
 
