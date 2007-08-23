@@ -23,5 +23,4 @@ if( LIBXML2_FOUND AND LIBXSLT_FOUND )
   add_subdirectory( webpresence )
 endif( LIBXML2_FOUND AND LIBXSLT_FOUND )
 
-#add_subdirectory(plugins_playground/smpppdcs)
 
