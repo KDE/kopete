@@ -554,17 +554,22 @@ int VideoDevicePool::setInputParameters()
 int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 {
     /// @todo implement me
-	kDebug() << "fillInputKComboBox: Called.";
-	combobox->clear();
-	if(m_videodevice.size())
+	kDebug() << "Called.";
+// check if KComboBox is a valid pointer.
+	if (combobox != NULL)
 	{
-		for (int loop=0; loop < m_videodevice.size(); loop++)
+		combobox->clear();
+		kDebug() << "Combobox cleaned.";
+		if(m_videodevice.size())
 		{
-			combobox->addItem(m_videodevice[loop].m_name);
-			kDebug() << "DeviceKCombobox: Added device " << loop << ": " << m_videodevice[loop].m_name;
+			for (int loop=0; loop < m_videodevice.size(); loop++)
+			{
+				combobox->addItem(m_videodevice[loop].m_name);
+				kDebug() << "Added device " << loop << ": " << m_videodevice[loop].m_name;
+			}
+			combobox->setCurrentIndex(currentDevice());
+			return EXIT_SUCCESS;
 		}
-		combobox->setCurrentIndex(currentDevice());
-		return EXIT_SUCCESS;
 	}
 	return EXIT_FAILURE;
 }
@@ -575,19 +580,22 @@ int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 {
     /// @todo implement me
-	kDebug() << "fillInputKComboBox: Called.";
-	combobox->clear();
-	if(m_videodevice.size())
+	kDebug() << "Called.";
+	if (combobox != NULL)
 	{
-		if(m_videodevice[currentDevice()].inputs()>0)
+		combobox->clear();
+		if(m_videodevice.size())
 		{
-			for (int loop=0; loop < m_videodevice[currentDevice()].inputs(); loop++)
+			if(m_videodevice[currentDevice()].inputs()>0)
 			{
-				combobox->addItem(m_videodevice[currentDevice()].m_input[loop].name);
-				kDebug() << "InputKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")";
+				for (int loop=0; loop < m_videodevice[currentDevice()].inputs(); loop++)
+				{
+					combobox->addItem(m_videodevice[currentDevice()].m_input[loop].name);
+					kDebug() << "Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")";
+				}
+				combobox->setCurrentIndex(currentInput());
+				return EXIT_SUCCESS;
 			}
-			combobox->setCurrentIndex(currentInput());
-			return EXIT_SUCCESS;
 		}
 	}
 	return EXIT_FAILURE;
@@ -599,16 +607,18 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 {
     /// @todo implement me
-	kDebug() << "fillInputKComboBox: Called.";
-	combobox->clear();
-	if(m_videodevice.size())
+	kDebug() << "Called.";
+	if (combobox != NULL)
 	{
-		if(m_videodevice[currentDevice()].inputs()>0)
+		combobox->clear();
+		if(m_videodevice.size())
 		{
-			for (unsigned int loop=0; loop < 25; loop++)
+			if(m_videodevice[currentDevice()].inputs()>0)
 			{
-				if ( (m_videodevice[currentDevice()].m_input[currentInput()].m_standards) & (1 << loop) )
-					combobox->addItem(m_videodevice[currentDevice()].signalStandardName( 1 << loop));
+				for (unsigned int loop=0; loop < 25; loop++)
+				{
+					if ( (m_videodevice[currentDevice()].m_input[currentInput()].m_standards) & (1 << loop) )
+						combobox->addItem(m_videodevice[currentDevice()].signalStandardName( 1 << loop));
 /*
 				case STANDARD_PAL_B1	: return V4L2_STD_PAL_B1;	break;
 				case STANDARD_PAL_G	: return V4L2_STD_PAL_G;	break;
@@ -646,9 +656,10 @@ int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 
 				combobox->insertItem(m_videodevice[currentDevice()].m_input[loop].name);
 				kDebug() << "StandardKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")";*/
+				}
+				combobox->setCurrentIndex(currentInput());
+				return EXIT_SUCCESS;
 			}
-			combobox->setCurrentIndex(currentInput());
-			return EXIT_SUCCESS;
 		}
 	}
 	return EXIT_FAILURE;
