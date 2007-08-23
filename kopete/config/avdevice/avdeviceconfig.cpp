@@ -55,7 +55,10 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
 	layout->addWidget( mAVDeviceTabCtl );
 
 // "Video" TAB ============================================================
+	QWidget *w = new QWidget(this);
 	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice();
+	mPrfsVideoDevice->setupUi(w);
+	mAVDeviceTabCtl->addTab(w, i18n("Video"));
 //	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
 	connect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mInputKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
