@@ -25,6 +25,8 @@
 
 #include <QHeaderView>
 
+#include <KDebug>
+
 #include "kopeteuiglobal.h"
 #include "kopetecontactlistelement.h"
 #include "kopetemetacontact.h"
@@ -46,9 +48,10 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 	setAlternatingRowColors( true );
 	setItemDelegate( new KopeteItemDelegate( this ) );
 
-    connect( this, SIGNAL( activated(const QModelIndex&)),
-             this, SLOT( contactActivated(const QModelIndex&)));
-             
+	connect( this, SIGNAL( activated(const QModelIndex&)),
+	         this, SLOT( contactActivated(const QModelIndex&)));
+
+	setEditTriggers( NoEditTriggers );
 	// Load in the user's initial settings
 	//slotSettingsChanged();
 }
@@ -123,17 +126,19 @@ KopeteContactListView::~KopeteContactListView()
 
 void KopeteContactListView::contactActivated( const QModelIndex& index )
 {
-    QVariant v = index.data( Kopete::Items::ElementRole );
-    
-    if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
-    {
-        QObject* o = v.value<QObject*>();
-        Kopete::MetaContact* mc = qobject_cast<Kopete::MetaContact*>(o);
-        if ( mc )  
-            mc->execute();
-    }
 
-    
+	kDebug(14010) << "contact activated";
+	QVariant v = index.data( Kopete::Items::ElementRole );
+	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
+	{
+		kDebug( 14010 ) << "have a metacontact";
+		QObject* o = v.value<QObject*>();
+		Kopete::MetaContact* mc = qobject_cast<Kopete::MetaContact*>( o );
+		if ( mc )
+		{
+			mc->execute();
+		}
+    }
 }
 
 
