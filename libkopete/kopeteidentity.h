@@ -107,13 +107,6 @@ public:
 	void addAccount( Kopete::Account *account );
 
 	/**
-	 * @brief Removes an account from the identity
-	 *
-	 * @param account the account to be removed
-	 */
-	void removeAccount( Kopete::Account *account );
-
-	/**
 	 * Returns the @ref KConfigGroup that should be used to read/write settings 
 	 * of this identity
 	 */
@@ -130,6 +123,13 @@ public:
 	void save();
 
 public slots:
+	/**
+	 * @brief Removes an account from the identity
+	 *
+	 * @param account the account to be removed
+	 */
+	void removeAccount( const Kopete::Account *account );
+
 	void updateOnlineStatus();
 
 protected slots:

@@ -173,15 +173,21 @@ void Identity::addAccount( Kopete::Account *account )
 		return;
 
 	d->accounts.append( account );
+	connect(account, SIGNAL(accountDestroyed(const Kopete::Account*)),
+			this, SLOT(removeAccount(const Kopete::Account*)));
 	//TODO implement the signals for status changes and so
 	
 	emit identityChanged( this );
 }
 
-void Identity::removeAccount( Kopete::Account *account )
+void Identity::removeAccount( const Kopete::Account *account )
 {
+	Kopete::Account *a = const_cast<Kopete::Account*>(account);
+	if ( d->accounts.findIndex( a ) == -1 )
+		return;
+
 	//TODO disconnect signals and so on
-	d->accounts.removeAll( account );
+	d->accounts.removeAll( a );
 	
 	emit identityChanged( this );
 }
