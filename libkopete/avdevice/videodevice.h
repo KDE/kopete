@@ -20,7 +20,7 @@
 #ifndef KOPETE_AVVIDEODEVICELISTITEM_H
 #define KOPETE_AVVIDEODEVICELISTITEM_H
 
-#ifdef HAVE_CONFIG_H
+#if defined HAVE_CONFIG_H
 #include <config.h>
 #endif
 
@@ -68,6 +68,7 @@
 #include <kcombobox.h>
 
 #include "videoinput.h"
+#include "videocontrol.h"
 
 namespace Kopete {
 
@@ -82,7 +83,7 @@ typedef enum
 #if defined( __linux__) && defined(ENABLE_AV)
         ,
 	VIDEODEV_DRIVER_V4L
-#ifdef HAVE_V4L2
+#ifdef V4L2_CAP_VIDEO_CAPTURE
         ,
 	VIDEODEV_DRIVER_V4L2
 #endif
@@ -256,17 +257,22 @@ public:
 
 //protected:
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef V4L2_CAP_VIDEO_CAPTURE
 	struct v4l2_capability V4L2_capabilities;
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
 	struct v4l2_format fmt;
 //	struct v4l2_input m_input;
+	struct v4l2_queryctrl queryctrl;
+	struct v4l2_querymenu querymenu;
+void enumerateMenu (void);
+
 #endif
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
 #endif	
 	QValueVector<Kopete::AV::VideoInput> m_input;
+	QValueVector<Kopete::AV::VideoControl> m_control;
 //	QFile file;
 protected:
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
