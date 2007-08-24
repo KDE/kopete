@@ -32,7 +32,9 @@ KopeteMetaContactItem::KopeteMetaContactItem( Kopete::MetaContact *contact )
 
 {
     setData( Kopete::Items::MetaContact, Kopete::Items::TypeRole );
+    
 	m_metaContact = contact;
+    setData( m_metaContact, Kopete::Items::ElementRole );
 	setText( m_metaContact->displayName() );
     setData( m_metaContact->picture().image(), Qt::DecorationRole );
 
