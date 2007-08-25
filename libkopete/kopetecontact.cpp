@@ -552,15 +552,15 @@ QString Contact::toolTip() const
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( nick.isEmpty() )
 	{
-		tip = i18nc( "@label:textbox <b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
-			"<b><nobr>%3</nobr></b><br><img src=\"%2\">&nbsp;%1",
+		tip = i18nc( "@label:textbox display name", "<b>DISPLAY NAME</b><br /><img src=\"%2\">&nbsp;CONTACT STATUS",
+			"<b><nobr>%3</nobr></b><br /><img src=\"%2\">&nbsp;%1",
 			Kopete::Message::escape( onlineStatus().description() ), iconName,
 				Kopete::Message::escape( d->contactId ) );
 	}
 	else
 	{
-		tip = i18nc( "@label:textbox <b>DISPLAY NAME</b> (CONTACT ID)<br><img src=\"%2\">&nbsp;CONTACT STATUS",
-			"<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1",
+		tip = i18nc( "@label:textbox display name", "<b>DISPLAY NAME</b> (CONTACT ID)<br /><img src=\"%2\">&nbsp;CONTACT STATUS",
+			"<nobr><b>%4</b> (%3)</nobr><br /><img src=\"%2\">&nbsp;%1",
 				Kopete::Message::escape( onlineStatus().description() ), iconName,
 					Kopete::Message::escape( contactId() ),
 					Kopete::Emoticons::parseEmoticons( Kopete::Message::escape( nick ) ) );
@@ -578,7 +578,7 @@ QString Contact::toolTip() const
 			if(!name.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted name",
-							"<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>", Qt::escape(name));
+							"<br /><b>Full Name:</b>&nbsp;<nobr>%1</nobr>", Qt::escape(name));
 			}
 		}
 		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
@@ -587,7 +587,7 @@ QString Contact::toolTip() const
 			if(!time.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted idle time",
-					"<br><b>Idle:</b>&nbsp;<nobr>%1</nobr>", time);
+					"<br /><b>Idle:</b>&nbsp;<nobr>%1</nobr>", time);
 			}
 		}
 		else if ((*it) == QString::fromLatin1("homePage"))
@@ -596,7 +596,7 @@ QString Contact::toolTip() const
 			if(!url.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted url",
-					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>",
+					"<br /><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>",
 						QString(QUrl::toPercentEncoding( url )), Kopete::Message::escape( Qt::escape(url) ) );
 			}
 		}
@@ -606,7 +606,7 @@ QString Contact::toolTip() const
 			if(!statusmsg.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted status message",
-							"<br><b>Status&nbsp;Message:</b>&nbsp;%1",  Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusmsg) ) );
+							"<br /><b>Status&nbsp;Message:</b>&nbsp;%1",  Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusmsg) ) );
 			}
 		}
 		else
@@ -642,8 +642,8 @@ QString Contact::toolTip() const
 						}
 				}
 
-				tip += i18nc("@label:textbox <br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
-					"<br><nobr><b>%2:</b></nobr>&nbsp;%1",
+				tip += i18nc("@label:textbox property label", "<br /><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
+					"<br /><nobr><b>%2:</b></nobr>&nbsp;%1",
 						valueText, Qt::escape(p.tmpl().label()) );
 			}
 		}
@@ -726,7 +726,6 @@ QString Kopete::Contact::formattedIdleTime() const
 	return ret;
 }
 
-
 void Kopete::Contact::slotBlock()
 {
 	account()->block( d->contactId );
@@ -759,4 +758,3 @@ void Kopete::Contact::setPhoto(const QString &photoPath)
 } //END namespace Kopete
 
 #include "kopetecontact.moc"
-

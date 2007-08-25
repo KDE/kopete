@@ -328,7 +328,7 @@ XService* XtrazNotify::serviceFromId( const QString& id ) const
 {
 	if ( id == "cAwaySrv" )
 		return new XAwayService();
-	else if ( id == "" )
+	else if ( id.isEmpty()  )
 		return new XService();
 	else
 		return 0;

@@ -98,7 +98,7 @@ void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 			continue;
 		}
 	
-		if( utf8.startsWith( "1" ) )
+		if( utf8.startsWith( '1' ) )
 			msg = QString::fromUtf8( msg.toLatin1() );
 	
 		if( t->service() == Yahoo::ServiceSysMessage )
@@ -129,7 +129,7 @@ void MessageReceiverTask::parseNotify( YMSGTransfer *t )
 		;
 	else if( type.startsWith( "WEBCAMINVITE" ) )
 	{
-		if( ind.startsWith(" ") )
+		if( ind.startsWith(' ') )
 		{
 			kDebug(YAHOO_RAW_DEBUG) << "Got a WebcamInvitation.";
 			emit gotWebcamInvite( from );

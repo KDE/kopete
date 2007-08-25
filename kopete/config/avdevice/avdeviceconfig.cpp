@@ -55,7 +55,10 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
 	layout->addWidget( mAVDeviceTabCtl );
 
 // "Video" TAB ============================================================
+	QWidget *w = new QWidget(this);
 	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice();
+	mPrfsVideoDevice->setupUi(w);
+	mAVDeviceTabCtl->addTab(w, i18n("Video"));
 //	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
 	connect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mInputKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
@@ -81,14 +84,14 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
 	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-	setVideoInputParameters();
+//	setVideoInputParameters();
 
-	mVideoDevicePool->startCapturing();
-	mVideoDevicePool->getFrame();
-	mVideoDevicePool->getImage(&qimage);
-//	if (qpixmap.fromImage(qimage,Qt::AutoColor) != NULL)
-//	if (qpixmap.fromImage(qimage,Qt::AutoColor) == true)
-		mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
+//	mVideoDevicePool->startCapturing();
+//	mVideoDevicePool->getFrame();
+//	mVideoDevicePool->getImage(&qimage);
+ //	if (qpixmap.fromImage(qimage,Qt::AutoColor) != NULL)
+ //	if (qpixmap.fromImage(qimage,Qt::AutoColor) == true)
+ //		mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
 	qtimer.start(0,false);
 }
@@ -244,7 +247,7 @@ void AVDeviceConfig::slotDeviceDisableMMapChanged(bool){
 void AVDeviceConfig::slotUpdateImage()
 {
 	mVideoDevicePool->getFrame();
-	mVideoDevicePool->getImage(&qimage);
+//	mVideoDevicePool->getImage(&qimage);
 	//bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
 // 	kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated.";
 }

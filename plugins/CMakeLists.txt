@@ -5,8 +5,8 @@ endif (UNIX)
 add_subdirectory( autoreplace ) 
 add_subdirectory( history ) 
 add_subdirectory( contactnotes ) 
-message(STATUS "Disable cryptography plugin. It does not build because of the kleo move back to kdepim")
-# add_subdirectory( cryptography )
+#message(STATUS "Disable cryptography plugin. It does not build because of the kleo move back to kdepim")
+add_subdirectory( cryptography )
 # chehrlic connectionstatus is using k3process 
 if(NOT WIN32)
   add_subdirectory( connectionstatus ) 
@@ -22,6 +22,5 @@ add_subdirectory( privacy )
 if( LIBXML2_FOUND AND LIBXSLT_FOUND )
   add_subdirectory( webpresence )
 endif( LIBXML2_FOUND AND LIBXSLT_FOUND )
-
 
 

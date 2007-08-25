@@ -1510,7 +1510,7 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 
 void JabberAccount::slotGroupChatLeft (const XMPP::Jid & jid)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) "Left groupchat " << jid.full ();
+	kDebug (JABBER_DEBUG_GLOBAL) << "Left groupchat " << jid.full ();
 	
 	// remove group contact from list
 	Kopete::Contact *contact = 

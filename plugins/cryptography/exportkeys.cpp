@@ -60,7 +60,7 @@ ExportKeys::ExportKeys ( Kopete::ChatSession * cs, QWidget *parent )
 		addressee.insertCustom ("KADDRESSBOOK", "OPENPGPFP", key);
 		
 		key = key.right(8).prepend("0x");
-		key = key + " " + mc->displayName() + " (" + addressee.assembledName() + ")";
+		key = key + ' ' + mc->displayName() + " (" + addressee.assembledName() + ')';
 		QListWidgetItem * tmpItem = new QListWidgetItem ( KIconLoader::global()->loadIconSet ("kgpg-export-kgpg", K3Icon::Small), key, mUi->keyList);
 		tmpItem->setFlags (Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		tmpItem->setCheckState (Qt::Checked);
@@ -73,7 +73,9 @@ ExportKeys::ExportKeys ( Kopete::ChatSession * cs, QWidget *parent )
 
 
 ExportKeys::~ExportKeys()
-{}
+{
+	delete mUi;
+}
 
 void ExportKeys::accept()
 {
