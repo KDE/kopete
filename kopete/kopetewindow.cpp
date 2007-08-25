@@ -839,7 +839,7 @@ void KopeteWindow::makeTrayToolTip()
 		{
 			Kopete::Contact *self = a->myself();
 			tt += i18nc( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)</nobr><br />",
-			             "<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 (<i>%5</i>)</nobr><br />",
+			             "<nobr><img src=\"kopete-account-icon:%3:%4\"> <b>%1:</b> %2 (<i>%5</i>)</img></nobr><br />",
 				     a->protocol()->displayName(), a->accountLabel(), QString(QUrl::toPercentEncoding( a->protocol()->pluginId() )),
 				     QString(QUrl::toPercentEncoding( a->accountId() )), self->onlineStatus().description() );
 		}

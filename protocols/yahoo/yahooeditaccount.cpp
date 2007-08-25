@@ -169,7 +169,7 @@ void YahooEditAccount::slotSelectPicture()
 	}
 	else
 	{
-		KMessageBox::sorry( this, i18n( "<qt>The selected buddy icon could not be opened. <br>Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
+		KMessageBox::sorry( this, i18n( "<qt>The selected buddy icon could not be opened. <br />Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
 		return;
 	}
 }

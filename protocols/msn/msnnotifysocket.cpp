@@ -122,7 +122,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 205:
 	case 208:
 	{
-		QString msg = i18n( "<qt>The MSN user '%1' does not exist.<br>Please check the MSN ID.</qt>", handle );
+		QString msg = i18n( "<qt>The MSN user '%1' does not exist.<br />Please check the MSN ID.</qt>", handle );
 		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
@@ -131,8 +131,8 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 218:
 	case 540:
 	{
-		QString msg =i18n( "<qt>An internal error occurred in the MSN plugin.<br>"
-			      "MSN Error: %1<br>"
+		QString msg =i18n( "<qt>An internal error occurred in the MSN plugin.<br />"
+			      "MSN Error: %1<br />"
 			      "please send us a detailed bug report "
 			      "at kopete-devel@kde.org containing the raw debug output on the "
 			      "console (in gzipped format, as it is probably a lot of output.)" , code);
@@ -168,7 +168,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 215:
 	{
-		QString msg = i18n( "<qt>The user '%1' already exists in this group on the MSN server;<br>"
+		QString msg = i18n( "<qt>The user '%1' already exists in this group on the MSN server;<br />"
 			"if Kopete does not show the user, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw debug output on the "
 			"console (in gzipped format, as it is probably a lot of output.)</qt>" , handle);
