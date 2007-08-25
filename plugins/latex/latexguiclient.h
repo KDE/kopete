@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef TRANSLATORGUICLIENT_H
-#define TRANSLATORGUICLIENT_H
+#ifndef LATEXGUICLIENT_H
+#define LATEXGUICLIENT_H
 
 #include <qobject.h>
 #include <kxmlguiclient.h>
@@ -49,5 +49,4 @@ private:
 	Kopete::ChatSession *m_manager;
 };
 
-#endif
-
+#endif // LATEXGUICLIENT_H

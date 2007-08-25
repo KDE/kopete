@@ -31,7 +31,6 @@
 #include "qqcontact.h"
 #include "qqaccount.h"
 #include "ui_qqvcard.h"
-#include "dlgqqvcard.h"
 
 /*
  *  Constructs a dlgQQVCard which is a child of 'parent', with the

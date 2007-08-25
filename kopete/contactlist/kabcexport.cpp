@@ -41,8 +41,6 @@
 #include <kopetemetacontact.h>
 #include <kopetepicture.h>
 
-#include "kabcpersistence.h"
-
 #include "kabcexport.h"
 
 class ContactLVI : public Q3CheckListItem

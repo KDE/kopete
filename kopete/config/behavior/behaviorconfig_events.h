@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef __BEHAVIOURCONFIG_EVENTS_H
-#define __BEHAVIOURCONFIG_EVENTS_H
+#ifndef BEHAVIORCONFIG_EVENTS_H
+#define BEHAVIORCONFIG_EVENTS_H
 
 #include "ui_behaviorconfig_events.h"
 
@@ -27,4 +27,5 @@ class BehaviorConfig_Events : public QWidget, public Ui::BehaviorConfig_Events
 public:
 	BehaviorConfig_Events(QWidget *parent = 0);
 };
-#endif
+
+#endif // BEHAVIORCONFIG_EVENTS_H

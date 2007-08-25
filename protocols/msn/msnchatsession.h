@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef MSNMESSAGEMANAGER_H
-#define MSNMESSAGEMANAGER_H
+#ifndef MSNCHATSESSION_H
+#define MSNCHATSESSION_H
 
 #include "kopetechatsession.h"
 
@@ -137,7 +137,6 @@ signals:
 	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNChatSession* msnMM , MSNContact* c );
 };
 
-#endif
+#endif // MSNCHATSESSION_H
 
 // vim: set noet ts=4 sts=4 tw=4:
-

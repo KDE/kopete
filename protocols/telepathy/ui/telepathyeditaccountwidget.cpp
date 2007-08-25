@@ -24,7 +24,6 @@
 #include <QtCore/QPointer>
 #include <QtCore/QMap>
 #include <QtGui/QTreeWidgetItem>
-#include <QtGui/QTreeWidgetItem>
 
 // KDE includes
 #include <kmessagebox.h>

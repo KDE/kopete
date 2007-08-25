@@ -17,8 +17,8 @@
     *************************************************************************
 */
 
-#ifndef KIRCTCPMESSAGES_H
-#define KIRCTCPMESSAGES_H
+#ifndef KIRCCTCPMESSAGES_H
+#define KIRCCTCPMESSAGES_H
 
 #include "kircmessage.h"
 
@@ -44,5 +44,4 @@ namespace CtcpMessages
 
 }
 
-#endif
-
+#endif // KIRCCTCPMESSAGES_H

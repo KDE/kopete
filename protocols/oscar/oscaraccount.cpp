@@ -26,7 +26,6 @@
 #include "kopeteidentity.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
-#include "kopetecontactlist.h"
 #include "kopetecontact.h"
 #include "kopetechatsession.h"
 

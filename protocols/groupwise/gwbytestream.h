@@ -18,13 +18,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef KNETWORKBYTESTREAM_H
-#define KNETWORKBYTESTREAM_H
+#ifndef GWBYTESTREAM_H
+#define GWBYTESTREAM_H
 
 #include <kbufferedsocket.h>
 
 #include "bytestream.h"
-
 
 /**
  * Low level socket class, using KDE's KNetwork socket classes
@@ -66,4 +65,4 @@ private:
 
 };
 
-#endif
+#endif // GWBYTESTREAM_H

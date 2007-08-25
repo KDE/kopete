@@ -17,8 +17,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef DLGJABBERVCARD_H
-#define DLGJABBERVCARD_H
+#ifndef DLGQQVCARD_H
+#define DLGQQVCARD_H
 
 #include <kdialog.h>
 
@@ -106,7 +106,7 @@ private:
 	
 };
 
-#endif // DLGJABBERVCARD_H
+#endif // DLGQQVCARD_H
 
 /*
  * Local variables:

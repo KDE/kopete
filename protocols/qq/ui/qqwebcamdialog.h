@@ -14,8 +14,8 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDWEBCAMDIALOG_H
-#define TESTBEDWEBCAMDIALOG_H
+#ifndef QQWEBCAMDIALOG_H
+#define QQWEBCAMDIALOG_H
 
 #include <qstring.h>
 #include <qimage.h>
@@ -56,4 +56,4 @@ private:
 	Kopete::AV::VideoDevicePool *mVideoDevicePool;
 };
 
-#endif
+#endif // QQWEBCAMDIALOG_H

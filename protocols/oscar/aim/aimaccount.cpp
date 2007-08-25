@@ -33,7 +33,6 @@
 #include "kopeteprotocol.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteview.h"
-#include <kopeteuiglobal.h>
 
 #include "aimprotocol.h"
 #include "aimaccount.h"

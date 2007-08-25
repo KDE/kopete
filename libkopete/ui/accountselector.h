@@ -18,7 +18,7 @@
 #ifndef ACCOUNTSELECTOR_H
 #define ACCOUNTSELECTOR_H
 
-#include <qwidget.h>
+#include <QtGui/QWidget>
 #include <kopeteprotocol.h>
 #include "kopete_export.h"
 

@@ -23,12 +23,12 @@
 
 #include "kopeteonlinestatus.h"
 #include "kopetestatusmessage.h"
-
 #include "kopete_export.h"
 
-#include <QObject>
-#include <QPixmap>
-#include <QHash>
+#include <QtCore/QObject>
+#include <QtGui/QPixmap>
+#include <QtCore/QHash>
+
 #include <kconfiggroup.h>
 
 class KActionMenu;

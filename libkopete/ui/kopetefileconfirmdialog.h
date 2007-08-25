@@ -18,7 +18,8 @@
 #ifndef KOPETEFILECONFIRMDIALOG_H
 #define KOPETEFILECONFIRMDIALOG_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
+
 #include <kdialog.h>
 #include "kopetetransfermanager.h"
 #include "ui_fileconfirmbase.h"

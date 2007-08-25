@@ -34,8 +34,6 @@
 #include <kio/netaccess.h>
 #include <kstaticdeleter.h>
 #include <ksharedconfig.h>
-#include <kglobal.h>
-
 
 #include "kopetechatwindowstyle.h"
 

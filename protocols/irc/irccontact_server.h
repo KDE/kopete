@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef IRCSERVERCONTACT_H
-#define IRCSERVERCONTACT_H
+#ifndef IRCCONTACT_SERVER_H
+#define IRCCONTACT_SERVER_H
 
 #include "irccontact.h"
 
@@ -70,7 +70,6 @@ class IRCServerContact
 		Q3ValueList<Kopete::Message> mMsgBuffer;
 };
 
-#endif
+#endif // IRCCONTACT_SERVER_H
 
 // vim: set noet ts=4 sts=4 tw=4:
-

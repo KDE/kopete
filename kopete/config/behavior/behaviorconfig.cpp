@@ -38,7 +38,6 @@
 #include "kopetebehaviorsettings.h"
 #include "kopeteaway.h"
 #include "kopetepluginmanager.h"
-#include "kopeteaway.h"
 
 #include <qtabwidget.h>
 

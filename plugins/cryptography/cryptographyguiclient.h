@@ -15,8 +15,8 @@
     *                                                                       *
     *************************************************************************
 */
-#ifndef CRYPTOGUICLIENT_H
-#define CRYPTOGUICLIENT_H
+#ifndef CRYPTOGRAPHYGUICLIENT_H
+#define CRYPTOGRAPHYGUICLIENT_H
 
 #include <qobject.h>
 #include <kxmlguiclient.h>
@@ -48,4 +48,4 @@ private slots:
 	void slotExport();
 };
 
-#endif
+#endif // CRYPTOGRAPHYGUICLIENT_H

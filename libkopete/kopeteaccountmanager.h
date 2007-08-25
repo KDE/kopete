@@ -19,10 +19,10 @@
 #ifndef __kopeteaccountmanager_h__
 #define __kopeteaccountmanager_h__
 
-#include <QObject>
-#include <QColor>
-#include "kopete_export.h"
+#include <QtCore/QObject>
+#include <QtGui/QColor>
 
+#include "kopete_export.h"
 
 namespace Kopete {
 

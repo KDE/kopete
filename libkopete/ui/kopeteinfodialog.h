@@ -18,7 +18,7 @@
 #ifndef KOPETEINFODIALOG_H
 #define KOPETEINFODIALOG_H
 
-#include <KDialog>
+#include <KDE/KDialog>
 #include "kopete_export.h"
 
 namespace Kopete

@@ -18,8 +18,8 @@
 */
 
 
-#ifndef YAHOOIDENTITY_H
-#define YAHOOIDENTITY_H
+#ifndef YAHOOACCOUNT_H
+#define YAHOOACCOUNT_H
 
 // Qt
 #include <qobject.h>
@@ -295,6 +295,4 @@ private:
 	Client *m_session;		// The Connection object
 };
 
-
-#endif
-
+#endif // YAHOOACCOUNT_H

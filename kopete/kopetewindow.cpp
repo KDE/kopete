@@ -51,7 +51,6 @@
 #include <kedittoolbar.h>
 #include <kmenubar.h>
 #include <kstatusbar.h>
-#include <kglobalaccel.h>
 #include <kwindowsystem.h>
 #include <kdeversion.h>
 #include <kinputdialog.h>

@@ -38,7 +38,6 @@
 #include "kopetechatsessionmanager.h"
 #include "kopetemessagehandlerchain.h"
 #include "kopetemetacontact.h"
-#include "knotification.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopeteview.h"

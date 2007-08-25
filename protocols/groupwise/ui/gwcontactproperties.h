@@ -17,8 +17,8 @@
     *************************************************************************
 */
 
-#ifndef GROUPWISECONTACTPROPERTIES_H
-#define GROUPWISECONTACTPROPERTIES_H
+#ifndef GWCONTACTPROPERTIES_H
+#define GWCONTACTPROPERTIES_H
 
 #include <QHash>
 #include <QObject>
@@ -58,4 +58,4 @@ private:
 	KDialog * m_dialog;
 };
 
-#endif
+#endif // GWCONTACTPROPERTIES_H

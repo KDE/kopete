@@ -40,7 +40,6 @@
 #include <kio/netaccess.h>
 #include <kinputdialog.h>
 #include <kopeteview.h>
-#include <kicon.h>
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"

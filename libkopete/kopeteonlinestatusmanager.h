@@ -20,8 +20,8 @@
 
 #include "kopete_export.h"
 
-#include <QObject>
-#include <QFlags>
+#include <QtCore/QObject>
+#include <QtCore/QFlags>
 
 #include "kaction.h"
 #include "kactionmenu.h"

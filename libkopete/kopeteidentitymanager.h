@@ -18,11 +18,11 @@
 #ifndef __kopeteidentitymanager_h__
 #define __kopeteidentitymanager_h__
 
-#include <QObject>
+#include <QtCore/QObject>
+
 #include "kopete_export.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteidentity.h"
-
 
 namespace Kopete 
 {

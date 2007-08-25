@@ -16,8 +16,8 @@
    *************************************************************************
 */
 
-#ifndef PAPILLON_CORE_PROTOCOL_H
-#define PAPILLON_CORE_PROTOCOL_H
+#ifndef MESSANGERCOREPROTOCOL_H
+#define MESSANGERCOREPROTOCOL_H
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
@@ -149,4 +149,4 @@ private:
 
 }
 
-#endif
+#endif // MESSANGERCOREPROTOCOL_H

@@ -21,7 +21,6 @@
 
 #include <kplugininfo.h>
 #include <ksettings/dispatcher.h>
-#include <kplugininfo.h>
 
 namespace Kopete {
 

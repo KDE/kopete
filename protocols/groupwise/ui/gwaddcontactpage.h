@@ -20,8 +20,8 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDADDCONTACTPAGE_H
-#define TESTBEDADDCONTACTPAGE_H
+#ifndef GWADDCONTACTPAGE_H
+#define GWADDCONTACTPAGE_H
 
 #include "gwerror.h"
 
@@ -69,4 +69,4 @@ protected:
 	bool m_canadd;
 };
 
-#endif
+#endif // GWADDCONTACTPAGE_H

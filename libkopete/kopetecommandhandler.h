@@ -17,7 +17,8 @@
 #ifndef _KOPETECOMMANDHANDLER_H_
 #define _KOPETECOMMANDHANDLER_H_
 
-#include <QMultiHash>
+#include <QtCore/QMultiHash>
+
 #include <kshortcut.h>
 #include "kopetemessage.h"
 

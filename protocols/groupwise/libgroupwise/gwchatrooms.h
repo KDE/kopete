@@ -16,11 +16,12 @@
     *************************************************************************
 */
 
+#ifndef GWCHATROOMS_H
+#define GWCHATROOMS_H
+
 #include <QDateTime>
 #include <QList>
 #include <QMap>
-#ifndef GROUPWISE_CHATROOMS_H
-#define GROUPWISE_CHATROOMS_H
 
 namespace GroupWise
 {
@@ -75,4 +76,5 @@ class Chatroom
 typedef QList<Chatroom> ChatroomList;
 typedef QMap<QString, Chatroom> ChatroomMap;
 };
-#endif
+
+#endif // GWCHATROOMS_H

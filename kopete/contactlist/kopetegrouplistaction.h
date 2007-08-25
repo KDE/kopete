@@ -15,12 +15,10 @@
     *************************************************************************
 */
 
-#ifndef KOPETEGRLISTACT_H
-#define KOPETEGRLISTACT_H
-
+#ifndef KOPETEGROUPLISTACTION_H
+#define KOPETEGROUPLISTACTION_H
 
 #include <kselectaction.h>
-
 
 /**
  * Action used for Copy To  and  Move To
@@ -40,4 +38,4 @@ private:
 	QStringList m_groupList;
 };
 
-#endif
+#endif // KOPETEGROUPLISTACTION_H

@@ -12,8 +12,8 @@
    *                                                                       *
    *************************************************************************
 */
-#ifndef PAPILLONNOTIFICATIONSTREAM_H
-#define PAPILLONNOTIFICATIONSTREAM_H
+#ifndef PAPILLONCLIENTSTREAM_H
+#define PAPILLONCLIENTSTREAM_H
 
 #include <Papillon/Base/Stream>
 #include <Papillon/Macros>
@@ -70,4 +70,4 @@ private:
 
 }
 
-#endif
+#endif // PAPILLONCLIENTSTREAM_H

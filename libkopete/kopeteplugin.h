@@ -21,13 +21,12 @@
 #define KOPETEPLUGIN_H
 
 #include <kxmlguiclient.h>
-#include <QObject>
+#include <QtCore/QObject>
 #include <kdemacros.h>
 
 #include "kopete_export.h"
 
 class KPluginInfo;
-
 
 namespace Kopete
 {

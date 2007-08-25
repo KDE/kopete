@@ -41,7 +41,6 @@
 #include <kmessagebox.h>
 #include <krun.h>
 #include <kstandarddirs.h>
-#include <kactionmenu.h>
 #include <ktoolinvocation.h>
 #include <kicon.h>
 

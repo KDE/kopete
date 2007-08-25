@@ -34,7 +34,6 @@
 #include <QMouseEvent>
 #include <QTimer>
 #include <QToolTip>
-#include <QStyle>
 
 #include <kdebug.h>
 

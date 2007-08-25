@@ -18,8 +18,8 @@
     *************************************************************************
 */
 
-#ifndef YAHOOWEBCAMDIALOG_H_
-#define YAHOOWEBCAMDIALOG_H_
+#ifndef MSNWEBCAMDIALOG_H
+#define MSNWEBCAMDIALOG_H
 
 //#include <qlabel.h>
 #include <webcamwidget.h>
@@ -51,5 +51,5 @@ private:
 	
 };
 
-#endif
+#endif // MSNWEBCAMDIALOG_H
 //kate: indent-mode csands; auto-insert-doxygen on;

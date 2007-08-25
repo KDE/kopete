@@ -21,8 +21,8 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDPROTOCOL_H
-#define TESTBEDPROTOCOL_H
+#ifndef GWPROTOCOL_H
+#define GWPROTOCOL_H
 
 #include <kopeteprotocol.h>
 #include "kopetecontactproperty.h"
@@ -110,4 +110,4 @@ protected:
 	static GroupWiseProtocol *s_protocol;
 };
 
-#endif
+#endif // GWPROTOCOL_H

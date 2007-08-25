@@ -16,12 +16,13 @@
     *************************************************************************
 */
 
-#ifndef KOPETEFILETRANSFER_H
-#define KOPETEFILETRANSFER_H
+#ifndef KOPETETRANSFERMANAGER_H
+#define KOPETETRANSFERMANAGER_H
 
-#include <qobject.h>
-#include <qstring.h>
-#include <qmap.h>
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtCore/QMap>
+
 #include "kopete_export.h"
 
 #include <kio/job.h>
@@ -221,5 +222,5 @@ private slots:
 
 }
 
-#endif
+#endif // KOPETETRANSFERMANAGER_H
 // vim: set noet ts=4 sts=4 sw=4:
