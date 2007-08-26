@@ -24,5 +24,5 @@ if( LIBXML2_FOUND AND LIBXSLT_FOUND )
 endif( LIBXML2_FOUND AND LIBXSLT_FOUND )
 
 #add_subdirectory(plugins_playground/smpppdcs)
-add_subdirectory(plugins_playground/urlpicpreview)
+#add_subdirectory(plugins_playground/urlpicpreview)
 
