@@ -486,7 +486,7 @@ void ChatWindowConfig::createPreviewMessages()
 	msgOut.setDirection( Kopete::Message::Outbound );
 
 	Kopete::Message msgOut2( m_myself, m_jack );
-	msgOut2.setPlainBody( i18n( "Ok, a outgoing consecutive message." ) );
+	msgOut2.setPlainBody( i18n( "Ok, an outgoing consecutive message." ) );
 	msgOut2.setDirection( Kopete::Message::Outbound );
 
 	Kopete::Message msgCol( m_jack, m_myself );
