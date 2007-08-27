@@ -143,7 +143,6 @@ private slots:
 	void slotIconsChanged();
 
 private:
-	static OnlineStatusManager *s_self;
 	OnlineStatusManager();
 	class Private;
 	Private *d;

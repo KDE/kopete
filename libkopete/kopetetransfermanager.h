@@ -125,7 +125,6 @@ private slots:
 
 private:
 	TransferManager( QObject *parent );
-	static TransferManager *s_transferManager;
 
 	int nextID;
 	QMap<unsigned int, Transfer *> mTransfersMap;

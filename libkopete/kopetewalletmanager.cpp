@@ -19,7 +19,6 @@
 #include "kopeteuiglobal.h"
 
 #include <kdebug.h>
-#include <kstaticdeleter.h>
 #include <kwallet.h>
 
 #include <qtimer.h>
@@ -64,12 +63,8 @@ Kopete::WalletManager::~WalletManager()
 
 Kopete::WalletManager *Kopete::WalletManager::self()
 {
-	static KStaticDeleter<Kopete::WalletManager> s_deleter;
-	static Kopete::WalletManager *s_self = 0;
-
-	if ( !s_self )
-		s_deleter.setObject( s_self, new Kopete::WalletManager() );
-	return s_self;
+	static WalletManager s;
+	return &s;
 }
 
 void Kopete::WalletManager::openWallet( QObject *object, const char *slot )

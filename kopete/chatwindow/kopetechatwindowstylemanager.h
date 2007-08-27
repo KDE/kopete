@@ -133,9 +133,6 @@ private:
 	 * Call loadStyles() to list all avaiable styles.
 	 */
 	ChatWindowStyleManager(QObject *parent = 0);
-
-	static ChatWindowStyleManager *s_self;
-
 	class Private;
 	Private *d;
 };

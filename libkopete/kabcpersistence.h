@@ -95,9 +95,6 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 	private:
 		class Private;
 		Private *d;
-		static KABCPersistence * s_self;
-		// FIXME: Try to remove that static variable !
-		static KABC::AddressBook* s_addressBook;
 };
 
 } // end namespace Kopete
