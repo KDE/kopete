@@ -40,7 +40,7 @@ class IpEndpointConnector : public QObject
 
 	public:
 		/** @brief Creates a new instance of the IpEndpointConnector class. */
-		IpEndpointConnector(bool enableTls, QObject *parent=0);
+		explicit IpEndpointConnector(bool enableTls, QObject *parent=0);
 		/** @brief Frees resources and performs other cleanup operations. */
 		~IpEndpointConnector();
 

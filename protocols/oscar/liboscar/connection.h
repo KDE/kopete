@@ -49,7 +49,7 @@ class LIBOSCAR_EXPORT Connection : public QObject
 Q_OBJECT
 public:
 
-	Connection( ClientStream* cs, const char* name = 0 );
+	explicit Connection( ClientStream* cs, const char* name = 0 );
 	~Connection();
 
 	void setClient( Client* );
