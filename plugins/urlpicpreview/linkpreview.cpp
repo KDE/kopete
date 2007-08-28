@@ -3,7 +3,7 @@
  
     Copyright (c) 2005      by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -31,7 +31,7 @@ LinkPreview * LinkPreview::m_self = NULL;
 
 LinkPreview::LinkPreview() : m_pic(1280, 1024), m_khtml(NULL), m_URLLoading(false) {
 
-    kdDebug(0) << k_funcinfo << endl;
+    kDebug(14314) << k_funcinfo << endl;
 
     m_khtml = new KHTMLPart();
 
@@ -47,7 +47,7 @@ LinkPreview::LinkPreview() : m_pic(1280, 1024), m_khtml(NULL), m_URLLoading(fals
 LinkPreview::~LinkPreview() {
     delete m_khtml;
 
-    kdDebug(0) << k_funcinfo << endl;
+    kDebug(14314) << k_funcinfo << endl;
 }
 
 LinkPreview * LinkPreview::self(const URLPicPreviewPlugin * plugin) {
@@ -60,9 +60,9 @@ LinkPreview * LinkPreview::self(const URLPicPreviewPlugin * plugin) {
 }
 
 /*!
-    \fn LinkPreview::getPreviewPic(const KURL& url)
+    \fn LinkPreview::getPreviewPic(const KUrl& url)
  */
-QPixmap LinkPreview::getPreviewPic(const KURL& url) {
+QPixmap LinkPreview::getPreviewPic(const KUrl& url) {
     QPainter painter(&m_pic);
 
     m_pic.fill();
@@ -71,8 +71,8 @@ QPixmap LinkPreview::getPreviewPic(const KURL& url) {
     connect(m_khtml, SIGNAL(completed()), this, SLOT(completed()));
     connect(m_khtml, SIGNAL(canceled(const QString &)), this, SLOT(completed()));
 
-    if(m_khtml->openURL(url)) {
-        kdDebug(0) << k_funcinfo << "Creating preview of " << url << endl;
+    if(m_khtml->openUrl(url)) {
+        kDebug(14314) << k_funcinfo << "Creating preview of " << url << endl;
         m_khtml->view()->resize(1280, 1024);
         m_khtml->stopAnimations();
         m_khtml->paint(&painter, QRect(0, 0, 1280, 1024));

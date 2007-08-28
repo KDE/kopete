@@ -3,7 +3,7 @@
  
     Copyright (c) 2005      by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -21,6 +21,7 @@
 
 //Kopete
 #include "kopeteplugin.h"
+namespace Kopete { class Message; }
 
 class QImage;
 
@@ -37,12 +38,12 @@ signals:
     void abortAllOperations();
 
 public:
-    URLPicPreviewPlugin(QObject* parent, const char* name, const QStringList& args);
+    URLPicPreviewPlugin(QObject* parent, const QStringList& args);
     virtual ~URLPicPreviewPlugin();
 
 private:
     QString prepareBody(const QString& parsedBody, uint previewCount = 0);
-    QString createPreviewPicture(const KURL& url);
+    QString createPreviewPicture(const KUrl& url);
 
 protected slots:
     void aboutToDisplay(Kopete::Message& message);

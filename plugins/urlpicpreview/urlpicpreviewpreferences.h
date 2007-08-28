@@ -1,10 +1,10 @@
 /*
     urlpicpreviewpreferences.h
- 
+
     Copyright (c) 2005      by Heiko Schaefer        <heiko@rangun.de>
- 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
- 
+
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+
     *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
@@ -20,24 +20,26 @@
 #include <kcmodule.h>
 
 class QLayout;
-class URLPicPreviewPrefsBase;
+namespace Ui { class URLPicPreviewPrefsUI; }
 
-class URLPicPreviewPreferences : public KCModule {
-    Q_OBJECT
+class URLPicPreviewPreferences : public KCModule
+{
+		Q_OBJECT
 
-    URLPicPreviewPreferences(const URLPicPreviewPreferences&);
-    URLPicPreviewPreferences& operator=(const URLPicPreviewPreferences&);
+		URLPicPreviewPreferences ( const URLPicPreviewPreferences& );
+		URLPicPreviewPreferences& operator= ( const URLPicPreviewPreferences& );
 
-public:
-    URLPicPreviewPreferences(QWidget* parent, const char* name, const QStringList& args);
+	public:
+		explicit URLPicPreviewPreferences ( QWidget* parent = 0, const QStringList& args = QStringList() );
 
-    virtual ~URLPicPreviewPreferences();
-    virtual void load();
-    virtual void save();
+		virtual ~URLPicPreviewPreferences();
+		virtual void load();
+		virtual void save();
+		virtual void defaults();
 
-private:
-    QLayout * m_layout;
-    URLPicPreviewPrefsBase * m_ui;
+	private:
+		QLayout * m_layout;
+		Ui::URLPicPreviewPrefsUI * m_ui;
 };
 
 #endif /* URLPICPREVIEWPREFERENCES_H */

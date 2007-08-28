@@ -3,7 +3,7 @@
  
     Copyright (c) 2005      by Heiko Schaefer        <heiko@rangun.de>
  
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -35,7 +35,7 @@ class LinkPreview : public QObject {
 public:
     virtual ~LinkPreview();
     static LinkPreview * self(const URLPicPreviewPlugin * plugin);
-    QPixmap getPreviewPic(const KURL& url);
+    QPixmap getPreviewPic(const KUrl& url);
 
 private:
     LinkPreview();
