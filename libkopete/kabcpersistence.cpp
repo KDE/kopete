@@ -30,8 +30,6 @@
 #include "accountselector.h"
 #include "kopeteuiglobal.h"
 
-#include <kstaticdeleter.h>
-
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecontact.h"
@@ -67,7 +65,12 @@ public:
 	{}
 	QList<KABC::Resource *> pendingResources;
 	bool addrBookWritePending;
+
+	// FIXME: Try to remove that static variable !
+	static KABC::AddressBook* s_addressBook;
 };
+
+KABC::AddressBook* KABCPersistence::Private::s_addressBook = 0L;
 
 KABCPersistence::KABCPersistence( QObject * parent, const char * name ) : QObject( parent)
 {
@@ -80,26 +83,20 @@ KABCPersistence::~KABCPersistence()
 	delete d;
 }
 
-KABCPersistence *KABCPersistence::s_self = 0L;
-
-KABC::AddressBook* KABCPersistence::s_addressBook = 0;
-
 KABCPersistence *KABCPersistence::self()
 {
-	static KStaticDeleter<KABCPersistence> deleter;
-	if(!s_self)
-		deleter.setObject( s_self, new KABCPersistence() );
-	return s_self;
+	static KABCPersistence s;
+	return &s;
 }
 
 KABC::AddressBook* KABCPersistence::addressBook()
 {
-	if ( s_addressBook == 0L )
+	if ( Private::s_addressBook == 0L )
 	{
-		s_addressBook = KABC::StdAddressBook::self();
+		Private::s_addressBook = KABC::StdAddressBook::self();
 		KABC::StdAddressBook::setAutomaticSave( false );
 	}
-	return s_addressBook;
+	return Private::s_addressBook;
 }
 
 void KABCPersistence::write( MetaContact * mc )

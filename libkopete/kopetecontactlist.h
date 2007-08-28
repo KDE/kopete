@@ -19,8 +19,8 @@
 #ifndef KOPETECONTACTLIST_H__
 #define KOPETECONTACTLIST_H__
 
-#include <QtCore/QList>
 #include <QtCore/QObject>
+#include <QtCore/QList>
 #include <QtGui/QStandardItemModel>
 
 #include <KUrl>

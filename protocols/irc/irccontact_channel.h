@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef IRCCHANNELCONTACT_H
-#define IRCCHANNELCONTACT_H
+#ifndef IRCCONTACT_CHANNEL_H
+#define IRCCONTACT_CHANNEL_H
 
 #include "irccontact.h"
 #include <QList>
@@ -149,4 +149,4 @@ private:
 	void toggleMode( QChar mode, bool enabled, bool update );
 };
 
-#endif
+#endif // IRCCONTACT_CHANNEL_H

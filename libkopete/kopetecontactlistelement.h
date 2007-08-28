@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef KOPETEPLUGINDATAOBJECT_H
-#define KOPETEPLUGINDATAOBJECT_H
+#ifndef KOPETECONTACTLISTELEMENT_H
+#define KOPETECONTACTLISTELEMENT_H
 
 #include <QtCore/QList>
 #include <QtCore/QMap>
@@ -183,7 +183,6 @@ private:
 
 } //END namespace Kopete
 
-#endif
+#endif // KOPETECONTACTLISTELEMENT_H
 
 // vim: set noet ts=4 sts=4 sw=4:
-

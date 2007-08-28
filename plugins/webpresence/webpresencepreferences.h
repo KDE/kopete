@@ -15,8 +15,8 @@
     ***************************************************************************
 */
 
-#ifndef WEBPRSENCEPREFERECES_H
-#define WEBPRSENCEPREFERECES_H
+#ifndef WEBPRESENCEPREFERENCES_H
+#define WEBPRESENCEPREFERENCES_H
 
 #include "kcmodule.h"
 
@@ -47,6 +47,6 @@ private slots: // Public slots
 
 };
 
-#endif
+#endif // WEBPRESENCEPREFERENCES_H
 
 // vim: set noet ts=4 sts=4 sw=4:

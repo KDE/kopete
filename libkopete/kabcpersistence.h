@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef KOPETEADDRESSBOOKLINK_H
-#define KOPETEADDRESSBOOKLINK_H
+#ifndef KABCPERSISTENCE_H
+#define KABCPERSISTENCE_H
 
 #include "kopete_export.h"
 
@@ -95,12 +95,8 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 	private:
 		class Private;
 		Private *d;
-		static KABCPersistence * s_self;
-		// FIXME: Try to remove that static variable !
-		static KABC::AddressBook* s_addressBook;
 };
 
 } // end namespace Kopete
 
-#endif
-
+#endif // KABCPERSISTENCE_H

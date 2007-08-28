@@ -18,7 +18,7 @@
 #ifndef KOPETEUIGLOBAL_H
 #define KOPETEUIGLOBAL_H
 
-#include <qwidget.h>
+#include <QtGui/QWidget>
 
 #include "kopete_export.h"
 

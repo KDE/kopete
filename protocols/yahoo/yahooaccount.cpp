@@ -41,7 +41,6 @@
 #include <kmessagebox.h>
 #include <krun.h>
 #include <kstandarddirs.h>
-#include <kactionmenu.h>
 #include <ktoolinvocation.h>
 #include <kicon.h>
 
@@ -1662,7 +1661,7 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 		uint expire = myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt();
 
 		if ( image.isNull() ) {
-			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n( "<qt>The selected buddy icon could not be opened. <br>Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
+			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n( "<qt>The selected buddy icon could not be opened. <br />Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
 			return;
 		}
 		image = image.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );

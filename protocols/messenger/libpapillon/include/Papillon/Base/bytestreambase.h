@@ -15,8 +15,8 @@
 // VERSION 2 OF THE LICENSE, OR (AT YOUR OPTION) ANY LATER VERSION.
 //
 
-#ifndef PAPILLON_BYTESTREAM_H
-#define PAPILLON_BYTESTREAM_H
+#ifndef BYTESTREAMBASE_H
+#define BYTESTREAMBASE_H
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
@@ -57,4 +57,4 @@ class ByteStreamBase : public QObject
 }; // ByteStream
 }
 
-#endif
+#endif // BYTESTREAMBASE_H

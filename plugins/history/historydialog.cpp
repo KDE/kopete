@@ -52,7 +52,6 @@
 #include <kstandarddirs.h>
 #include <k3listview.h>
 #include <k3listviewsearchline.h>
-#include <kiconloader.h>
 #include <kcombobox.h>
 #include <kmenu.h>
 #include <kstandardaction.h>

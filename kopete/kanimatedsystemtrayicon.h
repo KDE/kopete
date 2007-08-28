@@ -55,14 +55,14 @@ class KAnimatedSystemTrayIcon : public KSystemTrayIcon
 		* Same as above but allows one to define the movie by name that should
 		* be used for the system tray icon.
 		 */
-		KAnimatedSystemTrayIcon ( const QString& movie, QWidget* parent = 0 );
+		explicit KAnimatedSystemTrayIcon ( const QString& movie, QWidget* parent = 0 );
 
 		/**
 		* Same as above but allows one to define the movie by QMovie that should
 		* be used for the system tray icon. Memory management for the movie will
 		* be handled by KAnimatedSystemTrayIcon.
 		 */
-		KAnimatedSystemTrayIcon ( QMovie* movie, QWidget* parent = 0 );
+		explicit KAnimatedSystemTrayIcon ( QMovie* movie, QWidget* parent = 0 );
 
 
 		~KAnimatedSystemTrayIcon();

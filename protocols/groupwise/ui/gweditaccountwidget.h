@@ -20,8 +20,8 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDEDITACCOUNTWIDGET_H
-#define TESTBEDEDITACCOUNTWIDGET_H
+#ifndef GWEDITACCOUNTWIDGET_H
+#define GWEDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
 #include <editaccountwidget.h>
@@ -62,4 +62,4 @@ protected:
 	Ui::GroupWiseAccountPreferences *m_preferencesDialog;
 };
 
-#endif
+#endif // GWEDITACCOUNTWIDGET_H

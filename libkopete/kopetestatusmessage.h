@@ -17,8 +17,7 @@
 #ifndef KOPETESTATUSMESSAGE_H
 #define KOPETESTATUSMESSAGE_H
 
-#include <QVariant>
-
+#include <QtCore/QVariant>
 
 #include <ksharedptr.h>
 #include "kopete_export.h"

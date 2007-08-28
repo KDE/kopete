@@ -17,8 +17,9 @@
 #ifndef KOPETEMESSAGEHANDLER_H
 #define KOPETEMESSAGEHANDLER_H
 
-#include <QObject>
-#include <QList>
+#include <QtCore/QObject>
+#include <QtCore/QList>
+
 #include "kopete_export.h"
 
 //FIXME: Message::MessageDirection could be moved into namespace Kopete

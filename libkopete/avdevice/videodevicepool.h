@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef KOPETE_AVVIDEODEVICE_H
-#define KOPETE_AVVIDEODEVICE_H
+#ifndef VIDEODEVICEPOOL_H
+#define VIDEODEVICEPOOL_H
 
 #include <iostream>
 
@@ -126,4 +126,4 @@ private:
 
 }
 
-#endif
+#endif // VIDEODEVICEPOOL_H

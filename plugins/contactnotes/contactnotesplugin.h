@@ -15,8 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef BABELFISHPLUGIN_H
-#define BABELFISHPLUGIN_H
+#ifndef CONTACTNOTESPLUGIN_H
+#define CONTACTNOTESPLUGIN_H
 
 #include <qobject.h>
 #include <qmap.h>
@@ -60,6 +60,4 @@ private slots: // Private slots
   void slotEditInfo();
 };
 
-#endif
-
-
+#endif // CONTACTNOTESPLUGIN_H

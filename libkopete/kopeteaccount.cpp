@@ -33,7 +33,6 @@
 #include <kmenu.h>
 #include <kmessagebox.h>
 #include <kcomponentdata.h>
-#include <kmenu.h>
 #include <kactionmenu.h>
 #include <kconfiggroup.h>
 

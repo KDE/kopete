@@ -68,7 +68,6 @@
 #include <kstandardaction.h>
 #include <kiconloader.h>
 #include <kcodecs.h>
-#include <kstandardaction.h>
 #include <kicon.h>
 
 // Kopete includes

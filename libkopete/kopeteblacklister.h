@@ -16,7 +16,7 @@
 #ifndef KOPETEBLACKLISTER_H
 #define KOPETEBLACKLISTER_H
 
-#include <qobject.h>
+#include <QtCore/QObject>
 
 namespace Kopete
 {

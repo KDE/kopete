@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef YAHOO_FN_H
+#define YAHOO_FN_H
+
 #define IDENT  1 /* identify function */
 #define XOR    2 /* xor with arg1 */
 #define MULADD 3 /* multipy by arg1 then add arg2 */
@@ -31,3 +34,5 @@ struct yahoo_fn
 };
 
 int yahoo_xfrm( int table, int depth, int seed );
+
+#endif // YAHOO_FN_H

@@ -24,7 +24,8 @@
 #include <kopete_export.h>
 
 #include <utility>
-#include <QPixmap>
+
+#include <QtGui/QPixmap>
 
 namespace Kopete {
 namespace UI {

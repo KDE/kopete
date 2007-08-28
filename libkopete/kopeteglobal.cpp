@@ -31,8 +31,6 @@
 #include <kstandarddirs.h>
 #include <ktar.h>
 #include <kzip.h>
-#include <kmimetype.h>
-
 
 namespace Kopete
 {

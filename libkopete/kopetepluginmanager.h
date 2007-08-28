@@ -234,7 +234,6 @@ private:
 
 	class Private;
 	Private *d;
-	static PluginManager *s_self;
 };
 
 }

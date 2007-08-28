@@ -32,10 +32,7 @@
 #include <ktar.h>
 #include <kmimetype.h>
 #include <kio/netaccess.h>
-#include <kstaticdeleter.h>
 #include <ksharedconfig.h>
-#include <kglobal.h>
-
 
 #include "kopetechatwindowstyle.h"
 
@@ -65,18 +62,10 @@ public:
 	QStack<KUrl> styleDirs;
 };
 
-static KStaticDeleter<ChatWindowStyleManager> ChatWindowStyleManagerstaticDeleter;
-
-ChatWindowStyleManager *ChatWindowStyleManager::s_self = 0;
-
 ChatWindowStyleManager *ChatWindowStyleManager::self()
 {
-	if( !s_self )
-	{
-		ChatWindowStyleManagerstaticDeleter.setObject( s_self, new ChatWindowStyleManager() );
-	}
-
-	return s_self;
+	static ChatWindowStyleManager s;
+	return &s;
 }
 
 ChatWindowStyleManager::ChatWindowStyleManager(QObject *parent)

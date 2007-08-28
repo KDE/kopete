@@ -11,8 +11,8 @@
 // * Created: 4.5.1999
 // *************************************************************************
 
-#ifndef GSM_UNIX_SERIAL_KOPETE_H
-#define GSM_UNIX_SERIAL_KOPETE_H
+#ifndef KOPETE_UNIX_SERIAL_H
+#define KOPETE_UNIX_SERIAL_H
 
 #include "config-kopete.h"
 #ifdef INCLUDE_SMSGSM
@@ -67,4 +67,5 @@ signals:
 
 }
 #endif
-#endif // GSM_UNIX_SERIAL_KOPETE_H
+
+#endif // KOPETE_UNIX_SERIAL_H

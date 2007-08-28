@@ -15,11 +15,11 @@
     *************************************************************************
 */
 
-#ifndef KOPETEMESSAGEMANAGERFACTORY_H
-#define KOPETEMESSAGEMANAGERFACTORY_H
+#ifndef KOPETECHATSESSIONMANAGER_H
+#define KOPETECHATSESSIONMANAGER_H
 
-#include <qobject.h>
-#include <QList>
+#include <QtCore/QObject>
+#include <QtCore/QList>
 
 #include "kopetechatsession.h"
 #include "kopetemessage.h"
@@ -184,7 +184,6 @@ private:
 
 }
 
-#endif
+#endif // KOPETECHATSESSIONMANAGER_H
 
 // vim: set noet ts=4 sts=4 sw=4:
-

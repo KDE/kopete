@@ -28,7 +28,7 @@ public:
 	typedef QPair<char, char> Escape;
 	typedef QList<Escape> EscapeList;
 
-	KByteArrayEscaper(char escape_char = '\0', const KByteArrayEscaper::EscapeList &escapes = KByteArrayEscaper::EscapeList());
+	explicit KByteArrayEscaper(char escape_char = '\0', const KByteArrayEscaper::EscapeList &escapes = KByteArrayEscaper::EscapeList());
 	~KByteArrayEscaper();
 
 	void reset(char escape_char = '\0');

@@ -28,7 +28,6 @@
 #include <kglobalsettings.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kstaticdeleter.h>
 #include <kicon.h>
 
 #include <algorithm> // for min
@@ -56,14 +55,10 @@ public:
 	QHash< QString, QPixmap* > iconCache;
 };
 
-OnlineStatusManager *OnlineStatusManager::s_self=0L;
-
 OnlineStatusManager *OnlineStatusManager::self()
 {
-	static KStaticDeleter<OnlineStatusManager> deleter;
-	if(!s_self)
-		deleter.setObject( s_self, new OnlineStatusManager() );
-	return s_self;
+	static OnlineStatusManager s;
+	return &s;
 }
 
 OnlineStatusManager::OnlineStatusManager()

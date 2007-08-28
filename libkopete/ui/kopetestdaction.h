@@ -21,7 +21,7 @@
 
 #undef KDE_NO_COMPAT
 #include <kaction.h>
-#include <qobject.h>
+#include <QtCore/QObject>
 
 #include "kopete_export.h"
 

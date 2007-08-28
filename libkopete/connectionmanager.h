@@ -53,7 +53,6 @@ class KOPETE_EXPORT ConnectionManager : public QObject, virtual public DCOPObjec
 	private:
 		ConnectionManager( QObject *parent, const char * name );
 		ConnectionManagerPrivate *d;
-		static ConnectionManager * s_self;
 };
 
 #endif

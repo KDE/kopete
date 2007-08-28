@@ -23,7 +23,7 @@
 #ifndef __KOPETECHATSESSION_H__
 #define __KOPETECHATSESSION_H__
 
-#include <qobject.h>
+#include <QtCore/QObject>
 
 #include <kxmlguiclient.h>
 

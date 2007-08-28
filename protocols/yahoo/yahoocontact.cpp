@@ -22,7 +22,6 @@
 #include "kopeteonlinestatus.h"
 #include "kopetemetacontact.h"
 #include "kopetechatsessionmanager.h"
-#include "kopetemetacontact.h"
 #include "kopeteuiglobal.h"
 #include "kopeteview.h"
 #include "kopetetransfermanager.h"

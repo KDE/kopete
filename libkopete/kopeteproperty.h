@@ -22,8 +22,8 @@
 #ifndef _KOPETEPROPERTY_H_
 #define _KOPETEPROPERTY_H_
 
-#include <QVariant>
-#include <QFlags>
+#include <QtCore/QVariant>
+#include <QtCore/QFlags>
 
 #include "kopete_export.h"
 

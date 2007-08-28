@@ -19,8 +19,8 @@
 #ifndef KOPETEAWAY_HI
 #define KOPETEAWAY_HI
 
-#include <qstring.h>
-#include <qobject.h>
+#include <QtCore/QString>
+#include <QtCore/QObject>
 
 #include "kopete_export.h"
 

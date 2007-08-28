@@ -21,7 +21,7 @@
 #include <ksharedptr.h>
 #include "kopete_export.h"
 
-#include <qimage.h>
+#include <QtGui/QImage>
 
 namespace KABC
 {

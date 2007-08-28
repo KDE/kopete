@@ -19,7 +19,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kstaticdeleter.h>
 
 #include "clientiface_stub.h"
 #include "networkstatuscommon.h"
@@ -49,14 +48,10 @@ ConnectionManager::ConnectionManager( QObject * parent, const char * name ) : DC
 	initialise();
 }
 
-ConnectionManager *ConnectionManager::s_self = 0L;
-
 ConnectionManager *ConnectionManager::self()
 {
-	static KStaticDeleter<ConnectionManager> deleter;
-	if(!s_self)
-		deleter.setObject( s_self, new ConnectionManager( 0, "connection_manager" ) );
-	return s_self;	
+	static ConnectionManager s;
+	return &s;
 }
 
 void ConnectionManager::initialise()

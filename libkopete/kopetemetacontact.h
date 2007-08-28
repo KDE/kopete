@@ -22,14 +22,13 @@
 #define kopetemetacontact_h__
 
 #include "kopetecontactlistelement.h"
-#include <QList>
 
+#include <QtCore/QList>
 
 #include <kdemacros.h>
 #include <kurl.h>
 #include "kopete_export.h"
 
-#include "kopetecontactlistelement.h"
 #include "kopeteonlinestatus.h"
 
 namespace Kopete {

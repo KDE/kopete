@@ -61,7 +61,7 @@ public:
 	enum Method { AuthNone=0x0001, AuthUsername=0x0002 };
 	enum Request { ReqConnect, ReqUDPAssociate };
 	SocksClient(QObject *parent=0);
-	SocksClient(int, QObject *parent=0);
+	explicit SocksClient(int, QObject *parent=0);
 	~SocksClient();
 
 	bool isIncoming() const;

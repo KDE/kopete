@@ -20,8 +20,8 @@
 // 02110-1301, USA.
 
 
-#ifndef GADURTF_H
-#define GADURTF_H
+#ifndef GADURICHTEXTFORMAT_H
+#define GADURICHTEXTFORMAT_H
 
 #include <libgadu.h>
 
@@ -52,4 +52,5 @@ private:
 	QByteArray		rtf;
 
 };
-#endif
+
+#endif // GADURICHTEXTFORMAT_H

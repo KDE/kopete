@@ -39,7 +39,6 @@
 #include <kplugininfo.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
-#include <kstaticdeleter.h>
 #include <kurl.h>
 #include <kservicetypetrader.h>
 
@@ -49,7 +48,6 @@
 
 namespace Kopete
 {
-
 
 class PluginManager::Private
 {
@@ -74,20 +72,14 @@ public:
 	// Plugins pending for loading
 	QStack<QString> pluginsToLoad;
 
-	static KStaticDeleter<PluginManager> deleter;
-
 	bool isAllPluginsLoaded;
 };
 
-KStaticDeleter<PluginManager> PluginManager::Private::deleter;
-PluginManager* PluginManager::s_self = 0L;
 
 PluginManager* PluginManager::self()
 {
-	if ( !s_self )
-		Private::deleter.setObject( s_self, new PluginManager() );
-
-	return s_self;
+	static PluginManager s;
+	return &s;
 }
 
 PluginManager::PluginManager() : QObject( qApp ), d( new Private )

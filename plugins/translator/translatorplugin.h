@@ -18,20 +18,18 @@
     *************************************************************************
 */
 
-#ifndef BABELFISHPLUGIN_H
-#define BABELFISHPLUGIN_H
+#ifndef TRANSLATORPLUGIN_H
+#define TRANSLATORPLUGIN_H
 
 #include <qobject.h>
 #include <qmap.h>
 #include <q3cstring.h>
 #include <q3intdict.h>
 
-
 #include <kio/job.h>
 
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
-
 
 class QString;
 class KSelectAction;
@@ -106,7 +104,6 @@ private:
 	void sendTranslation(Kopete::Message &msg, const QString &translated);
 };
 
-#endif
+#endif // TRANSLATORPLUGIN_H
 
 // vim: set noet ts=4 sts=4 sw=4:
-

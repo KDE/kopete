@@ -48,7 +48,6 @@
 #include <kabc/stdaddressbook.h>
 #include <kabc/addressee.h>
 #include <kstandarddirs.h>
-#include <kurlrequester.h>
 
 #include "kabcpersistence.h"
 #include "kopeteaddrbookexport.h"

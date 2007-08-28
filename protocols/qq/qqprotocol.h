@@ -14,8 +14,8 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDPROTOCOL_H
-#define TESTBEDPROTOCOL_H
+#ifndef QQPROTOCOL_H
+#define QQPROTOCOL_H
 
 #include <kopeteprotocol.h>
 #include <kopeteproperty.h>
@@ -112,4 +112,4 @@ protected:
 	static QQProtocol *s_protocol;
 };
 
-#endif
+#endif // QQPROTOCOL_H

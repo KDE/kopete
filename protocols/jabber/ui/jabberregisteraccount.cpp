@@ -27,7 +27,6 @@
 #include <kglobal.h>
 #include <kmessagebox.h>
 #include <klineedit.h>
-#include <klineedit.h>
 #include <knuminput.h>
 #include <kpushbutton.h>
 #include <qlabel.h>

@@ -19,7 +19,8 @@
 #ifndef KOPETECOMMAND_H
 #define KOPETECOMMAND_H
 
-#include <qobject.h>
+#include <QtCore/QObject>
+
 #include <kaction.h>
 #include "kopetecommandhandler.h"
 

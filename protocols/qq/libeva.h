@@ -188,11 +188,11 @@ namespace Eva {
         ByteArray( int capacity=0 ) : m_itsOwn(capacity>0), m_capacity(capacity), 
                                        m_size(0), m_data((uchar*) malloc(capacity))
 		{ }
-        ByteArray( uchar* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
+        explicit ByteArray( uchar* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
                                        m_size(size), m_data(p)
 		{ }
 
-        ByteArray( const char* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
+        explicit ByteArray( const char* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
                                        m_size(size), m_data((uchar*)p)
 		{ }
         

@@ -14,8 +14,8 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDADDCONTACTPAGE_H
-#define TESTBEDADDCONTACTPAGE_H
+#ifndef QQADDCONTACTPAGE_H
+#define QQADDCONTACTPAGE_H
 
 #include <addcontactpage.h>
 
@@ -47,4 +47,4 @@ protected:
 	Ui::QQAddUI *m_qqAddUI;
 };
 
-#endif
+#endif // QQADDCONTACTPAGE_H

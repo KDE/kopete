@@ -21,7 +21,6 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <qstring.h>
 #include <kdebug.h>
 
 MailNotifierTask::MailNotifierTask(Task* parent) : Task(parent)

@@ -26,8 +26,8 @@
 #include <kdemacros.h>
 #include <ksharedptr.h>
 
-#include <QObject>
-#include <QFlags>
+#include <QtCore/QObject>
+#include <QtCore/QFlags>
 
 #include "kopeteonlinestatusmanager.h"
 

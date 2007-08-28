@@ -17,7 +17,6 @@
 */
 
 #include <klocale.h>
-#include <kstaticdeleter.h>
 #include <kfiledialog.h>
 #include <kfileitem.h>
 #include <kmessagebox.h>
@@ -189,15 +188,10 @@ bool Kopete::Transfer::showMessage( QString text )
  *  Kopete::TransferManager  *
  ***************************/
 
-static KStaticDeleter<Kopete::TransferManager> deleteManager;
-Kopete::TransferManager *Kopete::TransferManager::s_transferManager = 0;
-
 Kopete::TransferManager* Kopete::TransferManager::transferManager()
 {
-	if(!s_transferManager)
-		deleteManager.setObject(s_transferManager, new Kopete::TransferManager(0));
-
-	return s_transferManager;
+	static TransferManager s(0L);
+	return &s;
 }
 
 Kopete::TransferManager::TransferManager( QObject *parent ) : QObject( parent )

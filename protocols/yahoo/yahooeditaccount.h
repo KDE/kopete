@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef __YAHOOEDITIDENTITY_H
-#define __YAHOOEDITIDENTITY_H
+#ifndef YAHOOEDITACCOUNT_H
+#define YAHOOEDITACCOUNT_H
 
 // KDE Includes
 
@@ -53,7 +53,6 @@ private slots:
 	void slotSelectPicture();
 };
 
-#endif
+#endif // YAHOOEDITACCOUNT_H
 
 // vim: set noet ts=4 sts=4 sw=4:
-

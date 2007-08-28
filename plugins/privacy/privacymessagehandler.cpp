@@ -17,7 +17,6 @@
 #include "privacymessagehandler.h"
 #include "kopetemessageevent.h"
 
-#include <kstaticdeleter.h>
 #include <kdebug.h>
 #include <QPointer>
 

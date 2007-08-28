@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef MSNEDITACCOUNTWIDEGET_H
-#define MSNEDITACCOUNTWIDEGET_H
+#ifndef MSNEDITACCOUNTWIDGET_H
+#define MSNEDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
 
@@ -53,7 +53,6 @@ private:
 	MSNEditAccountWidgetPrivate *d;
 };
 
-#endif
+#endif // MSNEDITACCOUNTWIDGET_H
 
 // vim: set noet ts=4 sts=4 sw=4:
-
