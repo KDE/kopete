@@ -18,7 +18,9 @@
 #ifndef WEBPRESENCEPREFERENCES_H
 #define WEBPRESENCEPREFERENCES_H
 
-#include "kcmodule.h"
+#define KDE3_SUPPORT
+#include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 namespace Ui { class WebPresencePrefsUI; }
 //class KAutoConfig;

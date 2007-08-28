@@ -19,7 +19,9 @@
 #ifndef CHATWINCONF_H
 #define CHATWINCONF_H
 
-#include "kcmodule.h"
+#define KDE3_SUPPORT
+#include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include "ui_chatwindowconfig_style.h"
 #include <kopetechatwindowstyle.h>
 

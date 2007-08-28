@@ -16,7 +16,9 @@
 #ifndef __BEHAVIOR_H
 #define __BEHAVIOR_H
 
-#include "kcmodule.h"
+#define KDE3_SUPPORT
+#include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 namespace Kopete
 {

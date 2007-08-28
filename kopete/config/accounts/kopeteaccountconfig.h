@@ -19,7 +19,9 @@
 #ifndef __ACCOUNTCONFIG_H
 #define __ACCOUNTCONFIG_H
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <qmap.h>
 #include <qcolor.h>
 
