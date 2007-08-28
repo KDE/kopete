@@ -78,8 +78,8 @@ public:
 	
 	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
 	
-	const QString &contactName() const { return mName; };
-	OscarAccount *account() const { return mAccount; };
+	const QString &contactName() const { return mName; }
+	OscarAccount *account() const { return mAccount; }
 	
 	bool isOnServer() const;
 

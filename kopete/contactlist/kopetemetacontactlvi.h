@@ -61,7 +61,7 @@ public:
 	 * metacontact this visual item represents
 	 */
 	Kopete::MetaContact *metaContact() const
-	{ return m_metaContact; };
+	{ return m_metaContact; }
 
 	/**
 	 * true if the item is at top level and not under a group
@@ -71,12 +71,12 @@ public:
 	/**
 	 * parent when top-level
 	 */
-	Q3ListView *parentView() const { return m_parentView; };
+	Q3ListView *parentView() const { return m_parentView; }
 
 	/**
 	 * parent when not top-level
 	 */
-	KopeteGroupViewItem *parentGroup() const { return m_parentGroup; };
+	KopeteGroupViewItem *parentGroup() const { return m_parentGroup; }
 
 	/**
 	 * call this when the item has been moved to a different group

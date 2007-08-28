@@ -76,7 +76,7 @@ public:
 	 * Retrieve the transfer manager instance
 	 */
 	static TransferManager* transferManager();
-	virtual ~TransferManager() {};
+	virtual ~TransferManager() {}
 
 	/**
 	 * @brief Adds a file transfer to the Kopete::TransferManager

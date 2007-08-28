@@ -44,7 +44,7 @@ public:
 
 	void createChat( const QString &handle, const QString &address, const QString &auth, const QString &ID = QString() );
 
-	MSNSwitchBoardSocket *service() { return m_chatService; };
+	MSNSwitchBoardSocket *service() { return m_chatService; }
 
 	void sendFile( const QString &fileLocation, const QString &fileName,
 		long unsigned int fileSize );

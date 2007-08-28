@@ -396,7 +396,7 @@ public slots:
 	 * reimplement it to show the informlation
 	 * @todo rename and make it pure virtual
  	 */
-	virtual void slotUserInfo() {};
+	virtual void slotUserInfo() {}
 
 	/**
 	 * @brief Syncronise the server and the metacontact.
