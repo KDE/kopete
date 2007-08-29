@@ -28,10 +28,10 @@
 #include "contactnotesplugin.h"
 #include <kactioncollection.h>
 
-typedef KGenericFactory<ContactNotesPlugin> ContactNotesPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_contactnotes, ContactNotesPluginFactory( "kopete_contactnotes" )  )
+K_PLUGIN_FACTORY(ContactNotesPluginFactory, registerPlugin<ContactNotesPlugin>();)
+K_EXPORT_PLUGIN(ContactNotesPluginFactory( "kopete_contactnotes" ))
 
-ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const QStringList & /* args */ )
+ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const QVariantList & /* args */ )
 : Kopete::Plugin( ContactNotesPluginFactory::componentData(), parent )
 {
 	if ( pluginStatic_ )

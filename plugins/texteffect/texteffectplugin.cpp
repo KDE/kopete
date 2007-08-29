@@ -25,10 +25,10 @@
 #include "texteffectplugin.h"
 #include "texteffectconfig.h"
 
-typedef KGenericFactory<TextEffectPlugin> TextEffectPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_texteffect, TextEffectPluginFactory( "kopete_texteffect" )  )
+K_PLUGIN_FACTORY(TextEffectPluginFactory, registerPlugin<TextEffectPlugin>();)
+K_EXPORT_PLUGIN(TextEffectPluginFactory( "kopete_texteffect" ))
 
-TextEffectPlugin::TextEffectPlugin( QObject *parent, const QStringList &/*args*/ )
+TextEffectPlugin::TextEffectPlugin( QObject *parent, const QVariantList &/*args*/ )
 : Kopete::Plugin( TextEffectPluginFactory::componentData(), parent )
 {
 	if( !pluginStatic_ )

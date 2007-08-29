@@ -33,11 +33,11 @@
 #include "texteffectpreferences.h"
 #include "texteffectconfig.h"
 
-typedef KGenericFactory<TextEffectPreferences> TextEffectPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_texteffect, TextEffectPreferencesFactory( "kcm_kopete_texteffect" )  )
+K_PLUGIN_FACTORY(TextEffectPreferencesFactory, registerPlugin<TextEffectPreferences>();)
+K_EXPORT_PLUGIN(TextEffectPreferencesFactory( "kcm_kopete_texteffect" ))
 
 TextEffectPreferences::TextEffectPreferences(QWidget *parent,
-                                             const QStringList &args)
+                                             const QVariantList &args)
 	: KCModule(TextEffectPreferencesFactory::componentData(), parent, args)
 {
 	QVBoxLayout* l = new QVBoxLayout( this );

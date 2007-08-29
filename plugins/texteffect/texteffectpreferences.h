@@ -18,9 +18,7 @@
 #ifndef TextEffectPREFERENCES_H
 #define TextEffectPREFERENCES_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 namespace Ui { class TextEffectPrefs; }
 class TextEffectConfig;
@@ -34,7 +32,7 @@ class TextEffectPreferences : public KCModule  {
    Q_OBJECT
 public:
 
-	explicit TextEffectPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
+	explicit TextEffectPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
 	~TextEffectPreferences();
 
 	// Overloaded from parent

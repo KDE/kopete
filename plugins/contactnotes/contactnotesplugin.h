@@ -43,7 +43,7 @@ class ContactNotesPlugin : public Kopete::Plugin
 public:
     static ContactNotesPlugin  *plugin();
 
-	ContactNotesPlugin( QObject *parent, const QStringList &args );
+	ContactNotesPlugin( QObject *parent, const QVariantList &args );
 	~ContactNotesPlugin();
 
 	QString notes(Kopete::MetaContact *m);
