@@ -38,10 +38,12 @@
 
 #define ENCODED_IMAGE_MODE 0
 
-typedef KGenericFactory<LatexPlugin> LatexPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_latex, LatexPluginFactory( "kopete_latex" )  )
 
-LatexPlugin::LatexPlugin( QObject *parent, const QStringList &/*args*/ )
+K_PLUGIN_FACTORY(LatexPluginFactory, registerPlugin<LatexPlugin>();)
+K_EXPORT_PLUGIN(LatexPluginFactory( "kopete_latex" ))
+
+
+LatexPlugin::LatexPlugin( QObject *parent, const QVariantList &/*args*/ )
 : Kopete::Plugin( LatexPluginFactory::componentData(), parent )
 {
 //	kDebug() ;
