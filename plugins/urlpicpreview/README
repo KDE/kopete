@@ -1,0 +1,17 @@
+URLPicPreview Plugin for Kopete
+===============================
+
+Author: Heiko Schäfer <heiko@rangun.de>
+--------------------------------------
+
+This plugin displays previews of images send as URL in chats.
+You can scale them to a certain width and you can restrict the
+number of pictures to download.
+
+The URLs get downloaded and then displayed in the chat window 
+under the URL.
+
+Please discuss this plugin at the Kopete mailinglist:
+kopete-devel@kde.org
+
+or contact the author directly: heiko@rangun.de

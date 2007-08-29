@@ -17,12 +17,11 @@ add_subdirectory( texteffect )
 add_subdirectory( highlight ) 
 add_subdirectory( alias ) 
 add_subdirectory( addbookmarks ) 
-add_subdirectory( privacy )
+add_subdirectory( privacy ) 
+add_subdirectory( urlpicpreview ) 
 
 if( LIBXML2_FOUND AND LIBXSLT_FOUND )
   add_subdirectory( webpresence )
 endif( LIBXML2_FOUND AND LIBXSLT_FOUND )
 
-#add_subdirectory(plugins_playground/smpppdcs)
-#add_subdirectory(plugins_playground/urlpicpreview)
 
