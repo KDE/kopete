@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+ <kcfgfile name="motionawayconfig" />
+ <group name="MotionAutoAway Plugin" >
+  <entry key="BecomeAvailableWithActivity" type="Bool" >
+   <label>Become available again when the plugin detects motion</label>
+   <whatsthis>If this option is set, the plugin will put you in status available if you are away and it detects motion again.</whatsthis>
+   <default>true</default>
+  </entry>
+  <entry key="VideoDevice" type="Path" >
+   <label>Video device to use for motion detection</label>
+   <whatsthis>This is the Video4Linux path of the camera or device you want to use to detect motion. In most systems the first video device is /dev/v4l/video0.</whatsthis>
+   <default>/dev/v4l/video0</default>
+  </entry>
+  <entry key="AwayTimeout" type="UInt" >
+   <label>Become away after this many minutes of inactivity</label>
+   <whatsthis>This setting affects how fast the plugin switches to away status. Once the plugin detects no motion, it will wait this amount of minutes before switching to away status.</whatsthis>
+   <default>1</default>
+   <min>0</min>
+  </entry>
+ </group>
+</kcfg>

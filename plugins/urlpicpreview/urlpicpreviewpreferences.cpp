@@ -86,6 +86,7 @@ void URLPicPreviewPreferences::save() {
 void URLPicPreviewPreferences::defaults() {
 	URLPicPreviewConfig::self()->setDefaults ();
 	load();
+	changed();
 }
 
 #include "urlpicpreviewpreferences.moc"

@@ -24,4 +24,7 @@ if( LIBXML2_FOUND AND LIBXSLT_FOUND )
   add_subdirectory( webpresence )
 endif( LIBXML2_FOUND AND LIBXSLT_FOUND )
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  add_subdirectory( motionautoaway ) 
+endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
