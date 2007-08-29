@@ -24,8 +24,7 @@ using namespace std;
 #include <qmap.h>
 #include <qstring.h>
 #include <qstringlist.h>
-
-#include <dbusobject.h>
+#include <QVariantList>
 
 #include "kopeteplugin.h"
 
@@ -33,13 +32,10 @@ using namespace std;
 #include "kopetemessagehandler.h"
 #include "kopeteonlinestatus.h"
 
-#include "statisticsdbusiface.h"
-
 class QString;
 
 class StatisticsDB;
 class StatisticsContact;
-class StatisticsDCOPIface;
 
 
 /** \section Kopete Statistics Plugin
@@ -65,7 +61,7 @@ class StatisticsDCOPIface;
  * <td>Event</td><td>Changes to database</td><td>oldStatus</td>
  * </tr>
   * <tr>
- * <td>John 17:44 Away <i>(connexion)</i></td><td> - <i>(oldstatus was offline)</i></td><td>oldstatus = away </td>
+ * <td>John 17:44 Away <i>(connect)</i></td><td> - <i>(oldstatus was offline)</i></td><td>oldstatus = away </td>
  * </tr>
  * <tr>
  * <td>John 18:01 Online</td><td>(+) Away 17:44 18:01</td><td>oldstatus = online</td>
@@ -74,7 +70,7 @@ class StatisticsDCOPIface;
  * <td>John 18:30 Offline <i>(disconnect)</i></td><td>(+) Online 18:01 18:30</td><td>oldstatus = offline</td>
  * </tr>
  * <tr>
- * <td>John 18:45 Online <i>(connexion)</i></td><td> - <i>(oldstatus was offline)</i></td><td>oldstatus = online</td>
+ * <td>John 18:45 Online <i>(connect)</i></td><td> - <i>(oldstatus was offline)</i></td><td>oldstatus = online</td>
  * </tr>
  * <tr>
  * <td>John 20:30 Offline <i>(disconnect)</i></td><td>(+) Online 18:45 20:30</td><td>oldstatus = offline</td>
@@ -97,12 +93,12 @@ class StatisticsDCOPIface;
  * StatisticsPlugin is the main Statistics plugin class.
  * Contains mainly slots.
  */
-class StatisticsPlugin : public Kopete::Plugin, virtual public StatisticsDCOPIface
+class StatisticsPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 public:
 	/// Standard plugin constructors
-	StatisticsPlugin(QObject *parent, const char *name, const QStringList &args);
+	StatisticsPlugin(QObject *parent, const QVariantList &args);
 	~StatisticsPlugin();
 	
 	/// Method to access m_db member

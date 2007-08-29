@@ -1,4 +1,7 @@
-add_subdirectory( sqlite ) 
+
+include_directories ( ${KOPETE_INCLUDES} )
+
+#add_subdirectory( sqlite ) 
 
 ########### next target ###############
 
@@ -8,14 +11,14 @@ set(kopete_statistics_PART_SRCS
    statisticsdialog.cpp 
    statisticscontact.cpp )
 
-kde4_add_ui_files(kopete_statistics_PART_SRCS statisticswidget.ui )
+kde4_add_ui_files(kopete_statistics_PART_SRCS statisticswidgetbase.ui )
 
-qt_add_dbus_interfaces(kopete_statistics_PART_SRCS org.kde.kopete.statisticsiface.xml)
+qt4_add_dbus_interfaces(kopete_statistics_PART_SRCS org.kde.kopete.statisticsiface.xml)
 
 kde4_add_plugin(kopete_statistics ${kopete_statistics_PART_SRCS})
 
 
-target_link_libraries(kopete_statistics  ${KDE4_KDECORE_LIBS} kopete sqlite )
+target_link_libraries(kopete_statistics  ${KDE4_KDECORE_LIBS} kopete sqlite3 khtml )
 
 install(TARGETS kopete_statistics  DESTINATION ${PLUGIN_INSTALL_DIR})
 

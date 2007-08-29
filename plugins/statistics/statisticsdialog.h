@@ -1,5 +1,5 @@
 /*
-    statisticsdialog.h - Kopete History Dialog
+    statisticsdialog.h - Kopete Statistics Dialog
 
     Copyright (c) 2003-2004 by Marc Cramdal        <marc.cramdal@gmail.com>
 
@@ -23,7 +23,7 @@
 
 class QStringList;
 
-class StatisticsWidget;
+namespace Ui { class StatisticsWidgetUI; }
 class StatisticsDB;
 class StatisticsContact;
 
@@ -45,7 +45,7 @@ class StatisticsDialog : public KDialog
 		QString generateHTMLChartBar(int height, const QString & color, const QString & caption);
 		QString stringFromSeconds(const int seconds);
 		
-		StatisticsWidget *mainWidget;
+		Ui::StatisticsWidgetUI *dialogUi;
 		KHTMLPart *generalHTMLPart;
 		
 		/// Database from which we get the statistics
@@ -70,7 +70,7 @@ private slots:
 		 * We manage the openUrlRequestDelayed signal from the generalHTMLPart->browserExtension() in order to
 		 * generate requested pages on the flow.
 		 */
-		void slotOpenURLRequest(const KUrl& url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
+		void slotOpenURLRequest(const KUrl& url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &);
 		void slotAskButtonClicked();
 
 };

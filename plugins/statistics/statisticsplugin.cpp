@@ -22,6 +22,7 @@
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
 #include <kaction.h>
+#include <kactioncollection.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kdeversion.h>
@@ -35,26 +36,23 @@
 #include "kopeteonlinestatus.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
+#include "kopetecontact.h"
 
 #include "statisticscontact.h"
 #include "statisticsdialog.h"
 #include "statisticsplugin.h"
 #include "statisticsdb.h"
 
-typedef KGenericFactory<StatisticsPlugin> StatisticsPluginFactory;
+K_PLUGIN_FACTORY(StatisticsPluginFactory, registerPlugin<StatisticsPlugin>();)
+K_EXPORT_PLUGIN(StatisticsPluginFactory( "kopete_statistics" ))
 
-
-static const KAboutData aboutdata("kopete_statistics", 0, ki18n("Statistics") , "0.1" );
-K_EXPORT_COMPONENT_FACTORY( kopete_statistics, StatisticsPluginFactory( &aboutdata )  )
-
-StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QStringList &)
-      : DCOPObject("StatisticsDCOPIface"), 
-        Kopete::Plugin( StatisticsPluginFactory::componentData(), parent, name )
-      
-
+StatisticsPlugin::StatisticsPlugin( QObject *parent, const QVariantList &/*args*/ )
+	: Kopete::Plugin( StatisticsPluginFactory::componentData(), parent )
 {
+
 	KAction *viewMetaContactStatistics = new KAction( KIcon("log"), i18n("View &Statistics" ),
-		actionCollection(), "viewMetaContactStatistics" );
+		this );
+	actionCollection()->addAction ( "viewMetaContactStatistics", viewMetaContactStatistics );
 	connect(viewMetaContactStatistics, SIGNAL(triggered(bool)), this, SLOT(slotViewStatistics()));
 	viewMetaContactStatistics->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count() == 1);
 

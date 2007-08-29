@@ -1,5 +1,5 @@
 /*
-    statisticsdialog.cpp - Kopete History Dialog
+    statisticsdialog.cpp - Kopete Statistics Dialog
 
     Copyright (c) 2003-2004 by Marc Cramdal        <marc.cramdal@gmail.com>
 
@@ -25,7 +25,7 @@
 #include <QTimeEdit>
 #include <kvbox.h>
 
-#include "kdialogbase.h"
+#include "kdialog.h"
 #include "klocale.h"
 #include "k3listview.h"
 #include "khtml_part.h"
@@ -37,16 +37,18 @@
 
 #include "statisticsdialog.h"
 #include "statisticscontact.h"
-#include "statisticswidget.h"
+#include "ui_statisticswidgetbase.h"
 #include "statisticsplugin.h"
 #include "statisticsdb.h"
 
-StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db, QWidget* parent) : KDialog(parent,
-	i18n("Statistics for %1", contact->metaContact()->displayName()), Close), m_db(db), m_contact(contact)
+StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db, QWidget* parent) : KDialog(parent), m_db(db), m_contact(contact)
 {
 	setDefaultButton(KDialog::Close);
-	mainWidget = new StatisticsWidget(this);
-	setMainWidget(mainWidget);
+	setCaption (i18n("Statistics for %1", contact->metaContact()->displayName()), Close);
+	QWidget * w = new QWidget (this);
+	dialogUi = new Ui::StatisticsWidgetUI();
+	dialogUi->setupUi(w);
+	setMainWidget(w);
 	
 	setMinimumWidth(640);
 	setMinimumHeight(400);
@@ -59,12 +61,12 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 			  this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ) );
 	
 	
-	mainWidget->tabWidget->insertTab(hbox, i18n("General"), 0);
-	mainWidget->tabWidget->setCurrentPage(0);
+	dialogUi->tabWidget->addTab(hbox, i18n("General"));
+	dialogUi->tabWidget->setCurrentIndex(0);
 	
-	mainWidget->timePicker->setTime(QTime::currentTime());
-	mainWidget->datePicker->setDate(QDate::currentDate());
-	connect(mainWidget->askButton, SIGNAL(clicked()), this, SLOT(slotAskButtonClicked()));
+	dialogUi->timePicker->setTime(QTime::currentTime());
+	dialogUi->datePicker->setDate(QDate::currentDate());
+	connect(dialogUi->askButton, SIGNAL(clicked()), this, SLOT(slotAskButtonClicked()));
 	
 	setFocus();
 	setEscapeButton(Close);
@@ -217,11 +219,11 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 	"<a href=\"monthofyear:12\">December</a>&nbsp;"
 	"</span></div><br>"));
 	
-//	mainWidget->listView->addColumn(i18n("Status"));
-//	mainWidget->listView->addColumn(i18n("Start Date"));
-//	mainWidget->listView->addColumn(i18n("End Date"));
-//	mainWidget->listView->addColumn(i18n("Start Date"));
-//	mainWidget->listView->addColumn(i18n("End Date"));
+//	dialogUi->listView->addColumn(i18n("Status"));
+//	dialogUi->listView->addColumn(i18n("Start Date"));
+//	dialogUi->listView->addColumn(i18n("End Date"));
+//	dialogUi->listView->addColumn(i18n("Start Date"));
+//	dialogUi->listView->addColumn(i18n("End Date"));
 
 	QString todayString;
 	todayString.append(i18n("<div class=\"statgroup\" title=\"Contact status history for today\"><h2>Today</h2><table width=\"100%\"><tr><td>Status</td><td>From</td><td>To</td></tr>"));
@@ -359,7 +361,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 		// QDateTime listViewDT1, listViewDT2;
 		// listViewDT1.setTime_t(values[i+1].toInt());
 		// listViewDT2.setTime_t(values[i+2].toInt());
-		// new K3ListViewItem(mainWidget->listView, values[i], values[i+1], values[i+2], listViewDT1.toString(), listViewDT2.toString());
+		// new K3ListViewItem(dialogUi->listView, values[i], values[i+1], values[i+2], listViewDT1.toString(), listViewDT2.toString());
 	}
 
 	
@@ -430,7 +432,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 	generalHTMLPart->write(QString("<tr><td height=\"200\" valign=\"bottom\" colspan=\"3\" class=\"chart\">"));
 	
 	QString chartString;
-	QString colorPath = ::locate("appdata", "pics/statistics/black.png");
+	QString colorPath = KStandardDirs::locate("appdata", "pics/statistics/black.png");
 	for (uint i=0; i<24; i++)
 	{
 		
@@ -486,7 +488,7 @@ QString StatisticsDialog::generateHTMLChart(const int *hours, const int *hours2,
 {
 	QString chartString;
 	
-	QString colorPath = ::locate("appdata", "pics/statistics/"+color+".png");
+	QString colorPath = KStandardDirs::locate("appdata", "pics/statistics/"+color+".png");
 	
 	
 	for (uint i=0; i<24; i++)
@@ -521,19 +523,19 @@ QString StatisticsDialog::stringFromSeconds(const int seconds)
 
 void StatisticsDialog::slotAskButtonClicked()
 {
-	if (mainWidget->questionComboBox->currentItem()==0)
+	if (dialogUi->questionComboBox->currentIndex()==0)
 	{
 		QString text = i18nc("1 is date, 2 is contact name, 3 is online status", "%1, %2 was %3",
-		     KGlobal::locale()->formatDateTime(QDateTime(mainWidget->datePicker->date(), mainWidget->timePicker->time())),
+		     KGlobal::locale()->formatDateTime(QDateTime(dialogUi->datePicker->date(), dialogUi->timePicker->time())),
 		     m_contact->metaContact()->displayName(),
-		     m_contact->statusAt(QDateTime(mainWidget->datePicker->date(), mainWidget->timePicker->time())));
-		mainWidget->answerEdit->setText(text);
+		     m_contact->statusAt(QDateTime(dialogUi->datePicker->date(), dialogUi->timePicker->time())));
+		dialogUi->answerEdit->setText(text);
 	}
-	else if (mainWidget->questionComboBox->currentItem()==1)
+	else if (dialogUi->questionComboBox->currentIndex()==1)
 	{
-		mainWidget->answerEdit->setText(m_contact->mainStatusDate(mainWidget->datePicker->date()));
+		dialogUi->answerEdit->setText(m_contact->mainStatusDate(dialogUi->datePicker->date()));
 	}
-	else if (mainWidget->questionComboBox->currentItem()==2)
+	else if (dialogUi->questionComboBox->currentIndex()==2)
 	// Next online
 	{
 		

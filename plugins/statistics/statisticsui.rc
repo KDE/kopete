@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kopete_history" version="1">
+<kpartgui name="kopete_statistics" version="1">
 	<MenuBar>
 		<Menu name="edit">
 			<text>&amp;Edit</text>
