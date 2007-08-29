@@ -63,7 +63,7 @@ URLPicPreviewPreferences::~URLPicPreviewPreferences() {
 
 void URLPicPreviewPreferences::load() {
 
-	kDebug ( 14314 ) << endl;
+	kDebug ( 14314 );
 
 	m_ui->enableScaling->setChecked ( URLPicPreviewConfig::self()->scaling() );
 	m_ui->restrictPreviews->setChecked ( URLPicPreviewConfig::self()->previewRestriction() );
@@ -73,7 +73,7 @@ void URLPicPreviewPreferences::load() {
 
 void URLPicPreviewPreferences::save() {
 
-	kDebug ( 14314 ) << endl;
+	kDebug ( 14314 );
 
 	URLPicPreviewConfig::self()->setScaling ( m_ui->enableScaling->isChecked() );
 	URLPicPreviewConfig::self()->setPreviewRestriction ( m_ui->restrictPreviews->isChecked() );

@@ -31,7 +31,7 @@ LinkPreview * LinkPreview::m_self = NULL;
 
 LinkPreview::LinkPreview() : m_pic(1280, 1024), m_khtml(NULL), m_URLLoading(false) {
 
-    kDebug(14314) << endl;
+    kDebug(14314);
 
     m_khtml = new KHTMLPart();
 
@@ -47,7 +47,7 @@ LinkPreview::LinkPreview() : m_pic(1280, 1024), m_khtml(NULL), m_URLLoading(fals
 LinkPreview::~LinkPreview() {
     delete m_khtml;
 
-    kDebug(14314) << endl;
+    kDebug(14314);
 }
 
 LinkPreview * LinkPreview::self(const URLPicPreviewPlugin * plugin) {
@@ -72,7 +72,7 @@ QPixmap LinkPreview::getPreviewPic(const KUrl& url) {
     connect(m_khtml, SIGNAL(canceled(const QString &)), this, SLOT(completed()));
 
     if(m_khtml->openUrl(url)) {
-        kDebug(14314) << "Creating preview of " << url << endl;
+        kDebug(14314) << "Creating preview of " << url;
         m_khtml->view()->resize(1280, 1024);
         m_khtml->stopAnimations();
         m_khtml->paint(&painter, QRect(0, 0, 1280, 1024));

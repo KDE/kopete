@@ -42,7 +42,7 @@ URLPicPreviewPlugin::URLPicPreviewPlugin ( QObject* parent, const QStringList& /
 		: Kopete::Plugin ( URLPicPreviewPluginFactory::componentData(), parent ), m_pic ( NULL ), m_abortMessageCheck ( false )
 {
 
-	kDebug ( 14314 ) << endl;
+	kDebug ( 14314 );
 
 	Kopete::ChatSessionManager * chatSessionManager = Kopete::ChatSessionManager::self();
 	connect ( chatSessionManager, SIGNAL ( aboutToDisplay ( Kopete::Message& ) ),
@@ -56,7 +56,7 @@ URLPicPreviewPlugin::URLPicPreviewPlugin ( QObject* parent, const QStringList& /
 URLPicPreviewPlugin::~URLPicPreviewPlugin()
 {
 
-	kDebug ( 14314 ) << "Removing temporary files..." << endl;
+	kDebug ( 14314 ) << "Removing temporary files...";
 	for ( uint i = 0; i < m_tmpFileRegistry.count(); i++ )
 	{
 		KIO::NetAccess::removeTempFile ( m_tmpFileRegistry[i] );
@@ -66,7 +66,7 @@ URLPicPreviewPlugin::~URLPicPreviewPlugin()
 
 	delete m_pic;
 
-	kDebug ( 14314 ) << endl;
+	kDebug ( 14314 );
 }
 
 /*!
@@ -93,7 +93,7 @@ void URLPicPreviewPlugin::aboutToDisplay ( Kopete::Message& message )
 QString URLPicPreviewPlugin::prepareBody ( const QString& parsedBody, uint previewCount )
 {
 
-	kDebug ( 14314 ) << "Searching for URLs to pictures" << endl;
+	kDebug ( 14314 ) << "Searching for URLs to pictures";
 
 	static const QString rex = "(<a href=\")([^\"]*)(\" )?([^<]*)(</a>)(.*)$";
 	//             Caps:          1           2        3     4      5    6
@@ -101,11 +101,11 @@ QString URLPicPreviewPlugin::prepareBody ( const QString& parsedBody, uint previ
 	QRegExp ex ( rex );
 	QString myParsedBody = parsedBody;
 
-	kDebug ( 14314 ) << "Analyzing message: \"" << myParsedBody << "\"" << endl;
+	kDebug ( 14314 ) << "Analyzing message: \"" << myParsedBody << "\"";
 
 	if ( ex.search ( myParsedBody ) == -1 || ( previewCount >= URLPicPreviewConfig::self()->previewAmount() ) || m_abortMessageCheck )
 	{
-		kDebug ( 14314 ) << "No more URLs found in message." << endl;
+		kDebug ( 14314 ) << "No more URLs found in message.";
 		return myParsedBody;
 	}
 
@@ -113,18 +113,18 @@ QString URLPicPreviewPlugin::prepareBody ( const QString& parsedBody, uint previ
 	KUrl url ( foundURL );
 	QString tmpFile;
 
-	kDebug ( 14314 ) << "Found an URL: " << foundURL << endl;
+	kDebug ( 14314 ) << "Found an URL: " << foundURL;
 
 	if ( url.isValid() )
 	{
-		kDebug ( 14314 ) << "URL \"" << foundURL << "\" is valid." << endl;
+		kDebug ( 14314 ) << "URL \"" << foundURL << "\" is valid.";
 
 		if ( ( tmpFile = createPreviewPicture ( url ) ) != QString::null )
 		{
 			if ( URLPicPreviewConfig::self()->scaling() )
 			{
 				int width = URLPicPreviewConfig::self()->previewScaleWidth();
-				kDebug ( 14314 ) << "Try to scale the image to width: " << width << endl;
+				kDebug ( 14314 ) << "Try to scale the image to width: " << width;
 				if ( m_pic->load ( tmpFile ) )
 				{
 					// resize but keep aspect ratio
@@ -132,13 +132,13 @@ QString URLPicPreviewPlugin::prepareBody ( const QString& parsedBody, uint previ
 					{
 						if ( ! ( (*m_pic = m_pic->scaledToWidth ( width ) ) ).save ( tmpFile, "PNG" ) )
 						{
-							kWarning ( 14314 ) << "Couldn't save scaled image" << tmpFile << endl;
+							kWarning ( 14314 ) << "Couldn't save scaled image" << tmpFile;
 						}
 					}
 				}
 				else
 				{
-					kWarning ( 14314 ) << "Couldn't load image " << tmpFile << endl;
+					kWarning ( 14314 ) << "Couldn't load image " << tmpFile;
 				}
 			}
 
@@ -147,17 +147,17 @@ QString URLPicPreviewPlugin::prepareBody ( const QString& parsedBody, uint previ
 			if ( URLPicPreviewConfig::self()->previewRestriction() )
 			{
 				previewCount++;
-				kDebug ( 14314 ) << "Updating previewCount: " << previewCount << endl;
+				kDebug ( 14314 ) << "Updating previewCount: " << previewCount;
 			}
 
-			kDebug ( 14314 ) << "Registering temporary file for deletion." << endl;
+			kDebug ( 14314 ) << "Registering temporary file for deletion.";
 			m_tmpFileRegistry.append ( tmpFile );
 			return myParsedBody + prepareBody ( ex.cap ( 6 ), previewCount );
 		}
 	}
 	else
 	{
-		kWarning ( 14314 ) << "URL \"" << foundURL << "\" is invalid. Ignoring." << endl;
+		kWarning ( 14314 ) << "URL \"" << foundURL << "\" is invalid. Ignoring.";
 	}
 
 	return myParsedBody.replace ( QRegExp ( rex ), ex.cap ( 1 ) + ex.cap ( 2 ) + ex.cap ( 3 ) + ex.cap ( 4 ) + ex.cap ( 5 ) ) + prepareBody ( ex.cap ( 6 ), previewCount );
