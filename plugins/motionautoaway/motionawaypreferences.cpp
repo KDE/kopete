@@ -3,7 +3,7 @@
 
     Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
     
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -25,22 +25,28 @@
 #include <klineedit.h>
 #include <knuminput.h>
 
-#include "motionawayprefs.h"
+#include "ui_motionawayprefs.h"
 #include "motionawaypreferences.h"
 #include "motionawayconfig.h"
 
-typedef KGenericFactory<MotionAwayPreferences> MotionAwayPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_motionaway, MotionAwayPreferencesFactory("kcm_kopete_motionaway"))
+K_PLUGIN_FACTORY(MotionAwayPreferencesFactory,
+		 registerPlugin<MotionAwayPreferences>();
+		)
+K_EXPORT_PLUGIN(MotionAwayPreferencesFactory ( "kcm_kopete_motionaway" ))
 
-MotionAwayPreferences::MotionAwayPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
-							: KCModule(MotionAwayPreferencesFactory::componentData(), parent, args)
+
+MotionAwayPreferences::MotionAwayPreferences ( QWidget *parent, const QVariantList &args )
+	: KCModule ( MotionAwayPreferencesFactory::componentData(), parent, args )
 {
 	// Add actuall widget generated from ui file.
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	preferencesDialog = new motionawayPrefsUI(this);
-	connect(preferencesDialog->BecomeAvailableWithActivity, SIGNAL(toggled(bool)), this, SLOT(slotWidgetModified()));
-	connect(preferencesDialog->AwayTimeout, SIGNAL(valueChanged(int)), this, SLOT(slotWidgetModified()));
-	connect(preferencesDialog->VideoDevice, SIGNAL(textChanged(const QString &)), this, SLOT(slotWidgetModified()));
+	QVBoxLayout * l = new QVBoxLayout (this);
+	QWidget * w = new QWidget (this);
+	l->addWidget (w);
+	preferencesDialog = new Ui::motionawayPrefsUI();
+	preferencesDialog->setupUi (w);
+	connect(preferencesDialog->BecomeAvailableWithActivity, SIGNAL(toggled(bool)), this, SLOT(changed()));
+	connect(preferencesDialog->AwayTimeout, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+	connect(preferencesDialog->VideoDevice, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 	load();
 }
 
@@ -51,11 +57,6 @@ void MotionAwayPreferences::load()
 	preferencesDialog->BecomeAvailableWithActivity->setChecked(MotionAwayConfig::self()->becomeAvailableWithActivity());
 	preferencesDialog->VideoDevice->setText(MotionAwayConfig::self()->videoDevice());
 	emit KCModule::changed(false);
-}
-
-void MotionAwayPreferences::slotWidgetModified()
-{
-	emit KCModule::changed(true);
 }
 
 void MotionAwayPreferences::save()

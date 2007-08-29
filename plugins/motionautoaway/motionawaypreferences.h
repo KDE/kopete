@@ -3,7 +3,7 @@
 
     Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
     
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,7 +20,7 @@
 
 #include "kcmodule.h"
 
-class motionawayPrefsUI;
+class Ui::motionawayPrefsUI;
 
 /**
  * Preference widget for the Motion Away plugin
@@ -30,14 +30,13 @@ class MotionAwayPreferences : public KCModule
 {
 	Q_OBJECT
 public:
-	explicit MotionAwayPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
+	explicit MotionAwayPreferences ( QWidget* parent = 0, const QVariantList& args = QVariantList() );
 	virtual void save();
 	virtual void load();
+	virtual void defaults() {}
 
 private:
-	motionawayPrefsUI *preferencesDialog;
-private slots:
-	void slotWidgetModified();
+	Ui::motionawayPrefsUI *preferencesDialog;
 };
 
 #endif

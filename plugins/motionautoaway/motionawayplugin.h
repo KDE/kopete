@@ -10,7 +10,7 @@
 	Distributed under the GNU public license version 2
 	See also the file 'COPYING.motion'
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -28,6 +28,7 @@
 #include "kopeteplugin.h"
 
 class QTimer;
+#include <QVariantList>
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -38,7 +39,7 @@ class MotionAwayPlugin : public Kopete::Plugin
 	Q_OBJECT
 
 public:
-	MotionAwayPlugin( QObject *parent, const char *name, const QStringList &args );
+	MotionAwayPlugin( QObject *parent, const QVariantList &args );
 	~MotionAwayPlugin();
 
 public slots:

@@ -10,7 +10,7 @@
     Distributed under the GNU public license version 2
     See also the file 'COPYING.motion'
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -25,6 +25,7 @@
 #include "config-kopete.h"
 
 #include "motionawayplugin.h"
+#include "motionawayconfig.h"
 
 #include <fcntl.h>
 #include <signal.h>
@@ -37,6 +38,7 @@
 #include <unistd.h>
 
 #include <qtimer.h>
+
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -89,13 +91,13 @@ typedef __signed__ long long __s64;
 #define NORM_DEFAULT		0
 #define IN_DEFAULT		8
 
-typedef KGenericFactory<MotionAwayPlugin> MotionAwayPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_motionaway, MotionAwayPluginFactory( "kopete_motionaway" )  )
+K_PLUGIN_FACTORY ( MotionAwayPluginFactory, registerPlugin<MotionAwayPlugin>(); )
+K_EXPORT_PLUGIN ( MotionAwayPluginFactory ( "kopete_motionaway" ) )
 
-MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: Kopete::Plugin( MotionAwayPluginFactory::componentData(), parent, name )
+MotionAwayPlugin::MotionAwayPlugin ( QObject *parent, const QVariantList &/*args*/ )
+		: Kopete::Plugin ( MotionAwayPluginFactory::componentData(), parent )
 {
-	kDebug(14305) << "Called.";
+	kDebug ( 14305 ) << "Called.";
 	/* This should be read from config someday may be */
 	m_width = DEF_WIDTH;
 	m_height = DEF_HEIGHT;
@@ -106,64 +108,61 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QSt
 	/* We haven't took the first picture yet */
 	m_tookFirst = false;
 
-	m_captureTimer = new QTimer(this);
-	m_awayTimer = new QTimer(this);
+	m_captureTimer = new QTimer ( this );
+	m_awayTimer = new QTimer ( this );
 
-	connect( m_captureTimer, SIGNAL(timeout()), this, SLOT(slotCapture()) );
-	connect( m_awayTimer, SIGNAL(timeout()), this, SLOT(slotTimeout()) );
+	connect ( m_captureTimer, SIGNAL ( timeout() ), this, SLOT ( slotCapture() ) );
+	connect ( m_awayTimer, SIGNAL ( timeout() ), this, SLOT ( slotTimeout() ) );
 
-	signal(SIGCHLD, SIG_IGN);
+	signal ( SIGCHLD, SIG_IGN );
 
-	m_imageRef.resize( m_width * m_height * 3);
-	m_imageNew.resize( m_width * m_height * 3);
-	m_imageOld.resize( m_width * m_height * 3);
-	m_imageOut.resize( m_width * m_height * 3);
+	m_imageRef.resize ( m_width * m_height * 3 );
+	m_imageNew.resize ( m_width * m_height * 3 );
+	m_imageOld.resize ( m_width * m_height * 3 );
+	m_imageOut.resize ( m_width * m_height * 3 );
 
 
-	kDebug(14305) << "Opening Video4Linux Device";
+	kDebug ( 14305 ) << "Opening Video4Linux Device";
 
-	m_deviceHandler = open( videoDevice.toLatin1() , O_RDWR);
+	m_deviceHandler = open ( videoDevice.toLatin1() , O_RDWR );
 
-	if (m_deviceHandler < 0)
+	if ( m_deviceHandler < 0 )
 	{
-		kDebug(14305) << "Can't open Video4Linux Device";
+		kDebug ( 14305 ) << "Can't open Video4Linux Device";
 	}
 	else
 	{
-        kDebug(14305) << "Worked! Setting Capture timers!";
+		kDebug ( 14305 ) << "Worked! Setting Capture timers!";
 		/* Capture first image, or we will get a alarm on start */
-		getImage (m_deviceHandler, m_imageRef, DEF_WIDTH, DEF_HEIGHT, IN_DEFAULT, NORM_DEFAULT,
-	    	VIDEO_PALETTE_RGB24);
+		getImage ( m_deviceHandler, m_imageRef, DEF_WIDTH, DEF_HEIGHT, IN_DEFAULT, NORM_DEFAULT,
+		           VIDEO_PALETTE_RGB24 );
 
-        /* We have the first image now */
+		/* We have the first image now */
 		m_tookFirst = true;
 		m_wentAway = false;
 
-		m_captureTimer->start( DEF_POLL_INTERVAL );
-		m_awayTimer->start( awayTimeout * 60 * 1000 );
+		m_captureTimer->start ( DEF_POLL_INTERVAL );
+		m_awayTimer->start ( awayTimeout * 60 * 1000 );
 	}
 	loadSettings();
-	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
+	connect ( this, SIGNAL ( settingsChanged() ), this, SLOT ( loadSettings() ) );
 }
 
 MotionAwayPlugin::~MotionAwayPlugin()
 {
-    kDebug(14305) << "Closing Video4Linux Device";
-	close (m_deviceHandler);
-	kDebug(14305) << "Freeing memory";
+	kDebug ( 14305 ) << "Closing Video4Linux Device";
+	close ( m_deviceHandler );
+	kDebug ( 14305 ) << "Freeing memory";
 }
 
-void MotionAwayPlugin::loadSettings(){
-	KSharedConfig::Ptr kconfig = KGlobal::config();
-	kconfig->setGroup("MotionAway Plugin");
-
-	awayTimeout = kconfig->readEntry("AwayTimeout", 1);
-	becomeAvailableWithActivity = kconfig->readEntry("BecomeAvailableWithActivity", true);
-	videoDevice = kconfig->readEntry("VideoDevice", "/dev/video0");
-	m_awayTimer->start(awayTimeout * 60 * 1000);
+void MotionAwayPlugin::loadSettings() {
+	awayTimeout = MotionAwayConfig::self()->awayTimeout();
+	becomeAvailableWithActivity = MotionAwayConfig::self()->becomeAvailableWithActivity();
+	videoDevice = MotionAwayConfig::self()->videoDevice();
+	m_awayTimer->start ( awayTimeout * 60 * 1000 );
 }
 
-int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _height, int _input, int _norm,  int _fmt)
+int MotionAwayPlugin::getImage ( int _dev, QByteArray &_image, int _width, int _height, int _input, int _norm,  int _fmt )
 {
 	struct video_capability vid_caps;
 	struct video_channel vid_chnl;
@@ -173,41 +172,41 @@ int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _he
 	// Just to avoid a warning
 	_fmt = 0;
 
-	if (ioctl (_dev, VIDIOCGCAP, &vid_caps) == -1)
+	if ( ioctl ( _dev, VIDIOCGCAP, &vid_caps ) == -1 )
 	{
-		perror ("ioctl (VIDIOCGCAP)");
-		return (-1);
+		perror ( "ioctl (VIDIOCGCAP)" );
+		return ( -1 );
 	}
 	/* Set channels and norms, NOT TESTED my philips cam doesn't have a
 	 * tuner. */
-	if (_input != IN_DEFAULT)
+	if ( _input != IN_DEFAULT )
 	{
 		vid_chnl.channel = -1;
-		if (ioctl (_dev, VIDIOCGCHAN, &vid_chnl) == -1)
+		if ( ioctl ( _dev, VIDIOCGCHAN, &vid_chnl ) == -1 )
 		{
-			perror ("ioctl (VIDIOCGCHAN)");
+			perror ( "ioctl (VIDIOCGCHAN)" );
 		}
 		else
 		{
 			vid_chnl.channel = _input;
 			vid_chnl.norm    = _norm;
 
-			if (ioctl (_dev, VIDIOCSCHAN, &vid_chnl) == -1)
+			if ( ioctl ( _dev, VIDIOCSCHAN, &vid_chnl ) == -1 )
 			{
-				perror ("ioctl (VIDIOCSCHAN)");
-				return (-1);
+				perror ( "ioctl (VIDIOCSCHAN)" );
+				return ( -1 );
 			}
 		}
 	}
 	/* Set image size */
-	if (ioctl (_dev, VIDIOCGWIN, &vid_win) == -1)
-		return (-1);
+	if ( ioctl ( _dev, VIDIOCGWIN, &vid_win ) == -1 )
+		return ( -1 );
 
 	vid_win.width=_width;
 	vid_win.height=_height;
 
-	if (ioctl (_dev, VIDIOCSWIN, &vid_win) == -1)
-		return (-1);
+	if ( ioctl ( _dev, VIDIOCSWIN, &vid_win ) == -1 )
+		return ( -1 );
 
 	/* Check if data available on the video device */
 	video_fd.fd = _dev;
@@ -215,13 +214,13 @@ int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _he
 	video_fd.events |= POLLIN;
 	video_fd.revents = 0;
 
-	poll(&video_fd, 1, 0);
+	poll ( &video_fd, 1, 0 );
 
-	if (video_fd.revents & POLLIN) {
+	if ( video_fd.revents & POLLIN ) {
 		/* Read an image */
-		return read (_dev, _image.data() , _width * _height * 3);
+		return read ( _dev, _image.data() , _width * _height * 3 );
 	} else {
-		return (-1);
+		return ( -1 );
 	}
 }
 
@@ -229,16 +228,16 @@ void MotionAwayPlugin::slotCapture()
 {
 	/* Should go on forever... emphasis on 'should' */
 	if ( getImage ( m_deviceHandler, m_imageNew, m_width, m_height, IN_DEFAULT, NORM_DEFAULT,
-	    VIDEO_PALETTE_RGB24) == m_width * m_height *3 )
+	                VIDEO_PALETTE_RGB24 ) == m_width * m_height *3 )
 	{
-	    int diffs = 0;
-        if ( m_tookFirst )
+		int diffs = 0;
+		if ( m_tookFirst )
 		{
 			/* Make a differences picture in image_out */
-			for (int i=0; i< m_width * m_height * 3 ; i++)
+			for ( int i=0; i< m_width * m_height * 3 ; i++ )
 			{
 				m_imageOut[i]= m_imageOld[i]- m_imageNew[i];
-				if ((signed char)m_imageOut[i] > 32 || (signed char)m_imageOut[i] < -32)
+				if ( ( signed char ) m_imageOut[i] > 32 || ( signed char ) m_imageOut[i] < -32 )
 				{
 					m_imageOld[i] = m_imageNew[i];
 					diffs++;
@@ -252,24 +251,24 @@ void MotionAwayPlugin::slotCapture()
 		else
 		{
 			/* First picture: new image is now the old */
-			for (int i=0; i< m_width * m_height * 3; i++)
+			for ( int i=0; i< m_width * m_height * 3; i++ )
 				m_imageOld[i] = m_imageNew[i];
 		}
 
 		/* The cat just walked in :) */
-		if (diffs > m_maxChanges)
+		if ( diffs > m_maxChanges )
 		{
-            kDebug(14305) << "Motion Detected. [" << diffs << "] Reseting Timeout";
+			kDebug ( 14305 ) << "Motion Detected. [" << diffs << "] Reseting Timeout";
 
 			/* If we were away, now we are available again */
-			if ( becomeAvailableWithActivity && !Kopete::Away::globalAway() && m_wentAway)
+			if ( becomeAvailableWithActivity && !Kopete::Away::globalAway() && m_wentAway )
 			{
 				slotActivity();
 			}
 
 			/* We reset the away timer */
-            m_awayTimer->stop();
-			m_awayTimer->start( awayTimeout * 60 * 1000 );
+			m_awayTimer->stop();
+			m_awayTimer->start ( awayTimeout * 60 * 1000 );
 		}
 
 		/* Old image slowly decays, this will make it even harder on
@@ -289,16 +288,16 @@ void MotionAwayPlugin::slotCapture()
 
 void MotionAwayPlugin::slotActivity()
 {
-	kDebug(14305) << "User activity!, going available";
+	kDebug ( 14305 ) << "User activity!, going available";
 	m_wentAway = false;
 	Kopete::AccountManager::self()->setAvailableAll();
 }
 
 void MotionAwayPlugin::slotTimeout()
 {
-	if(!Kopete::Away::globalAway() && !m_wentAway)
+	if ( !Kopete::Away::globalAway() && !m_wentAway )
 	{
-		kDebug(14305) << "Timeout and no user activity, going away";
+		kDebug ( 14305 ) << "Timeout and no user activity, going away";
 		m_wentAway = true;
 		Kopete::AccountManager::self()->setAwayAll();
 	}

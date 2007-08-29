@@ -1,6 +1,7 @@
 
-
-
+include_directories( 
+${KOPETE_INCLUDES}
+)
 
 ########### next target ###############
 
