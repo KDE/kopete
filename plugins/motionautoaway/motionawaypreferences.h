@@ -33,7 +33,7 @@ public:
 	explicit MotionAwayPreferences ( QWidget* parent = 0, const QVariantList& args = QVariantList() );
 	virtual void save();
 	virtual void load();
-	virtual void defaults() {}
+	virtual void defaults();
 
 private:
 	Ui::motionawayPrefsUI *preferencesDialog;

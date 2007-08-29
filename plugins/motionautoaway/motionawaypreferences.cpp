@@ -68,6 +68,13 @@ void MotionAwayPreferences::save()
 	emit KCModule::changed(false);
 }
 
+void MotionAwayPreferences::defaults()
+{
+	MotionAwayConfig::self()->setDefaults();
+	load();
+	changed();
+}
+
 #include "motionawaypreferences.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
