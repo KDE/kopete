@@ -18,10 +18,7 @@
 #ifndef WEBPRESENCEPREFERENCES_H
 #define WEBPRESENCEPREFERENCES_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
-
 namespace Ui { class WebPresencePrefsUI; }
 //class KAutoConfig;
 
@@ -34,7 +31,7 @@ class WebPresencePreferences : public KCModule  {
    Q_OBJECT
 
 public:
-	explicit WebPresencePreferences(QWidget *parent = 0, const QStringList &args = QStringList());
+	explicit WebPresencePreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
 	~WebPresencePreferences();
 
 	virtual void save();

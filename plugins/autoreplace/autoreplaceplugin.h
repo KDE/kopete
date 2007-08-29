@@ -38,7 +38,7 @@ class AutoReplacePlugin : public Kopete::Plugin
 public:
 	static AutoReplacePlugin *plugin();
 
-	AutoReplacePlugin( QObject *parent, const QStringList &args );
+	AutoReplacePlugin( QObject *parent, const QVariantList &args );
 	~AutoReplacePlugin();
 
 private slots:

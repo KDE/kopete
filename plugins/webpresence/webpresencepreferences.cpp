@@ -23,10 +23,12 @@
 
 //TODO: Port to KConfigXT
 
-typedef KGenericFactory<WebPresencePreferences> WebPresencePreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_webpresence, WebPresencePreferencesFactory("kcm_kopete_webpresence"))
+K_PLUGIN_FACTORY(WebPresencePreferencesFactory, registerPlugin<WebPresencePreferences>();)
+K_EXPORT_PLUGIN(WebPresencePreferencesFactory("kcm_kopete_webpresence"))
 
-WebPresencePreferences::WebPresencePreferences(QWidget *parent, const QStringList &args)
+
+
+WebPresencePreferences::WebPresencePreferences(QWidget *parent, const QVariantList &args)
 		: KCModule(WebPresencePreferencesFactory::componentData(), parent, args)
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
