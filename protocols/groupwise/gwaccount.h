@@ -163,6 +163,7 @@ signals:
 
 	
 protected slots:
+    void slotMessageSendingFailed();
 	/**
 	 * Set an auto reply message for use when the account is away
 	 * TODO: Extend Kopete::AwayAction so you can set multiple ones there.

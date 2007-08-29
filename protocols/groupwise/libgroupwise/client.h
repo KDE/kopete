@@ -351,6 +351,7 @@ fd		 * @param password
 		void systemBroadcastReceived ( const ConferenceEvent & );
 		/** CONTACT LIST MANAGEMENT EVENTS */
 		/** TBD! */
+        void messageSendingFailed();
 	protected:
 		/**
 		 * Instantiate all the event handling tasks
@@ -389,7 +390,8 @@ fd		 * @param password
 		 * sendout a 'ping' keepalive message so that the server does not disconnect us
 		 */
 		void sendKeepAlive();
-
+        void smt_messageSent();
+    
 	private:
 		void distribute( Transfer *transfer );
 		class ClientPrivate;
