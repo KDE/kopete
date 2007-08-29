@@ -89,9 +89,6 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mAutoConnect, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mMouseNavigation, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-
 
 	// "Events" TAB ============================================================
 	connect(mPrfsEvents->mQueueOnlyHighlightedMessagesInGroupChatsChk, SIGNAL(toggled(bool)),
@@ -171,7 +168,6 @@ void BehaviorConfig::save()
 	p->setUseStack(mPrfsGeneral->mUseStackChk->isChecked());
 	p->setQueueUnreadMessages(mPrfsGeneral->mQueueUnreadMessagesChk->isChecked());
 	p->setAutoConnect(mPrfsGeneral->mAutoConnect->isChecked());
-	p->setContactListMouseNavigation(mPrfsGeneral->mMouseNavigation->isChecked());
 
 	// "Events" TAB ============================================================
 	p->setQueueOnlyHighlightedMessagesInGroupChats(mPrfsEvents->mQueueOnlyHighlightedMessagesInGroupChatsChk->isChecked());
@@ -197,7 +193,7 @@ void BehaviorConfig::save()
 	config->writeEntry("UseAutoAway", mAwayConfigUI->mUseAutoAway->isChecked() );
 	config->writeEntry("UseAutoAwayMessage", mAwayConfigUI->mDisplayCustomAwayMessage->isChecked() );
 	config->sync();
-	
+
 	// Save the auto away message, if defined
 	if( mAwayConfigUI->mDisplayCustomAwayMessage->isChecked() )
 	{
@@ -210,7 +206,7 @@ void BehaviorConfig::save()
 	p->setSpellCheck(mPrfsChat->cb_SpellCheckChk->isChecked());
 	p->setInterfacePreference( viewPlugins[mPrfsChat->viewPlugin->currentItem()]->pluginName() );
 	p->setChatWindowPolicy(mPrfsChat->cmbChatGroupingPolicy->currentItem());
-	
+
 	p->setChatViewBufferSize(mPrfsChat->mChatViewBufferSize->value());
 	p->setTruncateContactNames(mPrfsChat->truncateContactNameEnabled->isChecked());
 	p->setMaxContactNameLength(mPrfsChat->mMaxContactNameLength->value());
@@ -234,7 +230,6 @@ void BehaviorConfig::load()
 	mPrfsGeneral->mUseStackChk->setChecked( p->useStack() );
 	mPrfsGeneral->mQueueUnreadMessagesChk->setChecked ( p->queueUnreadMessages() );
 	mPrfsGeneral->mAutoConnect->setChecked( p->autoConnect() );
-	mPrfsGeneral->mMouseNavigation->setChecked( p->contactListMouseNavigation() );
 
 	// "Events" TAB ============================================================
 	mPrfsEvents->mQueueOnlyHighlightedMessagesInGroupChatsChk->setChecked ( p->queueOnlyHighlightedMessagesInGroupChats() );
