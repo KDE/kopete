@@ -30,10 +30,14 @@
 #include "ui_urlpicpreviewprefsbase.h"
 #include "urlpicpreviewpreferences.h"
 
-typedef KGenericFactory<URLPicPreviewPreferences> URLPicPreviewPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY ( kcm_kopete_urlpicpreview, URLPicPreviewPreferencesFactory ( "kcm_kopete_urlpicpreview" ) )
 
-URLPicPreviewPreferences::URLPicPreviewPreferences ( QWidget *parent, const QStringList &args )
+K_PLUGIN_FACTORY(URLPicPreviewPreferencesFactory,
+        registerPlugin<URLPicPreviewPreferences>();
+        )
+K_EXPORT_PLUGIN(URLPicPreviewPreferencesFactory ( "kcm_kopete_urlpicpreview" ))
+
+
+URLPicPreviewPreferences::URLPicPreviewPreferences ( QWidget *parent, const QVariantList &args )
 		: KCModule ( URLPicPreviewPreferencesFactory::componentData(), parent, args )
 {
 	m_ui = new Ui::URLPicPreviewPrefsUI;
