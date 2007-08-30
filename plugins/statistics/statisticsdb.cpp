@@ -18,7 +18,7 @@
 //Added by qt3to4:
 #include <QByteArray>
 
-#include "sqlite/sqlite3.h"
+#include "sqlite3.h"
 
 #include <kgenericfactory.h>
 #include <kaboutdata.h>

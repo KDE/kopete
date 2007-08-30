@@ -149,7 +149,7 @@ void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 
 void StatisticsPlugin::dbusStatisticsDialog(QString id)
 {
-	kDebug() << "statistics - DCOP dialog :" << id;
+	kDebug() << "statistics - DBus dialog :" << id;
 	
 	if (statisticsContactMap[id])
 	{
@@ -197,7 +197,7 @@ bool StatisticsPlugin::dbusWasOffline(QString id, QString dateTime)
 
 bool StatisticsPlugin::dbusWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status)
 {
-	kDebug() << "statistics - DCOP wasOnline :" << id;
+	kDebug() << "statistics - DBus wasOnline :" << id;
 	
 	if (dateTime.isValid() && statisticsContactMap[id])
 	{
