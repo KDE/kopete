@@ -3,6 +3,7 @@
 
     Copyright (c) 2003-2004 by Marc Cramdal        <marc.cramdal@gmail.com>
 
+   Copyright (c) 2007      by the Kopete Developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
