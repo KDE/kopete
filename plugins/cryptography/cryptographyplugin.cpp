@@ -46,13 +46,11 @@
 #include "gpginterface.h"
 #include <kactioncollection.h>
 
-typedef KGenericFactory<CryptographyPlugin> CryptographyPluginFactory;
-static const KAboutData aboutdata ( "kopete_cryptography", 0, ki18n ( "Cryptography" ) , "1.2" );
-K_EXPORT_COMPONENT_FACTORY ( kopete_cryptography, CryptographyPluginFactory ( &aboutdata ) )
+K_PLUGIN_FACTORY ( CryptographyPluginFactory, registerPlugin<CryptographyPlugin>(); )
+K_EXPORT_PLUGIN ( CryptographyPluginFactory ( "kopete_cryptography" ) )
 
-CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QStringList & /* args */ )
-		: Kopete::Plugin ( CryptographyPluginFactory::componentData(), parent ),
-		m_cachedPass()
+CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*args*/ )
+	: Kopete::Plugin ( CryptographyPluginFactory::componentData(), parent )
 {
 	if ( !pluginStatic_ )
 		pluginStatic_=this;

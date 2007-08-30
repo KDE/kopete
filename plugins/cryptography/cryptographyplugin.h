@@ -23,7 +23,8 @@
 
 #include "cryptographyconfig.h"
 
-class QStringList;
+#include <QVariantList>
+
 class QString;
 class QTimer;
 
@@ -52,7 +53,7 @@ public:
 	static QStringList supportedProtocols() { QStringList l; return l << "MSNProtocol" << "MessengerProtocol" << "JabberProtocol" << "YahooProtocol"; }
 	static QStringList getKabcKeys (QString uid);
 
-	CryptographyPlugin( QObject *parent, const QStringList &args );
+	CryptographyPlugin( QObject *parent, const QVariantList &args );
 	~CryptographyPlugin();
 
 public slots:
