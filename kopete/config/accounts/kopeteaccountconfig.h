@@ -19,7 +19,9 @@
 #ifndef __ACCOUNTCONFIG_H
 #define __ACCOUNTCONFIG_H
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <qmap.h>
 #include <qcolor.h>
 
@@ -30,9 +32,11 @@ namespace Kopete
 {
 class Account;
 class Contact;
+class Identity;
 }
 
 class KopeteAccountLVI;
+class KopeteIdentityLVI;
 
 /**
  * @author Olivier Goffart <ogoffart@kde.org>
@@ -50,13 +54,18 @@ public slots:
 
 private:
 	KopeteAccountLVI* selectedAccount();
+	KopeteIdentityLVI* selectedIdentity();
 	Kopete::OnlineStatus mStatus;
-
+	
+	void editAccount(Kopete::Account *);
+	void editIdentity(Kopete::Identity *);
+	void removeAccount(KopeteAccountLVI *);
+	void removeIdentity(KopeteIdentityLVI *);
 	bool m_protected;
 
 private slots:
-	void slotRemoveAccount();
-	void slotEditAccount();
+	void slotRemove();
+	void slotEdit();
 	void slotSelectIdentity();
 	void slotAddAccount();
 	void slotAddWizardDone();

@@ -18,7 +18,9 @@
 #ifndef AVDEVICECONFIG_H
 #define AVDEVICECONFIG_H
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qtimer.h>

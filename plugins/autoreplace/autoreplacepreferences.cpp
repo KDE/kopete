@@ -32,12 +32,12 @@
 #include "autoreplacepreferences.h"
 #include "autoreplaceconfig.h"
 
-typedef KGenericFactory<AutoReplacePreferences> AutoReplacePreferencesFactory;
+K_PLUGIN_FACTORY(AutoReplacePreferencesFactory, registerPlugin<AutoReplacePreferences>();)
+K_EXPORT_PLUGIN(AutoReplacePreferencesFactory( "kcm_kopete_autoreplace" ))
 
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_autoreplace, AutoReplacePreferencesFactory( "kcm_kopete_autoreplace" ) )
 
 // TODO: Use KConfigXT
-AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const QStringList &args )
+AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const QVariantList &args )
 : KCModule( AutoReplacePreferencesFactory::componentData(), parent, args )
 {
 	QVBoxLayout* l = new QVBoxLayout( this );

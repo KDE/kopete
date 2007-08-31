@@ -39,10 +39,10 @@
 #include "ui_highlightprefsbase.h"
 #include "highlightpreferences.h"
 
-typedef KGenericFactory<HighlightPreferences> HighlightPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_highlight, HighlightPreferencesFactory( "kcm_kopete_highlight" )  )
+K_PLUGIN_FACTORY(HighlightPreferencesFactory, registerPlugin<HighlightPreferences>();)
+K_EXPORT_PLUGIN(HighlightPreferencesFactory( "kcm_kopete_highlight" ))
 
-HighlightPreferences::HighlightPreferences(QWidget *parent, const QStringList &args)
+HighlightPreferences::HighlightPreferences(QWidget *parent, const QVariantList &args)
 							: KCModule(HighlightPreferencesFactory::componentData(), parent, args)
 {
 	donttouch=true;

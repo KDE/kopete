@@ -100,7 +100,7 @@ public:
     /**
      * @brief Disable file open, because it's not used by this part.
      */
-    virtual bool openFile() { return false; };
+    virtual bool openFile() { return false; }
 
     void setRichTextSupport(const KRichTextEditPart::RichTextSupport &support);
     RichTextSupport richTextSupport() const;

@@ -38,32 +38,32 @@ public:
 	 ***************************************************************************/
 
 	const QString& languageName( const QString &key )
-	{ return m_langs[key]; };
+	{ return m_langs[key]; }
 
 	const int languageIndex	( const QString &key )
-	{ return m_langKeyIntMap[key]; };
+	{ return m_langKeyIntMap[key]; }
 
 	const QString& languageKey( const int index )
-	{ return  m_langIntKeyMap[index]; };
+	{ return  m_langIntKeyMap[index]; }
 
 	const QMap<QString,QString>& languagesMap()
-	{ return m_langs; };
+	{ return m_langs; }
 
 	const QMap<QString,QString>& servicesMap()
-	{ return m_services; };
+	{ return m_services; }
 
 	const QStringList& supported( const QString &servicekey )
-	{ return m_supported[servicekey]; };
+	{ return m_supported[servicekey]; }
 
 	const int serviceIndex	( const QString &key )
-	{ return m_servicesKeyIntMap[key]; };
+	{ return m_servicesKeyIntMap[key]; }
 
 	const QString& serviceKey( const int index )
-	{ return  m_servicesIntKeyMap[index]; };
+	{ return  m_servicesIntKeyMap[index]; }
 
-	int numLanguages()	{ return m_lc; };
+	int numLanguages()	{ return m_lc; }
 
-	int numServices()	{ return m_sc; };
+	int numServices()	{ return m_sc; }
 
 private:
 

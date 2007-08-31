@@ -244,14 +244,16 @@ void QQChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSess
 
 void QQChatSession::slotGotTypingNotification( const ConferenceEvent& event )
 {
-	if ( event.guid == guid() )
-		; // receivedTypingMsg( static_cast<QQProtocol *>( protocol() )->dnToDotted( event.user ), true );
+	if ( event.guid == guid() ) {
+		// receivedTypingMsg( static_cast<QQProtocol *>( protocol() )->dnToDotted( event.user ), true );
+        }
 }
 
 void QQChatSession::slotGotNotTypingNotification( const ConferenceEvent& event )
 {
-	if ( event.guid == guid() )
-		; //receivedTypingMsg( static_cast<QQProtocol *>( protocol() )->dnToDotted( event.user ), false );
+	if ( event.guid == guid() ) {
+		//receivedTypingMsg( static_cast<QQProtocol *>( protocol() )->dnToDotted( event.user ), false );
+        }
 }
 
 void QQChatSession::dequeueMessagesAndInvites()

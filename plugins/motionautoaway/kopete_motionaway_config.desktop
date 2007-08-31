@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-Library=kcm_kopete_motionaway
+X-KDE-FactoryName=kcm_kopete_motionaway
+X-KDE-ParentApp=kopete_motionaway
+X-KDE-ParentComponents=kopete_motionaway
+
+Name=Motion Auto-Away
+Name[pt]=Ausência Automática por Movimento
+Name[sv]=Automatisk rörelsefrånvaro
+Comment=Sets away status when not detecting movement near the computer
+Comment[pt]=Configura o estado de ausência ao não detectar movimento perto do computador
+Comment[sv]=Ställer automatisk in frånvarostatus när ingen rörelse märks nära datorn

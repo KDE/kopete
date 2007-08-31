@@ -34,7 +34,7 @@ namespace Kopete {
 class AwayAction::Private
 {
 public:
-	Private(const OnlineStatus& s) : reasonCount(0) , status(s) {};
+	Private(const OnlineStatus& s) : reasonCount(0) , status(s) {}
 	int reasonCount;
 	OnlineStatus status;
 };

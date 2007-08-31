@@ -20,7 +20,9 @@
 #ifndef NOWLISTENINGPREFERENCES_H
 #define NOWLISTENINGPREFERENCES_H
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 namespace Ui { class NowListeningPrefsUI; }
 

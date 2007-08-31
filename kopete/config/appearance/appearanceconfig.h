@@ -19,7 +19,9 @@
 #ifndef __APPEARANCE_H
 #define __APPEARANCE_H
 
-#include "kcmodule.h"
+#define KDE3_SUPPORT
+#include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>

@@ -66,7 +66,7 @@ public:
 	* parameters can be set by using it.
 	*/
 	AddressBookSelectorWidget *addressBookSelectorWidget() const
-	{ return m_addressBookSelectorWidget; };
+	{ return m_addressBookSelectorWidget; }
 
 	/**
 	* Creates a modal dialog, lets the user to select a addressbook contact

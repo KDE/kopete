@@ -1,3 +1,4 @@
+
 # Laurent this plugins use shell script which will not work on windows
 if (UNIX)
   add_subdirectory( latex ) 
@@ -17,12 +18,17 @@ add_subdirectory( texteffect )
 add_subdirectory( highlight ) 
 add_subdirectory( alias ) 
 add_subdirectory( addbookmarks ) 
-add_subdirectory( privacy )
+add_subdirectory( privacy ) 
+add_subdirectory( urlpicpreview ) 
+if (SQLITE_FOUND)
+  add_subdirectory ( statistics ) 
+endif (SQLITE_FOUND)
 
 if( LIBXML2_FOUND AND LIBXSLT_FOUND )
   add_subdirectory( webpresence )
 endif( LIBXML2_FOUND AND LIBXSLT_FOUND )
 
-#add_subdirectory(plugins_playground/smpppdcs)
-#add_subdirectory(plugins_playground/urlpicpreview)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  add_subdirectory( motionautoaway ) 
+endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 

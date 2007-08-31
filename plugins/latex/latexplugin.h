@@ -45,7 +45,7 @@ class LatexPlugin : public Kopete::Plugin
 public:
 	static LatexPlugin  *plugin();
 
-	LatexPlugin( QObject *parent, const QStringList &args );
+	LatexPlugin( QObject *parent, const QVariantList &args );
 	~LatexPlugin();
 
 public slots:

@@ -29,11 +29,14 @@
 
 #include "cryptographyconfig.h"
 
-typedef KGenericFactory<CryptographyPreferences> CryptographyPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY ( kcm_kopete_cryptography, CryptographyPreferencesFactory ( "kcm_kopete_cryptography" ) )
+K_PLUGIN_FACTORY(CryptographyPreferencesFactory,
+		 registerPlugin<CryptographyPreferences>();
+		)
+K_EXPORT_PLUGIN(CryptographyPreferencesFactory ( "kcm_kopete_cryptography" ))
 
-CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QStringList &args )
-		: KCModule ( CryptographyPreferencesFactory::componentData(), parent, args )
+
+CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QVariantList &args )
+	: KCModule ( CryptographyPreferencesFactory::componentData(), parent, args )
 {
 	mConfig = new CryptographyConfig;
 	

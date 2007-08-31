@@ -51,10 +51,10 @@ protected:
 	virtual void createResponse( QDomDocument& doc, QDomElement &e ) const;
 
 	/** Services should implement this to handle request. */
-	virtual void handleRequest( QDomElement& ) {};
+	virtual void handleRequest( QDomElement& ) {}
 
 	/** Services should implement this to handle response. */
-	virtual void handleResponse( QDomElement& ) {};
+	virtual void handleResponse( QDomElement& ) {}
 };
 
 }

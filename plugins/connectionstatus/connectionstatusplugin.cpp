@@ -25,10 +25,11 @@
 
 #include "kopeteaccountmanager.h"
 
-typedef KGenericFactory<ConnectionStatusPlugin> ConnectionStatusPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_connectionstatus, ConnectionStatusPluginFactory( "kopete_connectionstatus" )  )
+K_PLUGIN_FACTORY(ConnectionStatusPluginFactory, registerPlugin<ConnectionStatusPlugin>();)
+K_EXPORT_PLUGIN(ConnectionStatusPluginFactory( "kopete_connectionstatus" ))
 
-ConnectionStatusPlugin::ConnectionStatusPlugin( QObject *parent, const QStringList& /* args */ )
+
+ConnectionStatusPlugin::ConnectionStatusPlugin( QObject *parent, const QVariantList& /* args */ )
 : Kopete::Plugin( ConnectionStatusPluginFactory::componentData(), parent )
 {
 	kDebug( 14301 ) ;

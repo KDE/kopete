@@ -19,10 +19,9 @@
 #define CONNECTIONSTATUSPLUGIN_H
 
 #include "kopeteplugin.h"
-
+#include <QVariantList>
 class QTimer;
 class K3Process;
-
 /**
  * @author Chris Howells <howells@kde.org>
  */
@@ -31,7 +30,7 @@ class ConnectionStatusPlugin : public Kopete::Plugin
 	Q_OBJECT
 
 public:
-	ConnectionStatusPlugin( QObject *parent, const QStringList &args );
+	ConnectionStatusPlugin( QObject *parent, const QVariantList &args );
 	~ConnectionStatusPlugin();
 
 private slots:

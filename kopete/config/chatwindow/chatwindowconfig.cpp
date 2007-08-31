@@ -420,7 +420,7 @@ class FakeContact : public Kopete::Contact
 public:
 	FakeContact (Kopete::Account *account, const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( account, id, mc ) {}
 	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags /*c*/) { return 0L; }
-	virtual void slotUserInfo() {};
+	virtual void slotUserInfo() {}
 };
 
 // This is for style preview.

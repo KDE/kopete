@@ -172,7 +172,7 @@ namespace Eva {
 		uchar type;
 		uchar groupId;
 
-		GroupInfo( uint q, uchar t, uchar g ) : qqId(q), type (t), groupId(g) {};
+		GroupInfo( uint q, uchar t, uchar g ) : qqId(q), type (t), groupId(g) {}
 	};
 
 
@@ -313,7 +313,7 @@ namespace Eva {
 			qqId( ntohl( type_cast<int> (data )) ), 
 			ip( ntohl( type_cast<int> (data+5 )) ), 
 			port( ntohs( type_cast<short> (data+9 )) ), 
-			status( type_cast<char> (data+12 ))  {};
+			status( type_cast<char> (data+12 ))  {}
 	};
 
 	struct MessageEnvelop
@@ -331,7 +331,7 @@ namespace Eva {
 			sequence( ntohl( type_cast<int>( text.data() + 8 )) ),
 			ip( ntohl( type_cast<int>( text.data() + 12 )) ),
 			port( ntohs( type_cast<short>( text.data() + 16 )) ),
-			type( ntohs( type_cast<short>( text.data() + 18 )) )  {};
+			type( ntohs( type_cast<short>( text.data() + 18 )) )  {}
 	};
 
 	struct MessageHeader
@@ -354,7 +354,7 @@ namespace Eva {
 			type( ntohs( type_cast<ushort>( text.data() + 26)) ),
 			sequence( ntohs( type_cast<ushort>( text.data() + 28)) ),
 			timestamp( ntohl( type_cast<uint>( text.data() + 30)) ),
-			avatar( ntohs( type_cast<ushort>( text.data() + 34)) ) {};
+			avatar( ntohs( type_cast<ushort>( text.data() + 34)) ) {}
 	};
 
 	/** 

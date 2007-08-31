@@ -18,7 +18,9 @@
 #ifndef AutoReplacePREFERENCES_H
 #define AutoReplacePREFERENCES_H
 
-#include "kcmodule.h"
+#define KDE3_SUPPORT
+#include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 namespace Ui { class AutoReplacePrefsUI; }
 class AutoReplaceConfig;
@@ -34,7 +36,7 @@ class AutoReplacePreferences : public KCModule
 	Q_OBJECT
 
 public:
-	explicit AutoReplacePreferences( QWidget *parent = 0, const QStringList &args = QStringList() );
+	explicit AutoReplacePreferences( QWidget *parent = 0, const QVariantList &args = QVariantList() );
 	virtual~AutoReplacePreferences();
 
 	virtual void save();

@@ -78,17 +78,17 @@ public:
 	/**
 	 * Returns the command this object handles
 	 */
-	 const QString &command() const { return m_command; };
+	 const QString &command() const { return m_command; }
 
 	 /**
 	  * Returns the help string for this command
 	  */
-	 const QString &help() const { return m_help; };
+	 const QString &help() const { return m_help; }
 
 	 /**
 	  * Returns the type of the command
 	  */
-	 const CommandHandler::CommandType type() const { return m_type; };
+	 const CommandHandler::CommandType type() const { return m_type; }
 
 signals:
 	/**
