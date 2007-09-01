@@ -37,7 +37,7 @@
 #include "kopeteuiglobal.h"
 #include <kactioncollection.h>
 
-K_GLOBAL_STATIC_WITH_ARGS(KSettings::Dialog, s_settingsDialog, (Kopete::UI::Global::mainWidget()));
+K_GLOBAL_STATIC_WITH_ARGS(KSettings::Dialog, s_settingsDialog, (Kopete::UI::Global::mainWidget()))
 
 KopetePreferencesAction::KopetePreferencesAction( KActionCollection *parent, const char *name )
 : KAction( KIcon(KStandardGuiItem::configure().iconName()), KStandardGuiItem::configure().text(), parent )
