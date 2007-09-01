@@ -9,4 +9,8 @@ X-KDE-ParentApp=kopete_urlpicpreview
 X-KDE-ParentComponents=kopete_urlpicpreview
 
 Name=URLPicPreview Plugin Configuration
+Name[pt]=Configuração do 'Plugin' de Antevisão dos URLs
+Name[pt_BR]=Configuração do 'Plugin' de Antevisão dos URLs
 Comment=URLPicPreview Plugin
+Comment[pt]='Plugin' de Antevisão dos URLs
+Comment[pt_BR]='Plugin' de Antevisão dos URLs
