@@ -10,25 +10,29 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 IF (NOT WIN32)
-INCLUDE(UsePkgConfig)
+  INCLUDE(UsePkgConfig)
 
-PKGCONFIG(libidn _IDNIncDir _IDNLinkDir _IDNLinkFlags _IDNCflags)
+  PKGCONFIG(libidn _IDNIncDir _IDNLinkDir _IDNLinkFlags _IDNCflags)
+
+  FIND_PATH(IDN_INCLUDE_DIR idna.h
+    PATHS
+    ${_IDNIncDir}
+    NO_DEFAULT_PATH
+  )
+
+  set(IDN_DEFINITIONS ${_IDNCflags})
+
+  FIND_LIBRARY(IDN_LIBRARY NAMES idn
+    PATHS
+    ${_IDNLinkDir} 
+    NO_DEFAULT_PATH 
+  )
+ELSE (NOT WIN32)
+  FIND_PATH(IDN_INCLUDE_DIR idna.h)
+  FIND_LIBRARY(IDN_LIBRARY NAMES idn idn-11 libidn-11)
 ENDIF (NOT WIN32)
-
-FIND_PATH(IDN_INCLUDE_DIR idna.h
-  PATHS
-  ${_IDNIncDir}
-  NO_DEFAULT_PATH
-)
-
-set(IDN_DEFINITIONS ${_IDNCflags})
 set(IDN_INCLUDES ${IDN_INCLUDE_DIR} )
 
-FIND_LIBRARY(IDN_LIBRARY NAMES idn
-  PATHS
-  ${_IDNLinkDir} 
-  NO_DEFAULT_PATH 
-)
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(IDN DEFAULT_MSG IDN_INCLUDES IDN_LIBRARY )
 
