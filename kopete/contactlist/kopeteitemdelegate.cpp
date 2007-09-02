@@ -52,18 +52,16 @@ void KopeteItemDelegate::paint( QPainter* painter,
     //pull in contact list settings: contactListDisplayMode
     QStyleOptionViewItem opt = option;
 
-    using namespace Kopete::Items;
-    if ( index.data( TypeRole ) == MetaContact )
+    kDebug( 14000 ) << "type role is " << index.data( Kopete::Items::TypeRole );
+    if ( index.data( Kopete::Items::TypeRole ) ==
+         Kopete::Items::MetaContact )
     {
         //check the idle state of the metacontact and apply the appropriate
         //color
-        QVariant v = index.data( ElementRole );
-        QObject* o = v.value<QObject*>();
-        Kopete::MetaContact* mc = qobject_cast<Kopete::MetaContact*>( o );
-        if ( mc && Kopete::AppearanceSettings::self()->greyIdleMetaContacts() &&
-             mc->idleTime() > 0 )
+        QVariant v = index.data( Kopete::Items::IdleTimeRole );
+        if ( Kopete::AppearanceSettings::self()->greyIdleMetaContacts() &&
+             v.toInt() > 0 )
         {
-            kDebug( 14000 ) << mc->displayName() << " is idle";
             painter->setPen( Qt::lightGray );
         }
     }
