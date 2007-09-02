@@ -65,6 +65,12 @@ void KopeteItemDelegate::paint( QPainter* painter,
         }
     }
 
+    if (  index.data( Kopete::Items::TypeRole ) ==
+          Kopete::Items::Group )
+    {
+        QColor gc( Kopete::AppearanceSettings::self()->groupNameColor() );
+        opt.palette.setColor( QPalette::Text, gc );
+    }
     QItemDelegate::paint( painter, opt, index );
 }
 
