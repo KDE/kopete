@@ -161,7 +161,7 @@ Identity *IdentityManager::defaultIdentity()
 		setDefaultIdentity( ident );
 		return ident;
 	}
-
+	return 0;
 }
 
 void IdentityManager::setDefaultIdentity( Identity *identity )
