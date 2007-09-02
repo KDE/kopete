@@ -21,28 +21,33 @@
 #include "kopetemetacontactitem.h"
 #include "kopeteitembase.h"
 #include <K3Icon>
+#include <KDebug>
 #include <KIconLoader>
 
 #include "kopetemetacontact.h"
 #include "kopetepicture.h"
+#include "kopeteonlinestatus.h"
 
 
 KopeteMetaContactItem::KopeteMetaContactItem( Kopete::MetaContact *contact )
 : QObject(0),QStandardItem()
 
 {
-    setData( Kopete::Items::MetaContact, Kopete::Items::TypeRole );
-    
+	setData( Kopete::Items::MetaContact, Kopete::Items::TypeRole );
+
 	m_metaContact = contact;
-    setData( m_metaContact, Kopete::Items::ElementRole );
+	setData( m_metaContact, Kopete::Items::ElementRole );
 	setText( m_metaContact->displayName() );
-    setData( m_metaContact->picture().image(), Qt::DecorationRole );
+	setData( m_metaContact->picture().image(), Qt::DecorationRole );
 
 	connect( m_metaContact,
 	         SIGNAL( displayNameChanged( const QString&, const QString& ) ),
 	         this, SLOT( changeDisplayName( const QString&, const QString ) ) );
 	connect( m_metaContact, SIGNAL( photoChanged() ),
 	         this, SLOT( changePhoto() ) );
+	connect( m_metaContact,
+	         SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)),
+	         this, SLOT(updateOnlineStatus(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)) );
 
 }
 
@@ -65,7 +70,6 @@ void KopeteMetaContactItem::changeDisplayName( const QString&,
 
 void KopeteMetaContactItem::changePhoto()
 {
-
     QImage img = m_metaContact->picture().image();
     if ( img.isNull() )
     {
@@ -76,6 +80,19 @@ void KopeteMetaContactItem::changePhoto()
     {
         setData( m_metaContact->picture().image(), Qt::DecorationRole );
     }
+}
+
+void KopeteMetaContactItem::updateOnlineStatus( Kopete::MetaContact* metaContact,
+                                                Kopete::OnlineStatus::StatusType status )
+{
+	using namespace Kopete;
+	using namespace Kopete::Items;
+	if ( metaContact != m_metaContact )
+	{
+		return;
+	}
+
+	setData( status, OnlineStatusRole );
 }
 
 #include "kopetemetacontactitem.moc"

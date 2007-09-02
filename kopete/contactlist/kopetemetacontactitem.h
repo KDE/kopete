@@ -23,9 +23,8 @@
 #define KOPETEMETACONTACTLVI_H
 
 #include <QtGui/QStandardItem>
-#include <qobject.h>
-#include <qpixmap.h>
-#include <q3ptrdict.h>
+
+#include "kopeteonlinestatus.h"
 
 class QVariant;
 
@@ -65,6 +64,7 @@ public:
 public Q_SLOTS:
 	void changeDisplayName(const QString&, const QString&);
 	void changePhoto();
+	void updateOnlineStatus(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType);
 
 private:
 	Kopete::MetaContact *m_metaContact;

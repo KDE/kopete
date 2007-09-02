@@ -29,6 +29,7 @@ namespace Kopete
         /** Qt Model Role Definitions */
         const int TypeRole = Qt::UserRole + 1;
         const int ElementRole = Qt::UserRole + 2;
+        const int OnlineStatusRole = Qt::UserRole + 3;
         
         /* Item type role values */
         enum Type { Group, MetaContact };
