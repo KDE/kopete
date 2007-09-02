@@ -22,11 +22,10 @@
 #include <QRegExp>
 
 // KDE Includes
-#include <kdebug.h>
-#include <kglobal.h>
-#include <klocale.h>
-#include <klineedit.h>
-#include <kconfig.h>
+#include <KDebug>
+#include <KGlobal>
+#include <KLocale>
+#include <KConfig>
 
 // Local Includes
 #include "wpuserinfo.h"
@@ -83,7 +82,7 @@ void WPUserInfo::startDetailsProcess(const QString &host)
 	detailsProcess->start(theSMBClientPath, args);
 }
 
-void WPUserInfo::slotDetailsProcessFinished(int i, QProcess::ExitStatus status)
+void WPUserInfo::slotDetailsProcessFinished(int, QProcess::ExitStatus)
 {
 	QByteArray outputData = detailsProcess->readAll();
 	QRegExp info("Domain=\\[(.[^\\]]+)\\]\\sOS=\\[(.[^\\]]+)\\]\\sServer=\\[(.[^\\]]+)\\]"),

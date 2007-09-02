@@ -87,9 +87,7 @@ bool WinPopupLib::checkHost(const QString &Name) const
 {
 	bool ret = false;
 
-	QMap<QString, WorkGroup>::const_iterator i;
-	for (i = theGroups.constBegin(); i != theGroups.constEnd(); ++i) {
-		WorkGroup tmpGroup = i.value();
+	foreach (WorkGroup tmpGroup, theGroups) {
 		if (tmpGroup.Hosts().contains(Name.toUpper())) {
 			ret = true;
 			break;
@@ -171,9 +169,9 @@ void WinPopupLib::startReadProcess(const QString &Host)
 	readGroupsProcess->start(smbClientBin, args);
 }
 
-void WinPopupLib::slotReadProcessExited(int, QProcess::ExitStatus status)
+void WinPopupLib::slotReadProcessExited(int i, QProcess::ExitStatus status)
 {
-	if (status == QProcess::CrashExit) {
+	if (i > 0 || status == QProcess::CrashExit) {
 		todo.removeAll(currentHost);
 		done += currentHost;
 	} else {
@@ -327,6 +325,7 @@ void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 	args << "-M" << Destination << "-N" << "-";
 	sender->start(smbClientBin);
 	sender->write(Body.toLocal8Bit());
+	sender->closeWriteChannel();
 }
 
 void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq)
