@@ -126,6 +126,7 @@ KopeteContactListView::~KopeteContactListView()
 
 void KopeteContactListView::contactActivated( const QModelIndex& index )
 {
+
 	kDebug(14010) << "contact activated";
 	QVariant v = index.data( Kopete::Items::ElementRole );
 	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
