@@ -52,7 +52,6 @@ void KopeteItemDelegate::paint( QPainter* painter,
     //pull in contact list settings: contactListDisplayMode
     QStyleOptionViewItem opt = option;
 
-    kDebug( 14000 ) << "type role is " << index.data( Kopete::Items::TypeRole );
     if ( index.data( Kopete::Items::TypeRole ) ==
          Kopete::Items::MetaContact )
     {
