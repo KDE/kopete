@@ -65,7 +65,17 @@ void KopeteMetaContactItem::changeDisplayName( const QString&,
 
 void KopeteMetaContactItem::changePhoto()
 {
-    setData( m_metaContact->picture().image(), Qt::DecorationRole );
+
+    QImage img = m_metaContact->picture().image();
+    if ( img.isNull() )
+    {
+        /* load the default metacontact icon instead */
+        setData( SmallIcon( m_metaContact->statusIcon(), Qt::DecorationRole ) );
+    }
+    else
+    {
+        setData( m_metaContact->picture().image(), Qt::DecorationRole );
+    }
 }
 
 #include "kopetemetacontactitem.moc"
