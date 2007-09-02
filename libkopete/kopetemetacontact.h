@@ -348,7 +348,7 @@ public:
 	/**
 	 * return the time in second the contact is idle.
 	 */
-	unsigned long int idleTime() const;
+	quint32 idleTime() const;
 
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
