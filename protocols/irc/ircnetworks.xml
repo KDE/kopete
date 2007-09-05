@@ -731,20 +731,15 @@
         </servers>
     </network>
     <network>
-        <name>Freenode</name>
-        <description>Freenode Peer-directed Projects Network</description>
+        <name>freenode</name>
+        <description>freenode, a service by Peer-directed Projects Center</description>
         <servers>
-	    <server>
-	    	<host>irc.kde.org</host>
-		<port>6667</port>
-		<useSSL>false</useSSL>
-	    </server>
-	    <server>
-	    	<host>brunner.freenode.net</host>
-		<port>993</port>
-		<useSSL>true</useSSL>
-	    </server>
-	    <server>
+            <server>
+                <host>irc.kde.org</host>
+                <port>6667</port>
+                <useSSL>false</useSSL>
+            </server>
+            <server>
                 <host>chat.freenode.net</host>
                 <port>6667</port>
                 <useSSL>false</useSSL>
