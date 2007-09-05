@@ -64,7 +64,7 @@ CryptographySelectUserKey::CryptographySelectUserKey ( const QString& key ,Kopet
 	{
 		// find keys in address book and possibly use them (this same code is in cryptographyguiclient.cpp)
 		QStringList keys;
-		keys = CryptographyPlugin::getKabcKeys ( m_metaContact->metaContactId() );
+		keys = CryptographyPlugin::getKabcKeys ( m_metaContact->kabcId() );
 
 		// if there is one key found, use it automatically
 		if ( keys.count() == 1 )
@@ -76,7 +76,7 @@ CryptographySelectUserKey::CryptographySelectUserKey ( const QString& key ,Kopet
 		// if more than one if found, let the user choose which one
 		if ( keys.count() > 1 )
 		{
-			KABC::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid ( mc->metaContactId() );
+			KABC::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid ( mc->kabcId() );
 			KDialog dialog ( this );
 			QWidget w ( &dialog );
 			Ui::KabcKeySelectorUI ui;

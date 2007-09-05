@@ -120,12 +120,12 @@ void CryptographyGUIClient::slotEncryptToggled()
 		if ( mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" ).isEmpty() && m_encAction->isChecked() )
 		{
 			// to grab the public key from KABC (this same code is in crytographyselectuserkey.cpp)
-			KABC::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid ( mc->metaContactId() );
+			KABC::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid ( mc->kabcId() );
 
 			if ( ! addressee.isEmpty() )
 			{
 				QStringList keys;
-				keys = CryptographyPlugin::getKabcKeys( mc->metaContactId() );
+				keys = CryptographyPlugin::getKabcKeys( mc->kabcId() );
 				
 				// ask user if they want to use key found in address book
 				if ( keys.count() == 1 ) {

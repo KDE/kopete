@@ -221,7 +221,7 @@ Q3DragObject *ChatMembersListWidget::dragObject()
 	d->setEncodedData( QString( c->protocol()->pluginId()+QChar( 0xE000 )+c->account()->accountId()+QChar( 0xE000 )+ c->contactId() ).toUtf8() );
 	drag->addDragObject( d );
 
-	KABC::Addressee address = KABC::StdAddressBook::self()->findByUid(c->metaContact()->metaContactId());
+	KABC::Addressee address = KABC::StdAddressBook::self()->findByUid(c->metaContact()->kabcId());
 
 	if( !address.isEmpty() )
 	{

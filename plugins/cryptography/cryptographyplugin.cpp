@@ -268,7 +268,7 @@ void CryptographyPlugin::slotExportOneKey()
 		return;
 	}
 
-	addressee = Kopete::KABCPersistence::addressBook()->findByUid ( mc->metaContactId() );
+	addressee = Kopete::KABCPersistence::addressBook()->findByUid ( mc->kabcId() );
 	if ( addressee.isEmpty() )
 		addressee.setName ( mc->displayName() );
 	addressee.insertCustom ( "KADDRESSBOOK", "OPENPGPFP", key );

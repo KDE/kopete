@@ -72,6 +72,16 @@ MetaContact::~MetaContact()
 	delete d;
 }
 
+QUuid MetaContact::metaContactId() const
+{
+	return d->metaContactId;
+}
+
+void MetaContact::setMetaContactId( const QUuid& newUuid)
+{
+	d->metaContactId = newUuid;
+}
+
 void MetaContact::addContact( Contact *c )
 {
 	if( d->contacts.contains( c ) )
@@ -591,8 +601,8 @@ QString MetaContact::displayName() const
 	{
 		// kabc source, try to get from addressbook
 		// if the metacontact has a kabc association
-		if ( !metaContactId().isEmpty() )
-			return nameFromKABC(metaContactId());
+		if ( !kabcId().isEmpty() )
+			return nameFromKABC(kabcId());
 	}
 	else if ( source == SourceContact )
 	{
@@ -960,7 +970,7 @@ void MetaContact::slotAllPluginsLoaded()
 void MetaContact::slotUpdateAddressBookPicture()
 {
 	KABC::AddressBook* ab = KABCPersistence::self()->addressBook();
-	QString id = metaContactId();
+	QString id = kabcId();
 	if ( !id.isEmpty() && !id.contains(':') )
 	{
 		KABC::Addressee theAddressee = ab->findByUid(id);
@@ -1003,9 +1013,9 @@ void MetaContact::setTemporary( bool isTemporary, Group *group )
 		moveToGroup(temporaryGroup, group ? group : Group::topLevel());
 }
 
-QString MetaContact::metaContactId() const
+QString MetaContact::kabcId() const
 {
-	if(d->metaContactId.isEmpty())
+	if(d->kabcId.isEmpty())
 	{
 		if(d->contacts.isEmpty())
 			return QString();
@@ -1014,12 +1024,12 @@ QString MetaContact::metaContactId() const
 			return QString();
 		return c->protocol()->pluginId()+QString::fromUtf8(":")+c->account()->accountId()+QString::fromUtf8(":") + c->contactId() ;
 	}
-	return d->metaContactId;
+	return d->kabcId;
 }
 
-void MetaContact::setMetaContactId( const QString& newMetaContactId )
+void MetaContact::setKabcId( const QString& newMetaContactId )
 {
-	if(newMetaContactId == d->metaContactId)
+	if(newMetaContactId == d->kabcId)
 		return;
 
 	// 1) Check the Id is not already used by another contact
@@ -1031,7 +1041,7 @@ void MetaContact::setMetaContactId( const QString& newMetaContactId )
 
 	// Don't remove IM addresses from kabc if we are changing contacts;
 	// other programs may have written that data and depend on it
-	d->metaContactId = newMetaContactId;
+	d->kabcId = newMetaContactId;
 	if ( loading() )
 	{
 		slotUpdateAddressBookPicture();
@@ -1076,9 +1086,9 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 				return;
 		}
 
-		if ( !d->metaContactId.isEmpty() && !newValue.isNull())
+		if ( !d->kabcId.isEmpty() && !newValue.isNull())
 		{
-			KABC::Addressee theAddressee = KABCPersistence::self()->addressBook()->findByUid( metaContactId() );
+			KABC::Addressee theAddressee = KABCPersistence::self()->addressBook()->findByUid( kabcId() );
 
 			if ( !theAddressee.isEmpty() )
 			{

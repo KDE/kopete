@@ -107,7 +107,7 @@ KabcExportWizard::KabcExportWizard( QWidget *parent )
 		Q3CheckListItem * lvi = new ContactLVI( mc, m_contactList,
 				mc->displayName(), Q3CheckListItem::CheckBox );
 		lvi->setOn( false );
-		if ( mc->metaContactId().contains(':') )
+		if ( !mc->kabcId().isEmpty() )
 		{
 			lvi->setOn( true );
 			lvi->setEnabled( true );
@@ -168,7 +168,7 @@ void KabcExportWizard::accept()
 			if ( item->isEnabled() && item->isOn() )
 			{
 				KABC::Addressee addr;
-				addr = m_addressBook->findByUid( item->mc->metaContactId() );
+				addr = m_addressBook->findByUid( item->mc->kabcId() );
 				if ( addr.isEmpty() ) // unassociated contact
 				{
 					kDebug( 14000 ) << "creating addressee " << item->mc->displayName() << " in address book " << selectedResource->resourceName();
@@ -195,7 +195,7 @@ void KabcExportWizard::accept()
 					m_addressBook->insertAddressee( addr );
 					// set the metacontact's id to that of the new addressee 
 					// - this causes the addressbook to be written by libkopete
-					item->mc->setMetaContactId( addr.uid() );
+					item->mc->setKabcId( addr.uid() );
 				}
 				else
 				{

@@ -75,7 +75,7 @@ void SidebarWidget::generateContactDetails()
 
 	if ( ! metaContact->picture().image().isNull() )
         {
-		QString photoName = QString(QLatin1String("kopete-metacontact-photo:%1")).arg( QLatin1String(QUrl::toPercentEncoding( metaContact->metaContactId()) ));
+		QString photoName = QString(QLatin1String("kopete-metacontact-photo:%1")).arg( QLatin1String(QUrl::toPercentEncoding( metaContact->kabcId()) ));
 		content += QString(QLatin1String("<img src=\"%1\" style=\"margin-bottom:10px;\"><br>")).arg( photoName );
 		 w = ( metaContact->picture().image().width() > 100 ) ? metaContact->picture().image().width() + 20 : 120;
         }
