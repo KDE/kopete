@@ -40,12 +40,6 @@ ContactTaskBase::ContactTaskBase(QObject *parent)
 {
 }
 
-ContactTaskBase::ContactTaskBase(Kopete::Contact *contact)
- : Kopete::Task(contact), d(new Private)
-{
-	setContact(contact);
-}
-
 ContactTaskBase::~ContactTaskBase()
 {
 	delete d;
