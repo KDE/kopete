@@ -28,6 +28,7 @@
 #include <Q3CString>
 #include <stdlib.h>
 #include <QtCrypto>
+#include <QDebug>
 
 #define SIMPLESASL_PLAIN
 
@@ -164,6 +165,29 @@ public:
 class SimpleSASLContext : public QCA::SASLContext
 {
 public:
+		class ParamsMutable
+		{
+		public:
+			/**
+			   User is held
+			*/
+			bool user;
+
+			/**
+			   Authorization ID is held
+			*/
+			bool authzid;
+
+			/**
+			   Password is held
+			*/
+			bool pass;
+
+			/**
+			   Realm is held
+			*/
+			bool realm;
+		};
 	// core props
 	QString service, host;
 
@@ -317,7 +341,7 @@ public:
 			if(need->needUsername() || need->canSendAuthzid() || need->needPassword() || need->canSendRealm()) {
 				qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
 				result_ = Error;
-				return;
+				goto ready;
 			}
 
 			bool need_user = need->needUsername();
@@ -400,7 +424,7 @@ public:
 			if (!authz.isEmpty())
 				out.set("authzid", authz.utf8());
 			QByteArray s(out.toString());
-			//qDebug(QString("OUT: %1").arg(QString(out.toString())));
+			//qDebug() << (QString("OUT: %1").arg(QString(out.toString())));
 
 			// done
 			out_buf.resize(s.length());
@@ -417,6 +441,8 @@ public:
 			out_buf.resize(0);
 			result_ = Success;
 		}
+ready:
+		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 	}
 
 	virtual void update(const QByteArray &from_net, const QByteArray &from_app) {
@@ -515,9 +541,12 @@ public:
 		have = new QCA::SASL::Params(have_user,have_authzid,have_pass,have_realm);
 	}
 
-	virtual QStringList realmlist() const {
+	virtual QStringList realmlist() const
+	{
+		// TODO
 		return QStringList();
 	}
+		
 	
 	virtual QString username() const {
 		return QString();
@@ -533,8 +562,14 @@ public:
 		return s;
 	}
 	
-	virtual void startServer(const QString &, bool) {}
-	virtual void serverFirstStep(const QString &, const QByteArray *) { }
+	virtual void startServer(const QString &, bool) {
+		result_ =  QCA::SASLContext::Error;
+		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
+	}
+	virtual void serverFirstStep(const QString &, const QByteArray *) {
+		result_ =  QCA::SASLContext::Error;
+		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
+	}
 
 };
 

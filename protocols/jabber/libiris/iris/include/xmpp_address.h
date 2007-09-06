@@ -1,6 +1,5 @@
 /*
- * rosterexchangeitem.h
- * Copyright (C) 2003  Remko Troncon
+ * Copyright (C) 2006  Remko Troncon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,50 +17,52 @@
  *
  */
 
-#ifndef XMPP_ROSTERX_H
-#define XMPP_ROSTERX_H
+#ifndef XMPP_ADDRESS_H
+#define XMPP_ADDRESS_H
 
-
-#include <QStringList>
+#include <QString>
 
 #include "xmpp_jid.h"
+
 #include <iris_export.h>
 
 class QDomElement;
 
 namespace XMPP
 {
-	class Stanza;
-
-	class  IRIS_EXPORT RosterExchangeItem
+	class IRIS_EXPORT Address
 	{
 	public:
-		enum Action { Add, Delete, Modify };
+		typedef enum { Unknown, To, Cc, Bcc, ReplyTo, ReplyRoom, NoReply, OriginalFrom, OriginalTo } Type;
 
-		RosterExchangeItem(const Jid& jid, const QString& name = "", const QStringList& groups = QStringList(), Action = Add);
-		RosterExchangeItem(const QDomElement&);
-		
+		Address(Type type = Unknown, const Jid& jid = Jid());
+		Address(const QDomElement&);
+
 		const Jid& jid() const;
-		Action action() const;
-		const QString& name() const;
-		const QStringList& groups() const;
-		bool isNull() const;
-
-		void setJid(const Jid&);
-		void setAction(Action);
-		void setName(const QString&);
-		void setGroups(const QStringList&);
-
-		QDomElement toXml(Stanza&) const;
-		void fromXml(const QDomElement&);
+		const QString& uri() const;
+		const QString& node() const;
+		const QString& desc() const;
+		bool delivered() const;
+		Type type() const;
 		
-	private:
-		Jid jid_;
-		QString name_;
-		QStringList groups_;
-		Action action_;
-	};
-	typedef QList<RosterExchangeItem> RosterExchangeItems;
-}
+		QDomElement toXml(Stanza&) const;
+		void fromXml(const QDomElement& t);
 
+		void setJid(const Jid &);
+		void setUri(const QString &);
+		void setNode(const QString &);
+		void setDesc(const QString &);
+		void setDelivered(bool);
+		void setType(Type);
+
+	private:
+		Jid v_jid;
+		QString v_uri, v_node, v_desc;
+		bool v_delivered;
+		Type v_type;
+	};
+
+	typedef QList<Address> AddressList;
+};
+	
 #endif

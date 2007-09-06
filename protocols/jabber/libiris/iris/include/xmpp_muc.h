@@ -25,10 +25,11 @@
 
 
 #include "xmpp_jid.h"
+#include <iris_export.h>
 
 namespace XMPP
 {
-	class MUCItem
+	class IRIS_EXPORT MUCItem
 	{
 	public:
 		enum Affiliation { UnknownAffiliation, Outcast, NoAffiliation, Member, Admin, Owner };
@@ -64,7 +65,7 @@ namespace XMPP
 		QString reason_;
 	};
 	
-	class MUCInvite
+	class IRIS_EXPORT MUCInvite
 	{
 	public:
 		MUCInvite();
@@ -91,7 +92,7 @@ namespace XMPP
 		bool cont_;
 	};
 	
-	class MUCDecline
+	class IRIS_EXPORT MUCDecline
 	{
 	public:
 		MUCDecline();
@@ -114,7 +115,7 @@ namespace XMPP
 		QString reason_;
 	};
 	
-	class MUCDestroy
+	class IRIS_EXPORT MUCDestroy
 	{
 	public:
 		MUCDestroy();
