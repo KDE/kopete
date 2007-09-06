@@ -40,7 +40,7 @@ namespace XMPP {
 	class XData;
 
 	typedef enum { OfflineEvent, DeliveredEvent, DisplayedEvent,
-			ComposingEvent, CancelEvent, InactiveEvent, GoneEvent } MsgEvent;
+			ComposingEvent, CancelEvent } MsgEvent;
 
 	class IRIS_EXPORT Message
 	{

@@ -120,7 +120,6 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	mRequestDisplayedEvent = false;
 	mRequestDeliveredEvent = false;
 	mRequestComposingEvent = false;
-	mRequestGoneEvent = false;
 }
 
 JabberContact::~JabberContact()
@@ -298,11 +297,11 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		else if (message.body().isEmpty())
 		// Then here could be event notifications
 		{
-			if (message.containsEvent ( XMPP::CancelEvent ) )
+			if (message.containsEvent ( XMPP::CancelEvent ) || (message.chatState() != XMPP::StateNone && message.chatState() != XMPP::StateComposing) )
 				mManager->receivedTypingMsg ( this, false );
-			else if (message.containsEvent ( XMPP::ComposingEvent ) )
+			else if (message.containsEvent ( XMPP::ComposingEvent )|| message.chatState() == XMPP::StateComposing )
 				mManager->receivedTypingMsg ( this, true );
-			else if (message.containsEvent ( XMPP::DisplayedEvent ) )
+			if (message.containsEvent ( XMPP::DisplayedEvent ) )
 				mManager->receivedEventNotification ( i18n("Message has been displayed") );
 			else if (message.containsEvent ( XMPP::DeliveredEvent ) )
 				mManager->receivedEventNotification ( i18n("Message has been delivered") );
@@ -310,7 +309,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			{
 	        	mManager->receivedEventNotification( i18n("Message stored on the server, contact offline") );
 			}
-			else if (message.containsEvent ( XMPP::GoneEvent ) )
+			else if (message.chatState() == XMPP::StateGone )
 			{
 				if(mManager->view( Kopete::Contact::CannotCreate ))
 				{   //show an internal message if the user has not already closed his window
@@ -329,7 +328,6 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			mRequestOfflineEvent = message.containsEvent ( XMPP::OfflineEvent );
 			mRequestDeliveredEvent = message.containsEvent ( XMPP::DeliveredEvent );
 			mRequestDisplayedEvent = message.containsEvent ( XMPP::DisplayedEvent);
-			mRequestGoneEvent= message.containsEvent ( XMPP::GoneEvent);
 		}
 	}
 
@@ -1227,8 +1225,6 @@ bool JabberContact::isContactRequestingEvent( XMPP::MsgEvent event )
 		return mRequestComposingEvent;
 	else if ( event == CancelEvent )
 		return mRequestComposingEvent;
-	else if ( event == GoneEvent )
-		return mRequestGoneEvent;
 	else
 		return false;
 }
