@@ -211,29 +211,6 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT JT_GetLastActivity : public Task
-	{
-		Q_OBJECT
-	public:
-		JT_GetLastActivity(Task *);
-		~JT_GetLastActivity();
-
-		void get(const Jid &);
-
-		int seconds() const;
-		const QString &message() const;
-
-		void onGo();
-		bool take(const QDomElement &x);
-
-	private:
-		class Private;
-		Private *d;
-
-		QDomElement iq;
-		Jid jid;
-	};
-
 	class IRIS_EXPORT JT_GetServices : public Task
 	{
 		Q_OBJECT
@@ -433,27 +410,6 @@ namespace XMPP
 		class Private;
 		Private *d;
 	};
-    
-	class IRIS_EXPORT JT_PrivateStorage : public Task
-	{
-		Q_OBJECT
-	public:
-		JT_PrivateStorage(Task *parent);
-		~JT_PrivateStorage();
-
-		void set(const QDomElement &);
-		void get(const QString &tag, const QString& xmlns);
-		
-		QDomElement element();
-
-		void onGo();
-		bool take(const QDomElement &);
-		
-	private:
-		class Private;
-		Private *d;
-	};
-	
 }
 
 #endif

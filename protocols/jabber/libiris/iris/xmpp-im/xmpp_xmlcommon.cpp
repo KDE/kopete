@@ -29,6 +29,9 @@
 #include <qstringlist.h>
 #include <qcolor.h>
 
+namespace XMPP
+{
+
 bool stamp2TS(const QString &ts, QDateTime *d)
 {
 	if(ts.length() != 17)
@@ -244,9 +247,13 @@ QDomElement addCorrectNS(const QDomElement &e)
 	return i;
 }
 
+}
+
 //----------------------------------------------------------------------------
 // XMLHelper
 //----------------------------------------------------------------------------
+
+using namespace XMPP;
 
 namespace XMLHelper {
 

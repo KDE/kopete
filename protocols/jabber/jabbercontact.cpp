@@ -21,6 +21,7 @@
 
 #include "xmpp_tasks.h"
 #include "im.h"
+#include "tasks/jt_getlastactivity.h"
 
 #include <qtimer.h>
 #include <qdatetime.h>
@@ -591,7 +592,7 @@ void JabberContact::slotGetTimedLastActivity ()
 	{
 		kDebug ( JABBER_DEBUG_GLOBAL ) << "Requesting last activity from timer for " << mRosterItem.jid().bare ();
 
-		XMPP::JT_GetLastActivity *task = new XMPP::JT_GetLastActivity ( account()->client()->rootTask () );
+		JT_GetLastActivity *task = new JT_GetLastActivity ( account()->client()->rootTask () );
 		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotGotLastActivity () ) );
 		task->get ( mRosterItem.jid () );
 		task->go ( true );
@@ -601,7 +602,7 @@ void JabberContact::slotGetTimedLastActivity ()
 
 void JabberContact::slotGotLastActivity ()
 {
-	XMPP::JT_GetLastActivity *task = (XMPP::JT_GetLastActivity *) sender ();
+	JT_GetLastActivity *task = (JT_GetLastActivity *) sender ();
 
 	if ( task->success () )
 	{

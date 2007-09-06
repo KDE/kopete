@@ -58,6 +58,8 @@ kde4_add_ui_files(kopete_jabber_ui_SRCS
 )
 
 set(kopete_jabber_PART_SRCS 
+   tasks/jt_getlastactivity.cpp
+   tasks/jt_privatestorage.cpp
    ${kopete_jabber_ui_SRCS} 
    jabberprotocol.cpp 
    jabberaccount.cpp 
