@@ -51,6 +51,7 @@ VideoDevice::~VideoDevice()
 
 
 
+#ifdef V4L2_CAP_VIDEO_CAPTURE
 
 void VideoDevice::enumerateMenu (void)
 {
@@ -74,7 +75,7 @@ void VideoDevice::enumerateMenu (void)
 }
 
 
-
+#endif
 
 
 
