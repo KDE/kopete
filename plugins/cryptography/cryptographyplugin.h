@@ -27,13 +27,14 @@
 
 class QString;
 class QTimer;
+class KAction;
 
 class CryptographyGUIClient;
 
 namespace Kopete
 {
 	class Message;
-		class ChatSession;
+	class ChatSession;
 	class SimpleMessageHandlerFactory;
 }
 
@@ -60,23 +61,24 @@ public slots:
 
 	void slotIncomingMessage( Kopete::Message& msg );
 	void slotOutgoingMessage( Kopete::Message& msg );
-
+	void slotContactSelectionChanged ();
+	void slotExportSelectedMetaContactKeys ();	
+	
 private slots:
 	// implemented as a slot so it can be hooked to a timer
 	void slotAskPassphraseOnStartup ();
 	void slotSelectContactKey();
-	void slotExportOneKey();
 	void slotForgetCachedPass();
 	void loadSettings();
 	
 	void slotNewKMM(Kopete::ChatSession *);
 	
 private:
-	CryptographyGUIClient* mGui;
 	static CryptographyPlugin* pluginStatic_;
 	Kopete::SimpleMessageHandlerFactory *m_inboundHandler;
 	QString m_cachedPass;
 	QTimer *m_cachedPass_timer;
+	KAction * mExportKeys;
 
 	//Settings
 	QString mPrivateKeyID;

@@ -32,7 +32,7 @@
 
 #include "ui_exportkeysbase.h"
 
-ExportKeys::ExportKeys ( Kopete::ChatSession * cs, QWidget *parent )
+ExportKeys::ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent )
 		: KDialog ( parent )
 {
 	QWidget * w = new QWidget(this);
@@ -47,10 +47,8 @@ ExportKeys::ExportKeys ( Kopete::ChatSession * cs, QWidget *parent )
 	
 	QString key;
 	KABC::Addressee addressee;
-	Kopete::MetaContact * mc;
-	foreach ( Kopete::Contact *c, cs->members() )
+	foreach ( Kopete::MetaContact *mc, mcs )
 	{
-		mc = c->metaContact();
 		key = mc->pluginData( CryptographyPlugin::plugin(), "gpgKey" );
 		if (key.isEmpty())
 			continue;
@@ -93,4 +91,5 @@ void ExportKeys::accept()
 		
 	QDialog::accept();
 }
+
 

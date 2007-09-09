@@ -42,10 +42,14 @@ public:
 	KToggleAction *m_signAction;
 	KAction *m_exportAction;
 
+public slots:
+	void slotContactsChanged();
+	
 private slots:
 	void slotEncryptToggled();
 	void slotSignToggled();
 	void slotExport();
+
 };
 
 #endif // CRYPTOGRAPHYGUICLIENT_H

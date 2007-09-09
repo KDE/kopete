@@ -21,7 +21,8 @@
 
 #include <kabc/addresseelist.h>
 
-namespace Kopete { class ChatSession; }
+namespace Kopete { class ChatSession;
+	class MetaContact; }
 namespace Ui { class ExportKeysUI; }
 
 /**
@@ -33,7 +34,7 @@ class ExportKeys : public KDialog
 {
 		Q_OBJECT
 	public:
-		ExportKeys ( Kopete::ChatSession * cs, QWidget *parent = 0 );
+		ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent = 0 );
 
 		~ExportKeys();
 		
