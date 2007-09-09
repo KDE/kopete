@@ -41,6 +41,7 @@ DeleteContactTask::DeleteContactTask(QObject *parent)
 DeleteContactTask::DeleteContactTask(Kopete::Contact *contact)
  : Kopete::ContactTaskBase(contact), d(new Private)
 {
+	setContact(contact);
 }
 
 DeleteContactTask::~DeleteContactTask()
@@ -50,7 +51,7 @@ DeleteContactTask::~DeleteContactTask()
 
 void DeleteContactTask::start()
 {
-	Q_ASSERT( !contact() );
+	Q_ASSERT( contact() );
 
 	if( contact()->account() && !contact()->account()->isConnected() )
 	{

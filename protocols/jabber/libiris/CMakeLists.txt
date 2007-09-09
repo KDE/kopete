@@ -51,6 +51,7 @@ iris/xmpp-core/stream.cpp
 iris/xmpp-core/xmlprotocol.cpp
 iris/xmpp-core/parser.cpp
 iris/xmpp-core/simplesasl.cpp
+iris/xmpp-core/xmpp_stanza.cpp
 
 iris/xmpp-im/client.cpp
 iris/xmpp-im/types.cpp
@@ -58,6 +59,10 @@ iris/xmpp-im/xmpp_tasks.cpp
 iris/xmpp-im/xmpp_vcard.cpp
 iris/xmpp-im/xmpp_xmlcommon.cpp
 iris/xmpp-im/xmpp_xdata.cpp
+iris/xmpp-im/xmpp_features.cpp
+iris/xmpp-im/xmpp_discoinfotask.cpp
+iris/xmpp-im/xmpp_discoitem.cpp
+iris/xmpp-im/xmpp_task.cpp
 )
 
 set(libiris_SRCS 
@@ -78,9 +83,12 @@ kde4_moc_headers(iris_kopete
 
 	cutestuff/util/bytestream.h
 
-	iris/include/im.h
 	iris/include/xmpp.h
 	iris/include/xmpp_task.h
+	iris/include/xmpp_client.h
+	iris/include/xmpp_clientstream.h
+	iris/include/xmpp_liverosteritem.h
+	iris/include/xmpp_stream.h
 
 	iris/jabber/filetransfer.h
 	iris/jabber/s5b.h
@@ -91,6 +99,9 @@ kde4_moc_headers(iris_kopete
 	iris/xmpp-core/securestream.h
 
 	iris/xmpp-im/xmpp_tasks.h
+    iris/xmpp-im/xmpp_discoinfotask.h
+
+	
 )
 
 kde4_add_library(iris_kopete SHARED ${libiris_SRCS})

@@ -23,7 +23,7 @@
 
 #include <QProcess>
 
-#include <kdialog.h>
+#include <KDialog>
 
 class WPContact;
 namespace Ui { class WPUserInfoWidget; }

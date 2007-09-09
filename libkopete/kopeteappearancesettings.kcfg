@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Author: Michaël Larouche-->
+<!-- Author: Michal Larouche-->
 <kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
@@ -7,6 +7,7 @@
 	<kcfgfile name="kopeterc"/>
 	<include>kstandarddirs.h</include>
 	<include>kglobalsettings.h</include>
+	<include>kcolorscheme.h</include>
 
 	<!-- Define the available signals to emit -->
 	<signal name="appearanceChanged">
@@ -44,12 +45,12 @@
 		<!-- Hightlight preferences -->
 		<entry key="highlightForegroundColor" type="Color">
 			<label>Text color used when hightlighting</label>
-			<default code="true">KGlobalSettings::highlightedTextColor()</default>
+			<default code="true">KColorScheme(QPalette::Active, KColorScheme::Selection).foreground().color()</default>
 			<emit signal="appearanceChanged" />
 		</entry>
 		<entry key="highlightBackgroundColor" type="Color">
 			<label>Background color used when hightlighting.</label>
-			<default code="true">KGlobalSettings::highlightColor()</default>
+			<default code="true">KColorScheme(QPalette::Active, KColorScheme::Selection).background().color()</default>
 			<emit signal="appearanceChanged" />
 		</entry>
 		
@@ -73,17 +74,17 @@
 		<!-- Color and fonts preferences -->
 		<entry key="chatTextColor" type="Color">
 			<label>Chat text color.</label>
-			<default code="true">KGlobalSettings::textColor()</default>
+			<default code="true">KColorScheme(QPalette::Active, KColorScheme::View).foreground().color()</default>
 			<emit signal="appearanceChanged" />
 		</entry>
 		<entry key="chatBackgroundColor" type="Color">
 			<label>Chat background color.</label>
-			<default code="true">KGlobalSettings::baseColor()</default>
+			<default code="true">KColorScheme(QPalette::Active, KColorScheme::View).background().color()</default>
 			<emit signal="appearanceChanged" />
 		</entry>
 		<entry key="chatLinkColor" type="Color">
 			<label>Chat link color.</label>
-			<default code="true">KGlobalSettings::linkColor()</default>
+			<default code="true">KColorScheme(QPalette::Active, KColorScheme::Window).foreground(KColorScheme::LinkText).color()</default>
 			<emit signal="appearanceChanged" />
 		</entry>
 		<entry key="chatFont" type="Font">

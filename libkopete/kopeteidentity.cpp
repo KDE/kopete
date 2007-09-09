@@ -183,7 +183,7 @@ void Identity::addAccount( Kopete::Account *account )
 void Identity::removeAccount( const Kopete::Account *account )
 {
 	Kopete::Account *a = const_cast<Kopete::Account*>(account);
-	if ( d->accounts.findIndex( a ) == -1 )
+	if ( !d->accounts.contains( a ) )
 		return;
 
 	//TODO disconnect signals and so on

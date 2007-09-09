@@ -19,6 +19,7 @@
  */
 
 #include "xmpp_xmlcommon.h"
+#include "xmpp_stanza.h"
 
 #include <qstring.h>
 #include <qdom.h>
@@ -28,7 +29,8 @@
 #include <qstringlist.h>
 #include <qcolor.h>
 
-#include "im.h"
+namespace XMPP
+{
 
 bool stamp2TS(const QString &ts, QDateTime *d)
 {
@@ -245,9 +247,13 @@ QDomElement addCorrectNS(const QDomElement &e)
 	return i;
 }
 
+}
+
 //----------------------------------------------------------------------------
 // XMLHelper
 //----------------------------------------------------------------------------
+
+using namespace XMPP;
 
 namespace XMLHelper {
 
@@ -400,7 +406,7 @@ void readSizeEntry(const QDomElement &e, const QString &name, QSize *v)
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
-	QStringList list = QStringList::split(',', tagContent(tag));
+	QStringList list = tagContent(tag).split(',');
 	if(list.count() != 2)
 		return;
 	QSize s;
@@ -415,7 +421,7 @@ void readRectEntry(const QDomElement &e, const QString &name, QRect *v)
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
-	QStringList list = QStringList::split(',', tagContent(tag));
+	QStringList list = tagContent(tag).split(',');
 	if(list.count() != 4)
 		return;
 	QRect r;

@@ -44,12 +44,7 @@ public:
 	 *
 	 / You must set the contact with setContact()
 	 */
-	ContactTaskBase(QObject *parent = 0); // implicit
-	/**
-	 * @brief Create a new task with the given contact
-	 * @param contact Kopete::Contact pointer
-	 */
-	explicit ContactTaskBase(Kopete::Contact *contact);
+	explicit ContactTaskBase(QObject *parent = 0);
 	/**
 	 * destructor
 	 */

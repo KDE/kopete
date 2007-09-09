@@ -29,6 +29,6 @@ if( LIBXML2_FOUND AND LIBXSLT_FOUND )
 endif( LIBXML2_FOUND AND LIBXSLT_FOUND )
 
 if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8 AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  macro_optional_add_subdirectory(motionautoaway)
+  add_subdirectory(motionautoaway)
 endif(NOT CMAKE_SIZEOF_VOID_P EQUAL 8 AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 

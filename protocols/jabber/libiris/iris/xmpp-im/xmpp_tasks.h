@@ -28,6 +28,7 @@
 
 #include "im.h"
 #include "xmpp_vcard.h"
+#include "xmpp_discoinfotask.h"
 
 namespace XMPP
 {
@@ -208,29 +209,6 @@ namespace XMPP
 	private:
 		class Private;
 		Private *d;
-	};
-
-	class IRIS_EXPORT JT_GetLastActivity : public Task
-	{
-		Q_OBJECT
-	public:
-		JT_GetLastActivity(Task *);
-		~JT_GetLastActivity();
-
-		void get(const Jid &);
-
-		int seconds() const;
-		const QString &message() const;
-
-		void onGo();
-		bool take(const QDomElement &x);
-
-	private:
-		class Private;
-		Private *d;
-
-		QDomElement iq;
-		Jid jid;
 	};
 
 	class IRIS_EXPORT JT_GetServices : public Task
@@ -416,28 +394,6 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT JT_DiscoInfo : public Task
-	{
-		Q_OBJECT
-	public:
-		JT_DiscoInfo(Task *);
-		~JT_DiscoInfo();
-	
-		void get(const Jid &, const QString &node = QString(), const DiscoItem::Identity = DiscoItem::Identity());
-		void get(const DiscoItem &);
-	
-		const DiscoItem &item() const;
-		const Jid& jid() const;
-		const QString& node() const;
-	
-		void onGo();
-		bool take(const QDomElement &);
-	
-	private:
-		class Private;
-		Private *d;
-	};
-
 	class IRIS_EXPORT JT_DiscoPublish : public Task
 	{
 		Q_OBJECT
@@ -454,27 +410,6 @@ namespace XMPP
 		class Private;
 		Private *d;
 	};
-    
-	class IRIS_EXPORT JT_PrivateStorage : public Task
-	{
-		Q_OBJECT
-	public:
-		JT_PrivateStorage(Task *parent);
-		~JT_PrivateStorage();
-
-		void set(const QDomElement &);
-		void get(const QString &tag, const QString& xmlns);
-		
-		QDomElement element();
-
-		void onGo();
-		bool take(const QDomElement &);
-		
-	private:
-		class Private;
-		Private *d;
-	};
-	
 }
 
 #endif

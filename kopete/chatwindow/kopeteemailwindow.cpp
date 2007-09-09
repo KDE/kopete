@@ -39,7 +39,7 @@
 #include <kdeversion.h>
 #include <kedittoolbar.h>
 #include <kfontdialog.h>
-#include <kglobalsettings.h>
+#include <kcolorscheme.h>
 #include <khtmlview.h>
 #include <kiconloader.h>
 #include <klibloader.h>
@@ -368,7 +368,7 @@ void KopeteEmailWindow::updateNextButton()
 		d->btnReadNext->setEnabled( false );
 
 		QPalette palette;
-		palette.setColor(d->btnReadNext->foregroundRole(), KGlobalSettings::textColor() );
+		palette.setColor(d->btnReadNext->foregroundRole(), KColorScheme(QPalette::Active, KColorScheme::View).foreground().color() );
 		d->btnReadNext->setPalette(palette);
 	}
 	else

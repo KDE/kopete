@@ -19,6 +19,7 @@
  */
 
 #include "im.h"
+#include "xmpp_features.h"
 
 #include <qmap.h>
 #include <qapplication.h>
@@ -966,6 +967,7 @@ public:
 	QList<MsgEvent> eventList;
 	QString pubsubNode;
 	QList<PubSubItem> pubsubItems;
+	QList<PubSubRetraction> pubsubRetractions;
 	QString eventId;
 	QString xencrypted, invite;
 	ChatState chatState;
@@ -1198,6 +1200,11 @@ const QString& Message::pubsubNode() const
 const QList<PubSubItem>& Message::pubsubItems() const
 {
 	return d->pubsubItems;
+}
+
+const QList<PubSubRetraction>& Message::pubsubRetractions() const
+{
+	return d->pubsubRetractions;
 }
 
 QDateTime Message::timeStamp() const
@@ -1493,7 +1500,7 @@ Stanza Message::toStanza(Stream *stream) const
 	// timestamp
 	if(d->timeStampSend && !d->timeStamp.isNull()) {
 		QDomElement e = s.createElement("jabber:x:delay", "x");
-		e.setAttribute("stamp", TS2stamp(d->timeStamp));
+		e.setAttribute("stamp", TS2stamp(d->timeStamp.toUTC()));
 		s.appendChild(e);
 	}
 
@@ -1516,48 +1523,28 @@ Stanza Message::toStanza(Stream *stream) const
 			else
 				x.appendChild(s.createTextElement("jabber:x:event","id",d->eventId));
 		}
-		else if (d->type=="chat" || d->type=="groupchat")
-			s.appendChild(  s.createElement(NS_CHATSTATES , "active" ) );
 
-		bool need_x_event=false;
 		for(QList<MsgEvent>::ConstIterator ev = d->eventList.begin(); ev != d->eventList.end(); ++ev) {
 			switch (*ev) {
 				case OfflineEvent:
 					x.appendChild(s.createElement("jabber:x:event", "offline"));
-					need_x_event=true;
 					break;
 				case DeliveredEvent:
 					x.appendChild(s.createElement("jabber:x:event", "delivered"));
-					need_x_event=true;
 					break;
 				case DisplayedEvent:
 					x.appendChild(s.createElement("jabber:x:event", "displayed"));
-					need_x_event=true;
 					break;
 				case ComposingEvent: 
 					x.appendChild(s.createElement("jabber:x:event", "composing"));
-					need_x_event=true;
-					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
-						s.appendChild(  s.createElement(NS_CHATSTATES , "composing" ) ); 
 					break;
 				case CancelEvent:
-					need_x_event=true;
-					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
-						s.appendChild(  s.createElement(NS_CHATSTATES , "paused" ) ); 
+					// Add nothing
 					break;
-				case InactiveEvent:
-					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
-						s.appendChild(  s.createElement(NS_CHATSTATES , "inactive" ) ); 
-					break;
-				case GoneEvent:
-					if (d->body.isEmpty() && (d->type=="chat" || d->type=="groupchat") )
-						s.appendChild(  s.createElement(NS_CHATSTATES , "gone" ) ); 
-					break;
-  			}
-  		}
-		if(need_x_event)  //we don't need to have the (empty) x:event element if this is only <gone> or <inactive>
-			s.appendChild(x);
-	}
+			}
+		}
+		s.appendChild(x);
+	} 
 
 	// chat state
 	QString chatStateNS = "http://jabber.org/protocol/chatstates";
@@ -1668,7 +1655,6 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 	d->body.clear();
 	d->htmlElements.clear();
 	d->thread = QString();
-	d->eventList.clear();
 
 	QDomElement root = s.element();
 
@@ -1705,35 +1691,11 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 									}
 								}
 							}
+							if (o.tagName() == "retract") {
+								d->pubsubRetractions += PubSubRetraction(o.attribute("id"));
+							}
 						}
 					}
-				}
-			}
-			else if (e.namespaceURI() == NS_CHATSTATES)
-			{
-				if(e.tagName() == "active")
-				{
-					//like in JEP-0022  we let the client know that we can receive ComposingEvent
-					// (we can do that according to  §4.6  of the JEP-0085)
-					d->eventList += ComposingEvent;
-					d->eventList += InactiveEvent;
-					d->eventList += GoneEvent;
-				}
-				else if (e.tagName() == "composing")
-				{
-					d->eventList += ComposingEvent;
-				}
-				else if (e.tagName() == "paused")
-				{
-					d->eventList += CancelEvent;
-				}
-				else if (e.tagName() == "inactive")
-				{
-					d->eventList += InactiveEvent;
-				}
-				else if (e.tagName() == "gone")
-				{
-					d->eventList += GoneEvent;
 				}
 			}
 			else {
@@ -1782,6 +1744,7 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 	}
 	
     // events
+	d->eventList.clear();
 	nl = root.elementsByTagNameNS("jabber:x:event", "x");
 	if (nl.count()) {
 		nl = nl.item(0).childNodes();
@@ -2985,439 +2948,6 @@ void SearchResult::setEmail(const QString &email)
 	v_email = email;
 }
 
-//---------------------------------------------------------------------------
-// Features
-//---------------------------------------------------------------------------
-
-Features::Features()
-{
-}
-
-Features::Features(const QStringList &l)
-{
-	setList(l);
-}
-
-Features::Features(const QString &str)
-{
-	QStringList l;
-	l << str;
-
-	setList(l);
-}
-
-Features::~Features()
-{
-}
-
-QStringList Features::list() const
-{
-	return _list;
-}
-
-void Features::setList(const QStringList &l)
-{
-	_list = l;
-}
-
-void Features::addFeature(const QString& s)
-{
-	_list += s;
-}
-
-bool Features::test(const QStringList &ns) const
-{
-	QStringList::ConstIterator it = ns.begin();
-	for ( ; it != ns.end(); ++it)
-		if ( _list.find( *it ) != _list.end() )
-			return true;
-
-	return false;
-}
-
-#define FID_MULTICAST "http://jabber.org/protocol/address"
-bool Features::canMulticast() const
-{
-	QStringList ns;
-	ns << FID_MULTICAST;
-
-	return test(ns);
-}
-
-#define FID_AHCOMMAND "http://jabber.org/protocol/commands"
-bool Features::canCommand() const
-{
-	QStringList ns;
-	ns << FID_AHCOMMAND;
-
-	return test(ns);
-}
-
-#define FID_REGISTER "jabber:iq:register"
-bool Features::canRegister() const
-{
-	QStringList ns;
-	ns << FID_REGISTER;
-
-	return test(ns);
-}
-
-#define FID_SEARCH "jabber:iq:search"
-bool Features::canSearch() const
-{
-	QStringList ns;
-	ns << FID_SEARCH;
-
-	return test(ns);
-}
-
-#define FID_GROUPCHAT "jabber:iq:conference"
-bool Features::canGroupchat() const
-{
-	QStringList ns;
-	ns << "http://jabber.org/protocol/muc";
-	ns << FID_GROUPCHAT;
-
-	return test(ns);
-}
-
-#define FID_VOICE "http://www.google.com/xmpp/protocol/voice/v1"
-bool Features::canVoice() const
-{
-	QStringList ns;
-	ns << FID_VOICE;
-
-	return test(ns);
-}
-
-#define FID_XHTML  "http://jabber.org/protocol/xhtml-im"
-bool Features::canXHTML() const
-{
-	QStringList ns;
-	ns << FID_XHTML;
-	return test(ns);
-}
-
-#define FID_GATEWAY "jabber:iq:gateway"
-bool Features::isGateway() const
-{
-	QStringList ns;
-	ns << FID_GATEWAY;
-
-	return test(ns);
-}
-
-#define FID_DISCO "http://jabber.org/protocol/disco"
-bool Features::canDisco() const
-{
-	QStringList ns;
-	ns << FID_DISCO;
-	ns << "http://jabber.org/protocol/disco#info";
-	ns << "http://jabber.org/protocol/disco#items";
-
-	return test(ns);
-}
-
-#define FID_CHATSTATE "http://jabber.org/protocol/chatstates"
-bool Features::canChatState() const
-{
-	QStringList ns;
-	ns << FID_CHATSTATE;
-
-	return test(ns);
-}
-
-#define FID_VCARD "vcard-temp"
-bool Features::haveVCard() const
-{
-	QStringList ns;
-	ns << FID_VCARD;
-
-	return test(ns);
-}
-
-// custom Psi acitons
-#define FID_ADD "psi:add"
-
-class Features::FeatureName : public QObject
-{
-	Q_OBJECT
-public:
-	FeatureName()
-	: QObject(qApp)
-	{
-		id2s[FID_Invalid]	= tr("ERROR: Incorrect usage of Features class");
-		id2s[FID_None]		= tr("None");
-		id2s[FID_Register]	= tr("Register");
-		id2s[FID_Search]	= tr("Search");
-		id2s[FID_Groupchat]	= tr("Groupchat");
-		id2s[FID_Gateway]	= tr("Gateway");
-		id2s[FID_Disco]		= tr("Service Discovery");
-		id2s[FID_VCard]		= tr("VCard");
-		id2s[FID_AHCommand]	= tr("Execute command");
-
-		// custom Psi actions
-		id2s[FID_Add]		= tr("Add to roster");
-
-		// compute reverse map
-		//QMap<QString, long>::Iterator it = id2s.begin();
-		//for ( ; it != id2s.end(); ++it)
-		//	s2id[it.data()] = it.key();
-
-		id2f[FID_Register]	= FID_REGISTER;
-		id2f[FID_Search]	= FID_SEARCH;
-		id2f[FID_Groupchat]	= FID_GROUPCHAT;
-		id2f[FID_Gateway]	= FID_GATEWAY;
-		id2f[FID_Disco]		= FID_DISCO;
-		id2f[FID_VCard]		= FID_VCARD;
-		id2f[FID_AHCommand]	= FID_AHCOMMAND;
-
-		// custom Psi actions
-		id2f[FID_Add]		= FID_ADD;
-	}
-
-	//QMap<QString, long> s2id;
-	QMap<long, QString> id2s;
-	QMap<long, QString> id2f;
-};
-
-static Features::FeatureName *featureName = 0;
-
-long Features::id() const
-{
-	if ( _list.count() > 1 )
-		return FID_Invalid;
-	else if ( canRegister() )
-		return FID_Register;
-	else if ( canSearch() )
-		return FID_Search;
-	else if ( canGroupchat() )
-		return FID_Groupchat;
-	else if ( isGateway() )
-		return FID_Gateway;
-	else if ( canDisco() )
-		return FID_Disco;
-	else if ( haveVCard() )
-		return FID_VCard;
-	else if ( canCommand() )
-		return FID_AHCommand;
-	else if ( test(QStringList(FID_ADD)) )
-		return FID_Add;
-
-	return FID_None;
-}
-
-long Features::id(const QString &feature)
-{
-	Features f(feature);
-	return f.id();
-}
-
-QString Features::feature(long id)
-{
-	if ( !featureName )
-		featureName = new FeatureName();
-
-	return featureName->id2f[id];
-}
-
-QString Features::name(long id)
-{
-	if ( !featureName )
-		featureName = new FeatureName();
-
-	return featureName->id2s[id];
-}
-
-QString Features::name() const
-{
-	return name(id());
-}
-
-QString Features::name(const QString &feature)
-{
-	Features f(feature);
-	return f.name(f.id());
-}
-
-//---------------------------------------------------------------------------
-// DiscoItem
-//---------------------------------------------------------------------------
-class DiscoItem::Private
-{
-public:
-	Private()
-	{
-		action = None;
-	}
-
-	Jid jid;
-	QString name;
-	QString node;
-	Action action;
-
-	Features features;
-	Identities identities;
-};
-
-DiscoItem::DiscoItem()
-{
-	d = new Private;
-}
-
-DiscoItem::DiscoItem(const DiscoItem &from)
-{
-	d = new Private;
-	*this = from;
-}
-
-DiscoItem & DiscoItem::operator= (const DiscoItem &from)
-{
-	d->jid = from.d->jid;
-	d->name = from.d->name;
-	d->node = from.d->node;
-	d->action = from.d->action;
-	d->features = from.d->features;
-	d->identities = from.d->identities;
-
-	return *this;
-}
-
-DiscoItem::~DiscoItem()
-{
-	delete d;
-}
-
-AgentItem DiscoItem::toAgentItem() const
-{
-	AgentItem ai;
-
-	ai.setJid( jid() );
-	ai.setName( name() );
-
-	Identity id;
-	if ( !identities().isEmpty() )
-		id = identities().first();
-
-	ai.setCategory( id.category );
-	ai.setType( id.type );
-
-	ai.setFeatures( d->features );
-
-	return ai;
-}
-
-void DiscoItem::fromAgentItem(const AgentItem &ai)
-{
-	setJid( ai.jid() );
-	setName( ai.name() );
-
-	Identity id;
-	id.category = ai.category();
-	id.type = ai.type();
-	id.name = ai.name();
-
-	Identities idList;
-	idList << id;
-
-	setIdentities( idList );
-
-	setFeatures( ai.features() );
-}
-
-const Jid &DiscoItem::jid() const
-{
-	return d->jid;
-}
-
-void DiscoItem::setJid(const Jid &j)
-{
-	d->jid = j;
-}
-
-const QString &DiscoItem::name() const
-{
-	return d->name;
-}
-
-void DiscoItem::setName(const QString &n)
-{
-	d->name = n;
-}
-
-const QString &DiscoItem::node() const
-{
-	return d->node;
-}
-
-void DiscoItem::setNode(const QString &n)
-{
-	d->node = n;
-}
-
-DiscoItem::Action DiscoItem::action() const
-{
-	return d->action;
-}
-
-void DiscoItem::setAction(Action a)
-{
-	d->action = a;
-}
-
-const Features &DiscoItem::features() const
-{
-	return d->features;
-}
-
-void DiscoItem::setFeatures(const Features &f)
-{
-	d->features = f;
-}
-
-const DiscoItem::Identities &DiscoItem::identities() const
-{
-	return d->identities;
-}
-
-void DiscoItem::setIdentities(const Identities &i)
-{
-	d->identities = i;
-
-	if ( name().isEmpty() && i.count() )
-		setName( i.first().name );
-}
-
-
-DiscoItem::Action DiscoItem::string2action(QString s)
-{
-	Action a;
-
-	if ( s == "update" )
-		a = Update;
-	else if ( s == "remove" )
-		a = Remove;
-	else
-		a = None;
-
-	return a;
-}
-
-QString DiscoItem::action2string(Action a)
-{
-	QString s;
-
-	if ( a == Update )
-		s = "update";
-	else if ( a == Remove )
-		s = "remove";
-	else
-		s = QString();
-
-	return s;
-}
-
-
 PubSubItem::PubSubItem() 
 {
 }
@@ -3437,6 +2967,18 @@ const QDomElement& PubSubItem::payload() const
 }
 
 
+PubSubRetraction::PubSubRetraction() 
+{
 }
 
-#include "types.moc"
+PubSubRetraction::PubSubRetraction(const QString& id) : id_(id) 
+{ 
+}
+
+const QString& PubSubRetraction::id() const 
+{ 
+	return id_; 
+}
+
+
+}

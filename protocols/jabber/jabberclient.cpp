@@ -678,7 +678,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	/*
 	 * Allow plaintext password authentication or not?
 	 */
-	d->jabberClientStream->setAllowPlain( allowPlainTextPassword () );
+	d->jabberClientStream->setAllowPlain( allowPlainTextPassword () ?  XMPP::ClientStream::AllowPlain : XMPP::ClientStream::NoAllowPlain );
 
 	/*
 	 * Setup client layer.

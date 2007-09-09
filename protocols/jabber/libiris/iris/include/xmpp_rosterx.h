@@ -25,6 +25,7 @@
 #include <QStringList>
 
 #include "xmpp_jid.h"
+#include <iris_export.h>
 
 class QDomElement;
 
@@ -32,7 +33,7 @@ namespace XMPP
 {
 	class Stanza;
 
-	class RosterExchangeItem
+	class  IRIS_EXPORT RosterExchangeItem
 	{
 	public:
 		enum Action { Add, Delete, Modify };

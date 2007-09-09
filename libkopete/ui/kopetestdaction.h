@@ -119,8 +119,6 @@ class KOPETE_EXPORT KopetePreferencesAction : public KAction
 
 	  protected slots:
 			 void slotShowPreferences();
-	  private:
-			 static KSettings::Dialog *s_settingsDialog;
 };
 
 #endif

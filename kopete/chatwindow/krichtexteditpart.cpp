@@ -34,6 +34,7 @@
 #include <kfontdialog.h>
 #include <kfontsizeaction.h>
 #include <kglobalsettings.h>
+#include <kcolorscheme.h>
 #include <kicon.h>
 #include <kparts/genericfactory.h>
 #include <kstandardaction.h>
@@ -351,7 +352,7 @@ void KRichTextEditPart::readConfig()
     d->configWriteLock = true;
     KConfigGroup config(KGlobal::config(), "RichTextEditor");
 
-    QColor standardColor = KGlobalSettings::textColor();
+    QColor standardColor = KColorScheme(QPalette::Active, KColorScheme::View).foreground().color();
     QColor tmpColor;
     tmpColor = config.readEntry("TextColor", standardColor );
     kDebug() << "Text color: " << tmpColor.name();
@@ -409,9 +410,9 @@ void KRichTextEditPart::setTextColor()
 {
     QColor currentTextColor = d->editor->textColor();
 
-    int result = KColorDialog::getColor( currentTextColor, KGlobalSettings::textColor() , d->editor );
+    int result = KColorDialog::getColor( currentTextColor, KColorScheme(QPalette::Active, KColorScheme::View).foreground().color() , d->editor );
     if(!currentTextColor.isValid())
-        currentTextColor = KGlobalSettings::textColor() ;
+        currentTextColor = KColorScheme(QPalette::Active, KColorScheme::View).foreground().color() ;
     if ( result != QDialog::Accepted  )
         return;
 
@@ -431,7 +432,7 @@ void KRichTextEditPart::setTextColor(const QColor &newColor)
 
 QColor KRichTextEditPart::textColor() const
 {
-    if( d->editor->textColor() == KGlobalSettings::textColor())
+    if( d->editor->textColor() == KColorScheme(QPalette::Active, KColorScheme::View).foreground().color() )
         return QColor();
     return d->editor->textColor();
 }

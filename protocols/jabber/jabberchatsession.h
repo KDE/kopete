@@ -87,11 +87,15 @@ private slots:
 	void slotSendFile();
 
 private:
+	enum  Event { Delivered, Displayed,
+		Composing, CancelComposing, Inactive, Gone } ;
 	/**
 	 * Send a notification (XMPP::MsgEvent) to the members of the chatsession.
 	 * SlotSendTypingNotification uses it.
+	 * and change the state acordingly.
+	 * 
 	 */
-	void sendNotification( XMPP::MsgEvent event );
+	void sendNotification( Event event );
 	
 	QString mResource;
 };
