@@ -129,7 +129,9 @@ private:
 	void deleteTabBar();
 	void addTab( ChatView* );
 	void setPrimaryChatView( ChatView* );
-	const QString fileContents( const QString &file ) const;
+
+	//why did we ever need this method??
+	//const QString fileContents( const QString &file ) const;
 
 	// Sidebar
 	SidebarWidget *m_sideBar;

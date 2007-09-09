@@ -20,10 +20,11 @@
     *************************************************************************
 */
 
-#include <qtimer.h>
-#include <qlayout.h>
+#include <QTimer>
+#include <QLayout>
+#include <QTime>
 
-#include <qfileinfo.h>
+#include <QFileInfo>
 #include <QDockWidget>
 
 //Added by qt3to4:
@@ -190,6 +191,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	: KXmlGuiWindow( parent )
 {
+	QTime chrono;chrono.start();
 	m_activeView = 0L;
 	m_popupView = 0L;
 	backgroundFile = 0L;
@@ -220,7 +222,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	if ( Kopete::BehaviorSettings::self()->chatWindowShowSendButton() )
 	{
 		//Send Button
-		m_button_send = new KPushButton( i18n("Send"), statusBar() );
+		m_button_send = new KPushButton( i18nc("@action:button", "Send"), statusBar() );
 		m_button_send->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum ) );
 		m_button_send->setEnabled( false );
 		m_button_send->setFont( statusBar()->font() );
@@ -231,7 +233,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	else
 		m_button_send = 0L;
 
-	m_status_text = new KSqueezedTextLabel( i18n("Ready."), statusBar() );
+	m_status_text = new KSqueezedTextLabel( i18nc("@info:status","Ready."), statusBar() );
 	m_status_text->setAlignment( Qt::AlignLeft | Qt::AlignVCenter );
 	m_status_text->setFont( statusBar()->font() );
 	m_status_text->setFixedHeight( statusBar()->sizeHint().height() );
@@ -248,6 +250,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 
 	//has to be done after the setupGUI, in order to have the toolbar set up to restore window settings.
 	readOptions();
+	kDebug()<<"TIME: "<<chrono.elapsed();
 }
 
 KopeteChatWindow::~KopeteChatWindow()
@@ -287,11 +290,7 @@ KopeteChatWindow::~KopeteChatWindow()
 
 	saveOptions();
 
-	if( backgroundFile )
-	{
-		delete backgroundFile;
-	}
-
+	delete backgroundFile;
 	delete anim;
 }
 
@@ -477,6 +476,7 @@ void KopeteChatWindow::initActions(void)
 	//toolBar()->alignItemRight( 99 );
 }
 
+/*
 const QString KopeteChatWindow::fileContents( const QString &path ) const
 {
  	QString contents;
@@ -490,7 +490,7 @@ const QString KopeteChatWindow::fileContents( const QString &path ) const
 
 	return contents;
 }
-
+*/
 void KopeteChatWindow::slotStopAnimation( ChatView* view )
 {
 	if( view == m_activeView )
@@ -623,7 +623,7 @@ void KopeteChatWindow::createTabBar()
 		connect( m_rightWidget, SIGNAL( clicked() ), this, SLOT( slotChatClosed() ) );
 		m_rightWidget->setIcon( SmallIcon( "tab-remove" ) );
 		m_rightWidget->adjustSize();
-		m_rightWidget->setToolTip( i18n("Close the current tab") );
+		m_rightWidget->setToolTip( i18nc("@info:tooltip","Close the current tab") );
 		m_tabBar->setCornerWidget( m_rightWidget, Qt::TopRightCorner );
 
 		mainLayout->addWidget( m_tabBar );
@@ -1159,12 +1159,13 @@ void KopeteChatWindow::slotAutoSpellCheckEnabled( ChatView* view, bool isEnabled
 
 bool KopeteChatWindow::queryClose()
 {
+	QTime chrono;chrono.start();
 	bool canClose = true;
 
 //	kDebug( 14010 ) << " Windows left open:";
 //	for( QPtrListIterator<ChatView> it( chatViewList ); it; ++it)
 //		kDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")";
-
+	setUpdatesEnabled(false);//hide the crazyness from users
 	while (!chatViewList.isEmpty())
 	{
 
@@ -1181,6 +1182,8 @@ bool KopeteChatWindow::queryClose()
 			canClose = false;
 		}
 	}
+	setUpdatesEnabled(true);
+        kDebug()<<"TIME: "<<chrono.elapsed();
 	return canClose;
 }
 
