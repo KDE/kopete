@@ -111,12 +111,12 @@ class KopeteWindow::Private
 {
 public:
 	Private()
-	 : contactlist(0), actionAddContact(0), actionDisconnect(0), actionExportContacts(0),
+	 : contactlist(0), identitywidget(0), actionAddContact(0), actionDisconnect(0), actionExportContacts(0),
 	actionAwayMenu(0), actionDockMenu(0), selectAway(0), selectBusy(0), actionSetAvailable(0),
 	actionSetInvisible(0), actionPrefs(0), actionQuit(0), actionSave(0), menubarAction(0),
 	statusbarAction(0), actionShowOffliners(0), actionShowEmptyGroups(0), docked(0), 
-	hidden(false), deskRight(0), statusBarWidget(0), tray(0), autoHide(false),
-	autoHideTimeout(0), autoHideTimer(0), addContactMapper(0), identitywidget(0),
+	deskRight(0), statusBarWidget(0), tray(0), hidden(false), autoHide(false),
+	autoHideTimeout(0), autoHideTimer(0), addContactMapper(0), 
 	globalStatusMessage(0), globalStatusMessageMenu(0), newMessageEdit(0)
 	{}
 
@@ -150,11 +150,11 @@ public:
 	KToggleAction *actionShowEmptyGroups;
 
 	int docked;
-	bool hidden;
 	int deskRight;
 	QPoint position;
 	KHBox *statusBarWidget;
 	KopeteSystemTray *tray;
+	bool hidden;
 	bool autoHide;
 	unsigned int autoHideTimeout;
 	QTimer *autoHideTimer;
@@ -307,7 +307,7 @@ void KopeteWindow::initActions()
 	connect( d->addContactMapper, SIGNAL( mapped( const QString & ) ),
 		 this, SLOT( slotAddContactDialogInternal( const QString & ) ) );
 
-	d->actionDisconnect = new KAction( KIcon("connect-no"), i18n( "O&ffline" ), this );
+	d->actionDisconnect = new KAction( KIcon("connect-no"), i18n( "Offline" ), this );
         actionCollection()->addAction( "DisconnectAll", d->actionDisconnect );
 	connect( d->actionDisconnect, SIGNAL( triggered(bool) ), this, SLOT( slotDisconnectAll() ) );
 	d->actionDisconnect->setEnabled(false);
@@ -348,9 +348,9 @@ void KopeteWindow::initActions()
 	KStandardAction::quit(this, SLOT(slotQuit()), actionCollection());
 
 	setStandardToolBarMenuEnabled(true);
-	d->menubarAction = KStandardAction::showMenubar(this, SLOT(showMenubar()), actionCollection() );
+	d->menubarAction = KStandardAction::showMenubar(menuBar(), SLOT(setVisible(bool)), actionCollection() );
         actionCollection()->addAction( "settings_showmenubar", d->menubarAction );
-	d->statusbarAction = KStandardAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection() );
+	d->statusbarAction = KStandardAction::showStatusbar(statusBar(), SLOT(setVisible(bool)), actionCollection() );
         actionCollection()->addAction( "settings_showstatusbar", d->statusbarAction );
 
 	KAction* act = KStandardAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), actionCollection() );
@@ -565,22 +565,6 @@ void KopeteWindow::saveOptions()
 	}
 
 	cg.sync();
-}
-
-void KopeteWindow::showMenubar()
-{
-	if( d->menubarAction->isChecked() )
-		menuBar()->show();
-	else
-		menuBar()->hide();
-}
-
-void KopeteWindow::showStatusbar()
-{
-	if( d->statusbarAction->isChecked() )
-		statusBar()->show();
-	else
-		statusBar()->hide();
 }
 
 void KopeteWindow::slotToggleShowOffliners()

@@ -419,7 +419,7 @@ void KopeteChatWindow::initActions(void)
 	action = KStandardAction::next( this, SLOT( slotPageDown() ), coll );
         coll->addAction( "scroll_down", action );
 
-	KStandardAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
+	KStandardAction::showMenubar( menuBar(), SLOT(setVisible(bool)), coll );
 
 	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), coll );
         coll->addAction( "options_membersleft", membersLeft );
@@ -665,15 +665,12 @@ void KopeteChatWindow::addTab( ChatView *view )
 	QPixmap pluginIcon = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
 
 	view->setParent( m_tabBar );
-    view->setWindowFlags( 0 );
-    view->move( QPoint() );
-    view->show();
+	view->setWindowFlags( 0 );
+	view->move( QPoint() );
+	//view->show();
 
 	m_tabBar->addTab( view, pluginIcon, view->caption() );
-	if( view == m_activeView )
-		view->show();
-	else
-		view->hide();
+        view->setVisible(view == m_activeView);
 	connect( view, SIGNAL( captionChanged( bool ) ), this, SLOT( updateChatLabel() ) );
 	connect( view, SIGNAL( updateStatusIcon( ChatView* ) ), this, SLOT( slotUpdateCaptionIcons( ChatView* ) ) );
 	view->setCaption( view->caption(), false );
@@ -685,8 +682,8 @@ void KopeteChatWindow::setPrimaryChatView( ChatView *view )
 	//reparent clears a lot of stuff out
 	QFont savedFont = view->font();
 	view->setParent( mainArea );
-    view->setWindowFlags( 0 );
-    view->move( QPoint() );
+	view->setWindowFlags( 0 );
+	view->move( QPoint() );
 	view->setFont( savedFont );
 	view->show();
 
@@ -1112,21 +1109,6 @@ void KopeteChatWindow::slotChatPrint()
 	m_activeView->messagePart()->print();
 }
 
-void KopeteChatWindow::slotToggleStatusBar()
-{
-	if (statusBar()->isVisible())
-		statusBar()->hide();
-	else
-		statusBar()->show();
-}
-
-void KopeteChatWindow::slotViewMenuBar()
-{
-	if( !menuBar()->isHidden() )
-		menuBar()->hide();
-	else
-		menuBar()->show();
-}
 
 void KopeteChatWindow::slotSmileyActivated(const QString &sm)
 {
@@ -1140,10 +1122,7 @@ void KopeteChatWindow::slotRTFEnabled( ChatView* cv, bool enabled)
 	if ( cv != m_activeView )
 		return;
 
-	if ( enabled )
-		toolBar( "formatToolBar" )->show();
-	else
-		toolBar( "formatToolBar" )->hide();
+	toolBar( "formatToolBar" )->setVisible(enabled);
 	updateSpellCheckAction();
 }
 

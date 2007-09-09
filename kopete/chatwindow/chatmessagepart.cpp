@@ -97,7 +97,7 @@ class ChatMessagePart::Private
 {
 public:
 	Private()
-	 : /*tt(0L),*/ manager(0), scrollPressed(false),
+	 : /*tt(0L),*/ scrollPressed(false), manager(0),
 	   copyAction(0), saveAction(0), printAction(0),
 	   closeAction(0),copyURLAction(0), currentChatStyle(0),
 	   latestDirection(Kopete::Message::Inbound), latestType(Kopete::Message::TypeNormal)
@@ -114,9 +114,8 @@ public:
 	bool rtfOverride;
 
 //	ToolTip *tt;
-
-	Kopete::ChatSession *manager;
 	bool scrollPressed;
+	Kopete::ChatSession *manager;
 
 	DOM::HTMLElement activeElement;
 
@@ -259,10 +258,7 @@ ChatMessagePart::~ChatMessagePart()
 void ChatMessagePart::slotScrollingTo( int y )
 {
 	int scrolledTo = y + view()->visibleHeight();
-	if ( scrolledTo >= ( view()->contentsHeight() - 10 ) )
-		d->scrollPressed = false;
-	else
-		d->scrollPressed = true;
+	d->scrollPressed = !( scrolledTo >= ( view()->contentsHeight() - 10 ) );
 }
 
 void ChatMessagePart::save()
@@ -743,17 +739,15 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 	* This also copies the text as type text/html
 	* RangeImpl::toHTML  was not implemented before KDE 3.4
 	*/
-	QString text;
-	QString htmltext;
-
-        htmltext = selectedTextAsHTML();
-        text = selectedText();
+	QString text = selectedText();
+	QString htmltext = selectedTextAsHTML();
         //selectedText is now sufficient
 //      text=Kopete::Message::unescape( htmltext ).trimmed();
         // Message::unsescape will replace image by his title attribute
         // trimmed is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
 
-	if(text.isEmpty()) return;
+	if(text.isEmpty())
+		return;
 
 	disconnect( QApplication::clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));
 
@@ -774,6 +768,7 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 #else
 	if(!justselection)
 		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
+	//NOTE maybe you wanna 'else' here?
 	QApplication::clipboard()->setText( text, QClipboard::Selection );
 #endif
 	connect( QApplication::clipboard(), SIGNAL( selectionChanged()), SLOT( slotClearSelection()));

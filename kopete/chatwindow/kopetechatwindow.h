@@ -213,9 +213,6 @@ private slots:
 	void slotDetachChat(QAction* = 0);
 	void slotPlaceTabs( QAction* );
 
-	void slotViewMenuBar();
-	void slotToggleStatusBar();
-
 	void slotEnableUpdateBg() { updateBg = true; }
 
 	void toggleAutoSpellChecking();
