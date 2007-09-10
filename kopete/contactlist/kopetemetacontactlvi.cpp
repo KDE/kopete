@@ -29,7 +29,6 @@
 #include "knotification.h"
 #include <kdebug.h>
 #include <kiconeffect.h>
-#include <kimageeffect.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -561,15 +560,27 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 				case Kopete::OnlineStatus::Online:
 				break;
 				case Kopete::OnlineStatus::Away:
-					photoImg = KImageEffect::fade(photoImg, 0.5, Qt::white);
+				    QPainter p;
+				    p.begin(photoImg);
+				    p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+					QBrush(QColor(255, 255, 255, 128));
+				    p.end();
 				break;
 				case Kopete::OnlineStatus::Offline:
-					photoImg = KImageEffect::fade(photoImg, 0.4, Qt::white);
-					photoImg = KImageEffect::toGray(photoImg);
+				    QPainter p;
+				    p.begin(photoImg);
+				    p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+					QBrush(QColor(255, 255, 255, 160));
+				    p.end();
+				    photoImg = KIconEffect::toGray(photoImg); // This possibly should use Blitz::grayscale() instead
 				break;
 				case Kopete::OnlineStatus::Unknown:
 				default:
-					photoImg = KImageEffect::fade(photoImg, 0.8, Qt::white);
+				    QPainter p;
+				    p.begin(photoImg);
+				    p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+					QBrush(QColor(255, 255, 255, 48));
+				    p.end();
 			}
 			photoPixmap = QPixmap::fromImage(photoImg);
 			QPainter p(&photoPixmap);
