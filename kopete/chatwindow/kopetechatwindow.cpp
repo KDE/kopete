@@ -22,7 +22,6 @@
 
 #include <QTimer>
 #include <QLayout>
-#include <QTime>
 
 #include <QFileInfo>
 #include <QDockWidget>
@@ -35,6 +34,10 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QMenu>
+
+#ifdef CHRONO
+#include <QTime>
+#endif
 
 #include <kactioncollection.h>
 #include <kcursor.h>
@@ -191,7 +194,9 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	: KXmlGuiWindow( parent )
 {
+#ifdef CHRONO
 	QTime chrono;chrono.start();
+#endif
 	m_activeView = 0L;
 	m_popupView = 0L;
 	backgroundFile = 0L;
@@ -250,7 +255,9 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 
 	//has to be done after the setupGUI, in order to have the toolbar set up to restore window settings.
 	readOptions();
+#ifdef CHRONO
 	kDebug()<<"TIME: "<<chrono.elapsed();
+#endif
 }
 
 KopeteChatWindow::~KopeteChatWindow()
@@ -1138,7 +1145,9 @@ void KopeteChatWindow::slotAutoSpellCheckEnabled( ChatView* view, bool isEnabled
 
 bool KopeteChatWindow::queryClose()
 {
+#ifdef CHRONO
 	QTime chrono;chrono.start();
+#endif
 	bool canClose = true;
 
 //	kDebug( 14010 ) << " Windows left open:";
@@ -1162,7 +1171,9 @@ bool KopeteChatWindow::queryClose()
 		}
 	}
 	setUpdatesEnabled(true);
+#ifdef CHRONO
         kDebug()<<"TIME: "<<chrono.elapsed();
+#endif
 	return canClose;
 }
 
