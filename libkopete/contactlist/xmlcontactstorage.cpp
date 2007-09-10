@@ -147,16 +147,9 @@ void XmlContactStorage::load()
         contactListFile.close();
 		kWarning(14010) << "The contact list on disk is older than expected."
 		                << "No contact list will be loaded";
-
-        convertContactList( filename, version,  Private::ContactListVersion );
-        contactList = QDomDocument ( QLatin1String( "kopete-contact-list" ) );
-
-        contactListFile.open( QIODevice::ReadOnly );
-        contactList.setContent( &contactListFile );
-
-        list = contactList.documentElement();
+		return;
     }
-#endif
+
 //TODO: Add to internal contactlist item list.
 #if 0
     addGroup( Kopete::Group::topLevel() );
@@ -167,8 +160,6 @@ void XmlContactStorage::load()
     {
         if( element.tagName() == QString::fromLatin1("meta-contact") )
         {
-            //TODO: id isn't used
-            //QString id = element.attribute( "id", QString() );
             Kopete::MetaContact *metaContact = new Kopete::MetaContact();
             if ( !parseMetaContact( metaContact, element ) )
             {
