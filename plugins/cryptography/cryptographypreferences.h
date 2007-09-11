@@ -50,10 +50,8 @@ class CryptographyPreferences : public KCModule
 		Kleo::EncryptionKeyRequester * key;
 		QCheckBox * mAskPassphraseOnStartup;
 		Ui::CryptographyPrefsUI *mPreferencesDialog;
-		CryptographyConfig *mConfig;
 
 	private slots:
-		void slotModified();
 		void slotAskOnStartupPressed (bool b);
 };
 

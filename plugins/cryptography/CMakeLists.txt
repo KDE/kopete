@@ -12,7 +12,6 @@ set(kopete_cryptography_PART_SRCS
    gpginterface.cpp 
    cryptographyguiclient.cpp 
    cryptographyselectuserkey.cpp 
-   kabckeyselector.cpp
    cryptographyconfig.cpp 
    exportkeys.cpp )
 

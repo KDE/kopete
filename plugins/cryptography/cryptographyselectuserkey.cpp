@@ -30,7 +30,6 @@
 #include <kabc/addressbook.h>
 #include <kabc/addressee.h>
 
-#include "kabckeyselector.h"
 #include "kopetemetacontact.h"
 #include "cryptographyplugin.h"
 
@@ -64,20 +63,10 @@ CryptographySelectUserKey::CryptographySelectUserKey ( const QString& key ,Kopet
 	{
 		// find keys in address book and possibly use them (this same code is in cryptographyguiclient.cpp)
 		QStringList keys;
-		keys = CryptographyPlugin::getKabcKeys ( m_metaContact->metaContactId() );
-
-		// if there is one key found, use it automatically
-		if ( keys.count() == 1 )
-		{
-			mc->setPluginData ( CryptographyPlugin::plugin(), "gpgKey", keys.first() );
-			m_KeyEdit->setFingerprint ( keys.first() );
-		}
-
-		// if more than one if found, let the user choose which one
-		if ( keys.count() > 1 )
-		{
-			m_KeyEdit->setFingerprint ( KabcKeySelector (mc->displayName(), Kopete::KABCPersistence::self()->addressBook()->findByUid ( mc->metaContactId()).assembledName(), keys, this) );
-		}
+		keys = CryptographyPlugin::getKabcKeys ( mc->metaContactId() );
+		m_KeyEdit->setFingerprint ( CryptographyPlugin::KabcKeySelector ( mc->displayName(),
+		                            Kopete::KABCPersistence::self()->addressBook()->findByUid (
+		                                mc->metaContactId() ).assembledName(), keys, this ) );
 	}
 }
 

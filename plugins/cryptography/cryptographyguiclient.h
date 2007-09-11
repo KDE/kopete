@@ -27,28 +27,29 @@ namespace Kopete { class ChatSession; }
 
 /**
  *@author Olivier Goffart
+ *Add functionality to a chat window
  */
 class CryptographyGUIClient : public QObject, public KXMLGUIClient
 {
-Q_OBJECT
-public:
-	CryptographyGUIClient(Kopete::ChatSession *parent = 0);
-	~CryptographyGUIClient();
-	
-	bool signing() { return m_signAction->isChecked(); }
-	bool encrypting() { return m_encAction->isChecked(); }
+		Q_OBJECT
+	public:
+		CryptographyGUIClient ( Kopete::ChatSession *parent = 0 );
+		~CryptographyGUIClient();
 
-	KToggleAction *m_encAction;
-	KToggleAction *m_signAction;
-	KAction *m_exportAction;
+		bool signing() { return m_signAction->isChecked(); }
+		bool encrypting() { return m_encAction->isChecked(); }
 
-public slots:
-	void slotContactsChanged();
-	
-private slots:
-	void slotEncryptToggled();
-	void slotSignToggled();
-	void slotExport();
+		KToggleAction *m_encAction;
+		KToggleAction *m_signAction;
+		KAction *m_exportAction;
+
+	public slots:
+		void slotContactsChanged();
+
+	private slots:
+		void slotEncryptToggled();
+		void slotSignToggled();
+		void slotExport();
 
 };
 

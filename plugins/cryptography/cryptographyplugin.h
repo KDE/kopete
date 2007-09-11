@@ -40,6 +40,7 @@ namespace Kopete
 
 /**
   * @author Olivier Goffart
+  * Main plugin class, handles mesages. Also has static functions used by rest of plugin
   */
 
 class CryptographyPlugin : public Kopete::Plugin
@@ -53,12 +54,12 @@ public:
 	
 	static QStringList supportedProtocols() { QStringList l; return l << "MSNProtocol" << "MessengerProtocol" << "JabberProtocol" << "YahooProtocol"; }
 	static QStringList getKabcKeys (QString uid);
+	static QString KabcKeySelector ( QString displayName, QString addresseeName, QStringList keys, QWidget *parent );
 
 	CryptographyPlugin( QObject *parent, const QVariantList &args );
 	~CryptographyPlugin();
 
 public slots:
-
 	void slotIncomingMessage( Kopete::Message& msg );
 	void slotOutgoingMessage( Kopete::Message& msg );
 	void slotContactSelectionChanged ();
@@ -69,22 +70,14 @@ private slots:
 	void slotAskPassphraseOnStartup ();
 	void slotSelectContactKey();
 	void slotForgetCachedPass();
-	void loadSettings();
-	
 	void slotNewKMM(Kopete::ChatSession *);
 	
 private:
-	static CryptographyPlugin* pluginStatic_;
-	Kopete::SimpleMessageHandlerFactory *m_inboundHandler;
-	QString m_cachedPass;
-	QTimer *m_cachedPass_timer;
+	static CryptographyPlugin* mPluginStatic;
+	Kopete::SimpleMessageHandlerFactory *mInboundHandler;
+	QString mCachedPass;
+	QTimer *mCachedPassTimer;
 	KAction * mExportKeys;
-
-	//Settings
-	QString mPrivateKeyID;
-	unsigned int mCacheTime;
-	bool mAskPassPhraseOnStartup;
-	CryptographyConfig::CacheMode mCachePassPhrase;
 };
 
 #endif

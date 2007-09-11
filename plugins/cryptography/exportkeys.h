@@ -3,7 +3,7 @@
 
     Copyright (c) 2007      by Charles Connell        <charles@connells.org>
 
-    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

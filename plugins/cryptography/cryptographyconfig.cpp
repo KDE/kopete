@@ -24,6 +24,15 @@
 
 #include "cryptographyconfig.h"
 
+CryptographyConfig* CryptographyConfig::mSelf = 0L;
+
+CryptographyConfig * CryptographyConfig::self()
+{
+	if (!mSelf)
+		mSelf = new CryptographyConfig;
+	return mSelf;
+}
+
 CryptographyConfig::CryptographyConfig()
 {
 	load();
@@ -49,4 +58,12 @@ void CryptographyConfig::save()
 	config.writeEntry("Cache time", mCacheTime);
 	
 	config.sync();
+}
+
+void CryptographyConfig::defaults()
+{
+	mFingerprint = "";
+	mAskPassphraseOnStartup = true;
+	mCacheMode = CryptographyConfig::Close;
+	mCacheTime = 15;
 }

@@ -26,6 +26,7 @@ namespace Kleo { class EncryptionKeyRequester; }
 
 /**
   *@author Olivier Goffart
+  * Dialog to select the public key to associate with a metacontact
   */
 
 class CryptographySelectUserKey : public KDialog

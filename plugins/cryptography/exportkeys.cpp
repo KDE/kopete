@@ -3,7 +3,7 @@
 
     Copyright (c) 2007      by Charles Connell        <charles@connells.org>
 
-    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -47,22 +47,29 @@ ExportKeys::ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent )
 	
 	QString key;
 	KABC::Addressee addressee;
+	// this loop creates the list widget items
 	foreach ( Kopete::MetaContact *mc, mcs )
 	{
+		// see if there is a key. if not, go to top of loop and start again with a new metacontact
 		key = mc->pluginData( CryptographyPlugin::plugin(), "gpgKey" );
 		if (key.isEmpty())
 			continue;
+		// get addressee for metacontact
 		addressee = Kopete::KABCPersistence::addressBook()->findByUid (mc->metaContactId());
+		// if no addressee exsists, create one by setting the name
 		if (addressee.isEmpty())
 			addressee.setName ( mc->displayName() );
+		// add key to old or new addressee
 		addressee.insertCustom ("KADDRESSBOOK", "OPENPGPFP", key);
 		
+		// now we create the ListWidgetItem
 		key = key.right(8).prepend("0x");
-		key = key + ' ' + mc->displayName() + " (" + addressee.assembledName() + ')';
+		key = key + " " + mc->displayName() + " (" + addressee.assembledName() + ")";
 		QListWidgetItem * tmpItem = new QListWidgetItem ( KIconLoader::global()->loadIconSet ("kgpg-export-kgpg", K3Icon::Small), key, mUi->keyList);
 		tmpItem->setFlags (Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		tmpItem->setCheckState (Qt::Checked);
 		mUi->keyList->addItem ( tmpItem );
+		// add addressee to master list
 		mAddressees.append (addressee);
 	}
 	if ( mUi->keyList->count() == 0 )
@@ -81,6 +88,7 @@ void ExportKeys::accept()
 	
 	KABC::AddressBook * ab = Kopete::KABCPersistence::self()->addressBook();
 	
+	// add addressees to address book
 	for (int i = 0; i < mUi->keyList->count(); i++)
 	{
 		if (mUi->keyList->item(i)->checkState()){
@@ -88,7 +96,6 @@ void ExportKeys::accept()
 			Kopete::KABCPersistence::self()->writeAddressBook(mAddressees.at(i).resource());
 		}
 	}
-		
 	QDialog::accept();
 }
 
