@@ -572,7 +572,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 				    p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
 					QBrush(QColor(255, 255, 255, 160));
 				    p.end();
-				    photoImg = KIconEffect::toGray(photoImg); // This possibly should use Blitz::grayscale() instead
+				    photoImg = KIconEffect::toGray(photoImg, 1.0); // This possibly should use Blitz::grayscale() instead
 				break;
 				case Kopete::OnlineStatus::Unknown:
 				default:
