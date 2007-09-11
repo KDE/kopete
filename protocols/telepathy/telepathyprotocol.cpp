@@ -54,7 +54,7 @@ TelepathyProtocol::TelepathyProtocol(QObject *parent, const QStringList &/*args*
 	Offline(Kopete::OnlineStatus::Offline, 0, this, 7, QStringList(),
 			i18n( "Offline" ), i18n( "&Offline" ), Kopete::OnlineStatusManager::Offline,
 			Kopete::OnlineStatusManager::DisabledIfOffline),
-	propAvatarToken("telepathyAvatarToken", i18n("Telepathy Avatar token"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty)
+	propAvatarToken("telepathyAvatarToken", i18n("Telepathy Avatar token"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty)
 {
 	s_self = this;
 
