@@ -561,14 +561,14 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 				break;
 				case Kopete::OnlineStatus::Away:
 				    QPainter p;
-				    p.begin(photoImg);
+				    p.begin(&photoImg);
 				    p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
 					QBrush(QColor(255, 255, 255, 128));
 				    p.end();
 				break;
 				case Kopete::OnlineStatus::Offline:
 				    QPainter p;
-				    p.begin(photoImg);
+				    p.begin(&photoImg);
 				    p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
 					QBrush(QColor(255, 255, 255, 160));
 				    p.end();
@@ -577,7 +577,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 				case Kopete::OnlineStatus::Unknown:
 				default:
 				    QPainter p;
-				    p.begin(photoImg);
+				    p.begin(&photoImg);
 				    p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
 					QBrush(QColor(255, 255, 255, 48));
 				    p.end();
