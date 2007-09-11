@@ -560,27 +560,27 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 				case Kopete::OnlineStatus::Online:
 				break;
 				case Kopete::OnlineStatus::Away:
-				    QPainter p;
-				    p.begin(&photoImg);
-				    p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+				    QPainter pAway;
+				    pAway.begin(&photoImg);
+				    pAway.setCompositionMode(QPainter::CompositionMode_SourceAtop);
 					QBrush(QColor(255, 255, 255, 128));
-				    p.end();
+				    pAway.end();
 				break;
 				case Kopete::OnlineStatus::Offline:
-				    QPainter p;
-				    p.begin(&photoImg);
-				    p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+				    QPainter pOffline;
+				    pOffline.begin(&photoImg);
+				    pOffline.setCompositionMode(QPainter::CompositionMode_SourceAtop);
 					QBrush(QColor(255, 255, 255, 160));
-				    p.end();
+				    pOffline.end();
 				    photoImg = KIconEffect::toGray(photoImg, 1.0); // This possibly should use Blitz::grayscale() instead
 				break;
 				case Kopete::OnlineStatus::Unknown:
 				default:
-				    QPainter p;
-				    p.begin(&photoImg);
-				    p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+				    QPainter pUnknown;
+				    pUnknown.begin(&photoImg);
+				    pUnknown.setCompositionMode(QPainter::CompositionMode_SourceAtop);
 					QBrush(QColor(255, 255, 255, 48));
-				    p.end();
+				    pUnknown.end();
 			}
 			photoPixmap = QPixmap::fromImage(photoImg);
 			QPainter p(&photoPixmap);
