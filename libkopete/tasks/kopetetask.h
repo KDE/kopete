@@ -18,7 +18,7 @@
 #ifndef KOPETETASK_H
 #define KOPETETASK_H
 
-#include <kopete_export.h>
+#include "kopete_export.h"
 #include <kcompositejob.h>
 
 namespace Kopete

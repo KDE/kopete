@@ -21,8 +21,8 @@
 
 #include <QtGui/QWidget>
 
-#include "kopetemessage.h"
-#include "kopete_export.h"
+#include "../kopetemessage.h"
+#include "../kopete_export.h"
 
 namespace Kopete
 {
