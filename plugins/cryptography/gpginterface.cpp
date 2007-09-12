@@ -26,7 +26,7 @@
 #include <ktemporaryfile.h>
 #include "gpginterface.h"
 
-#include "kopeteuiglobal.h"
+#include <kopete/kopeteuiglobal.h>
 
 QString GpgInterface::encryptText ( QString text, QString userIDs, bool signAlso, QString privateKey )
 {

@@ -19,7 +19,7 @@
 #ifndef CRYPTOGRAPHYPLUGIN_H
 #define CRYPTOGRAPHYPLUGIN_H
 
-#include "kopeteplugin.h"
+#include <kopete/kopeteplugin.h>
 
 #include "cryptographyconfig.h"
 

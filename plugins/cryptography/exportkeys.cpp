@@ -22,11 +22,11 @@
 
 #include <kiconloader.h>
 
-#include "kopetemetacontact.h"
-#include "kopetechatsession.h"
-#include "kopetecontact.h"
-#include "kabcpersistence.h"
-#include "kopeteprotocol.h"
+#include <kopete/kopetemetacontact.h>
+#include <kopete/kopetechatsession.h>
+#include <kopete/kopetecontact.h>
+#include <kopete/kabcpersistence.h>
+#include <kopete/kopeteprotocol.h>
 
 #include "cryptographyplugin.h"
 

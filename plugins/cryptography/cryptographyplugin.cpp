@@ -30,15 +30,15 @@
 #include <kactioncollection.h>
 #include <kleo/ui/keylistview.h>
 #include <kabc/addressbook.h>
-#include "kabcpersistence.h"
+#include <kopete/kabcpersistence.h>
 
-#include "kopetemetacontact.h"
-#include "kopetecontactlist.h"
-#include "kopetechatsessionmanager.h"
-#include "kopetesimplemessagehandler.h"
-#include "kopeteuiglobal.h"
-#include "kopetecontact.h"
-#include "kopeteprotocol.h"
+#include <kopete/kopetemetacontact.h>
+#include <kopete/kopetecontactlist.h>
+#include <kopete/kopetechatsessionmanager.h>
+#include <kopete/kopetesimplemessagehandler.h>
+#include <kopete/kopeteuiglobal.h>
+#include <kopete/kopetecontact.h>
+#include <kopete/kopeteprotocol.h>
 
 #include "cryptographyplugin.h"
 #include "cryptographyselectuserkey.h"
