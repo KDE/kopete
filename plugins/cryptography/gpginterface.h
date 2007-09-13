@@ -47,10 +47,11 @@ class GpgInterface : public QObject
 
 		/**Decrypt text function
 		* @param text QString text to be decrypted.
+		* @param userID QString the name of the decryption key (only used to prompt user for passphrase)
 		* @param opState Set to the state of the signature on the message, if any
 		* @returns The cleartext, or empty string if decryption failed
 		*/
-		static QString decryptText ( QString text, int &opState );
+		static QString decryptText ( QString text, QString userID, int &opState );
 		
 		/**Sign text function
 		* @param text QString text to be sign
@@ -58,6 +59,8 @@ class GpgInterface : public QObject
 		* @returns Signed text, or empty string if signing failed
 		*/
 		static QString signText ( QString text, QString userID );
+		
+		static QString getPassword (QString password, QString userID, int counter);
 };
 
 
