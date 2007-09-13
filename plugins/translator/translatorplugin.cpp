@@ -16,6 +16,8 @@
     * (at your option) any later version.                                   *
     *                                                                       *
     *************************************************************************
+    Patched by Francesco Rossi <redsh@email.it> in order to support new 
+    google translation page layout (13-sept-2007)
 */
 
 #include <qapplication.h>
@@ -292,7 +294,9 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 
 //	kDebug( 14308 ) << "Google response:"<< endl << data;
 
-	QRegExp re( "<textarea name=q rows=5 cols=45 wrap=PHYSICAL>(.*)</textarea>" );
+//	QRegExp re( "<textarea name=q rows=5 cols=45 wrap=PHYSICAL>(.*)</textarea>" );
+	QRegExp re( "<textarea name=utrans wrap=PHYSICAL dilr=ltr rows=5 id=suggestion>(.*)</textarea>");
+  
 	re.setMinimal( true );
 	re.indexIn( data );
 
@@ -327,7 +331,7 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg, const QStri
 
 	//kDebug( 14308 ) << "Babelfish response: " << endl << data;
 
-	QRegExp re( "<Div style=padding:10px; lang=..>(.*)</div" );
+	QRegExp re( "<div style=padding:10px;>(.*)</div>" );
 	re.setMinimal( true );
 	re.indexIn( data );
 
@@ -366,9 +370,9 @@ void TranslatorPlugin::sendTranslation( Kopete::Message &msg, const QString &tra
 		break;
 	case ShowOriginal:
 		if ( msg.format() & Qt::PlainText )
-			msg.setPlainBody( i18n( "%2\nAuto Translated: %1", translated, msg.plainBody() ) );
+			msg.setPlainBody( i18n( "%2 \nAuto Translated: \n%1", translated, msg.plainBody() ) );
 		else 
-			msg.setHtmlBody( i18n( "%2\nAuto Translated: %1", translated, msg.plainBody() ) );
+			msg.setHtmlBody( i18n( "%2 \nAuto Translated: \n%1", translated, msg.plainBody() ) );
 		break;
 	case ShowDialog:
 	{
