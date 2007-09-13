@@ -26,7 +26,6 @@
 #include <kaboutdata.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <kpassworddialog.h>
 #include <kactioncollection.h>
 #include <kleo/ui/keylistview.h>
 #include <kabc/addressbook.h>
@@ -66,10 +65,6 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*
 	          SIGNAL ( aboutToSend ( Kopete::Message & ) ),
 	          SLOT ( slotOutgoingMessage ( Kopete::Message & ) ) );
 
-	// when the password's cache runs out
-	mCachedPassTimer = new QTimer ( this );
-	QObject::connect ( mCachedPassTimer, SIGNAL ( timeout() ), this, SLOT ( slotForgetCachedPass() ) );
-
 	// actions in the contact list
 	KAction *action = new KAction ( KIcon ( "encrypted" ), i18n ( "&Select Public Key..." ), this );
 	actionCollection()->addAction ( "contactSelectKey", action );
@@ -92,8 +87,6 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*
 	// when selected metacontacts changes, actions may need to be enabled/disabled
 	connect ( Kopete::ContactList::self(), SIGNAL ( selectionChanged() ), this, SLOT ( slotContactSelectionChanged() ) );
 
-	slotAskPassphraseOnStartup();
-
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already running)
 	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
 	foreach ( Kopete::ChatSession *session, sessions )
@@ -113,25 +106,6 @@ CryptographyPlugin::~CryptographyPlugin()
 CryptographyPlugin* CryptographyPlugin::plugin()
 {
 	return mPluginStatic ;
-}
-
-QString CryptographyPlugin::cachedPass()
-{
-	return mPluginStatic->mCachedPass;
-}
-
-// set password, if configuration dissallows this, then don't
-void CryptographyPlugin::setCachedPass ( const QString& p )
-{
-	if ( CryptographyConfig::self()->cacheMode() == CryptographyConfig::Never )
-		return;
-	if ( CryptographyConfig::self()->cacheMode() == CryptographyConfig::Time )
-	{
-		mPluginStatic->mCachedPassTimer->setSingleShot ( false );
-		mPluginStatic->mCachedPassTimer->start ( CryptographyConfig::self()->cacheTime() * 60000 );
-	}
-
-	mPluginStatic->mCachedPass=p;
 }
 
 // handling an "incoming" message. this means any message to be displayed in the chat window, including ones sent by the user
@@ -158,7 +132,7 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 	
 	kDebug ( 14303 ) << "processing " << body;
 
-	body = GpgInterface::decryptText ( body, CryptographyConfig::self()->fingerprint(), opState );
+	body = GpgInterface::decryptText ( body, opState );
 
 	if ( !body.isEmpty() )
 	{
@@ -262,23 +236,6 @@ void CryptographyPlugin::slotSelectContactKey()
 	}
 }
 
-void CryptographyPlugin::slotForgetCachedPass()
-{
-	mCachedPass = QString();
-	mCachedPassTimer->stop();
-}
-
-// Ask for passphrase and cache it
-void CryptographyPlugin::slotAskPassphraseOnStartup()
-{
-	if ( CryptographyConfig::self()->askPassphraseOnStartup() && !CryptographyConfig::self()->fingerprint().isEmpty() )
-	{
-		KPasswordDialog dialog ( Kopete::UI::Global::mainWidget() );
-		dialog.setPrompt ( i18n ( "Enter password for GPG encryption and signing key" ) );
-		dialog.exec ();
-		setCachedPass ( dialog.password() );
-	}
-}
 
 // construct crytography toolbars/buttons in a newly opened chat window
 void CryptographyPlugin::slotNewKMM ( Kopete::ChatSession *KMM )

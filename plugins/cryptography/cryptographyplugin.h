@@ -49,8 +49,6 @@ class CryptographyPlugin : public Kopete::Plugin
 
 public:
 	static CryptographyPlugin  *plugin();
-	static QString cachedPass();
-	static void setCachedPass(const QString &pass);
 	
 	static QStringList supportedProtocols() { QStringList l; return l << "MSNProtocol" << "MessengerProtocol" << "JabberProtocol" << "YahooProtocol"; }
 	static QStringList getKabcKeys (QString uid);
@@ -66,17 +64,12 @@ public slots:
 	void slotExportSelectedMetaContactKeys ();	
 	
 private slots:
-	// implemented as a slot so it can be hooked to a timer
-	void slotAskPassphraseOnStartup ();
 	void slotSelectContactKey();
-	void slotForgetCachedPass();
 	void slotNewKMM(Kopete::ChatSession *);
 	
 private:
 	static CryptographyPlugin* mPluginStatic;
 	Kopete::SimpleMessageHandlerFactory *mInboundHandler;
-	QString mCachedPass;
-	QTimer *mCachedPassTimer;
 	KAction * mExportKeys;
 };
 

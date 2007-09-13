@@ -28,8 +28,6 @@ install(TARGETS kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_cryptography_PART_SRCS cryptographypreferences.cpp cryptographyconfig.cpp )
 
-kde4_add_ui_files(kcm_kopete_cryptography_PART_SRCS cryptographyprefsbase.ui )
-
 kde4_add_plugin(kcm_kopete_cryptography ${kcm_kopete_cryptography_PART_SRCS})
 
 target_link_libraries(kcm_kopete_cryptography ${KDE4_KUTILS_LIBS} kopete kleo )

@@ -29,7 +29,6 @@
  * @author Charles Connell
  */
 
-namespace Ui { class CryptographyPrefsUI; }
 class CryptographyConfig;
 class Kleo::EncryptionKeyRequester;
 class QCheckBox;
@@ -48,11 +47,6 @@ class CryptographyPreferences : public KCModule
 
 	private:
 		Kleo::EncryptionKeyRequester * key;
-		QCheckBox * mAskPassphraseOnStartup;
-		Ui::CryptographyPrefsUI *mPreferencesDialog;
-
-	private slots:
-		void slotAskOnStartupPressed (bool b);
 };
 
 #endif
