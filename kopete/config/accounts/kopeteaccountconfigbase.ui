@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
-    <height>357</height>
+    <width>350</width>
+    <height>324</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Manage Accounts</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QHBoxLayout" >
    <item>
     <widget class="QTreeWidget" name="mAccountList" >
      <property name="alternatingRowColors" >
@@ -47,14 +47,14 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
+    <layout class="QVBoxLayout" >
      <item>
       <widget class="QPushButton" name="mButtonNew" >
        <property name="toolTip" >
         <string>Add new account</string>
        </property>
        <property name="text" >
-        <string/>
+        <string>&amp;Add Account</string>
        </property>
       </widget>
      </item>
@@ -67,27 +67,41 @@
         <string>Remove selected account</string>
        </property>
        <property name="text" >
-        <string/>
+        <string>&amp;Remove</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="mButtonNewIdentity" >
+       <property name="text" >
+        <string>&amp;New Identity</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
        <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Vertical</enum>
        </property>
        <property name="sizeHint" >
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>20</width>
+         <height>111</height>
         </size>
        </property>
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="mButtonDefault" >
+       <property name="text" >
+        <string>Set &amp;Default</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="mButtonIdentity" >
        <property name="text" >
-        <string>Select Identity</string>
+        <string>Change &amp;Identity...</string>
        </property>
       </widget>
      </item>
