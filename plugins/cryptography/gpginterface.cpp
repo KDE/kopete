@@ -50,10 +50,10 @@ QString GpgInterface::encryptText ( QString text, QString userIDs, bool signAlso
 		// this is syncronous process IO.
 		QProcess fp;
 		fp.start ( gpgcmd, QIODevice::ReadWrite );
-		fp.waitForStarted();
+		fp.waitForStarted(-1);
 		fp.write ( text.toAscii() );
 		fp.closeWriteChannel();
-		fp.waitForFinished();
+		fp.waitForFinished(-1);
 		encResult = fp.readAll();
 		gpgcmd.clear();;
 	}
@@ -63,10 +63,10 @@ QString GpgInterface::encryptText ( QString text, QString userIDs, bool signAlso
 		gpgcmd = "gpg --no-secmem-warning --no-tty --trust-model always --armor -e " + dests;
 		QProcess fp;
 		fp.start ( gpgcmd, QIODevice::ReadWrite );
-		fp.waitForStarted();
+		fp.waitForStarted(-1);
 		fp.write ( text.toAscii() );
 		fp.closeWriteChannel();
-		fp.waitForFinished();
+		fp.waitForFinished(-1);
 		encResult = fp.readAll();
 	}
 	return encResult;
@@ -80,10 +80,10 @@ QString GpgInterface::signText ( QString text, QString privateKey )
 	// syncronous IO
 	QProcess fp;
 	fp.start ( gpgcmd, QIODevice::ReadWrite );
-	fp.waitForStarted();
+	fp.waitForStarted(-1);
 	fp.write ( text.toAscii() );
 	fp.closeWriteChannel();
-	fp.waitForFinished();
+	fp.waitForFinished(-1);
 	encResult = fp.readAll();
 	gpgcmd.clear();
 
@@ -102,10 +102,10 @@ QString GpgInterface::decryptText ( QString text, int &opState )
 	// syncronous IO
 	QProcess fp;
 	fp.start ( gpgcmd, QIODevice::ReadWrite );
-	fp.waitForStarted();
+	fp.waitForStarted(-1);
 	fp.write ( text.toAscii() );
 	fp.closeWriteChannel();
-	fp.waitForFinished();
+	fp.waitForFinished(-1);
 	encResult = fp.readAll();
 
 	// set signature sttate
