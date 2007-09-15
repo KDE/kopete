@@ -27,6 +27,7 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kpassworddialog.h>
+#include <kactioncollection.h>
 #include <kleo/ui/keylistview.h>
 #include <kabc/addressbook.h>
 #include "kabcpersistence.h"
@@ -42,52 +43,58 @@
 #include "cryptographyplugin.h"
 #include "cryptographyselectuserkey.h"
 #include "cryptographyguiclient.h"
-
+#include "exportkeys.h"
 #include "gpginterface.h"
-#include <kactioncollection.h>
+
+#include "ui_kabckeyselectorbase.h"
+
+CryptographyPlugin* CryptographyPlugin::mPluginStatic = 0L;
 
 K_PLUGIN_FACTORY ( CryptographyPluginFactory, registerPlugin<CryptographyPlugin>(); )
 K_EXPORT_PLUGIN ( CryptographyPluginFactory ( "kopete_cryptography" ) )
 
 CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*args*/ )
-	: Kopete::Plugin ( CryptographyPluginFactory::componentData(), parent )
+		: Kopete::Plugin ( CryptographyPluginFactory::componentData(), parent )
 {
-	if ( !pluginStatic_ )
-		pluginStatic_=this;
+	if ( !mPluginStatic )
+		mPluginStatic=this;
 
-	m_inboundHandler = new Kopete::SimpleMessageHandlerFactory ( Kopete::Message::Inbound,
-	                   Kopete::MessageHandlerFactory::InStageToSent, this, SLOT ( slotIncomingMessage ( Kopete::Message& ) ) );
+	// set up slots to handle incoming and outgoing messages
+	mInboundHandler = new Kopete::SimpleMessageHandlerFactory ( Kopete::Message::Inbound,
+	        Kopete::MessageHandlerFactory::InStageToSent, this, SLOT ( slotIncomingMessage ( Kopete::Message& ) ) );
 	connect ( Kopete::ChatSessionManager::self(),
 	          SIGNAL ( aboutToSend ( Kopete::Message & ) ),
 	          SLOT ( slotOutgoingMessage ( Kopete::Message & ) ) );
 
-	m_cachedPass_timer = new QTimer ( this );
-	m_cachedPass_timer->setObjectName ( "m_cachedPass_timer" );
-	QObject::connect ( m_cachedPass_timer, SIGNAL ( timeout() ), this, SLOT ( slotForgetCachedPass() ) );
+	// when the password's cache runs out
+	mCachedPassTimer = new QTimer ( this );
+	QObject::connect ( mCachedPassTimer, SIGNAL ( timeout() ), this, SLOT ( slotForgetCachedPass() ) );
 
-	CryptographyPlugin::plugin()->addAddressBookField ( "key" );
-
+	// actions in the contact list
 	KAction *action = new KAction ( KIcon ( "encrypted" ), i18n ( "&Select Public Key..." ), this );
 	actionCollection()->addAction ( "contactSelectKey", action );
 	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotSelectContactKey() ) );
 	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
 	action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
-	
-	action = new KAction ( KIcon ( "kgpg-export-kgpg" ), i18n ( "&Export Public Key To Address Book..." ), this );
-	actionCollection()->addAction ( "exportKey", action );
-	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotExportOneKey() ) );
-	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
-	action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
+
+	mExportKeys = new KAction ( KIcon ( "kgpg-export-kgpg" ), i18n ( "&Export Public Keys To Address Book..." ), this );
+	actionCollection()->addAction ( "exportKey", mExportKeys );
+	connect ( mExportKeys, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotExportSelectedMetaContactKeys() ) );
+	connect ( Kopete::ContactList::self() , SIGNAL ( selectionChanged ( bool ) ) , mExportKeys , SLOT ( slotContactSelectionChanged() () ) );
+	slotContactSelectionChanged();
 
 	setXMLFile ( "cryptographyui.rc" );
-	loadSettings();
 	connect ( this, SIGNAL ( settingsChanged() ), this, SLOT ( loadSettings() ) );
 
+	// add functionality to chat window when one opens
 	connect ( Kopete::ChatSessionManager::self(), SIGNAL ( chatSessionCreated ( Kopete::ChatSession * ) ) , SLOT ( slotNewKMM ( Kopete::ChatSession * ) ) );
+
+	// when selected metacontacts changes, actions may need to be enabled/disabled
+	connect ( Kopete::ContactList::self(), SIGNAL ( selectionChanged() ), this, SLOT ( slotContactSelectionChanged() ) );
 
 	slotAskPassphraseOnStartup();
 
-	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
+	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already running)
 	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
 	foreach ( Kopete::ChatSession *session, sessions )
 	{
@@ -98,53 +105,45 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*
 
 CryptographyPlugin::~CryptographyPlugin()
 {
-	delete m_inboundHandler;
-	pluginStatic_ = 0L;
+	delete mInboundHandler;
+	mPluginStatic = 0L;
 }
 
-void CryptographyPlugin::loadSettings()
-{
-	CryptographyConfig c;
-
-	mPrivateKeyID = c.fingerprint();
-	mAskPassPhraseOnStartup = c.askPassphraseOnStartup();
-	mCachePassPhrase = c.cacheMode();
-	mCacheTime = c.cacheTime();
-}
-
+// just like ::self(). runturn pointer to singleton
 CryptographyPlugin* CryptographyPlugin::plugin()
 {
-	return pluginStatic_ ;
+	return mPluginStatic ;
 }
-
-CryptographyPlugin* CryptographyPlugin::pluginStatic_ = 0L;
 
 QString CryptographyPlugin::cachedPass()
 {
-	return pluginStatic_->m_cachedPass;
+	return mPluginStatic->mCachedPass;
 }
 
+// set password, if configuration dissallows this, then don't
 void CryptographyPlugin::setCachedPass ( const QString& p )
 {
-	if ( pluginStatic_->mCachePassPhrase == CryptographyConfig::Never )
+	if ( CryptographyConfig::self()->cacheMode() == CryptographyConfig::Never )
 		return;
-	if ( pluginStatic_->mCachePassPhrase == CryptographyConfig::Time )
+	if ( CryptographyConfig::self()->cacheMode() == CryptographyConfig::Time )
 	{
-		pluginStatic_->m_cachedPass_timer->setSingleShot ( false );
-		pluginStatic_->m_cachedPass_timer->start ( pluginStatic_->mCacheTime * 60000 );
+		mPluginStatic->mCachedPassTimer->setSingleShot ( false );
+		mPluginStatic->mCachedPassTimer->start ( CryptographyConfig::self()->cacheTime() * 60000 );
 	}
 
-	pluginStatic_->m_cachedPass=p;
+	mPluginStatic->mCachedPass=p;
 }
 
+// handling an "incoming" message. this means any message to be displayed in the chat window, including ones sent by the user
 void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 {
 	QString body = msg.plainBody();
+	// iconFolder is the folder with the little lock and pen icons in it
 	QString iconFolder = KIconLoader::global()->iconPath ( "signature", K3Icon::Small );
 	iconFolder = iconFolder.remove ( iconFolder.lastIndexOf ( "/" ) +1, 100 );
 
-	kDebug ( 14303 ) << "icon folder is " << iconFolder << endl;
 	int opState;
+	// if we detect the lock or pen icons in the message, a forgery attempt has occurred, so we just replace the message body with a warning
 	if ( !body.startsWith ( QString::fromLatin1 ( "-----BEGIN PGP MESSAGE----" ) )
 	        || !body.contains ( QString::fromLatin1 ( "-----END PGP MESSAGE----" ) ) )
 	{
@@ -156,11 +155,14 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 		}
 		return;
 	}
+	
+	kDebug ( 14303 ) << "processing " << body;
 
-	body = GpgInterface::decryptText ( body, mPrivateKeyID, opState );
+	body = GpgInterface::decryptText ( body, CryptographyConfig::self()->fingerprint(), opState );
 
 	if ( !body.isEmpty() )
 	{
+		// same story as this exact same code from above
 		if ( body.contains ( QRegExp ( iconFolder + "signature\\..*|" + iconFolder + "bad_signature\\..*|" + iconFolder + "encrypted\\..*" ) ) )
 		{
 			msg.setHtmlBody ( i18n ( "Cryptography plugin refuses to show the most recent message because it contains an attempt to forge an encrypted or signed message" ) );
@@ -169,22 +171,32 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 			return;
 		}
 
-		if ( opState & GpgInterface::GoodSig )
+		// apply crypto state icons
+		if ( opState & GpgInterface::GoodSig ) {
 			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", K3Icon::Small ) + "\">&nbsp;&nbsp;" );
+			kDebug (14303) << "message has verified signature";
+		}
 
-		if ( ( opState & GpgInterface::ErrorSig ) || ( opState & GpgInterface::BadSig ) )
+		if ( ( opState & GpgInterface::ErrorSig ) || ( opState & GpgInterface::BadSig ) ){
 			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "bad_signature", K3Icon::Small ) + "\">&nbsp;&nbsp;" );
+			kDebug (14303) << "message has unverified signature";
+		}
 
-		if ( opState & GpgInterface::Decrypted )
+		if ( opState & GpgInterface::Decrypted ){
 			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", K3Icon::Small ) + "\">&nbsp;&nbsp;" );
+			kDebug (14303) << "message has been decrypted";
+		}
 
 		msg.setHtmlBody ( body );
 
 		msg.addClass ( "cryptography:encrypted" );
+		
+		kDebug (14303) << "result is " << body;
 	}
 	return;
 }
 
+// encrypt and or sign a message to be sent
 void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 {
 	if ( msg.direction() != Kopete::Message::Outbound )
@@ -192,8 +204,10 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 
 	QStringList keys;
 	QList<Kopete::Contact*> contactlist = msg.to();
-	bool signing = mGui->signing();
-	bool encrypting = mGui->encrypting();
+	bool signing = ( ( msg.to().first()->metaContact()->pluginData ( this, "sign_messages" ) ) == "on" );
+	bool encrypting = ( ( msg.to().first()->metaContact()->pluginData ( this, "encrypt_messages" ) ) == "on" );
+
+	kDebug ( 14303 ) << ( signing ? "signing" : "" ) << ( encrypting ? "encrypting" : "" ) << "message " << msg.plainBody();
 
 	if ( encrypting )
 	{
@@ -201,11 +215,7 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 		{
 			QString tmpKey;
 			if ( c->metaContact() )
-			{
-				if ( c->metaContact()->pluginData ( this, "encrypt_messages" ) == "off" )
-					return;
 				tmpKey = c->metaContact()->pluginData ( this, "gpgKey" );
-			}
 			if ( tmpKey.isEmpty() )
 			{
 				kDebug ( 14303 ) << "empty key";
@@ -215,37 +225,33 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 			keys.append ( tmpKey );
 		}
 		// encrypt to self so we can decrypt during slotIncomingMessage()
-		keys.append ( mPrivateKeyID );
+		keys.append ( CryptographyConfig::self()->fingerprint() );
 		QString key = keys.join ( " " );
 
 		if ( key.isEmpty() )
 			return;
 
-		QString original = msg.plainBody();
-
-		QString encryptOptions;
-		encryptOptions+=" --always-trust ";
-		encryptOptions+=" --armor ";
-
-		QString resultat = GpgInterface::encryptText ( original,key,encryptOptions, signing, mPrivateKeyID );
-		if ( !resultat.isEmpty() )
-			msg.setPlainBody ( resultat );
+		QString result = GpgInterface::encryptText ( msg.plainBody(), key, signing, CryptographyConfig::self()->fingerprint() );
+		if ( !result.isEmpty() )
+			msg.setPlainBody ( result );
 		else
 			kDebug ( 14303 ) << "empty result";
 	}
 	else if ( signing )
 	{
-		QString result = GpgInterface::signText ( msg.plainBody(), mPrivateKeyID );
+		QString result = GpgInterface::signText ( msg.plainBody(), CryptographyConfig::self()->fingerprint() );
 		if ( !result.isEmpty() )
 			msg.setPlainBody ( result );
 	}
 }
 
+// Contruct dialog to show/edit metacontact's public key.
 void CryptographyPlugin::slotSelectContactKey()
 {
 	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
 	if ( !m )
 		return;
+	// key we already have
 	QString key = m->pluginData ( this, "gpgKey" );
 	CryptographySelectUserKey opts ( key, m );
 	opts.exec();
@@ -256,40 +262,16 @@ void CryptographyPlugin::slotSelectContactKey()
 	}
 }
 
-void CryptographyPlugin::slotExportOneKey()
-{
-	Kopete::MetaContact * mc = Kopete::ContactList::self()->selectedMetaContacts().first();
-	QString key;
-	KABC::Addressee addressee;
-	key = mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" );
-	if ( key.isEmpty() )
-	{
-		KMessageBox::sorry ( Kopete::UI::Global::mainWidget(), i18n ( "No key has been set for this meta-contact" ), i18n ( "No Key" ) );
-		return;
-	}
-
-	addressee = Kopete::KABCPersistence::addressBook()->findByUid ( mc->kabcId() );
-	if ( addressee.isEmpty() )
-		addressee.setName ( mc->displayName() );
-	addressee.insertCustom ( "KADDRESSBOOK", "OPENPGPFP", key );
-
-	key = key.right ( 8 ).prepend ( "0x" );
-	key = key + ' ' + mc->displayName() + " (" + addressee.assembledName() + ')';
-	if ( KMessageBox::warningContinueCancel ( Kopete::UI::Global::mainWidget(), i18n ( QString ( "The key \"" + key + "\" will be exported. If no address book has been linked to this meta-contact, one will be created.").toAscii().constData() ), i18n ( "Export Public Key" ) ) == KMessageBox::Continue) {
-		Kopete::KABCPersistence::self()->addressBook()->insertAddressee (addressee);
-		Kopete::KABCPersistence::self()->writeAddressBook(addressee.resource());
-	}
-}
-
 void CryptographyPlugin::slotForgetCachedPass()
 {
-	m_cachedPass=QString();
-	m_cachedPass_timer->stop();
+	mCachedPass = QString();
+	mCachedPassTimer->stop();
 }
 
+// Ask for passphrase and cache it
 void CryptographyPlugin::slotAskPassphraseOnStartup()
 {
-	if ( mAskPassPhraseOnStartup && !mPrivateKeyID.isEmpty() )
+	if ( CryptographyConfig::self()->askPassphraseOnStartup() && !CryptographyConfig::self()->fingerprint().isEmpty() )
 	{
 		KPasswordDialog dialog ( Kopete::UI::Global::mainWidget() );
 		dialog.setPrompt ( i18n ( "Enter password for GPG encryption and signing key" ) );
@@ -298,15 +280,18 @@ void CryptographyPlugin::slotAskPassphraseOnStartup()
 	}
 }
 
+// construct crytography toolbars/buttons in a newly opened chat window
 void CryptographyPlugin::slotNewKMM ( Kopete::ChatSession *KMM )
 {
-	connect ( this , SIGNAL ( destroyed ( QObject* ) ) ,
-	          mGui = new CryptographyGUIClient ( KMM ) , SLOT ( deleteLater() ) );
+	CryptographyGUIClient * gui = new CryptographyGUIClient ( KMM );
+	connect ( this , SIGNAL ( destroyed ( QObject* ) ), gui, SLOT ( deleteLater() ) );
 
+	// warn about unfriendly protocols
 	QString protocol ( KMM->protocol()->metaObject()->className() );
-	if ( mGui->m_encAction->isChecked() )
+	if ( gui->m_encAction->isChecked() )
 		if ( ! supportedProtocols().contains ( protocol ) )
-			KMessageBox::information ( 0, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ), i18n ( "Cryptography Unsupported Protocol" ), "Warn about unsupported " + QString ( KMM->protocol()->metaObject()->className() ) );
+			KMessageBox::information ( 0, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ),
+			                           i18n ( "Cryptography Unsupported Protocol" ), "Warn about unsupported " + QString ( KMM->protocol()->metaObject()->className() ) );
 }
 
 QStringList CryptographyPlugin::getKabcKeys ( QString uid )
@@ -325,12 +310,67 @@ QStringList CryptographyPlugin::getKabcKeys ( QString uid )
 		keys << addressee.key ( KABC::Key::PGP ).textData();
 
 	// remove duplicates
-	if ( keys.at ( 0 ) == keys.at ( 1 ) )
-		keys.removeAt ( 1 );
+	if ( keys.count() >= 2 )
+		if ( keys.at ( 0 ) == keys.at ( 1 ) )
+			keys.removeAt ( 1 );
 
 	kDebug ( 14303 ) << "keys found in address book for contact " << addressee.assembledName() << ": " << keys << endl;
 
 	return keys;
+}
+
+QString CryptographyPlugin::KabcKeySelector ( QString displayName, QString addresseeName, QStringList keys, QWidget *parent )
+{
+	// just a Yes/No about whether to accept the key
+	if ( keys.count() == 1 ) {
+		if ( KMessageBox::questionYesNo ( parent,
+		                                  i18n ( QString ( "Cryptography plugin has found an encryption key for " + displayName + " (" + addresseeName + ")" + " in your KDE address book. Do you want to use key "+ keys.first().right ( 8 ).prepend ( "0x" ) + " as this contact's public key?" ).toLocal8Bit() ),
+		                                  i18n ( "Public Key Found" ) ) == KMessageBox::Yes ) {
+			return keys.first();
+		}
+	}
+	// allow for selection of key out of many
+	if ( keys.count() > 1 )
+	{
+		KDialog dialog ( parent );
+		QWidget w ( &dialog );
+		Ui::KabcKeySelectorUI ui;
+		ui.setupUi ( &w );
+		dialog.setCaption ( i18n ( "Public Keys Found" ) );
+		dialog.setButtons ( KDialog::Ok | KDialog::Cancel );
+		dialog.setMainWidget ( &w );
+		ui.label->setText ( i18n ( QString ( "Cryptography plugin has found multiple encryption keys for " + displayName + " (" + addresseeName + ")" + " in your KDE address book. To use one of these keys, select it and choose OK." ).toLocal8Bit() ) );
+		for ( int i = 0; i < keys.count(); i++ )
+			ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ( "kgpg-key1-kopete", K3Icon::Small ), keys[i].right ( 8 ).prepend ( "0x" ), ui.keyList ) );
+		ui.keyList->addItems ( keys );
+		if ( dialog.exec() )
+			return ui.keyList->currentItem()->text();
+	}
+	return QString();
+}
+
+// export the public keys of the chat session's contacts
+void CryptographyPlugin::slotExportSelectedMetaContactKeys()
+{
+	ExportKeys dialog ( Kopete::ContactList::self()->selectedMetaContacts(), Kopete::UI::Global::mainWidget() );
+	dialog.exec();
+}
+
+// enable or disable "Export Keys" depending on key whether we have a key for the selected metacontacts
+void CryptographyPlugin::slotContactSelectionChanged()
+{
+	kDebug ( 14303 );
+	bool keyFound = false;
+	foreach ( Kopete::MetaContact * mc, Kopete::ContactList::self()->selectedMetaContacts() ) {
+		if ( mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" ) != QString() ) {
+			keyFound = true;
+			kDebug ( 14303 ) << "metacontact " << mc->displayName() << "has a key";
+		}
+	}
+	if ( keyFound )
+		mExportKeys->setEnabled ( true );
+	else
+		mExportKeys->setEnabled ( false );
 }
 
 #include "cryptographyplugin.moc"

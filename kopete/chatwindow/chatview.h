@@ -21,7 +21,7 @@
 
 #include "kopeteview.h"
 #include "kopeteviewplugin.h"
-#include <k3dockwidget.h>
+//#include <k3dockwidget.h>
 #include <ktextedit.h> // for covariant return type of editWidget
 #include <QDragEnterEvent>
 #include <QDropEvent>

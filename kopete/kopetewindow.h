@@ -59,8 +59,6 @@ protected:
 	virtual void showEvent( QShowEvent* ev );
 
 private slots:
-	void showMenubar();
-	void showStatusbar();
 	void slotToggleShowOffliners();
 	void slotToggleShowEmptyGroups();
 	void slotConfigChanged();

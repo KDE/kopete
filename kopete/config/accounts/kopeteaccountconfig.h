@@ -68,6 +68,8 @@ private slots:
 	void slotEdit();
 	void slotSelectIdentity();
 	void slotAddAccount();
+	void slotSetDefaultIdentity();
+	void slotAddIdentity();
 	void slotAddWizardDone();
 	void slotItemSelected();
 	void slotOnlineStatusChanged( Kopete::Contact *contact,

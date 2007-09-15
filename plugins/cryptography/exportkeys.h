@@ -3,7 +3,7 @@
 
     Copyright (c) 2007      by Charles Connell        <charles@connells.org>
 
-    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,7 +21,8 @@
 
 #include <kabc/addresseelist.h>
 
-namespace Kopete { class ChatSession; }
+namespace Kopete { class ChatSession;
+	class MetaContact; }
 namespace Ui { class ExportKeysUI; }
 
 /**
@@ -33,7 +34,7 @@ class ExportKeys : public KDialog
 {
 		Q_OBJECT
 	public:
-		ExportKeys ( Kopete::ChatSession * cs, QWidget *parent = 0 );
+		ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent = 0 );
 
 		~ExportKeys();
 		

@@ -28,10 +28,10 @@ public:
 	
 	enum CacheMode { Never, Time, Close };
 	
-	CryptographyConfig();
+	static CryptographyConfig* self();
 
-	void load();
 	void save();
+	void defaults();
 
 	//accessor functions
 	QString fingerprint() const { return mFingerprint; }
@@ -45,6 +45,10 @@ public:
 	void setAskPassphraseOnStartup (bool b) { mAskPassphraseOnStartup = b; }
 
 private:
+	static CryptographyConfig * mSelf;
+	CryptographyConfig();
+	void load();
+	
 	QString mFingerprint;
 	CacheMode mCacheMode;
 	uint mCacheTime;

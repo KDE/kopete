@@ -129,7 +129,9 @@ private:
 	void deleteTabBar();
 	void addTab( ChatView* );
 	void setPrimaryChatView( ChatView* );
-	const QString fileContents( const QString &file ) const;
+
+	//why did we ever need this method??
+	//const QString fileContents( const QString &file ) const;
 
 	// Sidebar
 	SidebarWidget *m_sideBar;
@@ -210,9 +212,6 @@ private slots:
 	void slotNextTab();
 	void slotDetachChat(QAction* = 0);
 	void slotPlaceTabs( QAction* );
-
-	void slotViewMenuBar();
-	void slotToggleStatusBar();
 
 	void slotEnableUpdateBg() { updateBg = true; }
 

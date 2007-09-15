@@ -43,7 +43,7 @@ class GpgInterface : public QObject
 		* @param privateKey The private key with which to do the signing. Must be supplied if signAlso is true
 		* @returns The encrypted text or empty string if encryption failed
 		*/
-		static QString encryptText ( QString text, QString userIDs, QString options="", bool signAlso = false, QString privateKey = "" );
+		static QString encryptText ( QString text, QString userIDs, bool signAlso = false, QString privateKey = "" );
 
 		/**Decrypt text function
 		* @param text QString text to be decrypted.
@@ -59,8 +59,6 @@ class GpgInterface : public QObject
 		* @returns Signed text, or empty string if signing failed
 		*/
 		static QString signText ( QString text, QString userID );
-
-		static QString checkForUtf8 ( QString s );
 		
 		static QString getPassword (QString password, QString userID, int counter);
 };

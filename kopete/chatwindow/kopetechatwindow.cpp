@@ -20,10 +20,10 @@
     *************************************************************************
 */
 
-#include <qtimer.h>
-#include <qlayout.h>
+#include <QTimer>
+#include <QLayout>
 
-#include <qfileinfo.h>
+#include <QFileInfo>
 #include <QDockWidget>
 
 //Added by qt3to4:
@@ -34,6 +34,10 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QMenu>
+
+#ifdef CHRONO
+#include <QTime>
+#endif
 
 #include <kactioncollection.h>
 #include <kcursor.h>
@@ -190,6 +194,9 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	: KXmlGuiWindow( parent )
 {
+#ifdef CHRONO
+	QTime chrono;chrono.start();
+#endif
 	m_activeView = 0L;
 	m_popupView = 0L;
 	backgroundFile = 0L;
@@ -220,7 +227,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	if ( Kopete::BehaviorSettings::self()->chatWindowShowSendButton() )
 	{
 		//Send Button
-		m_button_send = new KPushButton( i18n("Send"), statusBar() );
+		m_button_send = new KPushButton( i18nc("@action:button", "Send"), statusBar() );
 		m_button_send->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum ) );
 		m_button_send->setEnabled( false );
 		m_button_send->setFont( statusBar()->font() );
@@ -231,7 +238,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	else
 		m_button_send = 0L;
 
-	m_status_text = new KSqueezedTextLabel( i18n("Ready."), statusBar() );
+	m_status_text = new KSqueezedTextLabel( i18nc("@info:status","Ready."), statusBar() );
 	m_status_text->setAlignment( Qt::AlignLeft | Qt::AlignVCenter );
 	m_status_text->setFont( statusBar()->font() );
 	m_status_text->setFixedHeight( statusBar()->sizeHint().height() );
@@ -248,6 +255,9 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 
 	//has to be done after the setupGUI, in order to have the toolbar set up to restore window settings.
 	readOptions();
+#ifdef CHRONO
+	kDebug()<<"TIME: "<<chrono.elapsed();
+#endif
 }
 
 KopeteChatWindow::~KopeteChatWindow()
@@ -287,11 +297,7 @@ KopeteChatWindow::~KopeteChatWindow()
 
 	saveOptions();
 
-	if( backgroundFile )
-	{
-		delete backgroundFile;
-	}
-
+	delete backgroundFile;
 	delete anim;
 }
 
@@ -420,7 +426,7 @@ void KopeteChatWindow::initActions(void)
 	action = KStandardAction::next( this, SLOT( slotPageDown() ), coll );
         coll->addAction( "scroll_down", action );
 
-	KStandardAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
+	KStandardAction::showMenubar( menuBar(), SLOT(setVisible(bool)), coll );
 
 	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), coll );
         coll->addAction( "options_membersleft", membersLeft );
@@ -477,6 +483,7 @@ void KopeteChatWindow::initActions(void)
 	//toolBar()->alignItemRight( 99 );
 }
 
+/*
 const QString KopeteChatWindow::fileContents( const QString &path ) const
 {
  	QString contents;
@@ -490,7 +497,7 @@ const QString KopeteChatWindow::fileContents( const QString &path ) const
 
 	return contents;
 }
-
+*/
 void KopeteChatWindow::slotStopAnimation( ChatView* view )
 {
 	if( view == m_activeView )
@@ -623,7 +630,7 @@ void KopeteChatWindow::createTabBar()
 		connect( m_rightWidget, SIGNAL( clicked() ), this, SLOT( slotChatClosed() ) );
 		m_rightWidget->setIcon( SmallIcon( "tab-remove" ) );
 		m_rightWidget->adjustSize();
-		m_rightWidget->setToolTip( i18n("Close the current tab") );
+		m_rightWidget->setToolTip( i18nc("@info:tooltip","Close the current tab") );
 		m_tabBar->setCornerWidget( m_rightWidget, Qt::TopRightCorner );
 
 		mainLayout->addWidget( m_tabBar );
@@ -665,15 +672,12 @@ void KopeteChatWindow::addTab( ChatView *view )
 	QPixmap pluginIcon = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
 
 	view->setParent( m_tabBar );
-    view->setWindowFlags( 0 );
-    view->move( QPoint() );
-    view->show();
+	view->setWindowFlags( 0 );
+	view->move( QPoint() );
+	//view->show();
 
 	m_tabBar->addTab( view, pluginIcon, view->caption() );
-	if( view == m_activeView )
-		view->show();
-	else
-		view->hide();
+        view->setVisible(view == m_activeView);
 	connect( view, SIGNAL( captionChanged( bool ) ), this, SLOT( updateChatLabel() ) );
 	connect( view, SIGNAL( updateStatusIcon( ChatView* ) ), this, SLOT( slotUpdateCaptionIcons( ChatView* ) ) );
 	view->setCaption( view->caption(), false );
@@ -685,8 +689,8 @@ void KopeteChatWindow::setPrimaryChatView( ChatView *view )
 	//reparent clears a lot of stuff out
 	QFont savedFont = view->font();
 	view->setParent( mainArea );
-    view->setWindowFlags( 0 );
-    view->move( QPoint() );
+	view->setWindowFlags( 0 );
+	view->move( QPoint() );
 	view->setFont( savedFont );
 	view->show();
 
@@ -1112,21 +1116,6 @@ void KopeteChatWindow::slotChatPrint()
 	m_activeView->messagePart()->print();
 }
 
-void KopeteChatWindow::slotToggleStatusBar()
-{
-	if (statusBar()->isVisible())
-		statusBar()->hide();
-	else
-		statusBar()->show();
-}
-
-void KopeteChatWindow::slotViewMenuBar()
-{
-	if( !menuBar()->isHidden() )
-		menuBar()->hide();
-	else
-		menuBar()->show();
-}
 
 void KopeteChatWindow::slotSmileyActivated(const QString &sm)
 {
@@ -1140,10 +1129,7 @@ void KopeteChatWindow::slotRTFEnabled( ChatView* cv, bool enabled)
 	if ( cv != m_activeView )
 		return;
 
-	if ( enabled )
-		toolBar( "formatToolBar" )->show();
-	else
-		toolBar( "formatToolBar" )->hide();
+	toolBar( "formatToolBar" )->setVisible(enabled);
 	updateSpellCheckAction();
 }
 
@@ -1159,12 +1145,15 @@ void KopeteChatWindow::slotAutoSpellCheckEnabled( ChatView* view, bool isEnabled
 
 bool KopeteChatWindow::queryClose()
 {
+#ifdef CHRONO
+	QTime chrono;chrono.start();
+#endif
 	bool canClose = true;
 
 //	kDebug( 14010 ) << " Windows left open:";
 //	for( QPtrListIterator<ChatView> it( chatViewList ); it; ++it)
 //		kDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")";
-
+	setUpdatesEnabled(false);//hide the crazyness from users
 	while (!chatViewList.isEmpty())
 	{
 
@@ -1181,6 +1170,10 @@ bool KopeteChatWindow::queryClose()
 			canClose = false;
 		}
 	}
+	setUpdatesEnabled(true);
+#ifdef CHRONO
+        kDebug()<<"TIME: "<<chrono.elapsed();
+#endif
 	return canClose;
 }
 

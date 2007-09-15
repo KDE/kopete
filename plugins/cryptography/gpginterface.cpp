@@ -19,6 +19,7 @@
 
 #include <klocale.h>
 #include <KPasswordDialog>
+#include <KMessageBox>
 
 #include <QProcess>
 
@@ -27,16 +28,15 @@
 
 #include "kopeteuiglobal.h"
 
-QString GpgInterface::encryptText ( QString text, QString userIDs, QString options, bool signAlso, QString privateKey )
+QString GpgInterface::encryptText ( QString text, QString userIDs, bool signAlso, QString privateKey )
 {
 	int counter = 0;
-	QString dests, encResult, gpgcmd, password;
+	QString dests, encResult, gpgcmd, passphrase;
 
-	userIDs=userIDs.trimmed();
-	userIDs=userIDs.simplified();
-	options=options.trimmed();
+	userIDs = userIDs.trimmed();
+	userIDs = userIDs.simplified();
 
-	int ct=userIDs.indexOf ( " " );
+	int ct = userIDs.indexOf ( " " );
 	while ( ct!=-1 )  // if multiple keys...
 	{
 		dests += " --recipient " + userIDs.section ( ' ',0,0 );
@@ -45,15 +45,18 @@ QString GpgInterface::encryptText ( QString text, QString userIDs, QString optio
 	}
 	dests += " --recipient " + userIDs;
 
+	// sign and encrypt
 	if ( signAlso )
 	{
+		// password challenge loop
 		while ( ( counter < 3 ) && ( encResult.isEmpty() ) )
 		{
 			counter++;
-			password = getPassword ( password, privateKey, counter );
-			gpgcmd = "gpg --no-secmem-warning --no-tty " + options + " -e " + dests;
-			gpgcmd += " --passphrase " + password + " -s ";
+			passphrase = getPassword ( passphrase, privateKey, counter );
+			// prepare the gpg command
+			gpgcmd = "gpg --no-secmem-warning --no-tty --trust-model always --armor -e --local-user " + privateKey + " " + dests + " -s --passphrase " + passphrase;
 
+			// this is syncronous process IO.
 			QProcess fp;
 			fp.start ( gpgcmd, QIODevice::ReadWrite );
 			fp.waitForStarted();
@@ -61,13 +64,14 @@ QString GpgInterface::encryptText ( QString text, QString userIDs, QString optio
 			fp.closeWriteChannel();
 			fp.waitForFinished();
 			encResult = fp.readAll();
-			password.clear();
+			passphrase.clear();
 			gpgcmd.clear();;
 		}
 	}
+	// just encrypt
 	else
 	{
-		gpgcmd = "gpg --no-secmem-warning --no-tty " + options + " -e " + dests;
+		gpgcmd = "gpg --no-secmem-warning --no-tty --trust-model always --armor -e " + dests;
 		QProcess fp;
 		fp.start ( gpgcmd, QIODevice::ReadWrite );
 		fp.waitForStarted();
@@ -83,13 +87,15 @@ QString GpgInterface::signText ( QString text, QString privateKey )
 {
 	QString gpgcmd, encResult;
 	int counter = 0;
-	QString password = CryptographyPlugin::cachedPass();
+	QString passphrase = CryptographyPlugin::cachedPass();
+	// password challenge loop
 	while ( ( counter<3 ) && ( encResult.isEmpty() ) )
 	{
 		counter++;
-		password = getPassword ( password, privateKey, counter );
+		passphrase = getPassword ( passphrase, privateKey, counter );
 
-		QString gpgcmd = "gpg --no-secmem-warning --no-tty --armor --passphrase " + password + " -s ";
+		QString gpgcmd = "gpg --no-secmem-warning --no-tty --trust-model always --armor -s --local-user " + privateKey + "  --passphrase " + passphrase;
+		// syncronous IO
 		QProcess fp;
 		fp.start ( gpgcmd, QIODevice::ReadWrite );
 		fp.waitForStarted();
@@ -97,7 +103,7 @@ QString GpgInterface::signText ( QString text, QString privateKey )
 		fp.closeWriteChannel();
 		fp.waitForFinished();
 		encResult = fp.readAll();
-		password.clear();
+		passphrase.clear();
 		gpgcmd.clear();
 	}
 	return encResult;
@@ -108,7 +114,7 @@ QString GpgInterface::decryptText ( QString text, QString userID, int &opState )
 	QString encResult, gpgcmd, status;
 
 	int counter = 0;
-	QString password = CryptographyPlugin::cachedPass();
+	QString passphrase = CryptographyPlugin::cachedPass();
 
 	// give them three tries on passphrase
 	while ( ( counter<3 ) && ( encResult.isEmpty() ) )
@@ -116,13 +122,12 @@ QString GpgInterface::decryptText ( QString text, QString userID, int &opState )
 		KTemporaryFile tempfile;
 
 		counter++;
-		password = getPassword ( password, userID, counter );
+		passphrase = getPassword ( passphrase, userID, counter );
+		
 		tempfile.open();
-		gpgcmd += "gpg --no-secmem-warning --no-tty ";
-		gpgcmd += " --status-file "  + tempfile.fileName();
-		gpgcmd += " --passphrase " + password;
-		gpgcmd += " -d ";
+		gpgcmd += "gpg --no-secmem-warning --no-tty --status-file " + tempfile.fileName() + " -d  --passphrase " + passphrase;
 
+		// syncronous IO
 		QProcess fp;
 		fp.start ( gpgcmd, QIODevice::ReadWrite );
 		fp.waitForStarted();
@@ -131,6 +136,7 @@ QString GpgInterface::decryptText ( QString text, QString userID, int &opState )
 		fp.waitForFinished();
 		encResult = fp.readAll();
 
+		// set signature sttate
 		status = tempfile.readAll();
 		if ( status.contains ( "GOODSIG" ) )
 			opState = GoodSig;
@@ -145,45 +151,13 @@ QString GpgInterface::decryptText ( QString text, QString userID, int &opState )
 			opState = ( opState | Decrypted );		
 		
 		status.clear();
-		password.clear();
+		passphrase.clear();
 		gpgcmd.clear();
 	}
 	return encResult;
 }
 
-QString GpgInterface::checkForUtf8 ( QString txt )
-{
-
-	//    code borrowed from gpa
-	const char *s;
-
-	/* Make sure the encoding is UTF-8.
-	* Test structure suggested by Werner Koch */
-	if ( txt.isEmpty() )
-		return QString();
-
-	for ( s = txt.ascii(); *s && ! ( *s & 0x80 ); s++ )
-		;
-	if ( *s && !strchr ( txt.ascii(), 0xc3 ) && ( txt.find ( "\\x" ) ==-1 ) )
-		return txt;
-
-	/* The string is not in UTF-8 */
-	//if (strchr (txt.ascii(), 0xc3)) return (txt+" +++");
-	if ( txt.find ( "\\x" ) ==-1 )
-		return QString::fromUtf8 ( txt.ascii() );
-	//        if (!strchr (txt.ascii(), 0xc3) || (txt.find("\\x")!=-1)) {
-	for ( int idx = 0 ; ( idx = txt.find ( "\\x", idx ) ) >= 0 ; ++idx )
-	{
-		char str[2] = "x";
-		str[0] = ( char ) QString ( txt.mid ( idx + 2, 2 ) ).toShort ( 0, 16 );
-		txt.replace ( idx, 4, str );
-	}
-	if ( !strchr ( txt.ascii(), 0xc3 ) )
-		return QString::fromUtf8 ( txt.ascii() );
-	else
-		return QString::fromUtf8 ( QString::fromUtf8 ( txt.ascii() ).ascii() );  // perform Utf8 twice, or some keys display badly
-}
-
+// we have a special class so we know can identify it by classname if it's being displayed
 class CryptographyPasswordDialog : public KPasswordDialog
 {
 		Q_OBJECT
@@ -191,10 +165,10 @@ class CryptographyPasswordDialog : public KPasswordDialog
 		CryptographyPasswordDialog ( QWidget *parent=0L, const KPasswordDialogFlags &flags=0, const KDialog::ButtonCodes otherButtons=0 ) : KPasswordDialog ( parent, flags, otherButtons ) {}
 };
 
-QString GpgInterface::getPassword ( QString password, QString userID, int counter )
+QString GpgInterface::getPassword ( QString passphrase, QString userID, int counter )
 {
-	if ( !password.isEmpty() && counter <= 1 )
-		return password;
+	if ( !passphrase.isEmpty() && counter <= 1 )
+		return passphrase;
 	
 	QString passdlg=i18n ( "Enter passphrase for secret key %1:\nYou have %2 tries left.", "0x" + userID.right ( 8 ), 4 - counter );
 	CryptographyPasswordDialog dlg ( Kopete::UI::Global::mainWidget(), KPasswordDialog::NoFlags );
@@ -203,7 +177,8 @@ QString GpgInterface::getPassword ( QString password, QString userID, int counte
 		return QString(); //the user canceled
 	CryptographyPlugin::setCachedPass ( dlg.password() );
 	
-	// if there is already a password dialog open, get password from user and send it to that
+	// if there is already a passphrase dialog open, get passphrase from user and send it to that
+	// identify by classname. I know it's a hack, if you have something better contact Charles Connell
 	QList<CryptographyPasswordDialog*> otherDialogs = Kopete::UI::Global::mainWidget()->findChildren <CryptographyPasswordDialog *> ();
 	if ( otherDialogs.size() > 1){
 		foreach ( CryptographyPasswordDialog *otherDialog, otherDialogs ){

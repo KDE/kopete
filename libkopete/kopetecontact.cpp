@@ -552,14 +552,14 @@ QString Contact::toolTip() const
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( nick.isEmpty() )
 	{
-		tip = i18nc( "@label:textbox display name", "<b>DISPLAY NAME</b><br /><img src=\"%2\">&nbsp;CONTACT STATUS",
+		tip = i18nc( "@label:textbox %3 is contact-display-name, %1 is its status",
 			"<b><nobr>%3</nobr></b><br /><img src=\"%2\">&nbsp;%1",
 			Kopete::Message::escape( onlineStatus().description() ), iconName,
 				Kopete::Message::escape( d->contactId ) );
 	}
 	else
 	{
-		tip = i18nc( "@label:textbox display name", "<b>DISPLAY NAME</b> (CONTACT ID)<br /><img src=\"%2\">&nbsp;CONTACT STATUS",
+		tip = i18nc( "@label:textbox %4 is contact-display-name, %3 is contact-id, %1 is its status",
 			"<nobr><b>%4</b> (%3)</nobr><br /><img src=\"%2\">&nbsp;%1",
 				Kopete::Message::escape( onlineStatus().description() ), iconName,
 					Kopete::Message::escape( contactId() ),
@@ -642,7 +642,7 @@ QString Contact::toolTip() const
 						}
 				}
 
-				tip += i18nc("@label:textbox property label", "<br /><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
+				tip += i18nc("@label:textbox property label %2 is name, %1 is value",
 					"<br /><nobr><b>%2:</b></nobr>&nbsp;%1",
 						valueText, Qt::escape(p.tmpl().label()) );
 			}

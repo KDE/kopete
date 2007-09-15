@@ -45,6 +45,7 @@
 #include "kopetecontact.h"
 #include "accountidentitydialog.h"
 #include "identitydialog.h"
+#include "addidentitydialog.h"
 
 
 
@@ -88,9 +89,11 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QStringList &ar
 	mButtonRemove->setIcon( KIcon("edit-delete") );
 
 	connect( mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
+	connect( mButtonNewIdentity,    SIGNAL( clicked() ), this, SLOT( slotAddIdentity() ) );
 	connect( mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEdit() ) );
 	connect( mButtonIdentity, SIGNAL( clicked() ), this, SLOT( slotSelectIdentity() ) );
 	connect( mButtonRemove, SIGNAL( clicked() ), this, SLOT( slotRemove() ) );
+	connect( mButtonDefault, SIGNAL( clicked() ), this, SLOT( slotSetDefaultIdentity() ) );
 	connect( mAccountList,  SIGNAL( itemSelectionChanged() ), this, SLOT( slotItemSelected() ) );
 	connect( mAccountList,  SIGNAL( itemDoubleClicked(QTreeWidgetItem*, int) ), this, SLOT( slotEdit() ) );
 	setButtons( Help );
@@ -128,6 +131,8 @@ void KopeteAccountConfig::save()
 	}*/
 
 	Kopete::AccountManager::self()->save();
+	Kopete::IdentityManager::self()->save();
+
 
 	//load(); //refresh the colred accounts (in case of apply)
 }
@@ -198,6 +203,7 @@ void KopeteAccountConfig::slotItemSelected()
 	mButtonEdit->setEnabled( accountSelected || identitySelected );
 	mButtonRemove->setEnabled( accountSelected || identitySelected );
 	mButtonIdentity->setEnabled( accountSelected );
+	mButtonDefault->setEnabled( identitySelected );
 
 	m_protected=false;
 }
@@ -343,6 +349,34 @@ void KopeteAccountConfig::slotSelectIdentity()
 	load();
 }
 
+void KopeteAccountConfig::slotSetDefaultIdentity()
+{
+	KopeteIdentityLVI *lvi = selectedIdentity();
+	
+	if ( !lvi || !lvi->identity() )
+		return;
+
+	Kopete::IdentityManager::self()->setDefaultIdentity( lvi->identity() );
+	load();
+}
+
+void KopeteAccountConfig::slotAddIdentity()
+{
+	Kopete::Identity *ident = AddIdentityDialog::getIdentity(this);
+
+	if (!ident)
+		return;
+
+	ident = Kopete::IdentityManager::self()->registerIdentity(ident);
+	if (ident)
+	{
+		IdentityDialog dialog(ident, this);
+		dialog.exec();
+	}
+	load();
+}
+
+
 void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,
 												   const Kopete::OnlineStatus &status, 
 												   const Kopete::OnlineStatus &oldStatus )
@@ -371,6 +405,7 @@ void KopeteAccountConfig::slotAddWizardDone()
 	save();
 	load();
 }
+
 
 #include "kopeteaccountconfig.moc"
 
