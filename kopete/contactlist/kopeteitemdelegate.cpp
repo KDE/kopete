@@ -71,6 +71,7 @@ void KopeteItemDelegate::paint( QPainter* painter,
         QColor gc( Kopete::AppearanceSettings::self()->groupNameColor() );
         opt.palette.setColor( QPalette::Text, gc );
     }
+
     QItemDelegate::paint( painter, opt, index );
 }
 
