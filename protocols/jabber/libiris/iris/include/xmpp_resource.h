@@ -43,7 +43,20 @@ namespace XMPP
 	private:
 		QString v_name;
 		Status v_status;
+#ifdef Q_OS_WIN
+    public:
+        bool operator==(const Resource&) const {
+            qWarning("Resource::operator==(const Resource&) was called");
+            return false;
+        }
+#endif
 	};
-}
 
+#ifdef Q_OS_WIN
+    inline uint qHash(const Resource) {
+        qWarning("inline uint qHash(const Resource) was called");
+        return 0;
+    }
+#endif
+}
 #endif
