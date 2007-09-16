@@ -19,13 +19,33 @@
 #include <QApplication>
 #include <kdebug.h>
 #include <klocale.h>
-#include <k3process.h>
 #include <kdeversion.h>
 #include <kxmlguiclient.h>
 #include <kaction.h>
 #include <qdom.h>
 #include <kauthorized.h>
 #include <kactioncollection.h>
+#ifndef Q_OS_WIN
+#include <k3process.h>
+#else
+class K3Process : public QObject {
+public:
+    enum RunMode {
+        NotifyOnExit,
+    };
+    enum Communication {
+        NoCommunication,
+        AllOutput,
+    };
+    K3Process(QObject *) {}
+    
+    K3Process &operator<< (const QString &arg) { return *this; }
+    K3Process &operator<< (const char *arg) { return *this; }
+    K3Process &operator<< (const QByteArray &arg) { return *this; }
+    K3Process &operator<< (const QStringList &args) { return *this; }
+    virtual bool start (RunMode runmode=NotifyOnExit, Communication comm=NoCommunication) { return true; }
+};
+#endif
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteprotocol.h"
