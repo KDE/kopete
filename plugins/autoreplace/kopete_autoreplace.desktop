@@ -63,6 +63,7 @@ Name[uz]=Авто-алмаштириш
 Name[vi]=Tự động thay thế
 Name[wa]=Replaecî otomaticmint
 Name[x-test]=xxAuto Replacexx
+Name[zh_CN]=自动替换
 Name[zh_HK]=自動取代
 Name[zh_TW]=自動取代
 Comment=Auto replaces some text you can choose
@@ -111,6 +112,7 @@ Comment[tr]=Seçilen bazı metinler otomatik değiştirilir
 Comment[uk]=Автоматично заміняє текст, який ви вкажете
 Comment[vi]=Tự động thay thế văn bản bạn chọn
 Comment[x-test]=xxAuto replaces some text you can choosexx
+Comment[zh_CN]=自动替换您可选择的某些文字
 Comment[zh_HK]=自動取代可選擇的文字
 Comment[zh_TW]=自動取代您所選擇的文字
 

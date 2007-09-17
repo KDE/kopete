@@ -59,6 +59,7 @@ Name[uz]=Криптография
 Name[vi]=Mật mã
 Name[wa]=Criptografeye
 Name[x-test]=xxCryptographyxx
+Name[zh_CN]=加密
 Name[zh_HK]=密碼學
 Name[zh_TW]=加密
 Comment=Encrypts messages using PGP
@@ -109,6 +110,7 @@ Comment[uk]=Шифрує повідомлення за допомогою PGP
 Comment[vi]=Mã hóa tin nhắn dùng PGP
 Comment[wa]=Ecripter les messaedjes avou PGP
 Comment[x-test]=xxEncrypts messages using PGPxx
+Comment[zh_CN]=用 PGP 加密消息
 Comment[zh_HK]=將訊息以 PGP 加密
 Comment[zh_TW]=用 PGP 加密訊息
 

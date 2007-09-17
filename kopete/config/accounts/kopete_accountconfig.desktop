@@ -60,6 +60,7 @@ Name[uz]=Ҳисоблар
 Name[vi]=Tài khoản
 Name[wa]=Contes
 Name[x-test]=xxAccountsxx
+Name[zh_CN]=账户
 Name[zh_HK]=帳號
 Name[zh_TW]=帳號
 Comment=Manage Your Accounts
@@ -79,6 +80,7 @@ Comment[sv]=Hantera dina konton
 Comment[uk]=Керування вашими рахунками
 Comment[vi]=Quản lý tất cả tài khoản của mình
 Comment[x-test]=xxManage Your Accountsxx
+Comment[zh_CN]=您可在此管理您全部的账户
 Comment[zh_TW]=管理您的帳號
 DocPath=kopete/configure-dialog.html#configuring-accounts
 
