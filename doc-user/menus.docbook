@@ -373,7 +373,7 @@ performs a menu item function, the default shortcut is listed with the menu item
 </menuchoice>
 </term>
 <listitem>
-<para>Displays the &kde; standard Configure Toolbars dialog, which lets you customise the Contact List's toolbars.</para>
+<para>Displays the &kde; standard Configure Toolbars dialog, which lets you customize the Contact List's toolbars.</para>
 </listitem>
 </varlistentry>
 
@@ -758,7 +758,7 @@ clipboard is pasted at the current cursor position.</para>
 </menuchoice>
 </term>
 <listitem>
-<para>Displays the &kde; standard Configure Toolbars dialog, which lets you customise the chat window's toolbars.</para>
+<para>Displays the &kde; standard Configure Toolbars dialog, which lets you customize the chat window's toolbars.</para>
 </listitem>
 </varlistentry>
 
