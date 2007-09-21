@@ -34,9 +34,6 @@ If not checked an unlimited number of previews are generated.</string>
         <property name="text" >
          <string>&amp;Restrict amount of previews</string>
         </property>
-        <property name="shortcut" >
-         <string>Alt+R</string>
-        </property>
         <property name="checked" >
          <bool>true</bool>
         </property>
@@ -104,9 +101,6 @@ If not checked, the images get not scaled at all and appear in their original si
         <property name="text" >
          <string>Scale &amp;to</string>
         </property>
-        <property name="shortcut" >
-         <string>Alt+T</string>
-        </property>
         <property name="checked" >
          <bool>true</bool>
         </property>
@@ -168,9 +162,6 @@ If not checked, the images get not scaled at all and appear in their original si
           </property>
           <property name="text" >
            <string>Enable Lin&amp;k Preview</string>
-          </property>
-          <property name="shortcut" >
-           <string>Alt+K</string>
           </property>
          </widget>
         </item>
