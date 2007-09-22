@@ -71,7 +71,7 @@ int main( int argc, char *argv[] )
 	aboutData.addCredit ( ki18n("Zack Rusin"), ki18n("Former developer, original Gadu plugin author"), "zack@kde.org" );
 	aboutData.addCredit ( ki18n("Richard Stellingwerff"), ki18n("Former developer"), "remenic@linuxfromscratch.org");
 	aboutData.addCredit ( ki18n("Daniel Stone"), ki18n("Former developer, Jabber plugin author"), "daniel@fooishbar.org", "http://fooishbar.org");
-	aboutData.addCredit ( ki18n("Chris TenHarmsel"), ki18n("Former developer, Oscar plugin"), "tenharmsel@users.sourceforge.net");
+	aboutData.addCredit ( ki18n("Chris TenHarmsel"), ki18n("Former developer, Oscar plugin"), "chris@tenharmsel.com");
 	aboutData.addCredit ( ki18n("Hendrik vom Lehn"), ki18n("Former developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
 	aboutData.addCredit ( ki18n("Gav Wood"), ki18n("Former developer and WinPopup maintainer"), "gav@indigoarchive.net" );
 
