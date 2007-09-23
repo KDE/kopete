@@ -74,6 +74,7 @@ private slots:
 	void slotItemSelected();
 	void slotOnlineStatusChanged( Kopete::Contact *contact,
 			                      const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
+	void slotItemChanged(QTreeWidgetItem*);
 };
 #endif
 

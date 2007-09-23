@@ -24,6 +24,7 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QBoxLayout>
 #include <QtCore/QPointer>
+#include <QtCore/QTimer>
 
 #include <kcolorbutton.h>
 #include <kpushbutton.h>
@@ -52,7 +53,6 @@
 class KopeteAccountLVI : public QTreeWidgetItem
 {
 	public:
-		KopeteAccountLVI( Kopete::Account *a, QTreeWidget* parent) : QTreeWidgetItem(parent) , m_account(a) { }
 		KopeteAccountLVI( Kopete::Account *a, QTreeWidgetItem* parent) : QTreeWidgetItem(parent) , m_account(a) { }
 		Kopete::Account *account() { return m_account; }
 
@@ -84,7 +84,7 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QStringList &ar
 	header->setResizeMode( 1, QHeaderView::ResizeToContents );
 	header->setResizeMode( 0, QHeaderView::Stretch );
 	header->setVisible(false);
-
+	
 	mButtonNew->setIcon( KIcon("edit-add") );
 	mButtonRemove->setIcon( KIcon("edit-delete") );
 
@@ -96,6 +96,7 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QStringList &ar
 	connect( mButtonDefault, SIGNAL( clicked() ), this, SLOT( slotSetDefaultIdentity() ) );
 	connect( mAccountList,  SIGNAL( itemSelectionChanged() ), this, SLOT( slotItemSelected() ) );
 	connect( mAccountList,  SIGNAL( itemDoubleClicked(QTreeWidgetItem*, int) ), this, SLOT( slotEdit() ) );
+	connect( mAccountList,  SIGNAL( itemChanged ( QTreeWidgetItem * , int )), this, SLOT( slotItemChanged(QTreeWidgetItem*) ) );
 	setButtons( Help );
 	load();
 }
@@ -140,6 +141,9 @@ void KopeteAccountConfig::save()
 void KopeteAccountConfig::load()
 {
 	mAccountList->clear();
+	
+	//FIXME: this doesn't work
+	mAccountList->invisibleRootItem()->setFlags(mAccountList->invisibleRootItem()->flags() & ~Qt::ItemIsDropEnabled);
 		
 	QHash<Kopete::Identity *,QTreeWidgetItem *> identityItemHash;
 	Kopete::Identity *defaultIdentity = Kopete::IdentityManager::self()->defaultIdentity();
@@ -153,6 +157,8 @@ void KopeteAccountConfig::load()
 		identityItem->setIcon( 0, KIcon( i->customIcon()) );
 		
 		identityItem->setExpanded( true );
+		
+		identityItem->setFlags( identityItem->flags() & ~Qt::ItemIsDragEnabled );
 		
 		if (i == defaultIdentity)
 		{
@@ -169,11 +175,8 @@ void KopeteAccountConfig::load()
 	{
 		Kopete::Identity *idnt = i->identity();
 		
-		KopeteAccountLVI *lvi;
-		if(identityItemHash.contains(idnt))
-			lvi = new KopeteAccountLVI( i, identityItemHash[idnt] );
-		else
-			lvi = new KopeteAccountLVI( i, mAccountList );
+		Q_ASSERT(identityItemHash.contains(idnt));
+		KopeteAccountLVI *lvi = new KopeteAccountLVI( i, identityItemHash[idnt] );
 		lvi->setText( 0, i->accountLabel() );
 		lvi->setIcon( 0, QIcon(i->myself()->onlineStatus().iconFor( i, 32)) );
 		QFont font = lvi->font( 0 );
@@ -185,6 +188,8 @@ void KopeteAccountConfig::load()
 		lvi->setText( 1, i->myself()->onlineStatus().statusTypeToString(i->myself()->onlineStatus().status()) );
 		lvi->setTextAlignment( 1, Qt::AlignRight | Qt::AlignVCenter );
 		lvi->setFont( 1, font );
+		
+		lvi->setFlags( lvi->flags() & ~Qt::ItemIsDropEnabled );
 
 		connect( i->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
 				 this, SLOT(slotOnlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)));
@@ -407,8 +412,23 @@ void KopeteAccountConfig::slotAddWizardDone()
 }
 
 
+void KopeteAccountConfig::slotItemChanged(QTreeWidgetItem* item)
+{
+	if(!item)
+		return;
+	KopeteAccountLVI *a = dynamic_cast<KopeteAccountLVI*>(item);
+	KopeteIdentityLVI *i = dynamic_cast<KopeteIdentityLVI*>(item->parent());
+	if(a && i)
+	{
+		if(a->account()->identity() != i->identity() )
+		{
+			a->account()->setIdentity( i->identity() );
+			changed(true);
+		}
+	}
+}
+
+
 #include "kopeteaccountconfig.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-
-

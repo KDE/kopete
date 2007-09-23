@@ -36,7 +36,7 @@ namespace Kopete
 class Identity::Private
 {
 public:
-	Private(const QString &i)
+	Private(const QString &i) : onlineStatus( OnlineStatus::Unknown ) 
 	{
 		id = i;
 		configGroup = new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Identity_%1" ).arg( id ));

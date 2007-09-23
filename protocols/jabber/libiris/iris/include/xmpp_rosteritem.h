@@ -77,7 +77,21 @@ namespace XMPP
 		Subscription v_subscription;
 		QString v_ask;
 		bool v_push;
+#ifdef Q_OS_WIN
+    public:
+        bool operator==(const RosterItem&) const {
+            qWarning("RosterItem::operator==(const RosterItem&) was called");
+            return false;
+        }
+#endif
 	};
+
+#ifdef Q_OS_WIN
+    inline uint qHash(const RosterItem) {
+        qWarning("inline uint qHash(const RosterItem) was called");
+        return 0;
+    }
+#endif
 }
 
 #endif

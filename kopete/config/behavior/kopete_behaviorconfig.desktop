@@ -60,6 +60,7 @@ Name[uz]=Хусусиятлар
 Name[vi]=Ứng xử
 Name[wa]=Dujhance
 Name[x-test]=xxBehaviorxx
+Name[zh_CN]=行为
 Name[zh_HK]=行為
 Name[zh_TW]=行為
 Comment=Personalize Kopete's Behavior
@@ -79,6 +80,7 @@ Comment[sv]=Personlig anpassning av Kopete
 Comment[uk]=Персоналізувати поведінку Kopete
 Comment[vi]=Tùy chỉnh Kopete theo ý thích
 Comment[x-test]=xxPersonalize Kopete's Behaviorxx
+Comment[zh_CN]=个性化 Kopete 的行为
 Comment[zh_TW]=將 Kopete 個人化
 DocPath=kopete/configure-dialog.html#configuring-behavior
 

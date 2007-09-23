@@ -126,7 +126,15 @@ if(Q_WS_X11 AND X11_Xss_FOUND)
    target_link_libraries(kopete ${X11_Xss_LIB})
 endif(Q_WS_X11 AND X11_Xss_FOUND)
 
-set_target_properties(kopete PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+set_target_properties(kopete PROPERTIES
+    VERSION ${GENERIC_LIB_VERSION}
+    SOVERSION ${GENERIC_LIB_SOVERSION}
+    )
+if(MSVC)
+  set_target_properties(kopete PROPERTIES
+      OUTPUT_NAME libkopete
+      )
+endif(MSVC)
 install(TARGETS kopete DESTINATION ${LIB_INSTALL_DIR})
 
 
