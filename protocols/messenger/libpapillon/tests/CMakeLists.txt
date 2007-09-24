@@ -1,3 +1,4 @@
+set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
 
 include_directories( ${PAPILLON_INCLUDES} )
 
@@ -12,14 +13,14 @@ add_definitions(-DPAPILLON_TESTS_DATA="\\"${CMAKE_CURRENT_SOURCE_DIR}/\\"")
 set(connection_test_SRCS connection_test.cpp )
 
 
-kde4_add_test_executable(connection_test  ${connection_test_SRCS})
+kde4_add_executable(connection_test TEST  ${connection_test_SRCS})
 
 target_link_libraries(connection_test ${PAPILLON_TEST_LIBRARIES} )
 
 ####
 set(connector_test_SRCS connector_test.cpp)
 
-kde4_add_test_executable(connector_test  ${connector_test_SRCS})
+kde4_add_executable(connector_test TEST  ${connector_test_SRCS})
 
 target_link_libraries(connector_test ${PAPILLON_TEST_LIBRARIES} )
 
@@ -29,7 +30,7 @@ if(NOT WIN32)
         set(papillon_console_SRCS papillon_console.cpp)
         
                 
-        kde4_add_test_executable(papillon_console  ${papillon_console_SRCS})
+        kde4_add_executable(papillon_console TEST  ${papillon_console_SRCS})
         
         target_link_libraries(papillon_console ${QT_QTGUI_LIBRARY} ${PAPILLON_TEST_LIBRARIES})
 endif(NOT WIN32)
@@ -38,7 +39,7 @@ endif(NOT WIN32)
 
 set(networkmessage_test_SRCS networkmessage_test.cpp )
 
-kde4_add_test_executable(networkmessage_test  ${networkmessage_test_SRCS})
+kde4_add_executable(networkmessage_test TEST  ${networkmessage_test_SRCS})
 
 target_link_libraries(networkmessage_test ${PAPILLON_TEST_LIBRARIES} )
 
@@ -49,7 +50,7 @@ add_test(networkmessage_test ${EXECUTABLE_OUTPUT_PATH}/networkmessage_test)
 set( coreprotocol_test_SRCS coreprotocol_test.cpp )
 
 
-kde4_add_test_executable(coreprotocol_test  ${coreprotocol_test_SRCS})
+kde4_add_executable(coreprotocol_test TEST  ${coreprotocol_test_SRCS})
 
 target_link_libraries(coreprotocol_test ${PAPILLON_TEST_LIBRARIES})
 
@@ -60,7 +61,7 @@ add_test(coreprotocol_test ${EXECUTABLE_OUTPUT_PATH}/coreprotocol_test)
 set( mimeheader_test_SRCS mimeheader_test.cpp )
 
 
-kde4_add_test_executable(mimeheader_test  ${mimeheader_test_SRCS})
+kde4_add_executable(mimeheader_test TEST  ${mimeheader_test_SRCS})
 
 target_link_libraries(mimeheader_test ${PAPILLON_TEST_LIBRARIES})
 
@@ -71,7 +72,7 @@ add_test(mimeheader_test ${EXECUTABLE_OUTPUT_PATH}/mimeheader_test)
 
 set( httptransfer_test_SRCS httptransfer_test.cpp )
 
-kde4_add_test_executable(httptransfer_test  ${httptransfer_test_SRCS})
+kde4_add_executable(httptransfer_test TEST  ${httptransfer_test_SRCS})
 
 target_link_libraries(httptransfer_test ${PAPILLON_TEST_LIBRARIES})
 
@@ -82,7 +83,7 @@ add_test(httptransfer_test ${EXECUTABLE_OUTPUT_PATH}/httptransfer_test)
 set( httpcoreprotocol_test_SRCS httpcoreprotocol_test.cpp )
 
 
-kde4_add_test_executable(httpcoreprotocol_test  ${httpcoreprotocol_test_SRCS})
+kde4_add_executable(httpcoreprotocol_test TEST  ${httpcoreprotocol_test_SRCS})
 
 target_link_libraries(httpcoreprotocol_test ${PAPILLON_TEST_LIBRARIES})
 
@@ -93,7 +94,7 @@ add_test(httpcoreprotocol_test ${EXECUTABLE_OUTPUT_PATH}/httpcoreprotocol_test)
 set( statusmessage_test_SRCS statusmessage_test.cpp )
 
 
-kde4_add_test_executable(statusmessage_test  ${statusmessage_test_SRCS})
+kde4_add_executable(statusmessage_test TEST  ${statusmessage_test_SRCS})
 
 target_link_libraries(statusmessage_test ${PAPILLON_TEST_LIBRARIES})
 
@@ -105,7 +106,7 @@ if(NOT WIN32)
         set( challenge_test_SRCS challengetest.cpp )
         
                 
-        kde4_add_test_executable(challenge_test  ${challenge_test_SRCS})
+        kde4_add_executable(challenge_test TEST  ${challenge_test_SRCS})
         
         target_link_libraries(challenge_test ${PAPILLON_TEST_LIBRARIES})
         

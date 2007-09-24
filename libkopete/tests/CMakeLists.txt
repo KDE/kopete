@@ -1,3 +1,4 @@
+set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
 
 set(kopete_test_mock_SRCS
 mock/kopeteaccount_mock.cpp
@@ -65,7 +66,7 @@ target_link_libraries(xmlcontactstorage_test ${KOPETE_TEST_LIBRARIES})
 
 set(avatarselector_test_SRCS avatarselectortest_program.cpp)
 
-kde4_add_test_executable(avatarselectortest_program ${avatarselector_test_SRCS})
+kde4_add_executable(avatarselectortest_program TEST ${avatarselector_test_SRCS})
 
 target_link_libraries(avatarselectortest_program ${KOPETE_TEST_LIBRARIES})
 

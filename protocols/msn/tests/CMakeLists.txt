@@ -1,3 +1,4 @@
+set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
 
 
 
@@ -6,7 +7,7 @@
 
 set(challengetest_SRCS challengetest.cpp )
 
-kde4_add_test_executable(challengetest ${challengetest_SRCS})
+kde4_add_executable(challengetest TEST ${challengetest_SRCS})
 
 target_link_libraries(challengetest  ${KDE4_KDECORE_LIBS} )
 
