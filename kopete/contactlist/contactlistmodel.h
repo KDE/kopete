@@ -38,7 +38,8 @@ public:
 	ContactListModel(QObject* parent = 0);
 	~ContactListModel();
 
-
+	virtual Qt::ItemFlags flags( const QModelIndex& index ) const;
+	
 public Q_SLOTS:
 	void addMetaContact( Kopete::MetaContact* );
 	void removeMetaContact( Kopete::MetaContact* );

@@ -45,6 +45,12 @@ ContactListModel::~ContactListModel()
 {
 }
 
+Qt::ItemFlags ContactListModel::flags( const QModelIndex& index ) const
+{
+	Qt::ItemFlags newFlags = QStandardItemModel::flags( index );
+	newFlags = newFlags | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+	return newFlags;
+}
 void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
 {
 	//create the metacontact item
