@@ -688,6 +688,7 @@ int VideoDevicePool::scanDevices()
 			kdDebug(14010) << k_funcinfo << "Found no suitable devices in " << videodevice_dir_path << endl;
 			return EXIT_FAILURE;
 		}
+/*
 		QFileInfoListIterator fileiterator ( *list );
 		QFileInfo *fileinfo;
 
@@ -711,6 +712,7 @@ int VideoDevicePool::scanDevices()
 
 
 		return EXIT_FAILURE;
+*/
 	}
 	QFileInfoListIterator fileiterator ( *list );
 	QFileInfo *fileinfo;
