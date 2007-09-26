@@ -1293,13 +1293,13 @@ VlcMagic *_find_magic(guint magic)
  * Internal helper-function used to initialize
  * the lookup-table used by the VLC-decoder.
  */
-void _initialize_vlcdec_lookup(gchar *lookup_tbl)
+void _initialize_vlcdec_lookup(gint8 *lookup_tbl)
 {
-    gchar util_buf[3072];
+    gint8 util_buf[3072];
     gint v1_start, v1_end, v1_dec, util_buf_offset;
     gint util_buf_offset_inc, buf1_val, samples_offset;
     gint v1, v2;
-    gchar *p, *p1, *p2, *p3;
+    gint8 *p, *p1, *p2, *p3;
 
     util_buf[0] = 0;
     util_buf[1] = 0;
