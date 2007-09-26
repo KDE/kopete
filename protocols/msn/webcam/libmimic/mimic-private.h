@@ -51,7 +51,7 @@ struct _MimCtx {
     guchar *cur_frame_buf;
     guchar *prev_frame_buf;
     
-    gchar vlcdec_lookup[2296];
+    gint8 vlcdec_lookup[2296];
     
     gchar *data_buffer;
     guint data_index;
@@ -96,7 +96,7 @@ void _fdct_quant_block(MimCtx *ctx, gint *block, const guchar *src,
 void _idct_dequant_block(MimCtx *ctx, gint *block, gboolean is_chrom);
 
 VlcMagic *_find_magic(guint magic);
-void _initialize_vlcdec_lookup(gchar *lookup_tbl);
+void _initialize_vlcdec_lookup(gint8 *lookup_tbl);
 
 void _rgb_to_yuv(const guchar *input_rgb,
                  guchar *output_y,
