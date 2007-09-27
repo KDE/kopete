@@ -33,6 +33,7 @@ namespace Kopete
 
 class Plugin;
 typedef QList<Plugin*> PluginList;
+class PluginManagerPrivate;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -40,6 +41,7 @@ typedef QList<Plugin*> PluginList;
  */
 class KOPETE_EXPORT PluginManager : public QObject
 {
+	friend class PluginManagerPrivate;
 	Q_OBJECT
 	Q_ENUMS( PluginLoadMode )
 
@@ -48,8 +50,6 @@ public:
 	 * Retrieve the plugin loader instance.
 	 */
 	static PluginManager* self();
-
-	~PluginManager();
 
 	/**
 	 * Returns a list of all available plugins for the given category.
@@ -231,9 +231,8 @@ private:
 	KPluginInfo infoForPluginId( const QString &pluginId ) const;
 
 	PluginManager();
+	~PluginManager();
 
-	class Private;
-	Private *d;
 };
 
 }
