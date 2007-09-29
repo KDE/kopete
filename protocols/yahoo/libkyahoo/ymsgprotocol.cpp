@@ -22,6 +22,7 @@
 #include <qdatastream.h>
 #include <qmap.h>
 #include <qobject.h>
+#include <qstringlist.h>
 
 #include <kdebug.h>
 
@@ -321,62 +322,19 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	t->setService(service);
 	t->setId(sessionid);
 	t->setStatus(status);
-	
-	// taken almost as is from libyahoo ;-)
-	
-	char *data = packet.data();
-	while (pos + 1 < len + 20 /*header*/)
-	{
-		if( (BYTE) data[pos] == (BYTE)0x00  )
-			break;
-	
-		char *key = 0L, *value = 0L;
-		int accept;
-		int x;
-		key = (char *) malloc(len + 1);
-		x = 0;
-		while (pos + 1 < len +20) {
-			if ( ((BYTE) data[pos] == (BYTE)0xc0 && (BYTE) data[pos + 1] == (BYTE)0x80) )
-				break;
-			key[x++] = data[pos++];
-		}
-		key[x] = 0;
-		pos += 2;
 
-		accept = x;
-		
-		/* if x is 0 there was no key, so don't accept it */
-		if (accept)
-			value = (char *) malloc(len - pos + 20 + 1);
-		
-		x = 0;
-		while (pos + 1 < len + 20 /* header */)
-		{
-			if ((BYTE) data[pos] == (BYTE) 0xc0 && (BYTE) data[pos + 1] == (BYTE) 0x80)
-				break;
-			if (accept)
-				value[x++] = data[pos++];
-		}
-		if (accept) {
-			value[x] = 0;
-			pos += 2;
-		}
+	QString d = QString::fromAscii( packet.data() + pos, packet.size() - pos );
+	QStringList list;
+	list = QStringList::split( "\xc0\x80", d );
+	for( uint i = 0; i+1 < list.size() && pos+1 < len+20; i += 2 ) {
+		QString key = list[i];
+		QString value = QString::fromUtf8( list[i+1].ascii() );
+		pos += key.utf8().length() + value.utf8().length() + 4;
+		t->setParam( QString(key).toInt(), value.utf8() );
+		kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Key: " << key << " Value: " << value << endl;
+	}	
 
-		if (accept) 
-		{
-			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " setting packet key [" << QString(key) << "] to " << QString(value) << endl;
-			t->setParam(QString(key).toInt(), value);
-			free(value);
-		}
-		else
-		{
-			kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " key not accepted" << endl;
-		}
-		free(key);
-	}
-
-	// Packets consisting of several YMSG-packets sometimes contain padding chars (0x00) -> filter out
-	while( (BYTE)data[pos] == (BYTE) 0x00 && pos <= len + 20)
+	while( (uint)pos < packet.size() && packet.data()[pos] == '\x00' )
 		pos++;
 
 	kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Returning transfer" << endl;
