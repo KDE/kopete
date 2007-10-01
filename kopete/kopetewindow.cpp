@@ -35,6 +35,7 @@
 #include <QSignalMapper>
 
 #include <khbox.h>
+#include <kvbox.h>
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
