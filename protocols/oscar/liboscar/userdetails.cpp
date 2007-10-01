@@ -166,7 +166,8 @@ void UserDetails::parseCapabilities( Buffer &inbuf, int &xStatus )
 			   i == CAP_VMICQ && cap.isEqual ( oscar_caps[i], 6 )       ||
 			   i == CAP_LICQ && cap.isEqual ( oscar_caps[i], 12 )       ||
 			   i == CAP_ANDRQ && cap.isEqual ( oscar_caps[i], 9 )       ||
-			   i == CAP_RANDQ && cap.isEqual ( oscar_caps[i], 9 ) )
+			   i == CAP_RANDQ && cap.isEqual ( oscar_caps[i], 9 )       ||
+			     i == CAP_MCHAT && cap.isEqual ( oscar_caps[i], 10 ) )
 			{
 				m_capabilities[i] = true;
 				dbgCaps += capName(i);
@@ -646,6 +647,13 @@ void UserDetails::detectClient()
 		m_clientName += ' ' + m_clientVersion;
 		return;
 	}
+	if ( hasCap( CAP_MCHAT ) )
+	{
+		m_clientName = QString::fromLatin1( "mChat" );
+		m_clientVersion = getVersionFromCap( m_identCap, 10 );
+		m_clientName += ' ' + m_clientVersion;
+		return;
+	}
 	
 	if ( m_dcProtoVersion == 9 )
 	{
@@ -686,6 +694,10 @@ void UserDetails::detectClient()
 				m_clientName = QString::fromLatin1( "pyICQ" );
 			}
 		}
+		
+	}
+	else if ( m_dcProtoVersion == 0 )
+	{
 		
 	}
 	if ( !m_clientName.isEmpty() )
