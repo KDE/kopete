@@ -263,7 +263,7 @@ void KopeteEmailWindow::initActions(void)
 
 	// The animated toolbarbutton
 	d->normalIcon = QPixmap( BarIcon( QLatin1String( "kopete" ) ) );
-//	d->animIcon = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), K3Icon::Toolbar);
+//	d->animIcon = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Toolbar);
 	d->animIcon.setPaused(true);
 
 	d->anim = new QLabel( this );

@@ -829,7 +829,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 			iconName = message.from()->protocol()->pluginIcon();
 		}
 
-		protocolIcon = KIconLoader::global()->iconPath( iconName, K3Icon::Small );
+		protocolIcon = KIconLoader::global()->iconPath( iconName, KIconLoader::Small );
 
 		nickLink=QString("<a href=\"kopetemessage://%1/?protocolId=%2&amp;accountId=%3\" class=\"KopeteDisplayName\">")
 				.arg( Qt::escape(message.from()->contactId()).replace('"',"&quot;"),
