@@ -113,7 +113,7 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 {
 	QString body = msg.plainBody();
 	// iconFolder is the folder with the little lock and pen icons in it
-	QString iconFolder = KIconLoader::global()->iconPath ( "signature", K3Icon::Small );
+	QString iconFolder = KIconLoader::global()->iconPath ( "signature", KIconLoader::Small );
 	iconFolder = iconFolder.remove ( iconFolder.lastIndexOf ( "/" ) +1, 100 );
 
 	int opState;
@@ -147,17 +147,17 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 
 		// apply crypto state icons
 		if ( opState & GpgInterface::GoodSig ) {
-			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", K3Icon::Small ) + "\">&nbsp;&nbsp;" );
+			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
 			kDebug (14303) << "message has verified signature";
 		}
 
 		if ( ( opState & GpgInterface::ErrorSig ) || ( opState & GpgInterface::BadSig ) ){
-			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "bad_signature", K3Icon::Small ) + "\">&nbsp;&nbsp;" );
+			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "bad_signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
 			kDebug (14303) << "message has unverified signature";
 		}
 
 		if ( opState & GpgInterface::Decrypted ){
-			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", K3Icon::Small ) + "\">&nbsp;&nbsp;" );
+			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
 			kDebug (14303) << "message has been decrypted";
 		}
 
@@ -298,7 +298,7 @@ QString CryptographyPlugin::KabcKeySelector ( QString displayName, QString addre
 		dialog.setMainWidget ( &w );
 		ui.label->setText ( i18n ( QString ( "Cryptography plugin has found multiple encryption keys for " + displayName + " (" + addresseeName + ")" + " in your KDE address book. To use one of these keys, select it and choose OK." ).toLocal8Bit() ) );
 		for ( int i = 0; i < keys.count(); i++ )
-			ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ( "kgpg-key1-kopete", K3Icon::Small ), keys[i].right ( 8 ).prepend ( "0x" ), ui.keyList ) );
+			ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ( "kgpg-key1-kopete", KIconLoader::Small ), keys[i].right ( 8 ).prepend ( "0x" ), ui.keyList ) );
 		ui.keyList->addItems ( keys );
 		if ( dialog.exec() )
 			return ui.keyList->currentItem()->text();

@@ -65,7 +65,7 @@ ExportKeys::ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent )
 		// now we create the ListWidgetItem
 		key = key.right(8).prepend("0x");
 		key = key + " " + mc->displayName() + " (" + addressee.assembledName() + ")";
-		QListWidgetItem * tmpItem = new QListWidgetItem ( KIconLoader::global()->loadIconSet ("kgpg-export-kgpg", K3Icon::Small), key, mUi->keyList);
+		QListWidgetItem * tmpItem = new QListWidgetItem ( KIconLoader::global()->loadIconSet ("kgpg-export-kgpg", KIconLoader::Small), key, mUi->keyList);
 		tmpItem->setFlags (Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		tmpItem->setCheckState (Qt::Checked);
 		mUi->keyList->addItem ( tmpItem );
