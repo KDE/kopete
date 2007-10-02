@@ -26,10 +26,11 @@
 #include <QPixmap>
 #include <QList>
 
+#include <qimageblitz.h>
+
 #include "knotification.h"
 #include <kdebug.h>
 #include <kiconeffect.h>
-#include <kimageeffect.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -556,23 +557,31 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 			int photoSize = d->iconSize;
 
 			photoImg = photoImg.scaled( photoSize, photoSize, Qt::KeepAspectRatio, Qt::SmoothTransformation );
+			if ( m_metaContact->status() == Kopete::OnlineStatus::Offline )
+				Blitz::grayscale(photoImg);
+
+			photoPixmap = QPixmap::fromImage(photoImg);
+			QPainter p(&photoPixmap);
+			QColor c = Qt::white;
+
 			switch ( m_metaContact->status() )
 			{
 				case Kopete::OnlineStatus::Online:
 				break;
 				case Kopete::OnlineStatus::Away:
-					photoImg = KImageEffect::fade(photoImg, 0.5, Qt::white);
+					c.setAlphaF(0.5);
+					p.fillRect(photoImg.rect(), c);
 				break;
 				case Kopete::OnlineStatus::Offline:
-					photoImg = KImageEffect::fade(photoImg, 0.4, Qt::white);
-					photoImg = KImageEffect::toGray(photoImg);
+					c.setAlphaF(0.4);
+					p.fillRect(photoImg.rect(), c);
 				break;
 				case Kopete::OnlineStatus::Unknown:
 				default:
-					photoImg = KImageEffect::fade(photoImg, 0.8, Qt::white);
+					c.setAlphaF(0.8);
+					p.fillRect(photoImg.rect(), c);
 			}
-			photoPixmap = QPixmap::fromImage(photoImg);
-			QPainter p(&photoPixmap);
+
 			p.setPen(Qt::black);
 			p.drawLine(0, 0, photoPixmap.width()-1, 0);
 			p.drawLine(0, photoPixmap.height()-1, photoPixmap.width()-1, photoPixmap.height()-1);

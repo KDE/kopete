@@ -2,6 +2,8 @@ project(kopete)
 KDE4_NO_ENABLE_FINAL(kopete)
 add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
+FIND_PACKAGE(Blitz REQUIRED)
+
 # Configure checks
 include (TestBigEndian)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
