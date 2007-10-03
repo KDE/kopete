@@ -64,6 +64,9 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 			 this, SLOT(slotPhotoLinkActivated(const QString &)));
 	connect( d->ui.accounts, SIGNAL(linkActivated(const QString&)),
 			 this, SLOT(slotAccountLinkActivated(const QString &)));
+	connect( Kopete::AccountManager::self(), 
+			SIGNAL(accountOnlineStatusChanged(Kopete::Account*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
+			this, SLOT(slotUpdateAccountStatus()));
 }
 
 IdentityStatusWidget::~IdentityStatusWidget()
@@ -144,19 +147,7 @@ void IdentityStatusWidget::slotLoad()
 	d->ui.identityName->setText(d->identity->identityId());
 
 	//acounts
-	QString text("<qt>");
-	foreach(Kopete::Account *a, d->identity->accounts())
-	{
-		Kopete::Contact *self = a->myself();
-		QString onlineStatus = self ? self->onlineStatus().description() : i18n("Offline");
-		text += i18nc( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)<br/>",
-					 "<nobr><a href=\"accountmenu:%2:%3\"><img src=\"kopete-account-icon:%2:%3\"> %1 (<i>%4</i>)</a><br/>",
-                     a->accountLabel(), QString(QUrl::toPercentEncoding( a->protocol()->pluginId() )),
-                     QString(QUrl::toPercentEncoding( a->accountId() )), onlineStatus );
-    }
-    text += QLatin1String("</qt>");
-	d->ui.accounts->setText( text );
-
+	slotUpdateAccountStatus();
 	//TODO: online status
 	
 }
@@ -210,6 +201,33 @@ void IdentityStatusWidget::slotPhotoLinkActivated(const QString &link)
 		slotSave();
 		slotLoad();
 	}
+}
+
+
+void IdentityStatusWidget::slotUpdateAccountStatus()
+{
+  if (!d->identity)
+  {
+    // no identity or already destroyed, ignore
+    return;
+  }
+
+  // Always clear text before changing it: otherwise icon changes are not reflected
+  d->ui.accounts->clear();
+
+  QString text("<qt>");
+  foreach(Kopete::Account *a, d->identity->accounts())
+  {
+	  Kopete::Contact *self = a->myself();
+	  QString onlineStatus = self ? self->onlineStatus().description() : i18n("Offline");
+	  text += i18nc( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)<br/>",
+				    "<nobr><a href=\"accountmenu:%2:%3\"><img src=\"kopete-account-icon:%2:%3\"> %1 (<i>%4</i>)</a><br/>",
+		a->accountLabel(), QString(QUrl::toPercentEncoding( a->protocol()->pluginId() )),
+		QString(QUrl::toPercentEncoding( a->accountId() )), onlineStatus );
+  }
+  
+  text += QLatin1String("</qt>");
+  d->ui.accounts->setText( text );
 }
 
 #include "identitystatuswidget.moc"
