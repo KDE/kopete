@@ -66,7 +66,7 @@ void YahooVerifyAccount::setUrl( const KUrl &url )
 	mFile = new KTemporaryFile();
 	mFile->setPrefix(url.fileName());
 	mFile->open();
-	KIO::TransferJob *transfer = KIO::get( url, false, false );
+	KIO::TransferJob *transfer = KIO::get( url, KIO::NoReload, KIO::HideProgressInfo );
 	connect( transfer, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
 	connect( transfer, SIGNAL( data( KIO::Job*, const QByteArray& ) ), this, SLOT( slotData( KIO::Job*, const QByteArray& ) ) );
 }

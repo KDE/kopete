@@ -39,7 +39,7 @@ void MSNSecureLoginHandler::login()
 {
 	// Retrive the login server.
 	// Do a reload and don't show the progress.
-	KIO::Job *getLoginServer = KIO::get(KUrl("https://nexus.passport.com/rdr/pprdr.asp"), true, false);
+	KIO::Job *getLoginServer = KIO::get(KUrl("https://nexus.passport.com/rdr/pprdr.asp"), KIO::Reload, KIO::HideProgressInfo);
 
 	getLoginServer->addMetaData("cookies", "manual");
 	getLoginServer->addMetaData("cache", "reload");
@@ -68,7 +68,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KJob *job)
 
 		QString authURL = "https://" + loginUrl;
 
-		KIO::Job *authJob = KIO::get(KUrl(authURL), true, false);
+		KIO::Job *authJob = KIO::get(KUrl(authURL), KIO::Reload, KIO::HideProgressInfo);
 		authJob->addMetaData("cookies", "manual");
 
 		QString authRequest = "Authorization: Passport1.4 "

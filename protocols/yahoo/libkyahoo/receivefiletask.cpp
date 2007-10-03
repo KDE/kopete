@@ -56,7 +56,7 @@ void ReceiveFileTask::onGo()
 			setError();
 			return;
 		}
-		m_transferJob = KIO::get( m_remoteUrl, false, false );
+		m_transferJob = KIO::get( m_remoteUrl, KIO::NoReload, KIO::HideProgressInfo );
 		QObject::connect( m_transferJob, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
 		QObject::connect( m_transferJob, SIGNAL( data( KIO::Job*, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
 		delete t;
@@ -195,7 +195,7 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 
 
 		m_transferJob = KIO::get( QString::fromLatin1("http://%1/relay?token=%2&sender=%3&recver=%4")
-				.arg( QString(transfer->firstParam( 250 )) ).arg( QString(transfer->firstParam( 251 )) ).arg(m_userId).arg(client()->userId()), false, false );
+				.arg( QString(transfer->firstParam( 250 )) ).arg( QString(transfer->firstParam( 251 )) ).arg(m_userId).arg(client()->userId()), KIO::NoReload, KIO::HideProgressInfo );
 		QObject::connect( m_transferJob, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
 		QObject::connect( m_transferJob, SIGNAL( data( KIO::Job*, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
 		m_transferJob->addMetaData("cookies", "manual");

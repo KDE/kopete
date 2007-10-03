@@ -119,7 +119,7 @@ void BookmarksPlugin::addKopeteBookmark( KUrl url, QString sender )
 	if( !isURLInGroup( url, group ) ){
 		KIO::TransferJob *transfer;
 		// make asynchronous transfer to avoid GUI freezing due to overloaded web servers
-		transfer = KIO::get(url, false, false);
+		transfer = KIO::get(url, KIO::NoReload, KIO::HideProgressInfo);
 		connect ( transfer, SIGNAL ( data( KIO::Job *, const QByteArray & ) ),
 		this, SLOT ( slotAddKopeteBookmark( KIO::Job *, const QByteArray & ) ) );
 		m_map[transfer].url = url;

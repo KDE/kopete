@@ -271,8 +271,8 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 	kDebug(14308) << " URL: " << gurl;
 	KUrl geturl ( gurl );
 
-	KIO::TransferJob *job = KIO::get( geturl, false, true );
-	//job = KIO::http_post( translatorURL, postData, true );
+	KIO::TransferJob *job = KIO::get( geturl );
+	//job = KIO::http_post( translatorURL, postData );
 
 	//job->addMetaData( "content-type", "application/x-www-form-urlencoded" );
 	//job->addMetaData( "referrer", "http://www.google.com" );
@@ -312,7 +312,7 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg, const QStri
 
 	kDebug( 14308 ) << "URL: " << gurl;
 
-	KIO::TransferJob *job = KIO::get( geturl, false, true );
+	KIO::TransferJob *job = KIO::get( geturl );
 
 	QObject::connect( job, SIGNAL( data( KIO::Job *, const QByteArray & ) ), this, SLOT( slotDataReceived( KIO::Job *, const QByteArray & ) ) );
 	QObject::connect( job, SIGNAL( result( KJob * ) ), this, SLOT( slotJobDone( KJob * ) ) );
