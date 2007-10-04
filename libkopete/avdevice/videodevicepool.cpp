@@ -711,7 +711,10 @@ int VideoDevicePool::scanDevices()
 		}
 
 
-		return EXIT_FAILURE;
+		m_current_device = 0;
+		loadConfig();
+		kdDebug(14010) <<  k_funcinfo << "exited successfuly" << endl;
+		return EXIT_SUCCESS;
 
 	}
 	QFileInfoListIterator fileiterator ( *list );
