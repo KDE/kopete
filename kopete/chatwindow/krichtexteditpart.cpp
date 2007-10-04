@@ -45,7 +45,7 @@
 typedef KParts::GenericFactory<KRichTextEditPart> KRichTextEditPartFactory;
 K_EXPORT_COMPONENT_FACTORY( librichtexteditpart, KRichTextEditPartFactory )
 
-// FIXME: It is still needed with Qt4 ? Need to checkout.
+// Still needed for Qt4 to be able to use the return key as shortcut for sending
 class KopeteTextEdit : public KTextEdit
 {
 public:
@@ -55,11 +55,18 @@ public:
 
     bool event(QEvent *event)
     {
-        // don't allow QTextEdit to override accels
-        if ( event->type() == QEvent::AccelOverride )
-            return QWidget::event(event);
-        else
-            return KTextEdit::event(event);
+        if ( event->type() == QEvent::ShortcutOverride )
+        {
+            QKeyEvent *keyEvent = dynamic_cast<QKeyEvent*>(event);
+            if (keyEvent && ( keyEvent->key() ==  Qt::Key_Return || keyEvent->key() == Qt::Key_Enter ) )
+            {
+                    // Enter is the default shortcut for sending a message,
+                    // therefore it should not be handled by a textedit
+                    return QWidget::event(event);
+            }
+        }
+
+        return KTextEdit::event(event);
     }
 };
 
