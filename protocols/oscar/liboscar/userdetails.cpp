@@ -483,7 +483,7 @@ void UserDetails::detectClient()
 		m_clientName = QString::fromLatin1( "Miranda IM" );
 		m_clientName += ' ' + getMirandaVersion( m_dcLastExtInfoUpdateTime, 0, true );
 	}
-	else if ( m_dcLastInfoUpdateTime & 0xFF7F0000 == 0x7D000000 )
+	else if ( ( m_dcLastInfoUpdateTime & 0xFF7F0000 ) == 0x7D000000 )
 	{
         //licq
 	}
