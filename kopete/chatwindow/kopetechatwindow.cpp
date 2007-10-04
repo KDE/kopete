@@ -60,6 +60,7 @@
 #include <ksqueezedtextlabel.h>
 #include <kstandardshortcut.h>
 #include <kglobalsettings.h>
+#include <kcolorscheme.h>
 #include <khbox.h>
 #include <kvbox.h>
 #include <ktoolbar.h>
@@ -1221,23 +1222,24 @@ void KopeteChatWindow::updateChatState( ChatView* cv, int newState )
 
 	if ( m_tabBar )
 	{
+		KColorScheme scheme(QPalette::Active, KColorScheme::Window);
 		switch( newState )
 		{
 			case ChatView::Highlighted:
-			//	m_tabBar->setTabColor( cv, Qt::blue );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::LinkText).color());
 				break;
 			case ChatView::Message:
-			//	m_tabBar->setTabColor( cv, Qt::red );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::ActiveText).color());
 				break;
 			case ChatView::Changed:
-			//	m_tabBar->setTabColor( cv, Qt::darkRed );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::NeutralText).color());
 				break;
 			case ChatView::Typing:
-			//	m_tabBar->setTabColor( cv, Qt::darkGreen );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::PositiveText).color());
 				break;
 			case ChatView::Normal:
 			default:
-			//	m_tabBar->setTabColor( cv, KGlobalSettings::textColor() );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::NormalText).color() );
 				break;
 		}
 	}

@@ -56,6 +56,7 @@
 #include "kopetemessage.h"
 #include "kopetecontact.h"
 #include "kopeteuiglobal.h"
+#include "kopeteappearancesettings.h"
 #include "private/kopeteemoticons.h"
 //#include "kopeteaccountmanager.h"
 //#include "kopeteprotocol.h"
@@ -409,8 +410,11 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	else if( type== "text/x-mms-emoticon" || type== "text/x-mms-animemoticon")
 	{
 		// TODO remove Displatcher.
-		KConfigGroup config(KGlobal::config(), "MSN");
-		if ( config.readEntry( "useCustomEmoticons", true ) )
+		bool useEmoticons( Kopete::AppearanceSettings::self()->useEmoticons() );
+		KConfigGroup msnConfig(KGlobal::config(), "MSN");
+		bool useCustomEmoticons( msnConfig.readEntry( "useCustomEmoticons", true ) );
+
+		if ( useEmoticons && useCustomEmoticons )
 		{
 			QRegExp rx("([^\\s]*)[\\s]*(<msnobj [^>]*>)");
 			rx.setMinimal(true);

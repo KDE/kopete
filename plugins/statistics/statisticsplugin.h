@@ -97,6 +97,8 @@ class StatisticsContact;
 class StatisticsPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
+	Q_CLASSINFO("D-Bus Interface", "org.kde.kopete.Statistics")
+
 public:
 	/// Standard plugin constructors
 	StatisticsPlugin(QObject *parent, const QVariantList &args);
@@ -162,23 +164,23 @@ public slots:
 	 * DCOP functions 
 	 * See statisticsdbusiface.h for the documentation
 	 */
-	void dbusStatisticsDialog(QString id);
+	Q_SCRIPTABLE void dbusStatisticsDialog(QString id);
 	
-	bool dbusWasOnline(QString id, int timeStamp);
-	bool dbusWasOnline(QString id, QString dt);
+	Q_SCRIPTABLE bool dbusWasOnline(QString id, int timeStamp);
+	Q_SCRIPTABLE bool dbusWasOnline(QString id, QString dt);
 	
-	bool dbusWasAway(QString id, int timeStamp);
-	bool dbusWasAway(QString id, QString dt);
+	Q_SCRIPTABLE bool dbusWasAway(QString id, int timeStamp);
+	Q_SCRIPTABLE bool dbusWasAway(QString id, QString dt);
 	
-	bool dbusWasOffline(QString id, int timeStamp);
-	bool dbusWasOffline(QString id, QString dt);
+	Q_SCRIPTABLE bool dbusWasOffline(QString id, int timeStamp);
+	Q_SCRIPTABLE bool dbusWasOffline(QString id, QString dt);
 	
-	bool dbusWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status);
+	Q_SCRIPTABLE bool dbusWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status);
 	
-	QString dbusStatus(QString id, QString dateTime);
-	QString dbusStatus(QString id, int timeStamp);
+	Q_SCRIPTABLE QString dbusStatus(QString id, QString dateTime);
+	Q_SCRIPTABLE QString dbusStatus(QString id, int timeStamp);
 	
-	QString dbusMainStatus(QString id, int timeStamp);
+	Q_SCRIPTABLE QString dbusMainStatus(QString id, int timeStamp);
 
 private:	
 	StatisticsDB *m_db;

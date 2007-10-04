@@ -1,8 +1,6 @@
 
 include_directories ( ${KOPETE_INCLUDES} )
 
-#add_subdirectory( sqlite ) 
-
 ########### next target ###############
 
 set(kopete_statistics_PART_SRCS 
@@ -13,7 +11,8 @@ set(kopete_statistics_PART_SRCS
 
 kde4_add_ui_files(kopete_statistics_PART_SRCS statisticswidgetbase.ui )
 
-qt4_add_dbus_interfaces(kopete_statistics_PART_SRCS org.kde.kopete.statisticsiface.xml)
+qt4_add_dbus_adaptor(kopete_statistics_PART_SRCS org.kde.kopete.Statistics.xml
+                     statisticsplugin.h StatisticsPlugin)
 
 kde4_add_plugin(kopete_statistics ${kopete_statistics_PART_SRCS})
 
@@ -24,7 +23,7 @@ install(TARGETS kopete_statistics  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
-install( FILES org.kde.kopete.statisticsiface.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install( FILES org.kde.kopete.Statistics.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 install( FILES kopete_statistics.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES statisticsui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_statistics)
 install( FILES images/blue.png images/navy.png images/black.png images/gray.png  DESTINATION ${DATA_INSTALL_DIR}/kopete/pics/statistics)
