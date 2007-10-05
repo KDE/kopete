@@ -60,7 +60,6 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 	if(YahooAccount *acct = dynamic_cast<YahooAccount*>(account()))
 	{	mScreenName->setText(acct->accountId());
 		mScreenName->setReadOnly(true); //the accountId is Constant FIXME: remove soon!
-		mScreenName->setDisabled(true);
 		mAutoConnect->setChecked(acct->excludeConnect());
 		mPasswordWidget->load( &acct->password() );
 

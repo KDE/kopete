@@ -65,7 +65,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 		account_ = static_cast<GaduAccount*>(ident);
 
 		registerNew->setDisabled( true );
-		loginEdit_->setDisabled( true );
+		loginEdit_->setReadOnly( true );
 		loginEdit_->setText( account_->accountId() );
 
 		passwordWidget_->load( &account_->password() );

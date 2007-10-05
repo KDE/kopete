@@ -204,11 +204,11 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	updateBg = true;
 	m_tabBar = 0L;
 
-	initActions();
-
 	m_sideBar = new SidebarWidget(this);
 	m_sideBar->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
 	m_sideBar->setObjectName("SideBar"); //object name is required for automatic position and settings save.
+
+	initActions();
 
 	addDockWidget(Qt::RightDockWidgetArea, m_sideBar);
 
@@ -446,6 +446,10 @@ void KopeteChatWindow::initActions(void)
         coll->addAction( "enable_auto_spell_check", toggleAutoSpellCheck );
 	toggleAutoSpellCheck->setChecked( true );
 	connect( toggleAutoSpellCheck, SIGNAL(triggered(bool)), this, SLOT(toggleAutoSpellChecking()) );
+
+	QAction *toggleSideBarAction = m_sideBar->toggleViewAction( );
+	toggleSideBarAction->setText( i18n( "Show Sidebar" ) );
+	coll->addAction ( "show_sidebar_widget", toggleSideBarAction );
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll );
         coll->addAction( "format_smiley", actionSmileyMenu );

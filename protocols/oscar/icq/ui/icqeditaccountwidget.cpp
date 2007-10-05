@@ -75,7 +75,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->edtAccountId->setText(mAccount->accountId());
 
 		// TODO: Remove me after we can change Account IDs (Matt)
-		mAccountSettings->edtAccountId->setDisabled(true);
+		mAccountSettings->edtAccountId->setReadOnly(true);
 		mAccountSettings->mPasswordWidget->load(&mAccount->password());
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->excludeConnect());
 

@@ -84,7 +84,7 @@ void JabberEditAccountWidget::reopen ()
 {
 
 	// FIXME: this is temporary until Kopete supports accound ID changes!
-	mID->setDisabled(true);
+	mID->setReadOnly(true);
 
 	mID->setText (account()->accountId ());
 	mPass->load (&account()->password ());

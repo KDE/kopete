@@ -44,7 +44,6 @@ MeanwhileEditAccountWidget::MeanwhileEditAccountWidget(
     {
         mScreenName->setText(account()->accountId());
         mScreenName->setReadOnly(true); 
-        mScreenName->setDisabled(true);
         mPasswordWidget->load(&static_cast<MeanwhileAccount*>(account())->password());
         mAutoConnect->setChecked(account()->excludeConnect());
         MeanwhileAccount *myAccount = static_cast<MeanwhileAccount *>(account());

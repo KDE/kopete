@@ -45,7 +45,7 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 		mGui->mPasswordWidget->load( &mAccount->password() );
 		mGui->edtAccountId->setText( account->accountId() );
 		//Remove me after we can change Account IDs (Matt)
-		mGui->edtAccountId->setDisabled( true );
+		mGui->edtAccountId->setReadOnly( true );
 		mGui->mAutoLogon->setChecked( account->excludeConnect() );
 		QString serverEntry = account->configGroup()->readEntry( "Server", "login.oscar.aol.com" );
 		int portEntry = account->configGroup()->readEntry( "Port", 5190 );
