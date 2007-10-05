@@ -91,7 +91,7 @@ void YahooChatTask::getYahooChatCategories()
 	kDebug(YAHOO_RAW_DEBUG) ;
 	KIO::TransferJob *transfer;
 
-	transfer = KIO::get( KUrl("http://insider.msg.yahoo.com/ycontent/?chatcat=0"), false, false );
+	transfer = KIO::get( KUrl("http://insider.msg.yahoo.com/ycontent/?chatcat=0"), KIO::NoReload, KIO::HideProgressInfo );
 	transfer->addMetaData( "UserAgent", "Mozilla/4.0 (compatible; MSIE 5.5)");
 	transfer->addMetaData( "no-cache", "true" );
 	transfer->addMetaData( "cookies", "manual" );
@@ -107,7 +107,7 @@ void YahooChatTask::getYahooChatRooms( const Yahoo::ChatCategory &category )
 	kDebug(YAHOO_RAW_DEBUG) << "Category Id: " << category.id;
 	KIO::TransferJob *transfer;
 
-	transfer = KIO::get( KUrl(QString("http://insider.msg.yahoo.com/ycontent/?chatroom_%1=0").arg( category.id )), false, false );
+	transfer = KIO::get( KUrl(QString("http://insider.msg.yahoo.com/ycontent/?chatroom_%1=0").arg( category.id )), KIO::NoReload, KIO::HideProgressInfo );
 	transfer->addMetaData( "UserAgent", "Mozilla/4.0 (compatible; MSIE 5.5)");
 	transfer->addMetaData( "no-cache", "true" );
 	transfer->addMetaData( "cookies", "manual" );

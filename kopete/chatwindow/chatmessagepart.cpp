@@ -301,7 +301,7 @@ void ChatMessagePart::save()
 	QString fileName = tempFile->fileName();
 	delete tempFile;
 
-	KIO::CopyJob *moveJob = KIO::move( KUrl( fileName ), saveURL, false );
+	KIO::CopyJob *moveJob = KIO::move( KUrl( fileName ), saveURL, KIO::HideProgressInfo );
 
 	if ( !moveJob )
 	{

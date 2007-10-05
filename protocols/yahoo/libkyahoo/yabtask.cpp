@@ -97,7 +97,7 @@ void YABTask::getAllEntries( long lastMerge, long lastRemoteRevision )
 	QString url = QString::fromLatin1("http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&diffs=1&t=%1&tags=short&rt=%2&prog-ver=%3")
 		.arg( lastMerge ).arg( lastRemoteRevision ).arg( YMSG_PROGRAM_VERSION_STRING );
 
-	m_transferJob = KIO::get( url , false, false );
+	m_transferJob = KIO::get( url , KIO::NoReload, KIO::HideProgressInfo );
 	m_transferJob->addMetaData("cookies", "manual");
 	m_transferJob->addMetaData("setcookies", QString::fromLatin1("Cookie: Y=%1; T=%2; C=%3;")
 				.arg(client()->yCookie()).arg(client()->tCookie()).arg(client()->cCookie()) );

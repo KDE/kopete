@@ -452,7 +452,7 @@ void QQContact::setDisplayPicture(KTemporaryFile *f)
 	f->setAutoRemove(false);
 	delete f;
 
-	KIO::Job *j=KIO::file_move( KUrl( fileName ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	KIO::Job *j=KIO::file_move( KUrl( fileName ), KUrl( newlocation ), -1, KIO::Overwrite | KIO::HideProgressInfo );
 
 
 	//let the time to KIO to copy the file
