@@ -42,7 +42,9 @@ kde4_add_ui_files(kopetecontactlist_SRCS
     contactlist/kopetegvipropswidget.ui
     contactlist/kopetemetalvipropswidget.ui
     contactlist/kopeteaddrbookexportui.ui
-    contactlist/kabcexport_base.ui )
+    contactlist/kabcexport_page1.ui
+    contactlist/kabcexport_page2.ui
+ )
 
 # Configure plugins
 set(kopetepluginconfig_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/kopetepluginconfig.cpp)
