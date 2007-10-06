@@ -22,6 +22,7 @@
 #include "kopetemessage.h"
 //Added by qt3to4:
 #include <Q3ValueList>
+#include <QTime>
 
 class StatisticsDB;
 class QDateTime;

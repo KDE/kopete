@@ -19,6 +19,7 @@
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
+#include <QColor>
 
 #include "kopetechatsessionmanager.h"
 

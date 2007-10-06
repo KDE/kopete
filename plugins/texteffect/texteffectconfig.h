@@ -19,7 +19,7 @@
 #ifndef TEXTEFFECTCONFIG_H
 #define TEXTEFFECTCONFIG_H
 
-class QStringList;
+#include <QStringList>;
 
 class TextEffectConfig
 {

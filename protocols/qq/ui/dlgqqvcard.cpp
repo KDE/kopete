@@ -25,7 +25,7 @@
 
 #include <QPixmap>
 // KDE includes
-
+#include <kdebug.h>
 // Kopete includes
 #include "qqprotocol.h"
 #include "qqcontact.h"

@@ -33,6 +33,7 @@
 #include <kmimetype.h>
 #include <kio/netaccess.h>
 #include <ksharedconfig.h>
+#include <kconfiggroup.h>
 
 #include "kopetechatwindowstyle.h"
 
