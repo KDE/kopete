@@ -21,7 +21,7 @@
 
 #include <kglobal.h>
 #include <ksharedconfig.h>
-
+#include <KConfigGroup>
 #include "cryptographyconfig.h"
 
 CryptographyConfig* CryptographyConfig::mSelf = 0L;
