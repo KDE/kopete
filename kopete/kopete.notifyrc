@@ -31,6 +31,7 @@ Version=4
 
 [Context/group]
 Name=Group
+Name[ca]=Grup
 Name[el]=Ομάδα
 Name[ga]=Grúpa
 Name[ja]=グループ
@@ -40,6 +41,7 @@ Name[sv]=Grupp
 Name[x-test]=xxGroupxx
 Name[zh_TW]=群組
 Comment=The group where the contact resides
+Comment[ca]=El grup a on resideix el contacte
 Comment[el]=Η ομάδα στην οποία ανήκει η επαφή
 Comment[ja]=コンタクトが所属するグループ
 Comment[pt]=O grupo onde reside o contacto
@@ -51,6 +53,7 @@ Icon=folder
 
 [Context/contact]
 Name=Contact
+Name[ca]=Contacte
 Name[el]=Επαφή
 Name[ga]=Teagmháil
 Name[ja]=コンタクト
@@ -60,6 +63,7 @@ Name[sv]=Kontakt
 Name[x-test]=xxContactxx
 Name[zh_TW]=聯絡人
 Comment=The specified contact
+Comment[ca]=El contacte especificat
 Comment[el]=Η καθορισμένη επαφή
 Comment[ja]=指定されたコンタクト
 Comment[pt]=O contacto indicado
@@ -71,6 +75,7 @@ Icon=metacontact
 
 [Context/class]
 Name=Class
+Name[ca]=Classe
 Name[el]=Κλάση
 Name[ga]=Aicme
 Name[ja]=クラス
@@ -80,6 +85,7 @@ Name[sv]=Klass
 Name[x-test]=xxClassxx
 Name[zh_TW]=類別
 Comment=The message class
+Comment[ca]=La classe de missatge
 Comment[el]=Η κλάση του μηνύματος
 Comment[ja]=メッセージのクラス
 Comment[pt]=A classe da mensagem
@@ -92,6 +98,7 @@ Icon=highlight
 
 [Event/kopete_contact_incoming]
 Name=Incoming Message
+Name[ca]=Missatge entrant
 Name[el]=Εισερχόμενο μήνυμα
 Name[ga]=Teachtaireacht Isteach
 Name[ja]=受信メッセージ
@@ -143,6 +150,7 @@ Persistant=true
 
 [Event/kopete_outgoing]
 Name=Outgoing Message
+Name[ca]=Missatge sortint
 Name[el]=Εξερχόμενο μήνυμα
 Name[ga]=Teachtaireacht Amach
 Name[ja]=送信メッセージ
@@ -191,6 +199,7 @@ Action=None
 
 [Event/kopete_contact_online]
 Name=Contact Gone Online
+Name[ca]=Un contacte s'ha connectat
 Name[el]=Επαφή συνδέθηκε
 Name[ja]=コンタクトがオンライン
 Name[pt]=Notas do Contacto
@@ -469,6 +478,7 @@ Persistant=true
 
 [Event/kopete_contact_lowpriority]
 Name=Low Priority Messages
+Name[ca]=Missatges de baixa prioritat
 Name[el]=Μηνύματα χαμηλής προτεραιότητας
 Name[ja]=優先度の低いメッセージ
 Name[pt]=Mensagens de Baixa Prioridade
@@ -856,6 +866,7 @@ Name[x-test]=xxConnection Lostxx
 Name[zh_HK]=連線已中斷
 Name[zh_TW]=連線遺失
 Comment=The connection have been lost
+Comment[ca]=S'ha perdut la connexió
 Comment[el]=Η σύνδεση χάθηκε
 Comment[ga]=Cailleadh an nasc
 Comment[ja]=接続が失われました
@@ -1021,6 +1032,7 @@ Name[x-test]=xxServer Internal Errorxx
 Name[zh_HK]=伺服器內部錯誤
 Name[zh_TW]=伺服器內部錯誤
 Comment=An service internal error has occurred
+Comment[ca]=Hi ha hagut un error intern del servei
 Comment[el]=Παρουσιάστηκε εσωτερικό σφάλμα σε μία υπηρεσία
 Comment[ja]=サービスの内部エラーが発生しました
 Comment[pt]=Ocorreu um erro interno do serviço
@@ -1085,6 +1097,7 @@ Action=PassivePopup|Sound|Taskbar
 
 [Event/message_dropped]
 Name=Message Dropped
+Name[ca]=Missatge descartat
 Name[el]=Μήνυμα απορρίφθηκε
 Name[ja]=メッセージを除去
 Name[pt]=Mensagem Perdida
@@ -1093,6 +1106,7 @@ Name[sv]=Meddelande kastat
 Name[x-test]=xxMessage Droppedxx
 Name[zh_TW]=訊息已丟棄
 Comment=A message was filtered by the Privacy Plugin
+Comment[ca]=El connector de privadesa ha filtrat un missatge
 Comment[el]=Ένα μήνυμα φιλτραρίστηκε από το πρόσθετο Προσωπικού απορρήτου
 Comment[ja]=プライバシープラグインのフィルタによってメッセージを除去しました
 Comment[pt]=Foi filtrada uma mensagem pelo 'Plugin' de Privacidade
@@ -1104,6 +1118,7 @@ Action=PassivePopup
 
 [Event/icq_user_reads_status_message]
 Name=ICQ Reading status
+Name[ca]=Lectura de l'estat de l'ICQ
 Name[el]=Κατάσταση ανάγνωσης ICQ
 Name[ja]=ICQ の状態を読んでいます
 Name[pt]=Estado da leitura do ICQ
@@ -1112,6 +1127,7 @@ Name[sv]=ICQ läser status
 Name[x-test]=xxICQ Reading statusxx
 Name[zh_TW]=ICQ 讀取狀態
 Comment=An ICQ user is reading your status message
+Comment[ca]=Un usuari de l'ICQ està llegint el vostre missatge d'estat
 Comment[el]=Ένας χρήστης ICQ διαβάζει το μήνυμα κατάστασής σας
 Comment[ja]=ICQ ユーザがあなたの状態メッセージを読んでいます
 Comment[pt]=Um utilizador de ICQ está a ler a sua mensagem de estado

@@ -20,6 +20,7 @@ Name[ne]=टेलिप्याथी
 Name[x-test]=xxTelepathyxx
 Comment=Protocol to connect to Telepathy connections managers.
 Comment[bg]=Протокол за връзка с MSN Messenger
+Comment[ca]=Protocol per a connectar-se als gestors de connexions del Telepathy.
 Comment[de]=Protokoll zum Verbinden mit Telepathy
 Comment[el]=Πρωτόκολλο σύνδεσης σε διαχειριστές συνδέσεων Telepathy.
 Comment[es]=Protocolo para conectar con gestores de conexiones Telepathy

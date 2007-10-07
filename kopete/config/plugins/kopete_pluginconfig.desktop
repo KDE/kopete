@@ -11,6 +11,7 @@ X-KDE-ParentComponents=kopete
 
 Name=Plugins
 Name[bg]=Приставки
+Name[ca]=Connectors
 Name[de]=Module
 Name[el]=Πρόσθετα
 Name[es]=Complementos
@@ -30,6 +31,7 @@ Name[zh_CN]=插件
 Name[zh_TW]=外掛程式
 Comment=Configure Plugins
 Comment[bg]=Настройване на приставките
+Comment[ca]=Configura els connectors
 Comment[de]=Module einrichten
 Comment[el]=Ρύθμιση προσθέτων
 Comment[fa]=پیکربندی وصله‌ها
