@@ -21,7 +21,6 @@
 
 #include <qfile.h>
 #include <qicon.h>
-#include <qregexp.h>
 #include <config-kopete.h>
 
 #include <kconfig.h>
@@ -375,10 +374,8 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 					
 					//&nbsp; is not a valid XML entity
 					xhtmlBody.replace("&nbsp;" , "&#160;");
-
-					//Remove trailing line break
-					xhtmlBody.remove(QRegExp("<br/>$"));
-					xhtmlBody="<span "+ message.getHtmlStyleAttribute() +'>'+ xhtmlBody +"</span>";
+							
+					xhtmlBody="<p "+ message.getHtmlStyleAttribute() +'>'+ xhtmlBody +"</p>";
 					
 					QDomDocument doc;
 					doc.setContent(xhtmlBody, true);
