@@ -570,6 +570,10 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 		msg = i18n ( "You are not logged in.\n" );
 		break;
 */
+    case 402:
+    case 403:
+        msg = i18n ( "Error accessing contact list. Please try again later." );
+        break;
 	case 500:
 		msg = i18n ( "An internal server error occurred. Please try again later." );
 		break;

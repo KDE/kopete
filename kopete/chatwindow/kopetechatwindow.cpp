@@ -60,6 +60,7 @@
 #include <ksqueezedtextlabel.h>
 #include <kstandardshortcut.h>
 #include <kglobalsettings.h>
+#include <kcolorscheme.h>
 #include <khbox.h>
 #include <kvbox.h>
 #include <ktoolbar.h>
@@ -203,11 +204,11 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	updateBg = true;
 	m_tabBar = 0L;
 
-	initActions();
-
 	m_sideBar = new SidebarWidget(this);
 	m_sideBar->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
 	m_sideBar->setObjectName("SideBar"); //object name is required for automatic position and settings save.
+
+	initActions();
 
 	addDockWidget(Qt::RightDockWidgetArea, m_sideBar);
 
@@ -446,6 +447,10 @@ void KopeteChatWindow::initActions(void)
 	toggleAutoSpellCheck->setChecked( true );
 	connect( toggleAutoSpellCheck, SIGNAL(triggered(bool)), this, SLOT(toggleAutoSpellChecking()) );
 
+	QAction *toggleSideBarAction = m_sideBar->toggleViewAction( );
+	toggleSideBarAction->setText( i18n( "Show Sidebar" ) );
+	coll->addAction ( "show_sidebar_widget", toggleSideBarAction );
+
 	actionSmileyMenu = new KopeteEmoticonAction( coll );
         coll->addAction( "format_smiley", actionSmileyMenu );
 	actionSmileyMenu->setDelayed( false );
@@ -461,7 +466,7 @@ void KopeteChatWindow::initActions(void)
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QLatin1String( "kopete" ) ) );
 #if 0
-	animIcon = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), K3Icon::Toolbar);
+	animIcon = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Toolbar);
 
 	// Pause the animation because otherwise it's running even when we're not
 	// showing it. This eats resources, and also triggers a pixmap leak in
@@ -1221,23 +1226,24 @@ void KopeteChatWindow::updateChatState( ChatView* cv, int newState )
 
 	if ( m_tabBar )
 	{
+		KColorScheme scheme(QPalette::Active, KColorScheme::Window);
 		switch( newState )
 		{
 			case ChatView::Highlighted:
-			//	m_tabBar->setTabColor( cv, Qt::blue );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::LinkText).color());
 				break;
 			case ChatView::Message:
-			//	m_tabBar->setTabColor( cv, Qt::red );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::ActiveText).color());
 				break;
 			case ChatView::Changed:
-			//	m_tabBar->setTabColor( cv, Qt::darkRed );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::NeutralText).color());
 				break;
 			case ChatView::Typing:
-			//	m_tabBar->setTabColor( cv, Qt::darkGreen );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::PositiveText).color());
 				break;
 			case ChatView::Normal:
 			default:
-			//	m_tabBar->setTabColor( cv, KGlobalSettings::textColor() );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::NormalText).color() );
 				break;
 		}
 	}

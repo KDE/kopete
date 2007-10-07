@@ -64,6 +64,11 @@ GaduAway::GaduAway( GaduAccount* account, QWidget* parent )
 	connect( this, SIGNAL( applyClicked() ), SLOT( slotApply() ) );
 }
 
+GaduAway::~GaduAway()
+{
+	delete ui_;
+}
+
 int
 GaduAway::status() const
 {

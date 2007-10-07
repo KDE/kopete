@@ -88,7 +88,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		d->ui->m_password->load( &static_cast<MSNAccount *>(account)->password() );
 
 		//remove me after we can change account ids (Matt)
-		d->ui->m_login->setDisabled( true );
+		d->ui->m_login->setReadOnly( true );
 		d->ui->m_autologin->setChecked( account->excludeConnect()  );
 		if ( ( static_cast<MSNAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<MSNAccount*>(account)->serverPort() != 1863) ) {
 			d->ui->optionOverrideServer->setChecked( true );
@@ -155,6 +155,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 MSNEditAccountWidget::~MSNEditAccountWidget()
 {
+	delete d->ui;
 	delete d;
 }
 

@@ -21,6 +21,7 @@
 #include <ksharedconfig.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 
 #include "icqprotocol.h"
 #include "oscarpresencesdataclasses.h"

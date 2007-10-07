@@ -24,6 +24,7 @@
 #include <QTimeLine>
 #include <QCursor>
 #include <QUrl>
+#include <QPalette>
 #include <kopeteidentity.h>
 #include <kopeteaccount.h>
 #include <kopeteaccountmanager.h>
@@ -39,6 +40,8 @@ public:
 	Ui::IdentityStatusBase ui;
 	QTimeLine *timeline;
 	QString photoPath;
+	// Used to display changing nickname in red
+	QString lastNickName;
 };
 
 IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *parent)
@@ -60,10 +63,14 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 
 	// user input signals
 	connect( d->ui.nickName, SIGNAL(editingFinished()), this, SLOT(slotSave()) );
+	connect( d->ui.nickName, SIGNAL(textChanged(QString)), this, SLOT(slotNickNameTextChanged(QString)) );
 	connect( d->ui.photo, SIGNAL(linkActivated(const QString&)), 
 			 this, SLOT(slotPhotoLinkActivated(const QString &)));
 	connect( d->ui.accounts, SIGNAL(linkActivated(const QString&)),
 			 this, SLOT(slotAccountLinkActivated(const QString &)));
+	connect( Kopete::AccountManager::self(), 
+			SIGNAL(accountOnlineStatusChanged(Kopete::Account*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
+			this, SLOT(slotUpdateAccountStatus()));
 }
 
 IdentityStatusWidget::~IdentityStatusWidget()
@@ -139,26 +146,35 @@ void IdentityStatusWidget::slotLoad()
 
 	// nickname
 	if (d->identity->hasProperty(props->nickName().key()))
-		d->ui.nickName->setText( d->identity->property(props->nickName()).value().toString() );
+	{
+		// Set lastNickName to make red highlighting works when editing the identity nickname
+		d->lastNickName = d->identity->property(props->nickName()).value().toString();
+
+		d->ui.nickName->setText( d->lastNickName );
+	}
 
 	d->ui.identityName->setText(d->identity->identityId());
 
 	//acounts
-	QString text("<qt>");
-	foreach(Kopete::Account *a, d->identity->accounts())
-	{
-		Kopete::Contact *self = a->myself();
-		QString onlineStatus = self ? self->onlineStatus().description() : i18n("Offline");
-		text += i18nc( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)<br/>",
-					 "<nobr><a href=\"accountmenu:%2:%3\"><img src=\"kopete-account-icon:%2:%3\"> %1 (<i>%4</i>)</a><br/>",
-                     a->accountLabel(), QString(QUrl::toPercentEncoding( a->protocol()->pluginId() )),
-                     QString(QUrl::toPercentEncoding( a->accountId() )), onlineStatus );
-    }
-    text += QLatin1String("</qt>");
-	d->ui.accounts->setText( text );
-
+	slotUpdateAccountStatus();
 	//TODO: online status
 	
+}
+
+void IdentityStatusWidget::slotNickNameTextChanged(const QString &text)
+{
+	if ( d->lastNickName != text )
+	{
+		QPalette palette;
+		palette.setColor(d->ui.nickName->foregroundRole(), Qt::red);
+		d->ui.nickName->setPalette(palette);
+	}
+	else
+	{
+		// If the nickname is the same, reset the palette
+		d->ui.nickName->setPalette(QPalette());
+	}
+
 }
 
 void IdentityStatusWidget::slotSave()
@@ -180,6 +196,11 @@ void IdentityStatusWidget::slotSave()
 		d->identity->property(props->photo()).value().toString() != d->ui.nickName->text())
 	{
 		d->identity->setProperty(props->nickName(), d->ui.nickName->text());
+
+		// Set last nickname to the new identity nickname
+		// and reset the palette
+		d->lastNickName = d->ui.nickName->text();
+		d->ui.nickName->setPalette(QPalette());
 	}
 
 	//TODO check what more to do
@@ -210,6 +231,33 @@ void IdentityStatusWidget::slotPhotoLinkActivated(const QString &link)
 		slotSave();
 		slotLoad();
 	}
+}
+
+
+void IdentityStatusWidget::slotUpdateAccountStatus()
+{
+  if (!d->identity)
+  {
+    // no identity or already destroyed, ignore
+    return;
+  }
+
+  // Always clear text before changing it: otherwise icon changes are not reflected
+  d->ui.accounts->clear();
+
+  QString text("<qt>");
+  foreach(Kopete::Account *a, d->identity->accounts())
+  {
+	  Kopete::Contact *self = a->myself();
+	  QString onlineStatus = self ? self->onlineStatus().description() : i18n("Offline");
+	  text += i18nc( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)<br/>",
+				    "<nobr><a href=\"accountmenu:%2:%3\"><img src=\"kopete-account-icon:%2:%3\"> %1 (<i>%4</i>)</a><br/>",
+		a->accountLabel(), QString(QUrl::toPercentEncoding( a->protocol()->pluginId() )),
+		QString(QUrl::toPercentEncoding( a->accountId() )), onlineStatus );
+  }
+  
+  text += QLatin1String("</qt>");
+  d->ui.accounts->setText( text );
 }
 
 #include "identitystatuswidget.moc"

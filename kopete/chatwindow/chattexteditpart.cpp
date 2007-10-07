@@ -240,7 +240,7 @@ bool ChatTextEditPart::canSend()
 	if ( !m_session ) return false;
 
 	// can't send if there's nothing *to* send...
-	if ( text().isEmpty() )
+	if ( text(Qt::PlainText).isEmpty() )
 		return false;
 
 	Kopete::ContactPtrList members = m_session->members();

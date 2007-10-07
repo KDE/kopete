@@ -42,6 +42,7 @@
 #include "statisticscontact.h"
 #include "statisticsdialog.h"
 #include "statisticsplugin.h"
+#include "statisticsadaptor.h"
 #include "statisticsdb.h"
 
 K_PLUGIN_FACTORY(StatisticsPluginFactory, registerPlugin<StatisticsPlugin>();)
@@ -72,6 +73,10 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const QVariantList &/*args*
 	/* Initialization reads the database, so it could be a bit time-consuming
 	due to disk access. This should overcome the problem and makes it non-blocking. */
 	QTimer::singleShot(0, this, SLOT(slotInitialize()));
+	
+	new StatisticsAdaptor(this);
+	QDBusConnection dbus = QDBusConnection::sessionBus();
+	dbus.registerObject("/Statistics", this);
 }	
 
 void StatisticsPlugin::slotInitialize()

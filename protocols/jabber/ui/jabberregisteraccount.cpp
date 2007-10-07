@@ -77,7 +77,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	connect ( jabberClient, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
 	
 	jidRegExp.setPattern ( "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
-	hintPixmap = KIconLoader::global()->loadIcon ( "jabber_online", K3Icon::Small );
+	hintPixmap = KIconLoader::global()->loadIcon ( "jabber_online", KIconLoader::Small );
 
 	mSuccess = false;
 

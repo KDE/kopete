@@ -57,6 +57,12 @@ private slots:
 
 	void slotAccountLinkActivated(const QString &link);
 	void slotPhotoLinkActivated(const QString &link);
+	void slotUpdateAccountStatus();
+	/**
+	 * @brief Show nickname in red when modified
+	 * @param text text changed in nickname textbox
+	 */
+	void slotNickNameTextChanged(const QString &text);
 
 private:
 	class Private;

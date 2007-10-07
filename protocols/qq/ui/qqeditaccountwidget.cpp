@@ -86,7 +86,7 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 		d->ui->m_login->setText( account->accountId() );
 		d->ui->m_password->load( &static_cast<QQAccount *>(account)->password() );
 		//remove me after we can change account ids (Matt)
-		d->ui->m_login->setDisabled( true );
+		d->ui->m_login->setReadOnly( true );
 		d->ui->m_autologin->setChecked( account->excludeConnect()  );
 
 		QQContact *myself = static_cast<QQContact *>( account->myself() );
@@ -111,6 +111,7 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 
 QQEditAccountWidget::~QQEditAccountWidget()
 {
+	delete d->ui;
 	delete d;
 }
 

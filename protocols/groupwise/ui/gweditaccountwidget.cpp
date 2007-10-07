@@ -72,6 +72,7 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete:
 
 GroupWiseEditAccountWidget::~GroupWiseEditAccountWidget()
 {
+	delete m_preferencesDialog;
 }
 
 GroupWiseAccount *GroupWiseEditAccountWidget::account ()
@@ -86,7 +87,7 @@ void GroupWiseEditAccountWidget::reOpen()
 	
 	m_preferencesDialog->m_password->load( &account()->password () );
 	// Kopete at least <=0.90 doesn't support changing account IDs
-	m_preferencesDialog->m_userId->setDisabled( true );
+	m_preferencesDialog->m_userId->setReadOnly( true );
 	m_preferencesDialog->m_userId->setText( account()->accountId() );
 	m_preferencesDialog->m_password->load( &account()->password() );
 	m_preferencesDialog->m_server->setText( account()->configGroup()->readEntry( "Server") );

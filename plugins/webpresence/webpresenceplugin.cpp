@@ -197,7 +197,7 @@ void WebPresencePlugin::slotWriteFile()
 
 	// upload it to the specified URL
 	KUrl src( m_output->fileName() );
-	KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, true, false, false );
+	KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, KIO::Overwrite | KIO::HideProgressInfo );
 	connect( job, SIGNAL( result( KJob * ) ),
 			SLOT(  slotUploadJobResult( KJob * ) ) );
 }

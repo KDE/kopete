@@ -13,7 +13,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/identity
 ${CMAKE_CURRENT_BINARY_DIR}/identity
 ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/ 
 ${CMAKE_CURRENT_BINARY_DIR}/contactlist/ 
-${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/ 
+${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/
+${BLITZ_INCLUDES}
 )
 
 link_directories( 
@@ -44,7 +45,9 @@ kde4_add_ui_files(kopetecontactlist_SRCS
     contactlist/kopetegvipropswidget.ui
     contactlist/kopetemetalvipropswidget.ui
     contactlist/kopeteaddrbookexportui.ui
-    contactlist/kabcexport_base.ui )
+    contactlist/kabcexport_page1.ui
+    contactlist/kabcexport_page2.ui
+ )
 
 # Configure plugins
 set(kopetepluginconfig_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/kopetepluginconfig.cpp)
@@ -72,6 +75,7 @@ target_link_libraries(kopete_bin
 	${KDE4_KDE3SUPPORT_LIBS} 
 	${KDE4_KTEXTEDITOR_LIBS} 
 	${KDE4_KNOTIFYCONFIG_LIBS} 
+	${BLITZ_LIBRARIES}
 	kopete 
 	kopeteaddaccountwizard
 	kopeteidentity)

@@ -25,7 +25,7 @@
 
 #include <QPixmap>
 // KDE includes
-
+#include <kdebug.h>
 // Kopete includes
 #include "qqprotocol.h"
 #include "qqcontact.h"
@@ -79,6 +79,7 @@ dlgQQVCard::dlgQQVCard (QQAccount *account, QQContact *contact, QWidget * parent
 dlgQQVCard::~dlgQQVCard ()
 {
 	// no need to delete child widgets, Qt does it all for us
+	delete m_mainWidget;
 }
 
 /*

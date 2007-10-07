@@ -18,7 +18,7 @@
 #define KOPETEMESSAGEHANDLER_H
 
 #include <QtCore/QObject>
-#include <QtCore/QList>
+#include <QtCore/QLinkedList>
 
 #include "kopete_export.h"
 
@@ -123,7 +123,7 @@ public:
 	 */
 	virtual ~MessageHandlerFactory();
 	
-	typedef QList<MessageHandlerFactory*> FactoryList;
+	typedef QLinkedList<MessageHandlerFactory*> FactoryList;
 	/**
 	 * @return the list of registered message handler factories
 	 */

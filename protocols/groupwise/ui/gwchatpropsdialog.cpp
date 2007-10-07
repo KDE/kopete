@@ -88,6 +88,11 @@ GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( const GroupWise::Chatroom & 
 	
 }
 
+GroupWiseChatPropsDialog::~GroupWiseChatPropsDialog()
+{
+	delete m_widget;
+}
+
 void GroupWiseChatPropsDialog::initialise()
 {
 	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;

@@ -33,6 +33,7 @@
 #include <kmimetype.h>
 #include <kio/netaccess.h>
 #include <ksharedconfig.h>
+#include <kconfiggroup.h>
 
 #include "kopetechatwindowstyle.h"
 
@@ -97,7 +98,7 @@ void ChatWindowStyleManager::loadStyles()
 	connect(d->styleDirLister, SIGNAL(completed()), this, SLOT(slotDirectoryFinished()));
 
 	if( !d->styleDirs.isEmpty() )
-		d->styleDirLister->openUrl(d->styleDirs.pop(), true);
+		d->styleDirLister->openUrl(d->styleDirs.pop(), KDirLister::Keep);
 }
 
 QStringList ChatWindowStyleManager::getAvailableStyles() const
@@ -351,15 +352,15 @@ ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &styleNa
 
 void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
 {
-	foreach(KFileItem *item, dirList)
+	foreach(KFileItem item, dirList)
 	{
 		// Ignore data dir(from deprecated XSLT themes)
-		if( !item->url().fileName().contains(QString::fromUtf8("data")) )
+		if( !item.url().fileName().contains(QString::fromUtf8("data")) )
 		{
-			kDebug(14000) << "Listing: " << item->url().fileName();
+			kDebug(14000) << "Listing: " << item.url().fileName();
 			// If the style path is already in the pool, that's mean the style was updated on disk
 			// Reload the style
-			QString styleName = item->url().fileName();
+			QString styleName = item.url().fileName();
 			if( d->stylePool.contains(styleName) )
 			{
 				kDebug(14000) << "Updating style: " << styleName;
@@ -385,7 +386,7 @@ void ChatWindowStyleManager::slotDirectoryFinished()
 	if( !d->styleDirs.isEmpty() )
 	{
 		kDebug(14000) << "Starting another directory.";
-		d->styleDirLister->openUrl(d->styleDirs.pop(), true);
+		d->styleDirLister->openUrl(d->styleDirs.pop(), KDirLister::Keep);
 	}
 	else
 	{

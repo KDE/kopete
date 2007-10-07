@@ -147,7 +147,7 @@ void MetaContactSelectorWidgetLVI::buildVisualComponents()
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
 	d->spacerBox = new BoxComponent( hbox, BoxComponent::Horizontal );
 
-	d->contactIconSize = IconSize( K3Icon::Small );
+	d->contactIconSize = IconSize( KIconLoader::Small );
 	Component *imageBox = new BoxComponent( hbox, BoxComponent::Vertical );
 	new VSpacerComponent( imageBox );
 	// include borders in size
@@ -172,7 +172,7 @@ void MetaContactSelectorWidgetLVI::slotUpdateContactBox()
 	while (it.hasNext())
 	{
 		Kopete::Contact *c = it.next();
-		new ContactComponent(d->contactIconBox, c, IconSize( K3Icon::Small ));
+		new ContactComponent(d->contactIconBox, c, IconSize( KIconLoader::Small ));
 	}
 }
 
@@ -216,6 +216,8 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 MetaContactSelectorWidget::~MetaContactSelectorWidget()
 {
 	disconnect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
+	delete d->widget;
+	delete d;
 }
 
 

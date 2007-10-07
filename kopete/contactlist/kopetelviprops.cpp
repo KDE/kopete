@@ -83,8 +83,8 @@ KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent)
 	ui_mainWidget = new Ui::KopeteGVIPropsWidget;
 	ui_mainWidget->setupUi( mainWidget );
 
-	ui_mainWidget->icnbOpen->setIconSize(QSize(K3Icon::SizeSmall,K3Icon::SizeSmall));
-	ui_mainWidget->icnbClosed->setIconSize(QSize(K3Icon::SizeSmall,K3Icon::SizeSmall));
+	ui_mainWidget->icnbOpen->setIconSize(QSize(KIconLoader::SizeSmall,KIconLoader::SizeSmall));
+	ui_mainWidget->icnbClosed->setIconSize(QSize(KIconLoader::SizeSmall,KIconLoader::SizeSmall));
 	QPair<QString,QString> context=qMakePair( QString::fromLatin1("group") , QString::number(gvi->group()->groupId() ) );
 	mNotificationProps = new CustomNotificationProps( this, context );
 	ui_mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
@@ -172,10 +172,10 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	ui_mainWidget = new Ui::KopeteMetaLVIPropsWidget;
 	ui_mainWidget->setupUi( mainWidget );
 
-	ui_mainWidget->icnbOffline->setIconSize( QSize(K3Icon::SizeSmall,K3Icon::SizeSmall) );
-	ui_mainWidget->icnbOnline->setIconSize( QSize(K3Icon::SizeSmall,K3Icon::SizeSmall) );
-	ui_mainWidget->icnbAway->setIconSize( QSize(K3Icon::SizeSmall,K3Icon::SizeSmall) );
-	ui_mainWidget->icnbUnknown->setIconSize( QSize(K3Icon::SizeSmall,K3Icon::SizeSmall) );
+	ui_mainWidget->icnbOffline->setIconSize( QSize(KIconLoader::SizeSmall,KIconLoader::SizeSmall) );
+	ui_mainWidget->icnbOnline->setIconSize( QSize(KIconLoader::SizeSmall,KIconLoader::SizeSmall) );
+	ui_mainWidget->icnbAway->setIconSize( QSize(KIconLoader::SizeSmall,KIconLoader::SizeSmall) );
+	ui_mainWidget->icnbUnknown->setIconSize( QSize(KIconLoader::SizeSmall,KIconLoader::SizeSmall) );
 
 	QPair<QString,QString> context=qMakePair( QString::fromLatin1("contact"), lvi->metaContact()->metaContactId() );
 	mNotificationProps = new CustomNotificationProps( this, context  );

@@ -18,6 +18,8 @@
 #include <QTreeWidgetItem>
 #include <QHeaderView>
 
+#include <kdebug.h>
+
 #include "ui_yahoochatselectorwidgetbase.h"
 #include "yahoochatselectordialog.h"
 

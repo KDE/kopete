@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>706</width>
-    <height>823</height>
+    <width>718</width>
+    <height>522</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -37,26 +37,14 @@
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget10" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
        <string>&amp;Basic Setup</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>9</number>
-       </property>
        <item>
         <widget class="QGroupBox" name="groupBox" >
          <property name="title" >
@@ -212,7 +200,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0" colspan="3" >
+          <item row="0" column="0" colspan="2" >
            <widget class="QLabel" name="lblRegistration" >
             <property name="sizePolicy" >
              <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
@@ -231,6 +219,9 @@
             </property>
             <property name="alignment" >
              <set>Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -294,7 +285,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0" colspan="3" >
+          <item row="0" column="0" colspan="2" >
            <widget class="QLabel" name="tlChangePwSuccess" >
             <property name="enabled" >
              <bool>true</bool>
@@ -310,6 +301,9 @@
             </property>
             <property name="alignment" >
              <set>Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>

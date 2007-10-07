@@ -35,6 +35,7 @@ class GaduAway : public KDialog
 
 public:
 	explicit GaduAway( GaduAccount*, QWidget* parent = 0 );
+	~GaduAway();
 	int status() const;
 	QString awayText() const;
 

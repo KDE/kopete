@@ -95,7 +95,7 @@ public:
 	PluginManager instance;
 };
 
-K_GLOBAL_STATIC(PluginManagerPrivate, _kpmp);
+K_GLOBAL_STATIC(PluginManagerPrivate, _kpmp)
 
 PluginManager* PluginManager::self()
 {
