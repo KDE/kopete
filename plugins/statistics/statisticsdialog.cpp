@@ -76,6 +76,11 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	generatePageGeneral();
 }
 
+StatisticsDialog::~StatisticsDialog()
+{
+	delete dialogUi;
+}
+
 // We only generate pages when the user clicks on a link
 void StatisticsDialog::slotOpenURLRequest(const KUrl& url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
 {

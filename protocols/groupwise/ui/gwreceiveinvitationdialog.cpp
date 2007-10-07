@@ -65,6 +65,7 @@ ReceiveInvitationDialog::ReceiveInvitationDialog( GroupWiseAccount * account, co
 
 ReceiveInvitationDialog::~ReceiveInvitationDialog()
 {
+	delete m_wid;
 }
 
 void ReceiveInvitationDialog::slotYesClicked()

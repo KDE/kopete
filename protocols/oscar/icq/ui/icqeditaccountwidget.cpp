@@ -173,6 +173,8 @@ ICQEditAccountWidget::~ICQEditAccountWidget()
 	
 	if ( m_ignoreEngine )
 		delete m_ignoreEngine;
+	
+	delete mAccountSettings;
 }
 
 Kopete::Account *ICQEditAccountWidget::apply()

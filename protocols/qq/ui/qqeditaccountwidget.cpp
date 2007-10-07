@@ -111,6 +111,7 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 
 QQEditAccountWidget::~QQEditAccountWidget()
 {
+	delete d->ui;
 	delete d;
 }
 

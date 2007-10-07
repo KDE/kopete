@@ -53,7 +53,7 @@ class GroupWiseChatPropsDialog : public KDialog
 		GroupWiseChatPropsDialog( const GroupWise::Chatroom & room, bool readOnly,
 									   QWidget * parent, const char * name );
 		
-		~GroupWiseChatPropsDialog() {}
+		~GroupWiseChatPropsDialog();
 		
 		bool dirty() { return m_dirty; };
 		GroupWise::Chatroom room();

@@ -62,6 +62,7 @@ GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account
 
 GroupWiseChatSearchDialog::~GroupWiseChatSearchDialog()
 {
+	delete m_widget;
 }
 
 void GroupWiseChatSearchDialog::slotUpdateClicked()

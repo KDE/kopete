@@ -41,7 +41,7 @@ OscarListNonServerContacts::OscarListNonServerContacts(QWidget* parent)
 
 OscarListNonServerContacts::~OscarListNonServerContacts()
 {
-
+    delete m_contactsList;
 }
 
 void OscarListNonServerContacts::addContacts( const QStringList& contactList )

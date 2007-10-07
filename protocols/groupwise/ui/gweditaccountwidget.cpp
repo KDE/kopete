@@ -72,6 +72,7 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete:
 
 GroupWiseEditAccountWidget::~GroupWiseEditAccountWidget()
 {
+	delete m_preferencesDialog;
 }
 
 GroupWiseAccount *GroupWiseEditAccountWidget::account ()

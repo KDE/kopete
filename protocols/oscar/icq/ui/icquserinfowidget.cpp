@@ -187,9 +187,11 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 ICQUserInfoWidget::~ ICQUserInfoWidget()
 {
 	delete m_genInfoWidget;
+	delete m_homeInfoWidget;
 	delete m_workInfoWidget;
 	delete m_otherInfoWidget;
 	delete m_interestInfoWidget;
+	delete m_orgAffInfoWidget;
 	delete m_emailModel;
 }
 

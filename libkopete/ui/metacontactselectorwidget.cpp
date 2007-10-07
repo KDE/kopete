@@ -216,6 +216,8 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 MetaContactSelectorWidget::~MetaContactSelectorWidget()
 {
 	disconnect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
+	delete d->widget;
+	delete d;
 }
 
 

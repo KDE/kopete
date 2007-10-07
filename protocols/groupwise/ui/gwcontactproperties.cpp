@@ -73,6 +73,7 @@ GroupWiseContactProperties::GroupWiseContactProperties( GroupWise::ContactDetail
 
 GroupWiseContactProperties::~GroupWiseContactProperties()
 {
+	delete m_propsWidget;
 }
 
 void GroupWiseContactProperties::init()

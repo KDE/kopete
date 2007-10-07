@@ -103,6 +103,10 @@ OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int
     connect(this,SIGNAL(cancelClicked()),this,SLOT(slotCancel()));
 }
 
+OscarEncodingSelectionDialog::~OscarEncodingSelectionDialog()
+{
+    delete m_encodingUI;
+}
 
 int OscarEncodingSelectionDialog::selectedEncoding() const
 {

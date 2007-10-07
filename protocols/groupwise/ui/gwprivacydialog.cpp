@@ -100,6 +100,7 @@ GroupWisePrivacyDialog::GroupWisePrivacyDialog( GroupWiseAccount * account, QWid
 
 GroupWisePrivacyDialog::~GroupWisePrivacyDialog()
 {
+	delete m_privacy;
 }
 
 void GroupWisePrivacyDialog::populateWidgets()

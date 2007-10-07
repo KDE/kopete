@@ -103,6 +103,7 @@ dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberBaseContact *conta
 dlgJabberVCard::~dlgJabberVCard ()
 {
 	// no need to delete child widgets, Qt does it all for us
+	delete m_mainWidget;
 }
 
 /*

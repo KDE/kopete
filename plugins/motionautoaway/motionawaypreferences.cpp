@@ -50,6 +50,12 @@ MotionAwayPreferences::MotionAwayPreferences ( QWidget *parent, const QVariantLi
 	load();
 }
 
+MotionAwayPreferences::~MotionAwayPreferences()
+{
+	delete preferencesDialog;
+}
+
+
 void MotionAwayPreferences::load()
 {
 	MotionAwayConfig::self()->readConfig();

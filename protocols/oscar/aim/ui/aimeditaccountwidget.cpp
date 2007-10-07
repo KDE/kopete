@@ -133,6 +133,8 @@ AIMEditAccountWidget::~AIMEditAccountWidget()
 
 	if ( m_invisibleEngine )
 		delete m_invisibleEngine;
+
+	delete mGui;
 }
 
 Kopete::Account *AIMEditAccountWidget::apply()

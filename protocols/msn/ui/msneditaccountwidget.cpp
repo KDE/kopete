@@ -155,6 +155,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 MSNEditAccountWidget::~MSNEditAccountWidget()
 {
+	delete d->ui;
 	delete d;
 }
 
