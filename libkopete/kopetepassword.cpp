@@ -89,12 +89,9 @@ public:
 	 */
 	void begin()
 	{
-		kDebug( 14010 ) ;
-#ifdef __GNUC__
-#warning TODO
-#endif
-//		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
-		walletReceived( 0L );
+		kDebug( 14010 );
+
+		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
 	}
 
 	void walletReceived( KWallet::Wallet *wallet )
