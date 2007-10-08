@@ -1,3 +1,20 @@
 /** @mainpage libkopete API Reference
- *
- */
+
+@section purpose Purpose
+
+libkopete provides the basic classes that Kopete's GUI, protocols, and plugins use. 
+
+@section features Important classes
+
+- Message
+- ChatSession
+- ChatSessionManager
+- MetaContact
+- Contact
+- Account
+- AccountManager
+- Protocol
+- Plugin
+- Task
+
+*/
