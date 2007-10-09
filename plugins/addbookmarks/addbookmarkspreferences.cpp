@@ -20,6 +20,7 @@
 #include <qradiobutton.h>
 #include <QButtonGroup>
 #include <QStringListModel>
+#include <kopetemetacontact.h>
 
 
 typedef KGenericFactory<BookmarksPreferences> BookmarksPreferencesFactory;
@@ -94,7 +95,12 @@ void BookmarksPreferences::load()
 	if ( button )
 		button->setChecked( true );
 
-	QStringList contactsList = Kopete::ContactList::self()->contacts();
+	QStringList contactsList;
+	foreach(Kopete::MetaContact *contact, Kopete::ContactList::self()->metaContacts())
+	{
+		contactsList << contact->displayName();
+	}
+
 	contactsList.sort();
 	p_contactsListModel->setStringList( contactsList );
 
