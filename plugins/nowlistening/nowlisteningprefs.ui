@@ -33,7 +33,7 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3Frame" name="advertiseNewMediaToBuddiesHLine" >
+    <widget class="QFrame" name="advertiseNewMediaToBuddiesHLine" >
      <property name="frameShape" >
       <enum>QFrame::HLine</enum>
      </property>
@@ -324,13 +324,6 @@ in place of your status message.</string>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3Frame</class>
-   <extends></extends>
-   <header>Qt3Support/Q3Frame</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
   <customwidget>
    <class>K3ListBox</class>
    <extends></extends>

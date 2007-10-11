@@ -297,7 +297,7 @@
            <number>9</number>
           </property>
           <item>
-           <widget class="Q3TextEdit" name="answerEdit" />
+           <widget class="QTextEdit" name="answerEdit" />
           </item>
          </layout>
         </widget>
@@ -311,11 +311,6 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3TextEdit</class>
-   <extends>Q3Frame</extends>
-   <header>q3textedit.h</header>
-  </customwidget>
   <customwidget>
    <class>Q3TimeEdit</class>
    <extends>QWidget</extends>
