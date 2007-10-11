@@ -48,7 +48,7 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 : QWidget(parent)
 {
 	d = new Private();
-	d->identity = identity;
+	d->identity = 0;
 	
 	// animation for showing/hiding
 	d->timeline = new QTimeLine( 150, this );
@@ -59,6 +59,7 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 	d->ui.setupUi(this);
 	QWidget::setVisible( false );
 
+	setIdentity(identity);
 	slotLoad();
 
 	// user input signals
@@ -68,7 +69,7 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 			 this, SLOT(slotPhotoLinkActivated(const QString &)));
 	connect( d->ui.accounts, SIGNAL(linkActivated(const QString&)),
 			 this, SLOT(slotAccountLinkActivated(const QString &)));
-	connect( Kopete::AccountManager::self(), 
+	connect( Kopete::AccountManager::self(),
 			SIGNAL(accountOnlineStatusChanged(Kopete::Account*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
 			this, SLOT(slotUpdateAccountStatus()));
 }
@@ -82,10 +83,18 @@ IdentityStatusWidget::~IdentityStatusWidget()
 void IdentityStatusWidget::setIdentity(Kopete::Identity *identity)
 {
 	if (d->identity)
+	{
+		disconnect( d->identity, SIGNAL(identityChanged(Kopete::Identity*)), this, SLOT(slotUpdateAccountStatus()));
 		slotSave();
+	}
 
 	d->identity = identity;
 	slotLoad();
+
+	if (d->identity)
+	{
+		connect( d->identity, SIGNAL(identityChanged(Kopete::Identity*)), this, SLOT(slotUpdateAccountStatus()));
+	}
 }
 
 Kopete::Identity *IdentityStatusWidget::identity() const
@@ -258,6 +267,9 @@ void IdentityStatusWidget::slotUpdateAccountStatus()
   
   text += QLatin1String("</qt>");
   d->ui.accounts->setText( text );
+
+  // Adding/removing accounts changes needed size
+  setFixedHeight( sizeHint().height() );
 }
 
 #include "identitystatuswidget.moc"
