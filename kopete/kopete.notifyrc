@@ -148,7 +148,7 @@ Comment[zh_CN]=收到了一条消息
 Comment[zh_HK]=收到新訊息
 Comment[zh_TW]=接收到的訊息
 Contexts=contact,group,class
-default_sound=Kopete_Received.ogg
+Sound=Kopete_Received.ogg
 Action=Sound|PassivePopup|Taskbar
 Persistant=true
 
@@ -201,7 +201,7 @@ Comment[zh_CN]=送出了一条消息
 Comment[zh_HK]=訊息已發出
 Comment[zh_TW]=送出去的訊息
 Contexts=contact,group,class
-default_sound=Kopete_Sent.ogg
+Sound=Kopete_Sent.ogg
 Action=None
 
 [Event/kopete_contact_online]
@@ -248,7 +248,7 @@ Comment[x-test]=xxA contact has come onlinexx
 Comment[zh_CN]=联系人上线
 Comment[zh_HK]=有個聯絡人已上線
 Comment[zh_TW]=聯絡人已上線
-default_sound=Kopete_User_is_Online.ogg
+Sound=Kopete_User_is_Online.ogg
 Action=PassivePopup
 
 [Event/kopete_contact_offline]
@@ -320,7 +320,7 @@ Comment[x-test]=xxA contact has gone offlinexx
 Comment[zh_CN]=联系人离线
 Comment[zh_HK]=有個聯絡人已離線
 Comment[zh_TW]=聯絡人已離線
-default_sound=Kopete_Event.ogg
+Sound=Kopete_Event.ogg
 Action=None
 
 [Event/kopete_contact_status_change]
@@ -394,7 +394,7 @@ Comment[x-test]=xxA contact's online status has changedxx
 Comment[zh_CN]=联系人更改了他的在线状态
 Comment[zh_HK]=有個聯絡人的上線狀態改變了
 Comment[zh_TW]=聯絡人的狀態已變更
-default_sound=Kopete_Event.ogg
+Sound=Kopete_Event.ogg
 Action=None
 
 [Event/kopete_contact_highlight]
@@ -1128,7 +1128,7 @@ Comment[x-test]=xxA contact has sent you a buzz/nudge.xx
 Comment[zh_CN]=联系人向您发送了闪屏振动。
 Comment[zh_HK]=有聯絡人傳了響聲或提示給您。
 Comment[zh_TW]=聯絡人送出來電震動或呼叫
-default_sound=Kopete_Received.ogg
+Sound=Kopete_Received.ogg
 Action=PassivePopup|Sound|Taskbar
 
 [Event/message_dropped]
