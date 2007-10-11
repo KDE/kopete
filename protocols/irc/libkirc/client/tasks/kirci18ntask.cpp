@@ -402,7 +402,7 @@ void I18nTask::numericReply_251(Event *e)
  */
 void I18nTask::numericReply_252(Event *e)
 {
-	postServerEvent(e, i18np("There is 1 operator online.", "There are %s operators online.", e->message().arg(1).toULong()));
+	postServerEvent(e, i18np("There is 1 operator online.", "There are %1 operators online.", e->message().arg(1).toULong()));
 }
 
 /* 253: "<integer> :unknown connection(s)"

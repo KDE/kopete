@@ -429,7 +429,7 @@ void ClientTask::numericReply_252(Message msg)
 {
 	CHECK_ARGS(2, 2);
 
-	postInfoEvent(msg, i18np("There is 1 operator online.", "There are %s operators online.", msg.arg(1).toULong()));
+	postInfoEvent(msg, i18np("There is 1 operator online.", "There are %1 operators online.", msg.arg(1).toULong()));
 }
 
 /* 253: "<integer> :unknown connection(s)"
