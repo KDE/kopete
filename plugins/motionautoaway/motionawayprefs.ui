@@ -37,6 +37,9 @@
      <property name="text" >
       <string>&lt;p>Motion Auto-Away can set you to be away automatically when it does not detect motion from your webcam or any video4linux device.&lt;/p> &lt;p>It will put you online again when it detects you moving in front of the camera.&lt;/p></string>
      </property>
+     <property name="wordWrap" >
+       <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
