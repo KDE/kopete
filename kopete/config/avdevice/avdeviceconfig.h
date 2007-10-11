@@ -69,7 +69,7 @@ private slots:
 	void slotDeviceWorkaroundBrokenDriverChanged(bool);
 	void slotUpdateImage();
 private:
-	QTabWidget* mAVDeviceTabCtl;
+//	QTabWidget* mAVDeviceTabCtl;
 	Ui_AVDeviceConfig_VideoDevice  *mPrfsVideoDevice;
 //	AVDeviceConfig_AudioDevice  *mPrfsAudioDevice;
 	Kopete::AV::VideoDevicePool *mVideoDevicePool ;

@@ -49,16 +49,16 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
  : KCModule( KopeteAVDeviceConfigFactory::componentData(), parent, args )
 {
 	kDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::componentData() called. ";
-	QVBoxLayout *layout = new QVBoxLayout(this);
+// 	QVBoxLayout *layout = new QVBoxLayout(this);
 
-	mAVDeviceTabCtl = new QTabWidget(this);
-	layout->addWidget( mAVDeviceTabCtl );
+// 	mAVDeviceTabCtl = new QTabWidget(this);
+// 	layout->addWidget( mAVDeviceTabCtl );
 
 // "Video" TAB ============================================================
-	QWidget *w = new QWidget(this);
+// 	QWidget *w = new QWidget(this);
 	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice();
-	mPrfsVideoDevice->setupUi(w);
-	mAVDeviceTabCtl->addTab(w, i18n("Video"));
+	mPrfsVideoDevice->setupUi(this);
+// 	mAVDeviceTabCtl->addTab(w, i18n("Video"));
 //	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
 	connect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mInputKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
