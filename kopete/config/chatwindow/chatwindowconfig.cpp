@@ -69,6 +69,7 @@
 #include <kopeteprotocol.h>
 #include <kopetemetacontact.h>
 #include <kopeteaccount.h>
+#include <kopeteidentity.h>
 #include <kopetecontact.h>
 #include <kopetemessage.h>
 #include <kopetechatsession.h>
@@ -83,6 +84,64 @@
 
 typedef KGenericFactory<ChatWindowConfig, QWidget> KopeteChatWindowConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_chatwindowconfig, KopeteChatWindowConfigFactory( "kcm_kopete_chatwindowconfig" ) )
+
+
+// Reimplement Kopete::Contact and its abstract method
+// This is for style preview.
+class FakeContact : public Kopete::Contact
+{
+public:
+	FakeContact (Kopete::Account *account, const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( account, id, mc ) {}
+	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags /*c*/) { return 0L; }
+	virtual void slotUserInfo() {}
+};
+
+// This is for style preview.
+class FakeProtocol : public Kopete::Protocol
+{
+public:
+FakeProtocol( const KComponentData &instance, QObject *parent ) : Kopete::Protocol(instance, parent){}
+Kopete::Account* createNewAccount( const QString &/*accountId*/ ){return 0L;}
+AddContactPage* createAddContactWidget( QWidget */*parent*/, Kopete::Account */*account*/){return 0L;}
+KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, QWidget */*parent */){return 0L;}
+};
+
+// This is for style preview.
+class FakeIdentity : public Kopete::Identity
+{
+	public:
+		FakeIdentity() : Kopete::Identity("Preview Identity") {};
+};
+
+// This is for style preview.
+class FakeAccount : public Kopete::Account
+{
+public:
+	FakeAccount(Kopete::Protocol *parent, const QString &accountID) : Kopete::Account(parent, accountID)
+	{
+		m_identity = new FakeIdentity();
+		setIdentity(m_identity);
+	}
+
+	void setMyself(Kopete::Contact *myself)
+	{
+		Kopete::Account::setMyself(myself);
+	}
+
+	~FakeAccount()
+	{
+		delete m_identity;
+	}
+
+bool createContact( const QString &/*contactId*/, Kopete::MetaContact */*parentContact*/ ){return true;}
+void connect( const Kopete::OnlineStatus& /*initialStatus*/){}
+void disconnect(){}
+void setOnlineStatus( const Kopete::OnlineStatus& /*status*/ , const Kopete::StatusMessage &/*reason*/){}
+void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/){}
+
+private:
+	FakeIdentity *m_identity;
+};
 
 
 #ifdef __GNUC__
@@ -142,10 +201,11 @@ public:
 #endif
 
 ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
-	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args )
-		, m_currentStyle (0L), m_loading(false), m_styleChanged(false)
+	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args ),
+		m_currentStyle (0L), m_loading(false), m_styleChanged(false),
+		m_previewProtocol(0L), m_previewAccount(0L), m_myselfMetaContact(0L),
+		m_jackMetaContact(0L), m_myself(0L), m_jack(0L)
 {
-
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
 	QTabWidget *chatWindowTabCtl = new QTabWidget(this);
@@ -203,6 +263,18 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 
 ChatWindowConfig::~ChatWindowConfig()
 {
+	if (m_previewChatSession)
+	{
+		Kopete::ChatSessionManager::self()->removeSession(m_previewChatSession);
+	}
+
+	// Deleting the account will delete jack and myself
+	delete m_previewAccount;
+
+	delete m_myselfMetaContact;
+	delete m_jackMetaContact;
+
+ 	delete m_previewProtocol;
 }
 
 
@@ -413,40 +485,6 @@ void ChatWindowConfig::slotGetChatStyles()
 #endif
 }
 
-// Reimplement Kopete::Contact and its abstract method
-// This is for style preview.
-class FakeContact : public Kopete::Contact
-{
-public:
-	FakeContact (Kopete::Account *account, const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( account, id, mc ) {}
-	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags /*c*/) { return 0L; }
-	virtual void slotUserInfo() {}
-};
-
-// This is for style preview.
-class FakeProtocol : public Kopete::Protocol
-{
-public:
-FakeProtocol( const KComponentData &instance, QObject *parent ) : Kopete::Protocol(instance, parent){}
-Kopete::Account* createNewAccount( const QString &/*accountId*/ ){return 0L;}
-AddContactPage* createAddContactWidget( QWidget */*parent*/, Kopete::Account */*account*/){return 0L;}
-KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, QWidget */*parent */){return 0L;}
-};
-
-// This is for style preview.
-class FakeAccount : public Kopete::Account
-{
-public:
-FakeAccount(Kopete::Protocol *parent, const QString &accountID) : Kopete::Account(parent, accountID){}
-~FakeAccount()
-{}
-bool createContact( const QString &/*contactId*/, Kopete::MetaContact */*parentContact*/ ){return true;}
-void connect( const Kopete::OnlineStatus& /*initialStatus*/){}
-void disconnect(){}
-void setOnlineStatus( const Kopete::OnlineStatus& /*status*/ , const Kopete::StatusMessage &/*reason*/){}
-void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/){}
-};
-
 void ChatWindowConfig::createPreviewChatSession()
 {
 	m_previewProtocol = new FakeProtocol( KComponentData(QByteArray("kopete-preview-chatwindowstyle")), 0 ); m_previewProtocol->setObjectName( QLatin1String("kopete-preview-chatwindowstyle") );
@@ -454,20 +492,27 @@ void ChatWindowConfig::createPreviewChatSession()
 
 	// Create fake meta/contacts
 	m_myselfMetaContact = new Kopete::MetaContact();
-	m_myself = new FakeContact(m_previewAccount, i18nc("This is the myself preview contact id", "myself@preview"), m_myselfMetaContact);
-	m_myself->setNickName(i18nc("This is the myself preview contact nickname", "Myself"));
-	m_jackMetaContact = new Kopete::MetaContact();
-	m_jack = new FakeContact(m_previewAccount, i18nc("This is the other preview contact id", "jack@preview"), m_jackMetaContact);
-	m_jack->setNickName(i18nc("This is the other preview contact nickname", "Jack"));
+	m_myselfMetaContact->setTemporary();
 	m_myselfMetaContact->setDisplayName(i18n("Myself"));
 	m_myselfMetaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
+
+	m_myself = new FakeContact(m_previewAccount, i18nc("This is the myself preview contact id", "myself@preview"), m_myselfMetaContact);
+	m_myself->setNickName(i18nc("This is the myself preview contact nickname", "Myself"));
+
+	m_jackMetaContact = new Kopete::MetaContact();
+	m_jackMetaContact->setTemporary();
 	m_jackMetaContact->setDisplayName(i18n("Jack"));
 	m_jackMetaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
+
+	m_jack = new FakeContact(m_previewAccount, i18nc("This is the other preview contact id", "jack@preview"), m_jackMetaContact);
+	m_jack->setNickName(i18nc("This is the other preview contact nickname", "Jack"));
+
+	m_previewAccount->setMyself(m_myself);
 
 	Kopete::ContactPtrList contactList;
 	contactList.append(m_jack);
 	// Create fakeChatSession
-	m_previewChatSession = Kopete::ChatSessionManager::self()->create(m_myself, contactList, 0);
+	m_previewChatSession = Kopete::ChatSessionManager::self()->create(m_myself, contactList, m_previewProtocol);
 	m_previewChatSession->setDisplayName("Preview Session");
 }
 
@@ -548,4 +593,3 @@ void ChatWindowConfig::emitChanged()
 }
 
 #include "chatwindowconfig.moc"
-
