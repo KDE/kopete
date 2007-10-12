@@ -78,8 +78,6 @@
 
 #include "kopeteglobal.h"
 
-#include <qtabwidget.h>
-
 #include "kopetechatwindowsettings.h"
 
 typedef KGenericFactory<ChatWindowConfig, QWidget> KopeteChatWindowConfigFactory;
@@ -206,18 +204,14 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 		m_previewProtocol(0L), m_previewAccount(0L), m_myselfMetaContact(0L),
 		m_jackMetaContact(0L), m_myself(0L), m_jack(0L)
 {
-	QVBoxLayout *layout = new QVBoxLayout(this);
-
-	QTabWidget *chatWindowTabCtl = new QTabWidget(this);
-	layout->addWidget( chatWindowTabCtl );
-	setLayout(layout);
-
 	KConfigGroup config(KGlobal::config(), "ChatWindowSettings");
 
-
-	// "Style" TAB ========================================================
-	QWidget *styleWidget=new QWidget(chatWindowTabCtl);
+	QWidget *styleWidget=new QWidget(this);
 	m_styleUi.setupUi(styleWidget);
+
+	QVBoxLayout *layout = new QVBoxLayout(this);
+	layout->addWidget(styleWidget);
+	setLayout(layout);
 
 	addConfig( KopeteChatWindowSettings::self(), styleWidget );
 
@@ -254,9 +248,6 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	m_styleUi.htmlFrame->setLayout(layout);
 	// Add the preview message to the ChatMessagePart
 	createPreviewMessages();
-
-	chatWindowTabCtl->addTab( styleWidget, i18n("Style") );
-
 
 	load();
 }
