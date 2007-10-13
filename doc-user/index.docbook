@@ -87,7 +87,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 <releaseinfo>0.12</releaseinfo>
 
 <copyright>
-<year>2003, 2004, 2005, 2006</year>
+<year>2003, 2004, 2005, 2006, 2007</year>
 </copyright>
 
 <!-- Abstract about this handbook -->
@@ -146,7 +146,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 <title>What is &kopete;?</title>
 <para>&kopete; is the &kde; instant messaging (&im;) client.  It allows you to communicate with your friends and colleagues using various instant messaging services.  A single program is easy to learn and convenient if your friends or colleagues use more than one &im; service.  </para>
 <para>&kopete; is designed to integrate well with your &kde; desktop; to make it immediately familiar.  The user interface is clean and simple, without any frills to distract the user.  At the same time, &kopete; aims to make communication the focus of &im;, by removing the differences between different &im; systems.  One feature &kopete; introduced to support this is the <link linkend="organise-contacts-metacontacts">Metacontact</link>, combining the various means there are to contact someone into a single <quote>person</quote> in your contact list.  Other multiprotocol instant messengers list the same person's various &im; accounts separately, making it confusing for non experienced people. &kopete; makes life easy: a metacontact is a person, and contacts are ways to communicate with that person. You will recognize contacts in a metacontact easily as small icons representing the &im; services you could use to communicate with that person.</para>
-<para>&kopete; is intended for all levels of users.  Out of the box, it supports a minimal set of functions to make chatting as easy as possible.  More advanced users can add extra functions such as Cryptography with &kopete;'s <link linkend="plugins">plugin system</link>.</para>
+<para>&kopete; is intended for all levels of users.  Out of the box, it supports a minimal set of functions to make chatting as easy as possible.  More advanced users can add extra functions such as Statistics with &kopete;'s <link linkend="plugins">plugin system</link>.</para>
 </sect2>
 <sect2 id="intro-to-kopete-web">
 <title>More &kopete; Information on the Web</title>
@@ -760,18 +760,6 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <sect2 id="plugins-contact-notes">
 <title>Contact Notes</title>
 <para><guilabel>Contact Notes</guilabel> allows you to note down any useful bits of information on a metacontact.</para>
-</sect2>
-<sect2 id="plugins-cryptography">
-<title>Cryptography</title>
-<para><guilabel>Cryptography</guilabel> lets you use <application>GnuPG</application> to encrypt and sign conversations.  Note that this is not the same as an SSL secured chat session.  SSL protects the message from alteration and snooping of the message contents while it is in transit, but it doesn't guarantee the person reading the message is the intended recipient.  Cryptography can encrypt your messages to a single individual - only the holder of the matching key can read it.  To guarantee that the message the recipient reads is the message that you sent, also sign the message.  Signing and encryption can be used separately or together. When you recieve a message, if it has been encrypted, you will see a lock icon. If it has been signed with a verifiable signature (you have the public key of the sender), you will see a pen icon.  For a non-verifiable signature, a red pen icon will be shown.</para>
-<para>To configure Cryptography, select your <application>GnuPG</application> key in the plugin configuration page.   Then, using <menuchoice><guimenuitem>Select Public Key...</guimenuitem></menuchoice> from each meta-contact's context menu, choose their public key.  You will be prompted for your passphrase when using this plugin.</para>
-<para>Due to limitations in some of the instant messaging protocols that &kopete; uses, encrypted messages cannot be sent with those protocols.  If you attempt to use an unsupported protocol, you will be warned.</para>
-<para>Cryptography can use the public keys stored in your &kde; address book for each contact.  However, it must be
-able to know which address book entry is associated with which meta-contact.  To provide this information, choose
-Properties from the meta-contact context menu, and then set the "Address Book Link."  Cryptography can also export
-public keys that you use to your address book.  If a meta-contact has an address book link, then the key will go in
-the correct address book entry, replacing an existing one.  If no link exists (possibly because no address book entry
-exists for the individual in question), a new entry will be created. This entry will have two fields filled: the public key from &kopete; and the meta-contact's display name.</para>
 </sect2>
 <sect2 id="plugins-highlight">
 <title>Highlight</title>
