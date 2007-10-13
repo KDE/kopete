@@ -18,34 +18,47 @@
 #ifndef KOPETE_UI_CONTACTLISTMODEL_H
 #define KOPETE_UI_CONTACTLISTMODEL_H
 
-#include <QStandardItemModel>
+#include <QAbstractItemModel>
 
 namespace Kopete {
 
 class Group;
 class Contactlist;
 class MetaContact;
-
+	
 namespace UI {
 
 /**
-@author Matt Rogers <mattr@kde.org>
+@author Aleix Pol <aleixpol@gmail.com>
 */
-class ContactListModel : public QStandardItemModel
+class ContactListModel : public QAbstractItemModel
 {
 Q_OBJECT
-public:
-	ContactListModel(QObject* parent = 0);
-	~ContactListModel();
-
-	virtual Qt::ItemFlags flags( const QModelIndex& index ) const;
+	public:
+		ContactListModel(QObject* parent = 0);
+		~ContactListModel();
+		
+		virtual int columnCount ( const QModelIndex & parent = QModelIndex() ) const { return 1; }
+		virtual QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
+		virtual QModelIndex index ( int row, int column, const QModelIndex & parent = QModelIndex() ) const;
+		
+		virtual QModelIndex parent ( const QModelIndex & index ) const;
+		virtual int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
+		virtual bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const;
+		
+		virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+	public Q_SLOTS:
+		void addMetaContact( Kopete::MetaContact* );
+		void removeMetaContact( Kopete::MetaContact* );
+		
+		void addGroup( Kopete::Group* );
+		void removeGroup( Kopete::Group* );
 	
-public Q_SLOTS:
-	void addMetaContact( Kopete::MetaContact* );
-	void removeMetaContact( Kopete::MetaContact* );
-
-	void addGroup( Kopete::Group* );
-	void removeGroup( Kopete::Group* );
+	private:
+		int childCount(const QModelIndex& parent) const;
+		
+		QList<Kopete::Group*> m_groups;
+		QMap<Kopete::Group*, QList<Kopete::MetaContact*> > m_contacts;
 };
 
 }

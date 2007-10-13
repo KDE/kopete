@@ -290,9 +290,9 @@ void KopeteWindow::initView()
 	d->contactlist = new KopeteContactListView( this );
 	setCentralWidget( d->contactlist );
 	d->model = new Kopete::UI::ContactListModel( this );
-	d->proxyModel = new Kopete::UI::ContactListProxyModel( this );
-	d->proxyModel->setSourceModel(d->model);
-	d->contactlist->setModel( d->proxyModel );
+// 	d->proxyModel = new Kopete::UI::ContactListProxyModel( this );
+// 	d->proxyModel->setSourceModel(d->model);
+	d->contactlist->setModel( d->model );
 }
 
 void KopeteWindow::initActions()
