@@ -7,7 +7,6 @@
 <!ENTITY package "extragear">
 <!ENTITY kappname "&kopete;">
 <!ENTITY im "<acronym>IM</acronym>">
-<!ENTITY kopete SYSTEM "help:/kopete/index.html">
 <!ENTITY Olivier.Goffart "<personname><firstname>Olivier</firstname><surname>Goffart</surname></personname>">
 <!ENTITY Olivier.Goffart.mail "<email>ogoffart@kde.org</email>">
 <!ENTITY Charles.Connell "<personname><firstname>Charles</firstname><surname>Connell</surname></personname>">
@@ -27,11 +26,13 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS --> 
 </authorgroup>
 
+<legalnotice>&FDLNotice;</legalnotice>
+
 <date>2007-10-14</date>
-<releaseinfo>3.5.1</releaseinfo>
+<releaseinfo>1.2.0</releaseinfo>
 
 <abstract>
-<para>The &cryptography; plugin allows you to send and recieve encrypted and/or signing messages.</para>
+<para>The &cryptography; plugin allows you to send and recieve encrypted and/or signed messages.</para>
 </abstract>
 
 <keywordset>
@@ -52,7 +53,7 @@
 
 <title>Cryptography</title>
 
-<para><guilabel>Cryptography</guilabel> lets you use <application>GnuPG</application> to encrypt and sign conversations.  Note that this is not the same as an SSL secured chat session.  Cryptography can encrypt your messages to a single individual so that only the holder of the matching key can read it.  If you wish that the recipient of your messages can verify that you have sent your messages, you may sign messages.  Signing and encryption can be used separately or together. When you recieve a message, if it has been encrypted, you will see a lock icon. If it has been signed with a verifiable signature (you have the public key of the sender), you will see a pen icon.  For a non-verifiable signature, a red pen icon will be shown.</para>
+<para>Cryptography lets you use <application>GnuPG</application> to encrypt and sign messages in conversations.  Note that this is not the same as an SSL secured chat session.  Cryptography can encrypt your messages to a single individual so that only the holder of the matching key can read it.  If you wish that the recipient of your messages can verify that you have sent your messages, you may sign messages.  Signing and encryption can be used separately or together. When you recieve a message, if it has been encrypted, you will see a lock icon. If it has been signed with a verifiable signature (you have the public key of the sender), you will see a pen icon.  For a non-verifiable signature, a red pen icon will be shown.</para>
 
 <para>To configure Cryptography, select your <application>GnuPG</application> key in the plugin configuration page.   Then, using <menuchoice><guimenuitem>Select Public Key...</guimenuitem></menuchoice> from each meta-contact's context menu, choose their public key.  You will be prompted for your passphrase when using this plugin.</para>
 
@@ -69,10 +70,11 @@ exists for the individual in question), a new entry will be created. This entry 
 
 <sect2>
 <title>Credits</title>
+&underFDL;
+&underGPL;
+<para>Cryptography copyright &copy; 2002-2007 &Olivier.Goffart; &Olivier.Goffart.mail; and &copy; 2007 &Charles.Connell; &Charles.Connell.mail;</para>
 
-<para> Copyright &copy; 2002-2007 &Olivier.Goffart; &Olivier.Goffart.mail; and &Charles.Connell; &Charles.Connell.mail;</para>
-
-<para>Documentation copyright &copy; &Olivier.Goffart; &Olivier.Goffart.mail; and &Charles.Connell; &Charles.Connell.mail;</para>
+<para>Documentation copyright &copy; &Olivier.Goffart; &Olivier.Goffart.mail; and &copy; 2007 &Charles.Connell; &Charles.Connell.mail;</para>
 </sect2>
 
 </sect1>
