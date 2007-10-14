@@ -520,7 +520,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			MSNContact *c = m_account->findContactByGuid( contactGuid );
 			if(c != 0L)
 			{
-				c->setProperty( Kopete::Global::Properties::self()->nickName(), publicName );
+				c->setNickName( publicName );
 			}
 		}
 	}
