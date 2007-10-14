@@ -784,7 +784,7 @@ QString MSNSocket::escape( const QString &str )
 
 QString MSNSocket::unescape( const QString &str )
 {
-	QString str2 = QUrl::fromPercentEncoding( str.toLatin1() );
+        QString str2 = QUrl::fromPercentEncoding( str.toUtf8() );
 	//remove msn+ colors code
 	str2 = str2.replace( QRegExp("[\\x1-\\x8]"), "" ); // old msn+ colors
 	// added by kaoul <erwin.kwolek at gmail.com>
