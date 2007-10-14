@@ -24,10 +24,19 @@
 #include "cryptographyconfig.h"
 
 #include <QVariantList>
+#include <QHash>
 
 class QString;
 class QTimer;
 class KAction;
+
+namespace GpgME
+{
+	class DecryptionResult;
+	class VerificationResult;
+}
+
+namespace Kleo { class Job; }
 
 class CryptographyGUIClient;
 
@@ -59,6 +68,11 @@ public:
 
 public slots:
 	void slotIncomingMessage( Kopete::Message& msg );
+	void slotIncomingMessageContinued(const GpgME::DecryptionResult &decryptionResult, const GpgME::VerificationResult &verificationResult, const QByteArray &plainText);
+	void slotIncomingEncryptedMessageContinued(const GpgME::DecryptionResult &decryptionResult, const QByteArray &plainText);
+	void slotIncomingSignedMessageContinued(const GpgME::VerificationResult &verificationResult, const QByteArray &plainText);
+	void finalizeMessage( Kopete::Message & msg, QString intendedBody);
+	
 	void slotOutgoingMessage( Kopete::Message& msg );
 	void slotContactSelectionChanged ();
 	void slotExportSelectedMetaContactKeys ();	
@@ -71,6 +85,7 @@ private:
 	static CryptographyPlugin* mPluginStatic;
 	Kopete::SimpleMessageHandlerFactory *mInboundHandler;
 	KAction * mExportKeys;
+	QHash<Kleo::Job*, Kopete::Message> mCurrentJobs;
 };
 
 #endif

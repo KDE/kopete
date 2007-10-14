@@ -39,6 +39,14 @@
 #include <kopete/kopetecontact.h>
 #include <kopete/kopeteprotocol.h>
 
+#include <assert.h>
+#include <kleo/cryptobackendfactory.h>
+#include <kleo/decryptverifyjob.h>
+#include <kleo/decryptjob.h>
+#include <kleo/verifyopaquejob.h>
+#include <gpgme++/decryptionresult.h>
+#include <gpgme++/verificationresult.h>
+
 #include "cryptographyplugin.h"
 #include "cryptographyselectuserkey.h"
 #include "cryptographyguiclient.h"
@@ -79,7 +87,6 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*
 	slotContactSelectionChanged();
 
 	setXMLFile ( "cryptographyui.rc" );
-	connect ( this, SIGNAL ( settingsChanged() ), this, SLOT ( loadSettings() ) );
 
 	// add functionality to chat window when one opens
 	connect ( Kopete::ChatSessionManager::self(), SIGNAL ( chatSessionCreated ( Kopete::ChatSession * ) ) , SLOT ( slotNewKMM ( Kopete::ChatSession * ) ) );
@@ -112,62 +119,122 @@ CryptographyPlugin* CryptographyPlugin::plugin()
 void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 {
 	QString body = msg.plainBody();
-	// iconFolder is the folder with the little lock and pen icons in it
-	QString iconFolder = KIconLoader::global()->iconPath ( "signature", KIconLoader::Small );
-	iconFolder = iconFolder.remove ( iconFolder.lastIndexOf ( "/" ) +1, 100 );
 
-	int opState;
-	// if we detect the lock or pen icons in the message, a forgery attempt has occurred, so we just replace the message body with a warning
 	if ( !body.startsWith ( QString::fromLatin1 ( "-----BEGIN PGP MESSAGE----" ) )
 	        || !body.contains ( QString::fromLatin1 ( "-----END PGP MESSAGE----" ) ) )
-	{
-		if ( body.contains ( QRegExp ( iconFolder + "signature\\..*|" + iconFolder + "bad_signature\\..*|" + iconFolder + "encrypted\\..*" ) ) )
-		{
-			msg.setHtmlBody ( i18n ( "Cryptography plugin refuses to show the most recent message because it contains an attempt to forge an encrypted or signed message" ) );
-			msg.setType ( Kopete::Message::TypeAction );
-			msg.addClass ( "cryptography:encrypted" );
-		}
 		return;
-	}
-	
+
 	kDebug ( 14303 ) << "processing " << body;
 
-	body = GpgInterface::decryptText ( body, opState );
+	const Kleo::CryptoBackendFactory *cpf = Kleo::CryptoBackendFactory::instance();
+	assert ( cpf );
+	const Kleo::CryptoBackend::Protocol *proto = cpf->openpgp();
+	assert ( proto );
+
+	Kleo::DecryptVerifyJob * decryptVerifyJob = proto->decryptVerifyJob();
+	connect ( decryptVerifyJob, SIGNAL ( result ( const GpgME::DecryptionResult &, const GpgME::VerificationResult &, const QByteArray & ) ), this, SLOT ( slotIncomingMessageContinued ( const GpgME::DecryptionResult &, const GpgME::VerificationResult &, const QByteArray & ) ) );
+	mCurrentJobs.insert ( decryptVerifyJob, msg );
+	decryptVerifyJob->start ( body.toLatin1() );
+	
+	msg.setPlainBody ("Cryptography processing...");
+	msg.setType ( Kopete::Message::TypeAction );
+}
+
+void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionResult &  decryptionResult, const GpgME::VerificationResult &verificationResult, const QByteArray &plainText )
+{
+	Kopete::Message msg = mCurrentJobs.take ( qobject_cast<Kleo::Job*> ( sender() ) );
+
+	QString body = plainText;
 
 	if ( !body.isEmpty() )
 	{
-		// same story as this exact same code from above
-		if ( body.contains ( QRegExp ( iconFolder + "signature\\..*|" + iconFolder + "bad_signature\\..*|" + iconFolder + "encrypted\\..*" ) ) )
+		if ( verificationResult.signatures().size() )
 		{
-			msg.setHtmlBody ( i18n ( "Cryptography plugin refuses to show the most recent message because it contains an attempt to forge an encrypted or signed message" ) );
-			msg.setType ( Kopete::Message::TypeAction );
-			msg.addClass ( "cryptography:encrypted" );
-			return;
+			// apply crypto state icons
+			if ( ! ( verificationResult.signature ( 0 ).summary() == GpgME::Signature::None ) ) {
+				if ( verificationResult.signature ( 0 ).summary() & GpgME::Signature::Valid ) {
+					body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
+					kDebug ( 14303 ) << "message has verified signature";
+				}
+				else  {
+					body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "bad_signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
+					kDebug ( 14303 ) << "message has unverified signature";
+				}
+			}
+			if ( decryptionResult.numRecipients() >= 1 ) {
+				body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
+				kDebug (14303) << "message was encrypted";
+				finalizeMessage ( msg, body );
+			}
 		}
+		else {
+			const Kleo::CryptoBackendFactory *cpf = Kleo::CryptoBackendFactory::instance();
+			assert ( cpf );
+			const Kleo::CryptoBackend::Protocol *proto = cpf->openpgp();
+			assert ( proto );
+				
+			Kleo::DecryptJob * decryptJob = proto->decryptJob();
+			connect ( decryptJob, SIGNAL ( result ( const GpgME::DecryptionResult &, const QByteArray & ) ), this, SLOT ( slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult &, const QByteArray & ) ) );
+			mCurrentJobs.insert ( decryptJob, msg );
+			decryptJob->start ( msg.plainBody().toLatin1() );
 
-		// apply crypto state icons
-		if ( opState & GpgInterface::GoodSig ) {
-			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
-			kDebug (14303) << "message has verified signature";
+			Kleo::VerifyOpaqueJob * verifyJob = proto->verifyOpaqueJob();
+			connect ( verifyJob, SIGNAL ( result ( const GpgME::VerificationResult &, const QByteArray & ) ), this, SLOT ( slotIncomingSignedMessageContinued ( const GpgME::VerificationResult &, const QByteArray & ) ) );
+			mCurrentJobs.insert ( verifyJob, msg );
+			verifyJob->start ( msg.plainBody().toLatin1() );
 		}
-
-		if ( ( opState & GpgInterface::ErrorSig ) || ( opState & GpgInterface::BadSig ) ){
-			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "bad_signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
-			kDebug (14303) << "message has unverified signature";
-		}
-
-		if ( opState & GpgInterface::Decrypted ){
-			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
-			kDebug (14303) << "message has been decrypted";
-		}
-
-		msg.setHtmlBody ( body );
-
-		msg.addClass ( "cryptography:encrypted" );
-		
-		kDebug (14303) << "result is " << body;
 	}
-	return;
+}
+
+void CryptographyPlugin::slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult & decryptionResult, const QByteArray &plainText )
+{
+	Kopete::Message msg = mCurrentJobs.take ( qobject_cast<Kleo::Job*> ( sender() ) );
+
+	QString body = plainText;
+
+	if ( !body.isEmpty() )
+	{
+		if ( decryptionResult.numRecipients() >= 1 ){
+			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
+			kDebug (14303) << "message was encrypted";
+			finalizeMessage ( msg, body );
+		}
+	}
+}
+
+void CryptographyPlugin::slotIncomingSignedMessageContinued ( const GpgME::VerificationResult &verificationResult, const QByteArray &plainText )
+{
+	kDebug (14303);
+	Kopete::Message msg = mCurrentJobs.take ( qobject_cast<Kleo::Job*> ( sender() ) );
+
+	QString body = plainText;
+
+	if ( !body.isEmpty() )
+	{
+		if ( verificationResult.signatures().size() )
+		{
+			// apply crypto state icons
+			if ( ! (verificationResult.signature ( 0 ).summary() == GpgME::Signature::None ) ) {
+				if (  verificationResult.signature ( 0 ).summary() & GpgME::Signature::Valid ) {
+					body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
+					kDebug ( 14303 ) << "message has verified signature";
+				}
+				else  {
+					body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "bad_signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
+					kDebug ( 14303 ) << "message has unverified signature";
+				}
+			}
+			finalizeMessage( msg, body  );
+		}
+	}
+}
+
+void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intendedBody )
+{
+	msg.setHtmlBody ( intendedBody );
+	msg.addClass ( "cryptography:encrypted" );
+	kDebug ( 14303 ) << "result is " << intendedBody;
+	msg.manager()->appendMessage ( msg );
 }
 
 // encrypt and or sign a message to be sent
