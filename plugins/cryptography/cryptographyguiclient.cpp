@@ -52,7 +52,7 @@ CryptographyGUIClient::CryptographyGUIClient ( Kopete::ChatSession *parent )
 		return;
 	}
 
-	KAboutData aboutData ( "kopete_cryptography", 0, ki18n ( "Cryptography" ) , "1.2" );
+	KAboutData aboutData ( "kopete_cryptography", 0, ki18n ( "Cryptography" ) , "1.3.0" );
 	setComponentData ( KComponentData ( &aboutData ) );
 
 	setXMLFile ( "cryptographychatui.rc" );

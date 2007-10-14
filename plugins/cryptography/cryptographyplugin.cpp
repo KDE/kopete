@@ -44,8 +44,15 @@
 #include <kleo/decryptverifyjob.h>
 #include <kleo/decryptjob.h>
 #include <kleo/verifyopaquejob.h>
+#include <kleo/encryptjob.h>
+#include <kleo/signencryptjob.h>
+#include <kleo/signjob.h>
+#include <kleo/keylistjob.h>
 #include <gpgme++/decryptionresult.h>
 #include <gpgme++/verificationresult.h>
+#include <gpgme++/keylistresult.h>
+#include <gpgme++/signingresult.h>
+#include <gpgme++/encryptionresult.h>
 
 #include "cryptographyplugin.h"
 #include "cryptographyselectuserkey.h"
@@ -126,6 +133,7 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 
 	kDebug ( 14303 ) << "processing " << body;
 
+	// launch a crypto job, and store it with the message, so that when the job finishes, we know what message it was for
 	const Kleo::CryptoBackendFactory *cpf = Kleo::CryptoBackendFactory::instance();
 	assert ( cpf );
 	const Kleo::CryptoBackend::Protocol *proto = cpf->openpgp();
@@ -135,11 +143,13 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 	connect ( decryptVerifyJob, SIGNAL ( result ( const GpgME::DecryptionResult &, const GpgME::VerificationResult &, const QByteArray & ) ), this, SLOT ( slotIncomingMessageContinued ( const GpgME::DecryptionResult &, const GpgME::VerificationResult &, const QByteArray & ) ) );
 	mCurrentJobs.insert ( decryptVerifyJob, msg );
 	decryptVerifyJob->start ( body.toLatin1() );
-	
-	msg.setPlainBody ("Cryptography processing...");
+
+	msg.setPlainBody ( "Cryptography processing..." );
 	msg.setType ( Kopete::Message::TypeAction );
+	
 }
 
+// this is called when the incoming crypto job is done
 void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionResult &  decryptionResult, const GpgME::VerificationResult &verificationResult, const QByteArray &plainText )
 {
 	Kopete::Message msg = mCurrentJobs.take ( qobject_cast<Kleo::Job*> ( sender() ) );
@@ -148,31 +158,22 @@ void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionR
 
 	if ( !body.isEmpty() )
 	{
+		// if was signed *and* encrypted, this will be true
 		if ( verificationResult.signatures().size() )
 		{
-			// apply crypto state icons
-			if ( ! ( verificationResult.signature ( 0 ).summary() == GpgME::Signature::None ) ) {
-				if ( verificationResult.signature ( 0 ).summary() & GpgME::Signature::Valid ) {
-					body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
-					kDebug ( 14303 ) << "message has verified signature";
-				}
-				else  {
-					body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "bad_signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
-					kDebug ( 14303 ) << "message has unverified signature";
-				}
-			}
 			if ( decryptionResult.numRecipients() >= 1 ) {
 				body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
-				kDebug (14303) << "message was encrypted";
-				finalizeMessage ( msg, body );
+				kDebug ( 14303 ) << "message was encrypted";
+				finalizeMessage ( msg, body, verificationResult );
 			}
 		}
+		// was not signed *and* encrypted, may be one or the other. launch a job to see about both possibilities
 		else {
 			const Kleo::CryptoBackendFactory *cpf = Kleo::CryptoBackendFactory::instance();
 			assert ( cpf );
 			const Kleo::CryptoBackend::Protocol *proto = cpf->openpgp();
 			assert ( proto );
-				
+
 			Kleo::DecryptJob * decryptJob = proto->decryptJob();
 			connect ( decryptJob, SIGNAL ( result ( const GpgME::DecryptionResult &, const QByteArray & ) ), this, SLOT ( slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult &, const QByteArray & ) ) );
 			mCurrentJobs.insert ( decryptJob, msg );
@@ -186,6 +187,7 @@ void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionR
 	}
 }
 
+// if was only encrypted, this will be called
 void CryptographyPlugin::slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult & decryptionResult, const QByteArray &plainText )
 {
 	Kopete::Message msg = mCurrentJobs.take ( qobject_cast<Kleo::Job*> ( sender() ) );
@@ -194,45 +196,43 @@ void CryptographyPlugin::slotIncomingEncryptedMessageContinued ( const GpgME::De
 
 	if ( !body.isEmpty() )
 	{
-		if ( decryptionResult.numRecipients() >= 1 ){
+		if ( decryptionResult.numRecipients() >= 1 ) {
 			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
-			kDebug (14303) << "message was encrypted";
-			finalizeMessage ( msg, body );
+			kDebug ( 14303 ) << "message was encrypted";
+			finalizeMessage ( msg, body, GpgME::VerificationResult() );
 		}
 	}
 }
 
+// if was only signed, this will be called
 void CryptographyPlugin::slotIncomingSignedMessageContinued ( const GpgME::VerificationResult &verificationResult, const QByteArray &plainText )
 {
-	kDebug (14303);
+	kDebug ( 14303 );
 	Kopete::Message msg = mCurrentJobs.take ( qobject_cast<Kleo::Job*> ( sender() ) );
 
 	QString body = plainText;
 
-	if ( !body.isEmpty() )
-	{
-		if ( verificationResult.signatures().size() )
-		{
-			// apply crypto state icons
-			if ( ! (verificationResult.signature ( 0 ).summary() == GpgME::Signature::None ) ) {
-				if (  verificationResult.signature ( 0 ).summary() & GpgME::Signature::Valid ) {
-					body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
-					kDebug ( 14303 ) << "message has verified signature";
-				}
-				else  {
-					body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "bad_signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
-					kDebug ( 14303 ) << "message has unverified signature";
-				}
-			}
-			finalizeMessage( msg, body  );
-		}
-	}
+	if ( ( !body.isEmpty() ) && ( verificationResult.signatures().size() ) )
+		finalizeMessage ( msg, body, verificationResult );
 }
 
-void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intendedBody )
+// apply signature icons and put message in chat window
+void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & validity )
 {
-	msg.setHtmlBody ( intendedBody );
 	msg.addClass ( "cryptography:encrypted" );
+
+	// apply crypto state icons
+	if ( ! ( validity.signature ( 0 ).summary() == GpgME::Signature::None ) ) {
+		if ( validity.signature ( 0 ).summary() & GpgME::Signature::Valid ) {
+			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
+			kDebug ( 14303 ) << "message has verified signature";
+		}
+		else  {
+			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "bad_signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
+			kDebug ( 14303 ) << "message has unverified signature";
+		}
+	}
+	msg.setHtmlBody ( intendedBody );
 	kDebug ( 14303 ) << "result is " << intendedBody;
 	msg.manager()->appendMessage ( msg );
 }
@@ -243,13 +243,29 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 	if ( msg.direction() != Kopete::Message::Outbound )
 		return;
 
-	QStringList keys;
+	QStringList encryptingKeysPattern;
+	std::vector<GpgME::Key> encryptingKeys;
+	std::vector<GpgME::Key> signingKeys;
 	QList<Kopete::Contact*> contactlist = msg.to();
 	bool signing = ( ( msg.to().first()->metaContact()->pluginData ( this, "sign_messages" ) ) == "on" );
 	bool encrypting = ( ( msg.to().first()->metaContact()->pluginData ( this, "encrypt_messages" ) ) == "on" );
+	QByteArray result;
 
 	kDebug ( 14303 ) << ( signing ? "signing" : "" ) << ( encrypting ? "encrypting" : "" ) << "message " << msg.plainBody();
 
+	const Kleo::CryptoBackendFactory *cpf = Kleo::CryptoBackendFactory::instance();
+	assert ( cpf );
+	const Kleo::CryptoBackend::Protocol *proto = cpf->openpgp();
+	assert ( proto );
+
+	// create std::vector with list of signing keys (really just the one the user has set)
+	if ( signing )
+	{
+		Kleo::KeyListJob * listJob = proto->keyListJob();
+		listJob->exec ( QStringList ( CryptographyConfig::self()->fingerprint() ), true, signingKeys );
+	}
+
+	// create QStringList of recpients' keys, then convert that (using a KeyListJob) into a std::vector
 	if ( encrypting )
 	{
 		foreach ( Kopete::Contact *c, contactlist )
@@ -257,33 +273,36 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 			QString tmpKey;
 			if ( c->metaContact() )
 				tmpKey = c->metaContact()->pluginData ( this, "gpgKey" );
-			if ( tmpKey.isEmpty() )
-			{
-				kDebug ( 14303 ) << "empty key";
-				KMessageBox::sorry ( Kopete::UI::Global::mainWidget(), i18n ( "You have not chosen an encryption key for one or more recipients" ) );
-				return;
-			}
-			keys.append ( tmpKey );
+			encryptingKeysPattern.append ( tmpKey );
 		}
 		// encrypt to self so we can decrypt during slotIncomingMessage()
-		keys.append ( CryptographyConfig::self()->fingerprint() );
-		QString key = keys.join ( " " );
-
-		if ( key.isEmpty() )
-			return;
-
-		QString result = GpgInterface::encryptText ( msg.plainBody(), key, signing, CryptographyConfig::self()->fingerprint() );
-		if ( !result.isEmpty() )
-			msg.setPlainBody ( result );
-		else
-			kDebug ( 14303 ) << "empty result";
+		encryptingKeysPattern.append ( CryptographyConfig::self()->fingerprint() );
+		Kleo::KeyListJob * listJob = proto->keyListJob();
+		listJob->exec ( encryptingKeysPattern, false, encryptingKeys );
 	}
+	// do both signing and encrypting at once
+	if ( signing && encrypting )
+	{
+		Kleo::SignEncryptJob * job = proto->signEncryptJob ( true );
+		job->exec ( signingKeys, encryptingKeys, msg.plainBody().toLatin1(), true, result );
+	}
+	// sign message body
 	else if ( signing )
 	{
-		QString result = GpgInterface::signText ( msg.plainBody(), CryptographyConfig::self()->fingerprint() );
-		if ( !result.isEmpty() )
-			msg.setPlainBody ( result );
+		Kleo::SignJob * job = proto->signJob ( true );
+		job->exec ( signingKeys, msg.plainBody().toLatin1(), GpgME::NormalSignatureMode, result );
 	}
+	// encrypt message body to all recipients
+	else if ( encrypting )
+	{
+		Kleo::EncryptJob * job = proto->encryptJob ( true );
+		job->exec ( encryptingKeys, msg.plainBody().toLatin1(), true, result );
+	}
+
+	if ( !result.isEmpty() )
+		msg.setPlainBody ( result );
+	else
+		kDebug ( 14303 ) << "empty result";
 }
 
 // Contruct dialog to show/edit metacontact's public key.
@@ -311,11 +330,13 @@ void CryptographyPlugin::slotNewKMM ( Kopete::ChatSession *KMM )
 	connect ( this , SIGNAL ( destroyed ( QObject* ) ), gui, SLOT ( deleteLater() ) );
 
 	// warn about unfriendly protocols
-	QString protocol ( KMM->protocol()->metaObject()->className() );
-	if ( gui->m_encAction->isChecked() )
-		if ( ! supportedProtocols().contains ( protocol ) )
-			KMessageBox::information ( 0, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ),
-			                           i18n ( "Cryptography Unsupported Protocol" ), "Warn about unsupported " + QString ( KMM->protocol()->metaObject()->className() ) );
+	if ( KMM->protocol() ) {
+		QString protocol ( KMM->protocol()->metaObject()->className() );
+		if ( gui->m_encAction->isChecked() )
+			if ( ! supportedProtocols().contains ( protocol ) )
+				KMessageBox::information ( 0, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ),
+				                           i18n ( "Cryptography Unsupported Protocol" ), "Warn about unsupported " + QString ( KMM->protocol()->metaObject()->className() ) );
+	}
 }
 
 QStringList CryptographyPlugin::getKabcKeys ( QString uid )
@@ -343,6 +364,7 @@ QStringList CryptographyPlugin::getKabcKeys ( QString uid )
 	return keys;
 }
 
+// show dialog to allow user to check which key they want
 QString CryptographyPlugin::KabcKeySelector ( QString displayName, QString addresseeName, QStringList keys, QWidget *parent )
 {
 	// just a Yes/No about whether to accept the key
