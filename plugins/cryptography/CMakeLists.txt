@@ -9,7 +9,6 @@ ${KOPETE_INCLUDES}
 
 set(kopete_cryptography_PART_SRCS 
    cryptographyplugin.cpp 
-   gpginterface.cpp 
    cryptographyguiclient.cpp 
    cryptographyselectuserkey.cpp 
    cryptographyconfig.cpp 

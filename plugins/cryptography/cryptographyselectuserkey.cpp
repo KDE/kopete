@@ -64,9 +64,9 @@ CryptographySelectUserKey::CryptographySelectUserKey ( const QString& key ,Kopet
 		// find keys in address book and possibly use them (this same code is in cryptographyguiclient.cpp)
 		QStringList keys;
 		keys = CryptographyPlugin::getKabcKeys ( mc->metaContactId() );
-		m_KeyEdit->setFingerprint ( CryptographyPlugin::KabcKeySelector ( mc->displayName(),
-		                            Kopete::KABCPersistence::self()->addressBook()->findByUid (
-		                                mc->metaContactId() ).assembledName(), keys, this ) );
+		m_KeyEdit->setFingerprint ( CryptographyPlugin::KabcKeySelector (
+				mc->displayName(),Kopete::KABCPersistence::self()->addressBook()->findByUid (
+				mc->metaContactId()).assembledName(), keys, this ) );
 	}
 }
 

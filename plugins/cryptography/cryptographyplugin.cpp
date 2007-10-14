@@ -48,6 +48,7 @@
 #include <kleo/signencryptjob.h>
 #include <kleo/signjob.h>
 #include <kleo/keylistjob.h>
+#include <kleo/job.h>
 #include <gpgme++/decryptionresult.h>
 #include <gpgme++/verificationresult.h>
 #include <gpgme++/keylistresult.h>
@@ -58,7 +59,6 @@
 #include "cryptographyselectuserkey.h"
 #include "cryptographyguiclient.h"
 #include "exportkeys.h"
-#include "gpginterface.h"
 
 #include "ui_kabckeyselectorbase.h"
 
@@ -152,7 +152,7 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 // this is called when the incoming crypto job is done
 void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionResult &  decryptionResult, const GpgME::VerificationResult &verificationResult, const QByteArray &plainText )
 {
-	Kopete::Message msg = mCurrentJobs.take ( qobject_cast<Kleo::Job*> ( sender() ) );
+	Kopete::Message msg = mCurrentJobs.take ( static_cast<Kleo::Job*> ( sender() ) );
 
 	QString body = plainText;
 
@@ -190,7 +190,7 @@ void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionR
 // if was only encrypted, this will be called
 void CryptographyPlugin::slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult & decryptionResult, const QByteArray &plainText )
 {
-	Kopete::Message msg = mCurrentJobs.take ( qobject_cast<Kleo::Job*> ( sender() ) );
+	Kopete::Message msg = mCurrentJobs.take ( static_cast<Kleo::Job*> ( sender() ) );
 
 	QString body = plainText;
 
@@ -208,7 +208,7 @@ void CryptographyPlugin::slotIncomingEncryptedMessageContinued ( const GpgME::De
 void CryptographyPlugin::slotIncomingSignedMessageContinued ( const GpgME::VerificationResult &verificationResult, const QByteArray &plainText )
 {
 	kDebug ( 14303 );
-	Kopete::Message msg = mCurrentJobs.take ( qobject_cast<Kleo::Job*> ( sender() ) );
+	Kopete::Message msg = mCurrentJobs.take ( static_cast<Kleo::Job*> ( sender() ) );
 
 	QString body = plainText;
 
@@ -228,7 +228,7 @@ void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intend
 			kDebug ( 14303 ) << "message has verified signature";
 		}
 		else  {
-			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "bad_signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
+			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "badsignature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
 			kDebug ( 14303 ) << "message has unverified signature";
 		}
 	}
@@ -332,10 +332,17 @@ void CryptographyPlugin::slotNewKMM ( Kopete::ChatSession *KMM )
 	// warn about unfriendly protocols
 	if ( KMM->protocol() ) {
 		QString protocol ( KMM->protocol()->metaObject()->className() );
-		if ( gui->m_encAction->isChecked() )
-			if ( ! supportedProtocols().contains ( protocol ) )
-				KMessageBox::information ( 0, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ),
+		if ( gui->m_encAction->isChecked() ){
+			if ( ! supportedProtocols().contains ( protocol ) ){
+				KMessageBox::information ( 0, i18n ( "This protocol may not work with messages that\
+						are encrypted. This is because encrypted messages are very long, and\
+								the server or peer may reject them due to their\
+								length. To avoid being signed off or your account\
+								being warned or temporarily suspended, turn off\
+								encryption." ),
 				                           i18n ( "Cryptography Unsupported Protocol" ), "Warn about unsupported " + QString ( KMM->protocol()->metaObject()->className() ) );
+			}
+		}
 	}
 }
 
@@ -369,8 +376,11 @@ QString CryptographyPlugin::KabcKeySelector ( QString displayName, QString addre
 {
 	// just a Yes/No about whether to accept the key
 	if ( keys.count() == 1 ) {
-		if ( KMessageBox::questionYesNo ( parent,
-		                                  i18n ( QString ( "Cryptography plugin has found an encryption key for " + displayName + " (" + addresseeName + ")" + " in your KDE address book. Do you want to use key "+ keys.first().right ( 8 ).prepend ( "0x" ) + " as this contact's public key?" ).toLocal8Bit() ),
+		if ( KMessageBox::questionYesNo ( parent, i18n ( QString ( "Cryptography plugin has found an\
+				   encryption key for "+ displayName+ " (" + addresseeName + ")" + " in your KDE\
+						   address book. Do you want to use key "+ keys.first().right( 8 ).
+						   prepend ( "0x" ) + 
+						   " as this contact's public key?" ).toLocal8Bit() ),
 		                                  i18n ( "Public Key Found" ) ) == KMessageBox::Yes ) {
 			return keys.first();
 		}
@@ -385,7 +395,10 @@ QString CryptographyPlugin::KabcKeySelector ( QString displayName, QString addre
 		dialog.setCaption ( i18n ( "Public Keys Found" ) );
 		dialog.setButtons ( KDialog::Ok | KDialog::Cancel );
 		dialog.setMainWidget ( &w );
-		ui.label->setText ( i18n ( QString ( "Cryptography plugin has found multiple encryption keys for " + displayName + " (" + addresseeName + ")" + " in your KDE address book. To use one of these keys, select it and choose OK." ).toLocal8Bit() ) );
+		ui.label->setText ( i18n ( QString ( "Cryptography plugin has found multiple encryption keys for "
+				+ displayName + " (" + addresseeName + ")" +
+				" in your KDE address book. To use one of these keys, select it and choose OK." ).
+				toLocal8Bit() ) );
 		for ( int i = 0; i < keys.count(); i++ )
 			ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ( "kgpg-key1-kopete", KIconLoader::Small ), keys[i].right ( 8 ).prepend ( "0x" ), ui.keyList ) );
 		ui.keyList->addItems ( keys );
