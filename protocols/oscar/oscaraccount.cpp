@@ -20,7 +20,6 @@
 
 #include "kopetepassword.h"
 #include "kopeteprotocol.h"
-#include "kopeteaway.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopeteidentity.h"

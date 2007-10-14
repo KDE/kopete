@@ -163,7 +163,7 @@ void OContact::checkTLVs()
 	if ( metaInfoIdTLV )
 	{
 		m_metaInfoId = metaInfoIdTLV.data;
-		kDebug( 14151 ) << "Got an meta info id '" << m_metaInfoId << "' for contact '" << m_name << "'";
+		kDebug( 14151 ) << "Got an meta info id '" << m_metaInfoId.toHex() << "' for contact '" << m_name << "'";
 	}
 }
 

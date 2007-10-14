@@ -112,7 +112,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	if ( details.dcOutsideSpecified() )
 	{
-		if ( details.dcExternalIp().isUnspecified() )
+		if ( details.dcExternalIp().isNull() )
 			removeProperty( mProtocol->ipAddress );
 		else
 			setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );

@@ -81,12 +81,12 @@ Oscar::WORD UserDetails::idleTime() const
 	return m_idleTime;
 }
 
-KNetwork::KIpAddress UserDetails::dcInternalIp() const
+QHostAddress UserDetails::dcInternalIp() const
 {
 	return m_dcInsideIp;
 }
 
-KNetwork::KIpAddress UserDetails::dcExternalIp() const
+QHostAddress UserDetails::dcExternalIp() const
 {
 	return m_dcOutsideIp;
 }
@@ -285,14 +285,14 @@ void UserDetails::fill( Buffer * buffer )
 #endif
 				break;
 			case 0x000A: //external IP address
-				m_dcOutsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
+				m_dcOutsideIp.setAddress( b.getDWord() );
 				m_dcOutsideSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
 				kDebug(OSCAR_RAW_DEBUG) << "External IP address is " << m_dcOutsideIp.toString();
 #endif
 				break;
 			case 0x000C: //DC info
-				m_dcInsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
+				m_dcInsideIp.setAddress( b.getDWord() );
 				m_dcPort = b.getDWord();
 #ifdef OSCAR_USERINFO_DEBUG
     			kDebug(OSCAR_RAW_DEBUG) << "Internal IP address is " << m_dcInsideIp.toString();
@@ -354,7 +354,7 @@ void UserDetails::fill( Buffer * buffer )
  							m_md5IconHash = b.getBlock( length );
 							m_iconSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-							kDebug(OSCAR_RAW_DEBUG) << "checksum:" << m_md5IconHash;
+							kDebug(OSCAR_RAW_DEBUG) << "checksum:" << m_md5IconHash.toHex();
 #endif
 						}
  						else

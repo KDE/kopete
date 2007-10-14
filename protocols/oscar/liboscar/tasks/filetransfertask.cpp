@@ -22,7 +22,8 @@
 #include "oscarsettings.h"
 #include "filetransfertask.h"
 
-#include <k3socketaddress.h>
+#include <QtNetwork/QHostAddress>
+
 #include <k3serversocket.h>
 #include <k3bufferedsocket.h>
 #include <krandom.h>
@@ -125,7 +126,7 @@ void FileTransferTask::onGo()
 		connect( tm, SIGNAL( refused( const Kopete::FileTransferInfo& ) ), this, SLOT( doCancel( const Kopete::FileTransferInfo& ) ) );
 		connect( tm, SIGNAL( accepted(Kopete::Transfer*, const QString &) ), this, SLOT( doAccept( Kopete::Transfer*, const QString & ) ) );
 
-		emit askIncoming( m_contactName, m_oftRendezvous.fileName, m_oftRendezvous.totalSize, m_desc, m_oftRendezvous.cookie );
+		emit askIncoming( m_contactName, m_oftRendezvous.fileName, m_oftRendezvous.totalSize, m_desc, m_oftRendezvous.cookie.toHex() );
 		return;
 	}
 	//else, send
@@ -146,8 +147,8 @@ void FileTransferTask::onGo()
 
 	if ( client()->settings()->fileProxy() )
 	{ //proxy stage 1
-		m_proxy = 1;
-		m_proxyRequester = 1;
+		m_proxy = true;
+		m_proxyRequester = true;
 		doConnect();
 	}
 	else
@@ -189,15 +190,15 @@ void FileTransferTask::parseReq( Buffer b )
 			break;
 		 case 2:
 		 	proxy_ip = tlv.data;
-			kDebug(OSCAR_RAW_DEBUG) << "proxy ip " << proxy_ip;
+			kDebug(OSCAR_RAW_DEBUG) << "proxy ip " << QHostAddress( b2.getDWord() ).toString();
 			break;
 		 case 3:
 		 	client_ip = tlv.data;
-			kDebug(OSCAR_RAW_DEBUG) << "client ip " << client_ip;
+			kDebug(OSCAR_RAW_DEBUG) << "client ip " << QHostAddress( b2.getDWord() ).toString();
 			break;
 		 case 4:
 		 	verified_ip = tlv.data;
-			kDebug(OSCAR_RAW_DEBUG) << "verified ip " << verified_ip;
+			kDebug(OSCAR_RAW_DEBUG) << "verified ip " << QHostAddress( b2.getDWord() ).toString();
 			break;
 		 case 5:
 		 	m_port = b2.getWord();
@@ -246,8 +247,8 @@ void FileTransferTask::parseReq( Buffer b )
 	{ //ip is all 0's
 		kDebug(OSCAR_RAW_DEBUG) << "proxy??";
 		//wtf... I guess it wants *me* to request a proxy?
-		m_proxy = 1;
-		m_proxyRequester = 1;
+		m_proxy = true;
+		m_proxyRequester = true;
 	}
 	else
 	{
@@ -328,7 +329,7 @@ bool FileTransferTask::take( Transfer* transfer )
 
 bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 {
-	kDebug(14151) << "comparing to " << m_oftRendezvous.cookie;
+	kDebug(14151) << "comparing to " << m_oftRendezvous.cookie.toHex();
 	if ( cookie != m_oftRendezvous.cookie )
 		return false;
 
@@ -515,7 +516,7 @@ void FileTransferTask::doCancel( const Kopete::FileTransferInfo &info )
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
 	//check that it's really for us
-	if ( info.internalId() == QString( m_oftRendezvous.cookie ) )
+	if ( info.internalId() == QString( m_oftRendezvous.cookie.toHex() ) )
 		doCancel();
 	else
 		kDebug(OSCAR_RAW_DEBUG) << "ID mismatch";
@@ -525,9 +526,7 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
 	//check that it's really for us
-	//XXX because qt is retarded, I can't simply compare a qstring and bytearray any more.
-	//if there are 0's in hte cookie then the qstring will only contain part of it - but it should at least be consistent about that. it just slightly increases the tiny chance of a conflict
-	if ( t->info().internalId() != QString( m_oftRendezvous.cookie ) )
+	if ( t->info().internalId() != QString( m_oftRendezvous.cookie.toHex() ) )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "ID mismatch";
 		return;
@@ -574,7 +573,8 @@ void FileTransferTask::doConnect()
 		}
 
 		//ksockets demand a qstring
-		host = KNetwork::KIpAddress( m_ip.constData(), 4 ).toString();
+		Buffer ipBuffer( m_ip );
+		host = QHostAddress( ipBuffer.getDWord() ).toString();
 		kDebug(OSCAR_RAW_DEBUG) << "ip: " << host;
 	}
 
@@ -651,7 +651,7 @@ void FileTransferTask::proxyInit()
 
 void FileTransferTask::timeout()
 {
-	kDebug(OSCAR_RAW_DEBUG) ;
+	kDebug(OSCAR_RAW_DEBUG);
 	m_timer.stop();
 	if ( m_state == Connecting )
 	{ //kbufferedsocket took too damn long
@@ -693,8 +693,8 @@ void FileTransferTask::connectFailed()
 	}
 
 	//proxy stage 2 or 3
-	m_proxy = 1;
-	m_proxyRequester = 1;
+	m_proxy = true;
+	m_proxyRequester = true;
 	doConnect();
 }
 

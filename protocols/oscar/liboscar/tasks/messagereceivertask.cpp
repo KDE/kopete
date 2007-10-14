@@ -74,7 +74,7 @@ bool MessageReceiverTask::take( Transfer* transfer )
 
 		Buffer* b = transfer->buffer();
 		m_icbmCookie = b->getBlock( 8 );
-		kDebug(OSCAR_RAW_DEBUG) << "icbm cookie is " << m_icbmCookie;
+		kDebug(OSCAR_RAW_DEBUG) << "icbm cookie is " << m_icbmCookie.toHex();
 		m_channel = b->getWord();
 		kDebug(OSCAR_RAW_DEBUG) << "channel is " << m_channel;
 

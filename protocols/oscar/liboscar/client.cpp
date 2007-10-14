@@ -586,7 +586,7 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
         // Set whether or not the message is an automated response
         sendMsgTask->setAutoResponse( isAuto );
         sendMsgTask->setMessage( msg );
-        sendMsgTask->setIp( ourInfo().dcExternalIp().IPv4Addr() ); //TODO: switch to internal
+	    sendMsgTask->setIp( ourInfo().dcExternalIp().toIPv4Address() ); //TODO: switch to internal
         sendMsgTask->go( Task::AutoDelete );
     }
 }

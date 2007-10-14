@@ -24,7 +24,6 @@
 #include <ktoggleaction.h>
 #include <kicon.h>
 
-#include "kopeteawayaction.h"
 #include "kopetepassword.h"
 #include "kopetestdaction.h"
 #include "kopeteuiglobal.h"

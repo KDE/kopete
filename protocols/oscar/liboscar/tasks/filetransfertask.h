@@ -97,7 +97,7 @@ private:
 	void connectFailed(); //tries another method of connecting
 	void doOft();
 
-	OFTRendezvous m_oftRendezvous;
+	Oscar::OFTRendezvous m_oftRendezvous;
 
 	Action m_action;
 	QString m_contactName; //other person's username

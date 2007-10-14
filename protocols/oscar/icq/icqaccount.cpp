@@ -24,7 +24,6 @@
 #include <knotification.h>
 #include <ktoggleaction.h>
 
-#include "kopeteawayaction.h"
 #include "kopetemessage.h"
 #include "kopetecontactlist.h"
 #include "kopeteuiglobal.h"
