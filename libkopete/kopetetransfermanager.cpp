@@ -56,6 +56,7 @@ Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QSt
 Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const QString &localFile, bool showProgressInfo)
 	: KIO::Job(), mInfo(kfti)
 {
+	this->setUiDelegate(new KIO::JobUiDelegate());
 	if(showProgressInfo)
 		KIO::getJobTracker()->registerJob(this);
 
@@ -66,6 +67,7 @@ Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const QString 
 Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const Kopete::Contact *contact, bool showProgressInfo)
 	: KIO::Job(), mInfo(kfti)
 {
+	this->setUiDelegate(new KIO::JobUiDelegate());
 	if(showProgressInfo)
 		KIO::getJobTracker()->registerJob(this);
 
