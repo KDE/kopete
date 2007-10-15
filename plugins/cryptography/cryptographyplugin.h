@@ -71,7 +71,7 @@ public slots:
 	void slotIncomingMessageContinued(const GpgME::DecryptionResult &decryptionResult, const GpgME::VerificationResult &verificationResult, const QByteArray &plainText);
 	void slotIncomingEncryptedMessageContinued(const GpgME::DecryptionResult &decryptionResult, const QByteArray &plainText);
 	void slotIncomingSignedMessageContinued(const GpgME::VerificationResult &verificationResult, const QByteArray &plainText);
-	void finalizeMessage( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & validity);
+	void finalizeMessage( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & validity, bool encrypted);
 	
 	void slotOutgoingMessage( Kopete::Message& msg );
 	void slotContactSelectionChanged ();

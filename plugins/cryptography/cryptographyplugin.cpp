@@ -17,7 +17,7 @@
 */
 
 #include <QList>
-#include <QTimer>
+#include <QTextDocument>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -159,14 +159,11 @@ void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionR
 	if ( !body.isEmpty() )
 	{
 		// if was signed *and* encrypted, this will be true
-		if ( verificationResult.signatures().size() )
-		{
-			if ( decryptionResult.numRecipients() >= 1 ) {
-				body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
-				kDebug ( 14303 ) << "message was encrypted";
-				finalizeMessage ( msg, body, verificationResult );
-			}
+		if ( verificationResult.signatures().size() ){
+			if ( decryptionResult.numRecipients() >= 1 )
+				finalizeMessage ( msg, body, verificationResult, true );
 		}
+		
 		// was not signed *and* encrypted, may be one or the other. launch a job to see about both possibilities
 		else {
 			const Kleo::CryptoBackendFactory *cpf = Kleo::CryptoBackendFactory::instance();
@@ -190,17 +187,15 @@ void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionR
 // if was only encrypted, this will be called
 void CryptographyPlugin::slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult & decryptionResult, const QByteArray &plainText )
 {
+	kDebug (14303);
 	Kopete::Message msg = mCurrentJobs.take ( static_cast<Kleo::Job*> ( sender() ) );
 
 	QString body = plainText;
 
 	if ( !body.isEmpty() )
 	{
-		if ( decryptionResult.numRecipients() >= 1 ) {
-			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
-			kDebug ( 14303 ) << "message was encrypted";
-			finalizeMessage ( msg, body, GpgME::VerificationResult() );
-		}
+		if ( decryptionResult.numRecipients() >= 1 ) 
+			finalizeMessage ( msg, body, GpgME::VerificationResult(), true );
 	}
 }
 
@@ -213,25 +208,37 @@ void CryptographyPlugin::slotIncomingSignedMessageContinued ( const GpgME::Verif
 	QString body = plainText;
 
 	if ( ( !body.isEmpty() ) && ( verificationResult.signatures().size() ) )
-		finalizeMessage ( msg, body, verificationResult );
+		finalizeMessage ( msg, body, verificationResult, false );
 }
 
 // apply signature icons and put message in chat window
-void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & validity )
+void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & validity, bool encrypted )
 {
 	msg.addClass ( "cryptography:encrypted" );
+	
+	// turn our plaintext body into html, so then it makes sense to stick HTML tags in it
+//	msg.setPlainBody ( intendedBody );
+//	intendedBody = msg.escapedBody();
+	intendedBody = Qt::convertFromPlainText( intendedBody, Qt::WhiteSpaceNormal );
+	intendedBody = intendedBody.remove ( QRegExp ( "<p[^>]*>", Qt::CaseInsensitive ) );
+	intendedBody = intendedBody.remove ( QRegExp ( "</p>", Qt::CaseInsensitive ) );
 
 	// apply crypto state icons
 	if ( ! ( validity.signature ( 0 ).summary() == GpgME::Signature::None ) ) {
 		if ( validity.signature ( 0 ).summary() & GpgME::Signature::Valid ) {
-			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
+			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;" );
 			kDebug ( 14303 ) << "message has verified signature";
 		}
 		else  {
-			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "badsignature", KIconLoader::Small ) + "\">&nbsp;&nbsp;" );
+			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "badsignature", KIconLoader::Small ) + "\">&nbsp;" );
 			kDebug ( 14303 ) << "message has unverified signature";
 		}
 	}
+	if ( encrypted ) {
+		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;" );
+		kDebug ( 14303 ) << "message was encrypted";
+	}
+	
 	msg.setHtmlBody ( intendedBody );
 	kDebug ( 14303 ) << "result is " << intendedBody;
 	msg.manager()->appendMessage ( msg );
