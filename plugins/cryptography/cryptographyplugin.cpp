@@ -218,8 +218,10 @@ void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intend
 	
 	// turn our plaintext body into html, so then it makes sense to stick HTML tags in it
 //	msg.setPlainBody ( intendedBody );
-//	intendedBody = msg.escapedBody();
-	intendedBody = Qt::convertFromPlainText( intendedBody, Qt::WhiteSpaceNormal );
+	kDebug (14303) << intendedBody;
+	
+	if ( ! Qt::mightBeRichText ( intendedBody ) )
+		intendedBody = Qt::convertFromPlainText( intendedBody, Qt::WhiteSpaceNormal );
 	intendedBody = intendedBody.remove ( QRegExp ( "<p[^>]*>", Qt::CaseInsensitive ) );
 	intendedBody = intendedBody.remove ( QRegExp ( "</p>", Qt::CaseInsensitive ) );
 
