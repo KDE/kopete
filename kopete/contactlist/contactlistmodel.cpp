@@ -85,10 +85,11 @@ int ContactListModel::childCount(const QModelIndex& parent) const
 	if(!parent.isValid()) { //Number of groups
 		cnt = m_groups.count();
 	} else {
-		int row = parent.row();
-		Kopete::Group* g=m_groups[row];
+		Kopete::ContactListElement *cle=static_cast<Kopete::ContactListElement*>(parent.internalPointer());
+		Kopete::Group *g=dynamic_cast<Kopete::Group*>(cle);
 		
 		cnt= m_contacts[g].count();
+		kDebug() << "cnt" << g->displayName();
 	}
 	qDebug() << "count child: " << cnt;
 	return cnt;
@@ -131,7 +132,7 @@ bool ContactListModel::hasChildren ( const QModelIndex & parent) const
 
 QModelIndex ContactListModel::index ( int row, int column, const QModelIndex & parent) const
 {
-	qDebug() << "idx" << row << column << parent.isValid();
+	qDebug() << "idx" << row << column << data(parent);
 	if(row<0 || row>=childCount(parent)) {
 		return QModelIndex();
 	}
@@ -153,6 +154,8 @@ QModelIndex ContactListModel::index ( int row, int column, const QModelIndex & p
 
 QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 {
+	if(!index.isValid())
+		return QVariant("-----");
 	if(role == Qt::DisplayRole) {
 		Kopete::ContactListElement *cle=static_cast<Kopete::ContactListElement*>(index.internalPointer());
 		Kopete::Group *g=dynamic_cast<Kopete::Group*>(cle);
@@ -165,8 +168,11 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 			display=mc->displayName();
 		}
 		qDebug() << "displayRole" << display;
+		
+// 		if(index.isValid())
+// 			qDebug() << "ooooo" << data(index) << childCount(index);
 		return display;
-	}
+        }
 	return QVariant();
 }
 
