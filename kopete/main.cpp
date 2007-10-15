@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
 		ki18n("(c) 2001-2004, Duncan Mac-Vicar Prett\n(c) 2002-2005, Kopete Development Team"), ki18n("kopete-devel@kde.org"), "http://kopete.kde.org");
 
 	aboutData.addAuthor ( ki18n("Duncan Mac-Vicar Prett"), ki18n("Developer and Project founder"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
-	aboutData.addAuthor ( ki18n("Andre Duffeck"), ki18n("Developer, Yahoo plugin maintainer"), "andre@duffeck.de" );
+	aboutData.addAuthor ( ki18n("Andre Duffeck"), ki18n("Developer, Yahoo plugin maintainer"), "duffeck@kde.org" );
 	aboutData.addAuthor ( ki18n("Andy Goossens"), ki18n("Developer"), "andygoossens@telenet.be" );
 	aboutData.addAuthor ( ki18n("Chris Howells"), ki18n("Developer, Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");
 	aboutData.addAuthor ( ki18n("Cláudio da Silveira Pinheiro"), ki18n("Developer, Video device support"), "taupter@gmail.com", "http://taupter.homelinux.org" );

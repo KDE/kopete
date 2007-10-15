@@ -1,7 +1,7 @@
 /*
     yahoowebcam.cpp - Send webcam images
 
-    Copyright (c) 2005 by André Duffec <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 by André Duffec <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *

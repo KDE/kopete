@@ -1,7 +1,7 @@
 /*
     privacymessagehandler.cpp - Kopete Message Filtering
 
-    Copyright (c) 2006 by Andre Duffeck <andre@duffeck.de>
+    Copyright (c) 2006 by Andre Duffeck <duffeck@kde.org>
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************

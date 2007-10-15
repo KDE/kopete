@@ -1,7 +1,7 @@
 /*
     Kopete Yahoo Protocol
     
-    Copyright (c) 2005-2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005-2006 André Duffeck <duffeck@kde.org>
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
     Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
     Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>

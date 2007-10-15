@@ -1,7 +1,7 @@
 /*
     yahoochatsession.h - Yahoo! Message Manager
 
-    Copyright (c) 2005 by Andre Duffeck        <andre@duffeck.de>
+    Copyright (c) 2005 by Andre Duffeck        <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *

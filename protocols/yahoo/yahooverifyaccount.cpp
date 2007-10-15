@@ -1,7 +1,7 @@
 /*
     yahooverifyaccount.cpp - UI Page for Verifying a locked account
 
-    Copyright (c) 2005 by André Duffeck          <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 by André Duffeck          <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *

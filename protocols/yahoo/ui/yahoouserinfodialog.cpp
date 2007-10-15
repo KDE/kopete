@@ -3,7 +3,7 @@
  yahoouserinfodialog.h - Display Yahoo user info
 
  Copyright (c) 2005 Matt Rogers <mattr@kde.org>
- Copyright (c) 2006 Andre Duffeck <andre@duffeck.de>
+ Copyright (c) 2006 Andre Duffeck <duffeck@kde.org>
 
  Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 

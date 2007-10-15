@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Notifies about incoming filetransfers
 
-    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *

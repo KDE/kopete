@@ -4,7 +4,7 @@
 
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <duffeck@kde.org>
 
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 

@@ -1,7 +1,7 @@
 /*
     yabcpp - Encapsulate Yahoo Adressbook information
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <duffeck@kde.org>
     Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************

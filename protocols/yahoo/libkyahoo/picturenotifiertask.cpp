@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Notifies about buddy icons
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
