@@ -19,37 +19,36 @@
 
 #include "oftmetatransfer.h"
 
-#include <k3bufferedsocket.h>
-#include <qstring.h>
+#include <QtCore/QFileInfo>
+#include <QtNetwork/QTcpSocket>
+
 #include <kdebug.h>
-#include "connection.h"
+
 #include "ofttransfer.h"
 #include "oftprotocol.h"
-#include "oscarutils.h"
-#include <typeinfo>
-#include <qfileinfo.h>
-#include <klocale.h>
 
-OftMetaTransfer::OftMetaTransfer( const QByteArray& cookie, const QString &dir, KBufferedSocket *connection )
-: m_file( this ), m_connection( connection ), m_timer( this ), m_state( SetupReceive )
+OftMetaTransfer::OftMetaTransfer( const QByteArray& cookie, const QString &dir, QTcpSocket *socket )
+: m_file( this ), m_socket( socket ), m_timer( this ), m_state( SetupReceive )
 {
 	//filetransfertask is responsible for hooking us up to the ui
-	//we're responsible for hooking up the connection and timer
-	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
-	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
+	//we're responsible for hooking up the socket and timer
+	connect( m_socket, SIGNAL(readyRead()), this, SLOT(socketRead()) );
+	connect( m_socket, SIGNAL(error(QAbstractSocket::SocketError)),
+	         this, SLOT(socketError(QAbstractSocket::SocketError)) );
 
 	initOft();
 	m_oft.cookie = cookie;
 	m_dir = dir;
 }
 
-OftMetaTransfer::OftMetaTransfer( const QByteArray& cookie, const QStringList& files, KBufferedSocket *connection )
-: m_file( this ), m_connection( connection ), m_timer( this ), m_state( SetupSend )
+OftMetaTransfer::OftMetaTransfer( const QByteArray& cookie, const QStringList& files, QTcpSocket *socket )
+: m_file( this ), m_socket( socket ), m_timer( this ), m_state( SetupSend )
 {
 	//filetransfertask is responsible for hooking us up to the ui
-	//we're responsible for hooking up the connection and timer
-	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( socketRead() ) );
-	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
+	//we're responsible for hooking up the socket and timer
+	connect( m_socket, SIGNAL(readyRead()), this, SLOT(socketRead()) );
+	connect( m_socket, SIGNAL(error(QAbstractSocket::SocketError)),
+	         this, SLOT(socketError(QAbstractSocket::SocketError)) );
 
 	initOft();
 	m_oft.cookie = cookie;
@@ -77,10 +76,10 @@ void OftMetaTransfer::start()
 
 OftMetaTransfer::~OftMetaTransfer()
 {
-	if( m_connection )
+	if( m_socket )
 	{
-		delete m_connection;
-		m_connection = 0;
+		delete m_socket;
+		m_socket = 0;
 	}
 	kDebug(OSCAR_RAW_DEBUG) << "really done";
 }
@@ -125,9 +124,9 @@ bool OftMetaTransfer::validFile()
 }
 */
 
-void OftMetaTransfer::socketError( int e )
+void OftMetaTransfer::socketError( QAbstractSocket::SocketError e )
 { //FIXME: do something
-	QString desc = m_connection->errorString();
+	QString desc = m_socket->errorString();
 	kWarning(OSCAR_RAW_DEBUG) << "socket error: " << e << " : " << desc;
 }
 
@@ -142,7 +141,7 @@ void OftMetaTransfer::socketRead()
 void OftMetaTransfer::readOft()
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
-	QByteArray raw = m_connection->readAll(); //is this safe?
+	QByteArray raw = m_socket->readAll(); //is this safe?
 	OftProtocol p;
 	uint b=0;
 	//remember we're responsible for freeing this!
@@ -344,14 +343,14 @@ void OftMetaTransfer::handelSendDone( const OFT &oft )
 	else
 	{ // Last file, ending connection
 		emit transferCompleted();
-		m_connection->close();
+		m_socket->close();
 		deleteLater();
 	}
 }
 
 void OftMetaTransfer::write()
 {
-	if ( m_connection->bytesToWrite() )
+	if ( m_socket->bytesToWrite() )
 		return; //give hte socket time to catch up
 
 	//an arbitrary amount to send each time.
@@ -364,7 +363,7 @@ void OftMetaTransfer::write()
 		return;
 	}
 
-	int written = m_connection->write( data, read );
+	int written = m_socket->write( data, read );
 	if( written == -1 )
 	{ //FIXME: handle this properly
 		kWarning(OSCAR_RAW_DEBUG) << "failed to write :(";
@@ -388,7 +387,7 @@ void OftMetaTransfer::write()
 
 void OftMetaTransfer::saveData()
 {
-	QByteArray raw = m_connection->readAll(); //is this safe?
+	QByteArray raw = m_socket->readAll(); //is this safe?
 	int written = m_file.write( raw );
 	if( written == -1 )
 	{ //FIXME: handle this properly
@@ -413,7 +412,7 @@ void OftMetaTransfer::sendOft()
 {
 	//now make a transfer out of it
 	OftTransfer t( m_oft );
-	int written = m_connection->write( t.toWire() );
+	int written = m_socket->write( t.toWire() );
 
 	if( written == -1 ) //FIXME: handle this properly
 		kDebug(OSCAR_RAW_DEBUG) << "failed to write :(";
@@ -475,7 +474,7 @@ void OftMetaTransfer::done()
 	else
 	{ //Last file, ending connection
 		emit transferCompleted();
-		m_connection->close();
+		m_socket->close();
 		m_state = Done;
 
 		//wait for the oft done to be really sent
@@ -504,7 +503,7 @@ void OftMetaTransfer::doCancel()
 	kDebug(OSCAR_RAW_DEBUG) ;
 	//stop our timer in case we were sending stuff
 	m_timer.stop();
-	m_connection->close();
+	m_socket->close();
 	deleteLater();
 }
 
@@ -514,7 +513,7 @@ void OftMetaTransfer::timeout()
 	if ( m_state != Done )
 		return; //can't happen
 	kDebug(OSCAR_RAW_DEBUG) << "waiting for empty buffer...";
-	if ( m_connection->bytesToWrite() == 0 )
+	if ( m_socket->bytesToWrite() == 0 )
 	{
 		m_timer.stop();
 		deleteLater(); //yay, it's ok to kill everything now

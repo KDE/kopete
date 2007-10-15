@@ -20,26 +20,23 @@
 #ifndef OFTMETATRANSFER_H
 #define OFTMETATRANSFER_H
 
-#include <qfile.h>
-#include <qtimer.h>
+#include <QtCore/QFile>
+#include <QtCore/QTimer>
+#include <QtNetwork/QAbstractSocket>
+
 #include "oscartypes.h"
 
-namespace KNetwork
-{
-	class KBufferedSocket;
-}
-typedef KNetwork::KBufferedSocket KBufferedSocket;
+class QTcpSocket;
 
-using namespace Oscar;
 class OftMetaTransfer : public QObject
 {
 Q_OBJECT
 public:
 	/** Receive constructor */
-	OftMetaTransfer( const QByteArray& cookie, const QString& dir, KBufferedSocket *connection );
+	OftMetaTransfer( const QByteArray& cookie, const QString& dir, QTcpSocket *socket );
 
 	/** Send constructor */
-	OftMetaTransfer( const QByteArray& cookie, const QStringList& files, KBufferedSocket *connection );
+	OftMetaTransfer( const QByteArray& cookie, const QStringList& files, QTcpSocket *socket );
 
 	~OftMetaTransfer();
 
@@ -62,7 +59,7 @@ signals:
 
 private slots:
 	//bool validFile();
-	void socketError( int );
+	void socketError( QAbstractSocket::SocketError );
 	void socketRead();
 	void write();
 	void timeout();
@@ -89,14 +86,14 @@ private:
 	Oscar::DWORD checksum( int max = -1 ); //return checksum of our file, up to max bytes
 					//XXX this does put an arbitrary limit on file size
 
-	OFT m_oft;
+	Oscar::OFT m_oft;
 
 	QFile m_file;
 
 	QString m_dir; //directory where we save files
 	QStringList m_files; //list of files that we want to send
 
-	KBufferedSocket *m_connection; //where we actually send file data
+	QTcpSocket *m_socket; //where we actually send file data
 	QTimer m_timer; //if we're idle too long, then give up
 	enum State { SetupReceive, SetupSend, Receiving, Sending, Done };
 	State m_state;

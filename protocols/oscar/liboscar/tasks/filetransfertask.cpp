@@ -19,27 +19,28 @@
     *************************************************************************
 */
 
-#include "oscarsettings.h"
 #include "filetransfertask.h"
 
+#include <QtCore/QFileInfo>
+#include <QtCore/QTextCodec>
 #include <QtNetwork/QHostAddress>
+#include <QtNetwork/QTcpServer>
+#include <QtNetwork/QTcpSocket>
 
-#include <k3serversocket.h>
-#include <k3bufferedsocket.h>
+#include <ksocketfactory.h>
 #include <krandom.h>
-#include <qstring.h>
-#include <qtextcodec.h>
-#include <kdebug.h>
-#include "buffer.h"
-#include "connection.h"
-#include "ofttransfer.h"
-#include "oftprotocol.h"
-#include "oscarutils.h"
-#include <typeinfo>
-#include "kopetetransfermanager.h"
-#include <qfileinfo.h>
+
 #include <klocale.h>
+#include <kdebug.h>
+
+#include "buffer.h"
+#include "oscarutils.h"
+#include "oscarmessage.h"
+#include "connection.h"
+#include "oscarsettings.h"
 #include "oftmetatransfer.h"
+
+#include "kopetetransfermanager.h"
 
 //receive
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
@@ -97,7 +98,7 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
 void FileTransferTask::init( Action act )
 {
 	m_action = act;
-	m_ss = 0;
+	m_tcpServer = 0;
 	m_connection = 0;
 	m_port = 0;
 	m_proxy = false;
@@ -107,8 +108,15 @@ void FileTransferTask::init( Action act )
 
 FileTransferTask::~FileTransferTask()
 {
+	if( m_tcpServer )
+	{
+		delete m_tcpServer;
+		m_tcpServer = 0;
+	}
+
 	if( m_connection )
 	{
+		m_connection->close();
 		delete m_connection;
 		m_connection = 0;
 	}
@@ -344,8 +352,9 @@ bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 			break;
 		}
 
-		delete m_ss;
-		m_ss = 0;
+		m_tcpServer->close();
+		delete m_tcpServer;
+		m_tcpServer = 0;
 		parseReq( b );
 		doConnect();
 		break;
@@ -368,11 +377,17 @@ bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 void FileTransferTask::readyAccept()
 {
 	kDebug(OSCAR_RAW_DEBUG) << "******************";
-	m_connection = dynamic_cast<KBufferedSocket*>( m_ss->accept() );
-	m_ss->close(); //free up the port so others can listen
-	m_ss->deleteLater();
-	m_ss = 0;
-	if (! m_connection )
+	m_connection = m_tcpServer->nextPendingConnection();
+
+	// Reparent because we want to delete TcpServer;
+	if ( m_connection )
+		m_connection->setParent( 0 );
+
+	m_tcpServer->close(); //free up the port so others can listen
+	delete m_tcpServer;
+	m_tcpServer = 0;
+	
+	if ( !m_connection )
 	{ //either it wasn't buffered, or it did something weird
 		kDebug(OSCAR_RAW_DEBUG) << "connection failed somehow.";
 		emit error( KIO::ERR_COULD_NOT_ACCEPT, QString() );
@@ -395,7 +410,7 @@ void FileTransferTask::doOft()
 	else
 		oft = new OftMetaTransfer( m_oftRendezvous.cookie, m_oftRendezvous.files, m_connection );
 
-	m_connection=0; //it's not ours any more
+	m_connection = 0; //it's not ours any more
 	//might be a good idea to hook up some signals&slots.
 	connect( oft, SIGNAL(fileProcessed(unsigned int, unsigned int)), this, SIGNAL(processed(unsigned int)) );
 	connect( oft, SIGNAL(transferCompleted()), this, SLOT(doneOft()) );
@@ -411,13 +426,11 @@ void FileTransferTask::doneOft()
 	setSuccess( true );
 }
 
-void FileTransferTask::socketError( int e )
+void FileTransferTask::socketError( QAbstractSocket::SocketError e )
 { //FIXME: handle this properly for all cases
 	QString desc;
-	if ( m_ss )
-		desc = m_ss->errorString();
-	else if ( m_connection )
-		desc = m_connection->errorString();
+	
+	desc = m_connection->errorString();
 	kWarning(OSCAR_RAW_DEBUG) << "socket error: " << e << " : " << desc;
 	if ( m_state == Connecting )
 	{ //connection failed, try another way
@@ -481,7 +494,9 @@ void FileTransferTask::proxyRead()
 		case 3: //ack
 			m_port = b.getWord();
 			m_ip = b.getBlock( 4 );
-			kDebug(OSCAR_RAW_DEBUG) << "got port " << m_port << " ip " << m_ip;
+
+			kDebug(OSCAR_RAW_DEBUG) << "got port " << m_port << " ip "
+			                        << QHostAddress( Buffer( m_ip ).getDWord() ).toString();;
 			//now we send a proxy request to the other side
 			sendReq();
 			break;
@@ -579,10 +594,11 @@ void FileTransferTask::doConnect()
 	}
 
 	//proxies *always* use port 5190; the "port" value is some retarded check
-	m_connection = new KBufferedSocket( host, QString::number( m_proxy ? 5190 : m_port ) );
-	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( proxyRead() ) );
-	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
-	connect( m_connection, SIGNAL( connected(const KNetwork::KResolverEntry&)), this, SLOT(socketConnected()));
+	m_connection = new QTcpSocket();
+	connect( m_connection, SIGNAL(readyRead() ), this, SLOT(proxyRead()) );
+	connect( m_connection, SIGNAL(error(QAbstractSocket::SocketError)),
+	         this, SLOT(socketError(QAbstractSocket::SocketError)) );
+	connect( m_connection, SIGNAL(connected()), this, SLOT(socketConnected()));
 
 	m_state = Connecting;
 	//socket doesn't seem to have its own timeout, so here's mine
@@ -590,7 +606,7 @@ void FileTransferTask::doConnect()
 	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
 	m_timer.start( client()->settings()->timeout()  * 1000 );
 	//try it
-	m_connection->connect();
+	KSocketFactory::connectToHost( m_connection, QString(), host, m_proxy ? 5190 : m_port );
 }
 
 void FileTransferTask::socketConnected()
@@ -673,6 +689,7 @@ void FileTransferTask::timeout()
 
 void FileTransferTask::connectFailed()
 {
+	m_connection->close();
 	delete m_connection;
 	m_connection = 0;
 	bool proxy = client()->settings()->fileProxy();
@@ -703,9 +720,11 @@ bool FileTransferTask::listen()
 	kDebug(OSCAR_RAW_DEBUG) ;
 	m_state = Default;
 	//listen for connections
-	m_ss = new KServerSocket( this );
-	connect( m_ss, SIGNAL(readyAccept()), this, SLOT(readyAccept()) );
-	connect( m_ss, SIGNAL(gotError(int)), this, SLOT(socketError(int)) );
+	m_tcpServer = new QTcpServer( this );
+	m_tcpServer->setProxy( KSocketFactory::proxyForListening( QString() ) );
+	
+	connect( m_tcpServer, SIGNAL(newConnection()), this, SLOT(readyAccept()) );
+	
 	bool success = false;
 	int first = client()->settings()->firstPort();
 	int last = client()->settings()->lastPort();
@@ -715,15 +734,13 @@ bool FileTransferTask::listen()
 
 	for ( int i = first; i <= last; i++ )
 	{ //try ports in the range (default 5190-5199)
-		m_ss->setAddress( QString::number( i ) );
-		if( success = ( m_ss->listen() && m_ss->error() == KNetwork::KSocketBase::NoError ) )
+		if( success = ( m_tcpServer->listen( QHostAddress::Any, i ) ) )
 		{
 			m_port = i;
 			break;
 		}
-		m_ss->close();
 	}
-	if (! success )
+	if ( !success )
 	{ //uhoh... what do we do? FIXME: maybe tell the user too many filetransfers
 		kDebug(OSCAR_RAW_DEBUG) << "listening failed. abandoning";
 		emit error( KIO::ERR_COULD_NOT_LISTEN, QString::number( last ) );
