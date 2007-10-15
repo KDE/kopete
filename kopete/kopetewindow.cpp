@@ -538,13 +538,12 @@ void KopeteWindow::loadOptions()
 
 void KopeteWindow::saveOptions()
 {
-        KConfigGroup cg( KGlobal::config(), "ToolBar Settings" );
+    KConfigGroup mainToolbarGroup( KGlobal::config(), "ToolBar Settings" );
+    toolBar("mainToolBar")->saveSettings( mainToolbarGroup );
+    KConfigGroup qsbGroup(KGlobal::config(), "QuickSearchBar Settings" );
+    toolBar("quickSearchBar")->saveSettings( qsbGroup );
 
-	toolBar("mainToolBar")->saveSettings ( cg );
-        cg.changeGroup( "QuickSearchBar Settings" );
-	toolBar("quickSearchBar")->saveSettings( cg );
-
-        cg.changeGroup( "General Options" );
+    KConfigGroup cg( KGlobal::config(), "General Options" );
 	saveMainWindowSettings( cg );
 
 	cg.writeEntry("Position", pos());
