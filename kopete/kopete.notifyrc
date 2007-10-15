@@ -325,7 +325,7 @@ Action=None
 
 [Event/kopete_contact_status_change]
 Name=Status Change
-Name[ca]=Canvia estatus
+Name[ca]=Canvia l'estat
 Name[cs]=Změna stavu
 Name[cy]=Newid Cyflwr
 Name[da]=Statusændring
