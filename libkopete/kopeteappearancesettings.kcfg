@@ -24,7 +24,7 @@
 		<!-- Emoticon config -->
 		<entry key="emoticonTheme" type="String">
 			<label>Current emoticon theme.</label>
-			<default>Default</default>
+			<default>kde4</default>
 			<emit signal="contactListAppearanceChanged" />
 			<emit signal="messageOverridesChanged" />
 		</entry>
