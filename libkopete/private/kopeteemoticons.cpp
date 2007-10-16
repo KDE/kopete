@@ -354,7 +354,7 @@ void Emoticons::initEmoticons( const QString &theme )
 		QString themeFromSettings = Kopete::AppearanceSettings::self()->emoticonTheme();
 		if (themeFromSettings == "Default")
 			themeFromSettings = "kde4";
-		if ( d->theme == themeFromSettings;
+		if ( d->theme == themeFromSettings )
 			return;
 
 		d->theme = themeFromSettings;
