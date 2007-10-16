@@ -59,6 +59,7 @@ public:
 	void onGo();
 	bool take( Transfer* transfer );
 	bool take( int type, QByteArray cookie, Buffer b );
+	bool takeAutoResponse( int type, QByteArray cookie, Buffer* b );
 
 public slots:
 	void doCancel();

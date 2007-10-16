@@ -349,6 +349,15 @@ void MessageReceiverTask::handleAutoResponse()
 	int reasonCode = b->getWord();
 	kDebug(14151) << "Reason code (1 - channel not supported, 2 - busted payload, 3 - channel specific data): " << reasonCode;
 
+	// TODO: remove this hack somehow
+	// Check if it's for FileTransferTask ( FileTransfer auto response has diffrent structure )
+	const QList<FileTransferTask*> p = parent()->findChildren<FileTransferTask*>();
+	foreach( FileTransferTask *t, p)
+	{
+		if ( t->takeAutoResponse( reasonCode, m_icbmCookie, b ) )
+			return;
+	}
+	
 	parseRendezvousData( b, &msg );
 	emit receivedMessage( msg );
 }

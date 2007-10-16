@@ -374,6 +374,39 @@ bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 	return true;
 }
 
+bool FileTransferTask::takeAutoResponse( int type, QByteArray cookie, Buffer* b )
+{
+	if ( cookie != m_oftRendezvous.cookie )
+		return false;
+
+	switch( type )
+	{
+	case 3: //channel specific data
+		if ( b->getWord() == 0x0002 )
+		{
+			Oscar::WORD data = b->getWord();
+			if ( data == 0x0001 )
+				kDebug(OSCAR_RAW_DEBUG) << "other user cancelled filetransfer :(";
+			else if ( data == 0x0006 )
+				kDebug(OSCAR_RAW_DEBUG) << "other client terminated filetransfer :(";
+
+			if ( data == 0x0001 || data == 0x0006 )
+			{
+				emit gotCancel();
+				emit cancelOft();
+				m_timer.stop();
+				setSuccess( true );
+				break;
+			}
+		}
+	case 1: //channel not supported
+	case 2: //busted payload
+	default:
+		kWarning(OSCAR_RAW_DEBUG) << "unknown response for type: " << type;
+	}
+	return true;
+}
+
 void FileTransferTask::readyAccept()
 {
 	kDebug(OSCAR_RAW_DEBUG) << "******************";
