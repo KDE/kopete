@@ -22,6 +22,8 @@
 #include <QtCore/QLatin1String>
 
 // KDE includes
+#include <kurl.h>
+
 // Kopete includes
 #include <kopetecontactlist.h>
 #include <kopetemetacontact.h>
@@ -34,6 +36,7 @@
 #include <kopeteonlinestatus.h>
 #include <kopetemessage.h>
 #include <kopetechatsession.h>
+#include <kopetegroup.h>
 
 // Local includes
 #include "kopeteadaptor.h"
@@ -55,6 +58,25 @@ KopeteDBusInterface::KopeteDBusInterface(QObject *parent)
 {
 	new KopeteAdaptor(this);
 	QDBusConnection::sessionBus().registerObject("/Kopete", this);
+}
+
+Kopete::OnlineStatusManager::Categories status2Value(const QString &status)
+{
+	Kopete::OnlineStatusManager::Categories statusValue;
+	if( status.toLower() == QLatin1String("online") || status.toLower() == QLatin1String("available") )
+	{
+		statusValue = Kopete::OnlineStatusManager::Online;
+	}
+	else if( status.toLower() == QLatin1String("busy") )
+	{
+		statusValue = Kopete::OnlineStatusManager::Busy;
+	}
+	else if( status.toLower() == QLatin1String("away") )
+	{
+		statusValue = Kopete::OnlineStatusManager::Away;
+	}
+
+	return statusValue;
 }
 
 KopeteDBusInterface::~KopeteDBusInterface()
@@ -147,6 +169,25 @@ void KopeteDBusInterface::setIdentityAvatar(const QString &avatarUrl, const QStr
 	}
 }
 
+void KopeteDBusInterface::setIdentityOnlineStatus(const QString &status, const QString &message, const QString &identityId)
+{
+	Kopete::Identity *identity = 0;
+	
+	if( identityId.isEmpty() )
+	{
+		identity = Kopete::IdentityManager::self()->defaultIdentity();
+	}
+	else
+	{
+		identity = Kopete::IdentityManager::self()->findIdentity(identityId);
+	}
+
+	if( identity )
+	{
+		identity->setOnlineStatus( status2Value(status), message );
+	}
+}
+
 QStringList KopeteDBusInterface::identities() const
 {
 	QStringList result;
@@ -181,23 +222,9 @@ void KopeteDBusInterface::disconnectAll()
 	Kopete::AccountManager::self()->disconnectAll();
 }
 
-void KopeteDBusInterface::setStatus(const QString &status, const QString &message)
+void KopeteDBusInterface::setOnlineStatus(const QString &status, const QString &message)
 {
-	Kopete::OnlineStatusManager::Categories statusValue;
-	if( status.toLower() == QLatin1String("online") || status.toLower() == QLatin1String("available") )
-	{
-		statusValue = Kopete::OnlineStatusManager::Online;
-	}
-	else if( status.toLower() == QLatin1String("busy") )
-	{
-		statusValue = Kopete::OnlineStatusManager::Busy;
-	}
-	else if( status.toLower() == QLatin1String("away") )
-	{
-		statusValue = Kopete::OnlineStatusManager::Away;
-	}
-
-	Kopete::AccountManager::self()->setOnlineStatus(statusValue, message);
+	Kopete::AccountManager::self()->setOnlineStatus( status2Value(status), message );
 }
 
 void KopeteDBusInterface::setStatusMessage(const QString &message)
@@ -224,13 +251,51 @@ void KopeteDBusInterface::sendMessage(const QString &displayName, const QString 
 
 bool KopeteDBusInterface::addContact(const QString &protocolName, const QString &accountId, const QString &contactId, const QString &displayName, const QString &groupName)
 {
-	// TODO
+	QString protocolId = protocolName;
+	if( !protocolName.contains("Protocol") )
+	{
+		protocolId += QLatin1String("Protocol");
+	}
+
+	// Find the account using the given parameters on D-Bus
+	Kopete::Account *account = Kopete::AccountManager::self()->findAccount( protocolId, accountId );
+
+	if( account )
+	{
+		QString contactName;
+		Kopete::Group *realGroup=0;
+
+		if( displayName.isEmpty() )
+		{
+			contactName = contactId;
+		}
+		else
+		{
+			contactName = displayName;
+		}
+
+		if ( !groupName.isEmpty() )
+			realGroup = Kopete::ContactList::self()->findGroup( groupName );
+
+		account->addContact( contactId, contactName, realGroup, Kopete::Account::DontChangeKABC);
+
+		return true;
+	}
+
 	return false;
 }
 
 void KopeteDBusInterface::sendFile(const QString &displayName, const QString &fileUrl)
 {
-	// TODO
+	Kopete::MetaContact *destMetaContact = Kopete::ContactList::self()->findMetaContactByDisplayName(displayName);
+	if( destMetaContact && destMetaContact->isReachable() )
+	{
+		Kopete::Contact *destContact = destMetaContact->execute();
+		if( destContact && destContact->isFileCapable() )
+		{
+			destContact->sendFile( KUrl(fileUrl) );
+		}
+	}
 }
 
 void KopeteDBusInterface::connect(const QString &protocolName, const QString &accountId)

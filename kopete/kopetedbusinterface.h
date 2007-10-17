@@ -43,11 +43,47 @@ public:
 
 public Q_SLOTS:
 	/**
+	 * @brief Connect all accounts
+	 */
+	void connectAll();
+
+	/**
+	 * @brief Disconnect all accounts
+	 */
+	void disconnectAll();
+
+	/**
+	 * @brief Connect a given account in the given protocol
+	 * @param protocolName The protocol name (ex: Jabber, Yahoo, Messenger)
+	 * @param accountId Account ID
+	 */
+	void connect(const QString &protocolName, const QString &accountId);
+
+	/**
+	 * @brief Disconnect a given account in the given protocol
+	 * @param protocolName The protocol name (ex: Jabber, Yahoo, Messenger)
+	 * @param accountId Account ID
+	 */
+	void disconnect(const QString &protocolName, const QString &accountId);
+
+	/**
+	 * @brief Get a list of all identities' ID
+	 * @return a list of all identities' ID
+	 */
+	QStringList identities() const;
+
+	/**
+	 * @brief Get a list of all account's ID
+	 * @return a list of all accounts' ID
+	 */
+	QStringList accounts() const;
+
+	/**
 	 * @brief Return all contacts
 	 * @return a list of all contacts display name
 	 */
 	QStringList contacts() const;
-	
+
 	/**
 	 * @brief Get a filered list of contacts based on the filter
 	 *
@@ -78,26 +114,17 @@ public Q_SLOTS:
 	 * @param identityId Identity ID to modify. If empty, will use default identity
 	 */
 	void setIdentityAvatar(const QString &avatarUrl, const QString &identityId = QString());
-
+	
 	/**
-	 * @brief Get the list of all the identities's ID
+	 * @brief Set the online status for the given identity
+	 *
+	 * To set the online status of the default identity, use an empty identityId
+	 *
+	 * @param status The english word for the status you want.
+	 * @param message Status message, can be an empty string
+	 * @param identityId Identity ID to modify. If empty, will use default identity
 	 */
-	QStringList identities() const;
-
-	/**
-	 * @brief Get a list of all account's ID
-	 */
-	QStringList accounts() const;
-
-	/**
-	 * @brief Connect all accounts
-	 */
-	void connectAll();
-
-	/**
-	 * @brief Disconnect all accounts
-	 */
-	void disconnectAll();
+	void setIdentityOnlineStatus(const QString &status, const QString &message, const QString &identityId = QString());
 
 	/**
 	 * @brief Change the online status for all accounts
@@ -106,7 +133,7 @@ public Q_SLOTS:
 	 * @param status The english word for the status you want.
 	 * @param message Optional status message
 	 */
-	void setStatus(const QString &status, const QString &message = QString());
+	void setOnlineStatus(const QString &status, const QString &message = QString());
 
 	/**
 	 * @brief Change the status message for all accounts
@@ -142,19 +169,7 @@ public Q_SLOTS:
 	 */
 	void sendFile( const QString &displayName, const QString &fileUrl );
 
-	/**
-	 * @brief Connect a given account in the given protocol
-	 * @param protocolName The protocol name (ex: Jabber, Yahoo, Messenger)
-	 * @param accountId Account ID
-	 */
-	void connect(const QString &protocolName, const QString &accountId);
 
-	/**
-	 * @brief Disconnect a given account in the given protocol
-	 * @param protocolName The protocol name (ex: Jabber, Yahoo, Messenger)
-	 * @param accountId Account ID
-	 */
-	void disconnect(const QString &protocolName, const QString &accountId);
 };
 
 #endif
