@@ -168,8 +168,6 @@ public Q_SLOTS:
 	 * @param fileUrl Url of the file to send
 	 */
 	void sendFile( const QString &displayName, const QString &fileUrl );
-
-
 };
 
 #endif
