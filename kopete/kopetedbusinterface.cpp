@@ -53,13 +53,6 @@ QStringList listContact(const QList<Kopete::MetaContact*> &contactList)
 	return result;
 }
 
-KopeteDBusInterface::KopeteDBusInterface(QObject *parent)
- : QObject(parent)
-{
-	new KopeteAdaptor(this);
-	QDBusConnection::sessionBus().registerObject("/Kopete", this);
-}
-
 Kopete::OnlineStatusManager::Categories status2Value(const QString &status)
 {
 	Kopete::OnlineStatusManager::Categories statusValue;
@@ -77,6 +70,13 @@ Kopete::OnlineStatusManager::Categories status2Value(const QString &status)
 	}
 
 	return statusValue;
+}
+
+KopeteDBusInterface::KopeteDBusInterface(QObject *parent)
+ : QObject(parent)
+{
+	new KopeteAdaptor(this);
+	QDBusConnection::sessionBus().registerObject("/Kopete", this);
 }
 
 KopeteDBusInterface::~KopeteDBusInterface()
