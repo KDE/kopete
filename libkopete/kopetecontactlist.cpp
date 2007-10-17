@@ -164,17 +164,13 @@ Contact *ContactList::findContact( const QString &protocolId,
 
 MetaContact *ContactList::findMetaContactByDisplayName( const QString &displayName ) const
 {
-	QListIterator<MetaContact *> it( d->contacts );
-	while ( it.hasNext() )
+	foreach(Kopete::MetaContact *contact, d->contacts)
 	{
-		MetaContact *mc = it.next();
-//		kDebug(14010) << "Display Name: " << it.current()->displayName() << "\n";
-		if( mc->displayName() == displayName ) {
-			return mc;
+		if( contact->displayName() == displayName )
+		{
+			return contact;
 		}
 	}
-
-	return 0L;
 }
 
 MetaContact* ContactList::findMetaContactByContactId( const QString &contactId ) const
