@@ -439,7 +439,7 @@ void ClientTask::numericReply_253(Message msg)
 {
 	CHECK_ARGS(2, 2);
 
-	postInfoEvent(msg, i18np("There is 1 unknown connection.", "There are %s unknown connections.", msg.arg(1).toULong()));
+	postInfoEvent(msg, i18np("There is 1 unknown connection.", "There are %1 unknown connections.", msg.arg(1).toULong()));
 }
 
 /* 254: "<integer> :channels formed"
@@ -449,7 +449,7 @@ void ClientTask::numericReply_254(Message msg)
 {
 	CHECK_ARGS(2, 2);
 
-	postInfoEvent(msg, i18np("There is 1 channel formed.", "There are %s channel formed.", msg.arg(1).toULong()));
+	postInfoEvent(msg, i18np("There is 1 channel formed.", "There are %1 channel formed.", msg.arg(1).toULong()));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"

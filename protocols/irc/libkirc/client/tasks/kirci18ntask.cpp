@@ -410,7 +410,7 @@ void I18nTask::numericReply_252(Event *e)
  */
 void I18nTask::numericReply_253(Event *e)
 {
-	postServerEvent(e, i18np("There is 1 unknown connection.", "There are %s unknown connections.", e->message().arg(1).toULong()));
+	postServerEvent(e, i18np("There is 1 unknown connection.", "There are %1 unknown connections.", e->message().arg(1).toULong()));
 }
 
 /* 254: "<integer> :channels formed"
@@ -418,7 +418,7 @@ void I18nTask::numericReply_253(Event *e)
  *  */
 void I18nTask::numericReply_254(Event *e)
 {
-	postServerEvent(e, i18np("There is 1 channel formed.", "There are %s channels formed.", e->message().arg(1).toULong()));
+	postServerEvent(e, i18np("There is 1 channel formed.", "There are %1 channels formed.", e->message().arg(1).toULong()));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
