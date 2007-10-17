@@ -139,6 +139,13 @@ void AccountManager::setOnlineStatus( uint category , const QString& awayMessage
 	}
 }
 
+void AccountManager::setStatusMessage(const QString &message)
+{
+	foreach( Account *account, d->accounts )
+	{
+		account->setStatusMessage(message);
+	}
+}
 
 QColor AccountManager::guessColor( Protocol *protocol ) const
 {

@@ -58,9 +58,11 @@ set(kopete_SRCS
    systemtray.cpp 
    kopetewindow.cpp 
    kopeteidentitystatusbaricon.cpp 
-#   kopeteiface.cpp 
+   kopetedbusinterface.cpp
 #   kimifaceimpl.cpp 
    )
+
+QT4_ADD_DBUS_ADAPTOR(kopete_SRCS org.kde.Kopete.xml kopetedbusinterface.h KopeteDBusInterface)
 
 kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui )
 
@@ -84,6 +86,7 @@ install(TARGETS kopete_bin  DESTINATION ${BIN_INSTALL_DIR} )
 
 install( FILES kopete.desktop  DESTINATION ${XDG_APPS_INSTALL_DIR})
 install( FILES kopeteui.rc kopete.notifyrc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
+install( FILES org.kde.Kopete.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}   )
 

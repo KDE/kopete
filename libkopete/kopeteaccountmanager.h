@@ -141,6 +141,13 @@ public slots:
 						  const QString& awayMessage = QString(), uint flags=0);
 
 	/**
+	 * @brief Set the given status message for all online accounts
+	 *
+	 * @param message Status message to set
+	 */
+	void setStatusMessage(const QString &message);
+	
+	/**
 	 * @deprecated  use setOnlineStatus
 	 */
 	void setAwayAll( const QString &awayReason = QString(), bool away=true );
