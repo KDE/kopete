@@ -43,7 +43,7 @@ styleName\ (can have .adiumMessageStyle as suffix, because in Mac OS X it is a b
 
 <sect3 id="chatstyle-reference-divinsert">
 	<title>About &lt;div id="insert"&gt;&lt;/div&gt;</title>
-	<para>This is a special div element used internally. It is a placeholder to indicate where to insert the next message. If it's a new message, it is removed and the new message take place. But if it's a consecutive message, the div element is replaced with the content of new message. This special div element is <emphasis>required</emphasis> in Content,Context,NextContent,NextContext templates. Though it not harm to put it also in Action and Status template.
+	<para>This is a special div element used internally. It is a placeholder to indicate where to insert the next message. If it is a new message, it is removed and the new message take place. But if it is a consecutive message, the div element is replaced with the content of new message. This special div element is <emphasis>required</emphasis> in Content,Context,NextContent,NextContext templates. Though it not harm to put it also in Action and Status template.
 	</para>
 </sect3>
 
@@ -357,7 +357,7 @@ Represent the message direction, if the message must be displayed right-to-left 
 
 <sect2 id="chatstyle-guideline-direction">
 	<title>Support right-to-left languages with <filename>%messageDirection%</filename> keyword.</title>
-	<para><filename>%messageDirection%</filename> keyword is present for languages in the world that write right-to-left. It define the message direction, if it's "rtl"(right-to-left) or "ltr"(left-to-right). Add this style attribute to the HTML element that display the message: <userinput>direction: %messageDirection%</userinput>. Style preview in appearance config include a right-to-left to check if your style display it correctly. It should begin the string from the right.</para>
+	<para><filename>%messageDirection%</filename> keyword is present for languages in the world that write right-to-left. It define the message direction, if it is "rtl"(right-to-left) or "ltr"(left-to-right). Add this style attribute to the HTML element that display the message: <userinput>direction: %messageDirection%</userinput>. Style preview in appearance config include a right-to-left to check if your style display it correctly. It should begin the string from the right.</para>
 </sect2>
 </sect1>
 </appendix>
