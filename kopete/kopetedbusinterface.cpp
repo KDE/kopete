@@ -32,6 +32,8 @@
 #include <kopeteaccount.h>
 #include <kopeteaccountmanager.h>
 #include <kopeteonlinestatus.h>
+#include <kopetemessage.h>
+#include <kopetechatsession.h>
 
 // Local includes
 #include "kopeteadaptor.h"
@@ -46,19 +48,6 @@ QStringList listContact(const QList<Kopete::MetaContact*> &contactList)
 	}
 
 	return result;
-}
-
-Kopete::MetaContact *findMetaContactByDisplayName(const QString &displayName)
-{
-	foreach(Kopete::MetaContact *contact, Kopete::ContactList::self()->metaContacts())
-	{
-		if( contact->displayName() == displayName )
-		{
-			return contact;
-		}
-	}
-
-	return 0;
 }
 
 KopeteDBusInterface::KopeteDBusInterface(QObject *parent)
@@ -218,7 +207,19 @@ void KopeteDBusInterface::setStatusMessage(const QString &message)
 
 void KopeteDBusInterface::sendMessage(const QString &displayName, const QString &message)
 {
-	// TODO
+	Kopete::MetaContact *destMetaContact = Kopete::ContactList::self()->findMetaContactByDisplayName(displayName);
+	if( destMetaContact && destMetaContact->isReachable() )
+	{
+		Kopete::Contact *destContact = destMetaContact->execute();
+		if( destContact )
+		{
+			Kopete::Message newMessage( destContact->account()->myself(), destContact );
+			newMessage.setPlainBody( message );
+			newMessage.setDirection( Kopete::Message::Outbound );
+
+			destContact->manager(Kopete::Contact::CanCreate)->sendMessage( newMessage );
+		}
+	}
 }
 
 bool KopeteDBusInterface::addContact(const QString &protocolName, const QString &accountId, const QString &contactId, const QString &displayName, const QString &groupName)

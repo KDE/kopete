@@ -29,6 +29,7 @@ class KopeteDBusInterface : public QObject
 {
 	Q_OBJECT
 	Q_CLASSINFO("D-Bus Interface", "org.kde.Kopete")
+
 public:
 	/**
 	 * @brief Constructor
