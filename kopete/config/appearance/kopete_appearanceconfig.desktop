@@ -9,7 +9,7 @@ X-KDE-FactoryName=kcm_kopete_appearanceconfig
 X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
-Name=Appearance
+Name=Contact List
 Name[bg]=Външен вид
 Name[br]=Neuziadur
 Name[ca]=Aparença
@@ -63,7 +63,7 @@ Name[x-test]=xxAppearancexx
 Name[zh_CN]=外观
 Name[zh_HK]=外觀
 Name[zh_TW]=外觀
-Comment=Change Kopete Look And Feel
+Comment=Configure Contact List Look and Feel
 Comment[bg]=Настройване външния вид на програмата
 Comment[ca]=Modifiqueu l'aparença i comportament del Kopete
 Comment[de]=Hier können Sie Kopetes Erscheinungsbild anpassen

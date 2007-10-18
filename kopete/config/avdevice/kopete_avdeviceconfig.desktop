@@ -9,7 +9,7 @@ X-KDE-FactoryName=kcm_kopete_avdeviceconfig
 X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
-Name=Devices
+Name=Audio/Video
 Name[bg]=Устройства
 Name[br]=Trobarzhelloù
 Name[ca]=Dispositius
@@ -60,7 +60,7 @@ Name[xh]=Amacebo
 Name[zh_CN]=设备
 Name[zh_HK]=裝置
 Name[zh_TW]=裝置
-Comment=Kopete Video and Audio Device Settings
+Comment=Configure Audio and Video Devices
 Comment[bg]=Настройване на видео и аудио устройствата на програмата
 Comment[ca]=Paràmetres dels dispositius d'àudio i vídeo del Kopete
 Comment[de]=Einrichtung der Audio- und Videogeräte für Kopete
