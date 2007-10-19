@@ -50,7 +50,7 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 	QWidget *w = new QWidget(this);
 	d->general.setupUi(w);
 	d->general.selectPhoto->setIcon(KIcon("fileview-preview"));
-	d->general.clearPhoto->setIcon(KIcon("clear-left"));
+	d->general.clearPhoto->setIcon(KIcon("edit-clear-locationbar-rtl"));
 
 	connect(d->general.selectPhoto, SIGNAL(clicked(bool)),
 			this, SLOT(slotSelectPhoto()));
