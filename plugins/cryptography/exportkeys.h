@@ -44,6 +44,7 @@ class ExportKeys : public KDialog
 	private:
 		Ui::ExportKeysUI * mUi;
 		KABC::AddresseeList mAddressees;
+		QList<Kopete::MetaContact*> mMetaContacts;
 };
 
 #endif

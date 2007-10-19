@@ -18,15 +18,12 @@
 
 #include <kabc/addressee.h>
 #include <kabc/addressbook.h>
-#include <kabc/resource.h>
 
 #include <kiconloader.h>
+#include <kpushbutton.h>
 
 #include <kopete/kopetemetacontact.h>
-#include <kopete/kopetechatsession.h>
-#include <kopete/kopetecontact.h>
 #include <kopete/kabcpersistence.h>
-#include <kopete/kopeteprotocol.h>
 
 #include "cryptographyplugin.h"
 
@@ -42,7 +39,7 @@ ExportKeys::ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent )
 	
 	setCaption ( i18n ("Export Public Keys") );
 	setButtons ( KDialog::User1 | KDialog::Cancel );
-	setButtonGuiItem ( KDialog::User1, KGuiItem ( i18n("Export"), QString(), i18n("Export checked keys to address book")));
+	setButtonGuiItem ( KDialog::User1, KGuiItem ( i18n("Export"), "kgpg-export-kgpg", i18n("Export checked keys to address book")));
 	connect ( this, SIGNAL( user1Clicked() ), this, SLOT ( accept() ) );
 	
 	QString key;
@@ -58,22 +55,26 @@ ExportKeys::ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent )
 		addressee = Kopete::KABCPersistence::addressBook()->findByUid (mc->metaContactId());
 		// if no addressee exsists, create one by setting the name
 		if (addressee.isEmpty())
-			addressee.setName ( mc->displayName() );
+			addressee.setFormattedName ( mc->displayName() );
 		// add key to old or new addressee
 		addressee.insertCustom ("KADDRESSBOOK", "OPENPGPFP", key);
 		
 		// now we create the ListWidgetItem
 		key = key.right(8).prepend("0x");
-		key = key + " " + mc->displayName() + " (" + addressee.assembledName() + ")";
+		key = key + " " + mc->displayName() + " (" + addressee.formattedName() + ")";
 		QListWidgetItem * tmpItem = new QListWidgetItem ( KIconLoader::global()->loadIconSet ("kgpg-export-kgpg", KIconLoader::Small), key, mUi->keyList);
 		tmpItem->setFlags (Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		tmpItem->setCheckState (Qt::Checked);
 		mUi->keyList->addItem ( tmpItem );
-		// add addressee to master list
+		// add addressee to master lists
+		// these are kept aligned so that mAddressees[i] refers to the same person as mMetaContacts[i]
 		mAddressees.append (addressee);
+		mMetaContacts.append (mc);
 	}
-	if ( mUi->keyList->count() == 0 )
+	if ( mUi->keyList->count() == 0 ){
 		mUi->keyList->addItem ( i18n ("<No meta-contacts with keys to export>") );
+		button( KDialog::User1 )->setEnabled (false);
+	}
 }
 
 
@@ -84,18 +85,23 @@ ExportKeys::~ExportKeys()
 
 void ExportKeys::accept()
 {
-	kDebug (14303) << "running" << endl;
-	
 	KABC::AddressBook * ab = Kopete::KABCPersistence::self()->addressBook();
 	
 	// add addressees to address book
 	for (int i = 0; i < mUi->keyList->count(); i++)
 	{
-		if (mUi->keyList->item(i)->checkState()){
+		if (mUi->keyList->item(i)->checkState() )
+		{
+			// if metacontact was not previously associated with this addressee, change the uid to associate it
+			if ( mMetaContacts.at(i)->metaContactId() != mAddressees.at(i).uid() )
+				mMetaContacts.at(i)->setMetaContactId (mAddressees.at(i).uid());
+			kDebug (14303) << "new uid for kabc contact " << mAddressees.at(i).formattedName() << " is " << mMetaContacts.at(i)->metaContactId();
 			ab->insertAddressee (mAddressees.at(i));
+			Kopete::KABCPersistence::self()->write (mMetaContacts.at(i));
 			Kopete::KABCPersistence::self()->writeAddressBook(mAddressees.at(i).resource());
 		}
 	}
+
 	QDialog::accept();
 }
 
