@@ -1,7 +1,7 @@
 /*
     addressbooklink.cpp - Manages operations involving the KDE Address Book
 
-    Copyright (c) 2005 Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2005 Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 

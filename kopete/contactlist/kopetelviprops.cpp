@@ -4,7 +4,7 @@
     Kopete Contactlist Properties GUI for Groups and MetaContacts
 
     Copyright (c) 2002-2003 by Stefan Gehn <metz@gehn.net>
-    Copyright (c) 2004 by Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2004 by Will Stephenson <wstephenson@kde.org>
     Copyright (c) 2004-2005 by Duncan Mac-Vicar P. <duncan@kde.org>
     
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>

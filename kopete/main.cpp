@@ -50,7 +50,7 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( ki18n("Ollivier Lapeyre Johann"), ki18n("Artist / Developer, Artwork maintainer"), "johann.ollivierlapeyre@gmail.com" );
 	aboutData.addAuthor ( ki18n("Richard Smith"), ki18n("Developer, UI maintainer"), "kde@metafoo.co.uk" );
 	aboutData.addAuthor ( ki18n("Till Gerken"), ki18n("Developer, Jabber plugin maintainer"), "till@tantalo.net");
-	aboutData.addAuthor ( ki18n("Will Stephenson"), ki18n("Lead Developer, GroupWise maintainer"), "lists@stevello.free-online.co.uk" );
+	aboutData.addAuthor ( ki18n("Will Stephenson"), ki18n("Lead Developer, GroupWise maintainer"), "wstephenson@kde.org" );
 	aboutData.addAuthor ( ki18n("Rafael Fernández López"), ki18n("Developer"), "ereslibre@kde.org" );
 	aboutData.addAuthor ( ki18n("Roman Jarosz"), ki18n("Developer, AIM and ICQ"), "kedgedev@centrum.cz" );
 	aboutData.addAuthor ( ki18n("Charles Connell"), ki18n("Developer"), "charles@connells.org" );

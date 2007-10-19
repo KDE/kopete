@@ -1,7 +1,7 @@
 /*
     kimifaceimpl.cpp - Kopete DCOP Interface
 
-    Copyright (c) 2004 by Will Stephenson     <lists@stevello.free-online.co.uk>
+    Copyright (c) 2004 by Will Stephenson     <wstephenson@kde.org>
 
     Kopete    (c) 2002-2004      by the Kopete developers  <kopete-devel@kde.org>
 
