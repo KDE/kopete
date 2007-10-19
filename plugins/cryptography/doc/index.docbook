@@ -29,7 +29,7 @@
 <legalnotice>&FDLNotice;</legalnotice>
 
 <date>2007-10-14</date>
-<releaseinfo>1.2.0</releaseinfo>
+<releaseinfo>1.3.0</releaseinfo>
 
 <abstract>
 <para>The &cryptography; plugin allows you to send and recieve encrypted and/or signed messages.</para>
