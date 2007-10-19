@@ -23,6 +23,12 @@
    </item>
    <item>
     <widget class="KListWidget" name="keyList" >
+     <property name="toolTip" >
+      <string>Select Keys to Use</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Select the key you want to use for to encrypt to the metacontact</string>
+     </property>
      <property name="editTriggers" >
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>

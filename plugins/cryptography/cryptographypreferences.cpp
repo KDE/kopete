@@ -45,11 +45,7 @@ CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QVaria
 	key->setToolTip ( i18n ( "The private key used for decryption and signing" ) );
 	key->setWhatsThis ( i18n ( "See and change the private key used for signing and encrypting messages using the Cryptography plugin" ) );
 
-	QLabel * label = new QLabel ( i18n ( "Before you can send encrypted messages to someone,\
-			you must select their public key by right-clicking on their name in your contact list,\
-			and choose \"Select Public Key\".\n\n\
-			Before you can sign messages, you must select a signing key.\n\n\
-			All messages become plain text when used with this plugin." ), this );
+	QLabel * label = new QLabel ( i18n ( "Before you can send encrypted messages to someone, you must select their public key by right-clicking on their name in your contact list, and choose \"Select Public Key\".\n\n Before you can sign messages, you must select a signing key.\n\n All messages become plain text when used with this plugin." ), this );
 	label->setWordWrap ( true );
 
 	l->addWidget ( key );

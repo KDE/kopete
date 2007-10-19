@@ -43,8 +43,6 @@ class CryptographyGUIClient : public QObject, public KXMLGUIClient
 		KToggleAction *m_signAction;
 		KAction *m_exportAction;
 
-	public slots:
-		void slotContactsChanged();
 
 	private slots:
 		void slotEncryptToggled();

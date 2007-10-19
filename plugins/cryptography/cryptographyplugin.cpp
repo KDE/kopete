@@ -87,19 +87,15 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*
 	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
 	action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
 
-	mExportKeys = new KAction ( KIcon ( "kgpg-export-kgpg" ), i18n ( "&Export Public Keys To Address Book..." ), this );
-	actionCollection()->addAction ( "exportKey", mExportKeys );
-	connect ( mExportKeys, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotExportSelectedMetaContactKeys() ) );
-	connect ( Kopete::ContactList::self() , SIGNAL ( selectionChanged ( bool ) ) , mExportKeys , SLOT ( slotContactSelectionChanged() () ) );
-	slotContactSelectionChanged();
+	action = new KAction ( KIcon ( "kgpg-export-kgpg" ), i18n ( "&Export Public Keys To Address Book..." ), this );
+	actionCollection()->addAction ( "exportKey", action );
+	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotExportSelectedMetaContactKeys() ) );
+	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
 
 	setXMLFile ( "cryptographyui.rc" );
 
 	// add functionality to chat window when one opens
 	connect ( Kopete::ChatSessionManager::self(), SIGNAL ( chatSessionCreated ( Kopete::ChatSession * ) ) , SLOT ( slotNewKMM ( Kopete::ChatSession * ) ) );
-
-	// when selected metacontacts changes, actions may need to be enabled/disabled
-	connect ( Kopete::ContactList::self(), SIGNAL ( selectionChanged() ), this, SLOT ( slotContactSelectionChanged() ) );
 
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already running)
 	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
@@ -107,7 +103,6 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*
 	{
 		slotNewKMM ( session );
 	}
-
 }
 
 CryptographyPlugin::~CryptographyPlugin()
@@ -146,7 +141,7 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 
 	msg.setPlainBody ( "Cryptography processing..." );
 	msg.setType ( Kopete::Message::TypeAction );
-	
+
 }
 
 // this is called when the incoming crypto job is done
@@ -159,11 +154,11 @@ void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionR
 	if ( !body.isEmpty() )
 	{
 		// if was signed *and* encrypted, this will be true
-		if ( verificationResult.signatures().size() ){
+		if ( verificationResult.signatures().size() ) {
 			if ( decryptionResult.numRecipients() >= 1 )
 				finalizeMessage ( msg, body, verificationResult, true );
 		}
-		
+
 		// was not signed *and* encrypted, may be one or the other. launch a job to see about both possibilities
 		else {
 			const Kleo::CryptoBackendFactory *cpf = Kleo::CryptoBackendFactory::instance();
@@ -187,14 +182,14 @@ void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionR
 // if was only encrypted, this will be called
 void CryptographyPlugin::slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult & decryptionResult, const QByteArray &plainText )
 {
-	kDebug (14303);
+	kDebug ( 14303 );
 	Kopete::Message msg = mCurrentJobs.take ( static_cast<Kleo::Job*> ( sender() ) );
 
 	QString body = plainText;
 
 	if ( !body.isEmpty() )
 	{
-		if ( decryptionResult.numRecipients() >= 1 ) 
+		if ( decryptionResult.numRecipients() >= 1 )
 			finalizeMessage ( msg, body, GpgME::VerificationResult(), true );
 	}
 }
@@ -215,13 +210,13 @@ void CryptographyPlugin::slotIncomingSignedMessageContinued ( const GpgME::Verif
 void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & validity, bool encrypted )
 {
 	msg.addClass ( "cryptography:encrypted" );
-	
+
 	// turn our plaintext body into html, so then it makes sense to stick HTML tags in it
 //	msg.setPlainBody ( intendedBody );
-	kDebug (14303) << intendedBody;
-	
+	kDebug ( 14303 ) << intendedBody;
+
 	if ( ! Qt::mightBeRichText ( intendedBody ) )
-		intendedBody = Qt::convertFromPlainText( intendedBody, Qt::WhiteSpaceNormal );
+		intendedBody = Qt::convertFromPlainText ( intendedBody, Qt::WhiteSpaceNormal );
 	intendedBody = intendedBody.remove ( QRegExp ( "<p[^>]*>", Qt::CaseInsensitive ) );
 	intendedBody = intendedBody.remove ( QRegExp ( "</p>", Qt::CaseInsensitive ) );
 
@@ -240,7 +235,7 @@ void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intend
 		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;" );
 		kDebug ( 14303 ) << "message was encrypted";
 	}
-	
+
 	msg.setHtmlBody ( intendedBody );
 	kDebug ( 14303 ) << "result is " << intendedBody;
 	msg.manager()->appendMessage ( msg );
@@ -341,14 +336,9 @@ void CryptographyPlugin::slotNewKMM ( Kopete::ChatSession *KMM )
 	// warn about unfriendly protocols
 	if ( KMM->protocol() ) {
 		QString protocol ( KMM->protocol()->metaObject()->className() );
-		if ( gui->m_encAction->isChecked() ){
-			if ( ! supportedProtocols().contains ( protocol ) ){
-				KMessageBox::information ( 0, i18n ( "This protocol may not work with messages that\
-						are encrypted. This is because encrypted messages are very long, and\
-								the server or peer may reject them due to their\
-								length. To avoid being signed off or your account\
-								being warned or temporarily suspended, turn off\
-								encryption." ),
+		if ( gui->m_encAction->isChecked() ) {
+			if ( ! supportedProtocols().contains ( protocol ) ) {
+				KMessageBox::information ( 0, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ),
 				                           i18n ( "Cryptography Unsupported Protocol" ), "Warn about unsupported " + QString ( KMM->protocol()->metaObject()->className() ) );
 			}
 		}
@@ -385,11 +375,7 @@ QString CryptographyPlugin::KabcKeySelector ( QString displayName, QString addre
 {
 	// just a Yes/No about whether to accept the key
 	if ( keys.count() == 1 ) {
-		if ( KMessageBox::questionYesNo ( parent, i18n ( QString ( "Cryptography plugin has found an\
-				   encryption key for "+ displayName+ " (" + addresseeName + ")" + " in your KDE\
-						   address book. Do you want to use key "+ keys.first().right( 8 ).
-						   prepend ( "0x" ) + 
-						   " as this contact's public key?" ).toLocal8Bit() ),
+		if ( KMessageBox::questionYesNo ( parent, i18n ( "Cryptography plugin has found an encryption key for %1 (%2) in your KDE address book. Do you want to use key %3 as this contact's public key? ", displayName, addresseeName, keys.first().right(8).prepend("0x") ),
 		                                  i18n ( "Public Key Found" ) ) == KMessageBox::Yes ) {
 			return keys.first();
 		}
@@ -404,10 +390,8 @@ QString CryptographyPlugin::KabcKeySelector ( QString displayName, QString addre
 		dialog.setCaption ( i18n ( "Public Keys Found" ) );
 		dialog.setButtons ( KDialog::Ok | KDialog::Cancel );
 		dialog.setMainWidget ( &w );
-		ui.label->setText ( i18n ( QString ( "Cryptography plugin has found multiple encryption keys for "
-				+ displayName + " (" + addresseeName + ")" +
-				" in your KDE address book. To use one of these keys, select it and choose OK." ).
-				toLocal8Bit() ) );
+		ui.label->setText ( i18n ( "Cryptography plugin has found multiple encryption keys for %1 (%2) in your KDE address book. To use one of these keys, select it and choose OK.",
+		                           displayName, addresseeName ) );
 		for ( int i = 0; i < keys.count(); i++ )
 			ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ( "kgpg-key1-kopete", KIconLoader::Small ), keys[i].right ( 8 ).prepend ( "0x" ), ui.keyList ) );
 		ui.keyList->addItems ( keys );
@@ -422,23 +406,6 @@ void CryptographyPlugin::slotExportSelectedMetaContactKeys()
 {
 	ExportKeys dialog ( Kopete::ContactList::self()->selectedMetaContacts(), Kopete::UI::Global::mainWidget() );
 	dialog.exec();
-}
-
-// enable or disable "Export Keys" depending on key whether we have a key for the selected metacontacts
-void CryptographyPlugin::slotContactSelectionChanged()
-{
-	kDebug ( 14303 );
-	bool keyFound = false;
-	foreach ( Kopete::MetaContact * mc, Kopete::ContactList::self()->selectedMetaContacts() ) {
-		if ( mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" ) != QString() ) {
-			keyFound = true;
-			kDebug ( 14303 ) << "metacontact " << mc->displayName() << "has a key";
-		}
-	}
-	if ( keyFound )
-		mExportKeys->setEnabled ( true );
-	else
-		mExportKeys->setEnabled ( false );
 }
 
 #include "cryptographyplugin.moc"

@@ -49,7 +49,34 @@ namespace Kopete
 
 /**
   * @author Olivier Goffart
+  * @author Charles Connell
   * Main plugin class, handles mesages. Also has static functions used by rest of plugin
+  *
+  * Basic architecture:
+  * Outgoing messages are routed through slotOutgoingMessage().
+  * That uses Kleo::SomethingJob->exec() to do the actual crypto work
+  *
+  * Incoming messages go through slotIncomingMessage(). This starts
+  * a crypto job to deal with the message, remembers which job goes with
+  * which message (using mCurrentJobs), and then changes the message body
+  * to "Cryptography Processing".
+  * When the job is done, it itself calls slotIncomingMessageContinued().
+  * Since slotIncomingMessageContinued was called to decrypt and verify the PGP block.
+  * it will only give back good data if the block was actually encrypted
+  * and signed. If the data is good, it will lookup the message that it was processing,
+  * and it will set the body to the plaintext the crypto job returned. If the job's
+  * returned data is not good, its plaintext result will be right, but the crypto
+  * meta-data will be invalid. So, if slotIncomingMessageContinued sees an
+  * empty list of signers, it will assume that the PGP block was not encrypted
+  * *and* signed, but may be one or the other. To check for each of those 
+  * possibilies,slotIncomingMessageContinued then launches two new jobs,
+  * one to check if the message was only signed, and the other to check if
+  * the message was only encrypted. If either of these find their case to be true
+  * by looking at heuristics in the info that the job returns, they will take the
+  * message from mCurrentJobs and put it into circulation. Whenever we detect that
+  * a message has had crypto applied to it, we add icons to the message to
+  * convey what we know to the user through the look of the message itself.
+  *
   */
 
 class CryptographyPlugin : public Kopete::Plugin
@@ -74,7 +101,6 @@ public slots:
 	void finalizeMessage( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & validity, bool encrypted);
 	
 	void slotOutgoingMessage( Kopete::Message& msg );
-	void slotContactSelectionChanged ();
 	void slotExportSelectedMetaContactKeys ();	
 	
 private slots:
@@ -84,7 +110,6 @@ private slots:
 private:
 	static CryptographyPlugin* mPluginStatic;
 	Kopete::SimpleMessageHandlerFactory *mInboundHandler;
-	KAction * mExportKeys;
 	QHash<Kleo::Job*, Kopete::Message> mCurrentJobs;
 };
 

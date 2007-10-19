@@ -93,10 +93,6 @@ CryptographyGUIClient::CryptographyGUIClient ( Kopete::ChatSession *parent )
 	connect ( m_encAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotEncryptToggled() ) );
 	connect ( m_signAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotSignToggled() ) );
 	connect ( m_exportAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotExport() ) );
-
-	connect ( parent, SIGNAL ( contactAdded ( const Kopete::Contact*, bool ) ), this, SLOT ( slotContactsChanged() ) );
-	connect ( parent, SIGNAL ( contactRemoved ( const Kopete::Contact*, const QString&, Qt::TextFormat, bool ) ), this, SLOT ( slotContactsChanged() ) );
-	slotContactsChanged();
 }
 
 
@@ -200,20 +196,6 @@ void CryptographyGUIClient::slotExport()
 	mcs.append ( c->metaContact() );
 	ExportKeys dialog ( mcs, csn->view()->mainWidget() );
 	dialog.exec();
-}
-
-// if no contacts have keys, we disable the "export to kabc" action
-void CryptographyGUIClient::slotContactsChanged()
-{
-	kDebug ( 14303 );
-	bool keyFound = false;
-	foreach ( Kopete::MetaContact * mc, Kopete::ContactList::self()->selectedMetaContacts() )
-	if ( mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" ) != QString() )
-		keyFound = true;
-	if ( keyFound )
-		m_exportAction->setEnabled ( true );
-	else
-		m_exportAction->setEnabled ( false );
 }
 
 #include "cryptographyguiclient.moc"
