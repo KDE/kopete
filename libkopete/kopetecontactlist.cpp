@@ -171,6 +171,7 @@ MetaContact *ContactList::findMetaContactByDisplayName( const QString &displayNa
 			return contact;
 		}
 	}
+        return 0;
 }
 
 MetaContact* ContactList::findMetaContactByContactId( const QString &contactId ) const
