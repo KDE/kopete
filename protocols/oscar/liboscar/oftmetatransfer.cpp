@@ -125,9 +125,10 @@ bool OftMetaTransfer::validFile()
 */
 
 void OftMetaTransfer::socketError( QAbstractSocket::SocketError e )
-{ //FIXME: do something
+{
 	QString desc = m_socket->errorString();
 	kWarning(OSCAR_RAW_DEBUG) << "socket error: " << e << " : " << desc;
+	emit transferError( e, desc );
 }
 
 void OftMetaTransfer::socketRead()

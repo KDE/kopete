@@ -55,7 +55,7 @@ signals:
 	void fileProcessed( unsigned int bytesSent, unsigned int fileSize );
 
 	void transferCompleted();
-//	void error( int, const QString & );
+	void transferError( int errorCode, const QString &error );
 
 private slots:
 	//bool validFile();

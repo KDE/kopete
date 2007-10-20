@@ -32,6 +32,7 @@
 class QTcpServer;
 class QTcpSocket;
 
+class KJob;
 class Transfer;
 namespace Oscar
 {
@@ -68,13 +69,16 @@ public slots:
 	void timeout();
 
 signals:
+	void transferCancelled();
+	void transferError( int errorCode, const QString &error );
+	void transferFinished();
+
+	void transferProcessed( unsigned int bytesSent );
+
 	void sendMessage( const Oscar::Message &msg );
 	void askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i );
 	void getTransferManager( Kopete::TransferManager ** );
-	void gotCancel();
-	void error( int, const QString & );
-	void processed( unsigned int );
-	void fileComplete();
+	
 	void cancelOft();
 
 private slots:
@@ -82,7 +86,11 @@ private slots:
 	void socketError( QAbstractSocket::SocketError );
 	void proxyRead();
 	void socketConnected();
+
+	void errorOft( int errorCode, const QString &error );
 	void doneOft(); //oft told us it's done
+
+	void transferResult( KJob* job );
 
 private:
 	enum Action { Send, Receive };
@@ -114,7 +122,7 @@ private:
 	QByteArray m_altIp; //to connect to if m_ip fails
 	bool m_proxy; //are we using a proxy?
 	bool m_proxyRequester; //did we choose to request the proxy?
-	enum State { Default, Listening, Connecting, ProxySetup, Done };
+	enum State { Default, Listening, Connecting, ProxySetup, OFT, Done };
 	State m_state;
 };
 
