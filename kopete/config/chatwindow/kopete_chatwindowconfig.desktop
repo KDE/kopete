@@ -10,7 +10,9 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Chat Window
+Name[ja]=チャットウィンドウ
 Comment=Configure Chat Window Look and Feel
+Comment[ja]=チャットウィンドウの外観を設定
 
 
 

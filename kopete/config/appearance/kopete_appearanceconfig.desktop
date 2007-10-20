@@ -10,7 +10,9 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Contact List
+Name[ja]=コンタクトリスト
 Comment=Configure Contact List Look and Feel
+Comment[ja]=コンタクトリストの外観を設定
 DocPath=kopete/configure-dialog.html#configuring-appearance
 
 
