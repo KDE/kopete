@@ -21,7 +21,6 @@
 #define OFTMETATRANSFER_H
 
 #include <QtCore/QFile>
-#include <QtCore/QTimer>
 #include <QtNetwork/QAbstractSocket>
 
 #include "oscartypes.h"
@@ -94,7 +93,6 @@ private:
 	QStringList m_files; //list of files that we want to send
 
 	QTcpSocket *m_socket; //where we actually send file data
-	QTimer m_timer; //if we're idle too long, then give up
 	enum State { SetupReceive, SetupSend, Receiving, Sending, Done };
 	State m_state;
 };
