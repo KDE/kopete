@@ -31,6 +31,7 @@ class Transfer;
 class RateClassManager;
 class ContactManager;
 class Task;
+class QHostAddress;
 
 
 namespace Oscar
@@ -147,6 +148,8 @@ public:
 	Oscar::Guid versionCap() const;
 	RateClassManager* rateManager() const;
 	bool isLoggedIn() const;
+
+	QHostAddress localAddress() const;
 
 	/** Convenience function to get the root task for use in Tasks */
 	Task* rootTask() const;

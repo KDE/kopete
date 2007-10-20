@@ -586,7 +586,6 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
         // Set whether or not the message is an automated response
         sendMsgTask->setAutoResponse( isAuto );
         sendMsgTask->setMessage( msg );
-	    sendMsgTask->setIp( ourInfo().dcExternalIp().toIPv4Address() ); //TODO: switch to internal
         sendMsgTask->go( Task::AutoDelete );
     }
 }
@@ -715,10 +714,19 @@ void Client::receivedMessage( const Oscar::Message& msg )
 
 void Client::fileMessage( const Oscar::Message& msg )
 {
-	kDebug( OSCAR_RAW_DEBUG ) << "internal ip: " << ourInfo().dcInternalIp().toString();
-	kDebug( OSCAR_RAW_DEBUG ) << "external ip: " << ourInfo().dcExternalIp().toString();
+	Connection* c = d->connections.connectionForFamily( 0x0004 );
+	if ( !c )
+		return;
 
-	sendMessage( msg );
+	kDebug( OSCAR_RAW_DEBUG ) << "internal ip: " << c->localAddress().toString();
+	kDebug( OSCAR_RAW_DEBUG ) << "external ip: " << ourInfo().dcExternalIp().toString();
+	
+	SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
+	// Set whether or not the message is an automated response
+	sendMsgTask->setAutoResponse( false );
+	sendMsgTask->setMessage( msg );
+	sendMsgTask->setIp( c->localAddress().toIPv4Address() );
+	sendMsgTask->go( Task::AutoDelete );
 }
 
 void Client::requestAuth( const QString& contactid, const QString& reason )

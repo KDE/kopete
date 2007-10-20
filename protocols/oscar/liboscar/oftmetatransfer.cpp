@@ -78,6 +78,7 @@ OftMetaTransfer::~OftMetaTransfer()
 {
 	if( m_socket )
 	{
+		m_socket->close();
 		delete m_socket;
 		m_socket = 0;
 	}
@@ -343,9 +344,8 @@ void OftMetaTransfer::handelSendDone( const OFT &oft )
 	}
 	else
 	{ // Last file, ending connection
-		emit transferCompleted();
-		m_socket->close();
-		deleteLater();
+		connect( m_socket, SIGNAL(disconnected()), this, SLOT(emitTransferCompleted()) );
+		m_socket->disconnectFromHost();
 	}
 }
 
@@ -474,13 +474,10 @@ void OftMetaTransfer::done()
 	}
 	else
 	{ //Last file, ending connection
-		emit transferCompleted();
-		m_socket->close();
 		m_state = Done;
 
-		//wait for the oft done to be really sent
-		connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
-		m_timer.start( 10 );
+		connect( m_socket, SIGNAL(disconnected()), this, SLOT(emitTransferCompleted()) );
+		m_socket->disconnectFromHost();
 	}
 }
 
@@ -508,17 +505,12 @@ void OftMetaTransfer::doCancel()
 	deleteLater();
 }
 
-void OftMetaTransfer::timeout()
+void OftMetaTransfer::emitTransferCompleted()
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
-	if ( m_state != Done )
-		return; //can't happen
-	kDebug(OSCAR_RAW_DEBUG) << "waiting for empty buffer...";
-	if ( m_socket->bytesToWrite() == 0 )
-	{
-		m_timer.stop();
-		deleteLater(); //yay, it's ok to kill everything now
-	}
+	
+	emit transferCompleted();
+	deleteLater(); //yay, it's ok to kill everything now
 }
 
 //FIXME: this is called more often than necessary. for large files that might be annoying.

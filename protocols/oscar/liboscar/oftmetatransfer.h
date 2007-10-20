@@ -62,7 +62,7 @@ private slots:
 	void socketError( QAbstractSocket::SocketError );
 	void socketRead();
 	void write();
-	void timeout();
+	void emitTransferCompleted();
 
 private:
 	void initOft();
