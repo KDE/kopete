@@ -38,6 +38,7 @@
 #include <kopete/kopeteuiglobal.h>
 #include <kopete/kopetecontact.h>
 #include <kopete/kopeteprotocol.h>
+#include <kopete/kopetemessageevent.h>
 
 #include <assert.h>
 #include <kleo/cryptobackendfactory.h>
@@ -59,6 +60,7 @@
 #include "cryptographyselectuserkey.h"
 #include "cryptographyguiclient.h"
 #include "exportkeys.h"
+#include "cryptographymessagehandler.h"
 
 #include "ui_kabckeyselectorbase.h"
 
@@ -74,8 +76,8 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*
 		mPluginStatic=this;
 
 	// set up slots to handle incoming and outgoing messages
-	mInboundHandler = new Kopete::SimpleMessageHandlerFactory ( Kopete::Message::Inbound,
-	        Kopete::MessageHandlerFactory::InStageToSent, this, SLOT ( slotIncomingMessage ( Kopete::Message& ) ) );
+	mInboundHandler = new CryptographyMessageHandlerFactory ( Kopete::Message::Inbound,
+	        Kopete::MessageHandlerFactory::InStageToSent, this, SLOT ( slotIncomingMessage ( Kopete::MessageEvent* ) ) );
 	connect ( Kopete::ChatSessionManager::self(),
 	          SIGNAL ( aboutToSend ( Kopete::Message & ) ),
 	          SLOT ( slotOutgoingMessage ( Kopete::Message & ) ) );
@@ -118,8 +120,9 @@ CryptographyPlugin* CryptographyPlugin::plugin()
 }
 
 // handling an "incoming" message. this means any message to be displayed in the chat window, including ones sent by the user
-void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
+void CryptographyPlugin::slotIncomingMessage ( Kopete::MessageEvent *messageEvent )
 {
+	Kopete::Message msg = messageEvent->message();
 	QString body = msg.plainBody();
 
 	if ( !body.startsWith ( QString::fromLatin1 ( "-----BEGIN PGP MESSAGE----" ) )
@@ -139,9 +142,7 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::Message& msg )
 	mCurrentJobs.insert ( decryptVerifyJob, msg );
 	decryptVerifyJob->start ( body.toLatin1() );
 
-	msg.setPlainBody ( "Cryptography processing..." );
-	msg.setType ( Kopete::Message::TypeAction );
-
+	messageEvent->discard();
 }
 
 // this is called when the incoming crypto job is done
@@ -212,9 +213,6 @@ void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intend
 	msg.addClass ( "cryptography:encrypted" );
 
 	// turn our plaintext body into html, so then it makes sense to stick HTML tags in it
-//	msg.setPlainBody ( intendedBody );
-	kDebug ( 14303 ) << intendedBody;
-
 	if ( ! Qt::mightBeRichText ( intendedBody ) )
 		intendedBody = Qt::convertFromPlainText ( intendedBody, Qt::WhiteSpaceNormal );
 	intendedBody = intendedBody.remove ( QRegExp ( "<p[^>]*>", Qt::CaseInsensitive ) );
@@ -251,8 +249,8 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 	std::vector<GpgME::Key> encryptingKeys;
 	std::vector<GpgME::Key> signingKeys;
 	QList<Kopete::Contact*> contactlist = msg.to();
-	bool signing = ( ( msg.to().first()->metaContact()->pluginData ( this, "sign_messages" ) ) == "on" );
-	bool encrypting = ( ( msg.to().first()->metaContact()->pluginData ( this, "encrypt_messages" ) ) == "on" );
+	bool signing = ( ( msg.to().first()->pluginData ( this, "sign_messages" ) ) == "on" );
+	bool encrypting = ( ( msg.to().first()->pluginData ( this, "encrypt_messages" ) ) == "on" );
 	QByteArray result;
 
 	kDebug ( 14303 ) << ( signing ? "signing" : "" ) << ( encrypting ? "encrypting" : "" ) << "message " << msg.plainBody();

@@ -12,7 +12,7 @@ X-KDE-ParentComponents=kopete_cryptography
 Name=Cryptography
 Name[nds]=Verslöteln
 Name[sv]=Kryptering
-Comment=Encrypts messages using PGP
+Comment=Encrypts messages using OpenPGP
 Comment[nds]=Verslötelt Narichten mit PGP
 Comment[sv]=Krypterar meddelanden med användning av PGP
 

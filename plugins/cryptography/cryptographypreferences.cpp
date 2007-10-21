@@ -38,17 +38,21 @@ CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QVaria
 {
 	// Add actual widget generated from ui file.
 	QVBoxLayout* l = new QVBoxLayout ( this );
+	QHBoxLayout* keyLayout = new QHBoxLayout ( this );
 
+	QLabel * keyLabel = new QLabel ( i18n ( "Private Key: " ), this );
 	key = new Kleo::EncryptionKeyRequester ( false, Kleo::EncryptionKeyRequester::OpenPGP, this, true, true );
 	key->setDialogMessage ( i18n ( "Select the key you want to use to sign and encrypt messages" ) );
 	key->setDialogCaption ( i18n ( "Select the key you want to use to sign and encrypt messages" ) );
 	key->setToolTip ( i18n ( "The private key used for decryption and signing" ) );
 	key->setWhatsThis ( i18n ( "See and change the private key used for signing and encrypting messages using the Cryptography plugin" ) );
 
-	QLabel * label = new QLabel ( i18n ( "Before you can send encrypted messages to someone, you must select their public key by right-clicking on their name in your contact list, and choose \"Select Public Key\".\n\n Before you can sign messages, you must select a signing key.\n\n All messages become plain text when used with this plugin." ), this );
+	QLabel * label = new QLabel ( i18n ( "Before you can send encrypted messages to someone, you must select their public key by right-clicking on their name in your contact list, and choose \"Select Public Key\".\n\n Before you can sign messages, you must select a private key.\n\n All messages become plain text when sent with this plugin." ), this );
 	label->setWordWrap ( true );
 
-	l->addWidget ( key );
+	keyLayout->addWidget ( keyLabel );
+	keyLayout->addWidget ( key );
+	l->addLayout ( keyLayout );
 	l->addWidget ( label );
 	l->addStretch ();
 	l->setSpacing(12);

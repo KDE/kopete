@@ -12,7 +12,8 @@ set(kopete_cryptography_PART_SRCS
    cryptographyguiclient.cpp 
    cryptographyselectuserkey.cpp 
    cryptographyconfig.cpp 
-   exportkeys.cpp )
+   exportkeys.cpp
+   cryptographymessagehandler.cpp )
 
 kde4_add_ui_files(kopete_cryptography_PART_SRCS kabckeyselectorbase.ui exportkeysbase.ui )
 

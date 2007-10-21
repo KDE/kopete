@@ -43,9 +43,11 @@ class CryptographyGUIClient;
 namespace Kopete
 {
 	class Message;
+	class MessageEvent;
 	class ChatSession;
-	class SimpleMessageHandlerFactory;
 }
+
+class CryptographyMessageHandlerFactory;
 
 /**
   * @author Olivier Goffart
@@ -53,13 +55,13 @@ namespace Kopete
   * Main plugin class, handles mesages. Also has static functions used by rest of plugin
   *
   * Basic architecture:
+  *
   * Outgoing messages are routed through slotOutgoingMessage().
   * That uses Kleo::SomethingJob->exec() to do the actual crypto work
   *
   * Incoming messages go through slotIncomingMessage(). This starts
   * a crypto job to deal with the message, remembers which job goes with
-  * which message (using mCurrentJobs), and then changes the message body
-  * to "Cryptography Processing".
+  * which message (using mCurrentJobs), and then discards it.
   * When the job is done, it itself calls slotIncomingMessageContinued().
   * Since slotIncomingMessageContinued was called to decrypt and verify the PGP block.
   * it will only give back good data if the block was actually encrypted
@@ -86,7 +88,7 @@ class CryptographyPlugin : public Kopete::Plugin
 public:
 	static CryptographyPlugin  *plugin();
 	
-	static QStringList supportedProtocols() { QStringList l; return l << "MSNProtocol" << "MessengerProtocol" << "JabberProtocol" << "YahooProtocol"; }
+	static QStringList supportedProtocols() { return QStringList() << "MSNProtocol" << "MessengerProtocol" << "JabberProtocol" << "YahooProtocol"; }
 	static QStringList getKabcKeys (QString uid);
 	static QString KabcKeySelector ( QString displayName, QString addresseeName, QStringList keys, QWidget *parent );
 
@@ -94,7 +96,7 @@ public:
 	~CryptographyPlugin();
 
 public slots:
-	void slotIncomingMessage( Kopete::Message& msg );
+	void slotIncomingMessage( Kopete::MessageEvent *msg );
 	void slotIncomingMessageContinued(const GpgME::DecryptionResult &decryptionResult, const GpgME::VerificationResult &verificationResult, const QByteArray &plainText);
 	void slotIncomingEncryptedMessageContinued(const GpgME::DecryptionResult &decryptionResult, const QByteArray &plainText);
 	void slotIncomingSignedMessageContinued(const GpgME::VerificationResult &verificationResult, const QByteArray &plainText);
@@ -109,7 +111,7 @@ private slots:
 	
 private:
 	static CryptographyPlugin* mPluginStatic;
-	Kopete::SimpleMessageHandlerFactory *mInboundHandler;
+	CryptographyMessageHandlerFactory *mInboundHandler;
 	QHash<Kleo::Job*, Kopete::Message> mCurrentJobs;
 };
 

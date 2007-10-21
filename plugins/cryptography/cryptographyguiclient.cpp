@@ -63,15 +63,15 @@ CryptographyGUIClient::CryptographyGUIClient ( Kopete::ChatSession *parent )
 	// if any contacts have previously been encrypted/signed to, enable that now
 	foreach ( Kopete::Contact *c , parent->members() )
 	{
-		Kopete::MetaContact *mc=c->metaContact();
+		Kopete::MetaContact *mc = c->metaContact();
 		if ( !mc )
 		{
 			deleteLater();
 			return;
 		}
-		if ( mc->pluginData ( CryptographyPlugin::plugin(), "encrypt_messages" ) == "on" )
+		if ( c->pluginData ( CryptographyPlugin::plugin(), "encrypt_messages" ) == "on" )
 			wantEncrypt = true;
-		if ( mc->pluginData ( CryptographyPlugin::plugin(), "sign_messages" ) == "on" )
+		if ( c->pluginData ( CryptographyPlugin::plugin(), "sign_messages" ) == "on" )
 			wantSign = true;
 		if ( ! ( mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" ).isEmpty() ) )
 			keysAvailable = true;
@@ -105,13 +105,12 @@ void CryptographyGUIClient::slotSignToggled()
 	if ( m_signAction->isChecked() ) {
 		if ( CryptographyConfig::self()->fingerprint().isEmpty() ) {
 			KMessageBox::sorry ( Kopete::UI::Global::mainWidget(),
-			                     i18n ( "You have not selected a private key for yourself, so signing is not possible."
-			                            "Please select a private key in the Cryptography preferences dialog" ),
+			                     i18n ( "You have not selected a private key for yourself, so signing is not possible. Please select a private key in the Cryptography preferences dialog" ),
 			                     i18n ( "No Private Key" ) );
 			m_signAction->setChecked ( false );
 		}
 	}
-	static_cast<Kopete::ChatSession *> ( parent() )->members().first()->metaContact()->setPluginData
+	static_cast<Kopete::ChatSession *> ( parent() )->members().first()->setPluginData
 	( CryptographyPlugin::plugin(), "sign_messages", m_signAction->isChecked() ? "on" : "off" );
 
 }
@@ -119,71 +118,67 @@ void CryptographyGUIClient::slotSignToggled()
 void CryptographyGUIClient::slotEncryptToggled()
 {
 	Kopete::ChatSession *csn = static_cast<Kopete::ChatSession *> ( parent() );
-	QStringList keyless;
-
-	QWidget *w = 0;
-	if ( csn->view() )
-		w = csn->view()->mainWidget();
-
-	Kopete::MetaContact *first=0L;
-	foreach ( Kopete::Contact * c , csn->members() )
-	{
-		Kopete::MetaContact *mc = c->metaContact();
-		if ( !mc )
-			continue;
-
-		if ( !first )
-			first=mc;
-
-		// if encrypting and we don't have a key, look in address book
-		if ( mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" ).isEmpty() && m_encAction->isChecked() )
-		{
-			// to grab the public key from KABC (this same code is in crytographyselectuserkey.cpp)
-			KABC::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid
-			                            ( mc->metaContactId() );
-
-			if ( ! addressee.isEmpty() )
-			{
-				QStringList keys;
-				keys = CryptographyPlugin::getKabcKeys ( mc->metaContactId() );
-
-				// ask user if they want to use key found in address book
-				KABC::Addressee tempAddressee = Kopete::KABCPersistence::self()->
-				                                addressBook()->findByUid ( mc->metaContactId() );
-				mc->setPluginData ( CryptographyPlugin::plugin(), "gpgKey",
-				                    CryptographyPlugin::KabcKeySelector ( mc->displayName(), tempAddressee.assembledName(), keys, w ) );
-			}
-		}
-		if ( mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" ).isEmpty() )
-			keyless.append ( mc->displayName() );
-	}
-
-	// if encrypting and using unsupported protocols, warn user
+		
 	if ( m_encAction->isChecked() )
 	{
-		QString protocol ( csn->protocol()->metaObject()->className() );
-		if ( m_encAction->isChecked() ) {
-			if ( ! CryptographyPlugin::supportedProtocols().contains ( protocol ) ) {
-				KMessageBox::information ( w, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ),
-				                           i18n ( "Cryptography Unsupported Protocol" ),
-				                           "Warn about unsupported " + QString ( csn->protocol()->metaObject()->className() ) );
+		QStringList keyless;
+
+		QWidget *w = 0;
+		if ( csn->view() )
+			w = csn->view()->mainWidget();
+
+		foreach ( Kopete::Contact * c , csn->members() )
+		{
+			Kopete::MetaContact *mc = c->metaContact();
+			if ( !mc )
+				continue;
+
+			// if encrypting and we don't have a key, look in address book
+			if ( mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" ).isEmpty() )
+			{
+				// to grab the public key from KABC (this same code is in crytographyselectuserkey.cpp)
+				KABC::Addressee addressee = Kopete::KABCPersistence::self()->addressBook()->findByUid
+				                            ( mc->metaContactId() );
+
+				if ( ! addressee.isEmpty() )
+				{
+					QStringList keys;
+					keys = CryptographyPlugin::getKabcKeys ( mc->metaContactId() );
+
+					// ask user if they want to use key found in address book
+					KABC::Addressee tempAddressee = Kopete::KABCPersistence::self()->
+					                                addressBook()->findByUid ( mc->metaContactId() );
+					mc->setPluginData ( CryptographyPlugin::plugin(), "gpgKey",
+					                    CryptographyPlugin::KabcKeySelector ( mc->displayName(), tempAddressee.assembledName(), keys, w ) );
+				}
 			}
+			if ( mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" ).isEmpty() )
+				keyless.append ( mc->displayName() );
+		}
+
+		// if encrypting and using unsupported protocols, warn user
+
+		QString protocol ( csn->protocol()->metaObject()->className() );
+		if ( ! CryptographyPlugin::supportedProtocols().contains ( protocol ) ) {
+			KMessageBox::information ( w, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ),
+			                           i18n ( "Cryptography Unsupported Protocol" ),
+			                           "Warn about unsupported " + QString ( csn->protocol()->metaObject()->className() ) );
+		}
+
+		// we can't encrypt if we don't have every single key we need
+		if ( !keyless.isEmpty() )
+		{
+			KMessageBox::sorry ( w, i18np ( "To send encrypted messages to %2, you still need to select a public key for this contact.", "To send encrypted messages to them, you still need to select a public key for each of these contacts:\n%2",
+			                                keyless.count(), keyless.join ( "\n" ) ),
+			                     i18np ( "Missing public key", "Missing public keys", keyless.count() ) );
+
+			m_encAction->setChecked ( false );
 		}
 	}
-
-	// we can't encrypt if we don't have every single key we need
-	if ( m_encAction->isChecked() && !keyless.isEmpty() )
-	{
-		KMessageBox::sorry ( w, i18np ( "To send encrypted messages to %2, you still need to select a public key for this contact.", "To send encrypted messages to them, you still need to select a public key for each of these contacts:\n%2",
-		                                keyless.count(), keyless.join ( "\n" ) ),
-		                     i18np ( "Missing public key", "Missing public keys", keyless.count() ) );
-
-		m_encAction->setChecked ( false );
-	}
-
+	
 	// finally, set the pluginData to reflect new settings
-	if ( first )
-		first->setPluginData ( CryptographyPlugin::plugin() , "encrypt_messages" ,
+	if ( csn->members().first() )
+		csn->members().first()->setPluginData ( CryptographyPlugin::plugin() , "encrypt_messages" ,
 		                       m_encAction->isChecked() ? "on" : "off" );
 }
 
