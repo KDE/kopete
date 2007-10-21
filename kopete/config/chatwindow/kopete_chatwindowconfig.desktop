@@ -11,8 +11,14 @@ X-KDE-ParentComponents=kopete
 
 Name=Chat Window
 Name[ja]=チャットウィンドウ
+Name[nds]=Klöönfinster
+Name[pt]=Janela de Conversação
+Name[pt_BR]=Janela de Conversação
 Comment=Configure Chat Window Look and Feel
 Comment[ja]=チャットウィンドウの外観を設定
+Comment[nds]=Dat Utsehn vun't Klöönfinster topassen
+Comment[pt]=Configurar a Aparência e Comportamento da Janela de Conversação
+Comment[pt_BR]=Configurar a Aparência e Comportamento da Janela de Conversação
 
 
 

@@ -11,6 +11,12 @@ X-KDE-ParentComponents=kopete
 
 Name=Audio/Video
 Name[ja]=オーディオ/ビデオ
+Name[nds]=Klang/Video
+Name[pt]=Áudio/Vídeo
+Name[pt_BR]=Áudio/Vídeo
 Comment=Configure Audio and Video Devices
 Comment[ja]=オーディオとビデオデバイスの設定
+Comment[nds]=Klang- un Videoreedschappen instellen
+Comment[pt]=Configurar os Dispositivos de Áudio e Vídeo
+Comment[pt_BR]=Configurar os Dispositivos de Áudio e Vídeo
 DocPath=kopete/configure-dialog.html#configuring-avdevice
