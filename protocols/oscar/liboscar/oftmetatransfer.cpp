@@ -157,22 +157,22 @@ void OftMetaTransfer::readOft()
 	switch( data.type )
 	{
 	case 0x101:
-		handelReceiveSetup( data );
+		handleReceiveSetup( data );
 		break;
 	case 0x202:
-		handelSendSetup( data );
+		handleSendSetup( data );
 		break;
 	case 0x204:
-		handelSendDone( data );
+		handleSendDone( data );
 		break;
 	case 0x205:
 		handleSendResumeRequest( data );
 		break;
 	case 0x106:
-		handelReceiveResumeSetup( data );
+		handleReceiveResumeSetup( data );
 		break;
 	case 0x207:
-		handelSendResumeSetup( data );
+		handleSendResumeSetup( data );
 		break;
 	default:
 		kWarning(OSCAR_RAW_DEBUG) << "unknown type " << data.type;
@@ -200,7 +200,7 @@ void OftMetaTransfer::initOft()
 	m_oft.totalSize = 0;
 }
 
-void OftMetaTransfer::handelReceiveSetup( const OFT &oft )
+void OftMetaTransfer::handleReceiveSetup( const OFT &oft )
 {
 	if ( m_state != SetupReceive )
 		return;
@@ -227,7 +227,7 @@ void OftMetaTransfer::handelReceiveSetup( const OFT &oft )
 	m_file.setFileName( m_dir + oft.fileName );
 	if ( m_file.size() > 0 && m_file.size() <= oft.fileSize )
 	{
-		m_oft.sentChecksum = checksum();
+		m_oft.sentChecksum = fileChecksum( m_file );
 		if ( m_file.size() < oft.fileSize )
 		{ //could be a partial file
 			resume();
@@ -249,7 +249,7 @@ void OftMetaTransfer::handelReceiveSetup( const OFT &oft )
 	ack();
 }
 
-void OftMetaTransfer::handelReceiveResumeSetup( const OFT &oft )
+void OftMetaTransfer::handleReceiveResumeSetup( const OFT &oft )
 {
 	if ( m_state != SetupReceive )
 		return;
@@ -277,7 +277,7 @@ void OftMetaTransfer::handelReceiveResumeSetup( const OFT &oft )
 	rAck();
 }
 
-void OftMetaTransfer::handelSendSetup( const OFT &oft )
+void OftMetaTransfer::handleSendSetup( const OFT &oft )
 {
 	if ( m_state != SetupSend )
 		return;
@@ -295,7 +295,7 @@ void OftMetaTransfer::handelSendSetup( const OFT &oft )
 	write();
 }
 
-void OftMetaTransfer::handelSendResumeSetup( const OFT &oft )
+void OftMetaTransfer::handleSendResumeSetup( const OFT &oft )
 {
 	Q_UNUSED(oft);
 
@@ -324,19 +324,22 @@ void OftMetaTransfer::handleSendResumeRequest( const OFT &oft )
 		<< "\tbytesSent\t" << oft.bytesSent << endl
 		<< "\tflags\t" << oft.flags << endl;
 
-	if ( checksum( oft.bytesSent ) == oft.sentChecksum )
+	if ( fileChecksum( m_file, oft.bytesSent ) == oft.sentChecksum )
+	{
+		m_oft.sentChecksum = oft.sentChecksum;
 		m_oft.bytesSent = oft.bytesSent; //ok, we can resume this
+	}
 
 	rAgree();
 }
 
-void OftMetaTransfer::handelSendDone( const OFT &oft )
+void OftMetaTransfer::handleSendDone( const OFT &oft )
 {
 	kDebug(OSCAR_RAW_DEBUG) << "done";
 	emit fileSent( oft.fileName, oft.bytesSent );
 
 	disconnect( m_socket, SIGNAL(bytesWritten(qint64)), this, SLOT(write()) );
-	if ( oft.sentChecksum != checksum() )
+	if ( oft.sentChecksum != m_oft.checksum )
 		kDebug(OSCAR_RAW_DEBUG) << "checksums do not match!";
 
 	if ( m_oft.filesLeft > 1 )
@@ -374,6 +377,8 @@ void OftMetaTransfer::write()
 		return;
 	}
 
+	m_oft.sentChecksum = chunkChecksum( data, written,
+	                                    m_oft.sentChecksum, m_oft.bytesSent & 1);
 	m_oft.bytesSent += written;
 	
 	//tell the ui
@@ -397,15 +402,21 @@ void OftMetaTransfer::saveData()
 		kWarning(OSCAR_RAW_DEBUG) << "failed to write :(";
 		return;
 	}
+
+	m_oft.sentChecksum = chunkChecksum( raw.constData(), raw.size(),
+	                                    m_oft.sentChecksum, m_oft.bytesSent & 1);
 	m_oft.bytesSent += written;
-	if ( written != raw.size() ) //FIXME: handle this properly
+	if ( written != raw.size() )
+	{	//FIXME: handle this properly
 		kWarning(OSCAR_RAW_DEBUG) << "didn't write everything we read";
+		doCancel();
+	}
+
 	//tell the ui
 	emit fileProcessed( m_oft.bytesSent, m_oft.fileSize );
 	if ( m_oft.bytesSent >= m_oft.fileSize )
 	{
 		m_file.close();
-		m_oft.sentChecksum = checksum();
 		done();
 	}
 
@@ -435,7 +446,8 @@ void OftMetaTransfer::prompt()
 	m_oft.modTime = fileInfo.lastModified().toTime_t();
 	m_oft.fileSize = fileInfo.size();
 	m_oft.fileName = fileInfo.fileName();
-	m_oft.checksum = checksum();
+	m_oft.checksum = fileChecksum( m_file );
+	m_oft.sentChecksum = 0xFFFF0000;
 	m_oft.bytesSent = 0;
 	sendOft();
 	//now we wait for the other side to ack
@@ -515,38 +527,58 @@ void OftMetaTransfer::emitTransferCompleted()
 	deleteLater(); //yay, it's ok to kill everything now
 }
 
-//FIXME: this is called more often than necessary. for large files that might be annoying.
-Oscar::DWORD OftMetaTransfer::checksum( int max )
+Oscar::DWORD OftMetaTransfer::fileChecksum( QFile& file, int bytes ) const
 {
-	kDebug(OSCAR_RAW_DEBUG) ;
-	//code adapted from joscar's FileTransferChecksum
-	Oscar::DWORD check = 0x0000ffff;
-	m_file.open( QIODevice::ReadOnly );
+	Oscar::DWORD checksum = 0xFFFF0000;
+	char data[BUFFER_SIZE];
+	int read;
+	int totalRead = 0;
 
-	char b;
-	while( max != 0 && m_file.getChar( &b ) ) {
-		Oscar::DWORD oldcheck = check;
-
-		int val = ( b & 0xff ) << 8;
-		if ( --max && m_file.getChar( &b ) )
+	file.open( QIODevice::ReadOnly );
+	while ( (read = file.read( data, BUFFER_SIZE )) > 0 )
+	{
+		if ( bytes != -1 && (totalRead + read) >= bytes )
 		{
-			val += ( b & 0xff );
-			--max;
+			read = bytes - totalRead;
+			checksum = chunkChecksum( data, read, checksum, totalRead & 1);
+			break;
 		}
-
-		check -= val;
-
-		if (check > oldcheck)
-			check--;
+		else
+		{
+			checksum = chunkChecksum( data, read, checksum, totalRead & 1);
+		}
+		totalRead += read;
 	}
-	m_file.close();
+	file.close();
+	
+	if ( read == -1 )
+		return 0xFFFF0000;
+	
+	return checksum;
+}
 
-	check = ((check & 0x0000ffff) + (check >> 16));
-	check = ((check & 0x0000ffff) + (check >> 16));
-	check = check << 16;
-
-	kDebug(OSCAR_RAW_DEBUG) << check;
-	return check;
+Oscar::DWORD OftMetaTransfer::chunkChecksum( const char *buffer, int bufferSize,
+                                             Oscar::DWORD checksum, bool shiftIndex ) const
+{
+	//code adapted from Miranda's oft_calc_checksum
+	const int evenIndex = (shiftIndex) ? 1 : 0;
+	
+	checksum = (checksum >> 16) & 0xffff;
+	for ( int i = 0; i < bufferSize; i++ )
+	{
+		quint16 val = (uchar)buffer[i];
+		
+		if ( (i & 1) == evenIndex )
+			val = val << 8;
+		
+		if (checksum < val)
+			checksum -= val + 1;
+		else // simulate carry
+			checksum -= val;
+	}
+	checksum = ((checksum & 0x0000ffff) + (checksum >> 16));
+	checksum = ((checksum & 0x0000ffff) + (checksum >> 16));
+	return checksum << 16;
 }
 
 #include "oftmetatransfer.moc"

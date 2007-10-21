@@ -65,13 +65,13 @@ private slots:
 
 private:
 	void initOft();
-	void handelReceiveSetup( const Oscar::OFT &oft );
-	void handelReceiveResumeSetup( const Oscar::OFT &oft );
+	void handleReceiveSetup( const Oscar::OFT &oft );
+	void handleReceiveResumeSetup( const Oscar::OFT &oft );
 
-	void handelSendSetup( const Oscar::OFT &oft );
-	void handelSendResumeSetup( const Oscar::OFT &oft );
+	void handleSendSetup( const Oscar::OFT &oft );
+	void handleSendResumeSetup( const Oscar::OFT &oft );
 	void handleSendResumeRequest( const Oscar::OFT &oft );
-	void handelSendDone( const Oscar::OFT &oft );
+	void handleSendDone( const Oscar::OFT &oft );
 
 	void sendOft();
 	void prompt();
@@ -82,8 +82,11 @@ private:
 	void rAck(); //resume ack
 	void saveData(); //save incoming data to disk
 	void readOft(); //handle incoming oft packet
-	Oscar::DWORD checksum( int max = -1 ); //return checksum of our file, up to max bytes
-					//XXX this does put an arbitrary limit on file size
+
+	/** return checksum of our file, up to bytes */
+	Oscar::DWORD fileChecksum( QFile& file, int bytes = -1 ) const;
+	Oscar::DWORD chunkChecksum( const char *buffer, int bufferSize,
+	                            Oscar::DWORD checksum, bool shiftIndex ) const;
 
 	Oscar::OFT m_oft;
 
