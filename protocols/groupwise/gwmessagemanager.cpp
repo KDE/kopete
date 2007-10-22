@@ -77,7 +77,7 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 	actionCollection()->addAction( "gwInvite", m_actionInvite );
 	connect( m_actionInvite->menu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
 
-	m_secure = new KAction( KIcon( "encrypted" ), i18n( "Security Status" ), 0 ); // "gwSecureChat"
+	m_secure = new KAction( KIcon( "security-high" ), i18n( "Security Status" ), 0 ); // "gwSecureChat"
 	QObject::connect( m_secure, SIGNAL( triggered( bool ) ), SLOT( slotShowSecurity() ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
 

@@ -68,7 +68,7 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 
 	m_secure = actionCollection()->addAction( "qqSecureChat" );
 	m_secure->setText( i18n( "Security Status" ) );
-        m_secure->setIcon( KIcon( "encrypted" ) );
+        m_secure->setIcon( KIcon( "security-high" ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
         connect( m_secure, SIGNAL( triggered() ), this, SLOT( slotShowSecurity() ) );
 
