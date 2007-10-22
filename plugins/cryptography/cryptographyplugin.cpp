@@ -83,7 +83,7 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*
 	          SLOT ( slotOutgoingMessage ( Kopete::Message & ) ) );
 
 	// actions in the contact list
-	KAction *action = new KAction ( KIcon ( "encrypted" ), i18n ( "&Select Public Key..." ), this );
+	KAction *action = new KAction ( KIcon ( "document-encrypt" ), i18n ( "&Select Public Key..." ), this );
 	actionCollection()->addAction ( "contactSelectKey", action );
 	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotSelectContactKey() ) );
 	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
@@ -230,7 +230,7 @@ void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intend
 		}
 	}
 	if ( encrypted ) {
-		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;" );
+		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-high", KIconLoader::Small ) + "\">&nbsp;" );
 		kDebug ( 14303 ) << "message was encrypted";
 	}
 

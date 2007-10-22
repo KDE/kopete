@@ -77,7 +77,7 @@ CryptographyGUIClient::CryptographyGUIClient ( Kopete::ChatSession *parent )
 			keysAvailable = true;
 	}
 
-	m_encAction = new KToggleAction ( KIcon ( "encrypted" ), i18n ( "Encrypt Messages" ), this );
+	m_encAction = new KToggleAction ( KIcon ( "document-encrypt" ), i18n ( "Encrypt Messages" ), this );
 	actionCollection()->addAction ( "encryptionToggle", m_encAction );
 	m_signAction = new KToggleAction ( KIcon ( "signature" ), i18n ( "Sign Messages" ), this );
 	actionCollection()->addAction ( "signToggle", m_signAction );
