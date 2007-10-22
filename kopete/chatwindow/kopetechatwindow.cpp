@@ -376,12 +376,12 @@ void KopeteChatWindow::initActions(void)
 	connect( nickComplete, SIGNAL(triggered(bool)), this, SLOT(slotNickComplete()));
 	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
-	tabDetach = new KAction( KIcon("tab-breakoff"), i18n( "&Detach Chat" ), coll );
+	tabDetach = new KAction( KIcon("tab-detach"), i18n( "&Detach Chat" ), coll );
         coll->addAction( "tabs_detach", tabDetach );
 	tabDetach->setEnabled( false );
 	connect( tabDetach, SIGNAL(triggered(bool)), this, SLOT( slotDetachChat() ));
 
-	actionDetachMenu = new KActionMenu( KIcon("tab-breakoff"), i18n( "&Move Tab to Window" ), coll );
+	actionDetachMenu = new KActionMenu( KIcon("tab-detach"), i18n( "&Move Tab to Window" ), coll );
         coll->addAction( "tabs_detachmove", actionDetachMenu );
 	actionDetachMenu->setDelayed( false );
 
@@ -633,7 +633,7 @@ void KopeteChatWindow::createTabBar()
 
 		QToolButton* m_rightWidget = new QToolButton( m_tabBar );
 		connect( m_rightWidget, SIGNAL( clicked() ), this, SLOT( slotChatClosed() ) );
-		m_rightWidget->setIcon( SmallIcon( "tab-remove" ) );
+		m_rightWidget->setIcon( SmallIcon( "tab-close" ) );
 		m_rightWidget->adjustSize();
 		m_rightWidget->setToolTip( i18nc("@info:tooltip","Close the current tab") );
 		m_tabBar->setCornerWidget( m_rightWidget, Qt::TopRightCorner );
