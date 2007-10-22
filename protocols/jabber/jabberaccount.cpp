@@ -1723,7 +1723,7 @@ bool JabberAccount::removeAccount( )
 							    "And you will never be able to connect to this account with any client", accountLabel() ),
 					i18n("Unregister"),
 					KGuiItem(i18n( "Remove and Unregister" ), "edit-delete"),
-					KGuiItem(i18n( "Remove from kopete only"), "edit-trash"),KStandardGuiItem::cancel(),
+					KGuiItem(i18n( "Remove from kopete only"), "user-trash"),KStandardGuiItem::cancel(),
 					"askUnregisterJabberAccount", KMessageBox::Notify | KMessageBox::Dangerous );
 		if(result == KMessageBox::Cancel)
 		{
