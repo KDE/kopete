@@ -20,7 +20,7 @@
 #define CRYPTOGRAPHY_MESSAGEHANDLER_H
 
 #include <kopete/kopetemessagehandler.h>
-#include <kopete/kopete_export.h>
+#include "cryptography_export.h"
 using namespace Kopete;
 
 class KOPETECRYPTOGRAPHY_EXPORT CryptographyMessageHandlerFactory : public MessageHandlerFactory
