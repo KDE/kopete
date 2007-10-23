@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>552</width>
-    <height>530</height>
+    <width>493</width>
+    <height>471</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,16 +17,16 @@
     <number>6</number>
    </property>
    <property name="leftMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="topMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="rightMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget7" >
@@ -259,7 +259,7 @@ If you do not currently have an ICQ account, please click the button to create o
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -541,9 +541,6 @@ If you do not currently have an ICQ account, please click the button to create o
             </property>
             <item>
              <widget class="QLabel" name="lblPort" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
               <property name="toolTip" >
                <string>The ports to use for direct connections.</string>
               </property>
@@ -560,9 +557,6 @@ If you do not currently have an ICQ account, please click the button to create o
             </item>
             <item>
              <widget class="QSpinBox" name="sbxFirstPort" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
               <property name="toolTip" >
                <string>The start of the port range.</string>
               </property>
@@ -582,9 +576,6 @@ If you do not currently have an ICQ account, please click the button to create o
             </item>
             <item>
              <widget class="QSpinBox" name="sbxLastPort" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
               <property name="toolTip" >
                <string>The end of the port range.</string>
               </property>
@@ -636,9 +627,6 @@ If you do not currently have an ICQ account, please click the button to create o
             </property>
             <item>
              <widget class="QLabel" name="lblTimeout" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
               <property name="toolTip" >
                <string>Timeout for direct connections.</string>
               </property>
@@ -655,9 +643,6 @@ If you do not currently have an ICQ account, please click the button to create o
             </item>
             <item>
              <widget class="QSpinBox" name="sbxTimeout" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
               <property name="toolTip" >
                <string>Timeout for direct connections.</string>
               </property>
@@ -711,24 +696,24 @@ If you do not currently have an ICQ account, please click the button to create o
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="encodingCombo" >
-           <property name="enabled" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" >
             <size>
-             <width>40</width>
+             <width>10</width>
              <height>20</height>
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="encodingCombo" >
+           <property name="enabled" >
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -743,7 +728,7 @@ If you do not currently have an ICQ account, please click the button to create o
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>

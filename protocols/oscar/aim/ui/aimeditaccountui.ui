@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>484</width>
-    <height>434</height>
+    <height>371</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -18,26 +18,20 @@
   <property name="windowTitle" >
    <string>Account Preferences - AIM</string>
   </property>
-  <layout class="QGridLayout" >
+  <layout class="QVBoxLayout" >
    <property name="leftMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="topMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="rightMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
-   <property name="horizontalSpacing" >
-    <number>6</number>
-   </property>
-   <property name="verticalSpacing" >
-    <number>6</number>
-   </property>
-   <item row="0" column="0" >
+   <item>
     <widget class="QTabWidget" name="tabWidget6" >
      <property name="currentIndex" >
       <number>0</number>
@@ -73,7 +67,7 @@
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -452,9 +446,6 @@
             </property>
             <item>
              <widget class="QLabel" name="lblPort" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
               <property name="toolTip" >
                <string>The ports to use for direct connections.</string>
               </property>
@@ -471,9 +462,6 @@
             </item>
             <item>
              <widget class="QSpinBox" name="sbxFirstPort" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
               <property name="toolTip" >
                <string>The start of the port range.</string>
               </property>
@@ -493,9 +481,6 @@
             </item>
             <item>
              <widget class="QSpinBox" name="sbxLastPort" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
               <property name="toolTip" >
                <string>The end of the port range.</string>
               </property>
@@ -547,9 +532,6 @@
             </property>
             <item>
              <widget class="QLabel" name="lblTimeout" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
               <property name="toolTip" >
                <string>Timeout for direct connections.</string>
               </property>
@@ -566,9 +548,6 @@
             </item>
             <item>
              <widget class="QSpinBox" name="sbxTimeout" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
               <property name="toolTip" >
                <string>Timeout for direct connections.</string>
               </property>
@@ -622,24 +601,24 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="encodingCombo" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" >
             <size>
-             <width>40</width>
+             <width>10</width>
              <height>20</height>
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="encodingCombo" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -651,7 +630,7 @@
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -755,7 +734,7 @@
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -896,7 +875,7 @@
      </widget>
     </widget>
    </item>
-   <item row="1" column="0" >
+   <item>
     <widget class="QLabel" name="labelStatusMessage" >
      <property name="text" >
       <string/>
