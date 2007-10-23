@@ -15,5 +15,6 @@
     *************************************************************************
 */
 
+#include <kdemacros.h>
 
 #define KOPETECRYPTOGRAPHY_EXPORT KDE_EXPORT
