@@ -18,6 +18,7 @@ Name[pt]=Janela de Conversação
 Name[pt_BR]=Janela de Conversação
 Name[sv]=Chattfönster
 Name[x-test]=xxChat Windowxx
+Name[zh_TW]=聊天視窗
 Comment=Configure Chat Window Look and Feel
 Comment[ca]=Configura l'aparença i comportament de la finestra de xat
 Comment[ja]=チャットウィンドウの外観を設定
@@ -26,6 +27,7 @@ Comment[pt]=Configurar a Aparência e Comportamento da Janela de Conversação
 Comment[pt_BR]=Configurar a Aparência e Comportamento da Janela de Conversação
 Comment[sv]=Anpassa chattfönstrets känsla och utseende
 Comment[x-test]=xxConfigure Chat Window Look and Feelxx
+Comment[zh_TW]=設定聊天視窗的外觀與感覺
 
 
 
