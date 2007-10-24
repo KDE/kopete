@@ -30,14 +30,13 @@
 #include <kwindowsystem.h>
 #include <kcmultidialog.h>
 #include <kicon.h>
-#include <kglobal.h>
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include <kactioncollection.h>
 
-K_GLOBAL_STATIC_WITH_ARGS(KSettings::Dialog, s_settingsDialog, (Kopete::UI::Global::mainWidget()))
+KSettings::Dialog *KopetePreferencesAction::s_settingsDialog = 0L;
 
 KopetePreferencesAction::KopetePreferencesAction( KActionCollection *parent, const char *name )
 : KAction( KIcon(KStandardGuiItem::configure().iconName()), KStandardGuiItem::configure().text(), parent )
@@ -52,6 +51,12 @@ KopetePreferencesAction::~KopetePreferencesAction()
 
 void KopetePreferencesAction::slotShowPreferences()
 {
+	// No need of static deleter since when the parent is deleted, the settings dialog is deleted (ereslibre)
+	if ( !s_settingsDialog )
+	{
+		s_settingsDialog = new KSettings::Dialog( Kopete::UI::Global::mainWidget() );
+	}
+
 	s_settingsDialog->show();
 
 	s_settingsDialog->raise();
