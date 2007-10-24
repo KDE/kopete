@@ -171,7 +171,7 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	else
 	{
 		// Save metadata of image
-		KConfigGroup avatarConfig(KSharedConfig::openConfig( configUrl.path(), KConfig::OnlyLocal), newEntry.name );
+		KConfigGroup avatarConfig(KSharedConfig::openConfig( configUrl.path(), KConfig::SimpleConfig), newEntry.name );
 	
 		avatarConfig.writeEntry( "Filename", avatarFilename );
 		avatarConfig.writeEntry( "Category", int(newEntry.category) );
@@ -206,7 +206,7 @@ bool AvatarManager::remove(Kopete::AvatarManager::AvatarEntry entryToRemove)
 		configUrl.addPath( UserDir );
 		configUrl.addPath( AvatarConfig );
 
-		KConfigGroup avatarConfig ( KSharedConfig::openConfig( configUrl.path(), KConfig::OnlyLocal ), entryToRemove.name );
+		KConfigGroup avatarConfig ( KSharedConfig::openConfig( configUrl.path(), KConfig::SimpleConfig ), entryToRemove.name );
 		avatarConfig.deleteGroup();
 		avatarConfig.sync();
 
@@ -343,7 +343,7 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 	avatarConfigUrl.addPath( AvatarConfig );
 	if( QFile::exists(avatarConfigUrl.path()) )
 	{
-		KConfig *avatarConfig = new KConfig( avatarConfigUrl.path(), KConfig::OnlyLocal);
+		KConfig *avatarConfig = new KConfig( avatarConfigUrl.path(), KConfig::SimpleConfig);
 		// Each avatar entry in configuration is a group
 		QStringList groupEntryList = avatarConfig->groupList();
 		QString groupEntry;

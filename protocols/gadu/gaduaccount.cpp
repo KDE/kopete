@@ -136,8 +136,6 @@ static const char* const servers_ip[] = {
 	p->session_ = new GaduSession( this );
 	p->session_->setObjectName( QLatin1String("GaduSession") );
 
-	KGlobal::config()->setGroup( "Gadu" );
-
 	setMyself( new GaduContact( accountId().toInt(), accountId(), this, Kopete::ContactList::self()->myself() ) );
 
 	p->status = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
