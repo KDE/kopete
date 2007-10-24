@@ -8,6 +8,7 @@ X-KDE-Library=kcm_kopete_avdeviceconfig
 X-KDE-FactoryName=kcm_kopete_avdeviceconfig
 X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
+X-KDE-Weight=180
 
 Name=Audio/Video
 Name[ca]=Àudio/Vídeo

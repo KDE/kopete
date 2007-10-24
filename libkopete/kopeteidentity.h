@@ -2,6 +2,7 @@
     kopeteidentity.h - Kopete Identity
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+              (c) 2007         Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -42,11 +43,19 @@ class KOPETE_EXPORT Identity : public PropertyContainer
 public:	
 	typedef QList<Identity*> List;
 	/**
-	 * @brief The main constructor for Kopete Identities 
+	 * @brief The main constructor for Kopete Identities
 	 *
-	 * This will create an empty identity name @param id
+	 * This will create an empty identity with a random id
+	 * @param label the label to use for this identity
 	 */
-	Identity(const QString &id);
+	Identity(const QString &label);
+
+	/**
+	 * @brief Constructor for deserialising stored Identities
+	 * @param id the stored Identity's id
+	 * @param label the stored Identity's label
+	 */
+	Identity(const QString &id, const QString &label);
 
 	/**
 	 * @brief Duplicates an existing identity
@@ -54,11 +63,27 @@ public:
 	 * This will create a new identity name @param id, that will clone all properties
 	 * of the identity @param existing.
 	 */
-	Identity(const QString &id, Identity &existing);
+	Identity(Identity &existing);
 
 	~Identity();
 
-	QString identityId() const;
+	/**
+	 * The id is a unique internal handle and should not be exposed in the UI
+	 * @return the identity's id
+	 */
+	QString id() const;
+
+	/**
+	 * The label is used to identify the identity in the UI
+	 * @return the identity's label
+	 */
+	QString label() const;
+
+	/**
+	 * Sets the label
+	 * @param newLabel a new label for the identity
+	 */
+	void setLabel( const QString & label );
 
 	/**
 	 * This identity should be connected when connect all is called?

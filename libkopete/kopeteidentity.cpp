@@ -2,6 +2,7 @@
     kopeteidentity.cpp - Kopete Identity
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kemail.net>
+              (c) 2007         Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -27,6 +28,7 @@
 #include <KGlobal>
 #include <KSharedConfigPtr>
 #include <KLocale>
+#include <KRandom>
 
 #include <kdeversion.h>
 
@@ -36,29 +38,37 @@ namespace Kopete
 class Identity::Private
 {
 public:
-	Private(const QString &i) : onlineStatus( OnlineStatus::Unknown ) 
+	Private(const QString &i, const QString &l) : onlineStatus( OnlineStatus::Unknown )
 	{
 		id = i;
+		label = l;
 		configGroup = new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Identity_%1" ).arg( id ));
 	}
 	QList<Kopete::Account*> accounts;
 	QString id;
+	QString label;
 	KConfigGroup *configGroup;
 	OnlineStatus::StatusType onlineStatus;
 };
 
-Identity::Identity(const QString &id)
+Identity::Identity( const QString &id, const QString &label )
+	: d( new Private(id, label) )
 {
-	d = new Private(id);
 	load();
 	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
 			this, SLOT(slotSaveProperty(PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
 }
 
-Identity::Identity(const QString &id, Identity &existing)
+Identity::Identity(const QString &label)
+: d( new Private(KRandom::randomString(10), label) )
 {
-	d = new Private(id);
+	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
+			this, SLOT(slotSaveProperty(PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
+}
 
+Identity::Identity( Identity &existing )
+{
+	d = new Private(KRandom::randomString(10), existing.label());
 	QMap<QString,QString> props;
 	
 	//read properties from the existing identity
@@ -79,9 +89,19 @@ Identity::~Identity()
 	delete d;
 }
 
-QString Identity::identityId() const
+QString Identity::id() const
 {
 	return d->id;
+}
+
+QString Identity::label() const
+{
+	return d->label;
+}
+
+void Identity::setLabel(const QString& label)
+{
+	d->label = label;
 }
 
 bool Identity::excludeConnect() const
@@ -116,11 +136,11 @@ QString Identity::toolTip() const
 	if ( hasProperty(Kopete::Global::Properties::self()->nickName().key()) )
 		nick = property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	else
-		nick = d->id;
+		nick = d->label;
 
 	tt+= i18nc( "Identity tooltip information: <nobr>ICON <b>NAME</b></nobr><br /><br />",
 				"<nobr><img src=\"kopete-identity-icon:%1\"> <b>%2</b></nobr><br /><br />",
-				QString(QUrl::toPercentEncoding( d->id )), nick );
+				QString(QUrl::toPercentEncoding( d->label )), nick );
 
 	foreach(Account *a, d->accounts)
 	{
@@ -150,7 +170,7 @@ KActionMenu* Identity::actionMenu()
 		return d->accounts.first()->actionMenu();
 
 	// if there is more than one account, add them as submenus of this identity menu
-	KActionMenu *menu = new KActionMenu(d->id, this);
+	KActionMenu *menu = new KActionMenu(d->label, this);
 
 	foreach(Account *account, d->accounts)
 	{

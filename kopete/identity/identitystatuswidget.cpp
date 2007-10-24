@@ -162,7 +162,7 @@ void IdentityStatusWidget::slotLoad()
 		d->ui.nickName->setText( d->lastNickName );
 	}
 
-	d->ui.identityName->setText(d->identity->identityId());
+	d->ui.identityName->setText(d->identity->label());
 
 	//acounts
 	slotUpdateAccountStatus();

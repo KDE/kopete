@@ -17,7 +17,7 @@ kopete:
 
 - Properly handle identity's property changes in the Kopete::Account derived classes
 
-- Merge the account config and identity config dialogs into a single dialog (as
+X Merge the account config and identity config dialogs into a single dialog (as
   suggested and started to be implemented by Gof).
 
 - Evaluate alternatives to the text links on the identity widget (as suggested by

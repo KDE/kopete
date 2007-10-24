@@ -2,6 +2,7 @@
     kopetedbusinterface.h - Kopete D-Bus interface
 
     Copyright (c) 2007      by Michaël Larouche      <larouche@kde.org>
+    Copyright (c) 2007         Will Stephenson       <wstephenson@kde.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -83,6 +84,11 @@ public Q_SLOTS:
 	 * @return a list of all contacts display name
 	 */
 	QStringList contacts() const;
+
+	/**
+	 * @brief Get UI labels for identities
+	 */
+	QString labelForIdentity(const QString & id) const;
 
 	/**
 	 * @brief Get a filered list of contacts based on the filter

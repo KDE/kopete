@@ -2,6 +2,7 @@
     identitydialog.cpp  -  Kopete identity configuration dialog
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+    Copyright (c) 2007         Will Stephenson        <wstephenson@kde.org>
 
     Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -39,7 +40,7 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 {
 	Q_ASSERT(identity);
 
-	setTitle(identity->identityId());
+	setTitle(identity->label());
 	setWindowTitle(i18n("Identity Information"));
 
 	d = new Private();
@@ -80,6 +81,10 @@ void IdentityDialog::load()
 	if (d->identity->hasProperty( d->props->photo().key() ))
 		setPhoto( d->identity->property(d->props->photo()).value().toString() );
 
+
+	// Label
+	d->general.label->setText( d->identity->label() );
+
 	// NickName
 	if (d->identity->hasProperty( d->props->nickName().key() ))
 		d->general.nickName->setText( d->identity->property(d->props->nickName()).value().toString() );
@@ -112,6 +117,7 @@ void IdentityDialog::load()
 void IdentityDialog::slotSave()
 {
 	//-------------- General Info ---------------------
+	d->identity->setLabel( d->general.label->text() );
 	d->identity->setProperty( d->props->photo(), d->photoPath );
 	d->identity->setProperty( d->props->nickName(), d->general.nickName->text() );
 	d->identity->setProperty( d->props->firstName(), d->general.firstName->text() );

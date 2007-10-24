@@ -22,6 +22,10 @@
     <method name="contacts">
       <arg type="as" direction="out"/>
     </method>
+    <method name="labelForIdentity">
+      <arg name="identity" type="s" direction="in"/>
+      <arg type="s" direction="out"/>
+    </method>
     <method name="contactsByFilter">
       <arg type="as" direction="out"/>
       <arg name="filter" type="s" direction="in"/>

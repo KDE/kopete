@@ -4,6 +4,7 @@
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2003-2007 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2003      by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2007      by Will Stephenson        <wstephenson@kde.org>
 
     Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -25,6 +26,7 @@
 #include <QtGui/QBoxLayout>
 #include <QtCore/QPointer>
 #include <QtCore/QTimer>
+#include <QtGui/QContextMenuEvent>
 
 #include <kcolorbutton.h>
 #include <kpushbutton.h>
@@ -35,6 +37,8 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kicon.h>
+#include <kaction.h>
+#include <kmenu.h>
 
 #include "addaccountwizard.h"
 #include "editaccountwidget.h"
@@ -46,7 +50,6 @@
 #include "kopetecontact.h"
 #include "accountidentitydialog.h"
 #include "identitydialog.h"
-#include "addidentitydialog.h"
 
 
 
@@ -71,7 +74,6 @@ class KopeteIdentityLVI : public QTreeWidgetItem
 		Kopete::Identity *m_identity;
 };
 
-
 typedef KGenericFactory<KopeteAccountConfig, QWidget> KopeteAccountConfigFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_accountconfig, KopeteAccountConfigFactory( "kcm_kopete_accountconfig" ) )
 
@@ -85,18 +87,16 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QStringList &ar
 	header->setResizeMode( 0, QHeaderView::Stretch );
 	header->setVisible(false);
 	
-	mButtonNew->setIcon( KIcon("edit-add") );
-	mButtonRemove->setIcon( KIcon("edit-delete") );
+	configureActions();
+	configureMenus();
 
-	connect( mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
-	connect( mButtonNewIdentity,    SIGNAL( clicked() ), this, SLOT( slotAddIdentity() ) );
-	connect( mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEdit() ) );
-	connect( mButtonIdentity, SIGNAL( clicked() ), this, SLOT( slotSelectIdentity() ) );
-	connect( mButtonRemove, SIGNAL( clicked() ), this, SLOT( slotRemove() ) );
-	connect( mButtonDefault, SIGNAL( clicked() ), this, SLOT( slotSetDefaultIdentity() ) );
 	connect( mAccountList,  SIGNAL( itemSelectionChanged() ), this, SLOT( slotItemSelected() ) );
-	connect( mAccountList,  SIGNAL( itemDoubleClicked(QTreeWidgetItem*, int) ), this, SLOT( slotEdit() ) );
+	connect( mAccountList,  SIGNAL( itemDoubleClicked(QTreeWidgetItem*, int) ), this, SLOT( slotModify() ) );
 	connect( mAccountList,  SIGNAL( itemChanged ( QTreeWidgetItem * , int )), this, SLOT( slotItemChanged(QTreeWidgetItem*) ) );
+
+	// this ensures that newly created accounts are assigned to the selected identity
+	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account *)), this, SLOT(slotAccountAdded(Kopete::Account *)) );
+
 	setButtons( Help );
 	load();
 }
@@ -141,10 +141,10 @@ void KopeteAccountConfig::save()
 void KopeteAccountConfig::load()
 {
 	mAccountList->clear();
-	
+
 	//FIXME: this doesn't work
 	mAccountList->invisibleRootItem()->setFlags(mAccountList->invisibleRootItem()->flags() & ~Qt::ItemIsDropEnabled);
-		
+
 	QHash<Kopete::Identity *,QTreeWidgetItem *> identityItemHash;
 	Kopete::Identity *defaultIdentity = Kopete::IdentityManager::self()->defaultIdentity();
 	foreach(Kopete::Identity *i, Kopete::IdentityManager::self()->identities())
@@ -153,7 +153,7 @@ void KopeteAccountConfig::load()
 		QTreeWidgetItem *identityItem = new KopeteIdentityLVI( i, mAccountList );
 		// Insert the item after the previous one
 		
-		identityItem->setText( 0, i->identityId() );
+		identityItem->setText( 0, i->label() );
 		identityItem->setIcon( 0, KIcon( i->customIcon()) );
 		
 		identityItem->setExpanded( true );
@@ -200,45 +200,48 @@ void KopeteAccountConfig::load()
 
 void KopeteAccountConfig::slotItemSelected()
 {
-	m_protected=true;
-
 	bool accountSelected = selectedAccount();
+	bool hasMultipleIdentities = ( Kopete::IdentityManager::self()->identities().size() > 1 );
+	mButtonAccountModify->setEnabled( accountSelected );
+	mButtonAccountRemove->setEnabled( accountSelected );
+	m_actionAccountSwitchIdentity->setEnabled( accountSelected && hasMultipleIdentities );
+	mButtonAccountSwitchIdentity->setEnabled( m_actionAccountSwitchIdentity->isEnabled() );
+
 	bool identitySelected = selectedIdentity();
-
-	mButtonEdit->setEnabled( accountSelected || identitySelected );
-	mButtonRemove->setEnabled( accountSelected || identitySelected );
-	mButtonIdentity->setEnabled( accountSelected );
-	mButtonDefault->setEnabled( identitySelected );
-
-	m_protected=false;
+	bool isDefaultIdentity = (identitySelected && Kopete::IdentityManager::self()->defaultIdentity() == selectedIdentity()->identity());
+	mButtonIdentityCopy->setEnabled( identitySelected );
+	mButtonIdentityModify->setEnabled( identitySelected );
+	m_actionIdentityRemove->setEnabled( identitySelected && !isDefaultIdentity );
+	mButtonIdentityRemove->setEnabled( m_actionIdentityRemove->isEnabled() );
+	m_actionIdentitySetDefault->setEnabled( identitySelected && !isDefaultIdentity );
+	mButtonIdentitySetDefault->setEnabled( m_actionIdentitySetDefault->isEnabled() );
 }
 
 void KopeteAccountConfig::slotAddAccount()
 {
-	AddAccountWizard *m_addwizard = new AddAccountWizard( this, true );
-	connect( m_addwizard, SIGNAL(finished()), this, SLOT(slotAddWizardDone()) );
-	m_addwizard->show();
+	AddAccountWizard *addwizard = new AddAccountWizard( this, true );
+	addwizard->show();
 }
 
-void KopeteAccountConfig::slotEdit()
+void KopeteAccountConfig::slotModify()
 {
 	KopeteAccountLVI *alvi = selectedAccount();
 	KopeteIdentityLVI *ilvi = selectedIdentity();
 	
-	if ( alvi && alvi->account() )
-		return editAccount( alvi->account() );
-	
 	if ( ilvi && ilvi->identity() )
-		return editIdentity( ilvi->identity() );
+		return modifyIdentity( ilvi->identity() );
+
+	if ( alvi && alvi->account() )
+		return modifyAccount( alvi->account() );
 }
 	
 	
-void KopeteAccountConfig::editAccount(Kopete::Account *account)
+void KopeteAccountConfig::modifyAccount(Kopete::Account *account)
 {
 	Kopete::Protocol *proto = account->protocol();
 
 	KDialog editDialog ( this );
-	editDialog.setCaption( i18n("Edit Account" ) );
+	editDialog.setCaption( i18n("Modify Account" ) );
 	editDialog.setButtons( KDialog::Ok | KDialog::Cancel );
 	editDialog.setDefaultButton(KDialog::Ok);
 	editDialog.showButtonSeparator(true);
@@ -268,8 +271,7 @@ void KopeteAccountConfig::editAccount(Kopete::Account *account)
 	Kopete::AccountManager::self()->save();
 }
 
-
-void KopeteAccountConfig::editIdentity(Kopete::Identity *)
+void KopeteAccountConfig::modifyIdentity(Kopete::Identity *)
 {
 	KopeteIdentityLVI *lvi = selectedIdentity();
 	
@@ -285,20 +287,22 @@ void KopeteAccountConfig::editIdentity(Kopete::Identity *)
 	Kopete::IdentityManager::self()->save();
 }
 
-
-void KopeteAccountConfig::slotRemove()
+void KopeteAccountConfig::slotRemoveAccount()
 {
 	KopeteAccountLVI *alvi = selectedAccount();
-	KopeteIdentityLVI *ilvi = selectedIdentity();
 	
 	if ( alvi && alvi->account() )
 		return removeAccount( alvi );
+}	
+
+void KopeteAccountConfig::slotRemoveIdentity()
+{
+	KopeteIdentityLVI *ilvi = selectedIdentity();
 	
 	if ( ilvi && ilvi->identity() )
 		return removeIdentity( ilvi );
+}
 
-}	
-	
 void KopeteAccountConfig::removeAccount(KopeteAccountLVI *lvi)
 {
 	Kopete::Account *i = lvi->account();
@@ -317,7 +321,7 @@ void KopeteAccountConfig::removeIdentity(KopeteIdentityLVI *lvi)
 
 	if (!i->accounts().count())
 	{
-		if ( KMessageBox::warningContinueCancel( this, i18n( "Are you sure you want to remove the identity \"%1\"?", i->identityId() ),
+		if ( KMessageBox::warningContinueCancel( this, i18n( "Are you sure you want to remove the identity \"%1\"?", i->label() ),
 			 i18n( "Remove Identity" ), KGuiItem(i18n( "Remove Identity" ), "edit-delete"), KStandardGuiItem::cancel(),
 				   "askRemoveIdentity", KMessageBox::Notify | KMessageBox::Dangerous ) == KMessageBox::Continue )
 		{
@@ -330,7 +334,7 @@ void KopeteAccountConfig::removeIdentity(KopeteIdentityLVI *lvi)
 		// if there are any accounts linked to this identity, need to change them before removing the identity
 		if ( AccountIdentityDialog::changeAccountIdentity( this, i->accounts(), i, 
 			 i18n("Before removing the identity %1, the following accounts must be" 
-					 "assigned to another identity:", i->identityId())) )
+					 "assigned to another identity:", i->label())) )
 		{
 			Kopete::IdentityManager::self()->removeIdentity( i );
 			delete lvi;
@@ -338,19 +342,32 @@ void KopeteAccountConfig::removeIdentity(KopeteIdentityLVI *lvi)
 	}
 	// if we removed the default identity, this will trigger an update
 	Kopete::IdentityManager::self()->defaultIdentity();
+	save();
+	// To be sure that accounts with relocated identities appear, reload
+	load();
 }
 
-void KopeteAccountConfig::slotSelectIdentity()
+void KopeteAccountConfig::slotAccountSwitchIdentity()
 {
 	KopeteAccountLVI *lvi = selectedAccount();
-	
+
 	if ( !lvi || !lvi->account() )
 		return;
 
+	// If there are only two identities, don't show the dialog,
+	// just switch to the other identity
 	Kopete::Account *a = lvi->account();
+	if ( Kopete::IdentityManager::self()->identities().size() == 2 ) {
+		foreach ( Kopete::Identity * id, Kopete::IdentityManager::self()->identities() ) {
+			if ( id != a->identity() ) {
+				a->setIdentity( id );
+				break;
+			}
+		}
+	} else {
+		AccountIdentityDialog::changeAccountIdentity( this, a, 0, i18n("Select an identity for the account:"));
+	}
 
-	AccountIdentityDialog::changeAccountIdentity( this, a, 0, i18n("Select an identity for the account:"));
-	
 	load();
 }
 
@@ -367,27 +384,61 @@ void KopeteAccountConfig::slotSetDefaultIdentity()
 
 void KopeteAccountConfig::slotAddIdentity()
 {
-	Kopete::Identity *ident = AddIdentityDialog::getIdentity(this);
+	Kopete::Identity *ident = new Kopete::Identity(i18n("New Identity"));
 
 	if (!ident)
 		return;
 
-	ident = Kopete::IdentityManager::self()->registerIdentity(ident);
-	if (ident)
-	{
-		IdentityDialog dialog(ident, this);
-		dialog.exec();
+	IdentityDialog dialog(ident, this);
+	if ( dialog.exec() == QDialog::Accepted ) {
+		ident = Kopete::IdentityManager::self()->registerIdentity(ident);
+		if (ident) {
+			load();
+		} else {
+			delete ident;
+		}
+	} else {
+		delete ident;
 	}
-	load();
 }
 
+void KopeteAccountConfig::slotCopyIdentity()
+{
+	Kopete::Identity * existing = selectedIdentity()->identity();
+	uint copyCount = 2;
+	QString newLabel = i18nc( "String used for creating first copy of a named item",
+			"Copy of %1", existing->label() );
+	Kopete::Identity::List ids = Kopete::IdentityManager::self()->identities();
+	QStringList idLabels;
+	foreach ( Kopete::Identity *i, ids ) {
+		idLabels.append( i->label() );
+	}
+	while ( idLabels.contains( newLabel ) && copyCount < 100 ) {
+		newLabel = i18nc( "String used for creating second and subsequent copies of a named item",
+			"Copy %1 of %2", copyCount++, existing->label() );
+	}
+	Kopete::Identity * ident = new Kopete::Identity( *existing );
+	ident->setLabel( newLabel );
+
+	IdentityDialog dialog(ident, this);
+	if ( dialog.exec() == QDialog::Accepted ) {
+		ident = Kopete::IdentityManager::self()->registerIdentity(ident);
+		if (ident) {
+			load();
+		} else {
+			delete ident;
+		}
+	} else {
+		delete ident;
+	}
+}
 
 void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,
-												   const Kopete::OnlineStatus &status, 
-												   const Kopete::OnlineStatus &oldStatus )
+												   const Kopete::OnlineStatus &newStatus, 
+												   const Kopete::OnlineStatus &/*oldStatus*/)
 {
 	//get all items
-	QList<QTreeWidgetItem*> items = mAccountList->findItems("", Qt::MatchContains);
+	QList<QTreeWidgetItem*> items = mAccountList->findItems("", Qt::MatchContains | Qt::MatchRecursive);
 	QList<QTreeWidgetItem*>::iterator it;
 	for (it = items.begin(); it != items.end(); ++it)
 	{
@@ -397,20 +448,25 @@ void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,
 
 		if (i->account()->myself() == contact)
 		{
-			(*it)->setIcon( 0, QIcon(status.iconFor(i->account(), 32)) );
-			(*it)->setText( 1, contact->onlineStatus().statusTypeToString(status.status()) );
+			(*it)->setIcon( 0, QIcon(newStatus.iconFor(i->account(), 32)) );
+			(*it)->setText( 1, contact->onlineStatus().statusTypeToString(newStatus.status()) );
 			break;
 		}
 	}
 
 }
 
-void KopeteAccountConfig::slotAddWizardDone()
+void KopeteAccountConfig::slotAccountAdded( Kopete::Account * account )
 {
+	KopeteIdentityLVI *i = selectedIdentity();
+	if ( i ) {
+		account->setIdentity( i->identity() );
+	} else {
+		account->setIdentity( Kopete::IdentityManager::self()->defaultIdentity() );
+	}
 	save();
 	load();
 }
-
 
 void KopeteAccountConfig::slotItemChanged(QTreeWidgetItem* item)
 {
@@ -426,6 +482,109 @@ void KopeteAccountConfig::slotItemChanged(QTreeWidgetItem* item)
 			changed(true);
 		}
 	}
+}
+
+void KopeteAccountConfig::contextMenuEvent ( QContextMenuEvent * event )
+{	
+	KopeteIdentityLVI *ilvi = selectedIdentity();
+	if ( ilvi && ilvi->identity() )
+	{
+		m_identityContextMenu->popup(event->globalPos());
+	}
+
+	KopeteAccountLVI *alvi = selectedAccount();
+	if ( alvi && alvi->account() )
+	{
+		m_accountContextMenu->popup(event->globalPos());
+	}
+}
+
+void KopeteAccountConfig::configureActions()
+{
+	// Add account
+	m_actionAccountAdd = new KAction( i18n( "&Add Account..." ), this );
+	m_actionAccountAdd->setIcon( KIcon("edit-add") );
+	mButtonAccountAdd->setIcon( m_actionAccountAdd->icon() );
+	mButtonAccountAdd->setText( m_actionAccountAdd->text() );
+	connect( m_actionAccountAdd, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotAddAccount() ) );
+	connect( mButtonAccountAdd, SIGNAL( clicked() ), m_actionAccountAdd, SLOT( trigger() ) );
+
+	// Modify account
+	m_actionAccountModify = new KAction( i18n( "&Modify Account..." ), this );
+	m_actionAccountModify->setIcon( KIcon("configure") );
+	mButtonAccountModify->setIcon( m_actionAccountModify->icon() );
+	mButtonAccountModify->setText( m_actionAccountModify->text() );
+	connect( m_actionAccountModify, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotModify() ) );
+	connect( mButtonAccountModify, SIGNAL( clicked() ), m_actionAccountModify, SLOT( trigger() ) );
+
+	// Remove account
+	m_actionAccountRemove = new KAction( i18n( "&Remove Account" ), this );
+	m_actionAccountRemove->setIcon( KIcon("edit-delete") );
+	m_actionAccountRemove->setShortcut(KShortcut(Qt::Key_Delete));
+	mButtonAccountRemove->setIcon( m_actionAccountRemove->icon() );
+	mButtonAccountRemove->setText( m_actionAccountRemove->text() );
+	connect( m_actionAccountRemove, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotRemoveAccount() ) );
+	connect( mButtonAccountRemove, SIGNAL( clicked() ), m_actionAccountRemove, SLOT( trigger() ) );
+
+	// Switch identity for an account
+	m_actionAccountSwitchIdentity = new KAction( i18n( "&Switch Identity..." ), this );
+	mButtonAccountSwitchIdentity->setText( m_actionAccountSwitchIdentity->text() );
+	connect( m_actionAccountSwitchIdentity, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotAccountSwitchIdentity() ) );
+	connect( mButtonAccountSwitchIdentity, SIGNAL( clicked() ), m_actionAccountSwitchIdentity, SLOT( trigger() ) );
+
+	// Add identity
+	m_actionIdentityAdd = new KAction( i18n( "Add &Identity..." ), this );
+	m_actionIdentityAdd->setIcon( KIcon("edit-add") );
+	mButtonIdentityAdd->setIcon( m_actionIdentityAdd->icon() );
+	mButtonIdentityAdd->setText( m_actionIdentityAdd->text() );
+	connect ( m_actionIdentityAdd, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotAddIdentity() ) );
+	connect( mButtonIdentityAdd, SIGNAL( clicked() ), m_actionIdentityAdd, SLOT( trigger() ) );
+
+	// Copy identity
+	m_actionIdentityCopy = new KAction( i18n( "&Copy Identity..." ), this );
+	m_actionIdentityCopy->setIcon( KIcon("edit-copy") );
+	mButtonIdentityCopy->setIcon( m_actionIdentityCopy->icon() );
+	mButtonIdentityCopy->setText( m_actionIdentityCopy->text() );
+	connect ( m_actionIdentityCopy, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotCopyIdentity() ) );
+	connect( mButtonIdentityCopy, SIGNAL( clicked() ), m_actionIdentityCopy, SLOT( trigger() ) );
+
+	// Modify identity
+	m_actionIdentityModify = new KAction( i18n( "M&odify Identity..." ), this );
+	m_actionIdentityModify->setIcon( KIcon("configure") );
+	mButtonIdentityModify->setIcon( m_actionIdentityModify->icon() );
+	mButtonIdentityModify->setText( m_actionIdentityModify->text() );
+	connect ( m_actionIdentityModify, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotModify() ) );
+	connect( mButtonIdentityModify, SIGNAL( clicked() ), m_actionIdentityModify, SLOT( trigger() ) );
+
+	// Remove identity
+	m_actionIdentityRemove = new KAction( i18n( "R&emove Identity" ), this );
+	m_actionIdentityRemove->setIcon( KIcon("edit-delete") );
+	mButtonIdentityRemove->setIcon( m_actionIdentityRemove->icon() );
+	mButtonIdentityRemove->setText( m_actionIdentityRemove->text() );
+	connect ( m_actionIdentityRemove, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotRemoveIdentity() ) );
+	connect( mButtonIdentityRemove, SIGNAL( clicked() ), m_actionIdentityRemove, SLOT( trigger() ) );
+
+	// Switch identity for an identity
+	m_actionIdentitySetDefault = new KAction( i18n( "Set &Default" ), this );
+	mButtonIdentitySetDefault->setText( m_actionIdentitySetDefault->text() );
+	connect ( m_actionIdentitySetDefault, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotSetDefaultIdentity() ) );
+	connect( mButtonIdentitySetDefault, SIGNAL( clicked() ), m_actionIdentitySetDefault, SLOT( trigger() ) );
+}
+
+void KopeteAccountConfig::configureMenus()
+{
+	// Account management context menu
+	m_accountContextMenu = new KMenu ( this );
+	m_accountContextMenu->addAction( m_actionAccountModify );
+	m_accountContextMenu->addAction( m_actionAccountRemove );
+
+	// Identity management context menu
+	m_identityContextMenu = new KMenu ( this );
+	m_identityContextMenu->addAction( m_actionAccountAdd );
+	m_identityContextMenu->addSeparator();
+	m_identityContextMenu->addAction( m_actionIdentityModify );
+	m_identityContextMenu->addAction( m_actionIdentityRemove );
+	m_identityContextMenu->addAction( m_actionIdentitySetDefault );
 }
 
 

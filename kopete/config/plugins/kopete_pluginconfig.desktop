@@ -8,6 +8,7 @@ X-KDE-Library=kcm_kopete_pluginconfig
 X-KDE-FactoryName=kcm_kopete_pluginconfig
 X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
+X-KDE-Weight=200
 
 Name=Plugins
 Name[bg]=Приставки

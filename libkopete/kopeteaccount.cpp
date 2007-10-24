@@ -4,6 +4,8 @@
     Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003-2004 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
+    Copyright (c) 2007         Will Stephenson       <wstephenson@kde.org>
+
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -427,7 +429,7 @@ void Account::setIdentity( Identity *ident )
 
 	ident->addAccount( this );
 	d->identity = ident;
-	d->configGroup->writeEntry("Identity", ident->identityId());
+	d->configGroup->writeEntry("Identity", ident->id());
 }
 
 Contact * Account::myself() const

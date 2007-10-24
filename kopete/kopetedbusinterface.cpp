@@ -2,6 +2,7 @@
     kopetedbusinterface.h - Kopete D-Bus interface
 
     Copyright (c) 2007      by Michaël Larouche      <larouche@kde.org>
+    Copyright (c) 2007         Will Stephenson       <wstephenson@kde.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -194,10 +195,18 @@ QStringList KopeteDBusInterface::identities() const
 
 	foreach(Kopete::Identity *identity, Kopete::IdentityManager::self()->identities())
 	{
-		result << identity->identityId();
+		result << identity->id();
 	}
 
 	return result;
+}
+
+QString KopeteDBusInterface::labelForIdentity(const QString & id) const
+{
+    Kopete::Identity * identity = Kopete::IdentityManager::self()->findIdentity(id);
+    if ( identity ) {
+        return identity->label();
+    }
 }
 
 QStringList KopeteDBusInterface::accounts() const

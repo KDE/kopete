@@ -20,7 +20,6 @@
 
 #include <KDialog>
 #include <kopete_export.h>
-#include "ui_addidentitybase.h"
 
 namespace Kopete
 {

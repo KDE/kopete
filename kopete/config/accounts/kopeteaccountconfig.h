@@ -3,6 +3,7 @@
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2003-2004 by Olivier Goffart <ogoffart@kde.org>
+    Copyright (c) 2007      by Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -37,6 +38,8 @@ class Identity;
 
 class KopeteAccountLVI;
 class KopeteIdentityLVI;
+class KMenu;
+class KAction;
 
 /**
  * @author Olivier Goffart <ogoffart@kde.org>
@@ -48,6 +51,9 @@ class KopeteAccountConfig : public KCModule, private Ui::KopeteAccountConfigBase
 public:
 	KopeteAccountConfig(QWidget *parent, const QStringList &args );
 
+protected:
+	virtual void contextMenuEvent ( QContextMenuEvent * event );
+
 public slots:
 	virtual void save();
 	virtual void load();
@@ -57,20 +63,41 @@ private:
 	KopeteIdentityLVI* selectedIdentity();
 	Kopete::OnlineStatus mStatus;
 	
-	void editAccount(Kopete::Account *);
-	void editIdentity(Kopete::Identity *);
+	void configureActions();
+	void configureMenus();
+
+	void modifyAccount(Kopete::Account *);
+	void modifyIdentity(Kopete::Identity *);
 	void removeAccount(KopeteAccountLVI *);
 	void removeIdentity(KopeteIdentityLVI *);
 	bool m_protected;
+	KMenu *m_identityContextMenu;
+	KMenu *m_accountContextMenu;
+
+	KAction *m_actionAccountAdd;
+	KAction *m_actionAccountModify;
+	KAction *m_actionAccountRemove;
+	KAction *m_actionAccountSwitchIdentity;
+
+	KAction *m_actionIdentityAdd;
+	KAction *m_actionIdentityCopy;
+	KAction *m_actionIdentityModify;
+	KAction *m_actionIdentityRemove;
+	KAction *m_actionIdentitySetDefault;
 
 private slots:
-	void slotRemove();
-	void slotEdit();
-	void slotSelectIdentity();
+	void slotModify();
+
 	void slotAddAccount();
-	void slotSetDefaultIdentity();
+	void slotRemoveAccount();
+	void slotAccountSwitchIdentity();
+
 	void slotAddIdentity();
-	void slotAddWizardDone();
+	void slotRemoveIdentity();
+	void slotSetDefaultIdentity();
+
+	void slotCopyIdentity();
+	void slotAccountAdded(Kopete::Account *);
 	void slotItemSelected();
 	void slotOnlineStatusChanged( Kopete::Contact *contact,
 			                      const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );

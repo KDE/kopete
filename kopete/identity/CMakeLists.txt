@@ -6,15 +6,13 @@ ${KOPETE_INCLUDES}
 
 ########### next target ###############
 
-set( kopeteidentity_SRCS 
-addidentitydialog.cpp 
+set( kopeteidentity_SRCS
 accountidentitydialog.cpp
 identitydialog.cpp
 identitystatuswidget.cpp
 )
 
 kde4_add_ui_files( kopeteidentity_SRCS
-    addidentitybase.ui 
     accountidentitybase.ui
     identitygeneral.ui
     identitydetailed.ui
