@@ -59,7 +59,8 @@ protected:
 	virtual void showEvent( QShowEvent* ev );
 
 private slots:
-	void slotToggleShowOffliners();
+	void slotToggleShowAllOfflineEmpty( bool toggled );
+	void slotToggleShowOfflineUsers();
 	void slotToggleShowEmptyGroups();
 	void slotConfigChanged();
 	void slotConfNotifications();

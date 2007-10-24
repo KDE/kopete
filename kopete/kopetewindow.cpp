@@ -115,7 +115,7 @@ public:
 	 : contactlist(0), identitywidget(0), actionAddContact(0), actionDisconnect(0), actionExportContacts(0),
 	actionAwayMenu(0), actionDockMenu(0), selectAway(0), selectBusy(0), actionSetAvailable(0),
 	actionSetInvisible(0), actionPrefs(0), actionQuit(0), actionSave(0), menubarAction(0),
-	statusbarAction(0), actionShowOffliners(0), actionShowEmptyGroups(0), docked(0), 
+	statusbarAction(0), actionShowOfflineUsers(0), actionShowEmptyGroups(0), docked(0), 
 	deskRight(0), statusBarWidget(0), tray(0), hidden(false), autoHide(false),
 	autoHideTimeout(0), autoHideTimer(0), addContactMapper(0), 
 	globalStatusMessage(0), globalStatusMessageMenu(0), newMessageEdit(0)
@@ -147,7 +147,8 @@ public:
 	KAction *actionSave;
 	KToggleAction *menubarAction;
 	KToggleAction *statusbarAction;
-	KToggleAction *actionShowOffliners;
+	KToggleAction *actionShowAllOfflineEmpty;
+	KToggleAction *actionShowOfflineUsers;
 	KToggleAction *actionShowEmptyGroups;
 
 	int docked;
@@ -299,6 +300,7 @@ void KopeteWindow::initActions()
 {
 	// this action menu contains one action per account and is updated when accounts are registered/unregistered
 	d->actionAddContact = new KActionMenu( KIcon("add-user"), i18n( "&Add Contact" ), this );
+	d->actionAddContact->setIconText( i18n( "Add" ) );
 	actionCollection()->addAction( "AddContact", d->actionAddContact );
 	d->actionAddContact->setDelayed( false );
 	// this signal mapper is needed to call slotAddContact with the correct arguments
@@ -334,7 +336,8 @@ void KopeteWindow::initActions()
 
 	d->actionAwayMenu = new KActionMenu( KIcon("kopeteavailable"), i18n("&Set Status"),
                                              this );
-        actionCollection()->addAction( "Status", d->actionAwayMenu );
+	d->actionAwayMenu->setIconText( i18n( "Status" ) );
+	actionCollection()->addAction( "Status", d->actionAwayMenu );
 	d->actionAwayMenu->setDelayed( false );
 	d->actionAwayMenu->addAction(d->actionSetAvailable);
 	d->actionAwayMenu->addAction(d->selectAway);
@@ -361,19 +364,24 @@ void KopeteWindow::initActions()
 
 	KStandardAction::configureToolbars( this, SLOT(slotConfToolbar()), actionCollection() );
 	act = KStandardAction::configureNotifications(this, SLOT(slotConfNotifications()), actionCollection() );
-        actionCollection()->addAction( "settings_notifications", act );
+	actionCollection()->addAction( "settings_notifications", act );
 
-	d->actionShowOffliners = new KToggleAction( KIcon("show-offliners"), i18n( "Show Offline &Users" ), this );
-        actionCollection()->addAction( "settings_show_offliners", d->actionShowOffliners );
-	d->actionShowOffliners->setShortcut( KShortcut(Qt::CTRL + Qt::Key_U) );
-	connect( d->actionShowOffliners, SIGNAL( triggered(bool) ), this, SLOT( slotToggleShowOffliners() ) );
+	d->actionShowAllOfflineEmpty = new KToggleAction( KIcon("show-offliners"), i18n( "Show &All" ), this );
+	actionCollection()->addAction( "settings_show_all_offline_empty", d->actionShowAllOfflineEmpty );
+	d->actionShowAllOfflineEmpty->setShortcut( KShortcut(Qt::CTRL + Qt::Key_U) );
+	connect( d->actionShowAllOfflineEmpty, SIGNAL( triggered(bool) ), this, SLOT( slotToggleShowAllOfflineEmpty(bool) ) );
+
+	d->actionShowOfflineUsers = new KToggleAction( KIcon("show-offliners"), i18n( "Show Offline &Users" ), this );
+        actionCollection()->addAction( "settings_show_offliners", d->actionShowOfflineUsers );
+	connect( d->actionShowOfflineUsers, SIGNAL( triggered(bool) ), this, SLOT( slotToggleShowOfflineUsers() ) );
 
 	d->actionShowEmptyGroups = new KToggleAction( KIcon("folder-grey"), i18n( "Show Empty &Groups" ), this );
         actionCollection()->addAction( "settings_show_empty_groups", d->actionShowEmptyGroups );
 	d->actionShowEmptyGroups->setShortcut( KShortcut(Qt::CTRL + Qt::Key_G) );
 	connect( d->actionShowEmptyGroups, SIGNAL( triggered(bool) ), this, SLOT( slotToggleShowEmptyGroups() ) );
 
-	d->actionShowOffliners->setCheckedState( KGuiItem( i18n("Hide Offline &Users") ) );
+	d->actionShowAllOfflineEmpty->setCheckedState( KGuiItem( i18n("Hide O&ffline") ) );
+	d->actionShowOfflineUsers->setCheckedState( KGuiItem( i18n("Hide Offline &Users") ) );
 	d->actionShowEmptyGroups->setCheckedState( KGuiItem( i18n("Hide Empty &Groups") ) );
 
 	// quick search bar
@@ -390,7 +398,8 @@ void KopeteWindow::initActions()
 
 	// KActionMenu for selecting the global status message
 	KActionMenu * setStatusMenu = new KActionMenu( KIcon("kopeteeditstatusmessage"), i18n( "Set Status Message" ), this );
-        actionCollection()->addAction( "SetStatusMessage", setStatusMenu );
+	setStatusMenu->setIconText( i18n( "&Message" ) );
+	actionCollection()->addAction( "SetStatusMessage", setStatusMenu );
 	setStatusMenu->setDelayed( false );
 	connect( setStatusMenu->menu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
 
@@ -565,9 +574,18 @@ void KopeteWindow::saveOptions()
 	cg.sync();
 }
 
-void KopeteWindow::slotToggleShowOffliners()
+void KopeteWindow::slotToggleShowAllOfflineEmpty( bool toggled)
 {
-	Kopete::AppearanceSettings::self()->setShowOfflineUsers ( d->actionShowOffliners->isChecked() );
+	d->actionShowOfflineUsers->setChecked( toggled );
+	d->actionShowEmptyGroups->setChecked( toggled );
+	Kopete::AppearanceSettings::self()->setShowOfflineUsers( toggled );
+	Kopete::AppearanceSettings::self()->setShowEmptyGroups( toggled );
+	Kopete::AppearanceSettings::self()->writeConfig();
+}
+
+void KopeteWindow::slotToggleShowOfflineUsers()
+{
+	Kopete::AppearanceSettings::self()->setShowOfflineUsers ( d->actionShowOfflineUsers->isChecked() );
 	Kopete::AppearanceSettings::self()->writeConfig();
 }
 
@@ -582,7 +600,8 @@ void KopeteWindow::slotConfigChanged()
 	if( isHidden() && !Kopete::BehaviorSettings::self()->showSystemTray()) // user disabled systray while kopete is hidden, show it!
 		show();
 
-	d->actionShowOffliners->setChecked( Kopete::AppearanceSettings::self()->showOfflineUsers() );
+	d->actionShowAllOfflineEmpty->setChecked( Kopete::AppearanceSettings::self()->showOfflineUsers() && Kopete::AppearanceSettings::self()->showEmptyGroups() );
+	d->actionShowOfflineUsers->setChecked( Kopete::AppearanceSettings::self()->showOfflineUsers() );
 	d->actionShowEmptyGroups->setChecked( Kopete::AppearanceSettings::self()->showEmptyGroups() );
 }
 
