@@ -68,8 +68,6 @@ private:
 
 	void modifyAccount(Kopete::Account *);
 	void modifyIdentity(Kopete::Identity *);
-	void removeAccount(KopeteAccountLVI *);
-	void removeIdentity(KopeteIdentityLVI *);
 	bool m_protected;
 	KMenu *m_identityContextMenu;
 	KMenu *m_accountContextMenu;
@@ -89,11 +87,11 @@ private slots:
 	void slotModify();
 
 	void slotAddAccount();
-	void slotRemoveAccount();
+	void removeAccount();
 	void slotAccountSwitchIdentity();
 
 	void slotAddIdentity();
-	void slotRemoveIdentity();
+	void removeIdentity();
 	void slotSetDefaultIdentity();
 
 	void slotCopyIdentity();
