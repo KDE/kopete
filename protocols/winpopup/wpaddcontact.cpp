@@ -42,7 +42,9 @@ WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount) : AddContactP
 {
 //	kDebug(14170) << "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")";
 
+	QVBoxLayout *topLayout = new QVBoxLayout( this );
 	QWidget* w = new QWidget( this );
+	topLayout->addWidget( w );
 	theDialog = new Ui::WPAddContactBase();
 	theDialog->setupUi( w );
 

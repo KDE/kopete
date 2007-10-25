@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>670</width>
-    <height>311</height>
+    <width>385</width>
+    <height>104</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -26,7 +26,28 @@
     <strikeout>false</strikeout>
    </font>
   </property>
+  <property name="windowTitle" >
+   <string>Add WinPopup Contact</string>
+  </property>
   <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
    <item row="0" column="0" >
     <layout class="QVBoxLayout" >
      <property name="spacing" >
@@ -103,6 +124,12 @@
      </property>
      <item>
       <widget class="KComboBox" native="1" name="mHostName" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip" >
         <string>The hostname you would like to use to send WinPopup messages to.</string>
        </property>
@@ -113,6 +140,12 @@
      </item>
      <item>
       <widget class="KComboBox" native="1" name="mHostGroup" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip" >
         <string>The workgroup or domain the computer is on that you would like to use to send WinPopup messages to.</string>
        </property>
@@ -147,15 +180,18 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" >
+   <item row="2" column="0" colspan="2" >
     <spacer>
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::MinimumExpanding</enum>
+     </property>
      <property name="sizeHint" >
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>1</height>
       </size>
      </property>
     </spacer>
