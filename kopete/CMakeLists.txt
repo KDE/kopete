@@ -27,9 +27,9 @@ ${CMAKE_CURRENT_BINARY_DIR}/identity
 
 # Contact List
 set(kopetecontactlist_SRCS 
-contactlist/kopetemetacontactitem.cpp 
-contactlist/kopetestatusgroupviewitem.cpp 
-contactlist/kopetegroupitem.cpp 
+#contactlist/kopetemetacontactitem.cpp 
+#contactlist/kopetestatusgroupviewitem.cpp 
+#contactlist/kopetegroupitem.cpp 
 contactlist/kopetecontactlistview.cpp 
 #contactlist/kopetelviprops.cpp 
 contactlist/kopeteaddrbookexport.cpp 

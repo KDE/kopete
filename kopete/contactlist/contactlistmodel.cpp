@@ -1,7 +1,7 @@
 /*
     Kopete Contactlist Model
 
-    Copyright (c) 2007      by Matt Rogers            <mattr@kde.org>
+    Copyright (c) 2007      by Aleix Pol              <aleixpol@gmail.com>
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -21,12 +21,11 @@
 #include <QList>
 
 #include <KDebug>
+#include <KLocale>
 
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
-#include "kopetemetacontactitem.h"
-#include "kopetegroupitem.h"
 
 namespace Kopete {
 
@@ -35,7 +34,6 @@ namespace UI {
 ContactListModel::ContactListModel(QObject* parent)
  : QAbstractItemModel(parent)
 {
-	kDebug() << "hello world!";
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
 	connect( kcl, SIGNAL( metaContactAdded( Kopete::MetaContact* ) ),
 	         this, SLOT( addMetaContact( Kopete::MetaContact* ) ) );
@@ -50,7 +48,6 @@ ContactListModel::~ContactListModel()
 
 void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
 {
-	kDebug() << "tolon tolon, adding a contact " << contact;
 	foreach(Kopete::Group* g, contact->groups()) {
 		m_contacts[g].append(contact);
 	}
@@ -89,9 +86,7 @@ int ContactListModel::childCount(const QModelIndex& parent) const
 		Kopete::Group *g=dynamic_cast<Kopete::Group*>(cle);
 		
 		cnt= m_contacts[g].count();
-		kDebug() << "cnt" << g->displayName();
 	}
-	qDebug() << "count child: " << cnt;
 	return cnt;
 }
 
@@ -109,7 +104,6 @@ int ContactListModel::rowCount ( const QModelIndex & parent) const
 	} else if(g) {
 		cnt+= m_contacts[g].count();
 	}
-	qDebug() << "rowcount: " << parent.row() << cnt << !parent.isValid() << g;
 	return cnt;
 }
 
@@ -126,7 +120,6 @@ bool ContactListModel::hasChildren ( const QModelIndex & parent) const
 		Kopete::Group *g=m_groups[row];
 		res=!m_contacts[g].isEmpty();
 	}
-	qDebug() << "children" << res << parent.isValid();
 	return res;
 }
 
@@ -148,31 +141,44 @@ QModelIndex ContactListModel::index ( int row, int column, const QModelIndex & p
 		itemPtr=m_contacts[g][row];
 	}
 	idx=createIndex(row, column, itemPtr);
-	qDebug() << "idx2" << idx;
 	return idx;
+}
+
+int ContactListModel::countConnected(Kopete::Group* g) const
+{
+	int onlineCount=0;
+	QList<Kopete::MetaContact*>::const_iterator it=m_contacts[g].constBegin(), itEnd=m_contacts[g].constBegin();
+	for(; it!=itEnd; ++it) {
+		if((*it)->isOnline())
+			onlineCount++;
+	}
+	return onlineCount;
 }
 
 QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 {
 	if(!index.isValid())
-		return QVariant("-----");
+		return QVariant();
+	
+	Kopete::ContactListElement *cle=static_cast<Kopete::ContactListElement*>(index.internalPointer());
+	Kopete::Group *g=dynamic_cast<Kopete::Group*>(cle);
 	if(role == Qt::DisplayRole) {
-		Kopete::ContactListElement *cle=static_cast<Kopete::ContactListElement*>(index.internalPointer());
-		Kopete::Group *g=dynamic_cast<Kopete::Group*>(cle);
-		
 		QString display;
 		if(g) {
-			display=QString::number(m_groups.indexOf(g))+". "+g->displayName()+" - "+QString::number(m_contacts[g].count());
+			display=i18n("%1 (%2/%3)", g->displayName(), countConnected(g), m_contacts[g].count());
 		} else {
 			Kopete::MetaContact *mc=dynamic_cast<Kopete::MetaContact*>(cle);
 			display=mc->displayName();
 		}
-		qDebug() << "displayRole" << display;
-		
-// 		if(index.isValid())
-// 			qDebug() << "ooooo" << data(index) << childCount(index);
 		return display;
-        }
+	} /*else if(role==IconList) {
+		if(g) {
+			return QStringList();
+		} else {
+			Kopete::MetaContact *mc=dynamic_cast<Kopete::MetaContact*>(cle);
+			display=mc->displayName();
+		}
+	}*/
 	return QVariant();
 }
 
