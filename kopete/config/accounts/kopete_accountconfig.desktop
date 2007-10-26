@@ -66,6 +66,10 @@ Name[zh_CN]=账户
 Name[zh_HK]=帳號
 Name[zh_TW]=帳號
 Comment=Manage Your Accounts and Identities
+Comment[pt]=Gerir as Suas Contas e Identidades
+Comment[pt_BR]=Gerir as Suas Contas e Identidades
+Comment[sv]=Hantera dina konton och identiteter
+Comment[zh_TW]=管理您的帳號與身份
 DocPath=kopete/configure-dialog.html#configuring-accounts
 
 
