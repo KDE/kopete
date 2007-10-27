@@ -505,6 +505,8 @@ void KopeteAccountConfig::configureActions()
 	mButtonAccountModify->setIcon( m_actionAccountModify->icon() );
 	mButtonAccountModify->setText( m_actionAccountModify->text() );
 	connect( m_actionAccountModify, SIGNAL(triggered(bool)), this, SLOT(slotModify()));
+	connect( mButtonAccountModify, SIGNAL(clicked()), m_actionAccountModify, SLOT(trigger()) );
+
 	// Remove account
 	m_actionAccountRemove = new KAction( i18n( "&Remove Account" ), this );
 	m_actionAccountRemove->setIcon( KIcon("edit-delete") );
