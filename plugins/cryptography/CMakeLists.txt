@@ -1,4 +1,7 @@
+project ( kopete-cryptography )
+
 add_subdirectory ( icons )
+add_subdirectory ( doc )
 
 include_directories( 
 ${KOPETE_INCLUDES}
