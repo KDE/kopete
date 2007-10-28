@@ -98,6 +98,10 @@ Contact::Contact( Account *account, const QString &contactId,
 	d->idleTime = 0;
 	d->icon = icon;
 
+	// Reemit propertyChanged
+	connect( this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant&, const QVariant&)),
+	         this, SLOT(emitPropertyChanged(PropertyContainer*, const QString&, const QVariant&, const QVariant&)) );
+
 	// If can happend that a MetaContact may be used without a account
 	// (ex: for unit tests or chat window style preview)
 	if ( account )
@@ -740,8 +744,6 @@ void Kopete::Contact::setNickName( const QString &name )
 {
 	QString oldNickName = nickName();
 	setProperty( Kopete::Global::Properties::self()->nickName(), name );
-        emit propertyChanged( this, Kopete::Global::Properties::self()->nickName().key(),
-		oldNickName, name );
 }
 
 QString Kopete::Contact::nickName() const
@@ -756,6 +758,12 @@ QString Kopete::Contact::nickName() const
 void Kopete::Contact::setPhoto(const QString &photoPath)
 {
 	setProperty( Kopete::Global::Properties::self()->photo(), photoPath );
+}
+
+void Kopete::Contact::emitPropertyChanged( PropertyContainer *container, const QString &key,
+                          const QVariant &oldValue, const QVariant &newValue )
+{
+	emit propertyChanged( this, key, oldValue, newValue );
 }
 
 } //END namespace Kopete
