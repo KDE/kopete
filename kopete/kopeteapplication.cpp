@@ -29,6 +29,7 @@
 #include <klocale.h>
 #include <kcmdlineargs.h>
 #include <kmessagebox.h>
+#include <solid/networking.h>
 
 #include "addaccountwizard.h"
 #include "kabcpersistence.h"
@@ -211,7 +212,9 @@ void KopeteApplication::slotAllPluginsLoaded()
 
 	//FIXME: this should probably ask for the identities to connect instead of all accounts
 	// --noconnect not specified?
-	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() )
+	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() &&
+			( Solid::Networking::status() == Solid::Networking::Unknown ||
+			  Solid::Networking::status() == Solid::Networking::Connected ) )
 		Kopete::AccountManager::self()->connectAll();
 
 	QStringList connectArgs = args->getOptionList( "autoconnect" );

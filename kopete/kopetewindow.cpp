@@ -63,6 +63,8 @@
 #include <ktoolbar.h>
 #include <kdialog.h>
 #include <kstandardaction.h>
+#include <solid/networking.h>
+#include <kstatusbarofflineindicator.h>
 
 #include "addcontactpage.h"
 #include "addressbooklinkwidget.h"
@@ -212,6 +214,9 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	KHBox *statusBarMessage = new KHBox(statusBar());
 	d->statusBarWidget->setMargin( 2 );
 	d->statusBarWidget->setSpacing( 1 );
+
+	KStatusBarOfflineIndicator * indicator = new KStatusBarOfflineIndicator( this );
+	statusBar()->addPermanentWidget( indicator, 0 );
 
 	GlobalStatusMessageIconLabel *label = new GlobalStatusMessageIconLabel( statusBarMessage );
 	label->setObjectName( QLatin1String("statusmsglabel") );

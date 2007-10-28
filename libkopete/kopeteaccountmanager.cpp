@@ -28,9 +28,11 @@
 #include <kglobal.h>
 #include <kplugininfo.h>
 #include <kconfiggroup.h>
+#include <solid/networking.h>
 
 #include "kopeteaccount.h"
 #include "kopeteaway.h"
+#include "kopetebehaviorsettings.h"
 #include "kopeteprotocol.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
@@ -77,6 +79,8 @@ AccountManager::AccountManager()
 {
 	setObjectName( "KopeteAccountManager" );
 	d = new Private;
+	connect( Solid::Networking::notifier(), SIGNAL(shouldConnect()), this, SLOT( doConnect() ) );
+	connect( Solid::Networking::notifier(), SIGNAL(shouldDisconnect()), this, SLOT( disconnectAll() ) );
 }
 
 
@@ -412,6 +416,12 @@ void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 
 	//kDebug(14010) ;
 	emit accountOnlineStatusChanged(account, oldStatus, newStatus);
+}
+
+void AccountManager::doConnect()
+{
+	if ( Kopete::BehaviorSettings::self()->autoConnect() )
+		setAvailableAll();
 }
 
 } //END namespace Kopete
