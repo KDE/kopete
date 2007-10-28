@@ -6,10 +6,22 @@
     <x>0</x>
     <y>0</y>
     <width>423</width>
-    <height>442</height>
+    <height>363</height>
    </rect>
   </property>
   <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
    <item row="0" column="0" >
     <widget class="QTabWidget" name="tabAvatar" >
      <property name="sizePolicy" >
@@ -19,7 +31,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabUser" >
       <attribute name="title" >
@@ -201,11 +213,17 @@
     </layout>
    </item>
    <item row="1" column="0" colspan="2" >
-    <widget class="KTitleWidget" name="labelErrorMessage" >
-    </widget>
+    <widget class="KTitleWidget" native="1" name="labelErrorMessage" />
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KTitleWidget</class>
+   <extends>QWidget</extends>
+   <header>ktitlewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

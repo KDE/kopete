@@ -87,7 +87,11 @@ KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent)
 	ui_mainWidget->icnbClosed->setIconSize(QSize(KIconLoader::SizeSmall,KIconLoader::SizeSmall));
 	QPair<QString,QString> context=qMakePair( QString::fromLatin1("group") , QString::number(gvi->group()->groupId() ) );
 	mNotificationProps = new CustomNotificationProps( this, context );
-	ui_mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
+
+	QWidget* npMainWidget = new QWidget();
+	QVBoxLayout* vbLayout = new QVBoxLayout( npMainWidget );
+	vbLayout->addWidget( mNotificationProps->widget() );
+	ui_mainWidget->tabWidget->addTab( npMainWidget, i18n( "Custom &Notifications" ) );
 
 	setMainWidget(mainWidget);
 	item = gvi;
@@ -193,8 +197,12 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	hb->addWidget( mFromKABC ); // [ [Button] <-xxxxx-> ]
 	hb->addStretch();
 	vb->addStretch(); // vert spacer keeps the rest snug
-	
-	ui_mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
+
+	QWidget* npMainWidget = new QWidget();
+	QVBoxLayout* vbLayout = new QVBoxLayout( npMainWidget );
+	vbLayout->addWidget( mNotificationProps->widget() );
+
+	ui_mainWidget->tabWidget->addTab( npMainWidget, i18n( "Custom &Notifications" ) );
 	setMainWidget( mainWidget );
 	item = lvi;
 
@@ -404,7 +412,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 		break;
 	}
 	if( !photo.isNull() )
-		ui_mainWidget->photoLabel->setPixmap(QPixmap::fromImage(photo.scaled(64, 92)));
+		ui_mainWidget->photoLabel->setPixmap(QPixmap::fromImage(photo.scaled(96, 96)));
 	else
 		ui_mainWidget->photoLabel->setPixmap( QPixmap() );
 }
