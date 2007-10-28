@@ -68,6 +68,8 @@ private slots:
 	void slotDeviceDisableMMapChanged(bool);
 	void slotDeviceWorkaroundBrokenDriverChanged(bool);
 	void slotUpdateImage();
+	void deviceRegistered( const QString & );
+	void deviceUnregistered( const QString & );
 private:
 //	QTabWidget* mAVDeviceTabCtl;
 	Ui_AVDeviceConfig_VideoDevice  *mPrfsVideoDevice;

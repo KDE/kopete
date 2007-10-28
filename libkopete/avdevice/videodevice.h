@@ -244,6 +244,8 @@ public:
 	bool canAsyncIO();
 	bool canStream();
 
+	void setUdi( const QString & );
+	QString udi() const;
 	QString m_model;
 	QString m_name;
 	size_t m_modelindex; // Defines what's the number of a device when more than 1 device of a given model is present;
@@ -294,6 +296,7 @@ protected:
 	int initMmap();
 	int initUserptr();
 
+	QString m_udi;
 };
 
 }

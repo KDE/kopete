@@ -92,10 +92,18 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
  //	if (qpixmap.fromImage(qimage,Qt::AutoColor) != NULL)
  //	if (qpixmap.fromImage(qimage,Qt::AutoColor) == true)
  //		mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
+	connect(mVideoDevicePool, SIGNAL(deviceRegistered(const QString &) ),
+			SLOT(deviceRegistered(const QString &)) );
+	connect(mVideoDevicePool, SIGNAL(deviceUnregistered(const QString &) ),
+			SLOT(deviceUnregistered(const QString &)) );
+
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
+#define DONT_TRY_TO_GRAB 0
+#if DONT_TRY_TO_GRAB
 	if ( mVideoDevicePool->hasDevices() ) {
 		qtimer.start(40,false);
 	}
+#endif
 }
 
 
@@ -252,4 +260,21 @@ void AVDeviceConfig::slotUpdateImage()
 //	mVideoDevicePool->getImage(&qimage);
 	//bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
 // 	kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated.";
+}
+
+void AVDeviceConfig::deviceRegistered( const QString & udi )
+{
+	kDebug() << "not updating combo boxes due to bugs in videodevicepool!";
+	//mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
+	//mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+	//mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+}
+
+
+void AVDeviceConfig::deviceUnregistered( const QString & udi )
+{
+	kDebug() << "not updating combo boxes due to bugs in videodevicepool!";
+	//mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
+	//mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+	//mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 }

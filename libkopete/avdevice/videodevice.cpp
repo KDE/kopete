@@ -2203,7 +2203,15 @@ bool VideoDevice::canStream()
 	return m_videostream;
 }
 
+void VideoDevice::setUdi( const QString & udi )
+{
+    m_udi = udi;
+}
 
+QString VideoDevice::udi() const
+{
+    return m_udi;
+}
 
 }
 

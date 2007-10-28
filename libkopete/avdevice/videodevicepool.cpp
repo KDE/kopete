@@ -28,6 +28,11 @@
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <qdir.h>
+#include <solid/device.h>
+#include <solid/devicenotifier.h>
+#include <solid/deviceinterface.h>
+#include <solid/video.h>
+
 
 #include "videodevice.h"
 #include "videodevicepool.h"
@@ -56,6 +61,8 @@ VideoDevicePool* VideoDevicePool::self()
 
 VideoDevicePool::VideoDevicePool()
 {
+	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(deviceAdded(const QString &)) );
+    connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(deviceRemoved(const QString &)) );
 }
 
 
@@ -585,7 +592,7 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 	if (combobox != NULL)
 	{
 		combobox->clear();
-		if(m_videodevice.size())
+		if ( currentDevice() < m_videodevice.size() )
 		{
 			if(m_videodevice[currentDevice()].inputs()>0)
 			{
@@ -612,7 +619,7 @@ int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 	if (combobox != NULL)
 	{
 		combobox->clear();
-		if(m_videodevice.size())
+		if ( currentDevice() < m_videodevice.size() )
 		{
 			if(m_videodevice[currentDevice()].inputs()>0)
 			{
@@ -675,6 +682,13 @@ int VideoDevicePool::scanDevices()
 
 	kDebug() << "called";
 #if defined(__linux__) && defined(ENABLE_AV)
+	foreach (Solid::Device device,
+			Solid::Device::listFromType(Solid::DeviceInterface::Video, QString())) {
+		registerDevice( device );
+	}
+
+#endif
+#if 0
 	QDir videodevice_dir;
 	const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/v4l/");
 	const QStringList videodevice_dir_filter(QString::fromLocal8Bit("video*"));
@@ -758,6 +772,43 @@ int VideoDevicePool::scanDevices()
 #endif
 	kDebug() << "exited successfuly";
 	return EXIT_SUCCESS;
+}
+
+void VideoDevicePool::registerDevice( Solid::Device & device )
+{
+	kDebug() << "New video device at " << device.udi();
+	const Solid::Device * vendorDevice = &device;
+	while ( vendorDevice->isValid() && vendorDevice->vendor().isEmpty() )
+	{
+		vendorDevice = new Solid::Device( vendorDevice->parentUdi() );
+	}
+	if ( vendorDevice->isValid() )
+	{
+		kDebug() << "vendor: " << vendorDevice->vendor() << ", product: " << vendorDevice->product();
+	}
+	QStringList protocols = device.as<Solid::Video>()->supportedProtocols();
+	if ( protocols.contains( "video4linux" ) )
+	{
+		QStringList drivers = device.as<Solid::Video>()->supportedDrivers( "video4linux" );
+		if ( drivers.contains( "video4linux" ) )
+		{
+			kDebug() << "V4L device path is" << device.as<Solid::Video>()->driverHandle( "video4linux" ).toString();
+			VideoDevice videodevice;
+			videodevice.setUdi( device.udi() );
+			videodevice.setFileName(device.as<Solid::Video>()->driverHandle( "video4linux" ).toString());
+			kDebug() << "Found device " << videodevice.full_filename;
+			videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
+			if(videodevice.isOpen())
+			{
+				kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
+
+				// This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
+				videodevice.close();
+				videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
+				m_videodevice.push_back(videodevice);
+			}
+		}
+	}
 }
 
 /*!
@@ -946,8 +997,31 @@ void VideoDevicePool::saveConfig()
 	}
 }
 
-
-
+void VideoDevicePool::deviceAdded( const QString & udi )
+{
+	Solid::Device dev( udi );
+	if ( dev.is<Solid::Video>() )
+	{
+		registerDevice( dev );
+		emit deviceRegistered( udi );
+	}
 }
 
+void VideoDevicePool::deviceRemoved( const QString & udi )
+{
+	int i = 0;
+	foreach ( VideoDevice vd, m_videodevice ) {
+		
+		if ( vd.udi() == udi ) {
+			kDebug() << "Video device '" << udi << "' has been removed!";
+		}
+		emit deviceUnregistered( udi );
+		m_videodevice.remove( i ); // not sure if this is safe but at this point the device node is
+								   // gone already anyway
+		i++;
+	}
 }
+
+} // namespace AV
+
+} // namespace Kopete

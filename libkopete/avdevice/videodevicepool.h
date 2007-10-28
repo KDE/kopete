@@ -32,6 +32,7 @@
 #include "kopete_export.h"
 #include <kconfig.h>
 #include <kglobal.h>
+#include <solid/device.h>
 
 namespace Kopete {
 
@@ -46,8 +47,9 @@ This class allows kopete to check for the existence, open, configure, test, set 
 typedef QVector<Kopete::AV::VideoDevice> VideoDeviceVector;
 
 
-class KOPETE_EXPORT VideoDevicePool
+class KOPETE_EXPORT VideoDevicePool : public QObject
 {
+Q_OBJECT
 public:
 	static VideoDevicePool* self();
 	int open();
@@ -69,6 +71,7 @@ public:
 	int selectInput(int newinput);
 	int setInputParameters();
 	int scanDevices();
+	void registerDevice( Solid::Device & dev );
 	bool hasDevices();
 	size_t size();
 	~VideoDevicePool();
@@ -107,6 +110,18 @@ public:
 	void loadConfig(); // Load configuration parameters;
 	void saveConfig(); // Save configuretion parameters;
 
+signals:
+	/**
+	 * Provisional signatures, probably more useful to indicate which device was registered
+	 */
+	void deviceRegistered( const QString & udi );
+	void deviceUnregistered( const QString & udi );
+protected slots:
+	/**
+	 * Slot called when a new device is added to the system
+	 */
+	void deviceAdded( const QString & udi );
+	void deviceRemoved( const QString & udi );
 protected:
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
