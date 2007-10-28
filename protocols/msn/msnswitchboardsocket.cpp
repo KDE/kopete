@@ -631,9 +631,9 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 
 			QString sha1d = QString(KCodecs::base64Encode(SHA1::hash(ar)));
 			QString size = QString::number( pictFile.size() );
-			QString all = "Creator" + m_account->accountId() +	"Size" + size + "Type3Location" + fi.fileName() + "FriendlyAAA=SHA1D" + sha1d;
+			QString all = "Creator" + m_account->accountId() +	"Size" + size + "Type2Location" + fi.fileName() + "FriendlyAAA=SHA1D" + sha1d;
 			QString sha1c = QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())));
-			picObj = "<msnobj Creator=\"" + m_account->accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\""+ fi.fileName() + "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+ "\" SHA1C=\""+sha1c+"\"/>";
+			picObj = "<msnobj Creator=\"" + m_account->accountId() + "\" Size=\"" + size  + "\" Type=\"2\" Location=\""+ fi.fileName() + "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+ "\" SHA1C=\""+sha1c+"\"/>";
 
 			PeerDispatcher()->objectList.insert(picObj, filename);
 		}

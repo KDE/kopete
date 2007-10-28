@@ -30,7 +30,10 @@
 
 #include <qstring.h>
 #include <kdebug.h>
+#include <qvaluevector.h>
 #include "kopete_export.h"
+
+#include "videocontrol.h"
 
 namespace Kopete {
 
@@ -46,6 +49,8 @@ public:
 	QString name;
 	int  hastuner;
 	__u64 m_standards;
+
+	
 	float getBrightness();
 	float setBrightness(float brightness);
 	float getContrast();
@@ -64,6 +69,7 @@ public:
 	bool setImageAsMirror(bool imageasmirror);
 
 protected:
+	QValueVector<VideoControl> m_control;
 	float m_brightness;
 	float m_contrast;
 	float m_saturation;

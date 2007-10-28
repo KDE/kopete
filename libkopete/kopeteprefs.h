@@ -122,7 +122,6 @@ public:
 	bool contactListAnimation() const { return mContactListAnimation; }
 	bool contactListFading() const { return mContactListFading; }
 	bool contactListFolding() const { return mContactListFolding; }
-	bool contactListMouseNavigation() const { return mContactListMouseNavigation; }
 	bool contactListAutoHide() const { return mContactListAutoHide; }
 	unsigned int contactListAutoHideTimeout() const { return mContactListAutoHideTimeout; }
 
@@ -186,7 +185,6 @@ public:
 	void setContactListAnimation( bool );
 	void setContactListFading( bool );
 	void setContactListFolding( bool );
-	void setContactListMouseNavigation( bool );
 	void setContactListAutoHide( bool );
 	void setContactListAutoHideTimeout( unsigned int );
 	void setReconnectOnDisconnect( bool newSetting );
@@ -306,7 +304,6 @@ private:
 	bool mContactListAnimation;
 	bool mContactListFading;
 	bool mContactListFolding;
-	bool mContactListMouseNavigation;
 	bool mContactListAutoHide;
 	unsigned int mContactListAutoHideTimeout;
 

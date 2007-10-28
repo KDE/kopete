@@ -358,6 +358,13 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	myself()->setOnlineStatus( protocol()->groupwiseConnecting );
 	m_client->connectToServer( m_clientStream, dn, true );
 
+    QObject::connect( m_client, SIGNAL( messageSendingFailed() ), SLOT( slotMessageSendingFailed() ) );
+}
+
+void GroupWiseAccount::slotMessageSendingFailed()
+{
+	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+				i18n("Message Sending Failed", "Kopete was not able to send the last message sent on account '%1'.\nIf possible, please send the console output from Kopete to <wstephenson@novell.com> for analysis." ).arg( accountId() ) , i18n ("Unable to Send Message on Account '%1'").arg( accountId() ) );
 }
 
 void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QString &reason )
@@ -408,6 +415,10 @@ void GroupWiseAccount::disconnect( Kopete::Account::DisconnectReason reason )
 	if( isConnected () )
 	{
 		kdDebug (GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << "Still connected, closing connection..." << endl;
+		QValueList<GroupWiseChatSession *>::ConstIterator it;
+		for ( it = m_chatSessions.begin() ; it != m_chatSessions.end(); ++it )
+			(*it)->setClosed();
+
 		/* Tell backend class to disconnect. */
 		m_client->close ();
 	}
@@ -650,6 +661,9 @@ void GroupWiseAccount::slotCSDisconnected()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Disconnected from Groupwise server." << endl;
 	myself()->setOnlineStatus( protocol()->groupwiseOffline );
+	QValueList<GroupWiseChatSession *>::ConstIterator it;
+	for ( it = m_chatSessions.begin() ; it != m_chatSessions.end(); ++it )
+		(*it)->setClosed();
 	setAllContactsStatus( protocol()->groupwiseOffline );
 	client()->close();
 }

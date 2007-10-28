@@ -163,20 +163,6 @@
                         <string>When starting Kopete, and whenever a network is online, all your accounts will be connected automatically. Note: You can exclude accounts individually in their properties.</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mMouseNavigation</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Use mouse &amp;navigation instead of scroll-bars</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Use mouse navigation instead of scroll-bars for contact list</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>This navigation scheme is designed to remove the vertical scrollbar. Instead of dragging the scrollbar you just move your mouse on the list vertically: as you move your mouse, the list will move in the opposite direction and you can reach your target contact. Each contact will be under the mouse cursor at a certain point.</string>
-                    </property>
-                </widget>
             </vbox>
         </widget>
         <spacer>
@@ -223,7 +209,6 @@
     <tabstop>mStartDockedChk</tabstop>
     <tabstop>mUseQueueChk</tabstop>
     <tabstop>mAutoConnect</tabstop>
-    <tabstop>mMouseNavigation</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

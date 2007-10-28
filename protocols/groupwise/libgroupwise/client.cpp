@@ -238,6 +238,7 @@ void Client::sendMessage( const QStringList & addresseeDNs, const OutgoingMessag
 {
 	SendMessageTask * smt = new SendMessageTask( d->root );
 	smt->message( addresseeDNs, message );
+	connect( smt, SIGNAL( finished() ), SLOT( smt_messageSent() ) );
 	smt->go( true );
 }
 
@@ -522,4 +523,19 @@ void Client::sendKeepAlive()
 	kat->setup();
 	kat->go( true );
 }
+
+void Client::smt_messageSent()
+{
+	const SendMessageTask * smt = ( SendMessageTask * )sender();
+	if ( smt->success() )
+	{
+		debug( "message sent OK" );
+	}
+	else
+	{
+		debug( "message sending failed!" );
+		emit messageSendingFailed();
+	}
+}
+
 #include "client.moc"

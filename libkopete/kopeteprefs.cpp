@@ -147,7 +147,6 @@ void KopetePrefs::load()
 	mContactListAnimation = config->readBoolEntry("AnimateChanges", true);
 	mContactListFading = config->readBoolEntry("FadeItems", true);
 	mContactListFolding = config->readBoolEntry("FoldItems", true);
-	mContactListMouseNavigation = config->readBoolEntry("MouseNavigation", false );
 	mContactListAutoHide = config->readBoolEntry("AutoHide", false);
 	mContactListAutoHideTimeout = config->readUnsignedNumEntry("AutoHideTimeout", 30);
 
@@ -239,7 +238,6 @@ void KopetePrefs::save()
 	config->writeEntry("AnimateChanges", mContactListAnimation);
 	config->writeEntry("FadeItems", mContactListFading);
 	config->writeEntry("FoldItems", mContactListFolding);
-	config->writeEntry("MouseNavigation", mContactListMouseNavigation );
 	config->writeEntry("AutoHide", mContactListAutoHide);
 	config->writeEntry("AutoHideTimeout", mContactListAutoHideTimeout);
 
@@ -401,7 +399,7 @@ void KopetePrefs::setBalloonNotifyIgnoreClosesChatView(bool value)
 	mBalloonNotifyIgnoreClosesChatView = value;
 }
 
-void KopetePrefs::setBalloonClose( bool value ) 
+void KopetePrefs::setBalloonClose( bool value )
 {
 	mBalloonClose = value;
 }
@@ -425,7 +423,7 @@ void KopetePrefs::setStylePath(const QString &stylePath)
 void KopetePrefs::_setStylePath(const QString &stylePath)
 {
 	mStylePath = stylePath;
-	
+
 	// Fallback to default style if the directory doesn't exist
 	// or the value is empty.
 	if( !QFile::exists(stylePath) || stylePath.isEmpty() )
@@ -632,12 +630,6 @@ void KopetePrefs::setContactListFolding( bool n )
 {
 	if( n != mContactListFolding ) mContactListAppearanceChanged = true;
 	mContactListFolding = n;
-}
-
-void KopetePrefs::setContactListMouseNavigation( bool n )
-{
-	if( n != mContactListMouseNavigation ) mContactListAppearanceChanged = true;
-	mContactListMouseNavigation = n;
 }
 
 void KopetePrefs::setContactListAutoHide( bool n )
