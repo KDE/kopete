@@ -257,29 +257,35 @@ void PluginManager::loadAllPlugins()
 	KSharedConfig::Ptr config = KGlobal::config();
 	if ( config->hasGroup( QLatin1String( "Plugins" ) ) )
 	{
+		QMap<QString, bool> pluginsMap;
+
 		QMap<QString, QString> entries = config->entryMap( QLatin1String( "Plugins" ) );
 		QMap<QString, QString>::Iterator it;
 		for ( it = entries.begin(); it != entries.end(); ++it )
 		{
 			QString key = it.key();
 			if ( key.endsWith( QLatin1String( "Enabled" ) ) )
-			{
-				key.resize( key.length() - 7 );
-				//kDebug(14010) << "Set " << key << " to " << it.value();
+				pluginsMap.insert( key.left(key.length() - 7), (it.value() == QLatin1String( "true" )) );
+		}
 
-				if ( it.value() == QLatin1String( "true" ) )
-				{
-					if ( !plugin( key ) )
-						_kpmp->pluginsToLoad.push( key );
-				}
-				else
-				{
-					//This happens if the user unloaded plugins with the config plugin page.
-					// No real need to be assync because the user usualy unload few plugins
-					// compared tto the number of plugin to load in a cold start. - Olivier
-					if ( plugin( key ) )
-						unloadPlugin( key );
-				}
+		QList<KPluginInfo> plugins = availablePlugins( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+		QList<KPluginInfo>::ConstIterator it2 = plugins.begin();
+		QList<KPluginInfo>::ConstIterator end = plugins.end();
+		for ( ; it2 != end; ++it2 )
+		{
+			QString pluginName = it2->pluginName();
+			if ( pluginsMap.value( pluginName, it2->isPluginEnabledByDefault() ) )
+			{
+				if ( !plugin( pluginName ) )
+					_kpmp->pluginsToLoad.push( pluginName );
+			}
+			else
+			{
+				//This happens if the user unloaded plugins with the config plugin page.
+				// No real need to be assync because the user usualy unload few plugins
+				// compared tto the number of plugin to load in a cold start. - Olivier
+				if ( plugin( pluginName ) )
+					unloadPlugin( pluginName );
 			}
 		}
 	}
