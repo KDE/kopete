@@ -261,29 +261,36 @@ void PluginManager::loadAllPlugins()
 	KConfig *config = KGlobal::config();
 	if ( config->hasGroup( QString::fromLatin1( "Plugins" ) ) )
 	{
+		QMap<QString, bool> pluginsMap;
+
 		QMap<QString, QString> entries = config->entryMap( QString::fromLatin1( "Plugins" ) );
 		QMap<QString, QString>::Iterator it;
 		for ( it = entries.begin(); it != entries.end(); ++it )
 		{
 			QString key = it.key();
 			if ( key.endsWith( QString::fromLatin1( "Enabled" ) ) )
+				pluginsMap.insert( key.left( key.length() - 7 ), (it.data() == QString::fromLatin1( "true" )) );
+		}
+
+		QValueList<KPluginInfo *> plugins = availablePlugins( QString::null );
+		QValueList<KPluginInfo *>::ConstIterator it2 = plugins.begin();
+		QValueList<KPluginInfo *>::ConstIterator end = plugins.end();
+		for ( ; it2 != end; ++it2 )
+		{
+			QString pluginName = (*it2)->pluginName();
+			bool inMap = pluginsMap.contains( pluginName );
+			if ( (inMap && pluginsMap[pluginName]) || (!inMap && (*it2)->isPluginEnabledByDefault()) )
 			{
-				key.setLength( key.length() - 7 );
-				//kdDebug(14010) << k_funcinfo << "Set " << key << " to " << it.data() << endl;
-	
-				if ( it.data() == QString::fromLatin1( "true" ) )
-				{
-					if ( !plugin( key ) )
-						d->pluginsToLoad.push( key );
-				}
-				else
-				{
-					//This happens if the user unloaded plugins with the config plugin page.
-					// No real need to be assync because the user usualy unload few plugins 
-					// compared tto the number of plugin to load in a cold start. - Olivier
-					if ( plugin( key ) )
-						unloadPlugin( key );
-				}
+				if ( !plugin( pluginName ) )
+					d->pluginsToLoad.push( pluginName );
+			}
+			else
+			{
+				//This happens if the user unloaded plugins with the config plugin page.
+				// No real need to be assync because the user usualy unload few plugins
+				// compared tto the number of plugin to load in a cold start. - Olivier
+				if ( plugin( pluginName ) )
+					unloadPlugin( pluginName );
 			}
 		}
 	}
