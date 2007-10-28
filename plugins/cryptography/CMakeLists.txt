@@ -1,5 +1,18 @@
 project ( kopete-cryptography )
 
+find_package(KDE4 REQUIRED)
+include (KDE4Defaults)
+include (MacroLibrary)
+include(MacroOptionalAddSubdirectory)
+find_package(Kopete)
+find_package(Kdepim)
+find_package(KdepimLibs)
+find_package(QGpgme)
+
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+
 add_subdirectory ( icons )
 
 include_directories( 
