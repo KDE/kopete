@@ -343,6 +343,8 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 		}
 	}
 
+	m_photoPath = item->metaContact()->customPhoto().path();
+
 	Kopete::MetaContact::PropertySource photoSource = item->metaContact()->photoSource();
 
 	ui_mainWidget->radioPhotoContact->setChecked(photoSource == Kopete::MetaContact::SourceContact);

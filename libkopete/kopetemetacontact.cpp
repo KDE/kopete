@@ -692,12 +692,6 @@ QImage MetaContact::photoFromCustom() const
 
 QImage photoFromContact( Kopete::Contact *contact) /*const*/
 {
-
-	// screw it, crashes now. 
-	// FIXME investigate later
-	
-	return QImage();
-
 	if ( contact == 0L )
 		return QImage();
 
