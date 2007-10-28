@@ -47,7 +47,16 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	setFaceType( KPageDialog::List );
 	setModal( false );
 	setCaption( i18n( "ICQ User Information" ) );
-	setDefaultButton( KDialog::Ok );
+	if ( editable )
+	{
+		setButtons( KDialog::Ok | KDialog::Cancel );
+		setDefaultButton( KDialog::Ok );
+	}
+	else
+	{
+		setButtons( KDialog::Close );
+		setDefaultButton( KDialog::Close );
+	}
 	
 	kDebug(14153) << "Creating new icq user info widget";
 	
