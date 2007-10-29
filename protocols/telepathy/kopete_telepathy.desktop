@@ -19,4 +19,10 @@ Name=Telepathy
 Name[ne]=टेलिप्याथी
 Name[x-test]=xxTelepathyxx
 Comment=Messaging using Telepathy connection managers.
+Comment[el]=Μηνύματα μέσα διαχειριστών σύνδεσης Telepathy.
+Comment[nb]=Meldinger ved bruk av Telepathy tilkoblingsbehandlere
+Comment[pt]=Mensageiros que usam os gestores de ligações do Telepathy.
+Comment[pt_BR]=Mensageiros que usam os gestores de ligações do Telepathy.
+Comment[sv]=Direktmeddelanden med Telepathy-anslutningshanterare.
+Comment[zh_TW]=使用 Telepathy 連線管理員協定發送訊息
 
