@@ -50,8 +50,6 @@ AvatarDialog::AvatarDialog(QWidget *parent)
 
 	d->mainWidget = new Kopete::UI::AvatarSelectorWidget(this);
 	setMainWidget(d->mainWidget);
-
-	connect(this, SIGNAL(okClicked()), this, SLOT(buttonOkClicked()));
 }
 
 AvatarDialog::~AvatarDialog()
