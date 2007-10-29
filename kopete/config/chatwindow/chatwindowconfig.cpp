@@ -436,22 +436,21 @@ void ChatWindowConfig::slotInstallChatStyle()
 
 void ChatWindowConfig::slotDeleteChatStyle()
 {
-//	QString styleName = m_styleUi.styleList->selectedItem()->text();
-//	QString stylePathToDelete = m_styleItemMap[m_styleUi.styleList->selectedItem()];
-//	if( ChatWindowStyleManager::self()->removeStyle(stylePathToDelete) )
-//	{
-//		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "The style %1 was successfully deleted.").arg(styleName));
-//
-		// Get the first item in the stye List.
-//		QString stylePath = (*m_styleItemMap.begin());
-//		m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool(stylePath);
-//		emitChanged();
-//	}
-//	else
-//	{
-//		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "An error occurred while trying to delete %1 style.").arg(styleName));
-//	}
-	emitChanged();
+	if (!m_styleUi.styleList->selectedItem())
+	{
+		return; // nothing selected
+	}
+
+	QString styleName = m_styleUi.styleList->selectedItem()->text();
+	if( ChatWindowStyleManager::self()->removeStyle(styleName) )
+	{
+		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18nc("@info", "The style <resource>%1</resource> was successfully deleted.", styleName));
+		emitChanged();
+	}
+	else
+	{
+		KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, i18nc("@info", "An error occurred while trying to delete the <resource>%1</resource> style. Your account might not have permission to remove it.", styleName));
+	}
 }
 
 void ChatWindowConfig::slotGetChatStyles()
