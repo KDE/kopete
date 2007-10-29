@@ -61,6 +61,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
 	void slotAboutToShowMenu();
+	void slotActivated( QSystemTrayIcon::ActivationReason reason );
 
 	void slotBlink();
 	void slotNewEvent(Kopete::MessageEvent*);
