@@ -186,7 +186,7 @@ Comment[zh_HK]=收到新訊息
 Comment[zh_TW]=接收到的訊息
 Contexts=contact,group,class
 Sound=Kopete_Received.ogg
-Action=Sound|PassivePopup|Taskbar
+Action=Sound|Popup|Taskbar
 Persistant=true
 
 
@@ -298,7 +298,7 @@ Comment[zh_CN]=联系人上线
 Comment[zh_HK]=有個聯絡人已上線
 Comment[zh_TW]=聯絡人已上線
 Sound=Kopete_User_is_Online.ogg
-Action=PassivePopup
+Action=Popup
 
 [Event/kopete_contact_offline]
 Name=Offline
@@ -546,8 +546,8 @@ Comment[x-test]=xxA highlighted message has been receivedxx
 Comment[zh_CN]=收到了突出显示的消息
 Comment[zh_HK]=收到一個加強顯示的訊息
 Comment[zh_TW]=已接收到高亮度訊息
-Default_sound=Kopete_Received.ogg
-Action=Sound|PassivePopup|Taskbar
+Sound=Kopete_Received.ogg
+Action=Sound|Popup|Taskbar
 Persistant=true
 
 
@@ -999,7 +999,7 @@ Comment[sv]=Anslutningen har förlorats
 Comment[x-test]=xxThe connection have been lostxx
 Comment[zh_CN]=连接已丢失
 Comment[zh_TW]=連線已遺失
-Action=PassivePopup
+Action=Popup
 
 [Event/cannot_connect]
 Name=Cannot Connect
@@ -1069,7 +1069,7 @@ Comment[x-test]=xxKopete can't connect to the servicexx
 Comment[zh_CN]=Kopete 无法连接到服务
 Comment[zh_HK]=Kopete 無法連接至服務
 Comment[zh_TW]=Kopete 無法與服務連線
-Action=PassivePopup
+Action=Popup
 
 [Event/network_problems]
 Name=Network Problems
@@ -1138,7 +1138,7 @@ Comment[x-test]=xxThe network is experiencing problemsxx
 Comment[zh_CN]=网络遇到问题
 Comment[zh_HK]=網絡發生問題
 Comment[zh_TW]=網路遇到問題
-Action=PassivePopup
+Action=Popup
 
 [Event/server_error]
 Name=Server Internal Error
@@ -1186,7 +1186,7 @@ Comment[sv]=Ett internt fel har inträffat i tjänsten
 Comment[x-test]=xxAn service internal error has occurredxx
 Comment[zh_CN]=发生了服务内部错误
 Comment[zh_TW]=發生伺服器內部錯誤
-Action=PassivePopup
+Action=Popup
 
 [Event/buzz_nudge]
 Name=Buzz/Nudge
@@ -1245,7 +1245,7 @@ Comment[zh_CN]=联系人向您发送了闪屏振动。
 Comment[zh_HK]=有聯絡人傳了響聲或提示給您。
 Comment[zh_TW]=聯絡人送出來電震動或呼叫
 Sound=Kopete_Received.ogg
-Action=PassivePopup|Sound|Taskbar
+Action=Popup|Sound|Taskbar
 
 [Event/message_dropped]
 Name=Message Dropped
@@ -1274,7 +1274,7 @@ Comment[sv]=Ett meddelande filtrerades av integritetsinsticksprogrammet
 Comment[x-test]=xxA message was filtered by the Privacy Pluginxx
 Comment[zh_CN]=消息已被隐私插件所过滤
 Comment[zh_TW]=有訊息被私密外掛程式過濾掉了
-Action=PassivePopup
+Action=Popup
 
 [Event/icq_user_reads_status_message]
 Name=ICQ Reading status
@@ -1303,4 +1303,4 @@ Comment[sv]=En ICQ-användare läser ditt statusmeddelande
 Comment[x-test]=xxAn ICQ user is reading your status messagexx
 Comment[zh_CN]=一位 ICQ 用户正在查阅您的状态信息
 Comment[zh_TW]=有 ICQ 使用者正讀取您的狀態訊息
-Action=PassivePopup
+Action=Popup
