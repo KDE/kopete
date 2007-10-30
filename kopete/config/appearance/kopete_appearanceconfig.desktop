@@ -11,6 +11,7 @@ X-KDE-ParentComponents=kopete
 
 Name=Contact List
 Name[ca]=Llista de contactes
+Name[de]=Kontaktliste
 Name[el]=Λίστα επαφών
 Name[ga]=Liosta Teagmhálacha
 Name[ja]=コンタクトリスト
@@ -20,9 +21,11 @@ Name[pt]=Lista de Contactos
 Name[pt_BR]=Lista de Contactos
 Name[sv]=Kontaktlista
 Name[x-test]=xxContact Listxx
+Name[zh_CN]=联系人列表
 Name[zh_TW]=聯絡人清單
 Comment=Configure Contact List Look and Feel
 Comment[ca]=Configura l'aparença i comportament de la llista de contactes
+Comment[de]=Erscheinungsbild der Kontaktliste einrichten
 Comment[el]=Ρύθμιση όψης και αίσθησης της λίστας επαφών
 Comment[ja]=コンタクトリストの外観を設定
 Comment[nb]=Sett opp utseende og oppførsel for kontaktlista
@@ -31,6 +34,7 @@ Comment[pt]=Configurar a Aparência e Comportamento da Lista de Contactos
 Comment[pt_BR]=Configurar a Aparência e Comportamento da Lista de Contactos
 Comment[sv]=Anpassa kontaktlistans känsla och utseende
 Comment[x-test]=xxConfigure Contact List Look and Feelxx
+Comment[zh_CN]=配置联系人列表的观感
 Comment[zh_TW]=設定聯絡人清單的外觀與感覺
 DocPath=kopete/configure-dialog.html#configuring-appearance
 

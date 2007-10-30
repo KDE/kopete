@@ -19,5 +19,6 @@ Name=IRC
 Name[ne]=आईआरसी
 Name[x-test]=xxIRCxx
 Comment=Internet Relay Chat
+Comment[zh_CN]=互联网中继聊天
 Comment[zh_TW]=IRC
 

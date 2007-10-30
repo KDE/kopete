@@ -11,6 +11,7 @@ X-KDE-ParentComponents=kopete
 
 Name=Chat Window
 Name[ca]=Finestra de xat
+Name[de]=Chat-Fenster
 Name[el]=Παράθυρο συνομιλίας
 Name[ga]=Fuinneog Chomhrá
 Name[ja]=チャットウィンドウ
@@ -20,9 +21,11 @@ Name[pt]=Janela de Conversação
 Name[pt_BR]=Janela de Conversação
 Name[sv]=Chattfönster
 Name[x-test]=xxChat Windowxx
+Name[zh_CN]=聊天窗口
 Name[zh_TW]=聊天視窗
 Comment=Configure Chat Window Look and Feel
 Comment[ca]=Configura l'aparença i comportament de la finestra de xat
+Comment[de]=Erscheinungsbild des Chat-Fensters einrichten
 Comment[el]=Ρύθμιση όψης και αίσθησης του παραθύρου συνομιλίας
 Comment[ja]=チャットウィンドウの外観を設定
 Comment[nb]=Sett opp pratevinduets utseende og oppførsel
@@ -31,6 +34,7 @@ Comment[pt]=Configurar a Aparência e Comportamento da Janela de Conversação
 Comment[pt_BR]=Configurar a Aparência e Comportamento da Janela de Conversação
 Comment[sv]=Anpassa chattfönstrets känsla och utseende
 Comment[x-test]=xxConfigure Chat Window Look and Feelxx
+Comment[zh_CN]=配置聊天窗口的观感
 Comment[zh_TW]=設定聊天視窗的外觀與感覺
 
 

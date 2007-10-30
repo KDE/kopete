@@ -110,6 +110,6 @@ Comment[tr]=İnternet bağlantısının kullanılabilir olabilirliğine göre Ko
 Comment[uk]=Автоматично входить в мережу чи виходить з неї в залежності від наявності з'єднання з Інтернет
 Comment[vi]=Tự động kết nối/huỷ kết nối Kopete phụ thuộc vào khả năng của kết nối Mạng
 Comment[x-test]=xxConnects/disconnects Kopete automatically depending on availability of Internet connectionxx
-Comment[zh_CN]=根据 Internet 连接是否可用自动连接/断开 Kopete
+Comment[zh_CN]=根据 Internet 连接的可用性自动连接/断开 Kopete
 Comment[zh_HK]=自動根據互聯網連接情況連接或中斷 Kopete 連線
 Comment[zh_TW]=自動依據網路狀況來連線/中斷連線 Kopete
