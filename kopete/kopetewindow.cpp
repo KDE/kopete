@@ -698,6 +698,7 @@ bool KopeteWindow::queryExit()
 		|| !Kopete::BehaviorSettings::self()->showSystemTray() /* also close if our tray icon is hidden! */
 		|| isHidden() )
 	{
+		saveOptions();
 		kDebug( 14000 ) << " shutting down plugin manager";
 		Kopete::PluginManager::self()->shutdown();
 		return true;
@@ -732,7 +733,6 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 
 void KopeteWindow::slotQuit()
 {
-	saveOptions();
 	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
 	app->quitKopete();
 }
