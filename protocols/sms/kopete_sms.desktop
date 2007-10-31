@@ -22,6 +22,7 @@ Name[ne]=एसएमएस
 Name[x-test]=xxSMSxx
 Comment=Send SMS messages to mobile phones
 Comment[el]=Αποστολή μηνυμάτων SMS σε κινητά τηλέφωνα
+Comment[ja]=携帯電話に SMS メッセージを送ります
 Comment[nb]=Send SMS-meldinger til mobiltelefoner
 Comment[pt]=Enviar mensagens SMS para telemóveis
 Comment[pt_BR]=Enviar mensagens SMS para telemóveis

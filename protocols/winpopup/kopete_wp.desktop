@@ -26,6 +26,7 @@ Name[x-test]=xxWinPopupxx
 Comment=Sends Windows WinPopup messages
 Comment[el]=Αποστολή μηνυμάτων Windows WinPopup
 Comment[ga]=Seol teachtaireachtaí Windows WinPopup
+Comment[ja]=Windows の WinPopup メッセージを送ります
 Comment[nb]=Sender Windows WinPopup -meldinger
 Comment[pt]=Envia mensagens de WinPopup do Windows
 Comment[pt_BR]=Envia mensagens de WinPopup do Windows
