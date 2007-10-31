@@ -760,8 +760,6 @@ void KopeteWindow::slotIdentityRegistered( Kopete::Identity *identity )
 			 this, SLOT( slotIdentityStatusIconChanged( Kopete::Identity * ) ) );
 
 	KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon( identity, d->statusBarWidget );
-	connect( sbIcon, SIGNAL( rightClicked( Kopete::Identity *, const QPoint & ) ),
-					 SLOT( slotIdentityStatusIconRightClicked( Kopete::Identity *, const QPoint & ) ) );
 	connect( sbIcon, SIGNAL( leftClicked( Kopete::Identity *, const QPoint & ) ),
 					 SLOT( slotIdentityStatusIconLeftClicked( Kopete::Identity *, const QPoint & ) ) );
 
@@ -851,16 +849,6 @@ void KopeteWindow::makeTrayToolTip()
 		tt += QLatin1String("</qt>");
 		d->tray->setToolTip(tt);
 	}
-}
-
-void KopeteWindow::slotIdentityStatusIconRightClicked( Kopete::Identity *identity, const QPoint &p )
-{
-	KActionMenu *actionMenu = identity->actionMenu();
-	if ( !actionMenu )
-		return;
-
-	connect( actionMenu->menu(), SIGNAL( aboutToHide() ), actionMenu, SLOT( deleteLater() ) );
-	actionMenu->menu()->popup( p );
 }
 
 void KopeteWindow::slotIdentityStatusIconLeftClicked( Kopete::Identity *identity, const QPoint &p )

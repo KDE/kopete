@@ -26,7 +26,6 @@
 #include "kopete_export.h"
 
 class KConfigGroup;
-class QAction;
 
 namespace Kopete
 {
@@ -69,11 +68,6 @@ public:
 	~Identity();
 
 	/**
-	 * @brief Initialize the identity actions
-	 */
-	void initActions();
-
-	/**
 	 * The id is a unique internal handle and should not be exposed in the UI
 	 * @return the identity's id
 	 */
@@ -108,6 +102,11 @@ public:
 	 * @return the online status of the identity
 	 */
 	OnlineStatus::StatusType onlineStatus() const;
+
+	/**
+	 * @brief Get the current status message of the identity
+	 */
+	QString statusMessage() const;
 	
 	/**
 	 * \brief Get the tooltip for this identity
@@ -119,11 +118,6 @@ public:
 	 * \brief Return the icon for this identity
 	 */
 	QString customIcon() const;
-
-	/**
-	 * @brief Return the menu for this identity
-	 */
-	KActionMenu* actionMenu();
 
 	/**
 	 * Returns the accounts assigned to this identity
@@ -166,9 +160,6 @@ public slots:
 protected slots:
 	void slotSaveProperty( PropertyContainer *container, const QString &key,
 				const QVariant &oldValue, const QVariant &newValue );
-
-private slots:
-	void slotChangeStatus(QAction *);
 
 signals:
 	void onlineStatusChanged(Kopete::Identity*,Kopete::OnlineStatus::StatusType, Kopete::OnlineStatus::StatusType);

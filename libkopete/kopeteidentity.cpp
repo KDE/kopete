@@ -39,9 +39,7 @@ namespace Kopete
 class Identity::Private
 {
 public:
-	Private(const QString &i, const QString &l) : onlineStatus( OnlineStatus::Unknown ),
-			actionSetOnline(0), actionSetAway(0), actionSetBusy(0), actionSetInvisible(0), 
-			actionSetOffline(0), statusGroup(0)
+	Private(const QString &i, const QString &l) : onlineStatus( OnlineStatus::Unknown )
 	{
 		id = i;
 		label = l;
@@ -53,20 +51,11 @@ public:
 	KConfigGroup *configGroup;
 	OnlineStatus::StatusType onlineStatus;
 	QString statusMessage;
-
-	// some actions
-	KAction *actionSetOnline;
-	KAction *actionSetAway;
-	KAction *actionSetBusy;
-	KAction *actionSetInvisible;
-	KAction *actionSetOffline;
-	QActionGroup *statusGroup;
 };
 
 Identity::Identity( const QString &id, const QString &label )
 	: d( new Private(id, label) )
 {
-	initActions();
 	load();
 	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
 			this, SLOT(slotSaveProperty(PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
@@ -75,7 +64,6 @@ Identity::Identity( const QString &id, const QString &label )
 Identity::Identity(const QString &label)
 : d( new Private(KRandom::randomString(10), label) )
 {
-	initActions();
 	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
 			this, SLOT(slotSaveProperty(PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
 }
@@ -83,7 +71,6 @@ Identity::Identity(const QString &label)
 Identity::Identity( Identity &existing )
 {
 	d = new Private(KRandom::randomString(10), existing.label());
-	initActions();
 
 	QMap<QString,QString> props;
 	
@@ -103,36 +90,6 @@ Identity::~Identity()
 
 	delete d->configGroup;
 	delete d;
-}
-
-void Identity::initActions()
-{
-	d->actionSetOnline = new KAction( KIcon("kopeteavailable"), i18n("&Online"), this );
-	d->actionSetOnline->setData((uint)Kopete::OnlineStatusManager::Online);
-
-	d->actionSetAway = new KAction( KIcon("kopeteaway"), i18n("&Away"), this );
-	d->actionSetAway->setData((uint)Kopete::OnlineStatusManager::Away);
-
-	d->actionSetBusy = new KAction( KIcon("kopeteaway"), i18n("&Busy"), this );
-	d->actionSetBusy->setData((uint)Kopete::OnlineStatusManager::Busy);
-
-	d->actionSetInvisible = new KAction( KIcon("kopeteavailable"), i18n( "&Invisible" ), this );
-	d->actionSetInvisible->setData((uint)Kopete::OnlineStatusManager::Invisible);
-
-	d->actionSetOffline = new KAction( KIcon("connect-no"), i18n( "Offline" ), this );
-	d->actionSetOffline->setData((uint)Kopete::OnlineStatusManager::Offline);
-
-	// create the actionGroup
-	d->statusGroup = new QActionGroup(this);
-	d->statusGroup->addAction(d->actionSetOnline);
-	d->statusGroup->addAction(d->actionSetAway);
-	d->statusGroup->addAction(d->actionSetBusy);
-	d->statusGroup->addAction(d->actionSetInvisible);
-	d->statusGroup->addAction(d->actionSetOffline);
-
-	connect(d->statusGroup, SIGNAL(triggered(QAction*)), 
-			this, SLOT(slotChangeStatus(QAction *)));
-
 }
 
 QString Identity::id() const
@@ -174,6 +131,11 @@ OnlineStatus::StatusType Identity::onlineStatus() const
 	return d->onlineStatus;
 }
 
+QString Identity::statusMessage() const
+{
+	return d->statusMessage;
+}
+
 QString Identity::toolTip() const
 {
 
@@ -208,21 +170,6 @@ QString Identity::customIcon() const
 	return "identity";
 }
 
-
-KActionMenu* Identity::actionMenu()
-{
-	// creates the action menu
-	KActionMenu *statusMenu = new KActionMenu(d->label, this);
-
-	// add a title to the popup menu before the online action
-	statusMenu->menu()->addTitle(d->label);
-
-	// add the status actions to the menu
-	foreach(QAction *action, d->statusGroup->actions())
-		statusMenu->addAction(action);
-
-	return statusMenu;
-}
 
 QList<Account*> Identity::accounts() const
 {
@@ -305,11 +252,6 @@ void Identity::slotSaveProperty( PropertyContainer *container, const QString &ke
 		                const QVariant &oldValue, const QVariant &newValue )
 {
 	save();
-}
-
-void Identity::slotChangeStatus(QAction *a)
-{
-	setOnlineStatus(a->data().toUInt(), d->statusMessage);
 }
 
 } //END namespace Kopete
