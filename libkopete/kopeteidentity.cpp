@@ -1,7 +1,7 @@
 /*
     kopeteidentity.cpp - Kopete Identity
 
-    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kemail.net>
+    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
               (c) 2007         Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
@@ -29,6 +29,7 @@
 #include <KSharedConfigPtr>
 #include <KLocale>
 #include <KRandom>
+#include <KMenu>
 
 #include <kdeversion.h>
 
@@ -38,7 +39,9 @@ namespace Kopete
 class Identity::Private
 {
 public:
-	Private(const QString &i, const QString &l) : onlineStatus( OnlineStatus::Unknown )
+	Private(const QString &i, const QString &l) : onlineStatus( OnlineStatus::Unknown ),
+			actionSetOnline(0), actionSetAway(0), actionSetBusy(0), actionSetInvisible(0), 
+			actionSetOffline(0), statusGroup(0)
 	{
 		id = i;
 		label = l;
@@ -49,11 +52,21 @@ public:
 	QString label;
 	KConfigGroup *configGroup;
 	OnlineStatus::StatusType onlineStatus;
+	QString statusMessage;
+
+	// some actions
+	KAction *actionSetOnline;
+	KAction *actionSetAway;
+	KAction *actionSetBusy;
+	KAction *actionSetInvisible;
+	KAction *actionSetOffline;
+	QActionGroup *statusGroup;
 };
 
 Identity::Identity( const QString &id, const QString &label )
 	: d( new Private(id, label) )
 {
+	initActions();
 	load();
 	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
 			this, SLOT(slotSaveProperty(PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
@@ -62,6 +75,7 @@ Identity::Identity( const QString &id, const QString &label )
 Identity::Identity(const QString &label)
 : d( new Private(KRandom::randomString(10), label) )
 {
+	initActions();
 	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
 			this, SLOT(slotSaveProperty(PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
 }
@@ -69,6 +83,8 @@ Identity::Identity(const QString &label)
 Identity::Identity( Identity &existing )
 {
 	d = new Private(KRandom::randomString(10), existing.label());
+	initActions();
+
 	QMap<QString,QString> props;
 	
 	//read properties from the existing identity
@@ -87,6 +103,36 @@ Identity::~Identity()
 
 	delete d->configGroup;
 	delete d;
+}
+
+void Identity::initActions()
+{
+	d->actionSetOnline = new KAction( KIcon("kopeteavailable"), i18n("&Online"), this );
+	d->actionSetOnline->setData((uint)Kopete::OnlineStatusManager::Online);
+
+	d->actionSetAway = new KAction( KIcon("kopeteaway"), i18n("&Away"), this );
+	d->actionSetAway->setData((uint)Kopete::OnlineStatusManager::Away);
+
+	d->actionSetBusy = new KAction( KIcon("kopeteaway"), i18n("&Busy"), this );
+	d->actionSetBusy->setData((uint)Kopete::OnlineStatusManager::Busy);
+
+	d->actionSetInvisible = new KAction( KIcon("kopeteavailable"), i18n( "&Invisible" ), this );
+	d->actionSetInvisible->setData((uint)Kopete::OnlineStatusManager::Invisible);
+
+	d->actionSetOffline = new KAction( KIcon("connect-no"), i18n( "Offline" ), this );
+	d->actionSetOffline->setData((uint)Kopete::OnlineStatusManager::Offline);
+
+	// create the actionGroup
+	d->statusGroup = new QActionGroup(this);
+	d->statusGroup->addAction(d->actionSetOnline);
+	d->statusGroup->addAction(d->actionSetAway);
+	d->statusGroup->addAction(d->actionSetBusy);
+	d->statusGroup->addAction(d->actionSetInvisible);
+	d->statusGroup->addAction(d->actionSetOffline);
+
+	connect(d->statusGroup, SIGNAL(triggered(QAction*)), 
+			this, SLOT(slotChangeStatus(QAction *)));
+
 }
 
 QString Identity::id() const
@@ -114,6 +160,7 @@ void Identity::setOnlineStatus( uint category, const QString &awayMessage )
 {
 	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
 
+	d->statusMessage = awayMessage;
 	foreach( Account *account ,  d->accounts )
 	{
 		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor);
@@ -164,21 +211,17 @@ QString Identity::customIcon() const
 
 KActionMenu* Identity::actionMenu()
 {
-	//TODO check what layout we want to have for this menu
-	// for now if there is only on account, return the account menu
-	if (d->accounts.count() == 1)
-		return d->accounts.first()->actionMenu();
+	// creates the action menu
+	KActionMenu *statusMenu = new KActionMenu(d->label, this);
 
-	// if there is more than one account, add them as submenus of this identity menu
-	KActionMenu *menu = new KActionMenu(d->label, this);
+	// add a title to the popup menu before the online action
+	statusMenu->menu()->addTitle(d->label);
 
-	foreach(Account *account, d->accounts)
-	{
-		KActionMenu *accountMenu = account->actionMenu();
-		accountMenu->setIcon( account->myself()->onlineStatus().iconFor(account->myself()) );
-		menu->addAction( accountMenu );
-	}
-	return menu;
+	// add the status actions to the menu
+	foreach(QAction *action, d->statusGroup->actions())
+		statusMenu->addAction(action);
+
+	return statusMenu;
 }
 
 QList<Account*> Identity::accounts() const
@@ -262,6 +305,11 @@ void Identity::slotSaveProperty( PropertyContainer *container, const QString &ke
 		                const QVariant &oldValue, const QVariant &newValue )
 {
 	save();
+}
+
+void Identity::slotChangeStatus(QAction *a)
+{
+	setOnlineStatus(a->data().toUInt(), d->statusMessage);
 }
 
 } //END namespace Kopete

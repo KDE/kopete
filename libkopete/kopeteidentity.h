@@ -26,6 +26,7 @@
 #include "kopete_export.h"
 
 class KConfigGroup;
+class QAction;
 
 namespace Kopete
 {
@@ -66,6 +67,11 @@ public:
 	Identity(Identity &existing);
 
 	~Identity();
+
+	/**
+	 * @brief Initialize the identity actions
+	 */
+	void initActions();
 
 	/**
 	 * The id is a unique internal handle and should not be exposed in the UI
@@ -161,8 +167,11 @@ protected slots:
 	void slotSaveProperty( PropertyContainer *container, const QString &key,
 				const QVariant &oldValue, const QVariant &newValue );
 
+private slots:
+	void slotChangeStatus(QAction *);
+
 signals:
-	void onlineStatusChanged(Kopete::Identity*,Kopete::OnlineStatus::StatusType,Kopete::OnlineStatus::StatusType);
+	void onlineStatusChanged(Kopete::Identity*,Kopete::OnlineStatus::StatusType, Kopete::OnlineStatus::StatusType);
 	void identityDestroyed( const Kopete::Identity *identity );
 	void identityChanged(Kopete::Identity *identity);
 
