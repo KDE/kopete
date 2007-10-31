@@ -526,7 +526,7 @@ void KopeteWindow::loadOptions()
 
 	QSize size = cg.readEntry("Geometry", QSize() );
 	if(size.isEmpty()) // Default size
-		resize( QSize(220, 350) );
+		resize( QSize(272, 400) );
 	else
 		resize(size);
 
