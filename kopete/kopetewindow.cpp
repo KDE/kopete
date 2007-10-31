@@ -115,7 +115,7 @@ class KopeteWindow::Private
 public:
 	Private()
 	 : contactlist(0), identitywidget(0), actionAddContact(0), actionDisconnect(0), actionExportContacts(0),
-	actionAwayMenu(0), actionDockMenu(0), selectAway(0), selectBusy(0), actionSetAvailable(0),
+	actionStatusMenu(0), actionDockMenu(0), actionSetAway(0), actionSetBusy(0), actionSetAvailable(0),
 	actionSetInvisible(0), actionPrefs(0), actionQuit(0), actionSave(0), menubarAction(0),
 	statusbarAction(0), actionShowOfflineUsers(0), actionShowEmptyGroups(0), docked(0), 
 	deskRight(0), statusBarWidget(0), tray(0), hidden(false), autoHide(false),
@@ -136,10 +136,10 @@ public:
 	KAction *actionDisconnect;
 	KAction *actionExportContacts;
 
-	KActionMenu *actionAwayMenu;
+	KActionMenu *actionStatusMenu;
 	KActionMenu *actionDockMenu;
-	KAction *selectAway;
-	KAction *selectBusy;
+	KAction *actionSetAway;
+	KAction *actionSetBusy;
 	KAction *actionSetAvailable;
 	KAction *actionSetInvisible;
 
@@ -322,13 +322,13 @@ void KopeteWindow::initActions()
         actionCollection()->addAction( "ExportContacts", d->actionExportContacts );
 	connect( d->actionExportContacts, SIGNAL( triggered(bool) ), this, SLOT( showExportDialog() ) );
 
-	d->selectAway = new KAction( KIcon("kopeteaway"), i18n("&Away"), this );
-        actionCollection()->addAction( "SetAwayAll", d->selectAway );
-	connect( d->selectAway, SIGNAL( triggered(bool) ), this, SLOT( slotGlobalAway() ) );
+	d->actionSetAway = new KAction( KIcon("kopeteaway"), i18n("&Away"), this );
+        actionCollection()->addAction( "SetAwayAll", d->actionSetAway );
+	connect( d->actionSetAway, SIGNAL( triggered(bool) ), this, SLOT( slotGlobalAway() ) );
 
-	d->selectBusy = new KAction( KIcon("kopeteaway"), i18n("&Busy"), this );
-        actionCollection()->addAction( "SetBusyAll", d->selectBusy );
-	connect( d->selectBusy, SIGNAL( triggered(bool) ), this, SLOT( slotGlobalBusy() ) );
+	d->actionSetBusy = new KAction( KIcon("kopeteaway"), i18n("&Busy"), this );
+        actionCollection()->addAction( "SetBusyAll", d->actionSetBusy );
+	connect( d->actionSetBusy, SIGNAL( triggered(bool) ), this, SLOT( slotGlobalBusy() ) );
 
 
 	d->actionSetInvisible = new KAction( KIcon("kopeteavailable"), i18n( "&Invisible" ), this );
@@ -339,16 +339,16 @@ void KopeteWindow::initActions()
         actionCollection()->addAction( "SetAvailableAll", d->actionSetAvailable );
 	connect( d->actionSetAvailable, SIGNAL( triggered(bool) ), this, SLOT( slotGlobalAvailable() ) );
 
-	d->actionAwayMenu = new KActionMenu( KIcon("kopeteavailable"), i18n("&Set Status"),
+	d->actionStatusMenu = new KActionMenu( KIcon("kopeteavailable"), i18n("&Set Status"),
                                              this );
-	d->actionAwayMenu->setIconText( i18n( "Status" ) );
-	actionCollection()->addAction( "Status", d->actionAwayMenu );
-	d->actionAwayMenu->setDelayed( false );
-	d->actionAwayMenu->addAction(d->actionSetAvailable);
-	d->actionAwayMenu->addAction(d->selectAway);
-	d->actionAwayMenu->addAction(d->selectBusy);
-	d->actionAwayMenu->addAction(d->actionSetInvisible);
-	d->actionAwayMenu->addAction(d->actionDisconnect);
+	d->actionStatusMenu->setIconText( i18n( "Status" ) );
+	actionCollection()->addAction( "Status", d->actionStatusMenu );
+	d->actionStatusMenu->setDelayed( false );
+	d->actionStatusMenu->addAction(d->actionSetAvailable);
+	d->actionStatusMenu->addAction(d->actionSetAway);
+	d->actionStatusMenu->addAction(d->actionSetBusy);
+	d->actionStatusMenu->addAction(d->actionSetInvisible);
+	d->actionStatusMenu->addAction(d->actionDisconnect);
 
 	d->actionPrefs = KopeteStdAction::preferences( actionCollection(), "settings_prefs" );
 
@@ -402,11 +402,11 @@ void KopeteWindow::initActions()
 	searchLabelAction->setDefaultWidget( searchLabel );
 
 	// KActionMenu for selecting the global status message
-	KActionMenu * setStatusMenu = new KActionMenu( KIcon("kopeteeditstatusmessage"), i18n( "Set Status Message" ), this );
-	setStatusMenu->setIconText( i18n( "&Message" ) );
-	actionCollection()->addAction( "SetStatusMessage", setStatusMenu );
-	setStatusMenu->setDelayed( false );
-	connect( setStatusMenu->menu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
+	KActionMenu * setStatusMessageMenu = new KActionMenu( KIcon("kopeteeditstatusmessage"), i18n( "Set Status Message" ), this );
+	setStatusMessageMenu->setIconText( i18n( "&Message" ) );
+	actionCollection()->addAction( "SetStatusMessage", setStatusMessageMenu );
+	setStatusMessageMenu->setDelayed( false );
+	connect( setStatusMessageMenu->menu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
 
 	// sync actions, config and prefs-dialog
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()) );
@@ -933,7 +933,7 @@ void KopeteWindow::slotTrayAboutToShowMenu( KMenu * popup )
 	}
 
 	popup->addSeparator();
-	popup->addAction( d->actionAwayMenu );
+	popup->addAction( d->actionStatusMenu );
 	popup->addSeparator();
 	popup->addAction( d->actionPrefs );
 	popup->addAction( d->actionAddContact );
