@@ -281,10 +281,11 @@ KJob* JabberProtocol::createProtocolTask(const QString &taskType)
 
 	/**
 	 * Check whether a password is valid for this protocol.  The default implementation
-     * validates every password
+	 * validates every password
 	 * @param password The password to check
 	 */
-	virtual bool validatePassword( const QString & password );
+	 virtual bool validatePassword( const QString & password ) const;
+
 public slots:
 	/**
 	 * A meta contact is about to save.

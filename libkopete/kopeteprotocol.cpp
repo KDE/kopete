@@ -375,7 +375,7 @@ KJob *Protocol::createProtocolTask(const QString &taskType)
 	return 0;
 }
 
-bool Protocol::validatePassword( const QString & password )
+bool Protocol::validatePassword( const QString & password ) const
 {
     return true;
 }
