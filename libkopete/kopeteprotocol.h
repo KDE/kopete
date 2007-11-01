@@ -47,7 +47,7 @@ class Account;
 
 
 /**
- * @brief base class of every protocols.
+ * @brief base class of every protocol.
  *
  * A protocol is just a particular case of Plugin
  *
@@ -279,6 +279,12 @@ KJob* JabberProtocol::createProtocolTask(const QString &taskType)
 	 */
 	virtual KJob *createProtocolTask(const QString &taskType);
 
+	/**
+	 * Check whether a password is valid for this protocol.  The default implementation
+     * validates every password
+	 * @param password The password to check
+	 */
+	virtual bool validatePassword( const QString & password );
 public slots:
 	/**
 	 * A meta contact is about to save.

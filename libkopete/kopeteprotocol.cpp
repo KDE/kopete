@@ -375,6 +375,11 @@ KJob *Protocol::createProtocolTask(const QString &taskType)
 	return 0;
 }
 
+bool Protocol::validatePassword( const QString & password )
+{
+    return true;
+}
+
 } //END namespace Kopete
 
 #include "kopeteprotocol.moc"

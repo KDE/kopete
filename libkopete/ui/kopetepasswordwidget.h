@@ -25,6 +25,7 @@ namespace Kopete
 {
 
 class Password;
+class Protocol;
 
 namespace UI
 {
@@ -47,8 +48,16 @@ public:
 	 * @param parent The widget to nest this one inside
 	 */
 	explicit PasswordWidget( Kopete::Password *from, QWidget *parent = 0 );
-    
+
 	~PasswordWidget();
+
+	/**
+	 * Sets a protocol to use to validate entered passwords.  If no protocol is set 
+	 * validate() always returns true.
+	 * @see Kopete::Protocol::validatePassword()
+	 * @param proto the protocol to use to validate entered passwords
+	 */
+	void setValidationProtocol( Kopete::Protocol * );
 
 	/**
 	 * Loads the information stored in source into the widget

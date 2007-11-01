@@ -17,20 +17,34 @@
 
 #include "kopetepasswordwidget.h"
 #include "kopetepassword.h"
+#include "kopeteprotocol.h"
 
 #include <klineedit.h>
 
 #include <qcheckbox.h>
 
+namespace Kopete
+{
+	namespace UI
+	{
+		class PasswordWidget::Private
+		{
+			public:
+				Private() : protocol( 0 ) { }
+				Kopete::Protocol * protocol;
+		};
+	} // namespace UI
+} // namespace Kopete
+
 Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent )
-	    : QWidget( parent )//, d( new Private )
+	    : QWidget( parent ), d( new Private )
 {
 	setupUi( this );
 	mPassword->setPasswordMode(true);
 }
 
 Kopete::UI::PasswordWidget::PasswordWidget( Kopete::Password *from, QWidget *parent )
-	: QWidget( parent )//, d( new Private )
+	: QWidget( parent ), d( new Private )
 {
 	setupUi( this );
 	mPassword->setPasswordMode(true);
@@ -40,7 +54,12 @@ Kopete::UI::PasswordWidget::PasswordWidget( Kopete::Password *from, QWidget *par
 
 Kopete::UI::PasswordWidget::~PasswordWidget()
 {
-//	delete d;
+	delete d;
+}
+
+void Kopete::UI::PasswordWidget::setValidationProtocol( Kopete::Protocol * proto )
+{
+	d->protocol = proto;
 }
 
 void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
@@ -100,9 +119,9 @@ void Kopete::UI::PasswordWidget::save( Kopete::Password *target )
 
 bool Kopete::UI::PasswordWidget::validate()
 {
-#ifdef __GNUC__
-#warning  TODO do something interesting or remove the function
-#endif
+	if ( d->protocol ) {
+		return d->protocol->validatePassword( password() );
+	}
 	return true;
 }
 
