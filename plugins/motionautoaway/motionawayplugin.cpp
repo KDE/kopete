@@ -46,32 +46,6 @@
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaway.h"
-/* The following is a hack:
- * e.g. Mandrake 9.x ships with a patched
- * kernel which doesn't define this 64 bit types (we need GNU C lib
- * because we use long long and warning - gcc extensions.)
- *
- * This is caused by the !defined(__STRICT_ANSI__) check in
- * /usr/include/asm/types.h
- */
-#if !defined(__u64) && defined(__GNUC__)
-#if SIZEOF_UNSIGNED_LONG >= 8
-typedef unsigned long __u64;
-#else
-typedef unsigned long long __u64;
-#endif
-#endif
-
-#if !defined(__s64) && defined(__GNUC__)
-#if SIZEOF_LONG >= 8
-typedef signed long __s64;
-#else
-typedef __signed__ long long __s64;
-#endif
-#endif
-/*
- * End hack
- */
 
 #include <linux/version.h>
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,50)
