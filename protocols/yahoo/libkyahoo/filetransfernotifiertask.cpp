@@ -134,7 +134,7 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 	expires = t->firstParam( 38 ).toLong();
 	filename = t->firstParam( 27 );
 	size = t->firstParam( 28 ).toULong();
-	preview = KCodecs::base64Decode( t->firstParam( 267 ) );
+	preview = QByteArray::fromBase64( t->firstParam( 267 ) );
 
 	if( preview.size() > 0 )
 	{

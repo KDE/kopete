@@ -578,7 +578,7 @@ void MSNSwitchBoardSocket::DispatchInkMessage(const QString& base64String)
 {
 	QByteArray image;
 	// Convert from base64 encoded string to byte array.
-	KCodecs::base64Decode(base64String.toUtf8() , image);
+	image = QByteArray::fromBase64(base64String.toUtf8());
 	KTemporaryFile *inkImage = new KTemporaryFile();
 	inkImage->setPrefix("inkformatgif-");
 	inkImage->setSuffix(".gif");
@@ -647,10 +647,10 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 			QByteArray ar = pictFile.readAll();
 			pictFile.close();
 
-			QString sha1d = QString(KCodecs::base64Encode(SHA1::hash(ar)));
+			QString sha1d = QString(SHA1::hash(ar).toBase64());
 			QString size = QString::number( pictFile.size() );
 			QString all = "Creator" + m_account->accountId() +	"Size" + size + "Type2Location" + fi.fileName() + "FriendlyAAA=SHA1D" + sha1d;
-			QString sha1c = QString(KCodecs::base64Encode(SHA1::hashString(all.toUtf8())));
+			QString sha1c = QString(SHA1::hashString(all.toUtf8()).toBase64());
 			picObj = "<msnobj Creator=\"" + m_account->accountId() + "\" Size=\"" + size  + "\" Type=\"2\" Location=\""+ fi.fileName() + "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+ "\" SHA1C=\""+sha1c+"\"/>";
 
 			PeerDispatcher()->objectList.insert(picObj, filename);

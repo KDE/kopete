@@ -1433,11 +1433,12 @@ void MSNAccount::resetPictureObject(bool silent)
 		{
 			QByteArray ar = pictFile.readAll();
 
-			QString sha1d= QString((KCodecs::base64Encode(SHA1::hash(ar))));
+			QString sha1d= QString((SHA1::hash(ar).toBase64()));
 
 			QString size=QString::number( pictFile.size() );
 			QString all= "Creator"+accountId()+"Size"+size+"Type3Locationkopete.tmpFriendlyAAA=SHA1D"+ sha1d;
-			m_pictureObj="<msnobj Creator=\"" + accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\"kopete.tmp\" Friendly=\"AAA=\" SHA1D=\""+sha1d+"\" SHA1C=\""+ QString(KCodecs::base64Encode(SHA1::hashString(all.toUtf8())))  +"\"/>";
+			m_pictureObj="<msnobj Creator=\"" + accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\"kopete.tmp\" Friendly=\"AAA=\" SHA1D=\""+sha1d+"\" SHA1C=\""+
+				QString(SHA1::hashString(all.toUtf8()).toBase64())  +"\"/>";
 			myself()->setProperty( Kopete::Global::Properties::self()->photo() , m_pictureFilename );
 		}
 	}

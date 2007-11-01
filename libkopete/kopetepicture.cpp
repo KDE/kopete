@@ -98,7 +98,7 @@ QString Picture::base64()
 		// Make sure it create a image cache.
 		if( image().save( &tempBuffer, "PNG" ) )
 		{
-			d->pictureBase64 = KCodecs::base64Encode(tempArray);
+			d->pictureBase64 = tempArray.toBase64();
 		}
 	}
 
