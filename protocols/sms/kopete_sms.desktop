@@ -21,6 +21,7 @@ Name[km]=សេវា​សារ​ខ្លីៗ
 Name[ne]=एसएमएस
 Name[x-test]=xxSMSxx
 Comment=Send SMS messages to mobile phones
+Comment[ca]=Envia missatges SMS a telèfons mòbils
 Comment[el]=Αποστολή μηνυμάτων SMS σε κινητά τηλέφωνα
 Comment[ja]=携帯電話に SMS メッセージを送ります
 Comment[nb]=Send SMS-meldinger til mobiltelefoner

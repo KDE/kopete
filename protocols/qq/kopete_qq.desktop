@@ -18,6 +18,7 @@ X-KDE-PluginInfo-EnabledByDefault=false
 Name=QQ
 Name[x-test]=xxQQxx
 Comment=A popular Chinese IM system
+Comment[ca]=Un sistema de missatgeria xinès popular
 Comment[el]=Ένα δημοφιλές κινέζικο σύστημα IM
 Comment[ja]=人気の高い中国の IM システム
 Comment[nb]=Et populært kinesisk lynmeldingssystem
