@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>573</width>
-    <height>502</height>
+    <width>467</width>
+    <height>516</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -28,24 +28,6 @@
       <string>Personal Information</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
-       <number>6</number>
-      </property>
       <item row="0" column="0" >
        <widget class="QLabel" name="uinLabel" >
         <property name="text" >
@@ -58,12 +40,6 @@
       </item>
       <item row="0" column="1" >
        <widget class="QLineEdit" name="uinEdit" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-          <horstretch>1</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
         <property name="readOnly" >
          <bool>true</bool>
         </property>
@@ -81,18 +57,6 @@
       </item>
       <item row="0" column="3" >
        <widget class="QLineEdit" name="ipEdit" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize" >
-         <size>
-          <width>125</width>
-          <height>0</height>
-         </size>
-        </property>
         <property name="text" >
          <string/>
         </property>
@@ -113,29 +77,27 @@
       </item>
       <item row="1" column="1" >
        <widget class="QLineEdit" name="nickNameEdit" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-          <horstretch>2</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
         <property name="readOnly" >
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item row="1" column="2" >
-       <widget class="QLabel" name="textLabel6" >
+       <widget class="QLabel" name="aliasLabel" >
         <property name="text" >
-         <string>Gen&amp;der:</string>
+         <string>Alias:</string>
         </property>
         <property name="buddy" >
-         <cstring>genderCombo</cstring>
+         <cstring>lastNameEdit</cstring>
         </property>
        </widget>
       </item>
       <item row="1" column="3" >
-       <widget class="QComboBox" name="genderCombo" />
+       <widget class="QLineEdit" name="aliasEdit" >
+        <property name="readOnly" >
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item row="2" column="0" >
        <widget class="QLabel" name="firstNameLabel" >
@@ -172,6 +134,19 @@
        </widget>
       </item>
       <item row="3" column="0" >
+       <widget class="QLabel" name="textLabel6" >
+        <property name="text" >
+         <string>Gen&amp;der:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>genderCombo</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="QComboBox" name="genderCombo" />
+      </item>
+      <item row="3" column="2" >
        <widget class="QLabel" name="maritalLabel" >
         <property name="text" >
          <string>Marital status:</string>
@@ -181,10 +156,23 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1" >
+      <item row="3" column="3" >
        <widget class="QComboBox" name="maritalCombo" />
       </item>
-      <item row="3" column="2" >
+      <item row="4" column="0" colspan="2" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="4" column="2" >
        <widget class="QLabel" name="textLabel7" >
         <property name="text" >
          <string>&amp;Timezone:</string>
@@ -194,7 +182,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="3" >
+      <item row="4" column="3" >
        <widget class="QComboBox" name="timezoneCombo" />
       </item>
      </layout>
@@ -280,7 +268,7 @@
         </property>
         <property name="sizeHint" >
          <size>
-          <width>151</width>
+          <width>40</width>
           <height>20</height>
          </size>
         </property>
@@ -366,14 +354,7 @@
        </widget>
       </item>
       <item row="0" column="1" >
-       <widget class="QComboBox" name="language1Combo" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
+       <widget class="QComboBox" name="language1Combo" />
       </item>
       <item row="1" column="0" >
        <widget class="QLabel" name="language2Label" >
@@ -386,14 +367,7 @@
        </widget>
       </item>
       <item row="1" column="1" >
-       <widget class="QComboBox" name="language2Combo" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
+       <widget class="QComboBox" name="language2Combo" />
       </item>
       <item row="2" column="0" >
        <widget class="QLabel" name="language3Label" >
@@ -454,12 +428,6 @@
       </item>
       <item row="0" column="1" >
        <widget class="QLineEdit" name="oCityEdit" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
         <property name="readOnly" >
          <bool>true</bool>
         </property>
@@ -510,12 +478,9 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
      <property name="sizeHint" >
       <size>
-       <width>466</width>
+       <width>51</width>
        <height>0</height>
       </size>
      </property>

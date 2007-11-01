@@ -102,7 +102,10 @@ public:
 	//! Should be used for other items we don't have explicit functions for
 	//! like icon hashs, privacy settings, non-icq contacts, etc.
 	bool modifyItem( const OContact& oldItem, const OContact& newItem );
-	
+
+	//! Modify an contact item on the SSI list
+	bool modifyContact( const OContact& oldItem, const OContact& newItem );
+
 protected:
 	virtual bool forMe( const Transfer* transfer ) const;
 

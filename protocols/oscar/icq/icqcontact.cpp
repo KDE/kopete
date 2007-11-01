@@ -574,11 +574,24 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 void ICQContact::slotUserInfo()
 {
 	m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
-	QObject::connect( m_infoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfoDialog() ) );
+	QObject::connect( m_infoWidget, SIGNAL(finished()), this, SLOT(closeUserInfoDialog()) );
+	QObject::connect( m_infoWidget, SIGNAL(okClicked()), this, SLOT(storeUserInfoDialog()) );
 	m_infoWidget->setContact( this );
 	m_infoWidget->show();
 	if ( account()->isConnected() )
 		mAccount->engine()->requestFullInfo( contactId() );
+}
+
+void ICQContact::storeUserInfoDialog()
+{
+	QString alias = m_infoWidget->getAlias();
+	mAccount->engine()->changeContactAlias( contactId(), alias );
+	if ( alias.isEmpty() && !m_requestingNickname ) {
+		m_requestingNickname = true;
+		int time = ( KRandom::random() % 5 ) * 1000 + 5000;
+		kDebug(OSCAR_ICQ_DEBUG) << "updating nickname in " << time/1000 << " seconds";
+		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
+	}
 }
 
 void ICQContact::closeUserInfoDialog()

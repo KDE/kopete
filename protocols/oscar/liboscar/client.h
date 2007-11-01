@@ -187,6 +187,13 @@ public:
 	void changeContactGroup( const QString& contact, const QString& newGroupName );
 
 	/**
+	 * Change a contact's alias on the server
+	 * \param contact the contact to change
+	 * \param alias the new alias
+	 */
+	void changeContactAlias( const QString& contact, const QString& alias );
+
+	/**
 	 * Send a message to a contact
 	 * \param msg the message to be sent
 	 * \param auto the message is an autoresponse message, default to false

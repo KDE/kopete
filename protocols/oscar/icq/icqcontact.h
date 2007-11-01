@@ -103,6 +103,7 @@ private slots:
 	/** We have received an auth reply */
 	void slotGotAuthReply( const QString& contact, const QString& reason, bool granted );
 
+	void storeUserInfoDialog();
 	void closeUserInfoDialog();
 
 	void receivedLongInfo( const QString& contact );

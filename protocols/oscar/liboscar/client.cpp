@@ -939,6 +939,47 @@ void Client::changeContactGroup( const QString& contact, const QString& newGroup
 		delete ssimt;
 }
 
+void Client::changeContactAlias( const QString& contact, const QString& alias )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0013 );
+	if ( !c )
+		return;
+	
+	OContact item = ssiManager()->findContact( contact );
+	if ( item )
+	{
+		OContact oldItem(item);
+
+		if ( alias.isEmpty() )
+		{
+			QList<TLV> tList( item.tlvList() );
+			TLV tlv = Oscar::findTLV( tList, 0x0131 );
+			if ( !tlv )
+				return;
+
+			tList.removeAll( tlv );
+			item.setTLVList( tList );
+		}
+		else
+		{
+			QList<TLV> tList;
+
+			QByteArray data = alias.toUtf8();
+			tList.append( TLV( 0x0131, data.size(), data ) );
+
+			if ( !Oscar::updateTLVs( item, tList ) )
+				return;
+		}
+
+		kDebug( OSCAR_RAW_DEBUG ) << "Changing " << contact << "'s alias to " << alias << endl;
+		SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
+		if ( ssimt->modifyContact( oldItem, item ) )
+			ssimt->go( Task::AutoDelete );
+		else
+			delete ssimt;
+	}
+}
+
 void Client::requestShortTlvInfo( const QString& contactId, const QByteArray &metaInfoId )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0015 );
