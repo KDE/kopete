@@ -39,6 +39,10 @@ VideoDevice::VideoDevice()
 	m_streambuffers  = 0;
 	m_current_input = 0;
 //	kdDebug(14010) << "libkopete (avdevice): VideoDevice() exited successfuly" << endl;
+	maxwidth  = 32767;
+	maxheight = 32767;
+	minwidth  = 1;
+	minheight = 1;
 }
 
 
