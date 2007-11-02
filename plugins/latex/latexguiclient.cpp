@@ -61,7 +61,7 @@ void LatexGUIClient::slotPreview()
 	QString messageText = msg.plainBody();
 	if(!messageText.contains("$$")) //we haven't found any latex strings
 	{
-		KMessageBox::sorry(reinterpret_cast<QWidget*>(m_manager->view()) , i18n("There are no latex in the message you are typing.  The latex formula must be included between $$ and $$ "),	i18n("No Latex Formula") );
+		KMessageBox::sorry(m_manager->view()->mainWidget() , i18n("There are no LaTeX in the message you are typing.  The LaTeX formula must be included between $$ and $$ "), i18n("No LaTeX Formula") );
 		return;
 	}
 
