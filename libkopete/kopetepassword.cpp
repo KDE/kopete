@@ -20,13 +20,10 @@
 
 #include <kwallet.h>
 
-#include <qapplication.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-//Added by qt3to4:
-#include <QPixmap>
-
+#include <QApplication>
+#include <QLabel>
+#include <QLineEdit>
+#include <QCheckBox>
 #include <k3activelabel.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -37,26 +34,17 @@
 #include <kstringhandler.h>
 #include <kpassworddialog.h>
 
-class Kopete::Password::Private
+class Kopete::Password::Private : public QSharedData
 {
 public:
 	Private( const QString &group, bool blanksAllowed )
-	 : refCount( 1 ), configGroup( group ), remembered( false ),
+	 : configGroup( group ), remembered( false ),
 	 isWrong( false ), allowBlankPassword( blanksAllowed )
 	{
 	}
-	Private *incRef()
+	~Private() 
 	{
-		++refCount;
-		return this;
 	}
-	void decRef()
-	{
-		if( --refCount == 0 )
-			delete this;
-	}
-	/** Reference count */
-	int refCount;
 	/** Group to use for KConfig and KWallet */
 	const QString configGroup;
 	/** Is the password being remembered? */
@@ -132,6 +120,7 @@ public:
 		// Before trying to read from the wallet, check if the config file holds a password.
 		// If so, remove it from the config and set it through KWallet instead.
 		QString pwd;
+
 		if ( mPassword.d->remembered && !mPassword.d->passwordFromKConfig.isNull() )
 		{
 			pwd = mPassword.d->passwordFromKConfig;
@@ -333,20 +322,17 @@ Kopete::Password::Password( const QString &configGroup, bool allowBlankPassword 
 }
 
 Kopete::Password::Password( const Password &other )
- : QObject( 0 ), d( other.d->incRef() )
+ : QObject( 0 ), d( other.d )
 {
 }
 
 Kopete::Password::~Password()
 {
-	d->decRef();
 }
 
 Kopete::Password &Kopete::Password::operator=( Password &other )
 {
 	if ( d == other.d ) return *this;
-	d->decRef();
-	d = other.d->incRef();
 	return *this;
 }
 
