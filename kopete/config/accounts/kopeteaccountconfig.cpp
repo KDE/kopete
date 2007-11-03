@@ -407,7 +407,7 @@ void KopeteAccountConfig::slotCopyIdentity()
 		newLabel = i18nc( "String used for creating second and subsequent copies of a named item",
 			"Copy %1 of %2", copyCount++, existing->label() );
 	}
-	Kopete::Identity * ident = new Kopete::Identity( *existing );
+	Kopete::Identity * ident = existing->clone();
 	ident->setLabel( newLabel );
 
 	IdentityDialog dialog(ident, this);

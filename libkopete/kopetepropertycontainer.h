@@ -58,7 +58,7 @@ public:
 	 * In contrary to @ref serialize() this does not need to be reimplemented.
 	 *
 	 */
-	void serializeProperties(QMap<QString, QString> &serializedData);
+	void serializeProperties(QMap<QString, QString> &serializedData) const;
 
 	/**
 	 * @brief Deserialize the contacts persistent properties

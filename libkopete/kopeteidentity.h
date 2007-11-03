@@ -57,16 +57,15 @@ public:
 	 */
 	Identity(const QString &id, const QString &label);
 
+	~Identity();
+
 	/**
 	 * @brief Duplicates an existing identity
 	 *
-	 * This will create a new identity name @param id, that will clone all properties
-	 * of the identity @param existing.
+	 * This will create a new identity name @param id, that clones all properties
+	 * @return duplicate Identity
 	 */
-	Identity(Identity &existing);
-
-	~Identity();
-
+	Identity * clone() const;
 	/**
 	 * The id is a unique internal handle and should not be exposed in the UI
 	 * @return the identity's id

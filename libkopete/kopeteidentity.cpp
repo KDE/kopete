@@ -68,20 +68,16 @@ Identity::Identity(const QString &label)
 			this, SLOT(slotSaveProperty(PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
 }
 
-Identity::Identity( Identity &existing )
+Identity * Identity::clone() const
 {
-	d = new Private(KRandom::randomString(10), existing.label());
-
+	Identity * id = new Identity( label() );
 	QMap<QString,QString> props;
-	
-	//read properties from the existing identity
-	existing.serializeProperties(props);
+	serializeProperties( props );
+	id->deserializeProperties( props );
 
-	//write them in this identity
-	deserializeProperties(props);	
-
-	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
-			this, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
+	connect(id, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
+			id, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
+	return id;
 }
 
 Identity::~Identity()
