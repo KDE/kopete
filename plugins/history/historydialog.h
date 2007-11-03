@@ -24,7 +24,6 @@
 #include <QList>
 
 #include <kdialog.h>
-#include <k3listview.h>
 #include <kurl.h>
 
 #include "kopetemessage.h"
@@ -41,8 +40,7 @@ class KHTMLPart;
 
 namespace KParts { class BrowserArguments; class OpenUrlArguments; class Part; }
 
-
-class KListViewDateItem;
+class QTreeWidgetItem;
 
 class DMPair
 {
@@ -81,7 +79,7 @@ class HistoryDialog : public KDialog
 		void slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &);
 
 		// Called when a date is selected in the treeview
-		void dateSelected(Q3ListViewItem *);
+		void dateSelected(QTreeWidgetItem *);
 
 		void slotSearch();
 
@@ -114,12 +112,7 @@ class HistoryDialog : public KDialog
 		 */
 		void setMessages(QList<Kopete::Message> m);
 
-		void listViewShowElements(bool s);
-
-		/**
-		 * Search if @param item already has @param text child
-		 */
-		bool hasChild(K3ListViewItem* item, int month);
+		void treeWidgetHideElements(bool s);
 
 		/**
 		 * We show history dialog to look at the log for a metacontact. Here is this metacontact.
@@ -144,7 +137,7 @@ class HistoryDialog : public KDialog
 				typedef QMap<QDate, QList<Kopete::MetaContact*> > DateSearchMap;
 				DateSearchMap dateSearchMap;
 
-				KListViewDateItem *item;
+				int itemIndex;
 
 				int resultMatches;
 

@@ -33,41 +33,22 @@
 #include <khtml_part.h>
 #include <khtmlview.h>
 
-#include <QPushButton>
-#include <QLineEdit>
-#include <QCheckBox>
-#include <QLayout>
 #include <QDir>
-#include <QDateTime>
-#include <QLabel>
 #include <QClipboard>
-#include <QTextStream>
-#include <QFrame>
-#include <QVBoxLayout>
 
 #include <kdebug.h>
-#include <kiconloader.h>
-#include <klocale.h>
 #include <krun.h>
-#include <kstandarddirs.h>
-#include <k3listview.h>
-#include <k3listviewsearchline.h>
-#include <kcombobox.h>
 #include <kmenu.h>
-#include <kstandardaction.h>
-#include <kaction.h>
 #include <kactioncollection.h>
-#include <kicon.h>
 
-class KListViewDateItem : public K3ListViewItem
+class KListViewDateItem : public QTreeWidgetItem
 {
 public:
-    KListViewDateItem(K3ListView* parent, QDate date, Kopete::MetaContact *mc);
-	QDate date() { return mDate; }
-	Kopete::MetaContact *metaContact() { return mMetaContact; }
+	KListViewDateItem(QTreeWidget* parent, QDate date, Kopete::MetaContact *mc);
+	QDate date() const { return mDate; }
+	Kopete::MetaContact *metaContact() const { return mMetaContact; }
 
-public:
-	int compare(Q3ListViewItem *i, int col, bool ascending) const;
+	virtual bool operator<( const QTreeWidgetItem& other ) const;
 private:
     QDate mDate;
 	Kopete::MetaContact *mMetaContact;
@@ -75,23 +56,23 @@ private:
 
 
 
-KListViewDateItem::KListViewDateItem(K3ListView* parent, QDate date, Kopete::MetaContact *mc)
-		: K3ListViewItem(parent, date.toString(Qt::ISODate), mc->displayName())
+KListViewDateItem::KListViewDateItem(QTreeWidget* parent, QDate date, Kopete::MetaContact *mc)
+: QTreeWidgetItem(parent), mDate(date), mMetaContact(mc)
 {
-	mDate = date;
-	mMetaContact = mc;
+	setText( 0, mDate.toString(Qt::ISODate) );
+	setText( 1, mMetaContact->displayName() );
 }
 
-int KListViewDateItem::compare(Q3ListViewItem *i, int col, bool ascending) const
+bool KListViewDateItem::operator<( const QTreeWidgetItem& other ) const
 {
-	if (col)
-		return Q3ListViewItem::compare(i, col, ascending);
+	QTreeWidget *tw = treeWidget();
+	int column =  tw ? tw->sortColumn() : 0;
+	if ( column > 0 )
+		return text(column) < other.text(column);
 
 	//compare dates - do NOT use ascending var here
-	KListViewDateItem* item = static_cast<KListViewDateItem*>(i);
-	if ( mDate < item->date() )
-		return -1;
-	return ( mDate > item->date() );
+	const KListViewDateItem* item = static_cast<const KListViewDateItem*>(&other);
+	return ( mDate < item->date() );
 }
 
 
@@ -135,8 +116,8 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	if (mMetaContact)
 		mMainWidget->contactComboBox->setCurrentIndex(mMetaContactList.indexOf(mMetaContact)+1);
 
-	mMainWidget->dateSearchLine->setListView(mMainWidget->dateListView);
-	mMainWidget->dateListView->setSorting(0, 0); //newest-first
+	mMainWidget->dateSearchLine->setTreeWidget(mMainWidget->dateTreeWidget);
+	mMainWidget->dateTreeWidget->sortItems(0, Qt::DescendingOrder); //newest-first
 
 	setMainWidget( w );
 
@@ -150,7 +131,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mHtmlPart->setJavaEnabled(false);
 	mHtmlPart->setPluginsEnabled(false);
 	mHtmlPart->setMetaRefreshEnabled(false);
-        mHtmlPart->setOnlyLocalReferences(true);
+	mHtmlPart->setOnlyLocalReferences(true);
 
 	mHtmlView = mHtmlPart->view();
 	mHtmlView->setMarginWidth(4);
@@ -171,7 +152,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 
 	connect(mHtmlPart->browserExtension(), SIGNAL(openUrlRequestDelayed(const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)),
 		this, SLOT(slotOpenURLRequest(const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)));
-	connect(mMainWidget->dateListView, SIGNAL(clicked(Q3ListViewItem*)), this, SLOT(dateSelected(Q3ListViewItem*)));
+	connect(mMainWidget->dateTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(dateSelected(QTreeWidgetItem*)));
 	connect(mMainWidget->searchButton, SIGNAL(clicked()), this, SLOT(slotSearch()));
 	connect(mMainWidget->searchLine, SIGNAL(returnPressed()), this, SLOT(slotSearch()));
 	connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
@@ -241,7 +222,7 @@ void HistoryDialog::slotLoadDays()
 	{
 		QDate c2Date(pair.date().year(),pair.date().month(),dayList[i]);
 		if (mInit.dateMCList.indexOf(pair) == -1)
-			new KListViewDateItem(mMainWidget->dateListView, c2Date, pair.metaContact());
+			new KListViewDateItem(mMainWidget->dateTreeWidget, c2Date, pair.metaContact());
 	}
 
 	mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
@@ -319,7 +300,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 	}
 }
 
-void HistoryDialog::dateSelected(Q3ListViewItem* it)
+void HistoryDialog::dateSelected(QTreeWidgetItem* it)
 {
 	kDebug(14310) ;
 
@@ -396,7 +377,7 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 
 void HistoryDialog::slotFilterChanged(int /*index*/)
 {
-	dateSelected(mMainWidget->dateListView->currentItem());
+	dateSelected(mMainWidget->dateTreeWidget->currentItem());
 }
 
 void HistoryDialog::slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
@@ -419,13 +400,14 @@ void HistoryDialog::slotSearchTextChanged(const QString& searchText)
 	}
 }
 
-void HistoryDialog::listViewShowElements(bool s)
+void HistoryDialog::treeWidgetHideElements(bool s)
 {
-	KListViewDateItem* item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
-	while (item != 0)
+	KListViewDateItem *item;
+	for ( int i = 0; i < mMainWidget->dateTreeWidget->topLevelItemCount(); i++ )
 	{
-			item->setVisible(s);
-			item = static_cast<KListViewDateItem*>(item->nextSibling());
+		item = static_cast<KListViewDateItem*>(mMainWidget->dateTreeWidget->topLevelItem(i));
+		if ( item )
+			item->setHidden(s);
 	}
 }
 
@@ -434,7 +416,7 @@ void HistoryDialog::listViewShowElements(bool s)
 void HistoryDialog::slotSearchErase()
 {
 	mMainWidget->searchLine->clear();
-	listViewShowElements(true);
+	treeWidgetHideElements(false);
 }
 
 // Search initialization
@@ -465,21 +447,18 @@ void HistoryDialog::slotSearch()
 		return;
 	}
 
-	if (mMainWidget->dateListView->childCount() == 0) return;
+	if (mMainWidget->dateTreeWidget->topLevelItemCount() == 0) return;
 
-	listViewShowElements(false);
+	treeWidgetHideElements(true);
 
 	mSearch = new Search();
-	mSearch->item = 0;
+	mSearch->itemIndex = 0;
 	mSearch->foundPrevious = false;
 
-	initProgressBar(i18n("Searching..."), mMainWidget->dateListView->childCount() );
+	initProgressBar(i18n("Searching..."), mMainWidget->dateTreeWidget->topLevelItemCount() );
 	mMainWidget->searchButton->setText(i18n("&Cancel"));
 
-	mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
 	searchFirstStep();
-
-
 }
 
 void HistoryDialog::searchFirstStep()
@@ -491,22 +470,23 @@ void HistoryDialog::searchFirstStep()
 		return;
 	}
 
-	if (!mSearch->dateSearchMap[mSearch->item->date()].contains(mSearch->item->metaContact()))
+	KListViewDateItem *item = static_cast<KListViewDateItem*>(mMainWidget->dateTreeWidget->topLevelItem(mSearch->itemIndex));
+	if (item && !mSearch->dateSearchMap[item->date()].contains(item->metaContact()))
 	{
 		if (mMainWidget->contactComboBox->currentIndex() == 0
-				|| mMetaContactList.at(mMainWidget->contactComboBox->currentIndex()-1) == mSearch->item->metaContact())
+		    || mMetaContactList.at(mMainWidget->contactComboBox->currentIndex()-1) == item->metaContact())
 		{
-			HistoryLogger hlog(mSearch->item->metaContact());
+			HistoryLogger hlog(item->metaContact());
 
-			QList<Kopete::Contact*> contacts=mSearch->item->metaContact()->contacts();
+			QList<Kopete::Contact*> contacts=item->metaContact()->contacts();
 
 			foreach(Kopete::Contact* contact, contacts)
 			{
-				mSearch->datePrevious = mSearch->item->date();
+				mSearch->datePrevious = item->date();
 
 				QString fullText;
 
-				QFile file(hlog.getFileName(contact, mSearch->item->date()));
+				QFile file(hlog.getFileName(contact, item->date()));
 				file.open(QIODevice::ReadOnly);
 				if (!file.isOpen())
 				{
@@ -519,7 +499,7 @@ void HistoryDialog::searchFirstStep()
 					if (textLine.contains(mMainWidget->searchLine->text(), Qt::CaseInsensitive))
 					{
 						rx.indexIn(textLine);
-						mSearch->dateSearchMap[QDate(mSearch->item->date().year(),mSearch->item->date().month(),rx.cap(1).toInt())].push_back(mSearch->item->metaContact());
+						mSearch->dateSearchMap[QDate(item->date().year(),item->date().month(),rx.cap(1).toInt())].push_back(item->metaContact());
 					}
 				}
 
@@ -528,9 +508,12 @@ void HistoryDialog::searchFirstStep()
 		}
 	}
 
-	mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling());
+	if ( item && mSearch->dateSearchMap[item->date()].contains(item->metaContact()) )
+		item->setHidden(false);
 
-	if(mSearch->item != 0)
+	mSearch->itemIndex++;
+
+	if( mSearch->itemIndex < mMainWidget->dateTreeWidget->topLevelItemCount() )
 	{
 		// Next iteration
 		mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
@@ -539,13 +522,6 @@ void HistoryDialog::searchFirstStep()
 	}
 	else
 	{
-		mSearch->item = static_cast<KListViewDateItem*>(mMainWidget->dateListView->firstChild());
-		do
-		{
-			if (mSearch->dateSearchMap[mSearch->item->date()].contains(mSearch->item->metaContact()))
-				mSearch->item->setVisible(true);
-		}
-		while((mSearch->item = static_cast<KListViewDateItem *>(mSearch->item->nextSibling())));
 		mMainWidget->searchButton->setText(i18n("&Search"));
 
 		delete mSearch;
@@ -559,7 +535,7 @@ void HistoryDialog::searchFirstStep()
 // When a contact is selected in the combobox. Item 0 is All contacts.
 void HistoryDialog::slotContactChanged(int index)
 {
-	mMainWidget->dateListView->clear();
+	mMainWidget->dateTreeWidget->clear();
 	if (index == 0)
 	{
         setCaption(i18n("History for All Contacts"));
