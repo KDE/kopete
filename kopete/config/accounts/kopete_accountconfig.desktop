@@ -74,6 +74,7 @@ Comment[nb]=Rediger kontoene og identitetene dine
 Comment[pt]=Gerir as Suas Contas e Identidades
 Comment[pt_BR]=Gerir as Suas Contas e Identidades
 Comment[sv]=Hantera dina konton och identiteter
+Comment[x-test]=xxManage Your Accounts and Identitiesxx
 Comment[zh_CN]=管理您的账户和身份
 Comment[zh_TW]=管理您的帳號與身份
 DocPath=kopete/configure-dialog.html#configuring-accounts
