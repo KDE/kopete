@@ -78,35 +78,6 @@ void notifyConnectionLost( const Account *account, const QString caption, const 
 	notify( account->accountIcon(32), QString::fromLatin1("connection_lost"), caption.isEmpty() ? notifyConnectionLost_DefaultCaption : caption, message.isEmpty() ? notifyConnectionLost_DefaultMessage : message, explanation.isEmpty() ? notifyConnectionLost_DefaultExplanation : explanation, debugInfo);
 }
 
-bool isHostReachable(const QString &host)
-{
-	Q_UNUSED(host);
-#ifdef __GNUC__
-#warning TODO
-#endif
-#if 0
-
-	const int NetWorkStatusUnknown = 1;
-	const int NetWorkStatusOnline = 8;
-	DCOPCString replyType;
-	QByteArray params;
-	QByteArray reply;
-
-	QDataStream stream(&params, QIODevice::WriteOnly);
-	stream << host;
-
-	if ( KApplication::kApplication()->dcopClient()->call( "kded", "networkstatus", "status(QString)", params, replyType, reply ) && (replyType == "int") )
-	{
-		int result;
-		QDataStream stream2( &reply, QIODevice::ReadOnly );
-		stream2 >> result;
-		return (result != NetWorkStatusUnknown) && (result != NetWorkStatusOnline);
-	}
-	return false; // On error, assume we are online
-#endif
-	return true;
-}
-
 void notifyCannotConnect( const Account *account, const QString explanation, const QString debugInfo)
 {
 	Q_UNUSED(explanation);

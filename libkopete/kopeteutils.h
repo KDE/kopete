@@ -33,13 +33,6 @@ namespace Utils
 {
 
 /**
- * Checks if host is accessible. Useful for plugins to check for disconnected events.
- *
- * @param host The host to be cheked
- */
-bool isHostReachable( const QString &host );
-
-/**
  * Notifies the user connection has been lost without coupling plugins with GUI code.
  *
  * @param account The account that lost the connection and wants to notify the user.
