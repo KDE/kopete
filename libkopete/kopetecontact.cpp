@@ -763,6 +763,7 @@ void Kopete::Contact::setPhoto(const QString &photoPath)
 void Kopete::Contact::emitPropertyChanged( PropertyContainer *container, const QString &key,
                           const QVariant &oldValue, const QVariant &newValue )
 {
+	Q_UNUSED( container )
 	emit propertyChanged( this, key, oldValue, newValue );
 }
 
