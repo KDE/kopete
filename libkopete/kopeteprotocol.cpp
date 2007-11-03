@@ -372,11 +372,13 @@ Contact *Protocol::deserializeContact(
 KJob *Protocol::createProtocolTask(const QString &taskType)
 {
 	// Default implementation does nothing
+	Q_UNUSED( taskType )
 	return 0;
 }
 
 bool Protocol::validatePassword( const QString & password ) const
 {
+	Q_UNUSED( password )
     return true;
 }
 
