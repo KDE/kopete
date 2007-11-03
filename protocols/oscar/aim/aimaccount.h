@@ -43,6 +43,7 @@ class StatusMessage;
 }
 
 class KAction;
+class KToggleAction;
 class OscarContact;
 class AIMAccount;
 class AIMProtocol;
@@ -135,6 +136,10 @@ private:
 
     AIMJoinChatUI* m_joinChatDialog;
 	QString mInitialStatusMessage;
+
+	KAction* mJoinChatAction;
+	KAction* mEditInfoAction;
+	KToggleAction* mActionInvisible;
 };
 #endif
 //kate: tab-width 4; indent-mode csands;

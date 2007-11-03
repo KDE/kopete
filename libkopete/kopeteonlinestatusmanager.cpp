@@ -409,7 +409,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		{
 			if(options & OnlineStatusManager::HasStatusMessage)
 			{
-				action = new AwayAction( status, caption, status.iconFor(account), KShortcut(), account,
+				action = new AwayAction( status, caption, status.iconFor(account), KShortcut(), account, account,
 							 SLOT( setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage& ) ));
 			}
 			else
@@ -418,7 +418,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 				connect(action, SIGNAL(activated(const Kopete::OnlineStatus&)) ,
                                         account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
 			}
-                        action->setObjectName( actionName ); // for the lookup by name above
+			action->setObjectName( actionName ); // for the lookup by name above
 		}
 
 		if( options & OnlineStatusManager::DisabledIfOffline )

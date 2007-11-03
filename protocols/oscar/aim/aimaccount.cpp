@@ -227,6 +227,15 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 	QObject::connect( engine(), SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ),
 			this, SLOT( userLeftChat( Oscar::WORD, const QString&, const QString& ) ) );
 
+	// Create actions
+	mJoinChatAction = new KAction( i18n( "Join Chat..." ), this );
+	QObject::connect( mJoinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChat()) );
+	
+	mEditInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), this );
+	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()) );
+	
+	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );
+	QObject::connect( mActionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
 }
 
 AIMAccount::~AIMAccount()
@@ -274,23 +283,13 @@ KActionMenu* AIMAccount::actionMenu()
 
 	mActionMenu->addSeparator();
 
-	KAction* m_joinChatAction = new KAction( i18n( "Join Chat..." ), this );
-        //, "join_a_chat" );
-	QObject::connect( m_joinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChat()) );
-	mActionMenu->addAction( m_joinChatAction );
+	mActionMenu->addAction( mJoinChatAction );
+	mActionMenu->addAction( mEditInfoAction );
 
-	KAction* m_editInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), this );
-        //, "actionEditInfo" );
-	QObject::connect( m_editInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()) );
-	mActionMenu->addAction( m_editInfoAction );
-
-	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), this );
-        //, "actionInvisible" );
 	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );
-	actionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
-	actionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
-	QObject::connect( actionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
-	mActionMenu->addAction( actionInvisible );
+	mActionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
+	mActionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
+	mActionMenu->addAction( mActionInvisible );
 
 	return mActionMenu;
 }

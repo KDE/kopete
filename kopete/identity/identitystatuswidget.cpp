@@ -229,7 +229,9 @@ void IdentityStatusWidget::slotAccountLinkActivated(const QString &link)
 	if (!a)
 		return;
 
-	a->actionMenu()->menu()->exec(QCursor::pos());
+	KActionMenu *actionMenu = a->actionMenu();
+	actionMenu->menu()->exec(QCursor::pos());
+	delete actionMenu;
 }
 
 void IdentityStatusWidget::slotPhotoLinkActivated(const QString &link)

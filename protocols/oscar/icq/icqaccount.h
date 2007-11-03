@@ -26,7 +26,9 @@
 #include "oscarpresence.h"
 
 class KAction;
-namespace Kopete { class AwayAction; class StatusMessage; }
+class KToggleAction;
+
+namespace Kopete { class StatusMessage; }
 class ICQProtocol;
 class ICQAccount;
 class ICQUserInfoWidget;
@@ -100,6 +102,9 @@ private:
 	QString mInitialStatusMessage;
 	ICQUserInfoWidget* mInfoWidget;
 	ICQContact* mInfoContact;
+
+	KAction* mEditInfoAction;
+	KToggleAction* mActionInvisible;
 };
 
 #endif
