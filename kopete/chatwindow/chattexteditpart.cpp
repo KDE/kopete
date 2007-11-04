@@ -27,7 +27,7 @@
 #include <kcompletion.h>
 #include <kdebug.h>
 #include <ktextedit.h>
-//#include <ksyntaxhighlighter.h>
+#include <sonnet/highlighter.h>
 
 #include <QtCore/QTimer>
 #include <QtCore/QRegExp>
@@ -51,6 +51,7 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 //	textEdit()->setWrapPolicy( Q3TextEdit::AtWhiteSpace );
 //	textEdit()->setAutoFormatting( Q3TextEdit::AutoNone );
 
+	m_highlighter = new Sonnet::Highlighter( textEdit() );
 	// some signals and slots connections
 	connect( textEdit(), SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
 
@@ -89,17 +90,12 @@ void ChatTextEditPart::toggleAutoSpellCheck( bool enabled )
 		enabled = false;
 
 	m_autoSpellCheckEnabled = enabled;
-#ifdef __GNUC__
-#warning Port to new SpellHightlighter interface, disabled to make compile (-DarkShock)
-#endif
-#if 0
 	if ( spellHighlighter() )
 	{
 		spellHighlighter()->setAutomatic( enabled );
 		spellHighlighter()->setActive( enabled );
 	}
 	textEdit()->setCheckSpellingEnabled( enabled );
-#endif
 }
 
 bool ChatTextEditPart::autoSpellCheckEnabled() const
@@ -107,18 +103,9 @@ bool ChatTextEditPart::autoSpellCheckEnabled() const
 	return m_autoSpellCheckEnabled;
 }
 
-KDictSpellingHighlighter* ChatTextEditPart::spellHighlighter()
+Sonnet::Highlighter* ChatTextEditPart::spellHighlighter()
 {
-#ifdef __GNUC__
-#warning disabled to make it compile
-#endif
-#if 0
-	Q3SyntaxHighlighter *qsh = textEdit()->syntaxHighlighter();
-	KDictSpellingHighlighter* kdsh = dynamic_cast<KDictSpellingHighlighter*>( qsh );
-	return kdsh;
-#else 
-	return 0l;
-#endif
+	return m_highlighter;
 }
 
 // NAUGHTY, BAD AND WRONG! (but needed to fix nick complete bugs)

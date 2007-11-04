@@ -864,26 +864,19 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 	}
 	else if( event->provides( "kopete/x-metacontact" ) )
 	{
-#ifdef __GNUC__
-#warning commented to make it compile
-#endif
-#if 0
 		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
-		Kopete::MetaContact *m=Kopete::ContactList::self()->metaContact(metacontactID);
-
-		if( m && m_manager->mayInvite())
+		Kopete::MetaContact *parent = Kopete::ContactList::self()->metaContact(metacontactID);
+		if ( parent && m_manager->mayInvite() )
 		{
-			cts=m->contacts();
-			for ( i = 0; i != cts.size(); i++)
+			foreach ( Kopete::Contact * candidate, parent->contacts() )
 			{
-				if(cts[i] && cts[i]->account() == m_manager->account())
+				if( candidate && candidate->account() == m_manager->account() && candidate->isOnline())
 				{
-					if( cts[i] != m_manager->myself() &&  !m_manager->members().contains(cts[i])  && cts[i]->isOnline())
+					if( candidate != m_manager->myself() &&  !m_manager->members().contains( candidate ) )
 						event->accept();
 				}
 			}
 		}
-#endif
 	}
 	// make sure it doesn't come from the current chat view - then it's an emoticon
 	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 &&
@@ -900,7 +893,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 
 void ChatView::dropEvent ( QDropEvent * event )
 {
-	QList<Kopete::Contact*> cts;
+	Kopete::ContactPtrList contacts;
 	int i;
 
 	if( event->provides( "kopete/x-contact" ) )
@@ -911,10 +904,9 @@ void ChatView::dropEvent ( QDropEvent * event )
 			QString contact=lst[2];
 
 			bool found =false;
-			cts=m_manager->members();
-			for ( i = 0; i != cts.size(); i++ )
+			foreach ( Kopete::Contact * candidate, m_manager->members() )
 			{
-				if(cts[i]->contactId() == contact)
+				if(candidate->contactId() == contact)
 				{
 					found=true;
 					break;
@@ -930,18 +922,17 @@ void ChatView::dropEvent ( QDropEvent * event )
 #ifdef __GNUC__
 #warning commented to make it compile
 #endif
-#if 0
+#if 1
 		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
-		Kopete::MetaContact *m=Kopete::ContactList::self()->metaContact(metacontactID);
-		if(m && m_manager->mayInvite())
+		Kopete::MetaContact *parent = Kopete::ContactList::self()->metaContact(metacontactID);
+		if ( parent && m_manager->mayInvite() )
 		{
-			cts=m->contacts();
-			for ( i = 0; i != cts.size(); i++ )
+			foreach ( Kopete::Contact * candidate, parent->contacts() )
 			{
-				if(cts[i] && cts[i]->account() == m_manager->account() && cts[i]->isOnline())
+				if( candidate && candidate->account() == m_manager->account() && candidate->isOnline())
 				{
-					if( cts[i] != m_manager->myself() &&  !m_manager->members().contains(cts[i]) )
-						m_manager->inviteContact(c->contactId());
+					if( candidate != m_manager->myself() &&  !m_manager->members().contains( candidate ) )
+						m_manager->inviteContact(candidate->contactId());
 				}
 			}
 		}

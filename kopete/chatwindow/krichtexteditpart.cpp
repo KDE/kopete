@@ -168,13 +168,8 @@ void KRichTextEditPart::setRichTextEnabled( bool enable )
 
     // Spellchecking disabled when using rich text because the
     // text we were getting from widget was coloured HTML!
-#ifdef __GNUC__
-#warning Renable spellchecker (-DarkShock)
-#endif
-#if 0
-    editor->setCheckSpellingEnabled( !richTextEnabled() );
-    checkSpelling->setEnabled( !richTextEnabled() );
-#endif
+    d->editor->setCheckSpellingEnabled( !isRichTextEnabled() );
+    d->checkSpelling->setEnabled( !isRichTextEnabled() );
 
     //Enable / disable buttons
     updateActions();

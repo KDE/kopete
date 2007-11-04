@@ -26,7 +26,10 @@
 class QTimer;
 
 class KCompletion;
-class KDictSpellingHighlighter;
+
+namespace Sonnet {
+	class Highlighter;
+}
 
 namespace Kopete
 {
@@ -177,7 +180,7 @@ private slots:
 	void slotPropertyChanged( Kopete::Contact *, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 private:
-	KDictSpellingHighlighter* spellHighlighter();
+	Sonnet::Highlighter* spellHighlighter();
 	void setProtocolRichTextSupport();
 
 private:
@@ -200,6 +203,7 @@ private:
 	QTimer *m_typingRepeatTimer;
 	QTimer *m_typingStopTimer;
 	bool m_autoSpellCheckEnabled;
+	Sonnet::Highlighter *m_highlighter;
 };
 
 #endif
