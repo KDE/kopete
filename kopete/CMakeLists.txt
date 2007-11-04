@@ -59,7 +59,6 @@ set(kopete_SRCS
    kopetewindow.cpp 
    kopeteidentitystatusbaricon.cpp 
    kopetedbusinterface.cpp
-#   kimifaceimpl.cpp 
    )
 
 QT4_ADD_DBUS_ADAPTOR(kopete_SRCS org.kde.Kopete.xml kopetedbusinterface.h KopeteDBusInterface)
