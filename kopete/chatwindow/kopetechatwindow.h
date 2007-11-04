@@ -138,7 +138,7 @@ private:
 	QTabWidget *m_sideBarTabWidget;
 
 	//
-	ChatView *m_activeView;
+	QPointer<ChatView> m_activeView;
 	ChatView *m_popupView;
 	bool m_alwaysShowTabs;
 	bool updateBg;
@@ -237,7 +237,7 @@ private:
 
 protected:
 	virtual void closeEvent( QCloseEvent *e );
-	virtual void windowActivationChange( bool );
+	virtual void changeEvent( QEvent *e );
 };
 
 #endif

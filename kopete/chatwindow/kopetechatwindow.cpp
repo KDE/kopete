@@ -791,6 +791,9 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 			setActiveView( static_cast<ChatView*>(m_tabBar->currentWidget()) );
 	}
 
+	if( m_activeView == view )
+		m_activeView = 0;
+
 	if( chatViewList.isEmpty() )
 		close();
 	else if( !m_alwaysShowTabs && chatViewList.count() == 1)
@@ -1110,9 +1113,9 @@ void KopeteChatWindow::slotChatSave()
 		m_activeView->messagePart()->save();
 }
 
-void KopeteChatWindow::windowActivationChange( bool )
+void KopeteChatWindow::changeEvent( QEvent *e )
 {
-	if( isActiveWindow() && m_activeView )
+	if( e->type() == QEvent::ActivationChange && isActiveWindow() && m_activeView )
 		m_activeView->setActive( true );
 }
 

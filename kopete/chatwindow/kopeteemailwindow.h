@@ -60,7 +60,7 @@ signals:
 
 protected:
 	virtual void closeEvent( QCloseEvent *e );
-	virtual void windowActivationChange( bool activated );
+	virtual void changeEvent( QEvent *e );
 
 private slots:
 	void slotReplySend();

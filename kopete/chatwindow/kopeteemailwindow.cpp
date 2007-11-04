@@ -559,9 +559,9 @@ void KopeteEmailWindow::raise(bool activate)
 		KWindowSystem::activateWindow( winId() );
 }
 
-void KopeteEmailWindow::windowActivationChange( bool )
+void KopeteEmailWindow::changeEvent( QEvent *e )
 {
-	if( isActiveWindow() )
+	if( e->type() == QEvent::ActivationChange && isActiveWindow() )
 		emit( activated( static_cast<KopeteView*>(this) ) );
 }
 
