@@ -215,7 +215,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() &&
 			( Solid::Networking::status() == Solid::Networking::Unknown ||
 			  Solid::Networking::status() == Solid::Networking::Connected ) )
-		Kopete::AccountManager::self()->connectAll();
+		Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Online, QString(), Kopete::AccountManager::ConnectIfOffline );
 
 	QStringList connectArgs = args->getOptionList( "autoconnect" );
 	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )

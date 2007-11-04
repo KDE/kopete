@@ -119,16 +119,6 @@ public:
 
 public slots:
 	/**
- 	 * @deprecated  use setOnlineStatus
-	 */
-	void connectAll();
-
-	/**
-	 * @deprecated  use setOnlineStatus
-	 */
-	void disconnectAll();
-
-	/**
 	 * @brief Set all accounts a status in the specified category
 	 *
 	 * Account that are offline will not be connected, unless the ConnectIfOffline flag is set.
@@ -146,16 +136,6 @@ public slots:
 	 * @param message Status message to set
 	 */
 	void setStatusMessage(const QString &message);
-	
-	/**
-	 * @deprecated  use setOnlineStatus
-	 */
-	void setAwayAll( const QString &awayReason = QString(), bool away=true );
-
-	/**
-	 * @deprecated  use setOnlineStatus
-	 */
-	void setAvailableAll( const QString &awayReason = QString() );
 
 	/**
 	 * \internal
@@ -202,9 +182,14 @@ private:
 
 private slots:
     /**
-     * Slot called by ConnectionManager to connect everything
+     * Try to connect every account that should be connected automatically
      */
-    void doConnect();
+    void networkConnected();
+    /**
+     * Disconnect everything
+     */
+    void networkDisconnected();
+
 	void slotPluginLoaded( Kopete::Plugin *plugin );
 	void slotAccountOnlineStatusChanged(Kopete::Contact *c,
 		const Kopete::OnlineStatus &oldStatus, const Kopete::OnlineStatus &newStatus);
@@ -216,7 +201,7 @@ private slots:
 	void unregisterAccount( const Kopete::Account *account );
 
 private:
-	bool isAnyAccountConnected();
+	bool isAnyAccountConnected() const;
 	static AccountManager *s_self;
 	class Private;
 	Private *d;

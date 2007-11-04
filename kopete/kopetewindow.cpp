@@ -463,14 +463,14 @@ void KopeteWindow::slotShowHide()
 
 void KopeteWindow::slotToggleAway()
 {
+	kDebug(14000);
 	Kopete::Away *mAway = Kopete::Away::getInstance();
 	if ( mAway->globalAway() )
 	{
-		Kopete::AccountManager::self()->setAvailableAll();
+		Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Online );
 	}
 	else
 	{
-		QString awayReason = mAway->getMessage( 0 );
 		slotGlobalAway();
 	}
 }
@@ -645,7 +645,7 @@ void KopeteWindow::slotUpdateToolbar()
 
 void KopeteWindow::slotGlobalAway()
 {
-	Kopete::AccountManager::self()->setAwayAll( d->globalStatusMessageStored );
+	Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Away, d->globalStatusMessageStored );
 }
 
 void KopeteWindow::slotGlobalBusy()
@@ -656,7 +656,7 @@ void KopeteWindow::slotGlobalBusy()
 
 void KopeteWindow::slotGlobalAvailable()
 {
-	Kopete::AccountManager::self()->setAvailableAll( d->globalStatusMessageStored );
+	Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Online, d->globalStatusMessageStored );
 }
 
 void KopeteWindow::slotSetInvisibleAll()
@@ -668,7 +668,7 @@ void KopeteWindow::slotDisconnectAll()
 {
 	d->globalStatusMessage->setText( "" );
 	d->globalStatusMessageStored = QString();
-	Kopete::AccountManager::self()->disconnectAll();
+	Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Offline, d->globalStatusMessageStored );
 }
 
 bool KopeteWindow::queryClose()

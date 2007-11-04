@@ -79,8 +79,8 @@ AccountManager::AccountManager()
 {
 	setObjectName( "KopeteAccountManager" );
 	d = new Private;
-	connect( Solid::Networking::notifier(), SIGNAL(shouldConnect()), this, SLOT( doConnect() ) );
-	connect( Solid::Networking::notifier(), SIGNAL(shouldDisconnect()), this, SLOT( disconnectAll() ) );
+	connect( Solid::Networking::notifier(), SIGNAL(shouldConnect()), this, SLOT( networkConnected() ) );
+	connect( Solid::Networking::notifier(), SIGNAL(shouldDisconnect()), this, SLOT( networkDisconnected() ) );
 }
 
 
@@ -91,7 +91,7 @@ AccountManager::~AccountManager()
 	delete d;
 }
 
-bool AccountManager::isAnyAccountConnected()
+bool AccountManager::isAnyAccountConnected() const
 {
 	foreach( Account *a , d->accounts )
 	{
@@ -102,45 +102,32 @@ bool AccountManager::isAnyAccountConnected()
 	return false;
 }
 
-void AccountManager::connectAll()
+void AccountManager::setOnlineStatus( uint category, const QString& awayMessage, uint flags )
 {
-	setOnlineStatus( OnlineStatusManager::Online  );
-}
+	kDebug() << "category: " << category << ", Kopete::OnlineStatusManager::Away: " << Kopete::OnlineStatusManager::Away << endl;
+	OnlineStatusManager::Categories categories 
+		= (OnlineStatusManager::Categories)category;
 
-void AccountManager::setAvailableAll( const QString &awayReason )
-{
-	setOnlineStatus( OnlineStatusManager::Online  , awayReason );
-}
-
-void AccountManager::disconnectAll()
-{
-	setOnlineStatus( OnlineStatusManager::Offline   );
-}
-
-void AccountManager::setAwayAll( const QString &awayReason, bool away )
-{
-	setOnlineStatus( away ? OnlineStatusManager::Away : OnlineStatusManager::Online  , awayReason );
-}
-
-void AccountManager::setOnlineStatus( uint category , const QString& awayMessage, uint flags )
-{
-	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
-	bool anyConnected = isAnyAccountConnected();
-
-	foreach( Account *account ,  d->accounts )
+	foreach( Account *account, d->accounts )
 	{
-		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor);
-		if ( anyConnected )
-		{
-			if ( account->isConnected() || ( (flags & ConnectIfOffline) && !account->excludeConnect() ) )
-				account->setOnlineStatus( status , awayMessage );
+		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus( account->protocol(), categories );
+		// Going offline is always respected
+		if ( category & Kopete::OnlineStatusManager::Offline ) {
+			account->setOnlineStatus( status, awayMessage );
+			continue;
 		}
-		else
-		{
+		
+		if ( isAnyAccountConnected() ) {
+			if ( account->isConnected() || ( (flags & ConnectIfOffline) && !account->excludeConnect() ) )
+				account->setOnlineStatus( status, awayMessage );
+		}
+		else {
 			if ( !account->excludeConnect() )
-				account->setOnlineStatus( status , awayMessage );
+				account->setOnlineStatus( status, awayMessage );
 		}
 	}
+	// mark ourselves as globally away if appropriate
+	Away::setGlobalAway( category & Kopete::OnlineStatusManager::Away );
 }
 
 void AccountManager::setStatusMessage(const QString &message)
@@ -418,10 +405,15 @@ void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 	emit accountOnlineStatusChanged(account, oldStatus, newStatus);
 }
 
-void AccountManager::doConnect()
+void AccountManager::networkConnected()
 {
 	if ( Kopete::BehaviorSettings::self()->autoConnect() )
-		setAvailableAll();
+		setOnlineStatus( Kopete::OnlineStatusManager::Online, QString(), ConnectIfOffline );
+}
+
+void AccountManager::networkDisconnected()
+{
+	setOnlineStatus( Kopete::OnlineStatusManager::Offline );
 }
 
 } //END namespace Kopete

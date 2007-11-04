@@ -368,15 +368,11 @@ void Kopete::CommandHandler::slotAwayCommand( const QString &args, Kopete::ChatS
 
 void Kopete::CommandHandler::slotAwayAllCommand( const QString &args, Kopete::ChatSession *manager )
 {
-	if( manager->account()->isAway() )
-		Kopete::AccountManager::self()->setAvailableAll();
-
-	else
-	{
-		if( args.isEmpty() )
-			Kopete::AccountManager::self()->setAwayAll();
-		else
-			Kopete::AccountManager::self()->setAwayAll( args );
+	if( manager->account()->isAway() ) {
+		Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Online );
+	}
+	else {
+		Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Away, args );
 	}
 }
 

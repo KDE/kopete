@@ -223,12 +223,12 @@ QStringList KopeteDBusInterface::accounts() const
 
 void KopeteDBusInterface::connectAll()
 {
-	Kopete::AccountManager::self()->connectAll();
+	Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Online, QString(), Kopete::AccountManager::ConnectIfOffline );
 }
 
 void KopeteDBusInterface::disconnectAll()
 {
-	Kopete::AccountManager::self()->disconnectAll();
+	Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Offline );
 }
 
 void KopeteDBusInterface::setOnlineStatus(const QString &status, const QString &message)
