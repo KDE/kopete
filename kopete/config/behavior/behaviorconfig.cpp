@@ -82,11 +82,6 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
 	// "Chat" TAB ===============================================================
 	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
 		 this, SLOT(slotValueChanged(int)));
-#ifdef __GNUC__
-#warning "Where is slot BehaviorConfig::slotUpdatePluginLabel?"
-#endif
-    connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
-		 this, SLOT(slotUpdatePluginLabel(int)));
 
 	// "Away" TAB ===============================================================
 	connect( mPrfsAway->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
@@ -95,7 +90,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
 
 void BehaviorConfig::save()
 {
-//	kDebug(14000) << "called.";
+//	kDebug(14000);
 
 	KCModule::save();
 
@@ -112,7 +107,7 @@ void BehaviorConfig::save()
 
 void BehaviorConfig::load()
 {
-//	kDebug(14000) << "called";
+//	kDebug(14000);
 	awayInstance = Kopete::Away::getInstance();
 
 	KCModule::load();
