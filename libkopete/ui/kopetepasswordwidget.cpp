@@ -71,7 +71,7 @@ void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
 	if ( source && source->remembered() )
 	{
 		mRemembered->setTristate();
-		mRemembered->setCheckState( Qt::Checked );
+		mRemembered->setCheckState( Qt::PartiallyChecked );
 		mPassword->setEnabled( true );
 		source->requestWithoutPrompt( this, SLOT( receivePassword( const QString & ) ) );
 	}
@@ -119,6 +119,11 @@ void Kopete::UI::PasswordWidget::save( Kopete::Password *target )
 
 bool Kopete::UI::PasswordWidget::validate()
 {
+	// Unchecked means the password should not be remembered, partially checked 
+	// we're waiting for kwallet. Let it pass in both cases.
+	if ( mRemembered->checkState() != Qt::Checked )
+		return true;
+
 	if ( d->protocol ) {
 		return d->protocol->validatePassword( password() );
 	}
