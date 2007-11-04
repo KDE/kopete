@@ -146,8 +146,6 @@ void AccountIdentityDialog::slotLoadAccounts()
 
 void AccountIdentityDialog::accept()
 {
-	Kopete::IdentityManager *manager = Kopete::IdentityManager::self();
-
 	Kopete::Identity *ident = d->identityItems[d->selectedIdentity()]; 
 	if (!ident)
 		return;
