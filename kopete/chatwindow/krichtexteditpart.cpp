@@ -120,6 +120,11 @@ KRichTextEditPart::KRichTextEditPart(QWidget *wparent, QObject*, const QStringLi
     readConfig();
 }
 
+KRichTextEditPart::~KRichTextEditPart()
+{
+    delete d;
+}
+
 KTextEdit *KRichTextEditPart::textEdit()
 {
     return static_cast<KTextEdit*>(d->editor);

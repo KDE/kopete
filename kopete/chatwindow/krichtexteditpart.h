@@ -64,6 +64,8 @@ public:
 
     KRichTextEditPart(QWidget *parent, QObject *, const QStringList &);
 
+    ~KRichTextEditPart();
+
     /**
      * @brief Get the text in the editor in the given format.
      * By default if return the text using the most appropriate format.
