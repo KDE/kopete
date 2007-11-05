@@ -31,6 +31,7 @@
 #include "kopeteviewmanager.h"
 
 #include <kaction.h>
+#include <ktoolbarspaceraction.h>
 #include <kstandardaction.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
@@ -191,13 +192,6 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 
 	d->sendInProgress = false;
 
-#ifdef __GNUC__
-#warning Port to new KToolBar
-#endif
-#if 0
-	toolBar()->alignItemRight( 99 );
-#endif
-
 	d->visible = false;
 	d->queuePosition = 0;
 
@@ -270,6 +264,10 @@ void KopeteEmailWindow::initActions(void)
 	d->anim->setObjectName( QLatin1String("kde toolbar widget") );
 	d->anim->setMargin( 5 );
 	d->anim->setPixmap( d->normalIcon );
+
+	KAction *spacerAction = new KToolBarSpacerAction( this );
+	spacerAction->setText( i18n( "Spacer for animation" ) );
+	coll->addAction( "toolbar_spacer", spacerAction );
 
 	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll );
         coll->addAction( "toolbar_animation", action );
