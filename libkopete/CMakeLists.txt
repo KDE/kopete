@@ -207,6 +207,7 @@ install( FILES
   kopetepassword.h
   kopetepicture.h
   kopeteplugin.h
+  kopetepluginmanager.h
   kopeteprotocol.h
   kopetepropertycontainer.h
   kopetesimplemessagehandler.h
