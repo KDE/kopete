@@ -207,6 +207,9 @@ QString KopeteDBusInterface::labelForIdentity(const QString & id) const
     if ( identity ) {
         return identity->label();
     }
+	else {
+		return QString();
+	}
 }
 
 QStringList KopeteDBusInterface::accounts() const
