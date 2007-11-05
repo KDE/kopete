@@ -41,11 +41,11 @@
 
 #include <qtabwidget.h>
 
-typedef KGenericFactory<BehaviorConfig, QWidget> KopeteBehaviorConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_behaviorconfig, KopeteBehaviorConfigFactory( "kcm_kopete_behaviorconfig" ) )
+K_PLUGIN_FACTORY( KopeteBehaviorConfigFactory,
+		registerPlugin<BehaviorConfig>(); )
+K_EXPORT_PLUGIN( KopeteBehaviorConfigFactory("kcm_kopete_behaviorconfig") )
 
-
-BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
+BehaviorConfig::BehaviorConfig(QWidget *parent, const QVariantList &args) :
 		KCModule( KopeteBehaviorConfigFactory::componentData(), parent, args )
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);

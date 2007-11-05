@@ -38,7 +38,7 @@ class BehaviorConfig : public KCModule
 	Q_OBJECT
 
 	public:
-		BehaviorConfig(QWidget *parent, const QStringList &args) ;
+		BehaviorConfig(QWidget *parent, const QVariantList &args) ;
 
 		virtual void save();
 		virtual void load();
