@@ -40,17 +40,11 @@ public:
 	virtual void load();
 
 private slots:
-	void slotSelectedEmoticonsThemeChanged();
 	void slotHighlightChanged();
 	void slotChangeFont();
 	void slotEditTooltips();
 	void emitChanged();
-	void installEmoticonTheme();
-	void removeSelectedEmoticonTheme();
-	void slotGetEmoticonThemes();
-	void updateEmoticonsButton(bool);
 private:
-	void updateEmoticonlist();
 	
 private:
 	class Private;

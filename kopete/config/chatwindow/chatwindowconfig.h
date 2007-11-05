@@ -23,12 +23,14 @@
 #include <kcmodule.h>
 #undef KDE3_SUPPORT
 #include "ui_chatwindowconfig_style.h"
+#include "ui_chatwindowconfig_emoticons.h"
 #include <kopetechatwindowstyle.h>
 
 class FakeProtocol;
 class FakeAccount;
 class FakeContact;
 class ChatMessagePart;
+class QTabWidget;
 
 namespace Kopete { class MetaContact; class ChatSession; }
 
@@ -55,11 +57,23 @@ private slots:
 	void slotGetChatStyles();
 	void slotLoadChatStyles();
 	void slotUpdateChatPreview();
+	//----- Emoticons TAB ---------------------
+	void slotSelectedEmoticonsThemeChanged();
+	void slotInstallEmoticonTheme();
+	void slotRemoveEmoticonTheme();
+	void slotGetEmoticonThemes();
+	void slotUpdateEmoticonsButton(bool);
+
 private:
+	//----- Style TAB ---------------------
 	void createPreviewChatSession();
 	void createPreviewMessages();
+	//----- Emoticons TAB ---------------------
+	void updateEmoticonList();
 	
 private:
+	//----- TAB Widget ---------------------
+	QTabWidget *m_tab;
 	//----- Style TAB ----------------------
 	Ui::ChatWindowConfig_Style m_styleUi;
 	ChatMessagePart *m_preview;
@@ -78,6 +92,8 @@ private:
 	FakeContact *m_jack;
 	Kopete::ChatSession *m_previewChatSession;
 
+	//----- Emoticons TAB ---------------------
+	Ui::ChatWindowConfig_Emoticons m_emoticonsUi;
 
 };
 #endif

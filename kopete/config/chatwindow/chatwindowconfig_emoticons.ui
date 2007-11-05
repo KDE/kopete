@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>AppearanceConfig_Emoticons</class>
- <widget class="QWidget" name="AppearanceConfig_Emoticons" >
+ <class>ChatWindowConfig_Emoticons</class>
+ <widget class="QWidget" name="ChatWindowConfig_Emoticons" >
   <property name="geometry" >
    <rect>
     <x>0</x>

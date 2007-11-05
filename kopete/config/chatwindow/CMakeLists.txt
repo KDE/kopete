@@ -12,7 +12,8 @@ set(kcm_kopete_chatwindowconfig_PART_SRCS
    chatwindowconfig.cpp  )
 
 kde4_add_ui_files(kcm_kopete_chatwindowconfig_PART_SRCS 
-   chatwindowconfig_style.ui  )
+   chatwindowconfig_style.ui
+   chatwindowconfig_emoticons.ui )
 
 kde4_add_plugin(kcm_kopete_chatwindowconfig ${kcm_kopete_chatwindowconfig_PART_SRCS})
 

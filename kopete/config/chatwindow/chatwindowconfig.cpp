@@ -32,7 +32,6 @@
 
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
-#include <kconfig.h> // for KNewStuff emoticon fetching
 #include <kdebug.h>
 #include <kfontrequester.h>
 #include <kgenericfactory.h>
@@ -75,6 +74,9 @@
 #include <kopetechatsession.h>
 #include <kopetechatsessionmanager.h>
 #include <kopetestatusmessage.h>
+#include <kopeteappearancesettings.h>
+
+#include "kopeteemoticons.h"
 
 #include "kopeteglobal.h"
 
@@ -206,13 +208,14 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 {
 	KConfigGroup config(KGlobal::config(), "ChatWindowSettings");
 
-	QWidget *styleWidget=new QWidget(this);
-	m_styleUi.setupUi(styleWidget);
-
 	QVBoxLayout *layout = new QVBoxLayout(this);
-	layout->addWidget(styleWidget);
-	setLayout(layout);
+	m_tab = new QTabWidget(this);
+	layout->addWidget(m_tab);
 
+//--------- style tab ---------------------
+	QWidget *styleWidget = new QWidget(m_tab);
+	m_styleUi.setupUi(styleWidget);
+	m_tab->addTab(styleWidget, i18n("&Style"));
 	addConfig( KopeteChatWindowSettings::self(), styleWidget );
 
 	connect(m_styleUi.styleList, SIGNAL(selectionChanged(Q3ListBoxItem *)),
@@ -248,6 +251,23 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	m_styleUi.htmlFrame->setLayout(layout);
 	// Add the preview message to the ChatMessagePart
 	createPreviewMessages();
+
+
+//--------- emoticons tab ---------------------
+	QWidget *emoticonsWidget = new QWidget(m_tab);
+	m_emoticonsUi.setupUi(emoticonsWidget);
+	m_tab->addTab(emoticonsWidget, i18n("&Emoticons"));
+	addConfig( Kopete::AppearanceSettings::self(), emoticonsWidget );
+
+	connect(m_emoticonsUi.icon_theme_list, SIGNAL(selectionChanged()),
+		this, SLOT(slotSelectedEmoticonsThemeChanged()));
+	connect(m_emoticonsUi.btnInstallTheme, SIGNAL(clicked()),
+		this, SLOT(slotInstallEmoticonTheme()));
+
+	connect(m_emoticonsUi.btnGetThemes, SIGNAL(clicked()),
+		this, SLOT(slotGetEmoticonThemes()));
+	connect(m_emoticonsUi.btnRemoveTheme, SIGNAL(clicked()),
+		this, SLOT(slotRemoveEmoticonTheme()));
 
 	load();
 }
@@ -289,6 +309,10 @@ void ChatWindowConfig::save()
 		settings->setStyleVariant( m_currentVariantMap[m_styleUi.variantList->currentText()] );
 	}
 
+	Kopete::AppearanceSettings *appearanceSettings = Kopete::AppearanceSettings::self();
+	appearanceSettings->setEmoticonTheme( m_emoticonsUi.icon_theme_list->currentText() );
+
+	appearanceSettings->writeConfig();
 	settings->writeConfig();
 	m_styleChanged = false;
 
@@ -305,6 +329,9 @@ void ChatWindowConfig::load()
 
 	// Look for available chat window styles.
 	slotLoadChatStyles();
+
+	// Look for available emoticons themes
+	updateEmoticonList();
 
 	m_loading=false;
 	slotUpdateChatPreview();
@@ -576,6 +603,131 @@ void ChatWindowConfig::slotUpdateChatPreview()
 
 	emitChanged();
 }
+
+void ChatWindowConfig::slotUpdateEmoticonsButton(bool _b)
+{
+    QString themeName = m_emoticonsUi.icon_theme_list->currentText();
+    QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+'/'));
+    m_emoticonsUi.btnRemoveTheme->setEnabled( _b && fileInf.isWritable());
+    m_emoticonsUi.btnGetThemes->setEnabled( false );
+}
+
+void ChatWindowConfig::updateEmoticonList()
+{
+	KStandardDirs dir;
+
+	m_emoticonsUi.icon_theme_list->clear(); // Wipe out old list
+	// Get a list of directories in our icon theme dir
+	QStringList themeDirs = KGlobal::dirs()->findDirs("emoticons", "");
+	// loop adding themes from all dirs into theme-list
+	for( int x = 0;x < themeDirs.count();x++)
+	{
+		QDir themeQDir(themeDirs[x]);
+		themeQDir.setFilter( QDir::Dirs ); // only scan for subdirs
+		themeQDir.setSorting( QDir::Name ); // I guess name is as good as any
+		for(unsigned int y = 0; y < themeQDir.count(); y++)
+		{
+			QStringList themes = themeQDir.entryList(QDir::Dirs, QDir::Name);
+			// We don't care for '.' and '..'
+			if ( themeQDir[y] != "." && themeQDir[y] != ".." )
+			{
+				// Add ourselves to the list, using our directory name  FIXME:  use the first emoticon of the theme.
+				QPixmap previewPixmap = QPixmap(KStandardDirs::locate("emoticons", themeQDir[y]+"/smile.png"));
+				m_emoticonsUi.icon_theme_list->insertItem(previewPixmap,themeQDir[y]);
+			}
+		}
+	}
+
+	// Where is that theme in our big-list-o-themes?
+
+	Q3ListBoxItem *item = m_emoticonsUi.icon_theme_list->findItem( Kopete::AppearanceSettings::self()->emoticonTheme() );
+
+	if (item) // found it... make it the currently selected theme
+		m_emoticonsUi.icon_theme_list->setCurrentItem( item );
+	else // Er, it's not there... select the current item
+		m_emoticonsUi.icon_theme_list->setCurrentItem( 0 );
+}
+
+void ChatWindowConfig::slotSelectedEmoticonsThemeChanged()
+{
+	QString themeName = m_emoticonsUi.icon_theme_list->currentText();
+	QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+'/'));
+	m_emoticonsUi.btnRemoveTheme->setEnabled( fileInf.isWritable() );
+
+	Kopete::Emoticons emoticons( themeName );
+	QStringList smileys = emoticons.emoticonAndPicList().keys();
+	QString newContentText = "<qt>";
+
+	for(QStringList::Iterator it = smileys.begin(); it != smileys.end(); ++it )
+		newContentText += QString::fromLatin1("<img src=\"%1\"> ").arg(*it);
+
+	newContentText += QLatin1String("</qt>");
+	m_emoticonsUi.icon_theme_preview->setHtml(newContentText);
+	emitChanged();
+}
+
+void ChatWindowConfig::slotInstallEmoticonTheme()
+{
+	KUrl themeURL = KUrlRequesterDialog::getUrl(QString::null, this,	//krazy:exclude=nullstrassign for old broken gcc
+			i18n("Drag or Type Emoticon Theme URL"));
+	if ( themeURL.isEmpty() )
+		return;
+
+	//TODO: support remote theme files!
+	if ( !themeURL.isLocalFile() )
+	{
+		KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Sorry, emoticon themes must be installed from local files."),
+		                               i18n("Could Not Install Emoticon Theme") );
+		return;
+	}
+
+	Kopete::Global::installEmoticonTheme( themeURL.path() );
+	updateEmoticonList();
+}
+
+void ChatWindowConfig::slotRemoveEmoticonTheme()
+{
+	Q3ListBoxItem *selected = m_emoticonsUi.icon_theme_list->selectedItem();
+	if(selected==0)
+		return;
+
+	QString themeName = selected->text();
+
+	QString question=i18n("<qt>Are you sure you want to remove the "
+			"<strong>%1</strong> emoticon theme?<br />"
+			"<br />"
+			"This will delete the files installed by this theme.</qt>",
+		themeName);
+
+        int res = KMessageBox::warningContinueCancel(this, question, i18n("Confirmation"),KStandardGuiItem::del());
+	if (res!=KMessageBox::Continue)
+		return;
+
+	KUrl themeUrl(KGlobal::dirs()->findResource("emoticons", themeName+'/'));
+	KIO::NetAccess::del(themeUrl, this);
+
+	updateEmoticonList();
+}
+
+void ChatWindowConfig::slotGetEmoticonThemes()
+{
+	KConfigGroup config(KGlobal::config(), "KNewStuff");
+	config.writeEntry( "ProvidersUrl",
+						"http://download.kde.org/khotnewstuff/emoticons-providers.xml" );
+	config.writeEntry( "StandardResource", "emoticons" );
+	config.writeEntry( "Uncompress", "application/x-gzip" );
+	config.sync();
+
+#ifdef __GNUC__
+#warning "Port KNS changes!"
+#endif
+#if 0
+	KNS::DownloadDialog::open( "emoticons", i18n( "Get New Emoticons") );
+#endif
+
+	updateEmoticonList();
+}
+
 
 void ChatWindowConfig::emitChanged()
 {
