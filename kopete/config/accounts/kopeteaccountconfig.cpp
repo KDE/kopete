@@ -32,7 +32,7 @@
 #include <kpushbutton.h>
 #include <kdebug.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -74,10 +74,11 @@ class KopeteIdentityLVI : public QTreeWidgetItem
 		Kopete::Identity *m_identity;
 };
 
-typedef KGenericFactory<KopeteAccountConfig, QWidget> KopeteAccountConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_accountconfig, KopeteAccountConfigFactory( "kcm_kopete_accountconfig" ) )
+K_PLUGIN_FACTORY( KopeteAccountConfigFactory,
+		registerPlugin<KopeteAccountConfig>(); )
+K_EXPORT_PLUGIN( KopeteAccountConfigFactory("kcm_kopete_accountconfig") )
 
-KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QStringList &args )
+KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QVariantList &args )
 : KCModule( KopeteAccountConfigFactory::componentData(), parent, args )
 {
 	setupUi( this );

@@ -41,7 +41,7 @@ class ChatWindowConfig : public KCModule
 friend class KopeteStyleNewStuff;
 
 public:
-	ChatWindowConfig( QWidget *parent, const QStringList &args );
+	ChatWindowConfig( QWidget *parent, const QVariantList &args );
 	~ChatWindowConfig();
 
 	virtual void save();

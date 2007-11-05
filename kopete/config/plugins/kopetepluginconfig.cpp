@@ -26,7 +26,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kpluginselector.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <ksettings/dispatcher.h>
 #include <KPluginInfo>
 
@@ -39,10 +39,11 @@ public:
 	KPluginSelector *pluginSelector;
 };
 
-typedef KGenericFactory<KopetePluginConfig, QWidget> KopetePluginConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( "kcm_kopete_pluginconfig" ) )
+K_PLUGIN_FACTORY( KopetePluginConfigFactory,
+		registerPlugin<KopetePluginConfig>(); )
+K_EXPORT_PLUGIN( KopetePluginConfigFactory("kcm_kopete_pluginconfig") )
 
-KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QStringList &args )
+KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QVariantList &args )
 : KCModule(KopetePluginConfigFactory::componentData(), parent, args), d(new KopetePluginConfigPrivate)
 {
 	d->pluginSelector = new KPluginSelector( this );

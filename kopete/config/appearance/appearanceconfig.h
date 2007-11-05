@@ -33,7 +33,7 @@ class AppearanceConfig : public KCModule
 
 
 public:
-	AppearanceConfig( QWidget *parent, const QStringList &args );
+	AppearanceConfig( QWidget *parent, const QVariantList &args );
 	~AppearanceConfig();
 
 	virtual void save();

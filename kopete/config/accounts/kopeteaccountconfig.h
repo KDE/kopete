@@ -49,7 +49,7 @@ class KopeteAccountConfig : public KCModule, private Ui::KopeteAccountConfigBase
 	Q_OBJECT
 
 public:
-	KopeteAccountConfig(QWidget *parent, const QStringList &args );
+	KopeteAccountConfig(QWidget *parent, const QVariantList &args );
 
 protected:
 	virtual void contextMenuEvent ( QContextMenuEvent * event );

@@ -34,7 +34,7 @@
 #include <kcolorbutton.h>
 #include <kdebug.h>
 #include <kfontrequester.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kio/netaccess.h>
 #include <khtmlview.h>
 #include <klineedit.h>
@@ -82,9 +82,9 @@
 
 #include "kopetechatwindowsettings.h"
 
-typedef KGenericFactory<ChatWindowConfig, QWidget> KopeteChatWindowConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_chatwindowconfig, KopeteChatWindowConfigFactory( "kcm_kopete_chatwindowconfig" ) )
-
+K_PLUGIN_FACTORY( KopeteChatWindowConfigFactory,
+		registerPlugin<ChatWindowConfig>(); )
+K_EXPORT_PLUGIN( KopeteChatWindowConfigFactory("kcm_kopete_chatwindowconfig") )
 
 // Reimplement Kopete::Contact and its abstract method
 // This is for style preview.
@@ -200,7 +200,7 @@ public:
 };
 #endif
 
-ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
+ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args ),
 		m_currentStyle (0L), m_loading(false), m_styleChanged(false),
 		m_previewProtocol(0L), m_previewAccount(0L), m_myselfMetaContact(0L),

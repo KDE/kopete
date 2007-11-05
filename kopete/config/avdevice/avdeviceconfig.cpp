@@ -31,7 +31,7 @@
 #include <kplugininfo.h>
 #include <klocale.h>
 #include <kpushbutton.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <ktrader.h>
 #include <kconfig.h>
 #include <kcombobox.h>
@@ -42,10 +42,11 @@
 #include <qgl.h>
 
 //#include "videodevice.h"
-typedef KGenericFactory<AVDeviceConfig, QWidget> KopeteAVDeviceConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_avdeviceconfig, KopeteAVDeviceConfigFactory( "kcm_kopete_avdeviceconfig" ) )
+K_PLUGIN_FACTORY( KopeteAVDeviceConfigFactory,
+		registerPlugin<AVDeviceConfig>(); )
+K_EXPORT_PLUGIN( KopeteAVDeviceConfigFactory("kcm_kopete_avdeviceconfig") )
 
-AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
+AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
  : KCModule( KopeteAVDeviceConfigFactory::componentData(), parent, args )
 {
 	kDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::componentData() called. ";

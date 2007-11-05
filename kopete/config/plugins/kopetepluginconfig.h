@@ -35,7 +35,7 @@ class KopetePluginConfig : public KCModule
 	Q_OBJECT
 
 public:
-	KopetePluginConfig( QWidget *parent, const QStringList &args  );
+	KopetePluginConfig( QWidget *parent, const QVariantList &args  );
 	~KopetePluginConfig();
 
 public slots:

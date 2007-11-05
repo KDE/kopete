@@ -38,7 +38,8 @@
 #include <kcolorbutton.h>
 #include <kdebug.h>
 #include <kfontrequester.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
+//#include <kpluginloader.h>
 #include <kio/netaccess.h>
 #include <khtmlview.h>
 #include <klineedit.h>
@@ -57,8 +58,11 @@
 
 #include "kopeteappearancesettings.h"
 
-typedef KGenericFactory<AppearanceConfig, QWidget> KopeteAppearanceConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_appearanceconfig, KopeteAppearanceConfigFactory( "kcm_kopete_appearanceconfig" ) )
+//class AppearanceConfig;
+
+K_PLUGIN_FACTORY( KopeteAppearanceConfigFactory,
+		registerPlugin<AppearanceConfig>(); )
+K_EXPORT_PLUGIN( KopeteAppearanceConfigFactory("kcm_kopete_appearanceconfig") )
 
 class FakeProtocol;
 class FakeAccount;
@@ -78,7 +82,7 @@ public:
 };
 
 
-AppearanceConfig::AppearanceConfig(QWidget *parent, const QStringList &args )
+AppearanceConfig::AppearanceConfig(QWidget *parent, const QVariantList &args )
 : KCModule( KopeteAppearanceConfigFactory::componentData(), parent, args )
 {
 	d = new Private;
