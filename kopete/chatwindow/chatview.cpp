@@ -894,7 +894,6 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 void ChatView::dropEvent ( QDropEvent * event )
 {
 	Kopete::ContactPtrList contacts;
-	int i;
 
 	if( event->provides( "kopete/x-contact" ) )
 	{
@@ -918,11 +917,6 @@ void ChatView::dropEvent ( QDropEvent * event )
 	}
 	else if( event->provides( "kopete/x-metacontact" ) )
 	{
-
-#ifdef __GNUC__
-#warning commented to make it compile
-#endif
-#if 1
 		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
 		Kopete::MetaContact *parent = Kopete::ContactList::self()->metaContact(metacontactID);
 		if ( parent && m_manager->mayInvite() )
@@ -936,7 +930,6 @@ void ChatView::dropEvent ( QDropEvent * event )
 				}
 			}
 		}
-#endif
 	}
 	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
 	{

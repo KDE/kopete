@@ -429,12 +429,6 @@ void KopeteWindow::initActions()
         actionCollection()->addAction( "Set_Away_Back",  globalSetAway );
 	connect( globalSetAway, SIGNAL( triggered(bool) ), this, SLOT( slotToggleAway() ) );
 	globalSetAway->setGlobalShortcut( KShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W) );
-
-#ifdef __GNUC__
-#warning port me - it is probably safe to just remove this line as *global* shortcut setttings
-#warning are now loaded automatically by default.
-#endif
-	//KGlobalAccel::self()->readSettings();
 }
 
 void KopeteWindow::slotShowHide()
@@ -478,10 +472,6 @@ void KopeteWindow::slotToggleAway()
 void KopeteWindow::initSystray()
 {
 	d->tray = KopeteSystemTray::systemTray( this );
-#ifdef __GNUC__
-#warning PORT ME
-#endif
-//	Kopete::UI::Global::setSysTrayWId( d->tray->winId() );
 
 	QObject::connect( d->tray, SIGNAL( aboutToShowMenu( KMenu * ) ),
 	                  this, SLOT( slotTrayAboutToShowMenu( KMenu * ) ) );

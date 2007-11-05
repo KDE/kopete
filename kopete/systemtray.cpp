@@ -100,7 +100,6 @@ KopeteSystemTray::~KopeteSystemTray()
 {
 	kDebug(14010) ;
 //	delete mBlinkTimer;
-	Kopete::UI::Global::setSysTrayWId( 0 );
 }
 
 void KopeteSystemTray::slotAboutToShowMenu()

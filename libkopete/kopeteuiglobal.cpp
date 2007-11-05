@@ -27,7 +27,6 @@ namespace Kopete
 namespace
 {
 	QPointer<QWidget> g_mainWidget;
-	int g_sysTrayWId;
 }
 
 void UI::Global::setMainWidget( QWidget *widget )
@@ -39,23 +38,6 @@ QWidget *UI::Global::mainWidget()
 {
 	return g_mainWidget;
 }
-
-void UI::Global::setSysTrayWId( int newWinId )
-{
-	g_sysTrayWId = newWinId;
-}
-
-int UI::Global::sysTrayWId()
-{
-#ifndef Q_OS_WIN	
-	if ( g_sysTrayWId == 0 )
-		return g_mainWidget->winId();
-	else
-#endif		
-		return g_sysTrayWId;
-}
-
-
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

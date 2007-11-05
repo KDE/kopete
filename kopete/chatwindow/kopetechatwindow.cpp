@@ -1095,15 +1095,16 @@ void KopeteChatWindow::saveOptions()
 {
 //	kDebug(14010) ;
 
-        KConfigGroup cg( KGlobal::config(), QLatin1String( "KopeteChatWindow" ) );
+	KConfigGroup kopeteChatWindowMainWinSettings( KGlobal::config(), QLatin1String( "KopeteChatWindow" ) );
 
 	// saves menubar,toolbar and statusbar setting
-	saveMainWindowSettings( cg  );
-        cg.changeGroup( QLatin1String("ChatWindowSettings") );
-	if( m_tabBar )
-		cg.writeEntry ( QLatin1String("Tab Placement"), (int)m_tabBar->tabPosition() );
-
-	cg.sync();
+	saveMainWindowSettings( kopeteChatWindowMainWinSettings );
+	if ( m_tabBar ) {
+		KConfigGroup chatWindowSettings( KGlobal::config(), QLatin1String("ChatWindowSettings") );
+		chatWindowSettings.writeEntry ( QLatin1String("Tab Placement"), (int)m_tabBar->tabPosition() );
+		chatWindowSettings.sync();
+	}
+	kopeteChatWindowMainWinSettings.sync();
 }
 
 void KopeteChatWindow::slotChatSave()
