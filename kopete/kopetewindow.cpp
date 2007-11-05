@@ -843,6 +843,7 @@ void KopeteWindow::makeTrayToolTip()
 
 void KopeteWindow::slotIdentityStatusIconLeftClicked( Kopete::Identity *identity, const QPoint &p )
 {
+	Q_UNUSED( p )
 	if (d->identitywidget->isVisible() && d->identitywidget->identity() == identity)
 	{
 		d->identitywidget->setIdentity(0);

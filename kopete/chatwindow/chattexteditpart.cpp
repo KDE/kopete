@@ -126,7 +126,7 @@ public:
 void ChatTextEditPart::complete()
 {
 #ifdef __GNUC__
-#warning disabled to make it compile
+#warning disabled nick completion to make it compile
 #endif
 #if 0
 	int para = 1, parIdx = 1;
@@ -358,8 +358,7 @@ void ChatTextEditPart::historyUp()
 // 	textEdit()->setTextFormat(AutoText); //workaround bug 115690
 	textEdit()->setText( newText );
 // 	textEdit()->setTextFormat(format);
-	// TODO: Port to Qt4
-	textEdit()->moveCursor( QTextEdit::MoveEnd );
+	textEdit()->moveCursor( QTextCursor::End );
 }
 
 void ChatTextEditPart::historyDown()
