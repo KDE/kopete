@@ -59,6 +59,11 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 // 	QWidget *w = new QWidget(this);
 	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice();
 	mPrfsVideoDevice->setupUi(this);
+
+	// set a default image for the webcam widget, in case the user does not have a video device
+	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("webcamsend").pixmap(128,128));
+
 // 	mAVDeviceTabCtl->addTab(w, i18n("Video"));
 //	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
 	connect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
@@ -99,10 +104,11 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 			SLOT(deviceUnregistered(const QString &)) );
 
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
-#define DONT_TRY_TO_GRAB 0
+#define DONT_TRY_TO_GRAB 1
 #if DONT_TRY_TO_GRAB
 	if ( mVideoDevicePool->hasDevices() ) {
 		qtimer.start(40,false);
+		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
 	}
 #endif
 }
@@ -258,9 +264,9 @@ void AVDeviceConfig::slotDeviceDisableMMapChanged(bool){
 void AVDeviceConfig::slotUpdateImage()
 {
 	mVideoDevicePool->getFrame();
-//	mVideoDevicePool->getImage(&qimage);
-	//bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
-// 	kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated.";
+	mVideoDevicePool->getImage(&qimage);
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(QPixmap::fromImage(qimage));
+	//kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated.";
 }
 
 void AVDeviceConfig::deviceRegistered( const QString & udi )
