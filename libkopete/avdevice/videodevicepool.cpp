@@ -479,9 +479,8 @@ int VideoDevicePool::getImage(QImage *qimage)
 	{
 		kDebug() << "VideoDevicePool::getImage() fallback for no device.";
 
-		// not sure if this is the way to handle this (gamaral)
-		delete qimage;
-		qimage = new QImage(width(), height(), QImage::Format_RGB32);
+		// do NOT delete qimage here, as it is received as a parameter
+		*qimage = QImage(width(), height(), QImage::Format_RGB32);
 
 		uchar *bits=qimage->bits();
 		switch(m_buffer.pixelformat)
