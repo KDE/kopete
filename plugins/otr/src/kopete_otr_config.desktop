@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Icon=kopete_otr
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kopete_otr
+X-KDE-FactoryName=OTRPreferencesFactory
+X-KDE-ParentApp=kopete_otr
+X-KDE-ParentComponents=kopete_otr
+
+Comment=Encrypt chat sessions with Off-The-Record encryption
+Comment[de]=Verschlüsselt Chat-Sitzungen mit Off-The-Record Verschlüsselung
+Name=OTR
+Name[de]=OTR

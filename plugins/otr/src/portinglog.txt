@@ -1,0 +1,73 @@
+Log for qt3to4 on Sat Sep 8 21:00:50 2007. Number of log entries: 66
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/AdditionalInfo.txt
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/CMakeLists.txt
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/ConvenienceLibs.cmake
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/Makefile.am
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/kopete_otr.desktop
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/kopete_otr.kcfg
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/kopete_otr.kcfgc
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/kopete_otr.lsm
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/kopete_otr_config.desktop
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrchatui.rc
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrguiclient.cpp
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrguiclient.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlchatinterface.cpp at line 45 column 15: qvbox.h -> q3vbox.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlchatinterface.cpp at line 52 column 18: qptrlist.h -> q3ptrlist.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlchatinterface.cpp at line 112 column 23: QPtrListIterator -> Q3PtrListIterator
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlchatinterface.cpp at line 131 column 23: QPtrListIterator -> Q3PtrListIterator
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlchatinterface.cpp at line 147 column 23: QPtrListIterator -> Q3PtrListIterator
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlchatinterface.cpp at line 478 column 31: IO_ReadWrite -> QIODevice::ReadWrite
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlchatinterface.cpp at line 491 column 27: IO_ReadWrite -> QIODevice::ReadWrite
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlchatinterface.cpp at line 503 column 39: IO_ReadWrite -> QIODevice::ReadWrite
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlchatinterface.cpp at line 515 column 35: IO_ReadWrite -> QIODevice::ReadWrite
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlchatinterface.h at line 27 column 18: qptrlist.h -> q3ptrlist.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlchatinterface.h at line 28 column 20: qvaluelist.h -> q3valuelist.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlconfinterface.cpp at line 102 column 10: QValueList -> Q3ValueList
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlconfinterface.cpp at line 107 column 11: QValueList -> Q3ValueList
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlconfinterface.cpp: Added the following include directives:
+	#include <Q3ValueList> 
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlconfinterface.h at line 27 column 18: qptrlist.h -> q3ptrlist.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlconfinterface.h at line 28 column 20: qvaluelist.h -> q3valuelist.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrlconfinterface.h at line 50 column 11: QValueList -> Q3ValueList
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrplugin.cpp at line 23 column 21: qstylesheet.h -> q3stylesheet.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrplugin.cpp at line 95 column 30: IO_ReadWrite -> QIODevice::ReadWrite
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrplugin.cpp at line 102 column 26: IO_ReadWrite -> QIODevice::ReadWrite
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrplugin.cpp at line 107 column 26: IO_ReadWrite -> QIODevice::ReadWrite
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrplugin.cpp at line 117 column 42: IO_ReadWrite -> QIODevice::ReadWrite
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrplugin.cpp at line 124 column 38: IO_ReadWrite -> QIODevice::ReadWrite
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrplugin.cpp at line 160 column 11: QValueList -> Q3ValueList
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrplugin.cpp at line 162 column 19: QValueListIterator -> Q3ValueListIterator
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrplugin.cpp: Added the following include directives:
+	#include <Q3ValueList> 
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrplugin.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 27 column 18: qptrlist.h -> q3ptrlist.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 30 column 16: qtable.h -> q3table.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 31 column 29: qpaintdevicemetrics.h -> q3paintdevicemetrics.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 32 column 15: qvbox.h -> q3vbox.h
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 63 column 18: QVBoxLayout -> Q3VBoxLayout
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 84 column 9: QPtrList -> Q3PtrList
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 86 column 24: QPtrListIterator -> Q3PtrListIterator
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 111 column 9: QPtrList -> Q3PtrList
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 127 column 9: QPtrList -> Q3PtrList
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 135 column 7: QTable -> Q3Table
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 137 column 11: QValueList -> Q3ValueList
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 138 column 11: QValueList -> Q3ValueList
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 145 column 84: QTableItem -> Q3TableItem
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 188 column 42: QTable -> Q3Table
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp at line 189 column 14: QTableItem -> Q3TableItem
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.cpp: Added the following include directives:
+	#include <Q3VBoxLayout> 	#include <Q3ValueList> 
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.h at line 52 column 41: QTableItem -> Q3TableItem
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrpreferences.h at line 55 column 23: QTable -> Q3Table
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrprefs.ui at line 89 column 50: WordBreak -> Qt::TextWordWrap
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrprefs.ui at line 89 column 63: AlignVCenter -> Qt::AlignVCenter
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrprefs.ui at line 177 column 42: Vertical -> Qt::Vertical
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/otrui.rc
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/privkeypopup.cpp at line 28 column 68: WFlags -> Qt::WFlags
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/privkeypopup.cpp: Added the following include directives:
+	#include <QCloseEvent> 
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/privkeypopup.h at line 35 column 63: WFlags -> Qt::WFlags
+In file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/privkeypopup.h: Added the following include directives:
+	#include <QCloseEvent> 
+No changes made to file /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src/privkeypopupui.ui
+
