@@ -449,7 +449,7 @@ void ClientTask::numericReply_254(Message msg)
 {
 	CHECK_ARGS(2, 2);
 
-	postInfoEvent(msg, i18np("There is 1 channel formed.", "There are %1 channel formed.", msg.arg(1).toULong()));
+	postInfoEvent(msg, i18np("There has been 1 channel formed.", "There have been %1 channels formed.", msg.arg(1).toULong()));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"

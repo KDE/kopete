@@ -59,7 +59,7 @@ void buildList()
 	//		sf - faust quote
 	//		mf - Multifield - participants, containing
 	//			nl - nested list
-	//				sf - contactlist (empty field array)
+	//				sf - contact list (empty field array)
 	//				sf - message body 
 	
 	Field::SingleField* sf = new Field::SingleField( NM_A_FA_MESSAGE, 0, NMFIELD_TYPE_UTF8, QString::fromLatin1( "Da steh ich nun, ich armer Tor! Und bin so klug als wie zuvor..." ) );

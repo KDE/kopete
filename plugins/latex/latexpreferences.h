@@ -1,5 +1,5 @@
 /*
-    Kopete Latex Plugin
+    Kopete LaTeX Plugin
 
     Copyright (c) 2004 by Duncan Mac-Vicar Prett   <duncan@kde.org>
 

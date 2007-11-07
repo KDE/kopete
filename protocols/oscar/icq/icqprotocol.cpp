@@ -722,7 +722,7 @@ void ICQProtocol::initAffiliations()
 	mAffiliations.insert(0 , "");
 	mAffiliations.insert(300 , i18n("Elementary School"));
 	mAffiliations.insert(301 , i18n("High School"));
-	mAffiliations.insert(302 , i18n("Collage"));
+	mAffiliations.insert(302 , i18n("College"));
 	mAffiliations.insert(303 , i18n("University"));
 	mAffiliations.insert(304 , i18n("Military"));
 	mAffiliations.insert(305 , i18n("Past Work Place"));

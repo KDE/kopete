@@ -41,7 +41,7 @@ namespace Utils
  * @param explanation A long description on how the error occurred and what the user can do about it.
  * @param debugInfo Debug info that can be sent to the developers or to the network service owners.
  *
- * You can not provide debugInfo without an user explanation. If you don't provide a caption, message, or
+ * You cannot provide debugInfo without an user explanation. If you don't provide a caption, message, or
  * explanation, Kopete will use a default explanation.
  */
 void KOPETE_EXPORT notifyConnectionLost( const Account *account,
@@ -58,7 +58,7 @@ void KOPETE_EXPORT notifyConnectionLost( const Account *account,
  * @param explanation A long description on how the error occurred and what the user can do about it.
  * @param debugInfo Debug info that can be sent to the developers or to the network service owners.
  *
- * You can not provide debugInfo without an user explanation. If you don't provide a caption, message, or
+ * You cannot provide debugInfo without an user explanation. If you don't provide a caption, message, or
  * explanation, Kopete will use a default explanation.
  */
 void KOPETE_EXPORT notifyCannotConnect( const Account *account,

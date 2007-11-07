@@ -53,7 +53,7 @@ public:
 	ContactDetails details( const QString &dn );
 	/** 
 	 * Add a ContactDetails object to our cache.
-	 * This SHOULD be called when receiving details in contactlist receive and manipulation, to prevent unnecessary additional requests.
+	 * This SHOULD be called when receiving details in contact list receive and manipulation, to prevent unnecessary additional requests.
 	 */
 	void addDetails( const GroupWise::ContactDetails & details );
 	/**

@@ -606,7 +606,7 @@ void YahooContact::inviteWebcam()
 	if ( KStandardDirs::findExe("jasper").isEmpty() )
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images."
+			i18n("I cannot find the Jasper image conversion program.\nJasper is required to render the Yahoo webcam images."
 			"\nPlease see %1 for further information.", QString("http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support") ) );
 		return;
 	}
@@ -700,14 +700,14 @@ void YahooContact::deleteContact()
 	}
 	else
 	{
-		kDebug(YAHOO_GEN_DEBUG) << "Contact is getting remove from server side contactlist....";
+		kDebug(YAHOO_GEN_DEBUG) << "Contact is getting remove from server side contact list....";
 		// Delete from YAB first
 		if( !m_YABEntry )
 			readYABEntry();
 		if( m_YABEntry->YABId )
 			m_account->yahooSession()->deleteYABEntry( *m_YABEntry );
 
-		// Now remove from the contactlist
+		// Now remove from the contact list
 		m_account->yahooSession()->removeBuddy( contactId(), m_groupName );
 	}
 	Kopete::Contact::deleteContact();

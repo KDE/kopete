@@ -157,10 +157,10 @@ Note that some web browsers do not support XHTML. You should also make sure your
       <item>
        <widget class="QCheckBox" name="useImagesHTML" >
         <property name="toolTip" >
-         <string>Replaces the protocol names, such as MSN and IRC with images.</string>
+         <string>Replaces the protocol names, such as MSN and IRC, with images.</string>
         </property>
         <property name="whatsThis" >
-         <string>Replaces the protocol names, such as MSN and IRC with images.
+         <string>Replaces the protocol names, such as MSN and IRC, with images.
 
 Note that you have to manually copy the PNG files into place.
 

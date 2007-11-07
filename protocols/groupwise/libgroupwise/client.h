@@ -307,7 +307,7 @@ fd		 * @param password
 		 */
 		void invitationReceived( const ConferenceEvent & );
 		/**
-		 * Someone joined a chat.  They may not be on our contact list if it is a group chat
+		 * Someone joined a chat.  They may not be on our contact list if it is a groupchat
 		 * and they were invited to join the chat prior to our being invited to join and joining
 		 */
 		void conferenceJoinNotifyReceived( const ConferenceEvent & );

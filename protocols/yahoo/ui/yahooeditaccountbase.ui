@@ -131,7 +131,7 @@
           <item>
            <widget class="QCheckBox" name="mAutoConnect" >
             <property name="whatsThis" >
-             <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
+             <string>Check to disable automatic connection.  If checked, you can connect manually to this account, using the icon at the bottom of the main Kopete window</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>

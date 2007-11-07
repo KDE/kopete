@@ -526,7 +526,7 @@ void KopeteMetaContactLVI::execute() const
 	else
 		m_metaContact->execute();
 
-	//The selection is removed, but the contact still hihjlihted,  remove the selection in the contactlist (see bug 106090)
+	//The selection is removed, but the contact still highlighted,  remove the selection in the contact list (see bug 106090)
 	Kopete::ContactList::self()->setSelectedItems( QList<Kopete::MetaContact*>() , QList<Kopete::Group*>() );
 }
 

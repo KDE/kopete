@@ -54,7 +54,7 @@ void SMSContact::slotSendingSuccess(const Kopete::Message &msg)
 
 void SMSContact::slotSendingFailure(const Kopete::Message &/*msg*/, const QString &error)
 {
-	KMessageBox::detailedError(Kopete::UI::Global::mainWidget(), i18n("Something went wrong when sending message."), error,
+	KMessageBox::detailedError(Kopete::UI::Global::mainWidget(), i18n("Something went wrong while sending the message."), error,
 			i18n("Could Not Send Message"));
 //	manager()->messageFailed();
 	// TODO: swap for failed as above. show it anyway for now to allow closing of window.

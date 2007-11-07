@@ -266,7 +266,7 @@ bool MetaContactSelectorWidget::metaContactSelected()
 	return d->widget->metaContactListView->selectedItem() ? true : false;
 }
 
-/**  Read in metacontacts from contactlist */
+/**  Read in metacontacts from contact list */
 void MetaContactSelectorWidget::slotLoadMetaContacts()
 {
 	d->widget->metaContactListView->clear();

@@ -156,7 +156,7 @@ void WebPresencePlugin::slotWriteFile()
 {
 	m_writeScheduler->stop();
 
-	// generate the (temporary) XML file representing the current contactlist
+	// generate the (temporary) XML file representing the current contact list
 	KUrl dest( resultURL );
 	if ( resultURL.isEmpty() || !dest.isValid() )
 	{
@@ -214,7 +214,7 @@ void WebPresencePlugin::slotUploadJobResult( KJob *job )
 
 KTemporaryFile* WebPresencePlugin::generateFile()
 {
-	// generate the (temporary) XML file representing the current contactlist
+	// generate the (temporary) XML file representing the current contact list
 	kDebug( 14309 ) ;
 	QString notKnown = i18n( "Not yet known" );
 

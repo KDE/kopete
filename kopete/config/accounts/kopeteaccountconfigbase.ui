@@ -109,7 +109,7 @@ these labels!</string>
            <string>Modify selected account</string>
           </property>
           <property name="whatsThis" >
-           <string>Let you edit the account's properties.</string>
+           <string>Lets you edit the account's properties.</string>
           </property>
           <property name="text" >
            <string>&amp;Modify Account...</string>

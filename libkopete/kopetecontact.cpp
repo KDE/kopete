@@ -693,7 +693,7 @@ QString Kopete::Contact::formattedIdleTime() const
 	unsigned long int leftTime = idleTime();
 
 	if ( leftTime > 0 )
-	{	// FIXME: duplicated from code in kopetecontactlistview.cpp
+	{	// FIXME: duplicated from code in kopetecontact listview.cpp
 		unsigned long int days, hours, mins, secs;
 
 		days = leftTime / ( 60*60*24 );

@@ -734,7 +734,7 @@ void ChatMessagePart::slotScrollView()
 void ChatMessagePart::copy(bool justselection /* default false */)
 {
 	/*
-	* The objective of this function is to keep the text of emoticons (or of latex image) when copying.
+	* The objective of this function is to keep the text of emoticons (or of LaTeX image) when copying.
 	*   see Bug 61676
 	* This also copies the text as type text/html
 	* RangeImpl::toHTML  was not implemented before KDE 3.4

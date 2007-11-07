@@ -270,7 +270,7 @@ bool ICQEditAccountWidget::validateData()
 	
 	if( !bOk || uid == 0 || userId.isEmpty() )
 	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
-	 	                              i18n("<qt>You must enter a valid ICQ Nr.</qt>"), i18n("ICQ"));
+	 	                              i18n("<qt>You must enter a valid ICQ No.</qt>"), i18n("ICQ"));
 		return false;
 	}
 

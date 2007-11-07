@@ -163,7 +163,7 @@ public:
 	 * receive messages.  This function must be defined by child classes
 	 *
 	 * @return true if the contact can be reached
-	 * @return false if the contact can not be reached
+	 * @return false if the contact cannot be reached
 	 */
 	// FIXME: After KDE 3.2 we should split this into a public, NON-virtual
 	//        isReachable() accessor that checks for account->isConnected()

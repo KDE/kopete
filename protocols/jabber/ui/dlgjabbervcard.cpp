@@ -429,7 +429,7 @@ void dlgJabberVCard::slotVCardSaved()
 	
 	if( vCard->success() )
 	{
-		m_mainWidget->lblStatus->setText( i18n("vCard save sucessful.") );
+		m_mainWidget->lblStatus->setText( i18n("vCard sucessfully saved.") );
 		m_contact->setPropertiesFromVCard( vCard->vcard() );
 	}
 	else
@@ -465,7 +465,7 @@ void dlgJabberVCard::slotGotVCard()
 
 		assignContactProperties();		
 
-		m_mainWidget->lblStatus->setText( i18n("vCard fetching Done.") );
+		m_mainWidget->lblStatus->setText( i18n("vCard successfully retrieved.") );
 	}
 	else
 	{
@@ -489,7 +489,7 @@ void dlgJabberVCard::slotSelectPhoto()
 	else
 	{
 		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "<qt>An error occurred when trying to change the photo.<br />"
-			"Make sure that you have selected a correct image file</qt>" ) );
+			"Make sure that you have selected a valid image file</qt>" ) );
 		m_photoPath.clear();
 	}
 }

@@ -259,7 +259,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			appendMessageEvent = appendMessageEvent && !view( manager )->isVisible();
 		}
 
-		// in group chats always append highlighted messages to queue
+		// in groupchats always append highlighted messages to queue
 		appendMessageEvent = appendMessageEvent && (!d->queueOnlyHighlightedMessagesInGroupChats || manager->members().count() == 1 || msg.importance() == Kopete::Message::Highlight);
 
 		

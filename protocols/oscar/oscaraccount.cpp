@@ -985,7 +985,7 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 		break;
 	case 0x0022: // Account suspended because of your age (age < 13)
 		reason = i18n("Account %1 was disabled on the %2 server because " \
-		              "of your age (less than 13).",
+		              "of your age (under than 13).",
 			  accountId(), acctType );
 		break;
 	default:

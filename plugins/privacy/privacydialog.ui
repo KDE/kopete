@@ -96,7 +96,7 @@
       <item row="1" column="0" colspan="2" >
        <widget class="QRadioButton" name="radioOnlyContactList" >
         <property name="text" >
-         <string>Allow messages only from contacts on my contactlist</string>
+         <string>Allow messages only from contacts on my contact list</string>
         </property>
        </widget>
       </item>
@@ -161,7 +161,7 @@
    <item row="1" column="0" >
     <widget class="QGroupBox" name="groupBox_2" >
      <property name="title" >
-      <string>Filter by content (separate word lists by commas)</string>
+      <string>Filter by content (separate multiple words by commas)</string>
      </property>
      <layout class="QGridLayout" >
       <property name="margin" >

@@ -40,7 +40,7 @@ class Contact;
  * The contactList is a singleton you can uses with @ref ContactList::self()
  *
  * it let you get a list of metacontact with metaContacts()
- * Only metacontact which are on the contactlist are returned.
+ * Only metacontact which are on the contact list are returned.
  *
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
@@ -58,7 +58,7 @@ public:
 	~ContactList();
 
 	/**
-	 * @brief return a list of all metacontact of the contactlist
+	 * @brief return a list of all metacontact of the contact list
 	 * Retrieve the list of all available meta contacts.
 	 * The returned QPtrList is not the internally used variable, so changes
 	 * to it won't propagate into the actual contact list. This can be
@@ -88,7 +88,7 @@ public:
 	
 	
 	/**
-	 * @brief find a contact in the contactlist.
+	 * @brief find a contact in the contact list.
 	 * Browse in each metacontact of the list to find the contact with the given ID.
 	 * @param protocolId the @ref Plugin::pluginId() of the protocol ("MSNProtocol")
 	 * @param accountId the @ref Account::accountId()
@@ -118,12 +118,12 @@ public:
 	Group * findGroup( const QString &displayName, int type = 0/*Group::Normal*/ );
 
 	/**
-	 * return the list of metacontact actually selected in the contactlist UI
+	 * return the list of metacontact actually selected in the contact list UI
 	 */
 	QList<MetaContact *> selectedMetaContacts() const;
 
 	/**
-	 * return the list of groups actualy selected in the contactlist UI
+	 * return the list of groups actualy selected in the contact list UI
 	 */
 	QList<Group *> selectedGroups() const ;
 
@@ -131,7 +131,7 @@ public:
 	  * return the metacontact that represent the user itself.
 	  * This metacontact should be the parent of every Kopete::Account::myself() contacts.
 	  *
-	  * This metacontact is not in the contactlist.
+	  * This metacontact is not in the contact list.
 	  */
 	MetaContact* myself();
 
@@ -153,7 +153,7 @@ public slots:
 	void addMetaContact( Kopete::MetaContact *c );
 
 	/**
-	 * Remove a metacontact from the contactlist.
+	 * Remove a metacontact from the contact list.
 	 * This method delete itself the metacontact.
 	 */
 	void removeMetaContact( Kopete::MetaContact *contact );
@@ -178,7 +178,7 @@ public slots:
 
 	/**
 	 * Set which items are selected in the ContactList GUI.
-	 * This method has to be called by the contactlist UI side.
+	 * This method has to be called by the contact list UI side.
 	 * it stores the selected items, and emits signals
 	 */
 	 void setSelectedItems(QList<MetaContact *> metaContacts , QList<Group *> groups);
@@ -246,7 +246,7 @@ private slots:
 	 */
 	void slotSaveLater();
 	/**
-	 * Called on contactlist load or when KABC has changed, to check if we need to update our contactlist from there.
+	 * Called on contact list load or when KABC has changed, to check if we need to update our contact list from there.
 	 */
 	void slotKABCChanged();
 

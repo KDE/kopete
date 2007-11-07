@@ -33,7 +33,7 @@ class MetaContact;
 namespace UI {
 
 /**
- * @brief Dialog which is shown when a contact added you in the contactlist.
+ * @brief Dialog which is shown when a contact added you in the contact list.
  *
  * This dialog asks the user to give authorization for the addition to the
  * person who added the user and also asks the user if the contact who you've

@@ -142,7 +142,7 @@ void WPProtocol::installSamba()
 	args += KStandardDirs::findExe("winpopup-install.sh");
 	args += KStandardDirs::findExe("winpopup-send.sh");
 	if (KToolInvocation::kdeinitExecWait("kdesu", args) == 0)
-		KMessageBox::information(Kopete::UI::Global::mainWidget(), i18n("The Samba configuration file is modified."), i18n("Configuration Succeeded"));
+		KMessageBox::information(Kopete::UI::Global::mainWidget(), i18n("The Samba configuration file has been modified."), i18n("Configuration Successful"));
 	else
 		KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Updating the Samba configuration file failed."), i18n("Configuration Failed"));
 }

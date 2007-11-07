@@ -136,7 +136,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		}
 		case 216:
 		{
-			QString msg = i18n( "The user %1 is online but has blocked you:\nyou can not talk to this user.", m_msgHandle );
+			QString msg = i18n( "The user %1 is online but has blocked you:\nyou cannot talk to this user.", m_msgHandle );
 			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
 			emit errorMessage( MSNSocket::ErrorInformation, msg );
 			userLeftChat(m_msgHandle, i18n("user blocked you"));
@@ -936,7 +936,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QS
 	}
 	else if(msnObj == "inkformatgif")
 	{
-		QString msg=i18n("<img src=\"%1\" alt=\"Typewrited message\" />", file->fileName() );
+		QString msg=i18n("<img src=\"%1\" alt=\"Typed message\" />", file->fileName() );
 
 		kDebug(14140) << file->fileName();
 

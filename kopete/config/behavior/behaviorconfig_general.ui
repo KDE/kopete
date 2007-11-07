@@ -108,7 +108,7 @@
          <string>Instantly open incoming messages</string>
         </property>
         <property name="whatsThis" >
-         <string>If there is no existing chat window a new window will be opened when a new message comes in. If there is already a chat window opened for the sender of the message it will be displayed there instantly.</string>
+         <string>If there is no chat window open, a new message arriving will cause a new window to open. If there is already a chat window opened for that sender, the message will immediately be displayed there.</string>
         </property>
         <property name="text" >
          <string>Open messages instantl&amp;y</string>
@@ -121,7 +121,7 @@
          <string>Use a message queue to store incoming messages</string>
         </property>
         <property name="whatsThis" >
-         <string>Store new incoming messages in a message queue. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via bubble, a flashing tray icon, or both..</string>
+         <string>Store new incoming messages in a message queue. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via a bubble, a flashing tray icon, or both.</string>
         </property>
         <property name="text" >
          <string>Use message &amp;queue</string>
@@ -134,7 +134,7 @@
          <string>Use a message stack to store incoming messages</string>
         </property>
         <property name="whatsThis" >
-         <string>Store new incoming messages in a message stack. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via bubble and flashing tray.</string>
+         <string>Store new incoming messages in a message stack. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via a bubble and flashing tray icon.</string>
         </property>
         <property name="text" >
          <string>Use message stac&amp;k</string>
@@ -150,7 +150,7 @@
          <string>Also add unread messages to queue/stack</string>
         </property>
         <property name="whatsThis" >
-         <string>Unread messages are messages that will be displayed in an already opened but inactive chat window. Only incoming queued messages trigger notification via the bubble, the flashing tray icon, or both. With this option disabled only new incoming messages are queued, i.e. messages that cannot be displayed in an already open chat window.</string>
+         <string>Unread messages are messages that will be displayed in an already opened but inactive chat window. Only incoming queued messages trigger notification via a bubble, a flashing tray icon, or both. With this option disabled only new incoming messages are queued, i.e. messages that cannot be displayed in an already open chat window.</string>
         </property>
         <property name="text" >
          <string>Queue/stack unrea&amp;d messages</string>
@@ -208,7 +208,7 @@ p, li { white-space: pre-wrap; }
          <string>Use mouse navigation instead of scroll-bars for contact list</string>
         </property>
         <property name="whatsThis" >
-         <string>This navigation scheme is designed to remove the vertical scrollbar. Instead of dragging the scrollbar you just move your mouse on the list vertically: as you move your mouse, the list will move in the opposite direction and you can reach your target contact. Each contact will be under the mouse cursor at a certain point.</string>
+         <string>This navigation scheme is designed to remove the vertical scrollbar. Instead of dragging the scrollbar you just move your mouse vertically on the list: as you move your mouse, the list will move in the opposite direction and until you reach your target contact. The mouse cursor will pass over each contact at some point.</string>
         </property>
         <property name="text" >
          <string>Use mouse &amp;navigation instead of scroll-bars</string>

@@ -294,8 +294,8 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 #endif
 
 		const QString& accountId=sd[ QString::fromLatin1( "accountId" ) ];
-		// myself was allowed in the contactlist in old version of kopete.
-		// But if one keep it on the contactlist now, it may conflict witht he myself metacontact.
+		// myself was allowed in the contact list in old version of kopete.
+		// But if one keep it on the contact list now, it may conflict witht he myself metacontact.
 		// So ignore it
 		if(accountId == sd[ QString::fromLatin1( "contactId" ) ] )
 		{

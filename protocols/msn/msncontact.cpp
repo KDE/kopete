@@ -182,7 +182,7 @@ void MSNContact::slotBlockUser()
 	if( !notify )
 	{
 		KMessageBox::error( Kopete::UI::Global::mainWidget(),
-			i18n( "<qt>Please go online to block or unblock a contact.</qt>" ),
+			i18n( "<qt>You need to go online to block or unblock a contact.</qt>" ),
 			i18n( "MSN Plugin" ));
 		return;
 	}
@@ -264,7 +264,7 @@ void MSNContact::deleteContact()
 	{
 		// FIXME: This case should be handled by Kopete, not by the plugins :( - Martijn
 		// FIXME: We should be able to delete contacts offline, and remove it from server next time we go online - Olivier
-		KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "<qt>Please go online to remove a contact from your contact list.</qt>" ), i18n( "MSN Plugin" ));
+		KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "<qt>You need to go online to remove a contact from your contact list.</qt>" ), i18n( "MSN Plugin" ));
 	}
 }
 

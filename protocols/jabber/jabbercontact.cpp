@@ -280,7 +280,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			QString room=message.invite();
 			QString originalBody=message.body().isEmpty() ? QString() :
 					i18n( "The original message is : <i>\" %1 \"</i><br />" , Qt::escape(message.body()));
-			QString mes=i18n("<qt><i>%1</i> invited you to join the conference <b>%2</b><br />%3<br />"
+			QString mes=i18n("<qt><i>%1</i> has invited you to join the conference <b>%2</b><br />%3<br />"
 					"If you want to accept and join, just <b>enter your nickname</b> and press ok<br />"
 							 "If you want to decline, press cancel</qt>",
 					message.from().full(), room , originalBody);
@@ -315,7 +315,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 				if(mManager->view( Kopete::Contact::CannotCreate ))
 				{   //show an internal message if the user has not already closed his window
 					Kopete::Message m=Kopete::Message ( this, mManager->members() );
-					m.setPlainBody( i18n("%1 has ended their participation in the chat session.", metaContact()->displayName()) );
+					m.setPlainBody( i18n("%1 has ended his/her participation in the chat session.", metaContact()->displayName()) );
 					m.setDirection( Kopete::Message::Internal );
 
 					mManager->appendMessage ( m, message.from().resource () );
@@ -934,7 +934,7 @@ void JabberContact::deleteContact ()
 	if( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From )
 	{
 		int result = KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget(),
-		 				i18n ( "Do you also want to remove the authorization from user %1 to see your status?" , 
+		 				i18n ( "Do you also want to remove user %1's authorization to see your status?" , 
 						  mRosterItem.jid().bare () ), i18n ("Notification"),
 						KStandardGuiItem::del (), KGuiItem( i18n("Keep") ),KStandardGuiItem::cancel(), "JabberRemoveAuthorizationOnDelete" );
 		if(result == KMessageBox::Yes )

@@ -392,7 +392,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 			KVBox vb(&chooser);
 			chooser.setMainWidget(&vb);
 			QLabel label(&vb);
-			label.setText(i18n("Choose an account to handle the uri %1" , kurl.prettyUrl()));
+			label.setText(i18n("Choose an account to handle the URL %1" , kurl.prettyUrl()));
 //			label.setSizePolicy(QSizePolicy::Minimum , QSizePolicy::MinimumExpanding);
 			label.setWordWrap(true);
 			AccountSelector accSelector(const_cast<JabberProtocol*>(this), &vb);
@@ -482,7 +482,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 			{
 				bool ok=true;
 				nick = KInputDialog::getText(i18n("Please enter your nickname for the room %1", jid.bare()),
-						i18n("Give your nickname"),
+						i18n("Provide your nickname"),
 						QString(),
 						&ok);
 				if (!ok)

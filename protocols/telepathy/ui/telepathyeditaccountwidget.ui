@@ -43,7 +43,7 @@
          <item>
           <widget class="QLabel" name="label_2" >
            <property name="text" >
-            <string>Step 2: Select the protocol which you want to connect</string>
+            <string>Step 2: Select the protocol with which you want to connect</string>
            </property>
           </widget>
          </item>

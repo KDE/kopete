@@ -39,7 +39,7 @@ void SendMessageTask::onGo()
 	if( m_text.isEmpty() )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "Text to send is empty.";
-		client()->notifyError( i18n( "An error occurred sending the message" ), i18n( "The message is empty." ), Client::Debug );
+		client()->notifyError( i18n( "An error occurred while sending the message" ), i18n( "The message is empty." ), Client::Debug );
 		return;
 	}	
 	int pos=0;

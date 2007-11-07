@@ -91,7 +91,7 @@ void SendFileTask::connectSucceeded()
 	else
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "Error opening file: " << m_file.errorString();
-		client()->notifyError( i18n( "An error occurred sending the file." ), m_file.errorString(), Client::Error );
+		client()->notifyError( i18n( "An error occurred while sending the file." ), m_file.errorString(), Client::Error );
 		setError();
 		return;
 	}

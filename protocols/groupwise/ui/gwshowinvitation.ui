@@ -55,7 +55,7 @@
         </sizepolicy>
        </property>
        <property name="text" >
-        <string>INVITE_DATE_TIME</string>
+        <string>Invitation Date</string>
        </property>
        <property name="wordWrap" >
         <bool>false</bool>
@@ -65,7 +65,7 @@
      <item row="0" column="1" >
       <widget class="QLabel" name="m_contactName" >
        <property name="text" >
-        <string>CONTACT_NAME</string>
+        <string>Contact Name</string>
        </property>
        <property name="wordWrap" >
         <bool>false</bool>
@@ -83,7 +83,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <property name="text" >
-      <string>INVITE_MESSAGE</string>
+      <string>Invitation Message</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignVCenter</set>

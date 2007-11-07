@@ -67,7 +67,7 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 
 	d->account=account;
 	d->contactId=contactId;
-	d->widget->m_label->setText(i18n("<qt><img src=\"kopete-account-icon:%1\" /> The contact <b>%2</b> has added you to his/her contactlist. (Account %3)</qt>",
+	d->widget->m_label->setText(i18n("<qt><img src=\"kopete-account-icon:%1\" /> The contact <b>%2</b> has added you to his/her contact list. (Account %3)</qt>",
 			QString(QUrl::toPercentEncoding( account->protocol()->pluginId() )) + QString::fromLatin1(":")
 			                 +  QString(QUrl::toPercentEncoding( account->accountId() )) ,
 				  contactNick.isEmpty() ? contactId : contactNick + QString::fromLatin1(" < ") + contactId + QString::fromLatin1(" >")  ,

@@ -108,7 +108,7 @@ public:
 	enum AddMode {
 		ChangeKABC = 0,     ///< The KDE Address book may be updated
 		DontChangeKABC = 1, ///< The KDE Address book will not be changed
-		Temporary = 2       ///< The contact will not be added on the contactlist
+		Temporary = 2       ///< The contact will not be added on the contact list
 	};
 
 	/**

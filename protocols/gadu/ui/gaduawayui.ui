@@ -36,7 +36,7 @@
      <item>
       <widget class="Q3ButtonGroup" name="statusGroup_" >
        <property name="whatsThis" >
-        <string>Choose status, by default present status is selected. 
+        <string>Choose a status; by default Online status is selected. 
 So all you need to do is just to type in your description. 
 Choosing Offline status will disconnect you, with given description.</string>
        </property>
@@ -80,7 +80,7 @@ Choosing Offline status will disconnect you, with given description.</string>
              <string>Set your status to busy.</string>
             </property>
             <property name="whatsThis" >
-             <string>Set your status to busy, indicating that you may should not be bothered with trivial chat, and may not be able to reply immediately.</string>
+             <string>Set your status to busy, indicating that you should not be bothered with trivial chat, and may not be able to reply immediately.</string>
             </property>
             <property name="text" >
              <string>&amp;Busy</string>
@@ -103,10 +103,10 @@ Choosing Offline status will disconnect you, with given description.</string>
           <item>
            <widget class="QRadioButton" name="offlineButton_" >
             <property name="toolTip" >
-             <string>Choose this status to disconnect with description entered below.</string>
+             <string>Choose this status to disconnect with the description entered below.</string>
             </property>
             <property name="whatsThis" >
-             <string>Choose this status to disconnect with description entered below.</string>
+             <string>Choose this status to disconnect with the description entered below.</string>
             </property>
             <property name="text" >
              <string>O&amp;ffline</string>

@@ -156,9 +156,9 @@ public:
 	bool mayInvite() const ;
 
 	/**
-	 * this method is called when a contact is dragged to the contactlist.
+	 * this method is called when a contact is dragged to the contact list.
 	 * @p contactId is the id of the contact. the contact is supposed to be of the same account as
-	 * the @ref account() but we can't be sure the Kopete::Contact is really on the contactlist
+	 * the @ref account() but we can't be sure the Kopete::Contact is really on the contact list
 	 *
 	 * It is possible to drag contact only if @ref mayInvite return true
 	 *

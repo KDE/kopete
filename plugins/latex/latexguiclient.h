@@ -1,5 +1,5 @@
 /*
-    latexguiclient.h - Kopete Latex Plugin
+    latexguiclient.h - Kopete LaTeX Plugin
 
     Copyright (c) 2005 by Olivier Goffart <ogoffart@kde.org>
 

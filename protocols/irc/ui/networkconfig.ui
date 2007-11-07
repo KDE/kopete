@@ -33,7 +33,7 @@
       </sizepolicy>
      </property>
      <property name="title" >
-      <string>Hosts Con&amp;figurations</string>
+      <string>Host Con&amp;figurations</string>
      </property>
      <layout class="QGridLayout" >
       <property name="margin" >
@@ -115,7 +115,7 @@
          <string>Move this server down</string>
         </property>
         <property name="whatsThis" >
-         <string>Move this server down in connection attempt priority</string>
+         <string>Decrease connection-attempt priority for this server</string>
         </property>
         <property name="text" >
          <string>Down</string>
@@ -131,7 +131,7 @@
          <string>Move this server up</string>
         </property>
         <property name="whatsThis" >
-         <string>Move this server up in connection attempt priority</string>
+		<string>Increase connection-attempt priority for this server</string>
         </property>
         <property name="text" >
          <string>Up</string>

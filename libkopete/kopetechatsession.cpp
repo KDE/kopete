@@ -481,7 +481,7 @@ void Kopete::ChatSession::slotContactDestroyed( Kopete::Contact *contact )
 
 	//This is a workaround to prevent crash if the contact get deleted.
 	// in the best case, we should ask the protocol to recreate a temporary contact.
-	// (remember: the contact may be deleted when the users removes it from the contactlist, or when closing kopete )
+	// (remember: the contact may be deleted when the users removes it from the contact list, or when closing kopete )
 	d->mContactList.removeAll( contact );
 	emit contactRemoved( contact, QString() );
 

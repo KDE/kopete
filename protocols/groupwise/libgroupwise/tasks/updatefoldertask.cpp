@@ -39,7 +39,7 @@ void UpdateFolderTask::renameFolder( const QString & newName, const GroupWise::F
 	renamed.name = newName;
 	// add the new version of the folder, marked add
 	lst.append( new Field::MultiField( NM_A_FA_FOLDER, NMFIELD_METHOD_ADD, 0, NMFIELD_TYPE_ARRAY, folderToFields( renamed ) ) );
-	// let our parent class package it up as a contactlist in a transfer
+	// let our parent class package it up as a contact list in a transfer
 	UpdateItemTask::item( lst );
 }
 

@@ -101,7 +101,7 @@ void dlgJabberRegister::slotSentForm ()
 	else
 	{
 		KMessageBox::error (this,
-							i18n ("The server denied the registration form.\nReason: \"%1\"", task->statusString ()), i18n ("Jabber Registration"));
+							i18n ("The server rejected the registration form.\nReason: \"%1\"", task->statusString ()), i18n ("Jabber Registration"));
 
 		btnRegister->setEnabled (true);
 		btnRegister->setEnabled (true);

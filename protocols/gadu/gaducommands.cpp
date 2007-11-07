@@ -277,7 +277,7 @@ void RegisterCommand::watcher()
 				if ( pubDir->success && pubDir->uin ) {
 					uin= pubDir->uin;
 					state = RegisterStateDone;
-					emit done( i18n( "Registration Finished" ), i18n( "Registration has completed successfully." ) );
+					emit done( i18n( "Registration Finished" ), i18n( "Registration has been completed successfully." ) );
 				}
 				else {
 					emit error( i18n( "Registration Error" ), i18n( "Incorrect data sent to server." ) );
@@ -343,7 +343,7 @@ RemindPasswordCommand::watcher()
 
 	if ( session_->state == GG_STATE_DONE ) {
 		struct gg_pubdir* p = static_cast<struct gg_pubdir*>( session_->data );
-		QString finished = (p->success) ? i18n( "Successfully" ) : i18n( "Unsuccessful. Please retry." );
+		QString finished = (p->success) ? i18n( "Success" ) : i18n( "Unsuccessful. Please retry." );
 		emit done( i18n( "Remind Password" ), i18n( "Remind password finished: " ) + finished );
 		gg_free_remind_passwd( session_ );
 		done_ = true;

@@ -1,5 +1,5 @@
 /*
-    kconf_update app for updating the contactlist format ( <= 0.9.0) for MetaContacts to
+    kconf_update app for updating the contact list format ( <= 0.9.0) for MetaContacts to
     track the name of a subcontact.
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
@@ -121,7 +121,7 @@ int main()
 		mcElement = mcElement.nextSibling().toElement();
 	}
 
-	// Save converted contactlist
+	// Save converted contact list
 	contactListFile.open( QIODevice::WriteOnly );
 	QTextStream stream( &contactListFile );
 	stream.setCodec(QTextCodec::codecForName("UTF-8"));

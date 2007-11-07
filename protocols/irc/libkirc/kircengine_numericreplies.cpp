@@ -185,7 +185,7 @@ void Engine::numericReply_253(Message &msg)
  *  */
 void Engine::numericReply_254(Message &msg)
 {
-	receivedServerMessage(msg, i18n("There are %1 channel formed.", msg.arg(1)));
+	receivedServerMessage(msg, i18n("There have been %1 channels formed.", msg.arg(1)));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"

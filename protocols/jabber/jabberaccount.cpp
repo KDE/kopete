@@ -166,7 +166,7 @@ void JabberAccount::setS5BServerPort ( int port )
 	if ( !m_jabberClient->setS5BServerPort ( port ) && !m_notifiedUserCannotBindTransferPort)
 	{
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry,
-							 i18n ( "Could not bind Jabber file transfer manager to local port. Please check if the file transfer port is already in use or choose another port in the account settings." ),
+							 i18n ( "Could not bind the Jabber file transfer manager to a local port. Please check if the file transfer port is already in use, or choose another port in the account settings." ),
 							 i18n ( "Failed to start Jabber File Transfer Manager" ) );
 		m_notifiedUserCannotBindTransferPort = true;
 	}
@@ -873,7 +873,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 					errorCondition = i18n("Socket has not been created.");
 					break;
 				case KNetwork::KSocketBase::WouldBlock:
-					errorCondition = i18n("Socket operation would block. You should not see this error, please use \"Report Bug\" from the Help menu.");
+					errorCondition = i18n("The socket operation would block. You should not see this error: please use \"Report Bug\" from the Help menu.");
 					break;
 				case KNetwork::KSocketBase::ConnectionRefused:
 					errorCondition = i18n("Connection refused.");
@@ -1180,8 +1180,8 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 
 		switch (KMessageBox::warningYesNo (Kopete::UI::Global::mainWidget(),
 								  i18n
-								  ("The Jabber user %1 removed %2's subscription to them. "
-								   "This account will no longer be able to view their online/offline status. "
+								  ("The Jabber user %1 removed %2's subscription to him/her. "
+								   "This account will no longer be able to view his/her online/offline status. "
 								   "Do you want to delete the contact?",
 								    jid.full(), accountId()), i18n ("Notification"), KStandardGuiItem::del(), KGuiItem( i18n("Keep") )))
 		{
@@ -1367,13 +1367,13 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 			contact->removeProperty ( protocol()->propAuthorizationStatus );
 		}
 	}
-	else if(c)  //we don't need to add it, and it is in the contactlist
+	else if(c)  //we don't need to add it, and it is in the contact list
 	{
 		Kopete::MetaContact *metaContact=c->metaContact();
 		if(metaContact->isTemporary())
 			return;
 		kDebug (JABBER_DEBUG_GLOBAL) << c->contactId() << 
-				" is on the contactlist while it shouldn't.  we are removing it.  - " << c << endl;
+				" is on the contact list while it shouldn't.  we are removing it.  - " << c << endl;
 		delete c;
 		if(metaContact->contacts().isEmpty())
 			Kopete::ContactList::self()->removeMetaContact( metaContact );
@@ -1398,7 +1398,7 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 
 	if ( message.type() == "groupchat" )
 	{
-		// this is a group chat message, forward it to the group contact
+		// this is a groupchat message, forward it to the group contact
 		// (the one without resource name)
 		XMPP::Jid jid ( message.from().userHost () );
 
@@ -1407,7 +1407,7 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 
 		/**
 		 * If there was no exact match, something is really messed up.
-		 * We can't receive group chat messages from rooms that we are
+		 * We can't receive groupchat messages from rooms that we are
 		 * not a member of and if the room contact vanished somehow,
 		 * we're in deep trouble.
 		 */
@@ -1473,9 +1473,9 @@ void JabberAccount::slotJoinNewChat ()
 
 void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "Joined group chat " << jid.full ();
+	kDebug (JABBER_DEBUG_GLOBAL) << "Joined groupchat " << jid.full ();
 
-	// Create new meta contact that holds the group chat contact.
+	// Create new meta contact that holds the groupchat contact.
 	Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 
 	metaContact->setTemporary ( true );
@@ -1583,7 +1583,7 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 		{
 			bool ok;
 			QString nickname = KInputDialog::getText(i18n("Error trying to join %1 : nickname %2 is already in use", jid.node(), jid.resource()),
-									i18n("Give your nickname"),
+									i18n("Provide your nickname"),
 									QString(),
 									&ok);
 			if (ok)
@@ -1596,14 +1596,14 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 	case JabberClient::BannedFromThisMUC:
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
-									i18n ("You can not join the room %1 because you were banned", jid.node()),
+									i18n ("You cannot join the room %1 because you have been banned", jid.node()),
 									i18n ("Jabber Group Chat") );
 		break;
 
 	case JabberClient::MaxUsersReachedForThisMuc:
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
-									i18n ("You can not join the room %1 because the maximum users has been reached", jid.node()),
+									i18n ("You cannot join the room %1 because the maximum number of users has been reached", jid.node()),
 									i18n ("Jabber Group Chat") );
 		break;
 
@@ -1613,7 +1613,7 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 
 		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
 									KMessageBox::Error,
-									i18n ("There was an error processing your request for group chat %1. (Reason: %2, Code %3)", jid.full (), detailedReason, error ),
+									i18n ("There was an error processing your request for groupchat %1. (Reason: %2, Code %3)", jid.full (), detailedReason, error ),
 									i18n ("Jabber Group Chat") );
 		}
 	}
@@ -1719,11 +1719,11 @@ bool JabberAccount::removeAccount( )
 	{
 		int result=KMessageBox::warningYesNoCancel( Kopete::UI::Global::mainWidget () ,
 				   i18n( "Do you want to also unregister \"%1\" from the Jabber server ?\n"
-				   			    "If you unregister, all your contact list may be removed on the server,"
-							    "And you will never be able to connect to this account with any client", accountLabel() ),
+				   			    "If you unregister, your whole contact list may be removed from the server,"
+							    " and you will never be able to connect to this account with any client", accountLabel() ),
 					i18n("Unregister"),
 					KGuiItem(i18n( "Remove and Unregister" ), "edit-delete"),
-					KGuiItem(i18n( "Remove from kopete only"), "user-trash"),KStandardGuiItem::cancel(),
+					KGuiItem(i18n( "Remove only from Kopete"), "user-trash"),KStandardGuiItem::cancel(),
 					"askUnregisterJabberAccount", KMessageBox::Notify | KMessageBox::Dangerous );
 		if(result == KMessageBox::Cancel)
 		{
@@ -1767,7 +1767,7 @@ void JabberAccount::slotUnregisterFinished( )
 	if ( task && ! task->success ())
 	{
 		KMessageBox::queuedMessageBox ( 0L, KMessageBox::Error,
-			i18n ("An error occurred when trying to remove the account:\n%1", task->statusString()),
+			i18n ("An error occurred while trying to remove the account:\n%1", task->statusString()),
 			i18n ("Jabber Account Unregistration"));
 		m_removing=false;
 		return;

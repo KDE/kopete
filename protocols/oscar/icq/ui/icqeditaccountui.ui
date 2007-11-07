@@ -128,7 +128,7 @@
              <bool>true</bool>
             </property>
             <property name="whatsThis" >
-             <string>If you check that case, the account will not be connected when you press the "Connect All" button, or at startup even if you selected to automatically connect at startup</string>
+             <string>If you enable this option, this account will not be connected when you press the "Connect All" button, nor at startup even if you have enabled automaic connection at startup.</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
@@ -452,10 +452,10 @@ If you do not currently have an ICQ account, please click the button to create o
           <item>
            <widget class="QCheckBox" name="chkRequireAuth" >
             <property name="toolTip" >
-             <string>Enable authorization requirement, which will not allow users to add you to their contact list without authorization from you.</string>
+             <string>Enable the authorization requirement, which will not allow users to add you to their contact list without authorization from you.</string>
             </property>
             <property name="whatsThis" >
-             <string>Enable authorization requirement, which will not allow users to add you to their contact list without authorization from you.  Check this box, and you will have to confirm any users who add you to their list before they may see your online status.</string>
+             <string>Enable the authorization requirement, which will not allow users to add you to their contact list without authorization from you.  Check this box, and you will have to confirm any users who add you to their list before they may see your online status.</string>
             </property>
             <property name="text" >
              <string>&amp;Require authorization before someone can add you to their contact list</string>
@@ -465,7 +465,7 @@ If you do not currently have an ICQ account, please click the button to create o
           <item>
            <widget class="QCheckBox" name="chkRespectRequireAuth" >
             <property name="text" >
-             <string>Respect other contacts' &amp;wish to require authorization</string>
+             <string>Respect other contacts' authori&amp;zation requirement</string>
             </property>
            </widget>
           </item>
@@ -475,7 +475,7 @@ If you do not currently have an ICQ account, please click the button to create o
              <string>Check this to hide your IP address from people when they view your user info</string>
             </property>
             <property name="whatsThis" >
-             <string>Checking this box will not allow people to see what your IP address if they view your ICQ user details such as name, address, or age.</string>
+             <string>Checking this box prevent people from seeing your IP address if they view your ICQ user details such as name, address, or age.</string>
             </property>
             <property name="text" >
              <string>Hide &amp;IP address</string>

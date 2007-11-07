@@ -35,7 +35,7 @@
     <widget class="QTabWidget" name="tabWidget" >
      <widget class="QWidget" name="TabPage" >
       <attribute name="title" >
-       <string>Ask &amp;Database</string>
+       <string>Query &amp;Database</string>
       </attribute>
       <layout class="QVBoxLayout" >
        <property name="spacing" >
@@ -266,7 +266,7 @@
             <item>
              <widget class="QPushButton" name="askButton" >
               <property name="text" >
-               <string>&amp;Ask</string>
+               <string>&amp;Query</string>
               </property>
              </widget>
             </item>
@@ -278,7 +278,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox" >
          <property name="title" >
-          <string>Answer</string>
+          <string>Response</string>
          </property>
          <layout class="QVBoxLayout" >
           <property name="spacing" >

@@ -134,7 +134,7 @@
              <string/>
             </property>
             <property name="whatsThis" >
-             <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+             <string>Check to disable automatic connection. When checked, you may connect to this account manually via the icon in the bottom of the main Kopete window.</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
@@ -313,7 +313,7 @@ If you do not currently have an account, please click the button to create one.<
              <bool>true</bool>
             </property>
             <property name="text" >
-             <string>Ignore people off your contact list</string>
+             <string>Ignore people not on your contact list</string>
             </property>
             <property name="shortcut" >
              <string/>
@@ -508,7 +508,7 @@ If you do not currently have an account, please click the button to create one.<
           <item row="2" column="0" >
            <widget class="QLabel" name="textLabel1_5_3_2_4_2" >
             <property name="text" >
-             <string>Values below are going to be used in search, but will not appear in results.</string>
+             <string>The values below will be used in the search, but will not appear in the results.</string>
             </property>
            </widget>
           </item>
@@ -561,7 +561,7 @@ If you do not currently have an account, please click the button to create one.<
               <item>
                <widget class="QLabel" name="textLabel1_5_3" >
                 <property name="text" >
-                 <string>Your nick name:</string>
+                 <string>Your nickname:</string>
                 </property>
                </widget>
               </item>

@@ -300,7 +300,7 @@ void IncomingTransfer::processMessage(const Message& message)
 					// The transfer has been canceled remotely.
 					if(m_transfer){
 						// Inform the user of the file transfer cancellation.
-						m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer canceled."));
+						m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer cancelled."));
 					}
 					// Remove the partially received file.
 					m_file->remove();

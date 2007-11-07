@@ -455,7 +455,7 @@ bool KopeteEmailWindow::closeView( bool force )
 			if( shortCaption.length() > 40 )
 				shortCaption = shortCaption.left( 40 ) + QLatin1String("...");
 
-			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br />"
+			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You are about to leave the groupchat session <b>%1</b>.<br />"
 				"You will not receive future messages from this conversation.</qt>", shortCaption), i18n("Closing Group Chat"),
 				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QLatin1String("AskCloseGroupChat"));
 		}

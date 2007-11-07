@@ -469,7 +469,7 @@ void ClientCommands::numericReply_253(Message msg)
  *  */
 void ClientCommands::numericReply_254(Message msg)
 {
-	postInfoEvent(msg, i18np("There is 1 channel formed.", "There are %1 channel formed.", msg.arg(1).toULong()));
+	postInfoEvent(msg, i18np("There has been 1 channel formed.", "There have been %1 channel formed.", msg.arg(1).toULong()));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"

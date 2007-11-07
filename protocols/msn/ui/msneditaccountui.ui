@@ -496,10 +496,10 @@
           <item>
            <widget class="QCheckBox" name="useCustomEmoticons" >
             <property name="whatsThis" >
-             <string>MSN Messenger allows users to download and use custom emoticons. If this option is enabled, Kopete will download these emoticons and show them.</string>
+             <string>MSN Messenger allows users to download and use custom emoticons. If this option is enabled, Kopete will download and display such emoticons.</string>
             </property>
             <property name="text" >
-             <string>&amp;Download and show custom emoticons</string>
+             <string>&amp;Download and display custom emoticons</string>
             </property>
             <property name="checked" >
              <bool>true</bool>
@@ -509,8 +509,7 @@
           <item>
            <widget class="QCheckBox" name="exportEmoticons" >
             <property name="whatsThis" >
-             <string>Export all the emoticon themes as custom emoticons.
-Only works for emoticons in the PNG format.</string>
+		    <string>Export all the emoticon themes as custom emoticons (only works for emoticons in PNG format).</string>
             </property>
             <property name="text" >
              <string>E&amp;xport the current emoticon theme to users</string>
@@ -569,7 +568,7 @@ Only works for emoticons in the PNG format.</string>
              <bool>true</bool>
             </property>
             <property name="whatsThis" >
-             <string>&lt;qt>Check this box to send &lt;b>Typing notifications&lt;/b> to your contacts. When you are composing a message, you might want your contact to know that you are typing so that he knows you are answering.&lt;/qt></string>
+             <string>&lt;qt>Check this box to send &lt;b>Typing notifications&lt;/b> to your contacts. When you are composing a message, you might want your contact to know that you are typing so that he/she knows you are answering.&lt;/qt></string>
             </property>
             <property name="text" >
              <string>Send &amp;typing notifications</string>
@@ -602,7 +601,7 @@ Only works for emoticons in the PNG format.</string>
                <string>If you have a Jabber account, you may let Jabber users on an MSN gateway know that you are also using Jabber.</string>
               </property>
               <property name="text" >
-               <string>Expose my Jabber account to Jabber users</string>
+               <string>Let other Jabber users see my Jabber account</string>
               </property>
               <property name="checked" >
                <bool>true</bool>
@@ -920,7 +919,7 @@ Only works for emoticons in the PNG format.</string>
                </sizepolicy>
               </property>
               <property name="text" >
-               <string>Please select a square image. The image will be scaled to 96x96.</string>
+               <string>Please select a square image. The image will be scaled to 96x96 px.</string>
               </property>
               <property name="alignment" >
                <set>Qt::AlignVCenter</set>
@@ -1067,7 +1066,7 @@ Only works for emoticons in the PNG format.</string>
          <property name="text" >
           <string>&lt;i>Italics&lt;/i> contacts are not on your contact list.&lt;br>
 &lt;br>
-&lt;b>Bold&lt;/b> contacts are in your contact list but you are not in their contact list.</string>
+&lt;b>Bold&lt;/b> contacts are in your contact list but you are not in theirs.</string>
          </property>
         </widget>
        </item>
@@ -1207,7 +1206,7 @@ Only works for emoticons in the PNG format.</string>
             <string>Checking this box will block all users not explicitly shown in the allowed list here, including any contacts not on your contact list.</string>
            </property>
            <property name="text" >
-            <string>Block all users not in 'Allowed' &amp;list</string>
+            <string><string>Block all users not on 'Allowed' &amp;list</string></string>
            </property>
           </widget>
          </item>
@@ -1271,10 +1270,10 @@ Only works for emoticons in the PNG format.</string>
             </size>
            </property>
            <property name="toolTip" >
-            <string>The reverse list is the list of contacts who added you to their own contact list.</string>
+            <string>The reverse list is the list of contacts who have added you to their own contact list.</string>
            </property>
            <property name="whatsThis" >
-            <string>The reverse list is the list of contacts who added you to their own contact list.</string>
+            <string>The reverse list is the list of contacts who have added you to their own contact list.</string>
            </property>
            <property name="text" >
             <string>View &amp;Reverse List</string>

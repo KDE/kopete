@@ -572,7 +572,7 @@ void GroupWiseAccount::reconcileOfflineChanges()
 	} //end while, now check the next groupwise contact
 	if ( conflicts )
 		// show queuedmessagebox
-		KPassivePopup::message( i18n( "Conflicting Changes Made Offline" ), i18n( "A change happened to your GroupWise contact list while you were offline which was impossible to reconcile." ), Kopete::UI::Global::mainWidget() );
+		KPassivePopup::message( i18n( "Conflicting Changes Made Offline" ), i18n( "While you were offline, a change happened to your GroupWise contact list which was impossible to reconcile." ), Kopete::UI::Global::mainWidget() );
 	m_dontSync = false;
 }
 
@@ -1503,7 +1503,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 			grpIt.next();
 			
 			QMutableListIterator< GWContactInstance *> instIt( instances );
-			// ( see if a contactlist instance matches the group)
+			// ( see if a contact list instance matches the group)
 			while ( instIt.hasNext() )
 			{
 				instIt.next();
@@ -1601,7 +1601,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 
 		kDebug( GROUPWISE_DEBUG_GLOBAL ) << " = LOOKING FOR REMOVES";
 		QMutableListIterator<GWContactInstance *>  instIt( instances );
-		// ( remove each remaining contactlist instance, because it doesn't exist locally any more )
+		// ( remove each remaining contact list instance, because it doesn't exist locally any more )
 		while ( instIt.hasNext() )
 		{
 			instIt.next();

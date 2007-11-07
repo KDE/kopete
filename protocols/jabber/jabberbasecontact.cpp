@@ -129,11 +129,11 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 			break;
 		case XMPP::Subscription::To:
 			setProperty ( protocol()->propSubscriptionStatus,
-						  i18n ( "You can see this contact's status but they cannot see your status." ) );
+						  i18n ( "You can see this contact's status, but he/she cannot see your status." ) );
 			break;
 		case XMPP::Subscription::From:
 			setProperty ( protocol()->propSubscriptionStatus,
-						  i18n ( "This contact can see your status but you cannot see their status." ) );
+						  i18n ( "This contact can see your status, but you cannot see his/her status." ) );
 			break;
 		case XMPP::Subscription::Both:
 			setProperty ( protocol()->propSubscriptionStatus,

@@ -41,8 +41,8 @@ public:
 	 */
 	void initialise();
 	/**
-	 * Only accepts the contactlist that comes back from the server, 
-	 * processes it and notifies the client of the contactlist
+	 * Only accepts the contact list that comes back from the server, 
+	 * processes it and notifies the client of the contact list
 	 */
 	bool take( Transfer * transfer );
 protected:

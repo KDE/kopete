@@ -382,7 +382,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 	{
 		mMainWidget->lblStatusMessage->setText ( i18n ( "Registration failed." ) );
 		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Information,
-								  i18n ("Unable to create account on the server. The Jabber ID is probably already in use."),
+								  i18n ("Unable to create an account on the server. The Jabber ID is probably already in use."),
 								  i18n ("Jabber Account Registration"));
 
 	}

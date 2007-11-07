@@ -226,7 +226,7 @@ void TelepathyAccount::slotSetAlias()
 	{
 		if( !changeAlias(newAlias) )
 		{
-			KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n("Current connection manager does not support changing the visible alias to your friends.") );
+			KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n("The current connection manager does not support changing the visible alias to your friends.") );
 		}
 	}
 }

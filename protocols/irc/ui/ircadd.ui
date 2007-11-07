@@ -43,7 +43,7 @@
             <string>The name of the IRC contact or channel you would like to add.</string>
            </property>
            <property name="whatsThis" >
-            <string>The name of the IRC contact or channel you would like to add.  You may type simply the text of a person's nickname, or you may type a channel name, preceded by a pound sign ('#').</string>
+            <string>The name of the IRC contact or channel you would like to add.  You can type a person's nickname, or a channel name, preceded by a pound sign ('#').</string>
            </property>
            <property name="text" >
             <string>N&amp;ickname/channel to add:</string>
@@ -59,7 +59,7 @@
             <string>The name of the IRC contact or channel you would like to add.</string>
            </property>
            <property name="whatsThis" >
-            <string>The name of the IRC contact or channel you would like to add.  You may type simply the text of a person's nickname, or you may type a channel name, preceded by a pound sign ('#')</string>
+            <string>The name of the IRC contact or channel you would like to add.  You can type a person's nickname, or a channel name, preceded by a pound sign ('#').</string>
            </property>
           </widget>
          </item>

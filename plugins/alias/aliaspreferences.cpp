@@ -347,7 +347,7 @@ void AliasPreferences::slotAddAlias()
 				if( Kopete::CommandHandler::commandHandler()->commandHandledByProtocol( alias, *it ) )
 				{
 					KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. This "
-						"command is already being handled by either another alias or "
+						"command is already being handled either by another alias or "
 						"Kopete itself.</qt>", alias), i18n("Could Not Add Alias") );
 					return;
 				}

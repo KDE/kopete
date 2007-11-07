@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>GroupWiseChatPropertiesWidget</string>
+   <string>GroupWise Chat Properties</string>
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
@@ -183,7 +183,7 @@
      <item row="3" column="3" >
       <widget class="QLineEdit" name="m_maxUsers" >
        <property name="toolTip" >
-        <string>Maximum simultaneous users allowed in the chatroom</string>
+        <string>Maximum number of simultaneous users allowed in the chatroom</string>
        </property>
        <property name="text" >
         <string/>

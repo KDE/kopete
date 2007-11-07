@@ -70,10 +70,10 @@
                                             <cstring>mScreenName</cstring>
                                         </property>
                                         <property name="toolTip" stdset="0">
-                                            <string>Your Sametime userid</string>
+                                            <string>Your Sametime user ID</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>Your Sametime userid</string>
+                                            <string>Your Sametime user ID</string>
                                         </property>
                                     </widget>
                                     <widget class="QLineEdit">
@@ -81,10 +81,10 @@
                                             <cstring>mScreenName</cstring>
                                         </property>
                                         <property name="toolTip" stdset="0">
-                                            <string>Your Sametime userid</string>
+                                            <string>Your Sametime user ID</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>Your Sametime userid</string>
+                                            <string>Your Sametime user ID</string>
                                         </property>
                                     </widget>
                                 </hbox>
@@ -102,7 +102,7 @@
                                     <string>E&amp;xclude from connect all</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
+                                 <string>Check to disable automatic connection.  If checked, you can connect manually to this account, using the icon at the bottom of the main Kopete windoww</string>
                                 </property>
                             </widget>
                         </vbox>

@@ -39,7 +39,7 @@
 #include <kdebug.h>
 #include <kfontrequester.h>
 #include <kpluginfactory.h>
-//#include <kpluginloader.h>
+#include <kpluginloader.h>
 #include <kio/netaccess.h>
 #include <khtmlview.h>
 #include <klineedit.h>

@@ -127,7 +127,7 @@
           <item>
            <widget class="QCheckBox" name="cbAutoConnect" >
             <property name="whatsThis" >
-             <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
+             <string>Check to disable automatic connection.  If checked, you can connect manually to this account, using the icon at the bottom of the main Kopete window</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
@@ -663,7 +663,7 @@
             <property name="whatsThis" >
              <string>&lt;qt>Each resource can have different &lt;b>priority &lt;/b> levels. The messages will be sent to the resource which has the highest priority level.
 
-If two resources have the same priority, the messages will be sent to the one connected the latest.&lt;/qt></string>
+If two resources have the same priority, the messages will be sent to the one most recently connected.&lt;/qt></string>
             </property>
             <property name="value" >
              <number>5</number>
@@ -822,7 +822,7 @@ If two resources have the same priority, the messages will be sent to the one co
           <item>
            <widget class="QLabel" name="textLabel3" >
             <property name="text" >
-             <string>&lt;i>&lt;ul>&lt;li>The information in the "public IP address" and "port" fields apply to all Jabber accounts.&lt;/li>
+             <string>&lt;i>&lt;ul>&lt;li>The information in the "public IP address" and "port" fields applies to all Jabber accounts.&lt;/li>
 &lt;li>You can leave the "public IP address" empty if your computer is directly connected to the internet.&lt;/li>
 &lt;li>A hostname is also valid.&lt;/li>
 &lt;li>Changes to these fields will only take effect the next time you start Kopete.&lt;/li>
@@ -898,7 +898,7 @@ If two resources have the same priority, the messages will be sent to the one co
           <item>
            <widget class="QCheckBox" name="cbHideSystemInfo" >
             <property name="whatsThis" >
-             <string>By default, Kopete gives the other users some info about your system and the client. You can check this box in order to  hide those infos.</string>
+             <string>By default, Kopete gives the other users some info about your system and the client. Checking this box will hide that information.</string>
             </property>
             <property name="text" >
              <string>&amp;Hide system and client info</string>
@@ -951,7 +951,7 @@ If two resources have the same priority, the messages will be sent to the one co
              <bool>true</bool>
             </property>
             <property name="whatsThis" >
-             <string>Check this box if you want to always send notifications to your contacts.</string>
+             <string>Check this box if you always want to send notifications to your contacts.</string>
             </property>
             <property name="text" >
              <string>Always send not&amp;ifications</string>
@@ -1017,7 +1017,7 @@ If two resources have the same priority, the messages will be sent to the one co
                  <bool>true</bool>
                 </property>
                 <property name="whatsThis" >
-                 <string>&lt;qt>Check this box to send the &lt;b>Delivered notification&lt;/b> to your contacts : when a message is delivered to Kopete, Kopete can notify your contact that it has received the message.&lt;/qt></string>
+                 <string>&lt;qt>Check this box to send the &lt;b>Delivered notification&lt;/b> to your contacts : when a message is delivered to Kopete, Kopete cannotify your contact that it has received the message.&lt;/qt></string>
                 </property>
                 <property name="text" >
                  <string>Alwa&amp;ys send delivered notifications</string>
@@ -1033,7 +1033,7 @@ If two resources have the same priority, the messages will be sent to the one co
                  <bool>true</bool>
                 </property>
                 <property name="whatsThis" >
-                 <string>&lt;qt>Check this box to send the &lt;b>Displayed notification&lt;/b> to your contacts : when a message is displayed in Kopete, Kopete can notify your contact that it has displayed the message.&lt;/qt></string>
+                 <string>&lt;qt>Check this box to send the &lt;b>Displayed notification&lt;/b> to your contacts : when a message is displayed in Kopete, Kopete cannotify your contact that it has displayed the message.&lt;/qt></string>
                 </property>
                 <property name="text" >
                  <string>Al&amp;ways send displayed notifications</string>
@@ -1049,7 +1049,7 @@ If two resources have the same priority, the messages will be sent to the one co
                  <bool>true</bool>
                 </property>
                 <property name="whatsThis" >
-                 <string>&lt;qt>Check this box to send the &lt;b>Typing notification&lt;/b> to your contacts : when you are composing a message, you might want your contact to know that you are typing so that he knows you are answering.&lt;/qt></string>
+                 <string>&lt;qt>Check this box to send the &lt;b>Typing notification&lt;/b> to your contacts : when you are composing a message, you might want your contact to know that you are typing so that he/she knows you are answering.&lt;/qt></string>
                 </property>
                 <property name="text" >
                  <string>Always send &amp;typing notifications</string>

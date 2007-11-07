@@ -207,15 +207,15 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Client *client )
 	//clearWState( WState_Polished );
 
 	textLabel1_2->setText( i18n( "Search for:" ) );
-	textLabel1_2->setToolTip( i18n( "You may search for channels on the IRC server for a text string entered here." ) );
+	textLabel1_2->setToolTip( i18n( "You may search for channels on the IRC server, using a text string entered here." ) );
 	numUsers->setToolTip( i18n( "Channels returned must have at least this many members." ) );
 	numUsers->setWhatsThis( i18n( "Channels returned must have at least this many members." ) );
-	textLabel1_2->setWhatsThis( i18n( "You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux." ) );
+	textLabel1_2->setWhatsThis( i18n( "You may search for channels on the IRC server, using a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with Linux." ) );
 	channelSearch->setToolTip( i18n( "You may search for channels on the IRC server for a text string entered here." ) );
-	channelSearch->setWhatsThis( i18n( "You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux." ) );
+	channelSearch->setWhatsThis( i18n( "You may search for channels on the IRC server, using a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with Linux." ) );
 	mSearchButton->setText( i18n( "S&earch" ) );
 	mSearchButton->setToolTip( i18n( "Perform a channel search." ) );
-	mSearchButton->setWhatsThis( i18n( "Perform a channel search.  Please be patient, as this can be slow depending on the number of channels on the server." ) );
+	mSearchButton->setWhatsThis( i18n( "Perform a channel search.  Please be patient, as this can be slow, depending on the total number of channels on the server." ) );
 
 	mChannelList->setToolTip( i18n( "Double click on a channel to select it." ) );
 	mChannelList->header()->setLabel( 0, i18n( "Channel" ) );

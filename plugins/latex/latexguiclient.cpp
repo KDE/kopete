@@ -1,5 +1,5 @@
 /*
-    latexguiclient.cpp - Kopete Latex plugin
+    latexguiclient.cpp - Kopete LaTeX plugin
 
     Copyright (c) 2003-2005 by Olivier Goffart <ogoffart@kde.org>
 
@@ -61,13 +61,13 @@ void LatexGUIClient::slotPreview()
 	QString messageText = msg.plainBody();
 	if(!messageText.contains("$$")) //we haven't found any latex strings
 	{
-		KMessageBox::sorry(m_manager->view()->mainWidget() , i18n("There are no LaTeX in the message you are typing.  The LaTeX formula must be included between $$ and $$ "), i18n("No LaTeX Formula") );
+		KMessageBox::sorry(m_manager->view()->mainWidget() , i18n("The message you are typing does not contain any LaTeX.  A LaTeX formula must surronded by two pairs of dollar signs: $$formula$$ "), i18n("No LaTeX Formula") );
 		return;
 	}
 
 	QString oldBody = msg.plainBody();
 	msg=Kopete::Message( msg.from() , msg.to() );
-	msg.setHtmlBody( i18n("<b>Preview of the latex message :</b> <br />%1", oldBody) );
+	msg.setHtmlBody( i18n("<b>Preview of the LaTeX message :</b> <br />%1", oldBody) );
 	msg.setDirection( Kopete::Message::Internal );
 
 	m_manager->appendMessage(msg) ;

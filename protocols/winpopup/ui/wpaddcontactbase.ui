@@ -68,10 +68,10 @@
      <item>
       <widget class="QLabel" name="TextLabel2_2" >
        <property name="toolTip" >
-        <string>The hostname you would like to use to send WinPopup messages to.</string>
+        <string>The hostname to which you want to send WinPopup messages.</string>
        </property>
        <property name="whatsThis" >
-        <string>The hostname you would like to use to send WinPopup messages to.</string>
+        <string>The hostname to which you want to send WinPopup messages.</string>
        </property>
        <property name="text" >
         <string>Com&amp;puter hostname:</string>
@@ -87,10 +87,10 @@
      <item>
       <widget class="QLabel" name="TextLabel1_2" >
        <property name="toolTip" >
-        <string>The workgroup or domain the computer is on that you would like to use to send WinPopup messages to.</string>
+        <string>The workgroup or domain containing the computer to which you want to send WinPopup messages.</string>
        </property>
        <property name="whatsThis" >
-        <string>The workgroup or domain the computer is on that you would like to use to send WinPopup messages to.</string>
+        <string>The workgroup or domain containing the computer to which you want to send WinPopup messages.</string>
        </property>
        <property name="text" >
         <string>&amp;Workgroup/domain:</string>
@@ -131,10 +131,10 @@
         </sizepolicy>
        </property>
        <property name="toolTip" >
-        <string>The hostname you would like to use to send WinPopup messages to.</string>
+        <string>The hostname to which you want to send WinPopup messages.</string>
        </property>
        <property name="whatsThis" >
-        <string>The hostname you would like to use to send WinPopup messages to.</string>
+        <string>The hostname to which you want to send WinPopup messages.</string>
        </property>
       </widget>
      </item>
@@ -147,10 +147,10 @@
         </sizepolicy>
        </property>
        <property name="toolTip" >
-        <string>The workgroup or domain the computer is on that you would like to use to send WinPopup messages to.</string>
+        <string>The workgroup or domain containing the computer to which you want to send WinPopup messages</string>
        </property>
        <property name="whatsThis" >
-        <string>The workgroup or domain the computer is on that you would like to use to send WinPopup messages to.</string>
+        <string>The workgroup or domain containing the computer to which you want to send WinPopup messages</string>
        </property>
       </widget>
      </item>

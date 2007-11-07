@@ -52,7 +52,7 @@ namespace  Kopete
 
 class ContactList::Private
 {public:
-	/** Flag:  do not save the contactlist until she is completely loaded */
+	/** Flag:  do not save the contact list until she is completely loaded */
 	bool loaded ;
 
 	QList<MetaContact *> contacts;
@@ -85,7 +85,7 @@ ContactList::ContactList()
 	//ContactList::self() as parent which will call this constructor -> infinite loop
 	d->myself=0L;
 
-	//no contactlist loaded yet, don't save them
+	//no contact list loaded yet, don't save them
 	d->loaded=false;
 
 	// automatically save on changes to the list

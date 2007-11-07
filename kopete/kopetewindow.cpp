@@ -185,13 +185,13 @@ public:
  * 1) user quit - KopeteWindow::slotQuit() was called, calls KopeteApplication::quitKopete(),
  *                which closes all chatwindows and the KopeteWindow.  The last window to close
  *                shuts down the PluginManager in queryExit().  When the PluginManager has completed its
- *                shutdown, the app is finally deref()ed, and the contactlist and accountmanager
+ *                shutdown, the app is finally deref()ed, and the contact list and accountmanager
  *                are saved.
  *                and calling KApplication::quit()
  * 2) session   - KopeteWindow and all chatwindows are closed by KApplication session management.
  *     quit        Then the shutdown proceeds as above.
  *
- * queryClose() is honoured so group chats and chats receiving recent messages can interrupt
+ * queryClose() is honoured so groupchats and chats receiving recent messages can interrupt
  * (session) quit.
  */
 

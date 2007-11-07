@@ -203,7 +203,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 	"<h3>%1</h3><hr>").arg(subTitle));
 	
 	generalHTMLPart->write(i18n("<div class=\"statgroup\"><b><a href=\"main:generalinfo\" title=\"General summary view\">General</a></b><br>"
-	"<span title=\"Select the a day or a month to view the stat for\"><b>Days: </b>"
+	"<span title=\"Select the day or month for which you want to view statistics\"><b>Days: </b>"
 	"<a href=\"dayofweek:1\">Monday</a>&nbsp;"
 	"<a href=\"dayofweek:2\">Tuesday</a>&nbsp;"
 	"<a href=\"dayofweek:3\">Wednesday</a>&nbsp;"
@@ -395,7 +395,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 	// Some "total times"
 	generalHTMLPart->write(i18n("<div class=\"statgroup\">"));
 	generalHTMLPart->write(i18n("<b title=\"The total time I have been able to see %1 status\">"
-		"Total seen time :</b> %2 hour(s)<br>", m_contact->metaContact()->displayName(), stringFromSeconds(totalTime)));
+		"Total visible time :</b> %2 hour(s)<br>", m_contact->metaContact()->displayName(), stringFromSeconds(totalTime)));
 	generalHTMLPart->write(i18n("<b title=\"The total time I have seen %1 online\">"
 		"Total online time :</b> %2 hour(s)<br>", m_contact->metaContact()->displayName(), stringFromSeconds(totalOnlineTime)));
 	generalHTMLPart->write(i18n("<b title=\"The total time I have seen %1 away\">Total busy time :</b> %2 hour(s)<br>", m_contact->metaContact()->displayName(), stringFromSeconds(totalAwayTime)));
@@ -414,7 +414,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 	
 		generalHTMLPart->write(QString("<div class=\"statgroup\">"));
 		generalHTMLPart->write(i18n("<b title=\"The last time you talked with %1\">Last talk :</b> %2<br>", m_contact->metaContact()->displayName(), KGlobal::locale()->formatDateTime(m_contact->lastTalk())));
-		generalHTMLPart->write(i18n("<b title=\"The last time I have seen %1 online or away\">Last time contact was present :</b> %2", m_contact->metaContact()->displayName(), KGlobal::locale()->formatDateTime(m_contact->lastPresent())));
+		generalHTMLPart->write(i18n("<b title=\"The last time I have seen %1 online or away\">Last time present :</b> %2", m_contact->metaContact()->displayName(), KGlobal::locale()->formatDateTime(m_contact->lastPresent())));
 		generalHTMLPart->write(QString("</div>"));
 
 		//generalHTMLPart->write(QString("<div class=\"statgroup\">"));

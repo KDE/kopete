@@ -28,7 +28,7 @@
    <item>
     <widget class="QLabel" name="textLabel1" >
      <property name="text" >
-      <string>Your Account has to be verified because of too many false login attempts.&lt;br></string>
+      <string>Your Account has to be verified due to too many failed login attempts.&lt;br></string>
      </property>
     </widget>
    </item>
@@ -43,7 +43,7 @@
      <item>
       <widget class="QLabel" name="textLabel2" >
        <property name="text" >
-        <string>Please enter the chars shown in the picture:</string>
+        <string>Please enter the characters shown in the picture:</string>
        </property>
       </widget>
      </item>

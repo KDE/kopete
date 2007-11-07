@@ -45,7 +45,7 @@ class Picture;
  * @author Olivier Goffart <ogoffart@kde.org>
  *
  * A metacontact represent a person. This is a kind of entry to
- * the contactlist. All information of a contact is contained in
+ * the contact list. All information of a contact is contained in
  * the metacontact. Plugins can store data in it with all
  * @ref ContactListElement methods
  */
@@ -88,7 +88,7 @@ public:
 	/**
 	 * @brief Returns this metacontact's ID.
 	 *
-	 * Every metacontact has a unique id, set by  when creating the contact, or reading the contactlist
+	 * Every metacontact has a unique id, set by  when creating the contact, or reading the contact list
 	 * TODO: make it real
 	 */
 	QString metaContactId() const;
@@ -161,10 +161,10 @@ public:
 	PropertySource photoSource() const;
 
 	/**
-	 * @brief the display name showed in the contactlist window
+	 * @brief the display name showed in the contact list window
 	 *
 	 * The displayname is the name which should be shown almost everywere to
-	 * represent the metacontact.  (in the contactlist, in the chatwindow, ...)
+	 * represent the metacontact.  (in the contact list, in the chatwindow, ...)
 	 *
 	 * This is a kind of alias, set by the kopete user, as opposed to a nickname
 	 * set by the contact itself.
@@ -177,7 +177,7 @@ public:
 	QString displayName() const;
 
 	/**
-	 * @brief the photo showed in the contactlist window
+	 * @brief the photo showed in the contact list window
 	 *
 	 * Returns a image for the metacontact. If the metacontact photo source is
 	 * the KDE addressbook. it will return the picture stored in the addressbook
@@ -276,7 +276,7 @@ public:
 
 	/**
 	 * Temporary contacts will not be serialized.
-	 * If they are added to the contactlist, they appears in a special "Not in your contactlist" group.
+	 * If they are added to the contact list, they appears in a special "Not in your contact list" group.
 	 * (the @ref Group::temporary  group)
 	 */
 	bool isTemporary() const;
@@ -408,7 +408,7 @@ public slots:
 
 signals:
 	/**
-	 * This metaContact is going to be saved to the contactlist. Plugins should
+	 * This metaContact is going to be saved to the contact list. Plugins should
 	 * connect to this signal to update data with setPluginData()
 	 */
 	void aboutToSave( Kopete::MetaContact *metaContact );
@@ -500,7 +500,7 @@ signals:
 	 *
 	 * this signal differs from @ref onlineStatusChanged because a contact can
 	 * change his status without changing MetaContact status. It is mainly used to update the small icons
-	 * in the contactlist
+	 * in the contact list
 	 */
 	void contactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status );
 

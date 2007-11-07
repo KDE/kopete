@@ -19,7 +19,7 @@
    <item>
     <widget class="QLabel" name="textLabel1" >
      <property name="text" >
-      <string>Who can see my online status and send me messages:</string>
+      <string>Users who can see my online status and send me messages:</string>
      </property>
      <property name="wordWrap" >
       <bool>false</bool>

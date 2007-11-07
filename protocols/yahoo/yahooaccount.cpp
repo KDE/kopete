@@ -713,7 +713,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	else if(succ == Yahoo::LoginLock)
 	{
 		initConnectionSignals( DeleteConnections );
-		errorMsg = i18n("Could not log into Yahoo service: your account has been locked.\nVisit %1 to reactivate it.", url);
+		errorMsg = i18n("Could not log into the Yahoo service: your account has been locked.\nVisit %1 to reactivate it.", url);
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		disconnected( BadUserName ); // FIXME: add a more appropriate disconnect reason
@@ -1102,7 +1102,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 		}
 	}
 	if( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-				i18n("%1 has invited you to join a conference with %2.\n\nHis message: %3\n\n Accept?",
+		i18n("%1 has invited you to join a conference with %2.\n\nHis/her message: %3\n\nAccept?",
 				who, m, msg), QString(), KGuiItem( i18n("Accept") ), KGuiItem( i18n("Ignore") ) ) )
 	{
 		m_session->joinConference( room, myMembers );
@@ -1196,7 +1196,7 @@ void YahooAccount::slotConfUserDecline( const QString &who, const QString &room,
 
 	YahooConferenceChatSession *session = m_conferences[room];
 
-	QString body = i18n( "%1 declined to join the conference: \"%2\"", who, msg );
+	QString body = i18n( "%1 has declined to join the conference: \"%2\"", who, msg );
 	Kopete::Message message = Kopete::Message( contact( who ), myself() );
 	message.setPlainBody( body );
 	message.setDirection( Kopete::Message::Internal );

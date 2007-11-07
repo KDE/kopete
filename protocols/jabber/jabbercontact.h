@@ -211,7 +211,7 @@ private:
 
 	/**
 	 * Create a message manager for this contact.
-	 * This version is suitable for group chat as it
+	 * This version is suitable for groupchat as it
 	 * looks for a message manager with a given
 	 * list of contacts as members.
 	 */
@@ -233,7 +233,7 @@ private:
 	 * resource name, if one account is interacting
 	 * with several resources of the same contact
 	 * at the same time. Note that this does *not*
-	 * apply to group chats, so this variable
+	 * apply to groupchats, so this variable
 	 * only contains classes of type JabberChatSession.
 	 * The casts in manager() and slotChatSessionDeleted()
 	 * are thus legal.

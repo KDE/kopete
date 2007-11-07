@@ -6,15 +6,15 @@ libkopete provides the basic classes that Kopete's GUI, protocols, and plugins u
 
 @section features Important classes
 
-- Message
-- ChatSession
-- ChatSessionManager
-- MetaContact
-- Contact
-- Account
-- AccountManager
-- Protocol
-- Plugin
-- Task
+- <a href="classKopete_1_1Message.html">Message</a>
+- <a href="classKopete_1_1ChatSession.html">ChatSession</a>
+- <a href="classKopete_1_1ChatSessionManagere.html">ChatSessionManager</a>
+- <a href="classKopete_1_1MetaContact.html">MetaContact</a>
+- <a href="classKopete_1_1Contact.html">Contact</a>
+- <a href="classKopete_1_1Account.html">Account</a>
+- <a href="classKopete_1_1AccountManager.html">AccountManager</a>
+- <a href="classKopete_1_1Protocol.html">Protocol</a>
+- <a href="classKopete_1_1Plugin.html">Plugin</a>
+- <a href="classKopete_1_1Task.html">Task</a>
 
 */

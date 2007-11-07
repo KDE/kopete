@@ -81,7 +81,7 @@ private slots:
 
 	/**
 	 * This slot will apply settings that change the
-	 * contactlist's appearance. Only autohiding is
+	 * contact list's appearance. Only autohiding is
 	 * handled here at the moment
 	 */
 	void slotContactListAppearanceChanged();

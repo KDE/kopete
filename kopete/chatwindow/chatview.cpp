@@ -342,7 +342,7 @@ bool ChatView::closeView( bool force )
 			QString shortCaption = d->captionText;
 			shortCaption = KStringHandler::rsqueeze( shortCaption );
 
-			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br />"
+			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You are about to leave the groupchat session <b>%1</b>.<br />"
 				"You will not receive future messages from this conversation.</qt>", shortCaption ), i18n( "Closing Group Chat" ),
 				KGuiItem( i18nc( "@action:button", "Close Chat" ) ), KStandardGuiItem::cancel(), QLatin1String( "AskCloseGroupChat" ) );
 		}

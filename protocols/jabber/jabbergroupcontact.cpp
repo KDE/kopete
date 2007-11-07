@@ -67,7 +67,7 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	/**
 	 * FIXME: The first contact in the list of the message manager
 	 * needs to be our own contact. This is a flaw in the Kopete
-	 * API because it can't deal with group chat properly.
+	 * API because it can't deal with groupchat properly.
 	 * If we are alone in a room, we are myself() already and members()
 	 * is empty. This makes at least the history plugin crash.
 	 */
@@ -115,7 +115,7 @@ QList<KAction*> *JabberGroupContact::customContextMenuActions ()
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 
 	KAction *actionSetNick = new KAction(this);
-	actionSetNick->setText( i18n ("Change nick name") );
+	actionSetNick->setText( i18n ("Change nickname") );
 	actionSetNick->setIcon( KIcon("jabber_changenick") );
 	connect(actionSetNick, SIGNAL(triggered(bool)), this, SLOT(slotChangeNick()));
 
@@ -227,7 +227,7 @@ JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &r
 		return subContact;
 	}
 	
-	// Create new meta contact that holds the group chat contact.
+	// Create new meta contact that holds the groupchat contact.
 	Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 	metaContact->setTemporary ( true );
 	mMetaContactList.append ( metaContact );
@@ -363,7 +363,7 @@ void JabberGroupContact::slotChangeNick( )
 	
 	bool ok;
 	QString futureNewNickName = KInputDialog::getText( i18n( "Change nickname - Jabber Plugin" ),
-			i18n( "Please enter the new nick name you want to have on the room <i>%1</i>" , rosterItem().jid().userHost()),
+			i18n( "Please enter the new nickname you want to have in the room <i>%1</i>" , rosterItem().jid().userHost()),
 			mNick, &ok );
 	if ( !ok || !account()->isConnected())
 		return;

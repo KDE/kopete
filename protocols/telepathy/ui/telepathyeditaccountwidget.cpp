@@ -114,7 +114,7 @@ bool TelepathyEditAccountWidget::validateData()
 		return true;
 	else
 	{
-		KMessageBox::error(this, i18n("Please fill the dialog. First select a connection manager then select a protocol."));
+		KMessageBox::error(this, i18n("Please fill in the fields in the dialog. First select a connection manager, then select a protocol."));
 		return false;
 	}
 }

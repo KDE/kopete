@@ -163,7 +163,7 @@
              <string>This is the name that everyone will see everytime you say something</string>
             </property>
             <property name="whatsThis" >
-             <string>The alias you would like to use on IRC.  You may change this once online with the /nick command.</string>
+             <string>The alias you would like to use on IRC.  Once you're online, you can change it with the /nick command.</string>
             </property>
            </widget>
           </item>
@@ -234,7 +234,7 @@
           </size>
          </property>
          <property name="text" >
-          <string>&lt;p>&lt;b>Note:&lt;/b> Most IRC servers do not require a password, and only a nickname is required to connect&lt;/p></string>
+          <string>&lt;p>&lt;b>Note:&lt;/b> most IRC servers do not require a password to connect, only a nickname.&lt;/p></string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignTop</set>
@@ -332,7 +332,7 @@
           <item row="1" column="0" >
            <widget class="QCheckBox" name="autoConnect" >
             <property name="whatsThis" >
-             <string>If you check that case, the account will not be connected when you press the "Connect All" button, or at startup even if you selected to automatically connect at startup</string>
+             <string>If you enable this option, this account will not be connected when you press the "Connect All" button, nor at startup even if you have enabled automaic connection at startup</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
@@ -366,7 +366,7 @@
           </size>
          </property>
          <property name="title" >
-          <string>Run Following Commands on Connect</string>
+          <string>Run the Following Commands on Connect</string>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -475,7 +475,7 @@
              </sizepolicy>
             </property>
             <property name="whatsThis" >
-             <string>You can use this dialog to add custom replies for when people send CTCP requests to you. You can also use this dialog to override the built-in replies for VERSION, USERINFO, and CLIENTINFO.</string>
+             <string>You can use this dialog to add custom replies for when people send you CTCP requests. You can also use this dialog to override the built-in replies for VERSION, USERINFO, and CLIENTINFO.</string>
             </property>
            </widget>
           </item>
@@ -584,7 +584,7 @@
      </widget>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
-       <string>Windowing</string>
+       <string>Windows</string>
       </attribute>
       <layout class="QGridLayout" >
        <property name="margin" >

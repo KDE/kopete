@@ -534,7 +534,7 @@ void FileTransferTask::proxyRead()
 					errMsg = i18n("Request Timed Out");
 					break;
 				case 0x1a: //other side was too slow
-					errMsg = i18n("Accept Period Timed Out");
+					errMsg = i18n("Acceptance Period Timed Out");
 					break;
 				default:
 					errMsg = i18n("Unknown Error: ") + QString::number( err );

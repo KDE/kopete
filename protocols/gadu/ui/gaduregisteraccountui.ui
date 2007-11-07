@@ -306,7 +306,7 @@
         <string>Gadu-Gadu registration token.</string>
        </property>
        <property name="whatsThis" >
-        <string>This field contains an image with number that you need to type into the &lt;b>Verification Sequence&lt;/b> field above.</string>
+        <string>This field contains an image showing a number that you need to type into the &lt;b>Verification Sequence&lt;/b> field above.</string>
        </property>
        <property name="frameShape" >
         <enum>QFrame::Box</enum>
