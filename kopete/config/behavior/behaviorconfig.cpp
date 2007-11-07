@@ -49,6 +49,8 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QVariantList &args) :
 		KCModule( KopeteBehaviorConfigFactory::componentData(), parent, args )
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
+	// since KSetting::Dialog has margins here, we don't need our own.
+	layout->setContentsMargins( 0, 0, 0, 0);
 	
 	mBehaviorTabCtl = new QTabWidget(this);
 	mBehaviorTabCtl->setObjectName("mBehaviorTabCtl");

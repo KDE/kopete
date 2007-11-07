@@ -212,6 +212,8 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	KConfigGroup config(KGlobal::config(), "ChatWindowSettings");
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
+	// since KSetting::Dialog has margins here, we don't need our own.
+	layout->setContentsMargins( 0, 0, 0, 0);
 	m_tab = new QTabWidget(this);
 	layout->addWidget(m_tab);
 

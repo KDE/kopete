@@ -88,7 +88,9 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QVariantList &args )
 	d = new Private;
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
-
+	// since the tab widget is already within a layout with margins in the KSettings::Dialog
+	// it needs no margins of its own.
+	layout->setContentsMargins( 0, 0, 0, 0 );
 	d->mAppearanceTabCtl = new QTabWidget(this);
 	d->mAppearanceTabCtl->setObjectName("mAppearanceTabCtl");
 	layout->addWidget( d->mAppearanceTabCtl );
