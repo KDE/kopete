@@ -223,7 +223,7 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	m_tab->addTab(styleWidget, i18n("&Style"));
 	addConfig( KopeteChatWindowSettings::self(), styleWidget );
 
-	connect(m_styleUi.styleList, SIGNAL(itemSelectionChanged(Q3ListBoxItem *)),
+	connect(m_styleUi.styleList, SIGNAL(selectionChanged(Q3ListBoxItem *)),
 		this, SLOT(slotChatStyleSelected()));
 	connect(m_styleUi.variantList, SIGNAL(activated(const QString&)),
 		this, SLOT(slotChatStyleVariantSelected(const QString &)));
@@ -275,6 +275,12 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 		this, SLOT(slotGetEmoticonThemes()));
 	connect(m_emoticonsUi.btnRemoveTheme, SIGNAL(clicked()),
 		this, SLOT(slotRemoveEmoticonTheme()));
+
+//--------- colors tab --------------------------
+	QWidget *colorsWidget = new QWidget(m_tab);
+	m_colorsUi.setupUi(colorsWidget);
+	m_tab->addTab(colorsWidget, i18n("Colors && Fonts"));
+	addConfig( Kopete::AppearanceSettings::self(), colorsWidget );
 
 	load();
 }

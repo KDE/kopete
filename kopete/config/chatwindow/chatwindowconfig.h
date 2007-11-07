@@ -25,6 +25,7 @@
 #undef KDE3_SUPPORT
 #include "ui_chatwindowconfig_style.h"
 #include "ui_chatwindowconfig_emoticons.h"
+#include "ui_chatwindowconfig_colors.h"
 #include <kopetechatwindowstyle.h>
 
 class FakeProtocol;
@@ -95,6 +96,9 @@ private:
 
 	//----- Emoticons TAB ---------------------
 	Ui::ChatWindowConfig_Emoticons m_emoticonsUi;
+
+	//----- Colors TAB ------------------------
+	Ui::ChatWindowConfig_Colors m_colorsUi;
 
 };
 #endif
