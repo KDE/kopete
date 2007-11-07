@@ -9,7 +9,9 @@ ${CMAKE_BINARY_DIR}/kopete/kopete/chatwindow
 ########### next target ###############
 
 set(kcm_kopete_chatwindowconfig_PART_SRCS
-   chatwindowconfig.cpp  )
+   chatwindowconfig.cpp  
+   emoticonthemedelegate.cpp 
+   emoticonthemeitem.cpp )
 
 kde4_add_ui_files(kcm_kopete_chatwindowconfig_PART_SRCS 
    chatwindowconfig_style.ui

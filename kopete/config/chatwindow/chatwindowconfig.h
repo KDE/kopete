@@ -1,10 +1,11 @@
 /*
-    appearanceconfig.h  -  Kopete Look Feel Config
+    chatwindowconfig.h  -  Kopete Look Feel Config
 
     Copyright (c) 2005-2006 by Michaël Larouche       <larouche@kde.org>
     Copyright (c) 2005-2006 by Olivier Goffart         <ogoffart at kde.org>
+    Copyright (c) 2007      by Gustavo Pichorim Boiko  <gustavo.boiko@kdemail.net>
 
-    Kopete    (c) 2005-2006 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2005-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

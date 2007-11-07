@@ -65,65 +65,10 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="4" >
-    <widget class="QSplitter" name="splitter" >
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
+    <widget class="QListWidget" name="icon_theme_list" >
+     <property name="alternatingRowColors" >
+      <bool>true</bool>
      </property>
-     <widget class="K3ListBox" name="icon_theme_list" >
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
-        <horstretch>0</horstretch>
-        <verstretch>10</verstretch>
-       </sizepolicy>
-      </property>
-     </widget>
-     <widget class="QGroupBox" name="previewBox" >
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-        <horstretch>0</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="title" >
-       <string>Preview</string>
-      </property>
-      <property name="flat" >
-       <bool>true</bool>
-      </property>
-      <layout class="QHBoxLayout" >
-       <property name="leftMargin" >
-        <number>1</number>
-       </property>
-       <property name="topMargin" >
-        <number>1</number>
-       </property>
-       <property name="rightMargin" >
-        <number>1</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>1</number>
-       </property>
-       <item>
-        <widget class="KTextEdit" name="icon_theme_preview" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>32767</width>
-           <height>32767</height>
-          </size>
-         </property>
-         <property name="readOnly" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
    <item row="4" column="0" >
@@ -188,40 +133,12 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
-  <customwidget>
-   <class>KTextEdit</class>
-   <extends>QTextEdit</extends>
-   <header>ktextedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>K3ListBox</class>
-   <extends>Q3ListBox</extends>
-   <header>k3listbox.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>
    <sender>kcfg_useEmoticons</sender>
    <signal>toggled(bool)</signal>
    <receiver>kcfg_emoticonsRequireSpace</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>kcfg_useEmoticons</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>icon_theme_list</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
