@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
-    <height>246</height>
+    <width>584</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -30,65 +30,17 @@
         </sizepolicy>
        </property>
        <property name="currentIndex" >
-        <number>2</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab" >
         <attribute name="title" >
          <string>Device</string>
         </attribute>
-        <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
-         <item row="0" column="0" >
+        <layout class="QVBoxLayout" >
+         <item>
           <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>6</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>6</number>
-             </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>0</number>
-             </property>
              <item>
               <widget class="QLabel" name="deviceLabel" >
                <property name="text" >
@@ -114,16 +66,10 @@
            </item>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>6</number>
-             </property>
              <property name="leftMargin" >
               <number>0</number>
              </property>
              <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
               <number>0</number>
              </property>
              <property name="bottomMargin" >
@@ -137,6 +83,9 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip" >
+                <string>Select the device to take video input from</string>
+               </property>
               </widget>
              </item>
              <item>
@@ -146,6 +95,9 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="toolTip" >
+                <string>Select from multiple inputs provided by some devices</string>
                </property>
               </widget>
              </item>
@@ -157,13 +109,16 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip" >
+                <string>Select the video standard to use</string>
+               </property>
               </widget>
              </item>
             </layout>
            </item>
           </layout>
          </item>
-         <item row="1" column="0" >
+         <item>
           <widget class="QCheckBox" name="mDeviceDisableMMap" >
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
@@ -176,7 +131,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0" >
+         <item>
           <widget class="QCheckBox" name="mDeviceWorkaroundBrokenDriver" >
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
@@ -187,306 +142,6 @@
            <property name="text" >
             <string>&amp;Workaround broken driver</string>
            </property>
-          </widget>
-         </item>
-         <item row="3" column="0" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tab" >
-        <attribute name="title" >
-         <string>Con&amp;trols</string>
-        </attribute>
-        <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
-         <item row="0" column="0" >
-          <widget class="Q3ButtonGroup" name="buttonGroup12" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="title" >
-            <string>&amp;Image Adjustment</string>
-           </property>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>6</number>
-            </property>
-            <property name="leftMargin" >
-             <number>11</number>
-            </property>
-            <property name="topMargin" >
-             <number>11</number>
-            </property>
-            <property name="rightMargin" >
-             <number>11</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>11</number>
-            </property>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>6</number>
-              </property>
-              <property name="leftMargin" >
-               <number>0</number>
-              </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
-               <number>0</number>
-              </property>
-              <item>
-               <layout class="QVBoxLayout" >
-                <property name="spacing" >
-                 <number>6</number>
-                </property>
-                <property name="leftMargin" >
-                 <number>0</number>
-                </property>
-                <property name="topMargin" >
-                 <number>0</number>
-                </property>
-                <property name="rightMargin" >
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="brightnessLabel" >
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text" >
-                   <string>Brightness:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="contrastLabel" >
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text" >
-                   <string>Contrast:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="saturationLabel" >
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text" >
-                   <string>Saturation:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="whitenessLabel" >
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text" >
-                   <string>Whiteness:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="hueLabel" >
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text" >
-                   <string>Hue:</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" >
-                <property name="spacing" >
-                 <number>6</number>
-                </property>
-                <property name="leftMargin" >
-                 <number>0</number>
-                </property>
-                <property name="topMargin" >
-                 <number>0</number>
-                </property>
-                <property name="rightMargin" >
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QSlider" name="mBrightnessSlider" >
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximum" >
-                   <number>65535</number>
-                  </property>
-                  <property name="singleStep" >
-                   <number>256</number>
-                  </property>
-                  <property name="pageStep" >
-                   <number>4096</number>
-                  </property>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSlider" name="mContrastSlider" >
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximum" >
-                   <number>65535</number>
-                  </property>
-                  <property name="singleStep" >
-                   <number>256</number>
-                  </property>
-                  <property name="pageStep" >
-                   <number>4096</number>
-                  </property>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSlider" name="mSaturationSlider" >
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximum" >
-                   <number>65535</number>
-                  </property>
-                  <property name="singleStep" >
-                   <number>256</number>
-                  </property>
-                  <property name="pageStep" >
-                   <number>4096</number>
-                  </property>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSlider" name="mWhitenessSlider" >
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximum" >
-                   <number>65535</number>
-                  </property>
-                  <property name="singleStep" >
-                   <number>256</number>
-                  </property>
-                  <property name="pageStep" >
-                   <number>4096</number>
-                  </property>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSlider" name="mHueSlider" >
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximum" >
-                   <number>65535</number>
-                  </property>
-                  <property name="singleStep" >
-                   <number>256</number>
-                  </property>
-                  <property name="pageStep" >
-                   <number>4096</number>
-                  </property>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-           </layout>
           </widget>
          </item>
         </layout>
@@ -504,8 +159,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip" >
+            <string>Enable automatic brightness/contrast adjustment</string>
+           </property>
            <property name="text" >
-            <string>Au&amp;tomatic brightness/contrast adjustment</string>
+            <string>Adjust brightness/contrast</string>
            </property>
           </widget>
          </item>
@@ -517,8 +175,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip" >
+            <string>Enable automatic color correction</string>
+           </property>
            <property name="text" >
-            <string>Automatic color correction</string>
+            <string>Correct colors</string>
            </property>
            <property name="shortcut" >
             <string/>
@@ -533,8 +194,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip" >
+            <string>Show the video input mirrored</string>
+           </property>
            <property name="text" >
-            <string>See preview mirrored</string>
+            <string>Mirror preview</string>
            </property>
            <property name="shortcut" >
             <string/>
@@ -556,35 +220,251 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="tab" >
+        <attribute name="title" >
+         <string>Con&amp;trols</string>
+        </attribute>
+        <layout class="QVBoxLayout" >
+         <item>
+          <layout class="QGridLayout" >
+           <item row="0" column="0" >
+            <widget class="QLabel" name="brightnessLabel" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Brightness:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QSlider" name="mBrightnessSlider" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximum" >
+              <number>65535</number>
+             </property>
+             <property name="singleStep" >
+              <number>256</number>
+             </property>
+             <property name="pageStep" >
+              <number>4096</number>
+             </property>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="contrastLabel" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Contrast:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QSlider" name="mContrastSlider" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximum" >
+              <number>65535</number>
+             </property>
+             <property name="singleStep" >
+              <number>256</number>
+             </property>
+             <property name="pageStep" >
+              <number>4096</number>
+             </property>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="saturationLabel" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Saturation:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="QSlider" name="mSaturationSlider" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximum" >
+              <number>65535</number>
+             </property>
+             <property name="singleStep" >
+              <number>256</number>
+             </property>
+             <property name="pageStep" >
+              <number>4096</number>
+             </property>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" >
+            <widget class="QLabel" name="whitenessLabel" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Whiteness:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" >
+            <widget class="QSlider" name="mWhitenessSlider" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximum" >
+              <number>65535</number>
+             </property>
+             <property name="singleStep" >
+              <number>256</number>
+             </property>
+             <property name="pageStep" >
+              <number>4096</number>
+             </property>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0" >
+            <widget class="QLabel" name="hueLabel" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Hue:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1" >
+            <widget class="QSlider" name="mHueSlider" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximum" >
+              <number>65535</number>
+             </property>
+             <property name="singleStep" >
+              <number>256</number>
+             </property>
+             <property name="pageStep" >
+              <number>4096</number>
+             </property>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="mVideoImageLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize" >
-        <size>
-         <width>280</width>
-         <height>210</height>
-        </size>
-       </property>
-       <property name="frameShape" >
-        <enum>QFrame::Box</enum>
-       </property>
-       <property name="pixmap" >
-        <pixmap/>
-       </property>
-       <property name="scaledContents" >
-        <bool>true</bool>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" >
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="mVideoImageLabel" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize" >
+          <size>
+           <width>280</width>
+           <height>210</height>
+          </size>
+         </property>
+         <property name="frameShape" >
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="pixmap" >
+          <pixmap/>
+         </property>
+         <property name="scaledContents" >
+          <bool>true</bool>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -605,12 +485,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <customwidgets>
-  <customwidget>
-   <class>Q3ButtonGroup</class>
-   <extends>Q3GroupBox</extends>
-   <header>Qt3Support/Q3ButtonGroup</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>KComboBox</class>
    <extends>QComboBox</extends>
