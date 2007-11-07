@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=webcamsend
+Icon=camera-web
 Type=Service
 ServiceTypes=KCModule
 
@@ -10,7 +10,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 X-KDE-Weight=180
 
-Name=Audio/Video
+Name=Video
 Name[ca]=Àudio/Vídeo
 Name[el]=Ήχος/βίντεο
 Name[ja]=オーディオ/ビデオ
@@ -22,7 +22,7 @@ Name[sv]=Ljud och video
 Name[x-test]=xxAudio/Videoxx
 Name[zh_CN]=音频/视频
 Name[zh_TW]=音效/影像
-Comment=Configure Audio and Video Devices
+Comment=Configure Video Devices
 Comment[ca]=Configura els dispositius d'àudio i vídeo
 Comment[de]=Audio- und Videogeräte einrichten
 Comment[el]=Ρύθμιση συσκευών ήχου και βίντεο

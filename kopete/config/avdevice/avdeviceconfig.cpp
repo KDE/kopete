@@ -62,7 +62,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 
 	// set a default image for the webcam widget, in case the user does not have a video device
 	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
-	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("webcamsend").pixmap(128,128));
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
 
 // 	mAVDeviceTabCtl->addTab(w, i18n("Video"));
 //	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
