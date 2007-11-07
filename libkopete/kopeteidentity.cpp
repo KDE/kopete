@@ -163,7 +163,7 @@ QString Identity::toolTip() const
 QString Identity::customIcon() const
 {
 	//TODO implement
-	return "identity";
+	return "user";
 }
 
 
