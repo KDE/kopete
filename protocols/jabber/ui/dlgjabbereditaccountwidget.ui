@@ -1017,7 +1017,7 @@ If two resources have the same priority, the messages will be sent to the one mo
                  <bool>true</bool>
                 </property>
                 <property name="whatsThis" >
-                 <string>&lt;qt>Check this box to send the &lt;b>Delivered notification&lt;/b> to your contacts : when a message is delivered to Kopete, Kopete cannotify your contact that it has received the message.&lt;/qt></string>
+                 <string>&lt;qt>Check this box to send the &lt;b>Delivered notification&lt;/b> to your contacts : when a message is delivered to Kopete, Kopete can notify your contact that it has received the message.&lt;/qt></string>
                 </property>
                 <property name="text" >
                  <string>Alwa&amp;ys send delivered notifications</string>
@@ -1033,7 +1033,7 @@ If two resources have the same priority, the messages will be sent to the one mo
                  <bool>true</bool>
                 </property>
                 <property name="whatsThis" >
-                 <string>&lt;qt>Check this box to send the &lt;b>Displayed notification&lt;/b> to your contacts : when a message is displayed in Kopete, Kopete cannotify your contact that it has displayed the message.&lt;/qt></string>
+                 <string>&lt;qt>Check this box to send the &lt;b>Displayed notification&lt;/b> to your contacts : when a message is displayed in Kopete, Kopete can notify your contact that it has displayed the message.&lt;/qt></string>
                 </property>
                 <property name="text" >
                  <string>Al&amp;ways send displayed notifications</string>
