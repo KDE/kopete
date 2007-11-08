@@ -11,4 +11,5 @@ X-KDE-ParentApp=kopete_otr
 X-KDE-ParentComponents=kopete_otr
 
 Comment=Encrypt chat sessions with Off-The-Record encryption
+Comment[pt]=Encriptar as mensagens de conversação com encriptação Fora-de-Banda
 Name=OTR
