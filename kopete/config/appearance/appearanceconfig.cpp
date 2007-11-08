@@ -17,8 +17,9 @@
 */
 
 #include "appearanceconfig.h"
-#include "appearanceconfig_colors.h"
-#include "appearanceconfig_contactlist.h"
+#include "ui_appearanceconfig_colors.h"
+#include "ui_appearanceconfig_contactlist.h"
+#include "ui_appearanceconfig_advanced.h"
 
 #include "tooltipeditdialog.h"
 
@@ -72,13 +73,14 @@ class AppearanceConfig::Private
 {
 public:
 	Private()
-	 : mAppearanceTabCtl(0L), mPrfsColors(0L), mPrfsContactList(0L)
+	 : mAppearanceTabCtl(0L)
 	{}
 
 	QTabWidget *mAppearanceTabCtl;
 
-	AppearanceConfig_Colors *mPrfsColors;
-	AppearanceConfig_ContactList *mPrfsContactList;
+	Ui::AppearanceConfig_Colors mPrfsColors;
+	Ui::AppearanceConfig_ContactList mPrfsContactList;
+	Ui::AppearanceConfig_Advanced mPrfsAdvanced;
 };
 
 
@@ -98,19 +100,28 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QVariantList &args )
 	KConfigGroup config(KGlobal::config(), "ChatWindowSettings");
 
 	// "Contact List" TAB =======================================================
-	d->mPrfsContactList = new AppearanceConfig_ContactList(d->mAppearanceTabCtl);
-	addConfig( Kopete::AppearanceSettings::self(), d->mPrfsContactList );
+	QWidget *contactListWidget = new QWidget(d->mAppearanceTabCtl);
+	d->mPrfsContactList.setupUi(contactListWidget);
+	addConfig( Kopete::AppearanceSettings::self(), contactListWidget );
 
-	connect(d->mPrfsContactList->mEditTooltips, SIGNAL(clicked()),
+	connect(d->mPrfsContactList.mEditTooltips, SIGNAL(clicked()),
 		this, SLOT(slotEditTooltips()));
 
-	d->mAppearanceTabCtl->addTab(d->mPrfsContactList, i18n("Contact List"));
+	d->mAppearanceTabCtl->addTab(contactListWidget, i18n("Contact List"));
 
 	// "Colors and Fonts" TAB ===================================================
-	d->mPrfsColors = new AppearanceConfig_Colors(d->mAppearanceTabCtl);
-	addConfig( Kopete::AppearanceSettings::self(), d->mPrfsColors );
+	QWidget *colorsWidget = new QWidget(d->mAppearanceTabCtl);
+	d->mPrfsColors.setupUi(colorsWidget);
+	addConfig( Kopete::AppearanceSettings::self(), colorsWidget );
 
-	d->mAppearanceTabCtl->addTab(d->mPrfsColors, i18n("Colors && Fonts"));
+	d->mAppearanceTabCtl->addTab(colorsWidget, i18n("Colors && Fonts"));
+
+	// "Advanced" TAB ===========================================================
+	QWidget *advancedWidget = new QWidget(d->mAppearanceTabCtl);
+	d->mPrfsAdvanced.setupUi(advancedWidget);
+	addConfig( Kopete::AppearanceSettings::self(), advancedWidget );
+
+	d->mAppearanceTabCtl->addTab(advancedWidget, i18n("Advanced"));
 
 	// ==========================================================================
 
