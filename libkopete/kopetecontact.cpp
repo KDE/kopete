@@ -98,10 +98,6 @@ Contact::Contact( Account *account, const QString &contactId,
 	d->idleTime = 0;
 	d->icon = icon;
 
-	// Reemit propertyChanged
-	connect( this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant&, const QVariant&)),
-	         this, SLOT(emitPropertyChanged(PropertyContainer*, const QString&, const QVariant&, const QVariant&)) );
-
 	// If can happend that a MetaContact may be used without a account
 	// (ex: for unit tests or chat window style preview)
 	if ( account )
@@ -760,12 +756,6 @@ void Kopete::Contact::setPhoto(const QString &photoPath)
 	setProperty( Kopete::Global::Properties::self()->photo(), photoPath );
 }
 
-void Kopete::Contact::emitPropertyChanged( PropertyContainer *container, const QString &key,
-                          const QVariant &oldValue, const QVariant &newValue )
-{
-	Q_UNUSED( container )
-	emit propertyChanged( this, key, oldValue, newValue );
-}
 
 } //END namespace Kopete
 

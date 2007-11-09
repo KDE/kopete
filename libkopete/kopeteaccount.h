@@ -44,6 +44,7 @@ class OnlineStatus;
 class BlackLister;
 class StatusMessage;
 class Identity;
+class PropertyContainer;
 
 /**
  * The Kopete::Account class handles one account.
@@ -545,7 +546,7 @@ private slots:
 	/**
 	 * The @ref myself() contact's property changed.
 	 */
-	void slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & );
+	void slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & );
 
 	/**
 	 * Stop the suppression of status notification (connected to a timer)

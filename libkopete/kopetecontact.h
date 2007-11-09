@@ -461,17 +461,6 @@ private slots:
 	 * The account's isConnected has changed.
 	 */
 	void slotAccountIsConnectedChanged();
-
-	/**
-	 * Emits contact's properties has changed.
-	 * @param container property container object
-	 * @param key the key whose value has changed
-	 * @param oldValue the value before the change, or an invalid QVariant if the property is new
-	 * @param newValue the value after the change, or an invalid QVariant if the property was removed
-	 */
-	void emitPropertyChanged( PropertyContainer *container, const QString &key,
-	                      const QVariant &oldValue, const QVariant &newValue );
-
 signals:
 	/**
 	 * The contact's online status changed
@@ -495,16 +484,6 @@ signals:
 	 * That mean when activity has been noticed
 	 */
 	void idleStateChanged( Kopete::Contact *contact );
-	/**
-	 * One of the contact's properties has changed.
-	 * @param contact this contact, useful for listening to signals from more than one contact
-	 * @param key the key whose value has changed
-	 * @param oldValue the value before the change, or an invalid QVariant if the property is new
-	 * @param newValue the value after the change, or an invalid QVariant if the property was removed
-	 */
-	void propertyChanged( Kopete::Contact *contact, const QString &key,
-		const QVariant &oldValue, const QVariant &newValue );
-
 private:
 	class Private;
 	Private *d;

@@ -447,8 +447,8 @@ void Account::setMyself( Contact *myself )
 	{
 		QObject::disconnect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-		QObject::disconnect( d->myself, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) );
+		QObject::disconnect( d->myself, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+			this, SLOT( slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) );
 	}
 
 	d->myself = myself;
@@ -457,8 +457,8 @@ void Account::setMyself( Contact *myself )
 
 	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-	QObject::connect( d->myself, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-		this, SLOT( slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) );
+	QObject::connect( d->myself, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+		this, SLOT( slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) );
 
 	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 		identity(), SLOT( updateOnlineStatus()));
@@ -515,7 +515,7 @@ void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 	}
 }
 
-void Account::slotContactPropertyChanged( Contact * /* contact */,
+void Account::slotContactPropertyChanged( PropertyContainer * /* contact */,
 	const QString &key, const QVariant &old, const QVariant &newVal )
 {
 	if ( key == Kopete::Global::Properties::self()->statusMessage().key() && old != newVal && isConnected() )

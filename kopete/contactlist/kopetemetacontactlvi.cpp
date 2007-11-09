@@ -834,9 +834,10 @@ void KopeteMetaContactLVI::updateVisibility()
 		setTargetVisibility( true );
 }
 
-void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
+void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::PropertyContainer *_contact,
 	const QString &key, const QVariant &old, const QVariant &newVal )
 {
+	Kopete::Contact *contact=static_cast<Kopete::Contact*>(_contact);
 	if ( key == Kopete::Global::Properties::self()->statusMessage().key() && d->extraText && old != newVal )
 	{
 		bool allOffline = !m_metaContact->isOnline();
@@ -880,9 +881,9 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::Contact *contact,
 
 void KopeteMetaContactLVI::slotContactAdded( Kopete::Contact *c )
 {
-	connect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &,
+	connect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &,
 			const QVariant &, const QVariant & ) ),
-		this, SLOT( slotContactPropertyChanged( Kopete::Contact *, const QString &,
+		this, SLOT( slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &,
 			const QVariant &, const QVariant & ) ) );
 	connect( c->account() , SIGNAL( colorChanged(const QColor& ) ) , this, SLOT( updateContactIcons() ) );
 
@@ -894,9 +895,9 @@ void KopeteMetaContactLVI::slotContactAdded( Kopete::Contact *c )
 
 void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
 {
-	disconnect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &,
+	disconnect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &,
 			const QVariant &, const QVariant & ) ),
-		this, SLOT( slotContactPropertyChanged( Kopete::Contact *,
+		this, SLOT( slotContactPropertyChanged( Kopete::PropertyContainer *,
 			const QString &, const QVariant &, const QVariant & ) ) );
 	disconnect( c->account() , SIGNAL( colorChanged(const QColor& ) ) , this, SLOT( updateContactIcons() ) );
 

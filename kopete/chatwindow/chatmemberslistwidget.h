@@ -27,6 +27,7 @@ namespace Kopete
 class ChatSession;
 class Contact;
 class OnlineStatus;
+class PropertyContainer;
 }
 
 /**
@@ -108,7 +109,7 @@ public:
 	Kopete::Contact *contact() const { return m_contact; }
 
 private slots:
-	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotPropertyChanged( Kopete::PropertyContainer *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 private:
 	friend class ChatMembersListWidget;

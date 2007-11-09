@@ -38,6 +38,7 @@ class Contact;
 class OnlineStatus;
 class ChatSession;
 class Protocol;
+class PropertyContainer;
 }
 
 /**
@@ -177,7 +178,7 @@ private slots:
 	/**
 	 * Update completion to follow changes in users' nicknames
 	 */
-	void slotPropertyChanged( Kopete::Contact *, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotPropertyChanged( Kopete::PropertyContainer *, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 private:
 	Sonnet::Highlighter* spellHighlighter();

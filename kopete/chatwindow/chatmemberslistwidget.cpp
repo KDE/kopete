@@ -80,13 +80,13 @@ ChatMembersListWidget::ContactItem::ContactItem( ChatMembersListWidget *parent, 
 	setDragEnabled(true);
 
 	connect( m_contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
-	         this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+	         this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
 	setStatus( parent->session()->contactOnlineStatus(m_contact) );
 	reposition();
 }
 
-void ChatMembersListWidget::ContactItem::slotPropertyChanged( Kopete::Contact*,
+void ChatMembersListWidget::ContactItem::slotPropertyChanged( Kopete::PropertyContainer*,
 	const QString &key, const QVariant&, const QVariant &newValue  )
 {
 	if ( key == Kopete::Global::Properties::self()->nickName().key() )

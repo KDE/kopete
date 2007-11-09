@@ -329,7 +329,7 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 				disconnect( old->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
 			}
 			else
-				disconnect( old, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
+				disconnect( old, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 			emit contactAdded( c, suppress );
 			emit contactRemoved( old, QString() );
 		}
@@ -348,7 +348,7 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 			connect( c->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
 		}
 		else
-			connect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
+			connect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
 
 		slotUpdateDisplayName();
@@ -380,7 +380,7 @@ void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString
 			disconnect( c->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
 		}
 		else
-			disconnect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
+			disconnect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		disconnect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
 
 		slotUpdateDisplayName();

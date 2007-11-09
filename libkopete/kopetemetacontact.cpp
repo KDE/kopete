@@ -85,8 +85,8 @@ void MetaContact::addContact( Contact *c )
 		connect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 
-		connect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+		connect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+			this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
 		connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
 			this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
@@ -209,8 +209,8 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
 			disconnect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-			disconnect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-				this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+			disconnect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+				this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 			disconnect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
 				this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
 			disconnect( c, SIGNAL( idleStateChanged( Kopete::Contact * ) ),
@@ -794,9 +794,10 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 	}
 }
 
-void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
+void MetaContact::slotPropertyChanged( PropertyContainer* _subcontact, const QString &key,
 		const QVariant &oldValue, const QVariant &newValue  )
 {
+	Contact *subcontact=static_cast<Contact*>(_subcontact);
 	if ( displayNameSource() == SourceContact )
 	{
 		if( key == Global::Properties::self()->nickName().key() )

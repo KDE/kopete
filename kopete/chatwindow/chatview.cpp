@@ -484,7 +484,7 @@ void ChatView::slotChatDisplayNameChanged()
 		setCaption( chatName, true );
 }
 
-void ChatView::slotPropertyChanged( Kopete::Contact*, const QString &key,
+void ChatView::slotPropertyChanged( Kopete::PropertyContainer*, const QString &key,
 		const QVariant& oldValue, const QVariant &newValue  )
 {
 	if ( key == Kopete::Global::Properties::self()->nickName().key() )
@@ -527,8 +527,8 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 	}
 	else
 	{
-		connect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-		this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+		connect( contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+		this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 	}
 
 	if( !suppress && m_manager->members().count() > 1 )
@@ -572,8 +572,8 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 			}
 			else
 			{
-				disconnect(contact,SIGNAL(propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & )),
-				this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+				disconnect(contact,SIGNAL(propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & )),
+				this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 			}
 		}
 

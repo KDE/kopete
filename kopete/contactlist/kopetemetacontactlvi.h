@@ -131,7 +131,7 @@ public slots:
 private slots:
 	void slotUpdateMetaContact();
 	void slotContactStatusChanged( Kopete::Contact * );
-	void slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & );
+	void slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & );
 	void slotContactAdded( Kopete::Contact * );
 	void slotContactRemoved( Kopete::Contact * );
 

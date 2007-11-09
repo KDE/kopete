@@ -192,7 +192,7 @@ void ChatTextEditPart::complete()
 #endif
 }
 
-void ChatTextEditPart::slotPropertyChanged( Kopete::Contact*, const QString &key,
+void ChatTextEditPart::slotPropertyChanged( Kopete::PropertyContainer*, const QString &key,
 		const QVariant& oldValue, const QVariant &newValue  )
 {
 	if ( key == Kopete::Global::Properties::self()->nickName().key() )
@@ -204,8 +204,8 @@ void ChatTextEditPart::slotPropertyChanged( Kopete::Contact*, const QString &key
 
 void ChatTextEditPart::slotContactAdded( const Kopete::Contact *contact )
 {
-	connect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-	         this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+	connect( contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+	         this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 	
 	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	mComplete->addItem( contactName );
@@ -213,8 +213,8 @@ void ChatTextEditPart::slotContactAdded( const Kopete::Contact *contact )
 
 void ChatTextEditPart::slotContactRemoved( const Kopete::Contact *contact )
 {
-	disconnect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-	            this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+	disconnect( contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+	            this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 	
 	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	mComplete->removeItem( contactName );
