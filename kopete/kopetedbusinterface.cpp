@@ -321,6 +321,18 @@ void KopeteDBusInterface::sendFile(const QString &displayName, const QString &fi
 	}
 }
 
+bool KopeteDBusInterface::isConnected(const QString &protocolName, const QString &accountId)
+{
+	QString protocolId = protocolName;
+	if( !protocolName.contains("Protocol") )
+	{
+		protocolId += QLatin1String("Protocol");
+	}
+
+	Kopete::Account *account = Kopete::AccountManager::self()->findAccount(protocolId, accountId);
+	return account ? account->isConnected() : false;
+}
+
 void KopeteDBusInterface::connect(const QString &protocolName, const QString &accountId)
 {
 	QString protocolId = protocolName;

@@ -54,6 +54,15 @@ public Q_SLOTS:
 	void disconnectAll();
 
 	/**
+	 * @brief Get information if we are connected to a given account in the given protocol
+	 * @param protocolName The protocol name (ex: Jabber, Yahoo, Messenger)
+	 * @param accountId Account ID
+	 * @return if the given protocolName and accountId are valid and we
+	 * are connected then true is returned else false is returned.
+	 */
+	bool isConnected(const QString &protocolName, const QString &accountId);
+
+	/**
 	 * @brief Connect a given account in the given protocol
 	 * @param protocolName The protocol name (ex: Jabber, Yahoo, Messenger)
 	 * @param accountId Account ID
