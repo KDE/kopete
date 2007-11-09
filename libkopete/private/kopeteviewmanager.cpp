@@ -360,13 +360,19 @@ void KopeteViewManager::readMessages( Kopete::ChatSession *manager, bool outgoin
 
 void KopeteViewManager::slotEventDeleted( Kopete::MessageEvent *event )
 {
+    // d->eventList.remove( event );
+    d->eventList.removeAll(event);
+
     // kDebug(14000) ;
     Kopete::ChatSession *kmm=event->message().manager();
     if(!kmm)
+    {
+            // this can be NULL for example if KopeteViewManager::slotViewActivated()
+            // got called which does deleteLater() the event what may result in the
+            // case, that the QPointer<ChatSession> in Message::Private got removed
+            // aka set to NULL already.
             return;
-
-    // d->eventList.remove( event );
-    d->eventList.removeAll(event);
+    }
 
     if ( event->state() == Kopete::MessageEvent::Applied )
     {
