@@ -5,6 +5,11 @@
     </method>
     <method name="disconnectAll">
     </method>
+    <method name="isConnected">
+      <arg type="b" direction="out"/>
+      <arg name="protocolName" type="s" direction="in"/>
+      <arg name="accountId" type="s" direction="in"/>
+    </method>
     <method name="connect">
       <arg name="protocolName" type="s" direction="in"/>
       <arg name="accountId" type="s" direction="in"/>
@@ -12,6 +17,9 @@
     <method name="disconnect">
       <arg name="protocolName" type="s" direction="in"/>
       <arg name="accountId" type="s" direction="in"/>
+    </method>
+    <method name="protocols">
+      <arg type="as" direction="out"/>
     </method>
     <method name="identities">
       <arg type="as" direction="out"/>
