@@ -45,16 +45,14 @@
 
 StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db, QWidget* parent) : KDialog(parent), m_db(db), m_contact(contact)
 {
+	setButtons (KDialog::Close);
 	setDefaultButton(KDialog::Close);
-	setCaption (i18n("Statistics for %1", contact->metaContact()->displayName()), Close);
+	setCaption (i18n("Statistics for %1", contact->metaContact()->displayName()));
 	QWidget * w = new QWidget (this);
 	dialogUi = new Ui::StatisticsWidgetUI();
 	dialogUi->setupUi(w);
 	setMainWidget(w);
 	
-	setMinimumWidth(640);
-	setMinimumHeight(400);
-	adjustSize();
 
 	KHBox *hbox = new KHBox(this);
 	
@@ -63,7 +61,7 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 			  this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ) );
 	
 	
-	dialogUi->tabWidget->addTab(hbox, i18n("General"));
+	dialogUi->tabWidget->insertTab(0, hbox, i18n("General"));
 	dialogUi->tabWidget->setCurrentIndex(0);
 	
 	dialogUi->timePicker->setTime(QTime::currentTime());
