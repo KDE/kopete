@@ -46,12 +46,8 @@ kde4_add_ui_files(kopetecontactlist_SRCS
     contactlist/kabcexport_page2.ui
  )
 
-# Configure plugins
-set(kopetepluginconfig_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/kopetepluginconfig.cpp)
-
 set(kopete_SRCS 
    ${kopetecontactlist_SRCS}
-   ${kopetepluginconfig_SRCS}
    main.cpp 
    kopeteapplication.cpp 
    kanimatedsystemtrayicon.cpp
