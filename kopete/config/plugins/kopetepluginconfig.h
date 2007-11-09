@@ -3,8 +3,9 @@
 
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2006      by Michaël Larouche      <larouche@kde.org>
+    Copyright (c) 2007      by Will Stephenson       <wstephenson@kde.org>
 
-    Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2001-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -23,7 +24,7 @@
 #include <kcmodule.h>
 #undef KDE3_SUPPORT
 
-class KopetePluginConfigPrivate;
+class KPluginSelector;
 
 /**
  * Plugin selector. See KPluginSelector in kdelibs for documentation.
@@ -45,7 +46,7 @@ public slots:
 	virtual void defaults();
     void reparseConfiguration(const QByteArray&conf);
 private:
-	KopetePluginConfigPrivate *d;
+	KPluginSelector *m_pluginSelector;
 };
 
 #endif // KOPETEPLUGINCONFIG_H
