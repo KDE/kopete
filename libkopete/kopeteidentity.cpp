@@ -57,15 +57,15 @@ Identity::Identity( const QString &id, const QString &label )
 	: d( new Private(id, label) )
 {
 	load();
-	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
-			this, SLOT(slotSaveProperty(PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
+	connect(this, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
+	        this, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
 }
 
 Identity::Identity(const QString &label)
 : d( new Private(KRandom::randomString(10), label) )
 {
-	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
-			this, SLOT(slotSaveProperty(PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
+	connect(this, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
+	        this, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
 }
 
 Identity * Identity::clone() const
@@ -75,7 +75,7 @@ Identity * Identity::clone() const
 	serializeProperties( props );
 	id->deserializeProperties( props );
 
-	connect(id, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
+	connect(id, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
 			id, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
 	return id;
 }
@@ -244,7 +244,7 @@ void Identity::updateOnlineStatus()
 	}
 }
 
-void Identity::slotSaveProperty( PropertyContainer *container, const QString &key,
+void Identity::slotSaveProperty( Kopete::PropertyContainer *container, const QString &key,
 		                const QVariant &oldValue, const QVariant &newValue )
 {
 	save();

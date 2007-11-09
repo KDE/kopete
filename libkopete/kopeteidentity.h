@@ -157,7 +157,7 @@ public slots:
 	void updateOnlineStatus();
 
 protected slots:
-	void slotSaveProperty( PropertyContainer *container, const QString &key,
+	void slotSaveProperty( Kopete::PropertyContainer *container, const QString &key,
 				const QVariant &oldValue, const QVariant &newValue );
 
 signals:

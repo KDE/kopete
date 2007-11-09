@@ -111,7 +111,7 @@ public:
 	void removeProperty(const Kopete::PropertyTmpl &tmpl);
 
 signals:
-	void propertyChanged( PropertyContainer *container, const QString &key, 
+	void propertyChanged( Kopete::PropertyContainer *container, const QString &key,
 		const QVariant &oldValue, const QVariant &newValue );
 
 private:
