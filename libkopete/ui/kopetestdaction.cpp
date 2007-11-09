@@ -99,7 +99,7 @@ KAction * KopeteStdAction::contactInfo( const QObject *recvr, const char *slot, 
 
 KAction * KopeteStdAction::sendFile( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "Send &File..." ), KIcon( "attach" ), recvr, slot, parent, name );
+	return createAction( i18n( "Send &File..." ), KIcon( "mail-attachment" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::viewHistory( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
@@ -119,7 +119,7 @@ KAction * KopeteStdAction::changeMetaContact( const QObject *recvr, const char *
 
 KAction * KopeteStdAction::deleteContact( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	KAction *deleteAction = createAction( i18n( "&Delete Contact" ), KIcon( "delete-user" ), recvr, slot, parent, name );
+	KAction *deleteAction = createAction( i18n( "&Delete Contact" ), KIcon( "list-remove-user" ), recvr, slot, parent, name );
 	deleteAction->setShortcut( KShortcut(Qt::Key_Delete) );
 
 	return deleteAction;

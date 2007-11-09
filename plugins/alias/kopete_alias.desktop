@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
-Icon=alias
+Icon=editinput
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_alias
 X-KDE-PluginInfo-Author=Jason Keirstead

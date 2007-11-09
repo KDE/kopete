@@ -496,7 +496,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
                                                 KShortcut(), this, SLOT( slotCopyToGroup() ), ac );
         ac->addAction( "contactCopy", actionCopy );
 
-	actionMakeMetaContact = new KAction(KIcon("move"), i18n("Make Meta Contact"), ac);
+	actionMakeMetaContact = new KAction(KIcon("user"), i18n("Make Meta Contact"), ac);
         ac->addAction( "makeMetaContact", actionMakeMetaContact );
         connect (actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(slotMakeMetaContact()));
 
@@ -512,11 +512,11 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
 		ac, "contactSendFile" );
 
-	actionAddContact = new KActionMenu( KIcon( QLatin1String("add-user") ), i18n( "&Add Contact" ), ac );
+	actionAddContact = new KActionMenu( KIcon( QLatin1String("list-add-user") ), i18n( "&Add Contact" ), ac );
         ac->addAction( "contactAddContact", actionAddContact );
 	actionAddContact->menu()->addTitle( i18n("Select Account") );
 
-	actionAddTemporaryContact = new KAction( KIcon("add-user"), i18n( "Add to Your Contact List" ), ac );
+	actionAddTemporaryContact = new KAction( KIcon("list-add-user"), i18n( "Add to Your Contact List" ), ac );
         ac->addAction( "contactAddTemporaryContact", actionAddTemporaryContact );
 	connect( actionAddTemporaryContact, SIGNAL( triggered(bool) ), this, SLOT( slotAddTemporaryContact() ) );
 
