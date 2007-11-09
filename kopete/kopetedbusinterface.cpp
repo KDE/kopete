@@ -24,6 +24,7 @@
 
 // KDE includes
 #include <kurl.h>
+#include <kplugininfo.h>
 
 // Kopete includes
 #include <kopetecontactlist.h>
@@ -38,6 +39,7 @@
 #include <kopetemessage.h>
 #include <kopetechatsession.h>
 #include <kopetegroup.h>
+#include <kopetepluginmanager.h>
 
 // Local includes
 #include "kopeteadaptor.h"
@@ -83,6 +85,14 @@ KopeteDBusInterface::KopeteDBusInterface(QObject *parent)
 
 KopeteDBusInterface::~KopeteDBusInterface()
 {
+}
+
+QStringList KopeteDBusInterface::protocols() const
+{
+    QStringList list;
+    foreach(KPluginInfo p, Kopete::PluginManager::self()->availablePlugins("Protocols"))
+        list << p.name();
+    return list;
 }
 
 QStringList KopeteDBusInterface::contacts() const

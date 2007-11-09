@@ -68,6 +68,12 @@ public Q_SLOTS:
 	void disconnect(const QString &protocolName, const QString &accountId);
 
 	/**
+	* @brief Get a list of all protocol names.
+	* @return a list of all protocol names.
+	*/
+	QStringList protocols() const;
+
+	/**
 	 * @brief Get a list of all identities' ID
 	 * @return a list of all identities' ID
 	 */
@@ -87,6 +93,7 @@ public Q_SLOTS:
 
 	/**
 	 * @brief Get UI labels for identities
+     * @return a label for a identity.
 	 */
 	QString labelForIdentity(const QString & id) const;
 
