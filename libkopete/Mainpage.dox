@@ -8,7 +8,7 @@ libkopete provides the basic classes that Kopete's GUI, protocols, and plugins u
 
 - <a href="classKopete_1_1Message.html">Message</a>
 - <a href="classKopete_1_1ChatSession.html">ChatSession</a>
-- <a href="classKopete_1_1ChatSessionManagere.html">ChatSessionManager</a>
+- <a href="classKopete_1_1ChatSessionManager.html">ChatSessionManager</a>
 - <a href="classKopete_1_1MetaContact.html">MetaContact</a>
 - <a href="classKopete_1_1Contact.html">Contact</a>
 - <a href="classKopete_1_1Account.html">Account</a>
