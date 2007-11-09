@@ -48,6 +48,7 @@
 #include "kopetewindow.h"
 #include "kopeteviewmanager.h"
 #include "kopeteidentitymanager.h"
+#include "kopetedbusinterface.h"
 
 KopeteApplication::KopeteApplication()
 : KUniqueApplication( true, true )
@@ -91,6 +92,9 @@ KopeteApplication::KopeteApplication()
 
 	//Create the emoticon installer
 	m_emoticonHandler = new Kopete::EmoticonMimeTypeHandler;
+
+	//Create the DBus interface for org.kde.kopete
+	new KopeteDBusInterface(this);
 }
 
 KopeteApplication::~KopeteApplication()

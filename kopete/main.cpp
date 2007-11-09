@@ -22,7 +22,6 @@
 #include <klocale.h>
 
 #include "kopeteapplication.h"
-#include "kopetedbusinterface.h"
 #include "kopeteversion.h"
 
 static const char description[] =
@@ -100,8 +99,6 @@ int main( int argc, char *argv[] )
 	KUniqueApplication::addCmdLineOptions();
 
 	KopeteApplication kopete;
-	KopeteDBusInterface dbus;
-
 	return kopete.exec();
 }
 // vim: set noet ts=4 sts=4 sw=4:

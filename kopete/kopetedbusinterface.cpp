@@ -76,6 +76,7 @@ Kopete::OnlineStatusManager::Categories status2Value(const QString &status)
 KopeteDBusInterface::KopeteDBusInterface(QObject *parent)
  : QObject(parent)
 {
+	setObjectName("KopeteDBusInterface");
 	new KopeteAdaptor(this);
 	QDBusConnection::sessionBus().registerObject("/Kopete", this);
 }

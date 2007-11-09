@@ -36,7 +36,7 @@ public:
 	 * @brief Constructor
 	 * @param parent QObject parent
 	 */
-	KopeteDBusInterface(QObject *parent = 0);
+	KopeteDBusInterface(QObject *parent);
 	/**
 	 * @brief Destructor
 	 */
