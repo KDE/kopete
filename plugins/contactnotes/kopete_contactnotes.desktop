@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
-Icon=kontact-notes
+Icon=contact
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_contactnotes
 X-KDE-PluginInfo-Author=Olivier Goffart
