@@ -11,5 +11,11 @@ X-KDE-ParentComponents=kopete
 X-KDE-Weight=180
 
 Name=Video
+Name[pt]=Vídeo
+Name[pt_BR]=Vídeo
+Name[zh_TW]=影像
 Comment=Configure Video Devices
+Comment[pt]=Configurar os Dispositivos de Vídeo
+Comment[pt_BR]=Configurar os Dispositivos de Vídeo
+Comment[zh_TW]=設定影像裝置
 DocPath=kopete/configure-dialog.html#configuring-avdevice
