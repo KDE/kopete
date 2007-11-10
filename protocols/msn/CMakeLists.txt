@@ -49,7 +49,6 @@ set(kopete_msn_shared_LIB_SRCS
    msnswitchboardsocket.cpp 
    msnfiletransfersocket.cpp 
    msninvitation.cpp 
-   sha1.cpp 
    msnsecureloginhandler.cpp 
    msnchallengehandler.cpp 
    dispatcher.cpp 
