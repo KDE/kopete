@@ -184,6 +184,7 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	// Save the avatar image
 	config->writeEntry("avatar", d->pictureUrl);
 	
+	static_cast<MSNAccount *>( account() )->setPictureUrl( d->pictureUrl );
 	static_cast<MSNAccount *>( account() )->resetPictureObject();
 
 	if ( account()->isConnected() )
