@@ -34,6 +34,7 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <QByteArray>
+#include <QtCore/QCryptographicHash>
 
 // kde
 #include <kdebug.h>
@@ -60,8 +61,6 @@
 #include "private/kopeteemoticons.h"
 //#include "kopeteaccountmanager.h"
 //#include "kopeteprotocol.h"
-
-#include "sha1.h"
 
 #include "dispatcher.h"
 using P2P::Dispatcher;
@@ -647,10 +646,10 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 			QByteArray ar = pictFile.readAll();
 			pictFile.close();
 
-			QString sha1d = QString(SHA1::hash(ar).toBase64());
+			QByteArray sha1d = QCryptographicHash::hash(ar, QCryptographicHash::Sha1).toBase64();
 			QString size = QString::number( pictFile.size() );
 			QString all = "Creator" + m_account->accountId() +	"Size" + size + "Type2Location" + fi.fileName() + "FriendlyAAA=SHA1D" + sha1d;
-			QString sha1c = QString(SHA1::hashString(all.toUtf8()).toBase64());
+			QString sha1c = QString(QCryptographicHash::hash(all.toUtf8(),QCryptographicHash::Sha1).toBase64());
 			picObj = "<msnobj Creator=\"" + m_account->accountId() + "\" Size=\"" + size  + "\" Type=\"2\" Location=\""+ fi.fileName() + "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+ "\" SHA1C=\""+sha1c+"\"/>";
 
 			PeerDispatcher()->objectList.insert(picObj, filename);
