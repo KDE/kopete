@@ -46,7 +46,7 @@ void ModifyYABTask::onGo()
 {
 	kDebug(YAHOO_RAW_DEBUG) ;
 	m_socket = new KBufferedSocket( "address.yahoo.com", QString::number(80) );
-	connect( m_socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
+	connect( m_socket, SIGNAL( connected( const KNetwork::KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
 	connect( m_socket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
 
 	m_socket->connect();
