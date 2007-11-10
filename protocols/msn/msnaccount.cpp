@@ -1138,7 +1138,14 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 
 void MSNAccount::slotCreateChat( const QString& address, const QString& auth )
 {
-	slotCreateChat( 0L, address, auth, m_msgHandle.first(), m_msgHandle.first() );
+	if( !m_msgHandle.isEmpty() )
+	{
+		slotCreateChat( 0L, address, auth, m_msgHandle.first(), m_msgHandle.first() );
+	}
+	else
+	{
+		kDebug(14140) << "m_msgHandle is empty";
+	}
 }
 
 void MSNAccount::slotCreateChat( const QString& ID, const QString& address, const QString& auth,
