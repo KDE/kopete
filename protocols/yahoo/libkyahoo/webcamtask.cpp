@@ -111,7 +111,7 @@ void WebcamTask::parseWebcamInformation( YMSGTransfer *t )
 	KStreamSocket *socket = new KStreamSocket( info.server, QString::number(5100) );
 	socketMap[socket] = info;
 	socket->enableRead( true );
-	connect( socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( slotConnectionStage1Established() ) );
+	connect( socket, SIGNAL( connected( const KNetwork::KResolverEntry& ) ), this, SLOT( slotConnectionStage1Established() ) );
 	connect( socket, SIGNAL( gotError(int) ), this, SLOT( slotConnectionFailed(int) ) );
 	connect( socket, SIGNAL( readyRead() ), this, SLOT( slotRead() ) );
 	
@@ -124,7 +124,7 @@ void WebcamTask::slotConnectionStage1Established()
 	if( !socket )
 		return;
 	kDebug(YAHOO_RAW_DEBUG) << "Webcam connection Stage1 to the user " << socketMap[socket].sender << " established.";
-	disconnect( socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( slotConnectionStage1Established() ) );
+	disconnect( socket, SIGNAL( connected( const KNetwork::KResolverEntry& ) ), this, SLOT( slotConnectionStage1Established() ) );
 	disconnect( socket, SIGNAL( gotError(int) ), this, SLOT( slotConnectionFailed(int) ) );
 	socketMap[socket].status = ConnectedStage1;
 	
@@ -157,7 +157,7 @@ void WebcamTask::slotConnectionStage2Established()
 		return;
 
 	kDebug(YAHOO_RAW_DEBUG) << "Webcam connection Stage2 to the user " << socketMap[socket].sender << " established.";
-	disconnect( socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( slotConnectionStage2Established() ) );
+	disconnect( socket, SIGNAL( connected( const KNetwork::KResolverEntry& ) ), this, SLOT( slotConnectionStage2Established() ) );
 	disconnect( socket, SIGNAL( gotError(int) ), this, SLOT( slotConnectionFailed(int) ) );
 	socketMap[socket].status = ConnectedStage2;
 
@@ -254,7 +254,7 @@ void WebcamTask::connectStage2( KStreamSocket *socket )
 		newSocket = new KStreamSocket( server, QString::number(5100) );
 		socketMap[newSocket] = socketMap[socket];
 		newSocket->enableRead( true );
-		connect( newSocket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( slotConnectionStage2Established() ) );
+		connect( newSocket, SIGNAL( connected( const KNetwork::KResolverEntry& ) ), this, SLOT( slotConnectionStage2Established() ) );
 		connect( newSocket, SIGNAL( gotError(int) ), this, SLOT( slotConnectionFailed(int) ) );
 		connect( newSocket, SIGNAL( readyRead() ), this, SLOT( slotRead() ) );
 		if( socketMap[newSocket].direction == Outgoing )
