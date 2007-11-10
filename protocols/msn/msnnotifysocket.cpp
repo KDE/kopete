@@ -1143,7 +1143,13 @@ void MSNNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 	if( onlineStatus() == Disconnected )
 		m_newstatus = status;
 	else
-		sendCommand( "CHG", statusToString( status ) + ' ' + m_account->myselfClientId() + ' ' + escape(m_account->pictureObject()) );
+	{
+		QString statusAsString = statusToString( status );
+		if( statusAsString != QLatin1String("UNK") )
+		{
+			sendCommand( "CHG", statusAsString + ' ' + m_account->myselfClientId() + ' ' + escape(m_account->pictureObject()) );
+		}
+	}
 }
 
 void MSNNotifySocket::changePublicName( const QString &publicName, const QString &handle )
