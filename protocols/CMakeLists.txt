@@ -1,7 +1,7 @@
 macro_optional_find_package(OpenSSL)
 
 option(WITH_testbed "Enable Kopete testbed protocol" ON)
-option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" ON)
+option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" OFF)
 option(WITH_sms "Enable Kopete SMS protocol" ON)
 option(WITH_groupwise "Enable Novell GroupWise Messenger protocol" OFF)
 option(WITH_telepathy "Enable Telepathy testbed protocol" OFF)
