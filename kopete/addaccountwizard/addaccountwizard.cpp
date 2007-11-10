@@ -87,6 +87,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
 
 	// add the available messenger services to the dialogs list
 	QList<KPluginInfo> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
+	qSort(protocols);
 	for (QList<KPluginInfo>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
 	{
 		QTreeWidgetItem *pluginItem = new QTreeWidgetItem(d->uiSelectService.protocolListView);
