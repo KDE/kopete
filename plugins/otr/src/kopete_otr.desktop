@@ -16,4 +16,5 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Comment=Encrypt chat sessions with Off-The-Record encryption
 Comment[pt]=Encriptar as mensagens de conversação com encriptação Fora-de-Banda
+Comment[sv]=Kryptera chattsessioner med Off-The-Record kryptering
 Name=OTR
