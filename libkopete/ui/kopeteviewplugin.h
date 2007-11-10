@@ -17,7 +17,7 @@
 #ifndef KOPETEVIEWPLUGIN_H
 #define KOPETEVIEWPLUGIN_H
 
-#include "../kopeteplugin.h"
+#include "kopeteplugin.h"
 
 class KopeteView;
 
