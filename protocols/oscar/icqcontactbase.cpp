@@ -50,7 +50,7 @@ QString ICQContactBase::sanitizedMessage( const QString& message )
 
 void ICQContactBase::requestShortInfo()
 {
-	if ( mAccount->isConnected() )
+	if ( mAccount->engine()->isActive() )
 		mAccount->engine()->requestShortInfo( contactId() );
 }
 

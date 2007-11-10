@@ -362,7 +362,7 @@ void ICQContact::receivedLongInfo( const QString& contact )
 
 void ICQContact::requestMediumTlvInfo()
 {
-	if ( mAccount->isConnected() && !m_ssiItem.metaInfoId().isEmpty() )
+	if ( mAccount->engine()->isActive() && !m_ssiItem.metaInfoId().isEmpty() )
 		mAccount->engine()->requestMediumTlvInfo( contactId(), m_ssiItem.metaInfoId() );
 }
 

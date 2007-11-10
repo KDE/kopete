@@ -440,7 +440,7 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 		if ( !ssiItem.alias().isEmpty() )
 			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
 
-		if ( isConnected() )
+		if ( engine()->isActive() )
 			contact->loggedIn();
 
 		return contact;
