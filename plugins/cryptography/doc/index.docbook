@@ -49,7 +49,7 @@
 
 <title>Cryptography Plugin</title>
 
-<sect2>
+<sect2 id="cryptography-summary">
 
 <title>Cryptography</title>
 
@@ -68,7 +68,7 @@ exists for the individual in question), a new entry will be created. This entry 
 
 </sect2>
 
-<sect2>
+<sect2 id="credits">
 <title>Credits</title>
 &underFDL;
 &underGPL;
