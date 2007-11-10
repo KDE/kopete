@@ -16,9 +16,11 @@
     ***************************************************************************
 */
 
+// qt stuff
 #include <QList>
 #include <QTextDocument>
 
+// kde stuff
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kaction.h>
@@ -27,10 +29,8 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kactioncollection.h>
-#include <kleo/ui/keylistview.h>
-#include <kabc/addressbook.h>
-#include <kopete/kabcpersistence.h>
 
+// kopete stuff
 #include <kopete/kopetemetacontact.h>
 #include <kopete/kopetecontactlist.h>
 #include <kopete/kopetechatsessionmanager.h>
@@ -40,7 +40,7 @@
 #include <kopete/kopeteprotocol.h>
 #include <kopete/kopetemessageevent.h>
 
-#include <assert.h>
+// crypto stuff
 #include <kleo/cryptobackendfactory.h>
 #include <kleo/decryptverifyjob.h>
 #include <kleo/decryptjob.h>
@@ -55,7 +55,13 @@
 #include <gpgme++/keylistresult.h>
 #include <gpgme++/signingresult.h>
 #include <gpgme++/encryptionresult.h>
+#include <gpgme++/key.h>
 
+// kabc stuff
+#include <kabc/addressbook.h>
+#include <kopete/kabcpersistence.h>
+
+// our own stuff
 #include "cryptographyplugin.h"
 #include "cryptographyselectuserkey.h"
 #include "cryptographyguiclient.h"
@@ -93,6 +99,7 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*
 	actionCollection()->addAction ( "exportKey", action );
 	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotExportSelectedMetaContactKeys() ) );
 	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
+	action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
 
 	setXMLFile ( "cryptographyui.rc" );
 
@@ -113,7 +120,7 @@ CryptographyPlugin::~CryptographyPlugin()
 	mPluginStatic = 0L;
 }
 
-// just like ::self(). runturn pointer to singleton
+// just like ::self(). return pointer to singleton
 CryptographyPlugin* CryptographyPlugin::plugin()
 {
 	return mPluginStatic ;
@@ -133,15 +140,16 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::MessageEvent *messageEven
 
 	// launch a crypto job, and store it with the message, so that when the job finishes, we know what message it was for
 	const Kleo::CryptoBackendFactory *cpf = Kleo::CryptoBackendFactory::instance();
-	assert ( cpf );
+	Q_ASSERT (cpf);
 	const Kleo::CryptoBackend::Protocol *proto = cpf->openpgp();
-	assert ( proto );
+	Q_ASSERT (proto);
 
 	Kleo::DecryptVerifyJob * decryptVerifyJob = proto->decryptVerifyJob();
 	connect ( decryptVerifyJob, SIGNAL ( result ( const GpgME::DecryptionResult &, const GpgME::VerificationResult &, const QByteArray & ) ), this, SLOT ( slotIncomingMessageContinued ( const GpgME::DecryptionResult &, const GpgME::VerificationResult &, const QByteArray & ) ) );
 	mCurrentJobs.insert ( decryptVerifyJob, msg );
 	decryptVerifyJob->start ( body.toLatin1() );
 
+	// message is no longer needed, it is killed. We will see it again when the crypto job is done and it comes out of mCurrentJobs
 	messageEvent->discard();
 }
 
@@ -157,15 +165,15 @@ void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionR
 		// if was signed *and* encrypted, this will be true
 		if ( verificationResult.signatures().size() ) {
 			if ( decryptionResult.numRecipients() >= 1 )
-				finalizeMessage ( msg, body, verificationResult, true );
+				finalizeMessage ( msg, body, verificationResult, true/*encrytped*/ );
 		}
 
 		// was not signed *and* encrypted, may be one or the other. launch a job to see about both possibilities
 		else {
 			const Kleo::CryptoBackendFactory *cpf = Kleo::CryptoBackendFactory::instance();
-			assert ( cpf );
+			Q_ASSERT ( cpf );
 			const Kleo::CryptoBackend::Protocol *proto = cpf->openpgp();
-			assert ( proto );
+			Q_ASSERT ( proto );
 
 			Kleo::DecryptJob * decryptJob = proto->decryptJob();
 			connect ( decryptJob, SIGNAL ( result ( const GpgME::DecryptionResult &, const QByteArray & ) ), this, SLOT ( slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult &, const QByteArray & ) ) );
@@ -191,7 +199,7 @@ void CryptographyPlugin::slotIncomingEncryptedMessageContinued ( const GpgME::De
 	if ( !body.isEmpty() )
 	{
 		if ( decryptionResult.numRecipients() >= 1 )
-			finalizeMessage ( msg, body, GpgME::VerificationResult(), true );
+			finalizeMessage ( msg, body, GpgME::VerificationResult(), true/*encrypted*/ );
 	}
 }
 
@@ -204,7 +212,7 @@ void CryptographyPlugin::slotIncomingSignedMessageContinued ( const GpgME::Verif
 	QString body = plainText;
 
 	if ( ( !body.isEmpty() ) && ( verificationResult.signatures().size() ) )
-		finalizeMessage ( msg, body, verificationResult, false );
+		finalizeMessage ( msg, body, verificationResult, false/*encrypted*/ );
 }
 
 // apply signature icons and put message in chat window
@@ -256,15 +264,15 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 	kDebug ( 14303 ) << ( signing ? "signing" : "" ) << ( encrypting ? "encrypting" : "" ) << "message " << msg.plainBody();
 
 	const Kleo::CryptoBackendFactory *cpf = Kleo::CryptoBackendFactory::instance();
-	assert ( cpf );
+	Q_ASSERT ( cpf );
 	const Kleo::CryptoBackend::Protocol *proto = cpf->openpgp();
-	assert ( proto );
+	Q_ASSERT ( proto );
 
 	// create std::vector with list of signing keys (really just the one the user has set)
 	if ( signing )
 	{
 		Kleo::KeyListJob * listJob = proto->keyListJob();
-		listJob->exec ( QStringList ( CryptographyConfig::self()->fingerprint() ), true, signingKeys );
+		listJob->exec ( QStringList ( CryptographyConfig::self()->fingerprint() ), true/*secretOnly*/, signingKeys );
 	}
 
 	// create QStringList of recpients' keys, then convert that (using a KeyListJob) into a std::vector
@@ -280,24 +288,24 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 		// encrypt to self so we can decrypt during slotIncomingMessage()
 		encryptingKeysPattern.append ( CryptographyConfig::self()->fingerprint() );
 		Kleo::KeyListJob * listJob = proto->keyListJob();
-		listJob->exec ( encryptingKeysPattern, false, encryptingKeys );
+		listJob->exec ( encryptingKeysPattern, false/*secretOnly*/, encryptingKeys );
 	}
 	// do both signing and encrypting at once
 	if ( signing && encrypting )
 	{
-		Kleo::SignEncryptJob * job = proto->signEncryptJob ( true );
+		Kleo::SignEncryptJob * job = proto->signEncryptJob ( true/*armor*/ );
 		job->exec ( signingKeys, encryptingKeys, msg.plainBody().toLatin1(), true, result );
 	}
 	// sign message body
 	else if ( signing )
 	{
-		Kleo::SignJob * job = proto->signJob ( true );
+		Kleo::SignJob * job = proto->signJob ( true/*armor*/ );
 		job->exec ( signingKeys, msg.plainBody().toLatin1(), GpgME::NormalSignatureMode, result );
 	}
 	// encrypt message body to all recipients
 	else if ( encrypting )
 	{
-		Kleo::EncryptJob * job = proto->encryptJob ( true );
+		Kleo::EncryptJob * job = proto->encryptJob ( true/*armor*/ );
 		job->exec ( encryptingKeys, msg.plainBody().toLatin1(), true, result );
 	}
 

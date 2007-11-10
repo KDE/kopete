@@ -21,7 +21,8 @@
 #include <QVBoxLayout>
 
 #include <klineedit.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
+#include <klocale.h>
 #include <kleo/ui/keyrequester.h>
 
 #include "cryptographypreferences.h"
@@ -36,20 +37,24 @@ K_EXPORT_PLUGIN ( CryptographyPreferencesFactory ( "kcm_kopete_cryptography" ) )
 CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QVariantList &args )
 		: KCModule ( CryptographyPreferencesFactory::componentData(), parent, args )
 {
+	setButtons ( Help | Apply | Default );
+	
 	// Add actual widget generated from ui file.
 	QVBoxLayout* l = new QVBoxLayout ( this );
-	QHBoxLayout* keyLayout = new QHBoxLayout ( this );
+	QHBoxLayout* keyLayout = new QHBoxLayout ( 0 );
 
 	QLabel * keyLabel = new QLabel ( i18n ( "Private Key: " ), this );
-	key = new Kleo::EncryptionKeyRequester ( false, Kleo::EncryptionKeyRequester::OpenPGP, this, true, true );
+
+	key = new Kleo::EncryptionKeyRequester ( false/*multipleKeys*/, Kleo::EncryptionKeyRequester::OpenPGP, this, true/*onlyTrusted*/, true/*onlyValid*/ );
 	key->setDialogMessage ( i18n ( "Select the key you want to use to sign and encrypt messages" ) );
 	key->setDialogCaption ( i18n ( "Select the key you want to use to sign and encrypt messages" ) );
 	key->setToolTip ( i18n ( "The private key used for decryption and signing" ) );
-	key->setWhatsThis ( i18n ( "See and change the private key used for signing and encrypting messages using the Cryptography plugin" ) );
+	key->setWhatsThis ( i18n ( "View and change the private key used for signing and encrypting messages using the Cryptography plugin" ) );
 
-	QLabel * label = new QLabel ( i18n ( "Before you can send encrypted messages to someone, you must select their public key by right-clicking on their name in your contact list, and choose \"Select Public Key\".\n\n Before you can sign messages, you must select a private key.\n\n All messages become plain text when sent with this plugin." ), this );
+	QLabel * label = new QLabel ( i18n ( "Before you can sign messages or receive encrypted ones, you must select a private key for yourself.\n\nBefore you can send encrypted messages to someone, you must select their public key by right-clicking on their name in your contact list and choosing \"Select Public Key\"."), this );
 	label->setWordWrap ( true );
 
+	keyLabel->setBuddy( key );
 	keyLayout->addWidget ( keyLabel );
 	keyLayout->addWidget ( key );
 	l->addLayout ( keyLayout );

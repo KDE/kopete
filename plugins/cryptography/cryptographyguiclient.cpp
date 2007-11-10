@@ -168,7 +168,7 @@ void CryptographyGUIClient::slotEncryptToggled()
 		// we can't encrypt if we don't have every single key we need
 		if ( !keyless.isEmpty() )
 		{
-			KMessageBox::sorry ( w, i18np ( "To send encrypted messages to %2, you still need to select a public key for this contact.", "To send encrypted messages to them, you still need to select a public key for each of these contacts:\n%2",
+			KMessageBox::sorry ( w, i18np ( "You need to select a public key for %2 to send encrypted messages to them.", "To send encrypted messages to the following meta-contacts still need to select a key for them:\n%2",
 			                                keyless.count(), keyless.join ( "\n" ) ),
 			                     i18np ( "Missing public key", "Missing public keys", keyless.count() ) );
 

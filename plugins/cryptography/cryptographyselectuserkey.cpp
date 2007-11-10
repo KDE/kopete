@@ -46,7 +46,7 @@ CryptographySelectUserKey::CryptographySelectUserKey ( const QString& key ,Kopet
 
 	QWidget *w = new QWidget ( this );
 	QLabel * label = new QLabel ( w );
-	m_KeyEdit = new Kleo::EncryptionKeyRequester ( false, Kleo::EncryptionKeyRequester::OpenPGP, w, false, true );
+	m_KeyEdit = new Kleo::EncryptionKeyRequester ( false/*multipleKeys*/, Kleo::EncryptionKeyRequester::OpenPGP, w, false/*onlyTrusted*/, true/*onlyValid*/ );
 	m_KeyEdit->setDialogMessage ( i18n ( "Select the key you want to use encrypt messages to the recipient" ) );
 	m_KeyEdit->setDialogCaption ( i18n ( "Select the key you want to use encrypt messages to the recipient" ) );
 	setMainWidget ( w );
