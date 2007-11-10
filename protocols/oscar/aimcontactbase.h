@@ -53,6 +53,8 @@ protected:
 	bool m_mobile; // Is this user mobile (i.e. do they have message forwarding on, or mobile AIM)
 
 private:
+	QString addQuotesAroundAttributes( QString message ) const;
+
 	QDateTime m_lastAutoresponseTime;
 	
 };

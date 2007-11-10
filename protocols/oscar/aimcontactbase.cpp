@@ -43,18 +43,18 @@ QString AIMContactBase::sanitizedMessage( const QString& message )
 	QDomDocument doc;
 	QString domError;
 	int errLine = 0, errCol = 0;
-	doc.setContent( message, false, &domError, &errLine, &errCol );
+	doc.setContent( addQuotesAroundAttributes(message), false, &domError, &errLine, &errCol );
 	if ( !domError.isEmpty() ) //error parsing, do nothing
 	{
 		kDebug(OSCAR_GEN_DEBUG) << "error from dom document conversion: "
-			<< domError << endl;
+			<< domError << "line:" << errLine << "col:" << errCol;
 		return message;
 	}
 	else
 	{
 		kDebug(OSCAR_GEN_DEBUG) << "conversion to dom document successful."
 			<< "looking for font tags" << endl;
-		QDomNodeList fontTagList = doc.elementsByTagName( "font" );
+		QDomNodeList fontTagList = doc.elementsByTagName( "FONT" );
 		if ( fontTagList.count() == 0 )
 		{
 			kDebug(OSCAR_GEN_DEBUG) << "No font tags found. Returning normal message";
@@ -72,14 +72,14 @@ QString AIMContactBase::sanitizedMessage( const QString& message )
 					fontEl = fontTagList.item(i).toElement();
 				else
 					continue;
-				if ( fontEl.hasAttribute( "back" ) )
+				if ( fontEl.hasAttribute( "BACK" ) )
 				{
 					kDebug(OSCAR_GEN_DEBUG) << "Found attribute to replace. Doing replacement";
-					QString backgroundColor = fontEl.attribute( "back" );
+					QString backgroundColor = fontEl.attribute( "BACK" );
 					backgroundColor.insert( 0, "background-color: " );
 					backgroundColor.append( ';' );
 					fontEl.setAttribute( "style", backgroundColor );
-					fontEl.removeAttribute( "back" );
+					fontEl.removeAttribute( "BACK" );
 				}
 			}
 		}
@@ -219,6 +219,43 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 	// Show the message we just sent in the chat window
 	manager(Kopete::Contact::CanCreate)->appendMessage(message);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
+}
+
+QString AIMContactBase::addQuotesAroundAttributes( QString message ) const
+{
+	int sIndex = 0;
+	int eIndex = 0;
+	int searchIndex = 0;
+	
+	QRegExp attrRegExp( "[\\d\\w]*=[^\"'/>\\s]+" );
+	QString attrValue( "\"%1\"" );
+	
+	sIndex = message.indexOf( "<", eIndex );
+	eIndex = message.indexOf( ">", sIndex );
+	
+	while ( attrRegExp.indexIn( message, searchIndex ) != -1 )
+	{
+		int startReplace = message.indexOf( "=", attrRegExp.pos() ) + 1;
+		int replaceLength = attrRegExp.pos() + attrRegExp.matchedLength() - startReplace;
+		
+		while ( startReplace + replaceLength > eIndex )
+		{
+			sIndex = message.indexOf( "<", eIndex );
+			eIndex = message.indexOf( ">", sIndex );
+		}
+		
+		searchIndex = attrRegExp.pos() + attrRegExp.matchedLength();
+		if ( startReplace <= sIndex )
+			continue;
+		
+		QString replaceText = attrValue.arg( message.mid( startReplace, replaceLength ) );
+		message.replace( startReplace, replaceLength, replaceText );
+		
+		searchIndex += 2;
+		eIndex += 2;
+	}
+	
+	return message;
 }
 
 #include "aimcontactbase.moc"
