@@ -184,18 +184,10 @@
       <item>
        <widget class="QCheckBox" name="kcfg_autoConnect" >
         <property name="toolTip" >
-         <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Connect on startup and when a network is available&lt;/p>&lt;/body>&lt;/html></string>
+         <string>Connect on startup and when a network is available</string>
         </property>
         <property name="whatsThis" >
-         <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">When starting Kopete, and whenever your computer is online, all your accounts will be connected automatically. &lt;/p>
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">You can exclude accounts individually in their properties.&lt;/p>&lt;/body>&lt;/html></string>
+         <string>When starting Kopete, and whenever your computer is online, all your accounts will be connected automatically. You can exclude accounts individually in their properties.</string>
         </property>
         <property name="text" >
          <string>Connect automatically</string>
