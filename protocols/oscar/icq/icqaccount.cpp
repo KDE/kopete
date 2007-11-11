@@ -45,6 +45,7 @@
 #include "xtrazicqstatuseditor.h"
 #include "xtrazstatusaction.h"
 #include "icqstatusmanager.h"
+#include "icqauthreplydialog.h"
 
 ICQMyselfContact::ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acct )
 {
@@ -125,6 +126,8 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 
 	QObject::connect( engine(), SIGNAL(userReadsStatusMessage(const QString&)),
 	                  this, SLOT(userReadsStatusMessage(const QString&)) );
+	QObject::connect( engine(), SIGNAL( authRequestReceived( const QString&, const QString& ) ),
+	                  this, SLOT( slotGotAuthRequest( const QString&, const QString& ) ) );
 
 	// Create actions
 	mEditInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), this );
@@ -456,6 +459,27 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 	}
 }
 
+void ICQAccount::slotGotAuthRequest( const QString& contact, const QString& reason )
+{
+	ICQAuthReplyDialog *replyDialog = new ICQAuthReplyDialog();
+	QObject::connect( this, SIGNAL(destroyed()), replyDialog, SLOT(deleteLater()) );
+	QObject::connect( replyDialog, SIGNAL(okClicked()), this, SLOT(slotAuthReplyDialogOkClicked()) );
+
+	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];	
+	replyDialog->setUser( ( ct ) ? ct->nickName() : contact );
+	replyDialog->setContact( contact );
+	replyDialog->setRequestReason( reason );
+	replyDialog->show();
+}
+
+void ICQAccount::slotAuthReplyDialogOkClicked()
+{
+    // Do not need to delete will delete itself automatically
+	ICQAuthReplyDialog *replyDialog = (ICQAuthReplyDialog*)sender();
+	
+	if ( replyDialog )
+		engine()->sendAuth( replyDialog->contact(), replyDialog->reason(), replyDialog->grantAuth() );
+}
 
 #include "icqaccount.moc"
 

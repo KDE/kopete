@@ -35,10 +35,15 @@ public:
 	
 	void setUser( const QString& user );
 	void setRequestReason( const QString& reason );
-	QString reason();
-	bool grantAuth();
+	void setContact( const QString& contact );
+
+	QString reason() const;
+	QString contact() const;
+	bool grantAuth() const;
 private:
 	bool m_wasRequested;
+	QString m_contact;
+
 	Ui::ICQAuthReplyUI *m_ui;
 };
 

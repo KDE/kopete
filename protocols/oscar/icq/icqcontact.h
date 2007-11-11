@@ -95,11 +95,6 @@ private slots:
 	/** Authorize this contact */
 	void slotSendAuth();
 
-	void slotAuthReplyDialogOkClicked();
-
-	/** We have received an auth request */
-	void slotGotAuthRequest( const QString& contact, const QString& reason );
-
 	/** We have received an auth reply */
 	void slotGotAuthReply( const QString& contact, const QString& reason, bool granted );
 

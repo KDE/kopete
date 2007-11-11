@@ -55,8 +55,6 @@ ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::M
 	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
 	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ), this, SLOT( userOffline( const QString& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( authRequestReceived( const QString&, const QString& ) ),
-	                  this, SLOT( slotGotAuthRequest( const QString&, const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( authReplyReceived( const QString&, const QString&, bool ) ),
 	                  this, SLOT( slotGotAuthReply(const QString&, const QString&, bool ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedIcqLongInfo( const QString& ) ),
@@ -298,29 +296,6 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 			  reason );
 	}
 	KNotification::event( QString::fromLatin1("icq_authorization"), message );
-}
-
-void ICQContact::slotGotAuthRequest( const QString& contact, const QString& reason )
-{
-	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
-		return;
-
-	ICQAuthReplyDialog *replyDialog = new ICQAuthReplyDialog();
-
-	connect( replyDialog, SIGNAL( okClicked() ), this, SLOT( slotAuthReplyDialogOkClicked() ) );
-	replyDialog->setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
-	replyDialog->setRequestReason( reason );
-	replyDialog->setModal( true );
-	replyDialog->show();
-}
-
-void ICQContact::slotAuthReplyDialogOkClicked()
-{
-    // Do not need to delete will delete itself automatically
-    ICQAuthReplyDialog *replyDialog = (ICQAuthReplyDialog*)sender();
-
-    if (replyDialog)
-	mAccount->engine()->sendAuth( contactId(), replyDialog->reason(), replyDialog->grantAuth() );
 }
 
 void ICQContact::receivedLongInfo( const QString& contact )
