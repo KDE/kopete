@@ -44,9 +44,6 @@ class StatisticsDialog : public KDialog
 		StatisticsDialog(StatisticsContact *contact, StatisticsDB* db, QWidget* parent=0);
 		~StatisticsDialog();
 		
-	private slots:
-		void slotButtonClicked(int button);
-		
 	private:
 		QString generateHTMLChart(const int *hours, const int *hours2, const int *hours3, const QString & caption, const QString & color);
 		QString generateHTMLChartBar(int height, const QString & color, const QString & caption);

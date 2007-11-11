@@ -43,6 +43,7 @@
 
 StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db, QWidget* parent) : KDialog(parent), m_db(db), m_contact(contact)
 {
+	setAttribute (Qt::WA_DeleteOnClose, true);
 	setButtons (KDialog::Close);
 	setDefaultButton(KDialog::Close);
 	setCaption (i18n("Statistics for %1", contact->metaContact()->displayName()));
@@ -76,7 +77,7 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	
 	generatePageGeneral();
 	
-	resize( 600, 800 );
+	resize( 800, 600 );
 
 }
 
@@ -84,16 +85,6 @@ StatisticsDialog::~StatisticsDialog()
 {
 	delete dialogUi;
 }
-
-// delete ourselves, since our creator can't. we're nonblocking, so it's moved on
-void StatisticsDialog::slotButtonClicked(int b)
-{
-	if (b == Close){
-		deleteLater();
-		QDialog::reject();
-	}
-}
-
 
 // We only generate pages when the user clicks on a link
 void StatisticsDialog::slotOpenURLRequest(const KUrl& url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
@@ -231,7 +222,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 	"<a href=\"monthofyear:3\">March</a>&nbsp;"
 	"<a href=\"monthofyear:4\">April</a>&nbsp;"
 	"<a href=\"monthofyear:5\">May</a>&nbsp;"
-	"<a href=\"monthofyear:6\">June</a><br />"
+	"<a href=\"monthofyear:6\">June</a>&nbsp;"
 	"<a href=\"monthofyear:7\">July</a>&nbsp;"
 	"<a href=\"monthofyear:8\">August</a>&nbsp;"
 	"<a href=\"monthofyear:9\">September</a>&nbsp;"
