@@ -181,7 +181,8 @@ Oscar::Presence OscarStatusManager::presenceOf( unsigned long oStatus, int oClas
 	Presence::Type type = pscTypeForOscarStatus( oStatus );
 
 	//Hack for aim away contacts
-	if ( type == Presence::Online && (oClass & ClassCode::AWAY) == ClassCode::AWAY )
+	if ( type == Presence::Online && (oClass & ClassCode::AWAY) == ClassCode::AWAY
+	     && (oClass & ClassCode::ICQ) == 0 )
 		type = Presence::Away;
 
 	Presence::Flags flags = Presence::None;
