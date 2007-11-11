@@ -21,7 +21,6 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <q3textedit.h>
 #include <qcombobox.h>
 #include <qstring.h>
 #include <QTimeEdit>
@@ -29,7 +28,6 @@
 
 #include "kdialog.h"
 #include "klocale.h"
-#include "k3listview.h"
 #include "khtml_part.h"
 #include "kstandarddirs.h"
 #include "kdatepicker.h"
@@ -59,6 +57,11 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	generalHTMLPart = new KHTMLPart(hbox);
 	connect ( generalHTMLPart->browserExtension(), SIGNAL( openUrlRequestDelayed( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ),
 			  this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ) );
+	generalHTMLPart->setJScriptEnabled(false);
+	generalHTMLPart->setJavaEnabled(false);
+	generalHTMLPart->setMetaRefreshEnabled(false);
+	generalHTMLPart->setPluginsEnabled(false);
+	generalHTMLPart->setOnlyLocalReferences(true);
 	
 	
 	dialogUi->tabWidget->insertTab(0, hbox, i18n("General"));
@@ -72,12 +75,25 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	setEscapeButton(Close);
 	
 	generatePageGeneral();
+	
+	resize( 600, 800 );
+
 }
 
 StatisticsDialog::~StatisticsDialog()
 {
 	delete dialogUi;
 }
+
+// delete ourselves, since our creator can't. we're nonblocking, so it's moved on
+void StatisticsDialog::slotButtonClicked(int b)
+{
+	if (b == Close){
+		deleteLater();
+		QDialog::reject();
+	}
+}
+
 
 // We only generate pages when the user clicks on a link
 void StatisticsDialog::slotOpenURLRequest(const KUrl& url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
@@ -215,7 +231,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 	"<a href=\"monthofyear:3\">March</a>&nbsp;"
 	"<a href=\"monthofyear:4\">April</a>&nbsp;"
 	"<a href=\"monthofyear:5\">May</a>&nbsp;"
-	"<a href=\"monthofyear:6\">June</a>&nbsp;"
+	"<a href=\"monthofyear:6\">June</a><br />"
 	"<a href=\"monthofyear:7\">July</a>&nbsp;"
 	"<a href=\"monthofyear:8\">August</a>&nbsp;"
 	"<a href=\"monthofyear:9\">September</a>&nbsp;"

@@ -162,7 +162,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="Q3TimeEdit" name="timePicker" />
+                 <widget class="QTimeEdit" name="timePicker" />
                 </item>
                 <item>
                  <spacer>
@@ -311,12 +311,6 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3TimeEdit</class>
-   <extends>QWidget</extends>
-   <header>Qt3Support/Q3TimeEdit</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>KDatePicker</class>
    <extends>QFrame</extends>
