@@ -36,7 +36,6 @@ public:
 	            const QString& icon = QString(), const OContact& ssiItem = OContact() );
 	virtual ~AIMContactBase();
 
-	virtual QString sanitizedMessage( const QString& message );
 	/**
 	 * Gets the last time an autoresponse was sent to this contact
 	 * @returns QDateTime Object that represents the date/time
@@ -53,8 +52,6 @@ protected:
 	bool m_mobile; // Is this user mobile (i.e. do they have message forwarding on, or mobile AIM)
 
 private:
-	QString addQuotesAroundAttributes( QString message ) const;
-
 	QDateTime m_lastAutoresponseTime;
 	
 };

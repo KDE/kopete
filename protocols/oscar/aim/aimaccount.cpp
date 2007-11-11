@@ -277,6 +277,56 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 	}
 }
 
+QString AIMAccount::sanitizedMessage( const QString& message ) const
+{
+	QDomDocument doc;
+	QString domError;
+	int errLine = 0, errCol = 0;
+	doc.setContent( addQuotesAroundAttributes(message), false, &domError, &errLine, &errCol );
+	if ( !domError.isEmpty() ) //error parsing, do nothing
+	{
+		kDebug(OSCAR_AIM_DEBUG) << "error from dom document conversion: "
+			<< domError << "line:" << errLine << "col:" << errCol;
+		return message;
+	}
+	else
+	{
+		kDebug(OSCAR_AIM_DEBUG) << "conversion to dom document successful."
+			<< "looking for font tags" << endl;
+		QDomNodeList fontTagList = doc.elementsByTagName( "FONT" );
+		if ( fontTagList.count() == 0 )
+		{
+			kDebug(OSCAR_AIM_DEBUG) << "No font tags found. Returning normal message";
+			return message;
+		}
+		else
+		{
+			kDebug(OSCAR_AIM_DEBUG) << "Found font tags. Attempting replacement";
+			uint numFontTags = fontTagList.count();
+			for ( uint i = 0; i < numFontTags; i++ )
+			{
+				QDomNode fontNode = fontTagList.item(i);
+				QDomElement fontEl;
+				if ( !fontNode.isNull() && fontNode.isElement() )
+					fontEl = fontTagList.item(i).toElement();
+				else
+					continue;
+				if ( fontEl.hasAttribute( "BACK" ) )
+				{
+					kDebug(OSCAR_AIM_DEBUG) << "Found attribute to replace. Doing replacement";
+					QString backgroundColor = fontEl.attribute( "BACK" );
+					backgroundColor.insert( 0, "background-color: " );
+					backgroundColor.append( ';' );
+					fontEl.setAttribute( "style", backgroundColor );
+					fontEl.removeAttribute( "BACK" );
+				}
+			}
+		}
+	}
+	kDebug(OSCAR_AIM_DEBUG) << "sanitized message is " << doc.toString();
+	return doc.toString();
+}
+
 KActionMenu* AIMAccount::actionMenu()
 {
 	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
@@ -519,7 +569,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 				kDebug(OSCAR_AIM_DEBUG) << "found chat session for chat room";
 				OscarContact* ocSender = static_cast<OscarContact*>(contacts()[Oscar::normalize( message.sender() )]);
 				//sanitize;
-				QString sanitizedMsg = ocSender->sanitizedMessage( message.text( defaultCodec() ) );
+				QString sanitizedMsg = sanitizedMessage( message.text( defaultCodec() ) );
 
 				Kopete::Message chatMessage( ocSender, myself() );
 				chatMessage.setDirection( Kopete::Message::Inbound );
@@ -725,6 +775,43 @@ void AIMAccount::setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses )
 			engine()->modifyContactItem( item, s );
 		}
 	}
+}
+
+QString AIMAccount::addQuotesAroundAttributes( QString message ) const
+{
+	int sIndex = 0;
+	int eIndex = 0;
+	int searchIndex = 0;
+	
+	QRegExp attrRegExp( "[\\d\\w]*=[^\"'/>\\s]+" );
+	QString attrValue( "\"%1\"" );
+	
+	sIndex = message.indexOf( "<", eIndex );
+	eIndex = message.indexOf( ">", sIndex );
+	
+	while ( attrRegExp.indexIn( message, searchIndex ) != -1 )
+	{
+		int startReplace = message.indexOf( "=", attrRegExp.pos() ) + 1;
+		int replaceLength = attrRegExp.pos() + attrRegExp.matchedLength() - startReplace;
+		
+		while ( startReplace + replaceLength > eIndex )
+		{
+			sIndex = message.indexOf( "<", eIndex );
+			eIndex = message.indexOf( ">", sIndex );
+		}
+		
+		searchIndex = attrRegExp.pos() + attrRegExp.matchedLength();
+		if ( startReplace <= sIndex )
+			continue;
+		
+		QString replaceText = attrValue.arg( message.mid( startReplace, replaceLength ) );
+		message.replace( startReplace, replaceLength, replaceText );
+		
+		searchIndex += 2;
+		eIndex += 2;
+	}
+	
+	return message;
 }
 
 #include "aimaccount.moc"

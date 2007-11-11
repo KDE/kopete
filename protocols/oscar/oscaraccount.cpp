@@ -444,7 +444,7 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	QString realText( message.text( contactCodec( ocSender ) ) );
 
 	//sanitize;
-	QString sanitizedMsg = ocSender->sanitizedMessage( realText );
+	QString sanitizedMsg = sanitizedMessage( realText );
 
 	Kopete::ContactPtrList me;
 	me.append( myself() );

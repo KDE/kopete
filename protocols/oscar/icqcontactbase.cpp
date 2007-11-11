@@ -43,11 +43,6 @@ ICQContactBase::~ICQContactBase()
 {
 }
 
-QString ICQContactBase::sanitizedMessage( const QString& message )
-{
-	return message;
-}
-
 void ICQContactBase::requestShortInfo()
 {
 	if ( mAccount->engine()->isActive() )

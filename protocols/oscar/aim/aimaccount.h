@@ -124,6 +124,8 @@ protected:
 	*/
 	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
 
+	virtual QString sanitizedMessage( const QString& message ) const;
+
 private:
 	Oscar::Presence presence();
 
@@ -133,6 +135,8 @@ private:
 
 	// Set privacy tlv item
 	void setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses );
+
+	QString addQuotesAroundAttributes( QString message ) const;
 
     AIMJoinChatUI* m_joinChatDialog;
 	QString mInitialStatusMessage;

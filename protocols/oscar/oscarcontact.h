@@ -107,8 +107,6 @@ public:
 	 */
 	void setPresenceTarget( const Oscar::Presence &presence );
 
-	virtual QString sanitizedMessage( const QString& message ) = 0;
-
 public slots:	
 	/** Remove this contact from the server. Reimplemented from Kopete::Contact */
 	virtual void deleteContact();

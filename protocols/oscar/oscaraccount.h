@@ -138,6 +138,8 @@ protected:
 
 	void updateVersionUpdaterStamp();
 
+	virtual QString sanitizedMessage( const QString& message ) const = 0;
+
 protected slots:
 
 	//! do stuff on login
