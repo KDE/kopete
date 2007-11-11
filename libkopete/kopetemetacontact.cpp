@@ -437,12 +437,12 @@ QString MetaContact::statusIcon() const
 			if( useCustomIcon() )
 				return icon( ContactListElement::Online );
 			else
-				return QString::fromUtf8( "metacontact_online" );
+				return QString::fromUtf8( "user-online" );
 		case OnlineStatus::Away:
 			if( useCustomIcon() )
 				return icon( ContactListElement::Away );
 			else
-				return QString::fromUtf8( "metacontact_away" );
+				return QString::fromUtf8( "user-away" );
 
 		case OnlineStatus::Unknown:
 			if( useCustomIcon() )
@@ -450,14 +450,14 @@ QString MetaContact::statusIcon() const
 			if ( d->contacts.isEmpty() )
 				return QString::fromUtf8( "metacontact_unknown" );
 			else
-				return QString::fromUtf8( "metacontact_offline" );
+				return QString::fromUtf8( "user-offline" );
 
 		case OnlineStatus::Offline:
 		default:
 			if( useCustomIcon() )
 				return icon( ContactListElement::Offline );
 			else
-				return QString::fromUtf8( "metacontact_offline" );
+				return QString::fromUtf8( "user-offline" );
 	}
 }
 

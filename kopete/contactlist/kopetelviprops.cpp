@@ -63,9 +63,9 @@
 
 #include "customnotificationprops.h"
 
-const QLatin1String MC_OFF( "metacontact_offline" );
-const QLatin1String MC_ON( "metacontact_online" );
-const QLatin1String MC_AW( "metacontact_away" );
+const QLatin1String MC_OFF( "user-offline" );
+const QLatin1String MC_ON( "user-online" );
+const QLatin1String MC_AW( "user-away" );
 const QLatin1String MC_UNK( "metacontact_unknown" );
 
 // KDE4 port notes:
