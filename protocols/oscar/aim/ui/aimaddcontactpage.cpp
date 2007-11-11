@@ -41,7 +41,10 @@ AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent)
 	}
 	else
 	{
-		new QLabel(i18n("You need to be connected to be able to add contacts.\nConnect to the AIM network and try again."), this);
+		QVBoxLayout *layout = new QVBoxLayout( this );
+		layout->setContentsMargins( 0, 0, 0, 0 );
+
+		layout->addWidget( new QLabel(i18n("You need to be connected to be able to add contacts.\nConnect to the AIM network and try again."), this) );
 		canadd = false;
 	}
 }
