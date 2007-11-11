@@ -304,7 +304,7 @@ void KopeteWindow::initView()
 void KopeteWindow::initActions()
 {
 	// this action menu contains one action per account and is updated when accounts are registered/unregistered
-	d->actionAddContact = new KActionMenu( KIcon("add_user"), i18n( "&Add Contact" ), this );
+	d->actionAddContact = new KActionMenu( KIcon("list-add-user"), i18n( "&Add Contact" ), this );
 	d->actionAddContact->setIconText( i18n( "Add" ) );
 	actionCollection()->addAction( "AddContact", d->actionAddContact );
 	d->actionAddContact->setDelayed( false );
