@@ -705,6 +705,10 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		}
 		else if ( !msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
 		{
+			// Filter out miranda's invisible check
+			if ( msg.messageType() == 0x0004 && msg.textArray().isEmpty() )
+				return;
+
 			// let application handle it
 			kDebug( OSCAR_RAW_DEBUG ) << "Emitting receivedMessage";
 			emit messageReceived( msg );
