@@ -299,6 +299,7 @@ void KopeteWindow::initView()
 	l->addWidget(d->identitywidget);
 
 	setCentralWidget(w);
+	d->contactlist->setFocus();
 }
 
 void KopeteWindow::initActions()
