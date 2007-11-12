@@ -161,7 +161,7 @@ protected slots:
 				const QVariant &oldValue, const QVariant &newValue );
 
 signals:
-	void onlineStatusChanged(Kopete::Identity*,Kopete::OnlineStatus::StatusType, Kopete::OnlineStatus::StatusType);
+	void onlineStatusChanged( Kopete::Identity* );
 	void identityDestroyed( const Kopete::Identity *identity );
 	void identityChanged(Kopete::Identity *identity);
 

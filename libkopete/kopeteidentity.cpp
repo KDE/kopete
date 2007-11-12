@@ -239,8 +239,8 @@ void Identity::updateOnlineStatus()
 	newStatus = mostSignificantStatus.status();
 	if( newStatus != d->onlineStatus )
 	{
-		emit onlineStatusChanged( this, d->onlineStatus, newStatus );
 		d->onlineStatus = newStatus;
+		emit onlineStatusChanged( this );
 	}
 }
 

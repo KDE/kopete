@@ -95,10 +95,8 @@ Identity* IdentityManager::registerIdentity( Identity *identity )
 	d->identities.append( identity );
 
 	// Connect to the identity's status changed signal
-	connect(identity, SIGNAL(onlineStatusChanged(Kopete::Identity *,
-			Kopete::OnlineStatus::StatusType, Kopete::OnlineStatus::StatusType)),
-		this, SLOT(slotIdentityOnlineStatusChanged(Kopete::Identity *,
-			Kopete::OnlineStatus::StatusType, Kopete::OnlineStatus::StatusType)));
+	connect(identity, SIGNAL(onlineStatusChanged(Kopete::Identity *)),
+		this, SLOT(slotIdentityOnlineStatusChanged(Kopete::Identity *)));
 
 	connect(identity, SIGNAL(identityDestroyed(const Kopete::Identity *)) , this, SLOT( unregisterIdentity(const Kopete::Identity *) ));
 
@@ -248,12 +246,11 @@ void IdentityManager::load()
 	defaultIdentity();
 }
 
-void IdentityManager::slotIdentityOnlineStatusChanged(Identity *i,
-	OnlineStatus::StatusType oldStatus, OnlineStatus::StatusType newStatus)
+void IdentityManager::slotIdentityOnlineStatusChanged(Identity *i)
 {
 	//TODO: check if we need to do something more on status changes
 	//kDebug(14010) << endl;
-	emit identityOnlineStatusChanged(i, oldStatus, newStatus);
+	emit identityOnlineStatusChanged(i);
 }
 
 } //END namespace Kopete

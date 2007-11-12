@@ -146,8 +146,7 @@ signals:
 	 */
 	void defaultIdentityChanged( Kopete::Identity *identity );
 	
-	void identityOnlineStatusChanged(Kopete::Identity *identity,
-		Kopete::OnlineStatus::StatusType oldStatus, Kopete::OnlineStatus::StatusType newStatus);
+	void identityOnlineStatusChanged( Kopete::Identity *identity );
 
 private:
 	/**
@@ -156,8 +155,7 @@ private:
 	IdentityManager();
 
 private slots:
-	void slotIdentityOnlineStatusChanged(Kopete::Identity *i,
-		Kopete::OnlineStatus::StatusType oldStatus, Kopete::OnlineStatus::StatusType newStatus);
+	void slotIdentityOnlineStatusChanged( Kopete::Identity *i );
 
 	/**
 	 * \internal

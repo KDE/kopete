@@ -744,11 +744,10 @@ void KopeteWindow::slotIdentityRegistered( Kopete::Identity *identity )
 	if ( !identity )
 		return;
 
-	connect( identity, SIGNAL(onlineStatusChanged( Kopete::Identity *, 
-												   Kopete::OnlineStatus::StatusType, Kopete::OnlineStatus::StatusType) ),
-			this, SLOT( slotIdentityStatusIconChanged( Kopete::Identity * ) ) );
-	connect( identity, SIGNAL(identityChanged( Kopete::Identity * )),
-			 this, SLOT( slotIdentityStatusIconChanged( Kopete::Identity * ) ) );
+	connect( identity, SIGNAL(onlineStatusChanged(Kopete::Identity *)),
+			this, SLOT( slotIdentityStatusIconChanged(Kopete::Identity *)));
+	connect( identity, SIGNAL(identityChanged(Kopete::Identity *)),
+			this, SLOT( slotIdentityStatusIconChanged( Kopete::Identity *)));
 
 	KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon( identity, d->statusBarWidget );
 	connect( sbIcon, SIGNAL( leftClicked( Kopete::Identity *, const QPoint & ) ),
@@ -774,18 +773,11 @@ void KopeteWindow::slotIdentityUnregistered( const Kopete::Identity *identity)
 
 }
 
-void KopeteWindow::slotIdentityStatusIconChanged()
-{
-	if ( const Kopete::Identity *from = dynamic_cast<const Kopete::Identity*>(sender()) )
-		slotIdentityStatusIconChanged( const_cast<Kopete::Identity*>(from) );
-}
-
 void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 {
 	kDebug( 14000 ) << identity->property( Kopete::Global::Properties::self()->statusMessage() ).value();
 	// update the global status label if the change doesn't
 //	QString newAwayMessage = contact->property( Kopete::Global::Properties::self()->awayMessage() ).value().toString();
-	Kopete::OnlineStatus status = identity->onlineStatus();
 // 	if ( status.status() != Kopete::OnlineStatus::Connecting )
 // 	{
 // 		QString globalMessage = m_globalStatusMessage->text();
@@ -795,7 +787,7 @@ void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 //	kDebug(14000) << "Icons: '" <<
 //		status.overlayIcons() << "'" << endl;
 
-	if ( status != Kopete::OnlineStatus::Connecting )
+	if ( identity->onlineStatus() != Kopete::OnlineStatus::Connecting )
 	{
 		d->globalStatusMessageStored = identity->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
 		d->globalStatusMessage->setText( d->globalStatusMessageStored );
@@ -811,7 +803,20 @@ void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 	i->setToolTip( identity->toolTip() );
 
 	// FIXME: should add the status to the icon
-	QPixmap pm = SmallIcon(identity->customIcon());
+	QPixmap pm;
+	switch ( identity->onlineStatus() ) {
+		case Kopete::OnlineStatus::Offline:
+		case Kopete::OnlineStatus::Connecting:
+			pm = SmallIcon( "user-offline" );
+			break;
+		case Kopete::OnlineStatus::Invisible:
+		case Kopete::OnlineStatus::Away:
+			pm = SmallIcon( "user-away" );
+			break;
+		case Kopete::OnlineStatus::Online:
+			pm = SmallIcon( "user-online" );
+			break;
+	}
 
 	// No Pixmap found, fallback to Unknown
 	if( pm.isNull() )

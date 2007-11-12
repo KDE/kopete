@@ -123,11 +123,6 @@ private slots:
 	void slotIdentityStatusIconChanged( Kopete::Identity *identity );
 
 	/**
-	 * The status icon of some identity changed. Must be sent by the identity in question.
-	 */
-	void slotIdentityStatusIconChanged();
-
-	/**
 	 * Show a in-place widget for an identity
 	 */
 	void slotIdentityStatusIconLeftClicked( Kopete::Identity *i,
