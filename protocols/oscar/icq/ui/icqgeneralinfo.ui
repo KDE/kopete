@@ -494,9 +494,10 @@
   <tabstop>uinEdit</tabstop>
   <tabstop>ipEdit</tabstop>
   <tabstop>nickNameEdit</tabstop>
-  <tabstop>genderCombo</tabstop>
+  <tabstop>aliasEdit</tabstop>
   <tabstop>firstNameEdit</tabstop>
   <tabstop>lastNameEdit</tabstop>
+  <tabstop>genderCombo</tabstop>
   <tabstop>maritalCombo</tabstop>
   <tabstop>timezoneCombo</tabstop>
   <tabstop>birthdayDaySpin</tabstop>

@@ -233,6 +233,14 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>kcfg_contactListAnimateChange</tabstop>
+  <tabstop>kcfg_contactListFading</tabstop>
+  <tabstop>kcfg_contactListFolding</tabstop>
+  <tabstop>kcfg_contactListAutoHide</tabstop>
+  <tabstop>kcfg_contactListAutoHideVScroll</tabstop>
+  <tabstop>kcfg_contactListAutoHideTimeout</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

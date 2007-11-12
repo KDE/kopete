@@ -13,11 +13,20 @@
    <string>GroupWise Chat Properties</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>11</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>11</number>
+   </property>
+   <property name="topMargin" >
+    <number>11</number>
+   </property>
+   <property name="rightMargin" >
+    <number>11</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>11</number>
    </property>
    <item>
     <widget class="QLabel" name="m_displayName" >
@@ -31,10 +40,22 @@
    </item>
    <item>
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="leftMargin" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>6</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>6</number>
      </property>
      <item row="4" column="1" >
@@ -282,11 +303,20 @@
       <enum>Qt::Vertical</enum>
      </property>
      <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>6</number>
+      </property>
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
       </property>
       <item>
        <widget class="QCheckBox" name="m_chkRead" >
@@ -352,28 +382,37 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>6</number>
      </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
      <item>
-      <widget class="KPushButton" native="1" name="m_btnAddAcl" >
+      <widget class="KPushButton" name="m_btnAddAcl" >
        <property name="toolTip" >
         <string>Add a new ACL entry</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" native="1" name="m_btnEditAcl" >
+      <widget class="KPushButton" name="m_btnEditAcl" >
        <property name="toolTip" >
         <string>Edit an existing ACL entry</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" native="1" name="m_btnDeleteAcl" >
+      <widget class="KPushButton" name="m_btnDeleteAcl" >
        <property name="toolTip" >
         <string>Delete a ACL entry</string>
        </property>
@@ -387,28 +426,41 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>K3ListBox</class>
-   <extends>Q3ListBox</extends>
-   <header>k3listbox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Q3ListBox</class>
-   <extends>Q3Frame</extends>
-   <header>q3listbox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QWidget</extends>
-   <header>kpushbutton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>Q3ButtonGroup</class>
    <extends>Q3GroupBox</extends>
    <header>Qt3Support/Q3ButtonGroup</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>K3ListBox</class>
+   <extends>Q3ListBox</extends>
+   <header>k3listbox.h</header>
+  </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>m_topic</tabstop>
+  <tabstop>m_disclaimer</tabstop>
+  <tabstop>m_owner</tabstop>
+  <tabstop>m_query</tabstop>
+  <tabstop>m_createdOn</tabstop>
+  <tabstop>m_maxUsers</tabstop>
+  <tabstop>m_creator</tabstop>
+  <tabstop>m_archive</tabstop>
+  <tabstop>m_description</tabstop>
+  <tabstop>m_chkRead</tabstop>
+  <tabstop>m_chkWrite</tabstop>
+  <tabstop>m_chkModify</tabstop>
+  <tabstop>m_acl</tabstop>
+  <tabstop>m_btnAddAcl</tabstop>
+  <tabstop>m_btnEditAcl</tabstop>
+  <tabstop>m_btnDeleteAcl</tabstop>
+ </tabstops>
  <includes>
   <include location="local" >k3listbox.h</include>
   <include location="local" >kpushbutton.h</include>

@@ -509,7 +509,7 @@
           <item>
            <widget class="QCheckBox" name="exportEmoticons" >
             <property name="whatsThis" >
-		    <string>Export all the emoticon themes as custom emoticons (only works for emoticons in PNG format).</string>
+             <string>Export all the emoticon themes as custom emoticons (only works for emoticons in PNG format).</string>
             </property>
             <property name="text" >
              <string>E&amp;xport the current emoticon theme to users</string>
@@ -1206,7 +1206,7 @@
             <string>Checking this box will block all users not explicitly shown in the allowed list here, including any contacts not on your contact list.</string>
            </property>
            <property name="text" >
-            <string><string>Block all users not on 'Allowed' &amp;list</string></string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -1634,6 +1634,9 @@ Only check this option if the normal connection doesn't work.</string>
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget3</tabstop>
+  <tabstop>m_login</tabstop>
+  <tabstop>m_autologin</tabstop>
+  <tabstop>buttonRegister</tabstop>
   <tabstop>optionOverrideServer</tabstop>
   <tabstop>m_serverName</tabstop>
   <tabstop>m_serverPort</tabstop>
@@ -1641,9 +1644,11 @@ Only check this option if the normal connection doesn't work.</string>
   <tabstop>NotifyNewChat</tabstop>
   <tabstop>DownloadPicture</tabstop>
   <tabstop>useCustomEmoticons</tabstop>
-  <tabstop>m_login</tabstop>
-  <tabstop>m_autologin</tabstop>
-  <tabstop>buttonRegister</tabstop>
+  <tabstop>exportEmoticons</tabstop>
+  <tabstop>SendClientInfo</tabstop>
+  <tabstop>SendTypingNotification</tabstop>
+  <tabstop>SendJabber</tabstop>
+  <tabstop>JabberAccount</tabstop>
   <tabstop>m_displayName</tabstop>
   <tabstop>m_phw</tabstop>
   <tabstop>m_phh</tabstop>
@@ -1656,6 +1661,12 @@ Only check this option if the normal connection doesn't work.</string>
   <tabstop>m_BL</tabstop>
   <tabstop>m_blp</tabstop>
   <tabstop>m_RLButton</tabstop>
+  <tabstop>optionOverrideServer</tabstop>
+  <tabstop>m_serverName</tabstop>
+  <tabstop>m_serverPort</tabstop>
+  <tabstop>optionUseHttpMethod</tabstop>
+  <tabstop>m_useWebcamPort</tabstop>
+  <tabstop>m_webcamPort</tabstop>
  </tabstops>
  <resources/>
  <connections>

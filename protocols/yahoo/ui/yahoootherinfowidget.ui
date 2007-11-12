@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>YahooOtherInfoWidget</class>
  <widget class="QWidget" name="YahooOtherInfoWidget" >
   <property name="geometry" >
@@ -13,10 +10,22 @@
    </rect>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>9</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>6</number>
    </property>
    <item row="1" column="0" colspan="2" >
@@ -105,6 +114,13 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <tabstops>
+  <tabstop>commentsEdit</tabstop>
+  <tabstop>note1Edit</tabstop>
+  <tabstop>note2Edit</tabstop>
+  <tabstop>note3Edit</tabstop>
+  <tabstop>note4Edit</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

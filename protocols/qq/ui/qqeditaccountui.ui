@@ -635,18 +635,23 @@ If you do not currently have an ID, please create one.</string>
  <customwidgets>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>kopetepasswordwidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget3</tabstop>
+  <tabstop>m_login</tabstop>
+  <tabstop>m_autologin</tabstop>
+  <tabstop>buttonVCard</tabstop>
+  <tabstop>buttonRegister</tabstop>
+  <tabstop>optionOverrideServer</tabstop>
+  <tabstop>m_serverName</tabstop>
+  <tabstop>m_serverPort</tabstop>
   <tabstop>NotifyNewChat</tabstop>
   <tabstop>DownloadPicture</tabstop>
   <tabstop>useCustomEmoticons</tabstop>
-  <tabstop>m_login</tabstop>
-  <tabstop>m_autologin</tabstop>
-  <tabstop>buttonRegister</tabstop>
+  <tabstop>exportEmoticons</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -517,14 +517,22 @@
   <tabstop>tabWidget</tabstop>
   <tabstop>btnExportKABC</tabstop>
   <tabstop>btnImportKABC</tabstop>
-  <tabstop>edtDisplayName</tabstop>
+  <tabstop>radioNameKABC</tabstop>
+  <tabstop>radioNameContact</tabstop>
   <tabstop>cmbAccountName</tabstop>
+  <tabstop>radioNameCustom</tabstop>
+  <tabstop>edtDisplayName</tabstop>
+  <tabstop>radioPhotoKABC</tabstop>
+  <tabstop>radioPhotoContact</tabstop>
   <tabstop>cmbAccountPhoto</tabstop>
+  <tabstop>radioPhotoCustom</tabstop>
+  <tabstop>btnChoosePhoto</tabstop>
+  <tabstop>btnClearPhoto</tabstop>
   <tabstop>chkSyncPhoto</tabstop>
   <tabstop>chkUseCustomIcons</tabstop>
   <tabstop>icnbOnline</tabstop>
-  <tabstop>icnbAway</tabstop>
   <tabstop>icnbOffline</tabstop>
+  <tabstop>icnbAway</tabstop>
   <tabstop>icnbUnknown</tabstop>
  </tabstops>
  <resources/>

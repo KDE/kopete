@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>YahooGeneralInfoWidget</class>
  <widget class="QWidget" name="YahooGeneralInfoWidget" >
   <property name="geometry" >
@@ -13,10 +10,22 @@
    </rect>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>9</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>6</number>
    </property>
    <item row="3" column="0" >
@@ -41,10 +50,22 @@
       <string>Contact Information</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>9</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>6</number>
       </property>
       <item row="6" column="0" >
@@ -77,9 +98,7 @@
       <item row="0" column="3" >
        <widget class="QLineEdit" name="cellEdit" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -102,9 +121,7 @@
       <item row="4" column="1" colspan="3" >
        <widget class="QLineEdit" name="emailEdit" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>3</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -147,9 +164,7 @@
       <item rowspan="2" row="1" column="3" >
        <widget class="QLineEdit" name="pagerEdit" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -182,9 +197,7 @@
       <item row="7" column="1" colspan="3" >
        <widget class="QLineEdit" name="homepageEdit" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>3</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -197,9 +210,7 @@
       <item row="5" column="1" colspan="3" >
        <widget class="QLineEdit" name="emailEdit_2" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>3</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -232,9 +243,7 @@
       <item row="3" column="1" >
        <widget class="QLineEdit" name="additionalEdit" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -247,9 +256,7 @@
       <item row="6" column="1" colspan="3" >
        <widget class="QLineEdit" name="emailEdit_3" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>3</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -268,10 +275,22 @@
       <string>Location Information</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>9</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>6</number>
       </property>
       <item rowspan="2" row="0" column="1" colspan="3" >
@@ -280,9 +299,7 @@
       <item row="3" column="1" >
        <widget class="QLineEdit" name="stateEdit" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
           <horstretch>1</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -325,9 +342,7 @@
       <item row="2" column="3" >
        <widget class="QLineEdit" name="cityEdit" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
           <horstretch>1</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -340,9 +355,7 @@
       <item row="2" column="1" >
        <widget class="QLineEdit" name="zipEdit" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -407,10 +420,22 @@
       <string>Personal Information</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>9</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>6</number>
       </property>
       <item row="2" column="1" >
@@ -450,9 +475,7 @@
          <bool>false</bool>
         </property>
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>5</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
           <horstretch>1</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -489,9 +512,7 @@
       <item row="3" column="1" >
        <widget class="QLineEdit" name="nickNameEdit" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
           <horstretch>2</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -524,9 +545,7 @@
       <item row="1" column="3" >
        <widget class="QLineEdit" name="titleEdit" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>5</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -585,26 +604,27 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>firstNameEdit</tabstop>
+  <tabstop>yahooIdEdit</tabstop>
   <tabstop>secondNameEdit</tabstop>
-  <tabstop>lastNameEdit</tabstop>
-  <tabstop>nickNameEdit</tabstop>
   <tabstop>titleEdit</tabstop>
+  <tabstop>lastNameEdit</tabstop>
   <tabstop>birthdayEdit</tabstop>
+  <tabstop>nickNameEdit</tabstop>
   <tabstop>anniversaryEdit</tabstop>
+  <tabstop>addressEdit</tabstop>
   <tabstop>zipEdit</tabstop>
   <tabstop>cityEdit</tabstop>
   <tabstop>stateEdit</tabstop>
   <tabstop>countryEdit</tabstop>
   <tabstop>phoneEdit</tabstop>
-  <tabstop>faxEdit</tabstop>
-  <tabstop>additionalEdit</tabstop>
   <tabstop>cellEdit</tabstop>
+  <tabstop>faxEdit</tabstop>
   <tabstop>pagerEdit</tabstop>
+  <tabstop>additionalEdit</tabstop>
   <tabstop>emailEdit</tabstop>
   <tabstop>emailEdit_2</tabstop>
   <tabstop>emailEdit_3</tabstop>
   <tabstop>homepageEdit</tabstop>
-  <tabstop>yahooIdEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

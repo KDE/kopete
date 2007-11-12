@@ -255,8 +255,11 @@
  </customwidgets>
  <tabstops>
   <tabstop>styleList</tabstop>
+  <tabstop>variantList</tabstop>
+  <tabstop>btnGetStyles</tabstop>
   <tabstop>installButton</tabstop>
   <tabstop>deleteButton</tabstop>
+  <tabstop>kcfg_groupConsecutiveMessages</tabstop>
  </tabstops>
  <resources/>
  <connections/>
