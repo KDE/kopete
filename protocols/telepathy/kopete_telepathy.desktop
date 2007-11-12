@@ -20,6 +20,7 @@ Name[ne]=टेलिप्याथी
 Name[x-test]=xxTelepathyxx
 Comment=Messaging using Telepathy connection managers.
 Comment[ca]=Missatgeria que usa els gestors de connexions del Telepathy.
+Comment[de]=Nachrichten mit Telepathy versenden
 Comment[el]=Μηνύματα μέσα διαχειριστών σύνδεσης Telepathy.
 Comment[ja]=Telepathy 接続マネージャを使うメッセージング
 Comment[nb]=Meldinger ved bruk av Telepathy tilkoblingsbehandlere
