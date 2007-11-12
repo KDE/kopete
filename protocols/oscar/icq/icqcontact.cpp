@@ -44,6 +44,7 @@ ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::M
 						const QString& icon, const OContact& ssiItem )
 : ICQContactBase( account, name, parent, icon, ssiItem )
 {
+	m_requestingNickname = false;
 	mProtocol = static_cast<ICQProtocol *>(protocol());
 	m_infoWidget = 0L;
 
@@ -57,6 +58,8 @@ ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::M
 	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ), this, SLOT( userOffline( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( authReplyReceived( const QString&, const QString&, bool ) ),
 	                  this, SLOT( slotGotAuthReply(const QString&, const QString&, bool ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqShortInfo(const QString&)),
+	                  this, SLOT(receivedShortInfo(const QString&)) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedIcqLongInfo( const QString& ) ),
 	                  this, SLOT( receivedLongInfo( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
@@ -109,20 +112,10 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	refreshStatus( details, presence );
 
 	if ( details.dcOutsideSpecified() )
-	{
-		if ( details.dcExternalIp().isNull() )
-			removeProperty( mProtocol->ipAddress );
-		else
-			setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );
-	}
+		setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );
 
 	if ( details.capabilitiesSpecified() )
-	{
-		if ( details.clientName().isEmpty() )
-			removeProperty( mProtocol->clientFeatures );
-		else
-			setProperty( mProtocol->clientFeatures, details.clientName() );
-	}
+		setProperty( mProtocol->clientFeatures, details.clientName() );
 
 	OscarContact::userInfoUpdated( contact, details );
 }
@@ -255,6 +248,12 @@ void ICQContact::loggedIn()
 
 }
 
+void ICQContact::requestShortInfo()
+{
+	if ( mAccount->engine()->isActive() )
+		mAccount->engine()->requestShortInfo( contactId() );
+}
+
 void ICQContact::slotRequestAuth()
 {
 	QString reason = KInputDialog::getText( i18n("Request Authorization"),
@@ -298,6 +297,26 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 	KNotification::event( QString::fromLatin1("icq_authorization"), message );
 }
 
+void ICQContact::receivedShortInfo( const QString& contact )
+{
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
+		return;
+
+	QTextCodec* codec = contactCodec();
+
+	m_requestingNickname = false; //done requesting nickname
+	ICQShortInfo shortInfo = mAccount->engine()->getShortInfo( contact );
+
+	setProperty( mProtocol->firstName, codec->toUnicode( shortInfo.firstName ) );
+	setProperty( mProtocol->lastName, codec->toUnicode( shortInfo.lastName ) );
+
+	if ( m_ssiItem.alias().isEmpty() && !shortInfo.nickname.isEmpty() )
+	{
+		kDebug(OSCAR_ICQ_DEBUG) << "setting new displayname for former UIN-only Contact" << endl;
+		setProperty( Kopete::Global::Properties::self()->nickName(), codec->toUnicode( shortInfo.nickname ) );
+	}
+}
+
 void ICQContact::receivedLongInfo( const QString& contact )
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
@@ -314,6 +333,10 @@ void ICQContact::receivedLongInfo( const QString& contact )
 	ICQGeneralUserInfo genInfo = mAccount->engine()->getGeneralInfo( contact );
 	if ( m_ssiItem.alias().isEmpty() && !genInfo.nickName.get().isEmpty() )
 		setNickName( codec->toUnicode( genInfo.nickName.get() ) );
+
+	setProperty( mProtocol->firstName, codec->toUnicode( genInfo.firstName.get() ) );
+	setProperty( mProtocol->lastName, codec->toUnicode( genInfo.lastName.get() ) );
+
 	emit haveBasicInfo( genInfo );
 
 	ICQWorkUserInfo workInfo = mAccount->engine()->getWorkInfo( contact );
@@ -347,6 +370,9 @@ void ICQContact::receivedTlvInfo( const QString& contact )
 		return;
 
 	ICQFullInfo info = mAccount->engine()->getFullInfo( contact );
+
+	setProperty( mProtocol->firstName, QString::fromUtf8( info.firstName.get() ) );
+	setProperty( mProtocol->lastName, QString::fromUtf8( info.lastName.get() ) );
 
 	m_requestingNickname = false; //done requesting nickname
 	if ( m_ssiItem.alias().isEmpty() && !info.nickName.get().isEmpty() )

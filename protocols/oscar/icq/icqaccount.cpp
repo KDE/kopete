@@ -89,9 +89,7 @@ void ICQMyselfContact::receivedShortInfo( const QString& contact )
 	ICQAccount* icqAccount = static_cast<ICQAccount*>( account() );
 	ICQShortInfo shortInfo = icqAccount->engine()->getShortInfo( contact );
 	if ( !shortInfo.nickname.isEmpty() )
-	{
 		setProperty( Kopete::Global::Properties::self()->nickName(), icqAccount->defaultCodec()->toUnicode( shortInfo.nickname ) );
-	}
 
 	//Sync server settings with local
 	QList<ICQInfoBase*> infoList;

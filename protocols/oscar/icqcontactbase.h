@@ -41,17 +41,10 @@ public:
 	            const QString& icon = QString(), const OContact& ssiItem = OContact()  );
 	virtual ~ICQContactBase();
 
-public slots:
-	void requestShortInfo();
-
-protected:
-	bool m_requestingNickname;
-
 protected slots:
 	virtual void slotSendMsg(Kopete::Message& message, Kopete::ChatSession *);
 
 private slots:
-	void receivedShortInfo( const QString& contact );
 	void receivedXStatusMessage( const QString& contact, int icon, const QString& description, const QString& message );
 
 };

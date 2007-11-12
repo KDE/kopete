@@ -31,50 +31,12 @@ ICQContactBase::ICQContactBase( Kopete::Account *account, const QString &name, K
 						const QString& icon, const OContact& ssiItem )
 : OscarContact( account, name, parent, icon, ssiItem )
 {
-	m_requestingNickname = false;
-
-	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqShortInfo(const QString&)),
-	                  this, SLOT(receivedShortInfo(const QString&)) );
 	QObject::connect( mAccount->engine(), SIGNAL(receivedXStatusMessage(const QString&, int, const QString&, const QString&)),
 	                  this, SLOT(receivedXStatusMessage(const QString&, int, const QString&, const QString&)) );
 }
 
 ICQContactBase::~ICQContactBase()
 {
-}
-
-void ICQContactBase::requestShortInfo()
-{
-	if ( mAccount->engine()->isActive() )
-		mAccount->engine()->requestShortInfo( contactId() );
-}
-
-void ICQContactBase::receivedShortInfo( const QString& contact )
-{
-	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
-		return;
-
-	QTextCodec* codec = contactCodec();
-
-	m_requestingNickname = false; //done requesting nickname
-	ICQShortInfo shortInfo = mAccount->engine()->getShortInfo( contact );
-	/*
-	if(!shortInfo.firstName.isEmpty())
-		setProperty( mProtocol->firstName, codec->toUnicode( shortInfo.firstName ) );
-	else
-		removeProperty(mProtocol->firstName);
-
-	if(!shortInfo.lastName.isEmpty())
-		setProperty( mProtocol->lastName, codec->toUnicode( shortInfo.lastName ) );
-	else
-		removeProperty(mProtocol->lastName);
-	*/
-	if ( m_ssiItem.alias().isEmpty() && !shortInfo.nickname.isEmpty() )
-	{
-		kDebug(OSCAR_GEN_DEBUG) <<
-			"setting new displayname for former UIN-only Contact" << endl;
-		setProperty( Kopete::Global::Properties::self()->nickName(), codec->toUnicode( shortInfo.nickname ) );
-	}
 }
 
 void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, const QString& description, const QString& message )

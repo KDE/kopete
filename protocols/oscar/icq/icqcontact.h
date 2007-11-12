@@ -62,6 +62,8 @@ public slots:
 	void userOffline( const QString& userID );
 	void loggedIn();
 
+	void requestShortInfo();
+
 signals:
 	void haveBasicInfo( const ICQGeneralUserInfo& );
 	void haveWorkInfo( const ICQWorkUserInfo& );
@@ -84,6 +86,7 @@ private:
 	KToggleAction *m_actionInvisibleTo;
 
 	QString m_statusDescription;
+	bool m_requestingNickname;
 
 private slots:
 	/** Refresh status from this contact */
@@ -101,6 +104,7 @@ private slots:
 	void storeUserInfoDialog();
 	void closeUserInfoDialog();
 
+	void receivedShortInfo( const QString& contact );
 	void receivedLongInfo( const QString& contact );
 
 	void requestMediumTlvInfo();
