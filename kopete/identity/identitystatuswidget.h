@@ -23,6 +23,8 @@
 
 namespace Kopete
 {
+class Account;
+class Contact;
 class Identity;
 }
 
@@ -55,16 +57,20 @@ private slots:
 	void slotLoad();
 	void slotSave();
 
-	void slotAccountLinkActivated(const QString &link);
-	void slotPhotoLinkActivated(const QString &link);
-	void slotUpdateAccountStatus();
+	void showAccountContextMenu( const QPoint & );
+	void slotPhotoClicked();
 	/**
 	 * @brief Show nickname in red when modified
 	 * @param text text changed in nickname textbox
 	 */
 	void slotNickNameTextChanged(const QString &text);
+	void slotAccountRegistered( Kopete::Account *account );
+	void slotAccountUnregistered( const Kopete::Account *account );
+	void slotAccountStatusIconChanged( Kopete::Contact *contact );
 
 private:
+	void addAccountItem( Kopete::Account *account );
+	void resizeAccountListWidget();
 	class Private;
 	Private *d;
 };
