@@ -91,6 +91,14 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 	connect(Kopete::AvatarManager::self(), SIGNAL(avatarAdded(Kopete::AvatarManager::AvatarEntry)), this, SLOT(avatarAdded(Kopete::AvatarManager::AvatarEntry)));
 	connect(Kopete::AvatarManager::self(), SIGNAL(avatarRemoved(Kopete::AvatarManager::AvatarEntry)), this, SLOT(avatarRemoved(Kopete::AvatarManager::AvatarEntry)));
 
+
+	// Add a No Avatar option
+	Kopete::AvatarManager::AvatarEntry empty;
+	empty.name = i18n("No Avatar");
+	empty.contact = 0;
+	empty.category = Kopete::AvatarManager::User;
+	d->addItem(empty);
+
 	// List avatars in lists
 	Kopete::AvatarQueryJob *queryJob = new Kopete::AvatarQueryJob(this);
 	connect(queryJob, SIGNAL(result(KJob*)), this, SLOT(queryJobFinished(KJob*)));

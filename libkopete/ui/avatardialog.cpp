@@ -40,6 +40,7 @@ public:
 
 	AvatarSelectorWidget *mainWidget;
 	QString selectedPath;
+	QString currentPath;
 };
 
 AvatarDialog::AvatarDialog(QWidget *parent)
@@ -66,6 +67,7 @@ QString AvatarDialog::getAvatar(QWidget *parent, const QString &currentAvatar)
 {
 	AvatarDialog dialog(parent);
 	dialog.d->mainWidget->setCurrentAvatar(currentAvatar);
+	dialog.d->currentPath = currentAvatar;
 	dialog.exec();
 
 	return dialog.selectedAvatarPath();
@@ -81,7 +83,7 @@ void AvatarDialog::slotButtonClicked(int button)
 		d->selectedPath = selectedEntry.path;
 	}
 	else
-		d->selectedPath = QString();
+		d->selectedPath = d->currentPath;
 
 	emit result(this);
 
