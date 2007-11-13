@@ -162,8 +162,6 @@ private:
 	KAction *tabDetach;
 	KAction* tabClose;
 
-	KToggleAction* membersLeft;
-	KToggleAction* membersRight;
 	QAction* toggleMembers;
 	KToggleAction* toggleAutoSpellCheck;
 

@@ -211,7 +211,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 
 	m_participantsWidget = new QDockWidget(this);
 	m_participantsWidget->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
-	m_participantsWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+	m_participantsWidget->setFeatures(QDockWidget::DockWidgetClosable);
 	m_participantsWidget->setTitleBarWidget(0L);
 	m_participantsWidget->setObjectName("Participants"); //object name is required for automatic position and settings save.
 
@@ -237,6 +237,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	mainArea = new QFrame( vBox );
 	mainArea->setLineWidth( 0 );
 	mainArea->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	mainLayout->setContentsMargins(0, 4, 0, 0);
 	mainLayout = new QVBoxLayout( mainArea );
 
 	if ( Kopete::BehaviorSettings::self()->chatWindowShowSendButton() )
@@ -442,14 +443,6 @@ void KopeteChatWindow::initActions(void)
         coll->addAction( "scroll_down", action );
 
 	KStandardAction::showMenubar( menuBar(), SLOT(setVisible(bool)), coll );
-
-	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), coll );
-        coll->addAction( "options_membersleft", membersLeft );
-	connect( membersLeft, SIGNAL(triggered(bool)), this, SLOT(slotViewMembersLeft()) );
-
-	membersRight = new KToggleAction( i18n( "Place to Right of Chat Area" ), coll );
-        coll->addAction( "options_membersright", membersRight );
-	connect( membersRight, SIGNAL(toggled(bool)), this, SLOT(slotViewMembersRight()) );
 
 	toggleMembers = m_participantsWidget->toggleViewAction();
 	toggleMembers->setText(i18n( "Participants" ));
