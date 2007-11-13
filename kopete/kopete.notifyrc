@@ -1292,6 +1292,7 @@ Name[zh_CN]=消息已丢弃
 Name[zh_TW]=訊息已丟棄
 Comment=A message was filtered by the Privacy Plugin
 Comment[ca]=El connector de privadesa ha filtrat un missatge
+Comment[de]=Das Privatsphäre-Modul hat eine Nachricht gefiltert
 Comment[el]=Ένα μήνυμα φιλτραρίστηκε από το πρόσθετο Προσωπικού απορρήτου
 Comment[ja]=プライバシープラグインのフィルタによってメッセージを除去しました
 Comment[nb]=Programtillegget for personvern filtrerte bort en melding
