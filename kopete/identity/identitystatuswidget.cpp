@@ -2,6 +2,7 @@
     identitystatuswidget.cpp  -  Kopete identity status configuration widget
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+    Copyright (c) 2007      by Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -25,7 +26,7 @@
 #include <QToolTip>
 #include <QCursor>
 #include <QUrl>
-#include <QPalette>
+#include <KColorScheme>
 #include <kopeteidentity.h>
 #include <kopeteaccount.h>
 #include <kopeteaccountmanager.h>
@@ -174,7 +175,7 @@ void IdentityStatusWidget::slotLoad()
 		addAccountItem( a );
 	}
 	if ( d->identity->accounts().isEmpty() ) {
-		QListWidgetItem * item = new QListWidgetItem( KIcon("configure" ), i18nc("Label to tell the user no accounts existed", "No accounts configured" ), d->ui.accounts );
+		new QListWidgetItem( KIcon("configure" ), i18nc("Label to tell the user no accounts existed", "No accounts configured" ), d->ui.accounts );
 	}
 	resizeAccountListWidget();
 }
@@ -194,6 +195,7 @@ void IdentityStatusWidget::slotAccountRegistered( Kopete::Account *account )
 	addAccountItem( account );
 	resizeAccountListWidget();
 #else
+	Q_UNUSED( account )
 	QWidget::setVisible( false );
 #endif
 }
@@ -266,7 +268,7 @@ void IdentityStatusWidget::slotNickNameTextChanged(const QString &text)
 	if ( d->lastNickName != text )
 	{
 		QPalette palette;
-		palette.setColor( d->ui.nickName->foregroundRole(), QPalette::HighlightedText );
+		KColorScheme::adjustForeground( palette, KColorScheme::ActiveText );
 		d->ui.nickName->setPalette(palette);
 	}
 	else
