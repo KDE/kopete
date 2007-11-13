@@ -34,6 +34,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QMenu>
+#include <QDockWidget>
 
 #ifdef CHRONO
 #include <QTime>
@@ -84,6 +85,8 @@
 #include "kopetestdaction.h"
 #include "kopeteviewmanager.h"
 #include "sidebarwidget.h"
+#include "chatmemberslistview.h"
+#include "chatsessionmemberslistmodel.h"
 
 #include <qtoolbutton.h>
 #include <kxmlguifactory.h>
@@ -92,6 +95,8 @@ typedef QMap<Kopete::Account*,KopeteChatWindow*> AccountMap;
 typedef QMap<Kopete::Group*,KopeteChatWindow*> GroupMap;
 typedef QMap<Kopete::MetaContact*,KopeteChatWindow*> MetaContactMap;
 typedef QList<KopeteChatWindow*> WindowList;
+
+using Kopete::ChatSessionMembersListModel;
 
 namespace
 {
@@ -204,13 +209,22 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	updateBg = true;
 	m_tabBar = 0L;
 
-	m_sideBar = new SidebarWidget(this);
-	m_sideBar->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
-	m_sideBar->setObjectName("SideBar"); //object name is required for automatic position and settings save.
+	m_participantsWidget = new QDockWidget(this);
+	m_participantsWidget->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
+	m_participantsWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+	m_participantsWidget->setTitleBarWidget(0L);
+	m_participantsWidget->setObjectName("Participants"); //object name is required for automatic position and settings save.
 
+	ChatSessionMembersListModel *members_model = new ChatSessionMembersListModel(this);
+
+	connect(this, SIGNAL(chatSessionChanged(Kopete::ChatSession *)), members_model, SLOT(setChatSession(Kopete::ChatSession *)));
+
+	ChatMembersListView *chatmembers = new ChatMembersListView(m_participantsWidget);
+	chatmembers->setModel(members_model);
+	m_participantsWidget->setWidget(chatmembers);
 	initActions();
 
-	addDockWidget(Qt::RightDockWidgetArea, m_sideBar);
+	addDockWidget(Qt::RightDockWidgetArea, m_participantsWidget);
 
 	KVBox *vBox = new KVBox( this );
 	vBox->setLineWidth( 0 );
@@ -447,9 +461,9 @@ void KopeteChatWindow::initActions(void)
 	toggleAutoSpellCheck->setChecked( true );
 	connect( toggleAutoSpellCheck, SIGNAL(triggered(bool)), this, SLOT(toggleAutoSpellChecking()) );
 
-	QAction *toggleSideBarAction = m_sideBar->toggleViewAction( );
-	toggleSideBarAction->setText( i18n( "Show Sidebar" ) );
-	coll->addAction ( "show_sidebar_widget", toggleSideBarAction );
+	QAction *toggleParticipantsAction = m_participantsWidget->toggleViewAction( );
+	toggleParticipantsAction->setText( i18n( "Show Participants" ) );
+	coll->addAction ( "show_participants_widget", toggleParticipantsAction );
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll );
         coll->addAction( "format_smiley", actionSmileyMenu );

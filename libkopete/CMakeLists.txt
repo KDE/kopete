@@ -100,6 +100,7 @@ set(kopete_LIB_SRCS
    kopeteutils.cpp
    kopetewalletmanager.cpp
    networkstatuscommon.h
+   chatsessionmemberslistmodel.cpp
 # REMOVED FOR NOW
 #   connectionmanager.cpp
 #   managedconnectionaccount.cpp

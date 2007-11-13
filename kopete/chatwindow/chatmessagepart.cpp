@@ -232,8 +232,9 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( this, SIGNAL(popupMenu(const QString &, const QPoint &)),
 	         this, SLOT(slotRightClick(const QString &, const QPoint &)) );
-	connect( view()->horizontalScrollBar(), SIGNAL(sliderMoved(int)),
-	         this, SLOT(slotScrollingTo(int)) );
+	// FIXME no longer compiles
+	//connect( view()->horizontalScrollBar(), SIGNAL(sliderMoved(int)),
+	//         this, SLOT(slotScrollingTo(int)) );
 
 	//initActions
 	d->copyAction = KStandardAction::copy( this, SLOT(copy()), actionCollection() );

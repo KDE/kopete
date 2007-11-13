@@ -48,6 +48,7 @@ class QLabel;
 class KopeteEmoticonAction;
 class ChatView;
 class SidebarWidget;
+class QDockWidget;
 
 namespace Kopete
 {
@@ -133,9 +134,7 @@ private:
 	//why did we ever need this method??
 	//const QString fileContents( const QString &file ) const;
 
-	// Sidebar
-	SidebarWidget *m_sideBar;
-	QTabWidget *m_sideBarTabWidget;
+	QDockWidget *m_participantsWidget;
 
 	//
 	QPointer<ChatView> m_activeView;
