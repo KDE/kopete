@@ -94,8 +94,8 @@ bool JoinChatTask::take( Transfer * transfer )
 						QString dn = contact->value().toString().toLower();
 						m_invitees.append( dn );
 						// need to ask for details for these contacts
-						if ( !client()->userDetailsManager()->known( dn )  )
-							; // don't request details for chatrooms, there could be too many
+						//if ( !client()->userDetailsManager()->known( dn )  )
+						//	; // don't request details for chatrooms, there could be too many
 					}
 				}
 			}

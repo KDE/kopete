@@ -50,9 +50,9 @@ public slots:
 private slots:
 	void tls_handshaken();
 	void tls_readyRead();
-	void tls_readyReadOutgoing(int);
+	void tls_readyReadOutgoing();
 	void tls_closed();
-	void tls_error(int);
+	void tls_error();
 
 private:
 	class Private;

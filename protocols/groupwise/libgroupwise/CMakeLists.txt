@@ -82,7 +82,7 @@ set( libqgroupwise_SRCS
 
 kde4_add_library( qgroupwise SHARED ${libqgroupwise_tasks_SRCS} ${libqgroupwise_SRCS} )
 
-target_link_libraries( qgroupwise ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES})
+target_link_libraries( qgroupwise ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES} ${KDE4_KDECORE_LIBS})
 
 ########### install files ###############
 

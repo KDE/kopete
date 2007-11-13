@@ -92,6 +92,7 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 										 SLOT( slotPrivacy() ) );
 			
 	m_connector = 0;
+    m_qcaInit = new QCA::Initializer;
 	m_QCATLS = 0;
 	m_tlsHandler = 0;
 	m_clientStream = 0;
@@ -695,7 +696,7 @@ void GroupWiseAccount::slotTLSHandshaken()
 	{
 		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Certificate is not valid, continuing anyway";
 		// certificate is not valid, query the user
-		if(handleTLSWarning ( identityResult, validityResult, server(), myself()->contactId ()) == KMessageBox::Continue)
+		if ( handleTLSWarning ( identityResult, validityResult, server(), myself()->contactId ()) )
 		{
 			m_tlsHandler->continueAfterHandshake ();
 		}

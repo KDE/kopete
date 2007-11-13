@@ -126,7 +126,7 @@ void CoreProtocol::debug( const QString &str )
 #ifdef LIBGW_USE_KDEBUG
 	kDebug( 14191 ) << "debug: " << str;
 #else
-	qDebug( "GW RAW PROTO: %s\n", str.toAscii() );
+	qDebug() << "GW RAW PROTO: " << str.toAscii();
 #endif
 }
 

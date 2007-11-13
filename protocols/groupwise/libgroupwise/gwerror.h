@@ -32,8 +32,8 @@ typedef quint16 NMERR_T;
 #define BLANK_GUID "[00000000-00000000-00000000-0000-0000]"
 #define CONF_GUID_END 27
 
-//#define LIBGW_DEBUG 1
-//#define LIBGW_USE_KDEBUG 0
+#define LIBGW_DEBUG 1
+#define LIBGW_USE_KDEBUG 1
 
 namespace GroupWise
 {

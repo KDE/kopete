@@ -31,8 +31,7 @@
 #include <qradiobutton.h>
 #include <qtabwidget.h>
 #include <q3valuelist.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
+#include <QVBoxLayout>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -53,20 +52,24 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 {
 	m_account = static_cast<GroupWiseAccount *>( owner );
 	kDebug(GROUPWISE_DEBUG_GLOBAL) ;
-	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
+	QVBoxLayout * layout = new QVBoxLayout( this );
 	if (owner->isConnected ())
 	{
 		m_searchUI = new GroupWiseContactSearch( m_account, Q3ListView::Single, false,
 				 this );
-		show();
+		layout->addWidget( m_searchUI );
 		m_canadd = true;
 	}
 	else
 	{
 		m_noaddMsg1 = new QLabel (i18n ("You need to be connected to be able to add contacts."), this);
 		m_noaddMsg2 = new QLabel (i18n ("Connect to GroupWise Messenger and try again."), this);
+		layout->addWidget( m_noaddMsg1 );
+		layout->addWidget( m_noaddMsg2 );
 		m_canadd = false;
 	}
+	setLayout( layout );
+	show();
 }
 
 GroupWiseAddContactPage::~GroupWiseAddContactPage()
