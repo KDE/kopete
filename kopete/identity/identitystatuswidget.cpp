@@ -261,6 +261,8 @@ void IdentityStatusWidget::slotAccountStatusIconChanged( Kopete::Contact *contac
 		item->setIcon( KIconLoader::unknown() );
 	else
 		item->setIcon( QIcon( pm ) );
+
+	item->setToolTip( contact->toolTip() );
 }
 
 void IdentityStatusWidget::slotNickNameTextChanged(const QString &text)
