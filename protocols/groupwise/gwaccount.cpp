@@ -1,13 +1,13 @@
 /*
     gwaccount.cpp - Kopete GroupWise Protocol
 
-    Copyright (c) 2006      Novell, Inc	 	 http://www.opensuse.org
+    Copyright (c) 2006,2007 Novell, Inc	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
 
     Based on Testbed
-    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+    Copyright (c) 2003-2007 by Will Stephenson		 <wstephenson@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -25,6 +25,7 @@
 
 #include <kaboutdata.h>
 #include <kconfig.h>
+#include <kcomponentdata.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
 #include <klocale.h>
@@ -804,6 +805,7 @@ int GroupWiseAccount::handleTLSWarning ( QCA::TLS::IdentityResult identityResult
 					  message,
 					  i18n("GroupWise Connection Certificate Problem"),
 					  KStandardGuiItem::cont(),
+					  KStandardGuiItem::cancel(),
 					  QString("KopeteTLSWarning") + server + idCode + code) == KMessageBox::Continue );
 }
 
@@ -862,9 +864,14 @@ void GroupWiseAccount::handleIncomingMessage( const ConferenceEvent & message )
 
 	kDebug(GROUPWISE_DEBUG_GLOBAL) << " message before KopeteMessage and appending: " << messageMunged;
 	Kopete::Message * newMessage = 
-			new Kopete::Message( message.timeStamp, sender, contactList, messageMunged,
-								 Kopete::Message::Inbound, 
-								 ( message.type == ReceiveAutoReply ) ? Kopete::Message::PlainText : Kopete::Message::RichText );
+			new Kopete::Message( sender, contactList );
+	newMessage->setTimestamp( message.timeStamp );
+	newMessage->setDirection( Kopete::Message::Inbound );
+	if ( message.type == ReceiveAutoReply ) {
+		newMessage->setPlainBody( messageMunged );
+	} else {
+		newMessage->setHtmlBody( messageMunged );
+	}
 	Q_ASSERT( sess );
 	sess->appendMessage( *newMessage );
 	kDebug(GROUPWISE_DEBUG_GLOBAL) << "message from KopeteMessage: plainbody: " << newMessage->plainBody() << " parsedbody: " << newMessage->parsedBody();
@@ -1381,7 +1388,8 @@ void GroupWiseAccount::receiveInviteNotify( const ConferenceEvent & event )
 			c = createTemporaryContact( event.user );
 
 		sess->addInvitee( c );
-		Kopete::Message declined = Kopete::Message( myself(), sess->members(), i18n("%1 has been invited to join this conversation.", c->metaContact()->displayName() ), Kopete::Message::Internal, Kopete::Message::PlainText );
+		Kopete::Message declined( myself(), sess->members() );
+		declined.setPlainBody( i18n("%1 has been invited to join this conversation.", c->metaContact()->displayName() ) );
 		sess->appendMessage( declined );
 	}
 	else

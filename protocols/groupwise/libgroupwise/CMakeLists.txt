@@ -1,3 +1,5 @@
+find_package(ZLIB REQUIRED)
+
 add_subdirectory( tasks )
 
 include_directories(
@@ -73,12 +75,14 @@ set( libqgroupwise_SRCS
 	privacymanager.cpp
 	gwglobal.cpp
 	chatroommanager.cpp
+	compressionhandler.cpp
+	compress.cpp
 )
 
 
 kde4_add_library( qgroupwise SHARED ${libqgroupwise_tasks_SRCS} ${libqgroupwise_SRCS} )
 
-target_link_libraries( qgroupwise ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QCA2_LIBRARIES} )
+target_link_libraries( qgroupwise ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES})
 
 ########### install files ###############
 

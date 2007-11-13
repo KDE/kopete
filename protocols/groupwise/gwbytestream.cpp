@@ -6,7 +6,7 @@
     copyright            : (C) 2004 by Till Gerken <till@tantalo.net>
     Copyright 			 : (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
 
-			   Kopete (C) 2004 Kopete developers <kopete-devel@kde.org>
+			   Kopete (C) 2004-2007 Kopete developers <kopete-devel@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -19,9 +19,8 @@
  ***************************************************************************/
 
 #include <qobject.h>
-#include <kbufferedsocket.h>
 #include <kdebug.h>
-#include <kresolver.h>
+#include <k3resolver.h>
 
 #include "gwbytestream.h"
 #include "gwerror.h"

@@ -5,7 +5,7 @@
     begin                : Wed Jul 7 2004
     copyright            : (C) 2004 by Till Gerken <till@tantalo.net>
 
-			   Kopete (C) 2004 Kopete developers <kopete-devel@kde.org>
+			   Kopete (C) 2004-2007 Kopete developers <kopete-devel@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -17,9 +17,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <kbufferedsocket.h>
+#include <k3bufferedsocket.h>
 #include <kdebug.h>
-#include <kresolver.h>
+#include <k3resolver.h>
 
 #include "gwconnector.h"
 #include "gwerror.h"

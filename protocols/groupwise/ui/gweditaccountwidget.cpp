@@ -2,13 +2,13 @@
     Kopete GroupWise Protocol
     gweditaccountwidget.cpp - widget for adding or editing GroupWise accounts
 
-    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
+    Copyright (c) 2006,2007 Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Testbed   
-    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+    Copyright (c) 2003-2007 by Will Stephenson		 <wstephenson@kde.org>
     
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -59,10 +59,9 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete:
 	else
 	{
 		// look for a default server and port setting
-		KSharedConfig::Ptr config = KGlobal::config();
-		config->setGroup("GroupWise Messenger");
-		m_preferencesDialog->m_server->setText( config->readEntry( "DefaultServer" ) );
-		m_preferencesDialog->m_port->setValue( config->readEntry( "DefaultPort", 8300 ) );
+		KConfigGroup config = KGlobal::config()->group("GroupWise Messenger");
+		m_preferencesDialog->m_server->setText( config.readEntry( "DefaultServer" ) );
+		m_preferencesDialog->m_port->setValue( config.readEntry( "DefaultPort", 8300 ) );
 	}
 	QWidget::setTabOrder( m_preferencesDialog->m_userId, m_preferencesDialog->m_password->mRemembered );
 	QWidget::setTabOrder( m_preferencesDialog->m_password->mRemembered, m_preferencesDialog->m_password->mPassword );
@@ -77,7 +76,6 @@ GroupWiseEditAccountWidget::~GroupWiseEditAccountWidget()
 
 GroupWiseAccount *GroupWiseEditAccountWidget::account ()
 {
-	Q_ASSERT( KopeteEditAccountWidget::account() );
 	return dynamic_cast< GroupWiseAccount *>( KopeteEditAccountWidget::account() );
 }
 

@@ -6,7 +6,7 @@
     begin                : Wed Jul 7 2004
     copyright            : (C) 2004 by Till Gerken <till@tantalo.net>
 
-			   Kopete (C) 2004 Kopete developers <kopete-devel@kde.org>
+			   Kopete (C) 2004-2007 Kopete developers <kopete-devel@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,9 +21,10 @@
 #ifndef GWBYTESTREAM_H
 #define GWBYTESTREAM_H
 
-#include <kbufferedsocket.h>
+#include <bytestream.h>
+#include <k3bufferedsocket.h>
+#include <kopete_export.h>
 
-#include "bytestream.h"
 
 /**
  * Low level socket class, using KDE's KNetwork socket classes

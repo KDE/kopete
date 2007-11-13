@@ -1,13 +1,13 @@
 /*
     gwmessagemanager.cpp - Kopete GroupWise Protocol
 
-    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
+    Copyright (c) 2006,2007 Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
 
     Based on Testbed
-    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+    Copyright (c) 2003-2007 by Will Stephenson		 <wstephenson@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -205,7 +205,8 @@ void GroupWiseChatSession::slotCreationFailed( const int failedId, const int sta
 	{
 		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << " couldn't start a chat, no GUID.\n";
 		//emit creationFailed();
-		Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("An error occurred when trying to start a chat: %1", statusCode ), Kopete::Message::Internal, Kopete::Message::PlainText);
+		Kopete::Message failureNotify( myself(), members());
+		failureNotify.setPlainBody( i18n("An error occurred when trying to start a chat: %1", statusCode ) );
 		appendMessage( failureNotify );
 		setClosed();
 	}
@@ -232,7 +233,8 @@ void GroupWiseChatSession::slotMessageSent( Kopete::Message & message, Kopete::C
 		}
 		else*/ if ( account()->myself()->onlineStatus() == ( static_cast<GroupWiseProtocol *>( protocol() ) )->groupwiseAppearOffline )
 		{
-			Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("Your message could not be sent. You cannot send messages while your status is Appear Offline. "), Kopete::Message::Internal, Kopete::Message::PlainText);
+			Kopete::Message failureNotify( myself(), members() );
+			failureNotify.setPlainBody( i18n("Your message could not be sent. You cannot send messages while your status is Appear Offline. ") );
 			appendMessage( failureNotify );
 			messageSucceeded();
 		}
@@ -425,7 +427,7 @@ void GroupWiseChatSession::joined( GroupWiseContact * c )
 	{
 		if ( pending->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( pending, QString(), Kopete::Message::PlainText, true );
+			removeContact( pending, QString(), Qt::PlainText, true );
 			break;
 		}
 	}
@@ -450,9 +452,8 @@ void GroupWiseChatSession::left( GroupWiseContact * c )
 	{
 		if ( m_invitees.count() )
 		{
-			Kopete::Message failureNotify = Kopete::Message( myself(), members(),
-						i18n("All the other participants have left, and other invitations are still pending. Your messages will not be delivered until someone else joins the chat."),
-						Kopete::Message::Internal, Kopete::Message::PlainText );
+			Kopete::Message failureNotify( myself(), members() );
+			failureNotify.setPlainBody( i18n("All the other participants have left, and other invitations are still pending. Your messages will not be delivered until someone else joins the chat.") );
 			appendMessage( failureNotify );
 		}
 		else
@@ -468,7 +469,7 @@ void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 	{
 		if ( pending->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( pending, QString(), Kopete::Message::PlainText, true );
+			removeContact( pending, QString(), Qt::PlainText, true );
 			break;
 		}
 	}
@@ -477,9 +478,8 @@ void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 
 	QString from = c->metaContact()->displayName();
 
-	Kopete::Message declined = Kopete::Message( myself(), members(),
-				i18n("%1 has rejected an invitation to join this conversation.", from ),
-				Kopete::Message::Internal, Kopete::Message::PlainText );
+	Kopete::Message declined( myself(), members() );
+	declined.setPlainBody( i18n("%1 has rejected an invitation to join this conversation.", from ) );
 	appendMessage( declined );
 }
 

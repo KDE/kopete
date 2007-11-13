@@ -1,13 +1,13 @@
 /*
     gwaccount.h - Kopete GroupWise Protocol
 
-    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
+    Copyright (c) 2006,2007 Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
 
     Based on Testbed
-    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+    Copyright (c) 2003-2007 by Will Stephenson		 <wstephenson@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -27,6 +27,7 @@
 #include <kaction.h>
 
 #include <kopetechatsessionmanager.h>
+#include <kopetecontact.h>
 
 #include "gwerror.h"
 
@@ -37,7 +38,6 @@
 class KActionMenu;
 
 namespace Kopete {
-	class Contact;
 	class Group;
 	class MetaContact; 
 }
