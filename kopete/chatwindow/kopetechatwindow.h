@@ -162,7 +162,6 @@ private:
 	KAction *tabDetach;
 	KAction* tabClose;
 
-	QAction* toggleMembers;
 	KToggleAction* toggleAutoSpellCheck;
 
 	KopeteEmoticonAction *actionSmileyMenu;

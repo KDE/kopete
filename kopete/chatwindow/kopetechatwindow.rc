@@ -42,6 +42,7 @@
 	<ToolBar name="mainToolBar" fullWidth="true">
 		<text>Main Toolbar</text>
 		<Action name="format_smiley"/>
+		<Action name="show_participants_widget" />
 		<Separator weakSeparator="true" lineSeparator="true"/>
 		<Merge />
 		<Separator weakSeparator="true" lineSeparator="true"/>

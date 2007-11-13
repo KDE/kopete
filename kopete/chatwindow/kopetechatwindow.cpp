@@ -443,17 +443,15 @@ void KopeteChatWindow::initActions(void)
 
 	KStandardAction::showMenubar( menuBar(), SLOT(setVisible(bool)), coll );
 
-	toggleMembers = m_participantsWidget->toggleViewAction();
-	toggleMembers->setText(i18n( "Participants" ));
-	coll->addAction( "options_togglemembers", toggleMembers );
-
 	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), coll );
         coll->addAction( "enable_auto_spell_check", toggleAutoSpellCheck );
 	toggleAutoSpellCheck->setChecked( true );
 	connect( toggleAutoSpellCheck, SIGNAL(triggered(bool)), this, SLOT(toggleAutoSpellChecking()) );
 
 	QAction *toggleParticipantsAction = m_participantsWidget->toggleViewAction( );
-	toggleParticipantsAction->setText( i18n( "Participants" ) );
+	toggleParticipantsAction->setText( i18n( "Show Participants" ) );
+	toggleParticipantsAction->setIconText(i18n( "Participants" ));
+	toggleParticipantsAction->setIcon(KIcon( "fileview-split" ) );
 	coll->addAction ( "show_participants_widget", toggleParticipantsAction );
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll );
