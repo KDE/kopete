@@ -71,7 +71,6 @@
 #include <kicon.h>
 
 // Kopete includes
-#include "chatmemberslistwidget.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetechatwindow.h"

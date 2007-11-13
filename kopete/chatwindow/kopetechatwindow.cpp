@@ -84,7 +84,6 @@
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
 #include "kopeteviewmanager.h"
-#include "sidebarwidget.h"
 #include "chatmemberslistview.h"
 #include "chatsessionmemberslistmodel.h"
 
