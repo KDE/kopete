@@ -164,7 +164,7 @@ private:
 
 	KToggleAction* membersLeft;
 	KToggleAction* membersRight;
-	KToggleAction* toggleMembers;
+	QAction* toggleMembers;
 	KToggleAction* toggleAutoSpellCheck;
 
 	KopeteEmoticonAction *actionSmileyMenu;

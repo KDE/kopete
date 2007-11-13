@@ -451,10 +451,9 @@ void KopeteChatWindow::initActions(void)
         coll->addAction( "options_membersright", membersRight );
 	connect( membersRight, SIGNAL(toggled(bool)), this, SLOT(slotViewMembersRight()) );
 
-	toggleMembers = new KToggleAction( i18n( "Show" ), coll );
-        coll->addAction( "options_togglemembers", toggleMembers );
-	toggleMembers->setCheckedState( KGuiItem( i18n("Hide") ) );
-	connect( toggleMembers, SIGNAL(toggled(bool)), this, SLOT(slotToggleViewMembers()) );
+	toggleMembers = m_participantsWidget->toggleViewAction();
+	toggleMembers->setText(i18n( "Participants" ));
+	coll->addAction( "options_togglemembers", toggleMembers );
 
 	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), coll );
         coll->addAction( "enable_auto_spell_check", toggleAutoSpellCheck );
@@ -462,7 +461,7 @@ void KopeteChatWindow::initActions(void)
 	connect( toggleAutoSpellCheck, SIGNAL(triggered(bool)), this, SLOT(toggleAutoSpellChecking()) );
 
 	QAction *toggleParticipantsAction = m_participantsWidget->toggleViewAction( );
-	toggleParticipantsAction->setText( i18n( "Show Participants" ) );
+	toggleParticipantsAction->setText( i18n( "Participants" ) );
 	coll->addAction ( "show_participants_widget", toggleParticipantsAction );
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll );

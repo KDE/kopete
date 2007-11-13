@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef CHATMEMBERSLISTWIDGET_H
-#define CHATMEMBERSLISTWIDGET_H
+#ifndef CHATMEMBERSLISTVIEW_H
+#define CHATMEMBERSLISTVIEW_H
 
 #include <QListView>
 

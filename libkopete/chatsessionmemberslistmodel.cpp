@@ -45,7 +45,7 @@ void ChatSessionMembersListModel::setChatSession(ChatSession *session)
 	reset();
 }
 
-Kopete::Contact * ChatSessionMembersListModel::contactAt( const QModelIndex &index )
+Kopete::Contact * ChatSessionMembersListModel::contactAt( const QModelIndex &index ) const
 {
 	if ( m_session )
 	{
@@ -66,6 +66,7 @@ Kopete::Contact * ChatSessionMembersListModel::contactAt( const QModelIndex &ind
 
 int ChatSessionMembersListModel::rowCount(const QModelIndex &parent) const
 {
+	Q_UNUSED(parent)
 	if ( m_session )
 		return m_session->members().count() + 1;
 	
@@ -74,41 +75,28 @@ int ChatSessionMembersListModel::rowCount(const QModelIndex &parent) const
 
 QVariant ChatSessionMembersListModel::data(const QModelIndex &index, int role) const
 {
-	if ( m_session )
+	Contact *c = contactAt(index);
+	if (!c)
+		return QVariant();
+
+	if (role == Qt::DisplayRole)
 	{
-		if (!index.isValid())
-			return QVariant();
-	
-		if (index.row() >= m_session->members().size() + 1)
-			return QVariant();
-	
-		const Contact *c;
-		if ( index.row() == 0 )
-			c = m_session->myself();
-		else
-			c = m_session->members().at(index.row() - 1);
-
-		if (role == Qt::DisplayRole)
-		{
-			QString nick = c->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
-			if ( nick.isEmpty() )
-				nick = c->contactId();
-			
-			return nick;
-		}
-		else if (role == Qt::DecorationRole)
-		{
-			return c->onlineStatus().iconFor(c);
-		}
-		else if (role == Qt::ToolTipRole)
-		{
-			return c->toolTip();
-		}
-		else
-			return QVariant();
+		QString nick = c->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
+		if ( nick.isEmpty() )
+			nick = c->contactId();
+		
+		return nick;
 	}
-
-	return QVariant();
+	else if (role == Qt::DecorationRole)
+	{
+		return c->onlineStatus().iconFor(c);
+	}
+	else if (role == Qt::ToolTipRole)
+	{
+		return c->toolTip();
+	}
+	else
+		return QVariant();
 }
 
 QVariant ChatSessionMembersListModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -124,6 +112,7 @@ QVariant ChatSessionMembersListModel::headerData(int section, Qt::Orientation or
 
 void ChatSessionMembersListModel::slotContactAdded( const Kopete::Contact *contact )
 {
+	Q_UNUSED(contact)
 	// NOTE in the future the adding of a contact
   // could be done just for the contact
 	reset();
@@ -131,6 +120,7 @@ void ChatSessionMembersListModel::slotContactAdded( const Kopete::Contact *conta
 
 void ChatSessionMembersListModel::slotContactRemoved( const Kopete::Contact *contact )
 {
+	Q_UNUSED(contact)
 	// NOTE in the future the removal of a contact
   // could be done just for the contact
 	reset();
@@ -138,6 +128,8 @@ void ChatSessionMembersListModel::slotContactRemoved( const Kopete::Contact *con
 
 void ChatSessionMembersListModel::slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status )
 {
+	Q_UNUSED(contact)
+	Q_UNUSED(status)
 	// NOTE in the future the change of a contact
   // could be done just for the contact
 	reset();
@@ -149,3 +141,4 @@ void ChatSessionMembersListModel::slotSessionChanged()
 }
 
 }
+

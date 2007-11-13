@@ -15,6 +15,9 @@
     *************************************************************************
 */
 
+#ifndef Kopete_ChatSessionMembersListModel_H
+#define Kopete_ChatSessionMembersListModel_H
+
 #include <QAbstractListModel>
 
 #include "kopetechatsession.h"
@@ -37,7 +40,7 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 	Kopete::ChatSession *session() { return m_session; }
 
-	Kopete::Contact *contactAt( const QModelIndex &index );
+	Kopete::Contact *contactAt( const QModelIndex &index ) const;
 public slots:
 	/**
 	 * Called when the ChatSession change for this list (eg. when the tab in the KopeteChatWindow is changing)
@@ -67,8 +70,8 @@ private slots:
 	void slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status );
 
 	/**
-   * Called when something in the session changed that requires a full
-   * model reset
+	 * Called when something in the session changed that requires a full
+	 * model reset
 	 */
 	void slotSessionChanged();
 
@@ -78,4 +81,6 @@ private:
 
 
 }
+
+#endif
 
