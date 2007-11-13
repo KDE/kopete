@@ -236,8 +236,8 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	mainArea = new QFrame( vBox );
 	mainArea->setLineWidth( 0 );
 	mainArea->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
-	mainLayout->setContentsMargins(0, 4, 0, 0);
 	mainLayout = new QVBoxLayout( mainArea );
+	mainLayout->setContentsMargins(0, 4, 0, 0);
 
 	if ( Kopete::BehaviorSettings::self()->chatWindowShowSendButton() )
 	{
