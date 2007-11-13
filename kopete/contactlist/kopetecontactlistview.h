@@ -93,7 +93,7 @@ public slots:
 	void addGroup();
 
 protected:
-	virtual void mousePressEvent( QMouseEvent *e );
+	virtual void contentsMousePressEvent( QMouseEvent *e );
 
 	virtual bool acceptDrag(QDropEvent *e) const;
 
