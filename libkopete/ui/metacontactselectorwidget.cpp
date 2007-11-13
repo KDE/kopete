@@ -207,6 +207,7 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 
 	d->widget->kListViewSearchLine->setListView(d->widget->metaContactListView);
 	d->widget->metaContactListView->setFullWidth( true );
+	d->widget->metaContactListView->addColumn( i18n( "Contacts" ), 0 );
 	d->widget->metaContactListView->header()->hide();
 	d->widget->metaContactListView->setColumnWidthMode(0, Q3ListView::Maximum);
 	slotLoadMetaContacts();
