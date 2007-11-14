@@ -59,10 +59,11 @@ public:
 	KopeteView *view;
 	bool mayInvite;
 	Kopete::MessageHandlerChain::Ptr chains[3];
+	Kopete::ChatSession::Form form;
 };
 
 Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
-	Kopete::ContactPtrList others, Kopete::Protocol *protocol )
+	Kopete::ContactPtrList others, Kopete::Protocol *protocol, Kopete::ChatSession::Form form )
 : QObject( user->account())
 {
 	int i;
@@ -76,6 +77,7 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	d->view = 0L;
 	d->customDisplayName = false;
 	d->mayInvite = false;
+	d->form = form;
 
 	for ( i = 0; others.size() != i; i++ )
 		addContact( others[i], true );
@@ -509,6 +511,11 @@ void Kopete::ChatSession::raiseView()
 	KopeteView *v=view(true, Kopete::BehaviorSettings::self()->viewPlugin() );
 	if(v)
 		v->raise(true);
+}
+
+Kopete::ChatSession::Form Kopete::ChatSession::form() const
+{
+	return d->form;
 }
 
 #include "kopetechatsession.moc"

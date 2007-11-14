@@ -38,6 +38,10 @@
 			<label>Group consecutive messages from the same user as one block.</label>
 			<default>true</default>
 		</entry>
+		<entry key="useCompact" type="Bool">
+			<label>Use a compact variant of the chat style for chatrooms.</label>
+			<default>true</default>
+		</entry>
 		
 		<!-- Hightlight preferences -->
 		<entry key="highlightForegroundColor" type="Color">

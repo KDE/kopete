@@ -75,7 +75,7 @@ Kopete::ChatSession* TestbedContact::manager( CanCreateFlags )
 	{
 		QList<Kopete::Contact*> contacts;
 		contacts.append(this);
-		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol());
+		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol(), Kopete::ChatSession::Chatroom);
 		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
 				this, SLOT( sendMessage( Kopete::Message& ) ) );
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));

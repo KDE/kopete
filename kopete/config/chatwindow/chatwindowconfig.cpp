@@ -415,8 +415,10 @@ void ChatWindowConfig::slotChatStyleSelected()
 		slotUpdateChatPreview();
 		// Get the first variant to preview
 		// Check if the current style has variants.
-		if( !m_currentVariantMap.empty() )
+		if( !m_currentVariantMap.empty() ) {
 			m_preview->setStyleVariant(m_currentVariantMap[0]);
+			m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( QString() ) );
+		}
 
 		emitChanged();
 	}
@@ -427,6 +429,16 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 // 	kDebug(14000) << variantName;
 // 	kDebug(14000) << m_currentVariantMap[variantName];
 
+	// enable the 'Use compact' checkbox depending on whether the selected variant exists in compact
+	// form
+	QString styleName = m_styleUi.styleList->selectedItem()->text();
+	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( styleName );
+	if ( m_styleUi.variantList->currentIndex() == 0 ) {
+		m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( "" ) );
+	}
+	else {
+		m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( variantName ) );
+	}
 	// Update the preview
 	m_preview->setStyleVariant(m_currentVariantMap[variantName]);
 	emitChanged();

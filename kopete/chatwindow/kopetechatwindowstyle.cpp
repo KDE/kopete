@@ -20,6 +20,7 @@
 // Qt includes
 #include <QFile>
 #include <QDir>
+#include <QHash>
 #include <QStringList>
 #include <QTextStream>
 
@@ -44,6 +45,7 @@ public:
 	QString statusHtml;
 	QString actionIncomingHtml;
 	QString actionOutgoingHtml;
+	QHash<QString, bool> compactVariants;
 };
 
 ChatWindowStyle::ChatWindowStyle(const QString &styleName, StyleBuildMode styleBuildMode)
@@ -162,11 +164,23 @@ void ChatWindowStyle::listVariants()
 
 	QStringList variantList = variantDir.entryList( QStringList("*.css") );
 	QStringList::ConstIterator it, itEnd = variantList.constEnd();
+	QLatin1String compactVersionPrefix("_compact_");
 	for(it = variantList.constBegin(); it != itEnd; ++it)
 	{
 		QString variantName = *it, variantPath;
 		// Retrieve only the file name.
 		variantName = variantName.left(variantName.lastIndexOf("."));
+		if ( variantName.startsWith( compactVersionPrefix ) ) {
+			if ( variantName == compactVersionPrefix ) {
+				d->compactVariants.insert( "", true );
+			}
+			continue;
+		}
+		QString compactVersionFilename = *it;
+		QString compactVersionPath = variantDirPath + compactVersionFilename.prepend( compactVersionPrefix );
+		if ( QFile::exists( compactVersionPath )) {
+			d->compactVariants.insert( variantName, true );
+		}
 		// variantPath is relative to baseHref.
 		variantPath = QString("Variants/%1").arg(*it);
 		d->variantsList.insert(variantName, variantPath);
@@ -293,4 +307,22 @@ void ChatWindowStyle::reload()
 	d->variantsList.clear();
 	readStyleFiles();
 	listVariants();
+}
+
+bool ChatWindowStyle::hasCompact( const QString & styleVariant ) const
+{
+	if ( d->compactVariants.contains( styleVariant ) ) {
+		return d->compactVariants.value( styleVariant );
+	}
+	return false;
+}
+
+QString ChatWindowStyle::compact( const QString & styleVariant ) const
+{
+	QString compacted = styleVariant;
+	if ( styleVariant.isEmpty() ) {
+		return QLatin1String( "Variants/_compact_.css" );
+	} else {
+		return compacted.insert( compacted.lastIndexOf('/') + 1, QString("_compact_") );
+	}
 }

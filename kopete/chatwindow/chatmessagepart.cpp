@@ -369,7 +369,7 @@ void ChatMessagePart::setStyleVariant( const QString &variantPath )
 {
 	DOM::HTMLElement variantNode = document().getElementById( QString("mainStyle") );
 	if( !variantNode.isNull() )
-		variantNode.setInnerText( QString("@import url(\"%1\");").arg(variantPath) );
+		variantNode.setInnerText( QString("@import url(\"%1\");").arg( adjustStyleVariantForChatSession( variantPath) ) );
 }
 
 void ChatMessagePart::slotAppearanceChanged()
@@ -1176,7 +1176,7 @@ void ChatMessagePart::writeTemplate()
 		).arg( d->currentChatStyle->getStyleBaseHref() )
 		.arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
 		.arg( formatStyleKeywords(d->currentChatStyle->getFooterHtml()) )
-		.arg( KopeteChatWindowSettings::self()->styleVariant() )
+		.arg( adjustStyleVariantForChatSession( KopeteChatWindowSettings::self()->styleVariant() ) )
 		.arg( styleHTML() );
 	write(xhtmlBase);
 	end();
@@ -1185,6 +1185,14 @@ void ChatMessagePart::writeTemplate()
 #endif
 }
 
+QString ChatMessagePart::adjustStyleVariantForChatSession( const QString & styleVariant ) const
+{
+	if ( d->manager->form() == Kopete::ChatSession::Chatroom
+			&& KopeteChatWindowSettings::self()->useCompact() ) {
+		return d->currentChatStyle->compact( styleVariant );
+	}
+	return styleVariant;
+}
 #include "chatmessagepart.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

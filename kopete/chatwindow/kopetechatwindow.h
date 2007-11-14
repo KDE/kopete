@@ -30,6 +30,7 @@
 #include <QList>
 #include "kopetecontact.h"
 #include "kdeversion.h"
+#include <kopetechatsession.h>
 
 #include <kopete_export.h>
 
@@ -53,7 +54,6 @@ class QDockWidget;
 namespace Kopete
 {
 class Message;
-class ChatSession;
 class Contact;
 typedef QList<Contact*>  ContactPtrList;
 }
@@ -114,7 +114,7 @@ public:
 
 private:
 	// All KopeteChatWindows are created by the window function
-	KopeteChatWindow( QWidget *parent = 0 );
+	KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *parent = 0 );
 
 	/**
 	 * The window list has changed:
@@ -170,6 +170,7 @@ private:
 	KActionMenu *actionDetachMenu;
 	KActionMenu *actionTabPlacementMenu;
 	QString statusMsg;
+	Kopete::ChatSession::Form initialForm;
 
 signals:
 	void closing( KopeteChatWindow* );

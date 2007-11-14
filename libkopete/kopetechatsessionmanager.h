@@ -63,7 +63,7 @@ public:
 	 * @return A pointer to a new or reused Kopete::ChatSession.
 	 */
 	Kopete::ChatSession* create( const Kopete::Contact *user,
-		Kopete::ContactPtrList chatContacts, Kopete::Protocol *protocol);
+		Kopete::ContactPtrList chatContacts, Kopete::Protocol *protocol, Kopete::ChatSession::Form form = Kopete::ChatSession::Small );
 
 	/**
 	 * Find a chat session, if one exists, that matches the given list of contacts.

@@ -179,7 +179,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 
 	if ( windowCreated )
 	{
-		myWindow = new KopeteChatWindow();
+		myWindow = new KopeteChatWindow( manager->form() );
 
 		if ( !accountMap.contains( manager->account() ) )
 			accountMap.insert( manager->account(), myWindow );
@@ -196,8 +196,8 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 	return myWindow;
 }
 
-KopeteChatWindow::KopeteChatWindow( QWidget *parent )
-	: KXmlGuiWindow( parent )
+KopeteChatWindow::KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *parent  )
+	: KXmlGuiWindow( parent ), initialForm( form )
 {
 #ifdef CHRONO
 	QTime chrono;chrono.start();
@@ -230,7 +230,12 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	vBox->setSpacing( 0 );
 	vBox->setFrameStyle( QFrame::NoFrame );
 	// set default window size.  This could be removed by fixing the size hints of the contents
-	resize( 500, 500 );
+	if ( initialForm == Kopete::ChatSession::Chatroom ) {
+		resize( 650, 400 );
+	} else {
+		m_participantsWidget->hide();
+		resize( 400, 400 );
+	}
 	setCentralWidget( vBox );
 
 	mainArea = new QFrame( vBox );
@@ -824,7 +829,7 @@ void KopeteChatWindow::slotDetachChat( QAction *action )
 
 	if( !action )
 	{
-		newWindow = new KopeteChatWindow();
+		newWindow = new KopeteChatWindow( detachedView->msgManager()->form() );
 		newWindow->setObjectName( QLatin1String("KopeteChatWindow") );
 	}
 	else
@@ -1090,7 +1095,7 @@ void KopeteChatWindow::readOptions()
 {
 	// load and apply config file settings affecting the appearance of the UI
 //	kDebug(14010) ;
-	applyMainWindowSettings( KGlobal::config()->group( QLatin1String( "KopeteChatWindow" ) ) );
+	applyMainWindowSettings( KGlobal::config()->group( ( initialForm == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) ) );
 	//config->setGroup( QLatin1String("ChatWindowSettings") );
 }
 
@@ -1098,7 +1103,7 @@ void KopeteChatWindow::saveOptions()
 {
 //	kDebug(14010) ;
 
-	KConfigGroup kopeteChatWindowMainWinSettings( KGlobal::config(), QLatin1String( "KopeteChatWindow" ) );
+	KConfigGroup kopeteChatWindowMainWinSettings( KGlobal::config(), ( initialForm == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
 
 	// saves menubar,toolbar and statusbar setting
 	saveMainWindowSettings( kopeteChatWindowMainWinSettings );

@@ -240,6 +240,14 @@ private:
 	 */
 	void writeTemplate();
 
+	/**
+	 * Adjust style variant to chat session type.  This allows the chat window to show a compact
+	 * variant of the style for chatrooms and a full-sized version for 1:small chats
+	 * @param styleVariant the chosen style variant as a relative path
+	 * @return the munged path, eg variant_compact.css
+	 */
+	QString adjustStyleVariantForChatSession( const QString & styleVariant ) const;
+
 	class Private;
 	Private *d;
 };
