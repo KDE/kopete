@@ -221,7 +221,6 @@ void AvatarSelectorWidget::buttonRemoveAvatarClicked()
 	if ( !d->mainWidget.listUserAvatar->selectedItems().count() )
 		return;
 
-	// You can't remove from listUserContact, so we can always use listUserAvatar
 	AvatarSelectorWidgetItem *selectedItem = dynamic_cast<AvatarSelectorWidgetItem*>( d->mainWidget.listUserAvatar->selectedItems().first() );
 	if( selectedItem )
 	{
@@ -259,12 +258,16 @@ void AvatarSelectorWidget::avatarAdded(Kopete::AvatarManager::AvatarEntry newEnt
 void AvatarSelectorWidget::avatarRemoved(Kopete::AvatarManager::AvatarEntry entryRemoved)
 {
 	// Same here, avatar can be only removed from listUserAvatar
-	QList<QListWidgetItem *> foundItems = d->mainWidget.listUserAvatar->findItems( entryRemoved.name, Qt::MatchContains );
-	if( !foundItems.isEmpty() )
+	foreach(QListWidgetItem *item, d->mainWidget.listUserAvatar->findItems("",Qt::MatchContains))
 	{
+		// checks if this is the right item
+		AvatarSelectorWidgetItem *avatar = dynamic_cast<AvatarSelectorWidgetItem*>(item);
+		if (!avatar || avatar->avatarEntry().name != entryRemoved.name)
+		    continue;
+
 		kDebug(14010) << "Removing " << entryRemoved.name << " from list.";
 
-		int deletedRow = d->mainWidget.listUserAvatar->row( foundItems.first() );
+		int deletedRow = d->mainWidget.listUserAvatar->row( item );
 		QListWidgetItem *removedItem = d->mainWidget.listUserAvatar->takeItem( deletedRow );
 		delete removedItem;
 
