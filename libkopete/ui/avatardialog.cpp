@@ -46,6 +46,7 @@ public:
 AvatarDialog::AvatarDialog(QWidget *parent)
  : KDialog(parent), d(new Private)
 {
+	showButtonSeparator(true);
 	setCaption( i18n("Select an avatar") );
 	setButtons( KDialog::Ok | KDialog::Cancel );
 
