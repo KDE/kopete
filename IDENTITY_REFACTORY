@@ -20,13 +20,13 @@ kopete:
 X Merge the account config and identity config dialogs into a single dialog (as
   suggested and started to be implemented by Gof).
 
-- Evaluate alternatives to the text links on the identity widget (as suggested by
+X Evaluate alternatives to the text links on the identity widget (as suggested by
   Bille)
 
-- Try to figure out the slow down seen by Gof on the identity widget (from the logs
+X Try to figure out the slow down seen by Gof on the identity widget (from the logs
   it seems something related to FileEngine, but not sure)
 
 - Check if there is something interesting on
   http://www.pidgin.im/~seanegan/cgi-bin/pyblosxom.cgi/identity.html
 
-- Make the identity widget a bit smaller (as suggested by Matt)
+X Make the identity widget a bit smaller (as suggested by Matt)
