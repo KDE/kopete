@@ -197,7 +197,7 @@
           <item>
            <widget class="KPushButton" name="btnGetStyles" >
             <property name="enabled" >
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="toolTip" >
              <string>Get new Chat Window styles over the Internet</string>
