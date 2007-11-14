@@ -194,19 +194,6 @@
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QCheckBox" name="kcfg_contactListMouseNavigation" >
-        <property name="toolTip" >
-         <string>Use mouse navigation instead of scroll-bars for contact list</string>
-        </property>
-        <property name="whatsThis" >
-         <string>This navigation scheme is designed to remove the vertical scrollbar. Instead of dragging the scrollbar you just move your mouse vertically on the list: as you move your mouse, the list will move in the opposite direction and until you reach your target contact. The mouse cursor will pass over each contact at some point.</string>
-        </property>
-        <property name="text" >
-         <string>Use mouse &amp;navigation instead of scroll-bars</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
@@ -235,7 +222,6 @@
   <tabstop>kcfg_startDocked</tabstop>
   <tabstop>kcfg_useMessageQueue</tabstop>
   <tabstop>kcfg_autoConnect</tabstop>
-  <tabstop>kcfg_contactListMouseNavigation</tabstop>
  </tabstops>
  <resources/>
  <connections/>
