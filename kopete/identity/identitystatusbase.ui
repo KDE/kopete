@@ -53,7 +53,7 @@
       <number>3</number>
      </property>
      <item row="0" column="0" >
-      <widget class="QPushButton" name="photo" >
+      <widget class="QToolButton" name="photo" >
        <property name="minimumSize" >
         <size>
          <width>48</width>
