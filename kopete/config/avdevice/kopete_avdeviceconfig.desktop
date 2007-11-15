@@ -11,12 +11,14 @@ X-KDE-ParentComponents=kopete
 X-KDE-Weight=180
 
 Name=Video
+Name[el]=Βίντεο
 Name[ja]=ビデオ
 Name[pt]=Vídeo
 Name[pt_BR]=Vídeo
 Name[zh_TW]=影像
 Comment=Configure Video Devices
 Comment[de]=Videogeräte einrichten
+Comment[el]=Ρύθμιση συσκευών βίντεο
 Comment[ja]=ビデオデバイスの設定
 Comment[nl]=Video-apparaten instellen
 Comment[pt]=Configurar os Dispositivos de Vídeo
