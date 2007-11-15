@@ -474,7 +474,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 		QObject::disconnect(m_session, SIGNAL(pictureInfoNotify(const QString&, KUrl, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KUrl, int )));
 
-		QObject::disconnect(m_session, SIGNAL(gotBuddyIconRequest(const QString&)), this, SLOT(slotGotBuddyIconRequest(const QString&)) );
+		QObject::disconnect(m_session, SIGNAL(pictureRequest(const QString&)), this, SLOT(slotGotBuddyIconRequest(const QString&)) );
 
 		QObject::disconnect(m_session, SIGNAL(pictureUploaded( const QString &, int )), this, SLOT(slotBuddyIconChanged(const QString&, int)));
 
