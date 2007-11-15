@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=encrypted
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_cryptography
 X-KDE-PluginInfo-Author=Olivier Goffart, Charles Connell, with thanks to Felix Tiede
 X-KDE-PluginInfo-Email=ogoffart@tiscalinet.be, charles@connells.org

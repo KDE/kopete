@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Icon=encrypted
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_cryptography
 X-KDE-FactoryName=kcm_kopete_cryptography
@@ -15,4 +14,4 @@ Name[sv]=Kryptering
 Comment=Encrypts and signs messages using OpenPGP
 Comment[nds]=Verslötelt Narichten mit PGP
 Comment[sv]=Krypterar meddelanden med användning av PGP
-DocPath=kopete/plugins/cryptography/index.html#cryptography-summary
+X-DocPath=kopete/plugins/cryptography/index.html#cryptography-summary
