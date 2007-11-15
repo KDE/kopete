@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=texteffect
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_texteffect
 X-KDE-PluginInfo-Author=Olivier Goffart
 X-KDE-PluginInfo-Email=ogoffart@tiscalinet.be

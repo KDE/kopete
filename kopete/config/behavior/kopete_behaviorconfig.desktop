@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Icon=configure
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_behaviorconfig
 X-KDE-FactoryName=kcm_kopete_behaviorconfig
@@ -88,7 +87,7 @@ Comment[vi]=Tùy chỉnh Kopete theo ý thích
 Comment[x-test]=xxPersonalize Kopete's Behaviorxx
 Comment[zh_CN]=个性化 Kopete 的行为
 Comment[zh_TW]=將 Kopete 個人化
-DocPath=kopete/configure-dialog.html#configuring-behavior
+X-DocPath=kopete/configure-dialog.html#configuring-behavior
 
 
 

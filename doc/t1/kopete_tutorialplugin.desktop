@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Name=Tutorial Plugin
 Name[bg]=Приставка за историята
@@ -42,7 +41,7 @@ Comment[x-test]=xxDemonstration plugin for teaching Kopete developmentxx
 Comment[zh_CN]=Kopete 开发教学示范插件
 Comment[zh_TW]=教導 Kopete 開發的示範外掛程式
 Icon=tutorial_plugin
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-Kopete-Version=1000900
 X-KDE-Library=kopete_tutorialplugin
 X-KDE-PluginInfo-Author=Will Stephenson

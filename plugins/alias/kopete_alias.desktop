@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=editinput
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_alias
 X-KDE-PluginInfo-Author=Jason Keirstead
 X-KDE-PluginInfo-Email=jason@keirstead.org

@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Icon=tutorial_plugin
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 Name=Tutorial
 Name[bg]=Ръководство
 Name[ca]=Tutelat

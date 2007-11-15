@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Icon=html
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_webpresence
 X-KDE-ParentApp=kopete_webpresence

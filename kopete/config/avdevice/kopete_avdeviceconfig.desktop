@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Icon=camera-web
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_avdeviceconfig
 X-KDE-FactoryName=kcm_kopete_avdeviceconfig
@@ -25,4 +24,4 @@ Comment[pt]=Configurar os Dispositivos de Vídeo
 Comment[pt_BR]=Configurar os Dispositivos de Vídeo
 Comment[sv]=Anpassa videoenheter
 Comment[zh_TW]=設定影像裝置
-DocPath=kopete/configure-dialog.html#configuring-avdevice
+X-DocPath=kopete/configure-dialog.html#configuring-avdevice

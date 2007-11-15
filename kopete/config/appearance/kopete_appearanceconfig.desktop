@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Icon=preferences-desktop-theme
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_appearanceconfig
 X-KDE-FactoryName=kcm_kopete_appearanceconfig
@@ -38,6 +37,6 @@ Comment[sv]=Anpassa kontaktlistans känsla och utseende
 Comment[x-test]=xxConfigure Contact List Look and Feelxx
 Comment[zh_CN]=配置联系人列表的观感
 Comment[zh_TW]=設定聯絡人清單的外觀與感覺
-DocPath=kopete/configure-dialog.html#configuring-appearance
+X-DocPath=kopete/configure-dialog.html#configuring-appearance
 
 

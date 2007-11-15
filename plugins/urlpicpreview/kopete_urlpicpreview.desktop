@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Icon=urlpicpreview
 X-Kopete-Version=1000900
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_urlpicpreview
 X-KDE-PluginInfo-Author=Heiko Schäfer
 X-KDE-PluginInfo-Email=heiko@rangun.de

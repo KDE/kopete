@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=network
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_webpresence
 X-KDE-PluginInfo-Author=Will Stephenson
 X-KDE-PluginInfo-Email=will@stevello.free-online.co.uk

@@ -1,7 +1,6 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-Kopete-Version=1000900
 X-KDE-Library=kopete_emailwindow
 X-KDE-PluginInfo-Author=Kopete Developers

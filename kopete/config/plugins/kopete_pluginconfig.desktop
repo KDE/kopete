@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Icon=gear
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_pluginconfig
 X-KDE-FactoryName=kcm_kopete_pluginconfig

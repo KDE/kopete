@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=media-podcast
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_nowlistening
 X-KDE-PluginInfo-Author=Will Stephenson
 X-KDE-PluginInfo-Email=wstephenson@kde.org

@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=view-filter
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_privacy
 X-KDE-PluginInfo-Author=Andre Duffeck
 X-KDE-PluginInfo-Email=duffeck@kde.org

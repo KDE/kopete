@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=gadu_protocol
-ServiceTypes=Kopete/Protocol
+X-KDE-ServiceTypes=Kopete/Protocol
 X-Kopete-Messaging-Protocol=messaging/gadu
 X-KDE-Library=kopete_gadu
 X-KDE-PluginInfo-Author=Grzegorz Jaskiewicz

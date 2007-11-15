@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=preferences-desktop-locale
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_translator
 X-KDE-PluginInfo-Author=Duncan Mac-Vicar Prett
 X-KDE-PluginInfo-Email=duncan@kde.org

@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Icon=users
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_accountconfig
 X-KDE-FactoryName=kcm_kopete_accountconfig
@@ -79,6 +78,6 @@ Comment[sv]=Hantera dina konton och identiteter
 Comment[x-test]=xxManage Your Accounts and Identitiesxx
 Comment[zh_CN]=管理您的账户和身份
 Comment[zh_TW]=管理您的帳號與身份
-DocPath=kopete/configure-dialog.html#configuring-accounts
+X-DocPath=kopete/configure-dialog.html#configuring-accounts
 
 

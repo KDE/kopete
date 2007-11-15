@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=qq_protocol
-ServiceTypes=Kopete/Protocol
+X-KDE-ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_qq
 X-Kopete-Messaging-Protocol=messaging/qq
 X-KDE-PluginInfo-Author=Hui Jin

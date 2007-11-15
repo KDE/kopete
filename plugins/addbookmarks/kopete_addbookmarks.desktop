@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Name=Bookmarks
 Name[bg]=Отметки
@@ -102,7 +101,7 @@ Comment[zh_CN]=自动将收到消息中的链接加入书签
 Comment[zh_HK]=自動將收到的訊息內的連結加到書籤
 Comment[zh_TW]=自動將接收訊息中的連結加入書籤
 Icon=konqueror
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-Kopete-Version=1000900
 X-KDE-Library=kopete_addbookmarks
 X-KDE-PluginInfo-Author=Roie Kerstein

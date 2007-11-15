@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=latex
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_latex
 X-KDE-PluginInfo-Author=Duncan Mac-Vicar
 X-KDE-PluginInfo-Email=duncan@kde.org

@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Icon=telepathy_protocol
-ServiceTypes=Kopete/Protocol
+X-KDE-ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_telepathy
 X-Kopete-Version=1000900
 X-Kopete-Messaging-Protocol=messaging/telepathy

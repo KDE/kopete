@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_connectionstatus
 X-KDE-PluginInfo-Author=Chris Howells
 X-KDE-PluginInfo-Email=howells@kde.org

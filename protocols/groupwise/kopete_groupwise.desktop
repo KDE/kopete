@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=groupwise_protocol
-ServiceTypes=Kopete/Protocol
+X-KDE-ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_groupwise
 X-Kopete-Messaging-Protocol=messaging/groupwise
 X-KDE-PluginInfo-Author=Will Stephenson

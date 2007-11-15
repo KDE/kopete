@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=statistics
-ServiceTypes=Kopete/Plugin
+X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_statistics
 X-KDE-PluginInfo-Author=Marc Cramdal
 X-KDE-PluginInfo-Email=marc.cramdal@yahoo.fr

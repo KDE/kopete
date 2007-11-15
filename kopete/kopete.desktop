@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 MimeType=application/x-kopete-emoticons;application/x-icq;
 Name=Kopete
 Name[ne]=कोपेट
@@ -115,4 +114,4 @@ Terminal=false
 Icon=kopete
 Categories=Qt;KDE;Network;InstantMessaging;
 X-DBUS-StartupType=Unique
-ServiceTypes=DBUS/InstantMessenger
+X-KDE-ServiceTypes=DBUS/InstantMessenger
