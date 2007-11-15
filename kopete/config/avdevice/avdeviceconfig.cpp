@@ -39,7 +39,6 @@
 #include <qpixmap.h>
 
 #include <qtabwidget.h>
-#include <qgl.h>
 
 //#include "videodevice.h"
 K_PLUGIN_FACTORY( KopeteAVDeviceConfigFactory,
