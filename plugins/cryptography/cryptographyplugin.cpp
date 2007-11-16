@@ -371,7 +371,7 @@ QStringList CryptographyPlugin::getKabcKeys ( QString uid )
 		if ( keys.at ( 0 ) == keys.at ( 1 ) )
 			keys.removeAt ( 1 );
 
-	kDebug ( 14303 ) << "keys found in address book for contact " << addressee.assembledName() << ": " << keys << endl;
+	kDebug ( 14303 ) << "keys found in address book for contact " << addressee.assembledName() << ": " << keys;
 
 	return keys;
 }
