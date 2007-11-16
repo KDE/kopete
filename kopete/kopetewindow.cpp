@@ -894,7 +894,7 @@ void KopeteWindow::slotAccountUnregistered( const Kopete::Account *account )
 	QAction *action = actionCollection()->action( s );
 	if ( action )
 	{
-		kDebug(14000) << " found KAction " << action << " with name: " << action->objectName() << endl;
+		kDebug(14000) << " found KAction " << action << " with name: " << action->objectName();
 		d->addContactMapper->removeMappings( action );
 		d->actionAddContact->removeAction( action );
 	}

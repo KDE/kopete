@@ -107,7 +107,7 @@ Identity* IdentityManager::registerIdentity( Identity *identity )
 
 void IdentityManager::unregisterIdentity( const Identity *identity )
 {
-	kDebug( 14010 ) << "Unregistering identity " << identity->id() << endl;
+	kDebug( 14010 ) << "Unregistering identity " << identity->id();
 	d->identities.removeAll( const_cast<Identity*>(identity) );
 
 	emit identityUnregistered( identity );
@@ -199,7 +199,7 @@ void IdentityManager::save()
 	KConfigGroup group = KGlobal::config()->group("IdentityManager");
 	group.writeEntry("DefaultIdentity", d->defaultIdentity->id());
 
-	//kDebug( 14010 ) << endl;
+	//kDebug( 14010 );
 	foreach( Identity *identity, d->identities )
 	{
 		KConfigGroup *config = identity->configGroup();
@@ -232,7 +232,7 @@ void IdentityManager::load()
 								 "Failed to create identity for '" << identityId << "'" << endl;
 			continue;
 		}
-		kDebug() << "Created identity " << identityId << endl;
+		kDebug() << "Created identity " << identityId;
 	}
 
 	// get the default identity
@@ -249,7 +249,7 @@ void IdentityManager::load()
 void IdentityManager::slotIdentityOnlineStatusChanged(Identity *i)
 {
 	//TODO: check if we need to do something more on status changes
-	//kDebug(14010) << endl;
+	//kDebug(14010);
 	emit identityOnlineStatusChanged(i);
 }
 

@@ -975,7 +975,7 @@ void Client::changeContactAlias( const QString& contact, const QString& alias )
 				return;
 		}
 
-		kDebug( OSCAR_RAW_DEBUG ) << "Changing " << contact << "'s alias to " << alias << endl;
+		kDebug( OSCAR_RAW_DEBUG ) << "Changing " << contact << "'s alias to " << alias;
 		SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
 		if ( ssimt->modifyContact( oldItem, item ) )
 			ssimt->go( Task::AutoDelete );

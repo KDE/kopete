@@ -168,7 +168,7 @@ QString URLPicPreviewPlugin::prepareBody ( const QString& parsedBody, uint previ
  */
 void URLPicPreviewPlugin::readyForUnload()
 {
-	kDebug ( 14314 ) << endl;
+	kDebug ( 14314 );
 	m_abortMessageCheck = true;
 	emit abortAllOperations();
 }

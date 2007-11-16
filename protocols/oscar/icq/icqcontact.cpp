@@ -312,7 +312,7 @@ void ICQContact::receivedShortInfo( const QString& contact )
 
 	if ( m_ssiItem.alias().isEmpty() && !shortInfo.nickname.isEmpty() )
 	{
-		kDebug(OSCAR_ICQ_DEBUG) << "setting new displayname for former UIN-only Contact" << endl;
+		kDebug(OSCAR_ICQ_DEBUG) << "setting new displayname for former UIN-only Contact";
 		setProperty( Kopete::Global::Properties::self()->nickName(), codec->toUnicode( shortInfo.nickname ) );
 	}
 }

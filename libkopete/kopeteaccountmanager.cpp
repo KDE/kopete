@@ -104,7 +104,7 @@ bool AccountManager::isAnyAccountConnected() const
 
 void AccountManager::setOnlineStatus( uint category, const QString& awayMessage, uint flags )
 {
-	kDebug() << "category: " << category << ", Kopete::OnlineStatusManager::Away: " << Kopete::OnlineStatusManager::Away << endl;
+	kDebug() << "category: " << category << ", Kopete::OnlineStatusManager::Away: " << Kopete::OnlineStatusManager::Away;
 	OnlineStatusManager::Categories categories 
 		= (OnlineStatusManager::Categories)category;
 
