@@ -1162,7 +1162,7 @@ int VideoDevice::getImage(QImage *qimage)
 		{
 			cbptr = &m_currentbuffer.data[0];
 			yptr = cbptr + 1;
-			crptr = cbptr + 3;
+			crptr = cbptr + 2;
 			packed=true;
 		}
 		else
@@ -1181,8 +1181,8 @@ int VideoDevice::getImage(QImage *qimage)
 			if (packed)
 			{
 				c = (yptr[x<<1])-16;
-				d = (cbptr[x&!1])-128;
-				e = (crptr[x&!1])-128;
+				d = (cbptr[x>>1<<2])-128;
+				e = (crptr[x>>1<<2])-128;
 			}
 			else
 			{
