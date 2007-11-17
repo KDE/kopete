@@ -209,6 +209,7 @@ void AddAccountWizard::accept()
 	// if the account wasn't created correctly then leave
 	if (!account)
 	{
+		reject();
 		return;
 	}
 
