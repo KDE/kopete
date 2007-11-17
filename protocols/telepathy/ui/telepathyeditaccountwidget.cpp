@@ -203,12 +203,12 @@ void TelepathyEditAccountWidget::writeConfig()
 	accountConfig->writeEntry( QLatin1String("SelectedProtocol"), selectedProtocol );
 	
 	// Write config related to ConnectionManager Parameter
-	KSharedConfig::Ptr telepathyConfig = KGlobal::config();
-	telepathyConfig->setGroup( TelepathyProtocol::protocol()->formatTelepathyConfigGroup(selectedConnectionManager, selectedProtocol, accountId) );
+	QString telepathyGroup(TelepathyProtocol::protocol()->formatTelepathyConfigGroup(selectedConnectionManager, selectedProtocol, accountId));
+	KConfigGroup telepathyConfig = KGlobal::config()->group(telepathyGroup);
 	
 	foreach(ConnectionManager::Parameter parameter, d->savedParameterList)
 	{
-		telepathyConfig->writeEntry( parameter.name(), parameter.value() );
+		telepathyConfig.writeEntry( parameter.name(), parameter.value() );
 	}
 }
 
