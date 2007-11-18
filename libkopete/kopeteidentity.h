@@ -91,8 +91,10 @@ public:
 
 	/**
 	 * @brief Sets the online status for this identity
-	 *
-	 * FIXME: describe a bit more
+	 * Sets the online status for each account in this identity, except those which are set to 
+	 * 'Exclude from connect all' (Kopete::Account::excludeConnect()).
+	 * @param category generic OnlineStatusManager::Categories identifying status to set
+	 * @param awayMessage status message to use in this onlinestatus
 	 */
 	void setOnlineStatus( uint category, const QString &awayMessage );
 
