@@ -28,6 +28,7 @@
 #include <QUrl>
 #include <KColorScheme>
 #include <kopeteidentity.h>
+#include <kopeteidentitymanager.h>
 #include <kopeteaccount.h>
 #include <kopeteaccountmanager.h>
 #include <kopetecontact.h>
@@ -78,6 +79,9 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 			this, SLOT(slotAccountRegistered(Kopete::Account*)));
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
 			this, SLOT(slotAccountUnregistered(const Kopete::Account*)));
+
+	connect( Kopete::IdentityManager::self(), SIGNAL(identityUnregistered(const Kopete::Identity*)),
+			this, SLOT(slotIdentityUnregistered(const Kopete::Identity*)));
 }
 
 IdentityStatusWidget::~IdentityStatusWidget()
@@ -339,6 +343,16 @@ void IdentityStatusWidget::resizeAccountListWidget()
 	layout()->invalidate();
 	setFixedHeight( sizeHint().height() );
 	//adjustSize();
+}
+
+void IdentityStatusWidget::slotIdentityUnregistered( const Kopete::Identity* identity )
+{
+	if ( identity == d->identity )
+	{
+		disconnect( identity );
+		hide();
+		setIdentity( Kopete::IdentityManager::self()->defaultIdentity() );
+	}
 }
 
 #include "identitystatuswidget.moc"

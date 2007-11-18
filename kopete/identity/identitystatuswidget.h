@@ -68,6 +68,10 @@ private slots:
 	void slotAccountRegistered( Kopete::Account *account );
 	void slotAccountUnregistered( const Kopete::Account *account );
 	void slotAccountStatusIconChanged( Kopete::Contact *contact );
+	/**
+	 * Handle departing identities
+	 */
+	void slotIdentityUnregistered( const Kopete::Identity* identity );
 
 private:
 	void addAccountItem( Kopete::Account *account );
