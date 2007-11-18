@@ -407,7 +407,8 @@ void KopeteWindow::initActions()
 	setStatusMessageMenu->setIconText( i18n( "&Message" ) );
 	actionCollection()->addAction( "SetStatusMessage", setStatusMessageMenu );
 	setStatusMessageMenu->setDelayed( false );
-	connect( setStatusMessageMenu->menu(), SIGNAL( aboutToShow() ), SLOT(slotBuildStatusMessageMenu() ) );
+	connect( setStatusMessageMenu->menu(), SIGNAL(aboutToShow()), SLOT(slotBuildStatusMessageMenu()) );
+	connect( setStatusMessageMenu->menu(), SIGNAL(triggered(QAction*)), this, SLOT(slotStatusMessageSelected(QAction*)) );
 
 	// sync actions, config and prefs-dialog
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()) );
@@ -991,9 +992,6 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	d->globalStatusMessageMenu = static_cast<KMenu *>( senderObj );
 	d->globalStatusMessageMenu->clear();
 
-	connect( d->globalStatusMessageMenu, SIGNAL( activated( int ) ),
-		SLOT( slotStatusMessageSelected( int ) ) );
-
 	d->globalStatusMessageMenu->addTitle( i18n("Status Message") );
 	//BEGIN: Add new message widget to the Set Status Message Menu.
 	KHBox * newMessageBox = new KHBox( 0 );
@@ -1011,7 +1009,7 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	newMessagePix->setFocusPolicy( Qt::ClickFocus );
 	connect( d->newMessageEdit, SIGNAL( returnPressed() ), SLOT( slotNewStatusMessageEntered() ) );
 
-	KAction *newMessageAction = new KAction( KIcon("edit"), i18n("New Message..."), this ); //, "new_message" );
+	KAction *newMessageAction = new KAction( KIcon("edit"), i18n("New Message..."), d->globalStatusMessageMenu );
 	newMessageAction->setDefaultWidget( newMessageBox );
 
 	d->globalStatusMessageMenu->addAction( newMessageAction );
@@ -1021,23 +1019,28 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	d->globalStatusMessageMenu->addSeparator();
 
 	QStringList awayMessages = Kopete::Away::getInstance()->getMessages();
-	for (int i = awayMessages.count() - 1; i >= 0; --i)
+	for ( int i = 0; i < awayMessages.count(); ++i )
 	{
-		d->globalStatusMessageMenu->addAction( KStringHandler::rsqueeze( awayMessages[i] ) );
+		QAction *action = new QAction( d->globalStatusMessageMenu );
+		action->setText( KStringHandler::rsqueeze( awayMessages[i] ) );
+		action->setData( i );
+		d->globalStatusMessageMenu->addAction( action );
 	}
-	//connect( m_globalStatusMessageMenu, SIGNAL( aboutToHide() ), m_globalStatusMessageMenu, SLOT( deleteLater() ) );
 
 	d->newMessageEdit->setFocus(Qt::OtherFocusReason);
 	d->globalStatusMessageMenu->setActiveAction(newMessageAction);
-	//messageMenu->popup( e->globalPos(), 1 );
 }
 
-void KopeteWindow::slotStatusMessageSelected( int i )
+void KopeteWindow::slotStatusMessageSelected( QAction *action )
 {
-	if ( 0 == i )
+	if ( !action->data().isValid() )
+	{
 		setStatusMessage( "" );
-	else if( i > 0 )
-		setStatusMessage(  Kopete::Away::getInstance()->getMessage( i - 1 ) );
+		return;
+	}
+
+	int i = action->data().toInt();
+	setStatusMessage(  Kopete::Away::getInstance()->getMessage( i ) );
 }
 
 void KopeteWindow::slotNewStatusMessageEntered()
@@ -1053,8 +1056,12 @@ void KopeteWindow::slotGlobalStatusMessageIconClicked( const QPoint &position )
 {
 	KMenu *statusMessageIconMenu = new KMenu(this);
 
-	connect(statusMessageIconMenu, SIGNAL( aboutToShow() ),
-		this, SLOT(slotBuildStatusMessageMenu()));
+	connect( statusMessageIconMenu, SIGNAL(aboutToShow()),
+	         this, SLOT(slotBuildStatusMessageMenu()) );
+	connect( statusMessageIconMenu, SIGNAL(triggered(QAction*)),
+	         this, SLOT(slotStatusMessageSelected(QAction*)) );
+	connect( statusMessageIconMenu, SIGNAL(aboutToHide()),
+	         statusMessageIconMenu, SLOT(deleteLater()) );
 
 	statusMessageIconMenu->popup(position);
 }

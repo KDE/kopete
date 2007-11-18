@@ -162,7 +162,7 @@ private slots:
 	 * Protected slot to setup the Set Global Status Message menu.
 	 */
 	void slotBuildStatusMessageMenu();
-	void slotStatusMessageSelected( int i );
+	void slotStatusMessageSelected( QAction *action );
 	void slotNewStatusMessageEntered();
 
 	/**
