@@ -105,8 +105,9 @@ bool AccountManager::isAnyAccountConnected() const
 void AccountManager::setOnlineStatus( uint category, const QString& awayMessage, uint flags )
 {
 	kDebug() << "category: " << category << ", Kopete::OnlineStatusManager::Away: " << Kopete::OnlineStatusManager::Away;
-	OnlineStatusManager::Categories categories 
+	OnlineStatusManager::Categories categories
 		= (OnlineStatusManager::Categories)category;
+	bool onlyChangeConnectedAccounts = isAnyAccountConnected();
 
 	foreach( Account *account, d->accounts )
 	{
@@ -117,7 +118,7 @@ void AccountManager::setOnlineStatus( uint category, const QString& awayMessage,
 			continue;
 		}
 		
-		if ( isAnyAccountConnected() ) {
+		if ( onlyChangeConnectedAccounts ) {
 			if ( account->isConnected() || ( (flags & ConnectIfOffline) && !account->excludeConnect() ) )
 				account->setOnlineStatus( status, awayMessage );
 		}
