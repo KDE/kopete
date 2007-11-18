@@ -157,7 +157,7 @@ QPixmap OnlineStatusManager::cacheLookupByObject( const OnlineStatus &statusFor,
 {
 	QString fp = fingerprint( statusFor, icon, size, color, idle );
 
-	kDebug(14010) << "finger print:" << fp << ", icon: " << icon;
+	//kDebug(14010) << "finger print:" << fp << ", icon: " << icon;
 	// look it up in the cache
 	QPixmap *theIcon = d->iconCache.value(fp);
 	if ( !theIcon )
@@ -319,7 +319,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
 
-	kDebug( 14010) << "overlayIcons size: " << statusFor.overlayIcons().count();
+	//kDebug( 14010) << "overlayIcons size: " << statusFor.overlayIcons().count();
 
 	// NOTE: overlayIcons car be empty
 	if ( !statusFor.overlayIcons().empty() && baseIcon == statusFor.overlayIcons().first() )

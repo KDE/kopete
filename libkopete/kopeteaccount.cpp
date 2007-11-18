@@ -103,15 +103,6 @@ Account::Account( Protocol *parent, const QString &accountId )
 	d->customIcon = d->configGroup->readEntry( "Icon", QString() );
 	d->priority = d->configGroup->readEntry( "Priority", 0 );
 
-	Identity *identity = Kopete::IdentityManager::self()->findIdentity( d->configGroup->readEntry("Identity", QString()) );
-
-	// if the identity was not found, use the default one which will for sure exist
-	// FIXME: maybe it could show a passive dialog telling that to the user
-	if (!identity)
-		identity = Kopete::IdentityManager::self()->defaultIdentity();
-
-	setIdentity( identity );
-
 	d->restoreStatus = Kopete::OnlineStatus::Online;
 	d->restoreMessage = "";
 
@@ -422,6 +413,11 @@ Identity * Account::identity() const
 
 void Account::setIdentity( Identity *ident )
 {
+	if ( d->identity == ident )
+	{
+		return;
+	}
+
 	if (d->identity)
 	{
 		d->identity->removeAccount( this );
@@ -459,9 +455,6 @@ void Account::setMyself( Contact *myself )
 		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 	QObject::connect( d->myself, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
 		this, SLOT( slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) );
-
-	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-		identity(), SLOT( updateOnlineStatus()));
 
 	if ( isConnected() != wasConnected )
 		emit isConnectedChanged();

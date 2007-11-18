@@ -36,6 +36,7 @@
 #include "kopeteprotocol.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
+#include "kopeteidentitymanager.h"
 #include "kopetepluginmanager.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteonlinestatusmanager.h"
@@ -392,6 +393,14 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 				"Failed to create account for '" << accountId << "'" << endl;
 			continue;
 		}
+		// the account's Identity must be set here instead of in the Kopete::Account ctor, because there the
+		// identity cannot pick up any state set in the derived Account ctor
+		Identity *identity = Kopete::IdentityManager::self()->findIdentity( account->configGroup()->readEntry("Identity", QString()) );
+		// if the identity was not found, use the default one which will for sure exist
+		// FIXME: get rid of this, the account's identity should always exist at this point
+		if (!identity)
+			identity = Kopete::IdentityManager::self()->defaultIdentity();
+		account->setIdentity( identity );
 	}
 }
 

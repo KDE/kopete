@@ -179,10 +179,14 @@ void Identity::addAccount( Kopete::Account *account )
 		return;
 
 	d->accounts.append( account );
+
+	connect( account->myself(),
+			SIGNAL(onlineStatusChanged(Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),
+			this, SLOT(updateOnlineStatus()));
 	connect(account, SIGNAL(accountDestroyed(const Kopete::Account*)),
 			this, SLOT(removeAccount(const Kopete::Account*)));
-	//TODO implement the signals for status changes and so
-	
+
+	updateOnlineStatus();
 	emit identityChanged( this );
 }
 
@@ -192,9 +196,9 @@ void Identity::removeAccount( const Kopete::Account *account )
 	if ( !d->accounts.contains( a ) )
 		return;
 
-	//TODO disconnect signals and so on
+	disconnect( account );
 	d->accounts.removeAll( a );
-	
+	updateOnlineStatus();
 	emit identityChanged( this );
 }
 
