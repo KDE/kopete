@@ -90,14 +90,14 @@ class AvatarSelectorWidget::Private
 {
 public:
 	Private()
-	 : selectedItem(0)
+	 : selectedItem(0), noAvatarItem(0)
 	{}
 
 	Ui::AvatarSelectorWidget mainWidget;
 	QListWidgetItem *selectedItem;
 	QString currentAvatar;
-
-	void addItem(Kopete::AvatarManager::AvatarEntry entry);
+	AvatarSelectorWidgetItem * noAvatarItem;
+	AvatarSelectorWidgetItem * addItem(Kopete::AvatarManager::AvatarEntry entry);
 };
 
 AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
@@ -124,7 +124,7 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 	empty.name = i18n("No Avatar");
 	empty.contact = 0;
 	empty.category = Kopete::AvatarManager::User;
-	d->addItem(empty);
+	d->noAvatarItem = d->addItem(empty);
 
 	// List avatars of User category
 	Kopete::AvatarQueryJob *queryJob = new Kopete::AvatarQueryJob(this);
@@ -224,9 +224,12 @@ void AvatarSelectorWidget::buttonRemoveAvatarClicked()
 	AvatarSelectorWidgetItem *selectedItem = dynamic_cast<AvatarSelectorWidgetItem*>( d->mainWidget.listUserAvatar->selectedItems().first() );
 	if( selectedItem )
 	{
-		if( !Kopete::AvatarManager::self()->remove( selectedItem->avatarEntry() ) )
+		if ( selectedItem != d->noAvatarItem )
 		{
-			kDebug(14010) << "Removing of avatar failed for unknown reason.";
+			if( !Kopete::AvatarManager::self()->remove( selectedItem->avatarEntry() ) )
+			{
+				kDebug(14010) << "Removing of avatar failed for unknown reason.";
+			}
 		}
 	}
 }
@@ -285,21 +288,23 @@ void AvatarSelectorWidget::avatarRemoved(Kopete::AvatarManager::AvatarEntry entr
 
 void AvatarSelectorWidget::listSelectionChanged(QListWidgetItem *item)
 {
+	d->mainWidget.buttonRemoveAvatar->setEnabled( item != d->noAvatarItem );
 	d->selectedItem = item;
 }
 
-void AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry entry)
+AvatarSelectorWidgetItem * AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry entry)
 {
 	kDebug(14010) << "Entry(" << entry.name << "): " << entry.category;
 
 	// only use User avatars
 	if( !(entry.category & Kopete::AvatarManager::User) )
-	    return;
+	    return 0;
 
 	AvatarSelectorWidgetItem *item = new AvatarSelectorWidgetItem(mainWidget.listUserAvatar);
 	item->setAvatarEntry(entry);
 	if (entry.path == currentAvatar)
 		item->setSelected(true);
+	return item;
 }
 
 } // Namespace Kopete::UI
