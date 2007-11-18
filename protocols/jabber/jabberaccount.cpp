@@ -1724,7 +1724,7 @@ bool JabberAccount::removeAccount( )
 					i18n("Unregister"),
 					KGuiItem(i18n( "Remove and Unregister" ), "edit-delete"),
 					KGuiItem(i18n( "Remove only from Kopete"), "user-trash"),KStandardGuiItem::cancel(),
-					"askUnregisterJabberAccount", KMessageBox::Notify | KMessageBox::Dangerous );
+					QString(), KMessageBox::Notify | KMessageBox::Dangerous );
 		if(result == KMessageBox::Cancel)
 		{
 			return false;
