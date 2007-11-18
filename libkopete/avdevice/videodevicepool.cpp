@@ -786,26 +786,29 @@ void VideoDevicePool::registerDevice( Solid::Device & device )
 	{
 		kDebug() << "vendor: " << vendorDevice->vendor() << ", product: " << vendorDevice->product();
 	}
-	QStringList protocols = device.as<Solid::Video>()->supportedProtocols();
-	if ( protocols.contains( "video4linux" ) )
-	{
-		QStringList drivers = device.as<Solid::Video>()->supportedDrivers( "video4linux" );
-		if ( drivers.contains( "video4linux" ) )
+	Solid::Video * solidVideoDevice = device.as<Solid::Video>();
+	if ( solidVideoDevice ) {
+		QStringList protocols = solidVideoDevice->supportedProtocols();
+		if ( protocols.contains( "video4linux" ) )
 		{
-			kDebug() << "V4L device path is" << device.as<Solid::Video>()->driverHandle( "video4linux" ).toString();
-			VideoDevice videodevice;
-			videodevice.setUdi( device.udi() );
-			videodevice.setFileName(device.as<Solid::Video>()->driverHandle( "video4linux" ).toString());
-			kDebug() << "Found device " << videodevice.full_filename;
-			videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
-			if(videodevice.isOpen())
+			QStringList drivers = solidVideoDevice->supportedDrivers( "video4linux" );
+			if ( drivers.contains( "video4linux" ) )
 			{
-				kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
+				kDebug() << "V4L device path is" << solidVideoDevice->driverHandle( "video4linux" ).toString();
+				VideoDevice videodevice;
+				videodevice.setUdi( device.udi() );
+				videodevice.setFileName(solidVideoDevice->driverHandle( "video4linux" ).toString());
+				kDebug() << "Found device " << videodevice.full_filename;
+				videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
+				if(videodevice.isOpen())
+				{
+					kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
 
-				// This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
-				videodevice.close();
-				videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
-				m_videodevice.push_back(videodevice);
+					// This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
+					videodevice.close();
+					videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
+					m_videodevice.push_back(videodevice);
+				}
 			}
 		}
 	}
