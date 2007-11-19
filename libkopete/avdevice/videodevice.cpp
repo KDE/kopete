@@ -1319,6 +1319,38 @@ float VideoDevice::setBrightness(float brightness)
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
+			{
+				struct v4l2_queryctrl queryctrl;
+				struct v4l2_control control;
+
+				CLEAR (queryctrl);
+				queryctrl.id = V4L2_CID_BRIGHTNESS;
+
+				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
+				{
+					if (errno != EINVAL)
+					{
+						kDebug() <<  k_funcinfo << "VIDIOC_QUERYCTRL failed (" << errno << ").";
+					} else
+					{
+						kDebug() << k_funcinfo << "Device doesn't support the Brightness control.";
+					}
+				} else
+				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+				{
+					kDebug() << k_funcinfo << "Device doesn't support the Brightness control.";
+				} else
+				{
+					CLEAR (control);
+					control.id = V4L2_CID_BRIGHTNESS;
+					control.value = (queryctrl.maximum - queryctrl.minimum)*getBrightness();
+
+					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
+					{
+						kDebug() <<  k_funcinfo << "VIDIOC_S_CTRL failed (" << errno << ").";
+					}
+				}
+			}
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
@@ -1357,6 +1389,38 @@ float VideoDevice::setContrast(float contrast)
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
+			{
+				struct v4l2_queryctrl queryctrl;
+				struct v4l2_control control;
+
+				CLEAR (queryctrl);
+				queryctrl.id = V4L2_CID_CONTRAST;
+
+				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
+				{
+					if (errno != EINVAL)
+					{
+						kDebug() <<  k_funcinfo << "VIDIOC_QUERYCTRL failed (" << errno << ").";
+					} else
+					{
+						kDebug() << k_funcinfo << "Device doesn't support the Contrast control.";
+					}
+				} else
+				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+				{
+					kDebug() << k_funcinfo << "Device doesn't support the Contrast control.";
+				} else
+				{
+					CLEAR (control);
+					control.id = V4L2_CID_CONTRAST;
+					control.value = (queryctrl.maximum - queryctrl.minimum)*getContrast();
+
+					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
+					{
+						kDebug() <<  k_funcinfo << "VIDIOC_S_CTRL failed (" << errno << ").";
+					}
+				}
+			}
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
@@ -1395,6 +1459,38 @@ float VideoDevice::setSaturation(float saturation)
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
+			{
+				struct v4l2_queryctrl queryctrl;
+				struct v4l2_control control;
+
+				CLEAR (queryctrl);
+				queryctrl.id = V4L2_CID_SATURATION;
+
+				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
+				{
+					if (errno != EINVAL)
+					{
+						kDebug() <<  k_funcinfo << "VIDIOC_QUERYCTRL failed (" << errno << ").";
+					} else
+					{
+						kDebug() << k_funcinfo << "Device doesn't support the Saturation control.";
+					}
+				} else
+				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+				{
+					kDebug() << k_funcinfo << "Device doesn't support the Saturation control.";
+				} else
+				{
+					CLEAR (control);
+					control.id = V4L2_CID_SATURATION;
+					control.value = (queryctrl.maximum - queryctrl.minimum)*getSaturation();
+
+					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
+					{
+						kDebug() <<  k_funcinfo << "VIDIOC_S_CTRL failed (" << errno << ").";
+					}
+				}
+			}
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
@@ -1433,6 +1529,38 @@ float VideoDevice::setWhiteness(float whiteness)
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
+			{
+				struct v4l2_queryctrl queryctrl;
+				struct v4l2_control control;
+
+				CLEAR (queryctrl);
+				queryctrl.id = V4L2_CID_WHITENESS;
+
+				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
+				{
+					if (errno != EINVAL)
+					{
+						kDebug() <<  k_funcinfo << "VIDIOC_QUERYCTRL failed (" << errno << ").";
+					} else
+					{
+						kDebug() << k_funcinfo << "Device doesn't support the Whiteness control.";
+					}
+				} else
+				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+				{
+					kDebug() << k_funcinfo << "Device doesn't support the Whiteness control.";
+				} else
+				{
+					CLEAR (control);
+					control.id = V4L2_CID_WHITENESS;
+					control.value = (queryctrl.maximum - queryctrl.minimum)*getWhiteness();
+
+					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
+					{
+						kDebug() <<  k_funcinfo << "VIDIOC_S_CTRL failed (" << errno << ").";
+					}
+				}
+			}
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
@@ -1471,6 +1599,38 @@ float VideoDevice::setHue(float hue)
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
+			{
+				struct v4l2_queryctrl queryctrl;
+				struct v4l2_control control;
+
+				CLEAR (queryctrl);
+				queryctrl.id = V4L2_CID_HUE;
+
+				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
+				{
+					if (errno != EINVAL)
+					{
+						kDebug() <<  k_funcinfo << "VIDIOC_QUERYCTRL failed (" << errno << ").";
+					} else
+					{
+						kDebug() << k_funcinfo << "Device doesn't support the Hue control.";
+					}
+				} else
+				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+				{
+					kDebug() << k_funcinfo << "Device doesn't support the Hue control.";
+				} else
+				{
+					CLEAR (control);
+					control.id = V4L2_CID_HUE;
+					control.value = (queryctrl.maximum - queryctrl.minimum)*getHue();
+
+					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
+					{
+						kDebug() <<  k_funcinfo << "VIDIOC_S_CTRL failed (" << errno << ").";
+					}
+				}
+			}
 			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
