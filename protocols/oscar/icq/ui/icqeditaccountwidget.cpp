@@ -145,6 +145,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
 		                              mProtocol->encodings(),
 		                              encodingId );
+		mAccountSettings->changePasswordGroupBox->hide();
 	}
 
 	if ( !mAccount || !mAccount->engine()->isActive() )

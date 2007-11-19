@@ -196,7 +196,7 @@ If you do not currently have an ICQ account, please click the button to create o
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_5" >
+        <widget class="QGroupBox" name="changePasswordGroupBox" >
          <property name="title" >
           <string>Change password</string>
          </property>
