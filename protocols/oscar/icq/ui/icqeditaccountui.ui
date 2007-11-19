@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>493</width>
-    <height>471</height>
+    <width>578</width>
+    <height>546</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -139,7 +139,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2" >
+        <widget class="QGroupBox" name="registrationGroupBox" >
          <property name="title" >
           <string>Registration</string>
          </property>
@@ -951,7 +951,7 @@ If you do not currently have an ICQ account, please click the button to create o
  <customwidgets>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>kopetepasswordwidget.h</header>
   </customwidget>
  </customwidgets>

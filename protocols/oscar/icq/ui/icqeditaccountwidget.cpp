@@ -134,6 +134,8 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 			QObject::connect( mAccountSettings->ignoreAdd, SIGNAL( clicked() ), m_ignoreEngine, SLOT( slotAdd() ) );
 			QObject::connect( mAccountSettings->ignoreRemove, SIGNAL( clicked() ), m_ignoreEngine, SLOT( slotRemove() ) );
 		}
+		// Hide the registration UI when editing an existing account
+		mAccountSettings->registrationGroupBox->hide();
 	}
 	else
 	{

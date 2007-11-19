@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>484</width>
-    <height>371</height>
+    <width>507</width>
+    <height>420</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -73,7 +73,7 @@
         </spacer>
        </item>
        <item row="1" column="0" >
-        <widget class="QGroupBox" name="groupBox_2" >
+        <widget class="QGroupBox" name="registrationGroupBox" >
          <property name="title" >
           <string>Registration</string>
          </property>
@@ -891,7 +891,7 @@
  <customwidgets>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>kopetepasswordwidget.h</header>
   </customwidget>
  </customwidgets>
