@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>718</width>
-    <height>522</height>
+    <width>511</width>
+    <height>568</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -24,16 +24,16 @@
     <number>6</number>
    </property>
    <property name="leftMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="topMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="rightMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget10" >
@@ -138,7 +138,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2" >
+        <widget class="QGroupBox" name="registrationGroupBox" >
          <property name="title" >
           <string>Registration</string>
          </property>
@@ -229,7 +229,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_3" >
+        <widget class="QGroupBox" name="changePasswordGroupBox" >
          <property name="title" >
           <string>Change Password</string>
          </property>
@@ -717,21 +717,6 @@ If two resources have the same priority, the messages will be sent to the one mo
           <string>File Transfer Settings</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <property name="leftMargin" >
-           <number>9</number>
-          </property>
-          <property name="topMargin" >
-           <number>9</number>
-          </property>
-          <property name="rightMargin" >
-           <number>9</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>9</number>
-          </property>
           <item>
            <layout class="QGridLayout" >
             <property name="leftMargin" >
@@ -830,6 +815,9 @@ If two resources have the same priority, the messages will be sent to the one mo
             </property>
             <property name="alignment" >
              <set>Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -1150,22 +1138,6 @@ If two resources have the same priority, the messages will be sent to the one mo
   <connection>
    <sender>cbCustomServer</sender>
    <signal>toggled(bool)</signal>
-   <receiver>mServer</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>204</x>
-     <y>129</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>202</x>
-     <y>145</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cbCustomServer</sender>
-   <signal>toggled(bool)</signal>
    <receiver>labelPort</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -1192,6 +1164,22 @@ If two resources have the same priority, the messages will be sent to the one mo
     <hint type="destinationlabel" >
      <x>636</x>
      <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCustomServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>mServer</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>204</x>
+     <y>129</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>202</x>
+     <y>145</y>
     </hint>
    </hints>
   </connection>
