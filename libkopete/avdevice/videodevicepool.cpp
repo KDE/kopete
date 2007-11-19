@@ -403,53 +403,11 @@ bool VideoDevicePool::setImageAsMirror(bool imageasmirror)
 }
 
 /*!
-    \fn VideoDevicePool::getDisableMMap()
- */
-bool VideoDevicePool::getDisableMMap()
-{
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].getDisableMMap();
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::setDisableMMap(bool disablemmap)
- */
-bool VideoDevicePool::setDisableMMap(bool disablemmap)
-{
-	kDebug() << "VideoDevicePool::setDisableMMap(" << disablemmap << ") called.";
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].setDisableMMap(disablemmap);
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::getWorkaroundBrokenDriver()
- */
-bool VideoDevicePool::getWorkaroundBrokenDriver()
-{
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].getWorkaroundBrokenDriver();
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::setWorkaroundBrokenDriver(bool workaroundbrokendriver)
- */
-bool VideoDevicePool::setWorkaroundBrokenDriver(bool workaroundbrokendriver)
-{
-	kDebug() << "VideoDevicePool::setWorkaroundBrokenDriver(" << workaroundbrokendriver << ") called.";
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].setWorkaroundBrokenDriver(workaroundbrokendriver);
-	return false;
-}
-
-/*!
     \fn VideoDevicePool::getFrame()
  */
 int VideoDevicePool::getFrame()
 {
-	kDebug() << "VideoDevicePool::getFrame() called.";
+//	kDebug() << "VideoDevicePool::getFrame() called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].getFrame();
 	else
@@ -472,7 +430,7 @@ int VideoDevicePool::getFrame()
  */
 int VideoDevicePool::getImage(QImage *qimage)
 {
-	kDebug() << "VideoDevicePool::getImage() called.";
+//	kDebug() << "VideoDevicePool::getImage() called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].getImage(qimage);
 	else
@@ -887,11 +845,8 @@ void VideoDevicePool::loadConfig()
 			}
 			const QString name                = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), (*vditerator).m_model);
 			const int currentinput            = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), 0);
-			const bool disablemmap            = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex)), false );
-			const bool workaroundbrokendriver = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex)), false );
 			kDebug() << "Device name: " << name;
 			kDebug() << "Device current input: " << currentinput;
-			(*vditerator).setWorkaroundBrokenDriver(workaroundbrokendriver);
 			(*vditerator).selectInput(currentinput);
 
 			for (int input = 0 ; input < (*vditerator).m_input.size(); input++)
@@ -920,7 +875,6 @@ void VideoDevicePool::loadConfig()
 				kDebug() << "AutoColorCorrection   :" << autocolorcorrection;
 				kDebug() << "ImageAsMirror         :" << imageasmirror;
 			}
-			Q_UNUSED(disablemmap);
 		}
 	}
 }
@@ -959,12 +913,8 @@ void VideoDevicePool::saveConfig()
 // Stores current input for the given video device
 			const QString name                   = QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
 			const QString currentinput           = QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
-			const QString disablemmap            = QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
-			const QString workaroundbrokendriver = QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
 			config.writeEntry( name,                   (*vditerator).m_name);
 			config.writeEntry( currentinput,           (*vditerator).currentInput());
-			config.writeEntry( disablemmap,            (*vditerator).getDisableMMap());
-			config.writeEntry( workaroundbrokendriver, (*vditerator).getWorkaroundBrokenDriver());
 
 			for (int input = 0 ; input < (*vditerator).m_input.size(); input++)
 			{

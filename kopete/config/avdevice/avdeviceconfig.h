@@ -65,8 +65,6 @@ private slots:
 	void slotImageAutoBrightnessContrastChanged(bool);
 	void slotImageAutoColorCorrectionChanged(bool);
 	void slotImageAsMirrorChanged(bool);
-	void slotDeviceDisableMMapChanged(bool);
-	void slotDeviceWorkaroundBrokenDriverChanged(bool);
 	void slotUpdateImage();
 	void deviceRegistered( const QString & );
 	void deviceUnregistered( const QString & );

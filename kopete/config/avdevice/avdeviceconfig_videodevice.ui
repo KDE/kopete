@@ -131,30 +131,17 @@
           </layout>
          </item>
          <item>
-          <widget class="QCheckBox" name="mDeviceDisableMMap" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
            </property>
-           <property name="text" >
-            <string>Disable memor&amp;y mapping</string>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="mDeviceWorkaroundBrokenDriver" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text" >
-            <string>&amp;Workaround broken driver</string>
-           </property>
-          </widget>
+          </spacer>
          </item>
         </layout>
        </widget>
@@ -458,8 +445,8 @@
          </property>
          <property name="minimumSize" >
           <size>
-           <width>280</width>
-           <height>210</height>
+           <width>320</width>
+           <height>240</height>
           </size>
          </property>
          <property name="frameShape" >
