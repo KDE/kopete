@@ -514,7 +514,11 @@ const QString KopeteChatWindow::fileContents( const QString &path ) const
 void KopeteChatWindow::slotStopAnimation( ChatView* view )
 {
 	if( view == m_activeView )
+	{
 		anim->setPixmap( normalIcon );
+		if( animIcon.state() == QMovie::Running )
+			animIcon.pause();
+	}
 }
 
 void KopeteChatWindow::slotUpdateSendEnabled()
