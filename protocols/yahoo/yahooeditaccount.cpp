@@ -80,7 +80,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		m_photoPath = iconUrl;
 		if( !iconUrl.isEmpty() )
 			m_Picture->setPixmap( iconUrl );
-
+		groupBox->hide();
 	}
 
 	QObject::connect(buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));

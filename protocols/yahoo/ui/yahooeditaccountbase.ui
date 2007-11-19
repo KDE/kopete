@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>554</width>
-    <height>336</height>
+    <width>478</width>
+    <height>433</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -185,6 +185,9 @@
             <property name="alignment" >
              <set>Qt::AlignVCenter</set>
             </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="1" column="0" >
@@ -349,7 +352,7 @@
                <string>Ser&amp;ver:</string>
               </property>
               <property name="buddy" >
-               <cstring>edtServerAddress</cstring>
+               <cstring>editServerAddress</cstring>
               </property>
              </widget>
             </item>
