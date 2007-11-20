@@ -162,8 +162,10 @@ QString Identity::toolTip() const
 
 QString Identity::customIcon() const
 {
-	//TODO implement
-	return "user";
+	if (hasProperty( Kopete::Global::Properties::self()->photo().key() ))
+		return property(Kopete::Global::Properties::self()->photo()).value().toString();
+	else
+		return "user";
 }
 
 
