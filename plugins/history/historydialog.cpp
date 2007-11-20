@@ -79,13 +79,13 @@ bool KListViewDateItem::operator<( const QTreeWidgetItem& other ) const
 HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
  : KDialog(parent)
 {
+	setAttribute (Qt::WA_DeleteOnClose, true);
 	setCaption( i18n("History for %1", mc->displayName()) );
 	QString fontSize;
 	QString htmlCode;
 	QString fontStyle;
 
 	kDebug(14310) << "called.";
-	//setWFlags(Qt::WDestructiveClose);	// send SIGNAL(closing()) on quit
 
 	// Class member initializations
 	mSearch = 0L;
