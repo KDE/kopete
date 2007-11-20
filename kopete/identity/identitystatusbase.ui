@@ -10,9 +10,6 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="spacing" >
-    <number>2</number>
-   </property>
    <property name="leftMargin" >
     <number>0</number>
    </property>
@@ -25,28 +22,6 @@
    <property name="bottomMargin" >
     <number>0</number>
    </property>
-   <item>
-    <widget class="QLabel" name="identityName" >
-     <property name="minimumSize" >
-      <size>
-       <width>0</width>
-       <height>20</height>
-      </size>
-     </property>
-     <property name="font" >
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text" >
-      <string>Identity Name</string>
-     </property>
-     <property name="alignment" >
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
    <item>
     <layout class="QGridLayout" >
      <property name="horizontalSpacing" >
@@ -77,22 +52,30 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="2" >
+      <layout class="QHBoxLayout" />
+     </item>
      <item row="0" column="1" >
-      <layout class="QHBoxLayout" >
-       <item>
-        <widget class="QLabel" name="nickLabel" >
-         <property name="text" >
-          <string>Nick:</string>
-         </property>
-         <property name="buddy" >
-          <cstring>nickName</cstring>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="nickName" />
-       </item>
-      </layout>
+      <widget class="QLabel" name="identityName" >
+       <property name="minimumSize" >
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="font" >
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text" >
+        <string>Identity Name</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

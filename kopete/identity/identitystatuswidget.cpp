@@ -44,8 +44,6 @@ public:
 	Ui::IdentityStatusBase ui;
 	QTimeLine *timeline;
 	QString photoPath;
-	// Used to display changing nickname in red
-	QString lastNickName;
 	QHash<QListWidgetItem *,Kopete::Account *> accountHash;
 };
 
@@ -70,8 +68,6 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 	// user input signals
 	connect( d->ui.accounts, SIGNAL(customContextMenuRequested(const QPoint &)),
 			this, SLOT(showAccountContextMenu(const QPoint &)) );
-	connect( d->ui.nickName, SIGNAL(editingFinished()), this, SLOT(slotSave()) );
-	connect( d->ui.nickName, SIGNAL(textChanged(QString)), this, SLOT(slotNickNameTextChanged(QString)) );
 	connect( d->ui.photo, SIGNAL(clicked()), 
 			 this, SLOT(slotPhotoClicked()));
 
@@ -134,7 +130,6 @@ void IdentityStatusWidget::slotAnimate(qreal amount)
 	{
 		layout()->setSizeConstraint( QLayout::SetDefaultConstraint );
 		setFixedHeight( sizeHint().height() );
-		d->ui.nickName->setFocus();
 		return;
 	}
 
@@ -147,7 +142,6 @@ void IdentityStatusWidget::slotAnimate(qreal amount)
 void IdentityStatusWidget::slotLoad()
 {
 	// clear
-	d->ui.nickName->clear();
 	d->ui.accounts->clear();
 	d->accountHash.clear();
 
@@ -164,14 +158,6 @@ void IdentityStatusWidget::slotLoad()
 	} else {
 		d->ui.photo->setIcon( KIcon( "user" ) );
     }
-
-	// nickname
-	if (d->identity->hasProperty(props->nickName().key()))
-	{
-		// Set lastNickName to make red highlighting works when editing the identity nickname
-		d->lastNickName = d->identity->property(props->nickName()).value().toString();
-		d->ui.nickName->setText( d->lastNickName );
-	}
 
 	d->ui.identityName->setText(d->identity->label());
 
@@ -269,21 +255,6 @@ void IdentityStatusWidget::slotAccountStatusIconChanged( Kopete::Contact *contac
 	item->setToolTip( contact->toolTip() );
 }
 
-void IdentityStatusWidget::slotNickNameTextChanged(const QString &text)
-{
-	if ( d->lastNickName != text )
-	{
-		QPalette palette;
-		KColorScheme::adjustForeground( palette, KColorScheme::ActiveText );
-		d->ui.nickName->setPalette(palette);
-	}
-	else
-	{
-		d->ui.nickName->setPalette(QPalette());
-	}
-
-}
-
 void IdentityStatusWidget::slotSave()
 {
 	if (!d->identity)
@@ -296,19 +267,6 @@ void IdentityStatusWidget::slotSave()
 		d->identity->property(props->photo()).value().toString() != d->photoPath)
 	{
 		d->identity->setProperty(props->photo(), d->photoPath);
-	}
-
-	// nickname
-	if (!d->identity->hasProperty(props->nickName().key()) ||
-		d->identity->property(props->photo()).value().toString() != d->ui.nickName->text())
-	{
-		d->identity->setProperty(props->nickName(), d->ui.nickName->text());
-
-		// Set last nickname to the new identity nickname
-		// and reset the palette
-		d->lastNickName = d->ui.nickName->text();
-		d->ui.nickName->setPalette(QPalette());
-	//TODO check what more to do
 	}
 }
 

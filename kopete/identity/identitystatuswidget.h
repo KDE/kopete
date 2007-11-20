@@ -60,11 +60,6 @@ private slots:
 
 	void showAccountContextMenu( const QPoint & );
 	void slotPhotoClicked();
-	/**
-	 * @brief Show nickname in red when modified
-	 * @param text text changed in nickname textbox
-	 */
-	void slotNickNameTextChanged(const QString &text);
 	void slotAccountRegistered( Kopete::Account *account );
 	void slotAccountUnregistered( const Kopete::Account *account );
 	void slotAccountStatusIconChanged( Kopete::Contact *contact );
