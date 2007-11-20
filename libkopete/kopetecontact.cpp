@@ -543,10 +543,21 @@ QString Contact::toolTip() const
 	// --------------------------------------------------------------------------
 	// Fixed part of tooltip
 
-	QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
-		.arg( QString(QUrl::toPercentEncoding( protocol()->pluginId() )),
-				QString(QUrl::toPercentEncoding( account()->accountId() )),
-				QString(QUrl::toPercentEncoding( contactId() )) );
+	QString iconName;
+	if ( this == account()->myself() )
+	{
+		iconName = QString::fromLatin1("kopete-account-icon:%1:%2")
+			.arg( QString(QUrl::toPercentEncoding( protocol()->pluginId() )),
+			      QString(QUrl::toPercentEncoding( account()->accountId() )) );
+
+	}
+	else
+	{
+		iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
+			.arg( QString(QUrl::toPercentEncoding( protocol()->pluginId() )),
+			      QString(QUrl::toPercentEncoding( account()->accountId() )),
+			      QString(QUrl::toPercentEncoding( contactId() )) );
+	}
 
 	// TODO:  the nickname should be a configurable properties, like others. -Olivier
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
