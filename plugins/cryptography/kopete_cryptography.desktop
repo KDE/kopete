@@ -19,3 +19,4 @@ Name[sv]=Kryptering
 Comment=Encrypts and signs messages using OpenPGP
 Comment[nds]=Narichten mit GPG ver- un opslöteln
 Comment[sv]=Kryptera och avkoda meddelanden med GPG
+X-DocPath=kopete/plugins/cryptography/index.html#cryptography-summary

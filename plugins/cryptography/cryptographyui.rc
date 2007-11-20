@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kopete_cryptography" version="1.3.0">
+<kpartgui version="2" name="kopete_cryptography" >
 	<MenuBar>
 		<Menu name="edit">
 			<text>&amp;Edit</text>

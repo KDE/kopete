@@ -19,7 +19,7 @@
 #ifndef CRYPTOGRAPHYPREFERENCES_H
 #define CRYPTOGRAPHYPREFERENCES_H
 
-#include "kcmodule.h"
+#include <kcmodule.h>
 
 #include <QVariantList>
 

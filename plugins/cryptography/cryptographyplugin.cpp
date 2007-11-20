@@ -238,7 +238,7 @@ void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intend
 		}
 	}
 	if ( encrypted ) {
-		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-high", KIconLoader::Small ) + "\">&nbsp;" );
+		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;" );
 		kDebug ( 14303 ) << "message was encrypted";
 	}
 
@@ -260,6 +260,9 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 	bool signing = ( ( msg.to().first()->pluginData ( this, "sign_messages" ) ) == "on" );
 	bool encrypting = ( ( msg.to().first()->pluginData ( this, "encrypt_messages" ) ) == "on" );
 	QByteArray result;
+	
+	if ( ! (signing || encrypting ) )
+		return;
 
 	kDebug ( 14303 ) << ( signing ? "signing" : "" ) << ( encrypting ? "encrypting" : "" ) << "message " << msg.plainBody();
 

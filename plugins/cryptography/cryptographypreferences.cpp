@@ -60,7 +60,7 @@ CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QVaria
 	l->addLayout ( keyLayout );
 	l->addWidget ( label );
 	l->addStretch ();
-	l->setSpacing(12);
+	l->setSpacing ( 12 );
 
 
 	connect ( key->dialogButton(), SIGNAL ( clicked() ), this, SLOT ( changed() ) );
