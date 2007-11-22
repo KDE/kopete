@@ -140,9 +140,9 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::MessageEvent *messageEven
 
 	// launch a crypto job, and store it with the message, so that when the job finishes, we know what message it was for
 	const Kleo::CryptoBackendFactory *cpf = Kleo::CryptoBackendFactory::instance();
-	Q_ASSERT (cpf);
+	Q_ASSERT ( cpf );
 	const Kleo::CryptoBackend::Protocol *proto = cpf->openpgp();
-	Q_ASSERT (proto);
+	Q_ASSERT ( proto );
 
 	Kleo::DecryptVerifyJob * decryptVerifyJob = proto->decryptVerifyJob();
 	connect ( decryptVerifyJob, SIGNAL ( result ( const GpgME::DecryptionResult &, const GpgME::VerificationResult &, const QByteArray & ) ), this, SLOT ( slotIncomingMessageContinued ( const GpgME::DecryptionResult &, const GpgME::VerificationResult &, const QByteArray & ) ) );
@@ -191,7 +191,6 @@ void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionR
 // if was only encrypted, this will be called
 void CryptographyPlugin::slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult & decryptionResult, const QByteArray &plainText )
 {
-	kDebug ( 14303 );
 	Kopete::Message msg = mCurrentJobs.take ( static_cast<Kleo::Job*> ( sender() ) );
 
 	QString body = plainText;
@@ -206,7 +205,6 @@ void CryptographyPlugin::slotIncomingEncryptedMessageContinued ( const GpgME::De
 // if was only signed, this will be called
 void CryptographyPlugin::slotIncomingSignedMessageContinued ( const GpgME::VerificationResult &verificationResult, const QByteArray &plainText )
 {
-	kDebug ( 14303 );
 	Kopete::Message msg = mCurrentJobs.take ( static_cast<Kleo::Job*> ( sender() ) );
 
 	QString body = plainText;
@@ -216,10 +214,8 @@ void CryptographyPlugin::slotIncomingSignedMessageContinued ( const GpgME::Verif
 }
 
 // apply signature icons and put message in chat window
-void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & validity, bool encrypted )
+void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & verificationResult, bool encrypted )
 {
-	msg.addClass ( "cryptography:encrypted" );
-
 	// turn our plaintext body into html, so then it makes sense to stick HTML tags in it
 	if ( ! Qt::mightBeRichText ( intendedBody ) )
 		intendedBody = Qt::convertFromPlainText ( intendedBody, Qt::WhiteSpaceNormal );
@@ -227,23 +223,43 @@ void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intend
 	intendedBody = intendedBody.remove ( QRegExp ( "</p>", Qt::CaseInsensitive ) );
 
 	// apply crypto state icons
-	if ( ! ( validity.signature ( 0 ).summary() == GpgME::Signature::None ) ) {
-		if ( validity.signature ( 0 ).summary() & GpgME::Signature::Valid ) {
-			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;" );
-			kDebug ( 14303 ) << "message has verified signature";
-		}
-		else  {
-			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "badsignature", KIconLoader::Small ) + "\">&nbsp;" );
-			kDebug ( 14303 ) << "message has unverified signature";
+	// use lowest common denominator; entire message is considered invalid if one signature is
+	GpgME::Signature::Validity validity = (GpgME::Signature::Validity) 0;
+	bool firstTime = true;
+	std::vector<GpgME::Signature> signatures = verificationResult.signatures();
+	for ( int i = 0 ; i < verificationResult.signatures().size() ; i++ )
+	{
+		kDebug ( 14303 ) << "signature" << i << "validity is" << signatures[i].validityAsString() << "from" << signatures[i].fingerprint();
+		if ( validity > signatures[i].validity() || firstTime){
+			validity = signatures[i].validity();
+			firstTime = false;
 		}
 	}
+	
+	if ( validity == GpgME::Signature::Ultimate || validity == GpgME::Signature::Full )
+	{
+		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;" );
+		msg.addClass ( "cryptography:signedvalid" );
+		kDebug ( 14303 ) << "message has fully valid signatures";
+	}
+	else if ( validity == GpgME::Signature::Marginal ) {
+		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;" );
+		msg.addClass ( "cryptography:signedmarginal" );
+		kDebug ( 14303 ) << "message has marginally signatures";
+	}
+	else  {
+		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "badsignature", KIconLoader::Small ) + "\">&nbsp;" );
+		msg.addClass ( "crytography:signedinvalid" );
+		kDebug ( 14303 ) << "message has unverified signatures";
+	}
+	
 	if ( encrypted ) {
 		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;" );
+		msg.addClass ( "cryptography:encrypted" );
 		kDebug ( 14303 ) << "message was encrypted";
 	}
 
 	msg.setHtmlBody ( intendedBody );
-	kDebug ( 14303 ) << "result is " << intendedBody;
 	msg.manager()->appendMessage ( msg );
 }
 
@@ -260,8 +276,8 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 	bool signing = ( ( msg.to().first()->pluginData ( this, "sign_messages" ) ) == "on" );
 	bool encrypting = ( ( msg.to().first()->pluginData ( this, "encrypt_messages" ) ) == "on" );
 	QByteArray result;
-	
-	if ( ! (signing || encrypting ) )
+
+	if ( ! ( signing || encrypting ) )
 		return;
 
 	kDebug ( 14303 ) << ( signing ? "signing" : "" ) << ( encrypting ? "encrypting" : "" ) << "message " << msg.plainBody();
@@ -384,7 +400,7 @@ QString CryptographyPlugin::KabcKeySelector ( QString displayName, QString addre
 {
 	// just a Yes/No about whether to accept the key
 	if ( keys.count() == 1 ) {
-		if ( KMessageBox::questionYesNo ( parent, i18n ( "Cryptography plugin has found an encryption key for %1 (%2) in your KDE address book. Do you want to use key %3 as this contact's public key? ", displayName, addresseeName, keys.first().right(8).prepend("0x") ),
+		if ( KMessageBox::questionYesNo ( parent, i18n ( "Cryptography plugin has found an encryption key for %1 (%2) in your KDE address book. Do you want to use key %3 as this contact's public key? ", displayName, addresseeName, keys.first().right ( 8 ).prepend ( "0x" ) ),
 		                                  i18n ( "Public Key Found" ) ) == KMessageBox::Yes ) {
 			return keys.first();
 		}
