@@ -1001,7 +1001,7 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	KHBox * newMessageBox = new KHBox( 0 );
 	newMessageBox->setMargin( 1 );
 	QLabel * newMessagePix = new QLabel( newMessageBox );
-	newMessagePix->setPixmap( SmallIcon( "edit" ) );
+	newMessagePix->setPixmap( SmallIcon( "object-edit" ) );
 	QLabel * newMessageLabel = new QLabel( i18n( "Add " ), newMessageBox );
 	d->newMessageEdit = new QLineEdit( newMessageBox );
 	newMessageBox->setFocusProxy( d->newMessageEdit );
@@ -1013,7 +1013,7 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	newMessagePix->setFocusPolicy( Qt::ClickFocus );
 	connect( d->newMessageEdit, SIGNAL( returnPressed() ), SLOT( slotNewStatusMessageEntered() ) );
 
-	KAction *newMessageAction = new KAction( KIcon("edit"), i18n("New Message..."), d->globalStatusMessageMenu );
+	KAction *newMessageAction = new KAction( KIcon("object-edit"), i18n("New Message..."), d->globalStatusMessageMenu );
 	newMessageAction->setDefaultWidget( newMessageBox );
 
 	d->globalStatusMessageMenu->addAction( newMessageAction );

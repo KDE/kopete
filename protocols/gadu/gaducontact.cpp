@@ -203,7 +203,7 @@ GaduContact::customContextMenuActions()
 
 	fakeCollection->append( actionShowProfile );
 
-	KAction* actionEditContact = new KAction( KIcon("edit"), i18n("Edit..."), this );
+	KAction* actionEditContact = new KAction( KIcon("object-edit"), i18n("Edit..."), this );
 	//, "actionEditContact" );
 	connect( actionEditContact, SIGNAL(triggered(bool)), this, SLOT(slotEditContact()) );
 
