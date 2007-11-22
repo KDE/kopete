@@ -158,7 +158,7 @@ int VideoDevice::checkDevice()
 			m_model=QString::fromLocal8Bit((const char*)V4L2_capabilities.card);
 
 
-// Detect maximum and minimum resolution supported by the V4L2 device
+// Detect maximum and minimum resolution supported by the V4L2 device. VIDIOC_ENUM_FRAMESIZES is still experimental.
 			CLEAR (fmt);
 			fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     			if (-1 == xioctl (VIDIOC_G_FMT, &fmt))

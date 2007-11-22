@@ -646,88 +646,6 @@ int VideoDevicePool::scanDevices()
 	}
 
 #endif
-#if 0
-	QDir videodevice_dir;
-	const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/v4l/");
-	const QStringList videodevice_dir_filter(QString::fromLocal8Bit("video*"));
-	VideoDevice videodevice;
-
-	m_videodevice.clear();
-	m_modelvector.clear();
-
-	videodevice_dir.setPath(videodevice_dir_path);
-	videodevice_dir.setNameFilters(videodevice_dir_filter);
-        videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
-        videodevice_dir.setSorting( QDir::Name );
-
-	QFileInfoList list = videodevice_dir.entryInfoList();
-
-	if (list.isEmpty())
-	{
-		kDebug() << "Found no suitable devices in " << videodevice_dir_path;
-		QDir videodevice_dir;
-		const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/");
-		const QStringList videodevice_dir_filter(QString::fromLocal8Bit("video*"));
-		VideoDevice videodevice;
-
-		videodevice_dir.setPath(videodevice_dir_path);
-		videodevice_dir.setNameFilters(videodevice_dir_filter);
-        	videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
-        	videodevice_dir.setSorting( QDir::Name );
-
-		QFileInfoList list = videodevice_dir.entryInfoList();
-
-		if (list.isEmpty())
-		{
-			kDebug() << "Found no suitable devices in " << videodevice_dir_path;
-			return EXIT_FAILURE;
-		}
-		QFileInfoList::iterator fileiterator, itEnd = list.end();
-
-		kDebug() << "scanning devices in " << videodevice_dir_path << "...";
-		for ( fileiterator = list.begin(); fileiterator != itEnd; ++fileiterator )
-		{
-			QFileInfo fileinfo = ( *fileiterator );
-			videodevice.setFileName(fileinfo.absoluteFilePath());
-			kDebug() << "Found device " << videodevice.full_filename;
-			videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
-			if(videodevice.isOpen())
-			{
-				kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
-
-// This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
-				videodevice.close();
-				videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
-				m_videodevice.push_back(videodevice);
-			}
-		}
-
-		return EXIT_FAILURE;
-	}
-
-	QFileInfoList::iterator fileiterator, itEnd = list.end();
-	m_videodevice.clear();
-	kDebug() << "scanning devices in " << videodevice_dir_path << "...";
-	for ( fileiterator = list.begin(); fileiterator != itEnd; ++fileiterator )
-	{
-		QFileInfo fileinfo = ( *fileiterator );
-		videodevice.setFileName(fileinfo.absoluteFilePath());
-		kDebug() << "Found device " << videodevice.full_filename;
-		videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
-		if(videodevice.isOpen())
-		{
-			kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
-
-// This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
-			videodevice.close();
-			videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
-			m_videodevice.push_back(videodevice);
-		}
-		++fileiterator;
-	}
-	m_current_device = 0;
-	loadConfig();
-#endif
 	kDebug() << "exited successfuly";
 	return EXIT_SUCCESS;
 }
@@ -757,12 +675,10 @@ void VideoDevicePool::registerDevice( Solid::Device & device )
 				videodevice.setUdi( device.udi() );
 				videodevice.setFileName(solidVideoDevice->driverHandle( "video4linux" ).toString());
 				kDebug() << "Found device " << videodevice.full_filename;
-				videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
+				videodevice.open();
 				if(videodevice.isOpen())
 				{
 					kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
-
-					// This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
 					videodevice.close();
 					videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
 					m_videodevice.push_back(videodevice);
