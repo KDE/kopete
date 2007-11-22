@@ -104,10 +104,8 @@ void EditorWithIcon::popupIcons()
 
 	if ( belowHeight < size.height() )
 	{
-		if ( aboveHeight < size.height() )
-			point.setY( screen.bottom() - size.height() );
-		else
-			point.setY( above.y() - size.height() );
+		point.setY( (	aboveHeight<size.height())?
+				screen.bottom():above.y() - size.height() );
 	}
 
 	popupFrame->move( point );

@@ -125,9 +125,55 @@ void ICQStatusManager::loadXtrazStatuses()
 {
 	KConfigGroup config = KGlobal::config()->group( "Xtraz Statuses" );
 
-	QList<int> statusList = config.readEntry( "Statuses", QList<int>() );
+	QList<int> t; t<<500;//trick to detect the usage of default value
+	QList<int> statusList = config.readEntry( "Statuses", t);
 	QList<QString> descriptionList = config.readEntry( "Descriptions", QList<QString>() );
 	QList<QString> messageList = config.readEntry( "Messages", QList<QString>() );
+
+	if (!statusList.isEmpty() && statusList.first()==500)
+	{
+		statusList.clear();
+		//populate list with default values
+		//really helps for those who can't seem to understand the meaning of ugly icons
+		for ( int i = 0; i < 32; i++ )
+		{
+			statusList<<i;
+			messageList<<"";
+		}
+		descriptionList
+		<<i18nc("@item icq xtraz status","angry")
+		<<i18nc("@item icq xtraz status","bath")
+		<<i18nc("@item icq xtraz status","tired")
+		<<i18nc("@item icq xtraz status","party")
+		<<i18nc("@item icq xtraz status","beer")
+		<<i18nc("@item icq xtraz status","thinking")
+		<<i18nc("@item icq xtraz status","eating")
+		<<i18nc("@item icq xtraz status","watching tv")
+		<<i18nc("@item icq xtraz status","meeting")
+		<<i18nc("@item icq xtraz status","coffee")
+		<<i18nc("@item icq xtraz status","music")
+		<<i18nc("@item icq xtraz status","business")
+		<<i18nc("@item icq xtraz status","shooting")
+		<<i18nc("@item icq xtraz status","having fun")
+		<<i18nc("@item icq xtraz status","phone")
+		<<i18nc("@item icq xtraz status","gaming")
+		<<i18nc("@item icq xtraz status","studying")
+		<<i18nc("@item icq xtraz status","shopping")
+		<<i18nc("@item icq xtraz status","sick")
+		<<i18nc("@item icq xtraz status","sleeping")
+		<<i18nc("@item icq xtraz status","surfing")
+		<<i18nc("@item icq xtraz status","browsing")
+		<<i18nc("@item icq xtraz status","working")
+		<<i18nc("@item icq xtraz status","typing")
+		<<i18nc("@item icq xtraz status","picnic")
+		<<i18nc("@item icq xtraz status","cooking")
+		<<i18nc("@item icq xtraz status","smoking")
+		<<i18nc("@item icq xtraz status","i'm high")
+		<<i18nc("@item icq xtraz status","wc")
+		<<i18nc("@item icq xtraz status","to be or not to be")
+		<<i18nc("@item icq xtraz status","watching pro7 on TV")
+		<<i18nc("@item icq xtraz status","love");
+	}
 
 	const int count = qMin( qMin( statusList.count(), descriptionList.count() ), messageList.count() );
 	for ( int i = 0; i < count; i++ )
@@ -139,6 +185,8 @@ void ICQStatusManager::loadXtrazStatuses()
 
 		d->xtrazStatusList.append( status );
 	}
+
+	
 }
 
 void ICQStatusManager::saveXtrazStatuses()
