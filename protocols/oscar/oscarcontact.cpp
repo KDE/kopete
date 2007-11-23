@@ -391,7 +391,10 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 		entry = Kopete::AvatarManager::self()->add(entry);
 		
 		if (!entry.path.isNull())
+		{
+			removeProperty( Kopete::Global::Properties::self()->photo() );
 			setProperty( Kopete::Global::Properties::self()->photo(), entry.path );
+		}
 
 		m_buddyIconDirty = false;
 	}
