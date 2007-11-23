@@ -171,7 +171,7 @@ void ICQStatusManager::loadXtrazStatuses()
 		<<i18nc("@item icq xtraz status","i'm high")
 		<<i18nc("@item icq xtraz status","wc")
 		<<i18nc("@item icq xtraz status","to be or not to be")
-		<<i18nc("@item icq xtraz status","watching pro7 on TV")
+		<<"?"//"watching pro7 on TV"
 		<<i18nc("@item icq xtraz status","love");
 	}
 

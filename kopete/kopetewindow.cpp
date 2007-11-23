@@ -94,8 +94,6 @@
 #include "kopeteonlinestatusmanager.h"
 #include "identitystatuswidget.h"
 
-#include <unistd.h>
-
 //BEGIN GlobalStatusMessageIconLabel
 GlobalStatusMessageIconLabel::GlobalStatusMessageIconLabel(QWidget *parent)
  : QLabel(parent)
@@ -233,9 +231,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	d->autoHideTimer = new QTimer( this );
 
 	// --------------------------------------------------------------------------------
-//         sleep(15);
 	initView();
-//         sleep(15);
 	initActions();
 	d->contactlist->initActions(actionCollection());
 	initSystray();
