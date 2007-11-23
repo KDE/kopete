@@ -163,6 +163,48 @@ private:
 };
 
 
+class UdpTransportBridge : public TransportBridge
+{
+	Q_OBJECT
+	friend class Transport;
+	
+public:
+	virtual ~UdpTransportBridge();
+
+private:
+	UdpTransportBridge(const KNetwork::KInetSocketAddress& to, MessageFormatter* formatter, QObject* parent);
+	UdpTransportBridge(KNetwork::KClientSocketBase* socket, MessageFormatter* formatter, QObject* parent);
+
+protected slots:
+	virtual void slotOnConnect();
+	virtual void slotOnDisconnect();
+	virtual void slotOnError(int);
+	virtual void slotOnSocketClose();
+	virtual void slotOnSocketConnect();
+	virtual void slotOnSocketReceive();
+	
+private slots:
+	void slotOnSocketConnectTimeout();
+
+signals:
+	void bridgeConnectTimeout();
+
+private:
+	class Buffer : public QByteArray
+	{
+	public:
+		Buffer(quint32 length = 0);
+		~Buffer();
+		
+	public:
+		void write(const QByteArray& bytes);
+		QByteArray read(quint32 length);
+	};
+	
+	Buffer mBuffer;
+	quint32 mLength;
+};
+
 }
 
 #endif
