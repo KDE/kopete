@@ -186,9 +186,11 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 	
 	if ( details.buddyIconHash().size() > 0 && details.buddyIconHash() != m_details.buddyIconHash() )
 	{
-		m_buddyIconDirty = true;
-		if ( cachedBuddyIcon( details.buddyIconHash() ) == false )
+		OscarProtocol *p = static_cast<OscarProtocol*>(protocol());
+		if ( property( p->buddyIconHash ).value().toByteArray() != details.buddyIconHash() )
 		{
+			m_buddyIconDirty = true;
+			
 			if ( !mAccount->engine()->hasIconConnection() )
 			{
 				mAccount->engine()->connectToIconServer();
@@ -389,7 +391,8 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 		entry.contact = this;
 		entry.image = img;
 		entry = Kopete::AvatarManager::self()->add(entry);
-		
+
+		setProperty( static_cast<OscarProtocol*>(protocol())->buddyIconHash, m_details.buddyIconHash() );
 		if (!entry.path.isNull())
 		{
 			removeProperty( Kopete::Global::Properties::self()->photo() );
@@ -428,33 +431,6 @@ QString OscarContact::filterAwayMessage( const QString &message ) const
 	while ( filteredMessage.indexOf( fontRemover ) != -1 )
 		filteredMessage.replace( fontRemover, QString::fromLatin1("\\1") );
 	return filteredMessage;
-}
-
-bool OscarContact::cachedBuddyIcon( QByteArray hash )
-{
-	QString iconLocation = KStandardDirs::locateLocal( "appdata", "oscarpictures/" + Oscar::normalize( contactId() ) );
-	
-	QFile iconFile( iconLocation );
-	if ( !iconFile.open( QIODevice::ReadOnly ) )
-		return false;
-	
-	KMD5 buddyIconHash;
-	buddyIconHash.update( iconFile );
-	iconFile.close();
-	
-	if ( memcmp( buddyIconHash.rawDigest(), hash.data(), 16 ) == 0 )
-	{
-		kDebug(OSCAR_GEN_DEBUG) << "Updating icon for "
-			<< contactId() << " from local cache" << endl;
-		
-		setProperty( Kopete::Global::Properties::self()->photo(), iconLocation );
-		m_buddyIconDirty = false;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
 }
 
 #include "oscarcontact.moc"

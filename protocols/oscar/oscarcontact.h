@@ -160,7 +160,6 @@ private slots:
 	
 private:
 	QString filterAwayMessage( const QString &message ) const;
-	bool cachedBuddyIcon( QByteArray hash );
 	bool m_buddyIconDirty;
 
 	OscarEncodingSelectionDialog* m_oesd;
