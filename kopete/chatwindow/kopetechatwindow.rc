@@ -39,8 +39,12 @@
 		<Merge/>
 	</MenuBar>
 
-	<ToolBar name="mainToolBar" fullWidth="true">
+	<ToolBar name="mainToolBar" fullWidth="true" hidden="true">
 		<text>Main Toolbar</text>
+		<Merge />
+	</ToolBar>
+    <ToolBar name="chatToolBar">
+		<text>Chat Toolbar</text>
 		<Action name="format_smiley"/>
 		<Action name="show_participants_widget" />
 		<Separator weakSeparator="true" lineSeparator="true"/>
