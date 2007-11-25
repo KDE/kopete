@@ -322,6 +322,7 @@ void KopeteWindow::initActions()
 	d->actionDisconnect->setEnabled(false);
 
 	d->actionExportContacts = new KAction( i18n( "&Export Contacts..." ), this );
+	d->actionExportContacts->setIcon( KIcon( "document-export" ) );
         actionCollection()->addAction( "ExportContacts", d->actionExportContacts );
 	connect( d->actionExportContacts, SIGNAL( triggered(bool) ), this, SLOT( showExportDialog() ) );
 

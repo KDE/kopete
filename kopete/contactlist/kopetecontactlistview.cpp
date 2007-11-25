@@ -481,6 +481,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 
 	KAction *actionCreateNewGroup = new KAction( i18n( "Create New Group..." ), ac );
+	actionCreateNewGroup->setIcon( KIcon( "users" ) );
 	connect( actionCreateNewGroup, SIGNAL( triggered(bool) ), this, SLOT( addGroup() ) );
         ac->addAction( "AddGroup", actionCreateNewGroup );
 
