@@ -18,6 +18,7 @@
 #define TESTBEDADDCONTACTPAGE_H
 
 #include <addcontactpage.h>
+#include "ui_testbedaddui.h"
 
 namespace Kopete { class Account; }
 namespace Kopete { class MetaContact; }
@@ -44,7 +45,7 @@ public:
     virtual bool validateData();
 
 protected:
-	Ui::TestbedAddUI *m_testbedAddUI;
+	Ui::TestbedAddUI m_testbedAddUI;
 };
 
 #endif

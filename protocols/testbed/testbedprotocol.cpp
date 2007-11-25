@@ -57,10 +57,12 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 	QString displayName = serializedData[ "displayName" ];
 	QString type = serializedData[ "contactType" ];
 
-	TestbedContact::TestbedContactType tbcType;
-	if ( type == QString::fromLatin1( "echo" ) )
+	TestbedContact::Type tbcType;
+	if ( type == QLatin1String( "group" ) )
+		tbcType = TestbedContact::Group;
+	else if ( type == QLatin1String( "echo" ) )
 		tbcType = TestbedContact::Echo;
-	if ( type == QString::fromLatin1( "null" ) )
+	else if ( type == QLatin1String( "null" ) )
 		tbcType = TestbedContact::Null;
 	else
 		tbcType = TestbedContact::Null;
@@ -79,7 +81,9 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 		return 0;
 	}
 
-	return new TestbedContact(account, contactId, tbcType, displayName, metaContact);
+	TestbedContact * contact = new TestbedContact(account, contactId, displayName, metaContact);
+	contact->setType( tbcType );
+	return contact;
 }
 
 AddContactPage * TestbedProtocol::createAddContactWidget( QWidget *parent, Kopete::Account * /* account */ )
