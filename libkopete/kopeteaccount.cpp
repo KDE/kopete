@@ -411,11 +411,11 @@ Identity * Account::identity() const
 	return d->identity;
 }
 
-void Account::setIdentity( Identity *ident )
+bool Account::setIdentity( Identity *ident )
 {
 	if ( d->identity == ident )
 	{
-		return;
+		return false;
 	}
 
 	if (d->identity)
@@ -426,6 +426,7 @@ void Account::setIdentity( Identity *ident )
 	ident->addAccount( this );
 	d->identity = ident;
 	d->configGroup->writeEntry("Identity", ident->id());
+	return true;
 }
 
 Contact * Account::myself() const

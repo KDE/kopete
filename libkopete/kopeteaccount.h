@@ -226,8 +226,11 @@ public:
 	 * identity it was previously associated.
 	 *
 	 * @param ident The identity this account should be associated to
+	 * \return @c true if the identity was changed, @c false otherwise
+	 *
+	 * @note You should call the default implementation from your reimplementation
 	 */
-	void setIdentity( Identity *ident );
+	virtual bool setIdentity( Kopete::Identity *ident );
 
 	/**
 	 * \brief Retrieve the 'myself' contact.
