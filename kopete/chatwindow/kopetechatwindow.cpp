@@ -68,7 +68,7 @@
 #include <kstandardaction.h>
 #include <ktoggleaction.h>
 #include <kactionmenu.h>
-// #include <k3widgetaction.h>
+#include <ktoolbarspaceraction.h>
 
 #include "chatmessagepart.h"
 #include "chattexteditpart.h"
@@ -470,6 +470,9 @@ void KopeteChatWindow::initActions(void)
 	connect ( actionContactMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareContactMenu()) );
 
 	KopeteStdAction::preferences( coll , "settings_prefs" );
+
+	KToolBarSpacerAction * spacer = new KToolBarSpacerAction( coll );
+	coll->addAction( "spacer", spacer );
 
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QLatin1String( "kopete" ) ) );

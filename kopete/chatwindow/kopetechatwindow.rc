@@ -49,14 +49,15 @@
 		<Action name="show_participants_widget" />
 		<Separator weakSeparator="true" lineSeparator="true"/>
 		<Merge />
+		<Action name="spacer"/>
 		<Separator weakSeparator="true" lineSeparator="true"/>
 		<Action name="toolbar_animation"/>
 	</ToolBar>
 
-	<ToolBar name="statusToolBar">
+	<ToolBar name="statusToolBar" hidden="true">
 		<text>Status</text>
 	</ToolBar>
-	<ToolBar name="formatToolBar">
+	<ToolBar name="formatToolBar" hidden="true">
 		<text>Format Toolbar</text>
 	</ToolBar>
 
