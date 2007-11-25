@@ -167,7 +167,7 @@ public:
 	QHash<const Kopete::Identity*, KopeteIdentityStatusBarIcon*> identityStatusBarIcons;
 	KSqueezedTextLabel *globalStatusMessage;
 	KMenu *globalStatusMessageMenu;
-	QLineEdit *newMessageEdit;
+	KLineEdit *newMessageEdit;
 	QString globalStatusMessageStored;
 };
 
@@ -207,25 +207,27 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// This fixes a "statusbar drawn over the top of the toolbar" bug
 	// e.g. it can happen when you switch desktops on Kopete startup
 	d->statusBarWidget = new KHBox(statusBar());
-	d->statusBarWidget->setObjectName( "m_statusBarWidget" );
 	d->statusBarWidget->setMargin( 2 );
 	d->statusBarWidget->setSpacing( 1 );
 	statusBar()->addPermanentWidget(d->statusBarWidget, 0);
-	KHBox *statusBarMessage = new KHBox(statusBar());
-	d->statusBarWidget->setMargin( 2 );
-	d->statusBarWidget->setSpacing( 1 );
+	QWidget *statusBarMessage = new QWidget( statusBar() );
+	QHBoxLayout *statusBarMessageLayout = new QHBoxLayout( statusBarMessage );
+	statusBarMessageLayout->setMargin( 2 );
 
 	KStatusBarOfflineIndicator * indicator = new KStatusBarOfflineIndicator( this );
 	statusBar()->addPermanentWidget( indicator, 0 );
 
 	GlobalStatusMessageIconLabel *label = new GlobalStatusMessageIconLabel( statusBarMessage );
-	label->setObjectName( QLatin1String("statusmsglabel") );
+	label->setCursor( QCursor( Qt::PointingHandCursor ) );
 	label->setFixedSize( 16, 16 );
 	label->setPixmap( SmallIcon( "kopetestatusmessage" ) );
 	connect(label, SIGNAL(iconClicked( const QPoint& )),
 		this, SLOT(slotGlobalStatusMessageIconClicked( const QPoint& )));
 	label->setToolTip( i18n( "Global status message" ) );
+	statusBarMessageLayout->addWidget( label );
+	statusBarMessageLayout->addSpacing( 1 );
 	d->globalStatusMessage = new KSqueezedTextLabel( statusBarMessage );
+	statusBarMessageLayout->addWidget( d->globalStatusMessage );
 	statusBar()->addWidget(statusBarMessage, 1);
 
 	d->autoHideTimer = new QTimer( this );
@@ -821,7 +823,7 @@ void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 
 	// No Pixmap found, fallback to Unknown
 	if( pm.isNull() )
-		i->setPixmap( KIconLoader::unknown() );
+		i->setPixmap( SmallIcon( "user" ) );
 	else
 		i->setPixmap( pm );
 	makeTrayToolTip();
@@ -994,12 +996,19 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 
 	d->globalStatusMessageMenu->addTitle( i18n("Status Message") );
 	//BEGIN: Add new message widget to the Set Status Message Menu.
-	KHBox * newMessageBox = new KHBox( 0 );
-	newMessageBox->setMargin( 1 );
+	QWidget * newMessageBox = new QWidget( this );
+	QHBoxLayout * newMessageBoxLayout = new QHBoxLayout( newMessageBox );
+	newMessageBoxLayout->setMargin( 1 );
+	newMessageBoxLayout->addSpacing( 2 );
 	QLabel * newMessagePix = new QLabel( newMessageBox );
 	newMessagePix->setPixmap( SmallIcon( "object-edit" ) );
-	QLabel * newMessageLabel = new QLabel( i18n( "Add " ), newMessageBox );
-	d->newMessageEdit = new QLineEdit( newMessageBox );
+	newMessageBoxLayout->addWidget( newMessagePix );
+	newMessageBoxLayout->addSpacing( 3 );
+	QLabel * newMessageLabel = new QLabel( i18n( "Add" ), newMessageBox );
+	newMessageBoxLayout->addWidget( newMessageLabel );
+	d->newMessageEdit = new KLineEdit( newMessageBox );
+	d->newMessageEdit->setClearButtonShown( true );
+	newMessageBoxLayout->addWidget( d->newMessageEdit );
 	newMessageBox->setFocusProxy( d->newMessageEdit );
 	newMessageBox->setFocusPolicy( Qt::ClickFocus );
 	newMessageLabel->setFocusProxy( d->newMessageEdit );
