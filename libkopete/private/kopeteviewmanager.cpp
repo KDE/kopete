@@ -300,7 +300,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					default:
 						eventId = QLatin1String( "kopete_contact_incoming" );
 				}
-				KNotification *notify=new KNotification(eventId, w, KNotification::Persistant);
+				KNotification *notify=new KNotification(eventId, w, KNotification::Persistent);
 				notify->setText(body.subs( Qt::escape(msgFrom) ).subs( squashMessage( msg )  ).toString());
 				notify->setPixmap( QPixmap::fromImage(msg.from()->metaContact()->picture().image()) );
                 notify->setActions(( QStringList() <<  i18n( "View" )  <<   i18n( "Ignore" )) );
