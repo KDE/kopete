@@ -58,7 +58,7 @@ Identity::Identity( const QString &id, const QString &label )
 {
 	load();
 	connect(this, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
-	        this, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
+			this, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
 }
 
 Identity::Identity(const QString &label)
@@ -253,6 +253,11 @@ void Identity::updateOnlineStatus()
 void Identity::slotSaveProperty( Kopete::PropertyContainer *container, const QString &key,
 		                const QVariant &oldValue, const QVariant &newValue )
 {
+	if ( !newValue.isValid() ) // the property was removed, remove the config entry also
+	{
+		QString cfgGrpKey = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(oldValue.typeName()), key );
+		d->configGroup->deleteEntry(cfgGrpKey);
+	}
 	save();
 }
 
