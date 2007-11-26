@@ -86,17 +86,13 @@ QString AvatarDialog::getAvatar(QWidget *parent, const QString &currentAvatar, b
 
 void AvatarDialog::slotButtonClicked(int button)
 {
-
 	if (button == KDialog::Ok)
 	{
 		Kopete::AvatarManager::AvatarEntry selectedEntry = d->mainWidget->selectedEntry();
 
 		d->selectedPath = selectedEntry.path;
+		emit result();
 	}
-	else
-		d->selectedPath = d->currentPath;
-
-	emit result(this);
 
 	KDialog::slotButtonClicked(button);
 }

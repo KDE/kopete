@@ -92,12 +92,10 @@ public:
 
 Q_SIGNALS:
 	/**
-	 * This signal is emitted when Apply has been clicked
-	 * and the dialog has been closed.
-	 *
-	 * @param dialog referring AvatarDialog
+	 * This signal is emitted when Ok has been clicked
+	 * before the dialog is closed
 	 */
-	void result(Kopete::UI::AvatarDialog *dialog);
+	void result();
 
 protected Q_SLOTS:
 	/**
