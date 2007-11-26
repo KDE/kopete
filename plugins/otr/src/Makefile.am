@@ -1,7 +1,7 @@
 METASOURCES = AUTO
 
-messages:
-	$(EXTRACTRC) `find . -name \*.ui -o -name \*.rc` > rc.cpp
+messages: rc.cpp
+	$(EXTRACTRC) `find . -name \*.ui -o -name \*.rc -o -name \*.kcfg` > rc.cpp
 	$(XGETTEXT) --keyword=i18n *.cpp -o $(podir)/kopete_otr.pot
 
 INCLUDES = $(all_includes) -I$(kde_includes)/kopete -I$(kde_includes)/kopete/ui
