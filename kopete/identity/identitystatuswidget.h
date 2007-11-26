@@ -53,10 +53,14 @@ public:
 
 	virtual void setVisible(bool visible);
 
+private:
+	/**
+	 * Initialise the widget's contents
+	 */
+	void load();
+
 private slots:
 	void slotAnimate(qreal amount);
-	void slotLoad();
-	void slotSave();
 
 	void showAccountContextMenu( const QPoint & );
 	void slotPhotoClicked();
