@@ -23,6 +23,7 @@
 #include <qdom.h>
 #include <qtimer.h>
 #include <qfile.h>
+#include <QTextCodec>
 #include <QTextStream>
 #include <QList>
 #include <QDateTime>

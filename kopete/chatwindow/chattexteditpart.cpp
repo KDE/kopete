@@ -384,8 +384,7 @@ void ChatTextEditPart::historyDown()
 // 	textEdit()->setTextFormat(AutoText); //workaround bug 115690
 	textEdit()->setText( newText );
 // 	textEdit()->setTextFormat(format);
-	// TODO: Port to Qt4
-	textEdit()->moveCursor( QTextEdit::MoveEnd, false );
+	textEdit()->moveCursor( QTextCursor::End );
 }
 
 void ChatTextEditPart::addText( const QString &text )

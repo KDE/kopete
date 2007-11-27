@@ -17,11 +17,8 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <q3groupbox.h>
 #include <q3header.h>
 #include <q3listview.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
 
 #include <klocale.h>
 #include <klineedit.h>

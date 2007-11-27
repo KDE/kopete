@@ -21,6 +21,7 @@
 
 // Qt includes
 #include <QtCore/QEvent>
+#include <QKeyEvent>
 #include <QtGui/QTextCursor>
 #include <QtGui/QTextCharFormat>
 

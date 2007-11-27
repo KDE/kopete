@@ -55,7 +55,7 @@ KopeteApplication::KopeteApplication()
 {
 	setQuitOnLastWindowClosed( false );
 	m_isShuttingDown = false;
-	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
+	m_mainWindow = new KopeteWindow( 0 );
 
 	Kopete::PluginManager::self();
 

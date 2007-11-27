@@ -104,7 +104,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 #define DONT_TRY_TO_GRAB 1
 #if DONT_TRY_TO_GRAB
 	if ( mVideoDevicePool->hasDevices() ) {
-		qtimer.start(40,false);
+		qtimer.start(40);
 		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
 	}
 #endif
@@ -163,7 +163,7 @@ void AVDeviceConfig::setVideoInputParameters()
 
 void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
-	unsigned int newdevice = mPrfsVideoDevice->mDeviceKComboBox->currentItem();
+	int newdevice = mPrfsVideoDevice->mDeviceKComboBox->currentIndex();
 	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << mVideoDevicePool->currentDevice() << "New device: " << newdevice;
 	if ((newdevice < mVideoDevicePool->m_videodevice.size())&&(newdevice!=mVideoDevicePool->currentDevice()))
 	{
@@ -179,10 +179,10 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 }
 
 void AVDeviceConfig::slotInputKComboBoxChanged(int){
-	unsigned int newinput = mPrfsVideoDevice->mInputKComboBox->currentItem();
+	int newinput = mPrfsVideoDevice->mInputKComboBox->currentIndex();
 	if((newinput < mVideoDevicePool->inputs()) && ( newinput !=mVideoDevicePool->currentInput()))
 	{
-		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentItem());
+		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentIndex());
 		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 		setVideoInputParameters();
 		emit changed( true );

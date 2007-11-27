@@ -520,7 +520,7 @@ void KopeteChatWindow::slotStopAnimation( ChatView* view )
 	{
 		anim->setPixmap( normalIcon );
 		if( animIcon.state() == QMovie::Running )
-			animIcon.pause();
+			animIcon.setPaused( true );
 	}
 }
 
@@ -1090,9 +1090,9 @@ void KopeteChatWindow::slotPlaceTabs( QAction *action )
 	{
 
 		if( placement == 0 )
-			m_tabBar->setTabPosition( QTabWidget::Top );
+			m_tabBar->setTabPosition( QTabWidget::North );
 		else
-			m_tabBar->setTabPosition( QTabWidget::Bottom );
+			m_tabBar->setTabPosition( QTabWidget::South );
 
 		saveOptions();
 	}

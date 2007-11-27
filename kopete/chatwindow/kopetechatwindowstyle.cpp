@@ -22,6 +22,7 @@
 #include <QDir>
 #include <QHash>
 #include <QStringList>
+#include <QTextCodec>
 #include <QTextStream>
 
 // KDE includes

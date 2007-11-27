@@ -35,6 +35,7 @@
 
 #include <QDir>
 #include <QClipboard>
+#include <QTextOStream>
 
 #include <kdebug.h>
 #include <krun.h>
@@ -141,7 +142,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 	l->addWidget(mHtmlView);
 
-	QTextOStream( &fontSize ) << Kopete::AppearanceSettings::self()->chatFont().pointSize();
+	QTextStream( &fontSize ) << Kopete::AppearanceSettings::self()->chatFont().pointSize();
 	fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + Kopete::AppearanceSettings::self()->chatFont().family() + "; color: " + Kopete::AppearanceSettings::self()->chatTextColor().name() + "; }</style>";
 
 	mHtmlPart->begin();

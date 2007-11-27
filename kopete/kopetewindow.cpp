@@ -195,10 +195,9 @@ public:
  * (session) quit.
  */
 
-KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
-: KXmlGuiWindow( parent, Qt::WType_TopLevel ), d(new Private)
+KopeteWindow::KopeteWindow( QWidget *parent )
+: KXmlGuiWindow( parent ), d(new Private)
 {
-	setObjectName( name );
 	setAttribute (Qt::WA_DeleteOnClose, false);
 	setAttribute (Qt::WA_QuitOnClose, false);
 	// Applications should ensure that their StatusBar exists before calling createGUI()
@@ -819,6 +818,9 @@ void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 			break;
 		case Kopete::OnlineStatus::Online:
 			pm = SmallIcon( "user-online" );
+			break;
+		case Kopete::OnlineStatus::Unknown:
+			pm = SmallIcon( "user" );
 			break;
 	}
 

@@ -93,7 +93,7 @@ QString NLQuodLibet::currentTrackPath() const
 
 void NLQuodLibet::parseFile( QFile & file )
 {
-	if ( file.open( IO_ReadOnly ) ) {
+	if ( file.open( QIODevice::ReadOnly ) ) {
 		QTextStream stream( &file );
 		QString line;
 		while ( !stream.atEnd() ) {

@@ -57,7 +57,7 @@ void ContactNotesEdit::slotButtonClicked(int buttonCode)
 {
 	KDialog::slotButtonClicked(buttonCode);
 	if( buttonCode == KDialog::Ok )
-		emit notesChanged(m_linesEdit->text(),m_metaContact) ;
+		emit notesChanged(m_linesEdit->toPlainText(),m_metaContact) ;
 }
 
 #include "contactnotesedit.moc"

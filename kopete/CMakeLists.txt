@@ -66,7 +66,6 @@ kde4_add_executable(kopete_bin ${kopete_SRCS})
 set_target_properties(kopete_bin PROPERTIES OUTPUT_NAME kopete)
 
 target_link_libraries(kopete_bin 
-	${KDE4_KDE3SUPPORT_LIBS} 
 	${KDE4_KTEXTEDITOR_LIBS} 
 	${KDE4_KNOTIFYCONFIG_LIBS} 
 	${BLITZ_LIBRARIES}

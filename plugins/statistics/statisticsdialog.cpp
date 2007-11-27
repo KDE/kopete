@@ -125,7 +125,7 @@ void StatisticsDialog::generatePageForMonth(const int monthOfYear)
 	
 	QStringList values2;
 	
-	for (uint i=0; i<values.count(); i+=3)
+	for (int i=0; i<values.count(); i+=3)
 	{
 		QDateTime dateTimeBegin;
 		dateTimeBegin.setTime_t(values[i+1].toInt());
@@ -147,7 +147,7 @@ void StatisticsDialog::generatePageForDay(const int dayOfWeek)
 	
 	QStringList values2;
 	
-	for (uint i=0; i<values.count(); i+=3)
+	for (int i=0; i<values.count(); i+=3)
 	{
 		QDateTime dateTimeBegin;
 		dateTimeBegin.setTime_t(values[i+1].toInt());
@@ -264,7 +264,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 		hoursOffline[i] = 0;
 	}
 		
-	for (uint i=0; i<values.count(); i+=3 /* because SELECT 3 columns */)
+	for (int i=0; i<values.count(); i+=3 /* because SELECT 3 columns */)
 	{
 		/* 	Here we try to interpret one database entry...
 			What's important here, is to not count two times the same hour for instance

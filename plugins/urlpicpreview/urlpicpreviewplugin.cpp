@@ -58,7 +58,7 @@ URLPicPreviewPlugin::~URLPicPreviewPlugin()
 {
 
 	kDebug ( 14314 ) << "Removing temporary files...";
-	for ( uint i = 0; i < m_tmpFileRegistry.count(); i++ )
+	for ( int i = 0; i < m_tmpFileRegistry.count(); i++ )
 	{
 		KIO::NetAccess::removeTempFile ( m_tmpFileRegistry[i] );
 	}
@@ -104,7 +104,7 @@ QString URLPicPreviewPlugin::prepareBody ( const QString& parsedBody, uint previ
 
 	kDebug ( 14314 ) << "Analyzing message: \"" << myParsedBody << "\"";
 
-	if ( ex.search ( myParsedBody ) == -1 || ( previewCount >= URLPicPreviewConfig::self()->previewAmount() ) || m_abortMessageCheck )
+	if ( ex.indexIn ( myParsedBody ) == -1 || ( previewCount >= URLPicPreviewConfig::self()->previewAmount() ) || m_abortMessageCheck )
 	{
 		kDebug ( 14314 ) << "No more URLs found in message.";
 		return myParsedBody;

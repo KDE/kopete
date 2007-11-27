@@ -48,7 +48,7 @@ class KopeteWindow : public KXmlGuiWindow
 	Q_OBJECT
 
 public:
-	explicit KopeteWindow ( QWidget *parent = 0, const char *name = 0 );
+	explicit KopeteWindow ( QWidget *parent = 0 );
 	~KopeteWindow();
 
 	virtual bool eventFilter( QObject* o, QEvent* e );
