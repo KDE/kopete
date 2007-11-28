@@ -26,6 +26,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <QPainter>
 #include <q3listview.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>

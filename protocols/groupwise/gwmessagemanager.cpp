@@ -22,6 +22,7 @@
 #include <qlabel.h>
 #include <qvalidator.h>
 #include <QList>
+#include <QPainter>
 
 #include <kactioncollection.h>
 #include <kdebug.h>

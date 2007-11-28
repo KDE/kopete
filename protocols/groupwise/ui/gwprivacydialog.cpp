@@ -21,6 +21,7 @@
 #include <q3listbox.h>
 #include <qpushbutton.h>
 #include <qstringlist.h>
+#include <QPainter>
 #include <q3listview.h>
 //Added by qt3to4:
 #include <QPixmap>
