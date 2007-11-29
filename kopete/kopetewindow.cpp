@@ -219,7 +219,7 @@ KopeteWindow::KopeteWindow( QWidget *parent )
 	GlobalStatusMessageIconLabel *label = new GlobalStatusMessageIconLabel( statusBarMessage );
 	label->setCursor( QCursor( Qt::PointingHandCursor ) );
 	label->setFixedSize( 16, 16 );
-	label->setPixmap( SmallIcon( "kopetestatusmessage" ) );
+	label->setPixmap( SmallIcon( "object-edit-status-message" ) );
 	connect(label, SIGNAL(iconClicked( const QPoint& )),
 		this, SLOT(slotGlobalStatusMessageIconClicked( const QPoint& )));
 	label->setToolTip( i18n( "Global status message" ) );
