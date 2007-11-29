@@ -75,29 +75,27 @@ bool LoginTask::take( Transfer * transfer )
 	// CREATE CONTACT LIST
 	// locate contact list
 	Field::MultiField * contactList = loginResponseFields.findMultiField( NM_A_FA_CONTACT_LIST );
-	if ( !contactList )
+	if ( contactList )
 	{
-		setError( Protocol );
-		return true;
-	}
-	Field::FieldList contactListFields = contactList->fields();
-	Field::MultiField * container;
-	// read folders
-	for ( Field::FieldListIterator it = contactListFields.find( NM_A_FA_FOLDER );
-		  it != contactListFields.end();
-		  it = contactListFields.find( ++it, NM_A_FA_FOLDER ) )
-	{
-		container = static_cast<Field::MultiField *>( *it );
-		extractFolder( container );
-	}
-		  
-	// read contacts
-	for ( Field::FieldListIterator it = contactListFields.find( NM_A_FA_CONTACT );
-		  it != contactListFields.end();
-		  it = contactListFields.find( ++it, NM_A_FA_CONTACT ) )
-	{
-		container = static_cast<Field::MultiField *>( *it );
-		extractContact( container );
+		Field::FieldList contactListFields = contactList->fields();
+		Field::MultiField * container;
+		// read folders
+		for ( Field::FieldListIterator it = contactListFields.find( NM_A_FA_FOLDER );
+				it != contactListFields.end();
+				it = contactListFields.find( ++it, NM_A_FA_FOLDER ) )
+		{
+			container = static_cast<Field::MultiField *>( *it );
+			extractFolder( container );
+		}
+
+		// read contacts
+		for ( Field::FieldListIterator it = contactListFields.find( NM_A_FA_CONTACT );
+				it != contactListFields.end();
+				it = contactListFields.find( ++it, NM_A_FA_CONTACT ) )
+		{
+			container = static_cast<Field::MultiField *>( *it );
+			extractContact( container );
+		}
 	}
 
 	extractKeepalivePeriod( loginResponseFields );
