@@ -374,12 +374,12 @@ void KopeteWindow::initActions()
 	act = KStandardAction::configureNotifications(this, SLOT(slotConfNotifications()), actionCollection() );
 	actionCollection()->addAction( "settings_notifications", act );
 
-	d->actionShowAllOfflineEmpty = new KToggleAction( KIcon("show-offliners"), i18n( "Show &All" ), this );
+	d->actionShowAllOfflineEmpty = new KToggleAction( KIcon("view-user-offline-kopete"), i18n( "Show &All" ), this );
 	actionCollection()->addAction( "settings_show_all_offline_empty", d->actionShowAllOfflineEmpty );
 	d->actionShowAllOfflineEmpty->setShortcut( KShortcut(Qt::CTRL + Qt::Key_U) );
 	connect( d->actionShowAllOfflineEmpty, SIGNAL( triggered(bool) ), this, SLOT( slotToggleShowAllOfflineEmpty(bool) ) );
 
-	d->actionShowOfflineUsers = new KToggleAction( KIcon("show-offliners"), i18n( "Show Offline &Users" ), this );
+	d->actionShowOfflineUsers = new KToggleAction( KIcon("view-user-offline-kopete"), i18n( "Show Offline &Users" ), this );
         actionCollection()->addAction( "settings_show_offliners", d->actionShowOfflineUsers );
 	connect( d->actionShowOfflineUsers, SIGNAL( triggered(bool) ), this, SLOT( slotToggleShowOfflineUsers() ) );
 
