@@ -434,7 +434,7 @@ void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,
 	for (it = items.begin(); it != items.end(); ++it)
 	{
 		KopeteAccountLVI *i = dynamic_cast<KopeteAccountLVI*>(*it);
-		if (!i)
+		if (!i || !i->account())
 			continue;
 
 		if (i->account()->myself() == contact)
