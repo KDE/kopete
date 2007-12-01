@@ -270,10 +270,11 @@ void IdentityStatusWidget::slotPhotoClicked()
 		Kopete::Global::Properties *props = Kopete::Global::Properties::self();
 		if ( photoPath.isEmpty() ) {
 			d->identity->removeProperty( props->photo() );
+			d->photoPath.clear();
 			changed = true;
 		}
 		else if ( photoPath != d->photoPath ) {
-			d->identity->setProperty(props->photo(), d->photoPath);
+			d->identity->setProperty(props->photo(), photoPath);
 			d->photoPath = photoPath;
 			changed = true;
 		}
