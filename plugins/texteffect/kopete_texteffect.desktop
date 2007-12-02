@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 X-Kopete-Version=1000900
-Icon=texteffect
+Icon=preferences-plugin-text-effect-kopete
 X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_texteffect
 X-KDE-PluginInfo-Author=Olivier Goffart

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 X-Kopete-Version=1000900
-Icon=statistics
+Icon=view-statistics
 X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_statistics
 X-KDE-PluginInfo-Author=Marc Cramdal

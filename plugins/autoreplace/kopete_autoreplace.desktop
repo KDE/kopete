@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 X-Kopete-Version=1000900
-Icon=autoreplace
+Icon=preferences-text-autocorrection-kopete
 X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_autoreplace
 X-KDE-PluginInfo-Author=Roberto Pariset
