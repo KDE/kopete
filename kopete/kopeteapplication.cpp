@@ -300,7 +300,7 @@ void KopeteApplication::quitKopete()
 	QList<KMainWindow*>::iterator it, itEnd = members.end();
 	for ( it = members.begin(); it != itEnd; ++it)
 	{
-		if ( (*it)->close() )
+		if ( !(*it)->close() )
 		{
 			m_isShuttingDown = false;
 			break;
