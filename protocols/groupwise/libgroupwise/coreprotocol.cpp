@@ -219,7 +219,7 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	
 	// convert to QByteArray
 	QByteArray bytesOut;
-	QTextStream dout( bytesOut, QIODevice::WriteOnly );
+	QTextStream dout( &bytesOut, QIODevice::WriteOnly );
 	dout.setCodec( "ISO 8859-1" );
 	//dout.setByteOrder( QDataStream::LittleEndian );
 
@@ -250,8 +250,8 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	else
 		dout <<  "\r\n";
 
-	debug( QString( "data out: %1" ).arg( bytesOut.data() ) );
 	dout.flush();
+	debug( QString( "data out: %1" ).arg( bytesOut.data() ) );
 	emit outgoingData( bytesOut );
 	// now convert 
 	fieldsToWire( fields );
