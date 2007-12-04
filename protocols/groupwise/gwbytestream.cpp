@@ -126,13 +126,7 @@ void KNetworkByteStream::slotConnectionClosed ()
 
 void KNetworkByteStream::slotReadyRead ()
 {
-
-	// stuff all available data into our buffers
-	QByteArray readBuffer ( socket()->bytesAvailable (), 0 );
-
-	socket()->read ( readBuffer.data (), readBuffer.size () );
-
-	appendRead ( readBuffer );
+	appendRead ( socket()->readAll() );
 
 	emit readyRead ();
 
@@ -147,9 +141,9 @@ void KNetworkByteStream::slotBytesWritten ( qint64 bytes )
 
 void KNetworkByteStream::slotError ( int code )
 {
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Socket error " << code;
-
-	emit error ( code );
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Socket error " <<  mSocket->errorString() <<  "' - Code : " << code;
+	if(KNetwork::KSocketBase::isFatalError( code ))
+		emit error ( code );
 
 }
 

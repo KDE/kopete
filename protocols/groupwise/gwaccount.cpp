@@ -271,7 +271,9 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	Q_ASSERT( QCA::isSupported("tls") );
 	m_QCATLS = new QCA::TLS;
 	m_tlsHandler = new QCATLSHandler( m_QCATLS );
-	m_clientStream = new ClientStream( m_connector, m_tlsHandler, 0);
+	if( QCA::haveSystemStore() )
+		m_QCATLS->setTrustedCertificates( QCA::systemStore() );
+	m_clientStream = new ClientStream( m_connector, m_tlsHandler );
 
 	QObject::connect( m_connector, SIGNAL( error() ), this, SLOT( slotConnError() ) );
 	QObject::connect( m_connector, SIGNAL( connected() ), this, SLOT( slotConnConnected() ) );
