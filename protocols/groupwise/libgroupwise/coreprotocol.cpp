@@ -387,9 +387,10 @@ int CoreProtocol::wireToTransfer( QByteArray& wire )
 	{
 		*m_din >> val;
 
-		// if is 'HTTP', it's a Response
-		if ( qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) ) == 0 )
-		{
+		// if is 'HTTP', it's a Response. PTTH it is after endian conversion
+		if ( !qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) )  ||
+		     !qstrncmp( (const char *)&val, "PTTH", strlen( "PTTH" ) )
+		) {
 			Transfer * t = m_responseProtocol->parse( wire, bytesParsed );
 			if ( t )
 			{

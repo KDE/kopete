@@ -22,19 +22,19 @@ set( kopete_groupwise_ui_SRCS
 kde4_add_ui_files(kopete_groupwise_ui_SRCS
 	ui/gwaccountpreferences.ui
 	ui/gwaddui.ui
-	ui/gwchatpropswidget.ui
-	ui/gwchatsearchwidget.ui
+	ui/gwchatprops.ui
+	ui/gwchatsearch.ui
 	ui/gwshowinvitation.ui
-	ui/gwcontactpropswidget.ui
+	ui/gwcontactprops.ui
 	ui/gwprivacy.ui
-	ui/gwcustomstatuswidget.ui
+	ui/gwcustomstatus.ui
 	ui/gwcustomstatusedit.ui
-	ui/gwcontactpropswidget.ui
+	ui/gwcontactprops.ui
 	ui/gwcontactsearch.ui
-	ui/gwcustomstatuswidget.ui
+	ui/gwcustomstatus.ui
 	ui/gwcustomstatusedit.ui
 	ui/gwcontactsearch.ui
-	ui/gwchatsearchwidget.ui
+	ui/gwchatsearch.ui
 )
 
 ########### next target ###############

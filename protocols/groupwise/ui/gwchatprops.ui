@@ -1,12 +1,12 @@
 <ui version="4.0" >
- <class>GroupWiseChatPropsWidget</class>
- <widget class="QWidget" name="GroupWiseChatPropsWidget" >
+ <class>GroupWiseChatProps</class>
+ <widget class="QWidget" name="GroupWiseChatProps" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
     <width>493</width>
-    <height>425</height>
+    <height>465</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -29,7 +29,7 @@
     <number>11</number>
    </property>
    <item>
-    <widget class="QLabel" name="m_displayName" >
+    <widget class="QLabel" name="displayName" >
      <property name="text" >
       <string>DISPLAY NAME</string>
      </property>
@@ -59,7 +59,7 @@
       <number>6</number>
      </property>
      <item row="4" column="1" >
-      <widget class="QLineEdit" name="m_creator" >
+      <widget class="QLineEdit" name="creator" >
        <property name="toolTip" >
         <string>The user who created the chatroom</string>
        </property>
@@ -93,12 +93,12 @@
         <bool>false</bool>
        </property>
        <property name="buddy" >
-        <cstring>m_displayName</cstring>
+        <cstring>displayName</cstring>
        </property>
       </widget>
      </item>
      <item row="1" column="3" >
-      <widget class="QLineEdit" name="m_disclaimer" >
+      <widget class="QLineEdit" name="disclaimer" >
        <property name="toolTip" >
         <string>A disclaimer for users entering the chatroom</string>
        </property>
@@ -124,7 +124,7 @@
       </widget>
      </item>
      <item row="1" column="1" >
-      <widget class="QLineEdit" name="m_topic" >
+      <widget class="QLineEdit" name="topic" >
        <property name="toolTip" >
         <string>The current topic of the discussion</string>
        </property>
@@ -137,7 +137,7 @@
       </widget>
      </item>
      <item row="2" column="3" >
-      <widget class="QLineEdit" name="m_query" >
+      <widget class="QLineEdit" name="query" >
        <property name="toolTip" >
         <string>UNKNOWN</string>
        </property>
@@ -189,7 +189,7 @@
       </widget>
      </item>
      <item row="5" column="1" >
-      <widget class="QLineEdit" name="m_description" >
+      <widget class="QLineEdit" name="description" >
        <property name="toolTip" >
         <string>General description of the chatroom</string>
        </property>
@@ -202,7 +202,7 @@
       </widget>
      </item>
      <item row="3" column="3" >
-      <widget class="QLineEdit" name="m_maxUsers" >
+      <widget class="QLineEdit" name="maxUsers" >
        <property name="toolTip" >
         <string>Maximum number of simultaneous users allowed in the chatroom</string>
        </property>
@@ -241,7 +241,7 @@
       </widget>
      </item>
      <item row="3" column="1" >
-      <widget class="QLineEdit" name="m_createdOn" >
+      <widget class="QLineEdit" name="createdOn" >
        <property name="toolTip" >
         <string>Date and time the chatroom was created</string>
        </property>
@@ -253,8 +253,14 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="2" >
-      <widget class="QCheckBox" name="m_archive" >
+     <item row="4" column="2" colspan="2" >
+      <widget class="QCheckBox" name="archive" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+         <horstretch>2</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip" >
         <string>Indicates if the chatroom is being archived on the server</string>
        </property>
@@ -267,7 +273,7 @@
       </widget>
      </item>
      <item row="2" column="1" >
-      <widget class="QLineEdit" name="m_owner" >
+      <widget class="QLineEdit" name="owner" >
        <property name="toolTip" >
         <string>The user who owns this chatroom</string>
        </property>
@@ -319,7 +325,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QCheckBox" name="m_chkRead" >
+       <widget class="QCheckBox" name="chkRead" >
         <property name="toolTip" >
          <string>General permission to read messages in the chatroom</string>
         </property>
@@ -332,7 +338,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="m_chkWrite" >
+       <widget class="QCheckBox" name="chkWrite" >
         <property name="toolTip" >
          <string>General permission to write messages in the chatroom</string>
         </property>
@@ -345,7 +351,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="m_chkModify" >
+       <widget class="QCheckBox" name="chkModify" >
         <property name="toolTip" >
          <string>General permission to modify the chatroom's access control list</string>
         </property>
@@ -374,7 +380,7 @@
     </widget>
    </item>
    <item>
-    <widget class="K3ListBox" name="m_acl" >
+    <widget class="K3ListBox" name="acl" >
      <property name="toolTip" >
       <string>Access permissions for specific users</string>
      </property>
@@ -398,21 +404,21 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="KPushButton" name="m_btnAddAcl" >
+      <widget class="KPushButton" name="addAcl" >
        <property name="toolTip" >
         <string>Add a new ACL entry</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" name="m_btnEditAcl" >
+      <widget class="KPushButton" name="editAcl" >
        <property name="toolTip" >
         <string>Edit an existing ACL entry</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" name="m_btnDeleteAcl" >
+      <widget class="KPushButton" name="deleteAcl" >
        <property name="toolTip" >
         <string>Delete a ACL entry</string>
        </property>
@@ -444,22 +450,22 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>m_topic</tabstop>
-  <tabstop>m_disclaimer</tabstop>
-  <tabstop>m_owner</tabstop>
-  <tabstop>m_query</tabstop>
-  <tabstop>m_createdOn</tabstop>
-  <tabstop>m_maxUsers</tabstop>
-  <tabstop>m_creator</tabstop>
-  <tabstop>m_archive</tabstop>
-  <tabstop>m_description</tabstop>
-  <tabstop>m_chkRead</tabstop>
-  <tabstop>m_chkWrite</tabstop>
-  <tabstop>m_chkModify</tabstop>
-  <tabstop>m_acl</tabstop>
-  <tabstop>m_btnAddAcl</tabstop>
-  <tabstop>m_btnEditAcl</tabstop>
-  <tabstop>m_btnDeleteAcl</tabstop>
+  <tabstop>topic</tabstop>
+  <tabstop>disclaimer</tabstop>
+  <tabstop>owner</tabstop>
+  <tabstop>query</tabstop>
+  <tabstop>createdOn</tabstop>
+  <tabstop>maxUsers</tabstop>
+  <tabstop>creator</tabstop>
+  <tabstop>archive</tabstop>
+  <tabstop>description</tabstop>
+  <tabstop>chkRead</tabstop>
+  <tabstop>chkWrite</tabstop>
+  <tabstop>chkModify</tabstop>
+  <tabstop>acl</tabstop>
+  <tabstop>addAcl</tabstop>
+  <tabstop>editAcl</tabstop>
+  <tabstop>deleteAcl</tabstop>
  </tabstops>
  <includes>
   <include location="local" >k3listbox.h</include>

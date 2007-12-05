@@ -1,32 +1,17 @@
 <ui version="4.0" >
- <class>GroupWiseContactPropsWidget</class>
- <widget class="QWidget" name="GroupWiseContactPropsWidget" >
+ <class>GroupWiseContactProps</class>
+ <widget class="QWidget" name="GroupWiseContactProps" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>373</width>
-    <height>444</height>
+    <width>309</width>
+    <height>384</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <property name="leftMargin" >
-    <number>11</number>
-   </property>
-   <property name="topMargin" >
-    <number>11</number>
-   </property>
-   <property name="rightMargin" >
-    <number>11</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>11</number>
-   </property>
    <item>
-    <widget class="QLabel" name="m_userId" >
+    <widget class="QLabel" name="userId" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
        <horstretch>3</horstretch>
@@ -75,7 +60,7 @@
       <number>6</number>
      </property>
      <item row="4" column="1" >
-      <widget class="QLineEdit" name="m_lastName" >
+      <widget class="QLineEdit" name="lastName" >
        <property name="toolTip" >
         <string>Change the display name used for this contact</string>
        </property>
@@ -98,7 +83,7 @@
       </widget>
      </item>
      <item row="2" column="1" >
-      <widget class="QLineEdit" name="m_displayName" >
+      <widget class="QLineEdit" name="displayName" >
        <property name="toolTip" >
         <string>Change the display name used for this contact</string>
        </property>
@@ -111,7 +96,7 @@
       </widget>
      </item>
      <item rowspan="2" row="0" column="1" >
-      <widget class="QLabel" name="m_status" >
+      <widget class="QLabel" name="status" >
        <property name="text" >
         <string>USER_STATUS</string>
        </property>
@@ -131,7 +116,7 @@
       </widget>
      </item>
      <item rowspan="2" row="1" column="0" >
-      <widget class="QLabel" name="lbl_displayName" >
+      <widget class="QLabel" name="lbldisplayName" >
        <property name="text" >
         <string>&amp;Display name:</string>
        </property>
@@ -139,12 +124,12 @@
         <bool>false</bool>
        </property>
        <property name="buddy" >
-        <cstring>m_displayName</cstring>
+        <cstring>displayName</cstring>
        </property>
       </widget>
      </item>
      <item row="3" column="1" >
-      <widget class="QLineEdit" name="m_firstName" >
+      <widget class="QLineEdit" name="firstName" >
        <property name="toolTip" >
         <string>Change the display name used for this contact</string>
        </property>
@@ -192,31 +177,39 @@
     </widget>
    </item>
    <item>
-    <widget class="K3ListView" name="m_propsView" >
+    <widget class="QTreeWidget" name="propsView" >
+     <property name="contextMenuPolicy" >
+      <enum>Qt::ActionsContextMenu</enum>
+     </property>
+     <property name="indentation" >
+      <number>0</number>
+     </property>
+     <property name="rootIsDecorated" >
+      <bool>false</bool>
+     </property>
      <property name="allColumnsShowFocus" >
       <bool>true</bool>
      </property>
-     <property name="resizeMode" >
-      <enum>Q3ListView::AllColumns</enum>
-     </property>
+     <column>
+      <property name="text" >
+       <string>New Column</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>New Column</string>
+      </property>
+     </column>
     </widget>
    </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
-  <customwidget>
-   <class>K3ListView</class>
-   <extends>Q3ListView</extends>
-   <header>k3listview.h</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
-  <tabstop>m_displayName</tabstop>
-  <tabstop>m_firstName</tabstop>
-  <tabstop>m_lastName</tabstop>
-  <tabstop>m_propsView</tabstop>
+  <tabstop>displayName</tabstop>
+  <tabstop>firstName</tabstop>
+  <tabstop>lastName</tabstop>
  </tabstops>
  <includes>
   <include location="local" >k3listview.h</include>

@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>GroupWiseChatSearchWidget</class>
- <widget class="QWidget" name="GroupWiseChatSearchWidget" >
+ <class>GroupWiseChatSearch</class>
+ <widget class="QWidget" name="GroupWiseChatSearch" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -10,14 +10,23 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>11</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
    </property>
+   <property name="leftMargin" >
+    <number>11</number>
+   </property>
+   <property name="topMargin" >
+    <number>11</number>
+   </property>
+   <property name="rightMargin" >
+    <number>11</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>11</number>
+   </property>
    <item>
-    <widget class="K3ListView" name="m_chatrooms" >
+    <widget class="K3ListView" name="chatrooms" >
      <property name="allColumnsShowFocus" >
       <bool>true</bool>
      </property>
@@ -25,14 +34,23 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>6</number>
      </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
      <item>
-      <widget class="KPushButton" native="1" name="m_btnProperties" />
+      <widget class="KPushButton" name="btnProperties" />
      </item>
      <item>
       <spacer>
@@ -51,7 +69,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="m_btnRefresh" >
+      <widget class="QPushButton" name="btnRefresh" >
        <property name="text" >
         <string>&amp;Refresh</string>
        </property>
@@ -65,18 +83,13 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>Q3ListView</class>
-   <extends>Q3Frame</extends>
-   <header>q3listview.h</header>
-  </customwidget>
-  <customwidget>
    <class>K3ListView</class>
    <extends>Q3ListView</extends>
    <header>k3listview.h</header>
   </customwidget>
   <customwidget>
    <class>KPushButton</class>
-   <extends>QWidget</extends>
+   <extends>QPushButton</extends>
    <header>kpushbutton.h</header>
    <container>1</container>
   </customwidget>

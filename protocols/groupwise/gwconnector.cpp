@@ -30,7 +30,7 @@ KNetworkConnector::KNetworkConnector ( QObject *parent )
 {
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "New KNetwork connector.";
 
-	mErrorCode = KNetwork::KSocketBase::NoError;
+	mErrorCode = 0;
 
 	mByteStream = new KNetworkByteStream ( this );
 
@@ -58,15 +58,9 @@ void KNetworkConnector::connectToServer ( const QString &server )
 	 * For XMPP 1.0, we need to enable this!
 	 */
 
-	mErrorCode = KNetwork::KSocketBase::NoError;
+	mErrorCode = 0;
 
-	if ( !mByteStream->connect ( mHost, QString::number ( mPort ) ) )
-	{
-		// Houston, we have a problem
-		mErrorCode = mByteStream->socket()->error ();
-		emit error ();
-	}
-
+	mByteStream->connect ( mHost, QString::number ( mPort ) );
 }
 
 void KNetworkConnector::slotConnected ()

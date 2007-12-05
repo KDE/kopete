@@ -130,7 +130,8 @@ bool ConferenceTask::take( Transfer * transfer )
 				break;
 			case GroupWise::ConferenceReject:
 				client()->debug( "ConferenceReject" );
-				emit invitationDeclined( event );
+				if ( !queueWhileAwaitingData( event ) )
+					emit invitationDeclined( event );
 				break;
 			case GroupWise::ReceiveAutoReply:
 				Q_ASSERT( incomingEvent->hasFlags() );
@@ -180,7 +181,7 @@ void ConferenceTask::slotReceiveUserDetails( const GroupWise::ContactDetails & d
 		// if the details relate to event, try again to handle it
 		if ( details.dn == (*current).user )
 		{
-			client()->debug( QString( " - got details for event involving%1" ).arg( (*current).user ) );
+			client()->debug( QString( " - got details for event involving %1" ).arg( (*current).user ) );
 			switch ( (*current).type )
 			{
 				case GroupWise::ConferenceJoined:

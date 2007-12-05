@@ -75,6 +75,6 @@ class Chatroom
 
 typedef QList<Chatroom> ChatroomList;
 typedef QMap<QString, Chatroom> ChatroomMap;
-};
+}
 
 #endif // GWCHATROOMS_H

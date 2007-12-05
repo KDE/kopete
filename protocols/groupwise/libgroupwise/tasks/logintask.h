@@ -52,7 +52,7 @@ protected:
 	void extractPrivacy( Field::FieldList & fields );
 	QStringList readPrivacyItems( const QByteArray & tag, Field::FieldList & fields );
 	void extractCustomStatuses( Field::FieldList & fields );
-
+	void extractKeepalivePeriod( Field::FieldList & fields );
 signals:
 	void gotMyself( const GroupWise::ContactDetails & );
 	void gotFolder( const FolderItem & );
@@ -60,6 +60,7 @@ signals:
 	void gotContactUserDetails( const GroupWise::ContactDetails & );
 	void gotPrivacySettings( bool locked, bool defaultDeny, const QStringList & allowList, const QStringList & denyList );
 	void gotCustomStatus( const GroupWise::CustomStatus & );
+	void gotKeepalivePeriod( int );
 };
 
 #endif

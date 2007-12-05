@@ -90,7 +90,7 @@ public:
 	/**
 	 * Utility access to the port given by the user
 	 */
-	const int port() const;
+	int port() const;
 	/**
 	 * Utility access to the server given by the user
 	 */
@@ -173,6 +173,7 @@ signals:
 
 	
 protected slots:
+    void slotMessageSendingFailed();
 	/**
 	 * Set an auto reply message for use when the account is away
 	 * TODO: Extend Kopete::AwayAction so you can set multiple ones there.
@@ -344,6 +345,7 @@ private:
 	// Client, entry point of libgroupwise
 	Client * m_client;
 
+	QString m_password;
 	QString m_initialReason;
 	Q3ValueList<GroupWiseChatSession*> m_chatSessions;
 	bool m_dontSync;

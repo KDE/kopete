@@ -25,10 +25,10 @@
 
 #include <qwidget.h>
 #include <editaccountwidget.h>
+#include "ui_gwaccountpreferences.h"
 
 class QVBoxLayout;
 namespace Kopete { class Account; }
-namespace Ui { class GroupWiseAccountPreferences; }
 
 /**
  * A widget for editing this protocol's accounts
@@ -59,7 +59,7 @@ protected:
 	void writeConfig();
 	Kopete::Account *m_account;
 	QVBoxLayout *m_layout;
-	Ui::GroupWiseAccountPreferences *m_preferencesDialog;
+	Ui::GroupWiseAccountPreferences m_ui;
 };
 
 #endif // GWEDITACCOUNTWIDGET_H

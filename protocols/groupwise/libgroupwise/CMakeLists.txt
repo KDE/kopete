@@ -48,35 +48,36 @@ set( libqgroupwise_tasks_SRCS
 )
 
 set( libqgroupwise_SRCS
-	connector.cpp
 	bytestream.cpp
-	tlshandler.cpp
-	qcatlshandler.cpp
-	gwclientstream.cpp
-	securestream.cpp
-	stream.cpp
-	coreprotocol.cpp
-	gwfield.cpp
-	transferbase.cpp
-	usertransfer.cpp
-	eventtransfer.cpp
-	transfer.cpp
-	request.cpp
-	requestfactory.cpp
-	safedelete.cpp
-	response.cpp
-	client.cpp
-	task.cpp
-	rtf.cc
-	userdetailsmanager.cpp
-	eventprotocol.cpp
-	inputprotocolbase.cpp
-	responseprotocol.cpp
-	privacymanager.cpp
-	gwglobal.cpp
 	chatroommanager.cpp
+	client.cpp
 	compressionhandler.cpp
 	compress.cpp
+	connector.cpp
+	coreprotocol.cpp
+	eventprotocol.cpp
+	eventtransfer.cpp
+	gwclientstream.cpp
+	gwerror.cpp
+	gwfield.cpp
+	gwglobal.cpp
+	inputprotocolbase.cpp
+	privacymanager.cpp
+	qcatlshandler.cpp
+	request.cpp
+	requestfactory.cpp
+	response.cpp
+	responseprotocol.cpp
+	rtf.cc
+	safedelete.cpp
+	securestream.cpp
+	stream.cpp
+	task.cpp
+	tlshandler.cpp
+	transfer.cpp
+	transferbase.cpp
+	userdetailsmanager.cpp
+	usertransfer.cpp
 )
 
 
