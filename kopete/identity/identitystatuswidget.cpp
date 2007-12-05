@@ -26,6 +26,7 @@
 #include <QToolTip>
 #include <QCursor>
 #include <QUrl>
+#include <QHelpEvent>
 #include <KColorScheme>
 #include <kopeteidentity.h>
 #include <kopeteidentitymanager.h>
@@ -79,6 +80,8 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 
 	connect( Kopete::IdentityManager::self(), SIGNAL(identityUnregistered(const Kopete::Identity*)),
 			this, SLOT(slotIdentityUnregistered(const Kopete::Identity*)));
+
+	d->ui.accounts->viewport()->installEventFilter( this );
 }
 
 IdentityStatusWidget::~IdentityStatusWidget()
@@ -110,6 +113,22 @@ void IdentityStatusWidget::setVisible( bool visible )
 	d->timeline->setDirection( visible ?  QTimeLine::Forward
 										: QTimeLine::Backward );
 	d->timeline->start();
+}
+
+bool IdentityStatusWidget::eventFilter( QObject *watched, QEvent *event )
+{
+	if( event->type() == QEvent::ToolTip && watched == d->ui.accounts->viewport() )
+	{
+		QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+		QListWidgetItem* item = d->ui.accounts->itemAt( helpEvent->pos() );
+		if ( item )
+		{
+			const Kopete::Account * account = d->accountHash.value( item, 0 );
+			if ( account )
+				item->setToolTip( account->myself()->toolTip() );
+		}
+	}
+	return QWidget::eventFilter( watched, event );
 }
 
 void IdentityStatusWidget::slotAnimate(qreal amount)
@@ -218,7 +237,6 @@ void IdentityStatusWidget::addAccountItem( Kopete::Account *account )
 			this, SLOT(slotAccountStatusIconChanged(Kopete::Contact *)) );
 
 	QListWidgetItem * item = new QListWidgetItem( account->accountIcon(), account->accountLabel(), d->ui.accounts );
-	item->setToolTip( account->myself()->toolTip() );
 	d->accountHash.insert( item, account );
 
 	slotAccountStatusIconChanged( account->myself() );
@@ -245,8 +263,6 @@ void IdentityStatusWidget::slotAccountStatusIconChanged( Kopete::Contact *contac
 		item->setIcon( KIconLoader::unknown() );
 	else
 		item->setIcon( QIcon( pm ) );
-
-	item->setToolTip( contact->toolTip() );
 }
 
 void IdentityStatusWidget::showAccountContextMenu( const QPoint & point )

@@ -53,6 +53,9 @@ public:
 
 	virtual void setVisible(bool visible);
 
+protected:
+	bool eventFilter( QObject *watched, QEvent *event );
+
 private:
 	/**
 	 * Initialise the widget's contents
