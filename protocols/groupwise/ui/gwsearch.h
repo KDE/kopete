@@ -24,6 +24,9 @@
 #include <Q3ValueList>
 #include "ui_gwcontactsearch.h"
 
+
+class GroupWiseContactSearchModel;
+class GroupWiseContactSearchSortProxyModel;
 class GroupWiseAccount;
 class GroupWiseContactProperties;
 
@@ -52,7 +55,8 @@ protected slots:
 	void slotShowDetails();
 	void slotValidateSelection();
 private:
-	Q3ValueList< GroupWise::ContactDetails > m_searchResults;
+	GroupWiseContactSearchModel * m_model;
+	GroupWiseContactSearchSortProxyModel * m_proxyModel;
 	GroupWiseAccount * m_account;
 	bool m_onlineOnly;
 };

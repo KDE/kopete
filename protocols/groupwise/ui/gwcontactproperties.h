@@ -48,7 +48,7 @@ public:
 	explicit GroupWiseContactProperties( GroupWise::ContactDetails contactDetails, QWidget *parent = 0 );
 	~GroupWiseContactProperties();
 protected:
-	void setupProperties( QHash< QString, QString > serverProps );
+	void setupProperties( QMap< QString, QVariant > serverProps );
 	void init();
 protected slots:
 	void copy();

@@ -183,7 +183,7 @@ void GroupWiseContact::slotUserInfo()
 	p->setObjectName( "gwcontactproperties" );
 }
 
-QHash< QString, QString > GroupWiseContact::serverProperties()
+QMap< QString, QVariant > GroupWiseContact::serverProperties()
 {
 	return m_serverProperties;
 }

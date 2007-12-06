@@ -90,10 +90,10 @@ void GroupWiseContactProperties::init()
 	m_ui.propsView->addAction( m_copyAction );
 }
 
-void GroupWiseContactProperties::setupProperties( QHash< QString, QString > serverProps )
+void GroupWiseContactProperties::setupProperties( QMap< QString, QVariant > serverProps )
 {
 	m_ui.propsView->header()->hide();
-	QHashIterator< QString, QString > i( serverProps );
+	QMapIterator< QString, QVariant > i( serverProps );
 	while ( i.hasNext() )
 	{
 		i.next();
@@ -119,7 +119,7 @@ void GroupWiseContactProperties::setupProperties( QHash< QString, QString > serv
 
 		QTreeWidgetItem * item = new QTreeWidgetItem( m_ui.propsView, 0 );
 		item->setText( 0, localised );
-		item->setText( 1, i.value() );
+		item->setText( 1, i.value().toString() );
 	}
 }
 

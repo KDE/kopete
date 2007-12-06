@@ -21,7 +21,8 @@
 
 #include <qdatetime.h>
 #include <qglobal.h>
-#include <QHash>
+#include <QMap>
+#include <QVariant>
 #include <qstring.h>
 #include "libgroupwise_export.h"
 typedef quint16 NMERR_T;
@@ -148,7 +149,7 @@ namespace GroupWise
 				authAttribute;
 		int status;
 		bool archive;
-		QHash< QString, QString > properties;
+		QMap< QString, QVariant > properties;
 	};
 
 	struct OutgoingMessage

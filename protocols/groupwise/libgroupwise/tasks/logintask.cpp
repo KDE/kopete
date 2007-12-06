@@ -189,7 +189,7 @@ ContactDetails LoginTask::extractUserDetails( Field::FieldList & fields )
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_MESSAGE_BODY ) ) )
 		cd.awayMessage = sf->value().toString();
 	Field::MultiField * mf;
-	QHash< QString, QString > propHash;
+	QMap< QString, QVariant > propMap;
 	if ( ( mf = fields.findMultiField ( NM_A_FA_INFO_DISPLAY_ARRAY ) ) )
 	{
 		Field::FieldList fl = mf->fields();
@@ -201,7 +201,7 @@ ContactDetails LoginTask::extractUserDetails( Field::FieldList & fields )
 			{
 				QString propName = propField->tag();
 				QString propValue = propField->value().toString();
-				propHash.insert( propName, propValue );
+				propMap.insert( propName, propValue );
 			}
 			else
 			{
@@ -218,20 +218,20 @@ ContactDetails LoginTask::extractUserDetails( Field::FieldList & fields )
 						if ( propField /*&& propField->tag() == parentName */)
 						{
 							QString propValue = propField->value().toString();
-							QString contents = propHash[ propField->tag() ];
+							QString contents = propMap[ propField->tag() ].toString();
 							if ( !contents.isEmpty() )
 								contents.append( ", " );
 							contents.append( propField->value().toString());
-							propHash.insert( propField->tag(), contents );
+							propMap.insert( propField->tag(), contents );
 						}
 					}
 				}
 			}
 		}
 	}
-	if ( !propHash.empty() )
+	if ( !propMap.empty() )
 	{
-		cd.properties = propHash;
+		cd.properties = propMap;
 	}
 	return cd;
 }

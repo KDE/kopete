@@ -191,7 +191,7 @@ void GroupWisePrivacyDialog::slotAddClicked()
 		m_searchDlg->setDefaultButton(KDialog::Ok);
 		m_searchDlg->setModal(false);
 		m_search = new GroupWiseContactSearch( m_account, Q3ListView::Multi, false, m_searchDlg );
-		m_search->setupUi( this );
+		m_searchDlg->setMainWidget( m_search );
 		QObject::connect( m_searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
 		QObject::connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOk( bool ) ) );
 		m_searchDlg->enableButtonOk( false );
