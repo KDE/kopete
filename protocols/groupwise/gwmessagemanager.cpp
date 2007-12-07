@@ -319,6 +319,8 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 			KAction *a = new Kopete::UI::ContactAction( contact,
 			                                            actionCollection() );
 			m_actionInvite->addAction( a );
+			QObject::connect( a, SIGNAL(triggered(Kopete::Contact*,bool)),
+					this, SLOT(slotInviteContact(Kopete::Contact*)) );
 			m_inviteActions.append( a ) ;
 		}
 	}
