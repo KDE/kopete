@@ -54,6 +54,9 @@ public:
 
 	virtual void setSSIItem( const OContact& ssiItem );
 
+	/**  Set encoding for this contact */
+	virtual void setEncoding( int mib );
+
 public slots:
 	virtual void slotUserInfo();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );

@@ -290,6 +290,21 @@ void OscarContact::setPresenceTarget( const Oscar::Presence &presence )
 	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
 }
 
+void OscarContact::setEncoding( int mib )
+{
+	OscarProtocol* p = static_cast<OscarProtocol*>( protocol() );
+	if ( mib != 0 )
+	{
+		kDebug(OSCAR_GEN_DEBUG) << "setting encoding mib to " << mib << endl;
+		setProperty( p->contactEncoding, m_oesd->selectedEncoding() );
+	}
+	else
+	{
+		kDebug(OSCAR_GEN_DEBUG) << "setting encoding to default" << endl;
+		removeProperty( p->contactEncoding );
+	}
+}
+
 //here's where a filetransfer usually begins
 //could be called by a KAction or our dcop code or something
 void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint fileSize )
@@ -340,22 +355,7 @@ void OscarContact::changeContactEncoding()
 void OscarContact::changeEncodingDialogClosed( int result )
 {
 	if ( result == QDialog::Accepted )
-	{
-		OscarProtocol* p = static_cast<OscarProtocol*>( protocol() );
-		int mib = m_oesd->selectedEncoding();
-		if ( mib != 0 )
-		{
-			kDebug(OSCAR_ICQ_DEBUG) << "setting encoding mib to "
-				<< m_oesd->selectedEncoding() << endl;
-			setProperty( p->contactEncoding, m_oesd->selectedEncoding() );
-		}
-		else
-		{
-			kDebug(OSCAR_ICQ_DEBUG) 
-				<< "setting encoding to default" << endl;
-			removeProperty( p->contactEncoding );
-		}
-	}
+		setEncoding( m_oesd->selectedEncoding() );
 	
 	if ( m_oesd )
 	{

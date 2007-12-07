@@ -107,6 +107,13 @@ public:
 	 */
 	void setPresenceTarget( const Oscar::Presence &presence );
 
+	/**
+	 * Set encoding for this contact
+	 * @param mib the MIBenum
+	 * @note If @p mib is 0 then default encoding will be used
+	 */
+	virtual void setEncoding( int mib );
+
 public slots:	
 	/** Remove this contact from the server. Reimplemented from Kopete::Contact */
 	virtual void deleteContact();

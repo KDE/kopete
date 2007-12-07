@@ -97,6 +97,12 @@ void ICQContact::setSSIItem( const OContact& ssiItem )
 	ICQContactBase::setSSIItem( ssiItem );
 }
 
+void ICQContact::setEncoding( int mib )
+{
+	ICQContactBase::setEncoding( mib );
+	QTimer::singleShot( 0, this, SLOT( requestShortInfo() ) );
+}
+
 void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& details )
 {
 	if ( Oscar::normalize( contact  ) != Oscar::normalize( contactId() ) )
