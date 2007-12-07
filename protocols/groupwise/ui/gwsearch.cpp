@@ -222,23 +222,39 @@ public:
 	}
 };
 
-GroupWiseContactSearch::GroupWiseContactSearch( GroupWiseAccount * account, Q3ListView::SelectionMode mode, bool onlineOnly,  QWidget *parent )
- : QWidget( parent ), m_account( account ), m_onlineOnly( onlineOnly )
+class OnlineOnlyGroupWiseContactSearchSortProxyModel : public GroupWiseContactSearchSortProxyModel
 {
-	//m_results->setSelectionMode( mode );
+public:
+	OnlineOnlyGroupWiseContactSearchSortProxyModel( QObject * parent = 0 ) : GroupWiseContactSearchSortProxyModel( parent )
+	{}
+	bool filterAcceptsRow( int source_row, const QModelIndex & source_parent ) const
+	{
+		QModelIndex index = sourceModel()->index( source_row, 0, source_parent );
+		int statusOrdered = sourceModel()->data( index, GroupWiseContactSearchModel::StatusOrderedRole ).toInt();
+		return ( statusOrdered > 1 );
+	}
+};
+
+GroupWiseContactSearch::GroupWiseContactSearch( GroupWiseAccount * account, QAbstractItemView::SelectionMode mode, bool onlineOnly,  QWidget *parent )
+ : QWidget( parent ), m_account( account )
+{
 	setupUi( this );
 	connect( m_details, SIGNAL( clicked() ), SLOT( slotShowDetails() ) );
-//	connect( m_results, SIGNAL( selectionChanged() ), SLOT( slotValidateSelection() ) );
 	connect( m_search, SIGNAL( clicked() ), SLOT( slotDoSearch() ) );
 	connect( m_clear, SIGNAL( clicked() ), SLOT( slotClear() ) );
-	m_proxyModel = new GroupWiseContactSearchSortProxyModel( this );
+	if ( onlineOnly ) {
+		m_proxyModel = new OnlineOnlyGroupWiseContactSearchSortProxyModel( this );
+	} else {
+		m_proxyModel = new GroupWiseContactSearchSortProxyModel( this );
+	}
 	m_proxyModel->setDynamicSortFilter(true);
 
 	m_results->header()->setClickable( true );
 	m_results->header()->setSortIndicator( 0, Qt::DescendingOrder );
 	m_results->header()->setSortIndicatorShown( true );
+	m_results->setSelectionMode( mode );
+	m_details->setEnabled( false );
 }
-
 
 GroupWiseContactSearch::~GroupWiseContactSearch()
 {
@@ -305,6 +321,8 @@ void GroupWiseContactSearch::slotDoSearch()
 		connect( st, SIGNAL( finished() ), SLOT( slotGotSearchResults() ) );
 		st->go( true );
 		m_matchCount->setText( i18n( "Searching" ) );
+		m_details->setEnabled( false );
+		emit selectionValidates( false );
 	}
 	else
 	{
@@ -322,7 +340,7 @@ void GroupWiseContactSearch::slotShowDetails()
 	{
 		// if they are already in our contact list, show that version
 		QModelIndex selectedIndex = selected.first();
-		QString dn = m_model->data( selectedIndex, GroupWiseContactSearchModel::DnRole ).toString();
+		QString dn = m_proxyModel->data( selectedIndex, GroupWiseContactSearchModel::DnRole ).toString();
 		
 		GroupWiseContact * c = m_account->contactForDN( dn );
 		GroupWiseContactProperties * p;
@@ -330,24 +348,27 @@ void GroupWiseContactSearch::slotShowDetails()
 			p = new GroupWiseContactProperties( c, this );
 		else
 		{
-			GroupWise::ContactDetails dt;
-			dt.dn = dn;
-			dt.cn = m_model->data( selectedIndex, GroupWiseContactSearchModel::CnRole ).toString();
-			dt.givenName = m_model->data( selectedIndex, GroupWiseContactSearchModel::GivenNameRole ).toString();
-			dt.surname = m_model->data( selectedIndex, GroupWiseContactSearchModel::SurnameRole ).toString();
-			dt.fullName = m_model->data( selectedIndex, GroupWiseContactSearchModel::FullNameRole ).toString();
-			dt.awayMessage = m_model->data( selectedIndex, GroupWiseContactSearchModel::AwayMessageRole ).toString();
-			dt.authAttribute = m_model->data( selectedIndex, GroupWiseContactSearchModel::AuthAttributeRole ).toString();
-			dt.status = m_model->data( selectedIndex, GroupWiseContactSearchModel::StatusRole ).toInt();
-			dt.archive = m_model->data( selectedIndex, GroupWiseContactSearchModel::ArchiveRole ).toBool();
-			dt.properties = m_model->data( selectedIndex, GroupWiseContactSearchModel::PropertiesRole ).toMap();
-			p = new GroupWiseContactProperties( dt, this );
+			p = new GroupWiseContactProperties( detailsAtIndex( selectedIndex ), this );
 		}
 		p->setObjectName( "gwcontactproperties" );
 	}
 
 }
 
+GroupWise::ContactDetails GroupWiseContactSearch::detailsAtIndex( const QModelIndex & index ) const
+{
+	GroupWise::ContactDetails dt;
+	dt.dn = m_proxyModel->data( index, GroupWiseContactSearchModel::DnRole ).toString();
+	dt.givenName = m_proxyModel->data( index, GroupWiseContactSearchModel::GivenNameRole ).toString();
+	dt.surname = m_proxyModel->data( index, GroupWiseContactSearchModel::SurnameRole ).toString();
+	dt.fullName = m_proxyModel->data( index, GroupWiseContactSearchModel::FullNameRole ).toString();
+	dt.awayMessage = m_proxyModel->data( index, GroupWiseContactSearchModel::AwayMessageRole ).toString();
+	dt.authAttribute = m_proxyModel->data( index, GroupWiseContactSearchModel::AuthAttributeRole ).toString();
+	dt.status = m_proxyModel->data( index, GroupWiseContactSearchModel::StatusRole ).toInt();
+	dt.archive = m_proxyModel->data( index, GroupWiseContactSearchModel::ArchiveRole ).toBool();
+	dt.properties = m_proxyModel->data( index, GroupWiseContactSearchModel::PropertiesRole ).toMap();
+	return dt;
+}
 void GroupWiseContactSearch::slotGotSearchResults()
 {
 	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
@@ -358,12 +379,14 @@ void GroupWiseContactSearch::slotGotSearchResults()
 		GroupWise::ContactDetails const * dtp = new GroupWise::ContactDetails(dt);
 		searchResults.append( dtp );
 	}
-	m_matchCount->setText( i18np( "1 matching user found", "%1 matching users found", searchResults.count() ) );
 
 	m_model = new GroupWiseContactSearchModel( searchResults, m_account, this );
 	m_proxyModel->setSourceModel( m_model );
 	m_results->setModel( m_proxyModel );
 	m_results->resizeColumnToContents( 0 );
+	connect( m_results->selectionModel(), SIGNAL( selectionChanged(const QItemSelection &,const QItemSelection &) ), SLOT( slotValidateSelection() ) );
+
+	m_matchCount->setText( i18np( "1 matching user found", "%1 matching users found", m_proxyModel->rowCount() ) );
 	// if there was only one hit, select it
 	if ( searchResults.count() == 1 )
 	{
@@ -372,20 +395,15 @@ void GroupWiseContactSearch::slotGotSearchResults()
 		rowSelection.select( m_model->index( 0, 0, QModelIndex() ), m_model->index(0, 3, QModelIndex() ) );
 		selectionModel->select( rowSelection, QItemSelectionModel::Select );
 	}
-
-	//	slotValidateSelection();
 }
 
 Q3ValueList< GroupWise::ContactDetails > GroupWiseContactSearch::selectedResults()
 {
-    Q3ValueList< GroupWise::ContactDetails > lst;
-	/*
-    Q3ListViewItemIterator it( m_results );
-    while ( it.current() ) {
-        if ( it.current()->isSelected() )
-            lst.append( static_cast< GWSearchResultsLVI * >( it.current() )->m_details );
-        ++it;
-    }*/
+	Q3ValueList< GroupWise::ContactDetails> lst;
+	foreach( QModelIndex index, m_results->selectionModel()->selectedRows() )
+	{
+		lst.append( detailsAtIndex( index ) );
+	}
 	return lst;
 }
 
@@ -405,41 +423,9 @@ unsigned char GroupWiseContactSearch::searchOperation( int comboIndex )
 
 void GroupWiseContactSearch::slotValidateSelection()
 {
-	/*j
-	bool ok = false;
-	// if we only allow online contacts to be selected
-	if ( m_onlineOnly )
-	{
-		// check that one of the selected items is online
-		Q3ListViewItemIterator it( m_results );
-		while ( it.current() )
-		{
-			if ( it.current()->isSelected() && 
-					!( static_cast< GWSearchResultsLVI * >( it.current() )->m_status == 1 ) )
-			{
-				ok = true;
-				break;
-			}
-			++it;
-		}
-	}
-	else
-	{
-		// check that at least one item is selected
-		Q3ListViewItemIterator it( m_results );
-		while ( it.current() )
-		{
-			if ( it.current()->isSelected() )
-			{
-				ok = true;
-				break;
-			}
-			++it;
-		}
-    }
-
-	emit selectionValidates( ok );
-	*/
+	int selectedCount = m_results->selectionModel()->selectedRows().count();
+	m_details->setEnabled( selectedCount == 1 );
+	emit selectionValidates( selectedCount != 0 );
 }
 
 #include "gwsearch.moc"

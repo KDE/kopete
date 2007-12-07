@@ -56,7 +56,7 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 	QVBoxLayout * layout = new QVBoxLayout( this );
 	if (owner->isConnected ())
 	{
-		m_searchUI = new GroupWiseContactSearch( m_account, Q3ListView::Single, false,
+		m_searchUI = new GroupWiseContactSearch( m_account, QAbstractItemView::SingleSelection, false,
 				 this );
 		layout->addWidget( m_searchUI );
 		m_canadd = true;

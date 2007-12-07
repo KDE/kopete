@@ -39,7 +39,7 @@ class GroupWiseContactSearch : public QWidget, public Ui::GroupWiseContactSearch
 {
 Q_OBJECT
 public:
-	GroupWiseContactSearch( GroupWiseAccount * account, Q3ListView::SelectionMode mode, bool onlineOnly, 
+	GroupWiseContactSearch( GroupWiseAccount * account, QAbstractItemView::SelectionMode mode, bool onlineOnly, 
 			QWidget *parent = 0 );
 	virtual ~GroupWiseContactSearch();
 	Q3ValueList< GroupWise::ContactDetails > selectedResults();
@@ -55,10 +55,10 @@ protected slots:
 	void slotShowDetails();
 	void slotValidateSelection();
 private:
+	GroupWise::ContactDetails detailsAtIndex( const QModelIndex & ) const;
 	GroupWiseContactSearchModel * m_model;
 	GroupWiseContactSearchSortProxyModel * m_proxyModel;
 	GroupWiseAccount * m_account;
-	bool m_onlineOnly;
 };
 
 #endif
