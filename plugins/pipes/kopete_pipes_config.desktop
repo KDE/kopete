@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=pipe
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-Library=kcm_kopete_pipes
+X-KDE-FactoryName=kcm_kopete_pipes
+X-KDE-ParentApp=kopete_pipes
+X-KDE-ParentComponents=kopete_pipes
+
+Name=Pipes
+Comment=Pipe messages through an external program or script
