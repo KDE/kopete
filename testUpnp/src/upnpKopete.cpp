@@ -143,9 +143,9 @@ void UpnpKopete::addXMLDescDoc (IXML_Document * DescDoc, char *location)
 	}
 }
 
-void  UpnpKopete::viewXMLDescDoc()
+QList<char *>  UpnpKopete::viewXMLDescDoc()
 {
-	char * chaine="";
+	QList<char *> chaine;
 	DocXML tmp;
 	this->ListDescDoc.begin();
 	printf("size %d\n",this->ListDescDoc.size());
@@ -153,8 +153,9 @@ void  UpnpKopete::viewXMLDescDoc()
 	{	
 		tmp = this->ListDescDoc.last();
 		printf("tmp.location %s\n",tmp.location);
-
+		chaine.append(tmp.location);
 	}
+	return chaine;
 
 }
 

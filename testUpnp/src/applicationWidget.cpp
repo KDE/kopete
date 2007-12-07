@@ -1,4 +1,5 @@
 #include "applicationWidget.h"
+#include <QList> 
 
 ApplicationWidget::ApplicationWidget(QWidget *parent): QMainWindow(parent)
 {
@@ -21,8 +22,9 @@ void ApplicationWidget::afficher()
 void ApplicationWidget::envoyer()
 {
 	int ret;
-	
+	char * tmp;
 	ret = this->upnp->researchDevice();
+	text_mess->append("######################################");
 	text_mess->append("Research Device ...");
 	
 	if(ret != 0)
@@ -30,7 +32,14 @@ void ApplicationWidget::envoyer()
 		printf("Error research device %d\n",ret);
 		UpnpFinish();
 	} 
-	this->upnp->viewXMLDescDoc();
+	QList<char *> liste = this->upnp->viewXMLDescDoc();
+	for(int i =0; i < liste.size(); i++)
+	{	
+		tmp = liste.last();
+		text_mess->append("Device location :");
+		text_mess->append(tmp);
+	}	
+	text_mess->append("######################################");
 	
 }
 

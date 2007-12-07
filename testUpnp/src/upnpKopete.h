@@ -53,7 +53,7 @@ class UpnpKopete
 		int researchDevice();
 		void addDevice(IXML_Document * DescDoc,char *location);
 		void addXMLDescDoc (IXML_Document * DescDoc, char *location);
-		void viewXMLDescDoc();
+		QList<char *> viewXMLDescDoc();
 		
 		//int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Cookie );
 
