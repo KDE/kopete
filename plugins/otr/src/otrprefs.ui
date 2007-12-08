@@ -9,9 +9,6 @@
     <height>393</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Form1</string>
-  </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <widget class="QTabWidget" name="twSettings" >
@@ -33,9 +30,6 @@
            <widget class="QPushButton" name="btGenFingerprint" >
             <property name="text" >
              <string>&amp;Generate</string>
-            </property>
-            <property name="shortcut" >
-             <string>Alt+G</string>
             </property>
            </widget>
           </item>
@@ -92,9 +86,6 @@
             <property name="text" >
              <string>Al&amp;ways</string>
             </property>
-            <property name="shortcut" >
-             <string>Alt+W</string>
-            </property>
             <property name="checked" >
              <bool>false</bool>
             </property>
@@ -107,9 +98,6 @@
             </property>
             <property name="text" >
              <string>&amp;Manual</string>
-            </property>
-            <property name="shortcut" >
-             <string>Alt+M</string>
             </property>
             <property name="checked" >
              <bool>false</bool>
@@ -124,9 +112,6 @@
             <property name="text" >
              <string>&amp;Opportunistic</string>
             </property>
-            <property name="shortcut" >
-             <string>Alt+O</string>
-            </property>
            </widget>
           </item>
           <item row="1" column="1" >
@@ -136,9 +121,6 @@
             </property>
             <property name="text" >
              <string>Ne&amp;ver</string>
-            </property>
-            <property name="shortcut" >
-             <string>Alt+V</string>
             </property>
            </widget>
           </item>
@@ -184,9 +166,6 @@
          <property name="text" >
           <string>&amp;Verify Fingerprint</string>
          </property>
-         <property name="shortcut" >
-          <string>Alt+V</string>
-         </property>
         </widget>
        </item>
        <item row="1" column="1" >
@@ -196,9 +175,6 @@
          </property>
          <property name="text" >
           <string>F&amp;orget Fingerprint</string>
-         </property>
-         <property name="shortcut" >
-          <string>Alt+O</string>
          </property>
         </widget>
        </item>
