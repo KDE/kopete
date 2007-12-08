@@ -237,7 +237,7 @@ void KopeteEmailWindow::initActions(void)
         coll->addAction( "format_color", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setForegroundColorColor()) );
 
-	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll );
+	action = new KAction( KIcon("color-fill"), i18n( "Set &Background Color..." ), coll );
         coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBackgroundColorColor()) );
 

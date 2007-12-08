@@ -427,7 +427,7 @@ void KopeteChatWindow::initActions(void)
         coll->addAction( "format_fgcolor", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFgColor()) );
 
-	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll );
+	action = new KAction( KIcon("color-fill"), i18n( "Set &Background Color..." ), coll );
         coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), this, SLOT(slotSetBgColor()) );
 
