@@ -31,17 +31,19 @@ PipesConfig * PipesConfig::self ()
 
 PipesPlugin::PipeOptionsList PipesConfig::pipes ()
 {
-	if ( ! mPipesList.count() )
-		load();
-	return mPipesList;
+	if (!mSelf)
+		mSelf = new PipesConfig();
+	return mSelf->mPipesList;
 }
 
 void PipesConfig::setPipes ( PipesPlugin::PipeOptionsList pipes )
 {
-	mPipesList = pipes;
+	if (!mSelf)
+		mSelf = new PipesConfig();
+	mSelf->mPipesList = pipes;
 }
 
-void PipesConfig::sync ()
+void PipesConfig::save ()
 {
 	KConfigGroup config (KGlobal::config(), "PipesPlugin_Pipes");
 	config.deleteGroup();

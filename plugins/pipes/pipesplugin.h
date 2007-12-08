@@ -64,14 +64,10 @@ class PipesPlugin : public Kopete::Plugin
 		typedef QList<PipeOptions> PipeOptionsList;
 
 	public:
+		static PipesPlugin* plugin();
+		
 		PipesPlugin ( QObject *parent, const QVariantList &args );
 		~PipesPlugin();
-		
-	public slots:
-		/*
-		* Load pipes config from file; identified by QUuid.
-		*/
-		void loadSettings();
 
 	private slots:
 		/*
@@ -107,6 +103,7 @@ class PipesPlugin : public Kopete::Plugin
 		static void readXml ( PipeOptions, Kopete::Message &, const QString & );
 
 	private:
+		static PipesPlugin* mPluginStatic;
 		PipeOptionsList mPipesList;
 		Kopete::SimpleMessageHandlerFactory * mInboundHandler;
 

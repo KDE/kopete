@@ -65,15 +65,16 @@ PipesPreferences::~PipesPreferences()
 
 void PipesPreferences::load()
 {
-	mModel->setPipes (PipesConfig::self()->pipes());
+	PipesConfig::self()->load();
+	mModel->setPipes (PipesConfig::pipes());
 
 	emit KCModule::changed(false);
 }
 
 void PipesPreferences::save()
 {
-	PipesConfig::self()->setPipes (mModel->pipes());
-	PipesConfig::self()->sync();
+	PipesConfig::setPipes (mModel->pipes());
+	PipesConfig::self()->save();
 
 	emit KCModule::changed(false);
 }

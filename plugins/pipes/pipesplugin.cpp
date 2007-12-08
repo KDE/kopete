@@ -43,6 +43,9 @@ K_EXPORT_PLUGIN ( PipesPluginFactory ( "kopete_pipes" ) )
 PipesPlugin::PipesPlugin ( QObject *parent, const QVariantList &/*args*/ )
 		: Kopete::Plugin ( PipesPluginFactory::componentData(), parent )
 {
+	if( !mPluginStatic )
+		mPluginStatic = this;
+	
 	// intercept inbound messages
 	mInboundHandler = new Kopete::SimpleMessageHandlerFactory ( Kopete::Message::Inbound,
 	        Kopete::MessageHandlerFactory::InStageToDesired, this, SLOT ( slotIncomingMessage ( Kopete::Message& ) ) );
@@ -50,24 +53,26 @@ PipesPlugin::PipesPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	connect ( Kopete::ChatSessionManager::self(),
 	          SIGNAL ( aboutToSend ( Kopete::Message & ) ),
 	          SLOT ( slotOutgoingMessage ( Kopete::Message & ) ) );
-
-	loadSettings();
 }
 
 PipesPlugin::~PipesPlugin()
 {
 	delete mInboundHandler;
+	mPluginStatic = 0;
 }
 
-void PipesPlugin::loadSettings()
+PipesPlugin * PipesPlugin::plugin()
 {
-	mPipesList = PipesConfig::self()->pipes();
+	return mPluginStatic;
 }
+
+PipesPlugin* PipesPlugin::mPluginStatic = 0L;
 
 void PipesPlugin::slotIncomingMessage ( Kopete::Message & msg )
 {
+	PipesConfig::self()->load();
 	// for each pipe, run it if it is enabled and set for this direction
-	foreach ( PipeOptions pipeOptions, PipesConfig::self()->pipes() )
+	foreach ( PipeOptions pipeOptions, PipesConfig::pipes() )
 	{
 		if ( ! pipeOptions.enabled )
 			continue;
@@ -80,8 +85,9 @@ void PipesPlugin::slotIncomingMessage ( Kopete::Message & msg )
 
 void PipesPlugin::slotOutgoingMessage ( Kopete::Message & msg )
 {
+	PipesConfig::self()->load();
 	// for each pipe, run it if it is enabled and set for this direction
-	foreach ( PipeOptions pipeOptions, PipesConfig::self()->pipes() )
+	foreach ( PipeOptions pipeOptions, PipesConfig::pipes() )
 	{
 		if ( ! pipeOptions.enabled )
 			continue;
