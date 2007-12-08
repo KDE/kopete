@@ -423,7 +423,7 @@ void KopeteChatWindow::initActions(void)
         coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFont()) );
 
-	action = new KAction( KIcon("pencil"), i18n( "Set Default Text &Color..." ), coll );
+	action = new KAction( KIcon("draw-freehand"), i18n( "Set Default Text &Color..." ), coll );
         coll->addAction( "format_fgcolor", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFgColor()) );
 

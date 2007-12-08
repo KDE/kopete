@@ -233,7 +233,7 @@ void KopeteEmailWindow::initActions(void)
         coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), d->editPart, SLOT(setFont()) );
 
-	action = new KAction( KIcon("pencil"), i18n( "Set Text &Color..." ), coll );
+	action = new KAction( KIcon("draw-freehand"), i18n( "Set Text &Color..." ), coll );
         coll->addAction( "format_color", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setForegroundColorColor()) );
 
