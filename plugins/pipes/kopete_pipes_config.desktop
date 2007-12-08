@@ -10,4 +10,8 @@ X-KDE-ParentApp=kopete_pipes
 X-KDE-ParentComponents=kopete_pipes
 
 Name=Pipes
+Name[pt]=Canais
+Name[sv]=Skicka genom
 Comment=Pipe messages through an external program or script
+Comment[pt]=Encaminhar as mensagens por um programa externo
+Comment[sv]=Skicka meddelanden genom ett externt program eller skript
