@@ -5,203 +5,82 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>423</width>
-    <height>442</height>
+    <width>478</width>
+    <height>331</height>
    </rect>
   </property>
+  <property name="minimumSize" >
+   <size>
+    <width>400</width>
+    <height>300</height>
+   </size>
+  </property>
   <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <widget class="QTabWidget" name="tabAvatar" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="MinimumExpanding" hsizetype="Expanding" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+   <item row="0" column="0" colspan="3" >
+    <widget class="QListWidget" name="listUserAvatar" >
+     <property name="showDropIndicator" stdset="0" >
+      <bool>false</bool>
      </property>
-     <property name="currentIndex" >
-      <number>1</number>
+     <property name="dragDropMode" >
+      <enum>QAbstractItemView::NoDragDrop</enum>
      </property>
-     <widget class="QWidget" name="tabUser" >
-      <attribute name="title" >
-       <string>User</string>
-      </attribute>
-      <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>9</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="0" >
-        <widget class="QListWidget" name="listUserAvatar" >
-         <property name="alternatingRowColors" >
-          <bool>true</bool>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>64</width>
-           <height>64</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabContacts" >
-      <attribute name="title" >
-       <string>Contacts</string>
-      </attribute>
-      <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>9</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="0" >
-        <widget class="QListWidget" name="listUserContact" >
-         <property name="alternatingRowColors" >
-          <bool>true</bool>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>64</width>
-           <height>64</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <property name="alternatingRowColors" >
+      <bool>false</bool>
+     </property>
+     <property name="selectionBehavior" >
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>96</width>
+       <height>96</height>
+      </size>
+     </property>
+     <property name="textElideMode" >
+      <enum>Qt::ElideNone</enum>
+     </property>
+     <property name="movement" >
+      <enum>QListView::Static</enum>
+     </property>
+     <property name="resizeMode" >
+      <enum>QListView::Adjust</enum>
+     </property>
+     <property name="layoutMode" >
+      <enum>QListView::Batched</enum>
+     </property>
+     <property name="viewMode" >
+      <enum>QListView::IconMode</enum>
+     </property>
+     <property name="uniformItemSizes" >
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
-   <item row="0" column="1" >
-    <layout class="QVBoxLayout" >
-     <item>
-      <widget class="QGroupBox" name="groupBox" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="title" >
-        <string>Current avatar</string>
-       </property>
-       <layout class="QGridLayout" >
-        <property name="leftMargin" >
-         <number>9</number>
-        </property>
-        <property name="topMargin" >
-         <number>9</number>
-        </property>
-        <property name="rightMargin" >
-         <number>9</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>9</number>
-        </property>
-        <property name="horizontalSpacing" >
-         <number>6</number>
-        </property>
-        <property name="verticalSpacing" >
-         <number>6</number>
-        </property>
-        <item row="0" column="0" >
-         <widget class="QLabel" name="labelAvatarImage" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize" >
-           <size>
-            <width>96</width>
-            <height>96</height>
-           </size>
-          </property>
-          <property name="maximumSize" >
-           <size>
-            <width>96</width>
-            <height>96</height>
-           </size>
-          </property>
-          <property name="baseSize" >
-           <size>
-            <width>96</width>
-            <height>96</height>
-           </size>
-          </property>
-          <property name="autoFillBackground" >
-           <bool>true</bool>
-          </property>
-          <property name="frameShape" >
-           <enum>QFrame::Box</enum>
-          </property>
-          <property name="scaledContents" >
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="buttonAddAvatar" >
-       <property name="text" >
-        <string>Add Avatar...</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="buttonRemoveAvatar" >
-       <property name="text" >
-        <string>Remove Avatar</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+   <item row="1" column="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>131</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
-   <item row="1" column="0" colspan="2" >
-    <widget class="KTitleWidget" name="labelErrorMessage" >
+   <item row="1" column="0" >
+    <widget class="QPushButton" name="buttonAddAvatar" >
+     <property name="text" >
+      <string>Add Avatar...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QPushButton" name="buttonRemoveAvatar" >
+     <property name="text" >
+      <string>Remove Avatar</string>
+     </property>
     </widget>
    </item>
   </layout>

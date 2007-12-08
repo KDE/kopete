@@ -71,7 +71,6 @@
 #include <kicon.h>
 
 // Kopete includes
-#include "chatmemberslistwidget.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetechatwindow.h"
@@ -232,8 +231,9 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( this, SIGNAL(popupMenu(const QString &, const QPoint &)),
 	         this, SLOT(slotRightClick(const QString &, const QPoint &)) );
-	connect( view()->horizontalScrollBar(), SIGNAL(sliderMoved(int)),
-	         this, SLOT(slotScrollingTo(int)) );
+	// FIXME no longer compiles
+	//connect( view()->horizontalScrollBar(), SIGNAL(sliderMoved(int)),
+	//         this, SLOT(slotScrollingTo(int)) );
 
 	//initActions
 	d->copyAction = KStandardAction::copy( this, SLOT(copy()), actionCollection() );
@@ -369,7 +369,7 @@ void ChatMessagePart::setStyleVariant( const QString &variantPath )
 {
 	DOM::HTMLElement variantNode = document().getElementById( QString("mainStyle") );
 	if( !variantNode.isNull() )
-		variantNode.setInnerText( QString("@import url(\"%1\");").arg(variantPath) );
+		variantNode.setInnerText( QString("@import url(\"%1\");").arg( adjustStyleVariantForChatSession( variantPath) ) );
 }
 
 void ChatMessagePart::slotAppearanceChanged()
@@ -734,7 +734,7 @@ void ChatMessagePart::slotScrollView()
 void ChatMessagePart::copy(bool justselection /* default false */)
 {
 	/*
-	* The objective of this function is to keep the text of emoticons (or of latex image) when copying.
+	* The objective of this function is to keep the text of emoticons (or of LaTeX image) when copying.
 	*   see Bug 61676
 	* This also copies the text as type text/html
 	* RangeImpl::toHTML  was not implemented before KDE 3.4
@@ -1176,7 +1176,7 @@ void ChatMessagePart::writeTemplate()
 		).arg( d->currentChatStyle->getStyleBaseHref() )
 		.arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
 		.arg( formatStyleKeywords(d->currentChatStyle->getFooterHtml()) )
-		.arg( KopeteChatWindowSettings::self()->styleVariant() )
+		.arg( adjustStyleVariantForChatSession( KopeteChatWindowSettings::self()->styleVariant() ) )
 		.arg( styleHTML() );
 	write(xhtmlBase);
 	end();
@@ -1185,6 +1185,14 @@ void ChatMessagePart::writeTemplate()
 #endif
 }
 
+QString ChatMessagePart::adjustStyleVariantForChatSession( const QString & styleVariant ) const
+{
+	if ( d->manager->form() == Kopete::ChatSession::Chatroom
+			&& KopeteChatWindowSettings::self()->useCompact() ) {
+		return d->currentChatStyle->compact( styleVariant );
+	}
+	return styleVariant;
+}
 #include "chatmessagepart.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

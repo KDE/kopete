@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>552</width>
-    <height>530</height>
+    <width>578</width>
+    <height>546</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,16 +17,16 @@
     <number>6</number>
    </property>
    <property name="leftMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="topMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="rightMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget7" >
@@ -128,7 +128,7 @@
              <bool>true</bool>
             </property>
             <property name="whatsThis" >
-             <string>If you check that case, the account will not be connected when you press the "Connect All" button, or at startup even if you selected to automatically connect at startup</string>
+             <string>If you enable this option, this account will not be connected when you press the "Connect All" button, nor at startup even if you have enabled automaic connection at startup.</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
@@ -139,7 +139,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2" >
+        <widget class="QGroupBox" name="registrationGroupBox" >
          <property name="title" >
           <string>Registration</string>
          </property>
@@ -196,7 +196,7 @@ If you do not currently have an ICQ account, please click the button to create o
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_5" >
+        <widget class="QGroupBox" name="changePasswordGroupBox" >
          <property name="title" >
           <string>Change password</string>
          </property>
@@ -259,7 +259,7 @@ If you do not currently have an ICQ account, please click the button to create o
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -452,10 +452,10 @@ If you do not currently have an ICQ account, please click the button to create o
           <item>
            <widget class="QCheckBox" name="chkRequireAuth" >
             <property name="toolTip" >
-             <string>Enable authorization requirement, which will not allow users to add you to their contact list without authorization from you.</string>
+             <string>Enable the authorization requirement, which will not allow users to add you to their contact list without authorization from you.</string>
             </property>
             <property name="whatsThis" >
-             <string>Enable authorization requirement, which will not allow users to add you to their contact list without authorization from you.  Check this box, and you will have to confirm any users who add you to their list before they may see your online status.</string>
+             <string>Enable the authorization requirement, which will not allow users to add you to their contact list without authorization from you.  Check this box, and you will have to confirm any users who add you to their list before they may see your online status.</string>
             </property>
             <property name="text" >
              <string>&amp;Require authorization before someone can add you to their contact list</string>
@@ -465,7 +465,7 @@ If you do not currently have an ICQ account, please click the button to create o
           <item>
            <widget class="QCheckBox" name="chkRespectRequireAuth" >
             <property name="text" >
-             <string>Respect other contacts' &amp;wish to require authorization</string>
+             <string>Respect other contacts' authori&amp;zation requirement</string>
             </property>
            </widget>
           </item>
@@ -475,7 +475,7 @@ If you do not currently have an ICQ account, please click the button to create o
              <string>Check this to hide your IP address from people when they view your user info</string>
             </property>
             <property name="whatsThis" >
-             <string>Checking this box will not allow people to see what your IP address if they view your ICQ user details such as name, address, or age.</string>
+             <string>Checking this box prevent people from seeing your IP address if they view your ICQ user details such as name, address, or age.</string>
             </property>
             <property name="text" >
              <string>Hide &amp;IP address</string>
@@ -541,9 +541,6 @@ If you do not currently have an ICQ account, please click the button to create o
             </property>
             <item>
              <widget class="QLabel" name="lblPort" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
               <property name="toolTip" >
                <string>The ports to use for direct connections.</string>
               </property>
@@ -560,9 +557,6 @@ If you do not currently have an ICQ account, please click the button to create o
             </item>
             <item>
              <widget class="QSpinBox" name="sbxFirstPort" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
               <property name="toolTip" >
                <string>The start of the port range.</string>
               </property>
@@ -582,9 +576,6 @@ If you do not currently have an ICQ account, please click the button to create o
             </item>
             <item>
              <widget class="QSpinBox" name="sbxLastPort" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
               <property name="toolTip" >
                <string>The end of the port range.</string>
               </property>
@@ -636,9 +627,6 @@ If you do not currently have an ICQ account, please click the button to create o
             </property>
             <item>
              <widget class="QLabel" name="lblTimeout" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
               <property name="toolTip" >
                <string>Timeout for direct connections.</string>
               </property>
@@ -655,9 +643,6 @@ If you do not currently have an ICQ account, please click the button to create o
             </item>
             <item>
              <widget class="QSpinBox" name="sbxTimeout" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
               <property name="toolTip" >
                <string>Timeout for direct connections.</string>
               </property>
@@ -711,24 +696,24 @@ If you do not currently have an ICQ account, please click the button to create o
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="encodingCombo" >
-           <property name="enabled" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" >
             <size>
-             <width>40</width>
+             <width>10</width>
              <height>20</height>
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="encodingCombo" >
+           <property name="enabled" >
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -743,7 +728,7 @@ If you do not currently have an ICQ account, please click the button to create o
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -966,7 +951,7 @@ If you do not currently have an ICQ account, please click the button to create o
  <customwidgets>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>kopetepasswordwidget.h</header>
   </customwidget>
  </customwidgets>

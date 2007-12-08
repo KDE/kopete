@@ -82,6 +82,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		userInfoView=0L;
 		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
+		l->setContentsMargins( 0, 0, 0, 0 );
 		userInfoEdit = new KTextEdit(QString(), mMainWidget->userInfoFrame);
 
 		AIMMyselfContact* aimmc = dynamic_cast<AIMMyselfContact*>( c );
@@ -99,6 +100,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		userInfoEdit=0L;
 		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
+		l->setContentsMargins( 0, 0, 0, 0 );
 		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame);
 		userInfoView->setObjectName("userInfoView");
 		userInfoView->setNotifyClick(true);

@@ -26,7 +26,6 @@
 
 ICQTlvInfoRequestTask::ICQTlvInfoRequestTask( Task* parent ) : ICQTask( parent )
 {
-	m_goSequence = 0;
 	m_type = Short;
 }
 
@@ -48,7 +47,7 @@ bool ICQTlvInfoRequestTask::forMe( const Transfer* transfer ) const
 	const_cast<ICQTlvInfoRequestTask*>( this )->parseInitialData( buf );
 
 	if ( requestType() == 0x07DA && requestSubType() == 0x0FB4
-	     && m_goSequence == sequence() )
+	     && m_contactSequenceMap.contains( sequence() ) )
 		return true;
 
 	return false;
@@ -87,8 +86,7 @@ void ICQTlvInfoRequestTask::onGo()
 {
 	kDebug(OSCAR_RAW_DEBUG) << "Requsting full TLV user info for: " << m_userToRequestFor;
 
-	m_goSequence = client()->snacSequence();
-	setSequence( m_goSequence );
+	setSequence( client()->snacSequence() );
 	setRequestType( 0x07D0 );
 	setRequestSubType( 0x0FA0 );
 

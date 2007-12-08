@@ -1,7 +1,8 @@
 /*
     kopeteidentity.cpp - Kopete Identity
 
-    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kemail.net>
+    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+              (c) 2007         Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -27,6 +28,8 @@
 #include <KGlobal>
 #include <KSharedConfigPtr>
 #include <KLocale>
+#include <KRandom>
+#include <KMenu>
 
 #include <kdeversion.h>
 
@@ -36,39 +39,45 @@ namespace Kopete
 class Identity::Private
 {
 public:
-	Private(const QString &i) : onlineStatus( OnlineStatus::Unknown ) 
+	Private(const QString &i, const QString &l) : onlineStatus( OnlineStatus::Unknown )
 	{
 		id = i;
+		label = l;
 		configGroup = new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Identity_%1" ).arg( id ));
 	}
 	QList<Kopete::Account*> accounts;
 	QString id;
+	QString label;
 	KConfigGroup *configGroup;
 	OnlineStatus::StatusType onlineStatus;
+	QString statusMessage;
 };
 
-Identity::Identity(const QString &id)
+Identity::Identity( const QString &id, const QString &label )
+	: d( new Private(id, label) )
 {
-	d = new Private(id);
 	load();
-	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
-			this, SLOT(slotSaveProperty(PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
+	connect(this, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
+			this, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
 }
 
-Identity::Identity(const QString &id, Identity &existing)
+Identity::Identity(const QString &label)
+: d( new Private(KRandom::randomString(10), label) )
 {
-	d = new Private(id);
+	connect(this, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
+	        this, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
+}
 
+Identity * Identity::clone() const
+{
+	Identity * id = new Identity( label() );
 	QMap<QString,QString> props;
-	
-	//read properties from the existing identity
-	existing.serializeProperties(props);
+	serializeProperties( props );
+	id->deserializeProperties( props );
 
-	//write them in this identity
-	deserializeProperties(props);	
-
-	connect(this, SIGNAL(propertyChanged(PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
-			this, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
+	connect(id, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
+			id, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
+	return id;
 }
 
 Identity::~Identity()
@@ -79,9 +88,19 @@ Identity::~Identity()
 	delete d;
 }
 
-QString Identity::identityId() const
+QString Identity::id() const
 {
 	return d->id;
+}
+
+QString Identity::label() const
+{
+	return d->label;
+}
+
+void Identity::setLabel(const QString& label)
+{
+	d->label = label;
 }
 
 bool Identity::excludeConnect() const
@@ -94,6 +113,7 @@ void Identity::setOnlineStatus( uint category, const QString &awayMessage )
 {
 	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
 
+	d->statusMessage = awayMessage;
 	foreach( Account *account ,  d->accounts )
 	{
 		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor);
@@ -107,6 +127,11 @@ OnlineStatus::StatusType Identity::onlineStatus() const
 	return d->onlineStatus;
 }
 
+QString Identity::statusMessage() const
+{
+	return d->statusMessage;
+}
+
 QString Identity::toolTip() const
 {
 
@@ -116,11 +141,11 @@ QString Identity::toolTip() const
 	if ( hasProperty(Kopete::Global::Properties::self()->nickName().key()) )
 		nick = property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	else
-		nick = d->id;
+		nick = d->label;
 
 	tt+= i18nc( "Identity tooltip information: <nobr>ICON <b>NAME</b></nobr><br /><br />",
 				"<nobr><img src=\"kopete-identity-icon:%1\"> <b>%2</b></nobr><br /><br />",
-				QString(QUrl::toPercentEncoding( d->id )), nick );
+				QString(QUrl::toPercentEncoding( d->label )), nick );
 
 	foreach(Account *a, d->accounts)
 	{
@@ -137,29 +162,12 @@ QString Identity::toolTip() const
 
 QString Identity::customIcon() const
 {
-	//TODO implement
-	return "identity";
+	if (hasProperty( Kopete::Global::Properties::self()->photo().key() ))
+		return property(Kopete::Global::Properties::self()->photo()).value().toString();
+	else
+		return "user";
 }
 
-
-KActionMenu* Identity::actionMenu()
-{
-	//TODO check what layout we want to have for this menu
-	// for now if there is only on account, return the account menu
-	if (d->accounts.count() == 1)
-		return d->accounts.first()->actionMenu();
-
-	// if there is more than one account, add them as submenus of this identity menu
-	KActionMenu *menu = new KActionMenu(d->id, this);
-
-	foreach(Account *account, d->accounts)
-	{
-		KActionMenu *accountMenu = account->actionMenu();
-		accountMenu->setIcon( account->myself()->onlineStatus().iconFor(account->myself()) );
-		menu->addAction( accountMenu );
-	}
-	return menu;
-}
 
 QList<Account*> Identity::accounts() const
 {
@@ -173,10 +181,14 @@ void Identity::addAccount( Kopete::Account *account )
 		return;
 
 	d->accounts.append( account );
+
+	connect( account->myself(),
+			SIGNAL(onlineStatusChanged(Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),
+			this, SLOT(updateOnlineStatus()));
 	connect(account, SIGNAL(accountDestroyed(const Kopete::Account*)),
 			this, SLOT(removeAccount(const Kopete::Account*)));
-	//TODO implement the signals for status changes and so
-	
+
+	updateOnlineStatus();
 	emit identityChanged( this );
 }
 
@@ -186,9 +198,9 @@ void Identity::removeAccount( const Kopete::Account *account )
 	if ( !d->accounts.contains( a ) )
 		return;
 
-	//TODO disconnect signals and so on
+	disconnect( account );
 	d->accounts.removeAll( a );
-	
+	updateOnlineStatus();
 	emit identityChanged( this );
 }
 
@@ -233,14 +245,19 @@ void Identity::updateOnlineStatus()
 	newStatus = mostSignificantStatus.status();
 	if( newStatus != d->onlineStatus )
 	{
-		emit onlineStatusChanged( this, d->onlineStatus, newStatus );
 		d->onlineStatus = newStatus;
+		emit onlineStatusChanged( this );
 	}
 }
 
-void Identity::slotSaveProperty( PropertyContainer *container, const QString &key,
+void Identity::slotSaveProperty( Kopete::PropertyContainer *container, const QString &key,
 		                const QVariant &oldValue, const QVariant &newValue )
 {
+	if ( !newValue.isValid() ) // the property was removed, remove the config entry also
+	{
+		QString cfgGrpKey = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(oldValue.typeName()), key );
+		d->configGroup->deleteEntry(cfgGrpKey);
+	}
 	save();
 }
 

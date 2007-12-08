@@ -597,11 +597,11 @@ GaduSession::stateDescription( int state )
 		case GG_STATE_READING_HEADER:
 			return i18n( "reading header" );
 		case GG_STATE_PARSING:
-			return i18n( "parse data" );
+			return i18n( "parsing data" );
 		case GG_STATE_DONE:
 			return i18n( "done" );
 		case GG_STATE_TLS_NEGOTIATION:
-			return i18n( "Tls connection negotiation" );
+			return i18n( "TLS connection negotiation" );
 		default:
 			return i18n( "unknown" );
 	}
@@ -632,7 +632,7 @@ GaduSession::failureDescription( gg_failure_t f )
 		case GG_FAILURE_CONNECTING:
 			return i18n( "Unable to connect to server." );
 		case GG_FAILURE_INVALID:
-			return i18n( "Server send incorrect data. Protocol error." );
+			return i18n( "Server sent incorrect data. Protocol error." );
 		case GG_FAILURE_READING:
 			return i18n( "Problem reading data from server." );
 		case GG_FAILURE_WRITING:
@@ -642,7 +642,7 @@ GaduSession::failureDescription( gg_failure_t f )
 		case GG_FAILURE_404:
 			return QString::fromAscii( "404." );
 		case GG_FAILURE_TLS:
-			return i18n( "Unable to connect over encrypted channel.\nTry to turn off encryption support in Gadu account settings and reconnect." );
+			return i18n( "Unable to connect over an encrypted channel.\nTry to turn off encryption support in the Gadu account settings, then reconnect." );
 		default:
 			return i18n( "Unknown error number %1." , f );
 	}

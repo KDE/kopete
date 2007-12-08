@@ -19,10 +19,10 @@
    <item row="0" column="0" >
     <widget class="QLabel" name="lblComputerName" >
      <property name="toolTip" >
-      <string>The hostname of the computer for this contact.</string>
+      <string>The host name of this contact's computer.</string>
      </property>
      <property name="whatsThis" >
-      <string>The hostname of the computer for this contact.</string>
+      <string>The host name of this contact's computer.</string>
      </property>
      <property name="text" >
       <string>&amp;Computer name:</string>
@@ -41,7 +41,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <property name="text" >
-      <string>sComputerName</string>
+      <string>Computer Name</string>
      </property>
     </widget>
    </item>
@@ -68,10 +68,10 @@
    <item row="2" column="0" >
     <widget class="QLabel" name="textLabel2" >
      <property name="toolTip" >
-      <string>The workgroup or domain the contact's computer is on.</string>
+      <string>The workgroup or domain containing this contact's computer.</string>
      </property>
      <property name="whatsThis" >
-      <string>The workgroup or domain the contact's computer is on.</string>
+      <string>The workgroup or domain containing this contact's computer.</string>
      </property>
      <property name="text" >
       <string>&amp;Workgroup/domain:</string>
@@ -97,10 +97,10 @@
    <item row="3" column="0" >
     <widget class="QLabel" name="textLabel3" >
      <property name="toolTip" >
-      <string>The operating system the contact's computer is running.</string>
+      <string>The operating system running on this contact's computer.</string>
      </property>
      <property name="whatsThis" >
-      <string>The operating system the contact's computer is running.</string>
+      <string>The operating system running on this contact's computer.</string>
      </property>
      <property name="text" >
       <string>Operating s&amp;ystem:</string>
@@ -126,10 +126,10 @@
    <item row="4" column="0" >
     <widget class="QLabel" name="textLabel1" >
      <property name="toolTip" >
-      <string>The software the contact's computer is running.</string>
+      <string>The software running on this contact's computer.</string>
      </property>
      <property name="whatsThis" >
-      <string>The software the contact's computer is running.</string>
+      <string>The software running on this contact's computer.</string>
      </property>
      <property name="text" >
       <string>Ser&amp;ver software:</string>

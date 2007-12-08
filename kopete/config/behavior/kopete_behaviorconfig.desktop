@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Icon=configure
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_behaviorconfig
 X-KDE-FactoryName=kcm_kopete_behaviorconfig
@@ -19,6 +18,7 @@ Name[da]=Opførsel
 Name[de]=Verhalten
 Name[el]=Συμπεριφορά
 Name[en_GB]=Behaviour
+Name[eo]=Fenestrokonduto
 Name[es]=Comportamiento
 Name[et]=Käitumine
 Name[eu]=Portaera
@@ -37,12 +37,14 @@ Name[kk]=Қасиеттер
 Name[km]=ឥរិយាបថ
 Name[ko]=행동
 Name[lt]=Elgsena
+Name[lv]=Izturēšanās
 Name[mk]=Однесување
 Name[nb]=Oppførsel
 Name[nds]=Bedregen
 Name[ne]=व्यवहार
 Name[nl]=Gedrag
 Name[nn]=Åtferd
+Name[oc]=Compòrtament
 Name[pl]=Zachowanie
 Name[pt]=Comportamento
 Name[pt_BR]=Comportamento
@@ -66,16 +68,23 @@ Name[zh_TW]=行為
 Comment=Personalize Kopete's Behavior
 Comment[bg]=Настройване поведението на Kopete
 Comment[ca]=Personalitzeu el comportament del Kopete
+Comment[cs]=Přizpůsobení chování Kopete
 Comment[de]=Anpassung von Kopete an Ihre persönlichen Vorstellungen
 Comment[el]=Καθορίστε τη συμπεριφορά του Kopete
+Comment[eo]=Proprigi la konduton de Kopete
 Comment[es]=Personalice el comportamiento de Kopete
+Comment[et]=Kopete käitumise muutmine isikupärasesks
 Comment[fa]=شخصی‌سازی رفتار Kopete
 Comment[ga]=Tig Leat Kopete a Oiriúnú Duit Féin Anseo
 Comment[gl]=Aquí pode personalizar o comportamento de Kopete
 Comment[ja]=Kopete の挙動をカスタマイズ
 Comment[ko]=Kopete의 행동을 설정합니다
+Comment[lv]=Personalizēt Kopete izturēšanos
+Comment[nb]=Sett dine egne innstillinger i Kopete
+Comment[nds]=Kopete sien Bedregen topassen
 Comment[ne]=कोपेटको व्यवहारलाई अस्तित्व दिनुहोस्
 Comment[nl]=Het gedrag van Kopete instellen
+Comment[pl]=Tutaj możesz dostosować Kopete do osobistych preferencji
 Comment[pt]=Personalizar o Comportamento do Kopete
 Comment[pt_BR]=Personalizar o Comportamento do Kopete
 Comment[sv]=Personlig anpassning av Kopete
@@ -84,7 +93,7 @@ Comment[vi]=Tùy chỉnh Kopete theo ý thích
 Comment[x-test]=xxPersonalize Kopete's Behaviorxx
 Comment[zh_CN]=个性化 Kopete 的行为
 Comment[zh_TW]=將 Kopete 個人化
-DocPath=kopete/configure-dialog.html#configuring-behavior
+X-DocPath=kopete/configure-dialog.html#configuring-behavior
 
 
 

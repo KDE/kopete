@@ -111,6 +111,9 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 			QObject::connect( mGui->invisibleAdd, SIGNAL( clicked() ), m_invisibleEngine, SLOT( slotAdd() ) );
 			QObject::connect( mGui->invisibleRemove, SIGNAL( clicked() ), m_invisibleEngine, SLOT( slotRemove() ) );
 		}
+
+		// Hide the register UI if editing an existing account
+		mGui->registrationGroupBox->hide();
     }
 	QObject::connect( mGui->buttonRegister, SIGNAL( clicked() ), this, SLOT( slotOpenRegister() ) );
 

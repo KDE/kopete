@@ -134,6 +134,8 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 			QObject::connect( mAccountSettings->ignoreAdd, SIGNAL( clicked() ), m_ignoreEngine, SLOT( slotAdd() ) );
 			QObject::connect( mAccountSettings->ignoreRemove, SIGNAL( clicked() ), m_ignoreEngine, SLOT( slotRemove() ) );
 		}
+		// Hide the registration UI when editing an existing account
+		mAccountSettings->registrationGroupBox->hide();
 	}
 	else
 	{
@@ -143,6 +145,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
 		                              mProtocol->encodings(),
 		                              encodingId );
+		mAccountSettings->changePasswordGroupBox->hide();
 	}
 
 	if ( !mAccount || !mAccount->engine()->isActive() )
@@ -270,7 +273,7 @@ bool ICQEditAccountWidget::validateData()
 	
 	if( !bOk || uid == 0 || userId.isEmpty() )
 	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
-	 	                              i18n("<qt>You must enter a valid ICQ Nr.</qt>"), i18n("ICQ"));
+	 	                              i18n("<qt>You must enter a valid ICQ No.</qt>"), i18n("ICQ"));
 		return false;
 	}
 

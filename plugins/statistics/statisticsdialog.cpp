@@ -21,7 +21,6 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <q3textedit.h>
 #include <qcombobox.h>
 #include <qstring.h>
 #include <QTimeEdit>
@@ -29,7 +28,6 @@
 
 #include "kdialog.h"
 #include "klocale.h"
-#include "k3listview.h"
 #include "khtml_part.h"
 #include "kstandarddirs.h"
 #include "kdatepicker.h"
@@ -45,25 +43,29 @@
 
 StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db, QWidget* parent) : KDialog(parent), m_db(db), m_contact(contact)
 {
+	setAttribute (Qt::WA_DeleteOnClose, true);
+	setButtons (KDialog::Close);
 	setDefaultButton(KDialog::Close);
-	setCaption (i18n("Statistics for %1", contact->metaContact()->displayName()), Close);
+	setCaption (i18n("Statistics for %1", contact->metaContact()->displayName()));
 	QWidget * w = new QWidget (this);
 	dialogUi = new Ui::StatisticsWidgetUI();
 	dialogUi->setupUi(w);
 	setMainWidget(w);
 	
-	setMinimumWidth(640);
-	setMinimumHeight(400);
-	adjustSize();
 
 	KHBox *hbox = new KHBox(this);
 	
 	generalHTMLPart = new KHTMLPart(hbox);
 	connect ( generalHTMLPart->browserExtension(), SIGNAL( openUrlRequestDelayed( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ),
 			  this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ) );
+	generalHTMLPart->setJScriptEnabled(false);
+	generalHTMLPart->setJavaEnabled(false);
+	generalHTMLPart->setMetaRefreshEnabled(false);
+	generalHTMLPart->setPluginsEnabled(false);
+	generalHTMLPart->setOnlyLocalReferences(true);
 	
 	
-	dialogUi->tabWidget->addTab(hbox, i18n("General"));
+	dialogUi->tabWidget->insertTab(0, hbox, i18n("General"));
 	dialogUi->tabWidget->setCurrentIndex(0);
 	
 	dialogUi->timePicker->setTime(QTime::currentTime());
@@ -74,6 +76,9 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	setEscapeButton(Close);
 	
 	generatePageGeneral();
+	
+	resize( 800, 600 );
+
 }
 
 StatisticsDialog::~StatisticsDialog()
@@ -120,7 +125,7 @@ void StatisticsDialog::generatePageForMonth(const int monthOfYear)
 	
 	QStringList values2;
 	
-	for (uint i=0; i<values.count(); i+=3)
+	for (int i=0; i<values.count(); i+=3)
 	{
 		QDateTime dateTimeBegin;
 		dateTimeBegin.setTime_t(values[i+1].toInt());
@@ -142,7 +147,7 @@ void StatisticsDialog::generatePageForDay(const int dayOfWeek)
 	
 	QStringList values2;
 	
-	for (uint i=0; i<values.count(); i+=3)
+	for (int i=0; i<values.count(); i+=3)
 	{
 		QDateTime dateTimeBegin;
 		dateTimeBegin.setTime_t(values[i+1].toInt());
@@ -203,7 +208,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 	"<h3>%1</h3><hr>").arg(subTitle));
 	
 	generalHTMLPart->write(i18n("<div class=\"statgroup\"><b><a href=\"main:generalinfo\" title=\"General summary view\">General</a></b><br>"
-	"<span title=\"Select the a day or a month to view the stat for\"><b>Days: </b>"
+	"<span title=\"Select the day or month for which you want to view statistics\"><b>Days: </b>"
 	"<a href=\"dayofweek:1\">Monday</a>&nbsp;"
 	"<a href=\"dayofweek:2\">Tuesday</a>&nbsp;"
 	"<a href=\"dayofweek:3\">Wednesday</a>&nbsp;"
@@ -259,7 +264,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 		hoursOffline[i] = 0;
 	}
 		
-	for (uint i=0; i<values.count(); i+=3 /* because SELECT 3 columns */)
+	for (int i=0; i<values.count(); i+=3 /* because SELECT 3 columns */)
 	{
 		/* 	Here we try to interpret one database entry...
 			What's important here, is to not count two times the same hour for instance
@@ -395,7 +400,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 	// Some "total times"
 	generalHTMLPart->write(i18n("<div class=\"statgroup\">"));
 	generalHTMLPart->write(i18n("<b title=\"The total time I have been able to see %1 status\">"
-		"Total seen time :</b> %2 hour(s)<br>", m_contact->metaContact()->displayName(), stringFromSeconds(totalTime)));
+		"Total visible time :</b> %2 hour(s)<br>", m_contact->metaContact()->displayName(), stringFromSeconds(totalTime)));
 	generalHTMLPart->write(i18n("<b title=\"The total time I have seen %1 online\">"
 		"Total online time :</b> %2 hour(s)<br>", m_contact->metaContact()->displayName(), stringFromSeconds(totalOnlineTime)));
 	generalHTMLPart->write(i18n("<b title=\"The total time I have seen %1 away\">Total busy time :</b> %2 hour(s)<br>", m_contact->metaContact()->displayName(), stringFromSeconds(totalAwayTime)));
@@ -414,7 +419,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 	
 		generalHTMLPart->write(QString("<div class=\"statgroup\">"));
 		generalHTMLPart->write(i18n("<b title=\"The last time you talked with %1\">Last talk :</b> %2<br>", m_contact->metaContact()->displayName(), KGlobal::locale()->formatDateTime(m_contact->lastTalk())));
-		generalHTMLPart->write(i18n("<b title=\"The last time I have seen %1 online or away\">Last time contact was present :</b> %2", m_contact->metaContact()->displayName(), KGlobal::locale()->formatDateTime(m_contact->lastPresent())));
+		generalHTMLPart->write(i18n("<b title=\"The last time I have seen %1 online or away\">Last time present :</b> %2", m_contact->metaContact()->displayName(), KGlobal::locale()->formatDateTime(m_contact->lastPresent())));
 		generalHTMLPart->write(QString("</div>"));
 
 		//generalHTMLPart->write(QString("<div class=\"statgroup\">"));

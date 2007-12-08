@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
     <horstretch>255</horstretch>
     <verstretch>255</verstretch>
    </sizepolicy>
@@ -20,22 +20,22 @@
     <number>6</number>
    </property>
    <property name="leftMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="topMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="rightMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget" >
      <widget class="QWidget" name="TabPage" >
       <attribute name="title" >
-       <string>Ask &amp;Database</string>
+       <string>Query &amp;Database</string>
       </attribute>
       <layout class="QVBoxLayout" >
        <property name="spacing" >
@@ -162,7 +162,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="Q3TimeEdit" name="timePicker" />
+                 <widget class="QTimeEdit" name="timePicker" />
                 </item>
                 <item>
                  <spacer>
@@ -266,7 +266,7 @@
             <item>
              <widget class="QPushButton" name="askButton" >
               <property name="text" >
-               <string>&amp;Ask</string>
+               <string>&amp;Query</string>
               </property>
              </widget>
             </item>
@@ -278,7 +278,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox" >
          <property name="title" >
-          <string>Answer</string>
+          <string>Response</string>
          </property>
          <layout class="QVBoxLayout" >
           <property name="spacing" >
@@ -297,7 +297,7 @@
            <number>9</number>
           </property>
           <item>
-           <widget class="Q3TextEdit" name="answerEdit" />
+           <widget class="QTextEdit" name="answerEdit" />
           </item>
          </layout>
         </widget>
@@ -311,17 +311,6 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3TextEdit</class>
-   <extends>Q3Frame</extends>
-   <header>q3textedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Q3TimeEdit</class>
-   <extends>QWidget</extends>
-   <header>Qt3Support/Q3TimeEdit</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>KDatePicker</class>
    <extends>QFrame</extends>

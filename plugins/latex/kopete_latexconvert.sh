@@ -133,6 +133,7 @@ fi
 cat << ENDHEADER1
 \documentclass[12pt]{article}
 \usepackage{color}
+\usepackage{amsmath,latexsym,amsfonts,amssymb,ulem}
 \usepackage[dvips]{graphicx}
 \pagestyle{empty}
 ENDHEADER1

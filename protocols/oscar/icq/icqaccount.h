@@ -26,7 +26,9 @@
 #include "oscarpresence.h"
 
 class KAction;
-namespace Kopete { class AwayAction; class StatusMessage; }
+class KToggleAction;
+
+namespace Kopete { class StatusMessage; }
 class ICQProtocol;
 class ICQAccount;
 class ICQUserInfoWidget;
@@ -69,6 +71,8 @@ public:
 protected:
 	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
 
+	virtual QString sanitizedMessage( const QString& message ) const;
+
 protected slots:
 	virtual void disconnected( DisconnectReason reason );
 
@@ -94,12 +98,20 @@ private slots:
 	void setXtrazStatus();
 	void editXtrazStatuses();
 
+	/** We have received an auth request */
+	void slotGotAuthRequest( const QString& contact, const QString& reason );
+	
+	void slotAuthReplyDialogOkClicked();
+
 private:
 	bool mWebAware;
 	bool mHideIP;
 	QString mInitialStatusMessage;
 	ICQUserInfoWidget* mInfoWidget;
 	ICQContact* mInfoContact;
+
+	KAction* mEditInfoAction;
+	KToggleAction* mActionInvisible;
 };
 
 #endif

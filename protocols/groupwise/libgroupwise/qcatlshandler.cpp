@@ -38,9 +38,9 @@ QCATLSHandler::QCATLSHandler(QCA::TLS *parent)
 	d->tls = parent;
 	connect(d->tls, SIGNAL(handshaken()), SLOT(tls_handshaken()));
 	connect(d->tls, SIGNAL(readyRead()), SLOT(tls_readyRead()));
-	connect(d->tls, SIGNAL(readyReadOutgoing(int)), SLOT(tls_readyReadOutgoing(int)));
+	connect(d->tls, SIGNAL(readyReadOutgoing()), SLOT(tls_readyReadOutgoing()));
 	connect(d->tls, SIGNAL(closed()), SLOT(tls_closed()));
-	connect(d->tls, SIGNAL(error(int)), SLOT(tls_error(int)));
+	connect(d->tls, SIGNAL(error()), SLOT(tls_error()));
 	d->state = 0;
 	d->err = -1;
 }
@@ -86,6 +86,7 @@ void QCATLSHandler::writeIncoming(const QByteArray &a)
 void QCATLSHandler::continueAfterHandshake()
 {
 	if(d->state == 2) {
+		d->tls->continueAfterStep();
 		success();
 		d->state = 3;
 	}
@@ -102,9 +103,11 @@ void QCATLSHandler::tls_readyRead()
 	readyRead(d->tls->read());
 }
 
-void QCATLSHandler::tls_readyReadOutgoing(int plainBytes)
+void QCATLSHandler::tls_readyReadOutgoing()
 {
-	readyReadOutgoing(d->tls->readOutgoing(), plainBytes);
+	int plainBytes;
+	QByteArray buf = d->tls->readOutgoing(&plainBytes);
+	readyReadOutgoing(buf, plainBytes);
 }
 
 void QCATLSHandler::tls_closed()
@@ -112,9 +115,9 @@ void QCATLSHandler::tls_closed()
 	closed();
 }
 
-void QCATLSHandler::tls_error(int x)
+void QCATLSHandler::tls_error()
 {
-	d->err = x;
+	d->err = d->tls->errorCode();
 	d->state = 0;
 	fail();
 }

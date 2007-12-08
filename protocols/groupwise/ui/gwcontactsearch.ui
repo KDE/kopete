@@ -13,18 +13,24 @@
    <string>Search GroupWise Messenger</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>11</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
    <item>
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="leftMargin" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>6</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>6</number>
      </property>
      <item row="0" column="0" >
@@ -249,49 +255,35 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
      <item>
-      <widget class="Q3ListView" name="m_results" >
-       <property name="resizePolicy" >
-        <enum>Q3ScrollView::AutoOneFit</enum>
+      <widget class="QTreeView" name="m_results" >
+       <property name="rootIsDecorated" >
+        <bool>false</bool>
        </property>
-       <property name="resizeMode" >
-        <enum>Q3ListView::AllColumns</enum>
+       <property name="sortingEnabled" >
+        <bool>true</bool>
        </property>
-       <column>
-        <property name="text" >
-         <string>Status</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>First Name</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Last Name</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>User ID</string>
-        </property>
-       </column>
+       <property name="allColumnsShowFocus" >
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
        </property>
        <item>
         <widget class="QPushButton" name="m_details" >
@@ -337,14 +329,8 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
-  <customwidget>
-   <class>Q3ListView</class>
-   <extends>Q3Frame</extends>
-   <header>q3listview.h</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
+  <tabstop>m_firstNameOperation</tabstop>
   <tabstop>m_firstName</tabstop>
   <tabstop>m_lastNameOperation</tabstop>
   <tabstop>m_lastName</tabstop>
@@ -354,11 +340,10 @@
   <tabstop>m_title</tabstop>
   <tabstop>m_deptOperation</tabstop>
   <tabstop>m_dept</tabstop>
+  <tabstop>m_results</tabstop>
   <tabstop>m_search</tabstop>
   <tabstop>m_clear</tabstop>
-  <tabstop>m_results</tabstop>
   <tabstop>m_details</tabstop>
-  <tabstop>m_firstNameOperation</tabstop>
  </tabstops>
  <resources/>
  <connections/>

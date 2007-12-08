@@ -20,13 +20,10 @@
 
 #include <kwallet.h>
 
-#include <qapplication.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-//Added by qt3to4:
-#include <QPixmap>
-
+#include <QApplication>
+#include <QLabel>
+#include <QLineEdit>
+#include <QCheckBox>
 #include <k3activelabel.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -37,26 +34,17 @@
 #include <kstringhandler.h>
 #include <kpassworddialog.h>
 
-class Kopete::Password::Private
+class Kopete::Password::Private : public QSharedData
 {
 public:
 	Private( const QString &group, bool blanksAllowed )
-	 : refCount( 1 ), configGroup( group ), remembered( false ),
+	 : configGroup( group ), remembered( false ),
 	 isWrong( false ), allowBlankPassword( blanksAllowed )
 	{
 	}
-	Private *incRef()
+	~Private() 
 	{
-		++refCount;
-		return this;
 	}
-	void decRef()
-	{
-		if( --refCount == 0 )
-			delete this;
-	}
-	/** Reference count */
-	int refCount;
 	/** Group to use for KConfig and KWallet */
 	const QString configGroup;
 	/** Is the password being remembered? */
@@ -89,12 +77,9 @@ public:
 	 */
 	void begin()
 	{
-		kDebug( 14010 ) ;
-#ifdef __GNUC__
-#warning TODO
-#endif
-//		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
-		walletReceived( 0L );
+		kDebug( 14010 );
+
+		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
 	}
 
 	void walletReceived( KWallet::Wallet *wallet )
@@ -135,6 +120,7 @@ public:
 		// Before trying to read from the wallet, check if the config file holds a password.
 		// If so, remove it from the config and set it through KWallet instead.
 		QString pwd;
+
 		if ( mPassword.d->remembered && !mPassword.d->passwordFromKConfig.isNull() )
 		{
 			pwd = mPassword.d->passwordFromKConfig;
@@ -259,7 +245,7 @@ public:
 		if ( mWallet && mWallet->writePassword( mPassword.d->configGroup, mNewPass ) == 0 )
 		{
 			mPassword.d->remembered = true;
-			mPassword.d->passwordFromKConfig.clear();
+			mPassword.d->passwordFromKConfig = QString();
 			mPassword.writeConfig();
 			return true;
 		}
@@ -310,7 +296,7 @@ public:
 		if ( clearPassword() )
 		{
 			mPassword.setWrong( true );
-			mPassword.d->cachedValue.clear();
+			mPassword.d->cachedValue = QString();
 		}
 
 		delete this;
@@ -320,7 +306,7 @@ public:
 		kDebug( 14010 ) << " clearing password";
 
 		mPassword.d->remembered = false;
-		mPassword.d->passwordFromKConfig.clear();
+		mPassword.d->passwordFromKConfig = QString();
 		mPassword.writeConfig();
 		if ( mWallet )
 			mWallet->removeEntry( mPassword.d->configGroup );
@@ -336,20 +322,17 @@ Kopete::Password::Password( const QString &configGroup, bool allowBlankPassword 
 }
 
 Kopete::Password::Password( const Password &other )
- : QObject( 0 ), d( other.d->incRef() )
+ : QObject( 0 ), d( other.d )
 {
 }
 
 Kopete::Password::~Password()
 {
-	d->decRef();
 }
 
 Kopete::Password &Kopete::Password::operator=( Password &other )
 {
 	if ( d == other.d ) return *this;
-	d->decRef();
-	d = other.d->incRef();
 	return *this;
 }
 
@@ -359,7 +342,7 @@ void Kopete::Password::readConfig()
 
 	QString passwordCrypted = config.readEntry( "Password", QString() );
 	if ( passwordCrypted.isNull() )
-		d->passwordFromKConfig.clear();
+		d->passwordFromKConfig = QString();
 	else
 		d->passwordFromKConfig = KStringHandler::obscure( passwordCrypted );
 
@@ -412,7 +395,7 @@ void Kopete::Password::setWrong( bool bWrong )
 	d->isWrong = bWrong;
 	writeConfig();
 
-	if ( bWrong ) d->cachedValue.clear();
+	if ( bWrong ) d->cachedValue = QString();
 }
 
 void Kopete::Password::requestWithoutPrompt( QObject *returnObj, const char *slot )

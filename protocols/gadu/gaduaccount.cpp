@@ -136,8 +136,6 @@ static const char* const servers_ip[] = {
 	p->session_ = new GaduSession( this );
 	p->session_->setObjectName( QLatin1String("GaduSession") );
 
-	KGlobal::config()->setGroup( "Gadu" );
-
 	setMyself( new GaduContact( accountId().toInt(), accountId(), this, Kopete::ContactList::self()->myself() ) );
 
 	p->status = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
@@ -328,7 +326,7 @@ GaduAccount::actionMenu()
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOffline()) );
 	p->actionMenu_->addAction( action );
 
-	action = new KAction( KIcon("document-properties"), i18n( "Set &Description..." ), this );
+	action = new KAction( KIcon("edit-rename"), i18n( "Set &Description..." ), this );
         //, "actionGaduDescription" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotDescription()) );
 	p->actionMenu_->addAction( action );

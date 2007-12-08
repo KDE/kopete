@@ -2,6 +2,7 @@
     identitystatuswidget.h - Kopete Identity Status configuration widget
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+    Copyright (c) 2007      by Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -23,6 +24,8 @@
 
 namespace Kopete
 {
+class Account;
+class Contact;
 class Identity;
 }
 
@@ -50,21 +53,31 @@ public:
 
 	virtual void setVisible(bool visible);
 
-private slots:
-	void slotAnimate(qreal amount);
-	void slotLoad();
-	void slotSave();
-
-	void slotAccountLinkActivated(const QString &link);
-	void slotPhotoLinkActivated(const QString &link);
-	void slotUpdateAccountStatus();
-	/**
-	 * @brief Show nickname in red when modified
-	 * @param text text changed in nickname textbox
-	 */
-	void slotNickNameTextChanged(const QString &text);
+protected:
+	bool eventFilter( QObject *watched, QEvent *event );
 
 private:
+	/**
+	 * Initialise the widget's contents
+	 */
+	void load();
+
+private slots:
+	void slotAnimate(qreal amount);
+
+	void showAccountContextMenu( const QPoint & );
+	void slotPhotoClicked();
+	void slotAccountRegistered( Kopete::Account *account );
+	void slotAccountUnregistered( const Kopete::Account *account );
+	void slotAccountStatusIconChanged( Kopete::Contact *contact );
+	/**
+	 * Handle departing identities
+	 */
+	void slotIdentityUnregistered( const Kopete::Identity* identity );
+
+private:
+	void addAccountItem( Kopete::Account *account );
+	void resizeAccountListWidget();
 	class Private;
 	Private *d;
 };

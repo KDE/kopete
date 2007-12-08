@@ -34,11 +34,12 @@
 #include <kicon.h>
 #include <kconfiggroup.h>
 
-#include <QFile>
-#include <QRegExp>
+#include <QtCore/QFile>
+#include <QtCore/QRegExp>
 #include <QValidator>
-#include <QImage>
-#include <QList>
+#include <QtGui/QImage>
+#include <QtCore/QList>
+#include <QtCore/QCryptographicHash>
 
 #include "msncontact.h"
 #include "msnnotifysocket.h"
@@ -51,9 +52,6 @@
 #include "kopeteglobal.h"
 #include "kopetechatsessionmanager.h"
 #include "contactaddednotifydialog.h"
-
-#include "sha1.h"
-
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
@@ -1138,7 +1136,14 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 
 void MSNAccount::slotCreateChat( const QString& address, const QString& auth )
 {
-	slotCreateChat( 0L, address, auth, m_msgHandle.first(), m_msgHandle.first() );
+	if( !m_msgHandle.isEmpty() )
+	{
+		slotCreateChat( 0L, address, auth, m_msgHandle.first(), m_msgHandle.first() );
+	}
+	else
+	{
+		kDebug(14140) << "m_msgHandle is empty";
+	}
 }
 
 void MSNAccount::slotCreateChat( const QString& ID, const QString& address, const QString& auth,
@@ -1423,9 +1428,11 @@ void MSNAccount::resetPictureObject(bool silent)
 	}
 	else
 	{
-		QFile pictFile( m_pictureFilename );
+		QFile pictFile( pictureUrl() );
 		if (!pictFile.open(QIODevice::ReadOnly))
 		{
+			kDebug(14140) << "Could not open avatar picture.";
+
 			m_pictureObj="";
 			myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
 		}
@@ -1433,17 +1440,19 @@ void MSNAccount::resetPictureObject(bool silent)
 		{
 			QByteArray ar = pictFile.readAll();
 
-			QString sha1d= QString((KCodecs::base64Encode(SHA1::hash(ar))));
+			QByteArray sha1d = QCryptographicHash::hash(ar, QCryptographicHash::Sha1).toBase64();
 
-			QString size=QString::number( pictFile.size() );
-			QString all= "Creator"+accountId()+"Size"+size+"Type3Locationkopete.tmpFriendlyAAA=SHA1D"+ sha1d;
-			m_pictureObj="<msnobj Creator=\"" + accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\"kopete.tmp\" Friendly=\"AAA=\" SHA1D=\""+sha1d+"\" SHA1C=\""+ QString(KCodecs::base64Encode(SHA1::hashString(all.toUtf8())))  +"\"/>";
-			myself()->setProperty( Kopete::Global::Properties::self()->photo() , m_pictureFilename );
+			QString size = QString::number( pictFile.size() );
+			QString all = "Creator"+accountId()+"Size"+size+"Type3Locationkopete.tmpFriendlyAAA=SHA1D"+ sha1d;
+			m_pictureObj="<msnobj Creator=\"" + accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\"kopete.tmp\" Friendly=\"AAA=\" SHA1D=\""+sha1d+"\" SHA1C=\""+
+				QString( QCryptographicHash::hash(all.toUtf8(), QCryptographicHash::Sha1).toBase64() )  +"\"/>";
+			myself()->setProperty( Kopete::Global::Properties::self()->photo(), pictureUrl() );
 		}
 	}
 
-	if(old!=m_pictureObj && isConnected() && m_notifySocket && !silent)
+	if( old != m_pictureObj && isConnected() && m_notifySocket && !silent )
 	{
+		kDebug(14140) << "Changing avatar(and status) on server";
 		//update the msn pict
 		m_notifySocket->setStatus( myself()->onlineStatus() );
 	}
@@ -1452,5 +1461,3 @@ void MSNAccount::resetPictureObject(bool silent)
 #include "msnaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-
-

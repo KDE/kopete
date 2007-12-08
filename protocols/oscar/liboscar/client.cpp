@@ -586,7 +586,6 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
         // Set whether or not the message is an automated response
         sendMsgTask->setAutoResponse( isAuto );
         sendMsgTask->setMessage( msg );
-        sendMsgTask->setIp( ourInfo().dcExternalIp().IPv4Addr() ); //TODO: switch to internal
         sendMsgTask->go( Task::AutoDelete );
     }
 }
@@ -706,6 +705,10 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		}
 		else if ( !msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
 		{
+			// Filter out miranda's invisible check
+			if ( msg.messageType() == 0x0004 && msg.textArray().isEmpty() )
+				return;
+
 			// let application handle it
 			kDebug( OSCAR_RAW_DEBUG ) << "Emitting receivedMessage";
 			emit messageReceived( msg );
@@ -715,10 +718,19 @@ void Client::receivedMessage( const Oscar::Message& msg )
 
 void Client::fileMessage( const Oscar::Message& msg )
 {
-	kDebug( OSCAR_RAW_DEBUG ) << "internal ip: " << ourInfo().dcInternalIp().toString();
-	kDebug( OSCAR_RAW_DEBUG ) << "external ip: " << ourInfo().dcExternalIp().toString();
+	Connection* c = d->connections.connectionForFamily( 0x0004 );
+	if ( !c )
+		return;
 
-	sendMessage( msg );
+	kDebug( OSCAR_RAW_DEBUG ) << "internal ip: " << c->localAddress().toString();
+	kDebug( OSCAR_RAW_DEBUG ) << "external ip: " << ourInfo().dcExternalIp().toString();
+	
+	SendMessageTask *sendMsgTask = new SendMessageTask( c->rootTask() );
+	// Set whether or not the message is an automated response
+	sendMsgTask->setAutoResponse( false );
+	sendMsgTask->setMessage( msg );
+	sendMsgTask->setIp( c->localAddress().toIPv4Address() );
+	sendMsgTask->go( Task::AutoDelete );
 }
 
 void Client::requestAuth( const QString& contactid, const QString& reason )
@@ -929,6 +941,47 @@ void Client::changeContactGroup( const QString& contact, const QString& newGroup
 		ssimt->go( Task::AutoDelete );
 	else
 		delete ssimt;
+}
+
+void Client::changeContactAlias( const QString& contact, const QString& alias )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0013 );
+	if ( !c )
+		return;
+	
+	OContact item = ssiManager()->findContact( contact );
+	if ( item )
+	{
+		OContact oldItem(item);
+
+		if ( alias.isEmpty() )
+		{
+			QList<TLV> tList( item.tlvList() );
+			TLV tlv = Oscar::findTLV( tList, 0x0131 );
+			if ( !tlv )
+				return;
+
+			tList.removeAll( tlv );
+			item.setTLVList( tList );
+		}
+		else
+		{
+			QList<TLV> tList;
+
+			QByteArray data = alias.toUtf8();
+			tList.append( TLV( 0x0131, data.size(), data ) );
+
+			if ( !Oscar::updateTLVs( item, tList ) )
+				return;
+		}
+
+		kDebug( OSCAR_RAW_DEBUG ) << "Changing " << contact << "'s alias to " << alias;
+		SSIModifyTask* ssimt = new SSIModifyTask( c->rootTask() );
+		if ( ssimt->modifyContact( oldItem, item ) )
+			ssimt->go( Task::AutoDelete );
+		else
+			delete ssimt;
+	}
 }
 
 void Client::requestShortTlvInfo( const QString& contactId, const QByteArray &metaInfoId )

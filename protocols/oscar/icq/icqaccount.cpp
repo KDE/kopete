@@ -24,7 +24,8 @@
 #include <knotification.h>
 #include <ktoggleaction.h>
 
-#include "kopeteawayaction.h"
+#include  <QtGui/QTextDocument> // Qt::escape
+
 #include "kopetemessage.h"
 #include "kopetecontactlist.h"
 #include "kopeteuiglobal.h"
@@ -46,6 +47,7 @@
 #include "xtrazicqstatuseditor.h"
 #include "xtrazstatusaction.h"
 #include "icqstatusmanager.h"
+#include "icqauthreplydialog.h"
 
 ICQMyselfContact::ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acct )
 {
@@ -87,9 +89,7 @@ void ICQMyselfContact::receivedShortInfo( const QString& contact )
 	ICQAccount* icqAccount = static_cast<ICQAccount*>( account() );
 	ICQShortInfo shortInfo = icqAccount->engine()->getShortInfo( contact );
 	if ( !shortInfo.nickname.isEmpty() )
-	{
 		setProperty( Kopete::Global::Properties::self()->nickName(), icqAccount->defaultCodec()->toUnicode( shortInfo.nickname ) );
-	}
 
 	//Sync server settings with local
 	QList<ICQInfoBase*> infoList;
@@ -126,6 +126,15 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 
 	QObject::connect( engine(), SIGNAL(userReadsStatusMessage(const QString&)),
 	                  this, SLOT(userReadsStatusMessage(const QString&)) );
+	QObject::connect( engine(), SIGNAL( authRequestReceived( const QString&, const QString& ) ),
+	                  this, SLOT( slotGotAuthRequest( const QString&, const QString& ) ) );
+
+	// Create actions
+	mEditInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), this );
+	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
+	
+	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );
+	QObject::connect( mActionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
 
 	//setIgnoreUnknownContacts(pluginData(protocol(), "IgnoreUnknownContacts").toUInt() == 1);
 
@@ -160,32 +169,25 @@ KActionMenu* ICQAccount::actionMenu()
 
 	actionMenu->addSeparator();
 
-	KAction* m_editInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), this );
-        //, "actionEditInfo" );
-	QObject::connect( m_editInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
-	actionMenu->addAction( m_editInfoAction );
+	actionMenu->addAction( mEditInfoAction );
 
-	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), this );
-        //, "actionInvisible" );
+	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );
+	mActionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
+	mActionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
+	actionMenu->addAction( mActionInvisible );
 
-	Oscar::Presence pres( presence() );
-	pres.setFlags( pres.flags() | Oscar::Presence::Invisible );
-	actionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
-	actionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
-	QObject::connect( actionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
-	actionMenu->addAction( actionInvisible );
 	/*
 	actionMenu->popupMenu()->insertSeparator();
 	//actionMenu->insert( new KToggleAction( i18n( "Send &SMS..." ), 0, 0, this, SLOT( slotSendSMS() ), this, "ICQAccount::mActionSendSMS") );
 	*/
 
-	KActionMenu *xtrazStatusMenu = new KActionMenu( i18n( "Set Xtraz Status" ), this );
+	KActionMenu *xtrazStatusMenu = new KActionMenu( i18n( "Set Xtraz Status" ), actionMenu );
 	
-	KAction* xtrazStatusSetAction = new KAction( i18n( "Set Status..." ), this );
+	KAction* xtrazStatusSetAction = new KAction( i18n( "Set Status..." ), xtrazStatusMenu );
 	QObject::connect( xtrazStatusSetAction, SIGNAL(triggered(bool)), this, SLOT(setXtrazStatus()) );
 	xtrazStatusMenu->addAction( xtrazStatusSetAction );
 
-	KAction* xtrazStatusEditAction = new KAction( i18n( "Edit Statuses..." ), this );
+	KAction* xtrazStatusEditAction = new KAction( i18n( "Edit Statuses..." ), xtrazStatusMenu );
 	QObject::connect( xtrazStatusEditAction, SIGNAL(triggered(bool)), this, SLOT(editXtrazStatuses()) );
 	xtrazStatusMenu->addAction( xtrazStatusEditAction );
 
@@ -197,7 +199,7 @@ KActionMenu* ICQAccount::actionMenu()
 
 	for ( int i = 0; i < xtrazStatusList.count(); i++ )
 	{
-		Xtraz::StatusAction* xtrazAction = new Xtraz::StatusAction( xtrazStatusList.at(i), this );
+		Xtraz::StatusAction* xtrazAction = new Xtraz::StatusAction( xtrazStatusList.at(i), xtrazStatusMenu );
 		QObject::connect( xtrazAction, SIGNAL(triggered(const Oscar::Presence&, const QString&)),
 		                  this, SLOT(setPresenceTarget(const Oscar::Presence&, const QString&)) );
 		xtrazStatusMenu->addAction( xtrazAction );
@@ -441,7 +443,7 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 		if ( !ssiItem.alias().isEmpty() )
 			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
 
-		if ( isConnected() )
+		if ( engine()->isActive() )
 			contact->loggedIn();
 
 		return contact;
@@ -457,6 +459,32 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 	}
 }
 
+QString ICQAccount::sanitizedMessage( const QString& message ) const
+{
+	return Qt::escape( message );
+}
+
+void ICQAccount::slotGotAuthRequest( const QString& contact, const QString& reason )
+{
+	ICQAuthReplyDialog *replyDialog = new ICQAuthReplyDialog();
+	QObject::connect( this, SIGNAL(destroyed()), replyDialog, SLOT(deleteLater()) );
+	QObject::connect( replyDialog, SIGNAL(okClicked()), this, SLOT(slotAuthReplyDialogOkClicked()) );
+
+	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];	
+	replyDialog->setUser( ( ct ) ? ct->nickName() : contact );
+	replyDialog->setContact( contact );
+	replyDialog->setRequestReason( reason );
+	replyDialog->show();
+}
+
+void ICQAccount::slotAuthReplyDialogOkClicked()
+{
+    // Do not need to delete will delete itself automatically
+	ICQAuthReplyDialog *replyDialog = (ICQAuthReplyDialog*)sender();
+	
+	if ( replyDialog )
+		engine()->sendAuth( replyDialog->contact(), replyDialog->reason(), replyDialog->grantAuth() );
+}
 
 #include "icqaccount.moc"
 

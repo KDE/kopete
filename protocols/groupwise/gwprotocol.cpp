@@ -1,16 +1,16 @@
 /*
     gwprotocol.cpp - Kopete GroupWise Protocol
 
-    Copyright (c) 2006      Novell, Inc	 	 http://www.opensuse.org
+    Copyright (c) 2006,2007 Novell, Inc	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
-    Based on Testbed   
-    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+
+    Based on Testbed
+    Copyright (c) 2003,2007 by Will Stephenson		 <wstephenson@kde.org>
     rtfizeTest from nm_rtfize_text, from Gaim src/protocols/novell/nmuser.c
     Copyright (c) 2004 Novell, Inc. All Rights Reserved
-    
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
- 
+
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -51,7 +51,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QStringList &/*args
 	  groupwiseOffline ( Kopete::OnlineStatus::Offline,    0,  this, GroupWise::Offline, QStringList(),
 			i18n( "Offline" ), i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline ),
 	  groupwiseAvailable  ( Kopete::OnlineStatus::Online,  25, this, GroupWise::Available, QStringList(), 
-			i18n( "Available" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online ),
+			i18n( "Online" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online ),
 	  groupwiseBusy       ( Kopete::OnlineStatus::Away,    18, this, GroupWise::Busy, QStringList( "contact_busy_overlay" ),
 			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage ),
 	  groupwiseAway       ( Kopete::OnlineStatus::Away,    20, this, GroupWise::Away, QStringList( "contact_away_overlay" ),
@@ -73,7 +73,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QStringList &/*args
 	  propFullName( Kopete::Global::Properties::self()->fullName() ),
 	  propAwayMessage( Kopete::Global::Properties::self()->statusMessage() ),
 	  propAutoReply( "groupwiseAutoReply", i18n( "Auto Reply Message" ), QString() ),
-	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ),
+	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString(), Kopete::PropertyTmpl::PersistentProperty ),
 	  propPhoneWork( Kopete::Global::Properties::self()->workPhone() ),
 	  propPhoneMobile( Kopete::Global::Properties::self()->privateMobilePhone() ),
 	  propEmail( Kopete::Global::Properties::self()->emailAddress() )

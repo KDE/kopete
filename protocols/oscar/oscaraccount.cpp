@@ -20,7 +20,6 @@
 
 #include "kopetepassword.h"
 #include "kopeteprotocol.h"
-#include "kopeteaway.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopeteidentity.h"
@@ -194,6 +193,19 @@ void OscarAccount::disconnect()
 bool OscarAccount::passwordWasWrong()
 {
 	return password().isWrong();
+}
+
+bool OscarAccount::setIdentity( Kopete::Identity *ident )
+{
+	if ( !Kopete::PasswordedAccount::setIdentity( ident ) )
+		return false;
+
+	QObject::connect( ident, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant&, const QVariant&)),
+	                  this, SLOT(slotIdentityPropertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant&, const QVariant&)) );
+	
+	QString photoPath = ident->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	updateBuddyIcon( photoPath );
+	return true;
 }
 
 void OscarAccount::loginActions()
@@ -445,7 +457,7 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	QString realText( message.text( contactCodec( ocSender ) ) );
 
 	//sanitize;
-	QString sanitizedMsg = ocSender->sanitizedMessage( realText );
+	QString sanitizedMsg = sanitizedMessage( realText );
 
 	Kopete::ContactPtrList me;
 	me.append( myself() );
@@ -489,6 +501,40 @@ QTextCodec* OscarAccount::contactCodec( const QString& contactName ) const
 	// XXX  method is not const for some strange reason.
 	OscarContact* contact = static_cast<OscarContact *> ( const_cast<OscarAccount *>(this)->contacts()[contactName] );
 	return contactCodec( contact );
+}
+
+void OscarAccount::updateBuddyIcon( const QString &path )
+{
+	if ( path.isEmpty() )
+	{
+		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
+	}
+	else
+	{
+		QImage image( path );
+		if ( image.isNull() )
+			return;
+		
+		const QSize size = ( d->engine->isIcq() ) ? QSize( 52, 64 ) : QSize( 48, 48 );
+		
+		image = image.scaled( size, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
+		if( image.width() > size.width())
+			image = image.copy( ( image.width() - size.width() ) / 2, 0, size.width(), image.height() );
+		
+		if( image.height() > size.height())
+			image = image.copy( 0, ( image.height() - size.height() ) / 2, image.width(), size.height() );
+		
+		QString newlocation( KStandardDirs::locateLocal( "appdata", "oscarpictures/" + accountId() + ".jpg" ) );
+		
+		kDebug(OSCAR_RAW_DEBUG) << "Saving buddy icon: " << newlocation;
+		if ( !image.save( newlocation, "JPEG" ) )
+			return;
+		
+		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+	}
+	
+	d->buddyIconDirty = true;
+	updateBuddyIconInSSI();
 }
 
 bool OscarAccount::addContactToSSI( const QString& contactName, const QString& groupName, bool autoAddGroup )
@@ -776,12 +822,11 @@ void OscarAccount::updateBuddyIconInSSI()
 	if ( !engine()->isActive() )
 		return;
 	
-	QString photoPath = identity()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
-	
+	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+
 	ContactManager* ssi = engine()->ssiManager();
 	OContact item = ssi->findItemForIconByRef( 1 );
 	
-	// FIXME: we need to resize the photo before sending it
 	if ( photoPath.isEmpty() )
 	{
 		if ( item )
@@ -862,7 +907,7 @@ void OscarAccount::slotSendBuddyIcon()
 {
 	//need to disconnect because we could end up with many connections
 	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotSendBuddyIcon() ) );
-	QString photoPath = identity()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
 	if ( photoPath.isEmpty() )
 		return;
 	
@@ -882,6 +927,16 @@ void OscarAccount::slotSendBuddyIcon()
 		}
 		QByteArray imageData = iconFile.readAll();
 		engine()->sendBuddyIcon( imageData );
+	}
+}
+
+void OscarAccount::slotIdentityPropertyChanged( Kopete::PropertyContainer*, const QString &key,
+                                                const QVariant&, const QVariant &newValue )
+{
+	kDebug(OSCAR_GEN_DEBUG) << "Identity property changed";
+	if ( key == Kopete::Global::Properties::self()->photo().key() )
+	{
+		updateBuddyIcon( newValue.toString() );
 	}
 }
 
@@ -986,7 +1041,7 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 		break;
 	case 0x0022: // Account suspended because of your age (age < 13)
 		reason = i18n("Account %1 was disabled on the %2 server because " \
-		              "of your age (less than 13).",
+		              "of your age (under than 13).",
 			  accountId(), acctType );
 		break;
 	default:

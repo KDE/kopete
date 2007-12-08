@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Icon=color
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_alias
 X-KDE-FactoryName=kcm_kopete_alias
@@ -15,6 +14,7 @@ Name[br]=Lesanv
 Name[ca]=Àlies
 Name[cy]=Ffugenw
 Name[el]=Αντιστοιχία
+Name[eo]=Alinomo
 Name[eu]=Aliasa
 Name[fa]=نام‌گردان
 Name[fi]=Uusi nimi
@@ -29,6 +29,7 @@ Name[ko]=별명
 Name[lt]=Kitas vardas
 Name[mk]=Други имиња
 Name[ne]=उपनाम
+Name[oc]=Aliàs
 Name[pt]=Nome Alternativo
 Name[pt_BR]=Apelidos
 Name[ru]=Псевдоним
@@ -52,6 +53,7 @@ Comment[cy]=Ychwanegu ffugenwau addasiedig ar gyfer gorchmynion
 Comment[da]=Tilføj personligt alias for kommandoer
 Comment[de]=Fügt benutzerdefinierte Aliase für Befehle hinzu
 Comment[el]=Προσθέτει προσαρμοσμένες αντιστοιχίες για εντολές
+Comment[eo]=Aldoni proprajn kromnomojn por la komandoj
 Comment[es]=Añade alias personales a los comandos
 Comment[et]=Lisab käskudele kohandatud aliase
 Comment[eu]=Alias pertsonalizatuak gehitzen ditu aginduentzat

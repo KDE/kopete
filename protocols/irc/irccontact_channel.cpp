@@ -439,7 +439,7 @@ void IRCChannelContact::failedChanBanned()
 {
 	manager()->deleteLater();
 	KMessageBox::error( Kopete::UI::Global::mainWidget(),
-		i18n("<qt>You can not join %1 because you have been banned.</qt>").arg(m_nickName),
+		i18n("<qt>You cannot join %1 because you have been banned.</qt>").arg(m_nickName),
 		i18n("IRC Plugin") );
 }
 
@@ -447,14 +447,14 @@ void IRCChannelContact::failedChanInvite()
 {
 	manager()->deleteLater();
 	KMessageBox::error( Kopete::UI::Global::mainWidget(),
-		i18n("<qt>You can not join %1 because it is set to invite only, and no one has invited you.</qt>").arg(m_nickName), i18n("IRC Plugin") );
+		i18n("<qt>You cannot join %1 because it is set to invite only, and no one has invited you.</qt>").arg(m_nickName), i18n("IRC Plugin") );
 }
 
 void IRCChannelContact::failedChanFull()
 {
 	manager()->deleteLater();
 	KMessageBox::error( Kopete::UI::Global::mainWidget(),
-		i18n("<qt>You can not join %1 because it has reached its user limit.</qt>").arg(m_nickName),
+		i18n("<qt>You cannot join %1 because it has reached its user limit.</qt>").arg(m_nickName),
 		i18n("IRC Plugin") );
 }
 

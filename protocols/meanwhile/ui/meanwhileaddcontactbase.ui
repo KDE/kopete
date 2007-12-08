@@ -38,16 +38,16 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Userid:</string>
+                        <string>&amp;User ID:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>contactID</cstring>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>The user id of the contact you would like to add.</string>
+                        <string>The user ID of the contact you would like to add.</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>The user id of the contact you would like to add.</string>
+                        <string>The user ID of the contact you would like to add.</string>
                     </property>
                 </widget>
                 <widget class="QLineEdit">
@@ -55,10 +55,10 @@
                         <cstring>contactID</cstring>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>The user id of the contact you would like to add.</string>
+                        <string>The user ID of the contact you would like to add.</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>The user id of the contact you would like to add.</string>
+                        <string>The user ID of the contact you would like to add.</string>
                     </property>
                 </widget>
                 <widget class="QPushButton">
@@ -69,10 +69,10 @@
                         <string>&amp;Find</string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Find Userid</string>
+                        <string>Find User ID</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Find Userid</string>
+                        <string>Find User ID</string>
                     </property>
                 </widget>
             </hbox>

@@ -89,6 +89,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	quit->disconnect();
 	KopeteWindow *myParent = static_cast<KopeteWindow *>( parent );
 	connect( quit, SIGNAL( activated() ), myParent, SLOT( slotQuit() ) );
+	connect( this, SIGNAL( activated( QSystemTrayIcon::ActivationReason ) ), SLOT( slotActivated( QSystemTrayIcon::ActivationReason ) ) );
 
 	setIcon(mKopeteIcon);
 	slotReevaluateAccountStates();
@@ -99,57 +100,33 @@ KopeteSystemTray::~KopeteSystemTray()
 {
 	kDebug(14010) ;
 //	delete mBlinkTimer;
-	Kopete::UI::Global::setSysTrayWId( 0 );
 }
 
 void KopeteSystemTray::slotAboutToShowMenu()
 {
 	emit aboutToShowMenu(qobject_cast<KMenu *>(contextMenu()));
 }
-/*
-void KopeteSystemTray::mousePressEvent( QMouseEvent *me )
-{
-#ifdef __GNUC__
-#warning PORT ME
-#endif
-#if 0
-	if (
-		(me->button() == Qt::MidButton ||
-			(me->button() == Qt::LeftButton && Kopete::BehaviorSettings::self()->trayflashNotifyLeftClickOpensMessage())) &&
-		mIsBlinking )
-	{
-		mouseDoubleClickEvent( me );
-		return;
-	}
 
-	KSystemTray::mousePressEvent( me );
-#endif
-}
-
-void KopeteSystemTray::mouseDoubleClickEvent( QMouseEvent *me )
+void KopeteSystemTray::slotActivated( QSystemTrayIcon::ActivationReason reason )
 {
-#ifdef __GNUC__
-#warning PORT ME
-#endif
-#if 0
-	if ( !mIsBlinking )
+	bool shouldProcessEvent(
+		reason == QSystemTrayIcon::MiddleClick
+		|| reason == QSystemTrayIcon::DoubleClick
+		|| ( reason == QSystemTrayIcon::Trigger
+			&& Kopete::BehaviorSettings::self()->trayflashNotifyLeftClickOpensMessage()));
+	if ( isBlinking() && shouldProcessEvent )
 	{
-		KSystemTray::mousePressEvent( me );
-	}
-	else
-	{
-		if(!mEventList.isEmpty())
+		if ( !mEventList.isEmpty() )
 			mEventList.first()->apply();
 	}
-#endif
 }
 
-void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
-{
-	//kDebug(14010) << "Called.";
-	emit aboutToShowMenu( me );
-}
-*/
+// void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
+// {
+// 	//kDebug(14010) << "Called.";
+// 	emit aboutToShowMenu( me );
+// }
+
 void KopeteSystemTray::startBlink( const QString &icon )
 {
 	startBlink( loadIcon( icon ) );

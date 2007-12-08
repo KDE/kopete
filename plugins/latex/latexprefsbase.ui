@@ -11,14 +11,26 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
    <item>
     <widget class="QLabel" name="textLabel1" >
      <property name="frameShape" >
       <enum>QFrame::NoFrame</enum>
      </property>
      <property name="text" >
-      <string>The KopeTeX plugin allows Kopete to render LaTeX formulas in the chat window. The sender must enclose the formula between two $ signs. ie: $$formula$$
-This plugin requires ImageMagick convert program installed in order to work.</string>
+      <string>The KopeTeX plugin allows Kopete to render LaTeX formulas in the chat window. The sender must enclose the formula between two pairs of $ signs. ie: $$formula$$
+This plugin requires that the ImageMagick convert program be installed in order to work.</string>
      </property>
      <property name="wordWrap" >
       <bool>true</bool>

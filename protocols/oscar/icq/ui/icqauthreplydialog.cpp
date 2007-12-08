@@ -66,12 +66,22 @@ void ICQAuthReplyDialog::setRequestReason( const QString & reason )
 	m_ui->lblRequestReason->setText( reason );
 }
 
-QString ICQAuthReplyDialog::reason()
+void ICQAuthReplyDialog::setContact( const QString& contact )
+{
+	m_contact = contact;
+}
+
+QString ICQAuthReplyDialog::reason() const
 {
 	return m_ui->leReason->text();
 }
 
-bool ICQAuthReplyDialog::grantAuth()
+QString ICQAuthReplyDialog::contact() const
+{
+	return m_contact;
+}
+
+bool ICQAuthReplyDialog::grantAuth() const
 {
 	return m_ui->rbGrant->isChecked();
 }

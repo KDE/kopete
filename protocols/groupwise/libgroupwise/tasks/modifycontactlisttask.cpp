@@ -20,7 +20,7 @@
 
 #include "client.h"
 #include "response.h"
-
+#include "gwerror.h"
 #include "modifycontactlisttask.h"
 
 ModifyContactListTask::ModifyContactListTask(Task* parent): RequestTask(parent)
@@ -74,7 +74,7 @@ bool ModifyContactListTask::take( Transfer * transfer )
 	// TODO: call virtual here to read any fields after the contact list...
 	if ( response->resultCode() == GroupWise::None )
 		setSuccess();
-	else
+	else 
 		setError( response->resultCode() );
 	return true;
 }

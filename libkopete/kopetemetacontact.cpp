@@ -94,8 +94,8 @@ void MetaContact::addContact( Contact *c )
 		connect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 
-		connect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+		connect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+			this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
 		connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
 			this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
@@ -218,8 +218,8 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
 			disconnect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-			disconnect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-				this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+			disconnect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+				this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 			disconnect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
 				this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
 			disconnect( c, SIGNAL( idleStateChanged( Kopete::Contact * ) ),
@@ -446,12 +446,12 @@ QString MetaContact::statusIcon() const
 			if( useCustomIcon() )
 				return icon( ContactListElement::Online );
 			else
-				return QString::fromUtf8( "metacontact_online" );
+				return QString::fromUtf8( "user-online" );
 		case OnlineStatus::Away:
 			if( useCustomIcon() )
 				return icon( ContactListElement::Away );
 			else
-				return QString::fromUtf8( "metacontact_away" );
+				return QString::fromUtf8( "user-away" );
 
 		case OnlineStatus::Unknown:
 			if( useCustomIcon() )
@@ -459,14 +459,14 @@ QString MetaContact::statusIcon() const
 			if ( d->contacts.isEmpty() )
 				return QString::fromUtf8( "metacontact_unknown" );
 			else
-				return QString::fromUtf8( "metacontact_offline" );
+				return QString::fromUtf8( "user-offline" );
 
 		case OnlineStatus::Offline:
 		default:
 			if( useCustomIcon() )
 				return icon( ContactListElement::Offline );
 			else
-				return QString::fromUtf8( "metacontact_offline" );
+				return QString::fromUtf8( "user-offline" );
 	}
 }
 
@@ -700,12 +700,6 @@ QImage MetaContact::photoFromCustom() const
 
 QImage photoFromContact( Kopete::Contact *contact) /*const*/
 {
-
-	// screw it, crashes now.
-	// FIXME investigate later
-
-	return QImage();
-
 	if ( contact == 0L )
 		return QImage();
 
@@ -806,9 +800,10 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 	}
 }
 
-void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
+void MetaContact::slotPropertyChanged( PropertyContainer* _subcontact, const QString &key,
 		const QVariant &oldValue, const QVariant &newValue  )
 {
+	Contact *subcontact=static_cast<Contact*>(_subcontact);
 	if ( displayNameSource() == SourceContact )
 	{
 		if( key == Global::Properties::self()->nickName().key() )

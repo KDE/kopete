@@ -3,7 +3,7 @@
 
     Copyright (c) 2004 Duncan Mac-Vicar Prett <duncan@kde.org>
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <duffeck@kde.org>
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -16,11 +16,10 @@
     *************************************************************************
 */
 
-#include <stdlib.h>
-
-#include <qdatastream.h>
-#include <qmap.h>
-#include <qobject.h>
+#include <QDataStream>
+#include <QMap>
+#include <QObject>
+#include <QStringList>
 
 #include <kdebug.h>
 
@@ -363,61 +362,19 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	t->setStatus(status);
 	t->setPacketLength(len);
 	
-	// taken almost as is from libyahoo ;-)
-	
-	char *data = (char*)packet.data();
-	while (pos + 1 < len + 20 /*header*/)
-	{
-		if( (BYTE) data[pos] == (BYTE)0x00  )
-			break;
-	
-		char *key = 0L, *value = 0L;
-		int accept;
-		int x;
-		key = (char *) malloc(len + 1);
-		x = 0;
-		while (pos + 1 < len +20) {
-			if ( ((BYTE) data[pos] == (BYTE)0xc0 && (BYTE) data[pos + 1] == (BYTE)0x80) )
-				break;
-			key[x++] = data[pos++];
-		}
-		key[x] = 0;
-		pos += 2;
+        QString d = QString::fromAscii( packet.data() + pos, packet.size() - pos );
+        QStringList list;
+        list = d.split( "\xc0\x80" );
+        for( int i = 0; i+1 < list.size() && pos+1 < len+20; i += 2 ) {
+                QString key = list[i];
+                QString value = QString::fromUtf8( list[i+1].toAscii() );
+                pos += key.toUtf8().length() + value.toUtf8().length() + 4;
+                t->setParam( QString(key).toInt(), value.toUtf8() );
+                kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Key: " << key << " Value: " << value << endl;
+        }
 
-		accept = x;
-		
-		/* if x is 0 there was no key, so don't accept it */
-		if (accept)
-			value = (char *) malloc(len - pos + 20 + 1);
-		
-		x = 0;
-		while (pos + 1 < len + 20 /* header */)
-		{
-			if ((BYTE) data[pos] == (BYTE) 0xc0 && (BYTE) data[pos + 1] == (BYTE) 0x80)
-				break;
-			if (accept)
-				value[x++] = data[pos++];
-		}
-		if (accept)
-			value[x] = 0;
-		pos += 2;
-
-		if (accept) 
-		{
-			kDebug(YAHOO_RAW_DEBUG) << " setting packet key [" << QString(key) << "] to " << QString(value);
-			t->setParam(QString(key).toInt(), value);
-			free(value);
-		}
-		else
-		{
-			kDebug(YAHOO_RAW_DEBUG) << " key not accepted";
-		}
-		free(key);
-	}
-
-	// Packets consisting of several YMSG-packets sometimes contain padding chars (0x00) -> filter out
- 	while( (BYTE)data[pos] == (BYTE) 0x00 && pos <= len + 20)
- 		pos++;
+        while( pos < packet.size() && packet.data()[pos] == '\x00' )
+                pos++;
 
 // 	kDebug(YAHOO_RAW_DEBUG) << " Returning transfer";
 	// tell them we have parsed offset bytes

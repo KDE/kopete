@@ -34,6 +34,7 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <QByteArray>
+#include <QtCore/QCryptographicHash>
 
 // kde
 #include <kdebug.h>
@@ -60,8 +61,6 @@
 #include "private/kopeteemoticons.h"
 //#include "kopeteaccountmanager.h"
 //#include "kopeteprotocol.h"
-
-#include "sha1.h"
 
 #include "dispatcher.h"
 using P2P::Dispatcher;
@@ -136,7 +135,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		}
 		case 216:
 		{
-			QString msg = i18n( "The user %1 is online but has blocked you:\nyou can not talk to this user.", m_msgHandle );
+			QString msg = i18n( "The user %1 is online but has blocked you:\nyou cannot talk to this user.", m_msgHandle );
 			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
 			emit errorMessage( MSNSocket::ErrorInformation, msg );
 			userLeftChat(m_msgHandle, i18n("user blocked you"));
@@ -578,7 +577,7 @@ void MSNSwitchBoardSocket::DispatchInkMessage(const QString& base64String)
 {
 	QByteArray image;
 	// Convert from base64 encoded string to byte array.
-	KCodecs::base64Decode(base64String.toUtf8() , image);
+	image = QByteArray::fromBase64(base64String.toUtf8());
 	KTemporaryFile *inkImage = new KTemporaryFile();
 	inkImage->setPrefix("inkformatgif-");
 	inkImage->setSuffix(".gif");
@@ -647,10 +646,10 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 			QByteArray ar = pictFile.readAll();
 			pictFile.close();
 
-			QString sha1d = QString(KCodecs::base64Encode(SHA1::hash(ar)));
+			QByteArray sha1d = QCryptographicHash::hash(ar, QCryptographicHash::Sha1).toBase64();
 			QString size = QString::number( pictFile.size() );
 			QString all = "Creator" + m_account->accountId() +	"Size" + size + "Type2Location" + fi.fileName() + "FriendlyAAA=SHA1D" + sha1d;
-			QString sha1c = QString(KCodecs::base64Encode(SHA1::hashString(all.toUtf8())));
+			QString sha1c = QString(QCryptographicHash::hash(all.toUtf8(),QCryptographicHash::Sha1).toBase64());
 			picObj = "<msnobj Creator=\"" + m_account->accountId() + "\" Size=\"" + size  + "\" Type=\"2\" Location=\""+ fi.fileName() + "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+ "\" SHA1C=\""+sha1c+"\"/>";
 
 			PeerDispatcher()->objectList.insert(picObj, filename);
@@ -936,7 +935,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QS
 	}
 	else if(msnObj == "inkformatgif")
 	{
-		QString msg=i18n("<img src=\"%1\" alt=\"Typewrited message\" />", file->fileName() );
+		QString msg=i18n("<img src=\"%1\" alt=\"Typed message\" />", file->fileName() );
 
 		kDebug(14140) << file->fileName();
 

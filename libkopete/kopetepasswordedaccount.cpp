@@ -54,8 +54,6 @@ void Kopete::PasswordedAccount::connect( )
 
 void Kopete::PasswordedAccount::connect( const Kopete::OnlineStatus& initialStatus )
 {
-	// check that the networkstatus is up
-
 	// warn user somewhere
 	d->initialStatus = initialStatus;
 	QString cached = password().cachedValue();

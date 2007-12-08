@@ -259,7 +259,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			appendMessageEvent = appendMessageEvent && !view( manager )->isVisible();
 		}
 
-		// in group chats always append highlighted messages to queue
+		// in groupchats always append highlighted messages to queue
 		appendMessageEvent = appendMessageEvent && (!d->queueOnlyHighlightedMessagesInGroupChats || manager->members().count() == 1 || msg.importance() == Kopete::Message::Highlight);
 
 		
@@ -300,7 +300,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					default:
 						eventId = QLatin1String( "kopete_contact_incoming" );
 				}
-				KNotification *notify=new KNotification(eventId, w, KNotification::Persistant);
+				KNotification *notify=new KNotification(eventId, w, KNotification::Persistent);
 				notify->setText(body.subs( Qt::escape(msgFrom) ).subs( squashMessage( msg )  ).toString());
 				notify->setPixmap( QPixmap::fromImage(msg.from()->metaContact()->picture().image()) );
                 notify->setActions(( QStringList() <<  i18n( "View" )  <<   i18n( "Ignore" )) );
@@ -360,13 +360,19 @@ void KopeteViewManager::readMessages( Kopete::ChatSession *manager, bool outgoin
 
 void KopeteViewManager::slotEventDeleted( Kopete::MessageEvent *event )
 {
+    // d->eventList.remove( event );
+    d->eventList.removeAll(event);
+
     // kDebug(14000) ;
     Kopete::ChatSession *kmm=event->message().manager();
     if(!kmm)
+    {
+            // this can be NULL for example if KopeteViewManager::slotViewActivated()
+            // got called which does deleteLater() the event what may result in the
+            // case, that the QPointer<ChatSession> in Message::Private got removed
+            // aka set to NULL already.
             return;
-
-    // d->eventList.remove( event );
-    d->eventList.removeAll(event);
+    }
 
     if ( event->state() == Kopete::MessageEvent::Applied )
     {

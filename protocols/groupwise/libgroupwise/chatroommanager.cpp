@@ -37,12 +37,9 @@ ChatroomManager::~ChatroomManager()
 {
 }
 
-void ChatroomManager::update()
+void ChatroomManager::updateRooms()
 {
-	if ( m_rooms.isEmpty() )
-		getChatrooms( false );
-	else
-		updateCounts();
+	getChatrooms( !m_rooms.isEmpty() );
 }
 
 GroupWise::ChatroomMap ChatroomManager::rooms()

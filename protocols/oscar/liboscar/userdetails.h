@@ -18,8 +18,8 @@
 #ifndef USERDETAILS_H
 #define USERDETAILS_H
 
-#include <QBitArray>
-#include <k3socketaddress.h>
+#include <QtCore/QBitArray>
+#include <QtNetwork/QHostAddress>
 #include "oscartypes.h"
 #include "kopete_export.h"
 
@@ -39,8 +39,8 @@ public:
 	QString userId() const; //! User ID accessor
 	int warningLevel() const; //! Warning level accessor
 	Oscar::WORD idleTime() const; //! Idle time accessor
-	KNetwork::KIpAddress dcInternalIp() const; //! DC local IP accessor
-	KNetwork::KIpAddress dcExternalIp() const; //! DC outside IP accessor
+	QHostAddress dcInternalIp() const; //! DC local IP accessor
+	QHostAddress dcExternalIp() const; //! DC outside IP accessor
 	Oscar::DWORD dcPort() const; //! DC port number    
     Oscar::WORD dcProtoVersion() const;
 	QDateTime onlineSinceTime() const; //! Online since accessor
@@ -110,8 +110,8 @@ private:
 	QBitArray m_capabilities; //TLV 0x05
 	QString m_clientVersion; /// the version of client they're using
 	QString m_clientName; /// the name of the client they're using
-	KNetwork::KIpAddress m_dcOutsideIp; /// DC Real IP Address - TLV 0x0A
-	KNetwork::KIpAddress m_dcInsideIp; /// DC Internal IP Address - TLV 0x0C
+	QHostAddress m_dcOutsideIp; /// DC Real IP Address - TLV 0x0A
+	QHostAddress m_dcInsideIp; /// DC Internal IP Address - TLV 0x0C
 	Oscar::DWORD m_dcPort; /// DC Port - TLV 0x0C
 	Oscar::BYTE m_dcType; /// DC Type - TLV 0x0C
 	Oscar::WORD m_dcProtoVersion; /// DC Protocol Version - TLV 0x0C

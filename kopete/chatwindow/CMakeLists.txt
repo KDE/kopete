@@ -32,14 +32,14 @@ set(krichtexteditpart_PART_SRCS krichtexteditpart.cpp )
 kde4_add_plugin(krichtexteditpart WITH_PREFIX ${krichtexteditpart_PART_SRCS})
 
 
-target_link_libraries(krichtexteditpart  kopete ${KDE4_KDEPRINT_LIBS} )
+target_link_libraries(krichtexteditpart  kopete )
 
 install(TARGETS krichtexteditpart  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############
 
-set(kopete_chatwindow_PART_SRCS chatview.cpp kopetechatwindow.cpp chatmemberslistwidget.cpp sidebarwidget.cpp)
+set(kopete_chatwindow_PART_SRCS chatview.cpp kopetechatwindow.cpp chatmemberslistview.cpp)
 
 
 kde4_add_plugin(kopete_chatwindow ${kopete_chatwindow_PART_SRCS})

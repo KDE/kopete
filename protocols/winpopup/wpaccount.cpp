@@ -97,7 +97,7 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 //	kDebug(14170) <<  "WPAccount::slotGotNewMessage(" << Body << ", " << Arrival.toString() << ", " << From << ")";
 
 	// Ignore messages from own host or IPs.
-	// IPs can not be matched to an account anyway.
+	// IPs cannot be matched to an account anyway.
 	// This should happen rarely but they make kopete crash.
 	// The reason for this seems to be in ChatSessionManager? GF
 	QRegExp ip("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
@@ -181,7 +181,7 @@ KActionMenu* WPAccount::actionMenu()
 		goAway->setEnabled(isConnected() && !isAway());
 		theActionMenu->addAction(goAway);
 
-		/// One can not really go offline manually - appears online as long as samba server is running. GF
+		/// One cannot really go offline manually - appears online as long as samba server is running. GF
 
 		theActionMenu->addSeparator();
 		KAction *properties = new KAction( i18n("Properties"), this );

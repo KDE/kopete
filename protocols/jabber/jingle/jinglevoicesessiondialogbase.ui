@@ -172,7 +172,7 @@
                                 <cstring>labelDisplayName</cstring>
                             </property>
                             <property name="text">
-                                <string>Contact displayname</string>
+                                <string>Contact display-name</string>
                             </property>
                         </widget>
                         <spacer>

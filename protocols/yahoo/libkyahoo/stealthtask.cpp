@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Stealth/Unstealth a buddy
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -53,8 +53,13 @@ void StealthTask::onGo()
 	}
 	t->setId( client()->sessionID() );
 	t->setParam( 1, client()->userId().toLocal8Bit());
-	if( !m_target.isEmpty() )
+	if( !m_target.isEmpty() ) {
+		t->setParam( 302, 319 );
+		t->setParam( 300, 319 );
 		t->setParam( 7, m_target.toLocal8Bit() );
+		t->setParam( 301, 319 );
+		t->setParam( 303, 319 );
+	}
 	send( t );
 	
 	setSuccess();

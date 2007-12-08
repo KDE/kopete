@@ -74,7 +74,7 @@ bool MessageReceiverTask::take( Transfer* transfer )
 
 		Buffer* b = transfer->buffer();
 		m_icbmCookie = b->getBlock( 8 );
-		kDebug(OSCAR_RAW_DEBUG) << "icbm cookie is " << m_icbmCookie;
+		kDebug(OSCAR_RAW_DEBUG) << "icbm cookie is " << m_icbmCookie.toHex();
 		m_channel = b->getWord();
 		kDebug(OSCAR_RAW_DEBUG) << "channel is " << m_channel;
 
@@ -349,6 +349,15 @@ void MessageReceiverTask::handleAutoResponse()
 	int reasonCode = b->getWord();
 	kDebug(14151) << "Reason code (1 - channel not supported, 2 - busted payload, 3 - channel specific data): " << reasonCode;
 
+	// TODO: remove this hack somehow
+	// Check if it's for FileTransferTask ( FileTransfer auto response has diffrent structure )
+	const QList<FileTransferTask*> p = parent()->findChildren<FileTransferTask*>();
+	foreach( FileTransferTask *t, p)
+	{
+		if ( t->takeAutoResponse( reasonCode, m_icbmCookie, b ) )
+			return;
+	}
+	
 	parseRendezvousData( b, &msg );
 	emit receivedMessage( msg );
 }

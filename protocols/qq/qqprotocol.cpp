@@ -44,8 +44,8 @@ QQProtocol::QQProtocol( QObject* parent, const QStringList &/*args*/ )
 	  propCity("QQVCardCity", i18n("State"), QString(), Kopete::PropertyTmpl::PersistentProperty ),
 	  propStreet("QQVCardAddress", i18n("Home Address"), QString(), Kopete::PropertyTmpl::PersistentProperty ),
 	  propZipcode("QQVCardZipcode", i18n("Zipcode"), QString(), Kopete::PropertyTmpl::PersistentProperty ), 
-	  propEmail(Kopete::Global::Properties::self()->emailAddress()),
-	  propAge("QQVCardAge", i18n("Age"), QString(), Kopete::PropertyTmpl::PersistentProperty )
+	  propAge("QQVCardAge", i18n("Age"), QString(), Kopete::PropertyTmpl::PersistentProperty ),
+    propEmail(Kopete::Global::Properties::self()->emailAddress())
 {
 	kDebug( 14210 ) ;
 	s_protocol = this;

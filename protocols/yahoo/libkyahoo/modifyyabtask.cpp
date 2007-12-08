@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     modifyyabtask.h - Handles the Yahoo Address Book
 
-    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <duffeck@kde.org>
     Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -46,7 +46,7 @@ void ModifyYABTask::onGo()
 {
 	kDebug(YAHOO_RAW_DEBUG) ;
 	m_socket = new KBufferedSocket( "address.yahoo.com", QString::number(80) );
-	connect( m_socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
+	connect( m_socket, SIGNAL( connected( const KNetwork::KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
 	connect( m_socket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
 
 	m_socket->connect();
@@ -90,7 +90,7 @@ void ModifyYABTask::setEntry( const YABEntry &entry )
 void ModifyYABTask::connectFailed( int i)
 {
 	m_socket->close();
-	client()->notifyError( i18n( "An error occurred saving the Addressbook entry." ), 
+	client()->notifyError( i18n( "An error occurred while saving the Addressbook entry." ), 
 			QString( "%1 - %2").arg(i).arg(static_cast<const KBufferedSocket*>( sender() )->errorString()), Client::Error );
 }
 
@@ -118,7 +118,7 @@ void ModifyYABTask::connectSucceeded()
 		kDebug(YAHOO_RAW_DEBUG) << "Upload Successful. Waiting for confirmation...";
 	else
 	{
-		client()->notifyError( i18n( "An error occurred saving the Addressbook entry." ), m_socket->errorString(), Client::Error );
+		client()->notifyError( i18n( "An error occurred while saving the Addressbook entry." ), m_socket->errorString(), Client::Error );
 		setError();
 		return;
 	}

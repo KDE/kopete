@@ -1,7 +1,7 @@
 /*
     Privacy Plugin - Filter messages
 
-    Copyright (c) 2006 by Andre Duffeck <andre@duffeck.de>
+    Copyright (c) 2006 by Andre Duffeck <duffeck@kde.org>
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -174,8 +174,8 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 	{
 		if( msg.from()->metaContact()->isTemporary() )
 		{
-			kDebug(14313) << "Message from " << msg.from()->contactId() << " dropped (not on the contactlist)";
-			KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because this contact is not on your contactlist.", msg.from()->contactId()) );
+			kDebug(14313) << "Message from " << msg.from()->contactId() << " dropped (not on the contact list)";
+			KNotification::event( "message_dropped", i18n("A message from %1 was dropped, because this contact is not on your contact list.", msg.from()->contactId()) );
 			event->discard();
 			return;
 		}

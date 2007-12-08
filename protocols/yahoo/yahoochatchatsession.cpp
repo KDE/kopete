@@ -2,7 +2,7 @@
     yahoochatchatsession.cpp - Yahoo Chat Chatsession
 
     Copyright (c) 2003 by Duncan Mac-Vicar <duncan@kde.org>
-    Copyright (c) 2006 by André Duffeck        <andre@duffeck.de>
+    Copyright (c) 2006 by André Duffeck        <duffeck@kde.org>
 
     Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 

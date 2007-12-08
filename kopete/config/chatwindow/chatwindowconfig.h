@@ -1,10 +1,11 @@
 /*
-    appearanceconfig.h  -  Kopete Look Feel Config
+    chatwindowconfig.h  -  Kopete Look Feel Config
 
     Copyright (c) 2005-2006 by Michaël Larouche       <larouche@kde.org>
     Copyright (c) 2005-2006 by Olivier Goffart         <ogoffart at kde.org>
+    Copyright (c) 2007      by Gustavo Pichorim Boiko  <gustavo.boiko@kdemail.net>
 
-    Kopete    (c) 2005-2006 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2005-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -23,12 +24,15 @@
 #include <kcmodule.h>
 #undef KDE3_SUPPORT
 #include "ui_chatwindowconfig_style.h"
+#include "ui_chatwindowconfig_emoticons.h"
+#include "ui_chatwindowconfig_colors.h"
 #include <kopetechatwindowstyle.h>
 
 class FakeProtocol;
 class FakeAccount;
 class FakeContact;
 class ChatMessagePart;
+class QTabWidget;
 
 namespace Kopete { class MetaContact; class ChatSession; }
 
@@ -39,7 +43,7 @@ class ChatWindowConfig : public KCModule
 friend class KopeteStyleNewStuff;
 
 public:
-	ChatWindowConfig( QWidget *parent, const QStringList &args );
+	ChatWindowConfig( QWidget *parent, const QVariantList &args );
 	~ChatWindowConfig();
 
 	virtual void save();
@@ -55,11 +59,23 @@ private slots:
 	void slotGetChatStyles();
 	void slotLoadChatStyles();
 	void slotUpdateChatPreview();
+	//----- Emoticons TAB ---------------------
+	void slotSelectedEmoticonsThemeChanged();
+	void slotInstallEmoticonTheme();
+	void slotRemoveEmoticonTheme();
+	void slotGetEmoticonThemes();
+	void slotUpdateEmoticonsButton(bool);
+
 private:
+	//----- Style TAB ---------------------
 	void createPreviewChatSession();
 	void createPreviewMessages();
+	//----- Emoticons TAB ---------------------
+	void updateEmoticonList();
 	
 private:
+	//----- TAB Widget ---------------------
+	QTabWidget *m_tab;
 	//----- Style TAB ----------------------
 	Ui::ChatWindowConfig_Style m_styleUi;
 	ChatMessagePart *m_preview;
@@ -78,6 +94,11 @@ private:
 	FakeContact *m_jack;
 	Kopete::ChatSession *m_previewChatSession;
 
+	//----- Emoticons TAB ---------------------
+	Ui::ChatWindowConfig_Emoticons m_emoticonsUi;
+
+	//----- Colors TAB ------------------------
+	Ui::ChatWindowConfig_Colors m_colorsUi;
 
 };
 #endif

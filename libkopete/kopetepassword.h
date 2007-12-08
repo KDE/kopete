@@ -17,6 +17,7 @@
 #ifndef KOPETEPASSWORD_H
 #define KOPETEPASSWORD_H
 
+#include <QSharedDataPointer>
 #include <QtCore/QObject>
 #include <QtGui/QPixmap>
 
@@ -168,7 +169,7 @@ private:
 	void writeConfig();
 
 	class Private;
-	Private *d;
+	QSharedDataPointer<Private> d;
 
 	//TODO: can we rearrange things so these aren't friends?
 	friend class ::KopetePasswordGetRequest;

@@ -4,7 +4,7 @@
     Kopete Contactlist Properties GUI for Groups and MetaContacts
 
     Copyright (c) 2002-2003 by Stefan Gehn <metz@gehn.net>
-    Copyright (c) 2004 by Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2004 by Will Stephenson <wstephenson@kde.org>
     Copyright (c) 2004-2005 by Duncan Mac-Vicar P. <duncan@kde.org>
     
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
@@ -63,9 +63,9 @@
 
 #include "customnotificationprops.h"
 
-const QLatin1String MC_OFF( "metacontact_offline" );
-const QLatin1String MC_ON( "metacontact_online" );
-const QLatin1String MC_AW( "metacontact_away" );
+const QLatin1String MC_OFF( "user-offline" );
+const QLatin1String MC_ON( "user-online" );
+const QLatin1String MC_AW( "user-away" );
 const QLatin1String MC_UNK( "metacontact_unknown" );
 
 // KDE4 port notes:
@@ -87,7 +87,11 @@ KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent)
 	ui_mainWidget->icnbClosed->setIconSize(QSize(KIconLoader::SizeSmall,KIconLoader::SizeSmall));
 	QPair<QString,QString> context=qMakePair( QString::fromLatin1("group") , QString::number(gvi->group()->groupId() ) );
 	mNotificationProps = new CustomNotificationProps( this, context );
-	ui_mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
+
+	QWidget* npMainWidget = new QWidget();
+	QVBoxLayout* vbLayout = new QVBoxLayout( npMainWidget );
+	vbLayout->addWidget( mNotificationProps->widget() );
+	ui_mainWidget->tabWidget->addTab( npMainWidget, i18n( "Custom &Notifications" ) );
 
 	setMainWidget(mainWidget);
 	item = gvi;
@@ -193,8 +197,12 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	hb->addWidget( mFromKABC ); // [ [Button] <-xxxxx-> ]
 	hb->addStretch();
 	vb->addStretch(); // vert spacer keeps the rest snug
-	
-	ui_mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
+
+	QWidget* npMainWidget = new QWidget();
+	QVBoxLayout* vbLayout = new QVBoxLayout( npMainWidget );
+	vbLayout->addWidget( mNotificationProps->widget() );
+
+	ui_mainWidget->tabWidget->addTab( npMainWidget, i18n( "Custom &Notifications" ) );
 	setMainWidget( mainWidget );
 	item = lvi;
 
@@ -207,7 +215,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	connect( ui_mainWidget->cmbAccountPhoto, SIGNAL(activated ( int )), SLOT(slotEnableAndDisableWidgets()));
 	
 
-	ui_mainWidget->btnClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "locationbar-erase" : "clear-left" ) );
+	ui_mainWidget->btnClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "edit-clear-locationbar" : "edit-clear-locationbar-rtl" ) );
 	connect( ui_mainWidget->btnClearPhoto, SIGNAL( clicked() ), this, SLOT( slotClearPhotoClicked() ) );
 	connect( ui_mainWidget->widAddresseeLink, SIGNAL( addresseeChanged( const KABC::Addressee & ) ), SLOT( slotAddresseeChanged( const KABC::Addressee & ) ) );
 	connect( ui_mainWidget->btnChoosePhoto, SIGNAL(clicked()), this, SLOT(slotSelectPhoto()));
@@ -335,6 +343,8 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 		}
 	}
 
+	m_photoPath = item->metaContact()->customPhoto().path();
+
 	Kopete::MetaContact::PropertySource photoSource = item->metaContact()->photoSource();
 
 	ui_mainWidget->radioPhotoContact->setChecked(photoSource == Kopete::MetaContact::SourceContact);
@@ -404,7 +414,7 @@ void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 		break;
 	}
 	if( !photo.isNull() )
-		ui_mainWidget->photoLabel->setPixmap(QPixmap::fromImage(photo.scaled(64, 92)));
+		ui_mainWidget->photoLabel->setPixmap(QPixmap::fromImage(photo.scaled(96, 96)));
 	else
 		ui_mainWidget->photoLabel->setPixmap( QPixmap() );
 }

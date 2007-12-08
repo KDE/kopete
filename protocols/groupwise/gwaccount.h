@@ -1,13 +1,13 @@
 /*
     gwaccount.h - Kopete GroupWise Protocol
 
-    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
+    Copyright (c) 2006,2007 Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
 
     Based on Testbed
-    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+    Copyright (c) 2003-2007 by Will Stephenson		 <wstephenson@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -27,6 +27,7 @@
 #include <kaction.h>
 
 #include <kopetechatsessionmanager.h>
+#include <kopetecontact.h>
 
 #include "gwerror.h"
 
@@ -37,7 +38,6 @@
 class KActionMenu;
 
 namespace Kopete {
-	class Contact;
 	class Group;
 	class MetaContact; 
 }
@@ -90,7 +90,7 @@ public:
 	/**
 	 * Utility access to the port given by the user
 	 */
-	const int port() const;
+	int port() const;
 	/**
 	 * Utility access to the server given by the user
 	 */
@@ -173,6 +173,7 @@ signals:
 
 	
 protected slots:
+    void slotMessageSendingFailed();
 	/**
 	 * Set an auto reply message for use when the account is away
 	 * TODO: Extend Kopete::AwayAction so you can set multiple ones there.
@@ -337,12 +338,14 @@ private:
 	KAction * m_actionJoinChatRoom;
 	// Network code
 	KNetworkConnector * m_connector;
+	QCA::Initializer * m_qcaInit;
 	QCA::TLS * m_QCATLS;
 	QCATLSHandler *	m_tlsHandler;
 	ClientStream * m_clientStream;
 	// Client, entry point of libgroupwise
 	Client * m_client;
 
+	QString m_password;
 	QString m_initialReason;
 	Q3ValueList<GroupWiseChatSession*> m_chatSessions;
 	bool m_dontSync;

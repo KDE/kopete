@@ -23,19 +23,22 @@
 #ifndef FILETRANSFERTASK_H
 #define FILETRANSFERTASK_H
 
-#include <qfile.h>
-#include <qtimer.h>
 #include "task.h"
-#include "oscarmessage.h"
 
-namespace KNetwork
-{
-	class KServerSocket;
-	class KBufferedSocket;
-}
-typedef KNetwork::KServerSocket KServerSocket;
-typedef KNetwork::KBufferedSocket KBufferedSocket;
+#include <QtCore/QFile>
+#include <QtCore/QTimer>
+#include <QtNetwork/QAbstractSocket>
+
+class QTcpServer;
+class QTcpSocket;
+
+class KJob;
 class Transfer;
+namespace Oscar
+{
+	class Message;
+}
+
 namespace Kopete
 {
 	class Transfer;
@@ -57,6 +60,7 @@ public:
 	void onGo();
 	bool take( Transfer* transfer );
 	bool take( int type, QByteArray cookie, Buffer b );
+	bool takeAutoResponse( int type, QByteArray cookie, Buffer* b );
 
 public slots:
 	void doCancel();
@@ -65,21 +69,28 @@ public slots:
 	void timeout();
 
 signals:
+	void transferCancelled();
+	void transferError( int errorCode, const QString &error );
+	void transferFinished();
+
+	void transferProcessed( unsigned int bytesSent );
+
 	void sendMessage( const Oscar::Message &msg );
 	void askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i );
 	void getTransferManager( Kopete::TransferManager ** );
-	void gotCancel();
-	void error( int, const QString & );
-	void processed( unsigned int );
-	void fileComplete();
+	
 	void cancelOft();
 
 private slots:
 	void readyAccept(); //serversocket got connection
-	void socketError( int );
+	void socketError( QAbstractSocket::SocketError );
 	void proxyRead();
 	void socketConnected();
+
+	void errorOft( int errorCode, const QString &error );
 	void doneOft(); //oft told us it's done
+
+	void transferResult( KJob* job );
 
 private:
 	enum Action { Send, Receive };
@@ -97,21 +108,21 @@ private:
 	void connectFailed(); //tries another method of connecting
 	void doOft();
 
-	OFTRendezvous m_oftRendezvous;
+	Oscar::OFTRendezvous m_oftRendezvous;
 
 	Action m_action;
 	QString m_contactName; //other person's username
 	QString m_selfName; //my username
 	QString m_desc; //file description
-	KServerSocket *m_ss; //listens for direct connections
-	KBufferedSocket *m_connection; //where we actually send file data
+	QTcpServer *m_tcpServer; //listens for direct connections
+	QTcpSocket *m_connection; //where we actually send file data
 	QTimer m_timer; //if we're idle too long, then give up
 	Oscar::WORD m_port; //to connect to
 	QByteArray m_ip; //to connect to
 	QByteArray m_altIp; //to connect to if m_ip fails
 	bool m_proxy; //are we using a proxy?
 	bool m_proxyRequester; //did we choose to request the proxy?
-	enum State { Default, Listening, Connecting, ProxySetup, Done };
+	enum State { Default, Listening, Connecting, ProxySetup, OFT, Done };
 	State m_state;
 };
 

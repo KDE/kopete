@@ -358,7 +358,7 @@ public:
 	XMPP::FileTransferManager *fileTransferManager () const;
 
 	/**
-	 * Join a group chat.
+	 * Join a groupchat.
 	 * @param host Node to join the room at.
 	 * @param room Name of room to join.
 	 * @param nick Nick name you want to join with.
@@ -366,7 +366,7 @@ public:
 	void joinGroupChat ( const QString &host, const QString &room, const QString &nick );
 
 	/**
-	 * Join a group chat that require a password.
+	 * Join a groupchat that require a password.
 	 * @param host Node to join the room at.
 	 * @param room Name of room to join.
 	 * @param nick Nick name you want to join with.
@@ -375,18 +375,18 @@ public:
 	void joinGroupChat ( const QString &host, const QString &room, const QString &nick, const QString &password );
 
 	/**
-	 * Leave a group chat.
+	 * Leave a groupchat.
 	 * @param host Node to leave room at.
 	 * @param room Name of room to leave.
 	 */
 	void leaveGroupChat ( const QString &host, const QString &room );
 	
 	/**
-	 * change the status of a group chat
+	 * change the status of a groupchat
 	 */
 	void setGroupChatStatus(const QString &host, const QString &room, const XMPP::Status &);
 	/**
-	 * change the nick in a group chat
+	 * change the nick in a groupchat
 	 */
 	void changeGroupChatNick(const QString &host, const QString &room, const QString &nick, const XMPP::Status &status =XMPP::Status());
 
@@ -495,12 +495,12 @@ signals:
 	void groupChatLeft ( const XMPP::Jid &jid );
 
 	/**
-	 * A presence to a group chat has been signalled.
+	 * A presence to a groupchat has been signalled.
 	 */
 	void groupChatPresence ( const XMPP::Jid &jid, const XMPP::Status &status );
 
 	/**
-	 * An error was encountered joining or processing a group chat.
+	 * An error was encountered joining or processing a groupchat.
 	 */
 	void groupChatError ( const XMPP::Jid &jid, int error, const QString &reason );
 
@@ -592,7 +592,7 @@ private slots:
 	void slotIncomingXML (const QString &msg);
 	void slotOutgoingXML (const QString &msg);
 
-	/* Slots for handling group chats. */
+	/* Slots for handling groupchats. */
 	void slotGroupChatJoined (const Jid & jid);
 	void slotGroupChatLeft (const Jid & jid);
 	void slotGroupChatPresence (const Jid & jid, const Status & status);

@@ -107,7 +107,12 @@ public:
 	 */
 	void setPresenceTarget( const Oscar::Presence &presence );
 
-	virtual QString sanitizedMessage( const QString& message ) = 0;
+	/**
+	 * Set encoding for this contact
+	 * @param mib the MIBenum
+	 * @note If @p mib is 0 then default encoding will be used
+	 */
+	virtual void setEncoding( int mib );
 
 public slots:	
 	/** Remove this contact from the server. Reimplemented from Kopete::Contact */
@@ -162,7 +167,6 @@ private slots:
 	
 private:
 	QString filterAwayMessage( const QString &message ) const;
-	bool cachedBuddyIcon( QByteArray hash );
 	bool m_buddyIconDirty;
 
 	OscarEncodingSelectionDialog* m_oesd;

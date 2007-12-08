@@ -1,10 +1,11 @@
 /*
-    appearanceconfig.cpp  -  Kopete Look Feel Config
+    chatwindowconfig.cpp  -  Kopete Look Feel Config
 
     Copyright (c) 2005-2006 by Michaël Larouche       <larouche@kde.org>
     Copyright (c) 2005-2006 by Olivier Goffart         <ogoffart at kde.org>
+    Copyright (c) 2007      by Gustavo Pichorim Boiko  <gustavo.boiko@kdemail.net>
 
-    Kopete    (c) 2005-2006 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2005-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -17,6 +18,8 @@
 */
 
 #include "chatwindowconfig.h"
+#include "emoticonthemedelegate.h"
+#include "emoticonthemeitem.h"
 
 #include <QCheckBox>
 #include <QDir>
@@ -32,10 +35,9 @@
 
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
-#include <kconfig.h> // for KNewStuff emoticon fetching
 #include <kdebug.h>
 #include <kfontrequester.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kio/netaccess.h>
 #include <khtmlview.h>
 #include <klineedit.h>
@@ -69,20 +71,80 @@
 #include <kopeteprotocol.h>
 #include <kopetemetacontact.h>
 #include <kopeteaccount.h>
+#include <kopeteidentity.h>
 #include <kopetecontact.h>
 #include <kopetemessage.h>
 #include <kopetechatsession.h>
 #include <kopetechatsessionmanager.h>
 #include <kopetestatusmessage.h>
+#include <kopeteappearancesettings.h>
+
+#include "kopeteemoticons.h"
 
 #include "kopeteglobal.h"
 
-#include <qtabwidget.h>
-
 #include "kopetechatwindowsettings.h"
 
-typedef KGenericFactory<ChatWindowConfig, QWidget> KopeteChatWindowConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_chatwindowconfig, KopeteChatWindowConfigFactory( "kcm_kopete_chatwindowconfig" ) )
+K_PLUGIN_FACTORY( KopeteChatWindowConfigFactory,
+		registerPlugin<ChatWindowConfig>(); )
+K_EXPORT_PLUGIN( KopeteChatWindowConfigFactory("kcm_kopete_chatwindowconfig") )
+
+// Reimplement Kopete::Contact and its abstract method
+// This is for style preview.
+class FakeContact : public Kopete::Contact
+{
+public:
+	FakeContact (Kopete::Account *account, const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( account, id, mc ) {}
+	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags /*c*/) { return 0L; }
+	virtual void slotUserInfo() {}
+};
+
+// This is for style preview.
+class FakeProtocol : public Kopete::Protocol
+{
+public:
+FakeProtocol( const KComponentData &instance, QObject *parent ) : Kopete::Protocol(instance, parent){}
+Kopete::Account* createNewAccount( const QString &/*accountId*/ ){return 0L;}
+AddContactPage* createAddContactWidget( QWidget */*parent*/, Kopete::Account */*account*/){return 0L;}
+KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, QWidget */*parent */){return 0L;}
+};
+
+// This is for style preview.
+class FakeIdentity : public Kopete::Identity
+{
+	public:
+		FakeIdentity() : Kopete::Identity("Preview Identity") {};
+};
+
+// This is for style preview.
+class FakeAccount : public Kopete::Account
+{
+public:
+	FakeAccount(Kopete::Protocol *parent, const QString &accountID) : Kopete::Account(parent, accountID)
+	{
+		m_identity = new FakeIdentity();
+		setIdentity(m_identity);
+	}
+
+	void setMyself(Kopete::Contact *myself)
+	{
+		Kopete::Account::setMyself(myself);
+	}
+
+	~FakeAccount()
+	{
+		delete m_identity;
+	}
+
+bool createContact( const QString &/*contactId*/, Kopete::MetaContact */*parentContact*/ ){return true;}
+void connect( const Kopete::OnlineStatus& /*initialStatus*/){}
+void disconnect(){}
+void setOnlineStatus( const Kopete::OnlineStatus& /*status*/ , const Kopete::StatusMessage &/*reason*/){}
+void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/){}
+
+private:
+	FakeIdentity *m_identity;
+};
 
 
 #ifdef __GNUC__
@@ -141,24 +203,24 @@ public:
 };
 #endif
 
-ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
-	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args )
-		, m_currentStyle (0L), m_loading(false), m_styleChanged(false)
+ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
+	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args ),
+		m_currentStyle (0L), m_loading(false), m_styleChanged(false),
+		m_previewProtocol(0L), m_previewAccount(0L), m_myselfMetaContact(0L),
+		m_jackMetaContact(0L), m_myself(0L), m_jack(0L)
 {
-
-	QVBoxLayout *layout = new QVBoxLayout(this);
-
-	QTabWidget *chatWindowTabCtl = new QTabWidget(this);
-	layout->addWidget( chatWindowTabCtl );
-	setLayout(layout);
-
 	KConfigGroup config(KGlobal::config(), "ChatWindowSettings");
 
+	QVBoxLayout *layout = new QVBoxLayout(this);
+	// since KSetting::Dialog has margins here, we don't need our own.
+	layout->setContentsMargins( 0, 0, 0, 0);
+	m_tab = new QTabWidget(this);
+	layout->addWidget(m_tab);
 
-	// "Style" TAB ========================================================
-	QWidget *styleWidget=new QWidget(chatWindowTabCtl);
+//--------- style tab ---------------------
+	QWidget *styleWidget = new QWidget(m_tab);
 	m_styleUi.setupUi(styleWidget);
-
+	m_tab->addTab(styleWidget, i18n("&Style"));
 	addConfig( KopeteChatWindowSettings::self(), styleWidget );
 
 	connect(m_styleUi.styleList, SIGNAL(selectionChanged(Q3ListBoxItem *)),
@@ -195,14 +257,48 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	// Add the preview message to the ChatMessagePart
 	createPreviewMessages();
 
-	chatWindowTabCtl->addTab( styleWidget, i18n("Style") );
 
+//--------- emoticons tab ---------------------
+	QWidget *emoticonsWidget = new QWidget(m_tab);
+	m_emoticonsUi.setupUi(emoticonsWidget);
+	m_tab->addTab(emoticonsWidget, i18n("&Emoticons"));
+
+	m_emoticonsUi.icon_theme_list->setItemDelegate(new EmoticonThemeDelegate(this));
+	addConfig( Kopete::AppearanceSettings::self(), emoticonsWidget );
+
+	connect(m_emoticonsUi.icon_theme_list, SIGNAL(itemSelectionChanged()),
+		this, SLOT(slotSelectedEmoticonsThemeChanged()));
+	connect(m_emoticonsUi.btnInstallTheme, SIGNAL(clicked()),
+		this, SLOT(slotInstallEmoticonTheme()));
+
+	connect(m_emoticonsUi.btnGetThemes, SIGNAL(clicked()),
+		this, SLOT(slotGetEmoticonThemes()));
+	connect(m_emoticonsUi.btnRemoveTheme, SIGNAL(clicked()),
+		this, SLOT(slotRemoveEmoticonTheme()));
+
+//--------- colors tab --------------------------
+	QWidget *colorsWidget = new QWidget(m_tab);
+	m_colorsUi.setupUi(colorsWidget);
+	m_tab->addTab(colorsWidget, i18n("Colors && Fonts"));
+	addConfig( Kopete::AppearanceSettings::self(), colorsWidget );
 
 	load();
 }
 
 ChatWindowConfig::~ChatWindowConfig()
 {
+	if (m_previewChatSession)
+	{
+		Kopete::ChatSessionManager::self()->removeSession(m_previewChatSession);
+	}
+
+	// Deleting the account will delete jack and myself
+	delete m_previewAccount;
+
+	delete m_myselfMetaContact;
+	delete m_jackMetaContact;
+
+ 	delete m_previewProtocol;
 }
 
 
@@ -226,6 +322,13 @@ void ChatWindowConfig::save()
 		settings->setStyleVariant( m_currentVariantMap[m_styleUi.variantList->currentText()] );
 	}
 
+	Kopete::AppearanceSettings *appearanceSettings = Kopete::AppearanceSettings::self();
+	QListWidgetItem *item = m_emoticonsUi.icon_theme_list->currentItem();
+	
+	if (item)
+		appearanceSettings->setEmoticonTheme( item->text() );
+
+	appearanceSettings->writeConfig();
 	settings->writeConfig();
 	m_styleChanged = false;
 
@@ -242,6 +345,9 @@ void ChatWindowConfig::load()
 
 	// Look for available chat window styles.
 	slotLoadChatStyles();
+
+	// Look for available emoticons themes
+	updateEmoticonList();
 
 	m_loading=false;
 	slotUpdateChatPreview();
@@ -309,8 +415,10 @@ void ChatWindowConfig::slotChatStyleSelected()
 		slotUpdateChatPreview();
 		// Get the first variant to preview
 		// Check if the current style has variants.
-		if( !m_currentVariantMap.empty() )
+		if( !m_currentVariantMap.empty() ) {
 			m_preview->setStyleVariant(m_currentVariantMap[0]);
+			m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( QString() ) );
+		}
 
 		emitChanged();
 	}
@@ -321,6 +429,16 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 // 	kDebug(14000) << variantName;
 // 	kDebug(14000) << m_currentVariantMap[variantName];
 
+	// enable the 'Use compact' checkbox depending on whether the selected variant exists in compact
+	// form
+	QString styleName = m_styleUi.styleList->selectedItem()->text();
+	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( styleName );
+	if ( m_styleUi.variantList->currentIndex() == 0 ) {
+		m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( "" ) );
+	}
+	else {
+		m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( variantName ) );
+	}
 	// Update the preview
 	m_preview->setStyleVariant(m_currentVariantMap[variantName]);
 	emitChanged();
@@ -373,22 +491,21 @@ void ChatWindowConfig::slotInstallChatStyle()
 
 void ChatWindowConfig::slotDeleteChatStyle()
 {
-//	QString styleName = m_styleUi.styleList->selectedItem()->text();
-//	QString stylePathToDelete = m_styleItemMap[m_styleUi.styleList->selectedItem()];
-//	if( ChatWindowStyleManager::self()->removeStyle(stylePathToDelete) )
-//	{
-//		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "The style %1 was successfully deleted.").arg(styleName));
-//
-		// Get the first item in the stye List.
-//		QString stylePath = (*m_styleItemMap.begin());
-//		m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool(stylePath);
-//		emitChanged();
-//	}
-//	else
-//	{
-//		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "An error occurred while trying to delete %1 style.").arg(styleName));
-//	}
-	emitChanged();
+	if (!m_styleUi.styleList->selectedItem())
+	{
+		return; // nothing selected
+	}
+
+	QString styleName = m_styleUi.styleList->selectedItem()->text();
+	if( ChatWindowStyleManager::self()->removeStyle(styleName) )
+	{
+		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18nc("@info", "The style <resource>%1</resource> was successfully deleted.", styleName));
+		emitChanged();
+	}
+	else
+	{
+		KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, i18nc("@info", "An error occurred while trying to delete the <resource>%1</resource> style. Your account might not have permission to remove it.", styleName));
+	}
 }
 
 void ChatWindowConfig::slotGetChatStyles()
@@ -413,40 +530,6 @@ void ChatWindowConfig::slotGetChatStyles()
 #endif
 }
 
-// Reimplement Kopete::Contact and its abstract method
-// This is for style preview.
-class FakeContact : public Kopete::Contact
-{
-public:
-	FakeContact (Kopete::Account *account, const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( account, id, mc ) {}
-	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags /*c*/) { return 0L; }
-	virtual void slotUserInfo() {}
-};
-
-// This is for style preview.
-class FakeProtocol : public Kopete::Protocol
-{
-public:
-FakeProtocol( const KComponentData &instance, QObject *parent ) : Kopete::Protocol(instance, parent){}
-Kopete::Account* createNewAccount( const QString &/*accountId*/ ){return 0L;}
-AddContactPage* createAddContactWidget( QWidget */*parent*/, Kopete::Account */*account*/){return 0L;}
-KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, QWidget */*parent */){return 0L;}
-};
-
-// This is for style preview.
-class FakeAccount : public Kopete::Account
-{
-public:
-FakeAccount(Kopete::Protocol *parent, const QString &accountID) : Kopete::Account(parent, accountID){}
-~FakeAccount()
-{}
-bool createContact( const QString &/*contactId*/, Kopete::MetaContact */*parentContact*/ ){return true;}
-void connect( const Kopete::OnlineStatus& /*initialStatus*/){}
-void disconnect(){}
-void setOnlineStatus( const Kopete::OnlineStatus& /*status*/ , const Kopete::StatusMessage &/*reason*/){}
-void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/){}
-};
-
 void ChatWindowConfig::createPreviewChatSession()
 {
 	m_previewProtocol = new FakeProtocol( KComponentData(QByteArray("kopete-preview-chatwindowstyle")), 0 ); m_previewProtocol->setObjectName( QLatin1String("kopete-preview-chatwindowstyle") );
@@ -454,20 +537,27 @@ void ChatWindowConfig::createPreviewChatSession()
 
 	// Create fake meta/contacts
 	m_myselfMetaContact = new Kopete::MetaContact();
-	m_myself = new FakeContact(m_previewAccount, i18nc("This is the myself preview contact id", "myself@preview"), m_myselfMetaContact);
-	m_myself->setNickName(i18nc("This is the myself preview contact nickname", "Myself"));
-	m_jackMetaContact = new Kopete::MetaContact();
-	m_jack = new FakeContact(m_previewAccount, i18nc("This is the other preview contact id", "jack@preview"), m_jackMetaContact);
-	m_jack->setNickName(i18nc("This is the other preview contact nickname", "Jack"));
+	m_myselfMetaContact->setTemporary();
 	m_myselfMetaContact->setDisplayName(i18n("Myself"));
 	m_myselfMetaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
+
+	m_myself = new FakeContact(m_previewAccount, i18nc("This is the myself preview contact id", "myself@preview"), m_myselfMetaContact);
+	m_myself->setNickName(i18nc("This is the myself preview contact nickname", "Myself"));
+
+	m_jackMetaContact = new Kopete::MetaContact();
+	m_jackMetaContact->setTemporary();
 	m_jackMetaContact->setDisplayName(i18n("Jack"));
 	m_jackMetaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
+
+	m_jack = new FakeContact(m_previewAccount, i18nc("This is the other preview contact id", "jack@preview"), m_jackMetaContact);
+	m_jack->setNickName(i18nc("This is the other preview contact nickname", "Jack"));
+
+	m_previewAccount->setMyself(m_myself);
 
 	Kopete::ContactPtrList contactList;
 	contactList.append(m_jack);
 	// Create fakeChatSession
-	m_previewChatSession = Kopete::ChatSessionManager::self()->create(m_myself, contactList, 0);
+	m_previewChatSession = Kopete::ChatSessionManager::self()->create(m_myself, contactList, m_previewProtocol);
 	m_previewChatSession->setDisplayName("Preview Session");
 }
 
@@ -542,10 +632,132 @@ void ChatWindowConfig::slotUpdateChatPreview()
 	emitChanged();
 }
 
+void ChatWindowConfig::slotUpdateEmoticonsButton(bool _b)
+{
+	QListWidgetItem *item = m_emoticonsUi.icon_theme_list->currentItem();
+	if (!item)
+		return;
+	QString themeName = item->text();
+	QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+'/'));
+	m_emoticonsUi.btnRemoveTheme->setEnabled( _b && fileInf.isWritable());
+	m_emoticonsUi.btnGetThemes->setEnabled( false );
+}
+
+void ChatWindowConfig::updateEmoticonList()
+{
+	KStandardDirs dir;
+
+	m_emoticonsUi.icon_theme_list->clear(); // Wipe out old list
+	// Get a list of directories in our icon theme dir
+	QStringList themeDirs = KGlobal::dirs()->findDirs("emoticons", "");
+	// loop adding themes from all dirs into theme-list
+	for( int x = 0;x < themeDirs.count();x++)
+	{
+		QDir themeQDir(themeDirs[x]);
+		themeQDir.setFilter( QDir::Dirs ); // only scan for subdirs
+		themeQDir.setSorting( QDir::Name ); // I guess name is as good as any
+		for(unsigned int y = 0; y < themeQDir.count(); y++)
+		{
+			QStringList themes = themeQDir.entryList(QDir::Dirs, QDir::Name);
+
+			// We don't care for '.' and '..'
+			if ( themeQDir[y] != "." && themeQDir[y] != ".." )
+			{
+				// Add ourselves to the list, using our directory name  FIXME:  use the first emoticon of the theme.
+				QListWidgetItem *item = new EmoticonThemeItem(themeQDir[y]);
+				m_emoticonsUi.icon_theme_list->addItem(item);
+			}
+		}
+	}
+
+	// Where is that theme in our big-list-o-themes?
+
+	QList<QListWidgetItem*> items = m_emoticonsUi.icon_theme_list->findItems( Kopete::AppearanceSettings::self()->emoticonTheme(), Qt::MatchExactly );
+
+	if (items.count()) // found it... make it the currently selected theme
+		m_emoticonsUi.icon_theme_list->setCurrentItem( items.first() );
+	else // Er, it's not there... select the current item
+		m_emoticonsUi.icon_theme_list->setCurrentItem( 0 );
+}
+
+void ChatWindowConfig::slotSelectedEmoticonsThemeChanged()
+{
+	QListWidgetItem *item = m_emoticonsUi.icon_theme_list->currentItem();
+	if (!item)
+		return;
+	QString themeName = item->text();
+	QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+'/'));
+	m_emoticonsUi.btnRemoveTheme->setEnabled( fileInf.isWritable() );
+
+	emitChanged();
+}
+
+void ChatWindowConfig::slotInstallEmoticonTheme()
+{
+	KUrl themeURL = KUrlRequesterDialog::getUrl(QString::null, this,	//krazy:exclude=nullstrassign for old broken gcc
+			i18n("Drag or Type Emoticon Theme URL"));
+	if ( themeURL.isEmpty() )
+		return;
+
+	//TODO: support remote theme files!
+	if ( !themeURL.isLocalFile() )
+	{
+		KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Sorry, emoticon themes must be installed from local files."),
+		                               i18n("Could Not Install Emoticon Theme") );
+		return;
+	}
+
+	Kopete::Global::installEmoticonTheme( themeURL.path() );
+	updateEmoticonList();
+}
+
+void ChatWindowConfig::slotRemoveEmoticonTheme()
+{
+	QListWidgetItem *selected = m_emoticonsUi.icon_theme_list->currentItem();
+	if(!selected)
+		return;
+
+	QString themeName = selected->text();
+
+	QString question=i18n("<qt>Are you sure you want to remove the "
+			"<strong>%1</strong> emoticon theme?<br />"
+			"<br />"
+			"This will delete the files installed by this theme.</qt>",
+		themeName);
+
+        int res = KMessageBox::warningContinueCancel(this, question, i18n("Confirmation"),KStandardGuiItem::del());
+	if (res!=KMessageBox::Continue)
+		return;
+
+	KUrl themeUrl(KGlobal::dirs()->findResource("emoticons", themeName+'/'));
+	KIO::NetAccess::del(themeUrl, this);
+
+	updateEmoticonList();
+}
+
+void ChatWindowConfig::slotGetEmoticonThemes()
+{
+	KConfigGroup config(KGlobal::config(), "KNewStuff");
+	config.writeEntry( "ProvidersUrl",
+						"http://download.kde.org/khotnewstuff/emoticons-providers.xml" );
+	config.writeEntry( "StandardResource", "emoticons" );
+	config.writeEntry( "Uncompress", "application/x-gzip" );
+	config.sync();
+
+#ifdef __GNUC__
+#warning "Port KNS changes!"
+#endif
+#if 0
+	KNS::DownloadDialog::open( "emoticons", i18n( "Get New Emoticons") );
+#endif
+
+	updateEmoticonList();
+}
+
+
 void ChatWindowConfig::emitChanged()
 {
 	emit changed( true );
 }
 
 #include "chatwindowconfig.moc"
-

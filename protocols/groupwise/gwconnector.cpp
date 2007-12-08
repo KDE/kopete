@@ -5,7 +5,7 @@
     begin                : Wed Jul 7 2004
     copyright            : (C) 2004 by Till Gerken <till@tantalo.net>
 
-			   Kopete (C) 2004 Kopete developers <kopete-devel@kde.org>
+			   Kopete (C) 2004-2007 Kopete developers <kopete-devel@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -17,9 +17,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <kbufferedsocket.h>
+#include <k3bufferedsocket.h>
 #include <kdebug.h>
-#include <kresolver.h>
+#include <k3resolver.h>
 
 #include "gwconnector.h"
 #include "gwerror.h"
@@ -30,7 +30,7 @@ KNetworkConnector::KNetworkConnector ( QObject *parent )
 {
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "New KNetwork connector.";
 
-	mErrorCode = KNetwork::KSocketBase::NoError;
+	mErrorCode = 0;
 
 	mByteStream = new KNetworkByteStream ( this );
 
@@ -58,15 +58,9 @@ void KNetworkConnector::connectToServer ( const QString &server )
 	 * For XMPP 1.0, we need to enable this!
 	 */
 
-	mErrorCode = KNetwork::KSocketBase::NoError;
+	mErrorCode = 0;
 
-	if ( !mByteStream->connect ( mHost, QString::number ( mPort ) ) )
-	{
-		// Houston, we have a problem
-		mErrorCode = mByteStream->socket()->error ();
-		emit error ();
-	}
-
+	mByteStream->connect ( mHost, QString::number ( mPort ) );
 }
 
 void KNetworkConnector::slotConnected ()

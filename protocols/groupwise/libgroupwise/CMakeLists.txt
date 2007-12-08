@@ -1,3 +1,5 @@
+find_package(ZLIB REQUIRED)
+
 add_subdirectory( tasks )
 
 include_directories(
@@ -46,39 +48,42 @@ set( libqgroupwise_tasks_SRCS
 )
 
 set( libqgroupwise_SRCS
-	connector.cpp
 	bytestream.cpp
-	tlshandler.cpp
-	qcatlshandler.cpp
-	gwclientstream.cpp
-	securestream.cpp
-	stream.cpp
+	chatroommanager.cpp
+	client.cpp
+	compressionhandler.cpp
+	compress.cpp
+	connector.cpp
 	coreprotocol.cpp
-	gwfield.cpp
-	transferbase.cpp
-	usertransfer.cpp
+	eventprotocol.cpp
 	eventtransfer.cpp
-	transfer.cpp
+	gwclientstream.cpp
+	gwerror.cpp
+	gwfield.cpp
+	gwglobal.cpp
+	inputprotocolbase.cpp
+	privacymanager.cpp
+	qcatlshandler.cpp
 	request.cpp
 	requestfactory.cpp
-	safedelete.cpp
 	response.cpp
-	client.cpp
-	task.cpp
-	rtf.cc
-	userdetailsmanager.cpp
-	eventprotocol.cpp
-	inputprotocolbase.cpp
 	responseprotocol.cpp
-	privacymanager.cpp
-	gwglobal.cpp
-	chatroommanager.cpp
+	rtf.cc
+	safedelete.cpp
+	securestream.cpp
+	stream.cpp
+	task.cpp
+	tlshandler.cpp
+	transfer.cpp
+	transferbase.cpp
+	userdetailsmanager.cpp
+	usertransfer.cpp
 )
 
 
 kde4_add_library( qgroupwise SHARED ${libqgroupwise_tasks_SRCS} ${libqgroupwise_SRCS} )
 
-target_link_libraries( qgroupwise ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QCA2_LIBRARIES} )
+target_link_libraries( qgroupwise ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES} ${KDE4_KDECORE_LIBS})
 
 ########### install files ###############
 

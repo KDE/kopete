@@ -64,11 +64,11 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 	// Set up the Invite menu
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), this );
         actionCollection()->addAction( "qqInvite", m_actionInvite );
-	connect( m_actionInvite->popupMenu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
+	connect( m_actionInvite->menu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
 
 	m_secure = actionCollection()->addAction( "qqSecureChat" );
 	m_secure->setText( i18n( "Security Status" ) );
-        m_secure->setIcon( KIcon( "encrypted" ) );
+        m_secure->setIcon( KIcon( "security-high" ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
         connect( m_secure, SIGNAL( triggered() ), this, SLOT( slotShowSecurity() ) );
 
@@ -282,7 +282,7 @@ void QQChatSession::slotActionInviteAboutToShow()
 	qDeleteAll(m_inviteActions);
 	m_inviteActions.clear();
 
-	m_actionInvite->popupMenu()->clear();
+	m_actionInvite->menu()->clear();
 
 	QHash<QString, Kopete::Contact*>::const_iterator it;
 	for ( it = account()->contacts().begin(); it != account()->contacts().end(); it++ )

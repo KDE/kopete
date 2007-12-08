@@ -23,6 +23,7 @@
 
 #include <QtCore/QQueue>
 #include <QtCore/QTimer>
+#include <QtNetwork/QHostAddress>
 
 #include <kdebug.h>
 
@@ -145,6 +146,11 @@ void ClientStream::setNoopTime( int mills )
 		return;
 	
 	d->noopTimer.start( d->noop_time );
+}
+
+QHostAddress ClientStream::localAddress() const
+{
+	return d->socket->localAddress();
 }
 
 int ClientStream::error() const

@@ -30,14 +30,13 @@
 #include <kwindowsystem.h>
 #include <kcmultidialog.h>
 #include <kicon.h>
-#include <kglobal.h>
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include <kactioncollection.h>
 
-K_GLOBAL_STATIC_WITH_ARGS(KSettings::Dialog, s_settingsDialog, (Kopete::UI::Global::mainWidget()))
+KSettings::Dialog *KopetePreferencesAction::s_settingsDialog = 0L;
 
 KopetePreferencesAction::KopetePreferencesAction( KActionCollection *parent, const char *name )
 : KAction( KIcon(KStandardGuiItem::configure().iconName()), KStandardGuiItem::configure().text(), parent )
@@ -52,6 +51,12 @@ KopetePreferencesAction::~KopetePreferencesAction()
 
 void KopetePreferencesAction::slotShowPreferences()
 {
+	// No need of static deleter since when the parent is deleted, the settings dialog is deleted (ereslibre)
+	if ( !s_settingsDialog )
+	{
+		s_settingsDialog = new KSettings::Dialog( Kopete::UI::Global::mainWidget() );
+	}
+
 	s_settingsDialog->show();
 
 	s_settingsDialog->raise();
@@ -94,7 +99,7 @@ KAction * KopeteStdAction::contactInfo( const QObject *recvr, const char *slot, 
 
 KAction * KopeteStdAction::sendFile( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "Send &File..." ), KIcon( "attach" ), recvr, slot, parent, name );
+	return createAction( i18n( "Send &File..." ), KIcon( "mail-attachment" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::viewHistory( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
@@ -114,7 +119,7 @@ KAction * KopeteStdAction::changeMetaContact( const QObject *recvr, const char *
 
 KAction * KopeteStdAction::deleteContact( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	KAction *deleteAction = createAction( i18n( "&Delete Contact" ), KIcon( "delete-user" ), recvr, slot, parent, name );
+	KAction *deleteAction = createAction( i18n( "&Delete Contact" ), KIcon( "list-remove-user" ), recvr, slot, parent, name );
 	deleteAction->setShortcut( KShortcut(Qt::Key_Delete) );
 
 	return deleteAction;

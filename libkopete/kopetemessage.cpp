@@ -553,6 +553,8 @@ QString Message::getHtmlStyleAttribute() const
 	return styleAttribute;
 }
 
+// prime candidate for removal
+#if 0 
 QString Message::decodeString( const QByteArray &message, const QTextCodec *providedCodec, bool *success )
 {
 	/*
@@ -636,6 +638,7 @@ QString Message::decodeString( const QByteArray &message, const QTextCodec *prov
 */
 	return QString();
 }
+#endif
 
 QStringList Message::classes() const
 {

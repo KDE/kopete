@@ -2,6 +2,7 @@
     identitydialog.cpp  -  Kopete identity configuration dialog
 
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+    Copyright (c) 2007         Will Stephenson        <wstephenson@kde.org>
 
     Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -39,7 +40,7 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 {
 	Q_ASSERT(identity);
 
-	setTitle(identity->identityId());
+	setTitle(identity->label());
 	setWindowTitle(i18n("Identity Information"));
 
 	d = new Private();
@@ -50,7 +51,7 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 	QWidget *w = new QWidget(this);
 	d->general.setupUi(w);
 	d->general.selectPhoto->setIcon(KIcon("fileview-preview"));
-	d->general.clearPhoto->setIcon(KIcon("clear-left"));
+	d->general.clearPhoto->setIcon(KIcon("edit-clear-locationbar-rtl"));
 
 	connect(d->general.selectPhoto, SIGNAL(clicked(bool)),
 			this, SLOT(slotSelectPhoto()));
@@ -79,6 +80,10 @@ void IdentityDialog::load()
 	// Photo
 	if (d->identity->hasProperty( d->props->photo().key() ))
 		setPhoto( d->identity->property(d->props->photo()).value().toString() );
+
+
+	// Label
+	d->general.label->setText( d->identity->label() );
 
 	// NickName
 	if (d->identity->hasProperty( d->props->nickName().key() ))
@@ -112,7 +117,11 @@ void IdentityDialog::load()
 void IdentityDialog::slotSave()
 {
 	//-------------- General Info ---------------------
-	d->identity->setProperty( d->props->photo(), d->photoPath );
+	d->identity->setLabel( d->general.label->text() );
+	if ( d->photoPath.isEmpty() )
+		d->identity->removeProperty( d->props->photo() );
+	else
+		d->identity->setProperty( d->props->photo(), d->photoPath );
 	d->identity->setProperty( d->props->nickName(), d->general.nickName->text() );
 	d->identity->setProperty( d->props->firstName(), d->general.firstName->text() );
 	d->identity->setProperty( d->props->lastName(), d->general.lastName->text() );
@@ -142,8 +151,10 @@ void IdentityDialog::setPhoto(QString path)
 
 void IdentityDialog::slotSelectPhoto()
 {
-	QString photo = Kopete::UI::AvatarDialog::getAvatar(this, d->photoPath);
-	setPhoto( photo );
+	bool ok;
+	QString photo = Kopete::UI::AvatarDialog::getAvatar(this, d->photoPath, &ok);
+	if ( ok )
+		setPhoto( photo );
 }
 
 void IdentityDialog::slotClearPhoto()

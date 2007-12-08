@@ -44,6 +44,7 @@ class OnlineStatus;
 class BlackLister;
 class StatusMessage;
 class Identity;
+class PropertyContainer;
 
 /**
  * The Kopete::Account class handles one account.
@@ -108,7 +109,7 @@ public:
 	enum AddMode {
 		ChangeKABC = 0,     ///< The KDE Address book may be updated
 		DontChangeKABC = 1, ///< The KDE Address book will not be changed
-		Temporary = 2       ///< The contact will not be added on the contactlist
+		Temporary = 2       ///< The contact will not be added on the contact list
 	};
 
 	/**
@@ -225,8 +226,11 @@ public:
 	 * identity it was previously associated.
 	 *
 	 * @param ident The identity this account should be associated to
+	 * \return @c true if the identity was changed, @c false otherwise
+	 *
+	 * @note You should call the default implementation from your reimplementation
 	 */
-	void setIdentity( Identity *ident );
+	virtual bool setIdentity( Kopete::Identity *ident );
 
 	/**
 	 * \brief Retrieve the 'myself' contact.
@@ -545,7 +549,7 @@ private slots:
 	/**
 	 * The @ref myself() contact's property changed.
 	 */
-	void slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & );
+	void slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & );
 
 	/**
 	 * Stop the suppression of status notification (connected to a timer)

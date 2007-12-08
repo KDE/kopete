@@ -28,6 +28,11 @@
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <qdir.h>
+#include <solid/device.h>
+#include <solid/devicenotifier.h>
+#include <solid/deviceinterface.h>
+#include <solid/video.h>
+
 
 #include "videodevice.h"
 #include "videodevicepool.h"
@@ -56,6 +61,8 @@ VideoDevicePool* VideoDevicePool::self()
 
 VideoDevicePool::VideoDevicePool()
 {
+	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(deviceAdded(const QString &)) );
+    connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(deviceRemoved(const QString &)) );
 }
 
 
@@ -396,53 +403,11 @@ bool VideoDevicePool::setImageAsMirror(bool imageasmirror)
 }
 
 /*!
-    \fn VideoDevicePool::getDisableMMap()
- */
-bool VideoDevicePool::getDisableMMap()
-{
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].getDisableMMap();
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::setDisableMMap(bool disablemmap)
- */
-bool VideoDevicePool::setDisableMMap(bool disablemmap)
-{
-	kDebug() << "VideoDevicePool::setDisableMMap(" << disablemmap << ") called.";
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].setDisableMMap(disablemmap);
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::getWorkaroundBrokenDriver()
- */
-bool VideoDevicePool::getWorkaroundBrokenDriver()
-{
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].getWorkaroundBrokenDriver();
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::setWorkaroundBrokenDriver(bool workaroundbrokendriver)
- */
-bool VideoDevicePool::setWorkaroundBrokenDriver(bool workaroundbrokendriver)
-{
-	kDebug() << "VideoDevicePool::setWorkaroundBrokenDriver(" << workaroundbrokendriver << ") called.";
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].setWorkaroundBrokenDriver(workaroundbrokendriver);
-	return false;
-}
-
-/*!
     \fn VideoDevicePool::getFrame()
  */
 int VideoDevicePool::getFrame()
 {
-	kDebug() << "VideoDevicePool::getFrame() called.";
+//	kDebug() << "VideoDevicePool::getFrame() called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].getFrame();
 	else
@@ -465,16 +430,16 @@ int VideoDevicePool::getFrame()
  */
 int VideoDevicePool::getImage(QImage *qimage)
 {
-	kDebug() << "VideoDevicePool::getImage() called.";
+//	kDebug() << "VideoDevicePool::getImage() called.";
 	if(m_videodevice.size())
 		return m_videodevice[currentDevice()].getImage(qimage);
 	else
 	{
 		kDebug() << "VideoDevicePool::getImage() fallback for no device.";
 
-		// not sure if this is the way to handle this (gamaral)
-		delete qimage;
-		qimage = new QImage(width(), height(), QImage::Format_RGB32);
+		// do NOT delete qimage here, as it is received as a parameter
+		if (qimage->width() != width() || qimage->height() != height())
+			*qimage = QImage(width(), height(), QImage::Format_RGB32);
 
 		uchar *bits=qimage->bits();
 		switch(m_buffer.pixelformat)
@@ -585,7 +550,7 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 	if (combobox != NULL)
 	{
 		combobox->clear();
-		if(m_videodevice.size())
+		if ( currentDevice() < m_videodevice.size() )
 		{
 			if(m_videodevice[currentDevice()].inputs()>0)
 			{
@@ -612,7 +577,7 @@ int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 	if (combobox != NULL)
 	{
 		combobox->clear();
-		if(m_videodevice.size())
+		if ( currentDevice() < m_videodevice.size() )
 		{
 			if(m_videodevice[currentDevice()].inputs()>0)
 			{
@@ -675,89 +640,52 @@ int VideoDevicePool::scanDevices()
 
 	kDebug() << "called";
 #if defined(__linux__) && defined(ENABLE_AV)
-	QDir videodevice_dir;
-	const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/v4l/");
-	const QStringList videodevice_dir_filter(QString::fromLocal8Bit("video*"));
-	VideoDevice videodevice;
-
-	m_videodevice.clear();
-	m_modelvector.clear();
-
-	videodevice_dir.setPath(videodevice_dir_path);
-	videodevice_dir.setNameFilters(videodevice_dir_filter);
-        videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
-        videodevice_dir.setSorting( QDir::Name );
-
-	QFileInfoList list = videodevice_dir.entryInfoList();
-
-	if (list.isEmpty())
-	{
-		kDebug() << "Found no suitable devices in " << videodevice_dir_path;
-		QDir videodevice_dir;
-		const QString videodevice_dir_path=QString::fromLocal8Bit("/dev/");
-		const QStringList videodevice_dir_filter(QString::fromLocal8Bit("video*"));
-		VideoDevice videodevice;
-
-		videodevice_dir.setPath(videodevice_dir_path);
-		videodevice_dir.setNameFilters(videodevice_dir_filter);
-        	videodevice_dir.setFilter( QDir::System | QDir::NoSymLinks | QDir::Readable | QDir::Writable );
-        	videodevice_dir.setSorting( QDir::Name );
-
-		QFileInfoList list = videodevice_dir.entryInfoList();
-
-		if (list.isEmpty())
-		{
-			kDebug() << "Found no suitable devices in " << videodevice_dir_path;
-			return EXIT_FAILURE;
-		}
-		QFileInfoList::iterator fileiterator, itEnd = list.end();
-
-		kDebug() << "scanning devices in " << videodevice_dir_path << "...";
-		for ( fileiterator = list.begin(); fileiterator != itEnd; ++fileiterator )
-		{
-			QFileInfo fileinfo = ( *fileiterator );
-			videodevice.setFileName(fileinfo.absoluteFilePath());
-			kDebug() << "Found device " << videodevice.full_filename;
-			videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
-			if(videodevice.isOpen())
-			{
-				kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
-
-// This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
-				videodevice.close();
-				videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
-				m_videodevice.push_back(videodevice);
-			}
-		}
-
-		return EXIT_FAILURE;
+	foreach (Solid::Device device,
+			Solid::Device::listFromType(Solid::DeviceInterface::Video, QString())) {
+		registerDevice( device );
 	}
 
-	QFileInfoList::iterator fileiterator, itEnd = list.end();
-	m_videodevice.clear();
-	kDebug() << "scanning devices in " << videodevice_dir_path << "...";
-	for ( fileiterator = list.begin(); fileiterator != itEnd; ++fileiterator )
-	{
-		QFileInfo fileinfo = ( *fileiterator );
-		videodevice.setFileName(fileinfo.absoluteFilePath());
-		kDebug() << "Found device " << videodevice.full_filename;
-		videodevice.open(); // It should be opened with O_NONBLOCK (it's a FIFO) but I dunno how to do it using QFile
-		if(videodevice.isOpen())
-		{
-			kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
-
-// This must be changed to proper code to handle multiple devices of the same model. It currently simply add models without proper checking
-			videodevice.close();
-			videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
-			m_videodevice.push_back(videodevice);
-		}
-		++fileiterator;
-	}
-	m_current_device = 0;
-	loadConfig();
 #endif
 	kDebug() << "exited successfuly";
 	return EXIT_SUCCESS;
+}
+
+void VideoDevicePool::registerDevice( Solid::Device & device )
+{
+	kDebug() << "New video device at " << device.udi();
+	const Solid::Device * vendorDevice = &device;
+	while ( vendorDevice->isValid() && vendorDevice->vendor().isEmpty() )
+	{
+		vendorDevice = new Solid::Device( vendorDevice->parentUdi() );
+	}
+	if ( vendorDevice->isValid() )
+	{
+		kDebug() << "vendor: " << vendorDevice->vendor() << ", product: " << vendorDevice->product();
+	}
+	Solid::Video * solidVideoDevice = device.as<Solid::Video>();
+	if ( solidVideoDevice ) {
+		QStringList protocols = solidVideoDevice->supportedProtocols();
+		if ( protocols.contains( "video4linux" ) )
+		{
+			QStringList drivers = solidVideoDevice->supportedDrivers( "video4linux" );
+			if ( drivers.contains( "video4linux" ) )
+			{
+				kDebug() << "V4L device path is" << solidVideoDevice->driverHandle( "video4linux" ).toString();
+				VideoDevice videodevice;
+				videodevice.setUdi( device.udi() );
+				videodevice.setFileName(solidVideoDevice->driverHandle( "video4linux" ).toString());
+				kDebug() << "Found device " << videodevice.full_filename;
+				videodevice.open();
+				if(videodevice.isOpen())
+				{
+					kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
+					videodevice.close();
+					videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
+					m_videodevice.push_back(videodevice);
+				}
+			}
+		}
+	}
 }
 
 /*!
@@ -833,11 +761,8 @@ void VideoDevicePool::loadConfig()
 			}
 			const QString name                = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), (*vditerator).m_model);
 			const int currentinput            = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), 0);
-			const bool disablemmap            = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex)), false );
-			const bool workaroundbrokendriver = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex)), false );
 			kDebug() << "Device name: " << name;
 			kDebug() << "Device current input: " << currentinput;
-			(*vditerator).setWorkaroundBrokenDriver(workaroundbrokendriver);
 			(*vditerator).selectInput(currentinput);
 
 			for (int input = 0 ; input < (*vditerator).m_input.size(); input++)
@@ -866,7 +791,6 @@ void VideoDevicePool::loadConfig()
 				kDebug() << "AutoColorCorrection   :" << autocolorcorrection;
 				kDebug() << "ImageAsMirror         :" << imageasmirror;
 			}
-			Q_UNUSED(disablemmap);
 		}
 	}
 }
@@ -905,12 +829,8 @@ void VideoDevicePool::saveConfig()
 // Stores current input for the given video device
 			const QString name                   = QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
 			const QString currentinput           = QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
-			const QString disablemmap            = QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
-			const QString workaroundbrokendriver = QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
 			config.writeEntry( name,                   (*vditerator).m_name);
 			config.writeEntry( currentinput,           (*vditerator).currentInput());
-			config.writeEntry( disablemmap,            (*vditerator).getDisableMMap());
-			config.writeEntry( workaroundbrokendriver, (*vditerator).getWorkaroundBrokenDriver());
 
 			for (int input = 0 ; input < (*vditerator).m_input.size(); input++)
 			{
@@ -946,8 +866,31 @@ void VideoDevicePool::saveConfig()
 	}
 }
 
-
-
+void VideoDevicePool::deviceAdded( const QString & udi )
+{
+	Solid::Device dev( udi );
+	if ( dev.is<Solid::Video>() )
+	{
+		registerDevice( dev );
+		emit deviceRegistered( udi );
+	}
 }
 
+void VideoDevicePool::deviceRemoved( const QString & udi )
+{
+	int i = 0;
+	foreach ( VideoDevice vd, m_videodevice ) {
+		
+		if ( vd.udi() == udi ) {
+			kDebug() << "Video device '" << udi << "' has been removed!";
+		}
+		emit deviceUnregistered( udi );
+		m_videodevice.remove( i ); // not sure if this is safe but at this point the device node is
+								   // gone already anyway
+		i++;
+	}
 }
+
+} // namespace AV
+
+} // namespace Kopete

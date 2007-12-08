@@ -2,12 +2,12 @@
     securestream.h - Kopete Groupwise Protocol
     Combines a ByteStream with TLS and SASL
   
-    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
+    Copyright (c) 2006,2007 Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Iris, Copyright (C) 2003  Justin Karneges
     
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -24,7 +24,6 @@
 
 #include <QtCrypto>
 //Added by qt3to4:
-#include <Q3ValueList>
 #include "tlshandler.h"
 #include"bytestream.h"
 
@@ -33,6 +32,7 @@
 #ifdef USE_TLSHANDLER
 	class TLSHandler;
 #endif
+class CompressionHandler;
 
 class SecureStream : public ByteStream
 {
@@ -44,6 +44,7 @@ public:
 
 	void startTLSClient(QCA::TLS *t, const QByteArray &spare=QByteArray());
 	void startTLSServer(QCA::TLS *t, const QByteArray &spare=QByteArray());
+	void setLayerCompress(const QByteArray &spare=QByteArray());
 	void setLayerSASL(QCA::SASL *s, const QByteArray &spare=QByteArray());
 #ifdef USE_TLSHANDLER
 	void startTLSClient(TLSHandler *t, const QString &server, const QByteArray &spare=QByteArray());
@@ -99,7 +100,7 @@ USE_TLSHANDLER
 	int finished(int encoded);
 
 	int p;
-	Q3ValueList<Item> list;
+	QList<Item> list;
 };
 
 
@@ -112,12 +113,13 @@ public:
 #ifdef USE_TLSHANDLER
 	SecureLayer(TLSHandler *t);
 #endif
+	SecureLayer(CompressionHandler *t);
 	void init();
 	void write(const QByteArray &a);
 	void writeIncoming(const QByteArray &a);
 	int finished(int plain);
 
-	enum { TLS, SASL, TLSH };
+	enum { TLS, SASL, TLSH, Compression };
 	int type;
 	union {
 		QCA::TLS *tls;
@@ -125,6 +127,7 @@ public:
 #ifdef USE_TLSHANDLER
 		TLSHandler *tlsHandler;
 #endif
+		CompressionHandler *compressionHandler;
 	} p;
 	LayerTracker layer;
 	bool tls_done;
@@ -144,8 +147,11 @@ private slots:
         void tls_closed();
         void tls_error(int x);
         void sasl_readyRead();
-        void sasl_readyReadOutgoing(int plainBytes);
-        void sasl_error(int x);
+        void sasl_readyReadOutgoing();
+        void sasl_error();
+        void compressionHandler_readyRead();
+        void compressionHandler_readyReadOutgoing();
+        void compressionHandler_error();
 #ifdef USE_TLSHANDLER
 	void tlsHandler_success();
 	void tlsHandler_fail();

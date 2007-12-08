@@ -41,8 +41,8 @@ public:
 
 
 AwayAction::AwayAction( const OnlineStatus& status, const QString &text, const QIcon &pix, const KShortcut &cut,
-					   const QObject *receiver, const char *slot )
-	: KSelectAction( KIcon(pix), text, 0 ) , d(new Private( status ) )
+                        QObject *parent, const QObject *receiver, const char *slot )
+	: KSelectAction( KIcon(pix), text, parent ) , d(new Private( status ) )
 {
 	setShortcut( cut );
 

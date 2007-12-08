@@ -256,7 +256,7 @@ private slots:
 	/* Sends a raw message to the server (use with caution) */
 	void slotSendRaw ();
 
-	/* Slots for handling group chats. */
+	/* Slots for handling groupchats. */
 	void slotJoinNewChat ();
 	void slotGroupChatJoined ( const XMPP::Jid &jid );
 	void slotGroupChatLeft ( const XMPP::Jid &jid );

@@ -1,3 +1,4 @@
+add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 add_subdirectory( private )
 if(NOT WIN32)
@@ -100,6 +101,7 @@ set(kopete_LIB_SRCS
    kopeteutils.cpp
    kopetewalletmanager.cpp
    networkstatuscommon.h
+   chatsessionmemberslistmodel.cpp
 # REMOVED FOR NOW
 #   connectionmanager.cpp
 #   managedconnectionaccount.cpp
@@ -207,6 +209,7 @@ install( FILES
   kopetepassword.h
   kopetepicture.h
   kopeteplugin.h
+  kopetepluginmanager.h
   kopeteprotocol.h
   kopetepropertycontainer.h
   kopetesimplemessagehandler.h

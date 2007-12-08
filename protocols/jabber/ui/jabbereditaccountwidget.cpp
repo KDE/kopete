@@ -59,11 +59,13 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	{
 		// we are working with an existing account
 		reopen ();
+		registrationGroupBox->hide();
 		btnRegister->setEnabled ( false );
 	}
 	else
 	{
 		// this is a new account
+		changePasswordGroupBox->hide();
 		btnChangePassword->setEnabled ( false );
 		connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
 	}

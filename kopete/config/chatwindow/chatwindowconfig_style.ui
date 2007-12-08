@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>281</width>
-    <height>354</height>
+    <width>488</width>
+    <height>284</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -62,29 +62,18 @@
        <property name="title" >
         <string>Display</string>
        </property>
-       <layout class="QGridLayout" >
-        <property name="leftMargin" >
-         <number>9</number>
-        </property>
-        <property name="topMargin" >
-         <number>9</number>
-        </property>
-        <property name="rightMargin" >
-         <number>9</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>9</number>
-        </property>
-        <property name="horizontalSpacing" >
-         <number>6</number>
-        </property>
-        <property name="verticalSpacing" >
-         <number>6</number>
-        </property>
-        <item row="0" column="0" >
+       <layout class="QHBoxLayout" >
+        <item>
          <widget class="QCheckBox" name="kcfg_groupConsecutiveMessages" >
           <property name="text" >
            <string>Group consecuti&amp;ve messages</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="kcfg_useCompact" >
+          <property name="text" >
+           <string>Co&amp;mpact style in chatrooms</string>
           </property>
          </widget>
         </item>
@@ -208,7 +197,7 @@
           <item>
            <widget class="KPushButton" name="btnGetStyles" >
             <property name="enabled" >
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="toolTip" >
              <string>Get new Chat Window styles over the Internet</string>
@@ -255,8 +244,12 @@
  </customwidgets>
  <tabstops>
   <tabstop>styleList</tabstop>
+  <tabstop>variantList</tabstop>
+  <tabstop>btnGetStyles</tabstop>
   <tabstop>installButton</tabstop>
   <tabstop>deleteButton</tabstop>
+  <tabstop>kcfg_groupConsecutiveMessages</tabstop>
+  <tabstop>kcfg_useCompact</tabstop>
  </tabstops>
  <resources/>
  <connections/>

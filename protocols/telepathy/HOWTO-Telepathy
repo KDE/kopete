@@ -20,7 +20,7 @@ Also setting TELEPATHY_DATA_PATH helps:
 
 2 - Get Tapioca-qt and Telepathy-qt
 
-svn co https://svn.sourceforge.net/svnroot/tapioca-voip/trunk/telepathy-qt
-svn co https://svn.sourceforge.net/svnroot/tapioca-voip/trunk/tapioca-qt
+svn co https://tapioca-voip.svn.sourceforge.net/svnroot/tapioca-voip/trunk/telepathy-qt
+svn co https://tapioca-voip.svn.sourceforge.net/svnroot/tapioca-voip/trunk/tapioca-qt
 
 Both use CMake so it's the same way to compile a KDE module.

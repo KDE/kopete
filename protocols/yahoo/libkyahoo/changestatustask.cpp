@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Change our Status
 
-    Copyright (c) 2005-2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005-2006 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *

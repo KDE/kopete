@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Name=Bookmarks
 Name[bg]=Отметки
@@ -35,6 +34,7 @@ Name[nds]=Leestekens
 Name[ne]=पुस्तकचिनो
 Name[nl]=Bladwijzers
 Name[nn]=Bokmerke
+Name[oc]=Favorits
 Name[pa]=ਬੁੱਕਮਾਰਕ
 Name[pl]=Zakładki
 Name[pt]=Favoritos
@@ -62,6 +62,7 @@ Comment[cs]=Automaticky přidat do záložek odkazy z příchozích zpráv
 Comment[da]=Sæt link til indkommende breve automatisk
 Comment[de]=Verknüpfungen in eingehenden Nachrichten automatisch als Lesezeichen ablegen
 Comment[el]=Αυτόματη τοποθέτηση σελιδοδεικτών στα εισερχόμενα μηνύματα
+Comment[eo]=Aŭtomate legosigni ligojn en la enirantaj mesaĝoj
 Comment[es]=Anota automáticamente los enlaces de los mensajes entrantes
 Comment[et]=Sissetulevates sõnumites olevate viitade automaatne lisamine järjehoidjatesse
 Comment[eu]=Automatikoki gorde lastermarketan sarrerako mezuetako loturak.
@@ -101,7 +102,7 @@ Comment[zh_CN]=自动将收到消息中的链接加入书签
 Comment[zh_HK]=自動將收到的訊息內的連結加到書籤
 Comment[zh_TW]=自動將接收訊息中的連結加入書籤
 Icon=konqueror
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_addbookmarks
 X-KDE-FactoryName=kcm_kopete_addbookmarks

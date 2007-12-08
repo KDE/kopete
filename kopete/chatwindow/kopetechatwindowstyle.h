@@ -103,6 +103,17 @@ public:
 	bool hasActionTemplate() const;
 
 	/**
+	 * Check if the supplied variant has a compact form
+	 */
+	bool hasCompact( const QString & variant ) const;
+
+	/**
+	 * Return the compact version of the given style variant.
+	 * For the unmodified style, this returns "Variants/_compact_.css"
+	 */
+	QString compact( const QString & variant ) const;
+
+	/**
 	 * Reload style from disk.
 	 */
 	void reload();

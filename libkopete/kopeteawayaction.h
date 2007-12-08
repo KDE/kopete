@@ -49,7 +49,7 @@ class KOPETE_EXPORT AwayAction : public KSelectAction
 		 * @p text, @p pix, @p cut, @p receiver and @p slot are all handled by KSelectAction
 		 **/
 		AwayAction(const OnlineStatus &status, const QString &text, const QIcon &pix,
-				   const KShortcut &cut, const QObject *receiver, const char *slot);
+		           const KShortcut &cut, QObject *parent, const QObject *receiver, const char *slot);
 
 		/**
 	 	 * Destructor.

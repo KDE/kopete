@@ -150,6 +150,8 @@ void OContact::checkTLVs()
 		m_alias = QString::fromUtf8( aliasTLV.data, aliasTLV.length );
 		kDebug( 14151 ) << "Got an alias '" << m_alias << "' for contact '" << m_name << "'";
 	}
+	else
+		m_alias.clear();
 
 	TLV privacyTLV = findTLV( m_tlvList, 0x00CA );
 	if ( privacyTLV )
@@ -163,8 +165,10 @@ void OContact::checkTLVs()
 	if ( metaInfoIdTLV )
 	{
 		m_metaInfoId = metaInfoIdTLV.data;
-		kDebug( 14151 ) << "Got an meta info id '" << m_metaInfoId << "' for contact '" << m_name << "'";
+		kDebug( 14151 ) << "Got an meta info id '" << m_metaInfoId.toHex() << "' for contact '" << m_name << "'";
 	}
+	else
+		m_metaInfoId.clear();
 }
 
 QString OContact::alias() const

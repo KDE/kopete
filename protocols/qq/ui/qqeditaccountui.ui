@@ -576,7 +576,7 @@ If you do not currently have an ID, please create one.</string>
           <item>
            <widget class="QCheckBox" name="useCustomEmoticons" >
             <property name="whatsThis" >
-             <string>QQ Messenger allows users to download and use custom emoticons. If this option is enabled, Kopete will download these emoticons and show them.</string>
+             <string>QQ Messenger allows users to download and use custom emoticons. If this option is enabled, Kopete will download and display such emoticons.</string>
             </property>
             <property name="text" >
              <string>&amp;Download and show custom emoticons</string>
@@ -589,8 +589,7 @@ If you do not currently have an ID, please create one.</string>
           <item>
            <widget class="QCheckBox" name="exportEmoticons" >
             <property name="whatsThis" >
-             <string>Export all the emoticon themes as custom emoticons.
-Only works for emoticons in the PNG format.</string>
+             <string>Export all the emoticon themes as custom emoticons (only works for emoticons in the PNG format).</string>
             </property>
             <property name="text" >
              <string>E&amp;xport the current emoticon theme to users</string>
@@ -636,18 +635,23 @@ Only works for emoticons in the PNG format.</string>
  <customwidgets>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>kopetepasswordwidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget3</tabstop>
+  <tabstop>m_login</tabstop>
+  <tabstop>m_autologin</tabstop>
+  <tabstop>buttonVCard</tabstop>
+  <tabstop>buttonRegister</tabstop>
+  <tabstop>optionOverrideServer</tabstop>
+  <tabstop>m_serverName</tabstop>
+  <tabstop>m_serverPort</tabstop>
   <tabstop>NotifyNewChat</tabstop>
   <tabstop>DownloadPicture</tabstop>
   <tabstop>useCustomEmoticons</tabstop>
-  <tabstop>m_login</tabstop>
-  <tabstop>m_autologin</tabstop>
-  <tabstop>buttonRegister</tabstop>
+  <tabstop>exportEmoticons</tabstop>
  </tabstops>
  <resources/>
  <connections>

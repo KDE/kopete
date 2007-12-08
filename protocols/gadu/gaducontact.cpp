@@ -197,13 +197,13 @@ GaduContact::customContextMenuActions()
 {
 	QList<KAction*> *fakeCollection = new QList<KAction*>();
 	//show profile
-	KAction* actionShowProfile = new KAction( KIcon("document-properties"), i18n("Show Profile"), this );
+	KAction* actionShowProfile = new KAction( KIcon("help-about"), i18n("Show Profile"), this );
 	//, "actionShowPublicProfile" );
 	connect( actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowPublicProfile()) );
 
 	fakeCollection->append( actionShowProfile );
 
-	KAction* actionEditContact = new KAction( KIcon("edit"), i18n("Edit..."), this );
+	KAction* actionEditContact = new KAction( KIcon("document-properties"), i18n("Edit..."), this );
 	//, "actionEditContact" );
 	connect( actionEditContact, SIGNAL(triggered(bool)), this, SLOT(slotEditContact()) );
 
@@ -248,7 +248,7 @@ GaduContact::deleteContact()
 	}
 	else {
 		KMessageBox::error( Kopete::UI::Global::mainWidget(),
-				i18n( "<qt>Please go online to remove a contact from your contact list.</qt>" ),
+				i18n( "<qt>You need to go online to remove a contact from your contact list.</qt>" ),
 				i18n( "Gadu-Gadu Plugin" ));
 	}
 }
@@ -272,7 +272,7 @@ GaduContact::setContactDetails( const GaduContactsList::ContactLine* cl )
 	setProperty( GaduProtocol::protocol()->propPhoneNr, cl->phonenr );
 	//setProperty( "ignored", i18n( "ignored" ), cl->ignored ? "true" : "false" );
 	ignored_ = cl->ignored;
-	//setProperty( "nickName", i18n( "nick name" ), cl->nickname );
+	//setProperty( "nickName", i18n( "nickname" ), cl->nickname );
 
 	return true;
 }

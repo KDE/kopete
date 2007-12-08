@@ -19,8 +19,9 @@
 
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
-#include "kopeteapplication.h"
 #include <klocale.h>
+
+#include "kopeteapplication.h"
 #include "kopeteversion.h"
 
 static const char description[] =
@@ -30,10 +31,10 @@ int main( int argc, char *argv[] )
 {
 	KAboutData aboutData( "kopete", 0, ki18n("Kopete"),
 		KOPETE_VERSION_STRING, ki18n(description), KAboutData::License_GPL,
-		ki18n("(c) 2001-2004, Duncan Mac-Vicar Prett\n(c) 2002-2005, Kopete Development Team"), ki18n("kopete-devel@kde.org"), "http://kopete.kde.org");
+		ki18n("(c) 2001-2004, Duncan Mac-Vicar Prett\n(c) 2002-2007, Kopete Development Team"), ki18n("kopete-devel@kde.org"), "http://kopete.kde.org");
 
 	aboutData.addAuthor ( ki18n("Duncan Mac-Vicar Prett"), ki18n("Developer and Project founder"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
-	aboutData.addAuthor ( ki18n("Andre Duffeck"), ki18n("Developer, Yahoo plugin maintainer"), "andre@duffeck.de" );
+	aboutData.addAuthor ( ki18n("Andre Duffeck"), ki18n("Developer, Yahoo plugin maintainer"), "duffeck@kde.org" );
 	aboutData.addAuthor ( ki18n("Andy Goossens"), ki18n("Developer"), "andygoossens@telenet.be" );
 	aboutData.addAuthor ( ki18n("Chris Howells"), ki18n("Developer, Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");
 	aboutData.addAuthor ( ki18n("Cláudio da Silveira Pinheiro"), ki18n("Developer, Video device support"), "taupter@gmail.com", "http://taupter.homelinux.org" );
@@ -48,7 +49,7 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( ki18n("Ollivier Lapeyre Johann"), ki18n("Artist / Developer, Artwork maintainer"), "johann.ollivierlapeyre@gmail.com" );
 	aboutData.addAuthor ( ki18n("Richard Smith"), ki18n("Developer, UI maintainer"), "kde@metafoo.co.uk" );
 	aboutData.addAuthor ( ki18n("Till Gerken"), ki18n("Developer, Jabber plugin maintainer"), "till@tantalo.net");
-	aboutData.addAuthor ( ki18n("Will Stephenson"), ki18n("Lead Developer, GroupWise maintainer"), "lists@stevello.free-online.co.uk" );
+	aboutData.addAuthor ( ki18n("Will Stephenson"), ki18n("Lead Developer, GroupWise maintainer"), "wstephenson@kde.org" );
 	aboutData.addAuthor ( ki18n("Rafael Fernández López"), ki18n("Developer"), "ereslibre@kde.org" );
 	aboutData.addAuthor ( ki18n("Roman Jarosz"), ki18n("Developer, AIM and ICQ"), "kedgedev@centrum.cz" );
 	aboutData.addAuthor ( ki18n("Charles Connell"), ki18n("Developer"), "charles@connells.org" );
@@ -98,10 +99,6 @@ int main( int argc, char *argv[] )
 	KUniqueApplication::addCmdLineOptions();
 
 	KopeteApplication kopete;
-//	new KIMIfaceImpl();
-//	kapp->dcopClient()->registerAs( "kopete", false );
-//	kapp->dcopClient()->setDefaultObject( (new KopeteIface())->objId() ); // Has to be called before exec
-
 	return kopete.exec();
 }
 // vim: set noet ts=4 sts=4 sw=4:

@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="33" name="kopetechatwindow">
+<kpartgui version="34" name="kopetechatwindow">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
@@ -32,26 +32,32 @@
 			<text>&amp;Settings</text>
 			<Merge name="StandardToolBarMenuHandler" />
 			<Action name="enable_auto_spell_check" />
-			<Action append="show_merge" name="show_sidebar_widget" />
+			<Action append="show_merge" name="show_participants_widget" />			
 			<Action append="show_merge" name="options_styles"/>
 			<Action append="configure_merge" name="settings_prefs" />
 		</Menu>
 		<Merge/>
 	</MenuBar>
 
-	<ToolBar name="mainToolBar" fullWidth="true">
+	<ToolBar name="mainToolBar" fullWidth="true" hidden="true">
 		<text>Main Toolbar</text>
+		<Merge />
+	</ToolBar>
+    <ToolBar name="chatToolBar">
+		<text>Chat Toolbar</text>
 		<Action name="format_smiley"/>
+		<Action name="show_participants_widget" />
 		<Separator weakSeparator="true" lineSeparator="true"/>
 		<Merge />
+		<Action name="spacer"/>
 		<Separator weakSeparator="true" lineSeparator="true"/>
 		<Action name="toolbar_animation"/>
 	</ToolBar>
 
-	<ToolBar name="statusToolBar">
+	<ToolBar name="statusToolBar" hidden="true">
 		<text>Status</text>
 	</ToolBar>
-	<ToolBar name="formatToolBar">
+	<ToolBar name="formatToolBar" hidden="true">
 		<text>Format Toolbar</text>
 	</ToolBar>
 

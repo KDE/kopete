@@ -115,7 +115,7 @@ void dlgJabberBrowse::slotSentForm ()
 
 	if (!task->success ())
 	{
-		KMessageBox::queuedMessageBox (this, KMessageBox::Error, i18n ("The Jabber server declined the search."), i18n ("Jabber Search"));
+		KMessageBox::queuedMessageBox (this, KMessageBox::Error, i18n ("The Jabber server rejected the search."), i18n ("Jabber Search"));
 
 		return;
 	}

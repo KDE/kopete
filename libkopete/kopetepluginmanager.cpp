@@ -257,29 +257,35 @@ void PluginManager::loadAllPlugins()
 	KSharedConfig::Ptr config = KGlobal::config();
 	if ( config->hasGroup( QLatin1String( "Plugins" ) ) )
 	{
+		QMap<QString, bool> pluginsMap;
+
 		QMap<QString, QString> entries = config->entryMap( QLatin1String( "Plugins" ) );
 		QMap<QString, QString>::Iterator it;
 		for ( it = entries.begin(); it != entries.end(); ++it )
 		{
 			QString key = it.key();
 			if ( key.endsWith( QLatin1String( "Enabled" ) ) )
-			{
-				key.resize( key.length() - 7 );
-				//kDebug(14010) << "Set " << key << " to " << it.value();
+				pluginsMap.insert( key.left(key.length() - 7), (it.value() == QLatin1String( "true" )) );
+		}
 
-				if ( it.value() == QLatin1String( "true" ) )
-				{
-					if ( !plugin( key ) )
-						_kpmp->pluginsToLoad.push( key );
-				}
-				else
-				{
-					//This happens if the user unloaded plugins with the config plugin page.
-					// No real need to be assync because the user usualy unload few plugins
-					// compared tto the number of plugin to load in a cold start. - Olivier
-					if ( plugin( key ) )
-						unloadPlugin( key );
-				}
+		QList<KPluginInfo> plugins = availablePlugins( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+		QList<KPluginInfo>::ConstIterator it2 = plugins.begin();
+		QList<KPluginInfo>::ConstIterator end = plugins.end();
+		for ( ; it2 != end; ++it2 )
+		{
+			QString pluginName = it2->pluginName();
+			if ( pluginsMap.value( pluginName, it2->isPluginEnabledByDefault() ) )
+			{
+				if ( !plugin( pluginName ) )
+					_kpmp->pluginsToLoad.push( pluginName );
+			}
+			else
+			{
+				//This happens if the user unloaded plugins with the config plugin page.
+				// No real need to be assync because the user usualy unload few plugins
+				// compared tto the number of plugin to load in a cold start. - Olivier
+				if ( plugin( pluginName ) )
+					unloadPlugin( pluginName );
 			}
 		}
 	}
@@ -360,9 +366,8 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 	if ( _kpmp->loadedPlugins.contains( info ) )
 		return _kpmp->loadedPlugins[ info ];
 
-	int error = 0;
-	Plugin *plugin = KServiceTypeTrader::createInstanceFromQuery<Plugin>( QLatin1String( "Kopete/Plugin" ),
-		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( pluginId ), this, QStringList(), &error );
+	QString error;
+        Plugin *plugin = KServiceTypeTrader::createInstanceFromQuery<Plugin>( QString::fromLatin1( "Kopete/Plugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( pluginId ), this, QVariantList(), &error );
 
 	if ( plugin )
 	{
@@ -378,32 +383,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 	}
 	else
 	{
-		switch( error )
-		{
-		case KLibLoader::ErrNoServiceFound:
-			kDebug( 14010 ) << "No service implementing the given mimetype "
-				<< "and fullfilling the given constraint expression can be found." << endl;
-			break;
-
-		case KLibLoader::ErrServiceProvidesNoLibrary:
-			kDebug( 14010 ) << "the specified service provides no shared library.";
-			break;
-
-		case KLibLoader::ErrNoLibrary:
-			kDebug( 14010 ) << "the specified library could not be loaded.";
-			break;
-
-		case KLibLoader::ErrNoFactory:
-			kDebug( 14010 ) << "the library does not export a factory for creating components.";
-			break;
-
-		case KLibLoader::ErrNoComponent:
-			kDebug( 14010 ) << "the factory does not support creating components of the specified type.";
-			break;
-		}
-
-		kDebug( 14010 ) << "Loading plugin '" << pluginId << "' failed, KLibLoader reported error: '" << endl <<
-			KLibLoader::self()->lastErrorMessage() << "'" << endl;
+		kDebug( 14010 ) << "Loading plugin " << pluginId << " failed, KServiceTypeTrader reported error: " << error ;
 	}
 
 	return plugin;

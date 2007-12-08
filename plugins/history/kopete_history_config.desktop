@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Icon=history
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_history
 X-KDE-FactoryName=kcm_kopete_history
@@ -44,6 +43,7 @@ Name[nds]=Vörgeschicht
 Name[ne]=इतिहास
 Name[nl]=Geschiedenis
 Name[nn]=Historie
+Name[oc]=Istoric
 Name[pa]=ਅਤੀਤ
 Name[pl]=Historia
 Name[pt]=Histórico
@@ -76,6 +76,7 @@ Comment[cy]=Ategyn Hanes
 Comment[da]=Historik-plugin
 Comment[de]=Verlaufsmodul
 Comment[el]=Πρόσθετο ιστορικού
+Comment[eo]=Historia kromaĵo
 Comment[es]=Complemento de historial
 Comment[et]=Ajalooplugin
 Comment[eu]=Historia plugin-a

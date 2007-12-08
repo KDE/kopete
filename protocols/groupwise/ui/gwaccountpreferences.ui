@@ -13,10 +13,19 @@
    <string>Account Preferences - Groupwise</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
+   <property name="spacing" >
     <number>0</number>
    </property>
-   <property name="spacing" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
     <number>0</number>
    </property>
    <item>
@@ -29,11 +38,20 @@
        <string>B&amp;asic Setup</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
        </property>
        <item>
         <widget class="QGroupBox" name="groupBox55" >
@@ -41,19 +59,37 @@
           <string>Account Information</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
           </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QLabel" name="textLabel1" >
@@ -70,12 +106,12 @@
                <bool>false</bool>
               </property>
               <property name="buddy" >
-               <cstring>m_userId</cstring>
+               <cstring>userId</cstring>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="m_userId" >
+             <widget class="QLineEdit" name="userId" >
               <property name="toolTip" >
                <string>The account name of your account.</string>
               </property>
@@ -87,10 +123,10 @@
            </layout>
           </item>
           <item>
-           <widget class="Kopete::UI::PasswordWidget" native="1" name="m_password" />
+           <widget class="Kopete::UI::PasswordWidget" native="1" name="password" />
           </item>
           <item>
-           <widget class="QCheckBox" name="m_autoConnect" >
+           <widget class="QCheckBox" name="autoConnect" >
             <property name="whatsThis" >
              <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
             </property>
@@ -114,11 +150,20 @@
           </item>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QLabel" name="labelServer" >
@@ -126,9 +171,7 @@
                <bool>true</bool>
               </property>
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>5</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -146,14 +189,20 @@
                <bool>false</bool>
               </property>
               <property name="buddy" >
-               <cstring>m_server</cstring>
+               <cstring>server</cstring>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="m_server" >
+             <widget class="QLineEdit" name="server" >
               <property name="enabled" >
                <bool>true</bool>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>180</width>
+                <height>0</height>
+               </size>
               </property>
               <property name="toolTip" >
                <string>The IP address or hostname of the server you would like to connect to.</string>
@@ -172,9 +221,7 @@
                <bool>true</bool>
               </property>
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>5</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -192,19 +239,17 @@
                <bool>false</bool>
               </property>
               <property name="buddy" >
-               <cstring>m_port</cstring>
+               <cstring>port</cstring>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="m_port" >
+             <widget class="QSpinBox" name="port" >
               <property name="enabled" >
                <bool>true</bool>
               </property>
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>0</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -218,11 +263,11 @@
               <property name="buttonSymbols" >
                <enum>QAbstractSpinBox::UpDownArrows</enum>
               </property>
-              <property name="maximum" >
-               <number>65535</number>
-              </property>
               <property name="minimum" >
                <number>1</number>
+              </property>
+              <property name="maximum" >
+               <number>65535</number>
               </property>
               <property name="value" >
                <number>8300</number>
@@ -241,14 +286,23 @@
        <string>Advanced &amp;Options</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
        </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
        <item>
-        <widget class="QCheckBox" name="m_alwaysAccept" >
+        <widget class="QCheckBox" name="alwaysAccept" >
          <property name="text" >
           <string>A&amp;lways accept invitations</string>
          </property>

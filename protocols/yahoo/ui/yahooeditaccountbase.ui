@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>554</width>
-    <height>336</height>
+    <width>478</width>
+    <height>433</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,16 +17,16 @@
     <number>6</number>
    </property>
    <property name="leftMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="topMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="rightMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget11" >
@@ -131,7 +131,7 @@
           <item>
            <widget class="QCheckBox" name="mAutoConnect" >
             <property name="whatsThis" >
-             <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
+             <string>Check to disable automatic connection.  If checked, you can connect manually to this account, using the icon at the bottom of the main Kopete window</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
@@ -184,6 +184,9 @@
             </property>
             <property name="alignment" >
              <set>Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -349,7 +352,7 @@
                <string>Ser&amp;ver:</string>
               </property>
               <property name="buddy" >
-               <cstring>edtServerAddress</cstring>
+               <cstring>editServerAddress</cstring>
               </property>
              </widget>
             </item>

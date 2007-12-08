@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Icon=html
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_webpresence
 X-KDE-ParentApp=kopete_webpresence
@@ -10,12 +9,13 @@ X-KDE-ParentComponents=kopete_webpresence
 
 Comment=Show the status of (parts of) your contact list on a web page
 Comment[bg]=Приставка за показвана състоянието на (част от) списъка с контакти като уеб страница
-Comment[ca]=Mostra l'estatus de (parts de) la vostra llista de contactes sobre una pàgina web
+Comment[ca]=Mostra l'estat de (parts de) la vostra llista de contactes sobre una pàgina web
 Comment[cs]=Zobrazí stav (části) seznamu kontaktů na webu
 Comment[cy]=Dangos cyflwr o (rannau o) eich rhestr cysylltiadau ar dudalen wê
 Comment[da]=Vis status for (dele af) din kontaktliste på en netside
 Comment[de]=Zeigt den Status Ihrer Kontaktliste (oder Teilen davon) auf einer Internetseite an
 Comment[el]=Εμφάνιση της κατάστασης της λίστας επαφών σας σε ιστοσελίδα
+Comment[eo]=Montras la staton (aŭ partojn) de via kontaktula listo sur reta paĝo
 Comment[es]=Mostrar el estado de (partes de) su lista de contactos en una página web
 Comment[et]=Näitab (vähemalt osa) kontaktide staatust veebileheküljel
 Comment[eu]=Erakutsi zure kontaktu zerrendaren (edo zati baten) egoera web orri batean
@@ -63,6 +63,7 @@ Name[cy]=Presenoldeb Gwê
 Name[da]=WWW-nærvær
 Name[de]=Web-Präsenz
 Name[el]=Παρουσία σε ιστοσελίδα
+Name[eo]=TTT-prezenco
 Name[es]=Presencia Web
 Name[et]=Veebinimekiri
 Name[fa]=حضور وب
@@ -99,5 +100,6 @@ Name[tr]=Web Hazır Bulunması
 Name[uk]=Присутність у Тенет
 Name[vi]=Vẻ ngoài của Mạng
 Name[x-test]=xxWeb Presencexx
+Name[zh_CN]=Web 状态
 Name[zh_HK]=網上狀態
 Name[zh_TW]=網頁連線

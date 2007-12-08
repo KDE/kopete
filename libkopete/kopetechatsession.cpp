@@ -59,10 +59,11 @@ public:
 	KopeteView *view;
 	bool mayInvite;
 	Kopete::MessageHandlerChain::Ptr chains[3];
+	Kopete::ChatSession::Form form;
 };
 
 Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
-	Kopete::ContactPtrList others, Kopete::Protocol *protocol )
+	Kopete::ContactPtrList others, Kopete::Protocol *protocol, Kopete::ChatSession::Form form )
 : QObject( user->account())
 {
 	int i;
@@ -76,6 +77,7 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	d->view = 0L;
 	d->customDisplayName = false;
 	d->mayInvite = false;
+	d->form = form;
 
 	for ( i = 0; others.size() != i; i++ )
 		addContact( others[i], true );
@@ -329,7 +331,7 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 				disconnect( old->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
 			}
 			else
-				disconnect( old, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
+				disconnect( old, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 			emit contactAdded( c, suppress );
 			emit contactRemoved( old, QString() );
 		}
@@ -348,7 +350,7 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 			connect( c->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
 		}
 		else
-			connect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
+			connect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
 
 		slotUpdateDisplayName();
@@ -380,7 +382,7 @@ void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString
 			disconnect( c->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
 		}
 		else
-			disconnect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
+			disconnect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		disconnect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
 
 		slotUpdateDisplayName();
@@ -481,7 +483,7 @@ void Kopete::ChatSession::slotContactDestroyed( Kopete::Contact *contact )
 
 	//This is a workaround to prevent crash if the contact get deleted.
 	// in the best case, we should ask the protocol to recreate a temporary contact.
-	// (remember: the contact may be deleted when the users removes it from the contactlist, or when closing kopete )
+	// (remember: the contact may be deleted when the users removes it from the contact list, or when closing kopete )
 	d->mContactList.removeAll( contact );
 	emit contactRemoved( contact, QString() );
 
@@ -509,6 +511,11 @@ void Kopete::ChatSession::raiseView()
 	KopeteView *v=view(true, Kopete::BehaviorSettings::self()->viewPlugin() );
 	if(v)
 		v->raise(true);
+}
+
+Kopete::ChatSession::Form Kopete::ChatSession::form() const
+{
+	return d->form;
 }
 
 #include "kopetechatsession.moc"

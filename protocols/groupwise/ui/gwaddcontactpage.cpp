@@ -26,13 +26,13 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <QPainter>
 #include <q3listview.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
 #include <q3valuelist.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
+#include <QVBoxLayout>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -53,20 +53,24 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 {
 	m_account = static_cast<GroupWiseAccount *>( owner );
 	kDebug(GROUPWISE_DEBUG_GLOBAL) ;
-	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
+	QVBoxLayout * layout = new QVBoxLayout( this );
 	if (owner->isConnected ())
 	{
-		m_searchUI = new GroupWiseContactSearch( m_account, Q3ListView::Single, false,
+		m_searchUI = new GroupWiseContactSearch( m_account, QAbstractItemView::SingleSelection, false,
 				 this );
-		show();
+		layout->addWidget( m_searchUI );
 		m_canadd = true;
 	}
 	else
 	{
 		m_noaddMsg1 = new QLabel (i18n ("You need to be connected to be able to add contacts."), this);
 		m_noaddMsg2 = new QLabel (i18n ("Connect to GroupWise Messenger and try again."), this);
+		layout->addWidget( m_noaddMsg1 );
+		layout->addWidget( m_noaddMsg2 );
 		m_canadd = false;
 	}
+	setLayout( layout );
+	show();
 }
 
 GroupWiseAddContactPage::~GroupWiseAddContactPage()
@@ -103,7 +107,9 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 bool GroupWiseAddContactPage::validateData()
 {
 	if ( m_canadd )
-		return ( m_searchUI->m_results->selectedItem() );
+#warning FIXME port GroupWiseAddContactPage::validateData to interview based GroupWiseSearch
+		return true;
+	//return ( m_searchUI->m_results->selectedItem() );
 	else
 		return false;
 }

@@ -29,6 +29,7 @@
 #include <klocale.h>
 #include <kcmdlineargs.h>
 #include <kmessagebox.h>
+#include <solid/networking.h>
 
 #include "addaccountwizard.h"
 #include "kabcpersistence.h"
@@ -47,13 +48,14 @@
 #include "kopetewindow.h"
 #include "kopeteviewmanager.h"
 #include "kopeteidentitymanager.h"
+#include "kopetedbusinterface.h"
 
 KopeteApplication::KopeteApplication()
 : KUniqueApplication( true, true )
 {
 	setQuitOnLastWindowClosed( false );
 	m_isShuttingDown = false;
-	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
+	m_mainWindow = new KopeteWindow( 0 );
 
 	Kopete::PluginManager::self();
 
@@ -90,6 +92,9 @@ KopeteApplication::KopeteApplication()
 
 	//Create the emoticon installer
 	m_emoticonHandler = new Kopete::EmoticonMimeTypeHandler;
+
+	//Create the DBus interface for org.kde.kopete
+	new KopeteDBusInterface(this);
 }
 
 KopeteApplication::~KopeteApplication()
@@ -211,8 +216,10 @@ void KopeteApplication::slotAllPluginsLoaded()
 
 	//FIXME: this should probably ask for the identities to connect instead of all accounts
 	// --noconnect not specified?
-	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() )
-		Kopete::AccountManager::self()->connectAll();
+	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() &&
+			( Solid::Networking::status() == Solid::Networking::Unknown ||
+			  Solid::Networking::status() == Solid::Networking::Connected ) )
+		Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Online, QString(), Kopete::AccountManager::ConnectIfOffline );
 
 	QStringList connectArgs = args->getOptionList( "autoconnect" );
 	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
@@ -293,7 +300,7 @@ void KopeteApplication::quitKopete()
 	QList<KMainWindow*>::iterator it, itEnd = members.end();
 	for ( it = members.begin(); it != itEnd; ++it)
 	{
-		if ( (*it)->close() )
+		if ( !(*it)->close() )
 		{
 			m_isShuttingDown = false;
 			break;

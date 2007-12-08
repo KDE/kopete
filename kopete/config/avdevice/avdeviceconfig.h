@@ -45,7 +45,7 @@ class AVDeviceConfig : public KCModule
 {
 Q_OBJECT
 public:
-	AVDeviceConfig(QWidget *parent, const QStringList &args);
+	AVDeviceConfig(QWidget *parent, const QVariantList &args);
 
 	~AVDeviceConfig();
 	virtual void save();
@@ -65,11 +65,11 @@ private slots:
 	void slotImageAutoBrightnessContrastChanged(bool);
 	void slotImageAutoColorCorrectionChanged(bool);
 	void slotImageAsMirrorChanged(bool);
-	void slotDeviceDisableMMapChanged(bool);
-	void slotDeviceWorkaroundBrokenDriverChanged(bool);
 	void slotUpdateImage();
+	void deviceRegistered( const QString & );
+	void deviceUnregistered( const QString & );
 private:
-	QTabWidget* mAVDeviceTabCtl;
+//	QTabWidget* mAVDeviceTabCtl;
 	Ui_AVDeviceConfig_VideoDevice  *mPrfsVideoDevice;
 //	AVDeviceConfig_AudioDevice  *mPrfsAudioDevice;
 	Kopete::AV::VideoDevicePool *mVideoDevicePool ;

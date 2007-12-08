@@ -420,7 +420,8 @@ public:  /* static helpers */
 	 */
 	static QString escape( const QString & );
 
-
+#if 0 
+	//candidate for removal!
 	/**
 	 * Helper function to decode a string. Whatever returned here is *nearly guaranteed* to
 	 * be parseable by the XML engine.
@@ -435,6 +436,7 @@ public:  /* static helpers */
 	 */
 	static QString decodeString( const QByteArray &message,
  		const QTextCodec *providedCodec = 0L, bool *success = 0L );
+#endif
 
 private:
 	class Private;

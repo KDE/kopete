@@ -115,7 +115,7 @@ void AccountIdentityDialog::slotLoadIdentities()
 
 		QTreeWidgetItem *identityItem = new QTreeWidgetItem(d->ui.identityList);
 		identityItem->setIcon(0, KIcon(ident->customIcon()));
-		identityItem->setText(0, ident->identityId());
+		identityItem->setText(0, ident->label());
 		d->identityItems.insert(identityItem, ident);
 		if (ident == d->currentIdentity)
 			identityItem->setSelected(true);
@@ -146,8 +146,6 @@ void AccountIdentityDialog::slotLoadAccounts()
 
 void AccountIdentityDialog::accept()
 {
-	Kopete::IdentityManager *manager = Kopete::IdentityManager::self();
-
 	Kopete::Identity *ident = d->identityItems[d->selectedIdentity()]; 
 	if (!ident)
 		return;

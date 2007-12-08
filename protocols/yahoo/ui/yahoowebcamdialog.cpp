@@ -90,7 +90,7 @@ void YahooWebcamDialog::webcamClosed( int reason  )
 	case 4:
 		closeReason = i18n( "%1 does not have his/her webcam online", contactName ); break;
 	default:
-		closeReason = i18n( "Unable to view the webcam of %1 for an unknown reason", contactName);
+		closeReason = i18n( "Unable to view %1's webcam for an unknown reason", contactName);
 	}
 	m_imageContainer->clear();
 

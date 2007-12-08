@@ -2,7 +2,7 @@
     kopeteonlinestatusmanager.cpp
 
     Copyright (c) 2004 by Olivier Goffart  <ogoffart@kde.fr>
-    Copyright (c) 2003 by Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2003 by Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -157,7 +157,7 @@ QPixmap OnlineStatusManager::cacheLookupByObject( const OnlineStatus &statusFor,
 {
 	QString fp = fingerprint( statusFor, icon, size, color, idle );
 
-	kDebug(14010) << "finger print:" << fp << ", icon: " << icon;
+	//kDebug(14010) << "finger print:" << fp << ", icon: " << icon;
 	// look it up in the cache
 	QPixmap *theIcon = d->iconCache.value(fp);
 	if ( !theIcon )
@@ -319,7 +319,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
 
-	kDebug( 14010) << "overlayIcons size: " << statusFor.overlayIcons().count();
+	//kDebug( 14010) << "overlayIcons size: " << statusFor.overlayIcons().count();
 
 	// NOTE: overlayIcons car be empty
 	if ( !statusFor.overlayIcons().empty() && baseIcon == statusFor.overlayIcons().first() )
@@ -409,7 +409,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 		{
 			if(options & OnlineStatusManager::HasStatusMessage)
 			{
-				action = new AwayAction( status, caption, status.iconFor(account), KShortcut(), account,
+				action = new AwayAction( status, caption, status.iconFor(account), KShortcut(), account, account,
 							 SLOT( setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage& ) ));
 			}
 			else
@@ -418,7 +418,7 @@ void OnlineStatusManager::createAccountStatusActions( Account *account , KAction
 				connect(action, SIGNAL(activated(const Kopete::OnlineStatus&)) ,
                                         account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
 			}
-                        action->setObjectName( actionName ); // for the lookup by name above
+			action->setObjectName( actionName ); // for the lookup by name above
 		}
 
 		if( options & OnlineStatusManager::DisabledIfOffline )

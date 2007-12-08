@@ -210,6 +210,15 @@ bool SSIModifyTask::modifyItem( const OContact& oldItem, const OContact& newItem
 	return true;
 }
 
+bool SSIModifyTask::modifyContact( const OContact& oldItem, const OContact& newItem )
+{
+	if ( !modifyItem(oldItem, newItem) )
+		return false;
+	
+	m_opSubject = Contact;
+	return true;
+}
+
 bool SSIModifyTask::forMe( const Transfer * transfer ) const
 {
 	const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );

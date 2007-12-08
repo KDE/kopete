@@ -478,7 +478,7 @@ void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 				QString inviteName = rx.cap( 1 );
 
 				QString body = i18n(
-					"%1 has sent an unimplemented invitation, the invitation was rejected.\n"
+					"%1 has sent an unimplemented invitation which was rejected.\n"
 					"The invitation was: %2",
 						c->property( Kopete::Global::Properties::self()->nickName()).value().toString(), inviteName );
 				Kopete::Message tmpMsg = Kopete::Message( c , members() );

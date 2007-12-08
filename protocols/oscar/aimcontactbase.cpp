@@ -38,56 +38,6 @@ AIMContactBase::~AIMContactBase()
 {
 }
 
-QString AIMContactBase::sanitizedMessage( const QString& message )
-{
-	QDomDocument doc;
-	QString domError;
-	int errLine = 0, errCol = 0;
-	doc.setContent( message, false, &domError, &errLine, &errCol );
-	if ( !domError.isEmpty() ) //error parsing, do nothing
-	{
-		kDebug(OSCAR_GEN_DEBUG) << "error from dom document conversion: "
-			<< domError << endl;
-		return message;
-	}
-	else
-	{
-		kDebug(OSCAR_GEN_DEBUG) << "conversion to dom document successful."
-			<< "looking for font tags" << endl;
-		QDomNodeList fontTagList = doc.elementsByTagName( "font" );
-		if ( fontTagList.count() == 0 )
-		{
-			kDebug(OSCAR_GEN_DEBUG) << "No font tags found. Returning normal message";
-			return message;
-		}
-		else
-		{
-			kDebug(OSCAR_GEN_DEBUG) << "Found font tags. Attempting replacement";
-			uint numFontTags = fontTagList.count();
-			for ( uint i = 0; i < numFontTags; i++ )
-			{
-				QDomNode fontNode = fontTagList.item(i);
-				QDomElement fontEl;
-				if ( !fontNode.isNull() && fontNode.isElement() )
-					fontEl = fontTagList.item(i).toElement();
-				else
-					continue;
-				if ( fontEl.hasAttribute( "back" ) )
-				{
-					kDebug(OSCAR_GEN_DEBUG) << "Found attribute to replace. Doing replacement";
-					QString backgroundColor = fontEl.attribute( "back" );
-					backgroundColor.insert( 0, "background-color: " );
-					backgroundColor.append( ';' );
-					fontEl.setAttribute( "style", backgroundColor );
-					fontEl.removeAttribute( "back" );
-				}
-			}
-		}
-	}
-	kDebug(OSCAR_GEN_DEBUG) << "sanitized message is " << doc.toString();
-	return doc.toString();
-}
-
 void AIMContactBase::sendAutoResponse(Kopete::Message& msg)
 {
 	// The target time is 2 minutes later than the last message

@@ -27,7 +27,7 @@
 #include <kcompletion.h>
 #include <kdebug.h>
 #include <ktextedit.h>
-//#include <ksyntaxhighlighter.h>
+#include <sonnet/highlighter.h>
 
 #include <QtCore/QTimer>
 #include <QtCore/QRegExp>
@@ -51,6 +51,7 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 //	textEdit()->setWrapPolicy( Q3TextEdit::AtWhiteSpace );
 //	textEdit()->setAutoFormatting( Q3TextEdit::AutoNone );
 
+	m_highlighter = new Sonnet::Highlighter( textEdit() );
 	// some signals and slots connections
 	connect( textEdit(), SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
 
@@ -89,17 +90,12 @@ void ChatTextEditPart::toggleAutoSpellCheck( bool enabled )
 		enabled = false;
 
 	m_autoSpellCheckEnabled = enabled;
-#ifdef __GNUC__
-#warning Port to new SpellHightlighter interface, disabled to make compile (-DarkShock)
-#endif
-#if 0
 	if ( spellHighlighter() )
 	{
 		spellHighlighter()->setAutomatic( enabled );
 		spellHighlighter()->setActive( enabled );
 	}
 	textEdit()->setCheckSpellingEnabled( enabled );
-#endif
 }
 
 bool ChatTextEditPart::autoSpellCheckEnabled() const
@@ -107,18 +103,9 @@ bool ChatTextEditPart::autoSpellCheckEnabled() const
 	return m_autoSpellCheckEnabled;
 }
 
-KDictSpellingHighlighter* ChatTextEditPart::spellHighlighter()
+Sonnet::Highlighter* ChatTextEditPart::spellHighlighter()
 {
-#ifdef __GNUC__
-#warning disabled to make it compile
-#endif
-#if 0
-	Q3SyntaxHighlighter *qsh = textEdit()->syntaxHighlighter();
-	KDictSpellingHighlighter* kdsh = dynamic_cast<KDictSpellingHighlighter*>( qsh );
-	return kdsh;
-#else 
-	return 0l;
-#endif
+	return m_highlighter;
 }
 
 // NAUGHTY, BAD AND WRONG! (but needed to fix nick complete bugs)
@@ -139,7 +126,7 @@ public:
 void ChatTextEditPart::complete()
 {
 #ifdef __GNUC__
-#warning disabled to make it compile
+#warning disabled nick completion to make it compile
 #endif
 #if 0
 	int para = 1, parIdx = 1;
@@ -205,7 +192,7 @@ void ChatTextEditPart::complete()
 #endif
 }
 
-void ChatTextEditPart::slotPropertyChanged( Kopete::Contact*, const QString &key,
+void ChatTextEditPart::slotPropertyChanged( Kopete::PropertyContainer*, const QString &key,
 		const QVariant& oldValue, const QVariant &newValue  )
 {
 	if ( key == Kopete::Global::Properties::self()->nickName().key() )
@@ -217,8 +204,8 @@ void ChatTextEditPart::slotPropertyChanged( Kopete::Contact*, const QString &key
 
 void ChatTextEditPart::slotContactAdded( const Kopete::Contact *contact )
 {
-	connect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-	         this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+	connect( contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+	         this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 	
 	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	mComplete->addItem( contactName );
@@ -226,8 +213,8 @@ void ChatTextEditPart::slotContactAdded( const Kopete::Contact *contact )
 
 void ChatTextEditPart::slotContactRemoved( const Kopete::Contact *contact )
 {
-	disconnect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-	            this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+	disconnect( contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+	            this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 	
 	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	mComplete->removeItem( contactName );
@@ -371,8 +358,7 @@ void ChatTextEditPart::historyUp()
 // 	textEdit()->setTextFormat(AutoText); //workaround bug 115690
 	textEdit()->setText( newText );
 // 	textEdit()->setTextFormat(format);
-	// TODO: Port to Qt4
-	textEdit()->moveCursor( QTextEdit::MoveEnd );
+	textEdit()->moveCursor( QTextCursor::End );
 }
 
 void ChatTextEditPart::historyDown()
@@ -398,8 +384,7 @@ void ChatTextEditPart::historyDown()
 // 	textEdit()->setTextFormat(AutoText); //workaround bug 115690
 	textEdit()->setText( newText );
 // 	textEdit()->setTextFormat(format);
-	// TODO: Port to Qt4
-	textEdit()->moveCursor( QTextEdit::MoveEnd, false );
+	textEdit()->moveCursor( QTextCursor::End );
 }
 
 void ChatTextEditPart::addText( const QString &text )

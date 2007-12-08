@@ -1,4 +1,4 @@
-
+add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 #add_subdirectory( ui ) 
 add_subdirectory( icons ) 
@@ -49,7 +49,6 @@ set(kopete_msn_shared_LIB_SRCS
    msnswitchboardsocket.cpp 
    msnfiletransfersocket.cpp 
    msninvitation.cpp 
-   sha1.cpp 
    msnsecureloginhandler.cpp 
    msnchallengehandler.cpp 
    dispatcher.cpp 

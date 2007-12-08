@@ -77,6 +77,7 @@ public:
 	bool isActive;
 	bool sendInProgress;
 	bool visibleMembers;
+	QSplitter * splitter;
 };
 
 ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
@@ -98,7 +99,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	//FIXME: don't widgets start off hidden anyway?
 	hide();
 
-	QSplitter *splitter = new QSplitter( Qt::Vertical, vbox );
+	d->splitter = new QSplitter( Qt::Vertical, vbox );
 
 	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)
 	m_messagePart = new ChatMessagePart( mgr , this );
@@ -106,10 +107,12 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	//Create the bottom dock widget, with the edit area, statusbar and send button
 	m_editPart = new ChatTextEditPart( mgr, vbox );
 
-	splitter->addWidget(m_messagePart->view());
-	splitter->addWidget(m_editPart->widget());
-	splitter->setStretchFactor(0, 3);
-	splitter->setStretchFactor(1, 0);
+	d->splitter->addWidget(m_messagePart->view());
+	d->splitter->addWidget(m_editPart->widget());
+	d->splitter->setChildrenCollapsible( false );
+	QList<int> sizes;
+	sizes << 240 << 40;
+	d->splitter->setSizes( sizes ); 
 
 	// FIXME: is this used these days? it seems totally unnecessary
 	connect( editPart(), SIGNAL( toolbarToggled(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
@@ -342,7 +345,7 @@ bool ChatView::closeView( bool force )
 			QString shortCaption = d->captionText;
 			shortCaption = KStringHandler::rsqueeze( shortCaption );
 
-			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br />"
+			response = KMessageBox::warningContinueCancel( this, i18n("<qt>You are about to leave the groupchat session <b>%1</b>.<br />"
 				"You will not receive future messages from this conversation.</qt>", shortCaption ), i18n( "Closing Group Chat" ),
 				KGuiItem( i18nc( "@action:button", "Close Chat" ) ), KStandardGuiItem::cancel(), QLatin1String( "AskCloseGroupChat" ) );
 		}
@@ -484,7 +487,7 @@ void ChatView::slotChatDisplayNameChanged()
 		setCaption( chatName, true );
 }
 
-void ChatView::slotPropertyChanged( Kopete::Contact*, const QString &key,
+void ChatView::slotPropertyChanged( Kopete::PropertyContainer*, const QString &key,
 		const QVariant& oldValue, const QVariant &newValue  )
 {
 	if ( key == Kopete::Global::Properties::self()->nickName().key() )
@@ -527,8 +530,8 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 	}
 	else
 	{
-		connect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-		this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+		connect( contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+		this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 	}
 
 	if( !suppress && m_manager->members().count() > 1 )
@@ -572,8 +575,8 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 			}
 			else
 			{
-				disconnect(contact,SIGNAL(propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & )),
-				this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+				disconnect(contact,SIGNAL(propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & )),
+				this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 			}
 		}
 
@@ -744,8 +747,8 @@ void ChatView::messageSentSuccessfully()
 void ChatView::saveOptions()
 {
 	KSharedConfig::Ptr config = KGlobal::config();
-
-//	writeDockConfig ( config, QLatin1String( "ChatViewDock" ) );
+	KConfigGroup kopeteChatWindowMainWinSettings( config, ( msgManager()->form() == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
+	kopeteChatWindowMainWinSettings.writeEntry( QLatin1String("ChatViewSplitter"), d->splitter->saveState().toBase64() );
 	saveChatSettings();
 	config->sync();
 }
@@ -792,33 +795,11 @@ void ChatView::loadChatSettings()
 
 void ChatView::readOptions()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
-
-	/** THIS IS BROKEN !!! */
-	//dockManager->readConfig ( config, QLatin1String("ChatViewDock") );
-#if 0
-	//Work-around to restore dock widget positions
-	config->setGroup( QLatin1String( "ChatViewDock" ) );
-
-	membersDockPosition = static_cast<K3DockWidget::DockPosition>(
-		config->readEntry( QLatin1String( "membersDockPosition" ), K3DockWidget::DockRight ) );
-
-	QString dockKey = QLatin1String( "viewDock" );
-	if ( d->visibleMembers )
-	{
-		if( membersDockPosition == K3DockWidget::DockLeft )
-			dockKey.prepend( QLatin1String( "membersDock," ) );
-		else if( membersDockPosition == K3DockWidget::DockRight )
-			dockKey.append( QLatin1String( ",membersDock" ) );
-	}
-
-	dockKey.append( QLatin1String( ",editDock:sepPos" ) );
+	KConfigGroup kopeteChatWindowMainWinSettings( KGlobal::config(), ( msgManager()->form() == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
 	//kDebug(14000) << "reading splitterpos from key: " << dockKey;
-	int splitterPos = config->readEntry( dockKey, 70 );
-	editDock->manualDock( viewDock, K3DockWidget::DockBottom, splitterPos );
-	viewDock->setDockSite( K3DockWidget::DockLeft | K3DockWidget::DockRight );
-	editDock->setEnableDocking( K3DockWidget::DockNone );
-#endif
+	QByteArray state;
+	state = kopeteChatWindowMainWinSettings.readEntry( QLatin1String("ChatViewSplitter"), state );
+	d->splitter->restoreState( QByteArray::fromBase64( state ) );
 }
 
 void ChatView::setActive( bool value )
@@ -864,26 +845,19 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 	}
 	else if( event->provides( "kopete/x-metacontact" ) )
 	{
-#ifdef __GNUC__
-#warning commented to make it compile
-#endif
-#if 0
 		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
-		Kopete::MetaContact *m=Kopete::ContactList::self()->metaContact(metacontactID);
-
-		if( m && m_manager->mayInvite())
+		Kopete::MetaContact *parent = Kopete::ContactList::self()->metaContact(metacontactID);
+		if ( parent && m_manager->mayInvite() )
 		{
-			cts=m->contacts();
-			for ( i = 0; i != cts.size(); i++)
+			foreach ( Kopete::Contact * candidate, parent->contacts() )
 			{
-				if(cts[i] && cts[i]->account() == m_manager->account())
+				if( candidate && candidate->account() == m_manager->account() && candidate->isOnline())
 				{
-					if( cts[i] != m_manager->myself() &&  !m_manager->members().contains(cts[i])  && cts[i]->isOnline())
+					if( candidate != m_manager->myself() &&  !m_manager->members().contains( candidate ) )
 						event->accept();
 				}
 			}
 		}
-#endif
 	}
 	// make sure it doesn't come from the current chat view - then it's an emoticon
 	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 &&
@@ -900,8 +874,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 
 void ChatView::dropEvent ( QDropEvent * event )
 {
-	QList<Kopete::Contact*> cts;
-	int i;
+	Kopete::ContactPtrList contacts;
 
 	if( event->provides( "kopete/x-contact" ) )
 	{
@@ -911,10 +884,9 @@ void ChatView::dropEvent ( QDropEvent * event )
 			QString contact=lst[2];
 
 			bool found =false;
-			cts=m_manager->members();
-			for ( i = 0; i != cts.size(); i++ )
+			foreach ( Kopete::Contact * candidate, m_manager->members() )
 			{
-				if(cts[i]->contactId() == contact)
+				if(candidate->contactId() == contact)
 				{
 					found=true;
 					break;
@@ -926,26 +898,19 @@ void ChatView::dropEvent ( QDropEvent * event )
 	}
 	else if( event->provides( "kopete/x-metacontact" ) )
 	{
-
-#ifdef __GNUC__
-#warning commented to make it compile
-#endif
-#if 0
 		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
-		Kopete::MetaContact *m=Kopete::ContactList::self()->metaContact(metacontactID);
-		if(m && m_manager->mayInvite())
+		Kopete::MetaContact *parent = Kopete::ContactList::self()->metaContact(metacontactID);
+		if ( parent && m_manager->mayInvite() )
 		{
-			cts=m->contacts();
-			for ( i = 0; i != cts.size(); i++ )
+			foreach ( Kopete::Contact * candidate, parent->contacts() )
 			{
-				if(cts[i] && cts[i]->account() == m_manager->account() && cts[i]->isOnline())
+				if( candidate && candidate->account() == m_manager->account() && candidate->isOnline())
 				{
-					if( cts[i] != m_manager->myself() &&  !m_manager->members().contains(cts[i]) )
-						m_manager->inviteContact(c->contactId());
+					if( candidate != m_manager->myself() &&  !m_manager->members().contains( candidate ) )
+						m_manager->inviteContact(candidate->contactId());
 				}
 			}
 		}
-#endif
 	}
 	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
 	{

@@ -1,7 +1,7 @@
 /*
     yahoobuddyiconloader.cpp - Fetches YahooBuddyIcons
 
-    Copyright (c) 2005 by André Duffeck <andre@duffeck.de>
+    Copyright (c) 2005 by André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -84,7 +84,7 @@ void YahooBuddyIconLoader::slotComplete( KJob *job )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "An error occurred while downloading buddy icon.";
 		if( m_client )
-			m_client->notifyError( i18n( "An error occurred while downloading buddy icon (%1)", m_jobs[transfer].url.url() ), job->errorString(), Client::Info );
+			m_client->notifyError( i18n( "An error occurred while downloading a buddy icon (%1)", m_jobs[transfer].url.url() ), job->errorString(), Client::Info );
 	}
 	else
 	{
@@ -97,7 +97,7 @@ void YahooBuddyIconLoader::slotComplete( KJob *job )
 		{
 			kDebug(YAHOO_RAW_DEBUG) << "Fatal Error! IconLoadJob has an empty KTemporaryFile pointer.";
 			if( m_client )
-				m_client->notifyError( i18n( "Fatal Error occurred while downloading buddy icon." ), i18n( "IconLoadJob has an empty KTemporaryFile pointer." ), Client::Info );
+				m_client->notifyError( i18n( "A fatal error occurred while downloading buddy icon." ), i18n( "IconLoadJob has an empty KTemporaryFile pointer." ), Client::Info );
 		}
 	}
 

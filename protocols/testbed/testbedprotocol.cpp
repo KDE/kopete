@@ -32,11 +32,11 @@ TestbedProtocol *TestbedProtocol::s_protocol = 0L;
 TestbedProtocol::TestbedProtocol( QObject* parent, const QStringList &/*args*/ )
 	: Kopete::Protocol( TestbedProtocolFactory::componentData(), parent ),
 	  testbedOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),  
-			  i18n( "Online" ),   i18n( "O&nline" ) ),
+			  i18n( "Online" ),   i18n( "O&nline" ), Kopete::OnlineStatusManager::Online ),
 	  testbedAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),  
-			  i18n( "Away" ),   i18n( "&Away" ) ),
+			  i18n( "Away" ),   i18n( "&Away" ), Kopete::OnlineStatusManager::Away ),
 	  testbedOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QStringList(QString()), 
-			  i18n( "Offline" ),   i18n( "O&ffline" ) )
+			  i18n( "Offline" ),   i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline )
 
 {
 	kDebug( 14210 ) ;
@@ -57,10 +57,12 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 	QString displayName = serializedData[ "displayName" ];
 	QString type = serializedData[ "contactType" ];
 
-	TestbedContact::TestbedContactType tbcType;
-	if ( type == QString::fromLatin1( "echo" ) )
+	TestbedContact::Type tbcType;
+	if ( type == QLatin1String( "group" ) )
+		tbcType = TestbedContact::Group;
+	else if ( type == QLatin1String( "echo" ) )
 		tbcType = TestbedContact::Echo;
-	if ( type == QString::fromLatin1( "null" ) )
+	else if ( type == QLatin1String( "null" ) )
 		tbcType = TestbedContact::Null;
 	else
 		tbcType = TestbedContact::Null;
@@ -79,7 +81,9 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 		return 0;
 	}
 
-	return new TestbedContact(account, contactId, tbcType, displayName, metaContact);
+	TestbedContact * contact = new TestbedContact(account, contactId, displayName, metaContact);
+	contact->setType( tbcType );
+	return contact;
 }
 
 AddContactPage * TestbedProtocol::createAddContactWidget( QWidget *parent, Kopete::Account * /* account */ )

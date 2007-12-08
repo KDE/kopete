@@ -58,7 +58,7 @@ public:
 	 * In contrary to @ref serialize() this does not need to be reimplemented.
 	 *
 	 */
-	void serializeProperties(QMap<QString, QString> &serializedData);
+	void serializeProperties(QMap<QString, QString> &serializedData) const;
 
 	/**
 	 * @brief Deserialize the contacts persistent properties
@@ -111,7 +111,7 @@ public:
 	void removeProperty(const Kopete::PropertyTmpl &tmpl);
 
 signals:
-	void propertyChanged( PropertyContainer *container, const QString &key, 
+	void propertyChanged( Kopete::PropertyContainer *container, const QString &key,
 		const QVariant &oldValue, const QVariant &newValue );
 
 private:

@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Send a file
 
-    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -91,7 +91,7 @@ void SendFileTask::connectSucceeded()
 	else
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "Error opening file: " << m_file.errorString();
-		client()->notifyError( i18n( "An error occurred sending the file." ), m_file.errorString(), Client::Error );
+		client()->notifyError( i18n( "An error occurred while sending the file." ), m_file.errorString(), Client::Error );
 		setError();
 		return;
 	}

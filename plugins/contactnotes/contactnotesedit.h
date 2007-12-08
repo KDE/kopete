@@ -25,7 +25,7 @@
 #include <kdialog.h>
 
 class QLabel;
-class Q3TextEdit;
+class QTextEdit;
 namespace Kopete { class MetaContact; }
 class ContactNotesPlugin;
 
@@ -44,7 +44,7 @@ private:
 	Kopete::MetaContact *m_metaContact;
 
 	QLabel *m_label;
-	Q3TextEdit *m_linesEdit;
+	QTextEdit *m_linesEdit;
 	
 protected slots: // Protected slots
 	virtual void slotButtonClicked(int buttonCode);

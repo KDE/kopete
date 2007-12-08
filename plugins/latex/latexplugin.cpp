@@ -95,7 +95,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 		{
 			KMessageBox::queuedMessageBox(
 			    Kopete::UI::Global::mainWidget(),
-			    KMessageBox::Error, i18n("I cannot find the Magick convert program.\nconvert is required to render the Latex formulas.\nPlease go to www.imagemagick.org or to your distribution site and get the right package.")
+			    KMessageBox::Error, i18n("Cannot find the Magick 'convert' program.\nconvert is required to render the LaTeX formulae.\nPlease get the software from www.imagemagick.org or from your distribution's package manager.")
 			);
 			mMagickNotFoundShown = true;
 		}
@@ -157,7 +157,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 		}
 	}
 
-	if(replaceMap.isEmpty()) //we haven't found any latex strings
+	if(replaceMap.isEmpty()) //we haven't found any LaTeX strings
 		return;
 
 	messageText= msg.escapedBody();

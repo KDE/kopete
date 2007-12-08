@@ -50,7 +50,7 @@ TelepathyProtocol::TelepathyProtocol(QObject *parent, const QStringList &/*args*
 	Hidden(Kopete::OnlineStatus::Invisible, 3, this, 8, QStringList(QString::fromLatin1("contact_invisible_overlay")), 
 			i18n( "Invisible" ), i18n( "&Hidden" ), Kopete::OnlineStatusManager::Invisible),
 	ExtendedAway(Kopete::OnlineStatus::Away, 15, this, 4, QStringList(QString::fromLatin1("contact_away_overlay")),
-			i18n( "Extented Away" ), i18n( "&Extented Away" ), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage),
+			i18n( "Extended Away" ), i18n( "&Extended Away" ), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage),
 	Offline(Kopete::OnlineStatus::Offline, 0, this, 7, QStringList(),
 			i18n( "Offline" ), i18n( "&Offline" ), Kopete::OnlineStatusManager::Offline,
 			Kopete::OnlineStatusManager::DisabledIfOffline),

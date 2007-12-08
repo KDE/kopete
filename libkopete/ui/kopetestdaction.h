@@ -74,7 +74,7 @@ public:
 	static KAction *deleteContact(const QObject *recvr, const char *slot,
 		KActionCollection* parent, const char *name = 0);
 	/**
-	 * Standard action to change a contact alias/nickname in your contactlist
+	 * Standard action to change a contact alias/nickname in your contact list
 	 */
 	static KAction *changeAlias(const QObject *recvr, const char *slot,
 		KActionCollection* parent, const char *name = 0);
@@ -119,6 +119,8 @@ class KOPETE_EXPORT KopetePreferencesAction : public KAction
 
 	  protected slots:
 			 void slotShowPreferences();
+	  private:
+			 static KSettings::Dialog *s_settingsDialog;
 };
 
 #endif

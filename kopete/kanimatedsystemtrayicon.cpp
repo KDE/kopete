@@ -95,6 +95,9 @@ void KAnimatedSystemTrayIcon::stopMovie()
 
 bool KAnimatedSystemTrayIcon::isPlaying() const
 {
+	if (!d->movie)
+		return false;
+
 	if (d->movie->state() == QMovie::Running)
 		return true;
 	else

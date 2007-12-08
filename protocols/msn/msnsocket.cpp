@@ -598,7 +598,7 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 	default:
 		// FIXME: if the error causes a disconnect, it will crash, but we can't disconnect every time
 		msg = i18n( "Unhandled MSN error code %1 \n"
-			"Please fill a bug report with a detailed description and if possible the last console debug output.", code );
+			"Please file a bug report with a detailed description and, if possible, the last console debug output.", code );
 			// "See http://www.hypothetic.org/docs/msn/basics.php for a description of all error codes."
 		break;
 	}
@@ -784,7 +784,7 @@ QString MSNSocket::escape( const QString &str )
 
 QString MSNSocket::unescape( const QString &str )
 {
-	QString str2 = QUrl::fromPercentEncoding( str.toLatin1() );
+        QString str2 = QUrl::fromPercentEncoding( str.toUtf8() );
 	//remove msn+ colors code
 	str2 = str2.replace( QRegExp("[\\x1-\\x8]"), "" ); // old msn+ colors
 	// added by kaoul <erwin.kwolek at gmail.com>

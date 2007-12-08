@@ -76,7 +76,7 @@ Kopete::ChatSession *JabberGroupMemberContact::manager ( Kopete::Contact::CanCre
 	chatMembers.append ( this );
 
 	/*
-	 * FIXME: We might have to use the group chat contact here instead of
+	 * FIXME: We might have to use the groupchat contact here instead of
 	 *        the global myself() instance for a correct representation.
 	 */
 	mManager = new JabberChatSession ( protocol(), static_cast<JabberBaseContact *>(account()->myself()), chatMembers );

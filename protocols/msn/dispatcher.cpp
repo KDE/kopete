@@ -95,10 +95,10 @@ void Dispatcher::requestDisplayIcon(const QString& from, const QString& msnObjec
 
 	kDebug(14140) << "Requesting, " << msnObject;
 
-	QString context = QString::fromUtf8(KCodecs::base64Encode(msnObject.toUtf8()));
+	QString context = QString::fromUtf8(msnObject.toUtf8().toBase64());
 	// NOTE remove the \0 character automatically
 	// appended to a QCString.
-	context.replace("=", QString());
+	context.replace("=", "");
 	QString content =
 			"EUF-GUID: {A4268EEC-FEC5-49E5-95C3-F126696BDBF6}\r\n"
 			"SessionID: " + QString::number(sessionId) + "\r\n"
@@ -155,7 +155,7 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 	writer << (quint32)0xFFFFFFFF;
 
 	// Encode the file context header to base64 encoding.
-	context = QString::fromUtf8(KCodecs::base64Encode(header));
+	context = QString::fromUtf8(header.toBase64());
 
 	// Send an INVITE message to the recipient.
 	QString content = "EUF-GUID: {5D3E02AB-6190-11D3-BBBB-00C04F795683}\r\n"
@@ -398,7 +398,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				QByteArray msnobj;
 
 				// Decode the msn object from base64 encoding.
-				KCodecs::base64Decode(regex.cap(1).toUtf8() , msnobj);
+                                msnobj = QByteArray::fromBase64(regex.cap(1).toUtf8());
 				kDebug(14140) << "Contact requested, "
 					<< msnobj << endl;
 
@@ -458,7 +458,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				QByteArray context;
 
 				// Decode the file context from base64 encoding.
-				KCodecs::base64Decode(regex.cap(1).toUtf8(), context);
+                                context = QByteArray::fromBase64(regex.cap(1).toUtf8());
 				QDataStream reader( &context,QIODevice::ReadOnly);
 				reader.setVersion(QDataStream::Qt_3_1);
 				reader.setByteOrder(QDataStream::LittleEndian);
@@ -580,7 +580,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				QString base64 = regex.cap(1);
 				QByteArray image;
 // 				Convert from base64 encoding to byte array.
-				KCodecs::base64Decode(base64.toUtf8(), image);
+                                image = QByteArray::fromBase64(base64.toUtf8());
 // 				Create a temporary file to store the image data.
 				KTemporaryFile *ink = new KTemporaryFile();
 				ink->setPrefix("inkformatgif-");

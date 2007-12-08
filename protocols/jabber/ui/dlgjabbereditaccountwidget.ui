@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>718</width>
-    <height>522</height>
+    <width>511</width>
+    <height>568</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -24,16 +24,16 @@
     <number>6</number>
    </property>
    <property name="leftMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="topMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="rightMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget10" >
@@ -127,7 +127,7 @@
           <item>
            <widget class="QCheckBox" name="cbAutoConnect" >
             <property name="whatsThis" >
-             <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
+             <string>Check to disable automatic connection.  If checked, you can connect manually to this account, using the icon at the bottom of the main Kopete window</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
@@ -138,7 +138,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2" >
+        <widget class="QGroupBox" name="registrationGroupBox" >
          <property name="title" >
           <string>Registration</string>
          </property>
@@ -229,7 +229,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_3" >
+        <widget class="QGroupBox" name="changePasswordGroupBox" >
          <property name="title" >
           <string>Change Password</string>
          </property>
@@ -663,7 +663,7 @@
             <property name="whatsThis" >
              <string>&lt;qt>Each resource can have different &lt;b>priority &lt;/b> levels. The messages will be sent to the resource which has the highest priority level.
 
-If two resources have the same priority, the messages will be sent to the one connected the latest.&lt;/qt></string>
+If two resources have the same priority, the messages will be sent to the one most recently connected.&lt;/qt></string>
             </property>
             <property name="value" >
              <number>5</number>
@@ -717,21 +717,6 @@ If two resources have the same priority, the messages will be sent to the one co
           <string>File Transfer Settings</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <property name="leftMargin" >
-           <number>9</number>
-          </property>
-          <property name="topMargin" >
-           <number>9</number>
-          </property>
-          <property name="rightMargin" >
-           <number>9</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>9</number>
-          </property>
           <item>
            <layout class="QGridLayout" >
             <property name="leftMargin" >
@@ -822,7 +807,7 @@ If two resources have the same priority, the messages will be sent to the one co
           <item>
            <widget class="QLabel" name="textLabel3" >
             <property name="text" >
-             <string>&lt;i>&lt;ul>&lt;li>The information in the "public IP address" and "port" fields apply to all Jabber accounts.&lt;/li>
+             <string>&lt;i>&lt;ul>&lt;li>The information in the "public IP address" and "port" fields applies to all Jabber accounts.&lt;/li>
 &lt;li>You can leave the "public IP address" empty if your computer is directly connected to the internet.&lt;/li>
 &lt;li>A hostname is also valid.&lt;/li>
 &lt;li>Changes to these fields will only take effect the next time you start Kopete.&lt;/li>
@@ -830,6 +815,9 @@ If two resources have the same priority, the messages will be sent to the one co
             </property>
             <property name="alignment" >
              <set>Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -898,7 +886,7 @@ If two resources have the same priority, the messages will be sent to the one co
           <item>
            <widget class="QCheckBox" name="cbHideSystemInfo" >
             <property name="whatsThis" >
-             <string>By default, Kopete gives the other users some info about your system and the client. You can check this box in order to  hide those infos.</string>
+             <string>By default, Kopete gives the other users some info about your system and the client. Checking this box will hide that information.</string>
             </property>
             <property name="text" >
              <string>&amp;Hide system and client info</string>
@@ -951,7 +939,7 @@ If two resources have the same priority, the messages will be sent to the one co
              <bool>true</bool>
             </property>
             <property name="whatsThis" >
-             <string>Check this box if you want to always send notifications to your contacts.</string>
+             <string>Check this box if you always want to send notifications to your contacts.</string>
             </property>
             <property name="text" >
              <string>Always send not&amp;ifications</string>
@@ -1049,7 +1037,7 @@ If two resources have the same priority, the messages will be sent to the one co
                  <bool>true</bool>
                 </property>
                 <property name="whatsThis" >
-                 <string>&lt;qt>Check this box to send the &lt;b>Typing notification&lt;/b> to your contacts : when you are composing a message, you might want your contact to know that you are typing so that he knows you are answering.&lt;/qt></string>
+                 <string>&lt;qt>Check this box to send the &lt;b>Typing notification&lt;/b> to your contacts : when you are composing a message, you might want your contact to know that you are typing so that he/she knows you are answering.&lt;/qt></string>
                 </property>
                 <property name="text" >
                  <string>Always send &amp;typing notifications</string>
@@ -1150,22 +1138,6 @@ If two resources have the same priority, the messages will be sent to the one co
   <connection>
    <sender>cbCustomServer</sender>
    <signal>toggled(bool)</signal>
-   <receiver>mServer</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>204</x>
-     <y>129</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>202</x>
-     <y>145</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cbCustomServer</sender>
-   <signal>toggled(bool)</signal>
    <receiver>labelPort</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -1192,6 +1164,22 @@ If two resources have the same priority, the messages will be sent to the one co
     <hint type="destinationlabel" >
      <x>636</x>
      <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCustomServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>mServer</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>204</x>
+     <y>129</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>202</x>
+     <y>145</y>
     </hint>
    </hints>
   </connection>

@@ -1,6 +1,5 @@
 project(kopete)
 KDE4_NO_ENABLE_FINAL(kopete)
-add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 FIND_PACKAGE(Blitz REQUIRED)
 
@@ -33,7 +32,7 @@ set(KOPETE_INCLUDES
 	${CMAKE_BINARY_DIR}/kopete/libkopete/ui/
 	${CMAKE_SOURCE_DIR}/kopete/libkopete/private/
 	${CMAKE_SOURCE_DIR}/kopete/libkopete/contactlist/
-    ${CMAKE_SOURCE_DIR}/kopete/libkopete/tasks/
+	${CMAKE_SOURCE_DIR}/kopete/libkopete/tasks/
 )
 
 add_subdirectory( libkopete )

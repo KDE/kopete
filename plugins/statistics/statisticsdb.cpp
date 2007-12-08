@@ -37,7 +37,7 @@
 StatisticsDB::StatisticsDB()
 {
 	QByteArray path = (KStandardDirs::locateLocal("appdata", "kopete_statistics-0.1.db")).toLatin1();
-	kDebug() << "statistics: DB path:" << path;
+	kDebug(14315) << "statistics: DB path:" << path;
 
 	// Open database file and check for correctness
 	bool failOpen = true;
@@ -66,14 +66,14 @@ StatisticsDB::StatisticsDB()
 	sqlite3_open( path, &m_db );
 	}
 
-	kDebug() << "[Statistics] Contructor";
+	kDebug(14315) << "[Statistics] Contructor";
 
 	// Creates the tables if they do not exist.
 	QStringList result = query("SELECT name FROM sqlite_master WHERE type='table'");
 	
 	if (!result.contains("contactstatus"))
 	{
-		kDebug() << "[Statistics] Database empty";
+		kDebug(14315) << "[Statistics] Database empty";
 		query(QString("CREATE TABLE contactstatus "
 			"(id INTEGER PRIMARY KEY,"
 			"metacontactid TEXT,"
@@ -122,13 +122,13 @@ StatisticsDB::~StatisticsDB()
  {
  
      if ( debug )
-         kDebug() << "query-start: " << statement;
+	     kDebug(14315) << "query-start: " << statement;
  
      clock_t start = clock();
  
      if ( !m_db )
      {
-         kError() << "[CollectionDB] SQLite pointer == NULL.\n";
+         kError(14315) << "[CollectionDB] SQLite pointer == NULL.\n";
          return QStringList();
      }
  
@@ -142,9 +142,9 @@ StatisticsDB::~StatisticsDB()
  
      if ( error != SQLITE_OK )
      {
-         kError() << "[CollectionDB] sqlite3_compile error:" << endl;
-         kError() << sqlite3_errmsg( m_db ) << endl;
-         kError() << "on query: " << statement << endl;
+         kError(14315) << "[CollectionDB] sqlite3_compile error:" << endl;
+         kError(14315) << sqlite3_errmsg( m_db ) << endl;
+         kError(14315) << "on query: " << statement << endl;
  
          return QStringList();
      }
@@ -159,14 +159,14 @@ StatisticsDB::~StatisticsDB()
          if ( error == SQLITE_BUSY )
          {
              if ( busyCnt++ > 20 ) {
-                 kError() << "[CollectionDB] Busy-counter has reached maximum. Aborting this sql statement!\n";
+                 kError(14315) << "[CollectionDB] Busy-counter has reached maximum. Aborting this sql statement!\n";
                  break;
              }
              ::usleep( 100000 ); // Sleep 100 msec
-             kDebug() << "[CollectionDB] sqlite3_step: BUSY counter: " << busyCnt;
+	     kDebug(14315) << "[CollectionDB] sqlite3_step: BUSY counter: " << busyCnt;
          }
          if ( error == SQLITE_MISUSE )
-             kDebug() << "[CollectionDB] sqlite3_step: MISUSE";
+		 kDebug(14315) << "[CollectionDB] sqlite3_step: MISUSE";
          if ( error == SQLITE_DONE || error == SQLITE_ERROR )
              break;
  
@@ -182,9 +182,9 @@ StatisticsDB::~StatisticsDB()
  
      if ( error != SQLITE_DONE )
      {
-         kError() << "sqlite_step error.\n";
-         kError() << sqlite3_errmsg( m_db ) << endl;
-         kError() << "on query: " << statement << endl;
+         kError(14315) << "sqlite_step error.\n";
+         kError(14315) << sqlite3_errmsg( m_db ) << endl;
+         kError(14315) << "on query: " << statement << endl;
  
          return QStringList();
      }
@@ -193,7 +193,7 @@ StatisticsDB::~StatisticsDB()
      {
          clock_t finish = clock();
          const double duration = (double) (finish - start) / CLOCKS_PER_SEC;
-         kDebug() << "[CollectionDB] SQL-query (" << duration << "s): " << statement;
+	 kDebug(14315) << "[CollectionDB] SQL-query (" << duration << "s): " << statement;
      }
  
  

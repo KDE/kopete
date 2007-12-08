@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Icon=msn_protocol
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-ModuleType=Library
 X-KDE-Library=kcm_kopete_msn
@@ -19,6 +18,7 @@ Name[cy]=Ategyn MSN
 Name[da]=MSN-Plugin
 Name[de]=MSN-Modul
 Name[el]=Πρόσθετο MSN
+Name[eo]=MSN kromaĵo
 Name[es]=Complemento de MSN
 Name[et]=MSN plugin
 Name[eu]=MSN Plugin-a
@@ -72,6 +72,7 @@ Comment[cs]=Protokol sítě Microsoft
 Comment[cy]=Protocol Rhwydwaith Microsoft
 Comment[de]=Microsoft-Netzwerk-Protokoll
 Comment[el]=Πρωτόκολλο Microsoft Network
+Comment[eo]=Mikrosofta retprotokolo
 Comment[es]=Protocolo de red de Microsoft
 Comment[et]=Microsofti võrguprotokoll
 Comment[fa]=قرارداد شبکۀ میکروسافت
@@ -108,7 +109,7 @@ Comment[uz]=Microsoft тармоғи билан алоқа ўрнатиш учу
 Comment[vi]=Giao thức mạng Microsoft
 Comment[wa]=Protocole pol rantoele da Microsoft
 Comment[x-test]=xxMicrosoft Network Protocolxx
-Comment[zh_CN]=Microsoft Network 协议
+Comment[zh_CN]=Microsoft 网络协议
 Comment[zh_HK]=Microsoft 網絡通訊協定
 Comment[zh_TW]=Microsoft 網路協定
 

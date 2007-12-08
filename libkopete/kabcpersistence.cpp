@@ -1,7 +1,7 @@
 /*
     addressbooklink.cpp - Manages operations involving the KDE Address Book
 
-    Copyright (c) 2005 Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2005 Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -281,7 +281,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 			{
 				if ( name == QLatin1String( "All" ) )
 				{
-					kDebug( 14010 ) << " syncing \"" << app << ":" << name << " with contactlist ";
+					kDebug( 14010 ) << " syncing \"" << app << ":" << name << " with contact list ";
 					// Get the protocol name from the custom field
 					// by chopping the 'messaging/' prefix from the custom field app name
 					QString protocolName = app.right( app.length() - 10 );
@@ -410,7 +410,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 								}
 							}
 							else
-								kDebug( 14010 ) << " user declined to add " << *it << " to contactlist ";
+								kDebug( 14010 ) << " user declined to add " << *it << " to contact list ";
 						}
 					}
 					kDebug( 14010 ) << " all " << addresses.count() << " contacts in " << proto->pluginId() << " checked ";

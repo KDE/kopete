@@ -1,13 +1,13 @@
 /*
     gwmessagemanager.cpp - Kopete GroupWise Protocol
 
-    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
+    Copyright (c) 2006,2007 Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
 
     Based on Testbed
-    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+    Copyright (c) 2003-2007 by Will Stephenson		 <wstephenson@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,6 +22,7 @@
 #include <qlabel.h>
 #include <qvalidator.h>
 #include <QList>
+#include <QPainter>
 
 #include <kactioncollection.h>
 #include <kdebug.h>
@@ -77,7 +78,7 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 	actionCollection()->addAction( "gwInvite", m_actionInvite );
 	connect( m_actionInvite->menu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
 
-	m_secure = new KAction( KIcon( "encrypted" ), i18n( "Security Status" ), 0 ); // "gwSecureChat"
+	m_secure = new KAction( KIcon( "security-high" ), i18n( "Security Status" ), 0 ); // "gwSecureChat"
 	QObject::connect( m_secure, SIGNAL( triggered( bool ) ), SLOT( slotShowSecurity() ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
 
@@ -205,7 +206,8 @@ void GroupWiseChatSession::slotCreationFailed( const int failedId, const int sta
 	{
 		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << " couldn't start a chat, no GUID.\n";
 		//emit creationFailed();
-		Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("An error occurred when trying to start a chat: %1", statusCode ), Kopete::Message::Internal, Kopete::Message::PlainText);
+		Kopete::Message failureNotify( myself(), members());
+		failureNotify.setPlainBody( i18n("An error occurred when trying to start a chat: %1", statusCode ) );
 		appendMessage( failureNotify );
 		setClosed();
 	}
@@ -232,7 +234,8 @@ void GroupWiseChatSession::slotMessageSent( Kopete::Message & message, Kopete::C
 		}
 		else*/ if ( account()->myself()->onlineStatus() == ( static_cast<GroupWiseProtocol *>( protocol() ) )->groupwiseAppearOffline )
 		{
-			Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("Your message could not be sent. You cannot send messages while your status is Appear Offline. "), Kopete::Message::Internal, Kopete::Message::PlainText);
+			Kopete::Message failureNotify( myself(), members() );
+			failureNotify.setPlainBody( i18n("Your message could not be sent. You cannot send messages while your status is Appear Offline. ") );
 			appendMessage( failureNotify );
 			messageSucceeded();
 		}
@@ -316,6 +319,8 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 			KAction *a = new Kopete::UI::ContactAction( contact,
 			                                            actionCollection() );
 			m_actionInvite->addAction( a );
+			QObject::connect( a, SIGNAL(triggered(Kopete::Contact*,bool)),
+					this, SLOT(slotInviteContact(Kopete::Contact*)) );
 			m_inviteActions.append( a ) ;
 		}
 	}
@@ -370,7 +375,7 @@ void GroupWiseChatSession::slotInviteOtherContact()
 		m_searchDlg->setCaption(i18n( "Search for Contact to Invite" ));
 		m_searchDlg->setButtons(KDialog::Ok|KDialog::Cancel );
 		m_searchDlg->setDefaultButton(KDialog::Ok);
-		m_search = new GroupWiseContactSearch( account(), Q3ListView::Single, true, m_searchDlg );
+		m_search = new GroupWiseContactSearch( account(), QAbstractItemView::SingleSelection, true, m_searchDlg );
 		m_searchDlg->setMainWidget( m_search );
 		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOk( bool ) ) );
 		m_searchDlg->enableButtonOk( false );
@@ -425,7 +430,7 @@ void GroupWiseChatSession::joined( GroupWiseContact * c )
 	{
 		if ( pending->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( pending, QString(), Kopete::Message::PlainText, true );
+			removeContact( pending, QString(), Qt::PlainText, true );
 			break;
 		}
 	}
@@ -450,9 +455,8 @@ void GroupWiseChatSession::left( GroupWiseContact * c )
 	{
 		if ( m_invitees.count() )
 		{
-			Kopete::Message failureNotify = Kopete::Message( myself(), members(),
-						i18n("All the other participants have left, and other invitations are still pending. Your messages will not be delivered until someone else joins the chat."),
-						Kopete::Message::Internal, Kopete::Message::PlainText );
+			Kopete::Message failureNotify( myself(), members() );
+			failureNotify.setPlainBody( i18n("All the other participants have left, and other invitations are still pending. Your messages will not be delivered until someone else joins the chat.") );
 			appendMessage( failureNotify );
 		}
 		else
@@ -468,7 +472,7 @@ void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 	{
 		if ( pending->contactId().startsWith( c->contactId() ) )
 		{
-			removeContact( pending, QString(), Kopete::Message::PlainText, true );
+			removeContact( pending, QString(), Qt::PlainText, true );
 			break;
 		}
 	}
@@ -477,9 +481,8 @@ void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 
 	QString from = c->metaContact()->displayName();
 
-	Kopete::Message declined = Kopete::Message( myself(), members(),
-				i18n("%1 has rejected an invitation to join this conversation.", from ),
-				Kopete::Message::Internal, Kopete::Message::PlainText );
+	Kopete::Message declined( myself(), members() );
+	declined.setPlainBody( i18n("%1 has rejected an invitation to join this conversation.", from ) );
 	appendMessage( declined );
 }
 

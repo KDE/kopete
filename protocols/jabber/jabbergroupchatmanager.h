@@ -1,5 +1,5 @@
 /*
-    jabbergroupchatmanager.h - Jabber Message Manager for group chats
+    jabbergroupchatmanager.h - Jabber Message Manager for groupchats
 
     Copyright (c) 2004 by Till Gerken            <till@tantalo.net>
 

@@ -188,7 +188,7 @@ void CollapsibleWidget::setInnerWidget(QWidget *w)
     return;
   }
 
-  bool first = d->innerWidget == 0;
+  //bool first = d->innerWidget == 0;
   d->innerWidget = w;
 
 #ifdef SIMPLE

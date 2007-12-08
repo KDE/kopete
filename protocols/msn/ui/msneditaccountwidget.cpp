@@ -184,6 +184,7 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	// Save the avatar image
 	config->writeEntry("avatar", d->pictureUrl);
 	
+	static_cast<MSNAccount *>( account() )->setPictureUrl( d->pictureUrl );
 	static_cast<MSNAccount *>( account() )->resetPictureObject();
 
 	if ( account()->isConnected() )
@@ -264,7 +265,7 @@ void MSNEditAccountWidget::slotBlock()
 void MSNEditAccountWidget::slotShowReverseList()
 {
 	QStringList reverseList = account()->configGroup()->readEntry( "reverseList", QStringList() );
-	KMessageBox::informationList( this, i18n( "Here you can see a list of contacts who added you to their contact list" ), reverseList,
+	KMessageBox::informationList( this, i18n( "Here you can see a list of the contacts who have added you to their contact list" ), reverseList,
 		i18n( "Reverse List - MSN Plugin" ) );
 }
 
@@ -281,7 +282,7 @@ void MSNEditAccountWidget::slotSelectImage()
 	else
 	{
 		KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br />"
-			"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
+			"Make sure that you have selected a valid image file</qt>" ), i18n( "MSN Plugin" ) );
 	}
 }
 

@@ -1,6 +1,6 @@
 /*
     Kopete Groupwise Protocol
-    gwchatrooms.h - Data types for group chat
+    gwchatrooms.h - Data types for groupchat
 
     Copyright (c) 2005      SUSE Linux AG	 	 http://www.suse.com
 
@@ -75,6 +75,6 @@ class Chatroom
 
 typedef QList<Chatroom> ChatroomList;
 typedef QMap<QString, Chatroom> ChatroomMap;
-};
+}
 
 #endif // GWCHATROOMS_H

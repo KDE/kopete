@@ -21,6 +21,7 @@
 
 // Qt includes
 #include <QtCore/QEvent>
+#include <QKeyEvent>
 #include <QtGui/QTextCursor>
 #include <QtGui/QTextCharFormat>
 
@@ -120,6 +121,11 @@ KRichTextEditPart::KRichTextEditPart(QWidget *wparent, QObject*, const QStringLi
     readConfig();
 }
 
+KRichTextEditPart::~KRichTextEditPart()
+{
+    delete d;
+}
+
 KTextEdit *KRichTextEditPart::textEdit()
 {
     return static_cast<KTextEdit*>(d->editor);
@@ -163,13 +169,8 @@ void KRichTextEditPart::setRichTextEnabled( bool enable )
 
     // Spellchecking disabled when using rich text because the
     // text we were getting from widget was coloured HTML!
-#ifdef __GNUC__
-#warning Renable spellchecker (-DarkShock)
-#endif
-#if 0
-    editor->setCheckSpellingEnabled( !richTextEnabled() );
-    checkSpelling->setEnabled( !richTextEnabled() );
-#endif
+    d->editor->setCheckSpellingEnabled( !isRichTextEnabled() );
+    d->checkSpelling->setEnabled( !isRichTextEnabled() );
 
     //Enable / disable buttons
     updateActions();

@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     yahoochattask.cpp - Handle Yahoo Chat
 
-    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <duffeck@kde.org>
     Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -260,16 +260,16 @@ void YahooChatTask::parseJoin( YMSGTransfer *t )
 	kDebug(YAHOO_RAW_DEBUG) << error;
 
 	if( error.startsWith( "-35" ) ) {
-		client()->notifyError( i18n("Chat could not be joined"), 
+		client()->notifyError( i18n("Could not join chat"), 
 				i18n("The room is full. Please choose another one."), Client::Error );
 		return;
 	} else if( error.startsWith( "-15" ) ) {
-		client()->notifyError( i18n("Chat could not be joined"), 
+		client()->notifyError( i18n("Could not join chat"), 
 				i18n("Invalid user."), Client::Error );
 		return;
 	} else if( !error.isEmpty() ) {
-		client()->notifyError( i18n("Chat could not be joined"), 
-				i18n("An unknown error occurred joining the chat room."), Client::Error );
+		client()->notifyError( i18n("Could not join chat"), 
+				i18n("An unknown error occurred while joining the chat room."), Client::Error );
 		return;
 	}
 

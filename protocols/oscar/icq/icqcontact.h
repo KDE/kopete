@@ -54,6 +54,9 @@ public:
 
 	virtual void setSSIItem( const OContact& ssiItem );
 
+	/**  Set encoding for this contact */
+	virtual void setEncoding( int mib );
+
 public slots:
 	virtual void slotUserInfo();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
@@ -61,6 +64,8 @@ public slots:
 	void userOnline( const QString& userId );
 	void userOffline( const QString& userID );
 	void loggedIn();
+
+	void requestShortInfo();
 
 signals:
 	void haveBasicInfo( const ICQGeneralUserInfo& );
@@ -84,6 +89,7 @@ private:
 	KToggleAction *m_actionInvisibleTo;
 
 	QString m_statusDescription;
+	bool m_requestingNickname;
 
 private slots:
 	/** Refresh status from this contact */
@@ -95,16 +101,13 @@ private slots:
 	/** Authorize this contact */
 	void slotSendAuth();
 
-	void slotAuthReplyDialogOkClicked();
-
-	/** We have received an auth request */
-	void slotGotAuthRequest( const QString& contact, const QString& reason );
-
 	/** We have received an auth reply */
 	void slotGotAuthReply( const QString& contact, const QString& reason, bool granted );
 
+	void storeUserInfoDialog();
 	void closeUserInfoDialog();
 
+	void receivedShortInfo( const QString& contact );
 	void receivedLongInfo( const QString& contact );
 
 	void requestMediumTlvInfo();

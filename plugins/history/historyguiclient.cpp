@@ -47,7 +47,7 @@ HistoryGUIClient::HistoryGUIClient(Kopete::ChatSession *parent)
 	QList<Kopete::Contact*> mb=m_manager->members();
 	m_logger=new HistoryLogger( mb.first() , this );
 
-	actionLast = new KAction( KIcon("go-last"), i18n("History Last" ), this );
+	actionLast = new KAction( KIcon("go-last"), i18n("Latest History" ), this );
         actionCollection()->addAction( "historyLast", actionLast );
 	connect( actionLast, SIGNAL(triggered(bool)), this, SLOT(slotLast()) );
 	actionPrev = KStandardAction::back( this, SLOT(slotPrevious()), this );

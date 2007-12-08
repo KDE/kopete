@@ -30,7 +30,6 @@
 
 #include "gwaccount.h"
 #include "gwprotocol.h"
-#include "ui_gwchatsearchwidget.h"
 #include "gwchatpropsdialog.h"
 
 #include "gwchatsearchdialog.h"
@@ -39,13 +38,14 @@ GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account
 	: KDialog(  parent),
 					m_account( account )
 {
-	m_widget = new Ui::GroupWiseChatSearchWidget();
+	QWidget * wid = new QWidget( this );
+	m_ui.setupUi( wid );
+	setMainWidget( wid );
 	setCaption(i18n( "Search Chatrooms" ));
 	setButtons(KDialog::Ok|KDialog::Apply|KDialog::Cancel);
 	setDefaultButton(Ok);
 	showButtonSeparator(true);
-//	m_widget->m_searchLineWidget->createSearchLine( m_widget->m_chatrooms );
-	m_widget->setupUi( this );
+//	m_ui.searchLineWidget->createSearchLine( m_ui.chatrooms );
 
 	m_manager = m_account->client()->chatroomManager();
 	
@@ -53,40 +53,39 @@ GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account
 	connect ( m_manager, SIGNAL( gotProperties( const GroupWise::Chatroom & ) ),
 			  SLOT( slotGotProperties( const GroupWise::Chatroom & ) ) );
 
-	connect( m_widget->m_btnRefresh, SIGNAL( clicked() ), SLOT( slotUpdateClicked() ) );
-	connect( m_widget->m_btnProperties, SIGNAL( clicked() ), SLOT( slotPropertiesClicked() ) );
+	connect( m_ui.btnRefresh, SIGNAL( clicked() ), SLOT( slotUpdateClicked() ) );
+	connect( m_ui.btnProperties, SIGNAL( clicked() ), SLOT( slotPropertiesClicked() ) );
 
-	m_manager->update();
+	m_manager->updateRooms();
 	show();
 }
 
 GroupWiseChatSearchDialog::~GroupWiseChatSearchDialog()
 {
-	delete m_widget;
 }
 
 void GroupWiseChatSearchDialog::slotUpdateClicked()
 {
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "updating chatroom list ";
-	Q3ListViewItem * first = m_widget->m_chatrooms->firstChild();
+	Q3ListViewItem * first = m_ui.chatrooms->firstChild();
 	QString updateMessage = i18n("Updating chatroom list..." );
 	if ( first )
 		new Q3ListViewItem( first, updateMessage );
 	else
-		new Q3ListViewItem( m_widget->m_chatrooms, updateMessage );
-	m_manager->update();
+		new Q3ListViewItem( m_ui.chatrooms, updateMessage );
+	m_manager->updateRooms();
 
 }
 
 void GroupWiseChatSearchDialog::slotManagerUpdated()
 {
-	m_widget->m_chatrooms->clear();
+	m_ui.chatrooms->clear();
 	ChatroomMap rooms = m_manager->rooms();
 	ChatroomMap::iterator it = rooms.begin();
 	const ChatroomMap::iterator end = rooms.end();
 	while ( it != end )
 	{
-		new Q3ListViewItem( m_widget->m_chatrooms,
+		new Q3ListViewItem( m_ui.chatrooms,
 						   it.value().displayName,
 						   m_account->protocol()->dnToDotted( it.value().ownerDN ),
 						   QString::number( it.value().participantsCount ) );
@@ -96,7 +95,7 @@ void GroupWiseChatSearchDialog::slotManagerUpdated()
 
 void GroupWiseChatSearchDialog::slotPropertiesClicked()
 {
-	Q3ListViewItem * selected  = m_widget->m_chatrooms->selectedItem();
+	Q3ListViewItem * selected  = m_ui.chatrooms->selectedItem();
 	if ( selected )
 	{
 		m_manager->requestProperties( selected->text( 0 ) );

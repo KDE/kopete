@@ -48,7 +48,7 @@ class KopeteWindow : public KXmlGuiWindow
 	Q_OBJECT
 
 public:
-	explicit KopeteWindow ( QWidget *parent = 0, const char *name = 0 );
+	explicit KopeteWindow ( QWidget *parent = 0 );
 	~KopeteWindow();
 
 	virtual bool eventFilter( QObject* o, QEvent* e );
@@ -59,7 +59,8 @@ protected:
 	virtual void showEvent( QShowEvent* ev );
 
 private slots:
-	void slotToggleShowOffliners();
+	void slotToggleShowAllOfflineEmpty( bool toggled );
+	void slotToggleShowOfflineUsers();
 	void slotToggleShowEmptyGroups();
 	void slotConfigChanged();
 	void slotConfNotifications();
@@ -80,7 +81,7 @@ private slots:
 
 	/**
 	 * This slot will apply settings that change the
-	 * contactlist's appearance. Only autohiding is
+	 * contact list's appearance. Only autohiding is
 	 * handled here at the moment
 	 */
 	void slotContactListAppearanceChanged();
@@ -122,16 +123,6 @@ private slots:
 	void slotIdentityStatusIconChanged( Kopete::Identity *identity );
 
 	/**
-	 * The status icon of some identity changed. Must be sent by the identity in question.
-	 */
-	void slotIdentityStatusIconChanged();
-
-	/**
-	 * Show a context menu for an identity
-	 */
-	void slotIdentityStatusIconRightClicked( Kopete::Identity *i,
-		const QPoint &p );
-	/**
 	 * Show a in-place widget for an identity
 	 */
 	void slotIdentityStatusIconLeftClicked( Kopete::Identity *i,
@@ -171,7 +162,7 @@ private slots:
 	 * Protected slot to setup the Set Global Status Message menu.
 	 */
 	void slotBuildStatusMessageMenu();
-	void slotStatusMessageSelected( int i );
+	void slotStatusMessageSelected( QAction *action );
 	void slotNewStatusMessageEntered();
 
 	/**

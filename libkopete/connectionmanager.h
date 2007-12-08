@@ -1,7 +1,7 @@
 /*
     connectionmanager.h - Provides the client side interface to the kde networkstatus daemon
 
-    Copyright (c) 2004      by Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2004      by Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2004-2007 by the Kopete developers  <kopete-devel@kde.org>
 

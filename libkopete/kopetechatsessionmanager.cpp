@@ -77,7 +77,7 @@ ChatSession* ChatSessionManager::findChatSession(const Contact *user,
 		{
 			QList<Contact*> contactlist = cs->members();
 
-			// set this to false if chatContacts doesn't contain current cs's contactlist
+			// set this to false if chatContacts doesn't contain current cs's contact list
 			bool halfMatch = true;
 
 			for ( i = 0; i != contactlist.size() && halfMatch; i++ )
@@ -105,12 +105,12 @@ ChatSession* ChatSessionManager::findChatSession(const Contact *user,
 }
 
 ChatSession *ChatSessionManager::create(
-	const Contact *user, ContactPtrList chatContacts, Protocol *protocol)
+	const Contact *user, ContactPtrList chatContacts, Protocol *protocol, Kopete::ChatSession::Form form )
 {
 	ChatSession *result=findChatSession( user,  chatContacts, protocol);
 	if (!result)
 	{
-		result = new ChatSession(user,  chatContacts, protocol );
+		result = new ChatSession(user,  chatContacts, protocol, form );
 		registerChatSession(result);
 	}
 	return (result);

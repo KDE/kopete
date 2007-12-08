@@ -180,6 +180,11 @@ bool Connection::isLoggedIn() const
 	return m_loggedIn;
 }
 
+QHostAddress Connection::localAddress() const
+{
+	return d->clientStream->localAddress();
+}
+
 RateClassManager* Connection::rateManager() const
 {
 	return d->rateClassManager;

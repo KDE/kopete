@@ -1207,7 +1207,12 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		// removed text truncating code from Qt - we do that differently, further on
 
 		int marg = lv->itemMargin();
-		p->fillRect( 0, 0, width, height(), _cg.background() );
+		QBrush b;
+		if (isSelected())
+			b = _cg.brush(QPalette::Normal, QPalette::Highlight);
+		else
+			b = _cg.background();
+		p->fillRect( 0, 0, width, height(), b );
 	//	const QPixmap * icon = pixmap( column );
 #ifdef __GNUC__
 #warning Item::paintCell needs fixing

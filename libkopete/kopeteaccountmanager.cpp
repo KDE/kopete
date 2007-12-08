@@ -28,12 +28,15 @@
 #include <kglobal.h>
 #include <kplugininfo.h>
 #include <kconfiggroup.h>
+#include <solid/networking.h>
 
 #include "kopeteaccount.h"
 #include "kopeteaway.h"
+#include "kopetebehaviorsettings.h"
 #include "kopeteprotocol.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
+#include "kopeteidentitymanager.h"
 #include "kopetepluginmanager.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteonlinestatusmanager.h"
@@ -77,6 +80,8 @@ AccountManager::AccountManager()
 {
 	setObjectName( "KopeteAccountManager" );
 	d = new Private;
+	connect( Solid::Networking::notifier(), SIGNAL(shouldConnect()), this, SLOT( networkConnected() ) );
+	connect( Solid::Networking::notifier(), SIGNAL(shouldDisconnect()), this, SLOT( networkDisconnected() ) );
 }
 
 
@@ -87,7 +92,7 @@ AccountManager::~AccountManager()
 	delete d;
 }
 
-bool AccountManager::isAnyAccountConnected()
+bool AccountManager::isAnyAccountConnected() const
 {
 	foreach( Account *a , d->accounts )
 	{
@@ -98,47 +103,42 @@ bool AccountManager::isAnyAccountConnected()
 	return false;
 }
 
-void AccountManager::connectAll()
+void AccountManager::setOnlineStatus( uint category, const QString& awayMessage, uint flags )
 {
-	setOnlineStatus( OnlineStatusManager::Online  );
-}
+	kDebug() << "category: " << category << ", Kopete::OnlineStatusManager::Away: " << Kopete::OnlineStatusManager::Away;
+	OnlineStatusManager::Categories categories
+		= (OnlineStatusManager::Categories)category;
+	bool onlyChangeConnectedAccounts = isAnyAccountConnected();
 
-void AccountManager::setAvailableAll( const QString &awayReason )
-{
-	setOnlineStatus( OnlineStatusManager::Online  , awayReason );
-}
-
-void AccountManager::disconnectAll()
-{
-	setOnlineStatus( OnlineStatusManager::Offline   );
-}
-
-void AccountManager::setAwayAll( const QString &awayReason, bool away )
-{
-	setOnlineStatus( away ? OnlineStatusManager::Away : OnlineStatusManager::Online  , awayReason );
-}
-
-void AccountManager::setOnlineStatus( uint category , const QString& awayMessage, uint flags )
-{
-	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
-	bool anyConnected = isAnyAccountConnected();
-
-	foreach( Account *account ,  d->accounts )
+	foreach( Account *account, d->accounts )
 	{
-		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor);
-		if ( anyConnected )
-		{
-			if ( account->isConnected() || ( (flags & ConnectIfOffline) && !account->excludeConnect() ) )
-				account->setOnlineStatus( status , awayMessage );
+		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus( account->protocol(), categories );
+		// Going offline is always respected
+		if ( category & Kopete::OnlineStatusManager::Offline ) {
+			account->setOnlineStatus( status, awayMessage );
+			continue;
 		}
-		else
-		{
+		
+		if ( onlyChangeConnectedAccounts ) {
+			if ( account->isConnected() || ( (flags & ConnectIfOffline) && !account->excludeConnect() ) )
+				account->setOnlineStatus( status, awayMessage );
+		}
+		else {
 			if ( !account->excludeConnect() )
-				account->setOnlineStatus( status , awayMessage );
+				account->setOnlineStatus( status, awayMessage );
 		}
 	}
+	// mark ourselves as globally away if appropriate
+	Away::setGlobalAway( category & Kopete::OnlineStatusManager::Away );
 }
 
+void AccountManager::setStatusMessage(const QString &message)
+{
+	foreach( Account *account, d->accounts )
+	{
+		account->setStatusMessage(message);
+	}
+}
 
 QColor AccountManager::guessColor( Protocol *protocol ) const
 {
@@ -393,6 +393,14 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 				"Failed to create account for '" << accountId << "'" << endl;
 			continue;
 		}
+		// the account's Identity must be set here instead of in the Kopete::Account ctor, because there the
+		// identity cannot pick up any state set in the derived Account ctor
+		Identity *identity = Kopete::IdentityManager::self()->findIdentity( account->configGroup()->readEntry("Identity", QString()) );
+		// if the identity was not found, use the default one which will for sure exist
+		// FIXME: get rid of this, the account's identity should always exist at this point
+		if (!identity)
+			identity = Kopete::IdentityManager::self()->defaultIdentity();
+		account->setIdentity( identity );
 	}
 }
 
@@ -405,6 +413,17 @@ void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 
 	//kDebug(14010) ;
 	emit accountOnlineStatusChanged(account, oldStatus, newStatus);
+}
+
+void AccountManager::networkConnected()
+{
+	if ( Kopete::BehaviorSettings::self()->autoConnect() )
+		setOnlineStatus( Kopete::OnlineStatusManager::Online, QString(), ConnectIfOffline );
+}
+
+void AccountManager::networkDisconnected()
+{
+	setOnlineStatus( Kopete::OnlineStatusManager::Offline );
 }
 
 } //END namespace Kopete

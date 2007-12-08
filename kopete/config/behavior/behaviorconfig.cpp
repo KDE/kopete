@@ -41,14 +41,16 @@
 
 #include <qtabwidget.h>
 
-typedef KGenericFactory<BehaviorConfig, QWidget> KopeteBehaviorConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_behaviorconfig, KopeteBehaviorConfigFactory( "kcm_kopete_behaviorconfig" ) )
+K_PLUGIN_FACTORY( KopeteBehaviorConfigFactory,
+		registerPlugin<BehaviorConfig>(); )
+K_EXPORT_PLUGIN( KopeteBehaviorConfigFactory("kcm_kopete_behaviorconfig") )
 
-
-BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
+BehaviorConfig::BehaviorConfig(QWidget *parent, const QVariantList &args) :
 		KCModule( KopeteBehaviorConfigFactory::componentData(), parent, args )
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
+	// since KSetting::Dialog has margins here, we don't need our own.
+	layout->setContentsMargins( 0, 0, 0, 0);
 	
 	mBehaviorTabCtl = new QTabWidget(this);
 	mBehaviorTabCtl->setObjectName("mBehaviorTabCtl");
@@ -82,11 +84,6 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
 	// "Chat" TAB ===============================================================
 	connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
 		 this, SLOT(slotValueChanged(int)));
-#ifdef __GNUC__
-#warning "Where is slot BehaviorConfig::slotUpdatePluginLabel?"
-#endif
-    connect( mPrfsChat->viewPlugin, SIGNAL(activated(int)),
-		 this, SLOT(slotUpdatePluginLabel(int)));
 
 	// "Away" TAB ===============================================================
 	connect( mPrfsAway->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
@@ -95,7 +92,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QStringList &args) :
 
 void BehaviorConfig::save()
 {
-//	kDebug(14000) << "called.";
+//	kDebug(14000);
 
 	KCModule::save();
 
@@ -112,7 +109,7 @@ void BehaviorConfig::save()
 
 void BehaviorConfig::load()
 {
-//	kDebug(14000) << "called";
+//	kDebug(14000);
 	awayInstance = Kopete::Away::getInstance();
 
 	KCModule::load();

@@ -70,6 +70,11 @@ public:
 	 */
 	virtual KActionMenu* actionMenu() = 0;
 
+	/**
+	 * Sets the identity this account belongs to
+	 */
+	virtual bool setIdentity( Kopete::Identity *ident );
+
 	/** Set the server address */
 	void setServerAddress( const QString& server );
 
@@ -90,6 +95,11 @@ public:
 	 * if contact has no encoding
 	 */
 	QTextCodec* contactCodec( const QString& contactName ) const;
+
+	/**
+	 * Updates buddy icon
+	 */
+	void updateBuddyIcon( const QString &path );
 
 	/**
 	 * Add a contact to the server site list
@@ -137,6 +147,8 @@ protected:
 	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem ) = 0;
 
 	void updateVersionUpdaterStamp();
+
+	virtual QString sanitizedMessage( const QString& message ) const = 0;
 
 protected slots:
 
@@ -187,6 +199,10 @@ private slots:
 
 	/** Sends buddy icon to server */
 	void slotSendBuddyIcon();
+
+	/** Identity's property changed */
+	void slotIdentityPropertyChanged( Kopete::PropertyContainer *container, const QString &key,
+	                                  const QVariant &oldValue, const QVariant &newValue );
 
 private:
 	OscarAccountPrivate *d;

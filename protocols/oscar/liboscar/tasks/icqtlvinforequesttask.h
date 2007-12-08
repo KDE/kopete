@@ -64,7 +64,6 @@ private:
 	InfoType m_type;
 
 	QByteArray m_metaInfoId;
-	Oscar::WORD m_goSequence;
 
 };
 

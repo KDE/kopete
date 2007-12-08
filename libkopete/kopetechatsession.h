@@ -78,6 +78,11 @@ class KOPETE_EXPORT ChatSession : public QObject , public KXMLGUIClient
 
 public:
 	/**
+	 * Describes the form of this chat session
+	 */ 
+	enum Form { Small,/**< The chat is a small group or 1:1 chat */
+		Chatroom/** Chat with many members and high traffic */ };
+	/**
 	 * Delete a chat manager instance
 	 * You shouldn't delete the KMM yourself. it will be deleted when the chatwindow is closed
 	 * see also @ref setCanBeDeleted() , @ref deref() 
@@ -156,9 +161,9 @@ public:
 	bool mayInvite() const ;
 
 	/**
-	 * this method is called when a contact is dragged to the contactlist.
+	 * this method is called when a contact is dragged to the contact list.
 	 * @p contactId is the id of the contact. the contact is supposed to be of the same account as
-	 * the @ref account() but we can't be sure the Kopete::Contact is really on the contactlist
+	 * the @ref account() but we can't be sure the Kopete::Contact is really on the contact list
 	 *
 	 * It is possible to drag contact only if @ref mayInvite return true
 	 *
@@ -170,6 +175,12 @@ public:
 	 * Returns the message handler chain for the message direction @p dir.
 	 */
 	MessageHandlerChain::Ptr chainForDirection( Message::MessageDirection dir );
+
+	/**
+	 * Get the form of this chatsession.  This is a hint to the UI so it can present the chat
+	 * appropriately
+	 */
+	Form form() const;
 
 signals:
 	/**
@@ -377,7 +388,7 @@ protected:
 	 * static factory method createSession() creates the object. You may
 	 * not create instances yourself directly!
 	 */
-	ChatSession( const Contact *user, ContactPtrList others, Protocol *protocol );
+	ChatSession( const Contact *user, ContactPtrList others, Protocol *protocol, Form form = Small );
 
 	/**
 	 * Set wether or not contact from this account may be invited in this chat.

@@ -79,7 +79,7 @@ typedef enum
 #if defined( __linux__) && defined(ENABLE_AV)
         ,
 	VIDEODEV_DRIVER_V4L
-#ifdef HAVE_V4L2
+#ifdef V4L2_CAP_VIDEO_CAPTURE
         ,
 	VIDEODEV_DRIVER_V4L2
 #endif
@@ -231,11 +231,6 @@ public:
 	bool getImageAsMirror();
 	bool setImageAsMirror(bool imageasmirror);
 
-	bool getDisableMMap();
-	bool setDisableMMap(bool disablemmap);
-	bool getWorkaroundBrokenDriver();
-	bool setWorkaroundBrokenDriver(bool workaroundbrokendriver);
-
 	bool canCapture();
 	bool canChromakey();
 	bool canScale();
@@ -244,6 +239,8 @@ public:
 	bool canAsyncIO();
 	bool canStream();
 
+	void setUdi( const QString & );
+	QString udi() const;
 	QString m_model;
 	QString m_name;
 	size_t m_modelindex; // Defines what's the number of a device when more than 1 device of a given model is present;
@@ -253,7 +250,7 @@ public:
 
 //protected:
 #if defined(__linux__) && defined(ENABLE_AV)
-#ifdef HAVE_V4L2
+#ifdef V4L2_CAP_VIDEO_CAPTURE
 	struct v4l2_capability V4L2_capabilities;
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
@@ -267,9 +264,6 @@ public:
 //	QFile file;
 protected:
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
-
-	bool m_disablemmap;
-	bool m_workaroundbrokendriver;
 
 	QVector<rawbuffer> m_rawbuffers;
 	unsigned int m_streambuffers;
@@ -294,6 +288,7 @@ protected:
 	int initMmap();
 	int initUserptr();
 
+	QString m_udi;
 };
 
 }

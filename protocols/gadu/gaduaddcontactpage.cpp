@@ -132,7 +132,7 @@ GaduAddContactPage::apply( Kopete::Account* a , Kopete::MetaContact* mc )
 		contact->setProperty( GaduProtocol::protocol()->propPhoneNr, addUI_->telephoneEdit_ ->text().trimmed() );
 		/*
 		contact->setProperty( "ignored", i18n( "ignored" ), "false" );
-		contact->setProperty( "nickName", i18n( "nick name" ), name );
+		contact->setProperty( "nickName", i18n( "nickname" ), name );
 		*/
 	}
 	return true;

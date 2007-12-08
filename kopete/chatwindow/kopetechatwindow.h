@@ -30,6 +30,7 @@
 #include <QList>
 #include "kopetecontact.h"
 #include "kdeversion.h"
+#include <kopetechatsession.h>
 
 #include <kopete_export.h>
 
@@ -48,11 +49,11 @@ class QLabel;
 class KopeteEmoticonAction;
 class ChatView;
 class SidebarWidget;
+class QDockWidget;
 
 namespace Kopete
 {
 class Message;
-class ChatSession;
 class Contact;
 typedef QList<Contact*>  ContactPtrList;
 }
@@ -113,7 +114,7 @@ public:
 
 private:
 	// All KopeteChatWindows are created by the window function
-	KopeteChatWindow( QWidget *parent = 0 );
+	KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *parent = 0 );
 
 	/**
 	 * The window list has changed:
@@ -133,12 +134,10 @@ private:
 	//why did we ever need this method??
 	//const QString fileContents( const QString &file ) const;
 
-	// Sidebar
-	SidebarWidget *m_sideBar;
-	QTabWidget *m_sideBarTabWidget;
+	QDockWidget *m_participantsWidget;
 
 	//
-	ChatView *m_activeView;
+	QPointer<ChatView> m_activeView;
 	ChatView *m_popupView;
 	bool m_alwaysShowTabs;
 	bool updateBg;
@@ -163,9 +162,6 @@ private:
 	KAction *tabDetach;
 	KAction* tabClose;
 
-	KToggleAction* membersLeft;
-	KToggleAction* membersRight;
-	KToggleAction* toggleMembers;
 	KToggleAction* toggleAutoSpellCheck;
 
 	KopeteEmoticonAction *actionSmileyMenu;
@@ -174,6 +170,7 @@ private:
 	KActionMenu *actionDetachMenu;
 	KActionMenu *actionTabPlacementMenu;
 	QString statusMsg;
+	Kopete::ChatSession::Form initialForm;
 
 signals:
 	void closing( KopeteChatWindow* );
@@ -237,7 +234,7 @@ private:
 
 protected:
 	virtual void closeEvent( QCloseEvent *e );
-	virtual void windowActivationChange( bool );
+	virtual void changeEvent( QEvent *e );
 };
 
 #endif

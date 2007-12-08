@@ -19,26 +19,28 @@
     *************************************************************************
 */
 
-#include "oscarsettings.h"
 #include "filetransfertask.h"
 
-#include <k3socketaddress.h>
-#include <k3serversocket.h>
-#include <k3bufferedsocket.h>
+#include <QtCore/QFileInfo>
+#include <QtCore/QTextCodec>
+#include <QtNetwork/QHostAddress>
+#include <QtNetwork/QTcpServer>
+#include <QtNetwork/QTcpSocket>
+
+#include <ksocketfactory.h>
 #include <krandom.h>
-#include <qstring.h>
-#include <qtextcodec.h>
-#include <kdebug.h>
-#include "buffer.h"
-#include "connection.h"
-#include "ofttransfer.h"
-#include "oftprotocol.h"
-#include "oscarutils.h"
-#include <typeinfo>
-#include "kopetetransfermanager.h"
-#include <qfileinfo.h>
+
 #include <klocale.h>
+#include <kdebug.h>
+
+#include "buffer.h"
+#include "oscarutils.h"
+#include "oscarmessage.h"
+#include "connection.h"
+#include "oscarsettings.h"
 #include "oftmetatransfer.h"
+
+#include "kopetetransfermanager.h"
 
 //receive
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
@@ -85,18 +87,22 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
 	m_oftRendezvous.cookie = b.buffer();
 
 	//hook up ui cancel
-	connect( transfer , SIGNAL(transferCanceled()), this, SLOT( doCancel() ) );
+	connect( transfer, SIGNAL(result(KJob*)), this, SLOT(transferResult(KJob*)) );
+#ifdef __GNUC__
+#warning Remove connection below when transferResult correctly sends cancel from cancel button. (Kedge)
+#endif
+	connect( transfer, SIGNAL(finished(KJob*)), this, SLOT(doCancel()) );
 	//hook up our ui signals
-	connect( this , SIGNAL( gotCancel() ), transfer, SLOT( slotCancelled() ) );
-	connect( this , SIGNAL( error( int, const QString & ) ), transfer, SLOT( slotError( int, const QString & ) ) );
-	connect( this , SIGNAL( processed( unsigned int ) ), transfer, SLOT( slotProcessed( unsigned int ) ) );
-	connect( this , SIGNAL( fileComplete() ), transfer, SLOT( slotComplete() ) );
+	connect( this, SIGNAL(transferCancelled()), transfer, SLOT(slotCancelled()) );
+	connect( this, SIGNAL(transferError(int, const QString&)), transfer, SLOT(slotError(int, const QString&)) );
+	connect( this, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
+	connect( this, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
 }
 
 void FileTransferTask::init( Action act )
 {
 	m_action = act;
-	m_ss = 0;
+	m_tcpServer = 0;
 	m_connection = 0;
 	m_port = 0;
 	m_proxy = false;
@@ -106,8 +112,15 @@ void FileTransferTask::init( Action act )
 
 FileTransferTask::~FileTransferTask()
 {
+	if( m_tcpServer )
+	{
+		delete m_tcpServer;
+		m_tcpServer = 0;
+	}
+
 	if( m_connection )
 	{
+		m_connection->close();
 		delete m_connection;
 		m_connection = 0;
 	}
@@ -122,10 +135,10 @@ void FileTransferTask::onGo()
 
 		Kopete::TransferManager *tm = 0;
 		emit getTransferManager( &tm );
-		connect( tm, SIGNAL( refused( const Kopete::FileTransferInfo& ) ), this, SLOT( doCancel( const Kopete::FileTransferInfo& ) ) );
-		connect( tm, SIGNAL( accepted(Kopete::Transfer*, const QString &) ), this, SLOT( doAccept( Kopete::Transfer*, const QString & ) ) );
+		connect( tm, SIGNAL(refused(const Kopete::FileTransferInfo&)), this, SLOT(doCancel(const Kopete::FileTransferInfo&)) );
+		connect( tm, SIGNAL(accepted(Kopete::Transfer*, const QString&)), this, SLOT(doAccept(Kopete::Transfer*, const QString&)) );
 
-		emit askIncoming( m_contactName, m_oftRendezvous.fileName, m_oftRendezvous.totalSize, m_desc, m_oftRendezvous.cookie );
+		emit askIncoming( m_contactName, m_oftRendezvous.fileName, m_oftRendezvous.totalSize, m_desc, m_oftRendezvous.cookie.toHex() );
 		return;
 	}
 	//else, send
@@ -146,8 +159,8 @@ void FileTransferTask::onGo()
 
 	if ( client()->settings()->fileProxy() )
 	{ //proxy stage 1
-		m_proxy = 1;
-		m_proxyRequester = 1;
+		m_proxy = true;
+		m_proxyRequester = true;
 		doConnect();
 	}
 	else
@@ -189,15 +202,15 @@ void FileTransferTask::parseReq( Buffer b )
 			break;
 		 case 2:
 		 	proxy_ip = tlv.data;
-			kDebug(OSCAR_RAW_DEBUG) << "proxy ip " << proxy_ip;
+			kDebug(OSCAR_RAW_DEBUG) << "proxy ip " << QHostAddress( b2.getDWord() ).toString();
 			break;
 		 case 3:
 		 	client_ip = tlv.data;
-			kDebug(OSCAR_RAW_DEBUG) << "client ip " << client_ip;
+			kDebug(OSCAR_RAW_DEBUG) << "client ip " << QHostAddress( b2.getDWord() ).toString();
 			break;
 		 case 4:
 		 	verified_ip = tlv.data;
-			kDebug(OSCAR_RAW_DEBUG) << "verified ip " << verified_ip;
+			kDebug(OSCAR_RAW_DEBUG) << "verified ip " << QHostAddress( b2.getDWord() ).toString();
 			break;
 		 case 5:
 		 	m_port = b2.getWord();
@@ -246,8 +259,8 @@ void FileTransferTask::parseReq( Buffer b )
 	{ //ip is all 0's
 		kDebug(OSCAR_RAW_DEBUG) << "proxy??";
 		//wtf... I guess it wants *me* to request a proxy?
-		m_proxy = 1;
-		m_proxyRequester = 1;
+		m_proxy = true;
+		m_proxyRequester = true;
 	}
 	else
 	{
@@ -265,17 +278,17 @@ bool FileTransferTask::validFile( const QString& file )
 	{
 		if ( ! fileInfo.exists() )
 		{
-			emit error( KIO::ERR_DOES_NOT_EXIST, fileInfo.fileName() );
+			emit transferError( KIO::ERR_DOES_NOT_EXIST, fileInfo.fileName() );
 			return 0;
 		}
 		if ( fileInfo.size() == 0 )
 		{
-			emit error( KIO::ERR_COULD_NOT_READ, i18n("file is empty: ") + fileInfo.fileName() );
+			emit transferError( KIO::ERR_COULD_NOT_READ, i18n("file is empty: ") + fileInfo.fileName() );
 			return 0;
 		}
 		if ( ! fileInfo.isReadable() )
 		{
-			emit error( KIO::ERR_CANNOT_OPEN_FOR_READING, fileInfo.fileName() );
+			emit transferError( KIO::ERR_CANNOT_OPEN_FOR_READING, fileInfo.fileName() );
 			return 0;
 		}
 	}
@@ -285,13 +298,13 @@ bool FileTransferTask::validFile( const QString& file )
 		{
 			if ( ! fileInfo.isWritable() )
 			{ //it's there and readonly
-				emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, fileInfo.fileName() );
+				emit transferError( KIO::ERR_CANNOT_OPEN_FOR_WRITING, fileInfo.fileName() );
 				return 0;
 			}
 		}
 		else if ( ! QFileInfo( fileInfo.path() ).isWritable() )
 		{ //not allowed to create it
-			emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, fileInfo.fileName() );
+			emit transferError( KIO::ERR_CANNOT_OPEN_FOR_WRITING, fileInfo.fileName() );
 			return 0;
 		}
 	}
@@ -307,13 +320,13 @@ bool FileTransferTask::validDir( const QString& dir )
 		{
 			if ( !fileInfo.isWritable() )
 			{ //it's there and readonly
-				emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, dir );
+				emit transferError( KIO::ERR_CANNOT_OPEN_FOR_WRITING, dir );
 				return false;
 			}
 		}
 		else
 		{ //not allowed o create it
-			emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, dir );
+			emit transferError( KIO::ERR_CANNOT_OPEN_FOR_WRITING, dir );
 			return false;
 		}
 	}
@@ -328,7 +341,7 @@ bool FileTransferTask::take( Transfer* transfer )
 
 bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 {
-	kDebug(14151) << "comparing to " << m_oftRendezvous.cookie;
+	kDebug(14151) << "comparing to " << m_oftRendezvous.cookie.toHex();
 	if ( cookie != m_oftRendezvous.cookie )
 		return false;
 
@@ -343,14 +356,15 @@ bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 			break;
 		}
 
-		delete m_ss;
-		m_ss = 0;
+		m_tcpServer->close();
+		delete m_tcpServer;
+		m_tcpServer = 0;
 		parseReq( b );
 		doConnect();
 		break;
 	 case 1:
 		kDebug(OSCAR_RAW_DEBUG) << "other user cancelled filetransfer :(";
-		emit gotCancel(); //FIXME: what if it's not hooked up?
+		emit transferCancelled(); //FIXME: what if it's not hooked up?
 		emit cancelOft();
 		m_timer.stop();
 		setSuccess( true );
@@ -364,17 +378,56 @@ bool FileTransferTask::take( int type, QByteArray cookie, Buffer b )
 	return true;
 }
 
+bool FileTransferTask::takeAutoResponse( int type, QByteArray cookie, Buffer* b )
+{
+	if ( cookie != m_oftRendezvous.cookie )
+		return false;
+
+	switch( type )
+	{
+	case 3: //channel specific data
+		if ( b->getWord() == 0x0002 )
+		{
+			Oscar::WORD data = b->getWord();
+			if ( data == 0x0001 )
+				kDebug(OSCAR_RAW_DEBUG) << "other user cancelled filetransfer :(";
+			else if ( data == 0x0006 )
+				kDebug(OSCAR_RAW_DEBUG) << "other client terminated filetransfer :(";
+
+			if ( data == 0x0001 || data == 0x0006 )
+			{
+				emit transferCancelled();
+				emit cancelOft();
+				m_timer.stop();
+				setSuccess( true );
+				break;
+			}
+		}
+	case 1: //channel not supported
+	case 2: //busted payload
+	default:
+		kWarning(OSCAR_RAW_DEBUG) << "unknown response for type: " << type;
+	}
+	return true;
+}
+
 void FileTransferTask::readyAccept()
 {
 	kDebug(OSCAR_RAW_DEBUG) << "******************";
-	m_connection = dynamic_cast<KBufferedSocket*>( m_ss->accept() );
-	m_ss->close(); //free up the port so others can listen
-	m_ss->deleteLater();
-	m_ss = 0;
-	if (! m_connection )
+	m_connection = m_tcpServer->nextPendingConnection();
+
+	// Reparent because we want to delete TcpServer;
+	if ( m_connection )
+		m_connection->setParent( 0 );
+
+	m_tcpServer->close(); //free up the port so others can listen
+	delete m_tcpServer;
+	m_tcpServer = 0;
+	
+	if ( !m_connection )
 	{ //either it wasn't buffered, or it did something weird
 		kDebug(OSCAR_RAW_DEBUG) << "connection failed somehow.";
-		emit error( KIO::ERR_COULD_NOT_ACCEPT, QString() );
+		emit transferError( KIO::ERR_COULD_NOT_ACCEPT, QString() );
 		doCancel();
 		return;
 	}
@@ -387,6 +440,7 @@ void FileTransferTask::doOft()
 {
 	kDebug(OSCAR_RAW_DEBUG) << "******************";
 	QObject::disconnect( m_connection, 0, 0, 0 ); //disconnect signals
+	m_state = OFT;
 	OftMetaTransfer *oft;
 
 	if ( m_action == Receive )
@@ -394,9 +448,12 @@ void FileTransferTask::doOft()
 	else
 		oft = new OftMetaTransfer( m_oftRendezvous.cookie, m_oftRendezvous.files, m_connection );
 
-	m_connection=0; //it's not ours any more
+	m_connection = 0; //it's not ours any more
 	//might be a good idea to hook up some signals&slots.
-	connect( oft, SIGNAL(fileProcessed(unsigned int, unsigned int)), this, SIGNAL(processed(unsigned int)) );
+	connect( oft, SIGNAL(fileProcessed(unsigned int, unsigned int)),
+	         this, SIGNAL(transferProcessed(unsigned int)) );
+	connect( oft, SIGNAL(transferError(int, const QString&)),
+	         this, SLOT(errorOft(int, const QString&)) );
 	connect( oft, SIGNAL(transferCompleted()), this, SLOT(doneOft()) );
 	connect( this, SIGNAL(cancelOft()), oft, SLOT(doCancel()) );
 	//now we can finally send the first OFT packet.
@@ -404,25 +461,35 @@ void FileTransferTask::doOft()
 		oft->start();
 }
 
+void FileTransferTask::errorOft( int errorCode, const QString &error )
+{
+	emit transferError( KIO::ERR_USER_CANCELED, error );
+	doCancel();
+}
+
 void FileTransferTask::doneOft()
 {
-	emit fileComplete();
+	emit transferFinished();
 	setSuccess( true );
 }
 
-void FileTransferTask::socketError( int e )
+void FileTransferTask::transferResult( KJob* job )
+{
+	if( job->error() == KIO::ERR_USER_CANCELED )
+		doCancel();
+}
+
+void FileTransferTask::socketError( QAbstractSocket::SocketError e )
 { //FIXME: handle this properly for all cases
 	QString desc;
-	if ( m_ss )
-		desc = m_ss->errorString();
-	else if ( m_connection )
-		desc = m_connection->errorString();
+	
+	desc = m_connection->errorString();
 	kWarning(OSCAR_RAW_DEBUG) << "socket error: " << e << " : " << desc;
 	if ( m_state == Connecting )
 	{ //connection failed, try another way
 		if ( m_proxy )
 		{ //fuck, we failed at a proxy! just give up
-			emit error( KIO::ERR_COULD_NOT_CONNECT, desc );
+			emit transferError( KIO::ERR_COULD_NOT_CONNECT, desc );
 			doCancel();
 		}
 		else
@@ -467,20 +534,22 @@ void FileTransferTask::proxyRead()
 					errMsg = i18n("Request Timed Out");
 					break;
 				case 0x1a: //other side was too slow
-					errMsg = i18n("Accept Period Timed Out");
+					errMsg = i18n("Acceptance Period Timed Out");
 					break;
 				default:
 					errMsg = i18n("Unknown Error: ") + QString::number( err );
 			}
 
-			emit error( KIO::ERR_COULD_NOT_LOGIN, errMsg );
+			emit transferError( KIO::ERR_COULD_NOT_LOGIN, errMsg );
 			doCancel();
 			break;
 		}
 		case 3: //ack
 			m_port = b.getWord();
 			m_ip = b.getBlock( 4 );
-			kDebug(OSCAR_RAW_DEBUG) << "got port " << m_port << " ip " << m_ip;
+
+			kDebug(OSCAR_RAW_DEBUG) << "got port " << m_port << " ip "
+			                        << QHostAddress( Buffer( m_ip ).getDWord() ).toString();;
 			//now we send a proxy request to the other side
 			sendReq();
 			break;
@@ -501,9 +570,12 @@ void FileTransferTask::doCancel()
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
 	//tell the other side
-	Oscar::Message msg = makeFTMsg();
-	msg.setRequestType( 1 );
-	emit sendMessage( msg );
+	if ( m_state != OFT )
+	{
+		Oscar::Message msg = makeFTMsg();
+		msg.setRequestType( 1 );
+		emit sendMessage( msg );
+	}
 	//stop our timer in case we were doing stuff
 	m_timer.stop();
 	emit cancelOft();
@@ -515,7 +587,7 @@ void FileTransferTask::doCancel( const Kopete::FileTransferInfo &info )
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
 	//check that it's really for us
-	if ( info.internalId() == QString( m_oftRendezvous.cookie ) )
+	if ( info.internalId() == QString( m_oftRendezvous.cookie.toHex() ) )
 		doCancel();
 	else
 		kDebug(OSCAR_RAW_DEBUG) << "ID mismatch";
@@ -525,22 +597,23 @@ void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName 
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
 	//check that it's really for us
-	//XXX because qt is retarded, I can't simply compare a qstring and bytearray any more.
-	//if there are 0's in hte cookie then the qstring will only contain part of it - but it should at least be consistent about that. it just slightly increases the tiny chance of a conflict
-	if ( t->info().internalId() != QString( m_oftRendezvous.cookie ) )
+	if ( t->info().internalId() != QString( m_oftRendezvous.cookie.toHex() ) )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "ID mismatch";
 		return;
 	}
 
 	//TODO: we should unhook the old transfermanager signals now
-
 	//hook up the ones for the transfer
-	connect( t , SIGNAL(transferCanceled()), this, SLOT( doCancel() ) );
-	connect( this , SIGNAL( gotCancel() ), t, SLOT( slotCancelled() ) );
-	connect( this , SIGNAL( error( int, const QString & ) ), t, SLOT( slotError( int, const QString & ) ) );
-	connect( this , SIGNAL( processed( unsigned int ) ), t, SLOT( slotProcessed( unsigned int ) ) );
-	connect( this , SIGNAL( fileComplete() ), t, SLOT( slotComplete() ) );
+	connect( t, SIGNAL(result(KJob*)), this, SLOT(transferResult(KJob*)) );
+#ifdef __GNUC__
+#warning Remove connection below when transferResult correctly sends cancel from cancel button. (Kedge)
+#endif
+	connect( t, SIGNAL(finished(KJob*)), this, SLOT(doCancel()) );
+	connect( this, SIGNAL(transferCancelled()), t, SLOT(slotCancelled()) );
+	connect( this, SIGNAL(transferError(int, const QString&)), t, SLOT(slotError(int, const QString&)) );
+	connect( this, SIGNAL(transferProcessed(unsigned int)), t, SLOT(slotProcessed(unsigned int)) );
+	connect( this, SIGNAL(transferFinished()), t, SLOT(slotComplete()) );
 	//and save the chosen filename
 
 	/*FIXME: Should we prompt for a file name if we receive one file or only for a directory like the official
@@ -568,21 +641,23 @@ void FileTransferTask::doConnect()
 	{
 		if ( m_ip.length() != 4 || ! m_port )
 		{
-			emit error( KIO::ERR_COULD_NOT_CONNECT, i18n("missing IP or port") );
+			emit transferError( KIO::ERR_COULD_NOT_CONNECT, i18n("missing IP or port") );
 			doCancel();
 			return;
 		}
 
 		//ksockets demand a qstring
-		host = KNetwork::KIpAddress( m_ip.constData(), 4 ).toString();
+		Buffer ipBuffer( m_ip );
+		host = QHostAddress( ipBuffer.getDWord() ).toString();
 		kDebug(OSCAR_RAW_DEBUG) << "ip: " << host;
 	}
 
 	//proxies *always* use port 5190; the "port" value is some retarded check
-	m_connection = new KBufferedSocket( host, QString::number( m_proxy ? 5190 : m_port ) );
-	connect( m_connection, SIGNAL( readyRead() ), this, SLOT( proxyRead() ) );
-	connect( m_connection, SIGNAL( gotError( int ) ), this, SLOT( socketError( int ) ) );
-	connect( m_connection, SIGNAL( connected(const KNetwork::KResolverEntry&)), this, SLOT(socketConnected()));
+	m_connection = new QTcpSocket();
+	connect( m_connection, SIGNAL(readyRead() ), this, SLOT(proxyRead()) );
+	connect( m_connection, SIGNAL(error(QAbstractSocket::SocketError)),
+	         this, SLOT(socketError(QAbstractSocket::SocketError)) );
+	connect( m_connection, SIGNAL(connected()), this, SLOT(socketConnected()));
 
 	m_state = Connecting;
 	//socket doesn't seem to have its own timeout, so here's mine
@@ -590,7 +665,7 @@ void FileTransferTask::doConnect()
 	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
 	m_timer.start( client()->settings()->timeout()  * 1000 );
 	//try it
-	m_connection->connect();
+	KSocketFactory::connectToHost( m_connection, QString(), host, m_proxy ? 5190 : m_port );
 }
 
 void FileTransferTask::socketConnected()
@@ -651,13 +726,13 @@ void FileTransferTask::proxyInit()
 
 void FileTransferTask::timeout()
 {
-	kDebug(OSCAR_RAW_DEBUG) ;
+	kDebug(OSCAR_RAW_DEBUG);
 	m_timer.stop();
 	if ( m_state == Connecting )
 	{ //kbufferedsocket took too damn long
 		if ( m_proxy )
 		{ //fuck, we failed at a proxy! just give up
-			emit error( KIO::ERR_COULD_NOT_CONNECT, i18n("Timeout") );
+			emit transferError( KIO::ERR_COULD_NOT_CONNECT, i18n("Timeout") );
 			doCancel();
 		}
 		else
@@ -667,12 +742,13 @@ void FileTransferTask::timeout()
 
 	//nothing's happened for ages - assume we're dead.
 	//so tell the user, send off a cancel, and die
-	emit error( KIO::ERR_ABORTED, i18n("Timeout") );
+	emit transferError( KIO::ERR_ABORTED, i18n("Timeout") );
 	doCancel();
 }
 
 void FileTransferTask::connectFailed()
 {
+	m_connection->close();
 	delete m_connection;
 	m_connection = 0;
 	bool proxy = client()->settings()->fileProxy();
@@ -693,8 +769,8 @@ void FileTransferTask::connectFailed()
 	}
 
 	//proxy stage 2 or 3
-	m_proxy = 1;
-	m_proxyRequester = 1;
+	m_proxy = true;
+	m_proxyRequester = true;
 	doConnect();
 }
 
@@ -703,9 +779,11 @@ bool FileTransferTask::listen()
 	kDebug(OSCAR_RAW_DEBUG) ;
 	m_state = Default;
 	//listen for connections
-	m_ss = new KServerSocket( this );
-	connect( m_ss, SIGNAL(readyAccept()), this, SLOT(readyAccept()) );
-	connect( m_ss, SIGNAL(gotError(int)), this, SLOT(socketError(int)) );
+	m_tcpServer = new QTcpServer( this );
+	m_tcpServer->setProxy( KSocketFactory::proxyForListening( QString() ) );
+	
+	connect( m_tcpServer, SIGNAL(newConnection()), this, SLOT(readyAccept()) );
+	
 	bool success = false;
 	int first = client()->settings()->firstPort();
 	int last = client()->settings()->lastPort();
@@ -715,18 +793,16 @@ bool FileTransferTask::listen()
 
 	for ( int i = first; i <= last; i++ )
 	{ //try ports in the range (default 5190-5199)
-		m_ss->setAddress( QString::number( i ) );
-		if( success = ( m_ss->listen() && m_ss->error() == KNetwork::KSocketBase::NoError ) )
+		if( success = ( m_tcpServer->listen( QHostAddress::Any, i ) ) )
 		{
 			m_port = i;
 			break;
 		}
-		m_ss->close();
 	}
-	if (! success )
+	if ( !success )
 	{ //uhoh... what do we do? FIXME: maybe tell the user too many filetransfers
 		kDebug(OSCAR_RAW_DEBUG) << "listening failed. abandoning";
-		emit error( KIO::ERR_COULD_NOT_LISTEN, QString::number( last ) );
+		emit transferError( KIO::ERR_COULD_NOT_LISTEN, QString::number( last ) );
 		setSuccess(false);
 		return false;
 	}

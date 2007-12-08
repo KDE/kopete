@@ -40,18 +40,18 @@ public:
 
 	AvatarSelectorWidget *mainWidget;
 	QString selectedPath;
+	QString currentPath;
 };
 
 AvatarDialog::AvatarDialog(QWidget *parent)
  : KDialog(parent), d(new Private)
 {
+	showButtonSeparator(true);
 	setCaption( i18n("Select an avatar") );
 	setButtons( KDialog::Ok | KDialog::Cancel );
 
 	d->mainWidget = new Kopete::UI::AvatarSelectorWidget(this);
 	setMainWidget(d->mainWidget);
-
-	connect(this, SIGNAL(okClicked()), this, SLOT(buttonOkClicked()));
 }
 
 AvatarDialog::~AvatarDialog()
@@ -64,28 +64,35 @@ QString AvatarDialog::selectedAvatarPath() const
 	return d->selectedPath;
 }
 
-QString AvatarDialog::getAvatar(QWidget *parent, const QString &currentAvatar)
+QString AvatarDialog::getAvatar(QWidget *parent, const QString &currentAvatar, bool * ok )
 {
 	AvatarDialog dialog(parent);
 	dialog.d->mainWidget->setCurrentAvatar(currentAvatar);
-	dialog.exec();
-
+	dialog.d->currentPath = currentAvatar;
+	if ( dialog.exec() == QDialog::Accepted )
+	{
+		if ( ok ) {
+			*ok = true;
+		}
+	}
+	else
+	{
+		if ( ok ) {
+			*ok = false;
+		}
+	}
 	return dialog.selectedAvatarPath();
 }
 
 void AvatarDialog::slotButtonClicked(int button)
 {
-
 	if (button == KDialog::Ok)
 	{
 		Kopete::AvatarManager::AvatarEntry selectedEntry = d->mainWidget->selectedEntry();
 
 		d->selectedPath = selectedEntry.path;
+		emit result();
 	}
-	else
-		d->selectedPath = QString();
-
-	emit result(this);
 
 	KDialog::slotButtonClicked(button);
 }

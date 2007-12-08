@@ -98,7 +98,7 @@ ContactDetails GetDetailsTask::extractUserDetails(Field::MultiField * details )
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_MESSAGE_BODY ) ) )
 		cd.awayMessage = sf->value().toString();
 	Field::MultiField * mf;
-	QHash< QString, QString > propHash;
+	QMap< QString, QVariant > propMap;
 	if ( ( mf = fields.findMultiField ( NM_A_FA_INFO_DISPLAY_ARRAY ) ) )
 	{
 		Field::FieldList fl = mf->fields();
@@ -108,12 +108,12 @@ ContactDetails GetDetailsTask::extractUserDetails(Field::MultiField * details )
 			Field::SingleField * propField = static_cast<Field::SingleField *>( *it );
 			QString propName = propField->tag();
 			QString propValue = propField->value().toString();
-			propHash.insert( propName, propValue );
+			propMap.insert( propName, propValue );
 		}
 	}
-	if ( !propHash.empty() )
+	if ( !propMap.empty() )
 	{
-		cd.properties = propHash;
+		cd.properties = propMap;
 	}
 	return cd;
 }

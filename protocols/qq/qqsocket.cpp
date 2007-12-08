@@ -232,7 +232,7 @@ void QQSocket::handleError( uint code, uint /* id */ )
 	default:
 		// FIXME: if the error causes a disconnect, it will crash, but we can't disconnect every time
 		msg = i18n( "Unhandled QQ error code %1 \n"
-			"Please fill a bug report with a detailed description and if possible the last console debug output.", code );
+			"Please file a bug report with a detailed description and, if possible, the last console debug output.", code );
 		break;
 	}
 

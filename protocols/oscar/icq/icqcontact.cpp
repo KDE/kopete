@@ -44,6 +44,7 @@ ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::M
 						const QString& icon, const OContact& ssiItem )
 : ICQContactBase( account, name, parent, icon, ssiItem )
 {
+	m_requestingNickname = false;
 	mProtocol = static_cast<ICQProtocol *>(protocol());
 	m_infoWidget = 0L;
 
@@ -55,10 +56,10 @@ ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::M
 	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
 	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ), this, SLOT( userOffline( const QString& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( authRequestReceived( const QString&, const QString& ) ),
-	                  this, SLOT( slotGotAuthRequest( const QString&, const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( authReplyReceived( const QString&, const QString&, bool ) ),
 	                  this, SLOT( slotGotAuthReply(const QString&, const QString&, bool ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqShortInfo(const QString&)),
+	                  this, SLOT(receivedShortInfo(const QString&)) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedIcqLongInfo( const QString& ) ),
 	                  this, SLOT( receivedLongInfo( const QString& ) ) );
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
@@ -96,6 +97,12 @@ void ICQContact::setSSIItem( const OContact& ssiItem )
 	ICQContactBase::setSSIItem( ssiItem );
 }
 
+void ICQContact::setEncoding( int mib )
+{
+	ICQContactBase::setEncoding( mib );
+	QTimer::singleShot( 0, this, SLOT( requestShortInfo() ) );
+}
+
 void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& details )
 {
 	if ( Oscar::normalize( contact  ) != Oscar::normalize( contactId() ) )
@@ -111,20 +118,10 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	refreshStatus( details, presence );
 
 	if ( details.dcOutsideSpecified() )
-	{
-		if ( details.dcExternalIp().isUnspecified() )
-			removeProperty( mProtocol->ipAddress );
-		else
-			setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );
-	}
+		setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );
 
 	if ( details.capabilitiesSpecified() )
-	{
-		if ( details.clientName().isEmpty() )
-			removeProperty( mProtocol->clientFeatures );
-		else
-			setProperty( mProtocol->clientFeatures, details.clientName() );
-	}
+		setProperty( mProtocol->clientFeatures, details.clientName() );
 
 	OscarContact::userInfoUpdated( contact, details );
 }
@@ -257,6 +254,12 @@ void ICQContact::loggedIn()
 
 }
 
+void ICQContact::requestShortInfo()
+{
+	if ( mAccount->engine()->isActive() )
+		mAccount->engine()->requestShortInfo( contactId() );
+}
+
 void ICQContact::slotRequestAuth()
 {
 	QString reason = KInputDialog::getText( i18n("Request Authorization"),
@@ -300,27 +303,24 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 	KNotification::event( QString::fromLatin1("icq_authorization"), message );
 }
 
-void ICQContact::slotGotAuthRequest( const QString& contact, const QString& reason )
+void ICQContact::receivedShortInfo( const QString& contact )
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
-	ICQAuthReplyDialog *replyDialog = new ICQAuthReplyDialog();
+	QTextCodec* codec = contactCodec();
 
-	connect( replyDialog, SIGNAL( okClicked() ), this, SLOT( slotAuthReplyDialogOkClicked() ) );
-	replyDialog->setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
-	replyDialog->setRequestReason( reason );
-	replyDialog->setModal( true );
-	replyDialog->show();
-}
+	m_requestingNickname = false; //done requesting nickname
+	ICQShortInfo shortInfo = mAccount->engine()->getShortInfo( contact );
 
-void ICQContact::slotAuthReplyDialogOkClicked()
-{
-    // Do not need to delete will delete itself automatically
-    ICQAuthReplyDialog *replyDialog = (ICQAuthReplyDialog*)sender();
+	setProperty( mProtocol->firstName, codec->toUnicode( shortInfo.firstName ) );
+	setProperty( mProtocol->lastName, codec->toUnicode( shortInfo.lastName ) );
 
-    if (replyDialog)
-	mAccount->engine()->sendAuth( contactId(), replyDialog->reason(), replyDialog->grantAuth() );
+	if ( m_ssiItem.alias().isEmpty() && !shortInfo.nickname.isEmpty() )
+	{
+		kDebug(OSCAR_ICQ_DEBUG) << "setting new displayname for former UIN-only Contact";
+		setProperty( Kopete::Global::Properties::self()->nickName(), codec->toUnicode( shortInfo.nickname ) );
+	}
 }
 
 void ICQContact::receivedLongInfo( const QString& contact )
@@ -339,6 +339,10 @@ void ICQContact::receivedLongInfo( const QString& contact )
 	ICQGeneralUserInfo genInfo = mAccount->engine()->getGeneralInfo( contact );
 	if ( m_ssiItem.alias().isEmpty() && !genInfo.nickName.get().isEmpty() )
 		setNickName( codec->toUnicode( genInfo.nickName.get() ) );
+
+	setProperty( mProtocol->firstName, codec->toUnicode( genInfo.firstName.get() ) );
+	setProperty( mProtocol->lastName, codec->toUnicode( genInfo.lastName.get() ) );
+
 	emit haveBasicInfo( genInfo );
 
 	ICQWorkUserInfo workInfo = mAccount->engine()->getWorkInfo( contact );
@@ -362,7 +366,7 @@ void ICQContact::receivedLongInfo( const QString& contact )
 
 void ICQContact::requestMediumTlvInfo()
 {
-	if ( mAccount->isConnected() && !m_ssiItem.metaInfoId().isEmpty() )
+	if ( mAccount->engine()->isActive() && !m_ssiItem.metaInfoId().isEmpty() )
 		mAccount->engine()->requestMediumTlvInfo( contactId(), m_ssiItem.metaInfoId() );
 }
 
@@ -372,6 +376,9 @@ void ICQContact::receivedTlvInfo( const QString& contact )
 		return;
 
 	ICQFullInfo info = mAccount->engine()->getFullInfo( contact );
+
+	setProperty( mProtocol->firstName, QString::fromUtf8( info.firstName.get() ) );
+	setProperty( mProtocol->lastName, QString::fromUtf8( info.lastName.get() ) );
 
 	m_requestingNickname = false; //done requesting nickname
 	if ( m_ssiItem.alias().isEmpty() && !info.nickName.get().isEmpty() )
@@ -574,11 +581,24 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 void ICQContact::slotUserInfo()
 {
 	m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
-	QObject::connect( m_infoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfoDialog() ) );
+	QObject::connect( m_infoWidget, SIGNAL(finished()), this, SLOT(closeUserInfoDialog()) );
+	QObject::connect( m_infoWidget, SIGNAL(okClicked()), this, SLOT(storeUserInfoDialog()) );
 	m_infoWidget->setContact( this );
 	m_infoWidget->show();
 	if ( account()->isConnected() )
 		mAccount->engine()->requestFullInfo( contactId() );
+}
+
+void ICQContact::storeUserInfoDialog()
+{
+	QString alias = m_infoWidget->getAlias();
+	mAccount->engine()->changeContactAlias( contactId(), alias );
+	if ( alias.isEmpty() && !m_requestingNickname ) {
+		m_requestingNickname = true;
+		int time = ( KRandom::random() % 5 ) * 1000 + 5000;
+		kDebug(OSCAR_ICQ_DEBUG) << "updating nickname in " << time/1000 << " seconds";
+		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
+	}
 }
 
 void ICQContact::closeUserInfoDialog()

@@ -42,7 +42,9 @@ WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount) : AddContactP
 {
 //	kDebug(14170) << "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")";
 
+	QVBoxLayout *topLayout = new QVBoxLayout( this );
 	QWidget* w = new QWidget( this );
+	topLayout->addWidget( w );
 	theDialog = new Ui::WPAddContactBase();
 	theDialog->setupUi( w );
 
@@ -99,7 +101,7 @@ bool WPAddContact::validateData()
 	// If our own host is not allowed as contact localhost should be forbidden as well,
 	// additionally somehow localhost as contact crashes when receiving a message from it?? GF
 	if (tmpHostName.toUpper() == QString::fromLatin1("LOCALHOST")) {
-		KMessageBox::sorry(this, i18n("<qt>LOCALHOST is not allowed as contact.</qt>"), i18n("WinPopup"));
+		KMessageBox::sorry(this, i18n("<qt>LOCALHOST is not allowed as a contact.</qt>"), i18n("WinPopup"));
 		return false;
 	}
 

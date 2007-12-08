@@ -110,12 +110,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 // 	}
 
 	if ( details.capabilitiesSpecified() )
-	{
-		if ( details.clientName().isEmpty() )
-			removeProperty( mProtocol->clientFeatures );
-		else
-			setProperty( mProtocol->clientFeatures, details.clientName() );
-	}
+		setProperty( mProtocol->clientFeatures, details.clientName() );
 
 	OscarContact::userInfoUpdated( contact, details );
 }
@@ -150,18 +145,6 @@ void ICQContact::loggedIn()
 
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
-
-	if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() )
-			&& nickName() == contactId() )
-		|| !hasProperty( Kopete::Global::Properties::self()->nickName().key() ) ) &&
-		!m_requestingNickname && m_ssiItem.alias().isEmpty() )
-	{
-		m_requestingNickname = true;
-		int time = ( KRandom::random() % 20 ) * 1000;
-		kDebug(OSCAR_AIM_DEBUG) << "updating nickname in " << time/1000 << " seconds";
-		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
-	}
-
 }
 
 bool ICQContact::isReachable()

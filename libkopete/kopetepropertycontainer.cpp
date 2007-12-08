@@ -45,7 +45,7 @@ PropertyContainer::~PropertyContainer()
 	delete d;
 }
 
-void PropertyContainer::serializeProperties(QMap<QString, QString> &serializedData)
+void PropertyContainer::serializeProperties(QMap<QString, QString> &serializedData) const
 {
 
 	Kopete::Property::Map::ConstIterator it;// = d->properties.ConstIterator;

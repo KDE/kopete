@@ -24,6 +24,7 @@
 #include <QtCore/QUuid>
 #include <QtCore/QRegExp>
 #include <QtCore/QLatin1String>
+#include <QtCore/QTextCodec>
 #include <QtCore/QTextStream>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomElement>
@@ -150,7 +151,7 @@ void XmlContactStorage::load()
 		return;
     }
 
-//TODO: Add to internal contactlist item list.
+//TODO: Add to internal contact list item list.
 #if 0
     addGroup( Kopete::Group::topLevel() );
 #endif
@@ -385,7 +386,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
                     QString strGroupId = groupElement.attribute( QString::fromUtf8("id") );
                     if( !strGroupId.isEmpty() )
                         metaContact->addToGroup( this->group( strGroupId.toUInt() ) );
-                    else //kopete 0.6 contactlist
+                    else //kopete 0.6 contact list
                         metaContact->addToGroup( this->findGroup( groupElement.text() ) );
                 }
                 else if( groupElement.tagName() == QString::fromUtf8( "top-level" ) ) //kopete 0.6 contactlist

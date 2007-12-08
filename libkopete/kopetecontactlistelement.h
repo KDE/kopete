@@ -34,10 +34,10 @@ class Plugin;
 /**
  * @author Olivier Goffart
  *
- * This is the base class for base elements of the contactlist.
+ * This is the base class for base elements of the contact list.
  * His purpose is to share the code between @ref Group and @ref MetaContact
  *
- * It handle the saving and loading of plugin data from the contactlist.
+ * It handle the saving and loading of plugin data from the contact list.
  * Plugins may set custom data to metaocntacts or groups by calling @ref setPluginData
  * and may retrieve them with @ref pluginData
  *

@@ -311,7 +311,7 @@ void Kopete::Away::slotTimerTimeout()
 		return;
 	rentrency_protection=true;
 #ifdef __GNUC__
-#warning verify dcop call
+#warning verify dbus call - when the KDE4 screensaver actually works!
 #endif
 	QDBusInterface caller("org.freedesktop.ScreenSaver", "/ScreenSaver", "org.freedesktop.ScreenSaver");
     //QDBusReply<bool> reply = caller.call("isBlanked");

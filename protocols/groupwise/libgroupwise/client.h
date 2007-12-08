@@ -307,7 +307,7 @@ fd		 * @param password
 		 */
 		void invitationReceived( const ConferenceEvent & );
 		/**
-		 * Someone joined a chat.  They may not be on our contact list if it is a group chat
+		 * Someone joined a chat.  They may not be on our contact list if it is a groupchat
 		 * and they were invited to join the chat prior to our being invited to join and joining
 		 */
 		void conferenceJoinNotifyReceived( const ConferenceEvent & );
@@ -354,6 +354,7 @@ fd		 * @param password
 		void systemBroadcastReceived ( const ConferenceEvent & );
 		/** CONTACT LIST MANAGEMENT EVENTS */
 		/** TBD! */
+        void messageSendingFailed();
 	protected:
 		/**
 		 * Instantiate all the event handling tasks
@@ -373,6 +374,10 @@ fd		 * @param password
 		 * Receive a custom status during login and record it
 		 */
 		void lt_gotCustomStatus( const GroupWise::CustomStatus & );
+		/**
+		 * Notify us of the keepalive period contained in the login response
+		 */
+		void lt_gotKeepalivePeriod( int );
 
 		/**
 		 * Used by the client stream to notify errors to upper layers.
@@ -383,7 +388,13 @@ fd		 * @param password
 		 * The client stream has data ready to read.
 		 */
 		void streamReadyRead();
-
+		
+		/**
+		 * sendout a 'ping' keepalive message so that the server does not disconnect us
+		 */
+		void sendKeepAlive();
+        void smt_messageSent();
+    
 	private:
 		void distribute( Transfer *transfer );
 		class ClientPrivate;

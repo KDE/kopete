@@ -41,7 +41,7 @@ class Contact;
  * The contactList is a singleton you can uses with @ref ContactList::self()
  *
  * it let you get a list of metacontact with metaContacts()
- * Only metacontact which are on the contactlist are returned.
+ * Only metacontact which are on the contact list are returned.
  *
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
@@ -59,7 +59,7 @@ public:
 	~ContactList();
 
 	/**
-	 * @brief return a list of all metacontact of the contactlist
+	 * @brief return a list of all metacontact of the contact list
 	 * Retrieve the list of all available meta contacts.
 	 * The returned QPtrList is not the internally used variable, so changes
 	 * to it won't propagate into the actual contact list. This can be
@@ -89,7 +89,7 @@ public:
 
 
 	/**
-	 * @brief find a contact in the contactlist.
+	 * @brief find a contact in the contact list.
 	 * Browse in each metacontact of the list to find the contact with the given ID.
 	 * @param protocolId the @ref Plugin::pluginId() of the protocol ("MSNProtocol")
 	 * @param accountId the @ref Account::accountId()
@@ -119,12 +119,12 @@ public:
 	Group * findGroup( const QString &displayName, int type = 0/*Group::Normal*/ );
 
 	/**
-	 * return the list of metacontact actually selected in the contactlist UI
+	 * return the list of metacontact actually selected in the contact list UI
 	 */
 	QList<MetaContact *> selectedMetaContacts() const;
 
 	/**
-	 * return the list of groups actualy selected in the contactlist UI
+	 * return the list of groups actualy selected in the contact list UI
 	 */
 	QList<Group *> selectedGroups() const ;
 
@@ -132,13 +132,11 @@ public:
 	  * return the metacontact that represent the user itself.
 	  * This metacontact should be the parent of every Kopete::Account::myself() contacts.
 	  *
-	  * This metacontact is not in the contactlist.
+	  * This metacontact is not in the contact list.
 	  */
 	MetaContact* myself();
 
-
 public slots:
-
 	/**
 	 * Add metacontacts into the contact list
 	 * When calling this method, contacts have to be already placed in the correct group.
@@ -156,7 +154,7 @@ public slots:
 	void addMetaContact( Kopete::MetaContact *c );
 
 	/**
-	 * Remove a metacontact from the contactlist.
+	 * Remove a metacontact from the contact list.
 	 * This method delete itself the metacontact.
 	 */
 	void removeMetaContact( Kopete::MetaContact *contact );
@@ -181,10 +179,18 @@ public slots:
 
 	/**
 	 * Set which items are selected in the ContactList GUI.
-	 * This method has to be called by the contactlist UI side.
+	 * This method has to be called by the contact list UI side.
 	 * it stores the selected items, and emits signals
 	 */
 	 void setSelectedItems(QList<MetaContact *> metaContacts , QList<Group *> groups);
+
+	/**
+	 * @internal
+	 * Load the contact list
+	 */
+	void load();
+
+	void save();
 
 signals:
 	/**
@@ -278,12 +284,11 @@ private slots:
 	 */
 	void slotSaveLater();
 	/**
-	 * Called on contactlist load or when KABC has changed, to check if we need to update our contactlist from there.
+	 * Called on contact list load or when KABC has changed, to check if we need to update our contact list from there.
 	 */
 	void slotKABCChanged();
 
 private:
-
 	/**
 	 * Private constructor: we are a singleton
 	 */
@@ -292,84 +297,6 @@ private:
 	static ContactList *s_self;
 	class Private;
 	Private *d;
-
-public: //TODO I think all theses method should be moved to the decop interface.
-	/**
-	 * Return all meta contacts
-	 */
-	QStringList contacts() const;
-
-	/**
-	 * Return all meta contacts that are reachable
-	 */
-	QStringList reachableContacts() const;
-
-	/**
-	 * Return all contacts that are online
-	 */
-	QList<Contact *> onlineContacts() const;
-
-	/**
-	 * Overloaded method of @ref onlineContacts() that only returns
-	 * the online contacts for a single protocol
-	 */
-	QList<Contact *> onlineContacts( const QString &protocolId ) const;
-
-	/**
-	 * Return all meta contacts that are online
-	 */
-	QList<MetaContact *> onlineMetaContacts() const;
-
-	/**
-	 * Overloaded method of @ref onlineMetaContacts() that only returns
-	 * the online meta contacts for a single protocol
-	 */
-	QList<MetaContact *> onlineMetaContacts( const QString &protocolId ) const;
-
-	/**
-	 * Returns all contacts which can accept file transfers
-	 */
-	QStringList fileTransferContacts() const;
-
-	QStringList contactFileProtocols( const QString &displayName);
-
-	/**
-	 * Return all meta contacts with their current status
-	 *
-	 * FIXME: Do we *need* this one? Sounds error prone to me, because
-	 * nicknames can contain parentheses too. - Martijn
-	 */
-	QStringList contactStatuses() const;
-
-
-	/**
-	 * Exposed via DCOP in kopeteiface
-	 * Used to send a file to a MetaContact using the highest ranked protocol
-	 *
-	 * FIXME: We need to change this to use a unique ID instead of the displayName
-	 *
-	 * @param displayName Metacontact to send file to
-	 * @param sourceURL The file we are sending
-	 * @param altFileName (Optional) An alternate filename for the file we are sending
-	 * @param fileSize (Optional) The size of the file
-	 */
-	void sendFile(const QString &displayName, const KUrl &sourceURL,
-		const QString &altFileName = QString(), const long unsigned int fileSize = 0L);
-
-	/**
-	 * Open a chat to a contact, and optionally set some initial text
-	 */
-	void messageContact( const QString &displayName, const QString &messageText = QString() );
-
-public slots:
-	/**
-	 * @internal
-	 * Load the contact list
-	 */
-	void load();
-
-	void save();
-
 };
 
 } //END namespace Kopete

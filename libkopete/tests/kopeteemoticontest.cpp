@@ -50,7 +50,7 @@ QTEST_KDEMAIN( KopeteEmoticonTest, GUI )
 
 void KopeteEmoticonTest::testEmoticonParser()
 {
-	Kopete::Emoticons emo("Default");
+	Kopete::Emoticons emo("kde4");
 	QString basePath = QString::fromLatin1( SRCDIR ) + QString::fromLatin1("/emoticon-parser-testcases");
 	QDir testCasesDir(basePath);
 	
@@ -81,10 +81,10 @@ void KopeteEmoticonTest::testEmoticonParser()
 			inputFile.close();
 			expectedFile.close();
 
-			QString path = KGlobal::dirs()->findResource( "emoticons", "Default/smile.png" ).replace( "smile.png", QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+			QString path = KGlobal::dirs()->findResource( "emoticons", "kde4/smile.png" ).replace( "smile.png", QString() );
 
 			//Kopete::Emoticons::self();
-			QString result = emo.parse( inputData, Kopete::Emoticons::RelaxedParse | Kopete::Emoticons::SkipHTML ).replace( path, QString::null );	//krazy:exclude=nullstrassign for old broken gcc	
+			QString result = emo.parse( inputData, Kopete::Emoticons::RelaxedParse | Kopete::Emoticons::SkipHTML ).replace( path, QString() );
 			
 			kDebug() << "Parse result: " << result;
 
