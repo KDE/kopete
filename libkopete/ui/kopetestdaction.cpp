@@ -84,12 +84,12 @@ KAction * KopeteStdAction::createAction(const QString &text, const KIcon &icon, 
 
 KAction * KopeteStdAction::chat( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "Start &Chat..." ), KIcon("mail"), recvr, slot, parent, name );
+	return createAction( i18n( "Start &Chat..." ), KIcon("mail-message-new"), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::sendMessage( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "&Send Single Message..." ), KIcon( "mail" ), recvr, slot, parent, name );
+	return createAction( i18n( "&Send Single Message..." ), KIcon( "mail-message-new" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::contactInfo( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
