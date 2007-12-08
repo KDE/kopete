@@ -157,8 +157,8 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool ownInfo )
 	m_genInfoWidget->birthdayMonthSpin->setReadOnly( !m_ownInfo );
 	m_genInfoWidget->birthdayYearSpin->setReadOnly( !m_ownInfo );
 	m_homeInfoWidget->homepageEdit->setReadOnly( !m_ownInfo );
-	m_genInfoWidget->oCityEdit->setReadOnly( !m_ownInfo );
-	m_genInfoWidget->oStateEdit->setReadOnly( !m_ownInfo );
+	m_homeInfoWidget->oCityEdit->setReadOnly( !m_ownInfo );
+	m_homeInfoWidget->oStateEdit->setReadOnly( !m_ownInfo );
 
 	m_workInfoWidget->cityEdit->setReadOnly( !m_ownInfo );
 	m_workInfoWidget->stateEdit->setReadOnly( !m_ownInfo );
@@ -230,7 +230,7 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	{
 		it.next();
 		m_homeInfoWidget->countryCombo->addItem( it.key(), it.value() );
-		m_genInfoWidget->oCountryCombo->addItem( it.key(), it.value() );
+		m_homeInfoWidget->oCountryCombo->addItem( it.key(), it.value() );
 		m_workInfoWidget->countryCombo->addItem( it.key(), it.value() );
 	}
 
@@ -516,9 +516,9 @@ void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 	m_genInfoWidget->genderCombo->setCurrentIndex( m_genInfoWidget->genderCombo->findData( ui.gender.get() ) );
 	m_homeInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage.get() ) );
 	m_genInfoWidget->maritalCombo->setCurrentIndex( m_genInfoWidget->maritalCombo->findData( ui.marital.get() ) );
-	m_genInfoWidget->oCityEdit->setText( codec->toUnicode( ui.ocity.get() ) );
-	m_genInfoWidget->oStateEdit->setText( codec->toUnicode( ui.ostate.get() ) );
-	m_genInfoWidget->oCountryCombo->setCurrentIndex( m_genInfoWidget->oCountryCombo->findData( ui.ocountry.get() ) );
+	m_homeInfoWidget->oCityEdit->setText( codec->toUnicode( ui.ocity.get() ) );
+	m_homeInfoWidget->oStateEdit->setText( codec->toUnicode( ui.ostate.get() ) );
+	m_homeInfoWidget->oCountryCombo->setCurrentIndex( m_homeInfoWidget->oCountryCombo->findData( ui.ocountry.get() ) );
 	m_genInfoWidget->language1Combo->setCurrentIndex( m_genInfoWidget->language1Combo->findData( ui.lang1.get() ) );
 	m_genInfoWidget->language2Combo->setCurrentIndex( m_genInfoWidget->language2Combo->findData( ui.lang2.get() ) );
 	m_genInfoWidget->language3Combo->setCurrentIndex( m_genInfoWidget->language3Combo->findData( ui.lang3.get() ) );
@@ -784,11 +784,11 @@ ICQMoreUserInfo* ICQUserInfoWidget::storeMoreInfo() const
 	index = m_genInfoWidget->maritalCombo->currentIndex();
 	info->marital.set( m_genInfoWidget->maritalCombo->itemData( index ).toInt() );
 	
-	info->ocity.set( codec->fromUnicode( m_genInfoWidget->oCityEdit->text() ) );
-	info->ostate.set( codec->fromUnicode( m_genInfoWidget->oStateEdit->text() ) );
+	info->ocity.set( codec->fromUnicode( m_homeInfoWidget->oCityEdit->text() ) );
+	info->ostate.set( codec->fromUnicode( m_homeInfoWidget->oStateEdit->text() ) );
 
-	index = m_genInfoWidget->oCountryCombo->currentIndex();
-	info->ocountry.set( m_genInfoWidget->oCountryCombo->itemData( index ).toInt() );
+	index = m_homeInfoWidget->oCountryCombo->currentIndex();
+	info->ocountry.set( m_homeInfoWidget->oCountryCombo->itemData( index ).toInt() );
 
 	index = m_genInfoWidget->language1Combo->currentIndex();
 	info->lang1.set( m_genInfoWidget->language1Combo->itemData( index ).toInt() );
