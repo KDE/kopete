@@ -155,7 +155,7 @@
        </widget>
       </item>
       <item row="2" column="3" >
-       <widget class="QComboBox" name="countryCombo" />
+       <widget class="InfoComboBox" name="countryCombo" />
       </item>
       <item row="3" column="0" >
        <widget class="QLabel" name="textLabel5" >
@@ -312,7 +312,7 @@
        </widget>
       </item>
       <item row="2" column="1" >
-       <widget class="QComboBox" name="oCountryCombo" >
+       <widget class="InfoComboBox" name="oCountryCombo" >
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
           <horstretch>0</horstretch>
@@ -341,6 +341,13 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>InfoComboBox</class>
+   <extends>QComboBox</extends>
+   <header>infocombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>addressEdit</tabstop>
   <tabstop>cityEdit</tabstop>

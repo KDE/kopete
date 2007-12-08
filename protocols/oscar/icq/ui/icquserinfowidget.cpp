@@ -189,6 +189,30 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool ownInfo )
 	m_otherInfoWidget->removeEmailButton->setEnabled( false );
 	m_otherInfoWidget->upEmailButton->setEnabled( false );
 	m_otherInfoWidget->downEmailButton->setEnabled( false );
+
+	if ( !m_ownInfo )
+	{
+		m_homeInfoWidget->countryCombo->setReadOnly( true );
+		m_homeInfoWidget->oCountryCombo->setReadOnly( true );
+		m_workInfoWidget->countryCombo->setReadOnly( true );
+		m_genInfoWidget->language1Combo->setReadOnly( true );
+		m_genInfoWidget->language2Combo->setReadOnly( true );
+		m_genInfoWidget->language3Combo->setReadOnly( true );
+		m_genInfoWidget->genderCombo->setReadOnly( true );
+		m_genInfoWidget->maritalCombo->setReadOnly( true );
+		m_workInfoWidget->occupationCombo->setReadOnly( true );
+		m_orgAffInfoWidget->org1CategoryCombo->setReadOnly( true );
+		m_orgAffInfoWidget->org2CategoryCombo->setReadOnly( true );
+		m_orgAffInfoWidget->org3CategoryCombo->setReadOnly( true );
+		m_orgAffInfoWidget->aff1CategoryCombo->setReadOnly( true );
+		m_orgAffInfoWidget->aff2CategoryCombo->setReadOnly( true );
+		m_orgAffInfoWidget->aff3CategoryCombo->setReadOnly( true );
+		m_interestInfoWidget->topic1Combo->setReadOnly( true );
+		m_interestInfoWidget->topic2Combo->setReadOnly( true );
+		m_interestInfoWidget->topic3Combo->setReadOnly( true );
+		m_interestInfoWidget->topic4Combo->setReadOnly( true );
+		m_genInfoWidget->timezoneCombo->setReadOnly( true );
+	}
 }
 
 ICQUserInfoWidget::~ ICQUserInfoWidget()

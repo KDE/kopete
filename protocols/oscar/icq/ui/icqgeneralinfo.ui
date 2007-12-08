@@ -156,7 +156,7 @@
        </widget>
       </item>
       <item row="3" column="1" >
-       <widget class="QComboBox" name="genderCombo" />
+       <widget class="InfoComboBox" name="genderCombo" />
       </item>
       <item row="3" column="2" >
        <widget class="QLabel" name="maritalLabel" >
@@ -169,7 +169,7 @@
        </widget>
       </item>
       <item row="3" column="3" >
-       <widget class="QComboBox" name="maritalCombo" />
+       <widget class="InfoComboBox" name="maritalCombo" />
       </item>
       <item row="4" column="0" colspan="2" >
        <spacer>
@@ -195,7 +195,7 @@
        </widget>
       </item>
       <item row="4" column="3" >
-       <widget class="QComboBox" name="timezoneCombo" />
+       <widget class="InfoComboBox" name="timezoneCombo" />
       </item>
      </layout>
     </widget>
@@ -366,7 +366,7 @@
        </widget>
       </item>
       <item row="0" column="1" >
-       <widget class="QComboBox" name="language1Combo" />
+       <widget class="InfoComboBox" name="language1Combo" />
       </item>
       <item row="1" column="0" >
        <widget class="QLabel" name="language2Label" >
@@ -379,7 +379,7 @@
        </widget>
       </item>
       <item row="1" column="1" >
-       <widget class="QComboBox" name="language2Combo" />
+       <widget class="InfoComboBox" name="language2Combo" />
       </item>
       <item row="2" column="0" >
        <widget class="QLabel" name="language3Label" >
@@ -392,7 +392,7 @@
        </widget>
       </item>
       <item row="2" column="1" >
-       <widget class="QComboBox" name="language3Combo" >
+       <widget class="InfoComboBox" name="language3Combo" >
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
           <horstretch>0</horstretch>
@@ -421,6 +421,13 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>InfoComboBox</class>
+   <extends>QComboBox</extends>
+   <header>infocombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>uinEdit</tabstop>
   <tabstop>ipEdit</tabstop>
