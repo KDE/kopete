@@ -66,6 +66,8 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 	d->detailed.setupUi(w);
 	addWidget(w, i18n("Detailed Information"));
 
+	setIcon(KIcon(d->identity->customIcon()));
+
 	load();
 }
 
