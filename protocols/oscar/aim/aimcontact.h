@@ -31,7 +31,7 @@ Q_OBJECT
 
 public:
 	AIMContact( Kopete::Account*, const QString&, Kopete::MetaContact*, 
-	            const QString& icon = QString(), const OContact& ssiItem = OContact() );
+	            const QString& icon = QString() );
 	virtual ~AIMContact();
 
 	bool isReachable();

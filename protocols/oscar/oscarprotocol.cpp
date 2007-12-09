@@ -57,8 +57,17 @@ Kopete::Contact *OscarProtocol::deserializeContact(Kopete::MetaContact *metaCont
 	uint ssiGid = 0, ssiBid = 0, ssiType = 0xFFFF;
 	QString ssiName;
 	bool ssiWaitingAuth = false;
+	QByteArray ssiMetaInfoId;
+	QString ssiAlias;
+
 	if ( serializedData.contains( "ssi_name" ) )
 		ssiName = serializedData["ssi_name"];
+
+	if ( serializedData.contains( "ssi_alias" ) )
+		ssiAlias = serializedData["ssi_alias"];
+
+	if ( serializedData.contains( "ssi_metaInfoId" ) )
+		ssiMetaInfoId = QByteArray::fromHex( serializedData["ssi_metaInfoId"].toUtf8() );
 
 	if ( serializedData.contains( "ssi_waitingAuth" ) )
 	{
@@ -76,6 +85,8 @@ Kopete::Contact *OscarProtocol::deserializeContact(Kopete::MetaContact *metaCont
 
 	OContact item( ssiName, ssiGid, ssiBid, ssiType, QList<TLV>(), 0 );
 	item.setWaitingAuth( ssiWaitingAuth );
+	item.setAlias( ssiAlias );
+	item.setMetaInfoId( ssiMetaInfoId );
 
 	OscarAccount* oaccount = static_cast<OscarAccount*>(account);
 	return oaccount->createNewContact( contactId, metaContact, item );

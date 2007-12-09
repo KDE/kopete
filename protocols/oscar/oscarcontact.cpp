@@ -54,13 +54,12 @@
 #include <assert.h>
 
 OscarContact::OscarContact( Kopete::Account* account, const QString& name,
-                            Kopete::MetaContact* parent, const QString& icon, const OContact& ssiItem )
+                            Kopete::MetaContact* parent, const QString& icon )
 : Kopete::Contact( account, name, parent, icon )
 {
 	mAccount = static_cast<OscarAccount*>(account);
 	mName = name;
 	mMsgManager = 0L;
-	m_ssiItem = ssiItem;
 	m_buddyIconDirty = false;
 	m_haveAwayMessage = false;
 	m_oesd = 0;
@@ -88,6 +87,7 @@ void OscarContact::serialize(QMap<QString, QString> &serializedData,
 	serializedData["ssi_bid"] = QString::number( m_ssiItem.bid() );
 	serializedData["ssi_alias"] = m_ssiItem.alias();
 	serializedData["ssi_waitingAuth"] = m_ssiItem.waitingAuth() ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" );
+	serializedData["ssi_metaInfoId"] = m_ssiItem.metaInfoId().toHex();
 }
 
 bool OscarContact::isOnServer() const

@@ -683,11 +683,13 @@ void OscarAccount::updateVersionUpdaterStamp()
 
 void OscarAccount::ssiContactAdded( const OContact& item )
 {
-	if ( d->addContactMap.contains( Oscar::normalize( item.name() ) ) )
+	QString normalizedName = Oscar::normalize( item.name() );
+	if ( d->addContactMap.contains( normalizedName ) )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << "Received confirmation from server. adding " << item.name()
 			<< " to the contact list" << endl;
-		createNewContact( item.name(), d->addContactMap[Oscar::normalize( item.name() )], item );
+		createNewContact( item.name(), d->addContactMap[normalizedName], item );
+		d->addContactMap.remove( normalizedName );
 	}
 	else if ( contacts()[item.name()] )
 	{

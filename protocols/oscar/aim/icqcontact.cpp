@@ -35,15 +35,12 @@
 #include "oscarstatusmanager.h"
 
 ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::MetaContact *parent,
-						const QString& icon, const OContact& ssiItem )
-: ICQContactBase( account, name, parent, icon, ssiItem )
+						const QString& icon )
+: ICQContactBase( account, name, parent, icon )
 {
 	mProtocol = static_cast<AIMProtocol *>(protocol());
 
-	if ( ssiItem.waitingAuth() )
-		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
-	else
-		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
+	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
 
 	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
 	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );

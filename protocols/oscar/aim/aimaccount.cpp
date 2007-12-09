@@ -256,10 +256,8 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 {
 	if ( QRegExp("[\\d]+").exactMatch( contactId ) )
 	{
-		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString(), ssiItem );
-
-		if ( !ssiItem.alias().isEmpty() )
-			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString() );
+		contact->setSSIItem( ssiItem );
 
 		if ( engine()->isActive() )
 			contact->loggedIn();
@@ -268,10 +266,8 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 	}
 	else
 	{
-		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString(), ssiItem );
-
-		if ( !ssiItem.alias().isEmpty() )
-			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString() );
+		contact->setSSIItem( ssiItem );
 
 		return contact;
 	}
