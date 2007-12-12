@@ -263,7 +263,8 @@ void ChatMessagePart::slotScrollingTo( int y )
 
 void ChatMessagePart::save()
 {
-	KFileDialog dlg( KUrl(), QLatin1String( "text/html text/plain" ), view() );
+	const KUrl dummyUrl;
+	KFileDialog dlg( dummyUrl, QLatin1String( "text/html text/plain" ), view() );
 	dlg.setCaption( i18n( "Save Conversation" ) );
 	dlg.setOperationMode( KFileDialog::Saving );
 
