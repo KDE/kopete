@@ -11,9 +11,11 @@ X-KDE-ParentComponents=kopete_pipes
 
 Name=Pipes
 Name[et]=Toru
+Name[it]=Pipe
 Name[pt]=Canais
 Name[sv]=Skicka genom
 Comment=Pipe messages through an external program or script
 Comment[et]=Sõnumite saatmine toru kaudu välise programmi või skripti vahendusel
+Comment[it]=Messaggi pipe tramite un programma esterno o uno script
 Comment[pt]=Encaminhar as mensagens por um programa externo
 Comment[sv]=Skicka meddelanden genom ett externt program eller skript
