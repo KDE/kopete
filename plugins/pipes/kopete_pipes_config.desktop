@@ -10,11 +10,13 @@ X-KDE-ParentApp=kopete_pipes
 X-KDE-ParentComponents=kopete_pipes
 
 Name=Pipes
+Name[es]=Tuberías
 Name[et]=Toru
 Name[it]=Pipe
 Name[pt]=Canais
 Name[sv]=Skicka genom
 Comment=Pipe messages through an external program or script
+Comment[es]=Redirige los mensajes a través de un programa o complemento externo
 Comment[et]=Sõnumite saatmine toru kaudu välise programmi või skripti vahendusel
 Comment[it]=Messaggi pipe tramite un programma esterno o uno script
 Comment[pt]=Encaminhar as mensagens por um programa externo
