@@ -8,37 +8,9 @@ add_definitions( ${QT_DEFINITIONS} ${KDE4_DEFINITIONS} )
 
 link_directories( ${KDE4_LIB_DIR} ${CMAKE_CURRENT_BINARY_DIR} )
 
-include( ConvenienceLibs.cmake )
-
 add_subdirectory( pics )
 
 include_directories( ${KDE4_INCLUDE_DIR} ${KDE4_INCLUDE_DIR}/kopete ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR} )
-
-
-########### next target ###############
-
-set(kcm_kopete_otr_PART_SRCS otrpreferences.cpp )
-
-kde4_add_ui_files(kcm_kopete_otr_PART_SRCS otrprefs.ui )
-
-kde4_add_kcfg_files( kcm_kopete_otr_PART_SRCS kopete_otr.kcfgc )
-
-kde4_add_plugin(kcm_kopete_otr ${kcm_kopete_otr_PART_SRCS})
-
-target_link_libraries(kcm_kopete_otr  ${KDE4_KDECORE_LIBS} kopete otr ${KDE4_KUTILS_LIBS} kotr )
-
-install(TARGETS kcm_kopete_otr DESTINATION ${PLUGIN_INSTALL_DIR} )
-
-
-########### next target ###############
-
-set(kopete_otr_PART_SRCS otrguiclient.cpp otrplugin.cpp )
-
-kde4_add_plugin(kopete_otr ${kopete_otr_PART_SRCS})
-
-target_link_libraries(kopete_otr  ${KDE4_KDECORE_LIBS} kopete otr kotr )
-
-install(TARGETS kopete_otr DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### next target ###############
@@ -47,10 +19,41 @@ set(kotr_LIB_SRCS otrlchatinterface.cpp otrlconfinterface.cpp )
 
 kde4_add_library(kotr SHARED ${kotr_LIB_SRCS} )
 
-target_link_libraries(kotr kopete kdeui Qt3Support ${KDE4_KDECORE_LIBS} otr )
+target_link_libraries(kotr kopete kdeui ${QT_QT3SUPPORT_LIBRARY} Qt3Support ${KDE4_KDECORE_LIBS} otr )
 
 set_target_properties(kotr PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kotr DESTINATION ${LIB_INSTALL_DIR} )
+
+########### next target ###############
+
+set(kcm_kopete_otr_PART_SRCS
+  ${kotr_LIB_SRCS} otrpreferences.cpp )
+
+kde4_add_ui_files(kcm_kopete_otr_PART_SRCS otrprefs.ui )
+
+kde4_add_kcfg_files( kcm_kopete_otr_PART_SRCS kopete_otr.kcfgc )
+
+kde4_add_plugin(kcm_kopete_otr ${kcm_kopete_otr_PART_SRCS})
+
+target_link_libraries(kcm_kopete_otr ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDECORE_LIBS} kopete otr ${KDE4_KUTILS_LIBS} )
+
+install(TARGETS kcm_kopete_otr DESTINATION ${PLUGIN_INSTALL_DIR} )
+
+
+########### next target ###############
+
+set(kopete_otr_PART_SRCS
+  ${kotr_LIB_SRCS} otrguiclient.cpp otrplugin.cpp)
+
+kde4_add_kcfg_files(kopete_otr_PART_SRCS kopete_otr.kcfgc )
+
+kde4_add_plugin(kopete_otr ${kopete_otr_PART_SRCS})
+
+target_link_libraries(kopete_otr  ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} kopete otr )
+
+install(TARGETS kopete_otr DESTINATION ${PLUGIN_INSTALL_DIR} )
+
+
 
 
 ########### install files ###############

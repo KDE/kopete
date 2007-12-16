@@ -517,7 +517,7 @@ bool OtrlChatInterface::isVerified( Kopete::ChatSession *session ){
 	}
 }
 
-/*void OtrlChatInterface::updateKeyfile( Kopete::Account *account ){
+void OtrlChatInterface::updateKeyfile( Kopete::Account *account ){
 // Updating private keys from <=0.3
 //	kdDebug() << "updating keys" << endl;
 	QFile keyfile( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkeys" );
@@ -540,36 +540,38 @@ bool OtrlChatInterface::isVerified( Kopete::ChatSession *session ){
 	}
 	keyfile.remove();
 	keyfile.open( QIODevice::ReadWrite );
-	keyfile.writeBlock( file.toLatin1(), file.length() );
+	keyfile.write( file.toLatin1() );
 	keyfile.close();
 	otrl_privkey_forget_all( userstate );
-	otrl_privkey_read( userstate, QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkeys" );
+	otrl_privkey_read( userstate, QString((KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkeys").toLatin1() );
 
 	file = "";
 	line = "";
 // Updating fingerprints from <=0.3
-	kdDebug() << "updating fingerprints" << endl;
+	kDebug() << "updating fingerprints";
 	QFile fingerprintfile( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints" );
 
 	if( fingerprintfile.open( QIODevice::ReadWrite ) ){
-		kdDebug() << "file open" << endl;
-		while( fingerprintfile.readLine( line, 200 ) != -1){
-			int pos = line.findRev( account->accountLabel() );
+		kDebug() << "file open";
+		line = fingerprintfile.readLine( 200 );
+		while( !line.isEmpty() ){
+			int pos = line.indexOf( account->accountLabel() );
 			if( pos != -1 ){
 				line.replace( pos, account->accountLabel().length(), account->protocol()->displayName() );
 				kdDebug() << "Successfully updated fingerprint for account " << account->accountId() << endl;
 			}
+			line = fingerprintfile.readLine( 200 );
 		file.append( line );
 		}
 	}
 	fingerprintfile.remove();
 	fingerprintfile.open( QIODevice::ReadWrite );
-	fingerprintfile.writeBlock( file.latin1(), file.length() );
+	fingerprintfile.write( file.toLatin1() );
 	fingerprintfile.close();
 	otrl_context_forget_all( userstate );
-	otrl_privkey_read_fingerprints(userstate, QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints", NULL, NULL);	
+	otrl_privkey_read_fingerprints(userstate, QString((KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints").toLatin1(), NULL, NULL);	
 
-}*/
+}
 
 void OtrlChatInterface::checkFilePermissions( QString file ){
 	if( QFile::exists( file ) ){

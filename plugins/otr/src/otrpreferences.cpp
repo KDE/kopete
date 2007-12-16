@@ -59,11 +59,6 @@
   * @author Michael Zanetti
   */
 
-//typedef KGenericFactory<OTRPreferences> OTRPreferencesFactory;
-//K_EXPORT_COMPONENT_FACTORY( kcm_kopete_otr, OTRPreferencesFactory("kcm_kopete_otr"))
-
-class OTRPreferences;
-
 K_PLUGIN_FACTORY(OTRPreferencesFactory, registerPlugin<OTRPreferences>();)
 K_EXPORT_PLUGIN(OTRPreferencesFactory ( "kcm_kopete_otr" ))
 
@@ -71,11 +66,11 @@ OTRPreferences::OTRPreferences(QWidget *parent, const QVariantList &args)
 		: KCModule(OTRPreferencesFactory::componentData(), parent, args)
 {
 //	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
-	QWidget *widget = new QWidget();
+	QWidget *widget = new QWidget(this);
 	preferencesDialog = new Ui::OTRPrefsUI();
 	preferencesDialog->setupUi( widget );
 	
-	this->addConfig( KopeteOtrKcfg::self(), widget );
+	addConfig( KopeteOtrKcfg::self(), widget );
 	KopeteOtrKcfg::self()->readConfig();
 	load();
 
