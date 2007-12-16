@@ -262,13 +262,14 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 
 		QWidget *viewWidget = 0L;
 		bool showNotification = false;
+		bool isActiveWindow = false;
 
 		if ( !outgoingMessage && ( !manager->account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
 		     && msg.direction() != Kopete::Message::Internal )
 		{
 			viewWidget = dynamic_cast<QWidget*>(manager->view(false));
-			showNotification = ( (!manager->view(false) || !viewWidget || manager->view() != d->activeView ||
-			                      Kopete::BehaviorSettings::self()->showEventsIfActive() || !viewWidget->isActiveWindow())
+			isActiveWindow =  manager->view(false) && viewWidget && manager->view() == d->activeView && viewWidget->isActiveWindow();
+			showNotification = ( (!isActiveWindow || Kopete::BehaviorSettings::self()->showEventsIfActive())
 			                     && msg.from());
 		}
 
@@ -304,7 +305,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					eventId = QLatin1String( "kopete_contact_incoming" );
 			}
 
-			KNotification *notify=new KNotification(eventId, viewWidget, KNotification::Persistent);
+			KNotification *notify=new KNotification(eventId, viewWidget, isActiveWindow ? KNotification::CloseOnTimeout : KNotification::Persistent);
 			notify->setText(body.subs( Qt::escape(msgFrom) ).subs( squashMessage( msg )  ).toString());
 			notify->setPixmap( QPixmap::fromImage(msg.from()->metaContact()->picture().image()) );
 			notify->setActions(( QStringList() <<  i18n( "View" )  <<   i18n( "Ignore" )) );
