@@ -1,6 +1,8 @@
 
-include_directories( ${KOPETE_INCLUDES} ${XMMS_INCLUDE_DIRS} )
-
+include_directories( ${KOPETE_INCLUDES} )
+if(XMMS_FOUND)
+  include_directories(${XMMS_INCLUDE_DIRS} )
+endif(XMMS_FOUND)
 
 ########### next target ###############
 
