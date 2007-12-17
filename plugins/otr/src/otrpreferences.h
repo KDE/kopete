@@ -52,15 +52,4 @@ private slots: // Public slots
 
 };
 
-
-#warning Port me! Align Tableitems in preferencesDialog!
-/*class QAlignTableItem : public Q3TableItem {
-
-public :
-	QAlignTableItem(Q3Table *table, EditType editType, const QString& text, int alignment);
-
-private :
-	int align;
-};
-*/
 #endif

@@ -73,6 +73,9 @@ K_EXPORT_PLUGIN ( OTRPluginFactory ( "kopete_otr" ) )
 OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	: Kopete::Plugin ( OTRPluginFactory::componentData(), parent )
 {
+
+	kdDebug() << "OTR Plugin loading..." << endl;
+
 	if( !pluginStatic_ )
 		pluginStatic_=this;
 	
@@ -156,10 +159,12 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 //	otrPolicyMenu->popupMenu()->insertSeparator( 1 );
 //	otrPolicyMenu->setEnabled( false );
 //	connect( otrPolicyMenu, SIGNAL( activated() ), this, SLOT( slotSetPolicy() ) );
-	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
+
+#warning PORT ME!!! Add context menu on Metacontacts again...
+//	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
 
 
-	setXMLFile( "otrui.rc" );
+	//setXMLFile( "otrui.rc" );
 
 
 

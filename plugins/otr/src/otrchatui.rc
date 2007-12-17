@@ -1,14 +1,12 @@
-<!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="kopete_otr" version="1">
-	
-	
+<!DOCTYPE kpartgui>
+<kpartgui version="1" name="kopete_otr">	
 	<MenuBar>
 		<Menu name="tools"><text>&amp;Tools</text>
-			<Menu name="otr_menu"><text>OTR Encryption</text>
+<!--			<Menu name="otr_menu"><text>OTR Encryption</text> -->
 				<Action name="enable_otr" />
 				<Action name="disable_otr" />
 				<Action name="verify_fingerprint"/>
-			</Menu>
+<!--			</Menu> -->
 		</Menu>
 	</MenuBar>
 		

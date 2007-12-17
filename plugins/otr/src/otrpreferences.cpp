@@ -24,7 +24,7 @@
 //#include <q3ptrlist.h>
 #include <qcombobox.h>
 #include <qstringlist.h>
-//#include <q3table.h>
+#include <qtablewidget.h>
 //#include <q3paintdevicemetrics.h>
 //#include <q3vbox.h>
 #include <qradiobutton.h>
@@ -86,18 +86,17 @@ OTRPreferences::OTRPreferences(QWidget *parent, const QVariantList &args)
 
 	int index = 0;
 	int accountnr = 0;
-//	Q3PtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
-//	if( !accounts.isEmpty() ){
-//		for ( Q3PtrListIterator<Kopete::Account> it( accounts );
-//			Kopete::Account *account = it.current();
-//			++it ){
-//				if (  account->protocol()->pluginId() != "IRCProtocol" ){
-//					preferencesDialog->cbKeys->insertItem(account->accountId() + " (" + account->protocol()->displayName() + ")");
-//					privKeys.insert(index++, accountnr);
-//				}
-//				accountnr++;
-//		}
-//	}
+	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts();
+	if( !accounts.isEmpty() ){
+		for( int i = 0; i < accounts.size(); i++){
+			Kopete::Account *account = accounts[i];
+				if (  account->protocol()->pluginId() != "IRCProtocol" ){
+					preferencesDialog->cbKeys->insertItem(index, account->accountId() + " (" + account->protocol()->displayName() + ")");
+					privKeys.insert(index++, accountnr);
+				}
+				accountnr++;
+		}
+	}
 	showPrivFingerprint( preferencesDialog->cbKeys->currentIndex() );
 	
 	preferencesDialog->tbFingerprints->setColumnWidth( 0, 200 );
@@ -113,44 +112,47 @@ OTRPreferences::~OTRPreferences(){
 
 void OTRPreferences::generateFingerprint()
 {
-//	Q3PtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
+	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts();
 
-//	if( (accounts.isEmpty())){
-//		return;
-//	}
+	if( (accounts.isEmpty())){
+		return;
+	}
 
-//	Kopete::Account *account = accounts.at( preferencesDialog->cbKeys->currentItem() );
+	Kopete::Account *account = accounts.at( preferencesDialog->cbKeys->currentIndex() );
 
-//	if ((otrlConfInterface->hasPrivFingerprint( account->accountId(), account->protocol()->displayName() ) ) && (KMessageBox::questionYesNo(this, i18n("Selected account already has a key. Do you want to create a new one?"), i18n("Overwrite key?")) !=3)) return;
+	if ((otrlConfInterface->hasPrivFingerprint( account->accountId(), account->protocol()->displayName() ) ) && (KMessageBox::questionYesNo(this, i18n("Selected account already has a key. Do you want to create a new one?"), i18n("Overwrite key?")) !=3)) return;
 	
-//	otrlConfInterface->generateNewPrivKey( account->accountId(), account->protocol()->displayName() );
+	otrlConfInterface->generateNewPrivKey( account->accountId(), account->protocol()->displayName() );
 	showPrivFingerprint( preferencesDialog->cbKeys->currentIndex() );	
 }
 
 void OTRPreferences::showPrivFingerprint( int accountnr )
 {
-//	Q3PtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
-//	if( !accounts.isEmpty() ){
-//		Kopete::Account *account = accounts.at(privKeys[accountnr]);
-//		preferencesDialog->tlFingerprint->setText( otrlConfInterface->getPrivFingerprint( account->accountId(), account->protocol()->displayName() ) );
-//	}
+	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts();
+	if( !accounts.isEmpty() ){
+		Kopete::Account *account = accounts.at(privKeys[accountnr]);
+		preferencesDialog->tlFingerprint->setText( otrlConfInterface->getPrivFingerprint( account->accountId(), account->protocol()->displayName() ) );
+	}
 }
 
 void OTRPreferences::fillFingerprints(){
-	//Q3Table *fingerprintsTable = preferencesDialog->tbFingerprints;
 	preferencesDialog->tbFingerprints->setRowCount(0);
-//	Q3ValueList<QString[5]> list = otrlConfInterface->readAllFingerprints();
-//	Q3ValueList<QString[5]>::iterator it;
+	QList<QStringList> list = otrlConfInterface->readAllFingerprints();
+	QList<QStringList>::iterator it;
 	int j = 0;
-//	for( it = list.begin(); it != list.end(); ++it ){
-//		preferencesDialog->tbFingerprints->setNumRows( preferencesDialog->tbFingerprints->numRows() +1 );
- //		(*it)[0] = OtrlChatInterface::self()->formatContact((*it)[0]);
-//		for( int i = 0; i < 5; i++ ){ 	
-//			//preferencesDialog->tbFingerprints->setText(j, i, (*it)[i] );
-//			preferencesDialog->tbFingerprints->setItem(j,i, new QAlignTableItem(preferencesDialog->tbFingerprints, Q3TableItem::Never,(*it)[i],Qt::AlignLeft));
- //		}
-//		j++;
-//	}
+
+kdDebug() << "*******************************************************************************************************************************************************************************************************"<< endl;
+
+
+	for( it = list.begin(); it != list.end(); it++ ){
+		preferencesDialog->tbFingerprints->setRowCount( preferencesDialog->tbFingerprints->rowCount() +1 );
+ 		(*it)[j*5] = OtrlChatInterface::self()->formatContact((*it)[j*5]);
+		for( int i = 0; i < 5; i++ ){ 	
+			preferencesDialog->tbFingerprints->setItem(j, i, new QTableWidgetItem((*it)[j*5 + i]) );
+			preferencesDialog->tbFingerprints->item(j,i)->setTextAlignment(Qt::AlignLeft);
+		}
+		j++;
+	}
 	updateButtons( preferencesDialog->tbFingerprints->currentRow(), preferencesDialog->tbFingerprints->currentColumn() );
 }
 
@@ -189,11 +191,6 @@ void OTRPreferences::forgetFingerprint(){
 		updateButtons( preferencesDialog->tbFingerprints->currentRow(), preferencesDialog->tbFingerprints->currentColumn() );
 	}
 }
-
-//QAlignTableItem :: QAlignTableItem( Q3Table *table, EditType editType, const QString& text, int alignment )
-//	 : Q3TableItem( table, editType, text ) {
-//	align = alignment;
-//}
 
 
 #include "otrpreferences.moc"

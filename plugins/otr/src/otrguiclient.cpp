@@ -29,7 +29,8 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
-
+#include <kicon.h>
+#include <kactioncollection.h>
 
 #include "otrguiclient.h"
 #include "otrplugin.h"
@@ -59,16 +60,20 @@ OtrGUIClient::OtrGUIClient( Kopete::ChatSession *parent )
 	connect( this, SIGNAL( signalVerifyFingerprint( Kopete::ChatSession * ) ), OTRPlugin::plugin(), SLOT(slotVerifyFingerprint( Kopete::ChatSession * )) );
 
 	m_manager = parent;
-//	otrActionMenu = new KActionMenu(i18n("OTR Settings"),"otr_disabled", actionCollection(), "otr_settings");
-//	otrActionMenu->setDelayed( false );
-//	actionEnableOtr = new KAction(i18n( "Start OTR session" ), "otr_private", 0,this,SLOT(slotEnableOtr()),actionCollection(), "enable_otr");
+	otrActionMenu = new KActionMenu( KIcon("otr"), i18n("OTR Encryption"), this );
+	actionCollection()->addAction("otr_menu", otrActionMenu);
+	otrActionMenu->setDelayed( false );
+
+	actionEnableOtr = new KAction( KIcon("otr_private"), i18n( "Start OTR session" ), this);
+	actionCollection()->addAction( "enable_otr", actionEnableOtr );
+	connect(actionEnableOtr, SIGNAL(triggered(bool)), this, SLOT(slotEnableOtr()));
 //	actionDisableOtr = new KAction(i18n("End OTR session"), "otr_disabled",0, this,SLOT(slotDisableOtr()), actionCollection(), "disable_otr");
 //	actionVerifyFingerprint = new KAction(i18n("Verify fingerprint"), "signature",0, this,SLOT(slotVerifyFingerprint()), actionCollection(), "verify_fingerprint");
 
-//	otrActionMenu->insert(actionEnableOtr);
+//	otrActionMenu->addAction(actionEnableOtr);
 //	otrActionMenu->insert(actionDisableOtr);
 //	otrActionMenu->insert(actionVerifyFingerprint);
-
+// 
 	setXMLFile("otrchatui.rc");
 
 	encryptionEnabled( parent, OtrlChatInterface::self()->privState(parent) );

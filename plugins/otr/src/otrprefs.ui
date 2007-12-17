@@ -5,15 +5,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>479</width>
-    <height>393</height>
+    <width>592</width>
+    <height>459</height>
    </rect>
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <widget class="QTabWidget" name="twSettings" >
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="settings" >
       <attribute name="title" >
@@ -22,6 +22,12 @@
       <layout class="QGridLayout" >
        <item row="0" column="0" >
         <widget class="QGroupBox" name="groupBox1" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title" >
           <string>Private Keys</string>
          </property>
@@ -136,6 +142,9 @@
       <layout class="QGridLayout" >
        <item row="0" column="0" colspan="2" >
         <widget class="QTableWidget" name="tbFingerprints" >
+         <property name="columnCount" >
+          <number>5</number>
+         </property>
          <column>
           <property name="text" >
            <string>User</string>
@@ -156,6 +165,7 @@
            <string>New Column</string>
           </property>
          </column>
+         <column/>
         </widget>
        </item>
        <item row="1" column="0" >

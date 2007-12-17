@@ -115,7 +115,6 @@ QList<QStringList> OtrlConfInterface::readAllFingerprints(){
 		fingerprint = context->fingerprint_root.next;
 		while( fingerprint ){
 			entry << context->username;
-
 			if( ( context->msgstate == OTRL_MSGSTATE_ENCRYPTED ) && ( context->active_fingerprint != fingerprint ) ){
 				entry << i18n("Unused");
 			} else {
