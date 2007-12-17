@@ -107,9 +107,7 @@ void MeanwhileAccount::connectWithPassword(const QString &password)
     }
 
     if (!m_session->isConnected() && !m_session->isConnecting())
-        m_session->connect(configGroup()->readEntry("Server"),
-                configGroup()->readNumEntry("Port"),
-                m_meanwhileId, password);
+        m_session->connect(password);
 
     m_session->setStatus(initialStatus());
 }
@@ -166,6 +164,38 @@ void MeanwhileAccount::setServerName(const QString &server)
 void MeanwhileAccount::setServerPort(int port)
 {
     configGroup()->writeEntry("Port", port);
+}
+
+void MeanwhileAccount::setClientID(int client, int major, int minor)
+{
+    configGroup()->writeEntry("clientID", client);
+    configGroup()->writeEntry("clientVersionMajor", major);
+    configGroup()->writeEntry("clientVersionMinor", minor);
+}
+
+void MeanwhileAccount::resetClientID()
+{
+    configGroup()->deleteEntry("clientID");
+    configGroup()->deleteEntry("clientVersionMajor");
+    configGroup()->deleteEntry("clientVersionMinor");
+}
+
+bool MeanwhileAccount::getClientIDParams(int *clientID,
+	int *verMajor, int *verMinor)
+{
+    bool custom_id = configGroup()->hasKey("clientID");
+
+    MeanwhileSession::getDefaultClientIDParams(clientID, verMajor, verMinor);
+
+    if (custom_id) {
+	*clientID = configGroup()->readUnsignedNumEntry("clientID", *clientID);
+	*verMajor = configGroup()->readUnsignedNumEntry("clientVersionMajor",
+		    *verMinor);
+	*verMinor = configGroup()->readUnsignedNumEntry("clientVersionMinor",
+		    *verMinor);
+    }
+
+    return custom_id;
 }
 
 void MeanwhileAccount::slotServerNotification(const QString &mesg)

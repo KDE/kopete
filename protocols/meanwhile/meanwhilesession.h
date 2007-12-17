@@ -25,6 +25,11 @@
 #include <mw_srvc_im.h>
 #include <mw_srvc_resolve.h>
 
+struct MeanwhileClientID {
+    int		id;
+    const char *name;
+};
+
 /**
  * A class to handle libmeanwhile session management.
  */
@@ -50,7 +55,7 @@ public:
      * the connection process is ascychronous - a loginDone() signal will be
      * emitted when sucessfully logged in.
      */
-    void connect(QString host, int port, QString account, QString password);
+    void connect(QString password);
 
     /**
      * Disconnect from the server.
@@ -105,6 +110,10 @@ public:
      */
     bool isConnecting();
 
+    static const struct MeanwhileClientID *getClientIDs();
+
+    static void getDefaultClientIDParams(int *clientID,
+	    int *verMajor, int *verMinor);
 signals:
     /**
      * Emitted when the status of the connection changes

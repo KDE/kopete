@@ -43,6 +43,9 @@ protected slots:
     void slotSetServer2Default();
 protected:
     MeanwhileProtocol *protocol;
+private:
+    void setupClientList();
+    void selectClientListItem(int selectedID);
 };
 
 #endif

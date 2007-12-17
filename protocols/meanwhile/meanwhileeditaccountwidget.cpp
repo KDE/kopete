@@ -19,6 +19,7 @@
 #include <qcheckbox.h>
 #include <qpushbutton.h>
 #include <qspinbox.h>
+#include <qcombobox.h>
 #include <kdebug.h>
 #include <kopeteaccount.h>
 #include <kopetepasswordwidget.h>
@@ -27,9 +28,40 @@
 #include "meanwhileprotocol.h"
 #include "meanwhileaccount.h"
 #include "meanwhileeditaccountwidget.h"
+#include "meanwhilesession.h"
 
 #define DEFAULT_SERVER "messaging.opensource.ibm.com"
 #define DEFAULT_PORT 1533
+
+void MeanwhileEditAccountWidget::setupClientList()
+{
+    const struct MeanwhileClientID *id;
+    int i = 0;
+
+    for (id = MeanwhileSession::getClientIDs(); id->name; id++, i++) {
+        QString name = QString("%1 (0x%2)")
+                           .arg(QString(id->name))
+                           .arg(id->id, 0, 16);
+
+        mClientID->insertItem(name, i);
+
+        if (id->id == mwLogin_MEANWHILE)
+            mClientID->setCurrentItem(i);
+    }
+}
+
+void MeanwhileEditAccountWidget::selectClientListItem(int selectedID)
+{
+    const struct MeanwhileClientID *id;
+    int i = 0;
+
+    for (id = MeanwhileSession::getClientIDs(); id->name; id++, i++) {
+        if (id->id == selectedID) {
+            mClientID->setCurrentItem(i);
+            break;
+        }
+    }
+}
 
 MeanwhileEditAccountWidget::MeanwhileEditAccountWidget( 
                                 QWidget* parent, 
@@ -40,16 +72,34 @@ MeanwhileEditAccountWidget::MeanwhileEditAccountWidget(
 {
     protocol = theProtocol;
 
+    /* setup client identifier combo box */
+    setupClientList();
+
     if (account())
     {
+        int clientID, verMajor, verMinor;
+        bool useCustomID;
+
         mScreenName->setText(account()->accountId());
         mScreenName->setReadOnly(true); 
         mScreenName->setDisabled(true);
         mPasswordWidget->load(&static_cast<MeanwhileAccount*>(account())->password());
         mAutoConnect->setChecked(account()->excludeConnect());
+
         MeanwhileAccount *myAccount = static_cast<MeanwhileAccount *>(account());
+        useCustomID = myAccount->getClientIDParams(&clientID,
+                &verMajor, &verMinor);
+
         mServerName->setText(myAccount->getServerName());
         mServerPort->setValue(myAccount->getServerPort());
+
+        if (useCustomID) {
+            selectClientListItem(clientID);
+            mClientVersionMajor->setValue(verMajor);
+            mClientVersionMinor->setValue(verMinor);
+            chkCustomClientID->setChecked(true);
+        }
+
     }
     else
     {
@@ -80,6 +130,15 @@ Kopete::Account* MeanwhileEditAccountWidget::apply()
 
     myAccount->setServerName(mServerName->text());
     myAccount->setServerPort(mServerPort->value());
+
+    if (chkCustomClientID->isChecked()) {
+        const struct MeanwhileClientID *ids = MeanwhileSession::getClientIDs();
+        myAccount->setClientID(ids[mClientID->currentItem()].id,
+                mClientVersionMajor->value(),
+                mClientVersionMinor->value());
+    } else {
+        myAccount->resetClientID();
+    }
 
     return myAccount;
 }
@@ -119,8 +178,17 @@ bool MeanwhileEditAccountWidget::validateData()
 
 void MeanwhileEditAccountWidget::slotSetServer2Default()
 {
+    int clientID, verMajor, verMinor;
+
+    MeanwhileSession::getDefaultClientIDParams(&clientID,
+            &verMajor, &verMinor);
+
     mServerName->setText(DEFAULT_SERVER);
     mServerPort->setValue(DEFAULT_PORT);
+    chkCustomClientID->setChecked(false);
+    selectClientListItem(clientID);
+    mClientVersionMajor->setValue(verMajor);
+    mClientVersionMinor->setValue(verMinor);
 }
 
 #include "meanwhileeditaccountwidget.moc"
