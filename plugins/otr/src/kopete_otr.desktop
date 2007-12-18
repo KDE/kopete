@@ -20,4 +20,6 @@ Comment[et]=Vestlusseansside krüptimine Off-The-Record krüptimisega
 Comment[it]=Cifra le sessioni di chat con la cifratura Off-The-Record
 Comment[pt]=Encriptar as mensagens de conversação com encriptação Fora-de-Banda
 Comment[sv]=Kryptera chattsessioner med Off-The-Record kryptering
+Comment[xx]=xxEncrypt chat sessions with Off-The-Record encryptionxx
 Name=OTR
+Name[xx]=xxOTRxx
