@@ -2,6 +2,7 @@
 include_directories( ${KOPETE_INCLUDES} )
 if(XMMS_FOUND)
   include_directories(${XMMS_INCLUDE_DIRS} )
+  include_directories( ${GLIB2_INCLUDE_DIR} )
 endif(XMMS_FOUND)
 
 ########### next target ###############

@@ -13,6 +13,11 @@ macro_optional_find_package(Xmms)
 macro_bool_to_01(XMMS_FOUND HAVE_XMMS)
 macro_log_feature(XMMS_FOUND "XMMS" "X MultiMedia System developement libraries" "http://www.xmms.org" FALSE "" "Used by the Kopete nowlistening plugin to support the XMMS player.")
 
+if(XMMS_FOUND)
+  # GLIB2_INCLUDE_DIR needed for Xmms
+  macro_optional_find_package(GLIB2)
+endif(XMMS_FOUND)
+
 macro_optional_find_package(LibXml2)
 macro_log_feature(LIBXML2_FOUND "LibXML2" "Libraries used to develop XML applications" "http://xmlsoft.org" FALSE "" "Required for the Kopete webpresence plugin.")
 
