@@ -8,6 +8,7 @@ X-KDE-ParentApp=kopete_latex
 X-KDE-ParentComponents=kopete_latex
 
 Name=KopeTeX
+Name[bn]=কপেটেক
 Name[ja]=KopeTex
 Name[ne]=कोपेटेक्स
 Name[sv]=Kopetex

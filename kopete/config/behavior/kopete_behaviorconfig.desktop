@@ -10,6 +10,7 @@ X-KDE-ParentComponents=kopete
 
 Name=Behavior
 Name[bg]=Поведение
+Name[bn]=আচরণ
 Name[br]=Emzalc'h
 Name[ca]=Comportament
 Name[cs]=Chování
@@ -51,6 +52,7 @@ Name[pt_BR]=Comportamento
 Name[ro]=Comportament
 Name[ru]=Поведение
 Name[se]=Láhtten
+Name[sk]=Chovanie
 Name[sl]=Obnašanje
 Name[sr]=Понашање
 Name[sr@latin]=Ponašanje
