@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>400</height>
+    <width>546</width>
+    <height>463</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -16,8 +16,8 @@
    <widget class="QPushButton" name="btEnvoi" >
     <property name="geometry" >
      <rect>
-      <x>150</x>
-      <y>300</y>
+      <x>220</x>
+      <y>350</y>
       <width>106</width>
       <height>27</height>
      </rect>
@@ -29,12 +29,27 @@
    <widget class="QTextEdit" name="text_mess" >
     <property name="geometry" >
      <rect>
-      <x>0</x>
+      <x>130</x>
       <y>0</y>
-      <width>391</width>
-      <height>271</height>
+      <width>411</width>
+      <height>321</height>
      </rect>
     </property>
+   </widget>
+   <widget class="QTreeWidget" name="treeDevice" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>121</width>
+      <height>321</height>
+     </rect>
+    </property>
+    <column>
+     <property name="text" >
+      <string>1</string>
+     </property>
+    </column>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar" >
@@ -42,7 +57,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>546</width>
      <height>29</height>
     </rect>
    </property>

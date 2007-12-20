@@ -7,8 +7,10 @@
 #include <QtGui>
 #include <QTextEdit>
 #include <QString>
+#include <QTreeWidget>
 
 #include "upnpKopete.h"
+#include "device.h"
 
 class ApplicationWidget : public QMainWindow, private Ui::MainWindow
 {

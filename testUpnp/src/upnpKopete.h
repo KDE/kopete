@@ -60,6 +60,7 @@ class UpnpKopete
 		void addXMLDescDoc (IXML_Document * DescDoc, char *location);
 		QList<char *> viewXMLDescDoc();
 		void viewListDevice();
+		QList<Device> getMainDevices();
 
 	private:
 		

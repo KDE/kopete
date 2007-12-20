@@ -10,8 +10,7 @@ char * modelNumber,
 char * serialNumber,
 char * presentationURL,
 char * UPC,
-char * DescDocURL,
-IXML_Node * xmlDoc)
+char * DescDocURL)
 {
 	printf("CONSTRUCTEUR DEVICE\n");
 	
@@ -30,7 +29,6 @@ IXML_Node * xmlDoc)
 	
 	this->listDevice.erase(this->listDevice.begin(),this->listDevice.end());
 	this->listService.erase(this->listService.begin(),this->listService.end());
-	this->xmlDoc = xmlDoc;
 	
 	
 
@@ -59,7 +57,7 @@ char* Device::getDescDocURL(){return this->DescDocURL;}
 
 QList<Device> Device::getListDevice(){return this->listDevice;}
 QList<Service> Device::getListService(){return this->listService;}
-IXML_Node* Device::getXmlDoc(){return this->xmlDoc;}
+
 
 
 void Device::addDevice (Device device)
@@ -103,106 +101,106 @@ void Device::addService (Service service)
 	}
 }
 
-void Device::searchAndAddUnderDevices()
-{
-	char *deviceType= NULL;
-	char *friendlyName= NULL;
-	char *manufacturer= NULL;
-	char *manufacturerURL= NULL;
-	char *modelName= NULL;
-	char *UDN= NULL;
-	char *modelDescription= NULL;
-	char *modelNumber= NULL;
-	char *serialNumber= NULL;
-	char *presentationURL= NULL;
-	char *UPC= NULL;
-	char *DescDocURL= NULL;
-	IXML_Node * xmlDoc = NULL;
-
-
-	IXML_Document *parent = (IXML_Document*)this->xmlDoc;
-	/*Device underDevice = NULL;*/	
-
-	IXML_NodeList * deviceList = ixmlDocument_getElementsByTagName(parent,"deviceList");
-	//verifie si il y a des deviceList
-	if(ixmlNodeList_length(deviceList) > 0)
-	{
-		//Recupere le premier deviceList
-		IXML_Node* node = ixmlNodeList_item(deviceList,0);
-		//je recupere les devices de la device list
-		IXML_NodeList* devices = ixmlNode_getChildNodes(node);
-		for(int i = 0;i<ixmlNodeList_length(devices);i++)
-		{
-			//recuperer le node principale d'un device
-			IXML_Node* childDevice = ixmlNodeList_item(devices,i);
-			//recupere la liste des info du device
-			IXML_NodeList * nChild = ixmlNode_getChildNodes(childDevice);
-			for(int j=0;j<ixmlNodeList_length(nChild);j++)
-			{
-				IXML_Node* n = ixmlNodeList_item(nChild,j);
-				if(strcmp(ixmlNode_getNodeName(n),"deviceType")==0)
-				{
-					deviceType = util_Xml_nodeValue(n);
-				}
-				if(strcmp(ixmlNode_getNodeName(n),"friendlyName")==0)
-				{
-					friendlyName = util_Xml_nodeValue(n);
-				}
-				if(strcmp(ixmlNode_getNodeName(n),"manufacturer")==0)
-				{
-					manufacturer = util_Xml_nodeValue(n);
-				}
-				if(strcmp(ixmlNode_getNodeName(n),"manufacturerURL")==0)
-				{
-					manufacturerURL = util_Xml_nodeValue(n);
-				}
-				if(strcmp(ixmlNode_getNodeName(n),"modelName")==0)
-				{
-					modelName = util_Xml_nodeValue(n);
-				}
-				if(strcmp(ixmlNode_getNodeName(n),"UDN")==0)
-				{
-					UDN = util_Xml_nodeValue(n);
-				}
-				if(strcmp(ixmlNode_getNodeName(n),"modelDescription")==0)
-				{
-					modelDescription = util_Xml_nodeValue(n);
-				}
-				if(strcmp(ixmlNode_getNodeName(n),"modelNumber")==0)
-				{
-					modelNumber = util_Xml_nodeValue(n);
-				}
-				if(strcmp(ixmlNode_getNodeName(n),"serialNumber")==0)
-				{
-					serialNumber = util_Xml_nodeValue(n);
-				}
-				if(strcmp(ixmlNode_getNodeName(n),"presentationURL")==0)
-				{
-					presentationURL = util_Xml_nodeValue(n);
-				}
-				if(strcmp(ixmlNode_getNodeName(n),"UPC")==0)
-				{
-					UPC = util_Xml_nodeValue(n);
-				}
-				if(strcmp(ixmlNode_getNodeName(n),"DescDocURL")==0)
-				{
-					DescDocURL = util_Xml_nodeValue(n);
-				}
-				if(strcmp(ixmlNode_getNodeName(n),"modelDescription")==0)
-				{
-					modelDescription = util_Xml_nodeValue(n);
-				}
-			}
-			//xmlDoc = ixmlNode_getOwnerDocument(childDevice);
-			//create device
-				//Device underDevice = Device(deviceType,friendlyName,manufacturer,manufacturerURL,modelName,UDN,modelDescription,modelNumber,serialNumber,presentationURL,UPC,DescDocURL,xmlDoc);
-			
-				//add device in the list
-				//this->addDevice(underDevice);
-				
-		}
-	}
-}
+// void Device::searchAndAddUnderDevices()
+// {
+// 	char *deviceType= NULL;
+// 	char *friendlyName= NULL;
+// 	char *manufacturer= NULL;
+// 	char *manufacturerURL= NULL;
+// 	char *modelName= NULL;
+// 	char *UDN= NULL;
+// 	char *modelDescription= NULL;
+// 	char *modelNumber= NULL;
+// 	char *serialNumber= NULL;
+// 	char *presentationURL= NULL;
+// 	char *UPC= NULL;
+// 	char *DescDocURL= NULL;
+// 	IXML_Node * xmlDoc = NULL;
+// 
+// 
+// 	IXML_Document *parent = (IXML_Document*)this->xmlDoc;
+// 	/*Device underDevice = NULL;*/	
+// 
+// 	IXML_NodeList * deviceList = ixmlDocument_getElementsByTagName(parent,"deviceList");
+// 	//verifie si il y a des deviceList
+// 	if(ixmlNodeList_length(deviceList) > 0)
+// 	{
+// 		//Recupere le premier deviceList
+// 		IXML_Node* node = ixmlNodeList_item(deviceList,0);
+// 		//je recupere les devices de la device list
+// 		IXML_NodeList* devices = ixmlNode_getChildNodes(node);
+// 		for(int i = 0;i<ixmlNodeList_length(devices);i++)
+// 		{
+// 			//recuperer le node principale d'un device
+// 			IXML_Node* childDevice = ixmlNodeList_item(devices,i);
+// 			//recupere la liste des info du device
+// 			IXML_NodeList * nChild = ixmlNode_getChildNodes(childDevice);
+// 			for(int j=0;j<ixmlNodeList_length(nChild);j++)
+// 			{
+// 				IXML_Node* n = ixmlNodeList_item(nChild,j);
+// 				if(strcmp(ixmlNode_getNodeName(n),"deviceType")==0)
+// 				{
+// 					deviceType = util_Xml_nodeValue(n);
+// 				}
+// 				if(strcmp(ixmlNode_getNodeName(n),"friendlyName")==0)
+// 				{
+// 					friendlyName = util_Xml_nodeValue(n);
+// 				}
+// 				if(strcmp(ixmlNode_getNodeName(n),"manufacturer")==0)
+// 				{
+// 					manufacturer = util_Xml_nodeValue(n);
+// 				}
+// 				if(strcmp(ixmlNode_getNodeName(n),"manufacturerURL")==0)
+// 				{
+// 					manufacturerURL = util_Xml_nodeValue(n);
+// 				}
+// 				if(strcmp(ixmlNode_getNodeName(n),"modelName")==0)
+// 				{
+// 					modelName = util_Xml_nodeValue(n);
+// 				}
+// 				if(strcmp(ixmlNode_getNodeName(n),"UDN")==0)
+// 				{
+// 					UDN = util_Xml_nodeValue(n);
+// 				}
+// 				if(strcmp(ixmlNode_getNodeName(n),"modelDescription")==0)
+// 				{
+// 					modelDescription = util_Xml_nodeValue(n);
+// 				}
+// 				if(strcmp(ixmlNode_getNodeName(n),"modelNumber")==0)
+// 				{
+// 					modelNumber = util_Xml_nodeValue(n);
+// 				}
+// 				if(strcmp(ixmlNode_getNodeName(n),"serialNumber")==0)
+// 				{
+// 					serialNumber = util_Xml_nodeValue(n);
+// 				}
+// 				if(strcmp(ixmlNode_getNodeName(n),"presentationURL")==0)
+// 				{
+// 					presentationURL = util_Xml_nodeValue(n);
+// 				}
+// 				if(strcmp(ixmlNode_getNodeName(n),"UPC")==0)
+// 				{
+// 					UPC = util_Xml_nodeValue(n);
+// 				}
+// 				if(strcmp(ixmlNode_getNodeName(n),"DescDocURL")==0)
+// 				{
+// 					DescDocURL = util_Xml_nodeValue(n);
+// 				}
+// 				if(strcmp(ixmlNode_getNodeName(n),"modelDescription")==0)
+// 				{
+// 					modelDescription = util_Xml_nodeValue(n);
+// 				}
+// 			}
+// 			//xmlDoc = ixmlNode_getOwnerDocument(childDevice);
+// 			//create device
+// 				//Device underDevice = Device(deviceType,friendlyName,manufacturer,manufacturerURL,modelName,UDN,modelDescription,modelNumber,serialNumber,presentationURL,UPC,DescDocURL,xmlDoc);
+// 			
+// 				//add device in the list
+// 				//this->addDevice(underDevice);
+// 				
+// 		}
+// 	}
+// }
 
 void Device::showDevice()
 {
@@ -221,7 +219,6 @@ void Device::showDevice()
 	printf("	Presentation URL : %s\n",this->getPresentationURL());
 	printf("	UPC : %s\n",this->getUPC());
 	printf("	DescDocURL : %s\n",this->getDescDocURL());
-	printf("	XML : \n%s\n",ixmlPrintNode(this->getXmlDoc()));
 // 	if(this->getXmlDoc()!=NULL)
 // 	{
 // 		printf("okkkkk\n");

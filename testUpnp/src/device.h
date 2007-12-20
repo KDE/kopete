@@ -32,8 +32,6 @@ class Device
 		char * UPC;
 
 		char * DescDocURL;
-
-		IXML_Node* xmlDoc;
 		
 		QList<Device> listDevice;
 		QList<Service> listService;
@@ -50,8 +48,7 @@ class Device
 			char * serialNumber,
 			char * presentationURL,
 			char * UPC,
-			char * DescDocURL,
-			IXML_Node * xmlDoc);
+			char * DescDocURL);
 
 		char* getDeviceType();
 		char* getFriendlyName();
@@ -65,9 +62,6 @@ class Device
 		char* getPresentationURL();
 		char* getUPC();
 		char* getDescDocURL();
-		IXML_Node* getXmlDoc();
-		
-		
 		
 		QList<Device> getListDevice();
 		QList<Service> getListService();
