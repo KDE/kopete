@@ -40,6 +40,8 @@ void ApplicationWidget::envoyer()
 		text_mess->append(tmp);
 	}	
 	text_mess->append("######################################");
+
+	this->upnp->viewListDevice();
 	
 }
 

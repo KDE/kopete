@@ -60,8 +60,6 @@ UpnpKopete::UpnpKopete()
 // 		UpnpFinish();
 // 	} 
 // 	printf("Success research device\n");
-
-
 }
 
 
@@ -109,10 +107,135 @@ int UpnpKopete::researchDevice()
 
 void UpnpKopete::addDevice(IXML_Document * DescDoc,char *location)
 {
+
 	char *deviceType=NULL;
-	char *UDN=NULL;
-	char *DescDocURL=NULL;
-	char *modelDescription=NULL;
+	char *friendlyName= NULL;
+	char *manufacturer= NULL;
+	char *manufacturerURL= NULL;
+	char *modelName= NULL;
+	char *UDN= NULL;
+	char *modelDescription= NULL;
+	char *modelNumber= NULL;
+	char *serialNumber= NULL;
+	char *presentationURL= NULL;
+	char *UPC= NULL;
+	char *DescDocURL= NULL;
+	IXML_Node * xmlDoc = NULL;
+
+	IXML_Document *parent = DescDoc;
+	/*Device underDevice = NULL;*/	
+
+	IXML_NodeList * deviceList = ixmlDocument_getElementsByTagName(parent,"root");
+	//verifie si il y a des deviceList
+	if(ixmlNodeList_length(deviceList) > 0)
+	{
+		//Recupere le premier deviceList
+		IXML_Node* node = ixmlNodeList_item(deviceList,0);
+		//je recupere les devices de la device list
+		IXML_NodeList* devices = ixmlNode_getChildNodes(node);
+		for(int i = 0;i<ixmlNodeList_length(devices);i++)
+		{
+			//recuperer le node principale d'un device
+			IXML_Node* childDevice = ixmlNodeList_item(devices,i);
+			
+			if(strcmp(ixmlNode_getNodeName(childDevice),"device")==0)
+			{
+				//recupere la liste des info du device
+				IXML_NodeList * nChild = ixmlNode_getChildNodes(childDevice);
+
+				for(int j=0;j<ixmlNodeList_length(nChild);j++)
+				{
+					IXML_Node* n = ixmlNodeList_item(nChild,j);
+					if(strcmp(ixmlNode_getNodeName(n),"deviceType")==0)
+					{
+						deviceType=util_Xml_nodeValue(n);
+					}
+					if(strcmp(ixmlNode_getNodeName(n),"friendlyName")==0)
+					{
+						friendlyName = util_Xml_nodeValue(n);
+					}
+					if(strcmp(ixmlNode_getNodeName(n),"manufacturer")==0)
+					{
+						manufacturer =util_Xml_nodeValue(n);
+					}
+					if(strcmp(ixmlNode_getNodeName(n),"manufacturerURL")==0)
+					{
+						manufacturerURL = util_Xml_nodeValue(n);
+					}
+					if(strcmp(ixmlNode_getNodeName(n),"modelName")==0)
+					{
+						modelName = util_Xml_nodeValue(n);
+					}
+					if(strcmp(ixmlNode_getNodeName(n),"UDN")==0)
+					{
+						UDN = util_Xml_nodeValue(n);
+					}
+					if(strcmp(ixmlNode_getNodeName(n),"modelDescription")==0)
+					{
+						modelDescription = util_Xml_nodeValue(n);
+					}
+					if(strcmp(ixmlNode_getNodeName(n),"modelNumber")==0)
+					{
+						modelNumber = util_Xml_nodeValue(n);
+					}
+					if(strcmp(ixmlNode_getNodeName(n),"serialNumber")==0)
+					{
+						serialNumber = util_Xml_nodeValue(n);
+					}
+					if(strcmp(ixmlNode_getNodeName(n),"presentationURL")==0)
+					{
+						presentationURL = util_Xml_nodeValue(n);
+					}
+					if(strcmp(ixmlNode_getNodeName(n),"UPC")==0)
+					{
+						UPC = util_Xml_nodeValue(n);
+					}
+					if(strcmp(ixmlNode_getNodeName(n),"DescDocURL")==0)
+					{
+						DescDocURL = util_Xml_nodeValue(n);
+					}
+					if(strcmp(ixmlNode_getNodeName(n),"modelDescription")==0)
+					{
+						modelDescription = util_Xml_nodeValue(n);
+					}
+				}
+				printf("xmlDoc *********************************************\n");
+				
+				xmlDoc = childDevice;
+// 				IXML_NodeList* nl=ixmlDocument_getElementsByTagName(xmlDoc,"device" );
+// 				printf("nombre de node %d .........\n",ixmlNodeList_length(nl));
+
+				//create device
+				printf("create device\n");
+				Device underDevice = Device(deviceType,friendlyName,manufacturer,manufacturerURL,modelName,UDN,modelDescription,modelNumber,serialNumber,presentationURL,UPC,DescDocURL,xmlDoc);
+				
+				printf("device cool\n");
+				//add device in the list maindevice
+				bool find=false;
+				this->mainDevices.begin();
+				for(int i=0; i<this->mainDevices.size() && !find; i++)
+				{
+					if(strcmp(underDevice.getDeviceType(),this->mainDevices.last().getDeviceType())==0)
+					{
+						find=true;
+					}
+				}
+				if(find==false)
+				{
+					printf("ajout device\n");
+					this->mainDevices.append(underDevice);
+				}	
+				else
+				{
+					printf("Device main exist\n");
+				}
+					
+			}
+				
+		}
+	}
+
+
 }
 
 void UpnpKopete::addXMLDescDoc (IXML_Document * DescDoc, char *location)
@@ -159,10 +282,37 @@ QList<char *>  UpnpKopete::viewXMLDescDoc()
 
 }
 
+void UpnpKopete::viewListDevice()
+{
+	this->mainDevices.begin();
+	if(this->mainDevices.size()==0)
+	{
+		printf("aucun device\n");
+	}
+	else
+	{
+		for(int i=0;i<this->mainDevices.size();i++)
+		{
+			Device d = this->mainDevices.last();
+			d.showDevice();
+		}
+	}
+}
+
 int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Cookie )
 {
 	int ret = 0;
-	UpnpKopete * getUpnp = UpnpKopete::getInstance();
+ 	UpnpKopete * getUpnp = UpnpKopete::getInstance();
+// 
+// 	IXML_Document *DescDoc = ixmlLoadDocument("XML/gatedesc.xml");
+// 	if(DescDoc == NULL)
+// 	{
+// 		printf("error loadDocument\n");
+// 	}
+// 	getUpnp->addXMLDescDoc(DescDoc, "XML/gatedesc.xml");
+// 	getUpnp->addDevice(DescDoc, "XML/gatedesc.xml");
+// 	if( DescDoc )
+//         	ixmlDocument_free( DescDoc );
 	
     switch ( EventType ) {
             /*
@@ -193,6 +343,7 @@ int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Coo
 				printf("Location URL %s\n",d_event->Location);
                     		//TvCtrlPointAddDevice( DescDoc, d_event->Location,d_event->Expires );
 				getUpnp->addXMLDescDoc(DescDoc, d_event->Location);
+				getUpnp->addDevice(DescDoc, d_event->Location);
                 	}
 
                 	if( DescDoc )
@@ -201,7 +352,10 @@ int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Coo
 			break;
 		}
         case UPNP_DISCOVERY_SEARCH_TIMEOUT:
-		printf("UPNP_DISCOVERY_SEARCH_TIMEOUT\n");break;
+	{
+		printf("UPNP_DISCOVERY_SEARCH_TIMEOUT\n");
+		break;
+	}
         case UPNP_DISCOVERY_ADVERTISEMENT_BYEBYE:
 		printf("UPNP_DISCOVERY_ADVERTISEMENT_BYEBYE\n");break;
         case UPNP_CONTROL_ACTION_COMPLETE:
@@ -226,7 +380,7 @@ int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Coo
 		printf("UPNP_CONTROL_GET_VAR_REQUEST\n");break;
         case UPNP_CONTROL_ACTION_REQUEST:
 		printf("UPNP_CONTROL_ACTION_REQUEST\n");break;
-    }
+    }	
 
     return ret;
 }

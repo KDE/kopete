@@ -7,7 +7,7 @@ include_directories(/usr/local/include)
 
 
 set(projectSources main.cpp)
-set(projectSources ${projectSources} applicationWidget.cpp upnpKopete.cpp sample_util.cpp)
+set(projectSources ${projectSources} applicationWidget.cpp upnpKopete.cpp action.cpp service.cpp device.cpp util_Xml.cpp)
 
 kde4_add_ui_files(projectSources mainWindow.ui)
 kde4_add_executable(window ${projectSources})

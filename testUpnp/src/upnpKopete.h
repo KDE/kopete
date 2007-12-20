@@ -17,28 +17,33 @@
 #include <upnp/upnptools.h>
 
 #include <QList>
-
+#include "device.h"
 #include "sample_util.h"
+
+#include "util_Xml.h"
 
 #define RESEARCH_SUCCESS 0
 #define RESEARCH_ERROR 1
 
-typedef struct {
-	char deviceType[250];
-	char UDN[250];
-	char DescDocURL[250];
-	char modelDescription[250];
-}Device;
+// typedef struct {
+// 	char deviceType[250];
+// 	char UDN[250];
+// 	char DescDocURL[250];
+// 	char modelDescription[250];
+// 	char ServicesDocURL[250];
+// }Device;
+
 
 typedef struct{
 	IXML_Document * DescDoc;
 	char * location;
 }DocXML;
 
-typedef struct DeviceNodeAlias {
-	Device device;
-	DeviceNodeAlias * next;
-}DeviceNode;
+// typedef struct DeviceNodeAlias {
+// 	Device device;
+// // 	DeviceNodeAlias * ssDevice;
+// 	DeviceNodeAlias * next;
+// }DeviceNode;
 
 
 
@@ -54,8 +59,7 @@ class UpnpKopete
 		void addDevice(IXML_Document * DescDoc,char *location);
 		void addXMLDescDoc (IXML_Document * DescDoc, char *location);
 		QList<char *> viewXMLDescDoc();
-		
-		//int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Cookie );
+		void viewListDevice();
 
 	private:
 		
@@ -69,7 +73,7 @@ class UpnpKopete
 		UpnpClient_Handle device_handle;
 		
 		char * deviceType;
-		DeviceNode device;	
+		QList<Device> mainDevices;	
 
 		UpnpKopete();	
 
