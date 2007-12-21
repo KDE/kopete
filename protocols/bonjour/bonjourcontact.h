@@ -20,6 +20,8 @@
 #include <qmap.h>
 //Added by qt3to4:
 #include <QList>
+#include <QTcpSocket>
+
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
@@ -67,6 +69,16 @@ public:
 	 * Set the Type of this contact
 	 */
 	void setType( Type type );
+
+	/**
+	 * These are the Datatypes that define how to contact the user
+	 * This includes the Hostname and the Port.
+	 * We also add a TCPSocket through which we can talk to the user
+	 */
+	QTcpSocket *socket;
+	QString remoteHostName;
+	short int remotePort;
+
 public slots:
 	/**
 	 * Transmits an outgoing message to the server 

@@ -40,10 +40,20 @@ BonjourContact::BonjourContact( Kopete::Account* _account, const QString &unique
 	m_msgManager = 0L;
 
 	setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
+
+	socket = NULL;
+	remotePort = 0;
 }
 
 BonjourContact::~BonjourContact()
 {
+	if (socket) {
+		if (socket->isValid())
+			socket->close();
+
+		delete socket;
+	}
+	remotePort = 0;
 }
 
 void BonjourContact::setType( BonjourContact::Type type )
