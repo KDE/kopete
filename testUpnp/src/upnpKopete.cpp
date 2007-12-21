@@ -265,7 +265,9 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,char *location)
 		//adding device service
 		Service service = Service(serviceType,serviceId,controlURL,eventSubURL,UrlDocXml);
 		underDevice.addService(service);
-		
+		service.viewActionList();
+
+
 		//add device in the list maindevice
 		bool find=false;
 		this->mainDevices.begin();

@@ -1,6 +1,7 @@
 #ifndef _SERVICE_H_
 #define _SERVICE_H_
 
+#include "util_Xml.h"
 #include <upnp/ixml.h>
 #include <upnp/FreeList.h>
 
@@ -22,21 +23,20 @@ class Service
 		char *serviceId;
 		char *controlURL;
 		char *eventSubURL;
-		char *docXml;
-		IXML_Document *xmlDoc;
+		IXML_Document *xmlDocService;
 		QList<Action> actionList;
 
 	public:
-		Service(char *serviceType, char *serviceId, char *controlURL, char *eventSubURL,char *docXml);
-		void addActionList(Action action);
+		Service(char *serviceType, char *serviceId, char *controlURL, char *eventSubURL,char *URLdocXml);
+		void addActionList(IXML_Node * actionNode);
 		char * getServiceType();
 		char * getServiceId();
 		char * getControlURL();
 		char * getEventSubURL();
 		char * getDocXml();
-		IXML_Document * getXmlDoc();
+		IXML_Document * getXmlDocService();
 		QList<Action> getActionList();
-
+		void viewActionList();
 };
 
 #endif
