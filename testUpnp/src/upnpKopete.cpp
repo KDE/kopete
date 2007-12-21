@@ -107,7 +107,8 @@ int UpnpKopete::researchDevice()
 
 void UpnpKopete::addDevice(IXML_Document * DescDoc,char *location)
 {
-
+	printf("#############ADD DEVICE###########\n");
+	printf("location : %s\n",location);
 	char *deviceType=NULL;
 	char *friendlyName= NULL;
 	char *manufacturer= NULL;
@@ -135,15 +136,17 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,char *location)
 	//verifie si il y a des deviceList
 	if(ixmlNodeList_length(deviceList) > 0)
 	{
+		int posDevice;
 		for(int i = 0;i<ixmlNodeList_length(deviceList);i++)
 		{
 			if(strcmp(util_Xml_nodeValue(ixmlNodeList_item(deviceList,i)),"urn:schemas-upnp-org:device:WANConnectionDevice:1")==0)
 			{
 				nodeDevice = ixmlNodeList_item(deviceList,i);
+				posDevice = i;
 			}
 		}
 		//Recupere le premier deviceList
-		IXML_Node* node = ixmlNodeList_item(deviceList,0);
+		IXML_Node* node = ixmlNodeList_item(deviceList,posDevice);
 		//je recupere les devices de la device list
 		IXML_NodeList* nChild = ixmlNode_getChildNodes(ixmlNode_getParentNode(node));
 		for(int j = 0;j<ixmlNodeList_length(nChild);j++)
@@ -203,7 +206,7 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,char *location)
 			{
 				IXML_NodeList* nList = ixmlNode_getChildNodes(n);
 				IXML_Node* nService = ixmlNodeList_item(nList,0);
-
+				
 				if(strcmp(ixmlNode_getNodeName(nService),"service")==0)
 				{
 					IXML_NodeList* nServiceList = ixmlNode_getChildNodes(nService);
@@ -226,9 +229,30 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,char *location)
 						{
 							eventSubURL = util_Xml_nodeValue(nServiceItem);
 						}
-						if(strcmp(ixmlNode_getNodeName(nServiceItem),"UrlDocXml")==0)
+						if(strcmp(ixmlNode_getNodeName(nServiceItem),"SCPDURL")==0)
 						{
-							UrlDocXml = util_Xml_nodeValue(nServiceItem);
+							int indice;
+							for (int i=0;i<strlen(location);i++)
+							{
+								if (location[i]=='/')
+								{
+									indice = i;
+									printf("indice : %d\n",indice);
+								}
+							}
+
+							char * nouchaine = (char*)malloc(indice + 1);
+							for (int i=0;i<indice;i++)
+							{
+								nouchaine[i] = location[i];
+							}
+							nouchaine[indice]='\0';
+							char * notrechaine = (char*)malloc(strlen(util_Xml_nodeValue(nServiceItem)+strlen(nouchaine)));
+							sprintf(notrechaine,"%s%s",nouchaine,util_Xml_nodeValue(nServiceItem));
+							notrechaine[strlen(notrechaine)]='\0';
+							
+							UrlDocXml = notrechaine;
+// 							
 						}
 					}
 				}
@@ -240,9 +264,8 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,char *location)
 
 		//adding device service
 		Service service = Service(serviceType,serviceId,controlURL,eventSubURL,UrlDocXml);
+		underDevice.addService(service);
 		
-				
-		printf("device cool\n");
 		//add device in the list maindevice
 		bool find=false;
 		this->mainDevices.begin();
@@ -255,7 +278,6 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,char *location)
 		}
 		if(find==false)
 		{
-			printf("ajout device\n");
 			this->mainDevices.append(underDevice);
 		}	
 		else
