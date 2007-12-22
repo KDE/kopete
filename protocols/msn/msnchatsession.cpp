@@ -104,7 +104,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	connect( m_actionWebcamSend, SIGNAL(triggered(bool)), this, SLOT(slotWebcamSend()) );
 
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
-	KAction* requestPicture = new KAction( KIcon("image-jpeg"), i18n( "Request Display Picture" ), this );
+	KAction* requestPicture = new KAction( KIcon("image-x-generic"), i18n( "Request Display Picture" ), this );
         actionCollection()->addAction( "msnRequestDisplayPicture", requestPicture );
 	requestPicture->setEnabled(!c->object().isEmpty());
 	connect( requestPicture, SIGNAL(triggered()), this, SLOT(slotRequestPicture()) );
