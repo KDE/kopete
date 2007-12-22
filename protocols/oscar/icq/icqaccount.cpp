@@ -465,7 +465,11 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 
 QString ICQAccount::sanitizedMessage( const QString& message ) const
 {
-	return Qt::escape( message );
+	QString sanitizedMsg = Qt::escape( message );
+
+	sanitizedMsg.replace( QRegExp(QString::fromLatin1("[\r]?[\n]")), QString::fromLatin1("<br />") );
+
+	return sanitizedMsg;
 }
 
 void ICQAccount::slotGotAuthRequest( const QString& contact, const QString& reason )
