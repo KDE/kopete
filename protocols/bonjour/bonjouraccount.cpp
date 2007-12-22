@@ -116,6 +116,7 @@ void BonjourAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage
 
 // This Function Starts a new Local Server
 // It runs on local port listeningPort
+// Make Sure IP Tables lets this port through!!
 bool BonjourAccount::startLocalServer()
 {
         int port = 5298;
@@ -124,11 +125,14 @@ bool BonjourAccount::startLocalServer()
 
         while (port < 5305)             // No of Attempts
                 if (localServer->listen(QHostAddress::Any, port)) {
+			QObject::connect(localServer, SIGNAL(newConnection()),
+					this, SLOT(newIncomingConnection()));
 			listeningPort = port;
                         break;
 		}
                 else
                         port++;
+
 
         return localServer->isListening();
 }
@@ -232,12 +236,18 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 
 	QString display = pointer->serviceName().split("@")[0];
 
-	Kopete::MetaContact *c;
+	Kopete::MetaContact *mc;
 
 	// FIXME: The Standard Has Specifications on What To Do in case of a clash
 	// We Ignore them over here.
-	c = addContact(pointer->serviceName(), display, bonjourGroup);
-	c->contacts()[0]->setOnlineStatus(Kopete::OnlineStatus::Online);
+	mc = addContact(pointer->serviceName(), display, bonjourGroup);
+
+	Kopete::Contact *c = mc->contacts()[0];
+
+	//FIXME: QObject is needed to be called here as there is a conflict fo setproperty
+	c->QObject::setProperty("remoteHostName", pointer->hostName());
+	c->QObject::setProperty("remotePort", pointer->port());
+	c->setOnlineStatus(Kopete::OnlineStatus::Online);
 }
 
 void BonjourAccount::goingOffline(DNSSD::RemoteService::Ptr pointer)
@@ -409,6 +419,31 @@ const QByteArray BonjourAccount::getlastName() const
 const QByteArray BonjourAccount::getemailAddress() const
 {
 	return emailAddress;
+}
+
+QList <BonjourContact *> BonjourAccount::getContactsByAddress(const QHostAddress &addr)
+{
+	QList <BonjourContact *> list;
+
+	QList <Kopete::Contact *> c = contacts().values();
+
+	for (QList <Kopete::Contact *>::iterator i = c.begin(); i != c.end(); i++) {
+		BonjourContact *c = (BonjourContact *) *i;
+		if (c->isRemoteAddress(addr))
+			list<<c;
+	}
+
+	return list;
+}
+
+void BonjourAccount::newIncomingConnection()
+{
+	// Get Next Connection
+	QTcpSocket *sock = localServer->nextPendingConnection();
+
+	QList <BonjourContact *> matches = getContactsByAddress (sock->peerAddress());
+
+	kDebug()<<"No of Matches for Address: "<<matches.size();	
 }
 
 #include "bonjouraccount.moc"

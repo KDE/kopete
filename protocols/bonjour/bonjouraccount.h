@@ -26,6 +26,7 @@
 #include <dnssd/publicservice.h>
 #include <dnssd/servicebrowser.h>
 
+#include "bonjourcontact.h"
 #include "bonjourwebcamdialog.h"
 
 class KActionMenu;
@@ -89,13 +90,6 @@ class BonjourAccount : public Kopete::Account
 	void startPublish();
 
 	/**
-	 * Resolve A Hostname Via Avahi
-	 * FIXME: Remove Avahi Dependency
-	 */
-	QString resolveHostName(const QString &hostName);
-	QString getLocalHostName();
-
-	/**
 	 * The Bonjour Group of The Contact List
 	 */
 	Kopete::Group *bonjourGroup;
@@ -129,6 +123,17 @@ public:
 	const QByteArray getlastName() const;
 	const QByteArray getemailAddress() const;
 
+	/**
+	 * Resolve A Hostname Via Avahi
+	 * FIXME: Remove Avahi Dependency
+	 */
+	static QString resolveHostName(const QString &hostName);
+	static QString getLocalHostName();
+
+	/**
+	 * Return all Contacts at a given Address (usually 1)
+	 */
+	QList <BonjourContact *> getContactsByAddress(const QHostAddress &addr);
 
 	/**
 	 * Construct the context menu used for the status bar icon
@@ -200,6 +205,11 @@ protected slots:
 	 * Show webcam.  Called by KActions and internally.
 	 */
 	void slotShowVideo();
+
+	/**
+	 * This slot is called if a new incomin connection is made
+	 */
+	void newIncomingConnection();
 
 };
 

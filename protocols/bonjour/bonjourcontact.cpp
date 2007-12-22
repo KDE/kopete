@@ -1,6 +1,7 @@
 /*
     bonjourcontact.cpp - Kopete Bonjour Protocol
 
+	Copyright (c) 2007      by Tejas Dinkar		<tejas@gja.in>
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
@@ -17,6 +18,7 @@
 #include "bonjourcontact.h"
 
 #include <QList>
+#include <QHostAddress>
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -156,6 +158,42 @@ void BonjourContact::slotChatSessionDestroyed()
 {
 	//FIXME: the chat window was closed?  Take appropriate steps.
 	m_msgManager = 0L;
+}
+
+void BonjourContact::setremoteHostName(const QString &nremoteHostName)
+{
+	remoteHostName = nremoteHostName;
+
+	// FIXME: Resolve the following Avahi Dependency BonjourAccount::resolveHostName
+	remoteAddress = QHostAddress(BonjourAccount::resolveHostName(remoteHostName));
+}
+
+const QString BonjourContact::getremoteHostName() const
+{
+	return remoteHostName;
+}
+
+const QHostAddress BonjourContact::getremoteAddress() const
+{
+	return remoteAddress;
+}
+
+void BonjourContact::setremotePort(const short int &nremotePort)
+{
+	remotePort = nremotePort;
+}
+
+const short int BonjourContact::getremotePort() const
+{
+	return remotePort;
+}
+
+const bool BonjourContact::isRemoteAddress(const QHostAddress &host) const
+{
+	if (remoteAddress == host)
+		return true;
+	else
+		return false;
 }
 
 #include "bonjourcontact.moc"

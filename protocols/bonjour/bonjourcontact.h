@@ -1,6 +1,7 @@
 /*
     bonjourcontact.h - Kopete Bonjour Protocol
 
+    Copyright (c) 2007      by Tejas Dinkar	<tejas@gja.in>
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
@@ -21,6 +22,7 @@
 //Added by qt3to4:
 #include <QList>
 #include <QTcpSocket>
+#include <QHostAddress>
 
 #include "kopetecontact.h"
 #include "kopetemessage.h"
@@ -37,6 +39,17 @@ namespace Kopete { class MetaContact; }
 class BonjourContact : public Kopete::Contact
 {
 	Q_OBJECT
+
+	/**
+	 * These are the Datatypes that define how to contact the user
+	 * This includes the Hostname and the Port.
+	 * We also add a TCPSocket through which we can talk to the user
+	 */
+	QTcpSocket *socket;
+	QString remoteHostName;
+	QHostAddress remoteAddress;
+	short int remotePort;
+
 public:
 	/**
 	 * The range of possible contact types
@@ -71,13 +84,25 @@ public:
 	void setType( Type type );
 
 	/**
-	 * These are the Datatypes that define how to contact the user
-	 * This includes the Hostname and the Port.
-	 * We also add a TCPSocket through which we can talk to the user
+	 * The Following Properties are For saving Each Contact's IP address, hostname and
+	 * port. This Way, when a connection is made, we know who it is from
 	 */
-	QTcpSocket *socket;
-	QString remoteHostName;
-	short int remotePort;
+	Q_PROPERTY(QString remoteHostName READ getremoteHostName WRITE setremoteHostName)
+	Q_PROPERTY(QHostAddress remoteAddress READ getremoteAddress)
+	Q_PROPERTY(short int remotePort READ getremotePort WRITE setremotePort)
+
+	void setremoteHostName(const QString &nremoteHostName);
+	void setremotePort(const short int &nremotePort);
+
+	const QString getremoteHostName() const;
+	const QHostAddress getremoteAddress() const;
+	const short int getremotePort() const;
+
+	/*
+	 * This Function Checks if a contact has the given remote address and port
+	 * and Returns True if they both match
+	 */
+	const bool isRemoteAddress(const QHostAddress &host) const;
 
 public slots:
 	/**
