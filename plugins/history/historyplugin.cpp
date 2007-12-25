@@ -49,7 +49,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  
 HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
 : Kopete::Plugin( HistoryPluginFactory::componentData(), parent ), m_loggerFactory( this )
 {
-	KAction *viewMetaContactHistory = new KAction( KIcon("history"), i18n("View &History" ), this );
+	KAction *viewMetaContactHistory = new KAction( KIcon("view-history"), i18n("View &History" ), this );
 	actionCollection()->addAction( "viewMetaContactHistory", viewMetaContactHistory );
 	connect(viewMetaContactHistory, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory()));
 	viewMetaContactHistory->setEnabled(

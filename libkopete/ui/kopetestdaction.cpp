@@ -104,17 +104,17 @@ KAction * KopeteStdAction::sendFile( const QObject *recvr, const char *slot, KAc
 
 KAction * KopeteStdAction::viewHistory( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "View &History..." ), KIcon( "history" ), recvr, slot, parent, name );
+	return createAction( i18n( "View &History..." ), KIcon( "view-history" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::addGroup( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "&Create Group..." ), KIcon( "folder" ), recvr, slot, parent, name );
+	return createAction( i18n( "&Create Group..." ), KIcon( "folder-new" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::changeMetaContact( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "Cha&nge Meta Contact..." ), KIcon( "move" ), recvr, slot, parent, name );
+	return createAction( i18n( "Cha&nge Meta Contact..." ), KIcon( "transform-move" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::deleteContact( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
