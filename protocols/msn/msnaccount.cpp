@@ -1235,10 +1235,13 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 		if(mc)
 		{ //if the contact has been added this way, it's because the other user added us.
 		  // don't forgot to set the reversed flag  (Bug 114400)
-			MSNContact *c=dynamic_cast<MSNContact*>(mc->contacts().first());
-			if(c && c->contactId() == handle )
+			if ( !mc->contacts().isEmpty() )
 			{
-				c->setReversed( true );
+				MSNContact *c=dynamic_cast<MSNContact*>(mc->contacts().first());
+				if(c && c->contactId() == handle )
+				{
+					c->setReversed( true );
+				}
 			}
 		}
 	}
