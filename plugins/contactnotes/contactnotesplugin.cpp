@@ -39,7 +39,7 @@ ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const QVariantList & /*
 	else
 		pluginStatic_ = this;
 
-	KAction *m_actionEdit=new KAction( KIcon("identity"), i18n("&Notes"), this );
+	KAction *m_actionEdit=new KAction( KIcon("user-identity"), i18n("&Notes"), this );
         actionCollection()->addAction( "editContactNotes", m_actionEdit );
 	connect(m_actionEdit, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()));
 

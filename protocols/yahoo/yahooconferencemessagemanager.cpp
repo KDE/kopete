@@ -49,7 +49,7 @@ YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoo
 
 	m_yahooRoom = yahooRoom;
 
-	m_actionInvite = new KAction( KIcon("kontact_contacts"), i18n( "&Invite others" ), this );
+	m_actionInvite = new KAction( KIcon("contact"), i18n( "&Invite others" ), this ); // icon should probably be "contact-invite", but let's leave it at "contact" for easier greppability
         actionCollection()->addAction( "yahooInvite", m_actionInvite );
 	connect ( m_actionInvite, SIGNAL( triggered ( bool ) ), this, SLOT( slotInviteOthers() ) );
 

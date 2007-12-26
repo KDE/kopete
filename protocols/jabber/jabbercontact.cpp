@@ -152,13 +152,13 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	actionAuthorization->addAction(requestAuthAction);
 	
 	removeAuthAction = new KAction( this );
-	removeAuthAction->setIcon( (KIcon("mail_delete") ) );
+	removeAuthAction->setIcon( (KIcon("edit-delete") ) );
 	removeAuthAction->setText( i18n ("Remove Authorization From") );
 	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
 	connect(removeAuthAction, SIGNAL(triggered(bool)), SLOT(slotRemoveAuth()));
 	actionAuthorization->addAction(removeAuthAction);
 
-	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("kopeteavailable"), i18n ("Set Availability"), this );
+	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n ("Set Availability"), this );
 
 #define KACTION(status, text, name, slot) \
 	{ KAction *tmp = new KAction(this); \
@@ -176,7 +176,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 #undef KACTION
 
-	KActionMenu *actionSelectResource = new KActionMenu ( KIcon("connect_no"), i18n ("Select Resource"), this );
+	KActionMenu *actionSelectResource = new KActionMenu ( KIcon("connect-no"), i18n ("Select Resource"), this );
 
 	// if the contact is online, display the resources we have for it,
 	// otherwise disable the menu

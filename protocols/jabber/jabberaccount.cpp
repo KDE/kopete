@@ -203,14 +203,14 @@ KActionMenu *JabberAccount::actionMenu ()
 	m_actionMenu->addAction( action );
 
 	action = new KAction( this );
-	action->setIcon( ( KIcon("mail_new") ) );
+	action->setIcon( ( KIcon("mail-message-new") ) );
 	action->setText( i18n ("Send Raw Packet to Server...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSendRaw()) );
 	action->setEnabled( isConnected() );
 	m_actionMenu->addAction( action );
 
 	action = new KAction( this );
-	action->setIcon( ( KIcon("identity") ) );
+	action->setIcon( ( KIcon("document-properties") ) );
 	action->setText( i18n ("Edit User Info...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotEditVCard()) );
 	action->setEnabled( isConnected() );

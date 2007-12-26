@@ -74,7 +74,7 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 
 	m_logging = actionCollection()->addAction( "qqLoggingChat" );
 	m_logging->setText( i18n( "Archiving Status" ) );
-        m_logging->setIcon( KIcon( "logchat" ) );
+        m_logging->setIcon( KIcon( "utilities-log-viewer" ) );
         connect( m_logging, SIGNAL( triggered() ), this, SLOT( slotShowArchiving() ) );
 	updateArchiving();
 

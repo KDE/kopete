@@ -271,7 +271,7 @@ void KopeteMetaContactLVI::initLVI()
 	mIsBlinkIcon = false;
 
 	//if ( !mBlinkIcon )
-	//	mBlinkIcon = new QPixmap( KGlobal::iconLoader()->loadIcon( QLatin1String( "newmsg" ), KIconLoader::Small ) );
+	//	mBlinkIcon = new QPixmap( KGlobal::iconLoader()->loadIcon( QLatin1String( "mail-unread" ), KIconLoader::Small ) );
 
 	slotConfigChanged();  // this calls slotIdleStateChanged(), which sets up the constituent components, spacing, fonts and indirectly, the contact icon
 	slotDisplayNameChanged();
@@ -1086,7 +1086,7 @@ void KopeteMetaContactLVI::slotBlink()
 		if ( haveEvent )
 		{
 			if(d->metaContactIcon)
-				d->metaContactIcon->setPixmap( SmallIcon( "newmsg", d->iconSize ) );
+				d->metaContactIcon->setPixmap( SmallIcon( "mail-unread", d->iconSize ) );
 		}
 		else
 		{

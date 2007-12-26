@@ -63,11 +63,11 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	buzzAction->setShortcut( KShortcut("Ctrl+G") );
 	connect( buzzAction, SIGNAL( triggered(bool) ), this, SLOT( slotBuzzContact() ) );
 
-	KAction *sendFileAction = new KAction( KIcon("attach"), i18n( "Send File" ), this );
+	KAction *sendFileAction = new KAction( KIcon("mail-attachment"), i18n( "Send File" ), this );
         actionCollection()->addAction( "yahooSendFile", sendFileAction );
 	connect( sendFileAction, SIGNAL( triggered() ), this, SLOT( slotSendFile() ) );
 
-	KAction *userInfoAction = new KAction( KIcon("idea"), i18n( "Show User Info" ), this );
+	KAction *userInfoAction = new KAction( KIcon("help-about"), i18n( "Show User Info" ), this );
         actionCollection()->addAction( "yahooShowInfo",  userInfoAction) ;
 	connect( userInfoAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserInfo() ) );
 

@@ -425,7 +425,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 
 	if ( !m_inviteConferenceAction )
 	{
-		m_inviteConferenceAction = new KAction( KIcon("kontact_contacts"), i18n( "&Invite to Conference" ), this );
+		m_inviteConferenceAction = new KAction( KIcon("contact"), i18n( "&Invite to Conference" ), this ); // icon should probably be "contact-invite", but let's leave it at "contact" for easier greppability
 		connect( m_inviteConferenceAction, SIGNAL( triggered(bool) ), this, SLOT( inviteConference() ) );
 	}
 	if ( isReachable() )
@@ -437,7 +437,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 
 	if ( !m_profileAction )
 	{
-		m_profileAction = new KAction( KIcon("kontact_notes"), i18n( "&View Yahoo Profile" ), this );
+		m_profileAction = new KAction( KIcon("help-about"), i18n( "&View Yahoo Profile" ), this );
 		connect( m_profileAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserProfile() ) );
 	}
 	m_profileAction->setEnabled( true );

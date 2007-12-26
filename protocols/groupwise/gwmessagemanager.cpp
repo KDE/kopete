@@ -82,7 +82,7 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 	QObject::connect( m_secure, SIGNAL( triggered( bool ) ), SLOT( slotShowSecurity() ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
 
-	m_logging = new KAction( KIcon( "logchat" ), i18n( "Archiving Status" ), 0 ); // "gwLoggingChat"
+	m_logging = new KAction( KIcon( "utilities-log-viewer" ), i18n( "Archiving Status" ), 0 ); // "gwLoggingChat"
 	QObject::connect( m_secure, SIGNAL( triggered( bool ) ),  SLOT( slotShowArchiving() ) );
 	updateArchiving();
 

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Service
-Icon=html
+Icon=text-html
 X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_webpresence

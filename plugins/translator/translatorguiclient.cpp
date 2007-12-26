@@ -44,7 +44,7 @@ TranslatorGUIClient::TranslatorGUIClient( Kopete::ChatSession *parent )
 
 	m_manager = parent;
 
-	KAction *translate = new KAction( KIcon("locale"), i18n( "Translate" ), this );
+	KAction *translate = new KAction( KIcon("preferences-desktop-locale"), i18n( "Translate" ), this );
         actionCollection()->addAction( "translateCurrentMessage", translate );
 	connect( translate, SIGNAL( triggered(bool) ), this, SLOT( slotTranslateChat() ) );
 	translate->setShortcut( KShortcut(Qt::CTRL + Qt::Key_T) );

@@ -219,7 +219,7 @@ KopeteWindow::KopeteWindow( QWidget *parent )
 	GlobalStatusMessageIconLabel *label = new GlobalStatusMessageIconLabel( statusBarMessage );
 	label->setCursor( QCursor( Qt::PointingHandCursor ) );
 	label->setFixedSize( 16, 16 );
-	label->setPixmap( SmallIcon( "object-edit-status-message" ) );
+	label->setPixmap( SmallIcon( "im-status-message-edit" ) );
 	connect(label, SIGNAL(iconClicked( const QPoint& )),
 		this, SLOT(slotGlobalStatusMessageIconClicked( const QPoint& )));
 	label->setToolTip( i18n( "Global status message" ) );
@@ -315,7 +315,7 @@ void KopeteWindow::initActions()
 	connect( d->addContactMapper, SIGNAL( mapped( const QString & ) ),
 		 this, SLOT( slotAddContactDialogInternal( const QString & ) ) );
 
-	d->actionDisconnect = new KAction( KIcon("connect-no"), i18n( "Offline" ), this );
+	d->actionDisconnect = new KAction( KIcon("user-offline"), i18n( "Offline" ), this );
         actionCollection()->addAction( "DisconnectAll", d->actionDisconnect );
 	connect( d->actionDisconnect, SIGNAL( triggered(bool) ), this, SLOT( slotDisconnectAll() ) );
 	d->actionDisconnect->setEnabled(false);
@@ -325,24 +325,24 @@ void KopeteWindow::initActions()
         actionCollection()->addAction( "ExportContacts", d->actionExportContacts );
 	connect( d->actionExportContacts, SIGNAL( triggered(bool) ), this, SLOT( showExportDialog() ) );
 
-	d->actionSetAway = new KAction( KIcon("kopeteaway"), i18n("&Away"), this );
+	d->actionSetAway = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-away"), i18n("&Away"), this );
         actionCollection()->addAction( "SetAwayAll", d->actionSetAway );
 	connect( d->actionSetAway, SIGNAL( triggered(bool) ), this, SLOT( slotGlobalAway() ) );
 
-	d->actionSetBusy = new KAction( KIcon("kopeteaway"), i18n("&Busy"), this );
+	d->actionSetBusy = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-busy"), i18n("&Busy"), this );
         actionCollection()->addAction( "SetBusyAll", d->actionSetBusy );
 	connect( d->actionSetBusy, SIGNAL( triggered(bool) ), this, SLOT( slotGlobalBusy() ) );
 
 
-	d->actionSetInvisible = new KAction( KIcon("kopeteavailable"), i18n( "&Invisible" ), this );
+	d->actionSetInvisible = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n( "&Invisible" ), this );
         actionCollection()->addAction( "SetInvisibleAll", d->actionSetInvisible );
 	connect( d->actionSetInvisible, SIGNAL( triggered(bool) ), this, SLOT( slotSetInvisibleAll() ) );
 
-	d->actionSetAvailable = new KAction( KIcon("kopeteavailable"), i18n("&Online"), this );
+	d->actionSetAvailable = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n("&Online"), this );
         actionCollection()->addAction( "SetAvailableAll", d->actionSetAvailable );
 	connect( d->actionSetAvailable, SIGNAL( triggered(bool) ), this, SLOT( slotGlobalAvailable() ) );
 
-	d->actionStatusMenu = new KActionMenu( KIcon("kopeteavailable"), i18n("&Set Status"),
+	d->actionStatusMenu = new KActionMenu( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n("&Set Status"),
                                              this );
 	d->actionStatusMenu->setIconText( i18n( "Status" ) );
 	actionCollection()->addAction( "Status", d->actionStatusMenu );
@@ -405,7 +405,7 @@ void KopeteWindow::initActions()
 	searchLabelAction->setDefaultWidget( searchLabel );
 
 	// KActionMenu for selecting the global status message
-	KActionMenu * setStatusMessageMenu = new KActionMenu( KIcon("kopeteeditstatusmessage"), i18n( "Set Status Message" ), this );
+	KActionMenu * setStatusMessageMenu = new KActionMenu( KIcon("im-status-message-edit"), i18n( "Set Status Message" ), this );
 	setStatusMessageMenu->setIconText( i18n( "&Message" ) );
 	actionCollection()->addAction( "SetStatusMessage", setStatusMessageMenu );
 	setStatusMessageMenu->setDelayed( false );
@@ -810,23 +810,26 @@ void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 	switch ( identity->onlineStatus() ) {
 		case Kopete::OnlineStatus::Offline:
 		case Kopete::OnlineStatus::Connecting:
-			pm = SmallIcon( "user-offline" );
+			pm = SmallIcon( "user-identity", 0, KIconLoader::DefaultState,
+                      QStringList() << QString() << "user-offline" );
 			break;
 		case Kopete::OnlineStatus::Invisible:
 		case Kopete::OnlineStatus::Away:
-			pm = SmallIcon( "user-away" );
+			pm = SmallIcon( "user-identity", 0, KIconLoader::DefaultState,
+                      QStringList() << QString() << "user-away" );
 			break;
 		case Kopete::OnlineStatus::Online:
-			pm = SmallIcon( "user-online" );
+			pm = SmallIcon( "user-identity", 0, KIconLoader::DefaultState,
+                      QStringList() << QString() << "user-online" );
 			break;
 		case Kopete::OnlineStatus::Unknown:
-			pm = SmallIcon( "user" );
+			pm = SmallIcon( "user-identity" );
 			break;
 	}
 
 	// No Pixmap found, fallback to Unknown
 	if( pm.isNull() )
-		i->setPixmap( SmallIcon( "user" ) );
+		i->setPixmap( SmallIcon( "user-identity" ) );
 	else
 		i->setPixmap( pm );
 	makeTrayToolTip();
@@ -1004,7 +1007,7 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	newMessageBoxLayout->setMargin( 1 );
 	newMessageBoxLayout->addSpacing( 2 );
 	QLabel * newMessagePix = new QLabel( newMessageBox );
-	newMessagePix->setPixmap( SmallIcon( "object-edit" ) );
+	newMessagePix->setPixmap( SmallIcon( "im-status-message-edit" ) );
 	newMessageBoxLayout->addWidget( newMessagePix );
 	newMessageBoxLayout->addSpacing( 3 );
 	QLabel * newMessageLabel = new QLabel( i18n( "Add" ), newMessageBox );
@@ -1021,13 +1024,13 @@ void KopeteWindow::slotBuildStatusMessageMenu()
 	newMessagePix->setFocusPolicy( Qt::ClickFocus );
 	connect( d->newMessageEdit, SIGNAL( returnPressed() ), SLOT( slotNewStatusMessageEntered() ) );
 
-	KAction *newMessageAction = new KAction( KIcon("object-edit"), i18n("New Message..."), d->globalStatusMessageMenu );
+	KAction *newMessageAction = new KAction( KIcon("im-status-message-edit"), i18n("New Message..."), d->globalStatusMessageMenu );
 	newMessageAction->setDefaultWidget( newMessageBox );
 
 	d->globalStatusMessageMenu->addAction( newMessageAction );
 	//END
 
-	d->globalStatusMessageMenu->addAction( SmallIcon( "list-remove" ), i18n( "No Message" ) );
+	d->globalStatusMessageMenu->addAction( SmallIcon( "edit-delete" ), i18n( "No Message" ) );
 	d->globalStatusMessageMenu->addSeparator();
 
 	QStringList awayMessages = Kopete::Away::getInstance()->getMessages();

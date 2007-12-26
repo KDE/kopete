@@ -40,19 +40,19 @@ KopeteIdentityStatusBarIcon::KopeteIdentityStatusBarIcon( Kopete::Identity *iden
 	m_identity = identity;
 
 	// initialize actions
-	m_actionSetOnline = new KAction( KIcon("kopeteavailable"), i18n("&Online"), this );
+	m_actionSetOnline = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n("&Online"), this );
 	m_actionSetOnline->setData((uint)Kopete::OnlineStatusManager::Online);
 
-	m_actionSetAway = new KAction( KIcon("kopeteaway"), i18n("&Away"), this );
+	m_actionSetAway = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-away"), i18n("&Away"), this );
 	m_actionSetAway->setData((uint)Kopete::OnlineStatusManager::Away);
 
-	m_actionSetBusy = new KAction( KIcon("kopeteaway"), i18n("&Busy"), this );
+	m_actionSetBusy = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-away"), i18n("&Busy"), this );
 	m_actionSetBusy->setData((uint)Kopete::OnlineStatusManager::Busy);
 
-	m_actionSetInvisible = new KAction( KIcon("kopeteavailable"), i18n( "&Invisible" ), this );
+	m_actionSetInvisible = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n( "&Invisible" ), this );
 	m_actionSetInvisible->setData((uint)Kopete::OnlineStatusManager::Invisible);
 
-	m_actionSetOffline = new KAction( KIcon("connect-no"), i18n( "Offline" ), this );
+	m_actionSetOffline = new KAction( KIcon("user-offline"), i18n( "Offline" ), this );
 	m_actionSetOffline->setData((uint)Kopete::OnlineStatusManager::Offline);
 
 	// create the actionGroup
