@@ -334,7 +334,7 @@ void KopeteWindow::initActions()
 	connect( d->actionSetBusy, SIGNAL( triggered(bool) ), this, SLOT( slotGlobalBusy() ) );
 
 
-	d->actionSetInvisible = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n( "&Invisible" ), this );
+	d->actionSetInvisible = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-invisible"), i18n( "&Invisible" ), this );
         actionCollection()->addAction( "SetInvisibleAll", d->actionSetInvisible );
 	connect( d->actionSetInvisible, SIGNAL( triggered(bool) ), this, SLOT( slotSetInvisibleAll() ) );
 
@@ -805,7 +805,6 @@ void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
 	// over one protocol
 	i->setToolTip( identity->toolTip() );
 
-	// FIXME: should add the status to the icon
 	QPixmap pm;
 	switch ( identity->onlineStatus() ) {
 		case Kopete::OnlineStatus::Offline:
@@ -814,6 +813,9 @@ void KopeteWindow::slotIdentityStatusIconChanged( Kopete::Identity *identity )
                       QStringList() << QString() << "user-offline" );
 			break;
 		case Kopete::OnlineStatus::Invisible:
+      pm = SmallIcon( "user-identity", 0, KIconLoader::DefaultState,
+                      QStringList() << QString() << "user-invisible" );
+      break;
 		case Kopete::OnlineStatus::Away:
 			pm = SmallIcon( "user-identity", 0, KIconLoader::DefaultState,
                       QStringList() << QString() << "user-away" );

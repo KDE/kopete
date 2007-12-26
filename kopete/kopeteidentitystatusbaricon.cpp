@@ -49,7 +49,7 @@ KopeteIdentityStatusBarIcon::KopeteIdentityStatusBarIcon( Kopete::Identity *iden
 	m_actionSetBusy = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-away"), i18n("&Busy"), this );
 	m_actionSetBusy->setData((uint)Kopete::OnlineStatusManager::Busy);
 
-	m_actionSetInvisible = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n( "&Invisible" ), this );
+	m_actionSetInvisible = new KAction( KIcon("user-identity", 0, QStringList() << QString() << "user-invisible"), i18n( "&Invisible" ), this );
 	m_actionSetInvisible->setData((uint)Kopete::OnlineStatusManager::Invisible);
 
 	m_actionSetOffline = new KAction( KIcon("user-offline"), i18n( "Offline" ), this );
