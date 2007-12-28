@@ -106,7 +106,7 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 	d->mainWidget.setupUi(this);
 
 	// use icons on buttons
-	d->mainWidget.buttonAddAvatar->setIcon( KIcon("edit-add") );
+	d->mainWidget.buttonAddAvatar->setIcon( KIcon("list-add") );
 	d->mainWidget.buttonRemoveAvatar->setIcon( KIcon("edit-delete") );
 
 	// Connect signals/slots
