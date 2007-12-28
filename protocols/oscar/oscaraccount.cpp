@@ -505,11 +505,9 @@ QTextCodec* OscarAccount::contactCodec( const QString& contactName ) const
 
 void OscarAccount::updateBuddyIcon( const QString &path )
 {
-	if ( path.isEmpty() )
-	{
-		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
-	}
-	else
+	myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
+
+	if ( !path.isEmpty() )
 	{
 		QImage image( path );
 		if ( image.isNull() )
