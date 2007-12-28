@@ -169,7 +169,7 @@ void IdentityStatusWidget::load()
 		d->photoPath = d->identity->property(props->photo()).value().toString();
 		d->ui.photo->setIcon( QIcon( d->photoPath ) );
 	} else {
-		d->ui.photo->setIcon( KIcon( "user" ) );
+		d->ui.photo->setIcon( KIcon( "user-identity" ) );
     }
 
 	d->ui.identityName->setText(d->identity->label());

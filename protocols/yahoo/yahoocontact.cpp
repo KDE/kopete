@@ -425,7 +425,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 
 	if ( !m_inviteConferenceAction )
 	{
-		m_inviteConferenceAction = new KAction( KIcon("contact"), i18n( "&Invite to Conference" ), this ); // icon should probably be "contact-invite", but let's leave it at "contact" for easier greppability
+		m_inviteConferenceAction = new KAction( KIcon("x-office-contact"), i18n( "&Invite to Conference" ), this ); // icon should probably be "contact-invite", but that doesn't exist... please request an icon on http://techbase.kde.org/index.php?title=Projects/Oxygen/Missing_Icons
 		connect( m_inviteConferenceAction, SIGNAL( triggered(bool) ), this, SLOT( inviteConference() ) );
 	}
 	if ( isReachable() )
@@ -437,7 +437,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 
 	if ( !m_profileAction )
 	{
-		m_profileAction = new KAction( KIcon("help-about"), i18n( "&View Yahoo Profile" ), this );
+		m_profileAction = new KAction( KIcon("document-preview"), i18n( "&View Yahoo Profile" ), this );
 		connect( m_profileAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserProfile() ) );
 	}
 	m_profileAction->setEnabled( true );
