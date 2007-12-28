@@ -31,7 +31,6 @@
 #include "kopeteviewmanager.h"
 #include "kopetebehaviorsettings.h"
 
-#include <kactioncollection.h>
 #include <kconfig.h>
 #include <ktabwidget.h>
 #include <kdebug.h>
@@ -43,7 +42,6 @@
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
-#include <kstandardaction.h>
 //#include <ksyntaxhighlighter.h>
 
 
@@ -404,10 +402,6 @@ void ChatView::updateChatState( KopeteTabState newState )
 void ChatView::setMainWindow( KopeteChatWindow* parent )
 {
 	m_mainWindow = parent;
-
-	// init actions
-	KStandardAction::copy( this, SLOT(copy()), m_mainWindow->actionCollection());
-	KStandardAction::close( this, SLOT(closeView()), m_mainWindow->actionCollection());
 }
 
 void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
