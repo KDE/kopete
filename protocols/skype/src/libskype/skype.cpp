@@ -76,7 +76,7 @@ class SkypePrivate {
 		bool mark;
 		///The skype account this connection belongs to
 		SkypeAccount &account;
-		///Should we show the message that Skype died? It if off when going offline, this removes that onnoying message when logging off and skype finishes first.
+		///Should we show the message that Skype died? It is off when going offline, this removes that onnoying message when logging off and skype finishes first.
 		bool showDeadMessage;
 		///Do we automatically scan for unread messages on login?
 		bool scanForUnread;

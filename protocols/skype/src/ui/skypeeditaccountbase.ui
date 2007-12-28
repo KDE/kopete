@@ -137,7 +137,7 @@
                                     <number>0</number>
                                 </property>
                                 <property name="text">
-                                    <string>&lt;p align="left"&gt;This is just a bridge to external running skype. This hase some consequences, like you need running instance of skype and thet only one skype account is possible&lt;/p&gt;</string>
+                                    <string>&lt;p align="left"&gt;This is just a bridge to external running skype. This has some consequences, like you need running instance of skype and the only one skype account is possible&lt;/p&gt;</string>
                                 </property>
                                 <property name="textFormat">
                                     <enum>AutoText</enum>
@@ -310,7 +310,7 @@
                             <string>Launches DBus when not running</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>This will start session DBus if connection is set to session and it is not running. The prefered way is to set it in startup script, thought, so this if off by default.</string>
+                            <string>This will start session DBus if connection is set to session and it is not running. The prefered way is to set it in startup script, thought, so this is off by default.</string>
                         </property>
                     </widget>
                     <widget class="QLayoutWidget">
@@ -591,10 +591,10 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                             <bool>true</bool>
                         </property>
                         <property name="toolTip" stdset="0">
-                            <string>Show call control window for all cals</string>
+                            <string>Show call control window for all calls</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>This will show a call control window for every call (both incoming and outgoing). If it is off, you can call from Kopete, byt you have to control that call from Skype.</string>
+                            <string>This will show a call control window for every call (both incoming and outgoing). If it is off, you can call from Kopete, but you have to control that call from Skype.</string>
                         </property>
                     </widget>
                     <widget class="QLayoutWidget">
@@ -636,7 +636,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                                     <string>Auto close the call control window</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>This will close tha call control window automatically when the call finishes</string>
+                                    <string>This will close the call control window automatically when the call finishes</string>
                                 </property>
                             </widget>
                             <spacer>
@@ -767,10 +767,10 @@ By default, kopete provides kopete as its name, but if you suspect another appli
                             <bool>true</bool>
                         </property>
                         <property name="toolTip" stdset="0">
-                            <string>If this is enabled, Kopete keeps track of wether the Skype is running.</string>
+                            <string>If this is enabled, Kopete keeps track of whether the Skype is running.</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>This keeps track of wether Skype is running. Turning this off makes only sence it you're trying to get some not-flooded debug output.</string>
+                            <string>This keeps track of whether Skype is running. Turning this off makes only sense if you're trying to get some not-flooded debug output.</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox">
@@ -990,7 +990,7 @@ Note that it will freeze kopete for the time.</string>
                                     <string>Onl&amp;y For Last Call</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
-                                    <string>Ususally makes no difference, just when there are some other calls on hold, it is executend only for the last ended one.</string>
+                                    <string>Ususally makes no difference, just when there are some other calls on hold, it is executed only for the last ended one.</string>
                                 </property>
                             </widget>
                         </hbox>
