@@ -133,7 +133,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 
-	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("connection-established"), i18n ("Authorization"), this);
+	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("network-connect"), i18n ("Authorization"), this);
 
 	KAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
 	
@@ -176,7 +176,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 #undef KACTION
 
-	KActionMenu *actionSelectResource = new KActionMenu ( KIcon("connect-no"), i18n ("Select Resource"), this );
+	KActionMenu *actionSelectResource = new KActionMenu ( i18n ("Select Resource"), this );
 
 	// if the contact is online, display the resources we have for it,
 	// otherwise disable the menu
