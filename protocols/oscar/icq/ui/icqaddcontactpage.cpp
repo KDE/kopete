@@ -19,25 +19,14 @@
 
 #include <ctype.h>
 
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qcheckbox.h>
-#include <qlineedit.h>
-#include <qtabwidget.h>
-#include <qlabel.h>
-#include <QShowEvent>
-#include <QVBoxLayout>
-
 #include <kdebug.h>
-#include <kiconloader.h>
-#include <klocale.h>
-#include <kpushbutton.h>
 #include <kmessagebox.h>
 
 #include "ui_icqadd.h"
 #include "icqaccount.h"
-#include "icqprotocol.h"
 #include "icqsearchdialog.h"
+
+#include "oscarutils.h"
 
 
 ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent)
@@ -77,12 +66,12 @@ bool ICQAddContactPage::apply(Kopete::Account* , Kopete::MetaContact *parentCont
 
 	if ( addUI->icqRadioButton->isChecked() )
 	{
-		QString contactId = addUI->icqEdit->text();
+		QString contactId = Oscar::normalize( addUI->icqEdit->text() );
 		return mAccount->addContact( contactId, parentContact, Kopete::Account::ChangeKABC );
 	}
 	else if ( addUI->aimRadioButton->isChecked() )
 	{
-		QString contactId = addUI->aimEdit->text();
+		QString contactId = Oscar::normalize( addUI->aimEdit->text() );
 		return mAccount->addContact( contactId, parentContact, Kopete::Account::ChangeKABC );
 	}
 	return false;
