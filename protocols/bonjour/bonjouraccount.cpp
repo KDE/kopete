@@ -195,36 +195,6 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 			this, SLOT ( receivedMessage( const QString & ) ) );
 }
 
-// FIXME: Remove Avahi Dependencies
-QString BonjourAccount::resolveHostName(const QString &hostname)
-{
-	QDBusInterface iface("org.freedesktop.Avahi", "/", "org.freedesktop.Avahi.Server", QDBusConnection::systemBus());
-
-	QList<QVariant> list;
-	list << -1 << -1 << hostname << 0 << (unsigned int ) 0;
-
-	QDBusMessage reply = iface.callWithArgumentList(QDBus::Block, "ResolveHostName", list);
-
-	if (reply.type() == QDBusMessage::ReplyMessage)
-		return reply.arguments()[4].toString();
-	else
-		return QString();
-}
-
-// FIXME: Remove Avahi Dependencies
-QString BonjourAccount::getLocalHostName()
-{
-	QDBusInterface iface("org.freedesktop.Avahi", "/", "org.freedesktop.Avahi.Server", QDBusConnection::systemBus());
-
-	QDBusMessage reply = iface.call(QDBus::Block, "GetHostName");
-
-	if (reply.type() == QDBusMessage::ReplyMessage)
-		return reply.arguments()[0].toString();
-	else
-		return QString();
-
-}
-
 void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 {
 	pointer->resolve();
