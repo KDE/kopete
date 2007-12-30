@@ -78,7 +78,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ),
 		SLOT( slotKopeteGroupRemoved( Kopete::Group * ) ) );
 
-	m_openInboxAction = new KAction( KIcon("mail-inbox"), i18n( "Open Inbo&x..." ), this );
+	m_openInboxAction = new KAction( KIcon("mail-folder-inbox"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect( m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()) );
 

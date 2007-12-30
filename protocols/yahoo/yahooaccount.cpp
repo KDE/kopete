@@ -85,7 +85,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_webcam = 0;
 	m_chatChatSession = 0;
 
-	m_openInboxAction = new KAction( KIcon("mail-inbox"), i18n( "Open Inbo&x..." ), this );
+	m_openInboxAction = new KAction( KIcon("mail-folder-inbox"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect(m_openInboxAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenInbox() ) );
 	m_openYABAction = new KAction( KIcon("x-office-address-book"), i18n( "Open &Addressbook..." ), this );
