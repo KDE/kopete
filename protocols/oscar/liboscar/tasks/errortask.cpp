@@ -50,7 +50,8 @@ bool ErrorTask::take( Transfer* transfer )
 	{
 		Buffer* buffer = transfer->buffer();
 		//get the error code
-		kDebug(OSCAR_RAW_DEBUG) << "Error code is " << buffer->getWord();
+		Oscar::WORD errorCode = buffer->getWord();
+		kDebug(OSCAR_RAW_DEBUG) << "Error code is " << errorCode;
 		TLV t = buffer->getTLV();
 		if ( t.type == 0x0008 && t.length > 0 )
 		{

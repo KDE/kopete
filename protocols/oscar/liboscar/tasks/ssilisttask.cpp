@@ -91,9 +91,12 @@ void SSIListTask::handleContactListReply()
 	QList<TLV> tlvList;
 
 	Buffer* buffer = transfer()->buffer();
-	kDebug(OSCAR_RAW_DEBUG) << "SSI Protocol version: " << buffer->getByte();
+	Oscar::BYTE protocolVersion = buffer->getByte();
 	Oscar::WORD ssiItems = buffer->getWord();
+
+	kDebug(OSCAR_RAW_DEBUG) << "SSI Protocol version: " << protocolVersion;
 	kDebug(OSCAR_RAW_DEBUG) << "Number of items in this SSI packet: " << ssiItems;
+
 	Oscar::WORD parsedItems;
 	for ( parsedItems = 1; parsedItems <= ssiItems; ++parsedItems )
 	{

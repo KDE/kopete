@@ -374,7 +374,8 @@ void UserDetails::fill( Buffer * buffer )
 							if ( b.bytesAvailable() >= 4 && b.getWord() == 0x0001 )
 							{
 								b.skipBytes( 2 );
-								kDebug(OSCAR_RAW_DEBUG) << "Encoding:" << b.getBSTR();
+								QByteArray encoding = b.getBSTR();
+								kDebug(OSCAR_RAW_DEBUG) << "Encoding:" << encoding;
 							}
 						}
 						else
