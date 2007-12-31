@@ -19,6 +19,7 @@ set(kopete_bonjour_PART_SRCS
    bonjourfakeserver.cpp 
    bonjourincomingmessage.cpp 
    avahi-bonjour.cpp
+   bonjourcontactconnection.cpp
    ui/bonjourwebcamdialog.cpp 
 )
 

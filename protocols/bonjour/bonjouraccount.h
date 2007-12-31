@@ -20,6 +20,7 @@
 
 #include <QByteArray>
 #include <QTcpServer>
+#include <QList>
 
 #include <kopeteaccount.h>
 
@@ -28,6 +29,7 @@
 
 #include "bonjourcontact.h"
 #include "bonjourwebcamdialog.h"
+#include "bonjourcontactconnection.h"
 
 class KActionMenu;
 namespace Kopete 
@@ -99,6 +101,11 @@ class BonjourAccount : public Kopete::Account
 	 */
 	void wipeOutContact(Kopete::Contact *c);
 	void wipeOutAllContacts();
+
+	/*
+	 * Big List of Open Connections, who we don't know is at the other end
+	 */
+	QList <BonjourContactConnection *> unknownConnections;
 
 public:
 	BonjourAccount( BonjourProtocol *parent, const QString& accountID );

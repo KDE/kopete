@@ -34,6 +34,7 @@
 #include "bonjourcontact.h"
 #include "bonjourfakeserver.h"
 #include "bonjourprotocol.h"
+#include "bonjourcontactconnection.h"
 
 
 BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountID )
@@ -411,9 +412,9 @@ void BonjourAccount::newIncomingConnection()
 	// Get Next Connection
 	QTcpSocket *sock = localServer->nextPendingConnection();
 
-	QList <BonjourContact *> matches = getContactsByAddress (sock->peerAddress());
+	BonjourContactConnection *bcc = new BonjourContactConnection(sock);
 
-	kDebug()<<"No of Matches for Address: "<<matches.size();	
+	unknownConnections << bcc;
 }
 
 #include "bonjouraccount.moc"
