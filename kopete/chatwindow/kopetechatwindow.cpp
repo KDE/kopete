@@ -419,11 +419,11 @@ void KopeteChatWindow::initActions(void)
 	KStandardAction::paste( this, SLOT(slotPaste()), coll);
 
 	KAction* action;
-	action = new KAction( KIcon("character-set"), i18n( "Set Default &Font..." ), coll );
+	action = new KAction( KIcon("preferences-desktop-font"), i18n( "Set Default &Font..." ), coll );
         coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFont()) );
 
-	action = new KAction( KIcon("draw-freehand"), i18n( "Set Default Text &Color..." ), coll );
+	action = new KAction( KIcon("color-line"), i18n( "Set Default Text &Color..." ), coll );
         coll->addAction( "format_fgcolor", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFgColor()) );
 
@@ -456,7 +456,7 @@ void KopeteChatWindow::initActions(void)
 	QAction *toggleParticipantsAction = m_participantsWidget->toggleViewAction( );
 	toggleParticipantsAction->setText( i18n( "Show Participants" ) );
 	toggleParticipantsAction->setIconText(i18n( "Participants" ));
-	toggleParticipantsAction->setIcon(KIcon( "fileview-split" ) );
+	toggleParticipantsAction->setIcon(KIcon( "system-users" ) );
 	coll->addAction ( "show_participants_widget", toggleParticipantsAction );
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll );
