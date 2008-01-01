@@ -19,6 +19,8 @@ set(kotr_LIB_SRCS otrlchatinterface.cpp otrlconfinterface.cpp )
 
 kde4_add_library(kotr SHARED ${kotr_LIB_SRCS} )
 
+kde4_add_ui_files(kotr_LIB_SRCS privkeypopupui.ui)
+
 target_link_libraries(kotr kopete kdeui ${QT_QT3SUPPORT_LIBRARY} Qt3Support ${KDE4_KDECORE_LIBS} otr )
 
 set_target_properties(kotr PROPERTIES VERSION 1.0.0 SOVERSION 1 )
@@ -29,9 +31,10 @@ install(TARGETS kotr DESTINATION ${LIB_INSTALL_DIR} )
 set(kcm_kopete_otr_PART_SRCS
   ${kotr_LIB_SRCS} otrpreferences.cpp )
 
-kde4_add_ui_files(kcm_kopete_otr_PART_SRCS otrprefs.ui )
+kde4_add_ui_files(kcm_kopete_otr_PART_SRCS otrprefs.ui)
 
-kde4_add_kcfg_files( kcm_kopete_otr_PART_SRCS kopete_otr.kcfgc )
+kde4_add_kcfg_files( kcm_kopete_otr_PART_SRCS ${kotr_PART_SRCS} 
+kopete_otr.kcfgc )
 
 kde4_add_plugin(kcm_kopete_otr ${kcm_kopete_otr_PART_SRCS})
 

@@ -25,11 +25,13 @@
 
 #include <qapplication.h>
 #include <qeventloop.h>
+#include <qwidget.h>
 //Added by qt3to4:
 #include <Q3ValueList>
 
 #include <kopetechatsession.h>
 #include <kopeteaccount.h>
+#include "kopeteuiglobal.h"
 
 #include <kdebug.h>
 #include <kmessagebox.h>
@@ -41,8 +43,7 @@
 #include "otrlconfinterface.h"
 #include "otrlchatinterface.h"
 #include "otrplugin.h"
-//#include "privkeypopup.h"
-
+#include "ui_privkeypopupui.h"
 
 
 /*********************** Konstruktor/Destruktor **********************/
@@ -85,23 +86,23 @@ bool OtrlConfInterface::hasPrivFingerprint( QString accountId, QString protocol 
 
 
 void OtrlConfInterface::generateNewPrivKey( QString accountId, QString protocol ){
-#warning Port me!
-//	PrivKeyPopup *popup = new PrivKeyPopup( preferencesDialog, i18n("Generating private key"),  Qt::WStyle_Dialog | Qt::WStyle_StaysOnTop );
-//	PrivKeyPopup *popup = new PrivKeyPopup( preferencesDialog );
-//	KAnimWidget *anim = new KAnimWidget( "kde", 72, popup->animFrame, "kopete" );
-//	anim->start();
-//	anim->show();
+#warning Avoid closing the window while generating private key!
+	QWidget *popupwidget = new QWidget(preferencesDialog, Qt::Dialog);
+	Ui::PrivKeyPopupUI *popup = new Ui::PrivKeyPopupUI( );
+	popup->setupUi( popupwidget );
+//	popupwidget->setCloseLock( true );
+	popupwidget->show();
+	popupwidget->activateWindow();
+	popupwidget->raise();
 
-//	popup->setCloseLock( true );
-//	popup->show();
-	KMessageBox::information(preferencesDialog, "Bla");
 	KeyGenThread *keyGenThread = new KeyGenThread ( accountId, protocol );
 	keyGenThread->start();
 	while( !keyGenThread->wait(100) ){
-//		qApp->eventLoop()->processEvents(QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers, 100);
+		qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers, 100);
 	}
-//	popup->setCloseLock( false );
-//	popup->close();
+
+//	popupwidget->setCloseLock( false );
+	popupwidget->close();
 }
 
 QList<QStringList> OtrlConfInterface::readAllFingerprints(){
@@ -147,7 +148,6 @@ QList<QStringList> OtrlConfInterface::readAllFingerprints(){
 
 void OtrlConfInterface::verifyFingerprint( QString strFingerprint, bool trust ){
 	Fingerprint *fingerprint;
-
 	fingerprint = findFingerprint( strFingerprint );
 
 	if( fingerprint != 0 ){
@@ -156,10 +156,9 @@ void OtrlConfInterface::verifyFingerprint( QString strFingerprint, bool trust ){
 		} else {
 			otrl_context_set_trust( fingerprint, NULL );
 		}
-//		kdDebug() << "Writing fingerprints" << endl;
 		otrl_privkey_write_fingerprints( userstate, QString(QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints").toLocal8Bit() );
 	} else {
-//		kdDebug() << "could not find fingerprint" << endl;
+		kdDebug() << "could not find fingerprint" << endl;
 	}
 }
 
@@ -210,7 +209,7 @@ Fingerprint *OtrlConfInterface::findFingerprint( QString strFingerprint ){
 bool OtrlConfInterface::isEncrypted( QString strFingerprint ){
 	Fingerprint *fingerprint;
 	Fingerprint *tmpFingerprint;
-	Fingerprint *foundFingerprint;
+	Fingerprint *foundFingerprint = NULL;
 	ConnContext *context;
 	ConnContext *foundContext = NULL;
 

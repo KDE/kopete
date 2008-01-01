@@ -47,7 +47,7 @@ private slots: // Public slots
 	void showPrivFingerprint(int accountnr);
 	void verifyFingerprint();
 	void fillFingerprints();
-	void updateButtons(int row, int col);
+	void updateButtons(int row, int col, int prevRow, int prevCol);
 	void forgetFingerprint();
 
 };

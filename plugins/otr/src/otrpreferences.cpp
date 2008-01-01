@@ -65,10 +65,11 @@ K_EXPORT_PLUGIN(OTRPreferencesFactory ( "kcm_kopete_otr" ))
 OTRPreferences::OTRPreferences(QWidget *parent, const QVariantList &args)
 		: KCModule(OTRPreferencesFactory::componentData(), parent, args)
 {
-//	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
+	QVBoxLayout *layout = new QVBoxLayout( this ) ;
 	QWidget *widget = new QWidget(this);
 	preferencesDialog = new Ui::OTRPrefsUI();
 	preferencesDialog->setupUi( widget );
+	layout->addWidget( widget );
 	
 	addConfig( KopeteOtrKcfg::self(), widget );
 	KopeteOtrKcfg::self()->readConfig();
@@ -81,7 +82,7 @@ OTRPreferences::OTRPreferences(QWidget *parent, const QVariantList &args)
 	connect( preferencesDialog->cbKeys, SIGNAL(activated(int)), SLOT(showPrivFingerprint(int)));
 	connect( preferencesDialog->btVerify, SIGNAL(clicked()), SLOT(verifyFingerprint()));
 	connect( preferencesDialog->twSettings, SIGNAL(currentChanged(QWidget *)), SLOT(fillFingerprints()));
-	connect( preferencesDialog->tbFingerprints, SIGNAL(currentChanged(int, int)), SLOT(updateButtons(int, int)));
+	connect( preferencesDialog->tbFingerprints, SIGNAL(currentCellChanged(int, int, int, int)), SLOT(updateButtons(int, int, int, int)));
 	connect( preferencesDialog->btForget, SIGNAL( clicked() ), SLOT( forgetFingerprint() ) );
 
 	int index = 0;
@@ -113,7 +114,7 @@ OTRPreferences::~OTRPreferences(){
 void OTRPreferences::generateFingerprint()
 {
 	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts();
-
+ 
 	if( (accounts.isEmpty())){
 		return;
 	}
@@ -141,9 +142,7 @@ void OTRPreferences::fillFingerprints(){
 	QList<QStringList>::iterator it;
 	int j = 0;
 
-kdDebug() << "*******************************************************************************************************************************************************************************************************"<< endl;
-
-
+//	preferencesDialog->tbFingerprints->setSortingEnabled(false);
 	for( it = list.begin(); it != list.end(); it++ ){
 		preferencesDialog->tbFingerprints->setRowCount( preferencesDialog->tbFingerprints->rowCount() +1 );
  		(*it)[j*5] = OtrlChatInterface::self()->formatContact((*it)[j*5]);
@@ -153,27 +152,28 @@ kdDebug() << "******************************************************************
 		}
 		j++;
 	}
-	updateButtons( preferencesDialog->tbFingerprints->currentRow(), preferencesDialog->tbFingerprints->currentColumn() );
+//	preferencesDialog->tbFingerprints->setSortingEnabled(true);
+	updateButtons( preferencesDialog->tbFingerprints->currentRow(), preferencesDialog->tbFingerprints->currentColumn(), 0, 0 );
 }
 
 void OTRPreferences::verifyFingerprint(){
 
 	int doVerify = KMessageBox::questionYesNo( 
 		this, 
-		i18n("Please contact %1 via another secure way and verify that the following Fingerprint is correct:").arg(preferencesDialog->tbFingerprints->takeItem( preferencesDialog->tbFingerprints->currentRow(), 0 )->text()) + "\n\n" + preferencesDialog->tbFingerprints->takeItem( preferencesDialog->tbFingerprints->currentRow(), 3 )->text() + "\n\n" + i18n("Are you sure you want to trust this fingerprint?"), i18n("Verify fingerprint")  );
+		i18n("Please contact %1 via another secure way and verify that the following Fingerprint is correct:").arg(preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 0 )->text()) + "\n\n" + preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text() + "\n\n" + i18n("Are you sure you want to trust this fingerprint?"), i18n("Verify fingerprint")  );
 	
 
 	if( doVerify == KMessageBox::Yes ){
-		otrlConfInterface->verifyFingerprint( preferencesDialog->tbFingerprints->takeItem( preferencesDialog->tbFingerprints->currentRow(), 3 )->text(), true );
+		otrlConfInterface->verifyFingerprint( preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text(), true );
 	} else {
-		otrlConfInterface->verifyFingerprint( preferencesDialog->tbFingerprints->takeItem( preferencesDialog->tbFingerprints->currentRow(), 3 )->text(), false );
+		otrlConfInterface->verifyFingerprint( preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text(), false );
 	}
 	fillFingerprints();
 }
 
-void OTRPreferences::updateButtons( int row, int col ){
+void OTRPreferences::updateButtons( int row, int col, int prevRow, int prevCol ){
 	if( row != -1 ){
-		if( !otrlConfInterface->isEncrypted( preferencesDialog->tbFingerprints->takeItem( row, 3 )->text() ) ){
+		if( !otrlConfInterface->isEncrypted( preferencesDialog->tbFingerprints->item( row, 3 )->text() ) ){
 			preferencesDialog->btForget->setEnabled( true );
 		} else {
 		preferencesDialog->btForget->setEnabled( false );			
@@ -184,11 +184,11 @@ void OTRPreferences::updateButtons( int row, int col ){
 }
 
 void OTRPreferences::forgetFingerprint(){
-	if( !otrlConfInterface->isEncrypted( preferencesDialog->tbFingerprints->takeItem( preferencesDialog->tbFingerprints->currentRow(), 3 )->text() ) ){
-		otrlConfInterface->forgetFingerprint( preferencesDialog->tbFingerprints->takeItem( preferencesDialog->tbFingerprints->currentRow(), 3 )->text() );
+	if( !otrlConfInterface->isEncrypted( preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text() ) ){
+		otrlConfInterface->forgetFingerprint( preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text() );
 		fillFingerprints();
 	} else {
-		updateButtons( preferencesDialog->tbFingerprints->currentRow(), preferencesDialog->tbFingerprints->currentColumn() );
+		updateButtons( preferencesDialog->tbFingerprints->currentRow(), preferencesDialog->tbFingerprints->currentColumn(), 0, 0 );
 	}
 }
 
