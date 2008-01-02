@@ -238,23 +238,23 @@ void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intend
 	
 	if ( validity == GpgME::Signature::Ultimate || validity == GpgME::Signature::Full )
 	{
-		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;" );
+		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-high", KIconLoader::Small ) + "\">&nbsp;" );
 		msg.addClass ( "cryptography:signedvalid" );
 		kDebug ( 14303 ) << "message has fully valid signatures";
 	}
 	else if ( validity == GpgME::Signature::Marginal ) {
-		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "signature", KIconLoader::Small ) + "\">&nbsp;" );
+		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-medium", KIconLoader::Small ) + "\">&nbsp;" );
 		msg.addClass ( "cryptography:signedmarginal" );
 		kDebug ( 14303 ) << "message has marginally signatures";
 	}
 	else  {
-		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "badsignature", KIconLoader::Small ) + "\">&nbsp;" );
+		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-low", KIconLoader::Small ) + "\">&nbsp;" );
 		msg.addClass ( "crytography:signedinvalid" );
 		kDebug ( 14303 ) << "message has unverified signatures";
 	}
 	
 	if ( encrypted ) {
-		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "encrypted", KIconLoader::Small ) + "\">&nbsp;" );
+		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "object-locked", KIconLoader::Small ) + "\">&nbsp;" );
 		msg.addClass ( "cryptography:encrypted" );
 		kDebug ( 14303 ) << "message was encrypted";
 	}
