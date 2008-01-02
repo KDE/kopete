@@ -87,14 +87,9 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-//	setVideoInputParameters();
 
-//	mVideoDevicePool->startCapturing();
-//	mVideoDevicePool->getFrame();
-//	mVideoDevicePool->getImage(&qimage);
- //	if (qpixmap.fromImage(qimage,Qt::AutoColor) != NULL)
- //	if (qpixmap.fromImage(qimage,Qt::AutoColor) == true)
- //		mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
+	mVideoDevicePool->startCapturing();
+
 	connect(mVideoDevicePool, SIGNAL(deviceRegistered(const QString &) ),
 			SLOT(deviceRegistered(const QString &)) );
 	connect(mVideoDevicePool, SIGNAL(deviceUnregistered(const QString &) ),

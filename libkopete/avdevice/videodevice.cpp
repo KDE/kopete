@@ -359,7 +359,7 @@ int VideoDevice::showDeviceCapabilities()
 			<< ((V4L2_capabilities.version>>16) & 0xFF) << "."
 			<< ((V4L2_capabilities.version>> 8) & 0xFF) << "."
 			<< ((V4L2_capabilities.version    ) & 0xFF) << endl;
-		kDebug() << "libkopete (avdevice): Card: " << name;
+		kDebug() << "libkopete (avdevice): Device: " << name;
 		kDebug() << "libkopete (avdevice): Capabilities:";
 		if(V4L2_capabilities.capabilities & V4L2_CAP_VIDEO_CAPTURE)
 			kDebug() << "libkopete (avdevice):     Video capture";
@@ -378,8 +378,8 @@ int VideoDevice::showDeviceCapabilities()
 		if(V4L2_capabilities.capabilities & V4L2_CAP_AUDIO)
 			kDebug() << "libkopete (avdevice):     Audio IO";
 ;*/
-		kDebug() << "Card model: " << m_model;
-		kDebug() << "Card name : " << m_name;
+		kDebug() << "Device model: " << m_model;
+		kDebug() << "Device name : " << m_name;
 		kDebug() << "Capabilities:";
 		if(canCapture())
 			kDebug() << "    Video capture";
@@ -537,27 +537,27 @@ kDebug() << "setSize(" << newwidth << ", " << newheight << ") called.";
 		kDebug() <<  k_funcinfo << "Trying YUY422P";
 		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV422P))
 		{
-			kDebug() <<  k_funcinfo << "Card doesn't seem to support YUV422P format. Trying YUYV.";
+			kDebug() <<  k_funcinfo << "Device doesn't seem to support YUV422P format. Trying YUYV.";
 			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUYV))
 			{
-				kDebug() <<  k_funcinfo << "Card doesn't seem to support YUYV format. Trying UYVY.";
+				kDebug() <<  k_funcinfo << "Device doesn't seem to support YUYV format. Trying UYVY.";
 				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_UYVY))
 				{
-					kDebug() <<  k_funcinfo << "Card doesn't seem to support UYVY format. Trying YUV420P.";
+					kDebug() <<  k_funcinfo << "Device doesn't seem to support UYVY format. Trying YUV420P.";
 					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
 					{
-						kDebug() <<  k_funcinfo << "Card doesn't seem to support YUV420P format. Trying RGB24.";
+						kDebug() <<  k_funcinfo << "Device doesn't seem to support YUV420P format. Trying RGB24.";
 						if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
 						{
-							kDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying BGR24.";
+							kDebug() <<  k_funcinfo << "Device doesn't seem to support RGB24 format. Trying BGR24.";
 							if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
 							{
-								kDebug() <<  k_funcinfo << "Card doesn't seem to support RGB24 format. Trying RGB32.";
+								kDebug() <<  k_funcinfo << "Device doesn't seem to support RGB24 format. Trying RGB32.";
 								if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
 								{
-									kDebug() <<  k_funcinfo << "Card doesn't seem to support RGB32 format. Trying BGR32.";
+									kDebug() <<  k_funcinfo << "Device doesn't seem to support RGB32 format. Trying BGR32.";
 									if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32))
-										kDebug() <<  k_funcinfo << "Card doesn't seem to support BGR32 format. Fallback to it is not yet implemented.";
+										kDebug() <<  k_funcinfo << "Device doesn't seem to support BGR32 format. Fallback to it is not yet implemented.";
 								}
 							}
 						}
@@ -629,7 +629,7 @@ kDebug() << "------------- width: " << V4L_videowindow.width << " Height: " << V
 //				kDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth;
 
 /*				if(-1 == xioctl(VIDIOCGFBUF,&V4L_videobuffer))
-					kDebug() << "libkopete (avdevice): VIDIOCGFBUF failed (" << errno << "): Card cannot stream";*/
+					kDebug() << "libkopete (avdevice): VIDIOCGFBUF failed (" << errno << "): Device cannot stream";*/
 
 				}
 				break;
@@ -712,7 +712,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			V4L_picture.depth   = pixelFormatDepth(newformat);
 			if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
 			{
-//				kDebug() << "Card seems to not support " << pixelFormatName(newformat) << " format. Fallback to it is not yet implemented.";
+//				kDebug() << "Device seems to not support " << pixelFormatName(newformat) << " format. Fallback to it is not yet implemented.";
 			}
 
 			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
@@ -826,7 +826,7 @@ int VideoDevice::startCapturing()
 	{
 		switch (m_io_method)
 		{
-			case IO_METHOD_NONE: // Card cannot capture frames
+			case IO_METHOD_NONE: // Device cannot capture frames
 				return EXIT_FAILURE;
 				break;
 			case IO_METHOD_READ: // Nothing to do
@@ -902,7 +902,7 @@ int VideoDevice::getFrame()
 	{
 		switch (m_io_method)
 		{
-			case IO_METHOD_NONE: // Card cannot capture frames
+			case IO_METHOD_NONE: // Device cannot capture frames
 				return EXIT_FAILURE;
 				break;
 			case IO_METHOD_READ:
@@ -1249,7 +1249,7 @@ int VideoDevice::stopCapturing()
 	{
 		switch (m_io_method)
 		{
-			case IO_METHOD_NONE: // Card cannot capture frames
+			case IO_METHOD_NONE: // Device cannot capture frames
 				return EXIT_FAILURE;
 				break;
 			case IO_METHOD_READ: // Nothing to do
@@ -1360,7 +1360,7 @@ float VideoDevice::setBrightness(float brightness)
 					kDebug() << "VIDIOCGPICT failed (" << errno << ").";
 				V4L_picture.brightness = uint(65535 * getBrightness());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-					kDebug() << "Card seems to not support adjusting image brightness. Fallback to it is not yet implemented.";
+					kDebug() << "Device seems to not support adjusting image brightness. Fallback to it is not yet implemented.";
 			}
 			break;
 #endif
@@ -1430,7 +1430,7 @@ float VideoDevice::setContrast(float contrast)
 					kDebug() << "VIDIOCGPICT failed (" << errno << ").";
 				V4L_picture.contrast = uint(65535*getContrast());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-					kDebug() << "Card seems to not support adjusting image contrast. Fallback to it is not yet implemented.";
+					kDebug() << "Device seems to not support adjusting image contrast. Fallback to it is not yet implemented.";
 			}
 		break;
 #endif
@@ -1500,7 +1500,7 @@ float VideoDevice::setSaturation(float saturation)
 					kDebug() << "VIDIOCGPICT failed (" << errno << ").";
 				V4L_picture.colour = uint(65535*getSaturation());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-					kDebug() << "Card seems to not support adjusting image saturation. Fallback to it is not yet implemented.";
+					kDebug() << "Device seems to not support adjusting image saturation. Fallback to it is not yet implemented.";
 			}
 		break;
 #endif
@@ -1570,7 +1570,7 @@ float VideoDevice::setWhiteness(float whiteness)
 					kDebug() << "VIDIOCGPICT failed (" << errno << ").";
 				V4L_picture.whiteness = uint(65535*getWhiteness());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-					kDebug() << "Card seems to not support adjusting white level. Fallback to it is not yet implemented.";
+					kDebug() << "Device seems to not support adjusting white level. Fallback to it is not yet implemented.";
 			}
 		break;
 #endif
@@ -1640,7 +1640,7 @@ float VideoDevice::setHue(float hue)
 					kDebug() << "VIDIOCGPICT failed (" << errno << ").";
 				V4L_picture.hue = uint(65535*getHue());
 				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-					kDebug() << "Card seems to not support adjusting image hue. Fallback to it is not yet implemented.";
+					kDebug() << "Device seems to not support adjusting image hue. Fallback to it is not yet implemented.";
 			}
 		break;
 #endif
