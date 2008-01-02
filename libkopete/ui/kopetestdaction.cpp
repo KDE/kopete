@@ -127,7 +127,7 @@ KAction * KopeteStdAction::deleteContact( const QObject *recvr, const char *slot
 
 KAction * KopeteStdAction::changeAlias( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "Change A&lias..." ), KIcon( "signature" ), recvr, slot, parent, name );
+	return createAction( i18n( "Change A&lias..." ), KIcon( "edit-rename" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::blockContact( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
