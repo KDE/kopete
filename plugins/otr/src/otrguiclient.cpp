@@ -68,7 +68,7 @@ OtrGUIClient::OtrGUIClient( Kopete::ChatSession *parent )
 	actionCollection()->addAction( "enable_otr", actionEnableOtr );
 	connect(actionEnableOtr, SIGNAL(triggered(bool)), this, SLOT(slotEnableOtr()));
 //	actionDisableOtr = new KAction(i18n("End OTR session"), "otr_disabled",0, this,SLOT(slotDisableOtr()), actionCollection(), "disable_otr");
-//	actionVerifyFingerprint = new KAction(i18n("Verify fingerprint"), "signature",0, this,SLOT(slotVerifyFingerprint()), actionCollection(), "verify_fingerprint");
+//	actionVerifyFingerprint = new KAction(i18n("Verify fingerprint"), "system-run",0, this,SLOT(slotVerifyFingerprint()), actionCollection(), "verify_fingerprint"); // jpetso says: please request an icon named "document-verify" or something like that, the "sign" icon is not really appropriate for this purpose imho
 
 //	otrActionMenu->addAction(actionEnableOtr);
 //	otrActionMenu->insert(actionDisableOtr);
