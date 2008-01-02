@@ -45,7 +45,7 @@ VideoDevice::VideoDevice()
 VideoDevice::~VideoDevice()
 {
 }
-
+/*
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 
 void VideoDevice::enumerateMenu (void)
@@ -69,7 +69,7 @@ void VideoDevice::enumerateMenu (void)
 	}
 }
 #endif
-
+*/
 /*!
     \fn VideoDevice::xioctl(int fd, int request, void *arg)
  */
@@ -255,7 +255,7 @@ int VideoDevice::checkDevice()
 				}
 			}
 
-
+/*
 // -----------------------------------------------------------------------------------------------------------------
 // This must turn up to be a proper method to check for controls' existence.
 CLEAR (queryctrl);
@@ -278,10 +278,10 @@ for (currentid = V4L2_CID_BASE; currentid < V4L2_CID_LASTP1; currentid++)
 
 kDebug() <<  " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) << " Values from " << queryctrl.minimum << " to " << queryctrl.maximum << " with steps of " << queryctrl.step << ". Default: " << queryctrl.default_value;
 
-/*		switch (queryctrl.type)
-		{
-			case V4L2_CTRL_TYPE_INTEGER : 
-		}*/
+//		switch (queryctrl.type)
+//		{
+//			case V4L2_CTRL_TYPE_INTEGER : 
+//		}
 		if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
 			enumerateMenu ();
 	}
@@ -319,7 +319,7 @@ kDebug() << " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) 
 //		exit (EXIT_FAILURE);
 	}
 }
-
+*/
 
 
 		}
