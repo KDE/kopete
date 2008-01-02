@@ -88,21 +88,44 @@ typedef enum
 
 typedef enum
 {
+// Packed RGB formats
 	PIXELFORMAT_NONE	= 0,
 	PIXELFORMAT_GREY	= (1 << 0),
 	PIXELFORMAT_RGB332	= (1 << 1),
-	PIXELFORMAT_RGB555	= (1 << 2),
-	PIXELFORMAT_RGB555X	= (1 << 3),
+	PIXELFORMAT_RGB444	= (1 << 2),
+	PIXELFORMAT_RGB555	= (1 << 3),
 	PIXELFORMAT_RGB565	= (1 << 4),
-	PIXELFORMAT_RGB565X	= (1 << 5),
-	PIXELFORMAT_RGB24	= (1 << 6),
+	PIXELFORMAT_RGB555X	= (1 << 5),
+	PIXELFORMAT_RGB565X	= (1 << 6),
 	PIXELFORMAT_BGR24	= (1 << 7),
-	PIXELFORMAT_RGB32	= (1 << 8),
+	PIXELFORMAT_RGB24	= (1 << 8),
 	PIXELFORMAT_BGR32	= (1 << 9),
-	PIXELFORMAT_YUYV	= (1 << 10),
-	PIXELFORMAT_UYVY	= (1 << 11),
-	PIXELFORMAT_YUV420P	= (1 << 12),
-	PIXELFORMAT_YUV422P	= (1 << 13)
+	PIXELFORMAT_RGB32	= (1 << 10),
+
+// Bayer RGB format
+	PIXELFORMAT_SBGGR8	= (1 << 11),
+
+// YUV formats
+	PIXELFORMAT_YUYV	= (1 << 11),
+	PIXELFORMAT_UYVY	= (1 << 12),
+	PIXELFORMAT_YUV420P	= (1 << 13),
+	PIXELFORMAT_YUV422P	= (1 << 14),
+
+// Compressed formats
+	PIXELFORMAT_JPEG	= (1 << 15),
+	PIXELFORMAT_MPEG	= (1 << 16),
+
+// Reserved formats
+	PIXELFORMAT_DV		= (1 << 17),
+	PIXELFORMAT_ET61X251	= (1 << 18),
+	PIXELFORMAT_HI240	= (1 << 19),
+	PIXELFORMAT_HM12	= (1 << 20),
+	PIXELFORMAT_MJPEG	= (1 << 21),
+	PIXELFORMAT_PWC1	= (1 << 22),
+	PIXELFORMAT_PWC2	= (1 << 23),
+	PIXELFORMAT_SN9C10X	= (1 << 24),
+	PIXELFORMAT_WNVA	= (1 << 25)
+
 //	PIXELFORMAT_ALL		= 0x00003FFF
 } pixel_format;
 
@@ -256,6 +279,9 @@ public:
 	struct v4l2_crop crop;
 	struct v4l2_format fmt;
 //	struct v4l2_input m_input;
+	struct v4l2_queryctrl queryctrl;
+	struct v4l2_querymenu querymenu;
+	void enumerateMenu (void);
 #endif
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;

@@ -46,6 +46,30 @@ VideoDevice::~VideoDevice()
 {
 }
 
+#ifdef V4L2_CAP_VIDEO_CAPTURE
+
+void VideoDevice::enumerateMenu (void)
+{
+	kDebug() <<  "  Menu items:";
+
+	memset (&querymenu, 0, sizeof (querymenu));
+	querymenu.id = queryctrl.id;
+
+	for (querymenu.index = queryctrl.minimum; querymenu.index <= queryctrl.maximum; querymenu.index++)
+	{
+		if (0 == xioctl (VIDIOC_QUERYMENU, &querymenu))
+		{
+			kDebug() <<  "  " << QString::fromLocal8Bit((const char*)querymenu.name);
+                }
+		else
+		{
+			perror ("VIDIOC_QUERYMENU");
+			exit (EXIT_FAILURE);
+		}
+	}
+}
+#endif
+
 /*!
     \fn VideoDevice::xioctl(int fd, int request, void *arg)
  */
@@ -230,6 +254,72 @@ int VideoDevice::checkDevice()
 					}
 				}
 			}
+
+
+// -----------------------------------------------------------------------------------------------------------------
+// This must turn up to be a proper method to check for controls' existence.
+CLEAR (queryctrl);
+// v4l2_queryctrl may zero the .id in some cases, even if the IOCTL returns EXIT_SUCCESS (tested with a bttv card, when testing for V4L2_CID_AUDIO_VOLUME).
+// As of 6th Aug 2007, according to the V4L2 specification version 0.21, this behavior is undocumented, and the example 1-8 code found at
+// http://www.linuxtv.org/downloads/video4linux/API/V4L2_API/spec/x519.htm fails because of this behavior with a bttv card.
+
+int currentid = V4L2_CID_BASE;
+
+kDebug() << "Checking CID controls";
+
+for (currentid = V4L2_CID_BASE; currentid < V4L2_CID_LASTP1; currentid++)
+//for (queryctrl.id = 9963776; queryctrl.id < 9963800; queryctrl.id++)
+{
+	queryctrl.id = currentid;
+	if (0 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
+	{
+		if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+			continue;
+
+kDebug() <<  " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) << " Values from " << queryctrl.minimum << " to " << queryctrl.maximum << " with steps of " << queryctrl.step << ". Default: " << queryctrl.default_value;
+
+/*		switch (queryctrl.type)
+		{
+			case V4L2_CTRL_TYPE_INTEGER : 
+		}*/
+		if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
+			enumerateMenu ();
+	}
+	else
+	{
+		if (errno == EINVAL)
+			continue;
+
+		perror ("VIDIOC_QUERYCTRL");
+//		exit (EXIT_FAILURE);
+	}
+}
+
+kDebug() << "Checking CID private controls";
+
+for (currentid = V4L2_CID_PRIVATE_BASE;; currentid++)
+{
+	queryctrl.id = currentid;
+	if ( 0 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
+	{
+		if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+			continue;
+
+kDebug() << " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) << " Values from " << queryctrl.minimum << " to " << queryctrl.maximum << " with steps of " << queryctrl.step << ". Default: " << queryctrl.default_value;
+
+		if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
+			enumerateMenu ();
+	}
+	else
+	{
+		if (errno == EINVAL)
+			break;
+
+		perror ("VIDIOC_QUERYCTRL");
+//		exit (EXIT_FAILURE);
+	}
+}
+
 
 
 		}
@@ -534,30 +624,30 @@ kDebug() << "setSize(" << newwidth << ", " << newheight << ") called.";
 	if(isOpen())
 	{
 // It should not be there. It must remain in a completely distict place, cause this method should not change the pixelformat.
-		kDebug() <<  k_funcinfo << "Trying YUY422P";
+		kDebug() <<  "Trying YUY422P";
 		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV422P))
 		{
-			kDebug() <<  k_funcinfo << "Device doesn't seem to support YUV422P format. Trying YUYV.";
+			kDebug() <<  "Device doesn't seem to support YUV422P format. Trying YUYV.";
 			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUYV))
 			{
-				kDebug() <<  k_funcinfo << "Device doesn't seem to support YUYV format. Trying UYVY.";
+				kDebug() <<  "Device doesn't seem to support YUYV format. Trying UYVY.";
 				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_UYVY))
 				{
-					kDebug() <<  k_funcinfo << "Device doesn't seem to support UYVY format. Trying YUV420P.";
+					kDebug() <<  "Device doesn't seem to support UYVY format. Trying YUV420P.";
 					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
 					{
-						kDebug() <<  k_funcinfo << "Device doesn't seem to support YUV420P format. Trying RGB24.";
+						kDebug() <<  "Device doesn't seem to support YUV420P format. Trying RGB24.";
 						if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
 						{
-							kDebug() <<  k_funcinfo << "Device doesn't seem to support RGB24 format. Trying BGR24.";
+							kDebug() <<  "Device doesn't seem to support RGB24 format. Trying BGR24.";
 							if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
 							{
-								kDebug() <<  k_funcinfo << "Device doesn't seem to support RGB24 format. Trying RGB32.";
+								kDebug() <<  "Device doesn't seem to support RGB24 format. Trying RGB32.";
 								if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
 								{
-									kDebug() <<  k_funcinfo << "Device doesn't seem to support RGB32 format. Trying BGR32.";
+									kDebug() <<  "Device doesn't seem to support RGB32 format. Trying BGR32.";
 									if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32))
-										kDebug() <<  k_funcinfo << "Device doesn't seem to support BGR32 format. Fallback to it is not yet implemented.";
+										kDebug() <<  "Device doesn't seem to support BGR32 format. Fallback to it is not yet implemented.";
 								}
 							}
 						}
@@ -1330,15 +1420,15 @@ float VideoDevice::setBrightness(float brightness)
 				{
 					if (errno != EINVAL)
 					{
-						kDebug() <<  k_funcinfo << "VIDIOC_QUERYCTRL failed (" << errno << ").";
+						kDebug() <<  "VIDIOC_QUERYCTRL failed (" << errno << ").";
 					} else
 					{
-						kDebug() << k_funcinfo << "Device doesn't support the Brightness control.";
+						kDebug() << "Device doesn't support the Brightness control.";
 					}
 				} else
 				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
 				{
-					kDebug() << k_funcinfo << "Device doesn't support the Brightness control.";
+					kDebug() << "Device doesn't support the Brightness control.";
 				} else
 				{
 					CLEAR (control);
@@ -1347,7 +1437,7 @@ float VideoDevice::setBrightness(float brightness)
 
 					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
 					{
-						kDebug() <<  k_funcinfo << "VIDIOC_S_CTRL failed (" << errno << ").";
+						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
 					}
 				}
 			}
@@ -1400,15 +1490,15 @@ float VideoDevice::setContrast(float contrast)
 				{
 					if (errno != EINVAL)
 					{
-						kDebug() <<  k_funcinfo << "VIDIOC_QUERYCTRL failed (" << errno << ").";
+						kDebug() <<  "VIDIOC_QUERYCTRL failed (" << errno << ").";
 					} else
 					{
-						kDebug() << k_funcinfo << "Device doesn't support the Contrast control.";
+						kDebug() << "Device doesn't support the Contrast control.";
 					}
 				} else
 				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
 				{
-					kDebug() << k_funcinfo << "Device doesn't support the Contrast control.";
+					kDebug() << "Device doesn't support the Contrast control.";
 				} else
 				{
 					CLEAR (control);
@@ -1417,7 +1507,7 @@ float VideoDevice::setContrast(float contrast)
 
 					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
 					{
-						kDebug() <<  k_funcinfo << "VIDIOC_S_CTRL failed (" << errno << ").";
+						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
 					}
 				}
 			}
@@ -1470,15 +1560,15 @@ float VideoDevice::setSaturation(float saturation)
 				{
 					if (errno != EINVAL)
 					{
-						kDebug() <<  k_funcinfo << "VIDIOC_QUERYCTRL failed (" << errno << ").";
+						kDebug() <<  "VIDIOC_QUERYCTRL failed (" << errno << ").";
 					} else
 					{
-						kDebug() << k_funcinfo << "Device doesn't support the Saturation control.";
+						kDebug() << "Device doesn't support the Saturation control.";
 					}
 				} else
 				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
 				{
-					kDebug() << k_funcinfo << "Device doesn't support the Saturation control.";
+					kDebug() << "Device doesn't support the Saturation control.";
 				} else
 				{
 					CLEAR (control);
@@ -1487,7 +1577,7 @@ float VideoDevice::setSaturation(float saturation)
 
 					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
 					{
-						kDebug() <<  k_funcinfo << "VIDIOC_S_CTRL failed (" << errno << ").";
+						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
 					}
 				}
 			}
@@ -1540,15 +1630,15 @@ float VideoDevice::setWhiteness(float whiteness)
 				{
 					if (errno != EINVAL)
 					{
-						kDebug() <<  k_funcinfo << "VIDIOC_QUERYCTRL failed (" << errno << ").";
+						kDebug() <<  "VIDIOC_QUERYCTRL failed (" << errno << ").";
 					} else
 					{
-						kDebug() << k_funcinfo << "Device doesn't support the Whiteness control.";
+						kDebug() << "Device doesn't support the Whiteness control.";
 					}
 				} else
 				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
 				{
-					kDebug() << k_funcinfo << "Device doesn't support the Whiteness control.";
+					kDebug() << "Device doesn't support the Whiteness control.";
 				} else
 				{
 					CLEAR (control);
@@ -1557,7 +1647,7 @@ float VideoDevice::setWhiteness(float whiteness)
 
 					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
 					{
-						kDebug() <<  k_funcinfo << "VIDIOC_S_CTRL failed (" << errno << ").";
+						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
 					}
 				}
 			}
@@ -1610,15 +1700,15 @@ float VideoDevice::setHue(float hue)
 				{
 					if (errno != EINVAL)
 					{
-						kDebug() <<  k_funcinfo << "VIDIOC_QUERYCTRL failed (" << errno << ").";
+						kDebug() <<  "VIDIOC_QUERYCTRL failed (" << errno << ").";
 					} else
 					{
-						kDebug() << k_funcinfo << "Device doesn't support the Hue control.";
+						kDebug() << "Device doesn't support the Hue control.";
 					}
 				} else
 				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
 				{
-					kDebug() << k_funcinfo << "Device doesn't support the Hue control.";
+					kDebug() << "Device doesn't support the Hue control.";
 				} else
 				{
 					CLEAR (control);
@@ -1627,7 +1717,7 @@ float VideoDevice::setHue(float hue)
 
 					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
 					{
-						kDebug() <<  k_funcinfo << "VIDIOC_S_CTRL failed (" << errno << ").";
+						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
 					}
 				}
 			}
