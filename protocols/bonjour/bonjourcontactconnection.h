@@ -19,6 +19,10 @@
 
 #include <QTcpSocket>
 #include <QString>
+#include <QHostAddress>
+#include <QByteArray>
+
+#include "kopetemessage.h"
 
 enum BonjourConnectionState {
 	BonjourConnectionNewOutgoing,		// New Outgoing Stream
@@ -67,6 +71,26 @@ class BonjourContactConnection : public QObject {
 	// Write <stream:stream> in socket
 	void sayStream();
 
+	// This Reads the Data From The Socket and emits a messageReceived (maybe)
+	void readData();
+
+	// This is Called When a <stream> is expected
+	void getStreamTag();
+
+	// This is called when we are waiting for the from
+	// and to values (incoming).
+	// FIXME: Currently unimplemented as (at least gaim) says who it is in the <stream>
+	void getWho();
+
+	// This Gets the Address of the Current Connection
+	QHostAddress getHostAddress();
+
+	// This Creates a Message
+	Kopete::Message *newMessage(Kopete::Message::MessageDirection direction);
+
+	// Void readMessage (get a message from a QByteArray
+	void readMessage(const QByteArray &data);
+
     signals:
 
 	// This Signal is Emitted when there is new data
@@ -79,6 +103,9 @@ class BonjourContactConnection : public QObject {
 	// This Signal is basically forwarding disconnect signal from socket
 	void disconnected(BonjourContactConnection *);
 
+	// Signal Emitted when a new message has been received (already formatted)
+	void messageReceived(Kopete::Message *);
+
     public slots:
 	
 	// This slot is called by the socket, to signify new data
@@ -88,10 +115,7 @@ class BonjourContactConnection : public QObject {
 	void socketDisconnected();
 
 	// Send a message
-	void say(QString message);
-
-	// Disconnect
-	void closeConnection();
+	void sendMessage(QString message);
 };
 
 #endif

@@ -137,6 +137,11 @@ public:
 	static QString resolveHostName(const QString &hostName);
 	static QString getLocalHostName();
 
+	/* Verify A User's IP Address Here
+	 * FIXME: For now it just verifies if the contact exists
+	 */
+	BonjourContact *verifyUser(BonjourContactConnection *conn, QString user);
+
 	/**
 	 * Return all Contacts at a given Address (usually 1)
 	 */
@@ -186,6 +191,11 @@ public slots:
 	 */
 	void comingOnline(DNSSD::RemoteService::Ptr pointer);
 	void goingOffline(DNSSD::RemoteService::Ptr pointer);
+
+	/**
+	 * This is called when a contact connection receives information on who it is connected to
+	 */
+	void discoveredUserName(BonjourContactConnection *conn, QString user);
 
 protected:
 	/**

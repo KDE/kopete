@@ -27,6 +27,8 @@
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
+#include "bonjourcontactconnection.h"
+
 class KAction;
 class KActionCollection;
 namespace Kopete { class Account; }
@@ -45,7 +47,7 @@ class BonjourContact : public Kopete::Contact
 	 * This includes the Hostname and the Port.
 	 * We also add a TCPSocket through which we can talk to the user
 	 */
-	QTcpSocket *socket;
+	BonjourContactConnection *connection;
 	QString remoteHostName;
 	QHostAddress remoteAddress;
 	short int remotePort;
@@ -104,6 +106,11 @@ public:
 	 */
 	const bool isRemoteAddress(const QHostAddress &host) const;
 
+	/*
+	 * This Sets the Connection
+	 */
+	void setConnection(BonjourContactConnection *);
+
 public slots:
 	/**
 	 * Transmits an outgoing message to the server 
@@ -116,6 +123,12 @@ public slots:
 	 * This displays it in the chatwindow
 	 */
 	void receivedMessage( const QString &message );
+	void receivedMessage( Kopete::Message *message );
+
+	/**
+	 * Call This Function when the connection is deleted
+	 */
+	void connectionDisconnected(BonjourContactConnection *);
 
 protected slots:
 	/**

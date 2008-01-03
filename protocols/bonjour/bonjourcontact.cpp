@@ -43,17 +43,14 @@ BonjourContact::BonjourContact( Kopete::Account* _account, const QString &unique
 
 	setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
 
-	socket = NULL;
+	connection = NULL;
 	remotePort = 0;
 }
 
 BonjourContact::~BonjourContact()
 {
-	if (socket) {
-		if (socket->isValid())
-			socket->close();
-
-		delete socket;
+	if (connection) {
+		delete connection;
 	}
 	remotePort = 0;
 }
@@ -154,6 +151,14 @@ void BonjourContact::receivedMessage( const QString &message )
 	manager()->appendMessage (newMessage);
 }
 
+void BonjourContact::receivedMessage(Kopete::Message *message)
+{
+	Kopete::ChatSession *session = manager(CanCreate);
+	session->appendMessage(*message);
+
+	delete message;
+}
+
 void BonjourContact::slotChatSessionDestroyed()
 {
 	//FIXME: the chat window was closed?  Take appropriate steps.
@@ -194,6 +199,32 @@ const bool BonjourContact::isRemoteAddress(const QHostAddress &host) const
 		return true;
 	else
 		return false;
+}
+
+void BonjourContact::setConnection(BonjourContactConnection *c)
+{
+	if (connection)
+		delete connection;
+
+	connection = c;
+
+	// We set the parent of the socket to us, so that we ensure that only we
+	// can delete the connection (and the socket hence)
+	connection->setParent(this);
+
+	connect(connection, SIGNAL(disconnected(BonjourContactConnection *)),
+			this, SLOT(connectionDisconnected(BonjourContactConnection *)));
+
+	connect(connection, SIGNAL(messageReceived(Kopete::Message *)),
+			this, SLOT(receivedMessage(Kopete::Message *)));
+}
+
+void BonjourContact::connectionDisconnected(BonjourContactConnection *c)
+{
+	if (c == connection) {
+		delete connection;
+		connection = NULL;
+	}
 }
 
 #include "bonjourcontact.moc"

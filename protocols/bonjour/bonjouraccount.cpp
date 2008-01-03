@@ -257,6 +257,8 @@ void BonjourAccount::wipeOutAllContacts()
 
 void BonjourAccount::disconnect()
 {
+	wipeOutAllContacts();
+
 	localServer->close();
 	service->stop();
 
@@ -269,8 +271,6 @@ void BonjourAccount::disconnect()
 
 	delete service;
 	service = NULL;
-
-	wipeOutAllContacts();
 
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
 	QObject::disconnect ( m_server, 0, 0, 0 );
@@ -413,8 +413,43 @@ void BonjourAccount::newIncomingConnection()
 	QTcpSocket *sock = localServer->nextPendingConnection();
 
 	BonjourContactConnection *bcc = new BonjourContactConnection(sock);
+	QObject::connect(bcc, SIGNAL(discoveredUserName(BonjourContactConnection *, QString)),
+			this, SLOT(discoveredUserName(BonjourContactConnection *, QString)));;
 
 	unknownConnections << bcc;
 }
+
+void BonjourAccount::discoveredUserName(BonjourContactConnection *conn, QString user)
+{
+	kDebug()<<"User Making Contact (unverified): "<<user;
+
+	BonjourContact *c;
+
+	if (! (c = verifyUser(conn, user))) {
+		kDebug()<<"Ignoring Unverified User: "<<user;
+		return;
+	}
+		
+	kDebug()<<"User Verified: "<<user;
+
+	unknownConnections.remove(conn);
+
+	c->setConnection(conn);
+}
+
+BonjourContact *BonjourAccount::verifyUser(BonjourContactConnection *conn, QString user)
+{
+	// First Check the User Exists
+	if (! contacts().keys().contains(user))
+		return NULL;
+
+	BonjourContact *c = (BonjourContact *) contacts()[user];
+
+	if (c->getremoteAddress() != conn->getHostAddress())
+		return NULL;
+
+	return c;
+}
+	
 
 #include "bonjouraccount.moc"
