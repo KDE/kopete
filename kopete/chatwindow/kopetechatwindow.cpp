@@ -423,11 +423,11 @@ void KopeteChatWindow::initActions(void)
         coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFont()) );
 
-	action = new KAction( KIcon("color-line"), i18n( "Set Default Text &Color..." ), coll );
+	action = new KAction( KIcon("format-stroke-color"), i18n( "Set Default Text &Color..." ), coll );
         coll->addAction( "format_fgcolor", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFgColor()) );
 
-	action = new KAction( KIcon("color-fill"), i18n( "Set &Background Color..." ), coll );
+	action = new KAction( KIcon("format-fill-color"), i18n( "Set &Background Color..." ), coll );
         coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), this, SLOT(slotSetBgColor()) );
 
