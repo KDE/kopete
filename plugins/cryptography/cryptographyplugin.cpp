@@ -95,7 +95,7 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*
 	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
 	action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
 
-	action = new KAction ( KIcon ( "kgpg-export-kgpg" ), i18n ( "&Export Public Keys To Address Book..." ), this );
+	action = new KAction ( KIcon ( "document-export-key" ), i18n ( "&Export Public Keys To Address Book..." ), this );
 	actionCollection()->addAction ( "exportKey", action );
 	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotExportSelectedMetaContactKeys() ) );
 	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
@@ -418,7 +418,7 @@ QString CryptographyPlugin::KabcKeySelector ( QString displayName, QString addre
 		ui.label->setText ( i18n ( "Cryptography plugin has found multiple encryption keys for %1 (%2) in your KDE address book. To use one of these keys, select it and choose OK.",
 		                           displayName, addresseeName ) );
 		for ( int i = 0; i < keys.count(); i++ )
-			ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ( "kgpg-key1-kopete", KIconLoader::Small ), keys[i].right ( 8 ).prepend ( "0x" ), ui.keyList ) );
+			ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ( "application-pgp-keys", KIconLoader::Small ), keys[i].right ( 8 ).prepend ( "0x" ), ui.keyList ) );
 		ui.keyList->addItems ( keys );
 		if ( dialog.exec() )
 			return ui.keyList->currentItem()->text();
