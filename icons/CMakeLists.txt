@@ -1,2 +1,1 @@
-
-kde4_install_icons( ${DATA_INSTALL_DIR}/kopete/pics )
+kde4_install_icons(${ICON_INSTALL_DIR})
