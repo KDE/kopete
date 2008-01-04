@@ -106,25 +106,26 @@ typedef enum
 	PIXELFORMAT_SBGGR8	= (1 << 11),
 
 // YUV formats
-	PIXELFORMAT_YUYV	= (1 << 11),
-	PIXELFORMAT_UYVY	= (1 << 12),
-	PIXELFORMAT_YUV420P	= (1 << 13),
-	PIXELFORMAT_YUV422P	= (1 << 14),
+	PIXELFORMAT_YUYV	= (1 << 12),
+	PIXELFORMAT_UYVY	= (1 << 13),
+	PIXELFORMAT_YUV420P	= (1 << 14),
+	PIXELFORMAT_YUV422P	= (1 << 15),
 
 // Compressed formats
-	PIXELFORMAT_JPEG	= (1 << 15),
-	PIXELFORMAT_MPEG	= (1 << 16),
+	PIXELFORMAT_JPEG	= (1 << 16),
+	PIXELFORMAT_MPEG	= (1 << 17),
 
 // Reserved formats
-	PIXELFORMAT_DV		= (1 << 17),
-	PIXELFORMAT_ET61X251	= (1 << 18),
-	PIXELFORMAT_HI240	= (1 << 19),
-	PIXELFORMAT_HM12	= (1 << 20),
-	PIXELFORMAT_MJPEG	= (1 << 21),
-	PIXELFORMAT_PWC1	= (1 << 22),
-	PIXELFORMAT_PWC2	= (1 << 23),
-	PIXELFORMAT_SN9C10X	= (1 << 24),
-	PIXELFORMAT_WNVA	= (1 << 25)
+	PIXELFORMAT_DV		= (1 << 18),
+	PIXELFORMAT_ET61X251	= (1 << 19),
+	PIXELFORMAT_HI240	= (1 << 20),
+	PIXELFORMAT_HM12	= (1 << 21),
+	PIXELFORMAT_MJPEG	= (1 << 22),
+	PIXELFORMAT_PWC1	= (1 << 23),
+	PIXELFORMAT_PWC2	= (1 << 24),
+	PIXELFORMAT_SN9C10X	= (1 << 25),
+	PIXELFORMAT_WNVA	= (1 << 26),
+	PIXELFORMAT_YYUV	= (1 << 27)
 
 //	PIXELFORMAT_ALL		= 0x00003FFF
 } pixel_format;
@@ -220,6 +221,7 @@ public:
 	int pixelFormatDepth(pixel_format pixelformat);
 	QString pixelFormatName(pixel_format pixelformat);
 	QString pixelFormatName(int pixelformat);
+	int detectPixelFormats();
 
 	__u64 signalStandardCode(signal_standard standard);
 	QString signalStandardName(signal_standard standard);
@@ -279,9 +281,9 @@ public:
 	struct v4l2_crop crop;
 	struct v4l2_format fmt;
 //	struct v4l2_input m_input;
-/*	struct v4l2_queryctrl queryctrl;
+	struct v4l2_queryctrl queryctrl;
 	struct v4l2_querymenu querymenu;
-	void enumerateMenu (void);*/
+	void enumerateMenu (void);
 #endif
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
