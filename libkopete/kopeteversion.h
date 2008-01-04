@@ -1,5 +1,5 @@
 /*
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -14,10 +14,10 @@
 #ifndef _KOPETE_VERSION_H_
 #define _KOPETE_VERSION_H_
 
-#define KOPETE_VERSION_STRING "0.40.3"
+#define KOPETE_VERSION_STRING "0.50.0"
 #define KOPETE_VERSION_MAJOR 0
-#define KOPETE_VERSION_MINOR 40
-#define KOPETE_VERSION_RELEASE 3
+#define KOPETE_VERSION_MINOR 50
+#define KOPETE_VERSION_RELEASE 0
 #define KOPETE_MAKE_VERSION( a,b,c ) (((a) << 16) | ((b) << 8) | (c))
 
 #define KOPETE_VERSION \
