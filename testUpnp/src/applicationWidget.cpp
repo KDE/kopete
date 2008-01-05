@@ -22,7 +22,7 @@ void ApplicationWidget::afficher()
 void ApplicationWidget::envoyer()
 {
 	int ret;
-	char * tmp;
+	QString tmp;
 	
 	ret = this->upnp->researchDevice();
 	text_mess->append("######################################");
@@ -41,7 +41,7 @@ void ApplicationWidget::envoyer()
 // 		item->setText(i, tr("Device"));
 // 		//treeDevice->insertTopLevelItem(i,item);
 // 	}
-	QList<char *> liste = this->upnp->viewXMLDescDoc();
+	QList<QString> liste = this->upnp->viewXMLDescDoc();
 	for(int i =0; i < liste.size(); i++)
 	{	
 		tmp = liste.last();

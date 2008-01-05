@@ -1,64 +1,71 @@
 #include "device.h"
-Device::Device(char * deviceType,
-char * friendlyName,
-char * manufacturer,
-char * manufacturerURL,
-char * modelName,
-char * UDN,
-char * modelDescription,
-char * modelNumber,
-char * serialNumber,
-char * presentationURL,
-char * UPC,
-char * DescDocURL)
+
+Device::Device()
+{
+	this->listDevice.erase(this->listDevice.begin(),this->listDevice.end());
+	this->listService.erase(this->listService.begin(),this->listService.end());
+}
+
+Device::Device(QString deviceType,
+QString friendlyName,
+QString manufacturer,
+QString manufacturerURL,
+QString modelName,
+QString UDN,
+QString modelDescription,
+QString modelNumber,
+QString serialNumber,
+QString presentationURL,
+QString UPC,
+QString DescDocURL)
 {
 	printf("CONSTRUCTEUR DEVICE\n");
 	
-	this->deviceType = deviceType;
-	this->friendlyName=friendlyName;
-	this->manufacturer=manufacturer;
-	this->manufacturerURL=manufacturerURL;
-	this->modelName=modelName;
-	this->UDN=UDN;
-	this->modelDescription=modelDescription;
-	this->modelNumber=modelNumber;
-	this->serialNumber=serialNumber;
-	this->presentationURL=presentationURL;
-	this->UPC=UPC;
-	this->DescDocURL=DescDocURL;	
+	this->m_deviceType = deviceType;
+	this->m_friendlyName=friendlyName;
+	this->m_manufacturer=manufacturer;
+	this->m_manufacturerURL=manufacturerURL;
+	this->m_modelName=modelName;
+	this->m_UDN=UDN;
+	this->m_modelDescription=modelDescription;
+	this->m_modelNumber=modelNumber;
+	this->m_serialNumber=serialNumber;
+	this->m_presentationURL=presentationURL;
+	this->m_UPC=UPC;
+	this->m_DescDocURL=DescDocURL;	
 	
 	this->listDevice.erase(this->listDevice.begin(),this->listDevice.end());
-	this->listService.erase(this->listService.begin(),this->listService.end());
-	
-	
-
-	//add under device at level one
-	//this->searchAndAddUnderDevices();
-	
+	this->listService.erase(this->listService.begin(),this->listService.end());	
 }
 
-char* Device::getDeviceType(){return this->deviceType;}
-char* Device::getFriendlyName(){return this->friendlyName;}
-char* Device::getManufacturer(){return this->manufacturer;}
-char* Device::getManufacturerURL(){return this->manufacturerURL;}
-char* Device::getModelName(){return this->modelName;}
-char* Device::getUDN(){return this->UDN;}
-char* Device::getModelDescription(){return this->modelDescription;}
-char* Device::getModelNumber(){return this->modelNumber;}
-char* Device::getSerialNumber(){return this->serialNumber;}
-char* Device::getPresentationURL(){return this->presentationURL;}
-char* Device::getUPC(){return this->UPC;}
-char* Device::getDescDocURL(){return this->DescDocURL;}
+QString Device::deviceType(){return this->m_deviceType;}
+QString Device::friendlyName(){return this->m_friendlyName;}
+QString Device::manufacturer(){return this->m_manufacturer;}
+QString Device::manufacturerURL(){return this->m_manufacturerURL;}
+QString Device::modelName(){return this->m_modelName;}
+QString Device::UDN(){return this->m_UDN;}
+QString Device::modelDescription(){return this->m_modelDescription;}
+QString Device::modelNumber(){return this->m_modelNumber;}
+QString Device::serialNumber(){return this->m_serialNumber;}
+QString Device::presentationURL(){return this->m_presentationURL;}
+QString Device::UPC(){return this->m_UPC;}
+QString Device::descDocURL(){return this->m_DescDocURL;}
 
-
-
-
-
+void Device::setDeviceType(QString deviceType){this->m_deviceType = deviceType;}
+void Device::setFriendlyName(QString friendlyName){this->m_friendlyName = friendlyName;}
+void Device::setManufacturer(QString manufacturer){this->m_manufacturer = manufacturer;}
+void Device::setManufacturerURL(QString manufacturerURL){this->m_manufacturerURL = manufacturerURL;}
+void Device::setModelName(QString modelName){this->m_modelName = modelName;}
+void Device::setUDN(QString UDN){this->m_UDN = UDN;}
+void Device::setModelDescription(QString modelDescription){this->m_modelDescription = modelDescription;}
+void Device::setModelNumber(QString modelNumber){this->m_modelNumber = modelNumber;}
+void Device::setSerialNumber(QString serialNumber){this->m_serialNumber = serialNumber;}
+void Device::setPresentationURL(QString presentationURL){this->m_presentationURL = presentationURL;}
+void Device::setUPC(QString UPC){this->m_UPC = UPC;}
+void Device::setDescDocURL(QString descDocURL){this->m_DescDocURL = descDocURL;}
 
 QList<Device> Device::getListDevice(){return this->listDevice;}
 QList<Service> Device::getListService(){return this->listService;}
-
-
 
 void Device::addDevice (Device device)
 {
@@ -66,7 +73,7 @@ void Device::addDevice (Device device)
 	this->listDevice.begin();
 	for(int i=0; i<this->listDevice.size() && !find; i++)
 	{
-		if(strcmp(device.getDeviceType(),this->listDevice.last().getDeviceType())==0)
+		if(device.deviceType() == this->listDevice.last().deviceType())
 		{
 			find=true;
 		}
@@ -86,7 +93,7 @@ void Device::addService (Service service)
 	this->listService.begin();
 	for(int i=0; i<this->listService.size() && !find; i++)
 	{
-		if(strcmp(service.getServiceType(),this->listService.last().getServiceType())==0)
+		if(service.serviceType() == this->listService.last().serviceType())
 		{
 			find=true;
 		}
@@ -101,136 +108,23 @@ void Device::addService (Service service)
 	}
 }
 
-// void Device::searchAndAddUnderDevices()
-// {
-// 	char *deviceType= NULL;
-// 	char *friendlyName= NULL;
-// 	char *manufacturer= NULL;
-// 	char *manufacturerURL= NULL;
-// 	char *modelName= NULL;
-// 	char *UDN= NULL;
-// 	char *modelDescription= NULL;
-// 	char *modelNumber= NULL;
-// 	char *serialNumber= NULL;
-// 	char *presentationURL= NULL;
-// 	char *UPC= NULL;
-// 	char *DescDocURL= NULL;
-// 	IXML_Node * xmlDoc = NULL;
-// 
-// 
-// 	IXML_Document *parent = (IXML_Document*)this->xmlDoc;
-// 	/*Device underDevice = NULL;*/	
-// 
-// 	IXML_NodeList * deviceList = ixmlDocument_getElementsByTagName(parent,"deviceList");
-// 	//verifie si il y a des deviceList
-// 	if(ixmlNodeList_length(deviceList) > 0)
-// 	{
-// 		//Recupere le premier deviceList
-// 		IXML_Node* node = ixmlNodeList_item(deviceList,0);
-// 		//je recupere les devices de la device list
-// 		IXML_NodeList* devices = ixmlNode_getChildNodes(node);
-// 		for(int i = 0;i<ixmlNodeList_length(devices);i++)
-// 		{
-// 			//recuperer le node principale d'un device
-// 			IXML_Node* childDevice = ixmlNodeList_item(devices,i);
-// 			//recupere la liste des info du device
-// 			IXML_NodeList * nChild = ixmlNode_getChildNodes(childDevice);
-// 			for(int j=0;j<ixmlNodeList_length(nChild);j++)
-// 			{
-// 				IXML_Node* n = ixmlNodeList_item(nChild,j);
-// 				if(strcmp(ixmlNode_getNodeName(n),"deviceType")==0)
-// 				{
-// 					deviceType = util_Xml_nodeValue(n);
-// 				}
-// 				if(strcmp(ixmlNode_getNodeName(n),"friendlyName")==0)
-// 				{
-// 					friendlyName = util_Xml_nodeValue(n);
-// 				}
-// 				if(strcmp(ixmlNode_getNodeName(n),"manufacturer")==0)
-// 				{
-// 					manufacturer = util_Xml_nodeValue(n);
-// 				}
-// 				if(strcmp(ixmlNode_getNodeName(n),"manufacturerURL")==0)
-// 				{
-// 					manufacturerURL = util_Xml_nodeValue(n);
-// 				}
-// 				if(strcmp(ixmlNode_getNodeName(n),"modelName")==0)
-// 				{
-// 					modelName = util_Xml_nodeValue(n);
-// 				}
-// 				if(strcmp(ixmlNode_getNodeName(n),"UDN")==0)
-// 				{
-// 					UDN = util_Xml_nodeValue(n);
-// 				}
-// 				if(strcmp(ixmlNode_getNodeName(n),"modelDescription")==0)
-// 				{
-// 					modelDescription = util_Xml_nodeValue(n);
-// 				}
-// 				if(strcmp(ixmlNode_getNodeName(n),"modelNumber")==0)
-// 				{
-// 					modelNumber = util_Xml_nodeValue(n);
-// 				}
-// 				if(strcmp(ixmlNode_getNodeName(n),"serialNumber")==0)
-// 				{
-// 					serialNumber = util_Xml_nodeValue(n);
-// 				}
-// 				if(strcmp(ixmlNode_getNodeName(n),"presentationURL")==0)
-// 				{
-// 					presentationURL = util_Xml_nodeValue(n);
-// 				}
-// 				if(strcmp(ixmlNode_getNodeName(n),"UPC")==0)
-// 				{
-// 					UPC = util_Xml_nodeValue(n);
-// 				}
-// 				if(strcmp(ixmlNode_getNodeName(n),"DescDocURL")==0)
-// 				{
-// 					DescDocURL = util_Xml_nodeValue(n);
-// 				}
-// 				if(strcmp(ixmlNode_getNodeName(n),"modelDescription")==0)
-// 				{
-// 					modelDescription = util_Xml_nodeValue(n);
-// 				}
-// 			}
-// 			//xmlDoc = ixmlNode_getOwnerDocument(childDevice);
-// 			//create device
-// 				//Device underDevice = Device(deviceType,friendlyName,manufacturer,manufacturerURL,modelName,UDN,modelDescription,modelNumber,serialNumber,presentationURL,UPC,DescDocURL,xmlDoc);
-// 			
-// 				//add device in the list
-// 				//this->addDevice(underDevice);
-// 				
-// 		}
-// 	}
-// }
-
 void Device::showDevice()
 {
 	printf("================================================================================\n");
 	printf("===                           DEVICE  DESCRIPTION                            ===\n");
 	printf("================================================================================\n");
-	printf("	Device type : %s\n",this->getDeviceType());
-	printf("	Friendly name : %s\n",this->getFriendlyName());
-	printf("	Manufacturer : %s\n",this->getManufacturer());
-	printf("	Manufacturer URL : %s\n",this->getManufacturerURL());
-	printf("	Model name : %s\n",this->getModelName());
-	printf("	UDN : %s\n",this->getUDN());
-	printf("	Model description : %s\n",this->getModelDescription());
-	printf("	Model number : %s\n",this->getModelNumber());
-	printf("	Serial number : %s\n",this->getSerialNumber());
-	printf("	Presentation URL : %s\n",this->getPresentationURL());
-	printf("	UPC : %s\n",this->getUPC());
-	printf("	DescDocURL : %s\n",this->getDescDocURL());
-// 	if(this->getXmlDoc()!=NULL)
-// 	{
-// 		printf("okkkkk\n");
-// 		IXML_NodeList* nl=ixmlDocument_getElementsByTagName(this->xmlDoc,"device" );
-// 		printf("nombre de node %d\n",ixmlNodeList_length(nl));
-// 		IXML_Node* nln = ixmlNodeList_item(nl,0);
-// 		printf("%s\n",ixmlPrintNode(nln));
-// 	}
-// 	else
-// 	{
-// 		printf("merde\n");
-// 	}
+	printf("	Device type : %s\n",this->deviceType().toLatin1().data());
+	printf("	Friendly name : %s\n",this->friendlyName().toLatin1().data());
+	printf("	Manufacturer : %s\n",this->manufacturer().toLatin1().data());
+	printf("	Manufacturer URL : %s\n",this->manufacturerURL().toLatin1().data());
+	printf("	Model name : %s\n",this->modelName().toLatin1().data());
+	printf("	UDN : %s\n",this->UDN().toLatin1().data());
+	printf("	Model description : %s\n",this->modelDescription().toLatin1().data());
+	printf("	Model number : %s\n",this->modelNumber().toLatin1().data());
+	printf("	Serial number : %s\n",this->serialNumber().toLatin1().data());
+	printf("	Presentation URL : %s\n",this->presentationURL().toLatin1().data());
+	printf("	UPC : %s\n",this->UPC().toLatin1().data());
+	printf("	DescDocURL : %s\n",this->descDocURL().toLatin1().data());
 	printf("================================================================================\n\n");
 }
 
@@ -239,6 +133,6 @@ void Device::showDeviceList()
 	this->listDevice.begin();
 	for (int i=0; i<this->listDevice.size();i++)
 	{	
-		printf("device %d : %s\n",i,this->listDevice.last().getDeviceType());
+		printf("device %d : %s\n",i,this->listDevice.last().deviceType().toLatin1().data());
 	}
 }

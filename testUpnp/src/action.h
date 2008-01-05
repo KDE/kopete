@@ -2,24 +2,25 @@
 #define _ACTION_H_
 
 #include <QList>
+#include <QString>
 
 
 typedef struct{
-	char * name;
-	char * direction;
-	char * relatedStateVariable;
+	QString name;
+	QString direction;
+	QString relatedStateVariable;
 }Argument;
 
 class Action
 {
 	private:
-		char * name;
-		QList<Argument> argumentList;
+		QString m_name;
+		QList<Argument> m_argumentList;
 	public:
-		Action(char *name);
-		void addArgument(char *name, char* direction, char* relatedStateVariable);
-		char* getName();
-		QList<Argument> getListArgument();
+		Action(QString name);
+		void addArgument(QString name, QString direction, QString relatedStateVariable);
+		QString name();
+		QList<Argument> listArgument();
 };
 
 #endif

@@ -1,12 +1,12 @@
 #include "action.h"
 
-Action::Action(char * name)
+Action::Action(QString name)
 {
-	this->name = name;
-	this->argumentList.erase(this->argumentList.begin(),this->argumentList.end());;
+	this->m_name = name;
+	this->m_argumentList.erase(this->m_argumentList.begin(),this->m_argumentList.end());;
 }
 
-void Action::addArgument(char *name, char* direction, char* relatedStateVariable)
+void Action::addArgument(QString name, QString direction, QString relatedStateVariable)
 {
 	bool find=false;
 
@@ -15,18 +15,18 @@ void Action::addArgument(char *name, char* direction, char* relatedStateVariable
 	arg.direction=direction;
 	arg.relatedStateVariable=relatedStateVariable;
 
-	this->argumentList.begin();
+	this->m_argumentList.begin();
 	//on verifie que l'argument existe pas deja
-	for(int i=0;i<this->argumentList.size() && !find;i++)
+	for(int i=0;i<this->m_argumentList.size() && !find;i++)
 	{
-		if(strcmp(this->argumentList.last().name,name)==0)
+		if(this->m_argumentList.last().name == name)
 		{
 			find=true;
 		}
 	}
 	if (find==false)
 	{
-		this->argumentList.append(arg);
+		this->m_argumentList.append(arg);
 	}
 	else
 	{
@@ -34,15 +34,15 @@ void Action::addArgument(char *name, char* direction, char* relatedStateVariable
 	}
 }
 
-char* Action::getName()
+QString Action::name()
 {
-	return this->name;
+	return this->m_name;
 }
 
 
-QList<Argument> Action::getListArgument()
+QList<Argument> Action::listArgument()
 {
-	return this->argumentList;
+	return this->m_argumentList;
 }
 
 

@@ -17,6 +17,8 @@
 #include <upnp/upnptools.h>
 
 #include <QList>
+#include <QString>
+
 #include "device.h"
 #include "sample_util.h"
 
@@ -36,7 +38,7 @@
 
 typedef struct{
 	IXML_Document * DescDoc;
-	char * location;
+	QString location;
 }DocXML;
 
 // typedef struct DeviceNodeAlias {
@@ -45,27 +47,32 @@ typedef struct{
 // 	DeviceNodeAlias * next;
 // }DeviceNode;
 
-
-
 class UpnpKopete 
 {
 	public:
 		~UpnpKopete();
 		
 		static UpnpKopete* getInstance();
-		char * getHostIp();
+		QString getHostIp();
 		unsigned short getDestPort();
+		QList<Device> mainDevices();
+      
 		int researchDevice();
-		void addDevice(IXML_Document * DescDoc,char *location);
-		void addXMLDescDoc (IXML_Document * DescDoc, char *location);
-		QList<char *> viewXMLDescDoc();
+
+		void addDevice(IXML_Document * DescDoc,QString location);
+		void addXMLDescDoc (IXML_Document * DescDoc,QString location);
+		
+		QList<QString> viewXMLDescDoc();
 		void viewListDevice();
-		QList<Device> getMainDevices();
+		
+		
 
 	private:
 		
 		static UpnpKopete * uniqueInstance;		
-		char * hostIp;
+		
+		QString deviceType;
+		QString hostIp;
 		unsigned short destPort;
 		
 
@@ -73,16 +80,9 @@ class UpnpKopete
 		
 		UpnpClient_Handle device_handle;
 		
-		char * deviceType;
-		QList<Device> mainDevices;	
-
-		UpnpKopete();	
-
 		
-		
+		QList<Device> m_mainDevices;	
 
+		UpnpKopete();
 };
-
-
-
 #endif

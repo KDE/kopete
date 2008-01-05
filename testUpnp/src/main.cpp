@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
   	fenetre.show();
 
   	return app.exec();
-	int ret;
+// 	int ret;
 // 	IXML_Document *DescDoc = ixmlLoadDocument("XML/gatedesc.xml");
 // 	if(DescDoc == NULL)
 // 	{

@@ -13,44 +13,18 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <widget class="QPushButton" name="btEnvoi" >
-    <property name="geometry" >
-     <rect>
-      <x>220</x>
-      <y>350</y>
-      <width>106</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Search</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="text_mess" >
-    <property name="geometry" >
-     <rect>
-      <x>130</x>
-      <y>0</y>
-      <width>411</width>
-      <height>321</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QTreeWidget" name="treeDevice" >
-    <property name="geometry" >
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>121</width>
-      <height>321</height>
-     </rect>
-    </property>
-    <column>
-     <property name="text" >
-      <string>1</string>
-     </property>
-    </column>
-   </widget>
+   <layout class="QHBoxLayout" >
+    <item>
+     <widget class="QTextEdit" name="text_mess" />
+    </item>
+    <item>
+     <widget class="QPushButton" name="btEnvoi" >
+      <property name="text" >
+       <string>Search</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar" >
    <property name="geometry" >
@@ -58,7 +32,7 @@
      <x>0</x>
      <y>0</y>
      <width>546</width>
-     <height>29</height>
+     <height>28</height>
     </rect>
    </property>
   </widget>

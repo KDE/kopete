@@ -14,54 +14,69 @@
 #include "util_Xml.h"
 
 #include <QList>
+#include <QString>
 
 class Device
 {
 
 	private:
-		char * deviceType;
-		char * friendlyName;
-		char * manufacturer;
-		char * manufacturerURL;
-		char * modelName;
-		char * UDN;
-		char * modelDescription;
-		char * modelNumber;
-		char * serialNumber;
-		char * presentationURL;
-		char * UPC;
+		QString m_deviceType;
+		QString m_friendlyName;
+		QString m_manufacturer;
+		QString m_manufacturerURL;
+		QString m_modelName;
+		QString m_UDN;
+		QString m_modelDescription;
+		QString m_modelNumber;
+		QString m_serialNumber;
+		QString m_presentationURL;
+		QString m_UPC;
 
-		char * DescDocURL;
+		QString m_DescDocURL;
 		
 		QList<Device> listDevice;
 		QList<Service> listService;
 
 	public:
-		Device(char * deviceType,
-			char * friendlyName,
-			char * manufacturer,
-			char * manufacturerURL,
-			char * modelName,
-			char * UDN,
-			char * modelDescription,
-			char * modelNumber,
-			char * serialNumber,
-			char * presentationURL,
-			char * UPC,
-			char * DescDocURL);
+		Device();
+		Device(QString deviceType,
+			QString friendlyName,
+			QString manufacturer,
+			QString manufacturerURL,
+			QString modelName,
+			QString UDN,
+			QString modelDescription,
+			QString modelNumber,
+			QString serialNumber,
+			QString presentationURL,
+			QString UPC,
+			QString DescDocURL);
 
-		char* getDeviceType();
-		char* getFriendlyName();
-		char* getManufacturer();
-		char* getManufacturerURL();
-		char* getModelName();
-		char* getUDN();
-		char* getModelDescription();
-		char* getModelNumber();
-		char* getSerialNumber();
-		char* getPresentationURL();
-		char* getUPC();
-		char* getDescDocURL();
+		QString deviceType();
+		QString friendlyName();
+		QString manufacturer();
+		QString manufacturerURL();
+		QString modelName();
+		QString UDN();
+		QString modelDescription();
+		QString modelNumber();
+		QString serialNumber();
+		QString presentationURL();
+		QString UPC();
+		QString descDocURL();
+
+		void setDeviceType(QString deviceType);
+		void setFriendlyName(QString friendlyName);
+		void setManufacturer(QString manufacturer);
+		void setManufacturerURL(QString manufacturerURL);
+		void setModelName(QString modelName);
+		void setUDN(QString UDN);
+		void setModelDescription(QString modelDescription);
+		void setModelNumber(QString modelNumber);
+		void setSerialNumber(QString serialNumber);
+		void setPresentationURL(QString presentationURL);
+		void setUPC(QString UPC);
+		void setDescDocURL(QString descDocURL);
 		
 		QList<Device> getListDevice();
 		QList<Service> getListService();
