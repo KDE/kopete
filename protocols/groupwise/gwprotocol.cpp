@@ -40,12 +40,12 @@
 #include "ui/gwaddcontactpage.h"
 #include "ui/gweditaccountwidget.h"
 
-typedef KGenericFactory<GroupWiseProtocol> GroupWiseProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_groupwise, GroupWiseProtocolFactory( "kopete_groupwise" )  )
+K_PLUGIN_FACTORY( GroupWiseProtocolFactory, registerPlugin<GroupWiseProtocol>(); )
+K_EXPORT_PLUGIN( GroupWiseProtocolFactory( "kopete_groupwise" ) )
 
 GroupWiseProtocol *GroupWiseProtocol::s_protocol = 0L;
 
-GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QStringList &/*args*/ )
+GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QVariantList &/*args*/ )
 	: Kopete::Protocol( GroupWiseProtocolFactory::componentData(), parent ),
 /* initialise Kopete::OnlineStatus that should be user selectable in the user interface */
 	  groupwiseOffline ( Kopete::OnlineStatus::Offline,    0,  this, GroupWise::Offline, QStringList(),

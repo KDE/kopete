@@ -37,7 +37,7 @@ class ICQProtocol : public OscarProtocol
 Q_OBJECT
 
 public:
-	ICQProtocol(QObject *parent, const QStringList &args);
+	ICQProtocol(QObject *parent, const QVariantList &args);
 	virtual ~ICQProtocol();
 
 	/**

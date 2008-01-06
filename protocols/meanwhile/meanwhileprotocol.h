@@ -36,7 +36,7 @@ class MeanwhileProtocol : public Kopete::Protocol
 {
     Q_OBJECT
 public:
-    MeanwhileProtocol(QObject *parent, const QStringList &args);
+    MeanwhileProtocol(QObject *parent, const QVariantList &args);
 
     ~MeanwhileProtocol();
 

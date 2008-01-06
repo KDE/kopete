@@ -32,10 +32,8 @@
 #include <kdialog.h>
 #include <kmessagebox.h>
 
-
-typedef KGenericFactory<AIMProtocol> AIMProtocolFactory;
-
-K_EXPORT_COMPONENT_FACTORY( kopete_aim, AIMProtocolFactory( "kopete_aim" ) )
+K_PLUGIN_FACTORY( AIMProtocolFactory, registerPlugin<AIMProtocol>(); )
+K_EXPORT_PLUGIN( AIMProtocolFactory( "kopete_aim" ) )
 
 AIMProtocol* AIMProtocol::protocolStatic_ = 0L;
 
@@ -223,7 +221,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 
 
 
-AIMProtocol::AIMProtocol(QObject *parent, const QStringList &)
+AIMProtocol::AIMProtocol(QObject *parent, const QVariantList &)
 : OscarProtocol( AIMProtocolFactory::componentData(), parent ),
 	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::PropertyTmpl::RichTextProperty)
 {

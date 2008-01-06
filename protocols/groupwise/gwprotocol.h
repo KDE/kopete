@@ -36,7 +36,7 @@ class GroupWiseProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
-	GroupWiseProtocol(QObject *parent, const QStringList &args);
+	GroupWiseProtocol(QObject *parent, const QVariantList &args);
     ~GroupWiseProtocol();
 	/**
 	 * Convert the serialised data back into a GroupWiseContact and add this
