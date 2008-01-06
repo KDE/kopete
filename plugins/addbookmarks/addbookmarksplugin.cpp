@@ -22,10 +22,10 @@
 #include "kopeteglobal.h"
 #include "kopetemetacontact.h"
 
+K_PLUGIN_FACTORY( BookmarksPluginFactory, registerPlugin<BookmarksPlugin>(); )
+K_EXPORT_PLUGIN( BookmarksPluginFactory( "kopete_addbookmarks" ) )
 
-K_EXPORT_COMPONENT_FACTORY( kopete_addbookmarks, BookmarksPluginFactory( "kopete_addbookmarks" )  )
-
-BookmarksPlugin::BookmarksPlugin(QObject *parent, const QStringList &/*args*/)
+BookmarksPlugin::BookmarksPlugin(QObject *parent, const QVariantList &/*args*/)
  : Kopete::Plugin(BookmarksPluginFactory::componentData(), parent)
 {
 	//kDebug(14501) << "plugin loading";

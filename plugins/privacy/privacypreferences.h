@@ -21,7 +21,7 @@
 #include <kcmodule.h>
 #undef KDE3_SUPPORT
 
-#include <QStringList>
+#include <QVariantList>
 
 namespace Ui { class PrivacyPrefsUI; }
 class PrivacyAccountListModel;
@@ -32,7 +32,7 @@ class PrivacyPreferences : public KCModule
 public:
 	enum SenderMode { AllowAllMessages, AllowNoMessagesExceptWhiteList, AllowAllMessagesExceptBlackList };
 
-	explicit PrivacyPreferences(QWidget *parent=0, const QStringList &args = QStringList());
+	explicit PrivacyPreferences(QWidget *parent=0, const QVariantList &args = QVariantList());
 	~PrivacyPreferences();
 
 	virtual void save();

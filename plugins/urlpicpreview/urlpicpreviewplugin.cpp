@@ -36,10 +36,10 @@
 #include "urlpicpreviewconfig.h"
 #include "kopetechatsessionmanager.h"
 
-typedef KGenericFactory<URLPicPreviewPlugin> URLPicPreviewPluginFactory;
-K_EXPORT_COMPONENT_FACTORY ( kopete_urlpicpreview, URLPicPreviewPluginFactory ( "kopete_urlpicpreview" ) )
+K_PLUGIN_FACTORY( URLPicPreviewPluginFactory, registerPlugin<URLPicPreviewPlugin>(); )
+K_EXPORT_PLUGIN( URLPicPreviewPluginFactory( "kopete_urlpicpreview" ) )
 
-URLPicPreviewPlugin::URLPicPreviewPlugin ( QObject* parent, const QStringList& /* args */ )
+URLPicPreviewPlugin::URLPicPreviewPlugin ( QObject* parent, const QVariantList& /* args */ )
 		: Kopete::Plugin ( URLPicPreviewPluginFactory::componentData(), parent ), m_pic ( NULL ), m_abortMessageCheck ( false )
 {
 
