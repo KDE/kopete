@@ -69,10 +69,10 @@
 #include <QSplitter>
 #include <kactioncollection.h>
 
-typedef KGenericFactory<EmailWindowPlugin> EmailWindowPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_emailwindow, EmailWindowPluginFactory( "kopete_emailwindow" )  )
+K_PLUGIN_FACTORY( EmailWindowPluginFactory, registerPlugin<EmailWindowPlugin>(); )
+K_EXPORT_PLUGIN( EmailWindowPluginFactory( "kopete_emailwindow" ) )
 
-EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const QStringList &) :
+EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const QVariantList &) :
 	Kopete::ViewPlugin( EmailWindowPluginFactory::componentData(), parent )
 {}
 

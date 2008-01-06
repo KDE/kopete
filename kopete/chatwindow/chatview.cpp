@@ -55,10 +55,10 @@
 #include <Q3UriDrag>
 #include <QObject>
 
-typedef KGenericFactory<ChatWindowPlugin> ChatWindowPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ChatWindowPluginFactory( "kopete_chatwindow" )  )
+K_PLUGIN_FACTORY( ChatWindowPluginFactory, registerPlugin<ChatWindowPlugin>(); )
+K_EXPORT_PLUGIN( ChatWindowPluginFactory( "kopete_chatwindow" ) )
 
-ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const QStringList &) :
+ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const QVariantList &) :
 	Kopete::ViewPlugin( ChatWindowPluginFactory::componentData(), parent )
 {}
 

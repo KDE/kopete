@@ -380,7 +380,7 @@ private:
 class ChatWindowPlugin : public Kopete::ViewPlugin
 {
 	public:
-		ChatWindowPlugin(QObject *parent, const QStringList &args);
+		ChatWindowPlugin(QObject *parent, const QVariantList &args);
 		KopeteView* createView( Kopete::ChatSession *manager );
 };
 
