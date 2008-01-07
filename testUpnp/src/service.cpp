@@ -43,8 +43,8 @@ void Service::addAllActions()
 
 void Service::addActionList(IXML_Node * actionNode)
 {
-	//creation d'une action à partir d'actionNode
-	//on récupère les paramètre et on les passe au constructeur Action
+	//we create an action from an actionNode
+	//we get parameters and give them to the Action constructor
 	printf("## add action list ##\n");
 	QString actionName;
 	QString argumentName;
@@ -57,13 +57,13 @@ void Service::addActionList(IXML_Node * actionNode)
 	printf("action Node : %s\n",util_Xml_nodeValue(node));
 	Action action = Action(QString(util_Xml_nodeValue(node)));
 
-	//tester la taille de l'actionNodeList
+	//test of the actionNodeList size
 	if (ixmlNodeList_length(actionNodeList) == 2)
 	{
 		IXML_Node * argnode = ixmlNodeList_item(actionNodeList,1);
 		IXML_NodeList * argNodeList = ixmlNode_getChildNodes(argnode);
 	
-		//tester la taille de la liste
+		// test of the list size
 		for(int i=1;i< ixmlNodeList_length(argNodeList);i++)
 		{
 			IXML_Node * subargnode = ixmlNodeList_item(argNodeList,i);

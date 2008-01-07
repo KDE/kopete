@@ -1,4 +1,5 @@
 #include "util_Xml.h"
+#include "malloc.h"
 
 char * util_Xml_nodeValue(IXML_Node* nodeptr)
 {

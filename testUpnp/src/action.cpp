@@ -16,7 +16,7 @@ void Action::addArgument(QString name, QString direction, QString relatedStateVa
 	arg.relatedStateVariable=relatedStateVariable;
 
 	this->m_argumentList.begin();
-	//on verifie que l'argument existe pas deja
+	//we check if the argument is not already existing
 	for(int i=0;i<this->m_argumentList.size() && !find;i++)
 	{
 		if(this->m_argumentList.last().name == name)

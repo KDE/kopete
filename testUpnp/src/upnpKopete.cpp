@@ -122,7 +122,7 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,QString location)
 	
 
 	IXML_NodeList * deviceList = ixmlDocument_getElementsByTagName(parent,"deviceType");
-	//verifie si il y a des deviceList
+	//checking if there is devicelists
 	if(ixmlNodeList_length(deviceList) > 0)
 	{
 		int posDevice;
@@ -134,14 +134,13 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,QString location)
 				posDevice = i;
 			}
 		}
-		//Recupere le premier deviceList
+		//get the first devicelist
 		IXML_Node* node = ixmlNodeList_item(deviceList,posDevice);
-		//je recupere les devices de la device list
+		//getting all devices from the devicelist
 		IXML_NodeList* nChild = ixmlNode_getChildNodes(ixmlNode_getParentNode(node));
 		for(int j = 0;j<ixmlNodeList_length(nChild);j++)
 		{
-			//recupere la liste des info du device
-	
+			//getting all data list from device
 			IXML_Node* n = ixmlNodeList_item(nChild,j);
 			if(strcmp(ixmlNode_getNodeName(n),"deviceType")==0)
 			{
@@ -290,7 +289,7 @@ void UpnpKopete::addXMLDescDoc (IXML_Document * DescDoc, QString location)
 	doc.DescDoc = DescDoc;
 	doc.location = location;
 	
-	//on verifie si le doc n existe pas
+	//checking if the doc is not already existing
 	this->ListDescDoc.begin();
 	while(!this->ListDescDoc.isEmpty() && !find)
 	{	
