@@ -12,6 +12,7 @@
  ***************************************************************************
 */
 
+#define QT3_SUPPORT
 #include <kpushbutton.h>
 #include <k3listview.h>
 #include <klocale.h>
@@ -22,10 +23,6 @@
 #include <kconfig.h>
 #include <qregexp.h>
 #include <qlayout.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include <Q3VBoxLayout>
-#include <QList>
 
 #include <kplugininfo.h>
 #include <kiconloader.h>

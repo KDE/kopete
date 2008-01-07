@@ -443,7 +443,7 @@ void BasicProtocol::handleDocOpen(const Parser::Event &pe)
 		int minor = 0;
 		QString verstr = atts.value("version");
 		if(!verstr.isEmpty()) {
-			int n = verstr.find('.');
+			int n = verstr.indexOf('.');
 			if(n != -1) {
 				major = verstr.mid(0, n).toInt();
 				minor = verstr.mid(n+1).toInt();
@@ -1226,7 +1226,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 			//	QCA::insertProvider(createProviderHash());
 
 			p = doc.createElement("digest");
-			Q3CString cs = id.utf8() + password.utf8();
+			Q3CString cs = id.toUtf8() + password.toUtf8();
 			p.appendChild(doc.createTextNode(QCA::Hash("sha1").hashToString(cs)));
 		}
 		else {
@@ -1585,7 +1585,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 	}
 	// server
 	else if(step == GetRequest) {
-		printf("get request: [%s], %s\n", e.namespaceURI().latin1(), e.tagName().latin1());
+		printf("get request: [%s], %s\n", e.namespaceURI().toLatin1(), e.tagName().toLatin1());
 		if(e.namespaceURI() == NS_TLS && e.localName() == "starttls") {
 			// TODO: don't let this be done twice
 

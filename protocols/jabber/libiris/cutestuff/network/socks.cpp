@@ -59,13 +59,13 @@ static QByteArray sp_create_udp(const QString &host, quint16 port, const QByteAr
 	//if(addr.setAddress(host))
 	//	return sp_set_request(addr, port, cmd1);
 
-	Q3CString h = host.utf8();
+	Q3CString h = host.toUtf8();
 	h.truncate(255);
-	h = QString::fromUtf8(h).utf8(); // delete any partial characters?
+	h = QString::fromUtf8(h).toUtf8(); // delete any partial characters?
 	int hlen = h.length();
 
 	int at = 0;
-	QByteArray a(4);
+	QByteArray a(4, '\n');
 	a[at++] = 0x00; // reserved
 	a[at++] = 0x00; // reserved
 	a[at++] = 0x00; // frag
@@ -202,7 +202,7 @@ void SocksUDP::write(const QByteArray &data)
 
 void SocksUDP::sn_activated(int)
 {
-	QByteArray buf(8192);
+	QByteArray buf(8192, '\n');
 	int actual = d->sd->readBlock(buf.data(), buf.size());
 	buf.resize(actual);
 	packetReady(buf);
@@ -227,7 +227,7 @@ void SocksUDP::sn_activated(int)
 // Version
 static QByteArray spc_set_version()
 {
-	QByteArray ver(4);
+	QByteArray ver(4, '\n');
 	ver[0] = 0x05; // socks version 5
 	ver[1] = 0x02; // number of methods
 	ver[2] = 0x00; // no-auth
@@ -237,7 +237,7 @@ static QByteArray spc_set_version()
 
 static QByteArray sps_set_version(int method)
 {
-	QByteArray ver(2);
+	QByteArray ver(2, '\n');
 	ver[0] = 0x05;
 	ver[1] = method;
 	return ver;
@@ -294,7 +294,7 @@ static QByteArray spc_set_authUsername(const Q3CString &user, const Q3CString &p
 		len1 = 255;
 	if(len2 > 255)
 		len2 = 255;
-	QByteArray a(1+1+len1+1+len2);
+	QByteArray a(1+1+len1+1+len2, '\n');
 	a[0] = 0x01; // username auth version 1
 	a[1] = len1;
 	memcpy(a.data() + 2, user.data(), len1);
@@ -305,7 +305,7 @@ static QByteArray spc_set_authUsername(const Q3CString &user, const Q3CString &p
 
 static QByteArray sps_set_authUsername(bool success)
 {
-	QByteArray a(2);
+	QByteArray a(2, '\n');
 	a[0] = 0x01;
 	a[1] = success ? 0x00 : 0xff;
 	return a;
@@ -363,13 +363,13 @@ static int sps_get_authUsername(QByteArray *from, SPSS_AUTHUSERNAME *s)
 static QByteArray sp_set_request(const QHostAddress &addr, unsigned short port, unsigned char cmd1)
 {
 	int at = 0;
-	QByteArray a(4);
+	QByteArray a(4, '\n');
 	a[at++] = 0x05; // socks version 5
 	a[at++] = cmd1;
 	a[at++] = 0x00; // reserved
-	if(addr.isIp4Addr()) {
+	if(addr.protocol() == QAbstractSocket::IPv4Protocol) {
 		a[at++] = 0x01; // address type = ipv4
-		quint32 ip4 = htonl(addr.ip4Addr());
+		quint32 ip4 = htonl(addr.toIPv4Address());
 		a.resize(at+4);
 		memcpy(a.data() + at, &ip4, 4);
 		at += 4;
@@ -377,7 +377,7 @@ static QByteArray sp_set_request(const QHostAddress &addr, unsigned short port, 
 	else {
 		a[at++] = 0x04;
 		Q_UINT8 a6[16];
-		QStringList s6 = QStringList::split(':', addr.toString(), true);
+		QStringList s6 = addr.toString().split(':', QString::KeepEmptyParts);
 		int at = 0;
 		quint16 c;
 		bool ok;
@@ -406,13 +406,13 @@ static QByteArray sp_set_request(const QString &host, quint16 port, unsigned cha
 	if(addr.setAddress(host))
 		return sp_set_request(addr, port, cmd1);
 
-	Q3CString h = host.utf8();
+	Q3CString h = host.toUtf8();
 	h.truncate(255);
-	h = QString::fromUtf8(h).utf8(); // delete any partial characters?
+	h = QString::fromUtf8(h).toUtf8(); // delete any partial characters?
 	int hlen = h.length();
 
 	int at = 0;
-	QByteArray a(4);
+	QByteArray a(4, '\n');
 	a[at++] = 0x05; // socks version 5
 	a[at++] = cmd1;
 	a[at++] = 0x00; // reserved
@@ -756,7 +756,7 @@ void SocksClient::processOutgoing(const QByteArray &block)
 #ifdef PROX_DEBUG
 				fprintf(stderr, "SocksClient: Authenticating [Username] ...\n");
 #endif
-				writeData(spc_set_authUsername(d->user.latin1(), d->pass.latin1()));
+				writeData(spc_set_authUsername(d->user.toLatin1(), d->pass.toLatin1()));
 			}
 		}
 	}
@@ -1209,7 +1209,7 @@ void SocksServer::connectionError()
 
 void SocksServer::sn_activated(int)
 {
-	QByteArray buf(8192);
+	QByteArray buf(8192, '\n');
 	int actual = d->sd->readBlock(buf.data(), buf.size());
 	buf.resize(actual);
 	QHostAddress pa = d->sd->peerAddress();

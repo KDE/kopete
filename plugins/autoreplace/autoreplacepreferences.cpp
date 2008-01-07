@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#define QT3_SUPPORT
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <q3header.h>

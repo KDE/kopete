@@ -106,7 +106,8 @@ void SrvResolver::resolve(const QString &server, const QString &type, const QStr
 	d->failed = false;
 	d->srvonly = false;
 	d->srv = QString("_") + type + "._" + proto + '.' + server;
-	d->t.start(15000, true);
+	d->t.setSingleShot(true);
+	d->t.start(15000);
 	d->qdns = new Q3Dns;
 	connect(d->qdns, SIGNAL(resultsReady()), SLOT(qdns_done()));
 	d->qdns->setRecordType(Q3Dns::Srv);
@@ -120,7 +121,8 @@ void SrvResolver::resolveSrvOnly(const QString &server, const QString &type, con
 	d->failed = false;
 	d->srvonly = true;
 	d->srv = QString("_") + type + "._" + proto + '.' + server;
-	d->t.start(15000, true);
+	d->t.setSingleShot(true);
+	d->t.start(15000);
 	d->qdns = new Q3Dns;
 	connect(d->qdns, SIGNAL(resultsReady()), SLOT(qdns_done()));
 	d->qdns->setRecordType(Q3Dns::Srv);

@@ -190,7 +190,7 @@ void cp_dump( const QByteArray &bytes )
 {
 #ifdef LIBGW_DEBUG
 	CoreProtocol::debug( QString( "contains: %1 bytes" ).arg( bytes.count() ) );
-	for ( uint i = 0; i < bytes.count(); ++i )
+	for ( int i = 0; i < bytes.count(); ++i )
 	{
 		printf( "%02x ", bytes[ i ] );
 	}

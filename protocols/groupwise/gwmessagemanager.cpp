@@ -309,7 +309,7 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 	qDeleteAll(m_inviteActions);
 	m_inviteActions.clear();
 
-	m_actionInvite->popupMenu()->clear();
+	m_actionInvite->menu()->clear();
 
 
 	foreach( Kopete::Contact * contact, account()->contacts() )
