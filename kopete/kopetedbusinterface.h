@@ -190,6 +190,21 @@ public Q_SLOTS:
 	 * @param fileUrl Url of the file to send
 	 */
 	void sendFile( const QString &displayName, const QString &fileUrl );
+
+	QString getDisplayName(const QString &contactId);
+
+	/**
+	 * @brief Retrieve the Display Name from the given contact ID
+	 * @param contactId Metacontact contactId
+	 */
+
+	bool isContactOnline(const QString &displayName);
+
+	/**
+	 * @brief Get the Online Status of the contact
+	 * @param displayName The displayName of the contact
+	 */
+
 };
 
 #endif
