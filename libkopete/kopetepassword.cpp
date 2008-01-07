@@ -137,10 +137,10 @@ public:
 			return pwd;
 		}
 
-		if ( mWallet && mWallet->readPassword( mPassword.d->configGroup, pwd ) == 0 && !pwd.isNull() )
+		if ( mWallet && mWallet->readPassword( mPassword.d->configGroup, pwd ) == 0 && !pwd.isEmpty() )
 			return pwd;
 
-		if ( mPassword.d->remembered && !mPassword.d->passwordFromKConfig.isNull() )
+		if ( mPassword.d->remembered && !mPassword.d->passwordFromKConfig.isEmpty() )
 			return mPassword.d->passwordFromKConfig;
 
 		return QString();
