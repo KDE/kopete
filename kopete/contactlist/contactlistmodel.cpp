@@ -162,12 +162,17 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 		return QVariant();
 	
 	Kopete::ContactListElement *cle=static_cast<Kopete::ContactListElement*>(index.internalPointer());
-	Kopete::Group *g=dynamic_cast<Kopete::Group*>(cle);
+	Kopete::Group *g = qobject_cast<Kopete::Group*>(cle);
+
 	if ( role == Qt::DisplayRole ) {
 		QString display;
-		if ( g ) {
-			display=i18n("%1 (%2/%3)", g->displayName(), countConnected(g), m_contacts[g].count());
-		} else {
+		if ( g )
+		{
+			display = i18n("%1 (%2/%3)", g->displayName(), countConnected(g),
+			               m_contacts[g].count());
+		}
+		else
+		{
 			Kopete::MetaContact *mc = qobject_cast<Kopete::MetaContact*>(cle);
 			if ( mc )
 				display = mc->displayName();
@@ -177,7 +182,7 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 
 	if ( role == Kopete::Items::TypeRole )
 	{
-		if (g)
+		if ( g )
 			return Kopete::Items::Group;
 		else
 			return Kopete::Items::MetaContact;
