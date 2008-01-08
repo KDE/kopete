@@ -44,7 +44,7 @@ ContactListProxyModel::~ContactListProxyModel()
 
 void ContactListProxyModel::slotConfigChanged()
 {
-	kDebug() << "config changed";
+	kDebug(14001) << "config changed";
 	reset();
 }
 
@@ -53,7 +53,7 @@ bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex 
 // 	QModelIndex current = sourceModel()->index(sourceRow, 0, sourceParent);
 // 	Kopete::MetaContact* mc = metaContactFromIndex( current );
 	
-	kDebug() << "filtering";
+	kDebug(14001) << "filtering";
 	return Kopete::AppearanceSettings::self()->showEmptyGroups();
 }
 
