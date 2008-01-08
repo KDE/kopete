@@ -134,7 +134,7 @@ bool BonjourAccount::startLocalServer()
                 else
                         port++;
 
-
+	kDebug()<<"Listening On Port: "<<listeningPort;
         return localServer->isListening();
 }
 
@@ -150,6 +150,7 @@ void BonjourAccount::startBrowse()
 	QObject::connect(browser,SIGNAL(serviceRemoved(DNSSD::RemoteService::Ptr)),
 			this,SLOT(goingOffline(DNSSD::RemoteService::Ptr)));
 
+	kDebug()<<"Starting Browser";
 	browser->startBrowse();
 }
 
@@ -175,6 +176,7 @@ void BonjourAccount::startPublish()
 
         service->setTextData(map);
 
+	kDebug()<<"Starting Publish";
         service->publish();
 }
 
@@ -205,7 +207,19 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 	if (pointer->serviceName() == fullName)			// Don't Add Ourselves
 		return;
 
-	QString display = pointer->serviceName().split("@")[0];
+        QMap <QString, QByteArray> map = pointer->textData();
+	QString cfirst = map["1st"];
+	QString clast = map["last"];
+	
+	QString display;
+	if (cfirst != "" && clast != "")
+		display = cfirst + " " + clast;
+	else if (cfirst != "")
+		display = cfirst;
+	else if (clast != "")
+		display = clast;
+	else
+		display = pointer->serviceName().split("@")[0];
 
 	Kopete::MetaContact *mc;
 
@@ -432,7 +446,7 @@ void BonjourAccount::discoveredUserName(BonjourContactConnection *conn, QString 
 		
 	kDebug()<<"User Verified: "<<user;
 
-	unknownConnections.remove(conn);
+	unknownConnections.removeAll(conn);
 
 	c->setConnection(conn);
 }
