@@ -29,7 +29,6 @@
 #include "kopetemetacontact.h"
 
 #include "bonjouraccount.h"
-#include "bonjourfakeserver.h"
 #include "bonjourprotocol.h"
 
 BonjourContact::BonjourContact( Kopete::Account* _account, const QString &uniqueName,
@@ -126,12 +125,6 @@ void BonjourContact::showContactSettings()
 void BonjourContact::sendMessage( Kopete::Message &message )
 {
 	kDebug( 14210 ) ;
-	// convert to the what the server wants
-	// For this 'protocol', there's nothing to do
-	// send it
-	static_cast<BonjourAccount *>( account() )->server()->sendMessage(
-			message.to().first()->contactId(),
-			message.plainBody() );
 
 	// This is Blocking, we may lose upto 5 seconds here
 	if (! connection) {

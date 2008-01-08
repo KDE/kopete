@@ -32,7 +32,6 @@
 
 #include "bonjouraccount.h"
 #include "bonjourcontact.h"
-#include "bonjourfakeserver.h"
 #include "bonjourprotocol.h"
 #include "bonjourcontactconnection.h"
 
@@ -43,7 +42,6 @@ BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountI
 	// Init the myself contact
 	setMyself( new BonjourContact( this, accountId(), accountId(), Kopete::ContactList::self()->myself() ) );
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
-	m_server = new BonjourFakeServer();;
 
 	service = NULL;
 	localServer = NULL;
@@ -61,7 +59,6 @@ BonjourAccount::~BonjourAccount()
 {
 	if (isConnected())
 		disconnect();
-	delete m_server;
 }
 
 KActionMenu* BonjourAccount::actionMenu()
@@ -193,9 +190,6 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOnline );
 
 	startBrowse();
-
-	QObject::connect ( m_server, SIGNAL ( messageReceived( const QString & ) ),
-			this, SLOT ( receivedMessage( const QString & ) ) );
 }
 
 void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
@@ -289,12 +283,6 @@ void BonjourAccount::disconnect()
 	service = NULL;
 
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
-	QObject::disconnect ( m_server, 0, 0, 0 );
-}
-
-BonjourFakeServer * BonjourAccount::server()
-{
-	return m_server;
 }
 
 void BonjourAccount::slotGoOnline ()

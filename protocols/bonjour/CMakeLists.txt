@@ -16,8 +16,6 @@ set(kopete_bonjour_PART_SRCS
    bonjouraccount.cpp 
    bonjouraddcontactpage.cpp 
    bonjoureditaccountwidget.cpp 
-   bonjourfakeserver.cpp 
-   bonjourincomingmessage.cpp 
    avahi-bonjour.cpp
    bonjourcontactconnection.cpp
    ui/bonjourwebcamdialog.cpp 

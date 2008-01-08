@@ -40,7 +40,6 @@ namespace Kopete
 }
 
 class BonjourProtocol;
-class BonjourFakeServer;
 
 /**
  * This represents an account connected to the bonjour
@@ -174,10 +173,7 @@ public:
 	 * Disconnect from the server.  Only sets myself() offline.
 	 */
 	virtual void disconnect();
-	/**
-	 * Return a reference to the server stub
-	 */
-	BonjourFakeServer* server();
+
 public slots:
 	/**
 	 * Called by the server when it has a message for us.
@@ -202,7 +198,6 @@ protected:
 	 * This simulates contacts going on and offline in sync with the account's status changes
 	 */
 	void updateContactStatus();
-	BonjourFakeServer* m_server;
 
 
 protected slots:
