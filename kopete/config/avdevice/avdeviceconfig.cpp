@@ -76,6 +76,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+	setVideoInputParameters();
 
 	mVideoDevicePool->startCapturing();
 
@@ -246,7 +247,7 @@ void AVDeviceConfig::deviceRegistered( const QString & udi )
 
 void AVDeviceConfig::deviceUnregistered( const QString & udi )
 {
-	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
+/*	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-}
+*/}

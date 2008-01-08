@@ -1403,7 +1403,7 @@ float VideoDevice::getBrightness()
 
 float VideoDevice::setBrightness(float brightness)
 {
-	kDebug() << " called.";
+	kDebug() << "(" << brightness << ") called.";
 	m_input[m_current_input].setBrightness(brightness); // Just to check bounds
 
 	switch(m_driver)
@@ -1473,7 +1473,7 @@ float VideoDevice::getContrast()
 
 float VideoDevice::setContrast(float contrast)
 {
-	kDebug() << " called.";
+	kDebug() << "(" << contrast << ") called.";
 	m_input[m_current_input].setContrast(contrast); // Just to check bounds
 
 	switch(m_driver)
@@ -1543,7 +1543,7 @@ float VideoDevice::getSaturation()
 
 float VideoDevice::setSaturation(float saturation)
 {
-	kDebug() << " called.";
+	kDebug() << "(" << saturation << ") called.";
 	m_input[m_current_input].setSaturation(saturation); // Just to check bounds
 
 	switch(m_driver)
@@ -1613,7 +1613,7 @@ float VideoDevice::getWhiteness()
 
 float VideoDevice::setWhiteness(float whiteness)
 {
-	kDebug() << " called.";
+	kDebug() << "(" << whiteness << ") called.";
 	m_input[m_current_input].setWhiteness(whiteness); // Just to check bounds
 
 	switch(m_driver)
@@ -1683,7 +1683,7 @@ float VideoDevice::getHue()
 
 float VideoDevice::setHue(float hue)
 {
-	kDebug() << " called.";
+	kDebug() << "(" << hue << ") called.";
 	m_input[m_current_input].setHue(hue); // Just to check bounds
 
 	switch(m_driver)
@@ -2160,11 +2160,29 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 
 int VideoDevice::detectPixelFormats()
 {
+			int err = 0;
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
+			fmtdesc.index = 0;
+			fmtdesc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+			while ( err == 0 )
+			{
+				if (-1 == xioctl (VIDIOC_ENUM_FMT, &fmtdesc))
+//				if (ioctl(fd, VIDIOC_ENUM_FMT, &fmtdesc) < 0 )
+				{
+					perror("VIDIOC_ENUM_FMT");
+					err = errno;
+				}
+				else
+				{	
+					kDebug () << pixelFormatName(pixelFormatForPalette(fmtdesc.pixelformat)); // Need a cleanup. PixelFormatForPalette is a really bad name
+					fmtdesc.index++;
+				}
+			}
 //			break;
 #endif
 		case VIDEODEV_DRIVER_V4L:
@@ -2172,71 +2190,43 @@ int VideoDevice::detectPixelFormats()
 // The correct thing to do is to isolate these calls and do a proper implementation for V4L and another for V4L2 when this thing will be migrated to a plugin architecture.
 
 // Packed RGB formats
-			kDebug() << "checkDevice(): " << "Supported pixel formats:";
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB332))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB332);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB444))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB444);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB555);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB565);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555X))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB555X);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565X))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB565X);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR24))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_BGR24);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB24))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB24);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR32))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_BGR32);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB32))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_RGB32);
+			kDebug() << "Supported pixel formats:";
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB332))	kDebug() << pixelFormatName(PIXELFORMAT_RGB332);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB444))	kDebug() << pixelFormatName(PIXELFORMAT_RGB444);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555))	kDebug() << pixelFormatName(PIXELFORMAT_RGB555);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565))	kDebug() << pixelFormatName(PIXELFORMAT_RGB565);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555X))	kDebug() << pixelFormatName(PIXELFORMAT_RGB555X);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565X))	kDebug() << pixelFormatName(PIXELFORMAT_RGB565X);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR24))	kDebug() << pixelFormatName(PIXELFORMAT_BGR24);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB24))	kDebug() << pixelFormatName(PIXELFORMAT_RGB24);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR32))	kDebug() << pixelFormatName(PIXELFORMAT_BGR32);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB32))	kDebug() << pixelFormatName(PIXELFORMAT_RGB32);
 
 // Bayer RGB format
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_SBGGR8))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_SBGGR8);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_SBGGR8))	kDebug() << pixelFormatName(PIXELFORMAT_SBGGR8);
 
 // YUV formats
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_GREY))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_GREY);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUYV))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUYV);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_UYVY))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_UYVY);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV420P))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUV420P);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV422P))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YUV422P);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_GREY))	kDebug() << pixelFormatName(PIXELFORMAT_GREY);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUYV))	kDebug() << pixelFormatName(PIXELFORMAT_YUYV);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_UYVY))	kDebug() << pixelFormatName(PIXELFORMAT_UYVY);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV420P))	kDebug() << pixelFormatName(PIXELFORMAT_YUV420P);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV422P))	kDebug() << pixelFormatName(PIXELFORMAT_YUV422P);
 
 // Compressed formats
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_JPEG))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_JPEG);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_MPEG))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_MPEG);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_JPEG))	kDebug() << pixelFormatName(PIXELFORMAT_JPEG);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_MPEG))	kDebug() << pixelFormatName(PIXELFORMAT_MPEG);
 
 // Reserved formats
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_DV))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_DV);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_ET61X251))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_ET61X251);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_HI240))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_HI240);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_HM12))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_HM12);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_MJPEG))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_MJPEG);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_PWC1))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_PWC1);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_PWC2))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_PWC2);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_SN9C10X))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_SN9C10X);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_WNVA))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_WNVA);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YYUV))
-				kDebug() << "checkDevice(): " << pixelFormatName(PIXELFORMAT_YYUV);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_DV))		kDebug() << pixelFormatName(PIXELFORMAT_DV);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_ET61X251))	kDebug() << pixelFormatName(PIXELFORMAT_ET61X251);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_HI240))	kDebug() << pixelFormatName(PIXELFORMAT_HI240);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_HM12))	kDebug() << pixelFormatName(PIXELFORMAT_HM12);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_MJPEG))	kDebug() << pixelFormatName(PIXELFORMAT_MJPEG);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_PWC1))	kDebug() << pixelFormatName(PIXELFORMAT_PWC1);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_PWC2))	kDebug() << pixelFormatName(PIXELFORMAT_PWC2);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_SN9C10X))	kDebug() << pixelFormatName(PIXELFORMAT_SN9C10X);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_WNVA))	kDebug() << pixelFormatName(PIXELFORMAT_WNVA);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YYUV))	kDebug() << pixelFormatName(PIXELFORMAT_YYUV);
 			break;
 #endif
 		case VIDEODEV_DRIVER_NONE:
