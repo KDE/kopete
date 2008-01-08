@@ -26,6 +26,7 @@
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
+#include "kopeteitembase.h"
 
 namespace Kopete {
 
@@ -162,23 +163,26 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 	
 	Kopete::ContactListElement *cle=static_cast<Kopete::ContactListElement*>(index.internalPointer());
 	Kopete::Group *g=dynamic_cast<Kopete::Group*>(cle);
-	if(role == Qt::DisplayRole) {
+	if ( role == Qt::DisplayRole ) {
 		QString display;
-		if(g) {
+		if ( g ) {
 			display=i18n("%1 (%2/%3)", g->displayName(), countConnected(g), m_contacts[g].count());
 		} else {
-			Kopete::MetaContact *mc=dynamic_cast<Kopete::MetaContact*>(cle);
-			display=mc->displayName();
+			Kopete::MetaContact *mc = qobject_cast<Kopete::MetaContact*>(cle);
+			if ( mc )
+				display = mc->displayName();
 		}
 		return display;
-	} /*else if(role==IconList) {
-		if(g) {
-			return QStringList();
-		} else {
-			Kopete::MetaContact *mc=dynamic_cast<Kopete::MetaContact*>(cle);
-			display=mc->displayName();
-		}
-	}*/
+	}
+
+	if ( role == Kopete::Items::TypeRole )
+	{
+		if (g)
+			return Kopete::Items::Group;
+		else
+			return Kopete::Items::MetaContact;
+	}
+
 	return QVariant();
 }
 

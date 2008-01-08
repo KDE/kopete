@@ -34,7 +34,6 @@ namespace UI {
 class ContactListModel : public QAbstractItemModel
 {
 Q_OBJECT
-	enum KopeteRoles { MetaContact=Qt::UserRole+1, };
 	public:
 		ContactListModel(QObject* parent = 0);
 		~ContactListModel();
