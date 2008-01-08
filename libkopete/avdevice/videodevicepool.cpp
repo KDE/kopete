@@ -919,7 +919,7 @@ void VideoDevicePool::saveConfig()
 				config->writeEntry( brightness,             (*vditerator).m_input[input].getBrightness());
 				config->writeEntry( contrast,               (*vditerator).m_input[input].getContrast());
 				config->writeEntry( saturation,             (*vditerator).m_input[input].getSaturation());
-				config->writeEntry( saturation,             (*vditerator).m_input[input].getWhiteness());
+				config->writeEntry( whiteness,              (*vditerator).m_input[input].getWhiteness());
 				config->writeEntry( hue,                    (*vditerator).m_input[input].getHue());
 				config->writeEntry( autobrightnesscontrast, (*vditerator).m_input[input].getAutoBrightnessContrast());
 				config->writeEntry( autocolorcorrection,    (*vditerator).m_input[input].getAutoColorCorrection());
