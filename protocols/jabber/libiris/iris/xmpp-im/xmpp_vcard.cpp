@@ -114,7 +114,7 @@ QString image2type(const QByteArray &ba)
 		return "image/jpeg";
 
 	qWarning("WARNING! VCard::image2type: unknown format = %s", format.isNull() ? "UNKNOWN" :
-                format.toAscii());
+                qPrintable(format));
 
 	return "image/unknown";
 }
