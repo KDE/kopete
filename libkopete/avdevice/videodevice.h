@@ -280,6 +280,7 @@ public:
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
 	struct v4l2_format fmt;
+	struct v4l2_fmtdesc fmtdesc; // Not sure if it must be here or inside detectPixelFormats(). Should inve
 //	struct v4l2_input m_input;
 	struct v4l2_queryctrl queryctrl;
 	struct v4l2_querymenu querymenu;
