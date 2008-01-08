@@ -132,36 +132,39 @@ void BonjourContact::sendMessage( Kopete::Message &message )
 	static_cast<BonjourAccount *>( account() )->server()->sendMessage(
 			message.to().first()->contactId(),
 			message.plainBody() );
+
+	// This is Blocking, we may lose upto 5 seconds here
+	if (! connection) {
+		QString localName = account()->property("fullName").toString();
+		setConnection(new BonjourContactConnection(remoteAddress, remotePort, localName, fullName));
+	}
+
+	// Blocking Again. Upto another 3 seconds
+	connection->waitReady(3000);
+	connection->sendMessage(message);
+
 	// give it back to the manager to display
 	manager()->appendMessage( message );
 	// tell the manager it was sent successfully
 	manager()->messageSucceeded();
 }
 
-void BonjourContact::receivedMessage( const QString &message )
-{
-	Kopete::ContactPtrList contactList;
-	contactList.append( account()->myself() );
-	// Create a Kopete::Message
-	Kopete::Message newMessage( this, contactList );
-	newMessage.setPlainBody( message );
-	newMessage.setDirection( Kopete::Message::Inbound );
-
-	// Add it to the manager
-	manager()->appendMessage (newMessage);
-}
-
-void BonjourContact::receivedMessage(Kopete::Message *message)
+void BonjourContact::receivedMessage(Kopete::Message message)
 {
 	Kopete::ChatSession *session = manager(CanCreate);
-	session->appendMessage(*message);
-
-	delete message;
+	session->appendMessage(message);
 }
 
 void BonjourContact::slotChatSessionDestroyed()
 {
 	//FIXME: the chat window was closed?  Take appropriate steps.
+
+	if (connection) {
+		connection->sayGoodBye();
+		delete connection;
+		connection = NULL;
+	}
+
 	m_msgManager = 0L;
 }
 
@@ -193,6 +196,26 @@ const short int BonjourContact::getremotePort() const
 	return remotePort;
 }
 
+void BonjourContact::setfullName(const QString &n_fullName)
+{
+	fullName = n_fullName;
+}
+
+const QString BonjourContact::getfullName() const
+{
+	return fullName;
+}
+
+void BonjourContact::settextdata(const QMap <QString, QByteArray> &n_textdata)
+{
+	textdata = n_textdata;
+}
+
+const QMap <QString, QByteArray> BonjourContact::gettextdata() const
+{
+	return textdata;
+}
+
 const bool BonjourContact::isRemoteAddress(const QHostAddress &host) const
 {
 	if (remoteAddress == host)
@@ -215,8 +238,8 @@ void BonjourContact::setConnection(BonjourContactConnection *c)
 	connect(connection, SIGNAL(disconnected(BonjourContactConnection *)),
 			this, SLOT(connectionDisconnected(BonjourContactConnection *)));
 
-	connect(connection, SIGNAL(messageReceived(Kopete::Message *)),
-			this, SLOT(receivedMessage(Kopete::Message *)));
+	connect(connection, SIGNAL(messageReceived(Kopete::Message)),
+			this, SLOT(receivedMessage(Kopete::Message)));
 }
 
 void BonjourContact::connectionDisconnected(BonjourContactConnection *c)

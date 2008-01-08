@@ -227,11 +227,13 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 	// We Ignore them over here.
 	mc = addContact(pointer->serviceName(), display, bonjourGroup);
 
-	Kopete::Contact *c = mc->contacts()[0];
+	BonjourContact *c = (BonjourContact *) mc->contacts()[0];
 
 	//FIXME: QObject is needed to be called here as there is a conflict fo setproperty
-	c->QObject::setProperty("remoteHostName", pointer->hostName());
-	c->QObject::setProperty("remotePort", pointer->port());
+	c->setremoteHostName(pointer->hostName());
+	c->setremotePort(pointer->port());
+	c->settextdata(pointer->textData());
+	c->setfullName(pointer->serviceName());
 	c->setOnlineStatus(Kopete::OnlineStatus::Online);
 }
 
@@ -245,7 +247,7 @@ void BonjourAccount::goingOffline(DNSSD::RemoteService::Ptr pointer)
 
 void BonjourAccount::wipeOutContact(Kopete::Contact *c)
 {
-	if (c == myself())
+	if (c == myself() || c == NULL)
 		return;
 
 	Kopete::MetaContact *mc = c->metaContact();
@@ -348,13 +350,6 @@ void BonjourAccount::receivedMessage( const QString &message )
 	from = message.section( ':', 0, 0 );
 	Kopete::Contact* contact = contacts()[from];
 	messageSender = dynamic_cast<BonjourContact *>( contact );
-
-	kDebug( 14210 ) << " got a message from " << from << ", " << messageSender << ", is: " << message;
-	// Pass it on to the contact to process and display via a KMM
-	if ( messageSender )
-		messageSender->receivedMessage( message );
-	else
-		kWarning(14210) << "unable to look up contact for delivery";
 }
 
 void BonjourAccount::updateContactStatus()

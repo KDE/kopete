@@ -18,6 +18,8 @@
 #include <QTcpSocket>
 #include <QRegExp>
 #include <QHostAddress>
+#include <QThread>
+#include <QTime>
 
 #include "kdebug.h"
 
@@ -27,8 +29,7 @@
 
 #include "bonjourcontactconnection.h"
 
-BonjourContactConnection::BonjourContactConnection(QTcpSocket *aSocket, 
-		QObject *parent) : QObject(parent)
+void BonjourContactConnection::setSocket(QTcpSocket *aSocket)
 {
 	socket = aSocket;
 
@@ -36,19 +37,39 @@ BonjourContactConnection::BonjourContactConnection(QTcpSocket *aSocket,
 
 	connect(socket, SIGNAL(readyRead()), this, SLOT(dataInSocket()));
 	connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
-
-	connectionState = BonjourConnectionNewIncoming;
 }
 
 BonjourContactConnection::BonjourContactConnection(QTcpSocket *aSocket, 
+		QObject *parent) : QObject(parent)
+{
+	setSocket(aSocket);
+	
+	connectionState = BonjourConnectionNewIncoming;
+}
+
+BonjourContactConnection::BonjourContactConnection(const QHostAddress &address, short int port,
 		QString alocal, QString aremote, QObject *parent) : QObject(parent)
 {
-	BonjourContactConnection(aSocket, parent);
+	QTcpSocket *aSocket = new QTcpSocket;
+	aSocket->connectToHost(address, port);
+
+	setSocket(aSocket);
 
 	connectionState = BonjourConnectionNewOutgoing;
 
 	local = alocal;
 	remote = aremote;
+
+	kDebug()<<"Starting to Wait for Connection";
+	//If We Cannot Connect within 5 seconds, that's an error :(
+	if (! (socket->waitForConnected(5000)))
+	{
+		connectionState = BonjourConnectionError;
+		emit errorCouldNotConnect();
+		return;
+	}
+
+	sayStream();
 }
 
 BonjourContactConnection::~BonjourContactConnection()
@@ -72,6 +93,7 @@ void BonjourContactConnection::dataInSocket()
 			break;
 
 		case BonjourConnectionNewIncoming:
+		case BonjourConnectionNewOutgoing:
 			getStreamTag();
 			break;
 		
@@ -94,6 +116,14 @@ void BonjourContactConnection::getStreamTag()
 	if (re.indexIn(data) <= -1) {
 		return;
 	}
+
+	// If This was an Outgoing Stream, we do not need to check if the username is in the stream
+	if (connectionState == BonjourConnectionNewOutgoing) {
+		connectionState = BonjourConnectionConnected;
+		return;
+	}
+
+	// From Here on, we are guaranteed that this is an incoming connection
 
 	// Check if from and to was encoded in stream
         re = QRegExp("<stream:stream.*\\sfrom=\"(.*)\".*\\sto=\"(.*)\".*>");
@@ -135,11 +165,25 @@ void BonjourContactConnection::getWho()
 
 void BonjourContactConnection::socketDisconnected()
 {
+	connectionState = BonjourConnectionDisconnected;
 	emit disconnected(this);
 }
 
-void BonjourContactConnection::sendMessage(QString message)
+void BonjourContactConnection::sendMessage(const Kopete::Message &message)
 {
+	QString response;
+	QTextStream stream(&response);
+
+	stream	<<"<message to='"<<remote<<"' from='"<<local<<"' type='chat'>"
+		<<"<body>"<<message.plainBody()<<"</body>"
+		<<"<html xmlns='http://www.w3.org/1999/xhtml'>"
+		<<"<body>"<<message.escapedBody()<<"</body>"
+		<<"</html>"
+		<<"<x xmlns='jabber:x:event'><composing/></x>"
+		<<"</message>";
+
+	kDebug()<<response;
+	socket->write(response.toUtf8());
 }
 
 QHostAddress BonjourContactConnection::getHostAddress()
@@ -147,7 +191,7 @@ QHostAddress BonjourContactConnection::getHostAddress()
 	return socket->peerAddress();
 }
 
-Kopete::Message *BonjourContactConnection::newMessage(Kopete::Message::MessageDirection direction)
+Kopete::Message BonjourContactConnection::newMessage(Kopete::Message::MessageDirection direction)
 {
 	// Our Parent is the remote contact
 	Kopete::Contact *remote = (Kopete::Contact *) parent();
@@ -155,14 +199,14 @@ Kopete::Message *BonjourContactConnection::newMessage(Kopete::Message::MessageDi
 	// Get the Myself
 	Kopete::Contact *myself = remote->account()->myself();
 
-	Kopete::Message *message;
+	Kopete::Message message;
 
 	if (direction == Kopete::Message::Inbound)
-		message = new Kopete::Message(remote, myself);
+		message = Kopete::Message(remote, myself);
 	else
-		message = new Kopete::Message(myself, remote);
+		message = Kopete::Message(myself, remote);
 
-	message->setDirection(direction);
+	message.setDirection(direction);
 
 	return message;
 }
@@ -190,7 +234,7 @@ void BonjourContactConnection::readMessage(const QByteArray &data)
 	QString plaintext;
 	QString HTMLVersion;
 
-	Kopete::Message *message = NULL;
+	Kopete::Message message;
 
 	// First Get HTML Version
 	re = QRegExp("<html.*><body>(.*)</body></html>");
@@ -199,7 +243,7 @@ void BonjourContactConnection::readMessage(const QByteArray &data)
 
 		if (HTMLVersion.size()) {
 			message = newMessage(Kopete::Message::Inbound);
-			message->setHtmlBody(HTMLVersion);
+			message.setHtmlBody(HTMLVersion);
 
 			emit messageReceived(message);
 			return;
@@ -214,10 +258,30 @@ void BonjourContactConnection::readMessage(const QByteArray &data)
 
 		if (plaintext.size()) {
 			message = newMessage(Kopete::Message::Inbound);
-			message->setPlainBody(plaintext);
+			message.setPlainBody(plaintext);
 
 			emit messageReceived(message);
 			return;
 		}
 	}
+}
+
+bool BonjourContactConnection::waitReady(int msecs)
+{
+	// FIXME: This Really Wastes Resources
+	// Maybe I should Speed it up somehow?
+	
+	QTime stopWatch;
+	stopWatch.start();
+
+	while (connectionState != BonjourConnectionConnected && stopWatch.elapsed() < msecs)
+		;
+		//QThread::msleep(100);			// Take a 100ms nap
+	return connectionState == BonjourConnectionConnected;		
+}
+
+void BonjourContactConnection::sayGoodBye()
+{
+	if (connectionState == BonjourConnectionConnected)
+		socket->write("</stream:stream>");
 }

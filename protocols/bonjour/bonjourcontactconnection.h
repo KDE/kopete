@@ -32,6 +32,7 @@ enum BonjourConnectionState {
 	BonjourConnectionToWho,			// We are Unsure who we connect to
 
 	BonjourConnectionConnected,		// Connected
+	BonjourConnectionDisconnected,		// Disconnected
 
 	BonjourConnectionError			// Reserved for Future Use
 };
@@ -57,13 +58,17 @@ class BonjourContactConnection : public QObject {
 	QString local;
 	QString remote;
 
+	// Set the Socket
+	void setSocket(QTcpSocket *socket);
+
     public:
 
 	// Public Constructor for incoming connections
 	BonjourContactConnection(QTcpSocket *aSocket, QObject *parent = NULL);
 
 	// This is For OutGoing Connections
-	BonjourContactConnection(QTcpSocket *aSocket, QString local, QString remote, QObject *parent = NULL);
+	// We Create a Socket Here, so this may take upto 5 seconds
+	BonjourContactConnection(const QHostAddress &address, short int port, QString local, QString remote, QObject *parent = NULL);
 
 	// Destructor
 	~BonjourContactConnection();
@@ -86,10 +91,22 @@ class BonjourContactConnection : public QObject {
 	QHostAddress getHostAddress();
 
 	// This Creates a Message
-	Kopete::Message *newMessage(Kopete::Message::MessageDirection direction);
+	Kopete::Message newMessage(Kopete::Message::MessageDirection direction);
 
 	// Void readMessage (get a message from a QByteArray
 	void readMessage(const QByteArray &data);
+
+	// Returns if a Connection is ready for general data transfer
+	inline bool isConnected()
+	{
+		return connectionState == BonjourConnectionConnected;
+	}
+
+	// This Blocks and Waits for the connection to become ready
+	bool waitReady(int msecs = 3000);
+
+	// Send the </stream>
+	void sayGoodBye();
 
     signals:
 
@@ -104,7 +121,10 @@ class BonjourContactConnection : public QObject {
 	void disconnected(BonjourContactConnection *);
 
 	// Signal Emitted when a new message has been received (already formatted)
-	void messageReceived(Kopete::Message *);
+	void messageReceived(Kopete::Message);
+
+	// Signal Emitted if we could not connect to an external socket
+	void errorCouldNotConnect();
 
     public slots:
 	
@@ -115,7 +135,7 @@ class BonjourContactConnection : public QObject {
 	void socketDisconnected();
 
 	// Send a message
-	void sendMessage(QString message);
+	void sendMessage(const Kopete::Message &message);
 };
 
 #endif

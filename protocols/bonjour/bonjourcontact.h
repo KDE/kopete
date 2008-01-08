@@ -52,6 +52,9 @@ class BonjourContact : public Kopete::Contact
 	QHostAddress remoteAddress;
 	short int remotePort;
 
+	QString fullName;
+	QMap <QString, QByteArray> textdata;
+
 public:
 	/**
 	 * The range of possible contact types
@@ -92,13 +95,18 @@ public:
 	Q_PROPERTY(QString remoteHostName READ getremoteHostName WRITE setremoteHostName)
 	Q_PROPERTY(QHostAddress remoteAddress READ getremoteAddress)
 	Q_PROPERTY(short int remotePort READ getremotePort WRITE setremotePort)
+	Q_PROPERTY(QString fullName READ getfullName WRITE setfullName)
 
 	void setremoteHostName(const QString &nremoteHostName);
 	void setremotePort(const short int &nremotePort);
+	void setfullName(const QString &nfullName);
+	void settextdata(const QMap <QString, QByteArray> &ntextdata);
 
 	const QString getremoteHostName() const;
 	const QHostAddress getremoteAddress() const;
 	const short int getremotePort() const;
+	const QString getfullName() const;
+	const QMap <QString, QByteArray> gettextdata() const;
 
 	/*
 	 * This Function Checks if a contact has the given remote address and port
@@ -122,8 +130,7 @@ public slots:
 	 * Called when an incoming message arrived
 	 * This displays it in the chatwindow
 	 */
-	void receivedMessage( const QString &message );
-	void receivedMessage( Kopete::Message *message );
+	void receivedMessage( Kopete::Message message );
 
 	/**
 	 * Call This Function when the connection is deleted
