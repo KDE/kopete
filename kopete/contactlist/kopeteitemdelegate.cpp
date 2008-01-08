@@ -22,12 +22,13 @@
 #include <QStyleOptionViewItem>
 #include <QModelIndex>
 #include <QAbstractItemView>
+#include <QItemDelegate>
 
 #include "kopetemetacontact.h"
 #include "kopeteappearancesettings.h"
 
 KopeteItemDelegate::KopeteItemDelegate( QAbstractItemView* parent )
-: QAbstractItemDelegate( parent )
+: QItemDelegate( parent )
 {
 }
 
@@ -69,8 +70,5 @@ void KopeteItemDelegate::paint( QPainter* painter,
 		opt.palette.setColor( QPalette::Text, gc );
 	}
 	
-	painter->setPen(QColor(0,0,0));
-	painter->drawText(option.rect.bottomLeft(), index.model()->data(index).toString());
-	kDebug() << "delegating...";
 }
 

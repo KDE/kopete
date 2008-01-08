@@ -18,18 +18,23 @@
 #ifndef KOPETEITEMDELEGATE_H
 #define KOPETEITEMDELEGATE_H
 
-#include <QAbstractItemDelegate>
+#include <QItemDelegate>
 #include <QSize>
 
+class QPainter;
+class QAbstractItemView;
 
-class KopeteItemDelegate : public QAbstractItemDelegate
+class KopeteItemDelegate : public QItemDelegate
 {
-	public:
-		KopeteItemDelegate( QAbstractItemView* parent = 0 );
-		~KopeteItemDelegate();
+public:
+	KopeteItemDelegate( QAbstractItemView* parent = 0 );
+	~KopeteItemDelegate();
 		
-		virtual void paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
-		virtual QSize sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const;
+	virtual void paint ( QPainter * painter, 
+	                     const QStyleOptionViewItem & option,
+	                     const QModelIndex & index ) const;
+	virtual QSize sizeHint ( const QStyleOptionViewItem & option,
+	                         const QModelIndex & index ) const;
 };
 
 #endif
