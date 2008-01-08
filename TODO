@@ -2,10 +2,8 @@ This is the TODO file for the break-the-contactlist branch and is not in any par
 
 Cosmetic:
 
-Fix group coloring
 Fix contact photo handling
 Fix contact protocol icon handling
-Fix default fonts (follow KDE settings. I don't think they're followed)
 Readd contact display modes
 Make metacontacts blinking on state changes
 Follow show empty groups setting
