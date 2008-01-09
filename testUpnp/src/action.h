@@ -3,13 +3,7 @@
 
 #include <QList>
 #include <QString>
-
-
-typedef struct{
-	QString name;
-	QString direction;
-	QString relatedStateVariable;
-}Argument;
+#include "argument.h"
 
 class Action
 {

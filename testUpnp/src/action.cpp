@@ -11,15 +11,15 @@ void Action::addArgument(QString name, QString direction, QString relatedStateVa
 	bool find=false;
 
 	Argument arg;
-	arg.name=name;
-	arg.direction=direction;
-	arg.relatedStateVariable=relatedStateVariable;
+	arg.setName(name);
+	arg.setDirection(direction);
+	arg.setRelatedStateVariable(relatedStateVariable);
 
 	this->m_argumentList.begin();
 	//we check if the argument is not already existing
 	for(int i=0;i<this->m_argumentList.size() && !find;i++)
 	{
-		if(this->m_argumentList.last().name == name)
+		if(this->m_argumentList.last().name() == name)
 		{
 			find=true;
 		}

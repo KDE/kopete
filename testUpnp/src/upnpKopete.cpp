@@ -1,5 +1,7 @@
 #include "upnpKopete.h"
 #include "applicationWidget.h"
+
+
 UpnpKopete *UpnpKopete::uniqueInstance = NULL;
 
 int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Cookie );

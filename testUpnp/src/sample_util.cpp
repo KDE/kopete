@@ -54,7 +54,7 @@ ithread_mutex_t display_mutex;
  * Description: 
  *     Initializes the sample util. Must be called before any sample util 
  *     functions. May be called multiple times.
- *
+ *IXML_Node
  * Parameters:
  *   print_function - print function to use in SampleUtil_Print
  *
