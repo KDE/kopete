@@ -21,6 +21,7 @@
 #include <QString>
 #include <QHostAddress>
 #include <QByteArray>
+#include <QXmlStreamReader>
 
 #include "kopetemessage.h"
 
@@ -54,12 +55,51 @@ class BonjourContactConnection : public QObject {
 	// The Actual Connection
 	QTcpSocket *socket;
 
+	// The XML Parser
+	QXmlStreamReader parser;
+
 	// The local and remote names (as defined by them for incoming)
 	QString local;
 	QString remote;
 
 	// Set the Socket
 	void setSocket(QTcpSocket *socket);
+
+	// Internally used structures to describe a token as obtained by the parser
+	enum BonjourXmlTokenName {
+		BonjourXmlTokenOther,
+		BonjourXmlTokenNone,
+		BonjourXmlTokenStream,
+		BonjourXmlTokenMessage,
+		BonjourXmlTokenBody,
+		BonjourXmlTokenHtml,
+		BonjourXmlTokenX,
+
+		BonjourXmlTokenError = 99
+	};
+	
+	// This is a Hash Object to Translate a qualified name into a BonjourXmlTokenName quickly
+	// Only one instance is needed. We use a derived version so we can fill it
+	static class TokenTable : public QHash <QString, BonjourXmlTokenName>{
+	    public:
+		TokenTable();
+	} tokenTable;
+
+	// This Describes a Token
+	struct BonjourXmlToken {
+		QXmlStreamReader::TokenType type;
+		BonjourXmlTokenName name;
+		QStringRef qualifiedName;
+		QXmlStreamAttributes attributes;
+		QStringRef text;
+	};
+
+	// This Next Function Gets the Next Token sent
+	const BonjourXmlToken getNextToken();
+
+	// This Function returns the next token whose name matches. All tokens before this
+	// is found are simply thrown away. If Not found, the name is set to BonjourXmlTokenError
+	const BonjourXmlToken getNextToken(BonjourXmlTokenName name);
 
     public:
 
@@ -77,10 +117,12 @@ class BonjourContactConnection : public QObject {
 	void sayStream();
 
 	// This Reads the Data From The Socket and emits a messageReceived (maybe)
-	void readData();
+	// The Parameter is the most recent token. However, this function probably reads more tokens
+	// The Value of the Parameter is also affected.
+	void readData(BonjourXmlToken &token);
 
-	// This is Called When a <stream> is expected
-	void getStreamTag();
+	// This is Called When a <stream> is expected (already read into token)
+	void getStreamTag(const BonjourXmlToken &token);
 
 	// This is called when we are waiting for the from
 	// and to values (incoming).
@@ -93,8 +135,10 @@ class BonjourContactConnection : public QObject {
 	// This Creates a Message
 	Kopete::Message newMessage(Kopete::Message::MessageDirection direction);
 
-	// Void readMessage (get a message from a QByteArray
-	void readMessage(const QByteArray &data);
+	// Read a Message From Tokens. This does not guarantee what the value of token is
+	// after reading. Further, this may read many tokens, uptil a </message>
+	// Please ensure that the type of this token is message before calling
+	void readMessage(BonjourXmlToken &token);
 
 	// Returns if a Connection is ready for general data transfer
 	inline bool isConnected()

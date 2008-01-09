@@ -16,10 +16,10 @@
 
 #include <QAbstractSocket>
 #include <QTcpSocket>
-#include <QRegExp>
 #include <QHostAddress>
 #include <QThread>
 #include <QTime>
+#include <QXmlStreamReader>
 
 #include "kdebug.h"
 
@@ -29,11 +29,25 @@
 
 #include "bonjourcontactconnection.h"
 
+// Declare the tokenTable
+BonjourContactConnection::TokenTable BonjourContactConnection::tokenTable;
+
+BonjourContactConnection::TokenTable::TokenTable()
+{
+	insert("", BonjourXmlTokenNone);
+	insert("stream:stream", BonjourXmlTokenStream);
+	insert("message", BonjourXmlTokenMessage);
+	insert("body", BonjourXmlTokenBody);
+	insert("html", BonjourXmlTokenHtml);
+	insert("x", BonjourXmlTokenX);
+}
+
 void BonjourContactConnection::setSocket(QTcpSocket *aSocket)
 {
 	socket = aSocket;
 
 	socket->setParent(this);
+	parser.setDevice(socket);
 
 	connect(socket, SIGNAL(readyRead()), this, SLOT(dataInSocket()));
 	connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
@@ -84,55 +98,86 @@ BonjourContactConnection::~BonjourContactConnection()
 	}
 }
 
+const BonjourContactConnection::BonjourXmlToken BonjourContactConnection::getNextToken()
+{
+	BonjourXmlToken ret;
+
+	if (parser.atEnd())
+	{
+		ret.type = QXmlStreamReader::Invalid;
+		ret.name = BonjourXmlTokenError;
+		return ret;
+	}
+
+	parser.readNext();
+
+	ret.type = parser.tokenType();
+	ret.qualifiedName = parser.qualifiedName();
+	ret.name = tokenTable[ret.qualifiedName.toString()];
+	ret.attributes = parser.attributes();
+	ret.text = parser.text();
+
+	kDebug()<<"Read Token: "<<ret.qualifiedName.toString();
+	return ret;
+}
+
+const BonjourContactConnection::BonjourXmlToken BonjourContactConnection::getNextToken(BonjourXmlTokenName name)
+{
+	BonjourXmlToken token;
+
+	// Scan Until We Get the Token
+	do {
+		token = getNextToken();
+		if (token.name == name)
+			break;
+	} while (token.name != BonjourXmlTokenError);
+
+	return token;
+}
+
 void BonjourContactConnection::dataInSocket()
 {
+	BonjourXmlToken token;
+	
 	switch (connectionState) {
 		
 		case BonjourConnectionConnected:
-			readData();
+			token = getNextToken();
+			readData(token);
+			break;
+
+		case BonjourConnectionToWho:
+			getWho();
 			break;
 
 		case BonjourConnectionNewIncoming:
 		case BonjourConnectionNewOutgoing:
-			getStreamTag();
-			break;
-		
-		case BonjourConnectionToWho:
-			getWho();
+			token = getNextToken(BonjourXmlTokenStream);
+			getStreamTag(token);
 			break;
 	}
 }
 
-void BonjourContactConnection::getStreamTag()
+void BonjourContactConnection::getStreamTag(const BonjourXmlToken &token)
 {
-	int size = socket->bytesAvailable();
-	QByteArray data = socket->read(size);
-	QRegExp re;
 
-	// First check for a valid stream tag
-	// Ignore all tags that are not stream here
-	// Warning: This Packet (whatever it is, will be lost)
-	re = QRegExp("stream:stream");
-	if (re.indexIn(data) <= -1) {
+	// If we haven't gotten the stream token yet, just ignore the packet
+	if (token.name != BonjourXmlTokenStream)
 		return;
-	}
-
+	
 	// If This was an Outgoing Stream, we do not need to check if the username is in the stream
 	if (connectionState == BonjourConnectionNewOutgoing) {
 		connectionState = BonjourConnectionConnected;
 		return;
 	}
 
-	// From Here on, we are guaranteed that this is an incoming connection
+	// From Now On, We are Guaranteed It it an Incoming Connection
+	remote = token.attributes.value("from").toString();
+	local = token.attributes.value("to").toString();
+	kDebug()<<"Local: "<<local<<" Remote: "<<remote;
 
-	// Check if from and to was encoded in stream
-        re = QRegExp("<stream:stream.*\\sfrom=\"(.*)\".*\\sto=\"(.*)\".*>");
-        if (re.indexIn(data) > -1) {
+	if (local != "" && remote != "") {
 		connectionState = BonjourConnectionConnected;
-
-                remote = re.cap(1);
-                local = re.cap(2);
-
 		emit discoveredUserName(this, remote);
 	}
 	else
@@ -211,59 +256,60 @@ Kopete::Message BonjourContactConnection::newMessage(Kopete::Message::MessageDir
 	return message;
 }
 
-void BonjourContactConnection::readData()
+// We May Getting A Message or a </stream> here
+void BonjourContactConnection::readData(BonjourXmlToken &token)
 {
-	int size = socket->bytesAvailable();
-	QByteArray data = socket->read(size);
-
-	kDebug()<<data;
-
-	if (data.contains("message"))
-		readMessage(data);
-	else if (data.contains("</stream"))
-		;				// Should Do Something
+	if (token.name == BonjourXmlTokenMessage && token.attributes.value("type").toString() == "chat")
+		readMessage(token);
+	else if (token.name == BonjourXmlTokenStream)
+		;				// Should Do Something... Connection Ending
 }
 
-void BonjourContactConnection::readMessage(const QByteArray &data)
+void BonjourContactConnection::readMessage(BonjourXmlToken &token)
 {
-	// The Structure of a message is <message .... <body>plaintextver</body>....<body>HTMLVER</body>...</message>
-	// or                            <message>.... <body>plaintextver</body>....<body /></message>
-	// We Check in that Order
-	
-	QRegExp re;
 	QString plaintext;
 	QString HTMLVersion;
+	bool inHtml = false;
 
 	Kopete::Message message;
 
-	// First Get HTML Version
-	re = QRegExp("<html.*><body>(.*)</body></html>");
-	if (re.indexIn(data) > -1) {
-		HTMLVersion = re.cap(1);
+	// We Now Scan Each Token One by one
+	do {
+		token = getNextToken();
 
-		if (HTMLVersion.size()) {
-			message = newMessage(Kopete::Message::Inbound);
-			message.setHtmlBody(HTMLVersion);
+		switch (token.name) {
 
-			emit messageReceived(message);
-			return;
+			case BonjourXmlTokenBody:
+				if (inHtml)
+					;			// FIXME: No HTML Stuff Implemented!!
+				else
+					plaintext = parser.readElementText();
+				break;
+
+			case BonjourXmlTokenHtml:
+				if (token.type == QXmlStreamReader::StartElement)
+					inHtml = true;
+				else
+					inHtml = false;
 		}
-	}
 
+	} while (token.name != BonjourXmlTokenError && token.name != BonjourXmlTokenMessage);
+	// Exit When We Read The </message>, or out of packet data
 
-	// Then Get Plaintext Version
-	re = QRegExp("<message.*<body>([^<]*)</body>");
-	if (re.indexIn(data) > -1) {
-		plaintext = re.cap(1);
+	
+	// If No Message, then return
+	if (HTMLVersion == "" && plaintext == "")
+		return;
 
-		if (plaintext.size()) {
-			message = newMessage(Kopete::Message::Inbound);
-			message.setPlainBody(plaintext);
+	// We Are Now Guaranteed to have a message to show
+	message = newMessage(Kopete::Message::Inbound);
 
-			emit messageReceived(message);
-			return;
-		}
-	}
+	if (HTMLVersion != "")
+		message.setHtmlBody(HTMLVersion);
+	else
+		message.setPlainBody(plaintext);
+
+	emit messageReceived(message);
 }
 
 bool BonjourContactConnection::waitReady(int msecs)
