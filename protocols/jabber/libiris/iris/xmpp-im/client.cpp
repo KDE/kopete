@@ -905,7 +905,7 @@ void Client::importRosterItem(const RosterItem &item)
 	}
 
 	QString dstr, str;
-	str.sprintf("  %s %-32s", substr.toLatin1(), item.jid().full().toLatin1());
+	str.sprintf("  %s %-32s", qPrintable(substr), qPrintable(item.jid().full()));
 	if(!item.name().isEmpty())
 		str += QString(" [") + item.name() + "]";
 	str += '\n';
