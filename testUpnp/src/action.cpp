@@ -1,17 +1,21 @@
 #include "action.h"
 
-Action::Action(){;}
+
+Action::Action()
+{
+	this->m_argumentList.erase(this->m_argumentList.begin(),this->m_argumentList.end());
+}
 
 Action::Action(QString name)
 {
-	this->m_name = name;
-	this->m_argumentList.erase(this->m_argumentList.begin(),this->m_argumentList.end());;
+	this->setName(name);
+	this->m_argumentList.erase(this->m_argumentList.begin(),this->m_argumentList.end());
 }
 
 void Action::addArgument(QString name, QString direction, QString relatedStateVariable)
 {
 	bool find=false;
-
+	// Argument creation
 	Argument arg;
 	arg.setName(name);
 	arg.setDirection(direction);
@@ -47,18 +51,20 @@ QList<Argument> Action::listArgument()
 	return this->m_argumentList;
 }
 
+void Action::setName(QString name)
+{
+	this->m_name = name;
+}
+
 void Action::viewListArgument()
 {
 	printf("## Displaying action arguments ##\n");
 	for(int i =0; i < this->m_argumentList.size(); i++)
 	{
-		//Action action = this->m_actionList.at(i);
-		//printf("%s \n",action.name().toLatin1().data());
 		Argument arg = this->m_argumentList.at(i);
 		printf("# %d # \n",i);
-		printf("%s \n",arg.name().toLatin1().data());
-		printf("%s \n",arg.direction().toLatin1().data());
-		printf("%s \n",arg.relatedStateVariable().toLatin1().data());
+		// Show argument characteristics
+		arg.viewArgument();
 	}
 }
 

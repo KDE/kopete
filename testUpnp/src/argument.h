@@ -25,6 +25,8 @@ class Argument
 		void setName(QString name);
 		void setDirection(QString direction);
 		void setRelatedStateVariable(QString relatedStateVariable);
+		// Method witch show an argument
+		void viewArgument();
 };
 
 

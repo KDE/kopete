@@ -24,3 +24,29 @@ kde4_add_executable(window ${projectSources})
 
 # Libraries needed by the application
 target_link_libraries(window ${KDE4_KIO_LIBS} upnp )
+
+
+# Argument test unit
+kde4_add_unit_test(argumentTest
+	argument.cpp
+	./tests/argumenttest.cpp
+)
+
+# Libraries needed for argument tests
+target_link_libraries(argumentTest
+	${KDE4_KIO_LIBS}
+	${QT_QTTEST_LIBRARY}
+)
+
+# Action test unit
+kde4_add_unit_test(actionTest
+	action.cpp
+	argument.cpp
+	./tests/actiontest.cpp
+)
+
+# Libraries needed for action tests
+target_link_libraries(actionTest
+	${KDE4_KIO_LIBS}
+	${QT_QTTEST_LIBRARY}
+)

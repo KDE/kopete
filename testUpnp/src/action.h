@@ -20,14 +20,22 @@
 class Action
 {
 	private:
+		// Action name
 		QString m_name;
+		// Argument list of the action
 		QList<Argument> m_argumentList;
 	public:
+		// Construtor
 		Action();
 		Action(QString name);
+		// Method which add an argument to the argument list
 		void addArgument(QString name, QString direction, QString relatedStateVariable);
+		// Getter
 		QString name();
 		QList<Argument> listArgument();
+		// Setters
+		void setName(QString name);
+		// Method witch show the argument list
 		void viewListArgument();
 };
 

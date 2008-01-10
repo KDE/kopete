@@ -34,3 +34,11 @@ void Argument::setRelatedStateVariable(QString relatedStateVariable)
 {
 	this->m_relatedStateVariable = relatedStateVariable;
 }
+
+
+void Argument::viewArgument()
+{
+	printf("%s \n",this->name().toLatin1().data());
+	printf("%s \n",this->direction().toLatin1().data());
+	printf("%s \n",this->relatedStateVariable().toLatin1().data());
+}
