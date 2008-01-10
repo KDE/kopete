@@ -347,20 +347,100 @@ void UpnpKopete::viewListDevice()
 	}
 }
 
+
+void UpnpKopete::sendAction(QString nameAction, QList<QString> paramNameAction,QList<QString> paramValueAction)
+{
+	bool find = false;
+	int ret;
+	IXML_Document *actionNode = NULL;
+// 	Action action = NULL;
+	for(int i=0;i<this->m_mainDevices.size();i++)
+	{
+		Device device_tmp = this->m_mainDevices.at(i);
+		for(int j=0;j<device_tmp.getListService().size() && !find;j++)
+		{
+			Service service_tmp=device_tmp.getListService().at(j);
+			if(service_tmp.existAction(nameAction)==true)
+			{
+				if(paramNameAction.isEmpty())
+				{
+					printf("----PAS DE PARAMETRE----\n");
+					actionNode = UpnpMakeAction( nameAction.toLatin1().data(), service_tmp.serviceType().toLatin1().data(), 0,
+					NULL );
+				}
+				else
+				{
+					printf("----DES PARAMETRE----%d\n",paramNameAction.size());
+					for( int k=0; k < paramNameAction.size(); k++ ) 
+					{
+						QString nameActionP = paramNameAction.at(k);
+						QString valueActionP = paramValueAction.at(k);
+						printf("nameAction = %s and valueAction %s\n",nameActionP.toLatin1().data(),nameActionP.toLatin1().data());
+						
+						if( UpnpAddToAction
+						( &actionNode, nameAction.toLatin1().data(), service_tmp.serviceType().toLatin1().data(),
+						nameActionP.toLatin1().data(),valueActionP.toLatin1().data()) != UPNP_E_SUCCESS ) 
+						{
+							printf("Erreur UpnpAddToAction\n");
+						//return -1; // TBD - BAD! leaves mutex locked
+						}
+					}
+			
+				}
+				ret = UpnpSendActionAsync( device_handle,
+                                  service_tmp.xmlDocService().toLatin1().data(), service_tmp.serviceType().toLatin1().data(),
+                                  NULL, actionNode,
+                                  kopeteCallbackEventHandler, NULL );				
+				
+				if( ret != UPNP_E_SUCCESS ) 
+				{
+					printf("Erreur UpnpSendActionAsync\n");
+				}
+				
+				if( actionNode )
+        				ixmlDocument_free( actionNode );
+				
+				find = true;
+			}
+		}
+	}
+}
+
+void UpnpKopete::openPort(QString nameProtocol, int numPort)
+{
+	char c_numPort[50];
+
+	QList<QString> paramNameAction;
+	paramNameAction.append(QString("NewRemoteHost"));
+	paramNameAction.append(QString("NewExternalPort"));
+	paramNameAction.append(QString("NewProtocol"));
+	paramNameAction.append(QString("NewInternalPort"));
+	paramNameAction.append(QString("NewInternalClient"));
+	paramNameAction.append(QString("NewEnabled"));
+	paramNameAction.append(QString("NewPortMappingDescription"));
+	paramNameAction.append(QString("NewLeaseDuration"));
+	
+	sprintf(c_numPort,"%d",numPort);
+
+	QList<QString> paramValueAction;
+	paramValueAction.append(nameProtocol);
+	paramValueAction.append(c_numPort);
+	paramValueAction.append(QString("TCP"));
+	paramValueAction.append(c_numPort);
+	paramValueAction.append(this->hostIp);
+	paramValueAction.append(QString("1"));
+	paramValueAction.append(nameProtocol);
+	paramValueAction.append(QString("5"));
+	
+	sendAction(QString("AddPortMapping"),paramNameAction,paramValueAction);
+}
+
+
 int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Cookie )
 {
 	int ret = 0;
  	UpnpKopete * getUpnp = UpnpKopete::getInstance();
-// 
-// 	IXML_Document *DescDoc = ixmlLoadDocument("XML/gatedesc.xml");
-// 	if(DescDoc == NULL)
-// 	{
-// 		printf("error loadDocument\n");
-// 	}
-// 	getUpnp->addXMLDescDoc(DescDoc, "XML/gatedesc.xml");
-// 	getUpnp->addDevice(DescDoc, "XML/gatedesc.xml");
-// 	if( DescDoc )
-//         	ixmlDocument_free( DescDoc );
+
 	
     switch ( EventType ) {
             /*

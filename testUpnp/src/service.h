@@ -47,6 +47,9 @@ class Service
 		void addAllActions();
 		void addActionList(IXML_Node * actionNode);
 	    
+		bool existAction(QString nameAction);
+		Action actionByName(QString nameAction);
+
 		void viewActionList();
 };
 

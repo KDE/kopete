@@ -64,6 +64,9 @@ class UpnpKopete
 		
 		QList<QString> viewXMLDescDoc();
 		void viewListDevice();
+
+		//different actions
+		void openPort(QString nameProtocol, int numPort);
 		
 		
 
@@ -84,5 +87,6 @@ class UpnpKopete
 		QList<Device> m_mainDevices;	
 
 		UpnpKopete();
+		void sendAction(QString nameAction, QList<QString> paramNameAction,QList<QString> paramValueAction);
 };
 #endif

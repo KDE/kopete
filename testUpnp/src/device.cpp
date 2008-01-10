@@ -93,7 +93,8 @@ void Device::addService (Service service)
 	this->listService.begin();
 	for(int i=0; i<this->listService.size() && !find; i++)
 	{
-		if(service.serviceType() == this->listService.last().serviceType())
+		Service service_tmp = this->listService.at(i);
+		if(service.serviceType() == service_tmp.serviceType())
 		{
 			find=true;
 		}
@@ -133,6 +134,7 @@ void Device::showDeviceList()
 	this->listDevice.begin();
 	for (int i=0; i<this->listDevice.size();i++)
 	{	
-		printf("device %d : %s\n",i,this->listDevice.last().deviceType().toLatin1().data());
+		Device device_tmp = this->listDevice.at(i);
+		printf("device %d : %s\n",i,device_tmp.deviceType().toLatin1().data());
 	}
 }

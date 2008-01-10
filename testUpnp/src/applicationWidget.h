@@ -21,7 +21,7 @@ public:
 	UpnpKopete * upnp;
 
 public slots:
-	void afficher();
+	void openPort();
 	void envoyer();
 	void close();
 

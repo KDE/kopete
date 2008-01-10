@@ -5,20 +5,17 @@ ApplicationWidget::ApplicationWidget(QWidget *parent): QMainWindow(parent)
 {
 	setupUi(this);
 	this->upnp = UpnpKopete::getInstance();
-	//connect(btEnvoi, SIGNAL(clicked()),this, SLOT(afficher()));
+	connect(btOpen, SIGNAL(clicked()),this, SLOT(openPort()));
 	connect(btEnvoi, SIGNAL(clicked()),this, SLOT(envoyer()));
 	connect(actionQuitter, SIGNAL(clicked()),this, SLOT(close()));
 }
 
 
-void ApplicationWidget::afficher()
+void ApplicationWidget::openPort()
 {
-	/*QString mess = text_ecrit->toPlainText();
-	text_mess->append(mess);
-	text_ecrit->setPlainText("");*/
-	
+	printf("---------------OPEN PORT----------------------\n");
+	this->upnp->openPort(QString("Test application"), 4661);
 }
-
 void ApplicationWidget::envoyer()
 {
 	int ret;

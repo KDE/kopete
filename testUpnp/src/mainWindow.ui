@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>546</width>
+    <width>591</width>
     <height>463</height>
    </rect>
   </property>
@@ -16,6 +16,13 @@
    <layout class="QHBoxLayout" >
     <item>
      <widget class="QTextEdit" name="text_mess" />
+    </item>
+    <item>
+     <widget class="QPushButton" name="btOpen" >
+      <property name="text" >
+       <string>OpenPort</string>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QPushButton" name="btEnvoi" >
@@ -31,8 +38,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>546</width>
-     <height>28</height>
+     <width>591</width>
+     <height>30</height>
     </rect>
    </property>
   </widget>

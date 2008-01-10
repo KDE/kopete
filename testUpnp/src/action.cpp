@@ -1,5 +1,7 @@
 #include "action.h"
 
+Action::Action(){;}
+
 Action::Action(QString name)
 {
 	this->m_name = name;

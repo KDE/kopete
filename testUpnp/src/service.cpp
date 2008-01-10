@@ -107,6 +107,36 @@ void Service::addActionList(IXML_Node * actionNode)
 
 }
 
+bool Service::existAction(QString nameAction)
+{
+	bool find = false;	
+	for(int i=0;i<this->m_actionList.size(); i++)
+	{
+		Action action_tmp = this->m_actionList.at(i);	
+		if(action_tmp.name() == nameAction)
+		{
+			find = true;
+		}
+	}
+	return find;
+}
+
+Action Service::actionByName(QString nameAction)
+{
+	Action action_tmp = Action();
+	bool find = false;	
+	for(int i=0;i<this->m_actionList.size() && !find; i++)
+	{
+		action_tmp = this->m_actionList.at(i);	
+		if(action_tmp.name() == nameAction)
+		{
+			find = true;
+			
+		}
+	}
+	return action_tmp;
+}
+
 void Service::viewActionList()
 {
 	printf("## Displaying actions ##\n");
