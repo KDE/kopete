@@ -45,4 +45,18 @@ QList<Argument> Action::listArgument()
 	return this->m_argumentList;
 }
 
+void Action::viewListArgument()
+{
+	printf("## Displaying action arguments ##\n");
+	for(int i =0; i < this->m_argumentList.size(); i++)
+	{
+		//Action action = this->m_actionList.at(i);
+		//printf("%s \n",action.name().toLatin1().data());
+		Argument arg = this->m_argumentList.at(i);
+		printf("# %d # \n",i);
+		printf("%s \n",arg.name().toLatin1().data());
+		printf("%s \n",arg.direction().toLatin1().data());
+		printf("%s \n",arg.relatedStateVariable().toLatin1().data());
+	}
+}
 

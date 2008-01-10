@@ -23,7 +23,7 @@ class Service
 		QString m_serviceId;
 		QString m_controlURL;
 		QString m_eventSubURL;
-		IXML_Document *m_xmlDocService;
+		QString m_xmlDocService;
 		QList<Action> m_actionList;
 
 	public:
@@ -35,7 +35,7 @@ class Service
 		QString controlURL();
 		QString eventSubURL();
 		
-		IXML_Document * xmlDocService();
+		QString xmlDocService();
 		QList<Action> actionList();
 
 		void setServiceType(QString serviceType);

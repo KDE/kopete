@@ -15,6 +15,7 @@ class Action
 		void addArgument(QString name, QString direction, QString relatedStateVariable);
 		QString name();
 		QList<Argument> listArgument();
+		void viewListArgument();
 };
 
 #endif

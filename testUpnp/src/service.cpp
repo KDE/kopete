@@ -1,19 +1,19 @@
 #include "service.h"
 
-Service::Service(){;}
+Service::Service(){printf("## Entering service constructor without arguments ##\n");}
 
 
 Service::Service(QString serviceType, QString serviceId, QString controlURL, QString eventSubURL, QString URLdocXml)
 {
-	printf("## entree constructeur service ##\n");
+	printf("## Entering service constructor ##\n");
 
 	this->m_serviceType = serviceType;
 	this->m_serviceId = serviceId;
 	this->m_controlURL = controlURL;
 	this->m_eventSubURL = eventSubURL;
-	this->m_xmlDocService = ixmlLoadDocument(URLdocXml.toLatin1().data());
+	this->m_xmlDocService = URLdocXml;
 	
-	printf("## sortie constructeur service ##\n");
+	printf("## Leaving service Constructor ##\n");
 }
 
 
@@ -21,18 +21,23 @@ QString Service::serviceType(){return this->m_serviceType;}
 QString Service::serviceId(){return this->m_serviceId;}
 QString Service::controlURL(){return this->m_controlURL;}
 QString Service::eventSubURL(){return this->m_eventSubURL;}
-IXML_Document * Service::xmlDocService(){return this->m_xmlDocService;}
+QString Service::xmlDocService(){return this->m_xmlDocService;}
 QList<Action> Service::actionList(){return this->m_actionList;}
 
 void Service::setServiceType(QString serviceType){this->m_serviceType = serviceType;}
 void Service::setServiceId(QString serviceId){this->m_serviceId = serviceId;}
 void Service::setControlURL(QString controlURL){this->m_controlURL = controlURL;}
 void Service::setEventSubURL(QString eventSubURL){this->m_eventSubURL = eventSubURL;}
-void Service::setXmlDocService(QString URLdocXml){this->m_xmlDocService = ixmlLoadDocument(URLdocXml.toLatin1().data());}
+void Service::setXmlDocService(QString URLdocXml){this->m_xmlDocService =URLdocXml;}
 
 void Service::addAllActions()
 {
-	IXML_NodeList * nodelist = ixmlDocument_getElementsByTagName(this->m_xmlDocService,"action");
+	IXML_Document * doc ;
+if((UpnpDownloadXmlDoc(this->m_xmlDocService.toLatin1().data(),&doc)) != UPNP_E_SUCCESS ) 
+			{
+                    		printf("Error \n");
+                	}
+	IXML_NodeList * nodelist = ixmlDocument_getElementsByTagName(doc,"action");
 	IXML_Node * actionNode;
 	for(int i =0; i<ixmlNodeList_length(nodelist);i++)
 	{
@@ -45,7 +50,6 @@ void Service::addActionList(IXML_Node * actionNode)
 {
 	//we create an action from an actionNode
 	//we get parameters and give them to the Action constructor
-	printf("## add action list ##\n");
 	QString actionName;
 	QString argumentName;
 	QString argumentDirection;
@@ -54,7 +58,6 @@ void Service::addActionList(IXML_Node * actionNode)
 	//creating action
 	IXML_NodeList * actionNodeList = ixmlNode_getChildNodes(actionNode);
 	IXML_Node * node = ixmlNodeList_item(actionNodeList,0);
-	printf("action Node : %s\n",util_Xml_nodeValue(node));
 	Action action = Action(QString(util_Xml_nodeValue(node)));
 
 	//test of the actionNodeList size
@@ -87,8 +90,8 @@ void Service::addActionList(IXML_Node * actionNode)
 	
 	for(int i=0;i<this->m_actionList.size() && !find;i++)
 	{
-		
-		if(this->m_actionList.last().name() == action.name())
+		Action action_tmp = this->m_actionList.at(i);	
+		if(action_tmp.name() == action.name())
 		{
 			find = true;
 		}
@@ -106,11 +109,11 @@ void Service::addActionList(IXML_Node * actionNode)
 
 void Service::viewActionList()
 {
-	printf("## affichage actions ##\n");
-	this->m_actionList.begin();
+	printf("## Displaying actions ##\n");
 	for(int i =0; i < this->m_actionList.size(); i++)
-	{	
-		Action tmp = this->m_actionList.last();
-		printf("%s\n",tmp.name().toLatin1().data());
+	{
+		Action action = this->m_actionList.at(i);
+		printf("%s \n",action.name().toLatin1().data());
+		action.viewListArgument();
 	}
 }

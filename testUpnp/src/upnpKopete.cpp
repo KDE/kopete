@@ -221,9 +221,9 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,QString location)
 						}
 						if(strcmp(ixmlNode_getNodeName(nServiceItem),"SCPDURL")==0)
 						{
-							int indice = location.indexOf (QString('/'),0, Qt::CaseInsensitive) ;
+							int indice = location.lastIndexOf (QString('/'),-1, Qt::CaseSensitive) ;
 							
-							UrlDocXml = location.left(indice);
+							UrlDocXml = location.left(indice+1);
 							UrlDocXml.append(util_Xml_nodeValue(nServiceItem));		
 						}
 					}
@@ -255,7 +255,10 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,QString location)
 		service.setEventSubURL(eventSubURL);
 		service.setXmlDocService(UrlDocXml);
 		
+		service.addAllActions();
+		
 		underDevice.addService(service);
+				
 		service.viewActionList();
 
 
