@@ -146,9 +146,6 @@ class BonjourContactConnection : public QObject {
 		return connectionState == BonjourConnectionConnected;
 	}
 
-	// This Blocks and Waits for the connection to become ready
-	bool waitReady(int msecs = 3000);
-
 	// Send the </stream>
 	void sayGoodBye();
 

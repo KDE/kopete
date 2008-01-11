@@ -133,7 +133,6 @@ void BonjourContact::sendMessage( Kopete::Message &message )
 	}
 
 	// Blocking Again. Upto another 3 seconds
-	connection->waitReady(3000);
 	connection->sendMessage(message);
 
 	// give it back to the manager to display

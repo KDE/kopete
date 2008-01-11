@@ -75,8 +75,8 @@ BonjourContactConnection::BonjourContactConnection(const QHostAddress &address, 
 	remote = aremote;
 
 	kDebug()<<"Starting to Wait for Connection";
-	//If We Cannot Connect within 5 seconds, that's an error :(
-	if (! (socket->waitForConnected(5000)))
+	//If We Cannot Connect within 3 seconds, that's an error :(
+	if (! (socket->waitForConnected()))
 	{
 		connectionState = BonjourConnectionError;
 		emit errorCouldNotConnect();
@@ -138,11 +138,14 @@ const BonjourContactConnection::BonjourXmlToken BonjourContactConnection::getNex
 void BonjourContactConnection::dataInSocket()
 {
 	BonjourXmlToken token;
+
+	kDebug()<<"Data Available!";
 	
 	switch (connectionState) {
 		
 		case BonjourConnectionConnected:
 			token = getNextToken();
+			kDebug()<<token.qualifiedName.toString();
 			readData(token);
 			break;
 
@@ -188,6 +191,8 @@ void BonjourContactConnection::getStreamTag(const BonjourXmlToken &token)
 
 void BonjourContactConnection::sayStream()
 {
+	kDebug()<<"Sending <stream>";
+
 	QString response;
 	QTextStream stream(&response);
 
@@ -259,10 +264,21 @@ Kopete::Message BonjourContactConnection::newMessage(Kopete::Message::MessageDir
 // We May Getting A Message or a </stream> here
 void BonjourContactConnection::readData(BonjourXmlToken &token)
 {
-	if (token.name == BonjourXmlTokenMessage && token.attributes.value("type").toString() == "chat")
-		readMessage(token);
-	else if (token.name == BonjourXmlTokenStream)
-		;				// Should Do Something... Connection Ending
+	QString type;
+
+	switch (token.name) {
+
+		case BonjourXmlTokenMessage:
+			type = token.attributes.value("type").toString();
+			if (type == "chat" || type == "")
+				readMessage(token);
+			break;
+
+		case BonjourXmlTokenStream:
+			connectionState = BonjourConnectionDisconnected;
+			// Stream About to Close
+			break;
+	}
 }
 
 void BonjourContactConnection::readMessage(BonjourXmlToken &token)
@@ -310,20 +326,6 @@ void BonjourContactConnection::readMessage(BonjourXmlToken &token)
 		message.setPlainBody(plaintext);
 
 	emit messageReceived(message);
-}
-
-bool BonjourContactConnection::waitReady(int msecs)
-{
-	// FIXME: This Really Wastes Resources
-	// Maybe I should Speed it up somehow?
-	
-	QTime stopWatch;
-	stopWatch.start();
-
-	while (connectionState != BonjourConnectionConnected && stopWatch.elapsed() < msecs)
-		;
-		//QThread::msleep(100);			// Take a 100ms nap
-	return connectionState == BonjourConnectionConnected;		
 }
 
 void BonjourContactConnection::sayGoodBye()
