@@ -91,9 +91,10 @@ BonjourContactConnection::BonjourContactConnection(const QHostAddress &address, 
 BonjourContactConnection::~BonjourContactConnection()
 {
 	if (socket) {
-
-		// Remove Socket From All Connections, so that the disconnect doesn't cascade
+		// Remove Socket From All Connections, so that the deletion doesn't cascade
 		socket->disconnect();
+
+		sayGoodBye();
 
 		delete socket;
 		socket = NULL;
@@ -127,12 +128,39 @@ const BonjourContactConnection::BonjourXmlToken BonjourContactConnection::getNex
 {
 	BonjourXmlToken token;
 
-	// Scan Until We Get the Token
-	do {
-		token = getNextToken();
-		if (token.name == name)
+	switch (name) {
+
+		case BonjourXmlStartElement:
+			do {
+				token = getNextToken();
+				if (token.type == QXmlStreamReader::StartElement)
+					break;
+			} while (token.name != BonjourXmlTokenError);
 			break;
-	} while (token.name != BonjourXmlTokenError);
+
+		case BonjourXmlEndElement:
+			do {
+				token = getNextToken();
+				if (token.type == QXmlStreamReader::EndElement)
+					break;
+			} while (token.name != BonjourXmlTokenError);
+			break;
+
+		case BonjourXmlStartOrEndElement:
+			do {
+				token = getNextToken();
+				if (token.type == QXmlStreamReader::StartElement || token.type ==QXmlStreamReader::EndElement)
+					break;
+			} while (token.name != BonjourXmlTokenError);
+			break;
+
+		default:
+			do {
+				token = getNextToken();
+				if (token.name == name)
+					break;
+			} while (token.name != BonjourXmlTokenError);
+	}
 
 	return token;
 }
@@ -141,7 +169,10 @@ void BonjourContactConnection::dataInSocket()
 {
 	BonjourXmlToken token;
 
-	token = getNextToken();
+	// Occasionally, there is whitespace all the XML document (empathy workaround)
+	// Hense, we get the next Start Element or End Element
+	token = getNextToken(BonjourXmlStartOrEndElement);
+
 	kDebug()<<"Data Available: "<<token.qualifiedName.toString()<<" ConnectionState: "<<connectionState;
 	
 	switch (connectionState) {
@@ -208,7 +239,7 @@ void BonjourContactConnection::sayStream()
 	if (connectionState != BonjourConnectionToWho)
 		stream<<" from='"<<local<<"' to='"<<remote<<"'";
 
-	stream<<">\n";
+	stream<<">";
 
 	socket->write(response.toUtf8());
 
@@ -235,7 +266,7 @@ void BonjourContactConnection::sendMessage(const Kopete::Message &message)
 		<<"<body>"<<message.escapedBody()<<"</body>"
 		<<"</html>"
 		<<"<x xmlns='jabber:x:event'><composing /></x>"
-		<<"</message>\n";
+		<<"</message>";
 
 	kDebug()<<response;
 	socket->write(response.toUtf8());

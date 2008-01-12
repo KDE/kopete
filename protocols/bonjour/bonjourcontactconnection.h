@@ -77,6 +77,10 @@ class BonjourContactConnection : public QObject {
 		BonjourXmlTokenIq,
 		BonjourXmlTokenQuery,
 
+		BonjourXmlStartElement = 50,		// Simply A Convenient Parameter to getNextToken
+		BonjourXmlEndElement,			// No Token is ever of this type
+		BonjourXmlStartOrEndElement,		// Instead see the value of 'type' (QXmlStreamReader::TokenType)
+
 		BonjourXmlTokenError = 99
 	};
 	
@@ -101,6 +105,7 @@ class BonjourContactConnection : public QObject {
 
 	// This Function returns the next token whose name matches. All tokens before this
 	// is found are simply thrown away. If Not found, the name is set to BonjourXmlTokenError
+	// You May Also Search for Next Start Element or End Element
 	const BonjourXmlToken getNextToken(BonjourXmlTokenName name);
 
 	// FIXME: Ignore everything between <iq> and </iq>
