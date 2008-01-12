@@ -32,7 +32,7 @@
 BonjourAddContactPage::BonjourAddContactPage( QWidget* parent )
 		: AddContactPage(parent)
 {
-	kDebug(14210) ;
+	kDebug() ;
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget();
 	m_bonjourAddUI.setupUi( w );
@@ -45,23 +45,6 @@ BonjourAddContactPage::~BonjourAddContactPage()
 
 bool BonjourAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )
 {
-	if ( validateData() )
-	{
-		QString name = m_bonjourAddUI.m_uniqueName->text();
-
-		if ( a->addContact(name, m, Kopete::Account::ChangeKABC ) )
-		{
-			BonjourContact * newContact = qobject_cast<BonjourContact*>( Kopete::ContactList::self()->findContact( a->protocol()->pluginId(), a->accountId(), name ) );
-			if ( newContact )
-			{
-				newContact->setType( m_bonjourAddUI.m_rbEcho->isChecked() ? BonjourContact::Echo : BonjourContact::Group );
-				return true;
-			}
-		}
-		else
-			return false;
-	}
-	return false;
 }
 
 bool BonjourAddContactPage::validateData()

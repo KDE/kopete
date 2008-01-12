@@ -35,7 +35,7 @@ BonjourContact::BonjourContact( Kopete::Account* _account, const QString &unique
 		const QString &displayName, Kopete::MetaContact *parent )
 : Kopete::Contact( _account, uniqueName, parent )
 {
-	kDebug( 14210 ) << " uniqueName: " << uniqueName << ", displayName: " << displayName;
+	kDebug()<< " uniqueName: " << uniqueName << ", displayName: " << displayName;
 	m_type = BonjourContact::Null;
 	// FIXME: ? setDisplayName( displayName );
 	m_msgManager = 0L;
@@ -82,7 +82,7 @@ void BonjourContact::serialize( QMap< QString, QString > &serializedData, QMap< 
 
 Kopete::ChatSession* BonjourContact::manager( CanCreateFlags canCreateFlags )
 {
-	kDebug( 14210 ) ;
+	kDebug();
 	if ( m_msgManager )
 	{
 		return m_msgManager;
@@ -125,7 +125,7 @@ void BonjourContact::showContactSettings()
 
 void BonjourContact::sendMessage( Kopete::Message &message )
 {
-	kDebug( 14210 ) ;
+	kDebug();
 
 	// This is Blocking, we may lose upto 5 seconds here
 	if (! connection) {

@@ -296,7 +296,7 @@ void BonjourAccount::disconnect()
 
 void BonjourAccount::slotGoOnline ()
 {
-	kDebug ( 14210 ) ;
+	kDebug();
 
 	if (!isConnected ())
 		connect ();
@@ -307,7 +307,7 @@ void BonjourAccount::slotGoOnline ()
 
 void BonjourAccount::slotGoAway ()
 {
-	kDebug ( 14210 ) ;
+	kDebug();
 
 	if (!isConnected ())
 		connect();
@@ -319,7 +319,7 @@ void BonjourAccount::slotGoAway ()
 
 void BonjourAccount::slotGoOffline ()
 {
-	kDebug ( 14210 ) ;
+	kDebug();
 
 	if (isConnected ())
 		disconnect ();
@@ -328,7 +328,7 @@ void BonjourAccount::slotGoOffline ()
 
 void BonjourAccount::slotShowVideo ()
 {
-	kDebug ( 14210 ) ;
+	kDebug();
 
 	if (isConnected ())
 	{

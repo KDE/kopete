@@ -1,4 +1,5 @@
 add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
+add_definitions(-DKDE_DEFAULT_DEBUG_AREA=14220)
 
 add_subdirectory( icons ) 
 

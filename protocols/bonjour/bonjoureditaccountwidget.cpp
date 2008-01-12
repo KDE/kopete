@@ -34,7 +34,7 @@ BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Acc
 : QWidget( parent ), KopeteEditAccountWidget( account )
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
-				kDebug(14210) ;
+				kDebug() ;
 	m_preferencesWidget = new Ui::BonjourAccountPreferences();
 	m_preferencesWidget->setupUi( this );
 
