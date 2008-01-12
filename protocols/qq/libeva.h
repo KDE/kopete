@@ -9,6 +9,13 @@
 #include <list>
 #include <map>
 
+#ifdef max
+#undef max
+#endif
+#ifdef min
+#undef min
+#endif
+
 namespace Eva {
 	// NOTICE: the length of the following data declarations are:
 	// uchar : 8bit
@@ -177,10 +184,8 @@ namespace Eva {
 
 
 	// Customized max to get rid of stl dependence
-#ifndef _MSC_VER
 	template<class T> T max( T a, T b) { return (a>b) ? a : b; }
 	template<class T> T min( T a, T b) { return (a<b) ? a : b; }
-#endif
 
     class ByteArray
     {

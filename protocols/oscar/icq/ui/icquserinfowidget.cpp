@@ -40,6 +40,7 @@
 #include "ui_icqinterestinfowidget.h"
 #include "ui_icqorgaffinfowidget.h"
 
+#undef timezone
 
 ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool ownInfo )
 : KPageDialog( parent ), m_ownInfo( ownInfo )
