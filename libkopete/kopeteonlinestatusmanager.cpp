@@ -325,7 +325,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	if ( !statusFor.overlayIcons().empty() && baseIcon == statusFor.overlayIcons().first() )
 		kWarning( 14010 ) << "Base and overlay icons are the same - icon effects will not be visible.";
 
-	QPixmap* basis = new QPixmap( KIcon(baseIcon).pixmap(size) );
+	QPixmap* basis = new QPixmap( SmallIcon( baseIcon ) );
 
 	// Colorize
 	if ( color.isValid() )
