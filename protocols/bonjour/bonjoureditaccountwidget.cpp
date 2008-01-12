@@ -22,11 +22,13 @@
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <kdebug.h>
+#include <KConfigGroup>
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
 #include "ui_bonjouraccountpreferences.h"
 #include "bonjouraccount.h"
 #include "bonjourprotocol.h"
+#include <kconfigdialog.h>
 
 BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Account* account)
 : QWidget( parent ), KopeteEditAccountWidget( account )
@@ -35,6 +37,15 @@ BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Acc
 				kDebug(14210) ;
 	m_preferencesWidget = new Ui::BonjourAccountPreferences();
 	m_preferencesWidget->setupUi( this );
+
+	if (account) {
+		group = account->configGroup();
+	
+		m_preferencesWidget->kcfg_username->setText(group->readEntry("username"));
+		m_preferencesWidget->kcfg_firstName->setText(group->readEntry("firstName"));
+		m_preferencesWidget->kcfg_lastName->setText(group->readEntry("lastName"));
+		m_preferencesWidget->kcfg_emailAddress->setText(group->readEntry("emailAddress"));
+	}
 }
 
 BonjourEditAccountWidget::~BonjourEditAccountWidget()
@@ -44,25 +55,24 @@ BonjourEditAccountWidget::~BonjourEditAccountWidget()
 
 Kopete::Account* BonjourEditAccountWidget::apply()
 {
-	if (! account() )
-		setAccount( new BonjourAccount ( BonjourProtocol::protocol(), m_preferencesWidget->m_name->text()));
+	if (! account() ) {
+		setAccount( new BonjourAccount ( BonjourProtocol::protocol(), m_preferencesWidget->kcfg_username->text()));
+		group = account()->configGroup();
+	}
 
-	QByteArray name =  m_preferencesWidget->m_name->text().toUtf8();
-	QByteArray fname =  m_preferencesWidget->m_first->text().toUtf8();
-	QByteArray lname =  m_preferencesWidget->m_last->text().toUtf8();
-	QByteArray email =  m_preferencesWidget->m_email->text().toUtf8();
+	group->writeEntry("username", m_preferencesWidget->kcfg_username->text());
+	group->writeEntry("firstName", m_preferencesWidget->kcfg_firstName->text());
+	group->writeEntry("lastName", m_preferencesWidget->kcfg_lastName->text());
+	group->writeEntry("emailAddress", m_preferencesWidget->kcfg_emailAddress->text());
 
-	account()->setProperty("fullName", name);
-	account()->setProperty("firstName", fname);
-	account()->setProperty("lastName", lname);
-	account()->setProperty("emailAddress", email);
+	((BonjourAccount *)account())->parseConfig();
 
 	return account();
 }
 
 bool BonjourEditAccountWidget::validateData()
 {
-   	return !( m_preferencesWidget->m_name->text().isEmpty() );
+   	return !( m_preferencesWidget->kcfg_username->text().isEmpty() );
 }
 
 #include "bonjoureditaccountwidget.moc"

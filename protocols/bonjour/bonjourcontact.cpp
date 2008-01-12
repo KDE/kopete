@@ -128,8 +128,8 @@ void BonjourContact::sendMessage( Kopete::Message &message )
 
 	// This is Blocking, we may lose upto 5 seconds here
 	if (! connection) {
-		QString localName = account()->property("fullName").toString();
-		setConnection(new BonjourContactConnection(remoteAddress, remotePort, localName, fullName));
+		QString localName = account()->property("username").toString();
+		setConnection(new BonjourContactConnection(remoteAddress, remotePort, localName, username));
 	}
 
 	// Blocking Again. Upto another 3 seconds
@@ -188,14 +188,14 @@ const short int BonjourContact::getremotePort() const
 	return remotePort;
 }
 
-void BonjourContact::setfullName(const QString &n_fullName)
+void BonjourContact::setusername(const QString &n_username)
 {
-	fullName = n_fullName;
+	username = n_username;
 }
 
-const QString BonjourContact::getfullName() const
+const QString BonjourContact::getusername() const
 {
-	return fullName;
+	return username;
 }
 
 void BonjourContact::settextdata(const QMap <QString, QByteArray> &n_textdata)

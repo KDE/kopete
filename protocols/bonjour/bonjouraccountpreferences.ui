@@ -79,7 +79,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="m_name" >
+           <widget class="QLineEdit" name="kcfg_username" >
             <property name="text" >
              <string>KDE Developer</string>
             </property>
@@ -93,7 +93,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="m_first" >
+           <widget class="QLineEdit" name="kcfg_firstName" >
             <property name="text" >
              <string>KDE</string>
             </property>
@@ -107,7 +107,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="m_email" >
+           <widget class="QLineEdit" name="kcfg_emailAddress" >
             <property name="text" >
              <string>kde@example.com</string>
             </property>
@@ -121,7 +121,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="m_last" >
+           <widget class="QLineEdit" name="kcfg_lastName" >
             <property name="text" >
              <string>Developer</string>
             </property>

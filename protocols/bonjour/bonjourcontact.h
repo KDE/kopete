@@ -52,7 +52,7 @@ class BonjourContact : public Kopete::Contact
 	QHostAddress remoteAddress;
 	short int remotePort;
 
-	QString fullName;
+	QString username;
 	QMap <QString, QByteArray> textdata;
 
 public:
@@ -95,17 +95,17 @@ public:
 	Q_PROPERTY(QString remoteHostName READ getremoteHostName WRITE setremoteHostName)
 	Q_PROPERTY(QHostAddress remoteAddress READ getremoteAddress)
 	Q_PROPERTY(short int remotePort READ getremotePort WRITE setremotePort)
-	Q_PROPERTY(QString fullName READ getfullName WRITE setfullName)
+	Q_PROPERTY(QString username READ getusername WRITE setusername)
 
 	void setremoteHostName(const QString &nremoteHostName);
 	void setremotePort(const short int &nremotePort);
-	void setfullName(const QString &nfullName);
+	void setusername(const QString &nusername);
 	void settextdata(const QMap <QString, QByteArray> &ntextdata);
 
 	const QString getremoteHostName() const;
 	const QHostAddress getremoteAddress() const;
 	const short int getremotePort() const;
-	const QString getfullName() const;
+	const QString getusername() const;
 	const QMap <QString, QByteArray> gettextdata() const;
 
 	/*

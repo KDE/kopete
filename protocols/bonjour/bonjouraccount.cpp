@@ -53,6 +53,16 @@ BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountI
 
 	// Clean out Contacts from last time when kopete starts up
 	wipeOutAllContacts();
+
+	parseConfig();
+}
+
+void BonjourAccount::parseConfig()
+{
+	username = configGroup()->readEntry("username").toUtf8();
+	firstName = configGroup()->readEntry("firstName").toUtf8();
+	lastName = configGroup()->readEntry("lastName").toUtf8();
+	emailAddress = configGroup()->readEntry("emailAddress").toUtf8();
 }
 
 BonjourAccount::~BonjourAccount()
@@ -153,12 +163,12 @@ void BonjourAccount::startBrowse()
 
 void BonjourAccount::startPublish()
 {
-	if (! fullName.contains('@')) {
-		fullName.append("@");
-		fullName.append(getLocalHostName().toUtf8());
+	if (! username.contains('@')) {
+		username.append("@");
+		username.append(getLocalHostName().toUtf8());
 	}
 
-	service = new DNSSD::PublicService(fullName, "_presence._tcp", listeningPort);
+	service = new DNSSD::PublicService(username, "_presence._tcp", listeningPort);
 
         QMap <QString, QByteArray> map;
         map.insert("1st",  firstName);
@@ -179,8 +189,8 @@ void BonjourAccount::startPublish()
 
 void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 {
-	if (fullName.isEmpty())
-		fullName = accountId().toUtf8();
+	if (username.isEmpty())
+		username = accountId().toUtf8();
 
 	if (! startLocalServer())
 		return;
@@ -198,7 +208,7 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 
 	kDebug()<<"\nComing Online\n";
 	
-	if (pointer->serviceName() == fullName)			// Don't Add Ourselves
+	if (pointer->serviceName() == username)			// Don't Add Ourselves
 		return;
 
         QMap <QString, QByteArray> map = pointer->textData();
@@ -227,7 +237,7 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 	c->setremoteHostName(pointer->hostName());
 	c->setremotePort(pointer->port());
 	c->settextdata(pointer->textData());
-	c->setfullName(pointer->serviceName());
+	c->setusername(pointer->serviceName());
 	c->setOnlineStatus(Kopete::OnlineStatus::Online);
 }
 
@@ -349,9 +359,9 @@ void BonjourAccount::updateContactStatus()
 	}
 }
 
-void BonjourAccount::setfullName(const QByteArray &n_fullName)
+void BonjourAccount::setusername(const QByteArray &n_username)
 {
-	fullName = n_fullName;
+	username = n_username;
 }
 
 void BonjourAccount::setfirstName(const QByteArray &n_firstName)
@@ -369,9 +379,9 @@ void BonjourAccount::setemailAddress(const QByteArray &n_emailAddress)
 	emailAddress = n_emailAddress;
 }
 
-const QByteArray BonjourAccount::getfullName() const
+const QByteArray BonjourAccount::getusername() const
 {
-	return fullName;
+	return username;
 }
 
 const QByteArray BonjourAccount::getfirstName() const

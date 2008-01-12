@@ -52,7 +52,7 @@ class BonjourAccount : public Kopete::Account
 	/** 
 	 * The Following Details are Set When An Account is Created
 	 */
-	QByteArray fullName;
+	QByteArray username;
 	QByteArray firstName; 
 	QByteArray emailAddress; 
 	QByteArray lastName; 
@@ -110,21 +110,26 @@ public:
 	BonjourAccount( BonjourProtocol *parent, const QString& accountID );
 	~BonjourAccount();
 
+	/*
+	 * Parse The Config File
+	 */
+	void parseConfig();
+
 	/**
-	 * Set Properties Such As fullName, firstName, emailAddress, lastName
+	 * Set Properties Such As username, firstName, emailAddress, lastName
 	 */
 
-	Q_PROPERTY(QByteArray fullName READ getfullName WRITE setfullName)
+	Q_PROPERTY(QByteArray username READ getusername WRITE setusername)
 	Q_PROPERTY(QByteArray firstName READ getfirstName WRITE setfirstName)
 	Q_PROPERTY(QByteArray lastName READ getlastName WRITE setlastName)
 	Q_PROPERTY(QByteArray emailAddress READ getemailAddress WRITE setemailAddress)
 
-	void setfullName(const QByteArray &nfullName);
+	void setusername(const QByteArray &nusername);
 	void setfirstName(const QByteArray &nfirstName);
 	void setlastName(const QByteArray &nlastName);
 	void setemailAddress(const QByteArray &nemailAddress);
 
-	const QByteArray getfullName() const;
+	const QByteArray getusername() const;
 	const QByteArray getfirstName() const;
 	const QByteArray getlastName() const;
 	const QByteArray getemailAddress() const;

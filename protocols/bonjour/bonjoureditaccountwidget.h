@@ -19,9 +19,8 @@
 #define BONJOUREDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
-//Added by qt3to4:
-#include <QVBoxLayout>
 #include <editaccountwidget.h>
+#include <KConfigGroup>
 
 class QVBoxLayout;
 namespace Kopete { class Account; }
@@ -50,6 +49,7 @@ public:
 protected:
 	Kopete::Account *m_account;
 	Ui::BonjourAccountPreferences *m_preferencesWidget;
+	KConfigGroup *group;
 };
 
 #endif
