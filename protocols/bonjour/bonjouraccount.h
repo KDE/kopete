@@ -198,6 +198,12 @@ public slots:
 	 */
 	void discoveredUserName(BonjourContactConnection *conn, QString user);
 
+	/**
+	 * Some IM clients are not decent enough to tell us who they are in the stream (ex: Miranda)
+	 * The Expect a lookup of know clients v/s their IP addresses
+	 */
+	void usernameNotInStream(BonjourContactConnection *conn);
+
 protected:
 	/**
 	 * This simulates contacts going on and offline in sync with the account's status changes

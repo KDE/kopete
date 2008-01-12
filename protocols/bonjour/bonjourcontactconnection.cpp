@@ -40,6 +40,8 @@ BonjourContactConnection::TokenTable::TokenTable()
 	insert("body", BonjourXmlTokenBody);
 	insert("html", BonjourXmlTokenHtml);
 	insert("x", BonjourXmlTokenX);
+	insert("iq", BonjourXmlTokenIq);
+	insert("query", BonjourXmlTokenQuery);
 }
 
 void BonjourContactConnection::setSocket(QTcpSocket *aSocket)
@@ -139,34 +141,35 @@ void BonjourContactConnection::dataInSocket()
 {
 	BonjourXmlToken token;
 
-	kDebug()<<"Data Available!";
+	token = getNextToken();
+	kDebug()<<"Data Available: "<<token.qualifiedName.toString()<<" ConnectionState: "<<connectionState;
 	
 	switch (connectionState) {
 		
 		case BonjourConnectionConnected:
-			token = getNextToken();
-			kDebug()<<token.qualifiedName.toString();
 			readData(token);
 			break;
 
 		case BonjourConnectionToWho:
-			getWho();
+			getWho(token);
 			break;
 
 		case BonjourConnectionNewIncoming:
 		case BonjourConnectionNewOutgoing:
-			token = getNextToken(BonjourXmlTokenStream);
 			getStreamTag(token);
 			break;
 	}
 }
 
-void BonjourContactConnection::getStreamTag(const BonjourXmlToken &token)
+void BonjourContactConnection::getStreamTag(BonjourXmlToken &token)
 {
 
-	// If we haven't gotten the stream token yet, just ignore the packet
-	if (token.name != BonjourXmlTokenStream)
-		return;
+	// If we haven't gotten the stream token yet, get it, if possible
+	if (token.name != BonjourXmlTokenStream) {
+		token = getNextToken(BonjourXmlTokenStream);
+		if (token.name != BonjourXmlTokenStream)
+			return;
+	}
 	
 	// If This was an Outgoing Stream, we do not need to check if the username is in the stream
 	if (connectionState == BonjourConnectionNewOutgoing) {
@@ -183,8 +186,10 @@ void BonjourContactConnection::getStreamTag(const BonjourXmlToken &token)
 		connectionState = BonjourConnectionConnected;
 		emit discoveredUserName(this, remote);
 	}
-	else
+	else {
 		connectionState = BonjourConnectionToWho;
+		emit usernameNotInStream(this);
+	}
 
 	sayStream();
 }
@@ -209,7 +214,7 @@ void BonjourContactConnection::sayStream()
 
 }
 
-void BonjourContactConnection::getWho()
+void BonjourContactConnection::getWho(BonjourXmlToken &token)
 {
 }
 
@@ -229,7 +234,7 @@ void BonjourContactConnection::sendMessage(const Kopete::Message &message)
 		<<"<html xmlns='http://www.w3.org/1999/xhtml'>"
 		<<"<body>"<<message.escapedBody()<<"</body>"
 		<<"</html>"
-		<<"<x xmlns='jabber:x:event'><composing/></x>"
+		<<"<x xmlns='jabber:x:event'><composing /></x>"
 		<<"</message>\n";
 
 	kDebug()<<response;
@@ -277,6 +282,13 @@ void BonjourContactConnection::readData(BonjourXmlToken &token)
 		case BonjourXmlTokenStream:
 			connectionState = BonjourConnectionDisconnected;
 			// Stream About to Close
+			break;
+
+		case BonjourXmlTokenIq:
+			ignoreAllIq(token);
+			break;
+
+		case BonjourXmlTokenError:
 			break;
 	}
 }
@@ -332,4 +344,24 @@ void BonjourContactConnection::sayGoodBye()
 {
 	if (connectionState == BonjourConnectionConnected)
 		socket->write("</stream:stream>");
+}
+
+void BonjourContactConnection::setRemoteAndLocal(const QString &aremote, const QString &alocal)
+{
+	remote = aremote;
+	local = alocal;
+	kDebug()<<"Local: "<<local<<" Remote: "<<remote;
+	connectionState = BonjourConnectionConnected;
+}
+
+void BonjourContactConnection::ignoreAllIq(BonjourXmlToken &token)
+{
+	do {
+		token = getNextToken();
+		if (token.name == BonjourXmlTokenIq)
+			break;
+	} while (token.name != BonjourXmlTokenError);
+
+	token = getNextToken();
+	readData(token);
 }

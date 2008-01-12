@@ -74,6 +74,8 @@ class BonjourContactConnection : public QObject {
 		BonjourXmlTokenBody,
 		BonjourXmlTokenHtml,
 		BonjourXmlTokenX,
+		BonjourXmlTokenIq,
+		BonjourXmlTokenQuery,
 
 		BonjourXmlTokenError = 99
 	};
@@ -101,6 +103,11 @@ class BonjourContactConnection : public QObject {
 	// is found are simply thrown away. If Not found, the name is set to BonjourXmlTokenError
 	const BonjourXmlToken getNextToken(BonjourXmlTokenName name);
 
+	// FIXME: Ignore everything between <iq> and </iq>
+	// iq is only sent by clients like miranda... Who don't care about the reply anyway
+	void ignoreAllIq(BonjourXmlToken &token);
+
+
     public:
 
 	// Public Constructor for incoming connections
@@ -122,12 +129,12 @@ class BonjourContactConnection : public QObject {
 	void readData(BonjourXmlToken &token);
 
 	// This is Called When a <stream> is expected (already read into token)
-	void getStreamTag(const BonjourXmlToken &token);
+	void getStreamTag(BonjourXmlToken &token);
 
 	// This is called when we are waiting for the from
 	// and to values (incoming).
 	// FIXME: Currently unimplemented as (at least gaim) says who it is in the <stream>
-	void getWho();
+	void getWho(BonjourXmlToken &token);
 
 	// This Gets the Address of the Current Connection
 	QHostAddress getHostAddress();
@@ -149,6 +156,9 @@ class BonjourContactConnection : public QObject {
 	// Send the </stream>
 	void sayGoodBye();
 
+	// Set remote and local externally, say via an IP lookup
+	void setRemoteAndLocal(const QString &remote, const QString &local);
+
     signals:
 
 	// This Signal is Emitted when there is new data
@@ -157,6 +167,9 @@ class BonjourContactConnection : public QObject {
 	// This signal is emitted when we discover who we are connected to (unverified)
 	// Incoming Connections Only, the username is sent back
 	void discoveredUserName(BonjourContactConnection *, QString);
+
+	// This signal is sent if we can't figure out who it is
+	void usernameNotInStream(BonjourContactConnection *);
 
 	// This Signal is basically forwarding disconnect signal from socket
 	void disconnected(BonjourContactConnection *);

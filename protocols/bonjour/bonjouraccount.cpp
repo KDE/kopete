@@ -421,6 +421,8 @@ void BonjourAccount::newIncomingConnection()
 	BonjourContactConnection *bcc = new BonjourContactConnection(sock);
 	QObject::connect(bcc, SIGNAL(discoveredUserName(BonjourContactConnection *, QString)),
 			this, SLOT(discoveredUserName(BonjourContactConnection *, QString)));;
+	QObject::connect(bcc, SIGNAL(usernameNotInStream(BonjourContactConnection *)),
+			this, SLOT(usernameNotInStream(BonjourContactConnection *)));;
 
 	unknownConnections << bcc;
 }
@@ -442,6 +444,26 @@ void BonjourAccount::discoveredUserName(BonjourContactConnection *conn, QString 
 
 	c->setConnection(conn);
 }
+
+void BonjourAccount::usernameNotInStream(BonjourContactConnection *conn)
+{
+	QList <BonjourContact *> list = getContactsByAddress(conn->getHostAddress());
+
+	kDebug()<<"Looking Up Via IP Address"<<conn->getHostAddress()<<list;
+
+	// Set this connection to first user in the list
+	if (list.size()) {
+		BonjourContact *c = list[0];
+	
+		kDebug()<<"Assigned to Contact: "<<c->getusername();
+
+		unknownConnections.removeAll(conn);
+
+		conn->setRemoteAndLocal(c->getusername(), username);
+		c->setConnection(conn);
+	}
+}
+
 
 BonjourContact *BonjourAccount::verifyUser(BonjourContactConnection *conn, QString user)
 {
