@@ -246,7 +246,7 @@ void BonjourAccount::goingOffline(DNSSD::RemoteService::Ptr pointer)
 	pointer->resolve();
 
 	Kopete::Contact *c = contacts()[pointer->serviceName()];
-	wipeOutContact(c);
+	c->setOnlineStatus(Kopete::OnlineStatus::Offline);
 }
 
 void BonjourAccount::wipeOutContact(Kopete::Contact *c)
@@ -260,8 +260,7 @@ void BonjourAccount::wipeOutContact(Kopete::Contact *c)
 	mc->removeContact(c);
 
 	// FIXME: DeleteContact task should be extended and used
-	Kopete::DeleteContactTask task(c);
-	task.start();
+	c->deleteLater();
 
 	if (mc->contacts().isEmpty())
 		Kopete::ContactList::self()->removeMetaContact(mc);

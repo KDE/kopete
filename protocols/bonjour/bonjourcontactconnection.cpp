@@ -196,14 +196,14 @@ void BonjourContactConnection::sayStream()
 	QString response;
 	QTextStream stream(&response);
 
-	stream	<<"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
-		<<"<stream:stream xmlns=\"jabber:client\" "
-		<<"xmlns:stream=\"http://etherx.jabber.org/streams\"";
+	stream	<<"<?xml version='1.0' encoding='UTF-8' ?>\n"
+		<<"<stream:stream xmlns='jabber:client' "
+		<<"xmlns:stream='http://etherx.jabber.org/streams'";
 
 	if (connectionState != BonjourConnectionToWho)
-		stream<<" from=\""<<local<<"\" to=\""<<remote<<"\"";
+		stream<<" from='"<<local<<"' to='"<<remote<<"'";
 
-	stream<<">";
+	stream<<">\n";
 
 	socket->write(response.toUtf8());
 
@@ -230,7 +230,7 @@ void BonjourContactConnection::sendMessage(const Kopete::Message &message)
 		<<"<body>"<<message.escapedBody()<<"</body>"
 		<<"</html>"
 		<<"<x xmlns='jabber:x:event'><composing/></x>"
-		<<"</message>";
+		<<"</message>\n";
 
 	kDebug()<<response;
 	socket->write(response.toUtf8());

@@ -48,6 +48,7 @@ BonjourContact::BonjourContact( Kopete::Account* _account, const QString &unique
 
 BonjourContact::~BonjourContact()
 {
+	kDebug()<<"Deleting Contact!";
 	if (connection) {
 		delete connection;
 	}
