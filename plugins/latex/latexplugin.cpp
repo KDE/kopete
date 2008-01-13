@@ -46,19 +46,17 @@ K_EXPORT_PLUGIN(LatexPluginFactory( "kopete_latex" ))
 LatexPlugin::LatexPlugin( QObject *parent, const QVariantList &/*args*/ )
 : Kopete::Plugin( LatexPluginFactory::componentData(), parent )
 {
-//	kDebug() ;
+//	kDebug(14317) ;
 	if( !s_pluginStatic )
 		s_pluginStatic = this;
 
 	mMagickNotFoundShown = false;
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotMessageAboutToShow( Kopete::Message & ) ) );
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToSend(Kopete::Message& )  ), this,  SLOT(slotMessageAboutToSend(Kopete::Message& )  ) );
-	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * ) ),
 			 this, SLOT( slotNewChatSession( Kopete::ChatSession * ) ) );
 	
 	m_convScript = KStandardDirs::findExe("kopete_latexconvert.sh");
-	slotSettingsChanged();
 
 		//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
 	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
@@ -107,7 +105,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	if( !messageText.contains("$$"))
 		return;
 
-	//kDebug() << " Using converter: " << m_convScript;
+	//kDebug(14317) << " Using converter: " << m_convScript;
 
 	// /\[([^]]).*?\[/$1\]/
 	// \$\$.+?\$\$
@@ -123,7 +121,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	QMap<QString, QString> replaceMap;
 	while (pos >= 0 && pos < messageText.length())
 	{
-//		kDebug() << " searching pos: " << pos;
+//		kDebug(14317) << " searching pos: " << pos;
 		pos = rg.indexIn(messageText, pos);
 		
 		if (pos >= 0 )
@@ -227,17 +225,20 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 	QString fileName = tempFile->fileName();
 
 	KProcess p;
-			
-	QString argumentRes = "-r %1x%2";
-	QString argumentOut = "-o %1";
+	
+	QString argumentRes = QString("-r %1x%2").arg(LatexConfig::horizontalDPI()).arg(LatexConfig::verticalDPI());
+	QString argumentOut = QString("-o %1").arg(fileName);
+	QString argumentInclude ("-x %1");
 	//QString argumentFormat = "-fgif";  //we uses gif format because MSN only handle gif
-	int hDPI, vDPI;
-	hDPI = LatexConfig::self()->horizontalDPI();
-	vDPI = LatexConfig::self()->verticalDPI();
-	p << m_convScript <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << argumentOut.arg(fileName) /*<< argumentFormat*/ << latexFormula  ;
-			
-	kDebug() << " Rendering " << m_convScript << " " <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << " " << argumentOut.arg(fileName);
-			
+	LatexConfig::self()->readConfig();
+	QString includePath = LatexConfig::latexIncludeFile();
+	if (!includePath.isNull())
+		p << m_convScript <<  argumentRes << argumentOut /*<< argumentFormat*/ << argumentInclude.arg(includePath) << latexFormula;
+	else
+		p << m_convScript <<  argumentRes << argumentOut /*<< argumentFormat*/ << latexFormula;
+	
+	kDebug(14317) << "Rendering" << m_convScript << argumentRes << argumentOut << argumentInclude << latexFormula ;
+	
 	// FIXME our sucky sync filter API limitations :-)
 	p.execute();
 	return fileName;
@@ -250,11 +251,6 @@ bool LatexPlugin::securityCheck(const QString &latexFormula)
 			"|read|csname|newhelp|relax|afterground|afterassignment|expandafter|noexpand|special|command|loop|repeat|toks"
 			"|output|line|mathcode|name|item|section|mbox|DeclareRobustCommand)[^a-zA-Z]"));
 
-}
-
-void LatexPlugin::slotSettingsChanged()
-{
-	LatexConfig::self()->readConfig();
 }
 
 #include "latexplugin.moc"

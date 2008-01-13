@@ -15,5 +15,9 @@
 			<label>Vertical Rendering Resolution (DPI).</label>
 			<default>150</default>
 		</entry>
+		<entry name="LatexIncludeFile" type="String">
+			<label>Latex Include File.</label>
+			<default>~/.tex2im_header</default>
+		</entry>
 	</group>
 </kcfg>

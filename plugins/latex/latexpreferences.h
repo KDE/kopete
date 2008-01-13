@@ -35,8 +35,9 @@ public:
 	explicit LatexPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
 	~LatexPreferences();
 
-	virtual void save();
-	virtual void load();
+	void save();
+	void load();
+	void defaults();
 
 private:
 	Ui::LatexPrefsUI *m_preferencesDialog;
