@@ -26,8 +26,8 @@
    <widget class="QPushButton" name="btOpen" >
     <property name="geometry" >
      <rect>
-      <x>510</x>
-      <y>10</y>
+      <x>170</x>
+      <y>250</y>
       <width>75</width>
       <height>26</height>
      </rect>
@@ -52,8 +52,8 @@
    <widget class="QLineEdit" name="l_port" >
     <property name="geometry" >
      <rect>
-      <x>390</x>
-      <y>10</y>
+      <x>50</x>
+      <y>250</y>
       <width>113</width>
       <height>22</height>
      </rect>
@@ -62,14 +62,27 @@
    <widget class="QLabel" name="label" >
     <property name="geometry" >
      <rect>
-      <x>352</x>
-      <y>12</y>
+      <x>12</x>
+      <y>252</y>
       <width>50</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text" >
      <string>Port :</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btDelete" >
+    <property name="geometry" >
+     <rect>
+      <x>170</x>
+      <y>280</y>
+      <width>75</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>DeletePort</string>
     </property>
    </widget>
   </widget>

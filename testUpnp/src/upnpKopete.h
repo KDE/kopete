@@ -69,7 +69,7 @@ class UpnpKopete
 
 		//different actions
 		void openPort(QString nameProtocol, int numPort);
-		
+		void deletePort(int numPort);
 		
 
 	private:

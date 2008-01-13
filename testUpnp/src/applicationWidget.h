@@ -23,6 +23,7 @@ public:
 
 public slots:
 	void openPort();
+	void deletePort();
 	void envoyer();
 	void close();
 

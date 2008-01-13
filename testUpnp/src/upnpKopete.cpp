@@ -475,6 +475,26 @@ void UpnpKopete::openPort(QString nameProtocol, int numPort)
 	sendAction(QString("AddPortMapping"),paramNameAction,paramValueAction);
 }
 
+void UpnpKopete::deletePort(int numPort)
+{
+	printf("---------------ACTION DELETE PORT----------------------\n");	
+	QList<QString> paramNameAction;
+	QList<QString> paramValueAction;
+
+	char c_numPort[50];
+
+	paramNameAction.append(QString("NewRemoteHost"));
+	paramNameAction.append(QString("NewExternalPort"));
+	paramNameAction.append(QString("NewProtocol"));
+
+	sprintf(c_numPort,"%d",numPort);
+
+	paramValueAction.append(QString(""));
+	paramValueAction.append(c_numPort);
+	paramValueAction.append(QString("TCP"));
+
+	sendAction(QString("DeletePortMapping"),paramNameAction,paramValueAction);
+}
 
 int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Cookie )
 {
