@@ -277,6 +277,8 @@ public:
 	bool isDefinitelyOnline() const;
 
 
+	
+
 	/**
 	 * \brief Return a status icon generated for the given Contact
 	 *
@@ -285,9 +287,18 @@ public:
 	 * over the base icon.
 	 * A cache is employed to reduce CPU and memory usage.
 	 * @param contact is the contact the icon should apply to.
-	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
 	 */
-	QPixmap iconFor( const Contact *contact, int size = 16 ) const;
+	QIcon iconFor( const Contact *contact ) const;
+
+	/**
+	 * \brief Return a status icon generated for the given Contact
+	 * \overload 
+	 * \deprecated  Use the one that return a QIcon
+	 * @param contact is the contact the icon should apply to.
+	 * @param size is the size we the icon should be scaled to
+	 */
+	KDE_DEPRECATED QPixmap iconFor( const Contact *contact, int size ) const
+	{ return iconFor(contact).pixmap(size); }
 
 	/**
 	 * \brief Return the mime source for a status icon generated for the given Contact
@@ -314,7 +325,19 @@ public:
 	 * The account's color causes tinting, if it's plain QColor(), no tinting takes place.
 	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
 	 */
-	QPixmap iconFor( const Account *account, int size = 16 ) const;
+	QIcon iconFor( const Account *account ) const;
+
+	/**
+	 * \brief Return a status icon generated for the given Account
+	 * \overload
+	 * \deprecated  Use the varient which return a QIcon
+	 * 
+	 * @param account is the account the icon should apply to.
+	 * The account's color causes tinting, if it's plain QColor(), no tinting takes place.
+	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
+	 */
+	KDE_DEPRECATED QPixmap iconFor( const Account *account, int size  ) const
+	{ return iconFor(account).pixmap(size); }
 
 	/**
 	 * \brief Return the mime source for a status icon generated for the given Account

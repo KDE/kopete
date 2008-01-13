@@ -689,7 +689,8 @@ void KopeteChatWindow::addTab( ChatView *view )
 		if(!c || c->onlineStatus() < contact->onlineStatus())
 			c=contact;
 	}
-	QPixmap pluginIcon = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
+	QIcon pluginIcon = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c) :
+			KIcon( view->msgManager()->protocol()->pluginIcon() );
 
 	view->setParent( m_tabBar );
 	view->setWindowFlags( 0 );
@@ -973,16 +974,13 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 
 	if ( view == m_activeView )
  	{
-		QPixmap icon16 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 16) :
-		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
-		QPixmap icon32 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 32) :
-		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
-		KWindowSystem::setIcons( winId(), icon32, icon16 );
+		setWindowIcon( c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c ) :
+				KIcon(view->msgManager()->protocol()->pluginIcon()));
 	}
 
 	if ( m_tabBar )
 		m_tabBar->setTabIcon(m_tabBar->indexOf( view ), c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c ) :
-		                                   SmallIcon( view->msgManager()->protocol()->pluginIcon() ) );
+		                                   KIcon( view->msgManager()->protocol()->pluginIcon() ) );
 }
 
 void KopeteChatWindow::slotChatClosed()

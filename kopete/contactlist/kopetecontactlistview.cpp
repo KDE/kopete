@@ -756,7 +756,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 						text = text.left( 38 ) + QLatin1String( "..." );
 
 					contactMenu->setTitle(text);
-					contactMenu->setIcon(c->onlineStatus().iconFor( c, 16 ));
+					contactMenu->setIcon(c->onlineStatus().iconFor( c ));
 					popup->addMenu( contactMenu );
 				}
 

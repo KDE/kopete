@@ -258,11 +258,7 @@ void IdentityStatusWidget::slotAccountStatusIconChanged( Kopete::Contact *contac
 	if( !item )
 		return;
 
-	QPixmap pm = status.iconFor( contact->account() );
-	if( pm.isNull() )
-		item->setIcon( KIconLoader::unknown() );
-	else
-		item->setIcon( QIcon( pm ) );
+	item->setIcon ( status.iconFor( contact->account() ) );
 }
 
 void IdentityStatusWidget::showAccountContextMenu( const QPoint & point )
