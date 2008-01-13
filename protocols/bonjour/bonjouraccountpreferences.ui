@@ -81,7 +81,7 @@
           <item>
            <widget class="QLineEdit" name="kcfg_username" >
             <property name="text" >
-             <string>KDE Developer</string>
+             <string>kde-devel</string>
             </property>
            </widget>
           </item>
