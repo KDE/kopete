@@ -25,8 +25,11 @@ namespace Kopete { class MetaContact; }
 namespace Ui { class BonjourAddUI; }
 
 /**
+ * @brief A Dummy Widget that Shows a Message
  * A page in the Add Contact Wizard
- * @author Will Stephenson
+ * This just shows a messaging saying `sorry, you cannot add anyone`
+ * @todo Remove this All Together
+ * @author Tejas Dinkar <tejas\@gja.in>
 */
 class BonjourAddContactPage : public AddContactPage
 {

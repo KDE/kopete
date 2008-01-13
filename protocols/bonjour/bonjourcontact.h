@@ -36,8 +36,12 @@ namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }
 
 /**
-@author Will Stephenson
-*/
+ * @brief This Represents a Bonjour Contact
+ *
+ * Bonjour Contacts are Added only by an Account Object, and not manually.
+ *
+ * @author Tejas Dinkar <tejas\@gja.in>
+ */
 class BonjourContact : public Kopete::Contact
 {
 	Q_OBJECT
@@ -57,6 +61,7 @@ class BonjourContact : public Kopete::Contact
 
 public:
 	/**
+	 * @todo FIXME: Remove this
 	 * The range of possible contact types
 	 */
 	enum Type { Null, Echo, Group };
@@ -65,26 +70,31 @@ public:
 			const QString &displayName, 
 			Kopete::MetaContact *parent );
 
-    ~BonjourContact();
+	~BonjourContact();
 
-    virtual bool isReachable();
+	virtual bool isReachable();
 	/**
 	 * Serialize the contact's data into a key-value map
 	 * suitable for writing to a file
 	 */
-    virtual void serialize(QMap< QString, QString >& serializedData,
+	virtual void serialize(QMap< QString, QString >& serializedData,
 			QMap< QString, QString >& addressBookData);
 	/**
 	 * Return the actions for this contact
 	 */
 	virtual QList<KAction *> *customContextMenuActions();
 	/**
-	 * Returns a Kopete::ChatSession associated with this contact
+	 * @brief Returns a Kopete::ChatSession associated with this contact
+	 *
+	 * @param canCreate If @c true, then a new manager may be created
+	 * @return The Contats's ChatSession Manager
 	 */
 	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
 
 	/**
-	 * Set the Type of this contact
+	 * @brief Set the Type of this contact
+	 *
+	 * @todo FIXME: Remove This, it's left over from testbed
 	 */
 	void setType( Type type );
 
@@ -109,40 +119,68 @@ public:
 	const QMap <QString, QByteArray> gettextdata() const;
 
 	/*
-	 * This Function Checks if a contact has the given remote address and port
-	 * and Returns True if they both match
+	 * @brief Checks if the contact is at a given address
+	 *
+	 * This Function Checks if a contact has the given remote address
+	 *
+	 * @param host The Host To Be Compared With
+	 * @return @c true if it is the same, @false otherwise
 	 */
 	const bool isRemoteAddress(const QHostAddress &host) const;
 
 	/*
-	 * This Sets the Connection
+	 * @brief This Sets the @ref connection
+	 *
+	 * A Connection is a wrapper around a socket which is a TCP connection with a remote user
+	 * The Connection is reparented so that the contact is the new parent
+	 *
+	 * @param conn The Connection
 	 */
-	void setConnection(BonjourContactConnection *);
+	void setConnection(BonjourContactConnection *conn );
 
 public slots:
 	/**
-	 * Transmits an outgoing message to the server 
+	 * @brief Send an Outgoing message
+	 *
+	 * Transmits an outgoing message to the @ref connection
 	 * Called when the chat window send button has been pressed
 	 * (in response to the relevant Kopete::ChatSession signal)
+	 *
+	 * @param message The Message To Be Sent
 	 */
 	void sendMessage( Kopete::Message &message );
+
 	/**
+	 * @brief Receive an Incoming Messaed
+	 *
 	 * Called when an incoming message arrived
 	 * This displays it in the chatwindow
+	 *
+	 * @param message The Message Received
 	 */
 	void receivedMessage( Kopete::Message message );
 
 	/**
-	 * Call This Function when the connection is deleted
+	 * @brief The Connection Was Disconnected
+	 *
+	 * Call This Function when the connection is disconnected
+	 * This Cleans up (ensures the entire connection is deleted)
+	 *
+	 * @param conn The Connection
 	 */
-	void connectionDisconnected(BonjourContactConnection *);
+	void connectionDisconnected(BonjourContactConnection *conn);
 
 protected slots:
 	/**
-	 * Show the settings dialog
+	 * @brief Show the settings dialog
+	 *
+	 * @todo FIXME: This is implemented from the Testbed protocol
 	 */
 	void showContactSettings();
+
 	/**
+	 * @brief The Chat Session was destroyed
+	 *
 	 * Notify the contact that its current Kopete::ChatSession was
 	 * destroyed - probably by the chatwindow being closed
 	 */

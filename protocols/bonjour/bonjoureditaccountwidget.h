@@ -27,7 +27,10 @@ namespace Kopete { class Account; }
 namespace Ui { class BonjourAccountPreferences; }
 
 /**
- * A widget for editing this protocol's accounts
+ * @brief A widget for editing this protocol's accounts
+ *
+ * @todo This entire Widget needs to be made more beautiful
+ *
  * @author Tejas Dinkar
 */
 class BonjourEditAccountWidget : public QWidget, public KopeteEditAccountWidget
