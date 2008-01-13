@@ -55,17 +55,6 @@ Kopete::Contact *BonjourProtocol::deserializeContact(
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
 	QString displayName = serializedData[ "displayName" ];
-	QString type = serializedData[ "contactType" ];
-
-	BonjourContact::Type tbcType;
-	if ( type == QLatin1String( "group" ) )
-		tbcType = BonjourContact::Group;
-	else if ( type == QLatin1String( "echo" ) )
-		tbcType = BonjourContact::Echo;
-	else if ( type == QLatin1String( "null" ) )
-		tbcType = BonjourContact::Null;
-	else
-		tbcType = BonjourContact::Null;
 
 	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );
 	Kopete::Account* account = 0;
@@ -82,7 +71,6 @@ Kopete::Contact *BonjourProtocol::deserializeContact(
 	}
 
 	BonjourContact * contact = new BonjourContact(account, contactId, displayName, metaContact);
-	contact->setType( tbcType );
 	return contact;
 }
 

@@ -60,12 +60,6 @@ class BonjourContact : public Kopete::Contact
 	QMap <QString, QByteArray> textdata;
 
 public:
-	/**
-	 * @todo FIXME: Remove this
-	 * The range of possible contact types
-	 */
-	enum Type { Null, Echo, Group };
-
 	BonjourContact( Kopete::Account* _account, const QString &uniqueName, 
 			const QString &displayName, 
 			Kopete::MetaContact *parent );
@@ -76,6 +70,8 @@ public:
 	/**
 	 * Serialize the contact's data into a key-value map
 	 * suitable for writing to a file
+	 *
+	 * @todo FIXME: As we don't save any contacts, this function is useless
 	 */
 	virtual void serialize(QMap< QString, QString >& serializedData,
 			QMap< QString, QString >& addressBookData);
@@ -90,13 +86,6 @@ public:
 	 * @return The Contats's ChatSession Manager
 	 */
 	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
-
-	/**
-	 * @brief Set the Type of this contact
-	 *
-	 * @todo FIXME: Remove This, it's left over from testbed
-	 */
-	void setType( Type type );
 
 	/**
 	 * The Following Properties are For saving Each Contact's IP address, hostname and
@@ -189,7 +178,6 @@ protected slots:
 protected:
 	Kopete::ChatSession* m_msgManager;
 	KActionCollection* m_actionCollection;
-	Type m_type;
 	KAction* m_actionPrefs;
 };
 

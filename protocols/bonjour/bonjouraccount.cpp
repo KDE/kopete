@@ -75,16 +75,6 @@ KActionMenu* BonjourAccount::actionMenu()
 {
 	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
 
-	mActionMenu->addSeparator();
-
-	KAction *action;
-
-	action = new KAction (KIcon("bonjour_showvideo"), i18n ("Show my own video..."), mActionMenu );
-        //, "actionShowVideo");
-	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
-	mActionMenu->addAction(action);
-	action->setEnabled( isConnected() );
-
 	return mActionMenu;
 }
 
@@ -302,7 +292,6 @@ void BonjourAccount::slotGoOnline ()
 		connect ();
 	else
 		myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOnline );
-	updateContactStatus();
 }
 
 void BonjourAccount::slotGoAway ()
@@ -313,7 +302,6 @@ void BonjourAccount::slotGoAway ()
 		connect();
 
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourAway );
-	updateContactStatus();
 }
 
 
@@ -323,19 +311,6 @@ void BonjourAccount::slotGoOffline ()
 
 	if (isConnected ())
 		disconnect ();
-	updateContactStatus();
-}
-
-void BonjourAccount::slotShowVideo ()
-{
-	kDebug();
-
-	if (isConnected ())
-	{
-		BonjourWebcamDialog *bonjourWebcamDialog = new BonjourWebcamDialog(0, 0);
-		Q_UNUSED(bonjourWebcamDialog);
-	}
-	updateContactStatus();
 }
 
 void BonjourAccount::receivedMessage( const QString &message )
@@ -347,15 +322,6 @@ void BonjourAccount::receivedMessage( const QString &message )
 	from = message.section( ':', 0, 0 );
 	Kopete::Contact* contact = contacts()[from];
 	messageSender = dynamic_cast<BonjourContact *>( contact );
-}
-
-void BonjourAccount::updateContactStatus()
-{
-	QHashIterator<QString, Kopete::Contact*>itr( contacts() );
-	for ( ; itr.hasNext(); ) {
-		itr.next();
-		itr.value()->setOnlineStatus( myself()->onlineStatus() );
-	}
 }
 
 void BonjourAccount::setusername(const QByteArray &n_username)

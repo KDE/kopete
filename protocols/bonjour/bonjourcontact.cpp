@@ -36,7 +36,7 @@ BonjourContact::BonjourContact( Kopete::Account* _account, const QString &unique
 : Kopete::Contact( _account, uniqueName, parent )
 {
 	kDebug()<< " uniqueName: " << uniqueName << ", displayName: " << displayName;
-	m_type = BonjourContact::Null;
+	//
 	// FIXME: ? setDisplayName( displayName );
 	m_msgManager = 0L;
 
@@ -55,11 +55,6 @@ BonjourContact::~BonjourContact()
 	remotePort = 0;
 }
 
-void BonjourContact::setType( BonjourContact::Type type )
-{
-	m_type = type;
-}
-
 bool BonjourContact::isReachable()
 {
     return true;
@@ -67,17 +62,7 @@ bool BonjourContact::isReachable()
 
 void BonjourContact::serialize( QMap< QString, QString > &serializedData, QMap< QString, QString > & /* addressBookData */ )
 {
-    QString value;
-	switch ( m_type )
-	{
-	case Null:
-		value = QLatin1String("null");
-	case Echo:
-		value = QLatin1String("echo");
-	case Group:
-		value = QLatin1String("group");
-	}
-	serializedData[ "contactType" ] = value;
+	// Really Do Nothing
 }
 
 Kopete::ChatSession* BonjourContact::manager( CanCreateFlags canCreateFlags )
@@ -91,8 +76,7 @@ Kopete::ChatSession* BonjourContact::manager( CanCreateFlags canCreateFlags )
 	{
 		QList<Kopete::Contact*> contacts;
 		contacts.append(this);
-		Kopete::ChatSession::Form form = ( m_type == Group ?
-				  Kopete::ChatSession::Chatroom : Kopete::ChatSession::Small );
+		Kopete::ChatSession::Form form = ( Kopete::ChatSession::Small );
 		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol(), form );
 		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
 				this, SLOT( sendMessage( Kopete::Message& ) ) );

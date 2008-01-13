@@ -241,16 +241,6 @@ public slots:
 	 */
 	void usernameNotInStream(BonjourContactConnection *conn);
 
-protected:
-	/**
-	 * @brief A Function about to be removed
-	 *
-	 * This is from the old testbed protocol, and is going bye bye
-	 * This simulates contacts going on and offline in sync with the account's status changes
-	 * @todo Remove This Function
-	 */
-	void updateContactStatus();
-
 private:
 
 	/** 
@@ -353,13 +343,6 @@ protected slots:
 	 * @brief Change the account's status.  Called by KActions and internally.
 	 */
 	void slotGoOffline();
-
-	/**
-	 * @brief Show webcam.  Called by KActions and internally.
-	 *
-	 * @todo FIXME: This Does Nothing
-	 */
-	void slotShowVideo();
 
 	/**
 	 * @brief This slot is called if a new incoming connection is made
