@@ -12,6 +12,7 @@ option(WITH_privacy "Enable Kopete privacy plugin" ON)
 option(WITH_urlpicpreview "Enable Kopete urlpicpreview plugin" ON)
 option(WITH_statistics "Enable Kopete statistics plugin" ON)
 option(WITH_webpresence "Enable Kopete webpresence plugin" ON)
+option(WITH_pipes "Enable Kopete pipes plugin" ON)
 
 # Laurent this plugins use shell script which will not work on windows
 if (WITH_latex AND UNIX)
@@ -53,7 +54,9 @@ endif (WITH_urlpicpreview)
 if (WITH_statistics AND SQLITE_FOUND)
   add_subdirectory ( statistics ) 
 endif (WITH_statistics AND SQLITE_FOUND)
-
+if (WITH_pipes)
+  add_subdirectory ( pipes )
+endif (WITH_pipes)
 if(WITH_webpresence AND LIBXML2_FOUND AND LIBXSLT_FOUND)
   add_subdirectory( webpresence )
 endif(WITH_webpresence AND LIBXML2_FOUND AND LIBXSLT_FOUND)
