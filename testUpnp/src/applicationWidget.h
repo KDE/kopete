@@ -8,6 +8,7 @@
 #include <QTextEdit>
 #include <QString>
 #include <QTreeWidget>
+ #include <QLineEdit>
 
 #include "upnpKopete.h"
 #include "device.h"

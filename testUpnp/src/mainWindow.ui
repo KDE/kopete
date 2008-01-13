@@ -6,32 +6,72 @@
     <x>0</x>
     <y>0</y>
     <width>591</width>
-    <height>463</height>
+    <height>481</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <layout class="QHBoxLayout" >
-    <item>
-     <widget class="QTextEdit" name="text_mess" />
-    </item>
-    <item>
-     <widget class="QPushButton" name="btOpen" >
-      <property name="text" >
-       <string>OpenPort</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="btEnvoi" >
-      <property name="text" >
-       <string>Search</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+   <widget class="QTextEdit" name="text_mess" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>581</width>
+      <height>181</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btOpen" >
+    <property name="geometry" >
+     <rect>
+      <x>510</x>
+      <y>10</y>
+      <width>75</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>OpenPort</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btEnvoi" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>75</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Search</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="l_port" >
+    <property name="geometry" >
+     <rect>
+      <x>390</x>
+      <y>10</y>
+      <width>113</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label" >
+    <property name="geometry" >
+     <rect>
+      <x>352</x>
+      <y>12</y>
+      <width>50</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Port :</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar" >
    <property name="geometry" >
@@ -39,7 +79,7 @@
      <x>0</x>
      <y>0</y>
      <width>591</width>
-     <height>30</height>
+     <height>28</height>
     </rect>
    </property>
   </widget>

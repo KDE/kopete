@@ -67,7 +67,7 @@ void Service::addActionList(IXML_Node * actionNode)
 		IXML_NodeList * argNodeList = ixmlNode_getChildNodes(argnode);
 	
 		// test of the list size
-		for(int i=1;i< ixmlNodeList_length(argNodeList);i++)
+		for(int i=0;i< ixmlNodeList_length(argNodeList);i++)
 		{
 			IXML_Node * subargnode = ixmlNodeList_item(argNodeList,i);
 			IXML_NodeList * subargNodeList = ixmlNode_getChildNodes(subargnode);
@@ -144,6 +144,6 @@ void Service::viewActionList()
 	{
 		Action action = this->m_actionList.at(i);
 		printf("%s \n",action.name().toLatin1().data());
-		action.viewListArgument();
+		//action.viewListArgument();
 	}
 }

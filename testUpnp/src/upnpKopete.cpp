@@ -82,6 +82,9 @@ QList<Device> UpnpKopete::mainDevices()
 	return this->m_mainDevices;
 }
 
+QString UpnpKopete::routeurLocation(){return this->m_routeurLocation;}
+void UpnpKopete::setRouteurLocation(QString routeurLocation){this->m_routeurLocation=routeurLocation;}
+
 int UpnpKopete::researchDevice()
 {
 	int ret;
@@ -121,6 +124,10 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,QString location)
 
 	IXML_Document *parent = DescDoc;
 	IXML_Node * nodeDevice;
+
+	Upnp_SID SubsId;
+	int ret;
+	int timeOut = 1801;
 	
 
 	IXML_NodeList * deviceList = ixmlDocument_getElementsByTagName(parent,"deviceType");
@@ -258,8 +265,23 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,QString location)
 		service.addAllActions();
 		
 		underDevice.addService(service);
-				
-		service.viewActionList();
+		
+		//subscribe device
+		printf("---------SUBSCRIBE---------\n");
+		char * relURL = (char *)malloc( strlen( location.toLatin1().data() ) + strlen( service.eventSubURL().toLatin1().data() ) + 1 );
+		ret = UpnpResolveURL( location.toLatin1().data(), service.eventSubURL().toLatin1().data(), relURL );
+                printf("ACTIONURL : %s\n",relURL);
+		if( ret != UPNP_E_SUCCESS )		
+		{
+			printf("Erreur UpnpResolveURL : %d\n",ret);
+		}
+		ret = UpnpSubscribe( device_handle, relURL,&timeOut,SubsId );
+                if( ret != UPNP_E_SUCCESS ) 
+		{
+                        printf("Erreur Subscribed to EventURL : %d\n",ret);
+                } 
+
+		//service.viewActionList();
 
 
 		//add device in the list maindevice
@@ -353,6 +375,7 @@ void UpnpKopete::sendAction(QString nameAction, QList<QString> paramNameAction,Q
 	bool find = false;
 	int ret;
 	IXML_Document *actionNode = NULL;
+	
 // 	Action action = NULL;
 	for(int i=0;i<this->m_mainDevices.size();i++)
 	{
@@ -364,18 +387,18 @@ void UpnpKopete::sendAction(QString nameAction, QList<QString> paramNameAction,Q
 			{
 				if(paramNameAction.isEmpty())
 				{
-					printf("----PAS DE PARAMETRE----\n");
+					printf("-------PAS de PARAM\n");
 					actionNode = UpnpMakeAction( nameAction.toLatin1().data(), service_tmp.serviceType().toLatin1().data(), 0,
 					NULL );
 				}
 				else
 				{
-					printf("----DES PARAMETRE----%d\n",paramNameAction.size());
+					printf("-------PARAM\n");
 					for( int k=0; k < paramNameAction.size(); k++ ) 
 					{
 						QString nameActionP = paramNameAction.at(k);
 						QString valueActionP = paramValueAction.at(k);
-						printf("nameAction = %s and valueAction %s\n",nameActionP.toLatin1().data(),nameActionP.toLatin1().data());
+					
 						
 						if( UpnpAddToAction
 						( &actionNode, nameAction.toLatin1().data(), service_tmp.serviceType().toLatin1().data(),
@@ -387,10 +410,22 @@ void UpnpKopete::sendAction(QString nameAction, QList<QString> paramNameAction,Q
 					}
 			
 				}
-				ret = UpnpSendActionAsync( device_handle,
-                                  service_tmp.xmlDocService().toLatin1().data(), service_tmp.serviceType().toLatin1().data(),
-                                  NULL, actionNode,
-                                  kopeteCallbackEventHandler, NULL );				
+				char * relURL = (char *)malloc( strlen( this->routeurLocation().toLatin1().data() ) + strlen( service_tmp.controlURL().toLatin1().data() ) + 1 );
+		ret = UpnpResolveURL( this->routeurLocation().toLatin1().data(), service_tmp.controlURL().toLatin1().data(), relURL );
+		if( ret != UPNP_E_SUCCESS )		
+		{
+			printf("Erreur UpnpResolveURL : %d\n",ret);
+		}
+
+				printf("DOCUMENT--------------\n xmlDoc : %s\n",relURL);
+				printf("%s\n",ixmlPrintNode((IXML_Node*)actionNode));
+				ret = UpnpSendActionAsync( 
+					device_handle,relURL,
+				 	service_tmp.serviceType().toLatin1().data(),
+					NULL, 
+					actionNode,
+					kopeteCallbackEventHandler,
+					NULL );				
 				
 				if( ret != UPNP_E_SUCCESS ) 
 				{
@@ -408,9 +443,14 @@ void UpnpKopete::sendAction(QString nameAction, QList<QString> paramNameAction,Q
 
 void UpnpKopete::openPort(QString nameProtocol, int numPort)
 {
+	printf("---------------ACTION OPEN PORT----------------------\n");	
+	QList<QString> paramNameAction;
+	QList<QString> paramValueAction;
+	//sendAction(QString("RequestConnection"),paramNameAction,paramValueAction);	
+
 	char c_numPort[50];
 
-	QList<QString> paramNameAction;
+	
 	paramNameAction.append(QString("NewRemoteHost"));
 	paramNameAction.append(QString("NewExternalPort"));
 	paramNameAction.append(QString("NewProtocol"));
@@ -422,15 +462,15 @@ void UpnpKopete::openPort(QString nameProtocol, int numPort)
 	
 	sprintf(c_numPort,"%d",numPort);
 
-	QList<QString> paramValueAction;
-	paramValueAction.append(nameProtocol);
+	
+	paramValueAction.append(QString(""));
 	paramValueAction.append(c_numPort);
 	paramValueAction.append(QString("TCP"));
 	paramValueAction.append(c_numPort);
 	paramValueAction.append(this->hostIp);
 	paramValueAction.append(QString("1"));
 	paramValueAction.append(nameProtocol);
-	paramValueAction.append(QString("5"));
+	paramValueAction.append(QString("0"));
 	
 	sendAction(QString("AddPortMapping"),paramNameAction,paramValueAction);
 }
@@ -467,7 +507,7 @@ int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Coo
                 	}
 			else
 			{
-				
+				getUpnp->setRouteurLocation(QString(d_event->Location));
 				printf("Location URL %s\n",d_event->Location);
                     		//TvCtrlPointAddDevice( DescDoc, d_event->Location,d_event->Expires );
 				getUpnp->addXMLDescDoc(DescDoc, d_event->Location);

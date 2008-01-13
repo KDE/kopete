@@ -57,6 +57,8 @@ class UpnpKopete
 		unsigned short getDestPort();
 		QList<Device> mainDevices();
       
+		QString routeurLocation();
+		void setRouteurLocation(QString routeurLocation);
 		int researchDevice();
 
 		void addDevice(IXML_Document * DescDoc,QString location);
@@ -74,6 +76,7 @@ class UpnpKopete
 		
 		static UpnpKopete * uniqueInstance;		
 		
+		QString m_routeurLocation;
 		QString deviceType;
 		QString hostIp;
 		unsigned short destPort;

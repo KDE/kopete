@@ -13,8 +13,25 @@ ApplicationWidget::ApplicationWidget(QWidget *parent): QMainWindow(parent)
 
 void ApplicationWidget::openPort()
 {
-	printf("---------------OPEN PORT----------------------\n");
-	this->upnp->openPort(QString("Test application"), 4661);
+	bool val;
+	int port;
+	if(l_port->text().isEmpty())
+	{
+		text_mess->append("Choose port");
+	}
+	else
+	{
+		port=l_port->text().toInt(&val, 10);
+		if(val==true)
+		{ 
+			this->upnp->openPort(QString("Test application"), port);
+			text_mess->append("Port open : "+l_port->text());
+		}
+		else
+		{
+			text_mess->append("the value isn't number");
+		}
+	}
 }
 void ApplicationWidget::envoyer()
 {
@@ -48,6 +65,7 @@ void ApplicationWidget::envoyer()
 	text_mess->append("######################################");
 
 	this->upnp->viewListDevice();
+
 	
 }
 
