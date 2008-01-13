@@ -854,7 +854,7 @@ void VideoDevicePool::saveConfig()
 				config.writeEntry( brightness,             (double)(*vditerator).m_input[input].getBrightness());
 				config.writeEntry( contrast,               (double)(*vditerator).m_input[input].getContrast());
 				config.writeEntry( saturation,             (double)(*vditerator).m_input[input].getSaturation());
-				config.writeEntry( saturation,             (double)(*vditerator).m_input[input].getWhiteness());
+				config.writeEntry( whiteness,              (double)(*vditerator).m_input[input].getWhiteness());
 				config.writeEntry( hue,                    (double)(*vditerator).m_input[input].getHue());
 				config.writeEntry( autobrightnesscontrast, (*vditerator).m_input[input].getAutoBrightnessContrast());
 				config.writeEntry( autocolorcorrection,    (*vditerator).m_input[input].getAutoColorCorrection());
@@ -868,6 +868,7 @@ void VideoDevicePool::saveConfig()
 
 void VideoDevicePool::deviceAdded( const QString & udi )
 {
+	kDebug() << "("<< udi << ") called";
 	Solid::Device dev( udi );
 	if ( dev.is<Solid::Video>() )
 	{
@@ -878,6 +879,7 @@ void VideoDevicePool::deviceAdded( const QString & udi )
 
 void VideoDevicePool::deviceRemoved( const QString & udi )
 {
+	kDebug() << "("<< udi << ") called";
 	int i = 0;
 	foreach ( VideoDevice vd, m_videodevice ) {
 		

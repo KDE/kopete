@@ -319,6 +319,9 @@ void Emoticons::addIfPossible( const QString& filenameNoExt, const QStringList &
 		for ( QStringList::const_iterator it = emoticons.constBegin(), end = emoticons.constEnd();
 		      it != end; ++it )
 		{
+			if ( (*it).isEmpty() )
+				continue;
+
 			QString matchEscaped=Qt::escape(*it);
 
 			Emoticon e;
@@ -406,7 +409,9 @@ void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
 					{
 						if( emoticonElement.tagName() == QLatin1String( "string" ) )
 						{
-							items << emoticonElement.text();
+							QString emoticonText = emoticonElement.text();
+							if ( !emoticonText.isEmpty() )
+								items << emoticonText;
 						}
 						else
 						{
@@ -462,7 +467,9 @@ void Emoticons::initEmoticon_JEP0038( const QString & filename)
 						if( emoticonElement.tagName() == QLatin1String( "text" ) )
 						{
 							//TODO xml:lang
-							items << emoticonElement.text();
+							QString emoticonText = emoticonElement.text();
+							if ( !emoticonText.isEmpty() )
+								items << emoticonText;
 						}
 						else if( emoticonElement.tagName() == QLatin1String( "object" ) && emoticon_file.isEmpty() )
 						{

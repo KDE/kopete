@@ -183,7 +183,7 @@ void NDnsManager::resolve(NDns *self, const QString &name)
 {
 	Item *i = new Item;
 	i->ndns = self;
-	i->worker = new NDnsWorker(this, name.utf8());
+	i->worker = new NDnsWorker(this, name.toUtf8());
 	d->list.append(i);
 
 	i->worker->start();
@@ -299,7 +299,7 @@ void NDns::stop()
 //! \sa resultsReady()
 uint NDns::result() const
 {
-	return addr.ip4Addr();
+	return addr.toIPv4Address();
 }
 
 //!

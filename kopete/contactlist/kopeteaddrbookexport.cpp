@@ -67,7 +67,7 @@ void KopeteAddressBookExport::fetchKABCData()
 {
 	if ( !mAddressee.isEmpty() )
 	{
-		mAddrBookIcon = SmallIcon( "kaddressbook" );
+		mAddrBookIcon = SmallIcon( "office-address-book" );
 		
 		// given name
 		QString given = mAddressee.givenName();

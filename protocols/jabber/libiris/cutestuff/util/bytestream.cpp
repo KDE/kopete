@@ -134,7 +134,7 @@ int ByteStream::bytesToWrite() const
 //! Writes string \a cs to the stream.
 void ByteStream::write(const Q3CString &cs)
 {
-	QByteArray block(cs.length());
+	QByteArray block(cs.length(), '\0');
 	memcpy(block.data(), cs.data(), block.size());
 	write(block);
 }

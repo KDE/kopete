@@ -165,7 +165,7 @@ QString Identity::customIcon() const
 	if (hasProperty( Kopete::Global::Properties::self()->photo().key() ))
 		return property(Kopete::Global::Properties::self()->photo()).value().toString();
 	else
-		return "user";
+		return "user-identity";
 }
 
 

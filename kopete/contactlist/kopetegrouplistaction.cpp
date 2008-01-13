@@ -35,7 +35,7 @@ KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString
 {
 	setShortcut(cut);
 	if( receiver && slot )
-		connect( this, SIGNAL( activated() ), receiver, slot );
+		connect( this, SIGNAL(triggered(int)), receiver, slot );
 
 	connect( Kopete::ContactList::self(), SIGNAL( groupAdded( Kopete::Group * ) ), this, SLOT( slotUpdateList() ) );
 	connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ), this, SLOT( slotUpdateList() ) );

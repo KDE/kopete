@@ -52,7 +52,7 @@ public:
 	/**
 	 * Object constructor and destructor
 	 */
-	 JabberProtocol (QObject * parent, const QStringList &);
+	 JabberProtocol (QObject * parent, const QVariantList &);
 	 ~JabberProtocol ();
 
 	/**

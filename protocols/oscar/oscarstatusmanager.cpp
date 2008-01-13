@@ -109,10 +109,11 @@ Kopete::OnlineStatus OscarStatusManager::onlineStatusOf( const Oscar::Presence &
 		kDebug() << "Creating Kopete::OnlineStatus for XStatus, internal status: " << pres.internalStatus();
 		// XStatus, we have to create new KOS
 		Oscar::PresenceOverlay overlay = pscOverlayForFlags( pres.flags() );
+		const Oscar::PresenceType &type = pscTypeForType( pres.type() );
 
 		QString desc = kosDescription( pres );
 		QString xtrazIcon = QString( "icq_xstatus%1" ).arg( pres.xtrazStatus() );
-		return Kopete::OnlineStatus( Kopete::OnlineStatus::Online, 0, d->protocol, pres.internalStatus(),
+		return Kopete::OnlineStatus( type.onlineStatusType(), 0, d->protocol, pres.internalStatus(),
 		                             QStringList( xtrazIcon ) + overlay.icons(), desc );
 	}
 	else if ( (pres.flags() & Oscar::Presence::ExtStatus) == Oscar::Presence::ExtStatus )

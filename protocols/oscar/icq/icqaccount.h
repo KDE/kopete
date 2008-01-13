@@ -74,6 +74,7 @@ protected:
 	virtual QString sanitizedMessage( const QString& message ) const;
 
 protected slots:
+	virtual void loginActions();
 	virtual void disconnected( DisconnectReason reason );
 
 

@@ -263,7 +263,8 @@ void ChatMessagePart::slotScrollingTo( int y )
 
 void ChatMessagePart::save()
 {
-	KFileDialog dlg( KUrl(), QLatin1String( "text/html text/plain" ), view() );
+	const KUrl dummyUrl;
+	KFileDialog dlg( dummyUrl, QLatin1String( "text/html text/plain" ), view() );
 	dlg.setCaption( i18n( "Save Conversation" ) );
 	dlg.setOperationMode( KFileDialog::Saving );
 
@@ -611,9 +612,17 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 	else
 	{
 		QString nick = element.innerText().string().trimmed();
-		for ( i = 0; i != m.size(); i++)
-			if ( m[i]->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString() == nick )
-				return m[i];
+		foreach ( Kopete::Contact *contact, m )
+		{
+			QString contactNick;
+			if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
+				contactNick = contact->metaContact()->displayName();
+			else
+				contactNick = contact->nickName();
+
+			if ( contactNick == nick )
+				return contact;
+		}
 	}
 
 	return 0;

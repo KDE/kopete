@@ -317,7 +317,7 @@ QString Message::escapedBody() const
 		QString html = d->body->toHtml();
 //		all this regex business is to take off the outer HTML document provided by QTextDocument
 //		remove the head
-		QRegExp badStuff ("<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>");
+		QRegExp badStuff ("<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>|</?p[^<>]*>");
 		html = html.remove (badStuff);
 //		remove newlines that may be present, since they end up being displayed in the chat window. real newlines are represented with <br>, so we know \n's are meaningless
 		html = html.remove ("\n");

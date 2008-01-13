@@ -8,11 +8,23 @@ include (TestBigEndian)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
 check_type_size("long" SIZEOF_LONG)
 check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
-macro_bool_to_01(XMMS_FOUND HAVE_XMMS)
+
 macro_optional_find_package(Xmms)
+macro_bool_to_01(XMMS_FOUND HAVE_XMMS)
+macro_log_feature(XMMS_FOUND "XMMS" "X MultiMedia System developement libraries" "http://www.xmms.org" FALSE "" "Used by the Kopete nowlistening plugin to support the XMMS player.")
+
+if(XMMS_FOUND)
+  # GLIB2_INCLUDE_DIR needed for Xmms
+  macro_optional_find_package(GLIB2)
+endif(XMMS_FOUND)
+
 macro_optional_find_package(LibXml2)
+macro_log_feature(LIBXML2_FOUND "LibXML2" "Libraries used to develop XML applications" "http://xmlsoft.org" FALSE "" "Required for the Kopete webpresence plugin.")
+
 macro_optional_find_package(LibXslt)
 macro_bool_to_01(LIBXSLT_FOUND HAVE_XSLT)
+macro_log_feature(LIBXSLT_FOUND "LibXSLT" "A library to transform XML files into other XML files" "http://xmlsoft.org/XSLT" FALSE "" "Required for the Kopete webpresence plugin.")
+
 check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
 check_include_files(stdint.h HAVE_STDINT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)

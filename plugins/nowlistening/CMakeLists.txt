@@ -1,6 +1,9 @@
 
-include_directories( ${KOPETE_INCLUDES} ${XMMS_INCLUDE_DIR} )
-
+include_directories( ${KOPETE_INCLUDES} )
+if(XMMS_FOUND)
+  include_directories(${XMMS_INCLUDE_DIRS} )
+  include_directories( ${GLIB2_INCLUDE_DIR} )
+endif(XMMS_FOUND)
 
 ########### next target ###############
 
@@ -20,10 +23,10 @@ kde4_add_kcfg_files(kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
 kde4_add_plugin(kopete_nowlistening ${kopete_nowlistening_PART_SRCS})
 
 
-target_link_libraries(kopete_nowlistening  ${KDE4_KDECORE_LIBS} kopete ${KDE4_KDE3SUPPORT_LIBS})
+target_link_libraries(kopete_nowlistening  ${KDE4_KDECORE_LIBS} kopete)
 
 if(XMMS_FOUND)
-   target_link_libraries( kopete_nowlistening ${XMMS_LIBRAIRIES} )
+   target_link_libraries( kopete_nowlistening ${XMMS_LDFLAGS} )
 endif(XMMS_FOUND)
 
 install(TARGETS kopete_nowlistening  DESTINATION ${PLUGIN_INSTALL_DIR})

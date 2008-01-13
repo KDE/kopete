@@ -28,8 +28,8 @@
 
 
 ICQContactBase::ICQContactBase( Kopete::Account *account, const QString &name, Kopete::MetaContact *parent,
-						const QString& icon, const OContact& ssiItem )
-: OscarContact( account, name, parent, icon, ssiItem )
+						const QString& icon )
+: OscarContact( account, name, parent, icon )
 {
 	QObject::connect( mAccount->engine(), SIGNAL(receivedXStatusMessage(const QString&, int, const QString&, const QString&)),
 	                  this, SLOT(receivedXStatusMessage(const QString&, int, const QString&, const QString&)) );

@@ -78,7 +78,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ),
 		SLOT( slotKopeteGroupRemoved( Kopete::Group * ) ) );
 
-	m_openInboxAction = new KAction( KIcon("mail"), i18n( "Open Inbo&x..." ), this );
+	m_openInboxAction = new KAction( KIcon("mail-folder-inbox"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect( m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()) );
 
@@ -86,7 +86,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
         //, "renameAction" );
 	QObject::connect( m_changeDNAction, SIGNAL(triggered(bool)), this, SLOT(slotChangePublicName()) );
 
-	m_startChatAction = new KAction( KIcon("mail"), i18n( "&Start Chat..." ), this );
+	m_startChatAction = new KAction( KIcon("mail-message-new"), i18n( "&Start Chat..." ), this );
         //, "startChatAction" );
 	QObject::connect( m_startChatAction, SIGNAL(triggered(bool)), this, SLOT(slotStartChat()) );
 
@@ -1235,10 +1235,13 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 		if(mc)
 		{ //if the contact has been added this way, it's because the other user added us.
 		  // don't forgot to set the reversed flag  (Bug 114400)
-			MSNContact *c=dynamic_cast<MSNContact*>(mc->contacts().first());
-			if(c && c->contactId() == handle )
+			if ( !mc->contacts().isEmpty() )
 			{
-				c->setReversed( true );
+				MSNContact *c=dynamic_cast<MSNContact*>(mc->contacts().first());
+				if(c && c->contactId() == handle )
+				{
+					c->setReversed( true );
+				}
 			}
 		}
 	}

@@ -23,10 +23,11 @@
 
 #include "kopeteplugin.h"
 
+#include <QVariantList>
+
 namespace Kopete { class ChatSession; class Message; }
 
 class NLMediaPlayer;
-class QStringList;
 
 /**
  * @author Will Stephenson
@@ -39,7 +40,7 @@ class NowListeningPlugin : public Kopete::Plugin
 friend class NowListeningGUIClient;
 
 	public:
-		NowListeningPlugin(  QObject *parent, const QStringList &args );
+		NowListeningPlugin(  QObject *parent, const QVariantList &args );
 		virtual ~NowListeningPlugin();
 		static NowListeningPlugin* plugin();
 

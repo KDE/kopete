@@ -264,6 +264,14 @@ void ICQAccount::connectWithPassword( const QString &password )
 	}
 }
 
+void ICQAccount::loginActions()
+{
+	OscarAccount::loginActions();
+
+	// Set default privacy settings to make "invisible to" and "visible to" work
+	engine()->setPrivacyTLVs( 0x04 );
+}
+
 void ICQAccount::disconnected( DisconnectReason reason )
 {
 	kDebug(14153) << "Attempting to set status offline";
@@ -438,10 +446,8 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 {
 	if ( QRegExp("[\\d]+").exactMatch( contactId ) )
 	{
-		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString(), ssiItem );
-
-		if ( !ssiItem.alias().isEmpty() )
-			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString() );
+		contact->setSSIItem( ssiItem );
 
 		if ( engine()->isActive() )
 			contact->loggedIn();
@@ -450,10 +456,8 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 	}
 	else
 	{
-		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString(), ssiItem );
-
-		if ( !ssiItem.alias().isEmpty() )
-			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString() );
+		contact->setSSIItem( ssiItem );
 
 		return contact;
 	}
@@ -461,7 +465,11 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 
 QString ICQAccount::sanitizedMessage( const QString& message ) const
 {
-	return Qt::escape( message );
+	QString sanitizedMsg = Qt::escape( message );
+
+	sanitizedMsg.replace( QRegExp(QString::fromLatin1("[\r]?[\n]")), QString::fromLatin1("<br />") );
+
+	return sanitizedMsg;
 }
 
 void ICQAccount::slotGotAuthRequest( const QString& contact, const QString& reason )

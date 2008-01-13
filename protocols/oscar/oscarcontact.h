@@ -70,7 +70,7 @@ Q_OBJECT
 
 public:
 	OscarContact( Kopete::Account* account, const QString& name,
-	              Kopete::MetaContact* parent, const QString& icon = QString(), const OContact& ssiItem = OContact() );
+	              Kopete::MetaContact* parent, const QString& icon = QString() );
 	
 	virtual ~OscarContact();
 	

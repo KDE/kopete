@@ -30,7 +30,7 @@
 
 #include "gwchatpropsdialog.h"
 
-GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( QWidget * parent, const char * name )
+GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( QWidget * parent )
  : KDialog( parent ), m_dirty( false )
 {
 	setCaption(i18n( "Chatroom properties" ));
@@ -42,7 +42,7 @@ GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( QWidget * parent, const char
 }
 
 GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( const GroupWise::Chatroom & room, bool readOnly,
-							   QWidget * parent, const char * name )
+							   QWidget * parent )
 	: KDialog( parent)
 				   , m_dirty( false )
 {

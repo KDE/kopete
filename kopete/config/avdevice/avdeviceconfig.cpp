@@ -49,13 +49,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
  : KCModule( KopeteAVDeviceConfigFactory::componentData(), parent, args )
 {
 	kDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::componentData() called. ";
-// 	QVBoxLayout *layout = new QVBoxLayout(this);
-
-// 	mAVDeviceTabCtl = new QTabWidget(this);
-// 	layout->addWidget( mAVDeviceTabCtl );
-
 // "Video" TAB ============================================================
-// 	QWidget *w = new QWidget(this);
 	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice();
 	mPrfsVideoDevice->setupUi(this);
 
@@ -63,8 +57,6 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
 
-// 	mAVDeviceTabCtl->addTab(w, i18n("Video"));
-//	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
 	connect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mInputKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mStandardKComboBox,            SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
@@ -77,9 +69,6 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	connect(mPrfsVideoDevice->mImageAutoColorCorrection,     SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
 	connect(mPrfsVideoDevice->mImageAsMirror,                SIGNAL(toggled(bool)),     this, SLOT(slotImageAsMirrorChanged(bool)));
 
-	// why is this here?
-	// mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
-//	mAVDeviceTabCtl->addTab(mPrfsVideoDevice,tr2i18n("&Video",0)); // Problematic. Need to be uncommented after fixing it.
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
 	mVideoDevicePool->open();
 	mVideoDevicePool->setSize(320, 240);
@@ -87,14 +76,10 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-//	setVideoInputParameters();
+	setVideoInputParameters();
 
-//	mVideoDevicePool->startCapturing();
-//	mVideoDevicePool->getFrame();
-//	mVideoDevicePool->getImage(&qimage);
- //	if (qpixmap.fromImage(qimage,Qt::AutoColor) != NULL)
- //	if (qpixmap.fromImage(qimage,Qt::AutoColor) == true)
- //		mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
+	mVideoDevicePool->startCapturing();
+
 	connect(mVideoDevicePool, SIGNAL(deviceRegistered(const QString &) ),
 			SLOT(deviceRegistered(const QString &)) );
 	connect(mVideoDevicePool, SIGNAL(deviceUnregistered(const QString &) ),
@@ -254,17 +239,15 @@ void AVDeviceConfig::slotUpdateImage()
 
 void AVDeviceConfig::deviceRegistered( const QString & udi )
 {
-	kDebug() << "not updating combo boxes due to bugs in videodevicepool!";
-	//mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
-	//mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
-	//mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
+	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 }
 
 
 void AVDeviceConfig::deviceUnregistered( const QString & udi )
 {
-	kDebug() << "not updating combo boxes due to bugs in videodevicepool!";
-	//mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
-	//mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
-	//mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-}
+/*	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
+	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+*/}

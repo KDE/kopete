@@ -36,7 +36,7 @@ class AliasPreferences : public KCModule
 
 	public:
 		explicit AliasPreferences( QWidget *parent = 0,
-			const QStringList &args = QStringList() );
+			const QVariantList &args = QVariantList() );
 		~AliasPreferences();
 
 		virtual void save();

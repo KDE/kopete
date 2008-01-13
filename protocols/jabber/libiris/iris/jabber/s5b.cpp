@@ -47,7 +47,7 @@ namespace XMPP {
 static QString makeKey(const QString &sid, const Jid &initiator, const Jid &target)
 {
 	QString str = sid + initiator.full() + target.full();
-	return QCA::Hash("sha1").hashToString(str.utf8());
+	return QCA::Hash("sha1").hashToString(str.toUtf8());
 }
 
 static bool haveHost(const StreamHostList &list, const Jid &j)
@@ -352,7 +352,7 @@ int S5BConnection::bytesToWrite() const
 
 void S5BConnection::writeDatagram(const S5BDatagram &i)
 {
-	QByteArray buf(i.data().size() + 4);
+	QByteArray buf(i.data().size() + 4, '\n');
 	ushort ssp = htons(i.sourcePort());
 	ushort sdp = htons(i.destPort());
 	QByteArray data = i.data();
@@ -517,7 +517,7 @@ void S5BConnection::handleUDP(const QByteArray &buf)
 	memcpy(&sdp, buf.data() + 2, 2);
 	int source = ntohs(ssp);
 	int dest = ntohs(sdp);
-	QByteArray data(buf.size() - 4);
+	QByteArray data(buf.size() - 4, '\n');
 	memcpy(data.data(), buf.data() + 4, data.size());
 	d->dglist.append(new S5BDatagram(source, dest, data));
 
@@ -1606,7 +1606,7 @@ void S5BManager::Item::tryActivation()
 			printf("sending extra CR\n");
 #endif
 			// must send [CR] to activate target streamhost
-			QByteArray a(1);
+			QByteArray a(1, '\n');
 			a[0] = '\r';
 			client->write(a);
 		}
@@ -1824,7 +1824,7 @@ private slots:
 		}
 
 		// send initialization with our JID
-		QByteArray a(jid.full().utf8());
+		QByteArray a(jid.full().toUtf8());
 		client_udp->write(a);
 		++udp_tries;
 	}
@@ -2265,8 +2265,10 @@ void JT_S5B::requestActivation(const Jid &to, const QString &sid, const Jid &tar
 
 void JT_S5B::onGo()
 {
-	if(d->mode == 1)
-		d->t.start(15000, true);
+	if(d->mode == 1) {
+		d->t.setSingleShot(true);
+		d->t.start(15000);
+}
 	send(d->iq);
 }
 

@@ -33,7 +33,7 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	setButtons( KDialog::Close );
 	setDefaultButton( KDialog::Close );
 	showButtonSeparator( true );
-	setWindowFlags( Qt::WDestructiveClose );
+	setAttribute( Qt::WA_DeleteOnClose  );
 
 	setInitialSize( QSize(320,290) );
 	
@@ -84,7 +84,7 @@ void TestbedWebcamDialog::slotUpdateImage()
 	mVideoDevicePool->getFrame();
 	kDebug() << "Getting image";
 	mVideoDevicePool->getImage(&mImage);
-	mImageContainer->updatePixmap( QPixmap( mImage ) );
+	mImageContainer->updatePixmap( QPixmap::fromImage( mImage ) );
 #endif
 }
 

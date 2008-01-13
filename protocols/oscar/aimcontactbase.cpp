@@ -26,8 +26,8 @@
 #include "oscarutils.h"
 
 AIMContactBase::AIMContactBase( Kopete::Account* account, const QString& name, Kopete::MetaContact* parent,
-                        const QString& icon, const OContact& ssiItem )
-: OscarContact(account, name, parent, icon, ssiItem )
+                        const QString& icon )
+: OscarContact(account, name, parent, icon )
 {	
 	m_mobile = false;
 	// Set the last autoresponse time to the current time yesterday

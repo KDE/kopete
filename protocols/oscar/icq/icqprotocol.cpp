@@ -38,8 +38,8 @@
 #include "icqprotocol.h"
 #include "icqstatusmanager.h"
 
-typedef KGenericFactory<ICQProtocol> ICQProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_icq, ICQProtocolFactory( "kopete_icq" ) )
+K_PLUGIN_FACTORY( ICQProtocolFactory, registerPlugin<ICQProtocol>(); )
+K_EXPORT_PLUGIN( ICQProtocolFactory( "kopete_icq" ) )
 
 //BEGIN class ICQProtocolHandler
 
@@ -156,7 +156,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 
 ICQProtocol* ICQProtocol::protocolStatic_ = 0L;
 
-ICQProtocol::ICQProtocol(QObject *parent, const QStringList&)
+ICQProtocol::ICQProtocol(QObject *parent, const QVariantList&)
 : OscarProtocol( ICQProtocolFactory::componentData(), parent ),
 	firstName(Kopete::Global::Properties::self()->firstName()),
 	lastName(Kopete::Global::Properties::self()->lastName()),

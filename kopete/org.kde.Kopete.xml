@@ -94,5 +94,14 @@
       <arg name="displayName" type="s" direction="in"/>
       <arg name="fileUrl" type="s" direction="in"/>
     </method>
+    <method name="getDisplayName">
+      <arg name="contactID" type="s" direction="in"/>
+      <arg type="s" direction="out"/>
+    </method>
+    <method name="isContactOnline">
+      <arg name="displayName" type="s" direction="in"/>
+      <arg type="b" direction="out"/>
+    </method>
+
   </interface>
 </node>

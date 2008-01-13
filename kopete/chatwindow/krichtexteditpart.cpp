@@ -211,7 +211,7 @@ KAboutData *KRichTextEditPart::createAboutData()
 
 void KRichTextEditPart::createActions()
 {
-    d->enableRichText = new KToggleAction( KIcon("pencil"), i18n("Enable &Rich Text"), this );
+    d->enableRichText = new KToggleAction( KIcon("draw-freehand"), i18n("Enable &Rich Text"), this );
     actionCollection()->addAction( "enableRichText", d->enableRichText );
     d->enableRichText->setCheckedState( KGuiItem( i18n("Disable &Rich Text") ) );
     connect( d->enableRichText, SIGNAL(toggled(bool)),

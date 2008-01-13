@@ -50,7 +50,7 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 	// add the general page
 	QWidget *w = new QWidget(this);
 	d->general.setupUi(w);
-	d->general.selectPhoto->setIcon(KIcon("fileview-preview"));
+	d->general.selectPhoto->setIcon(KIcon("view-preview"));
 	d->general.clearPhoto->setIcon(KIcon("edit-clear-locationbar-rtl"));
 
 	connect(d->general.selectPhoto, SIGNAL(clicked(bool)),
@@ -65,6 +65,8 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 	w = new QWidget(this);
 	d->detailed.setupUi(w);
 	addWidget(w, i18n("Detailed Information"));
+
+	setIcon(KIcon(d->identity->customIcon()));
 
 	load();
 }

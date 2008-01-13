@@ -984,6 +984,32 @@ void Client::changeContactAlias( const QString& contact, const QString& alias )
 	}
 }
 
+void Client::setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses )
+{
+	OContact item = ssiManager()->findItem( QString(), ROSTER_VISIBILITY );
+
+	QList<Oscar::TLV> tList;
+	tList.append( TLV( 0x00CA, 1, (char *)&privacy ) );
+	tList.append( TLV( 0x00CB, sizeof(userClasses), (char *)&userClasses ) );
+
+	if ( !item )
+	{
+		kDebug( OSCAR_RAW_DEBUG ) << "Adding new privacy TLV item";
+		OContact s( QString(), 0, ssiManager()->nextContactId(), ROSTER_VISIBILITY, tList );
+		modifyContactItem( item, s );
+	}
+	else
+	{ //found an item
+		OContact s(item);
+
+		if ( Oscar::updateTLVs( s, tList ) == true )
+		{
+			kDebug( OSCAR_RAW_DEBUG ) << "Updating privacy TLV item";
+			modifyContactItem( item, s );
+		}
+	}
+}
+
 void Client::requestShortTlvInfo( const QString& contactId, const QByteArray &metaInfoId )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0015 );

@@ -56,21 +56,21 @@ YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent )
 	m_genInfoWidget->setupUi( genInfo );
 	KPageWidgetItem *genInfoItem = addPage( genInfo, i18n("General Info") );
 	genInfoItem->setHeader(  i18n( "General Yahoo Information" ) );
-	genInfoItem->setIcon( KIcon("identity") );
+	genInfoItem->setIcon( KIcon("user-identity") );
 	
 	QWidget *workInfo = new QWidget(this);
 	m_workInfoWidget = new Ui::YahooWorkInfoWidget;
 	m_workInfoWidget->setupUi( workInfo );
 	KPageWidgetItem *workInfoItem = addPage( workInfo, i18n("Work Info") );
 	workInfoItem->setHeader( i18n( "Work Information" ) );
-	workInfoItem->setIcon( KIcon("attach") );
+	workInfoItem->setIcon( KIcon("mail-attachment") );
 	
 	QWidget *otherInfo = new QWidget(this);
 	m_otherInfoWidget = new Ui::YahooOtherInfoWidget;
 	m_otherInfoWidget->setupUi( otherInfo );
 	KPageWidgetItem *otherInfoItem = addPage( otherInfo, i18n("Other Info") );
 	otherInfoItem->setHeader( i18n( "Other Yahoo Information" ) );
-	otherInfoItem->setIcon( KIcon("email") );
+	otherInfoItem->setIcon( KIcon("document-properties") );
 	
 	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotSaveAndCloseClicked()));
 	QObject::connect(this, SIGNAL(user2Clicked()), this, SLOT(slotUser2()));

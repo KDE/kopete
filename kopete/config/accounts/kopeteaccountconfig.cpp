@@ -494,7 +494,7 @@ void KopeteAccountConfig::configureActions()
 {
 	// Add account
 	m_actionAccountAdd = new KAction( i18n( "&Add Account..." ), this );
-	m_actionAccountAdd->setIcon( KIcon("edit-add") );
+	m_actionAccountAdd->setIcon( KIcon("list-add") );
 	mButtonAccountAdd->setIcon( m_actionAccountAdd->icon() );
 	mButtonAccountAdd->setText( m_actionAccountAdd->text() );
 	connect( m_actionAccountAdd, SIGNAL(triggered(bool)), this, SLOT(slotAddAccount()) );
@@ -525,7 +525,7 @@ void KopeteAccountConfig::configureActions()
 
 	// Add identity
 	m_actionIdentityAdd = new KAction( i18n( "Add &Identity..." ), this );
-	m_actionIdentityAdd->setIcon( KIcon("edit-add") );
+	m_actionIdentityAdd->setIcon( KIcon("list-add") );
 	mButtonIdentityAdd->setIcon( m_actionIdentityAdd->icon() );
 	mButtonIdentityAdd->setText( m_actionIdentityAdd->text() );
 	connect( m_actionIdentityAdd, SIGNAL(triggered(bool)), this, SLOT(slotAddIdentity()) );

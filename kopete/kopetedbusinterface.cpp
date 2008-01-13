@@ -272,6 +272,24 @@ void KopeteDBusInterface::sendMessage(const QString &displayName, const QString 
 	}
 }
 
+QString KopeteDBusInterface::getDisplayName(const QString &contactId)
+{
+	Kopete::MetaContact *contact = Kopete::ContactList::self()->findMetaContactByContactId(contactId);
+	if ( contact )
+		return contact->displayName();
+	else
+		return "";
+}
+
+bool KopeteDBusInterface::isContactOnline(const QString &displayName)
+{
+	Kopete::MetaContact *contact = Kopete::ContactList::self()->findMetaContactByDisplayName(displayName);
+	if ( contact )
+		return contact->isOnline();
+	else
+		return false;
+}
+
 bool KopeteDBusInterface::addContact(const QString &protocolName, const QString &accountId, const QString &contactId, const QString &displayName, const QString &groupName)
 {
 	QString protocolId = protocolName;

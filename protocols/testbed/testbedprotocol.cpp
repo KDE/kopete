@@ -24,12 +24,12 @@
 #include "testbedaddcontactpage.h"
 #include "testbededitaccountwidget.h"
 
-typedef KGenericFactory<TestbedProtocol> TestbedProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_testbed, TestbedProtocolFactory( "kopete_testbed" )  )
+K_PLUGIN_FACTORY( TestbedProtocolFactory, registerPlugin<TestbedProtocol>(); )
+K_EXPORT_PLUGIN( TestbedProtocolFactory( "kopete_testbed" ) )
 
 TestbedProtocol *TestbedProtocol::s_protocol = 0L;
 
-TestbedProtocol::TestbedProtocol( QObject* parent, const QStringList &/*args*/ )
+TestbedProtocol::TestbedProtocol( QObject* parent, const QVariantList &/*args*/ )
 	: Kopete::Protocol( TestbedProtocolFactory::componentData(), parent ),
 	  testbedOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),  
 			  i18n( "Online" ),   i18n( "O&nline" ), Kopete::OnlineStatusManager::Online ),

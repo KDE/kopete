@@ -22,11 +22,11 @@
 #include <QStringListModel>
 #include <kopetemetacontact.h>
 
+K_PLUGIN_FACTORY( BookmarksPreferencesFactory, registerPlugin<BookmarksPreferences>(); )
+K_EXPORT_PLUGIN( BookmarksPreferencesFactory( "kcm_kopete_addbookmarks" ) )
 
-typedef KGenericFactory<BookmarksPreferences> BookmarksPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_addbookmarks, BookmarksPreferencesFactory("kcm_kopete_addbookmarks") )
 
-BookmarksPreferences::BookmarksPreferences(QWidget *parent, const QStringList &args)
+BookmarksPreferences::BookmarksPreferences(QWidget *parent, const QVariantList &args)
  : KCModule(BookmarksPreferencesFactory::componentData(), parent, args)
 {
 	QVBoxLayout* l = new QVBoxLayout( this );

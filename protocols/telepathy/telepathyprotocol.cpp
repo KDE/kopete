@@ -33,12 +33,12 @@
 
 using namespace QtTapioca;
 
-typedef KGenericFactory<TelepathyProtocol> TelepathyProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_telepathy, TelepathyProtocolFactory("kopete_telepathy") )
+K_PLUGIN_FACTORY( TelepathyProtocolFactory, registerPlugin<TelepathyProtocol>(); )
+K_EXPORT_PLUGIN( TelepathyProtocolFactory( "kopete_telepathy" ) )
 
 TelepathyProtocol *TelepathyProtocol::s_self = 0;
 
-TelepathyProtocol::TelepathyProtocol(QObject *parent, const QStringList &/*args*/)
+TelepathyProtocol::TelepathyProtocol(QObject *parent, const QVariantList &/*args*/)
  : Kopete::Protocol(TelepathyProtocolFactory::componentData(), parent),
 	// Create Kopete::OnlineStatus
 	Available(Kopete::OnlineStatus::Online, 25, this, 1, QStringList(),

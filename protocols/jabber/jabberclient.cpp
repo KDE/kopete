@@ -705,7 +705,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	 */
 	{
 		using namespace XMPP;
-		QObject::connect ( d->jabberClient, SIGNAL ( subscription (const Jid &, const QString &) ),
+		QObject::connect ( d->jabberClient, SIGNAL ( subscription (const Jid &, const QString &, const QString &) ),
 				   this, SLOT ( slotSubscription (const Jid &, const QString &) ) );
 		QObject::connect ( d->jabberClient, SIGNAL ( rosterRequestFinished ( bool, int, const QString & ) ),
 				   this, SLOT ( slotRosterRequestFinished ( bool, int, const QString & ) ) );

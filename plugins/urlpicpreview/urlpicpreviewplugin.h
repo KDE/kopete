@@ -39,7 +39,7 @@ signals:
     void abortAllOperations();
 
 public:
-    URLPicPreviewPlugin(QObject* parent, const QStringList& args);
+    URLPicPreviewPlugin(QObject* parent, const QVariantList& args);
     virtual ~URLPicPreviewPlugin();
 
 private:

@@ -20,11 +20,12 @@
 
 #include <QTimer>
 #include <QStringList>
+#include <QVariantList>
 #include <QList>
 #include <QRegExp>
 
 #include <kdebug.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kaction.h>
 
 #include "config-kopete.h"
@@ -79,10 +80,10 @@ public:
 	QTimer *advertTimer;
 };
 
-typedef KGenericFactory<NowListeningPlugin> NowListeningPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_nowlistening, NowListeningPluginFactory( "kopete_nowlistening" )  )
+K_PLUGIN_FACTORY( NowListeningPluginFactory, registerPlugin<NowListeningPlugin>(); )
+K_EXPORT_PLUGIN( NowListeningPluginFactory( "kopete_nowlistening" ) )
 
-NowListeningPlugin::NowListeningPlugin( QObject *parent, const QStringList& /*args*/ )
+NowListeningPlugin::NowListeningPlugin( QObject *parent, const QVariantList& /*args*/ )
 : Kopete::Plugin( NowListeningPluginFactory::componentData(), parent )
 {
 	if ( pluginStatic_ )

@@ -93,11 +93,11 @@ KActionMenu *TelepathyAccount::actionMenu()
 	KActionMenu *actionMenu = Kopete::Account::actionMenu();
 
 	// FIXME: Maybe we should cache the action.
-	KAction *changeAliasAction = new KAction( KIcon("userconfig"), i18n("&Change Alias..."), 0 );
+	KAction *changeAliasAction = new KAction( KIcon("edit-rename"), i18n("&Change Alias..."), 0 );
 	changeAliasAction->setEnabled( isConnected() );
 	QObject::connect(changeAliasAction, SIGNAL(triggered(bool)), this, SLOT(slotSetAlias()));
 
-	KAction *changeAvatarAction = new KAction( KIcon("user"), i18n("Change &Avatar..."), 0 );
+	KAction *changeAvatarAction = new KAction( KIcon("user-properties"), i18n("Change &Avatar..."), 0 );
 	changeAvatarAction->setEnabled( isConnected() );
 	QObject::connect(changeAvatarAction, SIGNAL(triggered(bool)), this, SLOT(slotChangeAvatar()));
 

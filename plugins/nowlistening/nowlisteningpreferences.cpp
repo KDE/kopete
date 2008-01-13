@@ -26,7 +26,7 @@
 
 #include <k3listbox.h>
 #include <klocale.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 
 #include "config-kopete.h" // for HAVE_XMMS
 #include "ui_nowlisteningprefs.h"
@@ -34,11 +34,11 @@
 #include "nowlisteningpreferences.h"
 #include "nowlisteningpreferences.moc"
 
-typedef KGenericFactory<NowListeningPreferences> NowListeningPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_nowlistening, NowListeningPreferencesFactory( "kcm_kopete_nowlistening" )  )
+K_PLUGIN_FACTORY( NowListeningPreferencesFactory, registerPlugin<NowListeningPreferences>(); )
+K_EXPORT_PLUGIN( NowListeningPreferencesFactory( "kcm_kopete_nowlistening" ) )
 
 
-NowListeningPreferences::NowListeningPreferences(QWidget *parent, const QStringList &args)
+NowListeningPreferences::NowListeningPreferences(QWidget *parent, const QVariantList &args)
 	: KCModule( NowListeningPreferencesFactory::componentData(), parent, args )
 {
 	QVBoxLayout* l = new QVBoxLayout( this );

@@ -37,7 +37,7 @@ class AIMProtocol : public OscarProtocol
 	Q_OBJECT
 
 public:
-	AIMProtocol( QObject *parent, const QStringList &args );
+	AIMProtocol( QObject *parent, const QVariantList &args );
 	virtual ~AIMProtocol();
 	/**
 	 * Return the active instance of the protocol

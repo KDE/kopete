@@ -67,7 +67,7 @@ class IRCProtocol
 public:
 	static IRCProtocol *self();
 
-	IRCProtocol(QObject *parent, const QStringList &args);
+	IRCProtocol(QObject *parent, const QVariantList &args);
 	~IRCProtocol();
 
 	/**
