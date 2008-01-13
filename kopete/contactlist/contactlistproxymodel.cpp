@@ -23,8 +23,6 @@
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
-#include "kopetemetacontactitem.h"
-#include "kopetegroupitem.h"
 #include "kopeteappearancesettings.h"
 
 namespace Kopete {
