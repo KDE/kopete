@@ -48,6 +48,8 @@ class StatisticsDialog : public KDialog
 		QString generateHTMLChart(const int *hours, const int *hours2, const int *hours3, const QString & caption, const QString & color);
 		QString generateHTMLChartBar(int height, const QString & color, const QString & caption);
 		QString stringFromSeconds(const int seconds);
+		
+		QSize sizeHint() const { return QSize ( 800, 600 ); }
 
 		Ui::StatisticsWidgetUI *dialogUi;
 		KHTMLPart *generalHTMLPart;

@@ -76,9 +76,6 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	setEscapeButton(Close);
 	
 	generatePageGeneral();
-	
-	resize( 800, 600 );
-
 }
 
 StatisticsDialog::~StatisticsDialog()
