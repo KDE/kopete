@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 X-Kopete-Version=1000900
-Icon=testbed_protocol
+Icon=bonjour_protocol
 X-KDE-ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_bonjour
 X-Kopete-Messaging-Protocol=messaging/bonjour
