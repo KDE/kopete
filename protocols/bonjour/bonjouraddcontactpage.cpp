@@ -45,11 +45,12 @@ BonjourAddContactPage::~BonjourAddContactPage()
 
 bool BonjourAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )
 {
+	return false;
 }
 
 bool BonjourAddContactPage::validateData()
 {
-    return true;
+	return true;
 }
 
 

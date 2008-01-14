@@ -59,6 +59,17 @@ QString BonjourAccount::getLocalHostName()
 		return reply.arguments()[0].toString();
 	else
 		return QString();
-
 }
 
+// FIXME: Remove Avahi Dependency
+bool BonjourAccount::check_mDNS_running()
+{
+	QDBusInterface iface("org.freedesktop.Avahi", "/", "org.freedesktop.Avahi.Server", QDBusConnection::systemBus());
+
+	QDBusMessage reply = iface.call(QDBus::Block, "GetVersionString");
+
+	if (reply.type() == QDBusMessage::ReplyMessage)
+		return true;
+	else
+		return false;
+}

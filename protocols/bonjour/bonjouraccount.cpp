@@ -25,12 +25,14 @@
 #include <kactionmenu.h>
 #include <kmenu.h>
 #include <kicon.h>
+#include <kmessagebox.h>
 
 #include <dnssd/publicservice.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetedeletecontacttask.h"
+#include "kopeteuiglobal.h"
 
 #include "bonjourcontact.h"
 #include "bonjourprotocol.h"
@@ -133,6 +135,7 @@ bool BonjourAccount::startLocalServer()
                         port++;
 
 	kDebug()<<"Listening On Port: "<<listeningPort;
+
         return localServer->isListening();
 }
 
@@ -166,7 +169,7 @@ void BonjourAccount::startPublish()
         map.insert("email", emailAddress);
         map.insert("last", lastName);
         map.insert("node", "kopete");
-        map.insert("port.p2pj", QByteArray::number(listeningPort));	// This Number Actuall Ignored
+        map.insert("port.p2pj", QByteArray::number(listeningPort));	// This Number Actually Ignored
         map.insert("status", "avail");
         map.insert("txtvers", "1");
         map.insert("vc", "!");
@@ -182,6 +185,12 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 {
 	if (username.isEmpty())
 		username = accountId().toUtf8();
+
+	if (! check_mDNS_running()) {
+		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
+		i18n("Sorry, We are unable to connect to the local mDNS server. Please Ensure Avahi Daemon is Running"));
+		return;
+	}
 
 	if (! startLocalServer())
 		return;

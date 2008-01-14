@@ -5,7 +5,6 @@ add_subdirectory( icons )
 
 include_directories( 
 ${KOPETE_INCLUDES} 
-${CMAKE_CURRENT_SOURCE_DIR}/ui/ 
 )
 
 
@@ -19,7 +18,6 @@ set(kopete_bonjour_PART_SRCS
    bonjoureditaccountwidget.cpp 
    avahi-bonjour.cpp
    bonjourcontactconnection.cpp
-   ui/bonjourwebcamdialog.cpp 
 )
 
 kde4_add_ui_files(kopete_bonjour_PART_SRCS
