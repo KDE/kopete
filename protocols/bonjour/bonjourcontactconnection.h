@@ -35,7 +35,7 @@
  *
  * There is a protocol document that nobody follows. This can be found here:
  * http://www.xmpp.org/extensions/attic/jep-0174-0.5.html
- * The standard is totally sucky, and I'm not suprised that there isn't a single client who
+ * The standard is totally sucky, and I'm not surprised that there isn't a single client who
  * follows it faithfully (that I know of). The standard `we` follow was derived from wireshark
  * logs with a machine running Pidgen.
  *
@@ -171,7 +171,7 @@ class BonjourContactConnection : public QObject {
 	 * 
 	 * @param aSocket The Socket To Wrap Up
 	 */
-	BonjourContactConnection(QTcpSocket *aSocket, QObject *parent = NULL);
+	explicit BonjourContactConnection(QTcpSocket *aSocket, QObject *parent = NULL);
 
 	/**
 	 * @brief Constructor For Outgoing Connection
@@ -184,7 +184,7 @@ class BonjourContactConnection : public QObject {
 	 * @param remote The remoteuser@hostname
 	 * @param local myself@hostname
 	 */
-	BonjourContactConnection(const QHostAddress &address, short int port, QString local, QString remote, QObject *parent = NULL);
+	BonjourContactConnection(const QHostAddress &address, short int port, const QString &alocal, const QString &aremote, QObject *parent = NULL);
 
 	// Destructor
 	~BonjourContactConnection();
@@ -302,7 +302,7 @@ class BonjourContactConnection : public QObject {
 	 *
 	 * The Username is sent back
 	 */
-	void discoveredUserName(BonjourContactConnection *, QString);
+	void discoveredUserName(BonjourContactConnection *, const QString &);
 
 	/**
 	 * @brief Send if the stream tag didn't contain a from and to

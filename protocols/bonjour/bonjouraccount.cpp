@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#include "bonjouraccount.h"
+
 #include <QtDBus>
 
 #include <kaction.h>
@@ -30,7 +32,6 @@
 #include "kopetecontactlist.h"
 #include "kopetedeletecontacttask.h"
 
-#include "bonjouraccount.h"
 #include "bonjourcontact.h"
 #include "bonjourprotocol.h"
 #include "bonjourcontactconnection.h"
@@ -206,11 +207,11 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 	QString clast = map["last"];
 	
 	QString display;
-	if (cfirst != "" && clast != "")
-		display = cfirst + " " + clast;
-	else if (cfirst != "")
+	if (! cfirst.isEmpty() && ! clast.isEmpty())
+		display = cfirst + ' ' + clast;
+	else if (! cfirst.isEmpty())
 		display = cfirst;
-	else if (clast != "")
+	else if (! clast.isEmpty())
 		display = clast;
 	else
 		display = pointer->serviceName().split("@")[0];
@@ -385,15 +386,15 @@ void BonjourAccount::newIncomingConnection()
 	QTcpSocket *sock = localServer->nextPendingConnection();
 
 	BonjourContactConnection *bcc = new BonjourContactConnection(sock);
-	QObject::connect(bcc, SIGNAL(discoveredUserName(BonjourContactConnection *, QString)),
-			this, SLOT(discoveredUserName(BonjourContactConnection *, QString)));;
+	QObject::connect(bcc, SIGNAL(discoveredUserName(BonjourContactConnection *, const QString &)),
+			this, SLOT(discoveredUserName(BonjourContactConnection *, const QString &)));;
 	QObject::connect(bcc, SIGNAL(usernameNotInStream(BonjourContactConnection *)),
 			this, SLOT(usernameNotInStream(BonjourContactConnection *)));;
 
 	unknownConnections << bcc;
 }
 
-void BonjourAccount::discoveredUserName(BonjourContactConnection *conn, QString user)
+void BonjourAccount::discoveredUserName(BonjourContactConnection *conn, const QString &user)
 {
 	kDebug()<<"User Making Contact (unverified): "<<user;
 
@@ -431,7 +432,7 @@ void BonjourAccount::usernameNotInStream(BonjourContactConnection *conn)
 }
 
 
-BonjourContact *BonjourAccount::verifyUser(BonjourContactConnection *conn, QString user)
+BonjourContact *BonjourAccount::verifyUser(BonjourContactConnection *conn, const QString &user)
 {
 	// First Check the User Exists
 	if (! contacts().keys().contains(user))

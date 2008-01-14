@@ -14,6 +14,8 @@
     *************************************************************************
 */
 
+#include "bonjourcontactconnection.h"
+
 #include <QAbstractSocket>
 #include <QTcpSocket>
 #include <QHostAddress>
@@ -26,8 +28,6 @@
 #include "kopetemessage.h"
 #include "kopetecontact.h"
 #include "kopeteaccount.h"
-
-#include "bonjourcontactconnection.h"
 
 // Declare the tokenTable
 BonjourContactConnection::TokenTable BonjourContactConnection::tokenTable;
@@ -64,7 +64,7 @@ BonjourContactConnection::BonjourContactConnection(QTcpSocket *aSocket,
 }
 
 BonjourContactConnection::BonjourContactConnection(const QHostAddress &address, short int port,
-		QString alocal, QString aremote, QObject *parent) : QObject(parent)
+		const QString &alocal, const QString &aremote, QObject *parent) : QObject(parent)
 {
 	QTcpSocket *aSocket = new QTcpSocket;
 	aSocket->connectToHost(address, port);
@@ -213,7 +213,7 @@ void BonjourContactConnection::getStreamTag(BonjourXmlToken &token)
 	local = token.attributes.value("to").toString();
 	kDebug()<<"Local: "<<local<<" Remote: "<<remote;
 
-	if (local != "" && remote != "") {
+	if (! local.isEmpty() && ! remote.isEmpty()) {
 		connectionState = BonjourConnectionConnected;
 		emit discoveredUserName(this, remote);
 	}
@@ -306,7 +306,7 @@ void BonjourContactConnection::readData(BonjourXmlToken &token)
 
 		case BonjourXmlTokenMessage:
 			type = token.attributes.value("type").toString();
-			if (type == "chat" || type == "")
+			if (type == "chat" || type.isEmpty())
 				readMessage(token);
 			break;
 
@@ -357,13 +357,13 @@ void BonjourContactConnection::readMessage(BonjourXmlToken &token)
 
 	
 	// If No Message, then return
-	if (HTMLVersion == "" && plaintext == "")
+	if (HTMLVersion.isEmpty() && plaintext.isEmpty())
 		return;
 
 	// We Are Now Guaranteed to have a message to show
 	message = newMessage(Kopete::Message::Inbound);
 
-	if (HTMLVersion != "")
+	if (! HTMLVersion.isEmpty())
 		message.setHtmlBody(HTMLVersion);
 	else
 		message.setPlainBody(plaintext);

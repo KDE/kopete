@@ -107,7 +107,7 @@ public:
 	 * @param user A String uniquely identifying the user (username@hotname)
 	 * @return The contact if there is a match, or @c NULL otherwise
 	 */
-	BonjourContact *verifyUser(BonjourContactConnection *conn, QString user);
+	BonjourContact *verifyUser(BonjourContactConnection *conn, const QString &user);
 
 	/**
 	 * @brief Get all Contacts at a given Address
@@ -223,13 +223,13 @@ public slots:
 	 *
 	 * This is called when a contact connection receives information on who it is connected to
 	 * If We don't get this signal (or we can't find a match), then we can try our luck with @ref usernameNotInStream()
-	 * Usually, the connection recieves the username in a <stream:stream from="username@hostaname"...>
+	 * Usually, the connection receives the username in a <stream:stream from="username@hostaname"...>
 	 * @todo Add A Backup plan
 	 *
 	 * @param conn The Connection
 	 * @param user The User Claimed By the Connection
 	 */
-	void discoveredUserName(BonjourContactConnection *conn, QString user);
+	void discoveredUserName(BonjourContactConnection *conn, const QString &user);
 
 	/**
 	 * @brief A Slot Called if the connection doesn't get it's username in the stream

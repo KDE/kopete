@@ -13,6 +13,9 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include "bonjourprotocol.h"
+
 #include <QList>
 #include <kgenericfactory.h>
 #include <kdebug.h>
@@ -20,7 +23,6 @@
 #include "kopeteaccountmanager.h"
 #include "bonjouraccount.h"
 #include "bonjourcontact.h"
-#include "bonjourprotocol.h"
 #include "bonjouraddcontactpage.h"
 #include "bonjoureditaccountwidget.h"
 
@@ -34,9 +36,11 @@ BonjourProtocol::BonjourProtocol( QObject* parent, const QStringList &/*args*/ )
 	  bonjourOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),  
 			  i18n( "Online" ),   i18n( "O&nline" ), Kopete::OnlineStatusManager::Online ),
 	  bonjourAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),  
-			  i18n( "Away" ),   i18n( "&Away" ), Kopete::OnlineStatusManager::Away ),
+			  i18nc( "This Means the User is Away", "Away" ),   i18nc("This Means the User is Away", "&Away" ), 
+			  Kopete::OnlineStatusManager::Away ),
 	  bonjourOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QStringList(QString()), 
 			  i18n( "Offline" ),   i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline )
+
 
 {
 	kDebug();
