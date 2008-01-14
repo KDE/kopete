@@ -421,7 +421,7 @@ public:
 	 * Static method to convert a QString representing a StatusType to a StatusType to avoid
 	 * many issues when saving StatusType to disk
 	 */
-	 static OnlineStatus::StatusType statusStringToType(QString& string);
+	 static OnlineStatus::StatusType statusStringToType(const QString& string);
 
 
 

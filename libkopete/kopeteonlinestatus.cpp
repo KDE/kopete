@@ -333,7 +333,7 @@ QString OnlineStatus::statusTypeToString(OnlineStatus::StatusType statusType)
 	return QString::fromLatin1(statusNames[0].name); // Unknown
 }
 
-OnlineStatus::StatusType OnlineStatus::statusStringToType(QString& string)
+OnlineStatus::StatusType OnlineStatus::statusStringToType(const QString& string)
 {
 	int size = sizeof(statusNames) / sizeof(statusNames[0]);
 
