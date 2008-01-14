@@ -26,16 +26,16 @@
 #include <QProcess>
 #include <QDomDocument>
 
-#include <kopete/kopetesimplemessagehandler.h>
-#include <kopete/kopetechatsessionmanager.h>
-#include <kopete/kopetemessage.h>
-#include <kopete/kopetecontact.h>
-#include <kopete/kopetemetacontact.h>
-#include <kopete/kopeteaccount.h>
-#include <kopete/kopeteprotocol.h>
-#include <kopete/kopetepicture.h>
-#include <kopete/ui/kopeteview.h>
-#include <kopete/kopeteuiglobal.h>
+#include "kopetesimplemessagehandler.h"
+#include "kopetechatsessionmanager.h"
+#include "kopetemessage.h"
+#include "kopetecontact.h"
+#include "kopetemetacontact.h"
+#include "kopeteaccount.h"
+#include "kopeteprotocol.h"
+#include "kopetepicture.h"
+#include "kopeteview.h"
+#include "kopeteuiglobal.h"
 
 K_PLUGIN_FACTORY ( PipesPluginFactory, registerPlugin<PipesPlugin>(); )
 K_EXPORT_PLUGIN ( PipesPluginFactory ( "kopete_pipes" ) )

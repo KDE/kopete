@@ -17,7 +17,7 @@
 #ifndef PIPESPLUGIN_H
 #define PIPESPLUGIN_H
 
-#include <kopete/kopeteplugin.h>
+#include "kopeteplugin.h"
 
 #include <QUuid>
 #include <QDomDocument>
