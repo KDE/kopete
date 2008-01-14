@@ -1,19 +1,15 @@
 #include "service.h"
 
-Service::Service(){printf("## Entering service constructor without arguments ##\n");}
+Service::Service(){;}
 
 
 Service::Service(QString serviceType, QString serviceId, QString controlURL, QString eventSubURL, QString URLdocXml)
 {
-	printf("## Entering service constructor ##\n");
-
 	this->m_serviceType = serviceType;
 	this->m_serviceId = serviceId;
 	this->m_controlURL = controlURL;
 	this->m_eventSubURL = eventSubURL;
 	this->m_xmlDocService = URLdocXml;
-	
-	printf("## Leaving service Constructor ##\n");
 }
 
 
@@ -33,10 +29,10 @@ void Service::setXmlDocService(QString URLdocXml){this->m_xmlDocService =URLdocX
 void Service::addAllActions()
 {
 	IXML_Document * doc ;
-if((UpnpDownloadXmlDoc(this->m_xmlDocService.toLatin1().data(),&doc)) != UPNP_E_SUCCESS ) 
-			{
-                    		printf("Error \n");
-                	}
+	if((UpnpDownloadXmlDoc(this->m_xmlDocService.toLatin1().data(),&doc)) != UPNP_E_SUCCESS ) 
+	{
+		printf("Error \n");exit(1);
+	}
 	IXML_NodeList * nodelist = ixmlDocument_getElementsByTagName(doc,"action");
 	IXML_Node * actionNode;
 	for(int i =0; i<ixmlNodeList_length(nodelist);i++)

@@ -10,12 +10,14 @@ int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Coo
 UpnpKopete::UpnpKopete()
 {
 	int ret;
-	this->ListDescDoc.erase(this->ListDescDoc.begin(),this->ListDescDoc.end());
+
 	this->deviceType=QString("upnp:rootdevice");
 
 	this->device_handle =-1;
 	this->destPort = 0;
-	
+
+	this->m_mainDevices.setDeviceType(QString(""));	
+
 	ret = UpnpInit(NULL,this->destPort);
 	switch(ret)
 	{
@@ -77,13 +79,16 @@ unsigned short UpnpKopete::getDestPort()
 	return this->destPort;
 }
 
-QList<Device> UpnpKopete::mainDevices()
+Device UpnpKopete::mainDevices()
 {
 	return this->m_mainDevices;
 }
 
 QString UpnpKopete::routeurLocation(){return this->m_routeurLocation;}
 void UpnpKopete::setRouteurLocation(QString routeurLocation){this->m_routeurLocation=routeurLocation;}
+
+QString UpnpKopete::descDoc(){return this->m_descDoc;}
+void UpnpKopete::setDescDoc(QString url){this->m_descDoc = url;}
 
 int UpnpKopete::researchDevice()
 {
@@ -94,8 +99,6 @@ int UpnpKopete::researchDevice()
         	printf("Error sending search request%d", ret);
 		return RESEARCH_ERROR;
 	}
-	printf("deviceType %d\n",device_handle);
-
     	return RESEARCH_SUCCESS;
 }
 
@@ -230,7 +233,11 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,QString location)
 						{
 							int indice = location.lastIndexOf (QString('/'),-1, Qt::CaseSensitive) ;
 							
-							UrlDocXml = location.left(indice+1);
+							UrlDocXml = location.left(indice);
+							if(QString(util_Xml_nodeValue(nServiceItem)).at(0)!=QChar('/'))
+							{
+								UrlDocXml.push_back('/');
+							}
 							UrlDocXml.append(util_Xml_nodeValue(nServiceItem));		
 						}
 					}
@@ -260,6 +267,7 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,QString location)
 		service.setServiceId(serviceId);
 		service.setControlURL(controlURL);
 		service.setEventSubURL(eventSubURL);
+		printf("urlDocService : %s\n",UrlDocXml.toLatin1().data());
 		service.setXmlDocService(UrlDocXml);
 		
 		service.addAllActions();
@@ -285,88 +293,23 @@ void UpnpKopete::addDevice(IXML_Document * DescDoc,QString location)
 
 
 		//add device in the list maindevice
-		bool find=false;
-		this->m_mainDevices.begin();
-		for(int i=0; i<this->m_mainDevices.size() && !find; i++)
+		if(this->m_mainDevices.deviceType() == QString(""))
 		{
-			if(underDevice.deviceType() == this->m_mainDevices.last().deviceType())
-			{
-				find=true;
-			}
+			this->m_mainDevices = underDevice;
 		}
-		if(find==false)
-		{
-			this->m_mainDevices.append(underDevice);
-		}	
 		else
 		{
 			printf("Device main exist\n");
-		}
-				
+		}					
 	}
 
 
 }
 
-void UpnpKopete::addXMLDescDoc (IXML_Document * DescDoc, QString location)
+
+void UpnpKopete::viewDevice()
 {
-	bool find = false;
-	DocXML doc;
-	DocXML tmp;
-	doc.DescDoc = DescDoc;
-	doc.location = location;
-	
-	//checking if the doc is not already existing
-	this->ListDescDoc.begin();
-	while(!this->ListDescDoc.isEmpty() && !find)
-	{	
-		tmp = this->ListDescDoc.last();
-		//printf("tmp.location %s\n",tmp.location);
-		if(tmp.location == location)
-		{
-			find = true;
-		}
-
-	}
-
-	if(find ==false)
-	{
-		printf("ajout doc\n");
-		this->ListDescDoc.append(doc);
-	}
-}
-
-QList<QString>  UpnpKopete::viewXMLDescDoc()
-{
-	QList<QString> chaine;
-	DocXML tmp;
-	this->ListDescDoc.begin();
-	printf("size %d\n",this->ListDescDoc.size());
-	for(int i =0; i < this->ListDescDoc.size(); i++)
-	{	
-		tmp = this->ListDescDoc.last();
-		printf("tmp.location %s\n",tmp.location.toLatin1().data());
-		chaine.append(tmp.location);
-	}
-	return chaine;
-
-}
-
-void UpnpKopete::viewListDevice()
-{
-	this->m_mainDevices.begin();
-	if(this->m_mainDevices.size()==0)
-	{
-		printf("aucun device\n");
-	}
-	else
-	{
-		for(int i=0;i<this->m_mainDevices.size();i++)
-		{
-			Device d = this->m_mainDevices.last();
-			d.showDevice();
-		}
-	}
+	this->m_mainDevices.showDevice();
 }
 
 
@@ -377,12 +320,11 @@ void UpnpKopete::sendAction(QString nameAction, QList<QString> paramNameAction,Q
 	IXML_Document *actionNode = NULL;
 	
 // 	Action action = NULL;
-	for(int i=0;i<this->m_mainDevices.size();i++)
+	if(this->m_mainDevices.deviceType() != QString(""))
 	{
-		Device device_tmp = this->m_mainDevices.at(i);
-		for(int j=0;j<device_tmp.getListService().size() && !find;j++)
+		for(int j=0;j<this->m_mainDevices.getListService().size() && !find;j++)
 		{
-			Service service_tmp=device_tmp.getListService().at(j);
+			Service service_tmp=this->m_mainDevices.getListService().at(j);
 			if(service_tmp.existAction(nameAction)==true)
 			{
 				if(paramNameAction.isEmpty())
@@ -527,12 +469,14 @@ int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Coo
                 	}
 			else
 			{
-				getUpnp->setRouteurLocation(QString(d_event->Location));
-				printf("Location URL %s\n",d_event->Location);
-                    		//TvCtrlPointAddDevice( DescDoc, d_event->Location,d_event->Expires );
-				getUpnp->addXMLDescDoc(DescDoc, d_event->Location);
-				getUpnp->addDevice(DescDoc, d_event->Location);
-                	}
+				if(getUpnp->mainDevices().deviceType() == QString(""))
+				{
+					getUpnp->setRouteurLocation(QString(d_event->Location));
+					printf("Location URL %s\n",d_event->Location);
+					getUpnp->setDescDoc(QString(d_event->Location));
+					getUpnp->addDevice(DescDoc, d_event->Location);
+                		}
+			}
 
                 	if( DescDoc )
                     		ixmlDocument_free( DescDoc );

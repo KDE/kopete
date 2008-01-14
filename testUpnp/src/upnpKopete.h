@@ -18,6 +18,7 @@
 
 #include <QList>
 #include <QString>
+#include <QChar>
 
 #include "device.h"
 #include "sample_util.h"
@@ -27,26 +28,6 @@
 #define RESEARCH_SUCCESS 0
 #define RESEARCH_ERROR 1
 
-// typedef struct {
-// 	char deviceType[250];
-// 	char UDN[250];
-// 	char DescDocURL[250];
-// 	char modelDescription[250];
-// 	char ServicesDocURL[250];
-// }Device;
-
-
-typedef struct{
-	IXML_Document * DescDoc;
-	QString location;
-}DocXML;
-
-// typedef struct DeviceNodeAlias {
-// 	Device device;
-// // 	DeviceNodeAlias * ssDevice;
-// 	DeviceNodeAlias * next;
-// }DeviceNode;
-
 class UpnpKopete 
 {
 	public:
@@ -55,17 +36,18 @@ class UpnpKopete
 		static UpnpKopete* getInstance();
 		QString getHostIp();
 		unsigned short getDestPort();
-		QList<Device> mainDevices();
+		Device mainDevices();
       
 		QString routeurLocation();
 		void setRouteurLocation(QString routeurLocation);
 		int researchDevice();
 
 		void addDevice(IXML_Document * DescDoc,QString location);
-		void addXMLDescDoc (IXML_Document * DescDoc,QString location);
-		
-		QList<QString> viewXMLDescDoc();
-		void viewListDevice();
+
+		QString descDoc();
+		void setDescDoc(QString url);		
+
+		void viewDevice();
 
 		//different actions
 		void openPort(QString nameProtocol, int numPort);
@@ -82,12 +64,12 @@ class UpnpKopete
 		unsigned short destPort;
 		
 
-		QList<DocXML> ListDescDoc;
+		QString m_descDoc;
 		
 		UpnpClient_Handle device_handle;
 		
 		
-		QList<Device> m_mainDevices;	
+		Device m_mainDevices;	
 
 		UpnpKopete();
 		void sendAction(QString nameAction, QList<QString> paramNameAction,QList<QString> paramValueAction);

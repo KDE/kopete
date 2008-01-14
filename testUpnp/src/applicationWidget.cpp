@@ -72,23 +72,11 @@ void ApplicationWidget::envoyer()
 		UpnpFinish();
 	}
 
-// 	QList<Device> device = this->upnp->getMainDevices();
-// 	for(int i=0; i<device.size();i++)
-// 	{
-// 		QTreeWidgetItem* item = new QTreeWidgetItem(treeDevice);
-// 		item->setText(i, tr("Device"));
-// 		//treeDevice->insertTopLevelItem(i,item);
-// 	}
-	QList<QString> liste = this->upnp->viewXMLDescDoc();
-	for(int i =0; i < liste.size(); i++)
-	{	
-		tmp = liste.last();
-		text_mess->append("Device location :");
-		text_mess->append(tmp);
-	}	
+	text_mess->append("Device location :");
+	text_mess->append(this->upnp->descDoc());	
 	text_mess->append("######################################");
 
-	this->upnp->viewListDevice();
+	this->upnp->viewDevice();
 
 	
 }
