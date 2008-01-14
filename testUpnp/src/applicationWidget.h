@@ -26,6 +26,7 @@ public slots:
 	void deletePort();
 	void envoyer();
 	void close();
+	void statusInfos();
 
 };
 

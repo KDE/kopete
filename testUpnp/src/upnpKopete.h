@@ -34,44 +34,38 @@ class UpnpKopete
 		~UpnpKopete();
 		
 		static UpnpKopete* getInstance();
-		QString getHostIp();
-		unsigned short getDestPort();
-		Device mainDevices();
-      
+		QString hostIp();
+		unsigned short destPort();
+		
 		QString routeurLocation();
-		void setRouteurLocation(QString routeurLocation);
-		int researchDevice();
-
-		void addDevice(IXML_Document * DescDoc,QString location);
-
 		QString descDoc();
-		void setDescDoc(QString url);		
-
+		Device mainDevices();
 		void viewDevice();
 
+		void setRouteurLocation(QString routeurLocation);
+		void setDescDoc(QString url);
+
+		void addDevice(IXML_Document * DescDoc,QString location);
 		//different actions
+		int upnpConnect();
 		void openPort(QString nameProtocol, int numPort);
 		void deletePort(int numPort);
-		
+		void statusInfo();
 
 	private:
 		
-		static UpnpKopete * uniqueInstance;		
+		static UpnpKopete * m_uniqueInstance;		
 		
 		QString m_routeurLocation;
-		QString deviceType;
-		QString hostIp;
-		unsigned short destPort;
-		
-
+		QString m_deviceType;
+		QString m_hostIp;
+		unsigned short m_destPort;
 		QString m_descDoc;
-		
-		UpnpClient_Handle device_handle;
-		
-		
+		UpnpClient_Handle m_device_handle;
 		Device m_mainDevices;	
 
 		UpnpKopete();
-		void sendAction(QString nameAction, QList<QString> paramNameAction,QList<QString> paramValueAction);
+		
+		IXML_Document * sendAction(QString nameAction, QList<QString> paramNameAction,QList<QString> paramValueAction);
 };
 #endif

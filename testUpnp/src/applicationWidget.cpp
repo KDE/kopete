@@ -9,6 +9,7 @@ ApplicationWidget::ApplicationWidget(QWidget *parent): QMainWindow(parent)
 	connect(btDelete, SIGNAL(clicked()),this, SLOT(deletePort()));
 	connect(btEnvoi, SIGNAL(clicked()),this, SLOT(envoyer()));
 	connect(actionQuitter, SIGNAL(clicked()),this, SLOT(close()));
+	connect(btStatus,SIGNAL(clicked()),this, SLOT(statusInfos()));
 }
 
 
@@ -57,12 +58,18 @@ void ApplicationWidget::deletePort()
 		}
 	}
 }
+void ApplicationWidget::statusInfos()
+{
+	text_mess->append("Status infos");
+	this->upnp->statusInfo();
+}
+
 void ApplicationWidget::envoyer()
 {
 	int ret;
 	QString tmp;
 	
-	ret = this->upnp->researchDevice();
+	ret = this->upnp->upnpConnect();
 	text_mess->append("######################################");
 	text_mess->append("Research Device ...");
 
@@ -76,10 +83,12 @@ void ApplicationWidget::envoyer()
 	text_mess->append(this->upnp->descDoc());	
 	text_mess->append("######################################");
 
-	this->upnp->viewDevice();
+	//this->upnp->viewDevice();
 
 	
 }
+
+
 
 void ApplicationWidget::close()
 {
