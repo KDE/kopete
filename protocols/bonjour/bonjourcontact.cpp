@@ -31,12 +31,14 @@
 #include "bonjouraccount.h"
 #include "bonjourprotocol.h"
 
+// FIXME: Here, we hardcode the icon (bonjour_protocol) into the constructor.
+// This shouldn't be necessary
 BonjourContact::BonjourContact( Kopete::Account* _account, const QString &uniqueName,
 		const QString &displayName, Kopete::MetaContact *parent )
-: Kopete::Contact( _account, uniqueName, parent )
+: Kopete::Contact( _account, uniqueName, parent, QString("bonjour_protocol") )
 {
 	kDebug()<< " uniqueName: " << uniqueName << ", displayName: " << displayName;
-	//
+
 	// FIXME: ? setDisplayName( displayName );
 	m_msgManager = 0L;
 

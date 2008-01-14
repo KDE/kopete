@@ -43,9 +43,10 @@ BonjourProtocol::BonjourProtocol( QObject* parent, const QStringList &/*args*/ )
 
 
 {
-	kDebug();
+	kDebug()<<"Protocol Icon is: "<<pluginIcon();
 
 	s_protocol = this;
+
 }
 
 BonjourProtocol::~BonjourProtocol()
