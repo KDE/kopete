@@ -5,8 +5,7 @@ include(MacroOptionalAddSubdirectory)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 
-include_directories (${CMAKE_SOURCE_DIR} 
-${KDE4_INCLUDES} )
+include_directories ( ${KOPETE_INCLUDES} )
 
 add_subdirectory ( tests )
 
