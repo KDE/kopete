@@ -17,7 +17,7 @@ qt4_add_dbus_adaptor(kopete_statistics_PART_SRCS org.kde.kopete.Statistics.xml
 kde4_add_plugin(kopete_statistics ${kopete_statistics_PART_SRCS})
 
 
-target_link_libraries(kopete_statistics  kopete sqlite3 ${KDE4_KHTML_LIBS} )
+target_link_libraries(kopete_statistics  kopete ${QT_QTSQL_LIBRARY} ${KDE4_KHTML_LIBS} )
 
 install(TARGETS kopete_statistics  DESTINATION ${PLUGIN_INSTALL_DIR})
 
