@@ -10,4 +10,8 @@ X-KDE-ParentApp=kopete_pipes
 X-KDE-ParentComponents=kopete_pipes
 
 Name=Pipes
+Name[ga]=Píopaí
+Name[zh_TW]=管線
 Comment=Pipe messages through an external program or script
+Comment[ga]=Píopáil teachtaireachtaí trí chlár nó script sheachtrach
+Comment[zh_TW]=通透外部程式或文稿的管線訊息
