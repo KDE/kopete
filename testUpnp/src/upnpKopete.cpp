@@ -380,7 +380,7 @@ IXML_Document * UpnpKopete::sendAction(QString nameAction, QList<QString> paramN
 	return response;
 }
 
-void UpnpKopete::openPort(QString nameProtocol, int numPort)
+int UpnpKopete::openPort(QString nameProtocol, int numPort)
 {
 	QList<QString> paramNameAction;
 	QList<QString> paramValueAction;
@@ -410,9 +410,10 @@ void UpnpKopete::openPort(QString nameProtocol, int numPort)
 	paramValueAction.append(QString("0"));
 	
 	sendAction(QString("AddPortMapping"),paramNameAction,paramValueAction);
+	return ACTION_SUCCESS;
 }
 
-void UpnpKopete::deletePort(int numPort)
+int UpnpKopete::deletePort(int numPort)
 {
 	QList<QString> paramNameAction;
 	QList<QString> paramValueAction;
@@ -430,18 +431,51 @@ void UpnpKopete::deletePort(int numPort)
 	paramValueAction.append(QString("TCP"));
 
 	sendAction(QString("DeletePortMapping"),paramNameAction,paramValueAction);
+
+	return ACTION_SUCCESS;
 }
 
-void UpnpKopete::statusInfo()
+int UpnpKopete::statusInfo()
 {
 	QList<QString> paramNameAction;
 	QList<QString> paramValueAction;
 
 	IXML_Document* response = NULL;
+	if(m_mainDevices.deviceType()!=QString(""))
+	{
+		response = sendAction(QString("GetStatusInfo"),paramNameAction,paramValueAction);
+		printf("status info\n");
+		printf("%s\n",ixmlPrintNode((IXML_Node*)response));
+		return ACTION_SUCCESS;
+	}
+	else
+	{
+		printf("Aucun device\n");
+		return ACTION_ERROR;
+	}
+}
 
-	response = sendAction(QString("GetStatusInfo"),paramNameAction,paramValueAction);
-	printf("status info\n");
-	printf("%s\n",ixmlPrintNode((IXML_Node*)response));
+int UpnpKopete::portMapping()
+{
+	QList<QString> paramNameAction;
+	QList<QString> paramValueAction;
+
+	paramNameAction.append(QString("NewPortMappingIndex"));
+	paramValueAction.append(QString("3000"));
+
+	IXML_Document* response = NULL;
+	if(m_mainDevices.deviceType()!=QString(""))
+	{
+		response = sendAction(QString("GetGenericPortMappingEntry"),paramNameAction,paramValueAction);
+		printf("portMapping\n");
+		printf("%s\n",ixmlPrintNode((IXML_Node*)response));
+		return ACTION_SUCCESS;
+	}
+	else
+	{
+		printf("Aucun device\n");
+		return ACTION_ERROR;
+	}
 }
 
 int kopeteCallbackEventHandler( Upnp_EventType EventType, void *Event, void *Cookie )

@@ -98,6 +98,19 @@
      <string>Status Info</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="btMapping" >
+    <property name="geometry" >
+     <rect>
+      <x>484</x>
+      <y>290</y>
+      <width>91</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Port Mapping</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar" >
    <property name="geometry" >

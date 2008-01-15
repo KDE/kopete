@@ -10,6 +10,7 @@ ApplicationWidget::ApplicationWidget(QWidget *parent): QMainWindow(parent)
 	connect(btEnvoi, SIGNAL(clicked()),this, SLOT(envoyer()));
 	connect(actionQuitter, SIGNAL(clicked()),this, SLOT(close()));
 	connect(btStatus,SIGNAL(clicked()),this, SLOT(statusInfos()));
+	connect(btMapping,SIGNAL(clicked()),this, SLOT(portMapping()));
 }
 
 
@@ -62,6 +63,12 @@ void ApplicationWidget::statusInfos()
 {
 	text_mess->append("Status infos");
 	this->upnp->statusInfo();
+}
+
+void ApplicationWidget::portMapping()
+{
+	text_mess->append("Port Mapping");
+	this->upnp->portMapping();
 }
 
 void ApplicationWidget::envoyer()

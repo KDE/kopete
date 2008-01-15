@@ -27,6 +27,8 @@
 
 #define RESEARCH_SUCCESS 0
 #define RESEARCH_ERROR 1
+#define ACTION_SUCCESS 0
+#define ACTION_ERROR 1
 
 class UpnpKopete 
 {
@@ -48,10 +50,10 @@ class UpnpKopete
 		void addDevice(IXML_Document * DescDoc,QString location);
 		//different actions
 		int upnpConnect();
-		void openPort(QString nameProtocol, int numPort);
-		void deletePort(int numPort);
-		void statusInfo();
-
+		int openPort(QString nameProtocol, int numPort);
+		int deletePort(int numPort);
+		int statusInfo();
+		int portMapping();
 	private:
 		
 		static UpnpKopete * m_uniqueInstance;		

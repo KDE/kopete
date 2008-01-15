@@ -27,6 +27,7 @@ public slots:
 	void envoyer();
 	void close();
 	void statusInfos();
+	void portMapping();
 
 };
 

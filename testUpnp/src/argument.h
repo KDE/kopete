@@ -27,6 +27,9 @@ class Argument
 		void setRelatedStateVariable(QString relatedStateVariable);
 		// Method witch show an argument
 		void viewArgument();
+		
+		Argument & operator=(const Argument &arg);
+		bool operator==(const Argument &arg);
 };
 
 
