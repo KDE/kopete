@@ -16,3 +16,6 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=Bonjour
 Comment=Kopete Bonjour Protocol
+Comment[el]=Πρωτόκολλο Bonjour του Kopete
+Comment[ga]=Prótacal Bonjour Kopete
+Comment[ja]=Kopete Bonjour プロトコル
