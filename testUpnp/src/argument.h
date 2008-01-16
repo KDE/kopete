@@ -25,10 +25,9 @@ class Argument
 		void setName(QString name);
 		void setDirection(QString direction);
 		void setRelatedStateVariable(QString relatedStateVariable);
-		// Method witch show an argument
+		// Method which show an argument
 		void viewArgument();
-		
-		Argument & operator=(const Argument &arg);
+		// Method which test the equality of two arguments
 		bool operator==(const Argument &arg);
 };
 

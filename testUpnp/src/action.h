@@ -32,11 +32,13 @@ class Action
 		void addArgument(QString name, QString direction, QString relatedStateVariable);
 		// Getter
 		QString name();
-		QList<Argument> listArgument();
+		QList<Argument>* listArgument();
 		// Setters
 		void setName(QString name);
-		// Method witch show the argument list
+		// Method which show the argument list
 		void viewListArgument();
+		// Method which test the equality of two action
+		bool operator==(const Action &act);
 };
 
 #endif

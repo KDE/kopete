@@ -3,16 +3,12 @@
 // Constructor without parameter
 Action::Action()
 {
-	// Initialise an empty list
-	this->m_argumentList.erase(this->m_argumentList.begin(),this->m_argumentList.end());
 }
 
 Action::Action(QString name)
 {
 	// Modify the action name
 	this->setName(name);
-	// Initialise an empty list
-	this->m_argumentList.erase(this->m_argumentList.begin(),this->m_argumentList.end());
 }
 
 void Action::addArgument(QString name, QString direction, QString relatedStateVariable)
@@ -26,11 +22,11 @@ void Action::addArgument(QString name, QString direction, QString relatedStateVa
 	arg.setRelatedStateVariable(relatedStateVariable);
 	
 	// To go a the list beginning
-	this->m_argumentList.begin();
+	this->listArgument()->begin();
 	// We check if the argument is not already existing
-	for(int i=0;i<this->m_argumentList.size() && !find;i++)
+	for(int i=0;i<this->listArgument()->size() && !find;i++)
 	{
-		if(this->m_argumentList.last().name() == name)
+		if(this->listArgument()->last().name() == name)
 		{
 			find=true;
 		}
@@ -38,7 +34,7 @@ void Action::addArgument(QString name, QString direction, QString relatedStateVa
 	if (find==false)
 	{
 		// Adding the argument to the list
-		this->m_argumentList.append(arg);
+		this->listArgument()->append(arg);
 	}
 	else
 	{
@@ -52,9 +48,9 @@ QString Action::name()
 }
 
 
-QList<Argument> Action::listArgument()
+QList<Argument>* Action::listArgument()
 {
-	return this->m_argumentList;
+	return &(this->m_argumentList);
 }
 
 void Action::setName(QString name)
@@ -65,12 +61,42 @@ void Action::setName(QString name)
 void Action::viewListArgument()
 {
 	printf("## Displaying action arguments ##\n");
-	for(int i =0; i < this->m_argumentList.size(); i++)
+	for(int i =0; i < this->listArgument()->size(); i++)
 	{
-		Argument arg = this->m_argumentList.at(i);
+		Argument arg = this->listArgument()->at(i);
 		printf("# %d # \n",i);
 		// Show argument characteristics
 		arg.viewArgument();
 	}
 }
+
+bool Action::operator==(const Action &act)
+{
+	bool equals = true;
+	Action action = act;
+	if(this->name() != action.name())
+	{
+		equals = false;
+	}
+	else
+	{
+		if(this->listArgument()->size() == action.listArgument()->size())
+		{
+			for(int i =0; i < this->listArgument()->size(); i++)
+			{
+				Argument argument = this->listArgument()->at(i);
+				if((argument == action.listArgument()->at(i))==false)
+				{
+					equals = false;
+				}
+			}	
+		}
+		else
+		{
+			equals = false;
+		}
+	}
+	return equals;
+}
+
 

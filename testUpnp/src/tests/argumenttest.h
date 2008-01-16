@@ -14,6 +14,7 @@ class ArgumentTest : public QObject
 		~ArgumentTest();
 	private slots:
 		void testArgument();
+		void testOperatorEquals();
 		void testSetName();
 		void testSetDirection();
 		void testSetRelatedStateVariable();

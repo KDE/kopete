@@ -19,6 +19,7 @@ class ActionTest : public QObject
 		void testAction_2();
 		void testAddArgument();
 		void testSetName();
+		void testOperatorEquals();
 };
 
 #endif

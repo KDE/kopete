@@ -40,5 +40,22 @@ void ArgumentTest::testSetRelatedStateVariable()
 	QCOMPARE(arg.relatedStateVariable(),QString("state_variable"));
 }
 
+void ArgumentTest::testOperatorEquals()
+{
+	Argument argument, argument2, argument3;
+	argument.setName(QString("name_test"));
+	argument.setDirection(QString("direction_test"));
+	argument.setRelatedStateVariable(QString("state_variable_test"));
+	argument2 = argument;
+	QVERIFY(argument2 == argument);
+	argument2.setName(QString("name_test2"));
+	QVERIFY((argument2 == argument)==false);
+	argument3.setName(QString("name_test2"));
+	argument3.setDirection(QString("direction_test"));
+	argument3.setRelatedStateVariable(QString("state_variable_test"));
+	QVERIFY((argument == argument3)==false);
+	QVERIFY(argument2 == argument3);	
+}
+
 QTEST_KDEMAIN_CORE(ArgumentTest)
 
