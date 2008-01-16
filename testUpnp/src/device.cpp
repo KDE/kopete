@@ -138,3 +138,65 @@ void Device::showDeviceList()
 		printf("device %d : %s\n",i,device_tmp.deviceType().toLatin1().data());
 	}
 }
+
+bool Device::isEmpty()
+{
+	bool empty = true;
+	if(this->deviceType().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->friendlyName().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->manufacturer().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->manufacturerURL().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->modelName().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->UDN().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->modelDescription().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->modelNumber().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->serialNumber().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->presentationURL().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->UPC().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->descDocURL().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->getListDevice().isEmpty()==false)
+	{
+		empty = false;
+	}
+	if(this->getListService().isEmpty()==false)
+	{
+		empty = false;
+	}
+	return empty;
+}

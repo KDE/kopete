@@ -1,30 +1,56 @@
 #include "service.h"
 
-Service::Service(){;}
-
-
-Service::Service(QString serviceType, QString serviceId, QString controlURL, QString eventSubURL, QString URLdocXml)
+Service::Service()
 {
-	this->m_serviceType = serviceType;
-	this->m_serviceId = serviceId;
-	this->m_controlURL = controlURL;
-	this->m_eventSubURL = eventSubURL;
-	this->m_xmlDocService = URLdocXml;
 }
 
 
-QString Service::serviceType(){return this->m_serviceType;}
-QString Service::serviceId(){return this->m_serviceId;}
-QString Service::controlURL(){return this->m_controlURL;}
-QString Service::eventSubURL(){return this->m_eventSubURL;}
-QString Service::xmlDocService(){return this->m_xmlDocService;}
-QList<Action> Service::actionList(){return this->m_actionList;}
+QString Service::serviceType()
+{
+	return this->m_serviceType;
+}
+QString Service::serviceId()
+{
+	return this->m_serviceId;
+}
+QString Service::controlURL()
+{
+	return this->m_controlURL;
+}
+QString Service::eventSubURL()
+{
+	return this->m_eventSubURL;
+}
+QString Service::xmlDocService()
+{
+	return this->m_xmlDocService;
+}
+QList<Action>* Service::actionList()
+{
+	return &(this->m_actionList);
+}
 
-void Service::setServiceType(QString serviceType){this->m_serviceType = serviceType;}
-void Service::setServiceId(QString serviceId){this->m_serviceId = serviceId;}
-void Service::setControlURL(QString controlURL){this->m_controlURL = controlURL;}
-void Service::setEventSubURL(QString eventSubURL){this->m_eventSubURL = eventSubURL;}
-void Service::setXmlDocService(QString URLdocXml){this->m_xmlDocService =URLdocXml;}
+
+void Service::setServiceType(QString serviceType)
+{
+	this->m_serviceType = serviceType;
+}
+void Service::setServiceId(QString serviceId)
+{
+	this->m_serviceId = serviceId;
+}
+void Service::setControlURL(QString controlURL)
+{
+	this->m_controlURL = controlURL;
+}
+void Service::setEventSubURL(QString eventSubURL)
+{
+	this->m_eventSubURL = eventSubURL;
+}
+void Service::setXmlDocService(QString URLdocXml)
+{
+	this->m_xmlDocService =URLdocXml;
+}
 
 void Service::addAllActions()
 {
@@ -103,12 +129,13 @@ void Service::addActionList(IXML_Node * actionNode)
 
 }
 
+
 bool Service::existAction(QString nameAction)
 {
 	bool find = false;	
-	for(int i=0;i<this->m_actionList.size(); i++)
+	for(int i=0;i<this->actionList()->size(); i++)
 	{
-		Action action_tmp = this->m_actionList.at(i);	
+		Action action_tmp = this->actionList()->at(i);	
 		if(action_tmp.name() == nameAction)
 		{
 			find = true;

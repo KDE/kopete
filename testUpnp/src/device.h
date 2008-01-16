@@ -87,6 +87,7 @@ class Device
 		void searchAndAddUnderDevices();
 		void showDevice();
 		void showDeviceList(); 
+		bool isEmpty();
 };
 
 

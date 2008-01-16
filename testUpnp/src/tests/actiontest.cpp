@@ -28,6 +28,15 @@ void ActionTest::testAction_2()
 
 void ActionTest::testAddArgument()
 {
+	Action action(QString("action_name"));
+	QVERIFY(action.listArgument().isEmpty());
+	action.addArgument(QString("argument_name"),QString("argument_direction"),QString("argument_relatedStateVariable"));
+	QVERIFY(action.listArgument().isEmpty() == false);
+	QVERIFY(action.listArgument().size() == 1);
+	Argument argument = action.listArgument().at(0);
+	QCOMPARE(argument.name(),QString("argument_name"));
+	QCOMPARE(argument.direction(),QString("argument_direction"));
+	QCOMPARE(argument.relatedStateVariable(),QString("argument_relatedStateVariable"));
 }
 
 void ActionTest::testSetName()

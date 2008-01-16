@@ -27,29 +27,31 @@ class Service
 		QList<Action> m_actionList;
 
 	public:
+		// Constructor without argument
 		Service();
-		Service(QString serviceType, QString serviceId, QString controlURL, QString eventSubURL, QString URLdocXml);
 		
+		// Getters
 		QString serviceType();
 		QString serviceId();
 		QString controlURL();
 		QString eventSubURL();
-		
 		QString xmlDocService();
-		QList<Action> actionList();
+		QList<Action>* actionList();
 
+		// Setters
 		void setServiceType(QString serviceType);
 		void setServiceId(QString serviceId);
 		void setControlURL(QString controlURL);
 		void setEventSubURL(QString eventSubURL);
 		void setXmlDocService(QString URLdocXml);
 		
+		// Method which add all action of the service
 		void addAllActions();
 		void addActionList(IXML_Node * actionNode);
 
 		bool existAction(QString nameAction);
 		Action actionByName(QString nameAction);
-
+		void addAction(Action action);
 		void viewActionList();
 };
 

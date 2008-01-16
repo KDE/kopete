@@ -50,3 +50,19 @@ target_link_libraries(actionTest
 	${KDE4_KIO_LIBS}
 	${QT_QTTEST_LIBRARY}
 )
+
+# Service test unit
+kde4_add_unit_test(serviceTest
+	service.cpp
+	action.cpp
+	util_Xml.cpp
+	argument.cpp
+	./tests/servicetest.cpp
+)
+
+# Libraries needed for service tests
+target_link_libraries(serviceTest
+	${KDE4_KIO_LIBS}
+	${QT_QTTEST_LIBRARY}
+	upnp
+)
