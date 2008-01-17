@@ -797,11 +797,11 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			}
 			else
 			{
-//				if (fmt.fmt.pix.pixelformat == pixelFormatCode(newformat))
-//				{
+				if (fmt.fmt.pix.pixelformat == pixelFormatCode(newformat))
+				{
 					m_pixelformat = newformat;
 					ret = m_pixelformat;
-//				}
+				}
 			}
 			break;
 #endif
