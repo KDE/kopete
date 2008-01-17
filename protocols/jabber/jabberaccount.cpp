@@ -71,7 +71,6 @@
 #include "jabbergroupcontact.h"
 #include "jabbercapabilitiesmanager.h"
 #include "jabbertransport.h"
-#include "dlgjabbersendraw.h"
 #include "dlgxmppconsole.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
