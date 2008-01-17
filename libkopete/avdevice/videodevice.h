@@ -92,21 +92,45 @@ typedef enum
 
 typedef enum
 {
+// Packed RGB formats
 	PIXELFORMAT_NONE	= 0,
 	PIXELFORMAT_GREY	= (1 << 0),
 	PIXELFORMAT_RGB332	= (1 << 1),
-	PIXELFORMAT_RGB555	= (1 << 2),
-	PIXELFORMAT_RGB555X	= (1 << 3),
+	PIXELFORMAT_RGB444	= (1 << 2),
+	PIXELFORMAT_RGB555	= (1 << 3),
 	PIXELFORMAT_RGB565	= (1 << 4),
-	PIXELFORMAT_RGB565X	= (1 << 5),
-	PIXELFORMAT_RGB24	= (1 << 6),
+	PIXELFORMAT_RGB555X	= (1 << 5),
+	PIXELFORMAT_RGB565X	= (1 << 6),
 	PIXELFORMAT_BGR24	= (1 << 7),
-	PIXELFORMAT_RGB32	= (1 << 8),
+	PIXELFORMAT_RGB24	= (1 << 8),
 	PIXELFORMAT_BGR32	= (1 << 9),
-	PIXELFORMAT_YUYV	= (1 << 10),
-	PIXELFORMAT_UYVY	= (1 << 11),
-	PIXELFORMAT_YUV420P	= (1 << 12),
-	PIXELFORMAT_YUV422P	= (1 << 13)
+	PIXELFORMAT_RGB32	= (1 << 10),
+
+// Bayer RGB format
+	PIXELFORMAT_SBGGR8	= (1 << 11),
+
+// YUV formats
+	PIXELFORMAT_YUYV	= (1 << 12),
+	PIXELFORMAT_UYVY	= (1 << 13),
+	PIXELFORMAT_YUV420P	= (1 << 14),
+	PIXELFORMAT_YUV422P	= (1 << 15),
+
+// Compressed formats
+	PIXELFORMAT_JPEG	= (1 << 16),
+	PIXELFORMAT_MPEG	= (1 << 17),
+
+// Reserved formats
+	PIXELFORMAT_DV		= (1 << 18),
+	PIXELFORMAT_ET61X251	= (1 << 19),
+	PIXELFORMAT_HI240	= (1 << 20),
+	PIXELFORMAT_HM12	= (1 << 21),
+	PIXELFORMAT_MJPEG	= (1 << 22),
+	PIXELFORMAT_PWC1	= (1 << 23),
+	PIXELFORMAT_PWC2	= (1 << 24),
+	PIXELFORMAT_SN9C10X	= (1 << 25),
+	PIXELFORMAT_WNVA	= (1 << 26),
+	PIXELFORMAT_YYUV	= (1 << 27)
+
 //	PIXELFORMAT_ALL		= 0x00003FFF
 } pixel_format;
 
@@ -201,6 +225,7 @@ public:
 	int pixelFormatDepth(pixel_format pixelformat);
 	QString pixelFormatName(pixel_format pixelformat);
 	QString pixelFormatName(int pixelformat);
+	int detectPixelFormats();
 
 	__u64 signalStandardCode(signal_standard standard);
 	QString signalStandardName(signal_standard standard);
@@ -235,11 +260,6 @@ public:
 	bool getImageAsMirror();
 	bool setImageAsMirror(bool imageasmirror);
 
-	bool getDisableMMap();
-	bool setDisableMMap(bool disablemmap);
-	bool getWorkaroundBrokenDriver();
-	bool setWorkaroundBrokenDriver(bool workaroundbrokendriver);
-
 	bool canCapture();
 	bool canChromakey();
 	bool canScale();
@@ -262,6 +282,7 @@ public:
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
 	struct v4l2_format fmt;
+	struct v4l2_fmtdesc fmtdesc; // Not sure if it must be here or inside detectPixelFormats(). Should inve
 //	struct v4l2_input m_input;
 	struct v4l2_queryctrl queryctrl;
 	struct v4l2_querymenu querymenu;

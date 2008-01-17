@@ -102,11 +102,6 @@ public:
 	bool getImageAsMirror();
 	bool setImageAsMirror(bool imageasmirror);
 
-	bool getDisableMMap();
-	bool setDisableMMap(bool disablemmap);
-	bool getWorkaroundBrokenDriver();
-	bool setWorkaroundBrokenDriver(bool workaroundbrokendriver);
-
 	void loadConfig(); // Load configuration parameters;
 	void saveConfig(); // Save configuretion parameters;
 

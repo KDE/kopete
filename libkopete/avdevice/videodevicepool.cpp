@@ -392,48 +392,6 @@ bool VideoDevicePool::setImageAsMirror(bool imageasmirror)
 }
 
 /*!
-    \fn VideoDevicePool::getDisableMMap()
- */
-bool VideoDevicePool::getDisableMMap()
-{
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].getDisableMMap();
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::setDisableMMap(bool disablemmap)
- */
-bool VideoDevicePool::setDisableMMap(bool disablemmap)
-{
-	kdDebug(14010) <<  k_funcinfo << "VideoDevicePool::setDisableMMap(" << disablemmap << ") called." << endl;
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].setDisableMMap(disablemmap);
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::getWorkaroundBrokenDriver()
- */
-bool VideoDevicePool::getWorkaroundBrokenDriver()
-{
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].getWorkaroundBrokenDriver();
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::setWorkaroundBrokenDriver(bool workaroundbrokendriver)
- */
-bool VideoDevicePool::setWorkaroundBrokenDriver(bool workaroundbrokendriver)
-{
-	kdDebug(14010) <<  k_funcinfo << "VideoDevicePool::setWorkaroundBrokenDriver(" << workaroundbrokendriver << ") called." << endl;
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].setWorkaroundBrokenDriver(workaroundbrokendriver);
-	return false;
-}
-
-/*!
     \fn VideoDevicePool::getFrame()
  */
 int VideoDevicePool::getFrame()
@@ -818,11 +776,8 @@ void VideoDevicePool::loadConfig()
 			}
 			const QString name                = config->readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), (*vditerator).m_model);
 			const int currentinput            = config->readNumEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), 0);
-			const bool disablemmap            = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex)), false );
-			const bool workaroundbrokendriver = config->readBoolEntry((QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex)), false );
 			kdDebug(14010) << k_funcinfo << "Device name: " << name << endl;
 			kdDebug(14010) << k_funcinfo << "Device current input: " << currentinput << endl;
-			(*vditerator).setWorkaroundBrokenDriver(workaroundbrokendriver);
 			(*vditerator).selectInput(currentinput);
 
 			for (size_t input = 0 ; input < (*vditerator).m_input.size(); input++)
@@ -890,12 +845,8 @@ void VideoDevicePool::saveConfig()
 // Stores current input for the given video device
 			const QString name                   = QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
 			const QString currentinput           = QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
-			const QString disablemmap            = QString::fromLocal8Bit ( "Model %1 Device %2 DisableMMap") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
-			const QString workaroundbrokendriver = QString::fromLocal8Bit ( "Model %1 Device %2 WorkaroundBrokenDriver") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
 			config->writeEntry( name,                   (*vditerator).m_name);
 			config->writeEntry( currentinput,           (*vditerator).currentInput());
-			config->writeEntry( disablemmap,            (*vditerator).getDisableMMap());
-			config->writeEntry( workaroundbrokendriver, (*vditerator).getWorkaroundBrokenDriver());
 
 			for (size_t input = 0 ; input < (*vditerator).m_input.size(); input++)
 			{

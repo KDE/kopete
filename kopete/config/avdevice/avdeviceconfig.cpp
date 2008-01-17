@@ -63,8 +63,6 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const char *  name , const QStri
 	connect(mPrfsVideoDevice->mImageAutoBrightnessContrast,  SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoBrightnessContrastChanged(bool)));
 	connect(mPrfsVideoDevice->mImageAutoColorCorrection,     SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
 	connect(mPrfsVideoDevice->mImageAsMirror,                SIGNAL(toggled(bool)),     this, SLOT(slotImageAsMirrorChanged(bool)));
-	connect(mPrfsVideoDevice->mDeviceDisableMMap,            SIGNAL(toggled(bool)),     this, SLOT(slotDeviceDisableMMapChanged(bool)));
-	connect(mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver, SIGNAL(toggled(bool)),     this, SLOT(slotDeviceWorkaroundBrokenDriverChanged(bool)));
 
 	// why is this here?
 	// mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
@@ -135,8 +133,6 @@ void AVDeviceConfig::setVideoInputParameters()
 		mPrfsVideoDevice->mImageAutoBrightnessContrast->setChecked(mVideoDevicePool->getAutoBrightnessContrast());
 		mPrfsVideoDevice->mImageAutoColorCorrection->setChecked(mVideoDevicePool->getAutoColorCorrection());
 		mPrfsVideoDevice->mImageAsMirror->setChecked(mVideoDevicePool->getImageAsMirror());
-		mPrfsVideoDevice->mDeviceDisableMMap->setChecked(mVideoDevicePool->getDisableMMap());
-		mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->setChecked(mVideoDevicePool->getWorkaroundBrokenDriver());
 	}
 }
 
@@ -221,18 +217,6 @@ void AVDeviceConfig::slotImageAutoColorCorrectionChanged(bool){
 void AVDeviceConfig::slotImageAsMirrorChanged(bool){
 	kdDebug() << "kopete:config (avdevice): slotImageAsMirrorChanged(" << mPrfsVideoDevice->mImageAsMirror->isChecked() << ") called. " << endl;
 	mVideoDevicePool->setImageAsMirror(mPrfsVideoDevice->mImageAsMirror->isChecked());
-	emit changed( true );
-}
-
-void AVDeviceConfig::slotDeviceWorkaroundBrokenDriverChanged(bool){
-	kdDebug() << "kopete:config (avdevice): slotDeviceWorkaroundBrokenDriverChanged(" << mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->isChecked() << ") called. " << endl;
-	mVideoDevicePool->setWorkaroundBrokenDriver(mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->isChecked());
-	emit changed( true );
-}
-
-void AVDeviceConfig::slotDeviceDisableMMapChanged(bool){
-	kdDebug() << "kopete:config (avdevice): slotDeviceDisableMMapChanged(" << mPrfsVideoDevice->mDeviceDisableMMap->isChecked() << ") called. " << endl;
-	mVideoDevicePool->setDisableMMap(mPrfsVideoDevice->mDeviceDisableMMap->isChecked());
 	emit changed( true );
 }
 

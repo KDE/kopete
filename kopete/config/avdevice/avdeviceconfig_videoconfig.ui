@@ -529,59 +529,6 @@
                                     </widget>
                                 </vbox>
                             </widget>
-                            <widget class="QButtonGroup">
-                                <property name="name">
-                                    <cstring>deviceOptions</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>5</hsizetype>
-                                        <vsizetype>1</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="title">
-                                    <string>Device options</string>
-                                </property>
-                                <grid>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QCheckBox" row="1" column="0">
-                                        <property name="name">
-                                            <cstring>mDeviceWorkaroundBrokenDriver</cstring>
-                                        </property>
-                                        <property name="sizePolicy">
-                                            <sizepolicy>
-                                                <hsizetype>3</hsizetype>
-                                                <vsizetype>1</vsizetype>
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;Workaround broken driver</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QCheckBox" row="0" column="0">
-                                        <property name="name">
-                                            <cstring>mDeviceDisableMMap</cstring>
-                                        </property>
-                                        <property name="sizePolicy">
-                                            <sizepolicy>
-                                                <hsizetype>3</hsizetype>
-                                                <vsizetype>1</vsizetype>
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="text">
-                                            <string>Disable memor&amp;y mapping</string>
-                                        </property>
-                                    </widget>
-                                </grid>
-                            </widget>
                         </vbox>
                     </widget>
                 </grid>
