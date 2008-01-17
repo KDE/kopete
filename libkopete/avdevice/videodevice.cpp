@@ -2246,7 +2246,7 @@ int VideoDevice::detectPixelFormats()
 				}
 				else
 				{	
-					kdDebug(14010) <<  k_funcinfo << fmtdesc.pixelformat << "  " << pixelFormatName(fmtdesc.pixelformat); // Need a cleanup. PixelFormatForPalette is a really bad name
+					kdDebug(14010) <<  k_funcinfo << fmtdesc.pixelformat << "  " << pixelFormatName(fmtdesc.pixelformat) << endl; // Need a cleanup. PixelFormatForPalette is a really bad name
 					fmtdesc.index++;
 				}
 			}
@@ -2257,43 +2257,43 @@ int VideoDevice::detectPixelFormats()
 // The correct thing to do is to isolate these calls and do a proper implementation for V4L and another for V4L2 when this thing will be migrated to a plugin architecture.
 
 // Packed RGB formats
-			kdDebug(14010) <<  k_funcinfo << "Supported pixel formats:";
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB332))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB332);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB444))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB444);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB555);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB565);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555X))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB555X);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565X))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB565X);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR24))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_BGR24);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB24))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB24);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR32))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_BGR32);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB32))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB32);
+			kdDebug(14010) <<  k_funcinfo << "Supported pixel formats:" << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB332))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB332) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB444))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB444) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB555) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB565) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB555X))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB555X) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB565X))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB565X) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR24))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_BGR24) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB24))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB24) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_BGR32))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_BGR32) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_RGB32))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_RGB32) << endl;
 
 // Bayer RGB format
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_SBGGR8))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_SBGGR8);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_SBGGR8))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_SBGGR8) << endl;
 
 // YUV formats
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_GREY))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_GREY);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUYV))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_YUYV);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_UYVY))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_UYVY);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV420P))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_YUV420P);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV422P))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_YUV422P);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_GREY))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_GREY) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUYV))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_YUYV) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_UYVY))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_UYVY) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV420P))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_YUV420P) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YUV422P))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_YUV422P) << endl;
 
 // Compressed formats
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_JPEG))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_JPEG);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_MPEG))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_MPEG);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_JPEG))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_JPEG) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_MPEG))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_MPEG) << endl;
 
 // Reserved formats
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_DV))		kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_DV);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_ET61X251))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_ET61X251);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_HI240))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_HI240);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_HM12))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_HM12);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_MJPEG))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_MJPEG);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_PWC1))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_PWC1);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_PWC2))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_PWC2);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_SN9C10X))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_SN9C10X);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_WNVA))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_WNVA);
-			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YYUV))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_YYUV);
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_DV))		kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_DV) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_ET61X251))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_ET61X251) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_HI240))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_HI240) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_HM12))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_HM12) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_MJPEG))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_MJPEG) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_PWC1))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_PWC1) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_PWC2))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_PWC2) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_SN9C10X))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_SN9C10X) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_WNVA))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_WNVA) << endl;
+			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YYUV))	kdDebug(14010) <<  k_funcinfo << pixelFormatName(PIXELFORMAT_YYUV) << endl;
 			break;
 #endif
 		case VIDEODEV_DRIVER_NONE:
