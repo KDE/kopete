@@ -26,8 +26,8 @@
 #include "videoinput.h"
 #include "videodevice.h"
 
-//#include "bayer.h"
-//#include "sonix_compress.h"
+#include "bayer.h"
+#include "sonix_compress.h"
 
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
 
@@ -797,8 +797,11 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			}
 			else
 			{
-				m_pixelformat = newformat;
-				ret = m_pixelformat;
+//				if (fmt.fmt.pix.pixelformat == pixelFormatCode(newformat))
+//				{
+					m_pixelformat = newformat;
+					ret = m_pixelformat;
+//				}
 			}
 			break;
 #endif
@@ -1253,7 +1256,22 @@ int VideoDevice::getImage(QImage *qimage)
 			break;
 
 // Bayer RGB format
-		case PIXELFORMAT_SBGGR8	: break;
+		case PIXELFORMAT_SBGGR8	:
+		{
+			unsigned char *d = (unsigned char *) malloc (width() * height() * 3);
+			bayer2rgb24(d, &m_currentbuffer.data.first(), width(), height());
+			int step=0;
+			for(int loop=0;loop < qimage->numBytes();loop+=4)
+			{
+				bits[loop]   = d[step+2];
+				bits[loop+1] = d[step+1];
+				bits[loop+2] = d[step];
+				bits[loop+3] = 255;
+				step+=3;
+			}
+			free(d);
+		}
+		break;
 
 // YUV formats
 		case PIXELFORMAT_GREY	: break;
@@ -1353,7 +1371,26 @@ int VideoDevice::getImage(QImage *qimage)
 		case PIXELFORMAT_MJPEG	: break;
 		case PIXELFORMAT_PWC1	: break;
 		case PIXELFORMAT_PWC2	: break;
-		case PIXELFORMAT_SN9C10X: break;
+		case PIXELFORMAT_SN9C10X:
+		{
+			unsigned char *s = new unsigned char [width() * height()];
+			unsigned char *d = new unsigned char [width() * height() * 3];
+			sonix_decompress_init();
+			sonix_decompress(width(), height(), &m_currentbuffer.data.first(), s);
+			bayer2rgb24(d, s, width(), height());
+			int step=0;
+			for(int loop=0;loop < qimage->numBytes();loop+=4)
+			{
+				bits[loop]   = d[step+2];
+				bits[loop+1] = d[step+1];
+				bits[loop+2] = d[step];
+				bits[loop+3] = 255;
+				step+=3;
+			}
+			delete[] s;
+			delete[] d;
+		}
+		break;
 		case PIXELFORMAT_WNVA	: break;
 		case PIXELFORMAT_YYUV	: break;
 	}
