@@ -52,7 +52,6 @@
 #include "jabbereditaccountwidget.h"
 #include "jabbercapabilitiesmanager.h"
 #include "jabbertransport.h"
-#include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
 #include "dlgregister.h"
