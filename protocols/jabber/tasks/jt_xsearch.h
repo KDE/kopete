@@ -1,7 +1,7 @@
  /*
-    Copyright (c) 2007      by Olivier Goffart  <ogoffart@kde.org>
+    Copyright (c) 2008 by Igor Janssen  <alaves17@gmail.com>
 
-    Kopete    (c) 2007 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2008 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -13,34 +13,29 @@
     *************************************************************************
  */
 
-#ifndef JT_PRIVATESTORAGE_H
-#define JT_PRIVATESTORAGE_H
+#ifndef JT_XSEARCH_H
+#define JT_XSEARCH_H
 
-#include "xmpp_task.h"
-#include "xmpp_jid.h"
+#include "xmpp_tasks.h"
+#include "xmpp_xdata.h"
 
-class QDomElement;
-class QString;
+using namespace XMPP;
 
-    
-class JT_PrivateStorage : public XMPP::Task
+class JT_XSearch : public JT_Search
 {
 	Q_OBJECT
-	public:
-		JT_PrivateStorage(XMPP::Task *parent);
-		~JT_PrivateStorage();
+public:
+	JT_XSearch(Task *parent);
 
-		void set(const QDomElement &);
-		void get(const QString &tag, const QString& xmlns);
-		
-		QDomElement element();
+	void setForm(const Form &frm, const XData &_form);
 
-		void onGo();
-		bool take(const QDomElement &);
-		
-	private:
-		class Private;
-		Private *d;
+	bool take(const QDomElement &);
+	QDomElement iq() const;
+
+	void onGo();
+
+private:
+	QDomElement _iq;
 };
 
 #endif

@@ -1,7 +1,7 @@
  /*
-    Copyright (c) 2007      by Olivier Goffart  <ogoffart@kde.org>
+    Copyright (c) 2008 by Igor Janssen  <alaves17@gmail.com>
 
-    Kopete    (c) 2007 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2008 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -13,34 +13,31 @@
     *************************************************************************
  */
 
-#ifndef JT_PRIVATESTORAGE_H
-#define JT_PRIVATESTORAGE_H
+#ifndef DLGXMPPCONSOLE_H
+#define DLGXMPPCONSOLE_H
 
-#include "xmpp_task.h"
-#include "xmpp_jid.h"
+#include "ui_dlgxmppconsole.h"
 
-class QDomElement;
-class QString;
+class JabberClient;
 
-    
-class JT_PrivateStorage : public XMPP::Task
+class dlgXMPPConsole : public QDialog
 {
 	Q_OBJECT
-	public:
-		JT_PrivateStorage(XMPP::Task *parent);
-		~JT_PrivateStorage();
+public:
+	explicit dlgXMPPConsole(JabberClient *client, QWidget *parent = 0);
+	virtual ~dlgXMPPConsole();
 
-		void set(const QDomElement &);
-		void get(const QString &tag, const QString& xmlns);
-		
-		QDomElement element();
+public slots:
+	void slotIncomingXML(const QString &msg);
+	void slotOutgoingXML(const QString &msg);
 
-		void onGo();
-		bool take(const QDomElement &);
-		
-	private:
-		class Private;
-		Private *d;
+private slots:
+	void slotSend();
+	void slotClear();
+
+private:
+	Ui::DlgXMPPConsole ui;
+	JabberClient *mClient;
 };
 
 #endif

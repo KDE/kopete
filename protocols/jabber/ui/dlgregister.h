@@ -1,8 +1,8 @@
 
 /***************************************************************************
-                          dlgjabberbrowse.h  -  description
+                          dlgjabberregister.h  -  description
                              -------------------
-    begin                : Wed Dec 11 2002
+    begin                : Mon Dec 9 2002
     copyright            : (C) 2002-2003 by Till Gerken <till@tantalo.net>
     email                : kopete-devel@kde.org
  ***************************************************************************/
@@ -16,39 +16,40 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef DLGJABBERBROWSE_H
-#define DLGJABBERBROWSE_H
+#ifndef DLGJABBERREGISTER_H
+#define DLGJABBERREGISTER_H
 
 #include <qwidget.h>
+#include <qlayout.h>
+#include <q3groupbox.h>
+#include <qlabel.h>
 
-#include "xmpp_tasks.h"
+#include "im.h"
+#include "xmpp.h"
 
 #include "jabberaccount.h"
+#include "ui_dlgregister.h"
 #include "jabberformtranslator.h"
-#include "ui_dlgbrowse.h"
 
-/**
-  *@author Till Gerken <till@tantalo.net>
-  */
+class JabberXDataWidget;
 
-class dlgJabberBrowse : public QDialog, private Ui::dlgBrowse
+class dlgRegister : public QDialog, private Ui::dlgRegister
 {
-
 	Q_OBJECT
-
 public:
-	dlgJabberBrowse (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent = 0);
-	~dlgJabberBrowse ();
+	  dlgRegister(JabberAccount *account, const XMPP::Jid &jid, QWidget *parent = 0);
+	 ~dlgRegister();
 
 private slots:
-	void slotGotForm ();
-	void slotSendForm ();
-	void slotSentForm ();
+	void slotGotForm();
+	void slotSendForm();
+	void slotSentForm();
 
 private:
 	JabberAccount *m_account;
-	JabberFormTranslator * translator;
-
+	Form mForm;
+	JabberFormTranslator *translator;
+	JabberXDataWidget *mXDataWidget;
 };
 
 #endif

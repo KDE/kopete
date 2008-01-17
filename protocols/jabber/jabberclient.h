@@ -515,6 +515,8 @@ signals:
 	 * as well as internal status messages.
 	 */
 	void debugMessage ( const QString &message );
+	void incomingXML (const QString &msg);
+	void outgoingXML (const QString &msg);
 
 private:
 	class Private;

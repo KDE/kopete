@@ -32,6 +32,7 @@
 #include <kopeteonlinestatus.h>
 #include <im.h>
 #include "jabberclient.h"
+#include "mood.h"
 
 #include <QMap>
 #include <QtCrypto>
@@ -253,8 +254,10 @@ private slots:
 	/* Called from Psi: debug messages from the backend. */
 	void slotClientDebugMessage (const QString &msg);
 
-	/* Sends a raw message to the server (use with caution) */
-	void slotSendRaw ();
+	/* XMPP console dialog */
+	void slotXMPPConsole ();
+
+	void slotSetMood();
 
 	/* Slots for handling groupchats. */
 	void slotJoinNewChat ();
@@ -306,5 +309,22 @@ private slots:
 
 	//void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
 };
+
+/*class JabberMoodAction : public KAction
+{
+	Q_OBJECT
+public:
+	JabberMoodAction(const Mood::Type type, QObject *parent);
+
+public slots:
+	void triggered();
+
+signals:
+	void triggered(const Mood::Type type);
+
+private:
+	Mood::Type mType;
+};*/
+
 
 #endif

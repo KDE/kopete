@@ -72,8 +72,10 @@
 #include "jabbercapabilitiesmanager.h"
 #include "jabbertransport.h"
 #include "dlgjabbersendraw.h"
+#include "dlgxmppconsole.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
+#include "jt_pubsub.h"
 
 #include <sys/utsname.h>
 
@@ -204,8 +206,8 @@ KActionMenu *JabberAccount::actionMenu ()
 
 	action = new KAction( this );
 	action->setIcon( ( KIcon("mail-message-new") ) );
-	action->setText( i18n ("Send Raw Packet to Server...") );
-	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSendRaw()) );
+	action->setText( i18n ("XML Console") );
+	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotXMPPConsole()) );
 	action->setEnabled( isConnected() );
 	m_actionMenu->addAction( action );
 
@@ -216,7 +218,16 @@ KActionMenu *JabberAccount::actionMenu ()
 	action->setEnabled( isConnected() );
 	m_actionMenu->addAction( action );
 
-
+	KActionMenu *mMoodMenu = new KActionMenu(i18n("Set mood..."), m_actionMenu);
+	for(int i = 0; i <= Mood::Worried; i++)
+	{
+		action = new KAction(mMoodMenu);
+		action->setText(MoodManager::self()->getMoodName((Mood::Type)i));
+		action->setData(QVariant(i));
+		QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetMood()) );
+		mMoodMenu->addAction( action );
+	}
+	m_actionMenu->addAction( mMoodMenu );
 	return m_actionMenu;
 
 }
@@ -1129,7 +1140,7 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 
 }
 
-void JabberAccount::slotSendRaw ()
+void JabberAccount::slotXMPPConsole ()
 {
 	/* Check if we're connected. */
 	if ( !isConnected () )
@@ -1138,8 +1149,27 @@ void JabberAccount::slotSendRaw ()
 		return;
 	}
 
-	new dlgJabberSendRaw ( client (), Kopete::UI::Global::mainWidget());
+	dlgXMPPConsole *w = new dlgXMPPConsole( client (), Kopete::UI::Global::mainWidget());
+	QObject::connect( m_jabberClient, SIGNAL ( incomingXML (const QString &) ),
+				   w, SLOT ( slotIncomingXML ( const QString &) ) );
+	QObject::connect( m_jabberClient, SIGNAL ( outgoingXML (const QString &) ),
+				   w, SLOT ( slotOutgoingXML ( const QString &) ) );
+	w->show();
+}
 
+void JabberAccount::slotSetMood()
+{
+	KAction *action = (KAction *)sender();
+	Mood::Type type = (Mood::Type)action->data().toInt();
+	if(type == Mood::None)
+	{
+	}
+	else
+	{
+		PubSubItem psi("current", Mood(type).toXml(*client()->client()->rootTask()->doc()));
+		JT_PubSubPublish *task = new JT_PubSubPublish(client()->client()->rootTask(), QString("http://jabber.org/protocol/mood"), psi);
+		task->go(true);
+	}
 }
 
 void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & type)
@@ -1776,8 +1806,21 @@ void JabberAccount::slotUnregisterFinished( )
 		Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
 }
 
+/*
+JabberMoodAction::JabberMoodAction(const Mood::Type type, QObject *parent):
+KAction(parent)
+{
+	mType = type;
+	setText(MoodManager::self()->getMoodName(mType));
+	//setIcon( KIcon( QString( "icq_xstatus%1" ).arg( mStatus.status() ) ) );
+	//setToolTip();
+	QObject::connect(this, SIGNAL(triggered(bool)), this, SLOT(triggered()));
+}
 
-
+void JabberMoodAction::triggered()
+{
+	emit triggered(mType);
+}*/
 
 
 #include "jabberaccount.moc"

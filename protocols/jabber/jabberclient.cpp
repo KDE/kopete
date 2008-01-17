@@ -874,7 +874,7 @@ void JabberClient::slotIncomingXML ( const QString & _msg )
 	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
 
 	emit debugMessage ( "XML IN: " + msg );
-
+	emit incomingXML ( msg );
 }
 
 void JabberClient::slotOutgoingXML ( const QString & _msg )
@@ -885,7 +885,7 @@ void JabberClient::slotOutgoingXML ( const QString & _msg )
 	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
 
 	emit debugMessage ( "XML OUT: " + msg );
-
+	emit outgoingXML ( msg );
 }
 
 void JabberClient::slotTLSHandshaken ()
