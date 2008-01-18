@@ -23,6 +23,3 @@ class ActionTest : public QObject
 };
 
 #endif
-
-
-
