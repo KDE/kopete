@@ -66,3 +66,20 @@ target_link_libraries(serviceTest
 	${QT_QTTEST_LIBRARY}
 	upnp
 )
+
+# Device test unit
+kde4_add_unit_test(deviceTest
+	service.cpp
+	argument.cpp
+	util_Xml.cpp
+	action.cpp
+	device.cpp
+	./tests/devicetest.cpp
+)
+
+# Libraries needed for tests on devices
+target_link_libraries(deviceTest
+	${KDE4_KIO_LIBS}
+	${QT_QTTEST_LIBRARY}
+	upnp
+)
