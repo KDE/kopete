@@ -18,22 +18,16 @@
 
 using namespace std;
 
-int main()//int args, char **argv)
+int main()
 {
     KComponentData componentData("getwebcam device");  
- //get a list of all devices that are AudioInterface
-    //foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::Video, QString()))
-    foreach (Solid::Device device, Solid::Device::allDevices())
+    // displays all video devices connected
+    //TODO we are able to detect a video device used via a usb connection
+    foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::Video, QString()))
     {
-      QString str = QString("Video");
-      QString st = QString(device.product().toLatin1().constData());
-      if (st.contains(str,Qt::CaseInsensitive))
-      { 
 	  kDebug() << device.udi().toLatin1().constData();
 	  kDebug() << device.product().toLatin1().constData();
 	  kDebug() << device.vendor().toLatin1().constData();
-      }
     }
-    printf("###### robert\n");
     return 0;
 }
