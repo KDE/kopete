@@ -240,6 +240,7 @@ int VideoDevice::checkDevice()
 					VideoInput tempinput;
 					tempinput.name = QString::fromLocal8Bit((const char*)videoinput.name);
 					tempinput.hastuner = videoinput.type & V4L2_INPUT_TYPE_TUNER;
+detectSignalStandards();
 					tempinput.m_standards = videoinput.std;
 					m_input.push_back(tempinput);
 					kDebug() << "Input " << loop << ": " << tempinput.name << " (tuner: " << ((videoinput.type & V4L2_INPUT_TYPE_TUNER) != 0) << ")";
@@ -2179,7 +2180,7 @@ int VideoDevice::detectPixelFormats()
 				}
 				else
 				{	
-					kDebug () << pixelFormatName(pixelFormatForPalette(fmtdesc.pixelformat)); // Need a cleanup. PixelFormatForPalette is a really bad name
+					kDebug () << fmtdesc.pixelformat << "  " << pixelFormatName(fmtdesc.pixelformat); // Need a cleanup. PixelFormatForPalette is a really bad name
 					fmtdesc.index++;
 				}
 			}
@@ -2245,7 +2246,6 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 		case VIDEODEV_DRIVER_V4L2:
 			switch(standard)
 			{
-				case STANDARD_NONE	: return V4L2_STD_UNKNOWN;	break;
 				case STANDARD_PAL_B	: return V4L2_STD_PAL_B;	break;
 				case STANDARD_PAL_B1	: return V4L2_STD_PAL_B1;	break;
 				case STANDARD_PAL_G	: return V4L2_STD_PAL_G;	break;
@@ -2254,13 +2254,17 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 				case STANDARD_PAL_D	: return V4L2_STD_PAL_D;	break;
 				case STANDARD_PAL_D1	: return V4L2_STD_PAL_D1;	break;
 				case STANDARD_PAL_K	: return V4L2_STD_PAL_K;	break;
+
 				case STANDARD_PAL_M	: return V4L2_STD_PAL_M;	break;
 				case STANDARD_PAL_N	: return V4L2_STD_PAL_N;	break;
 				case STANDARD_PAL_Nc	: return V4L2_STD_PAL_Nc;	break;
 				case STANDARD_PAL_60	: return V4L2_STD_PAL_60;	break;
+
 				case STANDARD_NTSC_M	: return V4L2_STD_NTSC_M;	break;
 				case STANDARD_NTSC_M_JP	: return V4L2_STD_NTSC_M_JP;	break;
-				case STANDARD_NTSC_443	: return V4L2_STD_NTSC;		break; // Using workaround value because my videodev2.h header seems to not include this standard in struct __u64 v4l2_std_id
+				case STANDARD_NTSC_443	: return V4L2_STD_NTSC_443;	break;
+				case STANDARD_NTSC_M_KR	: return V4L2_STD_NTSC_M_KR;	break;
+
 				case STANDARD_SECAM_B	: return V4L2_STD_SECAM_B;	break;
 				case STANDARD_SECAM_D	: return V4L2_STD_SECAM_D;	break;
 				case STANDARD_SECAM_G	: return V4L2_STD_SECAM_G;	break;
@@ -2268,17 +2272,28 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 				case STANDARD_SECAM_K	: return V4L2_STD_SECAM_K;	break;
 				case STANDARD_SECAM_K1	: return V4L2_STD_SECAM_K1;	break;
 				case STANDARD_SECAM_L	: return V4L2_STD_SECAM_L;	break;
-				case STANDARD_SECAM_LC	: return V4L2_STD_SECAM;	break; // Using workaround value because my videodev2.h header seems to not include this standard in struct __u64 v4l2_std_id
-				case STANDARD_ATSC_8_VSB	: return V4L2_STD_ATSC_8_VSB;	break; // ATSC/HDTV Standard officially not supported by V4L2 but exists in videodev2.h
-				case STANDARD_ATSC_16_VSB	: return V4L2_STD_ATSC_16_VSB;	break; // ATSC/HDTV Standard officially not supported by V4L2 but exists in videodev2.h
+				case STANDARD_SECAM_LC	: return V4L2_STD_SECAM_LC;	break;
+
+				case STANDARD_ATSC_8_VSB: return V4L2_STD_ATSC_8_VSB;	break;
+				case STANDARD_ATSC_16_VSB:return V4L2_STD_ATSC_16_VSB;	break;
+
 				case STANDARD_PAL_BG	: return V4L2_STD_PAL_BG;	break;
 				case STANDARD_PAL_DK	: return V4L2_STD_PAL_DK;	break;
 				case STANDARD_PAL	: return V4L2_STD_PAL;		break;
 				case STANDARD_NTSC	: return V4L2_STD_NTSC;		break;
 				case STANDARD_SECAM_DK	: return V4L2_STD_SECAM_DK;	break;
 				case STANDARD_SECAM	: return V4L2_STD_SECAM;	break;
+
+				case STANDARD_MN	: return V4L2_STD_MN;		break;
+				case STANDARD_B		: return V4L2_STD_B;		break;
+				case STANDARD_GH	: return V4L2_STD_GH;		break;
+				case STANDARD_DK	: return V4L2_STD_DK;		break;
+
 				case STANDARD_525_60	: return V4L2_STD_525_60;	break;
 				case STANDARD_625_50	: return V4L2_STD_625_50;	break;
+				case STANDARD_ATSC	: return V4L2_STD_ATSC;		break;
+
+				case STANDARD_UNKNOWN	: return V4L2_STD_UNKNOWN;	break;
 				case STANDARD_ALL	: return V4L2_STD_ALL;		break;
 			}
 			break;
@@ -2286,7 +2301,6 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 		case VIDEODEV_DRIVER_V4L:
 			switch(standard)
 			{
-				case STANDARD_NONE	: return VIDEO_MODE_AUTO;	break;
 				case STANDARD_PAL_B	: return VIDEO_MODE_PAL;	break;
 				case STANDARD_PAL_B1	: return VIDEO_MODE_PAL;	break;
 				case STANDARD_PAL_G	: return VIDEO_MODE_PAL;	break;
@@ -2295,13 +2309,17 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 				case STANDARD_PAL_D	: return VIDEO_MODE_PAL;	break;
 				case STANDARD_PAL_D1	: return VIDEO_MODE_PAL;	break;
 				case STANDARD_PAL_K	: return VIDEO_MODE_PAL;	break;
+
 				case STANDARD_PAL_M	: return 5;	break;	// Undocumented value found to be compatible with V4L bttv driver
 				case STANDARD_PAL_N	: return 6;	break;	// Undocumented value found to be compatible with V4L bttv driver
 				case STANDARD_PAL_Nc	: return 4;	break;	// Undocumented value found to be compatible with V4L bttv driver
 				case STANDARD_PAL_60	: return VIDEO_MODE_PAL;	break;
+
 				case STANDARD_NTSC_M	: return VIDEO_MODE_NTSC;	break;
 				case STANDARD_NTSC_M_JP	: return 7;	break;	// Undocumented value found to be compatible with V4L bttv driver
-				case STANDARD_NTSC_443	: return VIDEO_MODE_NTSC;	break; // Using workaround value because my videodev2.h header seems to not include this standard in struct __u64 v4l2_std_id
+				case STANDARD_NTSC_443	: return VIDEO_MODE_NTSC;	break;
+				case STANDARD_NTSC_M_KR	: return VIDEO_MODE_NTSC;	break;
+
 				case STANDARD_SECAM_B	: return VIDEO_MODE_SECAM;	break;
 				case STANDARD_SECAM_D	: return VIDEO_MODE_SECAM;	break;
 				case STANDARD_SECAM_G	: return VIDEO_MODE_SECAM;	break;
@@ -2309,26 +2327,37 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 				case STANDARD_SECAM_K	: return VIDEO_MODE_SECAM;	break;
 				case STANDARD_SECAM_K1	: return VIDEO_MODE_SECAM;	break;
 				case STANDARD_SECAM_L	: return VIDEO_MODE_SECAM;	break;
-				case STANDARD_SECAM_LC	: return VIDEO_MODE_SECAM;	break; // Using workaround value because my videodev2.h header seems to not include this standard in struct __u64 v4l2_std_id
-				case STANDARD_ATSC_8_VSB	: return VIDEO_MODE_AUTO;	break; // ATSC/HDTV Standard officially not supported by V4L2 but exists in videodev2.h
-				case STANDARD_ATSC_16_VSB	: return VIDEO_MODE_AUTO;	break; // ATSC/HDTV Standard officially not supported by V4L2 but exists in videodev2.h
+				case STANDARD_SECAM_LC	: return VIDEO_MODE_SECAM;	break;
+
+				case STANDARD_ATSC_8_VSB: return VIDEO_MODE_AUTO;	break;
+				case STANDARD_ATSC_16_VSB:return VIDEO_MODE_AUTO;	break;
+
 				case STANDARD_PAL_BG	: return VIDEO_MODE_PAL;	break;
 				case STANDARD_PAL_DK	: return VIDEO_MODE_PAL;	break;
 				case STANDARD_PAL	: return VIDEO_MODE_PAL;	break;
 				case STANDARD_NTSC	: return VIDEO_MODE_NTSC;	break;
 				case STANDARD_SECAM_DK	: return VIDEO_MODE_SECAM;	break;
 				case STANDARD_SECAM	: return VIDEO_MODE_SECAM;	break;
+
+				case STANDARD_MN	: return VIDEO_MODE_AUTO;	break;
+				case STANDARD_B		: return VIDEO_MODE_AUTO;	break;
+				case STANDARD_GH	: return VIDEO_MODE_AUTO;	break;
+				case STANDARD_DK	: return VIDEO_MODE_AUTO;	break;
+
 				case STANDARD_525_60	: return VIDEO_MODE_PAL;	break;
 				case STANDARD_625_50	: return VIDEO_MODE_SECAM;	break;
+				case STANDARD_ATSC	: return VIDEO_MODE_AUTO;	break;
+
+				case STANDARD_UNKNOWN	: return VIDEO_MODE_AUTO;	break;
 				case STANDARD_ALL	: return VIDEO_MODE_AUTO;	break;
 			}
 			break;
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
-			return STANDARD_NONE;	break;
+			return STANDARD_UNKNOWN;	break;
 	}
-	return STANDARD_NONE;
+	return STANDARD_UNKNOWN;
 }
 
 QString VideoDevice::signalStandardName(signal_standard standard)
@@ -2337,7 +2366,6 @@ QString VideoDevice::signalStandardName(signal_standard standard)
 	returnvalue = "None";
 	switch(standard)
 	{
-		case STANDARD_NONE	: returnvalue = "None";		break;
 		case STANDARD_PAL_B	: returnvalue = "PAL-B";	break;
 		case STANDARD_PAL_B1	: returnvalue = "PAL-B1"; 	break;
 		case STANDARD_PAL_G	: returnvalue = "PAL-G";	break;
@@ -2346,13 +2374,17 @@ QString VideoDevice::signalStandardName(signal_standard standard)
 		case STANDARD_PAL_D	: returnvalue = "PAL-D";	break;
 		case STANDARD_PAL_D1	: returnvalue = "PAL-D1";	break;
 		case STANDARD_PAL_K	: returnvalue = "PAL-K";	break;
+
 		case STANDARD_PAL_M	: returnvalue = "PAL-M";	break;
 		case STANDARD_PAL_N	: returnvalue = "PAL-N";	break;
 		case STANDARD_PAL_Nc	: returnvalue = "PAL-Nc";	break;
 		case STANDARD_PAL_60	: returnvalue = "PAL-60";	break;
+
 		case STANDARD_NTSC_M	: returnvalue = "NTSC-M";	break;
 		case STANDARD_NTSC_M_JP	: returnvalue = "NTSC-M(JP)";	break;
 		case STANDARD_NTSC_443	: returnvalue = "NTSC-443";	break;
+		case STANDARD_NTSC_M_KR	: returnvalue = "NTSC-M(KR)";	break;
+
 		case STANDARD_SECAM_B	: returnvalue = "SECAM-B";	break;
 		case STANDARD_SECAM_D	: returnvalue = "SECAM-D";	break;
 		case STANDARD_SECAM_G	: returnvalue = "SECAM-G";	break;
@@ -2361,16 +2393,27 @@ QString VideoDevice::signalStandardName(signal_standard standard)
 		case STANDARD_SECAM_K1	: returnvalue = "SECAM-K1";	break;
 		case STANDARD_SECAM_L	: returnvalue = "SECAM-L";	break;
 		case STANDARD_SECAM_LC	: returnvalue = "SECAM-LC";	break;
-		case STANDARD_ATSC_8_VSB	: returnvalue = "ATSC-8-VSB";	break; // ATSC/HDTV Standard officially not supported by V4L2 but exists in videodev2.h
-		case STANDARD_ATSC_16_VSB	: returnvalue = "ATSC-16-VSB";	break; // ATSC/HDTV Standard officially not supported by V4L2 but exists in videodev2.h
+
+		case STANDARD_ATSC_8_VSB: returnvalue = "ATSC-8-VSB";	break;
+		case STANDARD_ATSC_16_VSB:returnvalue = "ATSC-16-VSB";	break;
+
 		case STANDARD_PAL_BG	: returnvalue = "PAL-BG";	break;
 		case STANDARD_PAL_DK	: returnvalue = "PAL-DK";	break;
 		case STANDARD_PAL	: returnvalue = "PAL";		break;
 		case STANDARD_NTSC	: returnvalue = "NTSC";		break;
 		case STANDARD_SECAM_DK  : returnvalue = "SECAM-DK";	break;
 		case STANDARD_SECAM	: returnvalue = "SECAM";	break;
-		case STANDARD_525_60	: returnvalue = "525 lines 60Hz";	break;
-		case STANDARD_625_50	: returnvalue = "625 lines 50Hz"; 	break;
+
+		case STANDARD_MN	: returnvalue = "DK";		break;
+		case STANDARD_B		: returnvalue = "B";		break;
+		case STANDARD_GH	: returnvalue = "GH";		break;
+		case STANDARD_DK	: returnvalue = "DK";		break;
+
+		case STANDARD_525_60	: returnvalue = "525 lines 60Hz";break;
+		case STANDARD_625_50	: returnvalue = "625 lines 50Hz";break;
+		case STANDARD_ATSC	: returnvalue = "ATSC"; 	break;
+
+		case STANDARD_UNKNOWN	: returnvalue = "Unknown";	break;
 		case STANDARD_ALL	: returnvalue = "All";		break;
 	}
 	return returnvalue;
@@ -2401,7 +2444,8 @@ QString VideoDevice::signalStandardName(int standard)
 				case V4L2_STD_PAL_60	: returnvalue = signalStandardName(STANDARD_PAL_60);	break;
 				case V4L2_STD_NTSC_M	: returnvalue = signalStandardName(STANDARD_NTSC_M);	break;
 				case V4L2_STD_NTSC_M_JP	: returnvalue = signalStandardName(STANDARD_NTSC_M_JP);	break;
-//				case V4L2_STD_NTSC_443	: returnvalue = signalStandardName(STANDARD_NTSC_443);	break; // Commented out because my videodev2.h header seems to not include this standard in struct __u64 v4l2_std_id
+				case V4L2_STD_NTSC_443	: returnvalue = signalStandardName(STANDARD_NTSC_443);	break; // Commented out because my videodev2.h header seems to not include this standard in struct __u64 v4l2_std_id
+				case V4L2_STD_NTSC_M_KR	: returnvalue = signalStandardName(STANDARD_NTSC_M_KR);	break; // Commented out because my videodev2.h header seems to not include this standard in struct __u64 v4l2_std_id
 				case V4L2_STD_SECAM_B	: returnvalue = signalStandardName(STANDARD_SECAM_B);	break;
 				case V4L2_STD_SECAM_D	: returnvalue = signalStandardName(STANDARD_SECAM_D);	break;
 				case V4L2_STD_SECAM_G	: returnvalue = signalStandardName(STANDARD_SECAM_G);	break;
@@ -2409,17 +2453,28 @@ QString VideoDevice::signalStandardName(int standard)
 				case V4L2_STD_SECAM_K	: returnvalue = signalStandardName(STANDARD_SECAM_K);	break;
 				case V4L2_STD_SECAM_K1	: returnvalue = signalStandardName(STANDARD_SECAM_K1);	break;
 				case V4L2_STD_SECAM_L	: returnvalue = signalStandardName(STANDARD_SECAM_L);	break;
-//				case V4L2_STD_SECAM_LC	: returnvalue = signalStandardName(STANDARD_SECAM_LC);	break; // Commented out because my videodev2.h header seems to not include this standard in struct __u64 v4l2_std_id
-				case V4L2_STD_ATSC_8_VSB	: returnvalue = signalStandardName(STANDARD_ATSC_8_VSB);	break; // ATSC/HDTV Standard officially not supported by V4L2 but exists in videodev2.h
-				case V4L2_STD_ATSC_16_VSB	: returnvalue = signalStandardName(STANDARD_ATSC_16_VSB);	break; // ATSC/HDTV Standard officially not supported by V4L2 but exists in videodev2.h
+				case V4L2_STD_SECAM_LC	: returnvalue = signalStandardName(STANDARD_SECAM_LC);	break;
+
+				case V4L2_STD_ATSC_8_VSB: returnvalue = signalStandardName(STANDARD_ATSC_8_VSB);break;
+				case V4L2_STD_ATSC_16_VSB:returnvalue = signalStandardName(STANDARD_ATSC_16_VSB);break;
+
 				case V4L2_STD_PAL_BG	: returnvalue = signalStandardName(STANDARD_PAL_BG);	break;
 				case V4L2_STD_PAL_DK	: returnvalue = signalStandardName(STANDARD_PAL_DK);	break;
 				case V4L2_STD_PAL	: returnvalue = signalStandardName(STANDARD_PAL);	break;
 				case V4L2_STD_NTSC	: returnvalue = signalStandardName(STANDARD_NTSC);	break;
 				case V4L2_STD_SECAM_DK	: returnvalue = signalStandardName(STANDARD_SECAM_DK);	break;
 				case V4L2_STD_SECAM	: returnvalue = signalStandardName(STANDARD_SECAM);	break;
+
+				case V4L2_STD_MN	: returnvalue = signalStandardName(STANDARD_MN);	break;
+				case V4L2_STD_B		: returnvalue = signalStandardName(STANDARD_B);		break;
+				case V4L2_STD_GH	: returnvalue = signalStandardName(STANDARD_GH);	break;
+				case V4L2_STD_DK	: returnvalue = signalStandardName(STANDARD_DK);	break;
+
 				case V4L2_STD_525_60	: returnvalue = signalStandardName(STANDARD_525_60);	break;
 				case V4L2_STD_625_50	: returnvalue = signalStandardName(STANDARD_625_50);	break;
+				case V4L2_STD_ATSC	: returnvalue = signalStandardName(STANDARD_ATSC);	break;
+
+				case V4L2_STD_UNKNOWN	: returnvalue = signalStandardName(STANDARD_UNKNOWN);	break;
 				case V4L2_STD_ALL	: returnvalue = signalStandardName(STANDARD_ALL);	break;
 			}
 			break;
@@ -2447,25 +2502,70 @@ QString VideoDevice::signalStandardName(int standard)
 
 /*!
     \fn VideoDevice::detectSignalStandards()
+// this must be done once for each _input_.
  */
 int VideoDevice::detectSignalStandards()
 {
-	switch(m_driver)
+	kDebug() << "called.";
+	if(isOpen())
 	{
+	switch(m_driver)
+		{
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
-		case VIDEODEV_DRIVER_V4L2:
-			break;
+			case VIDEODEV_DRIVER_V4L2:
+
+
+				struct v4l2_input input;
+				struct v4l2_standard standard;
+
+				memset (&input, 0, sizeof (input));
+
+				if (-1 == xioctl (VIDIOC_G_INPUT, &input.index)) {
+					perror ("VIDIOC_G_INPUT");
+					return EXIT_FAILURE;
+				}
+
+				if (-1 == xioctl (VIDIOC_ENUMINPUT, &input)) {
+					perror ("VIDIOC_ENUM_INPUT");
+					return EXIT_FAILURE;
+				}
+
+//			printf ("Current input %s supports:\n", input.name);
+
+				memset (&standard, 0, sizeof (standard));
+				standard.index = 0;
+
+				while (0 == xioctl (VIDIOC_ENUMSTD, &standard)) {
+					if (standard.id & input.std)
+//						kDebug() << standard.name;
+						kDebug() << signalStandardName(standard.id) << " (" << standard.id << ")" << V4L2_STD_NTSC;
+
+					standard.index++;
+				}
+
+/* EINVAL indicates the end of the enumeration, which cannot be
+   empty unless this device falls under the USB exception. */
+
+				if (errno != EINVAL || standard.index == 0) {
+					perror ("VIDIOC_ENUMSTD");
+					return EXIT_FAILURE;
+				}
+
+
+				break;
 #endif
-		case VIDEODEV_DRIVER_V4L:
-			break;
+			case VIDEODEV_DRIVER_V4L:
+				break;
 #endif
-		case VIDEODEV_DRIVER_NONE:
-		default:
-			break;
-	}
+			case VIDEODEV_DRIVER_NONE:
+			default:
+				break;
+		}
 	//FIXME: return a real value
-	return 0;
+		return EXIT_SUCCESS;
+	}
+	return EXIT_FAILURE;
 }
 
 /*!

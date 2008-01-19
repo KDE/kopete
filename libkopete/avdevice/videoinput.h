@@ -64,11 +64,13 @@ public:
 	bool setImageAsMirror(bool imageasmirror);
 
 protected:
+// this block must be changed to use a vector of controls instead of fixed ones
 	float m_brightness;
 	float m_contrast;
 	float m_saturation;
 	float m_whiteness;
 	float m_hue;
+
 	bool m_autobrightnesscontrast;
 	bool m_autocolorcorrection;
 	bool m_imageasmirror;
