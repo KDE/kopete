@@ -1,82 +1,34 @@
 <ui version="4.0" >
- <class>DlgXMPPConsole</class>
- <widget class="QDialog" name="DlgXMPPConsole" >
+ <class>dlgXMPPConsole</class>
+ <widget class="QWidget" name="dlgXMPPConsole" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>668</width>
-    <height>551</height>
+    <width>522</width>
+    <height>352</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Dialog</string>
+   <string>Form</string>
   </property>
   <layout class="QVBoxLayout" >
    <item>
-    <widget class="QSplitter" name="splitter" >
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="opaqueResize" >
-      <bool>true</bool>
-     </property>
-     <property name="childrenCollapsible" >
-      <bool>true</bool>
-     </property>
-     <widget class="KTextBrowser" name="brLog" />
-     <widget class="KTextEdit" name="mTextEdit" />
-    </widget>
+    <widget class="KTextBrowser" name="brLog" />
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>6</number>
+    <widget class="KTextEdit" name="mTextEdit" >
+     <property name="maximumSize" >
+      <size>
+       <width>16777215</width>
+       <height>100</height>
+      </size>
      </property>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>301</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="KPushButton" name="btnSend" >
-       <property name="text" >
-        <string>Send</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="KPushButton" name="btnClear" >
-       <property name="text" >
-        <string>Clear</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="KPushButton" name="btnClose" >
-       <property name="text" >
-        <string>Close</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-  </customwidget>
   <customwidget>
    <class>KTextBrowser</class>
    <extends>QTextBrowser</extends>

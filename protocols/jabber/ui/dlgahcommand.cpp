@@ -18,95 +18,86 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <KLocale>
+#include <KDebug>
 
 #include "jt_ahcommand.h"
 #include "jabberxdatawidget.h"
 
 dlgAHCommand::dlgAHCommand(const AHCommand &r, const XMPP::Jid &jid, XMPP::Client *client, bool final, QWidget *parent):
-QDialog(parent)
+KDialog(parent)
 {
 	setAttribute(Qt::WA_DeleteOnClose);
 	mNode = r.node();
 	mSessionId = r.sessionId();
 	mJid = jid;
 	mClient = client;
-	QVBoxLayout *vb = new QVBoxLayout(this, 11, 6);
 	// XData form
 	mXDataWidget = new JabberXDataWidget(r.data(), this);
-	vb->addWidget(mXDataWidget);
+	setMainWidget(mXDataWidget);
+	setCaption(i18n("Command executing"));
 
 	// Buttons
-	QHBoxLayout *buttons = new QHBoxLayout(vb);
 	if(!final)
 	{
 		if(r.actions().empty())
 		{
-			btnComplete = new QPushButton("Finish", this);
-			connect(btnComplete, SIGNAL(clicked()), SLOT(slotExecute()));
-			buttons->addWidget(btnComplete);
+			setButtons(Ok | Cancel);
+			setButtonText(Ok, i18n("Finish"));
+			connect(this, SIGNAL(okClicked()), SLOT(slotExecute()));
 		}
 		else
 		{
+			setButtons(Ok | Cancel | User1 | User2);
+			setButtonText(User1, i18n("Next"));
+			setButtonText(User2, i18n("Previous"));
+			setButtonText(Ok, i18n("Finish"));
 			// Multi-stage dialog
 			// Previous
-			btnPrev = new QPushButton("Previous", this);
-			buttons->addWidget(btnPrev);
 			if(r.actions().contains(AHCommand::Prev))
 			{
 				if(r.defaultAction() == AHCommand::Prev)
-				{
-					btnPrev->setDefault(true);
-					btnPrev->setFocus();
-				}
-				connect(btnPrev, SIGNAL(clicked()), SLOT(slotPrev()));
-				btnPrev->setEnabled(true);
+					setDefaultButton(User2);
+				connect(this, SIGNAL(user2Clicked()), SLOT(slotPrev()));
+				enableButton(User2, true);
 			}
-			else 
-				btnPrev->setEnabled(false);
+			else
+				enableButton(User2, false);
 			// Next
-			btnNext = new QPushButton("Next", this);
-			buttons->addWidget(btnNext);
 			if(r.actions().contains(AHCommand::Next))
 			{
 				if(r.defaultAction() == AHCommand::Next)
 				{
-					connect(btnNext, SIGNAL(clicked()), SLOT(slotExecute()));
-					btnNext->setDefault(true);
-					btnNext->setFocus();
+					connect(this, SIGNAL(user1Clicked()), SLOT(slotExecute()));
+					setDefaultButton(User1);
 				}
 				else
-					connect(btnNext, SIGNAL(clicked()), SLOT(slotNext()));
+					connect(this, SIGNAL(user1Clicked()), SLOT(slotNext()));
 				btnNext->setEnabled(true);
+				enableButton(User1, true);
 			}
 			else
-				btnNext->setEnabled(false);
+				enableButton(User1, false);
 			// Complete
-			btnComplete = new QPushButton("Finish", this);
-			buttons->addWidget(btnComplete);
 			if(r.actions().contains(AHCommand::Complete))
 			{
 				if(r.defaultAction() == AHCommand::Complete)
 				{
-					connect(btnComplete, SIGNAL(clicked()), SLOT(slotExecute()));
-					btnComplete->setDefault(true);
-					btnComplete->setFocus();
+					connect(this, SIGNAL(okClicked()), SLOT(slotExecute()));
+					setDefaultButton(Ok);
 				}
 				else
-					connect(btnComplete, SIGNAL(clicked()), SLOT(slotComplete()));
-				btnComplete->setEnabled(true);
+					connect(this, SIGNAL(okClicked()), SLOT(slotComplete()));
+				enableButton(Ok, true);
 			}
 			else
-				btnComplete->setEnabled(false);
+				enableButton(Ok, false);
 		}
-		btnCancel = new QPushButton("Cancel", this);
-		connect(btnCancel, SIGNAL(clicked()), SLOT(slotCancel()));
-		buttons->addWidget(btnCancel);
+		connect(this, SIGNAL(cancelClicked()), SLOT(slotCancel()));
 	}
 	else
 	{
-		QPushButton *btnComplete = new QPushButton("Ok", this);
-		connect(btnComplete, SIGNAL(clicked()), SLOT(close()));
-		buttons->addWidget(btnComplete);
+		setButtons(Ok);
 	}
 }
 

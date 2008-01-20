@@ -53,7 +53,6 @@ kde4_add_ui_files(kopete_jabber_ui_SRCS
    ui/dlgvcard.ui 
    ui/dlgservices.ui 
    ui/dlgaddcontact.ui 
-   ui/dlgregister.ui 
    ui/dlgsearch.ui 
    ui/dlgchangepassword.ui 
    ui/dlgjabbereditaccountwidget.ui

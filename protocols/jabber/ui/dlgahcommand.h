@@ -16,7 +16,7 @@
 #ifndef DLGAHCOMMAND_H
 #define DLGAHCOMMAND_H
 
-#include <QDialog>
+#include <KDialog>
 #include "xmpp_xdata.h"
 #include "xmpp_jid.h"
 #include "xmpp_client.h"
@@ -24,7 +24,7 @@
 class AHCommand;
 class JabberXDataWidget;
 
-class dlgAHCommand : public QDialog
+class dlgAHCommand : public KDialog
 {
 	Q_OBJECT
 public:

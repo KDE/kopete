@@ -20,7 +20,7 @@
 
 class JabberClient;
 
-class dlgXMPPConsole : public QDialog
+class dlgXMPPConsole : public KDialog
 {
 	Q_OBJECT
 public:
@@ -36,7 +36,7 @@ private slots:
 	void slotClear();
 
 private:
-	Ui::DlgXMPPConsole ui;
+	Ui::dlgXMPPConsole ui;
 	JabberClient *mClient;
 };
 

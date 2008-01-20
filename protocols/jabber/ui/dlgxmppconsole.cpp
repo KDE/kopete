@@ -18,15 +18,20 @@
 #include "jabberclient.h"
 
 dlgXMPPConsole::dlgXMPPConsole(JabberClient *client, QWidget *parent):
-QDialog(parent)
+KDialog(parent)
 {
-	setAttribute(Qt::WA_DeleteOnClose);
-	ui.setupUi(this);
 	mClient = client;
-
-	connect(ui.btnSend, SIGNAL(clicked()), this, SLOT(slotSend()));
-	connect(ui.btnClear, SIGNAL(clicked()), this, SLOT(slotClear()));
-	connect(ui.btnClose, SIGNAL(clicked()), this, SLOT(close()));
+	setAttribute(Qt::WA_DeleteOnClose);
+	QWidget *widget = new QWidget(this);
+	ui.setupUi(widget);
+	setMainWidget(widget);
+	setCaption(i18n("XML Console"));
+	// Buttons
+	setButtons(Close | User1 | User2);
+	setButtonText(User1, i18n("Clear"));
+	setButtonText(User2, i18n("Send"));
+	connect(this, SIGNAL(user1Clicked()), this, SLOT(slotClear()));
+	connect(this, SIGNAL(user2Clicked()), this, SLOT(slotSend()));
 }
 
 dlgXMPPConsole::~dlgXMPPConsole()

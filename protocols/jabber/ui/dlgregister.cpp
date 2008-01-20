@@ -18,34 +18,39 @@
 
 #include "dlgregister.h"
 
-#include <qpushbutton.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-
+#include <QLabel>
 #include <KMessageBox>
 #include <KLocale>
+#include <KDebug>
 
 #include "jabberaccount.h"
 #include "jabberprotocol.h"
 #include "jabberclient.h"
+#include "jabberformtranslator.h"
 #include "jabberxdatawidget.h"
 #include "jt_xregister.h"
 
 dlgRegister::dlgRegister(JabberAccount *account, const XMPP::Jid &jid, QWidget *parent):
-QDialog(parent)
+KDialog(parent)
 {
-	setupUi(this);
 	setAttribute(Qt::WA_DeleteOnClose);
-
-	m_account = account;
+	mAccount = account;
 	mXDataWidget = 0L;
-	translator = 0;
+	mTranslator = 0L;
 
+	mMainWidget = new QWidget(this);
+	setMainWidget(mMainWidget);
+	lblWait = new QLabel(mMainWidget);
 	lblWait->setText(i18n("Please wait while querying the server..."));
-	connect (btnRegister, SIGNAL(clicked()), this, SLOT(slotSendForm()));
-	connect(btnCancel, SIGNAL(clicked()), SLOT(close()));
+	QVBoxLayout *layout = new QVBoxLayout(mMainWidget);
+	layout->addWidget(lblWait);
+	setCaption(i18n("Register"));
 
-	JT_XRegister *task = new JT_XRegister(m_account->client()->rootTask());
+	setButtons(Close | User1);
+	setButtonText(User1, i18n("Register"));
+	connect(this, SIGNAL(user1Clicked()), this, SLOT(slotSendForm()));
+
+	JT_XRegister *task = new JT_XRegister(mAccount->client()->rootTask());
 	connect (task, SIGNAL (finished ()), this, SLOT (slotGotForm ()));
 	task->getForm(jid);
 	task->go(true);
@@ -53,7 +58,7 @@ QDialog(parent)
 
 dlgRegister::~dlgRegister()
 {
-	delete translator;
+	delete mTranslator;
 }
 
 void dlgRegister::slotGotForm()
@@ -76,28 +81,29 @@ void dlgRegister::slotGotForm()
 	{
 		XMPP::XData form;
 		form.fromXml(e);
-		mXDataWidget = new JabberXDataWidget(form, grpForm);
-		grpForm->layout()->addWidget(mXDataWidget);
+		mXDataWidget = new JabberXDataWidget(form, mMainWidget);
+		//kDebug() << "COUNT " << mMainWidget->layout()->count();
+		mMainWidget->layout()->addWidget(mXDataWidget);
 		mXDataWidget->show();
 	}
 	else
 	{
 		// translate the form and create it inside the box widget
-		translator = new JabberFormTranslator(mForm, grpForm);
-		static_cast<Q3BoxLayout*>(grpForm->layout())->insertWidget(1, translator);
-		translator->show();
+		mTranslator = new JabberFormTranslator(mForm, mMainWidget);
+		mMainWidget->layout()->addWidget(mTranslator);
+		mTranslator->show();
 	}
 	resize(sizeHint());
 
 	// enable the send button
-	btnRegister->setEnabled(true);
+	//btnRegister->setEnabled(true);
 }
 
-void dlgRegister::slotSendForm ()
+void dlgRegister::slotSendForm()
 {
-	if(!translator && !mXDataWidget)
+	if(!mTranslator && !mXDataWidget)
 		return;
-	JT_XRegister *task = new JT_XRegister(m_account->client()->rootTask());
+	JT_XRegister *task = new JT_XRegister(mAccount->client()->rootTask());
 	connect(task, SIGNAL(finished()), this, SLOT(slotSentForm()));
 
 	if(mXDataWidget)
@@ -108,16 +114,15 @@ void dlgRegister::slotSendForm ()
 	}
 	else
 	{
-		task->setForm(translator->resultData());
+		task->setForm(mTranslator->resultData());
 	}
 	task->go(true);
 
-	btnRegister->setEnabled(false);
-	btnCancel->setEnabled(false);
-
+	//btnRegister->setEnabled(false);
+	//btnCancel->setEnabled(false);
 }
 
-void dlgRegister::slotSentForm ()
+void dlgRegister::slotSentForm()
 {
 	JT_XRegister *task = (JT_XRegister *)sender();
 	if (task->success ())
@@ -128,7 +133,7 @@ void dlgRegister::slotSentForm ()
 	else
 	{
 		KMessageBox::error(this, i18n("The server rejected the registration form.\nReason: \"%1\"", task->statusString()), i18n("Jabber Registration"));
-		btnRegister->setEnabled(true);
+		//btnRegister->setEnabled(true);
 	}
 }
 

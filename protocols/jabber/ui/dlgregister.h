@@ -16,24 +16,20 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef DLGJABBERREGISTER_H
-#define DLGJABBERREGISTER_H
+#ifndef DLGREGISTER_H
+#define DLGREGISTER_H
 
-#include <qwidget.h>
-#include <qlayout.h>
-#include <q3groupbox.h>
-#include <qlabel.h>
+#include <KDialog>
 
 #include "im.h"
 #include "xmpp.h"
 
-#include "jabberaccount.h"
-#include "ui_dlgregister.h"
-#include "jabberformtranslator.h"
-
+class QLabel;
+class JabberAccount;
+class JabberFormTranslator;
 class JabberXDataWidget;
 
-class dlgRegister : public QDialog, private Ui::dlgRegister
+class dlgRegister : public KDialog
 {
 	Q_OBJECT
 public:
@@ -46,9 +42,11 @@ private slots:
 	void slotSentForm();
 
 private:
-	JabberAccount *m_account;
-	Form mForm;
-	JabberFormTranslator *translator;
+	JabberAccount *mAccount;
+	QWidget *mMainWidget;
+	QLabel *lblWait;
+	XMPP::Form mForm;
+	JabberFormTranslator *mTranslator;
 	JabberXDataWidget *mXDataWidget;
 };
 
