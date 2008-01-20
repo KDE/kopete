@@ -181,10 +181,9 @@ bool SMSAccount::createContact( const QString &contactId,
 		return false;
 }
 
-KActionMenu* SMSAccount::actionMenu()
+void SMSAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
-	return theActionMenu;
+	Kopete::Account::fillActionMenu( actionMenu );
 }
 
 void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const Kopete::StatusMessage &reason)

@@ -16,6 +16,7 @@
 
 #include <kgenericfactory.h>
 #include <kicon.h>
+#include <kaction.h>
 #include <knotification.h>
 #include <kplugininfo.h>
 

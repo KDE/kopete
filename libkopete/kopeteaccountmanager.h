@@ -24,6 +24,8 @@
 
 #include "kopete_export.h"
 
+#include "kopetestatusmessage.h"
+
 namespace Kopete {
 
 class Account;
@@ -31,6 +33,7 @@ class Plugin;
 class Protocol;
 class Contact;
 class OnlineStatus;
+class StatusMessage;
 
 /**
  * AccountManager manages all defined accounts in Kopete. You can
@@ -124,11 +127,11 @@ public slots:
 	 * Account that are offline will not be connected, unless the ConnectIfOffline flag is set.
 	 *
 	 * @param category is one of the Kopete::OnlineStatusManager::Categories
-	 * @param awayMessage is the new away message
+	 * @param statusMessage is the new status message
 	 * @param flags is a bitmask of SetOnlineStatusFlag
 	 */
 	void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
-						  const QString& awayMessage = QString(), uint flags=0);
+	                      const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage(), uint flags=0);
 
 	/**
 	 * @brief Set the given status message for all online accounts

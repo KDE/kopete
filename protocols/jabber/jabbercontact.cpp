@@ -36,6 +36,7 @@
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kicon.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>

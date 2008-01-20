@@ -60,6 +60,12 @@ public:
 	 */
 	StatusMessage(const QString &statusMessage); /* implicit */
 	/**
+	 * Create a new status message with the specified status message and title.
+	 * @param statusTitle the status title.
+	 * @param statusMessage the status message.
+	 */
+	StatusMessage(const QString &statusTitle, const QString &statusMessage);
+	/**
 	 * StatusMessage copy constructor. 
 	 * Very cheap because the class is implicit shared.
 	 */
@@ -116,6 +122,18 @@ public:
 	 * @return The current status message.
 	 */
 	QString message() const;
+
+	/**
+	 * Set a new status title.
+	 * @param title New status title.
+	 */
+	void setTitle(const QString &title);
+
+	/**
+	 * Return the current status title.
+	 * @return The current status title.
+	 */
+	QString title() const;
 
 private:
 	class Private;

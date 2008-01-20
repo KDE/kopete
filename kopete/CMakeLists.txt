@@ -1,6 +1,7 @@
 
-add_subdirectory( addaccountwizard ) 
-add_subdirectory( identity ) 
+add_subdirectory( addaccountwizard )
+add_subdirectory( statusmenu )
+add_subdirectory( identity )
 add_subdirectory( config )
 add_subdirectory( chatwindow )
 add_subdirectory( kconf_update ) 
@@ -9,6 +10,8 @@ include_directories(
 ${KOPETE_INCLUDES} 
 ${CMAKE_CURRENT_SOURCE_DIR}/addaccountwizard 
 ${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard
+${CMAKE_CURRENT_SOURCE_DIR}/statusmenu/
+${CMAKE_CURRENT_BINARY_DIR}/statusmenu/
 ${CMAKE_CURRENT_SOURCE_DIR}/identity 
 ${CMAKE_CURRENT_BINARY_DIR}/identity
 ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/ 
@@ -71,6 +74,7 @@ target_link_libraries(kopete_bin
 	${BLITZ_LIBRARIES}
 	kopete 
 	kopeteaddaccountwizard
+	kopetestatusmenu
 	kopeteidentity)
 
 install(TARGETS kopete_bin  DESTINATION ${BIN_INSTALL_DIR} )

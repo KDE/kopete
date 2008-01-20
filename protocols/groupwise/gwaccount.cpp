@@ -31,16 +31,16 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpassivepopup.h>
+#include <kactionmenu.h>
 
 #include <kopeteuiglobal.h>
-#include <kopeteaway.h>
-#include <kopeteawayaction.h>
 #include <kopetecontactlist.h>
 #include <kopetegroup.h>
 #include <kopeteglobal.h>
 #include <kopetemetacontact.h>
 #include <kopetepassword.h>
 #include <kopeteview.h>
+#include <kopeteidletimer.h>
 
 #include "client.h"
 #include <QtCrypto>
@@ -106,23 +106,22 @@ GroupWiseAccount::~GroupWiseAccount()
 	cleanup();
 }
 
-KActionMenu* GroupWiseAccount::actionMenu()
+void GroupWiseAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *m_actionMenu=Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
 	m_actionAutoReply->setEnabled( isConnected() );
 	m_actionManagePrivacy->setEnabled( isConnected() );
 	m_actionJoinChatRoom->setEnabled( isConnected() );
-	m_actionMenu->addAction( m_actionManagePrivacy );
-	m_actionMenu->addAction( m_actionAutoReply );
-	m_actionMenu->addAction( m_actionJoinChatRoom );
+	actionMenu->addAction( m_actionManagePrivacy );
+	actionMenu->addAction( m_actionAutoReply );
+	actionMenu->addAction( m_actionJoinChatRoom );
 	/* Used for debugging */
 	/*
 	theActionMenu->insert( new KAction ( "Test rtfize()", QString(), 0, this,
 		SLOT( slotTestRTFize() ), this,
 		"actionTestRTFize") );
 	*/
-	return m_actionMenu;
 }
 
 int GroupWiseAccount::port() const
@@ -229,7 +228,7 @@ void GroupWiseAccount::setAway( bool away, const QString & reason )
 {
 	if ( away )
 	{
-		if ( Kopete::Away::getInstance()->idleTime() > 10 ) // don't go AwayIdle unless the user has actually been idle this long
+		if ( Kopete::IdleTimer::self()->idleTime() > 10 ) // don't go AwayIdle unless the user has actually been idle this long
 			setOnlineStatus( protocol()->groupwiseAwayIdle );
 		else
 			setOnlineStatus( protocol()->groupwiseAway, reason );

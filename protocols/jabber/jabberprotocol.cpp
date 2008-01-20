@@ -37,7 +37,6 @@
 #include "kopetemetacontact.h"
 #include "kopetechatsession.h"
 #include "kopeteonlinestatusmanager.h"
-#include "kopeteaway.h"
 #include "kopeteglobal.h"
 #include "kopeteprotocol.h"
 #include "kopeteplugin.h"

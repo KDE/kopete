@@ -147,6 +147,12 @@ const PropertyTmpl &Properties::lastSeen() const
 		i18n("Last Seen"), QString(), true);
 }
 
+const PropertyTmpl &Properties::statusTitle() const
+{
+	return createProp(QLatin1String("statusTitle"),
+	                  i18n("Status Title"));
+}
+
 const PropertyTmpl &Properties::statusMessage() const
 {
 	return createProp(QLatin1String("statusMessage"),

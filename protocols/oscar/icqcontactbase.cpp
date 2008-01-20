@@ -47,9 +47,14 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 	OscarProtocol* p = static_cast<OscarProtocol *>(protocol());
 	Oscar::Presence presence = p->statusManager()->presenceOf( this->onlineStatus() );
 	presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
-	presence.setDescription( description );
 	presence.setXtrazStatus( icon );
 	setPresenceTarget( presence );
+
+	Kopete::StatusMessage statusMessage;
+	if ( !description.isEmpty() )
+		setProperty( static_cast<OscarProtocol*>( protocol() )->statusTitle, description );
+	else
+		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusTitle );
 
 	setAwayMessage( message );
 	m_haveAwayMessage = true;

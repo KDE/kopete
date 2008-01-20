@@ -47,6 +47,9 @@ public:
 	unsigned internalStatus;
 	QStringList overlayIcons;
 	QString description;
+	QString caption;
+	OnlineStatusManager::Categories categories;
+	OnlineStatusManager::Options options;
 	unsigned refCount;
 
 	QString protocolIcon() const
@@ -115,6 +118,8 @@ OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protoc
 	d->overlayIcons = overlayIcons;
 	d->protocol = protocol;
 	d->description = description;
+	d->categories = 0x00;
+	d->options = 0x00;
 }
 
 OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus,
@@ -127,8 +132,11 @@ OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protoc
 	d->overlayIcons = overlayIcons;
 	d->protocol = protocol;
 	d->description = description;
+	d->caption = caption;
+	d->categories = categories;
+	d->options = options;
 
-	OnlineStatusManager::self()->registerOnlineStatus(*this, caption, categories, options );
+	OnlineStatusManager::self()->registerOnlineStatus( *this );
 }
 
 OnlineStatus::OnlineStatus( StatusType status )
@@ -138,6 +146,8 @@ OnlineStatus::OnlineStatus( StatusType status )
 	d->internalStatus = 0;
 	d->weight = 0;
 	d->protocol = 0L;
+	d->categories = 0x00;
+	d->options = 0x00;
 
 	switch( status )
 	{
@@ -173,6 +183,8 @@ OnlineStatus::OnlineStatus()
 	d->weight = 0;
 	d->protocol = 0L;
 	d->overlayIcons = QStringList( QString::fromLatin1( "status_unknown" ) );
+	d->categories = 0x00;
+	d->options = 0x00;
 }
 
 OnlineStatus::OnlineStatus( const OnlineStatus &other )
@@ -252,6 +264,21 @@ QString OnlineStatus::description() const
 Protocol* OnlineStatus::protocol() const
 {
 	return d->protocol;
+}
+
+QString OnlineStatus::caption() const
+{
+	return d->caption;
+}
+
+OnlineStatusManager::Categories OnlineStatus::categories() const
+{
+	return d->categories;
+}
+
+OnlineStatusManager::Options OnlineStatus::options() const
+{
+	return d->options;
 }
 
 bool OnlineStatus::isDefinitelyOnline() const

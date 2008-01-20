@@ -22,6 +22,7 @@
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kinputdialog.h>
+#include <kaction.h>
 
 #include "jabberprotocol.h"
 #include "jabberaccount.h"

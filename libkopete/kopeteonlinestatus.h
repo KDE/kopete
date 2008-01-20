@@ -28,6 +28,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QFlags>
+#include <QtGui/QIcon>
 
 #include "kopeteonlinestatusmanager.h"
 
@@ -212,7 +213,12 @@ public:
 	 * @param caption is the text of the action in the menu
 	 * @param categories the categories this online status is in
 	 * @param options the options of this online status
-	 * @see Kopete::OnlineStatusManager::registerOnlineStatus for more info about the categories and options parameters
+	 * @see Kopete::OnlineStatusManager for more info about the categories and options parameters
+	 *
+	 * You can set the status to be in the predefined categories.
+	 * Ideally, each category should own one status.
+	 * A status may be in several categories, or in none.
+	 * There shouldn't be more than one status per protocol per categories.
 	 */
 	OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus, const QStringList &overlayIcon,
 		const QString &description, const QString& caption, OnlineStatusManager::Categories categories = 0x0 , OnlineStatusManager::Options options = 0x0 );
@@ -269,6 +275,25 @@ public:
 	 * \brief Return the protocol this applies to
 	 */
 	Protocol* protocol() const;
+
+	/**
+	 * \brief Return the text for the action in the menu
+	 */
+	QString caption() const;
+
+	/**
+	 * \brief Return the categories this online status is in
+	 *
+	 * @see Kopete::OnlineStatusManager for more info about the categories
+	 */
+	OnlineStatusManager::Categories categories() const;
+
+	/**
+	 * \brief Return the options of this online status
+	 *
+	 * @see Kopete::OnlineStatusManager for more info about the options parameters
+	 */
+	OnlineStatusManager::Options options() const;
 
 	/**
 	 * @return @c true if this a contact with this status is definitely online,

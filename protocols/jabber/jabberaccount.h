@@ -69,8 +69,8 @@ public:
 	JabberAccount (JabberProtocol * parent, const QString & accountID);
 	 ~JabberAccount ();
 
-	/* Returns the action menu for this account. */
-	virtual KActionMenu *actionMenu ();
+	/* Fills the menu for this account. */
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/* Return the resource of the client */
 	const QString resource () const;

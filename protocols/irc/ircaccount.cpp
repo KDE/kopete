@@ -28,8 +28,6 @@
 #include "kircstdmessages.h"
 
 #include "kopeteaccountmanager.h"
-#include "kopeteaway.h"
-#include "kopeteawayaction.h"
 #include "kopetechatsessionmanager.h"
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
@@ -82,8 +80,6 @@ public:
 
 	QMap<QString, QString> customCtcp;
 	Kopete::ChatSession *commandSource;
-
-	Kopete::AwayAction *awayAction;
 
 	KAction *joinChannelAction;
 	KAction *searchChannelAction;
@@ -433,29 +429,28 @@ const QStringList IRCAccount::connectCommands() const
 	return configGroup()->readEntry("ConnectCommands", QStringList());
 }
 
-KActionMenu *IRCAccount::actionMenu()
+void IRCAccount::fillActionMenu( KActionMenu *actionMenu )
 {
 	kDebug(14120) ;
 	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( myself()->onlineStatus().description() );
 
-	KActionMenu *mActionMenu = Account::actionMenu();
+	Account::fillActionMenu( actionMenu );
 
 	d->joinChannelAction->setEnabled( isConnected() );
 	d->searchChannelAction->setEnabled( isConnected() );
 
-	mActionMenu->addSeparator();
-	mActionMenu->addAction(d->joinChannelAction);
-	mActionMenu->addAction(d->searchChannelAction);
+	actionMenu->addSeparator();
+	actionMenu->addAction(d->joinChannelAction);
+	actionMenu->addAction(d->searchChannelAction);
 /*
-	mActionMenu->insert( new KAction ( i18n("Show Server Window"), QString(), 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
+	actionMenu->insert( new KAction ( i18n("Show Server Window"), QString(), 0, this, SLOT(slotShowServerWindow()), actionMenu ) );
 
 //	if (d->client->isConnected() && d->client->useSSL())
 	{
-		mActionMenu->insert( new KAction ( i18n("Show Security Information"), "", 0, d->client,
-			SLOT(showInfoDialog()), mActionMenu ) );
+		actionMenu->insert( new KAction ( i18n("Show Security Information"), "", 0, d->client,
+			SLOT(showInfoDialog()), actionMenu ) );
 	}
 */
-	return mActionMenu;
 }
 
 void IRCAccount::connectWithPassword(const QString &password)

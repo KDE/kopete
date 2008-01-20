@@ -22,6 +22,7 @@
 
 #include <KIcon>
 #include <KMenu>
+#include <KActionMenu>
 #include <QTimeLine>
 #include <QToolTip>
 #include <QCursor>
@@ -37,6 +38,8 @@
 #include <kopetestdaction.h>
 #include <avatardialog.h>
 #include <KDebug>
+
+#include "kopetestatusrootaction.h"
 
 class IdentityStatusWidget::Private
 {
@@ -267,7 +270,13 @@ void IdentityStatusWidget::showAccountContextMenu( const QPoint & point )
 	if ( item && !d->accountHash.isEmpty() ) {
 		Kopete::Account * account = d->accountHash[ item ];
 		if ( account ) {
-			KActionMenu *actionMenu = account->actionMenu();
+			KActionMenu *actionMenu = new KActionMenu( account->accountId(), account );
+
+			if ( !account->hasCustomStatusMenu() )
+				Kopete::StatusRootAction::createAccountStatusActions( account, actionMenu );
+
+			account->fillActionMenu( actionMenu );
+
 			actionMenu->menu()->exec( d->ui.accounts->mapToGlobal( point ) );
 			delete actionMenu;
 		}

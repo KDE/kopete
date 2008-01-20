@@ -49,11 +49,11 @@
 #include <kpassworddialog.h>
 #include <kinputdialog.h>
 #include <kicon.h>
+#include <kactionmenu.h>
 #include <kglobal.h>
 #include <KComponentData>
 
 #include "kopetepassword.h"
-#include "kopeteawayaction.h"
 #include "kopetemetacontact.h"
 #include "kopeteuiglobal.h"
 #include "kopetegroup.h"
@@ -174,11 +174,11 @@ void JabberAccount::setS5BServerPort ( int port )
 
 }
 
-KActionMenu *JabberAccount::actionMenu ()
+void JabberAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *m_actionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
-	m_actionMenu->addSeparator();
+	actionMenu->addSeparator();
 
 	KAction *action;
 	
@@ -186,38 +186,38 @@ KActionMenu *JabberAccount::actionMenu ()
 	action->setIcon( KIcon("jabber_group") );
 	action->setText( i18n("Join Groupchat...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotJoinNewChat()) );
-	m_actionMenu->addAction(action);
+	actionMenu->addAction(action);
 	action->setEnabled( isConnected() );
 	
 	action = m_bookmarks->bookmarksAction( m_bookmarks );
-	m_actionMenu->addAction(action);
+	actionMenu->addAction(action);
 	action->setEnabled( isConnected() );
 
 
-	m_actionMenu->addSeparator();
+	actionMenu->addSeparator();
 	
 	action = new KAction( this );
 	action->setIcon( KIcon("jabber_serv_on") );
 	action->setText( i18n ("Services...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGetServices()) );
 	action->setEnabled( isConnected() );
-	m_actionMenu->addAction( action );
+	actionMenu->addAction( action );
 
 	action = new KAction( this );
 	action->setIcon( ( KIcon("mail-message-new") ) );
 	action->setText( i18n ("XML Console") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotXMPPConsole()) );
 	action->setEnabled( isConnected() );
-	m_actionMenu->addAction( action );
+	actionMenu->addAction( action );
 
 	action = new KAction( this );
 	action->setIcon( ( KIcon("document-properties") ) );
 	action->setText( i18n ("Edit User Info...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotEditVCard()) );
 	action->setEnabled( isConnected() );
-	m_actionMenu->addAction( action );
+	actionMenu->addAction( action );
 
-	KActionMenu *mMoodMenu = new KActionMenu(i18n("Set mood..."), m_actionMenu);
+	KActionMenu *mMoodMenu = new KActionMenu(i18n("Set mood..."), actionMenu);
 	for(int i = 0; i <= Mood::Worried; i++)
 	{
 		action = new KAction(mMoodMenu);
@@ -226,9 +226,7 @@ KActionMenu *JabberAccount::actionMenu ()
 		QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetMood()) );
 		mMoodMenu->addAction( action );
 	}
-	m_actionMenu->addAction( mMoodMenu );
-	return m_actionMenu;
-
+	actionMenu->addAction( mMoodMenu );
 }
 
 JabberResourcePool *JabberAccount::resourcePool ()

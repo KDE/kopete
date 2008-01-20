@@ -5,106 +5,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>377</width>
-    <height>385</height>
+    <width>455</width>
+    <height>377</height>
    </rect>
   </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
-    <number>9</number>
-   </property>
-   <property name="topMargin" >
-    <number>9</number>
-   </property>
-   <property name="rightMargin" >
-    <number>9</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>9</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>6</number>
-   </property>
-   <property name="verticalSpacing" >
-    <number>6</number>
-   </property>
-   <item row="2" column="0" >
-    <widget class="QGroupBox" name="groupBox_3" >
-     <property name="title" >
-      <string>Auto Away Message</string>
-     </property>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <item>
-       <widget class="QRadioButton" name="kcfg_useLastAwayMessage" >
-        <property name="text" >
-         <string>Display the &amp;last away message used</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="kcfg_useCustomAwayMessage" >
-        <property name="text" >
-         <string>Display the &amp;following away message:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
-         <number>6</number>
-        </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>0</number>
-        </property>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>16</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="KLineEdit" name="kcfg_autoAwayCustomMessage" />
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0" >
+  <layout class="QVBoxLayout" >
+   <item>
     <widget class="QGroupBox" name="groupBox_2" >
      <property name="title" >
       <string>Auto Away</string>
@@ -204,85 +110,58 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="0" >
-    <widget class="QGroupBox" name="groupBox" >
+   <item>
+    <widget class="QGroupBox" name="groupBox_3" >
      <property name="title" >
-      <string>General</string>
+      <string>Auto Away Message</string>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
-         <number>6</number>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" colspan="2" >
+       <widget class="QRadioButton" name="kcfg_useLastAwayMessage" >
+        <property name="text" >
+         <string>Display the &amp;last away message used</string>
         </property>
-        <property name="leftMargin" >
-         <number>0</number>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2" >
+       <widget class="QRadioButton" name="kcfg_useCustomAwayMessage" >
+        <property name="text" >
+         <string>Display the &amp;following away message:</string>
         </property>
-        <property name="topMargin" >
-         <number>0</number>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="label" >
+        <property name="text" >
+         <string>Title:</string>
         </property>
-        <property name="rightMargin" >
-         <number>0</number>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="KLineEdit" name="kcfg_autoAwayCustomTitle" />
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="label_4" >
+        <property name="text" >
+         <string>Message:</string>
         </property>
-        <property name="bottomMargin" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="label" >
-          <property name="text" >
-           <string>Number of away messages to remember:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="kcfg_awayMessageRemembered" >
-          <property name="value" >
-           <number>5</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="QTextEdit" name="kcfg_autoAwayCustomMessage" />
       </item>
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" >
+   <item>
     <spacer>
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" >
       <size>
-       <width>20</width>
-       <height>40</height>
+       <width>437</width>
+       <height>0</height>
       </size>
      </property>
     </spacer>
@@ -297,14 +176,110 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>kcfg_awayMessageRemembered</tabstop>
   <tabstop>kcfg_useAutoAway</tabstop>
   <tabstop>mAutoAwayTimeout</tabstop>
   <tabstop>kcfg_autoAwayGoAvailable</tabstop>
   <tabstop>kcfg_useLastAwayMessage</tabstop>
   <tabstop>kcfg_useCustomAwayMessage</tabstop>
-  <tabstop>kcfg_autoAwayCustomMessage</tabstop>
+  <tabstop>kcfg_autoAwayCustomTitle</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>kcfg_useAutoAway</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label_2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>88</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>105</x>
+     <y>143</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_useAutoAway</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>mAutoAwayTimeout</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>142</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>174</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_useAutoAway</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label_3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>212</x>
+     <y>117</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>246</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_useAutoAway</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_autoAwayGoAvailable</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>72</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>65</x>
+     <y>177</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_useAutoAway</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBox_3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>42</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>44</x>
+     <y>208</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_useCustomAwayMessage</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_autoAwayCustomTitle</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>103</x>
+     <y>271</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>106</x>
+     <y>352</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -138,7 +138,7 @@ public:
 
 	virtual bool isConnected();
 
-	virtual KActionMenu *actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/** Reimplemented from Kopete::Account */
 	virtual void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &statusMessage);

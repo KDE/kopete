@@ -44,7 +44,7 @@ public:
 	/**
 	 * Construct the context menu used for the status bar icon
 	 */
-	virtual KActionMenu* actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/**
 	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplie

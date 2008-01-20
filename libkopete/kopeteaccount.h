@@ -242,9 +242,9 @@ public:
 	Contact * myself() const;
 
 	/**
-	 * @brief Return the menu for this account
+	 * @brief Fill the menu with actions for this account
 	 *
-	 * You have to reimplement this method to return the custom action menu which will
+	 * You have to reimplement this method to add custom actions to the @p actionMenu which will
 	 * be shown in the statusbar. It is the caller's responsibility to ensure the menu is deleted.
 	 *
 	 * The default implementation provides a generic menu, with actions generated from the protocol's
@@ -255,7 +255,17 @@ public:
 	 *
 	 * @see OnlineStatusManager::registerOnlineStatus
 	 */
-	virtual KActionMenu* actionMenu() ;
+	virtual void fillActionMenu( KActionMenu *actionMenu );
+
+	/**
+	 * @brief Return true if account has custom status menu.
+	 *
+	 * You have to reimplement this method and return true if you don't want to have status menu in menu
+	 * which will be shown in the statusbar
+	 *
+	 * The default implementation returns false.
+	 */
+	virtual bool hasCustomStatusMenu() const;
 
 	/**
 	 * @brief Retrieve the list of contacts for this account

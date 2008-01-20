@@ -62,8 +62,6 @@ set(kopete_LIB_SRCS
    kopeteaccount.cpp
    kopeteaccountmanager.cpp
    kopeteavatarmanager.cpp
-   kopeteawayaction.cpp
-   kopeteaway.cpp
    kopeteblacklister.cpp
    kopetechatsession.cpp
    kopetechatsessionmanager.cpp
@@ -102,6 +100,9 @@ set(kopete_LIB_SRCS
    kopetewalletmanager.cpp
    networkstatuscommon.h
    chatsessionmemberslistmodel.cpp
+   kopetestatusmanager.cpp
+   kopetestatusitems.cpp
+   kopeteidletimer.cpp
 # REMOVED FOR NOW
 #   connectionmanager.cpp
 #   managedconnectionaccount.cpp
@@ -119,7 +120,11 @@ kde4_add_ui_files(kopete_LIB_SRCS
  ui/metacontactselectorwidget_base.ui
 )
 
-kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
+kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC
+  kopeteappearancesettings.kcfgc
+  kopetebehaviorsettings.kcfgc
+  kopetestatussettings.kcfgc
+  )
 
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 
@@ -169,6 +174,7 @@ DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui )
 install( FILES
   kopeteappearancesettings.kcfg
   kopetebehaviorsettings.kcfg
+  kopetestatussettings.kcfg
 DESTINATION ${KCFG_INSTALL_DIR})
 
 install( FILES kopetecommandui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
@@ -177,12 +183,11 @@ install( FILES kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop  DES
 install( FILES
   ${CMAKE_CURRENT_BINARY_DIR}/kopeteappearancesettings.h
   ${CMAKE_CURRENT_BINARY_DIR}/kopetebehaviorsettings.h
+  ${CMAKE_CURRENT_BINARY_DIR}/kopetestatussettings.h
   kabcpersistence.h
   kopeteaccount.h
   kopeteaccountmanager.h
   kopeteavatarmanager.h
-  kopeteawayaction.h
-  kopeteaway.h
   kopeteblacklister.h
   kopetechatsession.h
   kopetechatsessionmanager.h
@@ -217,6 +222,7 @@ install( FILES
   kopetetransfermanager.h
   kopeteuiglobal.h
   kopeteversion.h
+  kopetestatusmanager.h
   tasks/kopetetask.h
   tasks/kopetecontacttaskbase.h
   tasks/kopetedeletecontacttask.h

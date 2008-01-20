@@ -26,7 +26,8 @@
 
 OscarProtocol::OscarProtocol( const KComponentData &instance, QObject *parent )
 	: Kopete::Protocol( instance, parent ),
-	awayMessage(Kopete::Global::Properties::self()->statusMessage()),
+	statusTitle(Kopete::Global::Properties::self()->statusTitle()),
+	statusMessage(Kopete::Global::Properties::self()->statusMessage()),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0),
 	buddyIconHash("iconHash", i18n("Buddy Icon MD5 Hash"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty),
 	contactEncoding("contactEncoding", i18n("Contact Encoding"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty),

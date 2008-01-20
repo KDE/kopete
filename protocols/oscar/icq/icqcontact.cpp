@@ -110,7 +110,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	// invalidate old away message if user was offline
 	if ( !isOnline() )
-		removeProperty( mProtocol->awayMessage );
+		removeProperty( mProtocol->statusMessage );
 
 	kDebug( OSCAR_ICQ_DEBUG ) << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
@@ -140,7 +140,6 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 	else if ( !m_statusDescription.isEmpty() )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
-		presence.setDescription( m_statusDescription );
 	}
 
 	setPresenceTarget( presence );
@@ -191,7 +190,7 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 		if ( contactStatus == Client::ICQOnline && !details.onlineStatusMsgSupport() )
 		{
 			mAccount->engine()->removeICQAwayMessageRequest( contactId() );
-			removeProperty( mProtocol->awayMessage );
+			removeProperty( mProtocol->statusMessage );
 		}
 		else
 		{
@@ -224,7 +223,7 @@ void ICQContact::userOffline( const QString& userId )
 	else
 		refreshStatus( m_details, Oscar::Presence( Oscar::Presence::Offline ) );
 	
-	removeProperty( mProtocol->awayMessage );
+	removeProperty( mProtocol->statusMessage );
 }
 
 void ICQContact::loggedIn()
@@ -383,6 +382,10 @@ void ICQContact::receivedTlvInfo( const QString& contact )
 		setNickName( QString::fromUtf8( info.nickName.get() ) );
 
 	m_statusDescription = QString::fromUtf8( info.statusDescription.get() );
+	if ( !m_statusDescription.isEmpty() )
+		setProperty( mProtocol->statusTitle, m_statusDescription );
+	else
+		removeProperty( mProtocol->statusTitle );
 
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( onlineStatus() );
 	
@@ -485,7 +488,7 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 			}
 			else // user changed to "Online" status and has no away message anymore
 			{
-				removeProperty(mProtocol->awayMessage);
+				removeProperty(mProtocol->statusMessage);
 			}
 		}
 	}
@@ -499,7 +502,7 @@ void ICQContact::slotOffgoingBuddy(QString sender)
 		return;
 
 	removeProperty(mProtocol->clientFeatures);
-	removeProperty(mProtocol->awayMessage);
+	removeProperty(mProtocol->statusMessage);
 	setOnlineStatus(mProtocol->statusOffline);
 }
 
@@ -678,8 +681,8 @@ void ICQContact::slotCloseAwayMessageDialog()
 
 const QString ICQContact::awayMessage()
 {
-	kDebug(14150) <<  property(mProtocol->awayMessage).value().toString();
-	return property(mProtocol->awayMessage).value().toString();
+	kDebug(14150) <<  property(mProtocol->statusMessage).value().toString();
+	return property(mProtocol->statusMessage).value().toString();
 }
 
 
@@ -687,7 +690,7 @@ void ICQContact::setAwayMessage(const QString &message)
 {
 	/*kDebug(14150) <<
 		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
-	setProperty(mProtocol->awayMessage, message);
+	setProperty(mProtocol->statusMessage, message);
 	emit awayMessageChanged();
 }
 

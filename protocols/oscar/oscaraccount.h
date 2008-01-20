@@ -66,9 +66,9 @@ public:
 	bool passwordWasWrong();
 
 	/**
-	 * Accessor method for the action menu
+	 * Fill the menu for this account
 	 */
-	virtual KActionMenu* actionMenu() = 0;
+	virtual void fillActionMenu( KActionMenu *actionMenu ) = 0;
 
 	/**
 	 * Sets the identity this account belongs to

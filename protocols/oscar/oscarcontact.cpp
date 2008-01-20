@@ -336,9 +336,9 @@ void OscarContact::setAwayMessage( const QString &message )
 		"Called for '" << contactId() << "', away msg='" << message << "'" << endl;
 	
 	if ( !message.isEmpty() )
-		setProperty( static_cast<OscarProtocol*>( protocol() )->awayMessage, filterAwayMessage( message ) );
+		setProperty( static_cast<OscarProtocol*>( protocol() )->statusMessage, filterAwayMessage( message ) );
 	else
-		removeProperty( static_cast<OscarProtocol*>( protocol() )->awayMessage );
+		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusMessage );
 }
 
 void OscarContact::changeContactEncoding()

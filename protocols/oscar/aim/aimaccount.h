@@ -86,8 +86,8 @@ public:
 
 	AIMProtocol *protocol() const;
 
-	// Accessor method for the action menu
-	virtual KActionMenu* actionMenu();
+	// fill the menu for this account
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	virtual void connectWithPassword( const QString &password );
 
