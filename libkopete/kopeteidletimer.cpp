@@ -35,8 +35,9 @@
   #ifdef HAVE_XSCREENSAVER
     #define HasScreenSaver
     #include <X11/extensions/scrnsaver.h>
-    #include <QX11Info>
   #endif
+  
+  #include <QX11Info>
 #endif // Q_WS_X11
 
 // As this is an untested X extension we better leave it off
