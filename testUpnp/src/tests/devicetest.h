@@ -12,10 +12,12 @@ class DeviceTest : public QObject
 		DeviceTest();
 		~DeviceTest();
 	private slots:
+	// Contructor test
+	void testDevice();
 	/*
 	*	Setters
 	*/
-	void testSetDeviceType();/*
+	void testSetDeviceType();
 	void testSetFriendlyName();
 	void testSetManufacturer();
 	void testSetManufacturerURL();
@@ -26,7 +28,7 @@ class DeviceTest : public QObject
 	void testSetSerialNumber();
 	void testSetPresentationURL();
 	void testSetUPC();
-	void testSetDescDocURL();*/
+	void testSetDescDocURL();
 };
 
 #endif
