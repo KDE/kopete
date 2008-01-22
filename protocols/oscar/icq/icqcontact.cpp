@@ -132,7 +132,7 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 	presence.setFlags( presence.flags() & ~Oscar::Presence::StatusTypeMask );
 
 	// XStatus don't support offline status so don't show it (xtrazStatusSpecified can be true if contact was online)
-	if ( details.xtrazStatusSpecified() && presence.type() != Oscar::Presence::Offline )
+	if ( details.xtrazStatus() != -1 && presence.type() != Oscar::Presence::Offline )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
 		presence.setXtrazStatus( details.xtrazStatus() );
@@ -150,7 +150,7 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 	if ( selfVisible && isReachable() && presence.type() != Oscar::Presence::Offline )
 	{
 		Client::ICQStatus contactStatus = Client::ICQOnline;
-		if ( details.xtrazStatusSpecified() )
+		if ( details.xtrazStatus() != -1 )
 		{
 			contactStatus = Client::ICQXStatus;
 		}

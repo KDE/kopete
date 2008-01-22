@@ -36,7 +36,7 @@ UserDetails::UserDetails()
 	m_userClass = 0;
 	m_idleTime = 0;
 	m_extendedStatus = 0;
-	m_xtrazStatus = 0;
+	m_xtrazStatus = -1;
 	m_dcPort = 0;
 	m_dcType = 0;
 	m_dcProtoVersion = 0;
@@ -320,7 +320,7 @@ void UserDetails::fill( Buffer * buffer )
 			case 0x000D: //capability info
 				parseCapabilities(b, m_xtrazStatus);
 				m_capabilitiesSpecified = true;
-				m_xtrazStatusSpecified = (m_xtrazStatus > -1) ? true : false;
+				m_xtrazStatusSpecified = true;
 				break;
 			case 0x0010:
 			case 0x000F: //online time

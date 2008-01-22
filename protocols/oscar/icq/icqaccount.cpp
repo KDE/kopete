@@ -66,7 +66,7 @@ void ICQMyselfContact::userInfoUpdated()
 	Oscar::Presence presence = p->statusManager()->presenceOf( extendedStatus, details().userClass() );
 
 	ICQAccount* icqAccount = static_cast<ICQAccount*>( account() );
-	if ( details().xtrazStatusSpecified() )
+	if ( details().xtrazStatus() != -1 )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
 		presence.setXtrazStatus( details().xtrazStatus() );
