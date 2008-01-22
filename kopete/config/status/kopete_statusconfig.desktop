@@ -10,5 +10,9 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Status
+Name[ga]=Stádas
+Name[zh_TW]=狀態
 Comment=Manage Your Statuses
+Comment[ga]=Bainistigh Do Chuid Stádas
+Comment[zh_TW]=管理您的狀態
 
