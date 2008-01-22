@@ -673,7 +673,7 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
  	kDebug(14000) << contact;
 	bool inhibitNotification = ( newStatus.status() == Kopete::OnlineStatus::Unknown ||
 	                             oldStatus.status() == Kopete::OnlineStatus::Unknown );
-	if ( contact && Kopete::BehaviorSettings::self() && !inhibitNotification )
+	if ( contact && Kopete::BehaviorSettings::self()->showEvents() && !inhibitNotification )
 	{
 		if ( contact->account() && contact == contact->account()->myself() )
 		{
