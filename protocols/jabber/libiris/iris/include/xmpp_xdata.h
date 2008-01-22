@@ -69,7 +69,7 @@ namespace XMPP {
 		bool isValid() const;
 
 	public:
-		class Field {
+		class IRIS_EXPORT Field {
 		public:
 			Field();
 			~Field();
