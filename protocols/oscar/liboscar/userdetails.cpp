@@ -126,6 +126,11 @@ int UserDetails::xtrazStatus() const
 	return m_xtrazStatus;
 }
 
+Oscar::WORD UserDetails::iconType() const
+{
+	return m_iconType;
+}
+
 Oscar::BYTE UserDetails::iconCheckSumType() const
 {
 	return m_iconChecksumType;
@@ -347,11 +352,15 @@ void UserDetails::fill( Buffer * buffer )
 					case 0x0000:
 						b.skipBytes(length);
 						break;
-					case 0x0001:
-						if ( length > 0 && ( number == 0x01 || number == 0x00 ) )
+					case 0x0001: // AIM/ICQ avatar hash
+					case 0x000C: // ICQ contact photo 
+					//case 0x0008: // ICQ Flash avatar hash
+						if ( length > 0 && ( number == 0x01 || number == 0x00 ) &&
+						     ( m_iconSpecified == false || m_iconType < type2 ) ) // Check priority
 						{
+							m_iconType = type2;
 							m_iconChecksumType = number;
- 							m_md5IconHash = b.getBlock( length );
+							m_md5IconHash = b.getBlock( length );
 							m_iconSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
 							kDebug(OSCAR_RAW_DEBUG) << "checksum:" << m_md5IconHash.toHex();
@@ -382,6 +391,7 @@ void UserDetails::fill( Buffer * buffer )
 							kDebug(OSCAR_RAW_DEBUG) << "not enough bytes for available message";
 						break;
 					default:
+						b.skipBytes( length );
 						break;
 					}
 				}
@@ -802,6 +812,7 @@ void UserDetails::merge( const UserDetails& ud )
 	}
 	if ( ud.m_iconSpecified )
 	{
+		m_iconType = ud.m_iconType;
 		m_iconChecksumType = ud.m_iconChecksumType;
 		m_md5IconHash = ud.m_md5IconHash;
 		m_iconSpecified = true;

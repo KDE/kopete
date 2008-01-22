@@ -355,7 +355,7 @@ public:
 	bool updateProfile( const QList<ICQInfoBase*>& infoList );
 
 	//! Get buddy icon information for a person
-	void requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::BYTE hashType );
+	void requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::WORD iconType, Oscar::BYTE hashType );
 
 	//! Start a server redirect for a different service
 	void requestServerRedirect( Oscar::WORD family, Oscar::WORD e = 0, QByteArray c = QByteArray(),

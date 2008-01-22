@@ -369,7 +369,7 @@ void OscarContact::requestBuddyIcon()
 	if ( m_buddyIconDirty && m_details.buddyIconHash().size() > 0 )
 	{
 		account()->engine()->requestBuddyIcon( contactId(), m_details.buddyIconHash(),
-		                                       m_details.iconCheckSumType() );
+		                                       m_details.iconType(), m_details.iconCheckSumType() );
 	}
 }
 

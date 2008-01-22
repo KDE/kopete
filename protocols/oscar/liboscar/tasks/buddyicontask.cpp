@@ -33,6 +33,7 @@ BuddyIconTask::BuddyIconTask( Task* parent )
 	m_seq = 0;
 	m_refNum = -1;
 	m_iconLength = 0;
+	m_iconType = 0x0001;
 	m_hashType = 0;
 }
 
@@ -52,6 +53,11 @@ void BuddyIconTask::requestIconFor( const QString& user )
 void BuddyIconTask::setHash( const QByteArray& md5Hash )
 {
 	m_hash = md5Hash;
+}
+
+void BuddyIconTask::setIconType( Oscar::WORD iconType )
+{
+	m_iconType = iconType;
 }
 
 void BuddyIconTask::setHashType( Oscar::BYTE type )
@@ -137,7 +143,7 @@ void BuddyIconTask::sendIcon()
 	m_seq = client()->snacSequence();
 	SNAC s = { 0x0010, 0x0002, 0x0000, m_seq };
 	Buffer* b = new Buffer;
-	b->addWord( 1 ); //gaim hard codes it, so will we
+	b->addWord( m_iconType ); //gaim hard codes it, so will we
 	b->addWord( m_iconLength );
 	b->addString( m_icon );
 	Transfer* t = createTransfer( f, s, b );
@@ -167,7 +173,7 @@ void BuddyIconTask::sendAIMBuddyIconRequest()
 
 	b->addBUIN( m_user.toLatin1() ); //TODO: check encoding
 	b->addByte( 0x01 );
-	b->addWord( 0x0001 );
+	b->addWord( m_iconType );
 	b->addByte( m_hashType );
 	b->addByte( m_hash.size() ); //MD5 Hash Size
 	b->addString( m_hash ); //MD5 Hash
@@ -200,7 +206,7 @@ void BuddyIconTask::sendICQBuddyIconRequest()
 
 	b->addBUIN( m_user.toLatin1() ); //TODO: check encoding
 	b->addByte( 0x01 );
-	b->addWord( 0x0001 );
+	b->addWord( m_iconType );
 	b->addByte( m_hashType );
 	b->addByte( m_hash.size() ); //MD5 Hash Size
 	b->addString( m_hash ); //MD5 Hash
