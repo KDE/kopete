@@ -172,6 +172,7 @@ KActionMenu* ICQAccount::actionMenu()
 	actionMenu->addAction( mEditInfoAction );
 
 	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );
+	pres.setXtrazStatus( presence().xtrazStatus() );
 	mActionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
 	mActionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
 	actionMenu->addAction( mActionInvisible );
