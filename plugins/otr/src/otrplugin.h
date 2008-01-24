@@ -24,6 +24,7 @@
 
 #include "otrlchatinterface.h"
 
+#include "qvariant.h"
 
 /**
   * @author Michael Zanetti
@@ -89,6 +90,7 @@ private slots:
 	void slotSelectionChanged( bool single );
 	void slotSetPolicy();
 	void accountReady( Kopete::Account *account );
+	void slotSecuritySate(Kopete::ChatSession *session, int state);
 
 private:
 	static OTRPlugin* pluginStatic_;

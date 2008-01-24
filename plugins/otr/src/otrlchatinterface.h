@@ -32,6 +32,9 @@
 #include <qmutex.h>
 
 #include <kopetechatsession.h>
+#include <kopeteplugin.h>
+
+//#include "otrplugin.h"
 
 extern "C" {
 #include <libotr/privkey.h>
@@ -39,6 +42,7 @@ extern "C" {
 #include <libotr/message.h>
 #include <libotr/userstate.h>
 }
+
 
 class OtrlChatInterface: public QObject
 {
@@ -63,11 +67,16 @@ public:
 	bool verifyQuestion( Kopete::ChatSession *session, QString fingerprint );
 	QString findActiveFingerprint( Kopete::ChatSession *session );
 	void verifyFingerprint( Kopete::ChatSession *session, bool trust );
+	void setPlugin(Kopete::Plugin *plugin);
+	void emitGoneSecure(Kopete::ChatSession *sesseion, int state);
 
 private:
 	OtrlChatInterface();
 	static OtrlChatInterface *mSelf;
 	Fingerprint *findFingerprint( QString username );
+
+signals:
+	void goneSecure(Kopete::ChatSession* session, int state);
 };
 
  class KeyGenThread : public QThread {

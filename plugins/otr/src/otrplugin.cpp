@@ -37,6 +37,7 @@
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kselectaction.h>
+#include <kactioncollection.h>
 
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
@@ -88,12 +89,14 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * ) ),
 			 this, SLOT( slotNewChatSessionWindow( Kopete::ChatSession * ) ) );
-	QObject::connect( this, SIGNAL( settingsChanged() ), this, SLOT( slotSettingsChanged() ) );
+
+	connect( this, SIGNAL( settingsChanged() ), this, SLOT( slotSettingsChanged() ) );
 
 
 
 	//initialize the otrlib and create the interface object
 	otrlChatInterface = OtrlChatInterface::self();
+	otrlChatInterface->setPlugin(this);
 
 	//update key files when an account is ready to use
 	if( QFile::exists( QString( KGlobal::dirs()->saveLocation( "data", "kopete_otr/", true ) ) + "privkey" ) &&
@@ -154,17 +157,19 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	//adding menu to contaclists menubar and contacts popup menu
 	QStringList policies;
 	policies << i18n("&Default") << i18n("Al&ways") << i18n("&Opportunistic") << i18n("&Manual") << i18n("Ne&ver");
-//	otrPolicyMenu = new KSelectAction( i18n( "&OTR Policy" ), "otr", 0, actionCollection(), "otr_policy" );
-//	otrPolicyMenu->setItems( policies );
+	otrPolicyMenu = new KSelectAction( KIcon("document-encrypt"), i18n( "&OTR Policy" ), this );
+	actionCollection()->addAction( "otr_policy", otrPolicyMenu );
+
+	otrPolicyMenu->setItems( policies );
 //	otrPolicyMenu->popupMenu()->insertSeparator( 1 );
-//	otrPolicyMenu->setEnabled( false );
-//	connect( otrPolicyMenu, SIGNAL( activated() ), this, SLOT( slotSetPolicy() ) );
+	otrPolicyMenu->setEnabled( false );
+	connect( otrPolicyMenu, SIGNAL( triggered( int ) ), this, SLOT( slotSetPolicy() ) );
 
 #warning PORT ME!!! Add context menu on Metacontacts again...
-//	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
+	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
 
 
-	//setXMLFile( "otrui.rc" );
+	setXMLFile( "otrui.rc" );
 
 
 
@@ -245,7 +250,7 @@ void  OTRPlugin::slotEnableOtr( Kopete::ChatSession *session, bool enable ){
 				body = i18n("Attempting to start a private OTR session with <b>%1</b>...").arg( otrlChatInterface->formatContact( session->members().first()->contactId() ) );				
 			}
 			Kopete::Message msg2( session->account()->myself(), session->members().first());
-			msg2.setPlainBody( body );
+			msg2.setHtmlBody( body );
 			msg2.setDirection( Kopete::Message::Internal );
 
 			session->sendMessage( msg1 );
@@ -266,17 +271,24 @@ void OTRPlugin::slotVerifyFingerprint( Kopete::ChatSession *session ){
 }
 
 void OTRPlugin::slotSettingsChanged(){
+
+kdDebug() << "slotSettingsChanged called" << endl;
 	KopeteOtrKcfg::self()->readConfig();
 	if( KopeteOtrKcfg::self()->rbAlways() ){
 		otrlChatInterface->setPolicy( OTRL_POLICY_ALWAYS );
+kdDebug() << "Setting policy to: always" << endl;
 	} else if( KopeteOtrKcfg::self()->rbOpportunistic() ){
 		otrlChatInterface->setPolicy( OTRL_POLICY_OPPORTUNISTIC );
+kdDebug() << "Setting policy to: Opportunistic" << endl;
 	} else if( KopeteOtrKcfg::self()->rbManual() ){
 		otrlChatInterface->setPolicy( OTRL_POLICY_MANUAL );
+kdDebug() << "Setting policy to: Manual" << endl;
 	} else if( KopeteOtrKcfg::self()->rbNever() ){
 		otrlChatInterface->setPolicy( OTRL_POLICY_NEVER );
+kdDebug() << "Setting policy to: Never" << endl;
 	} else {
 		otrlChatInterface->setPolicy( OTRL_POLICY_DEFAULT );
+kdDebug() << "Setting policy to: Default" << endl;
 	}
 }
 
@@ -353,6 +365,7 @@ void OTRPlugin::slotSetPolicy(){
 	if( metaContact ){
 		metaContact->setPluginData( this, "otr_policy", QString::number( otrPolicyMenu->currentItem() ) );		
 	}
+	kdDebug() << "Selected policy: " << otrPolicyMenu->currentItem() << endl;
 }
 
 void OTRPlugin::accountReady( Kopete::Account *account ){
@@ -360,6 +373,11 @@ void OTRPlugin::accountReady( Kopete::Account *account ){
 	otrlChatInterface->updateKeyfile( account );
 }
 
+
+void OTRPlugin::slotSecuritySate(Kopete::ChatSession *session, int state)
+{
+	emitGoneSecure(session, state);
+}
 
 #include "otrplugin.moc"
 

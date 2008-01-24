@@ -1,0 +1,31 @@
+<ui version="4.0" >
+ <class>PrivKeyPopupUI</class>
+ <widget class="QWidget" name="PrivKeyPopupUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>614</width>
+    <height>169</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="label" >
+   <property name="geometry" >
+    <rect>
+     <x>60</x>
+     <y>60</y>
+     <width>451</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Please wait while the prvate key is generated</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

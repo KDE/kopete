@@ -58,26 +58,34 @@
 #include "otrlchatinterface.h"
 #include "otrguiclient.h"
 #include "otrplugin.h"
-//#include "privkeypopup.h"
+#include "ui_privkeypopupui.h"
+
 
 OtrlChatInterface *OtrlChatInterface::mSelf = 0;
 static OtrlUserState userstate;
 static OtrlPolicy confPolicy;
 static void *updateContextList = 0;
+static Kopete::Plugin *chatPlugin = 0;
 
 /***************************** Gui_UI_Ops for libotr **********************************/
 static OtrlPolicy policy(void *opdata, ConnContext *context){
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	bool noerr;
 	
+	kdDebug() << "Policy is: " << confPolicy << endl;;
+	kdDebug() << "OTRL_POLICY_ALWAYS is: " << OTRL_POLICY_ALWAYS << endl;;
+	kdDebug() << "OTRL_POLICY_OPPORTUNISTIC is: " << OTRL_POLICY_OPPORTUNISTIC << endl;;
+	kdDebug() << "OTRL_POLICY_MANUAL is: " << OTRL_POLICY_MANUAL << endl;;
+	kdDebug() << "OTRL_POLICY_NEVER is: " << OTRL_POLICY_NEVER << endl;;
+
 	// Disable OTR for IRC
 	if( session->protocol()->pluginId() == "IRCProtocol" ){
 //		kdDebug() << "Disabling OTR for: " << session->protocol()->pluginId() << endl;
 		return OTRL_POLICY_NEVER;
 	}
-#warning Port me! Determine user specific policy!
-//	QString policy = session->members().first()->metaContact()->pluginData( OTRPlugin::plugin(), "otr_policy" );
-	QString policy = "2";
+	QString policy;
+	policy = session->members().first()->metaContact()->pluginData( chatPlugin, QString("otr_policy") );
+	kdDebug() << "Metacontact policy is: " << policy.toInt( &noerr, 10) << endl;
 	switch( policy.toInt( &noerr, 10 ) ){
 		case 1:
 			return OTRL_POLICY_ALWAYS;
@@ -93,45 +101,30 @@ static OtrlPolicy policy(void *opdata, ConnContext *context){
 }
 
 static void create_privkey(void *opdata, const char *accountname, const char *protocol){
-
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 
-//	PrivKeyPopup *popup = new PrivKeyPopup( session->view()->mainWidget(), i18n("Generating private key"), Qt::Popup | Qt::WindowStaysOnTopHint );
-#warning Port me!
-//	PrivKeyPopup *popup = new PrivKeyPopup( session->view()->mainWidget() );
-//	KAnimWidget *anim = new KAnimWidget( "kde", 72, popup->animFrame, "kopete" );
-//	anim->start();
-//	anim->show();
+	QWidget *popupwidget = new QWidget(session->view()->mainWidget(), Qt::Dialog);
+	Ui::PrivKeyPopupUI *popup = new Ui::PrivKeyPopupUI( );
+	popup->setupUi( popupwidget );
+//	popupwidget->setCloseLock( true );
+	popupwidget->show();
+	popupwidget->activateWindow();
+	popupwidget->raise();
 
-//	popup->setCloseLock( true );
-//	popup->show();
-	KMessageBox::information(session->view()->mainWidget(), "Bla" );
-	KeyGenThread *keyGenThread = new KeyGenThread( accountname, protocol );
+	KeyGenThread *keyGenThread = new KeyGenThread ( accountname, protocol );
 	keyGenThread->start();
 	while( !keyGenThread->wait(100) ){
-//		qApp->eventLoop()->processEvents(QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers, 100);
-//		qApp->x11ProcessEvent(); 
+		qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers, 100);
 	}
-//	popup->setCloseLock( false );
-//	popup->close();
+
+//	popupwidget->setCloseLock( false );
+	popupwidget->close();
 }
 
 static int is_logged_in(void *opdata, const char *accountname, const char *protocol, const char *recipient){
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::ContactPtrList list = session->members();		
-/*	for ( Q3PtrListIterator<Kopete::Contact> it( list ); Kopete::Contact *contact = it.current(); ++it ){
-		if( contact->contactId().compare( recipient ) == 0 ){
-			Kopete::OnlineStatus status = session->contactOnlineStatus( contact );
-			if( status == Kopete::OnlineStatus::Unknown){
-				return -1;
-			} else if( status == Kopete::OnlineStatus::Offline ){
-				return 0;
-			} else {
-				return 1;
-			}
-		}
-	}
-*/	for( int i = 0; i < list.size(); i++ ){
+	for( int i = 0; i < list.size(); i++ ){
 		if( list.at(i)->contactId().compare( recipient) == 0 ){
 			Kopete::OnlineStatus status = session->contactOnlineStatus( list.at(i) );
 			if( status == Kopete::OnlineStatus::Unknown){
@@ -147,7 +140,6 @@ static int is_logged_in(void *opdata, const char *accountname, const char *proto
 }
 
 static void inject_message( void *opdata, const char *accountname, const char *protocol, const char *recipient, const char *message ){
-	//KMessageBox::information( NULL, QString(accountname) + ":" + QString(protocol) + ":" + QString(recipient) + ":" + QString(message) );
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::ContactPtrList list = session->members();		
 	for( int i = 0; i < list.size(); i++ ){
@@ -219,31 +211,28 @@ static void gone_secure(void *opdata, ConnContext *context){
 
 	if( context->active_fingerprint->trust && context->active_fingerprint->trust[0] ){
 		Kopete::Message msg( session->members().first(), session->account()->myself() );
-		msg.setPlainBody( i18n("<b>Private OTR session started.</b>") );
+		msg.setHtmlBody( i18n("<b>Private OTR session started.</b>") );
 		msg.setDirection( Kopete::Message::Internal );
 		session->appendMessage( msg );
-#warning Port me! Tell otr-plugin the new security state!
-//		OTRPlugin::plugin()->emitGoneSecure( ((Kopete::ChatSession*)opdata), 2 );
+		OtrlChatInterface::self()->emitGoneSecure(session, 2);
 	} else {
 		Kopete::Message msg( session->members().first(), session->account()->myself() );
-		msg.setPlainBody( i18n("<b>Unverified OTR session started.</b>") );
+		msg.setHtmlBody( i18n("<b>Unverified OTR session started.</b>") );
 		msg.setDirection( Kopete::Message::Internal );
 		session->appendMessage( msg );
-#warning Port me! Tell otr-plugin the new security state!
-//		OTRPlugin::plugin()->emitGoneSecure( ((Kopete::ChatSession*)opdata), 1 );
+		OtrlChatInterface::self()->emitGoneSecure( ((Kopete::ChatSession*)opdata), 1 );
 	}
 }
 
 /* Actually I've never seen this event but its implemented in case someone should receive it 
-   kopete, gaim and miranda send a heartbeat message at disconnect. See log_message.
+   kopete, gaim and miranda send a heartbeat message at disconnect.
    Searching libotr I could not find any call of gone_insecure. */
 static void gone_insecure(void *opdata, ConnContext *context){
 //	kdDebug() << "gone insecure" << endl;
-#warning Port me! Tell otr-plugin the new security state!
-//	OTRPlugin::plugin()->emitGoneSecure(((Kopete::ChatSession*)opdata), 0);
+	OtrlChatInterface::self()->emitGoneSecure(((Kopete::ChatSession*)opdata), 0);
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::Message msg( session->members().first(), session->account()->myself() );
-	msg.setPlainBody( i18n("<b>OTR Session ended. The conversation is now insecure!</b>") );
+	msg.setHtmlBody( i18n("<b>OTR Session ended. The conversation is now insecure!</b>") );
 	msg.setDirection( Kopete::Message::Internal );
 	session->appendMessage( msg );
 }
@@ -252,31 +241,19 @@ static void still_secure(void *opdata, ConnContext *context, int is_reply){
 //	kdDebug() << "still secure" << endl;
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::Message msg( session->members().first(), session->account()->myself() );
-	msg.setPlainBody( i18n("<b>OTR connection refreshed successfully.</b>") );
+	msg.setHtmlBody( i18n("<b>OTR connection refreshed successfully.</b>") );
 	msg.setDirection( Kopete::Message::Internal );
 	session->appendMessage( msg );
 
 	if( context->active_fingerprint->trust && context->active_fingerprint->trust[0] ){
-#warning Port me! Tell otr-plugin the new security state!
-//		OTRPlugin::plugin()->emitGoneSecure( session, 2);
+		OtrlChatInterface::self()->emitGoneSecure( session, 2);
 	} else {
-#warning Port me! Tell otr-plugin the new security state!
-//		OTRPlugin::plugin()->emitGoneSecure( session, 1);
+		OtrlChatInterface::self()->emitGoneSecure( session, 1);
 	}
 }
 
 static void log_message(void *opdata, const char *message){
-//	kdDebug() << "libotr: "<< message << endl;
-// setting gui icon to disconnected because libotr sends a heartbeat message when calling otrl_context_disconnect()
-// and this doesn't call gone_insecure... I also have never seen a heartbeat message not generated while disconnect.
-	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
-	Kopete::Message msg( session->members().first(), session->account()->myself()  );
-	msg.setPlainBody( i18n("<b>%1</b> has ended the OTR session. You should do the same.").arg(session->members().first()->contactId()) );
-	msg.setDirection( Kopete::Message::Internal );
-	session->appendMessage( msg );
-
-#warning Port me! Tell otr-plugin the new security state!
-//	OTRPlugin::plugin()->emitGoneSecure(((Kopete::ChatSession*)opdata), 3);
+	kdDebug() << "libotr: "<< message << endl;
 }
 
 static OtrlMessageAppOps ui_ops = {
@@ -329,6 +306,10 @@ OtrlChatInterface *OtrlChatInterface::self(){
 	return mSelf;
 }
 
+void OtrlChatInterface::setPlugin( Kopete::Plugin *plugin ){
+	chatPlugin = plugin;
+}
+
 /********************* Chat section ***************************/
 
 OtrlUserState OtrlChatInterface::getUserstate(){
@@ -342,8 +323,93 @@ int OtrlChatInterface::decryptMessage( QString *msg, QString accountId,
 	int ignoremessage;
 	char *newMessage = NULL;
 	OtrlTLV *tlvs = NULL;
+	OtrlTLV *tlv = NULL;
+	ConnContext *context;
+	NextExpectedSMP nextMsg;
 
 	ignoremessage = otrl_message_receiving( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), msg->toLocal8Bit(), &newMessage, &tlvs, NULL, NULL );
+
+
+	tlv = otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED);
+	if( tlv ){
+		Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
+		msg.setHtmlBody( i18n("<b>%1</b> has ended the OTR session. You should do the same.").arg(chatSession->members().first()->contactId()) );
+		msg.setDirection( Kopete::Message::Internal );
+		chatSession->appendMessage( msg );
+		OtrlChatInterface::self()->emitGoneSecure( chatSession, 3 );
+	}
+
+/*	context = otrl_context_find( userstate, contactId.latin1(), accountId.latin1(), protocol.latin1(), 0, NULL, NULL, NULL);
+	if (context) {
+		nextMsg = context->smstate->nextExpected;
+
+		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP1);
+		if (tlv) {
+			if (nextMsg != OTRL_SMP_EXPECT1){
+				abortSMP( context, chatSession );
+			} else {
+//				SMPPopup *popup = new SMPPopup( chatSession->view()->mainWidget(), i18n("Enter authentication secret"),  Qt::WStyle_Dialog | Qt::WStyle_StaysOnTop, context, chatSession, false );
+//				popup->show();
+			}
+		}
+		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP2);
+		if (tlv) {
+			if (nextMsg != OTRL_SMP_EXPECT2)
+				abortSMP( context, chatSession );
+			else {
+				kdDebug() << "Update SMP state: 2 -> 3" << endl;
+				context->smstate->nextExpected = OTRL_SMP_EXPECT4;
+			}
+		}
+		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP3);
+		if (tlv) {
+			if (nextMsg != OTRL_SMP_EXPECT3)
+				abortSMP( context, chatSession );
+			else {
+				if (context->active_fingerprint->trust && context->active_fingerprint->trust[0]) {
+//					Kopete::Message msg( chatSession->members().getFirst(), chatSession->account()->myself(), i18n("<b>Authentication successful. The conversation is now secure!</b>"), Kopete::Message::Internal, Kopete::Message::RichText );
+//					chatSession->appendMessage( msg );
+//					OTRPlugin::plugin()->emitGoneSecure( chatSession, 2 );
+				} else {
+//					Kopete::Message msg( chatSession->members().getFirst(), chatSession->account()->myself(), i18n("<b>Authentication failed. The conversation is now insecure!</b>"), Kopete::Message::Internal, Kopete::Message::RichText );
+//					chatSession->appendMessage( msg );
+//					OTRPlugin::plugin()->emitGoneSecure( chatSession, 1 );
+				}
+
+				context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+			}
+		}
+		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP4);
+		if (tlv) {
+			if (nextMsg != OTRL_SMP_EXPECT4)
+				abortSMP( context, chatSession );
+			else {
+				if (context->active_fingerprint->trust && context->active_fingerprint->trust[0]) {
+//					Kopete::Message msg( chatSession->members().getFirst(), chatSession->account()->myself(), i18n("<b>Authentication successful. The conversation is now secure!</b>"), Kopete::Message::Internal, Kopete::Message::RichText );
+//					chatSession->appendMessage( msg );
+//					OTRPlugin::plugin()->emitGoneSecure( chatSession, 2 );
+				} else {
+//					Kopete::Message msg( chatSession->members().getFirst(), chatSession->account()->myself(), i18n("<b>Authentication failed. The conversation is now insecure!</b>"), Kopete::Message::Internal, Kopete::Message::RichText );
+//					chatSession->appendMessage( msg );
+//					OTRPlugin::plugin()->emitGoneSecure( chatSession, 1 );
+				}
+				context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+			}
+		}
+		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP_ABORT);
+		if (tlv) {
+//			Kopete::Message msg( chatSession->members().getFirst(), chatSession->account()->myself(), i18n("<b>Authentication error!</b>"), Kopete::Message::Internal, Kopete::Message::RichText );
+//			chatSession->appendMessage( msg );
+//			context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+		}
+	
+		otrl_tlv_free(tlvs);
+	}
+	
+*/
+
+
+
 	// message is now decrypted or is a Plaintext message and ready to deliver
 	if( !ignoremessage ){
 		// message is decrypted
@@ -390,8 +456,7 @@ QString OtrlChatInterface::getDefaultQuery( QString accountId ){
 
 void OtrlChatInterface::disconnectSession( Kopete::ChatSession *chatSession ){
 	otrl_message_disconnect( userstate, &ui_ops, chatSession, chatSession->account()->accountId().toLatin1(), chatSession->account()->protocol()->displayName().toLatin1(), chatSession->members().first()->contactId().toLocal8Bit() );
-#warning Port me! Tell otr-plugin the new security state!
-//	OTRPlugin::plugin()->emitGoneSecure( chatSession, false );
+	OtrlChatInterface::self()->emitGoneSecure( chatSession, 0 );
 
 	Kopete::Message msg( chatSession->account()->myself(), chatSession->members().first() );
 	msg.setPlainBody( i18n("Terminating OTR session.") );
@@ -468,8 +533,7 @@ void OtrlChatInterface::verifyFingerprint( Kopete::ChatSession *session, bool tr
 //		kdDebug() << "Writing fingerprints" << endl;
 		QString savePath = QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints";
 		otrl_privkey_write_fingerprints( userstate, savePath.toLocal8Bit() );
-#warning Port me! Tell otr-plugin the new security state!
-//		OTRPlugin::plugin()->emitGoneSecure( session, privState( session ) );
+		OtrlChatInterface::self()->emitGoneSecure( session, privState( session ) );
 	} else {
 //		kdDebug() << "could not find fingerprint" << endl;
 	}
@@ -611,6 +675,9 @@ bool OtrlChatInterface::verifyQuestion( Kopete::ChatSession *session, QString fi
 	return false;	
 }
 
+void OtrlChatInterface::emitGoneSecure( Kopete::ChatSession *session, int state ){
+	emit goneSecure( session, state );
+}
 
 /****************** KeyGenThread *******************/
 
@@ -627,4 +694,3 @@ void KeyGenThread::run()
 	otrl_privkey_generate(OtrlChatInterface::self()->getUserstate(), storeFile.toLocal8Bit(), accountname.toLocal8Bit(), protocol.toLocal8Bit());
 	OtrlChatInterface::self()->checkFilePermissions( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkeys" );
 }
-

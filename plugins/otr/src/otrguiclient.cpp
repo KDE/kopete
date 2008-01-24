@@ -34,6 +34,7 @@
 
 #include "otrguiclient.h"
 #include "otrplugin.h"
+#include "otrlchatinterface.h"
 
 /**
   * @author Frank Scheffold
@@ -44,7 +45,7 @@
 OtrGUIClient::OtrGUIClient( Kopete::ChatSession *parent )
 : QObject( parent ), KXMLGUIClient( parent )
 {
-//	setInstance( OTRPlugin::plugin()->instance() );
+	setComponentData( OTRPlugin::plugin()->componentData() );
 
 	connect( OTRPlugin::plugin(),
 		SIGNAL( destroyed( QObject * ) ), this,
@@ -54,27 +55,38 @@ OtrGUIClient::OtrGUIClient( Kopete::ChatSession *parent )
 
 	connect(this, SIGNAL( signalOtrChatsession(Kopete::ChatSession*, bool) ), OTRPlugin::plugin(), SLOT(slotEnableOtr(Kopete::ChatSession*, bool)));
 
-	connect( OTRPlugin::plugin(), SIGNAL( goneSecure( Kopete::ChatSession *, int ) ),
+	connect( OtrlChatInterface::self(), SIGNAL( goneSecure( Kopete::ChatSession *, int ) ),
 	this, SLOT( encryptionEnabled( Kopete::ChatSession *, int ) ) );
 
 	connect( this, SIGNAL( signalVerifyFingerprint( Kopete::ChatSession * ) ), OTRPlugin::plugin(), SLOT(slotVerifyFingerprint( Kopete::ChatSession * )) );
 
 	m_manager = parent;
-	otrActionMenu = new KActionMenu( KIcon("otr"), i18n("OTR Encryption"), this );
-	actionCollection()->addAction("otr_menu", otrActionMenu);
+
+	otrActionMenu = new KActionMenu(KIcon("document-decrypt"), i18n("OTR Encryption"), actionCollection() );
 	otrActionMenu->setDelayed( false );
+	actionCollection()->addAction("otr_settings", otrActionMenu);
 
-	actionEnableOtr = new KAction( KIcon("otr_private"), i18n( "Start OTR session" ), this);
-	actionCollection()->addAction( "enable_otr", actionEnableOtr );
+
+	actionEnableOtr = new KAction( KIcon("document-encrypt"), i18n( "Start OTR session" ), this);
+	actionCollection()->addAction( "enableOtr", actionEnableOtr );
 	connect(actionEnableOtr, SIGNAL(triggered(bool)), this, SLOT(slotEnableOtr()));
-//	actionDisableOtr = new KAction(i18n("End OTR session"), "otr_disabled",0, this,SLOT(slotDisableOtr()), actionCollection(), "disable_otr");
-//	actionVerifyFingerprint = new KAction(i18n("Verify fingerprint"), "system-run",0, this,SLOT(slotVerifyFingerprint()), actionCollection(), "verify_fingerprint"); // jpetso says: please request an icon named "document-verify" or something like that, the "sign" icon is not really appropriate for this purpose imho
 
-//	otrActionMenu->addAction(actionEnableOtr);
-//	otrActionMenu->insert(actionDisableOtr);
-//	otrActionMenu->insert(actionVerifyFingerprint);
-// 
+	actionDisableOtr = new KAction( KIcon("document-decrypt"), i18n( "End OTR session" ), this);
+	actionCollection()->addAction( "disableOtr", actionDisableOtr );
+	connect(actionDisableOtr, SIGNAL(triggered(bool)), this, SLOT(slotDisableOtr()));
+
+	actionVerifyFingerprint = new KAction( KIcon( "system-run" ),  i18n("Verify fingerprint"), this);
+	actionCollection()->addAction( "verifyFingerprint", actionVerifyFingerprint );
+	connect(actionVerifyFingerprint, SIGNAL(triggered(bool)), this,SLOT(slotVerifyFingerprint()));
+
+	 // jpetso says: please request an icon named "document-verify" or something like that, the "sign" icon is not really appropriate for this purpose imho
+
+	otrActionMenu->addAction(actionEnableOtr);
+	otrActionMenu->addAction(actionDisableOtr);
+	otrActionMenu->addAction(actionVerifyFingerprint);
+
 	setXMLFile("otrchatui.rc");
+//	setupGUI();
 
 	encryptionEnabled( parent, OtrlChatInterface::self()->privState(parent) );
     
@@ -99,34 +111,35 @@ void OtrGUIClient::slotVerifyFingerprint(){
 }
 
 void OtrGUIClient::encryptionEnabled(Kopete::ChatSession *session, int state){
-/*	if( session == m_manager ){
+kdDebug() << "OTRGUIClient switched security state to: " << state << endl;
+	if( session == m_manager ){
 		switch(state){
 			case 0:
-				otrActionMenu->setIcon("otr_disabled");
+				otrActionMenu->setIcon(KIcon("document-decrypt"));
 				actionEnableOtr->setText( i18n("Start OTR session") );
 				actionDisableOtr->setEnabled(false);
 				actionVerifyFingerprint->setEnabled(false);
 				break;
 			case 1:
-				otrActionMenu->setIcon("otr_unverified");
+				otrActionMenu->setIcon(KIcon("halfencrypted"));
 				actionEnableOtr->setText( i18n("Refresh OTR session") );
 				actionDisableOtr->setEnabled(true);
 				actionVerifyFingerprint->setEnabled(true);
 				break;
 			case 2:
-				otrActionMenu->setIcon("otr_private");
+				otrActionMenu->setIcon(KIcon("document-encrypt"));
 				actionEnableOtr->setText( i18n("Refresh OTR session") );
 				actionDisableOtr->setEnabled(true);
 				actionVerifyFingerprint->setEnabled(true);
 				break;
 			case 3:
-				otrActionMenu->setIcon("otr_finished");
+				otrActionMenu->setIcon(KIcon("otr_finished"));
 				actionEnableOtr->setText( i18n("Start OTR session") );
 				actionDisableOtr->setEnabled(true);
 				actionVerifyFingerprint->setEnabled(false);
 				break;
 		}
-	}*/
+	}
 }
 
 #include "otrguiclient.moc"
