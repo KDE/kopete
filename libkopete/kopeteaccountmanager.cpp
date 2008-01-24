@@ -31,7 +31,6 @@
 #include <solid/networking.h>
 
 #include "kopeteaccount.h"
-#include "kopeteaway.h"
 #include "kopetebehaviorsettings.h"
 #include "kopeteprotocol.h"
 #include "kopetecontact.h"
@@ -42,6 +41,7 @@
 #include "kopeteonlinestatusmanager.h"
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
+#include "kopetestatusmanager.h"
 
 namespace Kopete {
 
@@ -103,9 +103,9 @@ bool AccountManager::isAnyAccountConnected() const
 	return false;
 }
 
-void AccountManager::setOnlineStatus( uint category, const QString& awayMessage, uint flags )
+void AccountManager::setOnlineStatus( uint category, const Kopete::StatusMessage &statusMessage, uint flags )
 {
-	kDebug() << "category: " << category << ", Kopete::OnlineStatusManager::Away: " << Kopete::OnlineStatusManager::Away;
+	kDebug() << "category: " << category;
 	OnlineStatusManager::Categories categories
 		= (OnlineStatusManager::Categories)category;
 	bool onlyChangeConnectedAccounts = isAnyAccountConnected();
@@ -115,21 +115,21 @@ void AccountManager::setOnlineStatus( uint category, const QString& awayMessage,
 		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus( account->protocol(), categories );
 		// Going offline is always respected
 		if ( category & Kopete::OnlineStatusManager::Offline ) {
-			account->setOnlineStatus( status, awayMessage );
+			account->setOnlineStatus( status, statusMessage );
 			continue;
 		}
 		
 		if ( onlyChangeConnectedAccounts ) {
 			if ( account->isConnected() || ( (flags & ConnectIfOffline) && !account->excludeConnect() ) )
-				account->setOnlineStatus( status, awayMessage );
+				account->setOnlineStatus( status, statusMessage );
 		}
 		else {
 			if ( !account->excludeConnect() )
-				account->setOnlineStatus( status, awayMessage );
+				account->setOnlineStatus( status, statusMessage );
 		}
 	}
 	// mark ourselves as globally away if appropriate
-	Away::setGlobalAway( category & Kopete::OnlineStatusManager::Away );
+	Kopete::StatusManager::self()->setGlobalStatus( category, statusMessage );
 }
 
 void AccountManager::setStatusMessage(const QString &message)

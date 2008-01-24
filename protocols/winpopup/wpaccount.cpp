@@ -157,15 +157,14 @@ void WPAccount::setAway(bool status, const QString &awayMessage)
 	myself()->setStatusMessage( Kopete::StatusMessage(theAwayMessage) );
 }
 
-KActionMenu* WPAccount::actionMenu()
+void WPAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	kDebug(14170) <<  "WPAccount::actionMenu()";
+	kDebug(14170);
 
 	/// How to remove an action from Kopete::Account::actionMenu()? GF
 
-	KActionMenu *theActionMenu = new KActionMenu(accountId(), this);
-        theActionMenu->setIcon( myself()->onlineStatus().iconFor(this) );
-	theActionMenu->menu()->addTitle( QIcon(myself()->onlineStatus().iconFor(this)), i18n("WinPopup (%1)", accountId()));
+	actionMenu->setIcon( myself()->onlineStatus().iconFor(this) );
+	actionMenu->menu()->addTitle( QIcon(myself()->onlineStatus().iconFor(this)), i18n("WinPopup (%1)", accountId()));
 
 	if (mProtocol)
 	{
@@ -173,24 +172,27 @@ KActionMenu* WPAccount::actionMenu()
 		//, "actionGoAvailable" );
 		QObject::connect( goOnline, SIGNAL(triggered(bool)), this, SLOT(connect()) );
 		goOnline->setEnabled(isConnected() && isAway());
-		theActionMenu->addAction(goOnline);
+		actionMenu->addAction(goOnline);
 
 		KAction *goAway = new KAction( KIcon(QIcon(mProtocol->WPAway.iconFor(this))), i18n("Away"), this );
                 //, "actionGoAway" );
 		QObject::connect( goAway, SIGNAL(triggered(bool)), this, SLOT(goAway()) );
 		goAway->setEnabled(isConnected() && !isAway());
-		theActionMenu->addAction(goAway);
+		actionMenu->addAction(goAway);
 
 		/// One cannot really go offline manually - appears online as long as samba server is running. GF
 
-		theActionMenu->addSeparator();
+		actionMenu->addSeparator();
 		KAction *properties = new KAction( i18n("Properties"), this );
                 // "actionAccountProperties" );
 		QObject::connect( properties, SIGNAL(triggered(bool)), this, SLOT(editAccount()) );
-		theActionMenu->addAction( properties );
+		actionMenu->addAction( properties );
 	}
+}
 
-	return theActionMenu;
+bool WPAccount::hasCustomStatusMenu() const
+{
+	return true;
 }
 
 void WPAccount::slotSendMessage(const QString &Body, const QString &Destination)

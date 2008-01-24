@@ -336,9 +336,9 @@ void OscarContact::setAwayMessage( const QString &message )
 		"Called for '" << contactId() << "', away msg='" << message << "'" << endl;
 	
 	if ( !message.isEmpty() )
-		setProperty( static_cast<OscarProtocol*>( protocol() )->awayMessage, filterAwayMessage( message ) );
+		setProperty( static_cast<OscarProtocol*>( protocol() )->statusMessage, filterAwayMessage( message ) );
 	else
-		removeProperty( static_cast<OscarProtocol*>( protocol() )->awayMessage );
+		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusMessage );
 }
 
 void OscarContact::changeContactEncoding()
@@ -369,7 +369,7 @@ void OscarContact::requestBuddyIcon()
 	if ( m_buddyIconDirty && m_details.buddyIconHash().size() > 0 )
 	{
 		account()->engine()->requestBuddyIcon( contactId(), m_details.buddyIconHash(),
-		                                       m_details.iconCheckSumType() );
+		                                       m_details.iconType(), m_details.iconCheckSumType() );
 	}
 }
 

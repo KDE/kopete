@@ -49,7 +49,6 @@ public:
 	~LatexPlugin();
 
 public slots:
-	void slotSettingsChanged();
 	void slotMessageAboutToShow( Kopete::Message& msg );
 	void slotMessageAboutToSend( Kopete::Message& msg );
 	void slotNewChatSession( Kopete::ChatSession *KMM);

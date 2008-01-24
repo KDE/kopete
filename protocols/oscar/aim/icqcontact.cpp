@@ -77,7 +77,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	// invalidate old away message if user was offline
 	if ( !isOnline() )
-		removeProperty( mProtocol->awayMessage );
+		removeProperty( mProtocol->statusMessage );
 
 	kDebug( OSCAR_AIM_DEBUG ) << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
@@ -85,7 +85,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	if ( presence.type() == Oscar::Presence::Online )
 	{
-		removeProperty( mProtocol->awayMessage );
+		removeProperty( mProtocol->statusMessage );
 		m_haveAwayMessage = false;
 	}
 	else
@@ -132,7 +132,7 @@ void ICQContact::userOffline( const QString& userId )
 	else
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
 
-	removeProperty( mProtocol->awayMessage );
+	removeProperty( mProtocol->statusMessage );
 }
 
 void ICQContact::loggedIn()

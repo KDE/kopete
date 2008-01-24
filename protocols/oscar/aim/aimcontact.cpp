@@ -155,7 +155,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	if ( presence.type() == Oscar::Presence::Online )
 	{
-		removeProperty( mProtocol->awayMessage );
+		removeProperty( mProtocol->statusMessage );
 		m_haveAwayMessage = false;
 	}
 	else
@@ -185,7 +185,7 @@ void AIMContact::userOffline( const QString& userId )
 	{
 		kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline";
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
-		removeProperty( mProtocol->awayMessage );
+		removeProperty( mProtocol->statusMessage );
 	}
 }
 

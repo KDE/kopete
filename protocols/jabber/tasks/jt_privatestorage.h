@@ -16,7 +16,7 @@
 #ifndef JT_PRIVATESTORAGE_H
 #define JT_PRIVATESTORAGE_H
 
-#include "xmpp_task.h"	
+#include "xmpp_task.h"
 #include "xmpp_jid.h"
 
 class QDomElement;

@@ -57,8 +57,8 @@ public:
 
 	ICQProtocol *protocol();
 
-	// Accessor method for the action menu
-	virtual KActionMenu* actionMenu();
+	// fill the menu for this account
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
@@ -81,12 +81,12 @@ protected slots:
 private:
 	Oscar::Presence presence();
 
-	void setPresenceFlags( Oscar::Presence::Flags flags, const QString &message = QString() );
+	void setPresenceFlags( Oscar::Presence::Flags flags, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
 
 	//const unsigned long fullStatus( const unsigned long plainStatus );
 
 private slots:
-	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString() );
+	void setPresenceTarget( const Oscar::Presence &presence, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
 	
 	void slotToggleInvisible();
 
@@ -107,7 +107,7 @@ private slots:
 private:
 	bool mWebAware;
 	bool mHideIP;
-	QString mInitialStatusMessage;
+	Kopete::StatusMessage mInitialStatusMessage;
 	ICQUserInfoWidget* mInfoWidget;
 	ICQContact* mInfoContact;
 

@@ -177,6 +177,12 @@ void Contact::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
 	d->statusMessage = statusMessage;
 
+	kDebug(14010) << "Setting up the status title property with this: " << statusMessage.title();
+	if( !statusMessage.title().isEmpty() )
+		setProperty( Kopete::Global::Properties::self()->statusTitle(), statusMessage.title() );
+	else
+		removeProperty( Kopete::Global::Properties::self()->statusTitle() );
+
 	kDebug(14010) << "Setting up the status message property with this: " << statusMessage.message();
 	if( !statusMessage.message().isEmpty() )
 		setProperty( Kopete::Global::Properties::self()->statusMessage(), statusMessage.message() );
@@ -609,6 +615,15 @@ QString Contact::toolTip() const
 				tip += i18nc("@label:textbox formatted url",
 					"<br /><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>",
 						QString(QUrl::toPercentEncoding( url )), Kopete::Message::escape( Qt::escape(url) ) );
+			}
+		}
+		else if ((*it) == Kopete::Global::Properties::self()->statusTitle().key() )
+		{
+			QString statusTitle = property(*it).value().toString();
+			if(!statusTitle.isEmpty())
+			{
+				tip += i18nc("@label:textbox formatted status title",
+				             "<br /><b>Status&nbsp;Title:</b>&nbsp;%1",  Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusTitle) ) );
 			}
 		}
 		else if ((*it) == Kopete::Global::Properties::self()->statusMessage().key() )

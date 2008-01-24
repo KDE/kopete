@@ -40,6 +40,7 @@
 #include <kdebug.h>
 #include <krun.h>
 #include <kmenu.h>
+#include <kaction.h>
 #include <kactioncollection.h>
 
 class KListViewDateItem : public QTreeWidgetItem

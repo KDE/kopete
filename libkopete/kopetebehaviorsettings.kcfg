@@ -94,12 +94,6 @@
 			<default>true</default>
 		</entry>
 		
-		<!-- Away behavior -->
-		<entry key="awayMessageRemembered" type="Int">
-			<label>Number of away messages remembered.</label>
-			<default>5</default>
-		</entry>
-		
 		<!-- Chat behavior -->
 		<entry key="chatWindowGroupPolicy" type="Enum">
 			<label>Chat window grouping policy.</label>
@@ -162,6 +156,10 @@
 		<entry key="useCustomAwayMessage" type="Bool">
 			<label>When seting the auto away message, use the custom away message.</label>
 			<default>false</default>
+		</entry>
+		<entry key="autoAwayCustomTitle" type="String">
+			<label>The custom auto away title.</label>
+			<default code="true">i18n("Away")</default>
 		</entry>
 		<entry key="autoAwayCustomMessage" type="String">
 			<label>The custom auto away message.</label>

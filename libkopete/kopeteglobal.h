@@ -97,6 +97,10 @@ namespace Global
 			 */
 			const PropertyTmpl &lastSeen() const;
 			/**
+			 * @return default template for a contact's status title
+			 */
+			const PropertyTmpl &statusTitle() const;
+			/**
 			 * @return default template for a contact's status message
 			 */
 			const PropertyTmpl &statusMessage() const;

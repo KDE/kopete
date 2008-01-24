@@ -69,7 +69,7 @@ public:
 	/**
 	 * Construct the context menu used for the status bar icon
 	 */
-	virtual KActionMenu* actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	// DEBUG ONLY
 	void dumpManagers();
@@ -332,7 +332,6 @@ protected:
 	void cleanup();
 private:
 	// action menu and its actions
-	KActionMenu * m_actionMenu;
 	KAction * m_actionAutoReply;
 	KAction * m_actionManagePrivacy;
 	KAction * m_actionJoinChatRoom;

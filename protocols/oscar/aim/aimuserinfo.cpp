@@ -175,7 +175,7 @@ void AIMUserInfoDialog::slotUpdateProfile()
 {
 	kDebug(14152) << "Got User Profile.";
 	AIMProtocol* p = static_cast<AIMProtocol*>( mAccount->protocol() );
-	QString awayMessage = m_contact->property( p->awayMessage ).value().toString();
+	QString awayMessage = m_contact->property( p->statusMessage ).value().toString();
 	mMainWidget->txtAwayMessage->setHtml( awayMessage );
 
 	if ( awayMessage.isNull() )

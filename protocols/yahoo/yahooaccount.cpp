@@ -607,19 +607,17 @@ void YahooAccount::slotGoOffline()
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 }
 
-KActionMenu *YahooAccount::actionMenu()
+void YahooAccount::fillActionMenu( KActionMenu *actionMenu )
 {
 //	kDebug(YAHOO_GEN_DEBUG) ;
 
-	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
-	theActionMenu->addSeparator();
-	theActionMenu->addAction( m_openInboxAction );
-	theActionMenu->addAction( m_openYABAction );
-	theActionMenu->addAction( m_editOwnYABEntry );
-	theActionMenu->addAction( m_joinChatAction );
-
-	return theActionMenu;
+	actionMenu->addSeparator();
+	actionMenu->addAction( m_openInboxAction );
+	actionMenu->addAction( m_openYABAction );
+	actionMenu->addAction( m_editOwnYABEntry );
+	actionMenu->addAction( m_joinChatAction );
 }
 
 YahooContact *YahooAccount::contact( const QString &id )

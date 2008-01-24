@@ -23,6 +23,7 @@
 #include "kopete_export.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteidentity.h"
+#include "kopetestatusmessage.h"
 
 namespace Kopete 
 {
@@ -110,11 +111,11 @@ public slots:
 	 * @brief Set all identities a status in the specified category
 	 *
 	 * @param category is one of the Kopete::OnlineStatusManager::Categories
-	 * @param awayMessage is the new away message
+	 * @param statusMessage is the new status message
 	 * @param flags is a bitmask of SetOnlineStatusFlag
 	 */
 	void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
-						  const QString& awayMessage = QString(), uint flags=0);
+	                      const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage(), uint flags=0);
 
 	/**
 	 * \internal

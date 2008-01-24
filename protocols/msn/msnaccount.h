@@ -51,9 +51,9 @@ public:
 	MSNAccount( MSNProtocol *parent, const QString &accountID );
 
 	/*
-	 * return the menu for this account
+	 * fill the menu for this account
 	 */
-	virtual KActionMenu* actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	//------ internal functions
 	/**

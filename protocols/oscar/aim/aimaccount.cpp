@@ -20,6 +20,7 @@
 #include <kdialog.h>
 #include <klocale.h>
 #include <kmenu.h>
+#include <kactionmenu.h>
 #include <kmessagebox.h>
 #include <ktoggleaction.h>
 #include <kicon.h>
@@ -323,21 +324,19 @@ QString AIMAccount::sanitizedMessage( const QString& message ) const
 	return doc.toString();
 }
 
-KActionMenu* AIMAccount::actionMenu()
+void AIMAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
-	mActionMenu->addSeparator();
+	actionMenu->addSeparator();
 
-	mActionMenu->addAction( mJoinChatAction );
-	mActionMenu->addAction( mEditInfoAction );
+	actionMenu->addAction( mJoinChatAction );
+	actionMenu->addAction( mEditInfoAction );
 
 	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );
 	mActionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
 	mActionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
-	mActionMenu->addAction( mActionInvisible );
-
-	return mActionMenu;
+	actionMenu->addAction( mActionInvisible );
 }
 
 void AIMAccount::setPresenceFlags( Oscar::Presence::Flags flags, const QString &message )

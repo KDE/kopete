@@ -179,7 +179,7 @@ void KopeteAccountConfig::load()
 		Q_ASSERT(identityItemHash.contains(idnt));
 		KopeteAccountLVI *lvi = new KopeteAccountLVI( i, identityItemHash[idnt] );
 		lvi->setText( 0, i->accountLabel() );
-		lvi->setIcon( 0, QIcon(i->myself()->onlineStatus().iconFor( i, 32)) );
+		lvi->setIcon( 0, i->myself()->onlineStatus().iconFor( i) );
 		QFont font = lvi->font( 0 );
 		font.setBold( true );
 		lvi->setFont( 0, font );
@@ -439,7 +439,7 @@ void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,
 
 		if (i->account()->myself() == contact)
 		{
-			(*it)->setIcon( 0, QIcon(newStatus.iconFor(i->account(), 32)) );
+			(*it)->setIcon( 0, newStatus.iconFor(i->account()) );
 			(*it)->setText( 1, contact->onlineStatus().statusTypeToString(newStatus.status()) );
 			break;
 		}

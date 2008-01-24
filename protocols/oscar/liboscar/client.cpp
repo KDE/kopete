@@ -1440,7 +1440,7 @@ void Client::setInvisibleTo( const QString& user, bool invisible )
 	}
 }
 
-void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::BYTE hashType )
+void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::WORD iconType, Oscar::BYTE hashType )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0010 );
 	if ( !c )
@@ -1450,6 +1450,7 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, Osca
 	connect( bit, SIGNAL( haveIcon( const QString&, QByteArray ) ),
 	         this, SIGNAL( haveIconForContact( const QString&, QByteArray ) ) );
 	bit->requestIconFor( user );
+	bit->setIconType( iconType );
 	bit->setHashType( hashType );
 	bit->setHash( hash );
 	bit->go( Task::AutoDelete );

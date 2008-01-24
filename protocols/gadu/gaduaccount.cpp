@@ -76,7 +76,6 @@ public:
 	KFileDialog*	saveListDialog;
 	KFileDialog*	loadListDialog;
 
-	KActionMenu*	actionMenu_;
 	KAction*	searchAction;
 	KAction*	listputAction;
 	KAction*	listToFileAction;
@@ -259,14 +258,13 @@ GaduAccount::setAway( bool isAway, const QString& awayMessage )
 }
 
 
-KActionMenu*
-GaduAccount::actionMenu()
+void
+GaduAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	kDebug(14100) << "actionMenu() ";
+	kDebug(14100);
 
-	p->actionMenu_ = new KActionMenu( accountId(), this );
-        p->actionMenu_->setIcon( myself()->onlineStatus().iconFor( this ) );
-	p->actionMenu_->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> ",
+	actionMenu->setIcon( myself()->onlineStatus().iconFor( this ) );
+	actionMenu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> ",
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 
 	if ( p->session_->isConnected() ) {
@@ -306,50 +304,54 @@ GaduAccount::actionMenu()
 		i18n("Go O&nline"), this );
         //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOnline()));
-	p->actionMenu_->addAction( action );
+	actionMenu->addAction( action );
 
 	action = new KAction(
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ))),
 		i18n( "Set &Busy" ), this );
         //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoBusy()) );
-	p->actionMenu_->addAction( action );
+	actionMenu->addAction( action );
 
 	action = new KAction(
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ))),
 		i18n( "Set &Invisible" ), this );
         //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoInvisible()) );
-	p->actionMenu_->addAction( action );
+	actionMenu->addAction( action );
 
 	action = new KAction(
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ))),
 		i18n( "Go &Offline" ), this );
         //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOffline()) );
-	p->actionMenu_->addAction( action );
+	actionMenu->addAction( action );
 
 	action = new KAction( KIcon("edit-rename"), i18n( "Set &Description..." ), this );
         //, "actionGaduDescription" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotDescription()) );
-	p->actionMenu_->addAction( action );
+	actionMenu->addAction( action );
 
-	p->actionMenu_->addAction( p->friendsModeAction );
+	actionMenu->addAction( p->friendsModeAction );
 
-	p->actionMenu_->addSeparator();
+	actionMenu->addSeparator();
 
-	p->actionMenu_->addAction( p->searchAction );
+	actionMenu->addAction( p->searchAction );
 
-	p->actionMenu_->addSeparator();
+	actionMenu->addSeparator();
 
-	p->actionMenu_->addAction( p->listputAction );
+	actionMenu->addAction( p->listputAction );
 
-	p->actionMenu_->addSeparator();
+	actionMenu->addSeparator();
 
-	p->actionMenu_->addAction( p->listToFileAction );
-	p->actionMenu_->addAction( p->listFromFileAction );
+	actionMenu->addAction( p->listToFileAction );
+	actionMenu->addAction( p->listFromFileAction );
+}
 
-	return p->actionMenu_;
+bool
+GaduAccount::hasCustomStatusMenu() const
+{
+	return true;
 }
 
 void

@@ -55,7 +55,10 @@ public:
 	~JabberTransport ();
 
 	/** Returns the action menu for this account. */
-	virtual KActionMenu *actionMenu ();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
+
+	/** Returns the action menu for this account. */
+	virtual bool hasCustomStatusMenu() const;
 
 	/** the parent account */
 	JabberAccount *account() const

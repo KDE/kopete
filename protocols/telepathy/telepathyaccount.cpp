@@ -88,9 +88,9 @@ TelepathyAccount::~TelepathyAccount()
 	delete d;
 }
 
-KActionMenu *TelepathyAccount::actionMenu()
+void TelepathyAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *actionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
 	// FIXME: Maybe we should cache the action.
 	KAction *changeAliasAction = new KAction( KIcon("edit-rename"), i18n("&Change Alias..."), 0 );

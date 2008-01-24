@@ -192,6 +192,9 @@ Group * ContactList::findGroup(const QString& displayName, int type)
 {
 	if( type == Group::Temporary )
 		return Group::temporary();
+	
+	if ( displayName == i18n ("Top Level") )
+		return Group::topLevel();
 
 	QListIterator<Group *> it(d->groups);
 	while ( it.hasNext() )

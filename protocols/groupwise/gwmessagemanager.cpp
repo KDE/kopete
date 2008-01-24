@@ -25,6 +25,7 @@
 #include <QPainter>
 
 #include <kactioncollection.h>
+#include <kactionmenu.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>

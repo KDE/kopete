@@ -27,6 +27,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kicon.h>
+#include <kaction.h>
 #include <kactioncollection.h>
 #include "kopetechatsessionmanager.h"
 #include "kopetemessage.h"

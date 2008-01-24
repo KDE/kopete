@@ -34,6 +34,7 @@
 #include <qtimer.h>
 #include <kmenu.h>
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kconfig.h>
@@ -121,10 +122,9 @@ JabberTransport::~JabberTransport ()
 	m_account->removeTransport( myself()->contactId() );
 }
 
-KActionMenu *JabberTransport::actionMenu ()
+void JabberTransport::fillActionMenu( KActionMenu *actionMenu )
 {
-	KIcon icon = KIcon(QIcon(myself()->onlineStatus().iconFor( this ) ) );
-	KActionMenu *menu = new KActionMenu( icon, accountId(), this );
+	actionMenu->setIcon( myself()->onlineStatus().iconFor( this ) );
 
 	QString nick;
 	if ( identity()->hasProperty( Kopete::Global::Properties::self()->nickName().key() ))
@@ -132,21 +132,19 @@ KActionMenu *JabberTransport::actionMenu ()
 	else
 		nick = myself()->nickName();
 
-	menu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
+	actionMenu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
 	nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
 								  );
 	
 	QList<KAction*> *customActions = myself()->customContextMenuActions(  );
 	if( customActions && !customActions->isEmpty() )
 	{
-		menu->addSeparator();
+		actionMenu->addSeparator();
 
 		foreach( KAction *a, *customActions )
-			menu->menu()->addAction(a);
+			actionMenu->menu()->addAction(a);
 	}
 	delete customActions;
-
-	return menu;
 
 /*	KActionMenu *m_actionMenu = Kopete::Account::actionMenu();
 
@@ -167,6 +165,12 @@ KActionMenu *JabberTransport::actionMenu ()
 										 this, SLOT ( slotEditVCard () ), this, "actionEditVCard") );
 
 	return m_actionMenu;*/
+}
+
+
+bool JabberTransport::hasCustomStatusMenu() const
+{
+	return true;
 }
 
 

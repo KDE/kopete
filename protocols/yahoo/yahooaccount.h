@@ -77,7 +77,7 @@ public:
 	 */
 	YahooContact *contact(const QString &id);
 
-	virtual KActionMenu* actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/**
 	 * Sets the yahoo away status

@@ -27,10 +27,8 @@
 namespace Kopete
 {
 class Identity;
+class StatusRootAction;
 }
-
-class KAction;
-class QActionGroup;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -45,8 +43,6 @@ public:
 	 */
 	KopeteIdentityStatusBarIcon( Kopete::Identity *identity, QWidget *parent );
 
-	~KopeteIdentityStatusBarIcon();
-
 signals:
 	void leftClicked( Kopete::Identity *identity, const QPoint &p );
 
@@ -54,18 +50,10 @@ protected:
 	virtual void mousePressEvent( QMouseEvent *me );
 
 private slots:
-	void slotChangeStatus(QAction *);
+	void updateMessage( Kopete::StatusRootAction *statusRootAction );
 
 private:
 	Kopete::Identity *m_identity;
-
-	// some actions
-	KAction *m_actionSetOnline;
-	KAction *m_actionSetAway;
-	KAction *m_actionSetBusy;
-	KAction *m_actionSetInvisible;
-	KAction *m_actionSetOffline;
-	QActionGroup *m_statusGroup;
 };
 
 #endif

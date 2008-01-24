@@ -124,7 +124,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	if ( presence.type() == Oscar::Presence::Online )
 	{
-		removeProperty( mProtocol->awayMessage );
+		removeProperty( mProtocol->statusMessage );
 		m_haveAwayMessage = false;
 	}
 	else

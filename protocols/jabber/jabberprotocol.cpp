@@ -37,7 +37,6 @@
 #include "kopetemetacontact.h"
 #include "kopetechatsession.h"
 #include "kopeteonlinestatusmanager.h"
-#include "kopeteaway.h"
 #include "kopeteglobal.h"
 #include "kopeteprotocol.h"
 #include "kopeteplugin.h"
@@ -52,10 +51,9 @@
 #include "jabbereditaccountwidget.h"
 #include "jabbercapabilitiesmanager.h"
 #include "jabbertransport.h"
-#include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
-#include "dlgjabberregister.h"
+#include "dlgregister.h"
 
 JabberProtocol *JabberProtocol::protocolInstance = 0;
 
@@ -167,7 +165,7 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 		JabberTransport *transport = dynamic_cast < JabberTransport * >(account);
 		if(!transport)
 			return 0L;
-		dlgJabberRegister *registerDialog = new dlgJabberRegister (transport->account(), transport->myself()->contactId());
+		dlgRegister *registerDialog = new dlgRegister (transport->account(), transport->myself()->contactId());
 		registerDialog->show (); 
 		registerDialog->raise ();
 		return 0l; //we make ourself our own dialog, not an editAccountWidget.
