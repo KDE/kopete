@@ -41,6 +41,9 @@
 #ifndef __s64 //required by videodev.h
 #define __s64 signed long long
 #endif // __s64
+#ifndef __s32 //required by videodev.h
+#define __s32 signed long
+#endif // __s32
 
 
 #ifndef pgoff_t

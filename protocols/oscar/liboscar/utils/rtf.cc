@@ -2194,7 +2194,7 @@ const unsigned RED			= 2;
 const unsigned GREEN		= 3;
 const unsigned BLUE			= 4;
 const unsigned CF			= 5;
-const unsigned FS			= 6;
+const unsigned FS_			= 6; // underscored because of conflict with definition on OpenSolaris
 const unsigned HIGHLIGHT	= 7;
 const unsigned PARD			= 8;
 const unsigned PAR			= 9;
@@ -2358,7 +2358,7 @@ QString RTF2HTML::Parse(const char *rtf, const char *_encoding)
                 case CF:
                     cur_level.setFontColor(cmd_value);
                     break;
-                case FS:
+                case FS_:
                     cur_level.setFontSizeHalfPoints(cmd_value);
                     break;
                 case HIGHLIGHT:
