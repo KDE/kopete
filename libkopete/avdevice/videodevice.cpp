@@ -1181,7 +1181,19 @@ int VideoDevice::getImage(QImage *qimage)
 		case PIXELFORMAT_NONE	: break;
 
 // Packed RGB formats
-		case PIXELFORMAT_RGB332	: break;
+		case PIXELFORMAT_RGB332	:
+			{
+				int step=0;
+				for(int loop=0;loop < qimage->numBytes();loop+=4)
+				{
+					bits[loop]   = (m_currentbuffer.data[step]>>5<<5)+(m_currentbuffer.data[step]>>5<<2)+(m_currentbuffer.data[step]>>6);
+					bits[loop+1] = (m_currentbuffer.data[step]>>2<<5)+(m_currentbuffer.data[step]<<3>>5<<2)+(m_currentbuffer.data[step]<<3>>6);
+					bits[loop+2] = (m_currentbuffer.data[step]<<6)+(m_currentbuffer.data[step]<<6>>2)+(m_currentbuffer.data[step]<<6>>4)+(m_currentbuffer.data[step]<<6>>6);
+					bits[loop+3] = 255;
+					step++;
+				}
+			}
+			break;
 		case PIXELFORMAT_RGB444	: break;
 		case PIXELFORMAT_RGB555	: break;
 		case PIXELFORMAT_RGB565	:
