@@ -1226,6 +1226,17 @@ int VideoDevice::getImage(QImage *qimage)
 			}
 			break;
 		case PIXELFORMAT_BGR32	: break;
+			{
+				int step=0;
+				for(int loop=0;loop < qimage->numBytes();loop+=4)
+				{
+					bits[loop]   = m_currentbuffer.data[step+2];
+					bits[loop+1] = m_currentbuffer.data[step+1];
+					bits[loop+2] = m_currentbuffer.data[step];
+					bits[loop+3] = m_currentbuffer.data[step+3];
+					step+=4;
+				}
+			}
 		case PIXELFORMAT_RGB32	: memcpy(bits,&m_currentbuffer.data[0], m_currentbuffer.data.size());
 			break;
 
@@ -1248,7 +1259,18 @@ int VideoDevice::getImage(QImage *qimage)
 		break;
 
 // YUV formats
-		case PIXELFORMAT_GREY	: break;
+		case PIXELFORMAT_GREY	:
+			{
+				int step=0;
+				for(int loop=0;loop < qimage->numBytes();loop+=4)
+				{
+					bits[loop]   = m_currentbuffer.data[step];
+					bits[loop+1] = m_currentbuffer.data[step];
+					bits[loop+2] = m_currentbuffer.data[step];
+					bits[loop+3] = 255;
+					step++;
+				}
+			}
 		case PIXELFORMAT_YUYV:
 		case PIXELFORMAT_UYVY:
 		case PIXELFORMAT_YUV420P:
