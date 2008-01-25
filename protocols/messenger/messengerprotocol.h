@@ -17,6 +17,8 @@
 #ifndef MESSENGERPROTOCOL_H
 #define MESSENGERPROTOCOL_H
 
+#include <QVariant>;
+
 #include <kopeteprotocol.h>
 
 #include <kopete_export.h>

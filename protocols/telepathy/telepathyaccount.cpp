@@ -21,6 +21,7 @@
 
 // KDE includes
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmenu.h>
@@ -104,8 +105,6 @@ void TelepathyAccount::fillActionMenu( KActionMenu *actionMenu )
 	actionMenu->addSeparator();
 	actionMenu->addAction( changeAliasAction );
 	actionMenu->addAction( changeAvatarAction );
-
-	return actionMenu;
 }
 
 TelepathyContact *TelepathyAccount::myself()
