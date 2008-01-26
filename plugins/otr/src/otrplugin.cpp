@@ -301,7 +301,7 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 	QMap<QString, QString> messageCache = OTRPlugin::plugin()->getMessageCache();
 	
 	if( msg.direction() == Kopete::Message::Inbound ){
-		QString body = msg.parsedBody();
+		QString body = msg.plainBody();
 		QString accountId = msg.manager()->account()->accountId();
 		QString contactId = msg.from()->contactId();
 		int ignoremessage = OtrlChatInterface::self()->decryptMessage( &body, accountId, msg.manager()->account()->protocol()->displayName(), contactId, msg.manager() );

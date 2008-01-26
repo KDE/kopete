@@ -8,7 +8,7 @@ add_definitions( ${QT_DEFINITIONS} ${KDE4_DEFINITIONS} )
 
 link_directories( ${KDE4_LIB_DIR} ${CMAKE_CURRENT_BINARY_DIR} )
 
-add_subdirectory( pics )
+add_subdirectory( icons )
 
 include_directories( ${KDE4_INCLUDE_DIR} ${KDE4_INCLUDE_DIR}/kopete ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR} )
 
