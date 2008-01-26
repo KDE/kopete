@@ -189,7 +189,7 @@ static void new_fingerprint(void *opdata, OtrlUserState us, const char *accountn
 //	kdDebug() << "Received a new Fingerprint" << endl;
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::Message msg( session->members().first(), session->account()->myself() );
-	msg.setPlainBody( i18n("<b>Received a new fingerprint from <a>%1</a>. You should authenticate this contact.</b>").arg(session->members().first()->contactId()) );
+	msg.setHtmlBody( i18n("<b>Received a new fingerprint from <a>%1</a>. You should authenticate this contact.</b>").arg(session->members().first()->contactId()) );
 	msg.setDirection( Kopete::Message::Internal );
 	session->appendMessage( msg );
 }
@@ -343,7 +343,7 @@ int OtrlChatInterface::decryptMessage( QString *msg, QString accountId,
 			if (nextMsg != OTRL_SMP_EXPECT1){
 				abortSMP( context, chatSession );
 			} else {
-				SMPPopup *popup = new SMPPopup( chatSession->view()->mainWidget(), context, chatSession, true );
+				SMPPopup *popup = new SMPPopup( chatSession->view()->mainWidget(), context, chatSession, false );
 				popup->show();
 			}
 		}
@@ -695,7 +695,7 @@ void OtrlChatInterface::abortSMP( ConnContext *context, Kopete::ChatSession *ses
 		emitGoneSecure( session, 1 );
 
 		Kopete::Message msg( session->members().first(), session->account()->myself() );
-		msg.setPlainBody( i18n("<b>Authentication aborded. The conversation is now insecure!</b>") );
+		msg.setHtmlBody( i18n("<b>Authentication aborded. The conversation is now insecure!</b>") );
 		msg.setDirection( Kopete::Message::Internal );
 		session->appendMessage( msg );
 	}
@@ -712,7 +712,7 @@ void OtrlChatInterface::respondSMP( ConnContext *context, Kopete::ChatSession *s
 	}
 
 	Kopete::Message msg( session->members().first(), session->account()->myself() );
-	msg.setPlainBody( i18n("b>Authenticating contact...</b>") );
+	msg.setHtmlBody( i18n("<b>Authenticating contact...</b>") );
 	msg.setDirection( Kopete::Message::Internal );
 
 	session->appendMessage( msg );
