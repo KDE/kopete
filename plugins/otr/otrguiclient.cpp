@@ -75,11 +75,12 @@ OtrGUIClient::OtrGUIClient( Kopete::ChatSession *parent )
 	actionCollection()->addAction( "disableOtr", actionDisableOtr );
 	connect(actionDisableOtr, SIGNAL(triggered(bool)), this, SLOT(slotDisableOtr()));
 
-	actionVerifyFingerprint = new KAction( KIcon( "system-run" ),  i18n("Verify fingerprint"), this);
+	actionVerifyFingerprint = new KAction( KIcon( "document-sign" ),  i18n("Authenticate Contact"), this);
 	actionCollection()->addAction( "verifyFingerprint", actionVerifyFingerprint );
 	connect(actionVerifyFingerprint, SIGNAL(triggered(bool)), this,SLOT(slotVerifyFingerprint()));
 
 	 // jpetso says: please request an icon named "document-verify" or something like that, the "sign" icon is not really appropriate for this purpose imho
+	// mzanetti says: the "document-sign" icon is the same as kgpg uses to sign fingerprints. Anyways I will discuss that on #kopete. Re-using "document-sign for now.
 
 	otrActionMenu->addAction(actionEnableOtr);
 	otrActionMenu->addAction(actionDisableOtr);
@@ -121,19 +122,19 @@ kdDebug() << "OTRGUIClient switched security state to: " << state << endl;
 				actionVerifyFingerprint->setEnabled(false);
 				break;
 			case 1:
-				otrActionMenu->setIcon(KIcon("halfencrypted"));
+				otrActionMenu->setIcon(KIcon("document-encrypt-unverified"));
 				actionEnableOtr->setText( i18n("Refresh OTR session") );
 				actionDisableOtr->setEnabled(true);
 				actionVerifyFingerprint->setEnabled(true);
 				break;
 			case 2:
-				otrActionMenu->setIcon(KIcon("document-encrypt"));
+				otrActionMenu->setIcon(KIcon("document-encrypt-verified"));
 				actionEnableOtr->setText( i18n("Refresh OTR session") );
 				actionDisableOtr->setEnabled(true);
 				actionVerifyFingerprint->setEnabled(true);
 				break;
 			case 3:
-				otrActionMenu->setIcon(KIcon("otr_finished"));
+				otrActionMenu->setIcon(KIcon("document-encrypt-finished"));
 				actionEnableOtr->setText( i18n("Start OTR session") );
 				actionDisableOtr->setEnabled(true);
 				actionVerifyFingerprint->setEnabled(false);

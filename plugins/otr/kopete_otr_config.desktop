@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-Icon=kopete_otr
+Icon=mail-encrypt
 ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_otr

@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
-Icon=kopete_otr
+Icon=mail-encrypt
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_otr
 X-KDE-PluginInfo-Author=Michael Zanetti
