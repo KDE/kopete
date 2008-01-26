@@ -82,7 +82,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = /home/dreadhead/Develop/4kopete_otr/kopete_otr/trunk/kopete_otr/src
+INPUT                  = /home/dreadhead/Develop/kde4/kopete/plugins/otr/src
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \

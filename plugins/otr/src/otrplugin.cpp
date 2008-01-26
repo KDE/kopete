@@ -165,7 +165,6 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	otrPolicyMenu->setEnabled( false );
 	connect( otrPolicyMenu, SIGNAL( triggered( int ) ), this, SLOT( slotSetPolicy() ) );
 
-#warning PORT ME!!! Add context menu on Metacontacts again...
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
 
 
@@ -263,11 +262,7 @@ void  OTRPlugin::slotEnableOtr( Kopete::ChatSession *session, bool enable ){
 }
 
 void OTRPlugin::slotVerifyFingerprint( Kopete::ChatSession *session ){
-	if( otrlChatInterface->verifyQuestion( session, OtrlChatInterface::self()->findActiveFingerprint( session ) ) ){
-		otrlChatInterface->verifyFingerprint( session, true );
-	} else {
-		otrlChatInterface->verifyFingerprint( session, false );
-	}
+	otrlChatInterface->verifyFingerprint( session );
 }
 
 void OTRPlugin::slotSettingsChanged(){

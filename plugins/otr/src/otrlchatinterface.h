@@ -34,6 +34,7 @@
 #include <kopetechatsession.h>
 #include <kopeteplugin.h>
 
+#include "smppopup.h"
 //#include "otrplugin.h"
 
 extern "C" {
@@ -64,11 +65,13 @@ public:
 	bool isVerified( Kopete::ChatSession *session );
 	void updateKeyfile( Kopete::Account *account );
 	void checkFilePermissions( QString file );
-	bool verifyQuestion( Kopete::ChatSession *session, QString fingerprint );
 	QString findActiveFingerprint( Kopete::ChatSession *session );
-	void verifyFingerprint( Kopete::ChatSession *session, bool trust );
+	void verifyFingerprint( Kopete::ChatSession *session );
 	void setPlugin(Kopete::Plugin *plugin);
 	void emitGoneSecure(Kopete::ChatSession *sesseion, int state);
+	void abortSMP( ConnContext *context, Kopete::ChatSession *session );
+	void respondSMP( ConnContext *context, Kopete::ChatSession *session, QString secret, bool initiate );
+	void setTrust( Kopete::ChatSession *session, bool trust );
 
 private:
 	OtrlChatInterface();
