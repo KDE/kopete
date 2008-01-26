@@ -124,7 +124,11 @@ QByteArray UserDetails::buddyIconHash() const
 
 QString UserDetails::clientName() const
 {
-	return (m_clientName + m_clientVersion);
+	if ( !m_clientVersion.isEmpty() )
+		return i18n("Translators: client-name client-version",
+	                "%1 %2").arg(m_clientName, m_clientVersion);
+	else
+		return m_clientName;
 }
 
 void UserDetails::fill( Buffer * buffer )
@@ -196,10 +200,10 @@ void UserDetails::fill( Buffer * buffer )
 				m_dcInsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
 				m_dcPort = b.getDWord();
 #ifdef OSCAR_USERINFO_DEBUG
-    			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Internal IP address is " << m_dcInsideIp.toString() << endl;
-    			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Port number is " << m_dcPort << endl;
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Internal IP address is " << m_dcInsideIp.toString() << endl;
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Port number is " << m_dcPort << endl;
 #endif
-    			m_dcType = b.getByte();
+				m_dcType = b.getByte();
 				m_dcProtoVersion = b.getWord();
 				m_dcAuthCookie = b.getDWord();
 				m_dcWebFrontPort = b.getDWord();
@@ -216,6 +220,9 @@ void UserDetails::fill( Buffer * buffer )
 			case 0x000D: //capability info
 				m_capabilities = Oscar::parseCapabilities( b, m_clientVersion );
 				m_capabilitiesSpecified = true;
+#ifdef OSCAR_USERINFO_DEBUG
+				kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got capability info" << endl;
+#endif
 				break;
 			case 0x0010:
 			case 0x000F: //online time
@@ -306,7 +313,7 @@ void UserDetails::detectClient()
 	 * Thanks a lot for all the tests you guys must have made
 	 * without sim-icq I would have only checked for the capabilities
 	 */
-	 /*
+	 
 	bool clientMatched = false;
 	if (m_capabilities != 0)
 	{
@@ -345,9 +352,9 @@ void UserDetails::detectClient()
 				m_clientName=i18n("Licq");
 
 			if (ver % 10)
-				m_clientVersion.sprintf("%d%d%u", ver/1000, (ver/10)%100, ver%10);
+				m_clientVersion.sprintf("%d.%d.%u", ver/1000, (ver/10)%100, ver%10);
 			else
-				m_clientVersion.sprintf("%d%u", ver/1000, (ver/10)%100);
+				m_clientVersion.sprintf("%d.%u", ver/1000, (ver/10)%100);
 			return;
 		}
 		else // some client we could not detect using capabilities
@@ -425,6 +432,9 @@ void UserDetails::detectClient()
 			case 9:
 				m_clientName=QString::fromLatin1("ICQ Lite");
 				break;
+			case 8:
+				m_clientName=QString::fromLatin1("Miranda");
+				break;
 			default:
 				m_clientName=QString::fromLatin1("ICQ2go");
 			}
@@ -464,7 +474,7 @@ void UserDetails::detectClient()
 
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "detected client as: " << m_clientName
 		<< " " << m_clientVersion << endl;
-	*/
+	
 }
 
 bool UserDetails::hasCap( int capNumber ) const

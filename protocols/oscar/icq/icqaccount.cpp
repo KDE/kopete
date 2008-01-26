@@ -172,8 +172,6 @@ void ICQAccount::connectWithPassword( const QString &password )
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
 		oscarSettings->setWebAware( configGroup()->readBoolEntry( "WebAware", false ) );
 		oscarSettings->setHideIP( configGroup()->readBoolEntry( "HideIP", true ) );
-		oscarSettings->setRequireAuth( configGroup()->readBoolEntry( "RequireAuth", false ) );
-		oscarSettings->setRespectRequireAuth( configGroup()->readBoolEntry( "RespectRequireAuth", true ) );
 		//FIXME: also needed for the other call to setStatus (in setPresenceTarget)
 		DWORD status = pres.toOscarStatus();
 

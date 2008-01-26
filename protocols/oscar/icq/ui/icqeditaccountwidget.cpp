@@ -78,9 +78,6 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
         bool configValue = mAccount->configGroup()->readBoolEntry( "RequireAuth", false );
 		mAccountSettings->chkRequireAuth->setChecked( configValue );
 
-        configValue = mAccount->configGroup()->readBoolEntry( "RespectRequireAuth", true );
-		mAccountSettings->chkRespectRequireAuth->setChecked( configValue );
-
         configValue = mAccount->configGroup()->readBoolEntry( "HideIP", true );
 		mAccountSettings->chkHideIP->setChecked( configValue );
 
@@ -129,9 +126,6 @@ Kopete::Account *ICQEditAccountWidget::apply()
 
     bool configValue = mAccountSettings->chkRequireAuth->isChecked();
 	mAccount->configGroup()->writeEntry( "RequireAuth", configValue );
-
-    configValue = mAccountSettings->chkRespectRequireAuth->isChecked();
-	mAccount->configGroup()->writeEntry( "RespectRequireAuth", configValue );
 
     configValue = mAccountSettings->chkHideIP->isChecked();
 	mAccount->configGroup()->writeEntry( "HideIP", configValue );

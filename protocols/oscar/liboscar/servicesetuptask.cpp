@@ -21,7 +21,6 @@
 #include "blmlimitstask.h"
 #include "connection.h"
 #include "clientreadytask.h"
-#include "localcontactlisttask.h"
 #include "icbmparamstask.h"
 #include "locationrightstask.h"
 #include "ownuserinfotask.h"
@@ -110,8 +109,6 @@ void ServiceSetupTask::childTaskFinished()
 		crt->setFamilies( familyList );
 		sitt->go( true );
 		crt->go( true ); //autodelete
-		LocalContactListTask* lclt = new LocalContactListTask( client()->rootTask() );
-		lclt->go( true );
 	}
 	
 	if ( m_finishedTaskCount == 8 )
