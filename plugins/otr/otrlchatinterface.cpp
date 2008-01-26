@@ -58,7 +58,7 @@
 #include "otrlchatinterface.h"
 #include "otrguiclient.h"
 #include "otrplugin.h"
-#include "ui_privkeypopupui.h"
+#include "privkeypopup.h"
 
 OtrlChatInterface *OtrlChatInterface::mSelf = 0;
 static OtrlUserState userstate;
@@ -102,12 +102,12 @@ static OtrlPolicy policy(void *opdata, ConnContext *context){
 static void create_privkey(void *opdata, const char *accountname, const char *protocol){
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 
-	QWidget *popupwidget = new QWidget(session->view()->mainWidget(), Qt::Dialog);
-	Ui::PrivKeyPopupUI *popup = new Ui::PrivKeyPopupUI( );
-	popup->setupUi( popupwidget );
-	popupwidget->show();
-	popupwidget->activateWindow();
-	popupwidget->raise();
+	if( !session->view() ){
+		session->raiseView();
+	}
+	PrivKeyPopup *popup = new PrivKeyPopup( session->view()->mainWidget() );
+	popup->show();
+	popup->setCloseLock( true );
 
 
 	KeyGenThread *keyGenThread = new KeyGenThread ( accountname, protocol );
@@ -116,8 +116,8 @@ static void create_privkey(void *opdata, const char *accountname, const char *pr
 		qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers, 100);
 	}
 
-//	popupwidget->setCloseLock( false );
-	popupwidget->close();
+	popup->setCloseLock( false );
+	popup->close();
 }
 
 static int is_logged_in(void *opdata, const char *accountname, const char *protocol, const char *recipient){

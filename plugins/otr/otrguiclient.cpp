@@ -67,15 +67,15 @@ OtrGUIClient::OtrGUIClient( Kopete::ChatSession *parent )
 	actionCollection()->addAction("otr_settings", otrActionMenu);
 
 
-	actionEnableOtr = new KAction( KIcon("document-encrypt"), i18n( "Start OTR session" ), this);
+	actionEnableOtr = new KAction( KIcon("object-locked"), i18n( "Start OTR session" ), this);
 	actionCollection()->addAction( "enableOtr", actionEnableOtr );
 	connect(actionEnableOtr, SIGNAL(triggered(bool)), this, SLOT(slotEnableOtr()));
 
-	actionDisableOtr = new KAction( KIcon("document-decrypt"), i18n( "End OTR session" ), this);
+	actionDisableOtr = new KAction( KIcon("object-unlocked"), i18n( "End OTR session" ), this);
 	actionCollection()->addAction( "disableOtr", actionDisableOtr );
 	connect(actionDisableOtr, SIGNAL(triggered(bool)), this, SLOT(slotDisableOtr()));
 
-	actionVerifyFingerprint = new KAction( KIcon( "document-sign" ),  i18n("Authenticate Contact"), this);
+	actionVerifyFingerprint = new KAction( KIcon( "application-pgp-signature" ),  i18n("Authenticate Contact"), this);
 	actionCollection()->addAction( "verifyFingerprint", actionVerifyFingerprint );
 	connect(actionVerifyFingerprint, SIGNAL(triggered(bool)), this,SLOT(slotVerifyFingerprint()));
 
@@ -116,25 +116,25 @@ kdDebug() << "OTRGUIClient switched security state to: " << state << endl;
 	if( session == m_manager ){
 		switch(state){
 			case 0:
-				otrActionMenu->setIcon(KIcon("document-decrypt"));
+				otrActionMenu->setIcon(KIcon("object-unlocked"));
 				actionEnableOtr->setText( i18n("Start OTR session") );
 				actionDisableOtr->setEnabled(false);
 				actionVerifyFingerprint->setEnabled(false);
 				break;
 			case 1:
-				otrActionMenu->setIcon(KIcon("document-encrypt-unverified"));
+				otrActionMenu->setIcon(KIcon("object-locked-unverified"));
 				actionEnableOtr->setText( i18n("Refresh OTR session") );
 				actionDisableOtr->setEnabled(true);
 				actionVerifyFingerprint->setEnabled(true);
 				break;
 			case 2:
-				otrActionMenu->setIcon(KIcon("document-encrypt-verified"));
+				otrActionMenu->setIcon(KIcon("object-locked-verified"));
 				actionEnableOtr->setText( i18n("Refresh OTR session") );
 				actionDisableOtr->setEnabled(true);
 				actionVerifyFingerprint->setEnabled(true);
 				break;
 			case 3:
-				otrActionMenu->setIcon(KIcon("document-encrypt-finished"));
+				otrActionMenu->setIcon(KIcon("object-locked-finished"));
 				actionEnableOtr->setText( i18n("Start OTR session") );
 				actionDisableOtr->setEnabled(true);
 				actionVerifyFingerprint->setEnabled(false);

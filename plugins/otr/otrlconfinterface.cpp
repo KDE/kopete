@@ -43,7 +43,7 @@
 #include "otrlconfinterface.h"
 #include "otrlchatinterface.h"
 #include "otrplugin.h"
-#include "ui_privkeypopupui.h"
+#include "privkeypopup.h"
 
 
 /*********************** Konstruktor/Destruktor **********************/
@@ -86,14 +86,9 @@ bool OtrlConfInterface::hasPrivFingerprint( QString accountId, QString protocol 
 
 
 void OtrlConfInterface::generateNewPrivKey( QString accountId, QString protocol ){
-#warning Avoid closing the window while generating private key!
-	QWidget *popupwidget = new QWidget(preferencesDialog, Qt::Dialog);
-	Ui::PrivKeyPopupUI *popup = new Ui::PrivKeyPopupUI( );
-	popup->setupUi( popupwidget );
-//	popupwidget->setCloseLock( true );
-	popupwidget->show();
-	popupwidget->activateWindow();
-	popupwidget->raise();
+	PrivKeyPopup *popup = new PrivKeyPopup( preferencesDialog );
+	popup->show();
+	popup->setCloseLock( true );
 
 	KeyGenThread *keyGenThread = new KeyGenThread ( accountId, protocol );
 	keyGenThread->start();
@@ -101,8 +96,8 @@ void OtrlConfInterface::generateNewPrivKey( QString accountId, QString protocol 
 		qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers, 100);
 	}
 
-//	popupwidget->setCloseLock( false );
-	popupwidget->close();
+	popup->setCloseLock( false );
+	popup->close();
 }
 
 QList<QStringList> OtrlConfInterface::readAllFingerprints(){

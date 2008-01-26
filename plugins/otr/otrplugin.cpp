@@ -37,6 +37,7 @@
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kselectaction.h>
+#include <kaction.h>
 #include <kactioncollection.h>
 
 #include <kopetemetacontact.h>
@@ -61,12 +62,6 @@
   */
 
 
-
-//typedef KGenericFactory<OTRPlugin> OTRPluginFactory;
-#warning Port me! Add AboutData!
-//static const KAboutData aboutdata("kopete_otr", I18N_NOOP("OTR") , "0.6" );
-//K_EXPORT_COMPONENT_FACTORY( kopete_otr, OTRPluginFactory( &aboutdata )  )
-
 K_PLUGIN_FACTORY ( OTRPluginFactory, registerPlugin<OTRPlugin>(); )
 K_EXPORT_PLUGIN ( OTRPluginFactory ( "kopete_otr" ) )
 
@@ -84,8 +79,6 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToSend( Kopete::Message & ) ),
 		SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
-//	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ),
-//		this, SLOT( slotIncomingMessage( Kopete::Message & ) ) );
 
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * ) ),
 			 this, SLOT( slotNewChatSessionWindow( Kopete::ChatSession * ) ) );
@@ -155,22 +148,25 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	slotSettingsChanged();
 
 	//adding menu to contaclists menubar and contacts popup menu
-	QStringList policies;
-	policies << i18n("&Default") << i18n("Al&ways") << i18n("&Opportunistic") << i18n("&Manual") << i18n("Ne&ver");
-	otrPolicyMenu = new KSelectAction( KIcon("document-encrypt"), i18n( "&OTR Policy" ), this );
+	otrPolicyMenu = new KSelectAction( KIcon("object-locked"), i18n( "&OTR Policy" ), this );
 	actionCollection()->addAction( "otr_policy", otrPolicyMenu );
 
-	otrPolicyMenu->setItems( policies );
-//	otrPolicyMenu->popupMenu()->insertSeparator( 1 );
-	otrPolicyMenu->setEnabled( false );
-	connect( otrPolicyMenu, SIGNAL( triggered( int ) ), this, SLOT( slotSetPolicy() ) );
+	KAction *separatorAction = new KAction( otrPolicyMenu );
+	separatorAction->setSeparator( true );
 
+	otrPolicyMenu->addAction( i18n("&Default") );
+	otrPolicyMenu->addAction( separatorAction );
+	otrPolicyMenu->addAction( i18n("Al&ways") );
+	otrPolicyMenu->addAction( i18n("&Opportunistic") );
+	otrPolicyMenu->addAction( i18n("&Manual") );
+	otrPolicyMenu->addAction( i18n("Ne&ver") );
+
+	otrPolicyMenu->setEnabled( false );
+
+	connect( otrPolicyMenu, SIGNAL( triggered( int ) ), this, SLOT( slotSetPolicy() ) );
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
 
-
 	setXMLFile( "otrui.rc" );
-
-
 
 	//Add GUI action to all already existing kmm 
 	// (if the plugin is launched when kopete already runing)

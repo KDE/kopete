@@ -45,6 +45,9 @@ SMPPopup::SMPPopup( QWidget *parent, ConnContext *context, Kopete::ChatSession *
 
 	ui.lMessage->setText( i18n( "Please enter the secret passphrase to authenticate %1:" ).arg( OtrlChatInterface::self()->formatContact( session->members().first()->contactId() ) ) );
 
+	KIcon *icon = new KIcon( "application-pgp-signature" );
+	ui.lIcon->setPixmap( icon->pixmap( 48, 48 ) );
+
 	connect( ui.pbOk, SIGNAL( clicked(bool) ), this, SLOT( respondSMP() ) );
 	connect( ui.pbCancel, SIGNAL( clicked(bool) ), this, SLOT( cancelSMP() ) );
 	connect( ui.pbHelp, SIGNAL( clicked(bool) ), this, SLOT( openHelp() ) );

@@ -60,6 +60,13 @@
      </property>
     </widget>
    </item>
+   <item rowspan="2" row="0" column="0" >
+    <widget class="QLabel" name="lIcon" >
+     <property name="text" >
+      <string/>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>

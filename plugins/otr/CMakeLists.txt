@@ -15,12 +15,11 @@ include_directories( ${KDE4_INCLUDE_DIR} ${KDE4_INCLUDE_DIR}/kopete ${QT_INCLUDE
 
 ########### next target ###############
 
-set(kotr_LIB_SRCS otrlchatinterface.cpp otrlconfinterface.cpp smppopup.cpp verifydialog.cpp 
-)
+set(kotr_LIB_SRCS otrlchatinterface.cpp otrlconfinterface.cpp smppopup.cpp verifydialog.cpp privkeypopup.cpp )
 
 kde4_add_library(kotr SHARED ${kotr_LIB_SRCS} )
 
-kde4_add_ui_files(kotr_LIB_SRCS privkeypopupui.ui smppopup.ui verifydialog.ui )
+kde4_add_ui_files(kotr_LIB_SRCS privkeypopup.ui smppopup.ui verifydialog.ui )
 
 target_link_libraries(kotr kopete kdeui ${QT_QT3SUPPORT_LIBRARY} Qt3Support ${KDE4_KDECORE_LIBS} otr )
 
