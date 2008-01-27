@@ -147,11 +147,11 @@ bool ContactListModel::hasChildren( const QModelIndex& parent ) const
 
 QModelIndex ContactListModel::index( int row, int column, const QModelIndex & parent ) const
 {
-	if ( row<0 || row>=childCount( parent ) )
+	if ( row < 0 || row >= childCount( parent ) )
 	{
 		return QModelIndex();
 	}
-	
+
 	Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( parent.internalPointer() );
 	Kopete::Group *g = dynamic_cast<Kopete::Group*>(cle);
 	
