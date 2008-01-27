@@ -32,7 +32,7 @@
 #include "exportkeys.h"
 
 #include <kaction.h>
-#include <klocale.h>
+#include <klocalizedstring.h>
 #include <kaboutdata.h>
 #include <kicon.h>
 #include <kiconloader.h>
@@ -149,7 +149,7 @@ void CryptographyGUIClient::slotEncryptToggled()
 					KABC::Addressee tempAddressee = Kopete::KABCPersistence::self()->
 					                                addressBook()->findByUid ( mc->metaContactId() );
 					mc->setPluginData ( CryptographyPlugin::plugin(), "gpgKey",
-					                    CryptographyPlugin::KabcKeySelector ( mc->displayName(), tempAddressee.assembledName(), keys, w ) );
+					                    CryptographyPlugin::kabcKeySelector ( mc->displayName(), tempAddressee.assembledName(), keys, w ) );
 				}
 			}
 			if ( mc->pluginData ( CryptographyPlugin::plugin(), "gpgKey" ).isEmpty() )

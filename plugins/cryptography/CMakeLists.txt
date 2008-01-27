@@ -4,15 +4,29 @@ find_package(KDE4 REQUIRED)
 include (KDE4Defaults)
 include (MacroLibrary)
 include(MacroOptionalAddSubdirectory)
+include (MacroEnsureVersion)
 find_package(Kopete REQUIRED)
 find_package(Kdepim REQUIRED)
 find_package(KdepimLibs REQUIRED)
 find_package(QGpgme REQUIRED)
 
+
+find_program( _GPGMECONFIG_EXECUTABLE NAMES gpgme-config )
+if ( _GPGMECONFIG_EXECUTABLE )
+  message( STATUS "Found gpgme-config at ${_GPGMECONFIG_EXECUTABLE}" )
+  exec_program( ${_GPGMECONFIG_EXECUTABLE} ARGS --version OUTPUT_VARIABLE GPGME_VERSION )
+  set( _GPGME_MIN_VERSION "1.1.4" )
+  macro_ensure_version( ${_GPGME_MIN_VERSION} ${GPGME_VERSION} _GPGME_INSTALLED_VERSION_OK )
+  if ( NOT _GPGME_INSTALLED_VERSION_OK )
+    message( FATAL_ERROR "The installed version of gpgme is too old: ${GPGME_VERSION} (required: >= ${_GPGME_MIN_VERSION}). Install a newer gpgme, then go back and reconfigure kdepimlibs" )
+  endif( NOT _GPGME_INSTALLED_VERSION_OK )
+elseif (_GPGMECONFIG_EXECUTABLE)
+  message ( FATAL_ERROR "Could not find gpgme-config executable" )
+endif( _GPGMECONFIG_EXECUTABLE )
+
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 
 include_directories (${CMAKE_SOURCE_DIR} 
-#${CMAKE_BINARY_DIR}
 ${KDE4_INCLUDES} )
 
 add_subdirectory ( icons )

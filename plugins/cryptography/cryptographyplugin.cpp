@@ -163,11 +163,9 @@ void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionR
 	if ( !body.isEmpty() )
 	{
 		// if was signed *and* encrypted, this will be true
-		if ( verificationResult.signatures().size() ) {
-			if ( decryptionResult.numRecipients() >= 1 )
-				finalizeMessage ( msg, body, verificationResult, true/*encrytped*/ );
+		if ( verificationResult.numSignatures() && decryptionResult.numRecipients() ) {
+			finalizeMessage ( msg, body, verificationResult, true/*encrytped*/ );
 		}
-
 		// was not signed *and* encrypted, may be one or the other. launch a job to see about both possibilities
 		else {
 			const Kleo::CryptoBackendFactory *cpf = Kleo::CryptoBackendFactory::instance();
@@ -188,7 +186,7 @@ void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionR
 	}
 }
 
-// if was only encrypted, this will be called
+// if message was only encrypted, this will be called
 void CryptographyPlugin::slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult & decryptionResult, const QByteArray &plainText )
 {
 	Kopete::Message msg = mCurrentJobs.take ( static_cast<Kleo::Job*> ( sender() ) );
@@ -197,20 +195,22 @@ void CryptographyPlugin::slotIncomingEncryptedMessageContinued ( const GpgME::De
 
 	if ( !body.isEmpty() )
 	{
-		if ( decryptionResult.numRecipients() >= 1 )
+		if ( decryptionResult.numRecipients() ) {
 			finalizeMessage ( msg, body, GpgME::VerificationResult(), true/*encrypted*/ );
+		}
 	}
 }
 
-// if was only signed, this will be called
+// if message was only signed, this will be called
 void CryptographyPlugin::slotIncomingSignedMessageContinued ( const GpgME::VerificationResult &verificationResult, const QByteArray &plainText )
 {
 	Kopete::Message msg = mCurrentJobs.take ( static_cast<Kleo::Job*> ( sender() ) );
 
 	QString body = plainText;
 
-	if ( ( !body.isEmpty() ) && ( verificationResult.signatures().size() ) )
+	if ( ( !body.isEmpty() ) && ( verificationResult.numSignatures() ) ) {
 		finalizeMessage ( msg, body, verificationResult, false/*encrypted*/ );
+	}
 }
 
 // apply signature icons and put message in chat window
@@ -224,35 +224,37 @@ void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intend
 
 	// apply crypto state icons
 	// use lowest common denominator; entire message is considered invalid if one signature is
-	GpgME::Signature::Validity validity = (GpgME::Signature::Validity) 0;
+	GpgME::Signature::Validity validity = ( GpgME::Signature::Validity ) GpgME::Signature::Unknown;
 	bool firstTime = true;
 	std::vector<GpgME::Signature> signatures = verificationResult.signatures();
 	for ( int i = 0 ; i < verificationResult.signatures().size() ; i++ )
 	{
 		kDebug ( 14303 ) << "signature" << i << "validity is" << signatures[i].validityAsString() << "from" << signatures[i].fingerprint();
-		if ( validity > signatures[i].validity() || firstTime){
+		if ( validity > signatures[i].validity() || firstTime ) {
 			validity = signatures[i].validity();
 			firstTime = false;
 		}
 	}
-	
-	if ( validity == GpgME::Signature::Ultimate || validity == GpgME::Signature::Full )
-	{
-		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-high", KIconLoader::Small ) + "\">&nbsp;" );
-		msg.addClass ( "cryptography:signedvalid" );
-		kDebug ( 14303 ) << "message has fully valid signatures";
+
+	if ( verificationResult.numSignatures() ) {
+		if ( validity == GpgME::Signature::Ultimate || validity == GpgME::Signature::Full )
+		{
+			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-high", KIconLoader::Small ) + "\">&nbsp;" );
+			msg.addClass ( "cryptography:signedvalid" );
+			kDebug ( 14303 ) << "message has fully valid signatures";
+		}
+		else if ( validity == GpgME::Signature::Marginal ) {
+			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-medium", KIconLoader::Small ) + "\">&nbsp;" );
+			msg.addClass ( "cryptography:signedmarginal" );
+			kDebug ( 14303 ) << "message has marginally signatures";
+		}
+		else  {
+			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-low", KIconLoader::Small ) + "\">&nbsp;" );
+			msg.addClass ( "crytography:signedinvalid" );
+			kDebug ( 14303 ) << "message has unverified signatures";
+		}
 	}
-	else if ( validity == GpgME::Signature::Marginal ) {
-		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-medium", KIconLoader::Small ) + "\">&nbsp;" );
-		msg.addClass ( "cryptography:signedmarginal" );
-		kDebug ( 14303 ) << "message has marginally signatures";
-	}
-	else  {
-		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-low", KIconLoader::Small ) + "\">&nbsp;" );
-		msg.addClass ( "crytography:signedinvalid" );
-		kDebug ( 14303 ) << "message has unverified signatures";
-	}
-	
+
 	if ( encrypted ) {
 		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "object-locked", KIconLoader::Small ) + "\">&nbsp;" );
 		msg.addClass ( "cryptography:encrypted" );
@@ -337,7 +339,7 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 // Contruct dialog to show/edit metacontact's public key.
 void CryptographyPlugin::slotSelectContactKey()
 {
-	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
+	Kopete::MetaContact *m = Kopete::ContactList::self()->selectedMetaContacts().first();
 	if ( !m )
 		return;
 	// key we already have
@@ -396,7 +398,7 @@ QStringList CryptographyPlugin::getKabcKeys ( QString uid )
 }
 
 // show dialog to allow user to check which key they want
-QString CryptographyPlugin::KabcKeySelector ( QString displayName, QString addresseeName, QStringList keys, QWidget *parent )
+QString CryptographyPlugin::kabcKeySelector ( QString displayName, QString addresseeName, QStringList keys, QWidget *parent )
 {
 	// just a Yes/No about whether to accept the key
 	if ( keys.count() == 1 ) {

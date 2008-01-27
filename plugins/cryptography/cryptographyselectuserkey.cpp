@@ -17,7 +17,7 @@
 */
 
 #include <kiconloader.h>
-#include <klocale.h>
+#include <klocalizedstring.h>
 #include <klineedit.h>
 #include <qlabel.h>
 #include <qboxlayout.h>
@@ -64,7 +64,7 @@ CryptographySelectUserKey::CryptographySelectUserKey ( const QString& key ,Kopet
 		// find keys in address book and possibly use them (this same code is in cryptographyguiclient.cpp)
 		QStringList keys;
 		keys = CryptographyPlugin::getKabcKeys ( mc->metaContactId() );
-		m_KeyEdit->setFingerprint ( CryptographyPlugin::KabcKeySelector (
+		m_KeyEdit->setFingerprint ( CryptographyPlugin::kabcKeySelector (
 				mc->displayName(),Kopete::KABCPersistence::self()->addressBook()->findByUid (
 				mc->metaContactId()).assembledName(), keys, this ) );
 	}

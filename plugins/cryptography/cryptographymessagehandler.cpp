@@ -78,11 +78,11 @@ void CryptographyMessageHandler::handleMessage( MessageEvent *e )
 	emit handle( e );
 	if( event )
 	{
-		kDebug(14313) << "MessageEvent still there!";
+		kDebug(14303) << "MessageEvent still there!";
 		MessageHandler::handleMessage( event );
 	}
 	else
-		kDebug(14313) << "MessageEvent destroyed!";
+		kDebug(14303) << "MessageEvent destroyed!";
 }
 
 #include "cryptographymessagehandler.moc"

@@ -62,7 +62,7 @@ class CryptographyMessageHandlerFactory;
   * Incoming messages go through slotIncomingMessage(). This starts
   * a crypto job to deal with the message, remembers which job goes with
   * which message (using mCurrentJobs), and then discards it.
-  * When the job is done, it itself calls slotIncomingMessageContinued().
+  * When the job is done, it activates slotIncomingMessageContinued().
   * Since slotIncomingMessageContinued was called to decrypt and verify the PGP block.
   * it will only give back good data if the block was actually encrypted
   * and signed. If the data is good, it will lookup the message that it was processing,
@@ -70,7 +70,7 @@ class CryptographyMessageHandlerFactory;
   * returned data is not good, its plaintext result will be right, but the crypto
   * meta-data will be invalid. So, if slotIncomingMessageContinued sees an
   * empty list of signers, it will assume that the PGP block was not encrypted
-  * *and* signed, but may be one or the other. To check for each of those 
+  * *and* signed, but may be one or the other. To check for each of those
   * possibilies,slotIncomingMessageContinued then launches two new jobs,
   * one to check if the message was only signed, and the other to check if
   * the message was only encrypted. If either of these find their case to be true
@@ -83,36 +83,48 @@ class CryptographyMessageHandlerFactory;
 
 class CryptographyPlugin : public Kopete::Plugin
 {
-	Q_OBJECT
+		Q_OBJECT
 
-public:
-	static CryptographyPlugin  *plugin();
-	
-	static QStringList supportedProtocols() { return QStringList() << "MSNProtocol" << "MessengerProtocol" << "JabberProtocol" << "YahooProtocol"; }
-	static QStringList getKabcKeys (QString uid);
-	static QString KabcKeySelector ( QString displayName, QString addresseeName, QStringList keys, QWidget *parent );
+	public:
+		static CryptographyPlugin  *plugin();
 
-	CryptographyPlugin( QObject *parent, const QVariantList &args );
-	~CryptographyPlugin();
+		static QStringList supportedProtocols() {
+			return QStringList() << "MSNProtocol"
+			       << "MessengerProtocol"
+			       << "JabberProtocol"
+			       << "YahooProtocol";
+		}
+		
+		static QStringList getKabcKeys ( QString uid );
+		
+		static QString kabcKeySelector ( QString displayName, QString addresseeName, QStringList keys, QWidget *parent );
 
-public slots:
-	void slotIncomingMessage( Kopete::MessageEvent *msg );
-	void slotIncomingMessageContinued(const GpgME::DecryptionResult &decryptionResult, const GpgME::VerificationResult &verificationResult, const QByteArray &plainText);
-	void slotIncomingEncryptedMessageContinued(const GpgME::DecryptionResult &decryptionResult, const QByteArray &plainText);
-	void slotIncomingSignedMessageContinued(const GpgME::VerificationResult &verificationResult, const QByteArray &plainText);
-	void finalizeMessage( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & validity, bool encrypted);
-	
-	void slotOutgoingMessage( Kopete::Message& msg );
-	void slotExportSelectedMetaContactKeys ();	
-	
-private slots:
-	void slotSelectContactKey();
-	void slotNewKMM(Kopete::ChatSession *);
-	
-private:
-	static CryptographyPlugin* mPluginStatic;
-	CryptographyMessageHandlerFactory *mInboundHandler;
-	QHash<Kleo::Job*, Kopete::Message> mCurrentJobs;
+		CryptographyPlugin ( QObject *parent, const QVariantList &args );
+		~CryptographyPlugin();
+
+	private slots:
+		void slotIncomingMessage ( Kopete::MessageEvent *msg );
+		
+		void slotIncomingMessageContinued ( const GpgME::DecryptionResult &decryptionResult, const GpgME::VerificationResult &verificationResult, const QByteArray &plainText );
+		
+		void slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult &decryptionResult, const QByteArray &plainText );
+		
+		void slotIncomingSignedMessageContinued ( const GpgME::VerificationResult &verificationResult, const QByteArray &plainText );
+		
+		void finalizeMessage ( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & validity, bool encrypted );
+
+		void slotOutgoingMessage ( Kopete::Message& msg );
+		
+		void slotExportSelectedMetaContactKeys ();
+		
+		void slotSelectContactKey();
+		
+		void slotNewKMM ( Kopete::ChatSession * );
+
+	private:
+		static CryptographyPlugin* mPluginStatic;
+		CryptographyMessageHandlerFactory *mInboundHandler;
+		QHash<Kleo::Job*, Kopete::Message> mCurrentJobs;
 };
 
 #endif
