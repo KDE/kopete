@@ -136,7 +136,6 @@ bool ContactListModel::hasChildren ( const QModelIndex & parent) const
 
 QModelIndex ContactListModel::index ( int row, int column, const QModelIndex & parent) const
 {
-	kDebug(14001) << "idx" << row << column << data(parent);
 	if(row<0 || row>=childCount(parent)) {
 		return QModelIndex();
 	}
