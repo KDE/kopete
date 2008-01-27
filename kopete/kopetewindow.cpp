@@ -123,7 +123,7 @@ class KopeteWindow::Private
 {
 public:
 	Private()
-	 : contactlist(0), model(0), proxyModel(0), identitywidget(0), actionAddContact(0), actionDisconnect(0), actionExportContacts(0),
+	 : contactlist(0), identitywidget(0), model(0), proxyModel(0), actionAddContact(0), actionDisconnect(0), actionExportContacts(0),
 	actionStatusMenu(0), actionDockMenu(0), actionSetAway(0), actionSetBusy(0), actionSetAvailable(0),
 	actionSetInvisible(0), actionPrefs(0), actionQuit(0), actionSave(0), menubarAction(0),
 	statusbarAction(0), actionShowOfflineUsers(0), actionShowEmptyGroups(0), docked(0), 
@@ -298,13 +298,29 @@ KopeteWindow::KopeteWindow( QWidget *parent )
 
 void KopeteWindow::initView()
 {
-	d->contactlist = new KopeteContactListView( this );
-	setCentralWidget( d->contactlist );
+	QWidget *w = new QWidget( this );
+	QVBoxLayout *l = new QVBoxLayout( w );
+	
+	d->contactlist = new KopeteContactListView( w );
 	d->model = new Kopete::UI::ContactListModel( this );
 // 	d->proxyModel = new Kopete::UI::ContactListProxyModel( this );
 // 	d->proxyModel->setSourceModel(d->model);
 	d->contactlist->setModel( d->model );
+	l->addWidget( d->contactlist );
+	l->setSpacing( 0 );
+	l->setContentsMargins( 0, 0, 0, 0 );
+      
+	// create the identity widget
+	d->identitywidget = new IdentityStatusWidget( 0, w );
+	d->identitywidget->setSizePolicy( QSizePolicy( QSizePolicy::Preferred,
+	                                               QSizePolicy::Minimum ) );
+	d->identitywidget->setVisible( false );
+	l->addWidget( d->identitywidget );
+	
+	setCentralWidget( w );
 	d->contactlist->setFocus();
+
+	
 }
 
 void KopeteWindow::initActions()
