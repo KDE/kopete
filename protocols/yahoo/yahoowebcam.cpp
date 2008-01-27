@@ -92,7 +92,7 @@ void YahooWebcam::updateImage()
 	m_devicePool->getFrame();
 	m_devicePool->getImage(m_img);
 #endif
-	theDialog->newImage( QPixmap::fromImage(*m_img) );
+	theDialog->newImage( QPixmap::fromImage(*m_img/*.mirrored(m_devicePool->getImageAsMirror(),false)*/) );
 }
 
 void YahooWebcam::sendImage()
