@@ -36,6 +36,9 @@ namespace Kopete
         const int OnlineStatusRole = Qt::UserRole + 102;
         const int IdleTimeRole = Qt::UserRole + 103;
         const int UuidRole = Qt::UserRole + 104;
+	const int TotalCountRole = Qt::UserRole + 105;
+	const int ConnectedCountRole = Qt::UserRole + 106;
+	
 
         /* Item type role values */
         enum Type { Group, MetaContact };

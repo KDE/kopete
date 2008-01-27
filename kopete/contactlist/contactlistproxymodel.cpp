@@ -24,6 +24,7 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopeteappearancesettings.h"
+#include "kopeteitembase.h"
 
 namespace Kopete {
 
@@ -48,11 +49,42 @@ void ContactListProxyModel::slotConfigChanged()
 
 bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex & sourceParent ) const
 {
-// 	QModelIndex current = sourceModel()->index(sourceRow, 0, sourceParent);
+	QModelIndex current = sourceModel()->index(sourceRow, 0, sourceParent);
 // 	Kopete::MetaContact* mc = metaContactFromIndex( current );
 	
-	kDebug(14001) << "filtering";
-	return Kopete::AppearanceSettings::self()->showEmptyGroups();
+	QAbstractItemModel* model = sourceModel();
+	if ( model->data( current, Kopete::Items::TypeRole ) ==
+	     Kopete::Items::Group )
+	{
+		int connectedContactsCount = model->data( current,
+		                                          Kopete::Items::ConnectedCountRole ).toInt();
+		int totalContactsCount = model->data( current,
+		                                      Kopete::Items::TotalCountRole ).toInt();
+		
+		bool showEmpty = Kopete::AppearanceSettings::self()->showEmptyGroups();
+		bool showOffline = Kopete::AppearanceSettings::self()->showOfflineUsers();
+		
+		if ( !showEmpty && totalContactsCount == 0 )
+			return false;
+		
+		if ( !showEmpty && !showOffline && connectedContactsCount == 0 )
+			return false;
+		
+		return true;
+	}
+	
+	if ( model->data( current, Kopete::Items::TypeRole ) ==
+	     Kopete::Items::MetaContact )
+	{
+		int mcStatus = model->data( current,
+		                            Kopete::Items::OnlineStatusRole ).toInt();
+		if ( mcStatus == OnlineStatus::Offline &&
+		     !Kopete::AppearanceSettings::self()->showOfflineUsers() )
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 }
