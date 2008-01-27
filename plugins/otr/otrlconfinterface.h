@@ -26,8 +26,6 @@
   */
 
 #include <qstring.h>
-#include <q3ptrlist.h>
-#include <q3valuelist.h>
 #include <qthread.h>
 
 #include <kopetechatsession.h>

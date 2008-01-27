@@ -21,17 +21,11 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qmap.h>
-//#include <q3ptrlist.h>
 #include <qcombobox.h>
 #include <qstringlist.h>
 #include <qtablewidget.h>
-//#include <q3paintdevicemetrics.h>
-//#include <q3vbox.h>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
-//Added by qt3to4:
-//#include <Q3VBoxLayout>
-//#include <Q3ValueList>
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
@@ -39,7 +33,6 @@
 #include <kmessagebox.h>
 #include <kconfig.h>
 #include <kapplication.h>
-//#include <kanimwidget.h>
 #include <kpassivepopup.h>
 #include <kiconloader.h>
 #include <kstandarddirs.h>
@@ -49,11 +42,10 @@
 #include <kopeteaccount.h>
 #include <kopeteprotocol.h>
 
-//#include "ui_otrprefs.h"
 #include "otrpreferences.h"
-#include "otrplugin.h"
 #include "kopete_otr.h"
 #include "otrlconfinterface.h"
+#include "otrlchatinterface.h"
 
 /**
   * @author Michael Zanetti
@@ -145,6 +137,7 @@ void OTRPreferences::fillFingerprints(){
 //	preferencesDialog->tbFingerprints->setSortingEnabled(false);
 	for( it = list.begin(); it != list.end(); it++ ){
 		preferencesDialog->tbFingerprints->setRowCount( preferencesDialog->tbFingerprints->rowCount() +1 );
+#warning Broken here
  		(*it)[j*5] = OtrlChatInterface::self()->formatContact((*it)[j*5]);
 		for( int i = 0; i < 5; i++ ){ 	
 			preferencesDialog->tbFingerprints->setItem(j, i, new QTableWidgetItem((*it)[j*5 + i]) );
@@ -172,14 +165,17 @@ void OTRPreferences::verifyFingerprint(){
 }
 
 void OTRPreferences::updateButtons( int row, int col, int prevRow, int prevCol ){
+kdDebug() << "row:" << row << " col:" << col << endl;
 	if( row != -1 ){
+		preferencesDialog->btVerify->setEnabled( true );
 		if( !otrlConfInterface->isEncrypted( preferencesDialog->tbFingerprints->item( row, 3 )->text() ) ){
 			preferencesDialog->btForget->setEnabled( true );
 		} else {
-		preferencesDialog->btForget->setEnabled( false );			
+			preferencesDialog->btForget->setEnabled( false );			
 		}
 	} else {
 		preferencesDialog->btForget->setEnabled( false );
+		preferencesDialog->btVerify->setEnabled( false );
 	}
 }
 
