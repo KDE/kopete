@@ -2,8 +2,9 @@
     Kopete Contactlist Model
 
     Copyright (c) 2007      by Aleix Pol              <aleixpol@gmail.com>
+    Copyright (c) 2008      by Matt Rogers            <mattr@kde.org>
 
-    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,6 +20,7 @@
 
 #include <QStandardItem>
 #include <QList>
+#include <QUuid>
 
 #include <KIcon>
 #include <KDebug>
@@ -211,6 +213,14 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 			return Kopete::Items::Group;
 		else
 			return Kopete::Items::MetaContact;
+	}
+	
+	if ( role == Kopete::Items::UuidRole )
+	{
+		if ( g )
+			return QUuid().toString();
+		else
+			return mc->metaContactId().toString();
 	}
 
 	return QVariant();
