@@ -43,6 +43,7 @@ ContactListModel::ContactListModel(QObject* parent)
 	         this, SLOT( addMetaContact( Kopete::MetaContact* ) ) );
 	connect( kcl, SIGNAL( groupAdded( Kopete::Group* ) ),
 	         this, SLOT( addGroup( Kopete::Group* ) ) );
+	
 }
 
 
@@ -55,11 +56,17 @@ void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
 	foreach(Kopete::Group* g, contact->groups()) {
 		m_contacts[g].append(contact);
 	}
+	
+	connect( contact,
+	         SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+	         this, SLOT(resetModel()));
 }
 
 void ContactListModel::removeMetaContact( Kopete::MetaContact* contact )
 {
-
+	disconnect( contact,
+	            SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+				this, SLOT(resetModel()) );
 }
 
 void ContactListModel::addGroup( Kopete::Group* group )
@@ -151,11 +158,12 @@ QModelIndex ContactListModel::index ( int row, int column, const QModelIndex & p
 int ContactListModel::countConnected(Kopete::Group* g) const
 {
 	int onlineCount=0;
-	QList<Kopete::MetaContact*>::const_iterator it=m_contacts[g].constBegin(), itEnd=m_contacts[g].constBegin();
-	for(; it!=itEnd; ++it) {
-		if((*it)->isOnline())
-			onlineCount++;
+	foreach( Kopete::MetaContact* mc, m_contacts[g] )
+	{
+	  if ( mc->isOnline() )
+		onlineCount++;
 	}
+	
 	return onlineCount;
 }
 
@@ -246,6 +254,11 @@ QModelIndex ContactListModel::parent(const QModelIndex & index) const
 		}
 	}
 	return parent;
+}
+
+void ContactListModel::resetModel()
+{
+	reset();
 }
 
 }
