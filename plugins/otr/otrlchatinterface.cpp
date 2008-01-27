@@ -67,12 +67,6 @@ static OtrlPolicy policy(void *opdata, ConnContext *context){
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	bool noerr;
 	
-	kdDebug() << "Policy is: " << confPolicy << endl;;
-	kdDebug() << "OTRL_POLICY_ALWAYS is: " << OTRL_POLICY_ALWAYS << endl;;
-	kdDebug() << "OTRL_POLICY_OPPORTUNISTIC is: " << OTRL_POLICY_OPPORTUNISTIC << endl;;
-	kdDebug() << "OTRL_POLICY_MANUAL is: " << OTRL_POLICY_MANUAL << endl;;
-	kdDebug() << "OTRL_POLICY_NEVER is: " << OTRL_POLICY_NEVER << endl;;
-
 	// Disable OTR for IRC
 	if( session->protocol()->pluginId() == "IRCProtocol" ){
 //		kdDebug() << "Disabling OTR for: " << session->protocol()->pluginId() << endl;
@@ -80,7 +74,7 @@ static OtrlPolicy policy(void *opdata, ConnContext *context){
 	}
 	QString policy;
 	policy = session->members().first()->metaContact()->pluginData( chatPlugin, QString("otr_policy") );
-	kdDebug() << "Metacontact policy is: " << policy.toInt( &noerr, 10) << endl;
+//	kdDebug() << "Metacontact policy is: " << policy.toInt( &noerr, 10) << endl;
 	switch( policy.toInt( &noerr, 10 ) ){
 		case 1:
 			return OTRL_POLICY_ALWAYS;
@@ -215,9 +209,6 @@ static void gone_secure(void *opdata, ConnContext *context){
 	}
 }
 
-/* Actually I've never seen this event but its implemented in case someone should receive it 
-   kopete, gaim and miranda send a heartbeat message at disconnect.
-   Searching libotr I could not find any call of gone_insecure. */
 static void gone_insecure(void *opdata, ConnContext *context){
 //	kdDebug() << "gone insecure" << endl;
 	OtrlChatInterface::self()->emitGoneSecure(((Kopete::ChatSession*)opdata), 0);

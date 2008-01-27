@@ -18,18 +18,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <q3stylesheet.h>
 #include <qtimer.h>
 #include <qregexp.h>
 #include <qfile.h>
 #include <qcolor.h>
-//Added by qt3to4:
 #include <Q3ValueList>
 
 #include <kdebug.h>
 #include <kaction.h>
-//#include <kactionclasses.h>
-//#include <kpopupmenu.h>
 #include <kconfig.h>
 #include <kgenericfactory.h>
 #include <kdeversion.h>

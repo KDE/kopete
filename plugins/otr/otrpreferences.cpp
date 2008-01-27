@@ -76,6 +76,7 @@ OTRPreferences::OTRPreferences(QWidget *parent, const QVariantList &args)
 	connect( preferencesDialog->twSettings, SIGNAL(currentChanged(QWidget *)), SLOT(fillFingerprints()));
 	connect( preferencesDialog->tbFingerprints, SIGNAL(currentCellChanged(int, int, int, int)), SLOT(updateButtons(int, int, int, int)));
 	connect( preferencesDialog->btForget, SIGNAL( clicked() ), SLOT( forgetFingerprint() ) );
+	connect( OtrlChatInterface::self(), SIGNAL( goneSecure( Kopete::ChatSession* , int ) ), this, SLOT( fillFingerprints() ) );
 
 	int index = 0;
 	int accountnr = 0;
@@ -137,7 +138,6 @@ void OTRPreferences::fillFingerprints(){
 //	preferencesDialog->tbFingerprints->setSortingEnabled(false);
 	for( it = list.begin(); it != list.end(); it++ ){
 		preferencesDialog->tbFingerprints->setRowCount( preferencesDialog->tbFingerprints->rowCount() +1 );
-#warning Broken here
  		(*it)[j*5] = OtrlChatInterface::self()->formatContact((*it)[j*5]);
 		for( int i = 0; i < 5; i++ ){ 	
 			preferencesDialog->tbFingerprints->setItem(j, i, new QTableWidgetItem((*it)[j*5 + i]) );
@@ -165,7 +165,6 @@ void OTRPreferences::verifyFingerprint(){
 }
 
 void OTRPreferences::updateButtons( int row, int col, int prevRow, int prevCol ){
-kdDebug() << "row:" << row << " col:" << col << endl;
 	if( row != -1 ){
 		preferencesDialog->btVerify->setEnabled( true );
 		if( !otrlConfInterface->isEncrypted( preferencesDialog->tbFingerprints->item( row, 3 )->text() ) ){
