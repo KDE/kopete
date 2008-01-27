@@ -29,7 +29,6 @@ add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories (${CMAKE_SOURCE_DIR} 
 ${KDE4_INCLUDES} )
 
-add_subdirectory ( icons )
 
 ########### next target ###############
 
