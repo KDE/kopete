@@ -15,6 +15,10 @@
     *************************************************************************
 */
 
+#include "kirctransferhandler.moc"
+
+#include "kirctransferserver.h"
+
 #include <kglobal.h>
 #include <klocale.h>
 #include <kextsock.h>
@@ -22,10 +26,6 @@
 #include <qfile.h>
 #include <qregexp.h>
 #include <qtextcodec.h>
-
-#include "kirctransferserver.h"
-
-#include "kirctransferhandler.h"
 
 using namespace KIRC;
 
@@ -91,7 +91,5 @@ File *DCCHandler::openFile( QString file, int mode = QIODevice::ReadWrite )
 	return file;
 }
 */
-
-#include "kirctransferhandler.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

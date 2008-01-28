@@ -60,6 +60,8 @@ void Networks::slotReadNetworks()
 	QFile xmlFile( KStandardDirs::locate( "appdata", "ircnetworks.xml" ) );
 	xmlFile.open( QIODevice::ReadOnly );
 
+#if 0
+	// FIXME
 	QDomDocument doc;
 	doc.setContent( &xmlFile );
 	QDomElement networkNode = doc.documentElement().firstChild().toElement();
@@ -105,6 +107,7 @@ void Networks::slotReadNetworks()
 		d->networks.append(network);
 		networkNode = networkNode.nextSibling().toElement();
 	}
+#endif
 
 	xmlFile.close();
 }

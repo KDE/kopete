@@ -19,8 +19,6 @@
 
 #include <qtextcodec.h>
 
-#define CONST_BYTEARRAY(str) const QByteArray KIrc::str(#str)
-
 /* The usage of the namespace, instead of the "using" keyword, is intentional.
  * Not using it introduce compiler confusion, and lead to new symbols declaration.
  */
@@ -32,30 +30,6 @@ const QRegExp KIrc::sm_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
 
 const QString KIrc::URL_NICKNAME("nickname");
 const QString KIrc::URL_REALNAME("realname");
-
-CONST_BYTEARRAY(AWAY);
-CONST_BYTEARRAY(ERROR);
-CONST_BYTEARRAY(INVITE);
-CONST_BYTEARRAY(ISON);
-CONST_BYTEARRAY(JOIN);
-CONST_BYTEARRAY(KICK);
-CONST_BYTEARRAY(LIST);
-CONST_BYTEARRAY(MODE);
-CONST_BYTEARRAY(MOTD);
-CONST_BYTEARRAY(NICK);
-CONST_BYTEARRAY(NOTICE);
-CONST_BYTEARRAY(PART);
-CONST_BYTEARRAY(PASS);
-CONST_BYTEARRAY(PING);
-CONST_BYTEARRAY(PONG);
-CONST_BYTEARRAY(PRIVMSG);
-CONST_BYTEARRAY(QUIT);
-CONST_BYTEARRAY(SQUIT);
-CONST_BYTEARRAY(TOPIC);
-CONST_BYTEARRAY(USER);
-CONST_BYTEARRAY(WHO);
-CONST_BYTEARRAY(WHOIS);
-CONST_BYTEARRAY(WHOWAS);
 
 QTextCodec *KIrc::UTF8 = QTextCodec::codecForName("UTF-8");
 

@@ -22,8 +22,8 @@
 #include "irccontact.h"
 #include "ircprotocol.h"
 
+#include "kirccontext.h"
 #include "kircclientsocket.h"
-#include "kircentitymanager.h"
 #include "kircevent.h"
 #include "kircstdmessages.h"
 
@@ -36,7 +36,7 @@
 #include "kopeteview.h"
 #include "kopetepassword.h"
 
-#include <kaction.h>
+#include <kactionmenu.h>
 #include <kconfig.h>
 #include <kcompletionbox.h>
 #include <kdebug.h>
@@ -58,15 +58,19 @@ class IRCAccount::Private
 {
 public:
 	Private()
-		: manager(0), client(0),
-		  server(0), self(0),
-		  commandSource(0),
-		  awayAction(0), joinChannelAction(0), searchChannelAction(0)
+		: manager(0)
+		, client(0)
+		, server(0)
+		, self(0)
+		, commandSource(0)
+		, joinChannelAction(0)
+		, searchChannelAction(0)
 	{ }
 
 	Kopete::ChatSession *manager;
 	QString autoConnect;
 
+	KIrc::Context *clientContext;
 	KIrc::ClientSocket *client;
 	IRC::Network network;
 	int currentHost;
@@ -89,7 +93,8 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 	: PasswordedAccount(IRCProtocol::self(), accountId, true),
 	  d( new Private )
 {
-	d->client = new KIrc::ClientSocket(this);
+	d->clientContext = new KIrc::Context(this);
+	d->client = new KIrc::ClientSocket(d->clientContext);
 	d->autoConnect = autoChan;
 	d->currentHost = 0;
 
@@ -289,7 +294,7 @@ void IRCAccount::setCodecFromMib(int mib)
 {
 	kDebug(14120) ;
 	configGroup()->writeEntry(Config::CODECMIB, mib);
-	d->client->setDefaultCodec(QTextCodec::codecForMib(mib));
+	d->clientContext->setDefaultCodec(QTextCodec::codecForMib(mib));
 }
 
 QTextCodec *IRCAccount::codec() const
@@ -543,12 +548,6 @@ void IRCAccount::slotShowServerWindow()
 	d->server->startChat();
 }
 
-bool IRCAccount::isConnected()
-{
-	kDebug(14120) ;
-	return d->client->isConnected();
-}
-
 void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus)
 {
 	kDebug(14120) ;
@@ -658,7 +657,7 @@ IRCContact *IRCAccount::getContact(const KIrc::Entity::Ptr &entity, MetaContact 
 void IRCAccount::destroyed(IRCContact *contact)
 {
 	kDebug(14120) ;
-	d->contacts.remove(contact);
+	d->contacts.removeAll(contact);
 }
 
 void IRCAccount::receivedEvent(KIrc::Event *event)

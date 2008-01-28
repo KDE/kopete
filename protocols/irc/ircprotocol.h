@@ -109,8 +109,6 @@ private:
 	void initOnlineStatus();
 	void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
 
-	static IRCProtocol *s_protocol;
-
 //	QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
 //	const Kopete::OnlineStatus m_connecting;
 	const Kopete::OnlineStatus m_StatusUnknown;

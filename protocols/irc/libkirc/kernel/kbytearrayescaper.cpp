@@ -41,13 +41,13 @@ void KByteArrayEscaper::reset(char escape_char)
 {
 	d->escape_char = escape_char;
 	for (int i=0; i<256; ++i)
-		removeEscape((char)i);
+		removeEscape(i);
 }
 
 void KByteArrayEscaper::addEscape(char escape, char replacement)
 {
-	d->escape[escape] = replacement;
-	d->reverse[replacement] = escape;
+	d->escape[(uchar)escape] = replacement;
+	d->reverse[(uchar)replacement] = escape;
 }
 
 void KByteArrayEscaper::addEscape(const KByteArrayEscaper::EscapeList &escapeds)
@@ -75,7 +75,7 @@ QByteArray KByteArrayEscaper::escape(const QByteArray &buffer) const
 	char escaped;
 	foreach (char c, buffer)
 	{
-		escaped = d->escaped[c];
+		escaped = d->escaped[(uchar)c];
 		if(c != escaped || c == d->escape)
 			quoted += d->escape;
 		quoted += escaped;
@@ -107,7 +107,7 @@ QByteArray KByteArrayEscaper::unescape(const QByteArray &buffer) const
 	foreach (char c, buffer)
 	{
 		if (escaped)
-			quoted += d->reverse[c];
+			quoted += d->reverse[(uchar)c];
 		escaped = !escaped && c == d->escape;
 		if (!escaped)
 			quoted += c;

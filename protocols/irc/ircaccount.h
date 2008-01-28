@@ -136,8 +136,6 @@ public:
 	IRCContact *getContact(const QByteArray &name, Kopete::MetaContact *metac=0);
 	IRCContact *getContact(const KIrc::Entity::Ptr &entity, Kopete::MetaContact *metac=0);
 
-	virtual bool isConnected();
-
 	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/** Reimplemented from Kopete::Account */

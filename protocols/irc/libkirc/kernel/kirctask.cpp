@@ -32,8 +32,7 @@ Task::~Task()
 //	delete d;
 }
 
-Task::Status Task::doEvent(KIrc::Event *)
+void Task::ircEvent(KIrc::Context *, KIrc::Event *)
 {
-	return NotHandled;
 }
 
