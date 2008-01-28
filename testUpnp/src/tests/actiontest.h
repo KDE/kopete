@@ -31,8 +31,6 @@ class ActionTest : public QObject
 	private slots:
 		// Test of constructor without parameter
 		void testAction();
-		// Test of constructor with parameter
-		void testAction_2();
 		void testAddArgument();
 		void testSetName();
 		void testOperatorEquals();

@@ -35,16 +35,11 @@ void ActionTest::testAction()
 	QVERIFY(action.listArgument()->isEmpty());
 }
 
-void ActionTest::testAction_2()
-{
-	Action action(QString("action_name"));
-	QCOMPARE(action.name(),QString("action_name"));
-	QVERIFY(action.listArgument()->isEmpty());
-}
 
 void ActionTest::testAddArgument()
 {
-	Action action(QString("action_name"));
+	Action action;
+	action.setName(QString("action_name"));
 	QVERIFY(action.listArgument()->isEmpty());
 	action.addArgument(QString("argument_name"),QString("argument_direction"),QString("argument_relatedStateVariable"));
 	QVERIFY(action.listArgument()->isEmpty() == false);

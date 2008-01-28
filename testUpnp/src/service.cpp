@@ -100,7 +100,8 @@ void Service::addActionList(IXML_Node * actionNode)
 	//creating action
 	IXML_NodeList * actionNodeList = ixmlNode_getChildNodes(actionNode);
 	IXML_Node * node = ixmlNodeList_item(actionNodeList,0);
-	Action action = Action(QString(util_Xml_nodeValue(node)));
+	Action action;
+	action.setName(QString(util_Xml_nodeValue(node)));
 
 	//test of the actionNodeList size
 	if (ixmlNodeList_length(actionNodeList) == 2)
@@ -155,8 +156,7 @@ bool Service::existAction(QString nameAction)
 	bool find = false;	
 	for(int i=0;i<this->actionList()->size(); i++)
 	{
-		Action action_tmp = this->actionList()->at(i);	
-		if(action_tmp.name() == nameAction)
+		if(this->getActionAt(i)->name() == nameAction)
 		{
 			find = true;
 		}
@@ -164,20 +164,26 @@ bool Service::existAction(QString nameAction)
 	return find;
 }
 
-Action Service::actionByName(QString nameAction)
+Action* Service::actionByName(QString nameAction)
 {
-	Action action_tmp = Action();
-	bool find = false;	
-	for(int i=0;i<this->m_actionList.size() && !find; i++)
-	{
-		action_tmp = this->m_actionList.at(i);	
-		if(action_tmp.name() == nameAction)
+	bool find = false;
+	Action* response = new Action();
+	response = NULL;	
+	for(int i=0;i<this->actionList()->size() && !find; i++)
+	{	
+		if(this->getActionAt(i)->name() == nameAction)
 		{
 			find = true;
+			response = this->getActionAt(i);
 			
 		}
 	}
-	return action_tmp;
+	return response;
+}
+
+Action* Service::getActionAt(int i)
+{
+	return &((*(this->actionList()))[i]);
 }
 
 void Service::viewActionList()
@@ -186,7 +192,20 @@ void Service::viewActionList()
 	for(int i =0; i < this->m_actionList.size(); i++)
 	{
 		Action action = this->m_actionList.at(i);
-		printf("%s \n",action.name().toLatin1().data());
-		//action.viewListArgument();
+		printf("##### Action %d ##### \n",i);
+		action.viewAction();
+		printf("##################### \n");
 	}
 }
+
+
+void Service::viewService()
+{
+	printf("Service type : %s \n",this->serviceType().toLatin1().data());
+	printf("Service id : %s \n",this->serviceId().toLatin1().data());
+	printf("ControlURL : %s \n",this->controlURL().toLatin1().data());
+	printf("EventSubURL : %s \n",this->eventSubURL().toLatin1().data());
+	printf("XMLDocService : %s \n",this->xmlDocService().toLatin1().data());
+	this->viewActionList();
+}
+

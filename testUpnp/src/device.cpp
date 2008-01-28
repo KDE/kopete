@@ -22,41 +22,8 @@
 
 Device::Device()
 {
-	this->listDevice.erase(this->listDevice.begin(),this->listDevice.end());
-	this->listService.erase(this->listService.begin(),this->listService.end());
 }
 
-Device::Device(QString deviceType,
-QString friendlyName,
-QString manufacturer,
-QString manufacturerURL,
-QString modelName,
-QString UDN,
-QString modelDescription,
-QString modelNumber,
-QString serialNumber,
-QString presentationURL,
-QString UPC,
-QString DescDocURL)
-{
-	printf("CONSTRUCTEUR DEVICE\n");
-	
-	this->m_deviceType = deviceType;
-	this->m_friendlyName=friendlyName;
-	this->m_manufacturer=manufacturer;
-	this->m_manufacturerURL=manufacturerURL;
-	this->m_modelName=modelName;
-	this->m_UDN=UDN;
-	this->m_modelDescription=modelDescription;
-	this->m_modelNumber=modelNumber;
-	this->m_serialNumber=serialNumber;
-	this->m_presentationURL=presentationURL;
-	this->m_UPC=UPC;
-	this->m_DescDocURL=DescDocURL;	
-	
-	this->listDevice.erase(this->listDevice.begin(),this->listDevice.end());
-	this->listService.erase(this->listService.begin(),this->listService.end());	
-}
 
 QString Device::deviceType(){return this->m_deviceType;}
 QString Device::friendlyName(){return this->m_friendlyName;}

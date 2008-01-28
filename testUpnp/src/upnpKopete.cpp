@@ -370,13 +370,13 @@ IXML_Document * UpnpKopete::sendAction(QString nameAction, QList<QString> paramN
 				{
 					printf("Erreur UpnpResolveURL : %d\n",ret);
 				}
-
 				ret = UpnpSendAction( 
 					m_device_handle,relURL,
 				 	service_tmp.serviceType().toLatin1().data(),
 					NULL, 
 					actionNode,
-					&response);	
+					&response);
+				delete(relURL);
 				/*ret = UpnpSendActionAsync( 
 					m_device_handle,relURL,
 				 	service_tmp.serviceType().toLatin1().data(),
@@ -384,7 +384,6 @@ IXML_Document * UpnpKopete::sendAction(QString nameAction, QList<QString> paramN
 					actionNode,
 					kopeteCallbackEventHandler,
 					NULL );	*/			
-				
 				if( response == NULL ) 
 				{
 					printf("Erreur UpnpSendActionAsync\n");

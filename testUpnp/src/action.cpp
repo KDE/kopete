@@ -25,12 +25,6 @@ Action::Action()
 {
 }
 
-Action::Action(QString name)
-{
-	// Modify the action name
-	this->setName(name);
-}
-
 void Action::addArgument(QString name, QString direction, QString relatedStateVariable)
 {
 	// A boolean to know if the argument was found in the list
@@ -40,13 +34,10 @@ void Action::addArgument(QString name, QString direction, QString relatedStateVa
 	arg.setName(name);
 	arg.setDirection(direction);
 	arg.setRelatedStateVariable(relatedStateVariable);
-	
-	// To go a the list beginning
-	this->listArgument()->begin();
 	// We check if the argument is not already existing
 	for(int i=0;i<this->listArgument()->size() && !find;i++)
 	{
-		if(this->listArgument()->last().name() == name)
+		if(*(this->getArgumentAt(i)) == arg)
 		{
 			find=true;
 		}
@@ -80,14 +71,17 @@ void Action::setName(QString name)
 
 void Action::viewListArgument()
 {
+	Argument* arg = new Argument();
 	printf("## Displaying action arguments ##\n");
 	for(int i =0; i < this->listArgument()->size(); i++)
 	{
-		Argument arg = this->listArgument()->at(i);
-		printf("# %d # \n",i);
+		arg = this->getArgumentAt(i);
+		printf("##### Argument %d ##### \n",i);
 		// Show argument characteristics
-		arg.viewArgument();
+		(*arg).viewArgument();
+		printf("####################### \n");
 	}
+	delete(arg);
 }
 
 bool Action::operator==(const Action &act)
@@ -102,10 +96,11 @@ bool Action::operator==(const Action &act)
 	{
 		if(this->listArgument()->size() == action.listArgument()->size())
 		{
+			Argument* argument = new Argument();
 			for(int i =0; i < this->listArgument()->size(); i++)
 			{
-				Argument argument = this->listArgument()->at(i);
-				if((argument == action.listArgument()->at(i))==false)
+				argument = this->getArgumentAt(i);
+				if(((*argument) == (*(action.getArgumentAt(i))))==false)
 				{
 					equals = false;
 				}
@@ -119,4 +114,13 @@ bool Action::operator==(const Action &act)
 	return equals;
 }
 
+Argument* Action::getArgumentAt(int i)
+{
+	return &((*this->listArgument())[i]);
+}
 
+void Action::viewAction()
+{
+	printf("Action name : %s \n",this->name().toLatin1().data());
+	this->viewListArgument();
+}

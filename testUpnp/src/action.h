@@ -47,7 +47,6 @@ class Action
 	public:
 		// Construtor
 		Action();
-		Action(QString name);
 		// Method which add an argument to the argument list
 		void addArgument(QString name, QString direction, QString relatedStateVariable);
 		// Getter
@@ -59,6 +58,10 @@ class Action
 		void viewListArgument();
 		// Method which test the equality of two action
 		bool operator==(const Action &act);
+		// Method which show the description of an action
+		void viewAction();
+
+		Argument* getArgumentAt(int i);
 };
 
 #endif

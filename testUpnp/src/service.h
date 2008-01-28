@@ -68,10 +68,11 @@ class Service
 		// Method which add all action of the service
 		void addAllActions();
 		void addActionList(IXML_Node * actionNode);
-
+		Action* getActionAt(int i);
 		bool existAction(QString nameAction);
-		Action actionByName(QString nameAction);
+		Action* actionByName(QString nameAction);
 		void addAction(Action action);
+		void viewService();
 		void viewActionList();
 };
 

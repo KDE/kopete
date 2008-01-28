@@ -58,9 +58,9 @@ void Argument::setRelatedStateVariable(QString relatedStateVariable)
 
 void Argument::viewArgument()
 {
-	printf("%s \n",this->name().toLatin1().data());
-	printf("%s \n",this->direction().toLatin1().data());
-	printf("%s \n",this->relatedStateVariable().toLatin1().data());
+	printf("Argument name : %s \n",this->name().toLatin1().data());
+	printf("Argument direction : %s \n",this->direction().toLatin1().data());
+	printf("Argument related state variable : %s \n",this->relatedStateVariable().toLatin1().data());
 }
 
 bool Argument::operator==(const Argument &arg)

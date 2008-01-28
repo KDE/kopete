@@ -53,25 +53,12 @@ class Device
 		QString m_UPC;
 
 		QString m_DescDocURL;
-		
+
 		QList<Device> listDevice;
 		QList<Service> listService;
 
 	public:
 		Device();
-		Device(QString deviceType,
-			QString friendlyName,
-			QString manufacturer,
-			QString manufacturerURL,
-			QString modelName,
-			QString UDN,
-			QString modelDescription,
-			QString modelNumber,
-			QString serialNumber,
-			QString presentationURL,
-			QString UPC,
-			QString DescDocURL);
-
 		QString deviceType();
 		QString friendlyName();
 		QString manufacturer();
