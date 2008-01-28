@@ -12,11 +12,15 @@ X-KDE-ParentComponents=kopete
 Name=Status
 Name[el]=Κατάσταση
 Name[ga]=Stádas
+Name[km]=ស្ថានភាព
+Name[tr]=Durum
 Name[zh_TW]=狀態
 Comment=Manage Your Statuses
 Comment[el]=Διαχείριση των καταστάσεών σας
 Comment[ga]=Bainistigh Do Chuid Stádas
+Comment[km]=គ្រប់គ្រង​ស្ថានភាព​របស់​អ្នក
 Comment[nds]=Dien Statussen plegen
 Comment[sv]=Hantera din status
+Comment[tr]=Durumlarınızı Yapılandırın
 Comment[zh_TW]=管理您的狀態
 
