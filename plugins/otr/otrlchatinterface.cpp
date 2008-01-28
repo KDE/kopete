@@ -152,7 +152,7 @@ static int display_otr_message( void *opdata, const char *accountname, const cha
 	for( int i = 0; i < list.size(); i++ ){
 		if( list.at(i)->contactId().compare( username ) == 0 ){
 			Kopete::Message msg( session->members().first(), session->account()->myself() );
-			msg.setPlainBody( QString( message ) );
+			msg.setHtmlBody( QString( message ) );
 			msg.setDirection( Kopete::Message::Internal );
 			session->appendMessage( msg );
 			return 0;
