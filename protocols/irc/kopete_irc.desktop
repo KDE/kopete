@@ -16,6 +16,7 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=IRC
 Name[bn]=আই-আর-সি
+Name[hi]=आईआरसी
 Name[ne]=आईआरसी
 Name[x-test]=xxIRCxx
 Comment=Internet Relay Chat
