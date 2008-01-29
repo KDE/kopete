@@ -72,7 +72,7 @@ void SMPPopup::respondSMP()
 void SMPPopup::openHelp()
 {
 	KUrl *url = new KUrl("http://www.cypherpunks.ca/otr/help/authenticate.php?lang=en");
-//	new KRun(*url, 0, false, true);
+	new KRun(*url, 0, 0, false, true);
 }
 
 void SMPPopup::manualAuth(){

@@ -49,7 +49,7 @@ kde4_add_ui_files(kopete_otr_shared_LIB_SRCS smppopup.ui privkeypopup.ui verifyd
 
 kde4_add_library(kopete_otr_shared SHARED ${kopete_otr_shared_LIB_SRCS} )
 
-target_link_libraries(kopete_otr_shared kopete kdeui ${QT_QT3SUPPORT_LIBRARY} Qt3Support ${KDE4_KDECORE_LIBS} otr )
+target_link_libraries(kopete_otr_shared kopete kio kdeui ${QT_QT3SUPPORT_LIBRARY} Qt3Support ${KDE4_KDECORE_LIBS} otr )
 
 set_target_properties(kopete_otr_shared PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kopete_otr_shared DESTINATION ${LIB_INSTALL_DIR} )
