@@ -97,6 +97,7 @@ void HighlightPreferences::load()
 		first=false;
 	}
 	donttouch=false;
+	slotCurrentFilterChanged();
 	emit KCModule::changed(false);
 }
 
