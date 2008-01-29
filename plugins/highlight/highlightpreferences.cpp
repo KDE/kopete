@@ -232,30 +232,27 @@ void HighlightPreferences::slotSomethingHasChanged()
 
 void HighlightPreferences::slotEditRegExp()
 {
-#ifdef __GNUC__
-#warning TODO
-#endif
 	// FIXME: Port editorDialog->qt_cast
-// 	QDialog *editorDialog = KParts::ComponentFactory::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor" );
-// 	if ( editorDialog )
-// 	{
-// 		// kdeutils was installed, so the dialog was found fetch the editor interface
-// 		KRegExpEditorInterface *editor = static_cast<KRegExpEditorInterface *>( editorDialog->qt_cast( "KRegExpEditorInterface" ) );
-// 		Q_ASSERT( editor ); // This should not fail!
-// 		// now use the editor.
-// 		editor->setRegExp(preferencesDialog.m_search->text());
-// 
-// 		// Finally exec the dialog
-// 		if(editorDialog->exec() == QDialog::Accepted )
-// 		{
-// 			preferencesDialog.m_search->setText(editor->regExp());
-// 		}
-// 
-// 	}
-// 	else
-// 	{
-// 		// Don't offer the dialog.
-// 	}
+ 	QDialog *editorDialog = KServiceTypeTrader::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor" );
+ 	if ( editorDialog )
+ 	{
+ 		// kdeutils was installed, so the dialog was found fetch the editor interface
+ 		KRegExpEditorInterface *editor = qobject_cast<KRegExpEditorInterface*>( editorDialog );
+ 		Q_ASSERT( editor ); // This should not fail!
+ 		// now use the editor.
+ 		editor->setRegExp(preferencesDialog.m_search->text());
+ 
+ 		// Finally exec the dialog
+ 		if(editorDialog->exec() == QDialog::Accepted )
+ 		{
+ 			preferencesDialog.m_search->setText(editor->regExp());
+ 		}
+ 
+ 	}
+ 	else
+ 	{
+ 		// Don't offer the dialog.
+ 	}
 }
 
 Filter * HighlightPreferences::selectedItem()
