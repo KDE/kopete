@@ -316,7 +316,7 @@ void AliasPreferences::addAlias( QString &alias, QString &command, const Protoco
 
 void AliasPreferences::slotAddAlias()
 {
-	EditAliasDialog addDialog;
+	EditAliasDialog addDialog(this);
 	loadProtocols( &addDialog );
 	addDialog.addButton->setText( i18n("&Add") );
 
@@ -461,9 +461,11 @@ void AliasPreferences::slotEditAlias()
 
 void AliasPreferences::slotDeleteAliases()
 {
+        QList< Q3ListViewItem* > items = preferencesDialog->aliasList->selectedItems();
+        if( items.isEmpty())
+            return;
 	if( KMessageBox::warningContinueCancel(this, i18n("Are you sure you want to delete the selected aliases?"), i18n("Delete Aliases"), KGuiItem(i18n("Delete"), "edit-delete") ) == KMessageBox::Continue )
 	{
-		QList< Q3ListViewItem* > items = preferencesDialog->aliasList->selectedItems();
 		foreach( Q3ListViewItem *i, items)
 		{
 			ProtocolList protocols = static_cast<AliasItem*>( i )->protocolList;
@@ -484,6 +486,7 @@ void AliasPreferences::slotDeleteAliases()
 
 		save();
 	}
+        slotCheckAliasSelected();
 }
 
 void AliasPreferences::slotCheckAliasSelected()
