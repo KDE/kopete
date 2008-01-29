@@ -45,7 +45,7 @@ AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const
 	setMainWidget(vbox);
 	enableButtonOk(false);
 	//setHelp("linkaddressbook");
-
+	setHelp(QString(), "kopete");
 	connect(m_addressBookSelectorWidget, SIGNAL(addresseeListClicked( Q3ListViewItem * )), SLOT(slotWidgetAddresseeListClicked( Q3ListViewItem * )));
 
 	if ( !preSelectUid.isEmpty() )
