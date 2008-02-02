@@ -982,12 +982,13 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 {
 	QString resultHTML = sourceHTML;
 
-	Kopete::Contact *remoteContact = d->manager->members().first();
-
 	// Verify that all contacts are not null before doing anything
-	if( remoteContact && d->manager->myself() )
+	if( !d->manager->members().isEmpty() && d->manager->myself() )
 	{
 		QString sourceName, destinationName;
+
+		Kopete::Contact *remoteContact = d->manager->members().first();
+
 		// Use contact nickname for ourselfs, Myself metacontact display name isn't a reliable source.
 		sourceName = d->manager->myself()->nickName();
 		if( remoteContact->metaContact() )
