@@ -252,6 +252,9 @@ void Jid::update()
 		b = d;
 	else
 		b = n + '@' + d;
+	
+	b=b.toLower(); // JID are not case sensitive
+	
 	if(r.isEmpty())
 		f = b;
 	else
