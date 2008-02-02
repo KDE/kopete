@@ -21,12 +21,13 @@
 #define XMPP_HTMLELEMENT_H
 
 #include <QDomElement>
+#include <iris_export.h>
 
 class QString;
 
 namespace XMPP
 {
-	class HTMLElement
+	class IRIS_EXPORT HTMLElement
 	{
 	public:
 		HTMLElement();

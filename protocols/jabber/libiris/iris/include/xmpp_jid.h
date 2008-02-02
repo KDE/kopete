@@ -23,9 +23,11 @@
 
 #include <QString>
 
+#include <iris_export.h>
+
 namespace XMPP 
 {
-	class Jid
+	class IRIS_EXPORT Jid
 	{
 	public:
 		Jid();

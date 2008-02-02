@@ -28,7 +28,7 @@
 #include "xmpp_agentitem.h"
 
 namespace XMPP {
-	class DiscoItem
+	class IRIS_EXPORT DiscoItem
 	{
 	public:
 		DiscoItem();

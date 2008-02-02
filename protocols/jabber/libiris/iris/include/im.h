@@ -25,6 +25,8 @@
 //Added by qt3to4:
 #include <QList>
 
+#include <iris_export.h>
+
 #include "xmpp.h"
 #include "xmpp_jid.h"
 #include "xmpp_muc.h"
@@ -58,7 +60,7 @@ namespace XMPP
 	typedef QList<AgentItem> AgentList;
 	typedef QList<DiscoItem> DiscoList;
 
-	class FormField
+	class IRIS_EXPORT FormField
 	{
 	public:
 		enum { username, nick, password, name, first, last, email, address, city, state, zip, phone, url, date, misc };
@@ -85,7 +87,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class Form : public QList<FormField>
+	class IRIS_EXPORT Form : public QList<FormField>
 	{
 	public:
 		Form(const Jid &j="");
@@ -106,7 +108,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class SearchResult
+	class IRIS_EXPORT SearchResult
 	{
 	public:
 		SearchResult(const Jid &jid="");

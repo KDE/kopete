@@ -23,6 +23,8 @@
 #include <QObject>
 #include <QStringList>
 
+#include <iris_export.h>
+
 #include "xmpp_jid.h"
 #include "xmpp_status.h"
 #include "xmpp_discoitem.h"
@@ -50,7 +52,7 @@ namespace XMPP {
 
 namespace XMPP
 {
-	class Client : public QObject
+	class IRIS_EXPORT Client : public QObject
 	{
 		Q_OBJECT
 

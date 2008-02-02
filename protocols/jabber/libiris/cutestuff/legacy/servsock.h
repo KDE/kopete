@@ -22,10 +22,10 @@
 #define CS_SERVSOCK_H
 
 #include <QTcpServer>
-
+#include "cutestuff_export.h"
 // CS_NAMESPACE_BEGIN
 
-class ServSock : public QObject
+class CUTESTUFF_EXPORT ServSock : public QObject
 {
 	Q_OBJECT
 public:
@@ -49,7 +49,7 @@ private:
 	Private *d;
 };
 
-class ServSockSignal : public QTcpServer
+class CUTESTUFF_EXPORT ServSockSignal : public QTcpServer
 {
 	Q_OBJECT
 public:

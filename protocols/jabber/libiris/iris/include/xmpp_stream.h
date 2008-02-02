@@ -24,6 +24,8 @@
 #include <QDomElement>
 #include <QObject>
 
+#include <iris_export.h>
+
 #include "xmpp_stanza.h"
 #include "xmpp_jid.h"
 
@@ -31,7 +33,7 @@ class QDomDocument;
 
 namespace XMPP 
 {
-	class Stream : public QObject
+	class IRIS_EXPORT Stream : public QObject
 	{
 		Q_OBJECT
 	public:

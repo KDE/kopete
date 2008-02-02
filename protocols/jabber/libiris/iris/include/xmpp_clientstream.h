@@ -24,6 +24,8 @@
 
 #include "xmpp_stream.h"
 
+#include <iris_export.h>
+
 class QByteArray;
 class QString;
 class QDomDocument;
@@ -37,7 +39,7 @@ namespace XMPP
 	class TLSHandler;
 	class Connector;
 
-	class ClientStream : public Stream
+	class IRIS_EXPORT ClientStream : public Stream
 	{
 		Q_OBJECT
 	public:

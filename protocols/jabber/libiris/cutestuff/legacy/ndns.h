@@ -28,13 +28,14 @@
 #include <qhostaddress.h>
 //Added by qt3to4:
 #include <QEvent>
+#include "cutestuff_export.h"
 
 // CS_NAMESPACE_BEGIN
 
 class NDnsWorker;
 class NDnsManager;
 
-class NDns : public QObject
+class CUTESTUFF_EXPORT NDns : public QObject
 {
 	Q_OBJECT
 public:
@@ -58,7 +59,7 @@ private:
 	void finished(const QHostAddress &);
 };
 
-class NDnsManager : public QObject
+class CUTESTUFF_EXPORT NDnsManager : public QObject
 {
 	Q_OBJECT
 public:
