@@ -237,7 +237,7 @@ void Task::debug(const char *fmt, ...)
 		buf = new char[size];
 		va_list ap;
 		va_start(ap, fmt);
-		r = QT_VSNPRINTF(buf, size, fmt, ap);
+		r = qvsnprintf(buf, size, fmt, ap);
 		va_end(ap);
 
 		if(r != -1)
