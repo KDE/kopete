@@ -98,12 +98,6 @@ Index: iris/jabber/filetransfer.cpp
  	r.rangeSupported = rangeSupported;
  	r.streamTypes = streamTypes;
  
-@@ -757,4 +778,5 @@
- 	return true;
- }
- 
-+
- #include "filetransfer.moc"
 Index: iris/jabber/filetransfer.h
 ===================================================================
 --- iris/jabber/filetransfer.h	(revision 568436)
