@@ -691,7 +691,7 @@ void MSNChatSession::slotNudgeReceived(const QString& handle)
 
 void MSNChatSession::slotWebcamReceive()
 {
-	if(m_chatService && members().first())
+	if(m_chatService && !members().isEmpty())
 	{
 #if 0
 		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().first()->contactId() , true);
@@ -702,7 +702,7 @@ void MSNChatSession::slotWebcamReceive()
 void MSNChatSession::slotWebcamSend()
 {
 	kDebug(14140) ;
-	if(m_chatService && members().first())
+	if(m_chatService && !members().isEmpty())
 	{
 #if 0
 		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().first()->contactId() , false);
