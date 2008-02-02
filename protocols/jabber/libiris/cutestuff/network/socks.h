@@ -22,14 +22,14 @@
 #define CS_SOCKS_H
 
 #include "bytestream.h"
-
+#include "cutestuff_export.h"
 // CS_NAMESPACE_BEGIN
 
 class QHostAddress;
 class SocksClient;
 class SocksServer;
 
-class SocksUDP : public QObject
+class CUTESTUFF_EXPORT SocksUDP : public QObject
 {
 	Q_OBJECT
 public:
@@ -52,7 +52,7 @@ private:
 	SocksUDP(SocksClient *sc, const QString &host, int port, const QHostAddress &routeAddr, int routePort);
 };
 
-class SocksClient : public ByteStream
+class CUTESTUFF_EXPORT SocksClient : public ByteStream
 {
 	Q_OBJECT
 public:
@@ -125,7 +125,7 @@ private:
 	void writeData(const QByteArray &a);
 };
 
-class SocksServer : public QObject
+class CUTESTUFF_EXPORT SocksServer : public QObject
 {
 	Q_OBJECT
 public:

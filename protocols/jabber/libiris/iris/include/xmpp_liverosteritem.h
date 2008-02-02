@@ -20,13 +20,15 @@
 #ifndef XMPP_LIVEROSTERITEM_H
 #define XMPP_LIVEROSTERITEM_H
 
+#include <iris_export.h>
+
 #include "xmpp_status.h"
 #include "xmpp_resourcelist.h"
 #include "xmpp_rosteritem.h"
 
 namespace XMPP
 {
-	class LiveRosterItem : public RosterItem
+	class IRIS_EXPORT LiveRosterItem : public RosterItem
 	{
 	public:
 		LiveRosterItem(const Jid &j="");

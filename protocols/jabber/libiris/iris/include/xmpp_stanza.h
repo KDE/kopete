@@ -24,6 +24,8 @@
 #include <QString>
 #include <QDomElement>
 
+#include <iris_export.h>
+
 class QDomDocument;
 
 namespace XMPP 
@@ -31,7 +33,7 @@ namespace XMPP
 	class Jid;
 	class Stream;
 
-	class Stanza
+	class IRIS_EXPORT Stanza
 	{
 	public:
 		enum Kind { Message, Presence, IQ };

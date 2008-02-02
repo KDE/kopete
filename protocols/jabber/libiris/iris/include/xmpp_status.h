@@ -24,11 +24,12 @@
 #include <QString>
 #include <QDateTime>
 
+#include <iris_export.h>
 #include "xmpp_muc.h"
 
 namespace XMPP 
 {
-	class Status
+	class IRIS_EXPORT Status
 	{
 	public:
 		enum Type { Offline, Online, Away, XA, DND, Invisible, FFC };

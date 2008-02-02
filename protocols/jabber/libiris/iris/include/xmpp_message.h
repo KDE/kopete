@@ -20,6 +20,8 @@
 #ifndef XMPP_MESSAGE_H
 #define XMPP_MESSAGE_H
 
+#include <iris_export.h>
+
 #include "xmpp_stanza.h"
 #include "xmpp_url.h"
 #include "xmpp_chatstate.h"
@@ -42,7 +44,7 @@ namespace XMPP {
 	typedef enum { OfflineEvent, DeliveredEvent, DisplayedEvent,
 			ComposingEvent, CancelEvent } MsgEvent;
 
-	class Message
+	class IRIS_EXPORT Message
 	{
 	public:
 		Message(const Jid &to="");

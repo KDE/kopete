@@ -23,11 +23,13 @@
 #include <QString>
 #include <QStringList>
 
+#include <iris_export.h>
+
 #include "xmpp_jid.h"
 
 namespace XMPP
 {
-	class Subscription
+	class IRIS_EXPORT Subscription
 	{
 	public:
 		enum SubType { None, To, From, Both, Remove };
@@ -43,7 +45,7 @@ namespace XMPP
 		SubType value;
 	};
 
-	class RosterItem
+	class IRIS_EXPORT RosterItem
 	{
 	public:
 		RosterItem(const Jid &jid="");

@@ -23,6 +23,7 @@
 
 #include <qdom.h>
 
+#include <iris_export.h>
 class QDateTime;
 class QRect;
 class QSize;
@@ -34,9 +35,9 @@ bool stamp2TS(const QString &ts, QDateTime *d);
 QString TS2stamp(const QDateTime &d);
 QDomElement textTag(QDomDocument *doc, const QString &name, const QString &content);
 QString tagContent(const QDomElement &e);
-QDomElement findSubTag(const QDomElement &e, const QString &name, bool *found);
-QDomElement createIQ(QDomDocument *doc, const QString &type, const QString &to, const QString &id);
-QDomElement queryTag(const QDomElement &e);
+QDomElement IRIS_EXPORT findSubTag(const QDomElement &e, const QString &name, bool *found);
+QDomElement IRIS_EXPORT createIQ(QDomDocument *doc, const QString &type, const QString &to, const QString &id);
+QDomElement IRIS_EXPORT queryTag(const QDomElement &e);
 QString queryNS(const QDomElement &e);
 void getErrorFromElement(const QDomElement &e, const QString &baseNS, int *code, QString *str);
 QDomElement addCorrectNS(const QDomElement &e);

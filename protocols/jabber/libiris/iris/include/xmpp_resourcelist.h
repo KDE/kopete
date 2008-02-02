@@ -22,13 +22,15 @@
 
 #include <QList>
 
+#include <iris_export.h>
+
 #include "xmpp_resource.h"
 
 class QString;
 
 namespace XMPP
 {
-	class ResourceList : public QList<Resource>
+	class IRIS_EXPORT ResourceList : public QList<Resource>
 	{
 	public:
 		ResourceList();

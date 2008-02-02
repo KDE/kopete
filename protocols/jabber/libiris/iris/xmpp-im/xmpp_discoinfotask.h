@@ -23,6 +23,8 @@
 #include "xmpp_task.h"
 #include "xmpp_discoitem.h"
 
+#include <iris_export.h>
+
 namespace XMPP {
 	class Jid;
 }
@@ -31,7 +33,7 @@ class QDomElement;
 
 namespace XMPP
 {
-	class DiscoInfoTask : public Task
+	class IRIS_EXPORT DiscoInfoTask : public Task
 	{
 		Q_OBJECT
 	public:

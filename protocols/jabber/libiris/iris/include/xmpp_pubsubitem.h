@@ -23,9 +23,11 @@
 #include <QString>
 #include <QDomElement>
 
+#include <iris_export.h>
+
 namespace XMPP
 {
-	class PubSubItem 
+	class IRIS_EXPORT PubSubItem 
 	{
 	public:
 		PubSubItem();

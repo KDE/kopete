@@ -34,7 +34,7 @@ namespace XMPP
 	class IBBManager;
 
 	// this is an IBB connection.  use it much like a qsocket
-	class IBBConnection : public ByteStream
+	class IRIS_EXPORT IBBConnection : public ByteStream
 	{
 		Q_OBJECT
 	public:
@@ -78,7 +78,7 @@ namespace XMPP
 
 	typedef Q3PtrList<IBBConnection> IBBConnectionList;
 	typedef Q3PtrListIterator<IBBConnection> IBBConnectionListIt;
-	class IBBManager : public QObject
+	class IRIS_EXPORT IBBManager : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -111,7 +111,7 @@ namespace XMPP
 		void doReject(IBBConnection *c, const QString &id, int, const QString &);
 	};
 
-	class JT_IBB : public Task
+	class IRIS_EXPORT JT_IBB : public Task
 	{
 		Q_OBJECT
 	public:

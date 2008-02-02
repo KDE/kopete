@@ -27,12 +27,14 @@
 #include <QSharedDataPointer>
 #include <QStringList>
 
+#include <iris_export.h>
+
 class QDomElement;
 class QDomDocument;
 
 namespace XMPP {
 
-	class XData
+	class IRIS_EXPORT XData
 	{
 	public:
 		XData();
@@ -69,7 +71,7 @@ namespace XMPP {
 		bool isValid() const;
 
 	public:
-		class Field {
+		class IRIS_EXPORT Field {
 		public:
 			Field();
 			~Field();
