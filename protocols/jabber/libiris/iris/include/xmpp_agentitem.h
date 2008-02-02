@@ -27,7 +27,7 @@
 #include "xmpp_features.h"
 
 namespace XMPP {
-	class IRIS_EXPORT AgentItem
+	class AgentItem
 	{
 	public:
 		AgentItem() { }

@@ -23,10 +23,9 @@
 
 #include "bytestream.h"
 
-#include "cutestuff_export.h"
 // CS_NAMESPACE_BEGIN
 
-class CUTESTUFF_EXPORT HttpConnect : public ByteStream
+class HttpConnect : public ByteStream
 {
 	Q_OBJECT
 public:

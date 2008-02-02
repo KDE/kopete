@@ -24,10 +24,9 @@
 #include <QList>
 #include <q3dns.h>
 
-#include "cutestuff_export.h"
 // CS_NAMESPACE_BEGIN
 
-class CUTESTUFF_EXPORT SrvResolver : public QObject
+class SrvResolver : public QObject
 {
 	Q_OBJECT
 public:

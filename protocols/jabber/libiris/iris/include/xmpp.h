@@ -30,8 +30,6 @@
 #include <qxml.h>
 #include <qdom.h>
 
-#include <iris_export.h>
-
 #include "xmpp_jid.h"
 #include "xmpp_stanza.h"
 #include "xmpp_stream.h"
@@ -70,7 +68,7 @@ namespace XMPP
 
 	void setDebug(Debug *);
 
-	class IRIS_EXPORT Connector : public QObject
+	class Connector : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -102,7 +100,7 @@ namespace XMPP
 		Q_UINT16 port;
 	};
 
-	class IRIS_EXPORT AdvancedConnector : public Connector
+	class AdvancedConnector : public Connector
 	{
 		Q_OBJECT
 	public:
@@ -176,7 +174,7 @@ namespace XMPP
 		void tryNextSrv();
 	};
 
-	class IRIS_EXPORT TLSHandler : public QObject
+	class TLSHandler : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -196,7 +194,7 @@ namespace XMPP
 		void readyReadOutgoing(const QByteArray &a, int plainBytes);
 	};
 
-	class IRIS_EXPORT QCATLSHandler : public TLSHandler
+	class QCATLSHandler : public TLSHandler
 	{
 		Q_OBJECT
 	public:

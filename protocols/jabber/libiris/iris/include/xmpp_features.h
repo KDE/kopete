@@ -23,12 +23,11 @@
 
 #include <QStringList>
 
-#include <iris_export.h>
 class QString;
 
 namespace XMPP
 {
-	class IRIS_EXPORT Features
+	class Features
 	{
 	public:
 		Features();

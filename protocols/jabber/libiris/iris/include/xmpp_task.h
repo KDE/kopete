@@ -24,8 +24,6 @@
 #include <QObject>
 #include <QString>
 
-#include <iris_export.h>
-
 class QDomDocument;
 class QDomElement;
 
@@ -33,7 +31,7 @@ namespace XMPP {
 	class Client;
 	class Jid;
 
-	class IRIS_EXPORT Task : public QObject
+	class Task : public QObject
 	{
 		Q_OBJECT
 	public:

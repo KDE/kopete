@@ -22,10 +22,10 @@
 #define CS_HTTPPOLL_H
 
 #include "bytestream.h"
-#include "cutestuff_export.h"
+
 // CS_NAMESPACE_BEGIN
 
-class CUTESTUFF_EXPORT HttpPoll : public ByteStream
+class HttpPoll : public ByteStream
 {
 	Q_OBJECT
 public:
@@ -67,7 +67,7 @@ private:
 	const QString & getKey(bool *);
 };
 
-class CUTESTUFF_EXPORT HttpProxyPost : public QObject
+class HttpProxyPost : public QObject
 {
 	Q_OBJECT
 public:

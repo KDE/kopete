@@ -23,11 +23,11 @@
 
 #include <qobject.h>
 #include <q3cstring.h>
-#include "cutestuff_export.h"
+
 // CS_NAMESPACE_BEGIN
 
 // CS_EXPORT_BEGIN
-class CUTESTUFF_EXPORT ByteStream : public QObject
+class ByteStream : public QObject
 {
 	Q_OBJECT
 public:

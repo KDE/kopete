@@ -22,11 +22,9 @@
 
 class QString;
 
-#include <iris_export.h>
-
 namespace XMPP
 {
-	class IRIS_EXPORT Url
+	class Url
 	{
 	public:
 		Url(const QString &url="", const QString &desc="");

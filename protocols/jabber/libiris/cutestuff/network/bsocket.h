@@ -23,7 +23,6 @@
 
 #include <QAbstractSocket>
 
-#include "cutestuff_export.h"
 #include "bytestream.h"
 
 class QString;
@@ -32,7 +31,7 @@ class QByteArray;
 
 // CS_NAMESPACE_BEGIN
 
-class CUTESTUFF_EXPORT BSocket : public ByteStream
+class BSocket : public ByteStream
 {
 	Q_OBJECT
 public:

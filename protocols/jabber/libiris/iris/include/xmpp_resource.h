@@ -22,13 +22,11 @@
 
 #include <QString>
 
-#include <iris_export.h>
-
 #include "xmpp_status.h"
 
 namespace XMPP
 {
-	class IRIS_EXPORT Resource
+	class Resource
 	{
 	public:
 		Resource(const QString &name="", const Status &s=Status());
