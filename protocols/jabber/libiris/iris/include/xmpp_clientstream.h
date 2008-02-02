@@ -132,6 +132,8 @@ namespace XMPP
 		// reimplemented
 		QDomDocument & doc() const;
 		QString baseNS() const;
+		QString xhtmlImNS() const;
+		QString xhtmlNS() const;
 		bool old() const;
 
 		void close();

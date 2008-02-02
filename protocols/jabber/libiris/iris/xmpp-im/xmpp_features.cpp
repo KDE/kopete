@@ -110,6 +110,15 @@ bool Features::canSearch() const
 	return test(ns);
 }
 
+#define FID_XHTML "http://jabber.org/protocol/xhtml-im"
+bool Features::canXHTML() const
+{
+	QStringList ns;
+	ns << FID_XHTML;
+	return test(ns);
+}
+
+
 #define FID_GROUPCHAT "jabber:iq:conference"
 bool Features::canGroupchat() const
 {

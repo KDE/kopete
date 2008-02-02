@@ -53,6 +53,8 @@ namespace XMPP
 
 		virtual QDomDocument & doc() const=0;
 		virtual QString baseNS() const=0;
+		virtual QString xhtmlImNS() const=0;
+		virtual QString xhtmlNS() const=0;
 		virtual bool old() const=0;
 
 		virtual void close()=0;

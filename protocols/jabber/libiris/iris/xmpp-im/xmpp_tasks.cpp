@@ -1407,6 +1407,10 @@ bool JT_ServInfo::take(const QDomElement &e)
 			feature.setAttribute("var", "http://jabber.org/protocol/disco#info");
 			query.appendChild(feature);
 
+			feature = doc()->createElement("feature");
+			feature.setAttribute("var", "http://jabber.org/protocol/xhtml-im");
+			query.appendChild(feature);
+
 			// Client-specific features
 			QStringList clientFeatures = client()->features().list();
 			for (QStringList::ConstIterator i = clientFeatures.begin(); i != clientFeatures.end(); ++i) {

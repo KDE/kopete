@@ -46,6 +46,7 @@ namespace XMPP
 		bool canGroupchat() const;
 		bool canVoice() const;
 		bool canDisco() const;
+		bool canXHTML() const;
 		bool canChatState() const;
 		bool canCommand() const;
 		bool isGateway() const;
@@ -60,6 +61,7 @@ namespace XMPP
 			FID_Disco,
 			FID_Gateway,
 			FID_VCard,
+			FIX_Xhtml,
 			FID_AHCommand,
 
 			// private Psi actions

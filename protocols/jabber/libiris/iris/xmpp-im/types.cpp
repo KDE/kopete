@@ -19,6 +19,7 @@
  */
 
 #include "im.h"
+#include "protocol.h"
 #include "xmpp_features.h"
 
 #include <qmap.h>
@@ -890,7 +891,7 @@ public:
 	Jid to, from;
 	QString id, type, lang;
 
-	StringMap subject, body;
+	StringMap subject, body, xHTMLBody;
 	QString thread;
 	bool threadSend;
 	Stanza::Error error;
@@ -1045,6 +1046,11 @@ bool Message::containsHTML() const
 	return !(d->htmlElements.isEmpty());
 }
 
+QString Message::xHTMLBody(const QString &lang) const
+{
+	return d->xHTMLBody[lang];
+}
+
 QString Message::thread() const
 {
 	return d->thread;
@@ -1107,6 +1113,14 @@ void Message::setBody(const QString &s, const QString &lang)
 {
 	d->body[lang] = s;
 	//d->flag = false;
+}
+
+void Message::setXHTMLBody(const QString&s, const QString &lang, const QString &attr)
+{
+	//ugly but needed if s is not a node but a list of leaf
+	
+	QString content = "<body xmlns='" + QString(NS_XHTML) + "' " + attr + ">\n" + s + "\n</body>";
+	d->xHTMLBody[lang] = content;
 }
 
 //! \brief Set xhtml body

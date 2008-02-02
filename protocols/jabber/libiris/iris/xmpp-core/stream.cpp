@@ -507,6 +507,16 @@ QString ClientStream::baseNS() const
 	return NS_CLIENT;
 }
 
+QString ClientStream::xhtmlImNS() const
+{
+	return NS_XHTML_IM;
+}
+
+QString ClientStream::xhtmlNS() const
+{
+	return NS_XHTML;
+}
+
 void ClientStream::setAllowPlain(AllowPlainType a)
 {
 	d->allowPlain = a;

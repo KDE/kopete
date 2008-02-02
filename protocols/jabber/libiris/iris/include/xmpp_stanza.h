@@ -98,8 +98,11 @@ namespace XMPP
 
 		QDomDocument & doc() const;
 		QString baseNS() const;
+		QString xhtmlImNS() const;
+		QString xhtmlNS() const;
 		QDomElement createElement(const QString &ns, const QString &tagName);
 		QDomElement createTextElement(const QString &ns, const QString &tagName, const QString &text);
+		QDomElement createXHTMLElement(const QString &xHTML);
 		void appendChild(const QDomElement &e);
 
 		Kind kind() const;

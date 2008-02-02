@@ -57,6 +57,7 @@ namespace XMPP {
 		QString lang() const;
 		QString subject(const QString &lang="") const;
 		QString body(const QString &lang="") const;
+		QString xHTMLBody(const QString &lang="") const;
 		QString thread() const;
 		Stanza::Error error() const;
 
@@ -67,6 +68,7 @@ namespace XMPP {
 		void setLang(const QString &s);
 		void setSubject(const QString &s, const QString &lang="");
 		void setBody(const QString &s, const QString &lang="");
+		void setXHTMLBody(const QString &s, const QString &lang="", const QString &attr="");
 		void setThread(const QString &s, bool send = false);
 		void setError(const Stanza::Error &err);
 
