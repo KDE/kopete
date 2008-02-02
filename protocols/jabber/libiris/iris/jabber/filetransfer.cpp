@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -56,7 +56,6 @@ public:
 	qlonglong size;
 	qlonglong sent;
 	QString desc;
-	QString preview;
 	bool rangeSupported;
 	qlonglong rangeOffset, rangeLength, length;
 	QString streamType;
@@ -78,10 +77,29 @@ FileTransfer::FileTransfer(FileTransferManager *m, QObject *parent)
 	reset();
 }
 
+FileTransfer::FileTransfer(const FileTransfer& other)
+	: QObject(other.parent())
+{
+	d = new Private;
+	*d = *other.d;
+	d->m = other.d->m;
+	d->ft = 0;
+	d->c = 0;
+	reset();
+
+	if (d->m->isActive(&other))
+		d->m->link(this);
+}
+
 FileTransfer::~FileTransfer()
 {
 	reset();
 	delete d;
+}
+
+FileTransfer *FileTransfer::copy() const
+{
+	return new FileTransfer(*this);
 }
 
 void FileTransfer::reset()
@@ -105,14 +123,13 @@ void FileTransfer::setProxy(const Jid &proxy)
 	d->proxy = proxy;
 }
 
-void FileTransfer::sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc, const QString& preview)
+void FileTransfer::sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc)
 {
 	d->state = Requesting;
 	d->peer = to;
 	d->fname = fname;
 	d->size = size;
 	d->desc = desc;
-	d->preview = preview;
 	d->sender = true;
 	d->id = d->m->link(this);
 
@@ -120,7 +137,7 @@ void FileTransfer::sendFile(const Jid &to, const QString &fname, qlonglong size,
 	connect(d->ft, SIGNAL(finished()), SLOT(ft_finished()));
 	QStringList list;
 	list += "http://jabber.org/protocol/bytestreams";
-	d->ft->request(to, d->id, fname, size, desc, list,preview);
+	d->ft->request(to, d->id, fname, size, desc, list);
 	d->ft->go(true);
 }
 
@@ -171,12 +188,6 @@ qlonglong FileTransfer::fileSize() const
 QString FileTransfer::description() const
 {
 	return d->desc;
-}
-
-
-QString XMPP::FileTransfer::preview() const
-{
-	return d->preview;
 }
 
 bool FileTransfer::rangeSupported() const
@@ -320,7 +331,6 @@ void FileTransfer::man_waitForAccept(const FTRequest &req)
 	d->fname = req.fname;
 	d->size = req.size;
 	d->desc = req.desc;
-	d->preview = req.preview;
 	d->rangeSupported = req.rangeSupported;
 }
 
@@ -380,6 +390,11 @@ FileTransfer *FileTransferManager::takeIncoming()
 	// move to active list
 	d->list.append(ft);
 	return ft;
+}
+
+bool FileTransferManager::isActive(const FileTransfer *ft) const
+{
+	return d->list.contains(ft) > 0;
 }
 
 void FileTransferManager::pft_incoming(const FTRequest &req)
@@ -470,7 +485,7 @@ JT_FT::~JT_FT()
 	delete d;
 }
 
-void JT_FT::request(const Jid &to, const QString &_id, const QString &fname, qlonglong size, const QString &desc, const QStringList &streamTypes, const QString& preview)
+void JT_FT::request(const Jid &to, const QString &_id, const QString &fname, qlonglong size, const QString &desc, const QStringList &streamTypes)
 {
 	QDomElement iq;
 	d->to = to;
@@ -488,12 +503,6 @@ void JT_FT::request(const Jid &to, const QString &_id, const QString &fname, qlo
 		QDomElement de = doc()->createElement("desc");
 		de.appendChild(doc()->createTextNode(desc));
 		file.appendChild(de);
-	}
-	if(!preview.isEmpty()) {
-		QDomElement pr = doc()->createElement("preview");
-		pr.setAttribute("xmlns", "http://kopete.kde.org/protocol/file-preview");
-		pr.appendChild(doc()->createTextNode(preview));
-		file.appendChild(pr);
 	}
 	QDomElement range = doc()->createElement("range");
 	file.appendChild(range);
@@ -734,11 +743,6 @@ bool JT_PushFT::take(const QDomElement &e)
 	QDomElement de = file.elementsByTagName("desc").item(0).toElement();
 	if(!de.isNull())
 		desc = de.text();
-	
-	QString preview;
-	QDomElement pr = file.elementsByTagName("preview").item(0).toElement();
-	if(!pr.isNull())
-		preview= pr.text();
 
 	bool rangeSupported = false;
 	QDomElement range = file.elementsByTagName("range").item(0).toElement();
@@ -770,7 +774,6 @@ bool JT_PushFT::take(const QDomElement &e)
 	r.fname = fname;
 	r.size = size;
 	r.desc = desc;
-	r.preview = preview;
 	r.rangeSupported = rangeSupported;
 	r.streamTypes = streamTypes;
 

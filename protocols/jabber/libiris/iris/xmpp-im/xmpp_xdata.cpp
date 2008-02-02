@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -193,7 +193,7 @@ void XData::Field::fromXml(const QDomElement &e)
 		_type = Field_TextSingle;
 
 	_required = false;
-	_desc     = QString();
+	_desc     = QString::null;
 	_options.clear();
 	_value.clear();
 
@@ -207,7 +207,7 @@ void XData::Field::fromXml(const QDomElement &e)
 		if ( tag == "required" )
 			_required = true;
 		else if ( tag == "desc" )
-			_desc = i.text().trimmed();
+			_desc = i.text().simplifyWhiteSpace();
 		else if ( tag == "option" ) {
 			Option o;
 			bool found;
@@ -290,6 +290,7 @@ QDomElement XData::Field::toXml(QDomDocument *doc, bool submitForm) const
 XData::XData()
 {
 	d = new Private;
+	d->type = Data_Form;
 }
 
 QString XData::title() const

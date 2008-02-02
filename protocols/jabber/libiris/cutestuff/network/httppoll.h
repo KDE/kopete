@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -23,10 +23,9 @@
 
 #include "bytestream.h"
 
-#include <cutestuff_export.h>
 // CS_NAMESPACE_BEGIN
 
-class CUTESTUFF_EXPORT HttpPoll : public ByteStream
+class HttpPoll : public ByteStream
 {
 	Q_OBJECT
 public:
@@ -68,7 +67,7 @@ private:
 	const QString & getKey(bool *);
 };
 
-class CUTESTUFF_EXPORT HttpProxyPost : public QObject
+class HttpProxyPost : public QObject
 {
 	Q_OBJECT
 public:

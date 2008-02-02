@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -40,7 +40,7 @@ namespace XMPP
 			virtual void accept(qlonglong offset=0, qlonglong length=0) = 0;
 	};*/
 
-	class IRIS_EXPORT FileTransfer : public QObject /*, public AbstractFileTransfer */
+	class FileTransfer : public QObject /*, public AbstractFileTransfer */
 	{
 		Q_OBJECT
 	public:
@@ -48,10 +48,12 @@ namespace XMPP
 		enum { Idle, Requesting, Connecting, WaitingForAccept, Active };
 		~FileTransfer();
 
+		FileTransfer *copy() const;
+
 		void setProxy(const Jid &proxy);
 
 		// send
-		void sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc, const QString& preview=QString());
+		void sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc);
 		qlonglong offset() const;
 		qlonglong length() const;
 		int dataSizeNeeded() const;
@@ -62,7 +64,6 @@ namespace XMPP
 		QString fileName() const;
 		qlonglong fileSize() const;
 		QString description() const;
-		QString preview() const;
 		bool rangeSupported() const;
 		void accept(qlonglong offset=0, qlonglong length=0);
 
@@ -94,16 +95,19 @@ namespace XMPP
 
 		friend class FileTransferManager;
 		FileTransfer(FileTransferManager *, QObject *parent=0);
+		FileTransfer(const FileTransfer& other);
 		void man_waitForAccept(const FTRequest &req);
 		void takeConnection(S5BConnection *c);
 	};
 
-	class IRIS_EXPORT FileTransferManager : public QObject
+	class FileTransferManager : public QObject
 	{
 		Q_OBJECT
 	public:
 		FileTransferManager(Client *);
 		~FileTransferManager();
+
+		bool isActive(const FileTransfer *ft) const;
 
 		Client *client() const;
 		FileTransfer *createTransfer();
@@ -129,14 +133,14 @@ namespace XMPP
 		void unlink(FileTransfer *);
 	};
 
-	class IRIS_EXPORT JT_FT : public Task
+	class JT_FT : public Task
 	{
 		Q_OBJECT
 	public:
 		JT_FT(Task *parent);
 		~JT_FT();
 
-		void request(const Jid &to, const QString &id, const QString &fname, qlonglong size, const QString &desc, const QStringList &streamTypes, const QString &preview=QString());
+		void request(const Jid &to, const QString &id, const QString &fname, qlonglong size, const QString &desc, const QStringList &streamTypes);
 		qlonglong rangeOffset() const;
 		qlonglong rangeLength() const;
 		QString streamType() const;
@@ -156,7 +160,6 @@ namespace XMPP
 		QString fname;
 		qlonglong size;
 		QString desc;
-		QString preview;
 		bool rangeSupported;
 		QStringList streamTypes;
 	};

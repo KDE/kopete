@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -33,7 +33,6 @@
 
 #ifdef Q_OS_WIN
 # include <windows.h>
-# include <winsock2.h>
 #else
 # include <netinet/in.h>
 #endif
@@ -47,7 +46,7 @@ namespace XMPP {
 static QString makeKey(const QString &sid, const Jid &initiator, const Jid &target)
 {
 	QString str = sid + initiator.full() + target.full();
-	return QCA::Hash("sha1").hashToString(str.toUtf8());
+	return QCA::Hash("sha1").hashToString(str.utf8());
 }
 
 static bool haveHost(const StreamHostList &list, const Jid &j)
@@ -352,7 +351,7 @@ int S5BConnection::bytesToWrite() const
 
 void S5BConnection::writeDatagram(const S5BDatagram &i)
 {
-	QByteArray buf(i.data().size() + 4, '\n');
+	QByteArray buf(i.data().size() + 4);
 	ushort ssp = htons(i.sourcePort());
 	ushort sdp = htons(i.destPort());
 	QByteArray data = i.data();
@@ -517,7 +516,7 @@ void S5BConnection::handleUDP(const QByteArray &buf)
 	memcpy(&sdp, buf.data() + 2, 2);
 	int source = ntohs(ssp);
 	int dest = ntohs(sdp);
-	QByteArray data(buf.size() - 4, '\n');
+	QByteArray data(buf.size() - 4);
 	memcpy(data.data(), buf.data() + 4, data.size());
 	d->dglist.append(new S5BDatagram(source, dest, data));
 
@@ -1606,7 +1605,7 @@ void S5BManager::Item::tryActivation()
 			printf("sending extra CR\n");
 #endif
 			// must send [CR] to activate target streamhost
-			QByteArray a(1, '\n');
+			QByteArray a(1);
 			a[0] = '\r';
 			client->write(a);
 		}
@@ -1824,7 +1823,7 @@ private slots:
 		}
 
 		// send initialization with our JID
-		QByteArray a(jid.full().toUtf8());
+		QByteArray a(jid.full().utf8());
 		client_udp->write(a);
 		++udp_tries;
 	}
@@ -2265,10 +2264,8 @@ void JT_S5B::requestActivation(const Jid &to, const QString &sid, const Jid &tar
 
 void JT_S5B::onGo()
 {
-	if(d->mode == 1) {
-		d->t.setSingleShot(true);
-		d->t.start(15000);
-}
+	if(d->mode == 1)
+		d->t.start(15000, true);
 	send(d->iq);
 }
 

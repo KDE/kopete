@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -35,7 +35,7 @@ namespace XMPP
 	class Roster;
 	class Status;
 
-	class IRIS_EXPORT JT_Register : public Task
+	class JT_Register : public Task
 	{
 		Q_OBJECT
 	public:
@@ -66,7 +66,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT JT_UnRegister : public Task
+	class JT_UnRegister : public Task
 	{
 		Q_OBJECT
 	public:
@@ -86,7 +86,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT JT_Roster : public Task
+	class JT_Roster : public Task
 	{
 		Q_OBJECT
 	public:
@@ -114,7 +114,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT JT_PushRoster : public Task
+	class JT_PushRoster : public Task
 	{
 		Q_OBJECT
 	public:
@@ -131,7 +131,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT JT_Presence : public Task
+	class JT_Presence : public Task
 	{
 		Q_OBJECT
 	public:
@@ -152,7 +152,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT JT_PushPresence : public Task
+	class JT_PushPresence : public Task
 	{
 		Q_OBJECT
 	public:
@@ -178,7 +178,7 @@ namespace XMPP
 		bool take(const QDomElement&);
 	};
 
-	class IRIS_EXPORT JT_Message : public Task
+	class JT_Message : public Task
 	{
 		Q_OBJECT
 	public:
@@ -194,7 +194,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT JT_PushMessage : public Task
+	class JT_PushMessage : public Task
 	{
 		Q_OBJECT
 	public:
@@ -211,7 +211,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT JT_GetServices : public Task
+	class JT_GetServices : public Task
 	{
 		Q_OBJECT
 	public:
@@ -233,7 +233,7 @@ namespace XMPP
 		AgentList agentList;
 	};
 
-	class IRIS_EXPORT JT_VCard : public Task
+	class JT_VCard : public Task
 	{
 		Q_OBJECT
 	public:
@@ -241,7 +241,7 @@ namespace XMPP
 		~JT_VCard();
 
 		void get(const Jid &);
-		void set(const VCard &);
+		void set(const Jid &, const VCard &);
 
 		const Jid & jid() const;
 		const VCard  & vcard() const;
@@ -256,7 +256,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT JT_Search : public Task
+	class JT_Search : public Task
 	{
 		Q_OBJECT
 	public:
@@ -280,7 +280,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT JT_ClientVersion : public Task
+	class JT_ClientVersion : public Task
 	{
 		Q_OBJECT
 	public:
@@ -319,7 +319,7 @@ namespace XMPP
 		QDomElement iq;
 	};
 */
-	class IRIS_EXPORT JT_ServInfo : public Task
+	class JT_ServInfo : public Task
 	{
 		Q_OBJECT
 	public:
@@ -329,7 +329,7 @@ namespace XMPP
 		bool take(const QDomElement &);
 	};
 
-	class IRIS_EXPORT JT_Gateway : public Task
+	class JT_Gateway : public Task
 	{
 		Q_OBJECT
 	public:
@@ -352,7 +352,7 @@ namespace XMPP
 		QString v_prompt, v_desc;
 	};
 
-	class IRIS_EXPORT JT_Browse : public Task
+	class JT_Browse : public Task
 	{
 		Q_OBJECT
 	public:
@@ -374,14 +374,14 @@ namespace XMPP
 		AgentItem browseHelper (const QDomElement &i);
 	};
 
-	class IRIS_EXPORT JT_DiscoItems : public Task
+	class JT_DiscoItems : public Task
 	{
 		Q_OBJECT
 	public:
 		JT_DiscoItems(Task *);
 		~JT_DiscoItems();
 	
-		void get(const Jid &, const QString &node = QString());
+		void get(const Jid &, const QString &node = QString::null);
 		void get(const DiscoItem &);
 	
 		const DiscoList &items() const;
@@ -394,7 +394,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT JT_DiscoPublish : public Task
+	class JT_DiscoPublish : public Task
 	{
 		Q_OBJECT
 	public:

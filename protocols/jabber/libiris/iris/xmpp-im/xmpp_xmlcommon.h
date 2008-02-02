@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -22,7 +22,6 @@
 #define JABBER_XMLCOMMON_H
 
 #include <qdom.h>
-#include <iris_export.h>
 
 class QDateTime;
 class QRect;
@@ -30,21 +29,17 @@ class QSize;
 class QColor;
 class QStringList;
 
-namespace XMPP
-{
-
-bool IRIS_EXPORT stamp2TS(const QString &ts, QDateTime *d);
-QString IRIS_EXPORT TS2stamp(const QDateTime &d);
-QDomElement IRIS_EXPORT textTag(QDomDocument *doc, const QString &name, const QString &content);
-QString IRIS_EXPORT tagContent(const QDomElement &e);
-QDomElement IRIS_EXPORT findSubTag(const QDomElement &e, const QString &name, bool *found);
-QDomElement IRIS_EXPORT createIQ(QDomDocument *doc, const QString &type, const QString &to, const QString &id);
-QDomElement IRIS_EXPORT queryTag(const QDomElement &e);
-QString IRIS_EXPORT queryNS(const QDomElement &e);
-void IRIS_EXPORT getErrorFromElement(const QDomElement &e, const QString &baseNS, int *code, QString *str);
-QDomElement IRIS_EXPORT addCorrectNS(const QDomElement &e);
-
-}
+QDateTime stamp2TS(const QString &ts);
+bool stamp2TS(const QString &ts, QDateTime *d);
+QString TS2stamp(const QDateTime &d);
+QDomElement textTag(QDomDocument *doc, const QString &name, const QString &content);
+QString tagContent(const QDomElement &e);
+QDomElement findSubTag(const QDomElement &e, const QString &name, bool *found);
+QDomElement createIQ(QDomDocument *doc, const QString &type, const QString &to, const QString &id);
+QDomElement queryTag(const QDomElement &e);
+QString queryNS(const QDomElement &e);
+void getErrorFromElement(const QDomElement &e, const QString &baseNS, int *code, QString *str);
+QDomElement addCorrectNS(const QDomElement &e);
 
 namespace XMLHelper {
 	//QDomElement findSubTag(const QDomElement &e, const QString &name, bool *found);
@@ -73,5 +68,6 @@ namespace XMLHelper {
 	void readBoolAttribute(QDomElement e, const QString &name, bool *v);
 
 	//QString tagContent(const QDomElement &e); // obsolete;
-}
+};
+
 #endif

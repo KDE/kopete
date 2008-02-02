@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -51,33 +51,14 @@
 #include "xmpp_pubsubitem.h"
 #include "xmpp_pubsubretraction.h"
 
-
-
-#include <iris_export.h>
-
-#ifdef IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
-# define IRIS_DUMMY_COMPARISON_OPERATOR(C) \
-    bool operator==(const C&) const { \
-        qWarning(#C"::operator==(const "#C"&) was called"); \
-        return false; \
-    }
-# define IRIS_DUMMY_QHASH_FUNCTION(C) \
-    inline uint qHash(const C) { \
-        qWarning("inline uint qHash(const "#C") was called"); \
-        return 0; \
-    }
-#else
-# define IRIS_DUMMY_COMPARISON_OPERATOR(C)
-# define IRIS_DUMMY_QHASH_FUNCTION(C)
-#endif
-
 namespace XMPP
 {
 	typedef QMap<QString, QString> StringMap;
+	
 	typedef QList<AgentItem> AgentList;
 	typedef QList<DiscoItem> DiscoList;
 
-	class IRIS_EXPORT FormField
+	class FormField
 	{
 	public:
 		enum { username, nick, password, name, first, last, email, address, city, state, zip, phone, url, date, misc };
@@ -93,8 +74,6 @@ namespace XMPP
 		bool setType(const QString &);
 		void setValue(const QString &);
 
-		IRIS_DUMMY_COMPARISON_OPERATOR(FormField)
-
 	private:
 		int tagNameToType(const QString &) const;
 		QString typeToTagName(int) const;
@@ -105,9 +84,8 @@ namespace XMPP
 		class Private;
 		Private *d;
 	};
-	IRIS_DUMMY_QHASH_FUNCTION(FormField)
 
-	class IRIS_EXPORT Form : public QList<FormField>
+	class Form : public QList<FormField>
 	{
 	public:
 		Form(const Jid &j="");
@@ -128,7 +106,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	class IRIS_EXPORT SearchResult
+	class SearchResult
 	{
 	public:
 		SearchResult(const Jid &jid="");

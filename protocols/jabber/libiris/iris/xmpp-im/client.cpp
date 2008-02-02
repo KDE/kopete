@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -65,7 +65,7 @@
 //!    if(success)
 //!      printf("Login success!");
 //!    else
-//!      printf("Login failed.  Here's why: %s\n", err.toLatin1());
+//!      printf("Login failed.  Here's why: %s\n", err.latin1());
 //!  }
 //!  \endcode
 
@@ -601,7 +601,7 @@ void Client::send(const QDomElement &x)
 	debug(QString("Client: outgoing: [\n%1]\n").arg(out));
 	xmlOutgoing(out);
 
-	//printf("x[%s] x2[%s] s[%s]\n", Stream::xmlToString(x).toLatin1(), Stream::xmlToString(e).latin1(), s.toString().toLatin1());
+	//printf("x[%s] x2[%s] s[%s]\n", Stream::xmlToString(x).latin1(), Stream::xmlToString(e).latin1(), s.toString().latin1());
 	d->stream->write(s);
 }
 
@@ -796,6 +796,15 @@ void Client::updatePresence(LiveRosterItem *i, const Jid &j, const Status &s)
 			i->resourceList().remove(rit);
 			i->setLastUnavailableStatus(s);
 		}
+		else {
+			// create the resource just for the purpose of emit
+			Resource r = Resource(j.resource(), s);
+			i->resourceList() += r;
+			rit = i->resourceList().find(j.resource());
+			resourceUnavailable(j, *rit);
+			i->resourceList().remove(rit);
+			i->setLastUnavailableStatus(s);
+		}
 	}
 	// available?  add/update the resource
 	else {
@@ -905,7 +914,7 @@ void Client::importRosterItem(const RosterItem &item)
 	}
 
 	QString dstr, str;
-	str.sprintf("  %s %-32s", qPrintable(substr), qPrintable(item.jid().full()));
+	str.sprintf("  %s %-32s", substr.latin1(), item.jid().full().latin1());
 	if(!item.name().isEmpty())
 		str += QString(" [") + item.name() + "]";
 	str += '\n';

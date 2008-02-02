@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -103,7 +103,7 @@ static QString xmlToString(const QDomElement &e, const QString &fakeNS, const QS
 	}
 	// 'clip' means to remove any unwanted (and unneeded) characters, such as a trailing newline
 	if(clip) {
-		int n = out.lastIndexOf('>');
+		int n = out.findRev('>');
 		out.truncate(n+1);
 	}
 	return out;
@@ -133,12 +133,12 @@ static void createRootXmlTags(const QDomElement &root, QString *xmlHeader, QStri
 	}
 
 	// parse the tags out
-	int n = str.indexOf('<');
-	int n2 = str.indexOf('>', n);
+	int n = str.find('<');
+	int n2 = str.find('>', n);
 	++n2;
 	*tagOpen = str.mid(n, n2-n);
-	n2 = str.lastIndexOf('>');
-	n = str.lastIndexOf('<');
+	n2 = str.findRev('>');
+	n = str.findRev('<');
 	++n2;
 	*tagClose = str.mid(n, n2-n);
 
@@ -189,12 +189,13 @@ static QString sanitizeForStream(const QString &in)
 		}
 		else if(c == '>')
 		{
-			if(inquote)
+			if(inquote) {
 				escape = true;
-			else if(!intag)
+			} else if(!intag) {
 				escape = true;
-			else
+			} else {
 				intag = false;
+			}
 		}
 		else if(c == '\'' || c == '\"')
 		{
@@ -207,8 +208,9 @@ static QString sanitizeForStream(const QString &in)
 				}
 				else
 				{
-					if(quotechar == c)
+					if(quotechar == c) {
 						inquote = false;
+					}
 				}
 			}
 		}
@@ -428,7 +430,7 @@ QString XmlProtocol::elementToString(const QDomElement &e, bool clip)
 		for(n = 0; n < al.count(); ++n) {
 			QDomAttr a = al.item(n).toAttr();
 			QString s = a.name();
-			int x = s.indexOf(':');
+			int x = s.find(':');
 			if(x != -1)
 				s = s.mid(x+1);
 			else
@@ -551,8 +553,8 @@ int XmlProtocol::internalWriteData(const QByteArray &a, TrackItem::Type t, int i
 int XmlProtocol::internalWriteString(const QString &s, TrackItem::Type t, int id)
 {
 	QString out=sanitizeForStream(s);
-	Q3CString cs = s.toUtf8();
-	QByteArray a(cs.length(), '\n');
+	Q3CString cs = s.utf8();
+	QByteArray a(cs.length());
 	memcpy(a.data(), cs.data(), a.size());
 	return internalWriteData(a, t, id);
 }

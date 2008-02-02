@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -46,7 +46,7 @@ namespace XMPP
 	typedef Q3PtrList<S5BConnection> S5BConnectionList;
 	typedef Q3PtrListIterator<S5BConnection> S5BConnectionListIt;
 
-	class IRIS_EXPORT S5BDatagram
+	class S5BDatagram
 	{
 	public:
 		S5BDatagram();
@@ -61,7 +61,7 @@ namespace XMPP
 		QByteArray _buf;
 	};
 
-	class IRIS_EXPORT S5BConnection : public ByteStream
+	class S5BConnection : public ByteStream
 	{
 		Q_OBJECT
 	public:
@@ -131,7 +131,7 @@ namespace XMPP
 		S5BConnection(S5BManager *, QObject *parent=0);
 	};
 
-	class IRIS_EXPORT S5BManager : public QObject
+	class S5BManager : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -200,7 +200,7 @@ namespace XMPP
 		void doActivate(const Jid &peer, const QString &sid, const Jid &streamHost);
 	};
 
-	class IRIS_EXPORT S5BConnector : public QObject
+	class S5BConnector : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -231,7 +231,7 @@ namespace XMPP
 	};
 
 	// listens on a port for serving
-	class IRIS_EXPORT S5BServer : public QObject
+	class S5BServer : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -264,7 +264,7 @@ namespace XMPP
 		void writeUDP(const QHostAddress &addr, int port, const QByteArray &data);
 	};
 
-	class IRIS_EXPORT JT_S5B : public Task
+	class JT_S5B : public Task
 	{
 		Q_OBJECT
 	public:
@@ -290,7 +290,7 @@ namespace XMPP
 		Private *d;
 	};
 
-	struct IRIS_EXPORT S5BRequest
+	struct S5BRequest
 	{
 		Jid from;
 		QString id, sid;
@@ -298,7 +298,7 @@ namespace XMPP
 		bool fast;
 		bool udp;
 	};
-	class IRIS_EXPORT JT_PushS5B : public Task
+	class JT_PushS5B : public Task
 	{
 		Q_OBJECT
 	public:
@@ -320,7 +320,7 @@ namespace XMPP
 		void incomingActivate(const Jid &from, const QString &sid, const Jid &streamHost);
 	};
 
-	class IRIS_EXPORT StreamHost
+	class StreamHost
 	{
 	public:
 		StreamHost();

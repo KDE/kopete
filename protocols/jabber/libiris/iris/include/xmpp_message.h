@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -23,10 +23,10 @@
 #include "xmpp_stanza.h"
 #include "xmpp_url.h"
 #include "xmpp_chatstate.h"
+#include "xmpp_receipts.h"
 #include "xmpp_address.h"
 #include "xmpp_rosterx.h"
 #include "xmpp_muc.h"
-#include <iris_export.h>
 
 class QString;
 class QDateTime;
@@ -42,7 +42,7 @@ namespace XMPP {
 	typedef enum { OfflineEvent, DeliveredEvent, DisplayedEvent,
 			ComposingEvent, CancelEvent } MsgEvent;
 
-	class IRIS_EXPORT Message
+	class Message
 	{
 	public:
 		Message(const Jid &to="");
@@ -101,6 +101,10 @@ namespace XMPP {
 		ChatState chatState() const;
 		void setChatState(ChatState);
  
+		// XEP-0184
+		MessageReceipt messageReceipt() const;
+		void setMessageReceipt(MessageReceipt);
+
 		// JEP-0027
 		QString xencrypted() const;
 		void setXEncrypted(const QString &s);
@@ -128,9 +132,9 @@ namespace XMPP {
 		void setForm(const XData&);
 		const XData& getForm() const;
 
-		// JEP-xxxx Whiteboarding
-		void setWhiteboard(const QDomElement&);
-		const QDomElement& whiteboard() const;
+		// JEP-xxxx SXE
+		void setSxe(const QDomElement&);
+		const QDomElement& sxe() const;
 
 		// MUC
 		void setMUCStatus(int);

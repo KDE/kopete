@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -24,11 +24,10 @@
 #include <QStringList>
 
 #include "xmpp_jid.h"
-#include <iris_export.h>
 
 namespace XMPP
 {
-	class IRIS_EXPORT Subscription
+	class Subscription
 	{
 	public:
 		enum SubType { None, To, From, Both, Remove };
@@ -44,7 +43,7 @@ namespace XMPP
 		SubType value;
 	};
 
-	class IRIS_EXPORT RosterItem
+	class RosterItem
 	{
 	public:
 		RosterItem(const Jid &jid="");
@@ -77,21 +76,7 @@ namespace XMPP
 		Subscription v_subscription;
 		QString v_ask;
 		bool v_push;
-#ifdef Q_OS_WIN
-    public:
-        bool operator==(const RosterItem&) const {
-            qWarning("RosterItem::operator==(const RosterItem&) was called");
-            return false;
-        }
-#endif
 	};
-
-#ifdef Q_OS_WIN
-    inline uint qHash(const RosterItem) {
-        qWarning("inline uint qHash(const RosterItem) was called");
-        return 0;
-    }
-#endif
 }
 
 #endif

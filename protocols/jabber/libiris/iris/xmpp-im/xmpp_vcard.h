@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -28,18 +28,11 @@
 #include <QList>
 #include <qdom.h>
 
-#include <iris_export.h>
-
-// timezone() conflicts with a define/whatever deep inside win-sdk headers
-#ifdef Q_OS_WIN
-# undef timezone
-#endif
-
 class QDate;
 
 namespace XMPP
 {
-	class IRIS_EXPORT VCard
+	class VCard
 	{
 	public:
 		VCard();
@@ -92,7 +85,7 @@ namespace XMPP
 		void setBdayStr(const QString &);
 
 
-		class IRIS_EXPORT Address {
+		class Address {
 		public:
 			Address();
 
@@ -118,7 +111,7 @@ namespace XMPP
 		const AddressList &addressList() const;
 		void setAddressList(const AddressList &);
 
-		class IRIS_EXPORT Label {
+		class Label {
 		public:
 			Label();
 
@@ -139,7 +132,7 @@ namespace XMPP
 		void setLabelList(const LabelList &);
 
 
-		class IRIS_EXPORT Phone {
+		class Phone {
 		public:
 			Phone();
 
@@ -164,7 +157,7 @@ namespace XMPP
 		void setPhoneList(const PhoneList &);
 
 
-		class IRIS_EXPORT Email {
+		class Email {
 		public:
 			Email();
 
@@ -190,7 +183,7 @@ namespace XMPP
 		void setTimezone(const QString &);
 
 
-		class IRIS_EXPORT Geo {
+		class Geo {
 		public:
 			Geo();
 
@@ -222,7 +215,7 @@ namespace XMPP
 		void setAgentURI(const QString &);
 
 
-		class IRIS_EXPORT Org {
+		class Org {
 		public:
 			Org();
 

@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -129,15 +129,6 @@ bool Features::canVoice() const
 	return test(ns);
 }
 
-#define FID_XHTML  "http://jabber.org/protocol/xhtml-im"
-bool Features::canXHTML() const
-{
-	QStringList ns;
-	ns << FID_XHTML;
-	return test(ns);
-}
-
-
 #define FID_GATEWAY "jabber:iq:gateway"
 bool Features::isGateway() const
 {
@@ -244,8 +235,6 @@ long Features::id() const
 		return FID_AHCommand;
 	else if ( test(QStringList(FID_ADD)) )
 		return FID_Add;
-	else if (canXHTML() )
-		return FID_Xhtml;
 
 	return FID_None;
 }

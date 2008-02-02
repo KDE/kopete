@@ -14,18 +14,17 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef XMPP_ROSTERX_H
 #define XMPP_ROSTERX_H
 
-
+#include <QString>
 #include <QStringList>
 
 #include "xmpp_jid.h"
-#include <iris_export.h>
 
 class QDomElement;
 
@@ -33,7 +32,7 @@ namespace XMPP
 {
 	class Stanza;
 
-	class  IRIS_EXPORT RosterExchangeItem
+	class RosterExchangeItem
 	{
 	public:
 		enum Action { Add, Delete, Modify };

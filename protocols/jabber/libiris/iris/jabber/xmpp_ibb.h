@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -34,7 +34,7 @@ namespace XMPP
 	class IBBManager;
 
 	// this is an IBB connection.  use it much like a qsocket
-	class IRIS_EXPORT IBBConnection : public ByteStream
+	class IBBConnection : public ByteStream
 	{
 		Q_OBJECT
 	public:
@@ -78,7 +78,7 @@ namespace XMPP
 
 	typedef Q3PtrList<IBBConnection> IBBConnectionList;
 	typedef Q3PtrListIterator<IBBConnection> IBBConnectionListIt;
-	class IRIS_EXPORT IBBManager : public QObject
+	class IBBManager : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -111,7 +111,7 @@ namespace XMPP
 		void doReject(IBBConnection *c, const QString &id, int, const QString &);
 	};
 
-	class IRIS_EXPORT JT_IBB : public Task
+	class JT_IBB : public Task
 	{
 		Q_OBJECT
 	public:

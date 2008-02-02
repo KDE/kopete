@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -160,7 +160,7 @@ public:
 
 	QByteArray unprocessed() const
 	{
-		QByteArray a(in.size() - at, '\n');
+		QByteArray a(in.size() - at);
 		memcpy(a.data(), in.data() + at, a.size());
 		return a;
 	}
@@ -232,17 +232,17 @@ private:
 
 		if(mightChangeEncoding) {
 			while(1) {
-				int n = out.indexOf('<');
+				int n = out.find('<');
 				if(n != -1) {
 					// we need a closing bracket
-					int n2 = out.indexOf('>', n);
+					int n2 = out.find('>', n);
 					if(n2 != -1) {
 						++n2;
 						QString h = out.mid(n, n2-n);
 						QString enc = processXmlHeader(h);
 						QTextCodec *codec = 0;
 						if(!enc.isEmpty())
-							codec = QTextCodec::codecForName(enc.toLatin1());
+							codec = QTextCodec::codecForName(enc.latin1());
 
 						// changing codecs
 						if(codec) {
@@ -278,8 +278,8 @@ private:
 		if(h.left(5) != "<?xml")
 			return "";
 
-		int endPos = h.indexOf(">");
-		int startPos = h.indexOf("encoding");
+		int endPos = h.find(">");
+		int startPos = h.find("encoding");
 		if(startPos < endPos && startPos != -1) {
 			QString encoding;
 			do {
@@ -335,7 +335,7 @@ private:
 
 	bool checkForBadChars(const QString &s)
 	{
-		int len = s.indexOf('<');
+		int len = s.find('<');
 		if(len == -1)
 			len = s.length();
 		else
@@ -547,7 +547,7 @@ namespace XMPP
 		Q3PtrList<Parser::Event> eventList;
 		bool needMore;
 	};
-}
+};
 
 
 //----------------------------------------------------------------------------
@@ -610,7 +610,7 @@ QString Parser::Event::nsprefix(const QString &s) const
 			return (*it2);
 		++it2;
 	}
-	return QString();
+	return QString::null;
 }
 
 QString Parser::Event::namespaceURI() const
