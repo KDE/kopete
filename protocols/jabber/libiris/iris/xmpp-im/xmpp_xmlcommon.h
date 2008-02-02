@@ -69,6 +69,6 @@ namespace XMLHelper {
 	void readBoolAttribute(QDomElement e, const QString &name, bool *v);
 
 	//QString tagContent(const QDomElement &e); // obsolete;
-};
+}
 
 #endif

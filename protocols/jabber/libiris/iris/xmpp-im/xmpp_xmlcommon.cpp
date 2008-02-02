@@ -484,5 +484,5 @@ void readBoolAttribute(QDomElement e, const QString &name, bool *v)
 	}
 }
 
-};
+}
 
