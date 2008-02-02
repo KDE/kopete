@@ -419,7 +419,7 @@ void dlgJabberVCard::slotSaveVCard()
 	XMPP::JT_VCard *task = new XMPP::JT_VCard( m_account->client()->rootTask() );
 	// signal to ourselves when the vCard data arrived
 	QObject::connect(task, SIGNAL(finished()), this, SLOT(slotVCardSaved()));
-	task->set(vCard);
+	task->set(m_contact->rosterItem().jid(), vCard);
 	task->go(true);
 }
 

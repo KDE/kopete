@@ -734,7 +734,7 @@ void JabberContact::slotSendVCard()
 	XMPP::JT_VCard *task = new XMPP::JT_VCard (account()->client()->rootTask ());
 	// signal to ourselves when the vCard data arrived
 	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotSentVCard ()));
-	task->set (vCard);
+	task->set (rosterItem().jid(), vCard);
 	task->go (true);
 }
 
