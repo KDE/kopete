@@ -192,26 +192,17 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 	Group *g = qobject_cast<Group*>( cle );
 	MetaContact *mc = qobject_cast<MetaContact*>( cle );
 
-	if ( role == Qt::DisplayRole )
+	QString display;
+	if ( g )
 	{
-		QString display;
-		if ( g )
+		switch ( role )
 		{
+		case Qt::DisplayRole:
 			display = i18n( "%1 (%2/%3)", g->displayName(), countConnected( g ),
 			                m_contacts[g].count() );
-		}
-		else
-		{
-			if ( mc )
-				display = mc->displayName();
-		}
-		return display;
-	}
-
-	if ( role == Qt::DecorationRole )
-	{
-		if ( g )
-		{
+			return display;
+			break;
+		case Qt::DecorationRole:
 			if ( g->isExpanded() )
 			{
 				if ( g->useCustomIcon() )
@@ -226,47 +217,46 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 				else
 					return KIcon( KOPETE_GROUP_DEFAULT_CLOSED_ICON );
 			}
+			break;
+		case Kopete::Items::TypeRole:
+			return Kopete::Items::Group;
+			break;
+		case Kopete::Items::UuidRole:
+			return QUuid().toString();
+			break;
+		case Kopete::Items::TotalCountRole:
+			return g->members().count();
+			break;
+		case Kopete::Items::ConnectedCountRole:
+			return countConnected( g );
+			break;
+		case Kopete::Items::OnlineStatusRole:
+			return OnlineStatus::Unknown;
+			break;
 		}
 	}
 
-	if ( role == Kopete::Items::TypeRole )
+	if ( mc )
 	{
-		if ( g )
-			return Kopete::Items::Group;
-		else
+		switch ( role )
+		{
+		case Qt::DisplayRole:
+			display = mc->displayName();
+			return display;
+			break;
+		case Qt::DecorationRole:
+			return QVariant();
+			break;
+		case Kopete::Items::TypeRole:
 			return Kopete::Items::MetaContact;
-	}
-	
-	if ( role == Kopete::Items::UuidRole )
-	{
-		if ( g )
-			return QUuid().toString();
-		else
+			break;
+		case Kopete::Items::UuidRole:
 			return mc->metaContactId().toString();
-	}
-	
-	if ( role == Kopete::Items::TotalCountRole )
-	{
-		if ( g )
-			return g->members().count();
-		else
-			return 0;
-	}
-	
-	if ( role == Kopete::Items::ConnectedCountRole )
-	{
-		if ( g )
-			return countConnected( g );
-		else
-			return 0;
-	}
-	
-	if ( role == Kopete::Items::OnlineStatusRole )
-	{
-		if ( g )
-			return OnlineStatus::Unknown;
-		else
+			break;
+		case Kopete::Items::OnlineStatusRole:
 			return mc->status();
+			break;
+		}
 	}
 
 	return QVariant();
