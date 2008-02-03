@@ -69,3 +69,4 @@ Q_OBJECT
 }
 
 #endif
+//kate: tab-width 4

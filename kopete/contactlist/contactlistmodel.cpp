@@ -307,3 +307,4 @@ void ContactListModel::resetModel()
 }
 
 #include "contactlistmodel.moc"
+//kate: tab-width 4
