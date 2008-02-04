@@ -17,6 +17,7 @@
 
 #include "kircmessage.h"
 
+#include "kircbytearrayescaper.h"
 #include "kircconst.h"
 #include "kirccontext.h"
 #include "kircsocket.h"
@@ -55,18 +56,48 @@ public:
 //	QByteArray line;
 
 	QByteArray prefix;
-	KByteArrayList args;
+	QList<QByteArray> args;
 	QByteArray suffix;
 };
 
 using namespace KIrc;
+
+static KIrc::ByteArrayEscaper IrcEscaper('\020', KIrc::ByteArrayEscaper::EscapeList()
+	<< KIrc::ByteArrayEscaper::Escape('\r', 'r')
+	<< KIrc::ByteArrayEscaper::Escape('\n', 'n')
+	<< KIrc::ByteArrayEscaper::Escape('\0', '0')
+);
+
+QByteArray Message::quote(const QByteArray &buffer)
+{
+	return IrcEscaper.escape(buffer);
+}
+
+QByteArray Message::unquote(const QByteArray &buffer)
+{
+	return IrcEscaper.unescape(buffer);
+}
+
+static KIrc::ByteArrayEscaper IrcCtcpEscaper('\\', KIrc::ByteArrayEscaper::EscapeList()
+		<< KIrc::ByteArrayEscaper::Escape((char)1, '1')
+	);
+
+QByteArray Message::quoteCtcp(const QByteArray &buffer)
+{
+	return IrcCtcpEscaper.escape(buffer);
+}
+
+QByteArray Message::unquoteCtcp(const QByteArray &buffer)
+{
+	return IrcCtcpEscaper.unescape(buffer);
+}
 
 Message::Message()
 {
 }
 
 Message::Message(const QByteArray &prefix,
-		 const KByteArrayList &args,
+		 const QList<QByteArray> &args,
 		 const QByteArray &suffix)
 	: d(new KIrc::MessagePrivate())
 {
@@ -103,7 +134,7 @@ Message Message::fromLine(const QByteArray &line, bool *ok)
 	bool success = false;
 
 	QByteArray prefix;
-	KByteArrayList args;
+	QList<QByteArray> args;
 	QByteArray suffix;
 
 	// Match a regexp instead of the replace ...
@@ -135,7 +166,7 @@ Message Message::fromLine(const QByteArray &line, bool *ok)
 QByteArray Message::toLine() const
 {
 	// FIXME: we need to do some escaping checks here.
-	KByteArrayList list;
+	QList<QByteArray> list;
 
 	if (!d->prefix.isEmpty())
 		list.append(':' + d->prefix);
@@ -152,7 +183,7 @@ QByteArray Message::toLine() const
 	if (!d->suffix.isNull())
 		list.append(':' + d->suffix);
 
-	return list.join(' ') + "\r\n";
+	return IrcEscaper.join(list, ' ') + "\r\n";
 }
 
 QByteArray Message::prefix() const
@@ -160,19 +191,27 @@ QByteArray Message::prefix() const
 	return d->prefix;
 }
 
+#if 0
 QString Message::prefix(QTextCodec *codec) const
 {
 	Q_ASSERT(codec);
 	return codec->toUnicode(d->prefix);
 }
+#endif
 
-Message &Message::operator << (const KByteArrayList::OptArg &arg)
+Message &Message::operator << (const QByteArray &arg)
 {
 	d->args << arg;
 	return *this;
 }
 
-KByteArrayList Message::args() const
+Message &Message::operator << (const KIrc::OptArg &arg)
+{
+	d->args << arg;
+	return *this;
+}
+
+QList<QByteArray> Message::args() const
 {
 	return d->args;
 }
@@ -196,11 +235,13 @@ QByteArray Message::suffix() const
 	return d->suffix;
 }
 
+#if 0
 QString Message::suffix(QTextCodec *codec) const
 {
 	Q_ASSERT(codec);
 	return codec->toUnicode(d->suffix);
 }
+#endif
 
 bool Message::isNumericReply() const
 {

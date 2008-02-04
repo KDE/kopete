@@ -20,8 +20,6 @@
 
 #include "kircglobal.h"
 
-#include "kbytearraylist.h"
-
 #include <QtCore/QSharedDataPointer>
 #include <QtCore/QStringList>
 
@@ -49,9 +47,16 @@ _SetEnv setsuffix(const QByteArray &suffix)
 class KIRC_EXPORT Message
 {
 public:
+	static QByteArray quote(const QByteArray &buffer);
+	static QByteArray unquote(const QByteArray &buffer);
+
+	static QByteArray quoteCtcp(const QByteArray &buffer);
+	static QByteArray unquoteCtcp(const QByteArray &buffer);
+
+public:
 	Message();
 	Message(const QByteArray &prefix,
-		const KByteArrayList &args,
+		const QList<QByteArray> &args,
 		const QByteArray &suffix);
 	Message(const KIrc::Message &o);
 	~Message();
@@ -64,17 +69,18 @@ public:
 //	QString toLine(QTextCodec *codec) const;
 
 	QByteArray prefix() const;
-	QString prefix(QTextCodec *codec) const;
+//	QString prefix(QTextCodec *codec) const;
 
-	KIrc::Message &operator << (const KByteArrayList::OptArg &arg);
-	KByteArrayList args() const;
+	KIrc::Message &operator << (const QByteArray &arg);
+	KIrc::Message &operator << (const KIrc::OptArg &arg);
+	QList<QByteArray> args() const;
 //	QStringList args(QTextCodec *codec) const;
 
 	QByteArray argAt(int i) const;
 //	QString argAt(int i, QTextCodec *codec) const;
 
 	QByteArray suffix() const;
-	QString suffix(QTextCodec *codec) const;
+//	QString suffix(QTextCodec *codec) const;
 
 public:
 	bool isNumericReply() const;

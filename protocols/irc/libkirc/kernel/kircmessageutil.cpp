@@ -17,7 +17,7 @@
 
 #include "kircmessageutil.h"
 
-#include "kbytearrayescaper.h"
+#include "kircbytearrayescaper.h"
 
 #include <kdebug.h>
 
@@ -71,10 +71,10 @@ QByteArray MessageUtil::formatCtcp(const QByteArray &str)
 }
 */
 
-static KByteArrayEscaper IrcEscaper('\020', KByteArrayEscaper::EscapeList()
-	<< KByteArrayEscaper::Escape('\r', 'r')
-	<< KByteArrayEscaper::Escape('\n', 'n')
-	<< KByteArrayEscaper::Escape('\0', '0')
+static KIrc::ByteArrayEscaper IrcEscaper('\020', KIrc::ByteArrayEscaper::EscapeList()
+	<< KIrc::ByteArrayEscaper::Escape('\r', 'r')
+	<< KIrc::ByteArrayEscaper::Escape('\n', 'n')
+	<< KIrc::ByteArrayEscaper::Escape('\0', '0')
 	);
 
 QByteArray KIrc::MessageUtil::quote(const QByteArray &buffer)
@@ -89,8 +89,8 @@ QByteArray KIrc::MessageUtil::unquote(const QByteArray &buffer)
 
 #ifndef KIRC_STRICT
 
-static KByteArrayEscaper IrcCtcpEscaper('\\', KByteArrayEscaper::EscapeList()
-	<< KByteArrayEscaper::Escape((char)1, '1')
+static KIrc::ByteArrayEscaper IrcCtcpEscaper('\\', KIrc::ByteArrayEscaper::EscapeList()
+	<< KIrc::ByteArrayEscaper::Escape((char)1, '1')
 	);
 
 QByteArray KIrc::MessageUtil::quoteCtcp(const QByteArray &buffer)

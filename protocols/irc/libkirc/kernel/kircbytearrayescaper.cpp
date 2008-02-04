@@ -15,9 +15,9 @@
     *************************************************************************
 */
 
-#include "kbytearrayescaper.h"
+#include "kircbytearrayescaper.h"
 
-class KByteArrayEscaper::Private
+class KIrc::ByteArrayEscaper::Private
 {
 public:
 	char escape_char;
@@ -25,43 +25,45 @@ public:
 	char reverse[256];
 };
 
-KByteArrayEscaper::KByteArrayEscaper(char escape_char, const KByteArrayEscaper::EscapeList &escapes)
-	: d(new KByteArrayEscaper::Private)
+using namespace KIrc;
+
+ByteArrayEscaper::ByteArrayEscaper(char escape_char, const ByteArrayEscaper::EscapeList &escapes)
+	: d(new ByteArrayEscaper::Private)
 {
 	reset(escape_char);
 	addEscape(escapes);
 }
 
-KByteArrayEscaper::~KByteArrayEscaper()
+ByteArrayEscaper::~ByteArrayEscaper()
 {
 	delete d;
 }
 
-void KByteArrayEscaper::reset(char escape_char)
+void ByteArrayEscaper::reset(char escape_char)
 {
 	d->escape_char = escape_char;
 	for (int i=0; i<256; ++i)
 		removeEscape(i);
 }
 
-void KByteArrayEscaper::addEscape(char escape, char replacement)
+void ByteArrayEscaper::addEscape(char escape, char replacement)
 {
 	d->escape[(uchar)escape] = replacement;
 	d->reverse[(uchar)replacement] = escape;
 }
 
-void KByteArrayEscaper::addEscape(const KByteArrayEscaper::EscapeList &escapeds)
+void ByteArrayEscaper::addEscape(const ByteArrayEscaper::EscapeList &escapeds)
 {
-	Q_FOREACH(const KByteArrayEscaper::Escape &escaped, escapeds)
+	Q_FOREACH(const ByteArrayEscaper::Escape &escaped, escapeds)
 		addEscape(escaped.first, escaped.second);
 }
 
-void KByteArrayEscaper::removeEscape(char escape)
+void ByteArrayEscaper::removeEscape(char escape)
 {
 	addEscape(escape, escape);
 }
 
-QByteArray KByteArrayEscaper::escape(const QByteArray &buffer) const
+QByteArray ByteArrayEscaper::escape(const QByteArray &buffer) const
 {
 #ifdef __GNUC__
 	#warning implement me
@@ -84,7 +86,7 @@ QByteArray KByteArrayEscaper::escape(const QByteArray &buffer) const
 #endif
 }
 
-QList<QByteArray> KByteArrayEscaper::escape(const QList<QByteArray> &buffers) const
+QList<QByteArray> ByteArrayEscaper::escape(const QList<QByteArray> &buffers) const
 {
 	QList<QByteArray> ret;
 	Q_FOREACH(const QByteArray &buffer, buffers)
@@ -92,7 +94,7 @@ QList<QByteArray> KByteArrayEscaper::escape(const QList<QByteArray> &buffers) co
 	return ret;
 }
 
-QByteArray KByteArrayEscaper::unescape(const QByteArray &buffer) const
+QByteArray ByteArrayEscaper::unescape(const QByteArray &buffer) const
 {
 #ifdef __GNUC__
 	#warning implement me
@@ -119,10 +121,28 @@ QByteArray KByteArrayEscaper::unescape(const QByteArray &buffer) const
 #endif
 }
 
-QList<QByteArray> KByteArrayEscaper::unescape(const QList<QByteArray> &buffers) const
+QList<QByteArray> ByteArrayEscaper::unescape(const QList<QByteArray> &buffers) const
 {
 	QList<QByteArray> ret;
 	Q_FOREACH(const QByteArray &buffer, buffers)
 		ret.append(unescape(buffer));
+	return ret;
+}
+
+QByteArray ByteArrayEscaper::join(const QList<QByteArray> &buffers, char sep) const
+{
+	QByteArray ret;
+	int size = buffers.size();
+
+	if (size > 0)
+	{
+		ret.append(buffers.at(0));
+		for(int i=1; i < size; ++i)
+		{
+			ret.append(sep);
+			ret.append(buffers.at(i));
+		}
+	}
+
 	return ret;
 }
