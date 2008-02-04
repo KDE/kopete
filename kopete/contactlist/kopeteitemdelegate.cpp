@@ -24,6 +24,8 @@
 #include <QAbstractItemView>
 #include <QItemDelegate>
 
+#include <KIconLoader>
+
 #include "kopetemetacontact.h"
 #include "kopeteappearancesettings.h"
 
@@ -39,7 +41,15 @@ KopeteItemDelegate::~KopeteItemDelegate()
 QSize KopeteItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                    const QModelIndex &index) const
 {
-	return QItemDelegate::sizeHint( option, index );
+	if ( index.data( Kopete::Items::TypeRole ) ==
+		Kopete::Items::MetaContact )
+	{
+		QSize photoSize = metaContactIconSize( index );
+		QSize defaultSize = QItemDelegate::sizeHint( option, index );
+		return QSize(defaultSize.width(), photoSize.height());
+	}
+	else
+		return QItemDelegate::sizeHint( option, index );
 }
 
 void KopeteItemDelegate::paint( QPainter* painter, 
@@ -62,6 +72,8 @@ void KopeteItemDelegate::paint( QPainter* painter,
 		QColor idleColor( Kopete::AppearanceSettings::self()->idleContactColor() );
 		opt.palette.setColor( QPalette::Text, idleColor );
 		}
+		
+		opt.decorationSize = metaContactIconSize( index );
 	}
 	
 	if (  index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
@@ -69,8 +81,28 @@ void KopeteItemDelegate::paint( QPainter* painter,
 		QColor gc( Kopete::AppearanceSettings::self()->groupNameColor() );
 		opt.palette.setColor( QPalette::Text, gc );
 	}
-
+	
 	QItemDelegate::paint( painter, opt, index );
 	
+}
+
+QSize KopeteItemDelegate::metaContactIconSize( const QModelIndex& index ) const
+{
+	Q_ASSERT( index.isValid() );
+	using namespace Kopete; 
+	int displayMode = AppearanceSettings::self()->contactListDisplayMode();
+	int iconSize = AppearanceSettings::self()->contactListIconMode();
+	int displaySize = IconSize( KIconLoader::Small );
+	if ( displayMode == AppearanceSettings::EnumContactListDisplayMode::Detailed )
+	{
+		displaySize = ( iconSize == AppearanceSettings::EnumContactListIconMode::IconPic ? 
+		                KIconLoader::SizeMedium : KIconLoader::SizeLarge );
+	}
+	else
+	{
+		displaySize = ( iconSize == Kopete::AppearanceSettings::EnumContactListIconMode::IconPic ?
+		                IconSize( KIconLoader::Small ) :  KIconLoader::SizeMedium );
+	}
+	return QSize(displaySize, displaySize);
 }
 
