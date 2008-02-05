@@ -1482,7 +1482,7 @@ float VideoDevice::setBrightness(float brightness)
 						kDebug() <<  "VIDIOC_QUERYCTRL failed (" << errno << ").";
 					} else
 					{
-						kDebug() << "Device doesn't support the Brightness control. Ouch.";
+						kDebug() << "Device doesn't support the Brightness control.";
 					}
 				} else
 				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
