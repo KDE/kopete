@@ -107,7 +107,9 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 bool GroupWiseAddContactPage::validateData()
 {
 	if ( m_canadd )
+#ifdef __GNUC__
 #warning FIXME port GroupWiseAddContactPage::validateData to interview based GroupWiseSearch
+#endif
 		return true;
 	//return ( m_searchUI->m_results->selectedItem() );
 	else
