@@ -550,7 +550,7 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 	if (combobox != NULL)
 	{
 		combobox->clear();
-		if ( currentDevice() < m_videodevice.size() )
+		if ( !m_videodevice.isEmpty() && (currentDevice()>=0) && currentDevice() < m_videodevice.size() )
 		{
 			if(m_videodevice[currentDevice()].inputs()>0)
 			{
@@ -577,7 +577,7 @@ int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 	if (combobox != NULL)
 	{
 		combobox->clear();
-		if ( currentDevice() < m_videodevice.size() )
+		if ( !m_videodevice.isEmpty() && currentDevice() < m_videodevice.size() )
 		{
 			if(m_videodevice[currentDevice()].inputs()>0)
 			{
