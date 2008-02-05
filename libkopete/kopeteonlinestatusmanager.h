@@ -122,6 +122,7 @@ public:
 
 private:
 	friend class OnlineStatus;
+	friend class OnlineStatusIconEngine;
 	QPixmap cacheLookupByObject( const OnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle = false);
 	QPixmap cacheLookupByMimeSource( const QString &mimeSource );
 	QString fingerprint( const OnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle = false);

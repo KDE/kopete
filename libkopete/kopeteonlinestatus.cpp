@@ -33,7 +33,43 @@
 #include <QIconEngineV2>
 #include <QPainter>
 
+namespace Kopete
+{
 
+class OnlineStatusIconEngine : public QIconEngineV2
+{
+public:
+	OnlineStatusIconEngine( const OnlineStatus &s , const QString& i,
+	                        const QColor &c, bool _idle )
+		: status(s) , icon(i), color(c), idle(_idle) {}
+
+	virtual QIconEngineV2 *clone() const
+	{ return new OnlineStatusIconEngine(status,icon,color,idle); }
+
+	virtual QString key () const
+	{ return OnlineStatusManager::self()->fingerprint( status, icon, 0, color, idle ); }
+
+	QPixmap pixmap ( const QSize & size, QIcon::Mode mode, QIcon::State state )
+	{
+		const int iconSize = qMin(size.width(), size.height());
+		QIcon i(OnlineStatusManager::self()->cacheLookupByObject( status, icon, iconSize, color, idle ));
+		return i.pixmap(size, mode, state);
+	}
+
+	void paint( QPainter * painter, const QRect & rect, QIcon::Mode mode, QIcon::State state )
+	{
+		QPixmap pix = pixmap(rect.size() , mode, state);
+		painter->drawPixmap(rect, pix);
+	}
+
+private:
+	OnlineStatus status;
+	QString icon;
+	QColor color;
+	bool idle;
+};
+
+}
 
 using namespace Kopete;
 
@@ -56,40 +92,6 @@ public:
 	{
 		return protocol ?  protocol->pluginIcon() : QString::fromLatin1( "unknown" );
 	}
-	
-	class OnlineStatusIconEngine : public QIconEngineV2
-	{
-	public:
-		OnlineStatusIconEngine( const OnlineStatus &s , const QString& i,
-				const QColor &c, bool _idle)
-			: status(s) , icon(i), color(c), idle(_idle) {}
-		
-		virtual QIconEngineV2 *clone() const
-		{ return new OnlineStatusIconEngine(status,icon,color,idle); }
-		
-		virtual QString key () const
-		{ return OnlineStatusManager::self()->fingerprint( status, icon, 0, color, idle ); }
-		
-		QPixmap pixmap ( const QSize & size, QIcon::Mode mode, QIcon::State state ) 
-		{ 
-			const int iconSize = qMin(size.width(), size.height());
-			QIcon i(OnlineStatusManager::self()->cacheLookupByObject( status, icon, iconSize, color, idle ));
-			return i.pixmap(size, mode, state);
-		}
-		
-		void paint( QPainter * painter, const QRect & rect, QIcon::Mode mode, QIcon::State state )
-		{
-			QPixmap pix = pixmap(rect.size() , mode, state);
-			painter->drawPixmap(rect, pix);
-		}
-		
-	private:
-		OnlineStatus status;
-		QString icon;
-		QColor color;
-		bool idle;
-	};
-
 };
 
 /**
@@ -295,7 +297,7 @@ QIcon OnlineStatus::iconFor( const Contact *contact ) const
 		iconName = contact->account()->customIcon();
 	if ( iconName.isNull() )
 		iconName = d->protocolIcon();
-	return QIcon(new Private::OnlineStatusIconEngine( *this, iconName, 
+	return QIcon(new OnlineStatusIconEngine( *this, iconName,
 		     contact->account()->color(), contact->idleTime() >= 10*60));
 }
 
@@ -318,7 +320,7 @@ QIcon OnlineStatus::iconFor( const Account *account ) const
 	QString iconName = account->customIcon();
 	if ( iconName.isNull() )
 		iconName = d->protocolIcon();
-	return QIcon(new Private::OnlineStatusIconEngine(*this, iconName, account->color(),false));
+	return QIcon(new OnlineStatusIconEngine(*this, iconName, account->color(),false));
 
 }
 
