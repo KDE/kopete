@@ -75,8 +75,8 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 		this, SLOT( slotMessageSent( Kopete::Message&,
 		Kopete::ChatSession* ) ) );
 
-	connect( this, SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact*  ) ) ,
-		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact*  ) ) );
+	connect( this, SIGNAL( invitation(MSNInvitation*& ,  const QString & , unsigned long int , MSNChatSession*  , MSNContact*  ) ) ,
+		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , unsigned long int , MSNChatSession*  , MSNContact*  ) ) );
 
 
 	m_actionInvite = new KActionMenu( KIcon("kontact_contacts"), i18n( "&Invite" ), this );
