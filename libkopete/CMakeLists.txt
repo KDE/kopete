@@ -5,7 +5,10 @@ if(NOT WIN32)
 endif(NOT WIN32)
 add_subdirectory( tests )
 
-include_directories( ${KOPETE_INCLUDES} )
+
+FIND_PACKAGE(Upnp REQUIRED)
+
+include_directories( ${KOPETE_INCLUDES} ${UPNP_INCLUDE_DIR})
 
 ########### next target ###############
 
@@ -41,6 +44,16 @@ set(kopete_ui_SRCS
   ui/webcamwidget.cpp
 )
 
+set(kopete_upnp_SRCS
+  upnp/action.cpp
+  upnp/argument.cpp
+  upnp/device.cpp
+  #upnp/sample_util.cpp
+  upnp/service.cpp
+  upnp/upnpKopete.cpp
+  upnp/util_Xml.cpp
+)
+
 set(kopete_contactlist_SRCS
   contactlist/kopetecontactliststorage.cpp
   contactlist/xmlcontactstorage.cpp
@@ -55,6 +68,7 @@ set(kopete_tasks_SRCS
 set(kopete_LIB_SRCS
    ${kopete_private_SRCS}
    ${kopete_ui_SRCS}
+   ${kopete_upnp_SRCS}
    ${kopete_contactlist_SRCS}
    ${kopete_tasks_SRCS}
    kabcpersistence.cpp
@@ -122,7 +136,7 @@ kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC kopeteappearancesettings.kcfgc 
 
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 
-target_link_libraries(kopete ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS} )
+target_link_libraries(kopete ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS} ${UPNP_LIBRARY} ${IXML_LIBRARY})
 if(Q_WS_X11 AND X11_Xss_FOUND)
    target_link_libraries(kopete ${X11_Xss_LIB})
 endif(Q_WS_X11 AND X11_Xss_FOUND)
@@ -164,6 +178,15 @@ install(FILES
  ui/kopeteviewplugin.h
 DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui )
 
+install(FILES
+  upnp/action.h
+  upnp/argument.h
+  upnp/device.h
+  #upnp/sample_util.h
+  upnp/service.h
+  upnp/upnpKopete.h
+  upnp/util_Xml.h
+DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/upnp)
 
 install( FILES
   kopeteappearancesettings.kcfg

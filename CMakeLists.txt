@@ -4,6 +4,7 @@ add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 FIND_PACKAGE(Blitz REQUIRED)
 
+
 # Configure checks
 include (TestBigEndian)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
@@ -31,6 +32,8 @@ set(KOPETE_INCLUDES
 	${CMAKE_BINARY_DIR}/kopete/libkopete/
 	${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/
 	${CMAKE_BINARY_DIR}/kopete/libkopete/ui/
+	${CMAKE_SOURCE_DIR}/kopete/libkopete/upnp/
+	${CMAKE_BINARY_DIR}/kopete/libkopete/upnp/
 	${CMAKE_SOURCE_DIR}/kopete/libkopete/private/
 	${CMAKE_SOURCE_DIR}/kopete/libkopete/contactlist/
     ${CMAKE_SOURCE_DIR}/kopete/libkopete/tasks/
