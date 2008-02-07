@@ -402,7 +402,9 @@ detectSignalStandards();
 		m_name=m_model; // Take care about changing the name to be different from the model itself...
 
 		detectPixelFormats();
+#ifdef V4L2_CAP_VIDEO_CAPTURE
 		enumerateControls();
+#endif
 // TODO: Now we must execute the proper initialization according to the type of the driver.
 		kDebug() << "checkDevice() exited successfuly.";
 		return EXIT_SUCCESS;
