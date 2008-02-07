@@ -188,6 +188,7 @@ void BuddyIconTask::handleAIMBuddyIconResponse()
 	Oscar::WORD iconSize = b->getWord();
 	QByteArray icon( b->getBlock(iconSize) );
 	emit haveIcon( user, icon );
+	setSuccess( 0, QString() );
 }
 
 void BuddyIconTask::sendICQBuddyIconRequest()
@@ -233,6 +234,7 @@ void BuddyIconTask::handleICQBuddyIconResponse()
 	QByteArray icon( b->getBlock(iconSize) );
 	
 	emit haveIcon( user, icon );
+	setSuccess( 0, QString() );
 }
 
 #include "buddyicontask.moc"
