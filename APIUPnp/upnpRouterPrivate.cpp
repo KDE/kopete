@@ -2,14 +2,10 @@
 #include <upnp/ixml.h>
 #include <upnp/upnp.h>
 
-UPnp * UpnpRouterPrivate::d=NULL;
+UPnp *UpnpRouterPrivate::d=NULL;
 
 QList<UpnpRouterPrivate> UpnpRouterPrivate::listRouterPrivate()
 {
-	if(d==NULL)
-	{
-		d = UPnp::upnp();
-	}
 	static QList<UpnpRouterPrivate> routerPrivate;
 	d->searchDevices();
 	QList<QUrl> list = d->devicesSettingUrl();
@@ -19,6 +15,14 @@ QList<UpnpRouterPrivate> UpnpRouterPrivate::listRouterPrivate()
 		routerPrivate.push_back ( router );
 	}
 	return routerPrivate;
+}
+
+UpnpRouterPrivate::UpnpRouterPrivate()
+{
+	if(d==NULL)
+	{
+		d = UPnp::upnp();
+	}
 }
 
 UpnpRouterPrivate::UpnpRouterPrivate(QUrl &url)
@@ -250,7 +254,7 @@ bool UpnpRouterPrivate::isEmpty()
 }
 
 
-bool UpnpRouterPrivate::openPort(QHostAddress &hostAddress, quint16 port, const QString &typeProtocol, const QString &protocol)
+bool UpnpRouterPrivate::openPort(quint16 port, const QString &typeProtocol, const QString &protocol)
 {
 	bool send = false;
 	QList<QString> paramNameAction;
@@ -274,7 +278,7 @@ bool UpnpRouterPrivate::openPort(QHostAddress &hostAddress, quint16 port, const 
 	paramValueAction.append(c_port);
 	paramValueAction.append(typeProtocol);
 	paramValueAction.append(c_port);
-	paramValueAction.append(hostAddress.toString());
+	paramValueAction.append(d->hostAddress().toString());
 	paramValueAction.append(QString("1"));
 	paramValueAction.append(protocol);
 	paramValueAction.append(QString("0"));
