@@ -19,7 +19,7 @@ class UpnpRouterPrivate
 		/**
 		* Return all router detected on network
 		*/
-		QList<UpnpRouterPrivate> listRouterPrivate();
+		static QList<UpnpRouterPrivate> listRouterPrivate();
 
 		/**
 		* Constructor UpnpRouterPrivate
@@ -91,7 +91,6 @@ class UpnpRouterPrivate
 		QString m_serialNumber;
 		QString m_presentationURL;
 		QString m_UPC;
-		
-		UPnp *d;	
+		static UPnp *d;	
 };
 #endif

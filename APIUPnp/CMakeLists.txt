@@ -16,7 +16,7 @@ set(UPnp_SRCS
 	argument.cpp
 	service.cpp
 	util_Xml.cpp
-	#upnpRouter.cpp
+# 	upnpRouter.cpp
 	)
 
 #kde4_add_ui_files(UPnp_SRCS mainWindow.ui)

@@ -2,10 +2,15 @@
 #include <upnp/ixml.h>
 #include <upnp/upnp.h>
 
+UPnp * UpnpRouterPrivate::d=NULL;
+
 QList<UpnpRouterPrivate> UpnpRouterPrivate::listRouterPrivate()
 {
-	QList<UpnpRouterPrivate> routerPrivate;
-	d = UPnp::upnp();
+	if(d==NULL)
+	{
+		d = UPnp::upnp();
+	}
+	static QList<UpnpRouterPrivate> routerPrivate;
 	d->searchDevices();
 	QList<QUrl> list = d->devicesSettingUrl();
 	foreach (QUrl url, list) 
@@ -18,7 +23,10 @@ QList<UpnpRouterPrivate> UpnpRouterPrivate::listRouterPrivate()
 
 UpnpRouterPrivate::UpnpRouterPrivate(QUrl &url)
 {
-	d = UPnp::upnp();
+	if(d==NULL)
+	{
+		d = UPnp::upnp();
+	}
 	m_routerSettingUrl = url;	
 
 	QString serviceType;
