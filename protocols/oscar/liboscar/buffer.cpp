@@ -608,15 +608,15 @@ void Buffer::endBlock()
 	{
 		if ( block.type == BWord )
 		{
-			mBuffer[block.pos++] = (unsigned char) (size & 0x0000ff00) >> 8;
-			mBuffer[block.pos++] = (unsigned char) (size & 0x000000ff) >> 0;
+			mBuffer[block.pos++] = (unsigned char) ((size & 0x0000ff00) >> 8);
+			mBuffer[block.pos++] = (unsigned char) ((size & 0x000000ff) >> 0);
 		}
 		else if ( block.type == BDWord )
 		{
-			mBuffer[block.pos++] = (unsigned char) (size & 0xff000000) >> 24;
-			mBuffer[block.pos++] = (unsigned char) (size & 0x00ff0000) >> 16;
-			mBuffer[block.pos++] = (unsigned char) (size & 0x0000ff00) >> 8;
-			mBuffer[block.pos++] = (unsigned char) (size & 0x000000ff) >> 0;
+			mBuffer[block.pos++] = (unsigned char) ((size & 0xff000000) >> 24);
+			mBuffer[block.pos++] = (unsigned char) ((size & 0x00ff0000) >> 16);
+			mBuffer[block.pos++] = (unsigned char) ((size & 0x0000ff00) >> 8);
+			mBuffer[block.pos++] = (unsigned char) ((size & 0x000000ff) >> 0);
 		}
 	}
 	else
