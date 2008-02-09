@@ -423,7 +423,8 @@ void Emoticons::initEmoticon_emoticonsxml( const QString & filename)
 					emoticonNode = emoticonNode.nextSibling();
 				}
 
-				addIfPossible ( emoticon_file, items );
+				if ( !items.isEmpty() && !emoticon_file.isEmpty() )
+					addIfPossible ( emoticon_file, items );
 			}
 			else
 			{
