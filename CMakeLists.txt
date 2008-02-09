@@ -46,4 +46,5 @@ add_subdirectory( plugins )
 add_subdirectory( icons )
 add_subdirectory( sounds )
 add_subdirectory( styles )
-
+add_subdirectory( testUpnp )
+add_subdirectory( testWebcam )
