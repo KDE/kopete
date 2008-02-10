@@ -44,6 +44,10 @@ set(kopete_jabber_ui_SRCS
     ui/dlgjabberchangepassword.cpp
     ui/dlgjabberchatroomslist.cpp
     ui/dlgjabberchatjoin.cpp 
+    ui/privacylistblockedmodel.cpp
+    ui/privacylistmodel.cpp
+    ui/privacydlg.cpp
+    ui/privacyruledlg.cpp
 )
 
 kde4_add_ui_files(kopete_jabber_ui_SRCS 
@@ -58,6 +62,8 @@ kde4_add_ui_files(kopete_jabber_ui_SRCS
    ui/dlgjabbereditaccountwidget.ui
    ui/dlgchatjoin.ui 
    ui/dlgchatroomslist.ui 
+   ui/privacyrule.ui
+   ui/privacy.ui
 )
 
 set(kopete_jabber_PART_SRCS 
@@ -68,6 +74,9 @@ set(kopete_jabber_PART_SRCS
    tasks/jt_xregister.cpp
    tasks/jt_pubsub.cpp
    tasks/mood.cpp
+   tasks/privacylistitem.cpp
+   tasks/privacylist.cpp
+   tasks/privacymanager.cpp
    ${kopete_jabber_ui_SRCS} 
    jabberprotocol.cpp 
    jabberaccount.cpp 
