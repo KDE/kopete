@@ -584,25 +584,45 @@ void KopeteContactListView::slotMetaContactDeleted( Kopete::MetaContact *mc )
 	d->viewStrategy->removeMetaContact( mc );
 }
 
-void KopeteContactListView::slotMetaContactSelected( bool sel )
+void KopeteContactListView::slotMetaContactSelected( bool selected )
 {
-	bool set = sel;
+	if ( m_selectedMetaContact )
+	{ // Delete previous connection
+		disconnect( m_selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+		            this, SLOT(slotUpdateMetaContactActions()) );
+		m_selectedMetaContact = 0;
+	}
 
-	if( sel )
+	if ( selected )
 	{
-		Kopete::MetaContact *kmc = Kopete::ContactList::self()->selectedMetaContacts().first();
-		set = sel && kmc->isReachable();
-		actionAddTemporaryContact->setEnabled( sel && kmc->isTemporary() );
+		m_selectedMetaContact = Kopete::ContactList::self()->selectedMetaContacts().first();
+		connect( m_selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+		         this, SLOT(slotUpdateMetaContactActions()) );
+	}
+
+	actionMove->setEnabled( selected ); // TODO: make available for several contacts
+	actionCopy->setEnabled( selected ); // TODO: make available for several contacts
+	slotUpdateMetaContactActions();
+}
+
+void KopeteContactListView::slotUpdateMetaContactActions()
+{
+	bool reachable = false;
+
+	if( m_selectedMetaContact )
+	{
+		reachable = m_selectedMetaContact->isReachable();
+		actionAddTemporaryContact->setEnabled( m_selectedMetaContact->isTemporary() );
+		actionSendFile->setEnabled( reachable && m_selectedMetaContact->canAcceptFiles() );
 	}
 	else
 	{
-		actionAddTemporaryContact->setEnabled(false);
+		actionAddTemporaryContact->setEnabled( false );
+		actionSendFile->setEnabled( false );
 	}
 
-	actionSendMessage->setEnabled( set );
-	actionStartChat->setEnabled( set );
-	actionMove->setEnabled( sel ); // TODO: make available for several contacts
-	actionCopy->setEnabled( sel ); // TODO: make available for several contacts
+	actionSendMessage->setEnabled( reachable );
+	actionStartChat->setEnabled( reachable );
 }
 
 void KopeteContactListView::slotAddedToGroup( Kopete::MetaContact *mc, Kopete::Group *to )
@@ -1438,7 +1458,6 @@ void KopeteContactListView::updateActionsForSelection(
 		inkabc= !kabcid.isEmpty() && !kabcid.contains(":");
 	}
 
-	actionSendFile->setEnabled( singleContactSelected && contacts.first()->canAcceptFiles());
 	actionAddContact->setEnabled( singleContactSelected && !contacts.first()->isTemporary());
 	actionSendEmail->setEnabled( inkabc );
 
