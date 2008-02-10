@@ -29,6 +29,7 @@
 #include <kcodecs.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
+#include <kinputdialog.h>
 
 #include <kdeversion.h>
 #include <kfiledialog.h>
@@ -350,6 +351,18 @@ void OscarContact::changeContactEncoding()
 	m_oesd = new OscarEncodingSelectionDialog( Kopete::UI::Global::mainWidget(), property(p->contactEncoding).value().toInt() );
 	connect( m_oesd, SIGNAL(closing(int)), this, SLOT(changeEncodingDialogClosed(int)) );
 	m_oesd->show();
+}
+
+void OscarContact::requestAuthorization()
+{
+	QString info = i18n("The user %1 requires authorization before being added to a contact list. "
+	                    "Do you want to send an authorization request?\n\nReason for requesting authorization:",
+	                    ( !nickName().isEmpty() ) ? nickName() : contactId() );
+
+	QString reason = KInputDialog::getText( i18n("Request Authorization"), info,
+	                                        i18n("Please authorize me so I can add you to my contact list") );
+	if ( !reason.isNull() )
+		mAccount->engine()->requestAuth( contactId(), reason );
 }
 
 void OscarContact::changeEncodingDialogClosed( int result )
