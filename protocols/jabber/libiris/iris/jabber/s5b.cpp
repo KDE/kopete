@@ -33,6 +33,7 @@
 
 #ifdef Q_OS_WIN
 # include <windows.h>
+# include <winsock2.h>
 #else
 # include <netinet/in.h>
 #endif

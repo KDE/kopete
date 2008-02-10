@@ -54,7 +54,20 @@ namespace XMPP
 		ResourceList v_resourceList;
 		Status v_lastUnavailableStatus;
 		bool v_flagForDelete;
+#ifdef IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
+    public:
+        bool operator==(const LiveRosterItem&) const {
+            qWarning("LiveRosterItem::operator==(const LiveRosterItem&) was called");
+            return false;
+        }
+#endif
 	};
+#ifdef IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
+    inline uint qHash(const LiveRosterItem&) {
+        qWarning("inline uint qHash(const LiveRosterItem&) was called");
+        return 0;
+    }
+#endif
 }
 
 #endif

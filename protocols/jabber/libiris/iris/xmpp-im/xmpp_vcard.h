@@ -31,6 +31,11 @@
 #include <iris_export.h>
 class QDate;
 
+// on win32 timezone is a define and screws up the build
+#ifdef timezone
+#undef timezone
+#endif
+
 namespace XMPP
 {
 	class IRIS_EXPORT VCard

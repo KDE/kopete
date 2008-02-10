@@ -85,7 +85,20 @@ namespace XMPP
 
 		class Private;
 		Private *d;
+#ifdef IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
+    public:
+        bool operator==(const FormField&) const {
+            qWarning("FormField::operator==(const FormField&) was called");
+            return false;
+        }
+#endif
 	};
+#ifdef IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
+    inline uint qHash(const FormField&) {
+        qWarning("inline uint qHash(const FormField&) was called");
+        return 0;
+    }
+#endif
 
 	class IRIS_EXPORT Form : public QList<FormField>
 	{

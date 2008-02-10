@@ -4,11 +4,6 @@ add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 add_subdirectory( icons ) 
 add_subdirectory( libiris ) 
 
-# we can't use KDE_FULL_TEMPLATE_EXPORT_INSTANTIATION because libiris is an external lib
-if(MSVC)
-  add_definitions(-DIRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION)
-endif(MSVC)
-
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(JINGLE)")
 include_directories( 
 ${KOPETE_INCLUDES} 
