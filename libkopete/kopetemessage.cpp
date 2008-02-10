@@ -314,7 +314,12 @@ QString Message::escapedBody() const
 	if (!d->escapedBodyDirty)
 		return d->escapedBody;
 	else {
-		QString html = d->body->toHtml();
+		QString html;
+		if ( d->format == Qt::PlainText )
+			html = Qt::convertFromPlainText( d->body->toPlainText() );
+		else
+			html = d->body->toHtml();
+
 //		all this regex business is to take off the outer HTML document provided by QTextDocument
 //		remove the head
 		QRegExp badStuff ("<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>|</?p[^<>]*>");
