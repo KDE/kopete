@@ -10,11 +10,15 @@
   <!ENTITY package "kdenetwork">
   <!ENTITY kappname "&kopete;">
   <!ENTITY im "<acronym>IM</acronym>">
+  <!ENTITY ascii "<acronym>ASCII</acronym>">
+  <!ENTITY html "<acronym>HTML</acronym>">
+  <!ENTITY xml "<acronym>XML</acronym>">
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
   <!ENTITY kopetewww "<ulink url='http://kopete.kde.org'>http://kopete.kde.org</ulink>">
   <!ENTITY kopete-menus SYSTEM "menus.docbook">
   <!ENTITY kopete-chatstyle SYSTEM "chatstyle.docbook">
+  <!ENTITY kopete-pipes SYSTEM "pipes.docbook">
 ]>
 <!--
 Intro (1st draft, Will)
@@ -871,6 +875,26 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>Example: <userinput>sftp://username@somehost.org/path/to/homes/user/im.html</userinput> uses the <acronym>SFTP</acronym> protocol to upload your presence directly onto the webserver.</para>
 <para>See <ulink url="help:/kioslave/index.html">the KIO manuals</ulink> for tips on specific network protocols.</para>
 </sect2>
+<sect2 id="plugins-pipes">
+<title>Pipes</title>
+<para>Pipes allows you to pipe incoming or outgoing messages through an external script or executable. An incoming message will be piped through the executable before it reaches your chat window, while outgoing messages will be piped through the executable before they are sent over the internet. Pipes can recieve text in one of three forms:
+<variablelist>
+<varlistentry>
+<term>Plain text body</term>
+<listitem><para>The body of the message, in plain &ascii; text</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&html; text body</term>
+<listitem><para>The body of the message, in &html;, as it would be if your chat peer had sent HTML to you, which will be rendered in the chat window</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&xml; full message</term>
+<listitem><para>An &xml; document that describes all the characteristics of the message, including the &html; body.</para></listitem>
+</varlistentry>
+</variablelist>
+For most purposes, you probably want to use the plain text body or &html; text body options. These can be used with programs such as translators or summarizers. The &xml; format is only appropriate for use with a program or script written specifically to work with this plugin. If you would like to write a program or script that does work with this plugin, see <link linkend="pipes">the more detailed documentation</link>.
+</para>
+</sect2>
 </sect1>
 <sect1 id="plugins-contributing">
 <title>Contributing a plugin</title>
@@ -1004,6 +1028,7 @@ Documentation copyright 2003,2004,2005 Will Stephenson (lists at stevello free-o
 </appendix>
 
 &kopete-chatstyle;
+&kopete-pipes;
 
 &documentation.index;
 </book>
