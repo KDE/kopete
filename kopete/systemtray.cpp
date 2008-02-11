@@ -66,6 +66,9 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 
 	mKopeteIcon = loadIcon("kopete");
 
+	// Hack which allow us to disable window restoring or hiding when we should process event (BUG:157663)
+	disconnect( this, SIGNAL(activated( QSystemTrayIcon::ActivationReason )), 0 ,0 );
+
 	connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(slotAboutToShowMenu()));
 
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
@@ -118,6 +121,10 @@ void KopeteSystemTray::slotActivated( QSystemTrayIcon::ActivationReason reason )
 	{
 		if ( !mEventList.isEmpty() )
 			mEventList.first()->apply();
+	}
+	else if ( reason == QSystemTrayIcon::Trigger )
+	{
+		toggleActive();
 	}
 }
 
