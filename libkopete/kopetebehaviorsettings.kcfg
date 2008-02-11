@@ -114,6 +114,10 @@
 			<label>Show send button in Chat Window.</label>
 			<default>true</default>
 		</entry>
+		<entry key="showDates" type="Bool">
+			<label>Show message dates.</label>
+			<default>false</default>
+		</entry>
 		<entry key="truncateContactName" type="Bool">
 			<label>Truncate contact name.</label>
 			<default>false</default>
