@@ -26,6 +26,9 @@
 #include "videoinput.h"
 #include "videodevice.h"
 
+#include "bayer.h"
+#include "sonix_compress.h"
+
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
 
 namespace Kopete {
@@ -47,6 +50,73 @@ VideoDevice::~VideoDevice()
 }
 
 #ifdef V4L2_CAP_VIDEO_CAPTURE
+
+void VideoDevice::enumerateControls (void)
+{
+// -----------------------------------------------------------------------------------------------------------------
+// This must turn up to be a proper method to check for controls' existence.
+	CLEAR (queryctrl);
+// v4l2_queryctrl may zero the .id in some cases, even if the IOCTL returns EXIT_SUCCESS (tested with a bttv card, when testing for V4L2_CID_AUDIO_VOLUME).
+// As of 6th Aug 2007, according to the V4L2 specification version 0.21, this behavior is undocumented, and the example 1-8 code found at
+// http://www.linuxtv.org/downloads/video4linux/API/V4L2_API/spec/x519.htm fails because of this behavior with a bttv card.
+
+	int currentid = V4L2_CID_BASE;
+
+kDebug() << "Checking CID controls";
+
+	for (currentid = V4L2_CID_BASE; currentid < V4L2_CID_LASTP1; currentid++)
+//for (queryctrl.id = 9963776; queryctrl.id < 9963800; queryctrl.id++)
+	{
+		queryctrl.id = currentid;
+		if (0 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
+		{
+			if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+				continue;
+
+kDebug() <<  " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) << " Values from " << queryctrl.minimum << " to " << queryctrl.maximum << " with steps of " << queryctrl.step << ". Default: " << queryctrl.default_value;
+
+//			switch (queryctrl.type)
+//			{
+//				case V4L2_CTRL_TYPE_INTEGER : 
+//			}
+			if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
+				enumerateMenu ();
+		}
+		else
+		{
+			if (errno == EINVAL)
+				continue;
+
+			perror ("VIDIOC_QUERYCTRL");
+//			exit (EXIT_FAILURE);
+		}
+	}
+
+kDebug() << "Checking CID private controls";
+
+	for (currentid = V4L2_CID_PRIVATE_BASE;; currentid++)
+	{
+		queryctrl.id = currentid;
+		if ( 0 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
+		{
+			if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+				continue;
+
+kDebug() << " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) << " Values from " << queryctrl.minimum << " to " << queryctrl.maximum << " with steps of " << queryctrl.step << ". Default: " << queryctrl.default_value;
+
+			if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
+				enumerateMenu ();
+		}
+		else
+		{
+			if (errno == EINVAL)
+				break;
+
+			perror ("VIDIOC_QUERYCTRL");
+//			exit (EXIT_FAILURE);
+		}
+	}
+}
 
 void VideoDevice::enumerateMenu (void)
 {
@@ -255,74 +325,6 @@ detectSignalStandards();
 					}
 				}
 			}
-
-
-// -----------------------------------------------------------------------------------------------------------------
-// This must turn up to be a proper method to check for controls' existence.
-CLEAR (queryctrl);
-// v4l2_queryctrl may zero the .id in some cases, even if the IOCTL returns EXIT_SUCCESS (tested with a bttv card, when testing for V4L2_CID_AUDIO_VOLUME).
-// As of 6th Aug 2007, according to the V4L2 specification version 0.21, this behavior is undocumented, and the example 1-8 code found at
-// http://www.linuxtv.org/downloads/video4linux/API/V4L2_API/spec/x519.htm fails because of this behavior with a bttv card.
-
-int currentid = V4L2_CID_BASE;
-
-kDebug() << "Checking CID controls";
-
-for (currentid = V4L2_CID_BASE; currentid < V4L2_CID_LASTP1; currentid++)
-//for (queryctrl.id = 9963776; queryctrl.id < 9963800; queryctrl.id++)
-{
-	queryctrl.id = currentid;
-	if (0 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
-	{
-		if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
-			continue;
-
-kDebug() <<  " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) << " Values from " << queryctrl.minimum << " to " << queryctrl.maximum << " with steps of " << queryctrl.step << ". Default: " << queryctrl.default_value;
-
-//		switch (queryctrl.type)
-//		{
-//			case V4L2_CTRL_TYPE_INTEGER : 
-//		}
-		if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
-			enumerateMenu ();
-	}
-	else
-	{
-		if (errno == EINVAL)
-			continue;
-
-		perror ("VIDIOC_QUERYCTRL");
-//		exit (EXIT_FAILURE);
-	}
-}
-
-kDebug() << "Checking CID private controls";
-
-for (currentid = V4L2_CID_PRIVATE_BASE;; currentid++)
-{
-	queryctrl.id = currentid;
-	if ( 0 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
-	{
-		if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
-			continue;
-
-kDebug() << " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) << " Values from " << queryctrl.minimum << " to " << queryctrl.maximum << " with steps of " << queryctrl.step << ". Default: " << queryctrl.default_value;
-
-		if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
-			enumerateMenu ();
-	}
-	else
-	{
-		if (errno == EINVAL)
-			break;
-
-		perror ("VIDIOC_QUERYCTRL");
-//		exit (EXIT_FAILURE);
-	}
-}
-
-
-
 		}
 		else
 		{
@@ -400,7 +402,9 @@ kDebug() << " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) 
 		m_name=m_model; // Take care about changing the name to be different from the model itself...
 
 		detectPixelFormats();
-
+#ifdef V4L2_CAP_VIDEO_CAPTURE
+		enumerateControls();
+#endif
 // TODO: Now we must execute the proper initialization according to the type of the driver.
 		kDebug() << "checkDevice() exited successfuly.";
 		return EXIT_SUCCESS;
@@ -768,8 +772,11 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			}
 			else
 			{
-				m_pixelformat = newformat;
-				ret = m_pixelformat;
+				if (fmt.fmt.pix.pixelformat == pixelFormatCode(newformat)) // Thih "if" (not what is contained within) is a fix for a bug in sn9c102 driver.
+				{
+					m_pixelformat = newformat;
+					ret = m_pixelformat;
+				}
 			}
 			break;
 #endif
@@ -1021,35 +1028,6 @@ int VideoDevice::getFrame()
 					return EXIT_FAILURE;*/ //it was an assert()
 // kDebug() << "m_rawbuffers[" << v4l2buffer.index << "].start: " << (void *)m_rawbuffers[v4l2buffer.index].start << "   Size: " << m_currentbuffer.data.size();
 
-
-
-/*{
-	unsigned long long result=0;
-	unsigned long long R=0, G=0, B=0, A=0;
-	int Rmax=0, Gmax=0, Bmax=0, Amax=0;
-	int Rmin=255, Gmin=255, Bmin=255, Amin=0;
-
-	for(unsigned int loop=0;loop < m_currentbuffer.data.size();loop+=4)
-	{
-		R+=m_rawbuffers[v4l2buffer.index].start[loop];
-		G+=m_rawbuffers[v4l2buffer.index].start[loop+1];
-		B+=m_rawbuffers[v4l2buffer.index].start[loop+2];
-//		A+=currentbuffer.data[loop+3];
-		if (m_currentbuffer.data[loop]   < Rmin) Rmin = m_currentbuffer.data[loop];
-		if (m_currentbuffer.data[loop+1] < Gmin) Gmin = m_currentbuffer.data[loop+1];
-		if (m_currentbuffer.data[loop+2] < Bmin) Bmin = m_currentbuffer.data[loop+2];
-//		if (m_currentbuffer.data[loop+3] < Amin) Amin = m_currentbuffer.data[loop+3];
-		if (m_currentbuffer.data[loop]   > Rmax) Rmax = m_currentbuffer.data[loop];
-		if (m_currentbuffer.data[loop+1] > Gmax) Gmax = m_currentbuffer.data[loop+1];
-		if (m_currentbuffer.data[loop+2] > Bmax) Bmax = m_currentbuffer.data[loop+2];
-//		if (m_currentbuffer.data[loop+3] > Amax) Amax = m_currentbuffer.data[loop+3];
-	}
-	kDebug() << " R: " << R << " G: " << G << " B: " << B << " A: " << A <<
-		" Rmin: " << Rmin << " Gmin: " << Gmin << " Bmin: " << Bmin << " Amin: " << Amin <<
-		" Rmax: " << Rmax << " Gmax: " << Gmax << " Bmax: " << Bmax << " Amax: " << Amax << endl;
-}*/
-
-
 memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_currentbuffer.data.size());
 				if (-1 == xioctl (VIDIOC_QBUF, &v4l2buffer))
 					return errnoReturn ("VIDIOC_QBUF");
@@ -1087,53 +1065,6 @@ memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_current
 #endif
 				break;
 		}
-
-/* Automatic color correction. Now it just swaps R and B channels in RGB24/BGR24 modes.
-		if(m_input[m_current_input].getAutoColorCorrection())
-		{
-			switch(m_currentbuffer.pixelformat)
-			{
-				case PIXELFORMAT_NONE	: break;
-				case PIXELFORMAT_GREY	: break;
-				case PIXELFORMAT_RGB332	: break;
-				case PIXELFORMAT_RGB555	: break;
-				case PIXELFORMAT_RGB555X: break;
-				case PIXELFORMAT_RGB565	: break;
-				case PIXELFORMAT_RGB565X: break;
-				case PIXELFORMAT_RGB24	:
-				case PIXELFORMAT_BGR24	:
-					{
-						unsigned char temp;
-						for(int loop=0;loop < m_currentbuffer.data.size();loop+=3)
-						{
-							temp = m_currentbuffer.data[loop];
-							m_currentbuffer.data[loop] = m_currentbuffer.data[loop+2];
-							m_currentbuffer.data[loop+2] = temp;
-						}
-					}
-					break;
-				case PIXELFORMAT_RGB32	:
-				case PIXELFORMAT_BGR32	:
-					{
-						unsigned char temp;
-						for(int loop=0;loop < m_currentbuffer.data.size();loop+=4)
-						{
-							temp = m_currentbuffer.data[loop];
-							m_currentbuffer.data[loop] = m_currentbuffer.data[loop+2];
-							m_currentbuffer.data[loop+2] = temp;
-						}
-					}
-					break;
-				case PIXELFORMAT_YUYV	: break;
-				case PIXELFORMAT_UYVY	: break;
-				case PIXELFORMAT_YUV420P: break;
-				case PIXELFORMAT_YUV422P: break;
-			}
-		}*/
-// kDebug() << "10 Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size();
-
-
-// put frame copy operation here
 // 		kDebug() << "exited successfuly.";
 		return EXIT_SUCCESS;
 	}
@@ -1175,7 +1106,19 @@ int VideoDevice::getImage(QImage *qimage)
 		case PIXELFORMAT_NONE	: break;
 
 // Packed RGB formats
-		case PIXELFORMAT_RGB332	: break;
+		case PIXELFORMAT_RGB332	:
+			{
+				int step=0;
+				for(int loop=0;loop < qimage->numBytes();loop+=4)
+				{
+					bits[loop]   = (m_currentbuffer.data[step]>>5<<5)+(m_currentbuffer.data[step]>>5<<2)+(m_currentbuffer.data[step]>>6);
+					bits[loop+1] = (m_currentbuffer.data[step]>>2<<5)+(m_currentbuffer.data[step]<<3>>5<<2)+(m_currentbuffer.data[step]<<3>>6);
+					bits[loop+2] = (m_currentbuffer.data[step]<<6)+(m_currentbuffer.data[step]<<6>>2)+(m_currentbuffer.data[step]<<6>>4)+(m_currentbuffer.data[step]<<6>>6);
+					bits[loop+3] = 255;
+					step++;
+				}
+			}
+			break;
 		case PIXELFORMAT_RGB444	: break;
 		case PIXELFORMAT_RGB555	: break;
 		case PIXELFORMAT_RGB565	:
@@ -1183,9 +1126,9 @@ int VideoDevice::getImage(QImage *qimage)
 				int step=0;
 				for(int loop=0;loop < qimage->numBytes();loop+=4)
 				{
-					bits[loop] = (m_currentbuffer.data[step]<<3)+(m_currentbuffer.data[step]<<3>>5);
+					bits[loop]   = (m_currentbuffer.data[step]<<3)+(m_currentbuffer.data[step]<<3>>5);
 					bits[loop+1] = ((m_currentbuffer.data[step+1])<<5)|m_currentbuffer.data[step]>>5;
-					bits[loop+2]   = ((m_currentbuffer.data[step+1])&248)+((m_currentbuffer.data[step+1])>>5);
+					bits[loop+2] = ((m_currentbuffer.data[step+1])&248)+((m_currentbuffer.data[step+1])>>5);
 					bits[loop+3] = 255;
 					step+=2;
 				}
@@ -1219,15 +1162,54 @@ int VideoDevice::getImage(QImage *qimage)
 				}
 			}
 			break;
-		case PIXELFORMAT_BGR32	: break;
+		case PIXELFORMAT_BGR32	:
+			{
+				int step=0;
+				for(int loop=0;loop < qimage->numBytes();loop+=4)
+				{
+					bits[loop]   = m_currentbuffer.data[step+2];
+					bits[loop+1] = m_currentbuffer.data[step+1];
+					bits[loop+2] = m_currentbuffer.data[step];
+					bits[loop+3] = m_currentbuffer.data[step+3];
+					step+=4;
+				}
+			}
+			break;
 		case PIXELFORMAT_RGB32	: memcpy(bits,&m_currentbuffer.data[0], m_currentbuffer.data.size());
 			break;
 
 // Bayer RGB format
-		case PIXELFORMAT_SBGGR8	: break;
+		case PIXELFORMAT_SBGGR8	:
+		{
+			unsigned char *d = (unsigned char *) malloc (width() * height() * 3);
+			bayer2rgb24(d, &m_currentbuffer.data.first(), width(), height());
+			int step=0;
+			for(int loop=0;loop < qimage->numBytes();loop+=4)
+			{
+				bits[loop]   = d[step+2];
+				bits[loop+1] = d[step+1];
+				bits[loop+2] = d[step];
+				bits[loop+3] = 255;
+				step+=3;
+			}
+			free(d);
+		}
+		break;
 
 // YUV formats
-		case PIXELFORMAT_GREY	: break;
+		case PIXELFORMAT_GREY	:
+			{
+				int step=0;
+				for(int loop=0;loop < qimage->numBytes();loop+=4)
+				{
+					bits[loop]   = m_currentbuffer.data[step];
+					bits[loop+1] = m_currentbuffer.data[step];
+					bits[loop+2] = m_currentbuffer.data[step];
+					bits[loop+3] = 255;
+					step++;
+				}
+			}
+			break;
 		case PIXELFORMAT_YUYV:
 		case PIXELFORMAT_UYVY:
 		case PIXELFORMAT_YUV420P:
@@ -1324,9 +1306,85 @@ int VideoDevice::getImage(QImage *qimage)
 		case PIXELFORMAT_MJPEG	: break;
 		case PIXELFORMAT_PWC1	: break;
 		case PIXELFORMAT_PWC2	: break;
-		case PIXELFORMAT_SN9C10X: break;
+		case PIXELFORMAT_SN9C10X:
+		{
+			unsigned char *s = new unsigned char [width() * height()];
+			unsigned char *d = new unsigned char [width() * height() * 3];
+			sonix_decompress_init();
+			sonix_decompress(width(), height(), &m_currentbuffer.data.first(), s);
+			bayer2rgb24(d, s, width(), height());
+			int step=0;
+			for(int loop=0;loop < qimage->numBytes();loop+=4)
+			{
+				bits[loop]   = d[step+2];
+				bits[loop+1] = d[step+1];
+				bits[loop+2] = d[step];
+				bits[loop+3] = 255;
+				step+=3;
+			}
+			delete[] s;
+			delete[] d;
+		}
 		case PIXELFORMAT_WNVA	: break;
 		case PIXELFORMAT_YYUV	: break;
+	}
+
+// Proccesses image for automatic Brightness/Contrast/Color correction
+	if (getAutoBrightnessContrast()||getAutoColorCorrection())
+	{
+		unsigned long long result=0;
+		unsigned long long R=0, G=0, B=0, A=0, global=0;
+		int Rmax=0, Gmax=0, Bmax=0, Amax=0, globalmax=0;
+		int Rmin=255, Gmin=255, Bmin=255, Amin=255, globalmin=255;
+		int Rrange=255, Grange=255, Brange=255, Arange=255, globarange=255;
+
+// Finds minimum and maximum intensity for each color component
+		for(unsigned int loop=0;loop < qimage->numBytes();loop+=4)
+		{
+			R+=bits[loop];
+			G+=bits[loop+1];
+			B+=bits[loop+2];
+//			A+=bits[loop+3];
+			if (bits[loop]   < Rmin) Rmin = bits[loop];
+			if (bits[loop+1] < Gmin) Gmin = bits[loop+1];
+			if (bits[loop+2] < Bmin) Bmin = bits[loop+2];
+//			if (bits[loop+3] < Amin) Amin = bits[loop+3];
+			if (bits[loop]   > Rmax) Rmax = bits[loop];
+			if (bits[loop+1] > Gmax) Gmax = bits[loop+1];
+			if (bits[loop+2] > Bmax) Bmax = bits[loop+2];
+//			if (bits[loop+3] > Amax) Amax = bits[loop+3];
+		}
+		global = R + G + B;
+// Finds overall minimum and maximum intensity
+		if (Rmin > Gmin) globalmin = Gmin; else globalmin = Rmin; if (Bmin < globalmin) globalmin = Bmin;
+		if (Rmax > Gmax) globalmax = Rmax; else globalmax = Gmax; if (Bmax > globalmax) globalmax = Bmax;
+// If no color correction should be performed, simply level all the intensities so they're just the same.
+// In fact color correction should use the R, G and B variables to detect color deviation and "bump up" the saturation,
+// but it's computationally more expensive and the current way returns better results to the user.
+		if(!getAutoColorCorrection())
+		{
+			Rmin = globalmin ; Rmax = globalmax;
+			Gmin = globalmin ; Gmax = globalmax;
+			Bmin = globalmin ; Bmax = globalmax;
+//			Amin = globalmin ; Amax = globalmax;
+		}
+// Calculates ranges and prevent a division by zero later on.
+			Rrange = Rmax - Rmin; if (Rrange == 0) Rrange = 255;
+			Grange = Gmax - Gmin; if (Grange == 0) Grange = 255;
+			Brange = Bmax - Bmin; if (Brange == 0) Brange = 255;
+//			Arange = Amax - Amin; if (Arange == 0) Arange = 255;
+
+		kDebug() << " R: " << R << " G: " << G << " B: " << B << " A: " << A << " global: " << global <<
+			" Rmin: " << Rmin << " Gmin: " << Gmin << " Bmin: " << Bmin << " Amin: " << Amin << " globalmin: " << globalmin <<
+			" Rmax: " << Rmax << " Gmax: " << Gmax << " Bmax: " << Bmax << " Amax: " << Amax << " globalmax: " << globalmax ;
+
+		for(unsigned int loop=0;loop < qimage->numBytes();loop+=4)
+		{
+			bits[loop]   = (bits[loop]   - Rmin) * 255 / (Rrange);
+			bits[loop+1] = (bits[loop+1] - Gmin) * 255 / (Grange);
+			bits[loop+2] = (bits[loop+2] - Bmin) * 255 / (Brange);
+//			bits[loop+3] = (bits[loop+3] - Amin) * 255 / (Arange);
+		}
 	}
 	return EXIT_SUCCESS;
 }
@@ -1431,7 +1489,7 @@ float VideoDevice::setBrightness(float brightness)
 				} else
 				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
 				{
-					kDebug() << "Device doesn't support the Brightness control.";
+					kDebug() << "Brightness control is disabled.";
 				} else
 				{
 					CLEAR (control);
@@ -1501,7 +1559,7 @@ float VideoDevice::setContrast(float contrast)
 				} else
 				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
 				{
-					kDebug() << "Device doesn't support the Contrast control.";
+					kDebug() << "Contrast control is disabled.";
 				} else
 				{
 					CLEAR (control);
@@ -1571,7 +1629,7 @@ float VideoDevice::setSaturation(float saturation)
 				} else
 				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
 				{
-					kDebug() << "Device doesn't support the Saturation control.";
+					kDebug() << "Saturation control is disabled.";
 				} else
 				{
 					CLEAR (control);
@@ -1641,7 +1699,7 @@ float VideoDevice::setWhiteness(float whiteness)
 				} else
 				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
 				{
-					kDebug() << "Device doesn't support the Whiteness control.";
+					kDebug() << "Whiteness control is disabled.";
 				} else
 				{
 					CLEAR (control);
@@ -1711,7 +1769,7 @@ float VideoDevice::setHue(float hue)
 				} else
 				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
 				{
-					kDebug() << "Device doesn't support the Hue control.";
+					kDebug() << "Hue control is disabled.";
 				} else
 				{
 					CLEAR (control);

@@ -271,7 +271,10 @@ void MSNEditAccountWidget::slotShowReverseList()
 
 void MSNEditAccountWidget::slotSelectImage()
 {
-	QString path = Kopete::UI::AvatarDialog::getAvatar(this, d->pictureUrl);
+	bool ok;
+	QString path = Kopete::UI::AvatarDialog::getAvatar(this, d->pictureUrl,&ok);
+	if( !ok )
+		return;
 	QImage img( path );
 	if(!img.isNull()) 
 	{

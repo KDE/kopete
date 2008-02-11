@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -447,7 +447,7 @@ QString JT_Roster::toString() const
 bool JT_Roster::fromString(const QString &str)
 {
 	QDomDocument *dd = new QDomDocument;
-	if(!dd->setContent(lineDecode(str).toUtf8()))
+	if(!dd->setContent(lineDecode(str).utf8()))
 		return false;
 	QDomElement e = doc()->importNode(dd->documentElement(), true).toElement();
 	delete dd;
@@ -603,6 +603,13 @@ void JT_Presence::pres(const Status &s)
 					h.setAttribute("seconds",s.mucHistorySeconds());
 				m.appendChild(h);
 			}
+			tag.appendChild(m);
+		}
+
+		if(s.hasPhotoHash()) {
+			QDomElement m = doc()->createElement("x");
+			m.setAttribute("xmlns", "vcard-temp:x:update");
+			m.appendChild(textTag(doc(), "photo", s.photoHash()));
 			tag.appendChild(m);
 		}
 	}
@@ -855,6 +862,7 @@ bool JT_PushMessage::take(const QDomElement &e)
 	return true;
 }
 
+
 //----------------------------------------------------------------------------
 // JT_GetServices
 //----------------------------------------------------------------------------
@@ -971,7 +979,7 @@ void JT_VCard::get(const Jid &_jid)
 {
 	type = 0;
 	d->jid = _jid;
-	d->iq = createIQ(doc(), "get", d->jid.full(), id());
+	d->iq = createIQ(doc(), "get", type == 1 ? Jid().full() : d->jid.full(), id());
 	QDomElement v = doc()->createElement("vCard");
 	v.setAttribute("xmlns", "vcard-temp");
 	v.setAttribute("version", "2.0");
@@ -989,12 +997,12 @@ const VCard & JT_VCard::vcard() const
 	return d->vcard;
 }
 
-void JT_VCard::set(const VCard &card)
+void JT_VCard::set(const Jid &j, const VCard &card)
 {
 	type = 1;
 	d->vcard = card;
-	d->jid = "";
-	d->iq = createIQ(doc(), "set", d->jid.full(), id());
+	d->jid = j;
+	d->iq = createIQ(doc(), "set", "", id());
 	d->iq.appendChild(card.toXml(doc()) );
 }
 
@@ -1018,7 +1026,7 @@ bool JT_VCard::take(const QDomElement &x)
 				if(q.isNull())
 					continue;
 
-				if(q.tagName().toUpper() == "VCARD") {
+				if(q.tagName().upper() == "VCARD") {
 					if(d->vcard.fromXml(q)) {
 						setSuccess();
 						return true;
@@ -1399,6 +1407,10 @@ bool JT_ServInfo::take(const QDomElement &e)
 			feature.setAttribute("var", "http://jabber.org/protocol/disco#info");
 			query.appendChild(feature);
 
+			feature = doc()->createElement("feature");
+			feature.setAttribute("var", "http://jabber.org/protocol/xhtml-im");
+			query.appendChild(feature);
+
 			// Client-specific features
 			QStringList clientFeatures = client()->features().list();
 			for (QStringList::ConstIterator i = clientFeatures.begin(); i != clientFeatures.end(); ++i) {
@@ -1406,10 +1418,6 @@ bool JT_ServInfo::take(const QDomElement &e)
 				feature.setAttribute("var", *i);
 				query.appendChild(feature);
 			}
-
-			feature = doc()->createElement("feature");
-			feature.setAttribute("var", "http://jabber.org/protocol/xhtml-im");
-			query.appendChild(feature);
 
 			if (node.isEmpty()) {
 				// Extended features

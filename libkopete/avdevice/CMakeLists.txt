@@ -10,7 +10,9 @@ set(kopete_videodevice_LIB_SRCS
    videodevice.cpp 
    videoinput.cpp 
    videodevicepool.cpp 
-   videodevicemodelpool.cpp )
+   videodevicemodelpool.cpp
+   bayer.cpp
+   sonix_compress.cpp )
 
 kde4_add_library(kopete_videodevice SHARED ${kopete_videodevice_LIB_SRCS})
 

@@ -445,7 +445,7 @@
           <item row="0" column="0" >
            <widget class="QListView" name="commandList" >
             <property name="sizePolicy" >
-             <sizepolicy vsizetype="" hsizetype="Expanding" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -561,7 +561,7 @@
           <item row="0" column="0" >
            <widget class="QListView" name="ctcpList" >
             <property name="sizePolicy" >
-             <sizepolicy vsizetype="" hsizetype="Expanding" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>

@@ -20,7 +20,6 @@
 #include "kircclientcommands.moc"
 
 #include "kircclientsocket.h"
-#include "kirctransferhandler.h"
 
 #include "kircevent.h"
 
@@ -43,7 +42,7 @@ public:
 using namespace KIrc;
 
 ClientCommands::ClientCommands(QObject *parent)
-	: QObject(parent)
+	: KIrc::Plugin(parent)
 	, d(0)
 {
 }
@@ -52,7 +51,7 @@ ClientCommands::~ClientCommands()
 {
 //	delete d;
 }
-
+/*
 void ClientCommands::postEvent(const Message &msg, Message::Type messageType, const QString &message)
 {
 	Event event;
@@ -67,7 +66,7 @@ void ClientCommands::postEvent(const Message &msg, Message::Type messageType, co
 
 //	post the message here ... still dunno where, socket ?
 }
-
+*/
 void ClientCommands::postErrorEvent(const Message &msg, const QString &message)
 {
 //	postEvent(msg, Event::ErrorMessage, message);
@@ -75,7 +74,7 @@ void ClientCommands::postErrorEvent(const Message &msg, const QString &message)
 
 void ClientCommands::postInfoEvent(const Message &msg, const QString &message)
 {
-	postEvent(msg, Event::InfoMessage, message);
+//	postEvent(msg, Event::InfoMessage, message);
 }
 
 void ClientCommands::postMOTDEvent(const Message &msg, const QString &message)
@@ -83,12 +82,12 @@ void ClientCommands::postMOTDEvent(const Message &msg, const QString &message)
 //	postEvent(msg, Event::MOTDMessage, message);
 }
 
-void ClientCommands::receivedServerMessage(Message msg)
+void ClientCommands::receivedServerMessage(const Message &msg)
 {
 	receivedServerMessage(msg, msg.suffix());
 }
 
-void ClientCommands::receivedServerMessage(Message msg, const QString &message)
+void ClientCommands::receivedServerMessage(const Message &msg, const QString &message)
 {
 //	emit receivedMessage(InfoMessage, msg.prefix(), Entity::List(), message);
 }
@@ -125,7 +124,7 @@ void ClientCommands::registerStandardCommands(CommandManager *cm)
 */
 
 // FIXME: Really handle this message
-void ClientCommands::error(Message /*msg*/)
+void ClientCommands::error(const Message &/*msg*/)
 {
 //	msg->client->close();
 }
@@ -136,7 +135,7 @@ void ClientCommands::error(Message /*msg*/)
  * This is the response of someone joining a channel.
  * Remember that this will be emitted when *you* /join a room for the first time
  */
-void ClientCommands::join(Message msg)
+void ClientCommands::join(const Message &msg)
 {
 /*
 	if (msg.argsSize()==1)
@@ -155,7 +154,7 @@ void ClientCommands::join(Message msg)
 /* The given user is kicked.
  * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
  */
-void ClientCommands::kick(Message msg)
+void ClientCommands::kick(const Message &msg)
 {
 /*
 	emit incomingKick(msg.arg(0), msg.prefix(), msg.arg(1), msg.suffix());
@@ -170,7 +169,7 @@ void ClientCommands::kick(Message msg)
 /* Change the mode of a user.
  * "<nickname> *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )"
  */
-void ClientCommands::mode(Message msg)
+void ClientCommands::mode(const Message &msg)
 {
 /*
 	QStringList args = msg.argList();
@@ -192,7 +191,7 @@ void ClientCommands::mode(Message msg)
 /* Nick name of a user changed
  * "<nickname>"
  */
-void ClientCommands::nick(Message msg)
+void ClientCommands::nick(const Message &msg)
 {
 /*
 	// FIXME: Find better i18n strings
@@ -217,7 +216,7 @@ void ClientCommands::nick(Message msg)
 */
 }
 
-void ClientCommands::notice(Message msg)
+void ClientCommands::notice(const Message &msg)
 {
 	if (!msg.suffix().isEmpty())
 	{
@@ -238,7 +237,7 @@ void ClientCommands::notice(Message msg)
 /* This signal emits when a user parts a channel
  * "<channel> *( "," <channel> ) [ <Part Message> ]"
  */
-void ClientCommands::part(Message msg)
+void ClientCommands::part(const Message &msg)
 {
 /*
 	emit receivedMessage(
@@ -249,21 +248,23 @@ void ClientCommands::part(Message msg)
 */
 }
 
-void ClientCommands::ping(Message msg)
+void ClientCommands::ping(const Message &msg)
 {
+/*
 	Message reply;
 	reply.setCommand(PONG);
 //	reply.setArgs(msg.rawArg(0));
 	reply.setSuffix(msg.rawSuffix());
 
 //	msg->client->writeMessage(reply);
+*/
 }
 
-void ClientCommands::pong(Message /*msg*/)
+void ClientCommands::pong(const Message &/*msg*/)
 {
 }
 
-void ClientCommands::privmsg(Message msg)
+void ClientCommands::privmsg(const Message &msg)
 {
 	if (!msg.suffix().isEmpty())
 	{
@@ -275,7 +276,7 @@ void ClientCommands::privmsg(Message msg)
 			msg.suffix());
 */
 	}
-#ifndef KIRC_STRICT
+#if 0
 	if (msg.hasCtcpMessage())
 	{
 //		invokeCtcpCommandOfMessage(m_ctcpQueries, msg);
@@ -283,7 +284,7 @@ void ClientCommands::privmsg(Message msg)
 #endif
 }
 
-void ClientCommands::quit(Message msg)
+void ClientCommands::quit(const Message &msg)
 {
 /*
 	emit receivedMessage(
@@ -297,7 +298,7 @@ void ClientCommands::quit(Message msg)
 /* "<channel> [ <topic> ]"
  * The topic of a channel changed. emit the channel, new topic, and the person who changed it.
  */
-void ClientCommands::topic(Message msg)
+void ClientCommands::topic(const Message &msg)
 {
 /*
 	emit incomingTopicChange(msg.arg(0), msg.prefix(), msg.suffix());
@@ -385,7 +386,7 @@ void ClientCommands::bindNumericReplies()
 /* 001: "Welcome to the Internet Relay Network <nick>!<user>@<host>"
  * Gives a welcome message in the form of:
  */
-void ClientCommands::numericReply_001(Message msg)
+void ClientCommands::numericReply_001(const Message &msg)
 {
 	kDebug(14121) ;
 
@@ -400,7 +401,7 @@ void ClientCommands::numericReply_001(Message msg)
 /* 002: ":Your host is <servername>, running version <ver>"
  * Gives information about the host. The given information are close to 004.
  */
-void ClientCommands::numericReply_002(Message msg)
+void ClientCommands::numericReply_002(const Message &msg)
 {
 	receivedServerMessage(msg);
 }
@@ -409,7 +410,7 @@ void ClientCommands::numericReply_002(Message msg)
  * Gives the date that this server was created.
  * NOTE: This is useful for determining the uptime of the server).
  */
-void ClientCommands::numericReply_003(Message msg)
+void ClientCommands::numericReply_003(const Message &msg)
 {
 	receivedServerMessage(msg);
 }
@@ -417,7 +418,7 @@ void ClientCommands::numericReply_003(Message msg)
 /* 004: "<servername> <version> <available user modes> <available channel modes>"
  * Gives information about the servername, version, available modes, etc.
  */
-void ClientCommands::numericReply_004(Message msg)
+void ClientCommands::numericReply_004(const Message &msg)
 {
 //	emit incomingHostInfo(msg.arg(1),msg.arg(2),msg.arg(3),msg.arg(4));
 }
@@ -425,7 +426,7 @@ void ClientCommands::numericReply_004(Message msg)
 /* 005:
  * Gives capability information. TODO: This is important!
  */
-void ClientCommands::numericReply_005(Message msg)
+void ClientCommands::numericReply_005(const Message &msg)
 {
 	receivedServerMessage(msg);
 }
@@ -435,7 +436,7 @@ void ClientCommands::numericReply_005(Message msg)
  * Tells connections statistics about the server for the uptime activity.
  * NOT IN RFC1459 NOR RFC2812
  */
-void ClientCommands::numericReply_250(Message msg)
+void ClientCommands::numericReply_250(const Message &msg)
 {
 	postInfoEvent(msg);
 }
@@ -443,7 +444,7 @@ void ClientCommands::numericReply_250(Message msg)
 /* 251: ":There are <integer> users and <integer> services on <integer> servers"
  * Tells how many user there are on all the different servers in the form of:
  */
-void ClientCommands::numericReply_251(Message msg)
+void ClientCommands::numericReply_251(const Message &msg)
 {
 	postInfoEvent(msg);
 }
@@ -451,31 +452,33 @@ void ClientCommands::numericReply_251(Message msg)
 /* 252: "<integer> :operator(s) online"
  * Issues a number of operators on the server in the form of:
  */
-void ClientCommands::numericReply_252(Message msg)
+void ClientCommands::numericReply_252(const Message &msg)
 {
-	postInfoEvent(msg, i18np("There is 1 operator online.", "There are %1 operators online.", msg.arg(1).toULong()));
+//	postInfoEvent(msg, i18np("There is 1 operator online.", "There are %s operators online.", msg.argAt(1).toULong()));
 }
 
 /* 253: "<integer> :unknown connection(s)"
  * Tells how many unknown connections the server has in the form of:
  */
-void ClientCommands::numericReply_253(Message msg)
+void ClientCommands::numericReply_253(const Message &msg)
 {
-	postInfoEvent(msg, i18np("There is 1 unknown connection.", "There are %1 unknown connections.", msg.arg(1).toULong()));
+//	postInfoEvent(msg, i18np("There is 1 unknown connection.", "There are %s unknown connections.", msg.argAt(1).toULong()));
 }
 
 /* 254: "<integer> :channels formed"
  * Tells how many total channels there are on this network.
  *  */
-void ClientCommands::numericReply_254(Message msg)
+void ClientCommands::numericReply_254(const Message &msg)
 {
-	postInfoEvent(msg, i18np("There has been 1 channel formed.", "There have been %1 channel formed.", msg.arg(1).toULong()));
+	postInfoEvent(msg, i18np("There has been 1 channel formed.",
+		"There have been %1 channel formed.",
+		msg.argAt(1).toULong()));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
  * Tells how many clients and servers *this* server handles.
  */
-void ClientCommands::numericReply_255(Message msg)
+void ClientCommands::numericReply_255(const Message &msg)
 {
 	postInfoEvent(msg);
 }
@@ -483,16 +486,16 @@ void ClientCommands::numericReply_255(Message msg)
 /* 263: "<command> :Please wait a while and try again."
  * Server is too busy.
  */
-void ClientCommands::numericReply_263(Message msg)
+void ClientCommands::numericReply_263(const Message &msg)
 {
-	receivedServerMessage(msg, i18n("Server was too busy to execute %1.", msg.arg(1)));
+//	receivedServerMessage(msg, i18n("Server was too busy to execute %1.", msg.arg(1)));
 }
 
 /* 265: ":Current local  users: <integer>  Max: <integer>"
  * Tells statistics about the current local server state.
  * NOT IN RFC2812
  */
-void ClientCommands::numericReply_265(Message msg)
+void ClientCommands::numericReply_265(const Message &msg)
 {
 	postInfoEvent(msg);
 }
@@ -500,14 +503,14 @@ void ClientCommands::numericReply_265(Message msg)
 /* 266: ":Current global users: <integer>  Max: <integer>"
  * Tells statistics about the current global(the whole irc server chain) server state:
  */
-void ClientCommands::numericReply_266(Message msg)
+void ClientCommands::numericReply_266(const Message &msg)
 {
 	postInfoEvent(msg);
 }
 
 /* 301: "<nick> :<away message>"
  */
-void ClientCommands::numericReply_301(Message msg)
+void ClientCommands::numericReply_301(const Message &msg)
 {
 /*
 	Entity entity = msg.entityFromArg(1);
@@ -520,7 +523,7 @@ void ClientCommands::numericReply_301(Message msg)
 
 /* 303: ":*1<nick> *(" " <nick> )"
  */
-void ClientCommands::numericReply_303(Message msg)
+void ClientCommands::numericReply_303(const Message &msg)
 {
 /*
 	QStringList nicks = QStringList::split(QRegExp(QChar(' ')), msg.suffix());
@@ -534,7 +537,7 @@ void ClientCommands::numericReply_303(Message msg)
 
 /* 305: ":You are no longer marked as being away"
  */
-void ClientCommands::numericReply_305(Message msg)
+void ClientCommands::numericReply_305(const Message &msg)
 {
 /*
 	Entity::Ptr self = this->self();
@@ -547,7 +550,7 @@ void ClientCommands::numericReply_305(Message msg)
 
 /* 306: ":You have been marked as being away"
  */
-void ClientCommands::numericReply_306(Message msg)
+void ClientCommands::numericReply_306(const Message &msg)
 {
 //	Entity::Ptr self = d->client->owner();
 //	self->setModes("+a");
@@ -557,15 +560,15 @@ void ClientCommands::numericReply_306(Message msg)
 /* 307: ":is a registered nick"
  * DALNET: Indicates that this user is identified with NICSERV.
  */
-void ClientCommands::numericReply_307(Message msg)
+void ClientCommands::numericReply_307(const Message &msg)
 {
-	postErrorEvent(msg, i18n("%1 is a registered nick.", msg.arg(1)));
+//	postErrorEvent(msg, i18n("%1 is a registered nick.", msg.arg(1)));
 }
 
 /* 311: "<nick> <user> <host> * :<real name>"
  * Show info about a user (part of a /whois) in the form of:
  */
-void ClientCommands::numericReply_311(Message msg)
+void ClientCommands::numericReply_311(const Message &msg)
 {
 //	emit incomingWhoIsUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
 }
@@ -573,7 +576,7 @@ void ClientCommands::numericReply_311(Message msg)
 /* 312: "<nick> <server> :<server info>"
  * Show info about a server (part of a /whois).
  */
-void ClientCommands::numericReply_312(Message msg)
+void ClientCommands::numericReply_312(const Message &msg)
 {
 //	emit incomingWhoIsServer(msg.arg(1), msg.arg(2), msg.suffix());
 }
@@ -581,15 +584,15 @@ void ClientCommands::numericReply_312(Message msg)
 /* 313: "<nick> :is an IRC operator"
  * Show info about an operator (part of a /whois).
  */
-void ClientCommands::numericReply_313(Message msg)
+void ClientCommands::numericReply_313(const Message &msg)
 {
-	postInfoEvent(msg, i18n("%1 is an IRC operator.", msg.arg(1)));
+//	postInfoEvent(msg, i18n("%1 is an IRC operator.", msg.arg(1)));
 }
 
 /* 314: "<nick> <user> <host> * :<real name>"
  * Show WHOWAS Info
  */
-void ClientCommands::numericReply_314(Message msg)
+void ClientCommands::numericReply_314(const Message &msg)
 {
 //	emit incomingWhoWasUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
 }
@@ -597,7 +600,7 @@ void ClientCommands::numericReply_314(Message msg)
 /* 315: "<name> :End of WHO list"
  * End of WHO list.
  */
-void ClientCommands::numericReply_315(Message msg)
+void ClientCommands::numericReply_315(const Message &msg)
 {
 	receivedServerMessage(msg);
 }
@@ -606,7 +609,7 @@ void ClientCommands::numericReply_315(Message msg)
  * Some servers say: "<nick> <integer> <integer> :seconds idle, signon time"
  * Show info about someone who is idle (part of a /whois) in the form of:
  */
-void ClientCommands::numericReply_317(Message msg)
+void ClientCommands::numericReply_317(const Message &msg)
 {
 /*
 	emit incomingWhoIsIdle(msg.arg(1), msg.arg(2).toULong());
@@ -618,7 +621,7 @@ void ClientCommands::numericReply_317(Message msg)
 /* 318: "<nick>{<space><realname>} :End of /WHOIS list"
  * End of WHOIS for a given nick.
  */
-void ClientCommands::numericReply_318(Message msg)
+void ClientCommands::numericReply_318(const Message &msg)
 {
 	emit receivedServerMessage(msg);
 }
@@ -626,7 +629,7 @@ void ClientCommands::numericReply_318(Message msg)
 /* 319: "<nick> :{[@|+]<channel><space>}"
  * Show info a channel a user is logged in (part of a /whois) in the form of:
  */
-void ClientCommands::numericReply_319(Message msg)
+void ClientCommands::numericReply_319(const Message &msg)
 {
 //	emit incomingWhoIsChannels(msg.arg(1), msg.suffix());
 }
@@ -634,7 +637,7 @@ void ClientCommands::numericReply_319(Message msg)
 /* 320:
  * Indicates that this user is identified with NICSERV on FREENODE.
  */
-void ClientCommands::numericReply_320(Message msg)
+void ClientCommands::numericReply_320(const Message &msg)
 {
 //	emit incomingWhoIsIdentified(msg.arg(1));
 }
@@ -647,7 +650,7 @@ void ClientCommands::numericReply_320(Message msg)
 /* 322: "<channel> <# visible> :<topic>"
  * Received one channel from the LIST command.
  */
-void ClientCommands::numericReply_322(Message msg)
+void ClientCommands::numericReply_322(const Message &msg)
 {
 //	emit incomingListedChan(msg.arg(1), msg.arg(2).toUInt(), msg.suffix());
 }
@@ -655,21 +658,21 @@ void ClientCommands::numericReply_322(Message msg)
 /* 323: ":End of LIST"
  * End of the LIST command.
  */
-void ClientCommands::numericReply_323(Message msg)
+void ClientCommands::numericReply_323(const Message &msg)
 {
 	emit receivedServerMessage(msg);
 }
 
 /* 324: "<channel> <mode> <mode params>"
  */
-void ClientCommands::numericReply_324(Message msg)
+void ClientCommands::numericReply_324(const Message &msg)
 {
 //	emit incomingChannelMode(msg.arg(1), msg.arg(2), msg.arg(3));
 }
 
 /* 328:
  */
-void ClientCommands::numericReply_328(Message msg)
+void ClientCommands::numericReply_328(const Message &msg)
 {
 //	emit incomingChannelHomePage(msg.arg(1), msg.suffix());
 }
@@ -678,14 +681,14 @@ void ClientCommands::numericReply_328(Message msg)
  * NOTE: What is the meaning of this arguments. DAL-ircd say it's a RPL_CREATIONTIME
  * NOT IN RFC1459 NOR RFC2812
  */
-void ClientCommands::numericReply_329(Message /*msg*/)
+void ClientCommands::numericReply_329(const Message &/*msg*/)
 {
 }
 
 /* 331: "<channel> :No topic is set"
  * Gives the existing topic for a channel after a join.
  */
-void ClientCommands::numericReply_331(Message /*msg*/)
+void ClientCommands::numericReply_331(const Message &/*msg*/)
 {
 //	emit incomingExistingTopic(msg.arg(1), suffix);
 }
@@ -693,7 +696,7 @@ void ClientCommands::numericReply_331(Message /*msg*/)
 /* 332: "<channel> :<topic>"
  * Gives the existing topic for a channel after a join.
  */
-void ClientCommands::numericReply_332(Message msg)
+void ClientCommands::numericReply_332(const Message &msg)
 {
 //	emit incomingExistingTopic(msg.arg(1), msg.suffix());
 }
@@ -701,7 +704,7 @@ void ClientCommands::numericReply_332(Message msg)
 /* 333:
  * Gives the nickname and time who changed the topic
  */
-void ClientCommands::numericReply_333(Message msg)
+void ClientCommands::numericReply_333(const Message &msg)
 {
 /*
 	QDateTime d;
@@ -713,7 +716,7 @@ void ClientCommands::numericReply_333(Message msg)
 /* 352:
  * WHO Reply
  */
-void ClientCommands::numericReply_352(Message msg)
+void ClientCommands::numericReply_352(const Message &msg)
 {
 /*
 	QStringList suffix = QStringList::split( ' ', msg.suffix() );
@@ -736,7 +739,7 @@ void ClientCommands::numericReply_352(Message msg)
 /* 353:
  * NAMES list
  */
-void ClientCommands::numericReply_353(Message msg)
+void ClientCommands::numericReply_353(const Message &msg)
 {
 //	emit incomingNamesList(msg.arg(2), QStringList::split(' ', msg.suffix()));
 }
@@ -744,7 +747,7 @@ void ClientCommands::numericReply_353(Message msg)
 /* 366: "<channel> :End of NAMES list"
  * Gives a signal to indicate that the NAMES list has ended for channel.
  */
-void ClientCommands::numericReply_366(Message msg)
+void ClientCommands::numericReply_366(const Message &msg)
 {
 	emit receivedServerMessage(msg);
 }
@@ -752,7 +755,7 @@ void ClientCommands::numericReply_366(Message msg)
 /* 369: "<nick> :End of WHOWAS"
  * End of WHOWAS Request
  */
-void ClientCommands::numericReply_369(Message msg)
+void ClientCommands::numericReply_369(const Message &msg)
 {
 	emit receivedServerMessage(msg);
 }
@@ -760,7 +763,7 @@ void ClientCommands::numericReply_369(Message msg)
 /* 372: ":- <text>"
  * Part of the MOTD.
  */
-void ClientCommands::numericReply_372(Message msg)
+void ClientCommands::numericReply_372(const Message &msg)
 {
 #ifdef __GNUC__
 	#warning FIXME remove the "- " in front.
@@ -771,7 +774,7 @@ void ClientCommands::numericReply_372(Message msg)
 /* 375: ":- <server> Message of the day - "
  * Beginging the motd. This isn't emitted because the MOTD is sent out line by line.
  */
-void ClientCommands::numericReply_375(Message msg)
+void ClientCommands::numericReply_375(const Message &msg)
 {
 	postMOTDEvent(msg);
 }
@@ -779,7 +782,7 @@ void ClientCommands::numericReply_375(Message msg)
 /* 376: ":End of MOTD command"
  * End of the motd.
  */
-void ClientCommands::numericReply_376(Message msg)
+void ClientCommands::numericReply_376(const Message &msg)
 {
 	postMOTDEvent(msg);
 }
@@ -788,7 +791,7 @@ void ClientCommands::numericReply_376(Message msg)
  * Gives a signal to indicate that the command issued failed because the person/channel not being on IRC.
  *  - Used to indicate the nickname parameter supplied to a command is currently unused.
  */
-void ClientCommands::numericReply_401(Message msg)
+void ClientCommands::numericReply_401(const Message &msg)
 {
 //	i18n("The channel \"%1\" does not exist").arg(nick)
 //	i18n("The nickname \"%1\" does not exist").arg(nick)
@@ -796,15 +799,15 @@ void ClientCommands::numericReply_401(Message msg)
 
 /* 404: "<channel name> :Cannot send to channel"
  */
-void ClientCommands::numericReply_404(Message msg)
+void ClientCommands::numericReply_404(const Message &msg)
 {
-	postErrorEvent(msg, i18n("You cannot send message to channel %1.", msg.arg(1)));
+//	postErrorEvent(msg, i18n("You cannot send message to channel %1.", msg.arg(1)));
 }
 
 /* 406: "<nickname> :There was no such nickname"
  * Like case 401, but when there *was* no such nickname.
  */
-void ClientCommands::numericReply_406(Message msg)
+void ClientCommands::numericReply_406(const Message &msg)
 {
 #ifdef __GNUC__
 	#warning FIXME 406 MEANS *NEVER*, unlike 401
@@ -817,7 +820,7 @@ void ClientCommands::numericReply_406(Message msg)
  *
  * Server's MOTD file could not be opened by the server.
  */
-void ClientCommands::numericReply_422(Message msg)
+void ClientCommands::numericReply_422(const Message &msg)
 {
 	postErrorEvent(msg);
 }
@@ -825,7 +828,7 @@ void ClientCommands::numericReply_422(Message msg)
 /* 433: "<nick> :Nickname is already in use"
  * Tells us that our nickname is already in use.
  */
-void ClientCommands::numericReply_433(Message msg)
+void ClientCommands::numericReply_433(const Message &msg)
 {
 //	if(m_status == Authentifying)
 	{
@@ -841,24 +844,24 @@ void ClientCommands::numericReply_433(Message msg)
 		// but it's already in use
 //		emit incomingNickInUse(msg.arg(1));
 //	}
-	postErrorEvent(msg, i18n("Nickname %1 is already in use.", msg.arg(1)));
+//	postErrorEvent(msg, i18n("Nickname %1 is already in use.", msg.arg(1)));
 }
 
 /* 442: "<channel> :You're not on that channel"
  */
-void ClientCommands::numericReply_442(Message msg)
+void ClientCommands::numericReply_442(const Message &msg)
 {
-	postErrorEvent(msg, i18n("You are not on channel %1.", msg.arg(1)));
+//	postErrorEvent(msg, i18n("You are not on channel %1.", msg.arg(1)));
 }
 
 /* 464: ":Password Incorrect"
  * Bad server password
  */
-void ClientCommands::numericReply_464(Message msg)
+void ClientCommands::numericReply_464(const Message &msg)
 {
 	/* Server need pass.. Call disconnect*/
 //	emit incomingFailedServerPassword();
-	postErrorEvent(msg, i18n("Incorrect password."));
+//	postErrorEvent(msg, i18n("Incorrect password."));
 }
 
 /* 465: ":You are banned from this server"
@@ -867,9 +870,9 @@ void ClientCommands::numericReply_464(Message msg)
 /* 471: "<channel> :Cannot join channel (+l)"
  * Channel is Full
  */
-void ClientCommands::numericReply_471(Message msg)
+void ClientCommands::numericReply_471(const Message &msg)
 {
-	postErrorEvent(msg, i18n("Cannot join %1, channel is full.", msg.arg(1)) );
+//	postErrorEvent(msg, i18n("Cannot join %1, channel is full.", msg.arg(1)) );
 }
 
 /* 472: "<char> :is unknown mode char to me for <channel>"
@@ -878,25 +881,25 @@ void ClientCommands::numericReply_471(Message msg)
 /* 473: "<channel> :Cannot join channel (+i)"
  * Invite Only.
  */
-void ClientCommands::numericReply_473(Message msg)
+void ClientCommands::numericReply_473(const Message &msg)
 {
-	postErrorEvent(msg, i18n("Cannot join %1, channel is invite only.", msg.arg(1)) );
+//	postErrorEvent(msg, i18n("Cannot join %1, channel is invite only.", msg.arg(1)) );
 }
 
 /* 474: "<channel> :Cannot join channel (+b)"
  * Banned.
  */
-void ClientCommands::numericReply_474(Message msg)
+void ClientCommands::numericReply_474(const Message &msg)
 {
-	postErrorEvent(msg, i18n("Cannot join %1, you are banned from that channel.", msg.arg(1)) );
+//	postErrorEvent(msg, i18n("Cannot join %1, you are banned from that channel.", msg.arg(1)) );
 }
 
 /* 475: "<channel> :Cannot join channel (+k)"
  * Wrong Chan-key.
  */
-void ClientCommands::numericReply_475(Message msg)
+void ClientCommands::numericReply_475(const Message &msg)
 {
-	postErrorEvent(msg, i18n("Cannot join %1, wrong channel key was given.", msg.arg(1)) );
+//	postErrorEvent(msg, i18n("Cannot join %1, wrong channel key was given.", msg.arg(1)) );
 }
 
 /* 476: "<channel> :Bad Channel Mask"
@@ -937,217 +940,3 @@ void ClientCommands::numericReply_475(Message msg)
 /* 502: ":Cannot change mode for other users"
  */
 
-#if 0
-//#ifndef KIRC_STRICT
-
-/*
-void ClientCommands::bindCtcp()
-{
-	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(Message &)),
-		-1,	-1);
-	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(Message &)),
-		-1,	1);
-	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(Message &)),
-		4,	5);
-	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(Message &)),
-		-1,	0);
-	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(Message &)),
-		1,	1);
-	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(Message &)),
-		-1,	0);
-	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(Message &)),
-		-1,	0);
-	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(Message &)),
-		-1,	0);
-	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(Message &)),
-		-1,	0);
-
-	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(Message &)),
-		1,	-1);
-	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(Message &)),
-		1,	1,	"");
-	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(Message &)),
-		-1,	-1,	"");
-}
-*/
-
-void ClientCommands::CtcpQuery_action(Message msg)
-{
-/*	QString target = msg.arg(0);
-	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
-		emit incomingAction(target, msg, msg.ctcpMessage().ctcpRaw());
-	else
-		emit incomingPrivAction(msg, target, msg.ctcpMessage().ctcpRaw());*/
-}
-
-/*
-NO REPLY EXIST FOR THE CTCP ACTION COMMAND !
-bool ClientCommands::CtcpReply_action(Message msg)
-{
-}
-*/
-
-//	FIXME: the API can now answer to help commands.
-void ClientCommands::CtcpQuery_clientinfo(Message msg)
-{
-	QString clientinfo = QString::fromLatin1("The following commands are supported, but "
-			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
-			"ACTION.");
-
-//	writeCtcpReplyMessage(	msg.prefix(), QString(),
-//				msg.ctcpMessage().command(), QString(), clientinfo);
-}
-
-void ClientCommands::CtcpQuery_dcc(Message msg)
-{
-//	Message &ctcpMsg = msg.ctcpMessage();
-	Message ctcpMsg;
-
-	QString dccCommand = ctcpMsg.arg(0).toUpper();
-
-	if (dccCommand == QString::fromLatin1("CHAT"))
-	{
-//		if(ctcpMsg.argsSize()!=4) return false;
-
-		/* DCC CHAT type longip port
-		 *
-		 *  type   = Either Chat or Talk, but almost always Chat these days
-		 *  longip = 32-bit Internet address of originator's machine
-		 *  port   = Port on which the originator is waitng for a DCC chat
-		 */
-		bool okayHost, okayPort;
-		// should ctctMsg.arg(1) be tested?
-		QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
-		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
-		if (okayHost && okayPort)
-		{
-			kDebug(14120) << "Starting DCC chat window.";
-//			TransferHandler::self()->createClient(
-//				this, msg.prefix(),
-//				address, port,
-//				Transfer::Chat );
-		}
-	}
-	else if (dccCommand == QString::fromLatin1("SEND"))
-	{
-//		if(ctcpMsg.argsSize()!=5) return false;
-
-		/* DCC SEND (filename) (longip) (port) (filesize)
-		 *
-		 *  filename = Name of file being sent
-		 *  longip   = 32-bit Internet address of originator's machine
-		 *  port     = Port on which the originator is waiitng for a DCC chat
-		 *  filesize = Size of file being sent
-		 */
-		bool okayHost, okayPort, okaySize;
-//		QFileInfo realfile(msg.arg(1));
-		QHostAddress address(ctcpMsg.arg(2).toUInt(&okayHost));
-		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
-		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
-		if (okayHost && okayPort && okaySize)
-		{
-			kDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1);
-//			TransferHandler::self()->createClient(
-//				this, msg.prefix(),
-//				address, port,
-//				Transfer::FileIncoming,
-//				ctcpMsg.arg(1), size );
-		}
-	}
-//	else
-//		((MessageRedirector *)sender())->error("Unknow dcc command");
-}
-
-/*
-NO REPLY EXIST FOR THE CTCP DCC COMMAND !
-bool ClientCommands::CtcpReply_dcc(Message msg)
-{
-}
-*/
-
-void ClientCommands::CtcpReply_errmsg(Message /*msg*/)
-{
-	// should emit one signal
-}
-
-void ClientCommands::CtcpQuery_finger( Message /*msg*/)
-{
-	// To be implemented
-}
-
-void ClientCommands::CtcpQuery_ping(Message msg)
-{
-//	writeCtcpReplyMessage(	msg.prefix(), QString(),
-//				msg.ctcpMessage().command(), msg.ctcpMessage().arg(0));
-}
-
-void ClientCommands::CtcpReply_ping(Message msg)
-{
-/*	timeval time;
-	if (gettimeofday(&time, 0) == 0)
-	{
-		// FIXME: the time code is wrong for usec
-		QString timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
-		double newTime = timeReply.toDouble();
-		double oldTime = msg.suffix().section(' ',0, 0).toDouble();
-		double difference = newTime - oldTime;
-		QString diffString;
-
-		if (difference < 1)
-		{
-			diffString = QString::number(difference);
-			diffString.remove((diffString.find('.') -1), 2);
-			diffString.truncate(3);
-			diffString.append("milliseconds");
-		}
-		else
-		{
-			diffString = QString::number(difference);
-			QString seconds = diffString.section('.', 0, 0);
-			QString millSec = diffString.section('.', 1, 1);
-			millSec.remove(millSec.find('.'), 1);
-			millSec.truncate(3);
-			diffString = QString::fromLatin1("%1 seconds, %2 milliseconds").arg(seconds).arg(millSec);
-		}
-
-		emit incomingCtcpReply(QString::fromLatin1("PING"), msg.prefix(), diffString);
-	}
-//	else
-//		((MessageRedirector *)sender())->error("failed to get current time");*/
-}
-
-void ClientCommands::CtcpQuery_source(Message msg)
-{
-//	writeCtcpReplyMessage(msg.prefix(), QString(),
-//			      msg.ctcpMessage().command(), m_SourceString);
-}
-
-void ClientCommands::CtcpQuery_time(Message msg)
-{
-//	writeCtcpReplyMessage(msg.prefix(), QString(),
-//			      msg.ctcpMessage().command(), QDateTime::currentDateTime().toString(),
-//			      QString(), false);
-}
-
-void ClientCommands::CtcpQuery_userinfo(Message msg)
-{
-//	QString userinfo = m_UserString;
-
-//	writeCtcpReplyMessage(msg.prefix(), QString(),
-//			      msg.ctcpMessage().command(), QString(), userinfo);
-}
-
-void ClientCommands::CtcpQuery_version(Message msg)
-{
-//	QString response = m_VersionString;
-
-//	writeCtcpReplyMessage(msg.prefix(),
-//		msg.ctcpMessage().command() + " " + response);
-}
-
-void ClientCommands::CtcpReply_version(Message msg)
-{
-//	emit incomingCtcpReply(msg.ctcpMessage().command(), msg.prefix(), msg.ctcpMessage().ctcpRaw());
-}
-
-#endif

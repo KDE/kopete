@@ -119,7 +119,7 @@ private:
 	QString mUid;
 
 	StatusGroup *mParentItem;
-	Q_DISABLE_COPY(StatusItem);
+	Q_DISABLE_COPY(StatusItem)
 };
 
 /**

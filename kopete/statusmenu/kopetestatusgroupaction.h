@@ -17,7 +17,7 @@
 #define KOPETESTATUSGROUPACTION_H
 
 #include <KActionMenu>
-
+#include "kopete_export.h"
 namespace Kopete
 {
 	class StatusRootAction;
@@ -33,7 +33,7 @@ namespace Kopete
 	@author Roman Jarosz <kedgedev@centrum.cz>
 */
 
-class StatusGroupAction : public KActionMenu
+class KOPETE_STATUSMENU_EXPORT StatusGroupAction : public KActionMenu
 {
 	Q_OBJECT
 public:

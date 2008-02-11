@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -55,13 +55,13 @@ static QString extractLine(QByteArray *buf, bool *found)
 
 static bool extractMainHeader(const QString &line, QString *proto, int *code, QString *msg)
 {
-	int n = line.indexOf(' ');
+	int n = line.find(' ');
 	if(n == -1)
 		return false;
 	if(proto)
 		*proto = line.mid(0, n);
 	++n;
-	int n2 = line.indexOf(' ', n);
+	int n2 = line.find(' ', n);
 	if(n2 == -1)
 		return false;
 	if(code)
@@ -203,8 +203,8 @@ void HttpConnect::sock_connected()
 	s += "Pragma: no-cache\r\n";
 	s += "\r\n";
 
-	Q3CString cs = s.toUtf8();
-	QByteArray block(cs.length(), '\0');
+	Q3CString cs = s.utf8();
+	QByteArray block(cs.length());
 	memcpy(block.data(), cs.data(), block.size());
 	d->toWrite = block.size();
 	d->sock.write(block);

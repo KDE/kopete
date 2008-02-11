@@ -14,83 +14,21 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #include "im.h"
+#include "protocol.h"
 #include "xmpp_features.h"
 
 #include <qmap.h>
 #include <qapplication.h>
 //Added by qt3to4:
 #include <QList>
-#include "protocol.h"
 
+#include "xmpp_xmlcommon.h"
 #define NS_XML     "http://www.w3.org/XML/1998/namespace"
-
-static QDomElement textTag(QDomDocument *doc, const QString &name, const QString &content)
-{
-	QDomElement tag = doc->createElement(name);
-	QDomText text = doc->createTextNode(content);
-	tag.appendChild(text);
-
-	return tag;
-}
-
-static QString tagContent(const QDomElement &e)
-{
-	// look for some tag content
-	for(QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling()) {
-		QDomText i = n.toText();
-		if(i.isNull())
-			continue;
-		return i.data();
-	}
-
-	return "";
-}
-
-static QDateTime stamp2TS(const QString &ts)
-{
-	if(ts.length() != 17)
-		return QDateTime();
-
-	int year  = ts.mid(0,4).toInt();
-	int month = ts.mid(4,2).toInt();
-	int day   = ts.mid(6,2).toInt();
-
-	int hour  = ts.mid(9,2).toInt();
-	int min   = ts.mid(12,2).toInt();
-	int sec   = ts.mid(15,2).toInt();
-
-	QDate xd;
-	xd.setYMD(year, month, day);
-	if(!xd.isValid())
-		return QDateTime();
-
-	QTime xt;
-	xt.setHMS(hour, min, sec);
-	if(!xt.isValid())
-		return QDateTime();
-
-	return QDateTime(xd, xt);
-}
-
-static QString TS2stamp(const QDateTime &d)
-{
-	QString str;
-
-	str.sprintf("%04d%02d%02dT%02d:%02d:%02d",
-		d.date().year(),
-		d.date().month(),
-		d.date().day(),
-		d.time().hour(),
-		d.time().minute(),
-		d.time().second());
-
-	return str;
-}
 
 namespace XMPP
 {
@@ -953,7 +891,7 @@ public:
 	Jid to, from;
 	QString id, type, lang;
 
-	StringMap subject, body;
+	StringMap subject, body, xHTMLBody;
 	QString thread;
 	bool threadSend;
 	Stanza::Error error;
@@ -971,17 +909,17 @@ public:
 	QString eventId;
 	QString xencrypted, invite;
 	ChatState chatState;
+	MessageReceipt messageReceipt;
 	QString nick;
 	HttpAuthRequest httpAuthRequest;
 	XData xdata;
 	QMap<QString,HTMLElement> htmlElements;
- 	QDomElement wb;
+ 	QDomElement sxe;
 	
 	int mucStatus;
 	QList<MUCInvite> mucInvites;
 	MUCDecline mucDecline;
 	QString mucPassword;
-	int mucHistoryMaxChars, mucHistoryMaxStanzas, mucHistorySeconds;
 
 	bool spooled, wasEncrypted;
 };
@@ -1004,6 +942,7 @@ Message::Message(const Jid &to)
 	d->errorCode = -1;*/
 	d->chatState = StateNone;
 	d->mucStatus = -1;
+	d->messageReceipt = ReceiptNone;
 }
 
 //! \brief Constructs a copy of Message object
@@ -1107,6 +1046,11 @@ bool Message::containsHTML() const
 	return !(d->htmlElements.isEmpty());
 }
 
+QString Message::xHTMLBody(const QString &lang) const
+{
+	return d->xHTMLBody[lang];
+}
+
 QString Message::thread() const
 {
 	return d->thread;
@@ -1169,6 +1113,14 @@ void Message::setBody(const QString &s, const QString &lang)
 {
 	d->body[lang] = s;
 	//d->flag = false;
+}
+
+void Message::setXHTMLBody(const QString&s, const QString &lang, const QString &attr)
+{
+	//ugly but needed if s is not a node but a list of leaf
+	
+	QString content = "<body xmlns='" + QString(NS_XHTML) + "' " + attr + ">\n" + s + "\n</body>";
+	d->xHTMLBody[lang] = content;
 }
 
 //! \brief Set xhtml body
@@ -1333,6 +1285,16 @@ void Message::setChatState(ChatState state)
 	d->chatState = state;
 }
 
+MessageReceipt Message::messageReceipt() const
+{
+	return d->messageReceipt;
+}
+
+void Message::setMessageReceipt(MessageReceipt messageReceipt)
+{
+	d->messageReceipt = messageReceipt;
+}
+
 QString Message::xencrypted() const
 {
 	return d->xencrypted;
@@ -1428,14 +1390,14 @@ const XData& Message::getForm() const
 	return d->xdata;
 }
 
-const QDomElement& Message::whiteboard() const
+const QDomElement& Message::sxe() const
 {
-	return d->wb;
+	return d->sxe;
 }
 
-void Message::setWhiteboard(const QDomElement& e)
+void Message::setSxe(const QDomElement& e)
 {
-	d->wb = e;
+	d->sxe = e;
 }
 
 bool Message::spooled() const
@@ -1570,6 +1532,21 @@ Stanza Message::toStanza(Stream *stream) const
 		}
 	}
 
+	// message receipt
+	QString messageReceiptNS = "urn:xmpp:receipts";
+	if (d->messageReceipt != ReceiptNone) {
+		switch(d->messageReceipt) {
+			case ReceiptRequest:
+				s.appendChild(s.createElement(messageReceiptNS, "request"));
+				break;
+			case ReceiptReceived:
+				s.appendChild(s.createElement(messageReceiptNS, "received"));
+				break;
+			default: 
+				break;
+		}
+	}
+
 	// xencrypted
 	if(!d->xencrypted.isEmpty())
 		s.appendChild(s.createTextElement("jabber:x:encrypted", "x", d->xencrypted));
@@ -1604,9 +1581,9 @@ Stanza Message::toStanza(Stream *stream) const
 		s.appendChild(s.createTextElement("http://jabber.org/protocol/nick", "nick", d->nick));
 	}
 
-	// wb
-	if(!d->wb.isNull()) {
-		s.appendChild(d->wb);
+	// sxe
+	if(!d->sxe.isNull()) {
+		s.appendChild(d->sxe);
 	}
 
 	// muc
@@ -1783,7 +1760,15 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 	t = root.elementsByTagNameNS(chatStateNS, "gone").item(0).toElement();
 	if(!t.isNull())
 		d->chatState = StateGone;
-	
+
+	// message receipts
+	QString messageReceiptNS = "urn:xmpp:receipts";
+	t = root.elementsByTagNameNS(messageReceiptNS, "request").item(0).toElement();
+	if(!t.isNull())
+		d->messageReceipt = ReceiptRequest;
+	t = root.elementsByTagNameNS(messageReceiptNS, "received").item(0).toElement();
+	if(!t.isNull())
+		d->messageReceipt = ReceiptReceived;
 
 	// xencrypted
 	t = root.elementsByTagNameNS("jabber:x:encrypted", "x").item(0).toElement();
@@ -1830,12 +1815,12 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 	else
 		d->nick = QString();
 
-	// wb
-	t = root.elementsByTagNameNS("http://jabber.org/protocol/svgwb", "wb").item(0).toElement();
+	// sxe
+	t = root.elementsByTagNameNS("http://jabber.org/protocol/sxe", "sxe").item(0).toElement();
 	if(!t.isNull())
-		d->wb = t;
+		d->sxe = t;
 	else
-		d->wb = QDomElement();
+		d->sxe = QDomElement();
 
 	t = root.elementsByTagNameNS("http://jabber.org/protocol/muc#user", "x").item(0).toElement();
 	if(!t.isNull()) {
@@ -2261,10 +2246,7 @@ bool Status::isAvailable() const
 
 bool Status::isAway() const
 {
-	if(v_show == "away" || v_show == "xa" || v_show == "dnd")
-		return true;
-
-	return false;
+	return (v_show == "away" || v_show == "xa" || v_show == "dnd");
 }
 
 bool Status::isInvisible() const

@@ -1,8 +1,6 @@
 This is the TODO file for the break-the-contactlist branch and is not in any particular order.
 
 
-Important!!!
-
 Implement (and add tests for) setData so that we can edit contact list element fields as needed.
 
 

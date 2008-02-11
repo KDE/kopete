@@ -187,6 +187,9 @@
      <property name="alignment" >
       <set>Qt::AlignVCenter</set>
      </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item row="0" column="0" >

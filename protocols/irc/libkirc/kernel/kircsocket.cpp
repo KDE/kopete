@@ -17,264 +17,45 @@
     *************************************************************************
 */
 
-#include <config-kopete.h>
-
 #include "kircsocket.moc"
+#include "kircsocket_p.moc"
+
+#include "kirccontext.h"
 
 #include <qtextcodec.h>
 #include <qtimer.h>
-#include <QtCore/QUrl>
-
-#include <QtNetwork/QTcpSocket>
-
-class KIrc::Socket::Private
-{
-public:
-	Private()
-		: socket(0)
-		, useSSL(false)
-		, state(Idle)
-		, defaultCodec(KIrc::UTF8)
-		, commandHandler(0)
-		, entityManager(0)
-		, owner(new Entity())
-	{ }
-
-	QTcpSocket *socket;
-	QUrl url;
-	bool useSSL;
-	KIrc::Socket::ConnectionState state;
-
-	QTextCodec *defaultCodec;
-
-	KIrc::CommandHandler *commandHandler;
-	KIrc::EntityManager *entityManager;
-	KIrc::Entity::Ptr owner;
-};
 
 using namespace KIrc;
 
-Socket::Socket(QObject *parent)
-	: QObject(parent),
-	  d( new Private )
+SocketPrivate::SocketPrivate(KIrc::Socket *socket)
+		: q_ptr(socket)
+		, socket(0)
+		, state(KIrc::Socket::Idle)
 {
 }
 
-Socket::~Socket()
+void SocketPrivate::setSocket(QAbstractSocket *socket)
 {
-	delete d;
+	connect(socket, SIGNAL(readyRead()), SLOT(onReadyRead()));
+	connect(socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
+		SLOT(socketStateChanged(QAbstractSocket::SocketState)));
+	connect(socket, SIGNAL(error(QAbstractSocket::SocketError)),
+		SLOT(socketGotError(QAbstractSocket::SocketError)));
 }
 
-Socket::ConnectionState Socket::connectionState() const
+void SocketPrivate::setConnectionState(Socket::ConnectionState newstate)
 {
-	return d->state;
-}
+	Q_Q(Socket);
 
-QTcpSocket *Socket::socket()
-{
-	return d->socket;
-}
-
-QTextCodec *Socket::defaultCodec() const
-{
-	return d->defaultCodec;
-}
-
-void Socket::setDefaultCodec(QTextCodec *codec)
-{
-	codec = d->defaultCodec;
-}
-
-CommandHandler *Socket::commandHandler() const
-{
-	return d->commandHandler;
-}
-
-void Socket::setCommandHandler(CommandHandler *commandHandler)
-{
-	d->commandHandler = commandHandler;
-}
-
-EntityManager *Socket::entityManager() const
-{
-	return d->entityManager;
-}
-
-void Socket::setEntityManager(EntityManager *entityManager)
-{
-	d->entityManager = entityManager;
-}
-
-Entity::Ptr Socket::owner() const
-{
-	return d->owner;
-}
-
-void Socket::setOwner(const Entity::Ptr &newOwner)
-{
-	d->owner = newOwner;
-}
-
-const QUrl &Socket::url() const
-{
-	return d->url;
-}
-
-void Socket::connectToServer(const QUrl &url)
-{
-	close();
-	d->url = "";
-
-	bool useSSL = false;
-	if (url.scheme() == "irc")
-		useSSL = false;
-	else if (url.scheme() == "ircs")
-		useSSL = true;
-	else
+	if (state != newstate)
 	{
-//		#warning FIXME: send an event here to reflect the error
-		return;
-	}
-
-	QString host = url.host();
-	if(host.isEmpty())
-		host = "localhost";
-
-	int port = url.port();
-
-	if (port == -1)
-	{
-		// Make the port being guessed by the socket (look into /etc/services)
-		//port = url.scheme();
-		;
-	}
-
-//	the given url is now validated
-	d->url = url;
-
-#ifdef KIRC_SSL_SUPPORT
-	if( d->useSSL ) {
-		d->socket = new KSSLSocket(this);
-		d->socket->setSocketFlags( KExtendedSocket::inetSocket );
-	}
-#else
-	if( d->useSSL ) {
-//		kWarning(14121) << "You tried to use SSL, but this version of Kopete was"
-//			" not compiled with IRC SSL support. A normal IRC connection will be attempted." << endl;
-	}
-#endif
-	if (!d->socket) {
-		d->socket = new QTcpSocket(this);
-//		d->socket->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
-	}
-
-	connect(d->socket, SIGNAL(readyRead()), SLOT(onReadyRead()));
-	connect(d->socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
-	                   SLOT(socketStateChanged(QAbstractSocket::SocketState)));
-	connect(d->socket, SIGNAL(error(QAbstractSocket::SocketError)),
-	                   SLOT(socketGotError(QAbstractSocket::SocketError)));
-
-#ifdef __GNUC__
-	#warning FIXME: send an event here to reflect connection state
-#endif
-
-	d->socket->connectToHost(host, port);
-}
-
-void Socket::close()
-{
-	delete d->socket;
-	d->socket = 0;
-}
-
-void Socket::writeMessage(const Message &msg)
-{
-#ifdef __GNUC__
-	#warning Check message validity before sending it
-#endif
-
-	if (!d->socket || d->socket->state() != QAbstractSocket::ConnectedState)
-	{
-//		postErrorEvent(i18n("Attempting to send while not connected: %1", msg.data()));
-		return;
-	}
-
-	qint64 wrote = d->socket->write(msg.rawLine() + "\n\r");
-
-//	if (wrote == -1)
-//		kDebug(14121) << "Socket write failed!";
-
-//	kDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg);
-}
-
-void Socket::showInfoDialog()
-{
-/*
-	if( d->useSSL )
-	{
-		static_cast<KSSLSocket*>( d->socket )->showInfoDialog();
-	}
-*/
-}
-
-void Socket::setConnectionState(ConnectionState newstate)
-{
-	if (d->state != newstate)
-	{
-		d->state = newstate;
-		emit connectionStateChanged(newstate);
+		state = newstate;
+		emit q->connectionStateChanged(newstate);
 	}
 }
 
-void Socket::onReadyRead()
-{
-	// The caller can also be self so lets check the socket still exist
 
-	if (d->socket && d->socket->canReadLine())
-	{
-		QByteArray rawMsg = d->socket->readLine();
-
-		Message msg;
-		msg.setLine(rawMsg);
-		msg.setDirection(Message::InGoing);
-
-		if (msg.isValid())
-			emit receivedMessage(msg);
-		else
-			//postErrorEvent(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
-
-		QTimer::singleShot( 0, this, SLOT( onReadyRead() ) );
-	}
-
-//	if(d->socket->socketStatus() != KExtendedSocket::connected)
-//		error();
-}
-
-void Socket::socketStateChanged(QAbstractSocket::SocketState newstate)
-{
-	switch (newstate) {
-	case QAbstractSocket::UnconnectedState:
-		setConnectionState(Idle);
-		break;
-	case QAbstractSocket::HostLookupState:
-		setConnectionState(HostLookup);
-		break;
-	case QAbstractSocket::ConnectingState:
-		setConnectionState(Connecting);
-		break;
-	case QAbstractSocket::ConnectedState:
-		setConnectionState(Open);
-		break;
-	case QAbstractSocket::ClosingState:
-		setConnectionState(Closing);
-		break;
-	default:
-//		postErrorEvent(i18n("Unknown SocketState value:%1", newstate));
-		close();
-	}
-}
-
-void Socket::socketGotError(QAbstractSocket::SocketError)
+void SocketPrivate::socketGotError(QAbstractSocket::SocketError)
 {
 	/*
 	KBufferedSocket::SocketError err = d->socket->error();
@@ -294,7 +75,146 @@ void Socket::socketGotError(QAbstractSocket::SocketError)
 	close();
 	*/
 }
-/*
+
+void SocketPrivate::socketReadyRead()
+{
+	Q_Q(Socket);
+
+	// The caller can also be self so lets check the socket still exist
+	
+	if (socket && socket->canReadLine())
+	{
+		bool ok = false;
+		QByteArray raw = socket->readLine();
+
+		Message msg = Message::fromLine(raw, &ok);
+//		msg.setDirection(Message::InGoing);
+
+		if (ok)
+			emit q->receivedMessage(msg);
+//		else
+//			postErrorEvent(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
+
+		// FIXME: post events instead of reschudeling.
+		QTimer::singleShot( 0, this, SLOT( onReadyRead() ) );
+	}
+
+//	if(d->socket->socketStatus() != KExtendedSocket::connected)
+//		error();
+}
+
+void SocketPrivate::socketStateChanged(QAbstractSocket::SocketState newstate)
+{
+	Q_Q(Socket);
+
+	switch (newstate) {
+	case QAbstractSocket::UnconnectedState:
+		setConnectionState(Socket::Idle);
+		break;
+	case QAbstractSocket::HostLookupState:
+		setConnectionState(Socket::HostLookup);
+		break;
+	case QAbstractSocket::ConnectingState:
+		setConnectionState(Socket::Connecting);
+		break;
+//	MUST BE HANDLED BY CHILDREN
+//	case QAbstractSocket::ConnectedState:
+//		setConnectionState(Socket::Open);
+//		break;
+	case QAbstractSocket::ClosingState:
+		setConnectionState(Socket::Closing);
+		break;
+	default:
+//		postErrorEvent(i18n("Unknown SocketState value:%1", newstate));
+		q->close();
+	}
+}
+
+
+
+
+
+Socket::Socket(Context *context, SocketPrivate *socketp, Entity::Ptr owner)
+	: QObject(context)
+	, d_ptr(socketp)
+{
+	Q_D(Socket);
+
+#if 0
+	// FIXME: create an anonymous as owner.
+	if ( owner.isNull() )
+		owner = context->anonymous();
+#endif
+	d->owner = owner;
+}
+
+Socket::~Socket()
+{
+	delete d_ptr;
+}
+
+Socket::ConnectionState Socket::connectionState() const
+{
+	Q_D(const Socket);
+
+	return d->state;
+}
+
+QAbstractSocket *Socket::socket()
+{
+	Q_D(Socket);
+
+	return d->socket;
+}
+
+Entity::Ptr Socket::owner() const
+{
+	Q_D(const Socket);
+
+	return d->owner;
+}
+
+void Socket::writeMessage(const Message &msg)
+{
+	Q_D(Socket);
+
+#ifdef __GNUC__
+	#warning Check message validity before sending it
+#endif
+
+//	if (!d->socket || d->socket->state() != QAbstractSocket::ConnectedState)
+	{
+//		postErrorEvent(i18n("Attempting to send while not connected: %1", msg.data()));
+		return;
+	}
+
+//	qint64 wrote = d->socket->write(msg.toLine());
+
+//	if (wrote == -1)
+//		kDebug(14121) << "Socket write failed!";
+
+//	kDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg);
+}
+
+void Socket::close()
+{
+	Q_D(Socket);
+
+	delete d->socket;
+	d->socket = 0;
+
+	d->url = "";
+}
+
+#if 0
+void Socket::showInfoDialog()
+{
+	if( d->useSSL )
+	{
+		static_cast<KSSLSocket*>( d->socket )->showInfoDialog();
+	}
+}
+
 QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) const
 {
 	kDebug(14121) ;
@@ -323,4 +243,4 @@ QByteArray Socket::encode(const QString &str, bool *success, QTextCodec *codec) 
 	*success = true;
 	return codec->fromUnicode(str);
 }
-*/
+#endif

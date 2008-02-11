@@ -386,7 +386,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 					to.append( dir==Kopete::Message::Inbound ? contact->account()->myself() : contact );
 
 					Kopete::Message msg(from, to);
-					msg.setHtmlBody( msgElem2.text() );
+					msg.setPlainBody( msgElem2.text() );
 					msg.setHtmlBody( QString::fromLatin1("<span title=\"%1\">%2</span>")
 							.arg( dt.toString(Qt::LocalDate), msg.escapedBody() ));
 					msg.setTimestamp( dt );
@@ -607,7 +607,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
 					Kopete::Message msg(from, to);
 					msg.setTimestamp( timestamp );
 					msg.setDirection( dir );
-					msg.setHtmlBody( msgElem.text() );
+					msg.setPlainBody( msgElem.text() );
 					if (colorize)
 					{
 						msg.setHtmlBody( QString::fromLatin1("<span style=\"color:%1\" title=\"%2\">%3</span>")

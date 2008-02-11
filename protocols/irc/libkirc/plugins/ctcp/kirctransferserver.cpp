@@ -15,12 +15,12 @@
     *************************************************************************
 */
 
-#include <kdebug.h>
-#include <kextsock.h>
+#include "kirctransferserver.moc"
 
 #include "kirctransferhandler.h"
 
-#include "kirctransferserver.h"
+#include <kdebug.h>
+#include <kextsock.h>
 
 using namespace KIrc;
 

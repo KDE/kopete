@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -74,7 +74,7 @@ void XMPP::setDebug(Debug *p)
 
 static QByteArray randomArray(int size)
 {
-	QByteArray a(size, '\n');
+	QByteArray a(size);
 	for(int n = 0; n < size; ++n)
 		a[n] = (char)(256.0*rand()/(RAND_MAX+1.0));
 	return a;
@@ -181,7 +181,7 @@ public:
 	AllowPlainType allowPlain;
 	bool haveLocalAddr;
 	QHostAddress localAddr;
-	quint16 localPort;
+	Q_UINT16 localPort;
 	int minimumSSF, maximumSSF;
 	QString sasl_mech;
 	bool doBinding;
@@ -384,7 +384,7 @@ void ClientStream::setPassword(const QString &s)
 	}
 	else {
 		if(d->sasl)
-			d->sasl->setPassword(QCA::SecureArray(s.toUtf8()));
+			d->sasl->setPassword(QCA::SecureArray(s.utf8()));
 	}
 }
 
@@ -453,7 +453,7 @@ void ClientStream::setSASLMechanism(const QString &s)
 	d->sasl_mech = s;
 }
 
-void ClientStream::setLocalAddr(const QHostAddress &addr, quint16 port)
+void ClientStream::setLocalAddr(const QHostAddress &addr, Q_UINT16 port)
 {
 	d->haveLocalAddr = true;
 	d->localAddr = addr;
@@ -505,6 +505,16 @@ QDomDocument & ClientStream::doc() const
 QString ClientStream::baseNS() const
 {
 	return NS_CLIENT;
+}
+
+QString ClientStream::xhtmlImNS() const
+{
+	return NS_XHTML_IM;
+}
+
+QString ClientStream::xhtmlNS() const
+{
+	return NS_XHTML;
 }
 
 void ClientStream::setAllowPlain(AllowPlainType a)
@@ -732,7 +742,7 @@ void ClientStream::sasl_authCheck(const QString &user, const QString &)
 //	printf("authcheck: [%s], [%s]\n", user.latin1(), authzid.latin1());
 //#endif
 	QString u = user;
-	int n = u.indexOf('@');
+	int n = u.find('@');
 	if(n != -1)
 		u.truncate(n);
 	d->srv.user = u;
@@ -851,9 +861,9 @@ void ClientStream::srvProcessNext()
 				printf("Break (RecvOpen)\n");
 
 				// calculate key
-				Q3CString str = QCA::Hash("sha1").hashToString("secret").toUtf8();
-				str = QCA::Hash("sha1").hashToString(str + "im.pyxa.org").toUtf8();
-				str = QCA::Hash("sha1").hashToString(str + d->srv.id.toUtf8()).toUtf8();
+				Q3CString str = QCA::Hash("sha1").hashToString("secret").utf8();
+				str = QCA::Hash("sha1").hashToString(str + "im.pyxa.org").utf8();
+				str = QCA::Hash("sha1").hashToString(str + d->srv.id.utf8()).utf8();
 				d->srv.setDialbackKey(str);
 
 				//d->srv.setDialbackKey("3c5d721ea2fcc45b163a11420e4e358f87e3142a");
@@ -915,7 +925,7 @@ void ClientStream::processNext()
 			QString str;
 			if(i.isString) {
 				// skip whitespace pings
-				if(i.str.trimmed().isEmpty())
+				if(i.str.stripWhiteSpace().isEmpty())
 					continue;
 				str = i.str;
 			}

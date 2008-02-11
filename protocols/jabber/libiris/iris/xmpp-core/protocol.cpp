@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -443,7 +443,7 @@ void BasicProtocol::handleDocOpen(const Parser::Event &pe)
 		int minor = 0;
 		QString verstr = atts.value("version");
 		if(!verstr.isEmpty()) {
-			int n = verstr.indexOf('.');
+			int n = verstr.find('.');
 			if(n != -1) {
 				major = verstr.mid(0, n).toInt();
 				minor = verstr.mid(n+1).toInt();
@@ -1174,6 +1174,16 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 			}
 		}
 		else {
+			// already authed?  then ignore last client step
+			//   (this happens if "additional data with success"
+			//   is used)
+			if(sasl_authed)
+			{
+				event = ESASLSuccess;
+				step = HandleSASLSuccess;
+				return true;
+			}
+
 			QByteArray stepData = sasl_step;
 #ifdef XMPP_TEST
 			TD::msg(QString("SASL OUT: [%1]").arg(printArray(sasl_step)));
@@ -1226,7 +1236,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 			//	QCA::insertProvider(createProviderHash());
 
 			p = doc.createElement("digest");
-			Q3CString cs = id.toUtf8() + password.toUtf8();
+			Q3CString cs = id.utf8() + password.utf8();
 			p.appendChild(doc.createTextNode(QCA::Hash("sha1").hashToString(cs)));
 		}
 		else {
@@ -1421,6 +1431,18 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 				return false;
 			}
 			else if(e.tagName() == "success") {
+				QString str = e.text();
+				// "additional data with success" ?
+				if(!str.isEmpty())
+				{
+					QByteArray a = QCA::Base64().stringToArray(str).toByteArray();
+					sasl_step = a;
+					sasl_authed = true;
+					need = NSASLNext;
+					step = GetSASLNext;
+					return false;
+				}
+
 				sasl_authed = true;
 				event = ESASLSuccess;
 				step = HandleSASLSuccess;
@@ -1585,7 +1607,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 	}
 	// server
 	else if(step == GetRequest) {
-		printf("get request: [%s], %s\n", qPrintable(e.namespaceURI()), qPrintable(e.tagName()));
+		printf("get request: [%s], %s\n", e.namespaceURI().latin1(), e.tagName().latin1());
 		if(e.namespaceURI() == NS_TLS && e.localName() == "starttls") {
 			// TODO: don't let this be done twice
 

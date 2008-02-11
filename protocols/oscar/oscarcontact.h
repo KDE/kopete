@@ -139,6 +139,8 @@ public slots:
 	/** change contact encoding */
 	void changeContactEncoding();
 
+	void requestAuthorization();
+
 protected slots:
 	void slotTyping( bool typing );
 

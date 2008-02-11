@@ -162,7 +162,7 @@ void PrivacyPreferences::slotChkDropAllToggled( bool enabled )
 
 void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 {
-	KDialog *addDialog = new KDialog( Kopete::UI::Global::mainWidget() );
+	KDialog *addDialog = new KDialog( this );
 	addDialog->setCaption( i18n( "Add Contact to Whitelist" ) );
 	addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	addDialog->setDefaultButton( KDialog::Ok );
@@ -188,7 +188,7 @@ void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 
 void PrivacyPreferences::slotBtnAddToBlackListClicked()
 {
-	KDialog *addDialog = new KDialog( Kopete::UI::Global::mainWidget() );
+	KDialog *addDialog = new KDialog( this );
 	addDialog->setCaption( i18n( "Add Contact to Blacklist" ) );
 	addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	addDialog->setDefaultButton( KDialog::Ok );

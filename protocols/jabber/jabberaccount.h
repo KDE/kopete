@@ -33,6 +33,7 @@
 #include <im.h>
 #include "jabberclient.h"
 #include "mood.h"
+#include "privacymanager.h"
 
 #include <QMap>
 #include <QtCrypto>
@@ -89,6 +90,11 @@ public:
 	JabberClient *client () const
 	{
 		return m_jabberClient;
+	}
+	
+	PrivacyManager *privacyManager () const
+	{
+		return m_privacyManager;
 	}
 
 #ifdef SUPPORT_JINGLE
@@ -186,6 +192,8 @@ private:
 
 	// backend for this account
 	JabberClient *m_jabberClient;
+	
+	PrivacyManager *m_privacyManager;
 
 	JabberResourcePool *m_resourcePool;
 	JabberContactPool *m_contactPool;

@@ -995,7 +995,8 @@ void Client::setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses )
 	if ( !item )
 	{
 		kDebug( OSCAR_RAW_DEBUG ) << "Adding new privacy TLV item";
-		OContact s( QString(), 0, ssiManager()->nextContactId(), ROSTER_VISIBILITY, tList );
+		QString empty;
+		OContact s( empty, 0, ssiManager()->nextContactId(), ROSTER_VISIBILITY, tList );
 		modifyContactItem( item, s );
 	}
 	else

@@ -686,8 +686,11 @@ void OscarAccount::ssiContactAdded( const OContact& item )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << "Received confirmation from server. adding " << item.name()
 			<< " to the contact list" << endl;
-		createNewContact( item.name(), d->addContactMap[normalizedName], item );
+		OscarContact* oc = createNewContact( item.name(), d->addContactMap[normalizedName], item );
 		d->addContactMap.remove( normalizedName );
+
+		if ( oc && oc->ssiItem().waitingAuth() )
+			QTimer::singleShot( 1, oc, SLOT(requestAuthorization()) );
 	}
 	else if ( contacts()[item.name()] )
 	{

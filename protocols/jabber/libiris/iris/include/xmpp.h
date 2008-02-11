@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -30,12 +30,12 @@
 #include <qxml.h>
 #include <qdom.h>
 
+#include <iris_export.h>
+
 #include "xmpp_jid.h"
 #include "xmpp_stanza.h"
 #include "xmpp_stream.h"
 #include "xmpp_clientstream.h"
-
-#include <iris_export.h>
 
 namespace QCA
 {
@@ -84,7 +84,7 @@ namespace XMPP
 		bool useSSL() const;
 		bool havePeerAddress() const;
 		QHostAddress peerAddress() const;
-		quint16 peerPort() const;
+		Q_UINT16 peerPort() const;
 
 	signals:
 		void connected();
@@ -93,13 +93,13 @@ namespace XMPP
 	protected:
 		void setUseSSL(bool b);
 		void setPeerAddressNone();
-		void setPeerAddress(const QHostAddress &addr, quint16 port);
+		void setPeerAddress(const QHostAddress &addr, Q_UINT16 port);
 
 	private:
 		bool ssl;
 		bool haveaddr;
 		QHostAddress addr;
-		quint16 port;
+		Q_UINT16 port;
 	};
 
 	class IRIS_EXPORT AdvancedConnector : public Connector
@@ -119,28 +119,28 @@ namespace XMPP
 
 			int type() const;
 			QString host() const;
-			quint16 port() const;
+			Q_UINT16 port() const;
 			QString url() const;
 			QString user() const;
 			QString pass() const;
 			int pollInterval() const;
 
-			void setHttpConnect(const QString &host, quint16 port);
-			void setHttpPoll(const QString &host, quint16 port, const QString &url);
-			void setSocks(const QString &host, quint16 port);
+			void setHttpConnect(const QString &host, Q_UINT16 port);
+			void setHttpPoll(const QString &host, Q_UINT16 port, const QString &url);
+			void setSocks(const QString &host, Q_UINT16 port);
 			void setUserPass(const QString &user, const QString &pass);
 			void setPollInterval(int secs);
 
 		private:
 			int t;
 			QString v_host, v_url;
-			quint16 v_port;
+			Q_UINT16 v_port;
 			QString v_user, v_pass;
 			int v_poll;
 		};
 
 		void setProxy(const Proxy &proxy);
-		void setOptHostPort(const QString &host, quint16 port);
+		void setOptHostPort(const QString &host, Q_UINT16 port);
 		void setOptProbe(bool);
 		void setOptSSL(bool);
 

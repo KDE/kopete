@@ -233,7 +233,7 @@ void AVDeviceConfig::slotUpdateImage()
 {
 	mVideoDevicePool->getFrame();
 	mVideoDevicePool->getImage(&qimage);
-	mPrfsVideoDevice->mVideoImageLabel->setPixmap(QPixmap::fromImage(qimage));
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(QPixmap::fromImage(qimage.mirrored(mVideoDevicePool->getImageAsMirror(),false)));
 	//kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated.";
 }
 

@@ -15,59 +15,91 @@
     *************************************************************************
 */
 
-#ifndef KIRCEVENT_H
-#define KIRCEVENT_H
+#ifndef KIRC_EVENT_H
+#define KIRC_EVENT_H
 
 #include "kircmessage.h"
 
-#include "kdemacros.h"
-
-#include <QtCore/QVariant>
+#include <QtCore/QEvent>
 
 namespace KIrc
 {
 
+class Socket;
+
 class KIRC_EXPORT Event
-//	: QEvent // TODO: Use QEvent interface
+	: public QEvent
 {
 public:
-	Event(const QString &name,
-		const QString &text, const QList<QVariant> &args,
-		const KIrc::Entity::Ptr &from,
-		const KIrc::Entity::List &to,
-		const KIrc::Entity::List &cc = KIrc::Entity::List());
+	enum Type
+	{
+		Command                 = 10, // Text command
 
-	/**
-	 * The name of the event.
-	 */
-	const QString &name() const;
+		MessageReceived         = 20, // Generic message, usually a command message
+		MessageSending		= 21,
+//		MessageDispatch		= 22, // Message as to be redispatched to other sockets.
 
-	/**
-	 * The text associed with this event.
-	 *
-	 * This text is used to build the displayed text using the arguments.
-	 */
-	const QString &text() const;
+//		ClientServerReply       = 21, // Numeric reply message in the 001-099 range
+//		CommandReply            = 22, // Numeric reply message in the 200-399 range
+//		ErrorReply              = 23  // Numeric reply message in the 400-599 range
 
-	/**
-	 * The arguments of the event.
-	 */
-	const QList<QVariant> &args() const;
+		Text
+	};
 
-	const KIrc::Entity::Ptr &from() const;
+public:
+	explicit Event(Type type)
+		: QEvent(static_cast<QEvent::Type>(type))
+	{ }
 
-	const KIrc::Entity::List &to() const;
+	Event(const Event &o);
+};
 
-	const KIrc::Entity::List &cc() const;
+class KIRC_EXPORT CommandEvent
+	: public KIrc::Event
+{
+public:
+//	explicit CommandEvent();
 
 private:
-	QString m_name;
-	QString m_text;
-	QList<QVariant> m_args;
-	KIrc::Entity::Ptr m_from;
-	KIrc::Entity::List m_to;
-	KIrc::Entity::List m_cc;
+};
 
+class KIRC_EXPORT MessageEvent
+	: public Event
+{
+public:
+	MessageEvent(Type type, const KIrc::Message &message, KIrc::Socket *socket)
+		: KIrc::Event(type), m_message(message), m_socket(socket)
+	{ }
+
+	inline const KIrc::Message &message() const { return m_message; }
+	inline KIrc::Socket *socket() { return m_socket; }
+
+private:
+	KIrc::Message m_message;
+	KIrc::Socket *m_socket; // Use QPointer instead?
+};
+
+class KIRC_EXPORT TextEvent
+	: public KIrc::Event
+{
+public:
+	enum Verbosity
+	{
+		Error,
+		Warning,
+		Normal,
+		Verbose,
+		Debug
+	};
+
+
+	TextEvent(const QString &text, Verbosity verbosity = Normal)
+		: Event(Text), m_text(text), m_verbosity(verbosity)
+	{ }
+
+private:
+	QString m_text;
+	Verbosity m_verbosity;
 };
 
 }

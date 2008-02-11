@@ -215,7 +215,7 @@
 		<!-- Contact list appearance config -->
 		<entry key="showOfflineUsers" type="Bool">
 			<label>Show offline users in contact list.</label>
-			<default>false</default>
+			<default>true</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<entry key="showEmptyGroups" type="Bool">

@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -37,9 +37,10 @@
 #define NS_SESSION  "urn:ietf:params:xml:ns:xmpp-session"
 #define NS_STANZAS  "urn:ietf:params:xml:ns:xmpp-stanzas"
 #define NS_BIND     "urn:ietf:params:xml:ns:xmpp-bind"
-#define NS_CHATSTATES "http://jabber.org/protocol/chatstates"
 #define NS_COMPRESS_FEATURE "http://jabber.org/features/compress"
 #define NS_COMPRESS_PROTOCOL "http://jabber.org/protocol/compress"
+#define NS_XHTML_IM "http://jabber.org/protocol/xhtml-im"
+#define NS_XHTML "http://www.w3.org/1999/xhtml"
 
 namespace XMPP
 {

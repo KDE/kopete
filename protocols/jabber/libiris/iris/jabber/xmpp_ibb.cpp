@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -106,7 +106,7 @@ void IBBConnection::connectToJid(const Jid &peer, const QDomElement &comment)
 	d->peer = peer;
 	d->comment = comment;
 
-	QString dstr; dstr.sprintf("IBBConnection[%d]: initiating request to %s\n", d->id, qPrintable(peer.full()));
+	QString dstr; dstr.sprintf("IBBConnection[%d]: initiating request to %s\n", d->id, peer.full().latin1());
 	d->m->client()->debug(dstr);
 
 	d->j = new JT_IBB(d->m->client()->rootTask());
@@ -120,7 +120,7 @@ void IBBConnection::accept()
 	if(d->state != WaitingForAccept)
 		return;
 
-	QString dstr; dstr.sprintf("IBBConnection[%d]: accepting %s [%s]\n", d->id, qPrintable(d->peer.full()), qPrintable(d->sid));
+	QString dstr; dstr.sprintf("IBBConnection[%d]: accepting %s [%s]\n", d->id, d->peer.full().latin1(), d->sid.latin1());
 	d->m->client()->debug(dstr);
 
 	d->m->doAccept(this, d->iq_id);
@@ -254,7 +254,7 @@ void IBBConnection::ibb_finished()
 		if(j->mode() == JT_IBB::ModeRequest) {
 			d->sid = j->streamid();
 
-			QString dstr; dstr.sprintf("IBBConnection[%d]: %s [%s] accepted.\n", d->id, qPrintable(d->peer.full()), qPrintable(d->sid));
+			QString dstr; dstr.sprintf("IBBConnection[%d]: %s [%s] accepted.\n", d->id, d->peer.full().latin1(), d->sid.latin1());
 			d->m->client()->debug(dstr);
 
 			d->state = Active;
@@ -275,7 +275,7 @@ void IBBConnection::ibb_finished()
 	}
 	else {
 		if(j->mode() == JT_IBB::ModeRequest) {
-			QString dstr; dstr.sprintf("IBBConnection[%d]: %s refused.\n", d->id, qPrintable(d->peer.full()));
+			QString dstr; dstr.sprintf("IBBConnection[%d]: %s refused.\n", d->id, d->peer.full().latin1());
 			d->m->client()->debug(dstr);
 
 			reset(true);

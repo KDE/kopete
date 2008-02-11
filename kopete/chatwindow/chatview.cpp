@@ -258,7 +258,14 @@ void ChatView::setFont( const QFont &font )
 
 void ChatView::setFgColor( const QColor &newColor )
 {
-	editPart()->setTextColor( newColor );
+    if ( newColor.isValid() )
+	{
+		editPart()->setTextColor( newColor );
+    }
+	else
+	{
+		editPart()->setTextColor();
+    }
 }
 
 void ChatView::raise( bool activate )

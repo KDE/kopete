@@ -111,11 +111,7 @@ void I18nTask::error(Event * /*e*/)
 void I18nTask::join(Event *e)
 {
 /*
-	emit receivedMessage(
-		JoinMessage,
-		fromEntity,
-		toEntity,
-		i18n(""));
+	return Event("Join", i18n("%1 has joined %2"), who, channel);
 */
 }
 
@@ -125,11 +121,7 @@ void I18nTask::join(Event *e)
 void I18nTask::kick(Event *e)
 {
 /*
-	emit receivedMessage(
-		PartMessage,
-		fromEntity,
-		toEntity,
-		i18n(""));
+	return Event("Kick", i18n("%1 has kicked %2 from %3 (%4)", who, victims, channel, reason));
 */
 }
 
@@ -159,44 +151,13 @@ void I18nTask::mode(Event *e)
 void I18nTask::nick(Event *e)
 {
 /*
-	// FIXME: Find better i18n strings
-
-	QString message;
-
-	if (oldNick.toLower() == m_Nickname->message().toLower())
-	{
-		m_Nickname = e->message().suffix();
-		message = i18n("Your nick has changed from %1 to %2");
-	}
-	else
-		message = i18n("User nick has changed from %1 to %2");
-
-	emit receivedMessage(
-		InfoMessage,
-		e->message().entityFromPrefix(),
-		Entity::List::null,
-		message);
-
-	fromEntity->rename();
+	return Event("Nick Changed", i18n("%1 is now knwon as %2"), oldnick, newnick);
 */
 }
 
 void I18nTask::notice(Event *e)
 {
-//	if (!e->suffix().isEmpty())
-	{
-/*
-		emit receivedMessage(
-			NoticeMessage,
-			e->message().entityFromPrefix(),
-			e->message().entityFromArg(0), // should always return myself
-			e->message().suffix()
-		);
-*/
-	}
-
-//	if(e->message().hasCtcpMessage())
-//		invokeCtcpCommandOfMessage(m_ctcpReplies, e);
+//	return Event("Notice", i18n(""), who, message);
 }
 
 /* This signal emits when a user parts a channel
@@ -402,7 +363,7 @@ void I18nTask::numericReply_251(Event *e)
  */
 void I18nTask::numericReply_252(Event *e)
 {
-	postServerEvent(e, i18np("There is 1 operator online.", "There are %1 operators online.", e->message().arg(1).toULong()));
+	postServerEvent(e, i18np("There is 1 operator online.", "There are %s operators online.", e->message().arg(1).toULong()));
 }
 
 /* 253: "<integer> :unknown connection(s)"
@@ -410,7 +371,7 @@ void I18nTask::numericReply_252(Event *e)
  */
 void I18nTask::numericReply_253(Event *e)
 {
-	postServerEvent(e, i18np("There is 1 unknown connection.", "There are %1 unknown connections.", e->message().arg(1).toULong()));
+	postServerEvent(e, i18np("There is 1 unknown connection.", "There are %s unknown connections.", e->message().arg(1).toULong()));
 }
 
 /* 254: "<integer> :channels formed"
@@ -418,7 +379,9 @@ void I18nTask::numericReply_253(Event *e)
  *  */
 void I18nTask::numericReply_254(Event *e)
 {
-	postServerEvent(e, i18np("There has been 1 channel formed.", "There have been %1 channels formed.", e->message().arg(1).toULong()));
+	postServerEvent(e, i18np("There has been 1 channel formed.",
+		"There have been %1 channels formed.",
+		e->message().arg(1).toULong()));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"

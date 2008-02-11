@@ -300,6 +300,7 @@ public:
 //	struct v4l2_input m_input;
 	struct v4l2_queryctrl queryctrl;
 	struct v4l2_querymenu querymenu;
+	void enumerateControls (void);
 	void enumerateMenu (void);
 #endif
 	struct video_capability V4L_capabilities;

@@ -14,19 +14,18 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef CS_SERVSOCK_H
 #define CS_SERVSOCK_H
 
-#include <QtCore>
-#include <QtNetwork>
-
+#include <QTcpServer>
+#include "cutestuff_export.h"
 // CS_NAMESPACE_BEGIN
 
-class ServSock : public QObject
+class CUTESTUFF_EXPORT ServSock : public QObject
 {
 	Q_OBJECT
 public:
@@ -50,7 +49,7 @@ private:
 	Private *d;
 };
 
-class ServSockSignal : public QTcpServer
+class CUTESTUFF_EXPORT ServSockSignal : public QTcpServer
 {
 	Q_OBJECT
 public:

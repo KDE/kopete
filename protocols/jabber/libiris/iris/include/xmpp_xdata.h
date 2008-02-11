@@ -14,17 +14,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef XMPPXDATA_H
 #define XMPPXDATA_H
 
+#include <QString>
 #include <QMap>
 #include <QList>
 #include <QSharedDataPointer>
 #include <QStringList>
+
 #include <iris_export.h>
 
 class QDomElement;
@@ -32,7 +34,7 @@ class QDomDocument;
 
 namespace XMPP {
 
-	class  IRIS_EXPORT XData
+	class IRIS_EXPORT XData
 	{
 	public:
 		XData();

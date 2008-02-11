@@ -150,13 +150,13 @@ JabberProtocol::~JabberProtocol ()
 
 AddContactPage *JabberProtocol::createAddContactWidget (QWidget * parent, Kopete::Account * i)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create Add Contact  Widget\n";
+	kDebug (JABBER_DEBUG_GLOBAL) << "Create Add Contact  Widget";
 	return new JabberAddContactPage (i, parent);
 }
 
 KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Account * account, QWidget * parent)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Edit Account Widget\n";
+	kDebug (JABBER_DEBUG_GLOBAL) << "Edit Account Widget";
 	JabberAccount *ja=dynamic_cast < JabberAccount * >(account);
 	if(ja || !account)
 		return new JabberEditAccountWidget (this,ja , parent);
@@ -174,7 +174,7 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 
 Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create New Account. ID: " << accountId << "\n";
+	kDebug (JABBER_DEBUG_GLOBAL) << "Create New Account. ID: " << accountId;
 	if( Kopete::AccountManager::self()->findAccount( pluginId() , accountId ) )
 		return 0L;  //the account may already exist if greated just above
 

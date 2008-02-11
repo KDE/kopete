@@ -38,7 +38,7 @@ public:
 	~CommandHandler();
 
 public slots:
-	Command *registerCommand(const QString &name, Command *command);
+	Command *registerCommand(const char *name, Command *command);
 
 	/**
 	 * Connects the given object member signal/slot to this message redirector.
@@ -47,11 +47,11 @@ public slots:
 	 * or
 	 * SIGNAL(myslot(KIrc::Message msg))
 	 */
-	Command *registerCommand(const QString &name, QObject *object, const char *member);
+	Command *registerCommand(const char *name, QObject *object);
 
 	virtual void handleMessage(KIrc::Message msg);
 
-	void unregisterCommand(Command *command);
+	void unregisterCommand(const char *name);
 
 protected:
 	QMultiHash<QString, Command*> m_commands;

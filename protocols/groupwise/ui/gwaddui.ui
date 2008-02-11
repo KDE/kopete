@@ -54,12 +54,9 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="Q3ButtonGroup" name="bg_addMethod" >
+        <widget class="QGroupBox" name="bg_addMethod" >
          <property name="title" >
           <string>Add Using</string>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
          </property>
          <layout class="QGridLayout" >
           <property name="leftMargin" >
@@ -142,14 +139,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
-  <customwidget>
-   <class>Q3ButtonGroup</class>
-   <extends>Q3GroupBox</extends>
-   <header>Qt3Support/Q3ButtonGroup</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>m_tabWidget</tabstop>
   <tabstop>rb_userName</tabstop>
