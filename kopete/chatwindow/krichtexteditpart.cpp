@@ -115,7 +115,7 @@ KRichTextEditPart::KRichTextEditPart(QWidget *wparent, QObject*, const QStringLi
     createActions();
 
     // TODO: Rename rc file
-    setXMLFile( "kopeterichtexteditpartfull.rc" );
+    setXMLFile( "kopeterichtexteditpart/kopeterichtexteditpartfull.rc" );
 
     //Set colors, font
     readConfig();
