@@ -220,21 +220,20 @@ bool UPnp::sendAction(QUrl deviceSettingUrl, QString serviceType, QString servic
 			{
 				printf("Erreur UpnpResolveURL : %d\n",ret);
 			}
-			printf("%s\n",ixmlPrintDocument(actionNode));
-// 			ret = UpnpSendActionAsync( 
-// 				m_device_handle,relURL,
-// 				serviceType.toLatin1().data(),
-// 				NULL, 
-// 				actionNode,
-// 				upnpCallbackEventHandler,
-// 				NULL );
-			ret = UpnpSendAction( 
-					m_device_handle,relURL,
-				 	serviceType.toLatin1().data(),
-					NULL, 
-					actionNode,
-					&response);
-			printf("*******************************\n%s\n",ixmlPrintDocument(response));
+
+			ret = UpnpSendActionAsync( 
+				m_device_handle,relURL,
+				serviceType.toLatin1().data(),
+				NULL, 
+				actionNode,
+				upnpCallbackEventHandler,
+				NULL );
+// 			ret = UpnpSendAction( 
+// 					m_device_handle,relURL,
+// 				 	serviceType.toLatin1().data(),
+// 					NULL, 
+// 					actionNode,
+// 					&response);
 						
 			if( ret != UPNP_E_SUCCESS ) 
 			{

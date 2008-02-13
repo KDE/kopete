@@ -11,17 +11,17 @@ include_directories(/usr/local/include)
 set(UPnp_SRCS 
 	main.cpp
 	applicationWidget.cpp
-	UPnp.cpp
- 	upnpRouterPrivate.cpp
-	router.cpp
-	action.cpp
-	argument.cpp
-	service.cpp
-	util_Xml.cpp
-	upnpRouter.cpp
+	../upnpRouter.cpp
+	../action.cpp
+	../argument.cpp
+	../router.cpp
+	../service.cpp
+	../UPnp.cpp
+	../upnpRouterPrivate.cpp
+	../util_Xml.cpp
 	)
 
-# kde4_add_ui_files(UPnp_SRCS mainWindow.ui)
+kde4_add_ui_files(UPnp_SRCS mainWindow.ui)
 
 # Build executable
 kde4_add_executable(apiUPnp ${UPnp_SRCS})
@@ -30,13 +30,6 @@ kde4_add_executable(apiUPnp ${UPnp_SRCS})
 target_link_libraries(apiUPnp ${KDE4_KIO_LIBS} upnp )
 
 install(FILES
-	UPnp.h
 	applicationWidget.h
- 	upnpRouterPrivate.h
-	router.h
-	action.h
-	argument.h
-	service.h
-	util_Xml.h
 	upnpRouter.h
-DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/APIUPnp)
+DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/upnp/sample_apply)

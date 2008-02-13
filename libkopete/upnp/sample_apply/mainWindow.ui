@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
-    <height>481</height>
+    <width>248</width>
+    <height>330</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -16,9 +16,9 @@
    <widget class="QTextEdit" name="text_mess" >
     <property name="geometry" >
      <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>581</width>
+      <x>0</x>
+      <y>10</y>
+      <width>241</width>
       <height>181</height>
      </rect>
     </property>
@@ -26,8 +26,8 @@
    <widget class="QPushButton" name="btOpen" >
     <property name="geometry" >
      <rect>
-      <x>170</x>
-      <y>250</y>
+      <x>10</x>
+      <y>240</y>
       <width>75</width>
       <height>26</height>
      </rect>
@@ -36,24 +36,11 @@
      <string>OpenPort</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btEnvoi" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>75</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Search</string>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="l_port" >
     <property name="geometry" >
      <rect>
-      <x>50</x>
-      <y>250</y>
+      <x>70</x>
+      <y>200</y>
       <width>113</width>
       <height>22</height>
      </rect>
@@ -62,8 +49,8 @@
    <widget class="QLabel" name="label" >
     <property name="geometry" >
      <rect>
-      <x>12</x>
-      <y>252</y>
+      <x>20</x>
+      <y>200</y>
       <width>50</width>
       <height>20</height>
      </rect>
@@ -75,8 +62,8 @@
    <widget class="QPushButton" name="btDelete" >
     <property name="geometry" >
      <rect>
-      <x>170</x>
-      <y>280</y>
+      <x>160</x>
+      <y>240</y>
       <width>75</width>
       <height>26</height>
      </rect>
@@ -85,39 +72,13 @@
      <string>DeletePort</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btStatus" >
-    <property name="geometry" >
-     <rect>
-      <x>500</x>
-      <y>250</y>
-      <width>75</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Status Info</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btMapping" >
-    <property name="geometry" >
-     <rect>
-      <x>484</x>
-      <y>290</y>
-      <width>91</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Port Mapping</string>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar" >
    <property name="geometry" >
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>591</width>
+     <width>248</width>
      <height>28</height>
     </rect>
    </property>

@@ -29,7 +29,7 @@
 #include <QTreeWidget>
  #include <QLineEdit>
 
-#include "upnpRouter.h"
+#include "../upnpRouter.h"
 
 class ApplicationWidget : public QMainWindow, private Ui::MainWindow
 {
