@@ -1965,7 +1965,7 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 
 // Packed RGB formats
 				case PIXELFORMAT_RGB332	: return V4L2_PIX_FMT_RGB332;	break;
-#if defined( V4L2_PIX_FMT_RGB44 )
+#if defined( V4L2_PIX_FMT_RGB444 )
 				case PIXELFORMAT_RGB444	: return V4L2_PIX_FMT_RGB444;	break;
 #endif
 				case PIXELFORMAT_RGB555	: return V4L2_PIX_FMT_RGB555;	break;
