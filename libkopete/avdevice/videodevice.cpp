@@ -1877,7 +1877,9 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 
 // Packed RGB formats
 				case V4L2_PIX_FMT_RGB332	: return PIXELFORMAT_RGB332;	break;
+#if defined( V4L2_PIX_FMT_RGB444 )
 				case V4L2_PIX_FMT_RGB444	: return PIXELFORMAT_RGB444;	break;
+#endif
 				case V4L2_PIX_FMT_RGB555	: return PIXELFORMAT_RGB555;	break;
 				case V4L2_PIX_FMT_RGB565	: return PIXELFORMAT_RGB565;	break;
 				case V4L2_PIX_FMT_RGB555X	: return PIXELFORMAT_RGB555X;	break;
@@ -1905,7 +1907,9 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 				case V4L2_PIX_FMT_DV		: return PIXELFORMAT_DV;	break;
 				case V4L2_PIX_FMT_ET61X251	: return PIXELFORMAT_ET61X251;	break;
 				case V4L2_PIX_FMT_HI240		: return PIXELFORMAT_HI240;	break;
+#if defined( V4L2_PIX_FMT_HM12 )
 				case V4L2_PIX_FMT_HM12		: return PIXELFORMAT_HM12;	break;
+#endif
 				case V4L2_PIX_FMT_MJPEG		: return PIXELFORMAT_MJPEG;	break;
 				case V4L2_PIX_FMT_PWC1		: return PIXELFORMAT_PWC1;	break;
 				case V4L2_PIX_FMT_PWC2		: return PIXELFORMAT_PWC2;	break;
@@ -1953,7 +1957,9 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 
 // Packed RGB formats
 				case PIXELFORMAT_RGB332	: return V4L2_PIX_FMT_RGB332;	break;
+#if defined( V4L2_PIX_FMT_RGB44 )
 				case PIXELFORMAT_RGB444	: return V4L2_PIX_FMT_RGB444;	break;
+#endif
 				case PIXELFORMAT_RGB555	: return V4L2_PIX_FMT_RGB555;	break;
 				case PIXELFORMAT_RGB565	: return V4L2_PIX_FMT_RGB565;	break;
 				case PIXELFORMAT_RGB555X: return V4L2_PIX_FMT_RGB555X;	break;
@@ -1981,7 +1987,9 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 				case PIXELFORMAT_DV	: return V4L2_PIX_FMT_DV;	break;
 				case PIXELFORMAT_ET61X251:return V4L2_PIX_FMT_ET61X251;break;
 				case PIXELFORMAT_HI240	: return V4L2_PIX_FMT_HI240;	break;
+#if defined( V4L2_PIX_FMT_HM12 )
 				case PIXELFORMAT_HM12	: return V4L2_PIX_FMT_HM12;	break;
+#endif
 				case PIXELFORMAT_MJPEG	: return V4L2_PIX_FMT_MJPEG;	break;
 				case PIXELFORMAT_PWC1	: return V4L2_PIX_FMT_PWC1;	break;
 				case PIXELFORMAT_PWC2	: return V4L2_PIX_FMT_PWC2;	break;
@@ -2155,7 +2163,9 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 
 // Packed RGB formats
 				case V4L2_PIX_FMT_RGB332	: returnvalue = pixelFormatName(PIXELFORMAT_RGB332);	break;
+#if defined( V4L2_PIX_FMT_RGB444 )
 				case V4L2_PIX_FMT_RGB444	: returnvalue = pixelFormatName(PIXELFORMAT_RGB444);	break;
+#endif
 				case V4L2_PIX_FMT_RGB555	: returnvalue = pixelFormatName(PIXELFORMAT_RGB555);	break;
 				case V4L2_PIX_FMT_RGB565	: returnvalue = pixelFormatName(PIXELFORMAT_RGB565);	break;
 				case V4L2_PIX_FMT_RGB555X	: returnvalue = pixelFormatName(PIXELFORMAT_RGB555X);	break;
@@ -2183,7 +2193,9 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 				case V4L2_PIX_FMT_DV		: returnvalue = pixelFormatName(PIXELFORMAT_DV);	break;
 				case V4L2_PIX_FMT_ET61X251	: returnvalue = pixelFormatName(PIXELFORMAT_ET61X251);	break;
 				case V4L2_PIX_FMT_HI240		: returnvalue = pixelFormatName(PIXELFORMAT_HI240);	break;
+#if defined( V4L2_PIX_FMT_HM12 )
 				case V4L2_PIX_FMT_HM12		: returnvalue = pixelFormatName(PIXELFORMAT_HM12);	break;
+#endif
 				case V4L2_PIX_FMT_MJPEG		: returnvalue = pixelFormatName(PIXELFORMAT_MJPEG);	break;
 				case V4L2_PIX_FMT_PWC1		: returnvalue = pixelFormatName(PIXELFORMAT_PWC1);	break;
 				case V4L2_PIX_FMT_PWC2		: returnvalue = pixelFormatName(PIXELFORMAT_PWC2);	break;
