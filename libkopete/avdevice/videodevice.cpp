@@ -305,7 +305,7 @@ kdDebug(14010) <<  k_funcinfo << " Control: " << QString::fromLocal8Bit((const c
 
 /*		switch (queryctrl.type)
 		{
-			case V4L2_CTRL_TYPE_INTEGER : 
+			case V4L2_CTRL_TYPE_INTEGER :
 		}*/
 		if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
 			enumerateMenu ();
@@ -382,7 +382,7 @@ kdDebug(14010) <<  k_funcinfo << " Control: " << QString::fromLocal8Bit((const c
 				if(V4L_capabilities.type & VID_TYPE_CHROMAKEY)
 					m_videochromakey=true;
 				if(V4L_capabilities.type & VID_TYPE_SCALES)
-					m_videoscale=true;	
+					m_videoscale=true;
 				if(V4L_capabilities.type & VID_TYPE_OVERLAY)
 					m_videooverlay=true;
 //				kdDebug(14010) << "libkopete (avdevice):     Inputs : " << V4L_capabilities.channels << endl;
@@ -789,7 +789,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			}
 			else
 				m_pixelformat = pixelFormatForPalette(fmt.fmt.pix.pixelformat);
-		
+
 			fmt.fmt.pix.pixelformat = pixelFormatCode(newformat);
 			if (-1 == xioctl (VIDIOC_S_FMT, &fmt))
 			{
@@ -1197,7 +1197,7 @@ int VideoDevice::getImage(QImage *qimage)
     /// @todo implement me
 
 	// do NOT delete qimage here, as it is received as a parameter
-	if (qimage->width() != width() || qimage->height() != height()) 
+	if (qimage->width() != width() || qimage->height() != height())
 		qimage->create(width(), height(),32, QImage::IgnoreEndian);
 
 	uchar *bits=qimage->bits();
@@ -1306,7 +1306,7 @@ int VideoDevice::getImage(QImage *qimage)
 				cbptr = yptr + (width()*height());
 				crptr = cbptr + (width()*height()/(halfheight ? 4:2));
 			}
-	
+
 			for(int y=0; y<height(); y++)
 			{
 // Decode scanline
@@ -1326,18 +1326,18 @@ int VideoDevice::getImage(QImage *qimage)
 						d = (cbptr[x>>1])-128;
 						e = (crptr[x>>1])-128;
 					}
-	
+
 					int r = (298 * c           + 409 * e + 128)>>8;
 					int g = (298 * c - 100 * d - 208 * e + 128)>>8;
 					int b = (298 * c + 516 * d           + 128)>>8;
-	
+
 					if (r<0) r=0;   if (r>255) r=255;
 					if (g<0) g=0;   if (g>255) g=255;
 					if (b<0) b=0;   if (b>255) b=255;
-	
+
 					uint *p = (uint*)qimage->scanLine(y)+x;
 					*p = qRgba(r,g,b,255);
-	
+
 				}
 // Jump to next line
 				if (packed)
@@ -1822,14 +1822,14 @@ bool VideoDevice::getAutoBrightnessContrast()
 bool VideoDevice::setAutoBrightnessContrast(bool brightnesscontrast)
 {
 	kdDebug(14010) <<  k_funcinfo << "VideoDevice::setAutoBrightnessContrast(" << brightnesscontrast << ") called." << endl;
-	if (m_current_input < m_input.size() ) 
+	if (m_current_input < m_input.size() )
 	  {
 		m_input[m_current_input].setAutoBrightnessContrast(brightnesscontrast);
 		return m_input[m_current_input].getAutoBrightnessContrast();
 	  }
 	else
 	  return false;
-   
+
 }
 
 bool VideoDevice::getAutoColorCorrection()
@@ -1863,7 +1863,7 @@ bool VideoDevice::getImageAsMirror()
 bool VideoDevice::setImageAsMirror(bool imageasmirror)
 {
 	kdDebug(14010) <<  k_funcinfo << "VideoDevice::setImageAsMirror(" << imageasmirror << ") called." << endl;
-	if (m_current_input < m_input.size() ) 
+	if (m_current_input < m_input.size() )
 	  {
 		m_input[m_current_input].setImageAsMirror(imageasmirror);
 		return m_input[m_current_input].getImageAsMirror();
@@ -1885,7 +1885,9 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 
 // Packed RGB formats
 				case V4L2_PIX_FMT_RGB332	: return PIXELFORMAT_RGB332;	break;
+#if defined( V4L2_PIX_FMT_RGB332 )
 				case V4L2_PIX_FMT_RGB444	: return PIXELFORMAT_RGB444;	break;
+#endif
 				case V4L2_PIX_FMT_RGB555	: return PIXELFORMAT_RGB555;	break;
 				case V4L2_PIX_FMT_RGB565	: return PIXELFORMAT_RGB565;	break;
 				case V4L2_PIX_FMT_RGB555X	: return PIXELFORMAT_RGB555X;	break;
@@ -1913,7 +1915,9 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 				case V4L2_PIX_FMT_DV		: return PIXELFORMAT_DV;	break;
 				case V4L2_PIX_FMT_ET61X251	: return PIXELFORMAT_ET61X251;	break;
 				case V4L2_PIX_FMT_HI240		: return PIXELFORMAT_HI240;	break;
+#if defined( V4L2_PIX_FMT_HM12 )
 				case V4L2_PIX_FMT_HM12		: return PIXELFORMAT_HM12;	break;
+#endif
 				case V4L2_PIX_FMT_MJPEG		: return PIXELFORMAT_MJPEG;	break;
 				case V4L2_PIX_FMT_PWC1		: return PIXELFORMAT_PWC1;	break;
 				case V4L2_PIX_FMT_PWC2		: return PIXELFORMAT_PWC2;	break;
@@ -1961,7 +1965,9 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 
 // Packed RGB formats
 				case PIXELFORMAT_RGB332	: return V4L2_PIX_FMT_RGB332;	break;
+#if defined( V4L2_PIX_FMT_RGB44 )
 				case PIXELFORMAT_RGB444	: return V4L2_PIX_FMT_RGB444;	break;
+#endif
 				case PIXELFORMAT_RGB555	: return V4L2_PIX_FMT_RGB555;	break;
 				case PIXELFORMAT_RGB565	: return V4L2_PIX_FMT_RGB565;	break;
 				case PIXELFORMAT_RGB555X: return V4L2_PIX_FMT_RGB555X;	break;
@@ -1989,7 +1995,9 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 				case PIXELFORMAT_DV	: return V4L2_PIX_FMT_DV;	break;
 				case PIXELFORMAT_ET61X251:return V4L2_PIX_FMT_ET61X251;break;
 				case PIXELFORMAT_HI240	: return V4L2_PIX_FMT_HI240;	break;
+#if defined( V4L2_PIX_FMT_HM12 )
 				case PIXELFORMAT_HM12	: return V4L2_PIX_FMT_HM12;	break;
+#endif
 				case PIXELFORMAT_MJPEG	: return V4L2_PIX_FMT_MJPEG;	break;
 				case PIXELFORMAT_PWC1	: return V4L2_PIX_FMT_PWC1;	break;
 				case PIXELFORMAT_PWC2	: return V4L2_PIX_FMT_PWC2;	break;
@@ -2163,7 +2171,9 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 
 // Packed RGB formats
 				case V4L2_PIX_FMT_RGB332	: returnvalue = pixelFormatName(PIXELFORMAT_RGB332);	break;
+#if defined( V4L2_PIX_FMT_RGB444 )
 				case V4L2_PIX_FMT_RGB444	: returnvalue = pixelFormatName(PIXELFORMAT_RGB444);	break;
+#endif
 				case V4L2_PIX_FMT_RGB555	: returnvalue = pixelFormatName(PIXELFORMAT_RGB555);	break;
 				case V4L2_PIX_FMT_RGB565	: returnvalue = pixelFormatName(PIXELFORMAT_RGB565);	break;
 				case V4L2_PIX_FMT_RGB555X	: returnvalue = pixelFormatName(PIXELFORMAT_RGB555X);	break;
@@ -2191,7 +2201,9 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 				case V4L2_PIX_FMT_DV		: returnvalue = pixelFormatName(PIXELFORMAT_DV);	break;
 				case V4L2_PIX_FMT_ET61X251	: returnvalue = pixelFormatName(PIXELFORMAT_ET61X251);	break;
 				case V4L2_PIX_FMT_HI240		: returnvalue = pixelFormatName(PIXELFORMAT_HI240);	break;
+#if defined( V4L2_PIX_FMT_HM12 )
 				case V4L2_PIX_FMT_HM12		: returnvalue = pixelFormatName(PIXELFORMAT_HM12);	break;
+#endif
 				case V4L2_PIX_FMT_MJPEG		: returnvalue = pixelFormatName(PIXELFORMAT_MJPEG);	break;
 				case V4L2_PIX_FMT_PWC1		: returnvalue = pixelFormatName(PIXELFORMAT_PWC1);	break;
 				case V4L2_PIX_FMT_PWC2		: returnvalue = pixelFormatName(PIXELFORMAT_PWC2);	break;
@@ -2245,7 +2257,7 @@ int VideoDevice::detectPixelFormats()
 					err = errno;
 				}
 				else
-				{	
+				{
 					kdDebug(14010) <<  k_funcinfo << fmtdesc.pixelformat << "  " << pixelFormatName(fmtdesc.pixelformat) << endl; // Need a cleanup. PixelFormatForPalette is a really bad name
 					fmtdesc.index++;
 				}
