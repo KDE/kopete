@@ -1,8 +1,10 @@
 /*
-    util_Xml.cpp -
+    main.cpp -
 
     Copyright (c) 2007-2008 by Romain Castan      <romaincastan@gmail.com>
     Copyright (c) 2007-2008 by Bertrand Demay     <bertranddemay@gmail.com>
+    Copyright (c) 2007-2008 by Julien Hubatzeck   <reineur31@gmail.com>
+    Copyright (c) 2007-2008 by Michel Saliba      <msalibaba@gmail.com>
 
     Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
@@ -15,25 +17,24 @@
     *                                                                       *
     *************************************************************************
 */
-
-#include "util_Xml.h"
-#include "malloc.h"
-
-char * util_Xml_nodeValue(IXML_Node* nodeptr)
+#include "applicationWidget.h"
+#include <QApplication>
+#include <QtGui>
+#include <QtDebug>
+#include <QtGlobal>
+#include <QUrl>
+// #include "upnpRouterPrivate.h"
+// #include "upnpRouter.h"
+int main(int argc, char *argv[])
 {
-	int sizeBalise = strlen(ixmlNode_getNodeName(nodeptr));
-	int sizeChaine = strlen(ixmlNodetoString(nodeptr));
-	char * chaine = ixmlNodetoString(nodeptr);
-	int deb = sizeBalise +2;
-	int fin = sizeChaine-(sizeBalise+3);
-	int tailleMax = fin - deb +1;
+	/*UPnpRouter router = UPnpRouter::defaultRouter();
+	if(router.isValid())
+		router.openPort(4000,QString("UDP"),QString("test"));*/	
+	
+	QApplication app(argc, argv);
+  	ApplicationWidget fenetre;
+  	fenetre.show();
 
-	char * ret= (char *)malloc(tailleMax);
-	
-	strncpy(ret,&chaine[deb],tailleMax-1);
-	ret[tailleMax-1] = '\0';
-	
-	return ret;
+  	return app.exec();
+  	
 }
-
-

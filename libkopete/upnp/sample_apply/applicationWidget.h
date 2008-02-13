@@ -1,8 +1,10 @@
 /*
-    util_Xml.cpp -
+    applicationWidget.h -
 
     Copyright (c) 2007-2008 by Romain Castan      <romaincastan@gmail.com>
     Copyright (c) 2007-2008 by Bertrand Demay     <bertranddemay@gmail.com>
+    Copyright (c) 2007-2008 by Julien Hubatzeck   <reineur31@gmail.com>
+    Copyright (c) 2007-2008 by Michel Saliba      <msalibaba@gmail.com>
 
     Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
@@ -16,24 +18,31 @@
     *************************************************************************
 */
 
-#include "util_Xml.h"
-#include "malloc.h"
+#ifndef _APPLICATIONWIDGET_H_
+#define _APPLICATIONWIDGET_H_
 
-char * util_Xml_nodeValue(IXML_Node* nodeptr)
+#include "ui_mainWindow.h"
+#include <QApplication>
+#include <QtGui>
+#include <QTextEdit>
+#include <QString>
+#include <QTreeWidget>
+ #include <QLineEdit>
+
+#include "upnpRouter.h"
+
+class ApplicationWidget : public QMainWindow, private Ui::MainWindow
 {
-	int sizeBalise = strlen(ixmlNode_getNodeName(nodeptr));
-	int sizeChaine = strlen(ixmlNodetoString(nodeptr));
-	char * chaine = ixmlNodetoString(nodeptr);
-	int deb = sizeBalise +2;
-	int fin = sizeChaine-(sizeBalise+3);
-	int tailleMax = fin - deb +1;
+	Q_OBJECT
+ 
+public:
+	ApplicationWidget(QWidget *parent = 0);
+	UPnpRouter router;
 
-	char * ret= (char *)malloc(tailleMax);
-	
-	strncpy(ret,&chaine[deb],tailleMax-1);
-	ret[tailleMax-1] = '\0';
-	
-	return ret;
-}
+public slots:
+	void openPort();
+	void deletePort();
 
+};
 
+#endif

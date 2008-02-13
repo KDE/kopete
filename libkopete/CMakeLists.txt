@@ -44,15 +44,16 @@ set(kopete_ui_SRCS
   ui/webcamwidget.cpp
 )
 
-# set(kopete_upnp_SRCS
-#   upnp/action.cpp
-#   upnp/argument.cpp
-#   upnp/device.cpp
-#   #upnp/sample_util.cpp
-#   upnp/service.cpp
-#   upnp/upnpKopete.cpp
-#   upnp/util_Xml.cpp
-# )
+set(kopete_upnp_SRCS
+  upnp/action.cpp
+  upnp/argument.cpp
+  upnp/router.cpp
+  upnp/service.cpp
+  upnp/UPnp.cpp
+  upnp/upnpRouter.cpp
+  upnp/upnpRouterPrivate.cpp
+  upnp/util_Xml.cpp
+)
 
 set(kopete_contactlist_SRCS
   contactlist/kopetecontactliststorage.cpp
@@ -68,7 +69,7 @@ set(kopete_tasks_SRCS
 set(kopete_LIB_SRCS
    ${kopete_private_SRCS}
    ${kopete_ui_SRCS}
-#    ${kopete_upnp_SRCS}
+   ${kopete_upnp_SRCS}
    ${kopete_contactlist_SRCS}
    ${kopete_tasks_SRCS}
    kabcpersistence.cpp
@@ -178,15 +179,16 @@ install(FILES
  ui/kopeteviewplugin.h
 DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui )
 
-# install(FILES
-#   upnp/action.h
-#   upnp/argument.h
-#   upnp/device.h
-#   #upnp/sample_util.h
-#   upnp/service.h
-#   upnp/upnpKopete.h
-#   upnp/util_Xml.h
-# DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/upnp)
+install(FILES
+  upnp/action.cpp
+  upnp/argument.cpp
+  upnp/router.cpp
+  upnp/service.cpp
+  upnp/UPnp.cpp
+  upnp/upnpRouter.cpp
+  upnp/upnpRouterPrivate.cpp
+  upnp/util_Xml.cpp
+DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/upnp)
 
 install( FILES
   kopeteappearancesettings.kcfg

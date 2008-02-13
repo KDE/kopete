@@ -1,5 +1,5 @@
 /*
-    util_Xml.cpp -
+    argument.h -
 
     Copyright (c) 2007-2008 by Romain Castan      <romaincastan@gmail.com>
     Copyright (c) 2007-2008 by Bertrand Demay     <bertranddemay@gmail.com>
@@ -16,24 +16,40 @@
     *************************************************************************
 */
 
-#include "util_Xml.h"
-#include "malloc.h"
+#ifndef _ARGUMENT_H_
+#define _ARGUMENT_H_
 
-char * util_Xml_nodeValue(IXML_Node* nodeptr)
+#include <QtDebug>
+#include <QtGlobal>
+#include <QString>
+
+class Argument
 {
-	int sizeBalise = strlen(ixmlNode_getNodeName(nodeptr));
-	int sizeChaine = strlen(ixmlNodetoString(nodeptr));
-	char * chaine = ixmlNodetoString(nodeptr);
-	int deb = sizeBalise +2;
-	int fin = sizeChaine-(sizeBalise+3);
-	int tailleMax = fin - deb +1;
+	private:
+		// Argument name
+		QString m_name;
+		// Argument type (in, out)
+		QString m_direction;
+		// State variable linked to the argument
+		QString m_relatedStateVariable;
+	public:
+		// Construtor
+		Argument();
+		// Destructor
+		~Argument();
+		// Getters
+		QString name();
+		QString direction();
+		QString relatedStateVariable();
+		// Setters
+		void setName(QString name);
+		void setDirection(QString direction);
+		void setRelatedStateVariable(QString relatedStateVariable);
+		// Method which show an argument
+		void viewArgument();
+		// Method which test the equality of two arguments
+		bool operator==(const Argument &arg);
+};
 
-	char * ret= (char *)malloc(tailleMax);
-	
-	strncpy(ret,&chaine[deb],tailleMax-1);
-	ret[tailleMax-1] = '\0';
-	
-	return ret;
-}
 
-
+#endif

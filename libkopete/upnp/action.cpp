@@ -3,8 +3,6 @@
 
     Copyright (c) 2007-2008 by Romain Castan      <romaincastan@gmail.com>
     Copyright (c) 2007-2008 by Bertrand Demay     <bertranddemay@gmail.com>
-    Copyright (c) 2007-2008 by Julien Hubatzeck   <reineur31@gmail.com>
-    Copyright (c) 2007-2008 by Michel Saliba      <msalibaba@gmail.com>
 
     Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
