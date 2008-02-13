@@ -1885,7 +1885,7 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 
 // Packed RGB formats
 				case V4L2_PIX_FMT_RGB332	: return PIXELFORMAT_RGB332;	break;
-#if defined( V4L2_PIX_FMT_RGB332 )
+#if defined( V4L2_PIX_FMT_RGB444 )
 				case V4L2_PIX_FMT_RGB444	: return PIXELFORMAT_RGB444;	break;
 #endif
 				case V4L2_PIX_FMT_RGB555	: return PIXELFORMAT_RGB555;	break;
