@@ -32,14 +32,6 @@ class UpnpRouterPrivate
 
 	public:
 		UpnpRouterPrivate();
-		/**
-		* Return all router detected on network
-		*/
-		static QList<UpnpRouterPrivate> listRouterPrivate();
-
-		static UpnpRouterPrivate defaultRouter();
-		
-		static UpnpRouterPrivate upnpRouterPrivate(const QUrl &url);
 
 		/**
 		* Constructs a copy of a router
@@ -82,10 +74,8 @@ class UpnpRouterPrivate
 		*/
 		bool closePort(quint16 port, const QString &typeProtocol);
 
-// 		UpnpRouterPrivate &operator=(const UpnpRouterPrivate &router);
 		
 		Router *router;
-	private:
 		UpnpRouterPrivate(const QUrl &url);
 };
 #endif

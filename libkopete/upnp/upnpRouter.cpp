@@ -19,31 +19,29 @@
 #include "upnpRouter.h"
 
 
-//TODO Possible Evolution: many routers
-// QList<UPnpRouter> UPnpRouter::allRouters()
-// {
-// 	QList<UPnpRouter> routers;
-// 	QList<UpnpRouterPrivate> listRouters = UpnpRouterPrivate::listRouterPrivate();
-// 	foreach (UpnpRouterPrivate rt, listRouters)
-// 	{
-// 		QUrl urlsetting = rt.router->routerSettingUrl();	
-// // 		UPnpRouter upnpRouter = UPnpRouter(urlsetting);
-// // 		routers.push_back(upnpRouter);
-// 	}
-// 	return routers;
-// }
-
+QList<UPnpRouter> UPnpRouter::allRouters()
+{
+	QList<UPnpRouter> routers;
+	UPnp *d = UPnp::upnp();
+	foreach (QUrl url, d->devicesSettingUrl())
+	{
+		UPnpRouter upnpRouter = UPnpRouter(url);
+		routers.push_back(upnpRouter);
+	}
+	return routers;
+}
 
 UPnpRouter UPnpRouter::defaultRouter()
 {
-	UpnpRouterPrivate routerP = UpnpRouterPrivate::defaultRouter();
-	UPnpRouter router = UPnpRouter(routerP.router->routerSettingUrl());
+	UPnp *u = UPnp::upnp();
+	u->searchDevices();
+	UPnpRouter router = UPnpRouter(u->devicesSettingUrl().first());
 	return router;
 }
 
 UPnpRouter::UPnpRouter(const QUrl &url)
 {
-	d = UpnpRouterPrivate::upnpRouterPrivate(url);
+	d = UpnpRouterPrivate(url);
 }
 
 UPnpRouter::UPnpRouter(){}
