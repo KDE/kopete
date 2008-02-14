@@ -33,7 +33,7 @@
 PrivacyList::PrivacyList(const QString& name, const QList<PrivacyListItem>& items) : name_(name), items_(items) 
 { 
 	qSort(items_);
-};
+}
 
 PrivacyList::PrivacyList(const QDomElement& e)
 {
