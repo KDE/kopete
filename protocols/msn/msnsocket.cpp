@@ -1062,7 +1062,7 @@ MSNSocket::WebResponse::WebResponse(const QByteArray& bytes)
 				content[i] = bytes[offset + i];
 			// Create the web response stream from the response content bytes.
 			m_stream = new QDataStream( &content,QIODevice::ReadOnly);
-			m_stream->setVersion(QDataStream::Qt_3_1);
+			m_stream->setVersion(QDataStream::Qt_3_3);
 		}
 	}
 }

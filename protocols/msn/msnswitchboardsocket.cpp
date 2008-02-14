@@ -30,6 +30,7 @@
 #include <QTextDocument>
 #include <qregexp.h>
 #include <qimage.h>
+#include <qimagereader.h>
 #include <qtimer.h>
 #include <qfile.h>
 #include <qfileinfo.h>
@@ -935,9 +936,11 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QS
 	}
 	else if(msnObj == "inkformatgif")
 	{
+		file->open(); // Open otherwise fileName will be empty!
 		QString msg=i18n("<img src=\"%1\" alt=\"Typed message\" />", file->fileName() );
 
 		kDebug(14140) << file->fileName();
+		file->close();
 
 		m_typewrited.append(file);
 
@@ -1032,8 +1035,10 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 		KTemporaryFile *f=it.value().second;
 		if(message.contains(es) && f)
 		{
+			f->open(); // Open otherwise fileName will be empty!
 			QString imgPath = f->fileName();
-			QImage iconImage(imgPath);
+			QImage iconImage = QImageReader(f).read();
+			f->close();
 			/* We don't use a comple algoritm (like the one in the #if)  because the msn client shows
 		     * emoticons like that. So, in that case, we show like the MSN client */
 			#if 0

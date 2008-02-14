@@ -23,6 +23,7 @@
 
 #include <qcheckbox.h>
 #include <QList>
+#include <QImageReader>
 
 #undef KDE_NO_COMPAT
 #include <kaction.h>
@@ -689,7 +690,10 @@ void MSNContact::setDisplayPicture(KTemporaryFile *f)
 	entry.name = contactId();
 	entry.category = Kopete::AvatarManager::Contact;
 	entry.contact = this;
-	entry.image = QImage(f->fileName());
+
+	f->open();
+	entry.image = QImageReader(f).read();
+	f->close();
 
 	entry = Kopete::AvatarManager::self()->add(entry);
 
