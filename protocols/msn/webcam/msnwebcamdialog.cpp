@@ -19,17 +19,10 @@
 
 #include "msnwebcamdialog.h"
 
-#include <q3frame.h>
-#include <qobject.h>
-#include <qwidget.h>
-//Added by qt3to4:
-#include <QPixmap>
 #include <kdebug.h>
 #include <klocale.h>
 
-
-
-MSNWebcamDialog::MSNWebcamDialog( const QString& contact, QWidget * parent, const char * name )
+MSNWebcamDialog::MSNWebcamDialog( const QString& contact, QWidget * parent )
 	: KDialog( parent),
 	m_imageContainer( this )
 {

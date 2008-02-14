@@ -40,18 +40,18 @@
 #include "ui/gwaddcontactpage.h"
 #include "ui/gweditaccountwidget.h"
 
-typedef KGenericFactory<GroupWiseProtocol> GroupWiseProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_groupwise, GroupWiseProtocolFactory( "kopete_groupwise" )  )
+K_PLUGIN_FACTORY( GroupWiseProtocolFactory, registerPlugin<GroupWiseProtocol>(); )
+K_EXPORT_PLUGIN( GroupWiseProtocolFactory( "kopete_groupwise" ) )
 
 GroupWiseProtocol *GroupWiseProtocol::s_protocol = 0L;
 
-GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QStringList &/*args*/ )
+GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QVariantList &/*args*/ )
 	: Kopete::Protocol( GroupWiseProtocolFactory::componentData(), parent ),
 /* initialise Kopete::OnlineStatus that should be user selectable in the user interface */
 	  groupwiseOffline ( Kopete::OnlineStatus::Offline,    0,  this, GroupWise::Offline, QStringList(),
 			i18n( "Offline" ), i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline ),
 	  groupwiseAvailable  ( Kopete::OnlineStatus::Online,  25, this, GroupWise::Available, QStringList(), 
-			i18n( "Available" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online ),
+			i18n( "Online" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online ),
 	  groupwiseBusy       ( Kopete::OnlineStatus::Away,    18, this, GroupWise::Busy, QStringList( "contact_busy_overlay" ),
 			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage ),
 	  groupwiseAway       ( Kopete::OnlineStatus::Away,    20, this, GroupWise::Away, QStringList( "contact_away_overlay" ),

@@ -56,7 +56,8 @@ public:
 	~GaduAccount();
 	//{
 	void setAway( bool isAway, const QString& awayMessage = QString() );
-	KActionMenu* actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
+	virtual bool hasCustomStatusMenu() const;
 	void dccRequest( GaduContact* );
 	void sendFile( GaduContact* , QString& );
 	//}

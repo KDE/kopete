@@ -53,7 +53,7 @@ GroupWiseContact::GroupWiseContact( Kopete::Account* account, const QString &dn,
 			Kopete::MetaContact *parent, 
 			const int objectId, const int parentId, const int sequence )
 : Kopete::Contact( account, GroupWiseProtocol::dnToDotted( dn ), parent ), m_objectId( objectId ), m_parentId( parentId ),
-  m_sequence( sequence ), m_actionBlock( 0 ), m_archiving( false ), m_deleting( false )
+  m_sequence( sequence ), m_actionBlock( 0 ), m_archiving( false ), m_deleting( false ), m_messageReceivedOffline( false )
 {
 	if ( dn.indexOf( '=' ) != -1 )
 	{
@@ -133,7 +133,7 @@ bool GroupWiseContact::isReachable()
 	// in GWChatSession
 	// (This is a GroupWise rule, not a problem in Kopete)
 
-	if ( account()->isConnected() && isOnline()/* && account()->myself()->onlineStatus() != protocol()->groupwiseAppearOffline */)
+	if ( account()->isConnected() && ( isOnline() || messageReceivedOffline() ) /* && account()->myself()->onlineStatus() != protocol()->groupwiseAppearOffline */)
 		return true;
 	if ( !account()->isConnected()/* || account()->myself()->onlineStatus() == protocol()->groupwiseAppearOffline*/ )
 		return false;
@@ -183,7 +183,7 @@ void GroupWiseContact::slotUserInfo()
 	p->setObjectName( "gwcontactproperties" );
 }
 
-QHash< QString, QString > GroupWiseContact::serverProperties()
+QMap< QString, QVariant > GroupWiseContact::serverProperties()
 {
 	return m_serverProperties;
 }
@@ -227,6 +227,7 @@ void GroupWiseContact::receivePrivacyChanged( const QString & dn, bool allow )
 
 void GroupWiseContact::setOnlineStatus( const Kopete::OnlineStatus& status )
 {
+	setMessageReceivedOffline( false );
 	if ( status == protocol()->groupwiseAwayIdle && status != onlineStatus() )
 		setIdleTime( 1 );
 	else if ( onlineStatus() == protocol()->groupwiseAwayIdle && status != onlineStatus() )
@@ -299,6 +300,17 @@ void GroupWiseContact::renamedOnServer()
 	else
 		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "rename failed, return code: " << uct->statusCode();
 }
+
+void GroupWiseContact::setMessageReceivedOffline( bool on )
+{
+	m_messageReceivedOffline = on;
+}
+
+bool GroupWiseContact::messageReceivedOffline() const
+{
+	return m_messageReceivedOffline;
+}
+
 #include "gwcontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

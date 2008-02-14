@@ -38,6 +38,8 @@ namespace Kopete
 	class Account;
 	class Contact;
 	class Plugin;
+	class StatusMessage;
+	class StatusRootAction;
 }
 
 /**
@@ -48,7 +50,7 @@ class KopeteWindow : public KXmlGuiWindow
 	Q_OBJECT
 
 public:
-	explicit KopeteWindow ( QWidget *parent = 0, const char *name = 0 );
+	explicit KopeteWindow ( QWidget *parent = 0 );
 	~KopeteWindow();
 
 	virtual bool eventFilter( QObject* o, QEvent* e );
@@ -71,7 +73,9 @@ private slots:
 	void slotToggleAway();
 
 
-	void setStatusMessage( const QString & );
+	void setStatusMessage( const Kopete::StatusMessage& );
+
+	void globalStatusChanged();
 
 	/**
 	 * Checks if the mousecursor is in the contact list.
@@ -159,13 +163,6 @@ private slots:
 	void slotAllPluginsLoaded();
 
 	/**
-	 * Protected slot to setup the Set Global Status Message menu.
-	 */
-	void slotBuildStatusMessageMenu();
-	void slotStatusMessageSelected( QAction *action );
-	void slotNewStatusMessageEntered();
-
-	/**
 	 * Show the set global status message menu when clicking on the icon in the status bar.
 	 */
 	void slotGlobalStatusMessageIconClicked( const QPoint &position );
@@ -177,6 +174,8 @@ private slots:
 	 * We need both to uniquely identify an account, but QSignalMapper only emits one QString.
 	 */
 	void slotAddContactDialogInternal( const QString & accountIdentifier );
+
+	void updateStatusMenuMessage( Kopete::StatusRootAction *statusRootAction );
 
 private:
 	void initView();

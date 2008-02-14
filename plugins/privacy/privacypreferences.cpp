@@ -33,10 +33,10 @@
 #include "privacyaccountlistmodel.h"
 #include "privacypreferences.h"
 
-typedef KGenericFactory<PrivacyPreferences> PrivacyPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_privacy, PrivacyPreferencesFactory( "kcm_kopete_privacy" ) )
+K_PLUGIN_FACTORY( PrivacyPreferencesFactory, registerPlugin<PrivacyPreferences>(); )
+K_EXPORT_PLUGIN( PrivacyPreferencesFactory( "kcm_kopete_privacy" ) )
 
-PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QStringList &args)
+PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QVariantList &args)
 	: KCModule(PrivacyPreferencesFactory::componentData(), parent, args)
 {
 	kDebug(14313) << "called.";
@@ -162,7 +162,7 @@ void PrivacyPreferences::slotChkDropAllToggled( bool enabled )
 
 void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 {
-	KDialog *addDialog = new KDialog( Kopete::UI::Global::mainWidget() );
+	KDialog *addDialog = new KDialog( this );
 	addDialog->setCaption( i18n( "Add Contact to Whitelist" ) );
 	addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	addDialog->setDefaultButton( KDialog::Ok );
@@ -188,7 +188,7 @@ void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 
 void PrivacyPreferences::slotBtnAddToBlackListClicked()
 {
-	KDialog *addDialog = new KDialog( Kopete::UI::Global::mainWidget() );
+	KDialog *addDialog = new KDialog( this );
 	addDialog->setCaption( i18n( "Add Contact to Blacklist" ) );
 	addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	addDialog->setDefaultButton( KDialog::Ok );

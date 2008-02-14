@@ -36,6 +36,7 @@
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kicon.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
@@ -133,7 +134,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 
-	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("connection-established"), i18n ("Authorization"), this);
+	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("network-connect"), i18n ("Authorization"), this);
 
 	KAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
 	
@@ -152,13 +153,13 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	actionAuthorization->addAction(requestAuthAction);
 	
 	removeAuthAction = new KAction( this );
-	removeAuthAction->setIcon( (KIcon("mail_delete") ) );
+	removeAuthAction->setIcon( (KIcon("edit-delete") ) );
 	removeAuthAction->setText( i18n ("Remove Authorization From") );
 	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
 	connect(removeAuthAction, SIGNAL(triggered(bool)), SLOT(slotRemoveAuth()));
 	actionAuthorization->addAction(removeAuthAction);
 
-	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("kopeteavailable"), i18n ("Set Availability"), this );
+	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n ("Set Availability"), this );
 
 #define KACTION(status, text, name, slot) \
 	{ KAction *tmp = new KAction(this); \
@@ -176,7 +177,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 #undef KACTION
 
-	KActionMenu *actionSelectResource = new KActionMenu ( KIcon("connect_no"), i18n ("Select Resource"), this );
+	KActionMenu *actionSelectResource = new KActionMenu ( i18n ("Select Resource"), this );
 
 	// if the contact is online, display the resources we have for it,
 	// otherwise disable the menu
@@ -733,7 +734,7 @@ void JabberContact::slotSendVCard()
 	XMPP::JT_VCard *task = new XMPP::JT_VCard (account()->client()->rootTask ());
 	// signal to ourselves when the vCard data arrived
 	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotSentVCard ()));
-	task->set (vCard);
+	task->set (rosterItem().jid(), vCard);
 	task->go (true);
 }
 

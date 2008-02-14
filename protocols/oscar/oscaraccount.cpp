@@ -195,6 +195,19 @@ bool OscarAccount::passwordWasWrong()
 	return password().isWrong();
 }
 
+bool OscarAccount::setIdentity( Kopete::Identity *ident )
+{
+	if ( !Kopete::PasswordedAccount::setIdentity( ident ) )
+		return false;
+
+	QObject::connect( ident, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant&, const QVariant&)),
+	                  this, SLOT(slotIdentityPropertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant&, const QVariant&)) );
+	
+	QString photoPath = ident->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	updateBuddyIcon( photoPath );
+	return true;
+}
+
 void OscarAccount::loginActions()
 {
     password().setWrong( false );
@@ -490,6 +503,38 @@ QTextCodec* OscarAccount::contactCodec( const QString& contactName ) const
 	return contactCodec( contact );
 }
 
+void OscarAccount::updateBuddyIcon( const QString &path )
+{
+	myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
+
+	if ( !path.isEmpty() )
+	{
+		QImage image( path );
+		if ( image.isNull() )
+			return;
+		
+		const QSize size = ( d->engine->isIcq() ) ? QSize( 52, 64 ) : QSize( 48, 48 );
+		
+		image = image.scaled( size, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
+		if( image.width() > size.width())
+			image = image.copy( ( image.width() - size.width() ) / 2, 0, size.width(), image.height() );
+		
+		if( image.height() > size.height())
+			image = image.copy( 0, ( image.height() - size.height() ) / 2, image.width(), size.height() );
+		
+		QString newlocation( KStandardDirs::locateLocal( "appdata", "oscarpictures/" + accountId() + ".jpg" ) );
+		
+		kDebug(OSCAR_RAW_DEBUG) << "Saving buddy icon: " << newlocation;
+		if ( !image.save( newlocation, "JPEG" ) )
+			return;
+		
+		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+	}
+	
+	d->buddyIconDirty = true;
+	updateBuddyIconInSSI();
+}
+
 bool OscarAccount::addContactToSSI( const QString& contactName, const QString& groupName, bool autoAddGroup )
 {
 	ContactManager* listManager = d->engine->ssiManager();
@@ -636,11 +681,16 @@ void OscarAccount::updateVersionUpdaterStamp()
 
 void OscarAccount::ssiContactAdded( const OContact& item )
 {
-	if ( d->addContactMap.contains( Oscar::normalize( item.name() ) ) )
+	QString normalizedName = Oscar::normalize( item.name() );
+	if ( d->addContactMap.contains( normalizedName ) )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << "Received confirmation from server. adding " << item.name()
 			<< " to the contact list" << endl;
-		createNewContact( item.name(), d->addContactMap[Oscar::normalize( item.name() )], item );
+		OscarContact* oc = createNewContact( item.name(), d->addContactMap[normalizedName], item );
+		d->addContactMap.remove( normalizedName );
+
+		if ( oc && oc->ssiItem().waitingAuth() )
+			QTimer::singleShot( 1, oc, SLOT(requestAuthorization()) );
 	}
 	else if ( contacts()[item.name()] )
 	{
@@ -775,12 +825,11 @@ void OscarAccount::updateBuddyIconInSSI()
 	if ( !engine()->isActive() )
 		return;
 	
-	QString photoPath = identity()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
-	
+	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+
 	ContactManager* ssi = engine()->ssiManager();
 	OContact item = ssi->findItemForIconByRef( 1 );
 	
-	// FIXME: we need to resize the photo before sending it
 	if ( photoPath.isEmpty() )
 	{
 		if ( item )
@@ -861,7 +910,7 @@ void OscarAccount::slotSendBuddyIcon()
 {
 	//need to disconnect because we could end up with many connections
 	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotSendBuddyIcon() ) );
-	QString photoPath = identity()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
+	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
 	if ( photoPath.isEmpty() )
 		return;
 	
@@ -881,6 +930,16 @@ void OscarAccount::slotSendBuddyIcon()
 		}
 		QByteArray imageData = iconFile.readAll();
 		engine()->sendBuddyIcon( imageData );
+	}
+}
+
+void OscarAccount::slotIdentityPropertyChanged( Kopete::PropertyContainer*, const QString &key,
+                                                const QVariant&, const QVariant &newValue )
+{
+	kDebug(OSCAR_GEN_DEBUG) << "Identity property changed";
+	if ( key == Kopete::Global::Properties::self()->photo().key() )
+	{
+		updateBuddyIcon( newValue.toString() );
 	}
 }
 

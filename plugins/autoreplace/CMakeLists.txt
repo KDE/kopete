@@ -1,4 +1,3 @@
-
 add_subdirectory( icons ) 
 
 include_directories( 

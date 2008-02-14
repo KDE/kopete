@@ -50,7 +50,7 @@ public:
 	QString label;
 	KConfigGroup *configGroup;
 	OnlineStatus::StatusType onlineStatus;
-	QString statusMessage;
+	Kopete::StatusMessage statusMessage;
 };
 
 Identity::Identity( const QString &id, const QString &label )
@@ -58,7 +58,7 @@ Identity::Identity( const QString &id, const QString &label )
 {
 	load();
 	connect(this, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)),
-	        this, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
+			this, SLOT(slotSaveProperty(Kopete::PropertyContainer*, const QString&, const QVariant &, const QVariant &)));
 }
 
 Identity::Identity(const QString &label)
@@ -109,16 +109,29 @@ bool Identity::excludeConnect() const
 	return false;
 }
 
-void Identity::setOnlineStatus( uint category, const QString &awayMessage )
+void Identity::setOnlineStatus( uint category, const Kopete::StatusMessage &statusMessage )
 {
 	OnlineStatusManager::Categories katgor=(OnlineStatusManager::Categories)category;
 
-	d->statusMessage = awayMessage;
+	d->statusMessage = statusMessage;
 	foreach( Account *account ,  d->accounts )
 	{
 		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus(account->protocol() , katgor);
 		if ( !account->excludeConnect() )
-			account->setOnlineStatus( status , awayMessage );
+			account->setOnlineStatus( status, statusMessage );
+	}
+}
+
+void Identity::setStatusMessage( const Kopete::StatusMessage &statusMessage )
+{
+	d->statusMessage = statusMessage;
+	foreach( Account *account ,  d->accounts )
+	{
+		if ( !account->excludeConnect() )
+		{
+			Kopete::Contact *self = account->myself();
+			account->setOnlineStatus( self->onlineStatus(), statusMessage );
+		}
 	}
 }
 
@@ -127,7 +140,7 @@ OnlineStatus::StatusType Identity::onlineStatus() const
 	return d->onlineStatus;
 }
 
-QString Identity::statusMessage() const
+Kopete::StatusMessage Identity::statusMessage() const
 {
 	return d->statusMessage;
 }
@@ -165,7 +178,7 @@ QString Identity::customIcon() const
 	if (hasProperty( Kopete::Global::Properties::self()->photo().key() ))
 		return property(Kopete::Global::Properties::self()->photo()).value().toString();
 	else
-		return "user";
+		return "user-identity";
 }
 
 
@@ -253,6 +266,11 @@ void Identity::updateOnlineStatus()
 void Identity::slotSaveProperty( Kopete::PropertyContainer *container, const QString &key,
 		                const QVariant &oldValue, const QVariant &newValue )
 {
+	if ( !newValue.isValid() ) // the property was removed, remove the config entry also
+	{
+		QString cfgGrpKey = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(oldValue.typeName()), key );
+		d->configGroup->deleteEntry(cfgGrpKey);
+	}
 	save();
 }
 

@@ -41,17 +41,14 @@
 
 
 ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::MetaContact *parent,
-						const QString& icon, const OContact& ssiItem )
-: ICQContactBase( account, name, parent, icon, ssiItem )
+						const QString& icon )
+: ICQContactBase( account, name, parent, icon )
 {
-	m_requestingNickname = false;
+	m_requestingInfo = InfoNone;
 	mProtocol = static_cast<ICQProtocol *>(protocol());
 	m_infoWidget = 0L;
 
-	if ( ssiItem.waitingAuth() )
-		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
-	else
-		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
+	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 
 	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
 	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
@@ -85,16 +82,25 @@ void ICQContact::setSSIItem( const OContact& ssiItem )
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 	}
 
-	if ( mAccount->isConnected() && m_ssiItem.metaInfoId() != ssiItem.metaInfoId() )
+	if ( mAccount->engine()->isActive() && m_ssiItem.metaInfoId() != ssiItem.metaInfoId() )
 	{
-		// User info has changed, check nickname or status description if needed
-		if ( m_details.onlineStatusMsgSupport() )
-			mAccount->engine()->requestMediumTlvInfo( contactId(), ssiItem.metaInfoId() );
-		else if ( ssiItem.alias().isEmpty() )
-			requestShortInfo();
+		// User info has changed, check nickname or status description if needed.
+		// If mAccount->isConnected() is false then the metaInfoId has changed while
+		// we were offline and we don't know how many users changed its info, so better
+		// delay the request.
+		if ( mAccount->isConnected() )
+			QTimer::singleShot( 0, this, SLOT( requestMediumTlvInfo() ) );
+		else
+			requestMediumTlvInfoDelayed();
 	}
 
 	ICQContactBase::setSSIItem( ssiItem );
+}
+
+void ICQContact::setEncoding( int mib )
+{
+	ICQContactBase::setEncoding( mib );
+	QTimer::singleShot( 0, this, SLOT( requestShortInfo() ) );
 }
 
 void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& details )
@@ -104,7 +110,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	// invalidate old away message if user was offline
 	if ( !isOnline() )
-		removeProperty( mProtocol->awayMessage );
+		removeProperty( mProtocol->statusMessage );
 
 	kDebug( OSCAR_ICQ_DEBUG ) << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
@@ -126,7 +132,7 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 	presence.setFlags( presence.flags() & ~Oscar::Presence::StatusTypeMask );
 
 	// XStatus don't support offline status so don't show it (xtrazStatusSpecified can be true if contact was online)
-	if ( details.xtrazStatusSpecified() && presence.type() != Oscar::Presence::Offline )
+	if ( details.xtrazStatus() != -1 && presence.type() != Oscar::Presence::Offline )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
 		presence.setXtrazStatus( details.xtrazStatus() );
@@ -134,7 +140,6 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 	else if ( !m_statusDescription.isEmpty() )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
-		presence.setDescription( m_statusDescription );
 	}
 
 	setPresenceTarget( presence );
@@ -145,7 +150,7 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 	if ( selfVisible && isReachable() && presence.type() != Oscar::Presence::Offline )
 	{
 		Client::ICQStatus contactStatus = Client::ICQOnline;
-		if ( details.xtrazStatusSpecified() )
+		if ( details.xtrazStatus() != -1 )
 		{
 			contactStatus = Client::ICQXStatus;
 		}
@@ -185,7 +190,7 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 		if ( contactStatus == Client::ICQOnline && !details.onlineStatusMsgSupport() )
 		{
 			mAccount->engine()->removeICQAwayMessageRequest( contactId() );
-			removeProperty( mProtocol->awayMessage );
+			removeProperty( mProtocol->statusMessage );
 		}
 		else
 		{
@@ -218,7 +223,7 @@ void ICQContact::userOffline( const QString& userId )
 	else
 		refreshStatus( m_details, Oscar::Presence( Oscar::Presence::Offline ) );
 	
-	removeProperty( mProtocol->awayMessage );
+	removeProperty( mProtocol->statusMessage );
 }
 
 void ICQContact::loggedIn()
@@ -229,29 +234,13 @@ void ICQContact::loggedIn()
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
-	if ( !m_ssiItem.metaInfoId().isEmpty() )
-	{
-		m_requestingNickname = true;
-		int time = ( KRandom::random() % 20 ) * 1000;
-		kDebug(OSCAR_ICQ_DEBUG) << "updating nickname and status description in " << time/1000 << " seconds";
-		QTimer::singleShot( time, this, SLOT( requestMediumTlvInfo() ) );
-	}
-	else if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() ) && nickName() == contactId() )
+	if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() ) && nickName() == contactId() )
 	            || !hasProperty( Kopete::Global::Properties::self()->nickName().key() ) )
-	          && !m_requestingNickname && m_ssiItem.alias().isEmpty() )
+	     && m_ssiItem.alias().isEmpty() )
 	{
-		m_requestingNickname = true;
-		int time = ( KRandom::random() % 20 ) * 1000;
-		kDebug(OSCAR_ICQ_DEBUG) << "updating nickname in " << time/1000 << " seconds";
-		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
+		requestShortInfoDelayed();
 	}
 
-}
-
-void ICQContact::requestShortInfo()
-{
-	if ( mAccount->engine()->isActive() )
-		mAccount->engine()->requestShortInfo( contactId() );
 }
 
 void ICQContact::slotRequestAuth()
@@ -297,6 +286,17 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 	KNotification::event( QString::fromLatin1("icq_authorization"), message );
 }
 
+void ICQContact::requestShortInfo()
+{
+	kDebug(OSCAR_ICQ_DEBUG) << "requesting short info for " << contactId();
+	if ( mAccount->engine()->isActive() )
+		mAccount->engine()->requestShortInfo( contactId() );
+
+	// Don't clear m_requestingInfo if info with higher contents was requested
+	if ( m_requestingInfo <= InfoShort )
+		m_requestingInfo = InfoNone;
+}
+
 void ICQContact::receivedShortInfo( const QString& contact )
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
@@ -304,7 +304,6 @@ void ICQContact::receivedShortInfo( const QString& contact )
 
 	QTextCodec* codec = contactCodec();
 
-	m_requestingNickname = false; //done requesting nickname
 	ICQShortInfo shortInfo = mAccount->engine()->getShortInfo( contact );
 
 	setProperty( mProtocol->firstName, codec->toUnicode( shortInfo.firstName ) );
@@ -360,8 +359,13 @@ void ICQContact::receivedLongInfo( const QString& contact )
 
 void ICQContact::requestMediumTlvInfo()
 {
+	kDebug(OSCAR_ICQ_DEBUG) << "requesting medium tlv info for " << contactId();
 	if ( mAccount->engine()->isActive() && !m_ssiItem.metaInfoId().isEmpty() )
 		mAccount->engine()->requestMediumTlvInfo( contactId(), m_ssiItem.metaInfoId() );
+
+	// Don't clear m_requestingInfo if info with higher contents was requested
+	if ( m_requestingInfo <= InfoMediumTlv )
+		m_requestingInfo = InfoNone;
 }
 
 void ICQContact::receivedTlvInfo( const QString& contact )
@@ -374,15 +378,48 @@ void ICQContact::receivedTlvInfo( const QString& contact )
 	setProperty( mProtocol->firstName, QString::fromUtf8( info.firstName.get() ) );
 	setProperty( mProtocol->lastName, QString::fromUtf8( info.lastName.get() ) );
 
-	m_requestingNickname = false; //done requesting nickname
 	if ( m_ssiItem.alias().isEmpty() && !info.nickName.get().isEmpty() )
 		setNickName( QString::fromUtf8( info.nickName.get() ) );
 
 	m_statusDescription = QString::fromUtf8( info.statusDescription.get() );
+	if ( !m_statusDescription.isEmpty() )
+		setProperty( mProtocol->statusTitle, m_statusDescription );
+	else
+		removeProperty( mProtocol->statusTitle );
 
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( onlineStatus() );
 	
 	refreshStatus( m_details, presence );
+}
+
+void ICQContact::requestShortInfoDelayed( int minDelay )
+{
+	if ( mAccount->engine()->isActive() && m_requestingInfo < InfoShort )
+	{
+		m_requestingInfo = InfoShort;
+		int time = ( KRandom::random() % 20 ) * 1000 + minDelay;
+		kDebug(OSCAR_ICQ_DEBUG) << "requesting info in " << time/1000 << " seconds";
+		QTimer::singleShot( time, this, SLOT( infoDelayTimeout() ) );
+	}
+}
+
+void ICQContact::requestMediumTlvInfoDelayed( int minDelay )
+{
+	if ( mAccount->engine()->isActive() && m_requestingInfo < InfoMediumTlv )
+	{
+		m_requestingInfo = InfoMediumTlv;
+		int time = ( KRandom::random() % 20 ) * 1000 + minDelay;
+		kDebug(OSCAR_ICQ_DEBUG) << "requesting info in " << time/1000 << " seconds";
+		QTimer::singleShot( time, this, SLOT( infoDelayTimeout() ) );
+	}
+}
+
+void ICQContact::infoDelayTimeout()
+{
+	if ( m_requestingInfo == InfoMediumTlv )
+		requestMediumTlvInfo();
+	else if ( m_requestingInfo == InfoShort )
+		requestShortInfo();
 }
 
 #if 0
@@ -451,7 +488,7 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 			}
 			else // user changed to "Online" status and has no away message anymore
 			{
-				removeProperty(mProtocol->awayMessage);
+				removeProperty(mProtocol->statusMessage);
 			}
 		}
 	}
@@ -465,7 +502,7 @@ void ICQContact::slotOffgoingBuddy(QString sender)
 		return;
 
 	removeProperty(mProtocol->clientFeatures);
-	removeProperty(mProtocol->awayMessage);
+	removeProperty(mProtocol->statusMessage);
 	setOnlineStatus(mProtocol->statusOffline);
 }
 
@@ -587,12 +624,8 @@ void ICQContact::storeUserInfoDialog()
 {
 	QString alias = m_infoWidget->getAlias();
 	mAccount->engine()->changeContactAlias( contactId(), alias );
-	if ( alias.isEmpty() && !m_requestingNickname ) {
-		m_requestingNickname = true;
-		int time = ( KRandom::random() % 5 ) * 1000 + 5000;
-		kDebug(OSCAR_ICQ_DEBUG) << "updating nickname in " << time/1000 << " seconds";
-		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
-	}
+	if ( alias.isEmpty() )
+		requestShortInfoDelayed( 5000 );
 }
 
 void ICQContact::closeUserInfoDialog()
@@ -648,8 +681,8 @@ void ICQContact::slotCloseAwayMessageDialog()
 
 const QString ICQContact::awayMessage()
 {
-	kDebug(14150) <<  property(mProtocol->awayMessage).value().toString();
-	return property(mProtocol->awayMessage).value().toString();
+	kDebug(14150) <<  property(mProtocol->statusMessage).value().toString();
+	return property(mProtocol->statusMessage).value().toString();
 }
 
 
@@ -657,7 +690,7 @@ void ICQContact::setAwayMessage(const QString &message)
 {
 	/*kDebug(14150) <<
 		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
-	setProperty(mProtocol->awayMessage, message);
+	setProperty(mProtocol->statusMessage, message);
 	emit awayMessageChanged();
 }
 

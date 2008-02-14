@@ -37,9 +37,10 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 	/* Add instructions to layout. */
 	Q3VBoxLayout *innerLayout = new Q3VBoxLayout (this, 0, 4);
 
-	QLabel *label = new QLabel (form.instructions (), this, "InstructionLabel");
-	label->setAlignment (int (Qt::TextWordWrap | Qt::AlignVCenter));
-	label->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed, true);
+	QLabel *label = new QLabel (form.instructions (), this);
+	label->setWordWrap (true);
+	label->setAlignment (Qt::AlignVCenter);
+	label->setSizePolicy (QSizePolicy::Minimum,QSizePolicy::Fixed);
 	label->show ();
 
 	innerLayout->addWidget (label, 0);
@@ -53,7 +54,7 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 		kDebug (14130) << "[JabberFormTranslator] Adding field realName()==" <<
 			(*it).realName () << ", fieldName()==" << (*it).fieldName () << " to the dialog" << endl;
 
-		label = new QLabel ((*it).fieldName (), this, (*it).fieldName ().toLatin1 ());
+		label = new QLabel ((*it).fieldName (), this);
 		formLayout->addWidget (label, row, 0);
 		label->show ();
 

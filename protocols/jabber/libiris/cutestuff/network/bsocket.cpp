@@ -14,16 +14,17 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #include <QTcpSocket>
 #include <QHostAddress>
+#include <QMetaType>
 
 #include "bsocket.h"
 
-#include "safedelete.h"
+//#include "safedelete.h"
 #ifndef NO_NDNS
 #include "ndns.h"
 #endif
@@ -39,15 +40,73 @@
 
 // CS_NAMESPACE_BEGIN
 
+class QTcpSocketSignalRelay : public QObject
+{
+	Q_OBJECT
+public:
+	QTcpSocketSignalRelay(QTcpSocket *sock, QObject *parent = 0)
+	:QObject(parent)
+	{
+		qRegisterMetaType<QAbstractSocket::SocketError>("QAbstractSocket::SocketError");
+		connect(sock, SIGNAL(hostFound()), SLOT(sock_hostFound()), Qt::QueuedConnection);
+		connect(sock, SIGNAL(connected()), SLOT(sock_connected()), Qt::QueuedConnection);
+		connect(sock, SIGNAL(disconnected()), SLOT(sock_disconnected()), Qt::QueuedConnection);
+		connect(sock, SIGNAL(readyRead()), SLOT(sock_readyRead()), Qt::QueuedConnection);
+		connect(sock, SIGNAL(bytesWritten(qint64)), SLOT(sock_bytesWritten(qint64)), Qt::QueuedConnection);
+		connect(sock, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(sock_error(QAbstractSocket::SocketError)), Qt::QueuedConnection);
+	}
+
+signals:
+	void hostFound();
+	void connected();
+	void disconnected();
+	void readyRead();
+	void bytesWritten(qint64);
+	void error(QAbstractSocket::SocketError);
+
+public slots:
+	void sock_hostFound()
+	{
+		emit hostFound();
+	}
+
+	void sock_connected()
+	{
+		emit connected();
+	}
+
+	void sock_disconnected()
+	{
+		emit disconnected();
+	}
+
+	void sock_readyRead()
+	{
+		emit readyRead();
+	}
+
+	void sock_bytesWritten(qint64 x)
+	{
+		emit bytesWritten(x);
+	}
+
+	void sock_error(QAbstractSocket::SocketError x)
+	{
+		emit error(x);
+	}
+};
+
 class BSocket::Private
 {
 public:
 	Private()
 	{
 		qsock = 0;
+		qsock_relay = 0;
 	}
 
 	QTcpSocket *qsock;
+	QTcpSocketSignalRelay *qsock_relay;
 	int state;
 
 #ifndef NO_NDNS
@@ -56,7 +115,7 @@ public:
 	SrvResolver srv;
 	QString host;
 	int port;
-	SafeDelete sd;
+	//SafeDelete sd;
 };
 
 BSocket::BSocket(QObject *parent)
@@ -80,16 +139,21 @@ BSocket::~BSocket()
 void BSocket::reset(bool clear)
 {
 	if(d->qsock) {
-		d->qsock->disconnect(this);
+		delete d->qsock_relay;
+		d->qsock_relay = 0;
 
-		if(!clear && d->qsock->isOpen()) {
+		/*d->qsock->disconnect(this);
+
+		if(!clear && d->qsock->isOpen() && d->qsock->isValid()) {*/
 			// move remaining into the local queue
 			QByteArray block(d->qsock->bytesAvailable(), 0);
 			d->qsock->read(block.data(), block.size());
 			appendRead(block);
-		}
+		//}
 
-		d->sd.deleteLater(d->qsock);
+		//d->sd.deleteLater(d->qsock);
+		// delete d->qsock;
+		d->qsock->deleteLater();
 		d->qsock = 0;
 	}
 	else {
@@ -113,12 +177,13 @@ void BSocket::ensureSocket()
 #if QT_VERSION >= 0x030200
 		d->qsock->setReadBufferSize(READBUFSIZE);
 #endif
-		connect(d->qsock, SIGNAL(hostFound()), SLOT(qs_hostFound()));
-		connect(d->qsock, SIGNAL(connected()), SLOT(qs_connected()));
-		connect(d->qsock, SIGNAL(disconnected()), SLOT(qs_closed()));
-		connect(d->qsock, SIGNAL(readyRead()), SLOT(qs_readyRead()));
-		connect(d->qsock, SIGNAL(bytesWritten(qint64)), SLOT(qs_bytesWritten(qint64)));
-		connect(d->qsock, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(qs_error(QAbstractSocket::SocketError)));
+		d->qsock_relay = new QTcpSocketSignalRelay(d->qsock);
+		connect(d->qsock_relay, SIGNAL(hostFound()), SLOT(qs_hostFound()));
+		connect(d->qsock_relay, SIGNAL(connected()), SLOT(qs_connected()));
+		connect(d->qsock_relay, SIGNAL(disconnected()), SLOT(qs_closed()));
+		connect(d->qsock_relay, SIGNAL(readyRead()), SLOT(qs_readyRead()));
+		connect(d->qsock_relay, SIGNAL(bytesWritten(qint64)), SLOT(qs_bytesWritten(qint64)));
+		connect(d->qsock_relay, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(qs_error(QAbstractSocket::SocketError)));
 	}
 }
 
@@ -286,7 +351,7 @@ void BSocket::srv_done()
 void BSocket::ndns_done()
 {
 #ifndef NO_NDNS
-	if(d->ndns.result()) {
+	if(!d->ndns.result().isNull()) {
 		d->host = d->ndns.resultString();
 		d->state = Connecting;
 		do_connect();
@@ -322,7 +387,7 @@ void BSocket::qs_connected()
 #ifdef BS_DEBUG
 	fprintf(stderr, "BSocket: Connected.\n");
 #endif
-	SafeDeleteLock s(&d->sd);
+	//SafeDeleteLock s(&d->sd);
 	connected();
 }
 
@@ -333,7 +398,7 @@ void BSocket::qs_closed()
 #ifdef BS_DEBUG
 		fprintf(stderr, "BSocket: Delayed Close Finished.\n");
 #endif
-		SafeDeleteLock s(&d->sd);
+		//SafeDeleteLock s(&d->sd);
 		reset();
 		delayedCloseFinished();
 	}
@@ -341,7 +406,7 @@ void BSocket::qs_closed()
 
 void BSocket::qs_readyRead()
 {
-	SafeDeleteLock s(&d->sd);
+	//SafeDeleteLock s(&d->sd);
 	readyRead();
 }
 
@@ -351,7 +416,7 @@ void BSocket::qs_bytesWritten(qint64 x64)
 #ifdef BS_DEBUG
 	fprintf(stderr, "BSocket: BytesWritten [%d].\n", x);
 #endif
-	SafeDeleteLock s(&d->sd);
+	//SafeDeleteLock s(&d->sd);
 	bytesWritten(x);
 }
 
@@ -361,7 +426,7 @@ void BSocket::qs_error(QAbstractSocket::SocketError x)
 #ifdef BS_DEBUG
 		fprintf(stderr, "BSocket: Connection Closed.\n");
 #endif
-		SafeDeleteLock s(&d->sd);
+		//SafeDeleteLock s(&d->sd);
 		reset();
 		connectionClosed();
 		return;
@@ -370,7 +435,7 @@ void BSocket::qs_error(QAbstractSocket::SocketError x)
 #ifdef BS_DEBUG
 	fprintf(stderr, "BSocket: Error.\n");
 #endif
-	SafeDeleteLock s(&d->sd);
+	//SafeDeleteLock s(&d->sd);
 
 	// connection error during SRV host connect?  try next
 	if(d->state == HostLookup && (x == QTcpSocket::ConnectionRefusedError || x == QTcpSocket::HostNotFoundError)) {
@@ -386,5 +451,7 @@ void BSocket::qs_error(QAbstractSocket::SocketError x)
 	else
 		error(ErrRead);
 }
+
+#include "bsocket.moc"
 
 // CS_NAMESPACE_END

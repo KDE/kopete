@@ -26,6 +26,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <QPainter>
 #include <q3listview.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
@@ -55,7 +56,7 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 	QVBoxLayout * layout = new QVBoxLayout( this );
 	if (owner->isConnected ())
 	{
-		m_searchUI = new GroupWiseContactSearch( m_account, Q3ListView::Single, false,
+		m_searchUI = new GroupWiseContactSearch( m_account, QAbstractItemView::SingleSelection, false,
 				 this );
 		layout->addWidget( m_searchUI );
 		m_canadd = true;
@@ -106,7 +107,11 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 bool GroupWiseAddContactPage::validateData()
 {
 	if ( m_canadd )
-		return ( m_searchUI->m_results->selectedItem() );
+#ifdef __GNUC__
+#warning FIXME port GroupWiseAddContactPage::validateData to interview based GroupWiseSearch
+#endif
+		return true;
+	//return ( m_searchUI->m_results->selectedItem() );
 	else
 		return false;
 }

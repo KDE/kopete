@@ -69,7 +69,7 @@ public:
 	/**
 	 * Construct the context menu used for the status bar icon
 	 */
-	virtual KActionMenu* actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	// DEBUG ONLY
 	void dumpManagers();
@@ -90,7 +90,7 @@ public:
 	/**
 	 * Utility access to the port given by the user
 	 */
-	const int port() const;
+	int port() const;
 	/**
 	 * Utility access to the server given by the user
 	 */
@@ -173,6 +173,7 @@ signals:
 
 	
 protected slots:
+    void slotMessageSendingFailed();
 	/**
 	 * Set an auto reply message for use when the account is away
 	 * TODO: Extend Kopete::AwayAction so you can set multiple ones there.
@@ -331,7 +332,6 @@ protected:
 	void cleanup();
 private:
 	// action menu and its actions
-	KActionMenu * m_actionMenu;
 	KAction * m_actionAutoReply;
 	KAction * m_actionManagePrivacy;
 	KAction * m_actionJoinChatRoom;
@@ -344,6 +344,7 @@ private:
 	// Client, entry point of libgroupwise
 	Client * m_client;
 
+	QString m_password;
 	QString m_initialReason;
 	Q3ValueList<GroupWiseChatSession*> m_chatSessions;
 	bool m_dontSync;

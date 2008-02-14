@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>ShowInvitationWidget</class>
- <widget class="QWidget" name="ShowInvitationWidget" >
+ <class>ShowInvitation</class>
+ <widget class="QWidget" name="ShowInvitation" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -10,18 +10,39 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>11</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
    </property>
+   <property name="leftMargin" >
+    <number>11</number>
+   </property>
+   <property name="topMargin" >
+    <number>11</number>
+   </property>
+   <property name="rightMargin" >
+    <number>11</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>11</number>
+   </property>
    <item>
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="leftMargin" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>6</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>6</number>
      </property>
      <item row="0" column="0" >
@@ -45,11 +66,9 @@
       </widget>
      </item>
      <item row="1" column="1" >
-      <widget class="QLabel" name="m_dateTime" >
+      <widget class="QLabel" name="dateTime" >
        <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>5</hsizetype>
-         <vsizetype>5</vsizetype>
+        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
          <horstretch>2</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -63,7 +82,7 @@
       </widget>
      </item>
      <item row="0" column="1" >
-      <widget class="QLabel" name="m_contactName" >
+      <widget class="QLabel" name="contactName" >
        <property name="text" >
         <string>Contact Name</string>
        </property>
@@ -75,7 +94,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="m_message" >
+    <widget class="QLabel" name="message" >
      <property name="frameShape" >
       <enum>QFrame::Panel</enum>
      </property>
@@ -95,11 +114,20 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>6</number>
+     </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
      </property>
      <item>
       <widget class="QLabel" name="textLabel6" >
@@ -130,7 +158,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="cb_dontShowAgain" >
+    <widget class="QCheckBox" name="cbDontShowAgain" >
      <property name="text" >
       <string>A&amp;lways accept invitations</string>
      </property>

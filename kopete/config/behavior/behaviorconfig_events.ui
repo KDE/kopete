@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>368</width>
-    <height>310</height>
+    <width>371</width>
+    <height>393</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -144,26 +144,7 @@
          <number>0</number>
         </property>
         <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
          <widget class="QCheckBox" name="kcfg_balloonNotifyIgnoreClosesChatView" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
           <property name="toolTip" >
            <string>The "Ignore" button of the bubble closes the chat window for the sender</string>
           </property>
@@ -174,95 +155,6 @@
            <string>Button "I&amp;gnore" closes chat</string>
           </property>
          </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
-         <number>6</number>
-        </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>0</number>
-        </property>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="kcfg_balloonClose" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="toolTip" >
-           <string>Automatically close bubble after fixed amount of time</string>
-          </property>
-          <property name="whatsThis" >
-           <string>Bubbles will automatically be closed after a fixed amount of time. A closed one will be replaced by a new one if another message is waiting.</string>
-          </property>
-          <property name="text" >
-           <string>Close &amp;bubble automatically after</string>
-          </property>
-          <property name="checked" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="kcfg_balloonCloseDelay" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="suffix" >
-           <string> Sec</string>
-          </property>
-          <property name="minimum" >
-           <number>1</number>
-          </property>
-          <property name="maximum" >
-           <number>120</number>
-          </property>
-          <property name="value" >
-           <number>30</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>70</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </item>
@@ -396,8 +288,6 @@
   <tabstop>kcfg_trayflashNotifyLeftClickOpensMessage</tabstop>
   <tabstop>kcfg_balloonNotify</tabstop>
   <tabstop>kcfg_balloonNotifyIgnoreClosesChatView</tabstop>
-  <tabstop>kcfg_balloonClose</tabstop>
-  <tabstop>kcfg_balloonCloseDelay</tabstop>
   <tabstop>kcfg_queueOnlyHighlightedMessagesInGroupChats</tabstop>
   <tabstop>kcfg_queueOnlyMessagesOnAnotherDesktop</tabstop>
   <tabstop>kcfg_enableEventsWhileAway</tabstop>
@@ -420,54 +310,6 @@
     <hint type="destinationlabel" >
      <x>129</x>
      <y>64</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>kcfg_balloonNotify</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>kcfg_balloonNotifyIgnoreClosesChatView</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>56</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>88</x>
-     <y>114</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>kcfg_balloonNotify</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>kcfg_balloonClose</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>174</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>181</x>
-     <y>132</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>kcfg_balloonClose</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>kcfg_balloonCloseDelay</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>58</x>
-     <y>129</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>252</x>
-     <y>133</y>
     </hint>
    </hints>
   </connection>

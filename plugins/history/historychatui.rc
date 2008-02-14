@@ -6,12 +6,14 @@
 			<Action name="historyPrevious" />
 			<Action name="historyNext" />
 			<Action name="historyLast"  />
+			<Action name="historyQuote" />
 		</Menu>
 	</MenuBar>
 
 	<ToolBar name="mainToolBar" fullWidth="true">
 		<Action name="historyPrevious" />
 		<Action name="historyNext" />
+		<Action name="historyQuote" />
 	</ToolBar>
 
 </kpartgui>

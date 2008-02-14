@@ -368,11 +368,10 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 	return success;
 }
 
-KActionMenu * Account::actionMenu()
+void Account::fillActionMenu( KActionMenu *actionMenu )
 {
 	//default implementation
 // 	KActionMenu *menu = new KActionMenu( QIcon(myself()->onlineStatus().iconFor( this )), accountId(), 0, 0);
-	KActionMenu *menu = new KActionMenu( accountId(), this );
 #ifdef __GNUC__
 #warning No icon shown, we should go away from QPixmap genered icons with overlays.
 #endif
@@ -382,20 +381,24 @@ KActionMenu * Account::actionMenu()
 	else
 		nick = myself()->nickName();
 
-	menu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
-		nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
+	// Always add title at the beginning of actionMenu
+	QAction *before = actionMenu->menu()->actions().value( 0, 0 );
+	actionMenu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
+		nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick ),
+		before
 	);
 
-	OnlineStatusManager::self()->createAccountStatusActions(this, menu);
-	menu->menu()->addSeparator();
+	actionMenu->menu()->addSeparator();
 
-	KAction *propertiesAction = new KAction( i18n("Properties"), menu );
+	KAction *propertiesAction = new KAction( i18n("Properties"), actionMenu );
 	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT( editAccount() ) );
-	menu->addAction( propertiesAction );
-
-	return menu;
+	actionMenu->addAction( propertiesAction );
 }
 
+bool Account::hasCustomStatusMenu() const
+{
+	return false;
+}
 
 bool Account::isConnected() const
 {
@@ -411,11 +414,11 @@ Identity * Account::identity() const
 	return d->identity;
 }
 
-void Account::setIdentity( Identity *ident )
+bool Account::setIdentity( Identity *ident )
 {
 	if ( d->identity == ident )
 	{
-		return;
+		return false;
 	}
 
 	if (d->identity)
@@ -426,6 +429,7 @@ void Account::setIdentity( Identity *ident )
 	ident->addAccount( this );
 	d->identity = ident;
 	d->configGroup->writeEntry("Identity", ident->id());
+	return true;
 }
 
 Contact * Account::myself() const

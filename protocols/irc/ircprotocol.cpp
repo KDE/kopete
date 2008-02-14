@@ -40,6 +40,7 @@
 #include "kopeteview.h"
 #include "kopeteuiglobal.h"
 
+#include <kaboutdata.h>
 #include <kaction.h>
 #include <kcharsets.h>
 #include <kdebug.h>
@@ -65,10 +66,10 @@
 
 using namespace Kopete;
 
-typedef KGenericFactory<IRCProtocol> IRCProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY(kopete_irc, IRCProtocolFactory("kopete_irc"))
+K_PLUGIN_FACTORY( IRCProtocolFactory, registerPlugin<IRCProtocol>(); )
+K_EXPORT_PLUGIN( IRCProtocolFactory( "kopete_irc" ) )
 
-IRCProtocol *IRCProtocol::s_protocol = 0L;
+static IRCProtocol *s_protocol = 0L;
 
 IRCProtocolHandler::IRCProtocolHandler()
 	: MimeTypeHandler(false)
@@ -105,7 +106,7 @@ void IRCProtocolHandler::handleURL(const KUrl &url) const
 	newAccount->connect();
 }
 
-IRCProtocol::IRCProtocol( QObject *parent, const QStringList & /* args */ )
+IRCProtocol::IRCProtocol( QObject *parent, const QVariantList & /* args */ )
 	: Protocol(IRCProtocolFactory::componentData(), parent)
 //	, m_StatusUnknown(OnlineStatus::Unknown, 999, this, 999, "status_unknown", i18n("Status not available"))
 {
@@ -442,7 +443,7 @@ void IRCProtocol::slotMessageFilter(Message &msg)
 		//Add right click for channels, only replace text not in HTML tags
 		messageText.replace(QRegExp( QString::fromLatin1("(?![^<]+>)(#[^#\\s]+)(?![^<]+>)")), QString::fromLatin1("<span class=\"KopeteLink\" type=\"IRCChannel\">\\1</span>") );
 
-		msg.setBody( messageText, Message::RichText );
+		msg.setHtmlBody(messageText);
 	}
 }
 /*

@@ -87,7 +87,7 @@ bool OwnUserInfoTask::take( Transfer* transfer )
 				{ //buffer might be empty if flags bit 8 = 1
 					Oscar::BYTE checksumLength = b->getByte();
 					qba = b->getBlock( checksumLength );
-					kDebug(OSCAR_RAW_DEBUG) << "Self icon checksum: " << qba;
+					kDebug(OSCAR_RAW_DEBUG) << "Self icon checksum: " << qba.toHex();
 				}
 				
 				if ( needUpload )

@@ -75,8 +75,8 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 		this, SLOT( slotMessageSent( Kopete::Message&,
 		Kopete::ChatSession* ) ) );
 
-	connect( this, SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact*  ) ) ,
-		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact*  ) ) );
+	connect( this, SIGNAL( invitation(MSNInvitation*& ,  const QString & , unsigned long int , MSNChatSession*  , MSNContact*  ) ) ,
+		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , unsigned long int , MSNChatSession*  , MSNContact*  ) ) );
 
 
 	m_actionInvite = new KActionMenu( KIcon("kontact_contacts"), i18n( "&Invite" ), this );
@@ -89,7 +89,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	connect( rawCmd, SIGNAL(triggered()), this, SLOT(slotDebugRawCommand()) );
 	#endif
 
-	m_actionNudge=new KAction( KIcon("bell"), i18n( "Send Nudge" ), this );
+	m_actionNudge=new KAction( KIcon("preferences-desktop-notification-bell"), i18n( "Send Nudge" ), this );
         actionCollection()->addAction( "msnSendNudge", m_actionNudge ) ;
 	connect( m_actionNudge, SIGNAL(triggered(bool)), this, SLOT(slotSendNudge()) );
 
@@ -104,7 +104,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	connect( m_actionWebcamSend, SIGNAL(triggered(bool)), this, SLOT(slotWebcamSend()) );
 
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
-	KAction* requestPicture = new KAction( KIcon("image"), i18n( "Request Display Picture" ), this );
+	KAction* requestPicture = new KAction( KIcon("image-x-generic"), i18n( "Request Display Picture" ), this );
         actionCollection()->addAction( "msnRequestDisplayPicture", requestPicture );
 	requestPicture->setEnabled(!c->object().isEmpty());
 	connect( requestPicture, SIGNAL(triggered()), this, SLOT(slotRequestPicture()) );
@@ -691,7 +691,7 @@ void MSNChatSession::slotNudgeReceived(const QString& handle)
 
 void MSNChatSession::slotWebcamReceive()
 {
-	if(m_chatService && members().first())
+	if(m_chatService && !members().isEmpty())
 	{
 #if 0
 		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().first()->contactId() , true);
@@ -702,7 +702,7 @@ void MSNChatSession::slotWebcamReceive()
 void MSNChatSession::slotWebcamSend()
 {
 	kDebug(14140) ;
-	if(m_chatService && members().first())
+	if(m_chatService && !members().isEmpty())
 	{
 #if 0
 		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().first()->contactId() , false);

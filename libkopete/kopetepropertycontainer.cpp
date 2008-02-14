@@ -160,9 +160,8 @@ void PropertyContainer::setProperty(const Kopete::PropertyTmpl &tmpl,
 
 void PropertyContainer::removeProperty(const Kopete::PropertyTmpl &tmpl)
 {
-	if(!tmpl.isNull() && !tmpl.key().isEmpty())
+	if(!tmpl.isNull() && !tmpl.key().isEmpty() && hasProperty(tmpl.key()))
 	{
-
 		QVariant oldValue = property(tmpl.key()).value();
 		d->properties.remove(tmpl.key());
 		emit propertyChanged(this, tmpl.key(), oldValue, QVariant());

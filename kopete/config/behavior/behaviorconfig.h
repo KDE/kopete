@@ -20,11 +20,6 @@
 #include <kcmodule.h>
 #undef KDE3_SUPPORT
 
-namespace Kopete
-{
-class Away;
-}
-
 class QTabWidget;
 
 class BehaviorConfig_General;
@@ -57,7 +52,6 @@ class BehaviorConfig : public KCModule
 		BehaviorConfig_Away *mPrfsAway;
 
 		QList<KPluginInfo> viewPlugins;
-		Kopete::Away* awayInstance;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

@@ -29,7 +29,7 @@ class QQProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
-	QQProtocol(QObject *parent, const QStringList &args);
+	QQProtocol(QObject *parent, const QVariantList &args);
     ~QQProtocol();
 
 	/**

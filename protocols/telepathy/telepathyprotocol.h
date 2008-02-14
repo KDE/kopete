@@ -50,7 +50,7 @@ public:
 
 	const Kopete::PropertyTmpl propAvatarToken;
 
-	TelepathyProtocol(QObject *parent, const QStringList &args);
+	TelepathyProtocol(QObject *parent, const QVariantList &args);
 	
 	virtual Kopete::Account *createNewAccount(const QString &accountId);
 	virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);

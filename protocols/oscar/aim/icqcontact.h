@@ -43,7 +43,7 @@ public:
 
 	/** Normal ICQ constructor */
 	ICQContact( Kopete::Account* account, const QString &name, Kopete::MetaContact *parent,
-	            const QString& icon = QString(), const OContact& ssiItem = OContact()  );
+	            const QString& icon = QString() );
 	virtual ~ICQContact();
 
 	/**

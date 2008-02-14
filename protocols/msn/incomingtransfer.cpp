@@ -111,7 +111,7 @@ void IncomingTransfer::acknowledged()
 					if(m_transfer)
 					{
 						QFile *destination = new QFile(m_transfer->destinationURL().path());
-						if(!destination->open(IO_WriteOnly))
+						if(!destination->open(QIODevice::WriteOnly))
 						{
 							m_transfer->slotError(KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Cannot open file for writing"));
 							m_transfer = 0l;

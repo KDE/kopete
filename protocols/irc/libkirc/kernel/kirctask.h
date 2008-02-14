@@ -26,38 +26,16 @@
 namespace KIrc
 {
 
+class Context;
+
 class KIRC_EXPORT Task
 	: public QObject
 {
 	Q_OBJECT
-	Q_ENUMS(Status)
 
 public:
-	enum Status
-	{
-		/**
-		 * The command was unhandled by this task, and will try to be handled by next task.
-		 */
-		NotHandled = 0,
-
-		/**
-		 * The message doesn't require more plugin processing. 
-		 */
-		PluginHandled = 1 << 0,
-
-		/**
-		 * The message doesn't require more system precessing.
-		 */
-		SystemHandled = 1 << 1,
-
-		/**
-		 * The command was fully handled, and don't require more processing.
-		 */
-		FullyHandled = PluginHandled | SystemHandled 
-	};
-
 	explicit Task(QObject *parent = 0);
-	~Task();
+	virtual ~Task();
 
 public:
 	/**
@@ -65,13 +43,8 @@ public:
 	 *
 	 * @return the status of the event handling.
 	 */
-	virtual Status doEvent(KIrc::Event *event);
+	virtual void ircEvent(KIrc::Context *context, KIrc::Event *event);
 
-/*
-	virtual QStringList listCommands();
-
-	virtual QString getCommandHelp(const QString &command);
-*/
 signals:
 	void postEvent(KIrc::Event *event);
 

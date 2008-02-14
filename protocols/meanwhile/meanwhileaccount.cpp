@@ -29,7 +29,6 @@
 #include <kmenu.h>
 #include <klocale.h>
 #include <kconfigbase.h>
-#include "kopeteaway.h"
 #include <kinputdialog.h>
 #include <kmessagebox.h>
 #include <q3dict.h>
@@ -133,19 +132,18 @@ void MeanwhileAccount::disconnect(Kopete::Account::DisconnectReason reason)
     m_session = 0L;
 }
 
-KActionMenu * MeanwhileAccount::actionMenu()
+void MeanwhileAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-    KActionMenu *menu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
-    menu->popupMenu()->insertSeparator();
+	actionMenu->popupMenu()->insertSeparator();
 
 #if 0
-    menu->insert(new KAction(i18n("&Change Status Message"), QString(), 0,
+    actionMenu->insert(new KAction(i18n("&Change Status Message"), QString(), 0,
                 this, SLOT(meanwhileChangeStatus()), this,
                 "meanwhileChangeStatus"));
     //infoPlugin->addCustomMenus(theMenu);
 #endif
-    return menu;
 }
 
 QString MeanwhileAccount::getServerName()

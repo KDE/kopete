@@ -194,6 +194,13 @@ public:
 	void changeContactAlias( const QString& contact, const QString& alias );
 
 	/**
+	 * Set privacy settings
+	 * \param privacy the privacy settings
+	 * \param userClasses the bit mask which tells which class of users you want to be visible to
+	 */
+	void setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses = 0xFFFFFFFF );
+
+	/**
 	 * Send a message to a contact
 	 * \param msg the message to be sent
 	 * \param auto the message is an autoresponse message, default to false
@@ -348,7 +355,7 @@ public:
 	bool updateProfile( const QList<ICQInfoBase*>& infoList );
 
 	//! Get buddy icon information for a person
-	void requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::BYTE hashType );
+	void requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::WORD iconType, Oscar::BYTE hashType );
 
 	//! Start a server redirect for a different service
 	void requestServerRedirect( Oscar::WORD family, Oscar::WORD e = 0, QByteArray c = QByteArray(),

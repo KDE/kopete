@@ -13,11 +13,12 @@
 
 #include "aliasplugin.h"
 
-typedef KGenericFactory<AliasPlugin> AliasPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_alias, AliasPluginFactory( "kopete_alias" )  )
+K_PLUGIN_FACTORY( AliasPluginFactory, registerPlugin<AliasPlugin>(); )
+K_EXPORT_PLUGIN( AliasPluginFactory( "kopete_alias" ) )
+
 AliasPlugin * AliasPlugin::pluginStatic_ = 0L;
 
-AliasPlugin::AliasPlugin( QObject *parent, const QStringList & )
+AliasPlugin::AliasPlugin( QObject *parent, const QVariantList & )
 	: Kopete::Plugin( AliasPluginFactory::componentData(), parent )
 {
 	if( !pluginStatic_ )

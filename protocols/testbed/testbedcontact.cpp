@@ -31,11 +31,11 @@
 #include "testbedprotocol.h"
 
 TestbedContact::TestbedContact( Kopete::Account* _account, const QString &uniqueName,
-		const TestbedContactType type, const QString &displayName, Kopete::MetaContact *parent )
+		const QString &displayName, Kopete::MetaContact *parent )
 : Kopete::Contact( _account, uniqueName, parent )
 {
 	kDebug( 14210 ) << " uniqueName: " << uniqueName << ", displayName: " << displayName;
-	m_type = type;
+	m_type = TestbedContact::Null;
 	// FIXME: ? setDisplayName( displayName );
 	m_msgManager = 0L;
 
@@ -44,6 +44,11 @@ TestbedContact::TestbedContact( Kopete::Account* _account, const QString &unique
 
 TestbedContact::~TestbedContact()
 {
+}
+
+void TestbedContact::setType( TestbedContact::Type type )
+{
+	m_type = type;
 }
 
 bool TestbedContact::isReachable()
@@ -57,29 +62,37 @@ void TestbedContact::serialize( QMap< QString, QString > &serializedData, QMap< 
 	switch ( m_type )
 	{
 	case Null:
-		value = "null";
+		value = QLatin1String("null");
 	case Echo:
-		value = "echo";
+		value = QLatin1String("echo");
+	case Group:
+		value = QLatin1String("group");
 	}
 	serializedData[ "contactType" ] = value;
 }
 
-Kopete::ChatSession* TestbedContact::manager( CanCreateFlags )
+Kopete::ChatSession* TestbedContact::manager( CanCreateFlags canCreateFlags )
 {
 	kDebug( 14210 ) ;
 	if ( m_msgManager )
 	{
 		return m_msgManager;
 	}
-	else
+	else if ( canCreateFlags == CanCreate )
 	{
 		QList<Kopete::Contact*> contacts;
 		contacts.append(this);
-		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol(), Kopete::ChatSession::Chatroom);
+		Kopete::ChatSession::Form form = ( m_type == Group ?
+				  Kopete::ChatSession::Chatroom : Kopete::ChatSession::Small );
+		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol(), form );
 		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
 				this, SLOT( sendMessage( Kopete::Message& ) ) );
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
 		return m_msgManager;
+	}
+	else
+	{
+		return 0;
 	}
 }
 

@@ -31,16 +31,16 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpassivepopup.h>
+#include <kactionmenu.h>
 
 #include <kopeteuiglobal.h>
-#include <kopeteaway.h>
-#include <kopeteawayaction.h>
 #include <kopetecontactlist.h>
 #include <kopetegroup.h>
 #include <kopeteglobal.h>
 #include <kopetemetacontact.h>
 #include <kopetepassword.h>
 #include <kopeteview.h>
+#include <kopeteidletimer.h>
 
 #include "client.h"
 #include <QtCrypto>
@@ -106,25 +106,25 @@ GroupWiseAccount::~GroupWiseAccount()
 	cleanup();
 }
 
-KActionMenu* GroupWiseAccount::actionMenu()
+void GroupWiseAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *m_actionMenu=Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
 	m_actionAutoReply->setEnabled( isConnected() );
 	m_actionManagePrivacy->setEnabled( isConnected() );
-	m_actionMenu->addAction( m_actionManagePrivacy );
-	m_actionMenu->addAction( m_actionAutoReply );
-	m_actionMenu->addAction( m_actionJoinChatRoom );
+	m_actionJoinChatRoom->setEnabled( isConnected() );
+	actionMenu->addAction( m_actionManagePrivacy );
+	actionMenu->addAction( m_actionAutoReply );
+	actionMenu->addAction( m_actionJoinChatRoom );
 	/* Used for debugging */
 	/*
 	theActionMenu->insert( new KAction ( "Test rtfize()", QString(), 0, this,
 		SLOT( slotTestRTFize() ), this,
 		"actionTestRTFize") );
 	*/
-	return m_actionMenu;
 }
 
-const int GroupWiseAccount::port() const
+int GroupWiseAccount::port() const
 {
 	return configGroup()->readEntry( "Port", 0 );
 }
@@ -228,7 +228,7 @@ void GroupWiseAccount::setAway( bool away, const QString & reason )
 {
 	if ( away )
 	{
-		if ( Kopete::Away::getInstance()->idleTime() > 10 ) // don't go AwayIdle unless the user has actually been idle this long
+		if ( Kopete::IdleTimer::self()->idleTime() > 10 ) // don't go AwayIdle unless the user has actually been idle this long
 			setOnlineStatus( protocol()->groupwiseAwayIdle );
 		else
 			setOnlineStatus( protocol()->groupwiseAway, reason );
@@ -244,6 +244,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 		disconnect();
 		return;
 	}
+	m_password = password;
 	// don't try and connect if we are already connected
 	if ( isConnected () )
 		return;
@@ -271,7 +272,9 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	Q_ASSERT( QCA::isSupported("tls") );
 	m_QCATLS = new QCA::TLS;
 	m_tlsHandler = new QCATLSHandler( m_QCATLS );
-	m_clientStream = new ClientStream( m_connector, m_tlsHandler, 0);
+	if( QCA::haveSystemStore() )
+		m_QCATLS->setTrustedCertificates( QCA::systemStore() );
+	m_clientStream = new ClientStream( m_connector, m_tlsHandler );
 
 	QObject::connect( m_connector, SIGNAL( error() ), this, SLOT( slotConnError() ) );
 	QObject::connect( m_connector, SIGNAL( connected() ), this, SLOT( slotConnConnected() ) );
@@ -362,7 +365,13 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	m_serverListModel = new GWContactList( this );
 	myself()->setOnlineStatus( protocol()->groupwiseConnecting );
 	m_client->connectToServer( m_clientStream, dn, true );
+	QObject::connect( m_client, SIGNAL( messageSendingFailed() ), SLOT( slotMessageSendingFailed() ) );
+}
 
+void GroupWiseAccount::slotMessageSendingFailed()
+{
+	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+				i18nc("Message Sending Failed using the named local account", "Kopete was not able to send the last message sent on account '%1'.\nIf possible, please send the console output from Kopete to <wstephenson@novell.com> for analysis." ).arg( accountId() ) , i18nc("message sending failed using the named local account", "Unable to Send Message on Account '%1'").arg( accountId() ) );
 }
 
 void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
@@ -419,6 +428,10 @@ void GroupWiseAccount::disconnect( Kopete::Account::DisconnectReason reason )
 	if( isConnected () )
 	{
 		kDebug (GROUPWISE_DEBUG_GLOBAL) << "Still connected, closing connection...";
+		foreach( GroupWiseChatSession * chatSession, m_chatSessions ) {
+			chatSession->setClosed();
+		}
+
 		/* Tell backend class to disconnect. */
 		m_client->close ();
 	}
@@ -574,7 +587,7 @@ void GroupWiseAccount::reconcileOfflineChanges()
 	} //end while, now check the next groupwise contact
 	if ( conflicts )
 		// show queuedmessagebox
-		KPassivePopup::message( i18n( "Conflicting Changes Made Offline" ), i18n( "While you were offline, a change happened to your GroupWise contact list which was impossible to reconcile." ), Kopete::UI::Global::mainWidget() );
+		KPassivePopup::message( i18n( "Conflicting Changes Made Offline" ), i18n( "A change happened to your GroupWise contact list while you were offline which was impossible to reconcile." ), Kopete::UI::Global::mainWidget() );
 	m_dontSync = false;
 }
 
@@ -662,6 +675,11 @@ void GroupWiseAccount::slotCSDisconnected()
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Disconnected from Groupwise server.";
 	myself()->setOnlineStatus( protocol()->groupwiseOffline );
 	setAllContactsStatus( protocol()->groupwiseOffline );
+	foreach( GroupWiseChatSession * chatSession, m_chatSessions ) {
+		chatSession->setClosed();
+	}
+	setAllContactsStatus( protocol()->groupwiseOffline );
+	client()->close();
 }
 
 void GroupWiseAccount::slotCSConnected()
@@ -815,7 +833,7 @@ void GroupWiseAccount::slotTLSReady( int secLayerCode )
 	// i don't know what secLayerCode is for...
 	Q_UNUSED( secLayerCode );
 	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
-	m_client->start( server(), port(), accountId(), password().cachedValue() );
+	m_client->start( server(), port(), accountId(), /*QLatin1String("bollax08")*/m_password );
 }
 
 void GroupWiseAccount::handleIncomingMessage( const ConferenceEvent & message )
@@ -835,6 +853,13 @@ void GroupWiseAccount::handleIncomingMessage( const ConferenceEvent & message )
 	GroupWiseContact * sender = contactForDN( message.user );
 	if ( !sender )
 		sender = createTemporaryContact( message.user );
+
+	// if we receive a message from an Offline contact, they are probably blocking us
+	// but we have to set their status to Unknown so that we can reply to them.
+	kDebug( GROUPWISE_DEBUG_GLOBAL) << "sender is: " << sender->onlineStatus().description() << endl;
+	if ( sender->onlineStatus() == protocol()->groupwiseOffline ) {
+		sender->setMessageReceivedOffline( true );
+	}
 
 	Kopete::ContactPtrList contactList;
 	contactList.append( sender );
@@ -1224,10 +1249,14 @@ void GroupWiseAccount::receiveContactCreated()
 		Kopete::Contact * c = contacts()[ protocol()->dnToDotted( cct->userId() ) ];
 		if ( c )
 		{
-			if ( c->metaContact()->contacts().count() == 1 )
-				Kopete::ContactList::self()->removeMetaContact( c->metaContact() );
-			else	
-				delete c;
+			// if the contact creation failed because it already exists on the server, don't delete it
+			if (!cct->statusCode() == NMERR_DUPLICATE_CONTACT )
+			{
+				if ( c->metaContact()->contacts().count() == 1 )
+					Kopete::ContactList::self()->removeMetaContact( c->metaContact() );
+				else	
+					delete c;
+			}
 		}
 
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Error,
@@ -1404,6 +1433,11 @@ void GroupWiseAccount::slotLeavingConference( GroupWiseChatSession * sess )
 		m_client->leaveConference( sess->guid() );
 	m_chatSessions.remove( sess );
 	kDebug( GROUPWISE_DEBUG_GLOBAL ) << "m_chatSessions now contains:" << m_chatSessions.count() << " managers";
+	Kopete::ContactPtrList members = sess->members();
+	foreach( Kopete::Contact * contact, members )
+	{
+		static_cast< GroupWiseContact * >( contact )->setMessageReceivedOffline( false );
+	}
 }
 
 void GroupWiseAccount::slotSetAutoReply()

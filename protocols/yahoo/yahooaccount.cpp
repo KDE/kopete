@@ -85,16 +85,16 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_webcam = 0;
 	m_chatChatSession = 0;
 
-	m_openInboxAction = new KAction( KIcon("mail"), i18n( "Open Inbo&x..." ), this );
+	m_openInboxAction = new KAction( KIcon("mail-folder-inbox"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect(m_openInboxAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenInbox() ) );
-	m_openYABAction = new KAction( KIcon("help-contents"), i18n( "Open &Addressbook..." ), this );
+	m_openYABAction = new KAction( KIcon("x-office-address-book"), i18n( "Open &Addressbook..." ), this );
         //, "m_openYABAction" );
 	QObject::connect(m_openYABAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenYAB() ) );
-	m_editOwnYABEntry = new KAction( KIcon("help-contents"), i18n( "&Edit my contact details..."), this );
+	m_editOwnYABEntry = new KAction( KIcon("document-properties"), i18n( "&Edit my contact details..."), this );
         //, "m_editOwnYABEntry" );
 	QObject::connect(m_editOwnYABEntry, SIGNAL( triggered(bool) ), this, SLOT( slotEditOwnYABEntry() ) );
-	m_joinChatAction = new KAction( KIcon("chat"), i18n( "&Join chat room..."), this );
+	m_joinChatAction = new KAction( KIcon("im-chat-room-join"), i18n( "&Join chat room..."), this );
         //, "m_joinChatAction" );
 	QObject::connect(m_joinChatAction, SIGNAL( triggered(bool) ), this, SLOT( slotJoinChatRoom() ) );
 
@@ -607,19 +607,17 @@ void YahooAccount::slotGoOffline()
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 }
 
-KActionMenu *YahooAccount::actionMenu()
+void YahooAccount::fillActionMenu( KActionMenu *actionMenu )
 {
 //	kDebug(YAHOO_GEN_DEBUG) ;
 
-	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
-	theActionMenu->addSeparator();
-	theActionMenu->addAction( m_openInboxAction );
-	theActionMenu->addAction( m_openYABAction );
-	theActionMenu->addAction( m_editOwnYABEntry );
-	theActionMenu->addAction( m_joinChatAction );
-
-	return theActionMenu;
+	actionMenu->addSeparator();
+	actionMenu->addAction( m_openInboxAction );
+	actionMenu->addAction( m_openYABAction );
+	actionMenu->addAction( m_editOwnYABEntry );
+	actionMenu->addAction( m_joinChatAction );
 }
 
 YahooContact *YahooAccount::contact( const QString &id )

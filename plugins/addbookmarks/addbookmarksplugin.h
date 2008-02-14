@@ -28,7 +28,7 @@ class BookmarksPlugin : public Kopete::Plugin
 {
 Q_OBJECT
 public:
-    BookmarksPlugin(QObject *parent, const QStringList &args);
+    BookmarksPlugin(QObject *parent, const QVariantList &args);
 
     ~BookmarksPlugin();
     
@@ -55,7 +55,5 @@ public slots:
 private slots:
     void slotAddKopeteBookmark( KIO::Job *transfer, const QByteArray &data );
 };
-
-typedef KGenericFactory<BookmarksPlugin> BookmarksPluginFactory;
 
 #endif

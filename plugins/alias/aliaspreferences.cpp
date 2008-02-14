@@ -12,6 +12,7 @@
  ***************************************************************************
 */
 
+#define QT3_SUPPORT
 #include <kpushbutton.h>
 #include <k3listview.h>
 #include <klocale.h>
@@ -22,10 +23,6 @@
 #include <kconfig.h>
 #include <qregexp.h>
 #include <qlayout.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include <Q3VBoxLayout>
-#include <QList>
 
 #include <kplugininfo.h>
 #include <kiconloader.h>
@@ -40,7 +37,8 @@
 #include "editaliasdialog.h"
 #include "aliaspreferences.h"
 
-typedef KGenericFactory<AliasPreferences> AliasPreferencesFactory;
+K_PLUGIN_FACTORY( AliasPreferencesFactory, registerPlugin<AliasPreferences>(); )
+K_EXPORT_PLUGIN( AliasPreferencesFactory( "kcm_kopete_alias" ) )
 
 class AliasItem : public Q3ListViewItem
 {
@@ -126,9 +124,7 @@ class ProtocolItem : public Q3ListViewItem
 		QString id;
 };
 
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_alias, AliasPreferencesFactory( "kcm_kopete_alias" ) )
-
-AliasPreferences::AliasPreferences( QWidget *parent, const QStringList &args )
+AliasPreferences::AliasPreferences( QWidget *parent, const QVariantList &args )
 	: KCModule( AliasPreferencesFactory::componentData(), parent, args )
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
@@ -316,7 +312,7 @@ void AliasPreferences::addAlias( QString &alias, QString &command, const Protoco
 
 void AliasPreferences::slotAddAlias()
 {
-	EditAliasDialog addDialog;
+	EditAliasDialog addDialog(this);
 	loadProtocols( &addDialog );
 	addDialog.addButton->setText( i18n("&Add") );
 
@@ -461,9 +457,11 @@ void AliasPreferences::slotEditAlias()
 
 void AliasPreferences::slotDeleteAliases()
 {
+        QList< Q3ListViewItem* > items = preferencesDialog->aliasList->selectedItems();
+        if( items.isEmpty())
+            return;
 	if( KMessageBox::warningContinueCancel(this, i18n("Are you sure you want to delete the selected aliases?"), i18n("Delete Aliases"), KGuiItem(i18n("Delete"), "edit-delete") ) == KMessageBox::Continue )
 	{
-		QList< Q3ListViewItem* > items = preferencesDialog->aliasList->selectedItems();
 		foreach( Q3ListViewItem *i, items)
 		{
 			ProtocolList protocols = static_cast<AliasItem*>( i )->protocolList;
@@ -484,6 +482,7 @@ void AliasPreferences::slotDeleteAliases()
 
 		save();
 	}
+        slotCheckAliasSelected();
 }
 
 void AliasPreferences::slotCheckAliasSelected()

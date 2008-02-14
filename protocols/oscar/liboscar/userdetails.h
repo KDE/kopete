@@ -48,6 +48,7 @@ public:
 	int userClass() const; //! User class accessor
 	Oscar::DWORD extendedStatus() const; //!User status accessor
 	int xtrazStatus() const;
+	Oscar::WORD iconType() const; //!Buddy icon type
 	Oscar::BYTE iconCheckSumType() const; //!Buddy icon hash type
 	QByteArray buddyIconHash() const; //! Buddy icon md5 hash accessor
 	QString clientName() const; //! Client name and version
@@ -121,6 +122,7 @@ private:
 	Oscar::DWORD m_dcLastInfoUpdateTime; /// DC last info update time - TLV 0x0C
 	Oscar::DWORD m_dcLastExtInfoUpdateTime; /// DC last exteneded info update time - TLV 0x0C
 	Oscar::DWORD m_dcLastExtStatusUpdateTime; /// DC last extended status update time - TLV 0x0C
+	Oscar::WORD m_iconType; /// The OSCAR icon type for the buddy icon TLV 0x1D
 	Oscar::BYTE m_iconChecksumType; /// The OSCAR checksum type for the buddy icon TLV 0x1D
 	QByteArray m_md5IconHash; /// Buddy Icon MD5 Hash - TLV 0x1D
 	QString m_availableMessage; /// Message a person can have when available - TLV 0x0D

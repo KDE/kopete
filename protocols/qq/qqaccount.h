@@ -57,7 +57,7 @@ public:
 	/**
 	 * Construct the context menu used for the status bar icon
 	 */
-	virtual KActionMenu* actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/** FIXME: connect is used only for testing, once the kwalletd fixed.
 	 * all the code is going to move to connectWithPassword

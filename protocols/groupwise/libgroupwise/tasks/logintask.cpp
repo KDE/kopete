@@ -78,31 +78,31 @@ bool LoginTask::take( Transfer * transfer )
 	// CREATE CONTACT LIST
 	// locate contact list
 	Field::MultiField * contactList = loginResponseFields.findMultiField( NM_A_FA_CONTACT_LIST );
-	if ( !contactList )
+	if ( contactList )
 	{
-		setError( Protocol );
-		return true;
+		Field::FieldList contactListFields = contactList->fields();
+		Field::MultiField * container;
+		// read folders
+		for ( Field::FieldListIterator it = contactListFields.find( NM_A_FA_FOLDER );
+				it != contactListFields.end();
+				it = contactListFields.find( ++it, NM_A_FA_FOLDER ) )
+		{
+			container = static_cast<Field::MultiField *>( *it );
+			extractFolder( container );
+		}
+
+		// read contacts
+		for ( Field::FieldListIterator it = contactListFields.find( NM_A_FA_CONTACT );
+				it != contactListFields.end();
+				it = contactListFields.find( ++it, NM_A_FA_CONTACT ) )
+		{
+			container = static_cast<Field::MultiField *>( *it );
+			extractContact( container );
+		}
 	}
-	Field::FieldList contactListFields = contactList->fields();
-	Field::MultiField * container;
-	// read folders
-	for ( Field::FieldListIterator it = contactListFields.find( NM_A_FA_FOLDER );
-		  it != contactListFields.end();
-		  it = contactListFields.find( ++it, NM_A_FA_FOLDER ) )
-	{
-		container = static_cast<Field::MultiField *>( *it );
-		extractFolder( container );
-	}
-		  
-	// read contacts
-	for ( Field::FieldListIterator it = contactListFields.find( NM_A_FA_CONTACT );
-		  it != contactListFields.end();
-		  it = contactListFields.find( ++it, NM_A_FA_CONTACT ) )
-	{
-		container = static_cast<Field::MultiField *>( *it );
-		extractContact( container );
-	}
-	
+
+	extractKeepalivePeriod( loginResponseFields );
+
 	setSuccess();
 	
 	return true;
@@ -173,7 +173,7 @@ ContactDetails LoginTask::extractUserDetails( Field::FieldList & fields )
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_AUTH_ATTRIBUTE ) ) )
 		cd.authAttribute = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_DN ) ) )
-		cd.dn =sf->value().toString().toLower(); // HACK: lowercased DN
+		cd.dn = sf->value().toString().toLower(); // HACK: lowercased DN
 	if ( ( sf = fields.findSingleField ( "CN" ) ) )
 		cd.cn = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( "Given Name" ) ) )
@@ -189,22 +189,49 @@ ContactDetails LoginTask::extractUserDetails( Field::FieldList & fields )
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_MESSAGE_BODY ) ) )
 		cd.awayMessage = sf->value().toString();
 	Field::MultiField * mf;
-	QHash< QString, QString > propHash;
+	QMap< QString, QVariant > propMap;
 	if ( ( mf = fields.findMultiField ( NM_A_FA_INFO_DISPLAY_ARRAY ) ) )
 	{
 		Field::FieldList fl = mf->fields();
 		const Field::FieldListIterator end = fl.end();
 		for ( Field::FieldListIterator it = fl.begin(); it != end; ++it )
 		{
-			Field::SingleField * propField = static_cast<Field::SingleField *>( *it );
-			QString propName = propField->tag();
-			QString propValue = propField->value().toString();
-			propHash.insert( propName, propValue );
+			Field::SingleField * propField = dynamic_cast<Field::SingleField *>( *it );
+			if ( propField )
+			{
+				QString propName = propField->tag();
+				QString propValue = propField->value().toString();
+				propMap.insert( propName, propValue );
+			}
+			else
+			{
+				Field::MultiField * propList = dynamic_cast<Field::MultiField*>( *it );
+				if ( propList )
+				{
+					// Hello A Nagappan. GW gave us a multiple field where we previously got a single field
+					QString parentName = propList->tag();
+					Field::FieldList propFields = propList->fields();
+					const Field::FieldListIterator end = propFields.end();
+					for ( Field::FieldListIterator it = propFields.begin(); it != end; ++it )
+					{
+						propField = dynamic_cast<Field::SingleField *>( *it );
+						if ( propField /*&& propField->tag() == parentName */)
+						{
+							QString propValue = propField->value().toString();
+							QString contents = propMap[ propField->tag() ].toString();
+							if ( !contents.isEmpty() )
+								contents.append( ", " );
+							contents.append( propField->value().toString());
+							propMap.insert( propField->tag(), contents );
+						}
+					}
+				}
+			}
 		}
 	}
-	if ( !propHash.empty() )
+	if ( !propMap.empty() )
 	{
-		cd.properties = propHash;
+		cd.properties = propMap;
 	}
 	return cd;
 }
@@ -311,6 +338,23 @@ void LoginTask::extractCustomStatuses( Field::FieldList & fields )
 					}
 					emit gotCustomStatus( custom );
 				}
+			}
+		}
+	}
+}
+
+void LoginTask::extractKeepalivePeriod( Field::FieldList & fields )
+{
+	Field::FieldListIterator it = fields.find( NM_A_UD_KEEPALIVE );
+	if ( it != fields.end() )
+	{
+		if ( Field::SingleField * sf = dynamic_cast<Field::SingleField *>( *it ) )
+		{
+			bool ok;
+			int period = sf->value().toInt( &ok );
+			if ( ok )
+			{
+				emit gotKeepalivePeriod( period );
 			}
 		}
 	}

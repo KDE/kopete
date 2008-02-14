@@ -30,8 +30,8 @@
 #include "oscarstatusmanager.h"
 
 AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::MetaContact* parent,
-                        const QString& icon, const OContact& ssiItem )
-: AIMContactBase(account, name, parent, icon, ssiItem )
+                        const QString& icon )
+: AIMContactBase(account, name, parent, icon )
 {
 	mProtocol=static_cast<ICQProtocol *>(protocol());
 	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::AIM ) );
@@ -124,7 +124,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	if ( presence.type() == Oscar::Presence::Online )
 	{
-		removeProperty( mProtocol->awayMessage );
+		removeProperty( mProtocol->statusMessage );
 		m_haveAwayMessage = false;
 	}
 	else

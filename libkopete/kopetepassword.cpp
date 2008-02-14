@@ -34,17 +34,26 @@
 #include <kstringhandler.h>
 #include <kpassworddialog.h>
 
-class Kopete::Password::Private : public QSharedData
+class Kopete::Password::Private
 {
 public:
 	Private( const QString &group, bool blanksAllowed )
-	 : configGroup( group ), remembered( false ),
+	 : refCount( 1 ), configGroup( group ), remembered( false ),
 	 isWrong( false ), allowBlankPassword( blanksAllowed )
 	{
 	}
-	~Private() 
+	Private *incRef()
 	{
+		++refCount;
+		return this;
 	}
+	void decRef()
+	{
+		if( --refCount == 0 )
+			delete this;
+	}
+	/** Reference count */
+	int refCount;
 	/** Group to use for KConfig and KWallet */
 	const QString configGroup;
 	/** Is the password being remembered? */
@@ -128,10 +137,10 @@ public:
 			return pwd;
 		}
 
-		if ( mWallet && mWallet->readPassword( mPassword.d->configGroup, pwd ) == 0 && !pwd.isNull() )
+		if ( mWallet && mWallet->readPassword( mPassword.d->configGroup, pwd ) == 0 && !pwd.isEmpty() )
 			return pwd;
 
-		if ( mPassword.d->remembered && !mPassword.d->passwordFromKConfig.isNull() )
+		if ( mPassword.d->remembered && !mPassword.d->passwordFromKConfig.isEmpty() )
 			return mPassword.d->passwordFromKConfig;
 
 		return QString();
@@ -322,17 +331,20 @@ Kopete::Password::Password( const QString &configGroup, bool allowBlankPassword 
 }
 
 Kopete::Password::Password( const Password &other )
- : QObject( 0 ), d( other.d )
+ : QObject( 0 ), d( other.d->incRef() )
 {
 }
 
 Kopete::Password::~Password()
 {
+	d->decRef();
 }
 
 Kopete::Password &Kopete::Password::operator=( Password &other )
 {
 	if ( d == other.d ) return *this;
+	d->decRef();
+	d = other.d->incRef();
 	return *this;
 }
 

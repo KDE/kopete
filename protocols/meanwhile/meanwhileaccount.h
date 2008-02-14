@@ -51,7 +51,7 @@ public:
 
     virtual void disconnect(Kopete::Account::DisconnectReason reason);
 
-    virtual KActionMenu *actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
     /** Get the server host name */
     QString getServerName();

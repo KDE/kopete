@@ -21,9 +21,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QPixmap>
-
-#include <Q3VBoxLayout>
-#include <q3vbox.h>
+#include <QVBoxLayout>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -35,7 +33,7 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	setButtons( KDialog::Close );
 	setDefaultButton( KDialog::Close );
 	showButtonSeparator( true );
-	setWindowFlags( Qt::WDestructiveClose );
+	setAttribute( Qt::WA_DeleteOnClose  );
 
 	setInitialSize( QSize(320,290) );
 	
@@ -45,7 +43,7 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	QWidget *page = new QWidget(this);
 	setMainWidget(page);
 
-	Q3VBoxLayout *topLayout = new Q3VBoxLayout( page, 0, spacingHint() );	
+	QVBoxLayout *topLayout = new QVBoxLayout( page );	
 	mImageContainer = new Kopete::WebcamWidget( page );
 	mImageContainer->setMinimumSize(320,240);
 	mImageContainer->setText( i18n( "No webcam image received" ) );
@@ -86,7 +84,7 @@ void TestbedWebcamDialog::slotUpdateImage()
 	mVideoDevicePool->getFrame();
 	kDebug() << "Getting image";
 	mVideoDevicePool->getImage(&mImage);
-	mImageContainer->updatePixmap( QPixmap( mImage ) );
+	mImageContainer->updatePixmap( QPixmap::fromImage( mImage.mirrored (mVideoDevicePool->getImageAsMirror(), false) ) );
 #endif
 }
 

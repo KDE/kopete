@@ -22,14 +22,12 @@
 #include "irccontact.h"
 #include "ircprotocol.h"
 
+#include "kirccontext.h"
 #include "kircclientsocket.h"
-#include "kircentitymanager.h"
 #include "kircevent.h"
 #include "kircstdmessages.h"
 
 #include "kopeteaccountmanager.h"
-#include "kopeteaway.h"
-#include "kopeteawayaction.h"
 #include "kopetechatsessionmanager.h"
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
@@ -38,7 +36,7 @@
 #include "kopeteview.h"
 #include "kopetepassword.h"
 
-#include <kaction.h>
+#include <kactionmenu.h>
 #include <kconfig.h>
 #include <kcompletionbox.h>
 #include <kdebug.h>
@@ -60,15 +58,19 @@ class IRCAccount::Private
 {
 public:
 	Private()
-		: manager(0), client(0),
-		  server(0), self(0),
-		  commandSource(0),
-		  awayAction(0), joinChannelAction(0), searchChannelAction(0)
+		: manager(0)
+		, client(0)
+		, server(0)
+		, self(0)
+		, commandSource(0)
+		, joinChannelAction(0)
+		, searchChannelAction(0)
 	{ }
 
 	Kopete::ChatSession *manager;
 	QString autoConnect;
 
+	KIrc::Context *clientContext;
 	KIrc::ClientSocket *client;
 	IRC::Network network;
 	int currentHost;
@@ -83,8 +85,6 @@ public:
 	QMap<QString, QString> customCtcp;
 	Kopete::ChatSession *commandSource;
 
-	Kopete::AwayAction *awayAction;
-
 	KAction *joinChannelAction;
 	KAction *searchChannelAction;
 };
@@ -93,7 +93,8 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 	: PasswordedAccount(IRCProtocol::self(), accountId, true),
 	  d( new Private )
 {
-	d->client = new KIrc::ClientSocket(this);
+	d->clientContext = new KIrc::Context(this);
+	d->client = new KIrc::ClientSocket(d->clientContext);
 	d->autoConnect = autoChan;
 	d->currentHost = 0;
 
@@ -293,7 +294,7 @@ void IRCAccount::setCodecFromMib(int mib)
 {
 	kDebug(14120) ;
 	configGroup()->writeEntry(Config::CODECMIB, mib);
-	d->client->setDefaultCodec(QTextCodec::codecForMib(mib));
+	d->clientContext->setDefaultCodec(QTextCodec::codecForMib(mib));
 }
 
 QTextCodec *IRCAccount::codec() const
@@ -433,29 +434,28 @@ const QStringList IRCAccount::connectCommands() const
 	return configGroup()->readEntry("ConnectCommands", QStringList());
 }
 
-KActionMenu *IRCAccount::actionMenu()
+void IRCAccount::fillActionMenu( KActionMenu *actionMenu )
 {
 	kDebug(14120) ;
 	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( myself()->onlineStatus().description() );
 
-	KActionMenu *mActionMenu = Account::actionMenu();
+	Account::fillActionMenu( actionMenu );
 
 	d->joinChannelAction->setEnabled( isConnected() );
 	d->searchChannelAction->setEnabled( isConnected() );
 
-	mActionMenu->addSeparator();
-	mActionMenu->addAction(d->joinChannelAction);
-	mActionMenu->addAction(d->searchChannelAction);
+	actionMenu->addSeparator();
+	actionMenu->addAction(d->joinChannelAction);
+	actionMenu->addAction(d->searchChannelAction);
 /*
-	mActionMenu->insert( new KAction ( i18n("Show Server Window"), QString(), 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
+	actionMenu->insert( new KAction ( i18n("Show Server Window"), QString(), 0, this, SLOT(slotShowServerWindow()), actionMenu ) );
 
 //	if (d->client->isConnected() && d->client->useSSL())
 	{
-		mActionMenu->insert( new KAction ( i18n("Show Security Information"), "", 0, d->client,
-			SLOT(showInfoDialog()), mActionMenu ) );
+		actionMenu->insert( new KAction ( i18n("Show Security Information"), "", 0, d->client,
+			SLOT(showInfoDialog()), actionMenu ) );
 	}
 */
-	return mActionMenu;
 }
 
 void IRCAccount::connectWithPassword(const QString &password)
@@ -546,12 +546,6 @@ void IRCAccount::setAway(bool isAway, const QString &awayMessage)
 void IRCAccount::slotShowServerWindow()
 {
 	d->server->startChat();
-}
-
-bool IRCAccount::isConnected()
-{
-	kDebug(14120) ;
-	return d->client->isConnected();
 }
 
 void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus)
@@ -663,7 +657,7 @@ IRCContact *IRCAccount::getContact(const KIrc::Entity::Ptr &entity, MetaContact 
 void IRCAccount::destroyed(IRCContact *contact)
 {
 	kDebug(14120) ;
-	d->contacts.remove(contact);
+	d->contacts.removeAll(contact);
 }
 
 void IRCAccount::receivedEvent(KIrc::Event *event)

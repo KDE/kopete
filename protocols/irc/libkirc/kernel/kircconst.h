@@ -35,31 +35,6 @@ extern const QRegExp sm_RemoveLinefeeds;
 extern const QString URL_NICKNAME;
 extern const QString URL_REALNAME;
 
-// Static strings
-extern const QByteArray AWAY;
-extern const QByteArray ERROR;
-extern const QByteArray INVITE;
-extern const QByteArray ISON;
-extern const QByteArray JOIN;
-extern const QByteArray KICK;
-extern const QByteArray LIST;
-extern const QByteArray MODE;
-extern const QByteArray MOTD;
-extern const QByteArray NICK;
-extern const QByteArray NOTICE;
-extern const QByteArray PART;
-extern const QByteArray PASS;
-extern const QByteArray PING;
-extern const QByteArray PONG;
-extern const QByteArray PRIVMSG;
-extern const QByteArray QUIT;
-extern const QByteArray SQUIT;
-extern const QByteArray TOPIC;
-extern const QByteArray USER;
-extern const QByteArray WHO;
-extern const QByteArray WHOIS;
-extern const QByteArray WHOWAS;
-
 // Static codecs
 extern QTextCodec *UTF8;
 

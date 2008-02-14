@@ -353,6 +353,9 @@
      <property name="alignment" >
       <set>Qt::AlignTop</set>
      </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>

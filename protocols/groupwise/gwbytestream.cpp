@@ -18,11 +18,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qobject.h>
-#include <kdebug.h>
-#include <k3resolver.h>
-
 #include "gwbytestream.h"
+#include <ksocketfactory.h>
+
+#include <kdebug.h>
+
 #include "gwerror.h"
 
 KNetworkByteStream::KNetworkByteStream ( QObject *parent )
@@ -33,33 +33,36 @@ KNetworkByteStream::KNetworkByteStream ( QObject *parent )
 	// reset close tracking flag
 	mClosing = false;
 
-	mSocket = new KNetwork::KBufferedSocket;
-
-	// make sure we get a signal whenever there's data to be read
-	mSocket->enableRead ( true );
-
-	// connect signals and slots
-	QObject::connect ( mSocket, SIGNAL ( gotError ( int ) ), this, SLOT ( slotError ( int ) ) );
-	QObject::connect ( mSocket, SIGNAL ( connected ( const KNetwork::KResolverEntry& ) ), this, SLOT ( slotConnected () ) );
-	QObject::connect ( mSocket, SIGNAL ( closed () ), this, SLOT ( slotConnectionClosed () ) );
-	QObject::connect ( mSocket, SIGNAL ( readyRead () ), this, SLOT ( slotReadyRead () ) );
-	QObject::connect ( mSocket, SIGNAL ( bytesWritten ( qint64 ) ), this, SLOT ( slotBytesWritten ( qint64 ) ) );
+	mSocket = 0;
 
 }
 
 bool KNetworkByteStream::connect ( QString host, QString service )
 {
 	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Connecting to " << host << ", service " << service;
+	mSocket = KSocketFactory::connectToHost( "gwims", host, service.toUInt(), this );
 
-	return socket()->connect ( host, service );
-
+	QObject::connect( mSocket, SIGNAL(error(QAbstractSocket::SocketError)),
+			this, SLOT(slotError(QAbstractSocket::SocketError)) );
+	QObject::connect( mSocket, SIGNAL(connected()), this, SLOT(slotConnected()) );
+	QObject::connect( mSocket, SIGNAL(disconnected()), this, SLOT(slotConnectionClosed()) );
+	QObject::connect( mSocket, SIGNAL(readyRead()), this, SLOT(slotReadyRead()) );
+	QObject::connect( mSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)) );
+	return true;
 }
 
 bool KNetworkByteStream::isOpen () const
 {
 
 	// determine if socket is open
-	return socket()->isOpen ();
+	if ( socket() )
+	{
+		return socket()->isOpen ();
+	}
+	else
+	{
+		return false;
+	}
 
 }
 
@@ -69,7 +72,8 @@ void KNetworkByteStream::close ()
 
 	// close the socket and set flag that we are closing it ourselves
 	mClosing = true;
-	socket()->close();
+	if ( socket() )
+		socket()->close();
 
 }
 
@@ -84,7 +88,7 @@ int KNetworkByteStream::tryWrite ()
 
 }
 
-KNetwork::KBufferedSocket *KNetworkByteStream::socket () const
+QTcpSocket *KNetworkByteStream::socket () const
 {
 
 	return mSocket;
@@ -93,9 +97,6 @@ KNetwork::KBufferedSocket *KNetworkByteStream::socket () const
 
 KNetworkByteStream::~KNetworkByteStream ()
 {
-
-	delete mSocket;
-
 }
 
 void KNetworkByteStream::slotConnected ()
@@ -126,13 +127,7 @@ void KNetworkByteStream::slotConnectionClosed ()
 
 void KNetworkByteStream::slotReadyRead ()
 {
-
-	// stuff all available data into our buffers
-	QByteArray readBuffer ( socket()->bytesAvailable (), 0 );
-
-	socket()->read ( readBuffer.data (), readBuffer.size () );
-
-	appendRead ( readBuffer );
+	appendRead ( socket()->readAll() );
 
 	emit readyRead ();
 
@@ -145,12 +140,10 @@ void KNetworkByteStream::slotBytesWritten ( qint64 bytes )
 
 }
 
-void KNetworkByteStream::slotError ( int code )
+void KNetworkByteStream::slotError ( QAbstractSocket::SocketError code )
 {
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Socket error " << code;
-
+	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Socket error " <<  mSocket->errorString() <<  "' - Code : " << code;
 	emit error ( code );
-
 }
 
 #include "gwbytestream.moc"

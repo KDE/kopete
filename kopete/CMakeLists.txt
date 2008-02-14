@@ -1,6 +1,7 @@
 
-add_subdirectory( addaccountwizard ) 
-add_subdirectory( identity ) 
+add_subdirectory( addaccountwizard )
+add_subdirectory( statusmenu )
+add_subdirectory( identity )
 add_subdirectory( config )
 add_subdirectory( chatwindow )
 add_subdirectory( kconf_update ) 
@@ -9,6 +10,8 @@ include_directories(
 ${KOPETE_INCLUDES} 
 ${CMAKE_CURRENT_SOURCE_DIR}/addaccountwizard 
 ${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard
+${CMAKE_CURRENT_SOURCE_DIR}/statusmenu/
+${CMAKE_CURRENT_BINARY_DIR}/statusmenu/
 ${CMAKE_CURRENT_SOURCE_DIR}/identity 
 ${CMAKE_CURRENT_BINARY_DIR}/identity
 ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/ 
@@ -66,12 +69,12 @@ kde4_add_executable(kopete_bin ${kopete_SRCS})
 set_target_properties(kopete_bin PROPERTIES OUTPUT_NAME kopete)
 
 target_link_libraries(kopete_bin 
-	${KDE4_KDE3SUPPORT_LIBS} 
 	${KDE4_KTEXTEDITOR_LIBS} 
 	${KDE4_KNOTIFYCONFIG_LIBS} 
 	${BLITZ_LIBRARIES}
 	kopete 
 	kopeteaddaccountwizard
+	kopetestatusmenu
 	kopeteidentity)
 
 install(TARGETS kopete_bin  DESTINATION ${BIN_INSTALL_DIR} )
@@ -81,6 +84,7 @@ install(TARGETS kopete_bin  DESTINATION ${BIN_INSTALL_DIR} )
 
 install( FILES kopete.desktop  DESTINATION ${XDG_APPS_INSTALL_DIR})
 install( FILES kopeteui.rc kopete.notifyrc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
+install( FILES kopeterc DESTINATION ${CONFIG_INSTALL_DIR} )
 install( FILES org.kde.Kopete.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}   )

@@ -37,7 +37,6 @@
 #include "kopetemetacontact.h"
 #include "kopetechatsession.h"
 #include "kopeteonlinestatusmanager.h"
-#include "kopeteaway.h"
 #include "kopeteglobal.h"
 #include "kopeteprotocol.h"
 #include "kopeteplugin.h"
@@ -52,18 +51,16 @@
 #include "jabbereditaccountwidget.h"
 #include "jabbercapabilitiesmanager.h"
 #include "jabbertransport.h"
-#include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
-#include "dlgjabberregister.h"
+#include "dlgregister.h"
 
 JabberProtocol *JabberProtocol::protocolInstance = 0;
 
-typedef KGenericFactory<JabberProtocol> JabberProtocolFactory;
+K_PLUGIN_FACTORY( JabberProtocolFactory, registerPlugin<JabberProtocol>(); )
+K_EXPORT_PLUGIN( JabberProtocolFactory( "kopete_jabber" ) )
 
-K_EXPORT_COMPONENT_FACTORY( kopete_jabber, JabberProtocolFactory( "kopete_jabber" )  )
-
-JabberProtocol::JabberProtocol (QObject * parent, const QStringList &)
+JabberProtocol::JabberProtocol (QObject * parent, const QVariantList &)
 : Kopete::Protocol( JabberProtocolFactory::componentData(), parent),
 	JabberKOSChatty(Kopete::OnlineStatus::Online,        100, this, JabberFreeForChat, QStringList("jabber_chatty"), i18n ("Free for Chat"), i18n ("Free for Chat"), Kopete::OnlineStatusManager::FreeForChat, Kopete::OnlineStatusManager::HasStatusMessage ),
 	JabberKOSOnline(Kopete::OnlineStatus::Online,         90, this, JabberOnline, QStringList(), i18n ("Online"), i18n ("Online"), Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasStatusMessage ),
@@ -153,13 +150,13 @@ JabberProtocol::~JabberProtocol ()
 
 AddContactPage *JabberProtocol::createAddContactWidget (QWidget * parent, Kopete::Account * i)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create Add Contact  Widget\n";
+	kDebug (JABBER_DEBUG_GLOBAL) << "Create Add Contact  Widget";
 	return new JabberAddContactPage (i, parent);
 }
 
 KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Account * account, QWidget * parent)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Edit Account Widget\n";
+	kDebug (JABBER_DEBUG_GLOBAL) << "Edit Account Widget";
 	JabberAccount *ja=dynamic_cast < JabberAccount * >(account);
 	if(ja || !account)
 		return new JabberEditAccountWidget (this,ja , parent);
@@ -168,7 +165,7 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 		JabberTransport *transport = dynamic_cast < JabberTransport * >(account);
 		if(!transport)
 			return 0L;
-		dlgJabberRegister *registerDialog = new dlgJabberRegister (transport->account(), transport->myself()->contactId());
+		dlgRegister *registerDialog = new dlgRegister (transport->account(), transport->myself()->contactId());
 		registerDialog->show (); 
 		registerDialog->raise ();
 		return 0l; //we make ourself our own dialog, not an editAccountWidget.
@@ -177,7 +174,7 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 
 Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create New Account. ID: " << accountId << "\n";
+	kDebug (JABBER_DEBUG_GLOBAL) << "Create New Account. ID: " << accountId;
 	if( Kopete::AccountManager::self()->findAccount( pluginId() , accountId ) )
 		return 0L;  //the account may already exist if greated just above
 

@@ -19,6 +19,8 @@
 #include "oscarutils.h"
 
 #include <QHostAddress>
+#include <QTextCodec>
+
 #include <kdebug.h>
 
 

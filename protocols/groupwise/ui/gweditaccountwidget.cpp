@@ -35,7 +35,6 @@
 #include "kopetepasswordedaccount.h"
 #include "kopetepasswordwidget.h"
 
-#include "ui_gwaccountpreferences.h"
 #include "gwaccount.h"
 #include "gwerror.h"
 #include "gwprotocol.h"
@@ -47,31 +46,29 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete:
 {
 	kDebug(GROUPWISE_DEBUG_GLOBAL) ;
 	m_layout = new QVBoxLayout( this );
-	m_preferencesDialog = new Ui::GroupWiseAccountPreferences;
 	QWidget * wid = new QWidget;
-	m_preferencesDialog->setupUi( wid );
+	m_ui.setupUi( wid );
 	m_layout->addWidget( wid );
-	connect( m_preferencesDialog->m_password, SIGNAL( changed() ), this, SLOT( configChanged() ) );
-	connect( m_preferencesDialog->m_server, SIGNAL( textChanged( const QString & ) ), this, SLOT( configChanged() ) );
-	connect( m_preferencesDialog->m_port, SIGNAL( valueChanged( int ) ), this, SLOT( configChanged() ) );
+	connect( m_ui.password, SIGNAL( changed() ), this, SLOT( configChanged() ) );
+	connect( m_ui.server, SIGNAL( textChanged( const QString & ) ), this, SLOT( configChanged() ) );
+	connect( m_ui.port, SIGNAL( valueChanged( int ) ), this, SLOT( configChanged() ) );
 	if ( account() )
 		reOpen();
 	else
 	{
 		// look for a default server and port setting
 		KConfigGroup config = KGlobal::config()->group("GroupWise Messenger");
-		m_preferencesDialog->m_server->setText( config.readEntry( "DefaultServer" ) );
-		m_preferencesDialog->m_port->setValue( config.readEntry( "DefaultPort", 8300 ) );
+		m_ui.server->setText( config.readEntry( "DefaultServer" ) );
+		m_ui.port->setValue( config.readEntry( "DefaultPort", 8300 ) );
 	}
-	QWidget::setTabOrder( m_preferencesDialog->m_userId, m_preferencesDialog->m_password->mRemembered );
-	QWidget::setTabOrder( m_preferencesDialog->m_password->mRemembered, m_preferencesDialog->m_password->mPassword );
-	QWidget::setTabOrder( m_preferencesDialog->m_password->mPassword, m_preferencesDialog->m_autoConnect );
+	QWidget::setTabOrder( m_ui.userId, m_ui.password->mRemembered );
+	QWidget::setTabOrder( m_ui.password->mRemembered, m_ui.password->mPassword );
+	QWidget::setTabOrder( m_ui.password->mPassword, m_ui.autoConnect );
 
 }
 
 GroupWiseEditAccountWidget::~GroupWiseEditAccountWidget()
 {
-	delete m_preferencesDialog;
 }
 
 GroupWiseAccount *GroupWiseEditAccountWidget::account ()
@@ -83,16 +80,16 @@ void GroupWiseEditAccountWidget::reOpen()
 {
 	kDebug(GROUPWISE_DEBUG_GLOBAL) ;
 	
-	m_preferencesDialog->m_password->load( &account()->password () );
+	m_ui.password->load( &account()->password () );
 	// Kopete at least <=0.90 doesn't support changing account IDs
-	m_preferencesDialog->m_userId->setReadOnly( true );
-	m_preferencesDialog->m_userId->setText( account()->accountId() );
-	m_preferencesDialog->m_password->load( &account()->password() );
-	m_preferencesDialog->m_server->setText( account()->configGroup()->readEntry( "Server") );
+	m_ui.userId->setReadOnly( true );
+	m_ui.userId->setText( account()->accountId() );
+	m_ui.password->load( &account()->password() );
+	m_ui.server->setText( account()->configGroup()->readEntry( "Server") );
 	
-	m_preferencesDialog->m_port->setValue( account()->configGroup()->readEntry( "Port", 0 ) );
-	m_preferencesDialog->m_autoConnect->setChecked( account()->excludeConnect() );
-	m_preferencesDialog->m_alwaysAccept->setChecked( account()->configGroup()->readEntry( "AlwaysAcceptInvitations", false ) );
+	m_ui.port->setValue( account()->configGroup()->readEntry( "Port", 0 ) );
+	m_ui.autoConnect->setChecked( account()->excludeConnect() );
+	m_ui.alwaysAccept->setChecked( account()->configGroup()->readEntry( "AlwaysAcceptInvitations", false ) );
 }
 
 Kopete::Account* GroupWiseEditAccountWidget::apply()
@@ -100,7 +97,7 @@ Kopete::Account* GroupWiseEditAccountWidget::apply()
 	kDebug(GROUPWISE_DEBUG_GLOBAL) ;
 		
 	if ( !account() )
-		setAccount( new GroupWiseAccount( GroupWiseProtocol::protocol(), m_preferencesDialog->m_userId->text() ) );
+		setAccount( new GroupWiseAccount( GroupWiseProtocol::protocol(), m_ui.userId->text() ) );
 	
 	if(account()->isConnected())
 	{
@@ -116,19 +113,19 @@ Kopete::Account* GroupWiseEditAccountWidget::apply()
 
 bool GroupWiseEditAccountWidget::validateData()
 {
-    return !( m_preferencesDialog->m_userId->text().isEmpty() || m_preferencesDialog->m_server->text().isEmpty() );
+    return !( m_ui.userId->text().isEmpty() || m_ui.server->text().isEmpty() );
 }
 
 void GroupWiseEditAccountWidget::writeConfig()
 {
 	kDebug(GROUPWISE_DEBUG_GLOBAL) ;
-	account()->configGroup()->writeEntry( "Server", m_preferencesDialog->m_server->text() );
-	account()->configGroup()->writeEntry( "Port", QString::number( m_preferencesDialog->m_port->value() ) );
+	account()->configGroup()->writeEntry( "Server", m_ui.server->text() );
+	account()->configGroup()->writeEntry( "Port", QString::number( m_ui.port->value() ) );
 	account()->configGroup()->writeEntry( "AlwaysAcceptInvitations", 
-			m_preferencesDialog->m_alwaysAccept->isChecked() ? "true" : "false" );
+			m_ui.alwaysAccept->isChecked() ? "true" : "false" );
 	
-	account()->setExcludeConnect( m_preferencesDialog->m_autoConnect->isChecked() );
-	m_preferencesDialog->m_password->save( &account()->password() );
+	account()->setExcludeConnect( m_ui.autoConnect->isChecked() );
+	m_ui.password->save( &account()->password() );
 	settings_changed = false;
 }
 

@@ -27,6 +27,7 @@ ui/xtrazicqstatuseditor.cpp
 ui/xtrazstatusdelegate.cpp
 ui/editorwithicon.cpp
 ui/iconcells.cpp
+ui/infocombobox.cpp
 )
 
 kde4_add_ui_files(kopete_icq_ui_SRCS

@@ -13,17 +13,18 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef XMPP_LIVEROSTERITEM_H
 #define XMPP_LIVEROSTERITEM_H
 
+#include <iris_export.h>
+
 #include "xmpp_status.h"
 #include "xmpp_resourcelist.h"
 #include "xmpp_rosteritem.h"
-#include <iris_export.h>
 
 namespace XMPP
 {
@@ -53,7 +54,7 @@ namespace XMPP
 		ResourceList v_resourceList;
 		Status v_lastUnavailableStatus;
 		bool v_flagForDelete;
-#ifdef Q_OS_WIN
+#ifdef IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
     public:
         bool operator==(const LiveRosterItem&) const {
             qWarning("LiveRosterItem::operator==(const LiveRosterItem&) was called");
@@ -61,10 +62,9 @@ namespace XMPP
         }
 #endif
 	};
-
-#ifdef Q_OS_WIN
-    inline uint qHash(const LiveRosterItem) {
-        qWarning("inline uint qHash(const LiveRosterItem) was called");
+#ifdef IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
+    inline uint qHash(const LiveRosterItem&) {
+        qWarning("inline uint qHash(const LiveRosterItem&) was called");
         return 0;
     }
 #endif

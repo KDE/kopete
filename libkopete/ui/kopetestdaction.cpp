@@ -84,12 +84,12 @@ KAction * KopeteStdAction::createAction(const QString &text, const KIcon &icon, 
 
 KAction * KopeteStdAction::chat( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "Start &Chat..." ), KIcon("mail"), recvr, slot, parent, name );
+	return createAction( i18n( "Start &Chat..." ), KIcon("mail-message-new"), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::sendMessage( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "&Send Single Message..." ), KIcon( "mail" ), recvr, slot, parent, name );
+	return createAction( i18n( "&Send Single Message..." ), KIcon( "mail-message-new" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::contactInfo( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
@@ -104,17 +104,17 @@ KAction * KopeteStdAction::sendFile( const QObject *recvr, const char *slot, KAc
 
 KAction * KopeteStdAction::viewHistory( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "View &History..." ), KIcon( "history" ), recvr, slot, parent, name );
+	return createAction( i18n( "View &History..." ), KIcon( "view-history" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::addGroup( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "&Create Group..." ), KIcon( "folder" ), recvr, slot, parent, name );
+	return createAction( i18n( "&Create Group..." ), KIcon( "folder-new" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::changeMetaContact( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "Cha&nge Meta Contact..." ), KIcon( "move" ), recvr, slot, parent, name );
+	return createAction( i18n( "Cha&nge Meta Contact..." ), KIcon( "transform-move" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::deleteContact( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
@@ -127,7 +127,7 @@ KAction * KopeteStdAction::deleteContact( const QObject *recvr, const char *slot
 
 KAction * KopeteStdAction::changeAlias( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )
 {
-	return createAction( i18n( "Change A&lias..." ), KIcon( "signature" ), recvr, slot, parent, name );
+	return createAction( i18n( "Change A&lias..." ), KIcon( "edit-rename" ), recvr, slot, parent, name );
 }
 
 KAction * KopeteStdAction::blockContact( const QObject *recvr, const char *slot, KActionCollection* parent, const char *name )

@@ -69,10 +69,10 @@
 #include <QSplitter>
 #include <kactioncollection.h>
 
-typedef KGenericFactory<EmailWindowPlugin> EmailWindowPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_emailwindow, EmailWindowPluginFactory( "kopete_emailwindow" )  )
+K_PLUGIN_FACTORY( EmailWindowPluginFactory, registerPlugin<EmailWindowPlugin>(); )
+K_EXPORT_PLUGIN( EmailWindowPluginFactory( "kopete_emailwindow" ) )
 
-EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const QStringList &) :
+EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const QVariantList &) :
 	Kopete::ViewPlugin( EmailWindowPluginFactory::componentData(), parent )
 {}
 
@@ -229,15 +229,15 @@ void KopeteEmailWindow::initActions(void)
 	KStandardAction::paste( d->editPart->widget(), SLOT( paste() ), coll );
 
 	KAction* action;
-	action = new KAction( KIcon("character-set"), i18n( "&Set Font..." ), coll );
+	action = new KAction( KIcon("preferences-desktop-font"), i18n( "&Set Font..." ), coll );
         coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), d->editPart, SLOT(setFont()) );
 
-	action = new KAction( KIcon("pencil"), i18n( "Set Text &Color..." ), coll );
+	action = new KAction( KIcon("format-stroke-color"), i18n( "Set Text &Color..." ), coll );
         coll->addAction( "format_color", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setForegroundColorColor()) );
 
-	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll );
+	action = new KAction( KIcon("format-fill-color"), i18n( "Set &Background Color..." ), coll );
         coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBackgroundColorColor()) );
 

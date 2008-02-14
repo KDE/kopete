@@ -68,7 +68,7 @@
 #include <kstandardaction.h>
 #include <ktoggleaction.h>
 #include <kactionmenu.h>
-// #include <k3widgetaction.h>
+#include <ktoolbarspaceraction.h>
 
 #include "chatmessagepart.h"
 #include "chattexteditpart.h"
@@ -419,15 +419,15 @@ void KopeteChatWindow::initActions(void)
 	KStandardAction::paste( this, SLOT(slotPaste()), coll);
 
 	KAction* action;
-	action = new KAction( KIcon("character-set"), i18n( "Set Default &Font..." ), coll );
+	action = new KAction( KIcon("preferences-desktop-font"), i18n( "Set Default &Font..." ), coll );
         coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFont()) );
 
-	action = new KAction( KIcon("pencil"), i18n( "Set Default Text &Color..." ), coll );
+	action = new KAction( KIcon("format-stroke-color"), i18n( "Set Default Text &Color..." ), coll );
         coll->addAction( "format_fgcolor", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFgColor()) );
 
-	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll );
+	action = new KAction( KIcon("format-fill-color"), i18n( "Set &Background Color..." ), coll );
         coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), this, SLOT(slotSetBgColor()) );
 
@@ -456,7 +456,7 @@ void KopeteChatWindow::initActions(void)
 	QAction *toggleParticipantsAction = m_participantsWidget->toggleViewAction( );
 	toggleParticipantsAction->setText( i18n( "Show Participants" ) );
 	toggleParticipantsAction->setIconText(i18n( "Participants" ));
-	toggleParticipantsAction->setIcon(KIcon( "fileview-split" ) );
+	toggleParticipantsAction->setIcon(KIcon( "system-users" ) );
 	coll->addAction ( "show_participants_widget", toggleParticipantsAction );
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll );
@@ -470,6 +470,9 @@ void KopeteChatWindow::initActions(void)
 	connect ( actionContactMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareContactMenu()) );
 
 	KopeteStdAction::preferences( coll , "settings_prefs" );
+
+	KToolBarSpacerAction * spacer = new KToolBarSpacerAction( coll );
+	coll->addAction( "spacer", spacer );
 
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QLatin1String( "kopete" ) ) );
@@ -517,7 +520,7 @@ void KopeteChatWindow::slotStopAnimation( ChatView* view )
 	{
 		anim->setPixmap( normalIcon );
 		if( animIcon.state() == QMovie::Running )
-			animIcon.pause();
+			animIcon.setPaused( true );
 	}
 }
 
@@ -686,7 +689,8 @@ void KopeteChatWindow::addTab( ChatView *view )
 		if(!c || c->onlineStatus() < contact->onlineStatus())
 			c=contact;
 	}
-	QPixmap pluginIcon = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
+	QIcon pluginIcon = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c) :
+			KIcon( view->msgManager()->protocol()->pluginIcon() );
 
 	view->setParent( m_tabBar );
 	view->setWindowFlags( 0 );
@@ -946,6 +950,8 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	setCaption( m_activeView->caption() );
 	setStatus( m_activeView->statusText() );
+	// Force keepScrolledDown because it doesn't work if window was hidden (bug:155237)
+	m_activeView->messagePart()->keepScrolledDown();
 	m_activeView->setFocus();
 	updateSpellCheckAction();
 	slotUpdateSendEnabled();
@@ -970,16 +976,13 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 
 	if ( view == m_activeView )
  	{
-		QPixmap icon16 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 16) :
-		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
-		QPixmap icon32 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 32) :
-		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
-		KWindowSystem::setIcons( winId(), icon32, icon16 );
+		setWindowIcon( c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c ) :
+				KIcon(view->msgManager()->protocol()->pluginIcon()));
 	}
 
 	if ( m_tabBar )
 		m_tabBar->setTabIcon(m_tabBar->indexOf( view ), c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c ) :
-		                                   SmallIcon( view->msgManager()->protocol()->pluginIcon() ) );
+		                                   KIcon( view->msgManager()->protocol()->pluginIcon() ) );
 }
 
 void KopeteChatWindow::slotChatClosed()
@@ -1087,9 +1090,9 @@ void KopeteChatWindow::slotPlaceTabs( QAction *action )
 	{
 
 		if( placement == 0 )
-			m_tabBar->setTabPosition( QTabWidget::Top );
+			m_tabBar->setTabPosition( QTabWidget::North );
 		else
-			m_tabBar->setTabPosition( QTabWidget::Bottom );
+			m_tabBar->setTabPosition( QTabWidget::South );
 
 		saveOptions();
 	}

@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -41,7 +41,7 @@
 //! // The class will emit the resultsReady() signal when the resolution
 //! // is finished. You may then retrieve the results:
 //!
-//! uint ip_address = dns.result();
+//! QHostAddress ip_address = dns.result();
 //!
 //! // or if you want to get the IP address as a string:
 //!
@@ -62,6 +62,7 @@
 #ifdef Q_OS_UNIX
 #include <netdb.h>
 #include <sys/types.h>
+#include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #endif
@@ -74,6 +75,15 @@
 // CS_NAMESPACE_BEGIN
 
 //! \if _hide_doc_
+class NDnsWorkerEvent : public QCustomEvent
+{
+public:
+	enum Type { WorkerEvent = QEvent::User + 100 };
+	NDnsWorkerEvent(NDnsWorker *);
+
+	NDnsWorker *worker;
+};
+
 class NDnsWorker : public QThread
 {
 public:
@@ -90,17 +100,6 @@ private:
 	Q3CString host;
 	QObject *par;
 };
-
-class NDnsWorkerEvent : public QCustomEvent
-{
-public:
-	enum Type { WorkerEvent = QEvent::User + 100 };
-	NDnsWorkerEvent(NDnsWorker *);
-
-	NDnsWorker *worker;
-};
-
-
 //! \endif
 
 //----------------------------------------------------------------------------
@@ -295,11 +294,11 @@ void NDns::stop()
 }
 
 //!
-//! Returns the IP address as a 32-bit integer in host-byte-order.  This will be 0 if the lookup failed.
+//! Returns the IP address as QHostAddress.  This will be a Null QHostAddress if the lookup failed.
 //! \sa resultsReady()
-uint NDns::result() const
+QHostAddress NDns::result() const
 {
-	return addr.ip4Addr();
+	return addr;
 }
 
 //!
@@ -307,7 +306,10 @@ uint NDns::result() const
 //! \sa resultsReady()
 QString NDns::resultString() const
 {
-	return addr.toString();
+	if (addr.isNull()) 
+		return QString();
+	else
+		return addr.toString();
 }
 
 //!
@@ -366,7 +368,8 @@ void NDnsWorker::run()
 		h = gethostbyname(host.data());
 #endif
 
-	if(!h) {
+	// FIXME: not ipv6 clean, currently.
+	if(!h || h->h_addrtype != AF_INET) {
 		success = false;
 		QApplication::postEvent(par, new NDnsWorkerEvent(this));
 		return;

@@ -15,22 +15,22 @@
     *************************************************************************
 */
 
-#ifndef _STATISTICSDB_H_H
-#define _STATISTICSDB_H_H 1
+#ifndef _STATISTICSDB_H
+#define _STATISTICSDB_H
 
-typedef struct sqlite3;
+#include <QSqlDatabase>
 
 class StatisticsDB
 {
-	
-public:
-	StatisticsDB();
-	~StatisticsDB();
-	 //sql helper methods
-          QStringList query( const QString& statement, QStringList* const names = 0, bool debug = false );
-          QString escapeString( QString string );
-private:
-	sqlite3 *m_db;
+
+	public:
+		StatisticsDB();
+		~StatisticsDB();
+		//sql helper methods
+		QStringList query ( const QString& statement, QStringList* const names = 0, bool debug = false );
+		QString escapeString ( QString string );
+	private:
+		QSqlDatabase m_db;
 };
 
 #endif

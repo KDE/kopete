@@ -5,13 +5,14 @@
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
-    *************************************************************************
-    *                                                                       *
-    * This program is free software; you can redistribute it and/or modify  *
-    * it under the terms of the GNU General Public License as published by  *
-    * the Free Software Foundation; version 2 of the License.               *
-    *                                                                       *
-    *************************************************************************
+    **************************************************************************
+    *                                                                        *
+    * This program is free software; you can redistribute it and/or modify   *
+    * it under the terms of the GNU General Public License as published by   *
+    * the Free Software Foundation; version 2, or (at your option) version 3 *
+    * of the License.                                                        *
+    *                                                                        *
+    **************************************************************************
 */
 
 // Qt
@@ -35,10 +36,10 @@
 #include "urlpicpreviewconfig.h"
 #include "kopetechatsessionmanager.h"
 
-typedef KGenericFactory<URLPicPreviewPlugin> URLPicPreviewPluginFactory;
-K_EXPORT_COMPONENT_FACTORY ( kopete_urlpicpreview, URLPicPreviewPluginFactory ( "kopete_urlpicpreview" ) )
+K_PLUGIN_FACTORY( URLPicPreviewPluginFactory, registerPlugin<URLPicPreviewPlugin>(); )
+K_EXPORT_PLUGIN( URLPicPreviewPluginFactory( "kopete_urlpicpreview" ) )
 
-URLPicPreviewPlugin::URLPicPreviewPlugin ( QObject* parent, const QStringList& /* args */ )
+URLPicPreviewPlugin::URLPicPreviewPlugin ( QObject* parent, const QVariantList& /* args */ )
 		: Kopete::Plugin ( URLPicPreviewPluginFactory::componentData(), parent ), m_pic ( NULL ), m_abortMessageCheck ( false )
 {
 
@@ -57,7 +58,7 @@ URLPicPreviewPlugin::~URLPicPreviewPlugin()
 {
 
 	kDebug ( 14314 ) << "Removing temporary files...";
-	for ( uint i = 0; i < m_tmpFileRegistry.count(); i++ )
+	for ( int i = 0; i < m_tmpFileRegistry.count(); i++ )
 	{
 		KIO::NetAccess::removeTempFile ( m_tmpFileRegistry[i] );
 	}
@@ -103,7 +104,7 @@ QString URLPicPreviewPlugin::prepareBody ( const QString& parsedBody, uint previ
 
 	kDebug ( 14314 ) << "Analyzing message: \"" << myParsedBody << "\"";
 
-	if ( ex.search ( myParsedBody ) == -1 || ( previewCount >= URLPicPreviewConfig::self()->previewAmount() ) || m_abortMessageCheck )
+	if ( ex.indexIn ( myParsedBody ) == -1 || ( previewCount >= URLPicPreviewConfig::self()->previewAmount() ) || m_abortMessageCheck )
 	{
 		kDebug ( 14314 ) << "No more URLs found in message.";
 		return myParsedBody;

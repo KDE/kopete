@@ -60,7 +60,7 @@ void IRCAddContactPage::slotChannelSelected( const QString &channel )
 void IRCAddContactPage::slotChannelDoubleClicked( const QString &channel )
 {
 	addID->setText( channel );
-	tabWidget3->setCurrentPage(0);
+	tabWidget3->setCurrentIndex(0);
 }
 
 bool IRCAddContactPage::apply(Kopete::Account *account , Kopete::MetaContact *m)

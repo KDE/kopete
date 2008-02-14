@@ -43,7 +43,6 @@ set(kopete_irc_SRCS
 kde4_add_plugin(kopete_irc ${kopete_irc_SRCS})
 
 target_link_libraries(kopete_irc ${KDE4_KIO_LIBS} kopete kirc_client kirc )
-set_target_properties(kopete_irc PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 
 install(TARGETS kopete_irc  DESTINATION ${PLUGIN_INSTALL_DIR})
 

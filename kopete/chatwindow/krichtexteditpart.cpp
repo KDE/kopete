@@ -21,6 +21,7 @@
 
 // Qt includes
 #include <QtCore/QEvent>
+#include <QKeyEvent>
 #include <QtGui/QTextCursor>
 #include <QtGui/QTextCharFormat>
 
@@ -114,7 +115,7 @@ KRichTextEditPart::KRichTextEditPart(QWidget *wparent, QObject*, const QStringLi
     createActions();
 
     // TODO: Rename rc file
-    setXMLFile( "kopeterichtexteditpartfull.rc" );
+    setXMLFile( "kopeterichtexteditpart/kopeterichtexteditpartfull.rc" );
 
     //Set colors, font
     readConfig();
@@ -210,7 +211,7 @@ KAboutData *KRichTextEditPart::createAboutData()
 
 void KRichTextEditPart::createActions()
 {
-    d->enableRichText = new KToggleAction( KIcon("pencil"), i18n("Enable &Rich Text"), this );
+    d->enableRichText = new KToggleAction( KIcon("draw-freehand"), i18n("Enable &Rich Text"), this );
     actionCollection()->addAction( "enableRichText", d->enableRichText );
     d->enableRichText->setCheckedState( KGuiItem( i18n("Disable &Rich Text") ) );
     connect( d->enableRichText, SIGNAL(toggled(bool)),

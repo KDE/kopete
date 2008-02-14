@@ -66,9 +66,14 @@ public:
 	bool passwordWasWrong();
 
 	/**
-	 * Accessor method for the action menu
+	 * Fill the menu for this account
 	 */
-	virtual KActionMenu* actionMenu() = 0;
+	virtual void fillActionMenu( KActionMenu *actionMenu ) = 0;
+
+	/**
+	 * Sets the identity this account belongs to
+	 */
+	virtual bool setIdentity( Kopete::Identity *ident );
 
 	/** Set the server address */
 	void setServerAddress( const QString& server );
@@ -90,6 +95,11 @@ public:
 	 * if contact has no encoding
 	 */
 	QTextCodec* contactCodec( const QString& contactName ) const;
+
+	/**
+	 * Updates buddy icon
+	 */
+	void updateBuddyIcon( const QString &path );
 
 	/**
 	 * Add a contact to the server site list
@@ -189,6 +199,10 @@ private slots:
 
 	/** Sends buddy icon to server */
 	void slotSendBuddyIcon();
+
+	/** Identity's property changed */
+	void slotIdentityPropertyChanged( Kopete::PropertyContainer *container, const QString &key,
+	                                  const QVariant &oldValue, const QVariant &newValue );
 
 private:
 	OscarAccountPrivate *d;

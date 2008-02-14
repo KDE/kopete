@@ -107,7 +107,7 @@
 		<!-- Tooltip content -->
 		<entry key="toolTipContents" type="StringList">
 			<label>Contact properties that contact tooltip will show.</label>
-			<default>FormattedName,userInfo,server,channels,FormattedIdleTime,channelMembers,channelTopic,emailAddress,homePage,onlineSince,lastOnline,statusMessage</default>
+			<default>FormattedName,userInfo,server,channels,FormattedIdleTime,channelMembers,channelTopic,emailAddress,homePage,onlineSince,lastOnline,statusTitle,statusMessage</default>
 		</entry>
 	</group>
 	
@@ -215,7 +215,7 @@
 		<!-- Contact list appearance config -->
 		<entry key="showOfflineUsers" type="Bool">
 			<label>Show offline users in contact list.</label>
-			<default>false</default>
+			<default>true</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<entry key="showEmptyGroups" type="Bool">

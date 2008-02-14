@@ -179,7 +179,7 @@ void KopeteAccountConfig::load()
 		Q_ASSERT(identityItemHash.contains(idnt));
 		KopeteAccountLVI *lvi = new KopeteAccountLVI( i, identityItemHash[idnt] );
 		lvi->setText( 0, i->accountLabel() );
-		lvi->setIcon( 0, QIcon(i->myself()->onlineStatus().iconFor( i, 32)) );
+		lvi->setIcon( 0, i->myself()->onlineStatus().iconFor( i) );
 		QFont font = lvi->font( 0 );
 		font.setBold( true );
 		lvi->setFont( 0, font );
@@ -434,12 +434,12 @@ void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,
 	for (it = items.begin(); it != items.end(); ++it)
 	{
 		KopeteAccountLVI *i = dynamic_cast<KopeteAccountLVI*>(*it);
-		if (!i)
+		if (!i || !i->account())
 			continue;
 
 		if (i->account()->myself() == contact)
 		{
-			(*it)->setIcon( 0, QIcon(newStatus.iconFor(i->account(), 32)) );
+			(*it)->setIcon( 0, newStatus.iconFor(i->account()) );
 			(*it)->setText( 1, contact->onlineStatus().statusTypeToString(newStatus.status()) );
 			break;
 		}
@@ -494,7 +494,7 @@ void KopeteAccountConfig::configureActions()
 {
 	// Add account
 	m_actionAccountAdd = new KAction( i18n( "&Add Account..." ), this );
-	m_actionAccountAdd->setIcon( KIcon("edit-add") );
+	m_actionAccountAdd->setIcon( KIcon("list-add") );
 	mButtonAccountAdd->setIcon( m_actionAccountAdd->icon() );
 	mButtonAccountAdd->setText( m_actionAccountAdd->text() );
 	connect( m_actionAccountAdd, SIGNAL(triggered(bool)), this, SLOT(slotAddAccount()) );
@@ -525,7 +525,7 @@ void KopeteAccountConfig::configureActions()
 
 	// Add identity
 	m_actionIdentityAdd = new KAction( i18n( "Add &Identity..." ), this );
-	m_actionIdentityAdd->setIcon( KIcon("edit-add") );
+	m_actionIdentityAdd->setIcon( KIcon("list-add") );
 	mButtonIdentityAdd->setIcon( m_actionIdentityAdd->icon() );
 	mButtonIdentityAdd->setText( m_actionIdentityAdd->text() );
 	connect( m_actionIdentityAdd, SIGNAL(triggered(bool)), this, SLOT(slotAddIdentity()) );

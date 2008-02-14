@@ -78,7 +78,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ),
 		SLOT( slotKopeteGroupRemoved( Kopete::Group * ) ) );
 
-	m_openInboxAction = new KAction( KIcon("mail"), i18n( "Open Inbo&x..." ), this );
+	m_openInboxAction = new KAction( KIcon("mail-folder-inbox"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect( m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()) );
 
@@ -86,7 +86,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
         //, "renameAction" );
 	QObject::connect( m_changeDNAction, SIGNAL(triggered(bool)), this, SLOT(slotChangePublicName()) );
 
-	m_startChatAction = new KAction( KIcon("mail"), i18n( "&Start Chat..." ), this );
+	m_startChatAction = new KAction( KIcon("mail-message-new"), i18n( "&Start Chat..." ), this );
         //, "startChatAction" );
 	QObject::connect( m_startChatAction, SIGNAL(triggered(bool)), this, SLOT(slotStartChat()) );
 
@@ -247,9 +247,9 @@ void MSNAccount::disconnect()
 		m_notifySocket->disconnect();
 }
 
-KActionMenu * MSNAccount::actionMenu()
+void MSNAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *m_actionMenu=Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 	if ( isConnected() )
 	{
 		m_openInboxAction->setEnabled( true );
@@ -263,14 +263,14 @@ KActionMenu * MSNAccount::actionMenu()
 		m_changeDNAction->setEnabled( false );
 	}
 
-	m_actionMenu->addSeparator();
+	actionMenu->addSeparator();
 
-	m_actionMenu->addAction( m_changeDNAction );
-	m_actionMenu->addAction( m_startChatAction );
+	actionMenu->addAction( m_changeDNAction );
+	actionMenu->addAction( m_startChatAction );
 
-//	m_actionMenu->menu()->insertSeparator();
+//	actionMenu->menu()->insertSeparator();
 
-	m_actionMenu->addAction( m_openInboxAction );
+	actionMenu->addAction( m_openInboxAction );
 
 #if !defined NDEBUG
 	KActionMenu *debugMenu = new KActionMenu( "Debug", this );
@@ -280,11 +280,9 @@ KActionMenu * MSNAccount::actionMenu()
 	QObject::connect( rawCmd, SIGNAL(triggered()), this, SLOT(slotDebugRawCommand()) );
 	debugMenu->addAction(rawCmd);
 
-	m_actionMenu->addSeparator();
-	m_actionMenu->addAction( debugMenu );
+	actionMenu->addSeparator();
+	actionMenu->addAction( debugMenu );
 #endif
-
-	return m_actionMenu;
 }
 
 MSNNotifySocket *MSNAccount::notifySocket()
@@ -1235,10 +1233,13 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 		if(mc)
 		{ //if the contact has been added this way, it's because the other user added us.
 		  // don't forgot to set the reversed flag  (Bug 114400)
-			MSNContact *c=dynamic_cast<MSNContact*>(mc->contacts().first());
-			if(c && c->contactId() == handle )
+			if ( !mc->contacts().isEmpty() )
 			{
-				c->setReversed( true );
+				MSNContact *c=dynamic_cast<MSNContact*>(mc->contacts().first());
+				if(c && c->contactId() == handle )
+				{
+					c->setReversed( true );
+				}
 			}
 		}
 	}

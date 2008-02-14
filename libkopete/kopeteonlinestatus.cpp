@@ -4,7 +4,7 @@
     Copyright (c) 2003      by Martijn Klingens <klingens@kde.org>
     Copyright (c) 2003      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2003      by Will Stephenson <wstephenson@kde.org>
-    Copyright (c) 2004      by Olivier Goffart <ogoffart@kde.org>
+    Copyright (c) 2004-2008 by Olivier Goffart <ogoffart@kde.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -30,8 +30,46 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <QPixmap>
+#include <QIconEngineV2>
+#include <QPainter>
 
+namespace Kopete
+{
 
+class OnlineStatusIconEngine : public QIconEngineV2
+{
+public:
+	OnlineStatusIconEngine( const OnlineStatus &s , const QString& i,
+	                        const QColor &c, bool _idle )
+		: status(s) , icon(i), color(c), idle(_idle) {}
+
+	virtual QIconEngineV2 *clone() const
+	{ return new OnlineStatusIconEngine(status,icon,color,idle); }
+
+	virtual QString key () const
+	{ return OnlineStatusManager::self()->fingerprint( status, icon, 0, color, idle ); }
+
+	QPixmap pixmap ( const QSize & size, QIcon::Mode mode, QIcon::State state )
+	{
+		const int iconSize = qMin(size.width(), size.height());
+		QIcon i(OnlineStatusManager::self()->cacheLookupByObject( status, icon, iconSize, color, idle ));
+		return i.pixmap(size, mode, state);
+	}
+
+	void paint( QPainter * painter, const QRect & rect, QIcon::Mode mode, QIcon::State state )
+	{
+		QPixmap pix = pixmap(rect.size() , mode, state);
+		painter->drawPixmap(rect, pix);
+	}
+
+private:
+	OnlineStatus status;
+	QString icon;
+	QColor color;
+	bool idle;
+};
+
+}
 
 using namespace Kopete;
 
@@ -45,13 +83,15 @@ public:
 	unsigned internalStatus;
 	QStringList overlayIcons;
 	QString description;
+	QString caption;
+	OnlineStatusManager::Categories categories;
+	OnlineStatusManager::Options options;
 	unsigned refCount;
 
 	QString protocolIcon() const
 	{
 		return protocol ?  protocol->pluginIcon() : QString::fromLatin1( "unknown" );
 	}
-
 };
 
 /**
@@ -80,6 +120,8 @@ OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protoc
 	d->overlayIcons = overlayIcons;
 	d->protocol = protocol;
 	d->description = description;
+	d->categories = 0x00;
+	d->options = 0x00;
 }
 
 OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus,
@@ -92,8 +134,11 @@ OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protoc
 	d->overlayIcons = overlayIcons;
 	d->protocol = protocol;
 	d->description = description;
+	d->caption = caption;
+	d->categories = categories;
+	d->options = options;
 
-	OnlineStatusManager::self()->registerOnlineStatus(*this, caption, categories, options );
+	OnlineStatusManager::self()->registerOnlineStatus( *this );
 }
 
 OnlineStatus::OnlineStatus( StatusType status )
@@ -103,6 +148,8 @@ OnlineStatus::OnlineStatus( StatusType status )
 	d->internalStatus = 0;
 	d->weight = 0;
 	d->protocol = 0L;
+	d->categories = 0x00;
+	d->options = 0x00;
 
 	switch( status )
 	{
@@ -138,6 +185,8 @@ OnlineStatus::OnlineStatus()
 	d->weight = 0;
 	d->protocol = 0L;
 	d->overlayIcons = QStringList( QString::fromLatin1( "status_unknown" ) );
+	d->categories = 0x00;
+	d->options = 0x00;
 }
 
 OnlineStatus::OnlineStatus( const OnlineStatus &other )
@@ -219,6 +268,21 @@ Protocol* OnlineStatus::protocol() const
 	return d->protocol;
 }
 
+QString OnlineStatus::caption() const
+{
+	return d->caption;
+}
+
+OnlineStatusManager::Categories OnlineStatus::categories() const
+{
+	return d->categories;
+}
+
+OnlineStatusManager::Options OnlineStatus::options() const
+{
+	return d->options;
+}
+
 bool OnlineStatus::isDefinitelyOnline() const
 {
 	if ( status() == Offline || status() == Connecting || status() == Unknown )
@@ -226,9 +290,15 @@ bool OnlineStatus::isDefinitelyOnline() const
 	return true;
 }
 
-QPixmap OnlineStatus::iconFor( const Contact *contact, int size ) const
+QIcon OnlineStatus::iconFor( const Contact *contact ) const
 {
-	return OnlineStatusManager::self()->cacheLookupByMimeSource( mimeSourceFor( contact, size ) );
+	QString iconName = contact->icon();
+	if ( iconName.isNull() )
+		iconName = contact->account()->customIcon();
+	if ( iconName.isNull() )
+		iconName = d->protocolIcon();
+	return QIcon(new OnlineStatusIconEngine( *this, iconName,
+		     contact->account()->color(), contact->idleTime() >= 10*60));
 }
 
 
@@ -245,9 +315,13 @@ QString OnlineStatus::mimeSourceFor( const Contact *contact, int size ) const
 	return mimeSource( iconName, size, contact->account()->color(),contact->idleTime() >= 10*60 );
 }
 
-QPixmap OnlineStatus::iconFor( const Account *account, int size ) const
+QIcon OnlineStatus::iconFor( const Account *account ) const
 {
-	return OnlineStatusManager::self()->cacheLookupByMimeSource( mimeSourceFor( account, size ) );
+	QString iconName = account->customIcon();
+	if ( iconName.isNull() )
+		iconName = d->protocolIcon();
+	return QIcon(new OnlineStatusIconEngine(*this, iconName, account->color(),false));
+
 }
 
 QString OnlineStatus::mimeSourceFor( const Account *account, int size ) const
@@ -288,7 +362,7 @@ QString OnlineStatus::statusTypeToString(OnlineStatus::StatusType statusType)
 	return QString::fromLatin1(statusNames[0].name); // Unknown
 }
 
-OnlineStatus::StatusType OnlineStatus::statusStringToType(QString& string)
+OnlineStatus::StatusType OnlineStatus::statusStringToType(const QString& string)
 {
 	int size = sizeof(statusNames) / sizeof(statusNames[0]);
 

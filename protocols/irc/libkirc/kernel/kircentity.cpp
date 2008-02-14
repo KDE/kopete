@@ -17,7 +17,7 @@
 
 #include "kircentity.moc"
 
-#include "kircentitymanager.h"
+#include "kirccontext.h"
 
 #include <kdebug.h>
 
@@ -76,8 +76,8 @@ public:
 	QTextCodec *codec;
 };
 
-Entity::Entity(QObject *parent)
-	: QObject(parent)
+Entity::Entity(Context *context)
+	: QObject(context)
 	, d(new Private)
 {
 }

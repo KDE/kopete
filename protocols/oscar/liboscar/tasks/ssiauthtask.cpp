@@ -25,6 +25,8 @@
 
 #include <kdebug.h>
 
+#include <QTextCodec>
+
 SSIAuthTask::SSIAuthTask( Task* parent )
 	: Task( parent )
 {

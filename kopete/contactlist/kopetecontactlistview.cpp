@@ -481,6 +481,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 
 	KAction *actionCreateNewGroup = new KAction( i18n( "Create New Group..." ), ac );
+	actionCreateNewGroup->setIcon( KIcon( "user-group-new" ) );
 	connect( actionCreateNewGroup, SIGNAL( triggered(bool) ), this, SLOT( addGroup() ) );
         ac->addAction( "AddGroup", actionCreateNewGroup );
 
@@ -496,17 +497,17 @@ void KopeteContactListView::initActions( KActionCollection *ac )
                                                 KShortcut(), this, SLOT( slotCopyToGroup() ), ac );
         ac->addAction( "contactCopy", actionCopy );
 
-	actionMakeMetaContact = new KAction(KIcon("user"), i18n("Make Meta Contact"), ac);
+	actionMakeMetaContact = new KAction(KIcon("list-add-user"), i18n("Make Meta Contact"), ac);
         ac->addAction( "makeMetaContact", actionMakeMetaContact );
         connect (actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(slotMakeMetaContact()));
 
 	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ), ac );
         ac->addAction( "contactRemove", actionRemove );
-	actionSendEmail = new KAction( KIcon("mail"), i18n( "Send Email..." ), ac );
+	actionSendEmail = new KAction( KIcon("mail-send"), i18n( "Send Email..." ), ac );
         ac->addAction( "contactSendEmail", actionSendEmail );
 	connect( actionSendEmail, SIGNAL( triggered(bool) ), this, SLOT( slotSendEmail() ) );
 	/* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*/
-	actionRename = new KAction( KIcon("document-save-as"), i18n( "Rename" ), ac );
+	actionRename = new KAction( KIcon("edit-rename"), i18n( "Rename" ), ac );
         ac->addAction( "contactRename", actionRename );
 	connect( actionRename, SIGNAL( triggered(bool) ), this, SLOT( slotRename() ) );
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
@@ -525,7 +526,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered( Kopete::Account* )), SLOT(slotAddSubContactActionNewAccount(Kopete::Account*)));
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )), SLOT(slotAddSubContactActionAccountDeleted(const Kopete::Account *)));
 
-	actionProperties = new KAction( KIcon("edit-user"), i18n( "&Properties" ), ac );
+	actionProperties = new KAction( KIcon("user-properties"), i18n( "&Properties" ), ac );
         ac->addAction( "contactProperties", actionProperties );
 	actionProperties->setShortcut( KShortcut(Qt::Key_Alt + Qt::Key_Return) );
 	connect( actionProperties, SIGNAL( triggered(bool) ), this, SLOT( slotProperties() ) );
@@ -583,25 +584,45 @@ void KopeteContactListView::slotMetaContactDeleted( Kopete::MetaContact *mc )
 	d->viewStrategy->removeMetaContact( mc );
 }
 
-void KopeteContactListView::slotMetaContactSelected( bool sel )
+void KopeteContactListView::slotMetaContactSelected( bool selected )
 {
-	bool set = sel;
+	if ( m_selectedMetaContact )
+	{ // Delete previous connection
+		disconnect( m_selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+		            this, SLOT(slotUpdateMetaContactActions()) );
+		m_selectedMetaContact = 0;
+	}
 
-	if( sel )
+	if ( selected )
 	{
-		Kopete::MetaContact *kmc = Kopete::ContactList::self()->selectedMetaContacts().first();
-		set = sel && kmc->isReachable();
-		actionAddTemporaryContact->setEnabled( sel && kmc->isTemporary() );
+		m_selectedMetaContact = Kopete::ContactList::self()->selectedMetaContacts().first();
+		connect( m_selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+		         this, SLOT(slotUpdateMetaContactActions()) );
+	}
+
+	actionMove->setEnabled( selected ); // TODO: make available for several contacts
+	actionCopy->setEnabled( selected ); // TODO: make available for several contacts
+	slotUpdateMetaContactActions();
+}
+
+void KopeteContactListView::slotUpdateMetaContactActions()
+{
+	bool reachable = false;
+
+	if( m_selectedMetaContact )
+	{
+		reachable = m_selectedMetaContact->isReachable();
+		actionAddTemporaryContact->setEnabled( m_selectedMetaContact->isTemporary() );
+		actionSendFile->setEnabled( reachable && m_selectedMetaContact->canAcceptFiles() );
 	}
 	else
 	{
-		actionAddTemporaryContact->setEnabled(false);
+		actionAddTemporaryContact->setEnabled( false );
+		actionSendFile->setEnabled( false );
 	}
 
-	actionSendMessage->setEnabled( set );
-	actionStartChat->setEnabled( set );
-	actionMove->setEnabled( sel ); // TODO: make available for several contacts
-	actionCopy->setEnabled( sel ); // TODO: make available for several contacts
+	actionSendMessage->setEnabled( reachable );
+	actionStartChat->setEnabled( reachable );
 }
 
 void KopeteContactListView::slotAddedToGroup( Kopete::MetaContact *mc, Kopete::Group *to )
@@ -755,7 +776,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 						text = text.left( 38 ) + QLatin1String( "..." );
 
 					contactMenu->setTitle(text);
-					contactMenu->setIcon(c->onlineStatus().iconFor( c, 16 ));
+					contactMenu->setIcon(c->onlineStatus().iconFor( c ));
 					popup->addMenu( contactMenu );
 				}
 
@@ -1437,7 +1458,6 @@ void KopeteContactListView::updateActionsForSelection(
 		inkabc= !kabcid.isEmpty() && !kabcid.contains(":");
 	}
 
-	actionSendFile->setEnabled( singleContactSelected && contacts.first()->canAcceptFiles());
 	actionAddContact->setEnabled( singleContactSelected && !contacts.first()->isTemporary());
 	actionSendEmail->setEnabled( inkabc );
 

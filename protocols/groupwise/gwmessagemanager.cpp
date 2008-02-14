@@ -22,8 +22,10 @@
 #include <qlabel.h>
 #include <qvalidator.h>
 #include <QList>
+#include <QPainter>
 
 #include <kactioncollection.h>
+#include <kactionmenu.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
@@ -81,7 +83,7 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 	QObject::connect( m_secure, SIGNAL( triggered( bool ) ), SLOT( slotShowSecurity() ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
 
-	m_logging = new KAction( KIcon( "logchat" ), i18n( "Archiving Status" ), 0 ); // "gwLoggingChat"
+	m_logging = new KAction( KIcon( "utilities-log-viewer" ), i18n( "Archiving Status" ), 0 ); // "gwLoggingChat"
 	QObject::connect( m_secure, SIGNAL( triggered( bool ) ),  SLOT( slotShowArchiving() ) );
 	updateArchiving();
 
@@ -308,7 +310,7 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 	qDeleteAll(m_inviteActions);
 	m_inviteActions.clear();
 
-	m_actionInvite->popupMenu()->clear();
+	m_actionInvite->menu()->clear();
 
 
 	foreach( Kopete::Contact * contact, account()->contacts() )
@@ -318,6 +320,8 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 			KAction *a = new Kopete::UI::ContactAction( contact,
 			                                            actionCollection() );
 			m_actionInvite->addAction( a );
+			QObject::connect( a, SIGNAL(triggered(Kopete::Contact*,bool)),
+					this, SLOT(slotInviteContact(Kopete::Contact*)) );
 			m_inviteActions.append( a ) ;
 		}
 	}
@@ -372,7 +376,7 @@ void GroupWiseChatSession::slotInviteOtherContact()
 		m_searchDlg->setCaption(i18n( "Search for Contact to Invite" ));
 		m_searchDlg->setButtons(KDialog::Ok|KDialog::Cancel );
 		m_searchDlg->setDefaultButton(KDialog::Ok);
-		m_search = new GroupWiseContactSearch( account(), Q3ListView::Single, true, m_searchDlg );
+		m_search = new GroupWiseContactSearch( account(), QAbstractItemView::SingleSelection, true, m_searchDlg );
 		m_searchDlg->setMainWidget( m_search );
 		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOk( bool ) ) );
 		m_searchDlg->enableButtonOk( false );

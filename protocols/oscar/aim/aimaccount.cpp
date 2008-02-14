@@ -20,6 +20,7 @@
 #include <kdialog.h>
 #include <klocale.h>
 #include <kmenu.h>
+#include <kactionmenu.h>
 #include <kmessagebox.h>
 #include <ktoggleaction.h>
 #include <kicon.h>
@@ -256,10 +257,8 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 {
 	if ( QRegExp("[\\d]+").exactMatch( contactId ) )
 	{
-		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString(), ssiItem );
-
-		if ( !ssiItem.alias().isEmpty() )
-			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString() );
+		contact->setSSIItem( ssiItem );
 
 		if ( engine()->isActive() )
 			contact->loggedIn();
@@ -268,10 +267,8 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 	}
 	else
 	{
-		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString(), ssiItem );
-
-		if ( !ssiItem.alias().isEmpty() )
-			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString() );
+		contact->setSSIItem( ssiItem );
 
 		return contact;
 	}
@@ -327,21 +324,19 @@ QString AIMAccount::sanitizedMessage( const QString& message ) const
 	return doc.toString();
 }
 
-KActionMenu* AIMAccount::actionMenu()
+void AIMAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
-	mActionMenu->addSeparator();
+	actionMenu->addSeparator();
 
-	mActionMenu->addAction( mJoinChatAction );
-	mActionMenu->addAction( mEditInfoAction );
+	actionMenu->addAction( mJoinChatAction );
+	actionMenu->addAction( mEditInfoAction );
 
 	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );
 	mActionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
 	mActionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
-	mActionMenu->addAction( mActionInvisible );
-
-	return mActionMenu;
+	actionMenu->addAction( mActionInvisible );
 }
 
 void AIMAccount::setPresenceFlags( Oscar::Presence::Flags flags, const QString &message )
@@ -746,35 +741,7 @@ void AIMAccount::setPrivacySettings( int privacy )
 			break;
 	}
 
-	this->setPrivacyTLVs( privacyByte, userClasses );
-}
-
-void AIMAccount::setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses )
-{
-	ContactManager* ssi = engine()->ssiManager();
-	OContact item = ssi->findItem( QString(), ROSTER_VISIBILITY );
-
-	QList<Oscar::TLV> tList;
-
-	tList.append( TLV( 0x00CA, 1, (char *)&privacy ) );
-	tList.append( TLV( 0x00CB, sizeof(userClasses), (char *)&userClasses ) );
-
-	if ( !item )
-	{
-		kDebug(OSCAR_AIM_DEBUG) << "Adding new privacy TLV item";
-		OContact s( QString(), 0, ssi->nextContactId(), ROSTER_VISIBILITY, tList );
-		engine()->modifyContactItem( item, s );
-	}
-	else
-	{ //found an item
-		OContact s(item);
-
-		if ( Oscar::updateTLVs( s, tList ) == true )
-		{
-			kDebug(OSCAR_AIM_DEBUG) << "Updating privacy TLV item";
-			engine()->modifyContactItem( item, s );
-		}
-	}
+	engine()->setPrivacyTLVs( privacyByte, userClasses );
 }
 
 QString AIMAccount::addQuotesAroundAttributes( QString message ) const

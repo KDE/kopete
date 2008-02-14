@@ -3,7 +3,8 @@
     client.cpp - The main interface for the Groupwise protocol
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+              (c) 2008      Novell, Inc.
+
     Based on Iris, Copyright (C) 2003  Justin Karneges
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -21,6 +22,7 @@
 #include <QApplication>
 #include <QByteArray>
 #include <QList>
+#include <QTimer>
 
 #include "chatroommanager.h"
 #include "gwclientstream.h"
@@ -33,6 +35,7 @@
 #include "tasks/getdetailstask.h"
 #include "tasks/getstatustask.h"
 #include "tasks/joinconferencetask.h"
+#include "tasks/keepalivetask.h"
 #include "tasks/leaveconferencetask.h"
 #include "tasks/logintask.h"
 #include "tasks/rejectinvitetask.h"
@@ -63,6 +66,7 @@ public:
 	PrivacyManager * privacyMgr;
 	uint protocolVersion;
 	QList<GroupWise::CustomStatus> customStatuses;
+	QTimer * keepAliveTimer;
 };
 
 Client::Client(QObject *par, uint protocolVersion )
@@ -85,6 +89,9 @@ Client::Client(QObject *par, uint protocolVersion )
 	d->privacyMgr->setObjectName( "privacymgr" );
 	d->stream = 0;
 	d->protocolVersion = protocolVersion;
+	// Sends regular keepalives so the server knows we are still running
+	d->keepAliveTimer = new QTimer( this );
+	connect( d->keepAliveTimer, SIGNAL( timeout() ), SLOT( sendKeepAlive() ) );
 }
 
 Client::~Client()
@@ -152,6 +159,8 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 	connect( login, SIGNAL( gotCustomStatus( const GroupWise::CustomStatus & ) ), 
 			SLOT( lt_gotCustomStatus( const GroupWise::CustomStatus & ) ) );
 
+	connect( login, SIGNAL( gotKeepalivePeriod( int ) ), SLOT( lt_gotKeepalivePeriod( int ) ) );
+
 	connect( login, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	
 	login->initialise();
@@ -163,6 +172,7 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 void Client::close()
 {
 	debug( "Client::close()" );
+	d->keepAliveTimer->stop();
 	if(d->stream) {
 		d->stream->disconnect(this);
 		d->stream->close();
@@ -233,6 +243,7 @@ void Client::sendMessage( const QStringList & addresseeDNs, const OutgoingMessag
 {
 	SendMessageTask * smt = new SendMessageTask( d->root );
 	smt->message( addresseeDNs, message );
+	connect( smt, SIGNAL( finished() ), SLOT( smt_messageSent() ) );
 	smt->go( true );
 }
 
@@ -507,6 +518,32 @@ ChatroomManager * Client::chatroomManager()
 		d->chatroomMgr->setObjectName( "chatroommgr" );
 	}
 	return d->chatroomMgr;
+}
+
+void Client::lt_gotKeepalivePeriod( int period )
+{
+	d->keepAliveTimer->start( period * 60 * 1000 );
+}
+
+void Client::sendKeepAlive()
+{
+	KeepAliveTask * kat = new KeepAliveTask( d->root );
+	kat->setup();
+	kat->go( true );
+}
+
+void Client::smt_messageSent()
+{
+	const SendMessageTask * smt = ( SendMessageTask * )sender();
+	if ( smt->success() )
+	{
+		debug( "message sent OK" );
+	}
+	else
+	{
+		debug( "message sending failed!" );
+		emit messageSendingFailed();
+	}
 }
 
 #include "client.moc"

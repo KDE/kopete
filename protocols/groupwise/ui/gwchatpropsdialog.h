@@ -23,8 +23,8 @@
 #include <kdialog.h>
 
 #include "gwchatrooms.h"
+#include "ui_gwchatprops.h"
 
-namespace Ui { class GroupWiseChatPropsWidget; }
 /**
  * Dialog for viewing/modifying chat properties.
  * Chatroom list dialog gets props from manager
@@ -46,12 +46,12 @@ class GroupWiseChatPropsDialog : public KDialog
 		/**
 		 * Construct an empty dialog
 		 */
-		GroupWiseChatPropsDialog( QWidget * parent, const char * name );
+		GroupWiseChatPropsDialog( QWidget * parent );
 		/**
 		 * Construct a populated dialog
 		 */
 		GroupWiseChatPropsDialog( const GroupWise::Chatroom & room, bool readOnly,
-									   QWidget * parent, const char * name );
+									   QWidget * parent );
 		
 		~GroupWiseChatPropsDialog();
 		
@@ -62,7 +62,7 @@ class GroupWiseChatPropsDialog : public KDialog
 	protected slots:
 		void slotWidgetChanged();
 	private:
-		Ui::GroupWiseChatPropsWidget * m_widget;
+		Ui::GroupWiseChatProps m_ui;
 		GroupWise::Chatroom m_room;
 		bool m_dirty;
 };

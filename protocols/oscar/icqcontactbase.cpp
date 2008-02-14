@@ -28,8 +28,8 @@
 
 
 ICQContactBase::ICQContactBase( Kopete::Account *account, const QString &name, Kopete::MetaContact *parent,
-						const QString& icon, const OContact& ssiItem )
-: OscarContact( account, name, parent, icon, ssiItem )
+						const QString& icon )
+: OscarContact( account, name, parent, icon )
 {
 	QObject::connect( mAccount->engine(), SIGNAL(receivedXStatusMessage(const QString&, int, const QString&, const QString&)),
 	                  this, SLOT(receivedXStatusMessage(const QString&, int, const QString&, const QString&)) );
@@ -47,9 +47,14 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 	OscarProtocol* p = static_cast<OscarProtocol *>(protocol());
 	Oscar::Presence presence = p->statusManager()->presenceOf( this->onlineStatus() );
 	presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
-	presence.setDescription( description );
 	presence.setXtrazStatus( icon );
 	setPresenceTarget( presence );
+
+	Kopete::StatusMessage statusMessage;
+	if ( !description.isEmpty() )
+		setProperty( static_cast<OscarProtocol*>( protocol() )->statusTitle, description );
+	else
+		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusTitle );
 
 	setAwayMessage( message );
 	m_haveAwayMessage = true;

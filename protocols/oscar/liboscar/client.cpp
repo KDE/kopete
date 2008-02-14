@@ -984,6 +984,33 @@ void Client::changeContactAlias( const QString& contact, const QString& alias )
 	}
 }
 
+void Client::setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses )
+{
+	OContact item = ssiManager()->findItem( QString(), ROSTER_VISIBILITY );
+
+	QList<Oscar::TLV> tList;
+	tList.append( TLV( 0x00CA, 1, (char *)&privacy ) );
+	tList.append( TLV( 0x00CB, sizeof(userClasses), (char *)&userClasses ) );
+
+	if ( !item )
+	{
+		kDebug( OSCAR_RAW_DEBUG ) << "Adding new privacy TLV item";
+		QString empty;
+		OContact s( empty, 0, ssiManager()->nextContactId(), ROSTER_VISIBILITY, tList );
+		modifyContactItem( item, s );
+	}
+	else
+	{ //found an item
+		OContact s(item);
+
+		if ( Oscar::updateTLVs( s, tList ) == true )
+		{
+			kDebug( OSCAR_RAW_DEBUG ) << "Updating privacy TLV item";
+			modifyContactItem( item, s );
+		}
+	}
+}
+
 void Client::requestShortTlvInfo( const QString& contactId, const QByteArray &metaInfoId )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0015 );
@@ -1414,7 +1441,7 @@ void Client::setInvisibleTo( const QString& user, bool invisible )
 	}
 }
 
-void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::BYTE hashType )
+void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::WORD iconType, Oscar::BYTE hashType )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0010 );
 	if ( !c )
@@ -1424,6 +1451,7 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, Osca
 	connect( bit, SIGNAL( haveIcon( const QString&, QByteArray ) ),
 	         this, SIGNAL( haveIconForContact( const QString&, QByteArray ) ) );
 	bit->requestIconFor( user );
+	bit->setIconType( iconType );
 	bit->setHashType( hashType );
 	bit->setHash( hash );
 	bit->go( Task::AutoDelete );

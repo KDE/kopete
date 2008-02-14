@@ -4,10 +4,6 @@
 
 FIND_PACKAGE(ZLIB REQUIRED)
 
-if(MSVC)
-  add_definitions(-DIRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION)
-endif(MSVC)
-
 include_directories( 
 ${CMAKE_CURRENT_SOURCE_DIR}/cutestuff/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/cutestuff/legacy/ 

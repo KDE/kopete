@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>467</width>
-    <height>516</height>
+    <width>500</width>
+    <height>381</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -111,6 +111,12 @@
       </item>
       <item row="2" column="1" >
        <widget class="QLineEdit" name="firstNameEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="readOnly" >
          <bool>true</bool>
         </property>
@@ -128,6 +134,12 @@
       </item>
       <item row="2" column="3" >
        <widget class="QLineEdit" name="lastNameEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="readOnly" >
          <bool>true</bool>
         </property>
@@ -144,7 +156,7 @@
        </widget>
       </item>
       <item row="3" column="1" >
-       <widget class="QComboBox" name="genderCombo" />
+       <widget class="InfoComboBox" name="genderCombo" />
       </item>
       <item row="3" column="2" >
        <widget class="QLabel" name="maritalLabel" >
@@ -157,7 +169,7 @@
        </widget>
       </item>
       <item row="3" column="3" >
-       <widget class="QComboBox" name="maritalCombo" />
+       <widget class="InfoComboBox" name="maritalCombo" />
       </item>
       <item row="4" column="0" colspan="2" >
        <spacer>
@@ -183,7 +195,7 @@
        </widget>
       </item>
       <item row="4" column="3" >
-       <widget class="QComboBox" name="timezoneCombo" />
+       <widget class="InfoComboBox" name="timezoneCombo" />
       </item>
      </layout>
     </widget>
@@ -354,7 +366,7 @@
        </widget>
       </item>
       <item row="0" column="1" >
-       <widget class="QComboBox" name="language1Combo" />
+       <widget class="InfoComboBox" name="language1Combo" />
       </item>
       <item row="1" column="0" >
        <widget class="QLabel" name="language2Label" >
@@ -367,7 +379,7 @@
        </widget>
       </item>
       <item row="1" column="1" >
-       <widget class="QComboBox" name="language2Combo" />
+       <widget class="InfoComboBox" name="language2Combo" />
       </item>
       <item row="2" column="0" >
        <widget class="QLabel" name="language3Label" >
@@ -380,88 +392,7 @@
        </widget>
       </item>
       <item row="2" column="1" >
-       <widget class="QComboBox" name="language3Combo" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_3" >
-     <property name="title" >
-      <string>Origin</string>
-     </property>
-     <layout class="QGridLayout" >
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
-       <number>6</number>
-      </property>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="textLabel2_2" >
-        <property name="text" >
-         <string>City:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>oCityEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" >
-       <widget class="QLineEdit" name="oCityEdit" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="textLabel1_2" >
-        <property name="text" >
-         <string>State:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>oStateEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QLineEdit" name="oStateEdit" >
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="textLabel3_2" >
-        <property name="text" >
-         <string>Country:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>oCountryCombo</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QComboBox" name="oCountryCombo" >
+       <widget class="InfoComboBox" name="language3Combo" >
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
           <horstretch>0</horstretch>
@@ -490,6 +421,13 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>InfoComboBox</class>
+   <extends>QComboBox</extends>
+   <header>infocombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>uinEdit</tabstop>
   <tabstop>ipEdit</tabstop>
@@ -507,9 +445,6 @@
   <tabstop>language1Combo</tabstop>
   <tabstop>language2Combo</tabstop>
   <tabstop>language3Combo</tabstop>
-  <tabstop>oCityEdit</tabstop>
-  <tabstop>oStateEdit</tabstop>
-  <tabstop>oCountryCombo</tabstop>
  </tabstops>
  <resources/>
  <connections/>

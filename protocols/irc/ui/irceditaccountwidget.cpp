@@ -86,18 +86,20 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 //	mUserName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^\\s]*$"), mUserName ) );
 //	mNickName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mNickName ) );
 //	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mAltNickname ) );
-
+#if 0
 	KCharsets *c = KGlobal::charsets();
 	charset->addItems( c->availableEncodingNames() );
 
 	for( int i = 0; i < charset->count(); ++i )
 	{
+		// codecForName can return NULL
 		if( c->codecForName( charset->itemText(i) )->mibEnum() == currentCodec )
 		{
 			charset->setCurrentIndex( i );
 			break;
 		}
 	}
+#endif
 /*
 	connect( commandList, SIGNAL( contextMenu( K3ListView *, QListViewItem *, const QPoint & ) ),
 		this, SLOT( slotCommandContextMenu( K3ListView *, QListViewItem *, const QPoint & ) ) );

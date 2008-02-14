@@ -37,8 +37,9 @@ public:
 	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 	                                             const QMap<QString, QString> &serializedData,
 	                                             const QMap<QString, QString> &addressBookData );
-	
-	const Kopete::PropertyTmpl awayMessage;
+
+	const Kopete::PropertyTmpl statusTitle;
+	const Kopete::PropertyTmpl statusMessage;
 	const Kopete::PropertyTmpl clientFeatures;
 	const Kopete::PropertyTmpl buddyIconHash;
 	const Kopete::PropertyTmpl contactEncoding;

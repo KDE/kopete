@@ -39,6 +39,7 @@
 #include <QtGui/QCursor>
 #include <QtGui/QPixmap>
 #include <QtGui/QTextDocument>
+#include <QtGui/QScrollBar>
 #include <QMimeData>
 #include <QApplication>
 
@@ -231,9 +232,8 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( this, SIGNAL(popupMenu(const QString &, const QPoint &)),
 	         this, SLOT(slotRightClick(const QString &, const QPoint &)) );
-	// FIXME no longer compiles
-	//connect( view()->horizontalScrollBar(), SIGNAL(sliderMoved(int)),
-	//         this, SLOT(slotScrollingTo(int)) );
+	connect( view()->verticalScrollBar(), SIGNAL(sliderMoved(int)),
+	         this, SLOT(slotScrollingTo(int)) );
 
 	//initActions
 	d->copyAction = KStandardAction::copy( this, SLOT(copy()), actionCollection() );
@@ -263,7 +263,8 @@ void ChatMessagePart::slotScrollingTo( int y )
 
 void ChatMessagePart::save()
 {
-	KFileDialog dlg( KUrl(), QLatin1String( "text/html text/plain" ), view() );
+	const KUrl dummyUrl;
+	KFileDialog dlg( dummyUrl, QLatin1String( "text/html text/plain" ), view() );
 	dlg.setCaption( i18n( "Save Conversation" ) );
 	dlg.setOperationMode( KFileDialog::Saving );
 
@@ -611,9 +612,17 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 	else
 	{
 		QString nick = element.innerText().string().trimmed();
-		for ( i = 0; i != m.size(); i++)
-			if ( m[i]->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString() == nick )
-				return m[i];
+		foreach ( Kopete::Contact *contact, m )
+		{
+			QString contactNick;
+			if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
+				contactNick = contact->metaContact()->displayName();
+			else
+				contactNick = contact->nickName();
+
+			if ( contactNick == nick )
+				return contact;
+		}
 	}
 
 	return 0;
@@ -845,7 +854,10 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	// Replace sender (contact nick)
 	resultHTML = resultHTML.replace( QLatin1String("%sender%"), nickLink+nick+"</a>" );
 	// Replace time, by default display only time and display seconds(that was true means).
-	resultHTML = resultHTML.replace( QLatin1String("%time%"), KGlobal::locale()->formatTime(message.timestamp().time(), true) );
+	if ( Kopete::BehaviorSettings::showDates() )
+		resultHTML = resultHTML.replace( QLatin1String("%time%"), KGlobal::locale()->formatDateTime(message.timestamp(), KLocale::ShortDate, true) );
+	else
+		resultHTML = resultHTML.replace( QLatin1String("%time%"), KGlobal::locale()->formatTime(message.timestamp().time(), true) );
 	// Replace %screenName% (contact ID)
 	resultHTML = resultHTML.replace( QLatin1String("%senderScreenName%"), nickLink+Qt::escape(contactId)+"</a>" );
 	// Replace service name (protocol name)
@@ -973,12 +985,13 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 {
 	QString resultHTML = sourceHTML;
 
-	Kopete::Contact *remoteContact = d->manager->members().first();
-
 	// Verify that all contacts are not null before doing anything
-	if( remoteContact && d->manager->myself() )
+	if( !d->manager->members().isEmpty() && d->manager->myself() )
 	{
 		QString sourceName, destinationName;
+
+		Kopete::Contact *remoteContact = d->manager->members().first();
+
 		// Use contact nickname for ourselfs, Myself metacontact display name isn't a reliable source.
 		sourceName = d->manager->myself()->nickName();
 		if( remoteContact->metaContact() )

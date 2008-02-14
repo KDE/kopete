@@ -27,6 +27,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kicon.h>
+#include <kaction.h>
 #include <kactioncollection.h>
 #include "kopetechatsessionmanager.h"
 #include "kopetemessage.h"
@@ -186,7 +187,7 @@ void JabberChatSession::sendNotification( Event event )
 	XMPP::MsgEvent msg_event;
 	XMPP::ChatState new_state;
 	bool send_msg_event=false;
-	bool send_state;
+	bool send_state=false;
 	
 	switch(event)
 	{
@@ -250,7 +251,7 @@ void JabberChatSession::sendNotification( Event event )
 		}
 	}*/
 	
-	if(send_state || send_msg_event )
+	if( !members().isEmpty() && (send_state || send_msg_event) )
 	{
 		// create JID for us as sender
 		XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();

@@ -16,13 +16,16 @@
     *                                                                       *
     *************************************************************************
 */
+#ifdef Q_WS_X11
 #include <fixx11h.h>
+#endif
 #include "xmlcontactstorage.h"
 
 // Qt includes
 #include <QtCore/QFile>
 #include <QtCore/QRegExp>
 #include <QtCore/QLatin1String>
+#include <QtCore/QTextCodec>
 #include <QtCore/QTextStream>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomElement>

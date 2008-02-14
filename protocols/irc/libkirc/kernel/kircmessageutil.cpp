@@ -17,9 +17,10 @@
 
 #include "kircmessageutil.h"
 
+#include "kircbytearrayescaper.h"
+
 #include <kdebug.h>
 
-//QRegExp Message::sm_("^()\\r\\n$")
 /*
 #ifndef _IRC_STRICTNESS_
 QRegExp Message::sm_IRCNumericCommand("^\\d{1,3}$");
@@ -70,69 +71,36 @@ QByteArray MessageUtil::formatCtcp(const QByteArray &str)
 }
 */
 
-struct quote_data
-{
-	char in, out;
-};
-
-static QByteArray quote(const QByteArray &in, const struct quote_data *d)
-{
-#ifdef __GNUC__
-	#warning implement me
-#endif
-	char esc = d->in;
-	QByteArray out(in);
-
-	return out;
-}
-
-static QByteArray unquote(const QByteArray &in, const struct quote_data *d)
-{
-#ifdef __GNUC__
-	#warning implement me
-#endif
-	char esc = d->in;
-	QByteArray out(in);
-
-	return out;
-}
-
-static struct quote_data irc_quote_data[] =
-{
-	{ '\020', '\020' },
-	{ '\r', 'r' },
-	{ '\n', 'n' },
-	{ '\0', '0' },
-	{ 0, 0 }
-};
+static KIrc::ByteArrayEscaper IrcEscaper('\020', KIrc::ByteArrayEscaper::EscapeList()
+	<< KIrc::ByteArrayEscaper::Escape('\r', 'r')
+	<< KIrc::ByteArrayEscaper::Escape('\n', 'n')
+	<< KIrc::ByteArrayEscaper::Escape('\0', '0')
+	);
 
 QByteArray KIrc::MessageUtil::quote(const QByteArray &buffer)
 {
-	return quote(buffer, irc_quote_data);
+	return IrcEscaper.escape(buffer);
 }
 
 QByteArray KIrc::MessageUtil::unquote(const QByteArray &buffer)
 {
-	return unquote(buffer, irc_quote_data);
+	return IrcEscaper.unescape(buffer);
 }
 
 #ifndef KIRC_STRICT
 
-static struct quote_data irc_ctcp_quote_data[] =
-{
-	{ '\\', '\\' },
-	{ 1, '1' },
-	{ 0, 0 }
-};
+static KIrc::ByteArrayEscaper IrcCtcpEscaper('\\', KIrc::ByteArrayEscaper::EscapeList()
+	<< KIrc::ByteArrayEscaper::Escape((char)1, '1')
+	);
 
 QByteArray KIrc::MessageUtil::quoteCtcp(const QByteArray &buffer)
 {
-	return quote(buffer, irc_ctcp_quote_data);
+	return IrcCtcpEscaper.escape(buffer);
 }
 
 QByteArray KIrc::MessageUtil::unquoteCtcp(const QByteArray &buffer)
 {
-	return unquote(buffer, irc_ctcp_quote_data);
+	return IrcCtcpEscaper.unescape(buffer);
 }
 
 #endif

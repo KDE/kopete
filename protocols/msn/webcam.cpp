@@ -831,7 +831,7 @@ void Webcam::timerEvent( QTimerEvent *e )
 	videoDevice->getImage(&img);
 	
 	if(m_widget)
-		m_widget->newImage(QPixmap::fromImage(img));
+		m_widget->newImage(QPixmap::fromImage(img.mirrored(VideoDevice->getImageAsMirror(),false)));
 	
 	if(img.width()!=320 || img.height()!=240)
 	{

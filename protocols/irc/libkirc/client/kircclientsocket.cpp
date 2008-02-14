@@ -17,72 +17,31 @@
 */
 
 #include "kircclientsocket.moc"
+#include "kircclientsocket_p.moc"
 
-#include "kircclientcommandhandler.h"
 #include "kircentity.h"
 #include "kircstdmessages.h"
 
-class KIrc::ClientSocket::Private
-{
-public:
-	Private()
-		: server(new Entity())
-		, failedNickOnLogin(false)
-	{ }
-
-	KIrc::Entity::Ptr server;
-
-	bool failedNickOnLogin : 1;
-};
+#include <QtNetwork/QSslSocket>
 
 using namespace KIrc;
 
-ClientSocket::ClientSocket(QObject *parent)
-	: Socket(parent),
-	  d( new Private )
+ClientSocketPrivate::ClientSocketPrivate(ClientSocket *socket)
+	: SocketPrivate(socket)
+	, failedNickOnLogin(false)
 {
-//	setUserName(QString::null);
-
-//	d->entities << d->server << d->self;
-
-//	d->versionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
-//	d->userString = QString::fromLatin1("Response not supplied by user.");
-//	d->sourceString = QString::fromLatin1("Unknown client, known source.");
-
-/*
-	connect(this, SIGNAL(internalError(const QString &)),
-		this, SLOT());
-*/
-	connect(this, SIGNAL(connectionStateChanged(Socket::ConnectionState)),
-		this, SLOT(onConnectionStateChanged(Socket::ConnectionState)));
-
 	connect(this, SIGNAL(receivedMessage(KIrc::Message &)),
 		this, SLOT(onReceivedMessage(KIrc::Message &)));
 }
 
-ClientSocket::~ClientSocket()
+void ClientSocketPrivate::socketStateChanged(QAbstractSocket::SocketState newstate)
 {
-//	StdCommands::quit(this, QLatin1String("KIRC Deleted"));
+	Q_Q(Socket);
 
-	delete d;
-}
-
-bool ClientSocket::isDisconnected() const
-{
-	return connectionState() == Idle;
-}
-
-bool ClientSocket::isConnected() const
-{
-	return connectionState() == Open;
-}
-
-void ClientSocket::onConnectionStateChanged(Socket::ConnectionState newState)
-{
-	switch(newState)
+	switch(newstate)
 	{
-	case Open:
-		setConnectionState(Authentifying);
+	case QAbstractSocket::ConnectedState:
+		setConnectionState(Socket::Authentifying);
 /* 
 		// If password is given for this server, send it now, and don't expect a reply
 		const KUrl &url = this->url();
@@ -98,19 +57,98 @@ void ClientSocket::onConnectionStateChanged(Socket::ConnectionState newState)
 */
 		break;
 	default:
-		//do nothing
+		SocketPrivate::socketStateChanged(newstate);
 		break;
 	}
 }
 
+
+
+ClientSocket::ClientSocket(Context *context)
+	: Socket(context, new ClientSocketPrivate(this))
+{
+//	d->entities << d->server << d->self;
+
+//	d->versionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
+//	d->userString = QString::fromLatin1("Response not supplied by user.");
+//	d->sourceString = QString::fromLatin1("Unknown client using the KIRC engine.");
+}
+
+ClientSocket::~ClientSocket()
+{
+//	StdCommands::quit(this, QLatin1String("KIRC Deleted"));
+}
+
 Entity::Ptr ClientSocket::server()
 {
+	Q_D(ClientSocket);
+
 	return d->server;
 }
 
-ClientCommandHandler *ClientSocket::clientCommandHandler()
+QUrl ClientSocket::url() const
 {
-//	return dynamic_cast<ClientCommandHandler *>(commandHandler());
-	return 0;
+	Q_D(const ClientSocket);
+
+	return d->url;
+}
+
+void ClientSocket::connectToServer(const QUrl &url)
+{
+	Q_D(Socket);
+
+	QTcpSocket *socket;
+
+	if ( url.scheme() == "irc" )
+	{
+		socket = new QTcpSocket(this);
+//		socket->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
+		connectToServer(url, socket);
+	}
+	else if ( url.scheme() == "ircs" )
+	{
+		socket = new QSslSocket(this);
+//		socket->setSocketFlags( KExtendedSocket::inetSocket );
+		connectToServer(url, socket);
+	}
+	else
+	{
+//		#warning FIXME: send an event here to reflect the error
+	}
+}
+
+void ClientSocket::connectToServer(const QUrl &url, QAbstractSocket *socket)
+{
+	Q_D(Socket);
+
+	close();
+
+	if (!socket)
+	{
+//		#warning FIXME: send an event here to reflect the error
+	}
+
+	QString host = url.host();
+	if(host.isEmpty())
+		host = "localhost";
+
+	int port = url.port();
+
+	if (port == -1)
+	{
+		// Make the port being guessed by the socket (look into /etc/services)
+		//port = url.scheme();
+		;
+	}
+
+//	the given url is now validated
+	d->url = url;
+	d->setSocket(socket);
+
+#ifdef __GNUC__
+	#warning FIXME: send an event here to reflect connection state
+#endif
+
+	socket->connectToHost(host, port);
 }
 

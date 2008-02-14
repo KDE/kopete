@@ -35,10 +35,12 @@
 
 #include <QDir>
 #include <QClipboard>
+#include <QTextOStream>
 
 #include <kdebug.h>
 #include <krun.h>
 #include <kmenu.h>
+#include <kaction.h>
 #include <kactioncollection.h>
 
 class KListViewDateItem : public QTreeWidgetItem
@@ -102,7 +104,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mMainWidget->searchLine->setFocus();
 	mMainWidget->searchLine->setTrapReturnKey (true);
 	mMainWidget->searchLine->setTrapReturnKey(true);
-	mMainWidget->searchErase->setIcon( QIcon(BarIcon("edit-clear-locationbar")) );
+	mMainWidget->searchErase->setIcon( QIcon(BarIcon("edit-clear-locationbar-ltr")) );
 
 	mMainWidget->contactComboBox->addItem(i18n("All"));
 	mMetaContactList = Kopete::ContactList::self()->metaContacts();
@@ -141,7 +143,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 	l->addWidget(mHtmlView);
 
-	QTextOStream( &fontSize ) << Kopete::AppearanceSettings::self()->chatFont().pointSize();
+	QTextStream( &fontSize ) << Kopete::AppearanceSettings::self()->chatFont().pointSize();
 	fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + Kopete::AppearanceSettings::self()->chatFont().family() + "; color: " + Kopete::AppearanceSettings::self()->chatTextColor().name() + "; }</style>";
 
 	mHtmlPart->begin();

@@ -102,7 +102,7 @@
                                     <string>E&amp;xclude from connect all</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                 <string>Check to disable automatic connection.  If checked, you can connect manually to this account, using the icon at the bottom of the main Kopete windoww</string>
+                                 <string>Check to disable automatic connection.  If checked, you can connect manually to this account, using the icon at the bottom of the main Kopete window</string>
                                 </property>
                             </widget>
                         </vbox>

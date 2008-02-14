@@ -49,7 +49,7 @@ FieldListIterator FieldList::find( FieldListIterator &it, QByteArray tag )
 	for ( ; it != theEnd; ++it )
 	{
 		//cout << " - on " << (*it)->tag().data() << endl;
-		if ( (*it)->tag() == tag )
+		if ( (*it)->tag().data() == tag )
 			break;
 	}
 	return it;

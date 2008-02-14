@@ -49,7 +49,6 @@ Oscar::Presence Status::presence() const
 {
 	Oscar::Presence presence( Oscar::Presence::Online, Oscar::Presence::XStatus );
 	presence.setXtrazStatus( mStatus );
-	presence.setDescription( mDescription );
 	return presence;
 }
 

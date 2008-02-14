@@ -55,7 +55,7 @@ KopeteApplication::KopeteApplication()
 {
 	setQuitOnLastWindowClosed( false );
 	m_isShuttingDown = false;
-	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
+	m_mainWindow = new KopeteWindow( 0 );
 
 	Kopete::PluginManager::self();
 
@@ -300,7 +300,7 @@ void KopeteApplication::quitKopete()
 	QList<KMainWindow*>::iterator it, itEnd = members.end();
 	for ( it = members.begin(); it != itEnd; ++it)
 	{
-		if ( (*it)->close() )
+		if ( !(*it)->close() )
 		{
 			m_isShuttingDown = false;
 			break;

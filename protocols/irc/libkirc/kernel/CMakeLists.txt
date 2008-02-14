@@ -1,5 +1,8 @@
 
 set(libkirc_SRCS
+  kbytearrayescaper.cpp
+  kcmdline.cpp
+
   kircconst.cpp 
   kircentity.cpp 
   kircentitymanager.cpp 
@@ -12,7 +15,6 @@ set(libkirc_SRCS
 
   tasks/kircsimpletask.cpp  
 )
-
 
 kde4_add_library(kirc SHARED ${libkirc_SRCS})
 

@@ -31,46 +31,61 @@
   *@author Till Gerken <till@tantalo.net>
   */
 
-class dlgJabberServices : public QDialog, private Ui::dlgServices
+class ServiceItem;
+
+class dlgJabberServices : public KDialog
 {
 	Q_OBJECT
-
 public:
-	  explicit dlgJabberServices (JabberAccount *account, QWidget *parent = 0);
+	  explicit dlgJabberServices(JabberAccount *account, QWidget *parent = 0);
 	 ~dlgJabberServices ();
 
+protected:
+	void initTree();
+	bool eventFilter(QObject *object, QEvent *event);
+
 private slots:
-	void slotSetSelection (Q3ListViewItem *);
-	void slotService ();
-	void slotServiceFinished ();
-	void slotRegister ();
-	void slotBrowse ();
-	
+	//void slotSetSelection (Q3ListViewItem *);
+	void slotItemExpanded(QTreeWidgetItem *item);
+	void slotService();
+	void slotServiceFinished();
 	void slotDisco();
 	void slotDiscoFinished();
-	
-	void slotDiscoClicked();
-private:
-	JabberAccount *m_account;
-	XMPP::Jid current_jid;
-	QString current_node;
+	void slotRegister();
+	void slotSearch();
+	void slotCommand();
 
+private:
+	Ui::dlgServices ui;
+	JabberAccount  *mAccount;
+	ServiceItem    *mRootItem;
+	QAction        *mActRegister;
+	QAction        *mActSearch;
+	QAction        *mActCommand;
 };
 
-
-class dlgJabberServies_item : protected QObject, public Q3ListViewItem  
+class ServiceItem : protected QObject, public QTreeWidgetItem
 {
 	Q_OBJECT
-	public:
-		dlgJabberServies_item( Q3ListView *parent , const QString &s1 , const QString &s2, const QString &s3 ) 
-			: Q3ListViewItem(parent,s1,s2,s3), can_browse(false) , can_register(false) {}
-		bool can_browse, can_register;
-		XMPP::Jid jid;
-		QString node;
-		
-		void updateInfo(const XMPP::Jid& jid, const QString &node , JabberAccount *account);
-	private slots:
-		void slotDiscoFinished();
+public:
+	ServiceItem(JabberAccount *account, const QString &jid , const QString &node, const QString &name);
+
+	const QString jid() const {return mJid; }
+	const QString node() const {return mNode; }
+	const XMPP::Features &features() const {return mFeatures; }
+
+	void startDisco();
+
+private slots:
+	void slotDiscoFinished();
+	void slotDiscoInfoFinished();
+
+private:
+	JabberAccount *mAccount;
+	bool    mDiscoReady;
+	QString mJid;
+	QString mNode;
+	XMPP::Features mFeatures;
 };
 
 #endif

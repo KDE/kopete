@@ -36,7 +36,6 @@
 #include <klineedit.h>
 
 #include "kopetebehaviorsettings.h"
-#include "kopeteaway.h"
 #include "kopetepluginmanager.h"
 
 #include <qtabwidget.h>
@@ -109,9 +108,6 @@ void BehaviorConfig::save()
 
 void BehaviorConfig::load()
 {
-//	kDebug(14000);
-	awayInstance = Kopete::Away::getInstance();
-
 	KCModule::load();
 	// "Away" TAB ===============================================================
 	mPrfsAway->mAutoAwayTimeout->setValue( Kopete::BehaviorSettings::self()->autoAwayTimeout() / 60 );

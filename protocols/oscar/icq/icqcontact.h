@@ -40,7 +40,7 @@ public:
 
 	/** Normal ICQ constructor */
 	ICQContact( Kopete::Account* account, const QString &name, Kopete::MetaContact *parent,
-	            const QString& icon = QString(), const OContact& ssiItem = OContact()  );
+	            const QString& icon = QString() );
 	virtual ~ICQContact();
 
 	/**
@@ -54,6 +54,9 @@ public:
 
 	virtual void setSSIItem( const OContact& ssiItem );
 
+	/**  Set encoding for this contact */
+	virtual void setEncoding( int mib );
+
 public slots:
 	virtual void slotUserInfo();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
@@ -61,8 +64,6 @@ public slots:
 	void userOnline( const QString& userId );
 	void userOffline( const QString& userID );
 	void loggedIn();
-
-	void requestShortInfo();
 
 signals:
 	void haveBasicInfo( const ICQGeneralUserInfo& );
@@ -86,7 +87,7 @@ private:
 	KToggleAction *m_actionInvisibleTo;
 
 	QString m_statusDescription;
-	bool m_requestingNickname;
+	enum { InfoNone = 0, InfoShort, InfoMediumTlv } m_requestingInfo;
 
 private slots:
 	/** Refresh status from this contact */
@@ -104,11 +105,16 @@ private slots:
 	void storeUserInfoDialog();
 	void closeUserInfoDialog();
 
+	void requestShortInfo();
 	void receivedShortInfo( const QString& contact );
 	void receivedLongInfo( const QString& contact );
 
 	void requestMediumTlvInfo();
 	void receivedTlvInfo( const QString& contact );
+
+	void requestShortInfoDelayed( int minDelay = 1000 );
+	void requestMediumTlvInfoDelayed( int minDelay = 1000 );
+	void infoDelayTimeout();
 
 	void slotIgnore();
 	void slotVisibleTo();

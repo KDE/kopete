@@ -84,7 +84,7 @@ void WPAddContact::slotSelected(const QString &Group)
 	QString ownHost = theAccount->myself()->contactId();
 	QStringList::ConstIterator end = Hosts.end();
 	for (QStringList::ConstIterator i = Hosts.begin(); i != end; i++)
-		if (*i != ownHost) theDialog->mHostName->addItem( QIcon(SmallIcon("personal")), *i);
+		if (*i != ownHost) theDialog->mHostName->addItem( QIcon(SmallIcon("user-identity")), *i);
 }
 
 bool WPAddContact::validateData()

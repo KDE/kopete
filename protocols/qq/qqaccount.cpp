@@ -125,21 +125,19 @@ void QQAccount::disconnect()
 		m_notifySocket->disconnect();
 }
 
-KActionMenu* QQAccount::actionMenu()
+void QQAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
-	mActionMenu->addSeparator();
+	actionMenu->addSeparator();
 
 	KAction *action;
 
-	action = new KAction (KIcon("qq_showvideo"), i18n ("Show my own video..."), mActionMenu );
+	action = new KAction (KIcon("qq_showvideo"), i18n ("Show my own video..."), actionMenu );
         action->setObjectName("actionShowVideo");
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
-	mActionMenu->addAction(action);
+	actionMenu->addAction(action);
 	action->setEnabled( isConnected() );
-
-	return mActionMenu;
 }
 
 void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )

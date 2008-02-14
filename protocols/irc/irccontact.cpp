@@ -60,9 +60,11 @@ public:
 };
 
 IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, MetaContact *metac, const QString& icon)
-	: Contact(account, entity->name(), metac, icon),
-	  d (new IRCContact::Private)
+	: Contact(account, entity->name(), metac, icon)
+	, d (new IRCContact::Private)
 {
+	Q_ASSERT(entity);
+
 	kDebug(14120) << entity->name();
 
 	d->entity = entity;
@@ -222,8 +224,11 @@ QTextCodec *IRCContact::codec()
 			codec = QTextCodec::codecForName(codecId.toLatin1());
 	}
 
+#if 0
+	// FIXME: use context defaultCodec
 	if (!codec)
 		return kircClient()->defaultCodec();
+#endif
 
 	return codec;
 }
@@ -272,7 +277,7 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 {
 	QString htmlString = message.escapedBody();
 
-	if (htmlString.find(QString::fromLatin1("</span")) > -1)
+	if (htmlString.indexOf(QString::fromLatin1("</span")) > -1)
 	{
 		QRegExp findTags( QString::fromLatin1("<span style=\"(.*)\">(.*)</span>") );
 		findTags.setMinimal( true );
@@ -280,12 +285,12 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 
 		while (pos >= 0)
 		{
-			pos = findTags.search(htmlString);
+			pos = findTags.indexIn(htmlString);
 			if (pos > -1)
 			{
 				QString styleHTML = findTags.cap(1);
 				QString replacement = findTags.cap(2);
-				QStringList styleAttrs = QStringList::split(';', styleHTML);
+				QStringList styleAttrs = styleHTML.split(';');
 
 				for (QStringList::Iterator attrPair = styleAttrs.begin(); attrPair != styleAttrs.end(); ++attrPair)
 				{
@@ -311,17 +316,20 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 
 	htmlString = Message::unescape(htmlString);
 
-	if (htmlString.find('\n') > -1)
+	if (htmlString.indexOf('\n') > -1)
 	{
-		QStringList messages = QStringList::split( '\n', htmlString );
+		QStringList messages = htmlString.split('\n');
 
 		for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
 		{
-			Message msg(message.from(), message.to(), Kopete::Message::escape(sendMessage(*it)), message.direction(),
-			                    Message::RichText, CHAT_VIEW, message.type());
+#warning FIXME
+			Message msg(message.from(), message.to());
+			msg.setHtmlBody(Kopete::Message::escape(sendMessage(*it)));
+			msg.setDirection(message.direction());
+//			                    Message::RichText, CHAT_VIEW, message.type());
 
-			msg.setBackgroundColor(QColor());
-			msg.setForegroundColor(QColor());
+//			msg.setBackgroundColor(QColor());
+//			msg.setForegroundColor(QColor());
 
 			appendMessage(msg);
 			chatSession->messageSucceeded();
@@ -329,10 +337,10 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 	}
 	else
 	{
-		message.setBody( Kopete::Message::escape(sendMessage( htmlString )), Message::RichText );
+		message.setHtmlBody(Kopete::Message::escape(sendMessage(htmlString)));
 
-		message.setBackgroundColor( QColor() );
-		message.setForegroundColor( QColor() );
+//		message.setBackgroundColor(QColor());
+//		message.setForegroundColor(QColor());
 
 		appendMessage(message);
 		chatSession->messageSucceeded();
