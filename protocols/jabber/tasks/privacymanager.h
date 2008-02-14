@@ -28,7 +28,7 @@
 #include "xmpp_task.h"
 #include "privacylist.h"
 
-class QString;;
+class QString;
 
 namespace XMPP {
 
