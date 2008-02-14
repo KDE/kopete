@@ -209,6 +209,31 @@ void Service::viewService()
 
 bool Service::isEmpty()
 {
-	return false;
+	bool empty = true;
+	if(m_serviceType.isEmpty() == false)
+	{
+		empty = false;
+	}
+	if(m_serviceId.isEmpty() == false)
+	{
+		empty = false;
+	}
+	if(m_controlURL.isEmpty() == false)
+	{
+		empty = false;
+	}
+	if(m_eventSubURL.isEmpty() == false)
+	{
+		empty = false;
+	}
+	if(m_xmlDocService.isEmpty() == false)
+	{
+		empty = false;
+	}
+	if(m_actionList.isEmpty() == false)
+	{
+		empty = false;
+	}
+	return empty;
 }
 

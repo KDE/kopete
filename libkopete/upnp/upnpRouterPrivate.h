@@ -48,7 +48,7 @@ class UpnpRouterPrivate
 		*
 		* @return true if router is empty, false otherwise
 		*/
-		bool isEmpty();
+		bool isEmpty() const;
 
 		/**
 		* Check if router is valid

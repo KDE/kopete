@@ -70,6 +70,13 @@ public:
 	bool isValid() const;
 	
 	/**
+	* Retrieves location of a router
+	*
+	* @return location of a router
+	*/
+	QUrl url() const;
+
+	/**
 	* Retrieves all description of a router
 	*
 	* @return string containt a description of a router

@@ -31,7 +31,7 @@
 class Router
 {
 	public:
-
+		Router();
 		/**
 		* Constructor UpnpRouterPrivate
 		*
@@ -53,14 +53,14 @@ class Router
 		*
 		* @return true if router is valid, false otherwise
 		*/
-		bool isValid();
+		bool isValid() const;
 
 		/**
 		* Check if router is empty
 		*
 		* @return true if router is empty, false otherwise
 		*/
-		bool isEmpty();
+		bool isEmpty() const;
 
 		Service service();
 	
