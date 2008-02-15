@@ -28,19 +28,6 @@
     <set>QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QToolButton" name="runTestButton" >
-   <property name="geometry" >
-    <rect>
-     <x>20</x>
-     <y>70</y>
-     <width>121</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Lancer les test</string>
-   </property>
-  </widget>
   <widget class="QProgressBar" name="testsBar" >
    <property name="geometry" >
     <rect>
@@ -68,6 +55,19 @@
    </property>
    <property name="text" >
     <string>Statut des tests</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="runTestButton" >
+   <property name="geometry" >
+    <rect>
+     <x>30</x>
+     <y>70</y>
+     <width>111</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Lancer les tests</string>
    </property>
   </widget>
  </widget>
@@ -102,22 +102,6 @@
     <hint type="destinationlabel" >
      <x>286</x>
      <y>111</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>runTestButton</sender>
-   <signal>clicked()</signal>
-   <receiver>testsBar</receiver>
-   <slot>reset()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>93</x>
-     <y>82</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>193</x>
-     <y>54</y>
     </hint>
    </hints>
   </connection>

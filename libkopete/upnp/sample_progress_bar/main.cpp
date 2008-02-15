@@ -21,10 +21,10 @@ int main ( int argc, char* argv[]){
 	// Building the application
 	QApplication app(argc, argv);
 	// Retrieve our interface
-	Ui_Main ui;
-	QDialog *window = new QDialog;
-	ui.setupUi(window);
+	ProgressBarSample ui;
+	/*QDialog *window = new QDialog*/
+// 	ui.setupUi(window);
 	// Show the window
-	window->show();
+	ui.show();
 	return app.exec();
 }

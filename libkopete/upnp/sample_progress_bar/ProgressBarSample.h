@@ -21,12 +21,11 @@
 
 #include <QApplication>
 #include <QtGui>
-//#include <QDialogTextButton>
 #include <QString>
 #include <QProgressBar>
 #include <QAbstractButton>
 
-class ProgressBarSample : public QMainWindow, private Ui_Main
+class ProgressBarSample : public QDialog, private Ui::Main
 {
 	Q_OBJECT
 public:

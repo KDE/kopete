@@ -16,12 +16,13 @@
 */
 #include "ProgressBarSample.h"
 #include <iostream>
-using namespace std;
+#include <QDebug>
 
 // Connect runTestButton to the code of launch
-ProgressBarSample::ProgressBarSample(QWidget *parent): QMainWindow(parent) {
+ProgressBarSample::ProgressBarSample(QWidget *parent): QDialog(parent) 
+{
 	setupUi((QDialog *)this);
-	connect(runTestButton, SIGNAL(clicked()),this, SLOT(launch()));
+	connect(runTestButton, SIGNAL(clicked()),(QDialog *)this, SLOT(launch()));
 }
 
 // Code related with the the click on runTestButton
@@ -29,6 +30,6 @@ void ProgressBarSample::launch() {
 	testsBar->setValue(	(testsBar->value() < testsBar->maximum()) 
 				? testsBar->value()+1
 				: testsBar->minimum());
-	cout << "In ProgressBarSample::launch()"
+	qDebug() << "In ProgressBarSample::launch()"
 		<< endl;
 }
