@@ -313,8 +313,7 @@ void TransferContext::sendMessage(MessageType type, const QString& content, qint
 		content).toUtf8();
 
 	// NOTE The body must have a null character at the end.
-	// QCString by chance automatically adds a \0 to the
-	// end of the string.
+	body.append('\0');
 
 	outbound.header.totalDataSize = body.size();
 	// Send the outbound message.
