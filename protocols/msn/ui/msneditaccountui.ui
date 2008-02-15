@@ -429,6 +429,9 @@
             </property>
             <item>
              <widget class="QCheckBox" name="SendJabber" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="whatsThis" >
                <string>If you have a Jabber account, you may let Jabber users on an MSN gateway know that you are also using Jabber.</string>
               </property>
@@ -442,6 +445,9 @@
             </item>
             <item>
              <widget class="KComboBox" name="JabberAccount" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="whatsThis" >
                <string>If you have a Jabber account, you may let Jabber users on an MSN gateway know that you are also using Jabber.</string>
               </property>
