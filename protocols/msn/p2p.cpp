@@ -199,8 +199,7 @@ void TransferContext::sendDataPreparation()
 	outbound.header.ackUniqueIdentifier  = 0;
 	outbound.header.ackDataSize   = 0l;
 	QByteArray bytes;
-	bytes.reserve(4);
-	bytes.fill('\0');
+	bytes.fill('\0', 4);
 	outbound.body = bytes;
 	outbound.applicationIdentifier = 1;
 	outbound.destination = m_recipient;
