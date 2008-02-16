@@ -94,7 +94,7 @@ void OutgoingTransfer::slotSendData()
 {
 	qint32 bytesRead = 0;
 	QByteArray buffer;
-	buffer.reserve(1202);
+	buffer.resize(1202);
 
 	if(!m_file)
 		return;
@@ -129,21 +129,6 @@ void OutgoingTransfer::slotSendData()
 			m_file->close();
 		}
 	}
-
-		if((m_offset + bytesRead) < m_file->size())
-		{
-			sendData(buffer);
-			m_offset += bytesRead;
-		}
-		else
-		{
-			m_isComplete = true;
-			// Send the last chunk of the file.
-			sendData(buffer);
-			m_offset += buffer.size();
-			// Close the file.
-			m_file->close();
-		}
 
 	if(m_transfer){
 		m_transfer->slotProcessed(m_offset);
