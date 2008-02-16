@@ -4,12 +4,11 @@ add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 add_subdirectory( icons ) 
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(WEBCAM)")
+
 include_directories( 
 ${KOPETE_INCLUDES} 
 ${CMAKE_CURRENT_BINARY_DIR}/ui/ 
-${CMAKE_CURRENT_SOURCE_DIR}/ui/ 
-)
-
+${CMAKE_CURRENT_SOURCE_DIR}/ui/)
 
 ########### next target ###############
 
@@ -55,15 +54,15 @@ set(kopete_msn_shared_LIB_SRCS
    p2p.cpp 
    messageformatter.cpp 
    incomingtransfer.cpp 
-   outgoingtransfer.cpp 
+   outgoingtransfer.cpp
 )
 
-kde4_add_library(kopete_msn_shared SHARED ${kopete_msn_shared_LIB_SRCS})
+kde4_add_library(kopete_msn_shared SHARED ${kopete_msn_shared_LIB_SRCS} )
 
 if(WIN32)
-  target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete)
+  target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete )
 else(WIN32)
-  target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete kopete_videodevice)
+  target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete kopete_videodevice )
 endif(WIN32)
 
 set_target_properties(kopete_msn_shared PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )

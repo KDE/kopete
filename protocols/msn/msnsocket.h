@@ -4,6 +4,7 @@
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
+    Copyright (c) 2008      by Castan Romain          <romaincastan@gmail.com>
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -322,7 +323,7 @@ private:
 	int m_remaining;			// Indicates how many bytes of content data remain
 						// to be received if the content bytes are sent in
 						// a separate packet(s).
-
+	
 	/**
 	 * Provides access to information returned from a URI request.
 	 */

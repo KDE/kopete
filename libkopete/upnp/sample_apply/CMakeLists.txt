@@ -31,5 +31,5 @@ target_link_libraries(apiUPnp ${KDE4_KIO_LIBS} upnp )
 
 install(FILES
 	applicationWidget.h
-	upnpRouter.h
+	../upnpRouter.h
 DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/upnp/sample_apply)

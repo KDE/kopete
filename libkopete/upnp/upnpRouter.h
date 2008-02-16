@@ -20,14 +20,13 @@
 *	@author DEMAY Bertrand <bertranddemay@gmail.com>
 */
 
-#include <QtDebug>
 #include <QUrl>
 #include <QString>
 #include <QList>
+#include "kopete_export.h"
+class UpnpRouterPrivate;
 
-#include "upnpRouterPrivate.h"
-
-class UPnpRouter
+class KOPETE_EXPORT UPnpRouter
 {
 public:
 	/**
@@ -49,10 +48,8 @@ public:
 	*
 	* @param url
 	*/
-	UPnpRouter(const QUrl &url);
+	UPnpRouter(const QUrl &url  = QUrl());
 
-	UPnpRouter();
-	
 	/**
 	* Constructs a copy of a router
 	*
@@ -100,8 +97,11 @@ public:
 	*/
 	bool closePort(quint16 port, const QString &typeProtocol);
 
-
+	/**
+	* Destructor UPnpRouter
+	*/
+	~UPnpRouter();
 private:
-	UpnpRouterPrivate d;
+	UpnpRouterPrivate * const d;
 };
 

@@ -18,17 +18,17 @@
     *************************************************************************
 */
 
-#include "applicationWidget.h"
-#include <QList> 
+#include "applicationWidget.h" 
 #include <QMessageBox>
 
-ApplicationWidget::ApplicationWidget(QWidget *parent): QMainWindow(parent)
+ApplicationWidget::ApplicationWidget(QWidget *parent)
+	: QMainWindow(parent), router(UPnpRouter::allRouters())
 {
 	setupUi(this);
 	connect(btOpen, SIGNAL(clicked()),this, SLOT(openPort()));
 	connect(btDelete, SIGNAL(clicked()),this, SLOT(deletePort()));
 	connect(bt_search, SIGNAL(clicked()),this, SLOT(search()));
-	router = UPnpRouter::allRouters();
+
 
 }
 void ApplicationWidget::search()
