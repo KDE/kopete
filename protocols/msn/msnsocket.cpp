@@ -4,7 +4,6 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
     Copyright (c) 2005		by Gregg Edghill 		  <gregg.edghill@gmail.com>
-    Copyright (c) 2008      by Castan Romain          <romaincastan@gmail.com>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -38,7 +37,6 @@
 #include <kurl.h>
 
 #include "kopeteuiglobal.h"
-#include "upnpRouter.h"
 using namespace KNetwork;
 
 class MimeMessage
@@ -104,16 +102,6 @@ void MSNSocket::connect( const QString &server, uint port )
 	
 	if(!m_useHttp)
 	{
-		//Insert upnpRouter for open port
-		QList<UPnpRouter> routers = UPnpRouter::allRouters();
-		foreach (UPnpRouter r, routers)
-		{
-			if(r.isValid())
-			{
-				r.openPort(port,"TCP","msn");
-				kWarning()<< "Open the port of router";
-			}
-		}
 		m_socket = new KBufferedSocket( server, QString::number(port) );
 	}
 	else {

@@ -4,7 +4,6 @@
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2005      by Gregg Edghill          <gregg.edghill@gmail.com>
-    Copyright (c) 2008      by Castan Romain          <romaincastan@gmail.com>
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 

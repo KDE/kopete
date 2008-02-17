@@ -4,6 +4,7 @@
     Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2005      by Michaël Larouche     <larouche@kde.org>
+    Copyright (c) 2008      by Romain CASTAN        <romaincastan@gmail.com>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -40,6 +41,7 @@
 #include <QtGui/QImage>
 #include <QtCore/QList>
 #include <QtCore/QCryptographicHash>
+#include <QMessageBox>
 
 #include "msncontact.h"
 #include "msnnotifysocket.h"
@@ -52,6 +54,8 @@
 #include "kopeteglobal.h"
 #include "kopetechatsessionmanager.h"
 #include "contactaddednotifydialog.h"
+
+#include "upnpRouter.h"
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
@@ -183,6 +187,14 @@ void MSNAccount::connectWithPassword( const QString &passwd )
 	}
 
 	m_openInboxAction->setEnabled( false );
+	
+	//Insert upnp : open port
+	QList<UPnpRouter> routers = UPnpRouter::allRouters();
+	foreach (UPnpRouter router, routers)
+	{
+		if(router.isValid())
+			router.openPort(serverPort(),"TCP",serverName());
+	}
 
 	createNotificationServer(serverName(), serverPort());
 }
@@ -244,7 +256,16 @@ void MSNAccount::createNotificationServer( const QString &host, uint port )
 void MSNAccount::disconnect()
 {
 	if ( m_notifySocket )
+	{
+		//Insert upnp : close port
+		QList<UPnpRouter> routers = UPnpRouter::allRouters();
+		foreach (UPnpRouter router, routers)
+		{
+			if(router.isValid())
+				router.closePort(serverPort(),"TCP");
+		}
 		m_notifySocket->disconnect();
+	}
 }
 
 void MSNAccount::fillActionMenu( KActionMenu *actionMenu )
