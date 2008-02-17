@@ -405,7 +405,8 @@ void ChatTextEditPart::setContents( const Kopete::Message &message )
 		textEdit()->setHtml ( message.escapedBody() );
 	else
 		textEdit()->setPlainText ( message.plainBody() );
-
+	textEdit()->moveCursor ( QTextCursor::End );
+	
 	setFont( message.font() );
 	setTextColor( message.foregroundColor() );
 // 	setBackgroundColorColor( message.backgroundColor() );
