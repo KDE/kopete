@@ -476,7 +476,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				kDebug(14140) << flag;
 				// FileName UTF16 (Unicode) [19..539]
 				QByteArray bytes;
-				bytes.reserve(520);
+				bytes.resize(520);
 				reader.readRawData(bytes.data(), bytes.size());
 				QTextStream ts(bytes, QIODevice::ReadOnly);
 				ts.setCodec(QTextCodec::codecForName("UTF-16"));
