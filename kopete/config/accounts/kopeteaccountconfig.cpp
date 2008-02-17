@@ -94,6 +94,7 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QVariantList &a
 	connect( mAccountList,  SIGNAL( itemSelectionChanged() ), this, SLOT( slotItemSelected() ) );
 	connect( mAccountList,  SIGNAL( itemDoubleClicked(QTreeWidgetItem*, int) ), this, SLOT( slotModify() ) );
 	connect( mAccountList,  SIGNAL( itemChanged ( QTreeWidgetItem * , int )), this, SLOT( slotItemChanged(QTreeWidgetItem*) ) );
+	connect( mAccountList,  SIGNAL( itemClicked ( QTreeWidgetItem * , int )), this, SLOT( slotItemClicked(QTreeWidgetItem*, int) ) );
 
 	// this ensures that newly created accounts are assigned to the selected identity
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account *)), this, SLOT(slotAccountAdded(Kopete::Account *)) );
@@ -189,8 +190,9 @@ void KopeteAccountConfig::load()
 		lvi->setText( 1, i->myself()->onlineStatus().statusTypeToString(i->myself()->onlineStatus().status()) );
 		lvi->setTextAlignment( 1, Qt::AlignRight | Qt::AlignVCenter );
 		lvi->setFont( 1, font );
-		
-		lvi->setFlags( lvi->flags() & ~Qt::ItemIsDropEnabled );
+	
+		lvi->setFlags( lvi->flags() & (~Qt::ItemIsDropEnabled | Qt::ItemIsUserCheckable) );
+		lvi->setCheckState ( 0, i->excludeConnect() ? Qt::Unchecked : Qt::Checked );
 
 		connect( i->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
 				 this, SLOT(slotOnlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)));
@@ -576,6 +578,12 @@ void KopeteAccountConfig::configureMenus()
 	m_identityContextMenu->addAction( m_actionIdentityModify );
 	m_identityContextMenu->addAction( m_actionIdentityRemove );
 	m_identityContextMenu->addAction( m_actionIdentitySetDefault );
+}
+
+void KopeteAccountConfig::slotItemClicked( QTreeWidgetItem * item, int /*column*/ )
+{
+	KopeteAccountLVI *account = static_cast<KopeteAccountLVI*>( item );
+	account->account()->setExcludeConnect ( account->checkState(0) == Qt::Unchecked ? true : false );
 }
 
 
