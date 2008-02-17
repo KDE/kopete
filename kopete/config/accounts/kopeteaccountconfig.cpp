@@ -191,7 +191,7 @@ void KopeteAccountConfig::load()
 		lvi->setTextAlignment( 1, Qt::AlignRight | Qt::AlignVCenter );
 		lvi->setFont( 1, font );
 	
-		lvi->setFlags( lvi->flags() & (~Qt::ItemIsDropEnabled | Qt::ItemIsUserCheckable) );
+		lvi->setFlags( (lvi->flags() & ~Qt::ItemIsDropEnabled) | Qt::ItemIsUserCheckable );
 		lvi->setCheckState ( 0, i->excludeConnect() ? Qt::Unchecked : Qt::Checked );
 
 		connect( i->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
