@@ -316,7 +316,7 @@ QString Message::escapedBody() const
 	else {
 		QString html;
 		if ( d->format == Qt::PlainText )
-			html = Qt::convertFromPlainText( d->body->toPlainText() );
+			html = Qt::convertFromPlainText( d->body->toPlainText(), Qt::WhiteSpaceNormal );
 		else
 			html = d->body->toHtml();
 
