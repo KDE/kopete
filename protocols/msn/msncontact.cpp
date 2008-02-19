@@ -717,8 +717,8 @@ void MSNContact::setObject(const QString &obj)
 	removeProperty( Kopete::Global::Properties::self()->photo()  ) ;
 	emit displayPictureChanged();
 
-	KConfigGroup config(KGlobal::config(), "MSN");
-	if ( config.readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
+    KConfigGroup *config=account()->configGroup();
+	if ( config->readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
 			 && account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }

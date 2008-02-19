@@ -191,8 +191,8 @@ void MSNChatSession::createChat( const QString &handle,
 	connect( m_chatService, SIGNAL( receivedTypingMsg( const QString &, bool ) ),
 		this, SLOT( receivedTypingMsg( const QString &, bool ) ) );
 
-	KConfigGroup config(KGlobal::config(), "MSN");
-	if ( config.readEntry( "SendTypingNotification", true ) )
+    KConfigGroup *config=account()->configGroup();
+	if ( config->readEntry( "SendTypingNotification", true ) )
 	{
 		connect( this, SIGNAL( myselfTyping( bool ) ),
 			m_chatService, SLOT( sendTypingMsg( bool ) ) );
@@ -236,8 +236,8 @@ void MSNChatSession::slotUserJoined( const QString &handle, const QString &publi
 	if(!m_messagesQueue.empty() || !m_invitations.isEmpty())
 		sendMessageQueue();
 
-	KConfigGroup config(KGlobal::config(), "MSN");
-	if ( members().count()==1 && config.readEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() && !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
+    KConfigGroup *config=account()->configGroup();
+	if ( members().count()==1 && config->readEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() && !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 		slotRequestPicture();
 }
 
@@ -616,8 +616,8 @@ void MSNChatSession::slotDisplayPictureChanged()
 		}
 		else
 		{
-			KConfigGroup config(KGlobal::config(), "MSN");
-			if ( config.readEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() )
+            KConfigGroup *config=account()->configGroup();
+			if ( config->readEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() )
 				slotRequestPicture();
 		}
 	}
@@ -647,9 +647,8 @@ void MSNChatSession::receivedTypingMsg( const QString &contactId, bool b )
 	if(c && m_newSession &&  !view(false))
 	{
 		//this was originaly in MSNAccount::slotCreateChat
-		KConfigGroup group = KGlobal::config()->group( "MSN" );
-		bool notifyNewChat = group.readEntry( "NotifyNewChat", false );
-		if (  notifyNewChat  )
+        KConfigGroup *config=account()->configGroup();
+        if (  config->readEntry( "NotifyNewChat", false )  )
 		{
 			// this internal message should open the window if they not exist
 			QString body = i18n( "%1 has started a chat with you", c->metaContact()->displayName() );
