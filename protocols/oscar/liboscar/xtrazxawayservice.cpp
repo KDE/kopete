@@ -122,7 +122,9 @@ void XAwayService::handleRequest( QDomElement& eRoot )
 		if( !e.isNull() )
 		{
 			if ( e.tagName() == "id" )
+			{
 				Q_ASSERT( e.text() == "AwayStat" );
+			}
 // 			else if ( e.tagName() == "trans" )
 			else if ( e.tagName() == "senderId" )
 				m_senderId = e.text();
