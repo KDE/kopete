@@ -411,8 +411,8 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	{
 		// TODO remove Displatcher.
 		bool useEmoticons( Kopete::AppearanceSettings::self()->useEmoticons() );
-		KConfigGroup msnConfig(KGlobal::config(), "MSN");
-		bool useCustomEmoticons( msnConfig.readEntry( "useCustomEmoticons", true ) );
+        KConfigGroup *msnConfig=m_account->configGroup();
+		bool useCustomEmoticons( msnConfig->readEntry( "useCustomEmoticons", true ) );
 
 		if ( useEmoticons && useCustomEmoticons )
 		{
@@ -685,8 +685,8 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	}
 #endif
 
-	KConfigGroup config(KGlobal::config(), "MSN");
-	if ( config.readEntry( "exportEmoticons", false ) )
+    KConfigGroup *config=m_account->configGroup();
+	if ( config->readEntry( "exportEmoticons", false ) )
 	{
 		QMap<QString, QStringList> emap = Kopete::Emoticons::self()->emoticonAndPicList();
 
@@ -714,7 +714,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 
 	// User-Agent is not a official flag, but GAIM has it
 	QString UA;
-	if( config.readEntry("SendClientInfo", true) )
+	if( config->readEntry("SendClientInfo", true) )
 	{
 		UA="User-Agent: Kopete/"+escape(KGlobal::mainComponent().aboutData()->version())+"\r\n";
 	}
