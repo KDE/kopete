@@ -63,7 +63,9 @@ void XService::handle( QDomElement& eRoot )
 		if( !e.isNull() )
 		{
 			if ( e.tagName() == "id" )
+			{
 				Q_ASSERT( e.text() == serviceId() );
+			}
 			else if ( e.tagName() == "val" )
 				handleResponse( e );
 			else if ( e.tagName() == "req" )
