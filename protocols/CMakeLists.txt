@@ -2,7 +2,7 @@ macro_optional_find_package(OpenSSL)
 macro_log_feature(OPENSSL_FOUND "OpenSSL" "A toolkit implementing the Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1) protocols" "http://openssl.org" FALSE "" "Required for the Kopete Gadu-Gadu protocol.")
 
 option(WITH_testbed "Enable Kopete testbed protocol" ON)
-option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" OFF)
+option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" ON)
 option(WITH_msn "Enable Kopete MSN protocol" ON)
 option(WITH_oscar "Enable Kopete Oscar (ICQ and AIM) protocol" ON)
 option(WITH_yahoo "Enable Kopete Yahoo protocol" ON)

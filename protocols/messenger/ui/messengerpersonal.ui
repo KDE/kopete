@@ -1,0 +1,285 @@
+<ui version="4.0" >
+ <class>MessengerPersonalInfoWidget</class>
+ <widget class="QWidget" name="MessengerPersonalInfoWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>435</width>
+    <height>425</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>9</number>
+   </property>
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="personalGroupBox" >
+     <property name="windowModality" >
+      <enum>Qt::NonModal</enum>
+     </property>
+     <property name="title" >
+      <string>Personal Info</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>9</number>
+      </property>
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="8" column="2" >
+       <widget class="QLabel" name="birthdayLabel" >
+        <property name="text" >
+         <string>Birthday:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2" colspan="2" >
+       <widget class="QLineEdit" name="homePhoneEdit" />
+      </item>
+      <item row="4" column="0" >
+       <widget class="QLabel" name="zipLabel" >
+        <property name="text" >
+         <string>Zip/postal code:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2" colspan="2" >
+       <widget class="QLineEdit" name="personalEmailEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2" >
+       <widget class="QLabel" name="homePhoneLabel" >
+        <property name="text" >
+         <string>Home Phone:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QLabel" name="stateLabel" >
+        <property name="text" >
+         <string>State/province:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" colspan="2" >
+       <widget class="QLineEdit" name="stateEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0" >
+       <widget class="QLabel" name="websiteLabel" >
+        <property name="text" >
+         <string>Websites:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="cityLabel" >
+        <property name="text" >
+         <string>City:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="countryLabel" >
+        <property name="text" >
+         <string>Country/Region:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2" >
+       <widget class="QLabel" name="personalEmailLabel" >
+        <property name="text" >
+         <string>Personal e-mail:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0" >
+       <widget class="QLabel" name="spouceLabel" >
+        <property name="text" >
+         <string>Spouce/partner</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" >
+       <widget class="QLabel" name="otherPhoneLabel" >
+        <property name="text" >
+         <string>Other phone:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="2" >
+       <widget class="QLabel" name="anniversaryLabel" >
+        <property name="text" >
+         <string>Anniversary:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" >
+       <widget class="QLabel" name="streetLabel" >
+        <property name="text" >
+         <string>Street Address:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2" colspan="2" >
+       <widget class="QLineEdit" name="streetEdit" />
+      </item>
+      <item row="1" column="0" colspan="2" >
+       <widget class="QLineEdit" name="countryEdit" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2" >
+       <widget class="QLineEdit" name="cityEdit" />
+      </item>
+      <item row="5" column="0" colspan="2" >
+       <widget class="QLineEdit" name="zipEdit" />
+      </item>
+      <item row="7" column="0" colspan="2" >
+       <widget class="QLineEdit" name="otherPhoneEdit" />
+      </item>
+      <item row="9" column="0" colspan="2" >
+       <widget class="QLineEdit" name="websiteEdit" />
+      </item>
+      <item row="11" column="0" colspan="2" >
+       <widget class="QLineEdit" name="spouceEdit" />
+      </item>
+      <item row="9" column="2" colspan="2" >
+       <layout class="QHBoxLayout" >
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QSpinBox" name="birthdayYearSpin" />
+        </item>
+        <item>
+         <widget class="QComboBox" name="birthdayMonthComboBox" />
+        </item>
+        <item>
+         <widget class="QComboBox" name="birthdayDayComboBox" />
+        </item>
+       </layout>
+      </item>
+      <item row="11" column="2" colspan="2" >
+       <layout class="QHBoxLayout" >
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QSpinBox" name="anniversaryYearSpin" />
+        </item>
+        <item>
+         <widget class="QComboBox" name="anniversaryMonthComboBox" />
+        </item>
+        <item>
+         <widget class="QComboBox" name="anniversaryDayComboBox" />
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>51</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <tabstops>
+  <tabstop>countryEdit</tabstop>
+  <tabstop>stateEdit</tabstop>
+  <tabstop>personalEmailEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

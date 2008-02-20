@@ -20,6 +20,7 @@
 
 #include <qcheckbox.h>
 #include <qlabel.h>
+#include <kdebug.h>
 
 #include <kcolorbutton.h>
 #include <kdebug.h>
@@ -93,6 +94,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
 		QTreeWidgetItem *pluginItem = new QTreeWidgetItem(d->uiSelectService.protocolListView);
 		pluginItem->setIcon(0, QIcon(SmallIcon(it->icon())));
 		pluginItem->setText(0, it->name());
+		//kDebug() << "################## ok ### " << it->name();
 		pluginItem->setText(1, it->comment());
 
 		d->protocolItems.insert(pluginItem, *it);
