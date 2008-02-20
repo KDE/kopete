@@ -142,10 +142,11 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 	// TODO support file preview. For now disable file preview.
 	writer << (qint32)1;
 	// Write the file name in utf-16 to the stream.
-	QTextStream ts(header, QIODevice::WriteOnly);
+	QTextStream ts(&header, QIODevice::WriteOnly);
 	ts.setCodec(QTextCodec::codecForName("UTF-16"));
 	ts.device()->seek(20);
 	ts << path.section('/', -1);
+    ts.flush();
 	// NOTE Background Sharing base64 [540..569]
 	// TODO add support for background sharing.
 	// Write file exchange type to the stream.
