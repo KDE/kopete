@@ -91,7 +91,7 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	slotSettingsChanged();
 
 	//adding menu to contaclists menubar and contacts popup menu
-	otrPolicyMenu = new KSelectAction( KIcon("object-locked"), i18n( "&OTR Policy" ), this );
+	otrPolicyMenu = new KSelectAction( KIcon("object-locked"), i18nc( "@item:inmenu", "&OTR Policy" ), this );
 	actionCollection()->addAction( "otr_policy", otrPolicyMenu );
 
 	KAction *separatorAction = new KAction( otrPolicyMenu );
@@ -174,7 +174,7 @@ void  OTRPlugin::slotEnableOtr( Kopete::ChatSession *session, bool enable ){
 		KopeteOtrKcfg::self()->readConfig();
 		if( policy.toInt( &noerr, 10 ) == 4 || ( policy.toInt( &noerr, 10 ) == 0 && KopeteOtrKcfg::self()->rbNever() ) ){
 			Kopete::Message msg(  session->account()->myself(), session->members());
-			msg.setPlainBody( i18n( "Your policy settings do not allow encrypted sessions to this contact." ));
+			msg.setPlainBody( i18nc( "@info:status", "Your policy settings do not allow encrypted sessions to this contact." ));
 			msg.setDirection( Kopete::Message::Internal);
 			session->appendMessage( msg );
 		} else {
@@ -183,9 +183,9 @@ void  OTRPlugin::slotEnableOtr( Kopete::ChatSession *session, bool enable ){
 			msg1.setPlainBody( QString( body ) );
 			msg1.setDirection( Kopete::Message::Outbound );
 			if( otrlChatInterface->privState( session ) > 0 ){
-				body = i18n("Attempting to refresh the OTR session with <b>%1</b>...", otrlChatInterface->formatContact( session->members().first()->contactId()) );
+				body = i18nc( "@info:status", "Attempting to refresh the OTR session with <b>%1</b>...", otrlChatInterface->formatContact( session->members().first()->contactId()) );
 			} else {
-				body = i18n("Attempting to start a private OTR session with <b>%1</b>...", otrlChatInterface->formatContact( session->members().first()->contactId() ));
+				body = i18nc( "@info:status", "Attempting to start a private OTR session with <b>%1</b>...", otrlChatInterface->formatContact( session->members().first()->contactId() ));
 			}
 			Kopete::Message msg2( session->account()->myself(), session->members().first());
 			msg2.setHtmlBody( body );
@@ -256,7 +256,7 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 			return;
 		}
 		// If the message is sent while a Finished state libotr deletes the messagetext.
-		// This prevents the empty message from beeing shown in our chatwindow
+		// This prevents the empty message from being shown in our chatwindow
 		if( msg.plainBody().isEmpty() ){
 			event->discard();
 			return;

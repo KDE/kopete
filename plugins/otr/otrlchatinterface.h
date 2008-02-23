@@ -49,30 +49,30 @@ public:
 	~OtrlChatInterface();
 	static OtrlChatInterface *self();
 
-	int decryptMessage( QString *msg, QString accountId, QString protocol, QString contactId, Kopete::ChatSession *chatSession );
-	QString encryptMessage( QString msg, QString accountId,
-	QString protocol, QString contactId , Kopete::ChatSession *chatSession );
-	QString getDefaultQuery( QString accountId );
+	int decryptMessage( QString *msg, const QString &accountId, const QString &protocol, const QString &contactId, Kopete::ChatSession *chatSession );
+	QString encryptMessage( QString msg, const QString &accountId,
+	const QString &protocol, const QString &contactId , Kopete::ChatSession *chatSession );
+	QString getDefaultQuery( const QString &accountId );
 	void disconnectSession( Kopete::ChatSession *chatSession );
 	void setPolicy( OtrlPolicy policy );
-	bool shouldDiscard( QString message );
+	bool shouldDiscard( const QString &message );
 	OtrlUserState getUserstate();
 	int privState( Kopete::ChatSession *session );
-	QString formatContact(QString contactId);
+	QString formatContact( const QString &contactId);
 	bool isVerified( Kopete::ChatSession *session );
-	void checkFilePermissions( QString file );
+	void checkFilePermissions( const QString &file );
 	QString findActiveFingerprint( Kopete::ChatSession *session );
 	void verifyFingerprint( Kopete::ChatSession *session );
 	void setPlugin(Kopete::Plugin *plugin);
 	void emitGoneSecure(Kopete::ChatSession *sesseion, int state);
 	void abortSMP( ConnContext *context, Kopete::ChatSession *session );
-	void respondSMP( ConnContext *context, Kopete::ChatSession *session, QString secret, bool initiate );
+	void respondSMP( ConnContext *context, Kopete::ChatSession *session, const QString &secret, bool initiate );
 	void setTrust( Kopete::ChatSession *session, bool trust );
 
 private:
 	OtrlChatInterface();
 	static OtrlChatInterface *mSelf;
-	Fingerprint *findFingerprint( QString username );
+	Fingerprint *findFingerprint( const QString &username );
 
 signals:
 	void goneSecure(Kopete::ChatSession* session, int state);
@@ -85,7 +85,7 @@ private:
 	QString protocol;
 
 public:
-	KeyGenThread( QString accountname, QString protocol );
+	KeyGenThread( const QString &accountname, const QString &protocol );
 	virtual void run();
 };
 

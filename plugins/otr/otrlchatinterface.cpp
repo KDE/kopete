@@ -352,8 +352,8 @@ OtrlUserState OtrlChatInterface::getUserstate(){
 }
 
 
-KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, QString accountId,
-	QString protocol, QString contactId , Kopete::ChatSession *chatSession){
+KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &accountId,
+	const QString &protocol, const QString &contactId , Kopete::ChatSession *chatSession){
 
 	int ignoremessage;
 	char *newMessage = NULL;
@@ -467,8 +467,8 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, QString accountI
 	return ignoremessage;
 }
 
-KDE_EXPORT QString OtrlChatInterface::encryptMessage( QString msg, QString accountId,
-	QString protocol, QString contactId , Kopete::ChatSession *chatSession ){
+KDE_EXPORT QString OtrlChatInterface::encryptMessage( QString msg, const QString &accountId,
+	const QString &protocol, const QString &contactId , Kopete::ChatSession *chatSession ){
 	int err;
 	char * newMessage;
 	if( otrl_proto_message_type( msg.toLocal8Bit() ) == OTRL_MSGTYPE_NOTOTR ){
@@ -491,7 +491,7 @@ KDE_EXPORT QString OtrlChatInterface::encryptMessage( QString msg, QString accou
 	return msg;
 }
 
-KDE_EXPORT QString OtrlChatInterface::getDefaultQuery( QString accountId ){
+KDE_EXPORT QString OtrlChatInterface::getDefaultQuery( const QString &accountId ){
 	char *message;
 	message = otrl_proto_default_query_msg( accountId.toLatin1(), OTRL_POLICY_ALLOW_V2 );
 	QString msg( message );
@@ -511,7 +511,7 @@ KDE_EXPORT void OtrlChatInterface::disconnectSession( Kopete::ChatSession *chatS
 
 }
 
-KDE_EXPORT bool OtrlChatInterface::shouldDiscard( QString message ){
+KDE_EXPORT bool OtrlChatInterface::shouldDiscard( const QString &message ){
 	if( !message.isEmpty() && !message.isNull() ){
 		switch( otrl_proto_message_type( message.toLatin1() ) ){
 			case OTRL_MSGTYPE_TAGGEDPLAINTEXT:
@@ -553,7 +553,7 @@ KDE_EXPORT int OtrlChatInterface::privState( Kopete::ChatSession *session ){
 	return 0;
 }
 
-KDE_EXPORT QString  OtrlChatInterface::formatContact(QString contactId){
+KDE_EXPORT QString  OtrlChatInterface::formatContact(const QString &contactId){
 	
 	Kopete::MetaContact *metaContact = Kopete::ContactList::self()->findMetaContactByContactId(contactId);
 	if( metaContact ){
@@ -590,7 +590,7 @@ KDE_EXPORT void OtrlChatInterface::verifyFingerprint( Kopete::ChatSession *sessi
 */
 }
 
-Fingerprint *OtrlChatInterface::findFingerprint( QString account ){
+Fingerprint *OtrlChatInterface::findFingerprint( const QString &account ){
 	ConnContext *context;
 
 	for( context = userstate->context_root; context != NULL; context = context->next ){
@@ -631,7 +631,7 @@ bool OtrlChatInterface::isVerified( Kopete::ChatSession *session ){
 	}
 }
 
-KDE_EXPORT void OtrlChatInterface::checkFilePermissions( QString file ){
+KDE_EXPORT void OtrlChatInterface::checkFilePermissions( const QString &file ){
 	if( QFile::exists( file ) ){
 		QFile privkeys( file );
 		QFileInfo privkeysInfo( privkeys );
@@ -685,7 +685,7 @@ void OtrlChatInterface::abortSMP( ConnContext *context, Kopete::ChatSession *ses
 	}
 }
 
-void OtrlChatInterface::respondSMP( ConnContext *context, Kopete::ChatSession *session, QString secret, bool initiate ){
+void OtrlChatInterface::respondSMP( ConnContext *context, Kopete::ChatSession *session, const QString &secret, bool initiate ){
 	if( initiate ){
 		context = otrl_context_find( userstate, session->members().first()->contactId().toLocal8Bit(), session->account()->accountId().toLocal8Bit(), session->protocol()->displayName().toLocal8Bit(), 0, NULL, NULL, NULL);
 		otrl_message_initiate_smp( userstate, &ui_ops, session, context, (unsigned char*)secret.toLocal8Bit().data(), secret.length() );
@@ -704,7 +704,7 @@ void OtrlChatInterface::respondSMP( ConnContext *context, Kopete::ChatSession *s
 
 /****************** KeyGenThread *******************/
 
-KeyGenThread::KeyGenThread( QString accountname, QString protocol ){
+KeyGenThread::KeyGenThread( const QString &accountname, const QString &protocol ){
 	this->accountname = accountname;
 	this->protocol = protocol;
 }

@@ -23,6 +23,11 @@
   * @author Michael Zanetti
   */
 
+
+#include "otrlconfinterface.h"
+#include "otrlchatinterface.h"
+#include "privkeypopup.h"
+
 #include <qapplication.h>
 #include <qeventloop.h>
 #include <qwidget.h>
@@ -34,12 +39,6 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
-
-
-#include "otrlconfinterface.h"
-#include "otrlchatinterface.h"
-#include "privkeypopup.h"
-
 
 /*********************** Konstruktor/Destruktor **********************/
 
@@ -59,18 +58,18 @@ OtrlConfInterface::~ OtrlConfInterface(){
 
 /*********************** Functions for kcm module ************************/
 
-KDE_EXPORT QString OtrlConfInterface::getPrivFingerprint( QString accountId, QString protocol){
+KDE_EXPORT QString OtrlConfInterface::getPrivFingerprint( const QString &accountId, const QString &protocol){
 	char fingerprint[45];
 
 	if( otrl_privkey_fingerprint( userstate, fingerprint, accountId.toLatin1(), protocol.toLatin1()) != 0 ){
 		return fingerprint;
 	}
 
-	return i18n("No fingerprint present.");
+	return i18nc("@info", "No fingerprint present.");
 }
 
 
-KDE_EXPORT bool OtrlConfInterface::hasPrivFingerprint( QString accountId, QString protocol ){
+KDE_EXPORT bool OtrlConfInterface::hasPrivFingerprint( const QString &accountId, const QString &protocol ){
 	char fingerprint[45];
 	if( otrl_privkey_fingerprint( userstate, fingerprint, accountId.toLatin1(), protocol.toLatin1() ) != 0 ){
 		return true;
@@ -79,7 +78,7 @@ KDE_EXPORT bool OtrlConfInterface::hasPrivFingerprint( QString accountId, QStrin
 }
 
 
-KDE_EXPORT void OtrlConfInterface::generateNewPrivKey( QString accountId, QString protocol ){
+KDE_EXPORT void OtrlConfInterface::generateNewPrivKey( const QString &accountId, const QString &protocol ){
 	PrivKeyPopup *popup = new PrivKeyPopup( preferencesDialog );
 	popup->show();
 	popup->setCloseLock( true );
@@ -121,9 +120,9 @@ KDE_EXPORT QList<QStringList> OtrlConfInterface::readAllFingerprints(){
 				}
 			}
 			if ( fingerprint->trust && fingerprint->trust[0] ){
-				entry << i18nc( "@item:intable", "Yes" );
+				entry << i18nc( "@item:intable The fingerprint is trusted", "Yes" );
 			} else {
-				entry << i18nc( "@item:intable", "No" );
+				entry << i18nc( "@item:intable The fingerprint is not trusted", "No" );
 			}
 			otrl_privkey_hash_to_human( hash, fingerprint->fingerprint );
 			entry << hash;
@@ -135,7 +134,7 @@ KDE_EXPORT QList<QStringList> OtrlConfInterface::readAllFingerprints(){
 	return list;
 }
 
-KDE_EXPORT void OtrlConfInterface::verifyFingerprint( QString strFingerprint, bool trust ){
+KDE_EXPORT void OtrlConfInterface::verifyFingerprint( const QString &strFingerprint, bool trust ){
 	Fingerprint *fingerprint;
 	fingerprint = findFingerprint( strFingerprint );
 
@@ -151,7 +150,7 @@ KDE_EXPORT void OtrlConfInterface::verifyFingerprint( QString strFingerprint, bo
 	}
 }
 
-bool OtrlConfInterface::isVerified( QString strFingerprint ){
+bool OtrlConfInterface::isVerified( const QString &strFingerprint ){
 	Fingerprint *fingerprint;	
 
 	fingerprint = findFingerprint( strFingerprint );
@@ -166,7 +165,7 @@ bool OtrlConfInterface::isVerified( QString strFingerprint ){
 }
 
 
-KDE_EXPORT void OtrlConfInterface::forgetFingerprint( QString strFingerprint ){
+KDE_EXPORT void OtrlConfInterface::forgetFingerprint( const QString &strFingerprint ){
 	Fingerprint *fingerprint;
 	
 	fingerprint = findFingerprint( strFingerprint );
@@ -174,7 +173,7 @@ KDE_EXPORT void OtrlConfInterface::forgetFingerprint( QString strFingerprint ){
 	otrl_privkey_write_fingerprints( userstate, QString(QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints").toLocal8Bit() );
 }
 
-Fingerprint *OtrlConfInterface::findFingerprint( QString strFingerprint ){
+Fingerprint *OtrlConfInterface::findFingerprint( const QString &strFingerprint ){
 //	const char *cFingerprint = ;
 //	Fingerprint *fingerprintRoot = &userstate->context_root->fingerprint_root;
 	ConnContext *context;
@@ -195,7 +194,7 @@ Fingerprint *OtrlConfInterface::findFingerprint( QString strFingerprint ){
 	return foundFingerprint;
 }
 
-KDE_EXPORT bool OtrlConfInterface::isEncrypted( QString strFingerprint ){
+KDE_EXPORT bool OtrlConfInterface::isEncrypted( const QString &strFingerprint ){
 	Fingerprint *fingerprint;
 	Fingerprint *tmpFingerprint;
 	Fingerprint *foundFingerprint = NULL;

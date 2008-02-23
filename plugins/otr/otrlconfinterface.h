@@ -45,20 +45,20 @@ public:
 	~OtrlConfInterface();
 	OtrlConfInterface( QWidget *preferencesDialog );
 
-	QString getPrivFingerprint( QString accountId, QString protocol );
-	void generateNewPrivKey( QString accountId, QString protocol );
+	QString getPrivFingerprint( const QString &accountId, const QString &protocol );
+	void generateNewPrivKey( const QString &accountId, const QString &protocol );
 	QList<QStringList> readAllFingerprints();
-	bool hasPrivFingerprint( QString accountId, QString protocol);
-	void forgetFingerprint( QString strFingerprint );
-	void verifyFingerprint( QString strFingerprint, bool trust );
-	bool isVerified( QString strFingerprint );
-	bool isEncrypted( QString strFingerprint );
+	bool hasPrivFingerprint( const QString &accountId, const QString &protocol);
+	void forgetFingerprint( const QString &strFingerprint );
+	void verifyFingerprint( const QString &strFingerprint, bool trust );
+	bool isVerified( const QString &strFingerprint );
+	bool isEncrypted( const QString &strFingerprint );
 
 private:
 	OtrlUserState userstate;
 	QWidget *preferencesDialog;
 
-	Fingerprint *findFingerprint( QString strFingerprint );	
+	Fingerprint *findFingerprint( const QString &strFingerprint );	
 };
 
 #endif
