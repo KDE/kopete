@@ -16,10 +16,12 @@
 #ifndef MESSENGEREDITACCOUNTWIDEGET_H
 #define MESSENGEREDITACCOUNTWIDEGET_H
 
-#include <QWidget>
-#include <QString>
+#include <qwidget.h>
 
 #include "editaccountwidget.h"
+#include "messengeraccount.h"
+#include "messengerprotocol.h"
+#include "ui_messengereditaccount.h"
 
 namespace Kopete { class Account; }
 
@@ -29,10 +31,10 @@ class MessengerEditAccountWidgetPrivate;
 /*Messenger Edit Account Widget Class*/
 class MessengerEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
-	//Q_OBJECT
+	Q_OBJECT
 
 public:
-	explicit MessengerEditAccountWidget( Kopete::Account *account );
+	MessengerEditAccountWidget(MessengerProtocol * proto, MessengerAccount * account, QWidget * parent);
 	~MessengerEditAccountWidget();
 	virtual bool validateData();
 	virtual Kopete::Account * apply();
@@ -46,7 +48,7 @@ private slots:
 
 private:
 	MessengerEditAccountWidgetPrivate *d;
-// 	MessengerAccount	*m_account;
+ 	MessengerAccount	*m_account;
 };
 
 #endif

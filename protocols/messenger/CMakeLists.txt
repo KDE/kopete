@@ -4,7 +4,8 @@ add_subdirectory( libpapillon )
 
 include_directories(
 ${KOPETE_INCLUDES}
-)
+${CMAKE_CURRENT_BINARY_DIR}/ui/ 
+${CMAKE_CURRENT_SOURCE_DIR}/ui/)
 
 
 ########### next target ###############
@@ -15,7 +16,7 @@ set(kopete_messenger_PART_SRCS messengerprotocol.cpp messengeraccount.cpp messen
 kde4_add_plugin(kopete_messenger ${kopete_messenger_PART_SRCS})
 
 
-target_link_libraries(kopete_messenger ${KDE4_KIO_LIBS} kopete )
+target_link_libraries(kopete_messenger ${KDE4_KDECORE_LIBS} kopete_messenger_shared )
 
 install(TARGETS kopete_messenger  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -35,7 +36,7 @@ set(kopete_messenger_shared_LIB_SRCS
    )
 
 kde4_add_library(kopete_messenger_shared SHARED ${kopete_messenger_shared_LIB_SRCS})
-
+target_link_libraries(kopete_messenger_shared  ${KDE4_KIO_LIBS} kopete )
 ########### install files ###############
 
 install( FILES kopete_messenger.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
