@@ -25,8 +25,6 @@
 #include <qobject.h>
 #include <kxmlguiclient.h>
 
-//#include <kio/job.h>
-
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>

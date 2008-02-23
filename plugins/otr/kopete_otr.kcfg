@@ -8,11 +8,11 @@
 			<default>false</default>			
 		</entry>
 		<entry name="rbOpportunistic" type="Bool">
-			<label>Automatically encrypt mesages if the other side supports OTR</label>
+			<label>Automatically encrypt messages if the other side supports OTR</label>
 			<default>true</default>
 		</entry>		
 		<entry name="rbManual" type="Bool">
-			<label>Encrypt mesages if the other side requests an OTR connection</label>
+			<label>Encrypt messages if the other side requests an OTR connection</label>
 			<default>false</default>
 		</entry>
 		<entry name="rbNever" type="Bool">

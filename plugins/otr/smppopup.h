@@ -42,7 +42,6 @@ public:
 	~SMPPopup();
 
 public slots:
-  /*$PUBLIC_SLOTS$*/
 	virtual void	cancelSMP();
 	virtual void	respondSMP();
 	virtual void	openHelp();

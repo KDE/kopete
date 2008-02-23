@@ -45,8 +45,7 @@ SMPPopup::SMPPopup( QWidget *parent, ConnContext *context, Kopete::ChatSession *
 
 	ui.lMessage->setText( i18n( "Please enter the secret passphrase to authenticate %1", OtrlChatInterface::self()->formatContact( session->members().first()->contactId() ) ) );
 
-	KIcon *icon = new KIcon( "application-pgp-signature" );
-	ui.lIcon->setPixmap( icon->pixmap( 48, 48 ) );
+	ui.lIcon->setPixmap( KIcon( "application-pgp-signature" ).pixmap( 48, 48 ) );
 
 	connect( ui.pbOk, SIGNAL( clicked(bool) ), this, SLOT( respondSMP() ) );
 	connect( ui.pbCancel, SIGNAL( clicked(bool) ), this, SLOT( cancelSMP() ) );
@@ -71,8 +70,7 @@ void SMPPopup::respondSMP()
 
 void SMPPopup::openHelp()
 {
-	KUrl *url = new KUrl("http://www.cypherpunks.ca/otr/help/authenticate.php?lang=en");
-	new KRun(*url, 0, 0, false, true);
+	new KRun(KUrl("http://www.cypherpunks.ca/otr/help/authenticate.php?lang=en"), 0, 0, false, true);
 }
 
 void SMPPopup::manualAuth(){

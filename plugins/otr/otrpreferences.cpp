@@ -85,7 +85,7 @@ OTRPreferences::OTRPreferences(QWidget *parent, const QVariantList &args)
 		for( int i = 0; i < accounts.size(); i++){
 			Kopete::Account *account = accounts[i];
 				if (  account->protocol()->pluginId() != "IRCProtocol" ){
-					preferencesDialog->cbKeys->insertItem(index, account->accountId() + " (" + account->protocol()->displayName() + ")");
+					preferencesDialog->cbKeys->insertItem(index, account->accountId() + " (" + account->protocol()->displayName() + ')');
 					privKeys.insert(index++, accountnr);
 				}
 				accountnr++;

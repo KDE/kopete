@@ -21,7 +21,6 @@
 
 #include <kaction.h>
 #include <klocale.h>
-//#include <kactionclasses.h>
 #include <kactionmenu.h>
 #include <kopetechatsession.h>
 #include <ui/kopeteview.h>

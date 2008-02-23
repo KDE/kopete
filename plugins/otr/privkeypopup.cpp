@@ -31,8 +31,7 @@ PrivKeyPopup::PrivKeyPopup( QWidget *parent ):KDialog( parent ){
 	setCaption( i18n( "Please wait" ) );
 	setButtons( KDialog::None );
 
-	KIcon *icon = new KIcon( "dialog-password" );
-	ui.lIcon->setPixmap( icon->pixmap( 48, 48 ) );
+	ui.lIcon->setPixmap( KIcon( "dialog-password" ).pixmap( 48, 48 ) );
 }
 
 PrivKeyPopup::~PrivKeyPopup(){

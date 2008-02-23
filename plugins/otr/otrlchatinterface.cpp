@@ -506,7 +506,7 @@ KDE_EXPORT QString  OtrlChatInterface::formatContact(QString contactId){
 	if( metaContact ){
 		QString displayName = metaContact->displayName();
 		if((displayName != contactId) && !displayName.isNull()){
-			return displayName + " (" + contactId+")"; 
+			return displayName + " (" + contactId + ')'; 
 		}
 	}
 	return contactId;

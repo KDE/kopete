@@ -318,7 +318,7 @@ kdDebug() << "msg-PlainBody:" << msg.plainBody() << endl;
 			return;
 		}
 		// If the message is sent while a Finished state libotr deletes the messagetext.
-		// This prevents the empty message from beeing shown in our chatwindow
+		// This prevents the empty message from being shown in our chatwindow
 		if( msg.plainBody().isEmpty() ){
 			event->discard();
 			return;
