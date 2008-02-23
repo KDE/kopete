@@ -1,22 +1,22 @@
-/***************************************************************************
- *   Copyright (C) 2007 by Michael Zanetti
- *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
- ***************************************************************************/
+/*************************************************************************
+ * Copyright <2007>  <Michael Zanetti> <michael_zanetti@gmx.net>         *
+ *                                                                       *
+ * This program is free software; you can redistribute it and/or         *
+ * modify it under the terms of the GNU General Public License as        *
+ * published by the Free Software Foundation; either version 2 of        *
+ * the License or (at your option) version 3 or any later version        *
+ * accepted by the membership of KDE e.V. (or its successor approved     *
+ * by the membership of KDE e.V.), which shall act as a proxy            *
+ * defined in Section 14 of version 3 of the license.                    *
+ *                                                                       *
+ * This program is distributed in the hope that it will be useful,       *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ * GNU General Public License for more details.                          *
+ *                                                                       *
+ * You should have received a copy of the GNU General Public License     *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ *************************************************************************/ 
 
 
 /**
@@ -106,24 +106,24 @@ KDE_EXPORT QList<QStringList> OtrlConfInterface::readAllFingerprints(){
 		while( fingerprint ){
 			entry << context->username;
 			if( ( context->msgstate == OTRL_MSGSTATE_ENCRYPTED ) && ( context->active_fingerprint != fingerprint ) ){
-				entry << i18n("Unused");
+				entry << i18nc("@item:intable Fingerprint was never used", "Unused");
 			} else {
 				if (context && context->msgstate == OTRL_MSGSTATE_ENCRYPTED) {
 					if (context->active_fingerprint->trust && context->active_fingerprint->trust[0] != NULL) {
-						entry << i18n("Private");
+						entry << i18nc("@item:intable Fingerprint is used in a private conversation", "Private");
 					} else {
-						entry << i18n("Unverified");
+						entry << i18nc("@item:intable Fingerprint is used in an unverified conversation", "Unverified");
 					}
 				} else if (context && context->msgstate == OTRL_MSGSTATE_FINISHED) {
-					entry << i18n("Finished");
+					entry << i18nc("@item:intable Private conversation finished", "Finished");
 				} else {
-					entry << i18n("Not Private");
+					entry << i18nc("@item:intable Conversation is not private", "Not Private");
 				}
 			}
 			if ( fingerprint->trust && fingerprint->trust[0] ){
-				entry << i18n("Yes");
+				entry << i18nc( "@item:intable", "Yes" );
 			} else {
-				entry << i18n("No");
+				entry << i18nc( "@item:intable", "No" );
 			}
 			otrl_privkey_hash_to_human( hash, fingerprint->fingerprint );
 			entry << hash;

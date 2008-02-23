@@ -1,23 +1,36 @@
-/***************************************************************************
- *   Copyright (C) 2007 by Michael Zanetti                                 *
- *                                                                         *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
- ***************************************************************************/
+/*************************************************************************
+ * Copyright <2007>  <Michael Zanetti> <michael_zanetti@gmx.net>         *
+ *                                                                       *
+ * This program is free software; you can redistribute it and/or         *
+ * modify it under the terms of the GNU General Public License as        *
+ * published by the Free Software Foundation; either version 2 of        *
+ * the License or (at your option) version 3 or any later version        *
+ * accepted by the membership of KDE e.V. (or its successor approved     *
+ * by the membership of KDE e.V.), which shall act as a proxy            *
+ * defined in Section 14 of version 3 of the license.                    *
+ *                                                                       *
+ * This program is distributed in the hope that it will be useful,       *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ * GNU General Public License for more details.                          *
+ *                                                                       *
+ * You should have received a copy of the GNU General Public License     *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ *************************************************************************/ 
 
+#include "otrplugin.h"
+#include "otrguiclient.h"
+#include "otrlchatinterface.h"
+#include "kopete_otr.h"
+
+#include <qtimer.h>
+#include <qregexp.h>
+#include <qfile.h>
+#include <qcolor.h>
+
+#include <kdebug.h>
+#include <kaction.h>
+#include <kconfig.h>
 #include <kgenericfactory.h>
 #include <kselectaction.h>
 #include <kactioncollection.h>
@@ -34,10 +47,6 @@
 #include <kopetemessageevent.h>
 #include <kopeteprotocol.h>
 
-#include "otrplugin.h"
-#include "otrguiclient.h"
-#include "otrlchatinterface.h"
-#include "kopete_otr.h"
 
 /**
   * @author Michael Zanetti
@@ -88,12 +97,12 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	KAction *separatorAction = new KAction( otrPolicyMenu );
 	separatorAction->setSeparator( true );
 
-	otrPolicyMenu->addAction( i18n("&Default") );
+	otrPolicyMenu->addAction( i18nc( "@item:inmenu Use the default encryption mode specified in settings dialog", "&Default") );
 	otrPolicyMenu->addAction( separatorAction );
-	otrPolicyMenu->addAction( i18n("Al&ways") );
-	otrPolicyMenu->addAction( i18n("&Opportunistic") );
-	otrPolicyMenu->addAction( i18n("&Manual") );
-	otrPolicyMenu->addAction( i18n("Ne&ver") );
+	otrPolicyMenu->addAction( i18nc( "@item:inmenu Always encrypt messages", "Al&ways" ) );
+	otrPolicyMenu->addAction( i18nc( "@item:inmenu Use the opportunistic encryption mode", "&Opportunistic") );
+	otrPolicyMenu->addAction( i18nc( "@item:inmenu Use the manual encryption mode", "&Manual") );
+	otrPolicyMenu->addAction( i18nc( "@item:inmenu Never encrypt messages", "Ne&ver") );
 
 	otrPolicyMenu->setEnabled( false );
 
