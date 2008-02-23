@@ -56,6 +56,7 @@ public:
 	OtrMessageHandlerFactory( OTRPlugin *plugin ) : plugin(plugin) {}
 	Kopete::MessageHandler *create( Kopete::ChatSession *, Kopete::Message::MessageDirection direction )
 	{
+		Q_UNUSED(direction)
 		return new OtrMessageHandler(plugin);
 	}
 	int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection )
@@ -89,7 +90,6 @@ private slots:
 	void slotNewChatSessionWindow(Kopete::ChatSession * );
 	void slotSelectionChanged( bool single );
 	void slotSetPolicy();
-	void accountReady( Kopete::Account *account );
 	void slotSecuritySate(Kopete::ChatSession *session, int state);
 
 private:

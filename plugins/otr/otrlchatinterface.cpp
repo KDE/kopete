@@ -59,11 +59,14 @@ extern "C"{
 OtrlChatInterface *OtrlChatInterface::mSelf = 0;
 static OtrlUserState userstate;
 static OtrlPolicy confPolicy;
-static void *updateContextList = 0;
+//static void *updateContextList = 0;
 static Kopete::Plugin *chatPlugin = 0;
 
 /***************************** Gui_UI_Ops for libotr **********************************/
 static OtrlPolicy policy(void *opdata, ConnContext *context){
+
+	Q_UNUSED(context)
+
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	bool noerr;
 	
@@ -111,6 +114,10 @@ static void create_privkey(void *opdata, const char *accountname, const char *pr
 }
 
 static int is_logged_in(void *opdata, const char *accountname, const char *protocol, const char *recipient){
+
+	Q_UNUSED(accountname)
+	Q_UNUSED(protocol)
+
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::ContactPtrList list = session->members();		
 	for( int i = 0; i < list.size(); i++ ){
@@ -129,6 +136,10 @@ static int is_logged_in(void *opdata, const char *accountname, const char *proto
 }
 
 static void inject_message( void *opdata, const char *accountname, const char *protocol, const char *recipient, const char *message ){
+
+	Q_UNUSED(accountname)
+	Q_UNUSED(protocol)
+
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::ContactPtrList list = session->members();		
 	for( int i = 0; i < list.size(); i++ ){
@@ -143,10 +154,21 @@ static void inject_message( void *opdata, const char *accountname, const char *p
 }
 
 static void notify(void *opdata, OtrlNotifyLevel level, const char *accountname, const char *protocol, const char *username, const char *title, const char *primary, const char *secondary){
+
+	Q_UNUSED(opdata)
+	Q_UNUSED(level)
+	Q_UNUSED(accountname)
+	Q_UNUSED(protocol)
+	Q_UNUSED(username)
+
 	KMessageBox::information(NULL, QString( primary ) + QString( secondary ), QString( title ) );
 }
 
 static int display_otr_message( void *opdata, const char *accountname, const char *protocol, const char *username, const char *message ){
+
+	Q_UNUSED(accountname)
+	Q_UNUSED(protocol)
+
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::ContactPtrList list = session->members();		
 	for( int i = 0; i < list.size(); i++ ){
@@ -163,19 +185,36 @@ static int display_otr_message( void *opdata, const char *accountname, const cha
 
 static void update_context_list(void *opdata){
 //Not used...
+	Q_UNUSED(opdata)
 }
 
 static const char *protocol_name(void *opdata, const char *protocol){
 //Never seen...
+
+	Q_UNUSED(opdata)
+	Q_UNUSED(protocol)
+
 //	kdDebug() << "protocol_name called" << endl;
+	return 0;
 }
 
 static void protocol_name_free(void *opdata, const char *protocol_name){
 //Never seen...
+
+	Q_UNUSED(opdata)
+	Q_UNUSED(protocol_name)
+
 //	kdDebug() << "protocol_name_free called" << endl;
 }
 
 static void new_fingerprint(void *opdata, OtrlUserState us, const char *accountname, const char *protocol, const char *username, unsigned char fingerprint[20]){
+
+	Q_UNUSED(us)
+	Q_UNUSED(accountname)
+	Q_UNUSED(protocol)
+	Q_UNUSED(username)
+	Q_UNUSED(fingerprint)
+
 //	kdDebug() << "Received a new Fingerprint" << endl;
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::Message msg( session->members().first(), session->account()->myself() );
@@ -185,6 +224,9 @@ static void new_fingerprint(void *opdata, OtrlUserState us, const char *accountn
 }
 
 static void write_fingerprints(void *opdata){
+
+	Q_UNUSED(opdata)
+
 //	kdDebug() << "Writing fingerprints" << endl;
 	QString savePath = QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints";
 	otrl_privkey_write_fingerprints( userstate, savePath.toLocal8Bit() );
@@ -210,6 +252,9 @@ static void gone_secure(void *opdata, ConnContext *context){
 }
 
 static void gone_insecure(void *opdata, ConnContext *context){
+
+	Q_UNUSED(context)
+
 //	kdDebug() << "gone insecure" << endl;
 	OtrlChatInterface::self()->emitGoneSecure(((Kopete::ChatSession*)opdata), 0);
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
@@ -220,6 +265,9 @@ static void gone_insecure(void *opdata, ConnContext *context){
 }
 
 static void still_secure(void *opdata, ConnContext *context, int is_reply){
+
+	Q_UNUSED(is_reply)
+
 //	kdDebug() << "still secure" << endl;
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::Message msg( session->members().first(), session->account()->myself() );
@@ -235,7 +283,10 @@ static void still_secure(void *opdata, ConnContext *context, int is_reply){
 }
 
 static void log_message(void *opdata, const char *message){
-	kdDebug() << "libotr: "<< message << endl;
+
+	Q_UNUSED(opdata)
+
+	kDebug() << "libotr: "<< message;
 }
 
 static OtrlMessageAppOps ui_ops = {
@@ -253,7 +304,10 @@ static OtrlMessageAppOps ui_ops = {
 	gone_secure,
 	gone_insecure,
 	still_secure,
-	log_message
+	log_message,
+	0,		//not used yet...
+	0,		//not used yet...
+	0		//not used yet...
 };
 
 /*********************** Gui_UI_Ops finished *************************/
@@ -339,7 +393,7 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, QString accountI
 			if (nextMsg != OTRL_SMP_EXPECT2)
 				abortSMP( context, chatSession );
 			else {
-				kdDebug() << "Update SMP state: 2 -> 3" << endl;
+				kDebug() << "Update SMP state: 2 -> 3";
 				context->smstate->nextExpected = OTRL_SMP_EXPECT4;
 			}
 		}
@@ -578,62 +632,6 @@ bool OtrlChatInterface::isVerified( Kopete::ChatSession *session ){
 	}
 }
 
-KDE_EXPORT void OtrlChatInterface::updateKeyfile( Kopete::Account *account ){
-// Updating private keys from <=0.3
-//	kdDebug() << "updating keys" << endl;
-	QFile keyfile( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkeys" );
-	QString line;
-	char *lineChar;
-	QString file;
-
-	if( keyfile.open( QIODevice::ReadWrite ) ){
-//		kdDebug() << "file open" << endl;
-		while( keyfile.readLine( lineChar, 200 ) != -1){
-			line = QString::fromLocal8Bit(lineChar);
-			if( line.contains( "protocol" ) != -1 ){
-				if( line.contains( account->accountLabel() ) != -1 ){
-					line.replace( account->accountLabel(), account->protocol()->displayName() );
-//					kdDebug() << "Successfully updated keyfile for account " << account->accountId() << endl;
-				}
-			}
-		file.append( line );
-		}
-	}
-	keyfile.remove();
-	keyfile.open( QIODevice::ReadWrite );
-	keyfile.write( file.toLatin1() );
-	keyfile.close();
-	otrl_privkey_forget_all( userstate );
-	otrl_privkey_read( userstate, QString((KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkeys").toLatin1() );
-
-	file = "";
-	line = "";
-// Updating fingerprints from <=0.3
-	kDebug() << "updating fingerprints";
-	QFile fingerprintfile( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints" );
-
-	if( fingerprintfile.open( QIODevice::ReadWrite ) ){
-		kDebug() << "file open";
-		line = fingerprintfile.readLine( 200 );
-		while( !line.isEmpty() ){
-			int pos = line.indexOf( account->accountLabel() );
-			if( pos != -1 ){
-				line.replace( pos, account->accountLabel().length(), account->protocol()->displayName() );
-				kdDebug() << "Successfully updated fingerprint for account " << account->accountId() << endl;
-			}
-			line = fingerprintfile.readLine( 200 );
-		file.append( line );
-		}
-	}
-	fingerprintfile.remove();
-	fingerprintfile.open( QIODevice::ReadWrite );
-	fingerprintfile.write( file.toLatin1() );
-	fingerprintfile.close();
-	otrl_context_forget_all( userstate );
-	otrl_privkey_read_fingerprints(userstate, QString((KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints").toLatin1(), NULL, NULL);	
-
-}
-
 KDE_EXPORT void OtrlChatInterface::checkFilePermissions( QString file ){
 	if( QFile::exists( file ) ){
 		QFile privkeys( file );
@@ -666,11 +664,11 @@ void OtrlChatInterface::setTrust( Kopete::ChatSession *session, bool trust ){
 		} else {
 			otrl_context_set_trust( fingerprint, NULL );
 		}
-		kdDebug() << "Writing fingerprints" << endl;
+		kDebug() << "Writing fingerprints";
 		otrl_privkey_write_fingerprints( userstate, QString( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints" ).toLocal8Bit() );
 		emitGoneSecure( session, privState( session ) );
 	} else {
-		kdDebug() << "could not find fingerprint" << endl;
+		kDebug() << "could not find fingerprint";
 	}
 }
 

@@ -66,7 +66,7 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	: Kopete::Plugin ( OTRPluginFactory::componentData(), parent )
 {
 
-	kdDebug() << "OTR Plugin loading..." << endl;
+	kDebug() << "OTR Plugin loading...";
 
 	if( !pluginStatic_ )
 		pluginStatic_=this;
@@ -87,58 +87,10 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	otrlChatInterface = OtrlChatInterface::self();
 	otrlChatInterface->setPlugin(this);
 
-	//update key files when an account is ready to use
-	if( QFile::exists( QString( KGlobal::dirs()->saveLocation( "data", "kopete_otr/", true ) ) + "privkey" ) &&
-		!QFile::exists( QString( KGlobal::dirs()->saveLocation( "data", "kopete_otr/", true ) ) + "privkeys" ) ){
-		kdDebug() << "Detected old format keyfile. Doing updates!" << endl;
-		kdDebug() << "Reading old keyfile..." << endl;
-		QFile fpold( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkey" );
-		QString line;
-		QString file;
-		if( fpold.open( QIODevice::ReadWrite ) ){
-			while( fpold.readLine( line.toLocal8Bit().data(), 100 ) != -1){
-				file.append( line );
-			}
-		}
-		kdDebug() << "Writing new keyfile" << endl;
-		QFile fpnew( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkeys" );
-		fpnew.open( QIODevice::ReadWrite );
-		fpnew.write( file.toLocal8Bit().data(), file.length() );
-		fpnew.close();
-		kdDebug() << "Writing backup for old keyfile" << endl;
-		QFile fpbup( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkey.old" );
-		fpbup.open( QIODevice::ReadWrite );
-		fpbup.write( file.toLatin1(), file.length() );
-		fpbup.close();
-		kdDebug() << "Deleting old keyfile" << endl;
-		fpold.remove();
-
-		kdDebug() << "Reading old fingerprintsfile..." << endl;
-		QFile fpfingerprintsold( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints" );
-		line = "";
-		file = "";
-		if( fpfingerprintsold.open( QIODevice::ReadWrite ) ){
-			while( fpfingerprintsold.readLine( line.toLocal8Bit().data(), 100 ) != -1){
-				file.append( line );
-			}
-		}
-		kdDebug() << "Writing backup for old fingerprintsfile" << endl;
-		QFile fpfingerprintsbup( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints.old" );
-		fpfingerprintsbup.open( QIODevice::ReadWrite );
-		fpfingerprintsbup.write( file.toLatin1(), file.length() );
-		fpfingerprintsbup.close();
-
-		kdDebug() << "Waiting for accounts to update keyfile format" << endl;
-		connect( Kopete::AccountManager::self(), SIGNAL( accountRegistered( Kopete::Account * ) ),
-			this, SLOT( accountReady( Kopete::Account * ) ) );
-	}
 
 	// Checking file Permissions
 	OtrlChatInterface::self()->checkFilePermissions( QString( KGlobal::dirs()->saveLocation( "data", "kopete_otr/", true ) ) + "privkeys" );
 	OtrlChatInterface::self()->checkFilePermissions( QString( KGlobal::dirs()->saveLocation( "data", "kopete_otr/", true ) ) + "fingerprints" );
-	// Check also file permissions for eventuallly old beckup files
-	OtrlChatInterface::self()->checkFilePermissions( QString( KGlobal::dirs()->saveLocation( "data", "kopete_otr/", true ) ) + "privkey.old" );
-	OtrlChatInterface::self()->checkFilePermissions( QString( KGlobal::dirs()->saveLocation( "data", "kopete_otr/", true ) ) + "fingerprints.old" );
 
 	//setting the policy
 	slotSettingsChanged();
@@ -178,7 +130,7 @@ OTRPlugin::~OTRPlugin()
 {
 	delete m_inboundHandler;
 	pluginStatic_ = 0L;
-	kdDebug() << "Exiting plugin" << endl;
+	kDebug() << "Exiting plugin";
 }
 
 
@@ -206,7 +158,6 @@ void OTRPlugin::slotOutgoingMessage( Kopete::Message& msg )
 {
 	if( msg.direction() == Kopete::Message::Outbound ){
 		QString plainBody = msg.plainBody();
-kdDebug() << "PlainBody:" << plainBody << endl;
 		QString accountId = msg.manager()->account()->accountId();
 		Kopete::Contact *contact = msg.to().first();
 		
@@ -260,23 +211,17 @@ void OTRPlugin::slotVerifyFingerprint( Kopete::ChatSession *session ){
 
 void OTRPlugin::slotSettingsChanged(){
 
-kdDebug() << "slotSettingsChanged called" << endl;
 	KopeteOtrKcfg::self()->readConfig();
 	if( KopeteOtrKcfg::self()->rbAlways() ){
 		otrlChatInterface->setPolicy( OTRL_POLICY_ALWAYS );
-kdDebug() << "Setting policy to: always" << endl;
 	} else if( KopeteOtrKcfg::self()->rbOpportunistic() ){
 		otrlChatInterface->setPolicy( OTRL_POLICY_OPPORTUNISTIC );
-kdDebug() << "Setting policy to: Opportunistic" << endl;
 	} else if( KopeteOtrKcfg::self()->rbManual() ){
 		otrlChatInterface->setPolicy( OTRL_POLICY_MANUAL );
-kdDebug() << "Setting policy to: Manual" << endl;
 	} else if( KopeteOtrKcfg::self()->rbNever() ){
 		otrlChatInterface->setPolicy( OTRL_POLICY_NEVER );
-kdDebug() << "Setting policy to: Never" << endl;
 	} else {
 		otrlChatInterface->setPolicy( OTRL_POLICY_DEFAULT );
-kdDebug() << "Setting policy to: Default" << endl;
 	}
 }
 
@@ -290,7 +235,7 @@ QMap<QString, QString> OTRPlugin::getMessageCache(){
 
 void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 	Kopete::Message msg = event->message();
-	Kopete::ChatSession *session = msg.manager();
+//	Kopete::ChatSession *session = msg.manager();
 	QMap<QString, QString> messageCache = OTRPlugin::plugin()->getMessageCache();
 	
 	if( msg.direction() == Kopete::Message::Inbound ){
@@ -305,20 +250,18 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 		}
 	} else if( msg.direction() == Kopete::Message::Outbound ){
 		if( messageCache.contains( msg.plainBody() ) ){
-kdDebug() << "Cache-PlainBody:" << messageCache[msg.plainBody()] << endl;
 			msg.setPlainBody( messageCache[msg.plainBody()] );
-kdDebug() << "msg-PlainBody:" << msg.plainBody() << endl;
 			messageCache.remove( messageCache[msg.plainBody()] );
 			if(messageCache.count() > 5) messageCache.clear();
 		}
 		// Check if Message is an OTR message. Should it be discarded or shown?
 		if( OtrlChatInterface::self()->shouldDiscard( msg.plainBody() ) ){
 			event->discard();
-			kdDebug() << "discarding" << endl;
+			kDebug() << "OTR: discarding message";
 			return;
 		}
 		// If the message is sent while a Finished state libotr deletes the messagetext.
-		// This prevents the empty message from being shown in our chatwindow
+		// This prevents the empty message from beeing shown in our chatwindow
 		if( msg.plainBody().isEmpty() ){
 			event->discard();
 			return;
@@ -350,19 +293,13 @@ void OTRPlugin::slotSelectionChanged( bool single){
 }
 
 void OTRPlugin::slotSetPolicy(){
-	kdDebug() << "Setting contact policy" << endl;
+	kDebug() << "Setting contact policy";
 	Kopete::MetaContact *metaContact = Kopete::ContactList::self()->selectedMetaContacts().first();
 	if( metaContact ){
 		metaContact->setPluginData( this, "otr_policy", QString::number( otrPolicyMenu->currentItem() ) );		
 	}
-	kdDebug() << "Selected policy: " << otrPolicyMenu->currentItem() << endl;
+	kDebug() << "Selected policy: " << otrPolicyMenu->currentItem();
 }
-
-void OTRPlugin::accountReady( Kopete::Account *account ){
-	kdDebug() << "Account " << account->accountId() << " ready. Calling update function."<< endl;
-	otrlChatInterface->updateKeyfile( account );
-}
-
 
 void OTRPlugin::slotSecuritySate(Kopete::ChatSession *session, int state)
 {

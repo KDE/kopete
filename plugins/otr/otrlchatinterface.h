@@ -60,7 +60,6 @@ public:
 	int privState( Kopete::ChatSession *session );
 	QString formatContact(QString contactId);
 	bool isVerified( Kopete::ChatSession *session );
-	void updateKeyfile( Kopete::Account *account );
 	void checkFilePermissions( QString file );
 	QString findActiveFingerprint( Kopete::ChatSession *session );
 	void verifyFingerprint( Kopete::ChatSession *session );

@@ -51,7 +51,6 @@ KDE_EXPORT OtrlConfInterface::OtrlConfInterface( QWidget *preferencesDialog ){
 	
 	userstate = OtrlChatInterface::self()->getUserstate();
 
-//	kdDebug() << "OtrlConfInterface created" << endl;
 }
 
 OtrlConfInterface::~ OtrlConfInterface(){
@@ -61,12 +60,12 @@ OtrlConfInterface::~ OtrlConfInterface(){
 /*********************** Functions for kcm module ************************/
 
 KDE_EXPORT QString OtrlConfInterface::getPrivFingerprint( QString accountId, QString protocol){
-//	if (otrl_privkey_read(userstate, QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkey" ) == 0){
-		char fingerprint[45];
-		if( otrl_privkey_fingerprint( userstate, fingerprint, accountId.toLatin1(), protocol.toLatin1()) != 0 ){
-			return fingerprint;
-		}
-//	}
+	char fingerprint[45];
+
+	if( otrl_privkey_fingerprint( userstate, fingerprint, accountId.toLatin1(), protocol.toLatin1()) != 0 ){
+		return fingerprint;
+	}
+
 	return i18n("No fingerprint present.");
 }
 
@@ -148,7 +147,7 @@ KDE_EXPORT void OtrlConfInterface::verifyFingerprint( QString strFingerprint, bo
 		}
 		otrl_privkey_write_fingerprints( userstate, QString(QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints").toLocal8Bit() );
 	} else {
-		kdDebug() << "could not find fingerprint" << endl;
+		kDebug() << "could not find fingerprint";
 	}
 }
 

@@ -152,19 +152,15 @@ void OTRPreferences::fillFingerprints(){
 void OTRPreferences::verifyFingerprint(){
 
 	int doVerify = KMessageBox::questionYesNo( 
-		this, QString(
-		i18n("Please contact %1 via another secure way and verify that the following Fingerprint is correct:",preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 0 )->text()) + 
-		"\n\n" +
-		preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text() + 
-		"\n\n" + 
-		i18n("Are you sure you want to trust this fingerprint?")), i18n("Verify fingerprint")  ) ;
-
-	/* Better this way?
-	int doVerify = KMessageBox::questionYesNo( 
 		this, 
-		i18n("Please contact %1 via another secure way and verify that the following Fingerprint is correct: \n\n%2\n\nAre you sure you want to trust this fingerprint?",
-                preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 0 )->text(), preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text() ),  i18n("Verify fingerprint")  );
-	*/
+		QString(
+			i18n("Please contact %1 via another secure way and verify that the following fingerprint is correct:",preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 0 )->text()) + 
+			"\n\n" +
+			preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text() + 
+			"\n\n" + 
+			i18n("Are you sure you want to trust this fingerprint?")), 
+		i18n("Verify fingerprint")  ) ;
+
 
 	if( doVerify == KMessageBox::Yes ){
 		otrlConfInterface->verifyFingerprint( preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text(), true );
@@ -175,6 +171,11 @@ void OTRPreferences::verifyFingerprint(){
 }
 
 void OTRPreferences::updateButtons( int row, int col, int prevRow, int prevCol ){
+
+	Q_UNUSED(col)
+	Q_UNUSED(prevRow)
+	Q_UNUSED(prevCol)
+
 	if( row != -1 ){
 		preferencesDialog->btVerify->setEnabled( true );
 		if( !otrlConfInterface->isEncrypted( preferencesDialog->tbFingerprints->item( row, 3 )->text() ) ){
