@@ -24,8 +24,11 @@
 
 #include "privkeypopup.h"
 
+#include <kwindowsystem.h>
+
 PrivKeyPopup::PrivKeyPopup( QWidget *parent ):KDialog( parent ){
-	QWidget *widget = new QWidget( this, Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint );
+	QWidget *widget = new QWidget( this );
+	//KWindowSystem::setState(widget->winId(), NET::StaysOnTop );
 	ui.setupUi( widget );
 	setMainWidget( widget );
 	setCaption( i18n( "Please wait" ) );
