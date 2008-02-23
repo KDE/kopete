@@ -153,14 +153,15 @@ void OTRPlugin::slotOutgoingMessage( Kopete::Message& msg )
 {
 	if( msg.direction() == Kopete::Message::Outbound ){
 		QString plainBody = msg.plainBody();
+		QString cacheBody = msg.plainBody();
 		QString accountId = msg.manager()->account()->accountId();
 		Kopete::Contact *contact = msg.to().first();
 		
-		QString encBody = otrlChatInterface->encryptMessage( plainBody, accountId, msg.manager()->account()->protocol()->displayName(), contact->contactId(), msg.manager() );
-		msg.setPlainBody( encBody );
+		QString *encBody = otrlChatInterface->encryptMessage( &plainBody, accountId, msg.manager()->account()->protocol()->displayName(), contact->contactId(), msg.manager() );
+		msg.setPlainBody( *encBody );
 		msg.setType(Kopete::Message::TypeNormal);
 		if( !msg.plainBody().isEmpty() ){
-			messageCache.insert( encBody, plainBody  );
+			messageCache.insert( *encBody, cacheBody );
 		}
 	}
 }

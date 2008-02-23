@@ -467,26 +467,26 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 	return ignoremessage;
 }
 
-KDE_EXPORT QString OtrlChatInterface::encryptMessage( QString msg, const QString &accountId,
+KDE_EXPORT QString *OtrlChatInterface::encryptMessage( QString *msg, const QString &accountId,
 	const QString &protocol, const QString &contactId , Kopete::ChatSession *chatSession ){
 	int err;
 	char * newMessage;
-	if( otrl_proto_message_type( msg.toLocal8Bit() ) == OTRL_MSGTYPE_NOTOTR ){
-		msg.replace( QString('<'), QString("&lt;") );
-		err = otrl_message_sending( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), msg.toUtf8(), NULL, &newMessage, NULL, NULL );
+	if( otrl_proto_message_type( msg->toLocal8Bit() ) == OTRL_MSGTYPE_NOTOTR ){
+		msg->replace( QString('<'), QString("&lt;") );
+		err = otrl_message_sending( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), msg->toUtf8(), NULL, &newMessage, NULL, NULL );
 	
 		if( err != 0 ){
-			msg = i18n("Encryption error");
+			*msg = i18n("Encryption error");
 		} else {
 			if( newMessage != NULL ){
-				msg = QString::fromUtf8( newMessage );
+				*msg = QString::fromUtf8( newMessage );
 				otrl_message_free( newMessage );
 			}
 		}
 	}
-	OtrlMessageType type = otrl_proto_message_type( msg.toLocal8Bit() );
+	OtrlMessageType type = otrl_proto_message_type( msg->toLocal8Bit() );
 	if( type == OTRL_MSGTYPE_NOTOTR | type == OTRL_MSGTYPE_TAGGEDPLAINTEXT ){
-		msg.replace( QString("&lt;"), QString("<") );		
+		msg->replace( QString("&lt;"), QString("<") );		
 	}
 	return msg;
 }
