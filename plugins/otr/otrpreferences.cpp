@@ -152,9 +152,19 @@ void OTRPreferences::fillFingerprints(){
 void OTRPreferences::verifyFingerprint(){
 
 	int doVerify = KMessageBox::questionYesNo( 
+		this, QString(
+		i18n("Please contact %1 via another secure way and verify that the following Fingerprint is correct:",preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 0 )->text()) + 
+		"\n\n" +
+		preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text() + 
+		"\n\n" + 
+		i18n("Are you sure you want to trust this fingerprint?")), i18n("Verify fingerprint")  ) ;
+
+	/* Better this way?
+	int doVerify = KMessageBox::questionYesNo( 
 		this, 
-		i18n("Please contact %1 via another secure way and verify that the following Fingerprint is correct:").arg(preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 0 )->text()) + "\n\n" + preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text() + "\n\n" + i18n("Are you sure you want to trust this fingerprint?"), i18n("Verify fingerprint")  );
-	
+		i18n("Please contact %1 via another secure way and verify that the following Fingerprint is correct: \n\n%2\n\nAre you sure you want to trust this fingerprint?",
+                preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 0 )->text(), preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text() ),  i18n("Verify fingerprint")  );
+	*/
 
 	if( doVerify == KMessageBox::Yes ){
 		otrlConfInterface->verifyFingerprint( preferencesDialog->tbFingerprints->item( preferencesDialog->tbFingerprints->currentRow(), 3 )->text(), true );

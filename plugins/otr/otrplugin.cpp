@@ -206,6 +206,7 @@ void OTRPlugin::slotOutgoingMessage( Kopete::Message& msg )
 {
 	if( msg.direction() == Kopete::Message::Outbound ){
 		QString plainBody = msg.plainBody();
+kdDebug() << "PlainBody:" << plainBody << endl;
 		QString accountId = msg.manager()->account()->accountId();
 		Kopete::Contact *contact = msg.to().first();
 		
@@ -236,9 +237,9 @@ void  OTRPlugin::slotEnableOtr( Kopete::ChatSession *session, bool enable ){
 			msg1.setPlainBody( QString( body ) );
 			msg1.setDirection( Kopete::Message::Outbound );
 			if( otrlChatInterface->privState( session ) > 0 ){
-				body = i18n("Attempting to refresh the OTR session with <b>%1</b>...").arg( otrlChatInterface->formatContact( session->members().first()->contactId() ) );
+				body = i18n("Attempting to refresh the OTR session with <b>%1</b>...", otrlChatInterface->formatContact( session->members().first()->contactId()) );
 			} else {
-				body = i18n("Attempting to start a private OTR session with <b>%1</b>...").arg( otrlChatInterface->formatContact( session->members().first()->contactId() ) );				
+				body = i18n("Attempting to start a private OTR session with <b>%1</b>...", otrlChatInterface->formatContact( session->members().first()->contactId() ));
 			}
 			Kopete::Message msg2( session->account()->myself(), session->members().first());
 			msg2.setHtmlBody( body );
@@ -304,7 +305,9 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 		}
 	} else if( msg.direction() == Kopete::Message::Outbound ){
 		if( messageCache.contains( msg.plainBody() ) ){
+kdDebug() << "Cache-PlainBody:" << messageCache[msg.plainBody()] << endl;
 			msg.setPlainBody( messageCache[msg.plainBody()] );
+kdDebug() << "msg-PlainBody:" << msg.plainBody() << endl;
 			messageCache.remove( messageCache[msg.plainBody()] );
 			if(messageCache.count() > 5) messageCache.clear();
 		}
@@ -315,7 +318,7 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 			return;
 		}
 		// If the message is sent while a Finished state libotr deletes the messagetext.
-		// This prevents the empty message from beeing shown in out chatwindow
+		// This prevents the empty message from beeing shown in our chatwindow
 		if( msg.plainBody().isEmpty() ){
 			event->discard();
 			return;

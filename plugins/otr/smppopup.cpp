@@ -43,7 +43,7 @@ SMPPopup::SMPPopup( QWidget *parent, ConnContext *context, Kopete::ChatSession *
 	setCaption( i18n( "Enter authentication secret" ) );
 	setButtons( KDialog::None );
 
-	ui.lMessage->setText( i18n( "Please enter the secret passphrase to authenticate %1:" ).arg( OtrlChatInterface::self()->formatContact( session->members().first()->contactId() ) ) );
+	ui.lMessage->setText( i18n( "Please enter the secret passphrase to authenticate %1", OtrlChatInterface::self()->formatContact( session->members().first()->contactId() ) ) );
 
 	KIcon *icon = new KIcon( "application-pgp-signature" );
 	ui.lIcon->setPixmap( icon->pixmap( 48, 48 ) );

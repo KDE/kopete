@@ -179,7 +179,7 @@ static void new_fingerprint(void *opdata, OtrlUserState us, const char *accountn
 //	kdDebug() << "Received a new Fingerprint" << endl;
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::Message msg( session->members().first(), session->account()->myself() );
-	msg.setHtmlBody( i18n("<b>Received a new fingerprint from <a>%1</a>. You should authenticate this contact.</b>").arg(session->members().first()->contactId()) );
+	msg.setHtmlBody( i18n("<b>Received a new fingerprint from <a>%1</a>. You should authenticate this contact.</b>", session->members().first()->contactId()) );
 	msg.setDirection( Kopete::Message::Internal );
 	session->appendMessage( msg );
 }
@@ -315,7 +315,7 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, QString accountI
 	tlv = otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED);
 	if( tlv ){
 		Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
-		msg.setHtmlBody( i18n("<b>%1</b> has ended the OTR session. You should do the same.").arg(chatSession->members().first()->contactId()) );
+		msg.setHtmlBody( i18n("<b>%1</b> has ended the OTR session. You should do the same.",chatSession->members().first()->contactId() ) );
 		msg.setDirection( Kopete::Message::Internal );
 		chatSession->appendMessage( msg );
 		OtrlChatInterface::self()->emitGoneSecure( chatSession, 3 );

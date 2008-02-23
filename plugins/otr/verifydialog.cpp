@@ -37,9 +37,9 @@ VerifyDialog::VerifyDialog( QWidget *parent, Kopete::ChatSession *session ):KDia
 	setCaption( i18n( "Manual Authentication" ) );
 	setButtons( KDialog::None );
 
-	ui.tlContact->setText(i18n("Verify fingerprint for %1.").arg(OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
-	ui.tlFingerprint->setText(i18n("The received fingerprint is:\n\n%1\n\nContact %2 via another secure channel and verify that this fingerprint is correct.").arg(OtrlChatInterface::self()->findActiveFingerprint(session)).arg(OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
-	ui.tlVerified->setText(i18n("verified that this is in fact the correct fingerprint for %1").arg(OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+	ui.tlContact->setText(i18n("Verify fingerprint for %1.",OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+	ui.tlFingerprint->setText(i18n("The received fingerprint is:\n\n%1.\n\nContact %2 via another secure channel and verify that this fingerprint is correct.",OtrlChatInterface::self()->findActiveFingerprint(session),OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+	ui.tlVerified->setText(i18n("verified that this is in fact the correct fingerprint for %1.",OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 	ui.cbVerify->addItem(i18n("I have not"));
 	ui.cbVerify->addItem(i18n("I have"));
 	if( OtrlChatInterface::self()->isVerified(session)){
