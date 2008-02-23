@@ -1,28 +1,19 @@
+
 set(PAPILLON_INSIDE_KOPETE TRUE)
 
 add_subdirectory( libpapillon )
+add_subdirectory( ui )
 
 include_directories(
 ${KOPETE_INCLUDES}
-${CMAKE_CURRENT_BINARY_DIR}/ui/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/ui/)
 
 
 ########### next target ###############
 
-set(kopete_messenger_PART_SRCS messengerprotocol.cpp messengeraccount.cpp messengercontact.cpp )
-
-
-kde4_add_plugin(kopete_messenger ${kopete_messenger_PART_SRCS})
-
-
-target_link_libraries(kopete_messenger ${KDE4_KDECORE_LIBS} kopete_messenger_shared )
-
-install(TARGETS kopete_messenger  DESTINATION ${PLUGIN_INSTALL_DIR})
-
-########### next target ###############
-
-set(kopete_messenger_ui_SRCS ui/messengereditaccountwidget.cpp)
+set(kopete_messenger_ui_SRCS
+   ui/messengereditaccountwidget.cpp
+)
 
 kde4_add_ui_files(kopete_messenger_ui_SRCS
    ui/messengeradd.ui 
@@ -31,15 +22,23 @@ kde4_add_ui_files(kopete_messenger_ui_SRCS
    ui/messengereditaccount.ui
 )
 
-set(kopete_messenger_shared_LIB_SRCS 
-   ${kopete_messenger_ui_SRCS}
-   )
+set(kopete_messenger_PART_SRCS 
+   messengerprotocol.cpp 
+   messengeraccount.cpp 
+   messengercontact.cpp 
+   ${kopete_messenger_ui_SRCS} 
+)
 
-kde4_add_library(kopete_messenger_shared SHARED ${kopete_messenger_shared_LIB_SRCS})
-target_link_libraries(kopete_messenger_shared  ${KDE4_KIO_LIBS} kopete )
+kde4_add_plugin(kopete_messenger ${kopete_messenger_PART_SRCS})
+
+target_link_libraries(kopete_messenger ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDECORE_LIBS} kopete)
+
+install(TARGETS kopete_messenger  DESTINATION ${PLUGIN_INSTALL_DIR})
+
+
 ########### install files ###############
 
-install( FILES kopete_messenger.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES kopete_messenger.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
 
 

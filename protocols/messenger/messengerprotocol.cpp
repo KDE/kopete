@@ -23,6 +23,8 @@
 // Kopete includes
 #include <kopeteaccount.h>
 #include <kopetemetacontact.h>
+#include "messengeraccount.h"
+#include "ui/messengereditaccountwidget.h"
 
 K_PLUGIN_FACTORY( MessengerProtocolFactory, registerPlugin<MessengerProtocol>(); )
 K_EXPORT_PLUGIN( MessengerProtocolFactory( "kopete_messenger" ) )
@@ -55,7 +57,12 @@ AddContactPage *MessengerProtocol::createAddContactWidget(QWidget *parent, Kopet
 
 KopeteEditAccountWidget *MessengerProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
-	return 0;
+	kDebug () << "Edit Account Widget MESSAGER";
+	MessengerAccount *messengerAccount=dynamic_cast < MessengerAccount * >(account);
+	if(messengerAccount || !account)
+		return new MessengerEditAccountWidget (this,messengerAccount , parent);
+
+	return 0l;
 }
 
 Kopete::Contact *MessengerProtocol::deserializeContact( Kopete::MetaContact *metaContact, 

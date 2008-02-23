@@ -160,6 +160,7 @@ void AddAccountWizard::next()
 		{ //no item selected
 			return;
 		}
+
 		d->proto = qobject_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->loadPlugin(d->protocolItems[lvi].pluginName()));
 		if (!d->proto)
 		{
