@@ -583,7 +583,8 @@ void KopeteAccountConfig::configureMenus()
 void KopeteAccountConfig::slotItemClicked( QTreeWidgetItem * item, int /*column*/ )
 {
 	KopeteAccountLVI *account = static_cast<KopeteAccountLVI*>( item );
-	account->account()->setExcludeConnect ( account->checkState(0) == Qt::Unchecked ? true : false );
+	if ( account &&  account->parent() )
+		account->account()->setExcludeConnect ( account->checkState(0) == Qt::Unchecked ? true : false );
 }
 
 
