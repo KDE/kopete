@@ -18,22 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <qtimer.h>
-#include <qregexp.h>
-#include <qfile.h>
-#include <qcolor.h>
-#include <Q3ValueList>
-
-#include <kdebug.h>
-#include <kaction.h>
-#include <kconfig.h>
 #include <kgenericfactory.h>
-#include <kdeversion.h>
-#include <kaboutdata.h>
-#include <kstandarddirs.h>
-#include <kmessagebox.h>
 #include <kselectaction.h>
-#include <kaction.h>
 #include <kactioncollection.h>
 
 #include <kopetemetacontact.h>
@@ -118,11 +104,11 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 
 	//Add GUI action to all already existing kmm 
 	// (if the plugin is launched when kopete already runing)
-	Q3ValueList<Kopete::ChatSession*> sessions =
+	QList<Kopete::ChatSession*> sessions =
 		 Kopete::ChatSessionManager::self()->sessions();
-	Q3ValueListIterator<Kopete::ChatSession*> it;
-	for (it= sessions.begin(); it!=sessions.end() ; ++it){
-	  	slotNewChatSessionWindow( *it );
+	QListIterator<Kopete::ChatSession*> it(sessions);
+	while (it.hasNext()){
+		slotNewChatSessionWindow(it.next());
 	}
 }
 
