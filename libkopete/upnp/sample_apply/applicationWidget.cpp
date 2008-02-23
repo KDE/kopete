@@ -34,11 +34,12 @@ ApplicationWidget::ApplicationWidget(QWidget *parent)
 void ApplicationWidget::search()
 {
 	
-	qDebug()<<"avant router isValid";
 	if(!router.isEmpty())
 	{
 		foreach(UPnpRouter r,router)
+		{
 			text_mess->append("Router Url : "+r.url().toString());
+		}
 	}
 	else
 	{

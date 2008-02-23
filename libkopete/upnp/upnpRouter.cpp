@@ -23,6 +23,7 @@
 QList<UPnpRouter> UPnpRouter::allRouters()
 {
 	QList<UPnpRouter> routers;
+// 	UPnpRouter upnpRouter;
 	UPnp *d = UPnp::upnp();
 	d->searchDevices();
 	foreach (QUrl url, d->devicesSettingUrl())
@@ -30,7 +31,6 @@ QList<UPnpRouter> UPnpRouter::allRouters()
 		UPnpRouter upnpRouter = UPnpRouter(url);
 		routers.push_back(upnpRouter);
 	}
-
 	return routers;
 }
 
@@ -56,8 +56,9 @@ UPnpRouter::UPnpRouter(const QUrl &url):d(new UpnpRouterPrivate(url))
 // }
 
 //TODO constructor by copy
-UPnpRouter::UPnpRouter(const UPnpRouter &router):d(router.d)
+UPnpRouter::UPnpRouter(const UPnpRouter &router):d(new UpnpRouterPrivate())
 {
+	*d = *router.d;
 }
 
 //TODO 
@@ -74,6 +75,7 @@ bool UPnpRouter::isValid() const
 
 QString UPnpRouter::routerDescription() const
 {
+	qDebug()<<"desc";
 	return d->routerDescription();
 }
 

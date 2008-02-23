@@ -20,7 +20,7 @@
 
 UpnpRouterPrivate::UpnpRouterPrivate()
 {
-	router = new Router();
+	router = new Router;
 }
 
 UpnpRouterPrivate::UpnpRouterPrivate(const QUrl &url)
