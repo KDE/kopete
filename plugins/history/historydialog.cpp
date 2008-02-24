@@ -140,6 +140,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mHtmlView->setFocusPolicy(Qt::NoFocus);
 	mHtmlView->setSizePolicy(
 	QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+	l->setMargin(0);
 	l->addWidget(mHtmlView);
 
 	QTextStream( &fontSize ) << Kopete::AppearanceSettings::self()->chatFont().pointSize();
