@@ -42,18 +42,10 @@
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
-//#include <ksyntaxhighlighter.h>
-
 
 #include <QTimer>
 #include <QSplitter>
-
-//Added by qt3to4:
-#include <QPixmap>
-#include <QDropEvent>
-#include <QDragEnterEvent>
 #include <Q3UriDrag>
-#include <QObject>
 
 K_PLUGIN_FACTORY( ChatWindowPluginFactory, registerPlugin<ChatWindowPlugin>(); )
 K_EXPORT_PLUGIN( ChatWindowPluginFactory( "kopete_chatwindow" ) )
@@ -160,6 +152,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 		slotContactAdded( mgr->members()[i], true );
 
 	setFocusProxy( editPart()->widget() );
+	m_messagePart->widget()->setFocusProxy( editPart()->widget() );
 	editPart()->widget()->setFocus();
 
 	setCaption( m_manager->displayName(), false );
