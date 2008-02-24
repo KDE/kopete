@@ -347,7 +347,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 		int i = 0;
 		for( QStringList::iterator it = overlays.begin(), end = overlays.end(); it != end; ++it )
 		{
-			QPixmap overlay = loader->loadIcon(*it, KIconLoader::Small, 0 ,
+			QPixmap overlay = loader->loadIcon(*it, KIconLoader::NoGroup, size,
 				KIconLoader::DefaultState, QStringList(), 0L, /*canReturnNull=*/ true );
 
 			if ( !overlay.isNull() )
