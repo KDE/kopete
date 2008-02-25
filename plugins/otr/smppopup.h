@@ -41,11 +41,13 @@ public:
 	explicit SMPPopup(QWidget *parent = 0, ConnContext *context = 0, Kopete::ChatSession *session = 0, bool initiate = true );
 	~SMPPopup();
 
-public slots:
-	virtual void	cancelSMP();
-	virtual void	respondSMP();
-	virtual void	openHelp();
-	virtual void	manualAuth();
+protected:
+	virtual void closeEvent( QCloseEvent *event );
+
+private slots:
+	void	cancelSMP();
+	void	respondSMP();
+	void	manualAuth();
 
 private:
 	Ui::SMPPopup ui;

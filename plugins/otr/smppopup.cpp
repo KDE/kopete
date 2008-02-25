@@ -29,6 +29,7 @@
 
 #include <kurl.h>
 #include <krun.h>
+#include <kdebug.h>
 
 #include <kopetecontact.h>
 
@@ -37,20 +38,21 @@ SMPPopup::SMPPopup( QWidget *parent, ConnContext *context, Kopete::ChatSession *
 	this->session = session;
 	this->initiate = initiate;
 
-	QWidget *widget = new QWidget( this );
-	ui.setupUi( widget );
-	setMainWidget( widget );
+	ui.setupUi( mainWidget() );
+
 	setCaption( i18n( "Enter authentication secret" ) );
-	setButtons( KDialog::None );
+	setButtons( KDialog::Help | KDialog::Ok | KDialog::Cancel | KDialog::User1 );
+	setButtonText( KDialog::User1, i18nc( "@button", "Manual Authentication" ) );
+
+	setHelp("plugins-otr-auth");
 
 	ui.lMessage->setText( i18n( "Please enter the secret passphrase to authenticate %1", OtrlChatInterface::self()->formatContact( session->members().first()->contactId() ) ) );
 
 	ui.lIcon->setPixmap( KIcon( "application-pgp-signature" ).pixmap( 48, 48 ) );
 
-	connect( ui.pbOk, SIGNAL( clicked(bool) ), this, SLOT( respondSMP() ) );
-	connect( ui.pbCancel, SIGNAL( clicked(bool) ), this, SLOT( cancelSMP() ) );
-	connect( ui.pbHelp, SIGNAL( clicked(bool) ), this, SLOT( openHelp() ) );
-	connect( ui.pbManualAuth, SIGNAL( clicked(bool) ), this, SLOT( manualAuth() ) );
+	connect( this, SIGNAL( okClicked() ), this, SLOT( respondSMP() ) );
+	connect( this, SIGNAL( cancelClicked() ), this, SLOT( cancelSMP() ) );
+	connect( this, SIGNAL( user1Clicked() ), this, SLOT( manualAuth() ) );
 }
 
 SMPPopup::~SMPPopup(){
@@ -59,18 +61,11 @@ SMPPopup::~SMPPopup(){
 void SMPPopup::cancelSMP()
 {
 	OtrlChatInterface::self()->abortSMP( context, session );
-	this->close();
 }
 
 void SMPPopup::respondSMP()
 {
 	OtrlChatInterface::self()->respondSMP( context, session, ui.lePassphrase->text(), initiate );
-	this->close();
-}
-
-void SMPPopup::openHelp()
-{
-	new KRun(KUrl("http://www.cypherpunks.ca/otr/help/authenticate.php?lang=en"), 0, 0, false, true);
 }
 
 void SMPPopup::manualAuth(){
@@ -78,4 +73,11 @@ void SMPPopup::manualAuth(){
 	vfDialog->show();
 	this->close();
 }
+
+// Overriding closeEvent to prevent cancelling SMP on pressuing "Manual Auth"
+void SMPPopup::closeEvent( QCloseEvent *event )
+{
+	QDialog::closeEvent( event );
+}
+
 #include "smppopup.moc"
