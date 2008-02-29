@@ -6,13 +6,15 @@ add_subdirectory( ui )
 
 include_directories(
 ${KOPETE_INCLUDES}
-${CMAKE_CURRENT_SOURCE_DIR}/ui/)
+${CMAKE_CURRENT_SOURCE_DIR}/ui/
+${CMAKE_CURRENT_SOURCE_DIR}/libpapillon/)
 
 
 ########### next target ###############
 
 set(kopete_messenger_ui_SRCS
    ui/messengereditaccountwidget.cpp
+   ui/messengeraddcontactpage.cpp
 )
 
 kde4_add_ui_files(kopete_messenger_ui_SRCS

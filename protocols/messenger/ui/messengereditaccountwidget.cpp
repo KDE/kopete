@@ -44,7 +44,6 @@
 #include <kconfig.h>
 #include <kpixmapregionselectordialog.h>
 #include <kconfiggroup.h>
-
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 
@@ -94,7 +93,7 @@ MessengerEditAccountWidget::MessengerEditAccountWidget ( MessengerProtocol * pro
 // 			d->ui->optionOverrideServer->setChecked( true );
 // 		}
 
-//		d->ui->optionUseHttpMethod->setChecked( account->useHttpMethod() );
+// 		d->ui->optionUseHttpMethod->setChecked( account->useHttpMethod() );
 		
 		MessengerContact *myself = static_cast<MessengerContact *>( account->myself() );
 
@@ -163,15 +162,17 @@ MessengerEditAccountWidget::~MessengerEditAccountWidget()
 
 Kopete::Account * MessengerEditAccountWidget::apply()
 {
-// 	if ( !account() )
-// 		setAccount( new MessengerAccount( d->protocol, d->ui->m_login->text() ) );
-// 	
+	if ( !account() )
+		setAccount( new MessengerAccount( d->protocol, d->ui->m_login->text() ) );
+	
+	
 	KConfigGroup *config=account()->configGroup();
 
 	account()->setExcludeConnect( d->ui->m_autologin->isChecked() );
 	d->ui->m_password->save( &static_cast<MessengerAccount *>(account())->password() );
 
 	config->writeEntry( "exportCustomPicture", d->ui->m_useDisplayPicture->isChecked() );
+	
 	if (d->ui->optionOverrideServer->isChecked() ) {
 		config->writeEntry( "serverName", d->ui->m_serverName->text() );
 		config->writeEntry( "serverPort", d->ui->m_serverPort->value()  );
@@ -182,7 +183,6 @@ Kopete::Account * MessengerEditAccountWidget::apply()
 	}
 
 	config->writeEntry( "useHttpMethod", d->ui->optionUseHttpMethod->isChecked() );
-
 	// Global Identity
 	config->writeEntry( "ExcludeGlobalIdentity", d->ui->m_globalIdentity->isChecked() );
 
@@ -202,7 +202,7 @@ Kopete::Account * MessengerEditAccountWidget::apply()
 		}
 	}
 
-//	static_cast<MessengerAccount *>( account() )->resetPictureObject();
+// 	static_cast<MessengerAccount *>( account() )->resetPictureObject();
 
 // 	if ( account()->isConnected() )
 // 	{
@@ -235,8 +235,8 @@ Kopete::Account * MessengerEditAccountWidget::apply()
 bool MessengerEditAccountWidget::validateData()
 {
 	QString userid = d->ui->m_login->text();
-// 	if ( MessengerProtocol::validContactId( userid ) )
-// 		return true;
+	if ( MessengerProtocol::validContactId( userid ) )
+		return true;
 
 	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 		i18n( "<qt>You must enter a valid email address.</qt>" ), i18n( "Messenger Plugin" ) );

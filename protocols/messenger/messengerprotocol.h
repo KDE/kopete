@@ -48,6 +48,7 @@ public:
 
 	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
+	static bool validContactId(const QString&);
 private:
 	static MessengerProtocol *s_self;
 };

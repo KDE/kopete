@@ -27,14 +27,15 @@
 #include "kopeteuiglobal.h"
 
 #include "ui_messengeradd.h"
-
+#include <kdebug.h>
 #include "messengeraddcontactpage.h"
 #include "messengerprotocol.h"
+#include "messengeraccount.h"
 
 MessengerAddContactPage::MessengerAddContactPage(MessengerAccount * owner, QWidget *parent)
 				  : AddContactPage(parent)
 {
-	kdebug(14166) << k_funcinfo << "called" << endl;
+	//kdebug(14166) << k_funcinfo << "called" << endl;
 
 	m_account = owner;
 	addUI = new Ui::MessengerAddUI();
@@ -46,9 +47,9 @@ MessengerAddContactPage::~MessengerAddContactPage()
 	delete addUI;
 }
 
-bool MessengerAddContactPage::apply( Kopete::Account* , Kopete::MetaContact*m )
+bool MessengerAddContactPage::apply( Kopete::Account* i, Kopete::MetaContact*m )
 {
-	kdebug(14166) << k_funcinfo << "called" << endl;
+	//kdebug(14166) << k_funcinfo << "called" << endl;
 
 	if ( validateData())
 	{
@@ -60,7 +61,7 @@ bool MessengerAddContactPage::apply( Kopete::Account* , Kopete::MetaContact*m )
 
 bool MessengerAddContactPage::validateData()
 {
-	if(!mAccount->isConnected())
+	if(!m_account->isConnected())
 	{
 		//Account currently offline
 		KMessageBox::sorry( this, i18n("You must be online to add a contact."), i18n("messenger Plugin") );

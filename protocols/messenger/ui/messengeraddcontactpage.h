@@ -41,7 +41,7 @@ public:
 
 private:
 	Ui::MessengerAddUI *addUI;
-	MessengerAccount *mAccount;
+	MessengerAccount *m_account;
 };
 
 #endif
