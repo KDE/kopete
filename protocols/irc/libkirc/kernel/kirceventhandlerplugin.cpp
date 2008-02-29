@@ -1,9 +1,7 @@
 /*
-    kircmessage.cpp - IRC Client
+    kirceventhandlerplugin.h - IRC Event Handler Plugin.
 
-    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
-
-    Kopete    (c) 2003-2007 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2008      by Michel Hermier <michel.hermier@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -15,15 +13,15 @@
     *************************************************************************
 */
 
-#include "kircevent.h"
+#include "kirceventhandlerplugin.moc"
 
 using namespace KIrc;
 
-const int KIrc::CommandEvent::Command = registerEventType();
+EventHandlerPlugin::EventHandlerPlugin()
+{
+}
 
-const int KIrc::MessageEvent::MessageReveived = registerEventType();
-
-//const int KIrc::MessageEvent::MessageSending = registerEventType();
-
-//const int KIrc::MessageEvent::MessageDispatch = registerEventType();
+EventHandlerPlugin::~EventHandlerPlugin()
+{
+}
 

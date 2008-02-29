@@ -34,7 +34,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 /*
-class ClientCommands::Private
+class KIrc::ClientCommandsPrivate
 {
 public:
 };
@@ -42,7 +42,7 @@ public:
 using namespace KIrc;
 
 ClientCommands::ClientCommands(QObject *parent)
-	: KIrc::Plugin(parent)
+	: KIrc::EventHandler(parent)
 	, d(0)
 {
 }

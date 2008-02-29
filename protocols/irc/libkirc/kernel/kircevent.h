@@ -57,6 +57,7 @@ public:
 class KIRC_EXPORT CommandEvent
 	: public KIrc::Event
 {
+	static const int Command;
 public:
 //	explicit CommandEvent();
 
@@ -66,6 +67,14 @@ private:
 class KIRC_EXPORT MessageEvent
 	: public Event
 {
+	// Generic message, usually a command message
+	static const int MessageReveived;
+
+//	static const int MessageSending;
+
+	// Message as to be redispatched to other sockets.
+//	static const int MessageDispatch;
+
 public:
 	MessageEvent(Type type, const KIrc::Message &message, KIrc::Socket *socket)
 		: KIrc::Event(type), m_message(message), m_socket(socket)

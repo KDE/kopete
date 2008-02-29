@@ -146,3 +146,10 @@ QByteArray ByteArrayEscaper::join(const QList<QByteArray> &buffers, char sep) co
 
 	return ret;
 }
+
+#if 0
+QList<QByteArray> ByteArrayEscaper::split(const QByteArray &buffer, char sep) const
+{
+}
+#endif
+

@@ -6,18 +6,19 @@ include_directories(
 )
 
 set(libkirc_SRCS
-	kernel/kbytearrayescaper.cpp
-	kernel/kbytearraylist.cpp
 	kernel/kcmdline.cpp
 
+	kernel/kircbytearrayescaper.cpp
 #	kernel/kirccommand.cpp
 	kernel/kircconst.cpp 
 	kernel/kirccontext.cpp
 	kernel/kircentity.cpp 
 	kernel/kircevent.cpp 
+	kernel/kirceventhandler.cpp
+	kernel/kirceventhandlerfactory.cpp
+	kernel/kirceventhandlerplugin.cpp
 	kernel/kircmessage.cpp 
 	kernel/kircmessageutil.cpp 
-	kernel/kircplugin.cpp
 	kernel/kircsocket.cpp 
 #	kernel/kircstdmessages.cpp 
 	kernel/kirctask.cpp

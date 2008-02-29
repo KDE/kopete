@@ -1,9 +1,7 @@
 /*
-    kircmessage.cpp - IRC Client
+    kirceventhandlerplugin.h - IRC Event Handler Plugin.
 
-    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
-
-    Kopete    (c) 2003-2007 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2008      by Michel Hermier <michel.hermier@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -15,15 +13,37 @@
     *************************************************************************
 */
 
-#include "kircevent.h"
+#ifndef KIRCEVENTHANDLERPLUGIN_H
+#define KIRCEVENTHANDLERPLUGIN_H
 
-using namespace KIrc;
+#include "kircglobal.h"
 
-const int KIrc::CommandEvent::Command = registerEventType();
+#include <QtCore/QList>
+#include <QtCore/QtPlugin>
 
-const int KIrc::MessageEvent::MessageReveived = registerEventType();
+namespace KIrc
+{
 
-//const int KIrc::MessageEvent::MessageSending = registerEventType();
+class EventHandler;
 
-//const int KIrc::MessageEvent::MessageDispatch = registerEventType();
+class KIRC_EXPORT EventHandlerPlugin
+	: public QObject
+{
+	Q_OBJECT
+
+public:
+	EventHandlerPlugin();
+	virtual ~EventHandlerPlugin();
+
+public:
+	virtual QStringList keys() = 0;
+	virtual KIrc::EventHandler *create(const QString &key, QObject *parent) = 0;
+
+private:
+	Q_DISABLE_COPY(EventHandlerPlugin)
+};
+
+}
+
+#endif
 

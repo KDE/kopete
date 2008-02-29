@@ -20,7 +20,8 @@
 #ifndef KIRCCLIENTCOMMANDS_H
 #define KIRCCLIENTCOMMANDS_H
 
-#include "kircplugin.h"
+#include "kirceventhandler.h"
+#include "kircmessage.h"
 
 namespace KIrc
 {
@@ -33,7 +34,7 @@ class Event;
  * @author Jason Keirstead <jason@keirstead.org>
  */
 class ClientCommands
-	: public KIrc::Plugin
+	: public KIrc::EventHandler
 {
 	Q_OBJECT
 

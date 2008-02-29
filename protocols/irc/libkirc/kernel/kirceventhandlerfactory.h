@@ -1,9 +1,7 @@
 /*
-    kircmessage.cpp - IRC Client
+    kirceventhandlerfactory.h - IRC event handler factory.
 
-    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
-
-    Kopete    (c) 2003-2007 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2008      by Michel Hermier <michel.hermier@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -15,15 +13,26 @@
     *************************************************************************
 */
 
-#include "kircevent.h"
+#ifndef KIRCEVENTHANDLERFACTORY_H
+#define KIRCEVENTHANDLERFACTORY_H
 
-using namespace KIrc;
+#include "kircglobal.h"
 
-const int KIrc::CommandEvent::Command = registerEventType();
+#include <QtCore/QStringList>
 
-const int KIrc::MessageEvent::MessageReveived = registerEventType();
+namespace KIrc
+{
 
-//const int KIrc::MessageEvent::MessageSending = registerEventType();
+//class Context;
 
-//const int KIrc::MessageEvent::MessageDispatch = registerEventType();
+class KIRC_EXPORT EventHandlerFactory
+{
+public:
+	static QStringList keys();
+//	static KIrc::EventHandler *create(const QString &key, QObject *parent);
+};
+
+}
+
+#endif
 

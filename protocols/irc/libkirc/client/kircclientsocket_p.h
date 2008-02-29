@@ -1,9 +1,10 @@
 /*
-    kircmessage.cpp - IRC Client
+    kircclientsocket_p.h - IRC Client Socket Private
 
+    Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
 
-    Kopete    (c) 2003-2007 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,15 +16,30 @@
     *************************************************************************
 */
 
-#include "kircevent.h"
+#ifndef KIRCCLIENTSOCKET_P_H
+#define KIRCCLIENTSOCKET_P_H
 
-using namespace KIrc;
+#include "kircclientsocket.h"
 
-const int KIrc::CommandEvent::Command = registerEventType();
+#include "kircsocket_p.h"
 
-const int KIrc::MessageEvent::MessageReveived = registerEventType();
+class KIrc::ClientSocketPrivate
+	: public KIrc::SocketPrivate
+{
+	Q_OBJECT
+	Q_DECLARE_PUBLIC(KIrc::ClientSocket)
 
-//const int KIrc::MessageEvent::MessageSending = registerEventType();
+public:
+	ClientSocketPrivate(ClientSocket *socket);
 
-//const int KIrc::MessageEvent::MessageDispatch = registerEventType();
+public slots:
+	void socketStateChanged(QAbstractSocket::SocketState newstate);
+
+public:
+	KIrc::Entity::Ptr server;
+
+	bool failedNickOnLogin : 1;
+};
+
+#endif
 
