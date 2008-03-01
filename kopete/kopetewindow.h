@@ -59,6 +59,7 @@ protected:
 	virtual void closeEvent( QCloseEvent *ev );
 	virtual void leaveEvent( QEvent* ev );
 	virtual void showEvent( QShowEvent* ev );
+	virtual void hideEvent( QHideEvent* ev );
 
 private slots:
 	void slotToggleShowAllOfflineEmpty( bool toggled );
@@ -82,6 +83,13 @@ private slots:
 	 * If not, the window will be hidden.
 	 */
 	void slotAutoHide();
+	
+	/**
+	 * Resize window to fit size of contact list nicely.
+	 */
+	void slotUpdateSize();
+
+	void slotStartAutoResizeTimer();
 
 	/**
 	 * This slot will apply settings that change the
@@ -110,7 +118,7 @@ private slots:
 	/**
 	 * Get a notification when an identity is created, so we can add a status bar
 	 * icon
-	 * @param identity the registered identity 
+	 * @param identity the registered identity
 	 */
 	void slotIdentityRegistered( Kopete::Identity *identity );
 

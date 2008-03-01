@@ -437,11 +437,15 @@ protected:
 	void componentResized( Component *component );
 
 	void setHeight( int );
+	
+signals:
+	void visibilityChanged (bool visibility);
 
 private:
-	void initLVI();
+	void initLVI(QObject* parent);
 	void recalcHeight();
 	void scheduleLayout();
+	void mySetVisible ( bool b );
 
 private slots:
 	void slotColumnResized();

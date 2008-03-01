@@ -961,13 +961,13 @@ bool Item::Private::foldVisibility = true;
 Item::Item( Q3ListViewItem *parent, QObject *owner )
  : QObject( owner ), K3ListViewItem( parent ), d( new Private(this) )
 {
-	initLVI();
+	initLVI(parent->listView());
 }
 
 Item::Item( Q3ListView *parent, QObject *owner )
  : QObject( owner ), K3ListViewItem( parent ), d( new Private(this) )
 {
-	initLVI();
+	initLVI(parent);
 }
 
 Item::~Item()
@@ -982,13 +982,14 @@ void Item::setEffects( bool animation, bool fading, bool folding )
 	Private::foldVisibility = folding;
 }
 
-void Item::initLVI()
+void Item::initLVI(QObject* parent)
 {
 	connect( listView()->header(), SIGNAL( sizeChange( int, int, int ) ), SLOT( slotColumnResized() ) );
 	connect( &d->layoutTimer, SIGNAL( timeout() ), SLOT( slotLayoutItems() ) );
+	connect (this, SIGNAL ( visibilityChanged(bool) ), parent, SIGNAL ( visibleSizeChanged () ) );
 	//connect( &d->layoutAnimateTimer, SIGNAL( timeout() ), SLOT( slotLayoutAnimateItems() ) );
 	//connect( &d->visibilityTimer, SIGNAL( timeout() ), SLOT( slotUpdateVisibility() ) );
-	setVisible( false );
+	mySetVisible( false );
 	setTargetVisibility( true );
 }
 
@@ -1072,15 +1073,15 @@ void Item::setSearchMatch( bool match )
 	d->searchMatch = match;
 
 	if ( !match )
-		setVisible( false );
+		mySetVisible( false );
 	else
 	{
 		kDebug(14000) << " match: " << match << ", vis timer active: " << d->visibilityTimer.isActive()
 		               << ", target visibility: " << targetVisibility() << endl;
 		if ( d->visibilityTimer.isActive() )
-			setVisible( true );
+			mySetVisible( true );
 		else
-			setVisible( targetVisibility() );
+			mySetVisible( targetVisibility() );
 	}
 }
 
@@ -1096,14 +1097,14 @@ void Item::setTargetVisibility( bool vis )
 		// in case we're getting called because our parent was shown and
 		// we need to be rehidden
 		if ( !d->visibilityTimer.isActive() )
-			setVisible( vis && d->searchMatch );
+			mySetVisible( vis && d->searchMatch );
 		return;
 	}
 	d->visibilityTarget = vis;
 	d->visibilityTimer.start();
 	//d->visibilityTimer.start( 40 );
 	if ( targetVisibility() )
-		setVisible( d->searchMatch );
+		mySetVisible( d->searchMatch );
 	slotUpdateVisibility();
 }
 
@@ -1130,7 +1131,7 @@ void Item::slotUpdateVisibility()
 	{
 		d->visibilityLevel = 0;
 		d->visibilityTimer.stop();
-		setVisible( false );
+		mySetVisible( false );
 	}
 	setHeight( 0 );
 	repaint();
@@ -1315,6 +1316,12 @@ void Item::componentResized( Component *component )
 {
 	ComponentBase::componentResized( component );
 	scheduleLayout();
+}
+
+void Item::mySetVisible ( bool b )
+{
+	setVisible (b);
+	emit visibilityChanged (b);
 }
 
 } // END namespace ListView

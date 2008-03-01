@@ -157,6 +157,20 @@
 			<default>false</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
+		<entry key="contactListAutoResize" type="Bool">
+			<label>Automatically resize the main window.</label>
+			<default>false</default>
+			<emit signal="contactListAppearanceChanged" />
+		</entry>
+		<entry key="contactListResizeAnchor" type="Enum">
+			<label>Corner at which to anchor main window when auto-resizing.</label>
+			<choices>
+				<choice name="Top"/> <!-- order is significant! -->
+				<choice name="Bottom"/>
+			</choices>
+			<default>Bottom</default>
+			<emit signal="contactListAppearanceChanged" />
+		</entry>
 		<!-- Contact list font preferences -->
 		<entry key="contactListNormalFont" type="Font">
 			<!-- TODO: 
