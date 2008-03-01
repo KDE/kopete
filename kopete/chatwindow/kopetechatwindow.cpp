@@ -1289,6 +1289,14 @@ void KopeteChatWindow::updateChatLabel()
 	}
 }
 
+void KopeteChatWindow::resizeEvent( QResizeEvent *e )
+{
+	KXmlGuiWindow::resizeEvent( e );
+	if ( m_activeView && m_activeView->messagePart() )
+		m_activeView->messagePart()->keepScrolledDown();
+}
+
+
 #include "kopetechatwindow.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
