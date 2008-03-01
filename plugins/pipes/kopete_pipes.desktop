@@ -1,10 +1,9 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 X-Kopete-Version=1000900
 Icon=pipe
-ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_pipes
+X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-PluginInfo-Author=Charles Connell
 X-KDE-PluginInfo-Email=charles@connells.org
 X-KDE-PluginInfo-Name=kopete_pipes

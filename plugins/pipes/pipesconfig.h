@@ -14,6 +14,9 @@
     *                                                                       *
     *************************************************************************
 */
+#ifndef PIPESCONFIG_H
+#define PIPESCONFIG_H
+
 #include "pipesplugin.h"
 
 /**
@@ -37,7 +40,5 @@ class PipesConfig
 		static PipesConfig * mSelf;
 };
 
-
-
-
+#endif
 
