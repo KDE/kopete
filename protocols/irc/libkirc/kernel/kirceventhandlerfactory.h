@@ -23,13 +23,13 @@
 namespace KIrc
 {
 
-//class Context;
+class EventHandler;
 
 class KIRC_EXPORT EventHandlerFactory
 {
 public:
 	static QStringList keys();
-//	static KIrc::EventHandler *create(const QString &key, QObject *parent);
+	static KIrc::EventHandler *create(const QString &key, QObject *parent);
 };
 
 }

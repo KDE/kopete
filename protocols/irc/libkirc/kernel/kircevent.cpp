@@ -19,11 +19,11 @@
 
 using namespace KIrc;
 
-const int KIrc::CommandEvent::Command = registerEventType();
+const int KIrc::CommandEvent::Command = QEvent::registerEventType();
 
-const int KIrc::MessageEvent::MessageReveived = registerEventType();
+const int KIrc::MessageEvent::MessageReveived = QEvent::registerEventType();
 
-//const int KIrc::MessageEvent::MessageSending = registerEventType();
+//const int KIrc::MessageEvent::MessageSending = QEvent::registerEventType();
 
-//const int KIrc::MessageEvent::MessageDispatch = registerEventType();
+//const int KIrc::MessageEvent::MessageDispatch = QEvent::registerEventType();
 

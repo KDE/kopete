@@ -20,8 +20,7 @@
 
 #include "kircglobal.h"
 
-#include <kshareddata.h>
-
+#include <QExplicitlySharedDataPointer>
 #include <QList>
 #include <QObject>
 
@@ -34,7 +33,7 @@ class Context;
 
 class KIRC_EXPORT Entity
 	: public QObject
-	, public KSharedData
+	, public QSharedData
 {
 	Q_OBJECT
 
@@ -45,7 +44,7 @@ class KIRC_EXPORT Entity
 public:
 	friend class KIrc::Context;
 
-	typedef KExplicitlySharedDataPointer<Entity> Ptr;
+	typedef QExplicitlySharedDataPointer<Entity> Ptr;
 	typedef QList<Entity::Ptr> List;
 
 	enum Type
