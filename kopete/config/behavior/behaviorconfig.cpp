@@ -113,6 +113,11 @@ void BehaviorConfig::load()
 	awayInstance = Kopete::Away::getInstance();
 
 	KCModule::load();
+	// "General" TAB ===============================================================
+	if(!mPrfsGeneral->kcfg_useMessageQueue->isChecked() && !mPrfsGeneral->kcfg_useMessageStack->isChecked()) {
+		mPrfsGeneral->mInstantMessageOpeningChk->setChecked(true);
+	}
+
 	// "Away" TAB ===============================================================
 	mPrfsAway->mAutoAwayTimeout->setValue( Kopete::BehaviorSettings::self()->autoAwayTimeout() / 60 );
 

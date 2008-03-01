@@ -90,12 +90,12 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		//remove me after we can change account ids (Matt)
 		d->ui->m_login->setReadOnly( true );
 		d->ui->m_autologin->setChecked( account->excludeConnect()  );
-		if ( ( static_cast<MSNAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<MSNAccount*>(account)->serverPort() != 1863) ) {
+		if ( ( static_cast<MSNAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<MSNAccount*>(account)->serverPort() != 1863) || ( static_cast<MSNAccount*>(account)->useHttpMethod() ) ) {
 			d->ui->optionOverrideServer->setChecked( true );
 		}
 
 		d->ui->optionUseHttpMethod->setChecked( static_cast<MSNAccount*>(account)->useHttpMethod() );
-		
+
 		MSNContact *myself = static_cast<MSNContact *>( account->myself() );
 
 		d->ui->m_displayName->setText( myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() );

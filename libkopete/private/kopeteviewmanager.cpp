@@ -274,7 +274,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		}
 
 		Kopete::MessageEvent *event = 0L;
-		if ( appendMessageEvent && !outgoingMessage || showNotification )
+		if ( appendMessageEvent && !outgoingMessage && showNotification )
 		{
 			event = new Kopete::MessageEvent(msg,manager);
 			d->eventList.append( event );
