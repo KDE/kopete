@@ -67,6 +67,15 @@ PrivacyDlg::PrivacyDlg(JabberAccount* acc, QWidget* parent) : KDialog(parent), a
 	connect(ui_.pb_up,SIGNAL(clicked()),SLOT(moveCurrentRuleUp()));
 	connect(ui_.pb_down,SIGNAL(clicked()),SLOT(moveCurrentRuleDown()));
 	connect(ui_.pb_apply,SIGNAL(clicked()),SLOT(applyList()));
+	
+	ui_.pb_newList->setIcon(KIcon("list-add"));
+	ui_.pb_deleteList->setIcon(KIcon("list-remove"));
+	ui_.pb_add->setIcon(KIcon("list-add"));
+	ui_.pb_remove->setIcon(KIcon("list-remove"));
+	ui_.pb_up->setIcon(KIcon("arrow-up"));
+	ui_.pb_down->setIcon(KIcon("arrow-down"));
+	ui_.pb_edit->setIcon(KIcon("edit"));
+	ui_.pb_apply->setIcon(KIcon("dialog-apply"));
 
 	setWidgetsEnabled(false);
 
