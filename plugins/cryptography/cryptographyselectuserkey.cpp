@@ -15,6 +15,7 @@
     *                                                                         *
     ***************************************************************************
 */
+#include "cryptographyselectuserkey.h"
 
 #include <kiconloader.h>
 #include <klocalizedstring.h>
@@ -33,8 +34,6 @@
 #include <kopete/kopetemetacontact.h>
 #include "cryptographyplugin.h"
 
-#include "cryptographyselectuserkey.h"
-
 CryptographySelectUserKey::CryptographySelectUserKey ( const QString& key ,Kopete::MetaContact *mc )
 		: KDialog()
 {
@@ -47,11 +46,11 @@ CryptographySelectUserKey::CryptographySelectUserKey ( const QString& key ,Kopet
 	QWidget *w = new QWidget ( this );
 	QLabel * label = new QLabel ( w );
 	m_KeyEdit = new Kleo::EncryptionKeyRequester ( false/*multipleKeys*/, Kleo::EncryptionKeyRequester::OpenPGP, w, false/*onlyTrusted*/, true/*onlyValid*/ );
-	m_KeyEdit->setDialogMessage ( i18n ( "Select the key you want to use encrypt messages to the recipient" ) );
-	m_KeyEdit->setDialogCaption ( i18n ( "Select the key you want to use encrypt messages to the recipient" ) );
+	m_KeyEdit->setDialogMessage ( i18nc ( "@label:chooser", "Select the key you want to use encrypt messages to the recipient" ) );
+	m_KeyEdit->setDialogCaption ( i18n ( "Select public key" ) );
 	setMainWidget ( w );
 
-	label->setText ( i18n ( "Select public key for %1", mc->displayName() ) );
+	label->setText ( i18nc ( "@label:chooser", "Select public key for %1", mc->displayName() ) );
 	m_KeyEdit->setFingerprint ( key );
 
 	QVBoxLayout * l = new QVBoxLayout ( w );

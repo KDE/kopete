@@ -16,13 +16,13 @@
     *                                                                         *
     ***************************************************************************
 */
+#include "cryptographyconfig.h"
 
 #include <qstring.h>
 
 #include <kglobal.h>
 #include <ksharedconfig.h>
 #include <KConfigGroup>
-#include "cryptographyconfig.h"
 
 CryptographyConfig* CryptographyConfig::mSelf = 0L;
 

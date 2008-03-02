@@ -14,7 +14,12 @@
     *                                                                       *
     *************************************************************************
 */
+#ifndef CRYPTOGRAPHYEXPORT_H
+#define CRYPTOGRAPHYEXPORT_H
+
 
 #include <kdemacros.h>
 
 #define KOPETECRYPTOGRAPHY_EXPORT KDE_EXPORT
+
+#endif

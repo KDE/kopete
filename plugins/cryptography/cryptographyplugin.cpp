@@ -15,6 +15,7 @@
     *                                                                         *
     ***************************************************************************
 */
+#include "cryptographyplugin.h"
 
 // qt stuff
 #include <QList>
@@ -62,7 +63,6 @@
 #include <kopete/kabcpersistence.h>
 
 // our own stuff
-#include "cryptographyplugin.h"
 #include "cryptographyselectuserkey.h"
 #include "cryptographyguiclient.h"
 #include "exportkeys.h"
@@ -89,13 +89,13 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*
 	          SLOT ( slotOutgoingMessage ( Kopete::Message & ) ) );
 
 	// actions in the contact list
-	KAction *action = new KAction ( KIcon ( "document-encrypt" ), i18n ( "&Select Public Key..." ), this );
+	KAction *action = new KAction ( KIcon ( "document-encrypt" ), i18nc ( "@action toggle action", "&Select Public Key..." ), this );
 	actionCollection()->addAction ( "contactSelectKey", action );
 	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotSelectContactKey() ) );
 	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
 	action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
 
-	action = new KAction ( KIcon ( "document-export-key" ), i18n ( "&Export Public Keys To Address Book..." ), this );
+	action = new KAction ( KIcon ( "document-export-key" ), i18nc ( "@action toggle action", "&Export Public Keys To Address Book..." ), this );
 	actionCollection()->addAction ( "exportKey", action );
 	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotExportSelectedMetaContactKeys() ) );
 	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
@@ -214,13 +214,14 @@ void CryptographyPlugin::slotIncomingSignedMessageContinued ( const GpgME::Verif
 }
 
 // apply signature icons and put message in chat window
-void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & verificationResult, bool encrypted )
+void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, const QString &intendedBody, const GpgME::VerificationResult & verificationResult, bool encrypted )
 {
+	QString body = intendedBody;
 	// turn our plaintext body into html, so then it makes sense to stick HTML tags in it
-	if ( ! Qt::mightBeRichText ( intendedBody ) )
-		intendedBody = Qt::convertFromPlainText ( intendedBody, Qt::WhiteSpaceNormal );
-	intendedBody = intendedBody.remove ( QRegExp ( "<p[^>]*>", Qt::CaseInsensitive ) );
-	intendedBody = intendedBody.remove ( QRegExp ( "</p>", Qt::CaseInsensitive ) );
+	if ( ! Qt::mightBeRichText ( body ) )
+		body = Qt::convertFromPlainText ( body, Qt::WhiteSpaceNormal );
+	body = body.remove ( QRegExp ( "<p[^>]*>", Qt::CaseInsensitive ) );
+	body = body.remove ( QRegExp ( "</p>", Qt::CaseInsensitive ) );
 
 	// apply crypto state icons
 	// use lowest common denominator; entire message is considered invalid if one signature is
@@ -239,29 +240,29 @@ void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, QString intend
 	if ( verificationResult.numSignatures() ) {
 		if ( validity == GpgME::Signature::Ultimate || validity == GpgME::Signature::Full )
 		{
-			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-high", KIconLoader::Small ) + "\">&nbsp;" );
+			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-high", KIconLoader::Small ) + "\">&nbsp;" );
 			msg.addClass ( "cryptography:signedvalid" );
 			kDebug ( 14303 ) << "message has fully valid signatures";
 		}
 		else if ( validity == GpgME::Signature::Marginal ) {
-			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-medium", KIconLoader::Small ) + "\">&nbsp;" );
+			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-medium", KIconLoader::Small ) + "\">&nbsp;" );
 			msg.addClass ( "cryptography:signedmarginal" );
 			kDebug ( 14303 ) << "message has marginally signatures";
 		}
 		else  {
-			intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-low", KIconLoader::Small ) + "\">&nbsp;" );
+			body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "security-low", KIconLoader::Small ) + "\">&nbsp;" );
 			msg.addClass ( "crytography:signedinvalid" );
 			kDebug ( 14303 ) << "message has unverified signatures";
 		}
 	}
 
 	if ( encrypted ) {
-		intendedBody.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "object-locked", KIconLoader::Small ) + "\">&nbsp;" );
+		body.prepend ( "<img src=\"" + KIconLoader::global()->iconPath ( "object-locked", KIconLoader::Small ) + "\">&nbsp;" );
 		msg.addClass ( "cryptography:encrypted" );
 		kDebug ( 14303 ) << "message was encrypted";
 	}
 
-	msg.setHtmlBody ( intendedBody );
+	msg.setHtmlBody ( body );
 	msg.manager()->appendMessage ( msg );
 }
 
@@ -365,7 +366,7 @@ void CryptographyPlugin::slotNewKMM ( Kopete::ChatSession *KMM )
 		QString protocol ( KMM->protocol()->metaObject()->className() );
 		if ( gui->m_encAction->isChecked() ) {
 			if ( ! supportedProtocols().contains ( protocol ) ) {
-				KMessageBox::information ( 0, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ),
+				KMessageBox::information ( 0, i18nc ( "@info", "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ),
 				                           i18n ( "Cryptography Unsupported Protocol" ), "Warn about unsupported " + QString ( KMM->protocol()->metaObject()->className() ) );
 			}
 		}
@@ -402,7 +403,7 @@ QString CryptographyPlugin::kabcKeySelector ( QString displayName, QString addre
 {
 	// just a Yes/No about whether to accept the key
 	if ( keys.count() == 1 ) {
-		if ( KMessageBox::questionYesNo ( parent, i18n ( "Cryptography plugin has found an encryption key for %1 (%2) in your KDE address book. Do you want to use key %3 as this contact's public key? ", displayName, addresseeName, keys.first().right ( 8 ).prepend ( "0x" ) ),
+		if ( KMessageBox::questionYesNo ( parent, i18nc ( "@info", "Cryptography plugin has found an encryption key for %1 (%2) in your KDE address book. Do you want to use key %3 as this contact's public key? ", displayName, addresseeName, keys.first().right ( 8 ).prepend ( "0x" ) ),
 		                                  i18n ( "Public Key Found" ) ) == KMessageBox::Yes ) {
 			return keys.first();
 		}
@@ -417,7 +418,7 @@ QString CryptographyPlugin::kabcKeySelector ( QString displayName, QString addre
 		dialog.setCaption ( i18n ( "Public Keys Found" ) );
 		dialog.setButtons ( KDialog::Ok | KDialog::Cancel );
 		dialog.setMainWidget ( &w );
-		ui.label->setText ( i18n ( "Cryptography plugin has found multiple encryption keys for %1 (%2) in your KDE address book. To use one of these keys, select it and choose OK.",
+		ui.label->setText ( i18nc ( "@info", "Cryptography plugin has found multiple encryption keys for %1 (%2) in your KDE address book. To use one of these keys, select it and choose OK.",
 		                           displayName, addresseeName ) );
 		for ( int i = 0; i < keys.count(); i++ )
 			ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ( "application-pgp-keys", KIconLoader::Small ), keys[i].right ( 8 ).prepend ( "0x" ), ui.keyList ) );

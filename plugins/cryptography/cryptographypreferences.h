@@ -30,7 +30,7 @@
  */
 
 class CryptographyConfig;
-class Kleo::EncryptionKeyRequester;
+namespace Kleo { class EncryptionKeyRequester; }
 class QCheckBox;
 
 class CryptographyPreferences : public KCModule

@@ -52,7 +52,7 @@ class CryptographyMessageHandlerFactory;
 /**
   * @author Olivier Goffart
   * @author Charles Connell
-  * Main plugin class, handles mesages. Also has static functions used by rest of plugin
+  * Main plugin class, handles messages. Also has static functions used by rest of plugin
   *
   * Basic architecture:
   *
@@ -111,7 +111,7 @@ class CryptographyPlugin : public Kopete::Plugin
 		
 		void slotIncomingSignedMessageContinued ( const GpgME::VerificationResult &verificationResult, const QByteArray &plainText );
 		
-		void finalizeMessage ( Kopete::Message & msg, QString intendedBody, const GpgME::VerificationResult & validity, bool encrypted );
+		void finalizeMessage ( Kopete::Message & msg, const QString &intendedBody, const GpgME::VerificationResult & validity, bool encrypted );
 
 		void slotOutgoingMessage ( Kopete::Message& msg );
 		

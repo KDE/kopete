@@ -16,11 +16,10 @@
     *                                                                         *
     ***************************************************************************
 */
-
 #ifndef CRYPTOGRAPHYCONFIG_H
 #define CRYPTOGRAPHYCONFIG_H
 
-class QString;
+#include <QString>
 
 class CryptographyConfig
 {

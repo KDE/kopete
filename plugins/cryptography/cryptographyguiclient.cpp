@@ -77,11 +77,11 @@ CryptographyGUIClient::CryptographyGUIClient ( Kopete::ChatSession *parent )
 			keysAvailable = true;
 	}
 
-	m_encAction = new KToggleAction ( KIcon ( "document-encrypt" ), i18n ( "Encrypt Messages" ), this );
+	m_encAction = new KToggleAction ( KIcon ( "document-encrypt" ), i18nc ( "@action toggle action", "Encrypt Messages" ), this );
 	actionCollection()->addAction ( "encryptionToggle", m_encAction );
-	m_signAction = new KToggleAction ( KIcon ( "document-sign" ), i18n ( "Sign Messages" ), this );
+	m_signAction = new KToggleAction ( KIcon ( "document-sign" ), i18nc ( "@action toggle action", "Sign Messages" ), this );
 	actionCollection()->addAction ( "signToggle", m_signAction );
-	m_exportAction = new KAction ( i18n ( "Export Contacts' Keys to Address Book" ), this );
+	m_exportAction = new KAction ( i18nc ( "@action toggle action", "Export Contacts' Keys to Address Book" ), this );
 	actionCollection()->addAction ( "export", m_exportAction );
 
 	m_encAction->setChecked ( wantEncrypt && keysAvailable );
@@ -105,7 +105,7 @@ void CryptographyGUIClient::slotSignToggled()
 	if ( m_signAction->isChecked() ) {
 		if ( CryptographyConfig::self()->fingerprint().isEmpty() ) {
 			KMessageBox::sorry ( Kopete::UI::Global::mainWidget(),
-			                     i18n ( "You have not selected a private key for yourself, so signing is not possible. Please select a private key in the Cryptography preferences dialog" ),
+			                     i18nc ( "@info", "You have not selected a private key for yourself, so signing is not possible. Please select a private key in the Cryptography preferences dialog" ),
 			                     i18n ( "No Private Key" ) );
 			m_signAction->setChecked ( false );
 		}
@@ -160,15 +160,15 @@ void CryptographyGUIClient::slotEncryptToggled()
 
 		QString protocol ( csn->protocol()->metaObject()->className() );
 		if ( ! CryptographyPlugin::supportedProtocols().contains ( protocol ) ) {
-			KMessageBox::information ( w, i18n ( "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ),
-			                           i18n ( "Cryptography Unsupported Protocol" ),
+			KMessageBox::information ( w, i18nc ( "@info", "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ),
+					i18n ( "Cryptography Unsupported Protocol" ),
 			                           "Warn about unsupported " + QString ( csn->protocol()->metaObject()->className() ) );
 		}
 
 		// we can't encrypt if we don't have every single key we need
 		if ( !keyless.isEmpty() )
 		{
-			KMessageBox::sorry ( w, i18np ( "You need to select a public key for %2 to send encrypted messages to them.", "To send encrypted messages to the following meta-contacts still need to select a key for them:\n%2",
+			KMessageBox::sorry ( w, i18ncp ( "@info",  "You need to select a public key for %2 to send encrypted messages to them.", "To send encrypted messages to the following meta-contacts still need to select a key for them:\n%2",
 			                                keyless.count(), keyless.join ( "\n" ) ),
 			                     i18np ( "Missing public key", "Missing public keys", keyless.count() ) );
 

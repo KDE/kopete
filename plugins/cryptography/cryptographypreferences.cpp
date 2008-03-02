@@ -15,6 +15,7 @@
     *                                                                         *
     ***************************************************************************
 */
+#include "cryptographypreferences.h"
 
 #include <QPushButton>
 #include <QCheckBox>
@@ -25,14 +26,10 @@
 #include <klocalizedstring.h>
 #include <kleo/ui/keyrequester.h>
 
-#include "cryptographypreferences.h"
-#include "cryptographypreferences.moc"
-
 #include "cryptographyconfig.h"
 
 K_PLUGIN_FACTORY ( CryptographyPreferencesFactory, registerPlugin<CryptographyPreferences>(); )
 K_EXPORT_PLUGIN ( CryptographyPreferencesFactory ( "kcm_kopete_cryptography" ) )
-
 
 CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QVariantList &args )
 		: KCModule ( CryptographyPreferencesFactory::componentData(), parent, args )
@@ -46,12 +43,12 @@ CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QVaria
 	QLabel * keyLabel = new QLabel ( i18n ( "Private Key: " ), this );
 
 	key = new Kleo::EncryptionKeyRequester ( false/*multipleKeys*/, Kleo::EncryptionKeyRequester::OpenPGP, this, true/*onlyTrusted*/, true/*onlyValid*/ );
-	key->setDialogMessage ( i18n ( "Select the key you want to use to sign and encrypt messages" ) );
+	key->setDialogMessage ( i18nc ( "@label:chooser", "Select the key you want to use to sign and encrypt messages" ) );
 	key->setDialogCaption ( i18n ( "Select the key you want to use to sign and encrypt messages" ) );
-	key->setToolTip ( i18n ( "The private key used for decryption and signing" ) );
-	key->setWhatsThis ( i18n ( "View and change the private key used for signing and encrypting messages using the Cryptography plugin" ) );
+	key->setToolTip ( i18nc ( "@info:tooltip", "The private key used for decryption and signing" ) );
+	key->setWhatsThis ( i18nc ( "@info:whatsthis", "View and change the private key used for signing and encrypting messages using the Cryptography plugin" ) );
 
-	QLabel * label = new QLabel ( i18n ( "Before you can sign messages or receive encrypted ones, you must select a private key for yourself.\n\nBefore you can send encrypted messages to someone, you must select their public key by right-clicking on their name in your contact list and choosing \"Select Public Key\"."), this );
+	QLabel * label = new QLabel ( i18nc ( "@info", "<para>Before you can sign messages or receive encrypted ones, you must select a private key for yourself.</para><para>Before you can send encrypted messages to someone, you must select their public key by right-clicking on their name in your contact list and choosing \"Select Public Key\".</para>"), this );
 	label->setWordWrap ( true );
 
 	keyLabel->setBuddy( key );

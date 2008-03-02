@@ -39,7 +39,7 @@ ExportKeys::ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent )
 	
 	setCaption ( i18n ("Export Public Keys") );
 	setButtons ( KDialog::User1 | KDialog::Cancel );
-	setButtonGuiItem ( KDialog::User1, KGuiItem ( i18n("Export"), "document-export-key", i18n("Export checked keys to address book")));
+	setButtonGuiItem ( KDialog::User1, KGuiItem ( i18nc("@action:button", "Export"), "document-export-key", i18nc("@info:tooltip", "Export checked keys to address book")));
 	connect ( this, SIGNAL( user1Clicked() ), this, SLOT ( accept() ) );
 	
 	QString key;
@@ -61,7 +61,7 @@ ExportKeys::ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent )
 		
 		// now we create the ListWidgetItem
 		key = key.right(8).prepend("0x");
-		key = key + " " + mc->displayName() + " (" + addressee.formattedName() + ")";
+		key = key + ' ' + mc->displayName() + " (" + addressee.formattedName() + ')';
 		QListWidgetItem * tmpItem = new QListWidgetItem ( KIconLoader::global()->loadIconSet ("document-export-key", KIconLoader::Small), key, mUi->keyList);
 		tmpItem->setFlags (Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		tmpItem->setCheckState (Qt::Checked);
@@ -72,7 +72,7 @@ ExportKeys::ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent )
 		mMetaContacts.append (mc);
 	}
 	if ( mUi->keyList->count() == 0 ){
-		mUi->keyList->addItem ( i18n ("<No meta-contacts with keys to export>") );
+		mUi->keyList->addItem ( i18nc ("@item:inlistbox", "&lt;No meta-contacts with keys to export&gt;") );
 		button( KDialog::User1 )->setEnabled (false);
 	}
 }
@@ -102,7 +102,7 @@ void ExportKeys::accept()
 		}
 	}
 
-	QDialog::accept();
+	KDialog::accept();
 }
 
 
