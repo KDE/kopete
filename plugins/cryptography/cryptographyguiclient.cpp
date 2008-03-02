@@ -17,6 +17,7 @@
 */
 #include "cryptographyguiclient.h"
 #include "cryptographyplugin.h"
+#include "cryptographysettings.h"
 
 #include <kopete/kopetemetacontact.h>
 #include <kopete/kopetecontact.h>
@@ -103,7 +104,7 @@ CryptographyGUIClient::~CryptographyGUIClient()
 void CryptographyGUIClient::slotSignToggled()
 {
 	if ( m_signAction->isChecked() ) {
-		if ( CryptographyConfig::self()->fingerprint().isEmpty() ) {
+		if ( CryptographySettings::privateKeyFingerprint().isEmpty() ) {
 			KMessageBox::sorry ( Kopete::UI::Global::mainWidget(),
 			                     i18nc ( "@info", "You have not selected a private key for yourself, so signing is not possible. Please select a private key in the Cryptography preferences dialog" ),
 			                     i18n ( "No Private Key" ) );

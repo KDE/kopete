@@ -26,7 +26,7 @@
 #include <klocalizedstring.h>
 #include <kleo/ui/keyrequester.h>
 
-#include "cryptographyconfig.h"
+#include "cryptographysettings.h"
 
 K_PLUGIN_FACTORY ( CryptographyPreferencesFactory, registerPlugin<CryptographyPreferences>(); )
 K_EXPORT_PLUGIN ( CryptographyPreferencesFactory ( "kcm_kopete_cryptography" ) )
@@ -72,7 +72,7 @@ CryptographyPreferences::~CryptographyPreferences()
 
 void CryptographyPreferences::load()
 {
-	key->setFingerprint ( CryptographyConfig::self()->fingerprint() );
+	key->setFingerprint( CryptographySettings::privateKeyFingerprint() );
 
 	KCModule::load();
 	emit changed ( false );
@@ -80,9 +80,9 @@ void CryptographyPreferences::load()
 
 void CryptographyPreferences::save()
 {
-	CryptographyConfig::self()->setFingerprint ( key->fingerprint() );
+	CryptographySettings::setPrivateKeyFingerprint ( key->fingerprint() );
 
-	CryptographyConfig::self()->save();
+	CryptographySettings::self()->writeConfig();
 
 	KCModule::save();
 	emit changed ( false );
@@ -90,7 +90,7 @@ void CryptographyPreferences::save()
 
 void CryptographyPreferences::defaults()
 {
-	CryptographyConfig::self()->defaults();
+	CryptographySettings::self()->setDefaults();
 	load();
 	changed();
 }

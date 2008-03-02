@@ -21,8 +21,6 @@
 
 #include <kopete/kopeteplugin.h>
 
-#include "cryptographyconfig.h"
-
 #include <QVariantList>
 #include <QHash>
 

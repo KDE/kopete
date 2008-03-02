@@ -67,7 +67,7 @@
 #include "cryptographyguiclient.h"
 #include "exportkeys.h"
 #include "cryptographymessagehandler.h"
-
+#include "cryptographysettings.h"
 #include "ui_kabckeyselectorbase.h"
 
 CryptographyPlugin* CryptographyPlugin::mPluginStatic = 0L;
@@ -294,7 +294,7 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 	if ( signing )
 	{
 		Kleo::KeyListJob * listJob = proto->keyListJob();
-		listJob->exec ( QStringList ( CryptographyConfig::self()->fingerprint() ), true/*secretOnly*/, signingKeys );
+		listJob->exec ( QStringList ( CryptographySettings::privateKeyFingerprint() ), true/*secretOnly*/, signingKeys );
 	}
 
 	// create QStringList of recpients' keys, then convert that (using a KeyListJob) into a std::vector
@@ -308,7 +308,7 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 			encryptingKeysPattern.append ( tmpKey );
 		}
 		// encrypt to self so we can decrypt during slotIncomingMessage()
-		encryptingKeysPattern.append ( CryptographyConfig::self()->fingerprint() );
+		encryptingKeysPattern.append ( CryptographySettings::privateKeyFingerprint() );
 		Kleo::KeyListJob * listJob = proto->keyListJob();
 		listJob->exec ( encryptingKeysPattern, false/*secretOnly*/, encryptingKeys );
 	}
