@@ -178,9 +178,17 @@ void MessageReceiverTask::handleType1Message()
 	else
 		msg.addProperty( Oscar::Message::Normal );
 
+	TLV timestamp = Oscar::findTLV( messageTLVList, 0x0016 );
+	if ( timestamp )
+	{
+		Buffer timestampBuffer( t.data );
+		msg.setTimestamp( QDateTime::fromTime_t( timestampBuffer.getDWord() ) );
+	}
+	else
+		msg.setTimestamp( QDateTime::currentDateTime() );
+
 	msg.setSender( m_fromUser );
 	msg.setReceiver( client()->userId() );
-	msg.setTimestamp( QDateTime::currentDateTime() );
 	msg.setChannel( 0x01 );
 
 	emit receivedMessage( msg );

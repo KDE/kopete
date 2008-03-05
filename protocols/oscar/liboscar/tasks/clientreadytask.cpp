@@ -73,7 +73,7 @@ void ClientReadyTask::onGo()
 		
 		if ( client()->isIcq() )
 		{
-			buffer->addDWord( 0x011008E4 ); // ICQ dll library version
+			buffer->addDWord( 0x0110164F ); // ICQ dll library version
 		}
 		else
 		{

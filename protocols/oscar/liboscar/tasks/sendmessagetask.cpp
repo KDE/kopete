@@ -122,7 +122,7 @@ void SendMessageTask::onGo()
 			b->addDWord( 0x00030000 ); //empty TLV 3 to get an ack from the server
 		}
 
-		if ( client()->isIcq() && m_message.channel() != 2 && ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
+		if ( m_message.channel() != 2 && ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
 			b->addDWord( 0x00060000 ); //empty TLV 6 to store message on the server if not online
 	}
 	else

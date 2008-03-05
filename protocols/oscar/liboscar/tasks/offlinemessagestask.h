@@ -2,9 +2,9 @@
    Kopete Oscar Protocol
    offlinemessagestask.h - Offline messages handling
 
-   Copyright (c) 2004 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+   Copyright (c) 2008 Roman Jarosz <kedgedev@centrum.cz>
 
-   Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+   Kopete (c) 2008 by the Kopete developers <kopete-devel@kde.org>
 
    *************************************************************************
    *                                                                       *
@@ -19,38 +19,24 @@
 #ifndef OFFLINEMESSAGESTASK_H
 #define OFFLINEMESSAGESTASK_H
 
-#include "icqtask.h"
-#include "oscarmessage.h"
-#include "liboscar_export.h"
+#include <task.h>
+
+class Transfer;
 
 /**
-ICQ Offline messages handling
-
-@author Gustavo Pichorim Boiko
+@author Roman Jarosz
 */
-class LIBOSCAR_EXPORT  OfflineMessagesTask : public ICQTask
+class OfflineMessagesTask : public Task
 {
-Q_OBJECT
 public:
 	OfflineMessagesTask( Task* parent );
 
-	~OfflineMessagesTask();
-	
+	virtual bool forMe( const Transfer* transfer ) const;
+	virtual bool take( Transfer* transfer );
 	virtual void onGo();
-	virtual bool forMe( const Transfer* t ) const;
-	virtual bool take( Transfer* t );
-	static Oscar::Message parseOfflineMessage(Buffer *);
-	
-signals:
-	void receivedOfflineMessage( const Oscar::Message& msg );
-	
-private:
-	void handleOfflineMessage();
-	void endOfMessages();
-	void deleteOfflineMessages();
-	
-private:
-	int m_sequence;
+
 };
 
 #endif
+
+// kate: space-indent on; tab-width 4; indent-mode csands;
