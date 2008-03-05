@@ -1126,7 +1126,7 @@ void KopeteWindow::slotUpdateSize()
 		return; // don't do anything if cursor is inside window
 	}
 	const int amountWindowBiggerThanContactList = 200;
-	const QRect workArea = KWindowSystem::self()->workArea();
+	const QRect workArea = KWindowSystem::workArea();
 	const int minHeight = 400;
 	QRect newGeometry = geometry();
 	const QRect oldGeometry = geometry();
