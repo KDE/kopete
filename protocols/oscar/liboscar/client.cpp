@@ -488,7 +488,7 @@ void Client::haveOwnUserInfo()
 	d->ourDetails = ud;
 	emit haveOwnInfo();
 
-	if ( !d->offlineMessagesRequested )
+	if ( !d->offlineMessagesRequested && d->active )
 	{
 		//retrieve offline messages
 		Connection* c = d->connections.connectionForFamily( 0x0004 );
