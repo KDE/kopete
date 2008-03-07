@@ -277,6 +277,18 @@ void OscarAccount::processSSIList()
 		{
 			OContact item = ( *bit );
 			oc->setSSIItem( item );
+
+			//only synchronizes group if metacontact is a member of
+			//a single group
+			if ( oc->metaContact()->groups().size() == 1 )
+			{
+				Kopete::Group* oldGrp = oc->metaContact()->groups().first();
+				if ( oldGrp->displayName() != group->displayName() &&
+				     oc->metaContact()->contacts().count() == 1 )
+				{
+					oc->metaContact()->moveToGroup( oldGrp, group );
+				}
+			}
 		}
 		else
 			addContact( ( *bit ).name(), QString(), group, Kopete::Account::DontChangeKABC );
@@ -294,6 +306,13 @@ void OscarAccount::processSSIList()
 	                  this, SLOT( ssiGroupUpdated( const OContact& ) ) );
 	QObject::connect( listManager, SIGNAL( contactUpdated( const OContact& ) ),
 	                  this, SLOT( ssiContactUpdated( const OContact& ) ) );
+
+	// TODO: Synchronize groups.
+	// Currently groups that have been removed from the server do not get
+	// removed from the client's list.  The problem is that a group can hold
+	// contacts from other protocols.  Perhaps groups should store which
+	// protocols are using it.  Asking the user for which account to create
+	// a group, similar to how contact addition, could work.
 
     const QHash<QString, Kopete::Contact*> &nonServerContacts = contacts();
     QHash<QString, Kopete::Contact*>::ConstIterator it = nonServerContacts.constBegin();
@@ -325,7 +344,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
     if ( !d->olnscDialog )
         return;
 
-    if ( d->olnscDialog->result() == QDialog::Accepted )
+    if ( d->olnscDialog->result() == KDialog::Yes )
     {
         //start adding contacts
         kDebug(OSCAR_GEN_DEBUG) << "adding non server contacts to the contact list";
@@ -339,32 +358,66 @@ void OscarAccount::nonServerAddContactDialogClosed()
             OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *it )] );
             if ( !oc )
             {
-                kDebug(OSCAR_GEN_DEBUG) << "no OscarContact object available for"
-                                         << ( *it ) << endl;
+                kDebug(OSCAR_GEN_DEBUG) << "no OscarContact object available for" << ( *it );
                 continue;
             }
 
             Kopete::MetaContact* mc = oc->metaContact();
             if ( !mc )
             {
-                kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for"
-                                         << ( oc->contactId() ) << endl;
+                kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for" << oc->contactId();
                 continue;
             }
 
             Kopete::Group* group = mc->groups().first();
             if ( !group )
             {
-                kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for"
-                                         << ( oc->contactId() ) << endl;
+                kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for" << oc->contactId();
                 continue;
             }
 
 	    addContactToSSI( ( *it ), group->displayName(), true );
         }
-
-
     }
+
+	else if ( d->olnscDialog->result() == KDialog::No )
+	{
+		//remove contacts
+		kDebug( OSCAR_GEN_DEBUG ) << "removing non server contacts from the "
+			                         "contact list";
+		Kopete::ContactList* kcl = Kopete::ContactList::self();
+		QStringList offliners = d->olnscDialog->nonServerContactList();
+		QStringList::iterator it, itEnd = offliners.end();
+		for ( it = offliners.begin(); it != itEnd; ++it )
+		{
+			OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[(*it)] );
+			if ( !oc )
+			{
+				kDebug( OSCAR_GEN_DEBUG ) << "no OscarContact object available "
+				                             "for" << ( *it ) << endl;
+				continue;
+			}
+
+			Kopete::MetaContact* mc = oc->metaContact();
+			if ( !mc )
+			{
+				kDebug( OSCAR_GEN_DEBUG ) << "no metacontact object available "
+				                             "for" << ( oc->contactId() )
+				                             << endl;
+				continue;
+			}
+
+			if ( oc->metaContact()->contacts().count() <= 1 )
+			{
+				kcl->removeMetaContact( oc->metaContact() );
+			}
+			else
+			{
+				kDebug( OSCAR_GEN_DEBUG ) << oc->contactId() << " metacontact "
+			                                 "contains multiple contacts.";
+			}
+		}
+	}
 
 	bool showOnce = d->olnscDialog->onlyShowOnce();
 	configGroup()->writeEntry( QString::fromLatin1("ShowMissingContactsDialog") , !showOnce);
