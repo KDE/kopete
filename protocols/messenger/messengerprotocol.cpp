@@ -181,7 +181,8 @@ AddContactPage *MessengerProtocol::createAddContactWidget(QWidget *parent, Kopet
 KopeteEditAccountWidget *MessengerProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
 	/*create the Edit Account UI*/
-	return new MessengerEditAccountWidget(this,account,parent);
+	MessengerAccount *messengerAccount=dynamic_cast<MessengerAccount*>(account);
+	return new MessengerEditAccountWidget(this,messengerAccount,parent);
 }
 
 /* check the ContactId is a valid Windows Live ID
