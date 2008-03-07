@@ -97,6 +97,7 @@
 #include "kopetestatusmanager.h"
 #include "kopetestatusrootaction.h"
 #include "kopetestatuseditaction.h"
+#include "kopeteemoticons.h"
 
 
 //BEGIN GlobalStatusMessageIconLabel
@@ -1013,7 +1014,18 @@ void KopeteWindow::setStatusMessage ( const Kopete::StatusMessage& statusMessage
 
 void KopeteWindow::globalStatusChanged()
 {
-	d->globalStatusMessage->setText ( Kopete::StatusManager::self()->globalStatusMessage().title() );
+	QString statusTitle = Kopete::StatusManager::self()->globalStatusMessage().title();
+	QString statusMessage = Kopete::StatusManager::self()->globalStatusMessage().message();
+	d->globalStatusMessage->setText( statusTitle );
+
+	QString toolTip;
+	toolTip += i18nc("@label:textbox formatted status title", "<b>Status&nbsp;Title:</b>&nbsp;%1",
+	                 Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusTitle) ) );
+
+	toolTip += i18nc("@label:textbox formatted status message", "<br /><b>Status&nbsp;Message:</b>&nbsp;%1",
+	                 Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusMessage) ) );
+
+	d->globalStatusMessage->setToolTip( toolTip );
 }
 
 void KopeteWindow::slotGlobalStatusMessageIconClicked ( const QPoint &position )
