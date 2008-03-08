@@ -166,7 +166,7 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 	else
 	{
 		JabberTransport *transport = dynamic_cast < JabberTransport * >(account);
-		if(!transport)
+		if(!transport || !transport->account()->client() )
 			return 0L;
 		dlgJabberRegister *registerDialog = new dlgJabberRegister (transport->account(), transport->myself()->contactId());
 		registerDialog->show (); 
