@@ -53,7 +53,7 @@
 MessengerAccount::MessengerAccount(MessengerProtocol *protocol, const QString &accountId)
  : Kopete::PasswordedAccount(protocol, accountId.toLower(), false)
 {
-	setMyself( new MessengerContact(this, accountId, Kopete::ContactList::self()->myself()) );
+	
 
 	m_openInboxAction = new KAction( KIcon("mail"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
@@ -81,13 +81,13 @@ MessengerAccount::MessengerAccount(MessengerProtocol *protocol, const QString &a
 
 	// getting list of contacts order by type
 	Papillon::ContactList *cl = new Papillon::ContactList(m_messengerClient);
+	m_contactList = cl->contacts();
 	m_blockList = cl->blockList();
 	m_allowList = cl->allowList();
 	m_reverseList = cl->reverseList();
 
-// 	m_messengerClient->ContactList()->blockList(&m_blockList, "Block");
-// 	m_messengerClient->ContactList()->allowList(&m_allowList, "Allow");
-// 	m_messengerClient->ContactList()->reverseList(&m_reverseList, "Reverse");
+	MessengerContact *myContact = new MessengerContact ( this, accountId, Kopete::ContactList::self()->myself());
+	setMyself( myContact );
 
 	// Set the client Id for the myself contact.  It sets what Messenger feature we support.
 	m_clientId = MessengerProtocol::MessengerC4 | MessengerProtocol::InkFormatGIF | MessengerProtocol::SupportMultiPacketMessaging;
@@ -97,10 +97,26 @@ MessengerAccount::MessengerAccount(MessengerProtocol *protocol, const QString &a
 
 MessengerAccount::~MessengerAccount()
 {
-	//disconnect ( Kopete::Account::Manual );
-	delete m_messengerClient;
+	disconnect ();
+	cleanup ();
 }
 
+void MessengerAccount::cleanup ()
+{
+
+	delete m_messengerClient;
+	m_messengerClient = 0L;
+
+	//TODO delete also contact list
+// 	delete m_contactPool;
+// 	m_contactPool = 0L;
+
+}
+bool MessengerAccount::removedAccount()
+{
+      //TODO
+      return false;
+}
 QString MessengerAccount::serverName() const
 {
 	return configGroup()->readEntry(  "serverName" , MESSENGER_DEFAULT_SERVER );

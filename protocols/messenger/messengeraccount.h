@@ -42,6 +42,7 @@ namespace Papillon
 }
 namespace Kopete 
 { 
+	class Account;
 	class MetaContact;
 	class StatusMessage;
 }
@@ -65,7 +66,7 @@ public:
 	int serverPort () const;
 
 	/* to get the protocol from the account */
-	MessengerProtocol *protocol () const
+	MessengerProtocol *protocol() const
 	{
 		return m_protocol;
 	}
@@ -85,7 +86,7 @@ public:
 
 	/*
 	 * called when the account is removed in the config ui */
-	//virtual bool removeAccount();
+	virtual bool removedAccount();
 
 	 /*
 	 * picture */
@@ -111,6 +112,7 @@ public:
 	uint m_clientId;
 
 	// server data
+	QList<Papillon::Contact*> m_contactList;
 	QList<Papillon::Contact*> m_allowList;
 	QList<Papillon::Contact*> m_blockList;
 	QList<Papillon::Contact*> m_reverseList;
@@ -142,7 +144,8 @@ protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);
 	
 private:
-	//MessengerNotifySocket *m_notifySocket;
+	void cleanup ();
+
 	MessengerProtocol *m_protocol;
 	// backend for this account
 	QString m_pictureObj; //a cache of the <msnobj>
