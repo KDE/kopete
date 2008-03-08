@@ -20,6 +20,7 @@
 #include <kopetepasswordedaccount.h>
 #include "messengerprotocol.h"
 #include "kaction.h"
+#include "kopeteaccount.h"
 #include "Papillon/Client"
 #include "Papillon/ContactList"
 #include "Papillon/QtConnector"
@@ -39,6 +40,7 @@ namespace Papillon
     class Presence;
     class ContactList;
     class QtConnector;
+    class StatusMessageTask;
 }
 namespace Kopete 
 { 
@@ -58,8 +60,10 @@ public:
 	MessengerAccount(MessengerProtocol *protocol, const QString &accountId);
 	~MessengerAccount();
 
-	/* Fills the menu for this account. */
-	//virtual void fillActionMenu( KActionMenu *actionMenu );
+	/*
+	 * fill the menu for this account
+	 */
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/* Return the resource of the client */
 	QString serverName () const;

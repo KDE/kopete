@@ -195,43 +195,42 @@ void MessengerAccount::resetPictureObject(bool silent)
 	}*/
 }
 
-// KActionMenu *MessengerAccount::actionMenu()
-// {
-// 	KActionMenu *m_actionMenu = Kopete::Account::actionMenu();
-// 
-// 	if(isConnected())
-// 	{
-// 		m_openInboxAction->setEnabled( true );
-// 		m_startChatAction->setEnabled( true );
-// 		m_changeDNAction->setEnabled( true );
-// 
-// 	}
-// 	else
-// 	{
-// 		m_openInboxAction->setEnabled( false );
-// 		m_startChatAction->setEnabled( false );
-// 		m_changeDNAction->setEnabled( false );
-// 	}
-// 	m_actionMenu->addSeperator();
-// 
-// 	m_actionMenu->addAction( m_changeDNAction );
-// 	m_actionMenu->addAction( m_startChatAction );
-// 	m_actionMenu->addAction( m_openInboxAction );
-// 
-// #if defined MESSENGER_DEBUG
-// 	KActionMenu *debugMenu = new KActionMenu( "Debug", this );
-// 
-// 	KAction *rawCmd = new KAction( i18n( "Send Raw C&ommand..." ), this );
-//         //, "m_debugRawCommand" );
-// 	QObject::connect( rawCmd, SIGNAL(triggered()), this, SLOT(slotDebugRawCommand()) );
-// 	debugMenu->addAction(rawCmd);
-// 
-// 	m_actionMenu->addSeparator();
-// 	m_actionMenu->addAction( debugMenu );
-// #endif
-// 
-// 	return m_actionMenu;
-// }
+
+void MessengerAccount::fillActionMenu( KActionMenu *actionMenu )
+{
+	Kopete::Account::fillActionMenu( actionMenu );
+
+	if(isConnected())
+	{
+		m_openInboxAction->setEnabled( true );
+		m_startChatAction->setEnabled( true );
+		m_changeDNAction->setEnabled( true );
+
+	}
+	else
+	{
+		m_openInboxAction->setEnabled( false );
+		m_startChatAction->setEnabled( false );
+		m_changeDNAction->setEnabled( false );
+	}
+	actionMenu->addSeparator();
+
+	actionMenu->addAction( m_changeDNAction );
+	actionMenu->addAction( m_startChatAction );
+	actionMenu->addAction( m_openInboxAction );
+
+#if defined MESSENGER_DEBUG
+	KActionMenu *debugMenu = new KActionMenu( "Debug", this );
+
+	KAction *rawCmd = new KAction( i18n( "Send Raw C&ommand..." ), this );
+        //, "m_debugRawCommand" );
+	QObject::connect( rawCmd, SIGNAL(triggered()), this, SLOT(slotDebugRawCommand()) );
+	debugMenu->addAction(rawCmd);
+
+	actionMenu->addSeparator();
+	actionMenu->addAction( debugMenu );
+#endif
+}
 
 void MessengerAccount::createNotificationServer( const QString &host, uint port )
 {
@@ -288,19 +287,13 @@ void MessengerAccount::createNotificationServer( const QString &host, uint port 
 }
 
 
-
-
-
-
-
-
 void MessengerAccount::connectWithPassword(const QString &password)
 {
 	//kDebug(MESSENGER_DEBUG) << k_funcinfo << "connect with password"<<endl;
 	if(password.isNull())
 	{
-		//kDebug(MESSENGER_DEBUG ) << k_funcinfo <<"Abort connection (null password)"  << endl;
-		//return;
+// 		kDebug(MESSENGER_DEBUG ) << k_funcinfo <<"Abort connection (null password)"  << endl;
+// 		return;
 	}
 
 	if(isConnected())
@@ -329,7 +322,7 @@ void MessengerAccount::connectWithPassword(const QString &password)
 void MessengerAccount::disconnect()
 {
 	//kDebug(MESSENGER_DEBUG) << k_funcinfo << "attempt to set status offline"<<endl;
-	//d->client->disconnectFromServer();
+	m_messengerClient->disconnectFromServer();
 }
 
 void MessengerAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason)
@@ -340,7 +333,7 @@ void MessengerAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const
 void MessengerAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
 	myself()->setStatusMessage(statusMessage);
-	//d->client->setStatusMessage(statusMessage);
+	//m_messengerClient->setStatusMessage(statusMessage);
 }
 
 bool MessengerAccount::createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact)
