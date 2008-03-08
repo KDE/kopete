@@ -94,7 +94,7 @@ target_link_libraries( oscar ${KDE4_KDECORE_LIBS} ${QT_QTNETWORK_LIBRARY} ${QT_Q
 set_target_properties( oscar PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 
 
-install(TARGETS oscar  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS oscar ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 

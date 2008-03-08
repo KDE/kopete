@@ -87,7 +87,7 @@ target_link_libraries( qgroupwise ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_
 
 ########### install files ###############
 
-install(TARGETS qgroupwise  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS qgroupwise ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 

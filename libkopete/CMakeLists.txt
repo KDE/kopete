@@ -142,7 +142,7 @@ if(MSVC)
       OUTPUT_NAME libkopete
       )
 endif(MSVC)
-install(TARGETS kopete DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS kopete ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 ########### install files ###############

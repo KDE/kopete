@@ -111,7 +111,7 @@ endif(WIN32)
 target_link_libraries(iris_kopete ${iris_kopete_libs})
 
 set_target_properties(iris_kopete PROPERTIES VERSION 1.0.0 SOVERSION 1 )
-install(TARGETS iris_kopete  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS iris_kopete ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 
