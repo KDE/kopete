@@ -285,14 +285,6 @@ void ChatView::raise( bool activate )
 
 	m_mainWindow->raise();
 
-	/* Removed Nov 2003
-	According to Zack, the user double-clicking a contact is not valid reason for a non-pager
-	to grab window focus. While I don't agree with this, and it runs contradictory to every other
-	IM out there, commenting this code out to agree with KWin policy.
-
-	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
-		- Jason K
-	*/
 	//Will not activate window if user was typing
 	if ( activate )
 		KWindowSystem::activateWindow( m_mainWindow->winId() );
