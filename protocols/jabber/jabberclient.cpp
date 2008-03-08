@@ -31,6 +31,7 @@
 #include <xmpp_tasks.h>
 
 #include "jabberconnector.h"
+#include "privacymanager.h"
 
 #define JABBER_PENALTY_TIME	2
 
@@ -38,7 +39,8 @@ class JabberClient::Private
 {
 public:
 	Private()
-	 : jabberClient(0L), jabberClientStream(0L), jabberClientConnector(0L), jabberTLS(0L), jabberTLSHandler(0L)
+	: jabberClient(0L), jabberClientStream(0L), jabberClientConnector(0L), jabberTLS(0L),
+		       jabberTLSHandler(0L), privacyManager(0L)
 	{}
 	~Private()
 	{
@@ -52,6 +54,7 @@ public:
 		delete jabberClientConnector;
 		delete jabberTLSHandler;
 		delete jabberTLS;
+		// privacyManager will be deleted with jabberClient, its parent's parent
 	}
 
 	// connection details
@@ -65,6 +68,7 @@ public:
 	QCA::TLS *jabberTLS;
 	XMPP::QCATLSHandler *jabberTLSHandler;
 	QCA::Initializer qcaInit;
+	PrivacyManager *privacyManager;
 
 	// ignore TLS warnings
 	bool ignoreTLSWarnings;
@@ -149,12 +153,14 @@ void JabberClient::cleanUp ()
 	delete d->jabberClientConnector;
 	delete d->jabberTLSHandler;
 	delete d->jabberTLS;
+	// privacyManager will be deleted with jabberClient, its parent's parent
 
 	d->jabberClient = 0L;
 	d->jabberClientStream = 0L;
 	d->jabberClientConnector = 0L;
 	d->jabberTLSHandler = 0L;
 	d->jabberTLS = 0L;
+	d->privacyManager = 0L;
 
 	d->currentPenaltyTime = 0;
 
@@ -581,6 +587,11 @@ XMPP::FileTransferManager *JabberClient::fileTransferManager () const
 
 }
 
+PrivacyManager *JabberClient::privacyManager () const
+{
+	return d->privacyManager;
+}
+
 XMPP::Jid JabberClient::jid () const
 {
 
@@ -597,7 +608,6 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	{
 		d->jabberClient->close ();
 	}
-
 	d->jid = jid;
 	d->password = password;
 
@@ -606,6 +616,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	 */
 	if ( ( forceTLS () || useSSL () || probeSSL () ) && !QCA::isSupported ("tls" ) )
 	{
+		qDebug ("no TLS");
 		return NoTLS;
 	}
 
@@ -684,6 +695,11 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	 * Setup client layer.
 	 */
 	d->jabberClient = new XMPP::Client ( this );
+	
+	/*
+	 * Setup privacy manager
+	 */
+	d->privacyManager = new PrivacyManager ( rootTask() );
 
 	/*
 	 * Enable file transfer (IP and server will be set after connection

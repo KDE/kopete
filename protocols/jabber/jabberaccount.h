@@ -33,7 +33,6 @@
 #include <im.h>
 #include "jabberclient.h"
 #include "mood.h"
-#include "privacymanager.h"
 
 #include <QMap>
 #include <QtCrypto>

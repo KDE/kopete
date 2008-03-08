@@ -40,7 +40,7 @@ PrivacyDlg::PrivacyDlg(JabberAccount* acc, QWidget* parent) : KDialog(parent), a
 	setButtons (KDialog::Close);
 	ui_.lv_rules->setFocus (Qt::PopupFocusReason);
 
-	PrivacyManager* manager = acc->privacyManager();
+	PrivacyManager* manager = acc->client()->privacyManager();
 	connect(manager,SIGNAL(listsReceived(const QString&, const QString&, const QStringList&)),SLOT(updateLists(const QString&, const QString&, const QStringList&)));
 	connect(manager,SIGNAL(listReceived(const PrivacyList&)),SLOT(refreshList(const PrivacyList&)));
 	connect(manager,SIGNAL(listError()),SLOT(list_failed()));
@@ -143,9 +143,9 @@ void PrivacyDlg::applyList()
 {
 	if (!model_.list().isEmpty()) {
 		setWidgetsEnabled(false);
-		acc_->privacyManager()->changeList(model_.list());
+		acc_->client()->privacyManager()->changeList(model_.list());
 		if (newList_)
-			acc_->privacyManager()->requestListNames();
+			acc_->client()->privacyManager()->requestListNames();
 	}
 }
 
@@ -189,7 +189,7 @@ void PrivacyDlg::updateLists(const QString& defaultList, const QString& activeLi
 				ui_.cb_lists->setCurrentIndex(names.indexOf(currentList));
 			}
 		}
-		acc_->privacyManager()->requestList(ui_.cb_lists->currentText());
+		acc_->client()->privacyManager()->requestList(ui_.cb_lists->currentText());
 	}
 	else {
 		setWidgetsEnabled(true);
@@ -205,7 +205,7 @@ void PrivacyDlg::listChanged()
 		rememberSettings();
 	}
 	setWidgetsEnabled(false);
-	acc_->privacyManager()->requestList(ui_.cb_lists->currentText());
+	acc_->client()->privacyManager()->requestList(ui_.cb_lists->currentText());
 }
 
 void PrivacyDlg::refreshList(const PrivacyList& list)
@@ -221,7 +221,7 @@ void PrivacyDlg::active_selected(int i)
 {
 	if (i != previousActive_) {
 		setWidgetsEnabled(false);
-		acc_->privacyManager()->changeActiveList((i == 0 ? "" : ui_.cb_active->itemText(i)));
+		acc_->client()->privacyManager()->changeActiveList((i == 0 ? "" : ui_.cb_active->itemText(i)));
 	}
 }
 
@@ -229,7 +229,7 @@ void PrivacyDlg::default_selected(int i)
 {
 	if (i != previousDefault_) {
 		setWidgetsEnabled(false);
-		acc_->privacyManager()->changeDefaultList((i == 0 ? "" : ui_.cb_active->itemText(i)));
+		acc_->client()->privacyManager()->changeDefaultList((i == 0 ? "" : ui_.cb_active->itemText(i)));
 	}
 }
 
@@ -335,6 +335,6 @@ void PrivacyDlg::newList()
 void PrivacyDlg::removeList()
 {
 	model_.list().clear();
-	acc_->privacyManager()->changeList(model_.list());
-	acc_->privacyManager()->requestListNames();
+	acc_->client()->privacyManager()->changeList(model_.list());
+	acc_->client()->privacyManager()->requestListNames();
 }

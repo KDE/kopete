@@ -101,7 +101,6 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	m_protocol = parent;
 
 	m_jabberClient = 0L;
-	m_privacyManager = 0L;
 	
 	m_resourcePool = 0L;
 	m_contactPool = 0L;
@@ -453,9 +452,6 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 			break;
 	}
-	
-	m_privacyManager = new PrivacyManager (client()->rootTask());
-
 }
 
 void JabberAccount::slotClientDebugMessage ( const QString &msg )
@@ -717,9 +713,6 @@ void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 	// in the process of connecting
 	setPresence ( XMPP::Status ("", "", 0, false) );
 	m_initialPresence = XMPP::Status ("", "", 5, true);
-	
-	delete m_privacyManager;
-	m_privacyManager = 0L;
 
 	/* FIXME:
 	 * We should delete the JabberClient instance here,
