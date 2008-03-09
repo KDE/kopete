@@ -97,6 +97,7 @@ public:
 	/**
 	 * @brief Get the local user in the session
 	 * @return the local user in the session, same as account()->myself()
+	 * @note Can be 0 if local user was already deleted during account destruction
 	 */
 	const Contact* myself() const;
 
@@ -109,6 +110,7 @@ public:
 	/**
 	 * @brief get the account
 	 * @return the account
+	 * @note Can be 0 if account was already deleted
 	 */
 	Account *account() const ;
 
@@ -381,6 +383,7 @@ private slots:
 	void slotViewDestroyed();
 	void slotOnlineStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
 	void slotContactDestroyed( Kopete::Contact *contact );
+	void slotMyselfDestroyed( Kopete::Contact *contact );
 
 protected:
 	/**
