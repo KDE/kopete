@@ -279,7 +279,7 @@ void ChatView::raise( bool activate )
 #endif
 	if(m_mainWindow->isMinimized())
 	{
-		m_mainWindow->showNormal();
+		KWindowSystem::unminimizeWindow( m_mainWindow->winId());
 	}
 
 
