@@ -24,6 +24,7 @@
 #include "Papillon/Client"
 #include "Papillon/ContactList"
 #include "Papillon/QtConnector"
+#include "Papillon/UserContact"
 #include <QStringList>
 
 #define MESSENGER_DEFAULT_PORT	1863
@@ -41,6 +42,7 @@ namespace Papillon
     class ContactList;
     class QtConnector;
     class StatusMessageTask;
+    class UserContact;
 }
 namespace Kopete 
 { 
@@ -127,6 +129,8 @@ public slots:
 	void connectWithPassword(const QString &password);
 	/* Disconnects from the server. */
 	void disconnect();
+	void slotConnected();
+	
 	/* Disconnect with a reason */
 	//void disconnect ( Kopete::Account::DisconnectReason reason );
 	/* Disconnect with a reason, and status */
@@ -144,6 +148,8 @@ private slots:
 	 * When the dispatch server sends us the notification server to use.
 	 */
 	void createNotificationServer( const QString &host, uint port );
+	void clientConnectionStatusChanged(Papillon::Client::ConnectionStatus status);
+	void contactListLoaded();
 protected:
 	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);
 	
@@ -154,9 +160,11 @@ private:
 	// backend for this account
 	QString m_pictureObj; //a cache of the <msnobj>
 	QString m_pictureFilename; // the picture filename.
+	QString m_password; //password of account
 	Papillon::Client * m_messengerClient;
 
 	/* Initial presence to set after connecting. */
 	//Papillon::Presence::Status m_initialPresence;
 };
 #endif
+ 
