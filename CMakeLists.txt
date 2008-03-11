@@ -25,6 +25,10 @@ macro_optional_find_package(LibXslt)
 macro_bool_to_01(LIBXSLT_FOUND HAVE_XSLT)
 macro_log_feature(LIBXSLT_FOUND "LibXSLT" "A library to transform XML files into other XML files" "http://xmlsoft.org/XSLT" FALSE "" "Required for the Kopete webpresence plugin.")
 
+macro_optional_find_package(LibOTR)
+macro_bool_to_01(LIBOTR_FOUND HAVE_LIBOTR)
+macro_log_feature(LIBOTR_FOUND "libotr" "A library to encrypt messages with Off-the-Record encryption" "http://www.cypherpunks.ca/otr" FALSE "3.1.0" "Required for the Kopete otr plugin.")
+
 check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
 check_include_files(stdint.h HAVE_STDINT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)
