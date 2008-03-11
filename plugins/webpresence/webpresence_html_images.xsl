@@ -24,6 +24,9 @@
 
 	<xsl:template match="protocol">
 		<xsl:choose>
+		<xsl:when test=".='MessengerProtocol'">
+				<img src="{$images}/messenger_protocol.png" alt="Messenger" title="Messenger"/>
+			</xsl:when>
 			<xsl:when test=".='MSNProtocol'">
 				<img src="{$images}/msn_protocol.png" alt="MSN" title="MSN"/>
 			</xsl:when>

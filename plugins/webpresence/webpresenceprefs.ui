@@ -199,6 +199,7 @@ Note that you have to manually copy the PNG files into place.
 
 The following files are used by default:
 
+images/messenger_protocol.png
 images/msn_protocol.png
 images/icq_protocol.png
 images/jabber_protocol.png
