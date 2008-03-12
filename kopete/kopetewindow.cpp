@@ -403,9 +403,11 @@ void KopeteWindow::initActions()
 	d->actionShowEmptyGroups->setShortcut ( KShortcut ( Qt::CTRL + Qt::Key_G ) );
 	connect ( d->actionShowEmptyGroups, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotToggleShowEmptyGroups() ) );
 
+    /* The following are highly misleading together with the checkbox, consider removing them - ahartmetz
 	d->actionShowAllOfflineEmpty->setCheckedState ( KGuiItem ( i18n ( "Hide O&ffline" ) ) );
 	d->actionShowOfflineUsers->setCheckedState ( KGuiItem ( i18n ( "Hide Offline &Users" ) ) );
 	d->actionShowEmptyGroups->setCheckedState ( KGuiItem ( i18n ( "Hide Empty &Groups" ) ) );
+    */
 
 	// quick search bar
 	QLabel *searchLabel = new QLabel ( i18n ( "Se&arch:" ), 0 );
