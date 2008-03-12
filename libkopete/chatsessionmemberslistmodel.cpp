@@ -30,18 +30,23 @@ ChatSessionMembersListModel::ChatSessionMembersListModel(QObject * parent)
 
 void ChatSessionMembersListModel::setChatSession(ChatSession *session)
 {
+	if ( m_session )
+		disconnect( m_session, 0, this, 0 );
+
 	m_session = session;
 
-	connect( session, SIGNAL( contactAdded(const Kopete::Contact*, bool) ),
- 	         this, SLOT( slotContactAdded(const Kopete::Contact*) ) );
- 	connect( session, SIGNAL( contactRemoved(const Kopete::Contact*, const QString&, Qt::TextFormat, bool) ),
- 	         this, SLOT( slotContactRemoved(const Kopete::Contact*) ) );
- 	connect( session, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
- 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & ) ) );
-	connect( session, SIGNAL( displayNameChanged() ),
- 	         this, SLOT( slotSessionChanged() ) );
-	connect( session, SIGNAL( photoChanged() ),
- 	         this, SLOT( slotSessionChanged() ) );
+	connect( session, SIGNAL(closing(Kopete::ChatSession*)),
+	         this, SLOT(slotSessionClosed()) );
+	connect( session, SIGNAL(contactAdded(const Kopete::Contact*, bool)),
+	         this, SLOT(slotContactAdded(const Kopete::Contact*)) );
+	connect( session, SIGNAL(contactRemoved(const Kopete::Contact*, const QString&, Qt::TextFormat, bool)),
+	         this, SLOT(slotContactRemoved(const Kopete::Contact*)) );
+	connect( session, SIGNAL(onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
+	         this, SLOT(slotContactStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&)) );
+	connect( session, SIGNAL(displayNameChanged()),
+	         this, SLOT(slotSessionChanged()) );
+	connect( session, SIGNAL(photoChanged()),
+	         this, SLOT(slotSessionChanged()) );
 	reset();
 }
 
@@ -138,6 +143,16 @@ void ChatSessionMembersListModel::slotContactStatusChanged( Kopete::Contact *con
 void ChatSessionMembersListModel::slotSessionChanged()
 {
 	reset();
+}
+
+void ChatSessionMembersListModel::slotSessionClosed()
+{
+	if ( m_session )
+	{
+		disconnect( m_session, 0, this, 0 );
+		m_session = 0;
+		reset();
+	}
 }
 
 }
