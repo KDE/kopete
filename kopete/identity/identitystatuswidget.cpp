@@ -149,10 +149,10 @@ void IdentityStatusWidget::slotAnimate(qreal amount)
 		return;
 	}
 
+	setFixedHeight( sizeHint().height() * amount );
+
 	if (!isVisible())
 		QWidget::setVisible( true );
-
-	setFixedHeight( sizeHint().height() * amount );
 }
 
 void IdentityStatusWidget::load()
