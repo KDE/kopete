@@ -28,7 +28,7 @@
 #include <QStringList>
 
 #define MESSENGER_DEFAULT_PORT	1863
-#define MESSENGER_DEFAULT_SERVER	"muser.messenger.hotmail.com"
+//#define MESSENGER_DEFAULT_SERVER	"muser.messenger.hotmail.com"
 
 class KActionMenu;
 
@@ -100,8 +100,7 @@ public:
 	void setPictureUrl(const QString &url);
 	QString pictureObject();
 	void resetPictureObject(bool silent=false);
-
-
+	
 	bool useHttpMethod() const;
 	QString myselfClientId() const;
 	void setPublicName( const QString &publicName );
@@ -132,7 +131,7 @@ public slots:
 	void slotConnected();
 	
 	/* Disconnect with a reason */
-	//void disconnect ( Kopete::Account::DisconnectReason reason );
+	void disconnect ( Kopete::Account::DisconnectReason reason );
 	/* Disconnect with a reason, and status */
 	//void disconnect( Kopete::Account::DisconnectReason reason, XMPP::Status &status );
 	/* Reimplemented from Kopete::Account */
@@ -143,11 +142,12 @@ public slots:
 
 	void slotChangePublicName();
 	void slotStartChat();
+	void slotOpenInbox();
+	void slotUserInfo();
 private slots:
       /**
 	 * When the dispatch server sends us the notification server to use.
 	 */
-	void createNotificationServer( const QString &host, uint port );
 	void clientConnectionStatusChanged(Papillon::Client::ConnectionStatus status);
 	void contactListLoaded();
 protected:
@@ -161,10 +161,11 @@ private:
 	QString m_pictureObj; //a cache of the <msnobj>
 	QString m_pictureFilename; // the picture filename.
 	QString m_password; //password of account
+
 	Papillon::Client * m_messengerClient;
 
 	/* Initial presence to set after connecting. */
-	//Papillon::Presence::Status m_initialPresence;
+	Papillon::Presence::Status m_initialPresence;
 };
 #endif
  

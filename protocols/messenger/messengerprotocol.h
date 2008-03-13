@@ -23,6 +23,8 @@
 
 
 #define MESSENGER_DEFAULT_PORT	1863
+#define MESSENGER_DEFAULT_SERVER "messenger.hotmail.com"
+
 namespace Kopete
 {
 	class Account;

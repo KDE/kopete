@@ -38,6 +38,8 @@
 #include <QtCore/QList>
 #include <QtCore/QCryptographicHash>
 #include <QMessageBox>
+#include <QStringListModel>
+#include <QListView>
 
 #include "messengercontact.h"
 // Kopete includes
@@ -92,13 +94,14 @@ MessengerAccount::MessengerAccount(MessengerProtocol *protocol, const QString &a
 	// Set the client Id for the myself contact.  It sets what Messenger feature we support.
 	m_clientId = MessengerProtocol::MessengerC4 | MessengerProtocol::InkFormatGIF | MessengerProtocol::SupportMultiPacketMessaging;
 
-	//m_initialPresence = 
+	// starting with offline status
+	m_initialPresence = Papillon::Presence::Offline;
 }
 
 MessengerAccount::~MessengerAccount()
 {
-	QObject::disconnect ();
-  	cleanup ();
+	disconnect ( Kopete::Account::Manual );
+  	//cleanup ();
 }
 
 void MessengerAccount::cleanup ()
@@ -232,117 +235,56 @@ void MessengerAccount::fillActionMenu( KActionMenu *actionMenu )
 #endif
 }
 
-void MessengerAccount::createNotificationServer( const QString &host, uint port )
-{
-// 	if(m_notifySocket) //we are switching from one to another notifysocket.
-// 	{
-// 		//remove every slots to that socket, so we won't delete receive signals
-// 		// from the old socket thinking they are from the new one
-// 		QObject::disconnect( m_notifySocket , 0, this, 0 );
-// 		m_notifySocket->deleteLater(); //be sure it will be deleted
-// 		m_notifySocket=0L;
-// 	}
-// 
-// 	m_msgHandle.clear();
-// 
-// 	myself()->setOnlineStatus( MessengerProtocol::protocol()->CNT );
-// 
-// 
-// 	m_notifySocket = new MessengerNotifySocket( this, accountId() , m_password);
-// 	m_notifySocket->setUseHttpMethod( useHttpMethod() );
-// 
-// 	QObject::connect( m_notifySocket, SIGNAL( groupAdded( const QString&, const QString& ) ),
-// 		SLOT( slotGroupAdded( const QString&, const QString& ) ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( groupRenamed( const QString&, const QString& ) ),
-// 		SLOT( slotGroupRenamed( const QString&, const QString& ) ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( groupListed( const QString&, const QString& ) ),
-// 		SLOT( slotGroupAdded( const QString&, const QString& ) ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( groupRemoved( const QString& ) ),
-// 		SLOT( slotGroupRemoved( const QString& ) ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( contactList(const QString&, const QString&, const QString&, uint, const QString& ) ),
-// 		SLOT( slotContactListed(const QString&, const QString&, const QString&, uint, const QString& ) ) );
-// 	QObject::connect( m_notifySocket, SIGNAL(contactAdded(const QString&, const QString&, const QString&, const QString&, const QString& ) ),
-// 		SLOT( slotContactAdded(const QString&, const QString&, const QString&, const QString&, const QString& ) ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( contactRemoved(const QString&, const QString&, const QString&, const QString& ) ),
-// 		SLOT( slotContactRemoved(const QString&, const QString&, const QString&, const QString& ) ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( statusChanged( const Kopete::OnlineStatus & ) ),
-// 		SLOT( slotStatusChanged( const Kopete::OnlineStatus & ) ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( invitedToChat( const QString&, const QString&, const QString&, const QString&, const QString& ) ),
-// 		SLOT( slotCreateChat( const QString&, const QString&, const QString&, const QString&, const QString& ) ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( startChat( const QString&, const QString& ) ),
-// 		SLOT( slotCreateChat( const QString&, const QString& ) ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( socketClosed() ),
-// 		SLOT( slotNotifySocketClosed() ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( newContactList() ),
-// 		SLOT( slotNewContactList() ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( receivedNotificationServer(const QString&, uint )  ),
-// 		SLOT(createNotificationServer(const QString&, uint ) ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( hotmailSeted( bool ) ),
-// 		m_openInboxAction, SLOT( setEnabled( bool ) ) );
-// 	QObject::connect( m_notifySocket, SIGNAL( errorMessage(int, const QString& ) ),
-// 		SLOT( slotErrorMessageReceived(int, const QString& ) ) );
-// 
-// 	m_notifySocket->setStatus( m_connectstatus );
-// 	m_notifySocket->connect(host, port);
-}
-
-
 void MessengerAccount::connectWithPassword(const QString &password)
 {
-	//kDebug(MESSENGER_DEBUG) << k_funcinfo << "connect with password"<<endl;
-	if(password.isNull())
+	/* Cancel connection process if no password has been supplied or if password is null */
+	if(password.isEmpty() or password.isNull())
 	{
-// 		kDebug(MESSENGER_DEBUG ) << k_funcinfo <<"Abort connection (null password)"  << endl;
+		kDebug() << " isEmpty or isNull password EXIT " << endl;
+		disconnect ( Kopete::Account::Manual );
 		return;
 	}
-	m_password = password;
-	if(isConnected())
+
+	/* Don't do anything if we are already connected. */
+	if ( isConnected () )
 	{
-		//kDebug(MESSENGER_DEBUG) << k_funcinfo << "Ignore connect request(already connected)"<<endl;
+		kDebug() << " is Connected EXIT " << endl;
 		return;
 	}
+
+	// instantiate new client backend or clean up old one
+	if ( !m_messengerClient )
+	{
+	      kDebug() << " ################################### creation de client " << endl;
+
 
 	//create a MessengerClient
-	m_messengerClient = new Papillon::Client(new Papillon::QtConnector(this),this);
+	m_messengerClient = new Papillon::Client(new Papillon::QtConnector(this), this);
 	QObject::connect(m_messengerClient, SIGNAL(connectionStatusChanged(Papillon::Client::ConnectionStatus)), this, SLOT(clientConnectionStatusChanged(Papillon::Client::ConnectionStatus)));
+	
+     
+	QObject::connect ( m_messengerClient, SIGNAL(connectionStatusChanged(Papillon::Client::Connecting)),this,SLOT ( slotConnected () ) );
 
+	QObject::connect ( m_messengerClient, SIGNAL(connectionStatusChanged(Papillon::Client::LoggedIn)), this, SLOT( contactListLoaded() ));
+ 	}
+	else
+	{     
+	      kDebug() << " deconnexion " << endl;
+	      m_messengerClient->disconnectFromServer();
+	}
+
+	kDebug() << " connexion a etablir " << endl;
+
+	m_password = password;
 	QMessageBox::information(qobject_cast<QWidget *>(this), tr("Kopete Connexion"),
                    "Client ........ "+accountId());
 	
-	m_messengerClient->userContact()->setLoginInformation( accountId(), m_password );		
+	m_messengerClient->userContact()->setLoginInformation( accountId(), m_password );
 	m_messengerClient->setServer("messenger.hotmail.com", 1863);
 	m_messengerClient->connectToServer();
-
-	QObject::disconnect(m_messengerClient->contactList());
-	//QObject::connect(m_messengerClient->contactList(), SIGNAL(contactListLoaded()), this, SLOT(contactListLoaded()));
-
 	m_messengerClient->contactList()->load();
-	contactListLoaded();
-// 	Papillon::ContactList *cl = new Papillon::ContactList(m_messengerClient);
-// 	m_contactList = cl->contacts();
-// 	m_blockList = cl->blockList();
-// 	m_allowList = cl->allowList();
-// 	m_reverseList = cl->reverseList();	
 
-// 	QObject::connect ( m_messengerClient, SIGNAL ( Papillon::Client::connectionStatusChanged (Papillon::Client::Disconnected) ), this, SLOT ( disconnect () ) );
-
-	QObject::connect ( m_messengerClient, SIGNAL ( Papillon::Client::connectionStatusChanged (Papillon::Client::Connecting) ), this, SLOT ( slotConnected () ) );	
-
-// 	if ( contacts().count() <= 1 )
-// 	{
-// 		// Maybe the contact list.xml has been removed, and the serial number not updated
-// 		// ( the 1 is for the myself contact )
-// 		configGroup()->writeEntry( "serial", 0 );
-// 	}
-// 	// TODO create an action list in private of the account class
-// 	m_openInboxAction->setEnabled( false );
-// 
-// 	QString server = configGroup()->readEntry( "serverName", MESSENGER_DEFAULT_SERVER );
-// 	int port = configGroup()->readEntry( "serverPort", MESSENGER_DEFAULT_PORT );
-// 	// TODO do the connection to the server with the client
-// // 	d->client->setServer(&server, port);
-// // 	d->client->userContact()->setLoginInformation( accountId(), password );
-// // 	d->client->connectToServer();
+	//contactListLoaded();
 }
 
 void MessengerAccount::disconnect()
@@ -351,6 +293,26 @@ void MessengerAccount::disconnect()
 	m_messengerClient->disconnectFromServer();
 }
 
+void MessengerAccount::disconnect ( Kopete::Account::DisconnectReason reason )
+{
+	//kDebug (MESSENGER_DEBUG_GLOBAL) << "disconnect() called";
+
+	if (isConnected ())
+	{
+		//kDebug (MESSENGER_DEBUG_GLOBAL) << "Still connected, closing connection...";
+		disconnect();
+	}
+
+	// make sure that the connection animation gets stopped if we're still
+	// in the process of connecting
+
+	//TODO sauvegarde de l'etat presence a faire avec Status Presence de libpapillon
+	//setPresence ( XMPP::Status ("", "", 0, false) );
+	m_initialPresence = Papillon::Presence::Offline;
+	
+	//kDebug (MESSENGER_DEBUG_GLOBAL) << "Disconnected.";
+	disconnected ( reason );
+}
 void MessengerAccount::slotConnected(){}
 
 void MessengerAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason)
@@ -384,18 +346,61 @@ void MessengerAccount::clientConnectionStatusChanged(Papillon::Client::Connectio
 			message = "Login got a bad password.";
 			break;
 	}
-	QMessageBox::information(qobject_cast<QWidget *>(this), tr("Kopete Connexion statut"),
+	QMessageBox::information(qobject_cast<QWidget *>(this), tr("Kopete Connection status"),
                    message);
 }
 
 void MessengerAccount::contactListLoaded()
 {
+	QStringList allowList, blockList, reverseList, pendingList;
+
 	foreach(Papillon::Contact *contact, m_messengerClient->contactList()->allowList())
 	{
-		QMessageBox::information(qobject_cast<QWidget *>(this), tr("Kopete List ALLOW"),
-                   contact->contactId());
-// 		allowList << contact->contactId();
+		allowList << contact->contactId();
 	}
+
+	foreach(Papillon::Contact *contact, m_messengerClient->contactList()->blockList())
+	{
+		blockList << contact->contactId();
+	}
+
+	foreach(Papillon::Contact *contact, m_messengerClient->contactList()->reverseList())
+	{
+		reverseList << contact->contactId();
+	}
+
+	foreach(Papillon::Contact *contact, m_messengerClient->contactList()->pendingList())
+	{
+		pendingList << contact->contactId();
+	}
+
+	// Allow list
+	QStringListModel *allowModel = new QStringListModel( allowList );
+	QListView *allowView = new QListView(0);
+	allowView->setModel(allowModel);
+	allowView->setWindowTitle( QLatin1String("Allow List") );
+	allowView->show();
+
+	// Block list
+	QStringListModel *blockModel = new QStringListModel( blockList );
+	QListView *blockView = new QListView(0);
+	blockView->setModel(blockModel);
+	blockView->setWindowTitle( QLatin1String("Block List") );
+	blockView->show();
+
+	// Reverse list
+	QStringListModel *reverseModel = new QStringListModel( reverseList );
+	QListView *reserveView = new QListView(0);
+	reserveView->setModel(reverseModel);
+	reserveView->setWindowTitle( QLatin1String("Reverse List") );
+	reserveView->show();
+
+	// Pending list
+	QStringListModel *pendingModel = new QStringListModel( pendingList );
+	QListView *pendingView = new QListView(0);
+	pendingView->setModel(pendingModel);
+	pendingView->setWindowTitle( QLatin1String("Pending list") );
+	pendingView->show();
 }
 
 void MessengerAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
@@ -426,10 +431,15 @@ bool MessengerAccount::createContact(const QString &contactId, Kopete::MetaConta
 return 0;
 }
 
-// void MessengerContact::slotUserInfo()
-// {
-// 	myself()->slotUserInfo();
-// }
+void MessengerAccount::slotUserInfo()
+{
+	//myself()->slotUserInfo();
+}
+
+void MessengerAccount::slotOpenInbox()
+{
+
+}
  
 void MessengerAccount::setPublicName( const QString &publicName )
 {
@@ -438,11 +448,6 @@ void MessengerAccount::setPublicName( const QString &publicName )
 // 		d->client->changePublicName( publicName, QString() );
 // 	}
 }
-
-// MessengerClient * MessengerAccount::client()
-// {
-// 	return d->client;
-// }
 
 void MessengerAccount::slotStartChat()
 {
