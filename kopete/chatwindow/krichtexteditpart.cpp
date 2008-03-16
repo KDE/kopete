@@ -547,8 +547,12 @@ void KRichTextEditPart::setAlignJustify( bool yes )
 
 QString KRichTextEditPart::text( Qt::TextFormat format ) const
 {
-    if( (format == Qt::RichText || format == Qt::AutoText) && useRichText() )
-        return d->editor->toHtml();
+    if( (format == Qt::RichText || format == Qt::AutoText) && useRichText() ){
+        QString html = d->editor->toHtml();
+        QRegExp badStuff ("<![^<>]*>|<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>|</?p[^<>]*>|\\n");
+        html = html.remove (badStuff);
+        return html;
+    }
     else
         return d->editor->toPlainText();
 }
