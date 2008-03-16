@@ -61,7 +61,7 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	: Kopete::Plugin ( OTRPluginFactory::componentData(), parent )
 {
 
-	kDebug() << "OTR Plugin loading...";
+	kDebug(14318) << "OTR Plugin loading...";
 
 	if( !pluginStatic_ )
 		pluginStatic_=this;
@@ -125,7 +125,7 @@ OTRPlugin::~OTRPlugin()
 {
 	delete m_inboundHandler;
 	pluginStatic_ = 0L;
-	kDebug() << "Exiting plugin";
+	kDebug(14318) << "Exiting OTR plugin";
 }
 
 
@@ -253,7 +253,7 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 		// Check if Message is an OTR message. Should it be discarded or shown?
 		if( OtrlChatInterface::self()->shouldDiscard( msg.plainBody() ) ){
 			event->discard();
-			kDebug() << "OTR: discarding message";
+			kDebug(14318) << "OTR: discarding message";
 			return;
 		}
 		// If the message is sent while a Finished state libotr deletes the messagetext.
@@ -289,12 +289,12 @@ void OTRPlugin::slotSelectionChanged( bool single){
 }
 
 void OTRPlugin::slotSetPolicy(){
-	kDebug() << "Setting contact policy";
+	kDebug(14318) << "Setting contact policy";
 	Kopete::MetaContact *metaContact = Kopete::ContactList::self()->selectedMetaContacts().first();
 	if( metaContact ){
 		metaContact->setPluginData( this, "otr_policy", QString::number( otrPolicyMenu->currentItem() ) );		
 	}
-	kDebug() << "Selected policy: " << otrPolicyMenu->currentItem();
+	kDebug(14318) << "Selected policy: " << otrPolicyMenu->currentItem();
 }
 
 void OTRPlugin::slotSecuritySate(Kopete::ChatSession *session, int state)

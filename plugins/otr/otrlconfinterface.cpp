@@ -146,7 +146,7 @@ KDE_EXPORT void OtrlConfInterface::verifyFingerprint( const QString &strFingerpr
 		}
 		otrl_privkey_write_fingerprints( userstate, QString(QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints").toLocal8Bit() );
 	} else {
-		kDebug() << "could not find fingerprint";
+		kDebug(14318) << "could not find fingerprint";
 	}
 }
 

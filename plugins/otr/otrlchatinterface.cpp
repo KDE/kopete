@@ -286,7 +286,7 @@ static void log_message(void *opdata, const char *message){
 
 	Q_UNUSED(opdata)
 
-	kDebug() << "libotr: "<< message;
+	kDebug(14318) << "libotr: "<< message;
 }
 
 static OtrlMessageAppOps ui_ops = {
@@ -382,10 +382,10 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP1);
 		if (tlv) {
 			if (nextMsg != OTRL_SMP_EXPECT1){
-				kDebug() << "Abording SMP: 1";
+				kDebug(14318) << "Abording SMP: 1";
 				abortSMP( context, chatSession );
 			} else {
-				kDebug() << "Update SMP state: 1 ";
+				kDebug(14318) << "Update SMP state: 1 ";
 				SMPPopup *popup = new SMPPopup( chatSession->view()->mainWidget(), context, chatSession, false );
 				popup->show();
 			}
@@ -393,17 +393,17 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP2);
 		if (tlv) {
 			if (nextMsg != OTRL_SMP_EXPECT2){
-				kDebug() << "Abording SMP: 2";
+				kDebug(14318) << "Abording SMP: 2";
 				abortSMP( context, chatSession );
 			} else {
-				kDebug() << "Update SMP state: 2 -> 3";
+				kDebug(14318) << "Update SMP state: 2 -> 3";
 				context->smstate->nextExpected = OTRL_SMP_EXPECT4;
 			}
 		}
 		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP3);
 		if (tlv) {
 			if (nextMsg != OTRL_SMP_EXPECT3){
-				kDebug() << "Abording SMP: 3";
+				kDebug(14318) << "Abording SMP: 3";
 				abortSMP( context, chatSession );
 			} else {
 				if (context->active_fingerprint->trust && context->active_fingerprint->trust[0]) {
@@ -426,7 +426,7 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP4);
 		if (tlv) {
 			if (nextMsg != OTRL_SMP_EXPECT4) {
-				kDebug() << "Abording SMP: 4";
+				kDebug(14318) << "Abording SMP: 4";
 				abortSMP( context, chatSession );
 			} else {
 				if (context->active_fingerprint->trust && context->active_fingerprint->trust[0]) {
@@ -670,11 +670,11 @@ void OtrlChatInterface::setTrust( Kopete::ChatSession *session, bool trust ){
 		} else {
 			otrl_context_set_trust( fingerprint, NULL );
 		}
-		kDebug() << "Writing fingerprints";
+		kDebug(14318) << "Writing fingerprints";
 		otrl_privkey_write_fingerprints( userstate, QString( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints" ).toLocal8Bit() );
 		emitGoneSecure( session, privState( session ) );
 	} else {
-		kDebug() << "could not find fingerprint";
+		kDebug(14318) << "could not find fingerprint";
 	}
 }
 
@@ -694,7 +694,7 @@ void OtrlChatInterface::abortSMP( ConnContext *context, Kopete::ChatSession *ses
 
 void OtrlChatInterface::respondSMP( ConnContext *context, Kopete::ChatSession *session, const QString &secret, bool initiate ){
 
-	kDebug() << "sending SMP message. initiate: " << initiate;	
+	kDebug(14318) << "sending SMP message. initiate: " << initiate;	
 
 	if( initiate ){
 		context = otrl_context_find( userstate, session->members().first()->contactId().toLocal8Bit(), session->account()->accountId().toLocal8Bit(), session->protocol()->displayName().toLocal8Bit(), 0, NULL, NULL, NULL);

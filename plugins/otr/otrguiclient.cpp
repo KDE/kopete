@@ -110,7 +110,7 @@ void OtrGUIClient::slotVerifyFingerprint(){
 }
 
 void OtrGUIClient::encryptionEnabled(Kopete::ChatSession *session, int state){
-	kDebug() << "OTRGUIClient switched security state to: " << state;
+	kDebug(14318) << "OTRGUIClient switched security state to: " << state;
 	if( session == m_manager ){
 		switch(state){
 			case 0:
