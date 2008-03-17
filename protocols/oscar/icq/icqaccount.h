@@ -3,7 +3,7 @@
 
   Copyright (c) 2002 by Chris TenHarmsel            <tenharmsel@staticmethod.net>
   Copyright (c) 2004 by Richard Smith               <kde@metafoo.co.uk>
-  Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -101,8 +101,8 @@ private slots:
 
 	/** We have received an auth request */
 	void slotGotAuthRequest( const QString& contact, const QString& reason );
-	
-	void slotAuthReplyDialogOkClicked();
+
+	void addedInfoEventActionActivated( uint actionId );
 
 private:
 	bool mWebAware;

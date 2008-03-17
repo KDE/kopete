@@ -54,7 +54,7 @@
 #include <kopetecontactlist.h>
 #include <kopetetransfermanager.h>
 #include <kopeteview.h>
-#include <contactaddednotifydialog.h>
+#include <kopeteaddedinfoevent.h>
 
 // Yahoo
 #include "yahooaccount.h"
@@ -837,29 +837,36 @@ void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QStri
 	if(kc)
 		metaContact=kc->metaContact();
 
-	Kopete::UI::ContactAddedNotifyDialog::HideWidgetOptions hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
-	if( metaContact && !metaContact->isTemporary() )
-		hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
+	Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+	actions |= Kopete::AddedInfoEvent::BlockAction;
+	if( !metaContact || metaContact->isTemporary() )
+		actions |= Kopete::AddedInfoEvent::AddAction;
 
-	Kopete::UI::ContactAddedNotifyDialog *dialog=
-		new Kopete::UI::ContactAddedNotifyDialog( user,QString(),this, hideFlags );
-	QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
-	                 this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
-	dialog->show();
+	Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent( user, this );
+	QObject::connect( event, SIGNAL(actionActivated(uint)),
+	                  this, SLOT(slotAddedInfoEventActionActivated(uint)) );
+	
+	event->showActions( actions );
+	event->sendEvent();
 }
 
-void YahooAccount::slotContactAddedNotifyDialogClosed( const QString &user )
+void YahooAccount::slotAddedInfoEventActionActivated( uint actionId )
 {
-	const Kopete::UI::ContactAddedNotifyDialog *dialog =
-		dynamic_cast<const Kopete::UI::ContactAddedNotifyDialog *>(sender());
-	if(!dialog || !isConnected())
+	const Kopete::AddedInfoEvent *event = dynamic_cast<const Kopete::AddedInfoEvent *>(sender());
+	if( !event || !isConnected() )
 		return;
 
-	m_session->sendAuthReply( user, dialog->authorized(), QString() );
-
-	if(dialog->added())
+	switch ( actionId )
 	{
-		dialog->addContact();
+	case Kopete::AddedInfoEvent::AuthorizeAction:
+		m_session->sendAuthReply( event->contactId(), true, QString() );
+		break;
+	case Kopete::AddedInfoEvent::BlockAction:
+		m_session->sendAuthReply( event->contactId(), false, QString() );
+		break;
+	case Kopete::AddedInfoEvent::AddContactAction:
+		event->addContact();
+		break;
 	}
 }
 

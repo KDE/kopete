@@ -277,7 +277,7 @@ private slots:
 	void slotSubscription ( const XMPP::Jid &jid, const QString &type );
 
 	/* the dialog that asked to add the contact was closed   (that dialog is shown in slotSubscription) */
-	void slotContactAddedNotifyDialogClosed(const QString& contactid);
+	void slotAddedInfoEventActionActivated ( uint actionId );
 
 	/**
 	 * A new item appeared in our roster, synch it with the

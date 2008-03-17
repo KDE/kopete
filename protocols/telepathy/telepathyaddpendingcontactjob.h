@@ -55,7 +55,8 @@ public:
 	virtual void start();
 
 private slots:
-	void contactDialogDone();
+	void slotAddedInfoEventActionActivated( uint actionId );
+	void slotAddedInfoEventClosed();
 
 private:
 	class Private;

@@ -98,6 +98,8 @@
 #include "kopetestatusrootaction.h"
 #include "kopetestatuseditaction.h"
 #include "kopeteemoticons.h"
+#include "kopeteinfoeventmanager.h"
+#include "infoeventwidget.h"
 
 
 //BEGIN GlobalStatusMessageIconLabel
@@ -116,11 +118,41 @@ void GlobalStatusMessageIconLabel::mouseReleaseEvent ( QMouseEvent *event )
 }
 //END GlobalStatusMessageIconLabel
 
+//BEGIN InfoEventIconLabel
+InfoEventIconLabel::InfoEventIconLabel( QWidget *parent )
+: QLabel( parent )
+{
+	setCursor( QCursor( Qt::PointingHandCursor ) );
+	setFixedSize( 16, 16 );
+	setPixmap( SmallIcon( "flag-black" ) );
+	setToolTip( i18n( "Service messages" ) );
+	
+	connect( Kopete::InfoEventManager::self(), SIGNAL(changed()), this, SLOT(updateIcon()) );
+}
+
+void InfoEventIconLabel::mouseReleaseEvent( QMouseEvent *event )
+{
+	if ( event->button() == Qt::LeftButton || event->button() == Qt::RightButton )
+	{
+		emit clicked();
+		event->accept();
+	}
+}
+
+void InfoEventIconLabel::updateIcon()
+{
+	if ( Kopete::InfoEventManager::self()->eventCount() > 0 )
+		setPixmap( SmallIcon( "flag-green" ) );
+	else
+		setPixmap( SmallIcon( "flag-black" ) );
+}
+//END InfoEventIconLabel
+
 class KopeteWindow::Private
 {
 	public:
 		Private()
-				: contactlist ( 0 ), identitywidget ( 0 ), actionAddContact ( 0 ), actionDisconnect ( 0 ),
+				: contactlist ( 0 ), identitywidget ( 0 ), infoEventWidget ( 0 ), actionAddContact ( 0 ), actionDisconnect ( 0 ),
 				actionExportContacts ( 0 ), actionStatusMenu ( 0 ), actionDockMenu ( 0 ), actionSetAway ( 0 ),
 				actionSetBusy ( 0 ), actionSetAvailable ( 0 ), actionSetInvisible ( 0 ), actionPrefs ( 0 ),
 				actionQuit ( 0 ), actionSave ( 0 ), menubarAction ( 0 ), statusbarAction ( 0 ),
@@ -136,6 +168,7 @@ class KopeteWindow::Private
 		KopeteContactListView *contactlist;
 
 		IdentityStatusWidget *identitywidget;
+		InfoEventWidget *infoEventWidget;
 
 		// Some Actions
 		KActionMenu *actionAddContact;
@@ -230,6 +263,12 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	label->setToolTip ( i18n ( "Global status message" ) );
 	statusBarMessageLayout->addWidget ( label );
 	statusBarMessageLayout->addSpacing ( 1 );
+
+	InfoEventIconLabel *infoLabel = new InfoEventIconLabel ( statusBarMessage );
+	connect ( infoLabel, SIGNAL(clicked()), this, SLOT(slotInfoIconClicked()) );
+	statusBarMessageLayout->addWidget ( infoLabel );
+	statusBarMessageLayout->addSpacing ( 1 );
+
 	d->globalStatusMessage = new KSqueezedTextLabel ( statusBarMessage );
 	connect ( Kopete::StatusManager::self(), SIGNAL ( globalStatusChanged() ),
 	          this, SLOT ( globalStatusChanged() ) );
@@ -309,7 +348,12 @@ void KopeteWindow::initView()
 	d->identitywidget->setSizePolicy ( QSizePolicy ( QSizePolicy::Preferred, QSizePolicy::Minimum ) );
 	d->identitywidget->setVisible ( false );
 	l->addWidget ( d->identitywidget );
-
+	d->infoEventWidget = new InfoEventWidget ( w );
+	d->infoEventWidget->setSizePolicy ( QSizePolicy ( QSizePolicy::Preferred, QSizePolicy::Minimum ) );
+	d->infoEventWidget->setVisible ( false );
+	connect ( d->infoEventWidget, SIGNAL(showRequest()), this, SLOT(slotShowInfoEventWidget()) );
+	l->addWidget ( d->infoEventWidget );
+	
 	setCentralWidget ( w );
 	d->contactlist->setFocus();
 }
@@ -874,10 +918,44 @@ void KopeteWindow::slotIdentityStatusIconLeftClicked ( Kopete::Identity *identit
 		return;
 	}
 
+	if ( d->infoEventWidget->isVisible() )
+		d->infoEventWidget->setVisible ( false );
+
 	d->identitywidget->setIdentity ( identity );
 	d->identitywidget->setVisible ( true );
 }
 
+void KopeteWindow::slotShowInfoEventWidget()
+{
+	if ( d->identitywidget->isVisible() )
+	{
+		d->identitywidget->setIdentity( 0 );
+		d->identitywidget->setVisible( false );
+	}
+
+	if ( !d->infoEventWidget->isVisible() )
+		d->infoEventWidget->setVisible( true );
+
+	if ( !isActiveWindow() )
+		slotShowHide();
+}
+
+void KopeteWindow::slotInfoIconClicked()
+{
+	if ( d->infoEventWidget->isVisible() )
+	{
+		d->infoEventWidget->setVisible( false );
+	}
+	else
+	{
+		if ( d->identitywidget->isVisible() )
+		{
+			d->identitywidget->setIdentity( 0 );
+			d->identitywidget->setVisible( false );
+		}
+		d->infoEventWidget->setVisible( true );
+	}
+}
 
 void KopeteWindow::slotAccountRegistered ( Kopete::Account *account )
 {

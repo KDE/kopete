@@ -103,6 +103,9 @@ set(kopete_LIB_SRCS
    kopetestatusmanager.cpp
    kopetestatusitems.cpp
    kopeteidletimer.cpp
+   kopeteinfoeventmanager.cpp
+   kopeteinfoevent.cpp
+   kopeteaddedinfoevent.cpp
 # REMOVED FOR NOW
 #   connectionmanager.cpp
 #   managedconnectionaccount.cpp

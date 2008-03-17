@@ -975,7 +975,7 @@ Comment[x-test]=xxNew email has arrived in your Yahoo inboxxx
 Comment[zh_CN]=您的 Yahoo 收件箱中有新邮件到达
 Comment[zh_HK]=您的 Yahoo 收件匣有新郵件
 Comment[zh_TW]=您的 Yahoo 收件匣中有新郵件
-Action=MessageBox
+Action=Popup
 
 
 [Event/msn_mail]
@@ -1900,3 +1900,10 @@ Comment[x-test]=xxAn ICQ user is reading your status messagexx
 Comment[zh_CN]=一位 ICQ 用户正在查阅您的状态信息
 Comment[zh_TW]=有 ICQ 使用者正讀取您的狀態訊息
 Action=Popup
+
+[Event/kopete_info_event]
+Name=Service Message
+Comment=An service message has been received (e.g. authorization request)
+Action=Popup
+Sound=
+
