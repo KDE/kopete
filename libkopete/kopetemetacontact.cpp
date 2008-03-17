@@ -80,6 +80,8 @@ void MetaContact::addContact( Contact *c )
 	}
 	else
 	{
+		const QString oldDisplayName = displayName();
+
 		d->contacts.append( c );
 
 		connect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
@@ -97,15 +99,15 @@ void MetaContact::addContact( Contact *c )
 		emit contactAdded(c);
 
 		updateOnlineStatus();
-
+		
 		// if this is the first contact, probbaly was created by a protocol
 		// so it has empty custom properties, then set sources to the contact
 		if ( d->contacts.count() == 1 )
 		{
-			if ( displayName().isEmpty() )
+			const QString newDisplayName = displayName();
+			if ( oldDisplayName != newDisplayName )
 			{
-				setDisplayNameSourceContact(c);
-				setDisplayNameSource(SourceContact);
+				emit displayNameChanged( oldDisplayName , displayName() );
 			}
 			if ( picture().isNull() )
 			{
@@ -573,7 +575,7 @@ void MetaContact::setDisplayName( const QString &name )
 		const QString old = d->displayName;
 		d->displayName = name;
 
-		emit displayNameChanged( old , name );
+					emit displayNameChanged( old , name );
 		QListIterator<Kopete::Contact *> it( d->contacts );
 		while (  it.hasNext() )
 			( it.next() )->sync(Contact::DisplayNameChanged);
@@ -596,7 +598,7 @@ QString MetaContact::displayName() const
 		if ( !metaContactId().isEmpty() )
 			return nameFromKABC(metaContactId());
 	}
-	else if ( source == SourceContact )
+	else if ( source == SourceContact || d->displayName.isEmpty())
 	{
 		if ( d->displayNameSourceContact==0 )
 		{
@@ -798,7 +800,8 @@ void MetaContact::slotPropertyChanged( PropertyContainer* _subcontact, const QSt
 		const QVariant &oldValue, const QVariant &newValue  )
 {
 	Contact *subcontact=static_cast<Contact*>(_subcontact);
-	if ( displayNameSource() == SourceContact )
+	if ( displayNameSource() == SourceContact || 
+			(d->displayName.isEmpty() && displayNameSource() == SourceCustom) )
 	{
 		if( key == Global::Properties::self()->nickName().key() )
 		{
