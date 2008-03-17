@@ -48,10 +48,10 @@ class Message::Private
 public:
 	Private()
 		: direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), backgroundOverride(false),
-		  foregroundOverride(false), richTextOverride(false), isRightToLeft(false),
-		  timeStamp( QDateTime::currentDateTime() )
-
+		  foregroundOverride(false), richTextOverride(false), isRightToLeft(false), timeStamp( QDateTime::currentDateTime() ),
+		  body(new QTextDocument), escapedBodyDirty(true)
 	{}
+	Private (const Private &other);
 	~Private();
 
 	QPointer<Contact> from;
@@ -75,12 +75,43 @@ public:
 	QColor backgroundColor;
 	QString subject;
 
-	mutable QString plainBody;
+	QTextDocument* body;
 	mutable QString escapedBody;
-};	
+	mutable bool escapedBodyDirty;
+};
+
+Message::Private::Private (const Message::Private &other)
+	: QSharedData (other)
+{
+	from = other.from;
+	to = other.to;
+	manager = other.manager;
+
+	direction = other.direction;
+	format = other.format;
+	type = other.type;
+	requestedPlugin = other.requestedPlugin;
+	importance = other.importance;
+	backgroundOverride = other.backgroundOverride;
+	foregroundOverride = other.foregroundOverride;
+	richTextOverride = other.richTextOverride;
+	isRightToLeft = other.isRightToLeft;
+	timeStamp = other.timeStamp;
+	font = other.font;
+	classes = other.classes;
+
+	foregroundColor = other.foregroundColor;
+	backgroundColor = other.backgroundColor;
+	subject = other.subject;
+
+	body = other.body->clone();
+	escapedBody = other.escapedBody;
+	escapedBodyDirty = other.escapedBodyDirty;
+}
 
 Message::Private::~Private ()
 {
+	delete body;
 }
 
 Message::Message()
@@ -162,17 +193,27 @@ void Message::setHtmlBody (const QString &body)
 
 void Message::doSetBody (const QString &body, Qt::TextFormat f)
 {
-	if (f == Qt::PlainText){
-		d->plainBody = body;
-		d->escapedBody.clear();
-		d->isRightToLeft = d->plainBody.isRightToLeft();
-	}
-	else{
-		d->escapedBody = body;
-		d->plainBody.clear();
-		d->isRightToLeft = d->escapedBody.isRightToLeft();
-	}
+	if (f == Qt::PlainText)
+		d->body->setPlainText(body);
+	else
+		d->body->setHtml(body);
 	d->format = f;
+	d->isRightToLeft = d->body->toPlainText().isRightToLeft();
+	d->escapedBodyDirty = true;
+}
+
+void Message::setBody (const QTextDocument *_body)
+{
+	doSetBody (_body, Qt::RichText);
+}
+
+void Message::doSetBody (const QTextDocument *body, Qt::TextFormat f)
+{
+	delete d->body;
+	d->body = body->clone();          // delete the old body and replace it with a *copy* of the new one
+	d->format = f;
+	d->isRightToLeft = d->body->toPlainText().isRightToLeft();
+	d->escapedBodyDirty = true;
 }
 
 void Message::setImportance(Message::MessageImportance i)
@@ -262,19 +303,33 @@ QString Message::escape( const QString &text )
 
 QString Message::plainBody() const
 {
-	if (d->plainBody.isEmpty() && !d->escapedBody.isEmpty()){
-		QTextDocument t;
-		t.setHtml(d->escapedBody);
-		d->plainBody = t.toPlainText();
-	}
-	return d->plainBody;
+	return d->body->toPlainText();
 }
 
 QString Message::escapedBody() const
 {
-	if (d->escapedBody.isEmpty() && !d->plainBody.isEmpty())
-		d->escapedBody = Qt::convertFromPlainText( d->plainBody, Qt::WhiteSpaceNormal );
-	return d->escapedBody;
+//	kDebug(14010) << escapedBody() << " " << d->richTextOverride;
+
+//	the escaped body is cached because QRegExp is very expensive, so it shouldn't be used any more than nescessary
+	if (!d->escapedBodyDirty)
+		return d->escapedBody;
+	else {
+		QString html;
+		if ( d->format == Qt::PlainText )
+			html = Qt::convertFromPlainText( d->body->toPlainText(), Qt::WhiteSpaceNormal );
+		else
+			html = d->body->toHtml();
+
+//		all this regex business is to take off the outer HTML document provided by QTextDocument
+//		remove the head
+		QRegExp badStuff ("<![^<>]*>|<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>|</?p[^<>]*>");
+		html = html.remove (badStuff);
+//		remove newlines that may be present, since they end up being displayed in the chat window. real newlines are represented with <br>, so we know \n's are meaningless
+		html = html.remove ("\n");
+		d->escapedBody = html;
+		d->escapedBodyDirty = false;
+		return html;
+	}
 }
 
 QString Message::parsedBody() const
@@ -427,6 +482,11 @@ QString Message::subject() const
 void Message::setSubject(const QString &subject)
 {
 	d->subject = subject;
+}
+
+const QTextDocument *Message::body() const
+{
+	return d->body;
 }
 
 Qt::TextFormat Message::format() const

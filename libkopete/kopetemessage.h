@@ -239,6 +239,13 @@ public:
 	void setSubject(const QString &subject);
 
 	/**
+	 * @brief Accessor method for the body of the message
+	 * This is used internaly, to modify it make a copy of it with QTextDocument::clone()
+	 * @return The message body
+	 */
+	const QTextDocument *body() const;
+
+	/**
 	 * @brief Accessor method for the format of the message
 	 * @return The message format
 	 */
@@ -305,6 +312,13 @@ public:
 	 * @param body The body, interpreted as HTML
 	 */
 	void setHtmlBody( const QString &body);
+
+	/**
+	 * @brief Sets the body of the message
+	 * The format is changed to RichText automatically
+	 * @param body The body
+	 */
+	void setBody( const QTextDocument *body);
 
 	/**
 	 * @brief Get the message body back as plain text
@@ -434,6 +448,13 @@ private:
 	 * @internal
 	 */
 	void doSetBody( const QString &body, Qt::TextFormat format = Qt::PlainText );
+
+	/**
+	 * Called internally by @ref setBody() and the constructor
+	 * Basically @ref setBody() without detach
+	 * @internal
+	 */
+	void doSetBody (const QTextDocument *body, Qt::TextFormat format = Qt::PlainText);
 
 	/**
 	 * Called internally in rich text handling
