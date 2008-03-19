@@ -1,3 +1,4 @@
+// vim: set noet ts=4 sts=4 sw=4 :
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003-2004	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
@@ -168,7 +169,7 @@ GaduSession::login( KGaduLoginParams* loginp )
 	params_.status_descr	= (char*)desc.data();
 
 	params_.uin		= loginp->uin;
-	params_.password	= (char *)( loginp->password.toAscii().data() );
+	params_.password	= loginp->password.data();
 	params_.status		= loginp->status | ( loginp->forFriends ? GG_STATUS_FRIENDS_MASK : 0 );
 	params_.async		= 1;
 	params_.tls		= loginp->useTls;
