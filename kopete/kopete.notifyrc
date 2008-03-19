@@ -1904,7 +1904,11 @@ Action=Popup
 
 [Event/kopete_info_event]
 Name=Service Message
+Name[pt]=Mensagem do Serviço
+Name[pt_BR]=Mensagem do Serviço
 Comment=An service message has been received (e.g. authorization request)
+Comment[pt]=Foi recebida uma mensagem do serviço (p.ex., um pedido de autorização)
+Comment[pt_BR]=Foi recebida uma mensagem do serviço (p.ex., um pedido de autorização)
 Action=Popup
 Sound=
 
