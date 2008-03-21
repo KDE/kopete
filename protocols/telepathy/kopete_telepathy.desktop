@@ -24,6 +24,7 @@ Name[tr]=Telepati
 Name[x-test]=xxTelepathyxx
 Comment=Messaging using Telepathy connection managers.
 Comment[ca]=Missatgeria que usa els gestors de connexions del Telepathy.
+Comment[da]=Beskeder med brug af Telepathy-forbindelseshåndtering.
 Comment[de]=Nachrichten mit Telepathy versenden
 Comment[el]=Μηνύματα μέσα διαχειριστών σύνδεσης Telepathy.
 Comment[eo]=Mesaĝado uzante Telepathy konektadministrilojn.
