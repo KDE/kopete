@@ -59,7 +59,7 @@ void ApplicationWidget::openPort()
 	else
 	{
 		port=l_port->text().toInt(&val, 10);
-		if(val==true)
+		if(val==true && port>1)
 		{
 			foreach(UPnpRouter r, router)
 			{ 
@@ -88,7 +88,7 @@ void ApplicationWidget::deletePort()
 	else
 	{
 		port=l_port->text().toInt(&val, 10);
-		if(val==true)
+		if(val==true && port > 1)
 		{ 
 			foreach(UPnpRouter r, router)
 			{ 
