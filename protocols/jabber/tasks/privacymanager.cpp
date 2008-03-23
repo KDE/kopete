@@ -169,7 +169,7 @@ bool SetPrivacyListsTask::take ( const QDomElement &x ) {
 		return false;
 
 	if ( x.attribute ( "type" ) == "result" ) {
-		//kDebug (JABBER_DEBUG_GLOBAL) << "Got succesful reply for list change.";
+		//kDebug (JABBER_DEBUG_GLOBAL) << "Got successful reply for list change.";
 		setSuccess();
 	}
 	else {

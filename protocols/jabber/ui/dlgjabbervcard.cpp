@@ -429,7 +429,7 @@ void dlgJabberVCard::slotVCardSaved()
 	
 	if( vCard->success() )
 	{
-		m_mainWidget->lblStatus->setText( i18n("vCard sucessfully saved.") );
+		m_mainWidget->lblStatus->setText( i18n("vCard successfully saved.") );
 		m_contact->setPropertiesFromVCard( vCard->vcard() );
 	}
 	else

@@ -191,7 +191,7 @@ private:
 	 */
 	Kopete::OnlineStatus m_currentStatus;
 
-	//QQProtocol::deserializeContact need to acess some contact insternals
+	//QQProtocol::deserializeContact need to access some contact insternals
 	friend class QQProtocol;
 };
 

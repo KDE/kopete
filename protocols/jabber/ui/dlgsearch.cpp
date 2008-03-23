@@ -181,7 +181,7 @@ void dlgSearch::slotSentForm()
 		ui.tblResults->setColumnCount(5);
 		QStringList hdrs;
 		hdrs << i18n("JID");
-		hdrs << i18n("Nickanme");
+		hdrs << i18n("Nickname");
 		hdrs << i18n("First");
 		hdrs << i18n("Last");
 		hdrs << i18n("e-mail");
