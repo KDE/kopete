@@ -113,12 +113,12 @@ void ProfileTask::sendProfileUpdate()
 			capBuf.addGuid( oscar_caps[CAP_ICQSERVERRELAY] ); // we support type-2 messages
 			capBuf.addGuid( oscar_caps[CAP_DIRECT_ICQ_COMMUNICATION] ); // we support direct communication
 			//capBuf.addGuid( oscar_caps[CAP_RTFMSGS] ); // we do incoming RTF messages
-			capBuf.addGuid( oscar_caps[CAP_NEWCAPS] ); // we understand the new format of caps (xtra status)
 			capBuf.addGuid( oscar_caps[CAP_XTRAZ] ); // we support xtraz
 
 			if ( m_xtrazStatus > -1 )
 				capBuf.addGuid( oscar_xStatus[m_xtrazStatus] ); // set xtraz status
 		}
+		capBuf.addGuid( oscar_caps[CAP_NEWCAPS] ); // we understand the new format of caps (xtraz status)
 		capBuf.addGuid( oscar_caps[CAP_SENDFILE] ); // we can do filetransfers! :)
 		capBuf.addGuid( oscar_caps[CAP_UTF8] ); // we can send/receive UTF encoded messages
 		// send version
