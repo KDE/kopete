@@ -181,7 +181,7 @@ void MessageReceiverTask::handleType1Message()
 	TLV timestamp = Oscar::findTLV( messageTLVList, 0x0016 );
 	if ( timestamp )
 	{
-		Buffer timestampBuffer( t.data );
+		Buffer timestampBuffer( timestamp.data );
 		msg.setTimestamp( QDateTime::fromTime_t( timestampBuffer.getDWord() ) );
 	}
 	else
