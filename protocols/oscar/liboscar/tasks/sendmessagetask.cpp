@@ -164,19 +164,25 @@ void SendMessageTask::addChannel1Data( Buffer* b )
 	tlv2buffer.addWord( 0x0101 ); //add TLV(0x0101) also known as TLV(257)
 	tlv2buffer.addWord( m_message.textArray().size() + 4 ); // add TLV length
 
-	if ( m_message.encoding() == Oscar::Message::UserDefined )
+	switch ( m_message.encoding() )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message in "
-			<< "per-contact encoding" << endl;
+	case Oscar::Message::UserDefined:
+	case Oscar::Message::ASCII:
+		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message in per-contact encoding or as ASCII";
 		tlv2buffer.addWord( 0x0000 );
 		tlv2buffer.addWord( 0x0000 );
-	}
-	else
-	{
-		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message as "
-			<< "UCS-2" << endl;
+		break;
+	case Oscar::Message::LATIN1:
+		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message as LATIN1";
+		tlv2buffer.addWord( 0x0003 );
+		tlv2buffer.addWord( 0x0000 );
+		break;
+	case Oscar::Message::UCS2:
+	default:
+		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message as UCS-2";
 		tlv2buffer.addWord( 0x0002 );
 		tlv2buffer.addWord( 0x0000 );
+		break;
 	}
 	tlv2buffer.addString( m_message.textArray() );
 

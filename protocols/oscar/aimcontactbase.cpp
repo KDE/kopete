@@ -155,10 +155,9 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 	
 	// XXX Need to check for message size?
 	
-	if ( m_details.hasCap( CAP_UTF8 ) )
-		msg.setText( Oscar::Message::UCS2, s );
-	else
-		msg.setText( Oscar::Message::UserDefined, s, contactCodec() );
+	// Allow UCS2 because official AIM client doesn't sets the CAP_UTF8 anymore!
+	bool allowUCS2 = !isOnline() || !(m_details.userClass() & Oscar::CLASS_ICQ) || m_details.hasCap( CAP_UTF8 );
+	msg.setText( Oscar::Message::encodingForText( s, allowUCS2 ), s, contactCodec() );
 	
 	msg.setReceiver(mName);
 	msg.setTimestamp(message.timestamp());

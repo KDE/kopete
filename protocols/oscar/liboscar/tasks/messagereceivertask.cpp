@@ -151,11 +151,19 @@ void MessageReceiverTask::handleType1Message()
 			m_subCharSet = message.getWord();
 			kDebug(OSCAR_RAW_DEBUG) << "Message charset: " << m_charSet
 				<< " message subcharset: " << m_subCharSet << endl;
-			if ( m_charSet == 0x0002 )
-				msg.setEncoding( Oscar::Message::UCS2 );
-			else
-				msg.setEncoding( Oscar::Message::UserDefined );
 
+			switch ( m_charSet )
+			{
+			case 0x0002:
+				msg.setEncoding( Oscar::Message::UCS2 );
+				break;
+			case 0x0003:
+				msg.setEncoding( Oscar::Message::LATIN1 );
+				break;
+			default: // 0x0000 should be ASCII but some clients use different encoding.
+				msg.setEncoding( Oscar::Message::UserDefined );
+				break;
+			}
 			//message length is buffer length - length of ( charset + subcharset ) */
 			int msgLength = ( *it ).length - 4;
 			QByteArray msgArray( message.getBlock( msgLength ) );
