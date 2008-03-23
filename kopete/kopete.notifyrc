@@ -1920,10 +1920,12 @@ Action=Popup
 
 [Event/kopete_info_event]
 Name=Service Message
+Name[ga]=Teachtaireacht Sheirbhíse
 Name[km]=សារ​សេវា
 Name[pt]=Mensagem do Serviço
 Name[pt_BR]=Mensagem do Serviço
 Comment=An service message has been received (e.g. authorization request)
+Comment[ga]=Fuarthas teachtaireacht sheirbhíse (m.sh. iarratas údaraithe)
 Comment[km]=បាន​ទទួល​សារ​សេវា (ឧ. សំណើ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ)
 Comment[pt]=Foi recebida uma mensagem do serviço (p.ex., um pedido de autorização)
 Comment[pt_BR]=Foi recebida uma mensagem do serviço (p.ex., um pedido de autorização)
