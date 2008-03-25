@@ -14,6 +14,8 @@ Comment[km]=អ៊ិនគ្រីប​សម័យ​ជជែក​កំ�
 Comment[pt]=Encriptar as sessões de conversão com encriptação OTR (Off-The-Record - Não Oficial)
 Comment[pt_BR]=Encriptar as sessões de conversão com encriptação OTR (Off-The-Record - Não Oficial)
 Comment[uk]=Зашифрувати сеанси балачок шифруванням Off-The-Record
+Comment[x-test]=xxEncrypt chat sessions with Off-The-Record encryptionxx
 Comment[zh_TW]=使用私下加密（Off-The-Record）來加密聊天階段
 Name=OTR
+Name[x-test]=xxOTRxx
 

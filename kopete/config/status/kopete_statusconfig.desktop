@@ -18,6 +18,7 @@ Name[pt_BR]=Estado
 Name[ru]=Статусы
 Name[tr]=Durum
 Name[uk]=Стан
+Name[x-test]=xxStatusxx
 Name[zh_CN]=状态
 Name[zh_TW]=狀態
 Comment=Manage Your Statuses
@@ -30,6 +31,7 @@ Comment[pt_BR]=Gerir os Seus Estados
 Comment[sv]=Hantera din status
 Comment[tr]=Durumlarınızı Yapılandırın
 Comment[uk]=Керування вашими станами
+Comment[x-test]=xxManage Your Statusesxx
 Comment[zh_CN]=管理您的状态
 Comment[zh_TW]=管理您的狀態
 
