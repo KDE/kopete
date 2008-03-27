@@ -26,6 +26,7 @@ Name[x-test]=xxPipesxx
 Name[zh_CN]=管道
 Name[zh_TW]=管線
 Comment=Pipe messages through an external program or script
+Comment[da]=Videreled beskeder gennem et eksternt program eller script
 Comment[el]=Διασωλήνωση μηνύματος μέσω εξωτερικού προγράμματος ή σεναρίου κελύφους
 Comment[ga]=Píopáil teachtaireachtaí trí ríomhchlár nó script sheachtrach
 Comment[km]=សារ​បំពង់​តាម​កម្មវិធី ឬ​ស្គ្រីប​ខាងក្រៅ
