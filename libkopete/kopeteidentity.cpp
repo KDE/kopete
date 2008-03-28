@@ -203,6 +203,7 @@ void Identity::addAccount( Kopete::Account *account )
 
 	updateOnlineStatus();
 	emit identityChanged( this );
+	emit toolTipChanged( this );
 }
 
 void Identity::removeAccount( const Kopete::Account *account )
@@ -215,6 +216,7 @@ void Identity::removeAccount( const Kopete::Account *account )
 	d->accounts.removeAll( a );
 	updateOnlineStatus();
 	emit identityChanged( this );
+	emit toolTipChanged( this );
 }
 
 KConfigGroup *Identity::configGroup() const
@@ -261,6 +263,7 @@ void Identity::updateOnlineStatus()
 		d->onlineStatus = newStatus;
 		emit onlineStatusChanged( this );
 	}
+	emit toolTipChanged( this );
 }
 
 void Identity::slotSaveProperty( Kopete::PropertyContainer *container, const QString &key,

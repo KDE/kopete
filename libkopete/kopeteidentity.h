@@ -173,6 +173,7 @@ protected slots:
 
 signals:
 	void onlineStatusChanged( Kopete::Identity* );
+	void toolTipChanged( Kopete::Identity* );
 	void identityDestroyed( const Kopete::Identity *identity );
 	void identityChanged(Kopete::Identity *identity);
 

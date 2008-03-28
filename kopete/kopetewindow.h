@@ -129,6 +129,12 @@ private slots:
 	void slotIdentityUnregistered( const Kopete::Identity *identity );
 
 	/**
+	 * The tooltip got changed, update it.
+	 * @param identity the identity that has changed
+	 */
+	void slotIdentityToolTipChanged( Kopete::Identity *identity );
+
+	/**
 	 * The status icon got changed, update it.
 	 * @param identity the identity that has changed
 	 */

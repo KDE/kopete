@@ -797,10 +797,12 @@ void KopeteWindow::slotIdentityRegistered ( Kopete::Identity *identity )
 	if ( !identity )
 		return;
 
-	connect ( identity, SIGNAL ( onlineStatusChanged ( Kopete::Identity * ) ),
-	          this, SLOT ( slotIdentityStatusIconChanged ( Kopete::Identity * ) ) );
-	connect ( identity, SIGNAL ( identityChanged ( Kopete::Identity * ) ),
-	          this, SLOT ( slotIdentityStatusIconChanged ( Kopete::Identity * ) ) );
+	connect ( identity, SIGNAL(onlineStatusChanged(Kopete::Identity*)),
+	          this, SLOT(slotIdentityStatusIconChanged(Kopete::Identity*)) );
+	connect ( identity, SIGNAL(identityChanged(Kopete::Identity *)),
+	          this, SLOT(slotIdentityStatusIconChanged(Kopete::Identity*)) );
+	connect ( identity, SIGNAL(toolTipChanged(Kopete::Identity*)),
+	          this, SLOT(slotIdentityToolTipChanged(Kopete::Identity*)) );
 
 	KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon ( identity, d->statusBarWidget );
 	connect ( sbIcon, SIGNAL ( leftClicked ( Kopete::Identity *, const QPoint & ) ),
@@ -808,6 +810,7 @@ void KopeteWindow::slotIdentityRegistered ( Kopete::Identity *identity )
 
 	d->identityStatusBarIcons.insert ( identity, sbIcon );
 	slotIdentityStatusIconChanged ( identity );
+	slotIdentityToolTipChanged( identity );
 }
 
 void KopeteWindow::slotIdentityUnregistered ( const Kopete::Identity *identity )
@@ -824,6 +827,17 @@ void KopeteWindow::slotIdentityUnregistered ( const Kopete::Identity *identity )
 
 	makeTrayToolTip();
 
+}
+
+void KopeteWindow::slotIdentityToolTipChanged ( Kopete::Identity *identity )
+{
+	// Adds tooltip for each status icon, useful in case you have many accounts
+	// over one protocol
+	KopeteIdentityStatusBarIcon *i = d->identityStatusBarIcons[ identity ];
+	if ( i )
+		i->setToolTip ( identity->toolTip() );
+
+	makeTrayToolTip();
 }
 
 void KopeteWindow::slotIdentityStatusIconChanged ( Kopete::Identity *identity )
@@ -849,11 +863,6 @@ void KopeteWindow::slotIdentityStatusIconChanged ( Kopete::Identity *identity )
 	KopeteIdentityStatusBarIcon *i = d->identityStatusBarIcons[ identity ];
 	if ( !i )
 		return;
-
-	// Adds tooltip for each status icon,
-	// useful in case you have many accounts
-	// over one protocol
-	i->setToolTip ( identity->toolTip() );
 
 	QPixmap pm;
 	switch ( identity->onlineStatus() ) {
@@ -884,7 +893,6 @@ void KopeteWindow::slotIdentityStatusIconChanged ( Kopete::Identity *identity )
 		i->setPixmap ( SmallIcon ( "user-identity" ) );
 	else
 		i->setPixmap ( pm );
-	makeTrayToolTip();
 }
 
 void KopeteWindow::makeTrayToolTip()
