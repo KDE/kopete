@@ -263,7 +263,7 @@ XmlProtocol::TransferItem::TransferItem(const QDomElement &_elem, bool sent, boo
 }
 
 XmlProtocol::XmlProtocol()
-	: QObject(qApp)
+	: QObject()
 {
 	init();
 }
