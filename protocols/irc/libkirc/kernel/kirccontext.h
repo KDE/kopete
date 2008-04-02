@@ -56,12 +56,11 @@ public:
 //	Entity::List entitiesByServer(...) const;
 //	Entity::List entitiesByType(...) const;
 
-	Entity::Ptr entityFromName(const QByteArray &name) const;
-//	Entity::Ptr entityFromName(const QByteArray &name, bool );
+	Entity::Ptr entityFromName(const QByteArray &name);
 
 	Entity::List entitiesFromNames(const QList<QByteArray> &names);
 
-	Entity::List entitiesFromNames(const QByteArray &names, char sep);
+	Entity::List entitiesFromNames(const QByteArray &names, char sep = ',');
 
 public:
 	void postEvent(KIrc::Event *event);

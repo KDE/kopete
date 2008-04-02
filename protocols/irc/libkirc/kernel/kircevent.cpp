@@ -19,11 +19,9 @@
 
 using namespace KIrc;
 
-const int KIrc::CommandEvent::Command = QEvent::registerEventType();
+const QEvent::Type KIrc::CommandEvent::Type = (QEvent::Type)QEvent::registerEventType();
 
-const int KIrc::MessageEvent::MessageReveived = QEvent::registerEventType();
+const QEvent::Type KIrc::MessageEvent::Type = (QEvent::Type)QEvent::registerEventType();
 
-//const int KIrc::MessageEvent::MessageSending = QEvent::registerEventType();
-
-//const int KIrc::MessageEvent::MessageDispatch = QEvent::registerEventType();
+const QEvent::Type KIrc::TextEvent::Type = (QEvent::Type)QEvent::registerEventType();
 

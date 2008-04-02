@@ -56,7 +56,7 @@ Entity::List Context::entities() const
 	return entities;
 }
 
-Entity::Ptr Context::entityFromName(const QByteArray &name) const
+Entity::Ptr Context::entityFromName(const QByteArray &name)
 {
 	Entity::Ptr entity;
 
@@ -67,22 +67,15 @@ Entity::Ptr Context::entityFromName(const QByteArray &name) const
 	#warning Do the searching code here.
 #endif
 
-	return entity;
-}
-/*
-Entity::Ptr Context::entityFromName(const QByteArray &name, bool createIfNotFound)
-{
-	Entity *entity = entityFromName(name);
-
 	if (!entity)
 	{
-		entity = new Entity(name);
-		add(entity);
+		entity = new Entity(this);
+		entity->setName(name);
+//		add(entity);
 	}
 
 	return entity;
 }
-*/
 
 Entity::List Context::entitiesFromNames(const QList<QByteArray> &names)
 {

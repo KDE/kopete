@@ -12,7 +12,7 @@ set(libkirc_SRCS
 #	kernel/kirccommand.cpp
 	kernel/kircconst.cpp 
 	kernel/kirccontext.cpp
-	kernel/kircentity.cpp 
+	kernel/kircentity.cpp
 	kernel/kircevent.cpp 
 	kernel/kirceventhandler.cpp
 	kernel/kirceventhandlerfactory.cpp
@@ -21,7 +21,6 @@ set(libkirc_SRCS
 	kernel/kircmessageutil.cpp 
 	kernel/kircsocket.cpp 
 #	kernel/kircstdmessages.cpp 
-	kernel/kirctask.cpp
 )
 
 kde4_add_library(kirc SHARED ${libkirc_SRCS})
@@ -32,17 +31,8 @@ set_target_properties(kirc PROPERTIES VERSION 1.0.0 SOVERSION 1)
 install(TARGETS kirc ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 set(libkirc_client_SRCS
+	client/kircclienteventhandler.cpp
 	client/kircclientsocket.cpp 
-#	client/kirccommand.cpp
-#	client/kirccommandhandler.cpp
-#	client/kircclientcommandhandler.cpp 
-	client/kircclientcommands.cpp 
-#	client/kirctransfer.cpp 
-#	client/kirctransferhandler.cpp 
-#	client/kirctransferserver.cpp 
-
-#	client/tasks/kircclienttask.cpp
-#	client/tasks/kirci18ntask.cpp
 )
 
 kde4_add_library(kirc_client SHARED ${libkirc_client_SRCS})
