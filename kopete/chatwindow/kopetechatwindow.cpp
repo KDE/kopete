@@ -655,11 +655,12 @@ void KopeteChatWindow::createTabBar()
 
 		mainLayout->addWidget( m_tabBar );
 		m_tabBar->show();
-		connect ( m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)) );
-		connect ( m_tabBar, SIGNAL(contextMenu(QWidget *, const QPoint & )), this, SLOT(slotTabContextMenu( QWidget *, const QPoint & )) );
 
 		for( ChatViewList::iterator it = chatViewList.begin(); it != chatViewList.end(); ++it )
 			addTab( *it );
+
+		connect ( m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)) );
+		connect ( m_tabBar, SIGNAL(contextMenu(QWidget *, const QPoint & )), this, SLOT(slotTabContextMenu( QWidget *, const QPoint & )) );
 
 		if( m_activeView )
 			m_tabBar->setCurrentWidget( m_activeView );
