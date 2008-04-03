@@ -65,6 +65,7 @@ QT4_ADD_DBUS_ADAPTOR(kopete_SRCS org.kde.Kopete.xml kopetedbusinterface.h Kopete
 
 kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui infoeventbase.ui )
 
+kde4_add_app_icon(kopete_SRCS "hi*-apps-kopete.png")
 
 kde4_add_executable(kopete_bin ${kopete_SRCS})
 set_target_properties(kopete_bin PROPERTIES OUTPUT_NAME kopete)
