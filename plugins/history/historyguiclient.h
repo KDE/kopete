@@ -40,6 +40,7 @@ private slots:
 	void slotPrevious();
 	void slotLast();
 	void slotNext();
+	void slotQuote();
 
 private:
 	HistoryLogger *m_logger;

@@ -61,11 +61,12 @@ set(kopete_SRCS
    kopetewindow.cpp 
    kopeteidentitystatusbaricon.cpp 
    kopetedbusinterface.cpp
+   infoeventwidget.cpp
    )
 
 QT4_ADD_DBUS_ADAPTOR(kopete_SRCS org.kde.Kopete.xml kopetedbusinterface.h KopeteDBusInterface)
 
-kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui )
+kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui infoeventbase.ui )
 
 
 kde4_add_executable(kopete_bin ${kopete_SRCS})

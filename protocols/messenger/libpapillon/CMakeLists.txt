@@ -95,5 +95,5 @@ target_link_libraries( papillon_kopete ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRA
 
 set_target_properties( papillon_kopete PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 
-install(TARGETS papillon_kopete  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS papillon_kopete ${INSTALL_TARGETS_DEFAULT_ARGS})
 

@@ -51,7 +51,7 @@
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopetechatsessionmanager.h"
-#include "contactaddednotifydialog.h"
+#include "kopeteaddedinfoevent.h"
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
@@ -1002,12 +1002,17 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 				QString nick;			//in most case, the public name is not know
 				if(publicName!=handle)  // so we don't whos it if it is not know
 					nick=publicName;
-				Kopete::UI::ContactAddedNotifyDialog *dialog=
-						new Kopete::UI::ContactAddedNotifyDialog(  handle,nick,this,
-								Kopete::UI::ContactAddedNotifyDialog::InfoButton );
-				QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
-								 this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
-				dialog->show();
+
+				Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+				actions |= Kopete::AddedInfoEvent::BlockAction | Kopete::AddedInfoEvent::AddAction;
+
+				Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent( handle, this );
+				QObject::connect( event, SIGNAL(actionActivated(uint)),
+				                  this, SLOT(slotAddedInfoEventActionActivated(uint)) );
+
+				event->showActions( actions );
+				event->setContactNickname( nick );
+				event->sendEvent();
 			}
 		}
 		else
@@ -1220,17 +1225,17 @@ void MSNAccount::slotStartChatSession( const QString& handle )
 	}
 }
 
-void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
+void MSNAccount::slotAddedInfoEventActionActivated( uint actionId )
 {
-	const Kopete::UI::ContactAddedNotifyDialog *dialog =
-			dynamic_cast<const Kopete::UI::ContactAddedNotifyDialog *>(sender());
-	if(!dialog || !m_notifySocket)
+	const Kopete::AddedInfoEvent *event = dynamic_cast<const Kopete::AddedInfoEvent *>(sender());
+	if( !event || !m_notifySocket )
 		return;
 
-	if(dialog->added())
+	QString handle = event->contactId();
+	if ( actionId == Kopete::AddedInfoEvent::AddContactAction )
 	{
-		Kopete::MetaContact *mc=dialog->addContact();
-		if(mc)
+		Kopete::MetaContact *mc = event->addContact();
+		if ( mc )
 		{ //if the contact has been added this way, it's because the other user added us.
 		  // don't forgot to set the reversed flag  (Bug 114400)
 			if ( !mc->contacts().isEmpty() )
@@ -1243,22 +1248,20 @@ void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
 			}
 		}
 	}
-
-	if ( !dialog->authorized() )
+	else if ( actionId == Kopete::AddedInfoEvent::BlockAction )
 	{
 		if ( m_allowList.contains( handle ) )
 			m_notifySocket->removeContact( handle, MSNProtocol::AL, QString(), QString() );
 		else if ( !m_blockList.contains( handle ) )
 			m_notifySocket->addContact( handle, MSNProtocol::BL, QString(), QString(), QString() );
 	}
-	else
+	else if ( actionId == Kopete::AddedInfoEvent::AuthorizeAction )
 	{
 		if ( m_blockList.contains( handle ) )
 			m_notifySocket->removeContact( handle, MSNProtocol::BL, QString(), QString() );
 		else if ( !m_allowList.contains( handle ) )
 			m_notifySocket->addContact( handle, MSNProtocol::AL, QString(), QString(), QString() );
 	}
-
 
 }
 

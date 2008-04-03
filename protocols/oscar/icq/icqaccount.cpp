@@ -3,7 +3,7 @@
 
   Copyright (c) 2002 by Chris TenHarmsel            <tenharmsel@staticmethod.net>
   Copyright (c) 2004 by Richard Smith               <kde@metafoo.co.uk>
-  Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -30,6 +30,8 @@
 #include "kopetemessage.h"
 #include "kopetecontactlist.h"
 #include "kopeteuiglobal.h"
+#include "kopetemetacontact.h"
+#include "kopeteaddedinfoevent.h"
 
 #include "client.h"
 #include "icquserinfo.h"
@@ -48,7 +50,6 @@
 #include "xtrazicqstatuseditor.h"
 #include "xtrazstatusaction.h"
 #include "icqstatusmanager.h"
-#include "icqauthreplydialog.h"
 
 ICQMyselfContact::ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acct )
 {
@@ -476,24 +477,61 @@ QString ICQAccount::sanitizedMessage( const QString& message ) const
 
 void ICQAccount::slotGotAuthRequest( const QString& contact, const QString& reason )
 {
-	ICQAuthReplyDialog *replyDialog = new ICQAuthReplyDialog();
-	QObject::connect( this, SIGNAL(destroyed()), replyDialog, SLOT(deleteLater()) );
-	QObject::connect( replyDialog, SIGNAL(okClicked()), this, SLOT(slotAuthReplyDialogOkClicked()) );
+	QString contactId = Oscar::normalize( contact );
 
-	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];	
-	replyDialog->setUser( ( ct ) ? ct->nickName() : contact );
-	replyDialog->setContact( contact );
-	replyDialog->setRequestReason( reason );
-	replyDialog->show();
+	Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent( contactId, this );
+	QObject::connect( event, SIGNAL(actionActivated(uint)), this, SLOT(addedInfoEventActionActivated(uint)) );
+
+	Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+	actions |= Kopete::AddedInfoEvent::BlockAction;
+	actions |= Kopete::AddedInfoEvent::InfoAction;
+
+	Kopete::Contact * ct = contacts()[contactId];
+	if( !ct || !ct->metaContact() || ct->metaContact()->isTemporary() )
+		actions |= Kopete::AddedInfoEvent::AddAction;
+
+	if( ct )
+		event->setContactNickname( ct->nickName() );
+
+	event->showActions( actions );
+	event->setAdditionalText( reason );
+	event->sendEvent();
 }
 
-void ICQAccount::slotAuthReplyDialogOkClicked()
+void ICQAccount::addedInfoEventActionActivated( uint actionId )
 {
-    // Do not need to delete will delete itself automatically
-	ICQAuthReplyDialog *replyDialog = (ICQAuthReplyDialog*)sender();
-	
-	if ( replyDialog )
-		engine()->sendAuth( replyDialog->contact(), replyDialog->reason(), replyDialog->grantAuth() );
+	Kopete::AddedInfoEvent *event = dynamic_cast<Kopete::AddedInfoEvent *>(sender());
+	if ( !event || !isConnected() )
+		return;
+
+	switch ( actionId )
+	{
+	case Kopete::AddedInfoEvent::AddContactAction:
+		event->addContact();
+		break;
+	case Kopete::AddedInfoEvent::AuthorizeAction:
+		engine()->sendAuth( event->contactId(), QString(), true );
+		break;
+	case Kopete::AddedInfoEvent::BlockAction:
+		engine()->sendAuth( event->contactId(), QString(), false );
+		engine()->setIgnore( event->contactId(), true );
+		break;
+	case Kopete::AddedInfoEvent::InfoAction:
+		{
+			ICQContact* c = new ICQContact( this, event->contactId(), NULL );
+			ICQUserInfoWidget* info = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
+			QObject::connect( info, SIGNAL(finished()), c, SLOT(deleteLater()) );
+			QObject::connect( info, SIGNAL(finished()), info, SLOT(delayedDestruct()) );
+			QObject::connect( event, SIGNAL(eventClosed(Kopete::InfoEvent*)), info, SLOT(delayedDestruct()) );
+
+			info->setContact( c );
+			engine()->requestFullInfo( c->contactId() );
+
+			info->setModal( false );
+			info->show();
+		}
+		break;
+	}
 }
 
 #include "icqaccount.moc"

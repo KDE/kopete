@@ -20,7 +20,6 @@
 #define KIRCSOCKET_H
 
 #include "kircentity.h"
-#include "kircevent.h"
 #include "kircmessage.h"
 
 #include <QtCore/QUrl>

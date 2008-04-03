@@ -1,5 +1,5 @@
 /*
-    kircentitymanager.cpp - IRC Entity Manager
+    kirccontext.cpp - IRC Context
 
     Copyright (c) 2005-2007 by Michel Hermier <michel.hermier@gmail.com>
 
@@ -15,31 +15,39 @@
     *************************************************************************
 */
 
-#include "kircentitymanager.moc"
+#include "kirccontext.moc"
 
 #include "kircentity.h"
 
 using namespace KIrc;
 
-class EntityManager::Private
+class KIrc::ContextPrivate
 {
 public:
+	ContextPrivate()
+		: defaultCodec(0)
+	{ }
+
 	QList<Entity *> entities;
+
+	QTextCodec *defaultCodec;
 };
 
-EntityManager::EntityManager(QObject *parent)
-	: QObject(parent),
-	  d(new Private)
+Context::Context(QObject *parent)
+	: QObject(parent)
+//	, d(new Private)
 {
 }
 
-EntityManager::~EntityManager()
+Context::~Context()
 {
-	delete d;
+//	delete d;
 }
 
-Entity::List EntityManager::entities() const
+Entity::List Context::entities() const
 {
+	Q_D(const Context);
+
 	Entity::List entities;
 
 	foreach(Entity *entity, d->entities)
@@ -48,7 +56,7 @@ Entity::List EntityManager::entities() const
 	return entities;
 }
 
-Entity::Ptr EntityManager::entityFromName(const QByteArray &name) const
+Entity::Ptr Context::entityFromName(const QByteArray &name)
 {
 	Entity::Ptr entity;
 
@@ -59,24 +67,17 @@ Entity::Ptr EntityManager::entityFromName(const QByteArray &name) const
 	#warning Do the searching code here.
 #endif
 
-	return entity;
-}
-/*
-Entity::Ptr EntityManager::entityFromName(const QByteArray &name, bool createIfNotFound)
-{
-	Entity *entity = entityFromName(name);
-
 	if (!entity)
 	{
-		entity = new Entity(name);
-		add(entity);
+		entity = new Entity(this);
+		entity->setName(name);
+//		add(entity);
 	}
 
 	return entity;
 }
-*/
 
-Entity::List EntityManager::entitiesFromNames(const QList<QByteArray> &names)
+Entity::List Context::entitiesFromNames(const QList<QByteArray> &names)
 {
 	Entity::List entities;
 
@@ -86,12 +87,32 @@ Entity::List EntityManager::entitiesFromNames(const QList<QByteArray> &names)
 	return entities;
 }
 
-Entity::List EntityManager::entitiesFromNames(const QByteArray &names, char sep)
+Entity::List Context::entitiesFromNames(const QByteArray &names, char sep)
 {
 	return entitiesFromNames(names.split(sep));
 }
 
-void EntityManager::add(Entity *entity)
+QTextCodec *Context::defaultCodec() const
+{
+	Q_D(const Context);
+
+	return d->defaultCodec;
+}
+
+void Context::setDefaultCodec(QTextCodec *defaultCodec)
+{
+	Q_D(Context);
+
+	d->defaultCodec = defaultCodec;
+}
+
+void Context::postEvent(Event *event)
+{
+#warning CODE ME
+//	delete event;
+}
+#if 0
+void Context::add(Entity *entity)
 {
 	if (!d->entities.contains(entity))
 	{
@@ -101,9 +122,15 @@ void EntityManager::add(Entity *entity)
 	}
 }
 
-void EntityManager::remove(Entity *entity)
+void Context::remove(Entity *entity)
 {
 	d->entities.removeAll(entity);
 //	disconnect(entity);
 }
+#endif
 
+#if 0
+Status Context::SET()
+{
+}
+#endif

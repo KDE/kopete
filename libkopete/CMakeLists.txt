@@ -103,6 +103,9 @@ set(kopete_LIB_SRCS
    kopetestatusmanager.cpp
    kopetestatusitems.cpp
    kopeteidletimer.cpp
+   kopeteinfoeventmanager.cpp
+   kopeteinfoevent.cpp
+   kopeteaddedinfoevent.cpp
 # REMOVED FOR NOW
 #   connectionmanager.cpp
 #   managedconnectionaccount.cpp
@@ -142,7 +145,7 @@ if(MSVC)
       OUTPUT_NAME libkopete
       )
 endif(MSVC)
-install(TARGETS kopete DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS kopete ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 ########### install files ###############

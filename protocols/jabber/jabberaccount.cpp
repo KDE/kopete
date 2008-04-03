@@ -59,7 +59,7 @@
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
-#include "contactaddednotifydialog.h"
+#include "kopeteaddedinfoevent.h"
 
 #include "jabberconnector.h"
 #include "jabberclient.h"
@@ -101,7 +101,6 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	m_protocol = parent;
 
 	m_jabberClient = 0L;
-	m_privacyManager = 0L;
 	
 	m_resourcePool = 0L;
 	m_contactPool = 0L;
@@ -453,9 +452,6 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 			break;
 	}
-	
-	m_privacyManager = new PrivacyManager (client()->rootTask());
-
 }
 
 void JabberAccount::slotClientDebugMessage ( const QString &msg )
@@ -717,9 +713,6 @@ void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 	// in the process of connecting
 	setPresence ( XMPP::Status ("", "", 0, false) );
 	m_initialPresence = XMPP::Status ("", "", 5, true);
-	
-	delete m_privacyManager;
-	m_privacyManager = 0L;
 
 	/* FIXME:
 	 * We should delete the JabberClient instance here,
@@ -1191,16 +1184,19 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 		Kopete::MetaContact *metaContact=0L;
 		if(contact)
 			metaContact=contact->metaContact();
-		
-		Kopete::UI::ContactAddedNotifyDialog::HideWidgetOptions hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
-		if( metaContact && !metaContact->isTemporary() )
-			hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
-		
-		Kopete::UI::ContactAddedNotifyDialog *dialog=
-				new Kopete::UI::ContactAddedNotifyDialog( jid.full() ,QString(),this, hideFlags );
-		QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
-						this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
-		dialog->show();
+
+		Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+		actions |= Kopete::AddedInfoEvent::BlockAction;
+
+		if( !metaContact || metaContact->isTemporary() )
+			actions |= Kopete::AddedInfoEvent::AddAction;
+
+		Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent( jid.full(), this );
+		QObject::connect( event, SIGNAL(actionActivated(uint)),
+		                  this, SLOT(slotAddedInfoEventActionActivated(uint)) );
+
+		event->showActions( actions );
+		event->sendEvent();
 	}
 	else if (type == "unsubscribed")
 	{
@@ -1244,41 +1240,36 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 	}
 }
 
-void JabberAccount::slotContactAddedNotifyDialogClosed( const QString & contactid )
-{	// the dialog that asked the authorisation is closed. (it was shown in slotSubscrition)
-	
-	XMPP::JT_Presence *task;
-	XMPP::Jid jid(contactid);
+void JabberAccount::slotAddedInfoEventActionActivated ( uint actionId )
+{
+	const Kopete::AddedInfoEvent *event =
+		dynamic_cast<const Kopete::AddedInfoEvent *>(sender());
 
-	const Kopete::UI::ContactAddedNotifyDialog *dialog =
-			dynamic_cast<const Kopete::UI::ContactAddedNotifyDialog *>(sender());
-	if(!dialog || !isConnected())
+	if ( !event || !isConnected() )
 		return;
 
-	if ( dialog->authorized() )
+	XMPP::Jid jid(event->contactId());
+	if ( actionId == Kopete::AddedInfoEvent::AuthorizeAction )
 	{
 		/*
 		* Authorize user.
 		*/
-
-		task = new XMPP::JT_Presence ( client()->rootTask () );
+		XMPP::JT_Presence *task = new XMPP::JT_Presence ( client()->rootTask () );
 		task->sub ( jid, "subscribed" );
 		task->go ( true );
 	}
-	else
+	else if ( actionId == Kopete::AddedInfoEvent::BlockAction )
 	{
 		/*
 		* Reject subscription.
 		*/
-		task = new XMPP::JT_Presence ( client()->rootTask () );
+		XMPP::JT_Presence *task = new XMPP::JT_Presence ( client()->rootTask () );
 		task->sub ( jid, "unsubscribed" );
 		task->go ( true );
 	}
-
-
-	if(dialog->added())
+	else if( actionId == Kopete::AddedInfoEvent::AddContactAction )
 	{
-		Kopete::MetaContact *parentContact=dialog->addContact();
+		Kopete::MetaContact *parentContact=event->addContact();
 		if(parentContact)
 		{
 			QStringList groupNames;
@@ -1287,7 +1278,6 @@ void JabberAccount::slotContactAddedNotifyDialogClosed( const QString & contacti
 				groupNames += group->displayName();
 
 			XMPP::RosterItem item;
-//			XMPP::Jid jid ( contactId );
 
 			item.setJid ( jid );
 			item.setName ( parentContact->displayName() );

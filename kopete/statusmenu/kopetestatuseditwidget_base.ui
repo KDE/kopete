@@ -9,9 +9,6 @@
     <height>228</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" >
    <item>
     <widget class="QLabel" name="label" >
@@ -24,7 +21,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="statusTitle" />
+    <widget class="KLineEdit" name="statusTitle" />
    </item>
    <item>
     <widget class="QLabel" name="label_3" >
@@ -62,7 +59,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="setButton" >
+      <widget class="KPushButton" name="setButton" >
        <property name="text" >
         <string>Set</string>
        </property>
@@ -72,7 +69,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="clearButton" >
+      <widget class="KPushButton" name="clearButton" >
        <property name="text" >
         <string>Clear</string>
        </property>
@@ -82,6 +79,18 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global" >kpushbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global" >klineedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

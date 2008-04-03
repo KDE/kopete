@@ -67,7 +67,7 @@ else(WIN32)
 endif(WIN32)
 
 set_target_properties(kopete_msn_shared PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
-install(TARGETS kopete_msn_shared  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS kopete_msn_shared ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 ########### install files ###############

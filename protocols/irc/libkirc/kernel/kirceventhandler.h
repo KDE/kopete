@@ -1,9 +1,7 @@
 /*
-    kirctask.h - IRC Task
+    kirceventhandler.h - IRC event handler.
 
-    Copyright (c) 2004-2007 by Michel Hermier <michel.hermier@gmail.com>
-
-    Kopete    (c) 2004-2007 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2008      by Michel Hermier <michel.hermier@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -15,48 +13,43 @@
     *************************************************************************
 */
 
-#ifndef KIRCTASK_H
-#define KIRCTASK_H
+#ifndef KIRCEVENTHANDLER_H
+#define KIRCEVENTHANDLER_H
 
-#include "kircevent.h"
-#include "kircmessage.h"
+#include "kircglobal.h"
 
 #include <QtCore/QObject>
 
 namespace KIrc
 {
 
-class Context;
+class CommandEvent;
+class MessageEvent;
+class EventHandlerPrivate;
 
-class KIRC_EXPORT Task
+class KIRC_EXPORT EventHandler
 	: public QObject
 {
 	Q_OBJECT
+	Q_DECLARE_PRIVATE(KIrc::EventHandler)
 
 public:
-	explicit Task(QObject *parent = 0);
-	virtual ~Task();
+	explicit EventHandler(QObject *parent = 0);
+	virtual ~EventHandler();
 
-public:
-	/**
-	 * Tries to handle an event.
-	 *
-	 * @return the status of the event handling.
-	 */
-	virtual void ircEvent(KIrc::Context *context, KIrc::Event *event);
+	bool isEnabled() const;
+	void setEnabled(bool);	
 
-signals:
-	void postEvent(KIrc::Event *event);
+protected:
+	virtual bool eventFilter(QObject *watched, QEvent *event);
 
-//	void postCommand(KIrc::Message command);
-
-//	void postMessage(KIrc::Message message);
+	virtual bool commandEvent(KIrc::CommandEvent *event);
+	virtual bool messageEvent(KIrc::MessageEvent *event);
 
 private:
-	Q_DISABLE_COPY(Task)
+	Q_DISABLE_COPY(EventHandler)
 
-	class Private;
-	Private * const d;
+	EventHandlerPrivate * const d_ptr;
 };
 
 }

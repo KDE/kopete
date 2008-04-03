@@ -108,7 +108,8 @@ public:
 	bool isIcq;
 	bool redirectRequested;
 	QList<Oscar::WORD> redirectionServices;
-    Oscar::WORD currentRedirect;
+	Oscar::WORD currentRedirect;
+	bool offlineMessagesRequested;
 	QByteArray cookie;
 	Oscar::Settings* settings;
 
@@ -168,7 +169,8 @@ Client::Client( QObject* parent )
 	d->active = false;
 	d->isIcq = false; //default to AIM
 	d->redirectRequested = false;
-    d->currentRedirect = 0;
+	d->currentRedirect = 0;
+	d->offlineMessagesRequested = false;
 	d->status.status = 0x0; // default to online
 	d->status.xtraz = -1; // default to no Xtraz
 	d->status.sent = false;
@@ -256,11 +258,12 @@ void Client::close()
 		d->status.description.clear();
 	}
 
-    d->exchanges.clear();
-    d->redirectRequested = false;
-    d->currentRedirect = 0;
-    d->redirectionServices.clear();
-    d->ssiManager->clear();
+	d->exchanges.clear();
+	d->redirectRequested = false;
+	d->currentRedirect = 0;
+	d->redirectionServices.clear();
+	d->ssiManager->clear();
+	d->offlineMessagesRequested = false;
 }
 
 void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, const QString &description )
@@ -452,19 +455,6 @@ void Client::serviceSetupFinished()
 	setStatus( d->status.status, d->status.message, d->status.xtraz, d->status.description );
 	d->ownStatusTask->go();
 
-	if ( isIcq() )
-	{
-		//retrieve offline messages
-		Connection* c = d->connections.connectionForFamily( 0x0015 );
-		if ( !c )
-			return;
-
-		OfflineMessagesTask *offlineMsgTask = new OfflineMessagesTask( c->rootTask() );
-		connect( offlineMsgTask, SIGNAL( receivedOfflineMessage(const Oscar::Message& ) ),
-				this, SIGNAL( messageReceived(const Oscar::Message& ) ) );
-		offlineMsgTask->go( Task::AutoDelete );
-	}
-
 	emit haveContactList();
 	emit loggedIn();
 }
@@ -493,10 +483,22 @@ void Client::offlineUser( const QString& user, const UserDetails& )
 
 void Client::haveOwnUserInfo()
 {
-	kDebug( OSCAR_RAW_DEBUG ) ;
+	kDebug( OSCAR_RAW_DEBUG );
 	UserDetails ud = d->ownStatusTask->getInfo();
 	d->ourDetails = ud;
 	emit haveOwnInfo();
+
+	if ( !d->offlineMessagesRequested && d->active )
+	{
+		//retrieve offline messages
+		Connection* c = d->connections.connectionForFamily( 0x0004 );
+		if ( !c )
+			return;
+
+		OfflineMessagesTask *offlineMsgTask = new OfflineMessagesTask( c->rootTask() );
+		offlineMsgTask->go( Task::AutoDelete );
+		d->offlineMessagesRequested = true;
+	}
 }
 
 void Client::setCodecProvider( Client::CodecProvider* codecProvider )

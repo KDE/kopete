@@ -950,8 +950,6 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	setCaption( m_activeView->caption() );
 	setStatus( m_activeView->statusText() );
-	// Force keepScrolledDown because it doesn't work if window was hidden (bug:155237)
-	m_activeView->messagePart()->keepScrolledDown();
 	m_activeView->setFocus();
 	updateSpellCheckAction();
 	slotUpdateSendEnabled();
@@ -1288,6 +1286,14 @@ void KopeteChatWindow::updateChatLabel()
 			setCaption( chat->caption() );
 	}
 }
+
+void KopeteChatWindow::resizeEvent( QResizeEvent *e )
+{
+	KXmlGuiWindow::resizeEvent( e );
+	if ( m_activeView && m_activeView->messagePart() )
+		m_activeView->messagePart()->keepScrolledDown();
+}
+
 
 #include "kopetechatwindow.moc"
 

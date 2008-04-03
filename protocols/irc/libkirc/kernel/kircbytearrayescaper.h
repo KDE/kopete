@@ -52,6 +52,8 @@ public:
 //	QByteArray join(const QList<QByteArray> &buffers, const char *sep) const;
 //	QByteArray join(const QList<QByteArray> &buffers, const QByteArray &sep) const;
 
+//	QList<QByteArray> split(const QByteArray &buffer, char sep) const;
+
 private:
 	class Private;
 	Private * const d;

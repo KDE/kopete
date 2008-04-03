@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef KIRC_EVENT_H
-#define KIRC_EVENT_H
+#ifndef KIRC_EVENTS_H
+#define KIRC_EVENTS_H
 
 #include "kircmessage.h"
 
@@ -27,36 +27,10 @@ namespace KIrc
 
 class Socket;
 
-class KIRC_EXPORT Event
+class KIRC_EXPORT CommandEvent
 	: public QEvent
 {
-public:
-	enum Type
-	{
-		Command                 = 10, // Text command
-
-		MessageReceived         = 20, // Generic message, usually a command message
-		MessageSending		= 21,
-//		MessageDispatch		= 22, // Message as to be redispatched to other sockets.
-
-//		ClientServerReply       = 21, // Numeric reply message in the 001-099 range
-//		CommandReply            = 22, // Numeric reply message in the 200-399 range
-//		ErrorReply              = 23  // Numeric reply message in the 400-599 range
-
-		Text
-	};
-
-public:
-	explicit Event(Type type)
-		: QEvent(static_cast<QEvent::Type>(type))
-	{ }
-
-	Event(const Event &o);
-};
-
-class KIRC_EXPORT CommandEvent
-	: public KIrc::Event
-{
+	static const QEvent::Type Type;
 public:
 //	explicit CommandEvent();
 
@@ -64,11 +38,13 @@ private:
 };
 
 class KIRC_EXPORT MessageEvent
-	: public Event
+	: public QEvent
 {
+	static const QEvent::Type Type;
+
 public:
-	MessageEvent(Type type, const KIrc::Message &message, KIrc::Socket *socket)
-		: KIrc::Event(type), m_message(message), m_socket(socket)
+	MessageEvent(const KIrc::Message &message, KIrc::Socket *socket)
+		: QEvent(Type), m_message(message), m_socket(socket)
 	{ }
 
 	inline const KIrc::Message &message() const { return m_message; }
@@ -80,9 +56,11 @@ private:
 };
 
 class KIRC_EXPORT TextEvent
-	: public KIrc::Event
+	: public QEvent
 {
 public:
+	static const QEvent::Type Type;
+/*
 	enum Verbosity
 	{
 		Error,
@@ -91,15 +69,25 @@ public:
 		Verbose,
 		Debug
 	};
-
-
-	TextEvent(const QString &text, Verbosity verbosity = Normal)
-		: Event(Text), m_text(text), m_verbosity(verbosity)
+*/
+	TextEvent(const QString &eventId, const KIrc::Entity::Ptr &from, const KIrc::Entity::Ptr &to, const QString &text)
+		: QEvent(Type), m_eventId(eventId), m_from(from), m_to(KIrc::Entity::List() << to), m_text(text)
 	{ }
 
+	TextEvent(const QString &eventId, const KIrc::Entity::Ptr &from, const KIrc::Entity::List &to, const QString &text)
+		: QEvent(Type), m_eventId(eventId), m_from(from), m_to(to), m_text(text)
+	{ }
+
+	QString eventId() const { return m_eventId; }
+	KIrc::Entity::Ptr from() const { return m_from; }
+	KIrc::Entity::List to() const { return m_to; }
+	QString text() const { return m_text; }
+
 private:
+	QString m_eventId;
+	KIrc::Entity::Ptr m_from;
+	KIrc::Entity::List m_to;
 	QString m_text;
-	Verbosity m_verbosity;
 };
 
 }

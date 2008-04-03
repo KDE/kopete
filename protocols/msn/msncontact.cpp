@@ -23,6 +23,7 @@
 
 #include <qcheckbox.h>
 #include <QList>
+#include <QImageReader>
 
 #undef KDE_NO_COMPAT
 #include <kaction.h>
@@ -689,7 +690,10 @@ void MSNContact::setDisplayPicture(KTemporaryFile *f)
 	entry.name = contactId();
 	entry.category = Kopete::AvatarManager::Contact;
 	entry.contact = this;
-	entry.image = QImage(f->fileName());
+
+	f->open();
+	entry.image = QImageReader(f).read();
+	f->close();
 
 	entry = Kopete::AvatarManager::self()->add(entry);
 
@@ -713,8 +717,8 @@ void MSNContact::setObject(const QString &obj)
 	removeProperty( Kopete::Global::Properties::self()->photo()  ) ;
 	emit displayPictureChanged();
 
-	KConfigGroup config(KGlobal::config(), "MSN");
-	if ( config.readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
+    KConfigGroup *config=account()->configGroup();
+	if ( config->readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
 			 && account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }

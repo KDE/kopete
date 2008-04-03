@@ -31,341 +31,177 @@
    <item row="0" column="0" >
     <widget class="QTabWidget" name="tabWidget3" >
      <property name="currentIndex" >
-      <number>0</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
        <string>&amp;General</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>6</number>
-       </property>
-       <item row="4" column="0" colspan="2" >
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>6</number>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="lblNick" >
+         <property name="text" >
+          <string>Nickname:</string>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="lblBirthday" >
-           <property name="text" >
-            <string>Birthday:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="leBirthday" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        </widget>
        </item>
-       <item row="3" column="0" colspan="2" >
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>6</number>
+       <item row="0" column="1" colspan="2" >
+        <widget class="QLineEdit" name="leNick" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="lblHomepage" >
-           <property name="text" >
-            <string>Homepage:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="Q3WidgetStack" name="wsHomepage" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize" >
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <widget class="QWidget" name="page" >
-            <property name="geometry" >
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>647</width>
-              <height>20</height>
-             </rect>
-            </property>
-            <widget class="KUrlLabel" name="urlHomepage" >
-             <property name="geometry" >
-              <rect>
-               <x>0</x>
-               <y>5</y>
-               <width>450</width>
-               <height>18</height>
-              </rect>
-             </property>
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </widget>
-           <widget class="QWidget" name="page" >
-            <property name="geometry" >
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>100</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <widget class="QLineEdit" name="leHomepage" >
-             <property name="geometry" >
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>450</width>
-               <height>25</height>
-              </rect>
-             </property>
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </widget>
-          </widget>
-         </item>
-        </layout>
+        </widget>
        </item>
-       <item row="5" column="0" colspan="2" >
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>6</number>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="lblName" >
+         <property name="text" >
+          <string>Full name:</string>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="lblTimezone" >
-           <property name="text" >
-            <string>Timezone:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="leTimezone" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        </widget>
        </item>
-       <item row="2" column="0" colspan="2" >
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>6</number>
+       <item row="1" column="1" colspan="2" >
+        <widget class="QLineEdit" name="leName" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
+         <property name="text" >
+          <string/>
          </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="lblJID" >
-           <property name="text" >
-            <string>Jabber ID:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="leJID" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        </widget>
        </item>
-       <item row="1" column="0" colspan="2" >
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>6</number>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="lblJID" >
+         <property name="text" >
+          <string>Jabber ID:</string>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="lblName" >
-           <property name="text" >
-            <string>Full name:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="leName" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text" >
-            <string/>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        </widget>
        </item>
-       <item row="0" column="0" colspan="2" >
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>6</number>
+       <item row="2" column="1" colspan="2" >
+        <widget class="QLineEdit" name="leJID" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="lblNick" >
-           <property name="text" >
-            <string>Nickname:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="leNick" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        </widget>
        </item>
-       <item row="7" column="0" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="lblHomepage" >
+         <property name="text" >
+          <string>Homepage:</string>
          </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
+        </widget>
+       </item>
+       <item row="3" column="1" colspan="2" >
+        <widget class="Q3WidgetStack" name="wsHomepage" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="sizeHint" >
+         <property name="minimumSize" >
           <size>
-           <width>20</width>
-           <height>20</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
-        </spacer>
+         <widget class="QWidget" name="page" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>539</width>
+            <height>18</height>
+           </rect>
+          </property>
+          <widget class="KUrlLabel" name="urlHomepage" >
+           <property name="geometry" >
+            <rect>
+             <x>9</x>
+             <y>5</y>
+             <width>441</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="page" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>100</width>
+            <height>30</height>
+           </rect>
+          </property>
+          <widget class="QLineEdit" name="leHomepage" >
+           <property name="geometry" >
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>450</width>
+             <height>25</height>
+            </rect>
+           </property>
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </widget>
+        </widget>
        </item>
-       <item row="7" column="1" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
+       <item row="4" column="0" >
+        <widget class="QLabel" name="lblBirthday" >
+         <property name="text" >
+          <string>Birthday:</string>
          </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
-       <item row="6" column="0" colspan="2" >
+       <item row="4" column="1" colspan="2" >
+        <widget class="QLineEdit" name="leBirthday" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" >
+        <widget class="QLabel" name="lblTimezone" >
+         <property name="text" >
+          <string>Timezone:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" colspan="2" >
+        <widget class="QLineEdit" name="leTimezone" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="3" >
         <widget class="QGroupBox" name="groupBox1" >
          <property name="title" >
           <string>Photo</string>
@@ -466,6 +302,38 @@
          </layout>
         </widget>
        </item>
+       <item row="7" column="0" colspan="2" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>362</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="7" column="2" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>362</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
@@ -511,12 +379,18 @@
          <property name="verticalSpacing" >
           <number>6</number>
          </property>
-         <item row="4" column="0" >
-          <widget class="QLabel" name="lblState" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="lblStreet" >
            <property name="text" >
-            <string>Postal code:</string>
+            <string>Street:</string>
            </property>
           </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLineEdit" name="leHomeStreet" />
+         </item>
+         <item row="1" column="1" >
+          <widget class="QLineEdit" name="leHomeExtAddr" />
          </item>
          <item row="2" column="0" >
           <widget class="QLabel" name="lblPOBox" >
@@ -525,8 +399,8 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1" >
-          <widget class="QLineEdit" name="leHomeExtAddr" />
+         <item row="2" column="1" >
+          <widget class="QLineEdit" name="leHomePOBox" />
          </item>
          <item row="3" column="0" >
           <widget class="QLabel" name="lblCity" >
@@ -535,23 +409,43 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="1" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>16</height>
-            </size>
-           </property>
-          </spacer>
+         <item row="3" column="1" >
+          <widget class="QLineEdit" name="leHomeCity" />
          </item>
-         <item rowspan="2" row="6" column="1" >
+         <item row="4" column="0" >
+          <widget class="QLabel" name="lblState" >
+           <property name="text" >
+            <string>Postal code:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1" >
+          <widget class="QLineEdit" name="leHomePostalCode" />
+         </item>
+         <item row="5" column="0" >
+          <widget class="QLabel" name="lblCountry" >
+           <property name="text" >
+            <string>Country:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1" >
+          <widget class="QLineEdit" name="leHomeCountry" />
+         </item>
+         <item row="6" column="0" >
+          <widget class="QLabel" name="lblEmail" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text" >
+            <string>Email:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1" >
           <widget class="Q3WidgetStack" name="wsHomeEmail" >
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
@@ -564,8 +458,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>644</width>
-              <height>26</height>
+              <width>650</width>
+              <height>18</height>
              </rect>
             </property>
             <widget class="KUrlLabel" name="urlHomeEmail" >
@@ -601,40 +495,7 @@
            </widget>
           </widget>
          </item>
-         <item row="5" column="0" >
-          <widget class="QLabel" name="lblCountry" >
-           <property name="text" >
-            <string>Country:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" >
-          <widget class="QLabel" name="lblStreet" >
-           <property name="text" >
-            <string>Street:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0" >
-          <widget class="QLabel" name="lblEmail" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text" >
-            <string>Email:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1" >
-          <widget class="QLineEdit" name="leHomePOBox" />
-         </item>
-         <item row="4" column="1" >
-          <widget class="QLineEdit" name="leHomePostalCode" />
-         </item>
-         <item rowspan="2" row="7" column="0" >
+         <item row="7" column="0" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
@@ -650,14 +511,21 @@
            </property>
           </spacer>
          </item>
-         <item row="5" column="1" >
-          <widget class="QLineEdit" name="leHomeCountry" />
-         </item>
-         <item row="3" column="1" >
-          <widget class="QLineEdit" name="leHomeCity" />
-         </item>
-         <item row="0" column="1" >
-          <widget class="QLineEdit" name="leHomeStreet" />
+         <item row="7" column="1" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>16</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -811,8 +679,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>644</width>
-              <height>26</height>
+              <width>650</width>
+              <height>24</height>
              </rect>
             </property>
             <widget class="KUrlLabel" name="urlWorkEmail" >

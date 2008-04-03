@@ -1,5 +1,5 @@
 /*
-    kircentitymanager.h - IRC Entity Manager
+    kirccontext.h - IRC Context
 
     Copyright (c) 2005-2007 by Michel Hermier <michel.hermier@gmail.com>
 
@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef KIRCENTITYMANAGER_H
-#define KIRCENTITYMANAGER_H
+#ifndef KIRCCONTEXT_H
+#define KIRCCONTEXT_H
 
 #include "kircentity.h"
 
@@ -25,47 +25,65 @@ class QByteArray;
 namespace KIrc
 {
 
-class Entity;
+class ContextPrivate;
+class Event;
 
 /**
  * @author Michel Hermier <michel.hermier@gmail.com>
  */
-class EntityManager
+class KIRC_EXPORT Context
 	: public QObject
+//	, public KIrc::CommandHandlerInterface
+//	, public KIrc::MessageHandlerInterface
 {
 	Q_OBJECT
+	Q_DECLARE_PRIVATE(KIrc::Context)
 
-	friend class Entity;
-
-public:
-	explicit EntityManager(QObject *parent = 0);
-	~EntityManager();
+//	Q_INTERFACES(Kirc::CommandHandlerInterface Kirc::MessageHandlerInterface)
 
 public:
+	explicit Context(QObject *parent = 0);
+	~Context();
+
+public:
+	QTextCodec *defaultCodec() const;
+	void setDefaultCodec(QTextCodec *codec);
+
+//	Entity::List anonymous();
+
 	Entity::List entities() const;
 //	Entity::List entitiesByHost(...) const;
 //	Entity::List entitiesByServer(...) const;
 //	Entity::List entitiesByType(...) const;
 
-	Entity::Ptr entityFromName(const QByteArray &name) const;
-//	Entity::Ptr entityFromName(const QByteArray &name, bool );
+	Entity::Ptr entityFromName(const QByteArray &name);
 
 	Entity::List entitiesFromNames(const QList<QByteArray> &names);
 
-	Entity::List entitiesFromNames(const QByteArray &names, char sep);
+	Entity::List entitiesFromNames(const QByteArray &names, char sep = ',');
 
+public:
+	void postEvent(KIrc::Event *event);
+
+#if 0
 protected:
 	void add(Entity *entity);
 //	void add(const QList<Entity *> &entities);
 
 	void remove(Entity *entity);
 //	void remove(const QList<Entity *> &entities);
+#endif
+
+public:
+	/* This command allow to set and get values.
+	 * Syntax: SET variable [new_value]
+	 */
+//	Status SET();
+
+//	Status execute();
 
 private:
-	Q_DISABLE_COPY(EntityManager)
-
-	class Private;
-	Private * const d;
+	Q_DISABLE_COPY(Context)
 };
 
 }

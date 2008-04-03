@@ -42,18 +42,10 @@
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
-//#include <ksyntaxhighlighter.h>
-
 
 #include <QTimer>
 #include <QSplitter>
-
-//Added by qt3to4:
-#include <QPixmap>
-#include <QDropEvent>
-#include <QDragEnterEvent>
 #include <Q3UriDrag>
-#include <QObject>
 
 K_PLUGIN_FACTORY( ChatWindowPluginFactory, registerPlugin<ChatWindowPlugin>(); )
 K_EXPORT_PLUGIN( ChatWindowPluginFactory( "kopete_chatwindow" ) )
@@ -160,6 +152,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 		slotContactAdded( mgr->members()[i], true );
 
 	setFocusProxy( editPart()->widget() );
+	m_messagePart->widget()->setFocusProxy( editPart()->widget() );
 	editPart()->widget()->setFocus();
 
 	setCaption( m_manager->displayName(), false );
@@ -286,20 +279,12 @@ void ChatView::raise( bool activate )
 #endif
 	if(m_mainWindow->isMinimized())
 	{
-		m_mainWindow->showNormal();
+		KWindowSystem::unminimizeWindow( m_mainWindow->winId());
 	}
 
 
 	m_mainWindow->raise();
 
-	/* Removed Nov 2003
-	According to Zack, the user double-clicking a contact is not valid reason for a non-pager
-	to grab window focus. While I don't agree with this, and it runs contradictory to every other
-	IM out there, commenting this code out to agree with KWin policy.
-
-	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
-		- Jason K
-	*/
 	//Will not activate window if user was typing
 	if ( activate )
 		KWindowSystem::activateWindow( m_mainWindow->winId() );

@@ -84,6 +84,8 @@ public:
 
 	enum Encoding {
 		UserDefined,
+		ASCII,
+		LATIN1,
 		UTF8,
 		UCS2
 	};
@@ -111,6 +113,9 @@ public:
 
 	/** get the message text */
 	QString text( QTextCodec* codec ) const;
+
+	/** get best encoding for text */
+	static Message::Encoding encodingForText( const QString& newText, bool allowUCS2 = false );
 
 	/** set the message text */
 	void setText( Encoding newEncoding, const QString& newText, QTextCodec* codec  = 0);

@@ -90,12 +90,12 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		//remove me after we can change account ids (Matt)
 		d->ui->m_login->setReadOnly( true );
 		d->ui->m_autologin->setChecked( account->excludeConnect()  );
-		if ( ( static_cast<MSNAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<MSNAccount*>(account)->serverPort() != 1863) ) {
+		if ( ( static_cast<MSNAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<MSNAccount*>(account)->serverPort() != 1863) || ( static_cast<MSNAccount*>(account)->useHttpMethod() ) ) {
 			d->ui->optionOverrideServer->setChecked( true );
 		}
 
 		d->ui->optionUseHttpMethod->setChecked( static_cast<MSNAccount*>(account)->useHttpMethod() );
-		
+
 		MSNContact *myself = static_cast<MSNContact *>( account->myself() );
 
 		d->ui->m_displayName->setText( myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() );
@@ -135,6 +135,12 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 		d->ui->m_useDisplayPicture->setChecked( config->readEntry( "exportCustomPicture", false ));
 
+		d->ui->NotifyNewChat->setChecked( config->readEntry( "NotifyNewChat", false ));
+		d->ui->DownloadPicture->setCurrentIndex( config->readEntry( "DownloadPicture", 1 ));
+		d->ui->useCustomEmoticons->setChecked( config->readEntry( "useCustomEmoticons", true ));
+		d->ui->exportEmoticons->setChecked( config->readEntry( "exportEmoticons", false ));
+		d->ui->SendClientInfo->setChecked( config->readEntry( "SendClientInfo", true ));
+		d->ui->SendTypingNotification->setChecked( config->readEntry( "SendTypingNotification", true ));
 	}
 	else
 	{
@@ -169,6 +175,13 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	account()->setExcludeConnect( d->ui->m_autologin->isChecked() );
 	d->ui->m_password->save( &static_cast<MSNAccount *>(account())->password() );
 
+	config->writeEntry( "NotifyNewChat", d->ui->NotifyNewChat->isChecked() );
+	config->writeEntry( "DownloadPicture", d->ui->DownloadPicture->currentIndex() );
+	config->writeEntry( "useCustomEmoticons", d->ui->useCustomEmoticons->isChecked() );
+	config->writeEntry( "exportEmoticons", d->ui->exportEmoticons->isChecked() );
+	config->writeEntry( "SendClientInfo", d->ui->SendClientInfo->isChecked() );
+	config->writeEntry( "SendTypingNotification", d->ui->SendTypingNotification->isChecked() );
+	
 	config->writeEntry( "exportCustomPicture", d->ui->m_useDisplayPicture->isChecked() );
 	if (d->ui->optionOverrideServer->isChecked() ) {
 		config->writeEntry( "serverName", d->ui->m_serverName->text() );

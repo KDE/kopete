@@ -116,7 +116,7 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 {
 	if( readConfig() )
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << "Succesfully read config.";
+		kDebug(TELEPATHY_DEBUG_AREA) << "Successfully read config.";
 		kDebug(TELEPATHY_DEBUG_AREA) << "Connecting to connection manager " << connectionManager() << " on protocol " << connectionProtocol();
 		ConnectionManager *connectionManager = d->getConnectionManager();
 		

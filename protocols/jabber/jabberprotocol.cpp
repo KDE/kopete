@@ -163,7 +163,7 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 	else
 	{
 		JabberTransport *transport = dynamic_cast < JabberTransport * >(account);
-		if(!transport)
+		if(!transport || !transport->account()->client() )
 			return 0L;
 		dlgRegister *registerDialog = new dlgRegister (transport->account(), transport->myself()->contactId());
 		registerDialog->show (); 
@@ -493,7 +493,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 		
 		if(action=="invite" && url.hasQueryItem("jid") )
 		{
-			//NOTE: this is the obsolete, NOT RECOMMANDED protocol.
+			//NOTE: this is the obsolete, NOT RECOMMENDED protocol.
 			//      iris doesn't implement groupchat yet
 			//NOTE: This code is duplicated in JabberGroupChatManager::inviteContact
 			XMPP::Message jabberMessage;

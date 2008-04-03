@@ -129,7 +129,7 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 
 	QByteArray header(638, '\0');
 	QDataStream writer( &header,QIODevice::WriteOnly);
-	writer.setVersion(QDataStream::Qt_3_1);
+	writer.setVersion(QDataStream::Qt_3_3);
 	writer.setByteOrder(QDataStream::LittleEndian);
 
 	// Write the header length to the stream.
@@ -142,10 +142,11 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 	// TODO support file preview. For now disable file preview.
 	writer << (qint32)1;
 	// Write the file name in utf-16 to the stream.
-	QTextStream ts(header, QIODevice::WriteOnly);
+	QTextStream ts(&header, QIODevice::WriteOnly);
 	ts.setCodec(QTextCodec::codecForName("UTF-16"));
 	ts.device()->seek(20);
 	ts << path.section('/', -1);
+    ts.flush();
 	// NOTE Background Sharing base64 [540..569]
 	// TODO add support for background sharing.
 	// Write file exchange type to the stream.
@@ -460,7 +461,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				// Decode the file context from base64 encoding.
                                 context = QByteArray::fromBase64(regex.cap(1).toUtf8());
 				QDataStream reader( &context,QIODevice::ReadOnly);
-				reader.setVersion(QDataStream::Qt_3_1);
+				reader.setVersion(QDataStream::Qt_3_3);
 				reader.setByteOrder(QDataStream::LittleEndian);
 				//Retrieve the file info from the context field.
 				// File Size [8..15] Int64
@@ -476,7 +477,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				kDebug(14140) << flag;
 				// FileName UTF16 (Unicode) [19..539]
 				QByteArray bytes;
-				bytes.reserve(520);
+				bytes.resize(520);
 				reader.readRawData(bytes.data(), bytes.size());
 				QTextStream ts(bytes, QIODevice::ReadOnly);
 				ts.setCodec(QTextCodec::codecForName("UTF-16"));

@@ -20,6 +20,8 @@
 
 #include "kircglobal.h"
 
+#include "kircentity.h"
+
 #include <QtCore/QSharedDataPointer>
 #include <QtCore/QStringList>
 
@@ -29,6 +31,8 @@ namespace KIrc
 {
 
 class Context;
+class EntityManager;
+
 class MessagePrivate;
 
 /*

@@ -57,17 +57,6 @@ target_link_libraries(rateinfotest ${LIBOSCAR_TEST_LIBRARIES})
 
 ########### next target ###############
 
-set(offlinemessagestest_SRCS offlinemessagestest.cpp oscartestbase.cpp )
-
-
-kde4_add_unit_test(offlinemessagestest  ${offlinemessagestest_SRCS})
-
-target_link_libraries(offlinemessagestest ${LIBOSCAR_TEST_LIBRARIES})
-
-
-
-########### next target ###############
-
 set(filetransfertest_SRCS filetransfertest.cpp oscartestbase.cpp )
 
 

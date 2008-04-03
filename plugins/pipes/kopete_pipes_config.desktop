@@ -1,8 +1,7 @@
 [Desktop Entry]
-Encoding=UTF-8
 Icon=pipe
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_kopete_pipes
 X-KDE-FactoryName=kcm_kopete_pipes
@@ -18,9 +17,11 @@ Name[pt]=Canais
 Name[pt_BR]=Canais
 Name[sv]=Skicka genom
 Name[tr]=Borular
+Name[x-test]=xxPipesxx
 Name[zh_CN]=管道
 Name[zh_TW]=管線
 Comment=Pipe messages through an external program or script
+Comment[da]=Videreled beskeder gennem et eksternt program eller script
 Comment[el]=Διασωλήνωση μηνύματος μέσω εξωτερικού προγράμματος ή σεναρίου κελύφους
 Comment[ga]=Píopáil teachtaireachtaí trí ríomhchlár nó script sheachtrach
 Comment[km]=សារ​បំពង់​តាម​កម្មវិធី ឬ​ស្គ្រីប​ខាងក្រៅ
@@ -29,5 +30,7 @@ Comment[pt]=Encaminhar as mensagens por um programa externo
 Comment[pt_BR]=Encaminhar as mensagens por um programa externo
 Comment[sv]=Skicka meddelanden genom ett externt program eller skript
 Comment[tr]=İletileri bir dış uygulama ya da betik üzerinden borula
+Comment[uk]=Надсилати повідомлення через через зовнішню програму чи скрипт
+Comment[x-test]=xxPipe messages through an external program or scriptxx
 Comment[zh_CN]=通过外部程序或脚本管道处理信息
 Comment[zh_TW]=通透外部程式或文稿的管線訊息

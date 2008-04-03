@@ -36,6 +36,10 @@ public:
 	{
 		ui.setupUi( this );
 
+		ui.statusTitle->setClearButtonShown( true );
+		ui.setButton->setGuiItem( KStandardGuiItem::Ok );
+		ui.clearButton->setGuiItem( KGuiItem( i18n( "C&lear" ), "edit-clear" ) );
+
 		setFocusPolicy( Qt::StrongFocus );
 		setFocusProxy( ui.statusTitle );
 	}

@@ -365,10 +365,7 @@ void IncomingTransfer::slotSocketRead()
 	kDebug(14140) << available << ", bytes available.";
 	if(available > 0)
 	{
-		QByteArray buffer;
-		buffer.reserve(available);
-		m_socket->read(buffer.data(), buffer.size());
-
+		QByteArray buffer = m_socket->read(available);
 		if(QString(buffer) == "foo"){
 			kDebug(14140) << "Connection Check.";
 		}

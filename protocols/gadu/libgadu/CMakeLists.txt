@@ -11,7 +11,7 @@ target_link_libraries(gadu_kopete pthread ${OPENSSL_LIBRARIES} )
 
 set_target_properties(gadu_kopete PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
-install(TARGETS gadu_kopete  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS gadu_kopete ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 

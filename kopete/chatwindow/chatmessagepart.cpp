@@ -854,7 +854,10 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	// Replace sender (contact nick)
 	resultHTML = resultHTML.replace( QLatin1String("%sender%"), nickLink+nick+"</a>" );
 	// Replace time, by default display only time and display seconds(that was true means).
-	resultHTML = resultHTML.replace( QLatin1String("%time%"), KGlobal::locale()->formatTime(message.timestamp().time(), true) );
+	if ( Kopete::BehaviorSettings::showDates() )
+		resultHTML = resultHTML.replace( QLatin1String("%time%"), KGlobal::locale()->formatDateTime(message.timestamp(), KLocale::ShortDate, true) );
+	else
+		resultHTML = resultHTML.replace( QLatin1String("%time%"), KGlobal::locale()->formatTime(message.timestamp().time(), true) );
 	// Replace %screenName% (contact ID)
 	resultHTML = resultHTML.replace( QLatin1String("%senderScreenName%"), nickLink+Qt::escape(contactId)+"</a>" );
 	// Replace service name (protocol name)

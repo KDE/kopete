@@ -6,21 +6,21 @@ include_directories(
 )
 
 set(libkirc_SRCS
-	kernel/kbytearrayescaper.cpp
-	kernel/kbytearraylist.cpp
 	kernel/kcmdline.cpp
 
+	kernel/kircbytearrayescaper.cpp
 #	kernel/kirccommand.cpp
 	kernel/kircconst.cpp 
 	kernel/kirccontext.cpp
-	kernel/kircentity.cpp 
+	kernel/kircentity.cpp
 	kernel/kircevent.cpp 
+	kernel/kirceventhandler.cpp
+	kernel/kirceventhandlerfactory.cpp
+	kernel/kirceventhandlerplugin.cpp
 	kernel/kircmessage.cpp 
 	kernel/kircmessageutil.cpp 
-	kernel/kircplugin.cpp
 	kernel/kircsocket.cpp 
 #	kernel/kircstdmessages.cpp 
-	kernel/kirctask.cpp
 )
 
 kde4_add_library(kirc SHARED ${libkirc_SRCS})
@@ -28,20 +28,11 @@ kde4_add_library(kirc SHARED ${libkirc_SRCS})
 target_link_libraries(kirc ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY})
 set_target_properties(kirc PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
-install(TARGETS kirc  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS kirc ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 set(libkirc_client_SRCS
+	client/kircclienteventhandler.cpp
 	client/kircclientsocket.cpp 
-#	client/kirccommand.cpp
-#	client/kirccommandhandler.cpp
-#	client/kircclientcommandhandler.cpp 
-	client/kircclientcommands.cpp 
-#	client/kirctransfer.cpp 
-#	client/kirctransferhandler.cpp 
-#	client/kirctransferserver.cpp 
-
-#	client/tasks/kircclienttask.cpp
-#	client/tasks/kirci18ntask.cpp
 )
 
 kde4_add_library(kirc_client SHARED ${libkirc_client_SRCS})
@@ -49,7 +40,7 @@ kde4_add_library(kirc_client SHARED ${libkirc_client_SRCS})
 target_link_libraries(kirc_client kirc ${KDE4_KDECORE_LIBS} ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY})
 set_target_properties(kirc_client PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
-install(TARGETS kirc_client DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS kirc_client ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 # add_subdirectory( plugins )
 

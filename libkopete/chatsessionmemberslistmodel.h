@@ -75,6 +75,11 @@ private slots:
 	 */
 	void slotSessionChanged();
 
+	/**
+	 * Called when session has been closed
+	 */
+	void slotSessionClosed();
+
 private:
 	Kopete::ChatSession *m_session;
 };

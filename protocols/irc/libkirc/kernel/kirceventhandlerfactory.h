@@ -1,9 +1,7 @@
 /*
-    kirctask.cpp - IRC Task.
+    kirceventhandlerfactory.h - IRC event handler factory.
 
-    Copyright (c) 2006-2007 by Michel Hermier <michel.hermier@gmail.com>
-
-    Kopete    (c) 2006-2007 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2008      by Michel Hermier <michel.hermier@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -15,24 +13,26 @@
     *************************************************************************
 */
 
-#include "kirctask.moc"
+#ifndef KIRCEVENTHANDLERFACTORY_H
+#define KIRCEVENTHANDLERFACTORY_H
 
-#include <kdebug.h>
+#include "kircglobal.h"
 
-using namespace KIrc;
+#include <QtCore/QStringList>
 
-Task::Task(QObject *parent)
-	: QObject(parent)
-	, d(0)
+namespace KIrc
 {
+
+class EventHandler;
+
+class KIRC_EXPORT EventHandlerFactory
+{
+public:
+	static QStringList keys();
+	static KIrc::EventHandler *create(const QString &key, QObject *parent);
+};
+
 }
 
-Task::~Task()
-{
-//	delete d;
-}
-
-void Task::ircEvent(KIrc::Context *, KIrc::Event *)
-{
-}
+#endif
 

@@ -1,9 +1,9 @@
 /*
-    kircclientcommandhandler.h - IRC Client Command handler.
+    kircsocket.cpp - IRC socket.
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
-    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
     Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2006      by Tommi Rantala <tommi.rantala@cs.helsinki.fi>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -17,38 +17,42 @@
     *************************************************************************
 */
 
-#ifndef KIRCCLIENTCOMMANDHANDLER_H
-#define KIRCCLIENTCOMMANDHANDLER_H
+#ifndef KIRCSOCKET_P_H
+#define KIRCSOCKET_P_H
 
-#include "kirccommandhandler.h"
+#include "kircsocket.h"
+
+#include <QtNetwork/QAbstractSocket>
 
 namespace KIrc
 {
 
-class Message;
+class Context;
 
-/**
- * @author Nick Betcher <nbetcher@kde.org>
- * @author Michel Hermier <michel.hermier@gmail.com>
- * @author Jason Keirstead <jason@keirstead.org>
- */
-class ClientCommandHandler
-	: public KIrc::CommandHandler
+class KIRC_EXPORT SocketPrivate
+	: public QObject
 {
 	Q_OBJECT
+	Q_DECLARE_PUBLIC(KIrc::Socket)
 
 public:
-	explicit ClientCommandHandler(QObject *parent = 0);
-	~ClientCommandHandler();
+	explicit SocketPrivate(KIrc::Socket *socket);
+
+	void setSocket(QAbstractSocket *socket);
+	void setConnectionState(Socket::ConnectionState newstate);
 
 public slots:
-	void handleMessage(KIrc::Message msg);
+	void socketGotError(QAbstractSocket::SocketError);
+	void socketReadyRead();
+	virtual void socketStateChanged(QAbstractSocket::SocketState newstate);
 
-private:
-	Q_DISABLE_COPY(ClientCommandHandler)
+public:
+	KIrc::Socket *q_ptr;
 
-	class Private;
-	Private * const d;
+	QUrl url;
+	QAbstractSocket *socket;
+	KIrc::Socket::ConnectionState state;
+	KIrc::Entity::Ptr owner;
 };
 
 }

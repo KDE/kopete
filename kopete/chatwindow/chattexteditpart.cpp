@@ -401,8 +401,12 @@ void ChatTextEditPart::addText( const QString &text )
 
 void ChatTextEditPart::setContents( const Kopete::Message &message )
 {
-	textEdit()->setText( useRichText() ? message.escapedBody() : message.plainBody() );
-
+	if ( useRichText() )
+		textEdit()->setHtml ( message.escapedBody() );
+	else
+		textEdit()->setPlainText ( message.plainBody() );
+	textEdit()->moveCursor ( QTextCursor::End );
+	
 	setFont( message.font() );
 	setTextColor( message.foregroundColor() );
 // 	setBackgroundColorColor( message.backgroundColor() );

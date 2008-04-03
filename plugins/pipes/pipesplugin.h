@@ -109,7 +109,7 @@ class PipesPlugin : public Kopete::Plugin
 
 };
 
-Q_DECLARE_METATYPE ( PipesPlugin::PipeDirection );
-Q_DECLARE_METATYPE ( PipesPlugin::PipeContents );
+Q_DECLARE_METATYPE ( PipesPlugin::PipeDirection )
+Q_DECLARE_METATYPE ( PipesPlugin::PipeContents )
 
 #endif

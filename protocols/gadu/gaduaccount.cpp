@@ -1,3 +1,4 @@
+// vim: set noet ts=4 sts=4 sw=4 :
 // -*- Mode: c++; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003-2004 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
@@ -526,7 +527,7 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 			connectionFailed( GG_FAILURE_PASSWORD );
 		}
 		else {
-			p->loginInfo.password		= password().cachedValue();
+			p->loginInfo.password		= p->textcodec_->fromUnicode(password().cachedValue());
 			p->loginInfo.useTls		= p->connectWithSSL;
 			p->loginInfo.status		= status;
 			p->loginInfo.statusDescr	= dscr;

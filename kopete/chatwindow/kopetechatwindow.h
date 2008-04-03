@@ -235,6 +235,7 @@ private:
 protected:
 	virtual void closeEvent( QCloseEvent *e );
 	virtual void changeEvent( QEvent *e );
+	virtual void resizeEvent( QResizeEvent *e);
 };
 
 #endif

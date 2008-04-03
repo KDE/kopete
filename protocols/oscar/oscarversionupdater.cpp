@@ -90,13 +90,13 @@ void OscarVersionUpdater::initICQVersionInfo()
 	kDebug(OSCAR_RAW_DEBUG) ;
 	KConfigGroup config( KGlobal::config(), "ICQVersion" );
 	
-	mICQVersion.clientString = config.readEntry( "ClientString", "ICQBasic" );
+	mICQVersion.clientString = config.readEntry( "ClientString", "ICQ Client" );
 	mICQVersion.clientId = config.readEntry( "ClientId", "0x010A" ).toUShort( 0, 0 );
-	mICQVersion.major = config.readEntry( "Major", "0x0014" ).toUShort( 0, 0 );
-	mICQVersion.minor = config.readEntry( "Minor", "0x0034" ).toUShort( 0, 0 );
+	mICQVersion.major = config.readEntry( "Major", "0x0006" ).toUShort( 0, 0 );
+	mICQVersion.minor = config.readEntry( "Minor", "0x0000" ).toUShort( 0, 0 );
 	mICQVersion.point = config.readEntry( "Point", "0x0000" ).toUShort( 0, 0 );
-	mICQVersion.build = config.readEntry( "Build", "0x0BB8" ).toUShort( 0, 0 );
-	mICQVersion.other = config.readEntry( "Other", "0x0000043D" ).toUInt( 0, 0 );
+	mICQVersion.build = config.readEntry( "Build", "0x179B" ).toUShort( 0, 0 );
+	mICQVersion.other = config.readEntry( "Other", "0x00007535" ).toUInt( 0, 0 );
 	mICQVersion.country = config.readEntry( "Country", "us" );
 	mICQVersion.lang = config.readEntry( "Lang", "en" );
 }

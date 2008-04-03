@@ -104,7 +104,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mMainWidget->searchLine->setFocus();
 	mMainWidget->searchLine->setTrapReturnKey (true);
 	mMainWidget->searchLine->setTrapReturnKey(true);
-	mMainWidget->searchErase->setIcon( QIcon(BarIcon("edit-clear-locationbar-ltr")) );
+	mMainWidget->searchLine->setClearButtonShown(true);
 
 	mMainWidget->contactComboBox->addItem(i18n("All"));
 	mMetaContactList = Kopete::ContactList::self()->metaContacts();
@@ -141,6 +141,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mHtmlView->setFocusPolicy(Qt::NoFocus);
 	mHtmlView->setSizePolicy(
 	QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+	l->setMargin(0);
 	l->addWidget(mHtmlView);
 
 	QTextStream( &fontSize ) << Kopete::AppearanceSettings::self()->chatFont().pointSize();
@@ -158,7 +159,6 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	connect(mMainWidget->searchButton, SIGNAL(clicked()), this, SLOT(slotSearch()));
 	connect(mMainWidget->searchLine, SIGNAL(returnPressed()), this, SLOT(slotSearch()));
 	connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
-	connect(mMainWidget->searchErase, SIGNAL(clicked()), this, SLOT(slotSearchErase()));
 	connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
 	connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
 	connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)));
@@ -394,7 +394,7 @@ void HistoryDialog::slotSearchTextChanged(const QString& searchText)
 	if (searchText.isEmpty())
 	{
 		mMainWidget->searchButton->setEnabled(false);
-		slotSearchErase();
+		treeWidgetHideElements(false);
 	}
 	else
 	{
@@ -411,14 +411,6 @@ void HistoryDialog::treeWidgetHideElements(bool s)
 		if ( item )
 			item->setHidden(s);
 	}
-}
-
-// Erase the search line, show all date/metacontacts items in the list (accordint to the
-// metacontact selected in the combobox)
-void HistoryDialog::slotSearchErase()
-{
-	mMainWidget->searchLine->clear();
-	treeWidgetHideElements(false);
 }
 
 // Search initialization

@@ -365,7 +365,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 				{
 					QString xhtmlBody = message.escapedBody();
 					
-					// According to JEP-0071 8.9  it is only RECOMMANDED to replace \n with <br/>
+					// According to JEP-0071 8.9  it is only RECOMMENDED to replace \n with <br/>
 					//  which mean that some implementation (gaim 2 beta) may still think that \n are linebreak.  
 					// and considered the fact that KTextEditor generate a well indented XHTML, we need to remove all \n from it
 					//  see Bug 121627
