@@ -19,13 +19,7 @@
 
 #include <kaction.h>
 
-#include "oscarpresence.h"
 #include "xtrazstatus.h"
-
-namespace Kopete
-{
-	class StatusMessage;
-}
 
 namespace Xtraz
 {
@@ -40,7 +34,7 @@ public slots:
 	void triggered();
 
 signals:
-	void triggered( const Oscar::Presence &presence, const Kopete::StatusMessage &reason );
+	void triggered( const Xtraz::Status &status );
 
 private:
 	Xtraz::Status mStatus;

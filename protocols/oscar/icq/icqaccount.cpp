@@ -203,8 +203,8 @@ void ICQAccount::fillActionMenu( KActionMenu *actionMenu )
 	for ( int i = 0; i < xtrazStatusList.count(); i++ )
 	{
 		Xtraz::StatusAction* xtrazAction = new Xtraz::StatusAction( xtrazStatusList.at(i), xtrazStatusMenu );
-		QObject::connect( xtrazAction, SIGNAL(triggered(const Oscar::Presence&, const Kopete::StatusMessage&)),
-		                  this, SLOT(setPresenceTarget(const Oscar::Presence&, const Kopete::StatusMessage&)) );
+		QObject::connect( xtrazAction, SIGNAL(triggered(const Xtraz::Status&)),
+		                  this, SLOT(setPresenceXStatus(const Xtraz::Status&)) );
 		xtrazStatusMenu->addAction( xtrazAction );
 	}
 
@@ -364,13 +364,12 @@ void ICQAccount::setXtrazStatus()
 	Xtraz::ICQStatusDialog dialog;
 	if ( dialog.exec() == QDialog::Accepted )
 	{
-		Xtraz::Status status = dialog.xtrazStatus();
-		setPresenceTarget( status.presence(), Kopete::StatusMessage(status.description(), status.message()) );
+		setPresenceXStatus( dialog.xtrazStatus() );
 
 		if ( dialog.append() )
 		{
 			ICQStatusManager* mgr = static_cast<ICQStatusManager*>( protocol()->statusManager() );
-			mgr->appendXtrazStatus( status );
+			mgr->appendXtrazStatus( dialog.xtrazStatus() );
 		}
 	}
 }
@@ -416,6 +415,19 @@ void ICQAccount::setPresenceTarget( const Oscar::Presence &newPres, const Kopete
 	}
 }
 
+void ICQAccount::setPresenceXStatus( const Xtraz::Status &xStatus )
+{
+	Oscar::Presence pres = presence();
+	Oscar::Presence::Flags flags = pres.flags() & ~Oscar::Presence::StatusTypeMask;
+	pres.setFlags( flags | Oscar::Presence::XStatus );
+	pres.setXtrazStatus( xStatus.status() );
+
+	Kopete::StatusMessage statusMessage;
+	statusMessage.setTitle( xStatus.description() );
+	statusMessage.setMessage( xStatus.message() );
+
+	setPresenceTarget( pres, statusMessage );
+}
 
 void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
