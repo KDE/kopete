@@ -29,6 +29,7 @@ class KAction;
 class KToggleAction;
 
 namespace Kopete { class StatusMessage; }
+namespace Xtraz { class Status; }
 class ICQProtocol;
 class ICQAccount;
 class ICQUserInfoWidget;
@@ -87,7 +88,8 @@ private:
 
 private slots:
 	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString() );
-	
+	void setPresenceXStatus( const Xtraz::Status &xStatus );
+
 	void slotToggleInvisible();
 
 	void slotUserInfo();
