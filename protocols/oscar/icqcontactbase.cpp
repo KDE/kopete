@@ -52,7 +52,6 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 	setPresenceTarget( presence );
 
 	setAwayMessage( message );
-	m_haveAwayMessage = true;
 }
 
 void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )
