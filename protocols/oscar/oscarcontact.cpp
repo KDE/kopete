@@ -62,7 +62,6 @@ OscarContact::OscarContact( Kopete::Account* account, const QString& name,
 	mName = name;
 	mMsgManager = 0L;
 	m_buddyIconDirty = false;
-	m_haveAwayMessage = false;
 	m_oesd = 0;
 
 	setFileCapable( true );
@@ -340,6 +339,8 @@ void OscarContact::setAwayMessage( const QString &message )
 		setProperty( static_cast<OscarProtocol*>( protocol() )->statusMessage, filterAwayMessage( message ) );
 	else
 		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusMessage );
+
+	emit statusMessageChanged();
 }
 
 void OscarContact::changeContactEncoding()
@@ -427,7 +428,6 @@ void OscarContact::receivedStatusMessage( const QString& contact, const QString&
 		return;
 	
 	setAwayMessage( message );
-	m_haveAwayMessage = true;
 }
 
 QString OscarContact::filterAwayMessage( const QString &message ) const

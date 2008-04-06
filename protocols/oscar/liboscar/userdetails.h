@@ -44,6 +44,7 @@ public:
 	Oscar::DWORD dcPort() const; //! DC port number    
     Oscar::WORD dcProtoVersion() const;
 	QDateTime onlineSinceTime() const; //! Online since accessor
+	QDateTime awaySinceTime() const; //! Away since accessor
 	QDateTime memberSinceTime() const; //! Member since accessor
 	int userClass() const; //! User class accessor
 	Oscar::DWORD extendedStatus() const; //!User status accessor
@@ -70,6 +71,7 @@ public:
 	bool userClassSpecified() const { return m_userClassSpecified; }
 	bool memberSinceSpecified() const { return m_memberSinceSpecified; }
 	bool onlineSinceSpecified() const { return m_onlineSinceSpecified; }
+	bool awaySinceSpecified() const { return m_awaySinceSpecified; }
 	bool numSecondsOnlineSpecified() const { return m_numSecondsOnlineSpecified; }
 	bool idleTimeSpecified() const { return m_idleTimeSpecified; }
 	bool extendedStatusSpecified() const { return m_extendedStatusSpecified; }
@@ -104,6 +106,7 @@ private:
 	int m_userClass; /// the class of the user - TLV 0x01
 	QDateTime m_memberSince; /// how long the user's been a member - TLV 0x05
 	QDateTime m_onlineSince; /// how long the contact's been online - TLV 0x03
+	QDateTime m_awaySince; /// how long the contact's been away - TLV 0x29
 	Oscar::DWORD m_numSecondsOnline; /// how long the contact's been online in seconds
 	Oscar::WORD m_idleTime; /// the idle time of the contact - TLV 0x0F
 	Oscar::DWORD m_extendedStatus; /// the extended status of the contact - TLV 0x06
@@ -132,6 +135,7 @@ private:
 	bool m_userClassSpecified;
 	bool m_memberSinceSpecified;
 	bool m_onlineSinceSpecified;
+	bool m_awaySinceSpecified;
 	bool m_numSecondsOnlineSpecified;
 	bool m_idleTimeSpecified;
 	bool m_extendedStatusSpecified;

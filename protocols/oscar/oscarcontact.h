@@ -141,6 +141,9 @@ public slots:
 
 	void requestAuthorization();
 
+signals:
+	void statusMessageChanged();
+
 protected slots:
 	void slotTyping( bool typing );
 
@@ -152,8 +155,7 @@ protected:
 	OContact m_ssiItem;
 	int m_warningLevel;
 	QString m_clientFeatures;
-	bool m_haveAwayMessage;
-	
+
 private:
 	void initActions();
 
