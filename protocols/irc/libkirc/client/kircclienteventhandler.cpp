@@ -522,7 +522,7 @@ void ClientEventHandler::numericReply_255(MessageEvent *ev)
 void ClientEventHandler::numericReply_263(MessageEvent *ev)
 {
 	Entity::Ptr from; Entity::List to;
-	QString text = i18n("Server was too busy to execute %1.").arg(ev->message().argAt(1));
+	QString text = i18n("Server was too busy to execute %1.", ev->message().argAt(1));
 
 	postEvent(ev, "ServerTooBusy", from, to, text);
 }

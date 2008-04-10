@@ -371,7 +371,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 void GroupWiseAccount::slotMessageSendingFailed()
 {
 	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
-				i18nc("Message Sending Failed using the named local account", "Kopete was not able to send the last message sent on account '%1'.\nIf possible, please send the console output from Kopete to <wstephenson@novell.com> for analysis." ).arg( accountId() ) , i18nc("message sending failed using the named local account", "Unable to Send Message on Account '%1'").arg( accountId() ) );
+				i18nc("Message Sending Failed using the named local account", "Kopete was not able to send the last message sent on account '%1'.\nIf possible, please send the console output from Kopete to <wstephenson@novell.com> for analysis.", accountId() ) , i18nc("message sending failed using the named local account", "Unable to Send Message on Account '%1'", accountId() ) );
 }
 
 void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
