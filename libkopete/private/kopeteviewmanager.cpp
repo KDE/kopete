@@ -272,10 +272,11 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			showNotification = ( (!isActiveWindow || Kopete::BehaviorSettings::self()->showEventsIfActive())
 			                     && msg.from());
 		}
-
+		
 		Kopete::MessageEvent *event = 0L;
-		if ( appendMessageEvent && !outgoingMessage && showNotification )
+		if ( (appendMessageEvent && !outgoingMessage) || showNotification )
 		{
+			showNotification = showNotification || d->eventList.isEmpty(); // may happen for internal messages
 			event = new Kopete::MessageEvent(msg,manager);
 			d->eventList.append( event );
 			connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
@@ -328,16 +329,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			connect(event, SIGNAL(done(Kopete::MessageEvent*)) , notify , SLOT(close() ));
 			notify->sendEvent();
 		}
-
-		if( appendMessageEvent )
-		{
-			if ( !outgoingMessage )
-				Kopete::ChatSessionManager::self()->postNewEvent(event);
-		}
-		else if( d->eventList.isEmpty() )
-		{
-			readMessages( manager, outgoingMessage );
-		}
+		if( event )
+			Kopete::ChatSessionManager::self()->postNewEvent(event);
 	}
 }
 
@@ -367,7 +360,7 @@ void KopeteViewManager::slotEventDeleted( Kopete::MessageEvent *event )
     // d->eventList.remove( event );
     d->eventList.removeAll(event);
 
-    // kDebug(14000) ;
+//    kDebug(14000) ;
     Kopete::ChatSession *kmm=event->message().manager();
     if(!kmm)
     {
