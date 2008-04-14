@@ -54,7 +54,7 @@ private slots:
 	void slotInstallChatStyle();
 	int installChatStyle(const KUrl &styleToInstall);
 	void slotDeleteChatStyle();
-	void slotChatStyleSelected();
+	void slotChatStyleSelected(const QString &styleName);
 	void slotChatStyleVariantSelected(const QString &variantName);
 	void emitChanged();
 	void slotGetChatStyles();

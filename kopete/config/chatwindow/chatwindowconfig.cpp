@@ -158,8 +158,8 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	m_tab->addTab(styleWidget, i18n("&Style"));
 	addConfig( KopeteChatWindowSettings::self(), styleWidget );
 
-	connect(m_styleUi.styleList, SIGNAL(selectionChanged(Q3ListBoxItem *)),
-		this, SLOT(slotChatStyleSelected()));
+	connect(m_styleUi.styleList, SIGNAL(currentTextChanged(const QString &)),
+		this, SLOT(slotChatStyleSelected(const QString &)));
 	connect(m_styleUi.variantList, SIGNAL(activated(const QString&)),
 		this, SLOT(slotChatStyleVariantSelected(const QString &)));
 	connect(m_styleUi.deleteButton, SIGNAL(clicked()),
@@ -168,6 +168,10 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 		this, SLOT(slotInstallChatStyle()));
 	connect(m_styleUi.btnGetStyles, SIGNAL(clicked()),
 		this, SLOT(slotGetChatStyles()));
+
+	m_styleUi.deleteButton->setIcon(KIcon("edit-delete"));
+	m_styleUi.installButton->setIcon(KIcon("document-import"));
+	m_styleUi.btnGetStyles->setIcon(KIcon("get-hot-new-stuff"));
 
 	// Show the available styles when the Manager has finish to load the styles.
 	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadChatStyles()));
@@ -300,24 +304,25 @@ void ChatWindowConfig::slotLoadChatStyles()
 	foreach( const QString& styleName, availableStyles )
 	{
 		// Insert style name into the listbox
-		m_styleUi.styleList->insertItem( styleName, 0 );
+		m_styleUi.styleList->insertItem( 0, styleName );
 
 		if( styleName == KopeteChatWindowSettings::self()->styleName() )
 		{
 			kDebug(14000) << "Restoring saved style: " << styleName;
 
-			m_styleUi.styleList->setSelected( m_styleUi.styleList->firstItem(), true );
+			m_styleUi.styleList->setCurrentItem( m_styleUi.styleList->item( 0 ) );
 		}
 	}
 
-	m_styleUi.styleList->sort();
+	m_styleUi.styleList->setSortingEnabled( true );
 }
 
 
-void ChatWindowConfig::slotChatStyleSelected()
+void ChatWindowConfig::slotChatStyleSelected(const QString &styleName)
 {
+	if (styleName.isEmpty())
+		return;
 	// Retrieve variant list.
-	QString styleName = m_styleUi.styleList->selectedItem()->text();
 	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( styleName );
 
 	if(m_currentStyle)
@@ -366,7 +371,7 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 
 	// enable the 'Use compact' checkbox depending on whether the selected variant exists in compact
 	// form
-	QString styleName = m_styleUi.styleList->selectedItem()->text();
+	QString styleName = m_styleUi.styleList->currentItem()->text();
 	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( styleName );
 	if ( m_styleUi.variantList->currentIndex() == 0 ) {
 		m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( "" ) );
@@ -381,7 +386,12 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 
 void ChatWindowConfig::slotInstallChatStyle()
 {
-	int styleInstallReturn = installChatStyle(KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose Chat Window Style to install.") ));
+	KUrl styleUrl = KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose a Chat Window Style to install") );
+
+	if ( styleUrl.isEmpty() ) // dialog got canceled
+		return;
+
+	int styleInstallReturn = installChatStyle( styleUrl );
 
 	switch(styleInstallReturn)
 	{
@@ -433,12 +443,12 @@ int ChatWindowConfig::installChatStyle(const KUrl &styleToInstall)
 
 void ChatWindowConfig::slotDeleteChatStyle()
 {
-	if (!m_styleUi.styleList->selectedItem())
+	if (!m_styleUi.styleList->currentItem())
 	{
 		return; // nothing selected
 	}
 
-	QString styleName = m_styleUi.styleList->selectedItem()->text();
+	QString styleName = m_styleUi.styleList->currentItem()->text();
 	if( ChatWindowStyleManager::self()->removeStyle(styleName) )
 	{
 		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18nc("@info", "The Chat Window Style <resource>%1</resource> was successfully deleted.", styleName));

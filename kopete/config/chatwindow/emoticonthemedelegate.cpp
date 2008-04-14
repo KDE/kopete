@@ -19,29 +19,22 @@
 #include "emoticonthemeitem.h" // for the enum
 #include <QModelIndex>
 #include <QPainter>
+#include <QApplication>
 
 EmoticonThemeDelegate::EmoticonThemeDelegate(QObject *parent)
-: QAbstractItemDelegate(parent)
+: QStyledItemDelegate(parent)
 {
 }
 
 void EmoticonThemeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+	QApplication::style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
+
 	QString theme = index.data().toString();
 
 	QVariant v = index.data(EmoticonThemeItem::EmoticonPixmaps);
 	QList<QVariant> pixmapList = qvariant_cast<QList<QVariant> >(v);
 
-	if (option.state & QStyle::State_Selected)
-		painter->fillRect(option.rect, option.palette.brush(QPalette::Normal, QPalette::Highlight));
-	else
-	{
-		QVariant value = index.data(Qt::BackgroundRole);
-		QPointF oldBO = painter->brushOrigin();
-		painter->setBrushOrigin(option.rect.topLeft());
-		painter->fillRect(option.rect, qvariant_cast<QBrush>(value));
-		painter->setBrushOrigin(oldBO);
-	}
 	painter->save();
 		painter->translate(option.rect.topLeft());
 		if (option.state & QStyle::State_Selected)
