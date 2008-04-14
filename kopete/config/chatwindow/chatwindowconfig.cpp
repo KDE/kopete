@@ -45,21 +45,13 @@
 #include <kmessagebox.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
-#include <kurl.h> // KNewStuff
 #include <kurlrequesterdialog.h>
 #include <krun.h>
 #include <kfiledialog.h>
+#include <kurl.h>
 
-#ifdef __GNUC__
-#warning "Port KNS changes!"
-#endif
-#if 0
-#include <knewstuff/downloaddialog.h> // knewstuff emoticon and chatwindow fetching
-#include <knewstuff/engine.h>         // "
-#include <knewstuff/entry.h>          // "
-#include <knewstuff/knewstuff.h>      // "
-#include <knewstuff/provider.h>       // "
-#endif
+// KNewStuff
+#include <knewstuff2/engine.h>
 
 // For Kopete Chat Window Style configuration and preview.
 #include <kopetechatwindowstylemanager.h>
@@ -145,63 +137,6 @@ void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/){}
 private:
 	FakeIdentity *m_identity;
 };
-
-
-#ifdef __GNUC__
-#warning "Port KNS changes!"
-#endif
-#if 0
-class KopeteStyleNewStuff : public KNewStuff
-{
-public:
-	KopeteStyleNewStuff(const QString &type, QWidget *parentWidget = 0)
-	 : KNewStuff( type, parentWidget)
-	{}
-
-	bool createUploadFile(const QString &)
-	{
-		return false;
-	}
-
-	bool install(const QString &styleFilename)
-	{
-		int styleInstallReturn = 0;
-		styleInstallReturn = ChatWindowStyleManager::self()->installStyle( styleFilename );
-
-		switch(styleInstallReturn)
-		{
-			case ChatWindowStyleManager::StyleInstallOk:
-			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Information, i18n("The Chat Window style was successfully installed."), i18n("Install successful") );
-				return true;
-			}
-			case ChatWindowStyleManager::StyleCannotOpen:
-			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive cannot be opened.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
-				break;
-			}
-			case ChatWindowStyleManager::StyleNoDirectoryValid:
-			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Cannot find styles directory") );
-				break;
-			}
-			case ChatWindowStyleManager::StyleNotValid:
-			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window style."), i18n("Invalid Style") );
-				break;
-			}
-
-			case ChatWindowStyleManager::StyleUnknow:
-			default:
-			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("An unknow error occurred while trying to install the Chat Window style."), i18n("Unknow error") );
-				break;
-			}
-		}
-		return false;
-	}
-};
-#endif
 
 ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args ),
@@ -446,47 +381,54 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 
 void ChatWindowConfig::slotInstallChatStyle()
 {
-	KUrl styleToInstall = KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose Chat Window style to install.") );
+	int styleInstallReturn = installChatStyle(KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose Chat Window Style to install.") ));
+
+	switch(styleInstallReturn)
+	{
+		case ChatWindowStyleManager::StyleCannotOpen:
+		{
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be opened.\nMake sure that the archive is a valid ZIP or TAR archive."), i18n("Cannot open archive") );
+			break;
+		}
+		case ChatWindowStyleManager::StyleNoDirectoryValid:
+		{
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window Style."), i18n("Cannot find styles directory") );
+			break;
+		}
+		case ChatWindowStyleManager::StyleNotValid:
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window Style."), i18n("Invalid Style") );
+			break;
+		case ChatWindowStyleManager::StyleInstallOk:
+		{
+			KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window Style was successfully installed."), i18n("Install successful") );
+			break;
+		}
+		case ChatWindowStyleManager::StyleUnknow:
+		default:
+		{
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("An unknown error occurred while trying to install the Chat Window Style."), i18n("Unknown error") );
+			break;
+		}
+	}
+}
+
+int ChatWindowConfig::installChatStyle(const KUrl &styleToInstall)
+{
+	int styleInstallReturn = ChatWindowStyleManager::StyleCannotOpen;
 
 	if( !styleToInstall.isEmpty() )
 	{
 		QString stylePath;
 		if( KIO::NetAccess::download( styleToInstall, stylePath, this ) )
 		{
-			int styleInstallReturn = 0;
 			styleInstallReturn = ChatWindowStyleManager::self()->installStyle( stylePath );
-			switch(styleInstallReturn)
-			{
-				case ChatWindowStyleManager::StyleCannotOpen:
-				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be opened.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
-					break;
-				}
-				case ChatWindowStyleManager::StyleNoDirectoryValid:
-				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Cannot find styles directory") );
-					break;
-				}
-				case ChatWindowStyleManager::StyleNotValid:
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window style."), i18n("Invalid Style") );
-					break;
-				case ChatWindowStyleManager::StyleInstallOk:
-				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window style was successfully installed."), i18n("Install successful") );
-					break;
-				}
-				case ChatWindowStyleManager::StyleUnknow:
-				default:
-				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("An unknow error occurred while trying to install the Chat Window style."), i18n("Unknow error") );
-					break;
-				}
-			}
 
 			// removeTempFile check if the file is a temp file, so it's ok for local files.
 			KIO::NetAccess::removeTempFile( stylePath );
 		}
 	}
+
+	return styleInstallReturn;
 }
 
 void ChatWindowConfig::slotDeleteChatStyle()
@@ -499,35 +441,76 @@ void ChatWindowConfig::slotDeleteChatStyle()
 	QString styleName = m_styleUi.styleList->selectedItem()->text();
 	if( ChatWindowStyleManager::self()->removeStyle(styleName) )
 	{
-		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18nc("@info", "The style <resource>%1</resource> was successfully deleted.", styleName));
+		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18nc("@info", "The Chat Window Style <resource>%1</resource> was successfully deleted.", styleName));
 		emitChanged();
 	}
 	else
 	{
-		KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, i18nc("@info", "An error occurred while trying to delete the <resource>%1</resource> style. Your account might not have permission to remove it.", styleName));
+		KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, i18nc("@info", "An error occurred while trying to delete the <resource>%1</resource> Chat Window Style. Your account might not have permission to remove it.", styleName));
 	}
 }
 
 void ChatWindowConfig::slotGetChatStyles()
 {
-#ifdef __GNUC__
-#warning "Port KNS changes!"
-#endif
-#if 0
-	// we need this because KNewStuffGeneric's install function isn't clever enough
-	KopeteStyleNewStuff *kopeteNewStuff = new KopeteStyleNewStuff( "kopete/chatstyle", this );
-	KNS::Engine *engine = new KNS::Engine( kopeteNewStuff, "kopete/chatstyle", this );
-	KNS::DownloadDialog *downloadDialog = new KNS::DownloadDialog( engine, this );
-	downloadDialog->setCategory( "kopete/chatstyle" );
-	// you have to do this by hand when providing your own Engine
-	KNS::ProviderLoader *provider = new KNS::ProviderLoader( this );
-	QObject::connect( provider, SIGNAL( providersLoaded(Provider::List*) ), downloadDialog, SLOT( slotProviders (Provider::List *) ) );
-	provider->load( "kopete/chatstyle", "http://download.kde.org/khotnewstuff/kopetestyles12-providers.xml" );
-	downloadDialog->exec();
-	delete downloadDialog;
-	delete kopeteNewStuff;
+	KConfigGroup configGrp(KGlobal::config(), "KNewStuff2");
+	configGrp.writeEntry("ProvidersUrl", "http://download.kde.org/khotnewstuff/kopetestyles12-providers.xml");
+	configGrp.writeEntry("TargetDir", "kopete_chatstyles");
+	configGrp.sync();
+	
+	KNS::Engine *engine = new KNS::Engine();
+	engine->init(configGrp.config()->name());
+	
+	KNS::Entry::List entries = engine->downloadDialogModal(this);
+
+	if ( entries.size() > 0 )
+	{
+		int correctlyInstalled(0);
+		foreach( KNS::Entry* entry, entries )
+		{
+			if ( entry->status() == KNS::Entry::Installed && entry->installedFiles().size() > 0 )
+			{
+				KUrl styleFile( entry->installedFiles().at(0) );
+				int result = installChatStyle( styleFile );
+
+				QString packageName(entry->name().representation());
+				QString errorTitle = i18nc("@title:window", "Chat Window Style <resource>%1</resource> installation", packageName);
+				switch(result)
+				{
+					case ChatWindowStyleManager::StyleCannotOpen:
+					{
+						KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18nc("@info", "The specified archive <filename>%1</filename> cannot be opened.\nMake sure that the archive is a valid ZIP or TAR archive.", styleFile.pathOrUrl()), errorTitle);
+						break;
+					}
+					case ChatWindowStyleManager::StyleNoDirectoryValid:
+					{
+						KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18nc("@info", "Could not find a suitable place to install the Chat Window Style <resource>%1</resource>.", packageName), errorTitle );
+						break;
+					}
+					case ChatWindowStyleManager::StyleNotValid:
+						KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18nc("@info", "The specified archive <filename>%1</filename> does not contain a valid Chat Window Style.", styleFile.pathOrUrl()), errorTitle );
+						break;
+					case ChatWindowStyleManager::StyleInstallOk:
+					{
+						++correctlyInstalled;
+						break;
+					}
+					case ChatWindowStyleManager::StyleUnknow:
+					default:
+					{
+						KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18nc("@info", "An unknown error occurred while trying to install the Chat Window Style <resource>%1</resource>.", packageName), errorTitle );
+						break;
+					}
+				}
+			}
+		}
+
+		if ( correctlyInstalled > 0)
+		{
+			KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18np("One Chat Window Style package has been installed.", "%1 Chat Window Style packages have been installed.", correctlyInstalled));
+		}
+	}
+
 	delete engine;
-#endif
 }
 
 void ChatWindowConfig::createPreviewChatSession()
@@ -601,7 +584,7 @@ void ChatWindowConfig::createPreviewMessages()
 
 	// This is a UTF-8 string btw.
 	Kopete::Message msgRightToLeft( m_myself, m_jack );
-	msgRightToLeft.setPlainBody( i18nc("This special UTF-8 string is to test if the style support Right-to-Left language display.", "הודעות טקסט") );
+	msgRightToLeft.setPlainBody( i18nc("This special UTF-8 string is to test if the style supports Right-to-Left language display.", "הודעות טקסט") );
 	msgRightToLeft.setDirection( Kopete::Message::Outbound );
 
 	Kopete::Message msgBye ( m_myself, m_jack );
@@ -719,10 +702,10 @@ void ChatWindowConfig::slotRemoveEmoticonTheme()
 
 	QString themeName = selected->text();
 
-	QString question=i18n("<qt>Are you sure you want to remove the "
-			"<strong>%1</strong> emoticon theme?<br />"
+	QString question=i18nc("@info", "Are you sure you want to remove the "
+			"<resource>%1</resource> emoticon theme?<br />"
 			"<br />"
-			"This will delete the files installed by this theme.</qt>",
+			"<warning>This will delete all files installed by this theme.</warning>",
 		themeName);
 
         int res = KMessageBox::warningContinueCancel(this, question, i18n("Confirmation"),KStandardGuiItem::del());
@@ -737,6 +720,10 @@ void ChatWindowConfig::slotRemoveEmoticonTheme()
 
 void ChatWindowConfig::slotGetEmoticonThemes()
 {
+#ifdef __GNUC__
+#warning "Port KNS changes!"
+#endif
+#if 0
 	KConfigGroup config(KGlobal::config(), "KNewStuff");
 	config.writeEntry( "ProvidersUrl",
 						"http://download.kde.org/khotnewstuff/emoticons-providers.xml" );
@@ -744,14 +731,10 @@ void ChatWindowConfig::slotGetEmoticonThemes()
 	config.writeEntry( "Uncompress", "application/x-gzip" );
 	config.sync();
 
-#ifdef __GNUC__
-#warning "Port KNS changes!"
-#endif
-#if 0
 	KNS::DownloadDialog::open( "emoticons", i18n( "Get New Emoticons") );
-#endif
 
 	updateEmoticonList();
+#endif
 }
 
 
