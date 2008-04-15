@@ -112,6 +112,9 @@ Kopete::Identity *IdentityStatusWidget::identity() const
 
 void IdentityStatusWidget::setVisible( bool visible )
 {
+	if ( visible == isVisible() )
+		return;
+
 	// animate the widget disappearing
 	d->timeline->setDirection( visible ?  QTimeLine::Forward
 										: QTimeLine::Backward );
