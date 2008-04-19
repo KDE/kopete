@@ -84,6 +84,9 @@ ChatWindowStyleManager::~ChatWindowStyleManager()
 
 void ChatWindowStyleManager::loadStyles()
 {
+       // Make sure there exists a directory where chat styles can be installed to and it will be watched for changes
+       KStandardDirs::locateLocal( "appdata", QLatin1String( "styles/" ) );
+
         QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QLatin1String( "styles" ) );
 	foreach(const QString &styleDir, chatStyles)
 	{
