@@ -175,7 +175,7 @@ public:
 	{
 		kDebug( 14010 ) ;
 
-		KPasswordDialog *passwdDialog = new KPasswordDialog( Kopete::UI::Global::mainWidget() );
+		KPasswordDialog *passwdDialog = new KPasswordDialog( Kopete::UI::Global::mainWidget(), KPasswordDialog::ShowKeepPassword );
 		passwdDialog->setWindowTitle( i18n( "Password Required" ) );
 		passwdDialog->setPrompt( mPrompt );
 		passwdDialog->setPixmap( mImage );
