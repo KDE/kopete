@@ -170,7 +170,7 @@ fi
 #if [ -e "$infile" ]; then
 #	cat $infile >> $tmpdir/out.tex
 #else
-	echo "$infile" >> $tmpdir/out.tex
+	printf '%s' "$infile" >> $tmpdir/out.tex
 #fi
 
 if [ $noformula -eq 1 ]; then
