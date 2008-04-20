@@ -444,12 +444,15 @@ void JabberCapabilitiesManager::discoRequestFinished()
 	Jid jid = discoInfo->jid();
 	kDebug(JABBER_DEBUG_GLOBAL) << QString("Disco response from %1, node=%2, success=%3").arg(QString(jid.full()).replace('%',"%%")).arg(discoInfo->node()).arg(discoInfo->success());
 
-	QStringList tokens = discoInfo->node().split('#');
+	const QString &tokens = discoInfo->node();
+	int idx = tokens.lastIndexOf('#');
+
+	if (idx < 0)
+		return;
 
 	// Update features
-	Q_ASSERT(tokens.count() == 2);
-	QString node = tokens[0];
-	QString extensions = tokens[1];
+	QString node = tokens.left(idx);
+	QString extensions = tokens.mid(idx + 1);
 
 	Capabilities jidCapabilities = d->jidCapabilitiesMap[jid.full()];
 	if( jidCapabilities.node() == node )
