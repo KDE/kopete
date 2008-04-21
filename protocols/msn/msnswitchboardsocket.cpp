@@ -781,7 +781,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		int futurmessages_size=1400;  //1400 is a common good size
 		//int futurmessages_size=1664-len_H;
 
-		int nb=(int)ceil((float)(len_M)/(float)(futurmessages_size));
+		int nb=(int)std::ceil((float)(len_M)/(float)(futurmessages_size));
 
 		if(KMessageBox::warningContinueCancel(0L /* FIXME: we should try to find a parent somewere*/ ,
 			i18n("The message you are trying to send is too long; it will be split into %1 messages.", nb) ,
