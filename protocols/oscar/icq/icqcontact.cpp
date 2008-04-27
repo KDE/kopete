@@ -140,6 +140,11 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 	else if ( !m_statusDescription.isEmpty() )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
+		setProperty( mProtocol->statusTitle, m_statusDescription );
+	}
+	else
+	{
+		removeProperty( mProtocol->statusTitle );
 	}
 
 	setPresenceTarget( presence );
@@ -382,13 +387,8 @@ void ICQContact::receivedTlvInfo( const QString& contact )
 		setNickName( QString::fromUtf8( info.nickName.get() ) );
 
 	m_statusDescription = QString::fromUtf8( info.statusDescription.get() );
-	if ( !m_statusDescription.isEmpty() )
-		setProperty( mProtocol->statusTitle, m_statusDescription );
-	else
-		removeProperty( mProtocol->statusTitle );
-
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( onlineStatus() );
-	
+
 	refreshStatus( m_details, presence );
 }
 
