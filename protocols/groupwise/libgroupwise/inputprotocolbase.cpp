@@ -38,7 +38,7 @@ InputProtocolBase::~InputProtocolBase()
 void InputProtocolBase::debug( const QString &str )
 {
 #ifdef LIBGW_USE_KDEBUG
-	kDebug( 14191 ) << "debug: " << str;
+	kDebug() << "debug: " << str;
 #else
 	qDebug( "GW RAW PROTO: %s\n", qPrintable(str) );
 #endif

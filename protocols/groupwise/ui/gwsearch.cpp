@@ -326,14 +326,14 @@ void GroupWiseContactSearch::slotDoSearch()
 	}
 	else
 	{
-		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "no query to perform!";
+		kDebug() << "no query to perform!";
 	}
 	
 }
 
 void GroupWiseContactSearch::slotShowDetails()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 	// get the first selected result
 	QModelIndexList selected = m_results->selectionModel()->selectedIndexes();
 	if ( !selected.empty() )
@@ -371,7 +371,7 @@ GroupWise::ContactDetails GroupWiseContactSearch::detailsAtIndex( const QModelIn
 }
 void GroupWiseContactSearch::slotGotSearchResults()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 	SearchUserTask * st = ( SearchUserTask * ) sender();
 	QList< GroupWise::ContactDetails const *> searchResults;
 	foreach (GroupWise::ContactDetails dt, st->results() )

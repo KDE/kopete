@@ -1,3 +1,5 @@
+set( GROUPWISE_DEBUG_GLOBAL 14190 )
+add_definitions( -DKDE_DEFAULT_DEBUG_AREA=${GROUPWISE_DEBUG_GLOBAL} )
 
 add_subdirectory( icons ) 
 add_subdirectory( libgroupwise ) 
