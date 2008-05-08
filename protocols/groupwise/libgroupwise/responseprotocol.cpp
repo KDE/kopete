@@ -116,7 +116,7 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 	}
 	// find transaction id field and create Response object if nonzero
 	int tId = 0;
-	int resultCode = 0;
+	int resultCode = -1;
 	Field::FieldListIterator it;
 	Field::FieldListIterator end = m_collatingFields.end();
 	it = m_collatingFields.find( Field::NM_A_SZ_TRANSACTION_ID );
@@ -155,6 +155,9 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 	else
 	{
 		debug( "- WARNING - NO TRANSACTION ID FOUND!" );
+		if ( resultCode == -1 ) {
+			debug( "- WARNING - NO RESULT CODE FOUND!" );
+		}
 		m_state = ProtocolError;
 		m_din.unsetDevice();
 		m_collatingFields.purge();
@@ -246,7 +249,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 					currentList.purge();
 					return false;
 				}
-				if ( val > Field::NMFIELD_MAX_STR_LENGTH )
+				if ( val > NMFIELD_MAX_STR_LENGTH )
 				{
 					m_packetState = ProtocolError;
 					break;

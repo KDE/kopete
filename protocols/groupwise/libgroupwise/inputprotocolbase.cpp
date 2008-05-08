@@ -38,9 +38,9 @@ InputProtocolBase::~InputProtocolBase()
 void InputProtocolBase::debug( const QString &str )
 {
 #ifdef LIBGW_USE_KDEBUG
-	kDebug() << "debug: " << str;
+	kDebug() << str;
 #else
-	qDebug( "GW RAW PROTO: %s\n", qPrintable(str) );
+	qDebug() <<  "GW RAW PROTO:" << qPrintable(str);
 #endif
 }
 
@@ -83,7 +83,7 @@ bool InputProtocolBase::safeReadBytes( QByteArray & data, uint & len )
 		return false;
 	m_din >> val;
 	m_bytes += sizeof( quint32 );
-	if ( val > Field::NMFIELD_MAX_STR_LENGTH )
+	if ( val > NMFIELD_MAX_STR_LENGTH )
 		return false;
 	//qDebug( "EventProtocol::safeReadBytes() - expecting %i bytes", val );
 	QByteArray temp( val, 0 );

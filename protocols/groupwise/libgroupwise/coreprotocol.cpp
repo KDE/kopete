@@ -296,7 +296,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		// value
 		//dout.writeRawBytes( GW_URLVAR_VAL, sizeof( GW_URLVAR_VAL ) );
 		
-		char valString[ Field::NMFIELD_MAX_STR_LENGTH ];
+		char valString[ NMFIELD_MAX_STR_LENGTH ];
 		switch ( field->type() )
 		{
 			case NMFIELD_TYPE_UTF8:		// Field contains UTF-8
@@ -308,7 +308,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 // 				encoded.replace( "%20", "+" );
 // 				dout <<  encoded.ascii();
 
-				snprintf( valString, Field::NMFIELD_MAX_STR_LENGTH, "%s", url_escape_string( sField->value().toString().toUtf8() ).data() );
+				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%s", url_escape_string( sField->value().toString().toUtf8() ).data() );
 				//dout <<  sField->value().toString().ascii();
 				break;
 			}
@@ -319,7 +319,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 				const Field::MultiField *mField = static_cast<const Field::MultiField*>( field );
 				subFieldCount = mField->fields().count();	// determines if we have a subarray to send after this field
 				//dout <<  QString::number( subFieldCount ).ascii();
-				snprintf( valString, Field::NMFIELD_MAX_STR_LENGTH, "%u", subFieldCount );
+				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%u", subFieldCount );
 				break;
 			}
 			default:					// Field contains a numeric value
@@ -327,7 +327,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 				//debug( " - it's a number" );
 				const Field::SingleField *sField = static_cast<const Field::SingleField*>( field );
 				//dout <<  QString::number( sField->value().toInt() ).ascii();
-				snprintf( valString,Field:: NMFIELD_MAX_STR_LENGTH, "%u", sField->value().toInt() );
+				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%u", sField->value().toInt() );
 			}
 		}
 				

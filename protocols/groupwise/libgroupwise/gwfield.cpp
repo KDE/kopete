@@ -111,9 +111,6 @@ QLatin1String Field::KOPETE_NM_USER_DETAILS_FULL_NAME("Full Name");
 QLatin1String Field::NM_FIELD_TRUE				("1");
 QLatin1String Field::NM_FIELD_FALSE				("0");
 
-uint Field::NM_PROTOCOL_VERSION = 5;
-uint Field::NMFIELD_MAX_STR_LENGTH = 32768;
-
 /* === FieldList ==================================================== */
 FieldList::~FieldList()
 {
@@ -128,10 +125,10 @@ FieldListIterator FieldList::find( QLatin1String tag )
 FieldListIterator FieldList::find( FieldListIterator &it, QLatin1String tag )
 {
 	FieldListIterator theEnd = end();
-	//cout << "FieldList::find() looking for " << tag.data() << endl;
+	//qDebug() << "FieldList::find() looking for " << tag << endl;
 	for ( ; it != theEnd; ++it )
 	{
-		//cout << " - on " << (*it)->tag().data() << endl;
+		//qDebug() << " - on " << (*it)->tag() << endl;
 		if ( (*it)->tag() == tag )
 			break;
 	}
