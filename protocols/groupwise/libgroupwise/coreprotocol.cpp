@@ -339,7 +339,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		typeString.setNum( field->type() );
 		QByteArray outgoing;
 		outgoing.append( GW_URLVAR_TAG );
-		outgoing.append( field->tag().latin1() );
+		outgoing.append( field->tag() );
 		outgoing.append( GW_URLVAR_METHOD );
 		outgoing.append( encode_method( field->method() ).toLatin1() );
 		outgoing.append( GW_URLVAR_VAL );

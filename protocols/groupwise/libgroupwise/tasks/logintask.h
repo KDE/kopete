@@ -50,7 +50,7 @@ protected:
 	void extractContact( Field::MultiField * contactContainer );
 	ContactDetails extractUserDetails( Field::FieldList & fields );
 	void extractPrivacy( Field::FieldList & fields );
-	QStringList readPrivacyItems( QLatin1String tag, Field::FieldList & fields );
+	QStringList readPrivacyItems( const QByteArray & tag, Field::FieldList & fields );
 	void extractCustomStatuses( Field::FieldList & fields );
 	void extractKeepalivePeriod( Field::FieldList & fields );
 signals:

@@ -283,7 +283,7 @@ void LoginTask::extractPrivacy( Field::FieldList & fields )
 //	kDebug() << "locked is " << privacyLocked << ", default is " << defaultDeny << "\nallow list is: " << allowList << "\ndeny list is: " << denyList;
 }
 
-QStringList LoginTask::readPrivacyItems( QLatin1String tag, Field::FieldList & fields )
+QStringList LoginTask::readPrivacyItems( const QByteArray & tag, Field::FieldList & fields )
 {
 	QStringList items;
 	

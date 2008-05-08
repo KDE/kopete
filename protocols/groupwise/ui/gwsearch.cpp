@@ -294,7 +294,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_userId->text();
-		arg.field = Field::NM_A_SZ_USERID.latin1();
+		arg.field = Field::NM_A_SZ_USERID;
 		arg.operation = searchOperation( m_userIdOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
@@ -302,7 +302,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_title->text();
-		arg.field = Field::NM_A_SZ_TITLE.latin1();
+		arg.field = Field::NM_A_SZ_TITLE;
 		arg.operation = searchOperation( m_titleOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
@@ -310,7 +310,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_dept->text();
-		arg.field = Field::NM_A_SZ_DEPARTMENT.latin1();
+		arg.field = Field::NM_A_SZ_DEPARTMENT;
 		arg.operation = searchOperation( m_deptOperation->currentIndex() );
 		searchTerms.append( arg );
 	}

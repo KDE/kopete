@@ -23,7 +23,6 @@
 
 //#include <QGlobals>
 #include <QObject>
-#include <QLatin1String>
 #include <QVariant>
 
 #include "kopete_export.h"
@@ -81,83 +80,83 @@
 
 /* Attribute Names (field tags) */
 namespace Field {
-	extern KOPETE_EXPORT QLatin1String NM_A_IP_ADDRESS;
-	extern KOPETE_EXPORT QLatin1String NM_A_PORT;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_FOLDER;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_CONTACT;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_CONVERSATION;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_MESSAGE;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_CONTACT_LIST;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_RESULTS;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_INFO_DISPLAY_ARRAY;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_USER_DETAILS;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_OBJECT_ID;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_PARENT_ID;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_SEQUENCE_NUMBER;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_TYPE;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_STATUS;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_STATUS_TEXT;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_DN;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_DISPLAY_NAME;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_USERID;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_CREDENTIALS;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_MESSAGE_BODY;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_MESSAGE_TEXT;
-	extern KOPETE_EXPORT QLatin1String NM_A_UD_MESSAGE_TYPE;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_PARTICIPANTS;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_INVITES;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_EVENT;
-	extern KOPETE_EXPORT QLatin1String NM_A_UD_COUNT;
-	extern KOPETE_EXPORT QLatin1String NM_A_UD_DATE;
-	extern KOPETE_EXPORT QLatin1String NM_A_UD_EVENT;
-	extern KOPETE_EXPORT QLatin1String NM_A_B_NO_CONTACTS;
-	extern KOPETE_EXPORT QLatin1String NM_A_B_NO_CUSTOMS;
-	extern KOPETE_EXPORT QLatin1String NM_A_B_NO_PRIVACY;
-	extern KOPETE_EXPORT QLatin1String NM_A_B_ONLY_MODIFIED;
-	extern KOPETE_EXPORT QLatin1String NM_A_UW_STATUS;
-	extern KOPETE_EXPORT QLatin1String NM_A_UD_OBJECT_ID;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_TRANSACTION_ID;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_RESULT_CODE;
-	extern KOPETE_EXPORT QLatin1String NM_A_UD_BUILD;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_AUTH_ATTRIBUTE;
-	extern KOPETE_EXPORT QLatin1String NM_A_UD_KEEPALIVE;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_USER_AGENT;
-	extern KOPETE_EXPORT QLatin1String NM_A_BLOCKING;
-	extern KOPETE_EXPORT QLatin1String NM_A_BLOCKING_DENY_LIST;
-	extern KOPETE_EXPORT QLatin1String NM_A_BLOCKING_ALLOW_LIST;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_BLOCKING_ALLOW_ITEM;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_BLOCKING_DENY_ITEM;
-	extern KOPETE_EXPORT QLatin1String NM_A_LOCKED_ATTR_LIST;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_DEPARTMENT;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_TITLE;
+	extern KOPETE_EXPORT QByteArray NM_A_IP_ADDRESS;
+	extern KOPETE_EXPORT QByteArray NM_A_PORT;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_FOLDER;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CONTACT;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CONVERSATION;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_MESSAGE;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CONTACT_LIST;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_RESULTS;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_INFO_DISPLAY_ARRAY;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_USER_DETAILS;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_OBJECT_ID;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_PARENT_ID;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_SEQUENCE_NUMBER;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_TYPE;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_STATUS;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_STATUS_TEXT;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_DN;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_DISPLAY_NAME;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_USERID;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_CREDENTIALS;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_MESSAGE_BODY;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_MESSAGE_TEXT;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_MESSAGE_TYPE;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_PARTICIPANTS;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_INVITES;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_EVENT;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_COUNT;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_DATE;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_EVENT;
+	extern KOPETE_EXPORT QByteArray NM_A_B_NO_CONTACTS;
+	extern KOPETE_EXPORT QByteArray NM_A_B_NO_CUSTOMS;
+	extern KOPETE_EXPORT QByteArray NM_A_B_NO_PRIVACY;
+	extern KOPETE_EXPORT QByteArray NM_A_B_ONLY_MODIFIED;
+	extern KOPETE_EXPORT QByteArray NM_A_UW_STATUS;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_OBJECT_ID;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_TRANSACTION_ID;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_RESULT_CODE;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_BUILD;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_AUTH_ATTRIBUTE;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_KEEPALIVE;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_USER_AGENT;
+	extern KOPETE_EXPORT QByteArray NM_A_BLOCKING;
+	extern KOPETE_EXPORT QByteArray NM_A_BLOCKING_DENY_LIST;
+	extern KOPETE_EXPORT QByteArray NM_A_BLOCKING_ALLOW_LIST;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_BLOCKING_ALLOW_ITEM;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_BLOCKING_DENY_ITEM;
+	extern KOPETE_EXPORT QByteArray NM_A_LOCKED_ATTR_LIST;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_DEPARTMENT;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_TITLE;
 	// GW7
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_CUSTOM_STATUSES;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_STATUS;
-	extern KOPETE_EXPORT QLatin1String NM_A_UD_QUERY_COUNT;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_CHAT;
-	extern KOPETE_EXPORT QLatin1String NM_A_DISPLAY_NAME;
-	extern KOPETE_EXPORT QLatin1String NM_A_CHAT_OWNER_DN;
-	extern KOPETE_EXPORT QLatin1String NM_A_UD_PARTICIPANTS;
-	extern KOPETE_EXPORT QLatin1String NM_A_DESCRIPTION;
-	extern KOPETE_EXPORT QLatin1String NM_A_DISCLAIMER;
-	extern KOPETE_EXPORT QLatin1String NM_A_QUERY;
-	extern KOPETE_EXPORT QLatin1String NM_A_ARCHIVE;
-	extern KOPETE_EXPORT QLatin1String NM_A_MAX_USERS;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_TOPIC;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_CHAT_ACL;
-	extern KOPETE_EXPORT QLatin1String NM_A_FA_CHAT_ACL_ENTRY;
-	extern KOPETE_EXPORT QLatin1String NM_A_SZ_ACCESS_FLAGS;
-	extern KOPETE_EXPORT QLatin1String NM_A_CHAT_CREATOR_DN;
-	extern KOPETE_EXPORT QLatin1String NM_A_CREATION_TIME;
-	extern KOPETE_EXPORT QLatin1String NM_A_UD_CHAT_RIGHTS;
-	extern KOPETE_EXPORT QLatin1String NM_FIELD_TRUE;
-	extern KOPETE_EXPORT QLatin1String NM_FIELD_FALSE;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CUSTOM_STATUSES;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_STATUS;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_QUERY_COUNT;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CHAT;
+	extern KOPETE_EXPORT QByteArray NM_A_DISPLAY_NAME;
+	extern KOPETE_EXPORT QByteArray NM_A_CHAT_OWNER_DN;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_PARTICIPANTS;
+	extern KOPETE_EXPORT QByteArray NM_A_DESCRIPTION;
+	extern KOPETE_EXPORT QByteArray NM_A_DISCLAIMER;
+	extern KOPETE_EXPORT QByteArray NM_A_QUERY;
+	extern KOPETE_EXPORT QByteArray NM_A_ARCHIVE;
+	extern KOPETE_EXPORT QByteArray NM_A_MAX_USERS;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_TOPIC;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CHAT_ACL;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CHAT_ACL_ENTRY;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_ACCESS_FLAGS;
+	extern KOPETE_EXPORT QByteArray NM_A_CHAT_CREATOR_DN;
+	extern KOPETE_EXPORT QByteArray NM_A_CREATION_TIME;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_CHAT_RIGHTS;
+	extern KOPETE_EXPORT QByteArray NM_FIELD_TRUE;
+	extern KOPETE_EXPORT QByteArray NM_FIELD_FALSE;
 
-	extern KOPETE_EXPORT QLatin1String KOPETE_NM_USER_DETAILS_CN;
-	extern KOPETE_EXPORT QLatin1String KOPETE_NM_USER_DETAILS_GIVEN_NAME;
-	extern KOPETE_EXPORT QLatin1String KOPETE_NM_USER_DETAILS_SURNAME;
-	extern KOPETE_EXPORT QLatin1String KOPETE_NM_USER_DETAILS_ARCHIVE_FLAG;
-	extern KOPETE_EXPORT QLatin1String KOPETE_NM_USER_DETAILS_FULL_NAME;
+	extern KOPETE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_CN;
+	extern KOPETE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_GIVEN_NAME;
+	extern KOPETE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_SURNAME;
+	extern KOPETE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_ARCHIVE_FLAG;
+	extern KOPETE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_FULL_NAME;
 
 
 /**
@@ -176,7 +175,7 @@ namespace Field {
 //		FieldBase() {}
 		FieldBase( const QByteArray & tag, quint8 method, quint8 flags, quint8 type );
 		virtual ~FieldBase() {}
-		QLatin1String tag() const;
+		QByteArray tag() const;
 		quint8 method() const;
 		quint8 flags() const;
 		quint8 type() const;
@@ -205,18 +204,18 @@ namespace Field {
 			 * @param tag The tag name of the field to search for.
 			 * @return An iterator pointing to the first occurrence found, or end() if none was found.
 			 */
-			FieldListIterator find( QLatin1String tag );
+			FieldListIterator find( const QByteArray & tag );
 			/** 
 			 * Locate the first occurrence of a given field in the list, starting at the supplied iterator
 			 * @param tag The tag name of the field to search for.
 			 * @param it An iterator within the list, to start searching from.
 			 * @return An iterator pointing to the first occurrence found, or end() if none was found.
 			 */
-			FieldListIterator find( FieldListIterator &it, QLatin1String tag );
+			FieldListIterator find( FieldListIterator &it, const QByteArray & tag );
 			/**
 			 * Get the index of the first occurrence of tag, or -1 if not found
 			 */
-			int findIndex( QLatin1String tag );
+			int findIndex( const QByteArray & tag );
 			/** 
 			 * Debug function, dumps to stdout
 			 */
@@ -229,11 +228,11 @@ namespace Field {
 			 * Utility functions for finding the first instance of a tag
 			 * @return 0 if no field of the right tag and type was found.
 			 */
-			SingleField * findSingleField( QLatin1String tag );
-			MultiField * findMultiField( QLatin1String tag );
+			SingleField * findSingleField( const QByteArray & tag );
+			MultiField * findMultiField( const QByteArray & tag );
 		protected:
-			SingleField * findSingleField( FieldListIterator &it, QLatin1String tag );
-			MultiField * findMultiField( FieldListIterator &it, QLatin1String tag );
+			SingleField * findSingleField( FieldListIterator &it, const QByteArray & tag );
+			MultiField * findMultiField( FieldListIterator &it, const QByteArray & tag );
 
 	};
 
@@ -250,12 +249,10 @@ namespace Field {
 		 * Single field constructor
 		 */
 		SingleField( const QByteArray & tag, quint8 method, quint8 flags, quint8 type, QVariant value );
-		SingleField( QLatin1String tag, quint8 method, quint8 flags, quint8 type, QVariant value );
 		/** 
 		 * Convenience constructor for NMFIELD_METHOD_VALID fields
 		 */
 		SingleField( const QByteArray & tag, quint8 flags, quint8 type, QVariant value );
-		SingleField( QLatin1String tag, quint8 flags, quint8 type, QVariant value );
 		~SingleField();
 		void setValue( const QVariant v );
 		QVariant value() const;
@@ -272,8 +269,6 @@ namespace Field {
 	public:  
 		MultiField( const QByteArray & tag, quint8 method, quint8 flags, quint8 type );
 		MultiField( const QByteArray & tag, quint8 method, quint8 flags, quint8 type, FieldList fields );
-		MultiField( QLatin1String tag, quint8 method, quint8 flags, quint8 type );
-		MultiField( QLatin1String tag, quint8 method, quint8 flags, quint8 type, FieldList fields );
 		~MultiField();
 		FieldList fields() const;
 		void setFields( FieldList );

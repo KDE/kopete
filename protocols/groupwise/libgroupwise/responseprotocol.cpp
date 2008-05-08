@@ -120,8 +120,6 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 	int resultCode = -1;
 	Field::FieldListIterator it;
 	Field::FieldListIterator end = m_collatingFields.end();
-	qDebug() << "got " << m_collatingFields.count() << "fields";
-	m_collatingFields.dump(true);
 	it = m_collatingFields.find( Field::NM_A_SZ_TRANSACTION_ID );
 	if ( it != end )
 	{
@@ -233,8 +231,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 
 			// create multifield
 			debug( QString( " multi field containing: %1" ).arg( val ) );
-			Field::MultiField* m = new Field::MultiField( QLatin1String(tag.data()), method, 0, type );
-			qDebug() << " constructed field's tag: " << m->tag();
+			Field::MultiField* m = new Field::MultiField( tag.constData(), method, 0, type );
 			currentList.append( m );
 			if ( !readFields( val, &currentList) )
 			{
@@ -262,8 +259,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				QString fieldValue = QString::fromUtf8( rawData.data(), val - 1 );
 				debug( QString( "- utf/dn single field: %1" ).arg( fieldValue ) );
 				// create singlefield
-				Field::SingleField* s = new Field::SingleField( QLatin1String(tag.data()), method, 0, type, fieldValue );
-				qDebug() << " constructed field's tag: " << s->tag();
+				Field::SingleField* s = new Field::SingleField( tag.constData(), method, 0, type, fieldValue );
 				currentList.append( s );
 			}
 			else
@@ -278,8 +274,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				m_din >> val;
 				m_bytes += sizeof( quint32 );
 				debug( QString( "- numeric field: %1" ).arg( val ) );
-				Field::SingleField* s = new Field::SingleField( QLatin1String(tag.data()), method, 0, type, val );
-				qDebug() << " constructed field's tag: " << s->tag();
+				Field::SingleField* s = new Field::SingleField( tag.constData(), method, 0, type, val );
 				currentList.append( s );
 			}
 		}
