@@ -58,16 +58,16 @@ void SearchUserTask::search( const QList<UserSearchQueryTerm> & query )
 		return;
 	}
 	// object Id identifies the search for later reference
-	lst.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, m_queryHandle ) );
+	lst.append( new Field::SingleField( Field::NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, m_queryHandle ) );
 	QList<UserSearchQueryTerm>::ConstIterator it = query.begin();
 	const QList<UserSearchQueryTerm>::ConstIterator end = query.end();
 	for ( ; it != end; ++it )
 	{
-		Field::SingleField * fld =  new Field::SingleField( (*it).field.toAscii(), (*it).operation, 0, NMFIELD_TYPE_UTF8, (*it).argument );
+		Field::SingleField * fld =  new Field::SingleField( QLatin1String((*it).field.data()), (*it).operation, 0, NMFIELD_TYPE_UTF8, (*it).argument );
 		lst.append( fld );
 	}
 	//lst.append( new Field::SingleField( "Given Name", 0, NMFIELD_TYPE_UTF8, [ NMFIELD_METHOD_EQUAL | NMFIELD_METHOD_MATCHBEGIN | NMFIELD_METHOD_MATCHEND | NMFIELD_METHOD_SEARCH ], searchTerm );
-	// Or "Surname", NM_A_SZ_USERID, NM_A_SZ_TITLE, NM_A_SZ_DEPARTMENT in other fields
+	// Or "Surname", Field::NM_A_SZ_USERID, NM_A_SZ_TITLE, NM_A_SZ_DEPARTMENT in other fields
 	
 	createTransfer( "createsearch", lst );
 }

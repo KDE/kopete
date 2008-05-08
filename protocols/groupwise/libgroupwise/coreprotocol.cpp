@@ -213,7 +213,7 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 		return;*/
 	}
 	// Append field containing transaction id
-	Field::SingleField * fld = new Field::SingleField( NM_A_SZ_TRANSACTION_ID, NMFIELD_METHOD_VALID, 
+	Field::SingleField * fld = new Field::SingleField( Field::NM_A_SZ_TRANSACTION_ID, NMFIELD_METHOD_VALID, 
 					0, NMFIELD_TYPE_UTF8, request->transactionId() ); 
 	fields.append( fld );
 	
@@ -296,7 +296,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		// value
 		//dout.writeRawBytes( GW_URLVAR_VAL, sizeof( GW_URLVAR_VAL ) );
 		
-		char valString[ NMFIELD_MAX_STR_LENGTH ];
+		char valString[ Field::NMFIELD_MAX_STR_LENGTH ];
 		switch ( field->type() )
 		{
 			case NMFIELD_TYPE_UTF8:		// Field contains UTF-8
@@ -308,7 +308,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 // 				encoded.replace( "%20", "+" );
 // 				dout <<  encoded.ascii();
 
-				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%s", url_escape_string( sField->value().toString().toUtf8() ).data() );
+				snprintf( valString, Field::NMFIELD_MAX_STR_LENGTH, "%s", url_escape_string( sField->value().toString().toUtf8() ).data() );
 				//dout <<  sField->value().toString().ascii();
 				break;
 			}
@@ -319,7 +319,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 				const Field::MultiField *mField = static_cast<const Field::MultiField*>( field );
 				subFieldCount = mField->fields().count();	// determines if we have a subarray to send after this field
 				//dout <<  QString::number( subFieldCount ).ascii();
-				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%u", subFieldCount );
+				snprintf( valString, Field::NMFIELD_MAX_STR_LENGTH, "%u", subFieldCount );
 				break;
 			}
 			default:					// Field contains a numeric value
@@ -327,7 +327,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 				//debug( " - it's a number" );
 				const Field::SingleField *sField = static_cast<const Field::SingleField*>( field );
 				//dout <<  QString::number( sField->value().toInt() ).ascii();
-				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%u", sField->value().toInt() );
+				snprintf( valString,Field:: NMFIELD_MAX_STR_LENGTH, "%u", sField->value().toInt() );
 			}
 		}
 				
@@ -337,10 +337,15 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		//dout << QString::number( field->type() ).ascii();
 		QByteArray typeString;
 		typeString.setNum( field->type() );
-		QByteArray outgoing = GW_URLVAR_TAG + field->tag() 
-								+ GW_URLVAR_METHOD + encode_method( field->method() ).toAscii()
-								+ GW_URLVAR_VAL + (const char *)valString 
-								+ GW_URLVAR_TYPE + typeString;
+		QByteArray outgoing;
+		outgoing.append( GW_URLVAR_TAG );
+		outgoing.append( field->tag().latin1() );
+		outgoing.append( GW_URLVAR_METHOD );
+		outgoing.append( encode_method( field->method() ).toLatin1() );
+		outgoing.append( GW_URLVAR_VAL );
+		outgoing.append( valString );
+		outgoing.append( GW_URLVAR_TYPE );
+		outgoing.append( typeString );
 								
 		debug( QString( "outgoing data: %1" ).arg( outgoing.data() ) );
 		dout.writeRawData( outgoing.data(), outgoing.length() );
@@ -430,65 +435,62 @@ void CoreProtocol::reset()
 	m_in.resize( 0 );
 }
 
-QChar CoreProtocol::encode_method( quint8 method )
+QLatin1Char CoreProtocol::encode_method( quint8 method )
 {
-	QChar str;
-
-	switch (method) {
+	switch (method)
+	{
 		case NMFIELD_METHOD_EQUAL:
-			str = 'G';
+			return QLatin1Char('G');
 			break;
 		case NMFIELD_METHOD_UPDATE:
-			str = 'F';
+			return QLatin1Char('F');
 			break;
 		case NMFIELD_METHOD_GTE:
-			str = 'E';
+			return QLatin1Char('E');
 			break;
 		case NMFIELD_METHOD_LTE:
-			str = 'D';
+			return QLatin1Char('D');
 			break;
 		case NMFIELD_METHOD_NE:
-			str = 'C';
+			return QLatin1Char('C');
 			break;			
 		case NMFIELD_METHOD_EXIST:
-			str = 'B';
+			return QLatin1Char('B');
 			break;
 		case NMFIELD_METHOD_NOTEXIST:
-			str = 'A';
+			return QLatin1Char('A');
 			break;
 		case NMFIELD_METHOD_SEARCH:
-			str = '9';
+			return QLatin1Char('9');
 			break;
 		case NMFIELD_METHOD_MATCHBEGIN:
-			str = '8';
+			return QLatin1Char('8');
 			break;
 		case NMFIELD_METHOD_MATCHEND:
-			str = '7';
+			return QLatin1Char('7');
 			break;
 		case NMFIELD_METHOD_NOT_ARRAY:
-			str = '6';
+			return QLatin1Char('6');
 			break;
 		case NMFIELD_METHOD_OR_ARRAY:
-			str = '5';
+			return QLatin1Char('5');
 			break;
 		case NMFIELD_METHOD_AND_ARRAY:
-			str = '4';
+			return QLatin1Char('4');
 			break;
 		case NMFIELD_METHOD_DELETE_ALL:
-			str = '3';
+			return QLatin1Char('3');
 			break;
 		case NMFIELD_METHOD_DELETE:
-			str = '2';
+			return QLatin1Char('2');
 			break;
 		case NMFIELD_METHOD_ADD:
-			str = '1';
+			return QLatin1Char('1');
 			break;
 		default:					/* NMFIEL D_METHOD_VALID */
-			str = '0';
+			return QLatin1Char('0');
 			break;
 	}
-
-	return str;
 }
 
 void CoreProtocol::slotOutgoingData( const QByteArray &out )

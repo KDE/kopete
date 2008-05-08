@@ -34,18 +34,18 @@ void SendMessageTask::message( const QStringList & recipientDNList, const Outgoi
 	// Assumes the conference is instantiated, unlike Gaim's nm_send_message
 	Field::FieldList lst, tmp, msgBodies;
 	// list containing GUID
-	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, msg.guid ) );
-	lst.append( new Field::MultiField( NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
-	msgBodies.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, msg.rtfMessage ) );
+	tmp.append( new Field::SingleField( Field::NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, msg.guid ) );
+	lst.append( new Field::MultiField( Field::NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
+	msgBodies.append( new Field::SingleField( Field::NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, msg.rtfMessage ) );
 	// message body type indicator / separator?
- 	msgBodies.append( new Field::SingleField( NM_A_UD_MESSAGE_TYPE, 0, NMFIELD_TYPE_UDWORD, 0 ) );
+ 	msgBodies.append( new Field::SingleField( Field::NM_A_UD_MESSAGE_TYPE, 0, NMFIELD_TYPE_UDWORD, 0 ) );
 	// message body plaintext
-	msgBodies.append( new Field::SingleField( NM_A_SZ_MESSAGE_TEXT, 0, NMFIELD_TYPE_UTF8, msg.message ) );
+	msgBodies.append( new Field::SingleField( Field::NM_A_SZ_MESSAGE_TEXT, 0, NMFIELD_TYPE_UTF8, msg.message ) );
 	// list containing message bodies
-	lst.append( new Field::MultiField( NM_A_FA_MESSAGE, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, msgBodies ) );
+	lst.append( new Field::MultiField( Field::NM_A_FA_MESSAGE, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, msgBodies ) );
 	// series of participants (may be empty )
 	QStringList::ConstIterator end = recipientDNList.end();
 	for ( QStringList::ConstIterator it = recipientDNList.begin(); it != end; ++it )
-		lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, *it ) );
+		lst.append( new Field::SingleField( Field::NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, *it ) );
 	createTransfer( "sendmessage", lst );
 }

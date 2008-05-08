@@ -119,7 +119,7 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 	int resultCode = 0;
 	Field::FieldListIterator it;
 	Field::FieldListIterator end = m_collatingFields.end();
-	it = m_collatingFields.find( NM_A_SZ_TRANSACTION_ID );
+	it = m_collatingFields.find( Field::NM_A_SZ_TRANSACTION_ID );
 	if ( it != end )
 	{
 		Field::SingleField * sf = dynamic_cast<Field::SingleField*>( *it );
@@ -131,7 +131,7 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 			delete sf;
 		}
 	}
-	it = m_collatingFields.find( NM_A_SZ_RESULT_CODE );
+	it = m_collatingFields.find( Field::NM_A_SZ_RESULT_CODE );
 	if ( it != end )
 	{
 		Field::SingleField * sf = dynamic_cast<Field::SingleField*>( *it );
@@ -227,7 +227,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 
 			// create multifield
 			debug( QString( " multi field containing: %1" ).arg( val ) );
-			Field::MultiField* m = new Field::MultiField( tag, method, 0, type );
+			Field::MultiField* m = new Field::MultiField( QLatin1String(tag.data()), method, 0, type );
 			currentList.append( m );
 			if ( !readFields( val, &currentList) )
 			{
@@ -246,7 +246,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 					currentList.purge();
 					return false;
 				}
-				if ( val > NMFIELD_MAX_STR_LENGTH )
+				if ( val > Field::NMFIELD_MAX_STR_LENGTH )
 				{
 					m_packetState = ProtocolError;
 					break;
@@ -255,7 +255,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				QString fieldValue = QString::fromUtf8( rawData.data(), val - 1 );
 				debug( QString( "- utf/dn single field: %1" ).arg( fieldValue ) );
 				// create singlefield
-				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, fieldValue );
+				Field::SingleField* s = new Field::SingleField( QLatin1String(tag.data()), method, 0, type, fieldValue );
 				currentList.append( s );
 			}
 			else
@@ -270,7 +270,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				m_din >> val;
 				m_bytes += sizeof( quint32 );
 				debug( QString( "- numeric field: %1" ).arg( val ) );
-				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, val );
+				Field::SingleField* s = new Field::SingleField( QLatin1String(tag.data()), method, 0, type, val );
 				currentList.append( s );
 			}
 		}

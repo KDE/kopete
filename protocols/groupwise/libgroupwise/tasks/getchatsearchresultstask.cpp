@@ -41,8 +41,8 @@ GetChatSearchResultsTask::~GetChatSearchResultsTask()
 void GetChatSearchResultsTask::poll( int queryHandle )
 {
 	Field::FieldList lst;
-	lst.append( new Field::SingleField( NM_A_UD_OBJECT_ID, 0, NMFIELD_TYPE_UDWORD, queryHandle ) );
-	lst.append( new Field::SingleField( NM_A_UD_QUERY_COUNT, 0, NMFIELD_TYPE_UDWORD, 10 ) );
+	lst.append( new Field::SingleField( Field::NM_A_UD_OBJECT_ID, 0, NMFIELD_TYPE_UDWORD, queryHandle ) );
+	lst.append( new Field::SingleField( Field::NM_A_UD_QUERY_COUNT, 0, NMFIELD_TYPE_UDWORD, 10 ) );
 	createTransfer( "getchatsearchresults", lst );
 }
 
@@ -61,10 +61,10 @@ bool GetChatSearchResultsTask::take( Transfer * transfer )
 	
 	// look for the status code
 	Field::FieldList responseFields = response->fields();
-	Field::SingleField * sf = responseFields.findSingleField( NM_A_UW_STATUS );
+	Field::SingleField * sf = responseFields.findSingleField( Field::NM_A_UW_STATUS );
 	m_queryStatus = (SearchResultCode)sf->value().toInt();
 	
-	Field::MultiField * resultsArray = responseFields.findMultiField( NM_A_FA_RESULTS );
+	Field::MultiField * resultsArray = responseFields.findMultiField( Field::NM_A_FA_RESULTS );
 	if ( !resultsArray )
 	{
 		setError( Protocol );
@@ -72,9 +72,9 @@ bool GetChatSearchResultsTask::take( Transfer * transfer )
 	}
 	Field::FieldList matches = resultsArray->fields();
 	const Field::FieldListIterator end = matches.end();
-	for ( Field::FieldListIterator it = matches.find( NM_A_FA_CHAT );
+	for ( Field::FieldListIterator it = matches.find( Field::NM_A_FA_CHAT );
 			it != end;
-			it = matches.find( ++it, NM_A_FA_CHAT ) )
+			it = matches.find( ++it, Field::NM_A_FA_CHAT ) )
 	{
 		Field::MultiField * mf = static_cast<Field::MultiField *>( *it );
 		Field::FieldList chat = mf->fields();
@@ -108,11 +108,11 @@ GroupWise::ChatroomSearchResult GetChatSearchResultsTask::extractChatDetails( Fi
 	csr.participants = 0;
 	// read the supplied fields, set metadata and status.
 	Field::SingleField * sf;
-	if ( ( sf = fields.findSingleField ( NM_A_DISPLAY_NAME ) ) )
+	if ( ( sf = fields.findSingleField ( Field::NM_A_DISPLAY_NAME ) ) )
 		csr.name = sf->value().toString();
-	if ( ( sf = fields.findSingleField ( NM_A_CHAT_OWNER_DN ) ) )
+	if ( ( sf = fields.findSingleField ( Field::NM_A_CHAT_OWNER_DN ) ) )
 		csr.ownerDN = sf->value().toString().toLower(); // HACK: lowercased DN
-	if ( ( sf = fields.findSingleField ( NM_A_UD_PARTICIPANTS ) ) )
+	if ( ( sf = fields.findSingleField ( Field::NM_A_UD_PARTICIPANTS ) ) )
 		csr.participants = sf->value().toInt();
 	
 //	kDebug() << csr.name << ", " << csr.ownerDN << ", " << csr.participants;

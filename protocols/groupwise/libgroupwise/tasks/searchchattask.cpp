@@ -55,7 +55,7 @@ void SearchChatTask::search( SearchType type )
 {
 	Field::FieldList lst;
 	// object Id identifies the search for later reference
-	lst.append( new Field::SingleField( NM_A_B_ONLY_MODIFIED, 0, NMFIELD_TYPE_BOOL, ( type == FetchAll ? 0 : 1 ) ) );
+	lst.append( new Field::SingleField( Field::NM_A_B_ONLY_MODIFIED, 0, NMFIELD_TYPE_BOOL, ( type == FetchAll ? 0 : 1 ) ) );
 	createTransfer( "chatsearch", lst );
 }
 
@@ -73,7 +73,7 @@ bool SearchChatTask::take( Transfer * transfer )
 		return true;
 	}
 	Field::FieldList responseFields = response->fields();
-	Field::SingleField * sf = responseFields.findSingleField( NM_A_UD_OBJECT_ID );
+	Field::SingleField * sf = responseFields.findSingleField( Field::NM_A_UD_OBJECT_ID );
 	m_objectId = sf->value().toInt();
 
 	// now start the results poll timer

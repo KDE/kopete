@@ -37,6 +37,7 @@
 #include <kopetemetacontact.h>
 
 #include "client.h"
+#include "gwfield.h"
 #include "gwaccount.h"
 #include "gwcontact.h"
 #include "gwcontactproperties.h"
@@ -293,7 +294,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_userId->text();
-		arg.field = NM_A_SZ_USERID;
+		arg.field = Field::NM_A_SZ_USERID.latin1();
 		arg.operation = searchOperation( m_userIdOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
@@ -301,7 +302,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_title->text();
-		arg.field = NM_A_SZ_TITLE;
+		arg.field = Field::NM_A_SZ_TITLE.latin1();
 		arg.operation = searchOperation( m_titleOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
@@ -309,7 +310,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_dept->text();
-		arg.field = NM_A_SZ_DEPARTMENT;
+		arg.field = Field::NM_A_SZ_DEPARTMENT.latin1();
 		arg.operation = searchOperation( m_deptOperation->currentIndex() );
 		searchTerms.append( arg );
 	}

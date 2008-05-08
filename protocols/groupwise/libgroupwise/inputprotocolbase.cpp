@@ -83,7 +83,7 @@ bool InputProtocolBase::safeReadBytes( QByteArray & data, uint & len )
 		return false;
 	m_din >> val;
 	m_bytes += sizeof( quint32 );
-	if ( val > NMFIELD_MAX_STR_LENGTH )
+	if ( val > Field::NMFIELD_MAX_STR_LENGTH )
 		return false;
 	//qDebug( "EventProtocol::safeReadBytes() - expecting %i bytes", val );
 	QByteArray temp( val, 0 );

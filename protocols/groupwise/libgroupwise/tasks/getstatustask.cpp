@@ -36,7 +36,7 @@ void GetStatusTask::userDN( const QString & dn )
 	// set up Transfer
 	Field::FieldList lst;
 	// changed from USERID to DN as per Gaim/GWIM
-	lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_UTF8, m_userDN ) );
+	lst.append( new Field::SingleField( Field::NM_A_SZ_DN, 0, NMFIELD_TYPE_UTF8, m_userDN ) );
 	createTransfer( "getstatus", lst );
 }
 
@@ -53,7 +53,7 @@ bool GetStatusTask::take( Transfer * transfer )
 	// parse received details and signal like billio
 	Field::SingleField * sf = 0;
 	quint16 status;
-	sf = responseFields.findSingleField( NM_A_SZ_STATUS );
+	sf = responseFields.findSingleField( Field::NM_A_SZ_STATUS );
 	if ( sf )
 	{
 		// As of Sept 2004 the server always responds with 2 (Available) here, even if the sender is not
