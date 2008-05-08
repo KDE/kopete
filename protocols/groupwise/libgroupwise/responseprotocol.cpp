@@ -173,7 +173,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 	// so when we're done reading it, add it to the MultiList element
 	// that is the last element in the top list in m_collatingFields.
 	// if we find the beginning of a new nested list, push the current list onto m_collatingFields
-	debug( "ResponseProtocol::readFields()" );
+	debug("");
 	if ( fieldCount > 0 )
 		debug( QString( "reading %1 fields" ).arg( fieldCount ) );
 	Field::FieldList currentList;

@@ -125,10 +125,10 @@ FieldListIterator FieldList::find( QLatin1String tag )
 FieldListIterator FieldList::find( FieldListIterator &it, QLatin1String tag )
 {
 	FieldListIterator theEnd = end();
-	//qDebug() << "FieldList::find() looking for " << tag << endl;
+	qDebug() << "FieldList::find() looking for " << tag << endl;
 	for ( ; it != theEnd; ++it )
 	{
-		//qDebug() << " - on " << (*it)->tag() << endl;
+		qDebug() << " - on " << (*it)->tag() << endl;
 		if ( (*it)->tag() == tag )
 			break;
 	}
