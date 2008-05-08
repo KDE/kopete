@@ -908,13 +908,17 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 		m_activeView->saveChatSettings();
 	}
 
-	guiFactory()->addClient(view->msgManager());
+	if ( view != 0 )
+		guiFactory()->addClient(view->msgManager());
 // 	createGUI( view->editPart() );
 
 	if( m_activeView )
 		m_activeView->setActive( false );
 
 	m_activeView = view;
+
+	if ( view == 0 )
+		return;
 
 	if( chatViewList.indexOf( view ) == -1)
 		attachChatView( view );
