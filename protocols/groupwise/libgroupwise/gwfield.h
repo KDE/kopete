@@ -174,7 +174,7 @@ namespace Field {
 	{
 	public:
 //		FieldBase() {}
-		FieldBase( QLatin1String tag, quint8 method, quint8 flags, quint8 type );
+		FieldBase( const QByteArray & tag, quint8 method, quint8 flags, quint8 type );
 		virtual ~FieldBase() {}
 		QLatin1String tag() const;
 		quint8 method() const;
@@ -182,7 +182,7 @@ namespace Field {
 		quint8 type() const;
 		void setFlags( const quint8 flags );
 	protected:
-		QLatin1String m_tag;
+		QByteArray m_tag;
 		quint8 m_method;
 		quint8 m_flags;
 		quint8 m_type;  // doch needed
@@ -249,10 +249,12 @@ namespace Field {
 		/** 
 		 * Single field constructor
 		 */
+		SingleField( const QByteArray & tag, quint8 method, quint8 flags, quint8 type, QVariant value );
 		SingleField( QLatin1String tag, quint8 method, quint8 flags, quint8 type, QVariant value );
 		/** 
 		 * Convenience constructor for NMFIELD_METHOD_VALID fields
 		 */
+		SingleField( const QByteArray & tag, quint8 flags, quint8 type, QVariant value );
 		SingleField( QLatin1String tag, quint8 flags, quint8 type, QVariant value );
 		~SingleField();
 		void setValue( const QVariant v );
@@ -268,6 +270,8 @@ namespace Field {
 	class MultiField : public FieldBase
 	{
 	public:  
+		MultiField( const QByteArray & tag, quint8 method, quint8 flags, quint8 type );
+		MultiField( const QByteArray & tag, quint8 method, quint8 flags, quint8 type, FieldList fields );
 		MultiField( QLatin1String tag, quint8 method, quint8 flags, quint8 type );
 		MultiField( QLatin1String tag, quint8 method, quint8 flags, quint8 type, FieldList fields );
 		~MultiField();

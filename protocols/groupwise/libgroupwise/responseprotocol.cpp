@@ -18,6 +18,7 @@
 
 #include <QBuffer>
 #include <QByteArray>
+#include <QDebug>
 #include <QStringList>
 
 #include "response.h"
@@ -57,12 +58,12 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 		return 0;
 	// pull out the HTTP return code
 	int firstSpace = headerFirst.indexOf( ' ' );
-	QString rtnField = headerFirst.mid( firstSpace, headerFirst.indexOf( ' ', firstSpace + 1 ) );
+	QByteArray rtnField = headerFirst.mid( firstSpace + 1, 3 );
 	bool ok = true;
 	int rtnCode;
 	int packetState = -1;
 	rtnCode = rtnField.toInt( &ok );
-	debug( "CoreProtocol::readResponse() got HTTP return code " );
+	debug( QString("CoreProtocol::readResponse() got HTTP return code '%1'").arg( rtnCode) );
 	// read rest of header
 	QStringList headerRest;
 	QByteArray line;
@@ -119,6 +120,8 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 	int resultCode = -1;
 	Field::FieldListIterator it;
 	Field::FieldListIterator end = m_collatingFields.end();
+	qDebug() << "got " << m_collatingFields.count() << "fields";
+	m_collatingFields.dump(true);
 	it = m_collatingFields.find( Field::NM_A_SZ_TRANSACTION_ID );
 	if ( it != end )
 	{
@@ -231,6 +234,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 			// create multifield
 			debug( QString( " multi field containing: %1" ).arg( val ) );
 			Field::MultiField* m = new Field::MultiField( QLatin1String(tag.data()), method, 0, type );
+			qDebug() << " constructed field's tag: " << m->tag();
 			currentList.append( m );
 			if ( !readFields( val, &currentList) )
 			{
@@ -238,7 +242,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				return false;
 			}
 		}
-		else 
+		else
 		{
 		
 			if ( type == NMFIELD_TYPE_UTF8 || type == NMFIELD_TYPE_DN )
@@ -259,6 +263,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				debug( QString( "- utf/dn single field: %1" ).arg( fieldValue ) );
 				// create singlefield
 				Field::SingleField* s = new Field::SingleField( QLatin1String(tag.data()), method, 0, type, fieldValue );
+				qDebug() << " constructed field's tag: " << s->tag();
 				currentList.append( s );
 			}
 			else
@@ -274,6 +279,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				m_bytes += sizeof( quint32 );
 				debug( QString( "- numeric field: %1" ).arg( val ) );
 				Field::SingleField* s = new Field::SingleField( QLatin1String(tag.data()), method, 0, type, val );
+				qDebug() << " constructed field's tag: " << s->tag();
 				currentList.append( s );
 			}
 		}
@@ -314,7 +320,7 @@ bool ResponseProtocol::readGroupWiseLine( QByteArray & line )
 		if ( c == '\n' )
 			break;
 	}
-	return true;	
+	return true;
 }
 
 #include "responseprotocol.moc"

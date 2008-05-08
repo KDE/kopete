@@ -151,7 +151,7 @@ void FieldList::dump( bool recursive, int offset )
 {
 	const FieldListIterator myEnd = end();
 	if ( !offset )
-//		kDebug() << ( recursive ? ", recursively" : ", non-recursive" );
+		kDebug() << ( recursive ? ", recursively" : ", non-recursive" );
 	for( FieldListIterator it = begin(); it != myEnd; ++it )
 	{
 		QString s;
@@ -163,7 +163,7 @@ void FieldList::dump( bool recursive, int offset )
 			s.append( " :" );
 			s.append( sf->value().toString() );
 		}
-//		kDebug() << s;
+		kDebug() << s;
 		if ( recursive )
 		{
 			MultiField * mf;
@@ -218,15 +218,15 @@ MultiField * FieldList::findMultiField( FieldListIterator &it, QLatin1String tag
 
 /* === FieldBase ========================================================= */
 
-FieldBase::FieldBase( QLatin1String tag, quint8 method, quint8 flags, quint8 type )
+FieldBase::FieldBase( const QByteArray & tag, quint8 method, quint8 flags, quint8 type )
 : m_tag( tag ), m_method( method ), m_flags( flags ), m_type( type )
 {
-
+	kDebug() << "tag is :" << m_tag;
 }
 
 QLatin1String FieldBase::tag() const
 {
-	return m_tag;
+	return QLatin1String( m_tag );
 }
 
 quint8 FieldBase::method() const
@@ -251,13 +251,23 @@ void FieldBase::setFlags( const quint8 flags )
 
 /* === SingleField ========================================================= */
 
-SingleField::SingleField( QLatin1String tag, quint8 method, quint8 flags, quint8 type, QVariant value )
+SingleField::SingleField( const QByteArray & tag, quint8 method, quint8 flags, quint8 type, QVariant value )
 : FieldBase( tag, method, flags, type ), m_value( value )
 {
 }
 
-SingleField::SingleField( QLatin1String tag, quint8 flags, quint8 type, QVariant value )
+SingleField::SingleField( QLatin1String tag, quint8 method, quint8 flags, quint8 type, QVariant value )
+: FieldBase( tag.latin1(), method, flags, type ), m_value( value )
+{
+}
+
+SingleField::SingleField( const QByteArray & tag, quint8 flags, quint8 type, QVariant value )
 : FieldBase( tag, NMFIELD_METHOD_VALID, flags, type ), m_value( value )
+{
+}
+
+SingleField::SingleField( QLatin1String tag, quint8 flags, quint8 type, QVariant value )
+: FieldBase( tag.latin1(), NMFIELD_METHOD_VALID, flags, type ), m_value( value )
 {
 }
 
@@ -277,13 +287,23 @@ QVariant SingleField::value() const
 
 /* === MultiField ========================================================= */
 
-MultiField::MultiField( QLatin1String tag, quint8 method, quint8 flags, quint8 type, FieldList fields )
+MultiField::MultiField( const QByteArray & tag, quint8 method, quint8 flags, quint8 type, FieldList fields )
 : FieldBase( tag, method, flags, type ), m_fields( fields )
 {
 }
 
-MultiField::MultiField( QLatin1String tag, quint8 method, quint8 flags, quint8 type )
+MultiField::MultiField( const QByteArray & tag, quint8 method, quint8 flags, quint8 type )
 : FieldBase( tag, method, flags, type )
+{
+}
+
+MultiField::MultiField( QLatin1String tag, quint8 method, quint8 flags, quint8 type, FieldList fields )
+: FieldBase( tag.latin1(), method, flags, type ), m_fields( fields )
+{
+}
+
+MultiField::MultiField( QLatin1String tag, quint8 method, quint8 flags, quint8 type )
+: FieldBase( tag.latin1(), method, flags, type )
 {
 }
 
