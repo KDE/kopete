@@ -43,7 +43,7 @@
 #include "client.h"
 #include "gwaccount.h"
 #include "gwerror.h"
-//#include "gwprotocol.h"
+#include "gwprotocol.h"
 #include "gwsearch.h"
 #include "ui_gwaddui.h"
 #include "userdetailsmanager.h"
@@ -87,12 +87,12 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 		QString contactId;
 		QString displayName;
 
-		Q3ValueList< ContactDetails > selected = m_searchUI->selectedResults();
+		QList< ContactDetails > selected = m_searchUI->selectedResults();
 		if ( selected.count() == 1 )
 		{
 			ContactDetails dt = selected.first();
 			m_account->client()->userDetailsManager()->addDetails( dt );
-			contactId = dt.dn;
+			contactId = GroupWiseProtocol::dnToDotted(dt.dn);
 			displayName = dt.givenName + ' ' + dt.surname;
 		}
 		else
