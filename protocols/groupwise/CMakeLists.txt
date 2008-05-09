@@ -50,7 +50,6 @@ set(kopete_groupwise_PART_SRCS
    gwconnector.cpp
    gwmessagemanager.cpp
    gwcontactlist.cpp
-   modeltest.cpp
 )
 
 kde4_add_plugin(kopete_groupwise ${kopete_groupwise_PART_SRCS})
