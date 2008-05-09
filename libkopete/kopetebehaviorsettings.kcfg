@@ -61,21 +61,9 @@
 			<label>Queue Only Messages On Another Desktop</label>
 			<default>false</default>
 		</entry>
-		<entry key="balloonNotify" type="Bool">
-			<label>Use Balloon notification.</label>
-			<default>true</default>
-		</entry>
 		<entry key="balloonNotifyIgnoreClosesChatView" type="Bool">
 			<label>Balloon Notification Ignore Closes Chat View</label>
 			<default>false</default>
-		</entry>
-		<entry key="balloonClose" type="Bool">
-			<label>Balloon Autoclose</label>
-			<default>false</default>
-		</entry>
-		<entry key="balloonCloseDelay" type="Int">
-			<label>Balloon Autoclose Delay</label>
-			<default>30</default>
 		</entry>
 		<entry key="trayflashNotify" type="Bool">
 			<label>Trayflash Notification</label>
