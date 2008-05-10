@@ -38,6 +38,7 @@
 #include "kopetechatsession.h"
 #include "kopetegroup.h"
 #include "kopetepicture.h"
+#include "kopeteemoticons.h"
 
 #include "kopeteviewmanager.h"
 
@@ -62,7 +63,7 @@ static QString squashMessage( const Kopete::Message& msg )
 		msgText =msg.plainBody() ;
 		if( msgText.length() > 30 )
 			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
-		msgText=Kopete::Message::escape(msgText);
+		msgText=Kopete::Emoticons::parseEmoticons(Qt::escape(msgText));
 	}
 	else
 	{
@@ -232,6 +233,11 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 
 	if( !outgoingMessage || d->managerMap.contains( manager ) )
 	{
+		// Get an early copy of the plain message body before the chat view works on it
+		// Otherwise toPlainBody() will ignore smileys if they were turned into images during
+		// the html conversion. See bug 161651.
+		QString squashedMessage( squashMessage( msg ) );
+
 		d->foreignMessage=!outgoingMessage; //let know for the view we are about to create
 		manager->view(true,msg.requestedPlugin())->appendMessage( msg );
 		d->foreignMessage=false; //the view is created, reset the flag
@@ -307,7 +313,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			}
 
 			KNotification *notify=new KNotification(eventId, viewWidget, isActiveWindow ? KNotification::CloseOnTimeout : KNotification::Persistent);
-			notify->setText(body.subs( Qt::escape(msgFrom) ).subs( squashMessage( msg )  ).toString());
+			notify->setText(body.subs( Qt::escape(msgFrom) ).subs( squashedMessage ).toString());
 			notify->setPixmap( QPixmap::fromImage(msg.from()->metaContact()->picture().image()) );
 			notify->setActions(( QStringList() <<  i18n( "View" )  <<   i18n( "Ignore" )) );
 
