@@ -221,7 +221,6 @@ MultiField * FieldList::findMultiField( FieldListIterator &it, const QByteArray 
 FieldBase::FieldBase( const QByteArray & tag, quint8 method, quint8 flags, quint8 type )
 : m_tag( tag ), m_method( method ), m_flags( flags ), m_type( type )
 {
-	kDebug() << "tag is :" << m_tag;
 }
 
 QByteArray FieldBase::tag() const
