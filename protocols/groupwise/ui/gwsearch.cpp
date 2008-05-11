@@ -287,7 +287,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_firstName->text();
-		arg.field = "Given Name";
+		arg.field = Field::KOPETE_NM_USER_DETAILS_GIVEN_NAME;
 		arg.operation = searchOperation( m_firstNameOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
@@ -295,7 +295,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_lastName->text();
-		arg.field = "Surname";
+		arg.field = Field::KOPETE_NM_USER_DETAILS_SURNAME;
 		arg.operation = searchOperation( m_lastNameOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
