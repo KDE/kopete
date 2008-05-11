@@ -85,20 +85,18 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 	if ( validateData() )
 	{
 		QString contactId;
-		QString displayName;
 
+		ContactDetails dt;
 		QList< ContactDetails > selected = m_searchUI->selectedResults();
 		if ( selected.count() == 1 )
 		{
-			ContactDetails dt = selected.first();
+			dt = selected.first();
 			m_account->client()->userDetailsManager()->addDetails( dt );
-			contactId = GroupWiseProtocol::dnToDotted(dt.dn);
-			displayName = dt.givenName + ' ' + dt.surname;
 		}
 		else
 			return false;
 
-		return ( account->addContact ( contactId, parentContact, Kopete::Account::ChangeKABC ) );
+		return ( account->addContact ( dt.dn, parentContact, Kopete::Account::ChangeKABC ) );
 	}
 	else
 		return false;

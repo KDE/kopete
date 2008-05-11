@@ -1204,7 +1204,7 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 		displayAs = dt.givenName + ' ' + dt.surname;
 	else
 		displayAs = dt.fullName;
-
+	Q_ASSERT( !displayAs.isEmpty() );
 	gc->setNickName( displayAs );
 	// If the CreateContactTask finishes with an error, we have to
 	// delete the contact we just created, in receiveContactCreated :/
@@ -1217,7 +1217,7 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 	
 	// get the contact's full name to use as the display name of the created contact
 	CreateContactTask * cct = new CreateContactTask( client()->rootTask() );
-	cct->contactFromUserId( contactId, parentContact->displayName(), highestFreeSequence, folders, topLevel );
+	cct->contactFromUserId( contactId, displayAs, highestFreeSequence, folders, topLevel );
 	QObject::connect( cct, SIGNAL( finished() ), SLOT( receiveContactCreated() ) );
 	cct->go( true );
 	return true;
@@ -1235,6 +1235,8 @@ void GroupWiseAccount::receiveContactCreated()
 		{
 			ContactDetails dt = client()->userDetailsManager()->details( cct->dn() );
 			GroupWiseContact * c = contactForDN( cct->dn() );
+
+			Q_ASSERT(c);
 			c->setOnlineStatus( protocol()->gwStatusToKOS( dt.status ) );
 			c->setNickName( dt.fullName );
 			c->updateDetails( dt );
