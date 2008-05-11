@@ -46,12 +46,12 @@ class GroupWiseChatPropsDialog : public KDialog
 		/**
 		 * Construct an empty dialog
 		 */
-		GroupWiseChatPropsDialog( QWidget * parent, const char * name );
+		GroupWiseChatPropsDialog( QWidget * parent );
 		/**
 		 * Construct a populated dialog
 		 */
 		GroupWiseChatPropsDialog( const GroupWise::Chatroom & room, bool readOnly,
-									   QWidget * parent, const char * name );
+									   QWidget * parent );
 		
 		~GroupWiseChatPropsDialog();
 		

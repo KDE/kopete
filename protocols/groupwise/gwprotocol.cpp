@@ -40,12 +40,12 @@
 #include "ui/gwaddcontactpage.h"
 #include "ui/gweditaccountwidget.h"
 
-typedef KGenericFactory<GroupWiseProtocol> GroupWiseProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_groupwise, GroupWiseProtocolFactory( "kopete_groupwise" )  )
+K_PLUGIN_FACTORY( GroupWiseProtocolFactory, registerPlugin<GroupWiseProtocol>(); )
+K_EXPORT_PLUGIN( GroupWiseProtocolFactory( "kopete_groupwise" ) )
 
 GroupWiseProtocol *GroupWiseProtocol::s_protocol = 0L;
 
-GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QStringList &/*args*/ )
+GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QVariantList &/*args*/ )
 	: Kopete::Protocol( GroupWiseProtocolFactory::componentData(), parent ),
 /* initialise Kopete::OnlineStatus that should be user selectable in the user interface */
 	  groupwiseOffline ( Kopete::OnlineStatus::Offline,    0,  this, GroupWise::Offline, QStringList(),
@@ -79,7 +79,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QStringList &/*args
 	  propEmail( Kopete::Global::Properties::self()->emailAddress() )
 {
 	// ^^ That is all member initialiser syntax, not broken indentation!
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 
 	s_protocol = this;
 
@@ -107,7 +107,7 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 
 	if ( !account )
 	{
-		kDebug(GROUPWISE_DEBUG_GLOBAL) << "Account doesn't exist, skipping";
+		kDebug() << "Account doesn't exist, skipping";
 		return 0;
 	}
 
@@ -117,13 +117,13 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 
 AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, Kopete::Account *  account )
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << "Creating Add Contact Page";
+	kDebug() << "Creating Add Contact Page";
 	return new GroupWiseAddContactPage( account, parent );
 }
 
 KopeteEditAccountWidget * GroupWiseProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
-	kDebug(GROUPWISE_DEBUG_GLOBAL) << "Creating Edit Account Page";
+	kDebug() << "Creating Edit Account Page";
 	return new GroupWiseEditAccountWidget( parent, account );
 }
 
@@ -165,7 +165,7 @@ Kopete::OnlineStatus GroupWiseProtocol::gwStatusToKOS( const int gwInternal )
 			break;
 		default:
 			status = groupwiseInvalid;
-			kWarning( GROUPWISE_DEBUG_GLOBAL ) << "Got unrecognised status value" << gwInternal;
+			kWarning() << "Got unrecognised status value" << gwInternal;
 	}
 	return status;
 }
@@ -253,13 +253,13 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 			}
 			else
 			{
-				kDebug( GROUPWISE_DEBUG_GLOBAL ) << "bogus utf-8 lead byte: 0x" << Q3TextStream::hex << current;
+				kDebug() << "bogus utf-8 lead byte: 0x" << Q3TextStream::hex << current;
 				ucs4Char = 0x003F;
 				bytesEncoded = 1;
 			}
 			index += bytesEncoded;
 			escapedUnicodeChar = QString("\\u%1?").arg( ucs4Char );
-			kDebug( GROUPWISE_DEBUG_GLOBAL ) << "unicode escaped char: " << escapedUnicodeChar;
+			kDebug() << "unicode escaped char: " << escapedUnicodeChar;
 			outputText.append( escapedUnicodeChar );
 		}
 	}

@@ -37,8 +37,8 @@ void JoinChatTask::join( const QString & displayName )
 {
 	m_displayName = displayName;
 	Field::FieldList lst, tmp;
-	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, displayName ) );
-	lst.append( new Field::MultiField( NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
+	tmp.append( new Field::SingleField( Field::NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, displayName ) );
+	lst.append( new Field::MultiField( Field::NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
 	createTransfer( "joinchat", lst );
 }
 
@@ -53,15 +53,15 @@ bool JoinChatTask::take( Transfer * transfer )
 		if ( response->resultCode() == GroupWise::None )
 		{
 			// extract the list of participants and store them
-			Field::MultiField * participants = responseFields.findMultiField( NM_A_FA_CONTACT_LIST );
+			Field::MultiField * participants = responseFields.findMultiField( Field::NM_A_FA_CONTACT_LIST );
 			if ( participants )
 			{
 				Field::SingleField * contact = 0;
 				Field::FieldList contactList = participants->fields();
 				const Field::FieldListIterator end = contactList.end();
-				for ( Field::FieldListIterator it = contactList.find( NM_A_SZ_DN );
+				for ( Field::FieldListIterator it = contactList.find( Field::NM_A_SZ_DN );
 								  it != end;
-								  it = contactList.find( ++it, NM_A_SZ_DN ) )
+								  it = contactList.find( ++it, Field::NM_A_SZ_DN ) )
 				{
 					contact = static_cast<Field::SingleField *>( *it );
 					if ( contact )
@@ -77,15 +77,15 @@ bool JoinChatTask::take( Transfer * transfer )
 				setError( GroupWise::Protocol );
 			
 			// now, extract the list of pending invites and store them
-			Field::MultiField * invitees = responseFields.findMultiField( NM_A_FA_RESULTS );
+			Field::MultiField * invitees = responseFields.findMultiField( Field::NM_A_FA_RESULTS );
 			if ( invitees )
 			{
 				Field::SingleField * contact = 0;
 				Field::FieldList contactList = invitees->fields();
 				const Field::FieldListIterator end = contactList.end();
-				for ( Field::FieldListIterator it = contactList.find( NM_A_SZ_DN );
+				for ( Field::FieldListIterator it = contactList.find( Field::NM_A_SZ_DN );
 								  it != end;
-								  it = contactList.find( ++it, NM_A_SZ_DN ) )
+								  it = contactList.find( ++it, Field::NM_A_SZ_DN ) )
 				{
 					contact = static_cast<Field::SingleField *>( *it );
 					if ( contact )

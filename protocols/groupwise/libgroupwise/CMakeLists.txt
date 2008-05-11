@@ -1,3 +1,6 @@
+set( GROUPWISE_DEBUG_LIBGW 14191 )
+add_definitions( -DKDE_DEFAULT_DEBUG_AREA=${GROUPWISE_DEBUG_LIBGW} )
+
 find_package(ZLIB REQUIRED)
 
 add_subdirectory( tasks )
@@ -87,7 +90,7 @@ target_link_libraries( qgroupwise ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_
 
 ########### install files ###############
 
-install(TARGETS qgroupwise  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS qgroupwise ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 

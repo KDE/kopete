@@ -21,6 +21,12 @@
 #ifndef GWFIELD_H
 #define GWFIELD_H
 
+//#include <QGlobals>
+#include <QObject>
+#include <QVariant>
+
+#include "kopete_export.h"
+
 /* Field types */
 /* Comments: ^1 not used ^2 ignored ^3 apparently only used in _field_to_string for debug */
 /* Otherwise: widely used */
@@ -68,90 +74,90 @@
 #define NMFIELD_METHOD_NOT_ARRAY		40
 #define NMFIELD_METHOD_OR_ARRAY			41
 #define NMFIELD_METHOD_AND_ARRAY		42
-
-/* Attribute Names (field tags) */
-#define NM_A_IP_ADDRESS					"nnmIPAddress"
-#define	NM_A_PORT						"nnmPort"
-#define	NM_A_FA_FOLDER					"NM_A_FA_FOLDER"
-#define	NM_A_FA_CONTACT					"NM_A_FA_CONTACT"
-#define	NM_A_FA_CONVERSATION			"NM_A_FA_CONVERSATION"
-#define	NM_A_FA_MESSAGE					"NM_A_FA_MESSAGE"
-#define	NM_A_FA_CONTACT_LIST			"NM_A_FA_CONTACT_LIST"
-#define	NM_A_FA_RESULTS					"NM_A_FA_RESULTS"
-#define	NM_A_FA_INFO_DISPLAY_ARRAY		"NM_A_FA_INFO_DISPLAY_ARRAY"
-#define	NM_A_FA_USER_DETAILS			"NM_A_FA_USER_DETAILS"
-#define	NM_A_SZ_OBJECT_ID				"NM_A_SZ_OBJECT_ID"
-#define	NM_A_SZ_PARENT_ID				"NM_A_SZ_PARENT_ID"
-#define	NM_A_SZ_SEQUENCE_NUMBER			"NM_A_SZ_SEQUENCE_NUMBER"
-#define	NM_A_SZ_TYPE					"NM_A_SZ_TYPE"
-#define	NM_A_SZ_STATUS					"NM_A_SZ_STATUS"
-#define	NM_A_SZ_STATUS_TEXT				"NM_A_SZ_STATUS_TEXT"
-#define	NM_A_SZ_DN						"NM_A_SZ_DN"
-#define	NM_A_SZ_DISPLAY_NAME			"NM_A_SZ_DISPLAY_NAME"
-#define	NM_A_SZ_USERID					"NM_A_SZ_USERID"
-#define NM_A_SZ_CREDENTIALS				"NM_A_SZ_CREDENTIALS"
-#define	NM_A_SZ_MESSAGE_BODY			"NM_A_SZ_MESSAGE_BODY"
-#define	NM_A_SZ_MESSAGE_TEXT			"NM_A_SZ_MESSAGE_TEXT"
-#define	NM_A_UD_MESSAGE_TYPE			"NM_A_UD_MESSAGE_TYPE"
-#define	NM_A_FA_PARTICIPANTS			"NM_A_FA_PARTICIPANTS"
-#define	NM_A_FA_INVITES					"NM_A_FA_INVITES"
-#define	NM_A_FA_EVENT					"NM_A_FA_EVENT"
-#define	NM_A_UD_COUNT					"NM_A_UD_COUNT"
-#define	NM_A_UD_DATE					"NM_A_UD_DATE"
-#define	NM_A_UD_EVENT					"NM_A_UD_EVENT"
-#define	NM_A_B_NO_CONTACTS				"NM_A_B_NO_CONTACTS"
-#define	NM_A_B_NO_CUSTOMS				"NM_A_B_NO_CUSTOMS"
-#define	NM_A_B_NO_PRIVACY				"NM_A_B_NO_PRIVACY"
-#define	NM_A_B_ONLY_MODIFIED			"NM_A_B_ONLY_MODIFIED"
-#define	NM_A_UW_STATUS					"NM_A_UW_STATUS"
-#define	NM_A_UD_OBJECT_ID				"NM_A_UD_OBJECT_ID"
-#define	NM_A_SZ_TRANSACTION_ID			"NM_A_SZ_TRANSACTION_ID"
-#define	NM_A_SZ_RESULT_CODE				"NM_A_SZ_RESULT_CODE"
-#define	NM_A_UD_BUILD					"NM_A_UD_BUILD"
-#define	NM_A_SZ_AUTH_ATTRIBUTE			"NM_A_SZ_AUTH_ATTRIBUTE"
-#define	NM_A_UD_KEEPALIVE				"NM_A_UD_KEEPALIVE"
-#define NM_A_SZ_USER_AGENT				"NM_A_SZ_USER_AGENT"
-#define NM_A_BLOCKING					"nnmBlocking"
-#define NM_A_BLOCKING_DENY_LIST			"nnmBlockingDenyList"
-#define NM_A_BLOCKING_ALLOW_LIST		"nnmBlockingAllowList"
-#define	NM_A_SZ_BLOCKING_ALLOW_ITEM		"NM_A_SZ_BLOCKING_ALLOW_ITEM"
-#define	NM_A_SZ_BLOCKING_DENY_ITEM		"NM_A_SZ_BLOCKING_DENY_ITEM"
-#define NM_A_LOCKED_ATTR_LIST			"nnmLockedAttrList"
-#define NM_A_SZ_DEPARTMENT				"OU"
-#define NM_A_SZ_TITLE					"Title"
-// GW7
-#define NM_A_FA_CUSTOM_STATUSES			"NM_A_FA_CUSTOM_STATUSES"
-#define NM_A_FA_STATUS					"NM_A_FA_STATUS"
-#define NM_A_UD_QUERY_COUNT				"NM_A_UD_QUERY_COUNT"
-#define NM_A_FA_CHAT					"NM_A_FA_CHAT"
-#define NM_A_DISPLAY_NAME				"nnmDisplayName"
-#define NM_A_CHAT_OWNER_DN				"nnmChatOwnerDN"
-#define NM_A_UD_PARTICIPANTS			"NM_A_UD_PARTICIPANTS"
-#define NM_A_DESCRIPTION				"nnmDescription"
-#define NM_A_DISCLAIMER					"nnmDisclaimer"
-#define NM_A_QUERY						"nnmQuery"
-#define NM_A_ARCHIVE					"nnmArchive"
-#define NM_A_MAX_USERS					"nnmMaxUsers"
-#define NM_A_SZ_TOPIC					"NM_A_SZ_TOPIC"
-#define NM_A_FA_CHAT_ACL				"NM_A_FA_CHAT_ACL"
-#define NM_A_FA_CHAT_ACL_ENTRY			"NM_A_FA_CHAT_ACL_ENTRY"
-#define NM_A_SZ_ACCESS_FLAGS			"NM_A_SZ_ACCESS_FLAGS"
-#define NM_A_CHAT_CREATOR_DN			"nnmCreatorDN"
-#define NM_A_CREATION_TIME				"nnmCreationTime"
-#define NM_A_UD_CHAT_RIGHTS				"NM_A_UD_CHAT_RIGHTS"
-
-#define NM_PROTOCOL_VERSION		 		5
-#define	NM_FIELD_TRUE					"1"
-#define	NM_FIELD_FALSE					"0"
-
+#define NM_PROTOCOL_VERSION				5
 #define NMFIELD_MAX_STR_LENGTH			32768
 
-#include <qglobal.h>
-#include <qobject.h>
-#include <qvariant.h>
-#include <q3valuelist.h>	
-//Added by qt3to4:
-#include <QByteArray>
+
+/* Attribute Names (field tags) */
+namespace Field {
+	extern KOPETE_EXPORT QByteArray NM_A_IP_ADDRESS;
+	extern KOPETE_EXPORT QByteArray NM_A_PORT;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_FOLDER;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CONTACT;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CONVERSATION;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_MESSAGE;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CONTACT_LIST;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_RESULTS;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_INFO_DISPLAY_ARRAY;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_USER_DETAILS;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_OBJECT_ID;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_PARENT_ID;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_SEQUENCE_NUMBER;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_TYPE;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_STATUS;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_STATUS_TEXT;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_DN;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_DISPLAY_NAME;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_USERID;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_CREDENTIALS;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_MESSAGE_BODY;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_MESSAGE_TEXT;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_MESSAGE_TYPE;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_PARTICIPANTS;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_INVITES;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_EVENT;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_COUNT;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_DATE;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_EVENT;
+	extern KOPETE_EXPORT QByteArray NM_A_B_NO_CONTACTS;
+	extern KOPETE_EXPORT QByteArray NM_A_B_NO_CUSTOMS;
+	extern KOPETE_EXPORT QByteArray NM_A_B_NO_PRIVACY;
+	extern KOPETE_EXPORT QByteArray NM_A_B_ONLY_MODIFIED;
+	extern KOPETE_EXPORT QByteArray NM_A_UW_STATUS;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_OBJECT_ID;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_TRANSACTION_ID;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_RESULT_CODE;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_BUILD;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_AUTH_ATTRIBUTE;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_KEEPALIVE;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_USER_AGENT;
+	extern KOPETE_EXPORT QByteArray NM_A_BLOCKING;
+	extern KOPETE_EXPORT QByteArray NM_A_BLOCKING_DENY_LIST;
+	extern KOPETE_EXPORT QByteArray NM_A_BLOCKING_ALLOW_LIST;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_BLOCKING_ALLOW_ITEM;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_BLOCKING_DENY_ITEM;
+	extern KOPETE_EXPORT QByteArray NM_A_LOCKED_ATTR_LIST;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_DEPARTMENT;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_TITLE;
+	// GW7
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CUSTOM_STATUSES;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_STATUS;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_QUERY_COUNT;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CHAT;
+	extern KOPETE_EXPORT QByteArray NM_A_DISPLAY_NAME;
+	extern KOPETE_EXPORT QByteArray NM_A_CHAT_OWNER_DN;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_PARTICIPANTS;
+	extern KOPETE_EXPORT QByteArray NM_A_DESCRIPTION;
+	extern KOPETE_EXPORT QByteArray NM_A_DISCLAIMER;
+	extern KOPETE_EXPORT QByteArray NM_A_QUERY;
+	extern KOPETE_EXPORT QByteArray NM_A_ARCHIVE;
+	extern KOPETE_EXPORT QByteArray NM_A_MAX_USERS;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_TOPIC;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CHAT_ACL;
+	extern KOPETE_EXPORT QByteArray NM_A_FA_CHAT_ACL_ENTRY;
+	extern KOPETE_EXPORT QByteArray NM_A_SZ_ACCESS_FLAGS;
+	extern KOPETE_EXPORT QByteArray NM_A_CHAT_CREATOR_DN;
+	extern KOPETE_EXPORT QByteArray NM_A_CREATION_TIME;
+	extern KOPETE_EXPORT QByteArray NM_A_UD_CHAT_RIGHTS;
+	extern KOPETE_EXPORT QByteArray NM_FIELD_TRUE;
+	extern KOPETE_EXPORT QByteArray NM_FIELD_FALSE;
+
+	extern KOPETE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_CN;
+	extern KOPETE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_GIVEN_NAME;
+	extern KOPETE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_SURNAME;
+	extern KOPETE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_ARCHIVE_FLAG;
+	extern KOPETE_EXPORT QByteArray KOPETE_NM_USER_DETAILS_FULL_NAME;
+
 
 /**
  * Fields are typed units of information interchanged between the groupwise server and its clients.
@@ -160,16 +166,14 @@
  * deleting outgoing Fields.
  */
 
-namespace Field
-{
 	/**
 	 * Abstract base class of all field types
 	 */
 	class FieldBase
 	{
 	public:
-		FieldBase() {}
-		FieldBase( QByteArray tag, quint8 method, quint8 flags, quint8 type );
+//		FieldBase() {}
+		FieldBase( const QByteArray & tag, quint8 method, quint8 flags, quint8 type );
 		virtual ~FieldBase() {}
 		QByteArray tag() const;
 		quint8 method() const;
@@ -183,12 +187,12 @@ namespace Field
 		quint8 m_type;  // doch needed
 	};
 	
-	typedef QList<FieldBase*>::Iterator FieldListIterator;
-	typedef QList<FieldBase*>::ConstIterator FieldListConstIterator;
+	typedef QList<Field::FieldBase*>::Iterator FieldListIterator;
+	typedef QList<Field::FieldBase*>::ConstIterator FieldListConstIterator;
 	class SingleField;
 	class MultiField;
 	
-	class FieldList : public QList<FieldBase *>
+	class FieldList : public QList<Field::FieldBase *>
 	{
 		public:
 			/** 
@@ -200,18 +204,18 @@ namespace Field
 			 * @param tag The tag name of the field to search for.
 			 * @return An iterator pointing to the first occurrence found, or end() if none was found.
 			 */
-			FieldListIterator find( QByteArray tag );
+			FieldListIterator find( const QByteArray & tag );
 			/** 
 			 * Locate the first occurrence of a given field in the list, starting at the supplied iterator
 			 * @param tag The tag name of the field to search for.
 			 * @param it An iterator within the list, to start searching from.
 			 * @return An iterator pointing to the first occurrence found, or end() if none was found.
 			 */
-			FieldListIterator find( FieldListIterator &it, QByteArray tag );
+			FieldListIterator find( FieldListIterator &it, const QByteArray & tag );
 			/**
 			 * Get the index of the first occurrence of tag, or -1 if not found
 			 */
-			int findIndex( QByteArray tag );
+			int findIndex( const QByteArray & tag );
 			/** 
 			 * Debug function, dumps to stdout
 			 */
@@ -224,11 +228,11 @@ namespace Field
 			 * Utility functions for finding the first instance of a tag
 			 * @return 0 if no field of the right tag and type was found.
 			 */
-			SingleField * findSingleField( QByteArray tag );
-			MultiField * findMultiField( QByteArray tag );
+			SingleField * findSingleField( const QByteArray & tag );
+			MultiField * findMultiField( const QByteArray & tag );
 		protected:
-			SingleField * findSingleField( FieldListIterator &it, QByteArray tag );
-			MultiField * findMultiField( FieldListIterator &it, QByteArray tag );
+			SingleField * findSingleField( FieldListIterator &it, const QByteArray & tag );
+			MultiField * findMultiField( FieldListIterator &it, const QByteArray & tag );
 
 	};
 
@@ -244,11 +248,11 @@ namespace Field
 		/** 
 		 * Single field constructor
 		 */
-		SingleField( QByteArray tag, quint8 method, quint8 flags, quint8 type, QVariant value );
+		SingleField( const QByteArray & tag, quint8 method, quint8 flags, quint8 type, QVariant value );
 		/** 
 		 * Convenience constructor for NMFIELD_METHOD_VALID fields
 		 */
-		SingleField( QByteArray tag, quint8 flags, quint8 type, QVariant value );
+		SingleField( const QByteArray & tag, quint8 flags, quint8 type, QVariant value );
 		~SingleField();
 		void setValue( const QVariant v );
 		QVariant value() const;
@@ -263,8 +267,8 @@ namespace Field
 	class MultiField : public FieldBase
 	{
 	public:  
-		MultiField( QByteArray tag, quint8 method, quint8 flags, quint8 type );
-		MultiField( QByteArray tag, quint8 method, quint8 flags, quint8 type, FieldList fields );
+		MultiField( const QByteArray & tag, quint8 method, quint8 flags, quint8 type );
+		MultiField( const QByteArray & tag, quint8 method, quint8 flags, quint8 type, FieldList fields );
 		~MultiField();
 		FieldList fields() const;
 		void setFields( FieldList );
@@ -272,6 +276,5 @@ namespace Field
 		FieldList m_fields; // nb implicitly shared, copy-on-write - is there a case where this is bad?
 	};
 	
-}
-
+} // namespace Field
 #endif

@@ -37,7 +37,7 @@ class GroupWiseAccount;
 class GroupWiseContact;
 class GroupWiseContactSearch;
 /**
- * Specialised message manager, which tracks the GUID used by GroupWise to uniquely identify a given chat, and provides invite actions and logging and security indicators.  To instantiate call @ref GroupWiseAccount::chatSession().
+ * Specialized message manager, which tracks the GUID used by GroupWise to uniquely identify a given chat, and provides invite actions and logging and security indicators.  To instantiate call @ref GroupWiseAccount::chatSession().
  * @author SUSE AG
 */
 

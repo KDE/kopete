@@ -161,7 +161,7 @@ namespace GroupWise
 
 	struct UserSearchQueryTerm
 	{
-		QString field;
+		QByteArray field;
 		QString argument;
 		int operation;
 	};

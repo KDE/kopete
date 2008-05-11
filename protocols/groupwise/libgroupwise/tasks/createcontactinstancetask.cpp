@@ -33,7 +33,7 @@ CreateContactInstanceTask::~CreateContactInstanceTask()
 
 void CreateContactInstanceTask::contactFromUserId( const QString & userId, const QString & displayName, const int parentFolder )
 {
-	contact( new Field::SingleField( NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, userId ), displayName, parentFolder );
+	contact( new Field::SingleField( Field::NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, userId ), displayName, parentFolder );
 }
 
 void CreateContactInstanceTask::contactFromUserIdAndFolder( const QString & userId, const QString & displayName, const int folderSequence, const QString & folderDisplayName )
@@ -48,7 +48,7 @@ void CreateContactInstanceTask::contactFromUserIdAndFolder( const QString & user
 
 void CreateContactInstanceTask::contactFromDN( const QString & dn, const QString & displayName, const int parentFolder )
 {
-	contact( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_UTF8, dn ), displayName, parentFolder );
+	contact( new Field::SingleField( Field::NM_A_SZ_DN, 0, NMFIELD_TYPE_UTF8, dn ), displayName, parentFolder );
 }
 
 void CreateContactInstanceTask::contactFromDNAndFolder( const QString & dn, const QString & displayName, const int folderSequence, const QString & folderDisplayName )
@@ -64,13 +64,13 @@ void CreateContactInstanceTask::contactFromDNAndFolder( const QString & dn, cons
 void CreateContactInstanceTask::contact( Field::SingleField * id, const QString & displayName, const int parentFolder )
 {
 	Field::FieldList lst;
-	lst.append( new Field::SingleField( NM_A_SZ_PARENT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( parentFolder ) ) );
+	lst.append( new Field::SingleField( Field::NM_A_SZ_PARENT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( parentFolder ) ) );
 	// this is either a user Id or a DN
 	lst.append( id );
 	if ( displayName.isEmpty() ) // fallback so that the contact is created
-		lst.append( new Field::SingleField( NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, m_dn ) );
+		lst.append( new Field::SingleField( Field::NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, m_dn ) );
 	else
-		lst.append( new Field::SingleField( NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, displayName ) );
+		lst.append( new Field::SingleField( Field::NM_A_SZ_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, displayName ) );
 	createTransfer( "createcontact", lst );
 }
 
@@ -87,9 +87,9 @@ void CreateContactInstanceTask::onFolderCreated()
 {
 	// now the folder exists, perform the requested type of contact instance creation
 	if ( m_userId.isEmpty() )
-		contact( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_UTF8, m_dn ), m_displayName, m_folderId );
+		contact( new Field::SingleField( Field::NM_A_SZ_DN, 0, NMFIELD_TYPE_UTF8, m_dn ), m_displayName, m_folderId );
 	else
-		contact( new Field::SingleField( NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, m_userId ), m_displayName, m_folderId );
+		contact( new Field::SingleField( Field::NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, m_userId ), m_displayName, m_folderId );
 	// send the transfer immediately
 	RequestTask::onGo();
 }
