@@ -220,6 +220,7 @@ KopeteChatWindow::KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *par
 
 	ChatMembersListView *chatmembers = new ChatMembersListView(m_participantsWidget);
 	chatmembers->setModel(members_model);
+	chatmembers->setWordWrap(true);
 	m_participantsWidget->setWidget(chatmembers);
 	initActions();
 
