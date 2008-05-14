@@ -223,6 +223,7 @@ void KopeteAccountConfig::slotItemSelected()
 void KopeteAccountConfig::slotAddAccount()
 {
 	AddAccountWizard *addwizard = new AddAccountWizard( this, true );
+	addwizard->setIdentity( selectedIdentity()->identity() );
 	addwizard->show();
 }
 
@@ -451,12 +452,6 @@ void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,
 
 void KopeteAccountConfig::slotAccountAdded( Kopete::Account * account )
 {
-	KopeteIdentityLVI *i = selectedIdentity();
-	if ( i ) {
-		account->setIdentity( i->identity() );
-	} else {
-		account->setIdentity( Kopete::IdentityManager::self()->defaultIdentity() );
-	}
 	save();
 	load();
 }
