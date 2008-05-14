@@ -778,6 +778,12 @@ void KopeteWindow::slotQuit()
 {
 	KopeteApplication *app = static_cast<KopeteApplication *> ( kapp );
 	app->quitKopete();
+
+	if ( d->tray && app->isShuttingDown() )
+	{
+		d->tray->deleteLater();;
+		d->tray = 0;
+	}
 }
 
 void KopeteWindow::slotPluginLoaded ( Kopete::Plugin *  p )
