@@ -781,7 +781,7 @@ void KopeteWindow::slotQuit()
 
 	if ( d->tray && app->isShuttingDown() )
 	{
-		d->tray->deleteLater();;
+		d->tray->deleteLater();
 		d->tray = 0;
 	}
 }
