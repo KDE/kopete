@@ -399,7 +399,10 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 		// if the identity was not found, use the default one which will for sure exist
 		// FIXME: get rid of this, the account's identity should always exist at this point
 		if (!identity)
+		{
+			kWarning( 14010 ) << "No identity for account " << accountId << ": falling back to default";
 			identity = Kopete::IdentityManager::self()->defaultIdentity();
+		}
 		account->setIdentity( identity );
 	}
 }
