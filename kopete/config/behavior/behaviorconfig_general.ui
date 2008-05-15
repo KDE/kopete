@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>365</width>
-    <height>400</height>
+    <height>404</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -16,16 +16,7 @@
    <property name="spacing" >
     <number>6</number>
    </property>
-   <property name="leftMargin" >
-    <number>9</number>
-   </property>
-   <property name="topMargin" >
-    <number>9</number>
-   </property>
-   <property name="rightMargin" >
-    <number>9</number>
-   </property>
-   <property name="bottomMargin" >
+   <property name="margin" >
     <number>9</number>
    </property>
    <item>
@@ -37,16 +28,7 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
       <item>
@@ -55,7 +37,7 @@
          <string>Show the icon in the system tray</string>
         </property>
         <property name="whatsThis" >
-         <string>By default, the system tray icon indicates new incoming messages by flashing and showing a bubble. A left or middle mouse click on the icon will open the message in a new chat window. Pressing the "View" button in the bubble has the same effect.</string>
+         <string>By default, the system tray icon indicates new incoming messages using an animation. A left or middle mouse click on the icon will open the message in a new chat window. Pressing the "View" button in the notification popup has the same effect.</string>
         </property>
         <property name="text" >
          <string>Show system &amp;tray icon</string>
@@ -90,16 +72,7 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
       <item>
@@ -121,7 +94,7 @@
          <string>Use a message queue to store incoming messages</string>
         </property>
         <property name="whatsThis" >
-         <string>Store new incoming messages in a message queue. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via a bubble, a flashing tray icon, or both.</string>
+         <string>Store new incoming messages in a message queue. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via chat window and system tray icon animations.</string>
         </property>
         <property name="text" >
          <string>Use message &amp;queue</string>
@@ -134,7 +107,7 @@
          <string>Use a message stack to store incoming messages</string>
         </property>
         <property name="whatsThis" >
-         <string>Store new incoming messages in a message stack. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via a bubble and flashing tray icon.</string>
+         <string>Store new incoming messages in a message stack. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via chat window and system tray icon animations.</string>
         </property>
         <property name="text" >
          <string>Use message stac&amp;k</string>
@@ -150,7 +123,7 @@
          <string>Also add unread messages to queue/stack</string>
         </property>
         <property name="whatsThis" >
-         <string>Unread messages are messages that will be displayed in an already opened but inactive chat window. Only incoming queued messages trigger notification via a bubble, a flashing tray icon, or both. With this option disabled only new incoming messages are queued, i.e. messages that cannot be displayed in an already open chat window.</string>
+         <string>Unread messages are messages that will be displayed in an already opened but inactive chat window. Only incoming queued messages trigger notification via chat window and system tray icon animations. With this option disabled only new incoming messages are queued, i.e. messages that cannot be displayed in an already open chat window.</string>
         </property>
         <property name="text" >
          <string>Queue/stack unrea&amp;d messages</string>
@@ -169,16 +142,7 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
       <item>
@@ -205,7 +169,7 @@
      <property name="sizeType" >
       <enum>QSizePolicy::Expanding</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
        <height>16</height>

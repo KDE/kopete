@@ -243,19 +243,23 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		d->foreignMessage=false; //the view is created, reset the flag
 
 		bool appendMessageEvent = d->useQueueOrStack;
+		bool chatIsOnCurrentDesktop = true;
 
-		QWidget *w;
-		if( d->queueUnreadMessages && ( w = dynamic_cast<QWidget*>(view( manager )) ) )
+		QWidget *w = dynamic_cast<QWidget*>(view( manager ));
+#ifdef Q_WS_X11
+		if (w)
+		{
+			chatIsOnCurrentDesktop = KWindowSystem::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop();
+		}
+#endif
+
+		if( d->queueUnreadMessages && w )
 		{
 			// append msg event to queue if chat window is active but not the chat view in it...
 			appendMessageEvent = appendMessageEvent && !(w->isActiveWindow() && manager->view() == d->activeView);
 			// ...and chat window is on another desktop
 			appendMessageEvent = appendMessageEvent && (!d->queueOnlyMessagesOnAnotherDesktop 
-#ifdef Q_WS_X11
-					||!KWindowSystem::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop());
-#else
-					);
-#endif
+					||!chatIsOnCurrentDesktop);
 		}
 		else
 		{
@@ -279,7 +283,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		}
 		
 		Kopete::MessageEvent *event = 0L;
-		if ( (appendMessageEvent && !outgoingMessage) || showNotification )
+		if ( (appendMessageEvent && !outgoingMessage) )
 		{
 			showNotification = showNotification || d->eventList.isEmpty(); // may happen for internal messages
 			event = new Kopete::MessageEvent(msg,manager);
@@ -308,7 +312,15 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					body = ki18n( "<qt>A highlighted message arrived from %1<br />\"%2\"</qt>" );
 					break;
 				default:
-					eventId = QLatin1String( isActiveWindow ? "kopete_contact_incoming_active_window" : "kopete_contact_incoming" );
+					if ( isActiveWindow || (d->queueOnlyMessagesOnAnotherDesktop 
+						&& chatIsOnCurrentDesktop ) )
+					{
+						eventId = QLatin1String( "kopete_contact_incoming_active_window" );
+					}
+					else
+					{
+						 eventId = QLatin1String( "kopete_contact_incoming" );
+					}
 			}
 
 			KNotification *notify=new KNotification(eventId, viewWidget, isActiveWindow ? KNotification::CloseOnTimeout : KNotification::Persistent);
