@@ -167,6 +167,7 @@ void KopeteAccountConfig::load()
 			QFont font = identityItem->font( 0 );
 			font.setBold( true );
 			identityItem->setFont( 0, font );
+			identityItem->setSelected( true );
 		}
 		//identityItem->setSizeHint( 0, QSize(0, 42) );
 		
@@ -224,7 +225,11 @@ void KopeteAccountConfig::slotItemSelected()
 void KopeteAccountConfig::slotAddAccount()
 {
 	AddAccountWizard *addwizard = new AddAccountWizard( this, true );
-	addwizard->setIdentity( selectedIdentity()->identity() );
+	KopeteIdentityLVI *ilvi = selectedIdentity();
+	if (ilvi)
+	{
+		addwizard->setIdentity( ilvi->identity() );
+	}
 	addwizard->show();
 }
 
