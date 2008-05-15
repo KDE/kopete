@@ -224,7 +224,7 @@ void IdentityStatusWidget::slotAccountUnregistered( const Kopete::Account *accou
 	d->accountHash.remove( item );
 	delete item;
 
-	if ( d->identity->accounts().isEmpty() ) {
+	if ( d->identity && d->identity->accounts().isEmpty() ) {
 		new QListWidgetItem( KIcon("configure" ), i18nc("Button to open account configuration widget", "Click to add an account" ), d->ui.accounts );
 	}
 	resizeAccountListWidget();
