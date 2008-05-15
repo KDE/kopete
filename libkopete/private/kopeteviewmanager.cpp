@@ -331,7 +331,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 
 		if( appendMessageEvent )
 		{
-			if ( !outgoingMessage )
+			if ( !outgoingMessage && event )
 				Kopete::ChatSessionManager::self()->postNewEvent(event);
 		}
 		else if( d->eventList.isEmpty() )
