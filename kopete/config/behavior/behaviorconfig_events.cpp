@@ -17,10 +17,25 @@
 
 #include "behaviorconfig_events.h"
 
+#include <QMovie>
+
 BehaviorConfig_Events::BehaviorConfig_Events(QWidget *parent)
 	: QWidget(parent)
 {
 	setupUi(this);
+
+	bool supportsMng(false);
+	QList<QByteArray> supportedFormats = QMovie::supportedFormats();
+	foreach ( QByteArray format, supportedFormats )
+	{
+		supportsMng = supportsMng || format.toLower() == QByteArray("mng");
+	}
+
+	if ( !supportsMng )
+	{
+		kcfg_trayflashNotify->setEnabled(false);
+		kcfg_trayflashNotify->setToolTip(i18n("Animation is not possible as your Qt version does not support the mng video format."));
+	}
 }
 
 #include "behaviorconfig_events.moc"
