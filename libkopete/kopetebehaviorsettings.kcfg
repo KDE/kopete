@@ -49,10 +49,6 @@
 			<label>Show events in chat window.</label>
 			<default>true</default>
 		</entry>
-		<entry key="showEventsIfActive" type="Bool">
-			<label>Show events in active chat window.</label>
-			<default>true</default>
-		</entry>
 		<entry key="queueOnlyHighlightedMessagesInGroupChats" type="Bool">
 			<label>Queue only highlighted messages in group chats</label>
 			<default>false</default>

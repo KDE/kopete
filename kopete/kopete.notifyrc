@@ -337,6 +337,12 @@ Sound=KDE-Im-Message-In.ogg
 Action=Sound|Popup|Taskbar
 Persistant=true
 
+[Event/kopete_contact_incoming_active_window]
+Name=Incoming Message in Active Chat
+Comment=An incoming message in the active chat window has been received
+Contexts=contact,group,class
+Sound=KDE-Im-Message-In.ogg
+Action=Sound
 
 [Event/kopete_outgoing]
 Name=Outgoing Message

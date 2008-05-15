@@ -164,19 +164,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="kcfg_showEventsIfActive" >
-        <property name="toolTip" >
-         <string>Enable events for incoming messages if the chat window is active</string>
-        </property>
-        <property name="whatsThis" >
-         <string>Enable notification events for incoming messages even if the receiving chat window is active. Note: Neither the system tray icon flashes nor the bubble is shown.</string>
-        </property>
-        <property name="text" >
-         <string>Enable events for acti&amp;ve chat windows</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QCheckBox" name="kcfg_trayflashNotifySetCurrentDesktopToChatView" >
         <property name="toolTip" >
          <string>Switch to the desktop which contains the chat window for the sender when opening his/her message</string>
@@ -232,7 +219,6 @@
   <tabstop>kcfg_queueOnlyHighlightedMessagesInGroupChats</tabstop>
   <tabstop>kcfg_queueOnlyMessagesOnAnotherDesktop</tabstop>
   <tabstop>kcfg_enableEventsWhileAway</tabstop>
-  <tabstop>kcfg_showEventsIfActive</tabstop>
   <tabstop>kcfg_trayflashNotifySetCurrentDesktopToChatView</tabstop>
   <tabstop>kcfg_raiseMessageWindow</tabstop>
  </tabstops>

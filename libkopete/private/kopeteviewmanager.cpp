@@ -275,8 +275,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		{
 			viewWidget = dynamic_cast<QWidget*>(manager->view(false));
 			isActiveWindow =  manager->view(false) && viewWidget && manager->view() == d->activeView && viewWidget->isActiveWindow();
-			showNotification = ( (!isActiveWindow || Kopete::BehaviorSettings::self()->showEventsIfActive())
-			                     && msg.from());
+			showNotification = ( msg.from() );
 		}
 		
 		Kopete::MessageEvent *event = 0L;
@@ -309,7 +308,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					body = ki18n( "<qt>A highlighted message arrived from %1<br />\"%2\"</qt>" );
 					break;
 				default:
-					eventId = QLatin1String( "kopete_contact_incoming" );
+					eventId = QLatin1String( isActiveWindow ? "kopete_contact_incoming_active_window" : "kopete_contact_incoming" );
 			}
 
 			KNotification *notify=new KNotification(eventId, viewWidget, isActiveWindow ? KNotification::CloseOnTimeout : KNotification::Persistent);
