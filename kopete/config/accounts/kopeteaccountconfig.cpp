@@ -212,6 +212,7 @@ void KopeteAccountConfig::slotItemSelected()
 
 	bool identitySelected = selectedIdentity();
 	bool isDefaultIdentity = (identitySelected && Kopete::IdentityManager::self()->defaultIdentity() == selectedIdentity()->identity());
+	mButtonAccountAdd->setEnabled( identitySelected );
 	mButtonIdentityCopy->setEnabled( identitySelected );
 	mButtonIdentityModify->setEnabled( identitySelected );
 	m_actionIdentityRemove->setEnabled( identitySelected && !isDefaultIdentity );
