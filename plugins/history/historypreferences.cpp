@@ -51,7 +51,6 @@ HistoryPreferences::HistoryPreferences(QWidget *parent, const QVariantList &args
 		this, SLOT(slotModified()));
 	connect(p->History_color, SIGNAL(changed(const QColor&)),
 		this, SLOT(slotModified()));
-	load();
 }
 
 HistoryPreferences::~HistoryPreferences()

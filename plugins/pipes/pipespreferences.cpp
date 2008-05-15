@@ -45,7 +45,6 @@ PipesPreferences::PipesPreferences ( QWidget *parent, const QVariantList &args )
 
 	mPrefs->pipesList->setModel (mModel);
 	mPrefs->pipesList->setItemDelegate (delegate);
-	load();
 
 	mPrefs->pipesList->horizontalHeader()->setStretchLastSection (true);
 	mPrefs->pipesList->verticalHeader()->hide();

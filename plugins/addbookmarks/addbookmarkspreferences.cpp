@@ -44,7 +44,6 @@ BookmarksPreferences::BookmarksPreferences(QWidget *parent, const QVariantList &
 	p_contactsListModel = new QStringListModel();
 	p_dialog->contactList->setModel( p_contactsListModel );
 
-	load();
 	connect( p_buttonGroup, SIGNAL( buttonClicked ( int ) ), this, SLOT( slotSetStatusChanged() ));
 	connect( p_dialog->contactList, SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ),
 	         this, SLOT( slotSetStatusChanged() ));

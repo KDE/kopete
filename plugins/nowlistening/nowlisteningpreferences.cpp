@@ -60,7 +60,6 @@ NowListeningPreferences::NowListeningPreferences(QWidget *parent, const QVariant
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("XMMS"));
 #endif
-	load();
 }
 
 NowListeningPreferences::~NowListeningPreferences( )

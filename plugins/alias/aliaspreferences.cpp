@@ -141,8 +141,6 @@ AliasPreferences::AliasPreferences( QWidget *parent, const QVariantList &args )
 
 	connect( preferencesDialog->aliasList, SIGNAL(selectionChanged()),
 		this, SLOT( slotCheckAliasSelected() ) );
-
-	load();
 }
 
 AliasPreferences::~AliasPreferences()
