@@ -1084,7 +1084,8 @@ Comment[x-test]=xxNew email has arrived in your MSN inboxxx
 Comment[zh_CN]=您的 MSN 收件箱中有新邮件到达
 Comment[zh_HK]=您的 MSN 收件匣有新郵件
 Comment[zh_TW]=您的 MSN 收件匣中有新郵件
-Action=MessageBox
+Action=Popup
+Persistant=true
 
 [Event/icq_authorization]
 Name=ICQ Authorization
@@ -1176,7 +1177,8 @@ Comment[x-test]=xxAn ICQ user has authorized/declined your authorization request
 Comment[zh_CN]=ICQ 用户同意/拒绝了您的身份验证请求
 Comment[zh_HK]=有位 ICQ 用戶批準/拒絕了您的授權要求
 Comment[zh_TW]=ICQ 使用者已認可/拒絕您的認證請求
-Action=MessageBox
+Action=Popup
+Persistant=true
 
 [Event/irc_event]
 Name=IRC Event
@@ -1267,7 +1269,8 @@ Comment[x-test]=xxAn IRC event has occurredxx
 Comment[zh_CN]=发生了 IRC 事件
 Comment[zh_HK]=發生了 IRC 事件
 Comment[zh_TW]=IRC 事件發生
-Action=MessageBox
+Action=Popup
+Persistant=true
 
 [Event/connection_error]
 Name=Connection Error
@@ -1361,7 +1364,8 @@ Comment[x-test]=xxAn error on connection has occurredxx
 Comment[zh_CN]=发生了连接错误
 Comment[zh_HK]=連線發生錯誤
 Comment[zh_TW]=發生連線錯誤
-Action=MessageBox
+Action=Popup
+Persistant=true
 
 [Event/connection_lost]
 Name=Connection Lost
