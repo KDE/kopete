@@ -1,5 +1,5 @@
 /*
-    kirceventhandlerfactory.cpp - IRC event handler factory.
+    kirchandlerfactory.h - IRC Handler Factory.
 
     Copyright (c) 2008      by Michel Hermier <michel.hermier@gmail.com>
 
@@ -13,17 +13,26 @@
     *************************************************************************
 */
 
-#include "kirceventhandlerfactory.h"
+#ifndef KIRCHANDLERFACTORY_H
+#define KIRCHANDLERFACTORY_H
 
-using namespace KIrc;
+#include "kircglobal.h"
 
-QStringList EventHandlerFactory::keys()
+#include <QtCore/QStringList>
+
+namespace KIrc
 {
-	return QStringList();
+
+class Handler;
+
+class KIRC_EXPORT HandlerFactory
+{
+public:
+	static QStringList keys();
+	static KIrc::Handler *create(const QString &key, QObject *parent);
+};
+
 }
 
-KIrc::EventHandler *EventHandlerFactory::create(const QString &key, QObject *parent)
-{
-	return 0;
-}
+#endif
 

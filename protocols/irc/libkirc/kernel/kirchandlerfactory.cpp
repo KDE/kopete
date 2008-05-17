@@ -1,5 +1,5 @@
 /*
-    kirceventhandlerplugin.h - IRC Event Handler Plugin.
+    kirchandlerfactory.cpp - IRC Handler Factory.
 
     Copyright (c) 2008      by Michel Hermier <michel.hermier@gmail.com>
 
@@ -13,15 +13,17 @@
     *************************************************************************
 */
 
-#include "kirceventhandlerplugin.moc"
+#include "kirchandlerfactory.h"
 
 using namespace KIrc;
 
-EventHandlerPlugin::EventHandlerPlugin()
+QStringList HandlerFactory::keys()
 {
+	return QStringList();
 }
 
-EventHandlerPlugin::~EventHandlerPlugin()
+KIrc::Handler *HandlerFactory::create(const QString &key, QObject *parent)
 {
+	return 0;
 }
 

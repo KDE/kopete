@@ -14,10 +14,10 @@ set(libkirc_SRCS
 	kernel/kirccontext.cpp
 	kernel/kircentity.cpp
 	kernel/kircevent.cpp 
-	kernel/kirceventhandler.cpp
-	kernel/kirceventhandlerfactory.cpp
-	kernel/kirceventhandlerplugin.cpp
-	kernel/kircmessage.cpp 
+	kernel/kirchandler.cpp
+	kernel/kirchandlerfactory.cpp
+	kernel/kirchandlerplugin.cpp
+	kernel/kircmessage.cpp
 	kernel/kircmessageutil.cpp 
 	kernel/kircsocket.cpp 
 #	kernel/kircstdmessages.cpp 
@@ -31,7 +31,9 @@ set_target_properties(kirc PROPERTIES VERSION 1.0.0 SOVERSION 1)
 install(TARGETS kirc ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 set(libkirc_client_SRCS
-	client/kircclienteventhandler.cpp
+	client/kircclienthandler.cpp
+	client/kircclientwhohandler.cpp
+
 	client/kircclientsocket.cpp 
 )
 

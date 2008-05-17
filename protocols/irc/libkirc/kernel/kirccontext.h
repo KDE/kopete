@@ -33,8 +33,7 @@ class Event;
  */
 class KIRC_EXPORT Context
 	: public QObject
-//	, public KIrc::CommandHandlerInterface
-//	, public KIrc::MessageHandlerInterface
+//	, public KIrc::Handler
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(KIrc::Context)

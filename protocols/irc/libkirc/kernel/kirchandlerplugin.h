@@ -1,5 +1,5 @@
 /*
-    kirceventhandlerplugin.h - IRC Event Handler Plugin.
+    kirchandlerplugin.h - IRC Handler Plugin.
 
     Copyright (c) 2008      by Michel Hermier <michel.hermier@gmail.com>
 
@@ -13,8 +13,8 @@
     *************************************************************************
 */
 
-#ifndef KIRCEVENTHANDLERPLUGIN_H
-#define KIRCEVENTHANDLERPLUGIN_H
+#ifndef KIRCHANDLERPLUGIN_H
+#define KIRCHANDLERPLUGIN_H
 
 #include "kircglobal.h"
 
@@ -24,23 +24,23 @@
 namespace KIrc
 {
 
-class EventHandler;
+class Handler;
 
-class KIRC_EXPORT EventHandlerPlugin
+class KIRC_EXPORT HandlerPlugin
 	: public QObject
 {
 	Q_OBJECT
 
 public:
-	EventHandlerPlugin();
-	virtual ~EventHandlerPlugin();
+	HandlerPlugin();
+	virtual ~HandlerPlugin();
 
 public:
 	virtual QStringList keys() = 0;
-	virtual KIrc::EventHandler *create(const QString &key, QObject *parent) = 0;
+	virtual KIrc::Handler *create(const QString &key, QObject *parent) = 0;
 
 private:
-	Q_DISABLE_COPY(EventHandlerPlugin)
+	Q_DISABLE_COPY(HandlerPlugin)
 };
 
 }
