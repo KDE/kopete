@@ -49,6 +49,7 @@
 #include <krun.h>
 #include <kfiledialog.h>
 #include <kurl.h>
+#include <kemoticons.h>
 
 // KNewStuff
 #include <knewstuff2/engine.h>
@@ -265,7 +266,7 @@ void ChatWindowConfig::save()
 	QListWidgetItem *item = m_emoticonsUi.icon_theme_list->currentItem();
 	
 	if (item)
-		appearanceSettings->setEmoticonTheme( item->text() );
+		KEmoticons::setTheme( item->text() );
 
 	appearanceSettings->writeConfig();
 	settings->writeConfig();
@@ -665,7 +666,7 @@ void ChatWindowConfig::updateEmoticonList()
 
 	// Where is that theme in our big-list-o-themes?
 
-	QList<QListWidgetItem*> items = m_emoticonsUi.icon_theme_list->findItems( Kopete::AppearanceSettings::self()->emoticonTheme(), Qt::MatchExactly );
+	QList<QListWidgetItem*> items = m_emoticonsUi.icon_theme_list->findItems( KEmoticons::currentThemeName(), Qt::MatchExactly );
 
 	if (items.count()) // found it... make it the currently selected theme
 		m_emoticonsUi.icon_theme_list->setCurrentItem( items.first() );
@@ -700,7 +701,7 @@ void ChatWindowConfig::slotInstallEmoticonTheme()
 		return;
 	}
 
-	Kopete::Global::installEmoticonTheme( themeURL.path() );
+	Kopete::Emoticons::self()->installTheme( themeURL.path() );
 	updateEmoticonList();
 }
 

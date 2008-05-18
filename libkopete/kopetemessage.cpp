@@ -30,6 +30,7 @@
 
 #include <kdebug.h>
 #include <kstringhandler.h>
+#include <kemoticons.h>
 
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
@@ -336,7 +337,7 @@ QString Message::parsedBody() const
 {
 	//kDebug(14000) << "messageformat: " << d->format;
 
-	return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), Qt::RichText));
+	return Kopete::Emoticons::self()->theme().parseEmoticons(parseLinks(escapedBody(), Qt::RichText));
 }
 
 static QString makeRegExp( const char *pattern )

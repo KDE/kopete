@@ -29,6 +29,7 @@
 #include <ktoolbar.h>
 #include <kauthorized.h>
 #include <kicon.h>
+#include <kemoticons.h>
 
 #include "emoticonselector.h"
 #include "kopeteemoticons.h"
@@ -68,8 +69,8 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
 	// Try to load the icon for our current emoticon theme, when it fails
 	// fall back to our own default
 	QString icon;
-	QMap<QString, QStringList> emoticonsMap = Kopete::Emoticons::self()->emoticonAndPicList();
-	for( QMap<QString, QStringList>::const_iterator it = emoticonsMap.constBegin();
+	QHash<QString, QStringList> emoticonsMap = Kopete::Emoticons::self()->theme().emoticonsMap();
+	for( QHash<QString, QStringList>::const_iterator it = emoticonsMap.constBegin();
 		it != emoticonsMap.constEnd(); ++it )
 	{
 		if( ( *it ).contains( ":)" ) || ( *it ).contains( ":-)" ) )

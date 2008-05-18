@@ -32,6 +32,7 @@
 #include <QShowEvent>
 
 #include <kdebug.h>
+#include <kemoticons.h>
 
 EmoticonItem::EmoticonItem(const QString &emoticonText, const QString &pixmapPath, QListWidget *parent)
 	: QListWidgetItem(parent)
@@ -97,9 +98,9 @@ void EmoticonSelector::prepareList(void)
 {
 	m_emoticonList->clear();
 //	kDebug(14000) << "called.";
-	QMap<QString, QStringList> list = Kopete::Emoticons::self()->emoticonAndPicList();
+	QHash<QString, QStringList> list = Kopete::Emoticons::self()->theme().emoticonsMap();
 
-	for (QMap<QString, QStringList>::const_iterator it = list.constBegin(); it != list.constEnd(); ++it )
+	for (QHash<QString, QStringList>::const_iterator it = list.constBegin(); it != list.constEnd(); ++it )
 		(void) new EmoticonItem(it.value().first(), it.key(), m_emoticonList);
 
 	m_emoticonList->setIconSize(QSize(32,32));

@@ -25,6 +25,7 @@
 #include <knotification.h>
 #include <kglobal.h>
 #include <kwindowsystem.h>
+#include <kemoticons.h>
 
 #include "kopetebehaviorsettings.h"
 #include "kopeteaccount.h"
@@ -63,7 +64,7 @@ static QString squashMessage( const Kopete::Message& msg )
 		msgText =msg.plainBody() ;
 		if( msgText.length() > 30 )
 			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
-		msgText=Kopete::Emoticons::parseEmoticons(Qt::escape(msgText));
+		msgText=Kopete::Emoticons::self()->theme().parseEmoticons(Qt::escape(msgText));
 	}
 	else
 	{

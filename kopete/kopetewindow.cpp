@@ -68,6 +68,7 @@
 #include <kstandardaction.h>
 #include <solid/networking.h>
 #include <kstatusbarofflineindicator.h>
+#include <kemoticons.h>
 
 #include "addcontactpage.h"
 #include "addressbooklinkwidget.h"
@@ -1113,10 +1114,10 @@ void KopeteWindow::globalStatusChanged()
 
 	QString toolTip;
 	toolTip += i18nc("@label:textbox formatted status title", "<b>Status&nbsp;Title:</b>&nbsp;%1",
-	                 Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusTitle) ) );
+	                 Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape(statusTitle) ) );
 
 	toolTip += i18nc("@label:textbox formatted status message", "<br /><b>Status&nbsp;Message:</b>&nbsp;%1",
-	                 Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusMessage) ) );
+	                 Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape(statusMessage) ) );
 
 	d->globalStatusMessage->setToolTip( toolTip );
 }

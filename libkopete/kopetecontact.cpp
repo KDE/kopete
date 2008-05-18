@@ -35,6 +35,7 @@
 #include <kmenu.h>
 #include <kmessagebox.h>
 #include <k3listviewsearchline.h>
+#include <kemoticons.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
@@ -580,7 +581,7 @@ QString Contact::toolTip() const
 			"<nobr><b>%4</b> (%3)</nobr><br /><img src=\"%2\">&nbsp;%1",
 				Kopete::Message::escape( onlineStatus().description() ), iconName,
 					Kopete::Message::escape( contactId() ),
-					Kopete::Emoticons::parseEmoticons( Kopete::Message::escape( nick ) ) );
+					Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape( nick ) ) );
 	}
 
 	// --------------------------------------------------------------------------
@@ -623,7 +624,7 @@ QString Contact::toolTip() const
 			if(!statusTitle.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted status title",
-				             "<br /><b>Status&nbsp;Title:</b>&nbsp;%1",  Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusTitle) ) );
+				             "<br /><b>Status&nbsp;Title:</b>&nbsp;%1",  Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape(statusTitle) ) );
 			}
 		}
 		else if ((*it) == Kopete::Global::Properties::self()->statusMessage().key() )
@@ -632,7 +633,7 @@ QString Contact::toolTip() const
 			if(!statusmsg.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted status message",
-							"<br /><b>Status&nbsp;Message:</b>&nbsp;%1",  Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusmsg) ) );
+							"<br /><b>Status&nbsp;Message:</b>&nbsp;%1",  Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape(statusmsg) ) );
 			}
 		}
 		else

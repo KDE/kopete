@@ -45,6 +45,7 @@
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
+#include <kemoticons.h>
 
 
 #include "addcontactpage.h"
@@ -108,15 +109,15 @@ public:
 		toolTip += QLatin1String("</td><td>");
 
 		QString displayName;
-		Kopete::Emoticons *e = Kopete::Emoticons::self();
-		QList<Emoticons::Token> t = e->tokenize( metaContact->displayName());
-		QList<Emoticons::Token>::iterator it;
+		KEmoticonsTheme e = Kopete::Emoticons::self()->theme();
+		QList<KEmoticonsTheme::Token> t = e.tokenize( metaContact->displayName());
+		QList<KEmoticonsTheme::Token>::iterator it;
 		for( it = t.begin(); it != t.end(); ++it )
 		{
-			if( (*it).type == Kopete::Emoticons::Image )
+			if( (*it).type == KEmoticonsTheme::Image )
 			{
 				displayName += (*it).picHTMLCode;
-			} else if( (*it).type == Kopete::Emoticons::Text )
+			} else if( (*it).type == KEmoticonsTheme::Text )
 			{
 				displayName += Qt::escape( (*it).text );
 			}
@@ -146,7 +147,7 @@ public:
 
 			toolTip += i18nc("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
 							"<tr><td><img src=\"%1\">&nbsp;<nobr><b>%2</b></nobr>&nbsp;<nobr>(%3)</nobr></td><td align=\"right\"><nobr>%4</nobr></td></tr>",
-						iconName, Kopete::Emoticons::parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
+						iconName, Kopete::Emoticons::self()->theme().parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
 		}
 
 		return toolTip + QLatin1String("</table></td></tr></table></qt>");
@@ -469,7 +470,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 			if(notify)
 			{
 				QString text = i18n( "<qt><i>%1</i> is now %2.</qt>",
-									 Kopete::Emoticons::parseEmoticons( Qt::escape(m_metaContact->displayName()) ) ,
+									 Kopete::Emoticons::self()->theme().parseEmoticons( Qt::escape(m_metaContact->displayName()) ) ,
 									 Qt::escape(c->onlineStatus().description()));
 
 				notify->setText(text);

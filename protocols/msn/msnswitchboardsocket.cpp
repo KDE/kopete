@@ -47,6 +47,7 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <KComponentData>
+#include <kemoticons.h>
 
 // for the display picture
 #include <msncontact.h>
@@ -688,10 +689,10 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
     KConfigGroup *config=m_account->configGroup();
 	if ( config->readEntry( "exportEmoticons", false ) )
 	{
-		QMap<QString, QStringList> emap = Kopete::Emoticons::self()->emoticonAndPicList();
+		QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
 
 		// Check the list for any custom emoticons
-		for (QMap<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
+		for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
 		{
 			for ( QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2 )
 			{

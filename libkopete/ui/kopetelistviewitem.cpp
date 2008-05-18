@@ -26,6 +26,7 @@
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kstringhandler.h>
+#include <kemoticons.h>
 
 #include <qapplication.h>
 #include <qpixmap.h>
@@ -712,12 +713,12 @@ void DisplayNameComponent::redraw()
 		((TextComponent*)component(n))->color();
 	}
 
-	QList<Kopete::Emoticons::Token> tokens;
-	QList<Kopete::Emoticons::Token>::const_iterator token;
+	QList<KEmoticonsTheme::Token> tokens;
+	QList<KEmoticonsTheme::Token>::const_iterator token;
 
 	clear(); // clear childen
 
-	tokens = Kopete::Emoticons::tokenizeEmoticons( d->text );
+	tokens = Kopete::Emoticons::self()->theme().tokenize( d->text );
 	ImageComponent *ic;
 	TextComponent *t;
 
@@ -727,10 +728,10 @@ void DisplayNameComponent::redraw()
 	{
 		switch ( (*token).type )
 		{
-		case Kopete::Emoticons::Text:
+		case KEmoticonsTheme::Text:
 			t = new TextComponent( this,  d->font, (*token).text );
 		break;
-		case Kopete::Emoticons::Image:
+		case KEmoticonsTheme::Image:
 			ic = new ImageComponent( this );
 			ic->setPixmap( QPixmap( (*token).picPath ) );
 			ic->scale( INT_MAX, fontHeight, Qt::KeepAspectRatio );
