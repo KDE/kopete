@@ -348,7 +348,15 @@ Persistant=true
 
 [Event/kopete_contact_incoming_active_window]
 Name=Incoming Message in Active Chat
+Name[ga]=Teachtaireacht Isteach i gComhrá Gníomhach
+Name[pt]=Mensagem Recebida na Conversa Activa
+Name[pt_BR]=Mensagem Recebida na Conversa Activa
+Name[uk]=Вхідне повідомлення в активні балачці
 Comment=An incoming message in the active chat window has been received
+Comment[ga]=Fuarthas teachtaireacht isteach i bhfuinneog an chomhrá ghníomhaigh
+Comment[pt]=Foi recebida uma mensagem na janela de conversação activa
+Comment[pt_BR]=Foi recebida uma mensagem na janela de conversação activa
+Comment[uk]=Отримано вхідне повідомлення у вікні активної балачки
 Contexts=contact,group,class
 Sound=KDE-Im-Message-In.ogg
 Action=Sound
