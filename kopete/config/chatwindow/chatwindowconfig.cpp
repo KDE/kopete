@@ -50,6 +50,7 @@
 #include <kfiledialog.h>
 #include <kurl.h>
 #include <kemoticons.h>
+#include <KCMultiDialog>
 
 // KNewStuff
 #include <knewstuff2/engine.h>
@@ -207,14 +208,10 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	addConfig( Kopete::AppearanceSettings::self(), emoticonsWidget );
 
 	connect(m_emoticonsUi.icon_theme_list, SIGNAL(itemSelectionChanged()),
-		this, SLOT(slotSelectedEmoticonsThemeChanged()));
-	connect(m_emoticonsUi.btnInstallTheme, SIGNAL(clicked()),
-		this, SLOT(slotInstallEmoticonTheme()));
+		this, SLOT(emitChanged()));
 
-	connect(m_emoticonsUi.btnGetThemes, SIGNAL(clicked()),
-		this, SLOT(slotGetEmoticonThemes()));
-	connect(m_emoticonsUi.btnRemoveTheme, SIGNAL(clicked()),
-		this, SLOT(slotRemoveEmoticonTheme()));
+	connect(m_emoticonsUi.btnManageThemes, SIGNAL(clicked()),
+		this, SLOT(slotManageEmoticonThemes()));
 
 //--------- colors tab --------------------------
 	QWidget *colorsWidget = new QWidget(m_tab);
@@ -626,16 +623,6 @@ void ChatWindowConfig::slotUpdateChatPreview()
 	emitChanged();
 }
 
-void ChatWindowConfig::slotUpdateEmoticonsButton(bool _b)
-{
-	QListWidgetItem *item = m_emoticonsUi.icon_theme_list->currentItem();
-	if (!item)
-		return;
-	QString themeName = item->text();
-	QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+'/'));
-	m_emoticonsUi.btnRemoveTheme->setEnabled( _b && fileInf.isWritable());
-	m_emoticonsUi.btnGetThemes->setEnabled( false );
-}
 
 void ChatWindowConfig::updateEmoticonList()
 {
@@ -674,78 +661,14 @@ void ChatWindowConfig::updateEmoticonList()
 		m_emoticonsUi.icon_theme_list->setCurrentItem( 0 );
 }
 
-void ChatWindowConfig::slotSelectedEmoticonsThemeChanged()
+
+void ChatWindowConfig::slotManageEmoticonThemes()
 {
-	QListWidgetItem *item = m_emoticonsUi.icon_theme_list->currentItem();
-	if (!item)
-		return;
-	QString themeName = item->text();
-	QFileInfo fileInf(KGlobal::dirs()->findResource("emoticons", themeName+'/'));
-	m_emoticonsUi.btnRemoveTheme->setEnabled( fileInf.isWritable() );
-
-	emitChanged();
-}
-
-void ChatWindowConfig::slotInstallEmoticonTheme()
-{
-	KUrl themeURL = KUrlRequesterDialog::getUrl(QString::null, this,	//krazy:exclude=nullstrassign for old broken gcc
-			i18n("Drag or Type Emoticon Theme URL"));
-	if ( themeURL.isEmpty() )
-		return;
-
-	//TODO: support remote theme files!
-	if ( !themeURL.isLocalFile() )
-	{
-		KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Sorry, emoticon themes must be installed from local files."),
-		                               i18n("Could Not Install Emoticon Theme") );
-		return;
-	}
-
-	Kopete::Emoticons::self()->installTheme( themeURL.path() );
+	KCMultiDialog *kcm = new KCMultiDialog( this );
+	kcm->setCaption( i18n( "Configure Emoticon Themes" ) );
+	kcm->addModule( "emoticons" );
+	kcm->exec();
 	updateEmoticonList();
-}
-
-void ChatWindowConfig::slotRemoveEmoticonTheme()
-{
-	QListWidgetItem *selected = m_emoticonsUi.icon_theme_list->currentItem();
-	if(!selected)
-		return;
-
-	QString themeName = selected->text();
-
-	QString question=i18nc("@info", "Are you sure you want to remove the "
-			"<resource>%1</resource> emoticon theme?<br />"
-			"<br />"
-			"<warning>This will delete all files installed by this theme.</warning>",
-		themeName);
-
-        int res = KMessageBox::warningContinueCancel(this, question, i18n("Confirmation"),KStandardGuiItem::del());
-	if (res!=KMessageBox::Continue)
-		return;
-
-	KUrl themeUrl(KGlobal::dirs()->findResource("emoticons", themeName+'/'));
-	KIO::NetAccess::del(themeUrl, this);
-
-	updateEmoticonList();
-}
-
-void ChatWindowConfig::slotGetEmoticonThemes()
-{
-#ifdef __GNUC__
-#warning "Port KNS changes!"
-#endif
-#if 0
-	KConfigGroup config(KGlobal::config(), "KNewStuff");
-	config.writeEntry( "ProvidersUrl",
-						"http://download.kde.org/khotnewstuff/emoticons-providers.xml" );
-	config.writeEntry( "StandardResource", "emoticons" );
-	config.writeEntry( "Uncompress", "application/x-gzip" );
-	config.sync();
-
-	KNS::DownloadDialog::open( "emoticons", i18n( "Get New Emoticons") );
-
-	updateEmoticonList();
-#endif
 }
 
 

@@ -61,11 +61,7 @@ private slots:
 	void slotLoadChatStyles();
 	void slotUpdateChatPreview();
 	//----- Emoticons TAB ---------------------
-	void slotSelectedEmoticonsThemeChanged();
-	void slotInstallEmoticonTheme();
-	void slotRemoveEmoticonTheme();
-	void slotGetEmoticonThemes();
-	void slotUpdateEmoticonsButton(bool);
+	void slotManageEmoticonThemes();
 
 private:
 	//----- Style TAB ---------------------
