@@ -1254,7 +1254,7 @@ void GroupWiseAccount::receiveContactCreated()
 		if ( c )
 		{
 			// if the contact creation failed because it already exists on the server, don't delete it
-			if (!cct->statusCode() == NMERR_DUPLICATE_CONTACT )
+			if (cct->statusCode() != NMERR_DUPLICATE_CONTACT )
 			{
 				if ( c->metaContact()->contacts().count() == 1 )
 					Kopete::ContactList::self()->removeMetaContact( c->metaContact() );
