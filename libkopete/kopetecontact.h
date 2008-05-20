@@ -143,12 +143,11 @@ public:
 	 * \brief Move this contact to a new MetaContact.
 	 * This basically reparents the contact and updates the internal
 	 * data structures.
-	 * If the old contact is going to be empty, a question may ask to the user if it wants to delete the old contact.
+	 * If the old contact is going to be empty, the old contact will be removed.
 	 *
 	 * @param m The new MetaContact to move this contact to
 	 */
 	void setMetaContact(MetaContact *m);
-
 
 	/**
 	 * @brief Get whether this contact is online.

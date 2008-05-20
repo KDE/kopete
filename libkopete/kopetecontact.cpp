@@ -338,24 +338,11 @@ void Contact::setMetaContact( MetaContact *m )
 
 	if( old )
 	{
-		int result=KMessageBox::No;
-		if( old->isTemporary() )
-			result=KMessageBox::Yes;
-		else if( old->contacts().count()==1 )
-		{ //only one contact, including this one, that mean the contact will be empty efter the move
-			result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), i18n( "You are moving the contact `%1' to the meta contact `%2'.\n"
-				"`%3' will be empty afterwards. Do you want to delete this contact?",
-					contactId(), m ? m->displayName() : QString(), old->displayName())
-				, i18n( "Move Contact" ), KStandardGuiItem::del(), KGuiItem( i18n( "&Keep" ) )
-				, KStandardGuiItem::cancel(), QString::fromLatin1("delete_old_contact_when_move") );
-			if(result==KMessageBox::Cancel)
-				return;
-		}
 		old->removeContact( this );
 		disconnect( old, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
 
-		if(result==KMessageBox::Yes)
+		if(old->contacts().isEmpty())
 		{
 			//remove the old metacontact.  (this delete the MC)
 			ContactList::self()->removeMetaContact(old);

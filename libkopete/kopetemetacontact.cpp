@@ -572,6 +572,24 @@ void MetaContact::setDisplayName( const QString &name )
 	}
 	else
 	{
+		//check if there is another contact with the same display name.
+		//if this is the case, merge them
+		if(!name.isEmpty())
+			foreach(MetaContact *m, ContactList::self()->metaContacts())
+		{
+			if( m != this && m->customDisplayName() == name)
+			{
+				//merge
+				while(!m->d->contacts.isEmpty())
+				{
+					m->d->contacts.first()->setMetaContact(this);
+				}
+				//the contact will be automatically removed when the last contact is removed
+				//that's why we merge othe other into this one and not the opposite;
+				break;
+			}
+		}
+
 		const QString old = d->displayName;
 		d->displayName = name;
 
@@ -1118,6 +1136,9 @@ QList<Contact *> MetaContact::contacts() const
 {
 	return d->contacts;
 }
+
+
+
 } //END namespace Kopete
 
 #include "kopetemetacontact.moc"
