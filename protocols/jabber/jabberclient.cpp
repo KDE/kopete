@@ -25,7 +25,6 @@
 #include <QTimer>
 #include <QRegExp>
 #include <QtCrypto>
-#include <QDir>
 
 #include <bsocket.h>
 #include <filetransfer.h>
