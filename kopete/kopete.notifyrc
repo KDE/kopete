@@ -1976,7 +1976,7 @@ Comment[uk]=Користувач ICQ читає ваше повідомленн�
 Comment[x-test]=xxAn ICQ user is reading your status messagexx
 Comment[zh_CN]=一位 ICQ 用户正在查阅您的状态信息
 Comment[zh_TW]=有 ICQ 使用者正讀取您的狀態訊息
-Action=Popup
+Action=None
 
 [Event/kopete_info_event]
 Name=Service Message
