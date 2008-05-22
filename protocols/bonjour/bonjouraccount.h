@@ -132,7 +132,7 @@ public:
 	/**
 	 * Construct the context menu used for the status bar icon
 	 */
-	virtual KActionMenu* actionMenu();
+	//virtual KActionMenu* actionMenu();
 
 	/**
 	 * @brief Create a New Contact

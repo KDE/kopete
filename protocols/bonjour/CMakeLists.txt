@@ -5,6 +5,7 @@ include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 MESSAGE(STATUS "kopete include ${KOPETE_INCLUDE_DIR}")
 
 include_directories(${KOPETE_INCLUDE_DIR})
+include_directories(${KOPETE_INCLUDE_DIR}/kopete/)
 
 add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=14220)

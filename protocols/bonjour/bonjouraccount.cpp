@@ -73,14 +73,14 @@ BonjourAccount::~BonjourAccount()
 	if (isConnected())
 		disconnect();
 }
-
+#if 0
 KActionMenu* BonjourAccount::actionMenu()
 {
 	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
 
 	return mActionMenu;
 }
-
+#endif
 bool BonjourAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
 {
 	BonjourContact* newContact = new BonjourContact( this, contactId, parentContact->displayName(), parentContact );
