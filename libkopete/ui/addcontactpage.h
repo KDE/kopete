@@ -21,7 +21,7 @@
 #include <QtGui/QWidget>
 
 #include <kopeteprotocol.h>
-#include "kopete_export.h"
+#include <kopete_export.h>
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
