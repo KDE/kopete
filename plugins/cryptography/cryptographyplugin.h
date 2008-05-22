@@ -25,8 +25,6 @@
 #include <QHash>
 
 class QString;
-class QTimer;
-class KAction;
 
 namespace GpgME
 {
@@ -36,7 +34,6 @@ namespace GpgME
 
 namespace Kleo { class Job; }
 
-class CryptographyGUIClient;
 
 namespace Kopete
 {

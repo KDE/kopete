@@ -29,9 +29,7 @@
  * @author Charles Connell
  */
 
-class CryptographyConfig;
 namespace Kleo { class EncryptionKeyRequester; }
-class QCheckBox;
 
 class CryptographyPreferences : public KCModule
 {

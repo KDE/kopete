@@ -21,8 +21,7 @@
 
 #include <kabc/addresseelist.h>
 
-namespace Kopete { class ChatSession;
-	class MetaContact; }
+namespace Kopete { 	class MetaContact; }
 namespace Ui { class ExportKeysUI; }
 
 /**
