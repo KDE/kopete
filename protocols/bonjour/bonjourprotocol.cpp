@@ -20,7 +20,7 @@
 #include <kgenericfactory.h>
 #include <kdebug.h>
 
-#include "kopeteaccountmanager.h"
+#include <kopete/kopeteaccountmanager.h>
 #include "bonjouraccount.h"
 #include "bonjourcontact.h"
 #include "bonjouraddcontactpage.h"

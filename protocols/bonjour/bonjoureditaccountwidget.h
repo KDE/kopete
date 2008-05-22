@@ -19,7 +19,7 @@
 #define BONJOUREDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
-#include <editaccountwidget.h>
+#include <kopete/ui/editaccountwidget.h>
 #include <KConfigGroup>
 
 class QVBoxLayout;

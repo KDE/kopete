@@ -24,8 +24,8 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 
-#include "kopetecontact.h"
-#include "kopetemessage.h"
+#include <kopete/kopetecontact.h>
+#include <kopete/kopetemessage.h>
 
 #include "bonjourcontactconnection.h"
 

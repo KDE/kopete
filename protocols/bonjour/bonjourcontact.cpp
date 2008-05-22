@@ -24,9 +24,9 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include "kopeteaccount.h"
-#include "kopetechatsessionmanager.h"
-#include "kopetemetacontact.h"
+#include <kopete/kopeteaccount.h>
+#include <kopete/kopetechatsessionmanager.h>
+#include <kopete/kopetemetacontact.h>
 
 #include "bonjouraccount.h"
 #include "bonjourprotocol.h"
