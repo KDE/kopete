@@ -22,7 +22,6 @@
 #include <kopete/ui/editaccountwidget.h>
 #include <KConfigGroup>
 
-class QVBoxLayout;
 namespace Kopete { class Account; }
 namespace Ui { class BonjourAccountPreferences; }
 
