@@ -197,7 +197,6 @@ void StatusRootAction::editStatuses()
 
 StatusRootAction::~StatusRootAction()
 {
-	delete d->statusAction;
 	delete d;
 }
 
