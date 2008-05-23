@@ -1,6 +1,10 @@
 macro_optional_find_package(OpenSSL)
 macro_log_feature(OPENSSL_FOUND "OpenSSL" "A toolkit implementing the Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1) protocols" "http://openssl.org" FALSE "" "Required for the Kopete Gadu-Gadu protocol.")
 
+# On Solaris, some of the name resolution functions are in libnsl;
+# this needs to be linked in if found. Copied from kdelibs.
+check_library_exists(nsl gethostbyname "" HAVE_NSL_LIBRARY)
+
 option(WITH_testbed "Enable Kopete testbed protocol" ON)
 option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" OFF)
 option(WITH_msn "Enable Kopete MSN protocol" ON)

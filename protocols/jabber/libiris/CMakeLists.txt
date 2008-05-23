@@ -106,6 +106,11 @@ if(WIN32)
   set(iris_kopete_libs ${iris_kopete_libs} ws2_32)
 endif(WIN32)
 
+if(HAVE_NSL_LIBRARY)
+  # This is probably Solaris, and libiris needs to link
+  # to libnsl for gethostbyname
+  set(iris_kopete_libs ${iris_kopete_libs} nsl)
+endif(HAVE_NSL_LIBRARY)
 target_link_libraries(iris_kopete ${iris_kopete_libs})
 
 set_target_properties(iris_kopete PROPERTIES VERSION 1.0.0 SOVERSION 1 )
