@@ -100,7 +100,10 @@ void BehaviorConfig::save()
 	Kopete::BehaviorSettings::self()->setAutoAwayTimeout( mPrfsAway->mAutoAwayTimeout->value() * 60 );
 
 	// "Chat" TAB ===============================================================
-	Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()].pluginName() );
+	if ( viewPlugins.size() > 0 )
+	{
+		Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()].pluginName() );
+	}
 
 	Kopete::BehaviorSettings::self()->writeConfig();
 
