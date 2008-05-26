@@ -506,7 +506,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <varlistentry>
 <term><guilabel>Show a bubble on new message</guilabel></term>
 <listitem>
-<para>This option shows a <quote>speech bubble</quote>; coming from the System Tray icon when you receive a new message.  You can start a chat or ignore the message.  <acronym>URL</acronym>s are extracted from the message; if you click a link, your preferred browser will open the link and the message will be dismissed.</para>
+<para>This option shows a <quote>speech bubble</quote>; coming from the System Tray icon when you receive a new message.  You can start a chat or ignore the message.  &URL;s are extracted from the message; if you click a link, your preferred browser will open the link and the message will be dismissed.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
@@ -702,7 +702,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 		</sect2>
 		<sect2 id="protocols-icq">
 			<title>ICQ</title>
-			<para>ICQ has an Invisibility feature which allows you to hide from selected contacts.  You may also search the ICQ user directory when adding a contact.  A wide range of contact details can be set using the <guilabel>Properties</guilabel> option.</para>
+			<para>ICQ has an Invisibility feature which allows you to hide from selected contacts.  You may also search the ICQ user folder when adding a contact.  A wide range of contact details can be set using the <guilabel>Properties</guilabel> option.</para>
 		</sect2>
 		<sect2 id="protocols-msn">
 			<title>MSN</title> 
@@ -732,7 +732,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 		</sect2>
 		<sect2 id="protocols-winpopup">
 			<title>WinPopup</title>
-			<para>WinPopup is a way to use &kopete; to send and receive messages with Windows computers on the local network.  The WinPopup protocol only supports single, plain-text messages.</para>
+			<para>WinPopup is a way to use &kopete; to send and receive messages with &Windows; computers on the local network.  The WinPopup protocol only supports single, plain-text messages.</para>
 		</sect2>
 		<sect2 id="protocols-others">
 			<title>Other protocols</title>
@@ -843,7 +843,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </menuchoice>
 </term>
 <listitem>
-<para>(Enabled when a contact is selected) You can set the encryption policy for each contact here. Setting this entry to "Default" causes Kopete to use the default setting in the configure dialog</para>
+<para>(Enabled when a contact is selected) You can set the encryption policy for each contact here. Setting this entry to "Default" causes &kopete; to use the default setting in the configure dialog</para>
 </listitem>
 </varlistentry>
 </variablelist>
@@ -889,15 +889,15 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect3>
 <sect3 id="plugins-otr-setup">
 <title>The settings dialog</title>
-<para>In the setting dialog you have various options to set the modules behaviour during your chatsessions. The most important of them ist the default policy configuration. Set the policy to "Opportunistic" if you wish Kopete to check if you contacts support OTR and establish an encrypted session on its own or to "Manual" if you wish to control each encryption state on your own. The options "Always" and "Never" are recommended only for experienced users that wish to set the policy on a per-contact base. In the "Private Keys" Pane you have the possibility to create you personal keypair for each account. You don't need to do this manually. If an account does not have a keypair it will be generated automatically the first time it is required. In the "Known Fingerprints" tab you have the possibility to see, verify and delete known public fingerprints of your contacts.</para>
+<para>In the setting dialog you have various options to set the modules behaviour during your chatsessions. The most important of them ist the default policy configuration. Set the policy to "Opportunistic" if you wish &kopete; to check if you contacts support OTR and establish an encrypted session on its own or to "Manual" if you wish to control each encryption state on your own. The options "Always" and "Never" are recommended only for experienced users that wish to set the policy on a per-contact base. In the "Private Keys" Pane you have the possibility to create you personal keypair for each account. You don't need to do this manually. If an account does not have a keypair it will be generated automatically the first time it is required. In the "Known Fingerprints" tab you have the possibility to see, verify and delete known public fingerprints of your contacts.</para>
 </sect3>
 <sect3 id="plugins-otr-auth">
 <title>Authentication</title>
 <para>You've probably received email from people pretending to be banks, credit agencies, even wealthy Nigerian expatriates. People lie about who they are all the time on the Internet. Authentication is a way to make sure that nobody can lie to you about who they are when they use OTR.</para>
 <sect4 id="plugins-otr-auth-when">
 <title>When to authenticate</title>
-<para>You should authenticate a buddy the very first time that you talk to them using OTR. If you don't, then you can't really be sure that someone else isn't impersonating them or trying to listen in on your conversation. However, once you've authenticated your buddy once, you don't have to do it again. OTR will automatically do the authentication for all of your future conversations with that buddy. </para>
-<para>The only exceptions occur when your buddy switches between multiple computers or multiple IM accounts. In this case, you will need to authenticate once for each computer and account. Once you've done this, your buddy can freely use any of the computers you've authenticated them on, and OTR will recognize them automatically. If your buddy uses a new computer or account that OTR does not recognize, a message will pop up in your conversation window telling you about it.</para>
+<para>You should authenticate a buddy the very first time that you talk to them using OTR. If you don't, then you cannot really be sure that someone else isn't impersonating them or trying to listen in on your conversation. However, once you've authenticated your buddy once, you don't have to do it again. OTR will automatically do the authentication for all of your future conversations with that buddy. </para>
+<para>The only exceptions occur when your buddy switches between multiple computers or multiple &im; accounts. In this case, you will need to authenticate once for each computer and account. Once you've done this, your buddy can freely use any of the computers you've authenticated them on, and OTR will recognize them automatically. If your buddy uses a new computer or account that OTR does not recognize, a message will pop up in your conversation window telling you about it.</para>
 <screenshot>
   <mediaobject>
     <imageobject>
@@ -1045,7 +1045,7 @@ A better way to pick a secret would be something like this:</para>
 </varlistentry>
 <varlistentry>
 <term>&html; text body</term>
-<listitem><para>The body of the message, in &html;, as it would be if your chat peer had sent HTML to you, which will be rendered in the chat window</para></listitem>
+<listitem><para>The body of the message, in &html;, as it would be if your chat peer had sent &html; to you, which will be rendered in the chat window</para></listitem>
 </varlistentry>
 <varlistentry>
 <term>&xml; full message</term>
@@ -1134,12 +1134,12 @@ sets that you can simply extract there.</para>
 <listitem><para>Andy Goossens (andygoossens at telenet be): Developer</para></listitem>
 <listitem><para>Grzegorz Jaskiewicz (gregj at pointblue com pl): Developer, Gadu-gadu Plugin Maintainer</para></listitem>
 <listitem><para>Jason Keirstead (jason at keirstead org): Developer</para></listitem>
-<listitem><para>Matt Rogers (mattr at kde org): Lead Developer, AIM and ICQ plugin maintainer</para></listitem>
+<listitem><para>&Matt.Rogers; (mattr at kde org): Lead Developer, AIM and ICQ plugin maintainer</para></listitem>
 <listitem><para>Richard Smith (lilachaze at hotmail com): Developer, UI maintainer</para></listitem>
-<listitem><para>Will Stephenson (lists at stevello free-online co uk): Developer, icons, plugins, manual author</para></listitem>
+<listitem><para>&Will.Stephenson; (lists at stevello free-online co uk): Developer, icons, plugins, manual author</para></listitem>
 <listitem><para>Michel Hermier (michel.hermier at wanadoo fr): IRC Plugin Maintainer</para></listitem>
 <listitem><para>Andre Duffeck (andre at duffeck de): Developer: Developer, Yahoo plugin maintainer</para></listitem>
-<listitem><para>Michaël Larouche (michael.larouche at kdemail net): Developer, MSN, Chat Window.</para></listitem>
+<listitem><para>&Michael.Larouche; (michael.larouche at kdemail net): Developer, MSN, Chat Window.</para></listitem>
 </itemizedlist>
 </sect1>
 <sect1 id="ex-team">
@@ -1151,8 +1151,8 @@ sets that you can simply extract there.</para>
 <listitem><para>Richard Stellingwerff (remenic at linuxfromscratch org): Developer</para></listitem>
 <listitem><para>Hendrik vom Lehn (hennevl at hennevl de): Developer</para></listitem>
 <listitem><para>Stefan Gehn (sgehn at gmx net): Developer</para></listitem>
-<listitem><para>Robert Gogolok (robertgogolock at gmx de): Developer</para></listitem>
-<listitem><para>Nick Betcher (nbetcher at kde org): Original author of ICQ, AIM and IRC plugins</para></listitem>
+<listitem><para>&Robert.Gogolok; (robertgogolock at gmx de): Developer</para></listitem>
+<listitem><para>&Nick.Betcher; (nbetcher at kde org): Original author of ICQ, AIM and IRC plugins</para></listitem>
 <listitem><para>Daniel Stone (dstone at kde org): Original Jabber plugin author</para></listitem>
 <listitem><para>James Grant (topace at lightbox org): Developer, importer Plugin author</para></listitem>
 <listitem><para>Zack Rusin (zack at kde org): Developer, old Gadu-gadu Plugin author</para></listitem>
@@ -1163,7 +1163,7 @@ sets that you can simply extract there.</para>
 <sect1 id="documentation">
 <title>Documentation</title>
 <para>
-Documentation copyright 2003,2004,2005 Will Stephenson (lists at stevello free-online co uk), copyright 2005 Matt Rogers (mattr at kde org), copyright 2005,2006 Michaël Larouche (michael.larouche at kdemail net).
+Documentation copyright 2003,2004,2005 &Will.Stephenson; (lists at stevello free-online co uk), copyright 2005 &Matt.Rogers; (mattr at kde org), copyright 2005,2006 &Michael.Larouche; (michael.larouche at kdemail net).
 </para>
 </sect1>
 </chapter><!-- credits-and-licenses -->
