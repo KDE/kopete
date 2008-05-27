@@ -18,11 +18,10 @@
 #ifndef ADDCONTACTPAGE_H
 #define ADDCONTACTPAGE_H
 
-#include <qwidget.h>
+#include <QtGui/QWidget>
+
 #include <kopeteprotocol.h>
-
-
-#include "kopete_export.h"
+#include <kopete_export.h>
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>

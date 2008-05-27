@@ -18,20 +18,25 @@
 #ifndef AVDEVICECONFIG_H
 #define AVDEVICECONFIG_H
 
-#include "kcmodule.h"
-#include "videodevicepool.h"
+#define KDE3_SUPPORT
+#include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qtimer.h>
 #include <config-kopete.h>
-#ifdef HAVE_GL
-# include <qgl.h>
-#endif
+
+#include "avdevice/videodevicepool.h"
+#include "ui_avdeviceconfig_videodevice.h"
+
+//#ifdef HAVE_GL
+//#include <qgl.h>
+//#endif
 
 class QTabWidget;
 
-class AVDeviceConfig_VideoDevice;
-class AVDeviceConfig_AudioDevice;
+//class Ui_AVDeviceConfig_VideoDevice;
+//class Ui_AVDeviceConfig_AudioDevice;
 
 /**
 @author Cláudio da Silveira Pinheiro
@@ -40,7 +45,7 @@ class AVDeviceConfig : public KCModule
 {
 Q_OBJECT
 public:
-	AVDeviceConfig(QWidget *parent, const QStringList &args);
+	AVDeviceConfig(QWidget *parent, const QVariantList &args);
 
 	~AVDeviceConfig();
 	virtual void save();
@@ -60,20 +65,20 @@ private slots:
 	void slotImageAutoBrightnessContrastChanged(bool);
 	void slotImageAutoColorCorrectionChanged(bool);
 	void slotImageAsMirrorChanged(bool);
-	void slotDeviceDisableMMapChanged(bool);
-	void slotDeviceWorkaroundBrokenDriverChanged(bool);
 	void slotUpdateImage();
+	void deviceRegistered( const QString & );
+	void deviceUnregistered( const QString & );
 private:
-	QTabWidget* mAVDeviceTabCtl;
-	AVDeviceConfig_VideoDevice  *mPrfsVideoDevice;
-	AVDeviceConfig_AudioDevice  *mPrfsAudioDevice;
+//	QTabWidget* mAVDeviceTabCtl;
+	Ui_AVDeviceConfig_VideoDevice  *mPrfsVideoDevice;
+//	AVDeviceConfig_AudioDevice  *mPrfsAudioDevice;
 	Kopete::AV::VideoDevicePool *mVideoDevicePool ;
 	QImage qimage;
 	QPixmap qpixmap;
 	QTimer qtimer;
 	void setVideoInputParameters();
 #ifdef HAVE_GL
-	QGLWidget m_video_gl;
+//	QGLWidget m_video_gl;
 #endif
 };
 

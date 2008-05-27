@@ -26,6 +26,7 @@
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kstringhandler.h>
+#include <kemoticons.h>
 
 #include <qapplication.h>
 #include <qpixmap.h>
@@ -238,7 +239,7 @@ void Component::layout( const QRect &newRect )
 	else
 		d->startRect = rect();
 	d->targetRect = newRect;
-	//kDebug(14000) << k_funcinfo << "At " << rect << endl;
+	//kDebug(14000) << "At " << rect;
 }
 
 void Component::setRect( const QRect &rect )
@@ -712,12 +713,12 @@ void DisplayNameComponent::redraw()
 		((TextComponent*)component(n))->color();
 	}
 
-	QList<Kopete::Emoticons::Token> tokens;
-	QList<Kopete::Emoticons::Token>::const_iterator token;
+	QList<KEmoticonsTheme::Token> tokens;
+	QList<KEmoticonsTheme::Token>::const_iterator token;
 
-	clear(); // clear childs
+	clear(); // clear childen
 
-	tokens = Kopete::Emoticons::tokenizeEmoticons( d->text );
+	tokens = Kopete::Emoticons::self()->theme().tokenize( d->text );
 	ImageComponent *ic;
 	TextComponent *t;
 
@@ -727,16 +728,16 @@ void DisplayNameComponent::redraw()
 	{
 		switch ( (*token).type )
 		{
-		case Kopete::Emoticons::Text:
+		case KEmoticonsTheme::Text:
 			t = new TextComponent( this,  d->font, (*token).text );
 		break;
-		case Kopete::Emoticons::Image:
+		case KEmoticonsTheme::Image:
 			ic = new ImageComponent( this );
 			ic->setPixmap( QPixmap( (*token).picPath ) );
 			ic->scale( INT_MAX, fontHeight, Qt::KeepAspectRatio );
 		break;
 		default:
-			kDebug( 14010 ) << k_funcinfo << "This should have not happened!" << endl;
+			kDebug( 14010 ) << "This should have not happened!";
 		}
 	}
 
@@ -961,13 +962,13 @@ bool Item::Private::foldVisibility = true;
 Item::Item( Q3ListViewItem *parent, QObject *owner )
  : QObject( owner ), K3ListViewItem( parent ), d( new Private(this) )
 {
-	initLVI();
+	initLVI(parent->listView());
 }
 
 Item::Item( Q3ListView *parent, QObject *owner )
  : QObject( owner ), K3ListViewItem( parent ), d( new Private(this) )
 {
-	initLVI();
+	initLVI(parent);
 }
 
 Item::~Item()
@@ -982,13 +983,14 @@ void Item::setEffects( bool animation, bool fading, bool folding )
 	Private::foldVisibility = folding;
 }
 
-void Item::initLVI()
+void Item::initLVI(QObject* parent)
 {
 	connect( listView()->header(), SIGNAL( sizeChange( int, int, int ) ), SLOT( slotColumnResized() ) );
 	connect( &d->layoutTimer, SIGNAL( timeout() ), SLOT( slotLayoutItems() ) );
+	connect (this, SIGNAL ( visibilityChanged(bool) ), parent, SIGNAL ( visibleSizeChanged () ) );
 	//connect( &d->layoutAnimateTimer, SIGNAL( timeout() ), SLOT( slotLayoutAnimateItems() ) );
 	//connect( &d->visibilityTimer, SIGNAL( timeout() ), SLOT( slotUpdateVisibility() ) );
-	setVisible( false );
+	mySetVisible( false );
 	setTargetVisibility( true );
 }
 
@@ -1024,7 +1026,7 @@ void Item::slotLayoutItems()
 
 		int height = component( n )->heightForWidth( width );
 		component( n )->layout( QRect( 0, 0, width, height ) );
-		//kDebug(14000) << k_funcinfo << "Component " << n << " is " << width << " x " << height << endl;
+		//kDebug(14000) << "Component " << n << " is " << width << " x " << height;
 	}
 
 	if ( Private::animateChanges && d->animateLayout && !d->visibilityTimer.isActive() )
@@ -1072,15 +1074,15 @@ void Item::setSearchMatch( bool match )
 	d->searchMatch = match;
 
 	if ( !match )
-		setVisible( false );
+		mySetVisible( false );
 	else
 	{
-		kDebug(14000) << k_funcinfo << " match: " << match << ", vis timer active: " << d->visibilityTimer.isActive()
+		kDebug(14000) << " match: " << match << ", vis timer active: " << d->visibilityTimer.isActive()
 		               << ", target visibility: " << targetVisibility() << endl;
 		if ( d->visibilityTimer.isActive() )
-			setVisible( true );
+			mySetVisible( true );
 		else
-			setVisible( targetVisibility() );
+			mySetVisible( targetVisibility() );
 	}
 }
 
@@ -1096,14 +1098,14 @@ void Item::setTargetVisibility( bool vis )
 		// in case we're getting called because our parent was shown and
 		// we need to be rehidden
 		if ( !d->visibilityTimer.isActive() )
-			setVisible( vis && d->searchMatch );
+			mySetVisible( vis && d->searchMatch );
 		return;
 	}
 	d->visibilityTarget = vis;
 	d->visibilityTimer.start();
 	//d->visibilityTimer.start( 40 );
 	if ( targetVisibility() )
-		setVisible( d->searchMatch );
+		mySetVisible( d->searchMatch );
 	slotUpdateVisibility();
 }
 
@@ -1130,7 +1132,7 @@ void Item::slotUpdateVisibility()
 	{
 		d->visibilityLevel = 0;
 		d->visibilityTimer.stop();
-		setVisible( false );
+		mySetVisible( false );
 	}
 	setHeight( 0 );
 	repaint();
@@ -1160,7 +1162,7 @@ void Item::setHeight( int )
 	int minHeight = 0;
 	for ( uint n = 0; n < components(); ++n )
 		minHeight = qMax( minHeight, component( n )->rect().height() );
-	//kDebug(14000) << k_funcinfo << "Height is " << minHeight << endl;
+	//kDebug(14000) << "Height is " << minHeight;
 	if ( Private::foldVisibility && d->visibilityTimer.isActive() )
 	{
 		int vis = d->visibilityLevel;
@@ -1180,6 +1182,7 @@ int Item::width( const QFontMetrics &, const Q3ListView *lv, int c ) const
 
 void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align )
 {
+	Q_UNUSED(align);
 	QPixmap back( width, height() );
 	QPainter paint( &back );
 	//K3ListViewItem::paintCell( &paint, cg, column, width, align );
@@ -1206,8 +1209,12 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		// removed text truncating code from Qt - we do that differently, further on
 
 		int marg = lv->itemMargin();
-		int r = marg;
-		p->fillRect( 0, 0, width, height(), _cg.background() );
+		QBrush b;
+		if (isSelected())
+			b = _cg.brush(QPalette::Normal, QPalette::Highlight);
+		else
+			b = _cg.background();
+		p->fillRect( 0, 0, width, height(), b );
 	//	const QPixmap * icon = pixmap( column );
 #ifdef __GNUC__
 #warning Item::paintCell needs fixing
@@ -1310,6 +1317,12 @@ void Item::componentResized( Component *component )
 {
 	ComponentBase::componentResized( component );
 	scheduleLayout();
+}
+
+void Item::mySetVisible ( bool b )
+{
+	setVisible (b);
+	emit visibilityChanged (b);
 }
 
 } // END namespace ListView

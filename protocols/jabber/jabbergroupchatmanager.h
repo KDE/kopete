@@ -1,5 +1,5 @@
 /*
-    jabbergroupchatmanager.h - Jabber Message Manager for group chats
+    jabbergroupchatmanager.h - Jabber Message Manager for groupchats
 
     Copyright (c) 2004 by Till Gerken            <till@tantalo.net>
 
@@ -59,7 +59,7 @@ public:
 	
 	/**
 	 * reimplemented from Kopete::ChatSession
-	 * called when a contact is droped in the window
+	 * called when a contact is dropped in the window
 	 */
 	virtual void inviteContact(const QString &contactId);
 

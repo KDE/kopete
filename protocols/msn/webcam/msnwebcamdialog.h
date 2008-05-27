@@ -18,8 +18,8 @@
     *************************************************************************
 */
 
-#ifndef YAHOOWEBCAMDIALOG_H_
-#define YAHOOWEBCAMDIALOG_H_
+#ifndef MSNWEBCAMDIALOG_H
+#define MSNWEBCAMDIALOG_H
 
 //#include <qlabel.h>
 #include <webcamwidget.h>
@@ -31,13 +31,12 @@
 
 class QPixmap;
 class QWidget;
-class MSNContact;
 
 class MSNWebcamDialog : public KDialog
 {
 Q_OBJECT
 public:
-	explicit MSNWebcamDialog( const QString& contact, QWidget* parent = 0, const char* name = 0 );
+	explicit MSNWebcamDialog( const QString& contact, QWidget* parent = 0 );
 	~MSNWebcamDialog();
 	
 public slots:
@@ -52,5 +51,5 @@ private:
 	
 };
 
-#endif
+#endif // MSNWEBCAMDIALOG_H
 //kate: indent-mode csands; auto-insert-doxygen on;

@@ -38,7 +38,7 @@ void ChatPropertiesTask::setChat( const QString &displayName )
 {
 	Field::FieldList lst;
 	m_chat = displayName;
-	lst.append( new Field::SingleField( NM_A_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, m_chat ) );
+	lst.append( new Field::SingleField( Field::NM_A_DISPLAY_NAME, 0, NMFIELD_TYPE_UTF8, m_chat ) );
 	createTransfer( "chatproperties", lst );
 }
 
@@ -56,7 +56,7 @@ bool ChatPropertiesTask::take( Transfer * transfer )
 	}
 	
 	Field::FieldList responseFields = response->fields();
-	Field::MultiField * resultsArray = responseFields.findMultiField( NM_A_FA_CHAT );
+	Field::MultiField * resultsArray = responseFields.findMultiField( Field::NM_A_FA_CHAT );
 	if ( !resultsArray )
 	{
 		setError( Protocol );
@@ -72,25 +72,25 @@ bool ChatPropertiesTask::take( Transfer * transfer )
 		Field::SingleField * sf = dynamic_cast<Field::SingleField *>( *it );
 		if ( sf )
 		{
-			if ( sf->tag() == NM_A_DISPLAY_NAME )
+			if ( sf->tag() == Field::NM_A_DISPLAY_NAME )
 				continue;
-			else if ( sf->tag() == NM_A_CHAT_OWNER_DN )
+			else if ( sf->tag() == Field::NM_A_CHAT_OWNER_DN )
 				m_ownerDn = sf->value().toString();
-			else if ( sf->tag() == NM_A_CHAT_CREATOR_DN )
+			else if ( sf->tag() == Field::NM_A_CHAT_CREATOR_DN )
 				m_creatorDn= sf->value().toString();
-			else if ( sf->tag() == NM_A_DESCRIPTION )
+			else if ( sf->tag() == Field::NM_A_DESCRIPTION )
 				m_description =  sf->value().toString();
-			else if ( sf->tag() == NM_A_DISCLAIMER )
+			else if ( sf->tag() == Field::NM_A_DISCLAIMER )
 				m_disclaimer = sf->value().toString();
-			else if ( sf->tag() == NM_A_QUERY )
+			else if ( sf->tag() == Field::NM_A_QUERY )
 				m_query = sf->value().toString();
-			else if ( sf->tag() == NM_A_ARCHIVE )
+			else if ( sf->tag() == Field::NM_A_ARCHIVE )
 				m_archive = sf->value().toString();
-			else if ( sf->tag() == NM_A_SZ_TOPIC )
+			else if ( sf->tag() == Field::NM_A_SZ_TOPIC )
 				m_topic = sf->value().toString();
-			else if ( sf->tag() == NM_A_CREATION_TIME )
+			else if ( sf->tag() == Field::NM_A_CREATION_TIME )
 				m_creationTime.setTime_t( sf->value().toInt() );
-			else if ( sf->tag() == NM_A_UD_CHAT_RIGHTS )
+			else if ( sf->tag() == Field::NM_A_UD_CHAT_RIGHTS )
 				m_rights = sf->value().toInt();
 			
 		}
@@ -99,7 +99,7 @@ bool ChatPropertiesTask::take( Transfer * transfer )
 			Field::MultiField * mf = dynamic_cast<Field::MultiField *>( *it );
 			if ( mf )
 			{
-				if ( mf->tag() == NM_A_FA_CHAT_ACL )
+				if ( mf->tag() == Field::NM_A_FA_CHAT_ACL )
 				{
 					Field::FieldList acl = mf->fields();
 					const Field::FieldListIterator aclEnd = acl.end();
@@ -113,11 +113,11 @@ bool ChatPropertiesTask::take( Transfer * transfer )
 							ChatContact entry;
 							Field::FieldList entryFields = aclEntryFields->fields();
 							Field::SingleField * sf; 
-							if ( ( sf = entryFields.findSingleField ( NM_A_SZ_DN ) ) )
+							if ( ( sf = entryFields.findSingleField ( Field::NM_A_SZ_DN ) ) )
 								entry.dn = sf->value().toString();
-							if ( ( sf = entryFields.findSingleField ( NM_A_SZ_ACCESS_FLAGS ) ) )
+							if ( ( sf = entryFields.findSingleField ( Field::NM_A_SZ_ACCESS_FLAGS ) ) )
 								entry.chatRights = sf->value().toInt();
-							//kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "got acl entry: " << entry.dn << ", " << entry.chatRights << endl;
+							//kDebug () << "got acl entry: " << entry.dn << ", " << entry.chatRights;
 							m_aclEntries.append( entry );
 						}
 						
@@ -126,7 +126,7 @@ bool ChatPropertiesTask::take( Transfer * transfer )
 			}
 		}
 	}
-	//kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Got chatroom properties: " << m_chat << " : " << m_ownerDn << ", " << m_description << ", " << m_disclaimer << ", " << m_query << ", " << m_archive << ", " << m_topic << ", " << m_creatorDn << ", " << m_creationTime.toString() << ", " << m_rights << endl;
+	//kDebug () << "Got chatroom properties: " << m_chat << " : " << m_ownerDn << ", " << m_description << ", " << m_disclaimer << ", " << m_query << ", " << m_archive << ", " << m_topic << ", " << m_creatorDn << ", " << m_creationTime.toString() << ", " << m_rights;
 	finished();
 	return true;
 }

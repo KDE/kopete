@@ -17,7 +17,10 @@
 */
 
 #include "oscarutils.h"
-#include <qhostaddress.h>
+
+#include <QHostAddress>
+#include <QTextCodec>
+
 #include <kdebug.h>
 
 
@@ -75,129 +78,6 @@ bool Oscar::updateTLVs( OContact& item, const QList<TLV>& list )
 		item.setTLVList( tList );
 
 	return changed;
-}
-
-Oscar::DWORD Oscar::parseCapabilities( Buffer &inbuf, QString &versionString, int &xStatus )
-{
-	Oscar::DWORD capflags = 0;
-	xStatus = -1;
-	QString dbgCaps = "CAPS: ";
-
-	while(inbuf.bytesAvailable() >= 16)
-	{
-		bool found = false;
-		Guid cap( inbuf.getGuid() );
-
-		for (int i=0; i < CAP_LAST; i++)
-		{
-			if (i == CAP_KOPETE)
-			{
-				if ( oscar_caps[i].data().left(12) == cap.data().left(12) )
-				{
-					capflags |= (1 << i);
-					versionString.sprintf( "%d.%d.%d%d", cap.data().at(12), cap.data().at(13), cap.data().at(14), cap.data().at(15) );
-					versionString.insert( 0, "Kopete " );
-					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Kopete version - " << versionString << endl;
-					found = true;
-					break;
-				}
-			}
-			else if (i == CAP_MICQ)
-			{
-				if ( oscar_caps[i].data().left(12) == cap.data().left(12) )
-				{
-					kDebug(14150) << k_funcinfo << "MICQ version : <" <<
-						(int)cap.data()[12] << ":" << (int)cap.data()[13] << ":" <<
-						(int)cap.data()[14] << ":" << (int)cap.data()[15] << ">" << endl;
-
-					capflags |= (1 << i);
-
-						// FIXME: how to decode this micq version mess? [mETz - 08.06.2004]
-						/*versionString.sprintf("%d.%d.%d%d",
-							cap[12], cap[13], cap[14], cap[15]);*/
-					found = true;
-					break;
-				}
-			}
-			else if (i == CAP_SIMNEW)
-			{
-				if ( oscar_caps[i].data().left(12) == cap.data().left(12) )
-				{
-					kDebug(14150) << k_funcinfo << "SIM version : <" <<
-						(unsigned int)cap.data()[12] << ":" << (unsigned int)cap.data()[13] << ":" <<
-						(unsigned int)cap.data()[14] << ":" << (unsigned int)cap.data()[15] << ">" << endl;
-					capflags |= (1 << i);
-					versionString.sprintf("%d.%d.%d%d",
-					                      cap.data().at(12), cap.data().at(13), cap.data().at(14), cap.data().at(15));
-					versionString.insert( 0, "SIM " );
-					found = true;
-					break;
-				}
-			}
-			else if (i == CAP_SIMOLD)
-			{
-				if ( oscar_caps[i].data().left(15) == cap.data().left(15) )
-				{
-					int hiVersion = (cap.data()[15] >> 6) - 1;
-					unsigned loVersion = cap.data()[15] & 0x1F;
-					kDebug(14150) << k_funcinfo << "OLD SIM version : <" <<
-						hiVersion << ":" << loVersion << endl;
-					capflags |= (1 << i);
-					versionString.sprintf("%d.%d", (unsigned int)hiVersion, loVersion);
-					versionString.insert( 0, "SIM " );
-					found = true;
-					break;
-				}
-			}
-			else if ( oscar_caps[i] == cap )
-			{
-				capflags |= (1 << i);
-				dbgCaps += capName(i);
-				found = true;
-				break;
-			} // END if...
-		} // END for...
-		if ( !found && xStatus == -1 )
-		{
-			for ( int i = 0; i < XSTAT_LAST; i++ )
-			{
-				if ( oscar_xStatus[i] == cap )
-				{
-					xStatus = i;
-					found = true;
-					break;
-				}
-			}
-		}
-	}
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << dbgCaps << endl;
-	return capflags;
-}
-
-Oscar::DWORD Oscar::parseNewCapabilities( Buffer &inbuf )
-{
-	Oscar::DWORD capflags = 0;
-	QString dbgCaps = "NEW CAPS: ";
-
-	QByteArray cap = Guid( QLatin1String( "094600004c7f11d18222444553540000" ) );
-	while( inbuf.bytesAvailable() >= 2 )
-	{
-		cap[2] = inbuf.getByte();
-		cap[3] = inbuf.getByte();
-
-		for ( int i = 0; i < CAP_LAST; i++ )
-		{
-			if ( oscar_caps[i].data() == cap )
-			{
-				capflags |= (1 << i);
-				dbgCaps += capName(i);
-				break;
-			}
-		}
-	}
-
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << dbgCaps << endl;
-	return capflags;
 }
 
 const QString Oscar::capName( int capNumber )
@@ -267,6 +147,54 @@ const QString Oscar::capName( int capNumber )
 	case CAP_KOPETE:
 		capString = "CAP_KOPETE ";
 		break;
+	case CAP_MIRANDA:
+		capString = "CAP_MIRANDA";
+		break;
+	case CAP_QIP:
+		capString = "CAP_QIP";
+		break;
+	case CAP_QIPINFIUM:
+		capString = "CAP_QIPINFIUM";
+		break;
+	case CAP_QIPPDA:
+		capString = "CAP_QIPPDA";
+		break;
+	case CAP_QIPSYMBIAN:
+		capString = "CAP_QIPSYMBIAN";
+		break;
+	case CAP_QIPMOBILE:
+		capString = "CAP_QIPMOBILE";
+		break;
+	case CAP_JIMM:
+		capString = "CAP_JIMM";
+		break;
+	case CAP_VMICQ:
+		capString = "CAP_VMICQ";
+		break;
+	case CAP_LICQ:
+		capString = "CAP_LICQ";
+		break;
+	case CAP_ANDRQ:
+		capString = "CAP_ANDRQ";
+		break;
+	case CAP_RANDQ:
+		capString = "CAP_RANDQ";
+		break;
+	case CAP_ICQ_RAMBLER:
+		capString = "CAP_ICQ_RAMBLER";
+		break;
+	case CAP_ICQ_ABV:
+		capString = "CAP_ICQ_ABV";
+		break;
+	case CAP_ICQ_NETVIGATOR:
+		capString = "CAP_ICQ_NETVIGATOR";
+		break;
+	case CAP_TZERS:
+		capString = "CAP_TZERS";
+		break;
+	case CAP_HTMLMSGS:
+		capString = "CAP_HTMLMSGS";
+		break;
 	case CAP_MICQ:
 		capString = "CAP_MICQ ";
 		break;
@@ -296,9 +224,6 @@ const QString Oscar::capName( int capNumber )
 		break;
 	case CAP_NEWCAPS:
 		capString = "CAP_NEWCAPS ";
-		break;
-	case CAP_UNKNOWN1:
-		capString = "CAP_UNKNOWN1 ";
 		break;
 	case CAP_UNKNOWN2:
 		capString = "CAP_UNKNOWN2 ";

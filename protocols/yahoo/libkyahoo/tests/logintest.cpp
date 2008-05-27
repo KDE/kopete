@@ -48,7 +48,7 @@ void LoginTest::slotDoTest()
 {
 	QLatin1String server("scs.msg.yahoo.com");
 	// connect to server
-	kDebug(14180) << k_funcinfo << " connecting to server" << endl;
+	kDebug(14180) << " connecting to server";
 	
 	connect( myClient, SIGNAL( connected() ), SLOT( slotConnected() ) );
 	myClient->start( server, 5050, "duncanmacvicar", "**********" );
@@ -57,7 +57,7 @@ void LoginTest::slotDoTest()
 
 void LoginTest::slotConnected()
 {	
-	kDebug(14180) << k_funcinfo << " connection is up" << endl;
+	kDebug(14180) << " connection is up";
 	connected = true;
 }
 

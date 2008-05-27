@@ -104,7 +104,7 @@ public:
      * Get the room name for the chat room based the connection
      * @return The name of the chat room that this connection is connected to
      * If the connection passed in by @p c is not a chat room connection then
-     * QString::null is returned.
+     * QString() is returned.
      */
     QString chatRoomForConnection( Connection* c );
 

@@ -27,12 +27,12 @@
 #include "smsaddcontactpage.h"
 #include "smsaccount.h"
 
-typedef KGenericFactory<SMSProtocol> SMSProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_sms, SMSProtocolFactory( "kopete_sms" )  )
+K_PLUGIN_FACTORY( SMSProtocolFactory, registerPlugin<SMSProtocol>(); )
+K_EXPORT_PLUGIN( SMSProtocolFactory( "kopete_sms" ) )
 
 SMSProtocol* SMSProtocol::s_protocol = 0L;
 
-SMSProtocol::SMSProtocol(QObject *parent, const QStringList &)
+SMSProtocol::SMSProtocol(QObject *parent, const QVariantList &)
 : Kopete::Protocol( SMSProtocolFactory::componentData(), parent ),
 	SMSOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QStringList(),   i18n( "Online" ), i18n( "Online" ), Kopete::OnlineStatusManager::Online ),
 	SMSOffline( Kopete::OnlineStatus::Offline, 0, this, 2,  QStringList(),   i18n( "Offline" ), i18n( "Offline" ), Kopete::OnlineStatusManager::Offline ),
@@ -40,7 +40,7 @@ SMSProtocol::SMSProtocol(QObject *parent, const QStringList &)
 	
 {
 	if (s_protocol)
-		kWarning( 14160 ) << k_funcinfo << "s_protocol already defined!" << endl;
+		kWarning( 14160 ) << "s_protocol already defined!";
 	else
 		s_protocol = this;
 
@@ -91,7 +91,7 @@ Kopete::Contact *SMSProtocol::deserializeContact(Kopete::MetaContact *metaContac
 
 	if (!account)
 	{
-		kDebug(14160) << "Account doesn't exist, skipping" << endl;
+		kDebug(14160) << "Account doesn't exist, skipping";
 		return 0;
 	}
 

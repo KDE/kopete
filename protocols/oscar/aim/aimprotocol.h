@@ -22,10 +22,6 @@
 #include "kopetemimetypehandler.h"
 #include "kopeteonlinestatus.h"
 
-namespace Kopete
-{
-class OnlineStatus;
-}
 
 class AIMStatusManager;
 
@@ -41,7 +37,7 @@ class AIMProtocol : public OscarProtocol
 	Q_OBJECT
 
 public:
-	AIMProtocol( QObject *parent, const QStringList &args );
+	AIMProtocol( QObject *parent, const QVariantList &args );
 	virtual ~AIMProtocol();
 	/**
 	 * Return the active instance of the protocol
@@ -57,7 +53,7 @@ public:
 
 	OscarStatusManager *statusManager() const;
 
-	const Kopete::ContactPropertyTmpl clientProfile;
+	const Kopete::PropertyTmpl clientProfile;
 
 private:
 	/** The active instance of oscarprotocol */

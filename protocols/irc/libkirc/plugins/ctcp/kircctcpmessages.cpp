@@ -89,7 +89,7 @@ void StdCommands::CtcpRequest_dcc(const QString &nickname, const QString &fileNa
 	{
 		case Transfer::Chat:
 		{
-			writeCtcpQueryMessage(nickname, QString::null,
+			writeCtcpQueryMessage(nickname, QString(),
 				QString::fromLatin1("DCC"),
 				QStringList(QString::fromLatin1("CHAT")) << QString::fromLatin1("chat") <<
 					m_sock->localAddress()->nodeName() << QString::number(port)
@@ -107,11 +107,11 @@ void StdCommands::CtcpRequest_dcc(const QString &nickname, const QString &fileNa
 			TransferServer *server = TransferHandler::self()->createServer(this, nickname, type, fileName, file.size());
 
 			QString ip = m_sock->localAddress()->nodeName();
-			QString ipNumber = QString::number( ntohl( inet_addr( ip.latin1() ) ) );
+			QString ipNumber = QString::number( ntohl( inet_addr( ip.toLatin1() ) ) );
 
-			kDebug(14120) << "Starting DCC file outgoing transfer." << endl;
+			kDebug(14120) << "Starting DCC file outgoing transfer.";
 
-			writeCtcpQueryMessage(nickname, QString::null,
+			writeCtcpQueryMessage(nickname, QString(),
 				QString::fromLatin1("DCC"),
 				QStringList(QString::fromLatin1("SEND")) << noWhiteSpace << ipNumber <<
 					QString::number(server->port()) << QString::number(file.size())
@@ -128,7 +128,7 @@ void StdCommands::CtcpRequest_dcc(const QString &nickname, const QString &fileNa
 
 void StdCommands::CtcpRequest_ping(const QString &target)
 {
-	kDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) ;
 
 	timeval time;
 	if (gettimeofday(&time, 0) == 0)
@@ -140,7 +140,7 @@ void StdCommands::CtcpRequest_ping(const QString &target)
 		else
 		 	timeReply = QString::number( time.tv_sec );
 
-		writeCtcpQueryMessage(	target, QString::null, "PING", timeReply);
+		writeCtcpQueryMessage(target, QString(), "PING", timeReply);
 	}
 //	else
 //		((MessageRedirector *)sender())->error("failed to get current time");
@@ -148,6 +148,6 @@ void StdCommands::CtcpRequest_ping(const QString &target)
 
 void StdCommands::CtcpRequest_version(const QString &target)
 {
-//	writeCtcpQueryMessage(target, QString::null, "VERSION");
+//	writeCtcpQueryMessage(target, QString(), "VERSION");
 }
 */

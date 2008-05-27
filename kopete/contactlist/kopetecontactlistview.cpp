@@ -33,7 +33,7 @@
 #include <QPointer>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3PtrList>
+#include <QList>
 #include <QDropEvent>
 #include <QMouseEvent>
 
@@ -481,6 +481,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 
 	KAction *actionCreateNewGroup = new KAction( i18n( "Create New Group..." ), ac );
+	actionCreateNewGroup->setIcon( KIcon( "user-group-new" ) );
 	connect( actionCreateNewGroup, SIGNAL( triggered(bool) ), this, SLOT( addGroup() ) );
         ac->addAction( "AddGroup", actionCreateNewGroup );
 
@@ -496,27 +497,27 @@ void KopeteContactListView::initActions( KActionCollection *ac )
                                                 KShortcut(), this, SLOT( slotCopyToGroup() ), ac );
         ac->addAction( "contactCopy", actionCopy );
 
-	actionMakeMetaContact = new KAction(KIcon("move"), i18n("Make Meta Contact"), ac);
+	actionMakeMetaContact = new KAction(KIcon("list-add-user"), i18n("Make Meta Contact"), ac);
         ac->addAction( "makeMetaContact", actionMakeMetaContact );
         connect (actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(slotMakeMetaContact()));
 
 	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ), ac );
         ac->addAction( "contactRemove", actionRemove );
-	actionSendEmail = new KAction( KIcon("mail"), i18n( "Send Email..." ), ac );
+	actionSendEmail = new KAction( KIcon("mail-send"), i18n( "Send Email..." ), ac );
         ac->addAction( "contactSendEmail", actionSendEmail );
 	connect( actionSendEmail, SIGNAL( triggered(bool) ), this, SLOT( slotSendEmail() ) );
 	/* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*/
-	actionRename = new KAction( KIcon("document-save-as"), i18n( "Rename" ), ac );
+	actionRename = new KAction( KIcon("edit-rename"), i18n( "Rename" ), ac );
         ac->addAction( "contactRename", actionRename );
 	connect( actionRename, SIGNAL( triggered(bool) ), this, SLOT( slotRename() ) );
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
 		ac, "contactSendFile" );
 
-	actionAddContact = new KActionMenu( KIcon( QLatin1String("add-user") ), i18n( "&Add Contact" ), ac );
+	actionAddContact = new KActionMenu( KIcon( QLatin1String("list-add-user") ), i18n( "&Add Contact" ), ac );
         ac->addAction( "contactAddContact", actionAddContact );
 	actionAddContact->menu()->addTitle( i18n("Select Account") );
 
-	actionAddTemporaryContact = new KAction( KIcon("add-user"), i18n( "Add to Your Contact List" ), ac );
+	actionAddTemporaryContact = new KAction( KIcon("list-add-user"), i18n( "Add to Your Contact List" ), ac );
         ac->addAction( "contactAddTemporaryContact", actionAddTemporaryContact );
 	connect( actionAddTemporaryContact, SIGNAL( triggered(bool) ), this, SLOT( slotAddTemporaryContact() ) );
 
@@ -525,7 +526,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered( Kopete::Account* )), SLOT(slotAddSubContactActionNewAccount(Kopete::Account*)));
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )), SLOT(slotAddSubContactActionAccountDeleted(const Kopete::Account *)));
 
-	actionProperties = new KAction( KIcon("edit-user"), i18n( "&Properties" ), ac );
+	actionProperties = new KAction( KIcon("user-properties"), i18n( "&Properties" ), ac );
         ac->addAction( "contactProperties", actionProperties );
 	actionProperties->setShortcut( KShortcut(Qt::Key_Alt + Qt::Key_Return) );
 	connect( actionProperties, SIGNAL( triggered(bool) ), this, SLOT( slotProperties() ) );
@@ -549,7 +550,7 @@ void KopeteContactListView::slotAddSubContactActionNewAccount(Kopete::Account* a
 
 void KopeteContactListView::slotAddSubContactActionAccountDeleted(const Kopete::Account *account)
 {
-	kDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) ;
 
 	QMapIterator<KAction *, Kopete::Account *> it(m_addContactAccountMap);
 	while ( it.hasNext() )
@@ -583,25 +584,45 @@ void KopeteContactListView::slotMetaContactDeleted( Kopete::MetaContact *mc )
 	d->viewStrategy->removeMetaContact( mc );
 }
 
-void KopeteContactListView::slotMetaContactSelected( bool sel )
+void KopeteContactListView::slotMetaContactSelected( bool selected )
 {
-	bool set = sel;
+	if ( m_selectedMetaContact )
+	{ // Delete previous connection
+		disconnect( m_selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+		            this, SLOT(slotUpdateMetaContactActions()) );
+		m_selectedMetaContact = 0;
+	}
 
-	if( sel )
+	if ( selected )
 	{
-		Kopete::MetaContact *kmc = Kopete::ContactList::self()->selectedMetaContacts().first();
-		set = sel && kmc->isReachable();
-		actionAddTemporaryContact->setEnabled( sel && kmc->isTemporary() );
+		m_selectedMetaContact = Kopete::ContactList::self()->selectedMetaContacts().first();
+		connect( m_selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+		         this, SLOT(slotUpdateMetaContactActions()) );
+	}
+
+	actionMove->setEnabled( selected ); // TODO: make available for several contacts
+	actionCopy->setEnabled( selected ); // TODO: make available for several contacts
+	slotUpdateMetaContactActions();
+}
+
+void KopeteContactListView::slotUpdateMetaContactActions()
+{
+	bool reachable = false;
+
+	if( m_selectedMetaContact )
+	{
+		reachable = m_selectedMetaContact->isReachable();
+		actionAddTemporaryContact->setEnabled( m_selectedMetaContact->isTemporary() );
+		actionSendFile->setEnabled( reachable && m_selectedMetaContact->canAcceptFiles() );
 	}
 	else
 	{
-		actionAddTemporaryContact->setEnabled(false);
+		actionAddTemporaryContact->setEnabled( false );
+		actionSendFile->setEnabled( false );
 	}
 
-	actionSendMessage->setEnabled( set );
-	actionStartChat->setEnabled( set );
-	actionMove->setEnabled( sel ); // TODO: make available for several contacts
-	actionCopy->setEnabled( sel ); // TODO: make available for several contacts
+	actionSendMessage->setEnabled( reachable );
+	actionStartChat->setEnabled( reachable );
 }
 
 void KopeteContactListView::slotAddedToGroup( Kopete::MetaContact *mc, Kopete::Group *to )
@@ -694,7 +715,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 	KXmlGuiWindow *window = dynamic_cast<KXmlGuiWindow *>(topLevelWidget());
 	if ( !window )
 	{
-		kError( 14000 ) << k_funcinfo << "Main window not found, unable to display context-menu; "
+		kError( 14000 ) << "Main window not found, unable to display context-menu; "
 			<< "Kopete::UI::Global::mainWidget() = " << Kopete::UI::Global::mainWidget() << endl;
 		return;
 	}
@@ -705,7 +726,7 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 			treeStepSize() * ( item->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
 		int py = mapFromGlobal( point ).y() - itemRect( item ).y() - (header()->isVisible() ? header()->height() : 0) ;
 
-		//kDebug( 14000 ) << k_funcinfo << "x: " << px << ", y: " << py << endl;
+		//kDebug( 14000 ) << "x: " << px << ", y: " << py;
 		Kopete::Contact *c = metaLVI->contactForPoint( QPoint( px, py ) ) ;
 		if ( c )
 		{
@@ -726,14 +747,13 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 					title = title.left( 40 ) + QLatin1String( "..." );
 
 				// HACK: Used to update the KMenu title -DarkShock
-				if( !d->menuTitleMap.contains(popup) )
+				if( d->menuTitleMap.contains(popup) )
 				{
-					d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
+					QAction *action = d->menuTitleMap[popup];
+					popup->removeAction( action );
+					delete action;
 				}
-				else
-				{
-					d->menuTitleMap[popup]->setText( title );
-				}
+				d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
 
 				// Submenus for separate contact actions
 				bool sep = false;  //FIXME: find if there is already a separator in the end - Olivier
@@ -754,7 +774,9 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 					if ( text.length() > 41 )
 						text = text.left( 38 ) + QLatin1String( "..." );
 
-					popup->insertItem( c->onlineStatus().iconFor( c, 16 ), text , contactMenu );
+					contactMenu->setTitle(text);
+					contactMenu->setIcon(c->onlineStatus().iconFor( c ));
+					popup->addMenu( contactMenu );
 				}
 
 				popup->popup( point );
@@ -772,15 +794,13 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 				title = title.left( 30 ) + QLatin1String( "..." );
 
 			// HACK: Used to update the KMenu title -DarkShock
- 			if( !d->menuTitleMap.contains(popup) )
+			if( d->menuTitleMap.contains(popup) )
 			{
-				d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
+				QAction *action = d->menuTitleMap[popup];
+				popup->removeAction( action );
+				delete action;
 			}
-			else
-			{
-				d->menuTitleMap[popup]->setText( title );
-			}
-
+			d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
 
 			popup->popup( point );
 		}
@@ -799,14 +819,13 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 		if ( popup )
 		{
 			// HACK: Used to update the KMenu title -DarkShock
-			if( !d->menuTitleMap.contains(popup) )
+			if( d->menuTitleMap.contains(popup) )
 			{
-				d->menuTitleMap.insert( popup, popup->addTitle(i18n( "Kopete" ), popup->actions().first()) );
+				QAction *action = d->menuTitleMap[popup];
+				popup->removeAction( action );
+				delete action;
 			}
-			else
-			{
-				d->menuTitleMap[popup]->setText( i18n( "Kopete" ) );
-			}
+			d->menuTitleMap.insert( popup, popup->addTitle(i18n( "Kopete" ), popup->actions().first()) );
 
 			popup->popup( point );
 		}
@@ -909,12 +928,12 @@ void KopeteContactListView::slotDropped(QDropEvent *e, Q3ListViewItem *, Q3ListV
 
 	if( const_cast<const QWidget *>( e->source() ) == this )
 	{
-		Q3PtrListIterator<KopeteMetaContactLVI> it( m_selectedContacts );
+		MetaContactLVIList::iterator it = m_selectedContacts.begin();
 
-		while ( it.current() )
+		while ( it != m_selectedContacts.end() )
 		{
 			Kopete::Contact *source_contact=0L;
-			KopeteMetaContactLVI *source_metaLVI = it.current();
+			KopeteMetaContactLVI *source_metaLVI = *it;
 			++it;
 
 			if(source_metaLVI)
@@ -1091,7 +1110,7 @@ void KopeteContactListView::addDraggedContactToMetaContact( Kopete::Contact *con
 void KopeteContactListView::addDraggedContactByInfo( const QString &protocolId, const QString &accountId,
 			      const QString &contactId, Q3ListViewItem *after )
 {
-	kDebug(14000) << k_funcinfo << "protocolId=" << protocolId <<
+	kDebug(14000) << "protocolId=" << protocolId <<
 		", accountId=" << accountId << ", contactId=" << contactId << endl;
 
 	Kopete::Account *account = Kopete::AccountManager::self()->findAccount( protocolId,accountId );
@@ -1252,7 +1271,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 		{
 			QString text;
 			Q3TextDrag::decode(e, text);
-			kDebug(14000) << k_funcinfo << "drop with mimetype:" << e->format() << " data as text:" << text << endl;
+			kDebug(14000) << "drop with mimetype:" << e->format() << " data as text:" << text;
 		}
 	}
 
@@ -1270,9 +1289,9 @@ void KopeteContactListView::findDrop(const QPoint &pos, Q3ListViewItem *&parent,
 }
 
 
-void KopeteContactListView::mousePressEvent( QMouseEvent *e )
+void KopeteContactListView::contentsMousePressEvent( QMouseEvent *e )
 {
-	K3ListView::mousePressEvent( e );
+	K3ListView::contentsMousePressEvent( e );
 	if (e->button() == Qt::LeftButton )
 	{
 		QPoint p=contentsToViewport(e->pos());
@@ -1435,7 +1454,6 @@ void KopeteContactListView::updateActionsForSelection(
 		inkabc= !kabcid.isEmpty() && !kabcid.contains(":");
 	}
 
-	actionSendFile->setEnabled( singleContactSelected && contacts.first()->canAcceptFiles());
 	actionAddContact->setEnabled( singleContactSelected && !contacts.first()->isTemporary());
 	actionSendEmail->setEnabled( inkabc );
 
@@ -1512,9 +1530,9 @@ void KopeteContactListView::slotSendFile()
 		{
 			QString emailAddr = addressee.fullEmail();
 
-			kDebug( 14000 ) << "Email: " << emailAddr << "!" << endl;
+			kDebug( 14000 ) << "Email: " << emailAddr << "!";
 			if ( !emailAddr.isEmpty() )
-				KToolInvocation::invokeMailer( emailAddr, QString::null );
+				KToolInvocation::invokeMailer( emailAddr, QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 			else
 				KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "There is no email address set for this contact in the KDE address book." ), i18n( "No Email Address in Address Book" ) );
 		}
@@ -1775,7 +1793,7 @@ void KopeteContactListView::slotAddContact()
 
 		if (!addContactPage)
 		{
-			kDebug(14000) << k_funcinfo <<
+			kDebug(14000) <<
 				"Error while creating addcontactpage" << endl;
 		}
 		else
@@ -1828,7 +1846,7 @@ void KopeteContactListView::slotAddTemporaryContact()
 
 void KopeteContactListView::slotProperties()
 {
-//	kDebug(14000) << k_funcinfo << "Called" << endl;
+//	kDebug(14000) << "Called";
 
 	KopeteMetaContactLVI *metaLVI =
 		dynamic_cast<KopeteMetaContactLVI *>( currentItem() );
@@ -1880,7 +1898,7 @@ void KopeteContactListView::slotItemRenamed( Q3ListViewItem */*item*/ )
 	else
 	{
 		//group are handled differently in KopeteGroupViewItem
-	//	kWarning( 14000 ) << k_funcinfo << "Unknown list view item '" << item
+	//	kWarning( 14000 ) << "Unknown list view item '" << item
 	//	                   << "' renamed, ignoring item" << endl;
 	}
 	*/

@@ -19,23 +19,18 @@
 #ifndef KIRCSOCKET_H
 #define KIRCSOCKET_H
 
-#include "kircconst.h"
 #include "kircentity.h"
-#include "kircevent.h"
 #include "kircmessage.h"
 
-#include <QTcpSocket>
+#include <QtCore/QUrl>
 
-class QUrl;
-
-class QTextCodec;
+class QAbstractSocket;
 
 namespace KIrc
 {
 
-class CommandHandler;
-class EntityManager;
-class Event;
+class Context;
+class SocketPrivate;
 
 /**
  * @author Michel Hermier <michel.hermier@gmail.com>
@@ -44,9 +39,14 @@ class KIRC_EXPORT Socket
 	: public QObject
 {
 	Q_OBJECT
+	Q_DECLARE_PRIVATE(KIrc::Socket)
 
 	Q_PROPERTY(ConnectionState connectionState READ connectionState)
+	Q_PROPERTY(KIrc::Entity::Ptr owner READ owner)
 	Q_ENUMS(ConnectionState)
+
+protected:
+	KIrc::SocketPrivate * const d_ptr;
 
 public:
 	enum ConnectionState
@@ -54,69 +54,43 @@ public:
 		Idle,
 		HostLookup,
 		HostFound,
-//		Bound,
+//		Bound, // For server socket
 		Connecting,
-		Open,
+//		Open, // For server socket
 		Authentifying,
 		Authentified,
 		Closing
 	};
 
-	explicit Socket(QObject *parent = 0);
 	~Socket();
 
 public: // READ properties accessors.
-	ConnectionState connectionState() const;
+	KIrc::Socket::ConnectionState connectionState() const;
+
+	KIrc::Entity::Ptr owner() const;
 
 public:
-	QTcpSocket *socket();
-
-	QTextCodec *defaultCodec() const;
-
-	CommandHandler *commandHandler() const;
-	EntityManager *entityManager() const;
-	Entity::Ptr owner() const;
-
-	/**
-	 * The connection url.
-	 */
-	const QUrl &url() const;
 
 public slots:
-	void setDefaultCodec(QTextCodec *codec);
-
-	void setCommandHandler(CommandHandler *newCommandHandler);
-	void setEntityManager(EntityManager *newEntityManager);
-	void setOwner(const Entity::Ptr &newOwner);
-
-	void connectToServer(const QUrl &url);
-	void close();
-
 	void writeMessage(const Message &message);
 
-	void showInfoDialog();
+	void close();
 
 signals:
-//	void eventOccured(const KIrc::Event *);
-
-	void connectionStateChanged(Socket::ConnectionState newState);
+	void connectionStateChanged(KIrc::Socket::ConnectionState newState);
 
 	void receivedMessage(const KIrc::Message &message);
 
 protected:
-	void setConnectionState(Socket::ConnectionState newstate);
+	Socket(KIrc::Context *context,
+		KIrc::SocketPrivate *socketp,
+		KIrc::Entity::Ptr owner = KIrc::Entity::Ptr());
 
-private slots:
-	void onReadyRead();
-
-	void socketStateChanged(QAbstractSocket::SocketState);
-	void socketGotError(QAbstractSocket::SocketError);
+	void setSocket(QAbstractSocket *socket);
+	QAbstractSocket *socket();
 
 private:
 	Q_DISABLE_COPY(Socket)
-
-	class Private;
-	Private * const d;
 };
 
 }

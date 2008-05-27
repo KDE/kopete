@@ -3,7 +3,7 @@
  yahoouserinfodialog.h - Display Yahoo user info
 
  Copyright (c) 2005 Matt Rogers <mattr@kde.org>
- Copyright (c) 2006 Andre Duffeck <andre@duffeck.de>
+ Copyright (c) 2006 Andre Duffeck <duffeck@kde.org>
 
  Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -49,28 +49,28 @@ YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent )
 	setButtonGuiItem( KDialog::User2, KGuiItem( i18n("Merge with existing entry") ) );
 	showButton( KDialog::User2, false );
 
-	kDebug(14180) << k_funcinfo << "Creating new yahoo user info widget" << endl;
+	kDebug(14180) << "Creating new yahoo user info widget";
 	
 	QWidget *genInfo = new QWidget(this);
 	m_genInfoWidget = new Ui::YahooGeneralInfoWidget;
 	m_genInfoWidget->setupUi( genInfo );
 	KPageWidgetItem *genInfoItem = addPage( genInfo, i18n("General Info") );
 	genInfoItem->setHeader(  i18n( "General Yahoo Information" ) );
-	genInfoItem->setIcon( KIcon("identity") );
+	genInfoItem->setIcon( KIcon("user-identity") );
 	
 	QWidget *workInfo = new QWidget(this);
 	m_workInfoWidget = new Ui::YahooWorkInfoWidget;
 	m_workInfoWidget->setupUi( workInfo );
 	KPageWidgetItem *workInfoItem = addPage( workInfo, i18n("Work Info") );
 	workInfoItem->setHeader( i18n( "Work Information" ) );
-	workInfoItem->setIcon( KIcon("attach") );
+	workInfoItem->setIcon( KIcon("mail-attachment") );
 	
 	QWidget *otherInfo = new QWidget(this);
 	m_otherInfoWidget = new Ui::YahooOtherInfoWidget;
 	m_otherInfoWidget->setupUi( otherInfo );
 	KPageWidgetItem *otherInfoItem = addPage( otherInfo, i18n("Other Info") );
 	otherInfoItem->setHeader( i18n( "Other Yahoo Information" ) );
-	otherInfoItem->setIcon( KIcon("email") );
+	otherInfoItem->setIcon( KIcon("document-properties") );
 	
 	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotSaveAndCloseClicked()));
 	QObject::connect(this, SIGNAL(user2Clicked()), this, SLOT(slotUser2()));

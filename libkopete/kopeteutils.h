@@ -23,7 +23,6 @@
 #include "qpixmap.h"
 #include "kopete_export.h"
 
-class KNotification;
 
 namespace Kopete
 {
@@ -34,13 +33,6 @@ namespace Utils
 {
 
 /**
- * Checks if host is accessible. Useful for plugins to check for disconnected events.
- *
- * @param host The host to be cheked
- */
-bool isHostReachable( const QString &host );
-
-/**
  * Notifies the user connection has been lost without coupling plugins with GUI code.
  *
  * @param account The account that lost the connection and wants to notify the user.
@@ -49,14 +41,14 @@ bool isHostReachable( const QString &host );
  * @param explanation A long description on how the error occurred and what the user can do about it.
  * @param debugInfo Debug info that can be sent to the developers or to the network service owners.
  *
- * You can not provide debugInfo without an user explanation. If you don't provide a caption, message, or
+ * You cannot provide debugInfo without an user explanation. If you don't provide a caption, message, or
  * explanation, Kopete will use a default explanation.
  */
 void KOPETE_EXPORT notifyConnectionLost( const Account *account,
-                                         const QString caption = QString::null,
-                                         const QString message = QString::null,
-                                         const QString explanation = QString::null,
-                                         const QString debugInfo = QString::null );
+                                         const QString caption = QString(),
+                                         const QString message = QString(),
+                                         const QString explanation = QString(),
+                                         const QString debugInfo = QString() );
 
 
 /**
@@ -66,12 +58,12 @@ void KOPETE_EXPORT notifyConnectionLost( const Account *account,
  * @param explanation A long description on how the error occurred and what the user can do about it.
  * @param debugInfo Debug info that can be sent to the developers or to the network service owners.
  *
- * You can not provide debugInfo without an user explanation. If you don't provide a caption, message, or
+ * You cannot provide debugInfo without an user explanation. If you don't provide a caption, message, or
  * explanation, Kopete will use a default explanation.
  */
 void KOPETE_EXPORT notifyCannotConnect( const Account *account,
-                                        const QString explanation = QString::null,
-                                        const QString debugInfo = QString::null);
+                                        const QString explanation = QString(),
+                                        const QString debugInfo = QString());
 
 } // end ns Utils
 } // end ns Kopete

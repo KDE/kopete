@@ -15,11 +15,11 @@
     *************************************************************************
 */
 
-#ifndef KOPETEMESSAGEMANAGERFACTORY_H
-#define KOPETEMESSAGEMANAGERFACTORY_H
+#ifndef KOPETECHATSESSIONMANAGER_H
+#define KOPETECHATSESSIONMANAGER_H
 
-#include <qobject.h>
-#include <QList>
+#include <QtCore/QObject>
+#include <QtCore/QList>
 
 #include "kopetechatsession.h"
 #include "kopetemessage.h"
@@ -63,7 +63,7 @@ public:
 	 * @return A pointer to a new or reused Kopete::ChatSession.
 	 */
 	Kopete::ChatSession* create( const Kopete::Contact *user,
-		Kopete::ContactPtrList chatContacts, Kopete::Protocol *protocol);
+		Kopete::ContactPtrList chatContacts, Kopete::Protocol *protocol, Kopete::ChatSession::Form form = Kopete::ChatSession::Small );
 
 	/**
 	 * Find a chat session, if one exists, that matches the given list of contacts.
@@ -95,7 +95,7 @@ public:
 	 * create a new view for the manager.
 	 * only the manager should call this function
 	 */
-	KopeteView *createView( Kopete::ChatSession * , const QString &requestedPlugin = QString::null );
+	KopeteView *createView( Kopete::ChatSession * , const QString &requestedPlugin = QString() );
 
 	/**
 	 * Post a new event. this will emit the @ref newEvent signal
@@ -184,7 +184,6 @@ private:
 
 }
 
-#endif
+#endif // KOPETECHATSESSIONMANAGER_H
 
 // vim: set noet ts=4 sts=4 sw=4:
-

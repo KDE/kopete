@@ -27,6 +27,8 @@
 #include <QList>
 #include <QHostAddress>
 
+#include <iris_export.h>
+
 #include "bytestream.h"
 #include "xmpp_jid.h"
 #include "xmpp_task.h"

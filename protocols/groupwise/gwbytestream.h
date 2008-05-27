@@ -6,7 +6,7 @@
     begin                : Wed Jul 7 2004
     copyright            : (C) 2004 by Till Gerken <till@tantalo.net>
 
-			   Kopete (C) 2004 Kopete developers <kopete-devel@kde.org>
+			   Kopete (C) 2004-2007 Kopete developers <kopete-devel@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,13 +18,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef KNETWORKBYTESTREAM_H
-#define KNETWORKBYTESTREAM_H
+#ifndef GWBYTESTREAM_H
+#define GWBYTESTREAM_H
 
-#include <kbufferedsocket.h>
-
-#include "bytestream.h"
-
+#include <bytestream.h>
+#include <QTcpSocket>
+#include <kopete_export.h>
 
 /**
  * Low level socket class, using KDE's KNetwork socket classes
@@ -45,7 +44,7 @@ public:
 	virtual bool isOpen () const;
 	virtual void close ();
 
-	KNetwork::KBufferedSocket *socket () const;
+	QTcpSocket *socket () const;
 
 signals:
 	void connected ();
@@ -57,13 +56,13 @@ private slots:
 	void slotConnected ();
 	void slotConnectionClosed ();
 	void slotReadyRead ();
-	void slotBytesWritten ( int );
-	void slotError ( int );
+	void slotBytesWritten ( qint64 );
+	void slotError ( QAbstractSocket::SocketError );
 
 private:
-	KNetwork::KBufferedSocket *mSocket;
+	QTcpSocket *mSocket;
 	bool mClosing;
 
 };
 
-#endif
+#endif // GWBYTESTREAM_H

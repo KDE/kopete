@@ -142,7 +142,7 @@ private slots:
 private:
 	/**
 	 * @internal
-	 * @brief Provide a syncronous method to connect to server.
+	 * @brief Provide a synchronous method to connect to server.
 	 * @param server Server
 	 */
 	void connectToServer(const QString &server);

@@ -22,12 +22,13 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <klocale.h>
+#include <kjob.h>
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
 #include "kopeteglobal.h"
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 #include "kopetemetacontact.h"
 
 namespace Kopete
@@ -42,8 +43,8 @@ public:
 	 * Make sure we always have a lastSeen and a fullname property as long as
 	 * a protocol is loaded
 	 */
-	ContactPropertyTmpl mStickLastSeen;
-	ContactPropertyTmpl mStickFullName;
+	PropertyTmpl mStickLastSeen;
+	PropertyTmpl mStickFullName;
 
 	Kopete::OnlineStatus accountNotConnectedStatus;
 };
@@ -65,7 +66,7 @@ Protocol::~Protocol()
 	{
 		if( a->protocol() == this )
 		{
-			kWarning( 14010 ) << k_funcinfo << "Deleting protocol with existing accounts! Did the account unloading go wrong?  account: " 
+			kWarning( 14010 ) << "Deleting protocol with existing accounts! Did the account unloading go wrong?  account: " 
 					<< a->accountId() << endl;
 		
 			delete a;
@@ -136,7 +137,7 @@ void Protocol::aboutToUnload()
 			
 			if ( a->myself() && a->myself()->isOnline() )
 			{
-				kDebug( 14010 ) << k_funcinfo << a->accountId() <<
+				kDebug( 14010 ) << a->accountId() <<
 						" is still connected, disconnecting..." << endl;
 
 				QObject::connect( a->myself(),
@@ -147,7 +148,7 @@ void Protocol::aboutToUnload()
 			else
 			{
 				// Remove account, it's already disconnected
-				kDebug( 14010 ) << k_funcinfo << a->accountId() <<
+				kDebug( 14010 ) << a->accountId() <<
 						" is already disconnected, deleting..." << endl;
 
 				QObject::connect( a, SIGNAL( destroyed( ) ),
@@ -172,7 +173,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 	QMap<QString, QString> addressBookData, ad;
 	QMap<QString, QString>::Iterator it;
 
-	//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
+	//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName();
 
 	QListIterator<Contact *> cit(metaContact->contacts());
 	while ( cit.hasNext() )
@@ -230,7 +231,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 
 	for( it = addressBookData.begin(); it != addressBookData.end(); ++it )
 	{
-		//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data() << endl;
+		//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data();
 		// FIXME: This is a terrible hack to check the key name for the phrase "messaging/"
 		//        to indicate what app name to use, but for now it's by far the easiest
 		//        way to get this working.
@@ -241,7 +242,7 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 		if( it.key().startsWith( QString::fromLatin1( "messaging/" ) ) )
 		{
 			metaContact->setAddressBookField( this, it.key(), QString::fromLatin1( "All" ), it.value() );
-//			kDebug(14010) << k_funcinfo << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );" << endl;
+//			kDebug(14010) << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );";
 		}
 		else
 			metaContact->setAddressBookField( this, QString::fromLatin1( "kopete" ), it.key(), it.value() );
@@ -293,12 +294,12 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 #endif
 
 		const QString& accountId=sd[ QString::fromLatin1( "accountId" ) ];
-		// myself was allowed in the contactlist in old version of kopete.
-		// But if one keep it on the contactlist now, it may conflict witht he myself metacontact.
+		// myself was allowed in the contact list in old version of kopete.
+		// But if one keep it on the contact list now, it may conflict witht he myself metacontact.
 		// So ignore it
 		if(accountId == sd[ QString::fromLatin1( "contactId" ) ] )
 		{
-			kDebug( 14010 ) << k_funcinfo << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it" << endl;
+			kDebug( 14010 ) << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it";
 			continue;
 		}
 
@@ -340,7 +341,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 			}
 			else
 			{
-				kWarning( 14010 ) << k_funcinfo <<
+				kWarning( 14010 ) <<
 					"No account available and account not set in " \
 					"contactlist.xml either!" << endl
 					<< "Not deserializing this contact." << endl;
@@ -368,6 +369,18 @@ Contact *Protocol::deserializeContact(
 	return 0;
 }
 
+KJob *Protocol::createProtocolTask(const QString &taskType)
+{
+	// Default implementation does nothing
+	Q_UNUSED( taskType )
+	return 0;
+}
+
+bool Protocol::validatePassword( const QString & password ) const
+{
+	Q_UNUSED( password )
+    return true;
+}
 
 } //END namespace Kopete
 

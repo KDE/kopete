@@ -1,7 +1,7 @@
 /*
     latexplugin.h
 
-    Kopete Latex Plugin
+    Kopete LaTeX Plugin
 
     Copyright (c) 2004 by Duncan Mac-Vicar Prett   <duncan@kde.org>
     Copyright (c) 2004-2005 by Olivier Goffart  <ogoffart@kde. org>
@@ -45,23 +45,22 @@ class LatexPlugin : public Kopete::Plugin
 public:
 	static LatexPlugin  *plugin();
 
-	LatexPlugin( QObject *parent, const QStringList &args );
+	LatexPlugin( QObject *parent, const QVariantList &args );
 	~LatexPlugin();
 
 public slots:
-	void slotSettingsChanged();
 	void slotMessageAboutToShow( Kopete::Message& msg );
 	void slotMessageAboutToSend( Kopete::Message& msg );
 	void slotNewChatSession( Kopete::ChatSession *KMM);
 
 public:
 	/**
-	 * gives a latex formula, and return the filename of the file where the latex is stored.
+	 * gives a LaTeX formula, and return the filename of the file where the LaTeX is stored.
      */
 	QString handleLatex(const QString &latex);
 
 	/**
-	 * return false if the latex formula may contains malicious commands
+	 * return false if the LaTeX formula may contains malicious commands
 	 */
 	bool securityCheck(const QString & formula);
 

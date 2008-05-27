@@ -1,3 +1,4 @@
+// vim: set noet ts=4 sts=4 sw=4 :
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003-2004	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
@@ -26,7 +27,6 @@
 #include "kopeteaccount.h"
 
 #include <q3valuelist.h>
-#include <q3ptrlist.h>
 #include <qobject.h>
 #include <qstring.h>
 #include <qstringlist.h>
@@ -47,7 +47,7 @@ struct KGaduMessage {
 
 struct KGaduLoginParams {
 	uin_t uin;
-	QString password;
+	QByteArray password;
 	bool useTls;
 	int status;
 	QString statusDescr;
@@ -85,7 +85,6 @@ struct ResLine{
 typedef Q3ValueList<ResLine> SearchResult;
 
 class QSocketNotifier;
-class QStringList;
 namespace Kopete { class Message; }
 class GaduRichTextFormat;
 

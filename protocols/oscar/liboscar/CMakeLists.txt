@@ -82,11 +82,11 @@ set(liboscar_SRCS
     tasks/chatservicetask.cpp
     tasks/icquserinfoupdatetask.cpp
     tasks/icqchangepasswordtask.cpp
+    tasks/icqtlvinforequesttask.cpp
+    tasks/icqtlvinfoupdatetask.cpp
     utils/rtf.cc
     utils/md5.c
 )
-
-kde4_automoc(${liboscar_SRCS} )
 
 kde4_add_library( oscar SHARED ${liboscar_SRCS} )
 
@@ -94,7 +94,7 @@ target_link_libraries( oscar ${KDE4_KDECORE_LIBS} ${QT_QTNETWORK_LIBRARY} ${QT_Q
 set_target_properties( oscar PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 
 
-install(TARGETS oscar  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS oscar ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 

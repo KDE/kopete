@@ -40,16 +40,22 @@
 #include "ui_icqinterestinfowidget.h"
 #include "ui_icqorgaffinfowidget.h"
 
+#undef timezone
 
-ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
-: KPageDialog( parent ), m_editable( editable )
+ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool ownInfo )
+: KPageDialog( parent ), m_ownInfo( ownInfo )
 {
 	setFaceType( KPageDialog::List );
 	setModal( false );
 	setCaption( i18n( "ICQ User Information" ) );
-	setDefaultButton( KDialog::Ok );
+	setButtons( KDialog::Ok | KDialog::Cancel );
+
+	if ( m_ownInfo )
+		setDefaultButton( KDialog::Ok );
+	else
+		setDefaultButton( KDialog::Cancel );
 	
-	kDebug(14153) << k_funcinfo << "Creating new icq user info widget" << endl;
+	kDebug(14153) << "Creating new icq user info widget";
 	
 	QWidget *genInfo = new QWidget(this);
 	m_genInfoWidget = new Ui::ICQGeneralInfoWidget;
@@ -123,7 +129,7 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 	connect( m_interestInfoWidget->topic3Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic3Changed(int)) );
 	connect( m_interestInfoWidget->topic4Combo, SIGNAL(currentIndexChanged(int)), this, SLOT(slotInterestTopic4Changed(int)) );
 
-	if ( m_editable )
+	if ( m_ownInfo )
 	{
 		connect( m_otherInfoWidget->addEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotAddEmail()) );
 		connect( m_otherInfoWidget->removeEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotRemoveEmail()) );
@@ -133,63 +139,91 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool editable )
 		         this, SLOT(slotEmailSelectionChanged(const QItemSelection&)) );
 	}
 
+	m_genInfoWidget->aliasEdit->setReadOnly( m_ownInfo );
+
 	//ICQGeneralUserInfo
-	m_genInfoWidget->nickNameEdit->setReadOnly( !m_editable );
-	m_genInfoWidget->firstNameEdit->setReadOnly( !m_editable );
-	m_genInfoWidget->lastNameEdit->setReadOnly( !m_editable );
-	m_homeInfoWidget->cityEdit->setReadOnly( !m_editable );
-	m_homeInfoWidget->stateEdit->setReadOnly( !m_editable );
-	m_homeInfoWidget->phoneEdit->setReadOnly( !m_editable );
-	m_homeInfoWidget->faxEdit->setReadOnly( !m_editable );
-	m_homeInfoWidget->addressEdit->setReadOnly( !m_editable );
-	m_homeInfoWidget->cellEdit->setReadOnly( !m_editable );
-	m_homeInfoWidget->zipEdit->setReadOnly( !m_editable );
+	m_genInfoWidget->nickNameEdit->setReadOnly( !m_ownInfo );
+	m_genInfoWidget->firstNameEdit->setReadOnly( !m_ownInfo );
+	m_genInfoWidget->lastNameEdit->setReadOnly( !m_ownInfo );
+	m_homeInfoWidget->cityEdit->setReadOnly( !m_ownInfo );
+	m_homeInfoWidget->stateEdit->setReadOnly( !m_ownInfo );
+	m_homeInfoWidget->phoneEdit->setReadOnly( !m_ownInfo );
+	m_homeInfoWidget->faxEdit->setReadOnly( !m_ownInfo );
+	m_homeInfoWidget->addressEdit->setReadOnly( !m_ownInfo );
+	m_homeInfoWidget->cellEdit->setReadOnly( !m_ownInfo );
+	m_homeInfoWidget->zipEdit->setReadOnly( !m_ownInfo );
 
-	m_genInfoWidget->ageEdit->setReadOnly( !m_editable );
-	m_genInfoWidget->birthdayDaySpin->setReadOnly( !m_editable );
-	m_genInfoWidget->birthdayMonthSpin->setReadOnly( !m_editable );
-	m_genInfoWidget->birthdayYearSpin->setReadOnly( !m_editable );
-	m_homeInfoWidget->homepageEdit->setReadOnly( !m_editable );
-	m_genInfoWidget->oCityEdit->setReadOnly( !m_editable );
-	m_genInfoWidget->oStateEdit->setReadOnly( !m_editable );
+	m_genInfoWidget->ageEdit->setReadOnly( !m_ownInfo );
+	m_genInfoWidget->birthdayDaySpin->setReadOnly( !m_ownInfo );
+	m_genInfoWidget->birthdayMonthSpin->setReadOnly( !m_ownInfo );
+	m_genInfoWidget->birthdayYearSpin->setReadOnly( !m_ownInfo );
+	m_homeInfoWidget->homepageEdit->setReadOnly( !m_ownInfo );
+	m_homeInfoWidget->oCityEdit->setReadOnly( !m_ownInfo );
+	m_homeInfoWidget->oStateEdit->setReadOnly( !m_ownInfo );
 
-	m_workInfoWidget->cityEdit->setReadOnly( !m_editable );
-	m_workInfoWidget->stateEdit->setReadOnly( !m_editable );
-	m_workInfoWidget->phoneEdit->setReadOnly( !m_editable );
-	m_workInfoWidget->faxEdit->setReadOnly( !m_editable );
-	m_workInfoWidget->addressEdit->setReadOnly( !m_editable );
-	m_workInfoWidget->zipEdit->setReadOnly( !m_editable );
-	m_workInfoWidget->companyEdit->setReadOnly( !m_editable );
-	m_workInfoWidget->departmentEdit->setReadOnly( !m_editable );
-	m_workInfoWidget->positionEdit->setReadOnly( !m_editable );
-	m_workInfoWidget->homepageEdit->setReadOnly( !m_editable );
+	m_workInfoWidget->cityEdit->setReadOnly( !m_ownInfo );
+	m_workInfoWidget->stateEdit->setReadOnly( !m_ownInfo );
+	m_workInfoWidget->phoneEdit->setReadOnly( !m_ownInfo );
+	m_workInfoWidget->faxEdit->setReadOnly( !m_ownInfo );
+	m_workInfoWidget->addressEdit->setReadOnly( !m_ownInfo );
+	m_workInfoWidget->zipEdit->setReadOnly( !m_ownInfo );
+	m_workInfoWidget->companyEdit->setReadOnly( !m_ownInfo );
+	m_workInfoWidget->departmentEdit->setReadOnly( !m_ownInfo );
+	m_workInfoWidget->positionEdit->setReadOnly( !m_ownInfo );
+	m_workInfoWidget->homepageEdit->setReadOnly( !m_ownInfo );
 
-	m_orgAffInfoWidget->org1KeywordEdit->setReadOnly( !m_editable );
-	m_orgAffInfoWidget->org2KeywordEdit->setReadOnly( !m_editable );
-	m_orgAffInfoWidget->org3KeywordEdit->setReadOnly( !m_editable );
-	m_orgAffInfoWidget->aff1KeywordEdit->setReadOnly( !m_editable );
-	m_orgAffInfoWidget->aff2KeywordEdit->setReadOnly( !m_editable );
-	m_orgAffInfoWidget->aff3KeywordEdit->setReadOnly( !m_editable );
+	m_orgAffInfoWidget->org1KeywordEdit->setReadOnly( !m_ownInfo );
+	m_orgAffInfoWidget->org2KeywordEdit->setReadOnly( !m_ownInfo );
+	m_orgAffInfoWidget->org3KeywordEdit->setReadOnly( !m_ownInfo );
+	m_orgAffInfoWidget->aff1KeywordEdit->setReadOnly( !m_ownInfo );
+	m_orgAffInfoWidget->aff2KeywordEdit->setReadOnly( !m_ownInfo );
+	m_orgAffInfoWidget->aff3KeywordEdit->setReadOnly( !m_ownInfo );
 
-	m_interestInfoWidget->desc1->setReadOnly( !m_editable );
-	m_interestInfoWidget->desc2->setReadOnly( !m_editable );
-	m_interestInfoWidget->desc3->setReadOnly( !m_editable );
-	m_interestInfoWidget->desc4->setReadOnly( !m_editable );
+	m_interestInfoWidget->desc1->setReadOnly( !m_ownInfo );
+	m_interestInfoWidget->desc2->setReadOnly( !m_ownInfo );
+	m_interestInfoWidget->desc3->setReadOnly( !m_ownInfo );
+	m_interestInfoWidget->desc4->setReadOnly( !m_ownInfo );
 
-	m_otherInfoWidget->notesEdit->setReadOnly( !m_editable );
+	m_otherInfoWidget->notesEdit->setReadOnly( !m_ownInfo );
 
-	m_otherInfoWidget->addEmailButton->setEnabled( m_editable );
+	m_otherInfoWidget->addEmailButton->setEnabled( m_ownInfo );
 	m_otherInfoWidget->removeEmailButton->setEnabled( false );
 	m_otherInfoWidget->upEmailButton->setEnabled( false );
 	m_otherInfoWidget->downEmailButton->setEnabled( false );
+
+	if ( !m_ownInfo )
+	{
+		m_homeInfoWidget->countryCombo->setReadOnly( true );
+		m_homeInfoWidget->oCountryCombo->setReadOnly( true );
+		m_workInfoWidget->countryCombo->setReadOnly( true );
+		m_genInfoWidget->language1Combo->setReadOnly( true );
+		m_genInfoWidget->language2Combo->setReadOnly( true );
+		m_genInfoWidget->language3Combo->setReadOnly( true );
+		m_genInfoWidget->genderCombo->setReadOnly( true );
+		m_genInfoWidget->maritalCombo->setReadOnly( true );
+		m_workInfoWidget->occupationCombo->setReadOnly( true );
+		m_orgAffInfoWidget->org1CategoryCombo->setReadOnly( true );
+		m_orgAffInfoWidget->org2CategoryCombo->setReadOnly( true );
+		m_orgAffInfoWidget->org3CategoryCombo->setReadOnly( true );
+		m_orgAffInfoWidget->aff1CategoryCombo->setReadOnly( true );
+		m_orgAffInfoWidget->aff2CategoryCombo->setReadOnly( true );
+		m_orgAffInfoWidget->aff3CategoryCombo->setReadOnly( true );
+		m_interestInfoWidget->topic1Combo->setReadOnly( true );
+		m_interestInfoWidget->topic2Combo->setReadOnly( true );
+		m_interestInfoWidget->topic3Combo->setReadOnly( true );
+		m_interestInfoWidget->topic4Combo->setReadOnly( true );
+		m_genInfoWidget->timezoneCombo->setReadOnly( true );
+	}
 }
 
 ICQUserInfoWidget::~ ICQUserInfoWidget()
 {
 	delete m_genInfoWidget;
+	delete m_homeInfoWidget;
 	delete m_workInfoWidget;
 	delete m_otherInfoWidget;
 	delete m_interestInfoWidget;
+	delete m_orgAffInfoWidget;
 	delete m_emailModel;
 }
 
@@ -221,7 +255,7 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	{
 		it.next();
 		m_homeInfoWidget->countryCombo->addItem( it.key(), it.value() );
-		m_genInfoWidget->oCountryCombo->addItem( it.key(), it.value() );
+		m_homeInfoWidget->oCountryCombo->addItem( it.key(), it.value() );
 		m_workInfoWidget->countryCombo->addItem( it.key(), it.value() );
 	}
 
@@ -301,7 +335,7 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	QString timezone;
 	for ( int zone = 24; zone >= -24; zone-- )
 	{
-		timezone = QString( "GTM %1%2:%3" )
+		timezone = QString( "GMT %1%2:%3" )
 			.arg( ( zone > 0 ) ? "-" : "" )
 			.arg( qAbs( zone ) / 2, 2, 10, QLatin1Char('0') )
 			.arg( ( qAbs( zone ) % 2 ) * 30, 2, 10, QLatin1Char('0')  );
@@ -310,14 +344,15 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 	}
 
 	m_genInfoWidget->uinEdit->setText( m_contact->contactId() );
-	m_genInfoWidget->ipEdit->setText( m_contact->property( "ipAddress" ).value().toString() );
+	m_genInfoWidget->aliasEdit->setText( m_contact->ssiItem().alias() );
+	m_genInfoWidget->ipEdit->setText( m_contact->property( icqProtocol->ipAddress ).value().toString() );
 }
 
 QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
 {
 	QList<ICQInfoBase*> infoList;
 	
-	if ( !m_editable )
+	if ( !m_ownInfo )
 		return infoList;
 	
 	infoList.append( storeBasicInfo() );
@@ -331,11 +366,16 @@ QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
 	return infoList;
 }
 
+QString ICQUserInfoWidget::getAlias() const
+{
+	return m_genInfoWidget->aliasEdit->text();
+}
+
 void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 {
 	QTextCodec* codec = m_contact->contactCodec();
 	
-	if ( m_editable )
+	if ( m_ownInfo )
 		m_generalUserInfo = ui;
 	
 	m_genInfoWidget->nickNameEdit->setText( codec->toUnicode( ui.nickName.get() ) );
@@ -363,7 +403,7 @@ void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 		items.append( modelItem );
 
 		modelItem = new QStandardItem( codec->toUnicode( ui.email.get() ) );
-		modelItem->setEditable( m_editable );
+		modelItem->setEditable( m_ownInfo );
 		modelItem->setCheckable( true );
 		modelItem->setCheckState( ( ui.publishEmail.get() ) ? Qt::Checked : Qt::Unchecked );
 		items.append( modelItem );
@@ -376,7 +416,7 @@ void ICQUserInfoWidget::fillWorkInfo( const ICQWorkUserInfo& ui )
 {
 	QTextCodec* codec = m_contact->contactCodec();
 
-	if ( m_editable )
+	if ( m_ownInfo )
 		m_workUserInfo = ui;
 
 	m_workInfoWidget->cityEdit->setText( codec->toUnicode( ui.city.get() ) );
@@ -398,7 +438,7 @@ void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& info )
 {
 	QTextCodec* codec = m_contact->contactCodec();
 
-	if ( m_editable )
+	if ( m_ownInfo )
 		m_emailInfo = info;
 
 	int size = info.emailList.get().size();
@@ -412,7 +452,7 @@ void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& info )
 		modelItem->setSelectable( false );
 		m_emailModel->setItem( row, 0, modelItem );
 		modelItem = new QStandardItem( codec->toUnicode( item.email ) );
-		modelItem->setEditable( m_editable );
+		modelItem->setEditable( m_ownInfo );
 		modelItem->setCheckable( true );
 		modelItem->setCheckState( ( item.publish ) ? Qt::Checked : Qt::Unchecked );
 		m_emailModel->setItem( row, 1, modelItem );
@@ -423,7 +463,7 @@ void ICQUserInfoWidget::fillNotesInfo( const ICQNotesInfo& info )
 {
 	QTextCodec* codec = m_contact->contactCodec();
 
-	if ( m_editable )
+	if ( m_ownInfo )
 		m_notesInfo = info;
 
 	m_otherInfoWidget->notesEdit->setPlainText( codec->toUnicode( info.notes.get() ) );
@@ -433,7 +473,7 @@ void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info )
 {
 	QTextCodec* codec = m_contact->contactCodec();
 
-	if ( m_editable )
+	if ( m_ownInfo )
 		m_interestInfo = info;
 
 	int index = m_interestInfoWidget->topic1Combo->findData( info.topics[0].get() );
@@ -457,7 +497,7 @@ void ICQUserInfoWidget::fillOrgAffInfo( const ICQOrgAffInfo& info )
 {
 	QTextCodec* codec = m_contact->contactCodec();
 
-	if ( m_editable )
+	if ( m_ownInfo )
 		m_orgAffUserInfo = info;
 
 	m_orgAffInfoWidget->org1KeywordEdit->setText( codec->toUnicode( info.org1Keyword.get() ) );
@@ -491,7 +531,7 @@ void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 {
 	QTextCodec* codec = m_contact->contactCodec();
 
-	if ( m_editable )
+	if ( m_ownInfo )
 		m_moreUserInfo = ui;
 
 	m_genInfoWidget->ageEdit->setText( QString::number( ui.age.get() ) );
@@ -501,9 +541,9 @@ void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 	m_genInfoWidget->genderCombo->setCurrentIndex( m_genInfoWidget->genderCombo->findData( ui.gender.get() ) );
 	m_homeInfoWidget->homepageEdit->setText( codec->toUnicode( ui.homepage.get() ) );
 	m_genInfoWidget->maritalCombo->setCurrentIndex( m_genInfoWidget->maritalCombo->findData( ui.marital.get() ) );
-	m_genInfoWidget->oCityEdit->setText( codec->toUnicode( ui.ocity.get() ) );
-	m_genInfoWidget->oStateEdit->setText( codec->toUnicode( ui.ostate.get() ) );
-	m_genInfoWidget->oCountryCombo->setCurrentIndex( m_genInfoWidget->oCountryCombo->findData( ui.ocountry.get() ) );
+	m_homeInfoWidget->oCityEdit->setText( codec->toUnicode( ui.ocity.get() ) );
+	m_homeInfoWidget->oStateEdit->setText( codec->toUnicode( ui.ostate.get() ) );
+	m_homeInfoWidget->oCountryCombo->setCurrentIndex( m_homeInfoWidget->oCountryCombo->findData( ui.ocountry.get() ) );
 	m_genInfoWidget->language1Combo->setCurrentIndex( m_genInfoWidget->language1Combo->findData( ui.lang1.get() ) );
 	m_genInfoWidget->language2Combo->setCurrentIndex( m_genInfoWidget->language2Combo->findData( ui.lang2.get() ) );
 	m_genInfoWidget->language3Combo->setCurrentIndex( m_genInfoWidget->language3Combo->findData( ui.lang3.get() ) );
@@ -626,7 +666,7 @@ void ICQUserInfoWidget::slotAddEmail()
 	items.append( modelItem );
 
 	modelItem = new QStandardItem();
-	modelItem->setEditable( m_editable );
+	modelItem->setEditable( m_ownInfo );
 	modelItem->setCheckable( true );
 	modelItem->setCheckState( Qt::Unchecked );
 	items.append( modelItem );
@@ -769,11 +809,11 @@ ICQMoreUserInfo* ICQUserInfoWidget::storeMoreInfo() const
 	index = m_genInfoWidget->maritalCombo->currentIndex();
 	info->marital.set( m_genInfoWidget->maritalCombo->itemData( index ).toInt() );
 	
-	info->ocity.set( codec->fromUnicode( m_genInfoWidget->oCityEdit->text() ) );
-	info->ostate.set( codec->fromUnicode( m_genInfoWidget->oStateEdit->text() ) );
+	info->ocity.set( codec->fromUnicode( m_homeInfoWidget->oCityEdit->text() ) );
+	info->ostate.set( codec->fromUnicode( m_homeInfoWidget->oStateEdit->text() ) );
 
-	index = m_genInfoWidget->oCountryCombo->currentIndex();
-	info->ocountry.set( m_genInfoWidget->oCountryCombo->itemData( index ).toInt() );
+	index = m_homeInfoWidget->oCountryCombo->currentIndex();
+	info->ocountry.set( m_homeInfoWidget->oCountryCombo->itemData( index ).toInt() );
 
 	index = m_genInfoWidget->language1Combo->currentIndex();
 	info->lang1.set( m_genInfoWidget->language1Combo->itemData( index ).toInt() );

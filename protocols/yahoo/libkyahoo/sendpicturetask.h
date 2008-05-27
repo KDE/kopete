@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     sendpicturetask.h - Send our picture or information about it
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *

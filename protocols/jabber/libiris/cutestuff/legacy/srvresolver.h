@@ -24,9 +24,10 @@
 #include <QList>
 #include <q3dns.h>
 
+#include "cutestuff_export.h"
 // CS_NAMESPACE_BEGIN
 
-class SrvResolver : public QObject
+class CUTESTUFF_EXPORT SrvResolver : public QObject
 {
 	Q_OBJECT
 public:
@@ -43,7 +44,7 @@ public:
 
 	bool failed() const;
 	QHostAddress resultAddress() const;
-	quint16 resultPort() const;
+	Q_UINT16 resultPort() const;
 
 signals:
 	void resultsReady();
@@ -58,6 +59,7 @@ private:
 	Private *d;
 
 	void tryNext();
+	void resolve(const QString &server, const QString &type, const QString &proto, bool srvOnly);
 };
 
 // CS_NAMESPACE_END

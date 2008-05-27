@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Notifies about new mails
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,12 +21,11 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <qstring.h>
 #include <kdebug.h>
 
 MailNotifierTask::MailNotifierTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 MailNotifierTask::~MailNotifierTask()
@@ -61,7 +60,7 @@ bool MailNotifierTask::forMe( const Transfer* transfer ) const
 
 void MailNotifierTask::parseMail( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString count = t->firstParam( 9 );
 	QString mail = t->firstParam( 42 );

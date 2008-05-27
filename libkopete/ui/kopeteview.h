@@ -21,8 +21,8 @@
 
 #include <QtGui/QWidget>
 
-#include "kopetemessage.h"
-#include "kopete_export.h"
+#include "../kopetemessage.h"
+#include "../kopete_export.h"
 
 namespace Kopete
 {
@@ -139,7 +139,7 @@ class KOPETE_EXPORT KopeteView
 		 * @param target A target QObject for the contextMenuEvent signal of the view
 		 * @param slot A slot that matches the signature ( QString&, KMenu *)
 		 */
-		virtual void registerContextMenuHandler( QObject *target, const char*slot ){ Q_UNUSED(target); Q_UNUSED(slot); };
+		virtual void registerContextMenuHandler( QObject *target, const char*slot ){ Q_UNUSED(target); Q_UNUSED(slot); }
 
 		/**
 		* @brief Register a handler for the tooltip
@@ -155,7 +155,7 @@ class KOPETE_EXPORT KopeteView
 		* @param target A target QObject for the contextMenuEvent signal of the view
 		* @param slot A slot that matches the signature ( QString&, KMenu *)
 		*/
-		virtual void registerTooltipHandler( QObject *target, const char*slot ){ Q_UNUSED(target); Q_UNUSED(slot); };
+		virtual void registerTooltipHandler( QObject *target, const char*slot ){ Q_UNUSED(target); Q_UNUSED(slot); }
 
 		/**
 		 * @brief Returns the Kopete::ViewPlugin responsible for this view

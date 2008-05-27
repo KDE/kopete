@@ -47,10 +47,10 @@ public:
 
 	/**
 	 * @brief Build a single chat window style.
-	 * 
+	 *
 	 */
-	explicit ChatWindowStyle(const QString &stylePath, StyleBuildMode styleBuildMode = StyleBuildNormal);
-	ChatWindowStyle(const QString &stylePath, const QString &variantPath, StyleBuildMode styleBuildMode = StyleBuildFast);
+	explicit ChatWindowStyle(const QString &styleName, StyleBuildMode styleBuildMode = StyleBuildNormal);
+	ChatWindowStyle(const QString &styleName, const QString &variantPath, StyleBuildMode styleBuildMode = StyleBuildFast);
 	~ChatWindowStyle();
 
 	/**
@@ -70,7 +70,7 @@ public:
 	 *
 	 * @return the style path based.
 	 */
-	QString getStylePath() const;
+	QString getStyleName() const;
 
 	/**
 	 * Get the style ressource directory.
@@ -103,6 +103,17 @@ public:
 	bool hasActionTemplate() const;
 
 	/**
+	 * Check if the supplied variant has a compact form
+	 */
+	bool hasCompact( const QString & variant ) const;
+
+	/**
+	 * Return the compact version of the given style variant.
+	 * For the unmodified style, this returns "Variants/_compact_.css"
+	 */
+	QString compact( const QString & variant ) const;
+
+	/**
 	 * Reload style from disk.
 	 */
 	void reload();
@@ -115,7 +126,7 @@ private:
 	/**
 	 * Init this class
 	 */
-	void init(const QString &stylePath, StyleBuildMode styleBuildMode);
+	void init(const QString &styleName, StyleBuildMode styleBuildMode);
 
 	/**
 	 * List available variants for the current style.

@@ -17,8 +17,6 @@
 #include "kopetesimplemessagehandler.h"
 #include "kopetemessageevent.h"
 
-#include <kstaticdeleter.h>
-
 #include <qpointer.h>
 
 namespace Kopete

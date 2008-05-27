@@ -26,11 +26,11 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QFrame>
-#include <Q3PtrList>
 #include <QCloseEvent>
 #include <QList>
 #include "kopetecontact.h"
 #include "kdeversion.h"
+#include <kopetechatsession.h>
 
 #include <kopete_export.h>
 
@@ -40,28 +40,25 @@ class KActionMenu;
 class KTemporaryFile;
 class QPixmap;
 class QTabWidget;
-class QDockWidget;
 class KSqueezedTextLabel;
 class KPushButton;
-class KVBox;
 class QVBoxLayout;
 class QFrame;
 class KTabWidget;
 class QLabel;
 class KopeteEmoticonAction;
-class KopeteView;
-class KSelectAction;
 class ChatView;
 class SidebarWidget;
+class QDockWidget;
 
 namespace Kopete
 {
 class Message;
-class ChatSession;
 class Contact;
-class Protocol;
 typedef QList<Contact*>  ContactPtrList;
 }
+
+typedef QList<ChatView*> ChatViewList;
 
 class KopeteChatWindow : public KXmlGuiWindow
 {
@@ -113,11 +110,11 @@ public:
 	virtual bool queryExit();
 
 	KTemporaryFile *backgroundFile;
-	Q3PtrList<ChatView> chatViewList;
+	ChatViewList chatViewList;
 
 private:
 	// All KopeteChatWindows are created by the window function
-	KopeteChatWindow( QWidget *parent = 0 );
+	KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *parent = 0 );
 
 	/**
 	 * The window list has changed:
@@ -133,14 +130,14 @@ private:
 	void deleteTabBar();
 	void addTab( ChatView* );
 	void setPrimaryChatView( ChatView* );
-	const QString fileContents( const QString &file ) const;
 
-	// Sidebar
-	SidebarWidget *m_sideBar;
-	QTabWidget *m_sideBarTabWidget;
+	//why did we ever need this method??
+	//const QString fileContents( const QString &file ) const;
+
+	QDockWidget *m_participantsWidget;
 
 	//
-	ChatView *m_activeView;
+	QPointer<ChatView> m_activeView;
 	ChatView *m_popupView;
 	bool m_alwaysShowTabs;
 	bool updateBg;
@@ -165,9 +162,6 @@ private:
 	KAction *tabDetach;
 	KAction* tabClose;
 
-	KToggleAction* membersLeft;
-	KToggleAction* membersRight;
-	KToggleAction* toggleMembers;
 	KToggleAction* toggleAutoSpellCheck;
 
 	KopeteEmoticonAction *actionSmileyMenu;
@@ -176,6 +170,7 @@ private:
 	KActionMenu *actionDetachMenu;
 	KActionMenu *actionTabPlacementMenu;
 	QString statusMsg;
+	Kopete::ChatSession::Form initialForm;
 
 signals:
 	void closing( KopeteChatWindow* );
@@ -212,11 +207,8 @@ private slots:
 
 	void slotPreviousTab();
 	void slotNextTab();
-	void slotDetachChat( int newWindowIndex = -1 );
-	void slotPlaceTabs( int tabPlacement );
-
-	void slotViewMenuBar();
-	void slotToggleStatusBar();
+	void slotDetachChat(QAction* = 0);
+	void slotPlaceTabs( QAction* );
 
 	void slotEnableUpdateBg() { updateBg = true; }
 
@@ -242,7 +234,8 @@ private:
 
 protected:
 	virtual void closeEvent( QCloseEvent *e );
-	virtual void windowActivationChange( bool );
+	virtual void changeEvent( QEvent *e );
+	virtual void resizeEvent( QResizeEvent *e);
 };
 
 #endif

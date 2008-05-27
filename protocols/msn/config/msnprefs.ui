@@ -73,7 +73,7 @@
                 <cstring>useCustomEmoticons</cstring>
             </property>
             <property name="text">
-                <string>Download and show custom emoticons (experimental)</string>
+                <string>Download and display custom emoticons (experimental)</string>
             </property>
         </widget>
         <widget class="QLabel">
@@ -148,7 +148,7 @@
                         <cstring>textLabel3</cstring>
                     </property>
                     <property name="text">
-                        <string>Do not send more than one away message every</string>
+                        <string>Send no more than one away message every</string>
                     </property>
                 </widget>
                 <widget class="KIntNumInput">

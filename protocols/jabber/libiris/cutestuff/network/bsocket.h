@@ -23,13 +23,13 @@
 
 #include <QAbstractSocket>
 
+#include "cutestuff_export.h"
 #include "bytestream.h"
 
 class QString;
 class QObject;
 class QByteArray;
 
-#include <cutestuff_export.h>
 // CS_NAMESPACE_BEGIN
 
 class CUTESTUFF_EXPORT BSocket : public ByteStream

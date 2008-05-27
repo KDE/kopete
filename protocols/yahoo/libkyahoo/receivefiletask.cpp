@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Receive a file
 
-    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -30,7 +30,7 @@
 
 ReceiveFileTask::ReceiveFileTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	m_transmitted = 0;
 	m_file = 0;
 	m_transferJob = 0;
@@ -44,7 +44,7 @@ ReceiveFileTask::~ReceiveFileTask()
 
 void ReceiveFileTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceFileTransfer7);
 	switch( m_type )
 	{
@@ -56,7 +56,7 @@ void ReceiveFileTask::onGo()
 			setError();
 			return;
 		}
-		m_transferJob = KIO::get( m_remoteUrl, false, false );
+		m_transferJob = KIO::get( m_remoteUrl, KIO::NoReload, KIO::HideProgressInfo );
 		QObject::connect( m_transferJob, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
 		QObject::connect( m_transferJob, SIGNAL( data( KIO::Job*, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
 		delete t;
@@ -86,7 +86,7 @@ void ReceiveFileTask::onGo()
 
 bool ReceiveFileTask::take( Transfer* transfer )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	
 	if ( !forMe( transfer ) )
 		return false;
@@ -100,7 +100,7 @@ bool ReceiveFileTask::take( Transfer* transfer )
 
 bool ReceiveFileTask::forMe( const Transfer *transfer ) const
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	const YMSGTransfer *t = 0L;
 	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
@@ -122,7 +122,7 @@ bool ReceiveFileTask::forMe( const Transfer *transfer ) const
 void ReceiveFileTask::slotData( KIO::Job *job, const QByteArray& data )
 {
 	Q_UNUSED( job );
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	m_transmitted += data.size();
 	emit bytesProcessed( m_transferId, m_transmitted );
@@ -132,7 +132,7 @@ void ReceiveFileTask::slotData( KIO::Job *job, const QByteArray& data )
 
 void ReceiveFileTask::slotComplete( KJob *job )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
@@ -152,7 +152,7 @@ void ReceiveFileTask::slotComplete( KJob *job )
 
 void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 {	
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	if( transfer->firstParam( 249 ).toInt() == 1 )
 	{
@@ -195,7 +195,7 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 
 
 		m_transferJob = KIO::get( QString::fromLatin1("http://%1/relay?token=%2&sender=%3&recver=%4")
-				.arg( QString(transfer->firstParam( 250 )) ).arg( QString(transfer->firstParam( 251 )) ).arg(m_userId).arg(client()->userId()), false, false );
+				.arg( QString(transfer->firstParam( 250 )) ).arg( QString(transfer->firstParam( 251 )) ).arg(m_userId).arg(client()->userId()), KIO::NoReload, KIO::HideProgressInfo );
 		QObject::connect( m_transferJob, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
 		QObject::connect( m_transferJob, SIGNAL( data( KIO::Job*, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
 		m_transferJob->addMetaData("cookies", "manual");

@@ -37,7 +37,7 @@
 SMSSend::SMSSend(Kopete::Account* account)
 	: SMSService(account)
 {
-	kWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
+	kWarning( 14160 ) << " this = " << this;
 	prefWidget = 0L;
 	m_provider = 0L;
 }
@@ -50,7 +50,7 @@ SMSSend::~SMSSend()
 
 void SMSSend::send(const Kopete::Message& msg)
 {
-	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
+	kWarning( 14160 ) << "m_account = " << m_account << " (should be non-zero!!)";
 	QString provider = m_account->configGroup()->readEntry("SMSSend:ProviderName", QString());
 
 	if (provider.length() < 1)
@@ -76,7 +76,7 @@ void SMSSend::send(const Kopete::Message& msg)
 
 void SMSSend::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 {
-	kWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
+	kWarning( 14160 ) << "ml: " << layout << ", " << "mp: " << parent;
 	m_parent = parent;
 	m_layout = layout;
 
@@ -132,7 +132,7 @@ void SMSSend::savePreferences()
 
 void SMSSend::loadProviders(const QString &prefix)
 {
-	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero)" << endl;
+	kWarning( 14160 ) << "m_account = " << m_account << " (should be ok if zero)";
 
 	QStringList p;
 
@@ -179,7 +179,7 @@ void SMSSend::loadProviders(const QString &prefix)
 
 void SMSSend::setOptions(const QString& name)
 {
-	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero!!)" << endl;
+	kWarning( 14160 ) << "m_account = " << m_account << " (should be ok if zero!!)";
 	if(!prefWidget) return;			// sanity check
 
 	prefWidget->providerLabel->setText(i18n("%1 Settings", name));
@@ -222,7 +222,7 @@ void SMSSend::setAccount(Kopete::Account* account)
 
 int SMSSend::maxSize()
 {
-	kWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
+	kWarning( 14160 ) << "m_account = " << m_account << " (should be non-zero!!)";
 
 	QString pName = m_account->configGroup()->readEntry("SMSSend:ProviderName", QString());
 	if (pName.length() < 1)

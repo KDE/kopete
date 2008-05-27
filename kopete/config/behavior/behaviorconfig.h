@@ -16,12 +16,9 @@
 #ifndef __BEHAVIOR_H
 #define __BEHAVIOR_H
 
-#include "kcmodule.h"
-
-namespace Kopete
-{
-class Away;
-}
+#define KDE3_SUPPORT
+#include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 class QTabWidget;
 
@@ -36,7 +33,7 @@ class BehaviorConfig : public KCModule
 	Q_OBJECT
 
 	public:
-		BehaviorConfig(QWidget *parent, const QStringList &args) ;
+		BehaviorConfig(QWidget *parent, const QVariantList &args) ;
 
 		virtual void save();
 		virtual void load();
@@ -54,8 +51,7 @@ class BehaviorConfig : public KCModule
 		BehaviorConfig_Chat *mPrfsChat;
 		BehaviorConfig_Away *mPrfsAway;
 
-		QList<KPluginInfo*> viewPlugins;
-		Kopete::Away* awayInstance;
+		QList<KPluginInfo> viewPlugins;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

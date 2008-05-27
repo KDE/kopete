@@ -43,13 +43,13 @@
 #include <kactioncollection.h>
 
 typedef KGenericFactory<HistoryPlugin> HistoryPluginFactory;
-static const KAboutData aboutdata("kopete_history", I18N_NOOP("History") , "1.0" );
+static const KAboutData aboutdata("kopete_history", 0, ki18n("History") , "1.0" );
 K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  )
 
 HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
 : Kopete::Plugin( HistoryPluginFactory::componentData(), parent ), m_loggerFactory( this )
 {
-	KAction *viewMetaContactHistory = new KAction( KIcon("history"), i18n("View &History" ), this );
+	KAction *viewMetaContactHistory = new KAction( KIcon("view-history"), i18n("View &History" ), this );
 	actionCollection()->addAction( "viewMetaContactHistory", viewMetaContactHistory );
 	connect(viewMetaContactHistory, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory()));
 	viewMetaContactHistory->setEnabled(
@@ -69,7 +69,7 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
 		if(
 			KMessageBox::questionYesNo(Kopete::UI::Global::mainWidget(),
 				i18n( "Old history files from Kopete 0.6.x or older has been detected.\n"
-				"Do you want to import and convert it to the new history format?" ),
+				"Do you want to import and convert them to the new history format?" ),
 				i18n( "History Plugin" ), KGuiItem( i18n("Import && Convert") ), KGuiItem( i18n("Do Not Import") ) ) == KMessageBox::Yes )
 		{
 			convertOldHistory();
@@ -143,7 +143,7 @@ void HistoryPlugin::slotViewHistory()
 
 void HistoryPlugin::slotViewCreated( KopeteView* v )
 {
-	if(v->plugin()->pluginInfo()->pluginName() != QString::fromLatin1("kopete_chatwindow") )
+	if(v->plugin()->pluginInfo().pluginName() != QString::fromLatin1("kopete_chatwindow") )
 		return;  //Email chat windows are not supported.
 
 	bool autoChatWindow = HistoryConfig::auto_chatwindow();
@@ -194,7 +194,7 @@ void HistoryPlugin::slotKMMClosed( Kopete::ChatSession* kmm)
 
 void HistoryPlugin::slotSettingsChanged()
 {
-	kDebug(14310) << k_funcinfo << "RELOADING CONFIG" << endl;
+	kDebug(14310) << "RELOADING CONFIG";
 	HistoryConfig::self()->readConfig();
 }
 

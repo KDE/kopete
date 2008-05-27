@@ -35,7 +35,7 @@ KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString
 {
 	setShortcut(cut);
 	if( receiver && slot )
-		connect( this, SIGNAL( activated() ), receiver, slot );
+		connect( this, SIGNAL(triggered(int)), receiver, slot );
 
 	connect( Kopete::ContactList::self(), SIGNAL( groupAdded( Kopete::Group * ) ), this, SLOT( slotUpdateList() ) );
 	connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ), this, SLOT( slotUpdateList() ) );
@@ -61,7 +61,7 @@ void KopeteGroupListAction::slotUpdateList()
 	}
 
 	groupList.sort();
-	groupList.prepend(QString::null); //add a separator;
+	groupList.prepend(QString::null); //add a separator;	//krazy:exclude=nullstrassign for old broken gcc
 	groupList.prepend( i18n("Top Level") ); //the top-level group, with the id 0
 	setItems( groupList );
 }

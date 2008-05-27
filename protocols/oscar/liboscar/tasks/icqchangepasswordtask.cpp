@@ -59,19 +59,19 @@ bool ICQChangePasswordTask::take( Transfer* transfer )
 	{
 		setTransfer( transfer );
 		TLV tlv1 = transfer->buffer()->getTLV();
-		Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
+		Buffer buffer( tlv1.data, tlv1.length );
 		
 		//FIXME this is silly. parseInitialData should take care of this for me.
-		buffer->skipBytes( 12 );
+		buffer.skipBytes( 12 );
 		
-		if ( buffer->getByte() == 0x0A )
+		if ( buffer.getByte() == 0x0A )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Password changed successfully." << endl;
+			kDebug(OSCAR_RAW_DEBUG) << "Password changed successfully.";
 			setSuccess( 0, QString() );
 		}
 		else
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Error changing password!!!" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << "Error changing password!!!";
 			setError( 0, QString() );
 		}
 
@@ -83,11 +83,11 @@ bool ICQChangePasswordTask::take( Transfer* transfer )
 
 void ICQChangePasswordTask::onGo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Changing password." << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "Changing password.";
 
 	if ( m_password.length() < 6 || m_password.length() > 8 )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Wrong password length." << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "Wrong password length.";
 		setError( 0, QString() );
 		return;
 	}

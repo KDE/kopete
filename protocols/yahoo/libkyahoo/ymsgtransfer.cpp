@@ -4,7 +4,7 @@
 
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <duffeck@kde.org>
 
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
@@ -238,13 +238,13 @@ QByteArray YMSGTransfer::serialize() const
 	stream << (qint32)d->id;
  	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
 	{
- 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " Serializing key " << (*it).first << " value " << (*it).second << endl;
+ 		kDebug(YAHOO_RAW_DEBUG) << " Serializing key " << (*it).first << " value " << (*it).second;
 		stream.writeRawData ( QString::number( (*it).first ).toLocal8Bit(), QString::number( (*it).first ).length() );
 		stream << (qint8)0xc0 << (qint8)0x80;
 		stream.writeRawData( (*it).second, (*it).second.length() );
 		stream << (qint8)0xc0 << (qint8)0x80;
 	}
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " pos=" << pos << " (packet size)" << buffer << endl;
+	kDebug(YAHOO_RAW_DEBUG) << " pos=" << pos << " (packet size)" << buffer;
 	return buffer;
 }
 

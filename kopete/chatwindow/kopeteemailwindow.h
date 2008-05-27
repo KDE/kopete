@@ -27,7 +27,6 @@
 //Added by qt3to4:
 #include <QCloseEvent>
 
-namespace KParts { struct URLArgs; }
 class EmailWindowPlugin;
 
 class KopeteEmailWindow : KParts::MainWindow, public KopeteView
@@ -61,7 +60,7 @@ signals:
 
 protected:
 	virtual void closeEvent( QCloseEvent *e );
-	virtual void windowActivationChange( bool activated );
+	virtual void changeEvent( QEvent *e );
 
 private slots:
 	void slotReplySend();
@@ -96,7 +95,7 @@ private:
 class EmailWindowPlugin : public Kopete::ViewPlugin
 {
     public:
-	EmailWindowPlugin(QObject *parent, const QStringList &args);
+	EmailWindowPlugin(QObject *parent, const QVariantList &args);
 	KopeteView* createView( Kopete::ChatSession *manager );
 };
 

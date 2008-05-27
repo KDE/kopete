@@ -21,6 +21,7 @@
 
 #include "xmpp_tasks.h"
 #include "im.h"
+#include "tasks/jt_getlastactivity.h"
 
 #include <qtimer.h>
 #include <qdatetime.h>
@@ -35,12 +36,12 @@
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kicon.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include <kinputdialog.h>
 #include <kopeteview.h>
-#include <kicon.h>
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
@@ -70,7 +71,7 @@
 JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc, const QString &legacyId)
 	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , mDiscoDone(false), m_syncTimer(0L)
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << contactId() << "  is created  - " << this << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << contactId() << "  is created  - " << this;
 	// this contact is able to transfer files
 	setFileCapable ( true );
 
@@ -121,12 +122,11 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	mRequestDisplayedEvent = false;
 	mRequestDeliveredEvent = false;
 	mRequestComposingEvent = false;
-	mRequestGoneEvent = false;
 }
 
 JabberContact::~JabberContact()
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << contactId() << "  is destroyed  - " << this << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << contactId() << "  is destroyed  - " << this;
 }
 
 QList<KAction*> *JabberContact::customContextMenuActions ()
@@ -134,7 +134,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 
-	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("connection-established"), i18n ("Authorization"), this);
+	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("network-connect"), i18n ("Authorization"), this);
 
 	KAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
 	
@@ -153,13 +153,13 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	actionAuthorization->addAction(requestAuthAction);
 	
 	removeAuthAction = new KAction( this );
-	removeAuthAction->setIcon( (KIcon("mail_delete") ) );
+	removeAuthAction->setIcon( (KIcon("edit-delete") ) );
 	removeAuthAction->setText( i18n ("Remove Authorization From") );
 	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
 	connect(removeAuthAction, SIGNAL(triggered(bool)), SLOT(slotRemoveAuth()));
 	actionAuthorization->addAction(removeAuthAction);
 
-	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("kopeteavailable"), i18n ("Set Availability"), this );
+	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n ("Set Availability"), this );
 
 #define KACTION(status, text, name, slot) \
 	{ KAction *tmp = new KAction(this); \
@@ -177,7 +177,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 #undef KACTION
 
-	KActionMenu *actionSelectResource = new KActionMenu ( KIcon("connect_no"), i18n ("Select Resource"), this );
+	KActionMenu *actionSelectResource = new KActionMenu ( i18n ("Select Resource"), this );
 
 	// if the contact is online, display the resources we have for it,
 	// otherwise disable the menu
@@ -271,7 +271,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	QString viewPlugin;
 	Kopete::Message *newMessage = 0L;
 
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "Received Message Type:" << message.type ();
 
 	// fetch message manager
 	JabberChatSession *mManager = manager ( message.from().resource (), Kopete::Contact::CanCreate );
@@ -283,9 +283,9 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		{
 			QString room=message.invite();
 			QString originalBody=message.body().isEmpty() ? QString() :
-					i18n( "The original message is : <i>\" %1 \"</i><br>" , Qt::escape(message.body()));
-			QString mes=i18n("<qt><i>%1</i> invited you to join the conference <b>%2</b><br>%3<br>"
-					"If you want to accept and join, just <b>enter your nickname</b> and press ok<br>"
+					i18n( "The original message is : <i>\" %1 \"</i><br />" , Qt::escape(message.body()));
+			QString mes=i18n("<qt><i>%1</i> has invited you to join the conference <b>%2</b><br />%3<br />"
+					"If you want to accept and join, just <b>enter your nickname</b> and press ok<br />"
 							 "If you want to decline, press cancel</qt>",
 					message.from().full(), room , originalBody);
 			
@@ -302,11 +302,11 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		else if (message.body().isEmpty())
 		// Then here could be event notifications
 		{
-			if (message.containsEvent ( XMPP::CancelEvent ) )
+			if (message.containsEvent ( XMPP::CancelEvent ) || (message.chatState() != XMPP::StateNone && message.chatState() != XMPP::StateComposing) )
 				mManager->receivedTypingMsg ( this, false );
-			else if (message.containsEvent ( XMPP::ComposingEvent ) )
+			else if (message.containsEvent ( XMPP::ComposingEvent )|| message.chatState() == XMPP::StateComposing )
 				mManager->receivedTypingMsg ( this, true );
-			else if (message.containsEvent ( XMPP::DisplayedEvent ) )
+			if (message.containsEvent ( XMPP::DisplayedEvent ) )
 				mManager->receivedEventNotification ( i18n("Message has been displayed") );
 			else if (message.containsEvent ( XMPP::DeliveredEvent ) )
 				mManager->receivedEventNotification ( i18n("Message has been delivered") );
@@ -314,12 +314,12 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			{
 	        	mManager->receivedEventNotification( i18n("Message stored on the server, contact offline") );
 			}
-			else if (message.containsEvent ( XMPP::GoneEvent ) )
+			else if (message.chatState() == XMPP::StateGone )
 			{
 				if(mManager->view( Kopete::Contact::CannotCreate ))
 				{   //show an internal message if the user has not already closed his window
 					Kopete::Message m=Kopete::Message ( this, mManager->members() );
-					m.setPlainBody( i18n("%1 has ended their participation in the chat session.", metaContact()->displayName()) );
+					m.setPlainBody( i18n("%1 has ended his/her participation in the chat session.", metaContact()->displayName()) );
 					m.setDirection( Kopete::Message::Internal );
 
 					mManager->appendMessage ( m, message.from().resource () );
@@ -333,7 +333,6 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			mRequestOfflineEvent = message.containsEvent ( XMPP::OfflineEvent );
 			mRequestDeliveredEvent = message.containsEvent ( XMPP::DeliveredEvent );
 			mRequestDisplayedEvent = message.containsEvent ( XMPP::DisplayedEvent);
-			mRequestGoneEvent= message.containsEvent ( XMPP::GoneEvent);
 		}
 	}
 
@@ -378,7 +377,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		}
 		else if( message.containsHTML() )
 		{
-			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a xHTML message" << endl;
+			kDebug ( JABBER_DEBUG_GLOBAL ) << "Received a xHTML message";
 			newMessage = new Kopete::Message ( this, contactList );
 			newMessage->setTimestamp( message.timeStamp() );
 			newMessage->setHtmlBody( message.html().toString() );
@@ -388,7 +387,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		}
 		else if ( !body.isEmpty () )
 		{
-			kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Received a plain text message" << endl;
+			kDebug ( JABBER_DEBUG_GLOBAL ) << "Received a plain text message";
 			newMessage = new Kopete::Message ( this, contactList );
 			newMessage->setTimestamp( message.timeStamp() );
 			newMessage->setPlainBody( body );
@@ -432,7 +431,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 void JabberContact::slotCheckVCard ()
 {
 	QDateTime cacheDate;
-	Kopete::ContactProperty cacheDateString = property ( protocol()->propVCardCacheTimeStamp );
+	Kopete::Property cacheDateString = property ( protocol()->propVCardCacheTimeStamp );
 
 	// don't do anything while we are offline
 	if ( !account()->myself()->onlineStatus().isDefinitelyOnline () )
@@ -464,11 +463,11 @@ void JabberContact::slotCheckVCard ()
 	else
 		cacheDate = QDateTime::fromString ( cacheDateString.value().toString (), Qt::ISODate );
 
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Cached vCard data for " << contactId () << " from " << cacheDate.toString () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Cached vCard data for " << contactId () << " from " << cacheDate.toString ();
 
 	if ( !mVCardUpdateInProgress && ( cacheDate.addDays ( 1 ) < QDateTime::currentDateTime () ) )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Scheduling update." << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "Scheduling update.";
 
 		mVCardUpdateInProgress = true;
 
@@ -505,7 +504,7 @@ void JabberContact::slotGetTimedVCard ()
 		}
 	}
 
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting vCard for " << contactId () << " from update timer." << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Requesting vCard for " << contactId () << " from update timer.";
 
 	mVCardUpdateInProgress = true;
 
@@ -569,7 +568,7 @@ void JabberContact::slotCheckLastActivity ( Kopete::Contact *, const Kopete::Onl
 	
 	if ( ( oldStatus.status () == Kopete::OnlineStatus::Connecting ) && newStatus.isDefinitelyOnline () )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Scheduling request for last activity for " << mRosterItem.jid().bare () << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "Scheduling request for last activity for " << mRosterItem.jid().bare ();
 
 		QTimer::singleShot ( account()->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedLastActivity () ) );
 	}
@@ -595,9 +594,9 @@ void JabberContact::slotGetTimedLastActivity ()
 
 	if ( account()->myself()->onlineStatus().isDefinitelyOnline () )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting last activity from timer for " << mRosterItem.jid().bare () << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "Requesting last activity from timer for " << mRosterItem.jid().bare ();
 
-		XMPP::JT_GetLastActivity *task = new XMPP::JT_GetLastActivity ( account()->client()->rootTask () );
+		JT_GetLastActivity *task = new JT_GetLastActivity ( account()->client()->rootTask () );
 		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotGotLastActivity () ) );
 		task->get ( mRosterItem.jid () );
 		task->go ( true );
@@ -607,7 +606,7 @@ void JabberContact::slotGetTimedLastActivity ()
 
 void JabberContact::slotGotLastActivity ()
 {
-	XMPP::JT_GetLastActivity *task = (XMPP::JT_GetLastActivity *) sender ();
+	JT_GetLastActivity *task = (JT_GetLastActivity *) sender ();
 
 	if ( task->success () )
 	{
@@ -738,7 +737,7 @@ void JabberContact::slotSendVCard()
 	XMPP::JT_VCard *task = new XMPP::JT_VCard (account()->client()->rootTask ());
 	// signal to ourselves when the vCard data arrived
 	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotSentVCard ()));
-	task->set (vCard);
+	task->set (rosterItem().jid(), vCard);
 	task->go (true);
 }
 
@@ -811,7 +810,7 @@ void JabberContact::slotSentVCard ()
 
 void JabberContact::slotChatSessionDeleted ( QObject *sender )
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Message manager deleted, collecting the pieces..." << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "Message manager deleted, collecting the pieces...";
 
 	JabberChatSession *manager = static_cast<JabberChatSession *>(sender);
 
@@ -821,7 +820,7 @@ void JabberContact::slotChatSessionDeleted ( QObject *sender )
 
 JabberChatSession *JabberContact::manager ( Kopete::ContactPtrList chatMembers, Kopete::Contact::CanCreateFlags canCreate )
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "called, canCreate: " << canCreate;
 
 	Kopete::ChatSession *_manager = Kopete::ChatSessionManager::self()->findChatSession ( account()->myself(), chatMembers, protocol() );
 	JabberChatSession *manager = dynamic_cast<JabberChatSession*>( _manager );
@@ -843,7 +842,7 @@ JabberChatSession *JabberContact::manager ( Kopete::ContactPtrList chatMembers, 
 		if ( jid.resource().isEmpty () )
 			jid.setResource ( account()->resourcePool()->lockedResource ( jid ).name () );
 
-		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "No manager found, creating a new one with resource '" << jid.resource () << "'" << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << "No manager found, creating a new one with resource '" << jid.resource () << "'";
 
 		manager = new JabberChatSession ( protocol(), static_cast<JabberBaseContact *>(account()->myself()), chatMembers, jid.resource () );
 		connect ( manager, SIGNAL ( destroyed ( QObject * ) ), this, SLOT ( slotChatSessionDeleted ( QObject * ) ) );
@@ -856,7 +855,7 @@ JabberChatSession *JabberContact::manager ( Kopete::ContactPtrList chatMembers, 
 
 Kopete::ChatSession *JabberContact::manager ( Kopete::Contact::CanCreateFlags canCreate )
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "called, canCreate: " << canCreate;
 
 	Kopete::ContactPtrList chatMembers;
 	chatMembers.append ( this );
@@ -867,7 +866,7 @@ Kopete::ChatSession *JabberContact::manager ( Kopete::Contact::CanCreateFlags ca
 
 JabberChatSession *JabberContact::manager ( const QString &resource, Kopete::Contact::CanCreateFlags canCreate )
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "called, canCreate: " << canCreate << ", Resource: '" << resource << "'" << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "called, canCreate: " << canCreate << ", Resource: '" << resource << "'";
 
 	/*
 	 * First of all, see if we already have a manager matching
@@ -884,12 +883,12 @@ JabberChatSession *JabberContact::manager ( const QString &resource, Kopete::Con
 			if ( mManager->resource().isEmpty () || ( mManager->resource () == resource ) )
 			{
 				// we found a matching manager, return this one
-				kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Found an existing message manager for this resource." << endl;
+				kDebug(JABBER_DEBUG_GLOBAL) << "Found an existing message manager for this resource.";
 				return mManager;
 			}
 		}
 
-		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "No manager found for this resource, creating a new one." << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << "No manager found for this resource, creating a new one.";
 
 		/*
 		 * If we have come this far, we were either supposed to create
@@ -909,7 +908,7 @@ JabberChatSession *JabberContact::manager ( const QString &resource, Kopete::Con
 		return manager;
 	}
 
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Resource is empty, grabbing first available manager." << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "Resource is empty, grabbing first available manager.";
 
 	/*
 	 * The resource is empty, so just return first available manager.
@@ -920,7 +919,7 @@ JabberChatSession *JabberContact::manager ( const QString &resource, Kopete::Con
 
 void JabberContact::deleteContact ()
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing user " << contactId () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "Removing user " << contactId ();
 
 	if ( !account()->isConnected () )
 	{
@@ -939,7 +938,7 @@ void JabberContact::deleteContact ()
 	if( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From )
 	{
 		int result = KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget(),
-		 				i18n ( "Do you also want to remove the authorization from user %1 to see your status?" , 
+		 				i18n ( "Do you also want to remove user %1's authorization to see your status?" , 
 						  mRosterItem.jid().bare () ), i18n ("Notification"),
 						KStandardGuiItem::del (), KGuiItem( i18n("Keep") ),KStandardGuiItem::cancel(), "JabberRemoveAuthorizationOnDelete" );
 		if(result == KMessageBox::Yes )
@@ -973,7 +972,7 @@ void JabberContact::sync ( unsigned int )
 	if ( dontSync () || !account()->isConnected () || metaContact()->isTemporary () || metaContact() == Kopete::ContactList::self()->myself() )
 		return;
 	
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << contactId () /*<< " - " <<kdBacktrace()*/ << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << contactId () /*<< " - " <<kdBacktrace()*/;
 
 	if(!m_syncTimer)
 	{
@@ -1007,7 +1006,7 @@ void JabberContact::slotDelayedSync( )
 	QStringList groups;
 	Kopete::GroupList groupList = metaContact ()->groups ();
 
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Synchronizing contact " << contactId () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Synchronizing contact " << contactId ();
 
 	foreach ( Kopete::Group * g, groupList )
 	{
@@ -1023,7 +1022,7 @@ void JabberContact::slotDelayedSync( )
 	
 	if(!changed)
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "contact has not changed,  abort sync"  << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "contact has not changed,  abort sync";
 		return;
 	}
 
@@ -1058,7 +1057,7 @@ void JabberContact::sendFile ( const KUrl &sourceURL, const QString &/*fileName*
 void JabberContact::slotSendAuth ()
 {
 
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "(Re)send auth " << contactId () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "(Re)send auth " << contactId ();
 
 	sendSubscription ("subscribed");
 
@@ -1067,7 +1066,7 @@ void JabberContact::slotSendAuth ()
 void JabberContact::slotRequestAuth ()
 {
 
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "(Re)request auth " << contactId () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "(Re)request auth " << contactId ();
 
 	sendSubscription ("subscribe");
 
@@ -1076,7 +1075,7 @@ void JabberContact::slotRequestAuth ()
 void JabberContact::slotRemoveAuth ()
 {
 
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Remove auth " << contactId () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "Remove auth " << contactId ();
 
 	sendSubscription ("unsubscribed");
 
@@ -1120,7 +1119,7 @@ void JabberContact::slotSelectResource ()
 
 	if (currentItem == 0)
 	{
-		kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing active resource, trusting bestResource()." << endl;
+		kDebug (JABBER_DEBUG_GLOBAL) << "Removing active resource, trusting bestResource().";
 
 		account()->resourcePool()->removeLock ( rosterItem().jid() );
 	}
@@ -1128,7 +1127,7 @@ void JabberContact::slotSelectResource ()
 	{
 		QString selectedResource = static_cast<const KAction *>(sender())->text();
 
-		kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Moving to resource " << selectedResource << endl;
+		kDebug (JABBER_DEBUG_GLOBAL) << "Moving to resource " << selectedResource;
 
 		account()->resourcePool()->lockToResource ( rosterItem().jid() , XMPP::Resource ( selectedResource ) );
 	}
@@ -1231,8 +1230,6 @@ bool JabberContact::isContactRequestingEvent( XMPP::MsgEvent event )
 		return mRequestComposingEvent;
 	else if ( event == CancelEvent )
 		return mRequestComposingEvent;
-	else if ( event == GoneEvent )
-		return mRequestGoneEvent;
 	else
 		return false;
 }
@@ -1321,11 +1318,11 @@ void JabberContact::slotDiscoFinished( )
 		JabberAccount *parentAccount=account();
 		Kopete::OnlineStatus status=onlineStatus();
 		
-		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << ri.jid().full() << " is not a contact but a gateway   - " << this << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << ri.jid().full() << " is not a contact but a gateway   - " << this;
 		
 		if( Kopete::AccountManager::self()->findAccount( protocol()->pluginId() , account()->accountId() + '/' + ri.jid().bare() ) )
 		{
-			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "oops, transport already exists, abort operation " <<  endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << "oops, transport already exists, abort operation ";
 			return;
 		}
 		
@@ -1338,6 +1335,8 @@ void JabberContact::slotDiscoFinished( )
 		JabberTransport *transport = new JabberTransport( parentAccount , ri , tr_type );
 		if(!Kopete::AccountManager::self()->registerAccount( transport ))
 			return;
+		
+		transport->setIdentity( parentAccount->identity() );
 		transport->myself()->setOnlineStatus( status ); //push back the online status
 		return;
 	}

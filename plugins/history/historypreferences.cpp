@@ -30,13 +30,13 @@
 #include <knuminput.h>
 #include <qcheckbox.h>
 
-typedef KGenericFactory<HistoryPreferences> HistoryConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_history, HistoryConfigFactory( "kcm_kopete_history" ) )
+K_PLUGIN_FACTORY( HistoryPreferencesFactory, registerPlugin<HistoryPreferences>(); )
+K_EXPORT_PLUGIN( HistoryPreferencesFactory( "kcm_kopete_history" ) )
 
-HistoryPreferences::HistoryPreferences(QWidget *parent, const QStringList &args)
-	: KCModule(HistoryConfigFactory::componentData(), parent, args)
+HistoryPreferences::HistoryPreferences(QWidget *parent, const QVariantList &args)
+	: KCModule(HistoryPreferencesFactory::componentData(), parent, args)
 {
-	kDebug(14310) << k_funcinfo << "called." << endl;
+	kDebug(14310) << "called.";
 	
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget;
@@ -51,18 +51,17 @@ HistoryPreferences::HistoryPreferences(QWidget *parent, const QStringList &args)
 		this, SLOT(slotModified()));
 	connect(p->History_color, SIGNAL(changed(const QColor&)),
 		this, SLOT(slotModified()));
-	load();
 }
 
 HistoryPreferences::~HistoryPreferences()
 {
-	kDebug(14310) << k_funcinfo << "called." << endl;
+	kDebug(14310) << "called.";
 	delete p;
 }
 
 void HistoryPreferences::load()
 {
-	kDebug(14310) << k_funcinfo << "called." << endl;
+	kDebug(14310) << "called.";
 	HistoryConfig::self()->readConfig();
 	p->chkShowPrevious->setChecked(HistoryConfig::auto_chatwindow());
 	slotShowPreviousChanged(p->chkShowPrevious->isChecked());
@@ -75,7 +74,7 @@ void HistoryPreferences::load()
 
 void HistoryPreferences::save()
 {
-	kDebug(14310) << k_funcinfo << "called." << endl;
+	kDebug(14310) << "called.";
 	HistoryConfig::setAuto_chatwindow(p->chkShowPrevious->isChecked());
 	HistoryConfig::setNumber_Auto_chatwindow(p->Number_Auto_chatwindow->value());
 	HistoryConfig::setNumber_ChatWindow(p->Number_ChatWindow->value());
@@ -91,6 +90,7 @@ void HistoryPreferences::slotModified()
 
 void HistoryPreferences::slotShowPreviousChanged(bool on)
 {
+	Q_UNUSED(on);
 	emit KCModule::changed(true);
 }
 

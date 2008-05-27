@@ -19,7 +19,6 @@
 
 #include <qvariant.h>
 //Added by qt3to4:
-#include <Q3PtrList>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -45,7 +44,7 @@ TranslatorGUIClient::TranslatorGUIClient( Kopete::ChatSession *parent )
 
 	m_manager = parent;
 
-	KAction *translate = new KAction( KIcon("locale"), i18n( "Translate" ), this );
+	KAction *translate = new KAction( KIcon("preferences-desktop-locale"), i18n( "Translate" ), this );
         actionCollection()->addAction( "translateCurrentMessage", translate );
 	connect( translate, SIGNAL( triggered(bool) ), this, SLOT( slotTranslateChat() ) );
 	translate->setShortcut( KShortcut(Qt::CTRL + Qt::Key_T) );
@@ -75,7 +74,7 @@ void TranslatorGUIClient::slotTranslateChat()
 	dst_lang = to->pluginData( TranslatorPlugin::plugin(), "languageKey" );
 	if ( dst_lang.isEmpty() || dst_lang == "null" )
 	{
-		kDebug( 14308 ) << k_funcinfo << "Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
+		kDebug( 14308 ) << "Cannot determine dst Metacontact language (" << to->displayName() << ")";
 		return;
 	}
 
@@ -88,7 +87,7 @@ void TranslatorGUIClient::messageTranslated( const QVariant &result )
 	QString translated = result.toString();
 	if ( translated.isEmpty() )
 	{
-		kDebug( 14308 ) << k_funcinfo << "Empty string returned"  << endl;
+		kDebug( 14308 ) << "Empty string returned";
 		return;
 	}
 

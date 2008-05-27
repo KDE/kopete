@@ -57,11 +57,11 @@ public:
 	void setStatusMessage(const Papillon::StatusMessage &statusMessage);
 	
 	/**
-	 * @brief Check if the given Transfer has the confirmation of the command.
-	 * @param transfer Transfer to check.
-	 * @return true if we accept this transfer.
+	 * @brief Check if the given NetworkMessage has the confirmation of the command.
+	 * @param networkMessage NetworkMessage to check.
+	 * @return true if we accept this networkMessage.
 	 */
-	virtual bool take(Papillon::Transfer *transfer);
+	virtual bool take(Papillon::NetworkMessage *networkMessage);
 
 protected:
 	/**

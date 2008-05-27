@@ -120,13 +120,13 @@ bool Transfer::initiate()
 
 	if(m_initiated)
 	{
-		kDebug(14121) << k_funcinfo << "Transfer already initiated" << endl;
+		kDebug(14121) << "Transfer already initiated";
 		return false;
 	}
 
 	if(!m_socket)
 	{
-		kDebug(14121) << k_funcinfo << "Socket not set" << endl;
+		kDebug(14121) << "Socket not set";
 		return false;
 	}
 
@@ -149,18 +149,18 @@ bool Transfer::initiate()
 	switch( m_type )
 	{
 	case Chat:
-		kDebug(14121) << k_funcinfo << "Stting up a chat." << endl;
+		kDebug(14121) << "Stting up a chat.";
 		connect(m_socket, SIGNAL(readyRead()),
 			this, SLOT(readyReadFileIncoming()));
 		break;
 	case FileIncoming:
-		kDebug(14121) << k_funcinfo << "Stting up an incoming file transfer." << endl;
+		kDebug(14121) << "Stting up an incoming file transfer.";
 		m_file.open(QIODevice::WriteOnly);
 		connect(m_socket, SIGNAL(readyRead()),
 			this, SLOT(readyReadFileIncoming()));
 		break;
 	case FileOutgoing:
-		kDebug(14121) << k_funcinfo << "Stting up an outgoing file transfer." << endl;
+		kDebug(14121) << "Stting up an outgoing file transfer.";
 		m_file.open(QIODevice::ReadOnly);
 		connect(m_socket, SIGNAL(readyRead()),
 			this, SLOT(readyReadFileOutgoing()));
@@ -171,7 +171,7 @@ bool Transfer::initiate()
 		writeFileOutgoing(); // send a first packet.
 		break;
 	default:
-		kDebug(14121) << k_funcinfo << "Closing transfer: Unknown extra initiation for type:" << m_type << endl;
+		kDebug(14121) << "Closing transfer: Unknown extra initiation for type:" << m_type;
 		m_socket->close();
 		return false;
 		break;
@@ -205,7 +205,7 @@ bool Transfer::setSocket( KExtendedSocket *socket )
 		return true;
 	}
 	else
-		kDebug(14121) << k_funcinfo << "Socket already set" << endl;
+		kDebug(14121) << "Socket already set";
 	return false;
 }
 
@@ -282,13 +282,13 @@ void Transfer::readyReadLine()
 
 void Transfer::readyReadFileIncoming()
 {
-	kDebug(14121) << k_funcinfo << endl;
+	kDebug(14121) ;
 
-	m_bufferLength = m_socket->readBlock(m_buffer, sizeof(m_buffer));
+	m_bufferLength = m_socket->read(m_buffer, sizeof(m_buffer));
 
 	if(m_bufferLength > 0)
 	{
-		int written = m_file.writeBlock(m_buffer, m_bufferLength);
+		int written = m_file.write(m_buffer, m_bufferLength);
 		if(m_bufferLength == written)
 		{
 			m_fileSizeCur += written;
@@ -307,7 +307,7 @@ void Transfer::readyReadFileIncoming()
 
 void Transfer::readyReadFileOutgoing()
 {
-	kDebug(14121) << k_funcinfo << "Available bytes:" << m_socket->bytesAvailable() << endl;
+	kDebug(14121) << "Available bytes:" << m_socket->bytesAvailable();
 
 	bool hadData = false;
 	quint32 fileSizeAck = 0;
@@ -327,14 +327,14 @@ void Transfer::readyReadFileOutgoing()
 
 void Transfer::writeFileOutgoing()
 {
-	kDebug(14121) << k_funcinfo << endl;
+	kDebug(14121) ;
 
 	if (m_fileSizeAck < m_fileSize)
 	{
-		m_bufferLength = m_file.readBlock(m_buffer, sizeof(m_buffer));
+		m_bufferLength = m_file.read(m_buffer, sizeof(m_buffer));
 		if (m_bufferLength > 0)
 		{
-			quint32 read = m_socket->writeBlock(m_buffer, m_bufferLength); // should check written == read
+			quint32 read = m_socket->write(m_buffer, m_bufferLength); // should check written == read
 
 //			if(read != m_buffer_length)
 //				buffer is not cleared still
@@ -350,7 +350,7 @@ void Transfer::writeFileOutgoing()
 
 void Transfer::checkFileTransferEnd(quint32 fileSizeAck)
 {
-	kDebug(14121) << k_funcinfo << "Acknowledged:" << fileSizeAck << endl;
+	kDebug(14121) << "Acknowledged:" << fileSizeAck;
 
 	m_fileSizeAck = fileSizeAck;
 	emit fileSizeAcknowledge(m_fileSizeAck);

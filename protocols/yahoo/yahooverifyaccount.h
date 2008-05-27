@@ -1,7 +1,7 @@
 /*
     yahooverifyaccount.h - UI Page for Verifying a locked account
 
-    Copyright (c) 2005 by André Duffeck          <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 by André Duffeck          <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -36,7 +36,7 @@ private:
 	KTemporaryFile *mFile;
 	Ui::YahooVerifyAccountBase *mTheDialog;
 public:
-	YahooVerifyAccount(Kopete::Account *account, QWidget *parent = 0);
+	explicit YahooVerifyAccount(Kopete::Account *account, QWidget *parent = 0);
 	~YahooVerifyAccount();
 
 	virtual bool validateData();

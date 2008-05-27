@@ -31,7 +31,7 @@ typedef QList<GWContactInstance *> GWContactInstanceList;
 
 	/**
 	 *  These functions model the server side contact list structure enough to allow Kopete to manipulate it correctly
-	 *  In GroupWise, a contactlist is composed of folders, containing contacts.  But the contacts don't record which 
+	 *  In GroupWise, a contact list is composed of folders, containing contacts.  But the contacts don't record which 
 	 *  folders they are in.  Instead, each contact entry represents an instance of that contact within the list.  
 	 *  In Kopete's model, this looks like duplicate contacts (illegal), so instead we have unique contacts, 
 	 *  each (by way of its metacontact) knowing membership of potentially >1 KopeteGroups.  Contacts contain a list of the 

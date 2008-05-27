@@ -30,7 +30,6 @@
 
 class AddressBookLinkWidget;
 class CustomNotificationProps;
-class KPushButton;
 class KopeteGroupViewItem;
 class KopeteMetaContactLVI;
 class KopeteAddressBookExport;
@@ -81,6 +80,7 @@ class KopeteMetaLVIProps: public KDialog
 		int m_countPhotoCapable;
 		QMap<int, Kopete::Contact *> m_withPhotoContacts;
 		QString mAddressBookUid; // the currently selected addressbook UID
+		QString m_photoPath;
 		
 		Kopete::MetaContact::PropertySource selectedNameSource() const;
 		Kopete::MetaContact::PropertySource selectedPhotoSource() const;
@@ -97,6 +97,7 @@ class KopeteMetaLVIProps: public KDialog
 		void slotOpenSoundDialog( KUrlRequester *requester );
 		void slotLoadNameSources();
 		void slotLoadPhotoSources();
+		void slotSelectPhoto();
 		void slotEnableAndDisableWidgets();
 };
 

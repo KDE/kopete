@@ -17,7 +17,6 @@
 */
 
 #include <klocale.h>
-#include <kstaticdeleter.h>
 #include <kfiledialog.h>
 #include <kfileitem.h>
 #include <kmessagebox.h>
@@ -57,6 +56,7 @@ Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QSt
 Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const QString &localFile, bool showProgressInfo)
 	: KIO::Job(), mInfo(kfti)
 {
+	this->setUiDelegate(new KIO::JobUiDelegate());
 	if(showProgressInfo)
 		KIO::getJobTracker()->registerJob(this);
 
@@ -67,6 +67,7 @@ Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const QString 
 Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const Kopete::Contact *contact, bool showProgressInfo)
 	: KIO::Job(), mInfo(kfti)
 {
+	this->setUiDelegate(new KIO::JobUiDelegate());
 	if(showProgressInfo)
 		KIO::getJobTracker()->registerJob(this);
 
@@ -129,6 +130,13 @@ KUrl Kopete::Transfer::destinationURL()
 	return mTarget;
 }
 
+void Kopete::Transfer::emitCopying(const KUrl &src, const KUrl &dest)
+{
+    emit description(this, i18n("Copying"),
+                     qMakePair(i18n("Source"), src.prettyUrl()),
+                     qMakePair(i18n("Destination"), dest.prettyUrl()));
+}
+
 void Kopete::Transfer::slotProcessed(unsigned int bytes)
 {
 	emitPercent( bytes, mInfo.size() );
@@ -153,7 +161,7 @@ void Kopete::Transfer::slotResultEmitted()
 {
 	if( error() == KIO::ERR_USER_CANCELED )
 	{
-		showMessage( i18n("You cancelled filetransfer %1", mInfo.file() ) );
+		showMessage( i18n("You cancelled file transfer %1", mInfo.file() ) );
 		emit transferCanceled();
 	}
 }
@@ -182,15 +190,10 @@ bool Kopete::Transfer::showMessage( QString text )
  *  Kopete::TransferManager  *
  ***************************/
 
-static KStaticDeleter<Kopete::TransferManager> deleteManager;
-Kopete::TransferManager *Kopete::TransferManager::s_transferManager = 0;
-
 Kopete::TransferManager* Kopete::TransferManager::transferManager()
 {
-	if(!s_transferManager)
-		deleteManager.setObject(s_transferManager, new Kopete::TransferManager(0));
-
-	return s_transferManager;
+	static TransferManager s(0L);
+	return &s;
 }
 
 Kopete::TransferManager::TransferManager( QObject *parent ) : QObject( parent )

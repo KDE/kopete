@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Send a authorization request response
 
-    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <duffeck@kde.org>
     Kopete    (c) 2003-2006 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -25,7 +25,7 @@
 
 SendAuthRespTask::SendAuthRespTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 SendAuthRespTask::~SendAuthRespTask()

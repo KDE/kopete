@@ -60,7 +60,7 @@ Dispatcher::Dispatcher(QObject *parent, const QString& contact, const QStringLis
 
 Dispatcher::~Dispatcher()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 
 	if(m_callbackChannel)
 	{
@@ -93,12 +93,12 @@ void Dispatcher::requestDisplayIcon(const QString& from, const QString& msnObjec
 	// Add the transfer to the list.
 	m_sessions.insert(sessionId, current);
 
-	kDebug(14140) << k_funcinfo << "Requesting, " << msnObject << endl;
+	kDebug(14140) << "Requesting, " << msnObject;
 
-	QString context = QString::fromUtf8(KCodecs::base64Encode(msnObject.toUtf8()));
+	QString context = QString::fromUtf8(msnObject.toUtf8().toBase64());
 	// NOTE remove the \0 character automatically
 	// appended to a QCString.
-	context.replace("=", QString());
+	context.replace("=", "");
 	QString content =
 			"EUF-GUID: {A4268EEC-FEC5-49E5-95C3-F126696BDBF6}\r\n"
 			"SessionID: " + QString::number(sessionId) + "\r\n"
@@ -129,7 +129,7 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 
 	QByteArray header(638, '\0');
 	QDataStream writer( &header,QIODevice::WriteOnly);
-	writer.setVersion(QDataStream::Qt_3_1);
+	writer.setVersion(QDataStream::Qt_3_3);
 	writer.setByteOrder(QDataStream::LittleEndian);
 
 	// Write the header length to the stream.
@@ -142,10 +142,11 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 	// TODO support file preview. For now disable file preview.
 	writer << (qint32)1;
 	// Write the file name in utf-16 to the stream.
-	QTextStream ts(header, QIODevice::WriteOnly);
+	QTextStream ts(&header, QIODevice::WriteOnly);
 	ts.setCodec(QTextCodec::codecForName("UTF-16"));
 	ts.device()->seek(20);
 	ts << path.section('/', -1);
+    ts.flush();
 	// NOTE Background Sharing base64 [540..569]
 	// TODO add support for background sharing.
 	// Write file exchange type to the stream.
@@ -155,7 +156,7 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 	writer << (quint32)0xFFFFFFFF;
 
 	// Encode the file context header to base64 encoding.
-	context = QString::fromUtf8(KCodecs::base64Encode(header));
+	context = QString::fromUtf8(header.toBase64());
 
 	// Send an INVITE message to the recipient.
 	QString content = "EUF-GUID: {5D3E02AB-6190-11D3-BBBB-00C04F795683}\r\n"
@@ -168,11 +169,11 @@ void Dispatcher::sendFile(const QString& path, qint64 fileSize, const QString& t
 
 void Dispatcher::sendImage(const QString& /*fileName*/, const QString& /*to*/)
 {
-// 	TODO kDebug(14140) << k_funcinfo << endl;
+// 	TODO kDebug(14140) ;
 // 	QFile imageFile(fileName);
 // 	if(!imageFile.open(QIODevice::ReadOnly))
 // 	{
-// 		kDebug(14140) << k_funcinfo << "Error opening image file."
+// 		kDebug(14140) << "Error opening image file."
 // 			<< endl;
 // 		return;
 // 	}
@@ -244,7 +245,7 @@ void Dispatcher::slotReadMessage(const QString &from, const QByteArray& stream)
 			}
 			else
 			{
-				kDebug(14140) << k_funcinfo
+				kDebug(14140) 
 					<< "no transfer context with identifier, "
 					<< receivedMessage.header.ackSessionIdentifier
 					<< endl;
@@ -254,7 +255,7 @@ void Dispatcher::slotReadMessage(const QString &from, const QByteArray& stream)
 
 		if(m_messageBuffer.contains(receivedMessage.header.identifier))
 		{
-			kDebug(14140) << k_funcinfo
+			kDebug(14140) 
 				<< QString("retrieving buffered messsage, %1").arg(receivedMessage.header.identifier)
 				<< endl;
 
@@ -352,7 +353,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 		{
 			// The entire message has not been received;
 			// buffer the recevied portion of the original message.
-			kDebug(14140) << k_funcinfo
+			kDebug(14140) 
 				<< QString("Buffering messsage, %1").arg(message.header.identifier)
 				<< endl;
 			m_messageBuffer.insert(message.header.identifier, message);
@@ -361,7 +362,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 
 		QString body =
 			QByteArray(message.body.data(), message.header.dataSize);
-		kDebug(14140) << k_funcinfo << "received, " << body << endl;
+		kDebug(14140) << "received, " << body;
 
 		if(body.startsWith("INVITE"))
 		{
@@ -388,7 +389,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 			regex.indexIn(body);
 			quint32 applicationId = regex.cap(1).toUInt();
 
-			if(applicationId == 1  || applicationId == 12)
+			if(applicationId == 1  || applicationId == 11 || applicationId == 12 )
 			{                         //the AppID is 12 since Messenger 7.5
 				// A contact has requested a session to download
 				// a display icon (User Display Icon or CustomEmotion).
@@ -398,8 +399,8 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				QByteArray msnobj;
 
 				// Decode the msn object from base64 encoding.
-				KCodecs::base64Decode(regex.cap(1).toUtf8() , msnobj);
-				kDebug(14140) << k_funcinfo << "Contact requested, "
+                                msnobj = QByteArray::fromBase64(regex.cap(1).toUtf8());
+				kDebug(14140) << "Contact requested, "
 					<< msnobj << endl;
 
 				// Create a new transfer context that will handle
@@ -441,7 +442,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				// A contact has requested a session to
 				// send a file.
 
-				kDebug(14140) << k_funcinfo << "File transfer invitation." << endl;
+				kDebug(14140) << "File transfer invitation.";
 
 				// Create a new transfer context that will handle
 				// the file transfer.
@@ -458,9 +459,9 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				QByteArray context;
 
 				// Decode the file context from base64 encoding.
-				KCodecs::base64Decode(regex.cap(1).toUtf8(), context);
+                                context = QByteArray::fromBase64(regex.cap(1).toUtf8());
 				QDataStream reader( &context,QIODevice::ReadOnly);
-				reader.setVersion(QDataStream::Qt_3_1);
+				reader.setVersion(QDataStream::Qt_3_3);
 				reader.setByteOrder(QDataStream::LittleEndian);
 				//Retrieve the file info from the context field.
 				// File Size [8..15] Int64
@@ -473,10 +474,10 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				// 0x02 Background sharing.
 				qint32 flag;
 				reader >> flag;
-				kDebug(14140) << flag << endl;
+				kDebug(14140) << flag;
 				// FileName UTF16 (Unicode) [19..539]
 				QByteArray bytes;
-				bytes.reserve(520);
+				bytes.resize(520);
 				reader.readRawData(bytes.data(), bytes.size());
 				QTextStream ts(bytes, QIODevice::ReadOnly);
 				ts.setCodec(QTextCodec::codecForName("UTF-16"));
@@ -525,7 +526,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				regex.search(body);
 				QString GUID=regex.cap(1);
 
-				kDebug(14140) << k_funcinfo << "webcam " << GUID << endl;
+				kDebug(14140) << "webcam " << GUID;
 
 				Webcam::Who who;
 				if(GUID=="4BD96FC0-AB17-4425-A14A-439185962DC8")
@@ -539,7 +540,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				else
 				{ //unknown GUID
 					//current->error();
-					kWarning(14140) << k_funcinfo << "Unknown GUID " << GUID << endl;
+					kWarning(14140) << "Unknown GUID " << GUID;
 					return;
 				}
 
@@ -580,7 +581,7 @@ void Dispatcher::dispatch(const P2P::Message& message)
 				QString base64 = regex.cap(1);
 				QByteArray image;
 // 				Convert from base64 encoding to byte array.
-				KCodecs::base64Decode(base64.toUtf8(), image);
+                                image = QByteArray::fromBase64(base64.toUtf8());
 // 				Create a temporary file to store the image data.
 				KTemporaryFile *ink = new KTemporaryFile();
 				ink->setPrefix("inkformatgif-");

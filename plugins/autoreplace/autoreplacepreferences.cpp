@@ -15,13 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 
+#define QT3_SUPPORT
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <q3groupbox.h>
 #include <q3header.h>
 #include <q3listview.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
 
 #include <klocale.h>
 #include <klineedit.h>
@@ -32,12 +30,12 @@
 #include "autoreplacepreferences.h"
 #include "autoreplaceconfig.h"
 
-typedef KGenericFactory<AutoReplacePreferences> AutoReplacePreferencesFactory;
+K_PLUGIN_FACTORY(AutoReplacePreferencesFactory, registerPlugin<AutoReplacePreferences>();)
+K_EXPORT_PLUGIN(AutoReplacePreferencesFactory( "kcm_kopete_autoreplace" ))
 
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_autoreplace, AutoReplacePreferencesFactory( "kcm_kopete_autoreplace" ) )
 
 // TODO: Use KConfigXT
-AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const QStringList &args )
+AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const QVariantList &args )
 : KCModule( AutoReplacePreferencesFactory::componentData(), parent, args )
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
@@ -68,7 +66,6 @@ AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const QStringLi
 	//setMainWidget( preferencesDialog->gb_options, "AutoReplace Plugin" );
 
 	m_config = new AutoReplaceConfig;
-	load();
 }
 
 AutoReplacePreferences::~AutoReplacePreferences()

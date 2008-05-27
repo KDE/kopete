@@ -43,7 +43,7 @@ AddressBookLinkWidget::AddressBookLinkWidget( QWidget * parent, const char * nam
 	setObjectName(name);
 	setupUi(this);
 
-	btnClear->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? QString::fromLatin1( "locationbar-erase" ) : QString::fromLatin1( "clear-left") ) );
+	btnClear->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? QString::fromLatin1( "edit-clear-locationbar-ltr" ) : QString::fromLatin1( "edit-clear-locationbar-rtl") ) );
 	connect( btnClear, SIGNAL( clicked() ), this, SLOT( slotClearAddressee() ) );
 	connect( btnSelectAddressee, SIGNAL( clicked() ), SLOT( slotSelectAddressee() ) );
 }
@@ -81,7 +81,7 @@ void AddressBookLinkWidget::slotSelectAddressee()
  	else
 		message = i18n("Choose the corresponding entry in the address book" );
 
-	Kopete::UI::AddressBookSelectorDialog dialog( i18n("Addressbook Association"), message, ( mMetaContact ? mMetaContact->metaContactId() : QString::null ), this );
+	Kopete::UI::AddressBookSelectorDialog dialog( i18n("Addressbook Association"), message, ( mMetaContact ? mMetaContact->metaContactId() : QString::null ), this );	//krazy:exclude=nullstrassign for old broken gcc
 	int result = dialog.exec();
 
 	KABC::Addressee addr;
@@ -91,7 +91,7 @@ void AddressBookLinkWidget::slotSelectAddressee()
 
 		edtAddressee->setText( addr.realName() );
 		btnClear->setEnabled( !addr.isEmpty() );
-		mSelectedUid = ( addr.isEmpty() ? QString::null : addr.uid() );
+		mSelectedUid = ( addr.isEmpty() ? QString::null : addr.uid() );	//krazy:exclude=nullstrassign for old broken gcc
 		emit addresseeChanged( addr );
 	}
 }

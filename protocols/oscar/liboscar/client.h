@@ -129,6 +129,9 @@ public:
 	 * \param message the status message or Xtraz status message
 	 * \param xtraz the Xtraz status
 	 * \param description the Xtraz status description
+	 * @note If you want XStatus you have to set status, message, xtraz and description,
+	 * for ExtStatus (ICQ6 status) you have to set status, message and description, xtraz have to be -1.
+	 * If you want normal status than you should set only status and message.
 	 */
 	void setStatus( Oscar::DWORD status, const QString &message = QString(), int xtraz = -1, const QString &description = QString() );
 
@@ -184,6 +187,20 @@ public:
 	void changeContactGroup( const QString& contact, const QString& newGroupName );
 
 	/**
+	 * Change a contact's alias on the server
+	 * \param contact the contact to change
+	 * \param alias the new alias
+	 */
+	void changeContactAlias( const QString& contact, const QString& alias );
+
+	/**
+	 * Set privacy settings
+	 * \param privacy the privacy settings
+	 * \param userClasses the bit mask which tells which class of users you want to be visible to
+	 */
+	void setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses = 0xFFFFFFFF );
+
+	/**
 	 * Send a message to a contact
 	 * \param msg the message to be sent
 	 * \param auto the message is an autoresponse message, default to false
@@ -204,6 +221,15 @@ public:
 	 * \param auth grant or decline authorization
 	 */
 	void sendAuth( const QString& contactid, const QString& reason, bool auth=true );
+
+	/**
+	 * Request Short/Medium/Long user info from an ICQ contact (new TLV based format)
+	 * \param contactId the UIN of the contact to get info for
+	 * \param metaInfoId the id of the info (TLV 0x015C in SSI)
+	 */
+	void requestShortTlvInfo( const QString& contactId, const QByteArray &metaInfoId );
+	void requestMediumTlvInfo( const QString& contactId, const QByteArray &metaInfoId );
+	void requestLongTlvInfo( const QString& contactId, const QByteArray &metaInfoId );
 
 	/**
 	 * Request full user info from an ICQ contact
@@ -230,6 +256,12 @@ public:
 	 */
 	bool changeICQPassword( const QString& password );
 
+	/**
+	 * Get the full ICQ info for a client
+	 * \param contact the contact to get info for
+	 */
+	ICQFullInfo getFullInfo( const QString& contact );
+	
 	/**
 	 * Get the general ICQ info for a client
 	 * \param contact the contact to get info for
@@ -323,7 +355,7 @@ public:
 	bool updateProfile( const QList<ICQInfoBase*>& infoList );
 
 	//! Get buddy icon information for a person
-	void requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::BYTE hashType );
+	void requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::WORD iconType, Oscar::BYTE hashType );
 
 	//! Start a server redirect for a different service
 	void requestServerRedirect( Oscar::WORD family, Oscar::WORD e = 0, QByteArray c = QByteArray(),
@@ -357,9 +389,12 @@ public:
 
 	/** Set codec provider */
 	void setCodecProvider( CodecProvider* codecProvider );
-	
+
 	/** Set pointer to version info */
 	void setVersion( const Oscar::ClientVersion* version );
+
+	/**	Set version capability */
+	void setVersionCap( const QByteArray &cap );
 
 	/** start a filetransfer task */
 	void sendFiles( const QString& contact, const QStringList& files, Kopete::Transfer *t );
@@ -380,6 +415,9 @@ public:
 
 	/** Return version info */
 	const Oscar::ClientVersion* version() const;
+
+	/** Return version capability */
+	Guid versionCap() const;
 
 	/** The current user's user ID */
 	QString userId() const;
@@ -463,6 +501,7 @@ signals:
 
 	void receivedIcqShortInfo( const QString& contact );
 	void receivedIcqLongInfo( const QString& contact );
+	void receivedIcqTlvInfo( const QString& contact );
 
 	void receivedProfile( const QString& contact, const QString& profile );
 	void receivedAwayMessage( const QString& contact, const QString& message );

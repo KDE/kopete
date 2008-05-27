@@ -25,9 +25,8 @@
 
 #include "mw_common.h"
 
-typedef KGenericFactory<MeanwhileProtocol> MeanwhileProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY(kopete_meanwhile,
-    MeanwhileProtocolFactory("kopete_meanwhile"))
+K_PLUGIN_FACTORY( MeanwhileProtocolFactory, registerPlugin<MeanwhileProtocol>(); )
+K_EXPORT_PLUGIN( MeanwhileProtocolFactory( "kopete_meanwhile" ) )
 
 MeanwhileProtocol::MeanwhileProtocol(QObject* parent, const QStringList &/*args*/)
 : Kopete::Protocol(MeanwhileProtocolFactory::componentData(), parent),

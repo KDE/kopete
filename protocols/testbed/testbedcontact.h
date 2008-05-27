@@ -19,7 +19,7 @@
 
 #include <qmap.h>
 //Added by qt3to4:
-#include <Q3PtrList>
+#include <QList>
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
@@ -39,10 +39,10 @@ public:
 	/**
 	 * The range of possible contact types
 	 */
-	enum TestbedContactType { Null, Echo };
+	enum Type { Null, Echo, Group };
 
 	TestbedContact( Kopete::Account* _account, const QString &uniqueName, 
-			const TestbedContact::TestbedContactType type, const QString &displayName, 
+			const QString &displayName, 
 			Kopete::MetaContact *parent );
 
     ~TestbedContact();
@@ -63,6 +63,10 @@ public:
 	 */
 	virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
 
+	/**
+	 * Set the Type of this contact
+	 */
+	void setType( Type type );
 public slots:
 	/**
 	 * Transmits an outgoing message to the server 
@@ -90,7 +94,7 @@ protected slots:
 protected:
 	Kopete::ChatSession* m_msgManager;
 	KActionCollection* m_actionCollection;
-	TestbedContactType m_type;
+	Type m_type;
 	KAction* m_actionPrefs;
 };
 

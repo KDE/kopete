@@ -17,7 +17,7 @@
 #include "kopetemessagehandler.h"
 #include "kopetemessageevent.h"
 
-#include <kstaticdeleter.h>
+#include <kglobal.h>
 
 namespace Kopete
 {
@@ -79,13 +79,10 @@ public:
 	FactoryList::Iterator iterator;
 };
 
+K_GLOBAL_STATIC(MessageHandlerFactory::FactoryList, g_list)
 MessageHandlerFactory::FactoryList& MessageHandlerFactory::Private::factories()
 {
-	static KStaticDeleter<FactoryList> deleter;
-	static FactoryList *list = 0;
-	if( !list )
-		deleter.setObject( list, new FactoryList );
-	return *list;
+	return *g_list;
 }
 
 MessageHandlerFactory::MessageHandlerFactory()
@@ -96,10 +93,6 @@ MessageHandlerFactory::MessageHandlerFactory()
 
 MessageHandlerFactory::~MessageHandlerFactory()
 {
-#ifdef __GNUC__
-#warning Commented out FactoryList::erase( iterator ) to remove crash at Kopete exit. -DarkShock 2007-01-30
-#warning Uncommented to fix a crash when receiving a message after closing a chatwindow -Gof 2007-05-22
-#endif
  	Private::factories().erase( d->iterator );
 	delete d;
 }

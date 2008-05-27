@@ -101,36 +101,46 @@ void OscarStatusManager::setPresenceFlagsMask( Oscar::Presence::Flags mask )
 
 Kopete::OnlineStatus OscarStatusManager::onlineStatusOf( const Oscar::Presence &presence ) const
 {
-	uint internalStatus = presence.internalStatus() & d->mask;
-	if ( (internalStatus & Oscar::Presence::XStatus) == Oscar::Presence::XStatus )
+	Oscar::Presence pres( presence.internalStatus() & d->mask );
+	
+	if ( (pres.flags() & Oscar::Presence::XStatus) == Oscar::Presence::XStatus )
 	{
-		kDebug() << k_funcinfo << "Creating Kopete::OnlineStatus for XStatus, internal status: " << internalStatus << endl;
+		kDebug() << "Creating Kopete::OnlineStatus for XStatus, internal status: " << pres.internalStatus();
 		// XStatus, we have to create new KOS
-		Oscar::PresenceOverlay overlay = pscOverlayForFlags( (Oscar::Presence::Flags)(internalStatus & Oscar::Presence::FlagsMask) );
+		Oscar::PresenceOverlay overlay = pscOverlayForFlags( pres.flags() );
+		const Oscar::PresenceType &type = pscTypeForType( pres.type() );
 
-		QString desc = presence.description();
-		if ( !overlay.description().isEmpty() )
-			desc += QString(" (%1)").arg( overlay.description() );
-
-		QString xtrazIcon = QString( "icq_xstatus%1" ).arg( presence.xtrazStatus() );
-		return Kopete::OnlineStatus( Kopete::OnlineStatus::Online, 0, d->protocol, internalStatus,
+		QString desc = kosDescription( pres );
+		QString xtrazIcon = QString( "icq_xstatus%1" ).arg( pres.xtrazStatus() );
+		return Kopete::OnlineStatus( type.onlineStatusType(), 0, d->protocol, pres.internalStatus(),
 		                             QStringList( xtrazIcon ) + overlay.icons(), desc );
+	}
+	else if ( (pres.flags() & Oscar::Presence::ExtStatus) == Oscar::Presence::ExtStatus )
+	{
+		kDebug() << "Creating Kopete::OnlineStatus for ExtStatus, internal status: " << pres.internalStatus();
+		// ExtStatus, we have to create new KOS
+		Oscar::PresenceOverlay overlay = pscOverlayForFlags( pres.flags() );
+		const Oscar::PresenceType &type = pscTypeForType( pres.type() );
+
+		QString desc = kosDescription( pres );
+		return Kopete::OnlineStatus( type.onlineStatusType(), 0, d->protocol, pres.internalStatus(),
+		                             type.overlayIcons() + overlay.icons(), desc );
 	}
 	else
 	{
-		if ( d->statusHash.contains( internalStatus ) )
+		if ( d->statusHash.contains( pres.internalStatus() ) )
 		{
-			return d->statusHash.value( internalStatus );
+			return d->statusHash.value( pres.internalStatus() );
 		}
-		else if ( d->statusHash.contains( presence.type() ) )
+		else if ( d->statusHash.contains( pres.type() ) )
 		{
-			kWarning() << k_funcinfo << "Kopete::OnlineStatus doesn't exists for internal status " << internalStatus
-					<< " Using basic status for type " << presence.type() << endl;
-			return d->statusHash.value( presence.type() );
+			kWarning() << "Kopete::OnlineStatus doesn't exists for internal status " << pres.internalStatus()
+			           << " Using basic status for type " << pres.type() << endl;
+			return d->statusHash.value( pres.type() );
 		}
 		else
 		{
-			kWarning() << k_funcinfo << "Kopete::OnlineStatus doesn't exists for internal status " << internalStatus << endl;
+			kWarning() << "Kopete::OnlineStatus doesn't exists for internal status " << pres.internalStatus();
 			return unknownStatus();
 		}
 	}
@@ -140,19 +150,7 @@ Oscar::Presence OscarStatusManager::presenceOf( const Kopete::OnlineStatus &stat
 {
 	if ( status.protocol() == d->protocol )
 	{
-		Oscar::Presence presence( status.internalStatus() );
-		if ( (presence.flags() & Oscar::Presence::XStatus) == Oscar::Presence::XStatus )
-		{
-			// XStatus, we have to filter out description
-			Oscar::PresenceOverlay overlay = pscOverlayForFlags( presence.flags() );
-
-			QString desc = status.description();
-			if ( !overlay.description().isEmpty() )
-				desc.remove( QString(" (%1)").arg( overlay.description() ) );
-
-			presence.setDescription( desc );
-		}
-		return presence;
+		return Oscar::Presence( status.internalStatus() );
 	}
 	else
 	{
@@ -177,7 +175,8 @@ Oscar::Presence OscarStatusManager::presenceOf( unsigned long oStatus, int oClas
 	Presence::Type type = pscTypeForOscarStatus( oStatus );
 
 	//Hack for aim away contacts
-	if ( type == Presence::Online && (oClass & ClassCode::AWAY) == ClassCode::AWAY )
+	if ( type == Presence::Online && (oClass & ClassCode::AWAY) == ClassCode::AWAY
+	     && (oClass & ClassCode::ICQ) == 0 )
 		type = Presence::Away;
 
 	Presence::Flags flags = Presence::None;
@@ -232,7 +231,7 @@ const Oscar::PresenceType &OscarStatusManager::pscTypeForType( Oscar::Presence::
 			return d->presenceTypeList.at(n);
 	}
 
-	kWarning(14153) << k_funcinfo << "type " << (int)type << " not found! Returning Offline" << endl;
+	kWarning(14153) << "type " << (int)type << " not found! Returning Offline";
 	return d->presenceTypeList.at(0);
 }
 
@@ -245,7 +244,7 @@ const Oscar::PresenceType &OscarStatusManager::pscTypeForStatus( unsigned long s
 			return d->presenceTypeList.at(n);
 	}
 
-	kWarning(14153) << k_funcinfo << "status " << (int)status << " not found! Returning Offline. This should not happen." << endl;
+	kWarning(14153) << "status " << (int)status << " not found! Returning Offline. This should not happen.";
 	return d->presenceTypeList.at(0);
 }
 
@@ -258,6 +257,19 @@ const Oscar::PresenceType &OscarStatusManager::pscTypeForOnlineStatusType( const
 			return d->presenceTypeList.at(n);
 	}
 
-	kWarning(14153) << k_funcinfo << "online status " << (int)statusType << " not found! Returning Offline. This should not happen." << endl;
+	kWarning(14153) << "online status " << (int)statusType << " not found! Returning Offline. This should not happen.";
 	return d->presenceTypeList.at(0);
+}
+
+QString OscarStatusManager::kosDescription( const Oscar::Presence &presence ) const
+{
+	Oscar::PresenceOverlay overlay = pscOverlayForFlags( presence.flags() );
+	const Oscar::PresenceType &type = pscTypeForType( presence.type() );
+	
+	QString desc = type.name();
+	
+	if ( !overlay.description().isEmpty() )
+		desc += QString(" (%1)").arg( overlay.description() );
+	
+	return desc;
 }

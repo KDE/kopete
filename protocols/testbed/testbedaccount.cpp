@@ -36,7 +36,7 @@ TestbedAccount::TestbedAccount( TestbedProtocol *parent, const QString& accountI
 : Kopete::Account ( parent, accountID )
 {
 	// Init the myself contact
-	setMyself( new TestbedContact( this, accountId(), TestbedContact::Null, accountId(), Kopete::ContactList::self()->myself() ) );
+	setMyself( new TestbedContact( this, accountId(), accountId(), Kopete::ContactList::self()->myself() ) );
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
 	m_server = new TestbedFakeServer();;
 }
@@ -46,26 +46,24 @@ TestbedAccount::~TestbedAccount()
 	delete m_server;
 }
 
-KActionMenu* TestbedAccount::actionMenu()
+void TestbedAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
-	mActionMenu->addSeparator();
+	actionMenu->addSeparator();
 
 	KAction *action;
 
-	action = new KAction (KIcon("testbed_showvideo"), i18n ("Show my own video..."), mActionMenu );
+	action = new KAction (KIcon("testbed_showvideo"), i18n ("Show my own video..."), actionMenu );
         //, "actionShowVideo");
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
-	mActionMenu->addAction(action);
+	actionMenu->addAction(action);
 	action->setEnabled( isConnected() );
-
-	return mActionMenu;
 }
 
 bool TestbedAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
 {
-	TestbedContact* newContact = new TestbedContact( this, contactId, TestbedContact::Echo, parentContact->displayName(), parentContact );
+	TestbedContact* newContact = new TestbedContact( this, contactId, parentContact->displayName(), parentContact );
 	return newContact != 0L;
 }
 
@@ -93,12 +91,13 @@ void TestbedAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const K
 
 void TestbedAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 {
+	Q_UNUSED(statusMessage);
 	/* Not used in testbed */
 }
 
 void TestbedAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 {
-	kDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) ;
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOnline );
 	QObject::connect ( m_server, SIGNAL ( messageReceived( const QString & ) ),
 			this, SLOT ( receivedMessage( const QString & ) ) );
@@ -106,7 +105,7 @@ void TestbedAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 
 void TestbedAccount::disconnect()
 {
-	kDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) ;
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
 	QObject::disconnect ( m_server, 0, 0, 0 );
 }
@@ -118,7 +117,7 @@ TestbedFakeServer * TestbedAccount::server()
 
 void TestbedAccount::slotGoOnline ()
 {
-	kDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) ;
 
 	if (!isConnected ())
 		connect ();
@@ -129,7 +128,7 @@ void TestbedAccount::slotGoOnline ()
 
 void TestbedAccount::slotGoAway ()
 {
-	kDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) ;
 
 	if (!isConnected ())
 		connect();
@@ -141,7 +140,7 @@ void TestbedAccount::slotGoAway ()
 
 void TestbedAccount::slotGoOffline ()
 {
-	kDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) ;
 
 	if (isConnected ())
 		disconnect ();
@@ -150,10 +149,13 @@ void TestbedAccount::slotGoOffline ()
 
 void TestbedAccount::slotShowVideo ()
 {
-	kDebug ( 14210 ) << k_funcinfo << endl;
+	kDebug ( 14210 ) ;
 
 	if (isConnected ())
+	{
 		TestbedWebcamDialog *testbedWebcamDialog = new TestbedWebcamDialog(0, 0);
+		Q_UNUSED(testbedWebcamDialog);
+	}
 	updateContactStatus();
 }
 
@@ -167,12 +169,12 @@ void TestbedAccount::receivedMessage( const QString &message )
 	Kopete::Contact* contact = contacts()[from];
 	messageSender = dynamic_cast<TestbedContact *>( contact );
 
-	kDebug( 14210 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
+	kDebug( 14210 ) << " got a message from " << from << ", " << messageSender << ", is: " << message;
 	// Pass it on to the contact to process and display via a KMM
 	if ( messageSender )
 		messageSender->receivedMessage( message );
 	else
-		kWarning(14210) << k_funcinfo << "unable to look up contact for delivery" << endl;
+		kWarning(14210) << "unable to look up contact for delivery";
 }
 
 void TestbedAccount::updateContactStatus()

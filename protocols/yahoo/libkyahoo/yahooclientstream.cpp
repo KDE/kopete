@@ -105,7 +105,7 @@ public:
 ClientStream::ClientStream(Connector *conn, QObject *parent)
 :Stream(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	
 	d = new Private;
 	d->mode = Client;
@@ -127,7 +127,7 @@ ClientStream::~ClientStream()
 
 void ClientStream::reset(bool all)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	d->reset();
 	d->noopTimer.stop();
 
@@ -150,7 +150,7 @@ void ClientStream::reset(bool all)
 
 void ClientStream::connectToServer(const QString& server, bool auth)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	reset(true);
 	d->state = Connecting;
 	d->doAuth = auth;
@@ -161,7 +161,7 @@ void ClientStream::connectToServer(const QString& server, bool auth)
 
 void ClientStream::continueAfterWarning()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 /* unneeded?
 	if(d->state == WaitVersion) {
 		d->state = Connecting;
@@ -234,7 +234,7 @@ void ClientStream::close()
 
 bool ClientStream::transfersAvailable() const
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	return ( !d->in.isEmpty() );
 }
 
@@ -248,7 +248,7 @@ Transfer* ClientStream::read()
 
 void ClientStream::write( Transfer *request )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	// pass to CoreProtocol for transformation into wire format
 	d->client.outgoingTransfer( request );
 }
@@ -298,30 +298,30 @@ void cs_dump( const QByteArray &bytes )
 void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 {
 	// take formatted bytes from CoreProtocol and put them on the wire
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "[data size: " << outgoingBytes.size() << "]" << endl;
+	kDebug(YAHOO_RAW_DEBUG) << "[data size: " << outgoingBytes.size() << "]";
 	//cs_dump( outgoingBytes );
 	d->bs->write( outgoingBytes );
 }
 
 void ClientStream::cp_incomingData()
 {
-// 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+// 	kDebug(YAHOO_RAW_DEBUG) ;
 	Transfer * incoming = d->client.incomingTransfer();
 	if ( incoming )
 	{
-// 		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - got a new transfer" << endl;
+// 		kDebug(YAHOO_RAW_DEBUG) << " - got a new transfer";
 		d->in.enqueue( incoming );
 		d->newTransfers = true;
 		emit doReadyRead();
 	}
 	else
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " - client signalled incomingData but none was available, state is: "<< d->client.state() << endl;
+		kDebug(YAHOO_RAW_DEBUG) << " - client signalled incomingData but none was available, state is: "<< d->client.state();
 }
 
 /* Connector connected */
 void ClientStream::cr_connected()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	
 	d->bs = d->conn->stream();
 	connect(d->bs, SIGNAL(connectionClosed()), SLOT(bs_connectionClosed()));
@@ -340,7 +340,7 @@ void ClientStream::cr_connected()
 
 void ClientStream::cr_error()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	reset();
 	emit error(ErrConnection);
 }
@@ -358,20 +358,20 @@ void ClientStream::bs_delayedCloseFinished()
 
 void ClientStream::bs_error(int)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	// TODO
 }
 
 void ClientStream::bs_readyRead()
 {
-// 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+// 	kDebug(YAHOO_RAW_DEBUG) ;
 	QByteArray a;
 	//qDebug( "size of storage for incoming data is %i bytes.", a.size() );
 	a = d->bs->read();
 
 	//QCString cs(a.data(), a.size()+1);
 	//qDebug("ClientStream: recv: %d [%s]\n", a.size(), cs.data());
-	//kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " recv: " << a.size()  <<" bytes" <<endl;
+	//kDebug(YAHOO_RAW_DEBUG) << " recv: " << a.size()  <<" bytes";
 	//cs_dump( a );
 
 	d->client.addIncomingData(a);
@@ -379,7 +379,7 @@ void ClientStream::bs_readyRead()
 
 void ClientStream::bs_bytesWritten(int bytes)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << " written: " << bytes  <<" bytes" <<endl;
+	kDebug(YAHOO_RAW_DEBUG) << " written: " << bytes  <<" bytes";
 }
 
 void ClientStream::srvProcessNext()
@@ -388,7 +388,7 @@ void ClientStream::srvProcessNext()
 
 void ClientStream::doReadyRead()
 {
-// 	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+// 	kDebug(YAHOO_RAW_DEBUG) ;
 	emit readyRead();
 }
 

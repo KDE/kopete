@@ -38,6 +38,21 @@ Task::~Task()
 	delete d;
 }
 
+void Task::addSubTask(KJob *task)
+{
+	addSubjob(task);
+}
+
+void Task::start()
+{
+	kDebug(14010) << "Executing children tasks for this task.";
+	KJob *subTask = 0;
+	foreach( subTask, subjobs() )
+	{
+		subTask->start();
+	}
+}
+
 }
 
 #include "kopetetask.moc"

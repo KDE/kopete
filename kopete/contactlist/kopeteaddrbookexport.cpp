@@ -4,7 +4,7 @@
     Logic for exporting data acquired from messaging systems to the 
     KDE address book
 
-    Copyright (c) 2004 by Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2004 by Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
@@ -67,7 +67,7 @@ void KopeteAddressBookExport::fetchKABCData()
 {
 	if ( !mAddressee.isEmpty() )
 	{
-		mAddrBookIcon = SmallIcon( "kaddressbook" );
+		mAddrBookIcon = SmallIcon( "office-address-book" );
 		
 		// given name
 		QString given = mAddressee.givenName();
@@ -148,18 +148,18 @@ void KopeteAddressBookExport::fetchIMData()
 	}
 }
 
-void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const QPixmap &icon, QComboBox *combo, const Kopete::ContactPropertyTmpl &property )
+void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const QPixmap &icon, QComboBox *combo, const Kopete::PropertyTmpl &property )
 {
-	Kopete::ContactProperty prop = contact->property( property );
+	Kopete::Property prop = contact->property( property );
 	if ( !prop.isNull() )
 	{
 		combo->addItem( QIcon(icon), prop.value().toString() );
 	}	
 }
 
-void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const QPixmap &icon, K3ListBox *listBox, const Kopete::ContactPropertyTmpl &property )
+void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const QPixmap &icon, K3ListBox *listBox, const Kopete::PropertyTmpl &property )
 {
-	Kopete::ContactProperty prop = contact->property( property );
+	Kopete::Property prop = contact->property( property );
 	if ( !prop.isNull() )
 	{
 		listBox->insertItem( icon, prop.value().toString() );
@@ -183,7 +183,7 @@ int KopeteAddressBookExport::showDialog()
 		setupUi( w );
 		mDialog->setMainWidget( w );
 		mDialog->setButtonGuiItem( KDialog::Ok, KGuiItem( i18n( "Export" ), 
-							  QString::null, i18n( "Set address book fields using the selected data from Kopete" ) ) ); 
+							  QString(), i18n( "Set address book fields using the selected data from Kopete" ) ) );
 
 		initLabels();
 		// fetch existing data from kabc
@@ -258,16 +258,16 @@ void KopeteAddressBookExport::exportData()
 	
 		KABC::Ticket *ticket = mAddressBook->requestSaveTicket();
 		if ( !ticket )
-			kWarning( 14000 ) << k_funcinfo << "WARNING: Resource is locked by other application!" << endl;
+			kWarning( 14000 ) << "WARNING: Resource is locked by other application!";
 		else
 		{
 			if ( !mAddressBook->save( ticket ) )
 			{
-				kWarning( 14000 ) << k_funcinfo << "ERROR: Saving failed!" << endl;
+				kWarning( 14000 ) << "ERROR: Saving failed!";
 				mAddressBook->releaseSaveTicket( ticket );
 			}
 		}
-		kDebug( 14000 ) << k_funcinfo << "Finished writing KABC" << endl;
+		kDebug( 14000 ) << "Finished writing KABC";
 	}
 }
 

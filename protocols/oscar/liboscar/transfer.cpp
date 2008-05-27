@@ -159,8 +159,8 @@ FlapTransfer::~FlapTransfer()
 
 QByteArray FlapTransfer::toWire()
 {
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buffer length is " << m_buffer.length() << endl;
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Buffer is " << m_buffer.toString() << endl;
+	//kDebug(OSCAR_RAW_DEBUG) << "Buffer length is " << m_buffer.length();
+	//kDebug(OSCAR_RAW_DEBUG) << "Buffer is " << m_buffer.toString();
 
 	m_wireFormat.truncate( 0 );
 	QByteArray useBuf( m_buffer->buffer() );

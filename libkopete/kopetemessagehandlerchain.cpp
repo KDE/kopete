@@ -33,12 +33,12 @@ class MessageHandlerChainTerminator : public MessageHandler
 public:
 	void handleMessage( MessageEvent *event )
 	{
-		kError( 14010 ) << k_funcinfo << "message got to end of chain!" << endl;
+		kError( 14010 ) << "message got to end of chain!" << endl;
 		event->discard();
 	}
 	int capabilities()
 	{
-		kError( 14010 ) << k_funcinfo << "request got to end of chain!" << endl;
+		kError( 14010 ) << "request got to end of chain!" << endl;
 		return 0;
 	}
 };
@@ -79,7 +79,7 @@ MessageHandlerChain::Ptr MessageHandlerChain::create( ChatSession *manager, Mess
 		}
 	}
 	
-	kDebug(14010) << k_funcinfo << "got " << count << " handlers for chain" << endl;
+	kDebug(14010) << "got " << count << " handlers for chain";
 	
 	// add the handlers to the chain
 	MessageHandler *curr = 0;
@@ -113,7 +113,7 @@ MessageHandlerChain::MessageHandlerChain()
 
 MessageHandlerChain::~MessageHandlerChain()
 {
-	kDebug(14010) << k_funcinfo << endl;
+	kDebug(14010) ;
 	MessageHandler *handler = d->first;
 	while( handler )
 	{
@@ -174,7 +174,7 @@ void ProcessMessageTask::slotDone()
 
 void ProcessMessageTask::kill(bool quite)
 {
-	
+	Q_UNUSED(quite);
 }
 
 

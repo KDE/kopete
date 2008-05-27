@@ -96,43 +96,43 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 		switch ( requestSubType() )
 		{
 		case 0x00C8:  //basic user info
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received basic info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << "Received basic info";
 			genInfo.setSequenceNumber( seq );
 			genInfo.fill( buffer );
 			m_genInfoMap[seq] = genInfo;
 			break;
 		case 0x00D2:  //work user info
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received work info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << "Received work info";
 			workInfo.setSequenceNumber( seq );
 			workInfo.fill( buffer );
 			m_workInfoMap[seq] = workInfo;
 			break;
 		case 0x00DC:  //more user info
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received more info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << "Received more info";
 			moreInfo.setSequenceNumber( seq );
 			moreInfo.fill( buffer );
 			m_moreInfoMap[seq] = moreInfo;
 			break;
 		case 0x00E6:  //notes user info
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received notes info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << "Received notes info";
 			notesInfo.setSequenceNumber( seq );
 			notesInfo.fill( buffer );
 			m_notesInfoMap[seq] = notesInfo;
 			break;
 		case 0x00EB:  //email user info
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received email info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << "Received email info";
 			emailInfo.setSequenceNumber( seq );
 			emailInfo.fill( buffer );
 			m_emailInfoMap[seq] = emailInfo;
 			break;
 		case 0x00F0:  //interests user info
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received interest info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << "Received interest info";
 			interestInfo.setSequenceNumber( seq );
 			interestInfo.fill( buffer );
 			m_interestInfoMap[seq] = interestInfo;
 			break;
 		case 0x00FA:  //affliations user info
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received organization & affliation info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << "Received organization & affliation info";
 			orgAffInfo.setSequenceNumber( seq );
 			orgAffInfo.fill( buffer );
 			m_orgAffInfoMap[seq] = orgAffInfo;
@@ -140,13 +140,13 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 			emit receivedInfoFor( contactId, Long );
 			break;
 		case 0x0104:
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Received short user info" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << "Received short user info";
 			shortInfo.setSequenceNumber( seq );
 			shortInfo.fill( buffer );
 			m_shortInfoMap[seq] = shortInfo;
 			break;
 		case 0x010E:  //homepage category user info
-			kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got homepage category info, but we don't support it yet" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << "Got homepage category info, but we don't support it yet";
 			break;
 		default:
 			break;
@@ -173,12 +173,12 @@ void ICQUserInfoRequestTask::onGo()
 	if ( m_type != Short )
 	{
 		setRequestSubType( 0x04D0 );
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting full user info for " << m_userToRequestFor << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "Requesting full user info for " << m_userToRequestFor;
 	}
 	else
 	{
 		setRequestSubType( 0x04BA );
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Requesting short user info for " << m_userToRequestFor << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "Requesting short user info for " << m_userToRequestFor;
 	}
 	
 	setSequence( client()->snacSequence() );

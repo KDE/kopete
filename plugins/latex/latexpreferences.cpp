@@ -1,5 +1,5 @@
 /*
-    Kopete Latex Plugin
+    Kopete LaTeX Plugin
 
     Copyright (c) 2004 by Duncan Mac-Vicar Prett   <duncan@kde.org>
 
@@ -28,10 +28,11 @@
 #include "ui_latexprefsbase.h"
 #include "latexpreferences.h"
 
-typedef KGenericFactory<LatexPreferences> LatexPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_latex, LatexPreferencesFactory( "kcm_kopete_latex" )  )
+K_PLUGIN_FACTORY(LatexPreferencesFactory, registerPlugin<LatexPreferences>();)
+K_EXPORT_PLUGIN(LatexPreferencesFactory( "kcm_kopete_latex" ))
 
-LatexPreferences::LatexPreferences(QWidget *parent, const QStringList &args)
+
+LatexPreferences::LatexPreferences(QWidget *parent, const QVariantList &args)
 							: KCModule(LatexPreferencesFactory::componentData(), parent, args)
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
@@ -43,11 +44,13 @@ LatexPreferences::LatexPreferences(QWidget *parent, const QStringList &args)
 	// connect widget signals here
 	m_preferencesDialog->horizontalDPI->setMinimum(1);
 	m_preferencesDialog->verticalDPI->setMinimum(1);
+	m_preferencesDialog->horizontalDPI->setMaximum(1000);
+	m_preferencesDialog->verticalDPI->setMaximum(1000);
+	m_preferencesDialog->includeUrlRequester->setMode ( KFile::File | KFile::ExistingOnly | KFile::LocalOnly );
 	
 	connect(m_preferencesDialog->horizontalDPI, SIGNAL(valueChanged(int)), this, SLOT(slotModified()));
 	connect(m_preferencesDialog->verticalDPI, SIGNAL(valueChanged(int)), this, SLOT(slotModified()));
-	
-	load();
+	connect(m_preferencesDialog->includeUrlRequester, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
 }
 
 LatexPreferences::~LatexPreferences()
@@ -59,8 +62,9 @@ void LatexPreferences::load()
 {
 	LatexConfig::self()->readConfig();
 	// load widgets here
-	m_preferencesDialog->horizontalDPI->setValue(LatexConfig::self()->horizontalDPI());
-	m_preferencesDialog->verticalDPI->setValue(LatexConfig::self()->verticalDPI());
+	m_preferencesDialog->horizontalDPI->setValue(LatexConfig::horizontalDPI());
+	m_preferencesDialog->verticalDPI->setValue(LatexConfig::verticalDPI());
+	m_preferencesDialog->includeUrlRequester->setUrl( KUrl (LatexConfig::latexIncludeFile()) );
 	emit KCModule::changed(false);
 }
 
@@ -71,10 +75,20 @@ void LatexPreferences::slotModified()
 
 void LatexPreferences::save()
 {
-	LatexConfig::self()->setHorizontalDPI(m_preferencesDialog->horizontalDPI->value());
-	LatexConfig::self()->setVerticalDPI(m_preferencesDialog->verticalDPI->value());
+	LatexConfig::setHorizontalDPI(m_preferencesDialog->horizontalDPI->value());
+	LatexConfig::setVerticalDPI(m_preferencesDialog->verticalDPI->value());
+	LatexConfig::setLatexIncludeFile(m_preferencesDialog->includeUrlRequester->url().path());
 	LatexConfig::self()->writeConfig();
 	emit KCModule::changed(false);
+}
+
+void LatexPreferences::defaults()
+{
+	LatexConfig::self()->setDefaults();
+	m_preferencesDialog->horizontalDPI->setValue(LatexConfig::horizontalDPI());
+	m_preferencesDialog->verticalDPI->setValue(LatexConfig::verticalDPI());
+	m_preferencesDialog->includeUrlRequester->setUrl( KUrl (LatexConfig::latexIncludeFile()) );
+	emit KCModule::changed(true);
 }
 
 #include "latexpreferences.moc"

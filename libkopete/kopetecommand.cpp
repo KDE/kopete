@@ -139,7 +139,7 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 				mArgs.pop_front();
 			}
 
-			kDebug(14010) << "New Command after processing alias: " << formatString << endl;
+			kDebug(14010) << "New Command after processing alias: " << formatString;
 
 			Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/") + formatString, manager );
 		}

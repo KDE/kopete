@@ -1,6 +1,7 @@
 /*
     kopetechatwindow.cpp - Chat Window
 
+    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2002-2006 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003-2004 by Richard Smith         <kde@metafoo.co.uk>
     Copyright (C) 2002      by James Grant
@@ -19,21 +20,25 @@
     *************************************************************************
 */
 
-#include <qtimer.h>
-#include <qlayout.h>
+#include <QTimer>
+#include <QLayout>
 
-#include <qfileinfo.h>
+#include <QFileInfo>
 #include <QDockWidget>
 
 //Added by qt3to4:
 #include <QPixmap>
 #include <QTextStream>
 #include <QCloseEvent>
-#include <Q3PtrList>
 #include <QFrame>
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QMenu>
+#include <QDockWidget>
+
+#ifdef CHRONO
+#include <QTime>
+#endif
 
 #include <kactioncollection.h>
 #include <kcursor.h>
@@ -56,13 +61,14 @@
 #include <ksqueezedtextlabel.h>
 #include <kstandardshortcut.h>
 #include <kglobalsettings.h>
+#include <kcolorscheme.h>
 #include <khbox.h>
 #include <kvbox.h>
 #include <ktoolbar.h>
 #include <kstandardaction.h>
 #include <ktoggleaction.h>
 #include <kactionmenu.h>
-// #include <k3widgetaction.h>
+#include <ktoolbarspaceraction.h>
 
 #include "chatmessagepart.h"
 #include "chattexteditpart.h"
@@ -78,7 +84,8 @@
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
 #include "kopeteviewmanager.h"
-#include "sidebarwidget.h"
+#include "chatmemberslistview.h"
+#include "chatsessionmemberslistmodel.h"
 
 #include <qtoolbutton.h>
 #include <kxmlguifactory.h>
@@ -86,7 +93,9 @@
 typedef QMap<Kopete::Account*,KopeteChatWindow*> AccountMap;
 typedef QMap<Kopete::Group*,KopeteChatWindow*> GroupMap;
 typedef QMap<Kopete::MetaContact*,KopeteChatWindow*> MetaContactMap;
-typedef Q3PtrList<KopeteChatWindow> WindowList;
+typedef QList<KopeteChatWindow*> WindowList;
+
+using Kopete::ChatSessionMembersListModel;
 
 namespace
 {
@@ -149,12 +158,13 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 				//midstream
 
 				int viewCount = -1;
-				for ( KopeteChatWindow *thisWindow = windows.first(); thisWindow; thisWindow = windows.next() )
+				WindowList::iterator it;
+				for ( it = windows.begin(); it != windows.end(); ++it )
 				{
-					if( thisWindow->chatViewCount() > viewCount )
+					if( (*it)->chatViewCount() > viewCount )
 					{
-						myWindow = thisWindow;
-						viewCount = thisWindow->chatViewCount();
+						myWindow = (*it);
+						viewCount = (*it)->chatViewCount();
 					}
 				}
 			}
@@ -169,7 +179,7 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 
 	if ( windowCreated )
 	{
-		myWindow = new KopeteChatWindow();
+		myWindow = new KopeteChatWindow( manager->form() );
 
 		if ( !accountMap.contains( manager->account() ) )
 			accountMap.insert( manager->account(), myWindow );
@@ -181,45 +191,64 @@ KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 			groupMap.insert( group, myWindow );
 	}
 
-//	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
+//	kDebug( 14010 ) << "Open Windows: " << windows.count();
 
 	return myWindow;
 }
 
-KopeteChatWindow::KopeteChatWindow( QWidget *parent )
-	: KXmlGuiWindow( parent )
+KopeteChatWindow::KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *parent  )
+	: KXmlGuiWindow( parent ), initialForm( form )
 {
+#ifdef CHRONO
+	QTime chrono;chrono.start();
+#endif
 	m_activeView = 0L;
 	m_popupView = 0L;
 	backgroundFile = 0L;
 	updateBg = true;
 	m_tabBar = 0L;
 
+	m_participantsWidget = new QDockWidget(this);
+	m_participantsWidget->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
+	m_participantsWidget->setFeatures(QDockWidget::DockWidgetClosable);
+	m_participantsWidget->setTitleBarWidget(0L);
+	m_participantsWidget->setObjectName("Participants"); //object name is required for automatic position and settings save.
+
+	ChatSessionMembersListModel *members_model = new ChatSessionMembersListModel(this);
+
+	connect(this, SIGNAL(chatSessionChanged(Kopete::ChatSession *)), members_model, SLOT(setChatSession(Kopete::ChatSession *)));
+
+	ChatMembersListView *chatmembers = new ChatMembersListView(m_participantsWidget);
+	chatmembers->setModel(members_model);
+	chatmembers->setWordWrap(true);
+	m_participantsWidget->setWidget(chatmembers);
 	initActions();
 
-	m_sideBar = new SidebarWidget(this);
-	m_sideBar->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
-	m_sideBar->setObjectName("SideBar"); //object name is required for automatic position and settings save.
-
-	addDockWidget(Qt::RightDockWidgetArea, m_sideBar);
+	addDockWidget(Qt::RightDockWidgetArea, m_participantsWidget);
 
 	KVBox *vBox = new KVBox( this );
 	vBox->setLineWidth( 0 );
 	vBox->setSpacing( 0 );
 	vBox->setFrameStyle( QFrame::NoFrame );
 	// set default window size.  This could be removed by fixing the size hints of the contents
-	resize( 500, 500 );
+	if ( initialForm == Kopete::ChatSession::Chatroom ) {
+		resize( 650, 400 );
+	} else {
+		m_participantsWidget->hide();
+		resize( 400, 400 );
+	}
 	setCentralWidget( vBox );
 
 	mainArea = new QFrame( vBox );
 	mainArea->setLineWidth( 0 );
 	mainArea->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	mainLayout = new QVBoxLayout( mainArea );
+	mainLayout->setContentsMargins(0, 4, 0, 0);
 
 	if ( Kopete::BehaviorSettings::self()->chatWindowShowSendButton() )
 	{
 		//Send Button
-		m_button_send = new KPushButton( i18n("Send"), statusBar() );
+		m_button_send = new KPushButton( i18nc("@action:button", "Send"), statusBar() );
 		m_button_send->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum ) );
 		m_button_send->setEnabled( false );
 		m_button_send->setFont( statusBar()->font() );
@@ -230,7 +259,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 	else
 		m_button_send = 0L;
 
-	m_status_text = new KSqueezedTextLabel( i18n("Ready."), statusBar() );
+	m_status_text = new KSqueezedTextLabel( i18nc("@info:status","Ready."), statusBar() );
 	m_status_text->setAlignment( Qt::AlignLeft | Qt::AlignVCenter );
 	m_status_text->setFont( statusBar()->font() );
 	m_status_text->setFixedHeight( statusBar()->sizeHint().height() );
@@ -241,17 +270,20 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent )
 
 	m_alwaysShowTabs = KGlobal::config()->group( "ChatWindowSettings" ).
                            readEntry( QLatin1String("AlwaysShowTabs"), false );
-//	kDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
+//	kDebug( 14010 ) << "Open Windows: " << windows.count();
 
 	setupGUI( static_cast<StandardWindowOptions>(ToolBar | Keys | StatusBar | Save | Create) , "kopetechatwindow.rc" );
 
 	//has to be done after the setupGUI, in order to have the toolbar set up to restore window settings.
 	readOptions();
+#ifdef CHRONO
+	kDebug()<<"TIME: "<<chrono.elapsed();
+#endif
 }
 
 KopeteChatWindow::~KopeteChatWindow()
 {
-	kDebug( 14010 ) << k_funcinfo << endl;
+	kDebug( 14010 ) ;
 
 	emit( closing( this ) );
 
@@ -279,25 +311,21 @@ KopeteChatWindow::~KopeteChatWindow()
 			mcMap.remove( mayDeleteIt.key() );
 	}
 
-	windows.remove( this );
+	windows.removeAt( windows.indexOf( this ) );
 	windowListChanged();
 
-//	kDebug( 14010 ) << "Open Windows: " << windows.count() << endl;
+//	kDebug( 14010 ) << "Open Windows: " << windows.count();
 
 	saveOptions();
 
-	if( backgroundFile )
-	{
-		delete backgroundFile;
-	}
-
+	delete backgroundFile;
 	delete anim;
 }
 
 void KopeteChatWindow::windowListChanged()
 {
 	// update all windows' Move Tab to Window action
-	for ( Q3PtrListIterator<KopeteChatWindow> it( windows ); *it; ++it )
+	for ( WindowList::iterator it = windows.begin(); it != windows.end(); ++it )
 		(*it)->checkDetachEnable();
 }
 
@@ -368,22 +396,22 @@ void KopeteChatWindow::initActions(void)
 	connect( nickComplete, SIGNAL(triggered(bool)), this, SLOT(slotNickComplete()));
 	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
-	tabDetach = new KAction( KIcon("tab-breakoff"), i18n( "&Detach Chat" ), coll );
+	tabDetach = new KAction( KIcon("tab-detach"), i18n( "&Detach Chat" ), coll );
         coll->addAction( "tabs_detach", tabDetach );
 	tabDetach->setEnabled( false );
 	connect( tabDetach, SIGNAL(triggered(bool)), this, SLOT( slotDetachChat() ));
 
-	actionDetachMenu = new KActionMenu( KIcon("tab-breakoff"), i18n( "&Move Tab to Window" ), coll );
+	actionDetachMenu = new KActionMenu( KIcon("tab-detach"), i18n( "&Move Tab to Window" ), coll );
         coll->addAction( "tabs_detachmove", actionDetachMenu );
 	actionDetachMenu->setDelayed( false );
 
 	connect ( actionDetachMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareDetachMenu()) );
-	connect ( actionDetachMenu->menu(), SIGNAL(activated(int)), this, SLOT(slotDetachChat(int)) );
+	connect ( actionDetachMenu->menu(), SIGNAL(triggered(QAction*)), this, SLOT(slotDetachChat(QAction*)) );
 
 	actionTabPlacementMenu = new KActionMenu( i18n( "&Tab Placement" ), coll );
         coll->addAction( "tabs_placement", actionTabPlacementMenu );
 	connect ( actionTabPlacementMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()) );
-	connect ( actionTabPlacementMenu->menu(), SIGNAL(activated(int)), this, SLOT(slotPlaceTabs(int)) );
+	connect ( actionTabPlacementMenu->menu(), SIGNAL(triggered(QAction*)), this, SLOT(slotPlaceTabs(QAction*)) );
 
 	tabDetach->setShortcut( QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_B) );
 
@@ -392,15 +420,15 @@ void KopeteChatWindow::initActions(void)
 	KStandardAction::paste( this, SLOT(slotPaste()), coll);
 
 	KAction* action;
-	action = new KAction( KIcon("character-set"), i18n( "Set Default &Font..." ), coll );
+	action = new KAction( KIcon("preferences-desktop-font"), i18n( "Set Default &Font..." ), coll );
         coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFont()) );
 
-	action = new KAction( KIcon("pencil"), i18n( "Set Default Text &Color..." ), coll );
+	action = new KAction( KIcon("format-stroke-color"), i18n( "Set Default Text &Color..." ), coll );
         coll->addAction( "format_fgcolor", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFgColor()) );
 
-	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll );
+	action = new KAction( KIcon("format-fill-color"), i18n( "Set &Background Color..." ), coll );
         coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), this, SLOT(slotSetBgColor()) );
 
@@ -419,25 +447,18 @@ void KopeteChatWindow::initActions(void)
 	action = KStandardAction::next( this, SLOT( slotPageDown() ), coll );
         coll->addAction( "scroll_down", action );
 
-	KStandardAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
-
-	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), coll );
-        coll->addAction( "options_membersleft", membersLeft );
-	connect( membersLeft, SIGNAL(triggered(bool)), this, SLOT(slotViewMembersLeft()) );
-
-	membersRight = new KToggleAction( i18n( "Place to Right of Chat Area" ), coll );
-        coll->addAction( "options_membersright", membersRight );
-	connect( membersRight, SIGNAL(toggled(bool)), this, SLOT(slotViewMembersRight()) );
-
-	toggleMembers = new KToggleAction( i18n( "Show" ), coll );
-        coll->addAction( "options_togglemembers", toggleMembers );
-	toggleMembers->setCheckedState( KGuiItem( i18n("Hide") ) );
-	connect( toggleMembers, SIGNAL(toggled(bool)), this, SLOT(slotToggleViewMembers()) );
+	KStandardAction::showMenubar( menuBar(), SLOT(setVisible(bool)), coll );
 
 	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), coll );
         coll->addAction( "enable_auto_spell_check", toggleAutoSpellCheck );
 	toggleAutoSpellCheck->setChecked( true );
 	connect( toggleAutoSpellCheck, SIGNAL(triggered(bool)), this, SLOT(toggleAutoSpellChecking()) );
+
+	QAction *toggleParticipantsAction = m_participantsWidget->toggleViewAction( );
+	toggleParticipantsAction->setText( i18n( "Show Participants" ) );
+	toggleParticipantsAction->setIconText(i18n( "Participants" ));
+	toggleParticipantsAction->setIcon(KIcon( "system-users" ) );
+	coll->addAction ( "show_participants_widget", toggleParticipantsAction );
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll );
         coll->addAction( "format_smiley", actionSmileyMenu );
@@ -451,10 +472,13 @@ void KopeteChatWindow::initActions(void)
 
 	KopeteStdAction::preferences( coll , "settings_prefs" );
 
+	KToolBarSpacerAction * spacer = new KToolBarSpacerAction( coll );
+	coll->addAction( "spacer", spacer );
+
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QLatin1String( "kopete" ) ) );
 #if 0
-	animIcon = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), K3Icon::Toolbar);
+	animIcon = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Toolbar);
 
 	// Pause the animation because otherwise it's running even when we're not
 	// showing it. This eats resources, and also triggers a pixmap leak in
@@ -463,7 +487,7 @@ void KopeteChatWindow::initActions(void)
 		animIcon.pause();
 #endif
 	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
-	anim = new QLabel( QString::null, 0L );
+	anim = new QLabel( QString::null, 0L );	//krazy:exclude=nullstrassign for old broken gcc
 	anim->setObjectName( QLatin1String("kde toolbar widget") );
 	anim->setMargin(5);
 	anim->setPixmap( normalIcon );
@@ -476,6 +500,7 @@ void KopeteChatWindow::initActions(void)
 	//toolBar()->alignItemRight( 99 );
 }
 
+/*
 const QString KopeteChatWindow::fileContents( const QString &path ) const
 {
  	QString contents;
@@ -489,11 +514,15 @@ const QString KopeteChatWindow::fileContents( const QString &path ) const
 
 	return contents;
 }
-
+*/
 void KopeteChatWindow::slotStopAnimation( ChatView* view )
 {
 	if( view == m_activeView )
+	{
 		anim->setPixmap( normalIcon );
+		if( animIcon.state() == QMovie::Running )
+			animIcon.setPaused( true );
+	}
 }
 
 void KopeteChatWindow::slotUpdateSendEnabled()
@@ -532,13 +561,13 @@ void KopeteChatWindow::updateSpellCheckAction()
 		toggleAutoSpellCheck->setEnabled( true );
 		if ( Kopete::BehaviorSettings::self()->spellCheck() )
 		{
-			kDebug(14000) << k_funcinfo << "spell check enabled" << endl;
+			kDebug(14000) << "spell check enabled";
 			toggleAutoSpellCheck->setChecked( true );
 			m_activeView->editPart()->toggleAutoSpellCheck(true);
 		}
 		else
 		{
-			kDebug(14000) << k_funcinfo << "spell check disabled" << endl;
+			kDebug(14000) << "spell check disabled";
 			toggleAutoSpellCheck->setChecked( false );
 			m_activeView->editPart()->toggleAutoSpellCheck(false);
 		}
@@ -620,18 +649,19 @@ void KopeteChatWindow::createTabBar()
 
 		QToolButton* m_rightWidget = new QToolButton( m_tabBar );
 		connect( m_rightWidget, SIGNAL( clicked() ), this, SLOT( slotChatClosed() ) );
-		m_rightWidget->setIcon( SmallIcon( "tab-remove" ) );
+		m_rightWidget->setIcon( SmallIcon( "tab-close" ) );
 		m_rightWidget->adjustSize();
-		m_rightWidget->setToolTip( i18n("Close the current tab") );
+		m_rightWidget->setToolTip( i18nc("@info:tooltip","Close the current tab") );
 		m_tabBar->setCornerWidget( m_rightWidget, Qt::TopRightCorner );
 
 		mainLayout->addWidget( m_tabBar );
 		m_tabBar->show();
+
+		for( ChatViewList::iterator it = chatViewList.begin(); it != chatViewList.end(); ++it )
+			addTab( *it );
+
 		connect ( m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)) );
 		connect ( m_tabBar, SIGNAL(contextMenu(QWidget *, const QPoint & )), this, SLOT(slotTabContextMenu( QWidget *, const QPoint & )) );
-
-		for( ChatView *view = chatViewList.first(); view; view = chatViewList.next() )
-			addTab( view );
 
 		if( m_activeView )
 			m_tabBar->setCurrentWidget( m_activeView );
@@ -639,13 +669,17 @@ void KopeteChatWindow::createTabBar()
 			setActiveView( chatViewList.first() );
 
 		int tabPosition = cg.readEntry( QLatin1String("Tab Placement") , 0 );
-		slotPlaceTabs( tabPosition );
+
+		QAction action(this);
+		action.setData(tabPosition);
+		slotPlaceTabs( &action );
 	}
 }
 
 void KopeteChatWindow::slotCloseChat( QWidget *chatView )
 {
 	static_cast<ChatView*>( chatView )->closeView();
+	//FIXME: check if we need to remove from the chatViewList
 }
 
 void KopeteChatWindow::addTab( ChatView *view )
@@ -657,18 +691,16 @@ void KopeteChatWindow::addTab( ChatView *view )
 		if(!c || c->onlineStatus() < contact->onlineStatus())
 			c=contact;
 	}
-	QPixmap pluginIcon = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c) : SmallIcon( view->msgManager()->protocol()->pluginIcon() );
+	QIcon pluginIcon = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c) :
+			KIcon( view->msgManager()->protocol()->pluginIcon() );
 
 	view->setParent( m_tabBar );
-    view->setWindowFlags( 0 );
-    view->move( QPoint() );
-    view->show();
+	view->setWindowFlags( 0 );
+	view->move( QPoint() );
+	//view->show();
 
 	m_tabBar->addTab( view, pluginIcon, view->caption() );
-	if( view == m_activeView )
-		view->show();
-	else
-		view->hide();
+        view->setVisible(view == m_activeView);
 	connect( view, SIGNAL( captionChanged( bool ) ), this, SLOT( updateChatLabel() ) );
 	connect( view, SIGNAL( updateStatusIcon( ChatView* ) ), this, SLOT( slotUpdateCaptionIcons( ChatView* ) ) );
 	view->setCaption( view->caption(), false );
@@ -680,8 +712,8 @@ void KopeteChatWindow::setPrimaryChatView( ChatView *view )
 	//reparent clears a lot of stuff out
 	QFont savedFont = view->font();
 	view->setParent( mainArea );
-    view->setWindowFlags( 0 );
-    view->move( QPoint() );
+	view->setWindowFlags( 0 );
+	view->move( QPoint() );
 	view->setFont( savedFont );
 	view->show();
 
@@ -750,8 +782,7 @@ void KopeteChatWindow::checkDetachEnable()
 
 void KopeteChatWindow::detachChatView( ChatView *view )
 {
-	if( !chatViewList.removeRef( view ) )
-		return;
+	chatViewList.removeAt( chatViewList.indexOf( view ) );
 
 	disconnect( view, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
 	disconnect( view, SIGNAL( updateStatusIcon( ChatView* ) ), this, SLOT( slotUpdateCaptionIcons( ChatView* ) ) );
@@ -778,6 +809,9 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 			setActiveView( static_cast<ChatView*>(m_tabBar->currentWidget()) );
 	}
 
+	if( m_activeView == view )
+		m_activeView = 0;
+
 	if( chatViewList.isEmpty() )
 		close();
 	else if( !m_alwaysShowTabs && chatViewList.count() == 1)
@@ -786,7 +820,7 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 	checkDetachEnable();
 }
 
-void KopeteChatWindow::slotDetachChat( int newWindowIndex )
+void KopeteChatWindow::slotDetachChat( QAction *action )
 {
 	KopeteChatWindow *newWindow = 0L;
 	ChatView *detachedView;
@@ -803,13 +837,13 @@ void KopeteChatWindow::slotDetachChat( int newWindowIndex )
 // 	createGUI(0L);
 	guiFactory()->removeClient(detachedView->msgManager());
 
-	if( newWindowIndex == -1 )
+	if( !action )
 	{
-		newWindow = new KopeteChatWindow();
+		newWindow = new KopeteChatWindow( detachedView->msgManager()->form() );
 		newWindow->setObjectName( QLatin1String("KopeteChatWindow") );
 	}
 	else
-		newWindow = windows.at( newWindowIndex );
+		newWindow = windows.at( action->data().toInt() );
 
 	newWindow->show();
 	newWindow->raise();
@@ -876,7 +910,8 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 		m_activeView->saveChatSettings();
 	}
 
-	guiFactory()->addClient(view->msgManager());
+	if ( view != 0 )
+		guiFactory()->addClient(view->msgManager());
 // 	createGUI( view->editPart() );
 
 	if( m_activeView )
@@ -884,7 +919,10 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	m_activeView = view;
 
-	if( !chatViewList.contains( view ) )
+	if ( view == 0 )
+		return;
+
+	if( chatViewList.indexOf( view ) == -1)
 		attachChatView( view );
 
 	connect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
@@ -942,16 +980,13 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 
 	if ( view == m_activeView )
  	{
-		QPixmap icon16 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 16) :
-		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
-		QPixmap icon32 = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c , 32) :
-		                     SmallIcon( view->msgManager()->protocol()->pluginIcon() );
-		KWindowSystem::setIcons( winId(), icon32, icon16 );
+		setWindowIcon( c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c ) :
+				KIcon(view->msgManager()->protocol()->pluginIcon()));
 	}
 
 	if ( m_tabBar )
 		m_tabBar->setTabIcon(m_tabBar->indexOf( view ), c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c ) :
-		                                   SmallIcon( view->msgManager()->protocol()->pluginIcon() ) );
+		                                   KIcon( view->msgManager()->protocol()->pluginIcon() ) );
 }
 
 void KopeteChatWindow::slotChatClosed()
@@ -967,11 +1002,15 @@ void KopeteChatWindow::slotPrepareDetachMenu(void)
 	QMenu *detachMenu = actionDetachMenu->menu();
 	detachMenu->clear();
 
-	for ( unsigned id=0; id < windows.count(); id++ )
+	QAction *action;
+	for ( int id = 0; id < windows.count(); id++ )
 	{
 		KopeteChatWindow *win = windows.at( id );
 		if( win != this )
-			detachMenu->insertItem( win->windowTitle(), id );
+		{
+			action = detachMenu->addAction( win->windowIcon(), win->windowTitle() );
+			action->setData( id );
+		}
 	}
 }
 
@@ -1014,10 +1053,13 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 		connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),
 			p, SLOT(deleteLater() ) );
 
+		p->setIcon( contact->onlineStatus().iconFor( contact ) );
 		if( contact->metaContact() )
-			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->metaContact()->displayName(), p );
+			p->setTitle( contact->metaContact()->displayName() );
 		else
-			contactsMenu->insertItem( contact->onlineStatus().iconFor( contact ) , contact->contactId(), p );
+			p->setTitle( contact->contactId() );
+
+		contactsMenu->addMenu( p );
 
 		//FIXME: This number should be a config option
 		if( ++contactCount == 15 && contact != m_them.last() )
@@ -1037,19 +1079,24 @@ void KopeteChatWindow::slotPreparePlacementMenu()
 	QMenu *placementMenu = actionTabPlacementMenu->menu();
 	placementMenu->clear();
 
-	placementMenu->insertItem( i18n("Top"), 0 );
-	placementMenu->insertItem( i18n("Bottom"), 1 );
+	QAction *action;
+	action = placementMenu->addAction( i18n("Top") );
+	action->setData( 0 );
+
+	action = placementMenu->addAction( i18n("Bottom") );
+	action->setData( 1 );
 }
 
-void KopeteChatWindow::slotPlaceTabs( int placement )
+void KopeteChatWindow::slotPlaceTabs( QAction *action )
 {
+	int placement = action->data().toInt();
 	if( m_tabBar )
 	{
 
 		if( placement == 0 )
-			m_tabBar->setTabPosition( QTabWidget::Top );
+			m_tabBar->setTabPosition( QTabWidget::North );
 		else
-			m_tabBar->setTabPosition( QTabWidget::Bottom );
+			m_tabBar->setTabPosition( QTabWidget::South );
 
 		saveOptions();
 	}
@@ -1058,36 +1105,37 @@ void KopeteChatWindow::slotPlaceTabs( int placement )
 void KopeteChatWindow::readOptions()
 {
 	// load and apply config file settings affecting the appearance of the UI
-//	kDebug(14010) << k_funcinfo << endl;
-	applyMainWindowSettings( KGlobal::config()->group( QLatin1String( "KopeteChatWindow" ) ) );
+//	kDebug(14010) ;
+	applyMainWindowSettings( KGlobal::config()->group( ( initialForm == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) ) );
 	//config->setGroup( QLatin1String("ChatWindowSettings") );
 }
 
 void KopeteChatWindow::saveOptions()
 {
-//	kDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) ;
 
-        KConfigGroup cg( KGlobal::config(), QLatin1String( "KopeteChatWindow" ) );
+	KConfigGroup kopeteChatWindowMainWinSettings( KGlobal::config(), ( initialForm == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
 
 	// saves menubar,toolbar and statusbar setting
-	saveMainWindowSettings( cg  );
-        cg.changeGroup( QLatin1String("ChatWindowSettings") );
-	if( m_tabBar )
-		cg.writeEntry ( QLatin1String("Tab Placement"), (int)m_tabBar->tabPosition() );
-
-	cg.sync();
+	saveMainWindowSettings( kopeteChatWindowMainWinSettings );
+	if ( m_tabBar ) {
+		KConfigGroup chatWindowSettings( KGlobal::config(), QLatin1String("ChatWindowSettings") );
+		chatWindowSettings.writeEntry ( QLatin1String("Tab Placement"), (int)m_tabBar->tabPosition() );
+		chatWindowSettings.sync();
+	}
+	kopeteChatWindowMainWinSettings.sync();
 }
 
 void KopeteChatWindow::slotChatSave()
 {
-//	kDebug(14010) << "KopeteChatWindow::slotChatSave()" << endl;
+//	kDebug(14010) << "KopeteChatWindow::slotChatSave()";
 	if( isActiveWindow() && m_activeView )
 		m_activeView->messagePart()->save();
 }
 
-void KopeteChatWindow::windowActivationChange( bool )
+void KopeteChatWindow::changeEvent( QEvent *e )
 {
-	if( isActiveWindow() && m_activeView )
+	if( e->type() == QEvent::ActivationChange && isActiveWindow() && m_activeView )
 		m_activeView->setActive( true );
 }
 
@@ -1096,21 +1144,6 @@ void KopeteChatWindow::slotChatPrint()
 	m_activeView->messagePart()->print();
 }
 
-void KopeteChatWindow::slotToggleStatusBar()
-{
-	if (statusBar()->isVisible())
-		statusBar()->hide();
-	else
-		statusBar()->show();
-}
-
-void KopeteChatWindow::slotViewMenuBar()
-{
-	if( !menuBar()->isHidden() )
-		menuBar()->hide();
-	else
-		menuBar()->show();
-}
 
 void KopeteChatWindow::slotSmileyActivated(const QString &sm)
 {
@@ -1124,10 +1157,7 @@ void KopeteChatWindow::slotRTFEnabled( ChatView* cv, bool enabled)
 	if ( cv != m_activeView )
 		return;
 
-	if ( enabled )
-		toolBar( "formatToolBar" )->show();
-	else
-		toolBar( "formatToolBar" )->hide();
+	toolBar( "formatToolBar" )->setVisible(enabled);
 	updateSpellCheckAction();
 }
 
@@ -1143,17 +1173,19 @@ void KopeteChatWindow::slotAutoSpellCheckEnabled( ChatView* view, bool isEnabled
 
 bool KopeteChatWindow::queryClose()
 {
+#ifdef CHRONO
+	QTime chrono;chrono.start();
+#endif
 	bool canClose = true;
 
-//	kDebug( 14010 ) << " Windows left open:" << endl;
+//	kDebug( 14010 ) << " Windows left open:";
 //	for( QPtrListIterator<ChatView> it( chatViewList ); it; ++it)
-//		kDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")" << endl;
-
-	for( Q3PtrListIterator<ChatView> it( chatViewList ); it; )
+//		kDebug( 14010 ) << "  " << *it << " (" << (*it)->caption() << ")";
+	setUpdatesEnabled(false);//hide the crazyness from users
+	while (!chatViewList.isEmpty())
 	{
-		ChatView *view = *it;
-		// move out of the way before view is removed
-		++it;
+
+		ChatView *view = chatViewList.takeFirst();
 
 		// FIXME: This should only check if it *can* close
 		// and not start closing if the close can be aborted halfway, it would
@@ -1162,10 +1194,14 @@ bool KopeteChatWindow::queryClose()
 		// if the view is closed, it is removed from chatViewList for us
 		if ( !view->closeView() )
 		{
-			kDebug() << k_funcinfo << "Closing view failed!" << endl;
+			kDebug() << "Closing view failed!";
 			canClose = false;
 		}
 	}
+	setUpdatesEnabled(true);
+#ifdef CHRONO
+        kDebug()<<"TIME: "<<chrono.elapsed();
+#endif
 	return canClose;
 }
 
@@ -1209,25 +1245,28 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 
 void KopeteChatWindow::updateChatState( ChatView* cv, int newState )
 {
+	Q_UNUSED(cv);
+
 	if ( m_tabBar )
 	{
+		KColorScheme scheme(QPalette::Active, KColorScheme::Window);
 		switch( newState )
 		{
 			case ChatView::Highlighted:
-			//	m_tabBar->setTabColor( cv, Qt::blue );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::LinkText).color());
 				break;
 			case ChatView::Message:
-			//	m_tabBar->setTabColor( cv, Qt::red );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::ActiveText).color());
 				break;
 			case ChatView::Changed:
-			//	m_tabBar->setTabColor( cv, Qt::darkRed );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::NeutralText).color());
 				break;
 			case ChatView::Typing:
-			//	m_tabBar->setTabColor( cv, Qt::darkGreen );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::PositiveText).color());
 				break;
 			case ChatView::Normal:
 			default:
-			//	m_tabBar->setTabColor( cv, KGlobalSettings::textColor() );
+				m_tabBar->setTabTextColor( m_tabBar->indexOf(cv), scheme.foreground(KColorScheme::NormalText).color() );
 				break;
 		}
 	}
@@ -1253,6 +1292,14 @@ void KopeteChatWindow::updateChatLabel()
 			setCaption( chat->caption() );
 	}
 }
+
+void KopeteChatWindow::resizeEvent( QResizeEvent *e )
+{
+	KXmlGuiWindow::resizeEvent( e );
+	if ( m_activeView && m_activeView->messagePart() )
+		m_activeView->messagePart()->keepScrolledDown();
+}
+
 
 #include "kopetechatwindow.moc"
 

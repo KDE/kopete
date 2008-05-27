@@ -27,10 +27,10 @@
 #include <kopete_export.h>
 
 namespace Kopete
-{ 
-	class Message; 
-	class ChatSession; 
-	class Contact; 
+{
+	class Message;
+	class ChatSession;
+	class Contact;
 }
 class KMenu;
 class ChatWindowStyle;
@@ -55,7 +55,7 @@ public:
 
 	/**
 	 * Immediately scroll the chat to the bottom, as long as it has not been intentionally scrolled away from the bottom
-	 * use 
+	 * use
 	 */
 	void keepScrolledDown();
 
@@ -64,7 +64,7 @@ public slots:
 	 * Initiates a copy action
 	 * If there is text selected in the HTML view, that text is copied
 	 * Otherwise if @p justselection is false, the entire edit area is copied.
-	 * 
+	 *
 	 * @param justselection If this is true, then the text will be only copied to the selection buffer only.
 	 *                      In this mode, if nothing is selected, then nothing is copied.
 	 */
@@ -104,10 +104,10 @@ public slots:
 	 *
 	 * Need to rebuild all the XHTML content.
 	 *
-	 * @param stylePath absolute path to the style.
+	 * @param styleName name of the style.
 	 */
-	void setStyle( const QString &stylePath );
-	
+	void setStyle( const QString &styleName );
+
 	/**
 	 * Change the current style
 	 * This method override is used on preview and unit tests.
@@ -118,7 +118,7 @@ public slots:
 	 * @param chatWindowStyle ChatWindowStyle object.
 	 */
 	void setStyle( ChatWindowStyle *style );
-	
+
 	/**
 	 * Change the current variant for the current style
 	 * @param variantPath relative path to the style variant.
@@ -137,7 +137,7 @@ signals:
 	void tooltipEvent(  const QString &textUnderMouse, QString &toolTip );
 
 private slots:
-	void slotOpenURLRequest( const KUrl &url, const KParts::URLArgs &args );
+	void slotOpenURLRequest( const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & );
 	void slotScrollView();
 	void slotAppearanceChanged();
 
@@ -155,7 +155,7 @@ private slots:
 	 * Do the actual style change.
 	 */
 	void changeStyle();
-	
+
 	/**
 	 * Update the display in the header template if any.
 	 */
@@ -167,7 +167,7 @@ private slots:
 
 protected:
 	virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
-	
+
 private:
 	void readOverrides();
 
@@ -194,7 +194,7 @@ private:
 	 *
 	 * @param sourceHTML the source html which contains the keywords
 	 * @param message the current Message.
-	 * 
+	 *
 	 * @return the resulting HTML with replaced keywords.
 	 */
 	QString formatStyleKeywords( const QString &sourceHTML, const Kopete::Message &message );
@@ -239,6 +239,14 @@ private:
 	 * Write the template file to KHTMLPart
 	 */
 	void writeTemplate();
+
+	/**
+	 * Adjust style variant to chat session type.  This allows the chat window to show a compact
+	 * variant of the style for chatrooms and a full-sized version for 1:small chats
+	 * @param styleVariant the chosen style variant as a relative path
+	 * @return the munged path, eg variant_compact.css
+	 */
+	QString adjustStyleVariantForChatSession( const QString & styleVariant ) const;
 
 	class Private;
 	Private *d;

@@ -27,6 +27,7 @@
 class OContact;
 
 class AIMProtocol;
+class KToggleAction;
 
 /**
  * Contact for ICQ over Oscar protocol
@@ -42,7 +43,7 @@ public:
 
 	/** Normal ICQ constructor */
 	ICQContact( Kopete::Account* account, const QString &name, Kopete::MetaContact *parent,
-	            const QString& icon = QString(), const OContact& ssiItem = OContact()  );
+	            const QString& icon = QString() );
 	virtual ~ICQContact();
 
 	/**
@@ -54,8 +55,9 @@ public:
 	/** Return whether or not this contact is reachable. */
 	virtual bool isReachable();
 
+	virtual void setSSIItem( const OContact& ssiItem );
+
 public slots:
-	virtual void updateSSIItem();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
 
 	void userOnline( const QString& userId );

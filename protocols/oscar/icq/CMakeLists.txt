@@ -27,6 +27,7 @@ ui/xtrazicqstatuseditor.cpp
 ui/xtrazstatusdelegate.cpp
 ui/editorwithicon.cpp
 ui/iconcells.cpp
+ui/infocombobox.cpp
 )
 
 kde4_add_ui_files(kopete_icq_ui_SRCS
@@ -55,8 +56,6 @@ set(kopete_icq_PART_SRCS
    xtrazstatus.cpp
    xtrazstatusmodel.cpp
    xtrazstatusaction.cpp )
-
-kde4_automoc(${kopete_icq_PART_SRCS})
 
 kde4_add_plugin(kopete_icq ${kopete_icq_PART_SRCS})
 

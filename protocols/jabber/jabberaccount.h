@@ -32,12 +32,12 @@
 #include <kopeteonlinestatus.h>
 #include <im.h>
 #include "jabberclient.h"
+#include "mood.h"
 
 #include <QMap>
 #include <QtCrypto>
 
 class QString;
-class QStringList;
 class KActionMenu;
 class JabberResourcePool;
 class JabberContact;
@@ -69,8 +69,8 @@ public:
 	JabberAccount (JabberProtocol * parent, const QString & accountID);
 	 ~JabberAccount ();
 
-	/* Returns the action menu for this account. */
-	virtual KActionMenu *actionMenu ();
+	/* Fills the menu for this account. */
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/* Return the resource of the client */
 	const QString resource () const;
@@ -89,6 +89,11 @@ public:
 	JabberClient *client () const
 	{
 		return m_jabberClient;
+	}
+	
+	PrivacyManager *privacyManager () const
+	{
+		return m_privacyManager;
 	}
 
 #ifdef SUPPORT_JINGLE
@@ -186,6 +191,8 @@ private:
 
 	// backend for this account
 	JabberClient *m_jabberClient;
+	
+	PrivacyManager *m_privacyManager;
 
 	JabberResourcePool *m_resourcePool;
 	JabberContactPool *m_contactPool;
@@ -254,10 +261,12 @@ private slots:
 	/* Called from Psi: debug messages from the backend. */
 	void slotClientDebugMessage (const QString &msg);
 
-	/* Sends a raw message to the server (use with caution) */
-	void slotSendRaw ();
+	/* XMPP console dialog */
+	void slotXMPPConsole ();
 
-	/* Slots for handling group chats. */
+	void slotSetMood();
+
+	/* Slots for handling groupchats. */
 	void slotJoinNewChat ();
 	void slotGroupChatJoined ( const XMPP::Jid &jid );
 	void slotGroupChatLeft ( const XMPP::Jid &jid );
@@ -268,7 +277,7 @@ private slots:
 	void slotSubscription ( const XMPP::Jid &jid, const QString &type );
 
 	/* the dialog that asked to add the contact was closed   (that dialog is shown in slotSubscription) */
-	void slotContactAddedNotifyDialogClosed(const QString& contactid);
+	void slotAddedInfoEventActionActivated ( uint actionId );
 
 	/**
 	 * A new item appeared in our roster, synch it with the
@@ -299,9 +308,6 @@ private slots:
 	/* Get the services list from the server for management. */
 	void slotGetServices ();
 
-	/* Update the myself information if the global identity changes. */
-	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
-
 	/* we received a voice invitation */
 	void slotIncomingVoiceCall(const Jid&);
 
@@ -310,5 +316,22 @@ private slots:
 
 	void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
 };
+
+/*class JabberMoodAction : public KAction
+{
+	Q_OBJECT
+public:
+	JabberMoodAction(const Mood::Type type, QObject *parent);
+
+public slots:
+	void triggered();
+
+signals:
+	void triggered(const Mood::Type type);
+
+private:
+	Mood::Type mType;
+};*/
+
 
 #endif

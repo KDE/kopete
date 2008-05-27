@@ -21,9 +21,7 @@
 
 class KActionMenu;
 class SMSProtocol;
-class SMSContact;
 class SMSService;
-class K3Process;
 
 enum SMSMsgAction { ACT_ASK = 0, ACT_CANCEL, ACT_SPLIT };
 
@@ -35,7 +33,7 @@ public:
 	SMSAccount( SMSProtocol *parent, const QString &accountID, const char *name = 0L );
 	~SMSAccount();
 
-	virtual KActionMenu* actionMenu();			// Per-protocol actions for the systray and the status bar
+	virtual void fillActionMenu( KActionMenu *actionMenu );			// Per-protocol actions for the systray and the status bar
 
 	virtual void setAway( bool away, const QString & );
 

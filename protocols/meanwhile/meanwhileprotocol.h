@@ -28,18 +28,15 @@
 
 #include <kdebug.h>
 #define MEANWHILE_DEBUG 14200
-#define HERE kDebug(MEANWHILE_DEBUG) << k_funcinfo << endl
+#define HERE kDebug(MEANWHILE_DEBUG) << endl
 #define mwDebug() kDebug(MEANWHILE_DEBUG)
 
-class MeanwhileAccount;
-class MeanwhileEditAccountWidget;
-class MeanwhileAddContactPage;
 
 class MeanwhileProtocol : public Kopete::Protocol
 {
     Q_OBJECT
 public:
-    MeanwhileProtocol(QObject *parent, const QStringList &args);
+    MeanwhileProtocol(QObject *parent, const QVariantList &args);
 
     ~MeanwhileProtocol();
 

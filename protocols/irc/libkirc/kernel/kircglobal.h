@@ -20,6 +20,9 @@
 
 #include <kdemacros.h>
 
+#include <QtCore/QByteArray>
+#include <QtCore/QList>
+
 #if defined Q_OS_WIN
 
 #ifndef KIRC_EXPORT
@@ -31,7 +34,7 @@
 #endif
 
 #ifndef KIRCCLIENT_EXPORT
-# ifdef MAKE_KIRCCLIENT_LIB
+# ifdef MAKE_KIRC_CLIENT_LIB
 #  define KIRCCLIENT_EXPORT KDE_EXPORT
 # else
 #  define KIRCCLIENT_EXPORT KDE_IMPORT
@@ -44,5 +47,24 @@
 #define KIRCCLIENT_EXPORT KDE_EXPORT
 
 #endif
+
+namespace KIrc
+{
+
+typedef struct
+{
+	QByteArray value;
+} OptArg;
+
+static inline
+KIrc::OptArg optArg(const QByteArray &arg)
+{ KIrc::OptArg r; r.value = arg; return r; }
+
+// The isNull test is intented.
+static inline
+QList<QByteArray> &operator << (QList<QByteArray> &list, const KIrc::OptArg &optArg)
+{ if (!optArg.value.isNull()) list.append(optArg.value); return list; }
+
+};
 
 #endif

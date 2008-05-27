@@ -19,47 +19,9 @@
 
 using namespace KIrc;
 
-Event::Event(const QString &name,
-		const QString &text, const QList<QVariant> &args,
-		const KIrc::Entity::Ptr &from,
-		const KIrc::Entity::List &to,
-		const KIrc::Entity::List &cc)
-	: m_name(name)
-	, m_text(text)
-	, m_args(args)
-	, m_from(from)
-	, m_to(to)
-	, m_cc(cc)
-{
-}
+const QEvent::Type KIrc::CommandEvent::Type = (QEvent::Type)QEvent::registerEventType();
 
-const QString &Event::name() const
-{
-	return m_name;
-}
+const QEvent::Type KIrc::MessageEvent::Type = (QEvent::Type)QEvent::registerEventType();
 
-const QString &Event::text() const
-{
-	return m_text;
-}
-
-const QList<QVariant> &Event::args() const
-{
-	return m_args;
-}
-
-const KIrc::Entity::Ptr &Event::from() const
-{
-	return m_from;
-}
-
-const KIrc::Entity::List &Event::to() const
-{
-	return m_to;
-}
-
-const KIrc::Entity::List &Event::cc() const
-{
-	return m_cc;
-}
+const QEvent::Type KIrc::TextEvent::Type = (QEvent::Type)QEvent::registerEventType();
 

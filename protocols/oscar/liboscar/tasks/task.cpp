@@ -38,7 +38,8 @@ public:
 	int statusCode;
 	QString statusString;
 	Connection* client;
-	bool insignificant, deleteme, autoDelete;
+	bool insignificant, deleteme;
+	AutoDeleteSetting autoDelete;
 	bool done;
 	Transfer* transfer;
 };
@@ -71,7 +72,7 @@ void Task::init()
 	d->success = false;
 	d->insignificant = false;
 	d->deleteme = false;
-	d->autoDelete = false;
+	d->autoDelete = DoNotAutoDelete;
 	d->done = false;
 	d->transfer = 0;
 	d->id = 0;
@@ -117,10 +118,9 @@ const QString & Task::statusString() const
 	return d->statusString;
 }
 
-void Task::go(bool autoDelete)
+void Task::go(AutoDeleteSetting autoDelete)
 {
 	d->autoDelete = autoDelete;
-
 	onGo();
 }
 
@@ -192,7 +192,7 @@ void Task::setError(int code, const QString &str)
 
 void Task::done()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(OSCAR_RAW_DEBUG) ;
 	if(d->done || d->insignificant)
 		return;
 	d->done = true;
@@ -201,7 +201,7 @@ void Task::done()
 		d->deleteme = true;
 
 	d->insignificant = true;
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "emitting finished" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "emitting finished";
 	finished();
 	d->insignificant = false;
 

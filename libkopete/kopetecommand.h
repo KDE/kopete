@@ -19,7 +19,8 @@
 #ifndef KOPETECOMMAND_H
 #define KOPETECOMMAND_H
 
-#include <qobject.h>
+#include <QtCore/QObject>
+
 #include <kaction.h>
 #include "kopetecommandhandler.h"
 
@@ -64,9 +65,9 @@ public:
 	 * @param pix The icon to use for the command
 	 */
 	 Command( QObject *parent, const QString &command, const char* handlerSlot,
-	 	const QString &help = QString::null, CommandHandler::CommandType type = CommandHandler::Normal, const QString &formatString = QString::null,
+	 	const QString &help = QString(), CommandHandler::CommandType type = CommandHandler::Normal, const QString &formatString = QString(),
 		uint minArgs = 0, int maxArgs = -1, const KShortcut &cut = KShortcut(),
-		const QString &pix = QString::null );
+		const QString &pix = QString() );
 	~Command();
 
 	/**
@@ -77,17 +78,17 @@ public:
 	/**
 	 * Returns the command this object handles
 	 */
-	 const QString &command() const { return m_command; };
+	 const QString &command() const { return m_command; }
 
 	 /**
 	  * Returns the help string for this command
 	  */
-	 const QString &help() const { return m_help; };
+	 const QString &help() const { return m_help; }
 
 	 /**
 	  * Returns the type of the command
 	  */
-	 const CommandHandler::CommandType type() const { return m_type; };
+	 const CommandHandler::CommandType type() const { return m_type; }
 
 signals:
 	/**
@@ -113,7 +114,7 @@ private:
 	QString m_command;
 	QString m_help;
 	QString m_formatString;
-	uint m_minArgs;
+	int m_minArgs;
 	int m_maxArgs;
 	bool m_processing;
 	CommandHandler::CommandType m_type;

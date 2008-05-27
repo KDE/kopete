@@ -21,13 +21,10 @@
 #ifndef WPUSERINFO_H
 #define WPUSERINFO_H
 
-// KDE Includes
-#include <kdialog.h>
-#include <k3procio.h>
+#include <QProcess>
 
-// Local Includes
+#include <KDialog>
 
-class WPAccount;
 class WPContact;
 namespace Ui { class WPUserInfoWidget; }
 
@@ -42,8 +39,7 @@ class WPUserInfo : public KDialog
 		void startDetailsProcess(const QString &host);
 
 	private slots:
-		void slotDetailsProcessReady(K3ProcIO *d);
-		void slotDetailsProcessExited(K3Process *d);
+		void slotDetailsProcessFinished(int, QProcess::ExitStatus);
 		void slotCloseClicked();
 
 	signals:
@@ -54,6 +50,7 @@ class WPUserInfo : public KDialog
 		Ui::WPUserInfoWidget *m_mainWidget;
 
 		QString Comment, Workgroup, OS, Software;
+		QProcess *detailsProcess;
 };
 
 #endif

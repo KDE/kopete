@@ -111,11 +111,7 @@ void I18nTask::error(Event * /*e*/)
 void I18nTask::join(Event *e)
 {
 /*
-	emit receivedMessage(
-		JoinMessage,
-		fromEntity,
-		toEntity,
-		i18n(""));
+	return Event("Join", i18n("%1 has joined %2"), who, channel);
 */
 }
 
@@ -125,11 +121,7 @@ void I18nTask::join(Event *e)
 void I18nTask::kick(Event *e)
 {
 /*
-	emit receivedMessage(
-		PartMessage,
-		fromEntity,
-		toEntity,
-		i18n(""));
+	return Event("Kick", i18n("%1 has kicked %2 from %3 (%4)", who, victims, channel, reason));
 */
 }
 
@@ -159,44 +151,13 @@ void I18nTask::mode(Event *e)
 void I18nTask::nick(Event *e)
 {
 /*
-	// FIXME: Find better i18n strings
-
-	QString message;
-
-	if (oldNick.lower() == m_Nickname->message().lower())
-	{
-		m_Nickname = e->message().suffix();
-		message = i18n("Your nick has changed from %1 to %2");
-	}
-	else
-		message = i18n("User nick has changed from %1 to %2");
-
-	emit receivedMessage(
-		InfoMessage,
-		e->message().entityFromPrefix(),
-		Entity::List::null,
-		message);
-
-	fromEntity->rename();
+	return Event("Nick Changed", i18n("%1 is now knwon as %2"), oldnick, newnick);
 */
 }
 
 void I18nTask::notice(Event *e)
 {
-//	if (!e->suffix().isEmpty())
-	{
-/*
-		emit receivedMessage(
-			NoticeMessage,
-			e->message().entityFromPrefix(),
-			e->message().entityFromArg(0), // should always return myself
-			e->message().suffix()
-		);
-*/
-	}
-
-//	if(e->message().hasCtcpMessage())
-//		invokeCtcpCommandOfMessage(m_ctcpReplies, e);
+//	return Event("Notice", i18n(""), who, message);
 }
 
 /* This signal emits when a user parts a channel
@@ -338,7 +299,7 @@ void I18nTask::bindNumericReplies()
  */
 void I18nTask::numericReply_001(Event *e)
 {
-	kDebug(14121) << k_funcinfo << endl;
+	kDebug(14121) ;
 
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
@@ -402,7 +363,7 @@ void I18nTask::numericReply_251(Event *e)
  */
 void I18nTask::numericReply_252(Event *e)
 {
-	postServerEvent(e, i18np("There is 1 operator online.", "There are %s operators online.", e->message().arg(1).toULong()));
+	postServerEvent(e, i18np("There is 1 operator online.", "There are %1 operators online.", e->message().arg(1).toULong()));
 }
 
 /* 253: "<integer> :unknown connection(s)"
@@ -410,7 +371,7 @@ void I18nTask::numericReply_252(Event *e)
  */
 void I18nTask::numericReply_253(Event *e)
 {
-	postServerEvent(e, i18np("There is 1 unknown connection.", "There are %s unknown connections.", e->message().arg(1).toULong()));
+	postServerEvent(e, i18np("There is 1 unknown connection.", "There are %1 unknown connections.", e->message().arg(1).toULong()));
 }
 
 /* 254: "<integer> :channels formed"
@@ -418,7 +379,9 @@ void I18nTask::numericReply_253(Event *e)
  *  */
 void I18nTask::numericReply_254(Event *e)
 {
-	postServerEvent(e, i18np("There is 1 channel formed.", "There are %s channels formed.", e->message().arg(1).toULong()));
+	postServerEvent(e, i18np("There has been 1 channel formed.",
+		"There have been %1 channels formed.",
+		e->message().arg(1).toULong()));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
@@ -487,7 +450,7 @@ void I18nTask::numericReply_305(Event *e)
 {
 /*
 	Entity::Ptr self = this->self();
-	self->setAwayMessage(QString::null);
+	self->setAwayMessage(QString());
 //	self->setModes("-a");
 	postServerEvent(e, i18n("You are no longer marked as being away."));
 */
@@ -939,8 +902,8 @@ void I18nTask::CtcpQuery_clientinfo(Event *e)
 			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
 			"ACTION.");
 
-//	writeCtcpReplyMessage(	e->message().prefix(), QString::null,
-//				e->message().ctcpMessage().command(), QString::null, clientinfo);
+//	writeCtcpReplyMessage(	e->message().prefix(), QString(),
+//				e->message().ctcpMessage().command(), QString(), clientinfo);
 }
 
 void I18nTask::CtcpQuery_dcc(Event *e)
@@ -948,7 +911,7 @@ void I18nTask::CtcpQuery_dcc(Event *e)
 //	Event *&ctcpMsg = e->message().ctcpMessage();
 	Event *ctcpMsg;
 
-	QString dccCommand = ctcpMsg.arg(0).upper();
+	QString dccCommand = ctcpMsg.arg(0).toUpper();
 
 	if (dccCommand == QString::fromLatin1("CHAT"))
 	{
@@ -966,7 +929,7 @@ void I18nTask::CtcpQuery_dcc(Event *e)
 		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
 		if (okayHost && okayPort)
 		{
-			kDebug(14120) << "Starting DCC chat window." << endl;
+			kDebug(14120) << "Starting DCC chat window.";
 //			TransferHandler::self()->createClient(
 //				this, e->message().prefix(),
 //				address, port,
@@ -991,7 +954,7 @@ void I18nTask::CtcpQuery_dcc(Event *e)
 		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
 		if (okayHost && okayPort && okaySize)
 		{
-			kDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
+			kDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1);
 //			TransferHandler::self()->createClient(
 //				this, e->message().prefix(),
 //				address, port,
@@ -1022,7 +985,7 @@ void I18nTask::CtcpQuery_finger(Event * /*e*/)
 
 void I18nTask::CtcpQuery_ping(Event *e)
 {
-//	writeCtcpReplyMessage(	e->message().prefix(), QString::null,
+//	writeCtcpReplyMessage(	e->message().prefix(), QString(),
 //				e->message().ctcpMessage().command(), e->message().ctcpMessage().arg(0));
 }
 
@@ -1063,23 +1026,23 @@ void I18nTask::CtcpReply_ping(Event *e)
 
 void I18nTask::CtcpQuery_source(Event *e)
 {
-//	writeCtcpReplyMessage(e->message().prefix(), QString::null,
+//	writeCtcpReplyMessage(e->message().prefix(), QString(),
 //			      e->message().ctcpMessage().command(), m_SourceString);
 }
 
 void I18nTask::CtcpQuery_time(Event *e)
 {
-//	writeCtcpReplyMessage(e->message().prefix(), QString::null,
+//	writeCtcpReplyMessage(e->message().prefix(), QString(),
 //			      e->message().ctcpMessage().command(), QDateTime::currentDateTime().toString(),
-//			      QString::null, false);
+//			      QString(), false);
 }
 
 void I18nTask::CtcpQuery_userinfo(Event *e)
 {
 //	QString userinfo = m_UserString;
 
-//	writeCtcpReplyMessage(e->message().prefix(), QString::null,
-//			      e->message().ctcpMessage().command(), QString::null, userinfo);
+//	writeCtcpReplyMessage(e->message().prefix(), QString(),
+//			      e->message().ctcpMessage().command(), QString(), userinfo);
 }
 
 void I18nTask::CtcpQuery_version(Event *e)

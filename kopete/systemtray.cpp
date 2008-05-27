@@ -5,7 +5,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart@kde.org>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -53,10 +53,10 @@ KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent )
 }
 
 KopeteSystemTray::KopeteSystemTray(QWidget* parent)
-	: KSystemTrayIcon(parent)
+	: KAnimatedSystemTrayIcon(parent)
 	, mMovie(0)
 {
-	kDebug(14010) <<  k_funcinfo << endl;
+	kDebug(14010) ;
 	setToolTip(KGlobal::mainComponent().aboutData()->shortDescription());
 
 	mIsBlinkIcon = false;
@@ -65,6 +65,9 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	mBlinkTimer->setObjectName("mBlinkTimer");
 
 	mKopeteIcon = loadIcon("kopete");
+
+	// Hack which allow us to disable window restoring or hiding when we should process event (BUG:157663)
+	disconnect( this, SIGNAL(activated( QSystemTrayIcon::ActivationReason )), 0 ,0 );
 
 	connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(slotAboutToShowMenu()));
 
@@ -89,6 +92,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	quit->disconnect();
 	KopeteWindow *myParent = static_cast<KopeteWindow *>( parent );
 	connect( quit, SIGNAL( activated() ), myParent, SLOT( slotQuit() ) );
+	connect( this, SIGNAL( activated( QSystemTrayIcon::ActivationReason ) ), SLOT( slotActivated( QSystemTrayIcon::ActivationReason ) ) );
 
 	setIcon(mKopeteIcon);
 	slotReevaluateAccountStates();
@@ -97,60 +101,39 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 
 KopeteSystemTray::~KopeteSystemTray()
 {
-	kDebug(14010) <<  k_funcinfo << endl;
+	kDebug(14010) ;
 //	delete mBlinkTimer;
-	Kopete::UI::Global::setSysTrayWId( 0 );
-	delete mMovie;
 }
 
 void KopeteSystemTray::slotAboutToShowMenu()
 {
 	emit aboutToShowMenu(qobject_cast<KMenu *>(contextMenu()));
 }
-/*
-void KopeteSystemTray::mousePressEvent( QMouseEvent *me )
-{
-#ifdef __GNUC__
-#warning PORT ME
-#endif
-#if 0
-	if (
-		(me->button() == Qt::MidButton ||
-			(me->button() == Qt::LeftButton && Kopete::BehaviorSettings::self()->trayflashNotifyLeftClickOpensMessage())) &&
-		mIsBlinking )
-	{
-		mouseDoubleClickEvent( me );
-		return;
-	}
 
-	KSystemTray::mousePressEvent( me );
-#endif
-}
-
-void KopeteSystemTray::mouseDoubleClickEvent( QMouseEvent *me )
+void KopeteSystemTray::slotActivated( QSystemTrayIcon::ActivationReason reason )
 {
-#ifdef __GNUC__
-#warning PORT ME
-#endif
-#if 0
-	if ( !mIsBlinking )
+	bool shouldProcessEvent(
+		reason == QSystemTrayIcon::MiddleClick
+		|| reason == QSystemTrayIcon::DoubleClick
+		|| ( reason == QSystemTrayIcon::Trigger
+			&& Kopete::BehaviorSettings::self()->trayflashNotifyLeftClickOpensMessage()));
+	if ( isBlinking() && shouldProcessEvent )
 	{
-		KSystemTray::mousePressEvent( me );
-	}
-	else
-	{
-		if(!mEventList.isEmpty())
+		if ( !mEventList.isEmpty() )
 			mEventList.first()->apply();
 	}
-#endif
+	else if ( reason == QSystemTrayIcon::Trigger )
+	{
+		toggleActive();
+	}
 }
 
-void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
-{
-	//kDebug(14010) << k_funcinfo << "Called." << endl;
-	emit aboutToShowMenu( me );
-}
-*/
+// void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
+// {
+// 	//kDebug(14010) << "Called.";
+// 	emit aboutToShowMenu( me );
+// }
+
 void KopeteSystemTray::startBlink( const QString &icon )
 {
 	startBlink( loadIcon( icon ) );
@@ -176,34 +159,22 @@ void KopeteSystemTray::startBlink( const QIcon &icon )
 	}
 }
 
-void KopeteSystemTray::startBlink( QMovie *movie )
-{
-#ifdef __GNUC__
-#warning PORT ME
-#endif
-#if 0
-	//kDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
-	kDebug( 14010 ) << "Movie is " << movie->loopCount() << " loops, " << movie->frameCount() << " frames " << endl;
-	movie->setPaused(false);
-	setMovie( movie );
-	mIsBlinking = true;
-#endif
-}
-
 void KopeteSystemTray::startBlink()
 {
 	if ( !mMovie )
-		mMovie = KIconLoader::global()->loadMovie( QLatin1String( "newmessage" ), K3Icon::Panel );
+		mMovie = KIconLoader::global()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Panel );
 	// KIconLoader already checked isValid()
 	if ( !mMovie) return;
 	
-	startBlink( mMovie );
+	if (!movie())
+		setMovie( mMovie );
+	startMovie();
 }
 
 void KopeteSystemTray::stopBlink()
 {
 	if ( mMovie )
-		kDebug( 14010 ) << k_funcinfo << "stopping movie." << endl;
+		kDebug( 14010 ) << "stopping movie.";
 	else if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
 
@@ -248,7 +219,7 @@ void KopeteSystemTray::slotEventDone(Kopete::MessageEvent *event)
 
 void KopeteSystemTray::slotConfigChanged()
 {
-//	kDebug(14010) << k_funcinfo << "called." << endl;
+//	kDebug(14010) << "called.";
 	if ( Kopete::BehaviorSettings::self()->showSystemTray() )
 		show();
 	else
@@ -263,7 +234,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 		return;
 
 	
-	//kDebug(14010) << k_funcinfo << endl;
+	//kDebug(14010) ;
 	bool bOnline = false;
 	bool bAway = false;
 	bool bOffline = false;
@@ -310,7 +281,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 	}
 	else // none away and none online -> all offline
 	{
-		//kDebug(14010) << k_funcinfo << "All Accounts offline!" << endl;
+		//kDebug(14010) << "All Accounts offline!";
 		setIcon(loadIcon("kopete_offline"));
 	}
 }

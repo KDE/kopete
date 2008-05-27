@@ -35,7 +35,7 @@
 SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& prefixValue, Kopete::Account* account, QObject* parent)
 	: QObject( parent ), m_account(account)
 {
-	kWarning( 14160 ) << k_funcinfo << "this = " << this << ", m_account = " << m_account << " (should be ok if zero!!)" << endl;
+	kWarning( 14160 ) << "this = " << this << ", m_account = " << m_account << " (should be ok if zero!!)";
 
 	provider = providerName;
 	prefix = prefixValue;
@@ -116,10 +116,10 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 							telPos = names.count() - 1;
 							if (args[0] == *it)
 							{
-//								kDebug(14160) << "Exact match for " << args[0] << endl;
+//								kDebug(14160) << "Exact match for " << args[0];
 								exactNumberMatch = true;
 							}
-//							kDebug(14160) << "args[0] (" << args[0] << ") contains " << *it << endl;
+//							kDebug(14160) << "args[0] (" << args[0] << ") contains " << *it;
 						}
 					}
 				}
@@ -139,7 +139,7 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 
 SMSSendProvider::~SMSSendProvider()
 {
-	kWarning( 14160 ) << k_funcinfo << "this = " << this << endl;
+	kWarning( 14160 ) << "this = " << this;
 }
 
 void SMSSendProvider::setAccount(Kopete::Account *account)
@@ -172,7 +172,7 @@ const bool SMSSendProvider::isHidden(int i)
 
 void SMSSendProvider::save(const QList<KLineEdit*>& args)
 {
-	kDebug( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
+	kDebug( 14160 ) << "m_account = " << m_account << " (should be non-zero!!)";
 	if (!m_account) return;		// prevent crash in worst case
 
 	QString group = QString("SMSSend-%1").arg(provider);
@@ -182,16 +182,16 @@ void SMSSendProvider::save(const QList<KLineEdit*>& args)
 	{
 		if (telPos == namesI || messagePos == namesI)
 		{
-//		    kDebug(14160) << k_funcinfo << "Skipping pos " << namesI << endl;
+//		    kDebug(14160) << "Skipping pos " << namesI;
 		    namesI++;
 		    if (telPos == namesI || messagePos == namesI)
 		    {
-//		        kDebug(14160) << k_funcinfo << "Skipping pos " << namesI << endl;
+//		        kDebug(14160) << "Skipping pos " << namesI;
 		        namesI++;
 		    }
 		}
 
-//                kDebug(14160) << k_funcinfo << "saving " << args.at(i) << " to " << names[namesI] << endl;
+//                kDebug(14160) << "saving " << args.at(i) << " to " << names[namesI];
 		if (!args.at(i)->text().isEmpty())
 		{	values[namesI] = args.at(i)->text();
 			m_account->configGroup()->writeEntry(QString("%1:%2").arg(group).arg(names[namesI]), values[namesI]);
@@ -212,7 +212,7 @@ void SMSSendProvider::send(const Kopete::Message& msg)
 		if ( messagePos == -1 )
 		{
 			canSend = false;
-			KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Could not determine which argument which should contain the message."),
+			KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Could not determine which argument should contain the message."),
 				i18n("Could Not Send Message"));
 			return;
 		}
@@ -220,7 +220,7 @@ void SMSSendProvider::send(const Kopete::Message& msg)
 		{
 			canSend = false;
 
-			KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Could not determine which argument which should contain the number."),
+			KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Could not determine which argument should contain the number."),
 				i18n("Could Not Send Message"));
 			return;
 		}
@@ -239,7 +239,7 @@ void SMSSendProvider::send(const Kopete::Message& msg)
 
 	K3Process* p = new K3Process;
 
-	kWarning( 14160 ) << "Executing " << QString("%1/bin/smssend").arg(prefix) << " \"" << provider << "\" " << values.join("\" \"") << "\"" << endl;
+	kWarning( 14160 ) << "Executing " << QString("%1/bin/smssend").arg(prefix) << " \"" << provider << "\" " << values.join("\" \"") << "\"";
 
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << values;
 
@@ -253,7 +253,7 @@ void SMSSendProvider::send(const Kopete::Message& msg)
 
 void SMSSendProvider::slotSendFinished(K3Process *p)
 {
-	kWarning( 14160 ) << k_funcinfo << "this = " << this << ", es = " << p->exitStatus() << ", p = " << p << " (should be non-zero!!)" << endl;
+	kWarning( 14160 ) << "this = " << this << ", es = " << p->exitStatus() << ", p = " << p << " (should be non-zero!!)";
 	if (p->exitStatus() == 0)
 		emit messageSent(m_msg);
 	else
@@ -268,7 +268,7 @@ void SMSSendProvider::slotReceivedOutput(K3Process *, char *buffer, int buflen)
 //	for (QStringList::Iterator it = lines.begin(); it != lines.end(); ++it)
 	for(int i = 0; i < buflen; i++)
 		output += buffer[i];
-	kWarning( 14160 ) << k_funcinfo << " output now = " << output << endl;
+	kWarning( 14160 ) << " output now = " << output;
 }
 
 int SMSSendProvider::maxSize()

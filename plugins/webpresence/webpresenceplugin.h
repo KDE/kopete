@@ -30,8 +30,6 @@
 class QTimer;
 class KTemporaryFile;
 namespace Kopete { class MetaContact; }
-class KToggleAction;
-class KActionCollection;
 
 typedef QList<Kopete::Protocol*> ProtocolList;
 
@@ -62,7 +60,7 @@ private:
 	QString resultURL;
 
 public:
-	WebPresencePlugin( QObject *parent, const QStringList &args );
+	WebPresencePlugin( QObject *parent, const QVariantList &args );
 	virtual ~WebPresencePlugin();
 
 	virtual void aboutToUnload();

@@ -36,11 +36,9 @@
 #include "wpcontact.h"
 #include "wpaddcontact.h"
 
-class KMenu;
 class KActionMenu;
 class KAction;
 class WPProtocol;
-class KopeteWinPopup;
 
 namespace Kopete
 {
@@ -58,7 +56,8 @@ public:
 	WPAccount(WPProtocol *parent, const QString& accountID);
 	~WPAccount();
 
-	virtual KActionMenu* actionMenu();			// Per-protocol actions for the systray and the status bar
+	virtual void fillActionMenu( KActionMenu *actionMenu );			// Per-protocol actions for the systray and the status bar
+	virtual bool hasCustomStatusMenu() const;		//Has custom status menu
 	virtual void setAway(bool status, const QString &);	// Set user away
 
 public slots:

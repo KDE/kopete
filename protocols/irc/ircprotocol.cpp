@@ -40,6 +40,7 @@
 #include "kopeteview.h"
 #include "kopeteuiglobal.h"
 
+#include <kaboutdata.h>
 #include <kaction.h>
 #include <kcharsets.h>
 #include <kdebug.h>
@@ -65,10 +66,10 @@
 
 using namespace Kopete;
 
-typedef KGenericFactory<IRCProtocol> IRCProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY(kopete_irc, IRCProtocolFactory("kopete_irc"))
+K_PLUGIN_FACTORY( IRCProtocolFactory, registerPlugin<IRCProtocol>(); )
+K_EXPORT_PLUGIN( IRCProtocolFactory( "kopete_irc" ) )
 
-IRCProtocol *IRCProtocol::s_protocol = 0L;
+static IRCProtocol *s_protocol = 0L;
 
 IRCProtocolHandler::IRCProtocolHandler()
 	: MimeTypeHandler(false)
@@ -78,7 +79,7 @@ IRCProtocolHandler::IRCProtocolHandler()
 
 void IRCProtocolHandler::handleURL(const KUrl &url) const
 {
-	kDebug(14120) << url << endl;
+	kDebug(14120) << url;
 	if (!url.isValid())
 		return;
 
@@ -97,7 +98,7 @@ void IRCProtocolHandler::handleURL(const KUrl &url) const
 		QString::number(port)
 	);
 
-	kDebug(14120) << accountId << endl;
+	kDebug(14120) << accountId;
 
 	IRCAccount *newAccount = new IRCAccount( accountId, chan );
 	newAccount->setNickName( user.loginName() );
@@ -105,11 +106,11 @@ void IRCProtocolHandler::handleURL(const KUrl &url) const
 	newAccount->connect();
 }
 
-IRCProtocol::IRCProtocol( QObject *parent, const QStringList & /* args */ )
+IRCProtocol::IRCProtocol( QObject *parent, const QVariantList & /* args */ )
 	: Protocol(IRCProtocolFactory::componentData(), parent)
 //	, m_StatusUnknown(OnlineStatus::Unknown, 999, this, 999, "status_unknown", i18n("Status not available"))
 {
-	kDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) ;
 
 	s_protocol = this;
 
@@ -299,20 +300,20 @@ void IRCProtocol::initOnlineStatus()
 {
 /*
 	OnlineStatus ServerOnline(OnlineStatus::Online, 100, this, 0,
-		QString::null, i18n("Online"));
+		QString(), i18n("Online"));
 
 	OnlineStatus ServerOffline(OnlineStatus::Offline, 90, this, 0,
-		QString::null, i18n("Offline"));
+		QString(), i18n("Offline"));
 
 	m_statusMap.insert(ServerOnline.internalStatus(), ServerOnline);
 	m_statusMap.insert(ServerOffline.internalStatus(), ServerOffline);
 
 	ChannelOnline(OnlineStatus::Online, 80, this, EntityType::Channel|EntityType::Online,
-		QString::null, i18n("Online")),
+		QString(), i18n("Online")),
 	m_statusMap.insert(ChannelOnline.internalStatus(), ChannelOnline);
 
 	ChannelOffline(OnlineStatus::Offline, 70, this, EntityType::Channel|EntityType::OfflineChannel,
-		QString::null, i18n("Offline")),
+		QString(), i18n("Offline")),
 	m_statusMap.insert(ChannelOffline.internalStatus(), ChannelOffline);
 
 	KIrc::EntityStatus status;
@@ -327,7 +328,7 @@ void IRCProtocol::initOnlineStatus()
 	onlineStatusFor(status,  OnlineStatusManager::Away);
 
 	OnlineStatus UserOnline(OnlineStatus::Online, 25, this, 0,
-		QString::null, i18n("Online"), i18n("Online"), OnlineStatusManager::Online);
+		QString(), i18n("Online"), i18n("Online"), OnlineStatusManager::Online);
 
 	OnlineStatus UserAway(OnlineStatus::Away, 2, this, 0,
 		"contact_away_overlay", i18n("Away"), i18n("Away"), OnlineStatusManager::Away);
@@ -336,7 +337,7 @@ void IRCProtocol::initOnlineStatus()
 		"irc_connecting", i18n("Connecting"));
 
 	OnlineStatus UserOffline(OnlineStatus::Offline, 0, this, 0,
-		QString::null, i18n("Offline"), i18n("Offline"), OnlineStatusManager::Offline);
+		QString(), i18n("Offline"), i18n("Offline"), OnlineStatusManager::Offline);
 */
 }
 
@@ -360,7 +361,7 @@ OnlineStatus IRCProtocol::onlineStatusFor(const KIrc::Entity::Ptr &entity, unsig
 	OnlineStatus ret = m_statusMap[status];
 	if (ret.status() == OnlineStatus::Unknown)
 	{
-		kDebug(14120) << k_funcinfo << "New online status." << endl;
+		kDebug(14120) << "New online status.";
 
 		OnlineStatus::StatusType statusType;
 		unsigned weight = 0;
@@ -442,7 +443,7 @@ void IRCProtocol::slotMessageFilter(Message &msg)
 		//Add right click for channels, only replace text not in HTML tags
 		messageText.replace(QRegExp( QString::fromLatin1("(?![^<]+>)(#[^#\\s]+)(?![^<]+>)")), QString::fromLatin1("<span class=\"KopeteLink\" type=\"IRCChannel\">\\1</span>") );
 
-		msg.setBody( messageText, Message::RichText );
+		msg.setHtmlBody(messageText);
 	}
 }
 /*
@@ -480,7 +481,7 @@ Account *IRCProtocol::createNewAccount(const QString &accountId)
 Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> &/*addressBookData*/)
 {
-	kDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) ;
 
 	QString contactId = serializedData[ "contactId" ];
 	QString displayName = serializedData[ "displayName" ];
@@ -498,11 +499,11 @@ Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QS
 			return a->contacts()[contactId];
 		}
 		else
-			kDebug(14120) << k_funcinfo << serializedData[ "accountId" ] << " was a contact's account,"
+			kDebug(14120) << serializedData[ "accountId" ] << " was a contact's account,"
 				" but we don't have it in the accounts list" << endl; */
 	}
 	else
-		kDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;
+		kDebug(14120) << "No accounts loaded!";
 
 	return 0;
 }
@@ -521,7 +522,7 @@ void IRCProtocol::slotCtcpCommand(const QString &args, ChatSession *manager)
 		QString user = args.section( ' ', 0, 0 );
 		QString message = args.section( ' ', 1 );
 //		static_cast<IRCAccount*>(manager->account())->client()->writeCtcpQueryMessage(
-//			user, QString::null, message);
+//			user, QString(), message);
 	}
 }
 

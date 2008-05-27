@@ -29,7 +29,6 @@
 #include "stream.h"
 
 // forward defines
-class ByteStream;
 class Connector;
 class Request;
 class TLSHandler;

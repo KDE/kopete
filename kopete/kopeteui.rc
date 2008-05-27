@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kopete" version="25">
+<kpartgui name="kopete" version="26">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
@@ -48,8 +48,7 @@
 		<Action name="Status"/>
 		<Action name="SetStatusMessage"/>
 		<Action name="AddContact"/>
-		<Action name="settings_show_offliners"/>
-		<Action name="settings_show_empty_groups"/>
+		<Action name="settings_show_all_offline_empty"/>
 	</ToolBar>
 
         <ToolBar fullWidth="true" name="quickSearchBar" noMerge="1" newline="true"><Text>Quick Search Bar</Text>
@@ -58,10 +57,6 @@
 		<Action name="quicksearch_bar"/>
 	</ToolBar>
 	
-	<ToolBar fullWidth="true" name="editGlobalIdentityBar" noMerge="1" hidden="true" newline="true"><Text>Global Identity Bar</Text>
-		<Action name="editglobal_widget"/>
-	</ToolBar>
-
 	<Menu name="contact_popup">
 		<Action name="contactSendMessage" />
 		<Action name="contactStartChat" />

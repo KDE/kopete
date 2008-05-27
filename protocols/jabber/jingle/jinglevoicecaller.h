@@ -28,7 +28,6 @@ namespace talk_base{
 }
 
 class JingleClientSlots;
-class JingleCallSlots;
 
 
 class JingleVoiceCaller : public VoiceCaller

@@ -127,7 +127,7 @@ void MSNP2P::makeMSNSLPMessage( MessageType type, QString content )
 			"Content-Length: "+ QString::number(content.length()+1)+"\r\n"
 			"\r\n" + content ).toUtf8(); //\0
 
-	kDebug(14141) << k_funcinfo << dataMessage << endl;
+	kDebug(14141) << dataMessage;
 
 	sendP2PMessage(dataMessage);
 }
@@ -299,7 +299,7 @@ void MSNP2P::sendP2PAck( const char* originalHeader )
 
 void MSNP2P::error()
 {
-	kDebug(14140) << k_funcinfo   << endl;
+	kDebug(14140) ;
 	makeMSNSLPMessage( ERROR, QString() );
 	m_parent->finished(this);
 }
@@ -384,7 +384,7 @@ void MSNP2PWebcam::parseMessage(MessageStruct &msgStr)
 		f+=16;
 	}
 	
-	kDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
+	kDebug(14141) << dataMessage.size() << echoS;
 
 	for(uint pos=m_content.isNull() ? 10 : 0; pos<dataMessage.size(); pos+=2)
 	{
@@ -394,7 +394,7 @@ void MSNP2PWebcam::parseMessage(MessageStruct &msgStr)
 	if( msgStr.dataMessageSize+msgStr.dataOffset < msgStr.totalSize )
 		return;
 	
-	kDebug(14141) << k_funcinfo << "Message contents: " << m_content << '\n' << endl;
+	kDebug(14141) << "Message contents: " << m_content << '\n';
 	if(m_content.length() < 5)
 		makeSIPMessage(m_content);
 	else if(m_content.contains("<producer>"))
@@ -455,7 +455,7 @@ void MSNP2PWebcam::makeSIPMessage(const QString &message)
 		f+=16;
 	}
 	
-	kDebug(14141) << k_funcinfo << dataMessage.size() << echoS << endl;
+	kDebug(14141) << dataMessage.size() << echoS;
 
 	m_footer='\4';
 	sendBigP2PMessage(dataMessage);

@@ -16,17 +16,16 @@
     *************************************************************************
 */
 
-#ifndef IRCUSERCONTACT_H
-#define IRCUSERCONTACT_H
+#ifndef IRCCONTACT_USER_H
+#define IRCCONTACT_USER_H
 
 #include "kopetechatsessionmanager.h"
 #include "irccontact.h"
 #include "kopeteonlinestatus.h"
-#include <Q3PtrList>
+#include <QList>
 
 class QTimer;
 
-class KActionCollection;
 class KAction;
 class KActionMenu;
 class KCodecAction;
@@ -65,7 +64,7 @@ public:
 	IRCUserContact(IRCContactManager *, const QString &nickname, Kopete::MetaContact *mc);
 
 	// Kopete::Contact stuff
-	virtual Q3PtrList<KAction> *customContextMenuActions( Kopete::ChatSession *manager );
+	virtual QList<KAction*> *customContextMenuActions( Kopete::ChatSession *manager );
 	virtual const QString caption() const;
 
 	void setAway(bool isAway);
@@ -133,7 +132,6 @@ private:
 	void updateInfo();
 };
 
-#endif
+#endif // IRCCONTACT_USER_H
 
 // vim: set noet ts=4 sts=4 tw=4:
-

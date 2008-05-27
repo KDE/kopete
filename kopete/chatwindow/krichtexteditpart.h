@@ -35,7 +35,7 @@ class KTextEdit;
 /**
  * @brief Simple WYSIWYG rich text editor part.
  *
- * Technicaly it just a wrapper around KTextEdit which a toolbar of actions.
+ * Technicaly it just a wrapper around KTextEdit with a toolbar of actions.
  * The action toolbar adds buttons to set text bold, italic 
  * or underline, set font size and font familly and set text color.
  *
@@ -63,6 +63,8 @@ public:
     Q_DECLARE_FLAGS(RichTextSupport, RichTextSupportValues)
 
     KRichTextEditPart(QWidget *parent, QObject *, const QStringList &);
+
+    ~KRichTextEditPart();
 
     /**
      * @brief Get the text in the editor in the given format.
@@ -100,7 +102,7 @@ public:
     /**
      * @brief Disable file open, because it's not used by this part.
      */
-    virtual bool openFile() { return false; };
+    virtual bool openFile() { return false; }
 
     void setRichTextSupport(const KRichTextEditPart::RichTextSupport &support);
     RichTextSupport richTextSupport() const;

@@ -23,7 +23,7 @@
 
 #include "bytestream.h"
 
-#include <cutestuff_export.h>
+#include "cutestuff_export.h"
 // CS_NAMESPACE_BEGIN
 
 class CUTESTUFF_EXPORT HttpConnect : public ByteStream

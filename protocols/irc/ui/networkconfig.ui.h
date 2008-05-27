@@ -7,10 +7,8 @@
 ** place of a destructor.
 *****************************************************************************/
 
-
-
-
-
+#ifndef NETWORKCONFIG_UI_H
+#define NETWORKCONFIG_UI_H
 
 void NetworkConfig::accept()
 {
@@ -24,3 +22,5 @@ void NetworkConfig::reject()
     emit rejected();
     QDialog::reject();
 }
+
+#endif // NETWORKCONFIG_UI_H

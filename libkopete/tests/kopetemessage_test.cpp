@@ -58,8 +58,8 @@ KopeteMessage_Test::KopeteMessage_Test()
 	m_account = new Kopete::Test::Mock::Account(m_protocol, "testaccount");
 	m_metaContactMyself = new Kopete::Test::Mock::MetaContact();
 	m_metaContactOther = new Kopete::Test::Mock::MetaContact();
-	m_contactFrom = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-myself"), m_metaContactMyself, QString::null);
-	m_contactTo = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-dest"), m_metaContactOther, QString::null);
+	m_contactFrom = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-myself"), m_metaContactMyself, QString());
+	m_contactTo = new Kopete::Test::Mock::Contact(m_account, QString::fromLatin1("test-dest"), m_metaContactOther, QString());
 }
 
 void KopeteMessage_Test::testPrimitives()
@@ -197,7 +197,7 @@ void KopeteMessage_Test::testPrimitives()
 		{
 			Kopete::Message msg2;
 
-//			QCOMPARE(msg2.plainBody(), QString::null);
+//			QCOMPARE(msg2.plainBody(), QString());
 
 			msg2 = msg1;
 
@@ -270,13 +270,13 @@ void KopeteMessage_Test::testLinkParser()
 			// otherwise use QCOMPARE
 			if ( fileName.section("-", 0, 0) == QString::fromLatin1("broken") )
 			{
-				//kDebug() << "checking known-broken testcase: " << fileName << endl;
+				//kDebug() << "checking known-broken testcase: " << fileName;
 				QEXPECT_FAIL("", "Checking know-broken testcase", Continue);
 				QCOMPARE(result, expectedData);
 			}
 			else
 			{
-				//kDebug() << "checking known-working testcase: " << fileName << endl;
+				//kDebug() << "checking known-working testcase: " << fileName;
 				QCOMPARE(result, expectedData);
 			}
 		}

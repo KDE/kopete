@@ -5,19 +5,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>552</width>
-    <height>530</height>
+    <width>578</width>
+    <height>546</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Account Preferences - ICQ</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget7" >
@@ -29,11 +38,20 @@
        <string>&amp;Basic Setup</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
        </property>
        <item>
         <widget class="QGroupBox" name="groupBox" >
@@ -41,19 +59,37 @@
           <string>Account Preferences</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
           </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QLabel" name="lblAccountId" >
@@ -92,17 +128,10 @@
              <bool>true</bool>
             </property>
             <property name="whatsThis" >
-             <string>If you check that case, the account will not be connected when you press the "Connect All" button, or at startup even if you selected to automatically connect at startup</string>
+             <string>If you enable this option, this account will not be connected when you press the "Connect All" button, nor at startup even if you have enabled automaic connection at startup.</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="chkGlobalIdentity" >
-            <property name="text" >
-             <string>Exclu&amp;de from Global Identity</string>
             </property>
            </widget>
           </item>
@@ -110,23 +139,30 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2" >
+        <widget class="QGroupBox" name="registrationGroupBox" >
          <property name="title" >
           <string>Registration</string>
          </property>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QLabel" name="textLabel6" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>3</hsizetype>
-              <vsizetype>1</vsizetype>
+             <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -160,23 +196,30 @@ If you do not currently have an ICQ account, please click the button to create o
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_5" >
+        <widget class="QGroupBox" name="changePasswordGroupBox" >
          <property name="title" >
           <string>Change password</string>
          </property>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QLabel" name="label" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>5</vsizetype>
+             <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -192,9 +235,7 @@ If you do not currently have an ICQ account, please click the button to create o
           <item>
            <widget class="QPushButton" name="buttonChangePassword" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>1</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -218,7 +259,7 @@ If you do not currently have an ICQ account, please click the button to create o
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -230,11 +271,20 @@ If you do not currently have an ICQ account, please click the button to create o
        <string>Accou&amp;nt Preferences</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
        </property>
        <item>
         <widget class="QGroupBox" name="groupBox_3" >
@@ -242,11 +292,20 @@ If you do not currently have an ICQ account, please click the button to create o
           <string>Connection Preferences</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QCheckBox" name="optionOverrideServer" >
@@ -257,11 +316,20 @@ If you do not currently have an ICQ account, please click the button to create o
           </item>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <spacer>
@@ -344,11 +412,11 @@ If you do not currently have an ICQ account, please click the button to create o
               <property name="whatsThis" >
                <string>The port on the ICQ server that you would like to connect to.  Normally this is 5190.</string>
               </property>
-              <property name="maximum" >
-               <number>65534</number>
-              </property>
               <property name="minimum" >
                <number>1</number>
+              </property>
+              <property name="maximum" >
+               <number>65534</number>
               </property>
               <property name="value" >
                <number>5190</number>
@@ -366,19 +434,28 @@ If you do not currently have an ICQ account, please click the button to create o
           <string>Privacy Options</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QCheckBox" name="chkRequireAuth" >
             <property name="toolTip" >
-             <string>Enable authorization requirement, which will not allow users to add you to their contact list without authorization from you.</string>
+             <string>Enable the authorization requirement, which will not allow users to add you to their contact list without authorization from you.</string>
             </property>
             <property name="whatsThis" >
-             <string>Enable authorization requirement, which will not allow users to add you to their contact list without authorization from you.  Check this box, and you will have to confirm any users who add you to their list before they may see your online status.</string>
+             <string>Enable the authorization requirement, which will not allow users to add you to their contact list without authorization from you.  Check this box, and you will have to confirm any users who add you to their list before they may see your online status.</string>
             </property>
             <property name="text" >
              <string>&amp;Require authorization before someone can add you to their contact list</string>
@@ -388,7 +465,7 @@ If you do not currently have an ICQ account, please click the button to create o
           <item>
            <widget class="QCheckBox" name="chkRespectRequireAuth" >
             <property name="text" >
-             <string>Respect other contacts' &amp;wish to require authorization</string>
+             <string>Respect other contacts' authori&amp;zation requirement</string>
             </property>
            </widget>
           </item>
@@ -398,7 +475,7 @@ If you do not currently have an ICQ account, please click the button to create o
              <string>Check this to hide your IP address from people when they view your user info</string>
             </property>
             <property name="whatsThis" >
-             <string>Checking this box will not allow people to see what your IP address if they view your ICQ user details such as name, address, or age.</string>
+             <string>Checking this box prevent people from seeing your IP address if they view your ICQ user details such as name, address, or age.</string>
             </property>
             <property name="text" >
              <string>Hide &amp;IP address</string>
@@ -430,25 +507,40 @@ If you do not currently have an ICQ account, please click the button to create o
           <string>Direct Connect Options</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
           </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
             </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
             <item>
              <widget class="QLabel" name="lblPort" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
               <property name="toolTip" >
                <string>The ports to use for direct connections.</string>
               </property>
@@ -465,20 +557,17 @@ If you do not currently have an ICQ account, please click the button to create o
             </item>
             <item>
              <widget class="QSpinBox" name="sbxFirstPort" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
               <property name="toolTip" >
                <string>The start of the port range.</string>
               </property>
               <property name="whatsThis" >
                <string>The start of the port range. Normally this is 5190.</string>
               </property>
-              <property name="maximum" >
-               <number>65534</number>
-              </property>
               <property name="minimum" >
                <number>1</number>
+              </property>
+              <property name="maximum" >
+               <number>65534</number>
               </property>
               <property name="value" >
                <number>5190</number>
@@ -487,20 +576,17 @@ If you do not currently have an ICQ account, please click the button to create o
             </item>
             <item>
              <widget class="QSpinBox" name="sbxLastPort" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
               <property name="toolTip" >
                <string>The end of the port range.</string>
               </property>
               <property name="whatsThis" >
                <string>The end of the port range. Normally this is 5199.</string>
               </property>
-              <property name="maximum" >
-               <number>65534</number>
-              </property>
               <property name="minimum" >
                <number>1</number>
+              </property>
+              <property name="maximum" >
+               <number>65534</number>
               </property>
               <property name="value" >
                <number>5199</number>
@@ -524,17 +610,23 @@ If you do not currently have an ICQ account, please click the button to create o
           </item>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
             </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
             <item>
              <widget class="QLabel" name="lblTimeout" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
               <property name="toolTip" >
                <string>Timeout for direct connections.</string>
               </property>
@@ -551,20 +643,17 @@ If you do not currently have an ICQ account, please click the button to create o
             </item>
             <item>
              <widget class="QSpinBox" name="sbxTimeout" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
               <property name="toolTip" >
                <string>Timeout for direct connections.</string>
               </property>
               <property name="whatsThis" >
                <string>The number of seconds to wait for a connection to succeed before trying a different method.</string>
               </property>
-              <property name="maximum" >
-               <number>60</number>
-              </property>
               <property name="minimum" >
                <number>1</number>
+              </property>
+              <property name="maximum" >
+               <number>60</number>
               </property>
               <property name="value" >
                <number>10</number>
@@ -578,11 +667,20 @@ If you do not currently have an ICQ account, please click the button to create o
        </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>6</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="QLabel" name="textLabel1" >
@@ -598,24 +696,24 @@ If you do not currently have an ICQ account, please click the button to create o
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="encodingCombo" >
-           <property name="enabled" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" >
             <size>
-             <width>40</width>
+             <width>10</width>
              <height>20</height>
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="encodingCombo" >
+           <property name="enabled" >
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -630,7 +728,7 @@ If you do not currently have an ICQ account, please click the button to create o
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -642,10 +740,22 @@ If you do not currently have an ICQ account, please click the button to create o
        <string>Visible</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>9</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="1" column="0" colspan="2" >
@@ -696,10 +806,22 @@ If you do not currently have an ICQ account, please click the button to create o
        <string>Invisible</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>9</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="4" column="0" colspan="2" >
@@ -750,10 +872,22 @@ If you do not currently have an ICQ account, please click the button to create o
        <string>Ignore</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>9</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="2" column="1" >
@@ -817,7 +951,7 @@ If you do not currently have an ICQ account, please click the button to create o
  <customwidgets>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>kopetepasswordwidget.h</header>
   </customwidget>
  </customwidgets>
@@ -825,7 +959,6 @@ If you do not currently have an ICQ account, please click the button to create o
   <tabstop>tabWidget7</tabstop>
   <tabstop>edtAccountId</tabstop>
   <tabstop>chkAutoLogin</tabstop>
-  <tabstop>chkGlobalIdentity</tabstop>
   <tabstop>buttonRegister</tabstop>
   <tabstop>buttonChangePassword</tabstop>
   <tabstop>optionOverrideServer</tabstop>

@@ -15,59 +15,79 @@
     *************************************************************************
 */
 
-#ifndef KIRCEVENT_H
-#define KIRCEVENT_H
+#ifndef KIRC_EVENTS_H
+#define KIRC_EVENTS_H
 
 #include "kircmessage.h"
 
-#include "kdemacros.h"
-
-#include <QtCore/QVariant>
+#include <QtCore/QEvent>
 
 namespace KIrc
 {
 
-class KIRC_EXPORT Event
-//	: QEvent // TODO: Use QEvent interface
+class Socket;
+
+class KIRC_EXPORT CommandEvent
+	: public QEvent
 {
+	static const QEvent::Type Type;
 public:
-	Event(const QString &name,
-		const QString &text, const QList<QVariant> &args,
-		const KIrc::Entity::Ptr &from,
-		const KIrc::Entity::List &to,
-		const KIrc::Entity::List &cc = KIrc::Entity::List());
-
-	/**
-	 * The name of the event.
-	 */
-	const QString &name() const;
-
-	/**
-	 * The text associed with this event.
-	 *
-	 * This text is used to build the displayed text using the arguments.
-	 */
-	const QString &text() const;
-
-	/**
-	 * The arguments of the event.
-	 */
-	const QList<QVariant> &args() const;
-
-	const KIrc::Entity::Ptr &from() const;
-
-	const KIrc::Entity::List &to() const;
-
-	const KIrc::Entity::List &cc() const;
+//	explicit CommandEvent();
 
 private:
-	QString m_name;
-	QString m_text;
-	QList<QVariant> m_args;
+};
+
+class KIRC_EXPORT MessageEvent
+	: public QEvent
+{
+	static const QEvent::Type Type;
+
+public:
+	MessageEvent(const KIrc::Message &message, KIrc::Socket *socket)
+		: QEvent(Type), m_message(message), m_socket(socket)
+	{ }
+
+	inline const KIrc::Message &message() const { return m_message; }
+	inline KIrc::Socket *socket() { return m_socket; }
+
+private:
+	KIrc::Message m_message;
+	KIrc::Socket *m_socket; // Use QPointer instead?
+};
+
+class KIRC_EXPORT TextEvent
+	: public QEvent
+{
+public:
+	static const QEvent::Type Type;
+/*
+	enum Verbosity
+	{
+		Error,
+		Warning,
+		Normal,
+		Verbose,
+		Debug
+	};
+*/
+	TextEvent(const QString &eventId, const KIrc::Entity::Ptr &from, const KIrc::Entity::Ptr &to, const QString &text)
+		: QEvent(Type), m_eventId(eventId), m_from(from), m_to(KIrc::Entity::List() << to), m_text(text)
+	{ }
+
+	TextEvent(const QString &eventId, const KIrc::Entity::Ptr &from, const KIrc::Entity::List &to, const QString &text)
+		: QEvent(Type), m_eventId(eventId), m_from(from), m_to(to), m_text(text)
+	{ }
+
+	QString eventId() const { return m_eventId; }
+	KIrc::Entity::Ptr from() const { return m_from; }
+	KIrc::Entity::List to() const { return m_to; }
+	QString text() const { return m_text; }
+
+private:
+	QString m_eventId;
 	KIrc::Entity::Ptr m_from;
 	KIrc::Entity::List m_to;
-	KIrc::Entity::List m_cc;
-
+	QString m_text;
 };
 
 }

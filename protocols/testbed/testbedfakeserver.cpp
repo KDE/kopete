@@ -33,8 +33,8 @@ void TestbedFakeServer::sendMessage( const QString &contactId, const QString &me
 {
 	// see what contact the message is for
 	// if it's for Echo, respond immediately
-	kDebug( 14210 ) << k_funcinfo << "Message for: " << contactId << ", is: " << message << endl;
-	kDebug( 14210 ) << "recipient is echo, coming back at you." << endl;
+	kDebug( 14210 ) << "Message for: " << contactId << ", is: " << message;
+	kDebug( 14210 ) << "recipient is echo, coming back at you.";
 	// put the message in a map and start a timer to tell it to deliver itself.
 	//emit messageReceived( QString::fromLatin1( "echo: " ) + message );
 	QString messageId = contactId + QString::fromLatin1(": ");

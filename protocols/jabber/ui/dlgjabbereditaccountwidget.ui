@@ -1,15 +1,13 @@
 <ui version="4.0" >
  <author>Daniel Stone</author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>DlgJabberEditAccountWidget</class>
  <widget class="QWidget" name="DlgJabberEditAccountWidget" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>706</width>
-    <height>823</height>
+    <width>511</width>
+    <height>568</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -22,44 +20,68 @@
    <string/>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
    </property>
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
    <item>
     <widget class="QTabWidget" name="tabWidget10" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
        <string>&amp;Basic Setup</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="QGroupBox" name="groupBox" >
          <property name="title" >
           <string>Account Information</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
           </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QLabel" name="TextLabel1_3" >
@@ -93,11 +115,9 @@
            </layout>
           </item>
           <item>
-           <widget class="Kopete::UI::PasswordWidget" name="mPass" >
+           <widget class="Kopete::UI::PasswordWidget" native="1" name="mPass" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>1</hsizetype>
-              <vsizetype>1</vsizetype>
+             <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -107,17 +127,10 @@
           <item>
            <widget class="QCheckBox" name="cbAutoConnect" >
             <property name="whatsThis" >
-             <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
+             <string>Check to disable automatic connection.  If checked, you can connect manually to this account, using the icon at the bottom of the main Kopete window</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbGlobalIdentity" >
-            <property name="text" >
-             <string>Exclu&amp;de from Global Identity</string>
             </property>
            </widget>
           </item>
@@ -125,15 +138,27 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2" >
+        <widget class="QGroupBox" name="registrationGroupBox" >
          <property name="title" >
           <string>Registration</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>9</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>6</number>
           </property>
           <item row="1" column="0" >
@@ -175,12 +200,10 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0" colspan="3" >
+          <item row="0" column="0" colspan="2" >
            <widget class="QLabel" name="lblRegistration" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>3</hsizetype>
-              <vsizetype>1</vsizetype>
+             <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -197,21 +220,36 @@
             <property name="alignment" >
              <set>Qt::AlignVCenter</set>
             </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_3" >
+        <widget class="QGroupBox" name="changePasswordGroupBox" >
          <property name="title" >
           <string>Change Password</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>9</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>6</number>
           </property>
           <item row="1" column="2" >
@@ -247,15 +285,13 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0" colspan="3" >
+          <item row="0" column="0" colspan="2" >
            <widget class="QLabel" name="tlChangePwSuccess" >
             <property name="enabled" >
              <bool>true</bool>
             </property>
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>3</hsizetype>
-              <vsizetype>1</vsizetype>
+             <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -265,6 +301,9 @@
             </property>
             <property name="alignment" >
              <set>Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -294,11 +333,20 @@
        <string>Co&amp;nnection</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
        </property>
        <item>
         <widget class="QGroupBox" name="groupBox_4" >
@@ -306,11 +354,20 @@
           <string>Connection Preferences</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QCheckBox" name="cbUseSSL" >
@@ -347,11 +404,20 @@
           </item>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <spacer>
@@ -375,9 +441,7 @@
                <bool>false</bool>
               </property>
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>5</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -418,9 +482,7 @@
                <bool>false</bool>
               </property>
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>5</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -445,9 +507,7 @@
                <bool>false</bool>
               </property>
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>0</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -461,11 +521,11 @@
               <property name="buttonSymbols" >
                <enum>QAbstractSpinBox::UpDownArrows</enum>
               </property>
-              <property name="maximum" >
-               <number>65535</number>
-              </property>
               <property name="minimum" >
                <number>1</number>
+              </property>
+              <property name="maximum" >
+               <number>65535</number>
               </property>
               <property name="value" >
                <number>5222</number>
@@ -483,11 +543,20 @@
           <string>Location Settings</string>
          </property>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QLabel" name="TextLabel3_3" >
@@ -508,9 +577,7 @@
           <item>
            <widget class="QLineEdit" name="mResource" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>0</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -551,9 +618,7 @@
           <item>
            <widget class="QLabel" name="TextLabel3_3_2" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>5</vsizetype>
+             <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -578,9 +643,7 @@
           <item>
            <widget class="QSpinBox" name="mPriority" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>0</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -600,7 +663,7 @@
             <property name="whatsThis" >
              <string>&lt;qt>Each resource can have different &lt;b>priority &lt;/b> levels. The messages will be sent to the resource which has the highest priority level.
 
-If two resources have the same priority, the messages will be sent to the one connected the latest.&lt;/qt></string>
+If two resources have the same priority, the messages will be sent to the one most recently connected.&lt;/qt></string>
             </property>
             <property name="value" >
              <number>5</number>
@@ -633,11 +696,20 @@ If two resources have the same priority, the messages will be sent to the one co
        <string>Fi&amp;le Transfer</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
        </property>
        <item>
         <widget class="QGroupBox" name="groupBox_6" >
@@ -645,18 +717,24 @@ If two resources have the same priority, the messages will be sent to the one co
           <string>File Transfer Settings</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
           <item>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>6</number>
             </property>
             <item row="1" column="1" >
@@ -674,11 +752,20 @@ If two resources have the same priority, the messages will be sent to the one co
             </item>
             <item row="0" column="1" >
              <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>6</number>
+              </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
               </property>
               <item>
                <widget class="QLineEdit" name="leLocalIP" />
@@ -720,7 +807,7 @@ If two resources have the same priority, the messages will be sent to the one co
           <item>
            <widget class="QLabel" name="textLabel3" >
             <property name="text" >
-             <string>&lt;i>&lt;ul>&lt;li>The information in the "public IP address" and "port" fields apply to all Jabber accounts.&lt;/li>
+             <string>&lt;i>&lt;ul>&lt;li>The information in the "public IP address" and "port" fields applies to all Jabber accounts.&lt;/li>
 &lt;li>You can leave the "public IP address" empty if your computer is directly connected to the internet.&lt;/li>
 &lt;li>A hostname is also valid.&lt;/li>
 &lt;li>Changes to these fields will only take effect the next time you start Kopete.&lt;/li>
@@ -728,6 +815,9 @@ If two resources have the same priority, the messages will be sent to the one co
             </property>
             <property name="alignment" >
              <set>Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -757,11 +847,20 @@ If two resources have the same priority, the messages will be sent to the one co
        <string>Pri&amp;vacy</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
        </property>
        <item>
         <widget class="QGroupBox" name="groupBox_7" >
@@ -769,16 +868,25 @@ If two resources have the same priority, the messages will be sent to the one co
           <string>General Privacy</string>
          </property>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QCheckBox" name="cbHideSystemInfo" >
             <property name="whatsThis" >
-             <string>By default, Kopete gives the other users some info about your system and the client. You can check this box in order to  hide those infos.</string>
+             <string>By default, Kopete gives the other users some info about your system and the client. Checking this box will hide that information.</string>
             </property>
             <property name="text" >
              <string>&amp;Hide system and client info</string>
@@ -810,11 +918,20 @@ If two resources have the same priority, the messages will be sent to the one co
           <string>Notifications</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
           </property>
           <item>
            <widget class="QCheckBox" name="cbSendEvents" >
@@ -822,7 +939,7 @@ If two resources have the same priority, the messages will be sent to the one co
              <bool>true</bool>
             </property>
             <property name="whatsThis" >
-             <string>Check this box if you want to always send notifications to your contacts.</string>
+             <string>Check this box if you always want to send notifications to your contacts.</string>
             </property>
             <property name="text" >
              <string>Always send not&amp;ifications</string>
@@ -834,11 +951,20 @@ If two resources have the same priority, the messages will be sent to the one co
           </item>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <spacer>
@@ -858,11 +984,20 @@ If two resources have the same priority, the messages will be sent to the one co
             </item>
             <item>
              <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>6</number>
+              </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
               </property>
               <item>
                <widget class="QCheckBox" name="cbSendDeliveredEvent" >
@@ -874,9 +1009,6 @@ If two resources have the same priority, the messages will be sent to the one co
                 </property>
                 <property name="text" >
                  <string>Alwa&amp;ys send delivered notifications</string>
-                </property>
-                <property name="shortcut" >
-                 <string>Alt+Y</string>
                 </property>
                 <property name="checked" >
                  <bool>true</bool>
@@ -894,9 +1026,6 @@ If two resources have the same priority, the messages will be sent to the one co
                 <property name="text" >
                  <string>Al&amp;ways send displayed notifications</string>
                 </property>
-                <property name="shortcut" >
-                 <string>Alt+W</string>
-                </property>
                 <property name="checked" >
                  <bool>true</bool>
                 </property>
@@ -908,13 +1037,10 @@ If two resources have the same priority, the messages will be sent to the one co
                  <bool>true</bool>
                 </property>
                 <property name="whatsThis" >
-                 <string>&lt;qt>Check this box to send the &lt;b>Typing notification&lt;/b> to your contacts : when you are composing a message, you might want your contact to know that you are typing so that he knows you are answering.&lt;/qt></string>
+                 <string>&lt;qt>Check this box to send the &lt;b>Typing notification&lt;/b> to your contacts : when you are composing a message, you might want your contact to know that you are typing so that he/she knows you are answering.&lt;/qt></string>
                 </property>
                 <property name="text" >
                  <string>Always send &amp;typing notifications</string>
-                </property>
-                <property name="shortcut" >
-                 <string>Alt+T</string>
                 </property>
                 <property name="checked" >
                  <bool>true</bool>
@@ -926,9 +1052,6 @@ If two resources have the same priority, the messages will be sent to the one co
                 <property name="text" >
                  <string>Always send &amp;gone notifications (closing the window)</string>
                 </property>
-                <property name="shortcut" >
-                 <string>Alt+G</string>
-                </property>
                 <property name="checked" >
                  <bool>true</bool>
                 </property>
@@ -939,6 +1062,13 @@ If two resources have the same priority, the messages will be sent to the one co
            </layout>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="KPushButton" name="privacyListsButton" >
+         <property name="text" >
+          <string>Privacy Lists</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -964,14 +1094,16 @@ If two resources have the same priority, the messages will be sent to the one co
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
    <extends></extends>
    <header>kopetepasswordwidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -1018,22 +1150,6 @@ If two resources have the same priority, the messages will be sent to the one co
   <connection>
    <sender>cbCustomServer</sender>
    <signal>toggled(bool)</signal>
-   <receiver>mServer</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>204</x>
-     <y>129</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>202</x>
-     <y>145</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cbCustomServer</sender>
-   <signal>toggled(bool)</signal>
    <receiver>labelPort</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -1060,6 +1176,22 @@ If two resources have the same priority, the messages will be sent to the one co
     <hint type="destinationlabel" >
      <x>636</x>
      <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbCustomServer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>mServer</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>204</x>
+     <y>129</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>202</x>
+     <y>145</y>
     </hint>
    </hints>
   </connection>

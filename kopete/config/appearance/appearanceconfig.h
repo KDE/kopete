@@ -19,7 +19,9 @@
 #ifndef __APPEARANCE_H
 #define __APPEARANCE_H
 
-#include "kcmodule.h"
+#define KDE3_SUPPORT
+#include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -31,24 +33,18 @@ class AppearanceConfig : public KCModule
 
 
 public:
-	AppearanceConfig( QWidget *parent, const QStringList &args );
+	AppearanceConfig( QWidget *parent, const QVariantList &args );
 	~AppearanceConfig();
 
 	virtual void save();
 	virtual void load();
 
 private slots:
-	void slotSelectedEmoticonsThemeChanged();
 	void slotHighlightChanged();
 	void slotChangeFont();
 	void slotEditTooltips();
 	void emitChanged();
-	void installEmoticonTheme();
-	void removeSelectedEmoticonTheme();
-	void slotGetEmoticonThemes();
-	void updateEmoticonsButton(bool);
 private:
-	void updateEmoticonlist();
 	
 private:
 	class Private;

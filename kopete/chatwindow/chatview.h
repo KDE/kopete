@@ -21,12 +21,11 @@
 
 #include "kopeteview.h"
 #include "kopeteviewplugin.h"
-#include <k3dockwidget.h>
+//#include <k3dockwidget.h>
 #include <ktextedit.h> // for covariant return type of editWidget
-#include <q3ptrdict.h>
-//Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QMap>
 #include <kvbox.h>
 
 #include <kopete_export.h>
@@ -38,8 +37,6 @@ class ChatMessagePart;
 
 class KopeteChatWindow;
 
-class KTabWidget;
-class KHBox;
 class KopeteChatViewPrivate;
 class ChatWindowPlugin;
 
@@ -53,7 +50,10 @@ namespace Kopete
 	class Contact;
 	class ChatSession;
 	class OnlineStatus;
+	class PropertyContainer;
 }
+
+typedef QMap<const Kopete::Contact*,QTimer*> TypingMap;
 
 /**
  * @author Olivier Goffart
@@ -298,7 +298,7 @@ private slots:
 	/**
 	 * Show that a contact changed his nickname when a metacontact is not avaiable.
 	 */
-	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotPropertyChanged( Kopete::PropertyContainer *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
 	 * Called when a contact is added to the chat session.
@@ -358,7 +358,7 @@ private:
 	KopeteTabState m_tabState;
 
 	// miscellany
-	Q3PtrDict<QTimer> m_remoteTypingMap;
+	TypingMap m_remoteTypingMap;
 	QString unreadMessageFrom;
 	QString m_status;
 
@@ -380,7 +380,7 @@ private:
 class ChatWindowPlugin : public Kopete::ViewPlugin
 {
 	public:
-		ChatWindowPlugin(QObject *parent, const QStringList &args);
+		ChatWindowPlugin(QObject *parent, const QVariantList &args);
 		KopeteView* createView( Kopete::ChatSession *manager );
 };
 

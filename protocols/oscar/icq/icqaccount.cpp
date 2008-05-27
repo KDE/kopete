@@ -3,7 +3,7 @@
 
   Copyright (c) 2002 by Chris TenHarmsel            <tenharmsel@staticmethod.net>
   Copyright (c) 2004 by Richard Smith               <kde@metafoo.co.uk>
-  Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -19,15 +19,19 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmenu.h>
+#include <kactionmenu.h>
 #include <kmessagebox.h>
 #include <kicon.h>
 #include <knotification.h>
 #include <ktoggleaction.h>
 
-#include "kopeteawayaction.h"
+#include  <QtGui/QTextDocument> // Qt::escape
+
 #include "kopetemessage.h"
 #include "kopetecontactlist.h"
 #include "kopeteuiglobal.h"
+#include "kopetemetacontact.h"
+#include "kopeteaddedinfoevent.h"
 
 #include "client.h"
 #include "icquserinfo.h"
@@ -57,21 +61,27 @@ ICQMyselfContact::ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acc
 void ICQMyselfContact::userInfoUpdated()
 {
 	Oscar::DWORD extendedStatus = details().extendedStatus();
-	kDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << QString::number( extendedStatus, 16 ) << endl;
+	kDebug( OSCAR_ICQ_DEBUG ) << "extendedStatus is " << QString::number( extendedStatus, 16 );
 
 	ICQProtocol* p = static_cast<ICQProtocol *>(protocol());
 	Oscar::Presence presence = p->statusManager()->presenceOf( extendedStatus, details().userClass() );
 
 	ICQAccount* icqAccount = static_cast<ICQAccount*>( account() );
-	if ( details().xtrazStatusSpecified() )
+	if ( details().xtrazStatus() != -1 )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
-		presence.setDescription( icqAccount->engine()->statusDescription() );
 		presence.setXtrazStatus( details().xtrazStatus() );
 	}
-	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
+	else if ( !icqAccount->engine()->statusDescription().isEmpty() )
+	{
+		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
+	}
 
-	setProperty( Kopete::Global::Properties::self()->statusMessage(), icqAccount->engine()->statusMessage() );
+	Kopete::StatusMessage statusMessage;
+	statusMessage.setTitle( icqAccount->engine()->statusDescription() );
+	statusMessage.setMessage( icqAccount->engine()->statusMessage() );
+	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
+	setStatusMessage( statusMessage );
 }
 
 void ICQMyselfContact::receivedShortInfo( const QString& contact )
@@ -82,9 +92,7 @@ void ICQMyselfContact::receivedShortInfo( const QString& contact )
 	ICQAccount* icqAccount = static_cast<ICQAccount*>( account() );
 	ICQShortInfo shortInfo = icqAccount->engine()->getShortInfo( contact );
 	if ( !shortInfo.nickname.isEmpty() )
-	{
 		setProperty( Kopete::Global::Properties::self()->nickName(), icqAccount->defaultCodec()->toUnicode( shortInfo.nickname ) );
-	}
 
 	//Sync server settings with local
 	QList<ICQInfoBase*> infoList;
@@ -108,7 +116,7 @@ void ICQMyselfContact::fetchShortInfo()
 ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	: OscarAccount(parent, accountID, true)
 {
-	kDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
+	kDebug(14152) << accountID << ": Called.";
 	setMyself( new ICQMyselfContact( this ) );
 	myself()->setOnlineStatus( protocol()->statusManager()->onlineStatusOf( Oscar::Presence( Oscar::Presence::Offline ) ) );
 
@@ -117,17 +125,25 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	mHideIP = configGroup()->readEntry( "HideIP", true );
 	mInfoContact = 0L;
 	mInfoWidget = 0L;
-	mInitialStatusMessage.clear();
 
 	QObject::connect( engine(), SIGNAL(userReadsStatusMessage(const QString&)),
 	                  this, SLOT(userReadsStatusMessage(const QString&)) );
+	QObject::connect( engine(), SIGNAL( authRequestReceived( const QString&, const QString& ) ),
+	                  this, SLOT( slotGotAuthRequest( const QString&, const QString& ) ) );
+
+	// Create actions
+	mEditInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), this );
+	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
+	
+	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );
+	QObject::connect( mActionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
 
 	//setIgnoreUnknownContacts(pluginData(protocol(), "IgnoreUnknownContacts").toUInt() == 1);
 
 	/* FIXME: need to do this when web aware or hide ip change
 	if(isConnected() && (oldhideip != mHideIP || oldwebaware != mWebAware))
 	{
-		kDebug(14153) << k_funcinfo <<
+		kDebug(14153) <<
 			"sending status to reflect HideIP and WebAware settings" << endl;
 		//setStatus(mStatus, QString());
 	}*/
@@ -149,38 +165,32 @@ Oscar::Presence ICQAccount::presence()
 }
 
 
-KActionMenu* ICQAccount::actionMenu()
+void ICQAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu* actionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
 	actionMenu->addSeparator();
 
-	KAction* m_editInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), this );
-        //, "actionEditInfo" );
-	QObject::connect( m_editInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
-	actionMenu->addAction( m_editInfoAction );
+	actionMenu->addAction( mEditInfoAction );
 
-	KToggleAction* actionInvisible = new KToggleAction( i18n( "In&visible" ), this );
-        //, "actionInvisible" );
+	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );
+	pres.setXtrazStatus( presence().xtrazStatus() );
+	mActionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
+	mActionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
+	actionMenu->addAction( mActionInvisible );
 
-	Oscar::Presence pres( presence() );
-	pres.setFlags( pres.flags() | Oscar::Presence::Invisible );
-	actionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
-	actionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
-	QObject::connect( actionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
-	actionMenu->addAction( actionInvisible );
 	/*
 	actionMenu->popupMenu()->insertSeparator();
 	//actionMenu->insert( new KToggleAction( i18n( "Send &SMS..." ), 0, 0, this, SLOT( slotSendSMS() ), this, "ICQAccount::mActionSendSMS") );
 	*/
 
-	KActionMenu *xtrazStatusMenu = new KActionMenu( i18n( "Set Xtraz Status" ), this );
+	KActionMenu *xtrazStatusMenu = new KActionMenu( i18n( "Set Xtraz Status" ), actionMenu );
 	
-	KAction* xtrazStatusSetAction = new KAction( i18n( "Set Status..." ), this );
+	KAction* xtrazStatusSetAction = new KAction( i18n( "Set Status..." ), xtrazStatusMenu );
 	QObject::connect( xtrazStatusSetAction, SIGNAL(triggered(bool)), this, SLOT(setXtrazStatus()) );
 	xtrazStatusMenu->addAction( xtrazStatusSetAction );
 
-	KAction* xtrazStatusEditAction = new KAction( i18n( "Edit Statuses..." ), this );
+	KAction* xtrazStatusEditAction = new KAction( i18n( "Edit Statuses..." ), xtrazStatusMenu );
 	QObject::connect( xtrazStatusEditAction, SIGNAL(triggered(bool)), this, SLOT(editXtrazStatuses()) );
 	xtrazStatusMenu->addAction( xtrazStatusEditAction );
 
@@ -192,15 +202,13 @@ KActionMenu* ICQAccount::actionMenu()
 
 	for ( int i = 0; i < xtrazStatusList.count(); i++ )
 	{
-		Xtraz::StatusAction* xtrazAction = new Xtraz::StatusAction( xtrazStatusList.at(i), this );
-		QObject::connect( xtrazAction, SIGNAL(triggered(const Oscar::Presence&, const QString&)),
-		                  this, SLOT(setPresenceTarget(const Oscar::Presence&, const QString&)) );
+		Xtraz::StatusAction* xtrazAction = new Xtraz::StatusAction( xtrazStatusList.at(i), xtrazStatusMenu );
+		QObject::connect( xtrazAction, SIGNAL(triggered(const Xtraz::Status&)),
+		                  this, SLOT(setPresenceXStatus(const Xtraz::Status&)) );
 		xtrazStatusMenu->addAction( xtrazAction );
 	}
 
 	actionMenu->addAction( xtrazStatusMenu );
-
-	return actionMenu;
 }
 
 
@@ -209,7 +217,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 	if ( password.isNull() )
 		return;
 
-	kDebug(14153) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
+	kDebug(14153) << "accountId='" << accountId() << "'";
 
 	Kopete::OnlineStatus status = initialStatus();
 	if ( status == Kopete::OnlineStatus() && status.status() == Kopete::OnlineStatus::Unknown )
@@ -224,7 +232,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 	{
 		myself()->setOnlineStatus( protocol()->statusManager()->connectingStatus() );
 		QString icqNumber = accountId();
-		kDebug(14153) << k_funcinfo << "Logging in as " << icqNumber << endl ;
+		kDebug(14153) << "Logging in as " << icqNumber;
 		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
 		uint port = configGroup()->readEntry( "Port", 5190 );
 
@@ -246,20 +254,29 @@ void ICQAccount::connectWithPassword( const QString &password )
 		if ( mWebAware )
 			status |= Oscar::StatusCode::WEBAWARE;
 
-		engine()->setStatus( status, mInitialStatusMessage, pres.xtrazStatus(), pres.description() );
+		engine()->setStatus( status, mInitialStatusMessage.message(),
+		                     pres.xtrazStatus(), mInitialStatusMessage.title() );
 		updateVersionUpdaterStamp();
 
 		Connection* c = setupConnection();
 		engine()->start( server, port, accountId(), password.left(8) );
 		engine()->connectToServer( c, server, port, true /* doAuth */ );
 
-		mInitialStatusMessage.clear();
+		mInitialStatusMessage = Kopete::StatusMessage();
 	}
+}
+
+void ICQAccount::loginActions()
+{
+	OscarAccount::loginActions();
+
+	// Set default privacy settings to make "invisible to" and "visible to" work
+	engine()->setPrivacyTLVs( 0x04 );
 }
 
 void ICQAccount::disconnected( DisconnectReason reason )
 {
-	kDebug(14153) << k_funcinfo << "Attempting to set status offline" << endl;
+	kDebug(14153) << "Attempting to set status offline";
 	Oscar::Presence pres( Oscar::Presence::Offline, presence().flags() );
 	myself()->setOnlineStatus( protocol()->statusManager()->onlineStatusOf( pres ) );
 
@@ -347,13 +364,12 @@ void ICQAccount::setXtrazStatus()
 	Xtraz::ICQStatusDialog dialog;
 	if ( dialog.exec() == QDialog::Accepted )
 	{
-		Xtraz::Status status = dialog.xtrazStatus();
-		setPresenceTarget( status.presence(), status.message() );
+		setPresenceXStatus( dialog.xtrazStatus() );
 
 		if ( dialog.append() )
 		{
 			ICQStatusManager* mgr = static_cast<ICQStatusManager*>( protocol()->statusManager() );
-			mgr->appendXtrazStatus( status );
+			mgr->appendXtrazStatus( dialog.xtrazStatus() );
 		}
 	}
 }
@@ -365,16 +381,17 @@ void ICQAccount::editXtrazStatuses()
 	dialog.exec();
 }
 
-void ICQAccount::setPresenceFlags( Oscar::Presence::Flags flags, const QString &message )
+void ICQAccount::setPresenceFlags( Oscar::Presence::Flags flags, const Kopete::StatusMessage &reason )
 {
 	Oscar::Presence pres = presence();
 	pres.setFlags( flags );
-	kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "new flags=" << (int)flags << ", old type="
-		<< (int)pres.flags() << ", new message=" << message << endl;
-	setPresenceTarget( pres, message );
+	kDebug(OSCAR_ICQ_DEBUG) << "new flags=" << (int)flags << ", old type="
+		<< (int)pres.flags() << ", new message=" << reason.message()
+		<< ", new title=" << reason.title() << endl;
+	setPresenceTarget( pres, reason );
 }
 
-void ICQAccount::setPresenceTarget( const Oscar::Presence &newPres, const QString &message )
+void ICQAccount::setPresenceTarget( const Oscar::Presence &newPres, const Kopete::StatusMessage &reason )
 {
 	bool targetIsOffline = (newPres.type() == Oscar::Presence::Offline);
 	bool accountIsOffline = ( presence().type() == Oscar::Presence::Offline ||
@@ -388,16 +405,29 @@ void ICQAccount::setPresenceTarget( const Oscar::Presence &newPres, const QStrin
 	}
 	else if ( accountIsOffline )
 	{
-		mInitialStatusMessage = message;
+		mInitialStatusMessage = reason;
 		OscarAccount::connect( protocol()->statusManager()->onlineStatusOf( newPres ) );
 	}
 	else
 	{
 		Oscar::DWORD status = protocol()->statusManager()->oscarStatusOf( newPres );
-		engine()->setStatus( status, message, newPres.xtrazStatus(), newPres.description() );
+		engine()->setStatus( status, reason.message(), newPres.xtrazStatus(), reason.title() );
 	}
 }
 
+void ICQAccount::setPresenceXStatus( const Xtraz::Status &xStatus )
+{
+	Oscar::Presence pres = presence();
+	Oscar::Presence::Flags flags = pres.flags() & ~Oscar::Presence::StatusTypeMask;
+	pres.setFlags( flags | Oscar::Presence::XStatus );
+	pres.setXtrazStatus( xStatus.status() );
+
+	Kopete::StatusMessage statusMessage;
+	statusMessage.setTitle( xStatus.description() );
+	statusMessage.setMessage( xStatus.message() );
+
+	setPresenceTarget( pres, statusMessage );
+}
 
 void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
 {
@@ -418,39 +448,103 @@ void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kope
 	}
 	else
 	{
-		setPresenceTarget( protocol()->statusManager()->presenceOf( status ), reason.message() );
+		setPresenceTarget( protocol()->statusManager()->presenceOf( status ), reason );
 	}
 }
 
 void ICQAccount::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
+	Q_UNUSED(statusMessage);
 }
 
 OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem )
 {
 	if ( QRegExp("[\\d]+").exactMatch( contactId ) )
 	{
-		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString(), ssiItem );
+		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString() );
+		contact->setSSIItem( ssiItem );
 
-		if ( !ssiItem.alias().isEmpty() )
-			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
-
-		if ( isConnected() )
+		if ( engine()->isActive() )
 			contact->loggedIn();
 
 		return contact;
 	}
 	else
 	{
-		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString(), ssiItem );
-
-		if ( !ssiItem.alias().isEmpty() )
-			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString() );
+		contact->setSSIItem( ssiItem );
 
 		return contact;
 	}
 }
 
+QString ICQAccount::sanitizedMessage( const QString& message ) const
+{
+	QString sanitizedMsg = Qt::escape( message );
+
+	sanitizedMsg.replace( QRegExp(QString::fromLatin1("[\r]?[\n]")), QString::fromLatin1("<br />") );
+
+	return sanitizedMsg;
+}
+
+void ICQAccount::slotGotAuthRequest( const QString& contact, const QString& reason )
+{
+	QString contactId = Oscar::normalize( contact );
+
+	Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent( contactId, this );
+	QObject::connect( event, SIGNAL(actionActivated(uint)), this, SLOT(addedInfoEventActionActivated(uint)) );
+
+	Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+	actions |= Kopete::AddedInfoEvent::BlockAction;
+	actions |= Kopete::AddedInfoEvent::InfoAction;
+
+	Kopete::Contact * ct = contacts()[contactId];
+	if( !ct || !ct->metaContact() || ct->metaContact()->isTemporary() )
+		actions |= Kopete::AddedInfoEvent::AddAction;
+
+	if( ct )
+		event->setContactNickname( ct->nickName() );
+
+	event->showActions( actions );
+	event->setAdditionalText( reason );
+	event->sendEvent();
+}
+
+void ICQAccount::addedInfoEventActionActivated( uint actionId )
+{
+	Kopete::AddedInfoEvent *event = dynamic_cast<Kopete::AddedInfoEvent *>(sender());
+	if ( !event || !isConnected() )
+		return;
+
+	switch ( actionId )
+	{
+	case Kopete::AddedInfoEvent::AddContactAction:
+		event->addContact();
+		break;
+	case Kopete::AddedInfoEvent::AuthorizeAction:
+		engine()->sendAuth( event->contactId(), QString(), true );
+		break;
+	case Kopete::AddedInfoEvent::BlockAction:
+		engine()->sendAuth( event->contactId(), QString(), false );
+		engine()->setIgnore( event->contactId(), true );
+		break;
+	case Kopete::AddedInfoEvent::InfoAction:
+		{
+			ICQContact* c = new ICQContact( this, event->contactId(), NULL );
+			ICQUserInfoWidget* info = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
+			QObject::connect( info, SIGNAL(finished()), c, SLOT(deleteLater()) );
+			QObject::connect( info, SIGNAL(finished()), info, SLOT(delayedDestruct()) );
+			QObject::connect( event, SIGNAL(eventClosed(Kopete::InfoEvent*)), info, SLOT(delayedDestruct()) );
+
+			info->setContact( c );
+			engine()->requestFullInfo( c->contactId() );
+
+			info->setModal( false );
+			info->show();
+		}
+		break;
+	}
+}
 
 #include "icqaccount.moc"
 

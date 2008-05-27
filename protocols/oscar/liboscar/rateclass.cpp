@@ -94,7 +94,7 @@ bool RateClass::isMember( Oscar::WORD family, Oscar::WORD subtype ) const
 void RateClass::enqueue( Transfer* t )
 {
 	m_packetQueue.push_back( t );
-	/*kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Send queue length is now: "
+	/*kDebug(OSCAR_RAW_DEBUG) << "Send queue length is now: "
 		<< m_packetQueue.count() << endl;*/
 	setupTimer();
 }
@@ -141,7 +141,7 @@ int RateClass::timeToNextSend()
 	//The maximum level at which we can safely send a packet
 	Oscar::DWORD maxPacket = m_rateInfo.alertLevel + RATE_SAFETY_TIME;
 		
-/*kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Rate Information:"
+/*kDebug(OSCAR_RAW_DEBUG) << "Rate Information:"
 		<< "\nWindow Size: " << windowSize
 		<< "\nWindow Size - 1: " << windowSize - 1
 		<< "\nOld Level: " << m_rateInfo.currentLevel
@@ -156,7 +156,7 @@ int RateClass::timeToNextSend()
 	if ( newLevel < maxPacket || newLevel < m_rateInfo.disconnectLevel )
 	{
 		int waitTime = ( windowSize * maxPacket ) - ( ( windowSize - 1 ) * m_rateInfo.currentLevel );
-		kDebug(OSCAR_RAW_DEBUG) << "We're sending too fast. Will wait " << waitTime << "ms before sending" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "We're sending too fast. Will wait " << waitTime << "ms before sending";
 		return waitTime;
 	}
 	
@@ -165,7 +165,7 @@ int RateClass::timeToNextSend()
 
 Oscar::DWORD RateClass::calcNewLevel( int timeDifference ) const
 {
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Time since last packet: "
+	//kDebug(OSCAR_RAW_DEBUG) << "Time since last packet: "
 	//		<< timeDifference << endl;
 	//Calculate new rate level
 	//NewLevel = ( ( Window - 1 ) * OldLevel + TimeDiff )/Window
@@ -197,7 +197,7 @@ void RateClass::setupTimer()
 
 void RateClass::slotSend()
 {
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	//kDebug(OSCAR_RAW_DEBUG) ;
 
 	if ( m_packetQueue.isEmpty() )
 		return;
@@ -220,7 +220,7 @@ void RateClass::updateRateInfo()
 	//Update rate info
 	Oscar::DWORD newLevel = calcNewLevel( m_packetTimer.elapsed() );
 	m_rateInfo.currentLevel = newLevel;
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Current Level = " <<  newLevel << endl;
+	//kDebug(OSCAR_RAW_DEBUG) << "Current Level = " <<  newLevel;
 	
 	//restart the timer
 	m_packetTimer.restart();

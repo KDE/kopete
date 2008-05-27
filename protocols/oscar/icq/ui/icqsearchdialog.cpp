@@ -46,7 +46,12 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent )
 : KDialog( parent )
 {
 	setCaption( i18n( "ICQ User Search" ) );
-	
+	setButtons( KDialog::Ok | KDialog::Close );
+
+	setButtonText( KDialog::Ok, i18n( "Add" ) );
+	setButtonWhatsThis( KDialog::Ok, i18n( "Add the selected user to your contact list" ) );
+	enableButton( KDialog::Ok, false );
+
 	m_account = account;
 	QWidget* w = new QWidget( this );
 	m_searchUI = new Ui::ICQSearchBase();
@@ -64,14 +69,11 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent )
 	m_searchUI->searchResults->setEditTriggers( QAbstractItemView::NoEditTriggers );
 	
 	connect( m_searchUI->searchButton, SIGNAL( clicked() ), this, SLOT( startSearch() ) );
-	connect( m_searchUI->searchResults->selectionModel(), SIGNAL( currentRowChanged( const QModelIndex&, const QModelIndex& ) ),
-	         this, SLOT( resultRowChanged( const QModelIndex& ) ) );
-	connect( m_searchUI->addButton, SIGNAL( clicked() ), this, SLOT( addContact() ) );
-	connect( m_searchUI->clearButton, SIGNAL( clicked() ), this, SLOT( clearResults() ) );
+	connect( m_searchUI->searchResults->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+	         this, SLOT(selectionChanged(const QItemSelection&)) );
+	connect( m_searchUI->clearButton, SIGNAL( clicked() ), this, SLOT( clear() ) );
 	connect( m_searchUI->stopButton, SIGNAL( clicked() ), this, SLOT( stopSearch() ) );
-	connect( m_searchUI->closeButton, SIGNAL( clicked() ), this, SLOT( closeDialog() ) );
 	connect( m_searchUI->userInfoButton, SIGNAL( clicked() ), this, SLOT( userInfo() ) );
-	connect( m_searchUI->newSearchButton, SIGNAL( clicked() ), this, SLOT( newSearch() ) );
 	
 	ICQProtocol *p = ICQProtocol::protocol();
 	p->fillComboFromTable( m_searchUI->gender, p->genders() );
@@ -107,7 +109,7 @@ void ICQSearchDialog::startSearch()
 	
 		m_searchUI->stopButton->setEnabled( true );
 		m_searchUI->searchButton->setEnabled( false );
-		m_searchUI->newSearchButton->setEnabled( false );
+		m_searchUI->clearButton->setEnabled( false );
 	
 		connect( m_account->engine(), SIGNAL( gotSearchResults( const ICQSearchResult& ) ),
 				this, SLOT( newResult( const ICQSearchResult& ) ) );
@@ -124,7 +126,7 @@ void ICQSearchDialog::startSearch()
 				stopSearch();
 				clearResults();
 				KMessageBox::sorry( this, i18n("You must enter a valid UIN."), i18n("ICQ Plugin") );
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Search aborted: invalid UIN " << m_searchUI->uin->text() << endl;
+				kDebug(OSCAR_RAW_DEBUG) << "Search aborted: invalid UIN " << m_searchUI->uin->text();
 			}
 			else
 			{
@@ -163,13 +165,13 @@ void ICQSearchDialog::startSearch()
 				stopSearch();
 				clearResults();
 				KMessageBox::information(this, i18n("You must enter search criteria."), i18n("ICQ Plugin") );
-				kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Search aborted: all fields were blank" << endl;
+				kDebug(OSCAR_ICQ_DEBUG) << "Search aborted: all fields were blank";
 			}
 			else
 			{
 				// Start the search
 				m_account->engine()->whitePagesSearch( info );
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting whitepage search" << endl;
+				kDebug(OSCAR_RAW_DEBUG) << "Starting whitepage search";
 			}
 		}
 	}
@@ -184,32 +186,7 @@ void ICQSearchDialog::stopSearch()
 
 	m_searchUI->stopButton->setEnabled( false );
 	m_searchUI->searchButton->setEnabled( true );
-	m_searchUI->newSearchButton->setEnabled( true );
-}
-
-void ICQSearchDialog::addContact()
-{
-	ICQAddContactPage* iacp = dynamic_cast<ICQAddContactPage*>( parent() );
-	if ( !iacp )
-	{
-		kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "The ICQ ACP is not our parent!!" << endl;
-	}
-	else
-	{
-		QModelIndexList indexList = m_searchUI->searchResults->selectionModel()->selectedIndexes();
-		if ( indexList.count() > 0 )
-		{
-			const QAbstractItemModel *model = m_searchUI->searchResults->selectionModel()->model();
-			QModelIndex index = model->index( indexList.at( 0 ).row(), 0, QModelIndex() );
-			QString uin = model->data( index ).toString();
-			
-			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Passing " << uin << " back to the ACP" << endl;
-			iacp->setUINFromSearch( uin );
-			
-			// Closing the dialog
-			closeDialog();
-		}
-	}
+	m_searchUI->clearButton->setEnabled( true );
 }
 
 void ICQSearchDialog::userInfo()
@@ -240,7 +217,7 @@ void ICQSearchDialog::userInfo()
 			m_infoWidget->show();
 				if ( m_contact->account()->isConnected() )
 				m_account->engine()->requestFullInfo( m_contact->contactId() );
-			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Displaying user info" << endl;
+			kDebug(OSCAR_ICQ_DEBUG) << "Displaying user info";
 		}
 	}
 }
@@ -261,30 +238,21 @@ void ICQSearchDialog::clearResults()
 {
 	stopSearch();
 	m_searchResultsModel->removeRows( 0, m_searchResultsModel->rowCount() );
-	m_searchUI->addButton->setEnabled( false );
+	enableButton( KDialog::Ok, false );
 	m_searchUI->userInfoButton->setEnabled( false );
 	m_searchUI->searchButton->setEnabled( true );
 }
 
-void ICQSearchDialog::closeDialog()
+void ICQSearchDialog::selectionChanged( const QItemSelection & selected )
 {
-	stopSearch();
-	clearResults();
-	clearFields();
-
-	slotButtonClicked(KDialog::Close);
-}
-
-void ICQSearchDialog::resultRowChanged( const QModelIndex & current )
-{
-	if ( !current.isValid() )
+	if ( selected.isEmpty() )
 	{
-		m_searchUI->addButton->setEnabled( false );
+		enableButton( KDialog::Ok, false );
 		m_searchUI->userInfoButton->setEnabled( false );
 	}
 	else
 	{
-		m_searchUI->addButton->setEnabled( true );
+		enableButton( KDialog::Ok, true );
 		m_searchUI->userInfoButton->setEnabled( true );
 	}
 }
@@ -330,11 +298,10 @@ void ICQSearchDialog::newResult( const ICQSearchResult& info )
 
 void ICQSearchDialog::searchFinished( int numLeft )
 {
-	kWarning(OSCAR_ICQ_DEBUG) << k_funcinfo << "There are " << numLeft << "contact left out of this search" << endl;
+	kWarning(OSCAR_ICQ_DEBUG) << "There are " << numLeft << "contact left out of this search";
 	m_searchUI->stopButton->setEnabled( false );
 	m_searchUI->clearButton->setEnabled( true );
 	m_searchUI->searchButton->setEnabled( true );
-	m_searchUI->newSearchButton->setEnabled( true );
 }
 
 void ICQSearchDialog::clearFields()
@@ -352,10 +319,45 @@ void ICQSearchDialog::clearFields()
 	m_searchUI->onlyOnline->setChecked( false );
 }
 
-void ICQSearchDialog::newSearch()
+void ICQSearchDialog::clear()
 {
 	clearResults();
 	clearFields();
+}
+
+void ICQSearchDialog::slotButtonClicked( int button )
+{
+	if ( button == KDialog::Ok )
+	{
+		ICQAddContactPage* iacp = dynamic_cast<ICQAddContactPage*>( parent() );
+		if ( !iacp )
+		{
+			kDebug(OSCAR_ICQ_DEBUG) << "The ICQ ACP is not our parent!!";
+		}
+		else
+		{
+			QModelIndexList indexList = m_searchUI->searchResults->selectionModel()->selectedIndexes();
+			if ( indexList.count() > 0 )
+			{
+				const QAbstractItemModel *model = m_searchUI->searchResults->selectionModel()->model();
+				QModelIndex index = model->index( indexList.at( 0 ).row(), 0, QModelIndex() );
+				QString uin = model->data( index ).toString();
+
+				kDebug(OSCAR_ICQ_DEBUG) << "Passing " << uin << " back to the ACP";
+				iacp->setUINFromSearch( uin );
+			}
+		}
+		accept();
+	}
+	else if ( button == KDialog::Close )
+	{
+		stopSearch();
+		close();
+	}
+	else
+	{
+		KDialog::slotButtonClicked( button );
+	}
 }
 
 //kate: indent-mode csands; space-indent off; replace-tabs off; tab-width 4;

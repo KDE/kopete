@@ -4,7 +4,7 @@
     Logic for exporting data acquired from messaging systems to the 
     KDE address book
 
-    Copyright (c) 2004 by Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2004 by Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
@@ -24,14 +24,13 @@
 #include <kabc/stdaddressbook.h>
 #include <kabc/addressee.h>
 
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 #include "ui_kopeteaddrbookexportui.h"
 //Added by qt3to4:
 #include <QPixmap>
 
 class KDialog;
 class K3ListBox;
-class KComboBox;
 
 namespace Kopete
 {
@@ -76,12 +75,12 @@ protected:
 	 * Populate a combobox with a contact's IM data
 	 */
 	void populateIM( const Kopete::Contact *contact, const QPixmap &icon, 
-			QComboBox *combo, const Kopete::ContactPropertyTmpl &property );
+			QComboBox *combo, const Kopete::PropertyTmpl &property );
 	/**
 	 * Populate a listbox with a contact's IM data
 	 */
 	void populateIM( const Kopete::Contact *contact, const QPixmap &icon, 
-			K3ListBox *combo, const Kopete::ContactPropertyTmpl &property );
+			K3ListBox *combo, const Kopete::PropertyTmpl &property );
 	
 	/** Check the selected item is not the first (existing KABC) item, or the same as it */
 	bool newValue( QComboBox *combo );

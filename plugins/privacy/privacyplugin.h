@@ -1,7 +1,7 @@
 /*
     Privacy Plugin - Filter messages 
 
-    Copyright (c) 2006 by Andre Duffeck <andre@duffeck.de>
+    Copyright (c) 2006 by Andre Duffeck <duffeck@kde.org>
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -21,17 +21,16 @@
 #include <QMap>
 
 #include "kopeteplugin.h"
+#include <QVariantList>
 
 namespace Kopete { 
 	class Message;
-	class MetaContact;
 	class ChatSession;
 	class MessageEvent;
 	class Contact;
 }
 class KopeteView;
 class PrivacyMessageHandlerFactory;
-class PrivacyConfig;
 class PrivacyGUIClient;
 
 class PrivacyPlugin : public Kopete::Plugin
@@ -40,7 +39,7 @@ class PrivacyPlugin : public Kopete::Plugin
 public:
 	static PrivacyPlugin *plugin();
 
-	PrivacyPlugin( QObject *parent, const QStringList &args );
+	PrivacyPlugin( QObject *parent, const QVariantList &args );
 	~PrivacyPlugin();
 
 	void addContactsToWhiteList( QList< Kopete::Contact *> list );

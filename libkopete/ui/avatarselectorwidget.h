@@ -2,6 +2,7 @@
     avatarselectorwidget.h - Widget to manage and select user avatar
 
     Copyright (c) 2007      by Michaël Larouche      <larouche@kde.org>
+                  2007         Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -64,12 +65,13 @@ public:
 	 */
 	Kopete::AvatarManager::AvatarEntry selectedEntry() const;
 
-Q_SIGNALS:
 	/**
-	 * User has selected another avatar in the list.
+	 * @brief Set the avatar currently being used
+	 *
+	 * This is used to select the avatar in the avatar list
 	 */
-	void avatarChanged();
-	
+	void setCurrentAvatar(const QString &path);
+
 private Q_SLOTS:
 	/**
 	 * @internal
@@ -109,13 +111,6 @@ private Q_SLOTS:
 	 * @param item new selected QListWidgetItem
 	 */
 	void listSelectionChanged(QListWidgetItem *item);
-
-	/**
-	 * @internal
-	 * The current tab has changed
-	 * @param index the index of the selected tab
-	 */
-	void currentTabChanged(int index);
 
 private:
 	Q_DISABLE_COPY(AvatarSelectorWidget)

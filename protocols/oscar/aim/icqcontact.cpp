@@ -35,15 +35,12 @@
 #include "oscarstatusmanager.h"
 
 ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::MetaContact *parent,
-						const QString& icon, const OContact& ssiItem )
-: ICQContactBase( account, name, parent, icon, ssiItem )
+						const QString& icon )
+: ICQContactBase( account, name, parent, icon )
 {
 	mProtocol = static_cast<AIMProtocol *>(protocol());
 
-	if ( ssiItem.waitingAuth() )
-		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
-	else
-		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
+	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
 
 	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
 	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
@@ -56,47 +53,45 @@ ICQContact::~ICQContact()
 {
 }
 
-void ICQContact::updateSSIItem()
+void ICQContact::setSSIItem( const OContact& ssiItem )
 {
-	//kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << endl;
-
-	if ( m_ssiItem.waitingAuth() )
+	if ( ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
-	if ( m_ssiItem.type() != 0xFFFF && m_ssiItem.waitingAuth() == false &&
+	if ( ssiItem.type() != 0xFFFF && ssiItem.waitingAuth() == false &&
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
 	}
+
+	ICQContactBase::setSSIItem( ssiItem );
 }
 
 
 void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& details )
 {
-	//kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << contact << contactId() << endl;
+	//kDebug(OSCAR_AIM_DEBUG) << contact << contactId();
 	if ( Oscar::normalize( contact  ) != Oscar::normalize( contactId() ) )
 		return;
 
 	// invalidate old away message if user was offline
 	if ( !isOnline() )
-		removeProperty( mProtocol->awayMessage );
+		removeProperty( mProtocol->statusMessage );
 
-	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
+	kDebug( OSCAR_AIM_DEBUG ) << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
 	setPresenceTarget( presence );
 
 	if ( presence.type() == Oscar::Presence::Online )
 	{
-		removeProperty( mProtocol->awayMessage );
-		m_haveAwayMessage = false;
+		removeProperty( mProtocol->statusMessage );
 	}
 	else
 	{
-		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
+		if ( m_details.awaySinceTime() < details.awaySinceTime() ) //prevent cyclic away message requests
 		{
 			mAccount->engine()->requestAIMAwayMessage( contactId() );
-			m_haveAwayMessage = true;
 		}
 	}
 
@@ -110,12 +105,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 // 	}
 
 	if ( details.capabilitiesSpecified() )
-	{
-		if ( details.clientName().isEmpty() )
-			removeProperty( mProtocol->clientFeatures );
-		else
-			setProperty( mProtocol->clientFeatures, details.clientName() );
-	}
+		setProperty( mProtocol->clientFeatures, details.clientName() );
 
 	OscarContact::userInfoUpdated( contact, details );
 }
@@ -125,7 +115,7 @@ void ICQContact::userOnline( const QString& userId )
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " online" << endl;
+	kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " online";
 	setPresenceTarget( Oscar::Presence( Oscar::Presence::Online, Oscar::Presence::ICQ ) );
 }
 
@@ -134,13 +124,13 @@ void ICQContact::userOffline( const QString& userId )
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline" << endl;
+	kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline";
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 	else
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
 
-	removeProperty( mProtocol->awayMessage );
+	removeProperty( mProtocol->statusMessage );
 }
 
 void ICQContact::loggedIn()
@@ -150,18 +140,6 @@ void ICQContact::loggedIn()
 
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
-
-	if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() )
-			&& nickName() == contactId() )
-		|| !hasProperty( Kopete::Global::Properties::self()->nickName().key() ) ) &&
-		!m_requestingNickname && m_ssiItem.alias().isEmpty() )
-	{
-		m_requestingNickname = true;
-		int time = ( KRandom::random() % 20 ) * 1000;
-		kDebug(OSCAR_AIM_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds" << endl;
-		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
-	}
-
 }
 
 bool ICQContact::isReachable()

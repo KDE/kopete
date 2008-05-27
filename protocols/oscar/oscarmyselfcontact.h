@@ -24,12 +24,9 @@
 namespace Kopete
 {
 class ChatSession;
-class OnlineStatus;
 }
 
 class OscarAccount;
-class QTimer;
-class KToggleAction;
 
 /**
  * myself() contact for oscar protocol

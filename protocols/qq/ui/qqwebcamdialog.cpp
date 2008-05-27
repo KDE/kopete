@@ -18,15 +18,12 @@
 #include <webcamwidget.h>
 #include "avdevice/videodevicepool.h"
 
-#include <q3frame.h>
 #include <qobject.h>
 #include <qwidget.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <q3vbox.h>
-//Added by qt3to4:
 #include <QPixmap>
-#include <Q3VBoxLayout>
+#include <QVBoxLayout>
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -47,12 +44,12 @@ QQWebcamDialog::QQWebcamDialog( const QString &contactId, QWidget * parent )
 	QWidget *page = new QWidget(this);
 	setMainWidget(page);
 
-	Q3VBoxLayout *topLayout = new Q3VBoxLayout( page, 0, spacingHint() );	
+	QVBoxLayout *topLayout = new QVBoxLayout( page );	
 	mImageContainer = new Kopete::WebcamWidget( page );
 	mImageContainer->setMinimumSize(320,240);
 	mImageContainer->setText( i18n( "No webcam image received" ) );
 	mImageContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	topLayout->add( mImageContainer );
+	topLayout->addWidget( mImageContainer );
 	
 	show();
 
@@ -63,14 +60,14 @@ QQWebcamDialog::QQWebcamDialog( const QString &contactId, QWidget * parent )
 	mVideoDevicePool->startCapturing();
 	mVideoDevicePool->getFrame();
 	mVideoDevicePool->getImage(&mImage);
-	kDebug() << "Just captured 1st frame" << endl;
+	kDebug() << "Just captured 1st frame";
 
-	mPixmap=QPixmap(320,240);
-	if (mPixmap.convertFromImage(mImage,0) == true)
+	mPixmap = QPixmap::fromImage(mImage);
+	if (!mPixmap.isNull())
 		mImageContainer->updatePixmap(mPixmap);
 #endif
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
-	qtimer.start(0,false);
+	qtimer.start(0);
 }
 
 QQWebcamDialog::~ QQWebcamDialog( )
@@ -85,10 +82,10 @@ void QQWebcamDialog::slotUpdateImage()
 {
 #ifndef Q_OS_WIN
 	mVideoDevicePool->getFrame();
-	kDebug() << "Getting image" << endl;
+	kDebug() << "Getting image";
 	mVideoDevicePool->getImage(&mImage);
-	kDebug() << "BitBlitting image" << endl;
-	mImageContainer->updatePixmap( QPixmap( mImage ) );
+	kDebug() << "BitBlitting image";
+	mImageContainer->updatePixmap( QPixmap::fromImage( mImage ) );
 #endif
 }
 

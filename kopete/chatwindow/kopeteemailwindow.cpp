@@ -31,6 +31,7 @@
 #include "kopeteviewmanager.h"
 
 #include <kaction.h>
+#include <ktoolbarspaceraction.h>
 #include <kstandardaction.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
@@ -39,7 +40,7 @@
 #include <kdeversion.h>
 #include <kedittoolbar.h>
 #include <kfontdialog.h>
-#include <kglobalsettings.h>
+#include <kcolorscheme.h>
 #include <khtmlview.h>
 #include <kiconloader.h>
 #include <klibloader.h>
@@ -68,10 +69,10 @@
 #include <QSplitter>
 #include <kactioncollection.h>
 
-typedef KGenericFactory<EmailWindowPlugin> EmailWindowPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_emailwindow, EmailWindowPluginFactory( "kopete_emailwindow" )  )
+K_PLUGIN_FACTORY( EmailWindowPluginFactory, registerPlugin<EmailWindowPlugin>(); )
+K_EXPORT_PLUGIN( EmailWindowPluginFactory( "kopete_emailwindow" ) )
 
-EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const QStringList &) :
+EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const QVariantList &) :
 	Kopete::ViewPlugin( EmailWindowPluginFactory::componentData(), parent )
 {}
 
@@ -88,7 +89,7 @@ public:
 	bool showingMessage;
 	bool sendInProgress;
 	bool visible;
-	uint queuePosition;
+	int queuePosition;
 	KPushButton *btnReplySend;
 	KPushButton *btnReadNext;
 	KPushButton *btnReadPrev;
@@ -191,13 +192,6 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 
 	d->sendInProgress = false;
 
-#ifdef __GNUC__
-#warning Port to new KToolBar
-#endif
-#if 0
-	toolBar()->alignItemRight( 99 );
-#endif
-
 	d->visible = false;
 	d->queuePosition = 0;
 
@@ -235,15 +229,15 @@ void KopeteEmailWindow::initActions(void)
 	KStandardAction::paste( d->editPart->widget(), SLOT( paste() ), coll );
 
 	KAction* action;
-	action = new KAction( KIcon("character-set"), i18n( "&Set Font..." ), coll );
+	action = new KAction( KIcon("preferences-desktop-font"), i18n( "&Set Font..." ), coll );
         coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), d->editPart, SLOT(setFont()) );
 
-	action = new KAction( KIcon("pencil"), i18n( "Set Text &Color..." ), coll );
+	action = new KAction( KIcon("format-stroke-color"), i18n( "Set Text &Color..." ), coll );
         coll->addAction( "format_color", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setForegroundColorColor()) );
 
-	action = new KAction( KIcon("fill"), i18n( "Set &Background Color..." ), coll );
+	action = new KAction( KIcon("format-fill-color"), i18n( "Set &Background Color..." ), coll );
         coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBackgroundColorColor()) );
 
@@ -263,13 +257,17 @@ void KopeteEmailWindow::initActions(void)
 
 	// The animated toolbarbutton
 	d->normalIcon = QPixmap( BarIcon( QLatin1String( "kopete" ) ) );
-//	d->animIcon = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), K3Icon::Toolbar);
+//	d->animIcon = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Toolbar);
 	d->animIcon.setPaused(true);
 
 	d->anim = new QLabel( this );
 	d->anim->setObjectName( QLatin1String("kde toolbar widget") );
 	d->anim->setMargin( 5 );
 	d->anim->setPixmap( d->normalIcon );
+
+	KAction *spacerAction = new KToolBarSpacerAction( this );
+	spacerAction->setText( i18n( "Spacer for animation" ) );
+	coll->addAction( "toolbar_spacer", spacerAction );
 
 	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll );
         coll->addAction( "toolbar_animation", action );
@@ -322,7 +320,7 @@ void KopeteEmailWindow::slotConfToolbar()
 
 void KopeteEmailWindow::slotCopy()
 {
-//	kDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) ;
 
 	if ( d->messagePart->hasSelection() )
 		d->messagePart->copy();
@@ -368,7 +366,7 @@ void KopeteEmailWindow::updateNextButton()
 		d->btnReadNext->setEnabled( false );
 
 		QPalette palette;
-		palette.setColor(d->btnReadNext->foregroundRole(), KGlobalSettings::textColor() );
+		palette.setColor(d->btnReadNext->foregroundRole(), KColorScheme(QPalette::Active, KColorScheme::View).foreground().color() );
 		d->btnReadNext->setPalette(palette);
 	}
 	else
@@ -396,7 +394,7 @@ void KopeteEmailWindow::slotUpdateReplySend()
 
 void KopeteEmailWindow::slotReadNext()
 {
-//	kDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) ;
 
 	d->showingMessage = true;
 
@@ -409,7 +407,7 @@ void KopeteEmailWindow::slotReadNext()
 
 void KopeteEmailWindow::slotReadPrev()
 {
-//	kDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) ;
 
 	d->showingMessage = true;
 
@@ -457,7 +455,7 @@ bool KopeteEmailWindow::closeView( bool force )
 			if( shortCaption.length() > 40 )
 				shortCaption = shortCaption.left( 40 ) + QLatin1String("...");
 
-			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You are about to leave the group chat session <b>%1</b>.<br>"
+			response = KMessageBox::warningContinueCancel(this, i18n("<qt>You are about to leave the groupchat session <b>%1</b>.<br />"
 				"You will not receive future messages from this conversation.</qt>", shortCaption), i18n("Closing Group Chat"),
 				KGuiItem( i18n("Cl&ose Chat") ), KStandardGuiItem::cancel(), QLatin1String("AskCloseGroupChat"));
 		}
@@ -559,15 +557,15 @@ void KopeteEmailWindow::raise(bool activate)
 		KWindowSystem::activateWindow( winId() );
 }
 
-void KopeteEmailWindow::windowActivationChange( bool )
+void KopeteEmailWindow::changeEvent( QEvent *e )
 {
-	if( isActiveWindow() )
+	if( e->type() == QEvent::ActivationChange && isActiveWindow() )
 		emit( activated( static_cast<KopeteView*>(this) ) );
 }
 
 void KopeteEmailWindow::makeVisible()
 {
-//	kDebug(14010) << k_funcinfo << endl;
+//	kDebug(14010) ;
 	d->visible = true;
 	show();
 }

@@ -30,10 +30,12 @@
 #include <QTextDocument>
 #include <qregexp.h>
 #include <qimage.h>
+#include <qimagereader.h>
 #include <qtimer.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <QByteArray>
+#include <QtCore/QCryptographicHash>
 
 // kde
 #include <kdebug.h>
@@ -45,6 +47,7 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <KComponentData>
+#include <kemoticons.h>
 
 // for the display picture
 #include <msncontact.h>
@@ -56,11 +59,10 @@
 #include "kopetemessage.h"
 #include "kopetecontact.h"
 #include "kopeteuiglobal.h"
+#include "kopeteappearancesettings.h"
 #include "private/kopeteemoticons.h"
 //#include "kopeteaccountmanager.h"
 //#include "kopeteprotocol.h"
-
-#include "sha1.h"
 
 #include "dispatcher.h"
 using P2P::Dispatcher;
@@ -80,7 +82,7 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 
 	QMap<QString , QPair<QString , KTemporaryFile*> >::Iterator it;
 	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
@@ -113,7 +115,7 @@ void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QSt
 
 void MSNSwitchBoardSocket::handleError( uint code, uint id )
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 	switch( code )
 	{
 		case 208:
@@ -135,7 +137,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 		}
 		case 216:
 		{
-			QString msg = i18n( "The user %1 is online but has blocked you:\nyou can not talk to this user.", m_msgHandle );
+			QString msg = i18n( "The user %1 is online but has blocked you:\nyou cannot talk to this user.", m_msgHandle );
 			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, msg, i18n( "MSN Plugin" ) );
 			emit errorMessage( MSNSocket::ErrorInformation, msg );
 			userLeftChat(m_msgHandle, i18n("user blocked you"));
@@ -267,7 +269,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 			uint dataCastId = rx.cap(1).toUInt();
 			if( dataCastId == 1 )
 			{
-				kDebug(14140) << k_funcinfo << "Received a nudge !" << endl;
+				kDebug(14140) << "Received a nudge !";
 				emit nudgeReceived(m_msgHandle);
 			}
 		}
@@ -357,7 +359,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		if(!m_account->contacts()[m_msgHandle])
 		{
 			//this may happens if the contact has been deleted.
-			kDebug(14140) << k_funcinfo <<"WARNING: contact is null, adding it" <<endl;
+			kDebug(14140) <<"WARNING: contact is null, adding it";
 			if( !m_chatMembers.contains( m_msgHandle ) )
 				m_chatMembers.append( m_msgHandle );
 			emit userJoined( m_msgHandle , m_msgHandle , false);
@@ -392,7 +394,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		if ( m_recvIcons > 0  || m_chunks > 0)
 		{ //Some custom emoticons are waiting to be received. so append the message to the queue
 		  //Or the message has not been fully received, so same thing
-			kDebug(14140) << k_funcinfo << "Message not fully received => append to queue.  Emoticon left: " << m_recvIcons << "  chunks: " << chunk+1 << " of " << m_chunks   <<endl;
+			kDebug(14140) << "Message not fully received => append to queue.  Emoticon left: " << m_recvIcons << "  chunks: " << chunk+1 << " of " << m_chunks;
 			m_msgQueue.append( kmsg );
 			if(!m_emoticonTimer) //to be sure no message will be lost, we will appends message to
 			{                    // the queue in 15 secondes even if we have not received emoticons
@@ -409,8 +411,11 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	else if( type== "text/x-mms-emoticon" || type== "text/x-mms-animemoticon")
 	{
 		// TODO remove Displatcher.
-		KConfigGroup config(KGlobal::config(), "MSN");
-		if ( config.readEntry( "useCustomEmoticons", true ) )
+		bool useEmoticons( Kopete::AppearanceSettings::self()->useEmoticons() );
+        KConfigGroup *msnConfig=m_account->configGroup();
+		bool useCustomEmoticons( msnConfig->readEntry( "useCustomEmoticons", true ) );
+
+		if ( useEmoticons && useCustomEmoticons )
 		{
 			QRegExp rx("([^\\s]*)[\\s]*(<msnobj [^>]*>)");
 			rx.setMinimal(true);
@@ -419,7 +424,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 			{
 				QString msnobj=rx.cap(2);
 				QString txt=rx.cap(1);
-				kDebug(14140) << k_funcinfo << "emoticon: " <<  txt << "    msnobj: " << msnobj<<  endl;
+				kDebug(14140) << "emoticon: " <<  txt << "    msnobj: " << msnobj;
 
 				if( !m_emoticons.contains(msnobj) || !m_emoticons[msnobj].second )
 				{
@@ -566,7 +571,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	}
 	else
 	{
-		kDebug(14140) << k_funcinfo <<" Unknown type '" << type << "' message: \n"<< msg <<endl;
+		kDebug(14140) <<" Unknown type '" << type << "' message: \n"<< msg;
 	}
 }
 
@@ -574,7 +579,7 @@ void MSNSwitchBoardSocket::DispatchInkMessage(const QString& base64String)
 {
 	QByteArray image;
 	// Convert from base64 encoded string to byte array.
-	KCodecs::base64Decode(base64String.toUtf8() , image);
+	image = QByteArray::fromBase64(base64String.toUtf8());
 	KTemporaryFile *inkImage = new KTemporaryFile();
 	inkImage->setPrefix("inkformatgif-");
 	inkImage->setSuffix(".gif");
@@ -643,11 +648,11 @@ int MSNSwitchBoardSocket::sendCustomEmoticon(const QString &name, const QString 
 			QByteArray ar = pictFile.readAll();
 			pictFile.close();
 
-			QString sha1d = QString(KCodecs::base64Encode(SHA1::hash(ar)));
+			QByteArray sha1d = QCryptographicHash::hash(ar, QCryptographicHash::Sha1).toBase64();
 			QString size = QString::number( pictFile.size() );
-			QString all = "Creator" + m_account->accountId() +	"Size" + size + "Type3Location" + fi.fileName() + "FriendlyAAA=SHA1D" + sha1d;
-			QString sha1c = QString(KCodecs::base64Encode(SHA1::hashString(all.toUtf8())));
-			picObj = "<msnobj Creator=\"" + m_account->accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\""+ fi.fileName() + "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+ "\" SHA1C=\""+sha1c+"\"/>";
+			QString all = "Creator" + m_account->accountId() +	"Size" + size + "Type2Location" + fi.fileName() + "FriendlyAAA=SHA1D" + sha1d;
+			QString sha1c = QString(QCryptographicHash::hash(all.toUtf8(),QCryptographicHash::Sha1).toBase64());
+			picObj = "<msnobj Creator=\"" + m_account->accountId() + "\" Size=\"" + size  + "\" Type=\"2\" Location=\""+ fi.fileName() + "\" Friendly=\"AAA=\" SHA1D=\""+sha1d+ "\" SHA1C=\""+sha1c+"\"/>";
 
 			PeerDispatcher()->objectList.insert(picObj, filename);
 		}
@@ -681,13 +686,13 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	}
 #endif
 
-	KConfigGroup config(KGlobal::config(), "MSN");
-	if ( config.readEntry( "exportEmoticons", false ) )
+    KConfigGroup *config=m_account->configGroup();
+	if ( config->readEntry( "exportEmoticons", false ) )
 	{
-		QMap<QString, QStringList> emap = Kopete::Emoticons::self()->emoticonAndPicList();
+		QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
 
 		// Check the list for any custom emoticons
-		for (QMap<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
+		for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
 		{
 			for ( QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2 )
 			{
@@ -710,7 +715,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 
 	// User-Agent is not a official flag, but GAIM has it
 	QString UA;
-	if( config.readEntry("SendClientInfo", true) )
+	if( config->readEntry("SendClientInfo", true) )
 	{
 		UA="User-Agent: Kopete/"+escape(KGlobal::mainComponent().aboutData()->version())+"\r\n";
 	}
@@ -777,7 +782,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		int futurmessages_size=1400;  //1400 is a common good size
 		//int futurmessages_size=1664-len_H;
 
-		int nb=(int)ceil((float)(len_M)/(float)(futurmessages_size));
+		int nb=(int)std::ceil((float)(len_M)/(float)(futurmessages_size));
 
 		if(KMessageBox::warningContinueCancel(0L /* FIXME: we should try to find a parent somewere*/ ,
 			i18n("The message you are trying to send is too long; it will be split into %1 messages.", nb) ,
@@ -817,7 +822,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 					chunk_str="Chunk: "+QString::number(chunk)+"\r\n";
 				else
 				{
-					kDebug(14140) << k_funcinfo <<"The message is slit in more than initially estimated" <<endl;
+					kDebug(14140) <<"The message is slit in more than initially estimated";
 				}
 				result=sendCommand( "MSG", "A", true, (head+chunk_str+"\r\n"+m).toUtf8() );
 				chunk++;
@@ -826,7 +831,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 
 			while(chunk<nb)
 			{
-				kDebug(14140) << k_funcinfo <<"The message is plit in less than initially estimated.  Sending empty message to complete" <<endl;
+				kDebug(14140) <<"The message is plit in less than initially estimated.  Sending empty message to complete";
 				QString chunk_str="Chunk: "+QString::number(chunk);
 				sendCommand( "MSG", "A", true, (head+chunk_str+"\r\n").toUtf8() );
 				chunk++;
@@ -917,7 +922,7 @@ void MSNSwitchBoardSocket::requestDisplayPicture()
 
 void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QString &msnObj )
 {
-	kDebug(14141) << k_funcinfo << msnObj << endl;
+	kDebug(14141) << msnObj;
 
 	if(m_emoticons.contains(msnObj))
 	{ //it's an emoticon
@@ -925,16 +930,18 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QS
 
 		if( m_recvIcons > 0 )
 			m_recvIcons--;
-		kDebug(14140) << k_funcinfo << "emoticons received queue is now: " << m_recvIcons << endl;
+		kDebug(14140) << "emoticons received queue is now: " << m_recvIcons;
 
 		if ( m_recvIcons <= 0 )
 			cleanQueue();
 	}
 	else if(msnObj == "inkformatgif")
 	{
-		QString msg=i18n("<img src=\"%1\" alt=\"Typewrited message\" />", file->fileName() );
+		file->open(); // Open otherwise fileName will be empty!
+		QString msg=i18n("<img src=\"%1\" alt=\"Typed message\" />", file->fileName() );
 
-		kDebug(14140) << k_funcinfo << file->fileName()  <<endl;
+		kDebug(14140) << file->fileName();
+		file->close();
 
 		m_typewrited.append(file);
 
@@ -951,7 +958,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QS
 		if(!m_account->contacts()[m_msgHandle])
 		{
 			//this may happens if the contact has been deleted.
-			kDebug(14140) << k_funcinfo <<"WARNING: contact is null, adding it" <<endl;
+			kDebug(14140) <<"WARNING: contact is null, adding it";
 			if( !m_chatMembers.contains( m_msgHandle ) )
 				m_chatMembers.append( m_msgHandle );
 			emit userJoined( m_msgHandle , m_msgHandle , false);
@@ -987,7 +994,7 @@ void MSNSwitchBoardSocket::slotIncomingFileTransfer(const QString& from, const Q
 	if(!m_account->contacts()[m_msgHandle])
 	{
 		//this may happens if the contact has been deleted.
-		kDebug(14140) << k_funcinfo <<"WARNING: contact is null, adding it" <<endl;
+		kDebug(14140) <<"WARNING: contact is null, adding it";
 		if( !m_chatMembers.contains( m_msgHandle ) )
 			m_chatMembers.append( m_msgHandle );
 		emit userJoined( m_msgHandle , m_msgHandle , false);
@@ -1008,7 +1015,7 @@ void MSNSwitchBoardSocket::cleanQueue()
 		m_emoticonTimer->deleteLater();
 		m_emoticonTimer=0L;
 	}
-	kDebug(14141) << k_funcinfo << m_msgQueue.count() << endl;
+	kDebug(14141) << m_msgQueue.count();
 
 	QList<Kopete::Message>::Iterator it_msg;
 	for ( it_msg = m_msgQueue.begin(); it_msg != m_msgQueue.end(); ++it_msg )
@@ -1029,8 +1036,10 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 		KTemporaryFile *f=it.value().second;
 		if(message.contains(es) && f)
 		{
+			f->open(); // Open otherwise fileName will be empty!
 			QString imgPath = f->fileName();
-			QImage iconImage(imgPath);
+			QImage iconImage = QImageReader(f).read();
+			f->close();
 			/* We don't use a comple algoritm (like the one in the #if)  because the msn client shows
 		     * emoticons like that. So, in that case, we show like the MSN client */
 			#if 0

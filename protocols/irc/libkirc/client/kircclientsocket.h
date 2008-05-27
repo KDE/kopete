@@ -1,5 +1,5 @@
 /*
-    kircclientsocket.h - IRC Client
+    kircclientsocket.h - IRC Client Socket
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
@@ -25,8 +25,7 @@
 namespace KIrc
 {
 
-class ClientCommandHandler;
-class Message;
+class ClientSocketPrivate;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
@@ -37,34 +36,34 @@ class KIRCCLIENT_EXPORT ClientSocket
 	: public KIrc::Socket
 {
 	Q_OBJECT
+	Q_DECLARE_PRIVATE(ClientSocket)
+
+	Q_PROPERTY(QUrl url READ url)
+	Q_PROPERTY(KIrc::Entity::Ptr server READ server)
 
 public:
-	explicit ClientSocket(QObject *parent = 0);
+	explicit ClientSocket(Context *context = 0);
 	~ClientSocket();
 
 public: // READ properties accessors.
+	Entity::Ptr server();
+
+	QUrl url() const;
 
 public slots: // WRITE properties accessors.
 
 public:
-	bool isDisconnected() const KDE_DEPRECATED;
-	bool isConnected() const KDE_DEPRECATED;
 
-	Entity::Ptr server();
+public slots:
+	virtual void connectToServer(const QUrl &url);
 
-	ClientCommandHandler *clientCommandHandler();
-
-private slots:
-	void onConnectionStateChanged(Socket::ConnectionState newState);
+protected:
+	void connectToServer(const QUrl &url, QAbstractSocket *socket);
 
 private:
 	Q_DISABLE_COPY(ClientSocket)
-
-	class Private;
-	Private * const d;
 };
 
 }
 
 #endif
-

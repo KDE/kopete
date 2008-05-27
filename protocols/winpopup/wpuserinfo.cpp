@@ -19,14 +19,13 @@
  ***************************************************************************/
 
 // QT Includes
-#include <qregexp.h>
+#include <QRegExp>
 
 // KDE Includes
-#include <kdebug.h>
-#include <kglobal.h>
-#include <klocale.h>
-#include <klineedit.h>
-#include <kconfig.h>
+#include <KDebug>
+#include <KGlobal>
+#include <KLocale>
+#include <KConfig>
 
 // Local Includes
 #include "wpuserinfo.h"
@@ -40,7 +39,7 @@ WPUserInfo::WPUserInfo( WPContact *contact, QWidget *parent )
 {
 	setButtons( KDialog::Close );
 	setDefaultButton(KDialog::Close);
-//	kDebug( 14170 ) << k_funcinfo << endl;
+//	kDebug( 14170 ) ;
 
 	setCaption( i18n( "User Info for %1", m_contact->nickName() ) );
 
@@ -73,38 +72,39 @@ void WPUserInfo::startDetailsProcess(const QString &host)
 	KConfigGroup group = KGlobal::config()->group("WinPopup");
 	QString theSMBClientPath = group.readEntry("SMBClientPath", "/usr/bin/smbclient");
 
-	K3ProcIO *details = new K3ProcIO;
-	*details << theSMBClientPath << "-N" << "-E" << "-g" << "-L" << host << "-";
+	detailsProcess = new QProcess(this);
+	QStringList args;
+	args << "-N" << "-g" << "-L" << host << "-";
 
-	connect(details, SIGNAL(readReady(K3ProcIO *)), this, SLOT(slotDetailsProcessReady(K3ProcIO *)));
-	connect(details, SIGNAL(processExited(K3Process *)), this, SLOT(slotDetailsProcessExited(K3Process *)));
+	connect(detailsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int, QProcess::ExitStatus)));
 
-	if (!details->start(K3Process::NotifyOnExit, true)) {
-		slotDetailsProcessExited(details);
-		kDebug(14170) << "DetailsProcess not started!" << endl;
-	}
+	detailsProcess->setProcessChannelMode(QProcess::MergedChannels);
+	detailsProcess->start(theSMBClientPath, args);
 }
 
-void WPUserInfo::slotDetailsProcessReady(K3ProcIO *d)
+void WPUserInfo::slotDetailsProcessFinished(int, QProcess::ExitStatus)
 {
-	QString tmpLine = QString();
-	QRegExp info("^Domain=\\[(.*)\\]\\sOS=\\[(.*)\\]\\sServer=\\[(.*)\\]$"), host("^Server\\|(.*)\\|(.*)$");
+	QByteArray outputData = detailsProcess->readAll();
+	QRegExp info("Domain=\\[(.[^\\]]+)\\]\\sOS=\\[(.[^\\]]+)\\]\\sServer=\\[(.[^\\]]+)\\]"),
+			host("Server\\|" + m_contact->contactId() + "\\|(.*)");
 
-	while (d->readln(tmpLine) > -1) {
-		if (info.indexIn(tmpLine) != -1) {
-			Workgroup = info.cap(1);
-			OS = info.cap(2);
-			Software = info.cap(3);
-		}
-		if (host.indexIn(tmpLine) != -1) {
-			Comment = host.cap(2);
+	if (!outputData.isEmpty()) {
+		QString output = QString::fromUtf8(outputData.data());
+		QStringList outputList = output.split('\n');
+		foreach (QString line, outputList) {
+			if (info.indexIn(line) != -1) {
+				Workgroup = info.cap(1);
+				OS = info.cap(2);
+				Software = info.cap(3);
+			}
+			if (host.indexIn(line) != -1) {
+				Comment = host.cap(1);
+			}
 		}
 	}
-}
 
-void WPUserInfo::slotDetailsProcessExited(K3Process *d)
-{
-	delete d;
+	delete detailsProcess;
+	detailsProcess = 0;
 
 	m_mainWidget->sComment->setText(Comment);
 	m_mainWidget->sWorkgroup->setText(Workgroup);
@@ -114,7 +114,7 @@ void WPUserInfo::slotDetailsProcessExited(K3Process *d)
 
 void WPUserInfo::slotCloseClicked()
 {
-	kDebug( 14170 ) << k_funcinfo << endl;
+	kDebug( 14170 ) ;
 
 	emit closing();
 }

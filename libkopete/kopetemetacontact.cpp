@@ -76,17 +76,19 @@ void MetaContact::addContact( Contact *c )
 {
 	if( d->contacts.contains( c ) )
 	{
-		kWarning(14010) << "Ignoring attempt to add duplicate contact " << c->contactId() << "!" << endl;
+		kWarning(14010) << "Ignoring attempt to add duplicate contact " << c->contactId() << "!";
 	}
 	else
 	{
+		const QString oldDisplayName = displayName();
+
 		d->contacts.append( c );
 
 		connect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 
-		connect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+		connect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+			this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
 		connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
 			this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
@@ -97,15 +99,15 @@ void MetaContact::addContact( Contact *c )
 		emit contactAdded(c);
 
 		updateOnlineStatus();
-
+		
 		// if this is the first contact, probbaly was created by a protocol
 		// so it has empty custom properties, then set sources to the contact
 		if ( d->contacts.count() == 1 )
 		{
-			if ( displayName().isEmpty() )
+			const QString newDisplayName = displayName();
+			if ( oldDisplayName != newDisplayName )
 			{
-				setDisplayNameSourceContact(c);
-				setDisplayNameSource(SourceContact);
+				emit displayNameChanged( oldDisplayName , displayName() );
 			}
 			if ( picture().isNull() )
 			{
@@ -144,7 +146,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 {
 	if( !d->contacts.contains( c ) )
 	{
-		kDebug(14010) << k_funcinfo << " Contact is not in this metaContact " << endl;
+		kDebug(14010) << " Contact is not in this metaContact ";
 	}
 	else
 	{
@@ -209,14 +211,14 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
 			disconnect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-			disconnect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-				this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+			disconnect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+				this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 			disconnect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
 				this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
 			disconnect( c, SIGNAL( idleStateChanged( Kopete::Contact * ) ),
 				this, SIGNAL( contactIdleStateChanged( Kopete::Contact *) ) );
 
-			kDebug( 14010 ) << k_funcinfo << "Contact disconnected" << endl;
+			kDebug( 14010 ) << "Contact disconnected";
 
 			KABCPersistence::self()->write( this );
 		}
@@ -231,12 +233,12 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 
 Contact *MetaContact::findContact( const QString &protocolId, const QString &accountId, const QString &contactId )
 {
-	//kDebug( 14010 ) << k_funcinfo << "Num contacts: " << d->contacts.count() << endl;
+	//kDebug( 14010 ) << "Num contacts: " << d->contacts.count();
 	QListIterator<Contact *> it( d->contacts );
 	while ( it.hasNext() )
 	{
 		Contact *c = it.next();
-		//kDebug( 14010 ) << k_funcinfo << "Trying " << it.current()->contactId() << ", proto "
+		//kDebug( 14010 ) << "Trying " << it.current()->contactId() << ", proto "
 		//<< it.current()->protocol()->pluginId() << ", account " << it.current()->accountId() << endl;
 		if( ( c->contactId() == contactId ) && ( c->protocol()->pluginId() == protocolId || protocolId.isNull() ) )
 		{
@@ -437,12 +439,12 @@ QString MetaContact::statusIcon() const
 			if( useCustomIcon() )
 				return icon( ContactListElement::Online );
 			else
-				return QString::fromUtf8( "metacontact_online" );
+				return QString::fromUtf8( "user-online" );
 		case OnlineStatus::Away:
 			if( useCustomIcon() )
 				return icon( ContactListElement::Away );
 			else
-				return QString::fromUtf8( "metacontact_away" );
+				return QString::fromUtf8( "user-away" );
 
 		case OnlineStatus::Unknown:
 			if( useCustomIcon() )
@@ -450,14 +452,14 @@ QString MetaContact::statusIcon() const
 			if ( d->contacts.isEmpty() )
 				return QString::fromUtf8( "metacontact_unknown" );
 			else
-				return QString::fromUtf8( "metacontact_offline" );
+				return QString::fromUtf8( "user-offline" );
 
 		case OnlineStatus::Offline:
 		default:
 			if( useCustomIcon() )
 				return icon( ContactListElement::Offline );
 			else
-				return QString::fromUtf8( "metacontact_offline" );
+				return QString::fromUtf8( "user-offline" );
 	}
 }
 
@@ -557,9 +559,9 @@ void MetaContact::slotContactStatusChanged( Contact * c, const OnlineStatus &sta
 
 void MetaContact::setDisplayName( const QString &name )
 {
-	/*kDebug( 14010 ) << k_funcinfo << "Change displayName from " << d->displayName <<
+	/*kDebug( 14010 ) << "Change displayName from " << d->displayName <<
 		" to " << name  << ", d->trackChildNameChanges=" << d->trackChildNameChanges << endl;
-	kDebug(14010) << kBacktrace(6) << endl;*/
+	kDebug(14010) << kBacktrace(6);*/
 
 	if( name == d->displayName )
 		return;
@@ -570,10 +572,28 @@ void MetaContact::setDisplayName( const QString &name )
 	}
 	else
 	{
+		//check if there is another contact with the same display name.
+		//if this is the case, merge them
+		if(!name.isEmpty())
+			foreach(MetaContact *m, ContactList::self()->metaContacts())
+		{
+			if( m != this && m->customDisplayName() == name)
+			{
+				//merge
+				while(!m->d->contacts.isEmpty())
+				{
+					m->d->contacts.first()->setMetaContact(this);
+				}
+				//the contact will be automatically removed when the last contact is removed
+				//that's why we merge othe other into this one and not the opposite;
+				break;
+			}
+		}
+
 		const QString old = d->displayName;
 		d->displayName = name;
 
-		emit displayNameChanged( old , name );
+					emit displayNameChanged( old , name );
 		QListIterator<Kopete::Contact *> it( d->contacts );
 		while (  it.hasNext() )
 			( it.next() )->sync(Contact::DisplayNameChanged);
@@ -596,14 +616,14 @@ QString MetaContact::displayName() const
 		if ( !metaContactId().isEmpty() )
 			return nameFromKABC(metaContactId());
 	}
-	else if ( source == SourceContact )
+	else if ( source == SourceContact || d->displayName.isEmpty())
 	{
 		if ( d->displayNameSourceContact==0 )
 		{
 			if( d->contacts.count() >= 1 )
 			{// don't call setDisplayNameSource , or there will probably be an infinite loop
 				d->displayNameSourceContact=d->contacts.first();
-//				kDebug( 14010 ) << k_funcinfo << " setting displayname source for " << metaContactId()  << endl;
+//				kDebug( 14010 ) << " setting displayname source for " << metaContactId();
 			}
 		}
 		if ( displayNameSourceContact() != 0L )
@@ -612,7 +632,7 @@ QString MetaContact::displayName() const
 		}
 		else
 		{
-//			kDebug( 14010 ) << k_funcinfo << " source == SourceContact , but there is no displayNameSourceContact for contact " << metaContactId() << endl;
+//			kDebug( 14010 ) << " source == SourceContact , but there is no displayNameSourceContact for contact " << metaContactId();
 		}
 	}
 	return d->displayName;
@@ -626,7 +646,7 @@ QString nameFromKABC( const QString &id ) /*const*/
 		KABC::Addressee theAddressee = ab->findByUid(id);
 		if ( theAddressee.isEmpty() )
 		{
-			kDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
+			kDebug( 14010 ) << "no KABC::Addressee found for ( " << id << " ) " << " in current address book";
 		}
 		else
 		{
@@ -692,12 +712,6 @@ QImage MetaContact::photoFromCustom() const
 
 QImage photoFromContact( Kopete::Contact *contact) /*const*/
 {
-
-	// screw it, crashes now. 
-	// FIXME investigate later
-	
-	return QImage();
-
 	if ( contact == 0L )
 		return QImage();
 
@@ -725,7 +739,7 @@ QImage photoFromKABC( const QString &id ) /*const*/
 		KABC::Addressee theAddressee = ab->findByUid(id);
 		if ( theAddressee.isEmpty() )
 		{
-			kDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
+			kDebug( 14010 ) << "no KABC::Addressee found for ( " << id << " ) " << " in current address book";
 		}
 		else
 		{
@@ -800,10 +814,12 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 	}
 }
 
-void MetaContact::slotPropertyChanged( Contact* subcontact, const QString &key,
+void MetaContact::slotPropertyChanged( PropertyContainer* _subcontact, const QString &key,
 		const QVariant &oldValue, const QVariant &newValue  )
 {
-	if ( displayNameSource() == SourceContact )
+	Contact *subcontact=static_cast<Contact*>(_subcontact);
+	if ( displayNameSource() == SourceContact || 
+			(d->displayName.isEmpty() && displayNameSource() == SourceCustom) )
 	{
 		if( key == Global::Properties::self()->nickName().key() )
 		{
@@ -864,7 +880,7 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 		return;
 
 
-	//kDebug( 14010 ) << k_funcinfo << from->displayName() << " => " << to->displayName() << endl;
+	//kDebug( 14010 ) << from->displayName() << " => " << to->displayName();
 
 	d->groups.removeAll( from );
 	d->groups.append( to );
@@ -970,7 +986,7 @@ void MetaContact::slotUpdateAddressBookPicture()
 		KABC::Addressee theAddressee = ab->findByUid(id);
 		if ( theAddressee.isEmpty() )
 		{
-			kDebug( 14010 ) << k_funcinfo << "no KABC::Addressee found for ( " << id << " ) " << " in current address book" << endl;
+			kDebug( 14010 ) << "no KABC::Addressee found for ( " << id << " ) " << " in current address book";
 		}
 		else
 		{
@@ -1120,6 +1136,9 @@ QList<Contact *> MetaContact::contacts() const
 {
 	return d->contacts;
 }
+
+
+
 } //END namespace Kopete
 
 #include "kopetemetacontact.moc"

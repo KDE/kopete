@@ -30,7 +30,7 @@ namespace Kopete
 /**
  * @brief XML storage for contact list elements.
  *
- * This contactlist storage is provided for backwards compatibility
+ * This contact list storage is provided for backwards compatibility
  * with the "old" contact list which was saved as a XML document.
  *
  * @author Matt Rogers <mattr@kde.org>

@@ -91,9 +91,12 @@ void SSIListTask::handleContactListReply()
 	QList<TLV> tlvList;
 
 	Buffer* buffer = transfer()->buffer();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SSI Protocol version: " << buffer->getByte() << endl;
+	Oscar::BYTE protocolVersion = buffer->getByte();
 	Oscar::WORD ssiItems = buffer->getWord();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Number of items in this SSI packet: " << ssiItems << endl;
+
+	kDebug(OSCAR_RAW_DEBUG) << "SSI Protocol version: " << protocolVersion;
+	kDebug(OSCAR_RAW_DEBUG) << "Number of items in this SSI packet: " << ssiItems;
+
 	Oscar::WORD parsedItems;
 	for ( parsedItems = 1; parsedItems <= ssiItems; ++parsedItems )
 	{
@@ -116,7 +119,7 @@ void SSIListTask::handleContactListReply()
 		
 		OContact s( itemName, groupId, itemId, itemType, tlvList );
 		
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got SSI Item: " << s.toString() << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "Got SSI Item: " << s.toString();
 		if ( s.type() == ROSTER_GROUP )
 			emit newGroup( s );
 		
@@ -134,24 +137,24 @@ void SSIListTask::handleContactListReply()
 		SnacTransfer* st = dynamic_cast<SnacTransfer*>( transfer() );
 		if ( st && st->snacFlags() == 0  )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SSI List complete" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << "SSI List complete";
 			client()->ssiManager()->setListComplete( true );
 			setSuccess( 0, QString() );
 		}
 		else
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Awaiting another SSI packet" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << "Awaiting another SSI packet";
 	}
 
 }
 
 void SSIListTask::handleSSIUpToDate()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Our SSI List is up to date" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "Our SSI List is up to date";
 	Buffer* buffer = transfer()->buffer();
 
 	client()->ssiManager()->setLastModificationTime( buffer->getDWord() );
 	Oscar::WORD ssiItems = buffer->getWord();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Number of items in SSI list: " << ssiItems << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "Number of items in SSI list: " << ssiItems;
 
 	client()->ssiManager()->setListComplete( true );
 	setSuccess( 0, QString() );
@@ -159,7 +162,7 @@ void SSIListTask::handleSSIUpToDate()
 
 void SSIListTask::checkContactTimestamp()
 {
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Checking the timestamp of the SSI list" << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << "Checking the timestamp of the SSI list";
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0013, 0x0005, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();

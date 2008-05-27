@@ -21,6 +21,7 @@
 
 // Qt includes
 #include <QtCore/QEvent>
+#include <QKeyEvent>
 #include <QtGui/QTextCursor>
 #include <QtGui/QTextCharFormat>
 
@@ -34,6 +35,7 @@
 #include <kfontdialog.h>
 #include <kfontsizeaction.h>
 #include <kglobalsettings.h>
+#include <kcolorscheme.h>
 #include <kicon.h>
 #include <kparts/genericfactory.h>
 #include <kstandardaction.h>
@@ -44,7 +46,7 @@
 typedef KParts::GenericFactory<KRichTextEditPart> KRichTextEditPartFactory;
 K_EXPORT_COMPONENT_FACTORY( librichtexteditpart, KRichTextEditPartFactory )
 
-// FIXME: It is still needed with Qt4 ? Need to checkout.
+// Still needed for Qt4 to be able to use the return key as shortcut for sending
 class KopeteTextEdit : public KTextEdit
 {
 public:
@@ -54,11 +56,18 @@ public:
 
     bool event(QEvent *event)
     {
-        // don't allow QTextEdit to override accels
-        if ( event->type() == QEvent::AccelOverride )
-            return QWidget::event(event);
-        else
-            return KTextEdit::event(event);
+        if ( event->type() == QEvent::ShortcutOverride )
+        {
+            QKeyEvent *keyEvent = dynamic_cast<QKeyEvent*>(event);
+            if (keyEvent && ( keyEvent->key() ==  Qt::Key_Return || keyEvent->key() == Qt::Key_Enter ) )
+            {
+                    // Enter is the default shortcut for sending a message,
+                    // therefore it should not be handled by a textedit
+                    return QWidget::event(event);
+            }
+        }
+
+        return KTextEdit::event(event);
     }
 };
 
@@ -106,10 +115,15 @@ KRichTextEditPart::KRichTextEditPart(QWidget *wparent, QObject*, const QStringLi
     createActions();
 
     // TODO: Rename rc file
-    setXMLFile( "kopeterichtexteditpartfull.rc" );
+    setXMLFile( "kopeterichtexteditpart/kopeterichtexteditpartfull.rc" );
 
     //Set colors, font
     readConfig();
+}
+
+KRichTextEditPart::~KRichTextEditPart()
+{
+    delete d;
 }
 
 KTextEdit *KRichTextEditPart::textEdit()
@@ -155,13 +169,8 @@ void KRichTextEditPart::setRichTextEnabled( bool enable )
 
     // Spellchecking disabled when using rich text because the
     // text we were getting from widget was coloured HTML!
-#ifdef __GNUC__
-#warning Renable spellchecker (-DarkShock)
-#endif
-#if 0
-    editor->setCheckSpellingEnabled( !richTextEnabled() );
-    checkSpelling->setEnabled( !richTextEnabled() );
-#endif
+    d->editor->setCheckSpellingEnabled( !isRichTextEnabled() );
+    d->checkSpelling->setEnabled( !isRichTextEnabled() );
 
     //Enable / disable buttons
     updateActions();
@@ -190,19 +199,19 @@ void KRichTextEditPart::reloadConfig()
 
 KAboutData *KRichTextEditPart::createAboutData()
 {
-    KAboutData *aboutData = new KAboutData("krichtexteditpart", I18N_NOOP("KRichTextEditPart"), "0.1",
-                        I18N_NOOP("A simple rich text editor part"),
+    KAboutData *aboutData = new KAboutData("krichtexteditpart", 0, ki18n("KRichTextEditPart"), "0.1",
+                        ki18n("A simple rich text editor part"),
                         KAboutData::License_LGPL );
-    aboutData->addAuthor("Richard J. Moore", 0, "rich@kde.org", "http://xmelegance.org/" );
-    aboutData->addAuthor("Jason Keirstead", 0, "jason@keirstead.org", "http://www.keirstead.org/" );
-    aboutData->addAuthor("Michaël Larouche", 0, "larouche@kde.org" "http://www.tehbisnatch.org/" );
+    aboutData->addAuthor(ki18n("Richard J. Moore"), KLocalizedString(), "rich@kde.org", "http://xmelegance.org/" );
+    aboutData->addAuthor(ki18n("Jason Keirstead"), KLocalizedString(), "jason@keirstead.org", "http://www.keirstead.org/" );
+    aboutData->addAuthor(ki18n("Michaël Larouche"), KLocalizedString(), "larouche@kde.org" "http://www.tehbisnatch.org/" );
 
     return aboutData;
 }
 
 void KRichTextEditPart::createActions()
 {
-    d->enableRichText = new KToggleAction( KIcon("pencil"), i18n("Enable &Rich Text"), this );
+    d->enableRichText = new KToggleAction( KIcon("draw-freehand"), i18n("Enable &Rich Text"), this );
     actionCollection()->addAction( "enableRichText", d->enableRichText );
     d->enableRichText->setCheckedState( KGuiItem( i18n("Disable &Rich Text") ) );
     connect( d->enableRichText, SIGNAL(toggled(bool)),
@@ -254,17 +263,17 @@ void KRichTextEditPart::createActions()
     updateFont();
 
     //Alignment
-    d->action_align_left = new KToggleAction( KIcon("text_left"), i18n("Align &Left"), actionCollection() );
+    d->action_align_left = new KToggleAction( KIcon("text-left"), i18n("Align &Left"), actionCollection() );
     actionCollection()->addAction( "format_align_left", d->action_align_left );
     connect( d->action_align_left, SIGNAL(toggled(bool)),
         this, SLOT(setAlignLeft(bool)) );
 
-    d->action_align_center = new KToggleAction( KIcon("text_center"), i18n("Align &Center"), actionCollection() );
+    d->action_align_center = new KToggleAction( KIcon("text-center"), i18n("Align &Center"), actionCollection() );
     actionCollection()->addAction( "format_align_center", d->action_align_center );
     connect( d->action_align_center, SIGNAL(toggled(bool)),
         this, SLOT(setAlignCenter(bool)) );
 
-    d->action_align_right = new KToggleAction( KIcon("text_right"), i18n("Align &Right"), actionCollection() );
+    d->action_align_right = new KToggleAction( KIcon("text-right"), i18n("Align &Right"), actionCollection() );
     actionCollection()->addAction( "format_align_right", d->action_align_right );
     connect( d->action_align_right, SIGNAL(toggled(bool)),
         this, SLOT(setAlignRight(bool)) );
@@ -351,10 +360,10 @@ void KRichTextEditPart::readConfig()
     d->configWriteLock = true;
     KConfigGroup config(KGlobal::config(), "RichTextEditor");
 
-    QColor standardColor = KGlobalSettings::textColor();
+    QColor standardColor = KColorScheme(QPalette::Active, KColorScheme::View).foreground().color();
     QColor tmpColor;
     tmpColor = config.readEntry("TextColor", standardColor );
-    kDebug() << k_funcinfo << "Text color: " << tmpColor.name() << endl;
+    kDebug() << "Text color: " << tmpColor.name();
 
     setTextColor( tmpColor );
 
@@ -409,9 +418,9 @@ void KRichTextEditPart::setTextColor()
 {
     QColor currentTextColor = d->editor->textColor();
 
-    int result = KColorDialog::getColor( currentTextColor, KGlobalSettings::textColor() , d->editor );
+    int result = KColorDialog::getColor( currentTextColor, KColorScheme(QPalette::Active, KColorScheme::View).foreground().color() , d->editor );
     if(!currentTextColor.isValid())
-        currentTextColor = KGlobalSettings::textColor() ;
+        currentTextColor = KColorScheme(QPalette::Active, KColorScheme::View).foreground().color() ;
     if ( result != QDialog::Accepted  )
         return;
 
@@ -431,7 +440,7 @@ void KRichTextEditPart::setTextColor(const QColor &newColor)
 
 QColor KRichTextEditPart::textColor() const
 {
-    if( d->editor->textColor() == KGlobalSettings::textColor())
+    if( d->editor->textColor() == KColorScheme(QPalette::Active, KColorScheme::View).foreground().color() )
         return QColor();
     return d->editor->textColor();
 }

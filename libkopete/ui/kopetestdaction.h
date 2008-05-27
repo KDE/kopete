@@ -21,7 +21,7 @@
 
 #undef KDE_NO_COMPAT
 #include <kaction.h>
-#include <qobject.h>
+#include <QtCore/QObject>
 
 #include "kopete_export.h"
 
@@ -74,7 +74,7 @@ public:
 	static KAction *deleteContact(const QObject *recvr, const char *slot,
 		KActionCollection* parent, const char *name = 0);
 	/**
-	 * Standard action to change a contact alias/nickname in your contactlist
+	 * Standard action to change a contact alias/nickname in your contact list
 	 */
 	static KAction *changeAlias(const QObject *recvr, const char *slot,
 		KActionCollection* parent, const char *name = 0);

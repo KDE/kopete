@@ -3,7 +3,7 @@
 
     Copyright (c) 2003      by Martijn Klingens <klingens@kde.org>
     Copyright (c) 2003      by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2003      by Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2003      by Will Stephenson <wstephenson@kde.org>
     Copyright (c) 2004      by Olivier Goffart <ogoffart@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
@@ -26,8 +26,9 @@
 #include <kdemacros.h>
 #include <ksharedptr.h>
 
-#include <QObject>
-#include <QFlags>
+#include <QtCore/QObject>
+#include <QtCore/QFlags>
+#include <QtGui/QIcon>
 
 #include "kopeteonlinestatusmanager.h"
 
@@ -39,6 +40,7 @@ namespace Kopete
 {
 	class OnlineStatusManager;
 
+	class Identity;
 	class Protocol;
 	class Account;
 	class Contact;
@@ -172,7 +174,7 @@ public:
 	 * by libkopete and should be unique per protocol.
 	 * @param overlayIcons is a list of QStrings which are the name of status
 	 * icons to be used by the KDE icon loader. (Statuses which don't have icons
-	 * to overlay like Online and Offline should use QString::null as icon
+	 * to overlay like Online and Offline should use QString() as icon
 	 * name ).  NOTE if the string is a movie ( *.mng ) it must be the first string in the list.
 	 * TODO: KDE4 sort out movies and overlay icons.
 	 * @param description is a description in e.g. tooltips.
@@ -206,12 +208,17 @@ public:
 	 * by libkopete and should be unique per protocol.
 	 * @param overlayIcon is a string returning the name of the status icon to be
 	 * used by the KDE icon loader. (Status whiwh doesn't have icon to overlay like
-	 * Online and Offline should use QString::null as icon string)
+	 * Online and Offline should use QString() as icon string)
 	 * @param description is a description in e.g. tooltips.
 	 * @param caption is the text of the action in the menu
 	 * @param categories the categories this online status is in
 	 * @param options the options of this online status
-	 * @see Kopete::OnlineStatusManager::registerOnlineStatus for more info about the categories and options parameters
+	 * @see Kopete::OnlineStatusManager for more info about the categories and options parameters
+	 *
+	 * You can set the status to be in the predefined categories.
+	 * Ideally, each category should own one status.
+	 * A status may be in several categories, or in none.
+	 * There shouldn't be more than one status per protocol per categories.
 	 */
 	OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus, const QStringList &overlayIcon,
 		const QString &description, const QString& caption, OnlineStatusManager::Categories categories = 0x0 , OnlineStatusManager::Options options = 0x0 );
@@ -270,11 +277,32 @@ public:
 	Protocol* protocol() const;
 
 	/**
+	 * \brief Return the text for the action in the menu
+	 */
+	QString caption() const;
+
+	/**
+	 * \brief Return the categories this online status is in
+	 *
+	 * @see Kopete::OnlineStatusManager for more info about the categories
+	 */
+	OnlineStatusManager::Categories categories() const;
+
+	/**
+	 * \brief Return the options of this online status
+	 *
+	 * @see Kopete::OnlineStatusManager for more info about the options parameters
+	 */
+	OnlineStatusManager::Options options() const;
+
+	/**
 	 * @return @c true if this a contact with this status is definitely online,
 	 *         @c false if the contact is Offline, Connecting or Unknown.
 	 */
 	bool isDefinitelyOnline() const;
 
+
+	
 
 	/**
 	 * \brief Return a status icon generated for the given Contact
@@ -284,9 +312,18 @@ public:
 	 * over the base icon.
 	 * A cache is employed to reduce CPU and memory usage.
 	 * @param contact is the contact the icon should apply to.
-	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
 	 */
-	QPixmap iconFor( const Contact *contact, int size = 16 ) const;
+	QIcon iconFor( const Contact *contact ) const;
+
+	/**
+	 * \brief Return a status icon generated for the given Contact
+	 * \overload 
+	 * \deprecated  Use the one that return a QIcon
+	 * @param contact is the contact the icon should apply to.
+	 * @param size is the size we the icon should be scaled to
+	 */
+	KDE_DEPRECATED QPixmap iconFor( const Contact *contact, int size ) const
+	{ return iconFor(contact).pixmap(size); }
 
 	/**
 	 * \brief Return the mime source for a status icon generated for the given Contact
@@ -313,7 +350,19 @@ public:
 	 * The account's color causes tinting, if it's plain QColor(), no tinting takes place.
 	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
 	 */
-	QPixmap iconFor( const Account *account, int size = 16 ) const;
+	QIcon iconFor( const Account *account ) const;
+
+	/**
+	 * \brief Return a status icon generated for the given Account
+	 * \overload
+	 * \deprecated  Use the varient which return a QIcon
+	 * 
+	 * @param account is the account the icon should apply to.
+	 * The account's color causes tinting, if it's plain QColor(), no tinting takes place.
+	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
+	 */
+	KDE_DEPRECATED QPixmap iconFor( const Account *account, int size  ) const
+	{ return iconFor(account).pixmap(size); }
 
 	/**
 	 * \brief Return the mime source for a status icon generated for the given Account
@@ -397,7 +446,7 @@ public:
 	 * Static method to convert a QString representing a StatusType to a StatusType to avoid
 	 * many issues when saving StatusType to disk
 	 */
-	 static OnlineStatus::StatusType statusStringToType(QString& string);
+	 static OnlineStatus::StatusType statusStringToType(const QString& string);
 
 
 

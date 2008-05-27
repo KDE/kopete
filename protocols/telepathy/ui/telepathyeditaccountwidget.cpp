@@ -24,7 +24,6 @@
 #include <QtCore/QPointer>
 #include <QtCore/QMap>
 #include <QtGui/QTreeWidgetItem>
-#include <QtGui/QTreeWidgetItem>
 
 // KDE includes
 #include <kmessagebox.h>
@@ -97,7 +96,7 @@ TelepathyEditAccountWidget::TelepathyEditAccountWidget(Kopete::Account *account,
 
 TelepathyEditAccountWidget::~TelepathyEditAccountWidget()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) ;
 	delete d;
 }
 
@@ -108,14 +107,14 @@ TelepathyAccount *TelepathyEditAccountWidget::account()
 
 bool TelepathyEditAccountWidget::validateData()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) ;
 	// You must fill the form to move to the next step
 	if( !d->ui.treeConnectionManager->selectedItems().isEmpty() &&
 		!d->ui.treeProtocol->selectedItems().isEmpty() )
 		return true;
 	else
 	{
-		KMessageBox::error(this, i18n("Please fill the dialog. First select a connection manager then select a protocol."));
+		KMessageBox::error(this, i18n("Please fill in the fields in the dialog. First select a connection manager, then select a protocol."));
 		return false;
 	}
 }
@@ -125,7 +124,7 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
 	// Get parameter list
 	if( d->paramWidget )
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) ;
 		d->savedParameterList = d->paramWidget->parameterList();
 	
 		if( !account() )
@@ -137,7 +136,7 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
 				if( parameter.name().startsWith( QLatin1String("account") ) )
 				{
 					newAccountId = parameter.value().toString();
-					kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Found account id: " << newAccountId << endl;
+					kDebug(TELEPATHY_DEBUG_AREA) << "Found account id: " << newAccountId;
 					break;
 				}
 			}
@@ -153,7 +152,7 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
 
 void TelepathyEditAccountWidget::readConfig()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) ;
 	// Restore config not related to ConnectionManager parameters first
 	// so that the UI for the protocol parameters will be generated
 	if( account()->readConfig() )
@@ -191,7 +190,7 @@ void TelepathyEditAccountWidget::readConfig()
 
 void TelepathyEditAccountWidget::writeConfig()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) ;
 	QString selectedConnectionManager = d->ui.treeConnectionManager->selectedItems().first()->text(0);
 	QString selectedProtocol = d->ui.treeProtocol->selectedItems().first()->text(0);
 	QString accountId = account()->accountId();
@@ -204,12 +203,12 @@ void TelepathyEditAccountWidget::writeConfig()
 	accountConfig->writeEntry( QLatin1String("SelectedProtocol"), selectedProtocol );
 	
 	// Write config related to ConnectionManager Parameter
-	KSharedConfig::Ptr telepathyConfig = KGlobal::config();
-	telepathyConfig->setGroup( TelepathyProtocol::protocol()->formatTelepathyConfigGroup(selectedConnectionManager, selectedProtocol, accountId) );
+	QString telepathyGroup(TelepathyProtocol::protocol()->formatTelepathyConfigGroup(selectedConnectionManager, selectedProtocol, accountId));
+	KConfigGroup telepathyConfig = KGlobal::config()->group(telepathyGroup);
 	
 	foreach(ConnectionManager::Parameter parameter, d->savedParameterList)
 	{
-		telepathyConfig->writeEntry( parameter.name(), parameter.value() );
+		telepathyConfig.writeEntry( parameter.name(), parameter.value() );
 	}
 }
 

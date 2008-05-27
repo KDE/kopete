@@ -18,14 +18,11 @@
 #define MEANWHILECONTACT_H
 
 #include <qmap.h>
-//Added by qt3to4:
-#include <Q3PtrList>
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 #include "meanwhileaccount.h"
 
 class KAction;
-class KActionCollection;
 namespace Kopete { class Account; }
 namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }

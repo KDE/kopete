@@ -1,4 +1,3 @@
-
 include_directories( 
 ${KOPETE_INCLUDES} 
 )
@@ -7,8 +6,6 @@ ${KOPETE_INCLUDES}
 ########### next target ###############
 
 set(kopete_alias_PART_SRCS aliasplugin.cpp )
-
-kde4_automoc(${kopete_alias_PART_SRCS})
 
 kde4_add_plugin(kopete_alias ${kopete_alias_PART_SRCS})
 
@@ -24,7 +21,6 @@ set(kcm_kopete_alias_PART_SRCS aliaspreferences.cpp editaliasdialog.cpp )
 
 kde4_add_ui_files(kcm_kopete_alias_PART_SRCS aliasdialogbase.ui aliasdialog.ui )
 
-kde4_automoc(${kcm_kopete_alias_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_alias ${kcm_kopete_alias_PART_SRCS})
 

@@ -16,13 +16,16 @@
     *                                                                       *
     *************************************************************************
 */
+#ifdef Q_WS_X11
 #include <fixx11h.h>
+#endif
 #include "xmlcontactstorage.h"
 
 // Qt includes
 #include <QtCore/QFile>
 #include <QtCore/QRegExp>
 #include <QtCore/QLatin1String>
+#include <QtCore/QTextCodec>
 #include <QtCore/QTextStream>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomElement>
@@ -40,7 +43,6 @@
 #include "kopetecontact.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
-#include "kopetegeneralsettings.h"
 #include "kopetepluginmanager.h"
 
 namespace Kopete
@@ -138,16 +140,16 @@ void XmlContactStorage::load()
     QDomElement list = contactList.documentElement();
     //TODO: Check if we remove versioning support from XML file.
 #if 0
-    QString versionString = list.attribute( QString::fromLatin1( "version" ), QString::null );
+    QString versionString = list.attribute( QString::fromLatin1( "version" ), QString() );
     uint version = 0;
     if( QRegExp( QString::fromLatin1( "[0-9]+\\.[0-9]" ) ).exactMatch( versionString ) )
-        version = versionString.replace( QString::fromLatin1( "." ), QString::null ).toUInt();
+        version = versionString.replace( QString::fromLatin1( "." ), QString() ).toUInt();
 
     if( version < Private::ContactListVersion )
     {
         // The version string is invalid, or we're using an older version.
         // Convert first and reparse the file afterwards
-        kDebug( 14010 ) << k_funcinfo << "Contact list version " << version
+        kDebug( 14010 ) << "Contact list version " << version
                 << " is older than current version " <<  Private::ContactListVersion
                 << ". Converting first." << endl;
 
@@ -162,7 +164,7 @@ void XmlContactStorage::load()
         list = contactList.documentElement();
     }
 #endif
-//TODO: Add to internal contactlist item list.
+//TODO: Add to internal contact list item list.
 #if 0
     addGroup( Kopete::Group::topLevel() );
 #endif
@@ -173,7 +175,7 @@ void XmlContactStorage::load()
         if( element.tagName() == QString::fromLatin1("meta-contact") )
         {
             //TODO: id isn't used
-            //QString id = element.attribute( "id", QString::null );
+            //QString id = element.attribute( "id", QString() );
             Kopete::MetaContact *metaContact = new Kopete::MetaContact();
             if ( !parseMetaContact( metaContact, element ) )
             {
@@ -198,23 +200,9 @@ void XmlContactStorage::load()
                 addGroup( group );
             }
         }
-        // Only load myself metacontact information when Global Identity is enabled.
-#if 0
-        else if( element.tagName() == QString::fromLatin1("myself-meta-contact") && Kopete::GeneralSettings::self()->enableGlobalIdentity() )
-        {
-            //TODO: Add to internal contactlist item list.
-
-            if( !myself()->fromXML( element ) )
-            {
-                delete d->myself;
-                d->myself = 0;
-            }
-
-        }
-#endif
         else
         {
-            kWarning(14010) << k_funcinfo
+            kWarning(14010) 
                     << "Unknown element '" << element.tagName()
                     << "' in XML contact list storage!" << endl;
         }
@@ -274,16 +262,6 @@ void XmlContactStorage::save()
         }
     }
 
-    // Save myself metacontact information
-#if 0
-    if( Kopete::GeneralSettings::self()->enableGlobalIdentity() )
-    {
-        QDomElement myselfElement = myself()->toXML(true); // Save minimal information.
-        myselfElement.setTagName( QLatin1String("myself-meta-contact") );
-        doc.documentElement().appendChild( doc.importNode( myselfElement, true ) );
-    }
-#endif
-
     QTextStream stream ( &contactListFile );
     stream.setCodec(QTextCodec::codecForName("UTF-8"));
     doc.save( stream, 4 );
@@ -336,7 +314,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
             if ( contactElement.hasAttribute(NSCID_ELEM) && contactElement.hasAttribute(NSPID_ELEM) && contactElement.hasAttribute(NSAID_ELEM))
             {
                 oldNameTracking = true;
-                //kDebug(14010) << k_funcinfo << "old name tracking" << endl;
+                //kDebug(14010) << "old name tracking";
                 // retrieve deprecated data (now stored in property-sources)
                 // save temporarely, we will find a Contact* with this later
                 nameSourceCID = contactElement.attribute( NSCID_ELEM );
@@ -344,7 +322,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
                 nameSourceAID = contactElement.attribute( NSAID_ELEM );
             }
 //          else
-//              kDebug(14010) << k_funcinfo << "no old name tracking" << endl;
+//              kDebug(14010) << "no old name tracking";
         }
         else if( contactElement.tagName() == QString::fromUtf8( "photo" ) )
         {
@@ -359,13 +337,13 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
             if ( contactElement.hasAttribute(PSCID_ELEM) && contactElement.hasAttribute(PSPID_ELEM) && contactElement.hasAttribute(PSAID_ELEM))
             {
                 oldPhotoTracking = true;
-//              kDebug(14010) << k_funcinfo << "old photo tracking" << endl;
+//              kDebug(14010) << "old photo tracking";
                 photoSourceCID = contactElement.attribute( PSCID_ELEM );
                 photoSourcePID = contactElement.attribute( PSPID_ELEM );
                 photoSourceAID = contactElement.attribute( PSAID_ELEM );
             }
 //          else
-//              kDebug(14010) << k_funcinfo << "no old photo tracking" << endl;
+//              kDebug(14010) << "no old photo tracking";
         }
         else if( contactElement.tagName() == QString::fromUtf8( "property-sources" ) )
         {
@@ -425,7 +403,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
                     QString strGroupId = groupElement.attribute( QString::fromUtf8("id") );
                     if( !strGroupId.isEmpty() )
                         metaContact->addToGroup( this->group( strGroupId.toUInt() ) );
-                    else //kopete 0.6 contactlist
+                    else //kopete 0.6 contact list
                         metaContact->addToGroup( this->findGroup( groupElement.text() ) );
                 }
                 else if( groupElement.tagName() == QString::fromUtf8( "top-level" ) ) //kopete 0.6 contactlist
@@ -436,8 +414,8 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
         }
         else if( contactElement.tagName() == QString::fromUtf8( "address-book-field" ) )
         {
-            QString app = contactElement.attribute( QString::fromUtf8( "app" ), QString::null );
-            QString key = contactElement.attribute( QString::fromUtf8( "key" ), QString::null );
+            QString app = contactElement.attribute( QString::fromUtf8( "app" ), QString() );
+            QString key = contactElement.attribute( QString::fromUtf8( "key" ), QString() );
             QString val = contactElement.text();
             metaContact->setAddressBookField( 0, app, key , val );
         }
@@ -453,7 +431,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
         /* if (displayNameSourceContact() )  <- doesn't work because the contact is only set up when all plugin are loaded (BUG 111956) */
         if ( !nameSourceCID.isEmpty() )
         {
-//          kDebug(14010) << k_funcinfo << "Converting old name source" << endl;
+//          kDebug(14010) << "Converting old name source";
             // even if the old tracking attributes exists, they could have been null, that means custom
             metaContact->setDisplayNameSource( Kopete::MetaContact::SourceContact );
         }
@@ -470,7 +448,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
 
     if ( oldPhotoTracking )
     {
-//      kDebug(14010) << k_funcinfo << "Converting old photo source" << endl;
+//      kDebug(14010) << "Converting old photo source";
         if ( !photoSourceCID.isEmpty() )
         {
             metaContact->setPhotoSource( Kopete::MetaContact::SourceContact );
@@ -484,7 +462,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
         }
     }
 
-    //FIXME if we ensure that XmlContactStorage is still in memory when signal allPluginsLoaded is emited than
+    //FIXME if we ensure that XmlContactStorage is still in memory when signal allPluginsLoaded is emitted than
     // slotAllPluginsLoaded can be in this object with helper QStrings from MetaConctact ( nameSourcePID, nameSourceAID, nameSourceCID,
     // photoSourcePID, photoSourceAID, photoSourceCID ).
     metaContact->setPhotoSource( photoSourcePID, photoSourceAID, photoSourceCID );
@@ -506,7 +484,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
 //  if (d->contacts.count() > 1) // Does NOT work as intended
 //      d->trackChildNameChanges=false;
 
-//  kDebug(14010) << k_funcinfo << "END" << endl;
+//  kDebug(14010) << "END";
     metaContact->setLoading( false );
     return true;
 }
@@ -600,7 +578,7 @@ bool XmlContactStorage::parseContactListElement( Kopete::ContactListElement *con
     if ( element.tagName() == QLatin1String( "plugin-data" ) )
     {
         QMap<QString, QString> pluginData;
-        QString pluginId = element.attribute( QLatin1String( "plugin-id" ), QString::null );
+        QString pluginId = element.attribute( QLatin1String( "plugin-id" ), QString() );
 
         //in kopete 0.6 the AIM protocol was called OSCAR
         if ( pluginId == QLatin1String( "OscarProtocol" ) )
@@ -628,7 +606,7 @@ bool XmlContactStorage::parseContactListElement( Kopete::ContactListElement *con
             QDomElement iconElement = ic.toElement();
             if ( iconElement.tagName() == QLatin1String( "icon" ) )
             {
-                QString stateStr = iconElement.attribute( QLatin1String( "state" ), QString::null );
+                QString stateStr = iconElement.attribute( QLatin1String( "state" ), QString() );
                 QString icon = iconElement.text();
                 ContactListElement::IconState state = ContactListElement::None;
 
@@ -702,7 +680,7 @@ const QDomElement XmlContactStorage::storeMetaContact( Kopete::MetaContact *meta
 
     if( metaContact->photoSourceContact() )
     {
-        //kDebug(14010) << k_funcinfo << "serializing photo source " << nameFromContact(photoSourceContact()) << endl;
+        //kDebug(14010) << "serializing photo source " << nameFromContact(photoSourceContact());
         // set contact source metadata for photo
         QDomElement contactPhotoSource = metaContactDoc.createElement( QString::fromUtf8("contact-source") );
         contactPhotoSource.setAttribute( NSCID_ELEM, metaContact->photoSourceContact()->contactId() );
@@ -854,6 +832,7 @@ const QList<QDomElement> XmlContactStorage::storeContactListElement( Kopete::Con
 
 void XmlContactStorage::convertContactList( const QString &fileName, uint /* fromVersion */, uint /* toVersion */ )
 {
+	Q_UNUSED(fileName)
     // For now, ignore fromVersion and toVersion. These are meant for future
     // changes to allow incremental (multi-pass) conversion so we don't have
     // to rewrite the whole conversion code for each change.
@@ -904,7 +883,7 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
                         // be called "aim". MSN, AIM, IRC, Oscar and SMS don't use address
                         // book fields yet; Gadu and ICQ can be converted as-is.
                         // As Yahoo is unfinished we won't try to convert at all.
-                        QString id   = oldContactElement.attribute( QLatin1String( "id" ), QString::null );
+                        QString id   = oldContactElement.attribute( QLatin1String( "id" ), QString() );
                         QString data = oldContactElement.text();
 
                         QString app, key, val;
@@ -985,7 +964,7 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
                         else if( oldContactElement.tagName() == QLatin1String( "plugin-data" ) )
                         {
                             // Convert the plugin data
-                            QString id   = oldContactElement.attribute( QLatin1String( "plugin-id" ), QString::null );
+                            QString id   = oldContactElement.attribute( QLatin1String( "plugin-id" ), QString() );
                             QString data = oldContactElement.text();
 
                             bool convertOldAim = false;
@@ -1196,7 +1175,7 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
                         newGroup.appendChild( groupPluginData );
 
                         groupPluginData.setAttribute( QLatin1String( "plugin-id" ),
-                                oldGroupElement.attribute( QLatin1String( "plugin-id" ), QString::null ) );
+                                oldGroupElement.attribute( QLatin1String( "plugin-id" ), QString() ) );
                         groupPluginData.appendChild( newList.createTextNode( oldGroupElement.text() ) );
                     }
 
@@ -1205,7 +1184,7 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
             }
             else
             {
-                kWarning( 14010 ) << k_funcinfo << "Unknown element '" << oldElement.tagName()
+                kWarning( 14010 ) << "Unknown element '" << oldElement.tagName()
                         << "' in contact list!" << endl;
             }
         }
@@ -1217,7 +1196,7 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
 
     QDir().rename( fileName, fileName + QLatin1String( ".bak" ) );
 
-    // kDebug( 14010 ) << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
+    // kDebug( 14010 ) << "XML output:\n" << newList.toString( 2 );
 
     contactListFile.open( QIODevice::WriteOnly );
     QTextStream stream( &contactListFile );

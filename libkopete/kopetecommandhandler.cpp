@@ -19,13 +19,33 @@
 #include <QApplication>
 #include <kdebug.h>
 #include <klocale.h>
-#include <k3process.h>
 #include <kdeversion.h>
 #include <kxmlguiclient.h>
 #include <kaction.h>
 #include <qdom.h>
 #include <kauthorized.h>
 #include <kactioncollection.h>
+#ifndef Q_OS_WIN
+#include <k3process.h>
+#else
+class K3Process : public QObject {
+public:
+    enum RunMode {
+        NotifyOnExit,
+    };
+    enum Communication {
+        NoCommunication,
+        AllOutput,
+    };
+    K3Process(QObject *) {}
+    
+    K3Process &operator<< (const QString &arg) { return *this; }
+    K3Process &operator<< (const char *arg) { return *this; }
+    K3Process &operator<< (const QByteArray &arg) { return *this; }
+    K3Process &operator<< (const QStringList &args) { return *this; }
+    virtual bool start (RunMode runmode=NotifyOnExit, Communication comm=NoCommunication) { return true; }
+};
+#endif
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteprotocol.h"
@@ -174,7 +194,7 @@ void Kopete::CommandHandler::registerCommand( QObject *parent, const QString &co
 	QString lowerCommand = command.toLower();
 
 	Kopete::Command *mCommand = new Kopete::Command( parent, lowerCommand, handlerSlot, help,
-		Normal, QString::null, minArgs, maxArgs, cut, pix);
+		Normal, QString::null, minArgs, maxArgs, cut, pix);	//krazy:exclude=nullstrassign for old broken gcc
 	p->pluginCommands[ parent ].insert( lowerCommand, mCommand );
 }
 
@@ -219,7 +239,7 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::ChatSes
 	Kopete::Command *c = mCommands.value(command);
 	if(c)
 	{
-		kDebug(14010) << k_funcinfo << "Handled Command" << endl;
+		kDebug(14010) << "Handled Command";
 		if( c->type() != SystemAlias && c->type() != UserAlias )
 			p->inCommand = true;
 
@@ -348,15 +368,11 @@ void Kopete::CommandHandler::slotAwayCommand( const QString &args, Kopete::ChatS
 
 void Kopete::CommandHandler::slotAwayAllCommand( const QString &args, Kopete::ChatSession *manager )
 {
-	if( manager->account()->isAway() )
-		Kopete::AccountManager::self()->setAvailableAll();
-
-	else
-	{
-		if( args.isEmpty() )
-			Kopete::AccountManager::self()->setAwayAll();
-		else
-			Kopete::AccountManager::self()->setAwayAll( args );
+	if( manager->account()->isAway() ) {
+		Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Online );
+	}
+	else {
+		Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Away, args );
 	}
 }
 
@@ -368,7 +384,7 @@ void Kopete::CommandHandler::slotCloseCommand( const QString &, Kopete::ChatSess
 
 void Kopete::CommandHandler::slotExecReturnedData(K3Process *proc, char *buff, int bufflen )
 {
-	kDebug(14010) << k_funcinfo << endl;
+	kDebug(14010) ;
 	QString buffer = QString::fromLocal8Bit( buff, bufflen );
 	ManagerPair mgrPair = p->processMap[ proc ];
 	Kopete::Message msg( mgrPair.first->myself(), mgrPair.first->members()  );

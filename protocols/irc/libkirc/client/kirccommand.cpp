@@ -45,6 +45,7 @@ Command::Command(QObject *parent)
 
 Command::~Command()
 {
+	delete d;
 }
 
 QString Command::help() const

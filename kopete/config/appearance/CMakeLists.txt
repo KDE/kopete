@@ -9,23 +9,18 @@ ${KOPETE_INCLUDES}
 
 set(kcm_kopete_appearanceconfig_PART_SRCS
    appearanceconfig.cpp 
-   appearanceconfig_colors.cpp 
-   appearanceconfig_contactlist.cpp 
-   appearanceconfig_emoticons.cpp 
    tooltipeditdialog.cpp )
 
 kde4_add_ui_files(kcm_kopete_appearanceconfig_PART_SRCS 
    appearanceconfig_colors.ui
-   appearanceconfig_contactlist.ui 
-   appearanceconfig_emoticons.ui 
+   appearanceconfig_contactlist.ui
+   appearanceconfig_advanced.ui
    tooltipeditwidget.ui )
-
-kde4_automoc(${kcm_kopete_appearanceconfig_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_appearanceconfig ${kcm_kopete_appearanceconfig_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_appearanceconfig ${KDE4_KUTILS_LIBS} kopete ${KDE4_KNEWSTUFF_LIBS} )
+target_link_libraries(kcm_kopete_appearanceconfig ${KDE4_KUTILS_LIBS} kopete )
 
 install(TARGETS kcm_kopete_appearanceconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 

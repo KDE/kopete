@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     chatsessiontask.cpp - Register / Unregister a chatsession
 
-    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <duffeck@kde.org>
 
     Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
@@ -26,7 +26,7 @@
 
 ChatSessionTask::ChatSessionTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 ChatSessionTask::~ChatSessionTask()
@@ -35,7 +35,7 @@ ChatSessionTask::~ChatSessionTask()
 
 void ChatSessionTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceChatSession );
 	t->setId( client()->sessionID() );

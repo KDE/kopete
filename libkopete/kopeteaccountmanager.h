@@ -19,10 +19,12 @@
 #ifndef __kopeteaccountmanager_h__
 #define __kopeteaccountmanager_h__
 
-#include <QObject>
-#include <QColor>
+#include <QtCore/QObject>
+#include <QtGui/QColor>
+
 #include "kopete_export.h"
 
+#include "kopetestatusmessage.h"
 
 namespace Kopete {
 
@@ -31,6 +33,7 @@ class Plugin;
 class Protocol;
 class Contact;
 class OnlineStatus;
+class StatusMessage;
 
 /**
  * AccountManager manages all defined accounts in Kopete. You can
@@ -119,36 +122,23 @@ public:
 
 public slots:
 	/**
- 	 * @deprecated  use setOnlineStatus
-	 */
-	void connectAll();
-
-	/**
-	 * @deprecated  use setOnlineStatus
-	 */
-	void disconnectAll();
-
-	/**
 	 * @brief Set all accounts a status in the specified category
 	 *
 	 * Account that are offline will not be connected, unless the ConnectIfOffline flag is set.
 	 *
 	 * @param category is one of the Kopete::OnlineStatusManager::Categories
-	 * @param awayMessage is the new away message
+	 * @param statusMessage is the new status message
 	 * @param flags is a bitmask of SetOnlineStatusFlag
 	 */
 	void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
-						  const QString& awayMessage = QString::null, uint flags=0);
+	                      const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage(), uint flags=0);
 
 	/**
-	 * @deprecated  use setOnlineStatus
+	 * @brief Set the given status message for all online accounts
+	 *
+	 * @param message Status message to set
 	 */
-	void setAwayAll( const QString &awayReason = QString::null, bool away=true );
-
-	/**
-	 * @deprecated  use setOnlineStatus
-	 */
-	void setAvailableAll( const QString &awayReason = QString::null );
+	void setStatusMessage(const QString &message);
 
 	/**
 	 * \internal
@@ -194,6 +184,15 @@ private:
 	AccountManager();
 
 private slots:
+    /**
+     * Try to connect every account that should be connected automatically
+     */
+    void networkConnected();
+    /**
+     * Disconnect everything
+     */
+    void networkDisconnected();
+
 	void slotPluginLoaded( Kopete::Plugin *plugin );
 	void slotAccountOnlineStatusChanged(Kopete::Contact *c,
 		const Kopete::OnlineStatus &oldStatus, const Kopete::OnlineStatus &newStatus);
@@ -205,7 +204,7 @@ private slots:
 	void unregisterAccount( const Kopete::Account *account );
 
 private:
-	bool isAnyAccountConnected();
+	bool isAnyAccountConnected() const;
 	static AccountManager *s_self;
 	class Private;
 	Private *d;

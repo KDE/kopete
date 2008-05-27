@@ -19,6 +19,7 @@
  */
 
 #include "xmpp_xmlcommon.h"
+#include "xmpp_stanza.h"
 
 #include <qstring.h>
 #include <qdom.h>
@@ -28,12 +29,10 @@
 #include <qstringlist.h>
 #include <qcolor.h>
 
-#include "im.h"
-
-bool stamp2TS(const QString &ts, QDateTime *d)
+QDateTime stamp2TS(const QString &ts)
 {
 	if(ts.length() != 17)
-		return false;
+		return QDateTime();
 
 	int year  = ts.mid(0,4).toInt();
 	int month = ts.mid(4,2).toInt();
@@ -46,15 +45,23 @@ bool stamp2TS(const QString &ts, QDateTime *d)
 	QDate xd;
 	xd.setYMD(year, month, day);
 	if(!xd.isValid())
-		return false;
+		return QDateTime();
 
 	QTime xt;
 	xt.setHMS(hour, min, sec);
 	if(!xt.isValid())
+		return QDateTime();
+
+	return QDateTime(xd, xt);
+}
+
+bool stamp2TS(const QString &ts, QDateTime *d)
+{
+	QDateTime dateTime = stamp2TS(ts);
+	if (dateTime.isNull())
 		return false;
 
-	d->setDate(xd);
-	d->setTime(xt);
+	*d = dateTime;
 
 	return true;
 }
@@ -124,6 +131,15 @@ QDomElement findSubTag(const QDomElement &e, const QString &name, bool *found)
 	return tmp;
 }
 
+
+/**
+ * \brief create a new IQ stanza
+ * \param doc 
+ * \param type 
+ * \param to destination jid
+ * \param id stanza id
+ * \return the created stanza
+*/
 QDomElement createIQ(QDomDocument *doc, const QString &type, const QString &to, const QString &id)
 {
 	QDomElement iq = doc->createElement("iq");
@@ -400,7 +416,7 @@ void readSizeEntry(const QDomElement &e, const QString &name, QSize *v)
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
-	QStringList list = QStringList::split(',', tagContent(tag));
+	QStringList list = tagContent(tag).split(',');
 	if(list.count() != 2)
 		return;
 	QSize s;
@@ -415,7 +431,7 @@ void readRectEntry(const QDomElement &e, const QString &name, QRect *v)
 	QDomElement tag = findSubTag(e, name, &found);
 	if(!found)
 		return;
-	QStringList list = QStringList::split(',', tagContent(tag));
+	QStringList list = tagContent(tag).split(',');
 	if(list.count() != 4)
 		return;
 	QRect r;

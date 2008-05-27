@@ -30,7 +30,6 @@
 class GaduAccount;
 namespace Ui { class GaduAddUI; }
 class QLabel;
-class QString;
 class QWidget;
 class GaduContact;
 class GaduContactsList::ContactLine;

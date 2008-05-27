@@ -19,11 +19,12 @@
 
 #ifndef GWSEARCH_H
 #define GWSEARCH_H
-#include <q3listview.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 #include "ui_gwcontactsearch.h"
 
+
+class GroupWiseContactSearchModel;
+class GroupWiseContactSearchSortProxyModel;
 class GroupWiseAccount;
 class GroupWiseContactProperties;
 
@@ -36,10 +37,10 @@ class GroupWiseContactSearch : public QWidget, public Ui::GroupWiseContactSearch
 {
 Q_OBJECT
 public:
-	GroupWiseContactSearch( GroupWiseAccount * account, Q3ListView::SelectionMode mode, bool onlineOnly, 
+	GroupWiseContactSearch( GroupWiseAccount * account, QAbstractItemView::SelectionMode mode, bool onlineOnly, 
 			QWidget *parent = 0 );
 	virtual ~GroupWiseContactSearch();
-	Q3ValueList< GroupWise::ContactDetails > selectedResults();
+	QList< GroupWise::ContactDetails > selectedResults();
 signals:
 	void selectionValidates( bool );
 protected:
@@ -52,9 +53,11 @@ protected slots:
 	void slotShowDetails();
 	void slotValidateSelection();
 private:
-	Q3ValueList< GroupWise::ContactDetails > m_searchResults;
+	GroupWise::ContactDetails detailsAtIndex( const QModelIndex & ) const;
+	GroupWiseContactSearchModel * m_model;
+	GroupWiseContactSearchSortProxyModel * m_proxyModel;
 	GroupWiseAccount * m_account;
-	bool m_onlineOnly;
+	QList< GroupWise::ContactDetails > m_lastSearchResults;
 };
 
 #endif

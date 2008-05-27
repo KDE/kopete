@@ -4,6 +4,7 @@ to fix before the next release.
 Beware: It's totally unsorted ;)
 
 ================================================================================
+- windows only: Reenable Webcam support
 - Once and for all fix the way displayName is used in KopeteContact. With
   serverside contact lists it's now impossible to rename contacts on the server
   because some people (e.g. Olivier) want to see the nickname that a user

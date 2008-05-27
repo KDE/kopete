@@ -21,6 +21,7 @@
 
 // KDE includes
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmenu.h>
@@ -36,7 +37,7 @@
 #include <kopetecontactlist.h>
 #include <kopetechatsessionmanager.h>
 #include <kopeteuiglobal.h>
-#include <avatarselectordialog.h>
+#include <avatardialog.h>
 
 // QtTapioca includes
 #include <QtTapioca/ConnectionManagerFactory>
@@ -88,24 +89,22 @@ TelepathyAccount::~TelepathyAccount()
 	delete d;
 }
 
-KActionMenu *TelepathyAccount::actionMenu()
+void TelepathyAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *actionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
 	// FIXME: Maybe we should cache the action.
-	KAction *changeAliasAction = new KAction( KIcon("userconfig"), i18n("&Change Alias..."), 0 );
+	KAction *changeAliasAction = new KAction( KIcon("edit-rename"), i18n("&Change Alias..."), 0 );
 	changeAliasAction->setEnabled( isConnected() );
 	QObject::connect(changeAliasAction, SIGNAL(triggered(bool)), this, SLOT(slotSetAlias()));
 
-	KAction *changeAvatarAction = new KAction( KIcon("user"), i18n("Change &Avatar..."), 0 );
+	KAction *changeAvatarAction = new KAction( KIcon("user-properties"), i18n("Change &Avatar..."), 0 );
 	changeAvatarAction->setEnabled( isConnected() );
 	QObject::connect(changeAvatarAction, SIGNAL(triggered(bool)), this, SLOT(slotChangeAvatar()));
 
 	actionMenu->addSeparator();
 	actionMenu->addAction( changeAliasAction );
 	actionMenu->addAction( changeAvatarAction );
-
-	return actionMenu;
 }
 
 TelepathyContact *TelepathyAccount::myself()
@@ -117,11 +116,11 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 {
 	if( readConfig() )
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Succesfully read config." << endl;
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connecting to connection manager " << connectionManager() << " on protocol " << connectionProtocol() << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) << "Successfully read config.";
+		kDebug(TELEPATHY_DEBUG_AREA) << "Connecting to connection manager " << connectionManager() << " on protocol " << connectionProtocol();
 		ConnectionManager *connectionManager = d->getConnectionManager();
 		
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Actual connection manager: " << connectionManager->name() << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) << "Actual connection manager: " << connectionManager->name();
 		if( d->currentConnection )
 		{
 			delete d->currentConnection;
@@ -133,7 +132,7 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 			d->currentConnection = connectionManager->requestConnection( connectionProtocol(), connectionParameters() );
 			if( d->currentConnection )
 			{
-				kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Got a valid connection." << endl;
+				kDebug(TELEPATHY_DEBUG_AREA) << "Got a valid connection.";
 				// Connect signals/slots
 				QObject::connect(d->currentConnection, SIGNAL(statusChanged(QtTapioca::Connection*, QtTapioca::Connection::Status, QtTapioca::Connection::Reason)), this, SLOT(telepathyStatusChanged(QtTapioca::Connection*, QtTapioca::Connection::Status, QtTapioca::Connection::Reason)));
 
@@ -145,13 +144,13 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 			}
 			else
 			{
-				kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Failed to get a valid connection." << endl;
+				kDebug(TELEPATHY_DEBUG_AREA) << "Failed to get a valid connection.";
 				// TODO: Show an error message
 			}
 		}
 		else
 		{
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << connectionManager->name() << " is not running." << endl;
+			kDebug(TELEPATHY_DEBUG_AREA) << connectionManager->name() << " is not running.";
 			// TODO: Shown an error message
 		}
 	}
@@ -167,7 +166,7 @@ void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const
 {
 	if( !isConnected() )
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connecting with initial status: " << status.description() << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) << "Connecting with initial status: " << status.description();
 		d->initialStatus = status;
 		connect(status);
 	}
@@ -179,7 +178,7 @@ void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const
 	{
 		if( d->currentConnection && d->currentConnection->userContact() )
 		{
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Changing online status to " << status.description() << endl;
+			kDebug(TELEPATHY_DEBUG_AREA) << "Changing online status to " << status.description();
 			d->currentConnection->userContact()->setPresence( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(status) );
 
 			setStatusMessage( reason );
@@ -191,7 +190,7 @@ void TelepathyAccount::setStatusMessage(const Kopete::StatusMessage &statusMessa
 {
 	if( d->currentConnection && d->currentConnection->userContact() )
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Setting status message to \"" << statusMessage.message() << "\"." << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) << "Setting status message to \"" << statusMessage.message() << "\".";
 
 		d->currentConnection->userContact()->setPresenceMessage( statusMessage.message() );
 	}
@@ -226,7 +225,7 @@ void TelepathyAccount::slotSetAlias()
 	{
 		if( !changeAlias(newAlias) )
 		{
-			KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n("Current connection manager does not support changing the visible alias to your friends.") );
+			KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n("The current connection manager does not support changing the visible alias to your friends.") );
 		}
 	}
 }
@@ -240,14 +239,14 @@ bool TelepathyAccount::createContact(const QString &contactId, Kopete::MetaConta
 		return contact != 0;
 	}
 	else
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Contact " << contactId << " already exists." << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) << "Contact " << contactId << " already exists.";
 
 	return false;
 }
 
 bool TelepathyAccount::readConfig()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) ;
 	// Restore config not related to ConnectionManager parameters first
 	// so that the UI for the protocol parameters will be generated
 	KConfigGroup *accountConfig = configGroup();
@@ -292,7 +291,7 @@ bool TelepathyAccount::readConfig()
 					}
 					else
 						newValue = QVariant(it.value());
-// 					kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Name: " << parameter.name() << " Value: " << newValue << "Type: " << parameter.value().typeName() << endl;
+// 					kDebug(TELEPATHY_DEBUG_AREA) << "Name: " << parameter.name() << " Value: " << newValue << "Type: " << parameter.value().typeName();
 					d->connectionParameters.append( ConnectionManager::Parameter(parameter.name(), newValue) );
 					
 					break;
@@ -323,7 +322,7 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::connectionParam
 {
 	foreach(ConnectionManager::Parameter parameter, d->connectionParameters)
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Name: " << parameter.name() << " Value: " << parameter.value() << "Type: " << parameter.value().typeName() << endl;
+		kDebug(TELEPATHY_DEBUG_AREA) << "Name: " << parameter.name() << " Value: " << parameter.value() << "Type: " << parameter.value().typeName();
 	}
 	return d->connectionParameters;
 }
@@ -358,7 +357,7 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::allConnectionPa
 
 void TelepathyAccount::createTextChatSession(QtTapioca::TextChannel *newChannel)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) ;
 
 	// Get contact id
 	QString contactUri = newChannel->target()->uri();
@@ -372,13 +371,13 @@ void TelepathyAccount::createTextChatSession(QtTapioca::TextChannel *newChannel)
 		Kopete::ChatSession *currentChatSession = Kopete::ChatSessionManager::self()->findChatSession( myself(), others, protocol() );
 		if( !currentChatSession )
 		{
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Creating a new chat session" << endl;
+			kDebug(TELEPATHY_DEBUG_AREA) << "Creating a new chat session";
 
 			TelepathyChatSession *newChatSession = new TelepathyChatSession( myself(), others, protocol() );
 			newChatSession->setTextChannel( newChannel );
 		}
 		else
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Found an existing chat session." << endl;
+			kDebug(TELEPATHY_DEBUG_AREA) << "Found an existing chat session.";
 	}
 }
 
@@ -399,14 +398,14 @@ void TelepathyAccount::telepathyStatusChanged(QtTapioca::Connection *connection,
 	switch(status)
 	{
 		case Connection::Connecting:
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connecting...." << endl;
+			kDebug(TELEPATHY_DEBUG_AREA) << "Connecting....";
 			break;
 		case Connection::Connected:
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Connected using Telepathy :)" << endl;
+			kDebug(TELEPATHY_DEBUG_AREA) << "Connected using Telepathy :)";
 			emit telepathyConnected();
 			break;
 		case Connection::Disconnected:
-			kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo << "Disconnected :(" << endl;
+			kDebug(TELEPATHY_DEBUG_AREA) << "Disconnected :(";
 			break;
 	}
 	//TODO: reason
@@ -414,7 +413,7 @@ void TelepathyAccount::telepathyStatusChanged(QtTapioca::Connection *connection,
 
 void TelepathyAccount::telepathyChannelCreated(QtTapioca::Connection *connection, QtTapioca::Channel *channel)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << k_funcinfo  << endl;
+	kDebug(TELEPATHY_DEBUG_AREA) ;
 
 	Q_UNUSED(connection);
 
@@ -446,14 +445,8 @@ void TelepathyAccount::fetchContactList()
 
 void TelepathyAccount::slotChangeAvatar()
 {
-	Kopete::UI::AvatarSelectorDialog *avatarDialog = new Kopete::UI::AvatarSelectorDialog( Kopete::UI::Global::mainWidget() );
-	QObject::connect(avatarDialog, SIGNAL(result(Kopete::UI::AvatarSelectorDialog*)), this, SLOT(avatarDialogFinished(Kopete::UI::AvatarSelectorDialog*)));
-	avatarDialog->show();
-}
+	QString avatarPath = Kopete::UI::AvatarDialog::getAvatar(Kopete::UI::Global::mainWidget());
 
-void TelepathyAccount::avatarDialogFinished(Kopete::UI::AvatarSelectorDialog *dialog)
-{
-	QString avatarPath = dialog->selectedAvatarPath();
 	QtTapioca::Avatar *avatar = new QtTapioca::Avatar( avatarPath );
 	if( d->currentConnection && d->currentConnection->userContact() )
 	{

@@ -33,6 +33,7 @@ BuddyIconTask::BuddyIconTask( Task* parent )
 	m_seq = 0;
 	m_refNum = -1;
 	m_iconLength = 0;
+	m_iconType = 0x0001;
 	m_hashType = 0;
 }
 
@@ -52,6 +53,11 @@ void BuddyIconTask::requestIconFor( const QString& user )
 void BuddyIconTask::setHash( const QByteArray& md5Hash )
 {
 	m_hash = md5Hash;
+}
+
+void BuddyIconTask::setIconType( Oscar::WORD iconType )
+{
+	m_iconType = iconType;
 }
 
 void BuddyIconTask::setHashType( Oscar::BYTE type )
@@ -86,7 +92,7 @@ bool BuddyIconTask::forMe( const Transfer* transfer ) const
 
 	if ( st->snacRequest() != m_seq )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "sequences don't match" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "sequences don't match";
 		return false;
 	}
 
@@ -132,12 +138,12 @@ bool BuddyIconTask::take( Transfer* transfer )
 
 void BuddyIconTask::sendIcon()
 {
-	kDebug(OSCAR_RAW_DEBUG) << "icon length: " << m_iconLength << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "icon length: " << m_iconLength;
 	FLAP f = { 0x02, 0, 0 };
 	m_seq = client()->snacSequence();
 	SNAC s = { 0x0010, 0x0002, 0x0000, m_seq };
 	Buffer* b = new Buffer;
-	b->addWord( 1 ); //gaim hard codes it, so will we
+	b->addWord( m_iconType ); //gaim hard codes it, so will we
 	b->addWord( m_iconLength );
 	b->addString( m_icon );
 	Transfer* t = createTransfer( f, s, b );
@@ -146,20 +152,20 @@ void BuddyIconTask::sendIcon()
 
 void BuddyIconTask::handleUploadResponse()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "server acked icon upload" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "server acked icon upload";
 	Buffer* b = transfer()->buffer();
 	b->skipBytes( 4 );
 	Oscar::BYTE iconHashSize = b->getByte();
 	QByteArray hash( b->getBlock( iconHashSize ) );
 	//check the hash
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "hash " << hash << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "hash " << hash;
 	setSuccess( 0, QString() );
 }
 
 
 void BuddyIconTask::sendAIMBuddyIconRequest()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting buddy icon for " << m_user << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "requesting buddy icon for " << m_user;
 	FLAP f = { 0x02, 0, 0 };
 	m_seq = client()->snacSequence();
 	SNAC s = { 0x0010, 0x0004, 0x0000, m_seq };
@@ -167,7 +173,7 @@ void BuddyIconTask::sendAIMBuddyIconRequest()
 
 	b->addBUIN( m_user.toLatin1() ); //TODO: check encoding
 	b->addByte( 0x01 );
-	b->addWord( 0x0001 );
+	b->addWord( m_iconType );
 	b->addByte( m_hashType );
 	b->addByte( m_hash.size() ); //MD5 Hash Size
 	b->addString( m_hash ); //MD5 Hash
@@ -179,7 +185,7 @@ void BuddyIconTask::handleAIMBuddyIconResponse()
 {
 	Buffer* b = transfer()->buffer();
 	QString user = b->getBUIN();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "Receiving buddy icon for " << user;
 	b->skipBytes(2); //unknown field. not used
 	Oscar::BYTE iconType = b->getByte();
 	Q_UNUSED( iconType );
@@ -188,11 +194,12 @@ void BuddyIconTask::handleAIMBuddyIconResponse()
 	Oscar::WORD iconSize = b->getWord();
 	QByteArray icon( b->getBlock(iconSize) );
 	emit haveIcon( user, icon );
+	setSuccess( 0, QString() );
 }
 
 void BuddyIconTask::sendICQBuddyIconRequest()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "requesting buddy icon for " << m_user << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "requesting buddy icon for " << m_user;
 	FLAP f = { 0x02, 0, 0 };
 	m_seq = client()->snacSequence();
 	SNAC s = { 0x0010, 0x0006, 0x0000, m_seq };
@@ -200,7 +207,7 @@ void BuddyIconTask::sendICQBuddyIconRequest()
 
 	b->addBUIN( m_user.toLatin1() ); //TODO: check encoding
 	b->addByte( 0x01 );
-	b->addWord( 0x0001 );
+	b->addWord( m_iconType );
 	b->addByte( m_hashType );
 	b->addByte( m_hash.size() ); //MD5 Hash Size
 	b->addString( m_hash ); //MD5 Hash
@@ -212,7 +219,7 @@ void BuddyIconTask::handleICQBuddyIconResponse()
 {
 	Buffer* b = transfer()->buffer();
 	QString user = b->getBUIN();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Receiving buddy icon for " << user << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "Receiving buddy icon for " << user;
 	
 	b->skipBytes(2); //not used
 	Oscar::BYTE iconType = b->getByte();
@@ -233,6 +240,7 @@ void BuddyIconTask::handleICQBuddyIconResponse()
 	QByteArray icon( b->getBlock(iconSize) );
 	
 	emit haveIcon( user, icon );
+	setSuccess( 0, QString() );
 }
 
 #include "buddyicontask.moc"

@@ -10,18 +10,28 @@
    </rect>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>10</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>10</number>
+   </property>
+   <property name="rightMargin" >
+    <number>10</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>10</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>6</number>
    </property>
    <item row="0" column="0" >
     <widget class="QTabWidget" name="tabWidget2" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>3</hsizetype>
-       <vsizetype>3</vsizetype>
+      <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -34,10 +44,22 @@
        <string>B&amp;asic Setup</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>8</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>8</number>
+       </property>
+       <property name="rightMargin" >
+        <number>8</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>8</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="0" column="0" >
@@ -46,10 +68,22 @@
           <string>Account Information</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>0</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>6</number>
           </property>
           <item row="3" column="3" >
@@ -110,9 +144,7 @@
           <item row="1" column="1" colspan="3" >
            <widget class="QLineEdit" name="userName" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -131,9 +163,7 @@
           <item row="2" column="1" colspan="3" >
            <widget class="QLineEdit" name="realName" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -152,9 +182,7 @@
           <item row="0" column="1" colspan="3" >
            <widget class="QLineEdit" name="nickNames" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -163,7 +191,7 @@
              <string>This is the name that everyone will see everytime you say something</string>
             </property>
             <property name="whatsThis" >
-             <string>The alias you would like to use on IRC.  You may change this once online with the /nick command.</string>
+             <string>The alias you would like to use on IRC.  Once you're online, you can change it with the /nick command.</string>
             </property>
            </widget>
           </item>
@@ -220,9 +248,7 @@
        <item row="1" column="0" >
         <widget class="QLabel" name="textLabel3" >
          <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>3</hsizetype>
-           <vsizetype>1</vsizetype>
+          <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -234,7 +260,7 @@
           </size>
          </property>
          <property name="text" >
-          <string>&lt;p>&lt;b>Note:&lt;/b> Most IRC servers do not require a password, and only a nickname is required to connect&lt;/p></string>
+          <string>&lt;p>&lt;b>Note:&lt;/b> most IRC servers do not require a password to connect, only a nickname.&lt;/p></string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignTop</set>
@@ -264,18 +290,28 @@
        <string>C&amp;onnection</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>8</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>8</number>
+       </property>
+       <property name="rightMargin" >
+        <number>8</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>8</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="0" column="0" >
         <widget class="QGroupBox" name="groupBox1" >
          <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>3</hsizetype>
-           <vsizetype>0</vsizetype>
+          <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -284,19 +320,40 @@
           <string>Connection Preferences</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>0</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>6</number>
           </property>
           <item row="2" column="0" >
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QLabel" name="textLabel1_2_2" >
@@ -332,7 +389,7 @@
           <item row="1" column="0" >
            <widget class="QCheckBox" name="autoConnect" >
             <property name="whatsThis" >
-             <string>If you check that case, the account will not be connected when you press the "Connect All" button, or at startup even if you selected to automatically connect at startup</string>
+             <string>If you enable this option, this account will not be connected when you press the "Connect All" button, nor at startup even if you have enabled automaic connection at startup</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
@@ -352,9 +409,7 @@
        <item row="2" column="0" >
         <widget class="QGroupBox" name="groupBox60" >
          <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>3</hsizetype>
-           <vsizetype>3</vsizetype>
+          <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -366,21 +421,31 @@
           </size>
          </property>
          <property name="title" >
-          <string>Run Following Commands on Connect</string>
+          <string>Run the Following Commands on Connect</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>0</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>0</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>0</number>
           </property>
           <item row="0" column="0" >
            <widget class="QListView" name="commandList" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>2</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -395,18 +460,25 @@
           </item>
           <item row="1" column="0" >
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QLineEdit" name="commandEdit" >
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>3</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -432,18 +504,28 @@
        <string>A&amp;dvanced Configuration</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>8</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>8</number>
+       </property>
+       <property name="rightMargin" >
+        <number>8</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>8</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="1" column="0" >
         <widget class="QGroupBox" name="groupBox6" >
          <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>3</hsizetype>
-           <vsizetype>3</vsizetype>
+          <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -458,34 +540,53 @@
           <string>Custom CTCP Replies</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>0</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>0</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>0</number>
           </property>
           <item row="0" column="0" >
            <widget class="QListView" name="ctcpList" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>2</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="whatsThis" >
-             <string>You can use this dialog to add custom replies for when people send CTCP requests to you. You can also use this dialog to override the built-in replies for VERSION, USERINFO, and CLIENTINFO.</string>
+             <string>You can use this dialog to add custom replies for when people send you CTCP requests. You can also use this dialog to override the built-in replies for VERSION, USERINFO, and CLIENTINFO.</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0" >
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QLabel" name="textLabel3_2" >
@@ -531,10 +632,22 @@
           <string>Default Messages</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>0</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>6</number>
           </property>
           <item row="1" column="1" >
@@ -584,13 +697,25 @@
      </widget>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
-       <string>Windowing</string>
+       <string>Windows</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>8</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>8</number>
+       </property>
+       <property name="rightMargin" >
+        <number>8</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>8</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="1" column="0" >
@@ -612,10 +737,22 @@
           <string>Message Destinations</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>10</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>10</number>
+          </property>
+          <property name="rightMargin" >
+           <number>10</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>10</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>6</number>
           </property>
           <item row="1" column="1" >
@@ -634,10 +771,22 @@
           </item>
           <item row="0" column="0" >
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>6</number>
             </property>
             <item row="0" column="0" >
@@ -728,10 +877,22 @@
           </item>
           <item row="0" column="1" >
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>6</number>
             </property>
             <item row="1" column="0" >
@@ -829,13 +990,26 @@
   <tabstop>nickNames</tabstop>
   <tabstop>userName</tabstop>
   <tabstop>realName</tabstop>
+  <tabstop>network</tabstop>
+  <tabstop>editButton_2</tabstop>
   <tabstop>preferSSL</tabstop>
   <tabstop>autoConnect</tabstop>
   <tabstop>charset</tabstop>
+  <tabstop>commandList</tabstop>
+  <tabstop>commandEdit</tabstop>
+  <tabstop>addButton</tabstop>
+  <tabstop>partMessage</tabstop>
+  <tabstop>quitMessage</tabstop>
   <tabstop>ctcpList</tabstop>
   <tabstop>newCTCP</tabstop>
   <tabstop>newReply</tabstop>
   <tabstop>addReply</tabstop>
+  <tabstop>serverMessages_2</tabstop>
+  <tabstop>informationReplies_2</tabstop>
+  <tabstop>serverNotices_2</tabstop>
+  <tabstop>errorMessages_2</tabstop>
+  <tabstop>autoShowServerWindow</tabstop>
+  <tabstop>autoShowAnonWindows</tabstop>
  </tabstops>
  <resources/>
  <connections/>

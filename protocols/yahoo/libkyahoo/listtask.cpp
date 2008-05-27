@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Handles several lists such as buddylist, ignorelist and so on
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,13 +20,12 @@
 #include "transfer.h"
 #include "ymsgtransfer.h"
 #include "client.h"
-#include <qstring.h>
 #include <qstringlist.h>
 #include <kdebug.h>
 
 ListTask::ListTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 ListTask::~ListTask()
@@ -63,7 +62,7 @@ bool ListTask::forMe( const Transfer* transfer ) const
 
 void ListTask::parseBuddyList( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString group;
 
@@ -83,7 +82,7 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 
 void ListTask::parseStealthList( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString raw;
 	raw = t->firstParam( 185 );

@@ -19,17 +19,10 @@
 
 #include "msnwebcamdialog.h"
 
-#include <q3frame.h>
-#include <qobject.h>
-#include <qwidget.h>
-//Added by qt3to4:
-#include <QPixmap>
 #include <kdebug.h>
 #include <klocale.h>
 
-
-
-MSNWebcamDialog::MSNWebcamDialog( const QString& contact, QWidget * parent, const char * name )
+MSNWebcamDialog::MSNWebcamDialog( const QString& contact, QWidget * parent )
 	: KDialog( parent),
 	m_imageContainer( this )
 {
@@ -52,7 +45,7 @@ MSNWebcamDialog::MSNWebcamDialog( const QString& contact, QWidget * parent, cons
 	setMainWidget(page);
 	if ( page )
 	{
-		kDebug(14180) << k_funcinfo << "Adding webcam image container" << endl;
+		kDebug(14180) << "Adding webcam image container";
 		//m_imageContainer.setText( i18n( "No webcam image received" ) );
 		//m_imageContainer.setAlignment( Qt::AlignCenter );
 		m_imageContainer.setMinimumSize(320,240);
@@ -67,8 +60,8 @@ MSNWebcamDialog::~ MSNWebcamDialog( )
 
 void MSNWebcamDialog::newImage( const QPixmap & image )
 {
-	kDebug(14180) << k_funcinfo << "New image received" << endl;
-	//	kDebug(14180) << image << endl;
+	kDebug(14180) << "New image received";
+	//	kDebug(14180) << image;
 	//m_imageContainer.clear();
 	m_imageContainer.updatePixmap( image );
 	//show();
@@ -76,7 +69,7 @@ void MSNWebcamDialog::newImage( const QPixmap & image )
 
 void MSNWebcamDialog::webcamClosed( int reason  )
 {
-	kDebug(14180) << k_funcinfo << "webcam closed with reason?? " <<  reason <<endl;
+	kDebug(14180) << "webcam closed with reason?? " <<  reason;
 // 	m_imageContainer.clear();
 // 	m_imageContainer.setText( i18n( "Webcam closed with reason %1", reason ) );
 // 	m_imageContainer.setAlignment( Qt::AlignCenter );

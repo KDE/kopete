@@ -16,13 +16,12 @@
     *************************************************************************
 */
 
-#ifndef IRCCHANNELCONTACT_H
-#define IRCCHANNELCONTACT_H
+#ifndef IRCCONTACT_CHANNEL_H
+#define IRCCONTACT_CHANNEL_H
 
 #include "irccontact.h"
-#include <Q3PtrList>
+#include <QList>
 
-class KActionCollection;
 class KAction;
 class KActionMenu;
 class KCodecAction;
@@ -32,11 +31,8 @@ class IRCAccount;
 
 namespace Kopete
 {
-	class ChatSession;
-	class Message;
-	class MetaContact;
+class MetaContact;
 }
-class KopeteView;
 
 /**
  * @author Jason Keirstead <jason@keirstead.org>
@@ -74,7 +70,7 @@ public:
 	bool modeEnabled( QChar mode, QString *value = 0 );
 
 	// Kopete::Contact stuff
-	virtual Q3PtrList<KAction> *customContextMenuActions();
+	virtual QList<KAction*> *customContextMenuActions();
 	virtual const QString caption() const;
 
 	//Methods handled by the signal mapper
@@ -153,4 +149,4 @@ private:
 	void toggleMode( QChar mode, bool enabled, bool update );
 };
 
-#endif
+#endif // IRCCONTACT_CHANNEL_H

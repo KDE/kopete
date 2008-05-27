@@ -38,22 +38,13 @@ public:
 
 	/** Normal ICQ constructor */
 	ICQContactBase( Kopete::Account *account, const QString &name, Kopete::MetaContact *parent,
-	            const QString& icon = QString(), const OContact& ssiItem = OContact()  );
+	            const QString& icon = QString() );
 	virtual ~ICQContactBase();
-
-	virtual QString sanitizedMessage( const QString& message );
-
-public slots:
-	void requestShortInfo();
-
-protected:
-	bool m_requestingNickname;
 
 protected slots:
 	virtual void slotSendMsg(Kopete::Message& message, Kopete::ChatSession *);
 
 private slots:
-	void receivedShortInfo( const QString& contact );
 	void receivedXStatusMessage( const QString& contact, int icon, const QString& description, const QString& message );
 
 };

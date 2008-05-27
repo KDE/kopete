@@ -28,7 +28,6 @@
 class QHostAddress;
 
 // forward defines
-class ByteStream;
 class Connector;
 class Transfer;
 

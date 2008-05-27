@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>NetworkConfig</class>
  <widget class="QDialog" name="NetworkConfig" >
   <property name="geometry" >
@@ -16,38 +13,58 @@
    <string>Network Configuration</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>8</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>8</number>
+   </property>
+   <property name="rightMargin" >
+    <number>8</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>8</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>6</number>
    </property>
    <item row="1" column="3" colspan="4" >
     <widget class="QGroupBox" name="groupBox2" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>3</hsizetype>
-       <vsizetype>3</vsizetype>
+      <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="title" >
-      <string>Hosts Con&amp;figurations</string>
+      <string>Host Con&amp;figurations</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>-1</number>
+      <property name="leftMargin" >
+       <number>4</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>4</number>
+      </property>
+      <property name="rightMargin" >
+       <number>4</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>4</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>6</number>
       </property>
       <item row="0" column="1" >
        <widget class="QPushButton" name="m_newHost" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>1</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -55,26 +72,18 @@
         <property name="text" >
          <string>&amp;New...</string>
         </property>
-        <property name="shortcut" >
-         <string>Alt+N</string>
-        </property>
        </widget>
       </item>
       <item row="1" column="1" >
        <widget class="QPushButton" name="m_removeHost" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>1</hsizetype>
-          <vsizetype>0</vsizetype>
+         <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="text" >
          <string>&amp;Remove</string>
-        </property>
-        <property name="shortcut" >
-         <string>Alt+R</string>
         </property>
        </widget>
       </item>
@@ -97,9 +106,7 @@
       <item rowspan="5" row="0" column="0" >
        <widget class="Q3ListBox" name="m_hostList" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>3</hsizetype>
-          <vsizetype>3</vsizetype>
+         <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -121,7 +128,7 @@
          <string>Move this server down</string>
         </property>
         <property name="whatsThis" >
-         <string>Move this server down in connection attempt priority</string>
+         <string>Decrease connection-attempt priority for this server</string>
         </property>
         <property name="text" >
          <string>Down</string>
@@ -137,7 +144,7 @@
          <string>Move this server up</string>
         </property>
         <property name="whatsThis" >
-         <string>Move this server up in connection attempt priority</string>
+         <string>Increase connection-attempt priority for this server</string>
         </property>
         <property name="text" >
          <string>Up</string>
@@ -146,19 +153,31 @@
       </item>
       <item row="5" column="0" colspan="2" >
        <layout class="QGridLayout" >
-        <property name="margin" >
+        <property name="leftMargin" >
          <number>5</number>
         </property>
-        <property name="spacing" >
+        <property name="topMargin" >
+         <number>5</number>
+        </property>
+        <property name="rightMargin" >
+         <number>5</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>5</number>
+        </property>
+        <property name="horizontalSpacing" >
+         <number>6</number>
+        </property>
+        <property name="verticalSpacing" >
          <number>6</number>
         </property>
         <item row="2" column="1" >
          <widget class="QSpinBox" name="port" >
-          <property name="maximum" >
-           <number>65536</number>
-          </property>
           <property name="minimum" >
            <number>1024</number>
+          </property>
+          <property name="maximum" >
+           <number>65536</number>
           </property>
           <property name="value" >
            <number>6667</number>
@@ -208,7 +227,7 @@
        </layout>
       </item>
      </layout>
-     <widget class="QWidget" name="" >
+     <widget class="QWidget" native="1" name="widget" >
       <property name="geometry" >
        <rect>
         <x>11</x>
@@ -226,9 +245,7 @@
    <item row="0" column="3" >
     <widget class="QLabel" name="m_descriptionLabel" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>1</hsizetype>
-       <vsizetype>5</vsizetype>
+      <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -260,17 +277,12 @@
      <property name="text" >
       <string>Ne&amp;w</string>
      </property>
-     <property name="shortcut" >
-      <string>Alt+W</string>
-     </property>
     </widget>
    </item>
    <item rowspan="2" row="0" column="0" colspan="3" >
     <widget class="Q3ListBox" name="m_networkList" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>3</hsizetype>
-       <vsizetype>7</vsizetype>
+      <sizepolicy vsizetype="Expanding" hsizetype="MinimumExpanding" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -314,10 +326,8 @@
  <customwidgets>
   <customwidget>
    <class>Q3ListBox</class>
-   <extends></extends>
+   <extends>Q3Frame</extends>
    <header>q3listbox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -327,13 +337,13 @@
   <tabstop>m_removeNetworkButton</tabstop>
   <tabstop>m_description</tabstop>
   <tabstop>m_hostList</tabstop>
+  <tabstop>m_newHost</tabstop>
+  <tabstop>m_removeHost</tabstop>
   <tabstop>upButton</tabstop>
   <tabstop>downButton</tabstop>
   <tabstop>m_host</tabstop>
   <tabstop>port</tabstop>
   <tabstop>useSSL</tabstop>
-  <tabstop>m_newHost</tabstop>
-  <tabstop>m_removeHost</tabstop>
   <tabstop>m_saveButton</tabstop>
   <tabstop>m_cancelButton</tabstop>
  </tabstops>

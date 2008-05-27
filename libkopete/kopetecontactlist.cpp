@@ -1,7 +1,7 @@
 /*
     kopetecontactlist.cpp - Kopete's Contact List backend
 
-    Copyright (c) 2005      by Michael Larouche       <larouche@kde.org>
+    Copyright (c) 2005-2007 by Michael Larouche       <larouche@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -20,29 +20,31 @@
 
 #include "kopetecontactlist.h"
 
-#include <qdir.h>
-#include <qregexp.h>
-#include <qtimer.h>
-//Added by qt3to4:
-#include <QTextStream>
+// Qt includes
+#include <QtCore/QDir>
+#include <QtCore/QRegExp>
+#include <QtCore/QTimer>
+#include <QtCore/QTextStream>
 
-#include <kapplication.h>
+// KDE includes
 #include <kabc/stdaddressbook.h>
+#include <kapplication.h>
 #include <kdebug.h>
+#include <kglobal.h>
 #include <ksavefile.h>
 #include <kstandarddirs.h>
-#include <kglobal.h>
-#include "kopetemetacontact.h"
-#include "kopetecontact.h"
-#include "kopetechatsession.h"
-//#include "kopetemessage.h"
-#include "kopetepluginmanager.h"
-#include "kopeteprotocol.h"
+
+// Kopete includes
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
+#include "kopetechatsession.h"
+#include "kopetecontact.h"
+#include "kopetedeletecontacttask.h"
 #include "kopetegroup.h"
+#include "kopetemetacontact.h"
 #include "kopetepicture.h"
-#include "kopetegeneralsettings.h"
+#include "kopetepluginmanager.h"
+#include "kopeteprotocol.h"
 #include "xmlcontactstorage.h"
 
 namespace  Kopete
@@ -50,7 +52,7 @@ namespace  Kopete
 
 class ContactList::Private
 {public:
-	/** Flag:  do not save the contactlist until she is completely loaded */
+	/** Flag:  do not save the contact list until she is completely loaded */
 	bool loaded ;
 
 	QList<MetaContact *> contacts;
@@ -61,9 +63,6 @@ class ContactList::Private
 	QTimer *saveTimer;
 
 	MetaContact *myself;
-
-	/** Flag: does the user uses the global identity */
-	bool useGlobalIdentity;
 };
 
 ContactList *ContactList::s_self = 0L;
@@ -86,7 +85,7 @@ ContactList::ContactList()
 	//ContactList::self() as parent which will call this constructor -> infinite loop
 	d->myself=0L;
 
-	//no contactlist loaded yet, don't save them
+	//no contact list loaded yet, don't save them
 	d->loaded=false;
 
 	// automatically save on changes to the list
@@ -156,7 +155,7 @@ Contact *ContactList::findContact( const QString &protocolId,
 	Account *i=AccountManager::self()->findAccount(protocolId,accountId);
 	if(!i)
 	{
-		kDebug( 14010 ) << k_funcinfo << "Account not found" << endl;
+		kDebug( 14010 ) << "Account not found";
 		return 0L;
 	}
 	return i->contacts()[contactId];
@@ -165,17 +164,14 @@ Contact *ContactList::findContact( const QString &protocolId,
 
 MetaContact *ContactList::findMetaContactByDisplayName( const QString &displayName ) const
 {
-	QListIterator<MetaContact *> it( d->contacts );
-	while ( it.hasNext() )
+	foreach(Kopete::MetaContact *contact, d->contacts)
 	{
-		MetaContact *mc = it.next();
-//		kDebug(14010) << "Display Name: " << it.current()->displayName() << "\n";
-		if( mc->displayName() == displayName ) {
-			return mc;
+		if( contact->displayName() == displayName )
+		{
+			return contact;
 		}
 	}
-
-	return 0L;
+        return 0;
 }
 
 MetaContact* ContactList::findMetaContactByContactId( const QString &contactId ) const
@@ -196,6 +192,9 @@ Group * ContactList::findGroup(const QString& displayName, int type)
 {
 	if( type == Group::Temporary )
 		return Group::temporary();
+	
+	if ( displayName == i18n ("Top Level") )
+		return Group::topLevel();
 
 	QListIterator<Group *> it(d->groups);
 	while ( it.hasNext() )
@@ -245,7 +244,7 @@ void ContactList::removeMetaContact(MetaContact *m)
 {
 	if ( !d->contacts.contains(m) )
 	{
-		kDebug(14010) << k_funcinfo << "Trying to remove a not listed MetaContact." << endl;
+		kDebug(14010) << "Trying to remove a not listed MetaContact.";
 		return;
 	}
 
@@ -256,11 +255,12 @@ void ContactList::removeMetaContact(MetaContact *m)
 	}
 
 	//removes subcontact from server here and now.
-	QList<Contact *> cts = m->contacts();
-	QListIterator<Contact *> it(cts);
-	while( it.hasNext() )
+	Kopete::Contact *contactToDelete = 0;
+	foreach( contactToDelete, m->contacts() )
 	{
-		it.next()->deleteContact();
+		// TODO: Check for good execution of task
+		Kopete::DeleteContactTask *deleteTask = new Kopete::DeleteContactTask(contactToDelete);
+		deleteTask->start();
 	}
 
 	d->contacts.removeAll( m );
@@ -300,7 +300,7 @@ void ContactList::removeGroup( Group *g )
 
 void ContactList::setSelectedItems(QList<MetaContact *> metaContacts , QList<Group *> groups)
 {
-	kDebug( 14010 ) << k_funcinfo << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected" << endl;
+	kDebug( 14010 ) << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected";
 	d->selectedMetaContacts=metaContacts;
 	d->selectedGroups=groups;
 
@@ -315,73 +315,6 @@ MetaContact* ContactList::myself()
 	return d->myself;
 }
 
-void ContactList::loadGlobalIdentity()
-{
- 	// Apply the global identity
-	if(Kopete::GeneralSettings::self()->enableGlobalIdentity())
- 	{
-		// Disconnect to make sure it will not cause duplicate calls.
-		disconnect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
-		disconnect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
-
-		connect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
-		connect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
-
-		// Ensure that the myself metaContactId is always the KABC whoAmI
-		KABC::Addressee a = KABC::StdAddressBook::self()->whoAmI();
-		if(!a.isEmpty() && a.uid() != myself()->metaContactId())
-		{
-			myself()->setMetaContactId(a.uid());
-		}
-
-		// Apply the global identity
-		// Maybe one of the myself contact from a account has a different displayName/photo at startup.
-		slotDisplayNameChanged();
-		slotPhotoChanged();
- 	}
-	else
-	{
-		disconnect(myself(), SIGNAL(displayNameChanged(const QString&, const QString&)), this, SLOT(slotDisplayNameChanged()));
-		disconnect(myself(), SIGNAL(photoChanged()), this, SLOT(slotPhotoChanged()));
-	}
-}
-
-void ContactList::slotDisplayNameChanged()
-{
-	static bool mutex=false;
-	if(mutex)
-	{
-		kDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
-		return;
-	}
-	mutex=true;
-
-	kDebug( 14010 ) << k_funcinfo << myself()->displayName() << endl;
-
-	emit globalIdentityChanged(Kopete::Global::Properties::self()->nickName().key(), myself()->displayName());
-	mutex=false;
-}
-
-void ContactList::slotPhotoChanged()
-{
-	static bool mutex=false;
-	if(mutex)
-	{
-		kDebug (14010) << k_funcinfo << " mutex blocked" << endl ;
-		return;
-	}
-	mutex=true;
-	kDebug( 14010 ) << k_funcinfo << myself()->picture().path() << endl;
-
-	emit globalIdentityChanged(Kopete::Global::Properties::self()->photo().key(), myself()->picture().path());
-	mutex=false;
-	/* The mutex is useful to don't have such as stack overflow 
-	Kopete::ContactList::slotPhotoChanged  ->  Kopete::ContactList::globalIdentityChanged  
-	MSNAccount::slotGlobalIdentityChanged  ->  Kopete::Contact::propertyChanged 
-	Kopete::MetaContact::slotPropertyChanged -> Kopete::MetaContact::photoChanged -> Kopete::ContactList::slotPhotoChanged 
-	*/
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void ContactList::load()
 {
@@ -392,7 +325,7 @@ void ContactList::load()
 	storage->load();
 	if( !storage->isValid() )
 	{
-		kDebug(14010) << k_funcinfo << "Contact list storage failed. Reason: " << storage->errorMessage() << endl;
+		kDebug(14010) << "Contact list storage failed. Reason: " << storage->errorMessage();
 		d->loaded = true;
 		delete storage;
 		return;
@@ -401,9 +334,6 @@ void ContactList::load()
 	addGroups( storage->groups() );
 	addMetaContacts( storage->contacts() );
 
-	// Apply the global identity when all the protocols plugins are loaded.
-	connect(PluginManager::self(), SIGNAL(allPluginsLoaded()), this, SLOT(loadGlobalIdentity()));
-	
 	d->loaded = true;
 	delete storage;
 }
@@ -412,7 +342,7 @@ void Kopete::ContactList::save()
 {
 	if( !d->loaded )
 	{
-		kDebug(14010) << "Contact list not loaded, abort saving" << endl;
+		kDebug(14010) << "Contact list not loaded, abort saving";
 		return;
 	}
 
@@ -420,7 +350,7 @@ void Kopete::ContactList::save()
 	storage->save();
 	if( !storage->isValid() )
 	{
-		kDebug(14010) << k_funcinfo << "Contact list storage failed. Reason: " << storage->errorMessage() << endl;
+		kDebug(14010) << "Contact list storage failed. Reason: " << storage->errorMessage();
 
 		// Saving the contact list failed. retry every minute until it works.
 		// single-shot: will get restarted by us next time if it's still failing
@@ -434,191 +364,6 @@ void Kopete::ContactList::save()
 	d->saveTimer->stop();
 	delete storage;
 }
-
-QStringList ContactList::contacts() const
-{
-	QStringList contacts;
-	QListIterator<Kopete::MetaContact *> it( d->contacts );
-	while ( it.hasNext() )
-	{
-		contacts.append( it.next()->displayName() );
-	}
-	return contacts;
-}
-
-QStringList ContactList::contactStatuses() const
-{
-	QStringList meta_contacts;
-	QListIterator<Kopete::MetaContact *> it( d->contacts );
-	while ( it.hasNext() )
-	{
-		Kopete::MetaContact * mc = it.next();
-		meta_contacts.append( QString::fromLatin1( "%1 (%2)" ).
-			arg( mc->displayName(), mc->statusString() ));
-	}
-	return meta_contacts;
-}
-
-QStringList ContactList::reachableContacts() const
-{
-	QStringList contacts;
-	QListIterator<Kopete::MetaContact *> it( d->contacts );
-	while ( it.hasNext() )
-	{
-		Kopete::MetaContact * mc = it.next();
-		if ( mc->isReachable() )
-			contacts.append( mc->displayName() );
-	}
-	return contacts;
-}
-
-QList<Contact *> ContactList::onlineContacts() const
-{
-	QList<Kopete::Contact *> result;
-	QListIterator<Kopete::MetaContact *> it( d->contacts );
-	while ( it.hasNext() )
-	{
-		Kopete::MetaContact *mc = it.next();
-		if ( mc->isOnline() )
-		{
-			QList<Kopete::Contact *> contacts = mc->contacts();
-			QListIterator<Kopete::Contact *> cit( contacts );
-			while ( cit.hasNext() )
-			{
-				Kopete::Contact *c = cit.next();
-				if ( c->isOnline() )
-					result.append( c );
-			}
-		}
-	}
-	return result;
-}
-
-QList<Kopete::MetaContact *> Kopete::ContactList::onlineMetaContacts() const
-{
-	QList<Kopete::MetaContact *> result;
-	QListIterator<Kopete::MetaContact *> it( d->contacts );
-	while ( it.hasNext() )
-	{
-		Kopete::MetaContact * mc = it.next();
-		if ( mc->isOnline() )
-			result.append( mc );
-	}
-	return result;
-}
-
-QList<Kopete::MetaContact *> Kopete::ContactList::onlineMetaContacts( const QString &protocolId ) const
-{
-	QList<Kopete::MetaContact *> result;
-	QListIterator<Kopete::MetaContact *> it( d->contacts );
-	while ( it.hasNext() )
-	{
-		Kopete::MetaContact * mc = it.next();
-		// FIXME: This loop is not very efficient :(
-		if ( mc->isOnline() )
-		{
-			QList<Kopete::Contact *> contacts = mc->contacts();
-			QListIterator<Kopete::Contact *> cit( contacts );
-			while ( cit.hasNext() )
-			{
-				Kopete::Contact *c = cit.next();
-				if( c->isOnline() && c->protocol()->pluginId() == protocolId )
-					result.append( mc );
-			}
-		}
-	}
-	return result;
-}
-
-QList<Kopete::Contact *> Kopete::ContactList::onlineContacts( const QString &protocolId ) const
-{
-	QList<Kopete::Contact *> result;
-	QListIterator<Kopete::MetaContact *> it( d->contacts );
-	while ( it.hasNext() )
-	{
-		Kopete::MetaContact * mc = it.next();
-		// FIXME: This loop is not very efficient :(
-		if ( mc->isOnline() )
-		{
-			QList<Kopete::Contact *> contacts = mc->contacts();
-			QListIterator<Kopete::Contact *> cit( contacts );
-			while ( cit.hasNext() )
-			{
-				Kopete::Contact *c = cit.next();
-				if( c->isOnline() && c->protocol()->pluginId() == protocolId )
-					result.append( c );
-			}
-		}
-	}
-	return result;
-}
-
-QStringList Kopete::ContactList::fileTransferContacts() const
-{
-	QStringList contacts;
-	QList<Kopete::MetaContact *> result;
-	QListIterator<Kopete::MetaContact *> it( d->contacts );
-	while ( it.hasNext() )
-	{
-		Kopete::MetaContact * mc = it.next();
-		if ( mc->canAcceptFiles() )
-			contacts.append( mc->displayName() );
-	}
-	return contacts;
-}
-
-void Kopete::ContactList::sendFile( const QString &displayName, const KUrl &sourceURL,
-	const QString &altFileName, const long unsigned int fileSize)
-{
-//	kDebug(14010) << "Send To Display Name: " << displayName << "\n";
-
-	Kopete::MetaContact *c = findMetaContactByDisplayName( displayName );
-	if( c )
-		c->sendFile( sourceURL, altFileName, fileSize );
-}
-
-void Kopete::ContactList::messageContact( const QString &contactId, const QString &messageText )
-{
-	Kopete::MetaContact *mc = findMetaContactByContactId( contactId );
-	if (!mc) return;
-
-	Kopete::Contact *c = mc->execute(); //We need to know which contact was chosen as the preferred in order to message it
-	if (!c) return;
-
-	Kopete::Message msg(c->account()->myself(), c);
-	msg.setPlainBody( messageText );
-	msg.setDirection( Kopete::Message::Outbound );
-	
-	c->manager(Contact::CanCreate)->sendMessage(msg);
-
-}
-
-
-QStringList Kopete::ContactList::contactFileProtocols(const QString &displayName)
-{
-//	kDebug(14010) << "Get contacts for: " << displayName << "\n";
-	QStringList protocols;
-
-	Kopete::MetaContact *c = findMetaContactByDisplayName( displayName );
-	if( c )
-	{
-		QList<Kopete::Contact *> mContacts = c->contacts();
-		kDebug(14010) << mContacts.count() << endl;
-		QListIterator<Kopete::Contact *> jt( mContacts );
-		while ( jt.hasNext() )
-		{
-			Kopete::Contact *c = jt.next();
-			kDebug(14010) << "1" << c->protocol()->pluginId() << endl;
-			if( c->canAcceptFiles() ) {
-				kDebug(14010) << c->protocol()->pluginId() << endl;
-				protocols.append ( c->protocol()->pluginId() );
-			}
-		}
-		return protocols;
-	}
-	return QStringList();
-}
-
 
 void ContactList::slotSaveLater()
 {

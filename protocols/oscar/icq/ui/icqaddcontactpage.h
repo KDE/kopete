@@ -30,7 +30,6 @@
 namespace Ui { class icqAddUI; }
 class ICQAccount;
 class ICQSearchDialog;
-class QVBoxLayout;
 
 class ICQAddContactPage : public AddContactPage
 {

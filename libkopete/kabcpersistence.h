@@ -1,7 +1,7 @@
 /*
     addressbooklink.h - Manages operations involving the KDE Address Book
 
-    Copyright (c) 2005 Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2005 Will Stephenson <wstephenson@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef KOPETEADDRESSBOOKLINK_H
-#define KOPETEADDRESSBOOKLINK_H
+#ifndef KABCPERSISTENCE_H
+#define KABCPERSISTENCE_H
 
 #include "kopete_export.h"
 
@@ -95,12 +95,8 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 	private:
 		class Private;
 		Private *d;
-		static KABCPersistence * s_self;
-		// FIXME: Try to remove that static variable !
-		static KABC::AddressBook* s_addressBook;
 };
 
 } // end namespace Kopete
 
-#endif
-
+#endif // KABCPERSISTENCE_H

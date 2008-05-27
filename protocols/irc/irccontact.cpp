@@ -60,10 +60,12 @@ public:
 };
 
 IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, MetaContact *metac, const QString& icon)
-	: Contact(account, entity->name(), metac, icon),
-	  d (new IRCContact::Private)
+	: Contact(account, entity->name(), metac, icon)
+	, d (new IRCContact::Private)
 {
-	kDebug(14120) << k_funcinfo << entity->name() << endl;
+	Q_ASSERT(entity);
+
+	kDebug(14120) << entity->name();
 
 	d->entity = entity;
 
@@ -91,7 +93,7 @@ IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, Met
 
 IRCContact::~IRCContact()
 {
-//	kDebug(14120) << k_funcinfo << entity->name() << endl;
+//	kDebug(14120) << entity->name();
 //	if (metaContact() && metaContact()->isTemporary() && !isChatting(m_chatSession))
 //		metaContact()->deleteLater();
 
@@ -161,7 +163,7 @@ void IRCContact::entityUpdated()
 		break;
 	default:
 //		setIcon("irc_unknown");
-		setIcon(QString::null);
+		setIcon(QString::null);	//krazy:exclude=nullstrassign for old broken gcc
 		break;
 	}
 */
@@ -219,11 +221,14 @@ QTextCodec *IRCContact::codec()
 		if (test)
 			codec = QTextCodec::codecForMib(mib);
 		else
-			codec = QTextCodec::codecForName(codecId.latin1());
+			codec = QTextCodec::codecForName(codecId.toLatin1());
 	}
 
+#if 0
+	// FIXME: use context defaultCodec
 	if (!codec)
 		return kircClient()->defaultCodec();
+#endif
 
 	return codec;
 }
@@ -272,7 +277,7 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 {
 	QString htmlString = message.escapedBody();
 
-	if (htmlString.find(QString::fromLatin1("</span")) > -1)
+	if (htmlString.indexOf(QString::fromLatin1("</span")) > -1)
 	{
 		QRegExp findTags( QString::fromLatin1("<span style=\"(.*)\">(.*)</span>") );
 		findTags.setMinimal( true );
@@ -280,12 +285,12 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 
 		while (pos >= 0)
 		{
-			pos = findTags.search(htmlString);
+			pos = findTags.indexIn(htmlString);
 			if (pos > -1)
 			{
 				QString styleHTML = findTags.cap(1);
 				QString replacement = findTags.cap(2);
-				QStringList styleAttrs = QStringList::split(';', styleHTML);
+				QStringList styleAttrs = styleHTML.split(';');
 
 				for (QStringList::Iterator attrPair = styleAttrs.begin(); attrPair != styleAttrs.end(); ++attrPair)
 				{
@@ -311,17 +316,20 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 
 	htmlString = Message::unescape(htmlString);
 
-	if (htmlString.find('\n') > -1)
+	if (htmlString.indexOf('\n') > -1)
 	{
-		QStringList messages = QStringList::split( '\n', htmlString );
+		QStringList messages = htmlString.split('\n');
 
 		for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
 		{
-			Message msg(message.from(), message.to(), Kopete::Message::escape(sendMessage(*it)), message.direction(),
-			                    Message::RichText, CHAT_VIEW, message.type());
+#warning FIXME
+			Message msg(message.from(), message.to());
+			msg.setHtmlBody(Kopete::Message::escape(sendMessage(*it)));
+			msg.setDirection(message.direction());
+//			                    Message::RichText, CHAT_VIEW, message.type());
 
-			msg.setBackgroundColor(QColor());
-			msg.setForegroundColor(QColor());
+//			msg.setBackgroundColor(QColor());
+//			msg.setForegroundColor(QColor());
 
 			appendMessage(msg);
 			chatSession->messageSucceeded();
@@ -329,10 +337,10 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 	}
 	else
 	{
-		message.setBody( Kopete::Message::escape(sendMessage( htmlString )), Message::RichText );
+		message.setHtmlBody(Kopete::Message::escape(sendMessage(htmlString)));
 
-		message.setBackgroundColor( QColor() );
-		message.setForegroundColor( QColor() );
+//		message.setBackgroundColor(QColor());
+//		message.setForegroundColor(QColor());
 
 		appendMessage(message);
 		chatSession->messageSucceeded();
@@ -347,7 +355,7 @@ QString IRCContact::sendMessage(const QString &msg)
 	if( trueLength > 512 )
 	{
 		//TODO: tell them it is truncated
-		kWarning() << "Message was to long (" << trueLength << "), it has been truncated to 512 characters" << endl;
+		kWarning() << "Message was to long (" << trueLength << "), it has been truncated to 512 characters";
 		newMessage.truncate( 512 - ( m_nickName.length() + 12 ) );
 	}
 

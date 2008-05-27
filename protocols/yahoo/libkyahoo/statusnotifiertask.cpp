@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Notifies about status changes of buddies
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -26,7 +26,7 @@
 
 StatusNotifierTask::StatusNotifierTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 StatusNotifierTask::~StatusNotifierTask()
@@ -79,7 +79,7 @@ bool StatusNotifierTask::forMe( const Transfer* transfer ) const
 
 void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	if( t->status() == Yahoo::StatusDisconnected && 
 		t->service() == Yahoo::ServiceLogoff )
@@ -127,7 +127,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 
 void StatusNotifierTask::parseAuthorization( YMSGTransfer* t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString nick;		/* key = 4  */	
 	QString msg;		/* key = 14  */
@@ -158,14 +158,14 @@ void StatusNotifierTask::parseAuthorization( YMSGTransfer* t )
 		if( !fname.isEmpty() || !lname.isEmpty() )
 			name = QString("%1 %2").arg(fname).arg(lname);
 
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Emitting gotAuthorizationRequest( " << nick<< ", " << msg << ", " << name << " )" << endl;
+		kDebug(YAHOO_RAW_DEBUG) << "Emitting gotAuthorizationRequest( " << nick<< ", " << msg << ", " << name << " )";
 		emit gotAuthorizationRequest( nick, msg, name );
 	}
 }
 
 void StatusNotifierTask::parseStealthStatus( YMSGTransfer* t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString nick;		/* key = 7  */
 	int state;		/* key = 31  */

@@ -28,18 +28,18 @@
 #include "contactnotesplugin.h"
 #include <kactioncollection.h>
 
-typedef KGenericFactory<ContactNotesPlugin> ContactNotesPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_contactnotes, ContactNotesPluginFactory( "kopete_contactnotes" )  )
+K_PLUGIN_FACTORY(ContactNotesPluginFactory, registerPlugin<ContactNotesPlugin>();)
+K_EXPORT_PLUGIN(ContactNotesPluginFactory( "kopete_contactnotes" ))
 
-ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const QStringList & /* args */ )
+ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const QVariantList & /* args */ )
 : Kopete::Plugin( ContactNotesPluginFactory::componentData(), parent )
 {
 	if ( pluginStatic_ )
-		kDebug(14302)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized"<<endl;
+		kDebug(14302)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized";
 	else
 		pluginStatic_ = this;
 
-	KAction *m_actionEdit=new KAction( KIcon("identity"), i18n("&Notes"), this );
+	KAction *m_actionEdit=new KAction( KIcon("user-identity"), i18n("&Notes"), this );
         actionCollection()->addAction( "editContactNotes", m_actionEdit );
 	connect(m_actionEdit, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()));
 

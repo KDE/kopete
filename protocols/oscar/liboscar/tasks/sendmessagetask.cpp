@@ -64,7 +64,7 @@ void SendMessageTask::onGo()
 	int snacSubfamily = 0x0006;
 	if ( ( m_message.channel() == 2 ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
 	{ // an auto response is send for ack of channel 2 messages
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending SNAC 0x0B instead of 0x06 " << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "Sending SNAC 0x0B instead of 0x06 ";
 		snacSubfamily = 0x000B;
 	}
 	FLAP f = { 0x02, 0, 0 };
@@ -122,7 +122,7 @@ void SendMessageTask::onGo()
 			b->addDWord( 0x00030000 ); //empty TLV 3 to get an ack from the server
 		}
 
-		if ( client()->isIcq() && m_message.channel() != 2 && ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
+		if ( m_message.channel() != 2 && ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
 			b->addDWord( 0x00060000 ); //empty TLV 6 to store message on the server if not online
 	}
 	else
@@ -134,7 +134,7 @@ void SendMessageTask::onGo()
 	}
 
 	Transfer* t = createTransfer( f, s, b );
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SENDING: " << t->toString() << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "SENDING: " << t->toString();
 	send( t );
 
 	setSuccess(true);
@@ -164,19 +164,25 @@ void SendMessageTask::addChannel1Data( Buffer* b )
 	tlv2buffer.addWord( 0x0101 ); //add TLV(0x0101) also known as TLV(257)
 	tlv2buffer.addWord( m_message.textArray().size() + 4 ); // add TLV length
 
-	if ( m_message.encoding() == Oscar::Message::UserDefined )
+	switch ( m_message.encoding() )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending outgoing message in "
-			<< "per-contact encoding" << endl;
+	case Oscar::Message::UserDefined:
+	case Oscar::Message::ASCII:
+		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message in per-contact encoding or as ASCII";
 		tlv2buffer.addWord( 0x0000 );
 		tlv2buffer.addWord( 0x0000 );
-	}
-	else
-	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending outgoing message as "
-			<< "UCS-2" << endl;
+		break;
+	case Oscar::Message::LATIN1:
+		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message as LATIN1";
+		tlv2buffer.addWord( 0x0003 );
+		tlv2buffer.addWord( 0x0000 );
+		break;
+	case Oscar::Message::UCS2:
+	default:
+		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message as UCS-2";
 		tlv2buffer.addWord( 0x0002 );
 		tlv2buffer.addWord( 0x0000 );
+		break;
 	}
 	tlv2buffer.addString( m_message.textArray() );
 
@@ -185,7 +191,7 @@ void SendMessageTask::addChannel1Data( Buffer* b )
 
 void SendMessageTask::addChannel2Data( Buffer* b )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Trying to send channel 2 message!" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "Trying to send channel 2 message!";
 
 	Buffer tlv5buffer;
 
@@ -410,17 +416,17 @@ if(codec)
 {
 	if(codec->canEncode(message)) // this returns true for some accented western european chars but kopete can't decode on receipt
 	{
-		//kDebug(14151) << k_funcinfo << "Going to encode as US-ASCII" << endl;
+		//kDebug(14151) << "Going to encode as US-ASCII";
 		// We are forcing kopete to send messages using ISO-8859-1
 		// It's a hack and should be reimplemented in a better way
 		charset=0x0003;
 		codec=QTextCodec::codecForMib(4);
-		//kDebug(14151) << k_funcinfo << "Now trying ISO-8859-1" << endl;
+		//kDebug(14151) << "Now trying ISO-8859-1";
 	}
 	else
 	{
 		codec=0L; // we failed encoding it as US-ASCII
-		//kDebug(14151) << k_funcinfo << "Cannot encode as US-ASCII" << endl;
+		//kDebug(14151) << "Cannot encode as US-ASCII";
 	}
 }
 
@@ -449,7 +455,7 @@ if(!codec && charset != 0x0002 && contact->encoding() != 0)
 
 if(!codec && charset != 0x0002) // it's neither unicode nor did we find a codec so far!
 {
-	kDebug(14151) << k_funcinfo <<
+	kDebug(14151) <<
 		"Couldn't find suitable encoding for outgoing message, " <<
 		"encoding using ISO-8859-1, prepare for receiver getting unreadable text :)" << endl;
 	charset=0x0003;
@@ -463,13 +469,13 @@ tlv2.addWord(charsubset); // normal char set
 
 if(utfMessage)
 {
-	kDebug(14151) << k_funcinfo << "Outgoing message encoded as 'UTF-16BE'" << endl;
+	kDebug(14151) << "Outgoing message encoded as 'UTF-16BE'";
 	tlv2.addString(utfMessage, length); // the actual message
 	delete [] utfMessage;
 }
 else
 {
-	kDebug(14151) << k_funcinfo << "Outgoing message encoded as '" << codec->name() << "'" << endl;
+	kDebug(14151) << "Outgoing message encoded as '" << codec->name() << "'";
 	QCString outgoingMessage=codec->fromUnicode(message);
 	tlv2.addString(outgoingMessage, length); // the actual message
 }

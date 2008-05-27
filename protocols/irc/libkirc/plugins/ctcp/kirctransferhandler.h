@@ -23,10 +23,7 @@
 #include "kirctransfer.h"
 #include "kirctransferserver.h"
 
-class QFile;
-class QTextCodec;
 
-class KExtendedSocket;
 
 namespace KIrc
 {

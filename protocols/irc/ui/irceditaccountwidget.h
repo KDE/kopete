@@ -17,8 +17,8 @@
     *************************************************************************
 */
 
-#ifndef IRCEDITACCOUNTWIDEGET_H
-#define IRCEDITACCOUNTWIDEGET_H
+#ifndef IRCEDITACCOUNTWIDGET_H
+#define IRCEDITACCOUNTWIDGET_H
 
 #include "editaccountwidget.h"
 #include "ui_irceditaccount.h"
@@ -54,4 +54,4 @@ private:
 	QString generateAccountId( const QString &network );
 };
 
-#endif
+#endif // IRCEDITACCOUNTWIDGET_H

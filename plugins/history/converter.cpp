@@ -8,7 +8,7 @@
  * CONVERTER from the old kopete history.
  * it port history from kopete 0.6, 0.5 and above the actual
  * this should be placed in a perl script handled by KConf_update
- * but i need to acess to some info i don't have with perl, like
+ * but i need to access to some info i don't have with perl, like
  * the accountId, to know each protocol id, and more
  *-----------------------------------------------------------*/
 
@@ -38,7 +38,7 @@
 void HistoryPlugin::convertOldHistory()
 {
 	bool deleteFiles=  KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-		i18n( "Would you like to remove old history files?" ) , i18n( "History Converter" ), KStandardGuiItem::del(), KGuiItem( i18n("Keep") ) ) == KMessageBox::Yes;
+		i18n( "Would you like to remove the old history files?" ) , i18n( "History Converter" ), KStandardGuiItem::del(), KGuiItem( i18n("Keep") ) ) == KMessageBox::Yes;
 
 	KProgressDialog *progressDlg=new KProgressDialog(Kopete::UI::Global::mainWidget() , i18n( "History converter" ));
 	progressDlg->setModal(true); //modal  to  make sure the user will not doing stupid things (we have a qApp->processEvents())
@@ -108,7 +108,7 @@ void HistoryPlugin::convertOldHistory()
 
 			progressDlg->progressBar()->reset();
 			progressDlg->progressBar()->setMaximum(d2.count());
-			progressDlg->setLabelText(i18n("Parsing old history in %1", fi.fileName()));
+			progressDlg->setLabelText(i18n("Parsing the old history in %1", fi.fileName()));
 			progressDlg->show(); //if it was not already showed...
 
 			foreach(fi2, list)
@@ -118,7 +118,7 @@ void HistoryPlugin::convertOldHistory()
 
 				if(!contactId.isEmpty() )
 				{
-					progressDlg->setLabelText(i18n("Parsing old history in %1:\n%2", fi.fileName(), contactId));
+					progressDlg->setLabelText(i18n("Parsing the old history in %1:\n%2", fi.fileName(), contactId));
 					qApp->processEvents(0); //make sure the text is updated in the progressDlg
 
 					int month=0;

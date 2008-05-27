@@ -3,7 +3,7 @@
 
     Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @ kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -19,10 +19,11 @@
 
 #include "kopetecontact.h"
 
-#include <qapplication.h>
+#include <QApplication>
 #include <QTextDocument>
+#include <QTimer>
 
-#include <kdebug.h>
+#include <KDebug>
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
@@ -34,6 +35,7 @@
 #include <kmenu.h>
 #include <kmessagebox.h>
 #include <k3listviewsearchline.h>
+#include <kemoticons.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
@@ -49,6 +51,8 @@
 #include "metacontactselectorwidget.h"
 #include "kopeteemoticons.h"
 #include "kopetestatusmessage.h"
+#include "kopeteinfodialog.h"
+#include "kopetedeletecontacttask.h"
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
@@ -77,7 +81,6 @@ public:
 	QTime idleTimer;
 	unsigned long int idleTime;
 
-	Kopete::ContactProperty::Map properties;
 	Kopete::StatusMessage statusMessage;
 };
 
@@ -87,7 +90,7 @@ Contact::Contact( Account *account, const QString &contactId,
 {
 	d = new Private;
 
-	//kDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId << endl;
+	//kDebug( 14010 ) << "Creating contact with id " << contactId;
 
 	d->contactId = contactId;
 	d->metaContact = parent;
@@ -114,13 +117,11 @@ Contact::Contact( Account *account, const QString &contactId,
 
 		parent->addContact( this );
 	}
-
-
 }
 
 Contact::~Contact()
 {
-	//kDebug(14010) << k_funcinfo << endl;
+	//kDebug(14010) ;
 	emit( contactDestroyed( this ) );
 	delete d;
 }
@@ -150,7 +151,7 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 		status.status() != OnlineStatus::Offline )
 	{
 		setProperty( globalProps->onlineSince(), QDateTime::currentDateTime() );
-		/*kDebug(14010) << k_funcinfo << "REMOVING lastSeen property for " <<
+		/*kDebug(14010) << "REMOVING lastSeen property for " <<
 			d->displayName << endl;*/
 		removeProperty( globalProps->lastSeen() );
 	}
@@ -159,7 +160,7 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 		status.status() == OnlineStatus::Offline ) // Contact went back offline
 	{
 		removeProperty( globalProps->onlineSince() );
-		/*kDebug(14010) << k_funcinfo << "SETTING lastSeen property for " <<
+		/*kDebug(14010) << "SETTING lastSeen property for " <<
 			d->displayName << endl;*/
 		setProperty( globalProps->lastSeen(), QDateTime::currentDateTime() );
 	}
@@ -177,7 +178,13 @@ void Contact::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
 	d->statusMessage = statusMessage;
 
-	kDebug(14010) << k_funcinfo << "Setting up the status message property with this: " << statusMessage.message() << endl;
+	kDebug(14010) << "Setting up the status title property with this: " << statusMessage.title();
+	if( !statusMessage.title().isEmpty() )
+		setProperty( Kopete::Global::Properties::self()->statusTitle(), statusMessage.title() );
+	else
+		removeProperty( Kopete::Global::Properties::self()->statusTitle() );
+
+	kDebug(14010) << "Setting up the status message property with this: " << statusMessage.message();
 	if( !statusMessage.message().isEmpty() )
 		setProperty( Kopete::Global::Properties::self()->statusMessage(), statusMessage.message() );
 	else
@@ -198,7 +205,7 @@ void Contact::slotAccountIsConnectedChanged()
 
 void Contact::sendFile( const KUrl &, const QString &, uint )
 {
-	kWarning( 14010 ) << k_funcinfo << "Plugin "
+	kWarning( 14010 ) << "Plugin "
 		<< protocol()->pluginId() << " has enabled file sending, "
 		<< "but didn't implement it!" << endl;
 }
@@ -331,24 +338,11 @@ void Contact::setMetaContact( MetaContact *m )
 
 	if( old )
 	{
-		int result=KMessageBox::No;
-		if( old->isTemporary() )
-			result=KMessageBox::Yes;
-		else if( old->contacts().count()==1 )
-		{ //only one contact, including this one, that mean the contact will be empty efter the move
-			result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), i18n( "You are moving the contact `%1' to the meta contact `%2'.\n"
-				"`%3' will be empty afterwards. Do you want to delete this contact?",
-					contactId(), m ? m->displayName() : QString::null, old->displayName())
-				, i18n( "Move Contact" ), KStandardGuiItem::del(), KGuiItem( i18n( "&Keep" ) )
-				, KStandardGuiItem::cancel(), QString::fromLatin1("delete_old_contact_when_move") );
-			if(result==KMessageBox::Cancel)
-				return;
-		}
 		old->removeContact( this );
 		disconnect( old, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
 
-		if(result==KMessageBox::Yes)
+		if(old->contacts().isEmpty())
 		{
 			//remove the old metacontact.  (this delete the MC)
 			ContactList::self()->removeMetaContact(old);
@@ -381,64 +375,6 @@ void Contact::serialize( QMap<QString, QString> &/*serializedData*/,
 	QMap<QString, QString> & /* addressBookData */ )
 {
 }
-
-
-void Contact::serializeProperties(QMap<QString, QString> &serializedData)
-{
-
-	Kopete::ContactProperty::Map::ConstIterator it;// = d->properties.ConstIterator;
-	for (it=d->properties.begin(); it != d->properties.end(); ++it)
-	{
-		if (!it.value().tmpl().persistent())
-			continue;
-
-		QVariant val = it.value().value();
-		QString key = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(val.typeName()), it.key());
-
-		serializedData[key] = val.toString();
-
-	} // end for()
-} // end serializeProperties()
-
-void Contact::deserializeProperties(
-	QMap<QString, QString> &serializedData )
-{
-	QMap<QString, QString>::ConstIterator it;
-	for ( it=serializedData.begin(); it != serializedData.end(); ++it )
-	{
-		QString key = it.key();
-
-		if ( !key.startsWith( QString::fromLatin1("prop_") ) ) // avoid parsing other serialized data
-			continue;
-
-		QStringList keyList = key.split( QChar('_'), QString::SkipEmptyParts );
-		if( keyList.count() < 3 ) // invalid key, not enough parts in string "prop_X_Y"
-			continue;
-
-		key = keyList[2]; // overwrite key var with the real key name this property has
-		QString type( keyList[1] ); // needed for QVariant casting
-
-		QVariant variant( it.value() );
-		if( !variant.convert(QVariant::nameToType(type.toLatin1())) )
-		{
-			kDebug(14010) << k_funcinfo <<
-				"Casting QVariant to needed type FAILED" <<
-				"key=" << key << ", type=" << type << endl;
-			continue;
-		}
-
-		Kopete::ContactPropertyTmpl tmpl = Kopete::Global::Properties::self()->tmpl(key);
-		if( tmpl.isNull() )
-		{
-			kDebug( 14010 ) << k_funcinfo << "no ContactPropertyTmpl defined for" \
-				" key " << key << ", cannot restore persistent property" << endl;
-			continue;
-		}
-
-		setProperty(tmpl, variant);
-	} // end for()
-}
-
 
 bool Contact::isReachable()
 {
@@ -483,11 +419,12 @@ void Contact::slotDelete()
 {
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" ,
-		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("delete-user") ), KStandardGuiItem::cancel(),
+		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("list-remove-user") ), KStandardGuiItem::cancel(),
 		QString::fromLatin1("askRemoveContact"), KMessageBox::Notify | KMessageBox::Dangerous )
 		== KMessageBox::Continue )
 	{
-		deleteContact();
+		Kopete::DeleteContactTask *deleteTask = new Kopete::DeleteContactTask(this);
+		deleteTask->start();
 	}
 }
 
@@ -546,7 +483,6 @@ QList<KAction*> *Contact::customContextMenuActions( ChatSession * /* manager */ 
 	return customContextMenuActions();
 }
 
-
 bool Contact::isOnline() const
 {
 	return onlineStatus().isDefinitelyOnline();
@@ -592,112 +528,53 @@ void Contact::setIdleTime( unsigned long int t )
 		emit idleStateChanged(this);
 }
 
-
-QStringList Contact::properties() const
-{
-	return d->properties.keys();
-}
-
-bool Contact::hasProperty(const QString &key) const
-{
-	return d->properties.contains(key);
-}
-
-const ContactProperty &Contact::property(const QString &key) const
-{
-	if(hasProperty(key))
-		return d->properties[key];
-	else
-		return Kopete::ContactProperty::null;
-}
-
-const Kopete::ContactProperty &Contact::property(
-	const Kopete::ContactPropertyTmpl &tmpl) const
-{
-	if(hasProperty(tmpl.key()))
-		return d->properties[tmpl.key()];
-	else
-		return Kopete::ContactProperty::null;
-}
-
-
-void Contact::setProperty(const Kopete::ContactPropertyTmpl &tmpl,
-	const QVariant &value)
-{
-	if(tmpl.isNull() || tmpl.key().isEmpty())
-	{
-		kDebug(14000) << k_funcinfo <<
-			"No valid template for property passed!" << endl;
-		return;
-	}
-
-	if(value.isNull() || value.canConvert(QVariant::String) && value.toString().isEmpty())
-	{
-		removeProperty(tmpl);
-	}
-	else
-	{
-		QVariant oldValue = property(tmpl.key()).value();
-
-		if(oldValue != value)
-		{
-			Kopete::ContactProperty prop(tmpl, value);
-			d->properties.remove(tmpl.key());
-			d->properties.insert(tmpl.key(), prop);
-
-			emit propertyChanged(this, tmpl.key(), oldValue, value);
-		}
-	}
-}
-
-void Contact::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
-{
-	if(!tmpl.isNull() && !tmpl.key().isEmpty())
-	{
-
-		QVariant oldValue = property(tmpl.key()).value();
-		d->properties.remove(tmpl.key());
-		emit propertyChanged(this, tmpl.key(), oldValue, QVariant());
-	}
-}
-
-
 QString Contact::toolTip() const
 {
-	Kopete::ContactProperty p;
+	Kopete::Property p;
 	QString tip;
 	QStringList shownProps = Kopete::AppearanceSettings::self()->toolTipContents();
 
 	// --------------------------------------------------------------------------
 	// Fixed part of tooltip
 
-	QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
-		.arg( QString(QUrl::toPercentEncoding( protocol()->pluginId() )),
-				QString(QUrl::toPercentEncoding( account()->accountId() )),
-				QString(QUrl::toPercentEncoding( contactId() )) );
+	QString iconName;
+	if ( this == account()->myself() )
+	{
+		iconName = QString::fromLatin1("kopete-account-icon:%1:%2")
+			.arg( QString(QUrl::toPercentEncoding( protocol()->pluginId() )),
+			      QString(QUrl::toPercentEncoding( account()->accountId() )) );
+
+	}
+	else
+	{
+		iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
+			.arg( QString(QUrl::toPercentEncoding( protocol()->pluginId() )),
+			      QString(QUrl::toPercentEncoding( account()->accountId() )),
+			      QString(QUrl::toPercentEncoding( contactId() )) );
+	}
 
 	// TODO:  the nickname should be a configurable properties, like others. -Olivier
 	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( nick.isEmpty() )
 	{
-		tip = i18nc( "<b>DISPLAY NAME</b><br><img src=\"%2\">&nbsp;CONTACT STATUS",
-			"<b><nobr>%3</nobr></b><br><img src=\"%2\">&nbsp;%1",
+		tip = i18nc( "@label:textbox %3 is contact-display-name, %1 is its status",
+			"<b><nobr>%3</nobr></b><br /><img src=\"%2\">&nbsp;%1",
 			Kopete::Message::escape( onlineStatus().description() ), iconName,
 				Kopete::Message::escape( d->contactId ) );
 	}
 	else
 	{
-		tip = i18nc( "<b>DISPLAY NAME</b> (CONTACT ID)<br><img src=\"%2\">&nbsp;CONTACT STATUS",
-			"<nobr><b>%4</b> (%3)</nobr><br><img src=\"%2\">&nbsp;%1",
+		tip = i18nc( "@label:textbox %4 is contact-display-name, %3 is contact-id, %1 is its status",
+			"<nobr><b>%4</b> (%3)</nobr><br /><img src=\"%2\">&nbsp;%1",
 				Kopete::Message::escape( onlineStatus().description() ), iconName,
 					Kopete::Message::escape( contactId() ),
-					Kopete::Emoticons::parseEmoticons( Kopete::Message::escape( nick ) ) );
+					Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape( nick ) ) );
 	}
 
 	// --------------------------------------------------------------------------
 	// Configurable part of tooltip
 
-	// FIXME: It shouldn't use QString to identity the properties. Instead it should use ContactPropertyTmpl::key()
+	// FIXME: It shouldn't use QString to identity the properties. Instead it should use PropertyTmpl::key()
 	for(QStringList::Iterator it=shownProps.begin(); it!=shownProps.end(); ++it)
 	{
 		if((*it) == Kopete::Global::Properties::self()->fullName().key() )
@@ -705,8 +582,8 @@ QString Contact::toolTip() const
 			QString name = formattedName();
 			if(!name.isEmpty())
 			{
-				tip += i18nc("<br><b>Full Name:</b>&nbsp;FORMATTED NAME",
-							"<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>", Qt::escape(name));
+				tip += i18nc("@label:textbox formatted name",
+							"<br /><b>Full Name:</b>&nbsp;<nobr>%1</nobr>", Qt::escape(name));
 			}
 		}
 		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
@@ -714,8 +591,8 @@ QString Contact::toolTip() const
 			QString time = formattedIdleTime();
 			if(!time.isEmpty())
 			{
-				tip += i18nc("<br><b>Idle:</b>&nbsp;FORMATTED IDLE TIME",
-					"<br><b>Idle:</b>&nbsp;<nobr>%1</nobr>", time);
+				tip += i18nc("@label:textbox formatted idle time",
+					"<br /><b>Idle:</b>&nbsp;<nobr>%1</nobr>", time);
 			}
 		}
 		else if ((*it) == QString::fromLatin1("homePage"))
@@ -723,9 +600,18 @@ QString Contact::toolTip() const
 			QString url = property(*it).value().toString();
 			if(!url.isEmpty())
 			{
-				tip += i18nc("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
-					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>",
+				tip += i18nc("@label:textbox formatted url",
+					"<br /><b>Home Page:</b>&nbsp;<a href=\"%1\"><nobr>%2</nobr></a>",
 						QString(QUrl::toPercentEncoding( url )), Kopete::Message::escape( Qt::escape(url) ) );
+			}
+		}
+		else if ((*it) == Kopete::Global::Properties::self()->statusTitle().key() )
+		{
+			QString statusTitle = property(*it).value().toString();
+			if(!statusTitle.isEmpty())
+			{
+				tip += i18nc("@label:textbox formatted status title",
+				             "<br /><b>Status&nbsp;Title:</b>&nbsp;%1",  Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape(statusTitle) ) );
 			}
 		}
 		else if ((*it) == Kopete::Global::Properties::self()->statusMessage().key() )
@@ -733,8 +619,8 @@ QString Contact::toolTip() const
 			QString statusmsg = property(*it).value().toString();
 			if(!statusmsg.isEmpty())
 			{
-				tip += i18nc("<br><b>Status Message:</b>&nbsp;FORMATTED STATUS MESSAGE",
-							"<br><b>Status&nbsp;Message:</b>&nbsp;%1",  Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusmsg) ) );
+				tip += i18nc("@label:textbox formatted status message",
+							"<br /><b>Status&nbsp;Message:</b>&nbsp;%1",  Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape(statusmsg) ) );
 			}
 		}
 		else
@@ -770,8 +656,8 @@ QString Contact::toolTip() const
 						}
 				}
 
-				tip += i18nc("<br><b>PROPERTY LABEL:</b>&nbsp;PROPERTY VALUE",
-					"<br><nobr><b>%2:</b></nobr>&nbsp;%1",
+				tip += i18nc("@label:textbox property label %2 is name, %1 is value",
+					"<br /><nobr><b>%2:</b></nobr>&nbsp;%1",
 						valueText, Qt::escape(p.tmpl().label()) );
 			}
 		}
@@ -786,7 +672,7 @@ QString Kopete::Contact::formattedName() const
 		return property( Kopete::Global::Properties::self()->fullName() ).value().toString();
 
 	QString ret;
-	Kopete::ContactProperty first, last;
+	Kopete::Property first, last;
 
 	first = property( Kopete::Global::Properties::self()->firstName() );
 	last = property( Kopete::Global::Properties::self()->lastName() );
@@ -817,7 +703,7 @@ QString Kopete::Contact::formattedIdleTime() const
 	unsigned long int leftTime = idleTime();
 
 	if ( leftTime > 0 )
-	{	// FIXME: duplicated from code in kopetecontactlistview.cpp
+	{	// FIXME: duplicated from code in kopetecontact listview.cpp
 		unsigned long int days, hours, mins, secs;
 
 		days = leftTime / ( 60*60*24 );
@@ -854,7 +740,6 @@ QString Kopete::Contact::formattedIdleTime() const
 	return ret;
 }
 
-
 void Kopete::Contact::slotBlock()
 {
 	account()->block( d->contactId );
@@ -867,6 +752,7 @@ void Kopete::Contact::slotUnblock()
 
 void Kopete::Contact::setNickName( const QString &name )
 {
+	QString oldNickName = nickName();
 	setProperty( Kopete::Global::Properties::self()->nickName(), name );
 }
 
@@ -884,7 +770,7 @@ void Kopete::Contact::setPhoto(const QString &photoPath)
 	setProperty( Kopete::Global::Properties::self()->photo(), photoPath );
 }
 
+
 } //END namespace Kopete
 
 #include "kopetecontact.moc"
-

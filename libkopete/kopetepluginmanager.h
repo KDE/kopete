@@ -33,6 +33,7 @@ namespace Kopete
 
 class Plugin;
 typedef QList<Plugin*> PluginList;
+class PluginManagerPrivate;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -40,6 +41,7 @@ typedef QList<Plugin*> PluginList;
  */
 class KOPETE_EXPORT PluginManager : public QObject
 {
+	friend class PluginManagerPrivate;
 	Q_OBJECT
 	Q_ENUMS( PluginLoadMode )
 
@@ -48,8 +50,6 @@ public:
 	 * Retrieve the plugin loader instance.
 	 */
 	static PluginManager* self();
-
-	~PluginManager();
 
 	/**
 	 * Returns a list of all available plugins for the given category.
@@ -61,14 +61,14 @@ public:
 	 * You can query all information on the plugins through the KPluginInfo
 	 * interface.
 	 */
-	QList<KPluginInfo *> availablePlugins( const QString &category = QString::null ) const;
+	QList<KPluginInfo> availablePlugins( const QString &category = QString() ) const;
 
 	/**
 	 * Returns a list of all plugins that are actually loaded.
 	 * If you omit the category you get all, otherwise it's a filtered list.
 	 * See also @ref availablePlugins().
 	 */
-	PluginList loadedPlugins( const QString &category = QString::null ) const;
+	PluginList loadedPlugins( const QString &category = QString() ) const;
 
 	/**
 	 * @brief Search by plugin name. This is the key used as X-KDE-PluginInfo-Name in
@@ -85,7 +85,7 @@ public:
 	/**
 	 * @return the KPluginInfo for the specified plugin
 	 */
-	KPluginInfo *pluginInfo( const Kopete::Plugin *plugin ) const;
+	KPluginInfo pluginInfo( const Kopete::Plugin *plugin ) const;
 
 
 	/**
@@ -228,13 +228,11 @@ private:
 	 *
 	 * Returns a null pointer when no plugin info is found.
 	 */
-	KPluginInfo * infoForPluginId( const QString &pluginId ) const;
+	KPluginInfo infoForPluginId( const QString &pluginId ) const;
 
 	PluginManager();
+	~PluginManager();
 
-	class Private;
-	Private *d;
-	static PluginManager *s_self;
 };
 
 }

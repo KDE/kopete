@@ -83,7 +83,7 @@ QHostAddress Connector::peerAddress() const
 	return addr;
 }
 
-quint16 Connector::peerPort() const
+Q_UINT16 Connector::peerPort() const
 {
 	return port;
 }
@@ -100,7 +100,7 @@ void Connector::setPeerAddressNone()
 	port = 0;
 }
 
-void Connector::setPeerAddress(const QHostAddress &_addr, quint16 _port)
+void Connector::setPeerAddress(const QHostAddress &_addr, Q_UINT16 _port)
 {
 	haveaddr = true;
 	addr = _addr;
@@ -131,7 +131,7 @@ QString AdvancedConnector::Proxy::host() const
 	return v_host;
 }
 
-quint16 AdvancedConnector::Proxy::port() const
+Q_UINT16 AdvancedConnector::Proxy::port() const
 {
 	return v_port;
 }
@@ -156,14 +156,14 @@ int AdvancedConnector::Proxy::pollInterval() const
 	return v_poll;
 }
 
-void AdvancedConnector::Proxy::setHttpConnect(const QString &host, quint16 port)
+void AdvancedConnector::Proxy::setHttpConnect(const QString &host, Q_UINT16 port)
 {
 	t = HttpConnect;
 	v_host = host;
 	v_port = port;
 }
 
-void AdvancedConnector::Proxy::setHttpPoll(const QString &host, quint16 port, const QString &url)
+void AdvancedConnector::Proxy::setHttpPoll(const QString &host, Q_UINT16 port, const QString &url)
 {
 	t = HttpPoll;
 	v_host = host;
@@ -171,7 +171,7 @@ void AdvancedConnector::Proxy::setHttpPoll(const QString &host, quint16 port, co
 	v_url = url;
 }
 
-void AdvancedConnector::Proxy::setSocks(const QString &host, quint16 port)
+void AdvancedConnector::Proxy::setSocks(const QString &host, Q_UINT16 port)
 {
 	t = Socks;
 	v_host = host;
@@ -287,7 +287,7 @@ void AdvancedConnector::setProxy(const Proxy &proxy)
 	d->proxy = proxy;
 }
 
-void AdvancedConnector::setOptHostPort(const QString &host, quint16 _port)
+void AdvancedConnector::setOptHostPort(const QString &host, Q_UINT16 _port)
 {
 	if(d->mode != Idle)
 		return;
@@ -458,7 +458,7 @@ void AdvancedConnector::dns_done()
 	else
 		addr = list.first();
 #else
-	if(d->dns.result() == 0)
+	if(d->dns.result().isNull ())
 		failed = true;
 	else
 		addr = QHostAddress(d->dns.result());

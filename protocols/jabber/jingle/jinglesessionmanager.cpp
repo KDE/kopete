@@ -38,6 +38,25 @@
 #define JINGLE_VOICE_SESSION_NS "http://www.google.com/session/phone"
 #define JINGLE_FOO_NS "http://kopete.kde.com/jingle/foo.html"
 
+//BEGIN JingleSessionManager::SlotsProxy
+class JingleSessionManager;
+class JingleSessionManager::SlotsProxy : public sigslot::has_slots<>
+{
+public:
+	SlotsProxy(JingleSessionManager *parent)
+	 : sessionManager(parent)
+	{}
+	
+	void OnSignalingRequest()
+	{
+		kDebug(JABBER_DEBUG_GLOBAL) << "Requesting Jingle signaling.";
+		sessionManager->cricketSessionManager()->OnSignalingReady();
+	}
+	
+	
+private:
+	JingleSessionManager *sessionManager;
+};
 
 
 //BEGIN JingleSessionManager::Private
@@ -93,20 +112,20 @@ JingleSessionManager::JingleSessionManager(JabberAccount *account)
 
 JingleSessionManager::~JingleSessionManager()
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) ;
 
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Cleaning up Jingle sessions." << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "Cleaning up Jingle sessions.";
 	QList<JingleSession*>::Iterator it, itEnd = d->sessionList.end();
 	for(it = d->sessionList.begin(); it != itEnd; ++it)
 	{
 		JingleSession *deletedSession = *it;
 		if( deletedSession )
 		{
-			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "deleting a session." << endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << "deleting a session.";
 			delete deletedSession;
 		}
 	}
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Done Cleaning up Jingle sessions." << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "Done Cleaning up Jingle sessions.";
 
 	delete d;
 }
@@ -122,7 +141,7 @@ JingleSession *JingleSessionManager::createSession(const QString &sessionType, c
 
 	if(sessionType == JINGLE_VOICE_SESSION_NS)
 	{
-		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating a voice session" << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << "Creating a voice session";
 		newSession = new JingleVoiceSession(account(), peers);
 	}else if (sessionType == JINGLE_FOO_NS)
 	{
@@ -146,7 +165,7 @@ JingleSession *JingleSessionManager::createSession(const QString &sessionType, c
 
 void JingleSessionManager::removeSession(JingleSession *session)
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing a jingle session." << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "Removing a jingle session.";
 
 	d->sessionList.removeAll(session);
 	delete session;	
@@ -154,7 +173,7 @@ void JingleSessionManager::removeSession(JingleSession *session)
 
 void JingleSessionManager::slotIncomingSession(const QString &sessionType, const QString &initiator)
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Incoming session: " << sessionType << ". Initiator: " << initiator << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "Incoming session: " << sessionType << ". Initiator: " << initiator;
 
 	JingleSession *newSession = createSession(sessionType, XMPP::Jid(initiator));
 	emit incomingSession(sessionType, newSession);

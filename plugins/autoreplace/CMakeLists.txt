@@ -1,4 +1,3 @@
-
 add_subdirectory( icons ) 
 
 include_directories( 
@@ -9,8 +8,6 @@ ${KOPETE_INCLUDES}
 ########### next target ###############
 
 set(kopete_autoreplace_PART_SRCS autoreplaceplugin.cpp autoreplaceconfig.cpp )
-
-kde4_automoc(${kopete_autoreplace_PART_SRCS})
 
 kde4_add_plugin(kopete_autoreplace ${kopete_autoreplace_PART_SRCS})
 
@@ -26,7 +23,6 @@ set(kcm_kopete_autoreplace_PART_SRCS autoreplacepreferences.cpp autoreplaceconfi
 
 kde4_add_ui_files(kcm_kopete_autoreplace_PART_SRCS autoreplaceprefs.ui )
 
-kde4_automoc(${kcm_kopete_autoreplace_PART_SRCS})
 
 kde4_add_plugin(kcm_kopete_autoreplace ${kcm_kopete_autoreplace_PART_SRCS})
 

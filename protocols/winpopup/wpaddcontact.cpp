@@ -40,9 +40,11 @@
 
 WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount) : AddContactPage(parent)
 {
-//	kDebug(14170) << "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")" << endl;
+//	kDebug(14170) << "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")";
 
+	QVBoxLayout *topLayout = new QVBoxLayout( this );
 	QWidget* w = new QWidget( this );
+	topLayout->addWidget( w );
 	theDialog = new Ui::WPAddContactBase();
 	theDialog->setupUi( w );
 
@@ -63,7 +65,7 @@ WPAddContact::~WPAddContact()
 
 void WPAddContact::slotUpdateGroups()
 {
-	kDebug(14170) << "WPAddContact::slotUpdateGroups()" << endl;
+	kDebug(14170) << "WPAddContact::slotUpdateGroups()";
 
 	theDialog->mHostGroup->clear();
 	QStringList Groups = theAccount->getGroups();
@@ -75,19 +77,19 @@ void WPAddContact::slotUpdateGroups()
 
 void WPAddContact::slotSelected(const QString &Group)
 {
-	kDebug(14170) << "WPAddContact::slotSelected(" << Group << ")" << endl;
+	kDebug(14170) << "WPAddContact::slotSelected(" << Group << ")";
 
 	theDialog->mHostName->clear();
 	QStringList Hosts = theAccount->getHosts(Group);
 	QString ownHost = theAccount->myself()->contactId();
 	QStringList::ConstIterator end = Hosts.end();
 	for (QStringList::ConstIterator i = Hosts.begin(); i != end; i++)
-		if (*i != ownHost) theDialog->mHostName->addItem( QIcon(SmallIcon("personal")), *i);
+		if (*i != ownHost) theDialog->mHostName->addItem( QIcon(SmallIcon("user-identity")), *i);
 }
 
 bool WPAddContact::validateData()
 {
-	kDebug(14170) << "WPAddContact::validateData()" << endl;
+	kDebug(14170) << "WPAddContact::validateData()";
 
 	QString tmpHostName = theDialog->mHostName->currentText();
 
@@ -99,7 +101,7 @@ bool WPAddContact::validateData()
 	// If our own host is not allowed as contact localhost should be forbidden as well,
 	// additionally somehow localhost as contact crashes when receiving a message from it?? GF
 	if (tmpHostName.toUpper() == QString::fromLatin1("LOCALHOST")) {
-		KMessageBox::sorry(this, i18n("<qt>LOCALHOST is not allowed as contact.</qt>"), i18n("WinPopup"));
+		KMessageBox::sorry(this, i18n("<qt>LOCALHOST is not allowed as a contact.</qt>"), i18n("WinPopup"));
 		return false;
 	}
 
@@ -108,7 +110,7 @@ bool WPAddContact::validateData()
 
 bool WPAddContact::apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact)
 {
-	kDebug(14170) << "WPAddContact::apply(" << theAccount << ", " << theMetaContact << ")" << endl;
+	kDebug(14170) << "WPAddContact::apply(" << theAccount << ", " << theMetaContact << ")";
 
 	// TODO: make the nickname an option
 	return theAccount->addContact(theDialog->mHostName->currentText(), theMetaContact, Kopete::Account::ChangeKABC );

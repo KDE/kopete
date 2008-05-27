@@ -1,5 +1,5 @@
 /*
-    Kopete Latex Plugin
+    Kopete LaTeX Plugin
 
     Copyright (c) 2004 by Duncan Mac-Vicar Prett   <duncan@kde.org>
 
@@ -32,11 +32,12 @@ class LatexPreferences : public KCModule
 	Q_OBJECT
 public:
 
-	explicit LatexPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
+	explicit LatexPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
 	~LatexPreferences();
 
-	virtual void save();
-	virtual void load();
+	void save();
+	void load();
+	void defaults();
 
 private:
 	Ui::LatexPrefsUI *m_preferencesDialog;

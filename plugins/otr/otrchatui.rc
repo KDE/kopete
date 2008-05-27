@@ -1,0 +1,16 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="1" name="kopete_otr">	
+	<MenuBar>
+		<Menu name="tools"><text>&amp;Tools</text> 
+			<Menu name="otr_menu"><text>OTR Settings</text>
+				<Action name="enableOtr" />
+				<Action name="disableOtr" />
+				<Action name="verifyFingerprint" />
+			</Menu>
+		</Menu>
+	</MenuBar>
+	<ToolBar name="chatToolBar">
+		<Action name="otr_settings" />
+	</ToolBar>
+
+</kpartgui>

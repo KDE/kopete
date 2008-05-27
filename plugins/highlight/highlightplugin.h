@@ -27,14 +27,12 @@
 
 class QStringList;
 class QString;
-class QTimer;
 
 namespace Kopete { class Message; }
 namespace Kopete { class MetaContact; }
 namespace Kopete { class ChatSession; }
 
 class HighlightConfig;
-class Filter;
 
 /**
   * @author Olivier Goffart
@@ -47,7 +45,7 @@ class HighlightPlugin : public Kopete::Plugin
 public:
 	static HighlightPlugin  *plugin();
 
-	HighlightPlugin( QObject *parent, const QStringList &args );
+	HighlightPlugin( QObject *parent, const QVariantList &args );
 	~HighlightPlugin();
 
 public slots:

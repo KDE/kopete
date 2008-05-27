@@ -24,6 +24,7 @@
 
 #include <kcmdlineargs.h>
 #include <kdebug.h>
+#include <kemoticons.h>
 
 #include <kopetetask.h>
 #include <kopeteemoticons.h>
@@ -45,8 +46,7 @@ void ParseEmoticonTask::start()
 
 void ParseEmoticonTask::parseEmoticon(const QString &value)
 {
-	Kopete::Emoticons emo("Default");
-	m_parsed = emo.parse(value, Kopete::Emoticons::RelaxedParse | Kopete::Emoticons::SkipHTML);
+	m_parsed = Kopete::Emoticons::self()->theme().parseEmoticons(value, KEmoticonsTheme::RelaxedParse | KEmoticonsTheme::SkipHTML);
 
 	if(m_parsed.isEmpty())
 	{

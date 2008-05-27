@@ -1,4 +1,3 @@
-
 add_subdirectory( icons ) 
 
 include_directories( 
@@ -19,8 +18,6 @@ set(kopete_testbed_PART_SRCS
    testbedincomingmessage.cpp 
    ui/testbedwebcamdialog.cpp 
 )
-
-kde4_automoc(${kopete_testbed_PART_SRCS})
 
 kde4_add_ui_files(kopete_testbed_PART_SRCS
 testbedaddui.ui

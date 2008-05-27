@@ -22,8 +22,7 @@
 #define CS_SOCKS_H
 
 #include "bytestream.h"
-
-#include <cutestuff_export.h>
+#include "cutestuff_export.h"
 // CS_NAMESPACE_BEGIN
 
 class QHostAddress;
@@ -87,11 +86,11 @@ public:
 
 	// remote address
 	QHostAddress peerAddress() const;
-	quint16 peerPort() const;
+	Q_UINT16 peerPort() const;
 
 	// udp
 	QString udpAddress() const;
-	quint16 udpPort() const;
+	Q_UINT16 udpPort() const;
 	SocksUDP *createUDP(const QString &host, int port, const QHostAddress &routeAddr, int routePort);
 
 signals:
@@ -134,7 +133,7 @@ public:
 	~SocksServer();
 
 	bool isActive() const;
-	bool listen(quint16 port, bool udp=false);
+	bool listen(Q_UINT16 port, bool udp=false);
 	void stop();
 	int port() const;
 	QHostAddress address() const;

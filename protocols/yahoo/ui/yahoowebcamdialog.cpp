@@ -77,7 +77,7 @@ void YahooWebcamDialog::webcamPaused()
 
 void YahooWebcamDialog::webcamClosed( int reason  )
 {
-	kDebug(14180) << k_funcinfo << "webcam closed with reason?? " <<  reason <<endl;
+	kDebug(14180) << "webcam closed with reason?? " <<  reason;
 	QString closeReason;
 	switch ( reason )
 	{
@@ -90,7 +90,7 @@ void YahooWebcamDialog::webcamClosed( int reason  )
 	case 4:
 		closeReason = i18n( "%1 does not have his/her webcam online", contactName ); break;
 	default:
-		closeReason = i18n( "Unable to view the webcam of %1 for an unknown reason", contactName);
+		closeReason = i18n( "Unable to view %1's webcam for an unknown reason", contactName);
 	}
 	m_imageContainer->clear();
 

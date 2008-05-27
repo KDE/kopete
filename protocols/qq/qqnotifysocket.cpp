@@ -52,7 +52,7 @@ QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )
 
 QQNotifySocket::~QQNotifySocket()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 	if( m_heartbeat->isActive() )
 		m_heartbeat->stop();
 
@@ -65,7 +65,7 @@ void QQNotifySocket::doneConnect()
 	// setup the status first
 	QQSocket::doneConnect();
 
-	kDebug( 14140 ) << k_funcinfo << "Negotiating server protocol version" << endl;
+	kDebug( 14140 ) << "Negotiating server protocol version";
 	if( m_token.size() )
 		sendPacket( Eva::login( m_qqId, m_id++, m_passwordKey, m_token, m_loginMode ) );
 	else
@@ -75,7 +75,7 @@ void QQNotifySocket::doneConnect()
 
 void QQNotifySocket::disconnect()
 {
-	kDebug(14140) << k_funcinfo << "online status =" <<
+	kDebug(14140) << "online status =" <<
 		onlineStatus() << endl;
 	// FIXME: double check the logic, please.
 	if(	m_disconnectReason==Kopete::Account::Unknown )
@@ -93,7 +93,7 @@ void QQNotifySocket::disconnect()
 
 void QQNotifySocket::handleError( uint code, uint id )
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 
 	// TODO: Add support for all of these!
 	switch( code )
@@ -107,14 +107,14 @@ void QQNotifySocket::handleError( uint code, uint id )
 // Core functions
 void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 {
-	kDebug( 14140 ) << k_funcinfo << rawData << endl;
+	kDebug( 14140 ) << rawData;
 	Eva::Packet packet( rawData.data(), rawData.size() );
 	Eva::ByteArray text;
 
 	Eva::ByteArray initKey((char*) Eva::Packet::getInitKey(), 16 );
 	initKey.release();
 
-	kDebug( 14140 ) << "command = " << packet.command() << endl;
+	kDebug( 14140 ) << "command = " << packet.command();
 	switch( packet.command() )
 	{
 		case Eva::Command::RequestLoginToken :
@@ -133,7 +133,7 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 				text = Eva::Packet::decrypt( packet.body(), m_passwordKey );
 	}
 			
-	kDebug( 14140 ) << "text = " << QByteArray( text.c_str(), text.size() ) << endl;
+	kDebug( 14140 ) << "text = " << QByteArray( text.c_str(), text.size() );
 
 	
 	switch( packet.command() )
@@ -168,7 +168,7 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 		case Eva::Command::ChangeStatus :
 			if( Eva::Packet::replyCode(text) == Eva::ChangeStatusOK )
 			{
-				kDebug( 14140 ) << "ChangeStatus ok" << endl;
+				kDebug( 14140 ) << "ChangeStatus ok";
 				emit statusChanged( m_newstatus );
 			}
 			else // TODO: Debug me.
@@ -181,8 +181,8 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 		case Eva::Command::ReceiveMsg :
 		{
 			Eva::MessageEnvelop envelop(text);
-			kDebug(14140) << "Received message from " << envelop.sender << " to " << envelop.receiver << " type=" << envelop.type << endl;
-			kDebug(14140) << "seq = " << envelop.sequence << " from " << envelop.ip << ":" << envelop.port << endl;
+			kDebug(14140) << "Received message from " << envelop.sender << " to " << envelop.receiver << " type=" << envelop.type;
+			kDebug(14140) << "seq = " << envelop.sequence << " from " << envelop.ip << ":" << envelop.port;
 			
 			sendPacket( Eva::messageReply(m_qqId, packet.sequence(), m_sessionKey, Eva::Packet::replyKey(text) ));
 			Eva::ByteArray body( text.data() + sizeof(envelop), text.size() - sizeof(envelop) );
@@ -192,12 +192,12 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 			switch( envelop.type )
 			{
 				case 0x0010:
-					kDebug(14140) << "command 0x0010: " << QByteArray( body.c_str(), body.size() ) << endl;
+					kDebug(14140) << "command 0x0010: " << QByteArray( body.c_str(), body.size() );
 					break;
 				case Eva::RcvFromBuddy:
 				{
 					Eva::MessageHeader mh(body);
-					kDebug(14140) << "message header:" << endl;
+					kDebug(14140) << "message header:";
 					kDebug(14140) << "ver:" << mh.version << " sender:" << mh.sender 
 						<< " receiver:" << mh.receiver 
 						<< " type:" << mh.type << " seq:" << mh.sequence 
@@ -206,7 +206,7 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 
 					if( mh.receiver != m_qqId )
 					{
-						kDebug(14140) << "receive other(" << mh.receiver <<")'s message" << endl;
+						kDebug(14140) << "receive other(" << mh.receiver <<")'s message";
 						break;
 					}
 
@@ -215,6 +215,11 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 					Eva::uchar* p = body.data()+36;
 					bool hasFontStyle = p[3] != 0;
 					Eva::uchar replyType = p[8];
+					
+					// clear compiler warnings
+					Q_UNUSED(hasFontStyle);
+					Q_UNUSED(replyType);
+
 					Eva::ByteArray msg(body.size());
 					p += 9;
 
@@ -222,7 +227,7 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 						msg += *p++;
 					msg += char(0x0);
 
-					kDebug(14140) << "message received: " << msg.data() << endl;
+					kDebug(14140) << "message received: " << msg.data();
 					// FIXME: use a function to generate guid!
 					emit messageReceived(mh, msg);
 					
@@ -249,8 +254,8 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 				{
 					m_transferKey = Eva::Packet::transferKey( text );
 					m_transferToken = Eva::Packet::transferToken( text );
-					kDebug( 14140 ) << "transferKey =" << QByteArray( m_transferKey.c_str(), m_transferKey.size()) << endl;
-					kDebug( 14140 ) << "transferToken =" << QByteArray( m_transferToken.c_str(), m_transferToken.size()) << endl;
+					kDebug( 14140 ) << "transferKey =" << QByteArray( m_transferKey.c_str(), m_transferKey.size());
+					kDebug( 14140 ) << "transferToken =" << QByteArray( m_transferToken.c_str(), m_transferToken.size());
 
 				}
 			}
@@ -264,19 +269,19 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 			switch( Eva::Packet::replyCode(text)  )
 			{
 				case Eva::LoginOK:
-					kDebug( 14140 ) << "Bingo! QQ:#" << m_qqId << " logged in!" << endl;
+					kDebug( 14140 ) << "Bingo! QQ:#" << m_qqId << " logged in!";
 					// show off some meta data :
 					m_sessionKey = Eva::Packet::sessionKey(text);
 					kDebug( 14140 ) << "sessionKey = " << 
 						QByteArray( m_sessionKey.c_str(), m_sessionKey.size() ) << endl;
 
-					kDebug( 14140 )  << "remote IP: " << QHostAddress( Eva::Packet::remoteIP(text) ).toString() << endl;
-					kDebug( 14140 )  << "remote port: " << Eva::Packet::remotePort(text) << endl;
-					kDebug( 14140 )  << "local IP: " << QHostAddress( Eva::Packet::localIP(text) ).toString() << endl;
-					kDebug( 14140 )  << "local port: " << Eva::Packet::localPort(text) << endl;
-					kDebug( 14140 )  << "login time: " << Eva::Packet::loginTime(text) << endl;
-					kDebug( 14140 )  << "last login from: " << QHostAddress( Eva::Packet::lastLoginFrom(text) ).toString() << endl;
-					kDebug( 14140 )  << "last login time: " << Eva::Packet::lastLoginTime(text) << endl;
+					kDebug( 14140 )  << "remote IP: " << QHostAddress( Eva::Packet::remoteIP(text) ).toString();
+					kDebug( 14140 )  << "remote port: " << Eva::Packet::remotePort(text);
+					kDebug( 14140 )  << "local IP: " << QHostAddress( Eva::Packet::localIP(text) ).toString();
+					kDebug( 14140 )  << "local port: " << Eva::Packet::localPort(text);
+					kDebug( 14140 )  << "login time: " << Eva::Packet::loginTime(text);
+					kDebug( 14140 )  << "last login from: " << QHostAddress( Eva::Packet::lastLoginFrom(text) ).toString();
+					kDebug( 14140 )  << "last login time: " << Eva::Packet::lastLoginTime(text);
 
 					// start the heartbeat
 					if( !m_heartbeat->isActive() )
@@ -311,15 +316,15 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 					break;
 
 				case Eva::LoginWrongPassword :
-					kDebug( 14140 )  << "password is wrong. " << endl;
+					kDebug( 14140 )  << "password is wrong. ";
 					break;
 
 				case Eva::LoginMiscError :
-					kDebug( 14140 )  << "unknown error. " << endl;
+					kDebug( 14140 )  << "unknown error. ";
 					break;
 
 				default:
-					kDebug( 14140 ) << "Bad, we are not supposed to be here !" << endl;
+					kDebug( 14140 ) << "Bad, we are not supposed to be here !";
 					break;
 			}
 
@@ -372,10 +377,10 @@ void QQNotifySocket::handleIncomingPacket( const QByteArray& rawData )
 			break;
 		case Eva::Command::ContactStausChanged :
 		{
-			kDebug( 14140 ) << "contact status signal" << endl;
+			kDebug( 14140 ) << "contact status signal";
 			Eva::ContactStatus cs(text.data());
-			kDebug( 14140 ) << "contact status detail:" << endl;
-			kDebug( 14140 ) << "id = " << cs.qqId << " status = " << cs.status << endl;
+			kDebug( 14140 ) << "contact status detail:";
+			kDebug( 14140 ) << "id = " << cs.qqId << " status = " << cs.status;
 			emit contactStatusChanged( cs );
 			break;
 		}
@@ -395,7 +400,7 @@ void QQNotifySocket::sendTextMessage( const uint toId, const QByteArray& message
 {
 	// Translate the message to Eva::ByteArray
 	// TODO: color and font
-	kDebug( 14140 ) << "Send the message: " << message << " from " << m_qqId << " to " << toId << endl;
+	kDebug( 14140 ) << "Send the message: " << message << " from " << m_qqId << " to " << toId;
 	// attach the ByteArray to QString:
 	// FIXME: Add an adapter to ByteArray
 	Eva::ByteArray text( (char*)message.data(), message.size() );
@@ -423,13 +428,13 @@ void QQNotifySocket::groupNames( const Eva::ByteArray& text )
 	for( std::list<std::string>::const_iterator it = l.begin(); it != l.end(); it++ )
 		ql.append( QString( (*it).c_str() ) );
 
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 	emit groupNames( ql );
 }
 
 void QQNotifySocket::groupInfos( const Eva::ByteArray& text )
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 	std::list< Eva::GroupInfo > gis = Eva::Packet::groupInfos( text );
 	// TODO: send it one by one.
 	for( std::list< Eva::GroupInfo >::const_iterator it = gis.begin();
@@ -447,13 +452,13 @@ void QQNotifySocket::groupInfos( const Eva::ByteArray& text )
 
 void QQNotifySocket::doGetContactStatuses( const Eva::ByteArray& text )
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 	Eva::uchar pos = Eva::ContactListBegin;
 	std::list< Eva::ContactStatus > css = Eva::Packet::onlineContacts( text, pos );
 	for( std::list< Eva::ContactStatus >::const_iterator it = css.begin();
 		it != css.end(); it++ )
 	{
-		kDebug(14140) << "buddy: qqId = " << (*it).qqId << " status = " << (*it).status << endl;
+		kDebug(14140) << "buddy: qqId = " << (*it).qqId << " status = " << (*it).status;
 		emit contactStatusChanged(*it);
 	}
 

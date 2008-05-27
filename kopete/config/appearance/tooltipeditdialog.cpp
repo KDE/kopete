@@ -17,7 +17,7 @@
 
 #include "tooltipeditdialog.h"
 
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 #include "kopeteglobal.h"
 #include "kopeteappearancesettings.h"
 
@@ -50,7 +50,7 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	mUnusedEntries = new QStandardItemModel(this);
 	mUsedEntries = new QStandardItemModel(this);
 
-	const Kopete::ContactPropertyTmpl::Map propmap(
+	const Kopete::PropertyTmpl::Map propmap(
 		Kopete::Global::Properties::self()->templateMap());
 	QStringList usedKeys = Kopete::AppearanceSettings::self()->toolTipContents();
 
@@ -67,7 +67,7 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 
 	// then iterate over all known properties and insert the remaining ones
 	// into the "unused" list
-	Kopete::ContactPropertyTmpl::Map::ConstIterator it;
+	Kopete::PropertyTmpl::Map::ConstIterator it;
 	for(it = propmap.begin(); it != propmap.end(); ++it)
 	{
 		if((usedKeys.contains(it.key())==0) && (!it.value().isPrivate()))
@@ -134,7 +134,7 @@ void TooltipEditDialog::slotOkClicked()
 		QStandardItem *item = mUsedEntries->item( i, 0 );
 		keyname = item->data().value<QString>();
 		newList += keyname;
-		// kDebug(14000) << k_funcinfo <<
+		// kDebug(14000) <<
 		//	"Adding key '" << keyname << "' to tooltip list" << endl;
 	}
 
@@ -142,7 +142,7 @@ void TooltipEditDialog::slotOkClicked()
 	{
 		Kopete::AppearanceSettings::self()->setToolTipContents(newList);
 		emit changed(true);
-		kDebug(14000) << k_funcinfo << "tooltip fields changed, emitting changed()" << endl;
+		kDebug(14000) << "tooltip fields changed, emitting changed()";
 	}
 }
 

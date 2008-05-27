@@ -48,12 +48,12 @@ void FakeLocalContactListTask::onGo()
 		SNAC s = { 0x0003, 0x0004, 0x0000, client()->snacSequence() };
 		Buffer* buffer = new Buffer();
 		
-		kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending contact list" << endl;
+		kDebug( OSCAR_RAW_DEBUG ) << "Sending contact list";
 		QList<Contact> contactList = client()->ssiManager()->contactList();
 		QList<Contact>::const_iterator cEnd = contactList.constEnd();
 		for ( QList<Contact>::const_iterator it = contactList.constBegin(); it != cEnd; ++it )
 		{
-			kDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet" << endl;
+			kDebug( OSCAR_RAW_DEBUG ) << "Adding contact " << ( *it ).name() << " to CLI_BUDDYLIST_ADD packet";
 			buffer->addBUIN( ( *it ).name().toLatin1() );
 		}
 		

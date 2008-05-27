@@ -1,10 +1,11 @@
 /*
-    appearanceconfig.cpp  -  Kopete Look Feel Config
+    chatwindowconfig.cpp  -  Kopete Look Feel Config
 
     Copyright (c) 2005-2006 by Michaël Larouche       <larouche@kde.org>
     Copyright (c) 2005-2006 by Olivier Goffart         <ogoffart at kde.org>
+    Copyright (c) 2007      by Gustavo Pichorim Boiko  <gustavo.boiko@kdemail.net>
 
-    Kopete    (c) 2005-2006 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2005-2007 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -17,6 +18,8 @@
 */
 
 #include "chatwindowconfig.h"
+#include "emoticonthemedelegate.h"
+#include "emoticonthemeitem.h"
 
 #include <QCheckBox>
 #include <QDir>
@@ -32,10 +35,9 @@
 
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
-#include <kconfig.h> // for KNewStuff emoticon fetching
 #include <kdebug.h>
 #include <kfontrequester.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kio/netaccess.h>
 #include <khtmlview.h>
 #include <klineedit.h>
@@ -43,21 +45,15 @@
 #include <kmessagebox.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
-#include <kurl.h> // KNewStuff
 #include <kurlrequesterdialog.h>
 #include <krun.h>
 #include <kfiledialog.h>
+#include <kurl.h>
+#include <kemoticons.h>
+#include <KCMultiDialog>
 
-#ifdef __GNUC__
-#warning "Port KNS changes!"
-#endif
-#if 0
-#include <knewstuff/downloaddialog.h> // knewstuff emoticon and chatwindow fetching
-#include <knewstuff/engine.h>         // "
-#include <knewstuff/entry.h>          // "
-#include <knewstuff/knewstuff.h>      // "
-#include <knewstuff/provider.h>       // "
-#endif
+// KNewStuff
+#include <knewstuff2/engine.h>
 
 // For Kopete Chat Window Style configuration and preview.
 #include <kopetechatwindowstylemanager.h>
@@ -69,100 +65,103 @@
 #include <kopeteprotocol.h>
 #include <kopetemetacontact.h>
 #include <kopeteaccount.h>
+#include <kopeteidentity.h>
 #include <kopetecontact.h>
 #include <kopetemessage.h>
 #include <kopetechatsession.h>
 #include <kopetechatsessionmanager.h>
 #include <kopetestatusmessage.h>
+#include <kopeteappearancesettings.h>
+
+#include "kopeteemoticons.h"
 
 #include "kopeteglobal.h"
 
-#include <qtabwidget.h>
-
 #include "kopetechatwindowsettings.h"
 
-typedef KGenericFactory<ChatWindowConfig, QWidget> KopeteChatWindowConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_chatwindowconfig, KopeteChatWindowConfigFactory( "kcm_kopete_chatwindowconfig" ) )
+K_PLUGIN_FACTORY( KopeteChatWindowConfigFactory,
+		registerPlugin<ChatWindowConfig>(); )
+K_EXPORT_PLUGIN( KopeteChatWindowConfigFactory("kcm_kopete_chatwindowconfig") )
 
-
-#ifdef __GNUC__
-#warning "Port KNS changes!"
-#endif
-#if 0
-class KopeteStyleNewStuff : public KNewStuff
+// Reimplement Kopete::Contact and its abstract method
+// This is for style preview.
+class FakeContact : public Kopete::Contact
 {
 public:
-	KopeteStyleNewStuff(const QString &type, QWidget *parentWidget = 0)
-	 : KNewStuff( type, parentWidget)
-	{}
-
-	bool createUploadFile(const QString &)
-	{
-		return false;
-	}
-
-	bool install(const QString &styleFilename)
-	{
-		int styleInstallReturn = 0;
-		styleInstallReturn = ChatWindowStyleManager::self()->installStyle( styleFilename );
-
-		switch(styleInstallReturn)
-		{
-			case ChatWindowStyleManager::StyleInstallOk:
-			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Information, i18n("The Chat Window style was successfully installed."), i18n("Install successful") );
-				return true;
-			}
-			case ChatWindowStyleManager::StyleCannotOpen:
-			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
-				break;
-			}
-			case ChatWindowStyleManager::StyleNoDirectoryValid:
-			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Cannot find styles directory") );
-				break;
-			}
-			case ChatWindowStyleManager::StyleNotValid:
-			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window style."), i18n("Invalid Style") );
-				break;
-			}
-
-			case ChatWindowStyleManager::StyleUnknow:
-			default:
-			{
-				KMessageBox::queuedMessageBox( this->parentWidget(), KMessageBox::Error, i18n("An unknow error occurred while trying to install the Chat Window style."), i18n("Unknow error") );
-				break;
-			}
-		}
-		return false;
-	}
+	FakeContact (Kopete::Account *account, const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( account, id, mc ) {}
+	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags /*c*/) { return 0L; }
+	virtual void slotUserInfo() {}
 };
-#endif
 
-ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
-	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args )
-		, m_currentStyle (0L), m_loading(false), m_styleChanged(false)
+// This is for style preview.
+class FakeProtocol : public Kopete::Protocol
 {
+public:
+FakeProtocol( const KComponentData &instance, QObject *parent ) : Kopete::Protocol(instance, parent){}
+Kopete::Account* createNewAccount( const QString &/*accountId*/ ){return 0L;}
+AddContactPage* createAddContactWidget( QWidget */*parent*/, Kopete::Account */*account*/){return 0L;}
+KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, QWidget */*parent */){return 0L;}
+};
 
-	QVBoxLayout *layout = new QVBoxLayout(this);
+// This is for style preview.
+class FakeIdentity : public Kopete::Identity
+{
+	public:
+		FakeIdentity() : Kopete::Identity("Preview Identity") {};
+};
 
-	QTabWidget *chatWindowTabCtl = new QTabWidget(this);
-	layout->addWidget( chatWindowTabCtl );
-	setLayout(layout);
+// This is for style preview.
+class FakeAccount : public Kopete::Account
+{
+public:
+	FakeAccount(Kopete::Protocol *parent, const QString &accountID) : Kopete::Account(parent, accountID)
+	{
+		m_identity = new FakeIdentity();
+		setIdentity(m_identity);
+	}
 
+	void setMyself(Kopete::Contact *myself)
+	{
+		Kopete::Account::setMyself(myself);
+	}
+
+	~FakeAccount()
+	{
+		delete m_identity;
+	}
+
+bool createContact( const QString &/*contactId*/, Kopete::MetaContact */*parentContact*/ ){return true;}
+void connect( const Kopete::OnlineStatus& /*initialStatus*/){}
+void disconnect(){}
+void setOnlineStatus( const Kopete::OnlineStatus& /*status*/ , const Kopete::StatusMessage &/*reason*/){}
+void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/){}
+
+private:
+	FakeIdentity *m_identity;
+};
+
+ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
+	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args ),
+		m_currentStyle (0L), m_loading(false), m_styleChanged(false),
+		m_previewProtocol(0L), m_previewAccount(0L), m_myselfMetaContact(0L),
+		m_jackMetaContact(0L), m_myself(0L), m_jack(0L)
+{
 	KConfigGroup config(KGlobal::config(), "ChatWindowSettings");
 
+	QVBoxLayout *layout = new QVBoxLayout(this);
+	// since KSetting::Dialog has margins here, we don't need our own.
+	layout->setContentsMargins( 0, 0, 0, 0);
+	m_tab = new QTabWidget(this);
+	layout->addWidget(m_tab);
 
-	// "Style" TAB ========================================================
-	QWidget *styleWidget=new QWidget(chatWindowTabCtl);
+//--------- style tab ---------------------
+	QWidget *styleWidget = new QWidget(m_tab);
 	m_styleUi.setupUi(styleWidget);
-
+	m_tab->addTab(styleWidget, i18n("&Style"));
 	addConfig( KopeteChatWindowSettings::self(), styleWidget );
 
-	connect(m_styleUi.styleList, SIGNAL(selectionChanged(Q3ListBoxItem *)),
-		this, SLOT(slotChatStyleSelected()));
+	connect(m_styleUi.styleList, SIGNAL(currentTextChanged(const QString &)),
+		this, SLOT(slotChatStyleSelected(const QString &)));
 	connect(m_styleUi.variantList, SIGNAL(activated(const QString&)),
 		this, SLOT(slotChatStyleVariantSelected(const QString &)));
 	connect(m_styleUi.deleteButton, SIGNAL(clicked()),
@@ -171,6 +170,10 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 		this, SLOT(slotInstallChatStyle()));
 	connect(m_styleUi.btnGetStyles, SIGNAL(clicked()),
 		this, SLOT(slotGetChatStyles()));
+
+	m_styleUi.deleteButton->setIcon(KIcon("edit-delete"));
+	m_styleUi.installButton->setIcon(KIcon("document-import"));
+	m_styleUi.btnGetStyles->setIcon(KIcon("get-hot-new-stuff"));
 
 	// Show the available styles when the Manager has finish to load the styles.
 	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadChatStyles()));
@@ -195,37 +198,74 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QStringList &args )
 	// Add the preview message to the ChatMessagePart
 	createPreviewMessages();
 
-	chatWindowTabCtl->addTab( styleWidget, i18n("Style") );
 
+//--------- emoticons tab ---------------------
+	QWidget *emoticonsWidget = new QWidget(m_tab);
+	m_emoticonsUi.setupUi(emoticonsWidget);
+	m_tab->addTab(emoticonsWidget, i18n("&Emoticons"));
+
+	m_emoticonsUi.icon_theme_list->setItemDelegate(new EmoticonThemeDelegate(this));
+	addConfig( Kopete::AppearanceSettings::self(), emoticonsWidget );
+
+	connect(m_emoticonsUi.icon_theme_list, SIGNAL(itemSelectionChanged()),
+		this, SLOT(emitChanged()));
+
+	connect(m_emoticonsUi.btnManageThemes, SIGNAL(clicked()),
+		this, SLOT(slotManageEmoticonThemes()));
+
+//--------- colors tab --------------------------
+	QWidget *colorsWidget = new QWidget(m_tab);
+	m_colorsUi.setupUi(colorsWidget);
+	m_tab->addTab(colorsWidget, i18n("Colors && Fonts"));
+	addConfig( Kopete::AppearanceSettings::self(), colorsWidget );
 
 	load();
 }
 
 ChatWindowConfig::~ChatWindowConfig()
 {
+	if (m_previewChatSession)
+	{
+		Kopete::ChatSessionManager::self()->removeSession(m_previewChatSession);
+	}
+
+	// Deleting the account will delete jack and myself
+	delete m_previewAccount;
+
+	delete m_myselfMetaContact;
+	delete m_jackMetaContact;
+
+ 	delete m_previewProtocol;
 }
 
 
 void ChatWindowConfig::save()
 {
 	KCModule::save();
-//	kDebug(14000) << k_funcinfo << "called." << endl;
+//	kDebug(14000) << "called.";
 
 	KopeteChatWindowSettings *settings = KopeteChatWindowSettings::self();
 
-	// Get the stylePath
+	// Get the styleName
 	if(m_currentStyle)
 	{
-		kDebug(14000) << k_funcinfo << m_currentStyle->getStylePath() << endl;
-		settings->setStylePath( m_currentStyle->getStylePath() );
+		kDebug(14000) << m_currentStyle->getStyleName();
+		settings->setStyleName( m_currentStyle->getStyleName() );
 	}
 	// Get and save the styleVariant
 	if( !m_currentVariantMap.empty() )
 	{
-		kDebug(14000) << k_funcinfo << m_currentVariantMap[ m_styleUi.variantList->currentText()] << endl;
+		kDebug(14000) << m_currentVariantMap[ m_styleUi.variantList->currentText()];
 		settings->setStyleVariant( m_currentVariantMap[m_styleUi.variantList->currentText()] );
 	}
 
+	Kopete::AppearanceSettings *appearanceSettings = Kopete::AppearanceSettings::self();
+	QListWidgetItem *item = m_emoticonsUi.icon_theme_list->currentItem();
+	
+	if (item)
+		KEmoticons::setTheme( item->text() );
+
+	appearanceSettings->writeConfig();
 	settings->writeConfig();
 	m_styleChanged = false;
 
@@ -243,6 +283,9 @@ void ChatWindowConfig::load()
 	// Look for available chat window styles.
 	slotLoadChatStyles();
 
+	// Look for available emoticons themes
+	updateEmoticonList();
+
 	m_loading=false;
 	slotUpdateChatPreview();
 }
@@ -250,43 +293,40 @@ void ChatWindowConfig::load()
 void ChatWindowConfig::slotLoadChatStyles()
 {
 	m_styleUi.styleList->clear();
-	m_styleItemMap.clear();
 
-	ChatWindowStyleManager::StyleList availableStyles;
+	QStringList availableStyles;
 	availableStyles = ChatWindowStyleManager::self()->getAvailableStyles();
 	if( availableStyles.empty() )
-		kDebug(14000) << k_funcinfo << "Warning, available styles is empty !" << endl;
+		kDebug(14000) << "Warning, available styles is empty !";
 
-	ChatWindowStyleManager::StyleList::ConstIterator it, itEnd = availableStyles.constEnd();
-	for(it = availableStyles.constBegin(); it != itEnd; ++it)
+	foreach( const QString& styleName, availableStyles )
 	{
 		// Insert style name into the listbox
-		m_styleUi.styleList->insertItem( it.key(), 0 );
-		// Insert the style class into the internal map for futher access.
-		m_styleItemMap.insert( m_styleUi.styleList->firstItem(), it.value() );
+		m_styleUi.styleList->insertItem( 0, styleName );
 
-		if( it.value() == KopeteChatWindowSettings::self()->stylePath() )
+		if( styleName == KopeteChatWindowSettings::self()->styleName() )
 		{
-			kDebug(14000) << k_funcinfo << "Restoring saved style: " << it.key() << endl;
+			kDebug(14000) << "Restoring saved style: " << styleName;
 
-			m_styleUi.styleList->setSelected( m_styleUi.styleList->firstItem(), true );
+			m_styleUi.styleList->setCurrentItem( m_styleUi.styleList->item( 0 ) );
 		}
 	}
 
-	m_styleUi.styleList->sort();
+	m_styleUi.styleList->setSortingEnabled( true );
 }
 
 
-void ChatWindowConfig::slotChatStyleSelected()
+void ChatWindowConfig::slotChatStyleSelected(const QString &styleName)
 {
+	if (styleName.isEmpty())
+		return;
 	// Retrieve variant list.
-	QString stylePath = m_styleItemMap[m_styleUi.styleList->selectedItem()];
-	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( stylePath );
+	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( styleName );
 
 	if(m_currentStyle)
 	{
 		m_currentVariantMap = m_currentStyle->getVariants();
-		kDebug(14000) << k_funcinfo << "Loading style: " << m_currentStyle->getStylePath() << endl;
+		kDebug(14000) << "Loading style: " << m_currentStyle->getStyleName();
 
 		// Update the variant list based on current style.
 		m_styleUi.variantList->clear();
@@ -313,8 +353,10 @@ void ChatWindowConfig::slotChatStyleSelected()
 		slotUpdateChatPreview();
 		// Get the first variant to preview
 		// Check if the current style has variants.
-		if( !m_currentVariantMap.empty() )
+		if( !m_currentVariantMap.empty() ) {
 			m_preview->setStyleVariant(m_currentVariantMap[0]);
+			m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( QString() ) );
+		}
 
 		emitChanged();
 	}
@@ -322,9 +364,19 @@ void ChatWindowConfig::slotChatStyleSelected()
 
 void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 {
-// 	kDebug(14000) << k_funcinfo << variantName << endl;
-// 	kDebug(14000) << k_funcinfo << m_currentVariantMap[variantName] << endl;
+// 	kDebug(14000) << variantName;
+// 	kDebug(14000) << m_currentVariantMap[variantName];
 
+	// enable the 'Use compact' checkbox depending on whether the selected variant exists in compact
+	// form
+	QString styleName = m_styleUi.styleList->currentItem()->text();
+	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( styleName );
+	if ( m_styleUi.variantList->currentIndex() == 0 ) {
+		m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( "" ) );
+	}
+	else {
+		m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( variantName ) );
+	}
 	// Update the preview
 	m_preview->setStyleVariant(m_currentVariantMap[variantName]);
 	emitChanged();
@@ -332,124 +384,142 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 
 void ChatWindowConfig::slotInstallChatStyle()
 {
-	KUrl styleToInstall = KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose Chat Window style to install.") );
+	KUrl styleUrl = KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose a Chat Window Style to install") );
+
+	if ( styleUrl.isEmpty() ) // dialog got canceled
+		return;
+
+	int styleInstallReturn = installChatStyle( styleUrl );
+
+	switch(styleInstallReturn)
+	{
+		case ChatWindowStyleManager::StyleCannotOpen:
+		{
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be opened.\nMake sure that the archive is a valid ZIP or TAR archive."), i18n("Cannot open archive") );
+			break;
+		}
+		case ChatWindowStyleManager::StyleNoDirectoryValid:
+		{
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window Style."), i18n("Cannot find styles directory") );
+			break;
+		}
+		case ChatWindowStyleManager::StyleNotValid:
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window Style."), i18n("Invalid Style") );
+			break;
+		case ChatWindowStyleManager::StyleInstallOk:
+		{
+			KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window Style was successfully installed."), i18n("Install successful") );
+			break;
+		}
+		case ChatWindowStyleManager::StyleUnknow:
+		default:
+		{
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("An unknown error occurred while trying to install the Chat Window Style."), i18n("Unknown error") );
+			break;
+		}
+	}
+}
+
+int ChatWindowConfig::installChatStyle(const KUrl &styleToInstall)
+{
+	int styleInstallReturn = ChatWindowStyleManager::StyleCannotOpen;
 
 	if( !styleToInstall.isEmpty() )
 	{
 		QString stylePath;
 		if( KIO::NetAccess::download( styleToInstall, stylePath, this ) )
 		{
-			int styleInstallReturn = 0;
 			styleInstallReturn = ChatWindowStyleManager::self()->installStyle( stylePath );
-			switch(styleInstallReturn)
-			{
-				case ChatWindowStyleManager::StyleCannotOpen:
-				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be openned.\nMake sure that the archive is valid ZIP or TAR archive."), i18n("Cannot open archive") );
-					break;
-				}
-				case ChatWindowStyleManager::StyleNoDirectoryValid:
-				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window style in user directory."), i18n("Cannot find styles directory") );
-					break;
-				}
-				case ChatWindowStyleManager::StyleNotValid:
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window style."), i18n("Invalid Style") );
-					break;
-				case ChatWindowStyleManager::StyleInstallOk:
-				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window style was successfully installed !"), i18n("Install successful") );
-					break;
-				}
-				case ChatWindowStyleManager::StyleUnknow:
-				default:
-				{
-					KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("An unknow error occurred while trying to install the Chat Window style."), i18n("Unknow error") );
-					break;
-				}
-			}
 
 			// removeTempFile check if the file is a temp file, so it's ok for local files.
 			KIO::NetAccess::removeTempFile( stylePath );
 		}
 	}
+
+	return styleInstallReturn;
 }
 
 void ChatWindowConfig::slotDeleteChatStyle()
 {
-//	QString styleName = m_styleUi.styleList->selectedItem()->text();
-//	QString stylePathToDelete = m_styleItemMap[m_styleUi.styleList->selectedItem()];
-//	if( ChatWindowStyleManager::self()->removeStyle(stylePathToDelete) )
-//	{
-//		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "The style %1 was successfully deleted.").arg(styleName));
-//
-		// Get the first item in the stye List.
-//		QString stylePath = (*m_styleItemMap.begin());
-//		m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool(stylePath);
-//		emitChanged();
-//	}
-//	else
-//	{
-//		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("It's the deleted style name", "An error occurred while trying to delete %1 style.").arg(styleName));
-//	}
-	emitChanged();
+	if (!m_styleUi.styleList->currentItem())
+	{
+		return; // nothing selected
+	}
+
+	QString styleName = m_styleUi.styleList->currentItem()->text();
+	if( ChatWindowStyleManager::self()->removeStyle(styleName) )
+	{
+		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18nc("@info", "The Chat Window Style <resource>%1</resource> was successfully deleted.", styleName));
+		emitChanged();
+	}
+	else
+	{
+		KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, i18nc("@info", "An error occurred while trying to delete the <resource>%1</resource> Chat Window Style. Your account might not have permission to remove it.", styleName));
+	}
 }
 
 void ChatWindowConfig::slotGetChatStyles()
 {
-#ifdef __GNUC__
-#warning "Port KNS changes!"
-#endif
-#if 0
-	// we need this because KNewStuffGeneric's install function isn't clever enough
-	KopeteStyleNewStuff *kopeteNewStuff = new KopeteStyleNewStuff( "kopete/chatstyle", this );
-	KNS::Engine *engine = new KNS::Engine( kopeteNewStuff, "kopete/chatstyle", this );
-	KNS::DownloadDialog *downloadDialog = new KNS::DownloadDialog( engine, this );
-	downloadDialog->setCategory( "kopete/chatstyle" );
-	// you have to do this by hand when providing your own Engine
-	KNS::ProviderLoader *provider = new KNS::ProviderLoader( this );
-	QObject::connect( provider, SIGNAL( providersLoaded(Provider::List*) ), downloadDialog, SLOT( slotProviders (Provider::List *) ) );
-	provider->load( "kopete/chatstyle", "http://download.kde.org/khotnewstuff/kopetestyles12-providers.xml" );
-	downloadDialog->exec();
-	delete downloadDialog;
-	delete kopeteNewStuff;
+	KConfigGroup configGrp(KGlobal::config(), "KNewStuff2");
+	configGrp.writeEntry("ProvidersUrl", "http://download.kde.org/khotnewstuff/kopetestyles12-providers.xml");
+	configGrp.writeEntry("TargetDir", "kopete_chatstyles");
+	configGrp.sync();
+	
+	KNS::Engine *engine = new KNS::Engine();
+	engine->init(configGrp.config()->name());
+	
+	KNS::Entry::List entries = engine->downloadDialogModal(this);
+
+	if ( entries.size() > 0 )
+	{
+		int correctlyInstalled(0);
+		foreach( KNS::Entry* entry, entries )
+		{
+			if ( entry->status() == KNS::Entry::Installed && entry->installedFiles().size() > 0 )
+			{
+				KUrl styleFile( entry->installedFiles().at(0) );
+				int result = installChatStyle( styleFile );
+
+				QString packageName(entry->name().representation());
+				QString errorTitle = i18nc("@title:window", "Chat Window Style <resource>%1</resource> installation", packageName);
+				switch(result)
+				{
+					case ChatWindowStyleManager::StyleCannotOpen:
+					{
+						KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18nc("@info", "The specified archive <filename>%1</filename> cannot be opened.\nMake sure that the archive is a valid ZIP or TAR archive.", styleFile.pathOrUrl()), errorTitle);
+						break;
+					}
+					case ChatWindowStyleManager::StyleNoDirectoryValid:
+					{
+						KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18nc("@info", "Could not find a suitable place to install the Chat Window Style <resource>%1</resource>.", packageName), errorTitle );
+						break;
+					}
+					case ChatWindowStyleManager::StyleNotValid:
+						KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18nc("@info", "The specified archive <filename>%1</filename> does not contain a valid Chat Window Style.", styleFile.pathOrUrl()), errorTitle );
+						break;
+					case ChatWindowStyleManager::StyleInstallOk:
+					{
+						++correctlyInstalled;
+						break;
+					}
+					case ChatWindowStyleManager::StyleUnknow:
+					default:
+					{
+						KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18nc("@info", "An unknown error occurred while trying to install the Chat Window Style <resource>%1</resource>.", packageName), errorTitle );
+						break;
+					}
+				}
+			}
+		}
+
+		if ( correctlyInstalled > 0)
+		{
+			KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18np("One Chat Window Style package has been installed.", "%1 Chat Window Style packages have been installed.", correctlyInstalled));
+		}
+	}
+
 	delete engine;
-#endif
 }
-
-// Reimplement Kopete::Contact and its abstract method
-// This is for style preview.
-class FakeContact : public Kopete::Contact
-{
-public:
-	FakeContact (Kopete::Account *account, const QString &id, Kopete::MetaContact *mc ) : Kopete::Contact( account, id, mc ) {}
-	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags /*c*/) { return 0L; }
-	virtual void slotUserInfo() {};
-};
-
-// This is for style preview.
-class FakeProtocol : public Kopete::Protocol
-{
-public:
-FakeProtocol( const KComponentData &instance, QObject *parent ) : Kopete::Protocol(instance, parent){}
-Kopete::Account* createNewAccount( const QString &/*accountId*/ ){return 0L;}
-AddContactPage* createAddContactWidget( QWidget */*parent*/, Kopete::Account */*account*/){return 0L;}
-KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, QWidget */*parent */){return 0L;}
-};
-
-// This is for style preview.
-class FakeAccount : public Kopete::Account
-{
-public:
-FakeAccount(Kopete::Protocol *parent, const QString &accountID) : Kopete::Account(parent, accountID){}
-~FakeAccount()
-{}
-bool createContact( const QString &/*contactId*/, Kopete::MetaContact */*parentContact*/ ){return true;}
-void connect( const Kopete::OnlineStatus& /*initialStatus*/){}
-void disconnect(){}
-void setOnlineStatus( const Kopete::OnlineStatus& /*status*/ , const Kopete::StatusMessage &/*reason*/){}
-void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/){}
-};
 
 void ChatWindowConfig::createPreviewChatSession()
 {
@@ -458,20 +528,27 @@ void ChatWindowConfig::createPreviewChatSession()
 
 	// Create fake meta/contacts
 	m_myselfMetaContact = new Kopete::MetaContact();
-	m_myself = new FakeContact(m_previewAccount, i18nc("This is the myself preview contact id", "myself@preview"), m_myselfMetaContact);
-	m_myself->setNickName(i18nc("This is the myself preview contact nickname", "Myself"));
-	m_jackMetaContact = new Kopete::MetaContact();
-	m_jack = new FakeContact(m_previewAccount, i18nc("This is the other preview contact id", "jack@preview"), m_jackMetaContact);
-	m_jack->setNickName(i18nc("This is the other preview contact nickname", "Jack"));
+	m_myselfMetaContact->setTemporary();
 	m_myselfMetaContact->setDisplayName(i18n("Myself"));
 	m_myselfMetaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
+
+	m_myself = new FakeContact(m_previewAccount, i18nc("This is the myself preview contact id", "myself@preview"), m_myselfMetaContact);
+	m_myself->setNickName(i18nc("This is the myself preview contact nickname", "Myself"));
+
+	m_jackMetaContact = new Kopete::MetaContact();
+	m_jackMetaContact->setTemporary();
 	m_jackMetaContact->setDisplayName(i18n("Jack"));
 	m_jackMetaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
+
+	m_jack = new FakeContact(m_previewAccount, i18nc("This is the other preview contact id", "jack@preview"), m_jackMetaContact);
+	m_jack->setNickName(i18nc("This is the other preview contact nickname", "Jack"));
+
+	m_previewAccount->setMyself(m_myself);
 
 	Kopete::ContactPtrList contactList;
 	contactList.append(m_jack);
 	// Create fakeChatSession
-	m_previewChatSession = Kopete::ChatSessionManager::self()->create(m_myself, contactList, 0);
+	m_previewChatSession = Kopete::ChatSessionManager::self()->create(m_myself, contactList, m_previewProtocol);
 	m_previewChatSession->setDisplayName("Preview Session");
 }
 
@@ -490,7 +567,7 @@ void ChatWindowConfig::createPreviewMessages()
 	msgOut.setDirection( Kopete::Message::Outbound );
 
 	Kopete::Message msgOut2( m_myself, m_jack );
-	msgOut2.setPlainBody( i18n( "Ok, a outgoing consecutive message." ) );
+	msgOut2.setPlainBody( i18n( "Ok, an outgoing consecutive message." ) );
 	msgOut2.setDirection( Kopete::Message::Outbound );
 
 	Kopete::Message msgCol( m_jack, m_myself );
@@ -515,7 +592,7 @@ void ChatWindowConfig::createPreviewMessages()
 
 	// This is a UTF-8 string btw.
 	Kopete::Message msgRightToLeft( m_myself, m_jack );
-	msgRightToLeft.setPlainBody( i18nc("This special UTF-8 string is to test if the style support Right-to-Left language display.", "הודעות טקסט") );
+	msgRightToLeft.setPlainBody( i18nc("This special UTF-8 string is to test if the style supports Right-to-Left language display.", "הודעות טקסט") );
 	msgRightToLeft.setDirection( Kopete::Message::Outbound );
 
 	Kopete::Message msgBye ( m_myself, m_jack );
@@ -546,10 +623,58 @@ void ChatWindowConfig::slotUpdateChatPreview()
 	emitChanged();
 }
 
+
+void ChatWindowConfig::updateEmoticonList()
+{
+	KStandardDirs dir;
+
+	m_emoticonsUi.icon_theme_list->clear(); // Wipe out old list
+	// Get a list of directories in our icon theme dir
+	QStringList themeDirs = KGlobal::dirs()->findDirs("emoticons", "");
+	// loop adding themes from all dirs into theme-list
+	for( int x = 0;x < themeDirs.count();x++)
+	{
+		QDir themeQDir(themeDirs[x]);
+		themeQDir.setFilter( QDir::Dirs ); // only scan for subdirs
+		themeQDir.setSorting( QDir::Name ); // I guess name is as good as any
+		for(unsigned int y = 0; y < themeQDir.count(); y++)
+		{
+			QStringList themes = themeQDir.entryList(QDir::Dirs, QDir::Name);
+
+			// We don't care for '.' and '..'
+			if ( themeQDir[y] != "." && themeQDir[y] != ".." )
+			{
+				// Add ourselves to the list, using our directory name  FIXME:  use the first emoticon of the theme.
+				QListWidgetItem *item = new EmoticonThemeItem(themeQDir[y]);
+				m_emoticonsUi.icon_theme_list->addItem(item);
+			}
+		}
+	}
+
+	// Where is that theme in our big-list-o-themes?
+
+	QList<QListWidgetItem*> items = m_emoticonsUi.icon_theme_list->findItems( KEmoticons::currentThemeName(), Qt::MatchExactly );
+
+	if (items.count()) // found it... make it the currently selected theme
+		m_emoticonsUi.icon_theme_list->setCurrentItem( items.first() );
+	else // Er, it's not there... select the current item
+		m_emoticonsUi.icon_theme_list->setCurrentItem( 0 );
+}
+
+
+void ChatWindowConfig::slotManageEmoticonThemes()
+{
+	KCMultiDialog *kcm = new KCMultiDialog( this );
+	kcm->setCaption( i18n( "Configure Emoticon Themes" ) );
+	kcm->addModule( "emoticons" );
+	kcm->exec();
+	updateEmoticonList();
+}
+
+
 void ChatWindowConfig::emitChanged()
 {
 	emit changed( true );
 }
 
 #include "chatwindowconfig.moc"
-

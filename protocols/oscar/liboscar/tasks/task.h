@@ -38,6 +38,7 @@ class Task : public QObject
 {
 	Q_OBJECT
 public:
+	enum AutoDeleteSetting { DoNotAutoDelete, AutoDelete };
 	enum { ErrDisc };
 	Task(Task *parent);
 	Task( Connection*, bool isRoot );
@@ -53,7 +54,7 @@ public:
 	int statusCode() const;
 	const QString & statusString() const;
 
-	void go( bool autoDelete = false );
+	void go( AutoDeleteSetting autoDelete = DoNotAutoDelete );
 
 	/**
 	 * Allows a task to examine an incoming Transfer and decide whether to 'take' it

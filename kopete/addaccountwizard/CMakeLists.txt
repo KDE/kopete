@@ -15,11 +15,10 @@ kde4_add_ui_files( kopeteaddaccountwizard_SRCS
     addaccountwizardpage2.ui 
 )
 
-kde4_automoc(${kopeteaddaccountwizard_SRCS})
 kde4_add_library( kopeteaddaccountwizard SHARED ${kopeteaddaccountwizard_SRCS} )
 target_link_libraries( kopeteaddaccountwizard kopete ${KDE4_KDEUI_LIBS} )
 set_target_properties( kopeteaddaccountwizard PROPERTIES VERSION 1.0.0 SOVERSION 1 )
-install(TARGETS kopeteaddaccountwizard  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS kopeteaddaccountwizard ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 

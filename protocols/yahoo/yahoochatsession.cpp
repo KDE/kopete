@@ -1,7 +1,7 @@
 /*
     yahoochatsession.cpp - Yahoo! Message Manager
 
-    Copyright (c) 2005 by André Duffeck        <andre@duffeck.de>
+    Copyright (c) 2005 by André Duffeck        <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -53,7 +53,7 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	Kopete::ContactPtrList others )
 : Kopete::ChatSession( user, others, protocol )
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 	setComponentData(protocol->componentData());
 
@@ -63,11 +63,11 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	buzzAction->setShortcut( KShortcut("Ctrl+G") );
 	connect( buzzAction, SIGNAL( triggered(bool) ), this, SLOT( slotBuzzContact() ) );
 
-	KAction *sendFileAction = new KAction( KIcon("attach"), i18n( "Send File" ), this );
+	KAction *sendFileAction = new KAction( KIcon("mail-attachment"), i18n( "Send File" ), this );
         actionCollection()->addAction( "yahooSendFile", sendFileAction );
 	connect( sendFileAction, SIGNAL( triggered() ), this, SLOT( slotSendFile() ) );
 
-	KAction *userInfoAction = new KAction( KIcon("idea"), i18n( "Show User Info" ), this );
+	KAction *userInfoAction = new KAction( KIcon("help-about"), i18n( "Show User Info" ), this );
         actionCollection()->addAction( "yahooShowInfo",  userInfoAction) ;
 	connect( userInfoAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserInfo() ) );
 
@@ -107,42 +107,42 @@ YahooChatSession::~YahooChatSession()
 
 void YahooChatSession::slotBuzzContact()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->buzzContact();
 }
 
 void YahooChatSession::slotUserInfo()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->slotUserInfo();
 }
 
 void YahooChatSession::slotRequestWebcam()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->requestWebcam();
 }
 
 void YahooChatSession::slotInviteWebcam()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->inviteWebcam();
 }
 
 void YahooChatSession::slotSendFile()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->sendFile();
 }
 
 void YahooChatSession::slotDisplayPictureChanged()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	QList<Kopete::Contact*> mb=members();
 	YahooContact *c = static_cast<YahooContact *>( mb.first() );
 	if ( c && m_image )

@@ -67,7 +67,7 @@ class IRCProtocol
 public:
 	static IRCProtocol *self();
 
-	IRCProtocol(QObject *parent, const QStringList &args);
+	IRCProtocol(QObject *parent, const QVariantList &args);
 	~IRCProtocol();
 
 	/**
@@ -108,8 +108,6 @@ private slots:
 private:
 	void initOnlineStatus();
 	void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
-
-	static IRCProtocol *s_protocol;
 
 //	QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
 //	const Kopete::OnlineStatus m_connecting;

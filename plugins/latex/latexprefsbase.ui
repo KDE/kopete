@@ -1,7 +1,5 @@
 <ui version="4.0" >
  <author>Duncan Mac-Vicar</author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>LatexPrefsUI</class>
  <widget class="QWidget" name="LatexPrefsUI" >
   <property name="geometry" >
@@ -9,24 +7,21 @@
     <x>0</x>
     <y>0</y>
     <width>606</width>
-    <height>431</height>
+    <height>437</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
    <item>
     <widget class="QLabel" name="textLabel1" >
      <property name="frameShape" >
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="text" >
-      <string>&lt;p>The &lt;font size="+1">KopeTeX&lt;/font> plugin allows &lt;font size="+1">Kopet&lt;/font>e to render Latex formulas in the chat window. The sender must enclose the formula between two $ signs. ie: $$formula$$&lt;/p>
-&lt;p>This plugin requires ImageMagick convert program installed in order to work.&lt;/p></string>
+      <string>The KopeTeX plugin allows Kopete to render LaTeX formulas in the chat window. The sender must enclose the formula between two pairs of $ signs. ie: $$formula$$
+This plugin requires that the ImageMagick convert program be installed in order to work.</string>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -35,100 +30,61 @@
      <property name="title" >
       <string>Options</string>
      </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="1" column="0" >
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
+     <layout class="QHBoxLayout" >
+      <item>
+       <layout class="QVBoxLayout" >
         <item>
-         <widget class="KIntNumInput" name="horizontalDPI" />
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QLabel" name="textLabel4" >
+            <property name="text" >
+             <string>LaTeX include file:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="KUrlRequester" name="includeUrlRequester" />
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QLabel" name="textLabel3" >
-          <property name="text" >
-           <string>x</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="KIntNumInput" name="verticalDPI" />
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>220</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QLabel" name="textLabel2" >
+            <property name="text" >
+             <string>Rendering resolution (DPI):</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="KIntNumInput" name="horizontalDPI" />
+          </item>
+          <item>
+           <widget class="QLabel" name="textLabel3" >
+            <property name="text" >
+             <string>x</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="KIntNumInput" name="verticalDPI" />
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
-      <item row="2" column="0" >
+      <item>
        <spacer>
         <property name="orientation" >
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
+         <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" >
          <size>
-          <width>447</width>
-          <height>18</height>
+          <width>40</width>
+          <height>20</height>
          </size>
         </property>
        </spacer>
-      </item>
-      <item row="0" column="0" >
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="textLabel2" >
-          <property name="text" >
-           <string>Rendering resolution (DPI):</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>280</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
       </item>
      </layout>
     </widget>
@@ -138,13 +94,10 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
      <property name="sizeHint" >
       <size>
-       <width>491</width>
-       <height>16</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
     </spacer>
@@ -156,10 +109,13 @@
  <customwidgets>
   <customwidget>
    <class>KIntNumInput</class>
-   <extends></extends>
+   <extends>QWidget</extends>
    <header>knuminput.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KUrlRequester</class>
+   <extends>QFrame</extends>
+   <header>kurlrequester.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

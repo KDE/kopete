@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     yahoochattask.h - Handle Yahoo Chat
 
-    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <duffeck@kde.org>
     Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -30,7 +30,6 @@ class KJob;
 class YMSGTransfer;
 namespace KIO {
 	class Job;
-	class TransferJob;
 }
 
 struct YahooChatJob {

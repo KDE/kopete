@@ -21,13 +21,12 @@
 #define KOPETEPLUGIN_H
 
 #include <kxmlguiclient.h>
-#include <QObject>
+#include <QtCore/QObject>
 #include <kdemacros.h>
 
 #include "kopete_export.h"
 
 class KPluginInfo;
-
 
 namespace Kopete
 {
@@ -63,7 +62,7 @@ Comment=Plugin that do some nice stuff
  *
  * \code
 	typedef KGenericFactory<MyPlugin> MyPluginFactory;
-	static const KAboutData aboutdata("kopete_myplugin", I18N_NOOP("MyPlugin") , "1.0" );
+	static const KAboutData aboutdata("kopete_myplugin", 0, ki18n("MyPlugin") , "1.0" );
 	K_EXPORT_COMPONENT_FACTORY( kopete_myplugin, MyPluginFactory( &aboutdata )  )
 
 	MyPlugin::MyPlugin( QObject *parent, const char *name, const QStringList &  args  )
@@ -93,7 +92,7 @@ public:
 	/**
 	 * Returns the KPluginInfo object associated with this plugin
 	 */
-	KPluginInfo *pluginInfo() const;
+	KPluginInfo pluginInfo() const;
 
 	/**
 	 * Get the name of the icon for this plugin. The icon name is taken from the

@@ -45,7 +45,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 	
 	setDefaultButton(KDialog::Ok);
 	showButtonSeparator(true);
-	kDebug(14200) << k_funcinfo << "for contact '" << c->contactId() << "'" << endl;
+	kDebug(14200) << "for contact '" << c->contactId() << "'";
 
 	m_contact = c;
 	mAccount = acc;
@@ -59,6 +59,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotUpdateClicked()));
 	QObject::connect(this, SIGNAL(cancelClicked()), this, SLOT(slotCloseClicked()));
 	QObject::connect(c, SIGNAL(updatedProfile()), this, SLOT(slotUpdateProfile()));
+	QObject::connect(c, SIGNAL(statusMessageChanged()), this, SLOT(slotUpdateProfile()));
 
 	mMainWidget->txtScreenName->setText( c->contactId() );
 
@@ -82,6 +83,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		userInfoView=0L;
 		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
+		l->setContentsMargins( 0, 0, 0, 0 );
 		userInfoEdit = new KTextEdit(QString(), mMainWidget->userInfoFrame);
 
 		AIMMyselfContact* aimmc = dynamic_cast<AIMMyselfContact*>( c );
@@ -99,7 +101,9 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		userInfoEdit=0L;
 		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
-		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame, "userInfoView");
+		l->setContentsMargins( 0, 0, 0, 0 );
+		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame);
+		userInfoView->setObjectName("userInfoView");
 		userInfoView->setNotifyClick(true);
 		QObject::connect(
 			userInfoView, SIGNAL(urlClick(const QString&)),
@@ -124,12 +128,12 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 AIMUserInfoDialog::~AIMUserInfoDialog()
 {
 	delete mMainWidget;
-	kDebug(14200) << k_funcinfo << "Called." << endl;
+	kDebug(14200) << "Called.";
 }
 
 void AIMUserInfoDialog::slotUpdateClicked()
 {
-	kDebug(14200) << k_funcinfo << "Called." << endl;
+	kDebug(14200) << "Called.";
 	QString newNick = mMainWidget->txtNickName->text();
 	QString currentNick = m_contact->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if ( !newNick.isEmpty() && ( newNick != currentNick ) )
@@ -143,7 +147,7 @@ void AIMUserInfoDialog::slotUpdateClicked()
 
 void AIMUserInfoDialog::slotSaveClicked()
 {
-	kDebug(14200) << k_funcinfo << "Called." << endl;
+	kDebug(14200) << "Called.";
 
 	if (userInfoEdit)
 	{ // editable mode, set profile
@@ -164,15 +168,15 @@ void AIMUserInfoDialog::slotSaveClicked()
 
 void AIMUserInfoDialog::slotCloseClicked()
 {
-	kDebug(14200) << k_funcinfo << "Called." << endl;
+	kDebug(14200) << "Called.";
 	emit closing();
 }
 
 void AIMUserInfoDialog::slotUpdateProfile()
 {
-	kDebug(14152) << k_funcinfo << "Got User Profile." << endl;
+	kDebug(14152) << "Got User Profile.";
 	AIMProtocol* p = static_cast<AIMProtocol*>( mAccount->protocol() );
-	QString awayMessage = m_contact->property( p->awayMessage ).value().toString();
+	QString awayMessage = m_contact->property( p->statusMessage ).value().toString();
 	mMainWidget->txtAwayMessage->setHtml( awayMessage );
 
 	if ( awayMessage.isNull() )
@@ -215,11 +219,13 @@ void AIMUserInfoDialog::slotUpdateProfile()
 //KRun changed, so comment it so it compiles FIXME
 void AIMUserInfoDialog::slotUrlClicked(const QString &url)
 {
+	Q_UNUSED(url);
 	//new KRun(KUrl(url));
 }
 
 void AIMUserInfoDialog::slotMailClicked(const QString&, const QString &address)
 {
+	Q_UNUSED(address);
 	//new KRun(KUrl(address));
 }
 

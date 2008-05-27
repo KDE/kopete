@@ -12,8 +12,8 @@
 
    You should have received a copy of the GNU Library General Public License
    along with this library; see the file COPYING.LIB.  If not, write to
-   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.
+   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA 02110-1301, USA.
 */
 
 /*
@@ -67,7 +67,10 @@ static QString pushTag(ParserData *d, const QString &tag, const QString &attribu
 	if(!d->attributes.contains(tag))
 		d->attributes.insert(tag, attributes);
 	else if(!d->attributes.isEmpty())
-		d->attributes.replace(tag, attributes);
+	{
+		d->attributes.remove(tag);
+		d->attributes.insert(tag, attributes);
+	}
 	res.append('<' + tag);
 	if(!d->attributes[tag].isEmpty())
 		res.append(' ' + d->attributes[tag]);
@@ -146,7 +149,7 @@ QString KSParser::parse(QString message)
 			ret += toggleTag(&d, "b");
 			break;
 		case 0x03:	//Color code: ^C
-			if (colorsModeRegexp.search(message, i+1) == (int)i+1)
+			if (colorsModeRegexp.indexIn(message, i+1) == (int)i+1)
 			{
 				i += colorsModeRegexp.matchedLength(); // + 1 will be added by ++
 				QString tagStyle;
@@ -193,7 +196,7 @@ QString KSParser::parse(QString message)
 			break;
 		default:
 			if (car < QChar(' ')) // search for control characters
-				ret += QString::fromLatin1("&lt;%1&gt;").arg(car, 2, 16).upper();
+				ret += QString::fromLatin1("&lt;%1&gt;").arg(car, 2, 16).toUpper();
 			else
 				ret += car;
 		}

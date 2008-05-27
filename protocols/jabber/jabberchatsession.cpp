@@ -16,7 +16,6 @@
 */
 #include "jabberchatsession.h"
 
-#include <q3ptrlist.h>
 #include <qlabel.h>
 #include <qimage.h>
 
@@ -28,6 +27,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kicon.h>
+#include <kaction.h>
 #include <kactioncollection.h>
 #include "kopetechatsessionmanager.h"
 #include "kopetemessage.h"
@@ -48,7 +48,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 											 Kopete::ContactPtrList others, const QString &resource )
 											 : Kopete::ChatSession ( user, others, protocol )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "New message manager for " << user->contactId ();
 
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );
@@ -107,13 +107,13 @@ JabberChatSession::~JabberChatSession( )
 		return;
 	if ( a->configGroup()->readEntry ("SendEvents", true) &&
 			 a->configGroup()->readEntry ("SendGoneEvent", true) )
-		sendNotification( XMPP::GoneEvent );
+		sendNotification( Gone );
 }
 
 
 void JabberChatSession::slotUpdateDisplayName ()
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) ;
 
 	Kopete::ContactPtrList chatMembers = members ();
 
@@ -172,60 +172,129 @@ void JabberChatSession::appendMessage ( Kopete::Message &msg, const QString &fro
 	{
 		if ( account()->configGroup()->readEntry ("SendDeliveredEvent", true) )
 		{
-			sendNotification( XMPP::DeliveredEvent );
+			sendNotification( Delivered );
 		}
 		
 		if ( account()->configGroup()->readEntry ("SendDisplayedEvent", true) )
 		{
-			sendNotification( XMPP::DisplayedEvent );
+			sendNotification( Displayed );
 		}
 	}
 }
 
-void JabberChatSession::sendNotification( XMPP::MsgEvent event )
+void JabberChatSession::sendNotification( Event event )
 {
 	if ( !account()->isConnected () )
 		return;
 
-	JabberContact *contact;
-	QList<Kopete::Contact*>::ConstIterator it, itEnd = members().constEnd();
-	for(it = members().constBegin(); it != itEnd; ++it)
+	XMPP::MsgEvent msg_event;
+	XMPP::ChatState new_state;
+	bool send_msg_event=false;
+	bool send_state=false;
+	
+	switch(event)
 	{
-		contact = dynamic_cast<JabberContact*>( *it );
-		if ( contact->isContactRequestingEvent( event ) )
+		case Delivered:
+			send_msg_event=true;
+			msg_event=DeliveredEvent;
+			break;
+		case Displayed:
+			send_msg_event=true;
+			msg_event=DisplayedEvent;
+			break;
+		case Composing:
+			send_msg_event=true;
+			msg_event=ComposingEvent;
+			send_state=true;
+			new_state=XMPP::StateComposing;
+			break;
+		case CancelComposing:
+			send_msg_event=true;
+			msg_event=CancelEvent;
+			send_state=true;
+			//new_state=XMPP::StatePaused; //paused give some bad notification on some client. while this mean in kopete that we stopped typing.
+			new_state=XMPP::StateActive;
+			break;
+		case Inactive:
+			send_state=true;
+			new_state=XMPP::StateInactive;
+			break;
+		case Gone:
+			send_state=true;
+			new_state=XMPP::StateGone;
+			break;
+		default:
+			break;
+	}
+	
+	if(send_msg_event)
+	{
+		send_msg_event=false;
+		foreach(Kopete::Contact *c , members())
 		{
-			// create JID for us as sender
-			XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
-			fromJid.setResource ( account()->resource () );
-	
-			// create JID for the recipient
-			XMPP::Jid toJid = contact->rosterItem().jid();
-	
-			// set resource properly if it has been selected already
-			if ( !resource().isEmpty () )
-				toJid.setResource ( resource () );
-	
-			XMPP::Message message;
-	
-			message.setFrom ( fromJid );
-			message.setTo ( toJid );
-			message.setEventId ( contact->lastReceivedMessageId () );
-			// store composing event depending on state
-			message.addEvent ( event );
-			
-			if (view() && view()->plugin()->pluginId() == "kopete_emailwindow" )
-			{	
-				message.setType ( "normal" );
+			JabberContact *contact=static_cast<JabberContact*>(c);
+			if(contact->isContactRequestingEvent( msg_event ))
+			{
+				send_msg_event=true;
+				break;
 			}
-			else
-			{	
-				message.setType ( "chat" );
-			}
-
-	
-			// send message
-			account()->client()->sendMessage ( message );
 		}
+	}
+/*	if(send_state)
+	{
+		send_state=false;
+		foreach(JabberContact *contact , members())
+		{	
+			JabberContact *c;
+			if(contact->feature.canChatState()  )
+			{
+				send_state=true;
+				break;
+			}
+		}
+	}*/
+	
+	if( !members().isEmpty() && (send_state || send_msg_event) )
+	{
+		// create JID for us as sender
+		XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
+		fromJid.setResource ( account()->resource () );
+	
+		// create JID for the recipient
+		JabberContact *recipient = static_cast<JabberContact*>(members().first());
+		XMPP::Jid toJid = recipient->rosterItem().jid();
+	
+		// set resource properly if it has been selected already
+		if ( !resource().isEmpty () )
+			toJid.setResource ( resource () );
+
+		XMPP::Message message;
+
+		message.setFrom ( fromJid );
+		message.setTo ( toJid );
+		if(send_msg_event)
+		{
+			message.setEventId ( recipient->lastReceivedMessageId () );
+			// store composing event depending on state
+			message.addEvent ( msg_event );
+		}
+		if(send_state)
+		{
+			message.setChatState( new_state );
+		}
+		
+		if (view() && view()->plugin()->pluginId() == "kopete_emailwindow" )
+		{	
+			message.setType ( "normal" );
+		}
+		else
+		{	
+			message.setType ( "chat" );
+		}
+
+
+		// send message
+		account()->client()->sendMessage ( message );
 	}
 }
 
@@ -239,9 +308,9 @@ void JabberChatSession::slotSendTypingNotification ( bool typing )
 	XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
 	fromJid.setResource ( account()->configGroup()->readEntry( "Resource", QString() ) );
 
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Sending out typing notification (" << typing << ") to all chat members." << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Sending out typing notification (" << typing << ") to all chat members.";
 
-	typing ? sendNotification( ComposingEvent ) : sendNotification( CancelEvent );
+	typing ? sendNotification( Composing ) : sendNotification( CancelComposing );
 }
 
 void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::ChatSession * )
@@ -299,7 +368,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 				{
 					QString xhtmlBody = message.escapedBody();
 					
-					// According to JEP-0071 8.9  it is only RECOMMANDED to replace \n with <br/>
+					// According to JEP-0071 8.9  it is only RECOMMENDED to replace \n with <br/>
 					//  which mean that some implementation (gaim 2 beta) may still think that \n are linebreak.  
 					// and considered the fact that KTextEditor generate a well indented XHTML, we need to remove all \n from it
 					//  see Bug 121627
@@ -340,6 +409,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		jabberMessage.addEvent( ComposingEvent );
 		jabberMessage.addEvent( DeliveredEvent );
 		jabberMessage.addEvent( DisplayedEvent );
+		jabberMessage.setChatState( XMPP::StateActive );
 		
 
         // send the message

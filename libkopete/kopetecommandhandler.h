@@ -17,7 +17,8 @@
 #ifndef _KOPETECOMMANDHANDLER_H_
 #define _KOPETECOMMANDHANDLER_H_
 
-#include <QMultiHash>
+#include <QtCore/QMultiHash>
+
 #include <kshortcut.h>
 #include "kopetemessage.h"
 
@@ -86,8 +87,8 @@ class KOPETE_EXPORT CommandHandler : public QObject
 		 * @param pix icon name, the icon will be shown in menus
 		 */
 		void registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
-			const QString &help = QString::null, uint minArgs = 0, int maxArgs = -1,
-			const KShortcut &cut = KShortcut(), const QString &pix = QString::null );
+			const QString &help = QString(), uint minArgs = 0, int maxArgs = -1,
+			const KShortcut &cut = KShortcut(), const QString &pix = QString() );
 
 		/**
 		 * \brief Register a command alias.
@@ -109,12 +110,12 @@ class KOPETE_EXPORT CommandHandler : public QObject
 		void registerAlias( QObject *parent,
 			const QString &alias,
 			const QString &formatString,
-			const QString &help = QString::null,
+			const QString &help = QString(),
 			CommandType = SystemAlias,
 			uint minArgs = 0,
 			int maxArgs = -1,
 			const KShortcut &cut = KShortcut(),
-			const QString &pix = QString::null );
+			const QString &pix = QString() );
 
 		/**
 		 * \brief Unregister a command.

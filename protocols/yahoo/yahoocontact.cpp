@@ -22,10 +22,10 @@
 #include "kopeteonlinestatus.h"
 #include "kopetemetacontact.h"
 #include "kopetechatsessionmanager.h"
-#include "kopetemetacontact.h"
 #include "kopeteuiglobal.h"
 #include "kopeteview.h"
 #include "kopetetransfermanager.h"
+#include "kopeteavatarmanager.h"
 
 // Local Includes
 #include "yahoocontact.h"
@@ -64,7 +64,7 @@
 YahooContact::YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact )
 	: Kopete::Contact( account, userId, metaContact )
 {
-	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	//kDebug(YAHOO_GEN_DEBUG) ;
 
 	m_userId = userId;
 	if ( metaContact )
@@ -139,18 +139,18 @@ bool YahooContact::stealthed()
 
 void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
 {
-	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	//kDebug(YAHOO_GEN_DEBUG) ;
 
 	Kopete::Contact::serialize(serializedData, addressBookData);
 }
 
 void YahooContact::syncToServer()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo  << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	if(!m_account->isConnected()) return;
 
 	if ( !m_account->isOnServer(m_userId) && !metaContact()->isTemporary() )
-	{	kDebug(YAHOO_GEN_DEBUG) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
+	{	kDebug(YAHOO_GEN_DEBUG) << "Contact " << m_userId << " doesn't exist on server-side. Adding...";
 
 		Kopete::GroupList groupList = metaContact()->groups();
 		foreach(Kopete::Group *g, groupList)
@@ -160,14 +160,14 @@ void YahooContact::syncToServer()
 
 void YahooContact::sync(unsigned int flags)
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo  << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	if ( !m_account->isConnected() )
 		return;
 
 	if ( !m_account->isOnServer( contactId() ) )
 	{
 		//TODO: Share this code with the above function
-		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact isn't on the server. Adding..." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << "Contact isn't on the server. Adding...";
 		Kopete::GroupList groupList = metaContact()->groups();
 		foreach(Kopete::Group *g, groupList)
 			m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
@@ -177,7 +177,7 @@ void YahooContact::sync(unsigned int flags)
 		QString newGroup = metaContact()->groups().first()->displayName();
 		if ( flags & Kopete::Contact::MovedBetweenGroup )
 		{
-			kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "contact changed groups. moving on server" << endl;
+			kDebug(YAHOO_GEN_DEBUG) << "contact changed groups. moving on server";
 			m_account->yahooSession()->moveBuddy( contactId(), m_groupName, newGroup );
 			m_groupName = newGroup;
 		}
@@ -187,13 +187,13 @@ void YahooContact::sync(unsigned int flags)
 
 bool YahooContact::isOnline() const
 {
-	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	//kDebug(YAHOO_GEN_DEBUG) ;
 	return onlineStatus().status() != Kopete::OnlineStatus::Offline && onlineStatus().status() != Kopete::OnlineStatus::Unknown;
 }
 
 bool YahooContact::isReachable()
 {
-	//kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	//kDebug(YAHOO_GEN_DEBUG) ;
 	if ( m_account->isConnected() )
 		return true;
 	else
@@ -327,12 +327,12 @@ QString YahooContact::prepareMessage( const QString &messageText )
 
 void YahooContact::slotSendMessage( Kopete::Message &message )
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	QString messageText = message.escapedBody();
-	kDebug(YAHOO_GEN_DEBUG) << "Original message: " << messageText << endl;
+	kDebug(YAHOO_GEN_DEBUG) << "Original message: " << messageText;
 	messageText = prepareMessage( messageText );
-	kDebug(YAHOO_GEN_DEBUG) << "Converted message: " << messageText << endl;
+	kDebug(YAHOO_GEN_DEBUG) << "Converted message: " << messageText;
 
 	Kopete::ContactPtrList m_them = manager(Kopete::Contact::CanCreate)->members();
 	Kopete::Contact *target = m_them.first();
@@ -425,7 +425,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 
 	if ( !m_inviteConferenceAction )
 	{
-		m_inviteConferenceAction = new KAction( KIcon("kontact_contacts"), i18n( "&Invite to Conference" ), this );
+		m_inviteConferenceAction = new KAction( KIcon("x-office-contact"), i18n( "&Invite to Conference" ), this ); // icon should probably be "contact-invite", but that doesn't exist... please request an icon on http://techbase.kde.org/index.php?title=Projects/Oxygen/Missing_Icons
 		connect( m_inviteConferenceAction, SIGNAL( triggered(bool) ), this, SLOT( inviteConference() ) );
 	}
 	if ( isReachable() )
@@ -437,7 +437,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 
 	if ( !m_profileAction )
 	{
-		m_profileAction = new KAction( KIcon("kontact_notes"), i18n( "&View Yahoo Profile" ), this );
+		m_profileAction = new KAction( KIcon("document-preview"), i18n( "&View Yahoo Profile" ), this );
 		connect( m_profileAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserProfile() ) );
 	}
 	m_profileAction->setEnabled( true );
@@ -449,7 +449,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 
 void YahooContact::slotUserInfo()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	if( !m_YABEntry )
 	{
 		readYABEntry();	// No YABEntry was set, so read the one from contactlist.xml
@@ -464,7 +464,7 @@ void YahooContact::slotUserInfo()
 
 void YahooContact::slotUserProfile()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	QString profileSiteString = QLatin1String("http://profiles.yahoo.com/") + userId();
 	KToolInvocation::invokeBrowser(  profileSiteString );
@@ -472,13 +472,13 @@ void YahooContact::slotUserProfile()
 
 void YahooContact::slotSendFile( const KUrl &url)
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	m_account->sendFile( this, url );
 }
 
 void YahooContact::stealthContact()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	KDialog *stealthSettingDialog = new KDialog( Kopete::UI::Global::mainWidget() );
 	stealthSettingDialog->setCaption( i18n("Stealth Setting") );
@@ -552,27 +552,34 @@ void YahooContact::buzzContact()
 
 void YahooContact::setDisplayPicture(KTemporaryFile *f, int checksum)
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	if( !f )
 		return;
 	// stolen from msncontact.cpp ;)
-	QString newlocation=KStandardDirs::locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
 	setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
 
-	QString fileName = f->fileName();
-	f->setAutoRemove(false);
+	Kopete::AvatarManager::AvatarEntry entry;
+	entry.name = contactId();
+	entry.category = Kopete::AvatarManager::Contact;
+	entry.contact = this;
+	entry.image = QImage(f->fileName());
+	entry = Kopete::AvatarManager::self()->add(entry);
+
+	if (!entry.path.isNull())
+	{
+		setProperty( Kopete::Global::Properties::self()->photo(), QString() );
+		setProperty( Kopete::Global::Properties::self()->photo() , entry.path );
+		emit displayPictureChanged();
+	}
+
+	f->setAutoRemove(true);
 	delete f;
-
-	KIO::Job *j=KIO::file_move( KUrl( fileName ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
-
-	//let the time to KIO to copy the file
-	connect(j, SIGNAL(result(KJob *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
 }
 
 
 void YahooContact::setYABEntry( YABEntry *entry, bool show )
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << userId() << endl;
+	kDebug(YAHOO_GEN_DEBUG) << userId();
 	if( m_YABEntry )
 		delete m_YABEntry;
 
@@ -589,15 +596,6 @@ const YABEntry *YahooContact::yabEntry()
 	return m_YABEntry;
 }
 
-void YahooContact::slotEmitDisplayPictureChanged()
-{
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
-	QString newlocation=KStandardDirs::locateLocal( "appdata", "yahoopictures/"+contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
-	setProperty( Kopete::Global::Properties::self()->photo(), QString() );
-	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
-	emit displayPictureChanged();
-}
-
 void YahooContact::inviteConference()
 {
 	m_account->prepareConference( m_userId );
@@ -608,7 +606,7 @@ void YahooContact::inviteWebcam()
 	if ( KStandardDirs::findExe("jasper").isEmpty() )
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images."
+			i18n("I cannot find the Jasper image conversion program.\nJasper is required to render the Yahoo webcam images."
 			"\nPlease see %1 for further information.", QString("http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support") ) );
 		return;
 	}
@@ -694,22 +692,22 @@ void YahooContact::closeWebcamDialog()
 
 void YahooContact::deleteContact()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	if( !m_account->isOnServer( contactId() ) )
 	{
-		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact does not exist on server-side. Not removing..." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << "Contact does not exist on server-side. Not removing...";
 	}
 	else
 	{
-		kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << "Contact is getting remove from server side contactlist...." << endl;
+		kDebug(YAHOO_GEN_DEBUG) << "Contact is getting remove from server side contact list....";
 		// Delete from YAB first
 		if( !m_YABEntry )
 			readYABEntry();
 		if( m_YABEntry->YABId )
 			m_account->yahooSession()->deleteYABEntry( *m_YABEntry );
 
-		// Now remove from the contactlist
+		// Now remove from the contact list
 		m_account->yahooSession()->removeBuddy( contactId(), m_groupName );
 	}
 	Kopete::Contact::deleteContact();
@@ -717,7 +715,7 @@ void YahooContact::deleteContact()
 
 void YahooContact::writeYABEntry()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	// Personal
 	setProperty( YahooProtocol::protocol()->propfirstName, m_YABEntry->firstName );
@@ -776,7 +774,7 @@ void YahooContact::writeYABEntry()
 
 void YahooContact::readYABEntry()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	if( m_YABEntry )
 		delete m_YABEntry;
 

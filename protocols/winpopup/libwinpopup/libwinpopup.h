@@ -19,15 +19,15 @@
 #define LIBWINPOPUP_H
 
 //QT includes
-#include <qobject.h>
-#include <qmap.h>
-#include <qstringlist.h>
-#include <qtimer.h>
-#include <qdatetime.h>
+#include <QObject>
+#include <QMap>
+#include <QStringList>
+#include <QTimer>
+#include <QDateTime>
+#include <QProcess>
 
 // KDE Includes
-#include <k3procio.h>
-#include <kfileitem.h>
+#include <KFileItem>
 
 const QString WP_POPUP_DIR = QString::fromLatin1("/var/lib/winpopup");
 
@@ -40,7 +40,7 @@ class WorkGroup
 	QStringList groupHosts;
 
 public:
-	const QStringList &Hosts() { return groupHosts; }
+	QStringList Hosts() const { return groupHosts; }
 	void addHosts(const QStringList &newHosts) { groupHosts = newHosts; }
 };
 
@@ -52,9 +52,9 @@ public:
 	WinPopupLib(const QString &smbClient,int groupFreq);
 	~WinPopupLib();
 
-	const QStringList getGroups();
-	const QStringList getHosts(const QString &Group);
-	bool checkHost(const QString &Name);
+	QStringList getGroups() const;
+	QStringList getHosts(const QString &Group) const;
+	bool checkHost(const QString &Name) const;
 	void settingsChanged(const QString &smbClient, int groupFreq);
 	void sendMessage(const QString &Body, const QString &Destination);
 
@@ -68,19 +68,17 @@ private:
 	QString smbClientBin;
 	int groupCheckFreq;
 	KDirLister *dirLister;
+	QProcess *readGroupsProcess;
 
-	void readMessages(const KFileItemList &items);
 	bool checkMessageDir();
 
 private slots:
 	void slotUpdateGroupData();
 	void startReadProcess(const QString &Host);
-	void slotReadProcessReady(K3ProcIO *r);
-	void slotReadProcessExited(K3Process *r);
-	void slotSendProcessExited(K3Process *p);
+	void slotReadProcessExited(int, QProcess::ExitStatus);
 	void slotStartDirLister();
 	void slotListCompleted();
-	void slotNewMessages(const KFileItemList &items);
+	void slotReadMessages(const KFileItemList &items);
 
 signals:
 	void signalNewMessage(const QString &, const QDateTime &, const QString &);

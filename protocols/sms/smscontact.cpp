@@ -36,7 +36,7 @@ SMSContact::SMSContact( Kopete::Account* _account, const QString &phoneNumber,
 	const QString &displayName, Kopete::MetaContact *parent )
 : Kopete::Contact( _account, phoneNumber, parent ), m_phoneNumber( phoneNumber )
 {
-//	kWarning( 14160 ) << k_funcinfo << " this = " << this << ", phone = " << phoneNumber << endl;
+//	kWarning( 14160 ) << " this = " << this << ", phone = " << phoneNumber;
 	setNickName( displayName );
 
 	m_msgManager = 0L;
@@ -54,7 +54,7 @@ void SMSContact::slotSendingSuccess(const Kopete::Message &msg)
 
 void SMSContact::slotSendingFailure(const Kopete::Message &/*msg*/, const QString &error)
 {
-	KMessageBox::detailedError(Kopete::UI::Global::mainWidget(), i18n("Something went wrong when sending message."), error,
+	KMessageBox::detailedError(Kopete::UI::Global::mainWidget(), i18n("Something went wrong while sending the message."), error,
 			i18n("Could Not Send Message"));
 //	manager()->messageFailed();
 	// TODO: swap for failed as above. show it anyway for now to allow closing of window.

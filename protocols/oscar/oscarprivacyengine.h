@@ -29,7 +29,6 @@
 	@author Roman Jarosz <kedgedev@centrum.cz>
 */
 
-class QAbstractButton;
 class QComboBox;
 class QAbstractItemView;
 

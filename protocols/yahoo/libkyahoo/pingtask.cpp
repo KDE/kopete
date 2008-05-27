@@ -2,7 +2,7 @@
     pingtask.cpp
     Send a ping to the server
 
-    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <duffeck@kde.org>
 
     Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -26,7 +26,7 @@
 
 PingTask::PingTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 PingTask::~PingTask()
@@ -35,7 +35,7 @@ PingTask::~PingTask()
 
 void PingTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePing7);
 	t->setParam( 0, client()->userId().toLocal8Bit() );

@@ -1,3 +1,6 @@
+add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
+
+KDE4_NO_ENABLE_FINAL(kopete)
 
 add_subdirectory( icons ) 
 add_subdirectory( libgadu )
@@ -39,7 +42,6 @@ set(kopete_gadu_PART_SRCS
    gadudcctransaction.cpp 
    gadudcc.cpp )
 
-kde4_automoc(${kopete_gadu_PART_SRCS})
 
 kde4_add_plugin(kopete_gadu ${kopete_gadu_PART_SRCS})
 

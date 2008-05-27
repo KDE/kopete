@@ -26,7 +26,10 @@
 class QTimer;
 
 class KCompletion;
-class KDictSpellingHighlighter;
+
+namespace Sonnet {
+	class Highlighter;
+}
 
 namespace Kopete
 {
@@ -35,6 +38,7 @@ class Contact;
 class OnlineStatus;
 class ChatSession;
 class Protocol;
+class PropertyContainer;
 }
 
 /**
@@ -174,10 +178,10 @@ private slots:
 	/**
 	 * Update completion to follow changes in users' nicknames
 	 */
-	void slotPropertyChanged( Kopete::Contact *, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotPropertyChanged( Kopete::PropertyContainer *, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 private:
-	KDictSpellingHighlighter* spellHighlighter();
+	Sonnet::Highlighter* spellHighlighter();
 	void setProtocolRichTextSupport();
 
 private:
@@ -200,6 +204,7 @@ private:
 	QTimer *m_typingRepeatTimer;
 	QTimer *m_typingStopTimer;
 	bool m_autoSpellCheckEnabled;
+	Sonnet::Highlighter *m_highlighter;
 };
 
 #endif

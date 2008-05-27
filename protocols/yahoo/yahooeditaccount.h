@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef __YAHOOEDITIDENTITY_H
-#define __YAHOOEDITIDENTITY_H
+#ifndef YAHOOEDITACCOUNT_H
+#define YAHOOEDITACCOUNT_H
 
 // KDE Includes
 
@@ -38,6 +38,7 @@ class YahooEditAccount: public QWidget, private Ui::YahooEditAccountBase, public
 
 private:
 	YahooProtocol *theProtocol;
+	QString m_photoPath;
 
 public:
 	YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent = 0);
@@ -52,7 +53,6 @@ private slots:
 	void slotSelectPicture();
 };
 
-#endif
+#endif // YAHOOEDITACCOUNT_H
 
 // vim: set noet ts=4 sts=4 sw=4:
-

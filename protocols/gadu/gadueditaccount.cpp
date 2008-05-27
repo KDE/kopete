@@ -65,7 +65,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 		account_ = static_cast<GaduAccount*>(ident);
 
 		registerNew->setDisabled( true );
-		loginEdit_->setDisabled( true );
+		loginEdit_->setReadOnly( true );
 		loginEdit_->setText( account_->accountId() );
 
 		passwordWidget_->load( &account_->password() );
@@ -112,13 +112,13 @@ GaduEditAccount::publishUserInfo()
 	sr.meiden	= uiMeiden->text();
 	sr.orgin	= uiOrgin->text();
 
-	kDebug(14100) << uiGender->currentIndex() << " gender " << endl;
+	kDebug(14100) << uiGender->currentIndex() << " gender ";
 	if ( uiGender->currentIndex() == 1 ) {
-		kDebug(14100) << "so you become female now" << endl;
+		kDebug(14100) << "so you become female now";
 		sr.gender = QString( GG_PUBDIR50_GENDER_SET_FEMALE );
 	}
 	if ( uiGender->currentIndex() == 2 ) {
-		kDebug(14100) << "so you become male now" << endl;
+		kDebug(14100) << "so you become male now";
 		sr.gender = QString( GG_PUBDIR50_GENDER_SET_MALE );
 	}
 
@@ -142,15 +142,15 @@ GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq 
 	uiYOB->setText( result[0].age );
 	uiCity->setText( result[0].city );
 
-	kDebug( 14100 ) << "gender found: " << result[0].gender << endl;
+	kDebug( 14100 ) << "gender found: " << result[0].gender;
 	if ( result[0].gender == QString( GG_PUBDIR50_GENDER_SET_FEMALE ) ) {
 		uiGender->setCurrentIndex( 1 );
-		kDebug(14100) << "looks like female" << endl;
+		kDebug(14100) << "looks like female";
 	}
 	else {
 		if ( result[0].gender == QString( GG_PUBDIR50_GENDER_SET_MALE ) ) {
 			uiGender->setCurrentIndex( 2 );
-			kDebug( 14100 ) <<" looks like male" << endl;
+			kDebug( 14100 ) <<" looks like male";
 		}
 	}
 

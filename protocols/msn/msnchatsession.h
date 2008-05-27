@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef MSNMESSAGEMANAGER_H
-#define MSNMESSAGEMANAGER_H
+#ifndef MSNCHATSESSION_H
+#define MSNCHATSESSION_H
 
 #include "kopetechatsession.h"
 
@@ -24,7 +24,6 @@
 #include <QList>
 
 class MSNSwitchBoardSocket;
-class KActionCollection;
 class MSNInvitation;
 class MSNContact;
 class KActionMenu;
@@ -43,9 +42,9 @@ public:
 	MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user, Kopete::ContactPtrList others );
 	~MSNChatSession();
 
-	void createChat( const QString &handle, const QString &address, const QString &auth, const QString &ID = QString::null );
+	void createChat( const QString &handle, const QString &address, const QString &auth, const QString &ID = QString() );
 
-	MSNSwitchBoardSocket *service() { return m_chatService; };
+	MSNSwitchBoardSocket *service() { return m_chatService; }
 
 	void sendFile( const QString &fileLocation, const QString &fileName,
 		long unsigned int fileSize );
@@ -135,10 +134,9 @@ signals:
 	/*
 	 * This signal is relayed to the protocol and after, to plugins
 	 */
-	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNChatSession* msnMM , MSNContact* c );
+	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , unsigned long int cookie , MSNChatSession* msnMM , MSNContact* c );
 };
 
-#endif
+#endif // MSNCHATSESSION_H
 
 // vim: set noet ts=4 sts=4 tw=4:
-

@@ -25,7 +25,7 @@
 #include <klocale.h>
 #include <kicon.h>
 
-#include "xmpp_tasks.h"
+#include "tasks/jt_privatestorage.h"
 
 
 JabberBookmarks::JabberBookmarks(JabberAccount *parent) : QObject(parent) , m_account(parent) 
@@ -38,7 +38,7 @@ void JabberBookmarks::accountConnected()
 	if(!m_account->isConnected())
 		return;
 	
-	XMPP::JT_PrivateStorage * task = new XMPP::JT_PrivateStorage ( m_account->client()->rootTask ());
+	JT_PrivateStorage * task = new JT_PrivateStorage ( m_account->client()->rootTask ());
 	task->get( "storage" , "storage:bookmarks" );
 	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotReceivedBookmarks() ) );
 	task->go ( true );
@@ -46,7 +46,7 @@ void JabberBookmarks::accountConnected()
 
 void JabberBookmarks::slotReceivedBookmarks( )
 {
-	XMPP::JT_PrivateStorage * task = (XMPP::JT_PrivateStorage*)(sender());
+	JT_PrivateStorage * task = (JT_PrivateStorage*)(sender());
 	m_storage=QDomDocument("storage");
 	m_conferencesJID.clear();
 	if(task->success())
@@ -121,7 +121,7 @@ void JabberBookmarks::insertGroupChat(const XMPP::Jid &jid)
 	conference.appendChild(name);
 	name.appendChild(m_storage.createTextNode(jid.full()));
 
-	XMPP::JT_PrivateStorage * task = new XMPP::JT_PrivateStorage ( m_account->client()->rootTask ());
+	JT_PrivateStorage * task = new JT_PrivateStorage ( m_account->client()->rootTask ());
 	task->set( storage_e );
 	task->go ( true );
 	

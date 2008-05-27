@@ -27,7 +27,7 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
         Kopete::Account *account, QWidget *parent )
 		: QWidget( parent ), KopeteEditAccountWidget( account )
 {
-	//kDebug(14152) << k_funcinfo << "Called." << endl;
+	//kDebug(14152) << "Called.";
 
 	mAccount = dynamic_cast<AIMAccount*>( account );
 	mProtocol = protocol;
@@ -45,7 +45,7 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 		mGui->mPasswordWidget->load( &mAccount->password() );
 		mGui->edtAccountId->setText( account->accountId() );
 		//Remove me after we can change Account IDs (Matt)
-		mGui->edtAccountId->setDisabled( true );
+		mGui->edtAccountId->setReadOnly( true );
 		mGui->mAutoLogon->setChecked( account->excludeConnect() );
 		QString serverEntry = account->configGroup()->readEntry( "Server", "login.oscar.aol.com" );
 		int portEntry = account->configGroup()->readEntry( "Port", 5190 );
@@ -97,9 +97,6 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 		mGui->sbxTimeout->setValue( configValue );
 
 
-		// Global Identity
-		mGui->mGlobalIdentity->setChecked( account->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
-
 		if ( mAccount->engine()->isActive() )
 		{
 			m_visibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Visible );
@@ -114,6 +111,9 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 			QObject::connect( mGui->invisibleAdd, SIGNAL( clicked() ), m_invisibleEngine, SLOT( slotAdd() ) );
 			QObject::connect( mGui->invisibleRemove, SIGNAL( clicked() ), m_invisibleEngine, SLOT( slotRemove() ) );
 		}
+
+		// Hide the register UI if editing an existing account
+		mGui->registrationGroupBox->hide();
     }
 	QObject::connect( mGui->buttonRegister, SIGNAL( clicked() ), this, SLOT( slotOpenRegister() ) );
 
@@ -136,16 +136,18 @@ AIMEditAccountWidget::~AIMEditAccountWidget()
 
 	if ( m_invisibleEngine )
 		delete m_invisibleEngine;
+
+	delete mGui;
 }
 
 Kopete::Account *AIMEditAccountWidget::apply()
 {
-	kDebug( 14152 ) << k_funcinfo << "Called." << endl;
+	kDebug( 14152 ) << "Called.";
 
 	// If this is a new account, create it
 	if ( !mAccount )
 	{
-		kDebug( 14152 ) << k_funcinfo << "creating a new account" << endl;
+		kDebug( 14152 ) << "creating a new account";
 		QString newId = mGui->edtAccountId->text();
 		mAccount = new AIMAccount( mProtocol, newId );
 	}
@@ -193,9 +195,6 @@ Kopete::Account *AIMEditAccountWidget::apply()
 	configValue = mGui->sbxTimeout->value();
 	mAccount->configGroup()->writeEntry( "Timeout", configValue );
 
-	// Global Identity
-	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mGui->mGlobalIdentity->isChecked() );
-	
 	if ( mAccount->engine()->isActive() )
 	{
 		if ( m_visibleEngine )
@@ -209,7 +208,7 @@ Kopete::Account *AIMEditAccountWidget::apply()
 
 bool AIMEditAccountWidget::validateData()
 {
-	//kDebug(14152) << k_funcinfo << "Called." << endl;
+	//kDebug(14152) << "Called.";
 
 	QString userName = mGui->edtAccountId->text();
 	QString server = mGui->edtServerAddress->text();
@@ -225,7 +224,7 @@ bool AIMEditAccountWidget::validateData()
 		return false;
 
 	// Seems good to me
-	//kDebug(14152) << k_funcinfo << "Account data validated successfully." << endl;
+	//kDebug(14152) << "Account data validated successfully.";
 	return true;
 }
 

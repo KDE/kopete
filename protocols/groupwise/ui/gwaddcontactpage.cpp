@@ -26,13 +26,13 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <QPainter>
 #include <q3listview.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
 #include <q3valuelist.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
+#include <QVBoxLayout>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -43,7 +43,7 @@
 #include "client.h"
 #include "gwaccount.h"
 #include "gwerror.h"
-//#include "gwprotocol.h"
+#include "gwprotocol.h"
 #include "gwsearch.h"
 #include "ui_gwaddui.h"
 #include "userdetailsmanager.h"
@@ -52,21 +52,25 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 		: AddContactPage(parent)
 {
 	m_account = static_cast<GroupWiseAccount *>( owner );
-	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
-	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
+	kDebug() ;
+	QVBoxLayout * layout = new QVBoxLayout( this );
 	if (owner->isConnected ())
 	{
-		m_searchUI = new GroupWiseContactSearch( m_account, Q3ListView::Single, false,
+		m_searchUI = new GroupWiseContactSearch( m_account, QAbstractItemView::SingleSelection, false,
 				 this );
-		show();
+		layout->addWidget( m_searchUI );
 		m_canadd = true;
 	}
 	else
 	{
 		m_noaddMsg1 = new QLabel (i18n ("You need to be connected to be able to add contacts."), this);
 		m_noaddMsg2 = new QLabel (i18n ("Connect to GroupWise Messenger and try again."), this);
+		layout->addWidget( m_noaddMsg1 );
+		layout->addWidget( m_noaddMsg2 );
 		m_canadd = false;
 	}
+	setLayout( layout );
+	show();
 }
 
 GroupWiseAddContactPage::~GroupWiseAddContactPage()
@@ -81,20 +85,18 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 	if ( validateData() )
 	{
 		QString contactId;
-		QString displayName;
 
-		Q3ValueList< ContactDetails > selected = m_searchUI->selectedResults();
+		ContactDetails dt;
+		QList< ContactDetails > selected = m_searchUI->selectedResults();
 		if ( selected.count() == 1 )
 		{
-			ContactDetails dt = selected.first();
+			dt = selected.first();
 			m_account->client()->userDetailsManager()->addDetails( dt );
-			contactId = dt.dn;
-			displayName = dt.givenName + ' ' + dt.surname;
 		}
 		else
 			return false;
 
-		return ( account->addContact ( contactId, parentContact, Kopete::Account::ChangeKABC ) );
+		return ( account->addContact ( dt.dn, parentContact, Kopete::Account::ChangeKABC ) );
 	}
 	else
 		return false;
@@ -103,7 +105,11 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 bool GroupWiseAddContactPage::validateData()
 {
 	if ( m_canadd )
-		return ( m_searchUI->m_results->selectedItem() );
+#ifdef __GNUC__
+#warning FIXME port GroupWiseAddContactPage::validateData to interview based GroupWiseSearch
+#endif
+		return true;
+	//return ( m_searchUI->m_results->selectedItem() );
 	else
 		return false;
 }

@@ -1,3 +1,4 @@
+#include <QtCore> // for qWarning()
 #include <QObject>
 #include <QIODevice>
 #include <zlib.h>
@@ -34,7 +35,7 @@ void Compressor::flush()
 	write(QByteArray(),true);
 	int result = deflateEnd(zlib_stream_);
 	if (result != Z_OK) 
-		qWarning("compressor.c: deflateEnd failed (%d)", result);
+		qWarning() << QString("compressor.c: deflateEnd failed (%1)").arg(result).toAscii();
 	
 	flushed_ = true;
 }
@@ -59,7 +60,7 @@ int Compressor::write(const QByteArray& input, bool flush)
 		zlib_stream_->next_out = (Bytef*) (output.data() + output_position);
 		result = deflate(zlib_stream_,(flush ? Z_FINISH : Z_NO_FLUSH));
 		if (result == Z_STREAM_ERROR) {
-			qWarning("compressor.cpp: Error ('%s')", zlib_stream_->msg);
+			qWarning() << QString("compressor.cpp: Error ('%1')").arg(zlib_stream_->msg).toAscii();
 			return result;
 		}
 		output_position += CHUNK_SIZE;
@@ -78,7 +79,7 @@ int Compressor::write(const QByteArray& input, bool flush)
 			zlib_stream_->next_out = (Bytef*) (output.data() + output_position);
 			result = deflate(zlib_stream_,Z_SYNC_FLUSH);
 			if (result == Z_STREAM_ERROR) {
-				qWarning("compressor.cpp: Error ('%s')", zlib_stream_->msg);
+				qWarning() << QString("compressor.cpp: Error ('%1')").arg(zlib_stream_->msg).toAscii();
 				return result;
 			}
 			output_position += CHUNK_SIZE;
@@ -122,7 +123,7 @@ void Decompressor::flush()
 	write(QByteArray(),true);
 	int result = inflateEnd(zlib_stream_);
 	if (result != Z_OK) 
-		qWarning("compressor.c: inflateEnd failed (%d)", result);
+		qWarning() << QString("compressor.c: inflateEnd failed (%1)").arg(result).toAscii();
 	
 	flushed_ = true;
 }
@@ -147,13 +148,17 @@ int Decompressor::write(const QByteArray& input, bool flush)
 		zlib_stream_->next_out = (Bytef*) (output.data() + output_position);
 		result = inflate(zlib_stream_,(flush ? Z_FINISH : Z_NO_FLUSH));
 		if (result == Z_STREAM_ERROR) {
-			qWarning("compressor.cpp: Error ('%s')", zlib_stream_->msg);
+			qWarning() << QString("compressor.cpp: Error ('%1')").arg(zlib_stream_->msg).toAscii();
 			return result;
 		}
 		output_position += CHUNK_SIZE;
 	}
 	while (zlib_stream_->avail_out == 0);
-	Q_ASSERT(zlib_stream_->avail_in == 0);
+	//Q_ASSERT(zlib_stream_->avail_in == 0);
+	if (zlib_stream_->avail_in != 0) {
+		qWarning() << "Decompressor: Unexpected state: avail_in=" << zlib_stream_->avail_in << ",avail_out=" << zlib_stream_->avail_out << ",result=" << result;
+		return Z_STREAM_ERROR; // FIXME: Should probably return 'result'
+	}
 	output_position -= zlib_stream_->avail_out;
 
 	// Flush the data
@@ -164,7 +169,7 @@ int Decompressor::write(const QByteArray& input, bool flush)
 			zlib_stream_->next_out = (Bytef*) (output.data() + output_position);
 			result = inflate(zlib_stream_,Z_SYNC_FLUSH);
 			if (result == Z_STREAM_ERROR) {
-				qWarning("compressor.cpp: Error ('%s')", zlib_stream_->msg);
+				qWarning() << QString("compressor.cpp: Error ('%1')").arg(zlib_stream_->msg).toAscii();
 				return result;
 			}
 			output_position += CHUNK_SIZE;

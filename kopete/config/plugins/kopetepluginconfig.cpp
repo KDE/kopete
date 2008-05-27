@@ -3,8 +3,9 @@
 
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2006      by Michaël Larouche      <larouche@kde.org>
+    Copyright (c) 2007      by Will Stephenson       <wstephenson@kde.org>
 
-    Kopete    (c) 2001-2006 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2001-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -26,59 +27,59 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kpluginselector.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <ksettings/dispatcher.h>
+#include <KPluginInfo>
 
 // Kopete includes
 #include "kopetepluginmanager.h"
 
-class KopetePluginConfigPrivate
-{
-public:
-	KPluginSelector *pluginSelector;
-};
+K_PLUGIN_FACTORY( KopetePluginConfigFactory,
+		registerPlugin<KopetePluginConfig>(); )
+K_EXPORT_PLUGIN( KopetePluginConfigFactory("kcm_kopete_pluginconfig") )
 
-typedef KGenericFactory<KopetePluginConfig, QWidget> KopetePluginConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( "kcm_kopete_pluginconfig" ) )
-
-KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QStringList &args )
-: KCModule(KopetePluginConfigFactory::componentData(), parent, args), d(new KopetePluginConfigPrivate)
+KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QVariantList &args )
+: KCModule(KopetePluginConfigFactory::componentData(), parent, args)
 {
-	d->pluginSelector = new KPluginSelector( this );
+	m_pluginSelector = new KPluginSelector( this );
 	
 	QVBoxLayout *mainLayout = new QVBoxLayout(this);
 	mainLayout->setMargin(0);
-	mainLayout->addWidget( d->pluginSelector );
+	mainLayout->addWidget( m_pluginSelector );
 
-	connect( d->pluginSelector, SIGNAL(changed(bool)), this, SLOT(changed()) );
-	connect( d->pluginSelector, SIGNAL(configCommitted(const QByteArray&) ),
-		KSettings::Dispatcher::self(), SLOT(reparseConfiguration(const QByteArray&)) );
+	connect( m_pluginSelector, SIGNAL(changed(bool)), this, SLOT(changed()) );
+	connect( m_pluginSelector, SIGNAL(configCommitted(const QByteArray&) ),
+		this, SLOT(reparseConfiguration(const QByteArray&)) );
 
-	d->pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ),
-	                               i18n( "General Plugins" ), "Plugins" );
-	d->pluginSelector->load();
+	m_pluginSelector->addPlugins( Kopete::PluginManager::self()->availablePlugins( "Plugins" ),
+	                               KPluginSelector::ReadConfigFile, i18n( "General Plugins" ), "Plugins" );
+	m_pluginSelector->load();
 }
 
 KopetePluginConfig::~KopetePluginConfig()
 {
-	delete d;
+}
+
+void KopetePluginConfig::reparseConfiguration(const QByteArray&conf)
+{
+	KSettings::Dispatcher::reparseConfiguration(conf);
 }
 
 void KopetePluginConfig::load()
 {
-	d->pluginSelector->load();
+	m_pluginSelector->load();
 	
 	KCModule::load();
 }
 
 void KopetePluginConfig::defaults()
 {
-	d->pluginSelector->defaults();
+	m_pluginSelector->defaults();
 }
 
 void KopetePluginConfig::save()
 {
-	d->pluginSelector->save();
+	m_pluginSelector->save();
 	Kopete::PluginManager::self()->loadAllPlugins();
 
 	KCModule::save();

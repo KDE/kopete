@@ -31,12 +31,12 @@ using namespace Oscar;
 
 UserDetails::UserDetails()
 {
+    m_capabilities.resize(CAP_LAST);
 	m_warningLevel = 0;
 	m_userClass = 0;
 	m_idleTime = 0;
 	m_extendedStatus = 0;
-	m_xtrazStatus = 0;
-	m_capabilities = 0;
+	m_xtrazStatus = -1;
 	m_dcPort = 0;
 	m_dcType = 0;
 	m_dcProtoVersion = 0;
@@ -46,9 +46,12 @@ UserDetails::UserDetails()
 	m_dcLastInfoUpdateTime = 0;
 	m_dcLastExtInfoUpdateTime = 0;
 	m_dcLastExtStatusUpdateTime = 0;
+	m_onlineStatusMsgSupport = false;
+
 	m_userClassSpecified = false;
 	m_memberSinceSpecified = false;
 	m_onlineSinceSpecified = false;
+	m_awaySinceSpecified = false;
 	m_numSecondsOnlineSpecified = false;
 	m_idleTimeSpecified = false;
 	m_extendedStatusSpecified = false;
@@ -79,12 +82,12 @@ Oscar::WORD UserDetails::idleTime() const
 	return m_idleTime;
 }
 
-KNetwork::KIpAddress UserDetails::dcInternalIp() const
+QHostAddress UserDetails::dcInternalIp() const
 {
 	return m_dcInsideIp;
 }
 
-KNetwork::KIpAddress UserDetails::dcExternalIp() const
+QHostAddress UserDetails::dcExternalIp() const
 {
 	return m_dcOutsideIp;
 }
@@ -94,9 +97,19 @@ Oscar::DWORD UserDetails::dcPort() const
 	return m_dcPort;
 }
 
+Oscar::WORD UserDetails::dcProtoVersion() const
+{
+    return m_dcProtoVersion;
+}
+
 QDateTime UserDetails::onlineSinceTime() const
 {
 	return m_onlineSince;
+}
+
+QDateTime UserDetails::awaySinceTime() const
+{
+	return m_awaySince;
 }
 
 QDateTime UserDetails::memberSinceTime() const
@@ -119,6 +132,11 @@ int UserDetails::xtrazStatus() const
 	return m_xtrazStatus;
 }
 
+Oscar::WORD UserDetails::iconType() const
+{
+	return m_iconType;
+}
+
 Oscar::BYTE UserDetails::iconCheckSumType() const
 {
 	return m_iconChecksumType;
@@ -131,7 +149,87 @@ QByteArray UserDetails::buddyIconHash() const
 
 QString UserDetails::clientName() const
 {
-	return (m_clientName + m_clientVersion);
+	return m_clientName;
+}
+
+void UserDetails::parseCapabilities( Buffer &inbuf, int &xStatus )
+{
+	xStatus = -1;
+	QString dbgCaps = "CAPS: ";
+	while ( inbuf.bytesAvailable() >= 16 )
+	{
+		bool found = false;
+		Guid cap( inbuf.getGuid() );
+		int i;
+		for ( i=0; i < CAP_LAST; i++ )
+		{
+			if ( i == CAP_KOPETE && cap.isEqual ( oscar_caps[i], 12 )   ||
+			   i == CAP_MIRANDA && cap.isEqual ( oscar_caps[i], 8 )     ||
+			   i == CAP_QIP && cap.isEqual ( oscar_caps[i], 16 )        ||
+			   i == CAP_QIPINFIUM && cap.isEqual ( oscar_caps[i], 16 )  ||
+			   i == CAP_QIPPDA && cap.isEqual ( oscar_caps[i], 16 )     ||
+			   i == CAP_QIPSYMBIAN && cap.isEqual ( oscar_caps[i], 16 ) ||
+			   i == CAP_QIPMOBILE && cap.isEqual ( oscar_caps[i], 16 )  ||
+			   i == CAP_JIMM && cap.isEqual ( oscar_caps[i], 5 )        ||
+			   i == CAP_MICQ && cap.isEqual ( oscar_caps[i], 12 )       ||
+			   i == CAP_SIMNEW && cap.isEqual ( oscar_caps[i], 12 )     ||
+			   i == CAP_SIMOLD && cap.isEqual ( oscar_caps[i], 15 )     ||
+			   i == CAP_VMICQ && cap.isEqual ( oscar_caps[i], 6 )       ||
+			   i == CAP_LICQ && cap.isEqual ( oscar_caps[i], 12 )       ||
+			   i == CAP_ANDRQ && cap.isEqual ( oscar_caps[i], 9 )       ||
+			   i == CAP_RANDQ && cap.isEqual ( oscar_caps[i], 9 )       ||
+			     i == CAP_MCHAT && cap.isEqual ( oscar_caps[i], 10 ) )
+			{
+				m_capabilities[i] = true;
+				dbgCaps += capName(i);
+				m_identCap = cap;
+				found = true;
+				break;
+			}
+			else if(oscar_caps[i] == cap)
+			{
+				m_capabilities[i] = true;
+				dbgCaps += capName(i);
+				found = true;
+				break;
+			}
+		}
+		if(!found && xStatus == -1)
+		{
+			for(i = 0; i < XSTAT_LAST; i++)
+			{
+				if(oscar_xStatus[i] == cap)
+				{
+					xStatus = i;
+					found = true;
+					break;
+				}
+			}
+		}
+	}
+	kDebug(OSCAR_RAW_DEBUG) << dbgCaps;
+}
+
+void UserDetails::parseNewCapabilities( Buffer &inbuf )
+{
+	QString dbgCaps = "NEW CAPS: ";
+	QByteArray cap = Guid( QLatin1String("094600004c7f11d18222444553540000"));
+	while ( inbuf.bytesAvailable() >= 2 )
+	{
+		cap[2] = inbuf.getByte();
+		cap[3] = inbuf.getByte();
+		
+		for ( int i = 0; i < CAP_LAST; i++ )
+		{
+			if ( oscar_caps[i].data() == cap )
+			{
+				m_capabilities[i] = true;
+				dbgCaps += capName( i );
+				break;
+			}
+		}
+	}
+	kDebug(OSCAR_RAW_DEBUG) << dbgCaps;
 }
 
 void UserDetails::fill( Buffer * buffer )
@@ -142,9 +240,9 @@ void UserDetails::fill( Buffer * buffer )
 	m_warningLevel = buffer->getWord();
 	Oscar::WORD numTLVs = buffer->getWord();
 
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Got user info for " << user << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << "Got user info for " << user;
 #ifdef OSCAR_USERINFO_DEBUG
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Warning level is " << m_warningLevel << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << "Warning level is " << m_warningLevel;
 #endif
 	//start parsing TLVs
 	for( int i = 0; i < numTLVs; ++i  )
@@ -159,7 +257,7 @@ void UserDetails::fill( Buffer * buffer )
 				m_userClass = b.getWord();
 				m_userClassSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "User class is " << m_userClass << endl;
+				kDebug(OSCAR_RAW_DEBUG) << "User class is " << m_userClass;
 #endif
 				break;
 			case 0x0002: //member since
@@ -167,43 +265,49 @@ void UserDetails::fill( Buffer * buffer )
 				m_memberSince.setTime_t( b.getDWord() );
 				m_memberSinceSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Member since " << m_memberSince << endl;
+				kDebug(OSCAR_RAW_DEBUG) << "Member since " << m_memberSince;
 #endif
 				break;
 			case 0x0003: //sigon time
 				m_onlineSince.setTime_t( b.getDWord() );
 				m_onlineSinceSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Signed on at " << m_onlineSince << endl;
+				kDebug(OSCAR_RAW_DEBUG) << "Signed on at " << m_onlineSince;
 #endif
 				break;
 			case 0x0004: //idle time
 				m_idleTime = b.getWord() * 60;
 #ifdef OSCAR_USERINFO_DEBUG
 				m_idleTimeSpecified = true;
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Idle time is " << m_idleTime << endl;
+				kDebug(OSCAR_RAW_DEBUG) << "Idle time is " << m_idleTime;
 #endif
 				break;
 			case 0x0006: //extended user status
 				m_extendedStatus = b.getDWord();
 				m_extendedStatusSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Extended status is " << QString::number( m_extendedStatus, 16 ) << endl;
+				kDebug(OSCAR_RAW_DEBUG) << "Extended status is " << QString::number( m_extendedStatus, 16 );
 #endif
                 break;
+			case 0x0008:
+				m_onlineStatusMsgSupport = (b.getWord() == 0x0A06);
+#ifdef OSCAR_USERINFO_DEBUG
+				kDebug(OSCAR_RAW_DEBUG) << "Online status messages support";
+#endif
+				break;
 			case 0x000A: //external IP address
-				m_dcOutsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
+				m_dcOutsideIp.setAddress( b.getDWord() );
 				m_dcOutsideSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "External IP address is " << m_dcOutsideIp.toString() << endl;
+				kDebug(OSCAR_RAW_DEBUG) << "External IP address is " << m_dcOutsideIp.toString();
 #endif
 				break;
 			case 0x000C: //DC info
-				m_dcInsideIp = KNetwork::KIpAddress( ntohl( b.getDWord() ) );
+				m_dcInsideIp.setAddress( b.getDWord() );
 				m_dcPort = b.getDWord();
 #ifdef OSCAR_USERINFO_DEBUG
-    			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Internal IP address is " << m_dcInsideIp.toString() << endl;
-    			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Port number is " << m_dcPort << endl;
+    			kDebug(OSCAR_RAW_DEBUG) << "Internal IP address is " << m_dcInsideIp.toString();
+    			kDebug(OSCAR_RAW_DEBUG) << "Port number is " << m_dcPort;
 #endif
     			m_dcType = b.getByte();
 				m_dcProtoVersion = b.getWord();
@@ -213,27 +317,27 @@ void UserDetails::fill( Buffer * buffer )
 				m_dcLastInfoUpdateTime = b.getDWord();
 				m_dcLastExtInfoUpdateTime = b.getDWord();
 				m_dcLastExtStatusUpdateTime = b.getDWord();
-				b.getWord(); //unknown.
+  			    b.getWord(); //unknown.
 				m_dcInsideSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Got DC info" << endl;
+				kDebug(OSCAR_RAW_DEBUG) << "Got DC info";
 #endif
 				break;
 			case 0x000D: //capability info
-				m_capabilities |= Oscar::parseCapabilities( b, m_clientVersion, m_xtrazStatus );
+				parseCapabilities(b, m_xtrazStatus);
 				m_capabilitiesSpecified = true;
-				m_xtrazStatusSpecified = (m_xtrazStatus > -1) ? true : false;
+				m_xtrazStatusSpecified = true;
 				break;
 			case 0x0010:
 			case 0x000F: //online time
 				m_numSecondsOnline = b.getDWord();
 				m_numSecondsOnlineSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Online for " << m_numSecondsOnline << endl;
+				kDebug(OSCAR_RAW_DEBUG) << "Online for " << m_numSecondsOnline;
 #endif
 				break;
 			case 0x0019: //new capability info
-				m_capabilities |= Oscar::parseNewCapabilities( b );
+				parseNewCapabilities( b );
 				m_capabilitiesSpecified = true;
 				break;
 			case 0x001D:
@@ -244,7 +348,7 @@ void UserDetails::fill( Buffer * buffer )
 				while ( b.bytesAvailable() > 0 )
 				{
 #ifdef OSCAR_USERINFO_DEBUG
-					kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Icon and available message info" << endl;
+					kDebug(OSCAR_RAW_DEBUG) << "Icon and available message info";
 #endif
 					Oscar::WORD type2 = b.getWord();
 					Oscar::BYTE number = b.getByte();
@@ -254,19 +358,23 @@ void UserDetails::fill( Buffer * buffer )
 					case 0x0000:
 						b.skipBytes(length);
 						break;
-					case 0x0001:
-						if ( length > 0 && ( number == 0x01 || number == 0x00 ) )
+					case 0x0001: // AIM/ICQ avatar hash
+					case 0x000C: // ICQ contact photo 
+					//case 0x0008: // ICQ Flash avatar hash
+						if ( length > 0 && ( number == 0x01 || number == 0x00 ) &&
+						     ( m_iconSpecified == false || m_iconType < type2 ) ) // Check priority
 						{
+							m_iconType = type2;
 							m_iconChecksumType = number;
- 							m_md5IconHash = b.getBlock( length );
+							m_md5IconHash = b.getBlock( length );
 							m_iconSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
-							kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "checksum:" << m_md5IconHash << endl;
+							kDebug(OSCAR_RAW_DEBUG) << "checksum:" << m_md5IconHash.toHex();
 #endif
 						}
  						else
  						{
-	 						kWarning(OSCAR_RAW_DEBUG) << k_funcinfo << "icon checksum indicated"
+	 						kWarning(OSCAR_RAW_DEBUG) << "icon checksum indicated"
 		 						<< " but unable to parse checksum" << endl;
 							b.skipBytes( length );
  						}
@@ -276,25 +384,34 @@ void UserDetails::fill( Buffer * buffer )
 						{
 							m_availableMessage = QString( b.getBSTR() );
 #ifdef OSCAR_USERINFO_DEBUG
-							kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "available message:" << m_availableMessage << endl;
+							kDebug(OSCAR_RAW_DEBUG) << "available message:" << m_availableMessage;
 #endif
 							if ( b.bytesAvailable() >= 4 && b.getWord() == 0x0001 )
 							{
 								b.skipBytes( 2 );
-								kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Encoding:" << b.getBSTR() << endl;
+								QByteArray encoding = b.getBSTR();
+								kDebug(OSCAR_RAW_DEBUG) << "Encoding:" << encoding;
 							}
 						}
 						else
-							kDebug(OSCAR_RAW_DEBUG) << "not enough bytes for available message" << endl;
+							kDebug(OSCAR_RAW_DEBUG) << "not enough bytes for available message";
 						break;
 					default:
+						b.skipBytes( length );
 						break;
 					}
 				}
 				break;
 			}
+			case 0x0029:
+				m_awaySince.setTime_t( b.getDWord() );
+				m_awaySinceSpecified = true;
+#ifdef OSCAR_USERINFO_DEBUG
+				kDebug(OSCAR_RAW_DEBUG) << "Away since " << m_awaySince;
+#endif
+				break;
 			default:
-				kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Unknown TLV, type=" << t.type << ", length=" << t.length
+				kDebug(OSCAR_RAW_DEBUG) << "Unknown TLV, type=" << t.type << ", length=" << t.length
 					<< " in userinfo" << endl;
 				break;
 			};
@@ -305,183 +422,340 @@ void UserDetails::fill( Buffer * buffer )
 
 	//do client detection on fill
 	if ( m_capabilitiesSpecified )
+	{
 		detectClient();
+	}
+}
+
+static QString mirandaVersionToString( Oscar::DWORD v )
+{
+	QString ver;
+	ver.sprintf( "%d.%d.%d.%d", (v >> 0x18) & 0x7F, (v >> 0x10) & 0xFF, (v >> 0x08) & 0xFF, v & 0xFF );
+	if ( v & 0x80000000 )
+		ver += " alpha";
+	return ver;
+}
+
+static QString getMirandaVersion( Oscar::DWORD iver, Oscar::DWORD mver, bool isUnicode )
+{
+	if ( !iver )
+		return QString();
+	QString ver;
+	if ( !mver && iver == 1 )
+	{
+		ver = mirandaVersionToString( 0x80010200 );
+	}
+	else if ( !mver && ( iver & 0x7FFFFFFF ) <= 0x030301 )
+	{
+		ver = mirandaVersionToString( iver );
+	}
+	else
+	{
+		if ( mver )
+			ver = mirandaVersionToString( mver );
+		if ( isUnicode )
+			ver += " Unicode";
+		ver += " (ICQ v" + mirandaVersionToString( iver ) + ')';
+	}
+	return ver;
+}
+
+static QString getVersionFromCap( Guid &cap, int s, int f = 16 )
+{
+	const char *c = cap.data().data();
+	int len = 0;
+	for ( int i = s; i < f; i++, len++ )
+	{
+		if ( c[i] == '\0' )
+			break;
+	}
+	return QString::fromLatin1(c + s, len);
 }
 
 void UserDetails::detectClient()
 {
-
-	/* My thanks to mETz for stealing^Wusing this code from SIM.
-	 * Client type detection ---
-	 * Most of this code is based on sim-icq code
-	 * Thanks a lot for all the tests you guys must have made
-	 * without sim-icq I would have only checked for the capabilities
-	 */
-	 /*
-	bool clientMatched = false;
-	if (m_capabilities != 0)
-	{
-		bool clientMatched = false;
-		if (hasCap(CAP_KOPETE))
-		{
-			m_clientName=i18n("Kopete");
-			return;
-		}
-		else if (hasCap(CAP_MICQ))
-		{
-			m_clientName=i18n("MICQ");
-			return;
-		}
-		else if (hasCap(CAP_SIMNEW) || hasCap(CAP_SIMOLD))
-		{
-			m_clientName=i18n("SIM");
-			return;
-		}
-		else if (hasCap(CAP_TRILLIANCRYPT) || hasCap(CAP_TRILLIAN))
-		{
-			m_clientName=i18n("Trillian");
-			return;
-		}
-		else if (hasCap(CAP_MACICQ))
-		{
-			m_clientName=i18n("MacICQ");
-			return;
-		}
-		else if ((m_dcLastInfoUpdateTime & 0xFF7F0000L) == 0x7D000000L)
-		{
-			unsigned ver = m_dcLastInfoUpdateTime & 0xFFFF;
-			if (m_dcLastInfoUpdateTime & 0x00800000L)
-				m_clientName=i18n("Licq SSL");
-			else
-				m_clientName=i18n("Licq");
-
-			if (ver % 10)
-				m_clientVersion.sprintf("%d%d%u", ver/1000, (ver/10)%100, ver%10);
-			else
-				m_clientVersion.sprintf("%d%u", ver/1000, (ver/10)%100);
-			return;
-		}
-		else // some client we could not detect using capabilities
-		{
-
-			clientMatched=true; // default case will set it to false again if we did not find anything
-			switch (m_dcLastInfoUpdateTime)
-			{
-			case 0xFFFFFFFFL: //gaim behaves like official AIM so we can't detect them, only look for miranda
-				{
-					if (m_dcLastExtStatusUpdateTime & 0x80000000)
-						m_clientName=QString::fromLatin1("Miranda alpha");
-					else
-						m_clientName=QString::fromLatin1("Miranda");
-
-					DWORD version = (m_dcLastExtInfoUpdateTime & 0xFFFFFF);
-					BYTE major1 = ((version >> 24) & 0xFF);
-					BYTE major2 = ((version >> 16) & 0xFF);
-					BYTE minor1 = ((version >> 8) & 0xFF);
-					BYTE minor2 = (version & 0xFF);
-					if (minor2 > 0) // w.x.y.z
-					{
-						m_clientVersion.sprintf("%u.%u.%u.%u", major1, major2,
-												minor1, minor2);
-					}
-					else if (minor1 > 0)  // w.x.y
-					{
-						m_clientVersion.sprintf("%u.%u.%u", major1, major2, minor1);
-					}
-					else // w.x
-					{
-						m_clientVersion.sprintf("%u.%u", major1, major2);
-					}
-				}
-				break;
-			case 0xFFFFFF8FL:
-				m_clientName = QString::fromLatin1("StrICQ");
-				break;
-			case 0xFFFFFF42L:
-				m_clientName = QString::fromLatin1("mICQ");
-				break;
-			case 0xFFFFFFBEL:
-				m_clientName = QString::fromLatin1("alicq");
-				break;
-			case 0xFFFFFF7FL:
-				m_clientName = QString::fromLatin1("&RQ");
-				break;
-			case 0xFFFFFFABL:
-				m_clientName = QString::fromLatin1("YSM");
-				break;
-			case 0x3AA773EEL:
-				if ((m_dcLastExtStatusUpdateTime == 0x3AA66380L) &&
-				    (m_dcLastExtInfoUpdateTime == 0x3A877A42L))
-				{
-					m_clientName=QString::fromLatin1("libicq2000");
-				}
-				break;
-			default:
-				clientMatched=false;
-				break;
-			}
-		}
-	}
-
-	if (!clientMatched) // now the fuzzy clientsearch starts =)
-	{
-		if (hasCap(CAP_TYPING))
-		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Client protocol version = " << m_dcProtoVersion << endl;
-			switch (m_dcProtoVersion)
-			{
-			case 10:
-				m_clientName=QString::fromLatin1("ICQ 2003b");
-				break;
-			case 9:
-				m_clientName=QString::fromLatin1("ICQ Lite");
-				break;
-			default:
-				m_clientName=QString::fromLatin1("ICQ2go");
-			}
-		}
-		else if (hasCap(CAP_BUDDYICON)) // only gaim seems to advertise this on ICQ
-		{
-			m_clientName = QString::fromLatin1("Gaim");
-		}
-		else if (hasCap(CAP_XTRAZ))
-		{
-			m_clientName = QString::fromLatin1("ICQ 4.0 Lite");
-		}
-		else if ((hasCap(CAP_STR_2001) || hasCap(CAP_ICQSERVERRELAY)) &&
-		         hasCap(CAP_IS_2001))
-		{
-			m_clientName = QString::fromLatin1( "ICQ 2001");
-		}
-		else if ((hasCap(CAP_STR_2001) || hasCap(CAP_ICQSERVERRELAY)) &&
-		         hasCap(CAP_STR_2002))
-		{
-			m_clientName = QString::fromLatin1("ICQ 2002");
-		}
-		else if (hasCap(CAP_RTFMSGS) && hasCap(CAP_UTF8) &&
-		         hasCap(CAP_ICQSERVERRELAY) && hasCap(CAP_ISICQ))
-		{
-			m_clientName = QString::fromLatin1("ICQ 2003a");
-		}
-		else if (hasCap(CAP_ICQSERVERRELAY) && hasCap(CAP_ISICQ))
-		{
-			m_clientName =QString::fromLatin1("ICQ 2001b");
-		}
-		else if ((m_dcProtoVersion == 7) && hasCap(CAP_RTFMSGS))
-		{
-			m_clientName = QString::fromLatin1("GnomeICU");
-		}
-	}
-
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "detected client as: " << m_clientName
-		<< " " << m_clientVersion << endl;
+	// 1 m_dcLastInfoUpdateTime
+	// 2 m_dcLastExtInfoUpdateTime
+	// 3 m_dcLastExtStatusUpdateTime
+	/*
+		Most of this code is based on Miranda ICQ plugin code
 	*/
+	m_clientName = QString::fromLatin1("");
+	if ( m_dcLastInfoUpdateTime == 0xFFFFFFFF )
+	{
+		if ( m_dcLastExtInfoUpdateTime == 0xffffffff )
+		{
+			m_clientName = QString::fromLatin1( "Gaim" );
+		}
+		else if ( !m_dcLastExtInfoUpdateTime && m_dcProtoVersion == 7 )
+		{
+			m_clientName = QString::fromLatin1( "WebICQ" );
+		}
+		else if ( !m_dcLastExtInfoUpdateTime && m_dcLastExtStatusUpdateTime == 0x3B7248ED )
+		{
+			m_clientName = QString::fromLatin1( "Spam Bot" );
+		}
+		else
+		{
+			m_clientName = QString::fromLatin1( "Miranda IM" );
+			m_clientName += ' ' + getMirandaVersion( m_dcLastExtInfoUpdateTime, 0, false );
+		}
+	}
+	else if ( m_dcLastInfoUpdateTime == 0x7FFFFFFF )
+	{
+		// Miranda with unicode core
+		m_clientName = QString::fromLatin1( "Miranda IM" );
+		m_clientName += ' ' + getMirandaVersion( m_dcLastExtInfoUpdateTime, 0, true );
+	}
+	else if ( ( m_dcLastInfoUpdateTime & 0xFF7F0000 ) == 0x7D000000 )
+	{
+        //licq
+	}
+	else if ( m_dcLastInfoUpdateTime == 0xFFFFFF8F )
+	{
+		m_clientName = QString::fromLatin1( "StrICQ" );
+	}
+	else if ( m_dcLastInfoUpdateTime == 0xFFFFFF42 )
+	{
+		m_clientName = QString::fromLatin1( "mICQ" );
+	}
+	else if ( m_dcLastInfoUpdateTime == 0xFFFFFFBE )
+	{
+		m_clientName = QString::fromLatin1("Alicq %1.%2.%3").arg((m_dcLastExtInfoUpdateTime >> 0x18) & 0xFF).arg((m_dcLastExtInfoUpdateTime >> 0x10) & 0xFF).arg((m_dcLastExtInfoUpdateTime >> 0x08) & 0xFF);
+	}
+	else if ( m_dcLastInfoUpdateTime == 0xFFFFFF7F )
+	{
+		m_clientName = QString::fromLatin1( "&RQ" );
+	}
+	else if ( m_dcLastInfoUpdateTime == 0xFFFFFFAB )
+	{
+		m_clientName = QString::fromLatin1( "YSM" );
+	}
+	else if ( m_dcLastInfoUpdateTime == 0x04031980 )
+	{
+		m_clientName = QString::fromLatin1( "vICQ" );
+	}
+	else if ( m_dcLastInfoUpdateTime == 0x3AA773EE && m_dcLastExtInfoUpdateTime == 0x3AA66380 )
+	{
+		m_clientName = QString::fromLatin1( "libicq2000" );
+	}
+	else if ( m_dcLastInfoUpdateTime == 0x3B75AC09 )
+	{
+		m_clientName = QString::fromLatin1( "Trillian" );
+	}
+	else if ( m_dcLastInfoUpdateTime == 0xFFFFFFFE && m_dcLastExtStatusUpdateTime == 0xFFFFFFFE )
+	{
+		m_clientName = QString::fromLatin1( "Jimm" );
+	}
+	else if ( m_dcLastInfoUpdateTime == 0xFFFFF666 && !m_dcLastExtStatusUpdateTime )
+	{
+        // this is R&Q (Rapid Edition)
+		m_clientName = QString::fromLatin1( "R&Q" );
+		m_clientVersion.sprintf( "%u", m_dcLastExtInfoUpdateTime );
+		m_clientName += ' ' + m_clientVersion;
+	}
+    // parse capabilities
+	if ( hasCap( CAP_KOPETE ) )
+	{
+		m_clientName = i18n( "Kopete" );
+		m_clientVersion.sprintf( "%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(13), m_identCap.data().at(14) * 100 + m_identCap.data().at(15) );
+		m_clientName += ' ' + m_clientVersion;
+		return;
+	}
+	if ( hasCap ( CAP_MIRANDA ) )
+	{
+		m_clientName = QString::fromLatin1( "Miranda IM" );
+		Oscar::DWORD iver = m_identCap.data().at(12) << 0x18 | m_identCap.data().at(13) << 0x10 | m_identCap.data().at(14) << 0x08 | m_identCap.data().at(15);
+		Oscar::DWORD mver = m_identCap.data().at(8) << 0x18 | m_identCap.data().at(9) << 0x10 | m_identCap.data().at(10) << 0x08 | m_identCap.data().at(11);
+		m_clientName += ' ' + getMirandaVersion( iver, mver, m_dcLastInfoUpdateTime == 0x7FFFFFFF );
+		return;
+	}
+	if  ( hasCap( CAP_QIP ) )
+	{
+		m_clientName = QString::fromLatin1( "QIP" );
+		if ( m_dcLastExtStatusUpdateTime == 0x0F )
+			m_clientVersion = QString::fromLatin1( "2005" );
+		else
+			m_clientVersion = getVersionFromCap( m_identCap, 11 );
+		QString build;
+		if ( m_dcLastInfoUpdateTime && m_dcLastExtInfoUpdateTime == 0x0E )
+		{
+			build.sprintf( "(%d%d%d%d)", m_dcLastInfoUpdateTime >> 0x18, (m_dcLastInfoUpdateTime >> 0x10) & 0xFF, (m_dcLastInfoUpdateTime >> 0x08) & 0xFF, m_dcLastInfoUpdateTime & 0xFF );
+		}
+		m_clientName += ' ' + m_clientVersion + ' ' + build;
+		return;
+	}
+	if ( hasCap( CAP_QIPINFIUM ) )
+	{
+		m_clientName = QString::fromLatin1( "QIP Infium" );
+		if ( m_dcLastInfoUpdateTime )
+		{
+			QString build;
+			build.sprintf(" (%d)", m_dcLastInfoUpdateTime );
+			m_clientName += build;
+		}
+		if ( m_dcLastExtInfoUpdateTime == 0x0B )
+			m_clientName += " Beta";
+		return;
+	}
+	if ( hasCap( CAP_QIPPDA ) )
+	{
+		m_clientName = QString::fromLatin1( "QIP PDA (Windows)" );
+		return;
+	}
+	if ( hasCap( CAP_QIPSYMBIAN ) )
+	{
+		m_clientName = QString::fromLatin1( "QIP PDA (Symbian)" );
+		return;
+	}
+	if ( hasCap( CAP_QIPMOBILE ) )
+	{
+		m_clientName = QString::fromLatin1( "QIP Mobile (Java)" );
+		return;
+	}
+	if ( hasCap( CAP_JIMM ) )
+	{
+		m_clientName = QString::fromLatin1( "Jimm" );
+		m_clientName += ' ' + getVersionFromCap( m_identCap, 5 );
+		return;
+	}
+	if ( hasCap( CAP_SIMNEW ) )
+	{
+		m_clientName = QString::fromLatin1( "SIM" );
+		m_clientVersion.sprintf( "%d.%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(13), m_identCap.data().at(14), m_identCap.data().at(15) & 0x0F );
+		if ( m_identCap.data().at(15) & 0x80 )
+			m_clientVersion += QString::fromLatin1( " (Win32)" );
+		else if ( m_identCap.data().at(15) & 0x40 )
+			m_clientVersion += QString::fromLatin1( " (MacOS X)" );
+        // Linux version? Fix last number
+		m_clientName += ' ' + m_clientVersion;
+		return;
+	}
+	if ( hasCap( CAP_SIMOLD ) )
+	{
+		m_clientName = QString::fromLatin1( "SIM" );
+        /*int hiVersion = (cap.data()[15] >> 6) - 1;
+					unsigned loVersion = cap.data()[15] & 0x1F;
+					kDebug(14150) << "OLD SIM version : <" <<
+						hiVersion << ":" << loVersion << endl;
+				    m_capabilities[i] = true;
+					versionString.sprintf("%d.%d", (unsigned int)hiVersion, loVersion);
+					versionString.insert( 0, "SIM " );*/
+		return;
+	}
+	if ( hasCap( CAP_VMICQ ) )
+	{
+		m_clientName = QString::fromLatin1( "VmICQ" );
+		return;
+	}
+	if ( hasCap( CAP_LICQ ) )
+	{
+		m_clientName = QString::fromLatin1( "Licq" );
+		m_clientVersion.sprintf( "%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(13) % 100, m_identCap.data().at(14) );
+		if ( m_identCap.data().at(15) )
+			m_clientVersion += " SSL";
+		m_clientName += ' ' + m_clientVersion;
+		return;
+	}
+	if ( hasCap( CAP_ANDRQ ) )
+	{
+		m_clientName = QString::fromLatin1( "&RQ" );
+		m_clientVersion.sprintf( "%d.%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(11), m_identCap.data().at(10), m_identCap.data().at(9) );
+		m_clientName += ' ' + m_clientVersion;
+		return;
+	}
+	if ( hasCap( CAP_RANDQ ) )
+	{
+		m_clientName = QString::fromLatin1("R&Q");
+		m_clientVersion.sprintf("%d.%d.%d.%d", m_identCap.data().at(12), m_identCap.data().at(11), m_identCap.data().at(10), m_identCap.data().at(9));
+		m_clientName += ' ' + m_clientVersion;
+		return;
+	}
+	if ( hasCap( CAP_MCHAT ) )
+	{
+		m_clientName = QString::fromLatin1( "mChat" );
+		m_clientVersion = getVersionFromCap( m_identCap, 10 );
+		m_clientName += ' ' + m_clientVersion;
+		return;
+	}
+	
+	if ( m_dcProtoVersion == 9 )
+	{
+		if ( hasCap( CAP_XTRAZ ) )
+		{
+			if ( hasCap( CAP_SENDFILE ) )
+			{
+				if ( hasCap( CAP_TZERS ) )
+				{
+					if ( hasCap( CAP_HTMLMSGS ) )
+						m_clientName = QString::fromLatin1( "ICQ 6" );
+					else
+						m_clientName = QString::fromLatin1( "ICQ 5.1" );
+				}
+				else
+				{
+					m_clientName = QString::fromLatin1( "ICQ 5" );
+				}
+				if ( hasCap( CAP_ICQ_RAMBLER ) )
+				{
+					m_clientName += QString::fromLatin1( " (Rambler)" );
+				}
+				if ( hasCap( CAP_ICQ_ABV ) )
+				{
+					m_clientName += QString::fromLatin1( " (Abv)" );
+				}
+				if ( hasCap( CAP_ICQ_NETVIGATOR ) )
+				{
+					m_clientName += QString::fromLatin1( " (Netvigator)" );
+				}
+				return;
+			}
+		}
+		else if ( !hasCap( CAP_DIRECT_ICQ_COMMUNICATION ) )
+		{
+			if ( hasCap( CAP_UTF8 ) && !hasCap( CAP_RTFMSGS ) )
+			{
+				m_clientName = QString::fromLatin1( "pyICQ" );
+			}
+		}
+		
+	}
+	else if ( m_dcProtoVersion == 0 )
+	{
+		
+	}
+	if ( !m_clientName.isEmpty() )
+		return;
+	if ( m_dcProtoVersion == 6 )
+	{
+		m_clientName = QString::fromLatin1( "ICQ 99" );
+	}
+	else if ( m_dcProtoVersion == 7 )
+	{
+		m_clientName = QString::fromLatin1( "ICQ 2000/Icq2Go" );
+	}
+	else if ( m_dcProtoVersion == 8 )
+	{
+		m_clientName = QString::fromLatin1( "ICQ 2001-2003a" );
+	}
+	else if ( m_dcProtoVersion == 9 )
+	{
+		m_clientName = QString::fromLatin1( "ICQ Lite" );
+	}
+	else if ( m_dcProtoVersion == 10 )
+	{
+		m_clientName = QString::fromLatin1( "ICQ 2003b" );
+	}
 }
 
 bool UserDetails::hasCap( int capNumber ) const
 {
-	bool capPresent = ( ( m_capabilities & ( 1 << capNumber ) ) != 0 );
-	return capPresent;
+	return m_capabilities[capNumber];
+}
+
+bool UserDetails::onlineStatusMsgSupport() const
+{
+	return m_onlineStatusMsgSupport;
 }
 
 void UserDetails::merge( const UserDetails& ud )
@@ -502,6 +776,11 @@ void UserDetails::merge( const UserDetails& ud )
 	{
 		m_onlineSince = ud.m_onlineSince;
 		m_onlineSinceSpecified = true;
+	}
+	if ( ud.m_awaySinceSpecified )
+	{
+		m_awaySince = ud.m_awaySince;
+		m_awaySinceSpecified = true;
 	}
 	if ( ud.m_numSecondsOnlineSpecified )
 	{
@@ -551,11 +830,13 @@ void UserDetails::merge( const UserDetails& ud )
 	}
 	if ( ud.m_iconSpecified )
 	{
+		m_iconType = ud.m_iconType;
 		m_iconChecksumType = ud.m_iconChecksumType;
 		m_md5IconHash = ud.m_md5IconHash;
 		m_iconSpecified = true;
 	}
 	m_availableMessage = ud.m_availableMessage;
+	m_onlineStatusMsgSupport = ud.m_onlineStatusMsgSupport;
 }
 
 //kate: tab-width 4; indent-mode csands;

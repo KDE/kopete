@@ -41,13 +41,13 @@
 #include <kdebug.h>
 #include <ktoolinvocation.h>
 #include <kconfig.h>
-#include <kpixmapregionselectordialog.h>
 #include <kconfiggroup.h>
 
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 
 #include "kopetepasswordwidget.h"
+#include "avatardialog.h"
 
 #include "msnaccount.h"
 #include "msncontact.h"
@@ -88,14 +88,14 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		d->ui->m_password->load( &static_cast<MSNAccount *>(account)->password() );
 
 		//remove me after we can change account ids (Matt)
-		d->ui->m_login->setDisabled( true );
+		d->ui->m_login->setReadOnly( true );
 		d->ui->m_autologin->setChecked( account->excludeConnect()  );
-		if ( ( static_cast<MSNAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<MSNAccount*>(account)->serverPort() != 1863) ) {
+		if ( ( static_cast<MSNAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<MSNAccount*>(account)->serverPort() != 1863) || ( static_cast<MSNAccount*>(account)->useHttpMethod() ) ) {
 			d->ui->optionOverrideServer->setChecked( true );
 		}
 
 		d->ui->optionUseHttpMethod->setChecked( static_cast<MSNAccount*>(account)->useHttpMethod() );
-		
+
 		MSNContact *myself = static_cast<MSNContact *>( account->myself() );
 
 		d->ui->m_displayName->setText( myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() );
@@ -130,14 +130,17 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 		d->ui->m_blp->setChecked( config->readEntry( "BLP" ) == "BL" );
 
-		d->pictureUrl = KStandardDirs::locateLocal( "appdata", "msnpicture-" +
-			account->accountId().toLower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
+		d->pictureUrl = config->readEntry("avatar", QString());
 		d->ui->m_displayPicture->setPixmap( d->pictureUrl );
 
 		d->ui->m_useDisplayPicture->setChecked( config->readEntry( "exportCustomPicture", false ));
 
-		// Global Identity
-		d->ui->m_globalIdentity->setChecked( config->readEntry("ExcludeGlobalIdentity", false) );
+		d->ui->NotifyNewChat->setChecked( config->readEntry( "NotifyNewChat", false ));
+		d->ui->DownloadPicture->setCurrentIndex( config->readEntry( "DownloadPicture", 1 ));
+		d->ui->useCustomEmoticons->setChecked( config->readEntry( "useCustomEmoticons", true ));
+		d->ui->exportEmoticons->setChecked( config->readEntry( "exportEmoticons", false ));
+		d->ui->SendClientInfo->setChecked( config->readEntry( "SendClientInfo", true ));
+		d->ui->SendTypingNotification->setChecked( config->readEntry( "SendTypingNotification", true ));
 	}
 	else
 	{
@@ -158,6 +161,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 MSNEditAccountWidget::~MSNEditAccountWidget()
 {
+	delete d->ui;
 	delete d;
 }
 
@@ -171,6 +175,13 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	account()->setExcludeConnect( d->ui->m_autologin->isChecked() );
 	d->ui->m_password->save( &static_cast<MSNAccount *>(account())->password() );
 
+	config->writeEntry( "NotifyNewChat", d->ui->NotifyNewChat->isChecked() );
+	config->writeEntry( "DownloadPicture", d->ui->DownloadPicture->currentIndex() );
+	config->writeEntry( "useCustomEmoticons", d->ui->useCustomEmoticons->isChecked() );
+	config->writeEntry( "exportEmoticons", d->ui->exportEmoticons->isChecked() );
+	config->writeEntry( "SendClientInfo", d->ui->SendClientInfo->isChecked() );
+	config->writeEntry( "SendTypingNotification", d->ui->SendTypingNotification->isChecked() );
+	
 	config->writeEntry( "exportCustomPicture", d->ui->m_useDisplayPicture->isChecked() );
 	if (d->ui->optionOverrideServer->isChecked() ) {
 		config->writeEntry( "serverName", d->ui->m_serverName->text() );
@@ -183,25 +194,10 @@ Kopete::Account * MSNEditAccountWidget::apply()
 
 	config->writeEntry( "useHttpMethod", d->ui->optionUseHttpMethod->isChecked() );
 
-	// Global Identity
-	config->writeEntry( "ExcludeGlobalIdentity", d->ui->m_globalIdentity->isChecked() );
-
 	// Save the avatar image
-	if( d->ui->m_useDisplayPicture->isChecked() && !d->pictureData.isNull() )
-	{
-		d->pictureUrl = KStandardDirs::locateLocal( "appdata", "msnpicture-" +
-				account()->accountId().toLower().replace( QRegExp("[./~]" ), "-" ) + ".png" );
-		if ( d->pictureData.save( d->pictureUrl, "PNG" ) )
-		{
-			static_cast<MSNAccount *>( account() )->setPictureUrl( d->pictureUrl );
-		}
-		else
-		{
-			KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br>"
-					"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
-		}
-	}
-
+	config->writeEntry("avatar", d->pictureUrl);
+	
+	static_cast<MSNAccount *>( account() )->setPictureUrl( d->pictureUrl );
 	static_cast<MSNAccount *>( account() )->resetPictureObject();
 
 	if ( account()->isConnected() )
@@ -282,43 +278,28 @@ void MSNEditAccountWidget::slotBlock()
 void MSNEditAccountWidget::slotShowReverseList()
 {
 	QStringList reverseList = account()->configGroup()->readEntry( "reverseList", QStringList() );
-	KMessageBox::informationList( this, i18n( "Here you can see a list of contacts who added you to their contact list" ), reverseList,
+	KMessageBox::informationList( this, i18n( "Here you can see a list of the contacts who have added you to their contact list" ), reverseList,
 		i18n( "Reverse List - MSN Plugin" ) );
 }
 
 void MSNEditAccountWidget::slotSelectImage()
 {
-	QString path = 0;
-	bool remoteFile = false;
-	KUrl filePath = KFileDialog::getImageOpenUrl( KUrl(), this, i18n( "MSN Display Picture" ) );
-	if( filePath.isEmpty() )
+	bool ok;
+	QString path = Kopete::UI::AvatarDialog::getAvatar(this, d->pictureUrl,&ok);
+	if( !ok )
 		return;
-
-	if( !filePath.isLocalFile() ) {
-		if(!KIO::NetAccess::download( filePath, path, this )) {
-			KMessageBox::sorry( this, i18n( "Downloading of display image failed" ), i18n( "MSN Plugin" ) );
-			return;
-		}
-		remoteFile = true;
-	}
-	else path = filePath.path();
-
 	QImage img( path );
-	img = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(img), 96, 96, this );
-
 	if(!img.isNull()) 
 	{
-		img = MSNProtocol::protocol()->scalePicture(img);
-	
 		d->ui->m_displayPicture->setPixmap( QPixmap::fromImage(img) );
 		d->pictureData = img;
+		d->pictureUrl = path;
 	}
 	else
 	{
-		KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br>"
-			"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
+		KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the display picture.<br />"
+			"Make sure that you have selected a valid image file</qt>" ), i18n( "MSN Plugin" ) );
 	}
-	if( remoteFile ) KIO::NetAccess::removeTempFile( path );
 }
 
 void MSNEditAccountWidget::slotOpenRegister()

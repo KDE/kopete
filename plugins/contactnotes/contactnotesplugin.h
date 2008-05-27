@@ -15,8 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef BABELFISHPLUGIN_H
-#define BABELFISHPLUGIN_H
+#ifndef CONTACTNOTESPLUGIN_H
+#define CONTACTNOTESPLUGIN_H
 
 #include <qobject.h>
 #include <qmap.h>
@@ -26,7 +26,6 @@
 
 class QString;
 class KAction;
-class KActionCollection;
 
 namespace Kopete { class MetaContact; }
 
@@ -44,7 +43,7 @@ class ContactNotesPlugin : public Kopete::Plugin
 public:
     static ContactNotesPlugin  *plugin();
 
-	ContactNotesPlugin( QObject *parent, const QStringList &args );
+	ContactNotesPlugin( QObject *parent, const QVariantList &args );
 	~ContactNotesPlugin();
 
 	QString notes(Kopete::MetaContact *m);
@@ -61,6 +60,4 @@ private slots: // Private slots
   void slotEditInfo();
 };
 
-#endif
-
-
+#endif // CONTACTNOTESPLUGIN_H

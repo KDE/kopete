@@ -103,6 +103,8 @@ private:
 	const Oscar::PresenceType &pscTypeForStatus( unsigned long status ) const;
 	const Oscar::PresenceType &pscTypeForOnlineStatusType( const Kopete::OnlineStatus::StatusType statusType ) const;
 
+	QString kosDescription( const Oscar::Presence &presence ) const;
+
 	class Private;
 	Private *d;
 };

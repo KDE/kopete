@@ -28,22 +28,17 @@
 
 // KDE Includes
 #include "kopeteprotocol.h"
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 
-class YahooContact;
-class KPopupMenu;
-class KActionMenu;
-class KAction;
 namespace Kopete { class MetaContact; }
 namespace Kopete { class Message; }
-class YahooPreferences;
 namespace Kopete { class OnlineStatus; }
 
 class YahooProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
-	YahooProtocol( QObject *parent, const QStringList &args );
+	YahooProtocol( QObject *parent, const QVariantList &args );
 	~YahooProtocol();
 
 	//Online Statuses
@@ -63,64 +58,64 @@ public:
 	const Kopete::OnlineStatus Idle;
 	const Kopete::OnlineStatus Connecting;
 
-	const Kopete::ContactPropertyTmpl 	awayMessage;
-	const Kopete::ContactPropertyTmpl 	iconCheckSum;
-	const Kopete::ContactPropertyTmpl 	iconExpire;
-	const Kopete::ContactPropertyTmpl 	iconRemoteUrl;
+	const Kopete::PropertyTmpl 	awayMessage;
+	const Kopete::PropertyTmpl 	iconCheckSum;
+	const Kopete::PropertyTmpl 	iconExpire;
+	const Kopete::PropertyTmpl 	iconRemoteUrl;
 
 	// Personal
-	const Kopete::ContactPropertyTmpl	propfirstName;
-	const Kopete::ContactPropertyTmpl	propSecondName;
-	const Kopete::ContactPropertyTmpl	propLastName;
-	const Kopete::ContactPropertyTmpl	propNickName;
-	const Kopete::ContactPropertyTmpl	propTitle;
+	const Kopete::PropertyTmpl	propfirstName;
+	const Kopete::PropertyTmpl	propSecondName;
+	const Kopete::PropertyTmpl	propLastName;
+	const Kopete::PropertyTmpl	propNickName;
+	const Kopete::PropertyTmpl	propTitle;
 
 	// Primary Information	
-	const Kopete::ContactPropertyTmpl	propPhoneMobile;
-	const Kopete::ContactPropertyTmpl	propEmail;
-	const Kopete::ContactPropertyTmpl	propYABId;
+	const Kopete::PropertyTmpl	propPhoneMobile;
+	const Kopete::PropertyTmpl	propEmail;
+	const Kopete::PropertyTmpl	propYABId;
 
 	// Additional Information
-	const Kopete::ContactPropertyTmpl	propPager;
-	const Kopete::ContactPropertyTmpl	propFax;
-	const Kopete::ContactPropertyTmpl	propAdditionalNumber;
-	const Kopete::ContactPropertyTmpl	propAltEmail1;
-	const Kopete::ContactPropertyTmpl	propAltEmail2;
-	const Kopete::ContactPropertyTmpl	propImAIM;
-	const Kopete::ContactPropertyTmpl	propImICQ;
-	const Kopete::ContactPropertyTmpl	propImMSN;
-	const Kopete::ContactPropertyTmpl	propImGoogleTalk;
-	const Kopete::ContactPropertyTmpl	propImSkype;
-	const Kopete::ContactPropertyTmpl	propImIRC;
-	const Kopete::ContactPropertyTmpl	propImQQ;
+	const Kopete::PropertyTmpl	propPager;
+	const Kopete::PropertyTmpl	propFax;
+	const Kopete::PropertyTmpl	propAdditionalNumber;
+	const Kopete::PropertyTmpl	propAltEmail1;
+	const Kopete::PropertyTmpl	propAltEmail2;
+	const Kopete::PropertyTmpl	propImAIM;
+	const Kopete::PropertyTmpl	propImICQ;
+	const Kopete::PropertyTmpl	propImMSN;
+	const Kopete::PropertyTmpl	propImGoogleTalk;
+	const Kopete::PropertyTmpl	propImSkype;
+	const Kopete::PropertyTmpl	propImIRC;
+	const Kopete::PropertyTmpl	propImQQ;
 
 	// Private Information
-	const Kopete::ContactPropertyTmpl	propPrivateAddress;
-	const Kopete::ContactPropertyTmpl	propPrivateCity;
-	const Kopete::ContactPropertyTmpl	propPrivateState;
-	const Kopete::ContactPropertyTmpl	propPrivateZIP;
-	const Kopete::ContactPropertyTmpl	propPrivateCountry;
-	const Kopete::ContactPropertyTmpl	propPrivatePhone;
-	const Kopete::ContactPropertyTmpl	propPrivateURL;
+	const Kopete::PropertyTmpl	propPrivateAddress;
+	const Kopete::PropertyTmpl	propPrivateCity;
+	const Kopete::PropertyTmpl	propPrivateState;
+	const Kopete::PropertyTmpl	propPrivateZIP;
+	const Kopete::PropertyTmpl	propPrivateCountry;
+	const Kopete::PropertyTmpl	propPrivatePhone;
+	const Kopete::PropertyTmpl	propPrivateURL;
 		
 	// Work Information
-	const Kopete::ContactPropertyTmpl	propCorporation;
-	const Kopete::ContactPropertyTmpl	propWorkAddress;
-	const Kopete::ContactPropertyTmpl	propWorkCity;
-	const Kopete::ContactPropertyTmpl	propWorkState;
-	const Kopete::ContactPropertyTmpl	propWorkZIP;
-	const Kopete::ContactPropertyTmpl	propWorkCountry;
-	const Kopete::ContactPropertyTmpl	propWorkPhone;
-	const Kopete::ContactPropertyTmpl	propWorkURL;
+	const Kopete::PropertyTmpl	propCorporation;
+	const Kopete::PropertyTmpl	propWorkAddress;
+	const Kopete::PropertyTmpl	propWorkCity;
+	const Kopete::PropertyTmpl	propWorkState;
+	const Kopete::PropertyTmpl	propWorkZIP;
+	const Kopete::PropertyTmpl	propWorkCountry;
+	const Kopete::PropertyTmpl	propWorkPhone;
+	const Kopete::PropertyTmpl	propWorkURL;
 
 	// Miscellaneous
-	const Kopete::ContactPropertyTmpl	propBirthday;
-	const Kopete::ContactPropertyTmpl	propAnniversary;
-	const Kopete::ContactPropertyTmpl	propNotes;
-	const Kopete::ContactPropertyTmpl	propAdditional1;
-	const Kopete::ContactPropertyTmpl	propAdditional2;
-	const Kopete::ContactPropertyTmpl	propAdditional3;
-	const Kopete::ContactPropertyTmpl	propAdditional4;
+	const Kopete::PropertyTmpl	propBirthday;
+	const Kopete::PropertyTmpl	propAnniversary;
+	const Kopete::PropertyTmpl	propNotes;
+	const Kopete::PropertyTmpl	propAdditional1;
+	const Kopete::PropertyTmpl	propAdditional2;
+	const Kopete::PropertyTmpl	propAdditional3;
+	const Kopete::PropertyTmpl	propAdditional4;
 
 	/** Protocol Accessor **/
 	static YahooProtocol *protocol();

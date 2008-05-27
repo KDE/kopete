@@ -57,9 +57,11 @@ public:
 		ICQ           = 0x00000020,
 		Wireless      = 0x00000100,
 		Invisible     = 0x00000200,
-		XStatus       = 0x00000400,
+		XStatus       = 0x00001000,
+		ExtStatus     = 0x00002000,
 
-		FlagsMask     = 0x00000FF0
+		FlagsMask     = 0x0000FFF0,
+		StatusTypeMask= 0x0000F000
 	};
 	Q_DECLARE_FLAGS(Flags, Flag)
 
@@ -77,8 +79,8 @@ public:
 
 	/**
 	 * Returns internal status
-	 * @note Internal status is 32-bit int with a folowing structure XX000FFT where
-	 * T is status type, FF are Presence::Flags, XX is Xtraz status,
+	 * @note Internal status is 32-bit int with a following structure XX00FFFT where
+	 * T is status type, FFF are Presence::Flags, XX is Xtraz status,
 	 * 0 are always null
 	 */
 	uint internalStatus() const { return mInternalStatus; }
@@ -87,11 +89,8 @@ public:
 	bool operator!=( const Presence &other ) const { return !(*this == other); }
 
 	/**
-	 * XStatus functions.
+	 * Sets Xtraz status
 	 */
-	void setDescription( const QString& desc ) { mDescription = desc; }
-	QString description() const { return mDescription; }
-
 	void setXtrazStatus( int xtraz );
 
 	/**
@@ -105,9 +104,6 @@ private:
 	Presence( uint internalStatus );
 
 	uint mInternalStatus;
-
-	// For XStatus
-	QString mDescription;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(Presence::Flags)
 

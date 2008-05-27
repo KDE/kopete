@@ -23,6 +23,7 @@
 
 #include <qcheckbox.h>
 #include <QList>
+#include <QImageReader>
 
 #undef KDE_NO_COMPAT
 #include <kaction.h>
@@ -47,6 +48,7 @@
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
+#include "kopeteavatarmanager.h"
 
 #include "ui_msninfo.h"
 #include "msnchatsession.h"
@@ -87,7 +89,7 @@ MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::Met
 
 MSNContact::~MSNContact()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 }
 
 bool MSNContact::isReachable()
@@ -146,7 +148,7 @@ QList<KAction*> *MSNContact::customContextMenuActions()
 		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
 
 		// Send mail (only available if it is an hotmail account)
-		actionSendMail = new KAction( KIcon("mail"), i18n("Send Email..."), this );
+		actionSendMail = new KAction( KIcon("mail-message-new"), i18n("Send Email..."), this );
                 //, "actionSendMail" );
 		connect( actionSendMail, SIGNAL(triggered(bool)), this, SLOT(slotSendMail()) );
 
@@ -181,7 +183,7 @@ void MSNContact::slotBlockUser()
 	if( !notify )
 	{
 		KMessageBox::error( Kopete::UI::Global::mainWidget(),
-			i18n( "<qt>Please go online to block or unblock a contact.</qt>" ),
+			i18n( "<qt>You need to go online to block or unblock a contact.</qt>" ),
 			i18n( "MSN Plugin" ));
 		return;
 	}
@@ -234,7 +236,7 @@ void MSNContact::slotUserInfoDialogReversedToggled()
 
 void MSNContact::deleteContact()
 {
-	kDebug( 14140 ) << k_funcinfo << endl;
+	kDebug( 14140 ) ;
 
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
@@ -244,18 +246,18 @@ void MSNContact::deleteContact()
 			// Remove from all groups he belongs (if applicable)
 			for( QMap<QString, Kopete::Group*>::Iterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
 			{
-				kDebug(14140) << k_funcinfo << "Removing contact from group \"" << it.key() << "\"" << endl;
+				kDebug(14140) << "Removing contact from group \"" << it.key() << "\"";
 				notify->removeContact( contactId(), MSNProtocol::FL, guid(), it.key() );
 			}
 
 			// Then trully remove it from server contact list,
 			// because only removing the contact from his groups isn't sufficient from MSNP11.
-			kDebug( 14140 ) << k_funcinfo << "Removing contact from top-level." << endl;
+			kDebug( 14140 ) << "Removing contact from top-level.";
 			notify->removeContact( contactId(), MSNProtocol::FL, guid(), QString());
 		}
 		else
 		{
-			kDebug( 14140 ) << k_funcinfo << "The contact is already removed from server, just delete it" << endl;
+			kDebug( 14140 ) << "The contact is already removed from server, just delete it";
 			deleteLater();
 		}
 	}
@@ -263,7 +265,7 @@ void MSNContact::deleteContact()
 	{
 		// FIXME: This case should be handled by Kopete, not by the plugins :( - Martijn
 		// FIXME: We should be able to delete contacts offline, and remove it from server next time we go online - Olivier
-		KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "<qt>Please go online to remove a contact from your contact list.</qt>" ), i18n( "MSN Plugin" ));
+		KMessageBox::error( Kopete::UI::Global::mainWidget(), i18n( "<qt>You need to go online to remove a contact from your contact list.</qt>" ), i18n( "MSN Plugin" ));
 	}
 }
 
@@ -363,7 +365,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 		else if( data == "N" )
 			m_phone_mob = false;
 		else
-			kDebug( 14140 ) << k_funcinfo << "Unknown MOB " << data << endl;
+			kDebug( 14140 ) << "Unknown MOB " << data;
 	}
 	else if( type == "MFN" )
 	{
@@ -371,7 +373,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 	}
 	else
 	{
-		kDebug( 14140 ) << k_funcinfo << "Unknow info " << type << ' ' << data << endl;
+		kDebug( 14140 ) << "Unknow info " << type << ' ' << data;
 	}
 }
 
@@ -439,7 +441,7 @@ void MSNContact::sync( unsigned int changed )
 		// FIXME: if this method is called a seconds times, that mean change can be
 		//        done in the contact list. we should found a way to recall this
 		//        method later. (a QTimer?)
-		kDebug( 14140 ) << k_funcinfo << " This contact is already moving. Abort sync    id: " << contactId() << endl;
+		kDebug( 14140 ) << " This contact is already moving. Abort sync    id: " << contactId();
 		return;
 	}
 
@@ -478,7 +480,7 @@ void MSNContact::sync( unsigned int changed )
 				//repair the problem
 				group->setPluginData( protocol() , account()->accountId() + " id" , QString());
 				group->setPluginData( protocol() , account()->accountId() + " displayName" , QString());
-				kWarning( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
+				kWarning( 14140 ) << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server";
 
 				if(!group->displayName().isEmpty() && group->type() == Kopete::Group::Normal) //not the top-level
 				{
@@ -527,7 +529,7 @@ void MSNContact::sync( unsigned int changed )
 			removinglist.append(it.key());
 			count--;
 
-			kDebug( 14140 ) << k_funcinfo << "the group marked with id #" << it.key() << " does not seems to be anymore on the server" << endl;
+			kDebug( 14140 ) << "the group marked with id #" << it.key() << " does not seems to be anymore on the server";
 
 			continue;
 		}
@@ -551,7 +553,7 @@ void MSNContact::sync( unsigned int changed )
 	//   we add the contact to the group #0 (the default one)
 	/*if(count==0)
 	{
-//		notify->addContact( contactId(), MSNProtocol::FL, QString::null, guid(), "0");
+//		notify->addContact( contactId(), MSNProtocol::FL, QString(), guid(), "0");
 	}*/
 }
 
@@ -574,7 +576,7 @@ void MSNContact::contactRemovedFromGroup( const QString& groupId )
 
 void MSNContact::rename( const QString &newName )
 {
-	//kDebug( 14140 ) << k_funcinfo << "From: " << displayName() << ", to: " << newName << endl;
+	//kDebug( 14140 ) << "From: " << displayName() << ", to: " << newName;
 
 /*	if( newName == displayName() )
 		return;*/
@@ -606,7 +608,7 @@ void MSNContact::sendFile( const KUrl &sourceURL, const QString &altFileName, ui
 	else
 		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 
-	//kDebug(14140) << "MSNContact::sendFile: File chosen to send:" << fileName << endl;
+	//kDebug(14140) << "MSNContact::sendFile: File chosen to send:" << fileName;
 
 	if ( !filePath.isEmpty() )
 	{
@@ -684,23 +686,24 @@ void MSNContact::setDisplayPicture(KTemporaryFile *f)
 	//copy the temp file somewere else.
 	// in a better world, the file could be dirrectly wrote at the correct location.
 	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
-	QString newlocation=KStandardDirs::locateLocal( "appdata", "msnpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+	Kopete::AvatarManager::AvatarEntry entry;
+	entry.name = contactId();
+	entry.category = Kopete::AvatarManager::Contact;
+	entry.contact = this;
 
-	QString fileName = f->fileName();
-	f->setAutoRemove(false);
+	f->open();
+	entry.image = QImageReader(f).read();
+	f->close();
+
+	entry = Kopete::AvatarManager::self()->add(entry);
+
+	f->setAutoRemove(true);
 	delete f;
 
-	KIO::Job *j=KIO::file_move( KUrl( fileName ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	if (entry.path.isNull())
+		return;
 
-
-	//let the time to KIO to copy the file
-	connect(j, SIGNAL(result(KJob *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
-}
-
-void MSNContact::slotEmitDisplayPictureChanged()
-{
-	QString newlocation=KStandardDirs::locateLocal( "appdata", "msnpictures/"+ contactId().toLower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
-	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+	setProperty( Kopete::Global::Properties::self()->photo() , entry.path );
 	emit displayPictureChanged();
 }
 
@@ -714,8 +717,8 @@ void MSNContact::setObject(const QString &obj)
 	removeProperty( Kopete::Global::Properties::self()->photo()  ) ;
 	emit displayPictureChanged();
 
-	KConfigGroup config(KGlobal::config(), "MSN");
-	if ( config.readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
+    KConfigGroup *config=account()->configGroup();
+	if ( config->readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
 			 && account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }

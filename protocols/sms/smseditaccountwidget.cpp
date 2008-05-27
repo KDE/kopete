@@ -20,10 +20,6 @@
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
-#include <QGridLayout>
-#include <Q3BoxLayout>
 
 #include <kconfigbase.h>
 #include <klocale.h>
@@ -42,8 +38,7 @@
 SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *account, QWidget *parent)
 	: QWidget(parent), KopeteEditAccountWidget(account)
 {
-	Q3VBoxLayout *l = new Q3VBoxLayout(this);
-	l->setSpacing(Q3BoxLayout::Down);
+	QVBoxLayout *l = new QVBoxLayout(this);
 	preferencesDialog = new smsActPrefsUI(this);
 	l->addWidget(preferencesDialog);
 
@@ -59,7 +54,7 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Accoun
 		preferencesDialog->accountId->setText(account->accountId());
 		//Disable changing the account ID for now
 		//FIXME: Remove this when we can safely change the account ID (Matt)
-		preferencesDialog->accountId->setDisabled(true);
+		preferencesDialog->accountId->setReadOnly(true);
 		sName = account->configGroup()->readEntry("ServiceName", QString());
 		preferencesDialog->subEnable->setChecked(account->configGroup()->readEntry("SubEnable", false));
 		preferencesDialog->subCode->setText(account->configGroup()->readEntry("SubCode", QString()));

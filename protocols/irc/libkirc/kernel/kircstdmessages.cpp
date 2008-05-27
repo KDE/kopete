@@ -19,6 +19,7 @@
 
 #include "kircstdmessages.h"
 
+#include "kircconst.h"
 #include "kircmessage.h"
 #include "kircsocket.h"
 
@@ -36,10 +37,35 @@ using namespace KIrc;
 #warning make usage of KUser (done!) and make more useful using some default strings (todo!)
 #endif
 
+
+static const QByteArray AWAY("AWAY");
+static const QByteArray ERROR("ERROR");
+static const QByteArray INVITE("INVITE");
+static const QByteArray ISON("ISON");
+static const QByteArray JOIN("JOIN");
+static const QByteArray KICK("KICK");
+static const QByteArray LIST("LIST");
+static const QByteArray MODE("MODE");
+static const QByteArray MOTD("MOTD");
+static const QByteArray NICK("NICK");
+static const QByteArray NOTICE("NOTICE");
+static const QByteArray PART("PART");
+static const QByteArray PASS("PASS");
+static const QByteArray PING("PING");
+static const QByteArray PONG("PONG");
+static const QByteArray PRIVMSG("PRIVMSG");
+static const QByteArray QUIT("QUIT");
+static const QByteArray SQUIT("SQUIT");
+static const QByteArray TOPIC("TOPIC");
+static const QByteArray USER("USER");
+static const QByteArray WHO("WHO");
+static const QByteArray WHOIS("WHOIS");
+static const QByteArray WHOWAS("WHOWAS");
+
 Message StdMessages::away(const QByteArray &awayMessage)
 {
 	Message msg;
-	msg.setCommand(AWAY);
+	msg << AWAY;
 	if (!awayMessage.isNull())
 		msg.setSuffix(awayMessage);
 	return msg;
@@ -74,8 +100,7 @@ Message StdMessages::ison(const QList<QByteArray> &nickList)
 Message StdMessages::join(const QByteArray &name, const QByteArray &key)
 {
 	Message msg;
-	msg.setCommand(JOIN);
-	msg.appendArg(name);
+	msg << JOIN << name;
 	if (!key.isEmpty())
 		msg.appendArg(key);
 	return msg;
@@ -84,9 +109,7 @@ Message StdMessages::join(const QByteArray &name, const QByteArray &key)
 Message StdMessages::kick(const QByteArray &user, const QByteArray &channel, const QByteArray &reason)
 {
 	Message msg;
-	msg.setCommand(KICK);
-	msg.appendArg(channel);
-	msg.appendArg(user);
+	msg << KICK << channel << user;
 	msg.setSuffix(reason);
 	return msg;
 }
@@ -94,23 +117,21 @@ Message StdMessages::kick(const QByteArray &user, const QByteArray &channel, con
 Message StdMessages::list()
 {
 	Message msg;
-	msg.setCommand(LIST);
+	msg << LIST;
 	return msg;
 }
 
 Message StdMessages::mode(const QByteArray &target, const QByteArray &mode)
 {
 	Message msg;
-	msg.setCommand(MODE);
-	msg.appendArg(target);
-	msg.appendArg(mode);
+	msg << MODE << target << mode;
 	return msg;
 }
 
 Message StdMessages::motd(const QByteArray &server)
 {
 	Message msg;
-	msg.setCommand(MOTD);
+	msg << MOTD;
 	if (!server.isNull())
 		msg.appendArg(server);
 	return msg;
@@ -121,17 +142,15 @@ KIrc::Message StdMessages::nick(const QByteArray &newNickName)
 //	if (newNickName.isEmpty()) newNickName = KUser().loginName();
 
 	Message msg;
-	msg.setCommand(NICK);
-	msg.appendArg(newNickName);
+	msg << NICK << newNickName;
 	return msg;
 }
 
 KIrc::Message StdMessages::notice(const QByteArray &target, const QByteArray &content)
 {
 	Message msg;
-	msg.setCommand(NOTICE);
-	msg.appendArg(target);
-	msg.setSuffix(content/*, target->codec()*/);
+	msg << NOTICE << target;
+	msg.setSuffix(content);
 	return msg;
 }
 
@@ -140,33 +159,30 @@ KIrc::Message StdMessages::notice(const QByteArray &target, const QByteArray &co
 KIrc::Message StdMessages::part(const QByteArray &channel, const QByteArray &reason)
 {
 	Message msg;
-	msg.setCommand(PART);
-	msg.appendArg(channel);
-	msg.setSuffix(reason/*, channel->codec()*/);
+	msg << PART << channel;
+	msg.setSuffix(reason);
 	return msg;
 }
 
 KIrc::Message StdMessages::pass(const QByteArray &password)
 {
 	Message msg;
-	msg.setCommand(PASS);
-	msg.appendArg(password);
+	msg << PASS << password;
 	return msg;
 }
 
 KIrc::Message StdMessages::privmsg(const QByteArray &contact, const QByteArray &content)
 {
 	Message msg;
-	msg.setCommand(PRIVMSG);
-	msg.appendArg(contact);
-	msg.setSuffix(content/*, contact->codec*/);
+	msg << PRIVMSG << contact;
+	msg.setSuffix(content);
 	return msg;
 }
 
 KIrc::Message StdMessages::quit(const QByteArray &reason)
 {
 	Message msg;
-	msg.setCommand(QUIT);
+	msg << QUIT;
 	msg.setSuffix(reason);
 	return msg;
 }
@@ -174,9 +190,8 @@ KIrc::Message StdMessages::quit(const QByteArray &reason)
 Message StdMessages::topic(const QByteArray &channel, const QByteArray &topic)
 {
 	Message msg;
-	msg.setCommand(TOPIC);
-	msg.appendArg(channel);
-	msg.setSuffix(topic/*, channel->codec*/);
+	msg << TOPIC << channel;
+	msg.setSuffix(topic);
 	return msg;
 }
 
@@ -191,10 +206,7 @@ Message StdMessages::user(const QByteArray &user, const QByteArray &hostName, co
 //	if (realName.isEmpty()) realName = KUser().fullName();
 
 	Message msg;
-	msg.setCommand(USER);
-	msg.appendArg(user);
-	msg.appendArg(hostName);
-	msg.appendArg(serverName);
+	msg << USER << hostName << serverName;
 	msg.setSuffix(realName);
 	return msg;
 }
@@ -205,10 +217,7 @@ Message StdMessages::user(const QByteArray &user, UserMode mode, const QByteArra
 //      if (realName.isEmpty()) realName = KUser().fullName();
 
 	Message msg;
-	msg.setCommand(USER);
-	msg.appendArg(user);
-	msg.appendArg(QByteArray::number(mode));
-	msg.appendArg(QChar('*')); // empty byte array instead ...
+	msg << USER << user << QByteArray::number(mode) << QChar('*');
 	msg.setSuffix(realName);
 	return msg;
 }
@@ -216,8 +225,7 @@ Message StdMessages::user(const QByteArray &user, UserMode mode, const QByteArra
 Message StdMessages::whois(const QByteArray &user)
 {
 	Message msg;
-	msg.setCommand(WHOIS);
-	msg.appendArg(user);
+	msg << WHOIS << user;
 	return msg;
 }
 

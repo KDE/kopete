@@ -48,7 +48,7 @@ void ConnectionHandler::append( Connection* c )
 
 void ConnectionHandler::remove( Connection* c )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing connection "
+	kDebug(OSCAR_RAW_DEBUG) << "Removing connection "
 		<< c << endl;
 	d->connections.removeAll( c );
 	c->deleteLater();
@@ -56,7 +56,7 @@ void ConnectionHandler::remove( Connection* c )
 
 void ConnectionHandler::remove( int family )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Removing all connections " <<
+	kDebug(OSCAR_RAW_DEBUG) << "Removing all connections " <<
 		"supporting family " << family << endl;
 	QList<Connection*>::iterator it = d->connections.begin();
 	QList<Connection*>::iterator itEnd = d->connections.end();
@@ -73,7 +73,7 @@ void ConnectionHandler::remove( int family )
 
 void ConnectionHandler::clear()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Clearing all connections"
+	kDebug(OSCAR_RAW_DEBUG) << "Clearing all connections"
 		 << endl;
 	while ( !d->connections.isEmpty() )
 	{

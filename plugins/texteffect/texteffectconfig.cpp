@@ -20,12 +20,12 @@
 
 #include <kglobal.h>
 #include <ksharedconfig.h>
+#include <kconfiggroup.h>
 
 #include "texteffectconfig.h"
 
 TextEffectConfig::TextEffectConfig()
 {
-	load();
 }
 
 void TextEffectConfig::load()

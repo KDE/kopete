@@ -45,7 +45,7 @@ class TextEffectPlugin : public Kopete::Plugin
 public:
 	static TextEffectPlugin  *plugin();
 
-	TextEffectPlugin( QObject *parent, const QStringList &args );
+	TextEffectPlugin( QObject *parent, const QVariantList &args );
 	~TextEffectPlugin();
 
 public slots:
@@ -54,7 +54,7 @@ public slots:
 
 private:
 	static TextEffectPlugin* pluginStatic_;
-	unsigned int last_color;
+	int last_color;
 	TextEffectConfig *m_config;
 };
 

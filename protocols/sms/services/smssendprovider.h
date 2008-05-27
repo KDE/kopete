@@ -30,7 +30,6 @@
 
 class K3Process;
 namespace Kopete { class Account; }
-class SMSContact;
 
 class SMSSendProvider : public QObject
 {

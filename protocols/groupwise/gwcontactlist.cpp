@@ -1,10 +1,10 @@
 /*
     gwcontactlist.cpp - Kopete GroupWise Protocol
 
-    Copyright (c) 2006      Novell, Inc	 	 	 http://www.opensuse.org
+    Copyright (c) 2006,2007 Novell, Inc	 	 	 http://www.opensuse.org
     Copyright (c) 2005      SUSE Linux Products GmbH	 	 http://www.suse.com
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -38,9 +38,8 @@ GWFolder * GWContactList::addFolder( unsigned int id, unsigned int sequence, con
 GWContactInstance * GWContactList::addContactInstance( unsigned int id, unsigned int parent, unsigned int sequence, const QString & displayName, const QString & dn )
 {
 	GWContactInstance * contact = 0;
-	foreach ( QObject *obj, queryList( "GWFolder", 0, false, true ) )
+	foreach ( GWFolder *folder, findChildren<GWFolder *>() )
 	{
-		GWFolder * folder = qobject_cast< GWFolder * >( obj );
 		if ( folder && folder->id == parent )
 		{
 			contact = new GWContactInstance( folder, id, sequence, displayName, dn );
@@ -52,10 +51,9 @@ GWContactInstance * GWContactList::addContactInstance( unsigned int id, unsigned
 
 GWFolder * GWContactList::findFolderById( unsigned int id )
 {
-	GWFolder * candidate, * folder = 0;
-	foreach ( QObject *obj, queryList( "GWFolder", 0, false, true ) )
+	GWFolder * folder = 0;
+	foreach ( GWFolder *candidate, findChildren<GWFolder *>() )
 	{
-		candidate = qobject_cast< GWFolder * >( obj );
 		if ( candidate->id == id )
 		{
 			folder = candidate;
@@ -67,10 +65,9 @@ GWFolder * GWContactList::findFolderById( unsigned int id )
 
 GWFolder * GWContactList::findFolderByName( const QString & displayName )
 {
-	GWFolder *  folder = 0;
-	foreach ( QObject *obj, queryList( "GWFolder", 0, false, true ) )
+	GWFolder * folder = 0;
+	foreach ( GWFolder *candidate, findChildren<GWFolder *>() )
 	{
-		GWFolder * candidate = qobject_cast< GWFolder * >( obj );
 		if ( candidate->displayName == displayName )
 		{
 			folder = candidate;
@@ -83,9 +80,8 @@ GWFolder * GWContactList::findFolderByName( const QString & displayName )
 int GWContactList::maxSequenceNumber()
 {
 	unsigned int sequence = 0;
-	foreach ( QObject *obj, queryList( "GWFolder", 0, false, true ) )
+	foreach ( GWFolder *current, findChildren<GWFolder *>() )
 	{
-		GWFolder * current = qobject_cast< GWFolder * >( obj );
 		sequence = qMax( sequence, current->sequence );
 	}
 	return sequence;
@@ -94,9 +90,8 @@ int GWContactList::maxSequenceNumber()
 GWContactInstanceList GWContactList::instancesWithDn( const QString & dn )
 {
 	GWContactInstanceList matches;
-	foreach ( QObject *obj, queryList( "GWContactInstance", 0, false, true ) )
+	foreach ( GWContactInstance * current, findChildren<GWContactInstance *>() )
 	{
-		GWContactInstance * current = qobject_cast<GWContactInstance *>( obj );
 		if ( current->dn == dn )
 			matches.append( current );
 	}
@@ -111,9 +106,8 @@ void GWContactList::removeInstance( GWContactListItem * instance )
 void GWContactList::removeInstanceById( unsigned int id )
 {
 	GWContactInstanceList matches;
-	foreach ( QObject *obj, queryList( "GWContactInstance", 0, false, true ) )
+	foreach ( GWContactInstance * current, findChildren<GWContactInstance *>() )
 	{
-		GWContactInstance * current = qobject_cast<GWContactInstance *>( obj );
 		if ( current->id == id )
 		{
 			delete current;
@@ -124,10 +118,9 @@ void GWContactList::removeInstanceById( unsigned int id )
 
 void GWContactList::dump()
 {
-	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
-	foreach( QObject *obj, children() )
+	kDebug() ;
+	foreach ( GWFolder * folder, findChildren<GWFolder *>() )
 	{
-		GWFolder * folder = qobject_cast< GWFolder * >( obj );
 		if ( folder )
 			folder->dump( 1 );
 	}
@@ -135,7 +128,7 @@ void GWContactList::dump()
 
 void GWContactList::clear()
 {
-	kDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug() ;
 	foreach ( QObject *obj, children() )
 	{
 		delete obj;
@@ -154,7 +147,7 @@ void GWFolder::dump( unsigned int depth )
 {
 	QString s;
 	s.fill( ' ', ++depth * 2 );
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << s <<"Folder " << displayName << " id: " << id << " contains: " << endl;
+	kDebug() << s <<"Folder " << displayName << " id: " << id << " contains: ";
 	foreach ( QObject *obj, children() )
 	{
 		GWContactInstance * instance = qobject_cast< GWContactInstance * >( obj );
@@ -177,7 +170,7 @@ void GWContactInstance::dump( unsigned int depth )
 {
 	QString s;
 	s.fill( ' ', ++depth * 2 );
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << s << "Contact " << displayName << " id: " << id << " dn: " << dn << endl;
+	kDebug() << s << "Contact " << displayName << " id: " << id << " dn: " << dn;
 }
 #include "gwcontactlist.moc"
 

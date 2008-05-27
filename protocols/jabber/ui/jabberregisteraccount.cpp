@@ -27,7 +27,6 @@
 #include <kglobal.h>
 #include <kmessagebox.h>
 #include <klineedit.h>
-#include <klineedit.h>
 #include <knuminput.h>
 #include <kpushbutton.h>
 #include <qlabel.h>
@@ -78,7 +77,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	connect ( jabberClient, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
 	
 	jidRegExp.setPattern ( "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
-	hintPixmap = KIconLoader::global()->loadIcon ( "jabber_online", K3Icon::Small );
+	hintPixmap = SmallIcon ( "jabber_online" );
 
 	mSuccess = false;
 
@@ -247,7 +246,7 @@ void JabberRegisterAccount::slotOk ()
 
 	mMainWidget->lblStatusMessage->setText ( "" );
 
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Registering a new Jabber account." << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Registering a new Jabber account.";
 
 	enableButtonOk ( false );
 
@@ -298,7 +297,7 @@ void JabberRegisterAccount::slotHandleTLSWarning (
 		QCA::TLS::IdentityResult identityResult,
 		QCA::Validity validityResult )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Handling TLS warning..." << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Handling TLS warning...";
 
 	if ( JabberAccount::handleTLSWarning ( jabberClient, identityResult, validityResult ) )
 	{
@@ -315,7 +314,7 @@ void JabberRegisterAccount::slotHandleTLSWarning (
 
 void JabberRegisterAccount::slotCSError (int error)
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled, disconnecting." << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "Error in stream signalled, disconnecting.";
 
 	Kopete::Account::DisconnectReason errorClass;
 
@@ -330,7 +329,7 @@ void JabberRegisterAccount::slotCSError (int error)
 
 void JabberRegisterAccount::slotConnected ()
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Launching registration task..." << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "Launching registration task...";
 
 	mMainWidget->lblStatusMessage->setText ( i18n ( "Connected successfully, registering new account..." ) );
 
@@ -383,7 +382,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 	{
 		mMainWidget->lblStatusMessage->setText ( i18n ( "Registration failed." ) );
 		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Information,
-								  i18n ("Unable to create account on the server. The Jabber ID is probably already in use."),
+								  i18n ("Unable to create an account on the server. The Jabber ID is probably already in use."),
 								  i18n ("Jabber Account Registration"));
 
 	}

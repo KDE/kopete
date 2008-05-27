@@ -1,7 +1,7 @@
 /*
     privacyguiclient.cpp
 
-    Copyright (c) 2006 by Andre Duffeck        <andre@duffeck.de>
+    Copyright (c) 2006 by Andre Duffeck        <duffeck@kde.org>
     Kopete    (c) 2003-2006 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -64,11 +64,11 @@ PrivacyGUIClient::~PrivacyGUIClient()
 
 void PrivacyGUIClient::slotAddToBlackList()
 {
-	kDebug(14313) << k_funcinfo << endl;
+	kDebug(14313) ;
 	Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin("kopete_privacy");
 	if( !plugin )
 		return;
-	kDebug(14313) << k_funcinfo << "Plugin found" << endl;
+	kDebug(14313) << "Plugin found";
 
 	QList<Kopete::Contact*> members = m_manager->members();
 
@@ -84,7 +84,7 @@ void PrivacyGUIClient::slotAddToBlackList()
 
 void PrivacyGUIClient::slotAddToWhiteList()
 {
-	kDebug(14313) << k_funcinfo << endl;
+	kDebug(14313) ;
 	Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin("kopete_privacy");
 	if( !plugin )
 		return;

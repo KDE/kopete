@@ -16,69 +16,91 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <kmessagebox.h>
-#include <klocale.h>
-#include <kdebug.h>
+#include "dlgjabberservices.h"
 
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <q3table.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QTreeWidget>
+#include <QContextMenuEvent>
+#include <QHeaderView>
+#include <KMenu>
+#include <KMessageBox>
+#include <KLocale>
+#include <KDebug>
 
 #include "jabberaccount.h"
 #include "jabberclient.h"
-#include "dlgjabberregister.h"
-#include "dlgjabberbrowse.h"
-#include "dlgjabberservices.h"
+#include "tasks/jt_ahcommand.h"
+#include "dlgregister.h"
+#include "dlgsearch.h"
+#include "dlgahclist.h"
 
-#include "dlgjabberservices.moc"
-
-dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent) : QDialog(parent)
+dlgJabberServices::dlgJabberServices(JabberAccount *account, QWidget *parent):
+KDialog(parent)
 {
-	setupUi(this);
+	setAttribute(Qt::WA_DeleteOnClose);
+	QWidget *widget = new QWidget(this);
+	ui.setupUi(widget);
+	setMainWidget(widget);
+	setButtons(Close);
+	setCaption(i18n("Services"));
 
-	m_account = account;
-
-	if(m_account->isConnected())
+	mAccount = account;
+	if(mAccount->isConnected())
 	{
 		// pre-populate the server field
-		leServer->setText(m_account->server());
+		ui.leServer->setText(mAccount->server());
 	}
 
-	// disable the left margin
-	//tblServices->setLeftMargin (0);
+	ui.trServices->header()->setResizeMode(QHeaderView::Stretch);
+	ui.trServices->installEventFilter(this);
+	connect(ui.btnQuery, SIGNAL(clicked()), this, SLOT(slotDisco()));
 
-	// no content for now
-	//tblServices->setNumRows (0);
+	connect(ui.trServices, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(slotItemExpanded(QTreeWidgetItem *)));
+	connect(ui.trServices, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(slotMenuRequested(const QPoint &)));
 
-	// disable the buttons as long as nothing has been selected
-	btnRegister->setDisabled (true);
-	btnBrowse->setDisabled (true);
-
-	// allow autostretching
-	//tblServices->setColumnStretchable (0, true);
-	//tblServices->setColumnStretchable (1, true);
-
-	// disable user selections
-	//tblServices->setSelectionMode (Q3Table::NoSelection);
-
-	// name table headers
-	//tblServices->horizontalHeader ()->setLabel (0, i18n ("Name"));
-	//tblServices->horizontalHeader ()->setLabel (1, i18n ("Address"));
-
-	connect (btnQuery, SIGNAL (clicked ()), this, SLOT (slotDisco ()));
-	//connect (tblServices, SIGNAL (clicked (int, int, int, const QPoint &)), this, SLOT (slotSetSelection (int, int, int, const QPoint &)));
-	connect (lvServices, SIGNAL (selectionChanged (Q3ListViewItem *)), this, SLOT (slotSetSelection (Q3ListViewItem *)));
-
-	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (slotRegister ()));
-	connect (btnBrowse, SIGNAL (clicked ()), this, SLOT (slotBrowse ()));
-	
-	connect (btnDisco, SIGNAL (clicked ()), this, SLOT (slotDiscoClicked()));
-
+	mActRegister = new QAction("Register...", this);
+	connect(mActRegister, SIGNAL(triggered()), this, SLOT(slotRegister()));
+	mActSearch = new QAction("Search...", this);
+	connect(mActSearch, SIGNAL(triggered()), this, SLOT(slotSearch()));
+	mActCommand = new QAction("Execute...", this);
+	connect(mActCommand, SIGNAL(triggered()), this, SLOT(slotCommand()));
 }
 
-void dlgJabberServices::slotSetSelection (Q3ListViewItem *it)
+dlgJabberServices::~dlgJabberServices()
+{
+}
+
+void dlgJabberServices::initTree()
+{
+	ui.trServices->clear();
+	mRootItem = new ServiceItem(mAccount, ui.leServer->text() , ui.leNode->text(), "");
+	ui.trServices->addTopLevelItem(mRootItem);
+	mRootItem->setExpanded(true);
+}
+
+bool dlgJabberServices::eventFilter(QObject *object, QEvent *event)
+{
+	if(object == ui.trServices)
+	{
+		if(event->type() == QEvent::ContextMenu && ui.trServices->currentItem())
+		{
+			QContextMenuEvent *e = (QContextMenuEvent *)event;
+			ServiceItem *si = (ServiceItem *)ui.trServices->currentItem();
+			KMenu *menu = new KMenu(this);
+			if(si->features().canRegister())
+				menu->addAction(mActRegister);
+			if(si->features().canSearch())
+				menu->addAction(mActSearch);
+			if(si->features().canCommand())
+				menu->addAction(mActCommand);
+			menu->popup(e->globalPos());
+			return true;
+		}
+	}
+	return false;
+}
+/*void dlgJabberServices::slotSetSelection (Q3ListViewItem *it)
 {
 	dlgJabberServies_item *item=dynamic_cast<dlgJabberServies_item*>(it);
 	if(!item)
@@ -95,35 +117,40 @@ void dlgJabberServices::slotSetSelection (Q3ListViewItem *it)
 		current_node=item->node;
 	}
 
+}*/
+
+void dlgJabberServices::slotItemExpanded(QTreeWidgetItem *item)
+{
+	ServiceItem *si = (ServiceItem *)item;
+	si->startDisco();
 }
 
-void dlgJabberServices::slotService ()
+void dlgJabberServices::slotService()
 {
-
-	if(!m_account->isConnected())
+/*	if(!mAccount->isConnected())
 	{
-		m_account->errorConnectFirst();
+		mAccount->errorConnectFirst();
 		return;
 	}
-	
-	XMPP::JT_GetServices *serviceTask = new XMPP::JT_GetServices (m_account->client()->rootTask ());
+
+	XMPP::JT_GetServices *serviceTask = new XMPP::JT_GetServices (mAccount->client()->rootTask ());
 	connect (serviceTask, SIGNAL (finished ()), this, SLOT (slotServiceFinished ()));
 
-	/* populate server field if it is empty */
+	// populate server field if it is empty
 	if(leServer->text().isEmpty())
-		leServer->setText(m_account->server());
+		leServer->setText(mAccount->server());
 
-	kDebug (14130) << "[dlgJabberServices] Trying to fetch a list of services at " << leServer->text () << endl;
+	kDebug (14130) << "[dlgJabberServices] Trying to fetch a list of services at " << leServer->text ();
 
 	serviceTask->get (leServer->text ());
-	serviceTask->go (true);
+	serviceTask->go (true);*/
 }
 
 
 
 void dlgJabberServices::slotServiceFinished ()
 {
-	kDebug (14130) << "[dlgJabberServices] Query task finished" << endl;
+/*	kDebug (14130) << "[dlgJabberServices] Query task finished";
 
 	XMPP::JT_GetServices * task = (XMPP::JT_GetServices *) sender ();
 
@@ -142,28 +169,31 @@ void dlgJabberServices::slotServiceFinished ()
 		item->jid=(*it).jid();
 		item->can_browse=(*it).features().canSearch();
 		item->can_register=(*it).features().canRegister();
-	}
+		kDebug (14130) << "*******  " << (*it).features().canCommand();
+	}*/
 }
 
 void dlgJabberServices::slotDisco()
 {
-	lvServices->clear();
+	initTree();
+	mRootItem->startDisco();
+/*	trServices->clear();
 
-	if(!m_account->isConnected())
+	if(!mAccount->isConnected())
 	{
-		m_account->errorConnectFirst();
+		mAccount->errorConnectFirst();
 		return;
 	}
-	
-	JT_DiscoItems *jt = new JT_DiscoItems(m_account->client()->rootTask());
+
+	JT_DiscoItems *jt = new JT_DiscoItems(mAccount->client()->rootTask());
 	connect(jt, SIGNAL(finished()), this, SLOT(slotDiscoFinished()));
-	
-	/* populate server field if it is empty */
+
+	// populate server field if it is empty
 	if(leServer->text().isEmpty())
-		leServer->setText(m_account->server());
-	
+		leServer->setText(mAccount->server());
+
 	jt->get(leServer->text() , leNode->text());
-	jt->go(true);
+	jt->go(true);*/
 }
 
 
@@ -172,71 +202,118 @@ void dlgJabberServices::slotDisco()
 
 void dlgJabberServices::slotDiscoFinished( )
 {
-	XMPP::JT_DiscoItems *jt = (JT_DiscoItems *)sender();
+/*	XMPP::JT_DiscoItems *jt = (JT_DiscoItems *)sender();
 
-	if ( jt->success() ) 
+	if( jt->success() ) 
 	{
-		Q3ValueList<XMPP::DiscoItem> list = jt->items();
-		
-		lvServices->clear();
+		const DiscoList &list = jt->items();
+		//lvServices->clear();
 
-		for(Q3ValueList<XMPP::DiscoItem>::ConstIterator it = list.begin(); it != list.end(); ++it) 
+		for(DiscoList::ConstIterator it = list.begin(); it != list.end(); it++)
 		{
-			const XMPP::DiscoItem a = *it;
-			dlgJabberServies_item *item=new dlgJabberServies_item( lvServices ,a.jid().full() , a.node() , a.name());
-			item->jid=a.jid();
-			item->node=a.node();
-			item->updateInfo(a.jid() , a.node(), m_account);
+			const DiscoItem a = *it;
+			//dlgJabberServies_item *item=new dlgJabberServies_item( lvServices ,a.jid().full() , a.node() , a.name());
+			kDebug() << a.jid().full() << " " << a.node() << " " << a.name();
+			ServiceItem *item = new ServiceItem(a.jid().full(), a.node(), a.name());
+			trServices->addTopLevelItem(item);
 		}
 	}
 	else
 	{
-		slotService();
+		//slotService();
+	}*/
+}
+
+
+void dlgJabberServices::slotRegister()
+{
+	ServiceItem *si = (ServiceItem *)ui.trServices->currentItem();
+	dlgRegister *w = new dlgRegister(mAccount, si->jid());
+	w->show();
+	w->raise();
+}
+
+void dlgJabberServices::slotSearch()
+{
+	ServiceItem *si = (ServiceItem *)ui.trServices->currentItem();
+	dlgSearch *w = new dlgSearch(mAccount, si->jid());
+	w->show();
+	w->raise();
+}
+
+void dlgJabberServices::slotCommand()
+{
+	ServiceItem *si = (ServiceItem *)ui.trServices->currentItem();
+	if(si->node().isEmpty())
+	{
+		dlgAHCList *w = new dlgAHCList(si->jid(), mAccount->client()->client());
+		w->show();
+	}
+	else
+	{
+		JT_AHCommand *jt = new JT_AHCommand(si->jid(), AHCommand(si->node()), mAccount->client()->rootTask());
+		jt->go(true);
 	}
 }
 
-
-void dlgJabberServices::slotRegister ()
+ServiceItem::ServiceItem(JabberAccount *account, const QString &jid , const QString &node, const QString &name):
+QTreeWidgetItem(0)
 {
-
-	dlgJabberRegister *registerDialog = new dlgJabberRegister (m_account, current_jid);
-
-	registerDialog->show ();
-	registerDialog->raise ();
-
-}
-
-void dlgJabberServices::slotBrowse ()
-{
-
-	dlgJabberBrowse *browseDialog = new dlgJabberBrowse (m_account, current_jid);
-
-	browseDialog->show ();
-	browseDialog->raise ();
-
-}
-
-dlgJabberServices::~dlgJabberServices ()
-{
-}
-
-void dlgJabberServies_item::updateInfo( const XMPP::Jid & jid , const QString & node , JabberAccount *account )
-{
-	XMPP::JT_DiscoInfo *jt = new XMPP::JT_DiscoInfo(account->client()->rootTask());
-	connect(jt, SIGNAL(finished()),this, SLOT(slotDiscoFinished()));
-	jt->get(jid, node);
+	mAccount = account;
+	mDiscoReady = false;
+	mJid = jid;
+	mNode = node;
+	setChildIndicatorPolicy(ShowIndicator);
+	if(name.isEmpty())
+		setText(0, jid);
+	else
+		setText(0, name);
+	setText(1, jid);
+	setText(2, node);
+	XMPP::JT_DiscoInfo *jt = new XMPP::JT_DiscoInfo(mAccount->client()->rootTask());
+	connect(jt, SIGNAL(finished()), this, SLOT(slotDiscoInfoFinished()));
+	jt->get(mJid, mNode);
 	jt->go(true);
-
 }
 
-void dlgJabberServies_item::slotDiscoFinished( )
+void ServiceItem::startDisco()
+{
+	if(mDiscoReady)
+		return;
+	mDiscoReady = true;
+	JT_DiscoItems *jt = new JT_DiscoItems(mAccount->client()->rootTask());
+	connect(jt, SIGNAL(finished()), this, SLOT(slotDiscoFinished()));
+	jt->get(mJid , mNode);
+	jt->go(true);
+}
+
+void ServiceItem::slotDiscoFinished()
+{
+	XMPP::JT_DiscoItems *jt = (JT_DiscoItems *)sender();
+
+	if(jt->success())
+	{
+		const DiscoList &list = jt->items();
+		for(DiscoList::ConstIterator it = list.begin(); it != list.end(); it++)
+		{
+			const DiscoItem a = *it;
+			//kDebug() << a.jid().full() << " " << a.node() << " " << a.name();
+			ServiceItem *item = new ServiceItem(mAccount, a.jid().full(), a.node(), a.name());
+			addChild(item);
+		}
+	}
+	else
+	{
+		//slotService();
+	}
+}
+
+void ServiceItem::slotDiscoInfoFinished()
 {
 	JT_DiscoInfo *jt = (JT_DiscoInfo *)sender();
-
-	if ( jt->success() ) 
+	if(jt->success())
 	{
-		can_browse = jt->item().features().canSearch();
-		can_register = jt->item().features().canRegister();
+		mFeatures = jt->item().features();
 	}
 	else
 	{
@@ -244,10 +321,4 @@ void dlgJabberServies_item::slotDiscoFinished( )
 	}
 }
 
-void dlgJabberServices::slotDiscoClicked()
-{
-	leServer->setText(current_jid.full());
-	leNode->setText(current_node);
-	slotDisco();
-}
-
+#include "dlgjabberservices.moc"

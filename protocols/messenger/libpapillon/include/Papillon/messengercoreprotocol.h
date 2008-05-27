@@ -16,8 +16,8 @@
    *************************************************************************
 */
 
-#ifndef PAPILLON_CORE_PROTOCOL_H
-#define PAPILLON_CORE_PROTOCOL_H
+#ifndef MESSANGERCOREPROTOCOL_H
+#define MESSANGERCOREPROTOCOL_H
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
@@ -29,13 +29,13 @@ class QDataStream;
 namespace Papillon
 {
 
-class Transfer;
+class NetworkMessage;
 
 /**
  * @class MessengerCoreProtocol messengercoreprotocol.h <Papillon/MessengerCoreProtocol>
- * @brief Translate raw data into Transfer
+ * @brief Translate raw data into NetworkMessage
  * The sole purpose of this class is to parse in a low-level way the Messenger protocol.
- * it create Transfer that Task will be able to use.
+ * it create NetworkMessage that Task will be able to use.
  *
  * @author Michaël Larouche <larouche@kde.org>
  * @author SuSE Linux AG
@@ -55,7 +55,7 @@ public:
 		 */
 		NeedMore,
 		/**
-		 * Transfer is ready.
+		 * NetworkMessage is ready.
 		 */
 		Available,
 		/**
@@ -91,18 +91,18 @@ public:
 	void addIncomingData(const QByteArray &incomingBytes);
 
 	/**
-	 * @brief Get the current Transfer available.
-	 * Use incomingData() to tell when get the incoming Transfer.
-	 * @return the incoming Transfer or 0 if none is available.
+	 * @brief Get the current NetworkMessage available.
+	 * Use incomingData() to tell when get the incoming NetworkMessage.
+	 * @return the incoming NetworkMessage or 0 if none is available.
 	 */
-	Transfer *incomingTransfer();
+	NetworkMessage *incomingNetworkMessage();
 
 	/**
-	 * @brief Convert a request into an outgoing transfer
-	 * Emit outgoingData() with the raw transfer.
-	 * @param outgoing Transfer
+	 * @brief Convert a request into an outgoing networkMessage
+	 * Emit outgoingData() with the raw networkMessage.
+	 * @param outgoing NetworkMessage
 	 */
-	void outgoingTransfer(Transfer *outgoing);
+	void outgoingNetworkMessage(NetworkMessage *outgoing);
 
 	/**
 	 * @brief Get the state of the protocol
@@ -119,7 +119,7 @@ signals:
 	void outgoingData(const QByteArray &data);
 
 	/**
-	 * Emitted when there is incoming data, parsed into a Transfer
+	 * Emitted when there is incoming data, parsed into a NetworkMessage
 	 */
 	void incomingData();
 
@@ -130,11 +130,11 @@ protected:
 	 */
 	bool okToProceed(const QDataStream &din);
 	/**
-	 * Convert incoming raw data into a Transfer object and queue it
+	 * Convert incoming raw data into a NetworkMessage object and queue it
 	 * @param raw raw data
-	 * @return number of bytes from the input that were parsed into a Transfer
+	 * @return number of bytes from the input that were parsed into a NetworkMessage
 	 */
-	int rawToTransfer(const QByteArray &raw);
+	int rawToNetworkMessage(const QByteArray &raw);
 
 	/**
 	 * Check if the command is a payload command.
@@ -149,4 +149,4 @@ private:
 
 }
 
-#endif
+#endif // MESSANGERCOREPROTOCOL_H

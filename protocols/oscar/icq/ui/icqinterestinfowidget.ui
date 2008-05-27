@@ -6,15 +6,24 @@
     <x>0</x>
     <y>0</y>
     <width>376</width>
-    <height>193</height>
+    <height>167</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
    </property>
    <item>
     <widget class="QGroupBox" name="groupBox" >
@@ -22,14 +31,26 @@
       <string>Interests</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>9</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>6</number>
       </property>
       <item row="0" column="0" >
-       <widget class="QComboBox" name="topic1Combo" />
+       <widget class="InfoComboBox" name="topic1Combo" />
       </item>
       <item row="0" column="1" >
        <widget class="QLineEdit" name="desc1" >
@@ -39,7 +60,7 @@
        </widget>
       </item>
       <item row="1" column="0" >
-       <widget class="QComboBox" name="topic2Combo" />
+       <widget class="InfoComboBox" name="topic2Combo" />
       </item>
       <item row="1" column="1" >
        <widget class="QLineEdit" name="desc2" >
@@ -49,7 +70,7 @@
        </widget>
       </item>
       <item row="2" column="0" >
-       <widget class="QComboBox" name="topic3Combo" />
+       <widget class="InfoComboBox" name="topic3Combo" />
       </item>
       <item row="2" column="1" >
        <widget class="QLineEdit" name="desc3" >
@@ -59,7 +80,7 @@
        </widget>
       </item>
       <item row="3" column="0" >
-       <widget class="QComboBox" name="topic4Combo" />
+       <widget class="InfoComboBox" name="topic4Combo" />
       </item>
       <item row="3" column="1" >
        <widget class="QLineEdit" name="desc4" >
@@ -76,13 +97,10 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
      <property name="sizeHint" >
       <size>
        <width>281</width>
-       <height>60</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>
@@ -91,6 +109,13 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>InfoComboBox</class>
+   <extends>QComboBox</extends>
+   <header>infocombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>topic1Combo</tabstop>
   <tabstop>desc1</tabstop>

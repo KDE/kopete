@@ -147,7 +147,7 @@ void MetaContactSelectorWidgetLVI::buildVisualComponents()
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
 	d->spacerBox = new BoxComponent( hbox, BoxComponent::Horizontal );
 
-	d->contactIconSize = IconSize( K3Icon::Small );
+	d->contactIconSize = IconSize( KIconLoader::Small );
 	Component *imageBox = new BoxComponent( hbox, BoxComponent::Vertical );
 	new VSpacerComponent( imageBox );
 	// include borders in size
@@ -172,7 +172,7 @@ void MetaContactSelectorWidgetLVI::slotUpdateContactBox()
 	while (it.hasNext())
 	{
 		Kopete::Contact *c = it.next();
-		new ContactComponent(d->contactIconBox, c, IconSize( K3Icon::Small ));
+		new ContactComponent(d->contactIconBox, c, IconSize( KIconLoader::Small ));
 	}
 }
 
@@ -207,6 +207,7 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 
 	d->widget->kListViewSearchLine->setListView(d->widget->metaContactListView);
 	d->widget->metaContactListView->setFullWidth( true );
+	d->widget->metaContactListView->addColumn( i18n( "Contacts" ), 0 );
 	d->widget->metaContactListView->header()->hide();
 	d->widget->metaContactListView->setColumnWidthMode(0, Q3ListView::Maximum);
 	slotLoadMetaContacts();
@@ -216,6 +217,8 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 MetaContactSelectorWidget::~MetaContactSelectorWidget()
 {
 	disconnect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
+	delete d->widget;
+	delete d;
 }
 
 
@@ -264,7 +267,7 @@ bool MetaContactSelectorWidget::metaContactSelected()
 	return d->widget->metaContactListView->selectedItem() ? true : false;
 }
 
-/**  Read in metacontacts from contactlist */
+/**  Read in metacontacts from contact list */
 void MetaContactSelectorWidget::slotLoadMetaContacts()
 {
 	d->widget->metaContactListView->clear();

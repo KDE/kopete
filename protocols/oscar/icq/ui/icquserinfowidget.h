@@ -41,11 +41,12 @@ class ICQUserInfoWidget : public KPageDialog
 {
 Q_OBJECT
 public:
-	explicit ICQUserInfoWidget( QWidget* parent = 0, bool editable = false );
+	explicit ICQUserInfoWidget( QWidget* parent = 0, bool ownInfo = false );
 	~ICQUserInfoWidget();
 	void setContact( ICQContact* contact );
 	
 	QList<ICQInfoBase*> getInfoData() const;
+	QString getAlias() const;
 
 public slots:
 	void fillBasicInfo( const ICQGeneralUserInfo& );
@@ -100,7 +101,7 @@ private:
 	ICQContact* m_contact;
 	
 	QStandardItemModel* m_emailModel;
-	bool m_editable;
+	bool m_ownInfo;
 
 	ICQGeneralUserInfo m_generalUserInfo;
 	ICQMoreUserInfo m_moreUserInfo;

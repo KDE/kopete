@@ -24,7 +24,7 @@
 #include <kgenericfactory.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <k3process.h>
+#include <kprocess.h>
 #include <ktemporaryfile.h>
 #include <kcodecs.h>
 #include <kmessagebox.h>
@@ -38,25 +38,25 @@
 
 #define ENCODED_IMAGE_MODE 0
 
-typedef KGenericFactory<LatexPlugin> LatexPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_latex, LatexPluginFactory( "kopete_latex" )  )
 
-LatexPlugin::LatexPlugin( QObject *parent, const QStringList &/*args*/ )
+K_PLUGIN_FACTORY(LatexPluginFactory, registerPlugin<LatexPlugin>();)
+K_EXPORT_PLUGIN(LatexPluginFactory( "kopete_latex" ))
+
+
+LatexPlugin::LatexPlugin( QObject *parent, const QVariantList &/*args*/ )
 : Kopete::Plugin( LatexPluginFactory::componentData(), parent )
 {
-//	kDebug() << k_funcinfo << endl;
+//	kDebug(14317) ;
 	if( !s_pluginStatic )
 		s_pluginStatic = this;
 
 	mMagickNotFoundShown = false;
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotMessageAboutToShow( Kopete::Message & ) ) );
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToSend(Kopete::Message& )  ), this,  SLOT(slotMessageAboutToSend(Kopete::Message& )  ) );
-	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * ) ),
 			 this, SLOT( slotNewChatSession( Kopete::ChatSession * ) ) );
 	
 	m_convScript = KStandardDirs::findExe("kopete_latexconvert.sh");
-	slotSettingsChanged();
 
 		//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
 	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
@@ -93,7 +93,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 		{
 			KMessageBox::queuedMessageBox(
 			    Kopete::UI::Global::mainWidget(),
-			    KMessageBox::Error, i18n("I cannot find the Magick convert program.\nconvert is required to render the Latex formulas.\nPlease go to www.imagemagick.org or to your distribution site and get the right package.")
+			    KMessageBox::Error, i18n("Cannot find the Magick 'convert' program.\nconvert is required to render the LaTeX formulae.\nPlease get the software from www.imagemagick.org or from your distribution's package manager.")
 			);
 			mMagickNotFoundShown = true;
 		}
@@ -105,7 +105,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	if( !messageText.contains("$$"))
 		return;
 
-	//kDebug() << k_funcinfo << " Using converter: " << m_convScript << endl;
+	//kDebug(14317) << " Using converter: " << m_convScript;
 
 	// /\[([^]]).*?\[/$1\]/
 	// \$\$.+?\$\$
@@ -121,7 +121,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	QMap<QString, QString> replaceMap;
 	while (pos >= 0 && pos < messageText.length())
 	{
-//		kDebug() << k_funcinfo  << " searching pos: " << pos << endl;
+//		kDebug(14317) << " searching pos: " << pos;
 		pos = rg.indexIn(messageText, pos);
 		
 		if (pos >= 0 )
@@ -155,7 +155,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 		}
 	}
 
-	if(replaceMap.isEmpty()) //we haven't found any latex strings
+	if(replaceMap.isEmpty()) //we haven't found any LaTeX strings
 		return;
 
 	messageText= msg.escapedBody();
@@ -169,7 +169,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 		imagePxWidth = theImage.width();
 		imagePxHeight = theImage.height();
 		QString escapedLATEX=Qt::escape(it.key()).replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
-		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
+		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" align=\"middle\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
 	msg.setHtmlBody( messageText );
@@ -224,20 +224,23 @@ QString LatexPlugin::handleLatex(const QString &latexFormula)
 	m_tempFiles.append(tempFile);
 	QString fileName = tempFile->fileName();
 
-	K3Process p;
-			
-	QString argumentRes = "-r %1x%2";
-	QString argumentOut = "-o %1";
+	KProcess p;
+	
+	QString argumentRes = QString("-r %1x%2").arg(LatexConfig::horizontalDPI()).arg(LatexConfig::verticalDPI());
+	QString argumentOut = QString("-o %1").arg(fileName);
+	QString argumentInclude ("-x %1");
 	//QString argumentFormat = "-fgif";  //we uses gif format because MSN only handle gif
-	int hDPI, vDPI;
-	hDPI = LatexConfig::self()->horizontalDPI();
-	vDPI = LatexConfig::self()->verticalDPI();
-	p << m_convScript <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << argumentOut.arg(fileName) /*<< argumentFormat*/ << latexFormula  ;
-			
-	kDebug() << k_funcinfo  << " Rendering " << m_convScript << " " <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << " " << argumentOut.arg(fileName) << endl;
-			
+	LatexConfig::self()->readConfig();
+	QString includePath = LatexConfig::latexIncludeFile();
+	if (!includePath.isNull())
+		p << m_convScript <<  argumentRes << argumentOut /*<< argumentFormat*/ << argumentInclude.arg(includePath) << latexFormula;
+	else
+		p << m_convScript <<  argumentRes << argumentOut /*<< argumentFormat*/ << latexFormula;
+	
+	kDebug(14317) << "Rendering" << m_convScript << argumentRes << argumentOut << argumentInclude << latexFormula ;
+	
 	// FIXME our sucky sync filter API limitations :-)
-	p.start(K3Process::Block);
+	p.execute();
 	return fileName;
 }
 
@@ -248,11 +251,6 @@ bool LatexPlugin::securityCheck(const QString &latexFormula)
 			"|read|csname|newhelp|relax|afterground|afterassignment|expandafter|noexpand|special|command|loop|repeat|toks"
 			"|output|line|mathcode|name|item|section|mbox|DeclareRobustCommand)[^a-zA-Z]"));
 
-}
-
-void LatexPlugin::slotSettingsChanged()
-{
-	LatexConfig::self()->readConfig();
 }
 
 #include "latexplugin.moc"

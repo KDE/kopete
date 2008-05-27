@@ -27,8 +27,6 @@
 #include "jabberchatsession.h"
 #include "jabbercontactpool.h"
 #include "kopetemetacontact.h"
-//Added by qt3to4:
-#include <Q3PtrList>
 
 /**
  * JabberGroupMemberContact constructor
@@ -78,7 +76,7 @@ Kopete::ChatSession *JabberGroupMemberContact::manager ( Kopete::Contact::CanCre
 	chatMembers.append ( this );
 
 	/*
-	 * FIXME: We might have to use the group chat contact here instead of
+	 * FIXME: We might have to use the groupchat contact here instead of
 	 *        the global myself() instance for a correct representation.
 	 */
 	mManager = new JabberChatSession ( protocol(), static_cast<JabberBaseContact *>(account()->myself()), chatMembers );
@@ -101,7 +99,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
 
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "Received Message Type:" << message.type ();
 
 	/**
 	 * Don't display empty messages, these were most likely just carrying

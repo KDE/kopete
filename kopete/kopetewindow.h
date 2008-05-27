@@ -5,7 +5,7 @@
     Copyright (c) 2001-2002 by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -34,9 +34,12 @@ class KMenu;
 
 namespace Kopete
 {
+	class Identity;
 	class Account;
 	class Contact;
 	class Plugin;
+	class StatusMessage;
+	class StatusRootAction;
 }
 
 /**
@@ -47,7 +50,7 @@ class KopeteWindow : public KXmlGuiWindow
 	Q_OBJECT
 
 public:
-	explicit KopeteWindow ( QWidget *parent = 0, const char *name = 0 );
+	explicit KopeteWindow ( QWidget *parent = 0 );
 	~KopeteWindow();
 
 	virtual bool eventFilter( QObject* o, QEvent* e );
@@ -56,11 +59,11 @@ protected:
 	virtual void closeEvent( QCloseEvent *ev );
 	virtual void leaveEvent( QEvent* ev );
 	virtual void showEvent( QShowEvent* ev );
+	virtual void hideEvent( QHideEvent* ev );
 
 private slots:
-	void showMenubar();
-	void showStatusbar();
-	void slotToggleShowOffliners();
+	void slotToggleShowAllOfflineEmpty( bool toggled );
+	void slotToggleShowOfflineUsers();
 	void slotToggleShowEmptyGroups();
 	void slotConfigChanged();
 	void slotConfNotifications();
@@ -71,17 +74,26 @@ private slots:
 	void slotToggleAway();
 
 
-	void setStatusMessage( const QString & );
+	void setStatusMessage( const Kopete::StatusMessage& );
+
+	void globalStatusChanged();
 
 	/**
 	 * Checks if the mousecursor is in the contact list.
 	 * If not, the window will be hidden.
 	 */
 	void slotAutoHide();
+	
+	/**
+	 * Resize window to fit size of contact list nicely.
+	 */
+	void slotUpdateSize();
+
+	void slotStartAutoResizeTimer();
 
 	/**
 	 * This slot will apply settings that change the
-	 * contactlist's appearance. Only autohiding is
+	 * contact list's appearance. Only autohiding is
 	 * handled here at the moment
 	 */
 	void slotContactListAppearanceChanged();
@@ -104,32 +116,46 @@ private slots:
 	void slotPluginLoaded( Kopete::Plugin *p );
 
 	/**
-	 * Get a notification when an account is created, so we can add a status bar
+	 * Get a notification when an identity is created, so we can add a status bar
 	 * icon
+	 * @param identity the registered identity
 	 */
-	void slotAccountRegistered( Kopete::Account *a );
+	void slotIdentityRegistered( Kopete::Identity *identity );
 
 	/**
-	 * Cleanup the status bar icon when the account is destroyed
+	 * Cleanup the status bar icon when the identity is destroyed
+	 * @param identity the unregistered identity
 	 */
-	void slotAccountUnregistered( const Kopete::Account *a);
+	void slotIdentityUnregistered( const Kopete::Identity *identity );
+
+	/**
+	 * The tooltip got changed, update it.
+	 * @param identity the identity that has changed
+	 */
+	void slotIdentityToolTipChanged( Kopete::Identity *identity );
 
 	/**
 	 * The status icon got changed, update it.
-	 * @param contact The account's contact that changed.
+	 * @param identity the identity that has changed
 	 */
-	void slotAccountStatusIconChanged( Kopete::Contact * contact);
+	void slotIdentityStatusIconChanged( Kopete::Identity *identity );
 
 	/**
-	 * The status icon of some account changed. Must be sent by the account in question.
+	 * Show a in-place widget for an identity
 	 */
-	void slotAccountStatusIconChanged();
-
-	/**
-	 * Show a context menu for an account
-	 */
-	void slotAccountStatusIconRightClicked( Kopete::Account *a,
+	void slotIdentityStatusIconLeftClicked( Kopete::Identity *i,
 		const QPoint &p );
+
+
+	/**
+	 * This is used to add the account to the "Add Contact" submenu
+	 */
+	void slotAccountRegistered( Kopete::Account *account );
+
+	/**
+	 * This is used to add the account to the "Add Contact" submenu
+	 */
+	void slotAccountUnregistered( const Kopete::Account *account );
 
 	void slotTrayAboutToShowMenu(KMenu *);
 
@@ -151,16 +177,19 @@ private slots:
 	void slotAllPluginsLoaded();
 
 	/**
-	 * Protected slot to setup the Set Global Status Message menu.
-	 */
-	void slotBuildStatusMessageMenu();
-	void slotStatusMessageSelected( int i );
-	void slotNewStatusMessageEntered();
-
-	/**
 	 * Show the set global status message menu when clicking on the icon in the status bar.
 	 */
 	void slotGlobalStatusMessageIconClicked( const QPoint &position );
+
+	/**
+	 * Show Info Event widget and if necessary raise the Kopete window.
+	 */
+	void slotShowInfoEventWidget();
+
+	/**
+	 * Show/hide Info Event widget.
+	 */
+	void slotInfoIconClicked();
 
 	/**
 	 * Extracts protocolId and accountId from the single QString argument signalled by a QSignalMapper,
@@ -169,6 +198,8 @@ private slots:
 	 * We need both to uniquely identify an account, but QSignalMapper only emits one QString.
 	 */
 	void slotAddContactDialogInternal( const QString & accountIdentifier );
+
+	void updateStatusMenuMessage( Kopete::StatusRootAction *statusRootAction );
 
 private:
 	void initView();
@@ -200,6 +231,23 @@ protected:
 
 signals:
       void iconClicked(const QPoint &position);
+
+};
+
+class InfoEventIconLabel : public QLabel
+{
+	Q_OBJECT
+public:
+	InfoEventIconLabel( QWidget *parent = 0 );
+
+protected:
+	void mouseReleaseEvent( QMouseEvent *event );
+
+signals:
+	void clicked();
+
+private slots:
+	void updateIcon();
 
 };
 

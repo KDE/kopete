@@ -33,12 +33,12 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteonlinestatusmanager.h"
 #include "kopeteglobal.h"
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 
-typedef KGenericFactory<YahooProtocol> YahooProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, YahooProtocolFactory( "kopete_yahoo" )  )
+K_PLUGIN_FACTORY( YahooProtocolFactory, registerPlugin<YahooProtocol>(); )
+K_EXPORT_PLUGIN( YahooProtocolFactory( "kopete_yahoo" ) )
 
-YahooProtocol::YahooProtocol( QObject *parent, const QStringList & )
+YahooProtocol::YahooProtocol( QObject *parent, const QVariantList & )
 	: Kopete::Protocol( YahooProtocolFactory::componentData(), parent ),
 	Offline( Kopete::OnlineStatus::Offline,      0, this, 0x5a55aa56, QStringList(),  i18n( "Offline" ),       i18n( "Offline" ),     Kopete::OnlineStatusManager::Offline ),
 	Online( Kopete::OnlineStatus::Online,       25, this, 0, QStringList(),           i18n( "Online" ),        i18n( "Online" ),      Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasStatusMessage  ),
@@ -56,53 +56,53 @@ YahooProtocol::YahooProtocol( QObject *parent, const QStringList & )
 	Idle( Kopete::OnlineStatus::Away,           15, this, 999, QStringList(QString::fromUtf8("yahoo_idle")),          i18n( "Idle" ),         i18n( "Idle" ),         Kopete::OnlineStatusManager::Idle ),
 	Connecting( Kopete::OnlineStatus::Connecting,2, this, 555, QStringList(QString::fromUtf8("yahoo_connecting")),    i18n( "Connecting" ), i18n("Connecting"), 0, Kopete::OnlineStatusManager::HideFromMenu ),
 	awayMessage(Kopete::Global::Properties::self()->statusMessage()),
-	iconCheckSum("iconCheckSum", i18n("Buddy Icon Checksum"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty),
-	iconExpire("iconExpire", i18n("Buddy Icon Expire"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty),
-	iconRemoteUrl("iconRemoteUrl", i18n("Buddy Icon Remote Url"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty),
+	iconCheckSum("iconCheckSum", i18n("Buddy Icon Checksum"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty),
+	iconExpire("iconExpire", i18n("Buddy Icon Expires"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty),
+	iconRemoteUrl("iconRemoteUrl", i18n("Buddy Icon Remote URL"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty),
 	propfirstName(Kopete::Global::Properties::self()->firstName()),
 	propSecondName(),
 	propLastName(Kopete::Global::Properties::self()->lastName()),
 	propNickName(Kopete::Global::Properties::self()->nickName()),
-	propTitle("YABTitle", i18n("Title"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ),
+	propTitle("YABTitle", i18n("Title"), QString(), Kopete::PropertyTmpl::PersistentProperty ),
 	propPhoneMobile(Kopete::Global::Properties::self()->privateMobilePhone()),
 	propEmail(Kopete::Global::Properties::self()->emailAddress()),
-	propYABId("YABId", i18n("YAB Id"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty),
-	propPager("YABPager", i18n("Pager number"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propFax("YABFax", i18n("Fax number"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAdditionalNumber("YABAdditionalNumber", i18n("Additional number"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAltEmail1("YABAlternativeEmail1", i18n("Alternative email 1"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAltEmail2("YABAlternativeEmail2", i18n("Alternative email 1"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propImAIM("YABIMAIM", i18n("AIM"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propImICQ("YABIMICQ", i18n("ICQ"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propImMSN("YABIMMSN", i18n("MSN"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propImGoogleTalk("YABIMGoogleTalk", i18n("GoogleTalk"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propImSkype("YABIMSkype", i18n("Skype"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propImIRC("YABIMIRC", i18n("IRC"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propImQQ("YABIMQQ", i18n("QQ"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propPrivateAddress("YABPrivateAddress", i18n("Private Address"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propPrivateCity("YABPrivateCity", i18n("Private City"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propPrivateState("YABPrivateState", i18n("Private State"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propPrivateZIP("YABPrivateZIP", i18n("Private ZIP"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propPrivateCountry("YABPrivateCountry", i18n("Private Country"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propYABId("YABId", i18n("YAB Id"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty),
+	propPager("YABPager", i18n("Pager number"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propFax("YABFax", i18n("Fax number"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propAdditionalNumber("YABAdditionalNumber", i18n("Additional number"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propAltEmail1("YABAlternativeEmail1", i18n("Alternative email 1"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propAltEmail2("YABAlternativeEmail2", i18n("Alternative email 1"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propImAIM("YABIMAIM", i18n("AIM"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propImICQ("YABIMICQ", i18n("ICQ"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propImMSN("YABIMMSN", i18n("MSN"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propImGoogleTalk("YABIMGoogleTalk", i18n("GoogleTalk"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propImSkype("YABIMSkype", i18n("Skype"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propImIRC("YABIMIRC", i18n("IRC"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propImQQ("YABIMQQ", i18n("QQ"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propPrivateAddress("YABPrivateAddress", i18n("Private Address"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propPrivateCity("YABPrivateCity", i18n("Private City"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propPrivateState("YABPrivateState", i18n("Private State"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propPrivateZIP("YABPrivateZIP", i18n("Private ZIP"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propPrivateCountry("YABPrivateCountry", i18n("Private Country"), QString(), Kopete::PropertyTmpl::PersistentProperty),
 	propPrivatePhone(Kopete::Global::Properties::self()->privatePhone()),
-	propPrivateURL("YABPrivateURL", i18n("Private URL"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propCorporation("YABCorporation", i18n("Corporation"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkAddress("YABWorkAddress", i18n("Work Address"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkCity("YABWorkCity", i18n("Work City"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkState("YABWorkState", i18n("Work State"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkZIP("YABWorkZIP", i18n("Work ZIP"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkCountry("YABWorkCountry", i18n("Work Country"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
+	propPrivateURL("YABPrivateURL", i18n("Private URL"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propCorporation("YABCorporation", i18n("Corporation"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propWorkAddress("YABWorkAddress", i18n("Work Address"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propWorkCity("YABWorkCity", i18n("Work City"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propWorkState("YABWorkState", i18n("Work State"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propWorkZIP("YABWorkZIP", i18n("Work ZIP"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propWorkCountry("YABWorkCountry", i18n("Work Country"), QString(), Kopete::PropertyTmpl::PersistentProperty),
 	propWorkPhone(Kopete::Global::Properties::self()->workPhone()),
-	propWorkURL("YABWorkURL", i18n("Work URL"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propBirthday("YABBirthday", i18n("Birthday"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAnniversary("YABAnniversary", i18n("Anniversary"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propNotes("YABNotes", i18n("Notes"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAdditional1("YABAdditional1", i18n("Additional 1"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAdditional2("YABAdditional2", i18n("Additional 2"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAdditional3("YABAdditional3", i18n("Additional 3"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAdditional4("YABAdditional4", i18n("Additional 4"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty)
+	propWorkURL("YABWorkURL", i18n("Work URL"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propBirthday("YABBirthday", i18n("Birthday"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propAnniversary("YABAnniversary", i18n("Anniversary"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propNotes("YABNotes", i18n("Notes"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propAdditional1("YABAdditional1", i18n("Additional 1"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propAdditional2("YABAdditional2", i18n("Additional 2"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propAdditional3("YABAdditional3", i18n("Additional 3"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propAdditional4("YABAdditional4", i18n("Additional 4"), QString(), Kopete::PropertyTmpl::PersistentProperty)
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	s_protocolStatic_ = this;
 	setCapabilities( RichFgColor | RichFormatting | RichFont );
@@ -112,7 +112,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const QStringList & )
 
 YahooProtocol::~YahooProtocol()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	s_protocolStatic_ = 0L;
 }
 
@@ -175,12 +175,12 @@ Kopete::Contact *YahooProtocol::deserializeContact( Kopete::MetaContact *metaCon
 	YahooAccount *theAccount = static_cast<YahooAccount*>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
 
 	if(!theAccount)
-	{	kDebug( YAHOO_GEN_DEBUG ) << k_funcinfo << "Account " << accountId << " not found" << endl;
+	{	kDebug( YAHOO_GEN_DEBUG ) << "Account " << accountId << " not found";
 		return 0;
 	}
 
 	if(theAccount->contact(contactId))
-	{	kDebug( YAHOO_GEN_DEBUG ) << k_funcinfo << "User " << contactId << " already in contacts map" << endl;
+	{	kDebug( YAHOO_GEN_DEBUG ) << "User " << contactId << " already in contacts map";
 		return 0;
 	}
 
@@ -190,7 +190,7 @@ Kopete::Contact *YahooProtocol::deserializeContact( Kopete::MetaContact *metaCon
 
 AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent , Kopete::Account* )
 {
-	kDebug(YAHOO_GEN_DEBUG) << "YahooProtocol::createAddContactWidget(<parent>)" << endl;
+	kDebug(YAHOO_GEN_DEBUG) << "YahooProtocol::createAddContactWidget(<parent>)";
 	return new YahooAddContact(this, parent);
 }
 

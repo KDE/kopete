@@ -605,6 +605,13 @@ void JT_Presence::pres(const Status &s)
 			}
 			tag.appendChild(m);
 		}
+
+		if(s.hasPhotoHash()) {
+			QDomElement m = doc()->createElement("x");
+			m.setAttribute("xmlns", "vcard-temp:x:update");
+			m.appendChild(textTag(doc(), "photo", s.photoHash()));
+			tag.appendChild(m);
+		}
 	}
 }
 
@@ -857,74 +864,6 @@ bool JT_PushMessage::take(const QDomElement &e)
 
 
 //----------------------------------------------------------------------------
-// JT_GetLastActivity
-//----------------------------------------------------------------------------
-class JT_GetLastActivity::Private
-{
-public:
-	Private() {}
-
-	int seconds;
-	QString message;
-};
-
-JT_GetLastActivity::JT_GetLastActivity(Task *parent)
-:Task(parent)
-{
-	d = new Private;
-}
-
-JT_GetLastActivity::~JT_GetLastActivity()
-{
-	delete d;
-}
-
-void JT_GetLastActivity::get(const Jid &j)
-{
-	jid = j;
-	iq = createIQ(doc(), "get", jid.full(), id());
-	QDomElement query = doc()->createElement("query");
-	query.setAttribute("xmlns", "jabber:iq:last");
-	iq.appendChild(query);
-}
-
-int JT_GetLastActivity::seconds() const
-{
-	return d->seconds;
-}
-
-const QString &JT_GetLastActivity::message() const
-{
-	return d->message;
-}
-
-void JT_GetLastActivity::onGo()
-{
-	send(iq);
-}
-
-bool JT_GetLastActivity::take(const QDomElement &x)
-{
-	if(!iqVerify(x, jid, id()))
-		return false;
-
-	if(x.attribute("type") == "result") {
-		QDomElement q = queryTag(x);
-
-		d->message = q.text();
-		bool ok;
-		d->seconds = q.attribute("seconds").toInt(&ok);
-
-		setSuccess(ok);
-	}
-	else {
-		setError(x);
-	}
-
-	return true;
-}
-
-//----------------------------------------------------------------------------
 // JT_GetServices
 //----------------------------------------------------------------------------
 JT_GetServices::JT_GetServices(Task *parent)
@@ -1040,7 +979,7 @@ void JT_VCard::get(const Jid &_jid)
 {
 	type = 0;
 	d->jid = _jid;
-	d->iq = createIQ(doc(), "get", d->jid.full(), id());
+	d->iq = createIQ(doc(), "get", type == 1 ? Jid().full() : d->jid.full(), id());
 	QDomElement v = doc()->createElement("vCard");
 	v.setAttribute("xmlns", "vcard-temp");
 	v.setAttribute("version", "2.0");
@@ -1058,12 +997,12 @@ const VCard & JT_VCard::vcard() const
 	return d->vcard;
 }
 
-void JT_VCard::set(const VCard &card)
+void JT_VCard::set(const Jid &j, const VCard &card)
 {
 	type = 1;
 	d->vcard = card;
-	d->jid = "";
-	d->iq = createIQ(doc(), "set", d->jid.full(), id());
+	d->jid = j;
+	d->iq = createIQ(doc(), "set", "", id());
 	d->iq.appendChild(card.toXml(doc()) );
 }
 
@@ -1468,6 +1407,10 @@ bool JT_ServInfo::take(const QDomElement &e)
 			feature.setAttribute("var", "http://jabber.org/protocol/disco#info");
 			query.appendChild(feature);
 
+			feature = doc()->createElement("feature");
+			feature.setAttribute("var", "http://jabber.org/protocol/xhtml-im");
+			query.appendChild(feature);
+
 			// Client-specific features
 			QStringList clientFeatures = client()->features().list();
 			for (QStringList::ConstIterator i = clientFeatures.begin(); i != clientFeatures.end(); ++i) {
@@ -1475,10 +1418,6 @@ bool JT_ServInfo::take(const QDomElement &e)
 				feature.setAttribute("var", *i);
 				query.appendChild(feature);
 			}
-
-			feature = doc()->createElement("feature");
-			feature.setAttribute("var", "http://jabber.org/protocol/xhtml-im");
-			query.appendChild(feature);
 
 			if (node.isEmpty()) {
 				// Extended features
@@ -1838,149 +1777,6 @@ bool JT_DiscoItems::take(const QDomElement &x)
 }
 
 //----------------------------------------------------------------------------
-// JT_DiscoInfo
-//----------------------------------------------------------------------------
-class JT_DiscoInfo::Private
-{
-public:
-	Private() { }
-
-	QDomElement iq;
-	Jid jid;
-	QString node;
-	DiscoItem item;
-};
-
-JT_DiscoInfo::JT_DiscoInfo(Task *parent)
-: Task(parent)
-{
-	d = new Private;
-}
-
-JT_DiscoInfo::~JT_DiscoInfo()
-{
-	delete d;
-}
-
-void JT_DiscoInfo::get(const DiscoItem &item)
-{
-	DiscoItem::Identity id;
-	if ( item.identities().count() == 1 )
-		id = item.identities().first();
-	get(item.jid(), item.node(), id);
-}
-
-void JT_DiscoInfo::get (const Jid &j, const QString &node, DiscoItem::Identity ident)
-{
-	d->item = DiscoItem(); // clear item
-
-	d->jid = j;
-	d->node = node;
-	d->iq = createIQ(doc(), "get", d->jid.full(), id());
-	QDomElement query = doc()->createElement("query");
-	query.setAttribute("xmlns", "http://jabber.org/protocol/disco#info");
-
-	if ( !node.isEmpty() )
-		query.setAttribute("node", node);
-
-	if ( !ident.category.isEmpty() && !ident.type.isEmpty() ) {
-		QDomElement i = doc()->createElement("item");
-
-		i.setAttribute("category", ident.category);
-		i.setAttribute("type", ident.type);
-		if ( !ident.name.isEmpty() )
-			i.setAttribute("name", ident.name);
-
-		query.appendChild( i );
-
-	}
-
-	d->iq.appendChild(query);
-}
-
-
-/**
- * Original requested jid.
- * Is here because sometimes the responder does not include this information
- * in the reply.
- */
-const Jid& JT_DiscoInfo::jid() const
-{
-	return d->jid;
-}
-
-/**
- * Original requested node.
- * Is here because sometimes the responder does not include this information
- * in the reply.
- */
-const QString& JT_DiscoInfo::node() const
-{
-	return d->node;
-}
-
-
-
-const DiscoItem &JT_DiscoInfo::item() const
-{
-	return d->item;
-}
-
-void JT_DiscoInfo::onGo ()
-{
-	send(d->iq);
-}
-
-bool JT_DiscoInfo::take(const QDomElement &x)
-{
-	if(!iqVerify(x, d->jid, id()))
-		return false;
-
-	if(x.attribute("type") == "result") {
-		QDomElement q = queryTag(x);
-
-		DiscoItem item;
-
-		item.setJid( d->jid );
-		item.setNode( q.attribute("node") );
-
-		QStringList features;
-		DiscoItem::Identities identities;
-
-		for(QDomNode n = q.firstChild(); !n.isNull(); n = n.nextSibling()) {
-			QDomElement e = n.toElement();
-			if( e.isNull() )
-				continue;
-
-			if ( e.tagName() == "feature" ) {
-				features << e.attribute("var");
-			}
-			else if ( e.tagName() == "identity" ) {
-				DiscoItem::Identity id;
-
-				id.category = e.attribute("category");
-				id.name     = e.attribute("name");
-				id.type     = e.attribute("type");
-
-				identities.append( id );
-			}
-		}
-
-		item.setFeatures( features );
-		item.setIdentities( identities );
-
-		d->item = item;
-
-		setSuccess(true);
-	}
-	else {
-		setError(x);
-	}
-
-	return true;
-}
-
-//----------------------------------------------------------------------------
 // JT_DiscoPublish
 //----------------------------------------------------------------------------
 class JT_DiscoPublish::Private
@@ -2054,93 +1850,3 @@ bool JT_DiscoPublish::take(const QDomElement &x)
 	return true;
 }
 
-
-
-
-//----------------------------------------------------------------------------
-// JT_PrivateStorage
-//----------------------------------------------------------------------------
-class JT_PrivateStorage::Private
-{
-	public:
-		Private() : type(-1) {}
-
-		QDomElement iq;
-		QDomElement elem;
-		int type;
-};
-
-JT_PrivateStorage::JT_PrivateStorage(Task *parent)
-	:Task(parent)
-{
-	d = new Private;
-}
-
-JT_PrivateStorage::~JT_PrivateStorage()
-{
-	delete d;
-}
-
-void JT_PrivateStorage::get(const QString& tag, const QString& xmlns)
-{
-	d->type = 0;
-	d->iq = createIQ(doc(), "get" , QString() , id() );
-	QDomElement query = doc()->createElement("query");
-	query.setAttribute("xmlns", "jabber:iq:private");
-	d->iq.appendChild(query);
-	QDomElement s = doc()->createElement(tag);
-	if(!xmlns.isEmpty())
-		s.setAttribute("xmlns", xmlns);
-	query.appendChild(s);
-}
-
-void JT_PrivateStorage::set(const QDomElement& element)
-{
-	d->type = 1;
-	d->elem=element;
-	QDomNode n=doc()->importNode(element,true);
-
-	d->iq = createIQ(doc(), "set" , QString() , id() );
-	QDomElement query = doc()->createElement("query");
-	query.setAttribute("xmlns", "jabber:iq:private");
-	d->iq.appendChild(query);
-	query.appendChild(n);
-}
-
-void JT_PrivateStorage::onGo()
-{
-	send(d->iq);
-}
-
-bool JT_PrivateStorage::take(const QDomElement &x)
-{
-	QString to = client()->host();
-	if(!iqVerify(x, to, id()))
-		return false;
-
-	if(x.attribute("type") == "result") {
-		if(d->type == 0) {
-			QDomElement q = queryTag(x);
-			for(QDomNode n = q.firstChild(); !n.isNull(); n = n.nextSibling()) {
-				QDomElement i = n.toElement();
-				if(i.isNull())
-					continue;
-				d->elem=i;
-				break;
-			}
-		}
-		setSuccess();
-		return true;
-	}
-	else {
-		setError(x);
-	}
-
-	return true;
-}
-
-
-QDomElement JT_PrivateStorage::element( )
-{
-	return d->elem;
-}

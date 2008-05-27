@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     yabtask.h - Handles the Yahoo Address Book
 
-    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <duffeck@kde.org>
     Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -29,7 +29,7 @@
 
 YABTask::YABTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 YABTask::~YABTask()
@@ -64,7 +64,7 @@ bool YABTask::forMe( const Transfer* transfer ) const
 
 void YABTask::parseContactDetails( YMSGTransfer* t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString from;		/* key = 7  */
 	int count;
@@ -92,12 +92,12 @@ void YABTask::parseContactDetails( YMSGTransfer* t )
 
 void YABTask::getAllEntries( long lastMerge, long lastRemoteRevision )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "LastMerge: " << lastMerge << " LastRemoteRevision: " << lastRemoteRevision << endl;
+	kDebug(YAHOO_RAW_DEBUG) << "LastMerge: " << lastMerge << " LastRemoteRevision: " << lastRemoteRevision;
 	m_data.clear();
 	QString url = QString::fromLatin1("http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&diffs=1&t=%1&tags=short&rt=%2&prog-ver=%3")
 		.arg( lastMerge ).arg( lastRemoteRevision ).arg( YMSG_PROGRAM_VERSION_STRING );
 
-	m_transferJob = KIO::get( url , false, false );
+	m_transferJob = KIO::get( url , KIO::NoReload, KIO::HideProgressInfo );
 	m_transferJob->addMetaData("cookies", "manual");
 	m_transferJob->addMetaData("setcookies", QString::fromLatin1("Cookie: Y=%1; T=%2; C=%3;")
 				.arg(client()->yCookie()).arg(client()->tCookie()).arg(client()->cCookie()) );
@@ -107,7 +107,7 @@ void YABTask::getAllEntries( long lastMerge, long lastRemoteRevision )
 
 void YABTask::slotData( KIO::Job* /*job*/, const QByteArray &info  )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	m_data += info;
 }
 
@@ -115,18 +115,18 @@ void YABTask::slotResult( KJob* job )
 {
 	if( job->error () || m_transferJob->isErrorPage () )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Could not retrieve server side addressbook for user info." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << "Could not retrieve server side addressbook for user info.";
 		client()->notifyError( i18n( "Could not retrieve server side addressbook for user info." ), job->errorString(), Client::Info );
 	}
 	else 
 	{
-		kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Server side addressbook retrieved." << endl;
+		kDebug(YAHOO_RAW_DEBUG) << "Server side addressbook retrieved.";
 		QDomDocument doc;
 		QDomNodeList list;
 		QDomElement e;
 		int it = 0;
 
-		kDebug(YAHOO_RAW_DEBUG) << m_data << endl;
+		kDebug(YAHOO_RAW_DEBUG) << m_data;
 		doc.setContent( m_data );
 		
 		list = doc.elementsByTagName( "ab" );			// Get the Addressbook

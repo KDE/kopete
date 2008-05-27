@@ -12,6 +12,7 @@
  ***************************************************************************
 */
 
+#define QT3_SUPPORT
 #include <kpushbutton.h>
 #include <k3listview.h>
 #include <klocale.h>
@@ -22,10 +23,6 @@
 #include <kconfig.h>
 #include <qregexp.h>
 #include <qlayout.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include <Q3VBoxLayout>
-#include <QList>
 
 #include <kplugininfo.h>
 #include <kiconloader.h>
@@ -40,7 +37,8 @@
 #include "editaliasdialog.h"
 #include "aliaspreferences.h"
 
-typedef KGenericFactory<AliasPreferences> AliasPreferencesFactory;
+K_PLUGIN_FACTORY( AliasPreferencesFactory, registerPlugin<AliasPreferences>(); )
+K_EXPORT_PLUGIN( AliasPreferencesFactory( "kcm_kopete_alias" ) )
 
 class AliasItem : public Q3ListViewItem
 {
@@ -116,19 +114,17 @@ class AliasItem : public Q3ListViewItem
 class ProtocolItem : public Q3ListViewItem
 {
 	public:
-		ProtocolItem( Q3ListView *parent, KPluginInfo *p ) :
-		Q3ListViewItem( parent, p->name() )
+		ProtocolItem( Q3ListView *parent, const KPluginInfo &p ) :
+		Q3ListViewItem( parent, p.name() )
 		{
-			this->setPixmap( 0, SmallIcon( p->icon() ) );
-			id = p->pluginName();
+			this->setPixmap( 0, SmallIcon( p.icon() ) );
+			id = p.pluginName();
 		}
 
 		QString id;
 };
 
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_alias, AliasPreferencesFactory( "kcm_kopete_alias" ) )
-
-AliasPreferences::AliasPreferences( QWidget *parent, const QStringList &args )
+AliasPreferences::AliasPreferences( QWidget *parent, const QVariantList &args )
 	: KCModule( AliasPreferencesFactory::componentData(), parent, args )
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
@@ -145,8 +141,6 @@ AliasPreferences::AliasPreferences( QWidget *parent, const QStringList &args )
 
 	connect( preferencesDialog->aliasList, SIGNAL(selectionChanged()),
 		this, SLOT( slotCheckAliasSelected() ) );
-
-	load();
 }
 
 AliasPreferences::~AliasPreferences()
@@ -316,7 +310,7 @@ void AliasPreferences::addAlias( QString &alias, QString &command, const Protoco
 
 void AliasPreferences::slotAddAlias()
 {
-	EditAliasDialog addDialog;
+	EditAliasDialog addDialog(this);
 	loadProtocols( &addDialog );
 	addDialog.addButton->setText( i18n("&Add") );
 
@@ -347,7 +341,7 @@ void AliasPreferences::slotAddAlias()
 				if( Kopete::CommandHandler::commandHandler()->commandHandledByProtocol( alias, *it ) )
 				{
 					KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. This "
-						"command is already being handled by either another alias or "
+						"command is already being handled either by another alias or "
 						"Kopete itself.</qt>", alias), i18n("Could Not Add Alias") );
 					return;
 				}
@@ -385,10 +379,10 @@ const ProtocolList AliasPreferences::selectedProtocols( EditAliasDialog *dialog 
 
 void AliasPreferences::loadProtocols( EditAliasDialog *dialog )
 {
-	foreach(KPluginInfo *pluginInfo, Kopete::PluginManager::self()->availablePlugins("Protocols"))
+	foreach(const KPluginInfo &pluginInfo, Kopete::PluginManager::self()->availablePlugins("Protocols"))
 	{
 		ProtocolItem *item = new ProtocolItem( dialog->protocolList, pluginInfo );
-		itemMap[ (Kopete::Protocol*)Kopete::PluginManager::self()->plugin( (pluginInfo)->pluginName() ) ] = item;
+		itemMap[ (Kopete::Protocol*)Kopete::PluginManager::self()->plugin( pluginInfo.pluginName() ) ] = item;
 	}
 }
 
@@ -461,9 +455,11 @@ void AliasPreferences::slotEditAlias()
 
 void AliasPreferences::slotDeleteAliases()
 {
+        QList< Q3ListViewItem* > items = preferencesDialog->aliasList->selectedItems();
+        if( items.isEmpty())
+            return;
 	if( KMessageBox::warningContinueCancel(this, i18n("Are you sure you want to delete the selected aliases?"), i18n("Delete Aliases"), KGuiItem(i18n("Delete"), "edit-delete") ) == KMessageBox::Continue )
 	{
-		QList< Q3ListViewItem* > items = preferencesDialog->aliasList->selectedItems();
 		foreach( Q3ListViewItem *i, items)
 		{
 			ProtocolList protocols = static_cast<AliasItem*>( i )->protocolList;
@@ -484,6 +480,7 @@ void AliasPreferences::slotDeleteAliases()
 
 		save();
 	}
+        slotCheckAliasSelected();
 }
 
 void AliasPreferences::slotCheckAliasSelected()

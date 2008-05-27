@@ -1,16 +1,16 @@
 /*
     gwprotocol.h - Kopete GroupWise Protocol
 
-    Copyright (c) 2006      Novell, Inc	 	 http://www.opensuse.org
+    Copyright (c) 2006,2007 Novell, Inc	 	 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
-    Based on Testbed   
-    Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+
+    Based on Testbed
+    Copyright (c) 2003-2007 by Will Stephenson		 <wstephenson@kde.org>
     rtfizeTest from nm_rtfize_text, from Gaim src/protocols/novell/nmuser.c
     Copyright (c) 2004 Novell, Inc. All Rights Reserved
-    
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
- 
+
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -21,12 +21,12 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDPROTOCOL_H
-#define TESTBEDPROTOCOL_H
+#ifndef GWPROTOCOL_H
+#define GWPROTOCOL_H
 
 #include <kopeteprotocol.h>
-#include "kopetecontactproperty.h"
-#include "kopeteonlinestatus.h"
+#include <kopeteproperty.h>
+#include <kopeteonlinestatus.h>
 
 /**
  * Encapsulates the generic actions associated with this protocol
@@ -36,7 +36,7 @@ class GroupWiseProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
-	GroupWiseProtocol(QObject *parent, const QStringList &args);
+	GroupWiseProtocol(QObject *parent, const QVariantList &args);
     ~GroupWiseProtocol();
 	/**
 	 * Convert the serialised data back into a GroupWiseContact and add this
@@ -95,19 +95,19 @@ public:
 	/**
 	 * Contact properties
 	 */
-	const Kopete::ContactPropertyTmpl propGivenName;
-	const Kopete::ContactPropertyTmpl propLastName;
-	const Kopete::ContactPropertyTmpl propFullName;
-	const Kopete::ContactPropertyTmpl propAwayMessage;
-	const Kopete::ContactPropertyTmpl propAutoReply;
-	const Kopete::ContactPropertyTmpl propCN;
-	const Kopete::ContactPropertyTmpl propPhoneWork;
-	const Kopete::ContactPropertyTmpl propPhoneMobile;
-	const Kopete::ContactPropertyTmpl propEmail;
+	const Kopete::PropertyTmpl propGivenName;
+	const Kopete::PropertyTmpl propLastName;
+	const Kopete::PropertyTmpl propFullName;
+	const Kopete::PropertyTmpl propAwayMessage;
+	const Kopete::PropertyTmpl propAutoReply;
+	const Kopete::PropertyTmpl propCN;
+	const Kopete::PropertyTmpl propPhoneWork;
+	const Kopete::PropertyTmpl propPhoneMobile;
+	const Kopete::PropertyTmpl propEmail;
 	
 	
 protected:
 	static GroupWiseProtocol *s_protocol;
 };
 
-#endif
+#endif // GWPROTOCOL_H

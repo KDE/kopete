@@ -22,7 +22,7 @@
    <item>
     <widget class="QLabel" name="m_label" >
      <property name="text" >
-                <string>The contact XXX added you in his contactlist</string>
+                <string>The contact XXX has added you to his/her contactlist</string>
             </property>
      <property name="alignment" >
       <set>Qt::AlignVCenter</set>
@@ -108,7 +108,7 @@
                                 <string>The display name of the contact.  Leave it empty to use the contact nickname</string>
                             </property>
           <property name="whatsThis" >
-                                <string>Enter the contact display name. This is how the contact will appears in the contactlist.
+                                <string>Enter the contact display name. This is how the contact will appear in the contactlist.
 Leave it empty if you want to see the contact nickname as display name.</string>
                             </property>
           <property name="text" >
@@ -158,7 +158,7 @@ Leave it empty if you want to see the contact nickname as display name.</string>
                                 </sizepolicy>
                             </property>
           <property name="whatsThis" >
-                                <string>Enter the group where the contact should be added. Leave it empty to add it in the top level group.</string>
+                                <string>Enter the group where the contact should be added. Leave it empty to add it to the top level group.</string>
                             </property>
           <property name="editable" >
            <bool>true</bool>

@@ -28,7 +28,6 @@
 namespace Kopete { class Contact; }
 namespace Kopete { class MetaContact; }
 class QDate;
-class QFile;
 class QTimer;
 
 /**
@@ -52,7 +51,7 @@ public:
 	 * Constructor, takes the contact, and the color of messages
 	 */
 	explicit HistoryLogger( Kopete::MetaContact *m , QObject *parent = 0 );
-	HistoryLogger( Kopete::Contact *c , QObject *parent = 0 );
+	explicit HistoryLogger( Kopete::Contact *c , QObject *parent = 0 );
 
 
 	~HistoryLogger();
@@ -88,7 +87,7 @@ public:
 	 * read @param lines message from the current position
 	 * from Kopete::Contact @param c in the given @param sens
 	 */
-	QList<Kopete::Message> readMessages(unsigned int lines,
+	QList<Kopete::Message> readMessages(int lines,
 		const Kopete::Contact *c=0, Sens sens=Default,
 		bool reverseOrder=false, bool colorize=true);
 

@@ -1,7 +1,7 @@
 /*
     kimiface.h - KDE Instant Messenger DCOP Interface
 	
-	Copyright (c) 2004    Will Stephenson	 <lists@stevello.free-online.co.uk>
+	Copyright (c) 2004    Will Stephenson	 <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -32,7 +32,7 @@
 /**
  * Generic DCOP interface for KDE instant messenger applications
  * Note one omission of this interface is the lack of control over the range of values used for protocols' names.
- * @author Will Stephenson <lists@stevello.free-online.co.uk>
+ * @author Will Stephenson <wstephenson@kde.org>
  */
 class KIMIface : virtual public DCOPObject
 {
@@ -161,7 +161,7 @@ k_dcop:
 	 * @param fileSize file size in bytes
 	 */
 	virtual void sendFile(const QString &uid, const KUrl &sourceURL,
-		const QString &altFileName = QString::null, uint fileSize = 0) = 0;
+		const QString &altFileName = QString(), uint fileSize = 0) = 0;
 
 // MUTATORS
 // Contact list

@@ -18,8 +18,8 @@
 */
 
 
-#ifndef YAHOOIDENTITY_H
-#define YAHOOIDENTITY_H
+#ifndef YAHOOACCOUNT_H
+#define YAHOOACCOUNT_H
 
 // Qt
 #include <qobject.h>
@@ -77,7 +77,7 @@ public:
 	 */
 	YahooContact *contact(const QString &id);
 
-	virtual KActionMenu* actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/**
 	 * Sets the yahoo away status
@@ -183,7 +183,7 @@ protected slots:
 	void slotAuthorizationAccepted( const QString &who );
 	void slotAuthorizationRejected( const QString &who, const QString &msg );
 	void slotgotAuthorizationRequest( const QString &, const QString &, const QString & );
-	void slotContactAddedNotifyDialogClosed( const QString & );
+	void slotAddedInfoEventActionActivated( uint actionId );
 	void slotGotIgnore(const QStringList &);
 	void slotGotIdentities(const QStringList &);
 	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away, int idle, int pictureChecksum);
@@ -242,11 +242,6 @@ protected slots:
 	void slotFileTransferResult( KJob * );
 	void slotError( int level );
 
-private slots:
-	/**
-	 * When a global identity key get changed.
-	 */
-	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
 private:
 
 	/**
@@ -300,6 +295,4 @@ private:
 	Client *m_session;		// The Connection object
 };
 
-
-#endif
-
+#endif // YAHOOACCOUNT_H

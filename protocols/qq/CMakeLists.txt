@@ -1,3 +1,4 @@
+add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 add_subdirectory( icons ) 
 
@@ -35,7 +36,6 @@ set(kopete_qq_PART_SRCS
    crypt.cpp
 )
 
-kde4_automoc(${kopete_qq_PART_SRCS})
 
 kde4_add_plugin(kopete_qq ${kopete_qq_PART_SRCS})
 

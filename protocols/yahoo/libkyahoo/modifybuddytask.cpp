@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Add a buddy to the Contactlist
 
-    Copyright (c) 2005-2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005-2006 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -24,7 +24,7 @@
 
 ModifyBuddyTask::ModifyBuddyTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 ModifyBuddyTask::~ModifyBuddyTask()
@@ -33,7 +33,7 @@ ModifyBuddyTask::~ModifyBuddyTask()
 
 void ModifyBuddyTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	switch( m_type )
 	{

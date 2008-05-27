@@ -51,9 +51,9 @@ public:
 	MSNAccount( MSNProtocol *parent, const QString &accountID );
 
 	/*
-	 * return the menu for this account
+	 * fill the menu for this account
 	 */
-	virtual KActionMenu* actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	//------ internal functions
 	/**
@@ -191,19 +191,14 @@ private slots:
 	void slotKopeteGroupRemoved( Kopete::Group* );
 
 	/**
-	 * add contact ui
+	 * added info event
 	 */
-	void slotContactAddedNotifyDialogClosed( const QString &handle);
+	void slotAddedInfoEventActionActivated( uint actionId );
 
 	/**
 	 * When the dispatch server sends us the notification server to use.
 	 */
 	void createNotificationServer( const QString &host, uint port );
-
-	/**
- 	 * When a global identity key get changed.
-	 */
-	void slotGlobalIdentityChanged( const QString &key, const QVariant &value );
 
 private:
 	MSNNotifySocket *m_notifySocket;

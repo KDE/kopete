@@ -1,5 +1,5 @@
 /*
-   fetchcontactlistjob.h - Job to fetch contact list from MSN server using SOAP
+   fetchcontact listjob.h - Job to fetch contact list from MSN server using SOAP
 
    Copyright (c) 2007 by Michaël Larouche <larouche@kde.org>
 
@@ -17,7 +17,6 @@
 
 #include <QtCore/QObject>
 
-class QStringList;
 
 namespace Papillon
 {

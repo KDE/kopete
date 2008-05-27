@@ -31,11 +31,8 @@
 #include <QList>
 
 class QPixmap;
-class QTimer;
 
-class QQChatSession;
 class KAction;
-class KActionCollection;
 class KTemporaryFile;
 
 namespace Kopete { class Protocol; }
@@ -194,7 +191,7 @@ private:
 	 */
 	Kopete::OnlineStatus m_currentStatus;
 
-	//QQProtocol::deserializeContact need to acess some contact insternals
+	//QQProtocol::deserializeContact need to access some contact insternals
 	friend class QQProtocol;
 };
 

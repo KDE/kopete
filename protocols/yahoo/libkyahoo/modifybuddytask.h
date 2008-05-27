@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Add, remove or move a buddy to the Contactlist
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *

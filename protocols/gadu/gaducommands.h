@@ -34,7 +34,6 @@
 #include <QPixmap>
 
 class QSocketNotifier;
-class QStringList;
 class QPixmap;
 
 class GaduCommand : public QObject

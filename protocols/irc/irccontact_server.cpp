@@ -33,7 +33,7 @@ void IRCServerContact::slotSendMsg(Kopete::Message &, Kopete::ChatSession *manag
 {
 	manager->messageSucceeded();
 	Kopete::Message msg( manager->myself(), manager->members(),
-		i18n("You can not talk to the server, you can only issue commands here. Type /help for supported commands."), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
+		i18n("You cannot talk to the server, you can only issue commands here. Type /help for supported commands."), Kopete::Message::Internal, Kopete::Message::PlainText, CHAT_VIEW);
 	manager->appendMessage(msg);
 }
 
@@ -69,7 +69,7 @@ void IRCServerContact::slotDumpMessages()
 
 void IRCServerContact::slotViewCreated( KopeteView *v )
 {
-	kDebug(14121) << k_funcinfo << "Created: " << v << ", mgr: " << v->msgManager() << ", Mine: " << m_chatSession << endl;
+	kDebug(14121) << "Created: " << v << ", mgr: " << v->msgManager() << ", Mine: " << m_chatSession;
 	if (m_chatSession && v->msgManager() == m_chatSession)
 		QTimer::singleShot(500, this, SLOT(slotDumpMessages()));
 }

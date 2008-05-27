@@ -103,7 +103,7 @@ void Engine::bindNumericReplies()
  */
 void Engine::numericReply_001(Message &msg)
 {
-	kDebug(14121) << k_funcinfo << endl;
+	kDebug(14121) ;
 
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
@@ -185,7 +185,7 @@ void Engine::numericReply_253(Message &msg)
  *  */
 void Engine::numericReply_254(Message &msg)
 {
-	receivedServerMessage(msg, i18n("There are %1 channel formed.", msg.arg(1)));
+	receivedServerMessage(msg, i18n("There have been %1 channels formed.", msg.arg(1)));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
@@ -254,7 +254,7 @@ void Engine::numericReply_305(Message &msg)
 {
 /*
 	EntityPtr self = this->self();
-	self->setAwayMessage(QString::null);
+	self->setAwayMessage(QString());
 //	self->setModes("-a");
 	receivedServerMessage(msg, i18n("You are no longer marked as being away."));
 */

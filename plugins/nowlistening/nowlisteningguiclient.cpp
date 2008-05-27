@@ -45,7 +45,7 @@ NowListeningGUIClient::NowListeningGUIClient( Kopete::ChatSession *parent, NowLi
 
 void NowListeningGUIClient::slotAdvertToCurrentChat()
 {
-	kDebug( 14307 ) << k_funcinfo << endl;
+	kDebug( 14307 ) ;
 
 	// Sanity check - don't crash if the plugin is unloaded and we get called.
 	if (!NowListeningPlugin::plugin())
@@ -61,7 +61,7 @@ void NowListeningGUIClient::slotAdvertToCurrentChat()
 		if ( m_msgManager && m_msgManager->view() )
 			origin = m_msgManager->view()->mainWidget();
 		KMessageBox::queuedMessageBox( origin, KMessageBox::Sorry,
-			i18n( "None of the supported media players (KsCD, JuK, amaroK, Noatun or Kaffeine) are playing anything." ),
+			i18n( "None of the supported media players (Amarok, KsCD, JuK, Noatun, Kaffeine, or Quod Libet) are playing anything." ),
 			i18n( "Nothing to Send" ) );
 	}
 	else

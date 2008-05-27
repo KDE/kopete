@@ -1,5 +1,5 @@
 /*
-    jabbergroupchatmanager.cpp - Jabber Message Manager for group chats
+    jabbergroupchatmanager.cpp - Jabber Message Manager for groupchats
 
     Copyright (c) 2004 by Till Gerken            <till@tantalo.net>
 
@@ -17,7 +17,6 @@
 
 #include "jabbergroupchatmanager.h"
 
-#include <q3ptrlist.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include "kopetechatsessionmanager.h"
@@ -31,7 +30,7 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 											 Kopete::ContactPtrList others, XMPP::Jid roomJid )
 											 : Kopete::ChatSession ( user, others, protocol )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "New message manager for " << user->contactId ();
 
 	mRoomJid = roomJid;
 	
@@ -52,7 +51,7 @@ JabberGroupChatManager::~JabberGroupChatManager()
 
 void JabberGroupChatManager::updateDisplayName ()
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) ;
 
 	setDisplayName ( mRoomJid.full () );
 
@@ -139,7 +138,7 @@ void JabberGroupChatManager::inviteContact( const QString & contactId )
 {
 	if( account()->isConnected () )
 	{
-		//NOTE: this is the obsolete, NOT RECOMMANDED protocol.
+		//NOTE: this is the obsolete, NOT RECOMMENDED protocol.
 		//      iris doesn't implement groupchat yet
 		//NOTE: This code is duplicated in JabberProtocol::handleURL
 		XMPP::Message jabberMessage;

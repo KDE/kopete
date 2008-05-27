@@ -22,6 +22,7 @@
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kinputdialog.h>
+#include <kaction.h>
 
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
@@ -67,7 +68,7 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	/**
 	 * FIXME: The first contact in the list of the message manager
 	 * needs to be our own contact. This is a flaw in the Kopete
-	 * API because it can't deal with group chat properly.
+	 * API because it can't deal with groupchat properly.
 	 * If we are alone in a room, we are myself() already and members()
 	 * is empty. This makes at least the history plugin crash.
 	 */
@@ -88,7 +89,7 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 JabberGroupContact::~JabberGroupContact ()
 {
 
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) ;
 
 	if(mManager) 
 	{
@@ -99,13 +100,13 @@ JabberGroupContact::~JabberGroupContact ()
 	{
 		/*if(mManager)
 		mManager->removeContact( contact );*/
-		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KC " << contact->contactId () << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "Deleting KC " << contact->contactId ();
 		contact->deleteLater();
 	}
 
 	foreach ( Kopete::MetaContact *metaContact, mMetaContactList )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Deleting KMC " << metaContact->metaContactId () << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "Deleting KMC " << metaContact->metaContactId ();
 		metaContact->deleteLater();
 	}
 }
@@ -115,7 +116,7 @@ QList<KAction*> *JabberGroupContact::customContextMenuActions ()
 	QList<KAction*> *actionCollection = new QList<KAction*>();
 
 	KAction *actionSetNick = new KAction(this);
-	actionSetNick->setText( i18n ("Change nick name") );
+	actionSetNick->setText( i18n ("Change nickname") );
 	actionSetNick->setIcon( KIcon("jabber_changenick") );
 	connect(actionSetNick, SIGNAL(triggered(bool)), this, SLOT(slotChangeNick()));
 
@@ -128,7 +129,7 @@ Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFla
 {
 	if(!mManager && canCreate == Kopete::Contact::CanCreate)
 	{
-		kWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "somehow, the chat manager was removed, and the contact is still there" << endl;
+		kWarning (JABBER_DEBUG_GLOBAL) << "somehow, the chat manager was removed, and the contact is still there";
 		mManager = new JabberGroupChatManager ( protocol (), mSelfContact,
 				Kopete::ContactPtrList (), XMPP::Jid ( rosterItem().jid().userHost() ) );
 
@@ -149,7 +150,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
 	
-	kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received a message"  << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "Received a message";
 
 	/**
 	 * Don't display empty messages, these were most likely just carrying
@@ -188,7 +189,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 
 		if ( !subContact )
 		{
-			kWarning (JABBER_DEBUG_GLOBAL) << k_funcinfo << "the contact is not in the list   : " <<  message.from().full()<< endl;
+			kWarning (JABBER_DEBUG_GLOBAL) << "the contact is not in the list   : " <<  message.from().full();
 			return;
 			/**
 			 * We couldn't find the contact for this message. That most likely means
@@ -216,18 +217,18 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 
 JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &rosterItem, bool addToManager )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Adding new subcontact " << rosterItem.jid().full () << " to room " << mRosterItem.jid().full () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Adding new subcontact " << rosterItem.jid().full () << " to room " << mRosterItem.jid().full ();
 
 	// see if this contact already exists, skip creation otherwise
 	JabberBaseContact *subContact = dynamic_cast<JabberGroupMemberContact *>( account()->contactPool()->findExactMatch ( rosterItem.jid () ) );
 
 	if ( subContact )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Contact already exists, not adding again." << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "Contact already exists, not adding again.";
 		return subContact;
 	}
 	
-	// Create new meta contact that holds the group chat contact.
+	// Create new meta contact that holds the groupchat contact.
 	Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 	metaContact->setTemporary ( true );
 	mMetaContactList.append ( metaContact );
@@ -255,12 +256,12 @@ JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &r
 
 void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Removing subcontact " << rosterItem.jid().full () << " from room " << mRosterItem.jid().full () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "Removing subcontact " << rosterItem.jid().full () << " from room " << mRosterItem.jid().full ();
 
 	// make sure that subcontacts are only removed from the room contact, which has no resource
 	if ( !mRosterItem.jid().resource().isEmpty () )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "WARNING: Trying to remove subcontact from subcontact!" << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Trying to remove subcontact from subcontact!";
 		return;
 	}
 
@@ -269,7 +270,7 @@ void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 
 	if ( !subContact )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "WARNING: Subcontact couldn't be located!" << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Subcontact couldn't be located!";
 		return;
 	}
 	
@@ -363,7 +364,7 @@ void JabberGroupContact::slotChangeNick( )
 	
 	bool ok;
 	QString futureNewNickName = KInputDialog::getText( i18n( "Change nickname - Jabber Plugin" ),
-			i18n( "Please enter the new nick name you want to have on the room <i>%1</i>" , rosterItem().jid().userHost()),
+			i18n( "Please enter the new nickname you want to have in the room <i>%1</i>" , rosterItem().jid().userHost()),
 			mNick, &ok );
 	if ( !ok || !account()->isConnected())
 		return;
@@ -377,7 +378,7 @@ void JabberGroupContact::slotChangeNick( )
 
 void JabberGroupContact::slotSubContactDestroyed( Kopete::Contact * deadContact )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "cleaning dead subcontact " << deadContact->contactId() << " from room " << mRosterItem.jid().full () << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "cleaning dead subcontact " << deadContact->contactId() << " from room " << mRosterItem.jid().full ();
 
 	mMetaContactList.removeAll ( deadContact->metaContact () );
 	mContactList.removeAll ( deadContact );

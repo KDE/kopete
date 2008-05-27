@@ -20,17 +20,19 @@
 // Qt includes
 #include <QFile>
 #include <QDir>
+#include <QHash>
 #include <QStringList>
+#include <QTextCodec>
 #include <QTextStream>
 
 // KDE includes
 #include <kdebug.h>
-
+#include <kstandarddirs.h>
 
 class ChatWindowStyle::Private
 {
 public:
-	QString stylePath;
+	QString styleName;
 	StyleVariants variantsList;
 	QString baseHref;
 	QString currentVariantPath;
@@ -44,25 +46,35 @@ public:
 	QString statusHtml;
 	QString actionIncomingHtml;
 	QString actionOutgoingHtml;
+	QHash<QString, bool> compactVariants;
 };
 
-ChatWindowStyle::ChatWindowStyle(const QString &stylePath, StyleBuildMode styleBuildMode)
+ChatWindowStyle::ChatWindowStyle(const QString &styleName, StyleBuildMode styleBuildMode)
 	: d(new Private)
 {
-	init(stylePath, styleBuildMode);
+	init(styleName, styleBuildMode);
 }
 
-ChatWindowStyle::ChatWindowStyle(const QString &stylePath, const QString &variantPath, StyleBuildMode styleBuildMode)
+ChatWindowStyle::ChatWindowStyle(const QString &styleName, const QString &variantPath, StyleBuildMode styleBuildMode)
 	: d(new Private)
 {
 	d->currentVariantPath = variantPath;
-	init(stylePath, styleBuildMode);
+	init(styleName, styleBuildMode);
 }
 
-void ChatWindowStyle::init(const QString &stylePath, StyleBuildMode styleBuildMode)
+void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMode)
 {
-	d->stylePath = stylePath;
-	d->baseHref = stylePath + QString::fromUtf8("/Contents/Resources/");
+	QStringList styleDirs = KGlobal::dirs()->findDirs("appdata", QString("styles/%1/Contents/Resources/").arg(styleName));
+	if(styleDirs.isEmpty())
+	{
+		kDebug(14000) << "Failed to find style" << styleName;
+		return;
+	}
+	d->styleName = styleName;
+	if(styleDirs.count() > 1)
+		kDebug(14000) << "found several styles with the same name. using first";
+	d->baseHref = styleDirs.at(0);
+	kDebug(14000) << "Using style:" << d->baseHref;
 	readStyleFiles();
 	if(styleBuildMode & StyleBuildNormal)
 	{
@@ -72,7 +84,7 @@ void ChatWindowStyle::init(const QString &stylePath, StyleBuildMode styleBuildMo
 
 ChatWindowStyle::~ChatWindowStyle()
 {
-	kDebug(14000) << k_funcinfo << endl;
+	kDebug(14000) ;
 	delete d;
 }
 
@@ -86,9 +98,9 @@ ChatWindowStyle::StyleVariants ChatWindowStyle::getVariants()
 	return d->variantsList;
 }
 
-QString ChatWindowStyle::getStylePath() const
+QString ChatWindowStyle::getStyleName() const
 {
-	return d->stylePath;
+	return d->styleName;
 }
 
 QString ChatWindowStyle::getStyleBaseHref() const
@@ -153,11 +165,23 @@ void ChatWindowStyle::listVariants()
 
 	QStringList variantList = variantDir.entryList( QStringList("*.css") );
 	QStringList::ConstIterator it, itEnd = variantList.constEnd();
+	QLatin1String compactVersionPrefix("_compact_");
 	for(it = variantList.constBegin(); it != itEnd; ++it)
 	{
 		QString variantName = *it, variantPath;
 		// Retrieve only the file name.
 		variantName = variantName.left(variantName.lastIndexOf("."));
+		if ( variantName.startsWith( compactVersionPrefix ) ) {
+			if ( variantName == compactVersionPrefix ) {
+				d->compactVariants.insert( "", true );
+			}
+			continue;
+		}
+		QString compactVersionFilename = *it;
+		QString compactVersionPath = variantDirPath + compactVersionFilename.prepend( compactVersionPrefix );
+		if ( QFile::exists( compactVersionPath )) {
+			d->compactVariants.insert( variantName, true );
+		}
 		// variantPath is relative to baseHref.
 		variantPath = QString("Variants/%1").arg(*it);
 		d->variantsList.insert(variantName, variantPath);
@@ -185,7 +209,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->headerHtml = headerStream.readAll();
-		kDebug(14000) << k_funcinfo << "Header HTML: " << d->headerHtml << endl;
+		kDebug(14000) << "Header HTML: " << d->headerHtml;
 		fileAccess.close();
 	}
 	// Load Footer file
@@ -196,7 +220,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->footerHtml = headerStream.readAll();
-		kDebug(14000) << k_funcinfo << "Footer HTML: " << d->footerHtml << endl;
+		kDebug(14000) << "Footer HTML: " << d->footerHtml;
 		fileAccess.close();
 	}
 	// Load incoming file
@@ -207,7 +231,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->incomingHtml = headerStream.readAll();
-		kDebug(14000) << k_funcinfo << "Incoming HTML: " << d->incomingHtml << endl;
+		kDebug(14000) << "Incoming HTML: " << d->incomingHtml;
 		fileAccess.close();
 	}
 	// Load next Incoming file
@@ -218,7 +242,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->nextIncomingHtml = headerStream.readAll();
-		kDebug(14000) << k_funcinfo << "NextIncoming HTML: " << d->nextIncomingHtml << endl;
+		kDebug(14000) << "NextIncoming HTML: " << d->nextIncomingHtml;
 		fileAccess.close();
 	}
 	// Load outgoing file
@@ -229,7 +253,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->outgoingHtml = headerStream.readAll();
-		kDebug(14000) << k_funcinfo << "Outgoing HTML: " << d->outgoingHtml << endl;
+		kDebug(14000) << "Outgoing HTML: " << d->outgoingHtml;
 		fileAccess.close();
 	}
 	// Load next outgoing file
@@ -240,7 +264,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->nextOutgoingHtml = headerStream.readAll();
-		kDebug(14000) << k_funcinfo << "NextOutgoing HTML: " << d->nextOutgoingHtml << endl;
+		kDebug(14000) << "NextOutgoing HTML: " << d->nextOutgoingHtml;
 		fileAccess.close();
 	}
 	// Load status file
@@ -251,7 +275,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->statusHtml = headerStream.readAll();
-		kDebug(14000) << k_funcinfo << "Status HTML: " << d->statusHtml << endl;
+		kDebug(14000) << "Status HTML: " << d->statusHtml;
 		fileAccess.close();
 	}
 	
@@ -263,7 +287,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->actionIncomingHtml = headerStream.readAll();
-		kDebug(14000) << k_funcinfo << "ActionIncoming HTML: " << d->actionIncomingHtml << endl;
+		kDebug(14000) << "ActionIncoming HTML: " << d->actionIncomingHtml;
 		fileAccess.close();
 	}
 	// Load Action Outgoing file
@@ -274,7 +298,7 @@ void ChatWindowStyle::readStyleFiles()
 		QTextStream headerStream(&fileAccess);
 		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
 		d->actionOutgoingHtml = headerStream.readAll();
-		kDebug(14000) << k_funcinfo << "ActionOutgoing HTML: " << d->actionOutgoingHtml << endl;
+		kDebug(14000) << "ActionOutgoing HTML: " << d->actionOutgoingHtml;
 		fileAccess.close();
 	}
 }
@@ -284,4 +308,22 @@ void ChatWindowStyle::reload()
 	d->variantsList.clear();
 	readStyleFiles();
 	listVariants();
+}
+
+bool ChatWindowStyle::hasCompact( const QString & styleVariant ) const
+{
+	if ( d->compactVariants.contains( styleVariant ) ) {
+		return d->compactVariants.value( styleVariant );
+	}
+	return false;
+}
+
+QString ChatWindowStyle::compact( const QString & styleVariant ) const
+{
+	QString compacted = styleVariant;
+	if ( styleVariant.isEmpty() ) {
+		return QLatin1String( "Variants/_compact_.css" );
+	} else {
+		return compacted.insert( compacted.lastIndexOf('/') + 1, QString("_compact_") );
+	}
 }

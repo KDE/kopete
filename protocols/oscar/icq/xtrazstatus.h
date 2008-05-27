@@ -19,11 +19,6 @@
 
 #include <QString>
 
-namespace Oscar
-{
-class Presence;
-}
-
 namespace Xtraz
 {
 
@@ -41,8 +36,6 @@ public:
 
 	void setMessage( const QString& message );
 	QString message() const { return mMessage; }
-
-	Oscar::Presence presence() const;
 
 private:
 	int mStatus;

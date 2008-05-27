@@ -1,11 +1,12 @@
 /*
     kopeteaccount.h - Kopete Account
 
+    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003-2004 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,28 +23,28 @@
 
 #include "kopeteonlinestatus.h"
 #include "kopetestatusmessage.h"
-
 #include "kopete_export.h"
 
-#include <QObject>
-#include <QPixmap>
-#include <QHash>
+#include <QtCore/QObject>
+#include <QtGui/QPixmap>
+#include <QtCore/QHash>
+
 #include <kconfiggroup.h>
 
-class QDomNode;
 class KActionMenu;
 class KConfigGroup;
 
 namespace Kopete
 {
 class Contact;
-class Plugin;
 class Protocol;
 class MetaContact;
 class Group;
 class OnlineStatus;
 class BlackLister;
 class StatusMessage;
+class Identity;
+class PropertyContainer;
 
 /**
  * The Kopete::Account class handles one account.
@@ -108,7 +109,7 @@ public:
 	enum AddMode {
 		ChangeKABC = 0,     ///< The KDE Address book may be updated
 		DontChangeKABC = 1, ///< The KDE Address book will not be changed
-		Temporary = 2       ///< The contact will not be added on the contactlist
+		Temporary = 2       ///< The contact will not be added on the contact list
 	};
 
 	/**
@@ -196,7 +197,7 @@ public:
 	/**
 	 * \brief change the account icon.
 	 * by default the icon of an account is the protocol one, but it may be overide it.
-	 * Set QString::null to go back to the default  (the protocol icon)
+	 * Set QString() to go back to the default  (the protocol icon)
 	 * 
 	 * this call will emit colorChanged()
 	 */
@@ -210,6 +211,28 @@ public:
 	QString customIcon() const;
 	
 	/**
+	 * \brief Retrieve the identity this account belongs to
+	 *
+	 * \return a pointer to the Identity object this account belongs to.
+	 *
+	 * \see setIdentity().
+	 */
+	Identity * identity() const;
+
+	/**
+	 * \brief Sets the identity this account belongs to
+	 *
+	 * Setting the account to a new identity implies it to be removed from the 
+	 * identity it was previously associated.
+	 *
+	 * @param ident The identity this account should be associated to
+	 * \return @c true if the identity was changed, @c false otherwise
+	 *
+	 * @note You should call the default implementation from your reimplementation
+	 */
+	virtual bool setIdentity( Kopete::Identity *ident );
+
+	/**
 	 * \brief Retrieve the 'myself' contact.
 	 *
 	 * \return a pointer to the Contact object for this account
@@ -219,9 +242,9 @@ public:
 	Contact * myself() const;
 
 	/**
-	 * @brief Return the menu for this account
+	 * @brief Fill the menu with actions for this account
 	 *
-	 * You have to reimplement this method to return the custom action menu which will
+	 * You have to reimplement this method to add custom actions to the @p actionMenu which will
 	 * be shown in the statusbar. It is the caller's responsibility to ensure the menu is deleted.
 	 *
 	 * The default implementation provides a generic menu, with actions generated from the protocol's
@@ -232,7 +255,17 @@ public:
 	 *
 	 * @see OnlineStatusManager::registerOnlineStatus
 	 */
-	virtual KActionMenu* actionMenu() ;
+	virtual void fillActionMenu( KActionMenu *actionMenu );
+
+	/**
+	 * @brief Return true if account has custom status menu.
+	 *
+	 * You have to reimplement this method and return true if you don't want to have status menu in menu
+	 * which will be shown in the statusbar
+	 *
+	 * The default implementation returns false.
+	 */
+	virtual bool hasCustomStatusMenu() const;
 
 	/**
 	 * @brief Retrieve the list of contacts for this account
@@ -266,13 +299,13 @@ public:
 	 * If @p mode is @c DontChangeKABC, no additional action is carried out.
 	 *
 	 * @param contactId the @ref Contact::contactId of the contact to create
-	 * @param displayName the displayname (alias) of the new metacontact. Leave as QString::null if
+	 * @param displayName the displayname (alias) of the new metacontact. Leave as QString() if
 	 *                    no alias is known, then by default, the nick will be taken as alias and tracked if changed.
 	 * @param group the group to add the created metacontact to, or 0 for the top-level group.
 	 * @param mode the mode used to add the contact. Use DontChangeKABC when deserializing.
 	 * @return the new created metacontact or 0L if the operation failed
 	 */
-	MetaContact* addContact( const QString &contactId, const QString &displayName = QString::null, Group *group = 0, AddMode mode = DontChangeKABC ) ;
+	MetaContact* addContact( const QString &contactId, const QString &displayName = QString(), Group *group = 0, AddMode mode = DontChangeKABC );
 
 	/**
 	 * @brief Create a new contact, adding it to an existing metacontact
@@ -418,7 +451,7 @@ signals:
 	/**
 	 * The color of the account has been changed
 	 * 
-	 * also emited when the icon change
+	 * also emitted when the icon change
 	 * @todo  probably rename to accountIconChanged
 	 */
 	void colorChanged( const QColor & );
@@ -526,7 +559,7 @@ private slots:
 	/**
 	 * The @ref myself() contact's property changed.
 	 */
-	void slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & );
+	void slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & );
 
 	/**
 	 * Stop the suppression of status notification (connected to a timer)

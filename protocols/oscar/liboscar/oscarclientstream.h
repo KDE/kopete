@@ -28,6 +28,7 @@
 #include <QtNetwork/QAbstractSocket>
 
 class Connection;
+class QHostAddress;
 
 class LIBOSCAR_EXPORT ClientStream : public Stream
 {
@@ -65,6 +66,8 @@ public:
 	QString errorString() const;
 
 	void setNoopTime( int mills );
+
+	QHostAddress localAddress() const;
 
 Q_SIGNALS:
 	void connected();

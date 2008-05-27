@@ -51,7 +51,7 @@ void ClientReadyTask::onGo()
 	SNAC s = { 0x0001, 0x0002, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 	
-	kDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Sending client ready, end of login" << endl;
+	kDebug( OSCAR_RAW_DEBUG ) << "Sending client ready, end of login";
 	//nasty nasty nasty hack to get all the packets to work
 	QList<int>::const_iterator rcEnd = m_familyList.constEnd();
 	for ( QList<int>::const_iterator it = m_familyList.constBegin(); it != rcEnd; ++it )
@@ -73,7 +73,7 @@ void ClientReadyTask::onGo()
 		
 		if ( client()->isIcq() )
 		{
-			buffer->addDWord( 0x011008E4 ); // ICQ dll library version
+			buffer->addDWord( 0x0110164F ); // ICQ dll library version
 		}
 		else
 		{

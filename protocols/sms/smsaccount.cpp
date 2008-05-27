@@ -19,7 +19,6 @@
 #include <kconfigbase.h>
 #include <kaction.h>
 #include <kmenu.h>
-#include <k3process.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -37,6 +36,8 @@
 SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const char *name )
 	: Kopete::Account( parent, accountID )
 {
+	Q_UNUSED(name);
+
 	setMyself( new SMSContact(this, accountID, accountID, Kopete::ContactList::self()->myself()) );
 	loadConfig();
 	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSOffline );
@@ -121,7 +122,7 @@ void SMSAccount::slotDisconnected()
 
 void SMSAccount::slotSendMessage(Kopete::Message &msg)
 {
-	kWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
+	kWarning( 14160 ) << " this = " << this;
 
 	if(theService == 0L)
 		return;
@@ -180,10 +181,9 @@ bool SMSAccount::createContact( const QString &contactId,
 		return false;
 }
 
-KActionMenu* SMSAccount::actionMenu()
+void SMSAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
-	return theActionMenu;
+	Kopete::Account::fillActionMenu( actionMenu );
 }
 
 void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const Kopete::StatusMessage &reason)
@@ -198,6 +198,7 @@ void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const Ko
 
 void SMSAccount::setStatusMessage( const Kopete::StatusMessage& msg )
 {
+   Q_UNUSED(msg);
    return;
 }
 

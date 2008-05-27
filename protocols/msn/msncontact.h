@@ -31,11 +31,8 @@
 #include <QList>
 
 class QPixmap;
-class QTimer;
 
-class MSNChatSession;
 class KAction;
-class KActionCollection;
 class KTemporaryFile;
 
 namespace Kopete { class Protocol; }
@@ -151,7 +148,6 @@ private slots:
 	void slotBlockUser();
 	void slotShowProfile();
 	void slotSendMail();
-	void slotEmitDisplayPictureChanged();
 
 	/**
 	 * Workaround to make this checkboxe readonly

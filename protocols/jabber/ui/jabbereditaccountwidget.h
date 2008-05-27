@@ -17,8 +17,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef JABBEREDITACCOUNTWIDEGET_H
-#define JABBEREDITACCOUNTWIDEGET_H
+#ifndef JABBEREDITACCOUNTWIDGET_H
+#define JABBEREDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
 
@@ -50,6 +50,7 @@ private slots:
 	void deleteClicked ();
 	void sslToggled (bool);
 	void updateServerField ();
+	void slotPrivacyListsClicked ();
 
 private:
 	JabberProtocol *m_protocol;
@@ -59,4 +60,4 @@ private:
 
 };
 
-#endif
+#endif // JABBEREDITACCOUNTWIDGET_H

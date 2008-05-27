@@ -4,6 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@kde.org>
+    Copyright (c) 2007      by Michaël Larouche       <larouche@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -20,13 +21,14 @@
 #ifndef KOPETEPROTOCOL_H
 #define KOPETEPROTOCOL_H
 
-#include <QFlags>
+#include <QtCore/QFlags>
 
 #include "kopeteplugin.h"
 #include "kopeteonlinestatus.h"
 
 class KopeteEditAccountWidget;
 class AddContactPage;
+class KJob;
 
 #include "kopete_export.h"
 
@@ -45,7 +47,7 @@ class Account;
 
 
 /**
- * @brief base class of every protocols.
+ * @brief base class of every protocol.
  *
  * A protocol is just a particular case of Plugin
  *
@@ -246,7 +248,43 @@ public:
 		const QMap<QString, QString> &serializedData,
 		const QMap<QString, QString> &addressBookData );
 
+	/**
+	 * @brief Factory method to create a protocol Task
+	 *
+	 * Protocols Task are tasks needed for executing specific
+	 * commands for the given protocol. This method create the
+	 * required task for the given task type.
+	 *
+	 * If a task type is not available in the protocol, just return
+	 * a null pointer, like the default implementation.
+	 *
+	 * Example of a implementation of createProtocolTask()
+	 * @code
+KJob* JabberProtocol::createProtocolTask(const QString &taskType)
+{
+	if( taskType == QLatin1String("DeleteContactTask") )
+	{
+		return new JabberDeleteContactTask();
+	}
+	if( taskType == QLatin1String("AddContactTask") )
+	{
+		return new JabberAddContactTask();
+	}
 
+	return 0;
+}
+	 * @endcode
+	 *
+	 * @param taskType a task type as a string. Check each task for name.
+	 */
+	virtual KJob *createProtocolTask(const QString &taskType);
+
+	/**
+	 * Check whether a password is valid for this protocol.  The default implementation
+	 * validates every password
+	 * @param password The password to check
+	 */
+	 virtual bool validatePassword( const QString & password ) const;
 
 public slots:
 	/**

@@ -1,193 +1,52 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>ICQSearchBase</class>
  <widget class="QWidget" name="ICQSearchBase" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>603</width>
-    <height>465</height>
+    <width>640</width>
+    <height>408</height>
    </rect>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
-    <number>11</number>
+   <property name="leftMargin" >
+    <number>0</number>
    </property>
-   <property name="spacing" >
-    <number>6</number>
+   <property name="rightMargin" >
+    <number>0</number>
    </property>
-   <item row="4" column="1" >
-    <widget class="KPushButton" name="clearButton" >
-     <property name="enabled" >
-      <bool>false</bool>
-     </property>
-     <property name="whatsThis" >
-      <string>Clear the results</string>
-     </property>
-     <property name="text" >
-      <string>C&amp;lear</string>
-     </property>
-     <property name="stdItem" stdset="0" >
-      <number>10</number>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1" >
-    <widget class="KPushButton" name="closeButton" >
-     <property name="whatsThis" >
-      <string>Close this dialog</string>
-     </property>
-     <property name="text" >
-      <string>&amp;Close</string>
-     </property>
-     <property name="stdItem" stdset="0" >
-      <number>13</number>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1" >
-    <widget class="KPushButton" name="stopButton" >
-     <property name="enabled" >
-      <bool>false</bool>
-     </property>
-     <property name="whatsThis" >
-      <string>Stops the search</string>
-     </property>
-     <property name="text" >
-      <string>Stop</string>
-     </property>
-     <property name="shortcut" >
-      <string/>
-     </property>
-     <property name="stdItem" stdset="0" >
-      <number>26</number>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1" >
-    <widget class="KPushButton" name="addButton" >
-     <property name="enabled" >
-      <bool>false</bool>
-     </property>
-     <property name="whatsThis" >
-      <string>Add the selected user to your contact list</string>
-     </property>
-     <property name="text" >
-      <string>Add</string>
-     </property>
-     <property name="shortcut" >
-      <string/>
-     </property>
-     <property name="stdItem" stdset="0" >
-      <number>27</number>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1" >
-    <widget class="KPushButton" name="userInfoButton" >
-     <property name="enabled" >
-      <bool>false</bool>
-     </property>
-     <property name="whatsThis" >
-      <string>Show information about the selected contact</string>
-     </property>
-     <property name="text" >
-      <string>User Info</string>
-     </property>
-     <property name="shortcut" >
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>41</width>
-       <height>190</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
    <item row="0" column="0" >
     <widget class="QTabWidget" name="tabWidget3" >
-     <widget class="QWidget" name="tabUIN" >
-      <attribute name="title" >
-       <string>UIN Search</string>
-      </attribute>
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="textLabel1" >
-         <property name="text" >
-          <string>&amp;UIN #:</string>
-         </property>
-         <property name="buddy" >
-          <cstring>uin</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QLineEdit" name="uin" />
-       </item>
-       <item row="1" column="1" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>105</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="tabWhitepages" >
       <attribute name="title" >
        <string>ICQ Whitepages Search</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item row="1" column="3" >
-        <widget class="QLineEdit" name="lastName" />
+       <item row="0" column="0" >
+        <widget class="QLabel" name="textLabel2" >
+         <property name="text" >
+          <string>&amp;Nickname:</string>
+         </property>
+         <property name="buddy" >
+          <cstring>nickName</cstring>
+         </property>
+        </widget>
        </item>
        <item row="0" column="1" >
         <widget class="QLineEdit" name="nickName" />
-       </item>
-       <item row="1" column="2" >
-        <widget class="QLabel" name="textLabel4" >
-         <property name="text" >
-          <string>&amp;Last name:</string>
-         </property>
-         <property name="buddy" >
-          <cstring>lastName</cstring>
-         </property>
-        </widget>
        </item>
        <item row="0" column="2" >
         <widget class="QLabel" name="textLabel3" >
@@ -199,6 +58,9 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="3" >
+        <widget class="QLineEdit" name="firstName" />
+       </item>
        <item row="1" column="0" >
         <widget class="QLabel" name="textLabel6" >
          <property name="text" >
@@ -209,50 +71,21 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="textLabel2" >
-         <property name="text" >
-          <string>&amp;Nickname:</string>
-         </property>
-         <property name="buddy" >
-          <cstring>nickName</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="3" >
-        <widget class="QComboBox" name="country" />
-       </item>
-       <item row="3" column="0" >
-        <widget class="QLabel" name="textLabel9" >
-         <property name="text" >
-          <string>Lan&amp;guage:</string>
-         </property>
-         <property name="buddy" >
-          <cstring>language</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" >
-        <widget class="QComboBox" name="language" />
-       </item>
-       <item row="2" column="3" >
-        <widget class="QLineEdit" name="city" />
-       </item>
-       <item row="2" column="2" >
-        <widget class="QLabel" name="textLabel10" >
-         <property name="text" >
-          <string>&amp;City:</string>
-         </property>
-         <property name="buddy" >
-          <cstring>city</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3" >
-        <widget class="QLineEdit" name="firstName" />
-       </item>
        <item row="1" column="1" >
         <widget class="QLineEdit" name="email" />
+       </item>
+       <item row="1" column="2" >
+        <widget class="QLabel" name="textLabel4" >
+         <property name="text" >
+          <string>&amp;Last name:</string>
+         </property>
+         <property name="buddy" >
+          <cstring>lastName</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3" >
+        <widget class="QLineEdit" name="lastName" />
        </item>
        <item row="2" column="0" >
         <widget class="QLabel" name="textLabel8" >
@@ -267,12 +100,31 @@
        <item row="2" column="1" >
         <widget class="QComboBox" name="gender" />
        </item>
-       <item row="4" column="0" colspan="2" >
-        <widget class="QCheckBox" name="onlyOnline" >
+       <item row="2" column="2" >
+        <widget class="QLabel" name="textLabel10" >
          <property name="text" >
-          <string>Only search for online contacts</string>
+          <string>&amp;City:</string>
+         </property>
+         <property name="buddy" >
+          <cstring>city</cstring>
          </property>
         </widget>
+       </item>
+       <item row="2" column="3" >
+        <widget class="QLineEdit" name="city" />
+       </item>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="textLabel9" >
+         <property name="text" >
+          <string>Lan&amp;guage:</string>
+         </property>
+         <property name="buddy" >
+          <cstring>language</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="QComboBox" name="language" />
        </item>
        <item row="3" column="2" >
         <widget class="QLabel" name="textLabel11" >
@@ -284,21 +136,15 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
+       <item row="3" column="3" >
+        <widget class="QComboBox" name="country" />
+       </item>
+       <item row="4" column="0" colspan="2" >
+        <widget class="QCheckBox" name="onlyOnline" >
+         <property name="text" >
+          <string>Only search for online contacts</string>
          </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>16</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
        <item row="4" column="2" colspan="2" >
         <spacer>
@@ -318,12 +164,61 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabUIN" >
+      <attribute name="title" >
+       <string>UIN Search</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="QLabel" name="textLabel1" >
+         <property name="text" >
+          <string>&amp;UIN #:</string>
+         </property>
+         <property name="buddy" >
+          <cstring>uin</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QLineEdit" name="uin" />
+       </item>
+       <item row="1" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>41</width>
+           <height>91</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
-   <item rowspan="7" row="1" column="0" >
+   <item row="0" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Preferred</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>82</width>
+       <height>181</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0" >
     <widget class="QTreeView" name="searchResults" >
      <property name="whatsThis" >
-      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;/head>&lt;body style=" white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">This is where the results from your search are displayed. If you double-click a result, the search window will close and pass the UIN of the contact you wish to add back to the Add Contact Wizard. You can only add one contact at a time.&lt;/p>&lt;/body>&lt;/html></string>
+      <string>This is where the results from your search are displayed. If you double-click a result, the search window will close and pass the UIN of the contact you wish to add back to the Add Contact Wizard. You can only add one contact at a time.</string>
      </property>
      <property name="alternatingRowColors" >
       <bool>true</bool>
@@ -334,27 +229,79 @@
     </widget>
    </item>
    <item row="1" column="1" >
-    <widget class="KPushButton" name="searchButton" >
-     <property name="whatsThis" >
-      <string>Search the ICQ Whitepages with your search criteria</string>
+    <layout class="QVBoxLayout" >
+     <property name="spacing" >
+      <number>6</number>
      </property>
-     <property name="text" >
-      <string>&amp;Search</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1" >
-    <widget class="KPushButton" name="newSearchButton" >
-     <property name="enabled" >
-      <bool>true</bool>
-     </property>
-     <property name="whatsThis" >
-      <string>Clears both search fields and results</string>
-     </property>
-     <property name="text" >
-      <string>New Search</string>
-     </property>
-    </widget>
+     <item>
+      <widget class="KPushButton" name="searchButton" >
+       <property name="whatsThis" >
+        <string>Search the ICQ Whitepages with your search criteria</string>
+       </property>
+       <property name="text" >
+        <string>&amp;Search</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KPushButton" name="clearButton" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="whatsThis" >
+        <string>Clears both search fields and results</string>
+       </property>
+       <property name="text" >
+        <string>C&amp;lear</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KPushButton" name="stopButton" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="whatsThis" >
+        <string>Stops the search</string>
+       </property>
+       <property name="text" >
+        <string>Stop</string>
+       </property>
+       <property name="stdItem" stdset="0" >
+        <number>26</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KPushButton" name="userInfoButton" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="whatsThis" >
+        <string>Show information about the selected contact</string>
+       </property>
+       <property name="text" >
+        <string>User Info</string>
+       </property>
+       <property name="shortcut" >
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -363,15 +310,12 @@
  <customwidgets>
   <customwidget>
    <class>KPushButton</class>
-   <extends></extends>
+   <extends>QPushButton</extends>
    <header>kpushbutton.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget3</tabstop>
-  <tabstop>uin</tabstop>
   <tabstop>nickName</tabstop>
   <tabstop>firstName</tabstop>
   <tabstop>email</tabstop>
@@ -381,12 +325,11 @@
   <tabstop>language</tabstop>
   <tabstop>country</tabstop>
   <tabstop>onlyOnline</tabstop>
+  <tabstop>uin</tabstop>
   <tabstop>searchButton</tabstop>
-  <tabstop>stopButton</tabstop>
   <tabstop>clearButton</tabstop>
-  <tabstop>addButton</tabstop>
+  <tabstop>stopButton</tabstop>
   <tabstop>userInfoButton</tabstop>
-  <tabstop>closeButton</tabstop>
   <tabstop>searchResults</tabstop>
  </tabstops>
  <resources/>

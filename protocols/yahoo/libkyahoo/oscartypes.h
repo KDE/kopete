@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef _YAHOOTYPES_H_
-#define _YAHOOTYPES_H_
+#ifndef OSCARTYPES_H
+#define OSCARTYPES_H
 
 #include <qglobal.h>
 
@@ -28,4 +28,4 @@ namespace Yahoo
 	typedef quint32 DWORD;
 }
 
-#endif
+#endif // OSCARTYPES_H

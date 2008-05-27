@@ -1,6 +1,6 @@
 /*
     Kopete Groupwise Protocol
-    gwchatrooms.h - Data types for group chat
+    gwchatrooms.h - Data types for groupchat
 
     Copyright (c) 2005      SUSE Linux AG	 	 http://www.suse.com
 
@@ -16,11 +16,12 @@
     *************************************************************************
 */
 
+#ifndef GWCHATROOMS_H
+#define GWCHATROOMS_H
+
 #include <QDateTime>
 #include <QList>
 #include <QMap>
-#ifndef GROUPWISE_CHATROOMS_H
-#define GROUPWISE_CHATROOMS_H
 
 namespace GroupWise
 {
@@ -74,5 +75,6 @@ class Chatroom
 
 typedef QList<Chatroom> ChatroomList;
 typedef QMap<QString, Chatroom> ChatroomMap;
-};
-#endif
+}
+
+#endif // GWCHATROOMS_H

@@ -1,3 +1,4 @@
+add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 add_subdirectory( private )
 if(NOT WIN32)
@@ -9,25 +10,27 @@ include_directories( ${KOPETE_INCLUDES} )
 
 ########### next target ###############
 
-set(kopete_private_SRCS 
+set(kopete_private_SRCS
   private/kopeteemoticons.cpp
   private/kopeteutils_private.cpp
   private/kopeteviewmanager.cpp
 )
 
-set(kopete_ui_SRCS 
+set(kopete_ui_SRCS
   ui/accountselector.cpp
   ui/addcontactpage.cpp
   ui/addressbooklinkwidget.cpp
   ui/addressbookselectordialog.cpp
   ui/addressbookselectorwidget.cpp
   ui/addresseeitem.cpp
-  ui/avatarselectordialog.cpp
+  ui/avatardialog.cpp
   ui/avatarselectorwidget.cpp
   ui/contactaddednotifydialog.cpp
+  ui/collapsiblewidget.cpp
   ui/editaccountwidget.cpp
   ui/kopetecontactaction.cpp
   ui/kopetefileconfirmdialog.cpp
+  ui/kopeteinfodialog.cpp
   ui/kopetelistview.cpp
   ui/kopetelistviewitem.cpp
   ui/kopetelistviewsearchline.cpp
@@ -46,6 +49,8 @@ set(kopete_contactlist_SRCS
 
 set(kopete_tasks_SRCS
   tasks/kopetetask.cpp
+  tasks/kopetecontacttaskbase.cpp
+  tasks/kopetedeletecontacttask.cpp
 )
 
 set(kopete_LIB_SRCS
@@ -57,8 +62,6 @@ set(kopete_LIB_SRCS
    kopeteaccount.cpp
    kopeteaccountmanager.cpp
    kopeteavatarmanager.cpp
-   kopeteawayaction.cpp
-   kopeteaway.cpp
    kopeteblacklister.cpp
    kopetechatsession.cpp
    kopetechatsessionmanager.cpp
@@ -67,15 +70,17 @@ set(kopete_LIB_SRCS
    kopetecontact.cpp
    kopetecontactlist.cpp
    kopetecontactlistelement.cpp
-   kopetecontactproperty.cpp
+   kopeteproperty.cpp
    kopeteglobal.cpp
    kopetegroup.cpp
+   kopeteidentity.cpp
+   kopeteidentitymanager.cpp
    kopetemessage.cpp
    kopetemessageevent.cpp
    kopetemessagehandlerchain.cpp
    kopetemessagehandler.cpp
    kopetemetacontact.cpp
-   kopetemimesourcefactory.cpp
+   kopetefileengine.cpp
    kopetemimetypehandler.cpp
    kopeteonlinestatus.cpp
    kopeteonlinestatusmanager.cpp
@@ -85,6 +90,7 @@ set(kopete_LIB_SRCS
    kopeteplugin.cpp
    kopetepluginmanager.cpp
    kopeteproperties.cpp
+   kopetepropertycontainer.cpp
    kopeteprotocol.cpp
    kopetesimplemessagehandler.cpp
    kopetestatusmessage.cpp
@@ -93,6 +99,13 @@ set(kopete_LIB_SRCS
    kopeteutils.cpp
    kopetewalletmanager.cpp
    networkstatuscommon.h
+   chatsessionmemberslistmodel.cpp
+   kopetestatusmanager.cpp
+   kopetestatusitems.cpp
+   kopeteidletimer.cpp
+   kopeteinfoeventmanager.cpp
+   kopeteinfoevent.cpp
+   kopeteaddedinfoevent.cpp
 # REMOVED FOR NOW
 #   connectionmanager.cpp
 #   managedconnectionaccount.cpp
@@ -103,23 +116,36 @@ kde4_add_ui_files(kopete_LIB_SRCS
  ui/addressbooklinkwidget_base.ui
  ui/addressbookselectorwidget_base.ui
  ui/avatarselectorwidget.ui
- ui/contactaddednotifywidget.ui 
+ ui/contactaddednotifywidget.ui
  ui/fileconfirmbase.ui
  ui/kopeteawaydialogbase.ui
  ui/kopetepasswordwidgetbase.ui
  ui/metacontactselectorwidget_base.ui
 )
 
-kde4_automoc(${kopete_LIB_SRCS})
-
-kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC kopetegeneralsettings.kcfgc kopeteappearancesettings.kcfgc kopetebehaviorsettings.kcfgc )
+kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC
+  kopeteappearancesettings.kcfgc
+  kopetebehaviorsettings.kcfgc
+  kopetestatussettings.kcfgc
+  )
 
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 
-target_link_libraries(kopete ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS} ${X11_Xss_LIB} )
+target_link_libraries(kopete ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS})
+if(Q_WS_X11 AND X11_Xss_FOUND)
+   target_link_libraries(kopete ${X11_Xss_LIB})
+endif(Q_WS_X11 AND X11_Xss_FOUND)
 
-set_target_properties(kopete PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
-install(TARGETS kopete DESTINATION ${LIB_INSTALL_DIR})
+set_target_properties(kopete PROPERTIES
+    VERSION ${GENERIC_LIB_VERSION}
+    SOVERSION ${GENERIC_LIB_SOVERSION}
+    )
+if(MSVC)
+  set_target_properties(kopete PROPERTIES
+      OUTPUT_NAME libkopete
+      )
+endif(MSVC)
+install(TARGETS kopete ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 ########### install files ###############
@@ -132,11 +158,12 @@ install(FILES
  ui/addcontactpage.h
  ui/addressbookselectordialog.h
  ui/addressbookselectorwidget.h
- ui/avatarselectordialog.h
+ ui/avatardialog.h
  ui/avatarselectorwidget.h
  ui/editaccountwidget.h
  ui/kopetecontactaction.h
  ui/kopetefileconfirmdialog.h
+ ui/kopeteinfodialog.h
  ui/kopetelistview.h
  ui/kopetelistviewitem.h
  ui/kopetelistviewsearchline.h
@@ -150,7 +177,7 @@ DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui )
 install( FILES
   kopeteappearancesettings.kcfg
   kopetebehaviorsettings.kcfg
-  kopetegeneralsettings.kcfg
+  kopetestatussettings.kcfg
 DESTINATION ${KCFG_INSTALL_DIR})
 
 install( FILES kopetecommandui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
@@ -159,13 +186,11 @@ install( FILES kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop  DES
 install( FILES
   ${CMAKE_CURRENT_BINARY_DIR}/kopeteappearancesettings.h
   ${CMAKE_CURRENT_BINARY_DIR}/kopetebehaviorsettings.h
-  ${CMAKE_CURRENT_BINARY_DIR}/kopetegeneralsettings.h
+  ${CMAKE_CURRENT_BINARY_DIR}/kopetestatussettings.h
   kabcpersistence.h
   kopeteaccount.h
   kopeteaccountmanager.h
   kopeteavatarmanager.h
-  kopeteawayaction.h
-  kopeteaway.h
   kopeteblacklister.h
   kopetechatsession.h
   kopetechatsessionmanager.h
@@ -174,10 +199,12 @@ install( FILES
   kopetecontact.h
   kopetecontactlistelement.h
   kopetecontactlist.h
-  kopetecontactproperty.h
+  kopeteproperty.h
   kopete_export.h
   kopeteglobal.h
   kopetegroup.h
+  kopeteidentity.h
+  kopeteidentitymanager.h
   kopetemessageevent.h
   kopetemessage.h
   kopetemessagehandlerchain.h
@@ -190,13 +217,18 @@ install( FILES
   kopetepassword.h
   kopetepicture.h
   kopeteplugin.h
+  kopetepluginmanager.h
   kopeteprotocol.h
+  kopetepropertycontainer.h
   kopetesimplemessagehandler.h
   kopetestatusmessage.h
   kopetetransfermanager.h
   kopeteuiglobal.h
   kopeteversion.h
+  kopetestatusmanager.h
   tasks/kopetetask.h
+  tasks/kopetecontacttaskbase.h
+  tasks/kopetedeletecontacttask.h
 DESTINATION ${INCLUDE_INSTALL_DIR}/kopete )
 
-install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_DIR} )
+install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )

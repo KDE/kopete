@@ -1,9 +1,9 @@
 set(PAPILLON_INSIDE_KOPETE TRUE)
 
-add_subdirectory( libpapillon ) 
+add_subdirectory( libpapillon )
 
-include_directories( 
-${KOPETE_INCLUDES} 
+include_directories(
+${KOPETE_INCLUDES}
 )
 
 
@@ -11,7 +11,6 @@ ${KOPETE_INCLUDES}
 
 set(kopete_messenger_PART_SRCS messengerprotocol.cpp messengeraccount.cpp messengercontact.cpp )
 
-kde4_automoc(${kopete_messenger_PART_SRCS})
 
 kde4_add_plugin(kopete_messenger ${kopete_messenger_PART_SRCS})
 

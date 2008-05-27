@@ -38,7 +38,6 @@
 #include "kopetechatsessionmanager.h"
 #include "kopetemessagehandlerchain.h"
 #include "kopetemetacontact.h"
-#include "knotification.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopeteview.h"
@@ -60,10 +59,11 @@ public:
 	KopeteView *view;
 	bool mayInvite;
 	Kopete::MessageHandlerChain::Ptr chains[3];
+	Kopete::ChatSession::Form form;
 };
 
 Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
-	Kopete::ContactPtrList others, Kopete::Protocol *protocol )
+	Kopete::ContactPtrList others, Kopete::Protocol *protocol, Kopete::ChatSession::Form form )
 : QObject( user->account())
 {
 	int i;
@@ -77,10 +77,12 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	d->view = 0L;
 	d->customDisplayName = false;
 	d->mayInvite = false;
+	d->form = form;
 
 	for ( i = 0; others.size() != i; i++ )
 		addContact( others[i], true );
 
+	connect( user, SIGNAL(contactDestroyed(Kopete::Contact*)), this, SLOT(slotMyselfDestroyed(Kopete::Contact*)) );
 	connect( user, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ), this,
 		SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 
@@ -231,7 +233,7 @@ public:
 Kopete::MessageHandlerChain::Ptr Kopete::ChatSession::chainForDirection( Kopete::Message::MessageDirection dir )
 {
 	if( dir < 0 || dir > 2)
-		kFatal(14000) << k_funcinfo << "invalid message direction " << dir << endl;
+		kFatal(14000) << "invalid message direction " << dir;
 	if( !d->chains[dir] )
 	{
 		TempFactory theTempFactory;
@@ -304,17 +306,17 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, const Kopete::On
 
 void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 {
-	//kDebug( 14010 ) << k_funcinfo << endl;
+	//kDebug( 14010 ) ;
 	if ( d->mContactList.contains( (Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)(Kopete::Contact*)c ) )
 	{
-		kDebug( 14010 ) << k_funcinfo << "Contact already exists" <<endl;
+		kDebug( 14010 ) << "Contact already exists";
 		emit contactAdded( c, suppress );
 	}
 	else
 	{
 		if ( d->mContactList.count() == 1 && d->isEmpty )
 		{
-			kDebug( 14010 ) << k_funcinfo << " FUCKER ZONE " << endl;
+			kDebug( 14010 ) << " FUCKER ZONE ";
 			/* We have only 1 contact before, so the status of the
 			   message manager was given from that contact status */
 			Kopete::Contact *old = d->mContactList.first();
@@ -330,9 +332,9 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 				disconnect( old->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
 			}
 			else
-				disconnect( old, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
+				disconnect( old, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 			emit contactAdded( c, suppress );
-			emit contactRemoved( old, QString::null );
+			emit contactRemoved( old, QString() );
 		}
 		else
 		{
@@ -349,7 +351,7 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 			connect( c->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
 		}
 		else
-			connect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
+			connect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
 
 		slotUpdateDisplayName();
@@ -359,13 +361,13 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 
 void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString& reason, Qt::TextFormat format, bool suppressNotification )
 {
-	kDebug( 14010 ) << k_funcinfo << endl;
+	kDebug( 14010 ) ;
 	if ( !c || !d->mContactList.contains( (Kopete::Contact*)c ) )
 		return;
 
 	if ( d->mContactList.count() == 1 )
 	{
-		kDebug( 14010 ) << k_funcinfo << "Contact not removed. Keep always one contact" << endl;
+		kDebug( 14010 ) << "Contact not removed. Keep always one contact";
 		d->isEmpty = true;
 	}
 	else
@@ -381,7 +383,7 @@ void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString
 			disconnect( c->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
 		}
 		else
-			disconnect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
+			disconnect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		disconnect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
 
 		slotUpdateDisplayName();
@@ -469,25 +471,31 @@ void Kopete::ChatSession::slotViewDestroyed()
 
 Kopete::Account *Kopete::ChatSession::account() const
 {
+	if ( !myself() )
+		return 0;
+
 	return myself()->account();
 }
 
 void Kopete::ChatSession::slotContactDestroyed( Kopete::Contact *contact )
 {
-	if(contact == myself())
-		deleteLater();
-		
 	if( !contact || !d->mContactList.contains( contact ) )
 		return;
 
 	//This is a workaround to prevent crash if the contact get deleted.
 	// in the best case, we should ask the protocol to recreate a temporary contact.
-	// (remember: the contact may be deleted when the users removes it from the contactlist, or when closing kopete )
+	// (remember: the contact may be deleted when the users removes it from the contact list, or when closing kopete )
 	d->mContactList.removeAll( contact );
-	emit contactRemoved( contact, QString::null );
+	emit contactRemoved( contact, QString() );
 
 	if ( d->mContactList.isEmpty() )
 		deleteLater();
+}
+
+void Kopete::ChatSession::slotMyselfDestroyed( Kopete::Contact *contact )
+{
+	d->mUser = 0;
+	deleteLater();
 }
 
 bool Kopete::ChatSession::mayInvite() const
@@ -510,6 +518,11 @@ void Kopete::ChatSession::raiseView()
 	KopeteView *v=view(true, Kopete::BehaviorSettings::self()->viewPlugin() );
 	if(v)
 		v->raise(true);
+}
+
+Kopete::ChatSession::Form Kopete::ChatSession::form() const
+{
+	return d->form;
 }
 
 #include "kopetechatsession.moc"

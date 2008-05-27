@@ -79,7 +79,7 @@ GaduContactsList::GaduContactsList( QString sList )
 		cl.firstname		= (*stringIterator);
 
 		if ( cl.firstname == QString( 'i' ) ) {
-			kDebug(14100) << cline << " ignored" << endl;
+			kDebug(14100) << cline << " ignored";
 			cl.ignored	= true;
 			cl.uin		= strList[6];
 			++lni;

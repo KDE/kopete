@@ -24,40 +24,40 @@
 #include <kdebug.h>
 
 #include "kopeteaccount.h"
+#include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
-#include "ui_testbedaddui.h"
+
+#include "testbedcontact.h"
 
 TestbedAddContactPage::TestbedAddContactPage( QWidget* parent )
 		: AddContactPage(parent)
 {
-	kDebug(14210) << k_funcinfo << endl;
+	kDebug(14210) ;
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget();
-	m_testbedAddUI = new Ui::TestbedAddUI;
-	m_testbedAddUI->setupUi( w );
+	m_testbedAddUI.setupUi( w );
 	l->addWidget( w );
 }
 
 TestbedAddContactPage::~TestbedAddContactPage()
 {
-	delete m_testbedAddUI;
 }
 
 bool TestbedAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )
 {
-    if ( validateData() )
+	if ( validateData() )
 	{
-		bool ok = false;
-		QString type;
-		QString name;
-		if ( m_testbedAddUI->m_rbEcho->isChecked() )
+		QString name = m_testbedAddUI.m_uniqueName->text();
+
+		if ( a->addContact(name, m, Kopete::Account::ChangeKABC ) )
 		{
-			type = m_testbedAddUI->m_uniqueName->text();
-			name = QString::fromLatin1( "Echo Contact" );
-			ok = true;
+			TestbedContact * newContact = qobject_cast<TestbedContact*>( Kopete::ContactList::self()->findContact( a->protocol()->pluginId(), a->accountId(), name ) );
+			if ( newContact )
+			{
+				newContact->setType( m_testbedAddUI.m_rbEcho->isChecked() ? TestbedContact::Echo : TestbedContact::Group );
+				return true;
+			}
 		}
-		if ( ok )
-			return a->addContact(type, /* FIXME: ? name, */ m, Kopete::Account::ChangeKABC );
 		else
 			return false;
 	}

@@ -21,7 +21,6 @@
 namespace Papillon
 {
 
-class SecureStream;
 class HttpTransfer;
 /**
  * @class HttpConnection httpconnection.h <Papillon/Http/Connection>
@@ -32,7 +31,14 @@ class PAPILLON_EXPORT HttpConnection : public QObject
 {
 	Q_OBJECT
 public:
-	HttpConnection(SecureStream *stream, QObject *parent);
+	/**
+	 * @brief Create a new HttpConnection
+	 * @param parent QObject parent
+ 	 */
+	HttpConnection(QObject *parent = 0);
+	/**
+	 * Destructor
+	 */
 	~HttpConnection();
 
 	/**

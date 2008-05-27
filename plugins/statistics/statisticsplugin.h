@@ -3,6 +3,7 @@
 
     Copyright (c) 2003-2004 by Marc Cramdal        <marc.cramdal@gmail.com>
 
+    Copyright (c) 2007      by the Kopete Developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -24,8 +25,7 @@ using namespace std;
 #include <qmap.h>
 #include <qstring.h>
 #include <qstringlist.h>
-
-#include <dbusobject.h>
+#include <QVariantList>
 
 #include "kopeteplugin.h"
 
@@ -33,16 +33,11 @@ using namespace std;
 #include "kopetemessagehandler.h"
 #include "kopeteonlinestatus.h"
 
-#include "statisticsdbusiface.h"
-
 class QString;
 
 class StatisticsDB;
 class StatisticsContact;
-class StatisticsDCOPIface;
 
-class KopeteView;
-class KActionCollection;
 
 /** \section Kopete Statistics Plugin
  *
@@ -67,7 +62,7 @@ class KActionCollection;
  * <td>Event</td><td>Changes to database</td><td>oldStatus</td>
  * </tr>
   * <tr>
- * <td>John 17:44 Away <i>(connexion)</i></td><td> - <i>(oldstatus was offline)</i></td><td>oldstatus = away </td>
+ * <td>John 17:44 Away <i>(connect)</i></td><td> - <i>(oldstatus was offline)</i></td><td>oldstatus = away </td>
  * </tr>
  * <tr>
  * <td>John 18:01 Online</td><td>(+) Away 17:44 18:01</td><td>oldstatus = online</td>
@@ -76,7 +71,7 @@ class KActionCollection;
  * <td>John 18:30 Offline <i>(disconnect)</i></td><td>(+) Online 18:01 18:30</td><td>oldstatus = offline</td>
  * </tr>
  * <tr>
- * <td>John 18:45 Online <i>(connexion)</i></td><td> - <i>(oldstatus was offline)</i></td><td>oldstatus = online</td>
+ * <td>John 18:45 Online <i>(connect)</i></td><td> - <i>(oldstatus was offline)</i></td><td>oldstatus = online</td>
  * </tr>
  * <tr>
  * <td>John 20:30 Offline <i>(disconnect)</i></td><td>(+) Online 18:45 20:30</td><td>oldstatus = offline</td>
@@ -99,12 +94,14 @@ class KActionCollection;
  * StatisticsPlugin is the main Statistics plugin class.
  * Contains mainly slots.
  */
-class StatisticsPlugin : public Kopete::Plugin, virtual public StatisticsDCOPIface
+class StatisticsPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
+	Q_CLASSINFO("D-Bus Interface", "org.kde.kopete.Statistics")
+
 public:
 	/// Standard plugin constructors
-	StatisticsPlugin(QObject *parent, const char *name, const QStringList &args);
+	StatisticsPlugin(QObject *parent, const QVariantList &args);
 	~StatisticsPlugin();
 	
 	/// Method to access m_db member
@@ -167,23 +164,23 @@ public slots:
 	 * DCOP functions 
 	 * See statisticsdbusiface.h for the documentation
 	 */
-	void dbusStatisticsDialog(QString id);
+	Q_SCRIPTABLE void dbusStatisticsDialog(QString id);
 	
-	bool dbusWasOnline(QString id, int timeStamp);
-	bool dbusWasOnline(QString id, QString dt);
+	Q_SCRIPTABLE bool dbusWasOnline(QString id, int timeStamp);
+	Q_SCRIPTABLE bool dbusWasOnline(QString id, QString dt);
 	
-	bool dbusWasAway(QString id, int timeStamp);
-	bool dbusWasAway(QString id, QString dt);
+	Q_SCRIPTABLE bool dbusWasAway(QString id, int timeStamp);
+	Q_SCRIPTABLE bool dbusWasAway(QString id, QString dt);
 	
-	bool dbusWasOffline(QString id, int timeStamp);
-	bool dbusWasOffline(QString id, QString dt);
+	Q_SCRIPTABLE bool dbusWasOffline(QString id, int timeStamp);
+	Q_SCRIPTABLE bool dbusWasOffline(QString id, QString dt);
 	
-	bool dbusWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status);
+	Q_SCRIPTABLE bool dbusWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status);
 	
-	QString dbusStatus(QString id, QString dateTime);
-	QString dbusStatus(QString id, int timeStamp);
+	Q_SCRIPTABLE QString dbusStatus(QString id, QString dateTime);
+	Q_SCRIPTABLE QString dbusStatus(QString id, int timeStamp);
 	
-	QString dbusMainStatus(QString id, int timeStamp);
+	Q_SCRIPTABLE QString dbusMainStatus(QString id, int timeStamp);
 
 private:	
 	StatisticsDB *m_db;

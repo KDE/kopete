@@ -17,7 +17,7 @@
 //Added by qt3to4:
 #include <QLabel>
 #include <Q3ValueList>
-#include <Q3PtrList>
+#include <QList>
 #include <kopetemessage.h>
 #include <kopetechatsession.h>
 
@@ -158,7 +158,8 @@ private:
 	Q3ValueList< Kopete::Message > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
 	Kopete::ContactPtrList m_pendingInvites; // people we wanted to invite to the conference, queued while waiting for the conference to be created.
 	KActionMenu *m_actionInvite;
-	Q3PtrList<KAction> m_inviteActions;
+	typedef QList<KAction*> ActionList;
+	ActionList m_inviteActions;
 	// labels showing secure and logging status
 	QAction *m_secure;
 	QAction *m_logging;

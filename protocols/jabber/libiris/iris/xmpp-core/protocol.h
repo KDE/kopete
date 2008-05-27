@@ -37,9 +37,10 @@
 #define NS_SESSION  "urn:ietf:params:xml:ns:xmpp-session"
 #define NS_STANZAS  "urn:ietf:params:xml:ns:xmpp-stanzas"
 #define NS_BIND     "urn:ietf:params:xml:ns:xmpp-bind"
-#define NS_CHATSTATES "http://jabber.org/protocol/chatstates"
 #define NS_COMPRESS_FEATURE "http://jabber.org/features/compress"
 #define NS_COMPRESS_PROTOCOL "http://jabber.org/protocol/compress"
+#define NS_XHTML_IM "http://jabber.org/protocol/xhtml-im"
+#define NS_XHTML "http://www.w3.org/1999/xhtml"
 
 namespace XMPP
 {

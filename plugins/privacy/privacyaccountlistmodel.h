@@ -1,7 +1,7 @@
 /*
     privacyaccountlist.h - a list of accounts that are part of the black/whitelist
 
-    Copyright (c) 2006 by Andre Duffeck             <andre@duffeck.de>
+    Copyright (c) 2006 by Andre Duffeck             <duffeck@kde.org>
     Kopete    (c) 2003-2006 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************

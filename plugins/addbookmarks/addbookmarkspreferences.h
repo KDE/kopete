@@ -12,7 +12,9 @@
 #ifndef ADDBOOKMARKSPREFERENCES_H
 #define ADDBOOKMARKSPREFERENCES_H
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include "addbookmarksprefssettings.h"
 
 class QButtonGroup;
@@ -27,7 +29,7 @@ class BookmarksPreferences : public KCModule
 {
 Q_OBJECT
 public:
-    explicit BookmarksPreferences(QWidget *parent = 0, const QStringList &args = QStringList());
+    explicit BookmarksPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
 
     ~BookmarksPreferences();
     

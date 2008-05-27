@@ -23,6 +23,7 @@
 #include <qdom.h>
 #include <qtimer.h>
 #include <qfile.h>
+#include <QTextCodec>
 #include <QTextStream>
 #include <QList>
 #include <QDateTime>
@@ -51,10 +52,11 @@
 
 #include "webpresenceplugin.h"
 
-typedef KGenericFactory<WebPresencePlugin> WebPresencePluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, WebPresencePluginFactory( "kopete_webpresence" )  )
+K_PLUGIN_FACTORY(WebPresencePluginFactory, registerPlugin<WebPresencePlugin>();)
+K_EXPORT_PLUGIN(WebPresencePluginFactory( "kopete_webpresence" ))
 
-WebPresencePlugin::WebPresencePlugin( QObject *parent, const QStringList& /*args*/ )
+
+WebPresencePlugin::WebPresencePlugin( QObject *parent, const QVariantList& /*args*/ )
 	: Kopete::Plugin( WebPresencePluginFactory::componentData(), parent ),
 	shuttingDown( false ), resultFormatting( WEB_HTML )
 {
@@ -155,17 +157,17 @@ void WebPresencePlugin::slotWriteFile()
 {
 	m_writeScheduler->stop();
 
-	// generate the (temporary) XML file representing the current contactlist
+	// generate the (temporary) XML file representing the current contact list
 	KUrl dest( resultURL );
 	if ( resultURL.isEmpty() || !dest.isValid() )
 	{
-		kDebug(14309) << "url is empty or not valid. NOT UPDATING!" << endl;
+		kDebug(14309) << "url is empty or not valid. NOT UPDATING!";
 		return;
 	}
 
 	KTemporaryFile* xml = generateFile();
 	xml->setAutoRemove( true );
-	kDebug(14309) << k_funcinfo << " " << xml->fileName() << endl;
+	kDebug(14309) << " " << xml->fileName();
 
 	switch( resultFormatting ) {
 	case WEB_XML:
@@ -196,7 +198,7 @@ void WebPresencePlugin::slotWriteFile()
 
 	// upload it to the specified URL
 	KUrl src( m_output->fileName() );
-	KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, true, false, false );
+	KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, KIO::Overwrite | KIO::HideProgressInfo );
 	connect( job, SIGNAL( result( KJob * ) ),
 			SLOT(  slotUploadJobResult( KJob * ) ) );
 }
@@ -204,7 +206,7 @@ void WebPresencePlugin::slotWriteFile()
 void WebPresencePlugin::slotUploadJobResult( KJob *job )
 {
 	if ( job->error() ) {
-		kDebug(14309) << "Error uploading presence info." << endl;
+		kDebug(14309) << "Error uploading presence info.";
 		KMessageBox::queuedDetailedError( 0, i18n("An error occurred when uploading your presence page.\nCheck the path and write permissions of the destination."), 0, displayName() );
 		delete m_output;
 		m_output = 0L;
@@ -213,8 +215,8 @@ void WebPresencePlugin::slotUploadJobResult( KJob *job )
 
 KTemporaryFile* WebPresencePlugin::generateFile()
 {
-	// generate the (temporary) XML file representing the current contactlist
-	kDebug( 14309 ) << k_funcinfo << endl;
+	// generate the (temporary) XML file representing the current contact list
+	kDebug( 14309 ) ;
 	QString notKnown = i18n( "Not yet known" );
 
 	QDomDocument doc;
@@ -276,7 +278,7 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 					: notKnown ) ;
 			accStatus.appendChild( statusText );
 
-			// Dont add these if we're shutting down, because the result
+			// Do not add these if we're shutting down, because the result
 			// would be quite weird.
 			if ( !shuttingDown ) {
 
@@ -360,7 +362,7 @@ bool WebPresencePlugin::transform( KTemporaryFile * src, KTemporaryFile * dest )
 	xmlDocPtr res = 0;
 
 	if ( !sheet.exists() ) {
-		kDebug(14309) << k_funcinfo << "ERROR: Style sheet not found" << endl;
+		kDebug(14309) << "ERROR: Style sheet not found";
 		retval = false;
 		goto end;
 	}
@@ -368,28 +370,28 @@ bool WebPresencePlugin::transform( KTemporaryFile * src, KTemporaryFile * dest )
 	// is the cast safe?
 	cur = xsltParseStylesheetFile( (const xmlChar *) sheet.fileName().toLatin1().data() );
 	if ( !cur ) {
-		kDebug(14309) << k_funcinfo << "ERROR: Style sheet parsing failed" << endl;
+		kDebug(14309) << "ERROR: Style sheet parsing failed";
 		retval = false;
 		goto end;
 	}
 
 	doc = xmlParseFile( QFile::encodeName( src->fileName() ) );
 	if ( !doc ) {
-		kDebug(14309) << k_funcinfo << "ERROR: XML parsing failed" << endl;
+		kDebug(14309) << "ERROR: XML parsing failed";
 		retval = false;
 		goto end;
 	}
 
 	res = xsltApplyStylesheet( cur, doc, 0 );
 	if ( !res ) {
-		kDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed" << endl;
+		kDebug(14309) << "ERROR: Style sheet apply failed";
 		retval = false;
 		goto end;
 	}
 
 
 	if ( xsltSaveResultToFd(dest->handle(), res, cur) == -1 ) {
-		kDebug(14309) << k_funcinfo << "ERROR: Style sheet apply failed" << endl;
+		kDebug(14309) << "ERROR: Style sheet apply failed";
 		retval = false;
 		goto end;
 	}
@@ -416,7 +418,7 @@ end:
 
 ProtocolList WebPresencePlugin::allProtocols()
 {
-	kDebug( 14309 ) << k_funcinfo << endl;
+	kDebug( 14309 ) ;
 
 	Kopete::PluginList plugins = Kopete::PluginManager::self()->loadedPlugins( "Protocols" );
 	Kopete::PluginList::ConstIterator it;
@@ -457,7 +459,7 @@ QString WebPresencePlugin::statusAsString( const Kopete::OnlineStatus &newStatus
 
 void WebPresencePlugin::aboutToUnload()
 {
-	// Stop timer. Dont need it anymore.
+	// Stop timer. Do not need it anymore.
 	m_writeScheduler->stop();
 
 	// Force statusAsString() report all accounts as OFFLINE.

@@ -45,6 +45,130 @@ static bool hasPeer(const JingleVoiceSession::JidList &jidList, const XMPP::Jid 
 
 	return false;
 }
+//BEGIN SlotsProxy
+/**
+ * This class is used to receive signals from libjingle, 
+ * which is are not compatible with Qt signals.
+ * So it's a proxy between JingeVoiceSession(qt)<->linjingle class.
+ */
+class JingleVoiceSession::SlotsProxy : public sigslot::has_slots<> 
+{
+public:
+	SlotsProxy(JingleVoiceSession *parent)
+	 : voiceSession(parent)
+	{}
+	
+	void OnCallCreated(cricket::Call* call)
+	{
+		kDebug(JABBER_DEBUG_GLOBAL) << "SlotsProxy: CallCreated.";
+		call->SignalSessionState.connect(this, &JingleVoiceSession::SlotsProxy::PhoneSessionStateChanged);
+		voiceSession->setCall(call);
+	}
+		
+	void PhoneSessionStateChanged(cricket::Call *call, cricket::Session *session, cricket::Session::State state)
+	{
+		kDebug(JABBER_DEBUG_GLOBAL) << "State changed: " << state;
+
+		XMPP::Jid jid(session->remote_address().c_str());
+		
+		// Do nothing if the session do not contain a peers.
+		//if( !voiceSession->peers().contains(jid) )
+		if( !hasPeer(voiceSession->peers(), jid) )
+			return;
+
+		if (state == cricket::Session::STATE_INIT) 
+		{}
+		else if (state == cricket::Session::STATE_SENTINITIATE) 
+		{}
+		else if (state == cricket::Session::STATE_RECEIVEDINITIATE) 
+		{
+			voiceSession->setCall(call);
+		}
+		else if (state == cricket::Session::STATE_SENTACCEPT) 
+		{}
+		else if (state == cricket::Session::STATE_RECEIVEDACCEPT) 
+		{
+			emit voiceSession->accepted();
+		}
+		else if (state == cricket::Session::STATE_SENTMODIFY) 
+		{}
+		else if (state == cricket::Session::STATE_RECEIVEDMODIFY) 
+		{
+			//qWarning(QString("jinglevoicecaller.cpp: RECEIVEDMODIFY not implemented yet (was from %1)").arg(jid.full()));
+		}
+		else if (state == cricket::Session::STATE_SENTREJECT) 
+		{}
+		else if (state == cricket::Session::STATE_RECEIVEDREJECT) 
+		{
+			emit voiceSession->declined();
+		}
+		else if (state == cricket::Session::STATE_SENTREDIRECT) 
+		{}
+		else if (state == cricket::Session::STATE_SENTTERMINATE) 
+		{
+			emit voiceSession->terminated();
+		}
+		else if (state == cricket::Session::STATE_RECEIVEDTERMINATE) 
+		{
+			emit voiceSession->terminated();
+		}
+		else if (state == cricket::Session::STATE_INPROGRESS) 
+		{
+			emit voiceSession->sessionStarted();
+		}
+	}
+
+	void OnSendingStanza(cricket::SessionClient*, const buzz::XmlElement *buzzStanza)
+	{
+		QString irisStanza(buzzStanza->Str().c_str());
+		irisStanza.replace("cli:iq","iq");
+		irisStanza.replace(":cli=","=");
+	
+		voiceSession->sendStanza(irisStanza);
+	}
+private:
+	JingleVoiceSession *voiceSession;
+};
+//END SlotsProxy
+
+//BEGIN JingleIQResponder
+class JingleVoiceSession::JingleIQResponder : public XMPP::Task
+{
+public:
+	JingleIQResponder(XMPP::Task *);
+	~JingleIQResponder();
+
+	bool take(const QDomElement &);
+};
+
+/**
+ * \class JingleIQResponder
+ * \brief A task that responds to jingle candidate queries with an empty reply.
+ */
+ 
+JingleVoiceSession::JingleIQResponder::JingleIQResponder(Task *parent) :Task(parent)
+{
+}
+
+JingleVoiceSession::JingleIQResponder::~JingleIQResponder()
+{
+}
+
+bool JingleVoiceSession::JingleIQResponder::take(const QDomElement &e)
+{
+	if(e.tagName() != "iq")
+		return false;
+	
+	QDomElement first = e.firstChild().toElement();
+	if (!first.isNull() && first.attribute("xmlns") == JINGLE_NS) {
+		QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
+		send(iq);
+		return true;
+	}
+	
+	return false;
+}
+//END JingleIQResponder
 
 class JingleVoiceSession::Private
 {
@@ -86,7 +210,7 @@ JingleVoiceSession::JingleVoiceSession(JabberAccount *account, const JidList &pe
 
 JingleVoiceSession::~JingleVoiceSession()
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) ;
 	delete slotsProxy;
 	delete d;
 }
@@ -98,11 +222,11 @@ QString JingleVoiceSession::sessionType()
 
 void JingleVoiceSession::start()
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Starting a voice session..." << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "Starting a voice session...";
 	d->currentCall = d->phoneSessionClient->CreateCall();
 
 	QString firstPeerJid = ((XMPP::Jid)peers().first()).full();
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "With peer: " << firstPeerJid << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "With peer: " << firstPeerJid;
 	d->currentCall->InitiateSession( buzz::Jid(firstPeerJid.ascii()), NULL );
 
 	d->phoneSessionClient->SetFocus(d->currentCall);
@@ -113,7 +237,7 @@ void JingleVoiceSession::accept()
 {	
 	if(d->currentCall)
 	{
-		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Accepting a voice session..." << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << "Accepting a voice session...";
 
 		d->currentCall->AcceptSession(d->currentCall->sessions()[0]);
 		d->phoneSessionClient->SetFocus(d->currentCall);
@@ -141,7 +265,7 @@ void JingleVoiceSession::terminate()
 
 void JingleVoiceSession::setCall(cricket::Call *call)
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating cricket::call object." << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "Updating cricket::call object.";
 	d->currentCall = call;
 	d->phoneSessionClient->SetFocus(d->currentCall);
 }
@@ -159,7 +283,7 @@ void JingleVoiceSession::receiveStanza(const QString &stanza)
 		if( type == "unavailable" && hasPeer(peers(), from) ) 
 		{
 			//qDebug("JingleVoiceCaller: User went offline without closing a call.");
-			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "User went offline without closing a call." << endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << "User went offline without closing a call.";
 			emit terminated();
 		}
 		return;

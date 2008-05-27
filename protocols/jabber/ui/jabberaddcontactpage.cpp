@@ -55,7 +55,7 @@ JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * p
 		
 		if(transport)
 		{
-			jabData->textLabel1->setText( i18n("Loading instruction from gateway...") );
+			jabData->textLabel1->setText( i18n("Loading instructions from gateway...") );
 			XMPP::JT_Gateway * gatewayTask = new XMPP::JT_Gateway ( jaccount->client()->rootTask () );
 			QObject::connect (gatewayTask, SIGNAL (finished ()), this, SLOT (slotPromtReceived()));
 			gatewayTask->get ( transport->myself()->contactId() );
@@ -154,7 +154,7 @@ void JabberAddContactPage::slotPromtReceived( )
 	}
 	else
 	{
-		jabData->textLabel1->setText( i18n("An error occurred while loading instructions from gateway.") );
+		jabData->textLabel1->setText( i18n("An error occurred while loading instructions from the gateway.") );
 	}
 }
 

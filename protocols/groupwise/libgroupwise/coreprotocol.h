@@ -21,9 +21,9 @@
 #ifndef GW_CORE_PROTOCOL_H
 #define GW_CORE_PROTOCOL_H
 
+#include <QLatin1Char>
 #include <q3cstring.h>
 #include <qobject.h>
-#include <q3ptrlist.h>
 
 #include "gwfield.h"
 
@@ -187,7 +187,7 @@ protected:
 	/**
 	 * encodes a method number (usually supplied as a #defined symbol) to a char
 	 */
-	QChar encode_method( quint8 method );
+	QLatin1Char encode_method( quint8 method );
 private:
 	QByteArray m_in;	// buffer containing unprocessed bytes we received
 	QDataStream* m_din; // contains the packet currently being parsed

@@ -34,6 +34,7 @@
 		<Separator weakSeparator="true" lineSeparator="true"/>
 		<Merge/>
 		<Separator weakSeparator="true" lineSeparator="true"/>
+		<Action name="toolbar_spacer"/>
 		<Action name="toolbar_animation"/>
 	</ToolBar>
 

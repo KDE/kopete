@@ -1,7 +1,7 @@
 /*
     yahooverifyaccount.cpp - UI Page for Verifying a locked account
 
-    Copyright (c) 2005 by André Duffeck          <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 by André Duffeck          <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -57,7 +57,7 @@ YahooVerifyAccount::YahooVerifyAccount(Kopete::Account *account, QWidget *parent
 // Destructor
 YahooVerifyAccount::~YahooVerifyAccount()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	delete mTheDialog;
 }
 
@@ -66,7 +66,7 @@ void YahooVerifyAccount::setUrl( const KUrl &url )
 	mFile = new KTemporaryFile();
 	mFile->setPrefix(url.fileName());
 	mFile->open();
-	KIO::TransferJob *transfer = KIO::get( url, false, false );
+	KIO::TransferJob *transfer = KIO::get( url, KIO::NoReload, KIO::HideProgressInfo );
 	connect( transfer, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
 	connect( transfer, SIGNAL( data( KIO::Job*, const QByteArray& ) ), this, SLOT( slotData( KIO::Job*, const QByteArray& ) ) );
 }
@@ -74,7 +74,7 @@ void YahooVerifyAccount::setUrl( const KUrl &url )
 void YahooVerifyAccount::slotData( KIO::Job */*job*/, const QByteArray& data )
 {
 
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	mFile->write( data.data() , data.size() );
 }
@@ -82,7 +82,7 @@ void YahooVerifyAccount::slotData( KIO::Job */*job*/, const QByteArray& data )
 void YahooVerifyAccount::slotComplete( KJob */*job*/ )
 {
 
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	mFile->close();
 	mTheDialog->mPicture->setPixmap( mFile->fileName() );
 	mTheDialog->mPicture->show();
@@ -90,7 +90,7 @@ void YahooVerifyAccount::slotComplete( KJob */*job*/ )
 
 bool YahooVerifyAccount::validateData()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	return ( !mTheDialog->mWord->text().isEmpty() );
 }
@@ -102,7 +102,7 @@ void YahooVerifyAccount::slotClose()
 
 void YahooVerifyAccount::slotApply()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 	YahooAccount* myAccount = static_cast<YahooAccount*>(mTheAccount);
 	myAccount->verifyAccount( mTheDialog->mWord->text() );

@@ -24,12 +24,12 @@
 #include <kopeteaccount.h>
 #include <kopetemetacontact.h>
 
-typedef KGenericFactory<MessengerProtocol> MessengerProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_messenger, MessengerProtocolFactory("kopete_messenger") )
+K_PLUGIN_FACTORY( MessengerProtocolFactory, registerPlugin<MessengerProtocol>(); )
+K_EXPORT_PLUGIN( MessengerProtocolFactory( "kopete_messenger" ) )
 
 MessengerProtocol *MessengerProtocol::s_self = 0;
 
-MessengerProtocol::MessengerProtocol(QObject *parent, const QStringList &/*args*/)
+MessengerProtocol::MessengerProtocol(QObject *parent, const QVariantList &/*args*/)
  : Kopete::Protocol(MessengerProtocolFactory::componentData(), parent)
 {
 	s_self = this;

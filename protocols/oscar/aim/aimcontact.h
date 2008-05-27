@@ -23,6 +23,7 @@
 
 class AIMProtocol;
 class AIMUserInfoDialog;
+class KToggleAction;
 
 class AIMContact : public AIMContactBase
 {
@@ -30,7 +31,7 @@ Q_OBJECT
 
 public:
 	AIMContact( Kopete::Account*, const QString&, Kopete::MetaContact*, 
-	            const QString& icon = QString(), const OContact& ssiItem = OContact() );
+	            const QString& icon = QString() );
 	virtual ~AIMContact();
 
 	bool isReachable();
@@ -38,8 +39,9 @@ public:
 
 	int warningLevel() const;
 
+	virtual void setSSIItem( const OContact& ssiItem );
+
 public slots:
-	void updateSSIItem();
 	void slotUserInfo();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
 	void userOnline( const QString& userId );

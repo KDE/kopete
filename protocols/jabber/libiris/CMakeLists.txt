@@ -4,35 +4,6 @@
 
 FIND_PACKAGE(ZLIB REQUIRED)
 
-MACRO (QMAKE_WRAP filename outfiles )
-  # get include dirs
-  QT4_GET_MOC_INC_DIRS(moc_includes)
-
-  FOREACH (it ${ARGN})
-    GET_FILENAME_COMPONENT(it ${it} ABSOLUTE)
-    GET_FILENAME_COMPONENT(outfile ${it} NAME_WE)
-
-    SET(outfile ${CMAKE_CURRENT_BINARY_DIR}/${filename})
-    ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
-      COMMAND ${QT_MOC_EXECUTABLE}
-      ARGS ${moc_includes} -o ${outfile} ${it}
-      DEPENDS ${it})
-	SET(${outfiles} ${${outfiles}} ${outfile})
-  ENDFOREACH(it)
-ENDMACRO (QMAKE_WRAP)
-
-MACRO (QMAKE_WRAP_CPP outfiles )
-   QMAKE_WRAP("\${outfile}.moc" ${outfiles} ${ARGN})
-ENDMACRO (QMAKE_WRAP_CPP)
-
-MACRO (QMAKE_WRAP_H outfiles )
-   QMAKE_WRAP("moc_\${outfile}.cpp" ${outfiles} ${ARGN})
-ENDMACRO (QMAKE_WRAP_H)
-
-if(MSVC)
-  add_definitions(-DIRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION)
-endif(MSVC)
-
 include_directories( 
 ${CMAKE_CURRENT_SOURCE_DIR}/cutestuff/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/cutestuff/legacy/ 
@@ -76,6 +47,7 @@ iris/xmpp-core/stream.cpp
 iris/xmpp-core/xmlprotocol.cpp
 iris/xmpp-core/parser.cpp
 iris/xmpp-core/simplesasl.cpp
+iris/xmpp-core/xmpp_stanza.cpp
 
 iris/xmpp-im/client.cpp
 iris/xmpp-im/types.cpp
@@ -83,6 +55,10 @@ iris/xmpp-im/xmpp_tasks.cpp
 iris/xmpp-im/xmpp_vcard.cpp
 iris/xmpp-im/xmpp_xmlcommon.cpp
 iris/xmpp-im/xmpp_xdata.cpp
+iris/xmpp-im/xmpp_features.cpp
+iris/xmpp-im/xmpp_discoinfotask.cpp
+iris/xmpp-im/xmpp_discoitem.cpp
+iris/xmpp-im/xmpp_task.cpp
 )
 
 set(libiris_SRCS 
@@ -90,42 +66,37 @@ set(libiris_SRCS
     ${iris_SRCS} 
 )
 
-set(libiris_needmoc_SRCS
-	iris/jabber/s5b.cpp
-	iris/xmpp-core/securestream.cpp
-	iris/xmpp-im/types.cpp
-)
-
-set(libiris_needmoc_HDRS
-	cutestuff/legacy/ndns.h
-	cutestuff/legacy/safedelete.h
-	cutestuff/legacy/servsock.h
-	cutestuff/legacy/srvresolver.h
+kde4_moc_headers(iris_kopete 
+#	cutestuff/legacy/ndns.h
+#	cutestuff/legacy/safedelete.h
+#	cutestuff/legacy/servsock.h
+#	cutestuff/legacy/srvresolver.h
 
 	cutestuff/network/bsocket.h
-	cutestuff/network/httpconnect.h
-	cutestuff/network/socks.h
-	cutestuff/network/httppoll.h
+#	cutestuff/network/httpconnect.h
+#	cutestuff/network/socks.h
+#	cutestuff/network/httppoll.h
 
-	cutestuff/util/bytestream.h
+#	cutestuff/util/bytestream.h
 
-	iris/include/im.h
 	iris/include/xmpp.h
 	iris/include/xmpp_task.h
+	iris/include/xmpp_client.h
+	iris/include/xmpp_clientstream.h
+	iris/include/xmpp_liverosteritem.h
+	iris/include/xmpp_stream.h
 
-	iris/jabber/filetransfer.h
+#	iris/jabber/filetransfer.h
 	iris/jabber/s5b.h
-	iris/jabber/xmpp_ibb.h
+#	iris/jabber/xmpp_ibb.h
 
-	iris/xmpp-core/compress.h
-	iris/xmpp-core/compressionhandler.h
+#	iris/xmpp-core/compress.h
+#	iris/xmpp-core/compressionhandler.h
 	iris/xmpp-core/securestream.h
 
-	iris/xmpp-im/xmpp_tasks.h
+#	iris/xmpp-im/xmpp_tasks.h
+#	iris/xmpp-im/xmpp_discoinfotask.h
 )
-
-QMAKE_WRAP_CPP(libiris_SRCS ${libiris_needmoc_SRCS})
-QMAKE_WRAP_H(libiris_SRCS ${libiris_needmoc_HDRS})
 
 kde4_add_library(iris_kopete SHARED ${libiris_SRCS})
 
@@ -135,10 +106,15 @@ if(WIN32)
   set(iris_kopete_libs ${iris_kopete_libs} ws2_32)
 endif(WIN32)
 
+if(HAVE_NSL_LIBRARY)
+  # This is probably Solaris, and libiris needs to link
+  # to libnsl for gethostbyname
+  set(iris_kopete_libs ${iris_kopete_libs} nsl)
+endif(HAVE_NSL_LIBRARY)
 target_link_libraries(iris_kopete ${iris_kopete_libs})
 
 set_target_properties(iris_kopete PROPERTIES VERSION 1.0.0 SOVERSION 1 )
-install(TARGETS iris_kopete  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS iris_kopete ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 

@@ -26,7 +26,6 @@
 #include <kopete_export.h>
 
 class ByteStream;
-class KResolverEntry;
 
 /**
 @author Till Gerken

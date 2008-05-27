@@ -18,8 +18,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef KABC_ADDRESSEEDIALOG_H
-#define KABC_ADDRESSEEDIALOG_H
+#ifndef ADDRESSEEITEM_H
+#define ADDRESSEEITEM_H
 
 #include <klineedit.h>
 #include <k3listview.h>
@@ -62,4 +62,4 @@ class AddresseeItem : public K3ListViewItem
     KABC::Addressee mAddressee;
 };
 
-#endif
+#endif // ADDRESSEEITEM_H

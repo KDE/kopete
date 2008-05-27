@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Notifies about incoming filetransfers
 
-    Copyright (c) 2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2006 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -27,7 +27,7 @@
 
 FileTransferNotifierTask::FileTransferNotifierTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 FileTransferNotifierTask::~FileTransferNotifierTask()
@@ -73,7 +73,7 @@ bool FileTransferNotifierTask::forMe( const Transfer *transfer ) const
 
 void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString from;		/* key = 4  */
 	QString to;		/* key = 5  */
@@ -112,7 +112,7 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 
 void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 { 
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString from;		/* key = 4  */
 	QString to;		/* key = 5  */
@@ -134,7 +134,7 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 	expires = t->firstParam( 38 ).toLong();
 	filename = t->firstParam( 27 );
 	size = t->firstParam( 28 ).toULong();
-	preview = KCodecs::base64Decode( t->firstParam( 267 ) );
+	preview = QByteArray::fromBase64( t->firstParam( 267 ) );
 
 	if( preview.size() > 0 )
 	{
@@ -146,7 +146,7 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 
 void FileTransferNotifierTask::acceptFileTransfer( YMSGTransfer *transfer )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 	
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePeerToPeer);
 	t->setId( client()->sessionID() );

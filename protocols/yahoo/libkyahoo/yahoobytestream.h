@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef KNETWORKBYTESTREAM_H
-#define KNETWORKBYTESTREAM_H
+#ifndef YAHOOBYTESTREAM_H
+#define YAHOOBYTESTREAM_H
 
 #include <k3bufferedsocket.h>
 
@@ -63,7 +63,6 @@ private:
 
 };
 
-#endif
+#endif // YAHOOBYTESTREAM_H
 
 // kate: indent-width 4; replace-tabs off; tab-width 4; space-indent off;
-

@@ -28,7 +28,6 @@ namespace KIRC { class Client; }
 
 class Q3VBoxLayout;
 class Q3HBoxLayout;
-class Q3GridLayout;
 class QLabel;
 class QLineEdit;
 class QPushButton;

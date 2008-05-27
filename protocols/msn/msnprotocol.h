@@ -26,20 +26,15 @@
 
 #include "kopeteprotocol.h"
 #include "kopeteonlinestatus.h"
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 
 #include "msnsocket.h"
 
 
-class QImage;
 
 class KAction;
-class KActionMenu;
 
 class MSNContact;
-class MSNAccount;
-class MSNNotifySocket;
-class MSNSwitchBoardSocket;
 class MSNChatSession;
 class MSNInvitation;
 namespace Kopete { class ChatSession; }
@@ -105,13 +100,13 @@ public:
 	const Kopete::OnlineStatus UNK;  //inknown (internal)
 	const Kopete::OnlineStatus CNT;  //connecting (internal)
 
-	const Kopete::ContactPropertyTmpl propEmail;
-	const Kopete::ContactPropertyTmpl propPhoneHome;
-	const Kopete::ContactPropertyTmpl propPhoneWork;
-	const Kopete::ContactPropertyTmpl propPhoneMobile;
-	const Kopete::ContactPropertyTmpl propClient;
-	const Kopete::ContactPropertyTmpl propGuid;
-	const Kopete::ContactPropertyTmpl propPersonalMessage; // it's the equivalent of away message.
+	const Kopete::PropertyTmpl propEmail;
+	const Kopete::PropertyTmpl propPhoneHome;
+	const Kopete::PropertyTmpl propPhoneWork;
+	const Kopete::PropertyTmpl propPhoneMobile;
+	const Kopete::PropertyTmpl propClient;
+	const Kopete::PropertyTmpl propGuid;
+	const Kopete::PropertyTmpl propPersonalMessage; // it's the equivalent of away message.
 
 	enum List
 	{
@@ -158,7 +153,6 @@ public:
 
 	static MSNProtocol* protocol();
 	static bool validContactId(const QString&);
-	QImage scalePicture(const QImage &picture);
 
 private slots:
 	void slotSyncContactList();
@@ -178,7 +172,7 @@ signals:
 	 * @param msnMM is the message manager
 	 * @param c is the contact
 	 */
-	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNChatSession* msnMM , MSNContact* c );
+	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , unsigned long int cookie , MSNChatSession* msnMM , MSNContact* c );
 };
 
 #endif

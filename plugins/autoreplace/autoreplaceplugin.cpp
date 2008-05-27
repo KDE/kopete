@@ -24,11 +24,13 @@
 #include "autoreplaceplugin.h"
 #include "autoreplaceconfig.h"
 
-typedef KGenericFactory<AutoReplacePlugin> AutoReplacePluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_autoreplace, AutoReplacePluginFactory( "kopete_autoreplace" )  )
+K_PLUGIN_FACTORY(AutoReplacePluginFactory, registerPlugin<AutoReplacePlugin>();)
+K_EXPORT_PLUGIN(AutoReplacePluginFactory( "kopete_autoreplace" ))
+
+
 AutoReplacePlugin * AutoReplacePlugin::pluginStatic_ = 0L;
 
-AutoReplacePlugin::AutoReplacePlugin( QObject *parent, const QStringList & )
+AutoReplacePlugin::AutoReplacePlugin( QObject *parent, const QVariantList & )
 : Kopete::Plugin( AutoReplacePluginFactory::componentData(), parent )
 {
 	if( !pluginStatic_ )

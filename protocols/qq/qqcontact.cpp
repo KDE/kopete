@@ -86,7 +86,7 @@ QQContact::QQContact( Kopete::Account *account, const QString &id, Kopete::MetaC
 
 QQContact::~QQContact()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 }
 
 bool QQContact::isReachable()
@@ -118,7 +118,7 @@ Kopete::ChatSession *QQContact::manager( Kopete::Contact::CanCreateFlags canCrea
 {
 	Kopete::ContactPtrList chatMembers;
 	chatMembers.append(this);
-	QString guid(QString::null);
+	QString guid(QString::null);	//krazy:exclude=nullstrassign for old broken gcc
 
 	// 1 to 1 chat session
 	if( chatMembers.count() == 1 )
@@ -144,7 +144,7 @@ QList<KAction*> *QQContact::customContextMenuActions()
 		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
 
 		// Send mail (only available if it is an hotmail account)
-		actionSendMail = new KAction( KIcon("mail"), i18n("Send Email..."), this );
+		actionSendMail = new KAction( KIcon("mail-message-new"), i18n("Send Email..."), this );
 		connect( actionSendMail, SIGNAL(triggered(bool)), this, SLOT(slotSendMail()) );
 
 		// Invite to receive webcam
@@ -187,7 +187,7 @@ void QQContact::slotUserInfoDialogReversedToggled()
 
 void QQContact::deleteContact()
 {
-	kDebug( 14140 ) << k_funcinfo << endl;
+	kDebug( 14140 ) ;
 }
 
 bool QQContact::isBlocked() const
@@ -288,7 +288,7 @@ void QQContact::setInfo(const  QString &type,const QString &data )
 		else if( data == "N" )
 			m_phone_mob = false;
 		else
-			kDebug( 14140 ) << k_funcinfo << "Unknown MOB " << data << endl;
+			kDebug( 14140 ) << "Unknown MOB " << data;
 	}
 	else if( type == "MFN" )
 	{
@@ -296,7 +296,7 @@ void QQContact::setInfo(const  QString &type,const QString &data )
 	}
 	else
 	{
-		kDebug( 14140 ) << k_funcinfo << "Unknown info " << type << ' ' << data << endl;
+		kDebug( 14140 ) << "Unknown info " << type << ' ' << data;
 	}
 }
 
@@ -365,6 +365,7 @@ void QQContact::clearServerGroups()
 
 void QQContact::sync( unsigned int changed )
 {
+	Q_UNUSED(changed);
 	return;
 }
 
@@ -387,7 +388,8 @@ void QQContact::contactRemovedFromGroup( const QString& groupId )
 
 void QQContact::rename( const QString &newName )
 {
-	//kDebug( 14140 ) << k_funcinfo << "From: " << displayName() << ", to: " << newName << endl;
+	Q_UNUSED(newName);
+	//kDebug( 14140 ) << "From: " << displayName() << ", to: " << newName;
 
 /*	if( newName == displayName() )
 		return;*/
@@ -407,6 +409,8 @@ void QQContact::slotShowProfile()
  */
 void QQContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint /*fileSize*/ )
 {
+	Q_UNUSED(altFileName);
+
 	QString filePath;
 
 	//If the file location is null, then get it from a file open dialog
@@ -415,11 +419,12 @@ void QQContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uin
 	else
 		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 
-	//kDebug(14140) << "QQContact::sendFile: File chosen to send:" << fileName << endl;
+	//kDebug(14140) << "QQContact::sendFile: File chosen to send:" << fileName;
 
 	if ( !filePath.isEmpty() )
 	{
 		quint32 fileSize = QFileInfo(filePath).size();
+		Q_UNUSED(fileSize);
 		//Send the file
 		// static_cast<QQChatSession*>( manager(Kopete::Contact::CanCreate) )->sendFile( filePath, altFileName, fileSize );
 
@@ -447,7 +452,7 @@ void QQContact::setDisplayPicture(KTemporaryFile *f)
 	f->setAutoRemove(false);
 	delete f;
 
-	KIO::Job *j=KIO::file_move( KUrl( fileName ) , KUrl( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	KIO::Job *j=KIO::file_move( KUrl( fileName ), KUrl( newlocation ), -1, KIO::Overwrite | KIO::HideProgressInfo );
 
 
 	//let the time to KIO to copy the file

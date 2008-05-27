@@ -16,14 +16,14 @@
     *************************************************************************
 */
 
-#ifndef KOPETEPLUGINDATAOBJECT_H
-#define KOPETEPLUGINDATAOBJECT_H
+#ifndef KOPETECONTACTLISTELEMENT_H
+#define KOPETECONTACTLISTELEMENT_H
 
 #include <QtCore/QList>
 #include <QtCore/QMap>
-#include <QtCore/QObject>
 
 #include "kopete_export.h"
+#include "kopetepropertycontainer.h"
 
 namespace Kopete {
 
@@ -33,17 +33,17 @@ class Plugin;
 /**
  * @author Olivier Goffart
  *
- * This is the base class for base elements of the contactlist.
+ * This is the base class for base elements of the contact list.
  * His purpose is to share the code between @ref Group and @ref MetaContact
  *
- * It handle the saving and loading of plugin data from the contactlist.
+ * It handle the saving and loading of plugin data from the contact list.
  * Plugins may set custom data to metaocntacts or groups by calling @ref setPluginData
  * and may retrieve them with @ref pluginData
  *
  * It also allow to store an icon for this element.
  */
 class KOPETE_EXPORT ContactListElement
-	: public QObject  /* public KopeteNotifyDataObject */
+	: public PropertyContainer  /* public KopeteNotifyDataObject */
 {
 	Q_OBJECT
 
@@ -138,7 +138,7 @@ public:
 
 	/**
 	 * Set the icon in the given state
-	 * To clear an entry, set a QString::null
+	 * To clear an entry, set a QString()
 	 */
 	void setIcon( const QString &icon, IconState = None );
 
@@ -182,7 +182,6 @@ private:
 
 } //END namespace Kopete
 
-#endif
+#endif // KOPETECONTACTLISTELEMENT_H
 
 // vim: set noet ts=4 sts=4 sw=4:
-

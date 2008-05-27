@@ -31,8 +31,6 @@
 
 class QVariant;
 
-class KAction;
-class KSelectAction;
 
 namespace Kopete
 {
@@ -43,7 +41,6 @@ class Group;
 class MessageEvent;
 }
 
-class AddContactPage;
 class KopeteGroupViewItem;
 
 
@@ -64,7 +61,7 @@ public:
 	 * metacontact this visual item represents
 	 */
 	Kopete::MetaContact *metaContact() const
-	{ return m_metaContact; };
+	{ return m_metaContact; }
 
 	/**
 	 * true if the item is at top level and not under a group
@@ -74,12 +71,12 @@ public:
 	/**
 	 * parent when top-level
 	 */
-	Q3ListView *parentView() const { return m_parentView; };
+	Q3ListView *parentView() const { return m_parentView; }
 
 	/**
 	 * parent when not top-level
 	 */
-	KopeteGroupViewItem *parentGroup() const { return m_parentGroup; };
+	KopeteGroupViewItem *parentGroup() const { return m_parentGroup; }
 
 	/**
 	 * call this when the item has been moved to a different group
@@ -134,7 +131,7 @@ public slots:
 private slots:
 	void slotUpdateMetaContact();
 	void slotContactStatusChanged( Kopete::Contact * );
-	void slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & );
+	void slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & );
 	void slotContactAdded( Kopete::Contact * );
 	void slotContactRemoved( Kopete::Contact * );
 

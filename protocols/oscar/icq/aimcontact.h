@@ -23,6 +23,7 @@
 #include "aimcontactbase.h"
 
 class ICQProtocol;
+class KToggleAction;
 
 class AIMContact : public AIMContactBase
 {
@@ -30,7 +31,7 @@ Q_OBJECT
 
 public:
 	AIMContact( Kopete::Account*, const QString&, Kopete::MetaContact*, 
-	            const QString& icon = QString(), const OContact& ssiItem = OContact() );
+	            const QString& icon = QString() );
 	virtual ~AIMContact();
 
 	bool isReachable();
@@ -41,8 +42,9 @@ public:
 	 */
 	virtual QList<KAction*> *customContextMenuActions();
 
+	virtual void setSSIItem( const OContact& ssiItem );
+
 public slots:
-	void updateSSIItem();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
 	void userOnline( const QString& userId );
 	void userOffline( const QString& userId );

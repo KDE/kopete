@@ -23,6 +23,7 @@
 #include <kxmlguiwindow.h>
 #include <kmessagebox.h>
 #include <kmenu.h>
+#include <kactionmenu.h>
 #include <kshortcut.h>
 #include <kicon.h>
 
@@ -45,7 +46,7 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 	static uint s_id=0;
 	m_mmId=++s_id;
 
-	kDebug ( 14140 ) << k_funcinfo << "New message manager for " << user->contactId() << endl;
+	kDebug ( 14140 ) << "New message manager for " << user->contactId();
 
 	// Needed because this is (indirectly) a KXMLGuiClient, so it can find the gui description .rc file
 	setComponentData( protocol->componentData() );
@@ -64,17 +65,17 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 	// Set up the Invite menu
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), this );
         actionCollection()->addAction( "qqInvite", m_actionInvite );
-	connect( m_actionInvite->popupMenu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
+	connect( m_actionInvite->menu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
 
 	m_secure = actionCollection()->addAction( "qqSecureChat" );
 	m_secure->setText( i18n( "Security Status" ) );
-        m_secure->setIcon( KIcon( "encrypted" ) );
+        m_secure->setIcon( KIcon( "security-high" ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
         connect( m_secure, SIGNAL( triggered() ), this, SLOT( slotShowSecurity() ) );
 
 	m_logging = actionCollection()->addAction( "qqLoggingChat" );
 	m_logging->setText( i18n( "Archiving Status" ) );
-        m_logging->setIcon( KIcon( "logchat" ) );
+        m_logging->setIcon( KIcon( "utilities-log-viewer" ) );
         connect( m_logging, SIGNAL( triggered() ), this, SLOT( slotShowArchiving() ) );
 	updateArchiving();
 
@@ -99,16 +100,16 @@ void QQChatSession::setGuid( const QString& guid )
 {
 	if ( m_guid.isEmpty() )
 	{
-		kDebug( 14140 ) << k_funcinfo << "setting GUID to: " << guid << endl;
+		kDebug( 14140 ) << "setting GUID to: " << guid;
 		m_guid = guid;
 	}
 	else
-		kDebug( 14140 ) << k_funcinfo << "attempted to change the conference's GUID when already set!" << endl;
+		kDebug( 14140 ) << "attempted to change the conference's GUID when already set!";
 }
 
 void QQChatSession::setClosed()
 {
-	kDebug( 14140 ) << k_funcinfo << " Conference " << m_guid << " is now Closed " << endl;
+	kDebug( 14140 ) << " Conference " << m_guid << " is now Closed ";
 	m_guid.clear();
 }
 
@@ -122,7 +123,7 @@ void QQChatSession::createConference()
 {
 	if ( m_guid.isEmpty() )
 	{
-		kDebug ( 14140 ) << k_funcinfo << endl;
+		kDebug ( 14140 ) ;
 		// form a list of invitees
 		QStringList invitees;
 		Kopete::ContactPtrList chatMembers = members();
@@ -140,14 +141,14 @@ void QQChatSession::createConference()
 		// account()->createConference( mmId(), invitees );
 	}
 	else
-		kDebug ( 14140 ) << k_funcinfo << " tried to create conference on the server when it was already instantiated" << endl;
+		kDebug ( 14140 ) << " tried to create conference on the server when it was already instantiated";
 }
 
 void QQChatSession::receiveGuid( const int newMmId, const QString & guid )
 {
 	if ( newMmId == mmId() )
 	{
-		kDebug ( 14140 ) << k_funcinfo << " got GUID from server" << endl;
+		kDebug ( 14140 ) << " got GUID from server";
 		m_memberCount = members().count();
 		setGuid( guid );
 		// re-add all the members.  This is because when the last member leaves the conference,
@@ -169,7 +170,7 @@ void QQChatSession::slotCreationFailed( const int failedId, const int statusCode
 {
 	if ( failedId == mmId() )
 	{
-		kDebug ( 14140 ) << k_funcinfo << " couldn't start a chat, no GUID.\n" << endl;
+		kDebug ( 14140 ) << " couldn't start a chat, no GUID.\n";
 		//emit creationFailed();
 		Kopete::Message failureNotify( myself(), members() );
 		failureNotify.setPlainBody( i18n("An error occurred when trying to start a chat: %1", statusCode ) );
@@ -182,13 +183,14 @@ void QQChatSession::slotCreationFailed( const int failedId, const int statusCode
 
 void QQChatSession::slotSendTypingNotification( bool typing )
 {
+	Q_UNUSED(typing);
 	// only send a notification if we've got a conference going and we are not Appear Offline
 	// TODO: implement me later.
 }
 
 void QQChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSession * )
 {
-	kDebug ( 14140 ) << k_funcinfo << endl;
+	kDebug ( 14140 ) ;
 	if( account()->isConnected() )
 	{
 		/*if ( closed() )
@@ -220,7 +222,7 @@ void QQChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSess
 				}
 				else
 				{
-					kDebug ( 14140 ) << "waiting for server to create a conference, queuing message" << endl;
+					kDebug ( 14140 ) << "waiting for server to create a conference, queuing message";
 					// the conference hasn't been instantiated on the server yet, so queue the message
 					m_guid = QString();
 					createConference();
@@ -233,7 +235,7 @@ void QQChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSess
 				account()->sendMessage( guid(), message );
 				// we could wait until the server acks our send,
 				// but we'd need a UID for outgoing messages and a list to track them
-				kDebug ( 14140 ) << "sending message: " << message.plainBody() << endl;
+				kDebug ( 14140 ) << "sending message: " << message.plainBody();
 				appendMessage( message );
 				messageSucceeded();
 			}
@@ -243,19 +245,21 @@ void QQChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSess
 
 void QQChatSession::slotGotTypingNotification( const ConferenceEvent& event )
 {
-	if ( event.guid == guid() )
-		; // receivedTypingMsg( static_cast<QQProtocol *>( protocol() )->dnToDotted( event.user ), true );
+	if ( event.guid == guid() ) {
+		// receivedTypingMsg( static_cast<QQProtocol *>( protocol() )->dnToDotted( event.user ), true );
+        }
 }
 
 void QQChatSession::slotGotNotTypingNotification( const ConferenceEvent& event )
 {
-	if ( event.guid == guid() )
-		; //receivedTypingMsg( static_cast<QQProtocol *>( protocol() )->dnToDotted( event.user ), false );
+	if ( event.guid == guid() ) {
+		//receivedTypingMsg( static_cast<QQProtocol *>( protocol() )->dnToDotted( event.user ), false );
+        }
 }
 
 void QQChatSession::dequeueMessagesAndInvites()
 {
-	kDebug ( 14140 ) << k_funcinfo << endl;
+	kDebug ( 14140 ) ;
 	for ( Q3ValueListIterator< Kopete::Message > it = m_pendingOutgoingMessages.begin();
 		  it != m_pendingOutgoingMessages.end();
 		  ++it )
@@ -276,10 +280,10 @@ void QQChatSession::slotActionInviteAboutToShow()
 	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
 	//  items inserted with insert items are automatically deleted when we call clear
 
-	m_inviteActions.setAutoDelete(true);
+	qDeleteAll(m_inviteActions);
 	m_inviteActions.clear();
 
-	m_actionInvite->popupMenu()->clear();
+	m_actionInvite->menu()->clear();
 
 	QHash<QString, Kopete::Contact*>::const_iterator it;
 	for ( it = account()->contacts().begin(); it != account()->contacts().end(); it++ )
@@ -378,7 +382,7 @@ void QQChatSession::slotSearchedForUsers()
 void QQChatSession::addInvitee( const Kopete::Contact * c )
 {
 	// create a placeholder contact for each invitee
-	kDebug ( 14140 ) << k_funcinfo << endl;
+	kDebug ( 14140 ) ;
 	QString pending = i18nc("label attached to contacts who have been invited but are yet to join a chat", "(pending)");
 	Kopete::MetaContact * inviteeMC = new Kopete::MetaContact();
 	inviteeMC->setDisplayName( c->metaContact()->displayName() + pending );
@@ -415,7 +419,7 @@ void QQChatSession::joined( QQContact * c )
 
 void QQChatSession::left( QQContact * c )
 {
-	kDebug( 14140 ) << k_funcinfo << endl;
+	kDebug( 14140 ) ;
 	removeContact( c );
 	--m_memberCount;
 

@@ -27,7 +27,6 @@ namespace Kopete
 	class Protocol;
 }
 
-class TelepathyAccount;
 
 /**
  * @brief Managa a single text chat session between 2 peers.
@@ -54,8 +53,8 @@ private slots:
 	void telepathyMessageReceived(const QtTapioca::TextChannel::Message &message);
 
 	/**
-	 * @brief Message has been sent sucessfully
-	 * @param message Message succesfully sent.
+	 * @brief Message has been sent successfully
+	 * @param message Message successfully sent.
 	 */
 	void telepathyMessageSent(const QtTapioca::TextChannel::Message &message);
 

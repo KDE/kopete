@@ -57,7 +57,7 @@ ChatSessionManager::~ChatSessionManager()
 	QList<ChatSession*>::Iterator it;
 	for ( it=d->sessions.begin() ; it!=d->sessions.end() ; ++it )
 	{
-		kDebug( 14010 ) << k_funcinfo << "Unloading KMM: Why this KMM isn't yet unloaded?" << endl;
+		kDebug( 14010 ) << "Unloading KMM: Why this KMM isn't yet unloaded?";
 		(*it)->deleteLater();
 	}
 	delete d;
@@ -77,7 +77,7 @@ ChatSession* ChatSessionManager::findChatSession(const Contact *user,
 		{
 			QList<Contact*> contactlist = cs->members();
 
-			// set this to false if chatContacts doesn't contain current cs's contactlist
+			// set this to false if chatContacts doesn't contain current cs's contact list
 			bool halfMatch = true;
 
 			for ( i = 0; i != contactlist.size() && halfMatch; i++ )
@@ -105,12 +105,12 @@ ChatSession* ChatSessionManager::findChatSession(const Contact *user,
 }
 
 ChatSession *ChatSessionManager::create(
-	const Contact *user, ContactPtrList chatContacts, Protocol *protocol)
+	const Contact *user, ContactPtrList chatContacts, Protocol *protocol, Kopete::ChatSession::Form form )
 {
 	ChatSession *result=findChatSession( user,  chatContacts, protocol);
 	if (!result)
 	{
-		result = new ChatSession(user,  chatContacts, protocol );
+		result = new ChatSession(user,  chatContacts, protocol, form );
 		registerChatSession(result);
 	}
 	return (result);
@@ -145,7 +145,7 @@ void ChatSessionManager::registerChatSession(ChatSession * result)
 
 void ChatSessionManager::removeSession( ChatSession *session)
 {
-	kDebug(14010) << k_funcinfo << endl;
+	kDebug(14010) ;
 	d->sessions.removeAll( session );
 }
 
@@ -159,7 +159,7 @@ KopeteView * ChatSessionManager::createView( ChatSession *kmm , const QString &r
 	KopeteView *newView = KopeteViewManager::viewManager()->view(kmm,requestedPlugin);
 	if(!newView)
 	{
-		kDebug(14010) << k_funcinfo << "View not successfuly created" << endl;
+		kDebug(14010) << "View not successfuly created";
 		return 0L;
 	}
 
@@ -173,7 +173,7 @@ KopeteView * ChatSessionManager::createView( ChatSession *kmm , const QString &r
 	}
 	else
 	{
-		kWarning(14010) << "Failed to cast view to QObject *" << endl;
+		kWarning(14010) << "Failed to cast view to QObject *";
 	}
 
 	emit viewCreated( newView ) ;

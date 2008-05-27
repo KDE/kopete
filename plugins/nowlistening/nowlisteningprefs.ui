@@ -1,26 +1,23 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>NowListeningPrefsUI</class>
  <widget class="QWidget" name="NowListeningPrefsUI" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
-    <height>376</height>
+    <width>445</width>
+    <height>386</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Now Listening</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
+   </property>
+   <property name="margin" >
+    <number>0</number>
    </property>
    <item>
     <widget class="QLabel" name="advertiseNewMediaToBuddiesLabel" >
@@ -33,7 +30,7 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3Frame" name="advertiseNewMediaToBuddiesHLine" >
+    <widget class="QFrame" name="advertiseNewMediaToBuddiesHLine" >
      <property name="frameShape" >
       <enum>QFrame::HLine</enum>
      </property>
@@ -44,24 +41,35 @@
    </item>
    <item>
     <widget class="QTabWidget" name="tabWidget2" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="TabPage" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>433</width>
+        <height>298</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>Messa&amp;ge</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
        </property>
+       <property name="margin" >
+        <number>0</number>
+       </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>6</number>
+         </property>
+         <property name="margin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="QLabel" name="useThisMessageLabel" >
@@ -83,11 +91,11 @@ Expressions in brackets depend on a substitution being made.</string>
          </item>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>6</number>
+           </property>
+           <property name="margin" >
+            <number>0</number>
            </property>
            <item>
             <widget class="QLabel" name="m_headerLabel" >
@@ -161,7 +169,7 @@ Expressions in brackets depend on a substitution being made.</string>
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>40</height>
@@ -172,15 +180,23 @@ Expressions in brackets depend on a substitution being made.</string>
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>433</width>
+        <height>298</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>A&amp;dvertising Mode</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="margin" >
+        <number>9</number>
        </property>
        <item>
         <widget class="QRadioButton" name="kcfg_ExplicitAdvertising" >
@@ -221,7 +237,7 @@ in place of your status message.</string>
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>80</height>
@@ -232,23 +248,31 @@ in place of your status message.</string>
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>433</width>
+        <height>298</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>Media Pla&amp;yer</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
        </property>
+       <property name="margin" >
+        <number>0</number>
+       </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>6</number>
+         </property>
+         <property name="margin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="QCheckBox" name="kcfg_UseSpecifiedMediaPlayer" >
@@ -258,25 +282,17 @@ in place of your status message.</string>
           </widget>
          </item>
          <item>
-          <widget class="K3ListBox" name="kcfg_SelectedMediaPlayer" >
+          <widget class="K3ListBox" native="1" name="kcfg_SelectedMediaPlayer" >
            <property name="enabled" >
             <bool>false</bool>
            </property>
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>5</vsizetype>
+            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="columnMode" >
-            <enum>Q3ListBox::FixedNumber</enum>
-           </property>
-           <property name="rowMode" >
-            <enum>Q3ListBox::Variable</enum>
-           </property>
-           <property name="variableHeight" >
+           <property name="variableHeight" stdset="0" >
             <bool>false</bool>
            </property>
           </widget>
@@ -291,7 +307,7 @@ in place of your status message.</string>
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>40</height>
@@ -311,7 +327,7 @@ in place of your status message.</string>
      <property name="sizeType" >
       <enum>QSizePolicy::Expanding</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
        <height>40</height>
@@ -325,20 +341,28 @@ in place of your status message.</string>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>Q3Frame</class>
-   <extends></extends>
-   <header>Qt3Support/Q3Frame</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>K3ListBox</class>
    <extends></extends>
    <header>k3listbox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>kcfg_UseSpecifiedMediaPlayer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_SelectedMediaPlayer</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>128</x>
+     <y>94</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>185</x>
+     <y>113</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

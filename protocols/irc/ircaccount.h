@@ -27,7 +27,6 @@
 #include "kopetepasswordedaccount.h"
 
 class IRCContact;
-class IRCProtocol;
 
 namespace KIrc
 {
@@ -37,7 +36,6 @@ class Event;
 
 namespace Kopete
 {
-class AwayAction;
 class Contact;
 class Message;
 class ChatSession;
@@ -127,7 +125,7 @@ public:
 
 	QMap< QString, QString > customCtcp() const;
 
-	void setCustomCtcpReplies(const QMap< QString, QString > &replys);
+	void setCustomCtcpReplies( const QMap< QString, QString > &replies );
 
 	const QMap<QString, QString> customCtcpReplies() const;
 
@@ -138,9 +136,7 @@ public:
 	IRCContact *getContact(const QByteArray &name, Kopete::MetaContact *metac=0);
 	IRCContact *getContact(const KIrc::Entity::Ptr &entity, Kopete::MetaContact *metac=0);
 
-	virtual bool isConnected();
-
-	virtual KActionMenu *actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/** Reimplemented from Kopete::Account */
 	virtual void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &statusMessage);

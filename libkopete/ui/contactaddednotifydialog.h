@@ -33,7 +33,7 @@ class MetaContact;
 namespace UI {
 
 /**
- * @brief Dialog which is shown when a contact added you in the contactlist.
+ * @brief Dialog which is shown when a contact added you in the contact list.
  *
  * This dialog asks the user to give authorization for the addition to the
  * person who added the user and also asks the user if the contact who you've
@@ -43,7 +43,7 @@ namespace UI {
  * @code
 
 	Kopete::UI::ContactAddedNotifyDialog *dialog =
-			new ContactAddedNotifyDialog(contactId, QString::null,account);
+			new ContactAddedNotifyDialog(contactId, QString::null,account);	//krazy:exclude=nullstrassign for old broken gcc
 	QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),this,SLOT(contactAddedDialogApplied()));
 	QObject::connect(dialog,SIGNAL(infoClicked(const QString&)),this,SLOT(contactAddedDialogInfo()));
 	dialog->show();
@@ -94,7 +94,7 @@ public:
 	 * @param hide a bitmask of HideWidget used to hide some widget. By default, everything is shown.
 	 *
 	 */
-	explicit ContactAddedNotifyDialog(const QString& contactId, const QString& contactNick=QString::null,
+	explicit ContactAddedNotifyDialog(const QString& contactId, const QString& contactNick=QString::null,	//krazy:exclude=nullstrassign for old broken gcc
 					Kopete::Account *account=0L, const HideWidgetOptions &hide=DefaultHide);
 
 	/**

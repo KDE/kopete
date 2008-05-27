@@ -24,6 +24,7 @@
 
 class ICQProtocol;
 class ICQUserInfoWidget;
+class KToggleAction;
 
 /**
  * Contact for ICQ over Oscar protocol
@@ -39,7 +40,7 @@ public:
 
 	/** Normal ICQ constructor */
 	ICQContact( Kopete::Account* account, const QString &name, Kopete::MetaContact *parent,
-	            const QString& icon = QString(), const OContact& ssiItem = OContact()  );
+	            const QString& icon = QString() );
 	virtual ~ICQContact();
 
 	/**
@@ -51,9 +52,13 @@ public:
 	/** Return whether or not this contact is reachable. */
 	virtual bool isReachable();
 
+	virtual void setSSIItem( const OContact& ssiItem );
+
+	/**  Set encoding for this contact */
+	virtual void setEncoding( int mib );
+
 public slots:
 	virtual void slotUserInfo();
-	virtual void updateSSIItem();
 	void userInfoUpdated( const QString& contact, const UserDetails& details );
 
 	void userOnline( const QString& userId );
@@ -81,24 +86,35 @@ private:
 	KToggleAction *m_actionVisibleTo;
 	KToggleAction *m_actionInvisibleTo;
 
+	QString m_statusDescription;
+	enum { InfoNone = 0, InfoShort, InfoMediumTlv } m_requestingInfo;
+
 private slots:
+	/** Refresh status from this contact */
+	void refreshStatus( const UserDetails& details, Oscar::Presence presence );
+
 	/** Request authorization from this contact */
 	void slotRequestAuth();
 
 	/** Authorize this contact */
 	void slotSendAuth();
 
-	void slotAuthReplyDialogOkClicked();
-
-	/** We have received an auth request */
-	void slotGotAuthRequest( const QString& contact, const QString& reason );
-
 	/** We have received an auth reply */
 	void slotGotAuthReply( const QString& contact, const QString& reason, bool granted );
 
+	void storeUserInfoDialog();
 	void closeUserInfoDialog();
 
+	void requestShortInfo();
+	void receivedShortInfo( const QString& contact );
 	void receivedLongInfo( const QString& contact );
+
+	void requestMediumTlvInfo();
+	void receivedTlvInfo( const QString& contact );
+
+	void requestShortInfoDelayed( int minDelay = 1000 );
+	void requestMediumTlvInfoDelayed( int minDelay = 1000 );
+	void infoDelayTimeout();
 
 	void slotIgnore();
 	void slotVisibleTo();

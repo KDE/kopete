@@ -20,21 +20,17 @@
 
 #include "kopete_export.h"
 
-#include <QObject>
-#include <QFlags>
+#include <QtCore/QObject>
+#include <QtCore/QFlags>
+#include <QtCore/QMap>
 
-#include "kaction.h"
-#include "kactionmenu.h"
-
-class QString;
 class QPixmap;
 class QColor;
-class KActionMenu;
+class KIcon;
 
 namespace Kopete
 {
 	class OnlineStatus;
-	class Account;
 	class Protocol;
 
 
@@ -95,8 +91,8 @@ public:
 	 * You need to register each status an account can be.
 	 * Registered statuses will appear in the account menu.
 	 *
-	 * The Protocol constructor is a good place to call this function.
-	 * But if you want, you may use a special OnlineStatus constructor that call this function automatically
+	 * You should use a special OnlineStatus constructor that call this function automatically
+	 * The Protocol constructor is a good place to construct the OnlineStatuses
 	 *
 	 * You can set the status to be in the predefined categories.
 	 * Ideally, each category should own one status.
@@ -104,23 +100,8 @@ public:
 	 * There shouldn't be more than one status per protocol per categories.
 	 *
 	 * @param status The status to register
-	 * @param caption The caption that will appear in menus (e.g. "Set &Away")
-	 * @param categories A bitflag of OnlineStatusManager::Categories
-	 * @param options is a bitflag of OnlineStatusManager::Options
 	 */
-	void registerOnlineStatus(const OnlineStatus& status, const QString &caption, Categories categories=0x00 , Options options=0x0);
-
-	/**
-	 * insert "setStatus" actions from the given account to the specified actionMenu.
-	 *  (actions have that menu as parent QObject)
-	 * they are connected to the Account::setOnlineStatus signal
-	 *
-	 * Items are stored by status height.
-	 *
-	 * @param account the account
-	 * @param parent  the ActionMenu where action are inserted
-	 */
-	void createAccountStatusActions( Account *account , KActionMenu *parent);
+	void registerOnlineStatus(const OnlineStatus& status);
 
 	/**
 	 * return the status of the @p protocol which is in the category @p category
@@ -129,8 +110,19 @@ public:
 	 */
 	OnlineStatus onlineStatus(Protocol *protocol, Categories category) const;
 
+	/**
+	 * return the registered statuses for given @p protocol
+	 */
+	QList<OnlineStatus> registeredStatusList( Protocol *protocol ) const;
+
+	/**
+	 * return KIcon for given @p category
+	 */
+	static KIcon pixmapForCategory( Categories category );
+
 private:
 	friend class OnlineStatus;
+	friend class OnlineStatusIconEngine;
 	QPixmap cacheLookupByObject( const OnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle = false);
 	QPixmap cacheLookupByMimeSource( const QString &mimeSource );
 	QString fingerprint( const OnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle = false);
@@ -143,7 +135,6 @@ private slots:
 	void slotIconsChanged();
 
 private:
-	static OnlineStatusManager *s_self;
 	OnlineStatusManager();
 	class Private;
 	Private *d;
@@ -151,25 +142,6 @@ private:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(OnlineStatusManager::Categories)
 Q_DECLARE_OPERATORS_FOR_FLAGS(OnlineStatusManager::Options)
-
-/**
- * @internal
- */
-class OnlineStatusAction : public KAction
-{
-	Q_OBJECT
-  public:
-	OnlineStatusAction ( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent );
-	~OnlineStatusAction();
-
-  signals:
-	void activated( const Kopete::OnlineStatus& status );
-  private slots:
-	void slotActivated();
-  private:
-	class Private;
-	Private *d;
-};
 
 }  //END namespace Kopete
 

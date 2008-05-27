@@ -38,13 +38,12 @@
 #include "kopetemetacontact.h"
 #include "kopeteglobal.h"
 
-typedef KGenericFactory<GaduProtocol> GaduProtocolFactory;
-
-K_EXPORT_COMPONENT_FACTORY( kopete_gadu, KGenericFactory<GaduProtocol>( "kopete_gadu" )  )
+K_PLUGIN_FACTORY( GaduProtocolFactory, registerPlugin<GaduProtocol>(); )
+K_EXPORT_PLUGIN( GaduProtocolFactory( "kopete_gadu" ) )
 
 GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
 
-GaduProtocol::GaduProtocol( QObject* parent, const QStringList& )
+GaduProtocol::GaduProtocol( QObject* parent, const QVariantList& )
 :Kopete::Protocol( GaduProtocolFactory::componentData(), parent ),
 			propFirstName(Kopete::Global::Properties::self()->firstName()),
 			propLastName(Kopete::Global::Properties::self()->lastName()),
@@ -91,7 +90,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const QStringList& )
 				QStringList(QLatin1String("gg_con")), i18n( "Connecting" ) )
 {
 	if ( protocolStatic_ ) {
-		kDebug(14100)<<"####"<<"GaduProtocol already initialized"<<endl;
+		kDebug(14100)<<"####"<<"GaduProtocol already initialized";
 	}
 	else {
 		protocolStatic_ = this;

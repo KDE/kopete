@@ -22,11 +22,11 @@
 #include <QTextStream>
 
 // KDE Includes
-#include <kdebug.h>
-#include <kmessagebox.h>
-#include <klocale.h>
-#include <kdirlister.h>
-#include <ktoolinvocation.h>
+#include <KDebug>
+#include <KMessageBox>
+#include <KLocale>
+#include <KDirLister>
+#include <KToolInvocation>
 
 // Kopete Includes
 #include "kopeteuiglobal.h"
@@ -53,7 +53,7 @@ void WinPopupLib::slotStartDirLister()
 	if (checkMessageDir()) {
 		dirLister = new KDirLister();
 		dirLister->setAutoUpdate(true);
-		connect(dirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotNewMessages(const KFileItemList &)));
+		connect(dirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotReadMessages(const KFileItemList &)));
 		connect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
 		dirLister->openUrl(KUrl(WP_POPUP_DIR));
 	}
@@ -62,11 +62,11 @@ void WinPopupLib::slotStartDirLister()
 /**
  * return the group list
  */
-const QStringList WinPopupLib::getGroups()
+QStringList WinPopupLib::getGroups() const
 {
 	QStringList ret;
-	QMap<QString, WorkGroup>::ConstIterator end = theGroups.end();
-	for (QMap<QString, WorkGroup>::ConstIterator i = theGroups.begin(); i != end; i++)
+	QMap<QString, WorkGroup>::const_iterator i;
+	for (i = theGroups.constBegin(); i != theGroups.constEnd(); ++i)
 		ret += i.key();
 
 	return ret;
@@ -75,7 +75,7 @@ const QStringList WinPopupLib::getGroups()
 /**
  * return the host list
  */
-const QStringList WinPopupLib::getHosts(const QString &Group)
+QStringList WinPopupLib::getHosts(const QString &Group) const
 {
 	return theGroups[Group].Hosts();
 }
@@ -83,14 +83,12 @@ const QStringList WinPopupLib::getHosts(const QString &Group)
 /**
  * return if a host is in the host list
  */
-bool WinPopupLib::checkHost(const QString &Name)
+bool WinPopupLib::checkHost(const QString &Name) const
 {
-//	kDebug() << "WP checkHost: " << Name << endl;
 	bool ret = false;
 
-	QMap<QString, WorkGroup>::Iterator end = theGroups.end();
-	for(QMap<QString, WorkGroup>::Iterator i = theGroups.begin(); i != end && !ret; i++) {
-		if ((*i).Hosts().contains(Name.toUpper())) {
+	foreach (WorkGroup tmpGroup, theGroups) {
+		if (tmpGroup.Hosts().contains(Name.toUpper())) {
 			ret = true;
 			break;
 		}
@@ -105,11 +103,11 @@ bool WinPopupLib::checkMessageDir()
 	QDir dir(WP_POPUP_DIR);
 	if (! dir.exists()) {
 		int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(),
-												  i18n("Working directory %1 does not exist.\n"
-													   "If you have not configured anything yet (samba) please see\n"
+												  i18n("The working directory %1 does not exist.\n"
+													   "If you have not yet configured anything for Samba please see\n"
 													   "Install Into Samba (Configure... -> Account -> Edit) information\n"
 													   "on how to do this.\n"
-													   "Should the directory be created? (May need root password)", WP_POPUP_DIR),
+													   "Should the directory be created? (May require the root password)", WP_POPUP_DIR),
 		                                          QString::fromLatin1("Winpopup"), KGuiItem(i18n("Create Directory")), KGuiItem(i18n("Do Not Create")));
 		if (tmpYesNo == KMessageBox::Yes) {
 			QStringList kdesuArgs = QStringList(QString("-c mkdir -p -m 0777 " + WP_POPUP_DIR));
@@ -121,14 +119,14 @@ bool WinPopupLib::checkMessageDir()
 
 		if (tmpPerms != 0777) {
 
-			kDebug(14170) << "Perms not ok!" << endl;
+			kDebug(14170) << "Perms not ok!";
 
 			int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(),
 													  i18n("Permissions of the working directory "
-														   "%1 are wrong!\n"
-														   "You will not receive messages if you say no.\n"
-														   "You can also correct it manually (chmod 0777 %1) and restart kopete.\n"
-														   "Fix? (May need root password)", WP_POPUP_DIR),
+														   "%1 are incorrect.\n"
+														   "You will not receive messages if choose No.\n"
+														   "You can also correct it manually (chmod 0777 %1), restart Kopete.\n"
+														   "Fix this (may require the root password)?", WP_POPUP_DIR),
 			                                          QString::fromLatin1("Winpopup"), KGuiItem(i18n("Fix")), KGuiItem(i18n("Do Not Fix")));
 			if (tmpYesNo == KMessageBox::Yes) {
 				QStringList kdesuArgs = QStringList(QString("-c chmod 0777 " + WP_POPUP_DIR));
@@ -161,86 +159,86 @@ void WinPopupLib::startReadProcess(const QString &Host)
 	currentGroup = QString();
 
 	// for Samba 3
-	K3ProcIO *reader = new K3ProcIO;
-	*reader << smbClientBin << "-N" << "-g" << "-L" << Host << "-";
+	readGroupsProcess = new QProcess;
+	QStringList args;
+	args << "-N" << "-g" << "-L" << Host << "-";
 
-	connect(reader, SIGNAL(readReady(K3ProcIO *)), this, SLOT(slotReadProcessReady(K3ProcIO *)));
-	connect(reader, SIGNAL(processExited(K3Process *)), this, SLOT(slotReadProcessExited(K3Process *)));
+	connect(readGroupsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotReadProcessExited(int, QProcess::ExitStatus)));
 
-	if (!reader->start(K3Process::NotifyOnExit, true)) {
-		// still to come
-		kDebug(14170) << "ReadProcess not started!" << endl;
-	}
+	readGroupsProcess->setProcessChannelMode(QProcess::MergedChannels);
+	readGroupsProcess->start(smbClientBin, args);
 }
 
-void WinPopupLib::slotReadProcessReady(K3ProcIO *r)
+void WinPopupLib::slotReadProcessExited(int i, QProcess::ExitStatus status)
 {
-	QString tmpLine = QString();
-	QRegExp group("^Workgroup\\|(.*)\\|(.*)$"), host("^Server\\|(.*)\\|(.*)$"),
-			info("^Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]"),
-			error("Connection.*failed");
-
-	while (r->readln(tmpLine) > -1) {
-		if (info.indexIn(tmpLine) != -1) currentGroup = info.cap(1);
-		if (host.indexIn(tmpLine) != -1) currentHosts += host.cap(1);
-		if (group.indexIn(tmpLine) != -1) currentGroups[group.cap(1)] = group.cap(2);
-		if (error.indexIn(tmpLine) != -1) {
-			kDebug(14170) << "Connection to " << currentHost << " failed!" << endl;
-			if (currentHost == QString::fromLatin1("LOCALHOST")) currentHost = QString::fromLatin1("failed"); // to be sure
-		}
-	}
-}
-
-void WinPopupLib::slotReadProcessExited(K3Process *r)
-{
-	delete r;
-
-	// Drop the first cycle - it's only the initial search host,
-	// the next round are the real masters. GF
-
-	if (passedInitialHost) {
-
-		// move currentHost from todo to done
+	if (i > 0 || status == QProcess::CrashExit) {
 		todo.removeAll(currentHost);
 		done += currentHost;
-
-		if (!currentGroups.isEmpty()) {
-			QMap<QString, WorkGroup> newGroups;
-			//loop through the read groups and check for new ones
-			QMap<QString, QString>::ConstIterator end = currentGroups.end();
-			for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
-				QString groupMaster = i.value();
-				if (!done.contains(groupMaster)) todo += groupMaster;
-			}
-		}
-
-		if (!currentGroup.isEmpty() && !currentHosts.isEmpty()) {
-			// create a workgroup object and put the hosts in
-			WorkGroup nWG;
-			nWG.addHosts(currentHosts);
-
-			currentGroupsMap.remove(currentGroup);
-			currentGroupsMap.insert(currentGroup, nWG);
-		}
-
 	} else {
-		passedInitialHost = true;
-		if (!currentGroups.isEmpty()) {
-			foreach (QString groupMaster, currentGroups) {
-				todo += groupMaster;
+		QByteArray outputData = readGroupsProcess->readAll();
+		if (!outputData.isEmpty()) {
+			QString outputString = QString::fromUtf8(outputData.data());
+			QStringList outputList = outputString.split('\n');
+			QRegExp group("Workgroup\\|(.[^\\|]+)\\|(.+)"), host("Server\\|(.[^\\|]+)\\|(.+)"),
+					info("Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]"),
+					error("Connection.*failed");
+			foreach (QString line, outputList) {
+				if (info.indexIn(line) != -1) currentGroup = info.cap(1);
+				if (host.indexIn(line) != -1) currentHosts += host.cap(1);
+				if (group.indexIn(line) != -1) currentGroups[group.cap(1)] = group.cap(2);
 			}
+		}
+
+		delete readGroupsProcess;
+		readGroupsProcess = 0;
+
+		// Drop the first cycle - it's only the initial search host,
+		// the next round are the real masters. GF
+
+		if (passedInitialHost) {
+
+			// move currentHost from todo to done
+			todo.removeAll(currentHost);
+			done += currentHost;
+
+			if (!currentGroups.isEmpty()) {
+				QMap<QString, WorkGroup> newGroups;
+				//loop through the read groups and check for new ones
+				QMap<QString, QString>::ConstIterator end = currentGroups.end();
+				for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
+					QString groupMaster = i.value();
+					if (!done.contains(groupMaster)) todo += groupMaster;
+				}
+			}
+
+			if (!currentGroup.isEmpty() && !currentHosts.isEmpty()) {
+				// create a workgroup object and put the hosts in
+				WorkGroup nWG;
+				nWG.addHosts(currentHosts);
+
+				currentGroupsMap.remove(currentGroup);
+				currentGroupsMap.insert(currentGroup, nWG);
+			}
+
 		} else {
-			if (currentHost == QString::fromLatin1("failed"))
-				KMessageBox::error(Kopete::UI::Global::mainWidget(),
-								   i18n("Connection to localhost failed.\n"
-									    "Is your samba server running?"),
-								   QString::fromLatin1("Winpopup"));
+			passedInitialHost = true;
+			if (!currentGroups.isEmpty()) {
+				foreach (QString groupMaster, currentGroups) {
+					todo += groupMaster;
+				}
+			} else {
+				if (currentHost == QString::fromLatin1("failed"))
+					KMessageBox::error(Kopete::UI::Global::mainWidget(),
+									i18n("Connection to localhost failed.\n"
+											"Is your samba server running?"),
+									QString::fromLatin1("Winpopup"));
+			}
 		}
 	}
 
 	// maybe restart cycle
 	if (todo.count()) {
-		currentHost = todo[0];
+		currentHost = todo.at(0);
 		startReadProcess(currentHost);
 	} else {
 		theGroups = currentGroupsMap;
@@ -253,23 +251,18 @@ void WinPopupLib::slotListCompleted()
 {
 	/// only to check received messages during start up, then we use newItems. GF
 	disconnect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
-	readMessages(dirLister->items());
-}
-
-void WinPopupLib::slotNewMessages(const KFileItemList &items)
-{
-	readMessages(items);
+	slotReadMessages(dirLister->items());
 }
 
 /**
  * read new arrived messages
  */
-void WinPopupLib::readMessages(const KFileItemList &items)
+void WinPopupLib::slotReadMessages(const KFileItemList &items)
 {
-	KFileItem *tmpItem;
+	KFileItem tmpItem;
 	foreach (tmpItem, items) {
-		if (tmpItem->isFile()) {
-			QFile messageFile(tmpItem->url().path());
+		if (tmpItem.isFile()) {
+			QFile messageFile(tmpItem.url().path());
 
 			if (messageFile.open(QIODevice::ReadOnly)) {
 				QTextStream stream(&messageFile);
@@ -299,24 +292,24 @@ void WinPopupLib::readMessages(const KFileItemList &items)
 				if (!messageFile.remove()) {
 					// QFile::remove() seems to be very persistent, it removes even files with 0444 owned by root
 					// if the directory permissions are 0777 - so this is just for safety. GF
-					kDebug(14170) << "Message file not removed - how that?" << endl;
+					kDebug(14170) << "Message file not removed - how that?";
 					int tmpYesNo =  KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(),
 															  i18n("A message file could not be removed; "
-																   "maybe the permissions are wrong.\n"
-																   "Fix? (May need root password)"),
+																   "maybe the permissions are incorrect.\n"
+																   "Fix this (may require the root password)?"),
 					                                          QString::fromLatin1("Winpopup"), KGuiItem(i18n("Fix")), KGuiItem(i18n("Do Not Fix")));
 					if (tmpYesNo == KMessageBox::Yes) {
-						QStringList kdesuArgs = QStringList(QString("-c chmod 0666 " + tmpItem->url().path()));
+						QStringList kdesuArgs = QStringList(QString("-c chmod 0666 " + tmpItem.url().path()));
 						if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) {
 							if (!messageFile.remove())
-								KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Still cannot remove it; please fix manually."));
+								KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Still cannot remove it; please fix it manually."));
 						}
 					}
 				}
 				if (!sender.isEmpty() && time.isValid())
 					emit signalNewMessage(text, time, sender);
 				else
-					kDebug(14170) << "Received invalid message!" << endl;
+					kDebug(14170) << "Received invalid message!";
 			}
 		} // isFile
 	} // foreach
@@ -327,26 +320,12 @@ void WinPopupLib::readMessages(const KFileItemList &items)
  */
 void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 {
-	K3Process *sender = new K3Process(this);
-	*sender << smbClientBin << "-M" << Destination;
-	*sender << "-N" << "-";
-
-	connect(sender, SIGNAL(processExited(K3Process *)), this, SLOT(slotSendProcessExited(K3Process *)));
-
-	if (sender->start(K3Process::NotifyOnExit, K3Process::Stdin)) {
-		sender->writeStdin(Body.toLocal8Bit(), Body.toLocal8Bit().length());
-		if (!sender->closeStdin()) {
-			delete sender;
-		}
-	} else {
-		delete sender;
-	}
-}
-
-void WinPopupLib::slotSendProcessExited(K3Process *p)
-{
-//	emit sendJobDone(p->pid());
-	delete p;
+	QProcess *sender = new QProcess(this);
+	QStringList args;
+	args << "-M" << Destination << "-N" << "-";
+	sender->start(smbClientBin);
+	sender->write(Body.toLocal8Bit());
+	sender->closeWriteChannel();
 }
 
 void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq)

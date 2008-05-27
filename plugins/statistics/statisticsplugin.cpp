@@ -3,6 +3,7 @@
 
     Copyright (c) 2003-2004 by Marc Cramdal        <marc.cramdal@gmail.com>
 
+   Copyright (c) 2007      by the Kopete Developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -14,6 +15,8 @@
     *************************************************************************
 */
 
+#include <math.h>
+
 #include <qfile.h>
 //Added by qt3to4:
 #include <QList>
@@ -22,6 +25,7 @@
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
 #include <kaction.h>
+#include <kactioncollection.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kdeversion.h>
@@ -35,26 +39,24 @@
 #include "kopeteonlinestatus.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
+#include "kopetecontact.h"
 
 #include "statisticscontact.h"
 #include "statisticsdialog.h"
 #include "statisticsplugin.h"
+#include "statisticsadaptor.h"
 #include "statisticsdb.h"
 
-typedef KGenericFactory<StatisticsPlugin> StatisticsPluginFactory;
+K_PLUGIN_FACTORY(StatisticsPluginFactory, registerPlugin<StatisticsPlugin>();)
+K_EXPORT_PLUGIN(StatisticsPluginFactory( "kopete_statistics" ))
 
-
-static const KAboutData aboutdata("kopete_statistics", I18N_NOOP("Statistics") , "0.1" );
-K_EXPORT_COMPONENT_FACTORY( kopete_statistics, StatisticsPluginFactory( &aboutdata )  )
-
-StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QStringList &)
-      : DCOPObject("StatisticsDCOPIface"), 
-        Kopete::Plugin( StatisticsPluginFactory::componentData(), parent, name )
-      
-
+StatisticsPlugin::StatisticsPlugin( QObject *parent, const QVariantList &/*args*/ )
+	: Kopete::Plugin( StatisticsPluginFactory::componentData(), parent )
 {
-	KAction *viewMetaContactStatistics = new KAction( KIcon("log"), i18n("View &Statistics" ),
-		actionCollection(), "viewMetaContactStatistics" );
+
+	KAction *viewMetaContactStatistics = new KAction( KIcon("view-statistics"), i18n("View &Statistics" ),
+		this );
+	actionCollection()->addAction ( "viewMetaContactStatistics", viewMetaContactStatistics );
 	connect(viewMetaContactStatistics, SIGNAL(triggered(bool)), this, SLOT(slotViewStatistics()));
 	viewMetaContactStatistics->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count() == 1);
 
@@ -73,6 +75,10 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QSt
 	/* Initialization reads the database, so it could be a bit time-consuming
 	due to disk access. This should overcome the problem and makes it non-blocking. */
 	QTimer::singleShot(0, this, SLOT(slotInitialize()));
+	
+	new StatisticsAdaptor(this);
+	QDBusConnection dbus = QDBusConnection::sessionBus();
+	dbus.registerObject("/Statistics", this);
 }	
 
 void StatisticsPlugin::slotInitialize()
@@ -124,7 +130,7 @@ void StatisticsPlugin::slotViewStatistics()
 {
 	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
 	
-	kDebug() << k_funcinfo << "statistics - dialog :"+ m->displayName() << endl;
+	kDebug(14315) << "statistics - dialog: " + m->displayName();
 	
 	if (m && !m->metaContactId().isEmpty())
 	{
@@ -151,7 +157,7 @@ void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 
 void StatisticsPlugin::dbusStatisticsDialog(QString id)
 {
-	kDebug() << k_funcinfo << "statistics - DCOP dialog :" << id << endl;
+	kDebug(14315) << "statistics - DBus dialog :" << id;
 	
 	if (statisticsContactMap[id])
 	{
@@ -199,7 +205,7 @@ bool StatisticsPlugin::dbusWasOffline(QString id, QString dateTime)
 
 bool StatisticsPlugin::dbusWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status)
 {
-	kDebug() << k_funcinfo << "statistics - DCOP wasOnline :" << id << endl;
+	kDebug(14315) << "statistics - DBus wasOnline :" << id;
 	
 	if (dateTime.isValid() && statisticsContactMap[id])
 	{

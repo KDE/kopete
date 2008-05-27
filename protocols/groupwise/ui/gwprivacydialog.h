@@ -21,13 +21,9 @@
 #define GWPRIVACYDIALOG_H
 
 #include <kdialog.h>
+#include "ui_gwprivacy.h"
 
 class GroupWiseAccount;
-namespace Ui
-{
-	class GroupWisePrivacyWidget;
-	class GroupWiseContactSearchWidget;
-}
 class Q3ListBoxItem;
 
 /**
@@ -61,7 +57,7 @@ protected slots:
 	
 private:
 	GroupWiseAccount * m_account;
-	Ui::GroupWisePrivacyWidget * m_privacy;
+	Ui::GroupWisePrivacy m_privacy;
 	GroupWiseContactSearch * m_search;
 	Q3ListBoxItem * m_defaultPolicy;
 	bool m_dirty;

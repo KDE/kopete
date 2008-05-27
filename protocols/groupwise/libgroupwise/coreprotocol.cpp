@@ -124,16 +124,16 @@ int CoreProtocol::state()
 void CoreProtocol::debug( const QString &str )
 {
 #ifdef LIBGW_USE_KDEBUG
-	kDebug( 14191 ) << "debug: " << str << endl;
+	kDebug() << str;
 #else
-	qDebug( "GW RAW PROTO: %s\n", str.toAscii() );
+	qDebug() << "GW RAW PROTO: " << str.toAscii();
 #endif
 }
 
 void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 {
 // store locally
-	debug( "CoreProtocol::addIncomingData()");
+	debug( QString() );
 	int oldsize = m_in.size();
 	m_in.resize( oldsize + incomingBytes.size() );
 	memcpy( m_in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
@@ -146,7 +146,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 	while ( m_in.size() && ( parsedBytes = wireToTransfer( m_in ) ) )
 	{
 		transferCount++;
-		debug( QString( "CoreProtocol::addIncomingData() - parsed transfer #%1 in chunk" ).arg( transferCount ) );
+		debug( QString( "parsed transfer #%1 in chunk" ).arg( transferCount ) );
 		int size =  m_in.size();
 		if ( parsedBytes < size )
 		{
@@ -171,7 +171,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 
 Transfer* CoreProtocol::incomingTransfer()
 {	
-	debug( "CoreProtocol::incomingTransfer()" );
+	debug( "" );
 	if ( m_state == Available )
 	{
 		debug( " - got a transfer" );
@@ -190,7 +190,7 @@ void cp_dump( const QByteArray &bytes )
 {
 #ifdef LIBGW_DEBUG
 	CoreProtocol::debug( QString( "contains: %1 bytes" ).arg( bytes.count() ) );
-	for ( uint i = 0; i < bytes.count(); ++i )
+	for ( int i = 0; i < bytes.count(); ++i )
 	{
 		printf( "%02x ", bytes[ i ] );
 	}
@@ -202,24 +202,24 @@ void cp_dump( const QByteArray &bytes )
 
 void CoreProtocol::outgoingTransfer( Request* outgoing )
 {
-	debug( "CoreProtocol::outgoingTransfer()" );
+	debug( "" );
 	// Convert the outgoing data into wire format
 	Request * request = dynamic_cast<Request *>( outgoing );
 	Field::FieldList fields = request->fields();
 	if ( fields.isEmpty() )
 	{
-		debug( " CoreProtocol::outgoingTransfer: Transfer contained no fields, it must be a ping.");
+		debug( "Transfer contained no fields, it must be a ping.");
 /*		m_error = NMERR_BAD_PARM;
 		return;*/
 	}
 	// Append field containing transaction id
-	Field::SingleField * fld = new Field::SingleField( NM_A_SZ_TRANSACTION_ID, NMFIELD_METHOD_VALID, 
+	Field::SingleField * fld = new Field::SingleField( Field::NM_A_SZ_TRANSACTION_ID, NMFIELD_METHOD_VALID, 
 					0, NMFIELD_TYPE_UTF8, request->transactionId() ); 
 	fields.append( fld );
 	
 	// convert to QByteArray
 	QByteArray bytesOut;
-	QTextStream dout( bytesOut, QIODevice::WriteOnly );
+	QTextStream dout( &bytesOut, QIODevice::WriteOnly );
 	dout.setCodec( "ISO 8859-1" );
 	//dout.setByteOrder( QDataStream::LittleEndian );
 
@@ -250,8 +250,8 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	else
 		dout <<  "\r\n";
 
-	debug( QString( "data out: %1" ).arg( bytesOut.data() ) );
 	dout.flush();
+	debug( QString( "data out: %1" ).arg( bytesOut.data() ) );
 	emit outgoingData( bytesOut );
 	// now convert 
 	fieldsToWire( fields );
@@ -262,7 +262,7 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 
 void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 {
-	debug( "CoreProtocol::fieldsToWire()");
+	debug( "");
 	int subFieldCount = 0;
 	
 	// TODO: consider constructing this as a QStringList and then join()ing it.
@@ -337,15 +337,20 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		//dout << QString::number( field->type() ).ascii();
 		QByteArray typeString;
 		typeString.setNum( field->type() );
-		QByteArray outgoing = GW_URLVAR_TAG + field->tag() 
-								+ GW_URLVAR_METHOD + encode_method( field->method() ).toAscii()
-								+ GW_URLVAR_VAL + (const char *)valString 
-								+ GW_URLVAR_TYPE + typeString;
+		QByteArray outgoing;
+		outgoing.append( GW_URLVAR_TAG );
+		outgoing.append( field->tag() );
+		outgoing.append( GW_URLVAR_METHOD );
+		outgoing.append( encode_method( field->method() ).toLatin1() );
+		outgoing.append( GW_URLVAR_VAL );
+		outgoing.append( valString );
+		outgoing.append( GW_URLVAR_TYPE );
+		outgoing.append( typeString );
 								
-		debug( QString( "CoreProtocol::fieldsToWire - outgoing data: %1" ).arg( outgoing.data() ) );
+		debug( QString( "outgoing data: %1" ).arg( outgoing.data() ) );
 		dout.writeRawData( outgoing.data(), outgoing.length() );
 		// write what we have so far, we may be calling this function recursively
-		//kDebug( 14999 ) << k_funcinfo << "writing \'" << bout << "\'" << endl;
+		//kDebug( 14999 ) << "writing \'" << bout << "\'";
 		//debug( " - signalling data" );
 		emit outgoingData( bytesOut );
 
@@ -367,7 +372,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		dout.setByteOrder( QDataStream::LittleEndian );
 		dout.writeRawData( "\r\n", 2 );
 		emit outgoingData( bytesOut );
-		debug( "CoreProtocol::fieldsToWire - request completed" );
+		debug( "- request completed" );
 	}
 	//debug( " - method done" );
 }
@@ -387,14 +392,15 @@ int CoreProtocol::wireToTransfer( QByteArray& wire )
 	{
 		*m_din >> val;
 
-		// if is 'HTTP', it's a Response
-		if ( qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) ) == 0 )
-		{
+		// if is 'HTTP', it's a Response. PTTH it is after endian conversion
+		if ( !qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) )  ||
+		     !qstrncmp( (const char *)&val, "PTTH", strlen( "PTTH" ) )
+		) {
 			Transfer * t = m_responseProtocol->parse( wire, bytesParsed );
 			if ( t )
 			{
 				m_inTransfer = t;
-				debug( "CoreProtocol::wireToTransfer() - got a RESPONSE " );
+				debug( "- got a RESPONSE " );
 				
 				m_state = Available;
 				emit incomingData();
@@ -404,18 +410,18 @@ int CoreProtocol::wireToTransfer( QByteArray& wire )
 		}
 		else // otherwise -> Event code
 		{	
-			debug( QString( "CoreProtocol::wireToTransfer() - looks like an EVENT: %1, length %2" ).arg( val ).arg( wire.size() ) );
+			debug( QString( "- looks like an EVENT: %1, length %2" ).arg( val ).arg( wire.size() ) );
 			Transfer * t = m_eventProtocol->parse( wire, bytesParsed );
 			if ( t )
 			{
 				m_inTransfer = t;
-				debug( QString( "CoreProtocol::wireToTransfer() - got an EVENT: %1, parsed: %2" ).arg( val ).arg( bytesParsed ) );
+				debug( QString( "- got an EVENT: %1, parsed: %2" ).arg( val ).arg( bytesParsed ) );
 				m_state = Available;
 				emit incomingData();
 			}
 			else
 			{
-				debug( "CoreProtocol::wireToTransfer() - EventProtocol was unable to parse it" );
+				debug( "- EventProtocol was unable to parse it" );
 				bytesParsed = 0;
 			}
 		}
@@ -429,70 +435,67 @@ void CoreProtocol::reset()
 	m_in.resize( 0 );
 }
 
-QChar CoreProtocol::encode_method( quint8 method )
+QLatin1Char CoreProtocol::encode_method( quint8 method )
 {
-	QChar str;
-
-	switch (method) {
+	switch (method)
+	{
 		case NMFIELD_METHOD_EQUAL:
-			str = 'G';
+			return QLatin1Char('G');
 			break;
 		case NMFIELD_METHOD_UPDATE:
-			str = 'F';
+			return QLatin1Char('F');
 			break;
 		case NMFIELD_METHOD_GTE:
-			str = 'E';
+			return QLatin1Char('E');
 			break;
 		case NMFIELD_METHOD_LTE:
-			str = 'D';
+			return QLatin1Char('D');
 			break;
 		case NMFIELD_METHOD_NE:
-			str = 'C';
+			return QLatin1Char('C');
 			break;			
 		case NMFIELD_METHOD_EXIST:
-			str = 'B';
+			return QLatin1Char('B');
 			break;
 		case NMFIELD_METHOD_NOTEXIST:
-			str = 'A';
+			return QLatin1Char('A');
 			break;
 		case NMFIELD_METHOD_SEARCH:
-			str = '9';
+			return QLatin1Char('9');
 			break;
 		case NMFIELD_METHOD_MATCHBEGIN:
-			str = '8';
+			return QLatin1Char('8');
 			break;
 		case NMFIELD_METHOD_MATCHEND:
-			str = '7';
+			return QLatin1Char('7');
 			break;
 		case NMFIELD_METHOD_NOT_ARRAY:
-			str = '6';
+			return QLatin1Char('6');
 			break;
 		case NMFIELD_METHOD_OR_ARRAY:
-			str = '5';
+			return QLatin1Char('5');
 			break;
 		case NMFIELD_METHOD_AND_ARRAY:
-			str = '4';
+			return QLatin1Char('4');
 			break;
 		case NMFIELD_METHOD_DELETE_ALL:
-			str = '3';
+			return QLatin1Char('3');
 			break;
 		case NMFIELD_METHOD_DELETE:
-			str = '2';
+			return QLatin1Char('2');
 			break;
 		case NMFIELD_METHOD_ADD:
-			str = '1';
+			return QLatin1Char('1');
 			break;
 		default:					/* NMFIEL D_METHOD_VALID */
-			str = '0';
+			return QLatin1Char('0');
 			break;
 	}
-
-	return str;
 }
 
 void CoreProtocol::slotOutgoingData( const QByteArray &out )
 {
-	debug( QString( "CoreProtocol::slotOutgoingData() %1" ).arg( QString::fromAscii( out ) ) );
+	debug( QString( "%1" ).arg( QString::fromAscii( out ) ) );
 }
 
 bool CoreProtocol::okToProceed()
@@ -502,7 +505,7 @@ bool CoreProtocol::okToProceed()
 		if ( m_din->atEnd() )
 		{
 			m_state = NeedMore;
-			debug( "CoreProtocol::okToProceed() - Server message ended prematurely!" );
+			debug( "- Server message ended prematurely!" );
 		}
 		else
 			return true;

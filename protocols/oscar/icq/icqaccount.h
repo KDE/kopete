@@ -3,7 +3,7 @@
 
   Copyright (c) 2002 by Chris TenHarmsel            <tenharmsel@staticmethod.net>
   Copyright (c) 2004 by Richard Smith               <kde@metafoo.co.uk>
-  Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -26,7 +26,10 @@
 #include "oscarpresence.h"
 
 class KAction;
-namespace Kopete { class AwayAction; class StatusMessage; }
+class KToggleAction;
+
+namespace Kopete { class StatusMessage; }
+namespace Xtraz { class Status; }
 class ICQProtocol;
 class ICQAccount;
 class ICQUserInfoWidget;
@@ -55,8 +58,8 @@ public:
 
 	ICQProtocol *protocol();
 
-	// Accessor method for the action menu
-	virtual KActionMenu* actionMenu();
+	// fill the menu for this account
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/** Reimplementation from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
@@ -69,20 +72,24 @@ public:
 protected:
 	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
 
+	virtual QString sanitizedMessage( const QString& message ) const;
+
 protected slots:
+	virtual void loginActions();
 	virtual void disconnected( DisconnectReason reason );
 
 
 private:
 	Oscar::Presence presence();
 
-	void setPresenceFlags( Oscar::Presence::Flags flags, const QString &message = QString() );
+	void setPresenceFlags( Oscar::Presence::Flags flags, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
 
 	//const unsigned long fullStatus( const unsigned long plainStatus );
 
 private slots:
-	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString() );
-	
+	void setPresenceTarget( const Oscar::Presence &presence, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
+	void setPresenceXStatus( const Xtraz::Status &xStatus );
+
 	void slotToggleInvisible();
 
 	void slotUserInfo();
@@ -94,12 +101,20 @@ private slots:
 	void setXtrazStatus();
 	void editXtrazStatuses();
 
+	/** We have received an auth request */
+	void slotGotAuthRequest( const QString& contact, const QString& reason );
+
+	void addedInfoEventActionActivated( uint actionId );
+
 private:
 	bool mWebAware;
 	bool mHideIP;
-	QString mInitialStatusMessage;
+	Kopete::StatusMessage mInitialStatusMessage;
 	ICQUserInfoWidget* mInfoWidget;
 	ICQContact* mInfoContact;
+
+	KAction* mEditInfoAction;
+	KToggleAction* mActionInvisible;
 };
 
 #endif

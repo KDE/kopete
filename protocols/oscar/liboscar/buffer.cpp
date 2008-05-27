@@ -32,6 +32,7 @@ Buffer::Buffer( const Buffer& other )
 {
 	mBuffer =  other.mBuffer;
 	mReadPos = other.mReadPos;
+	mBlockStack =  other.mBlockStack;
 }
 
 Buffer::Buffer(const char *b, int len)
@@ -182,7 +183,7 @@ Oscar::BYTE Buffer::getByte()
 		mReadPos++;
 	}
 	else
-		kDebug(14150) << "Buffer::getByte(): mBuffer empty" << endl;
+		kDebug(14150) << "Buffer::getByte(): mBuffer empty";
 
 	return thebyte;
 }
@@ -246,7 +247,7 @@ QByteArray Buffer::getBlock(Oscar::DWORD len)
 {
 	if ( len > (Oscar::DWORD)(mBuffer.size() - mReadPos) )
 	{
-		kDebug(14150) << "Buffer::getBlock(DWORD): mBuffer underflow!!!" << endl;
+		kDebug(14150) << "Buffer::getBlock(DWORD): mBuffer underflow!!!";
 		len = mBuffer.size() - mReadPos;
 	}
 
@@ -271,7 +272,7 @@ QByteArray Buffer::getBBlock(Oscar::WORD len)
 
 Oscar::WORD *Buffer::getWordBlock(Oscar::WORD len)
 {
-	kDebug(14150) << k_funcinfo << "of length " << len << endl;
+	kDebug(14150) << "of length " << len;
 	Oscar::WORD *ch=new Oscar::WORD[len+1];
 	for (unsigned int i=0; i<len; i++)
 	{
@@ -343,10 +344,10 @@ TLV Buffer::getTLV()
 		if ( t )
 			t.data = getBlock( t.length );
 		/*else
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Invalid TLV in buffer" << endl;*/
+			kDebug(OSCAR_RAW_DEBUG) << "Invalid TLV in buffer";*/
 	}
 
-	//kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "TLV data is " << t.data << endl;
+	//kDebug(OSCAR_RAW_DEBUG) << "TLV data is " << t.data;
 	return t;
 }
 
@@ -361,11 +362,11 @@ QList<TLV> Buffer::getTLVList()
 		t = getTLV();
 		if ( !t )
 		{
-			kDebug(14150) << k_funcinfo << "Invalid TLV found" << endl;
+			kDebug(14150) << "Invalid TLV found";
 			continue;
 		}
 
-		//kDebug(14150) << k_funcinfo << "got TLV(" << t.type << ")" << endl;
+		//kDebug(14150) << "got TLV(" << t.type << ")";
 		ql.append(t);
 	}
 
@@ -579,6 +580,60 @@ QByteArray Buffer::getLEDBlock()
 {
 	Oscar::DWORD len = getLEDWord();
 	return getBlock( len );
+}
+
+void Buffer::startBlock( BlockType type, ByteOrder byteOrder )
+{
+	Block block = { type, byteOrder, mBuffer.size() };
+	mBlockStack.push( block );
+
+	if ( type == BWord )
+		expandBuffer( 2 );
+	else if ( type == BDWord )
+		expandBuffer( 4 );
+}
+
+void Buffer::endBlock()
+{
+	Q_ASSERT( mBlockStack.size() > 0 );
+	Block block = mBlockStack.pop();
+
+	int size = 0;
+	if ( block.type == BWord )
+		size = mBuffer.size() - block.pos - 2;
+	else if ( block.type == BDWord )
+		size = mBuffer.size() - block.pos - 4;
+
+	if ( block.byteOrder == BigEndian )
+	{
+		if ( block.type == BWord )
+		{
+			mBuffer[block.pos++] = (unsigned char) ((size & 0x0000ff00) >> 8);
+			mBuffer[block.pos++] = (unsigned char) ((size & 0x000000ff) >> 0);
+		}
+		else if ( block.type == BDWord )
+		{
+			mBuffer[block.pos++] = (unsigned char) ((size & 0xff000000) >> 24);
+			mBuffer[block.pos++] = (unsigned char) ((size & 0x00ff0000) >> 16);
+			mBuffer[block.pos++] = (unsigned char) ((size & 0x0000ff00) >> 8);
+			mBuffer[block.pos++] = (unsigned char) ((size & 0x000000ff) >> 0);
+		}
+	}
+	else
+	{
+		if ( block.type == BWord )
+		{
+			mBuffer[block.pos++] = (unsigned char) ((size >> 0) & 0xff);
+			mBuffer[block.pos++] = (unsigned char) ((size >> 8) & 0xff);
+		}
+		else if ( block.type == BDWord )
+		{
+			mBuffer[block.pos++] = (unsigned char) ((size >> 0) & 0xff);
+			mBuffer[block.pos++] = (unsigned char) ((size >> 8) & 0xff);
+			mBuffer[block.pos++] = (unsigned char) ((size >> 16) & 0xff);
+			mBuffer[block.pos++] = (unsigned char) ((size >> 24) & 0xff);
+		}
+	}
 }
 
 Buffer::operator QByteArray() const

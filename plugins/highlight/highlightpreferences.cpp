@@ -39,10 +39,10 @@
 #include "ui_highlightprefsbase.h"
 #include "highlightpreferences.h"
 
-typedef KGenericFactory<HighlightPreferences> HighlightPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_highlight, HighlightPreferencesFactory( "kcm_kopete_highlight" )  )
+K_PLUGIN_FACTORY(HighlightPreferencesFactory, registerPlugin<HighlightPreferences>();)
+K_EXPORT_PLUGIN(HighlightPreferencesFactory( "kcm_kopete_highlight" ))
 
-HighlightPreferences::HighlightPreferences(QWidget *parent, const QStringList &args)
+HighlightPreferences::HighlightPreferences(QWidget *parent, const QVariantList &args)
 							: KCModule(HighlightPreferencesFactory::componentData(), parent, args)
 {
 	donttouch=true;
@@ -97,6 +97,7 @@ void HighlightPreferences::load()
 		first=false;
 	}
 	donttouch=false;
+	slotCurrentFilterChanged();
 	emit KCModule::changed(false);
 }
 
@@ -231,30 +232,27 @@ void HighlightPreferences::slotSomethingHasChanged()
 
 void HighlightPreferences::slotEditRegExp()
 {
-#ifdef __GNUC__
-#warning TODO
-#endif
 	// FIXME: Port editorDialog->qt_cast
-// 	QDialog *editorDialog = KParts::ComponentFactory::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor" );
-// 	if ( editorDialog )
-// 	{
-// 		// kdeutils was installed, so the dialog was found fetch the editor interface
-// 		KRegExpEditorInterface *editor = static_cast<KRegExpEditorInterface *>( editorDialog->qt_cast( "KRegExpEditorInterface" ) );
-// 		Q_ASSERT( editor ); // This should not fail!
-// 		// now use the editor.
-// 		editor->setRegExp(preferencesDialog.m_search->text());
-// 
-// 		// Finally exec the dialog
-// 		if(editorDialog->exec() == QDialog::Accepted )
-// 		{
-// 			preferencesDialog.m_search->setText(editor->regExp());
-// 		}
-// 
-// 	}
-// 	else
-// 	{
-// 		// Don't offer the dialog.
-// 	}
+ 	QDialog *editorDialog = KServiceTypeTrader::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor" );
+ 	if ( editorDialog )
+ 	{
+ 		// kdeutils was installed, so the dialog was found fetch the editor interface
+ 		KRegExpEditorInterface *editor = qobject_cast<KRegExpEditorInterface*>( editorDialog );
+ 		Q_ASSERT( editor ); // This should not fail!
+ 		// now use the editor.
+ 		editor->setRegExp(preferencesDialog.m_search->text());
+ 
+ 		// Finally exec the dialog
+ 		if(editorDialog->exec() == QDialog::Accepted )
+ 		{
+ 			preferencesDialog.m_search->setText(editor->regExp());
+ 		}
+ 
+ 	}
+ 	else
+ 	{
+ 		// Don't offer the dialog.
+ 	}
 }
 
 Filter * HighlightPreferences::selectedItem()

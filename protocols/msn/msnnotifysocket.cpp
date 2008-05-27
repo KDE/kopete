@@ -77,12 +77,12 @@ MSNNotifySocket::~MSNNotifySocket()
 	delete m_secureLoginHandler;
 	delete m_challengeHandler;
 
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 }
 
 void MSNNotifySocket::doneConnect()
 {
-//	kDebug( 14140 ) << k_funcinfo << "Negotiating server protocol version" << endl;
+//	kDebug( 14140 ) << "Negotiating server protocol version";
 	sendCommand( "VER", "MSNP11 MSNP10 CVR0" );
 }
 
@@ -107,7 +107,7 @@ void MSNNotifySocket::disconnect()
 
 void MSNNotifySocket::handleError( uint code, uint id )
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 
 	QString handle;
 	if(m_tmpHandles.contains(id))
@@ -122,7 +122,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 205:
 	case 208:
 	{
-		QString msg = i18n( "<qt>The MSN user '%1' does not exist.<br>Please check the MSN ID.</qt>", handle );
+		QString msg = i18n( "<qt>The MSN user '%1' does not exist.<br />Please check the MSN ID.</qt>", handle );
 		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
@@ -131,8 +131,8 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 218:
 	case 540:
 	{
-		QString msg =i18n( "<qt>An internal error occurred in the MSN plugin.<br>"
-			      "MSN Error: %1<br>"
+		QString msg =i18n( "<qt>An internal error occurred in the MSN plugin.<br />"
+			      "MSN Error: %1<br />"
 			      "please send us a detailed bug report "
 			      "at kopete-devel@kde.org containing the raw debug output on the "
 			      "console (in gzipped format, as it is probably a lot of output.)" , code);
@@ -146,7 +146,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		if(handle==m_account->accountId())
 		{
 			QString msg = i18n( "Unable to change your display name.\n"
-				"Please ensure your display is not too long and does not contains censored words." );
+				"Please ensure your display name is not too long and does not contain censored words." );
 			//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 			emit errorMessage( MSNSocket::ErrorSorry, msg );
 		}
@@ -168,7 +168,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 215:
 	{
-		QString msg = i18n( "<qt>The user '%1' already exists in this group on the MSN server;<br>"
+		QString msg = i18n( "<qt>The user '%1' already exists in this group on the MSN server;<br />"
 			"if Kopete does not show the user, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw debug output on the "
 			"console (in gzipped format, as it is probably a lot of output.)</qt>" , handle);
@@ -204,7 +204,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 230:
 	{
 		QString msg = i18n("Kopete is trying to perform an operation on a group or a contact that does not exists on the server.\n"
-			"This might happen if the Kopete contact list and the MSN-server contact list are not correctly synchronized; if this is the case, you probably should send a bug report.");
+			"This might happen if the Kopete contact list and the MSN-server contact list are not correctly synchronized; if this is the case, you should probably send a bug report.");
 		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information,msg, i18n( "MSN Plugin" ) );
 		emit errorMessage( MSNSocket::ErrorInformation, msg );
 		break;
@@ -212,7 +212,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 
 	case 229:
 	{
-		QString msg = i18n("The group name is too long; it has not been changed on the MSN server.");
+		QString msg = i18n("The group name is too long, so it has not been changed on the MSN server.");
 		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "Invalid Group Name - MSN Plugin" ) );
 		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
@@ -253,14 +253,14 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		break;
 	case 913:
 	{
-		QString msg = i18n( "You can not send messages when you are offline or when you are invisible." );
+		QString msg = i18n( "You cannot send messages when you are offline or invisible." );
 		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
 	}
 	case 923:
 	{
-		QString msg = i18n( "You are trying to perform an action you are not allowed to perform in 'kid mode'." );
+		QString msg = i18n( "You are trying to perform an action not permitted in 'kid mode'." );
 		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "MSN Plugin" ) );
 		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
@@ -274,7 +274,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 
 void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &data )
 {
-	//kDebug(14140) << "MSNNotifySocket::parseCommand: Command: " << cmd << endl;
+	//kDebug(14140) << "MSNNotifySocket::parseCommand: Command: " << cmd;
 
 	if ( cmd == "VER" )
 	{
@@ -358,7 +358,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		// Capture contact group(s) guid(s)
 		groups = regex.cap(5);
 
-// 		kDebug(14140) << k_funcinfo << " msnId: " << m_tmpLastHandle << " publicName: " << publicName << " contactGuid: " << contactGuid << " list: " << lists << " groupGuid: " << groups << endl;
+// 		kDebug(14140) << " msnId: " << m_tmpLastHandle << " publicName: " << publicName << " contactGuid: " << contactGuid << " list: " << lists << " groupGuid: " << groups;
 
 		// handle, publicName, Contact GUID, lists, Group GUID
 		emit contactList(  m_tmpLastHandle , publicName, contactGuid, lists, groups );
@@ -463,7 +463,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		// Capture contact group(s) guid(s)
 		groupGuid = regex.cap(4);
 
-// 		kDebug(14140) << k_funcinfo << list << " msnId: " << msnId << " publicName: " << publicName << " contactGuid: " << contactGuid << " groupGuid: " << groupGuid << endl;
+// 		kDebug(14140) << list << " msnId: " << msnId << " publicName: " << publicName << " contactGuid: " << contactGuid << " groupGuid: " << groupGuid;
 
 		// handle, list, publicName, contactGuid, groupGuid
 		emit contactAdded( msnId, list, publicName, contactGuid, groupGuid );
@@ -520,7 +520,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			MSNContact *c = m_account->findContactByGuid( contactGuid );
 			if(c != 0L)
 			{
-				c->setProperty( Kopete::Global::Properties::self()->nickName(), publicName );
+				c->setNickName( publicName );
 			}
 		}
 	}
@@ -570,7 +570,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			m_account->configGroup()->writeEntry( "lastsynctime" , lastSyncTime);
 			m_account->configGroup()->writeEntry( "lastchange", lastChange);
 		}else
-			kDebug(14140) << k_funcinfo << "Contact list up-to-date." << endl;
+			kDebug(14140) << "Contact list up-to-date.";
 
 		// set the status
 		setStatus( m_newstatus );
@@ -617,7 +617,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 			m_keepaliveTimer->setSingleShot( true );
 			m_keepaliveTimer->start( id * 950 );
 		}
-		kDebug( 14140 ) << k_funcinfo << "timerTimeout=" << id << "sec"<< endl;
+		kDebug( 14140 ) << "timerTimeout=" << id << "sec";
 	}
 	else if( cmd == "URL" )
 	{
@@ -673,14 +673,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	}
 	else if ( cmd == "NOT" )
 	{
-		kDebug( 14140 ) << k_funcinfo << "Received NOT command, issuing read block for '" << id << " more bytes" << endl;
+		kDebug( 14140 ) << "Received NOT command, issuing read block for '" << id << " more bytes";
 		read( id );		
 	}	
 	else
 	{
 		// Let the base class handle the rest
 		//MSNSocket::parseCommand( cmd, id, data );
-		kDebug( 14140 ) << k_funcinfo << "Unimplemented command '" << cmd << ' ' << id << ' ' << data << "' from server!" << endl;
+		kDebug( 14140 ) << "Unimplemented command '" << cmd << ' ' << id << ' ' << data << "' from server!";
 	}
 }
 
@@ -882,7 +882,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 		alertDOM.setContent(notificationDOMAsString);
 
 		QDomNodeList msgElements = alertDOM.elementsByTagName("MSG");
-		for (uint i = 0 ; i < msgElements.count() ; i++)
+		for (int i = 0 ; i < msgElements.count() ; i++)
 		{
 			QString subscString;
 			QString actionString;
@@ -927,7 +927,7 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 
 			}
 
-//			kDebug( 14140 ) << "subscString " << subscString << " actionString " << actionString << " textString " << textString << endl;
+//			kDebug( 14140 ) << "subscString " << subscString << " actionString " << actionString << " textString " << textString;
 			// build an internal list of actions ... we'll need to index into this list when we receive an event
 			QStringList actions;
 			actions.append(i18n("More Information"));
@@ -965,13 +965,13 @@ void MSNNotifySocket::slotReadMessage( const QByteArray &bytes )
 				if(psmElement.tagName() == QString::fromUtf8("PSM"))
 				{
 					personalMessage = psmElement.text();
-					kDebug(14140) << k_funcinfo << "Personnal Message received: " << personalMessage << endl;
+					kDebug(14140) << "Personnal Message received: " << personalMessage;
 				}
 				else if(psmElement.tagName() == QString::fromUtf8("CurrentMedia"))
 				{
 					if( !psmElement.text().isEmpty() )
 					{
-						kDebug(14140) << k_funcinfo << "XML CurrentMedia: " << psmElement.text() << endl;
+						kDebug(14140) << "XML CurrentMedia: " << psmElement.text();
 						currentMedia = processCurrentMedia( psmElement.text() );
 					}
 				}
@@ -1037,7 +1037,7 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 
 	// Replace the formatter in the format string.
 	currentMedia = format;
-	for(uint i=0; i<formatterStrings.size(); i++)
+	for(int i=0; i<formatterStrings.size(); i++)
 	{
 		currentMedia = currentMedia.replace(QString("{%1}").arg(i), formatterStrings[i]);
 	}
@@ -1048,7 +1048,7 @@ QString MSNNotifySocket::processCurrentMedia( const QString &mediaXmlElement )
 		currentMedia = i18n("Now Listening: ♫ %1 ♫", currentMedia);
 	}
 
-	kDebug(1414) << "Current Media received: " << currentMedia << endl;
+	kDebug(1414) << "Current Media received: " << currentMedia;
 
 	return currentMedia;
 }
@@ -1081,13 +1081,13 @@ void MSNNotifySocket::addContact( const QString &handle, int list, const QString
 			if( !contactGuid.isEmpty() )
 			{
 				args = QString("FL C=%1 %2").arg( contactGuid ).arg( groupGuid );
-				kDebug(14140) << k_funcinfo << "In adding contact to a group" << endl;
+				kDebug(14140) << "In adding contact to a group";
 			}
 			// Adding a new contact
 			else
 			{
 				args = QString("FL N=%1 F=%2").arg( handle ).arg( escape( publicName ) );
-				kDebug(14140) << k_funcinfo << "In adding contact to a new contact" << endl;
+				kDebug(14140) << "In adding contact to a new contact";
 			}
 			break;
 		}
@@ -1101,7 +1101,7 @@ void MSNNotifySocket::addContact( const QString &handle, int list, const QString
 			args = QString("RL N=%1").arg( handle );
 			break;
 		default:
-			kDebug(14140) << k_funcinfo <<"WARNING! Unknown list " << list << '!' << endl;
+			kDebug(14140) <<"WARNING! Unknown list " << list << '!';
 			return;
 	}
 	unsigned int id=sendCommand( "ADC", args );
@@ -1129,7 +1129,7 @@ void MSNNotifySocket::removeContact( const QString &handle, int list, const QStr
 		args = "PL " + handle;
 		break;
 	default:
-		kDebug(14140) <<k_funcinfo  << "WARNING! Unknown list " << list << '!' << endl;
+		kDebug(14140) << "WARNING! Unknown list " << list << '!';
 		return;
 	}
 	unsigned int id=sendCommand( "REM", args );
@@ -1138,12 +1138,18 @@ void MSNNotifySocket::removeContact( const QString &handle, int list, const QStr
 
 void MSNNotifySocket::setStatus( const Kopete::OnlineStatus &status )
 {
-//	kDebug( 14140 ) << k_funcinfo << statusToString( status ) << endl;
+//	kDebug( 14140 ) << statusToString( status );
 
 	if( onlineStatus() == Disconnected )
 		m_newstatus = status;
 	else
-		sendCommand( "CHG", statusToString( status ) + ' ' + m_account->myselfClientId() + ' ' + escape(m_account->pictureObject()) );
+	{
+		QString statusAsString = statusToString( status );
+		if( statusAsString != QLatin1String("UNK") )
+		{
+			sendCommand( "CHG", statusAsString + ' ' + m_account->myselfClientId() + ' ' + escape(m_account->pictureObject()) );
+		}
+	}
 }
 
 void MSNNotifySocket::changePublicName( const QString &publicName, const QString &handle )
@@ -1270,7 +1276,7 @@ QString MSNNotifySocket::statusToString( const Kopete::OnlineStatus &status ) co
 		return "IDL";
 	else
 	{
-		kWarning( 14140 ) << k_funcinfo << "Unknown status " << status.internalStatus() << '!' << endl;
+		kWarning( 14140 ) << "Unknown status " << status.internalStatus() << '!';
 		return "UNK";
 	}
 }

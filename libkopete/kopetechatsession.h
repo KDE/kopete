@@ -23,7 +23,7 @@
 #ifndef __KOPETECHATSESSION_H__
 #define __KOPETECHATSESSION_H__
 
-#include <qobject.h>
+#include <QtCore/QObject>
 
 #include <kxmlguiclient.h>
 
@@ -78,6 +78,11 @@ class KOPETE_EXPORT ChatSession : public QObject , public KXMLGUIClient
 
 public:
 	/**
+	 * Describes the form of this chat session
+	 */ 
+	enum Form { Small,/**< The chat is a small group or 1:1 chat */
+		Chatroom/** Chat with many members and high traffic */ };
+	/**
 	 * Delete a chat manager instance
 	 * You shouldn't delete the KMM yourself. it will be deleted when the chatwindow is closed
 	 * see also @ref setCanBeDeleted() , @ref deref() 
@@ -92,6 +97,7 @@ public:
 	/**
 	 * @brief Get the local user in the session
 	 * @return the local user in the session, same as account()->myself()
+	 * @note Can be 0 if local user was already deleted during account destruction
 	 */
 	const Contact* myself() const;
 
@@ -104,6 +110,7 @@ public:
 	/**
 	 * @brief get the account
 	 * @return the account
+	 * @note Can be 0 if account was already deleted
 	 */
 	Account *account() const ;
 
@@ -146,7 +153,7 @@ public:
 	 * @param requestedPlugin Specifies the view plugin to use if we have to create one.
 	 */
 	// FIXME: canCreate should definitely be an enum and not a bool - Martijn
-	KopeteView* view( bool canCreate = false, const QString &requestedPlugin = QString::null );
+	KopeteView* view( bool canCreate = false, const QString &requestedPlugin = QString() );
 
 	/**
 	 * says if you may invite contact from the same account to this chat with @ref inviteContact
@@ -156,9 +163,9 @@ public:
 	bool mayInvite() const ;
 
 	/**
-	 * this method is called when a contact is dragged to the contactlist.
+	 * this method is called when a contact is dragged to the contact list.
 	 * @p contactId is the id of the contact. the contact is supposed to be of the same account as
-	 * the @ref account() but we can't be sure the Kopete::Contact is really on the contactlist
+	 * the @ref account() but we can't be sure the Kopete::Contact is really on the contact list
 	 *
 	 * It is possible to drag contact only if @ref mayInvite return true
 	 *
@@ -170,6 +177,12 @@ public:
 	 * Returns the message handler chain for the message direction @p dir.
 	 */
 	MessageHandlerChain::Ptr chainForDirection( Message::MessageDirection dir );
+
+	/**
+	 * Get the form of this chatsession.  This is a hint to the UI so it can present the chat
+	 * appropriately
+	 */
+	Form form() const;
 
 signals:
 	/**
@@ -308,7 +321,7 @@ public slots:
 	 * @param format The format of the message
 	 * @param suppressNotification prevents a notification of the removal in the chat view.  See note in @ref addContact
 	 */
-	void removeContact( const Kopete::Contact *contact, const QString& reason = QString::null, Qt::TextFormat format = Qt::PlainText, bool suppressNotification = false );
+	void removeContact( const Kopete::Contact *contact, const QString& reason = QString(), Qt::TextFormat format = Qt::PlainText, bool suppressNotification = false );
 
 	/**
 	 * Set if the KMM will be deleted when the chatwindow is deleted. It is useful if you want
@@ -370,6 +383,7 @@ private slots:
 	void slotViewDestroyed();
 	void slotOnlineStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
 	void slotContactDestroyed( Kopete::Contact *contact );
+	void slotMyselfDestroyed( Kopete::Contact *contact );
 
 protected:
 	/**
@@ -377,7 +391,7 @@ protected:
 	 * static factory method createSession() creates the object. You may
 	 * not create instances yourself directly!
 	 */
-	ChatSession( const Contact *user, ContactPtrList others, Protocol *protocol );
+	ChatSession( const Contact *user, ContactPtrList others, Protocol *protocol, Form form = Small );
 
 	/**
 	 * Set wether or not contact from this account may be invited in this chat.

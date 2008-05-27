@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Receive Messages
 
-    Copyright (c) 2005 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,12 +21,11 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <qstring.h>
 #include <kdebug.h>
 
 MessageReceiverTask::MessageReceiverTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 MessageReceiverTask::~MessageReceiverTask()
@@ -69,7 +68,7 @@ bool MessageReceiverTask::forMe( const Transfer* transfer ) const
 
 void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	int cnt = t->paramCount( 5 );
 	for( int i = 0; i < cnt; ++i )
@@ -94,11 +93,11 @@ void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 	
 		if( msg.isEmpty() )
 		{
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got a empty message. Dropped." << endl;
+			kDebug(YAHOO_RAW_DEBUG) << "Got a empty message. Dropped.";
 			continue;
 		}
 	
-		if( utf8.startsWith( "1" ) )
+		if( utf8.startsWith( '1' ) )
 			msg = QString::fromUtf8( msg.toLatin1() );
 	
 		if( t->service() == Yahoo::ServiceSysMessage )
@@ -115,7 +114,7 @@ void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 
 void MessageReceiverTask::parseNotify( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString from = t->firstParam( 4 );
 	//QString to = t->firstParam( 5 );
@@ -129,14 +128,14 @@ void MessageReceiverTask::parseNotify( YMSGTransfer *t )
 		;
 	else if( type.startsWith( "WEBCAMINVITE" ) )
 	{
-		if( ind.startsWith(" ") )
+		if( ind.startsWith(' ') )
 		{
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got a WebcamInvitation." << endl;
+			kDebug(YAHOO_RAW_DEBUG) << "Got a WebcamInvitation.";
 			emit gotWebcamInvite( from );
 		}
 		else
 		{
-			kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Got a WebcamRequest-Response: " << ind.toInt() << endl;
+			kDebug(YAHOO_RAW_DEBUG) << "Got a WebcamRequest-Response: " << ind.toInt();
 		}
 	}
 }

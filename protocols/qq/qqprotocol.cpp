@@ -24,12 +24,12 @@
 #include "qqaddcontactpage.h"
 #include "ui/qqeditaccountwidget.h"
 
-typedef KGenericFactory<QQProtocol> QQProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_qq, QQProtocolFactory( "kopete_qq" )  )
+K_PLUGIN_FACTORY( QQProtocolFactory, registerPlugin<QQProtocol>(); )
+K_EXPORT_PLUGIN( QQProtocolFactory( "kopete_qq" ) )
 
 QQProtocol *QQProtocol::s_protocol = 0L;
 
-QQProtocol::QQProtocol( QObject* parent, const QStringList &/*args*/ )
+QQProtocol::QQProtocol( QObject* parent, const QVariantList &/*args*/ )
 	: Kopete::Protocol( QQProtocolFactory::componentData(), parent ),
 	  qqOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),  
 			  i18n( "Online" ),   i18n( "O&nline" ) ),
@@ -39,15 +39,15 @@ QQProtocol::QQProtocol( QObject* parent, const QStringList &/*args*/ )
 			  i18n( "Offline" ),   i18n( "O&ffline" ) ),
 	  propNickName(Kopete::Global::Properties::self()->nickName()),
 	  propFullName(Kopete::Global::Properties::self()->fullName()),
-	  propCountry("QQVCardCountry", i18n("Country"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ), 
-	  propState("QQVCardState", i18n("State"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ), 
-	  propCity("QQVCardCity", i18n("State"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ),
-	  propStreet("QQVCardAddress", i18n("Home Address"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ),
-	  propZipcode("QQVCardZipcode", i18n("Zipcode"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty ), 
-	  propEmail(Kopete::Global::Properties::self()->emailAddress()),
-	  propAge("QQVCardAge", i18n("Age"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty )
+	  propCountry("QQVCardCountry", i18n("Country"), QString(), Kopete::PropertyTmpl::PersistentProperty ), 
+	  propState("QQVCardState", i18n("State"), QString(), Kopete::PropertyTmpl::PersistentProperty ), 
+	  propCity("QQVCardCity", i18n("State"), QString(), Kopete::PropertyTmpl::PersistentProperty ),
+	  propStreet("QQVCardAddress", i18n("Home Address"), QString(), Kopete::PropertyTmpl::PersistentProperty ),
+	  propZipcode("QQVCardZipcode", i18n("Zipcode"), QString(), Kopete::PropertyTmpl::PersistentProperty ), 
+	  propAge("QQVCardAge", i18n("Age"), QString(), Kopete::PropertyTmpl::PersistentProperty ),
+    propEmail(Kopete::Global::Properties::self()->emailAddress())
 {
-	kDebug( 14210 ) << k_funcinfo << endl;
+	kDebug( 14210 ) ;
 	s_protocol = this;
 }
 
@@ -82,7 +82,7 @@ Kopete::Contact *QQProtocol::deserializeContact(
 
 	if ( !account )
 	{
-		kDebug(14210) << "Account doesn't exist, skipping" << endl;
+		kDebug(14210) << "Account doesn't exist, skipping";
 		return 0;
 	}
 
@@ -91,13 +91,13 @@ Kopete::Contact *QQProtocol::deserializeContact(
 
 AddContactPage * QQProtocol::createAddContactWidget( QWidget *parent, Kopete::Account * /* account */ )
 {
-	kDebug( 14210 ) << "Creating Add Contact Page" << endl;
+	kDebug( 14210 ) << "Creating Add Contact Page";
 	return new QQAddContactPage( parent );
 }
 
 KopeteEditAccountWidget * QQProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
-	kDebug(14210) << "Creating Edit Account Page" << endl;
+	kDebug(14210) << "Creating Edit Account Page";
 	return new QQEditAccountWidget( this, account, parent );
 }
 

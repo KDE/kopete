@@ -25,13 +25,12 @@
 
 #include <QPixmap>
 // KDE includes
-
+#include <kdebug.h>
 // Kopete includes
 #include "qqprotocol.h"
 #include "qqcontact.h"
 #include "qqaccount.h"
 #include "ui_qqvcard.h"
-#include "dlgqqvcard.h"
 
 /*
  *  Constructs a dlgQQVCard which is a child of 'parent', with the
@@ -80,6 +79,7 @@ dlgQQVCard::dlgQQVCard (QQAccount *account, QQContact *contact, QWidget * parent
 dlgQQVCard::~dlgQQVCard ()
 {
 	// no need to delete child widgets, Qt does it all for us
+	delete m_mainWidget;
 }
 
 /*
@@ -87,7 +87,7 @@ dlgQQVCard::~dlgQQVCard ()
  */
 void dlgQQVCard::slotClose()
 {
-	kDebug(14140) << k_funcinfo << "Deleting dialog." << endl;
+	kDebug(14140) << "Deleting dialog.";
 	deleteLater();
 }
 
@@ -361,6 +361,7 @@ void dlgQQVCard::slotClearPhoto()
 
 void dlgQQVCard::slotOpenURL(const QString &url)
 {
+	Q_UNUSED(url);
 /*
 	if ( !url.isEmpty () || (url == QString::fromLatin1("mailto:") ) )
 		new KRun( KUrl( url ), this );

@@ -23,8 +23,8 @@
 
 #include <QStringList>
 
-
 #include <iris_export.h>
+class QString;
 
 namespace XMPP
 {
@@ -47,9 +47,9 @@ namespace XMPP
 		bool canGroupchat() const;
 		bool canVoice() const;
 		bool canDisco() const;
+		bool canXHTML() const;
 		bool canChatState() const;
 		bool canCommand() const;
-		bool canXHTML() const;
 		bool isGateway() const;
 		bool haveVCard() const;
 
@@ -62,8 +62,8 @@ namespace XMPP
 			FID_Disco,
 			FID_Gateway,
 			FID_VCard,
+			FIX_Xhtml,
 			FID_AHCommand,
- 			FID_Xhtml,
 
 			// private Psi actions
 			FID_Add

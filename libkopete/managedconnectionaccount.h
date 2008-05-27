@@ -2,7 +2,7 @@
     managedconnectionaccount.h - Kopete Account that uses a  manager to
     control its connection and respond to connection events
 
-    Copyright (c) 2005      by Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2005      by Will Stephenson <wstephenson@kde.org>
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************

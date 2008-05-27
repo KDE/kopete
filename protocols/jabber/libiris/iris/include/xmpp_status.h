@@ -21,12 +21,11 @@
 #ifndef XMPP_STATUS_H
 #define XMPP_STATUS_H
 
-
+#include <QString>
 #include <QDateTime>
 
-#include "xmpp_muc.h"
-
 #include <iris_export.h>
+#include "xmpp_muc.h"
 
 namespace XMPP 
 {

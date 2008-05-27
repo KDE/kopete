@@ -19,7 +19,6 @@
 
 #include <kaction.h>
 
-#include "oscarpresence.h"
 #include "xtrazstatus.h"
 
 namespace Xtraz
@@ -35,7 +34,7 @@ public slots:
 	void triggered();
 
 signals:
-	void triggered( const Oscar::Presence &presence, const QString &message );
+	void triggered( const Xtraz::Status &status );
 
 private:
 	Xtraz::Status mStatus;

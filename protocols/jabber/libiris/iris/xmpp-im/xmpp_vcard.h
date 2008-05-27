@@ -29,13 +29,12 @@
 #include <qdom.h>
 
 #include <iris_export.h>
-
-// timezone() conflicts with a define/whatever deep inside win-sdk headers
-#ifdef Q_OS_WIN
-# undef timezone
-#endif
-
 class QDate;
+
+// on win32 timezone is a define and screws up the build
+#ifdef timezone
+#undef timezone
+#endif
 
 namespace XMPP
 {

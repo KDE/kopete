@@ -19,7 +19,9 @@
 #ifndef HISTORYPREFERENCES_H
 #define HISTORYPREFERENCES_H
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <qstring.h>
 
 namespace Ui { class HistoryPrefsUI; }
@@ -31,7 +33,7 @@ class HistoryPreferences : public KCModule
 {
 	Q_OBJECT
 	public:
-		explicit HistoryPreferences(QWidget *parent=0, const QStringList &args = QStringList());
+		explicit HistoryPreferences(QWidget *parent=0, const QVariantList &args = QVariantList());
 		~HistoryPreferences();
 
 		virtual void save();

@@ -32,6 +32,7 @@
 #include <klineedit.h>
 #include <kopetepassword.h>
 #include <kopetepasswordedaccount.h>
+#include "kopetecontact.h"
 
 #include "kopeteuiglobal.h"
 #include "kopetepasswordwidget.h"
@@ -40,6 +41,7 @@
 #include "jabbereditaccountwidget.h"
 #include "jabberregisteraccount.h"
 #include "dlgjabberchangepassword.h"
+#include "privacydlg.h"
 
 JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, JabberAccount * ident, QWidget * parent)
 						: QWidget(parent), DlgJabberEditAccountWidget(), KopeteEditAccountWidget (ident)
@@ -54,18 +56,29 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (cbUseSSL, SIGNAL (toggled (bool)), this, SLOT (sslToggled (bool)));
 
 	connect (btnChangePassword, SIGNAL ( clicked() ), this, SLOT ( slotChangePasswordClicked () ));
+	
+	connect (privacyListsButton, SIGNAL ( clicked() ), this, SLOT ( slotPrivacyListsClicked() ) );
 
 	if (account())
 	{
 		// we are working with an existing account
 		reopen ();
+		registrationGroupBox->hide();
 		btnRegister->setEnabled ( false );
+		
+		if ( account()->myself()->isOnline() )
+			privacyListsButton->setEnabled (true);
+		else
+			privacyListsButton->setEnabled (false);
 	}
 	else
 	{
 		// this is a new account
+		changePasswordGroupBox->hide();
 		btnChangePassword->setEnabled ( false );
 		connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
+		
+		privacyListsButton->setEnabled (false);
 	}
 }
 
@@ -84,7 +97,7 @@ void JabberEditAccountWidget::reopen ()
 {
 
 	// FIXME: this is temporary until Kopete supports accound ID changes!
-	mID->setDisabled(true);
+	mID->setReadOnly(true);
 
 	mID->setText (account()->accountId ());
 	mPass->load (&account()->password ());
@@ -131,14 +144,11 @@ void JabberEditAccountWidget::reopen ()
 	cbSendGoneEvent->setChecked( account()->configGroup()->readEntry("SendGoneEvent", true) );
 
 	cbHideSystemInfo->setChecked( account()->configGroup()->readEntry("HideSystemInfo", false) );
-
-	// Global Identity
-	cbGlobalIdentity->setChecked( account()->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
 }
 
 Kopete::Account *JabberEditAccountWidget::apply ()
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << "JabberEditAccount::apply()" << endl;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << "JabberEditAccount::apply()";
 
 	if (!account())
 	{
@@ -195,9 +205,6 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->configGroup()->writeEntry("SendGoneEvent", cbSendGoneEvent->isChecked());
 	
 	account()->configGroup()->writeEntry("HideSystemInfo", cbHideSystemInfo->isChecked());
-
-	// Global Identity
-	account()->configGroup()->writeEntry("ExcludeGlobalIdentity", cbGlobalIdentity->isChecked());
 }
 
 bool JabberEditAccountWidget::validateData ()
@@ -282,6 +289,12 @@ void JabberEditAccountWidget::sslToggled (bool value)
 	else
 		if(!value && (mPort->value() == 5223))
 			mPort->stepDown ();
+}
+
+void JabberEditAccountWidget::slotPrivacyListsClicked()
+{
+	PrivacyDlg * dialog = new PrivacyDlg (account(), this);
+	dialog->show();
 }
 
 #include "jabbereditaccountwidget.moc"

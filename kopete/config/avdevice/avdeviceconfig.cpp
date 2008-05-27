@@ -17,8 +17,6 @@
 */
 
 #include "avdeviceconfig.h"
-#include "avdeviceconfig_videoconfig.h"
-#include "videodevice.h"
 
 #include <qcheckbox.h>
 #include <qlayout.h>
@@ -33,7 +31,7 @@
 #include <kplugininfo.h>
 #include <klocale.h>
 #include <kpushbutton.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <ktrader.h>
 #include <kconfig.h>
 #include <kcombobox.h>
@@ -43,20 +41,22 @@
 #include <qtabwidget.h>
 
 //#include "videodevice.h"
-typedef KGenericFactory<AVDeviceConfig, QWidget> KopeteAVDeviceConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_avdeviceconfig, KopeteAVDeviceConfigFactory( "kcm_kopete_avdeviceconfig" ) )
+K_PLUGIN_FACTORY( KopeteAVDeviceConfigFactory,
+		registerPlugin<AVDeviceConfig>(); )
+K_EXPORT_PLUGIN( KopeteAVDeviceConfigFactory("kcm_kopete_avdeviceconfig") )
 
-AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
+AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
  : KCModule( KopeteAVDeviceConfigFactory::componentData(), parent, args )
 {
-	kDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::componentData() called. " << endl;
-	QVBoxLayout *layout = new QVBoxLayout(this);
-
-	mAVDeviceTabCtl = new QTabWidget(this, "mAVDeviceTabCtl");
-	layout->addWidget( mAVDeviceTabCtl );
-
+	kDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::componentData() called. ";
 // "Video" TAB ============================================================
-	mPrfsVideoDevice = new AVDeviceConfig_VideoDevice(mAVDeviceTabCtl);
+	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice();
+	mPrfsVideoDevice->setupUi(this);
+
+	// set a default image for the webcam widget, in case the user does not have a video device
+	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
+
 	connect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mInputKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mStandardKComboBox,            SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
@@ -68,12 +68,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
 	connect(mPrfsVideoDevice->mImageAutoBrightnessContrast,  SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoBrightnessContrastChanged(bool)));
 	connect(mPrfsVideoDevice->mImageAutoColorCorrection,     SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
 	connect(mPrfsVideoDevice->mImageAsMirror,                SIGNAL(toggled(bool)),     this, SLOT(slotImageAsMirrorChanged(bool)));
-	connect(mPrfsVideoDevice->mDeviceDisableMMap,            SIGNAL(toggled(bool)),     this, SLOT(slotDeviceDisableMMapChanged(bool)));
-	connect(mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver, SIGNAL(toggled(bool)),     this, SLOT(slotDeviceWorkaroundBrokenDriverChanged(bool)));
 
-	// why is this here?
-	// mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
-	mAVDeviceTabCtl->addTab(mPrfsVideoDevice, i18n("&Video"));
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
 	mVideoDevicePool->open();
 	mVideoDevicePool->setSize(320, 240);
@@ -84,12 +79,20 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QStringList &args)
 	setVideoInputParameters();
 
 	mVideoDevicePool->startCapturing();
-	mVideoDevicePool->getFrame();
-	mVideoDevicePool->getImage(&qimage);
-	if (qpixmap.fromImage(qimage,Qt::AutoColor) == true)
-		mPrfsVideoDevice->mVideoImageLabel->setPixmap(qpixmap);
+
+	connect(mVideoDevicePool, SIGNAL(deviceRegistered(const QString &) ),
+			SLOT(deviceRegistered(const QString &)) );
+	connect(mVideoDevicePool, SIGNAL(deviceUnregistered(const QString &) ),
+			SLOT(deviceUnregistered(const QString &)) );
+
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
-	qtimer.start(0,false);
+#define DONT_TRY_TO_GRAB 1
+#if DONT_TRY_TO_GRAB
+	if ( mVideoDevicePool->hasDevices() ) {
+		qtimer.start(40);
+		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
+	}
+#endif
 }
 
 
@@ -107,7 +110,7 @@ AVDeviceConfig::~AVDeviceConfig()
 void AVDeviceConfig::save()
 {
     /// @todo implement me
-	kDebug() << "kopete:config (avdevice): save() called. " << endl;
+	kDebug() << "kopete:config (avdevice): save() called. ";
 	mVideoDevicePool->saveConfig();
 }
 
@@ -140,33 +143,31 @@ void AVDeviceConfig::setVideoInputParameters()
 		mPrfsVideoDevice->mImageAutoBrightnessContrast->setChecked(mVideoDevicePool->getAutoBrightnessContrast());
 		mPrfsVideoDevice->mImageAutoColorCorrection->setChecked(mVideoDevicePool->getAutoColorCorrection());
 		mPrfsVideoDevice->mImageAsMirror->setChecked(mVideoDevicePool->getImageAsMirror());
-		mPrfsVideoDevice->mDeviceDisableMMap->setChecked(mVideoDevicePool->getDisableMMap());
-		mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->setChecked(mVideoDevicePool->getWorkaroundBrokenDriver());
 	}
 }
 
 void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
-	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. " << endl;
-	unsigned int newdevice = mPrfsVideoDevice->mDeviceKComboBox->currentItem();
-	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << mVideoDevicePool->currentDevice() << "New device: " << newdevice << endl;
+	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
+	int newdevice = mPrfsVideoDevice->mDeviceKComboBox->currentIndex();
+	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << mVideoDevicePool->currentDevice() << "New device: " << newdevice;
 	if ((newdevice < mVideoDevicePool->m_videodevice.size())&&(newdevice!=mVideoDevicePool->currentDevice()))
 	{
-	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. " << endl;
+	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. ";
 		mVideoDevicePool->open(newdevice);
 		mVideoDevicePool->setSize(320, 240);
 		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 		mVideoDevicePool->startCapturing();
 		setVideoInputParameters();
-		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. " << endl;
+		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
 		emit changed( true );
 	}
 }
 
 void AVDeviceConfig::slotInputKComboBoxChanged(int){
-	unsigned int newinput = mPrfsVideoDevice->mInputKComboBox->currentItem();
+	int newinput = mPrfsVideoDevice->mInputKComboBox->currentIndex();
 	if((newinput < mVideoDevicePool->inputs()) && ( newinput !=mVideoDevicePool->currentInput()))
 	{
-		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentItem());
+		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentIndex());
 		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 		setVideoInputParameters();
 		emit changed( true );
@@ -181,62 +182,50 @@ void AVDeviceConfig::slotStandardKComboBoxChanged(int){
 }
 
 void AVDeviceConfig::slotBrightnessSliderChanged(int){
-	kDebug() << "kopete:config (avdevice): slotBrightnessSliderChanged(int) called. " << mPrfsVideoDevice->mBrightnessSlider->value() / 65535.0 << endl;
+	kDebug() << "kopete:config (avdevice): slotBrightnessSliderChanged(int) called. " << mPrfsVideoDevice->mBrightnessSlider->value() / 65535.0;
 	mVideoDevicePool->setBrightness( mPrfsVideoDevice->mBrightnessSlider->value() / 65535.0 );
   emit changed( true );
 }
 
 void AVDeviceConfig::slotContrastSliderChanged(int){
-	kDebug() << "kopete:config (avdevice): slotContrastSliderChanged(int) called. " << mPrfsVideoDevice->mContrastSlider->value() / 65535.0 << endl;
+	kDebug() << "kopete:config (avdevice): slotContrastSliderChanged(int) called. " << mPrfsVideoDevice->mContrastSlider->value() / 65535.0;
 	mVideoDevicePool->setContrast( mPrfsVideoDevice->mContrastSlider->value() / 65535.0 );
   emit changed( true );
 }
 
 void AVDeviceConfig::slotSaturationSliderChanged(int){
-	kDebug() << "kopete:config (avdevice): slotSaturationSliderChanged(int) called. " << mPrfsVideoDevice->mSaturationSlider->value() / 65535.0 << endl;
+	kDebug() << "kopete:config (avdevice): slotSaturationSliderChanged(int) called. " << mPrfsVideoDevice->mSaturationSlider->value() / 65535.0;
 	mVideoDevicePool->setSaturation( mPrfsVideoDevice->mSaturationSlider->value() / 65535.0);
   emit changed( true );
 }
 
 void AVDeviceConfig::slotWhitenessSliderChanged(int){
-	kDebug() << "kopete:config (avdevice): slotWhitenessSliderChanged(int) called. " << mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0 << endl;
+	kDebug() << "kopete:config (avdevice): slotWhitenessSliderChanged(int) called. " << mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0;
 	mVideoDevicePool->setWhiteness( mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0);
   emit changed( true );
 }
 
 void AVDeviceConfig::slotHueSliderChanged(int){
-	kDebug() << "kopete:config (avdevice): slotHueSliderChanged(int) called. " << mPrfsVideoDevice->mHueSlider->value() / 65535.0 << endl;
+	kDebug() << "kopete:config (avdevice): slotHueSliderChanged(int) called. " << mPrfsVideoDevice->mHueSlider->value() / 65535.0;
 	mVideoDevicePool->setHue( mPrfsVideoDevice->mHueSlider->value() / 65535.0 );
   emit changed( true );
 }
 
 void AVDeviceConfig::slotImageAutoBrightnessContrastChanged(bool){
-	kDebug() << "kopete:config (avdevice): slotImageAutoBrightnessContrastChanged(" << mPrfsVideoDevice->mImageAutoBrightnessContrast->isChecked() << ") called. " << endl;
+	kDebug() << "kopete:config (avdevice): slotImageAutoBrightnessContrastChanged(" << mPrfsVideoDevice->mImageAutoBrightnessContrast->isChecked() << ") called. ";
 	mVideoDevicePool->setAutoBrightnessContrast(mPrfsVideoDevice->mImageAutoBrightnessContrast->isChecked());
 	emit changed( true );
 }
 
 void AVDeviceConfig::slotImageAutoColorCorrectionChanged(bool){
-	kDebug() << "kopete:config (avdevice): slotImageAutoColorCorrectionChanged(" << mPrfsVideoDevice->mImageAutoColorCorrection->isChecked() << ") called. " << endl;
+	kDebug() << "kopete:config (avdevice): slotImageAutoColorCorrectionChanged(" << mPrfsVideoDevice->mImageAutoColorCorrection->isChecked() << ") called. ";
 	mVideoDevicePool->setAutoColorCorrection(mPrfsVideoDevice->mImageAutoColorCorrection->isChecked());
 	emit changed( true );
 }
 
 void AVDeviceConfig::slotImageAsMirrorChanged(bool){
-	kDebug() << "kopete:config (avdevice): slotImageAsMirrorChanged(" << mPrfsVideoDevice->mImageAsMirror->isChecked() << ") called. " << endl;
+	kDebug() << "kopete:config (avdevice): slotImageAsMirrorChanged(" << mPrfsVideoDevice->mImageAsMirror->isChecked() << ") called. ";
 	mVideoDevicePool->setImageAsMirror(mPrfsVideoDevice->mImageAsMirror->isChecked());
-	emit changed( true );
-}
-
-void AVDeviceConfig::slotDeviceWorkaroundBrokenDriverChanged(bool){
-	kDebug() << "kopete:config (avdevice): slotDeviceWorkaroundBrokenDriverChanged(" << mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->isChecked() << ") called. " << endl;
-	mVideoDevicePool->setWorkaroundBrokenDriver(mPrfsVideoDevice->mDeviceWorkaroundBrokenDriver->isChecked());
-	emit changed( true );
-}
-
-void AVDeviceConfig::slotDeviceDisableMMapChanged(bool){
-	kDebug() << "kopete:config (avdevice): slotDeviceDisableMMapChanged(" << mPrfsVideoDevice->mDeviceDisableMMap->isChecked() << ") called. " << endl;
-	mVideoDevicePool->setDisableMMap(mPrfsVideoDevice->mDeviceDisableMMap->isChecked());
 	emit changed( true );
 }
 
@@ -244,6 +233,21 @@ void AVDeviceConfig::slotUpdateImage()
 {
 	mVideoDevicePool->getFrame();
 	mVideoDevicePool->getImage(&qimage);
-	//bitBlt(mPrfsVideoDevice->mVideoImageLabel, 0, 0, &qimage, 0, Qt::CopyROP);
-// 	kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated." << endl;
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(QPixmap::fromImage(qimage.mirrored(mVideoDevicePool->getImageAsMirror(),false)));
+	//kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated.";
 }
+
+void AVDeviceConfig::deviceRegistered( const QString & udi )
+{
+	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
+	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+}
+
+
+void AVDeviceConfig::deviceUnregistered( const QString & udi )
+{
+/*	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
+	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+*/}

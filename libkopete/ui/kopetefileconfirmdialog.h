@@ -18,7 +18,8 @@
 #ifndef KOPETEFILECONFIRMDIALOG_H
 #define KOPETEFILECONFIRMDIALOG_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
+
 #include <kdialog.h>
 #include "kopetetransfermanager.h"
 #include "ui_fileconfirmbase.h"
@@ -32,7 +33,7 @@ Q_OBJECT
 
 public:
 	explicit KopeteFileConfirmDialog( const Kopete::FileTransferInfo &info,
-	                         const QString& description = QString::null,
+	                         const QString& description = QString(),
 	                         QWidget *parent = 0 );
 	~KopeteFileConfirmDialog();
 	

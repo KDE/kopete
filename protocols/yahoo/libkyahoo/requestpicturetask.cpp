@@ -2,7 +2,7 @@
     Kopete Yahoo Protocol
     Request a Picture of a Buddy
 
-    Copyright (c) 2005-2006 André Duffeck <andre.duffeck@kdemail.net>
+    Copyright (c) 2005-2006 André Duffeck <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -24,7 +24,7 @@
 
 RequestPictureTask::RequestPictureTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
 RequestPictureTask::~RequestPictureTask()

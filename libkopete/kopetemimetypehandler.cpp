@@ -27,7 +27,8 @@
 #include <kmimetype.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <ktar.h>
+#include <kemoticons.h>
+#include <kopeteemoticons.h>
 
 namespace Kopete
 {
@@ -67,14 +68,14 @@ bool MimeTypeHandler::registerAsMimeHandler( const QString &mimeType )
 {
 	if( g_mimeHandlers[ mimeType ] )
 	{
-		kWarning(14010) << k_funcinfo << "Warning: Two mime type handlers attempting"
+		kWarning(14010) << "Warning: Two mime type handlers attempting"
 			" to handle " << mimeType << endl;
 		return false;
 	}
 
 	g_mimeHandlers.insert( mimeType, this );
 	d->mimeTypes.append( mimeType );
-//	kDebug(14010) << k_funcinfo << "Mime type " << mimeType << " registered" << endl;
+//	kDebug(14010) << "Mime type " << mimeType << " registered";
 	return true;
 }
 
@@ -82,14 +83,14 @@ bool MimeTypeHandler::registerAsProtocolHandler( const QString &protocol )
 {
 	if( g_protocolHandlers[ protocol ] )
 	{
-		kWarning(14010) << k_funcinfo << "Warning: Two protocol handlers attempting"
+		kWarning(14010) << "Warning: Two protocol handlers attempting"
 			" to handle " << protocol << endl;
 		return false;
 	}
 
 	g_protocolHandlers.insert( protocol, this );
 	d->protocols.append( protocol );
-	kDebug(14010) << k_funcinfo << "Mime type " << protocol << " registered" << endl;
+	kDebug(14010) << "Mime type " << protocol << " registered";
 	return true;
 }
 
@@ -132,7 +133,7 @@ bool MimeTypeHandler::dispatchURL( const KUrl &url )
 		}
 		else
 		{
-			kDebug(14010) << "No mime type handler can handle this URL: " << url.prettyUrl() << endl;
+			kDebug(14010) << "No mime type handler can handle this URL: " << url.prettyUrl();
 			return false;
 		}
 	}
@@ -152,7 +153,7 @@ bool MimeTypeHandler::dispatchToHandler( const KUrl &url, const QString &mimeTyp
 			}
 			else
 			{
-				sorryText = i18n( "<qt>Unable to download the requested file;<br>"
+				sorryText = i18n( "<qt>Unable to download the requested file;<br />"
 				                  "please check that address %1 is correct.</qt>",
 				                  url.prettyUrl() );
 			}
@@ -205,7 +206,7 @@ EmoticonMimeTypeHandler::EmoticonMimeTypeHandler()
 
 void EmoticonMimeTypeHandler::handleURL( const QString &, const KUrl &url ) const
 {
-	Global::installEmoticonTheme( url.path() );
+	Emoticons::self()->installTheme( url.path() );
 }
 
 } // END namespace Kopete

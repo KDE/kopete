@@ -9,6 +9,13 @@
 #include <list>
 #include <map>
 
+#ifdef max
+#undef max
+#endif
+#ifdef min
+#undef min
+#endif
+
 namespace Eva {
 	// NOTICE: the length of the following data declarations are:
 	// uchar : 8bit
@@ -172,15 +179,13 @@ namespace Eva {
 		uchar type;
 		uchar groupId;
 
-		GroupInfo( uint q, uchar t, uchar g ) : qqId(q), type (t), groupId(g) {};
+		GroupInfo( uint q, uchar t, uchar g ) : qqId(q), type (t), groupId(g) {}
 	};
 
 
 	// Customized max to get rid of stl dependence
-#ifndef _MSC_VER
 	template<class T> T max( T a, T b) { return (a>b) ? a : b; }
 	template<class T> T min( T a, T b) { return (a<b) ? a : b; }
-#endif
 
     class ByteArray
     {
@@ -188,11 +193,11 @@ namespace Eva {
         ByteArray( int capacity=0 ) : m_itsOwn(capacity>0), m_capacity(capacity), 
                                        m_size(0), m_data((uchar*) malloc(capacity))
 		{ }
-        ByteArray( uchar* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
+        explicit ByteArray( uchar* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
                                        m_size(size), m_data(p)
 		{ }
 
-        ByteArray( const char* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
+        explicit ByteArray( const char* p, int size) : m_itsOwn(p!=NULL), m_capacity(size), 
                                        m_size(size), m_data((uchar*)p)
 		{ }
         
@@ -313,7 +318,7 @@ namespace Eva {
 			qqId( ntohl( type_cast<int> (data )) ), 
 			ip( ntohl( type_cast<int> (data+5 )) ), 
 			port( ntohs( type_cast<short> (data+9 )) ), 
-			status( type_cast<char> (data+12 ))  {};
+			status( type_cast<char> (data+12 ))  {}
 	};
 
 	struct MessageEnvelop
@@ -331,7 +336,7 @@ namespace Eva {
 			sequence( ntohl( type_cast<int>( text.data() + 8 )) ),
 			ip( ntohl( type_cast<int>( text.data() + 12 )) ),
 			port( ntohs( type_cast<short>( text.data() + 16 )) ),
-			type( ntohs( type_cast<short>( text.data() + 18 )) )  {};
+			type( ntohs( type_cast<short>( text.data() + 18 )) )  {}
 	};
 
 	struct MessageHeader
@@ -354,7 +359,7 @@ namespace Eva {
 			type( ntohs( type_cast<ushort>( text.data() + 26)) ),
 			sequence( ntohs( type_cast<ushort>( text.data() + 28)) ),
 			timestamp( ntohl( type_cast<uint>( text.data() + 30)) ),
-			avatar( ntohs( type_cast<ushort>( text.data() + 34)) ) {};
+			avatar( ntohs( type_cast<ushort>( text.data() + 34)) ) {}
 	};
 
 	/** 

@@ -94,9 +94,7 @@ done
 #
 
 if test -n "`type -p mktemp`" ; then
-	tmpdir="`mktemp /tmp/tex2imXXXXXX`"
-	rm $tmpdir
-	mkdir $tmpdir
+	tmpdir="`mktemp -d /tmp/tex2imXXXXXX`"
 else
 	tmpdir=/tmp/tex2im$$
 	if [ -e $tmpdir ] ; then
@@ -133,6 +131,7 @@ fi
 cat << ENDHEADER1
 \documentclass[12pt]{article}
 \usepackage{color}
+\usepackage{amsmath,latexsym,amsfonts,amssymb,ulem}
 \usepackage[dvips]{graphicx}
 \pagestyle{empty}
 ENDHEADER1
@@ -171,7 +170,7 @@ fi
 #if [ -e "$infile" ]; then
 #	cat $infile >> $tmpdir/out.tex
 #else
-	echo "$infile" >> $tmpdir/out.tex
+	printf '%s' "$infile" >> $tmpdir/out.tex
 #fi
 
 if [ $noformula -eq 1 ]; then
@@ -222,7 +221,7 @@ else
 	mv $tmpdir/out.$format.0 $outfile
 fi
 
-let OPTIND=$OPTIND+1
+OPTIND=$((${OPTIND}+1))
 outfile=""
 done
 

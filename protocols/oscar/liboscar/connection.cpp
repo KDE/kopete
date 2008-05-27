@@ -170,9 +170,19 @@ const Oscar::ClientVersion* Connection::version() const
 	return d->client->version();
 }
 
+Oscar::Guid Connection::versionCap() const
+{
+	return d->client->versionCap();
+}
+
 bool Connection::isLoggedIn() const
 {
 	return m_loggedIn;
+}
+
+QHostAddress Connection::localAddress() const
+{
+	return d->clientStream->localAddress();
 }
 
 RateClassManager* Connection::rateManager() const
@@ -184,7 +194,7 @@ void Connection::send( Transfer* request ) const
 {
 	if( !d->clientStream )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No stream to write on!" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "No stream to write on!";
 		return;
 	}
 	d->rateClassManager->queue( request );
@@ -195,7 +205,7 @@ void Connection::forcedSend( Transfer* request ) const
 {
 	if ( !d->clientStream )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "No stream to write on" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "No stream to write on";
 		return;
 	}
 	d->clientStream->write( request );
@@ -211,7 +221,7 @@ void Connection::distribute( Transfer * transfer ) const
 {
 	//d->rateClassManager->recalcRateLevels();
 	if( !rootTask()->take( transfer ) )
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "root task refused transfer" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "root task refused transfer";
 
 	delete transfer;
 }

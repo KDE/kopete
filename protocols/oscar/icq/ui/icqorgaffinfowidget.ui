@@ -6,18 +6,24 @@
     <x>0</x>
     <y>0</y>
     <width>394</width>
-    <height>287</height>
+    <height>262</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
    </property>
    <item>
     <widget class="QGroupBox" name="groupBox" >
@@ -25,14 +31,26 @@
       <string>Organization Type</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>9</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>6</number>
       </property>
       <item row="0" column="0" >
-       <widget class="QComboBox" name="org1CategoryCombo" />
+       <widget class="InfoComboBox" name="org1CategoryCombo" />
       </item>
       <item row="0" column="1" >
        <widget class="QLineEdit" name="org1KeywordEdit" >
@@ -42,7 +60,7 @@
        </widget>
       </item>
       <item row="1" column="0" >
-       <widget class="QComboBox" name="org2CategoryCombo" />
+       <widget class="InfoComboBox" name="org2CategoryCombo" />
       </item>
       <item row="1" column="1" >
        <widget class="QLineEdit" name="org2KeywordEdit" >
@@ -52,7 +70,7 @@
        </widget>
       </item>
       <item row="2" column="0" >
-       <widget class="QComboBox" name="org3CategoryCombo" />
+       <widget class="InfoComboBox" name="org3CategoryCombo" />
       </item>
       <item row="2" column="1" >
        <widget class="QLineEdit" name="org3KeywordEdit" >
@@ -70,14 +88,26 @@
       <string>Past Affiliation</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>9</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>6</number>
       </property>
       <item row="0" column="0" >
-       <widget class="QComboBox" name="aff1CategoryCombo" />
+       <widget class="InfoComboBox" name="aff1CategoryCombo" />
       </item>
       <item row="0" column="1" >
        <widget class="QLineEdit" name="aff1KeywordEdit" >
@@ -87,7 +117,7 @@
        </widget>
       </item>
       <item row="1" column="0" >
-       <widget class="QComboBox" name="aff2CategoryCombo" />
+       <widget class="InfoComboBox" name="aff2CategoryCombo" />
       </item>
       <item row="1" column="1" >
        <widget class="QLineEdit" name="aff2KeywordEdit" >
@@ -97,7 +127,7 @@
        </widget>
       </item>
       <item row="2" column="0" >
-       <widget class="QComboBox" name="aff3CategoryCombo" />
+       <widget class="InfoComboBox" name="aff3CategoryCombo" />
       </item>
       <item row="2" column="1" >
        <widget class="QLineEdit" name="aff3KeywordEdit" >
@@ -117,13 +147,20 @@
      <property name="sizeHint" >
       <size>
        <width>241</width>
-       <height>16</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>InfoComboBox</class>
+   <extends>QComboBox</extends>
+   <header>infocombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>org1CategoryCombo</tabstop>
   <tabstop>org1KeywordEdit</tabstop>

@@ -31,6 +31,7 @@ class Transfer;
 class RateClassManager;
 class ContactManager;
 class Task;
+class QHostAddress;
 
 
 namespace Oscar
@@ -49,7 +50,7 @@ class LIBOSCAR_EXPORT Connection : public QObject
 Q_OBJECT
 public:
 
-	Connection( ClientStream* cs, const char* name = 0 );
+	explicit Connection( ClientStream* cs, const char* name = 0 );
 	~Connection();
 
 	void setClient( Client* );
@@ -124,7 +125,7 @@ public:
 
     /**
      * Get the chat room name for this connection.
-     * @return the name of the room or QString::null if not connected to a room
+     * @return the name of the room or QString() if not connected to a room
      */
 
 	/** Get the user settings object */
@@ -144,8 +145,11 @@ public:
 	bool isIcq() const;
 	ContactManager* ssiManager() const;
 	const Oscar::ClientVersion* version() const;
+	Oscar::Guid versionCap() const;
 	RateClassManager* rateManager() const;
 	bool isLoggedIn() const;
+
+	QHostAddress localAddress() const;
 
 	/** Convenience function to get the root task for use in Tasks */
 	Task* rootTask() const;

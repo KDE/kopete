@@ -21,8 +21,9 @@
 #ifndef XMPP_JID_H
 #define XMPP_JID_H
 
+#include <QString>
+
 #include <iris_export.h>
-#include <QtCore/QString>
 
 namespace XMPP 
 {

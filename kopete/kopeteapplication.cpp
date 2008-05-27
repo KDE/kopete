@@ -29,6 +29,7 @@
 #include <klocale.h>
 #include <kcmdlineargs.h>
 #include <kmessagebox.h>
+#include <solid/networking.h>
 
 #include "addaccountwizard.h"
 #include "kabcpersistence.h"
@@ -38,7 +39,7 @@
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
-#include "kopetemimesourcefactory.h"
+#include "kopetefileengine.h"
 #include "kopetemimetypehandler.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
@@ -46,16 +47,22 @@
 #include "kopeteuiglobal.h"
 #include "kopetewindow.h"
 #include "kopeteviewmanager.h"
+#include "kopeteidentitymanager.h"
+#include "kopetedbusinterface.h"
 
 KopeteApplication::KopeteApplication()
 : KUniqueApplication( true, true )
 {
+	setQuitOnLastWindowClosed( false );
 	m_isShuttingDown = false;
-	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
+	m_mainWindow = new KopeteWindow( 0 );
 
 	Kopete::PluginManager::self();
 
 	Kopete::UI::Global::setMainWidget( m_mainWindow );
+
+	//Create the identity manager
+	Kopete::IdentityManager::self()->load();
 
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:
@@ -81,21 +88,23 @@ KopeteApplication::KopeteApplication()
 	 */
 	QTimer::singleShot( 0, this, SLOT( slotLoadPlugins() ) );
 
-	m_mimeFactory = new Kopete::MimeSourceFactory;
-	Q3MimeSourceFactory::addFactory( m_mimeFactory );
+	m_fileEngineHandler = new Kopete::FileEngineHandler();
 
 	//Create the emoticon installer
 	m_emoticonHandler = new Kopete::EmoticonMimeTypeHandler;
+
+	//Create the DBus interface for org.kde.kopete
+	new KopeteDBusInterface(this);
 }
 
 KopeteApplication::~KopeteApplication()
 {
-	kDebug( 14000 ) << k_funcinfo << endl;
+	kDebug( 14000 ) ;
 
-	delete m_mainWindow;
+	delete m_fileEngineHandler;
 	delete m_emoticonHandler;
-	delete m_mimeFactory;
-	//kDebug( 14000 ) << k_funcinfo << "Done" << endl;
+	delete m_mainWindow;
+	//kDebug( 14000 ) << "Done";
 }
 
 void KopeteApplication::slotLoadPlugins()
@@ -111,6 +120,7 @@ void KopeteApplication::slotLoadPlugins()
 	//Create the view manager
 	KopeteViewManager::viewManager();
 
+	// the account manager should be created after the identity manager is created
 	Kopete::AccountManager::self()->load();
 	Kopete::ContactList::self()->load();
 
@@ -121,14 +131,14 @@ void KopeteApplication::slotLoadPlugins()
 
 	bool showConfigDialog = false;
 
-	config->setGroup( "Plugins" );
+	KConfigGroup pluginsGroup = config->group( "Plugins" );
 
 	/* FIXME: This is crap, if something purged that groups but your accounts
 	 * are still working kopete will load the necessary plugins but still show the
 	 * stupid accounts dialog (of course empty at that time because account data
 	 * gets loaded later on). [mETz - 29.05.2004]
 	 */
-	if ( !config->hasGroup( "Plugins" ) )
+	if ( !pluginsGroup.exists() )
 		showConfigDialog = true;
 
 	// Listen to arguments
@@ -153,7 +163,7 @@ void KopeteApplication::slotLoadPlugins()
 	// Load some plugins exclusively? (--load-plugins=foo,bar)
 	if ( args->isSet( "load-plugins" ) )
 	{
-		config->deleteGroup( "Plugins", KConfigBase::Global );
+		pluginsGroup.deleteGroup( KConfigBase::Global );
 		showConfigDialog = false;
 		foreach ( const QString &plugin, args->getOption( "load-plugins" ).split( ',' ))
 			Kopete::PluginManager::self()->setPluginEnabled( plugin, true );
@@ -204,18 +214,21 @@ void KopeteApplication::slotAllPluginsLoaded()
 {
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
+	//FIXME: this should probably ask for the identities to connect instead of all accounts
 	// --noconnect not specified?
-	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() )
-		Kopete::AccountManager::self()->connectAll();
+	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() &&
+			( Solid::Networking::status() == Solid::Networking::Unknown ||
+			  Solid::Networking::status() == Solid::Networking::Connected ) )
+		Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Online, QString(), Kopete::AccountManager::ConnectIfOffline );
 
-	QByteArrayList connectArgs = args->getOptionList( "autoconnect" );
-	for ( QByteArrayList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
+	QStringList connectArgs = args->getOptionList( "autoconnect" );
+	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
 	{
-		foreach ( const QString connectArg, QString::fromLocal8Bit(*i).split(','))
-			connectArgs.append( connectArg.toLocal8Bit() );
+		foreach ( const QString connectArg, (*i).split(','))
+			connectArgs.append( connectArg );
 	}
 
-	for ( QByteArrayList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
+	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
 	{
 		QRegExp rx( QLatin1String( "([^\\|]*)\\|\\|(.*)" ) );
 		rx.indexIn( *i );
@@ -252,7 +265,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 
 int KopeteApplication::newInstance()
 {
-//	kDebug(14000) << k_funcinfo << endl;
+//	kDebug(14000) ;
 	handleURLArgs();
 
 	return KUniqueApplication::newInstance();
@@ -261,7 +274,7 @@ int KopeteApplication::newInstance()
 void KopeteApplication::handleURLArgs()
 {
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-//	kDebug(14000) << k_funcinfo << "called with " << args->count() << " arguments to handle." << endl;
+//	kDebug(14000) << "called with " << args->count() << " arguments to handle.";
 
 	if ( args->count() > 0 )
 	{
@@ -278,7 +291,7 @@ void KopeteApplication::handleURLArgs()
 
 void KopeteApplication::quitKopete()
 {
-	kDebug( 14000 ) << k_funcinfo << endl;
+	kDebug( 14000 ) ;
 
 	m_isShuttingDown = true;
 
@@ -287,7 +300,7 @@ void KopeteApplication::quitKopete()
 	QList<KMainWindow*>::iterator it, itEnd = members.end();
 	for ( it = members.begin(); it != itEnd; ++it)
 	{
-		if ( (*it)->close() )
+		if ( !(*it)->close() )
 		{
 			m_isShuttingDown = false;
 			break;

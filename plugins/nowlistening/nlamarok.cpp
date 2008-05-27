@@ -33,7 +33,7 @@ NLamaroK::NLamaroK() : NLMediaPlayer()
 {
 	m_type = Audio;
 	m_name = "amaroK";
-	m_client = new QDBusInterface("org.kde.amaroK", "/player");
+	m_client = new QDBusInterface("org.kde.amarok", "/Player");
 }
 
 NLamaroK::~NLamaroK()
@@ -48,7 +48,6 @@ void NLamaroK::update()
 	QString newTrack;
 	QString result;
 
-	// TODO: Port to amarok 2.0 D-BUS interface
 	if( !m_client->isValid() )
 		return;
 

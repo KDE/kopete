@@ -24,7 +24,7 @@
 
 #include "kopeteprotocol.h"
 #include "kopetemimetypehandler.h"
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 #include "kopeteonlinestatus.h"
 
 class AddContactPage;
@@ -42,9 +42,6 @@ namespace XMPP
 	class Status;
 }
 
-class JabberContact;
-class dlgJabberStatus;
-class dlgJabberSendRaw;
 class JabberCapabilitiesManager;
 
 class JabberProtocol:public Kopete::Protocol , private Kopete::MimeTypeHandler
@@ -55,7 +52,7 @@ public:
 	/**
 	 * Object constructor and destructor
 	 */
-	 JabberProtocol (QObject * parent, const QStringList &);
+	 JabberProtocol (QObject * parent, const QVariantList &);
 	 ~JabberProtocol ();
 
 	/**
@@ -83,46 +80,46 @@ public:
 	const Kopete::OnlineStatus JabberKOSInvisible;
 	const Kopete::OnlineStatus JabberKOSConnecting;
 
-	const Kopete::ContactPropertyTmpl propLastSeen;
-	const Kopete::ContactPropertyTmpl propAwayMessage;
-	const Kopete::ContactPropertyTmpl propFirstName;
-	const Kopete::ContactPropertyTmpl propLastName;
-	const Kopete::ContactPropertyTmpl propFullName;
-	const Kopete::ContactPropertyTmpl propEmailAddress;
-	const Kopete::ContactPropertyTmpl propPrivatePhone;
-	const Kopete::ContactPropertyTmpl propPrivateMobilePhone;
-	const Kopete::ContactPropertyTmpl propWorkPhone;
-	const Kopete::ContactPropertyTmpl propWorkMobilePhone;
-	const Kopete::ContactPropertyTmpl propNickName;
-	const Kopete::ContactPropertyTmpl propSubscriptionStatus;
-	const Kopete::ContactPropertyTmpl propAuthorizationStatus;
-	const Kopete::ContactPropertyTmpl propAvailableResources;
-	const Kopete::ContactPropertyTmpl propVCardCacheTimeStamp;
-	const Kopete::ContactPropertyTmpl propPhoto;
+	const Kopete::PropertyTmpl propLastSeen;
+	const Kopete::PropertyTmpl propAwayMessage;
+	const Kopete::PropertyTmpl propFirstName;
+	const Kopete::PropertyTmpl propLastName;
+	const Kopete::PropertyTmpl propFullName;
+	const Kopete::PropertyTmpl propEmailAddress;
+	const Kopete::PropertyTmpl propPrivatePhone;
+	const Kopete::PropertyTmpl propPrivateMobilePhone;
+	const Kopete::PropertyTmpl propWorkPhone;
+	const Kopete::PropertyTmpl propWorkMobilePhone;
+	const Kopete::PropertyTmpl propNickName;
+	const Kopete::PropertyTmpl propSubscriptionStatus;
+	const Kopete::PropertyTmpl propAuthorizationStatus;
+	const Kopete::PropertyTmpl propAvailableResources;
+	const Kopete::PropertyTmpl propVCardCacheTimeStamp;
+	const Kopete::PropertyTmpl propPhoto;
 	// extra properties to match with vCard
-	const Kopete::ContactPropertyTmpl propJid;
-	const Kopete::ContactPropertyTmpl propBirthday;
-	const Kopete::ContactPropertyTmpl propTimezone;
-	const Kopete::ContactPropertyTmpl propHomepage;
-	const Kopete::ContactPropertyTmpl propCompanyName;
-	const Kopete::ContactPropertyTmpl propCompanyDepartement;
-	const Kopete::ContactPropertyTmpl propCompanyPosition;
-	const Kopete::ContactPropertyTmpl propCompanyRole;
-	const Kopete::ContactPropertyTmpl propWorkStreet;
-	const Kopete::ContactPropertyTmpl propWorkExtAddr;
-	const Kopete::ContactPropertyTmpl propWorkPOBox;
-	const Kopete::ContactPropertyTmpl propWorkCity;
-	const Kopete::ContactPropertyTmpl propWorkPostalCode;
-	const Kopete::ContactPropertyTmpl propWorkCountry;
-	const Kopete::ContactPropertyTmpl propWorkEmailAddress;
-	const Kopete::ContactPropertyTmpl propHomeStreet;
-	const Kopete::ContactPropertyTmpl propHomeExtAddr;
-	const Kopete::ContactPropertyTmpl propHomePOBox;
-	const Kopete::ContactPropertyTmpl propHomeCity;
-	const Kopete::ContactPropertyTmpl propHomePostalCode;
-	const Kopete::ContactPropertyTmpl propHomeCountry;
-	const Kopete::ContactPropertyTmpl propPhoneFax;
-	const Kopete::ContactPropertyTmpl propAbout;
+	const Kopete::PropertyTmpl propJid;
+	const Kopete::PropertyTmpl propBirthday;
+	const Kopete::PropertyTmpl propTimezone;
+	const Kopete::PropertyTmpl propHomepage;
+	const Kopete::PropertyTmpl propCompanyName;
+	const Kopete::PropertyTmpl propCompanyDepartement;
+	const Kopete::PropertyTmpl propCompanyPosition;
+	const Kopete::PropertyTmpl propCompanyRole;
+	const Kopete::PropertyTmpl propWorkStreet;
+	const Kopete::PropertyTmpl propWorkExtAddr;
+	const Kopete::PropertyTmpl propWorkPOBox;
+	const Kopete::PropertyTmpl propWorkCity;
+	const Kopete::PropertyTmpl propWorkPostalCode;
+	const Kopete::PropertyTmpl propWorkCountry;
+	const Kopete::PropertyTmpl propWorkEmailAddress;
+	const Kopete::PropertyTmpl propHomeStreet;
+	const Kopete::PropertyTmpl propHomeExtAddr;
+	const Kopete::PropertyTmpl propHomePOBox;
+	const Kopete::PropertyTmpl propHomeCity;
+	const Kopete::PropertyTmpl propHomePostalCode;
+	const Kopete::PropertyTmpl propHomeCountry;
+	const Kopete::PropertyTmpl propPhoneFax;
+	const Kopete::PropertyTmpl propAbout;
 
 	/**
 	 * This returns our protocol instance

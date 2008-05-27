@@ -50,7 +50,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	Kopete::Account *account, QWidget *parent)
 	: QWidget(parent), KopeteEditAccountWidget(account)
 {
-	kDebug(14153) << k_funcinfo << "Called." << endl;
+	kDebug(14153) << "Called.";
 
 	mAccount=dynamic_cast<ICQAccount*>(account);
 	mProtocol=protocol;
@@ -68,14 +68,14 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	QRegExp rx("[0-9]{9}");
 	QValidator* validator = new QRegExpValidator( rx, this );
 	mAccountSettings->edtAccountId->setValidator(validator);
-	
+
 	// Read in the settings from the account if it exists
 	if(mAccount)
 	{
 		mAccountSettings->edtAccountId->setText(mAccount->accountId());
 
 		// TODO: Remove me after we can change Account IDs (Matt)
-		mAccountSettings->edtAccountId->setDisabled(true);
+		mAccountSettings->edtAccountId->setReadOnly(true);
 		mAccountSettings->mPasswordWidget->load(&mAccount->password());
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->excludeConnect());
 
@@ -114,9 +114,6 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		configValue = mAccount->configGroup()->readEntry( "Timeout", 10 );
 		mAccountSettings->sbxTimeout->setValue( configValue );
 
-		// Global Identity
-		mAccountSettings->chkGlobalIdentity->setChecked( mAccount->configGroup()->readEntry("ExcludeGlobalIdentity", false) );
-
 		if ( mAccount->engine()->isActive() )
 		{
 			m_visibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Visible );
@@ -137,12 +134,18 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 			QObject::connect( mAccountSettings->ignoreAdd, SIGNAL( clicked() ), m_ignoreEngine, SLOT( slotAdd() ) );
 			QObject::connect( mAccountSettings->ignoreRemove, SIGNAL( clicked() ), m_ignoreEngine, SLOT( slotRemove() ) );
 		}
+		// Hide the registration UI when editing an existing account
+		mAccountSettings->registrationGroupBox->hide();
 	}
 	else
 	{
+		int encodingId=4; //see icqprotocol.cpp for mappings
+		if (KGlobal::locale()->language().startsWith("ru"))
+			encodingId=2251;
 		mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
 		                              mProtocol->encodings(),
-		                              4 );
+		                              encodingId );
+		mAccountSettings->changePasswordGroupBox->hide();
 	}
 
 	if ( !mAccount || !mAccount->engine()->isActive() )
@@ -173,16 +176,18 @@ ICQEditAccountWidget::~ICQEditAccountWidget()
 	
 	if ( m_ignoreEngine )
 		delete m_ignoreEngine;
+	
+	delete mAccountSettings;
 }
 
 Kopete::Account *ICQEditAccountWidget::apply()
 {
-	kDebug(14153) << k_funcinfo << "Called." << endl;
+	kDebug(14153) << "Called.";
 
 	// If this is a new account, create it
 	if (!mAccount)
 	{
-		kDebug(14153) << k_funcinfo << "Creating a new account" << endl;
+		kDebug(14153) << "Creating a new account";
 		mAccount = new ICQAccount(mProtocol, mAccountSettings->edtAccountId->text());
 		if(!mAccount)
 			return NULL;
@@ -241,9 +246,6 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	mAccount->configGroup()->writeEntry( "Timeout", configValue );
 	oscarSettings->setTimeout( configValue );
 
-	// Global Identity
-	mAccount->configGroup()->writeEntry( "ExcludeGlobalIdentity", mAccountSettings->chkGlobalIdentity->isChecked() );
-
 	if ( mAccount->engine()->isActive() )
 	{
 		if ( m_visibleEngine )
@@ -264,14 +266,14 @@ Kopete::Account *ICQEditAccountWidget::apply()
 
 bool ICQEditAccountWidget::validateData()
 {
-	kDebug(14153) << k_funcinfo << "Called." << endl;
+	kDebug(14153) << "Called.";
 	bool bOk;
 	QString userId = mAccountSettings->edtAccountId->text();
 	qulonglong uid = userId.toULongLong( &bOk );
 	
 	if( !bOk || uid == 0 || userId.isEmpty() )
 	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
-	 	                              i18n("<qt>You must enter a valid ICQ Nr.</qt>"), i18n("ICQ"));
+	 	                              i18n("<qt>You must enter a valid ICQ No.</qt>"), i18n("ICQ"));
 		return false;
 	}
 
@@ -281,7 +283,7 @@ bool ICQEditAccountWidget::validateData()
 		return false;
 
 	// Seems good to me
-	kDebug(14153) << k_funcinfo <<
+	kDebug(14153) <<
 		"Account data validated successfully." << endl;
 	return true;
 }

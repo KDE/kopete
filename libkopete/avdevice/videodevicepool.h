@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef KOPETE_AVVIDEODEVICE_H
-#define KOPETE_AVVIDEODEVICE_H
+#ifndef VIDEODEVICEPOOL_H
+#define VIDEODEVICEPOOL_H
 
 #include <iostream>
 
@@ -32,6 +32,7 @@
 #include "kopete_export.h"
 #include <kconfig.h>
 #include <kglobal.h>
+#include <solid/device.h>
 
 namespace Kopete {
 
@@ -45,14 +46,14 @@ This class allows kopete to check for the existence, open, configure, test, set 
 
 typedef QVector<Kopete::AV::VideoDevice> VideoDeviceVector;
 
-class VideoDevicePoolPrivate;
 
-class KOPETE_EXPORT VideoDevicePool
+class KOPETE_EXPORT VideoDevicePool : public QObject
 {
+Q_OBJECT
 public:
 	static VideoDevicePool* self();
 	int open();
-	int open(unsigned int device);
+	int open(int device);
 	bool isOpen();
 	int getFrame();
 	int width();
@@ -70,6 +71,7 @@ public:
 	int selectInput(int newinput);
 	int setInputParameters();
 	int scanDevices();
+	void registerDevice( Solid::Device & dev );
 	bool hasDevices();
 	size_t size();
 	~VideoDevicePool();
@@ -78,7 +80,7 @@ public:
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	int fillStandardKComboBox(KComboBox *combobox);
-	unsigned int currentDevice();
+	int currentDevice();
 	int currentInput();
 	unsigned int inputs();
 
@@ -100,20 +102,27 @@ public:
 	bool getImageAsMirror();
 	bool setImageAsMirror(bool imageasmirror);
 
-	bool getDisableMMap();
-	bool setDisableMMap(bool disablemmap);
-	bool getWorkaroundBrokenDriver();
-	bool setWorkaroundBrokenDriver(bool workaroundbrokendriver);
-
 	void loadConfig(); // Load configuration parameters;
 	void saveConfig(); // Save configuretion parameters;
 
+signals:
+	/**
+	 * Provisional signatures, probably more useful to indicate which device was registered
+	 */
+	void deviceRegistered( const QString & udi );
+	void deviceUnregistered( const QString & udi );
+protected slots:
+	/**
+	 * Slot called when a new device is added to the system
+	 */
+	void deviceAdded( const QString & udi );
+	void deviceRemoved( const QString & udi );
 protected:
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
 	int showDeviceCapabilities(unsigned int device);
 	void guessDriver();
-	unsigned int m_current_device;
+	int m_current_device;
 	struct imagebuffer m_buffer; // only used when no devices were found
 
 	QMutex m_ready;
@@ -127,4 +136,4 @@ private:
 
 }
 
-#endif
+#endif // VIDEODEVICEPOOL_H

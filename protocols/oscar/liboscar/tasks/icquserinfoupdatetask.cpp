@@ -60,19 +60,19 @@ bool ICQUserInfoUpdateTask::take( Transfer* transfer )
 	{
 		setTransfer( transfer );
 		TLV tlv1 = transfer->buffer()->getTLV();
-		Buffer* buffer = new Buffer( tlv1.data, tlv1.length );
+		Buffer buffer( tlv1.data, tlv1.length );
 		
 		//FIXME this is silly. parseInitialData should take care of this for me.
-		buffer->skipBytes( 12 );
+		buffer.skipBytes( 12 );
 		
-		if ( buffer->getByte() == 0x0A )
+		if ( buffer.getByte() == 0x0A )
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Own user info was saved." << endl;
+			kDebug(OSCAR_RAW_DEBUG) << "Own user info was saved.";
 			setSuccess( 0, QString() );
 		}
 		else
 		{
-			kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Error saving own user info!!!" << endl;
+			kDebug(OSCAR_RAW_DEBUG) << "Error saving own user info!!!";
 			setError( 0, QString() );
 		}
 
@@ -84,7 +84,7 @@ bool ICQUserInfoUpdateTask::take( Transfer* transfer )
 
 void ICQUserInfoUpdateTask::onGo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Saving own user info." << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "Saving own user info.";
 
 	m_goSequence = client()->snacSequence();
 	setSequence( m_goSequence );

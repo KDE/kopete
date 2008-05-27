@@ -24,6 +24,7 @@
 #include <QtCore/QPointer>
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
+#include <QtGui/QPainter>
 
 // KDE includes
 #include <kdebug.h>
@@ -37,7 +38,7 @@
 
 // Kopete includes
 #include <kopetecontact.h>
-#include <kopeteprotocol.h>
+#include <kopeteaccount.h>
 
 namespace Kopete
 {
@@ -108,11 +109,11 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 		case AvatarManager::Contact:
 			avatarUrl.addPath( ContactDir );
 			d->createDirectory( avatarUrl );
-			// Use the plugin name for protocol sub directory
-			if( newEntry.contact && newEntry.contact->protocol() )
+			// Use the account id for sub directory
+			if( newEntry.contact && newEntry.contact->account() )
 			{
-				QString protocolName = newEntry.contact->protocol()->pluginId();
-				avatarUrl.addPath( protocolName );
+				QString accountName = newEntry.contact->account()->accountId();
+				avatarUrl.addPath( accountName );
 				d->createDirectory( avatarUrl );
 			}
 			break;
@@ -120,7 +121,7 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 			break;
 	}
 
-	kDebug(14010) << k_funcinfo << "Base directory: " << avatarUrl.path() << endl;
+	kDebug(14010) << "Base directory: " << avatarUrl.path();
 
 	// Second, open the avatar configuration in current directory.
 	KUrl configUrl = avatarUrl;
@@ -140,29 +141,38 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	avatar = d->scaleImage(avatar);
 
 	QString avatarFilename;
-	// Find MD5 hash for filename
-	// MD5 always contain ASCII caracteres so it is more save for a filename.
-	// Name can use UTF-8 caracters.
-	QByteArray tempArray;
-	QBuffer tempBuffer(&tempArray);
-	tempBuffer.open( QIODevice::WriteOnly );
-	avatar.save(&tempBuffer, "PNG");
-	KMD5 context(tempArray);
-	avatarFilename = context.hexDigest() + QLatin1String(".png");
+
+	// for the contact avatar, save it with the contactId + .png
+	if (newEntry.category == AvatarManager::Contact && newEntry.contact)
+	{
+		avatarFilename = newEntry.contact->contactId() + ".png";
+	}
+	else
+	{
+		// Find MD5 hash for filename
+		// MD5 always contain ASCII caracteres so it is more save for a filename.
+		// Name can use UTF-8 characters.
+		QByteArray tempArray;
+		QBuffer tempBuffer(&tempArray);
+		tempBuffer.open( QIODevice::WriteOnly );
+		avatar.save(&tempBuffer, "PNG");
+		KMD5 context(tempArray);
+		avatarFilename = context.hexDigest() + QLatin1String(".png");
+	}
 
 	// Save image on disk	
-	kDebug(14010) << k_funcinfo << "Saving " << avatarFilename << " on disk." << endl;
+	kDebug(14010) << "Saving " << avatarFilename << " on disk.";
 	avatarUrl.addPath( avatarFilename );
 
 	if( !avatar.save( avatarUrl.path(), "PNG") )
 	{
-		kDebug(14010) << k_funcinfo << "Saving of " << avatarUrl.path() << " failed !" << endl;
+		kDebug(14010) << "Saving of " << avatarUrl.path() << " failed !";
 		return AvatarEntry();
 	}
 	else
 	{
 		// Save metadata of image
-		KConfigGroup avatarConfig(KSharedConfig::openConfig( configUrl.path(), KConfig::OnlyLocal), newEntry.name );
+		KConfigGroup avatarConfig(KSharedConfig::openConfig( configUrl.path(), KConfig::SimpleConfig), newEntry.name );
 	
 		avatarConfig.writeEntry( "Filename", avatarFilename );
 		avatarConfig.writeEntry( "Category", int(newEntry.category) );
@@ -191,13 +201,13 @@ bool AvatarManager::remove(Kopete::AvatarManager::AvatarEntry entryToRemove)
 	// Delete the image file first, file delete is more likely to fail than config group remove.
 	if( KIO::NetAccess::del(KUrl(entryToRemove.path),0) )
 	{
-		kDebug(14010) << k_funcinfo << "Removing avatar from config." << endl;
+		kDebug(14010) << "Removing avatar from config.";
 
 		KUrl configUrl(d->baseDir);
 		configUrl.addPath( UserDir );
 		configUrl.addPath( AvatarConfig );
 
-		KConfigGroup avatarConfig ( KSharedConfig::openConfig( configUrl.path(), KConfig::OnlyLocal ), entryToRemove.name );
+		KConfigGroup avatarConfig ( KSharedConfig::openConfig( configUrl.path(), KConfig::SimpleConfig ), entryToRemove.name );
 		avatarConfig.deleteGroup();
 		avatarConfig.sync();
 
@@ -213,45 +223,39 @@ void AvatarManager::Private::createDirectory(const KUrl &directory)
 {
 	if( !QFile::exists(directory.path()) )
 	{
-		kDebug(14010) << k_funcinfo << "Creating directory: " << directory.path() << endl;
+		kDebug(14010) << "Creating directory: " << directory.path();
 		if( !KIO::NetAccess::mkdir(directory,0) )
 		{
-			kDebug(14010) << "Directory " << directory.path() <<" creating failed." << endl;
+			kDebug(14010) << "Directory " << directory.path() <<" creating failed.";
 		}
 	}
 }
 
 QImage AvatarManager::Private::scaleImage(const QImage &source)
 {
-	// Maybe the image doesn't need to be scaled
-	QImage result = source;
+	//make an empty image and fill with transparent color
+	QImage result(96, 96, QImage::Format_ARGB32);
+	result.fill(0);
 
-	if( result.width() > 96 || result.height() > 96 )
+	QPainter paint(&result);
+	float x = 0, y = 0;
+
+	// scale and center the image
+	if( source.width() > 96 || source.height() > 96 )
 	{
-		// Scale and crop the picture.
-		result = result.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
-		// crop image if not square
-		if( result.width() < result.height() )
-			result = result.copy( (result.width()-result.height())/2, 0, 96, 96 );
-		else if( result.width() > result.height() )
-			result = result.copy( 0, (result.height()-result.width())/2, 96, 96 );
-	}
-	else if( result.width() < 32 || result.height() < 32 )
-	{
-		// Scale and crop the picture.
-		result = result.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
-		// crop image if not square
-		if( result.width() < result.height() )
-			result = result.copy( (result.width()-result.height())/2, 0, 32, 32 );
-		else if( result.width() > result.height() )
-			result = result.copy( 0, (result.height()-result.width())/2, 32, 32 );
-	}
-	else if( result.width() != result.height() )
-	{
-		if(result.width() < result.height())
-			result = result.copy((result.width()-result.height())/2, 0, result.height(), result.height());
-		else if (result.width() > result.height())
-			result = result.copy(0, (result.height()-result.width())/2, result.height(), result.height());
+		QImage scaled = source.scaled( 96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation );
+
+		x = (96 - scaled.width()) / 2.0;
+		y = (96 - scaled.height()) / 2.0;
+
+		paint.translate(x, y);
+		paint.drawImage(QPoint(0, 0), scaled);
+	} else {
+		x = (96 - source.width()) / 2.0;
+		y = (96 - source.height()) / 2.0;
+
+		paint.translate(x, y);
+		paint.drawImage(QPoint(0, 0), source);
 	}
 
 	return result;
@@ -327,14 +331,14 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 	KUrl avatarDirectory = baseDir;
 	avatarDirectory.addPath(relativeDirectory);
 
-	kDebug(14010) << k_funcinfo << "Listing avatars in " << avatarDirectory.path() << endl;
+	kDebug(14010) << "Listing avatars in " << avatarDirectory.path();
 
 	// Look for Avatar configuration
 	KUrl avatarConfigUrl = avatarDirectory;
 	avatarConfigUrl.addPath( AvatarConfig );
 	if( QFile::exists(avatarConfigUrl.path()) )
 	{
-		KConfig *avatarConfig = new KConfig( avatarConfigUrl.path(), KConfig::OnlyLocal);
+		KConfig *avatarConfig = new KConfig( avatarConfigUrl.path(), KConfig::SimpleConfig);
 		// Each avatar entry in configuration is a group
 		QStringList groupEntryList = avatarConfig->groupList();
 		QString groupEntry;
@@ -353,6 +357,7 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 
 			avatarList << listedEntry;
 		}
+                delete avatarConfig;
 	}
 }
 

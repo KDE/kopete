@@ -41,9 +41,7 @@ class Presence;
 }
 
 class OscarAccount;
-class QTimer;
 class QTextCodec;
-class KToggleAction;
 class OscarEncodingSelectionDialog;
 
 /**
@@ -72,7 +70,7 @@ Q_OBJECT
 
 public:
 	OscarContact( Kopete::Account* account, const QString& name,
-	              Kopete::MetaContact* parent, const QString& icon = QString(), const OContact& ssiItem = OContact() );
+	              Kopete::MetaContact* parent, const QString& icon = QString() );
 	
 	virtual ~OscarContact();
 	
@@ -80,12 +78,12 @@ public:
 	
 	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CanCreate );
 	
-	const QString &contactName() const { return mName; };
-	OscarAccount *account() const { return mAccount; };
+	const QString &contactName() const { return mName; }
+	OscarAccount *account() const { return mAccount; }
 	
 	bool isOnServer() const;
-	
-	void setSSIItem( const OContact& item );
+
+	virtual void setSSIItem( const OContact& item );
 	OContact ssiItem() const;
 	
 	/** we received a typing notification from this contact, tell any message manager */
@@ -109,12 +107,14 @@ public:
 	 */
 	void setPresenceTarget( const Oscar::Presence &presence );
 
-	virtual QString sanitizedMessage( const QString& message ) = 0;
+	/**
+	 * Set encoding for this contact
+	 * @param mib the MIBenum
+	 * @note If @p mib is 0 then default encoding will be used
+	 */
+	virtual void setEncoding( int mib );
 
-public slots:
-	/** slot so that properties can be updated based on a new SSI item */
-	virtual void updateSSIItem() = 0;
-	
+public slots:	
 	/** Remove this contact from the server. Reimplemented from Kopete::Contact */
 	virtual void deleteContact();
 
@@ -139,11 +139,13 @@ public slots:
 	/** change contact encoding */
 	void changeContactEncoding();
 
-protected slots:
-	void slotTyping( bool typing );
+	void requestAuthorization();
 
 signals:
-	void updatedSSI();
+	void statusMessageChanged();
+
+protected slots:
+	void slotTyping( bool typing );
 
 protected:
 	OscarAccount *mAccount;
@@ -153,8 +155,7 @@ protected:
 	OContact m_ssiItem;
 	int m_warningLevel;
 	QString m_clientFeatures;
-	bool m_haveAwayMessage;
-	
+
 private:
 	void initActions();
 
@@ -170,7 +171,6 @@ private slots:
 	
 private:
 	QString filterAwayMessage( const QString &message ) const;
-	bool cachedBuddyIcon( QByteArray hash );
 	bool m_buddyIconDirty;
 
 	OscarEncodingSelectionDialog* m_oesd;

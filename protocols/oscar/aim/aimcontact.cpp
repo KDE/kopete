@@ -33,8 +33,8 @@
 #include "oscarstatusmanager.h"
 
 AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::MetaContact* parent,
-                        const QString& icon, const OContact& ssiItem )
-: AIMContactBase(account, name, parent, icon, ssiItem )
+                        const QString& icon )
+: AIMContactBase(account, name, parent, icon )
 {
 	mProtocol=static_cast<AIMProtocol *>(protocol());
 	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
@@ -103,14 +103,16 @@ int AIMContact::warningLevel() const
 	return m_warningLevel;
 }
 
-void AIMContact::updateSSIItem()
+void AIMContact::setSSIItem( const OContact& ssiItem )
 {
-	if ( m_ssiItem.type() != 0xFFFF && m_ssiItem.waitingAuth() == false &&
+	if ( ssiItem.type() != 0xFFFF && ssiItem.waitingAuth() == false &&
 	     onlineStatus() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 	}
+
+	AIMContactBase::setSSIItem( ssiItem );
 }
 
 void AIMContact::slotUserInfo()
@@ -137,7 +139,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << endl;
+	kDebug(OSCAR_RAW_DEBUG) << contact;
 
 	//if they don't have an SSI alias, make sure we use the capitalization from the
 	//server so their contact id looks all pretty.
@@ -145,7 +147,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( nickname.isEmpty() || Oscar::normalize( nickname ) == Oscar::normalize( contact ) )
 		setNickName( contact );
 
-	kDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
+	kDebug( OSCAR_AIM_DEBUG ) << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
 	setPresenceTarget( presence );
 
@@ -153,15 +155,13 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	if ( presence.type() == Oscar::Presence::Online )
 	{
-		removeProperty( mProtocol->awayMessage );
-		m_haveAwayMessage = false;
+		removeProperty( mProtocol->statusMessage );
 	}
 	else
 	{
-		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
+		if ( m_details.awaySinceTime() < details.awaySinceTime() ) //prevent cyclic away message requests
 		{
 			mAccount->engine()->requestAIMAwayMessage( contactId() );
-			m_haveAwayMessage = true;
 		}
 	}
 
@@ -172,7 +172,7 @@ void AIMContact::userOnline( const QString& userId )
 {
 	if ( Oscar::normalize( userId ) == Oscar::normalize( contactId() ) )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Getting more contact info" << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "Getting more contact info";
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Online ) );
 	}
 }
@@ -181,9 +181,9 @@ void AIMContact::userOffline( const QString& userId )
 {
 	if ( Oscar::normalize( userId ) == Oscar::normalize( contactId() ) )
 	{
-		kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline" << endl;
+		kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline";
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
-		removeProperty( mProtocol->awayMessage );
+		removeProperty( mProtocol->statusMessage );
 	}
 }
 

@@ -1,7 +1,7 @@
 /*
     privacymessagehandler.cpp - Kopete Message Filtering
 
-    Copyright (c) 2006 by Andre Duffeck <andre@duffeck.de>
+    Copyright (c) 2006 by Andre Duffeck <duffeck@kde.org>
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -17,7 +17,6 @@
 #include "privacymessagehandler.h"
 #include "kopetemessageevent.h"
 
-#include <kstaticdeleter.h>
 #include <kdebug.h>
 #include <QPointer>
 
@@ -77,11 +76,11 @@ void PrivacyMessageHandler::handleMessage( MessageEvent *e )
 	emit handle( e );
 	if( event )
 	{
-		kDebug(14313) << k_funcinfo << "MessageEvent still there!" << endl;
+		kDebug(14313) << "MessageEvent still there!";
 		MessageHandler::handleMessage( event );
 	}
 	else
-		kDebug(14313) << k_funcinfo << "MessageEvent destroyed!" << endl;
+		kDebug(14313) << "MessageEvent destroyed!";
 }
 
 #include "privacymessagehandler.moc"

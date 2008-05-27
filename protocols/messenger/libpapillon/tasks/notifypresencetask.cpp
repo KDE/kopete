@@ -20,7 +20,7 @@
 #include <QtDebug>
 
 // Papillon includes
-#include "Papillon/Transfer"
+#include "Papillon/NetworkMessage"
 #include "Papillon/Global"
 
 namespace Papillon
@@ -43,25 +43,25 @@ NotifyPresenceTask::~NotifyPresenceTask()
 }
 
 
-bool NotifyPresenceTask::take(Transfer *transfer)
+bool NotifyPresenceTask::take(NetworkMessage *networkMessage)
 {
-	if( forMe(transfer) )
+	if( forMe(networkMessage) )
 	{
 		QString contactId;
 		Papillon::Presence::Status newPresence = Presence::Offline;
 
 		// ILN is initial presence and NLN normal presence change.
-		if( transfer->command() == QLatin1String("NLN") || transfer->command() == QLatin1String("ILN") )
+		if( networkMessage->command() == QLatin1String("NLN") || networkMessage->command() == QLatin1String("ILN") )
 		{
-			newPresence = Papillon::Global::stringToPresence( transfer->arguments()[0] );
-			contactId = transfer->arguments()[1];
+			newPresence = Papillon::Global::stringToPresence( networkMessage->arguments()[0] );
+			contactId = networkMessage->arguments()[1];
 			// TODO: Handle nickname, features, MsnObject
 		}
 		// Contact went offline
-		else if( transfer->command() == QLatin1String("FLN") )
+		else if( networkMessage->command() == QLatin1String("FLN") )
 		{
 			newPresence = Presence::Offline;
-			contactId = transfer->arguments()[0];
+			contactId = networkMessage->arguments()[0];
 		}
 
 		emit contactPresenceChanged(contactId, newPresence);
@@ -72,11 +72,11 @@ bool NotifyPresenceTask::take(Transfer *transfer)
 	return false;
 }
 
-bool NotifyPresenceTask::forMe(Transfer *transfer) const
+bool NotifyPresenceTask::forMe(NetworkMessage *networkMessage) const
 {
-	if( transfer->command() == QLatin1String("ILN") ||
-		transfer->command() == QLatin1String("NLN") ||
-		transfer->command() == QLatin1String("FLN") )
+	if( networkMessage->command() == QLatin1String("ILN") ||
+		networkMessage->command() == QLatin1String("NLN") ||
+		networkMessage->command() == QLatin1String("FLN") )
 	{
 		return true;
 	}

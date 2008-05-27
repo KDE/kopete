@@ -19,7 +19,6 @@
 #include "kopeteuiglobal.h"
 
 #include <kdebug.h>
-#include <kstaticdeleter.h>
 #include <kwallet.h>
 
 #include <qtimer.h>
@@ -64,12 +63,8 @@ Kopete::WalletManager::~WalletManager()
 
 Kopete::WalletManager *Kopete::WalletManager::self()
 {
-	static KStaticDeleter<Kopete::WalletManager> s_deleter;
-	static Kopete::WalletManager *s_self = 0;
-
-	if ( !s_self )
-		s_deleter.setObject( s_self, new Kopete::WalletManager() );
-	return s_self;
+	static WalletManager s;
+	return &s;
 }
 
 void Kopete::WalletManager::openWallet( QObject *object, const char *slot )
@@ -91,17 +86,17 @@ void Kopete::WalletManager::openWalletInner()
 		// anyway, so we don't set up a single shot.
 		if ( d->wallet->isOpen() )
 		{
-			kDebug(14010) << k_funcinfo << " wallet already open" << endl;
+			kDebug(14010) << " wallet already open";
 			QTimer::singleShot( 0, this, SLOT( slotGiveExistingWallet() ) );
 		}
 		else
 		{
-			kDebug(14010) << k_funcinfo << " still waiting for earlier request" << endl;
+			kDebug(14010) << " still waiting for earlier request";
 		}
 		return;
 	}
 	
-	kDebug(14010) << k_funcinfo << " about to open wallet async" << endl;
+	kDebug(14010) << " about to open wallet async";
 
 	// we have no wallet: ask for one.
 	d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(),
@@ -112,7 +107,7 @@ void Kopete::WalletManager::openWalletInner()
 
 void Kopete::WalletManager::slotWalletChangedStatus()
 {
-	kDebug(14010) << k_funcinfo << " isOpen: " << d->wallet->isOpen() << endl;
+	kDebug(14010) << " isOpen: " << d->wallet->isOpen();
 
 	if( d->wallet->isOpen() )
 	{
@@ -121,6 +116,7 @@ void Kopete::WalletManager::slotWalletChangedStatus()
 
 		if ( d->wallet->setFolder( QString::fromLatin1( "Kopete" ) ) )
 		{
+			kDebug(14010) << "Succesfully opened the wallet !";
 			// success!
 			QObject::connect( d->wallet, SIGNAL( walletClosed() ), this, SLOT( closeWallet() ) );
 		}
@@ -143,7 +139,7 @@ void Kopete::WalletManager::slotWalletChangedStatus()
 
 void Kopete::WalletManager::slotGiveExistingWallet()
 {
-	kDebug(14010) << k_funcinfo << " with d->wallet " << d->wallet << endl;
+	kDebug(14010) << " with d->wallet " << d->wallet;
 
 	if ( d->wallet )
 	{
@@ -154,7 +150,7 @@ void Kopete::WalletManager::slotGiveExistingWallet()
 		// then we're waiting for it to open, and will be told
 		// when it's done: do nothing.
 		else
-			kDebug(14010) << k_funcinfo << " wallet gone, waiting for another wallet" << endl;
+			kDebug(14010) << " wallet gone, waiting for another wallet";
 	}
 	else
 	{

@@ -28,58 +28,15 @@
 
 
 ICQContactBase::ICQContactBase( Kopete::Account *account, const QString &name, Kopete::MetaContact *parent,
-						const QString& icon, const OContact& ssiItem )
-: OscarContact( account, name, parent, icon, ssiItem )
+						const QString& icon )
+: OscarContact( account, name, parent, icon )
 {
-	m_requestingNickname = false;
-
-	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqShortInfo(const QString&)),
-	                  this, SLOT(receivedShortInfo(const QString&)) );
 	QObject::connect( mAccount->engine(), SIGNAL(receivedXStatusMessage(const QString&, int, const QString&, const QString&)),
 	                  this, SLOT(receivedXStatusMessage(const QString&, int, const QString&, const QString&)) );
 }
 
 ICQContactBase::~ICQContactBase()
 {
-}
-
-QString ICQContactBase::sanitizedMessage( const QString& message )
-{
-	return message;
-}
-
-void ICQContactBase::requestShortInfo()
-{
-	if ( mAccount->isConnected() )
-		mAccount->engine()->requestShortInfo( contactId() );
-}
-
-void ICQContactBase::receivedShortInfo( const QString& contact )
-{
-	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
-		return;
-
-	QTextCodec* codec = contactCodec();
-
-	m_requestingNickname = false; //done requesting nickname
-	ICQShortInfo shortInfo = mAccount->engine()->getShortInfo( contact );
-	/*
-	if(!shortInfo.firstName.isEmpty())
-		setProperty( mProtocol->firstName, codec->toUnicode( shortInfo.firstName ) );
-	else
-		removeProperty(mProtocol->firstName);
-
-	if(!shortInfo.lastName.isEmpty())
-		setProperty( mProtocol->lastName, codec->toUnicode( shortInfo.lastName ) );
-	else
-		removeProperty(mProtocol->lastName);
-	*/
-	if ( m_ssiItem.alias().isEmpty() && !shortInfo.nickname.isEmpty() )
-	{
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo <<
-			"setting new displayname for former UIN-only Contact" << endl;
-		setProperty( Kopete::Global::Properties::self()->nickName(), codec->toUnicode( shortInfo.nickname ) );
-	}
 }
 
 void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, const QString& description, const QString& message )
@@ -90,12 +47,16 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 	OscarProtocol* p = static_cast<OscarProtocol *>(protocol());
 	Oscar::Presence presence = p->statusManager()->presenceOf( this->onlineStatus() );
 	presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
-	presence.setDescription( description );
 	presence.setXtrazStatus( icon );
 	setPresenceTarget( presence );
 
+	Kopete::StatusMessage statusMessage;
+	if ( !description.isEmpty() )
+		setProperty( static_cast<OscarProtocol*>( protocol() )->statusTitle, description );
+	else
+		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusTitle );
+
 	setAwayMessage( message );
-	m_haveAwayMessage = true;
 }
 
 void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )
@@ -106,17 +67,13 @@ void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* ses
 	QTextCodec* codec = contactCodec();
 
 	int messageChannel = 0x01;
-	Oscar::Message::Encoding messageEncoding;
-
-	if ( isOnline() && m_details.hasCap( CAP_UTF8 ) )
-		messageEncoding = Oscar::Message::UCS2;
-	else
-		messageEncoding = Oscar::Message::UserDefined;
+	// Allow UCS2 because official AIM client doesn't sets the CAP_UTF8 anymore!
+	bool allowUCS2 = !isOnline() || !(m_details.userClass() & Oscar::CLASS_ICQ) || m_details.hasCap( CAP_UTF8 );
 
 	QString msgText( msg.plainBody() );
 	// TODO: More intelligent handling of message length.
-	uint chunk_length = !isOnline() ? 450 : 4096;
-	uint msgPosition = 0;
+	const int chunk_length = 1274;
+	int msgPosition = 0;
 
 	do
 	{
@@ -136,7 +93,7 @@ void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* ses
 		msgPosition += msgChunk.length();
 
 		Oscar::Message message;
-		message.setText( messageEncoding, msgChunk, codec );
+		message.setText( Oscar::Message::encodingForText( msgChunk, allowUCS2 ), msgChunk, codec );
 		message.setChannel( messageChannel );
 		message.setTimestamp( msg.timestamp() );
 		message.setSender( mAccount->accountId() );

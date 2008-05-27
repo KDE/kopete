@@ -21,7 +21,7 @@
 #ifndef XMPP_ROSTERX_H
 #define XMPP_ROSTERX_H
 
-
+#include <QString>
 #include <QStringList>
 
 #include "xmpp_jid.h"

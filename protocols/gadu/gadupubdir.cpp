@@ -29,7 +29,6 @@
 
 #include <q3widgetstack.h>
 #include <q3listview.h>
-#include <q3ptrlist.h>
 #include <qradiobutton.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
@@ -67,7 +66,7 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	createWidget();
 	initConnections();
 
-	kDebug( 14100 ) << "search for Uin: " << searchFor << endl;
+	kDebug( 14100 ) << "search for Uin: " << searchFor;
 
 	mMainWidget->listFound->clear();
 	show();
@@ -255,14 +254,14 @@ GaduPublicDir::slotSearchResult( const SearchResult& result, unsigned int )
 {
 	Q3ListView* list = mMainWidget->listFound;
 
-	kDebug(14100) << "searchResults(" << result.count() <<")" << endl;
+	kDebug(14100) << "searchResults(" << result.count() <<")";
 
 	Q3ListViewItem* sl;
 
 	SearchResult::const_iterator r;
 
 	for ( r = result.begin(); r != result.end() ; ++r ){
-		kDebug(14100) << "adding" << (*r).uin << endl;
+		kDebug(14100) << "adding" << (*r).uin;
 		sl= new Q3ListViewItem(
 					list, QString::fromAscii(""),
 					(*r).firstname,
@@ -310,7 +309,7 @@ GaduPublicDir::slotSearch()
 
 	// search more, or search ?
 	if ( mMainWidget->pubsearch->id( mMainWidget->pubsearch->visibleWidget() ) == 0 ) {
-		kDebug(14100) << "start search... " << endl;
+		kDebug(14100) << "start search... ";
 		getData();
 
 		// validate data
@@ -323,7 +322,7 @@ GaduPublicDir::slotSearch()
 
 	}
 	else{
-		kDebug(14100) << "search more... " << endl;
+		kDebug(14100) << "search more... ";
 		// Search for more
 	}
 	mMainWidget->pubsearch->setDisabled( true );

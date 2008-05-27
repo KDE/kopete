@@ -2,7 +2,7 @@
     yahooconferencemessagemanager.h - Yahoo Conference Message Manager
 
     Copyright (c) 2003 by Duncan Mac-Vicar <duncan@kde.org>
-    Copyright (c) 2005 by André Duffeck        <andre@duffeck.de>
+    Copyright (c) 2005 by André Duffeck        <duffeck@kde.org>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -49,7 +49,7 @@ YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoo
 
 	m_yahooRoom = yahooRoom;
 
-	m_actionInvite = new KAction( KIcon("kontact_contacts"), i18n( "&Invite others" ), this );
+	m_actionInvite = new KAction( KIcon("x-office-contact"), i18n( "&Invite others" ), this ); // icon should probably be "contact-invite", but that doesn't exist... please request an icon on http://techbase.kde.org/index.php?title=Projects/Oxygen/Missing_Icons
         actionCollection()->addAction( "yahooInvite", m_actionInvite );
 	connect ( m_actionInvite, SIGNAL( triggered ( bool ) ), this, SLOT( slotInviteOthers() ) );
 
@@ -83,7 +83,7 @@ void YahooConferenceChatSession::left( YahooContact *c )
 
 void YahooConferenceChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSession * )
 {
-	kDebug ( YAHOO_GEN_DEBUG ) << k_funcinfo << endl;
+	kDebug ( YAHOO_GEN_DEBUG ) ;
 
 	YahooAccount *acc = dynamic_cast< YahooAccount *>( account() );
 	if( acc )

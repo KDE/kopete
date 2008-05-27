@@ -20,7 +20,7 @@
 
 #include "client.h"
 #include "response.h"
-
+#include "gwerror.h"
 #include "modifycontactlisttask.h"
 
 ModifyContactListTask::ModifyContactListTask(Task* parent): RequestTask(parent)
@@ -46,10 +46,10 @@ bool ModifyContactListTask::take( Transfer * transfer )
 	fl.dump( true );
 	Field::FieldListIterator it = fl.begin();
 	Field::FieldListIterator end = fl.end();
-	Field::MultiField * current = fl.findMultiField( NM_A_FA_RESULTS );
+	Field::MultiField * current = fl.findMultiField( Field::NM_A_FA_RESULTS );
 	if ( current )
 		fl = current->fields();
-	current = fl.findMultiField( NM_A_FA_CONTACT_LIST );
+	current = fl.findMultiField( Field::NM_A_FA_CONTACT_LIST );
 	if ( current )
 	{
 		Field::FieldList contactList = current->fields();
@@ -58,12 +58,12 @@ bool ModifyContactListTask::take( Transfer * transfer )
 		while ( cursor != end )
 		{
 			Field::MultiField * mf = dynamic_cast< Field::MultiField * >( *cursor );
-			if ( mf->tag() == NM_A_FA_CONTACT )
+			if ( mf->tag() == Field::NM_A_FA_CONTACT )
 			{
 				// contact change
 				processContactChange( mf );
 			}
-			else if ( mf->tag() == NM_A_FA_FOLDER )
+			else if ( mf->tag() == Field::NM_A_FA_FOLDER )
 			{
 				// folder change
 				processFolderChange( mf );
@@ -74,7 +74,7 @@ bool ModifyContactListTask::take( Transfer * transfer )
 	// TODO: call virtual here to read any fields after the contact list...
 	if ( response->resultCode() == GroupWise::None )
 		setSuccess();
-	else
+	else 
 		setError( response->resultCode() );
 	return true;
 }
@@ -89,15 +89,15 @@ void ModifyContactListTask::processContactChange( Field::MultiField * container 
 	Field::SingleField * current;
 	Field::FieldList fl = container->fields();
 	ContactItem contact;
-	current = fl.findSingleField( NM_A_SZ_OBJECT_ID );
+	current = fl.findSingleField( Field::NM_A_SZ_OBJECT_ID );
 	contact.id = current->value().toInt();
-	current = fl.findSingleField( NM_A_SZ_PARENT_ID );
+	current = fl.findSingleField( Field::NM_A_SZ_PARENT_ID );
 	contact.parentId = current->value().toInt();
-	current = fl.findSingleField( NM_A_SZ_SEQUENCE_NUMBER );
+	current = fl.findSingleField( Field::NM_A_SZ_SEQUENCE_NUMBER );
 	contact.sequence = current->value().toInt();
-	current = fl.findSingleField( NM_A_SZ_DISPLAY_NAME );
+	current = fl.findSingleField( Field::NM_A_SZ_DISPLAY_NAME );
 	contact.displayName = current->value().toString();
-	current = fl.findSingleField( NM_A_SZ_DN );
+	current = fl.findSingleField( Field::NM_A_SZ_DN );
 	contact.dn = current->value().toString();
 	
 	if ( container->method() == NMFIELD_METHOD_ADD )
@@ -117,16 +117,16 @@ void ModifyContactListTask::processFolderChange( Field::MultiField * container )
 	Field::SingleField * current;
 	Field::FieldList fl = container->fields();
 	// object id
-	current = fl.findSingleField( NM_A_SZ_OBJECT_ID );
+	current = fl.findSingleField( Field::NM_A_SZ_OBJECT_ID );
 	folder.id = current->value().toInt();
 	// sequence number
-	current = fl.findSingleField( NM_A_SZ_SEQUENCE_NUMBER );
+	current = fl.findSingleField( Field::NM_A_SZ_SEQUENCE_NUMBER );
 	folder.sequence = current->value().toInt();
 	// name 
-	current = fl.findSingleField( NM_A_SZ_DISPLAY_NAME );
+	current = fl.findSingleField( Field::NM_A_SZ_DISPLAY_NAME );
 	folder.name = current->value().toString();
 	// parent
-	current = fl.findSingleField( NM_A_SZ_PARENT_ID );
+	current = fl.findSingleField( Field::NM_A_SZ_PARENT_ID );
 	folder.parentId = current->value().toInt();
 	if ( container->method() == NMFIELD_METHOD_ADD )
 		emit gotFolderAdded( folder );

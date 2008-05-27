@@ -35,11 +35,6 @@
 #include "wpaddcontact.h"
 
 namespace Kopete { class Account; }
-class KMenu;
-class KActionMenu;
-class KAction;
-class WPContact;
-class WPAccount;
 
 /**
  * The actual Protocol class used by Kopete.
@@ -50,7 +45,7 @@ class WPProtocol : public Kopete::Protocol
 
 // Kopete::Protocol overloading
 public:
-	WPProtocol( QObject *parent, const QStringList & );
+	WPProtocol( QObject *parent, const QVariantList & );
 	~WPProtocol();
 
 	virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *theAccount);

@@ -12,8 +12,8 @@
    *                                                                       *
    *************************************************************************
 */
-#ifndef PAPILLONNOTIFICATIONSTREAM_H
-#define PAPILLONNOTIFICATIONSTREAM_H
+#ifndef PAPILLONCLIENTSTREAM_H
+#define PAPILLONCLIENTSTREAM_H
 
 #include <Papillon/Base/Stream>
 #include <Papillon/Macros>
@@ -22,7 +22,7 @@ namespace Papillon
 {
 
 class Connector;
-class Transfer;
+class NetworkMessage;
 
 /**
  * @class ClientStream papillonclientstream.h <Papillon/ClientStream>
@@ -43,10 +43,10 @@ public:
 	virtual int errorCondition() const;
  	virtual QString errorText() const;
 
-	virtual bool transfersAvailable() const;
+	virtual bool networkMessagesAvailable() const;
 
-	virtual Transfer *read();
-	virtual void write(Transfer *transfer);
+	virtual NetworkMessage *read();
+	virtual void write(NetworkMessage *networkMessage);
 
 	void reset(bool all);
 
@@ -70,4 +70,4 @@ private:
 
 }
 
-#endif
+#endif // PAPILLONCLIENTSTREAM_H

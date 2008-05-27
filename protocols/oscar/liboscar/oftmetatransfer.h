@@ -20,30 +20,22 @@
 #ifndef OFTMETATRANSFER_H
 #define OFTMETATRANSFER_H
 
-#include <qfile.h>
-#include <qtimer.h>
+#include <QtCore/QFile>
+#include <QtNetwork/QAbstractSocket>
+
 #include "oscartypes.h"
 
-namespace KNetwork
-{
-	class KBufferedSocket;
-}
-typedef KNetwork::KBufferedSocket KBufferedSocket;
-namespace Kopete
-{
-	class FileTransferInfo;
-}
+class QTcpSocket;
 
-using namespace Oscar;
 class OftMetaTransfer : public QObject
 {
 Q_OBJECT
 public:
 	/** Receive constructor */
-	OftMetaTransfer( const QByteArray& cookie, const QString& dir, KBufferedSocket *connection );
+	OftMetaTransfer( const QByteArray& cookie, const QString& dir, QTcpSocket *socket );
 
 	/** Send constructor */
-	OftMetaTransfer( const QByteArray& cookie, const QStringList& files, KBufferedSocket *connection );
+	OftMetaTransfer( const QByteArray& cookie, const QStringList& files, QTcpSocket *socket );
 
 	~OftMetaTransfer();
 
@@ -62,24 +54,24 @@ signals:
 	void fileProcessed( unsigned int bytesSent, unsigned int fileSize );
 
 	void transferCompleted();
-//	void error( int, const QString & );
+	void transferError( int errorCode, const QString &error );
 
 private slots:
 	//bool validFile();
-	void socketError( int );
+	void socketError( QAbstractSocket::SocketError );
 	void socketRead();
 	void write();
-	void timeout();
+	void emitTransferCompleted();
 
 private:
 	void initOft();
-	void handelReceiveSetup( const Oscar::OFT &oft );
-	void handelReceiveResumeSetup( const Oscar::OFT &oft );
+	void handleReceiveSetup( const Oscar::OFT &oft );
+	void handleReceiveResumeSetup( const Oscar::OFT &oft );
 
-	void handelSendSetup( const Oscar::OFT &oft );
-	void handelSendResumeSetup( const Oscar::OFT &oft );
+	void handleSendSetup( const Oscar::OFT &oft );
+	void handleSendResumeSetup( const Oscar::OFT &oft );
 	void handleSendResumeRequest( const Oscar::OFT &oft );
-	void handelSendDone( const Oscar::OFT &oft );
+	void handleSendDone( const Oscar::OFT &oft );
 
 	void sendOft();
 	void prompt();
@@ -90,18 +82,20 @@ private:
 	void rAck(); //resume ack
 	void saveData(); //save incoming data to disk
 	void readOft(); //handle incoming oft packet
-	Oscar::DWORD checksum( int max = -1 ); //return checksum of our file, up to max bytes
-					//XXX this does put an arbitrary limit on file size
 
-	OFT m_oft;
+	/** return checksum of our file, up to bytes */
+	Oscar::DWORD fileChecksum( QFile& file, int bytes = -1 ) const;
+	Oscar::DWORD chunkChecksum( const char *buffer, int bufferSize,
+	                            Oscar::DWORD checksum, bool shiftIndex ) const;
+
+	Oscar::OFT m_oft;
 
 	QFile m_file;
 
 	QString m_dir; //directory where we save files
 	QStringList m_files; //list of files that we want to send
 
-	KBufferedSocket *m_connection; //where we actually send file data
-	QTimer m_timer; //if we're idle too long, then give up
+	QTcpSocket *m_socket; //where we actually send file data
 	enum State { SetupReceive, SetupSend, Receiving, Sending, Done };
 	State m_state;
 };

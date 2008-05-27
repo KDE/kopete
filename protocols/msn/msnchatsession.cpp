@@ -17,8 +17,8 @@
 
 #include "msnchatsession.h"
 
-#include <qlabel.h>
-#include <qimage.h>
+#include <QLabel>
+#include <QImage>
 
 #include <qfile.h>
 #include <qiconset.h>
@@ -35,6 +35,8 @@
 #include <kmenu.h>
 #include <ktemporaryfile.h>
 #include <kxmlguiwindow.h>
+#include <kcomponentdata.h>
+#include <kactioncollection.h>
 #include <ktoolbar.h>
 #include <krun.h>
 #include <kicon.h>
@@ -54,7 +56,6 @@
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
-#include <kactioncollection.h>
 #endif
 
 MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user,
@@ -74,8 +75,8 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 		this, SLOT( slotMessageSent( Kopete::Message&,
 		Kopete::ChatSession* ) ) );
 
-	connect( this, SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact*  ) ) ,
-		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNChatSession*  , MSNContact*  ) ) );
+	connect( this, SIGNAL( invitation(MSNInvitation*& ,  const QString & , unsigned long int , MSNChatSession*  , MSNContact*  ) ) ,
+		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , unsigned long int , MSNChatSession*  , MSNContact*  ) ) );
 
 
 	m_actionInvite = new KActionMenu( KIcon("kontact_contacts"), i18n( "&Invite" ), this );
@@ -88,7 +89,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	connect( rawCmd, SIGNAL(triggered()), this, SLOT(slotDebugRawCommand()) );
 	#endif
 
-	m_actionNudge=new KAction( KIcon("bell"), i18n( "Send Nudge" ), this );
+	m_actionNudge=new KAction( KIcon("preferences-desktop-notification-bell"), i18n( "Send Nudge" ), this );
         actionCollection()->addAction( "msnSendNudge", m_actionNudge ) ;
 	connect( m_actionNudge, SIGNAL(triggered(bool)), this, SLOT(slotSendNudge()) );
 
@@ -103,7 +104,7 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 	connect( m_actionWebcamSend, SIGNAL(triggered(bool)), this, SLOT(slotWebcamSend()) );
 
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
-	KAction* requestPicture = new KAction( KIcon("image"), i18n( "Request Display Picture" ), this );
+	KAction* requestPicture = new KAction( KIcon("image-x-generic"), i18n( "Request Display Picture" ), this );
         actionCollection()->addAction( "msnRequestDisplayPicture", requestPicture );
 	requestPicture->setEnabled(!c->object().isEmpty());
 	connect( requestPicture, SIGNAL(triggered()), this, SLOT(slotRequestPicture()) );
@@ -166,7 +167,7 @@ void MSNChatSession::createChat( const QString &handle,
 
 	if( m_chatService )
 	{
-		kDebug(14140) << k_funcinfo << "Service already exists, disconnect them." << endl;
+		kDebug(14140) << "Service already exists, disconnect them.";
 		delete m_chatService;
 	}
 
@@ -189,8 +190,14 @@ void MSNChatSession::createChat( const QString &handle,
 		this, SLOT( slotSwitchBoardClosed() ) );
 	connect( m_chatService, SIGNAL( receivedTypingMsg( const QString &, bool ) ),
 		this, SLOT( receivedTypingMsg( const QString &, bool ) ) );
-	connect( this, SIGNAL( myselfTyping( bool ) ),
-		m_chatService, SLOT( sendTypingMsg( bool ) ) );
+
+    KConfigGroup *config=account()->configGroup();
+	if ( config->readEntry( "SendTypingNotification", true ) )
+	{
+		connect( this, SIGNAL( myselfTyping( bool ) ),
+			m_chatService, SLOT( sendTypingMsg( bool ) ) );
+	}
+
 	connect( m_chatService, SIGNAL( msgAcknowledgement(unsigned int, bool) ),
 		this, SLOT( slotAcknowledgement(unsigned int, bool) ) );
 	connect( m_chatService, SIGNAL( invitation( const QString&, const QString& ) ),
@@ -229,8 +236,8 @@ void MSNChatSession::slotUserJoined( const QString &handle, const QString &publi
 	if(!m_messagesQueue.empty() || !m_invitations.isEmpty())
 		sendMessageQueue();
 
-	KConfigGroup config(KGlobal::config(), "MSN");
-	if ( members().count()==1 && config.readEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() && !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
+    KConfigGroup *config=account()->configGroup();
+	if ( members().count()==1 && config->readEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() && !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 		slotRequestPicture();
 }
 
@@ -245,7 +252,7 @@ void MSNChatSession::slotUserLeft( const QString &handle, const QString& reason 
 
 void MSNChatSession::slotSwitchBoardClosed()
 {
-	//kDebug(14140) << "MSNChatSession::slotSwitchBoardClosed"  << endl;
+	//kDebug(14140) << "MSNChatSession::slotSwitchBoardClosed";
 	m_chatService->deleteLater();
 	m_chatService=0l;
 
@@ -264,7 +271,7 @@ void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSessio
 		if(id == -1)
 		{
 			m_messagesQueue.append(message);
-			kDebug(14140) << k_funcinfo << "Message added to the queue" <<endl;
+			kDebug(14140) << "Message added to the queue";
 		}
 		else if( id== -2 ) //the message has not been sent
 		{
@@ -339,7 +346,7 @@ void MSNChatSession::slotActionInviteAboutToShow()
 
 void MSNChatSession::slotCloseSession()
 {
-	kDebug(14140) << k_funcinfo  << m_chatService <<endl;
+	kDebug(14140) << m_chatService;
 	if(m_chatService)
 		m_chatService->slotCloseSession();
 }
@@ -382,10 +389,10 @@ void MSNChatSession::sendMessageQueue()
 {
 	if(!m_chatService)
 	{
-		kDebug(14140) <<k_funcinfo << "Service doesn't exist" <<endl;
+		kDebug(14140) << "Service doesn't exist";
 		return;
 	}
-//	kDebug(14140) << "MSNChatSession::sendMessageQueue: " << m_messagesQueue.count() <<endl;
+//	kDebug(14140) << "MSNChatSession::sendMessageQueue: " << m_messagesQueue.count();
 	QList<Kopete::Message>::Iterator it;
 	for ( it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
 	{
@@ -477,7 +484,7 @@ void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 				QString inviteName = rx.cap( 1 );
 
 				QString body = i18n(
-					"%1 has sent an unimplemented invitation, the invitation was rejected.\n"
+					"%1 has sent an unimplemented invitation which was rejected.\n"
 					"The invitation was: %2",
 						c->property( Kopete::Global::Properties::self()->nickName()).value().toString(), inviteName );
 				Kopete::Message tmpMsg = Kopete::Message( c , members() );
@@ -494,7 +501,7 @@ void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 
 void MSNChatSession::invitationDone(MSNInvitation* MFTS)
 {
-	kDebug(14140) << k_funcinfo <<endl;
+	kDebug(14140) ;
 	m_invitations.remove(MFTS->cookie());
 //	MFTS->deleteLater();
 	delete MFTS;
@@ -609,8 +616,8 @@ void MSNChatSession::slotDisplayPictureChanged()
 		}
 		else
 		{
-			KConfigGroup config(KGlobal::config(), "MSN");
-			if ( config.readEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() )
+            KConfigGroup *config=account()->configGroup();
+			if ( config->readEntry( "DownloadPicture", 1 ) >= 1 && !c->object().isEmpty() )
 				slotRequestPicture();
 		}
 	}
@@ -640,9 +647,8 @@ void MSNChatSession::receivedTypingMsg( const QString &contactId, bool b )
 	if(c && m_newSession &&  !view(false))
 	{
 		//this was originaly in MSNAccount::slotCreateChat
-		KConfigGroup group = KGlobal::config()->group( "MSN" );
-		bool notifyNewChat = group.readEntry( "NotifyNewChat", false );
-		if (  notifyNewChat  )
+        KConfigGroup *config=account()->configGroup();
+        if (  config->readEntry( "NotifyNewChat", false )  )
 		{
 			// this internal message should open the window if they not exist
 			QString body = i18n( "%1 has started a chat with you", c->metaContact()->displayName() );
@@ -690,7 +696,7 @@ void MSNChatSession::slotNudgeReceived(const QString& handle)
 
 void MSNChatSession::slotWebcamReceive()
 {
-	if(m_chatService && members().first())
+	if(m_chatService && !members().isEmpty())
 	{
 #if 0
 		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().first()->contactId() , true);
@@ -700,8 +706,8 @@ void MSNChatSession::slotWebcamReceive()
 
 void MSNChatSession::slotWebcamSend()
 {
-	kDebug(14140) << k_funcinfo << endl;
-	if(m_chatService && members().first())
+	kDebug(14140) ;
+	if(m_chatService && !members().isEmpty())
 	{
 #if 0
 		m_chatService->PeerDispatcher()->startWebcam(myself()->contactId() , members().first()->contactId() , false);

@@ -56,11 +56,12 @@ OutgoingTransfer::OutgoingTransfer(const QString& to, P2P::Dispatcher *dispatche
 
 OutgoingTransfer::~OutgoingTransfer()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 }
 
 void OutgoingTransfer::sendImage(const QByteArray& image)
 {
+	Q_UNUSED(image);
 
 // 	TODO QByteArray base64 = KCodecs::base64Encode(image);
 //
@@ -93,7 +94,7 @@ void OutgoingTransfer::slotSendData()
 {
 	qint32 bytesRead = 0;
 	QByteArray buffer;
-	buffer.reserve(1202);
+	buffer.resize(1202);
 
 	if(!m_file)
 		return;
@@ -111,7 +112,7 @@ void OutgoingTransfer::slotSendData()
 			buffer.resize(bytesRead);
 		}
 
-		kDebug(14140) << k_funcinfo << QString("Sending, %1 bytes").arg(bytesRead) << endl;
+		kDebug(14140) << QString("Sending, %1 bytes").arg(bytesRead);
 
 		if((m_offset + bytesRead) < m_file->size())
 		{
@@ -128,21 +129,6 @@ void OutgoingTransfer::slotSendData()
 			m_file->close();
 		}
 	}
-
-		if((m_offset + bytesRead) < m_file->size())
-		{
-			sendData(buffer);
-			m_offset += bytesRead;
-		}
-		else
-		{
-			m_isComplete = true;
-			// Send the last chunk of the file.
-			sendData(buffer);
-			m_offset += buffer.size();
-			// Close the file.
-			m_file->close();
-		}
 
 	if(m_transfer){
 		m_transfer->slotProcessed(m_offset);
@@ -155,7 +141,7 @@ void OutgoingTransfer::slotSendData()
 
 void OutgoingTransfer::acknowledged()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 
 	switch(m_state)
 	{
@@ -220,7 +206,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 {
 	QString body =
 		QByteArray(message.body.data(), message.header.dataSize);
-	kDebug(14140) << k_funcinfo << "received, " << body << endl;
+	kDebug(14140) << "received, " << body;
 
 	if(body.startsWith("BYE"))
 	{
@@ -233,7 +219,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 			if(m_transfer)
 			{
 				// Inform the user of the file transfer cancellation.
-				m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer canceled."));
+				m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer cancelled."));
 			}
 		}
 		// Dispose of this transfer context.
@@ -340,7 +326,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 		if(m_transfer)
 		{
 			// Inform the user of the file transfer cancellation.
-			m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer canceled."));
+			m_transfer->slotError(KIO::ERR_ABORTED, i18n("File transfer cancelled."));
 		}
 
 		if(m_file && m_file->isOpen()){
@@ -380,7 +366,7 @@ void OutgoingTransfer::connectToEndpoint(const QString& hostName)
 
 void OutgoingTransfer::slotConnected()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 	// Check if connection is ok.
 	quint32 bytesWritten = m_socket->write(QByteArray("foo").data(), 4);
 	if(bytesWritten != 4)
@@ -421,12 +407,12 @@ void OutgoingTransfer::slotConnected()
 void OutgoingTransfer::slotRead()
 {
 	qint32 bytesAvailable = m_socket->bytesAvailable();
-	kDebug(14140) << k_funcinfo << bytesAvailable << ", bytes available." << endl;
+	kDebug(14140) << bytesAvailable << ", bytes available.";
 }
 
 void OutgoingTransfer::slotSocketError(int)
 {
-	kDebug(14140) << k_funcinfo << m_socket->errorString() << endl;
+	kDebug(14140) << m_socket->errorString();
 	// If an error has occurred, try to connect
 	// to another available peer endpoint.
 	// If there are no more available endpoints,
@@ -449,7 +435,7 @@ void OutgoingTransfer::slotSocketError(int)
 
 void OutgoingTransfer::slotSocketClosed()
 {
-	kDebug(14140) << k_funcinfo << endl;
+	kDebug(14140) ;
 	m_socket->deleteLater();
 	m_socket = 0l;
 }

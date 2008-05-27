@@ -27,7 +27,7 @@
 
 class ChatWindowStyle;
 /**
- * Sigleton class that handle Chat Window styles. 
+ * Sigleton class that handle Chat Window styles.
  * It use style absolute path to avoid unexpected behavior that could happen when using style name.
  *
  * It can install, delete styles. The styles are managed in a pool, they are only retrieved on demand.
@@ -36,9 +36,9 @@ class ChatWindowStyle;
  * is handled by this class.
  *
  * When called the first time, it list all the available styles in $KDEDATADIR/kopete/styles and
- * KDirWatch (via KDirLister) watch for new styles. 
+ * KDirWatch (via KDirLister) watch for new styles.
  *
- * If you want to keep a trace of avaiable styles, connect to loadStylesFinished() signal. 
+ * If you want to keep a trace of avaiable styles, connect to loadStylesFinished() signal.
  * It is called when KDirLister finish a job(ex: on new directory).
  *
  * @author Michaël Larouche <larouche@kde.org>
@@ -47,13 +47,6 @@ class KOPETECHATWINDOW_SHARED_EXPORT ChatWindowStyleManager : public QObject
 {
 	Q_OBJECT
 public:
-	/**
-	 * StyleList typedef (a QMap)
-	 * key = Name of the style (currently the directory name)
-	 * value = Path to the style
-	 */
-	typedef QHash<QString, QString> StyleList;
-
 	/**
 	 * The StyleInstallStatus enum. It gives better return value for installStyle().
 	 * - StyleInstallOk : The install went fine.
@@ -84,7 +77,7 @@ public:
 	/**
 	 * Get all available styles.
 	 */
-	StyleList getAvailableStyles();
+	QStringList getAvailableStyles() const;
 
 public slots:
 	/**
@@ -99,20 +92,21 @@ public slots:
 	/**
 	 * Remove a style from user style directory
 	 *
-	 * @param stylePath the path of the style to remove.
+	 * @param styleName the name of the style to remove.
 	 * @return true if the deletion went without problems.
 	 */
-	bool removeStyle(const QString &stylePath);
-	
+	bool removeStyle(const QString &styleName);
+
 	/**
 	 * Get a instance of a ChatWindowStyle from the pool.
 	 * If they are no instance for the specified style, it gets created.
 	 * DO NOT DELETE the resulting pointer, it is handled by this class.
 	 *
-	 * @param stylePath Path for the specified style. Name can be ambigous.
+	 * @param styleName name for the specified style. If style with this name
+	 *        exists in both global and user directories, the user one will be returned
 	 * @return the instance of ChatWindow for the specified style. DO NOT DELETE IT.
 	 */
-	ChatWindowStyle *getStyleFromPool(const QString &stylePath);
+	ChatWindowStyle *getStyleFromPool(const QString &styleName);
 
 signals:
 	/**
@@ -139,9 +133,6 @@ private:
 	 * Call loadStyles() to list all avaiable styles.
 	 */
 	ChatWindowStyleManager(QObject *parent = 0);
-
-	static ChatWindowStyleManager *s_self;
-
 	class Private;
 	Private *d;
 };

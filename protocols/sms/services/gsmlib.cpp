@@ -87,9 +87,9 @@ GSMLibThread::~GSMLibThread()
 void GSMLibThread::stop()
 {
 	m_run = false;
-	kDebug( 14160 ) << "Waiting from GSMLibThread to die"<<endl;
+	kDebug( 14160 ) << "Waiting from GSMLibThread to die";
 	if( wait(4000) == false )
-		kWarning( 14160 ) << "GSMLibThread didn't exit!"<<endl;
+		kWarning( 14160 ) << "GSMLibThread didn't exit!";
 }
 void GSMLibThread::run()
 {
@@ -105,7 +105,7 @@ void GSMLibThread::run()
 	delete m_MeTa;
 	m_MeTa = NULL;
 	QApplication::postEvent(m_parent, new GSMLibEvent(GSMLibEvent::DISCONNECTED));
-	kDebug( 14160 ) << "GSMLibThread exited"<<endl;
+	kDebug( 14160 ) << "GSMLibThread exited";
 }
 
 void GSMLibThread::send(const Kopete::Message& msg)
@@ -131,11 +131,11 @@ bool GSMLibThread::doConnect()
 	// open the port and ME/TA
 	try
 	{
-		kDebug( 14160 ) << "Connecting to: '"<<m_device<<"'"<<endl;
+		kDebug( 14160 ) << "Connecting to: '"<<m_device<<"'";
 
-		gsmlib::Ref<gsmlib::Port> port = new gsmlib::KopeteUnixSerialPort(m_device.latin1(), 9600, gsmlib::DEFAULT_INIT_STRING, false);
+		gsmlib::Ref<gsmlib::Port> port = new gsmlib::KopeteUnixSerialPort(m_device.toLatin1(), 9600, gsmlib::DEFAULT_INIT_STRING, false);
 
-		kDebug( 14160 ) << "Port created"<<endl;
+		kDebug( 14160 ) << "Port created";
 
 		m_MeTa = new gsmlib::MeTa(port);
 		std::string dummy1, dummy2, receiveStoreName;
@@ -153,7 +153,7 @@ bool GSMLibThread::doConnect()
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		kWarning( 14160 ) << e.what();
 		m_run = false;
 		return false;
 	}
@@ -171,14 +171,14 @@ void GSMLibThread::SMSReception(gsmlib::SMSMessageRef newMessage, SMSMessageType
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		kWarning( 14160 ) << e.what();
 		m_run = false;
 	}
 }
 
 void GSMLibThread::SMSReceptionIndication(std::string storeName, unsigned int index, SMSMessageType messageType)
 {
-	kDebug( 14160 ) << k_funcinfo << "New Message in store: "<<storeName.c_str() << endl;
+	kDebug( 14160 ) << "New Message in store: "<<storeName.c_str();
 
 	try
 	{
@@ -193,7 +193,7 @@ void GSMLibThread::SMSReceptionIndication(std::string storeName, unsigned int in
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		kWarning( 14160 ) << e.what();
 		m_run = false;
 	}
 }
@@ -218,7 +218,7 @@ void GSMLibThread::pollForMessages( )
 			// Do we need to fetch it from the ME?
 			if( m.Message.isnull() )
 			{
-				gsmlib::SMSStoreRef store = m_MeTa->getSMSStore(m.StoreName.latin1());
+				gsmlib::SMSStoreRef store = m_MeTa->getSMSStore(m.StoreName.toLatin1());
 				store->setCaching(false);
 
 				m.Message = (*store.getptr())[m.Index].message();
@@ -236,7 +236,7 @@ void GSMLibThread::pollForMessages( )
 	}
 	catch(gsmlib::GsmException &e)
 	{
-		kWarning( 14160 ) << k_funcinfo<< e.what()<<endl;
+		kWarning( 14160 ) << e.what();
 		m_run = false;
 	}
 }
@@ -273,9 +273,9 @@ void GSMLibThread::sendMessage(const Kopete::Message& msg)
 	try
 	{
 		gsmlib::Ref<gsmlib::SMSSubmitMessage> submitSMS = new gsmlib::SMSSubmitMessage();
-		gsmlib::Address destAddr( nr.latin1() );
+		gsmlib::Address destAddr( nr.toLatin1() );
 		submitSMS->setDestinationAddress(destAddr);
-		m_MeTa->sendSMSs(submitSMS, message.latin1(), true);
+		m_MeTa->sendSMSs(submitSMS, message.toLatin1(), true);
 
 		GSMLibEvent* e = new GSMLibEvent( GSMLibEvent::MSG_SENT );
 		e->Message = msg;
@@ -340,7 +340,7 @@ void GSMLib::connect()
 
 void GSMLib::disconnect()
 {
-	kDebug( 14160 ) << k_funcinfo <<endl;
+	kDebug( 14160 ) ;
 
 	if( m_thread )
 	{
@@ -401,7 +401,7 @@ void GSMLib::customEvent(QCustomEvent* e)
 
 	GSMLibEvent* ge = (GSMLibEvent*)e;
 
-	kDebug( 14160 ) << "Got event "<<ge->subType()<<endl;
+	kDebug( 14160 ) << "Got event "<<ge->subType();
 	switch( ge->subType() )
 	{
 		case GSMLibEvent::CONNECTED:

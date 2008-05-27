@@ -4,6 +4,8 @@
     Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003-2004 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
+    Copyright (c) 2007         Will Stephenson       <wstephenson@kde.org>
+
     Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -33,11 +35,12 @@
 #include <kmenu.h>
 #include <kmessagebox.h>
 #include <kcomponentdata.h>
-#include <kmenu.h>
 #include <kactionmenu.h>
 #include <kconfiggroup.h>
 
 #include "kopeteaccount.h"
+#include "kopeteidentity.h"
+#include "kopeteidentitymanager.h"
 #include "kabcpersistence.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
@@ -63,7 +66,7 @@ public:
 	Private( Protocol *protocol, const QString &accountId )
 	 : protocol( protocol ), id( accountId )
 	 , excludeconnect( true ), priority( 0 )
-	 , connectionTry(0), myself( 0 )
+	 , connectionTry(0), identity( 0 ), myself( 0 )
 	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
 	 , blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
 	{ }
@@ -79,6 +82,7 @@ public:
 	QHash<QString, Contact*> contacts;
 	QColor color;
 	uint connectionTry;
+	Identity *identity;
 	Contact *myself;
 	QTimer suppressStatusTimer;
 	bool suppressStatusNotification;
@@ -114,7 +118,7 @@ Account::~Account()
 	qDeleteAll(d->contacts);
 	d->contacts.clear();
 
-	kDebug( 14010 ) << k_funcinfo << " account '" << d->id << "' about to emit accountDestroyed " << endl;
+	kDebug( 14010 ) << " account '" << d->id << "' about to emit accountDestroyed ";
 	emit accountDestroyed(this);
 
 	delete d->myself;
@@ -124,13 +128,13 @@ Account::~Account()
 
 void Account::reconnect()
 {
-	kDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage << endl;
+	kDebug( 14010 ) << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage;
 	setOnlineStatus( d->restoreStatus, d->restoreMessage );
 }
 
 void Account::disconnected( DisconnectReason reason )
 {
-	kDebug( 14010 ) << k_funcinfo << reason << endl;
+	kDebug( 14010 ) << reason;
 	//reconnect if needed
 	if(reason == BadPassword )
 	{
@@ -192,7 +196,7 @@ QPixmap Account::accountIcon(const int size) const
 
 	// FIXME: this code is duplicated with OnlineStatus, can we merge it somehow?
 	QPixmap base = KIconLoader::global()->loadIcon(
-		icon, K3Icon::Small, size );
+		icon, KIconLoader::Small, size );
 
 	if ( d->color.isValid() )
 	{
@@ -277,7 +281,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 	{
 		if ( c->metaContact()->isTemporary() && !isTemporary )
 		{
-			kDebug( 14010 ) << k_funcinfo <<  " You are trying to add an existing temporary contact. Just add it on the list" << endl;
+			kDebug( 14010 ) <<  " You are trying to add an existing temporary contact. Just add it on the list";
 
 			c->metaContact()->setTemporary(false, group );
 			ContactList::self()->addMetaContact(c->metaContact());
@@ -285,7 +289,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 		else
 		{
 			// should we here add the contact to the parentContact if any?
-			kDebug( 14010 ) << k_funcinfo << "Contact already exists" << endl;
+			kDebug( 14010 ) << "Contact already exists";
 		}
 		return c->metaContact();
 	}
@@ -305,7 +309,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 		c->setMetaContact( parentContact );
 		if ( mode == ChangeKABC )
 		{
-			kDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
+			kDebug( 14010 ) << " changing KABC";
 			KABCPersistence::self()->write( parentContact );
 		}
 	}
@@ -348,7 +352,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 		else
 		{
 			// should we here add the contact to the parentContact if any?
-			kDebug( 14010 ) << "Account::addContact: Contact already exists" << endl;
+			kDebug( 14010 ) << "Account::addContact: Contact already exists";
 		}
 		return false; //(the contact is not in the correct metacontact, so false)
 	}
@@ -357,37 +361,44 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 
 	if ( success && mode == ChangeKABC )
 	{
-		kDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
+		kDebug( 14010 ) << " changing KABC";
 		KABCPersistence::self()->write( parent );
 	}
 
 	return success;
 }
 
-KActionMenu * Account::actionMenu()
+void Account::fillActionMenu( KActionMenu *actionMenu )
 {
 	//default implementation
 // 	KActionMenu *menu = new KActionMenu( QIcon(myself()->onlineStatus().iconFor( this )), accountId(), 0, 0);
-	KActionMenu *menu = new KActionMenu( accountId(), this );
 #ifdef __GNUC__
 #warning No icon shown, we should go away from QPixmap genered icons with overlays.
 #endif
-	QString nick = myself()->nickName();
+	QString nick;
+       	if (identity()->hasProperty( Kopete::Global::Properties::self()->nickName().key() ))
+		nick = identity()->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	else
+		nick = myself()->nickName();
 
-	menu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
-		nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
+	// Always add title at the beginning of actionMenu
+	QAction *before = actionMenu->menu()->actions().value( 0, 0 );
+	actionMenu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
+		nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick ),
+		before
 	);
 
-	OnlineStatusManager::self()->createAccountStatusActions(this, menu);
-	menu->menu()->addSeparator();
+	actionMenu->menu()->addSeparator();
 
-	KAction *propertiesAction = new KAction( i18n("Properties"), menu );
+	KAction *propertiesAction = new KAction( i18n("Properties"), actionMenu );
 	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT( editAccount() ) );
-	menu->addAction( propertiesAction );
-
-	return menu;
+	actionMenu->addAction( propertiesAction );
 }
 
+bool Account::hasCustomStatusMenu() const
+{
+	return false;
+}
 
 bool Account::isConnected() const
 {
@@ -397,6 +408,28 @@ bool Account::isConnected() const
 bool Account::isAway() const
 {
 	return d->myself && ( d->myself->onlineStatus().status() == Kopete::OnlineStatus::Away );
+}
+Identity * Account::identity() const
+{
+	return d->identity;
+}
+
+bool Account::setIdentity( Identity *ident )
+{
+	if ( d->identity == ident )
+	{
+		return false;
+	}
+
+	if (d->identity)
+	{
+		d->identity->removeAccount( this );
+	}
+
+	ident->addAccount( this );
+	d->identity = ident;
+	d->configGroup->writeEntry("Identity", ident->id());
+	return true;
 }
 
 Contact * Account::myself() const
@@ -414,8 +447,8 @@ void Account::setMyself( Contact *myself )
 	{
 		QObject::disconnect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-		QObject::disconnect( d->myself, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) );
+		QObject::disconnect( d->myself, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+			this, SLOT( slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) );
 	}
 
 	d->myself = myself;
@@ -424,8 +457,8 @@ void Account::setMyself( Contact *myself )
 
 	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-	QObject::connect( d->myself, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-		this, SLOT( slotContactPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) );
+	QObject::connect( d->myself, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
+		this, SLOT( slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) );
 
 	if ( isConnected() != wasConnected )
 		emit isConnectedChanged();
@@ -454,11 +487,11 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 	if ( !isOffline )
 	{
 		d->restoreStatus = newStatus;
-		d->restoreMessage = myself()->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
-//		kDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage << endl;
+		d->restoreMessage = identity()->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
+//		kDebug( 14010 ) << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage;
 	}
 
-/*	kDebug(14010) << k_funcinfo << "account " << d->id << " changed status. was "
+/*	kDebug(14010) << "account " << d->id << " changed status. was "
 	               << Kopete::OnlineStatus::statusTypeToString(oldStatus.status()) << ", is "
 	               << Kopete::OnlineStatus::statusTypeToString(newStatus.status()) << endl;*/
 	if ( wasOffline != isOffline )
@@ -479,13 +512,13 @@ void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 	}
 }
 
-void Account::slotContactPropertyChanged( Contact * /* contact */,
+void Account::slotContactPropertyChanged( PropertyContainer * /* contact */,
 	const QString &key, const QVariant &old, const QVariant &newVal )
 {
 	if ( key == Kopete::Global::Properties::self()->statusMessage().key() && old != newVal && isConnected() )
 	{
 		d->restoreMessage = newVal.toString();
-//		kDebug( 14010 ) << k_funcinfo << "account " << d->id << " restoreMessage " << d->restoreMessage << endl;
+//		kDebug( 14010 ) << "account " << d->id << " restoreMessage " << d->restoreMessage;
 	}
 }
 

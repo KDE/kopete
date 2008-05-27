@@ -32,7 +32,7 @@ void IRCAccount::slotNickInUse( const QString &nick )
 	{
 		QString newNick = KInputDialog::getText(
 				i18n("IRC Plugin"),
-				i18n("The nickname %1 is already in use. Please enter an alternate nickname:", nick),
+				i18n("The nickname %1 is already in use. Please enter an alternative nickname:", nick),
 				nick);
 
 		if (newNick.isNull())
@@ -53,10 +53,10 @@ void IRCAccount::slotJoinChannel()
 		return;
 
 	QStringList chans = configGroup()->readListEntry( "Recent Channel list" );
-	//kDebug(14120) << "Recent channel list from config: " << chans << endl;
+	//kDebug(14120) << "Recent channel list from config: " << chans;
 
 	KLineEditDlg dlg(
-		i18n("Please enter name of the channel you want to join:"),
+		i18n("Please enter the name of the channel you want to join:"),
 		QString(),
 		UI::Global::mainWidget()
 	);
@@ -89,7 +89,7 @@ void IRCAccount::slotJoinChannel()
 		}
 
 		KMessageBox::error( UI::Global::mainWidget(),
-			i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.", chan),
+			i18n("\"%1\" is an invalid channel name. Channels must start with '#', '!', '+', or '&'.", chan),
 			i18n("IRC Plugin")
 			);
 	}

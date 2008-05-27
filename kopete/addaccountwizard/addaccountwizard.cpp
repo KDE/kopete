@@ -35,6 +35,8 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
+#include "kopeteidentity.h"
+#include "kopeteidentitymanager.h"
 
 class AddAccountWizard::Private
 {
@@ -42,12 +44,13 @@ public:
 	Private()
 		: accountPage(0)
 		, proto(0)
+		, identity(0L)
 		{
 		}
 
 	QTreeWidgetItem* selectedProtocol();
 
-	QMap<QTreeWidgetItem *, KPluginInfo *>  protocolItems;
+	QMap<QTreeWidgetItem *, KPluginInfo>  protocolItems;
 	KopeteEditAccountWidget *accountPage;
 	KVBox *accountPageWidget;
 	QWidget *selectService;
@@ -56,6 +59,7 @@ public:
 	Ui::AddAccountWizardPage2 uiFinish;
 	Kopete::Protocol *proto;
 	KPageWidgetItem *selectServiceItem;
+	Kopete::Identity *identity;
 };
 
 AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
@@ -86,24 +90,21 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
 	addPage(d->finish,d->finish->windowTitle());
 
 	// add the available messenger services to the dialogs list
-	QList<KPluginInfo *> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
-	for (QList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
+	QList<KPluginInfo> protocols = Kopete::PluginManager::self()->availablePlugins("Protocols");
+	qSort(protocols);
+	for (QList<KPluginInfo>::Iterator it = protocols.begin(); it != protocols.end(); ++it)
 	{
 		QTreeWidgetItem *pluginItem = new QTreeWidgetItem(d->uiSelectService.protocolListView);
-		pluginItem->setIcon(0, QIcon(SmallIcon((*it)->icon())));
-		pluginItem->setText(0, (*it)->name());
-		pluginItem->setText(1, (*it)->comment());
+		pluginItem->setIcon(0, QIcon(SmallIcon(it->icon())));
+		pluginItem->setText(0, it->name());
+		pluginItem->setText(1, it->comment());
 
 		d->protocolItems.insert(pluginItem, *it);
 	}
 
-	// focus the ListView and select the first item
+	// focus the ListView
 	QTreeWidget *protocol_list = d->uiSelectService.protocolListView;
 	protocol_list->setFocus();
-	if (protocol_list->topLevelItemCount() > 0)
-		protocol_list->setItemSelected( protocol_list->topLevelItem(0), true );
-	else
-		protocol_list->setItemSelected( protocol_list->topLevelItem(0), false );
 	
 	
  
@@ -114,6 +115,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
 		this, SLOT( slotProtocolListClicked()));
 	connect(d->uiSelectService.protocolListView, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
 		this, SLOT(slotProtocolListDoubleClicked()));
+    setHelp(QString(),"kopete");
 }
 
 QTreeWidgetItem* AddAccountWizard::Private::selectedProtocol()
@@ -156,15 +158,15 @@ void AddAccountWizard::next()
 	if (currentPage()->widget() == d->selectService)
 	{
 		QTreeWidgetItem *lvi = d->selectedProtocol();
-		if(!d->protocolItems[lvi])
+		if(!d->protocolItems[lvi].isValid())
 		{ //no item selected
 			return;
 		}
-		d->proto = qobject_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->loadPlugin(d->protocolItems[lvi]->pluginName()));
+		d->proto = qobject_cast<Kopete::Protocol *>(Kopete::PluginManager::self()->loadPlugin(d->protocolItems[lvi].pluginName()));
 		if (!d->proto)
 		{
 			KMessageBox::queuedMessageBox(this, KMessageBox::Error,
-				i18n("Cannot load the %1 protocol plugin.", d->protocolItems[lvi]->name()),
+				i18n("Cannot load the %1 protocol plugin.", d->protocolItems[lvi].name()),
 				i18n("Error While Adding Account"));
 			return;
 		}
@@ -196,7 +198,7 @@ void AddAccountWizard::next()
 	}
 	else 
 	{
-		kDebug(14100) << k_funcinfo << "Next pressed on misc page" << endl;
+		kDebug(14100) << "Next pressed on misc page";
 		KAssistantDialog::next();
 	}
 
@@ -207,11 +209,30 @@ void AddAccountWizard::accept()
 	// registeredAccount shouldn't probably be called here. Anyway, if the account is already registered, 
 	// it won't be registered twice
 	Kopete::AccountManager *manager = Kopete::AccountManager::self();
-	Kopete::Account        *account = manager->registerAccount(d->accountPage->apply());
+	Kopete::Account        *account = d->accountPage->apply();
 
 	// if the account wasn't created correctly then leave
 	if (!account)
 	{
+		reject();
+		return;
+	}
+
+	// Set a valid identity before registering the account
+	if (!d->identity)
+	{
+		account->setIdentity(Kopete::IdentityManager::self()->defaultIdentity());
+	}
+	else
+	{
+		account->setIdentity(d->identity);
+	}
+
+	account = manager->registerAccount(account);
+	// if the account wasn't created correctly then leave
+	if (!account)
+	{
+		reject();
 		return;
 	}
 
@@ -262,6 +283,12 @@ AddAccountWizard::~AddAccountWizard()
 {
 	delete d;
 }
+
+void AddAccountWizard::setIdentity( Kopete::Identity *identity )
+{
+	d->identity = identity;
+}
+
 
 #include "addaccountwizard.moc"
 

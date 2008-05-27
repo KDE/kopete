@@ -2,9 +2,9 @@
 add_subdirectory( accounts ) 
 add_subdirectory( behavior ) 
 add_subdirectory( appearance ) 
-add_subdirectory( identity )
 add_subdirectory( chatwindow ) 
 add_subdirectory( plugins )
-# TODO Renable avdevice config
-
-
+add_subdirectory( status )
+if(NOT WIN32)
+  add_subdirectory( avdevice )
+endif(NOT WIN32)

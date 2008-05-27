@@ -1,7 +1,7 @@
 /*
     yahoowebcam.cpp - Send webcam images
 
-    Copyright (c) 2005 by André Duffec <andre.duffeck@kdemail.net>
+    Copyright (c) 2005 by André Duffec <duffeck@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -14,7 +14,7 @@
 */
 
 #include <kdebug.h>
-#include <k3process.h>
+#include <kprocess.h>
 #include <ktemporaryfile.h>
 #include <qtimer.h>
 
@@ -28,7 +28,7 @@
 YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 {
 	setObjectName( QLatin1String("yahoo_webcam") );
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 	theAccount = account;
 	theDialog = 0L;
 	origImg = new KTemporaryFile();
@@ -91,13 +91,13 @@ void YahooWebcam::updateImage()
 #ifndef Q_OS_WIN
 	m_devicePool->getFrame();
 	m_devicePool->getImage(m_img);
+	theDialog->newImage( QPixmap::fromImage(m_img->mirrored(m_devicePool->getImageAsMirror(),false)) );
 #endif
-	theDialog->newImage( QPixmap::fromImage(*m_img) );
 }
 
 void YahooWebcam::sendImage()
 {
-	kDebug(YAHOO_GEN_DEBUG) << k_funcinfo << endl;
+	kDebug(YAHOO_GEN_DEBUG) ;
 
 #ifndef Q_OS_WIN
 	m_devicePool->getFrame();
@@ -109,15 +109,15 @@ void YahooWebcam::sendImage()
 	
 	m_img->save( origImg->fileName(), "JPEG");
 	
-	K3Process p;
+	KProcess p;
 	p << "jasper";
 	p << "--input" << origImg->fileName() << "--output" << convertedImg->fileName() << "--output-format" << "jpc" << "-O" <<"cblkwidth=64\ncblkheight=64\nnumrlvls=4\nrate=0.0165\nprcheight=128\nprcwidth=2048\nmode=real";
 	
 	
-	p.start( K3Process::Block );
-	if( p.exitStatus() != 0 )
+	int ec = p.execute();
+	if( ec != 0 )
 	{
-		kDebug(YAHOO_GEN_DEBUG) << " jasper exited with status " << p.exitStatus() << endl;
+		kDebug(YAHOO_GEN_DEBUG) << " jasper exited with status " << ec;
 	}
 	else
 	{
@@ -128,7 +128,7 @@ void YahooWebcam::sendImage()
 			theAccount->yahooSession()->sendWebcamImage( ar );
 		}
 		else
-			kDebug(YAHOO_GEN_DEBUG) << "Error opening the converted webcam image." << endl;
+			kDebug(YAHOO_GEN_DEBUG) << "Error opening the converted webcam image.";
 	}
 }
 

@@ -28,20 +28,17 @@
 #include "kopetemetacontact.h"
 #include <kopetegroup.h>
 
-#include <qpixmap.h>
-#include <q3ptrlist.h>
-#include <qstringlist.h>
-#include <qrect.h>
-#include <qtimer.h>
-#include <qpointer.h>
-//Added by qt3to4:
+#include <QPixmap>
+#include <QList>
+#include <QStringList>
+#include <QRect>
+#include <QTimer>
+#include <QPointer>
 #include <QMouseEvent>
 #include <QDropEvent>
 
 class KopeteMetaContactLVI;
 class KopeteGroupViewItem;
-class KopeteStatusGroupViewItem;
-class KRootPixmap;
 class KActionCollection;
 class KAction;
 class KSelectAction;
@@ -96,7 +93,7 @@ public slots:
 	void addGroup();
 
 protected:
-	virtual void mousePressEvent( QMouseEvent *e );
+	virtual void contentsMousePressEvent( QMouseEvent *e );
 
 	virtual bool acceptDrag(QDropEvent *e) const;
 
@@ -148,6 +145,7 @@ private slots:
 	void slotMetaContactAdded( Kopete::MetaContact *mc );
 	void slotMetaContactDeleted( Kopete::MetaContact *mc );
 	void slotMetaContactSelected( bool sel );
+	void slotUpdateMetaContactActions();
 
 	void slotGroupAdded(Kopete::Group *);
 
@@ -185,9 +183,13 @@ private slots:
 private:
 	bool mShowAsTree;
 
+	typedef QList<KopeteMetaContactLVI*> MetaContactLVIList;
+	typedef QList<KopeteGroupViewItem*> GroupViewItemList;
 	// TODO: do we really need to store these?
-	Q3PtrList<KopeteMetaContactLVI> m_selectedContacts;
-	Q3PtrList<KopeteGroupViewItem> m_selectedGroups;
+	MetaContactLVIList m_selectedContacts;
+	GroupViewItemList m_selectedGroups;
+
+	QPointer<Kopete::MetaContact> m_selectedMetaContact;
 
 	bool mSortByGroup;
 

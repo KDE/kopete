@@ -109,6 +109,12 @@ public:
 	//! Get the icon hash for this contact.
 	QByteArray iconHash() const;
 
+	//! Set the meta info id for this contact.
+	void setMetaInfoId( const QByteArray& id );
+
+	//! Get the meta info id for this contact.
+	QByteArray metaInfoId() const;
+
 	/** \brief String representation of our OContact object */
 	QString toString() const;
 
@@ -132,6 +138,7 @@ private:
 	bool m_waitingAuth;
 	QString m_alias;
 	QByteArray m_hash;
+	QByteArray m_metaInfoId;
 	Oscar::Capabilities m_caps;
 };
 

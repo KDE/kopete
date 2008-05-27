@@ -60,7 +60,7 @@ bool ICBMParamsTask::take( Transfer* transfer )
 
 void ICBMParamsTask::onGo()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM Parameters request" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "Sending ICBM Parameters request";
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0004, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
@@ -73,7 +73,7 @@ void ICBMParamsTask::handleICBMParameters()
 	Buffer* buffer = transfer()->buffer();
 	
 	Oscar::WORD channel = buffer->getWord();
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "channel=" << channel << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "channel=" << channel;
 	
 	/**
 	 * bit1: messages allowed for specified channel
@@ -87,11 +87,11 @@ void ICBMParamsTask::handleICBMParameters()
 	Oscar::WORD minMsgInterval = buffer->getWord(); // minimum message interval (msec)
 	
 	
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "messageFlags       = " << messageFlags << endl;
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "maxMessageSnacSize = " << maxMessageSnacSize << endl;
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "maxSendWarnLvl     = " << maxSendWarnLvl << endl;
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "maxRecvWarnLvl     = " << maxRecvWarnLvl << endl;
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "minMsgInterval     = " << minMsgInterval << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "messageFlags       = " << messageFlags;
+	kDebug(OSCAR_RAW_DEBUG) << "maxMessageSnacSize = " << maxMessageSnacSize;
+	kDebug(OSCAR_RAW_DEBUG) << "maxSendWarnLvl     = " << maxSendWarnLvl;
+	kDebug(OSCAR_RAW_DEBUG) << "maxRecvWarnLvl     = " << maxRecvWarnLvl;
+	kDebug(OSCAR_RAW_DEBUG) << "minMsgInterval     = " << minMsgInterval;
 	
 	/*WORD unknown = */buffer->getWord();
 
@@ -105,7 +105,7 @@ void ICBMParamsTask::handleICBMParameters()
 
 void ICBMParamsTask::sendMessageParams( int channel )
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Sending ICBM parameters for channel " << channel << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "Sending ICBM parameters for channel " << channel;
 	
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0004, 0x0002, 0x0000, client()->snacSequence() };
@@ -114,13 +114,15 @@ void ICBMParamsTask::sendMessageParams( int channel )
 	// the channel for which to set up the parameters
 	buffer->addWord( channel );
 	
+	const Oscar::DWORD OFFLINE_MESSAGES = 0x00000100;
+	
 	//these are all read-write
 	// channel-flags
 	// bit 1 : messages allowed (always 1 or you cannot send IMs)
 	// bit 2 : missed call notifications enabled
 	// bit 4 : typing notifications enabled
 	if ( channel == 1 )
-		buffer->addDWord(0x0000000B);
+		buffer->addDWord(0x0000000B | OFFLINE_MESSAGES);
 	else
 		buffer->addDWord(0x00000003);
 	

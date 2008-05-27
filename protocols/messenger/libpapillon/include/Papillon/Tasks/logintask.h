@@ -21,7 +21,7 @@
 namespace Papillon 
 {
 
-class Transfer;
+class NetworkMessage;
 class TweenerHandler;
 /**
  * @class LoginTask logintask.h <Papillon/Tasks/LoginTask>
@@ -95,12 +95,12 @@ public:
 
 	/**
 	 * Inherited from Task.
-	 * Proceed the given transfer according to the current LoginState.
+	 * Proceed the given networkMessage according to the current LoginState.
 	 * Move to the next login step if required.
-	 * @param transfer given Transfer.
-	 * @return true if we proceed this transfer.
+	 * @param networkMessage given NetworkMessage.
+	 * @return true if we proceed this networkMessage.
 	 */
-	virtual bool take(Papillon::Transfer *transfer);
+	virtual bool take(Papillon::NetworkMessage *networkMessage);
 
 	/**
 	 * Get the current state of the Login Task.
@@ -111,11 +111,11 @@ public:
 protected:
 	/**
 	 * Inherited from Task.
-	 * Helper method to check if the Transfer is for us.
-	 * @param transfer give Transfer.
-	 * @return true if the Transfer is for us.
+	 * Helper method to check if the NetworkMessage is for us.
+	 * @param networkMessage give NetworkMessage.
+	 * @return true if the NetworkMessage is for us.
 	 */
-	virtual bool forMe(Papillon::Transfer *transfer);
+	virtual bool forMe(Papillon::NetworkMessage *networkMessage) const;
 	/**
 	 * Inherited from Task.
 	 * Start the login process.

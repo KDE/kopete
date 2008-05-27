@@ -32,6 +32,7 @@
 
 
 class QQAccount;
+class QTimer;
 
 /**
  * @author Hui Jin

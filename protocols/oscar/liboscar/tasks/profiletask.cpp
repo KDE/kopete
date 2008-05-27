@@ -84,7 +84,7 @@ void ProfileTask::setCapabilities( bool value )
 
 void ProfileTask::sendProfileUpdate()
 {
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SEND (CLI_SETUSERINFO/CLI_SET_LOCATION_INFO)" << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "SEND (CLI_SETUSERINFO/CLI_SET_LOCATION_INFO)";
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0002, 0x0004, 0x0000, client()->snacSequence() };
 	Buffer *buffer = new Buffer();
@@ -94,7 +94,7 @@ void ProfileTask::sendProfileUpdate()
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
 		buffer->addTLV(0x0001, defencoding.toLatin1());
 		buffer->addTLV(0x0002, m_profileText.toLocal8Bit());
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting profile = " << m_profileText << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "setting profile = " << m_profileText;
 	}
 
 	if ( !m_awayMessage.isNull() )
@@ -102,7 +102,7 @@ void ProfileTask::sendProfileUpdate()
 		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
 		buffer->addTLV(0x0003, defencoding.toLatin1());
 		buffer->addTLV(0x0004, m_awayMessage.toLocal8Bit());
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting away message = " << m_awayMessage << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "setting away message = " << m_awayMessage;
 	}
 
 	if ( m_sendCaps )
@@ -113,27 +113,28 @@ void ProfileTask::sendProfileUpdate()
 			capBuf.addGuid( oscar_caps[CAP_ICQSERVERRELAY] ); // we support type-2 messages
 			capBuf.addGuid( oscar_caps[CAP_DIRECT_ICQ_COMMUNICATION] ); // we support direct communication
 			//capBuf.addGuid( oscar_caps[CAP_RTFMSGS] ); // we do incoming RTF messages
-			capBuf.addGuid( oscar_caps[CAP_NEWCAPS] ); // we understand the new format of caps (xtra status)
 			capBuf.addGuid( oscar_caps[CAP_XTRAZ] ); // we support xtraz
 
 			if ( m_xtrazStatus > -1 )
 				capBuf.addGuid( oscar_xStatus[m_xtrazStatus] ); // set xtraz status
 		}
+		capBuf.addGuid( oscar_caps[CAP_NEWCAPS] ); // we understand the new format of caps (xtraz status)
 		capBuf.addGuid( oscar_caps[CAP_SENDFILE] ); // we can do filetransfers! :)
 		capBuf.addGuid( oscar_caps[CAP_UTF8] ); // we can send/receive UTF encoded messages
-		capBuf.addGuid( oscar_caps[CAP_KOPETE] ); // we are the borg, resistance is futile
+		// send version
+		capBuf.addGuid( client()->versionCap() );
 		capBuf.addGuid( oscar_caps[CAP_TYPING] ); // we know you're typing something to us!
 		capBuf.addGuid( oscar_caps[CAP_BUDDYICON] ); //can you take my picture?
 		capBuf.addGuid( oscar_caps[CAP_INTEROPERATE] ); //AIM can communicate with ICQ users and ICQ with AIM users.
 
-		kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "adding capabilities, size=" << capBuf.length() << endl;
+		kDebug(OSCAR_RAW_DEBUG) << "adding capabilities, size=" << capBuf.length();
 		buffer->addTLV(0x0005, capBuf.buffer());
 	}
 
 	Transfer* st = createTransfer( f, s , buffer );
 	send( st );
 	setSuccess( 0, QString() );
-	kDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "done." << endl;
+	kDebug(OSCAR_RAW_DEBUG) << "done.";
 }
 
 //kate: tab-width 4; indent-mode csands;

@@ -24,7 +24,6 @@
 class QPixmap;
 class QLabel;
 class QWidget;
-class YahooContact;
 
 namespace Kopete
 {

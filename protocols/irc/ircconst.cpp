@@ -27,10 +27,10 @@ using namespace Kopete;
  */
 
 namespace IRC {
-
-const QString Version = i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]",
-			     KGlobal::mainComponent().aboutData()->version());
-
+/*
+const QString Version = I18N_NOOP("Kopete IRC Plugin %1 [http://kopete.kde.org]",
+				KGlobal::mainComponent().aboutData()->version());
+*/
 namespace Config {
 
 //const QLatin1String AUTOSHOWSERVERWINDOW("AutoShowServerWindow");
@@ -44,7 +44,7 @@ const QLatin1String REALNAME("RealName");
 
 namespace Properties {
 /*
-const ContactPropertyTmpl ChannelTopic(QLatin1String("channelTopic"), i18n("Topic"), QString::null, false, true );
+const ContactPropertyTmpl ChannelTopic(QLatin1String("channelTopic"), i18n("Topic"), QString(), false, true );
 const ContactPropertyTmpl ChannelMembers(QLatin1String("channelMembers"), i18n("Members"));
 const ContactPropertyTmpl ChannelHomepage(QLatin1String("homePage"), i18n("Home Page"));
 

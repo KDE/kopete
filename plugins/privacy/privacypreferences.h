@@ -1,7 +1,7 @@
 /*
     privacypreferences.h
 
-    Copyright (c) 2006 by Andre Duffeck             <andre@duffeck.de>
+    Copyright (c) 2006 by Andre Duffeck             <duffeck@kde.org>
     Kopete    (c) 2003-2006 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -17,12 +17,13 @@
 #ifndef PRIVACY_PREFERENCES_H
 #define PRIVACY_PREFERENCES_H
 
-#include "kcmodule.h"
+#define KDE3_SUPPORT
+#include <kcmodule.h>
+#undef KDE3_SUPPORT
 
-#include <QStringList>
+#include <QVariantList>
 
 namespace Ui { class PrivacyPrefsUI; }
-class PrivacyConfig;
 class PrivacyAccountListModel;
 
 class PrivacyPreferences : public KCModule
@@ -31,7 +32,7 @@ class PrivacyPreferences : public KCModule
 public:
 	enum SenderMode { AllowAllMessages, AllowNoMessagesExceptWhiteList, AllowAllMessagesExceptBlackList };
 
-	explicit PrivacyPreferences(QWidget *parent=0, const QStringList &args = QStringList());
+	explicit PrivacyPreferences(QWidget *parent=0, const QVariantList &args = QVariantList());
 	~PrivacyPreferences();
 
 	virtual void save();

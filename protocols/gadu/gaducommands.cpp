@@ -141,7 +141,7 @@ unsigned int RegisterCommand::newUin()
 void
 RegisterCommand::requestToken()
 {
-	kDebug( 14100 ) << "requestToken Initialisation" << endl;
+	kDebug( 14100 ) << "requestToken Initialisation";
 	state = RegisterStateWaitingForToken;
 
 	if ( !( session_ = gg_token( 1 ) ) ) {
@@ -177,7 +177,7 @@ RegisterCommand::execute()
 {
 	if ( state != RegisterStateGotToken || email_.isEmpty() || password_.isEmpty() || tokenString.isEmpty() ) {
 		// get token first || fill information
-		kDebug(14100) << "not enough info to run execute, state: " << state << " , email: " << email_ << ", password present " << !password_.isEmpty() << ", token string:" << tokenString << endl;
+		kDebug(14100) << "not enough info to run execute, state: " << state << " , email: " << email_ << ", password present " << !password_.isEmpty() << ", token string:" << tokenString;
 		return;
 	}
 	session_ = gg_register3( email_.toAscii(), password_.toAscii(), tokenId.toAscii(), tokenString.toAscii(), 1 );
@@ -209,7 +209,7 @@ void RegisterCommand::watcher()
 		emit operationStatus( i18n( "Token retrieving status: %1", GaduSession::stateDescription( session_->state ) ) );
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
-				kDebug( 14100 ) << "Recreating notifiers " << endl;
+				kDebug( 14100 ) << "Recreating notifiers ";
 				deleteNotifiers();
 				checkSocket( session_->fd, 0);
 				break;
@@ -224,7 +224,7 @@ void RegisterCommand::watcher()
 			case GG_STATE_DONE:
 				struct gg_token* sp = ( struct gg_token* )session_->data;
 				tokenId = (char *)sp->tokenid;
-				kDebug( 14100 ) << "got Token!, ID: " << tokenId << endl;
+				kDebug( 14100 ) << "got Token!, ID: " << tokenId;
 				deleteNotifiers();
 				if ( pubDir->success ) {
 					QPixmap tokenImg;
@@ -259,7 +259,7 @@ void RegisterCommand::watcher()
 		emit operationStatus( i18n( "Registration status: %1", GaduSession::stateDescription( session_->state ) ) );
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
-				kDebug( 14100 ) << "Recreating notifiers " << endl;
+				kDebug( 14100 ) << "Recreating notifiers ";
 				deleteNotifiers();
 				checkSocket( session_->fd, 0);
 				break;
@@ -277,7 +277,7 @@ void RegisterCommand::watcher()
 				if ( pubDir->success && pubDir->uin ) {
 					uin= pubDir->uin;
 					state = RegisterStateDone;
-					emit done( i18n( "Registration Finished" ), i18n( "Registration has completed successfully." ) );
+					emit done( i18n( "Registration Finished" ), i18n( "Registration has been completed successfully." ) );
 				}
 				else {
 					emit error( i18n( "Registration Error" ), i18n( "Incorrect data sent to server." ) );
@@ -343,7 +343,7 @@ RemindPasswordCommand::watcher()
 
 	if ( session_->state == GG_STATE_DONE ) {
 		struct gg_pubdir* p = static_cast<struct gg_pubdir*>( session_->data );
-		QString finished = (p->success) ? i18n( "Successfully" ) : i18n( "Unsuccessful. Please retry." );
+		QString finished = (p->success) ? i18n( "Success" ) : i18n( "Unsuccessful. Please retry." );
 		emit done( i18n( "Remind Password" ), i18n( "Remind password finished: " ) + finished );
 		gg_free_remind_passwd( session_ );
 		done_ = true;

@@ -24,7 +24,8 @@
 #include <kopete_export.h>
 
 #include <utility>
-#include <QPixmap>
+
+#include <QtGui/QPixmap>
 
 namespace Kopete {
 namespace UI {
@@ -259,7 +260,7 @@ private:
 class KOPETE_EXPORT TextComponent : public Component
 {
 public:
-	explicit TextComponent( ComponentBase *parent, const QFont &font = QFont(), const QString &text = QString::null );
+	explicit TextComponent( ComponentBase *parent, const QFont &font = QFont(), const QString &text = QString() );
 	~TextComponent();
 
 	QString text();
@@ -436,11 +437,15 @@ protected:
 	void componentResized( Component *component );
 
 	void setHeight( int );
+	
+signals:
+	void visibilityChanged (bool visibility);
 
 private:
-	void initLVI();
+	void initLVI(QObject* parent);
 	void recalcHeight();
 	void scheduleLayout();
+	void mySetVisible ( bool b );
 
 private slots:
 	void slotColumnResized();

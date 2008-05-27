@@ -28,7 +28,6 @@
 */
 class QPixmap;
 class QWidget;
-class TestbedContact;
 
 namespace Kopete { 
 	namespace AV	{

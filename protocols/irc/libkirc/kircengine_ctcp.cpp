@@ -126,8 +126,8 @@ void Engine::CtcpQuery_clientinfo(Message &msg)
 			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
 			"ACTION.");
 
-//	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-//				msg.ctcpMessage().command(), QString::null, clientinfo);
+//	writeCtcpReplyMessage(	msg.prefix(), QString(),
+//				msg.ctcpMessage().command(), QString(), clientinfo);
 }
 
 void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, uint port, Transfer::Type type)
@@ -141,7 +141,7 @@ void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, u
 	{
 		case Transfer::Chat:
 		{
-			writeCtcpQueryMessage(nickname, QString::null,
+			writeCtcpQueryMessage(nickname, QString(),
 				QString::fromLatin1("DCC"),
 				QStringList(QString::fromLatin1("CHAT")) << QString::fromLatin1("chat") <<
 					m_sock->localAddress()->nodeName() << QString::number(port)
@@ -159,11 +159,11 @@ void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, u
 			TransferServer *server = TransferHandler::self()->createServer(this, nickname, type, fileName, file.size());
 
 			QString ip = m_sock->localAddress()->nodeName();
-			QString ipNumber = QString::number( ntohl( inet_addr( ip.latin1() ) ) );
+			QString ipNumber = QString::number( ntohl( inet_addr( ip.toLatin1() ) ) );
 
-			kDebug(14120) << "Starting DCC file outgoing transfer." << endl;
+			kDebug(14120) << "Starting DCC file outgoing transfer.";
 
-			writeCtcpQueryMessage(nickname, QString::null,
+			writeCtcpQueryMessage(nickname, QString(),
 				QString::fromLatin1("DCC"),
 				QStringList(QString::fromLatin1("SEND")) << noWhiteSpace << ipNumber <<
 					QString::number(server->port()) << QString::number(file.size())
@@ -181,7 +181,7 @@ void Engine::CtcpRequest_dcc(const QString &nickname, const QString &fileName, u
 void Engine::CtcpQuery_dcc(Message &msg)
 {
 	Message &ctcpMsg = msg.ctcpMessage();
-	QString dccCommand = ctcpMsg.arg(0).upper();
+	QString dccCommand = ctcpMsg.arg(0).toUpper();
 
 	if (dccCommand == QString::fromLatin1("CHAT"))
 	{
@@ -199,7 +199,7 @@ void Engine::CtcpQuery_dcc(Message &msg)
 		unsigned int port = ctcpMsg.arg(3).toUInt(&okayPort);
 		if (okayHost && okayPort)
 		{
-			kDebug(14120) << "Starting DCC chat window." << endl;
+			kDebug(14120) << "Starting DCC chat window.";
 			TransferHandler::self()->createClient(
 				this, msg.prefix(),
 				address, port,
@@ -224,7 +224,7 @@ void Engine::CtcpQuery_dcc(Message &msg)
 		unsigned int size = ctcpMsg.arg(4).toUInt(&okaySize);
 		if (okayHost && okayPort && okaySize)
 		{
-			kDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1) << endl;
+			kDebug(14120) << "Starting DCC send file transfert for file:" << ctcpMsg.arg(1);
 			TransferHandler::self()->createClient(
 				this, msg.prefix(),
 				address, port,
@@ -255,7 +255,7 @@ void Engine::CtcpQuery_finger( Message &)
 
 void Engine::CtcpRequest_ping(const QString &target)
 {
-	kDebug(14120) << k_funcinfo << endl;
+	kDebug(14120) ;
 /*
 	timeval time;
 	if (gettimeofday(&time, 0) == 0)
@@ -267,7 +267,7 @@ void Engine::CtcpRequest_ping(const QString &target)
 		else
 		 	timeReply = QString::number( time.tv_sec );
 
-		writeCtcpQueryMessage(	target, QString::null, "PING", timeReply);
+		writeCtcpQueryMessage(target, QString(), "PING", timeReply);
 	}
 //	else
 //		((MessageRedirector *)sender())->error("failed to get current time");*/
@@ -275,7 +275,7 @@ void Engine::CtcpRequest_ping(const QString &target)
 
 void Engine::CtcpQuery_ping(Message &msg)
 {
-//	writeCtcpReplyMessage(	msg.prefix(), QString::null,
+//	writeCtcpReplyMessage(	msg.prefix(), QString(),
 //				msg.ctcpMessage().command(), msg.ctcpMessage().arg(0));
 }
 
@@ -316,28 +316,28 @@ void Engine::CtcpReply_ping(Message &msg)
 
 void Engine::CtcpQuery_source(Message &msg)
 {
-//	writeCtcpReplyMessage(msg.prefix(), QString::null,
+//	writeCtcpReplyMessage(msg.prefix(), QString(),
 //			      msg.ctcpMessage().command(), m_SourceString);
 }
 
 void Engine::CtcpQuery_time(Message &msg)
 {
-//	writeCtcpReplyMessage(msg.prefix(), QString::null,
+//	writeCtcpReplyMessage(msg.prefix(), QString(),
 //			      msg.ctcpMessage().command(), QDateTime::currentDateTime().toString(),
-//			      QString::null, false);
+//			      QString(), false);
 }
 
 void Engine::CtcpQuery_userinfo(Message &msg)
 {
 	QString userinfo = m_UserString;
 
-//	writeCtcpReplyMessage(msg.prefix(), QString::null,
-//			      msg.ctcpMessage().command(), QString::null, userinfo);
+//	writeCtcpReplyMessage(msg.prefix(), QString(),
+//			      msg.ctcpMessage().command(), QString(), userinfo);
 }
 
 void Engine::CtcpRequest_version(const QString &target)
 {
-//	writeCtcpQueryMessage(target, QString::null, "VERSION");
+//	writeCtcpQueryMessage(target, QString(), "VERSION");
 }
 
 void Engine::CtcpQuery_version(Message &msg)

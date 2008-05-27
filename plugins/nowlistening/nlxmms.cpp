@@ -48,7 +48,7 @@ void NLXmms::update()
 			// get the artist and album title
 			// get the song title
 			newTrack = xmms_remote_get_playlist_title( 0, xmms_remote_get_playlist_pos( 0 ) );
-			//kDebug( 14307 ) << "NLXmms::update() - track is: " << m_track << endl;
+			//kDebug( 14307 ) << "NLXmms::update() - track is: " << m_track;
 			m_artist = newTrack.section( " - ", 0, 0 );
 			newTrack = newTrack.section( " - ", -1, -1 );
 		}
@@ -62,10 +62,10 @@ void NLXmms::update()
 		}
 		else
 			m_newTrack = false;
-		kDebug( 14307 ) << k_funcinfo << " - found xmms - " << m_track << endl;
+		kDebug( 14307 ) << " - found xmms - " << m_track;
 	}
 	else
-		kDebug( 14307 ) << k_funcinfo << " - xmms not found" << endl;
+		kDebug( 14307 ) << " - xmms not found";
 }
 
 #endif 

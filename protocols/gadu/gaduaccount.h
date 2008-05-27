@@ -35,22 +35,17 @@
 #include <qhostaddress.h>
 #include <qmap.h>
 #include <qstring.h>
-#include <q3ptrlist.h>
 #include <kaction.h>
 #include <kfiledialog.h>
 
 class GaduAccountPrivate;
 
 class GaduContact;
-class GaduProtocol;
 namespace Kopete { class Protocol; }
 namespace Kopete { class Message; }
 namespace Kopete { class StatusMessage; }
-class GaduCommand;
-class QTimer;
 class KActionMenu;
 class GaduDCC;
-class GaduDCCTransaction;
 
 class GaduAccount : public Kopete::PasswordedAccount
 {
@@ -61,7 +56,8 @@ public:
 	~GaduAccount();
 	//{
 	void setAway( bool isAway, const QString& awayMessage = QString() );
-	KActionMenu* actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
+	virtual bool hasCustomStatusMenu() const;
 	void dccRequest( GaduContact* );
 	void sendFile( GaduContact* , QString& );
 	//}

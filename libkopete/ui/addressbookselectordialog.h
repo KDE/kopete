@@ -22,7 +22,9 @@
 #include <kdemacros.h>
 #include "kopete_export.h"
 #include <kdialog.h>
-#include <q3listview.h>
+
+#include <Qt3Support/Q3ListView>
+
 namespace KABC
 {
 	class AddressBook;
@@ -64,7 +66,7 @@ public:
 	* parameters can be set by using it.
 	*/
 	AddressBookSelectorWidget *addressBookSelectorWidget() const
-	{ return m_addressBookSelectorWidget; };
+	{ return m_addressBookSelectorWidget; }
 
 	/**
 	* Creates a modal dialog, lets the user to select a addressbook contact

@@ -37,7 +37,6 @@
 #include "kopetemetacontact.h"
 #include "kopetechatsession.h"
 #include "kopeteonlinestatusmanager.h"
-#include "kopeteaway.h"
 #include "kopeteglobal.h"
 #include "kopeteprotocol.h"
 #include "kopeteplugin.h"
@@ -52,18 +51,16 @@
 #include "jabbereditaccountwidget.h"
 #include "jabbercapabilitiesmanager.h"
 #include "jabbertransport.h"
-#include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
-#include "dlgjabberregister.h"
+#include "dlgregister.h"
 
 JabberProtocol *JabberProtocol::protocolInstance = 0;
 
-typedef KGenericFactory<JabberProtocol> JabberProtocolFactory;
+K_PLUGIN_FACTORY( JabberProtocolFactory, registerPlugin<JabberProtocol>(); )
+K_EXPORT_PLUGIN( JabberProtocolFactory( "kopete_jabber" ) )
 
-K_EXPORT_COMPONENT_FACTORY( kopete_jabber, JabberProtocolFactory( "kopete_jabber" )  )
-
-JabberProtocol::JabberProtocol (QObject * parent, const QStringList &)
+JabberProtocol::JabberProtocol (QObject * parent, const QVariantList &)
 : Kopete::Protocol( JabberProtocolFactory::componentData(), parent),
 	JabberKOSChatty(Kopete::OnlineStatus::Online,        100, this, JabberFreeForChat, QStringList("jabber_chatty"), i18n ("Free for Chat"), i18n ("Free for Chat"), Kopete::OnlineStatusManager::FreeForChat, Kopete::OnlineStatusManager::HasStatusMessage ),
 	JabberKOSOnline(Kopete::OnlineStatus::Online,         90, this, JabberOnline, QStringList(), i18n ("Online"), i18n ("Online"), Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasStatusMessage ),
@@ -84,44 +81,44 @@ JabberProtocol::JabberProtocol (QObject * parent, const QStringList &)
 	propWorkPhone(Kopete::Global::Properties::self()->workPhone()),
 	propWorkMobilePhone(Kopete::Global::Properties::self()->workMobilePhone()),
 	propNickName(Kopete::Global::Properties::self()->nickName()),
-	propSubscriptionStatus("jabberSubscriptionStatus", i18n ("Subscription"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAuthorizationStatus("jabberAuthorizationStatus", i18n ("Authorization Status"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAvailableResources("jabberAvailableResources", i18n ("Available Resources"), "jabber_chatty", Kopete::ContactPropertyTmpl::RichTextProperty),
-	propVCardCacheTimeStamp("jabberVCardCacheTimeStamp", i18n ("vCard Cache Timestamp"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty | Kopete::ContactPropertyTmpl::PrivateProperty),
+	propSubscriptionStatus("jabberSubscriptionStatus", i18n ("Subscription"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propAuthorizationStatus("jabberAuthorizationStatus", i18n ("Authorization Status"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propAvailableResources("jabberAvailableResources", i18n ("Available Resources"), "jabber_chatty", Kopete::PropertyTmpl::RichTextProperty),
+	propVCardCacheTimeStamp("jabberVCardCacheTimeStamp", i18n ("vCard Cache Timestamp"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty),
 	propPhoto(Kopete::Global::Properties::self()->photo()),
-	propJid("jabberVCardJid", i18n("Jabber ID"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propBirthday("jabberVCardBirthday", i18n("Birthday"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propTimezone("jabberVCardTimezone", i18n("Timezone"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomepage("jabberVCardHomepage", i18n("Homepage"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propCompanyName("jabberVCardCompanyName", i18n("Company name"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propCompanyDepartement("jabberVCardCompanyDepartement", i18n("Company Departement"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propCompanyPosition("jabberVCardCompanyPosition", i18n("Company Position"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propCompanyRole("jabberVCardCompanyRole", i18n("Company Role"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkStreet("jabberVCardWorkStreet", i18n("Work Street"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkExtAddr("jabberVCardWorkExtAddr", i18n("Work Extra Address"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkPOBox("jabberVCardWorkPOBox", i18n("Work PO Box"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkCity("jabberVCardWorkCity", i18n("Work City"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkPostalCode("jabberVCardWorkPostalCode", i18n("Work Postal Code"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkCountry("jabberVCardWorkCountry", i18n("Work Country"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propWorkEmailAddress("jabberVCardWorkEmailAddress", i18n("Work Email Address"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomeStreet("jabberVCardHomeStreet", i18n("Home Street"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomeExtAddr("jabberVCardHomeExt", i18n("Home Extra Address"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomePOBox("jabberVCardHomePOBox", i18n("Home PO Box"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomeCity("jabberVCardHomeCity", i18n("Home City"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomePostalCode("jabberVCardHomePostalCode", i18n("Home Postal Code"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propHomeCountry("jabberVCardHomeCountry", i18n("Home Country"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propPhoneFax("jabberVCardPhoneFax", i18n("Fax"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty),
-	propAbout("jabberVCardAbout", i18n("About"), QString(), Kopete::ContactPropertyTmpl::PersistentProperty)
+	propJid("jabberVCardJid", i18n("Jabber ID"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propBirthday("jabberVCardBirthday", i18n("Birthday"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propTimezone("jabberVCardTimezone", i18n("Timezone"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propHomepage("jabberVCardHomepage", i18n("Homepage"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propCompanyName("jabberVCardCompanyName", i18n("Company name"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propCompanyDepartement("jabberVCardCompanyDepartement", i18n("Company Departement"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propCompanyPosition("jabberVCardCompanyPosition", i18n("Company Position"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propCompanyRole("jabberVCardCompanyRole", i18n("Company Role"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propWorkStreet("jabberVCardWorkStreet", i18n("Work Street"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propWorkExtAddr("jabberVCardWorkExtAddr", i18n("Work Extra Address"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propWorkPOBox("jabberVCardWorkPOBox", i18n("Work PO Box"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propWorkCity("jabberVCardWorkCity", i18n("Work City"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propWorkPostalCode("jabberVCardWorkPostalCode", i18n("Work Postal Code"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propWorkCountry("jabberVCardWorkCountry", i18n("Work Country"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propWorkEmailAddress("jabberVCardWorkEmailAddress", i18n("Work Email Address"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propHomeStreet("jabberVCardHomeStreet", i18n("Home Street"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propHomeExtAddr("jabberVCardHomeExt", i18n("Home Extra Address"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propHomePOBox("jabberVCardHomePOBox", i18n("Home PO Box"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propHomeCity("jabberVCardHomeCity", i18n("Home City"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propHomePostalCode("jabberVCardHomePostalCode", i18n("Home Postal Code"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propHomeCountry("jabberVCardHomeCountry", i18n("Home Country"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propPhoneFax("jabberVCardPhoneFax", i18n("Fax"), QString(), Kopete::PropertyTmpl::PersistentProperty),
+	propAbout("jabberVCardAbout", i18n("About"), QString(), Kopete::PropertyTmpl::PersistentProperty)
 
 {
 
-	kDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ...";
 
 	/* This is meant to be a singleton, so we will check if we have
 	 * been loaded before. */
 	if (protocolInstance)
 	{
-		kDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Warning: Protocol already " << "loaded, not initializing again." << endl;
+		kDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Warning: Protocol already " << "loaded, not initializing again.";
 		return;
 	}
 
@@ -153,22 +150,22 @@ JabberProtocol::~JabberProtocol ()
 
 AddContactPage *JabberProtocol::createAddContactWidget (QWidget * parent, Kopete::Account * i)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create Add Contact  Widget\n" << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "Create Add Contact  Widget";
 	return new JabberAddContactPage (i, parent);
 }
 
 KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Account * account, QWidget * parent)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Edit Account Widget\n" << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "Edit Account Widget";
 	JabberAccount *ja=dynamic_cast < JabberAccount * >(account);
 	if(ja || !account)
 		return new JabberEditAccountWidget (this,ja , parent);
 	else
 	{
 		JabberTransport *transport = dynamic_cast < JabberTransport * >(account);
-		if(!transport)
+		if(!transport || !transport->account()->client() )
 			return 0L;
-		dlgJabberRegister *registerDialog = new dlgJabberRegister (transport->account(), transport->myself()->contactId());
+		dlgRegister *registerDialog = new dlgRegister (transport->account(), transport->myself()->contactId());
 		registerDialog->show (); 
 		registerDialog->raise ();
 		return 0l; //we make ourself our own dialog, not an editAccountWidget.
@@ -177,7 +174,7 @@ KopeteEditAccountWidget *JabberProtocol::createEditAccountWidget (Kopete::Accoun
 
 Kopete::Account *JabberProtocol::createNewAccount (const QString & accountId)
 {
-	kDebug (JABBER_DEBUG_GLOBAL) << "[Jabber Protocol] Create New Account. ID: " << accountId << "\n" << endl;
+	kDebug (JABBER_DEBUG_GLOBAL) << "Create New Account. ID: " << accountId;
 	if( Kopete::AccountManager::self()->findAccount( pluginId() , accountId ) )
 		return 0L;  //the account may already exist if greated just above
 
@@ -254,7 +251,7 @@ Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resou
 		}
 		else
 		{
-			kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug" << endl;
+			kDebug (JABBER_DEBUG_GLOBAL) << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug";
 		}
 	}
 
@@ -276,7 +273,7 @@ JabberProtocol *JabberProtocol::protocol ()
 Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaContact,
 										 const QMap < QString, QString > &serializedData, const QMap < QString, QString > & /* addressBookData */ )
 {
-//  kDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deserializing data for metacontact " << metaContact->displayName () << "\n" << endl;
+//  kDebug (JABBER_DEBUG_GLOBAL) << "Deserializing data for metacontact " << metaContact->displayName () << "\n";
 
 	QString contactId = serializedData["contactId"];
 	QString displayName = serializedData["displayName"];
@@ -294,7 +291,7 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 
 	if (!account)
 	{
-		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
+		kDebug(JABBER_DEBUG_GLOBAL) << "WARNING: Account for contact does not exist, skipping.";
 		return 0;
 	}
 	
@@ -366,7 +363,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 	XMPP::Jid jid = jid_str;
 	QString action=url.queryItems().isEmpty() ? QString() : url.queryItems().first().first;
 	 
-	kDebug() << k_funcinfo << url.queryItemValue("body") << endl;
+	kDebug() << url.queryItemValue("body");
 
 	if(jid.isEmpty())
 	{
@@ -392,7 +389,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 			KVBox vb(&chooser);
 			chooser.setMainWidget(&vb);
 			QLabel label(&vb);
-			label.setText(i18n("Choose an account to handle the uri %1" , kurl.prettyUrl()));
+			label.setText(i18n("Choose an account to handle the URL %1" , kurl.prettyUrl()));
 //			label.setSizePolicy(QSizePolicy::Minimum , QSizePolicy::MinimumExpanding);
 			label.setWordWrap(true);
 			AccountSelector accSelector(const_cast<JabberProtocol*>(this), &vb);
@@ -482,7 +479,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 			{
 				bool ok=true;
 				nick = KInputDialog::getText(i18n("Please enter your nickname for the room %1", jid.bare()),
-						i18n("Give your nickname"),
+						i18n("Provide your nickname"),
 						QString(),
 						&ok);
 				if (!ok)
@@ -496,7 +493,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 		
 		if(action=="invite" && url.hasQueryItem("jid") )
 		{
-			//NOTE: this is the obsolete, NOT RECOMMANDED protocol.
+			//NOTE: this is the obsolete, NOT RECOMMENDED protocol.
 			//      iris doesn't implement groupchat yet
 			//NOTE: This code is duplicated in JabberGroupChatManager::inviteContact
 			XMPP::Message jabberMessage;
@@ -523,7 +520,7 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 	}//TODO: recvfile
 	else
 	{
-		kWarning(JABBER_DEBUG_GLOBAL) << k_funcinfo << "unable to handle URL "<< kurl.prettyUrl() << endl;
+		kWarning(JABBER_DEBUG_GLOBAL) << "unable to handle URL "<< kurl.prettyUrl();
 	}
 
 }

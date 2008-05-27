@@ -9,9 +9,15 @@ kde4_add_library(gadu_kopete SHARED ${libgadu_SRCS})
 
 target_link_libraries(gadu_kopete pthread ${OPENSSL_LIBRARIES} )
 
+if(HAVE_NSL_LIBRARY)
+  # This is probably Solaris, and we need libnsl for gethostbyname
+  target_link_libraries(gadu_kopete nsl)
+endif(HAVE_NSL_LIBRARY)
+
+
 set_target_properties(gadu_kopete PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
-install(TARGETS gadu_kopete  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS gadu_kopete ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 

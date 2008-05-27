@@ -28,18 +28,14 @@
 #include "ui_addaccountwizardpage1.h"
 #include "ui_addaccountwizardpage2.h"
 
-class QTreeWidgetItem;
 
-class KPluginInfo;
-class KVBox;
-class KPageWidgetItem;
 
 namespace Kopete
 {
 class Protocol;
+class Identity;
 }
 
-class KopeteEditAccountWidget;
 
 /**
  * @author Olivier Goffart <ogoffart@kde.org>
@@ -51,6 +47,11 @@ class KOPETEADDACCOUNTWIZARD_EXPORT AddAccountWizard : public KAssistantDialog
 public:
 	explicit AddAccountWizard( QWidget *parent = 0, bool firstRun = false );
 	~AddAccountWizard();
+
+	/**
+	 * Set the identity assigned to the account
+	 */
+	void setIdentity( Kopete::Identity *identity );
 
 private slots:
 	void slotProtocolListClicked();

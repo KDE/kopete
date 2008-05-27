@@ -25,6 +25,7 @@
 #include <kopeteaccountmanager.h>
 #include <kopetecontact.h>
 #include <kopetecontactlist.h>
+#include <kopeteidentity.h>
 #include <kopetestatusmessage.h>
 #include <kopeteversion.h>
 
@@ -33,6 +34,7 @@
 #include <qtimer.h>
 #include <kmenu.h>
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kconfig.h>
@@ -49,7 +51,7 @@ JabberTransport::JabberTransport (JabberAccount * parentAccount, const XMPP::Ros
 	JabberContact *myContact = m_account->contactPool()->addContact ( item , Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 	
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << accountId() <<" transport created:  myself: " << myContact;
 	
 	setColor( account()->color() );
 
@@ -97,7 +99,7 @@ JabberTransport::JabberTransport( JabberAccount * parentAccount, const QString &
 	
 	if(contactJID_s.isEmpty())
 	{
-		kError(JABBER_DEBUG_GLOBAL) << k_funcinfo << _accountId <<": GatewayJID is empty: MISCONFIGURATION  (have you used Kopete 0.12 beta ?)" << endl;
+		kError(JABBER_DEBUG_GLOBAL) << _accountId <<": GatewayJID is empty: MISCONFIGURATION  (have you used Kopete 0.12 beta ?)" << endl;
 	}
 	
 	XMPP::Jid contactJID= XMPP::Jid( contactJID_s );
@@ -107,7 +109,7 @@ JabberTransport::JabberTransport( JabberAccount * parentAccount, const QString &
 	JabberContact *myContact = m_account->contactPool()->addContact ( contactJID , Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
 	
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << accountId() <<" transport created:  myself: " << myContact << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << accountId() <<" transport created:  myself: " << myContact;
 	
 	m_status=Normal;
 }
@@ -120,27 +122,29 @@ JabberTransport::~JabberTransport ()
 	m_account->removeTransport( myself()->contactId() );
 }
 
-KActionMenu *JabberTransport::actionMenu ()
+void JabberTransport::fillActionMenu( KActionMenu *actionMenu )
 {
-	KIcon icon = KIcon(QIcon(myself()->onlineStatus().iconFor( this ) ) );
-	KActionMenu *menu = new KActionMenu( icon, accountId(), this );
-	QString nick = myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
+	actionMenu->setIcon( myself()->onlineStatus().iconFor( this ) );
 
-	menu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
+	QString nick;
+	if ( identity()->hasProperty( Kopete::Global::Properties::self()->nickName().key() ))
+		nick = identity()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
+	else
+		nick = myself()->nickName();
+
+	actionMenu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
 	nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
 								  );
 	
 	QList<KAction*> *customActions = myself()->customContextMenuActions(  );
 	if( customActions && !customActions->isEmpty() )
 	{
-		menu->addSeparator();
+		actionMenu->addSeparator();
 
 		foreach( KAction *a, *customActions )
-			menu->menu()->addAction(a);
+			actionMenu->menu()->addAction(a);
 	}
 	delete customActions;
-
-	return menu;
 
 /*	KActionMenu *m_actionMenu = Kopete::Account::actionMenu();
 
@@ -164,8 +168,16 @@ KActionMenu *JabberTransport::actionMenu ()
 }
 
 
+bool JabberTransport::hasCustomStatusMenu() const
+{
+	return true;
+}
+
+
 bool JabberTransport::createContact (const QString & contactId,  Kopete::MetaContact * metaContact)
 {
+	Q_UNUSED(contactId);
+	Q_UNUSED(metaContact);
 #if 0 //TODO
 	// collect all group names
 	QStringList groupNames;
@@ -190,6 +202,8 @@ bool JabberTransport::createContact (const QString & contactId,  Kopete::MetaCon
 
 void JabberTransport::setOnlineStatus( const Kopete::OnlineStatus& status  , const Kopete::StatusMessage &reason)
 {
+	Q_UNUSED(status);
+	Q_UNUSED(reason);
 #if 0
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
@@ -247,6 +261,7 @@ void JabberTransport::setOnlineStatus( const Kopete::OnlineStatus& status  , con
 
 void JabberTransport::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
+	Q_UNUSED(statusMessage);
 }
 
 JabberProtocol * JabberTransport::protocol( ) const
@@ -285,7 +300,7 @@ void JabberTransport::removeAllContacts( )
 									i18n ("Jabber Service Unregistration"));
 	*/ //we don't really care, we remove everithing anyway.
 
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "delete all contacts of the transport"<< endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "delete all contacts of the transport";
 	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd(); 
 	for( it = contacts().constBegin(); it != itEnd; ++it )
 	{
@@ -322,7 +337,7 @@ void JabberTransport::eatContacts( )
 	*            - a new contact will born, with the same characteristics, but owned by the transport
 	* - Olivier 2006-01-17 -
 	*/
-    kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << endl;
+    kDebug(JABBER_DEBUG_GLOBAL) ;
 	QHash<QString, Kopete::Contact*> cts=account()->contacts();
 	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = cts.constEnd(); 
 	for( it = cts.constBegin(); it != itEnd; ++it )
@@ -333,7 +348,7 @@ void JabberTransport::eatContacts( )
 			XMPP::RosterItem item=contact->rosterItem();
 			Kopete::MetaContact *mc=contact->metaContact();
 			Kopete::OnlineStatus status = contact->onlineStatus();
-			kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << item.jid().full() << " will be soon eat  - " << contact << endl;
+			kDebug(JABBER_DEBUG_GLOBAL) << item.jid().full() << " will be soon eat  - " << contact;
 			delete contact;
 			Kopete::Contact *c2=account()->contactPool()->addContact( item , mc , false ); //not sure this is false;
 			if(c2)

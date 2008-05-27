@@ -41,6 +41,7 @@ bool OscarMyselfContact::isReachable()
 
 Kopete::ChatSession* OscarMyselfContact::manager(CanCreateFlags canCreate )
 {
+	Q_UNUSED(canCreate);
 	return 0;
 }
 
@@ -52,7 +53,7 @@ UserDetails OscarMyselfContact::details()
 
 void OscarMyselfContact::deleteContact()
 {
-	kWarning( OSCAR_GEN_DEBUG ) << k_funcinfo << "called on myself contact! Ignoring." << endl << kBacktrace() << endl;
+	kWarning( OSCAR_GEN_DEBUG ) << "called on myself contact! Ignoring." << endl << kBacktrace();
 }
 
 #include "oscarmyselfcontact.moc"

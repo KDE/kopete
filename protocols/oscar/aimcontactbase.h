@@ -33,10 +33,9 @@ Q_OBJECT
 
 public:
 	AIMContactBase( Kopete::Account*, const QString&, Kopete::MetaContact*,
-	            const QString& icon = QString(), const OContact& ssiItem = OContact() );
+	            const QString& icon = QString() );
 	virtual ~AIMContactBase();
 
-	virtual QString sanitizedMessage( const QString& message );
 	/**
 	 * Gets the last time an autoresponse was sent to this contact
 	 * @returns QDateTime Object that represents the date/time

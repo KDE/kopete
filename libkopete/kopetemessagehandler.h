@@ -17,8 +17,9 @@
 #ifndef KOPETEMESSAGEHANDLER_H
 #define KOPETEMESSAGEHANDLER_H
 
-#include <QObject>
-#include <QList>
+#include <QtCore/QObject>
+#include <QtCore/QLinkedList>
+
 #include "kopete_export.h"
 
 //FIXME: Message::MessageDirection could be moved into namespace Kopete
@@ -122,7 +123,7 @@ public:
 	 */
 	virtual ~MessageHandlerFactory();
 	
-	typedef QList<MessageHandlerFactory*> FactoryList;
+	typedef QLinkedList<MessageHandlerFactory*> FactoryList;
 	/**
 	 * @return the list of registered message handler factories
 	 */

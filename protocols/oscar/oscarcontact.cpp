@@ -29,6 +29,7 @@
 #include <kcodecs.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
+#include <kinputdialog.h>
 
 #include <kdeversion.h>
 #include <kfiledialog.h>
@@ -41,6 +42,7 @@
 #include "kopeteuiglobal.h"
 #include <kopeteglobal.h>
 #include "kopetetransfermanager.h"
+#include "kopeteavatarmanager.h"
 
 #include "oscaraccount.h"
 #include "client.h"
@@ -53,18 +55,15 @@
 #include <assert.h>
 
 OscarContact::OscarContact( Kopete::Account* account, const QString& name,
-                            Kopete::MetaContact* parent, const QString& icon, const OContact& ssiItem )
+                            Kopete::MetaContact* parent, const QString& icon )
 : Kopete::Contact( account, name, parent, icon )
 {
 	mAccount = static_cast<OscarAccount*>(account);
 	mName = name;
 	mMsgManager = 0L;
-	m_ssiItem = ssiItem;
 	m_buddyIconDirty = false;
-	m_haveAwayMessage = false;
 	m_oesd = 0;
 
-	connect( this, SIGNAL(updatedSSI()), this, SLOT(updateSSIItem()) );
 	setFileCapable( true );
 
 	QObject::connect( mAccount->engine(), SIGNAL(haveIconForContact(const QString&, QByteArray)),
@@ -88,6 +87,7 @@ void OscarContact::serialize(QMap<QString, QString> &serializedData,
 	serializedData["ssi_bid"] = QString::number( m_ssiItem.bid() );
 	serializedData["ssi_alias"] = m_ssiItem.alias();
 	serializedData["ssi_waitingAuth"] = m_ssiItem.waitingAuth() ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" );
+	serializedData["ssi_metaInfoId"] = m_ssiItem.metaInfoId().toHex();
 }
 
 bool OscarContact::isOnServer() const
@@ -100,12 +100,10 @@ bool OscarContact::isOnServer() const
 
 void OscarContact::setSSIItem( const OContact& ssiItem )
 {
+	if ( !ssiItem.alias().isEmpty() )
+		setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+	
 	m_ssiItem = ssiItem;
-
-	if ( !m_ssiItem.alias().isEmpty() )
-		setProperty( Kopete::Global::Properties::self()->nickName(), m_ssiItem.alias() );
-
-	emit updatedSSI();
 }
 
 OContact OscarContact::ssiItem() const
@@ -117,7 +115,7 @@ Kopete::ChatSession* OscarContact::manager( CanCreateFlags canCreate )
 {
 	if ( !mMsgManager && canCreate )
 	{
-		/*kDebug(14190) << k_funcinfo <<
+		/*kDebug(14190) <<
 			"Creating new ChatSession for contact '" << displayName() << "'" << endl;*/
 
 		QList<Kopete::Contact*> theContact;
@@ -166,7 +164,7 @@ void OscarContact::sync(unsigned int flags)
 	if ( (flags & Kopete::Contact::MovedBetweenGroup) == Kopete::Contact::MovedBetweenGroup )
 	{
 		
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups" << endl;
+		kDebug(OSCAR_GEN_DEBUG) << "Moving a contact between groups";
 		ContactManager* ssiManager = mAccount->engine()->ssiManager();
 		
 		OContact oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
@@ -188,9 +186,11 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 	
 	if ( details.buddyIconHash().size() > 0 && details.buddyIconHash() != m_details.buddyIconHash() )
 	{
-		m_buddyIconDirty = true;
-		if ( cachedBuddyIcon( details.buddyIconHash() ) == false )
+		OscarProtocol *p = static_cast<OscarProtocol*>(protocol());
+		if ( property( p->buddyIconHash ).value().toByteArray() != details.buddyIconHash() )
 		{
+			m_buddyIconDirty = true;
+			
 			if ( !mAccount->engine()->hasIconConnection() )
 			{
 				mAccount->engine()->connectToIconServer();
@@ -198,7 +198,7 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 			else
 			{
 				int time = ( KRandom::random() % 10 ) * 1000;
-				kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "updating buddy icon in "
+				kDebug(OSCAR_GEN_DEBUG) << "updating buddy icon in "
 					<< time/1000 << " seconds" << endl;
 				QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
 			}
@@ -214,16 +214,16 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 
 	QStringList capList;
 	// Append client name and version in case we found one
-	if ( m_details.userClass() & 0x0080 /* WIRELESS */ )
-		capList << i18n( "Mobile AIM Client" );
-	else
-	{
-		if ( !m_details.clientName().isEmpty() )
-		{
-			capList << i18nc( "Translators: client name and version",
-			                "%1", m_details.clientName() );
-		}
-	}
+	//if ( m_details.userClass() & 0x0080 /* WIRELESS */ )
+	//	capList << i18n( "Mobile AIM Client" );
+	//else
+	//{
+	//	if ( !m_details.clientName().isEmpty() )
+	//	{
+	//		capList << i18nc( "Translators: client name and version",
+	//		                "%1", m_details.clientName() );
+	//	}
+	//}
 	
 	// and now for some general informative capabilities
 	if ( m_details.hasCap( CAP_BUDDYICON ) )
@@ -244,11 +244,13 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 		capList << i18n( "File transfers" );
 	if ( m_details.hasCap( CAP_GAMES ) || m_details.hasCap( CAP_GAMES2 ) )
 		capList << i18n( "Games" );
-	if ( m_details.hasCap( CAP_TRILLIAN ) )
-		capList << i18n( "Trillian user" );
-	
+
 	m_clientFeatures = capList.join( ", " );
 	setProperty( static_cast<OscarProtocol*>(protocol())->clientFeatures, m_clientFeatures );
+
+	setProperty( static_cast<OscarProtocol*>(protocol())->memberSince, details.memberSinceTime() );
+	setProperty( static_cast<OscarProtocol*>(protocol())->client, details.clientName() );
+	setProperty( static_cast<OscarProtocol*>(protocol())->protocolVersion, QString::number(details.dcProtoVersion()) );
 }
 
 void OscarContact::startedTyping()
@@ -288,11 +290,26 @@ void OscarContact::setPresenceTarget( const Oscar::Presence &presence )
 	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
 }
 
+void OscarContact::setEncoding( int mib )
+{
+	OscarProtocol* p = static_cast<OscarProtocol*>( protocol() );
+	if ( mib != 0 )
+	{
+		kDebug(OSCAR_GEN_DEBUG) << "setting encoding mib to " << mib << endl;
+		setProperty( p->contactEncoding, m_oesd->selectedEncoding() );
+	}
+	else
+	{
+		kDebug(OSCAR_GEN_DEBUG) << "setting encoding to default" << endl;
+		removeProperty( p->contactEncoding );
+	}
+}
+
 //here's where a filetransfer usually begins
 //could be called by a KAction or our dcop code or something
 void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint fileSize )
 {
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "file: '" << sourceURL 
+	kDebug(OSCAR_GEN_DEBUG) << "file: '" << sourceURL 
 		<< "' '" << altFileName << "' size " << fileSize << endl;
 	QStringList files;
 
@@ -304,10 +321,10 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 
 	if( files.isEmpty() )
 	{
-		kDebug(OSCAR_GEN_DEBUG) << "files empty, assuming cancel" << endl;
+		kDebug(OSCAR_GEN_DEBUG) << "files empty, assuming cancel";
 		return;
 	}
-	kDebug(OSCAR_GEN_DEBUG) << "files: '" << files << "' " << endl;
+	kDebug(OSCAR_GEN_DEBUG) << "files: '" << files << "' ";
 
 	Kopete::Transfer *t = Kopete::TransferManager::transferManager()->addTransfer( this, files.at(0), QFile( files.at(0) ).size(), mName, Kopete::FileTransferInfo::Outgoing);
 	mAccount->engine()->sendFiles( mName, files, t );
@@ -315,13 +332,15 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 
 void OscarContact::setAwayMessage( const QString &message )
 {
-	kDebug(OSCAR_AIM_DEBUG) << k_funcinfo <<
+	kDebug(OSCAR_AIM_DEBUG) <<
 		"Called for '" << contactId() << "', away msg='" << message << "'" << endl;
 	
 	if ( !message.isEmpty() )
-		setProperty( static_cast<OscarProtocol*>( protocol() )->awayMessage, filterAwayMessage( message ) );
+		setProperty( static_cast<OscarProtocol*>( protocol() )->statusMessage, filterAwayMessage( message ) );
 	else
-		removeProperty( static_cast<OscarProtocol*>( protocol() )->awayMessage );
+		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusMessage );
+
+	emit statusMessageChanged();
 }
 
 void OscarContact::changeContactEncoding()
@@ -335,25 +354,22 @@ void OscarContact::changeContactEncoding()
 	m_oesd->show();
 }
 
+void OscarContact::requestAuthorization()
+{
+	QString info = i18n("The user %1 requires authorization before being added to a contact list. "
+	                    "Do you want to send an authorization request?\n\nReason for requesting authorization:",
+	                    ( !nickName().isEmpty() ) ? nickName() : contactId() );
+
+	QString reason = KInputDialog::getText( i18n("Request Authorization"), info,
+	                                        i18n("Please authorize me so I can add you to my contact list") );
+	if ( !reason.isNull() )
+		mAccount->engine()->requestAuth( contactId(), reason );
+}
+
 void OscarContact::changeEncodingDialogClosed( int result )
 {
 	if ( result == QDialog::Accepted )
-	{
-		OscarProtocol* p = static_cast<OscarProtocol*>( protocol() );
-		int mib = m_oesd->selectedEncoding();
-		if ( mib != 0 )
-		{
-			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "setting encoding mib to "
-				<< m_oesd->selectedEncoding() << endl;
-			setProperty( p->contactEncoding, m_oesd->selectedEncoding() );
-		}
-		else
-		{
-			kDebug(OSCAR_ICQ_DEBUG) << k_funcinfo
-				<< "setting encoding to default" << endl;
-			removeProperty( p->contactEncoding );
-		}
-	}
+		setEncoding( m_oesd->selectedEncoding() );
 	
 	if ( m_oesd )
 	{
@@ -367,7 +383,7 @@ void OscarContact::requestBuddyIcon()
 	if ( m_buddyIconDirty && m_details.buddyIconHash().size() > 0 )
 	{
 		account()->engine()->requestBuddyIcon( contactId(), m_details.buddyIconHash(),
-		                                       m_details.iconCheckSumType() );
+		                                       m_details.iconType(), m_details.iconCheckSumType() );
 	}
 }
 
@@ -376,31 +392,32 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
 		return;
 	
-	kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating icon for " << contactId() << endl;
+	kDebug(OSCAR_GEN_DEBUG) << "Updating icon for " << contactId();
 	
 	KMD5 buddyIconHash( icon );
 	if ( memcmp( buddyIconHash.rawDigest(), m_details.buddyIconHash().data(), 16 ) == 0 )
 	{
-		QString iconLocation = KStandardDirs::locateLocal( "appdata", "oscarpictures/" + Oscar::normalize( contactId() ) );
-		
-		QFile iconFile( iconLocation );
-		if ( !iconFile.open( QIODevice::WriteOnly ) )
+		QImage img;
+		img.loadFromData(icon);
+		Kopete::AvatarManager::AvatarEntry entry;
+		entry.name = contactId();
+		entry.category = Kopete::AvatarManager::Contact;
+		entry.contact = this;
+		entry.image = img;
+		entry = Kopete::AvatarManager::self()->add(entry);
+
+		setProperty( static_cast<OscarProtocol*>(protocol())->buddyIconHash, m_details.buddyIconHash() );
+		if (!entry.path.isNull())
 		{
-			kDebug(14153) << k_funcinfo << "Cannot open file"
-				<< iconLocation << " for writing!" << endl;
-			return;
+			removeProperty( Kopete::Global::Properties::self()->photo() );
+			setProperty( Kopete::Global::Properties::self()->photo(), entry.path );
 		}
-		
-		iconFile.write( icon );
-		iconFile.close();
-		
-		removeProperty( Kopete::Global::Properties::self()->photo() );
-		setProperty( Kopete::Global::Properties::self()->photo(), iconLocation );
+
 		m_buddyIconDirty = false;
 	}
 	else
 	{
-		kDebug(14153) << k_funcinfo << "Buddy icon hash does not match!" << endl;
+		kDebug(14153) << "Buddy icon hash does not match!";
 		removeProperty( Kopete::Global::Properties::self()->photo() );
 	}
 }
@@ -411,7 +428,6 @@ void OscarContact::receivedStatusMessage( const QString& contact, const QString&
 		return;
 	
 	setAwayMessage( message );
-	m_haveAwayMessage = true;
 }
 
 QString OscarContact::filterAwayMessage( const QString &message ) const
@@ -428,33 +444,6 @@ QString OscarContact::filterAwayMessage( const QString &message ) const
 	while ( filteredMessage.indexOf( fontRemover ) != -1 )
 		filteredMessage.replace( fontRemover, QString::fromLatin1("\\1") );
 	return filteredMessage;
-}
-
-bool OscarContact::cachedBuddyIcon( QByteArray hash )
-{
-	QString iconLocation = KStandardDirs::locateLocal( "appdata", "oscarpictures/" + Oscar::normalize( contactId() ) );
-	
-	QFile iconFile( iconLocation );
-	if ( !iconFile.open( QIODevice::ReadOnly ) )
-		return false;
-	
-	KMD5 buddyIconHash;
-	buddyIconHash.update( iconFile );
-	iconFile.close();
-	
-	if ( memcmp( buddyIconHash.rawDigest(), hash.data(), 16 ) == 0 )
-	{
-		kDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Updating icon for "
-			<< contactId() << " from local cache" << endl;
-		
-		setProperty( Kopete::Global::Properties::self()->photo(), iconLocation );
-		m_buddyIconDirty = false;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
 }
 
 #include "oscarcontact.moc"

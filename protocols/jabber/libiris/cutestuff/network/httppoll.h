@@ -22,8 +22,7 @@
 #define CS_HTTPPOLL_H
 
 #include "bytestream.h"
-
-#include <cutestuff_export.h>
+#include "cutestuff_export.h"
 // CS_NAMESPACE_BEGIN
 
 class CUTESTUFF_EXPORT HttpPoll : public ByteStream

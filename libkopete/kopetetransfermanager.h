@@ -16,12 +16,13 @@
     *************************************************************************
 */
 
-#ifndef KOPETEFILETRANSFER_H
-#define KOPETEFILETRANSFER_H
+#ifndef KOPETETRANSFERMANAGER_H
+#define KOPETETRANSFERMANAGER_H
 
-#include <qobject.h>
-#include <qstring.h>
-#include <qmap.h>
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtCore/QMap>
+
 #include "kopete_export.h"
 
 #include <kio/job.h>
@@ -32,7 +33,6 @@ namespace Kopete
 class Transfer;
 class Contact;
 class Message;
-class ChatSession;
 
 /**
  * @author Nick Betcher. <nbetcher@kde.org>
@@ -42,7 +42,7 @@ class KOPETE_EXPORT FileTransferInfo
 public:
 	enum KopeteTransferDirection { Incoming, Outgoing };
 
-	FileTransferInfo( Contact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString::null, const QPixmap &preview=QPixmap() );
+	FileTransferInfo( Contact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString(), const QPixmap &preview=QPixmap() );
 	~FileTransferInfo() {}
 	unsigned int transferId() const { return mId; }
 	Contact* contact() const { return mContact; }
@@ -76,13 +76,13 @@ public:
 	 * Retrieve the transfer manager instance
 	 */
 	static TransferManager* transferManager();
-	virtual ~TransferManager() {};
+	virtual ~TransferManager() {}
 
 	/**
 	 * @brief Adds a file transfer to the Kopete::TransferManager
 	 */
 	Transfer *addTransfer( Contact *contact, const QString& file, const unsigned long size, const QString &recipient , FileTransferInfo::KopeteTransferDirection di);
-	int askIncomingTransfer( Contact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, QString internalId=QString::null, const QPixmap &preview=QPixmap());
+	int askIncomingTransfer( Contact *contact, const QString& file, const unsigned long size, const QString& description=QString(), QString internalId=QString(), const QPixmap &preview=QPixmap());
 	void removeTransfer( unsigned int id );
 
 	/**
@@ -125,7 +125,6 @@ private slots:
 
 private:
 	TransferManager( QObject *parent );
-	static TransferManager *s_transferManager;
 
 	int nextID;
 	QMap<unsigned int, Transfer *> mTransfersMap;
@@ -170,6 +169,8 @@ public:
 	 * See @ref sourceURL
 	 */
 	KUrl destinationURL();
+protected:
+        void emitCopying(const KUrl &src, const KUrl &dest);
 
 public slots:
 
@@ -220,5 +221,5 @@ private slots:
 
 }
 
-#endif
+#endif // KOPETETRANSFERMANAGER_H
 // vim: set noet ts=4 sts=4 sw=4:

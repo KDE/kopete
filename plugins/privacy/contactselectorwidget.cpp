@@ -1,7 +1,7 @@
 /*
     contactselectorwidget.cpp
 
-    Copyright (c) 2006 by Andre Duffeck <andre@duffeck.de>
+    Copyright (c) 2006 by Andre Duffeck <duffeck@kde.org>
     Kopete    (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -34,10 +34,10 @@ ContactSelectorWidget::ContactSelectorWidget( QWidget *parent )
 	mUi->setupUi(widget);
 	layout->addWidget(widget);
 
-	QList<KPluginInfo *> plugins = Kopete::PluginManager::self()->availablePlugins("Protocols");
-	for( QList<KPluginInfo *>::Iterator it = plugins.begin(); it != plugins.end(); ++it )
+	QList<KPluginInfo> plugins = Kopete::PluginManager::self()->availablePlugins("Protocols");
+	for( QList<KPluginInfo>::Iterator it = plugins.begin(); it != plugins.end(); ++it )
 	{
-		Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin( (*it)->pluginName() );
+		Kopete::Plugin *plugin = Kopete::PluginManager::self()->plugin( it->pluginName() );
 		if( plugin )
 			mUi->comboProtocol->addItem( SmallIcon(plugin->pluginIcon()), plugin->displayName(), plugin->pluginId() );
 	}
@@ -56,6 +56,8 @@ QList<AccountListEntry> ContactSelectorWidget::contacts()
 	if( mUi->radioAddExistingMetaContact->isChecked() )
 	{
 		QList<AccountListEntry> list;
+		if(!mUi->metaContactSelector->metaContact())
+			return list;
 		foreach( Kopete::Contact *contact, mUi->metaContactSelector->metaContact()->contacts() )
 		{
 			list.append( AccountListEntry( contact->contactId(), contact->protocol() ) );

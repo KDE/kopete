@@ -33,25 +33,25 @@
 #include "texteffectpreferences.h"
 #include "texteffectconfig.h"
 
-typedef KGenericFactory<TextEffectPreferences> TextEffectPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_texteffect, TextEffectPreferencesFactory( "kcm_kopete_texteffect" )  )
+K_PLUGIN_FACTORY(TextEffectPreferencesFactory, registerPlugin<TextEffectPreferences>();)
+K_EXPORT_PLUGIN(TextEffectPreferencesFactory( "kcm_kopete_texteffect" ))
 
 TextEffectPreferences::TextEffectPreferences(QWidget *parent,
-                                             const QStringList &args)
+                                             const QVariantList &args)
 	: KCModule(TextEffectPreferencesFactory::componentData(), parent, args)
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget *w = new QWidget;
-	kDebug( 14310 ) << "Creating preferences dialog" << endl;
+	kDebug( 14310 ) << "Creating preferences dialog";
 	preferencesDialog = new Ui::TextEffectPrefs;
 	preferencesDialog->setupUi( w );
 	l->addWidget( w );
 
-	kDebug( 14310 ) << "Creating config object" << endl;
+	kDebug( 14310 ) << "Creating config object";
 
 	config = new TextEffectConfig;
 
-	kDebug( 14310 ) << "Setting up connections" << endl;
+	kDebug( 14310 ) << "Setting up connections";
 
 	connect(preferencesDialog->mColorsAdd , SIGNAL(pressed()) ,
 			this , SLOT(slotAddPressed()));
@@ -81,9 +81,6 @@ TextEffectPreferences::TextEffectPreferences(QWidget *parent,
 			 this, SLOT( slotSettingChanged() ) );
 
 	//setMainWidget( preferencesDialog, "Text Effect Plugin" );
-
-	load();
-
 }
 
 TextEffectPreferences::~TextEffectPreferences()
@@ -95,7 +92,7 @@ TextEffectPreferences::~TextEffectPreferences()
 
 void TextEffectPreferences::load()
 {
-	kDebug( 14310 ) << k_funcinfo << "ENTER" << endl;
+	kDebug( 14310 ) << "ENTER";
 
 	config->load();
 
@@ -113,13 +110,13 @@ void TextEffectPreferences::load()
 	// Indicate that we have not changed ^_^
 	emit changed( false );
 
-	kDebug( 14310 ) << k_funcinfo << "EXIT" << endl;
+	kDebug( 14310 ) << "EXIT";
 
 }
 
 void TextEffectPreferences::save()
 {
-	kDebug() << k_funcinfo << "ENTER" << endl;
+	kDebug() << "ENTER";
 	// Save the settings
 	config->setColors(colors());
 	config->setColorRandom(preferencesDialog->m_colorRandom->isChecked());
@@ -140,7 +137,7 @@ void TextEffectPreferences::save()
 
 	// Indicate that we have not changed ^_^
 	emit changed( false );
-	kDebug() << k_funcinfo << "EXIT" << endl;
+	kDebug() << "EXIT";
 }
 
 QStringList TextEffectPreferences::colors()
@@ -211,7 +208,7 @@ void TextEffectPreferences::slotDownPressed()
 
 void TextEffectPreferences::slotSettingChanged()
 {
-	kDebug() << k_funcinfo << "Called"
+	kDebug() << "Called"
 			  << endl;
 	// Indicate that our settings have changed
     emit changed( true );

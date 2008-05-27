@@ -118,7 +118,7 @@ void JabberResource::slotGetTimedClientVersion ()
 {
 	if ( d->account->isConnected () )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting client version for " << d->jid.full () << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "Requesting client version for " << d->jid.full ();
 
 		// request client version
 		XMPP::JT_ClientVersion *task = new XMPP::JT_ClientVersion ( d->account->client()->rootTask () );
@@ -146,7 +146,7 @@ void JabberResource:: slotGetDiscoCapabilties ()
 {
 	if ( d->account->isConnected () )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting Client Features for " << d->jid.full () << endl;
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "Requesting Client Features for " << d->jid.full ();
 
 		XMPP:: JT_DiscoInfo *task = new XMPP::JT_DiscoInfo ( d->account->client()->rootTask () );
 		// Retrive features when service discovery is done.

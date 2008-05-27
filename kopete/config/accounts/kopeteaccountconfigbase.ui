@@ -6,247 +6,220 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>401</width>
-    <height>314</height>
+    <width>519</width>
+    <height>506</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Manage Accounts</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
-    <number>9</number>
-   </property>
-   <property name="topMargin" >
-    <number>9</number>
-   </property>
-   <property name="rightMargin" >
-    <number>9</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>9</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>6</number>
-   </property>
-   <property name="verticalSpacing" >
-    <number>6</number>
-   </property>
-   <item rowspan="8" row="0" column="0" >
-    <widget class="QTreeWidget" name="mAccountList" >
-     <property name="alternatingRowColors" >
-      <bool>true</bool>
+  <layout class="QHBoxLayout" >
+   <item>
+    <layout class="QVBoxLayout" >
+     <property name="spacing" >
+      <number>8</number>
      </property>
-     <property name="rootIsDecorated" >
-      <bool>false</bool>
-     </property>
-     <column>
-      <property name="text" >
-       <string>1</string>
-      </property>
-     </column>
-    </widget>
-   </item>
-   <item row="3" column="2" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>70</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="6" column="2" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>70</width>
-       <height>50</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="7" column="1" colspan="2" >
-    <layout class="QGridLayout" >
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>6</number>
-     </property>
-     <property name="verticalSpacing" >
-      <number>6</number>
-     </property>
-     <item row="0" column="0" >
-      <widget class="KPushButton" name="mButtonUp" >
-       <property name="minimumSize" >
-        <size>
-         <width>60</width>
-         <height>10</height>
-        </size>
-       </property>
-       <property name="toolTip" >
-        <string>Increase the priority</string>
-       </property>
-       <property name="whatsThis" >
-        <string>Uses these buttons to increase or decrease the priority.
-The priority is used to determine which contact to use when you click on a metacontact: Kopete will use the contact of the account with the greatest priority (if all contacts have the same online status.)</string>
+     <item>
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string comment="second-person command" >Check to Include in Global Connection</string>
        </property>
       </widget>
      </item>
-     <item rowspan="2" row="0" column="1" >
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="1" column="0" >
-      <widget class="KPushButton" name="mButtonDown" >
-       <property name="minimumSize" >
-        <size>
-         <width>60</width>
-         <height>10</height>
-        </size>
-       </property>
-       <property name="toolTip" >
-        <string>Decrease the priority</string>
+     <item>
+      <widget class="QTreeWidget" name="mAccountList" >
+       <property name="acceptDrops" >
+        <bool>true</bool>
        </property>
        <property name="whatsThis" >
-        <string>Uses these buttons to increase or decrease the priority.
-The priority is used to determine which contact to use when you click on a metacontact: Kopete will use the contact of the account with the greatest priority (if all contacts have the same online status.)</string>
+        <string>This widget shows your identities and accounts in a hierarchical view. Each configured identity shows its associated accounts.</string>
        </property>
+       <property name="dragEnabled" >
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode" >
+        <enum>QAbstractItemView::InternalMove</enum>
+       </property>
+       <property name="alternatingRowColors" >
+        <bool>true</bool>
+       </property>
+       <property name="selectionBehavior" >
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+       <property name="iconSize" >
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="rootIsDecorated" >
+        <bool>false</bool>
+       </property>
+       <property name="allColumnsShowFocus" >
+        <bool>true</bool>
+       </property>
+       <column>
+        <property name="text" >
+         <string>Account ID</string>
+        </property>
+       </column>
+       <column>
+        <property name="text" >
+         <string>Status</string>
+        </property>
+       </column>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="5" column="1" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Minimum</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>16</width>
-       <height>16</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="5" column="2" >
-    <widget class="KColorButton" name="mColorButton" >
-     <property name="toolTip" >
-      <string>Account custom color selector</string>
-     </property>
-     <property name="whatsThis" >
-      <string>Allows you to set a custom color for this account.
-The icon of every contact of this account will be coloured with this color. Useful if you have several accounts of the same protocol</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1" colspan="2" >
-    <widget class="QCheckBox" name="mUseColor" >
-     <property name="toolTip" >
-      <string>Use custom color for account</string>
-     </property>
-     <property name="whatsThis" >
-      <string>Allows you to set a custom color for this account</string>
-     </property>
-     <property name="text" >
-      <string>Use &amp;custom color</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1" colspan="2" >
-    <widget class="QPushButton" name="mButtonRemove" >
-     <property name="toolTip" >
-      <string>Remove selected account</string>
-     </property>
-     <property name="whatsThis" >
-      <string>Remove selected account</string>
-     </property>
-     <property name="text" >
-      <string>&amp;Remove</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="2" >
-    <widget class="QPushButton" name="mButtonEdit" >
-     <property name="toolTip" >
-      <string>Modify selected account</string>
-     </property>
-     <property name="whatsThis" >
-      <string>Let you edit the account's properties.</string>
-     </property>
-     <property name="text" >
-      <string>&amp;Modify...</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="2" >
-    <widget class="QPushButton" name="mButtonNew" >
-     <property name="toolTip" >
-      <string>Add new account</string>
-     </property>
-     <property name="text" >
-      <string>&amp;New...</string>
-     </property>
-    </widget>
+   <item>
+    <layout class="QVBoxLayout" >
+     <item>
+      <widget class="QGroupBox" name="mGroupBoxAccounts" >
+       <property name="title" >
+        <string>Accounts</string>
+       </property>
+       <layout class="QVBoxLayout" >
+        <item>
+         <widget class="QPushButton" name="mButtonAccountAdd" >
+          <property name="toolTip" >
+           <string>Add a new account</string>
+          </property>
+          <property name="text" >
+           <string>Add Account
+KAction replaces
+these labels!</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonAccountRemove" >
+          <property name="toolTip" >
+           <string>Remove selected account</string>
+          </property>
+          <property name="whatsThis" >
+           <string>Remove selected account</string>
+          </property>
+          <property name="text" >
+           <string>&amp;Remove Account</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonAccountModify" >
+          <property name="toolTip" >
+           <string>Modify selected account</string>
+          </property>
+          <property name="whatsThis" >
+           <string>Lets you edit the account's properties.</string>
+          </property>
+          <property name="text" >
+           <string>&amp;Modify Account...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonAccountSwitchIdentity" >
+          <property name="toolTip" >
+           <string>Associate the selected account with another identity</string>
+          </property>
+          <property name="whatsThis" >
+           <string>Each account is associated with exactly one identity. You can use this button to change the association and switch an account to a different identity</string>
+          </property>
+          <property name="text" >
+           <string>Switch &amp;Identity...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>136</width>
+         <height>161</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="mGroupBoxIdentities" >
+       <property name="title" >
+        <string>Identities</string>
+       </property>
+       <layout class="QVBoxLayout" >
+        <item>
+         <widget class="QPushButton" name="mButtonIdentityAdd" >
+          <property name="toolTip" >
+           <string>Add a new identity</string>
+          </property>
+          <property name="text" >
+           <string>A&amp;dd Identity...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonIdentityCopy" >
+          <property name="toolTip" >
+           <string>Create a new identity based on an existing one</string>
+          </property>
+          <property name="text" >
+           <string>&amp;Copy Identity...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonIdentityRemove" >
+          <property name="toolTip" >
+           <string>Remove selected identity</string>
+          </property>
+          <property name="whatsThis" >
+           <string>Remove selected identity</string>
+          </property>
+          <property name="text" >
+           <string>R&amp;emove</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonIdentityModify" >
+          <property name="toolTip" >
+           <string>Modify selected identity</string>
+          </property>
+          <property name="whatsThis" >
+           <string>Let you edit the account's properties.</string>
+          </property>
+          <property name="text" >
+           <string>M&amp;odify Identity...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonIdentitySetDefault" >
+          <property name="toolTip" >
+           <string>Set the selected identity as default identity</string>
+          </property>
+          <property name="text" >
+           <string>&amp;Set Default</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
-  <customwidget>
-   <class>KColorButton</class>
-   <extends>QPushButton</extends>
-   <header>kcolorbutton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
-  <tabstop>mButtonNew</tabstop>
-  <tabstop>mButtonEdit</tabstop>
-  <tabstop>mButtonRemove</tabstop>
+  <tabstop>mButtonIdentityModify</tabstop>
  </tabstops>
  <resources/>
  <connections/>

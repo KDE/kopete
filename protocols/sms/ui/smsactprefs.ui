@@ -334,10 +334,10 @@
                                             <cstring>subCode</cstring>
                                         </property>
                                         <property name="toolTip" stdset="0">
-                                            <string>What you would like to substitute a leading zero with.</string>
+                                         <string>Whatever you want to substitute for a leading zero.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>What you would like to substitute a leading zero with.</string>
+                                         <string>Whatever you want to substitute for a leading zero.</string>
                                         </property>
                                     </widget>
                                     <widget class="KRestrictedLine">
@@ -362,10 +362,10 @@
                                             <string>1234567890+</string>
                                         </property>
                                         <property name="toolTip" stdset="0">
-                                            <string>What you would like to substitute a leading zero with.</string>
+                                         <string>Whatever you want to substitute for a leading zero.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>What you would like to substitute a leading zero with.</string>
+                                         <string>Whatever you want to substitute for a leading zero.</string>
                                         </property>
                                     </widget>
                                 </hbox>

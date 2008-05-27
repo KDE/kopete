@@ -101,7 +101,7 @@ GaduContact::sendFile( const KUrl &sourceURL, const QString &/*fileName*/, uint 
 	else
 		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
 
-	kDebug(14120) << k_funcinfo << "File chosen to send:" << filePath << endl;
+	kDebug(14120) << "File chosen to send:" << filePath;
 
 	account_->sendFile( this, filePath );
 }
@@ -126,7 +126,7 @@ GaduContact::changedStatus( KGaduNotify* newstatus )
 
 	setFileCapable( newstatus->fileCap );
 
-	kDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip.toIPv4Address() << " image size: " << image_size << "  version: "  << version  << endl;
+	kDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip.toIPv4Address() << " image size: " << image_size << "  version: "  << version;
 
 }
 
@@ -153,7 +153,7 @@ GaduContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 		connect( msgManager_, SIGNAL( destroyed() ),  this, SLOT( slotChatSessionDestroyed() ) );
 
 	}
-	kDebug(14100) << "GaduContact::manager returning:  " << msgManager_ << endl;
+	kDebug(14100) << "GaduContact::manager returning:  " << msgManager_;
 	return msgManager_;
 }
 
@@ -197,13 +197,13 @@ GaduContact::customContextMenuActions()
 {
 	QList<KAction*> *fakeCollection = new QList<KAction*>();
 	//show profile
-	KAction* actionShowProfile = new KAction( KIcon("document-properties"), i18n("Show Profile"), this );
+	KAction* actionShowProfile = new KAction( KIcon("help-about"), i18n("Show Profile"), this );
 	//, "actionShowPublicProfile" );
 	connect( actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowPublicProfile()) );
 
 	fakeCollection->append( actionShowProfile );
 
-	KAction* actionEditContact = new KAction( KIcon("edit"), i18n("Edit..."), this );
+	KAction* actionEditContact = new KAction( KIcon("document-properties"), i18n("Edit..."), this );
 	//, "actionEditContact" );
 	connect( actionEditContact, SIGNAL(triggered(bool)), this, SLOT(slotEditContact()) );
 
@@ -248,7 +248,7 @@ GaduContact::deleteContact()
 	}
 	else {
 		KMessageBox::error( Kopete::UI::Global::mainWidget(),
-				i18n( "<qt>Please go online to remove a contact from your contact list.</qt>" ),
+				i18n( "<qt>You need to go online to remove a contact from your contact list.</qt>" ),
 				i18n( "Gadu-Gadu Plugin" ));
 	}
 }
@@ -272,7 +272,7 @@ GaduContact::setContactDetails( const GaduContactsList::ContactLine* cl )
 	setProperty( GaduProtocol::protocol()->propPhoneNr, cl->phonenr );
 	//setProperty( "ignored", i18n( "ignored" ), cl->ignored ? "true" : "false" );
 	ignored_ = cl->ignored;
-	//setProperty( "nickName", i18n( "nick name" ), cl->nickname );
+	//setProperty( "nickName", i18n( "nickname" ), cl->nickname );
 
 	return true;
 }

@@ -18,9 +18,11 @@
 #ifndef KABCEXPORTWIZARD_H
 #define KABCEXPORTWIZARD_H
 
-#include <Q3Wizard>
+#include <kassistantdialog.h>
 
-#include "ui_kabcexport_base.h"
+#include "ui_kabcexport_page1.h"
+#include "ui_kabcexport_page2.h"
+
 
 namespace KABC {
 	class AddressBook;
@@ -35,7 +37,7 @@ namespace KRES {
 	class Resource;
 }
 
-class KabcExportWizard : public Q3Wizard, private Ui::KabcExportWizard_Base
+class KabcExportWizard : public KAssistantDialog
 {
 Q_OBJECT
 	public:
@@ -46,13 +48,17 @@ Q_OBJECT
 	protected slots:
 		void slotDeselectAll();
 		void slotSelectAll();
-		void slotResourceSelectionChanged( Q3ListBoxItem * lbi );
+		void slotResourceSelectionChanged( QListWidgetItem * lbi );
 	protected:
 		void exportDetails( Kopete::MetaContact * mc, KABC::Addressee & addr );
 	private:
 		KABC::AddressBook* m_addressBook;
 		QMap<int, KABC::Resource*> m_resourceMap;
 		QMap<int, Kopete::MetaContact*> m_contactMap;
+		Ui::KabcExportWizardPage1 m_page1;
+		KPageWidgetItem *m_page1WidgetItem;
+		Ui::KabcExportWizardPage2 m_page2;
+		KPageWidgetItem *m_page2WidgetItem;
 };
 
 #endif

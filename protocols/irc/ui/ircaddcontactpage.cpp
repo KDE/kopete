@@ -60,7 +60,7 @@ void IRCAddContactPage::slotChannelSelected( const QString &channel )
 void IRCAddContactPage::slotChannelDoubleClicked( const QString &channel )
 {
 	addID->setText( channel );
-	tabWidget3->setCurrentPage(0);
+	tabWidget3->setCurrentIndex(0);
 }
 
 bool IRCAddContactPage::apply(Kopete::Account *account , Kopete::MetaContact *m)
@@ -74,7 +74,7 @@ bool IRCAddContactPage::validateData()
 	QString name = addID->text();
 	if (name.isEmpty() == true)
 	{
-		KMessageBox::sorry(this, i18n("<qt>You need to specify a channel to join, or query to open.</qt>"), i18n("You Must Specify a Channel"));
+		KMessageBox::sorry(this, i18n("<qt>You need to specify a channel to join, or a query to open.</qt>"), i18n("You Must Specify a Channel"));
 		return false;
 	}
 	return true;

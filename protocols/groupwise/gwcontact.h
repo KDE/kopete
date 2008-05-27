@@ -42,7 +42,6 @@ class KAction;
 class KActionCollection;
 namespace Kopete { class Account; }
 class GroupWiseAccount;
-class GroupWiseChatSession;
 class GroupWiseProtocol;
 namespace Kopete { class MetaContact; }
 
@@ -110,7 +109,7 @@ public:
 	/**
 	 * Access the contact's server properties
 	 */
-	QHash< QString, QString > serverProperties();
+	QMap< QString, QVariant > serverProperties();
 	/** 
 	 * Updates this contact's group membership and display name on the server
 	 */
@@ -131,6 +130,15 @@ public:
 	 * Mark this contact as being deleted
 	 */
 	void setDeleting( bool deleting );
+	/**
+	 * Marks this contact as having sent a message whilst apparently offline
+	 */
+	void setMessageReceivedOffline( bool on );
+	/**
+	 * Has this contact sent a message whilst apparently offline?
+	 */
+	bool messageReceivedOffline() const;
+
 public slots:
 	/**
 	 * Transmits an outgoing message to the server 
@@ -175,11 +183,12 @@ protected:
 	KAction *m_actionBlock;
 	// Novell Messenger Properties, as received by the server.  
 	// Unfortunately we don't know the domain of the set of keys, so they are not easily mappable to KopeteContactProperties
-	QHash< QString, QString > m_serverProperties;
+	QMap< QString, QVariant > m_serverProperties;
 	bool m_archiving;
 	// HACK: flag used to differentiate between 'all contact list instances gone while we are moving on the server' 
 	// and 'all contact list instances gone because we wanted to delete them all'
 	bool m_deleting;
+    bool m_messageReceivedOffline;
 };
 
 #endif

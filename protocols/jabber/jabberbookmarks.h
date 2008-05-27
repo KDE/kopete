@@ -24,7 +24,6 @@
 
 namespace XMPP { class Jid; }
 class JabberAccount;
-class JabberProtocol;
 
 class KAction;
 

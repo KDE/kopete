@@ -5,7 +5,7 @@
 
     Contains UI controller logic for managing custom notifications
 
-    Copyright (c) 2004 Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2004 Will Stephenson <wstephenson@kde.org>
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -39,7 +39,7 @@ CustomNotificationProps::CustomNotificationProps( QWidget *parent, const QPair<Q
 {
 	setObjectName( name );
 	m_notifyWidget = new KNotifyConfigWidget( parent );
-	m_notifyWidget->setApplication(QString::null , m_item.first , m_item.second);
+	m_notifyWidget->setApplication(QString() , m_item.first , m_item.second);
 }
 
 

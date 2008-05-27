@@ -14,10 +14,11 @@
     *************************************************************************
 */
 
-#ifndef KOPETEFILTERCHAIN_H
-#define KOPETEFILTERCHAIN_H
+#ifndef KOPETEMESSAGEHANDLERCHAIN_H
+#define KOPETEMESSAGEHANDLERCHAIN_H
 
-#include <qobject.h>
+#include <QtCore/QObject>
+
 #include <kdemacros.h>
 #include <ksharedptr.h>
 #include "kopetemessage.h"
@@ -93,6 +94,6 @@ private:
 
 }
 
-#endif
+#endif // KOPETEMESSAGEHANDLERCHAIN_H
 
 // vim: set noet ts=4 sts=4 sw=4:

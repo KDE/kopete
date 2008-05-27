@@ -40,7 +40,6 @@
 #include <krun.h>
 #include <kio/netaccess.h>
 #include <kfiledialog.h>
-#include <kpixmapregionselectordialog.h>
 #include <kstandarddirs.h>
 
 // libiris(XMPP backend) includes
@@ -56,6 +55,7 @@
 #include "jabberbasecontact.h"
 #include "jabberclient.h"
 #include "ui_dlgvcard.h"
+#include "avatardialog.h"
 
 /*
  *  Constructs a dlgJabberVCard which is a child of 'parent', with the
@@ -103,6 +103,7 @@ dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberBaseContact *conta
 dlgJabberVCard::~dlgJabberVCard ()
 {
 	// no need to delete child widgets, Qt does it all for us
+	delete m_mainWidget;
 }
 
 /*
@@ -110,7 +111,7 @@ dlgJabberVCard::~dlgJabberVCard ()
  */
 void dlgJabberVCard::slotClose()
 {
-	kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Deleting dialog." << endl;
+	kDebug(JABBER_DEBUG_GLOBAL) << "Deleting dialog.";
 	deleteLater();
 }
 
@@ -418,7 +419,7 @@ void dlgJabberVCard::slotSaveVCard()
 	XMPP::JT_VCard *task = new XMPP::JT_VCard( m_account->client()->rootTask() );
 	// signal to ourselves when the vCard data arrived
 	QObject::connect(task, SIGNAL(finished()), this, SLOT(slotVCardSaved()));
-	task->set(vCard);
+	task->set(m_contact->rosterItem().jid(), vCard);
 	task->go(true);
 }
 
@@ -428,7 +429,7 @@ void dlgJabberVCard::slotVCardSaved()
 	
 	if( vCard->success() )
 	{
-		m_mainWidget->lblStatus->setText( i18n("vCard save sucessful.") );
+		m_mainWidget->lblStatus->setText( i18n("vCard successfully saved.") );
 		m_contact->setPropertiesFromVCard( vCard->vcard() );
 	}
 	else
@@ -464,7 +465,7 @@ void dlgJabberVCard::slotGotVCard()
 
 		assignContactProperties();		
 
-		m_mainWidget->lblStatus->setText( i18n("vCard fetching Done.") );
+		m_mainWidget->lblStatus->setText( i18n("vCard successfully retrieved.") );
 	}
 	else
 	{
@@ -477,76 +478,20 @@ void dlgJabberVCard::slotGotVCard()
 
 void dlgJabberVCard::slotSelectPhoto()
 {
-	QString path;
-	bool remoteFile = false;
-	KUrl filePath = KFileDialog::getImageOpenUrl( KUrl(), this, i18n( "Jabber Photo" ) );
-	if( filePath.isEmpty() )
-		return;
+	QString path = Kopete::UI::AvatarDialog::getAvatar(this, m_photoPath);
+	QPixmap pix( path );
 
-	if( !filePath.isLocalFile() ) 
+	if( !pix.isNull() ) 
 	{
-		if( !KIO::NetAccess::download( filePath, path, this ) ) 
-		{
-			KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "Downloading of Jabber contact photo failed." ) );
-			return;
-		}
-		remoteFile = true;
-	}
-	else 
-		path = filePath.path();
-
-	QImage img( path );
-	img = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(img), 96, 96, this );
-
-	if( !img.isNull() ) 
-	{
-		if(img.width() > 96 || img.height() > 96)
-		{
-			// Scale and crop the picture.
-			img = img.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
-			// crop image if not square
-			if(img.width() < img.height()) 
-				img = img.copy((img.width()-img.height())/2, 0, 96, 96);
-			else if (img.width() > img.height())
-				img = img.copy(0, (img.height()-img.width())/2, 96, 96);
-
-		}
-		else if (img.width() < 32 || img.height() < 32)
-		{
-			// Scale and crop the picture.
-			img = img.scaled( 32, 32, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-			// crop image if not square
-			if(img.width() < img.height())
-				img = img.copy((img.width()-img.height())/2, 0, 32, 32);
-			else if (img.width() > img.height())
-				img = img.copy(0, (img.height()-img.width())/2, 32, 32);
-	
-		}
-		else if (img.width() != img.height())
-		{
-			if(img.width() < img.height())
-				img = img.copy((img.width()-img.height())/2, 0, img.height(), img.height());
-			else if (img.width() > img.height())
-				img = img.copy(0, (img.height()-img.width())/2, img.height(), img.height());
-		}
-
-		m_photoPath = KStandardDirs::locateLocal("appdata", "jabberphotos/" + m_contact->rosterItem().jid().full().toLower().replace(QRegExp("[./~]"),"-")  +".png");
-		if( img.save(m_photoPath, "PNG") )
-		{
-			m_mainWidget->lblPhoto->setPixmap( QPixmap::fromImage(img) );
-		}
-		else
-		{
-			m_photoPath.clear();
-		}
+		m_photoPath = path;
+		m_mainWidget->lblPhoto->setPixmap( pix );
 	}
 	else
 	{
-		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "<qt>An error occurred when trying to change the photo.<br>"
-			"Make sure that you have selected a correct image file</qt>" ) );
+		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "<qt>An error occurred when trying to change the photo.<br />"
+			"Make sure that you have selected a valid image file</qt>" ) );
+		m_photoPath.clear();
 	}
-	if( remoteFile )
-		KIO::NetAccess::removeTempFile( path );
 }
 
 void dlgJabberVCard::slotClearPhoto()
