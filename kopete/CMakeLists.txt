@@ -79,7 +79,7 @@ target_link_libraries(kopete_bin
 	kopetestatusmenu
 	kopeteidentity)
 
-install(TARGETS kopete_bin  DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS kopete_bin  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 
 ########### install files ###############
