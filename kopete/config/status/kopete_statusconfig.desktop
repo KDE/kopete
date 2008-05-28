@@ -11,6 +11,7 @@ X-KDE-ParentComponents=kopete
 
 Name=Status
 Name[el]=Κατάσταση
+Name[et]=Olek
 Name[ga]=Stádas
 Name[ja]=状態
 Name[km]=ស្ថានភាព
@@ -25,6 +26,7 @@ Name[zh_TW]=狀態
 Comment=Manage Your Statuses
 Comment[da]=Håndtér din status
 Comment[el]=Διαχείριση των καταστάσεών σας
+Comment[et]=Oma olekute haldamine
 Comment[ga]=Bainistigh Do Chuid Stádas
 Comment[ja]=あなたの状態の管理
 Comment[km]=គ្រប់គ្រង​ស្ថានភាព​របស់​អ្នក
