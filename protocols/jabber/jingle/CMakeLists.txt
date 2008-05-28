@@ -74,7 +74,7 @@ QMAKE_WRAP_CPP(kopete_jingle_PART_SRCS ${moc_source})
 QMAKE_WRAP_H(kopete_jingle_PART_SRCS ${moc_head})
 
 
-kde4_automoc(${kopete_jingle_PART_SRCS})
+qt4_wrap_cpp(${kopete_jingle_PART_SRCS})
 
 kde4_add_library(kopete_jabberjingle STATIC ${kopete_jingle_PART_SRCS})
 
