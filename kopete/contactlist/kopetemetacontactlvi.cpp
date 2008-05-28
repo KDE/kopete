@@ -454,16 +454,15 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 				case noChange:
 					break;
 				case signedIn:
-					notify=new KNotification( QString("kopete_contact_online") , 0l /*KopeteSystemTray::systemTray()*/ );
+					notify=new KNotification( QString("kopete_contact_online"), Kopete::UI::Global::mainWidget() );
 					notify->setActions(QStringList(i18n( "Chat" )));
 					break;
 				case changedStatus:
-					notify=new KNotification( QString("kopete_contact_status_change") , 0l /*KopeteSystemTray::systemTray()*/ );
+					notify=new KNotification( QString("kopete_contact_status_change"), Kopete::UI::Global::mainWidget() );
 					notify->setActions(QStringList(i18n( "Chat" )));
 					break;
 				case signedOut:
-					notify=new KNotification( QString("kopete_contact_offline") , 0l /*KopeteSystemTray::systemTray()*/ );
-					//notify->setActions(QStringList(i18n( "Chat" )));
+					notify=new KNotification( QString("kopete_contact_offline"), Kopete::UI::Global::mainWidget() );
 					break;
 			}
 
