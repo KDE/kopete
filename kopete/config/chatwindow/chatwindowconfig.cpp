@@ -265,6 +265,12 @@ void ChatWindowConfig::save()
 	if (item)
 		KEmoticons::setTheme( item->text() );
 
+	// Ugly hacks, this will emit the kcfg signals
+	appearanceSettings->setChatTextColor(m_colorsUi.kcfg_chatTextColor->color());
+	appearanceSettings->setUseEmoticons(m_emoticonsUi.kcfg_useEmoticons->isChecked());
+	settings->setHighlightForegroundColor(m_colorsUi.kcfg_highlightForegroundColor->color());
+	settings->setChatBgOverride(m_colorsUi.kcfg_chatBgOverride->isChecked());
+
 	appearanceSettings->writeConfig();
 	settings->writeConfig();
 	m_styleChanged = false;
