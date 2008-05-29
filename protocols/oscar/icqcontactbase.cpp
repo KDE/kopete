@@ -57,7 +57,6 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusTitle );
 
 	setAwayMessage( message );
-	m_haveAwayMessage = true;
 }
 
 void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )

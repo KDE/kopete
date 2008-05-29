@@ -1,11 +1,7 @@
 /*
-    Tests for Kopete::Message::parseEmoticons
+    kirchandlerplugin.h - IRC Handler Plugin.
 
-    Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
-    Copyright (c) 2005      by Duncan Mac-Vicar       <duncan@kde.org>
-    Copyright (c) 2006      by Michael Larouche       <larouche@kde.org>
-
-    Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2008      by Michel Hermier <michel.hermier@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -17,21 +13,37 @@
     *************************************************************************
 */
 
-#ifndef KOPETE_EMOTICON_TEST_H
-#define KOPETE_EMOTICON_TEST_H
+#ifndef KIRCHANDLERPLUGIN_H
+#define KIRCHANDLERPLUGIN_H
 
-#include <QObject>
+#include "kircglobal.h"
 
-/**
- * QTestLib automatic test to test Emoticon parsing.
- */
-class KopeteEmoticonTest : public QObject
+#include <QtCore/QList>
+#include <QtCore/QtPlugin>
+
+namespace KIrc
+{
+
+class Handler;
+
+class KIRC_EXPORT HandlerPlugin
+	: public QObject
 {
 	Q_OBJECT
-private Q_SLOTS:
-	void testEmoticonParser();	
+
+public:
+	HandlerPlugin();
+	virtual ~HandlerPlugin();
+
+public:
+	virtual QStringList keys() = 0;
+	virtual KIrc::Handler *create(const QString &key, QObject *parent) = 0;
+
+private:
+	Q_DISABLE_COPY(HandlerPlugin)
 };
 
-#endif
+}
 
+#endif
 

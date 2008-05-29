@@ -111,7 +111,8 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	if( metaContact() != Kopete::ContactList::self()->myself() )
 	{
 		// only update the alias if its not empty
-		if ( !item.name().isEmpty () && item.name() != item.jid().bare() )
+		if ( !item.name().isEmpty () && item.name() != item.jid().bare() 
+			&& metaContact()->customDisplayName() != item.name () )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << "setting display name of " << contactId () << " to " << item.name();
 			metaContact()->setDisplayName ( item.name () );

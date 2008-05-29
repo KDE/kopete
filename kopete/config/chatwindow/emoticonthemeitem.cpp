@@ -18,13 +18,14 @@
 #include "emoticonthemeitem.h"
 
 #include <kopeteemoticons.h>
+#include <kemoticons.h>
 
 EmoticonThemeItem::EmoticonThemeItem(const QString &theme)
 : QListWidgetItem(theme, 0, UserType)
 {
 	// list the theme
-	Kopete::Emoticons emoticons( theme );
-	setData(EmoticonList, QStringList(emoticons.emoticonAndPicList().keys()));
+	KEmoticonsTheme emoticons = Kopete::Emoticons::self()->theme( theme );
+	setData(EmoticonList, QStringList(emoticons.emoticonsMap().keys()));
 
 	// set the emoticon pixmap list as an empty list: pixmaps will be added to 
 	// the list as they are rendered by the delegator

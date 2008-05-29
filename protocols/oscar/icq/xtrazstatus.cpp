@@ -16,8 +16,6 @@
 
 #include "xtrazstatus.h"
 
-#include "oscarpresence.h"
-
 namespace Xtraz {
 
 Status::Status()
@@ -43,13 +41,6 @@ void Status::setDescription( const QString& description )
 void Status::setMessage( const QString& message )
 {
 	mMessage = message;
-}
-
-Oscar::Presence Status::presence() const
-{
-	Oscar::Presence presence( Oscar::Presence::Online, Oscar::Presence::XStatus );
-	presence.setXtrazStatus( mStatus );
-	return presence;
 }
 
 }

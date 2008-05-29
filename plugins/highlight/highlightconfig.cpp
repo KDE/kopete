@@ -34,7 +34,6 @@
 
 HighlightConfig::HighlightConfig()
 {
-	load();
 }
 
 HighlightConfig::~HighlightConfig()

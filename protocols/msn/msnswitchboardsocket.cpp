@@ -47,6 +47,7 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <KComponentData>
+#include <kemoticons.h>
 
 // for the display picture
 #include <msncontact.h>
@@ -688,10 +689,10 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
     KConfigGroup *config=m_account->configGroup();
 	if ( config->readEntry( "exportEmoticons", false ) )
 	{
-		QMap<QString, QStringList> emap = Kopete::Emoticons::self()->emoticonAndPicList();
+		QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
 
 		// Check the list for any custom emoticons
-		for (QMap<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
+		for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
 		{
 			for ( QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2 )
 			{
@@ -781,7 +782,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		int futurmessages_size=1400;  //1400 is a common good size
 		//int futurmessages_size=1664-len_H;
 
-		int nb=(int)ceil((float)(len_M)/(float)(futurmessages_size));
+		int nb=(int)std::ceil((float)(len_M)/(float)(futurmessages_size));
 
 		if(KMessageBox::warningContinueCancel(0L /* FIXME: we should try to find a parent somewere*/ ,
 			i18n("The message you are trying to send is too long; it will be split into %1 messages.", nb) ,

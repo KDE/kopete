@@ -220,6 +220,7 @@ KopeteChatWindow::KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *par
 
 	ChatMembersListView *chatmembers = new ChatMembersListView(m_participantsWidget);
 	chatmembers->setModel(members_model);
+	chatmembers->setWordWrap(true);
 	m_participantsWidget->setWidget(chatmembers);
 	initActions();
 
@@ -655,11 +656,12 @@ void KopeteChatWindow::createTabBar()
 
 		mainLayout->addWidget( m_tabBar );
 		m_tabBar->show();
-		connect ( m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)) );
-		connect ( m_tabBar, SIGNAL(contextMenu(QWidget *, const QPoint & )), this, SLOT(slotTabContextMenu( QWidget *, const QPoint & )) );
 
 		for( ChatViewList::iterator it = chatViewList.begin(); it != chatViewList.end(); ++it )
 			addTab( *it );
+
+		connect ( m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)) );
+		connect ( m_tabBar, SIGNAL(contextMenu(QWidget *, const QPoint & )), this, SLOT(slotTabContextMenu( QWidget *, const QPoint & )) );
 
 		if( m_activeView )
 			m_tabBar->setCurrentWidget( m_activeView );
@@ -908,13 +910,17 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 		m_activeView->saveChatSettings();
 	}
 
-	guiFactory()->addClient(view->msgManager());
+	if ( view != 0 )
+		guiFactory()->addClient(view->msgManager());
 // 	createGUI( view->editPart() );
 
 	if( m_activeView )
 		m_activeView->setActive( false );
 
 	m_activeView = view;
+
+	if ( view == 0 )
+		return;
 
 	if( chatViewList.indexOf( view ) == -1)
 		attachChatView( view );

@@ -65,8 +65,6 @@ OTRPreferences::OTRPreferences(QWidget *parent, const QVariantList &args)
 	
 	addConfig( KopeteOtrKcfg::self(), widget );
 	KopeteOtrKcfg::self()->readConfig();
-	load();
-
 
 	otrlConfInterface = new OtrlConfInterface( widget );
 

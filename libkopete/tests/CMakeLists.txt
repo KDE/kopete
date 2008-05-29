@@ -18,14 +18,6 @@ set( KOPETE_TEST_LIBRARIES ${QT_QTTEST_LIBRARY} ${KDE4_KIO_LIBS} kopete )
 
 ########### Automated tests ###############
 
-set(kopeteemoticontest_SRCS kopeteemoticontest.cpp )
-
-
-kde4_add_unit_test(kopeteemoticontest ${kopeteemoticontest_SRCS})
-
-target_link_libraries(kopeteemoticontest  ${KOPETE_TEST_LIBRARIES} )
-
-####
 # this test uses an ugly hack which does not work on win32 
 if(NOT WIN32)
         set(kopetemessage_test_SRCS kopetemessage_test.cpp ${kopete_test_mock_SRCS})

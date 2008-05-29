@@ -94,7 +94,7 @@ GroupWiseChatPropsDialog::~GroupWiseChatPropsDialog()
 
 void GroupWiseChatPropsDialog::initialise()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 	QWidget * wid = new QWidget( this );
 	m_ui.setupUi( wid );
 	setMainWidget( wid );

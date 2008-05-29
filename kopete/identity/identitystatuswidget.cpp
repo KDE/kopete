@@ -19,6 +19,7 @@
 
 #include "identitystatuswidget.h"
 #include "ui_identitystatusbase.h"
+#include "addaccountwizard.h"
 
 #include <KIcon>
 #include <KMenu>
@@ -38,6 +39,8 @@
 #include <kopetestdaction.h>
 #include <avatardialog.h>
 #include <KDebug>
+#include <kopeteuiglobal.h>
+#include <KCMultiDialog>
 
 #include "kopetestatusrootaction.h"
 
@@ -73,6 +76,8 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 	// user input signals
 	connect( d->ui.accounts, SIGNAL(customContextMenuRequested(const QPoint &)),
 			this, SLOT(showAccountContextMenu(const QPoint &)) );
+	connect( d->ui.accounts, SIGNAL(itemClicked(QListWidgetItem *)),
+			this, SLOT(slotAccountClicked( QListWidgetItem *)) );
 	connect( d->ui.photo, SIGNAL(clicked()), 
 			 this, SLOT(slotPhotoClicked()));
 
@@ -112,6 +117,9 @@ Kopete::Identity *IdentityStatusWidget::identity() const
 
 void IdentityStatusWidget::setVisible( bool visible )
 {
+	if ( visible == isVisible() )
+		return;
+
 	// animate the widget disappearing
 	d->timeline->setDirection( visible ?  QTimeLine::Forward
 										: QTimeLine::Backward );
@@ -181,29 +189,21 @@ void IdentityStatusWidget::load()
 		addAccountItem( a );
 	}
 	if ( d->identity->accounts().isEmpty() ) {
-		new QListWidgetItem( KIcon("configure" ), i18nc("Label to tell the user no accounts existed", "No accounts configured" ), d->ui.accounts );
+		new QListWidgetItem( KIcon("configure" ), i18nc("Button to open account configuration widget", "Click to add an account" ), d->ui.accounts );
 	}
 	resizeAccountListWidget();
 }
 
 void IdentityStatusWidget::slotAccountRegistered( Kopete::Account *account )
 {
-	// Kopete::Identity is poorly integrated as of Kopete 0.40.0.  As a result Kopete::Accounts are
-	// always created as belonging to the default Identity, which means that they are added to the
-	// wrong identity in the IdentityStatus widget.  To fix this properly it would be necessary to 
-	// initialise the identities before the accounts on startup and pass the identity into the
-	// account constructor.  I'm not making changes like that for KDE 4.0 so just hide this widget
-	// now.  See also slotAccountUnregistered()
+	if (account && account->identity() == d->identity && d->accountHash.isEmpty())
+	{
+		// Remove "Add account" placeholder
+		d->ui.accounts->clear();
+	}
 
-	// the following code can be reenabled when Accounts have the right Identity on
-	// accountRegistered()
-#if 0
 	addAccountItem( account );
 	resizeAccountListWidget();
-#else
-	Q_UNUSED( account )
-	QWidget::setVisible( false );
-#endif
 }
 
 void IdentityStatusWidget::slotAccountUnregistered( const Kopete::Account *account )
@@ -223,6 +223,10 @@ void IdentityStatusWidget::slotAccountUnregistered( const Kopete::Account *accou
 	d->ui.accounts->takeItem( d->ui.accounts->row( item ) );
 	d->accountHash.remove( item );
 	delete item;
+
+	if ( d->identity && d->identity->accounts().isEmpty() ) {
+		new QListWidgetItem( KIcon("configure" ), i18nc("Button to open account configuration widget", "Click to add an account" ), d->ui.accounts );
+	}
 	resizeAccountListWidget();
 }
 
@@ -280,6 +284,20 @@ void IdentityStatusWidget::showAccountContextMenu( const QPoint & point )
 			actionMenu->menu()->exec( d->ui.accounts->mapToGlobal( point ) );
 			delete actionMenu;
 		}
+	}
+}
+
+void IdentityStatusWidget::slotAccountClicked( QListWidgetItem * item )
+{
+	Q_UNUSED( item );
+
+	if ( d->identity->accounts().isEmpty() )
+	{
+		Q_ASSERT(d->accountHash.isEmpty());
+		// "Add an account" item
+		AddAccountWizard *addwizard = new AddAccountWizard( this, true );
+		addwizard->setIdentity(identity());
+		addwizard->show();
 	}
 }
 

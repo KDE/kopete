@@ -167,6 +167,7 @@ void KopeteAccountConfig::load()
 			QFont font = identityItem->font( 0 );
 			font.setBold( true );
 			identityItem->setFont( 0, font );
+			identityItem->setSelected( true );
 		}
 		//identityItem->setSizeHint( 0, QSize(0, 42) );
 		
@@ -212,6 +213,7 @@ void KopeteAccountConfig::slotItemSelected()
 
 	bool identitySelected = selectedIdentity();
 	bool isDefaultIdentity = (identitySelected && Kopete::IdentityManager::self()->defaultIdentity() == selectedIdentity()->identity());
+	mButtonAccountAdd->setEnabled( identitySelected );
 	mButtonIdentityCopy->setEnabled( identitySelected );
 	mButtonIdentityModify->setEnabled( identitySelected );
 	m_actionIdentityRemove->setEnabled( identitySelected && !isDefaultIdentity );
@@ -223,6 +225,11 @@ void KopeteAccountConfig::slotItemSelected()
 void KopeteAccountConfig::slotAddAccount()
 {
 	AddAccountWizard *addwizard = new AddAccountWizard( this, true );
+	KopeteIdentityLVI *ilvi = selectedIdentity();
+	if (ilvi)
+	{
+		addwizard->setIdentity( ilvi->identity() );
+	}
 	addwizard->show();
 }
 
@@ -451,12 +458,6 @@ void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,
 
 void KopeteAccountConfig::slotAccountAdded( Kopete::Account * account )
 {
-	KopeteIdentityLVI *i = selectedIdentity();
-	if ( i ) {
-		account->setIdentity( i->identity() );
-	} else {
-		account->setIdentity( Kopete::IdentityManager::self()->defaultIdentity() );
-	}
 	save();
 	load();
 }

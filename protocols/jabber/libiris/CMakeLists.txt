@@ -67,17 +67,17 @@ set(libiris_SRCS
 )
 
 kde4_moc_headers(iris_kopete 
-        cutestuff/legacy/ndns.h
-	cutestuff/legacy/safedelete.h
-	cutestuff/legacy/servsock.h
-	cutestuff/legacy/srvresolver.h
+#	cutestuff/legacy/ndns.h
+#	cutestuff/legacy/safedelete.h
+#	cutestuff/legacy/servsock.h
+#	cutestuff/legacy/srvresolver.h
 
 	cutestuff/network/bsocket.h
-	cutestuff/network/httpconnect.h
-	cutestuff/network/socks.h
-	cutestuff/network/httppoll.h
+#	cutestuff/network/httpconnect.h
+#	cutestuff/network/socks.h
+#	cutestuff/network/httppoll.h
 
-	cutestuff/util/bytestream.h
+#	cutestuff/util/bytestream.h
 
 	iris/include/xmpp.h
 	iris/include/xmpp_task.h
@@ -86,18 +86,16 @@ kde4_moc_headers(iris_kopete
 	iris/include/xmpp_liverosteritem.h
 	iris/include/xmpp_stream.h
 
-	iris/jabber/filetransfer.h
+#	iris/jabber/filetransfer.h
 	iris/jabber/s5b.h
-	iris/jabber/xmpp_ibb.h
+#	iris/jabber/xmpp_ibb.h
 
-	iris/xmpp-core/compress.h
-	iris/xmpp-core/compressionhandler.h
+#	iris/xmpp-core/compress.h
+#	iris/xmpp-core/compressionhandler.h
 	iris/xmpp-core/securestream.h
 
-	iris/xmpp-im/xmpp_tasks.h
-    iris/xmpp-im/xmpp_discoinfotask.h
-
-	
+#	iris/xmpp-im/xmpp_tasks.h
+#	iris/xmpp-im/xmpp_discoinfotask.h
 )
 
 kde4_add_library(iris_kopete SHARED ${libiris_SRCS})
@@ -108,6 +106,11 @@ if(WIN32)
   set(iris_kopete_libs ${iris_kopete_libs} ws2_32)
 endif(WIN32)
 
+if(HAVE_NSL_LIBRARY)
+  # This is probably Solaris, and libiris needs to link
+  # to libnsl for gethostbyname
+  set(iris_kopete_libs ${iris_kopete_libs} nsl)
+endif(HAVE_NSL_LIBRARY)
 target_link_libraries(iris_kopete ${iris_kopete_libs})
 
 set_target_properties(iris_kopete PROPERTIES VERSION 1.0.0 SOVERSION 1 )

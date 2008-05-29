@@ -35,6 +35,7 @@
 #include <kmenu.h>
 #include <kmessagebox.h>
 #include <k3listviewsearchline.h>
+#include <kemoticons.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
@@ -337,24 +338,11 @@ void Contact::setMetaContact( MetaContact *m )
 
 	if( old )
 	{
-		int result=KMessageBox::No;
-		if( old->isTemporary() )
-			result=KMessageBox::Yes;
-		else if( old->contacts().count()==1 )
-		{ //only one contact, including this one, that mean the contact will be empty efter the move
-			result = KMessageBox::questionYesNoCancel( Kopete::UI::Global::mainWidget(), i18n( "You are moving the contact `%1' to the meta contact `%2'.\n"
-				"`%3' will be empty afterwards. Do you want to delete this contact?",
-					contactId(), m ? m->displayName() : QString(), old->displayName())
-				, i18n( "Move Contact" ), KStandardGuiItem::del(), KGuiItem( i18n( "&Keep" ) )
-				, KStandardGuiItem::cancel(), QString::fromLatin1("delete_old_contact_when_move") );
-			if(result==KMessageBox::Cancel)
-				return;
-		}
 		old->removeContact( this );
 		disconnect( old, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
 
-		if(result==KMessageBox::Yes)
+		if(old->contacts().isEmpty())
 		{
 			//remove the old metacontact.  (this delete the MC)
 			ContactList::self()->removeMetaContact(old);
@@ -580,7 +568,7 @@ QString Contact::toolTip() const
 			"<nobr><b>%4</b> (%3)</nobr><br /><img src=\"%2\">&nbsp;%1",
 				Kopete::Message::escape( onlineStatus().description() ), iconName,
 					Kopete::Message::escape( contactId() ),
-					Kopete::Emoticons::parseEmoticons( Kopete::Message::escape( nick ) ) );
+					Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape( nick ) ) );
 	}
 
 	// --------------------------------------------------------------------------
@@ -623,7 +611,7 @@ QString Contact::toolTip() const
 			if(!statusTitle.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted status title",
-				             "<br /><b>Status&nbsp;Title:</b>&nbsp;%1",  Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusTitle) ) );
+				             "<br /><b>Status&nbsp;Title:</b>&nbsp;%1",  Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape(statusTitle) ) );
 			}
 		}
 		else if ((*it) == Kopete::Global::Properties::self()->statusMessage().key() )
@@ -632,7 +620,7 @@ QString Contact::toolTip() const
 			if(!statusmsg.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted status message",
-							"<br /><b>Status&nbsp;Message:</b>&nbsp;%1",  Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusmsg) ) );
+							"<br /><b>Status&nbsp;Message:</b>&nbsp;%1",  Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape(statusmsg) ) );
 			}
 		}
 		else

@@ -357,6 +357,7 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 
 			avatarList << listedEntry;
 		}
+                delete avatarConfig;
 	}
 }
 

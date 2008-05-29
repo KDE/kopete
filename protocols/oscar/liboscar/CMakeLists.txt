@@ -77,7 +77,6 @@ set(liboscar_SRCS
     tasks/buddyicontask.cpp
     tasks/serverredirecttask.cpp
     tasks/filetransfertask.cpp
-    tasks/localcontactlisttask.cpp
     tasks/chatnavservicetask.cpp
     tasks/chatservicetask.cpp
     tasks/icquserinfoupdatetask.cpp

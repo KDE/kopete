@@ -26,7 +26,6 @@
 
 TextEffectConfig::TextEffectConfig()
 {
-	load();
 }
 
 void TextEffectConfig::load()

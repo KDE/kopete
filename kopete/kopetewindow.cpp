@@ -68,6 +68,7 @@
 #include <kstandardaction.h>
 #include <solid/networking.h>
 #include <kstatusbarofflineindicator.h>
+#include <kemoticons.h>
 
 #include "addcontactpage.h"
 #include "addressbooklinkwidget.h"
@@ -516,12 +517,11 @@ void KopeteWindow::slotShowHide()
 	else
 	{
 		show();
-#ifdef Q_WS_X11
 		//raise() and show() should normaly deIconify the window. but it doesn't do here due
 		// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
 		if ( isMinimized() )
 			KWindowSystem::unminimizeWindow ( winId() );
-
+#ifdef Q_WS_X11
 		if ( !KWindowSystem::windowInfo ( winId(),NET::WMDesktop ).onAllDesktops() )
 			KWindowSystem::setOnDesktop ( winId(), KWindowSystem::currentDesktop() );
 #endif
@@ -798,6 +798,12 @@ void KopeteWindow::slotQuit()
 {
 	KopeteApplication *app = static_cast<KopeteApplication *> ( kapp );
 	app->quitKopete();
+
+	if ( d->tray && app->isShuttingDown() )
+	{
+		d->tray->deleteLater();
+		d->tray = 0;
+	}
 }
 
 void KopeteWindow::slotPluginLoaded ( Kopete::Plugin *  p )
@@ -1127,10 +1133,10 @@ void KopeteWindow::globalStatusChanged()
 
 	QString toolTip;
 	toolTip += i18nc("@label:textbox formatted status title", "<b>Status&nbsp;Title:</b>&nbsp;%1",
-	                 Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusTitle) ) );
+	                 Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape(statusTitle) ) );
 
 	toolTip += i18nc("@label:textbox formatted status message", "<br /><b>Status&nbsp;Message:</b>&nbsp;%1",
-	                 Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusMessage) ) );
+	                 Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape(statusMessage) ) );
 
 	d->globalStatusMessage->setToolTip( toolTip );
 }

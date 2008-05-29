@@ -646,15 +646,11 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	if ( QCA::isSupported ("tls") )
 	{
 		d->jabberTLS = new QCA::TLS;
-		d->jabberTLSHandler = new XMPP::QCATLSHandler ( d->jabberTLS );
+		d->jabberTLS->setTrustedCertificates(QCA::systemStore());
+		d->jabberTLSHandler = new QCATLSHandler(d->jabberTLS);
+		d->jabberTLSHandler->setXMPPCertCheck(true);
 
-		{
-			using namespace XMPP;
-			QObject::connect ( d->jabberTLSHandler, SIGNAL ( tlsHandshaken() ), this, SLOT ( slotTLSHandshaken () ) );
-		}
-
-		if( QCA::haveSystemStore() )
-			d->jabberTLS->setTrustedCertificates( QCA::systemStore() );
+		QObject::connect ( d->jabberTLSHandler, SIGNAL ( tlsHandshaken() ), SLOT ( slotTLSHandshaken () ) );
 	}
 
 	/*

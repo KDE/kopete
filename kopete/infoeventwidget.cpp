@@ -70,6 +70,9 @@ InfoEventWidget::~InfoEventWidget()
 
 void InfoEventWidget::setVisible( bool visible )
 {
+	if ( visible == isVisible() )
+		return;
+
 	d->enableUpdates = visible;
 	if ( visible )
 		updateInfo();

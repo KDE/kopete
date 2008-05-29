@@ -48,7 +48,6 @@
 #include <kmessagebox.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
-#include <kurl.h> // KNewStuff
 #include <kurlrequesterdialog.h>
 #include <krun.h>
 #include <kfiledialog.h>

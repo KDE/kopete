@@ -36,20 +36,6 @@ namespace Global
 	class PropertiesPrivate;
 
 	/**
-	 * \brief Installs one or more kopete emoticon themes from a tarball
-	 * (either .kopete-emoticons or .tar.gz or .tar.bz2)
-	 *
-	 * @p localPath Full path to a local emoticon archive, use KIO to download
-	 * files in case their are non-local.
-	 *
-	 * @return true in case install was successful, false otherwise. Errors are
-	 * displayed by either KIO or by using KMessagebox directly.
-	 *
-	 * TODO: If possible, port it to KIO instead of using ugly blocking KTar
-	 **/
-	KOPETE_EXPORT void installEmoticonTheme(const QString &localPath);
-
-	/**
 	 * \brief Global facility to query/store templates that are needed by KopeteProperty
 	 *
 	 * Basically all a plugin author needs to worry about is creating PropertyTmpl

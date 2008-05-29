@@ -22,20 +22,8 @@
 
 	<group name="Appearance">
 		<!-- Emoticon config -->
-		<entry key="emoticonTheme" type="String">
-			<label>Current emoticon theme.</label>
-			<default>kde4</default>
-			<emit signal="contactListAppearanceChanged" />
-			<emit signal="messageOverridesChanged" />
-		</entry>
 		<entry key="useEmoticons" type="Bool"> 
 			<label>Enable emoticon support in Kopete.</label>
-			<default>true</default>
-			<emit signal="contactListAppearanceChanged" />
-			<emit signal="messageOverridesChanged" />
-		</entry>
-		<entry key="emoticonsRequireSpace" type="Bool">
-			<label>Use strict mode in emoticon parsing.</label>
 			<default>true</default>
 			<emit signal="contactListAppearanceChanged" />
 			<emit signal="messageOverridesChanged" />

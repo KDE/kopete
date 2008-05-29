@@ -63,11 +63,11 @@ void ClientStreamTest::slotsend(int layer)
 	QByteArray command("login");
 	Request * firstRequest = testFactory.request( command );
 	Field::FieldList lst;
-	lst.append( new Field::SingleField( NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, "maeuschen" ) );
+	lst.append( new Field::SingleField( Field::NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, "maeuschen" ) );
 	lst.append( new Field::SingleField( NM_A_SZ_CREDENTIALS, 0, NMFIELD_TYPE_UTF8, "maeuschen" ) );
 	lst.append( new Field::SingleField( NM_A_SZ_USER_AGENT, 0, NMFIELD_TYPE_UTF8, "libgroupwise/0.1 (linux, 2.6.5-7.97-smp)" ) );
 	lst.append( new Field::SingleField( NM_A_UD_BUILD, 0, NMFIELD_TYPE_UDWORD, 2 ) );
-	lst.append( new Field::SingleField( NM_A_IP_ADDRESS, 0, NMFIELD_TYPE_UTF8, "10.10.11.103" ) );
+	lst.append( new Field::SingleField( GroupWise::NM_A_IP_ADDRESS, 0, NMFIELD_TYPE_UTF8, "10.10.11.103" ) );
 	firstRequest->setFields( lst );
 	myTestObject->write( firstRequest );
 	qDebug( "done");

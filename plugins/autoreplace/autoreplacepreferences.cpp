@@ -66,7 +66,6 @@ AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const QVariantL
 	//setMainWidget( preferencesDialog->gb_options, "AutoReplace Plugin" );
 
 	m_config = new AutoReplaceConfig;
-	load();
 }
 
 AutoReplacePreferences::~AutoReplacePreferences()

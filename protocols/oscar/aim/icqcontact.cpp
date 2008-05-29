@@ -86,14 +86,12 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( presence.type() == Oscar::Presence::Online )
 	{
 		removeProperty( mProtocol->statusMessage );
-		m_haveAwayMessage = false;
 	}
 	else
 	{
-		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
+		if ( m_details.awaySinceTime() < details.awaySinceTime() ) //prevent cyclic away message requests
 		{
 			mAccount->engine()->requestAIMAwayMessage( contactId() );
-			m_haveAwayMessage = true;
 		}
 	}
 

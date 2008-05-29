@@ -40,13 +40,13 @@ SMPPopup::SMPPopup( QWidget *parent, ConnContext *context, Kopete::ChatSession *
 
 	ui.setupUi( mainWidget() );
 
-	setCaption( i18n( "Enter authentication secret" ) );
+	setCaption( i18nc( "@title:window", "Enter authentication secret" ) );
 	setButtons( KDialog::Help | KDialog::Ok | KDialog::Cancel | KDialog::User1 );
-	setButtonText( KDialog::User1, i18nc( "@button", "Manual Authentication" ) );
+	setButtonText( KDialog::User1, i18nc( "@action:button", "Manual Authentication" ) );
 
 	setHelp("plugins-otr-auth");
 
-	ui.lMessage->setText( i18n( "Please enter the secret passphrase to authenticate %1", OtrlChatInterface::self()->formatContact( session->members().first()->contactId() ) ) );
+	ui.lMessage->setText( i18nc( "@info", "Please enter the secret passphrase to authenticate %1", OtrlChatInterface::self()->formatContact( session->members().first()->contactId() ) ) );
 
 	ui.lIcon->setPixmap( KIcon( "application-pgp-signature" ).pixmap( 48, 48 ) );
 

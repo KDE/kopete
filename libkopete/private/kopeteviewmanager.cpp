@@ -25,6 +25,7 @@
 #include <knotification.h>
 #include <kglobal.h>
 #include <kwindowsystem.h>
+#include <kemoticons.h>
 
 #include "kopetebehaviorsettings.h"
 #include "kopeteaccount.h"
@@ -38,6 +39,7 @@
 #include "kopetechatsession.h"
 #include "kopetegroup.h"
 #include "kopetepicture.h"
+#include "kopeteemoticons.h"
 
 #include "kopeteviewmanager.h"
 
@@ -62,7 +64,7 @@ static QString squashMessage( const Kopete::Message& msg )
 		msgText =msg.plainBody() ;
 		if( msgText.length() > 30 )
 			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
-		msgText=Kopete::Message::escape(msgText);
+		msgText=Kopete::Emoticons::self()->theme().parseEmoticons(Qt::escape(msgText));
 	}
 	else
 	{
@@ -232,24 +234,33 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 
 	if( !outgoingMessage || d->managerMap.contains( manager ) )
 	{
+		// Get an early copy of the plain message body before the chat view works on it
+		// Otherwise toPlainBody() will ignore smileys if they were turned into images during
+		// the html conversion. See bug 161651.
+		QString squashedMessage( squashMessage( msg ) );
+
 		d->foreignMessage=!outgoingMessage; //let know for the view we are about to create
 		manager->view(true,msg.requestedPlugin())->appendMessage( msg );
 		d->foreignMessage=false; //the view is created, reset the flag
 
 		bool appendMessageEvent = d->useQueueOrStack;
+		bool chatIsOnCurrentDesktop = true;
 
-		QWidget *w;
-		if( d->queueUnreadMessages && ( w = dynamic_cast<QWidget*>(view( manager )) ) )
+		QWidget *w = dynamic_cast<QWidget*>(view( manager ));
+#ifdef Q_WS_X11
+		if (w)
+		{
+			chatIsOnCurrentDesktop = KWindowSystem::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop();
+		}
+#endif
+
+		if( d->queueUnreadMessages && w )
 		{
 			// append msg event to queue if chat window is active but not the chat view in it...
 			appendMessageEvent = appendMessageEvent && !(w->isActiveWindow() && manager->view() == d->activeView);
 			// ...and chat window is on another desktop
 			appendMessageEvent = appendMessageEvent && (!d->queueOnlyMessagesOnAnotherDesktop 
-#ifdef Q_WS_X11
-					||!KWindowSystem::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop());
-#else
-					);
-#endif
+					||!chatIsOnCurrentDesktop);
 		}
 		else
 		{
@@ -269,13 +280,13 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		{
 			viewWidget = dynamic_cast<QWidget*>(manager->view(false));
 			isActiveWindow =  manager->view(false) && viewWidget && manager->view() == d->activeView && viewWidget->isActiveWindow();
-			showNotification = ( (!isActiveWindow || Kopete::BehaviorSettings::self()->showEventsIfActive())
-			                     && msg.from());
+			showNotification = ( msg.from() );
 		}
-
+		
 		Kopete::MessageEvent *event = 0L;
-		if ( appendMessageEvent && !outgoingMessage && showNotification )
+		if ( (appendMessageEvent && !outgoingMessage) )
 		{
+			showNotification = showNotification || d->eventList.isEmpty(); // may happen for internal messages
 			event = new Kopete::MessageEvent(msg,manager);
 			d->eventList.append( event );
 			connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
@@ -302,11 +313,19 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					body = ki18n( "<qt>A highlighted message arrived from %1<br />\"%2\"</qt>" );
 					break;
 				default:
-					eventId = QLatin1String( "kopete_contact_incoming" );
+					if ( isActiveWindow || (d->queueOnlyMessagesOnAnotherDesktop 
+						&& chatIsOnCurrentDesktop ) )
+					{
+						eventId = QLatin1String( "kopete_contact_incoming_active_window" );
+					}
+					else
+					{
+						 eventId = QLatin1String( "kopete_contact_incoming" );
+					}
 			}
 
 			KNotification *notify=new KNotification(eventId, viewWidget, isActiveWindow ? KNotification::CloseOnTimeout : KNotification::Persistent);
-			notify->setText(body.subs( Qt::escape(msgFrom) ).subs( squashMessage( msg )  ).toString());
+			notify->setText(body.subs( Qt::escape(msgFrom) ).subs( squashedMessage ).toString());
 			notify->setPixmap( QPixmap::fromImage(msg.from()->metaContact()->picture().image()) );
 			notify->setActions(( QStringList() <<  i18n( "View" )  <<   i18n( "Ignore" )) );
 
@@ -328,16 +347,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			connect(event, SIGNAL(done(Kopete::MessageEvent*)) , notify , SLOT(close() ));
 			notify->sendEvent();
 		}
-
-		if( appendMessageEvent )
-		{
-			if ( !outgoingMessage )
-				Kopete::ChatSessionManager::self()->postNewEvent(event);
-		}
-		else if( d->eventList.isEmpty() )
-		{
-			readMessages( manager, outgoingMessage );
-		}
+		if( event )
+			Kopete::ChatSessionManager::self()->postNewEvent(event);
 	}
 }
 
@@ -367,7 +378,7 @@ void KopeteViewManager::slotEventDeleted( Kopete::MessageEvent *event )
     // d->eventList.remove( event );
     d->eventList.removeAll(event);
 
-    // kDebug(14000) ;
+//    kDebug(14000) ;
     Kopete::ChatSession *kmm=event->message().manager();
     if(!kmm)
     {

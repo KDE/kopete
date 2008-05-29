@@ -53,8 +53,6 @@ URLPicPreviewPreferences::URLPicPreviewPreferences ( QWidget *parent, const QVar
 	connect ( m_ui->previewScaleWidth, SIGNAL ( valueChanged ( int ) ), this, SLOT ( changed() ) );
 	connect ( m_ui->restrictPreviews, SIGNAL ( toggled ( bool ) ), this, SLOT ( changed() ) );
 	connect ( m_ui->previewAmount, SIGNAL ( valueChanged ( int ) ), this, SLOT ( changed() ) );
-
-	load();
 }
 
 URLPicPreviewPreferences::~URLPicPreviewPreferences() {
