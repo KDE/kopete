@@ -1,30 +1,10 @@
-#add_subdirectory(libjingle)
+add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
-MACRO (QMAKE_WRAP filename outfiles )
-  # get include dirs
-  QT4_GET_MOC_INC_DIRS(moc_includes)
+#add_subdirectory( ui ) 
+#add_subdirectory( icons ) 
+#add_subdirectory( libiris ) 
 
-  FOREACH (it ${ARGN})
-    GET_FILENAME_COMPONENT(it ${it} ABSOLUTE)
-    GET_FILENAME_COMPONENT(outfile ${it} NAME_WE)
-
-    SET(outfile ${CMAKE_CURRENT_BINARY_DIR}/${filename})
-    ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
-      COMMAND ${QT_MOC_EXECUTABLE}
-      ARGS ${moc_includes} -o ${outfile} ${it}
-      DEPENDS ${it})
-	SET(${outfiles} ${${outfiles}} ${outfile})
-  ENDFOREACH(it)
-ENDMACRO (QMAKE_WRAP)
-
-MACRO (QMAKE_WRAP_CPP outfiles )
-   QMAKE_WRAP("\${outfile}.moc" ${outfiles} ${ARGN})
-ENDMACRO (QMAKE_WRAP_CPP)
-
-MACRO (QMAKE_WRAP_H outfiles )
-   QMAKE_WRAP("moc_\${outfile}.cpp" ${outfiles} ${ARGN})
-ENDMACRO (QMAKE_WRAP_H)
-
+#message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(JINGLE)")
 include_directories( 
 ${KOPETE_INCLUDES} 
 ${CMAKE_CURRENT_SOURCE_DIR}/../ui/ 
@@ -41,42 +21,50 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../
 ${CMAKE_CURRENT_SOURCE_DIR}/libjingle/ 
 )
 
-link_directories( ${CMAKE_CURRENT_BINARY_DIR}/../libiris/iris/xmpp-im )
+link_directories( ${CMAKE_CURRENT_BINARY_DIR}/../libiris/iris/xmpp-im ./)
+
 
 ########### next target ###############
 
-set(kopete_jingle_PART_SRCS 
-
-  jinglefoosession.cpp
-  jinglefootransport.cpp
-  jinglejabberxml.cpp
-  jinglesession.cpp 
-  jinglesessionmanager.cpp 
-  #jinglevoicesession.cpp  this one'll get put back
-  jinglevoicesessiondialog.cpp 
-  voicecaller.h
-  jinglewatchsessiontask.cpp 
-  #jinglenetwork.cpp
-  #${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/xmpp-im/xmpp_xmlcommon.cpp
-  #${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/xmpp-core/stream.cpp
+set(kopete_jabber_jingle_ui_SRCS
+	ui/jinglevoicesessiondialogbase.ui
 )
 
-QT4_WRAP_UI(
-  kopete_jingle_UIS_H
-  jinglevoicesessiondialogbase.ui
+kde4_add_ui_files(kopete_jabber_jingle_ui_SRCS)
+
+set(kopete_jabber_jingle_PART_SRCS 
+	${kopete_jabber_jingle_ui_SRCS}
+	jinglefoosession.cpp
+	jinglejabberxml.cpp
+	jinglewatchsessiontask.cpp
+	jinglesessionmanager.cpp
+#	jinglevoicesession.cpp
+	jinglefootransport.cpp
+#	jinglenetwork.cpp
+	jinglevoicesessiondialog.cpp
+	jinglesession.cpp
+	jinglevoicecaller.cpp
 )
 
-set(moc_source jinglevoicecaller.cpp)
-set(moc_head voicecaller.h)
+set (kopete_jingle_Q_OBJECT_FILES
+	voicecaller.h
+	jinglesession.h
+	jinglevoicesession.h
+	jinglevoicecaller.h
+#	jinglenetwork.h
+	jinglewatchsessiontask.h
+	jinglevoicesessiondialog.h
+	jingleconnectioncandidate.h
+	jinglesessionmanager.h
+	jinglefoosession.h
+)
 
+qt4_wrap_cpp(kopete_jingle_MOC_FILES ${kopete_jingle_Q_OBJECT_FILES})
 
-QMAKE_WRAP_CPP(kopete_jingle_PART_SRCS ${moc_source})
-QMAKE_WRAP_H(kopete_jingle_PART_SRCS ${moc_head})
-
-
-qt4_wrap_cpp(kopete_jingle_MOC_FILES ${kopete_jingle_PART_SRCS})
-
-kde4_add_library(kopete_jabberjingle STATIC ${kopete_jingle_UIS_H} ${kopete_jingle_PART_SRCS} ${kopete_jingle_MOC_FILES})
+kde4_add_library(kopete_jabberjingle STATIC
+	${kopete_jabber_jingle_PART_SRCS}
+	${kopete_jingle_MOC_FILES}
+)
 
 link_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/libjingle/talk/session/phone/.libs/
@@ -88,10 +76,6 @@ link_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/libjingle/talk/third_party/mediastreamer/.libs/
 	${CMAKE_BINARY_DIR}/lib/
 )
-
-
-#target_link_libraries(kopete_jabberjingle ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete jinglebase-0.3 jinglep2pbase-0.3 jinglep2pclient-0.3 jinglesessiontunnel-0.3 jinglexmpp-0.3)
-
 
 target_link_libraries(kopete_jabberjingle ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES}
 	speex ortp glib-2.0 gmodule-2.0 gthread-2.0 asound expat kopete iris_kopete 
@@ -105,12 +89,10 @@ target_link_libraries(kopete_jabberjingle ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRAR
 )
 
 
-
-
 install(TARGETS kopete_jabberjingle  DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############
 
-#install( FILES kopete_jabber.desktop xmpp.protocol DESTINATION ${SERVICES_INSTALL_DIR})
-#install( FILES jabberchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_jabber)
+install( FILES kopete_jabber.desktop xmpp.protocol DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES jabberchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_jabber)

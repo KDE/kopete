@@ -18,7 +18,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/network/
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/ 
 ${QCA2_INCLUDE_DIR}
-${CMAKE_CURRENT_SOURCE_DIR}/jingle/
+#${CMAKE_CURRENT_SOURCE_DIR}/jingle/
 )
 
 
@@ -60,7 +60,6 @@ kde4_add_ui_files(kopete_jabber_ui_SRCS
    ui/dlgjabbereditaccountwidget.ui
    ui/dlgchatjoin.ui 
    ui/dlgchatroomslist.ui 
-   jingle/jinglevoicesessiondialogbase.ui
    ui/privacyrule.ui
    ui/privacy.ui
 )
@@ -103,9 +102,10 @@ set(kopete_jabber_PART_SRCS
 
 kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
-add_subdirectory( jingle ) 
+#add_subdirectory( jingle ) 
 
-target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete kopete_jabberjingle)
+target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete)
+#target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete kopete_jabberjingle)
 
 
 install(TARGETS kopete_jabber  DESTINATION ${PLUGIN_INSTALL_DIR})

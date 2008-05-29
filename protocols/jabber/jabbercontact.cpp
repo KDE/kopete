@@ -59,6 +59,8 @@
 #include "jabbertransport.h"
 #include "dlgjabbervcard.h"
 
+#undef SUPPORT_JINGLE //Jingle support Hardly disabled
+
 #ifdef SUPPORT_JINGLE
  #include "jinglesessionmanager.h"
  #include "jinglevoicesession.h"
@@ -1253,7 +1255,6 @@ void JabberContact::voiceCall( )
 			// If the jid resource is empty, get the JID from best resource for this contact.
 			jid = bestResource->jid();
 		}
-#if 1
 		//TODO iterate through resources until we find one that supports voice
 		if( account()->sessionManager() && bestResource->features().canVoice() )
 		{
@@ -1265,7 +1266,6 @@ void JabberContact::voiceCall( )
 		}else{
 			KMessageBox::sorry(0,i18n("The contact you selected does not have a jabber resource with voice support right now."), i18n("Unable to make voice call"));
 		}
-#endif
 	}
 	else
 	{

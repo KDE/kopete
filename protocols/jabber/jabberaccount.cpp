@@ -78,6 +78,8 @@
 
 #include <sys/utsname.h>
 
+#undef SUPPORT_JINGLE //Jingle support Hardly disabled
+
 #ifdef SUPPORT_JINGLE
 #include "voicecaller.h"
 #include "jinglevoicecaller.h"
