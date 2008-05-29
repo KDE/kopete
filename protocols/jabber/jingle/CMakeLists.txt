@@ -61,8 +61,8 @@ set(kopete_jingle_PART_SRCS
   #${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/xmpp-core/stream.cpp
 )
 
-kde4_add_ui_files(
-  kopete_jingle_PART_SRCS
+QT4_WRAP_UI(
+  kopete_jingle_UIS_H
   jinglevoicesessiondialogbase.ui
 )
 
@@ -74,9 +74,9 @@ QMAKE_WRAP_CPP(kopete_jingle_PART_SRCS ${moc_source})
 QMAKE_WRAP_H(kopete_jingle_PART_SRCS ${moc_head})
 
 
-qt4_wrap_cpp(${kopete_jingle_PART_SRCS})
+qt4_wrap_cpp(kopete_jingle_MOC_FILES ${kopete_jingle_PART_SRCS})
 
-kde4_add_library(kopete_jabberjingle STATIC ${kopete_jingle_PART_SRCS})
+kde4_add_library(kopete_jabberjingle STATIC ${kopete_jingle_UIS_H} ${kopete_jingle_PART_SRCS} ${kopete_jingle_MOC_FILES})
 
 link_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/libjingle/talk/session/phone/.libs/

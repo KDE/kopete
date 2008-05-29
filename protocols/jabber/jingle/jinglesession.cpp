@@ -140,7 +140,7 @@ void JingleSession::processStanza(QDomDocument doc)
 			}else if(action == "session-info"){
 
 				if(jingleElement.hasChildNodes()){
-					recieveSessionInfo(root);
+					receiveSessionInfo(root);
 				}else{
 					
 				}

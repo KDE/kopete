@@ -28,7 +28,7 @@ class JabberContact;
 class VoiceCaller;
 class JingleVoiceSession;
 
-class JingleVoiceSessionDialog : public QDialog, private Ui::JingleVoiceSessionDialogBase
+class JingleVoiceSessionDialog : public QDialog
 {
 	Q_OBJECT
 public:
@@ -58,7 +58,9 @@ private slots:
 	void sessionTerminated();
 
 private:
+	Ui::JingleVoiceSessionDialogBase Ui;
 	void setContactInformation(JabberContact *contact);
+	QWidget *m_parent;
 
 	JingleVoiceSession *m_session;
 	Jid m_peerJid;

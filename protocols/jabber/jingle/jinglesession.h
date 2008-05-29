@@ -23,7 +23,7 @@
 #include <xmpp.h> // XMPP::Jid
 #include <q3valuelist.h>
 
-#include "jingleconnectioncandidate.h"
+//#include "jingleconnectioncandidate.h"
 
 struct JingleContentType;
 class JingleTransport;
@@ -177,11 +177,11 @@ protected:
 	 * If that candidate cannot be written to, 
 	 * immediately returns false. Otherwise, returns true.
 	 */
-	virtual bool handleSessionAccept(QDomElement stanza);
+	virtual bool handleSessionAccept(QDomElement stanza) {return false;}
 
 	//this should probably just be checked by namespace.
 	//default: do nothing
-	virtual void recieveSessionInfo(QDomElement stanza);
+	virtual void receiveSessionInfo(QDomElement stanza) {return;}
 
 	QList<JingleContentType> types;
 

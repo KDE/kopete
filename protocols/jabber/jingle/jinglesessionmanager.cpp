@@ -34,14 +34,19 @@
 
 #include <QtNetwork>
 
+/* FIXME:
+ * Bad namespaces. Check XMPP Jingle specification
+ */
+
 #define JINGLE_NS "http://www.google.com/session"
 #define JINGLE_VOICE_SESSION_NS "http://www.google.com/session/phone"
 #define JINGLE_FOO_NS "http://kopete.kde.com/jingle/foo.html"
 
 //BEGIN JingleSessionManager::SlotsProxy
-class JingleSessionManager;
-class JingleSessionManager::SlotsProxy : public sigslot::has_slots<>
+/*class JingleSessionManager;
+class JingleSessionManager::SlotsProxy : public QObject
 {
+	Q_OBJECT
 public:
 	SlotsProxy(JingleSessionManager *parent)
 	 : sessionManager(parent)
@@ -50,13 +55,13 @@ public:
 	void OnSignalingRequest()
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << "Requesting Jingle signaling.";
-		sessionManager->cricketSessionManager()->OnSignalingReady();
+		//sessionManager->cricketSessionManager()->OnSignalingReady();
 	}
 	
 	
 private:
 	JingleSessionManager *sessionManager;
-};
+};*/
 
 
 //BEGIN JingleSessionManager::Private
@@ -83,7 +88,7 @@ public:
 //END JingleSessionManager::Private
 
 JingleSessionManager::JingleSessionManager(JabberAccount *account)
- : QObject(account), d(new Private(account))
+/* : QObject(account), d(new Private(account))*/
 {
 
 	// Create watch incoming session task.
@@ -103,11 +108,6 @@ JingleSessionManager::JingleSessionManager(JabberAccount *account)
 
 	// Create the JingleNetworkManager that manager local network connections
 	d->networkManager = new JingleNetworkManager(googleStunAddress);
-
-
-
-
-
 }
 
 JingleSessionManager::~JingleSessionManager()
@@ -142,7 +142,7 @@ JingleSession *JingleSessionManager::createSession(const QString &sessionType, c
 	if(sessionType == JINGLE_VOICE_SESSION_NS)
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << "Creating a voice session";
-		newSession = new JingleVoiceSession(account(), peers);
+		//newSession = new JingleVoiceSession(account(), peers);
 	}else if (sessionType == JINGLE_FOO_NS)
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating a foo session" <<endl;
@@ -176,13 +176,12 @@ void JingleSessionManager::slotIncomingSession(const QString &sessionType, const
 	kDebug(JABBER_DEBUG_GLOBAL) << "Incoming session: " << sessionType << ". Initiator: " << initiator;
 
 	JingleSession *newSession = createSession(sessionType, XMPP::Jid(initiator));
-	emit incomingSession(sessionType, newSession);
+	//emit incomingSession(sessionType, newSession);
 }
 
 /*void OnSignalingReady()
 {
-	for(int i=0;i<d->sessionList.size();i++){
-		d->sessionList[i].
+	//for(int i = 0; i < d->sessionList.size(); i++);
 
 }*/
 

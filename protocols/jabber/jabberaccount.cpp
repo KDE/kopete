@@ -83,9 +83,9 @@
 #include "jinglevoicecaller.h"
 
 // NOTE: Disabled for 0.12, will develop them futher in KDE4
- #include "jinglesessionmanager.h"
- #include "jinglesession.h"
- #include "jinglevoicesession.h"
+#include "jinglesessionmanager.h"
+#include "jinglesession.h"
+#include "jinglevoicesession.h"
 #include "jinglevoicesessiondialog.h"
 #endif
 

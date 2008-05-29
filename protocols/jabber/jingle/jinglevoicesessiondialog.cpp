@@ -82,17 +82,17 @@ using namespace XMPP;
 // }
 
 JingleVoiceSessionDialog::JingleVoiceSessionDialog(JingleVoiceSession *session, QWidget *parent)
- : Ui::JingleVoiceSessionDialogBase(),QDialog(parent), m_session(session), m_peerJid(session->peers().first()), m_sessionState(Incoming)
+ : m_parent(parent), m_session(session), m_peerJid(session->peers().first()), m_sessionState(Incoming)
 {
 	
-	setupUi(this);
+	Ui.setupUi(this);
 	
 	QString contactJid = m_peerJid.full();
 	setWindowTitle( i18n("Voice session with %1", contactJid) );
 
-	connect(buttonAccept, SIGNAL(clicked()), this, SLOT(slotAcceptClicked()));
-	connect(buttonDecline, SIGNAL(clicked()), this, SLOT(slotDeclineClicked()));
-	connect(buttonTerminate, SIGNAL(clicked()), this, SLOT(slotTerminateClicked()));
+	connect(Ui.buttonAccept, SIGNAL(clicked()), this, SLOT(slotAcceptClicked()));
+	connect(Ui.buttonDecline, SIGNAL(clicked()), this, SLOT(slotDeclineClicked()));
+	connect(Ui.buttonTerminate, SIGNAL(clicked()), this, SLOT(slotTerminateClicked()));
 
 // NOTE: Disabled for 0.12
 #if 1
@@ -113,9 +113,9 @@ JingleVoiceSessionDialog::JingleVoiceSessionDialog(JingleVoiceSession *session, 
 		setContactInformation( peerContact );
 	}
 	
-	labelSessionStatus->setText( i18n("Incoming Session...") );
-	buttonAccept->setEnabled(true);
-	buttonDecline->setEnabled(true);
+	Ui.labelSessionStatus->setText( i18n("Incoming Session...") );
+	Ui.buttonAccept->setEnabled(true);
+	Ui.buttonDecline->setEnabled(true);
 }
 
 JingleVoiceSessionDialog::~JingleVoiceSessionDialog()
@@ -127,22 +127,22 @@ void JingleVoiceSessionDialog::setContactInformation(JabberContact *contact)
 {
 	if( contact->metaContact() )
 	{
-		labelDisplayName->setText( contact->metaContact()->displayName() );
-		labelContactPhoto->setPixmap( QPixmap(contact->metaContact()->photo()) );
+		Ui.labelDisplayName->setText( contact->metaContact()->displayName() );
+		Ui.labelContactPhoto->setPixmap( QPixmap(contact->metaContact()->photo()) );
 	}
 	else
 	{
-		labelDisplayName->setText( contact->nickName() );
-		labelDisplayName->setPixmap( QPixmap(contact->property(Kopete::Global::Properties::self()->photo()).value().toString()) );
+		Ui.labelDisplayName->setText( contact->nickName() );
+		Ui.labelDisplayName->setPixmap( QPixmap(contact->property(Kopete::Global::Properties::self()->photo()).value().toString()) );
 	}
 }
 
 void JingleVoiceSessionDialog::start()
 {
-	labelSessionStatus->setText( i18n("Waiting for other peer...") );
-	buttonAccept->setEnabled(false);
-	buttonDecline->setEnabled(false);
-	buttonTerminate->setEnabled(true);
+	Ui.labelSessionStatus->setText( i18n("Waiting for other peer...") );
+	Ui.buttonAccept->setEnabled(false);
+	Ui.buttonDecline->setEnabled(false);
+	Ui.buttonTerminate->setEnabled(true);
 	m_session->start();
 	//m_session->call( m_peerJid );
 	m_sessionState = Waiting;
@@ -150,10 +150,10 @@ void JingleVoiceSessionDialog::start()
 
 void JingleVoiceSessionDialog::slotAcceptClicked()
 {
-	labelSessionStatus->setText( i18n("Session accepted.") );
-	buttonAccept->setEnabled(false);
-	buttonDecline->setEnabled(false);
-	buttonTerminate->setEnabled(true);
+	Ui.labelSessionStatus->setText( i18n("Session accepted.") );
+	Ui.buttonAccept->setEnabled(false);
+	Ui.buttonDecline->setEnabled(false);
+	Ui.buttonTerminate->setEnabled(true);
 	
 	m_session->accept();
 	//m_session->accept( m_peerJid );
@@ -162,10 +162,10 @@ void JingleVoiceSessionDialog::slotAcceptClicked()
 
 void JingleVoiceSessionDialog::slotDeclineClicked()
 {
-	labelSessionStatus->setText( i18n("Session declined.") );
-	buttonAccept->setEnabled(false);
-	buttonDecline->setEnabled(false);
-	buttonTerminate->setEnabled(false);
+	Ui.labelSessionStatus->setText( i18n("Session declined.") );
+	Ui.buttonAccept->setEnabled(false);
+	Ui.buttonDecline->setEnabled(false);
+	Ui.buttonTerminate->setEnabled(false);
 
 	m_session->decline();
 	//session->reject( m_peerJid );
@@ -175,10 +175,10 @@ void JingleVoiceSessionDialog::slotDeclineClicked()
 
 void JingleVoiceSessionDialog::slotTerminateClicked()
 {
-	labelSessionStatus->setText( i18n("Session terminated.") );
-	buttonAccept->setEnabled(false);
-	buttonDecline->setEnabled(false);
-	buttonTerminate->setEnabled(false);
+	Ui.labelSessionStatus->setText( i18n("Session terminated.") );
+	Ui.buttonAccept->setEnabled(false);
+	Ui.buttonDecline->setEnabled(false);
+	Ui.buttonTerminate->setEnabled(false);
 
 	m_session->terminate();
 	//m_session->terminate( m_peerJid );
@@ -195,10 +195,10 @@ void JingleVoiceSessionDialog::sessionStarted()
 {
 	//if( m_peerJid.compare(jid) )
 	{
-		labelSessionStatus->setText( i18n("Session in progress.") );
-		buttonAccept->setEnabled(false);
-		buttonDecline->setEnabled(false);
-		buttonTerminate->setEnabled(true);
+		Ui.labelSessionStatus->setText( i18n("Session in progress.") );
+		Ui.buttonAccept->setEnabled(false);
+		Ui.buttonDecline->setEnabled(false);
+		Ui.buttonTerminate->setEnabled(true);
 		m_sessionState = Started;
 	}
 }
@@ -207,10 +207,10 @@ void JingleVoiceSessionDialog::sessionAccepted()
 {
 	//if( m_peerJid.compare(jid) )
 	{
-		labelSessionStatus->setText( i18n("Session accepted.") );
-		buttonAccept->setEnabled(false);
-		buttonDecline->setEnabled(false);
-		buttonTerminate->setEnabled(true);
+		Ui.labelSessionStatus->setText( i18n("Session accepted.") );
+		Ui.buttonAccept->setEnabled(false);
+		Ui.buttonDecline->setEnabled(false);
+		Ui.buttonTerminate->setEnabled(true);
 		m_sessionState = Accepted;
 	}
 }
@@ -219,10 +219,10 @@ void JingleVoiceSessionDialog::sessionDeclined()
 {
 	//if( m_peerJid.compare(jid) )
 	{
-		labelSessionStatus->setText( i18n("Session declined.") );
-		buttonAccept->setEnabled(false);
-		buttonDecline->setEnabled(false);
-		buttonTerminate->setEnabled(false);
+		Ui.labelSessionStatus->setText( i18n("Session declined.") );
+		Ui.buttonAccept->setEnabled(false);
+		Ui.buttonDecline->setEnabled(false);
+		Ui.buttonTerminate->setEnabled(false);
 		m_sessionState = Declined;
 	}
 }
@@ -231,10 +231,10 @@ void JingleVoiceSessionDialog::sessionTerminated()
 {
 	//if( m_peerJid.compare(jid) )
 	{
-		labelSessionStatus->setText( i18n("Session terminated.") );
-		buttonAccept->setEnabled(false);
-		buttonDecline->setEnabled(false);
-		buttonTerminate->setEnabled(false);
+		Ui.labelSessionStatus->setText( i18n("Session terminated.") );
+		Ui.buttonAccept->setEnabled(false);
+		Ui.buttonDecline->setEnabled(false);
+		Ui.buttonTerminate->setEnabled(false);
 		m_sessionState = Terminated;
 	}
 }
