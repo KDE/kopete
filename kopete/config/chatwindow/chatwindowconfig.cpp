@@ -142,7 +142,7 @@ private:
 
 ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args ),
-		m_currentStyle (0L), m_loading(false), m_styleChanged(false),
+		m_currentStyle (0L), m_loading(false),
 		m_previewProtocol(0L), m_previewAccount(0L), m_myselfMetaContact(0L),
 		m_jackMetaContact(0L), m_myself(0L), m_jack(0L)
 {
@@ -273,7 +273,6 @@ void ChatWindowConfig::save()
 
 	appearanceSettings->writeConfig();
 	settings->writeConfig();
-	m_styleChanged = false;
 
 	load();
 }
@@ -309,16 +308,19 @@ void ChatWindowConfig::slotLoadChatStyles()
 	{
 		// Insert style name into the listbox
 		m_styleUi.styleList->insertItem( 0, styleName );
-
-		if( styleName == KopeteChatWindowSettings::self()->styleName() )
-		{
-			kDebug(14000) << "Restoring saved style: " << styleName;
-
-			m_styleUi.styleList->setCurrentItem( m_styleUi.styleList->item( 0 ) );
-		}
 	}
 
 	m_styleUi.styleList->setSortingEnabled( true );
+
+	QString currentStyle = KopeteChatWindowSettings::self()->styleName();
+	QList<QListWidgetItem *> items = m_styleUi.styleList->findItems( currentStyle, Qt::MatchFixedString | Qt::MatchCaseSensitive );
+	if( items.count() > 0 )
+	{
+		kDebug(14000) << "Restoring saved style: " << currentStyle;
+
+		m_styleUi.styleList->setCurrentItem( items[0] );
+		m_styleUi.styleList->scrollToItem( items[0] );
+	}
 }
 
 

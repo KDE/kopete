@@ -80,7 +80,6 @@ private:
 	ChatWindowStyle::StyleVariants m_currentVariantMap;
 	ChatWindowStyle *m_currentStyle;
 	bool m_loading;
-	bool m_styleChanged;
 	bool m_allowDownloadTheme;
 	// For style preview
 	FakeProtocol *m_previewProtocol;
