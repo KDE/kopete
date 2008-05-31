@@ -1158,7 +1158,6 @@ void KopeteChatWindow::slotRTFEnabled( ChatView* cv, bool enabled)
 	if ( cv != m_activeView )
 		return;
 
-	toolBar( "formatToolBar" )->setVisible(enabled);
 	updateSpellCheckAction();
 }
 
