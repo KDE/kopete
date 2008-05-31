@@ -5,27 +5,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>592</width>
-    <height>628</height>
+    <width>915</width>
+    <height>654</height>
    </rect>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>9</number>
    </property>
-   <property name="topMargin" >
-    <number>9</number>
-   </property>
-   <property name="rightMargin" >
-    <number>9</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>9</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>6</number>
-   </property>
-   <property name="verticalSpacing" >
+   <property name="spacing" >
     <number>6</number>
    </property>
    <item row="3" column="0" >
@@ -36,7 +24,7 @@
      <property name="sizeType" >
       <enum>QSizePolicy::Expanding</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>574</width>
        <height>16</height>
@@ -50,22 +38,10 @@
       <string>Contact Information</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="6" column="0" >
@@ -275,22 +251,10 @@
       <string>Location Information</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item rowspan="2" row="0" column="1" colspan="3" >
@@ -403,7 +367,7 @@
         <property name="sizeType" >
          <enum>QSizePolicy::Expanding</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>41</width>
           <height>58</height>
@@ -420,22 +384,10 @@
       <string>Personal Information</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="2" column="1" >
@@ -588,7 +540,7 @@
       <item row="1" column="2" >
        <widget class="QLabel" name="yahooIdLabel_2" >
         <property name="text" >
-         <string>Title:</string>
+         <string comment="Person's name suffix or prefix" >Title:</string>
         </property>
         <property name="buddy" >
          <cstring>uinEdit</cstring>
