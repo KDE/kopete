@@ -52,6 +52,9 @@ protected:
 	bool m_mobile; // Is this user mobile (i.e. do they have message forwarding on, or mobile AIM)
 
 private:
+	int aimFontSize( int size ) const;
+	QString brMargin( int margin, int fontPointSize, bool endBlock = false ) const;
+
 	QDateTime m_lastAutoresponseTime;
 	
 };
