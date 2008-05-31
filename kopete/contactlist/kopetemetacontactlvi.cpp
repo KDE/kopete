@@ -93,8 +93,8 @@ public:
 
         toolTip += QLatin1String("<tr><td>");
 
-// 		if ( ! metaContact->picture().isNull() )
-        {
+		if ( !metaContact->picture().isNull() )
+		{
 #ifdef __GNUC__
 #warning Currently using metaContact->picture().path() but should use replacement of KopeteMimeSourceFactory
 #endif
@@ -104,7 +104,7 @@ public:
 			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( photoName );
 #endif
 			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( metaContact->picture().path() );
-        }
+		}
 
 		toolTip += QLatin1String("</td><td>");
 
