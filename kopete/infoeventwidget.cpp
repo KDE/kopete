@@ -151,7 +151,7 @@ void InfoEventWidget::updateInfo()
 		d->ui.lblInfo->clear();
 		d->ui.lblActions->clear();
 		// Can't use clear
-		static_cast<KSqueezedTextLabel*>(d->ui.lblTitle)->setText(QString::null);
+		static_cast<KSqueezedTextLabel*>(d->ui.lblTitle)->setText(QString());
 		d->ui.lblEvent->setText( "0/0" );
 		d->ui.buttonPrev->setEnabled( false );
 		d->ui.buttonNext->setEnabled( false );
