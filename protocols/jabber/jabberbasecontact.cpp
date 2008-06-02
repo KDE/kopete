@@ -423,6 +423,10 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		{
 			setProperty ( protocol()->propNickName, vCard.nickName () );
 		}
+		else if ( !vCard.fullName().isEmpty () ) // google talk contacts for example do not have a nickname; better show fullname instead of jabber id
+		{
+			setProperty ( protocol()->propNickName, vCard.fullName () );
+		}
 		else
 		{
 			removeProperty ( protocol()->propNickName );
