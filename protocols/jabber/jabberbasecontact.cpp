@@ -323,14 +323,7 @@ void JabberBaseContact::reevaluateStatus ()
 	 * Set away message property.
 	 * We just need to read it from the current resource.
 	 */
-	if ( !resource.status ().status ().isEmpty () )
-	{
-		setProperty ( protocol()->propAwayMessage, resource.status().status () );
-	}
-	else
-	{
-		removeProperty ( protocol()->propAwayMessage );
-	}
+	setStatusMessage( resource.status().status() );
 
 }
 
