@@ -10,6 +10,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Status
+Name[ca]=Estat
 Name[el]=Κατάσταση
 Name[et]=Olek
 Name[ga]=Stádas
@@ -24,6 +25,7 @@ Name[x-test]=xxStatusxx
 Name[zh_CN]=状态
 Name[zh_TW]=狀態
 Comment=Manage Your Statuses
+Comment[ca]=Gestioneu els vostres estats
 Comment[da]=Håndtér din status
 Comment[el]=Διαχείριση των καταστάσεών σας
 Comment[et]=Oma olekute haldamine
