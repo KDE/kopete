@@ -69,8 +69,8 @@ void AIMMyselfContact::userInfoUpdated()
 	AIMProtocol* p = static_cast<AIMProtocol *>(protocol());
 	Oscar::Presence presence = p->statusManager()->presenceOf( extendedStatus, details().userClass() );
 
-	setProperty( Kopete::Global::Properties::self()->statusMessage(), static_cast<AIMAccount*>( account() )->engine()->statusMessage() );
 	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
+	setStatusMessage( static_cast<AIMAccount*>( account() )->engine()->statusMessage() );
 }
 
 void AIMMyselfContact::setOwnProfile( const QString& newProfile )

@@ -58,7 +58,6 @@ public:
 	const Kopete::OnlineStatus Idle;
 	const Kopete::OnlineStatus Connecting;
 
-	const Kopete::PropertyTmpl 	awayMessage;
 	const Kopete::PropertyTmpl 	iconCheckSum;
 	const Kopete::PropertyTmpl 	iconExpire;
 	const Kopete::PropertyTmpl 	iconRemoteUrl;

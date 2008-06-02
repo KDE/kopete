@@ -123,7 +123,7 @@ void YahooContact::setOnlineStatus(const Kopete::OnlineStatus &status)
 		Contact::setOnlineStatus( status );
 
 	if( status.status() == Kopete::OnlineStatus::Offline )
-		removeProperty( ((YahooProtocol*)(m_account->protocol()))->awayMessage);
+		setStatusMessage( Kopete::StatusMessage() );
 }
 
 void YahooContact::setStealthed( bool stealthed )
