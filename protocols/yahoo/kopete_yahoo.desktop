@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 X-Kopete-Version=1000900
-Icon=im-yahoo
+Icon=yahoo_protocol
 X-KDE-ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_yahoo
 X-Kopete-Messaging-Protocol=messaging/yahoo
