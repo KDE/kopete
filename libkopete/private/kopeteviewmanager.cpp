@@ -347,6 +347,20 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			connect(event, SIGNAL(done(Kopete::MessageEvent*)) , notify , SLOT(close() ));
 			notify->sendEvent();
 		}
+
+		if (!d->useQueueOrStack)
+		{
+			// "Open messages instantly" setting
+			readMessages(manager, outgoingMessage, true);
+		}
+
+		KopeteView *view = manager->view(false);
+		if ( d->raiseWindow && view && view->isVisible() )
+		{
+			// "Raise window on incoming message" setting
+			view->raise();
+		}
+
 		if( event )
 			Kopete::ChatSessionManager::self()->postNewEvent(event);
 	}
