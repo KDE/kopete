@@ -127,7 +127,7 @@ InfoEventIconLabel::InfoEventIconLabel( QWidget *parent )
 	setFixedSize( 16, 16 );
 	setPixmap( SmallIcon( "flag-black" ) );
 	setToolTip( i18n( "Service messages" ) );
-	
+
 	connect( Kopete::InfoEventManager::self(), SIGNAL(changed()), this, SLOT(updateIcon()) );
 }
 
@@ -354,7 +354,7 @@ void KopeteWindow::initView()
 	d->infoEventWidget->setVisible ( false );
 	connect ( d->infoEventWidget, SIGNAL(showRequest()), this, SLOT(slotShowInfoEventWidget()) );
 	l->addWidget ( d->infoEventWidget );
-	
+
 	setCentralWidget ( w );
 	d->contactlist->setFocus();
 }
@@ -427,6 +427,7 @@ void KopeteWindow::initActions()
 	actionCollection()->addAction ( "settings_keys", act );
 
 	KAction *configureGlobalShortcutsAction = new KAction ( KIcon ( "configure-shortcuts" ), i18n ( "Configure &Global Shortcuts..." ), this );
+	configureGlobalShortcutsAction->setMenuRole( QAction::NoRole ); //OS X: prevent Qt heuristics to move action to app menu->"Preferences"
 	actionCollection()->addAction ( "settings_global", configureGlobalShortcutsAction );
 	connect ( configureGlobalShortcutsAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotConfGlobalKeys() ) );
 
