@@ -1,3 +1,7 @@
+project ( kopete-bonjour )
+
+find_package(KDE4 REQUIRED)
+include (KDE4Defaults)
 find_package(Kopete)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
