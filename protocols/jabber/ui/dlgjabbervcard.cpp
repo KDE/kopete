@@ -22,14 +22,11 @@
 
 #include "dlgjabbervcard.h"
 
-#include <q3textedit.h>
 #include <qregexp.h>
 #include <qbuffer.h>
 
 #include <qapplication.h>
-#include <q3widgetstack.h>
-//Added by qt3to4:
-#include <QPixmap>
+
 // KDE includes
 #include <kdebug.h>
 #include <kpushbutton.h>
@@ -208,7 +205,7 @@ void dlgJabberVCard::setReadOnly (bool state)
 	m_mainWidget->leJID->setReadOnly (state);
 	m_mainWidget->leBirthday->setReadOnly (state);
 	m_mainWidget->leTimezone->setReadOnly (state);
-	m_mainWidget->wsHomepage->raiseWidget(state ? 0 : 1);
+	m_mainWidget->wsHomepage->setCurrentIndex(state ? 0 : 1);
 	// Disable photo buttons when read only
 	m_mainWidget->btnSelectPhoto->setEnabled(!state);
 	m_mainWidget->btnClearPhoto->setEnabled(!state);
@@ -220,7 +217,7 @@ void dlgJabberVCard::setReadOnly (bool state)
 	m_mainWidget->leHomeCity->setReadOnly (state);
 	m_mainWidget->leHomePostalCode->setReadOnly (state);
 	m_mainWidget->leHomeCountry->setReadOnly (state);
-	m_mainWidget->wsHomeEmail->raiseWidget(state ? 0 : 1);
+	m_mainWidget->wsHomeEmail->setCurrentIndex(state ? 0 : 1);
 
 	// work address tab
 	m_mainWidget->leWorkStreet->setReadOnly (state);
@@ -229,7 +226,7 @@ void dlgJabberVCard::setReadOnly (bool state)
 	m_mainWidget->leWorkCity->setReadOnly (state);
 	m_mainWidget->leWorkPostalCode->setReadOnly (state);
 	m_mainWidget->leWorkCountry->setReadOnly (state);
-	m_mainWidget->wsWorkEmail->raiseWidget(state ? 0 : 1);
+	m_mainWidget->wsWorkEmail->setCurrentIndex(state ? 0 : 1);
 
 	// work information tab
 	m_mainWidget->leCompany->setReadOnly (state);
@@ -258,7 +255,7 @@ void dlgJabberVCard::setEnabled(bool state)
 	m_mainWidget->leJID->setEnabled (state);
 	m_mainWidget->leBirthday->setEnabled (state);
 	m_mainWidget->leTimezone->setEnabled (state);
-	m_mainWidget->wsHomepage->raiseWidget(state ? 1 : 0);
+	m_mainWidget->wsHomepage->setCurrentIndex(state ? 1 : 0);
 	// Disable photo buttons when read only
 	m_mainWidget->btnSelectPhoto->setEnabled(state);
 	m_mainWidget->btnClearPhoto->setEnabled(state);
@@ -270,7 +267,7 @@ void dlgJabberVCard::setEnabled(bool state)
 	m_mainWidget->leHomeCity->setEnabled (state);
 	m_mainWidget->leHomePostalCode->setEnabled (state);
 	m_mainWidget->leHomeCountry->setEnabled (state);
-	m_mainWidget->wsHomeEmail->raiseWidget(state ? 0 : 1);
+	m_mainWidget->wsHomeEmail->setCurrentIndex(state ? 0 : 1);
 
 	// work address tab
 	m_mainWidget->leWorkStreet->setEnabled (state);
@@ -279,7 +276,7 @@ void dlgJabberVCard::setEnabled(bool state)
 	m_mainWidget->leWorkCity->setEnabled (state);
 	m_mainWidget->leWorkPostalCode->setEnabled (state);
 	m_mainWidget->leWorkCountry->setEnabled (state);
-	m_mainWidget->wsWorkEmail->raiseWidget(state ? 0 : 1);
+	m_mainWidget->wsWorkEmail->setCurrentIndex(state ? 0 : 1);
 
 	// work information tab
 	m_mainWidget->leCompany->setEnabled (state);
