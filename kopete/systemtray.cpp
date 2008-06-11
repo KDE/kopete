@@ -25,6 +25,7 @@
 #include <QMouseEvent>
 #include <QPixmap>
 #include <QEvent>
+#include <QPainter>
 
 #include <kaboutdata.h>
 #include <kactioncollection.h>
@@ -41,6 +42,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopetecontact.h"
 #include "kopetewindow.h"
+#include <kiconeffect.h>
 
 KopeteSystemTray* KopeteSystemTray::s_systemTray = 0;
 
@@ -233,56 +235,53 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 	if ( mIsBlinking )
 		return;
 
-	
-	//kDebug(14010) ;
-	bool bOnline = false;
-	bool bAway = false;
-	bool bOffline = false;
-	Kopete::Contact *c = 0;
-
-	QListIterator<Kopete::Account *> it(Kopete::AccountManager::self()->accounts());
-	while ( it.hasNext() )
+	Kopete::OnlineStatus highestStatus;
+	foreach ( Kopete::Account *account, Kopete::AccountManager::self()->accounts())
 	{
-		c = it.next()->myself();
-		if (!c)
-			continue;
-
-		if (c->onlineStatus().status() == Kopete::OnlineStatus::Online)
+		if ( account->myself() && account->myself()->onlineStatus() > highestStatus )
 		{
-			bOnline = true; // at least one contact is online
-		}
-		else if (c->onlineStatus().status() == Kopete::OnlineStatus::Away
-		      || c->onlineStatus().status() == Kopete::OnlineStatus::Invisible)
-		{
-			bAway = true; // at least one contact is away or invisible
-		}
-		else // this account must be offline (or unknown, which I don't know how to handle)
-		{
-			bOffline = true;
+			highestStatus = account->myself()->onlineStatus();
 		}
 	}
 
-	if (!bOnline && !bAway && !bOffline) // special case, no accounts defined (yet)
-		bOffline = true;
-
-	if (bAway)
+	switch ( highestStatus.status() )
 	{
-		if (!bOnline && !bOffline) // none online and none offline -> all away
-			setIcon(loadIcon("kopete_all_away"));
-		else
-			setIcon(loadIcon("kopete_some_away"));
-	}
-	else if(bOnline)
-	{
-		/*if(bOffline) // at least one offline and at least one online -> some accounts online
-			setIcon(loadIcon("kopete_some_online"));
-		else*/ // none offline and none away -> all online
-			setIcon(mKopeteIcon);
-	}
-	else // none away and none online -> all offline
-	{
-		//kDebug(14010) << "All Accounts offline!";
-		setIcon(loadIcon("kopete_offline"));
+		case Kopete::OnlineStatus::Unknown:
+		case Kopete::OnlineStatus::Offline:
+		case Kopete::OnlineStatus::Connecting:
+		{
+			QImage offlineIcon = mKopeteIcon.pixmap(22,22).toImage();
+			KIconEffect::toGray( offlineIcon, 0.85 );
+			setIcon( QPixmap::fromImage( offlineIcon ) );
+			break;
+		}
+		case Kopete::OnlineStatus::Invisible:
+		{
+			QPixmap statusOverlay = loadIcon("user-invisible").pixmap(11,11);
+			QPixmap statusIcon = mKopeteIcon.pixmap(22,22);
+			if (!statusIcon.isNull() && !statusOverlay.isNull())
+			{
+				QPainter painter(&statusIcon);
+				painter.drawPixmap(QPoint(11,11), statusOverlay);
+			}
+			setIcon( statusIcon );
+			break;
+		}
+		case Kopete::OnlineStatus::Away:
+		{
+			QPixmap statusOverlay = loadIcon("user-away").pixmap(11,11);
+			QPixmap statusIcon = mKopeteIcon.pixmap(22,22);
+			if (!statusIcon.isNull() && !statusOverlay.isNull())
+			{
+				QPainter painter(&statusIcon);
+				painter.drawPixmap(QPoint(11,11), statusOverlay);
+			}
+			setIcon( statusIcon );
+			break;
+		}
+		case Kopete::OnlineStatus::Online:
+			setIcon( mKopeteIcon );
+			break;
 	}
 }
 
