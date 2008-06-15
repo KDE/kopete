@@ -557,7 +557,7 @@ void ChatWindowConfig::createPreviewChatSession()
 	contactList.append(m_jack);
 	// Create fakeChatSession
 	m_previewChatSession = Kopete::ChatSessionManager::self()->create(m_myself, contactList, m_previewProtocol);
-	m_previewChatSession->setDisplayName("Preview Session");
+	m_previewChatSession->setDisplayName(i18nc("preview of a chat session", "Preview Session"));
 }
 
 void ChatWindowConfig::createPreviewMessages()
