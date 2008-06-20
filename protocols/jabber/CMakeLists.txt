@@ -4,7 +4,7 @@ add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 add_subdirectory( icons ) 
 add_subdirectory( libiris ) 
 
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(JINGLE)")
+message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: added subdir $(JINGLE)")
 include_directories( 
 ${KOPETE_INCLUDES} 
 ${CMAKE_CURRENT_SOURCE_DIR}/ui/
@@ -18,7 +18,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/network/
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/ 
 ${QCA2_INCLUDE_DIR}
-#${CMAKE_CURRENT_SOURCE_DIR}/jingle/
+${CMAKE_CURRENT_SOURCE_DIR}/jingle/
 )
 
 
@@ -102,10 +102,10 @@ set(kopete_jabber_PART_SRCS
 
 kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
-#add_subdirectory( jingle ) 
+add_subdirectory( jingle ) 
 
-target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete)
-#target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete kopete_jabberjingle)
+#target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete)
+target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete kopete_jabberjingle)
 
 
 install(TARGETS kopete_jabber  DESTINATION ${PLUGIN_INSTALL_DIR})

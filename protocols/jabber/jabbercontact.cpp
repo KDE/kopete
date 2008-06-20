@@ -62,9 +62,9 @@
 #undef SUPPORT_JINGLE //Jingle support Hardly disabled
 
 #ifdef SUPPORT_JINGLE
- #include "jinglesessionmanager.h"
- #include "jinglevoicesession.h"
-#include "jinglevoicesessiondialog.h"
+	#include "jinglesessionmanager.h"
+	#include "jinglevoicesession.h"
+	#include "jinglevoicesessiondialog.h"
 #endif
 
 /**
@@ -248,22 +248,23 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	actionCollection->append( actionSelectResource );
 	
 	
-#ifdef SUPPORT_JINGLE
-	//KAction *actionVoiceCall = new KAction( i18n ("Voice call"), "voicecall", 0, this, SLOT (voiceCall ()), 0, "jabber_voicecall");
-  KAction *actionVoiceCall = new KAction(this);
-  actionVoiceCall->setText( i18n("Voice call") );
-  connect(actionVoiceCall, SIGNAL(triggered(bool)),SLOT(voiceCall ()));
-	actionVoiceCall->setEnabled( false );
+//#ifdef SUPPORT_JINGLE
+	KAction *actionJingleAudioCall = new KAction(i18n("Jingle Audio call"), this);
+	connect(actionJingleAudioCall, SIGNAL(triggered(bool)),SLOT(slotJingleAudioCall()));
+	actionJingleAudioCall->setEnabled( false );
+	
+	KAction *actionJingleVideoCall = new KAction(i18n("Jingle Video call"), this);
+	connect(actionJingleVideoCall, SIGNAL(triggered(bool)),SLOT(slotJingleVideoCall()));
+	actionJingleVideoCall->setEnabled( false );
 
-	actionCollection->append( actionVoiceCall );
+	actionCollection->append( actionJingleAudioCall );
+	actionCollection->append( actionJingleVideoCall );
 
-	// Check if the current contact support Voice calls, also honor lock by default.
+	// Check if the current contact support jingle calls, also honor lock by default.
 	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( mRosterItem.jid() );
-	if( bestResource && bestResource->features().canVoice() )
-	{
-		actionVoiceCall->setEnabled( true );
-	}
-#endif
+	actionJingleAudioCall->setEnabled( bestResource->features().canJingleAudio() );
+	actionJingleVideoCall->setEnabled( bestResource->features().canJingleVideo() );
+//#endif
 	
 	return actionCollection;
 }
@@ -1241,9 +1242,9 @@ QString JabberContact::lastReceivedMessageId () const
 	return mLastReceivedMessageId;
 }
 
+#ifdef SUPPORT_JINGLE
 void JabberContact::voiceCall( )
 {
-#ifdef SUPPORT_JINGLE
 	Jid jid = mRosterItem.jid();
 	
 	// It's honor lock by default.
@@ -1271,8 +1272,8 @@ void JabberContact::voiceCall( )
 	{
 		// Shouldn't ever go here.
 	}
-#endif
 }
+#endif
 
 void JabberContact::slotDiscoFinished( )
 {
@@ -1343,5 +1344,19 @@ void JabberContact::slotDiscoFinished( )
 }
 
 
+void JabberContact::slotJingleVideoCall()
+{
+	kDebug() << "Start a Jingle Session";
+
+	XMPP::Jid jid = rosterItem().jid();
+	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( jid );
+	JabberChatSession *mManager = manager ( bestResource->resource().name(), Kopete::Contact::CanCreate );
+	Kopete::Message m = Kopete::Message ( this, mManager->members());
+	m.setPlainBody( i18n("Starting a Jingle video negotiation with %1", metaContact()->displayName()) );
+	m.setDirection( Kopete::Message::Internal );
+	mManager->appendMessage ( m, bestResource->resource().name() );
+
+	//TODO:implement me !
+}
 
 #include "jabbercontact.moc"

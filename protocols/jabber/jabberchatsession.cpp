@@ -68,26 +68,31 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	slotUpdateDisplayName ();
 
 #ifdef SUPPORT_JINGLE
-	//KAction *jabber_voicecall = new KAction( i18n("Voice call" ), "voicecall", 0, members().first(), SLOT(voiceCall ()), actionCollection(), "jabber_voicecall" );
 
-	KAction *jabber_voicecall = new KAction(members().first());
-	jabber_voicecall->setText( i18n("Voice call" ));
-	connect(jabber_voicecall, SIGNAL(triggered(bool)), SLOT (voiceCall() ));
+	KAction *jingleaudiocall = new KAction(i18n("Jingle Audio call" ), members().first());
+	connect(jingleaudiocall, SIGNAL(triggered(bool)), SLOT (slotJingleAudioCall() ));
 	setComponentData(protocol->componentData());
-	jabber_voicecall->setEnabled( false );
+	jingleaudiocall->setEnabled( false );
 
+	KAction *jinglevideocall = new KAction(i18n("Jingle Video call" ), members().first());
+	connect(jinglevideocall, SIGNAL(triggered(bool)), SLOT (slotJingleVideoCall() ));
+	setComponentData(protocol->componentData());
+	jinglevideocall->setEnabled( false );
 	
 	Kopete::ContactPtrList chatMembers = members ();
 	if ( chatMembers.first () )
 	{
-		// Check if the current contact support Voice calls, also honor lock by default.
+		// Check if the current contact support Audio calls, also honor lock by default.
 		// FIXME: we should use the active ressource
-		JabberResource *bestResource = account()->resourcePool()->  bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
-		if( bestResource && bestResource->features().canVoice() )
-		{
-			jabber_voicecall->setEnabled( true );
-		}
+		JabberResource *bestResource = account()->resourcePool()->bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
+		jingleaudiocall->setEnabled( bestResource->features().canJingleAudio() );
+		jinglevideocall->setEnabled( bestResource->features().canJingleVideo() );
 	}
+	
+	//FIXME : Toolbar does not show any action (either for MSN or XMPP)
+	//	  It should be corrected in trunk.
+	actionCollection()->addAction( "jabberJingleaudiocall", jingleaudiocall );
+	actionCollection()->addAction( "jabberJinglevideocall", jinglevideocall );
 
 #endif
 

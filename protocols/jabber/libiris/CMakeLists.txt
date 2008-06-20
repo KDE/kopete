@@ -35,6 +35,7 @@ set(iris_SRCS
 iris/jabber/filetransfer.cpp
 iris/jabber/s5b.cpp
 iris/jabber/xmpp_ibb.cpp
+iris/jabber/jingle.cpp
 
 iris/xmpp-core/compress.cpp
 iris/xmpp-core/compressionhandler.cpp
