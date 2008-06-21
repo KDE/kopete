@@ -103,10 +103,14 @@ void InfoEventWidget::nextInfoEvent()
 
 void InfoEventWidget::closeInfoEvent()
 {
-	Kopete::InfoEvent* event = Kopete::InfoEventManager::self()->event( d->currentEvent );
+	Kopete::InfoEventManager* ie = Kopete::InfoEventManager::self();
+	Kopete::InfoEvent* event = ie->event( d->currentEvent );
 
 	Q_ASSERT( event );
 	event->close();
+
+	if ( ie->eventCount() == 0 )
+		setVisible( false );
 }
 
 void InfoEventWidget::slotAnimate( qreal amount )
