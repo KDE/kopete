@@ -306,9 +306,7 @@ static int max_message_size(void *opdata, ConnContext *context){
 		return 1274;
 	} else if( session->protocol()->pluginId() == "YahooProtocol" ){
 		return 700;
-	} else if( session->protocol()->pluginId() == "JabberProtocol" ){
-		return 650;
-	}
+	} 
 
 	// Jabber doesn't need fragmentation. Return 0 to disable.
 	// GaduGadu seems to not need fragmentation too.
