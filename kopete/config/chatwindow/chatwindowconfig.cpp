@@ -476,6 +476,11 @@ void ChatWindowConfig::slotGetChatStyles()
 	KNS::Engine *engine = new KNS::Engine();
 	engine->init(configGrp.config()->name());
 	
+	// FIXME: Upon closing the Settings KCMultiDialog all KCMs are deleted and when reopening
+	// the settings dialog there is no active valid KComponentData, which KNS2 relies on.
+	// Forcing an active one below works around bug 163382, but the problem is somewhere else.
+	KGlobal::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
+
 	KNS::Entry::List entries = engine->downloadDialogModal(this);
 
 	if ( entries.size() > 0 )
