@@ -5,20 +5,16 @@
 #add_subdirectory( libiris ) 
 
 #message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(JINGLE)")
+
 include_directories( 
-${KOPETE_INCLUDES} 
-${CMAKE_CURRENT_SOURCE_DIR}/../ui/ 
-${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/include/
-${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/jabber/ 
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/xmpp-core/ 
-${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/xmpp-im/ 
-${CMAKE_CURRENT_SOURCE_DIR}/../libiris/cutestuff/util/ 
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/network/ 
-${CMAKE_CURRENT_SOURCE_DIR}/../libiris/cutestuff/ 
-${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/ 
+${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/src/xmpp/cutestuff/ 
+${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/include/iris/ 
+${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/src/xmpp/xmpp-core/ 
+${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/src/xmpp/xmpp-im/ 
+${CMAKE_CURRENT_SOURCE_DIR}/../libiris/iris/src/xmpp/
 ${QCA2_INCLUDE_DIR} 
-${CMAKE_CURRENT_SOURCE_DIR}/../ 
-#Some unneeded ?
+${IDN_INCLUDE_DIR}
+${ZLIB_INCLUDE_DIR}
 )
 
 #link_directories( ${CMAKE_CURRENT_BINARY_DIR}/../libiris/iris/xmpp-im ./)

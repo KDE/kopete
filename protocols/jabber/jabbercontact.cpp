@@ -66,6 +66,8 @@
 	#include "jinglevoicesession.h"
 	#include "jinglevoicesessiondialog.h"
 #endif
+#include "jinglesession.h"
+#include "jingletasks.h"
 
 /**
  * JabberContact constructor
@@ -249,21 +251,25 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	
 	
 //#ifdef SUPPORT_JINGLE
+#if 0
+	KAction *testAction = new KAction(i18n("Test action"), this);
+	actionJingleAudioCall->setEnabled( true );
+	actionCollection->append( testAction );
+
 	KAction *actionJingleAudioCall = new KAction(i18n("Jingle Audio call"), this);
-	connect(actionJingleAudioCall, SIGNAL(triggered(bool)),SLOT(slotJingleAudioCall()));
-	actionJingleAudioCall->setEnabled( false );
+	connect(actionJingleAudioCall, SIGNAL(triggered(bool)), SLOT(slotJingleAudioCall()));
 	
 	KAction *actionJingleVideoCall = new KAction(i18n("Jingle Video call"), this);
-	connect(actionJingleVideoCall, SIGNAL(triggered(bool)),SLOT(slotJingleVideoCall()));
-	actionJingleVideoCall->setEnabled( false );
-
-	actionCollection->append( actionJingleAudioCall );
-	actionCollection->append( actionJingleVideoCall );
+	connect(actionJingleVideoCall, SIGNAL(triggered(bool)), SLOT(slotJingleVideoCall()));
 
 	// Check if the current contact support jingle calls, also honor lock by default.
 	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( mRosterItem.jid() );
 	actionJingleAudioCall->setEnabled( bestResource->features().canJingleAudio() );
 	actionJingleVideoCall->setEnabled( bestResource->features().canJingleVideo() );
+	
+	actionCollection->append( actionJingleAudioCall );
+	actionCollection->append( actionJingleVideoCall );
+#endif
 //#endif
 	
 	return actionCollection;
@@ -1295,7 +1301,7 @@ void JabberContact::slotDiscoFinished( )
 				is_transport=true;
 				tr_type=ident.type;
 				//name=ident.name;
-				
+		
 				break;  //(we currently only support gateway)
 			}
 			else if (ident.category == "service")
@@ -1344,7 +1350,35 @@ void JabberContact::slotDiscoFinished( )
 }
 
 
-void JabberContact::slotJingleVideoCall()
+void JabberContact::startJingleAudioCall()
+{
+	startJingleVideoCall();
+	//TODO: implement me.
+	//jingleSessionManager->newSession(to);
+	
+	//--Test purpose--
+	XMPP::JingleSession *session = new XMPP::JingleSession(account()->client()->rootTask(), XMPP::Jid(fullAddress()));
+	
+	QDomDocument doc;
+	QDomElement payload = doc.createElement("payload-type");
+	payload.setAttribute("id", "96");
+	payload.setAttribute("name", "speex");
+	payload.setAttribute("clockrate", "16000");
+	
+	XMPP::JingleContent content;
+	content.addPayloadType(payload);
+	content.setDesriptionNS("urn:xmpp:tmp:jingle:apps:audio-rtp");
+	content.setProfile("RTP/AVP");
+	content.setName("ContentTest");
+	content.setCreator("initiator");
+	content.addTransportNS("urn:xmpp:tmp:jingle:transports:ice-udp");
+	
+	session->addContent(content);
+
+	session->start();
+}
+
+void JabberContact::startJingleVideoCall()
 {
 	kDebug() << "Start a Jingle Session";
 

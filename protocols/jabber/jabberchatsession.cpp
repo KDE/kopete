@@ -437,11 +437,23 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 }
 
- void JabberChatSession::slotSendFile()
-      {
-              QList<Kopete::Contact*>contacts = members();
-              static_cast<JabberContact *>(contacts.first())->sendFile();
-      }
+void JabberChatSession::slotSendFile()
+{
+	QList<Kopete::Contact*>contacts = members();
+	static_cast<JabberContact *>(contacts.first())->sendFile();
+}
+
+void JabberChatSession::slotJingleAudioCall()
+{
+	QList<Kopete::Contact*>contacts = members();
+	static_cast<JabberContact *>(contacts.first())->startJingleAudioCall();
+}
+
+void JabberChatSession::slotJingleVideoCall()
+{
+	QList<Kopete::Contact*>contacts = members();
+	static_cast<JabberContact *>(contacts.first())->startJingleVideoCall();
+}
 
 #include "jabberchatsession.moc"
 

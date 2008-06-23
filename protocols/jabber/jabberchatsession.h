@@ -86,6 +86,9 @@ private slots:
 
 	void slotSendFile();
 
+	void slotJingleAudioCall();
+	void slotJingleVideoCall();
+
 private:
 	enum  Event { Delivered, Displayed,
 		Composing, CancelComposing, Inactive, Gone } ;
