@@ -59,11 +59,11 @@ KDialog(parent)
 	connect(ui.trServices, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(slotItemExpanded(QTreeWidgetItem *)));
 	connect(ui.trServices, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(slotMenuRequested(const QPoint &)));
 
-	mActRegister = new QAction("Register...", this);
+	mActRegister = new QAction(i18n("Register..."), this);
 	connect(mActRegister, SIGNAL(triggered()), this, SLOT(slotRegister()));
-	mActSearch = new QAction("Search...", this);
+	mActSearch = new QAction(i18n("Search..."), this);
 	connect(mActSearch, SIGNAL(triggered()), this, SLOT(slotSearch()));
-	mActCommand = new QAction("Execute...", this);
+	mActCommand = new QAction(i18n("Execute..."), this);
 	connect(mActCommand, SIGNAL(triggered()), this, SLOT(slotCommand()));
 }
 
