@@ -131,7 +131,7 @@ InfoEventIconLabel::InfoEventIconLabel( QWidget *parent )
 	setFixedSize( 16, 16 );
 	setPixmap( SmallIcon( "flag-black" ) );
 	setToolTip( i18n( "Service messages" ) );
-	
+
 	connect( Kopete::InfoEventManager::self(), SIGNAL(changed()), this, SLOT(updateIcon()) );
 }
 
@@ -370,7 +370,7 @@ void KopeteWindow::initView()
 	d->infoEventWidget->setVisible ( false );
 	connect ( d->infoEventWidget, SIGNAL(showRequest()), this, SLOT(slotShowInfoEventWidget()) );
 	l->addWidget ( d->infoEventWidget );
-	
+
 	setCentralWidget( w );
 	d->contactlist->setFocus();
 }
@@ -443,6 +443,7 @@ void KopeteWindow::initActions()
 	actionCollection()->addAction ( "settings_keys", act );
 
 	KAction *configureGlobalShortcutsAction = new KAction ( KIcon ( "configure-shortcuts" ), i18n ( "Configure &Global Shortcuts..." ), this );
+	configureGlobalShortcutsAction->setMenuRole( QAction::NoRole ); //OS X: prevent Qt heuristics to move action to app menu->"Preferences"
 	actionCollection()->addAction ( "settings_global", configureGlobalShortcutsAction );
 	connect ( configureGlobalShortcutsAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotConfGlobalKeys() ) );
 
@@ -517,16 +518,12 @@ void KopeteWindow::slotShowHide()
 	else
 	{
 		show();
-		//raise() and show() should normaly deIconify the window. but it doesn't do here due
-		// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
-		if ( isMinimized() )
-			KWindowSystem::unminimizeWindow ( winId() );
 #ifdef Q_WS_X11
 		if ( !KWindowSystem::windowInfo ( winId(),NET::WMDesktop ).onAllDesktops() )
 			KWindowSystem::setOnDesktop ( winId(), KWindowSystem::currentDesktop() );
 #endif
 		raise();
-		activateWindow();
+		KWindowSystem::forceActiveWindow( winId() );
 	}
 }
 

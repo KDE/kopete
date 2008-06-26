@@ -288,7 +288,12 @@ void ClientStream::socketError( QAbstractSocket::SocketError socketError )
 	kDebug(OSCAR_RAW_DEBUG) << " error: " << int(socketError);
 
 	d->noopTimer.stop();
-	d->socket->close();
+
+	if ( socketError == QAbstractSocket::RemoteHostClosedError )
+		d->socket->abort();
+	else
+		d->socket->close();
+
 	d->client.reset();
 
 	emit Stream::error( socketError );

@@ -132,7 +132,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	                  this, SLOT( slotGotAuthRequest( const QString&, const QString& ) ) );
 
 	// Create actions
-	mEditInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), this );
+	mEditInfoAction = new KAction( KIcon("user-properties"), i18n( "Edit User Info..." ), this );
 	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
 	
 	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );
@@ -171,6 +171,7 @@ void ICQAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	actionMenu->addSeparator();
 
+	mEditInfoAction->setEnabled( isConnected() );
 	actionMenu->addAction( mEditInfoAction );
 
 	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );

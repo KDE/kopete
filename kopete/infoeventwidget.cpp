@@ -103,10 +103,14 @@ void InfoEventWidget::nextInfoEvent()
 
 void InfoEventWidget::closeInfoEvent()
 {
-	Kopete::InfoEvent* event = Kopete::InfoEventManager::self()->event( d->currentEvent );
+	Kopete::InfoEventManager* ie = Kopete::InfoEventManager::self();
+	Kopete::InfoEvent* event = ie->event( d->currentEvent );
 
 	Q_ASSERT( event );
 	event->close();
+
+	if ( ie->eventCount() == 0 )
+		setVisible( false );
 }
 
 void InfoEventWidget::slotAnimate( qreal amount )
@@ -150,7 +154,8 @@ void InfoEventWidget::updateInfo()
 		d->currentEvent = 0;
 		d->ui.lblInfo->clear();
 		d->ui.lblActions->clear();
-		d->ui.lblTitle->clear();
+		// Can't use clear
+		static_cast<KSqueezedTextLabel*>(d->ui.lblTitle)->setText(QString());
 		d->ui.lblEvent->setText( "0/0" );
 		d->ui.buttonPrev->setEnabled( false );
 		d->ui.buttonNext->setEnabled( false );

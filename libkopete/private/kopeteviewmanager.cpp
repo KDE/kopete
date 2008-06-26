@@ -25,7 +25,6 @@
 #include <knotification.h>
 #include <kglobal.h>
 #include <kwindowsystem.h>
-#include <kemoticons.h>
 
 #include "kopetebehaviorsettings.h"
 #include "kopeteaccount.h"
@@ -64,7 +63,7 @@ static QString squashMessage( const Kopete::Message& msg )
 		msgText =msg.plainBody() ;
 		if( msgText.length() > 30 )
 			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
-		msgText=Kopete::Emoticons::self()->theme().parseEmoticons(Qt::escape(msgText));
+		msgText=Kopete::Emoticons::parseEmoticons(Qt::escape(msgText));
 	}
 	else
 	{
@@ -284,7 +283,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		}
 		
 		Kopete::MessageEvent *event = 0L;
-		if ( (appendMessageEvent && !outgoingMessage) )
+		if ( (appendMessageEvent && !outgoingMessage) || showNotification )
 		{
 			showNotification = showNotification || d->eventList.isEmpty(); // may happen for internal messages
 			event = new Kopete::MessageEvent(msg,manager);
@@ -335,7 +334,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			Kopete::MetaContact *mc= msg.from()->metaContact();
 			if(mc)
 			{
-				notify->addContext( qMakePair( QString::fromLatin1("metacontact") , mc->metaContactId().toString()) );
+				notify->addContext( qMakePair( QString::fromLatin1("metacontact") , mc->metaContactId()) );
 				foreach( Kopete::Group *g , mc->groups() )
 				{
 					notify->addContext( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
@@ -347,6 +346,20 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			connect(event, SIGNAL(done(Kopete::MessageEvent*)) , notify , SLOT(close() ));
 			notify->sendEvent();
 		}
+
+		if (!d->useQueueOrStack)
+		{
+			// "Open messages instantly" setting
+			readMessages(manager, outgoingMessage, true);
+		}
+
+		KopeteView *view = manager->view(false);
+		if ( d->raiseWindow && view && view->isVisible() )
+		{
+			// "Raise window on incoming message" setting
+			view->raise();
+		}
+
 		if( event )
 			Kopete::ChatSessionManager::self()->postNewEvent(event);
 	}

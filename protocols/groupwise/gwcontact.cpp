@@ -93,7 +93,7 @@ void GroupWiseContact::updateDetails( const ContactDetails & details )
 		setProperty( protocol()->propFullName, details.fullName );
 	m_archiving = details.archive;
 	if ( !details.awayMessage.isNull() )
-		setProperty( protocol()->propAwayMessage, details.awayMessage );
+		setStatusMessage( details.awayMessage );
 	
 	m_serverProperties = details.properties;
 	

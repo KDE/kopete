@@ -207,7 +207,7 @@ void MSNContact::slotUserInfo()
 	infoDialog->setButtons( KDialog::Close );
 	infoDialog->setDefaultButton( KDialog::Close );
 	QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
-	QString personalMessage=property( MSNProtocol::protocol()->propPersonalMessage).value().toString();
+	QString personalMessage=statusMessage().message();
 	QWidget* w=new QWidget( infoDialog );
 	Ui::MSNInfo info;
 	info.setupUi( w );

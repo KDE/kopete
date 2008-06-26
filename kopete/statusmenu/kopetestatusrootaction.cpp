@@ -181,7 +181,7 @@ void StatusRootAction::addToolsActions()
 	messageMenu->addAction( d->statusAction );
 	d->menu->insertAction( d->insertBefore, messageMenu );
 
-	QAction *action = new QAction( "Edit statuses...", this );
+	QAction *action = new QAction( i18n("Edit statuses..."), this );
 	connect( action, SIGNAL(triggered( bool )), this, SLOT(editStatuses()) );
 	d->menu->insertAction( d->insertBefore, action );
 }

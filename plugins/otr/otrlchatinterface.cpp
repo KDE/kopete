@@ -140,6 +140,8 @@ static void inject_message( void *opdata, const char *accountname, const char *p
 	Q_UNUSED(accountname)
 	Q_UNUSED(protocol)
 
+	kDebug(14318) << "Sending message:" << message;
+
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::ContactPtrList list = session->members();		
 	for( int i = 0; i < list.size(); i++ ){
@@ -289,6 +291,28 @@ static void log_message(void *opdata, const char *message){
 	kDebug(14318) << "libotr: "<< message;
 }
 
+static int max_message_size(void *opdata, ConnContext *context){
+	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
+
+	Q_UNUSED(context)
+	
+	kDebug(14318) << session->protocol()->pluginId();
+
+	if( session->protocol()->pluginId() == "MSNProtocol" ){
+		return 1409;
+	} else if( session->protocol()->pluginId() == "ICQProtocol" ){
+		return 1274;
+	} else if( session->protocol()->pluginId() == "AIMProtocol" ){
+		return 1274;
+	} else if( session->protocol()->pluginId() == "YahooProtocol" ){
+		return 700;
+	} 
+
+	// Jabber doesn't need fragmentation. Return 0 to disable.
+	// GaduGadu seems to not need fragmentation too.
+	return 0;
+}
+
 static OtrlMessageAppOps ui_ops = {
 	policy,
 	create_privkey,
@@ -305,7 +329,7 @@ static OtrlMessageAppOps ui_ops = {
 	gone_insecure,
 	still_secure,
 	log_message,
-	0,		//not used yet...
+	max_message_size,
 	0,		//not used yet...
 	0		//not used yet...
 };
@@ -316,7 +340,6 @@ static OtrlMessageAppOps ui_ops = {
 /*********************** Constructor/Destructor **********************/
 
 OtrlChatInterface::OtrlChatInterface(){
-//	kdDebug() << "Creating OtrlChatInterface" << endl;
 	mSelf = this;
 	OTRL_INIT;	
 
@@ -458,9 +481,6 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 	}
 	
 
-
-
-
 	// message is now decrypted or is a Plaintext message and ready to deliver
 	if( !ignoremessage ){
 		// message is decrypted
@@ -477,17 +497,34 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 KDE_EXPORT QString *OtrlChatInterface::encryptMessage( QString *msg, const QString &accountId,
 	const QString &protocol, const QString &contactId , Kopete::ChatSession *chatSession ){
 	int err;
-	char * newMessage;
+	char *newMessage;
+	char *fragment;
+
 	if( otrl_proto_message_type( msg->toLocal8Bit() ) == OTRL_MSGTYPE_NOTOTR ){
 		msg->replace( QString('<'), QString("&lt;") );
 		err = otrl_message_sending( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), msg->toUtf8(), NULL, &newMessage, NULL, NULL );
 	
 		if( err != 0 ){
 			*msg = i18n("Encryption error");
-		} else {
-			if( newMessage != NULL ){
-				*msg = QString::fromUtf8( newMessage );
+		} else if( newMessage ){
+
+			/* Fragment the message if needed */
+			/* If fragmentation is needed libotr will send out all fragments but the last one. */
+			ConnContext *context = otrl_context_find(userstate, contactId.toLocal8Bit(), accountId.toLocal8Bit(), protocol.toLocal8Bit(), 0, NULL, NULL, NULL);
+
+			kDebug(14318) << "message to be sent out: " << newMessage;
+
+			err = otrl_message_fragment_and_send(&ui_ops, chatSession, context, newMessage,
+			OTRL_FRAGMENT_SEND_ALL_BUT_LAST, &fragment);
+
+			kDebug(14318) << "fragment left to be sent by kopete: " << fragment;
+
+			if( err != 0){
+				*msg = i18n("Encryption error");
+			} else if ( fragment ){
+				*msg = QString::fromUtf8( fragment );
 				otrl_message_free( newMessage );
+				otrl_message_free( fragment );
 			}
 		}
 	}
@@ -495,6 +532,8 @@ KDE_EXPORT QString *OtrlChatInterface::encryptMessage( QString *msg, const QStri
 	if( type == OTRL_MSGTYPE_NOTOTR | type == OTRL_MSGTYPE_TAGGEDPLAINTEXT ){
 		msg->replace( QString("&lt;"), QString("<") );		
 	}
+
+	
 	return msg;
 }
 
@@ -520,9 +559,10 @@ KDE_EXPORT void OtrlChatInterface::disconnectSession( Kopete::ChatSession *chatS
 
 KDE_EXPORT bool OtrlChatInterface::shouldDiscard( const QString &message ){
 	if( !message.isEmpty() && !message.isNull() ){
+//		kDebug(14318) << otrl_proto_message_type( message.toLatin1() );
 		switch( otrl_proto_message_type( message.toLatin1() ) ){
 			case OTRL_MSGTYPE_TAGGEDPLAINTEXT:
-			case OTRL_MSGTYPE_UNKNOWN:
+//			case OTRL_MSGTYPE_UNKNOWN: // Fragmented messages seem to be type UNKNOWN
 			case OTRL_MSGTYPE_NOTOTR:
 				return false;
 			default:

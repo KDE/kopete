@@ -69,8 +69,8 @@ void AIMMyselfContact::userInfoUpdated()
 	AIMProtocol* p = static_cast<AIMProtocol *>(protocol());
 	Oscar::Presence presence = p->statusManager()->presenceOf( extendedStatus, details().userClass() );
 
-	setProperty( Kopete::Global::Properties::self()->statusMessage(), static_cast<AIMAccount*>( account() )->engine()->statusMessage() );
 	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
+	setStatusMessage( static_cast<AIMAccount*>( account() )->engine()->statusMessage() );
 }
 
 void AIMMyselfContact::setOwnProfile( const QString& newProfile )
@@ -232,7 +232,7 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 	mJoinChatAction = new KAction( i18n( "Join Chat..." ), this );
 	QObject::connect( mJoinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChat()) );
 	
-	mEditInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), this );
+	mEditInfoAction = new KAction( KIcon("user-properties"), i18n( "Edit User Info..." ), this );
 	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()) );
 	
 	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );
@@ -330,7 +330,10 @@ void AIMAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	actionMenu->addSeparator();
 
+	mJoinChatAction->setEnabled( isConnected() );
 	actionMenu->addAction( mJoinChatAction );
+
+	mEditInfoAction->setEnabled( isConnected() );
 	actionMenu->addAction( mEditInfoAction );
 
 	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );

@@ -718,7 +718,7 @@ void DisplayNameComponent::redraw()
 
 	clear(); // clear childen
 
-	tokens = Kopete::Emoticons::self()->theme().tokenize( d->text );
+	tokens = Kopete::Emoticons::tokenize( d->text );
 	ImageComponent *ic;
 	TextComponent *t;
 

@@ -106,7 +106,6 @@ public:
 	const Kopete::PropertyTmpl propPhoneMobile;
 	const Kopete::PropertyTmpl propClient;
 	const Kopete::PropertyTmpl propGuid;
-	const Kopete::PropertyTmpl propPersonalMessage; // it's the equivalent of away message.
 
 	enum List
 	{

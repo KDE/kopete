@@ -1111,7 +1111,7 @@ void GroupWiseAccount::receiveStatus( const QString & contactId, quint16 status,
 		kDebug() << " - their KOS is: " << protocol()->gwStatusToKOS( status ).description();
 		Kopete::OnlineStatus kos = protocol()->gwStatusToKOS( status );
 		c->setOnlineStatus( kos );
-		c->setProperty( protocol()->propAwayMessage, awayMessage );
+		c->setStatusMessage( awayMessage );
 	}
 	else
 		kDebug() << " couldn't find " << contactId;
@@ -1123,7 +1123,7 @@ void GroupWiseAccount::changeOurStatus( GroupWise::Status status, const QString 
 		myself()->setOnlineStatus( protocol()->groupwiseAppearOffline );
 	else
 		myself()->setOnlineStatus( protocol()->gwStatusToKOS( status ) );
-	myself()->setProperty( protocol()->propAwayMessage, awayMessage );
+	myself()->setStatusMessage( awayMessage );
 	myself()->setProperty( protocol()->propAutoReply, autoReply );
 }
 

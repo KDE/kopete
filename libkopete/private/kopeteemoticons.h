@@ -21,6 +21,7 @@
 #define kopeteemoticons_h__
 
 #include "kopete_export.h"
+#include <kemoticons.h>
 
 class KEmoticons;
 namespace Kopete {
@@ -34,11 +35,9 @@ public:
 	 */
 	static KEmoticons *self();
 
-private:
-	/**
-	 * Our instance
-	 **/
-	static KEmoticons *s_self;
+	static QString parseEmoticons(const QString &text, KEmoticonsTheme::ParseMode mode = KEmoticonsTheme::DefaultParse, const QStringList &exclude = QStringList());
+	static QList<KEmoticonsTheme::Token> tokenize(const QString &message, KEmoticonsTheme::ParseMode mode = KEmoticonsTheme::DefaultParse);
+
 };
 
 } //END namespace Kopete
