@@ -171,7 +171,7 @@ install(FILES
  ui/kopetestdaction.h
  ui/kopeteview.h
  ui/kopeteviewplugin.h
-DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui )
+DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui COMPONENT Devel )
 
 
 install( FILES
@@ -229,6 +229,6 @@ install( FILES
   tasks/kopetetask.h
   tasks/kopetecontacttaskbase.h
   tasks/kopetedeletecontacttask.h
-DESTINATION ${INCLUDE_INSTALL_DIR}/kopete )
+DESTINATION ${INCLUDE_INSTALL_DIR}/kopete COMPONENT Devel)
 
 install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
