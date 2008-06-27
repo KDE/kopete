@@ -812,17 +812,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 
 	if( message.from() )
 	{
-		// Use metacontact display name if the metacontact exists and if its not the myself metacontact.
-		if( message.from()->metaContact() && message.from()->metaContact() != Kopete::ContactList::self()->myself() )
-		{
-			nick = message.from()->metaContact()->displayName();
-		}
-		// Use contact nickname for no metacontact or myself.
-		else
-		{
-			nick = message.from()->nickName();
-		}
-		nick = formatName(nick);
+		nick = formatName(message.from());
 		contactId = message.from()->contactId();
 		// protocol() returns NULL here in the style preview in appearance config.
 		// this isn't the right place to work around it, since contacts should never have
@@ -1072,7 +1062,7 @@ QString ChatMessagePart::formatTime(const QString &timeFormat, const QDateTime &
 	return QString(buffer);
 }
 
-QString ChatMessagePart::formatName(const QString &sourceName)
+QString ChatMessagePart::formatName(const QString &sourceName) const
 {
 	QString formattedName = sourceName;
 	// Escape the name.
@@ -1085,6 +1075,26 @@ QString ChatMessagePart::formatName(const QString &sourceName)
 	}
 
 	return formattedName;
+}
+
+QString ChatMessagePart::formatName( const Kopete::Contact* contact ) const
+{
+	if (!contact)
+	{
+		return QString();
+	}
+
+	// Use metacontact display name if the metacontact exists and if its not the myself metacontact.
+	// Myself metacontact is not a reliable source.
+	if ( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
+	{
+		return formatName( contact->metaContact()->displayName() );
+	}
+	// Use contact nickname for no metacontact or myself.
+	else
+	{
+		return formatName( contact->nickName() );
+	}
 }
 
 QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)

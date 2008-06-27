@@ -59,6 +59,22 @@ public:
 	 */
 	void keepScrolledDown();
 
+	/**
+	 * Format contact's nickname/displayname according to preferences.
+	 *
+	 * @param contact Contact to format.
+	 * @return the formatted name.
+	 */
+	QString formatName( const Kopete::Contact* contact ) const;
+
+	/**
+	 * Format a nickname/displayname according to preferences.
+	 *
+	 * @param sourceName Source name to format.
+	 * @return the formatted name.
+	 */
+	QString formatName( const QString &sourceName ) const;
+
 public slots:
 	/**
 	 * Initiates a copy action
@@ -217,14 +233,6 @@ private:
 	 * @return the formatted time string.
 	 */
 	QString formatTime(const QString &timeFormat, const QDateTime &dateTime);
-
-	/**
-	 * Format a nickname/displayname according to preferences.
-	 *
-	 * @param sourceName Source name to format.
-	 * @return the formatted name.
-	 */
-	QString formatName( const QString &sourceName );
 
 	/**
 	 * Format a message body according to the style included
