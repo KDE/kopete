@@ -233,6 +233,11 @@ void AvatarManager::Private::createDirectory(const KUrl &directory)
 
 QImage AvatarManager::Private::scaleImage(const QImage &source)
 {
+	if (source.isNull())
+	{
+		return QImage();
+	}
+
 	//make an empty image and fill with transparent color
 	QImage result(96, 96, QImage::Format_ARGB32);
 	result.fill(0);
