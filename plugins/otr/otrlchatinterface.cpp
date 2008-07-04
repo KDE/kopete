@@ -726,7 +726,7 @@ void OtrlChatInterface::abortSMP( ConnContext *context, Kopete::ChatSession *ses
 		emitGoneSecure( session, 1 );
 
 		Kopete::Message msg( session->members().first(), session->account()->myself() );
-		msg.setHtmlBody( i18n("<b>Authentication aborded. The conversation is now insecure!</b>") );
+		msg.setHtmlBody( i18n("<b>Authentication aborted. The conversation is now insecure!</b>") );
 		msg.setDirection( Kopete::Message::Internal );
 		session->appendMessage( msg );
 	}
