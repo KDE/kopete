@@ -333,7 +333,7 @@ void KopeteAccountConfig::removeIdentity()
 		{
 			// if there are any accounts linked to this identity, need to change them before removing the identity
 			if ( AccountIdentityDialog::changeAccountIdentity( this, i->accounts(), i, 
-						i18n("Before removing the identity %1, the following accounts must be" 
+						i18n("Before removing the identity %1, the following accounts must be " 
 							"assigned to another identity:", i->label())) )
 			{
 				Kopete::IdentityManager::self()->removeIdentity( i );
