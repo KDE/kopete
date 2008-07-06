@@ -90,8 +90,6 @@ class HistoryDialog : public KDialogBase
 		void slotContactChanged(int index);
 		void slotFilterChanged(int index);
 
-		void searchFirstStep();
-
 		void init();
 		void slotLoadDays();
 
@@ -120,8 +118,6 @@ class HistoryDialog : public KDialogBase
 		 */
 		bool hasChild(KListViewItem* item, int month);
 
-		HistoryLogger *mLogger;
-
 		/**
 		 * We show history dialog to look at the log for a metacontact. Here is this metacontact.
 		 */
@@ -140,20 +136,7 @@ class HistoryDialog : public KDialogBase
 			QValueList<DMPair> dateMCList; // mc for MetaContact
 		} mInit;
 
-		struct Search
-		{
-				typedef QMap<QDate, QValueList<Kopete::MetaContact*> > DateSearchMap;
-				DateSearchMap dateSearchMap;
-
-				KListViewDateItem *item;
-
-				int resultMatches;
-
-				bool foundPrevious;
-				QDate datePrevious;
-
-				Kopete::MetaContact *currentMetaContact;
-		} *mSearch;
+		bool mSearching;
 
 		KAction *mCopyAct;
 		KAction *mCopyURLAct;
