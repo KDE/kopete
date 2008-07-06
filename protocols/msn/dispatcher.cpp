@@ -95,7 +95,7 @@ void Dispatcher::requestDisplayIcon(const QString& from, const QString& msnObjec
 
 	kDebug(14140) << "Requesting, " << msnObject;
 
-	QString context = QString::fromUtf8(msnObject.toUtf8().toBase64());
+	QString context = QString::fromUtf8((msnObject + "\r\n").toUtf8().toBase64());
 	// NOTE remove the \0 character automatically
 	// appended to a QCString.
 	context.replace("=", "");
