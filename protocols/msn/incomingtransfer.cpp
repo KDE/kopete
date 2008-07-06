@@ -143,6 +143,9 @@ void IncomingTransfer::processMessage(const Message& message)
 {
 	if(m_file && (message.header.flag == 0x20 || message.header.flag == 0x01000030))
 	{
+		if(m_state == Finished) {
+			return;
+		}
 		// UserDisplayIcon data or File data is in this message.
 		// Write the received data to the file.
 		kDebug(14140) << QString("Received, %1 bytes").arg(message.header.dataSize);
