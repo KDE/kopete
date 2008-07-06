@@ -362,11 +362,29 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 				body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", Qt::CaseInsensitive);
 			}
 
-			resultHTML += "(<b>" + msg.timestamp().time().toString() + "</b>) "
-				+ (msg.direction() == Kopete::Message::Outbound ?
-				"<font color=\"" + Kopete::AppearanceSettings::self()->chatTextColor().dark().name() + "\"><b>&gt;</b></font> "
-				: "<font color=\"" + Kopete::AppearanceSettings::self()->chatTextColor().light(200).name() + "\"><b>&lt;</b></font> ")
-				+ body + "<br/>";
+			QString name;
+			if ( msg.from()->metaContact() && msg.from()->metaContact() != Kopete::ContactList::self()->myself() )
+			{
+				name = msg.from()->metaContact()->displayName();
+			}
+			else
+			{
+				name = msg.from()->nickName();
+			}
+
+			QString fontColor;
+			if (msg.direction() == Kopete::Message::Outbound)
+			{
+				fontColor = Kopete::AppearanceSettings::self()->chatTextColor().dark().name();
+			}
+			else
+			{
+				fontColor = Kopete::AppearanceSettings::self()->chatTextColor().light(200).name();
+			}
+
+			QString messageTemplate = "<b>%1&nbsp;<font color=\"%2\">%3</font></b>&nbsp;%4";
+			resultHTML += messageTemplate.arg( msg.timestamp().time().toString(),
+				fontColor, name, body );
 
 			newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
 			newNode.setAttribute(QString::fromLatin1("dir"), dir);
