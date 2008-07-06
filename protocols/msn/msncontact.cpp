@@ -145,7 +145,7 @@ QList<KAction*> *MSNContact::customContextMenuActions()
 		//show profile
 		actionShowProfile = new KAction( i18n("Show Profile"), this );
                 //, "actionShowProfile" );
-		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
+		connect( actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
 
 		// Send mail (only available if it is an hotmail account)
 		actionSendMail = new KAction( KIcon("mail-message-new"), i18n("Send Email..."), this );
