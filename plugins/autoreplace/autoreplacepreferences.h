@@ -56,8 +56,6 @@ protected slots:
 private:
 	Ui::AutoReplacePrefsUI * preferencesDialog;
 	AutoReplaceConfig *m_config;
-
-	bool m_wordListChanged;
 };
 
 #endif
