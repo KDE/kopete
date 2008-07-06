@@ -172,7 +172,8 @@ void Kopete::IdleTimer::slotTimerTimeout()
 	QDBusInterface caller("org.freedesktop.ScreenSaver", "/ScreenSaver", "org.freedesktop.ScreenSaver");
 	QDBusReply<bool> reply = caller.call("GetActive");
 	
-	bool activity = ( !reply.isValid() || !reply.value() ) ? isActivity() : true;
+	// If the screensaver is active, ignore any activity	
+	bool activity = ( reply.isValid() && reply.value() ) ? false : isActivity();
 
 	//kDebug(14010) << "idle: " << idleTime() << " active:" << activity;
 	if ( activity )
