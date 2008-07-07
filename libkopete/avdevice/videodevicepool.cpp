@@ -60,6 +60,7 @@ VideoDevicePool* VideoDevicePool::self()
 }
 
 VideoDevicePool::VideoDevicePool()
+: m_current_device(0)
 {
 	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(deviceAdded(const QString &)) );
     connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(deviceRemoved(const QString &)) );
