@@ -677,6 +677,11 @@ void ChatWindowConfig::updateEmoticonList()
 
 void ChatWindowConfig::slotManageEmoticonThemes()
 {
+	// FIXME: Upon closing the Settings KCMultiDialog all KCMs are deleted and when reopening
+	// the settings dialog there is no active valid KComponentData, which KNS2 relies on.
+	// Forcing an active one below works around bug 165919, but the problem is somewhere else.
+	KGlobal::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
+
 	KCMultiDialog *kcm = new KCMultiDialog( this );
 	kcm->setCaption( i18n( "Configure Emoticon Themes" ) );
 	kcm->addModule( "emoticons" );
