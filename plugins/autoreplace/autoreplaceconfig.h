@@ -41,8 +41,8 @@ public:
 
 	void setAutoReplaceIncoming(bool enabled);
 	void setAutoReplaceOutgoing(bool enabled);
-	bool setDotEndSentence(bool enabled);
-	bool setCapitalizeBeginningSentence(bool enabled);
+	void setDotEndSentence(bool enabled);
+	void setCapitalizeBeginningSentence(bool enabled);
 
 	void setMap( const WordsToReplace &w );
     QStringList defaultAutoReplaceList();
