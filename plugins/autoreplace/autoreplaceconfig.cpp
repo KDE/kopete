@@ -114,12 +114,12 @@ void AutoReplaceConfig::setAutoReplaceOutgoing(bool enabled)
 
 bool AutoReplaceConfig::setDotEndSentence(bool enabled)
 {
-	m_addDot = enabled;
+	return m_addDot = enabled;
 }
 
 bool AutoReplaceConfig::setCapitalizeBeginningSentence(bool enabled)
 {
-	m_upper = enabled;
+	return m_upper = enabled;
 }
 
 
