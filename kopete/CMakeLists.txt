@@ -51,12 +51,13 @@ kde4_add_ui_files(kopetecontactlist_SRCS
 
 set(kopete_SRCS 
    ${kopetecontactlist_SRCS}
-   main.cpp 
-   kopeteapplication.cpp 
+   main.cpp
+   kopeteapplication.cpp
    kanimatedsystemtrayicon.cpp
-   systemtray.cpp 
-   kopetewindow.cpp 
-   kopeteidentitystatusbaricon.cpp 
+   systemtray.cpp
+   kopetewindow.cpp
+   kopeteidentitystatusbaricon.cpp
+   kopeteaccountstatusbaricon.cpp
    kopetedbusinterface.cpp
    infoeventwidget.cpp
    )

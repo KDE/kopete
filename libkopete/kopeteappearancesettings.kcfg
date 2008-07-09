@@ -225,5 +225,10 @@
 			<default>false</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
+
+		<entry key="showIdentityIcons" type="Bool">
+			<label>Show identities in status bar instead of accounts.</label>
+			<default>true</default>
+		</entry>
 	</group>
 </kcfg>
