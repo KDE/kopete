@@ -181,7 +181,8 @@ void IncomingTransfer::processMessage(const Message& message)
 			}
 		}
 	}
-	else if(message.header.dataSize == 4 && message.applicationIdentifier == 1)
+	//pidgin is probably broken since it sends 0 as appid but we don't need this check anyway
+	else if(message.header.dataSize == 4 /*&& message.applicationIdentifier == 1*/)
 	{
 		// Data preparation message.
 		m_tempFile = new KTemporaryFile();
