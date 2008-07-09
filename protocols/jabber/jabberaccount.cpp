@@ -75,21 +75,11 @@
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
 #include "jt_pubsub.h"
+#include "jinglecallsmanager.h"
 
 #include <sys/utsname.h>
 
 #undef SUPPORT_JINGLE //Jingle support Hardly disabled
-
-#ifdef SUPPORT_JINGLE
-#include "voicecaller.h"
-#include "jinglevoicecaller.h"
-
-// NOTE: Disabled for 0.12, will develop them futher in KDE4
-#include "jinglesessionmanager.h"
-#include "jinglesession.h"
-#include "jinglevoicesession.h"
-#include "jinglevoicesessiondialog.h"
-#endif
 
 #define KOPETE_CAPS_NODE "http://kopete.kde.org/jabber/caps"
 
@@ -106,10 +96,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	
 	m_resourcePool = 0L;
 	m_contactPool = 0L;
-#ifdef SUPPORT_JINGLE
-	m_voiceCaller = 0L;
-	m_jingleSessionManager = 0L; // NOTE: Disabled for 0.12
-#endif
+	m_jcm = 0L;
 	m_bookmarks = new JabberBookmarks(this);
 	m_removing=false;
 	m_notifiedUserCannotBindTransferPort = false;
@@ -610,29 +597,9 @@ void JabberAccount::slotClientError ( JabberClient::ErrorCode errorCode )
 void JabberAccount::slotConnected ()
 {
 	kDebug (JABBER_DEBUG_GLOBAL) << "Connected to Jabber server.";
-	
-#ifdef SUPPORT_JINGLE
-// 	if(!m_voiceCaller)
-// 	{
-// 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating Jingle Voice caller..." << endl;
-// 		m_voiceCaller = new JingleVoiceCaller( this );
-// 		QObject::connect(m_voiceCaller,SIGNAL(incoming(const Jid&)),this,SLOT(slotIncomingVoiceCall( const Jid& )));
-// 		m_voiceCaller->initialize();
-// 	}
-#if 1
-	if(!m_jingleSessionManager)
-	{
-		kDebug(JABBER_DEBUG_GLOBAL) << "Creating Jingle Session Manager...";
-		m_jingleSessionManager = new JingleSessionManager( this );
-		QObject::connect(m_jingleSessionManager, SIGNAL(incomingSession(const QString &, JingleSession *)), this, SLOT(slotIncomingJingleSession(const QString &, JingleSession *)));
-	}
-#endif
 
-	// Set caps extensions
-	m_jabberClient->client()->addExtension("voice-v1", Features(QString("http://www.google.com/xmpp/protocol/voice/v1")));
-	//TODO take me out one day
-	m_jabberClient->client()->addExtension("jinglefoo", Features(QString("http://kopete.kde.com/jingle/foo.html")));
-#endif
+	qDebug() << "Create JingleCallsManager";
+	m_jcm = new JingleCallsManager(this);
 
 	kDebug (JABBER_DEBUG_GLOBAL) << "Requesting roster...";
 	m_jabberClient->requestRoster ();
@@ -787,6 +754,9 @@ void JabberAccount::slotCSDisconnected ()
 	/* It seems that we don't get offline notifications when going offline
 	 * with the protocol, so clear all resources manually. */
 	resourcePool()->clear();
+	
+	if (m_jcm != 0)
+		delete m_jcm;
 
 }
 
@@ -1698,24 +1668,24 @@ void JabberAccount::slotGetServices ()
 	dialog->raise ();
 }
 
+#ifdef SUPPORT_JINGLE
 void JabberAccount::slotIncomingVoiceCall( const Jid &jid )
 {
 	kDebug(JABBER_DEBUG_GLOBAL) ;
-#ifdef SUPPORT_JINGLE
 // 	if(voiceCaller())
 // 	{
 // 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Showing voice dialog." << endl;
 // 		JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog( jid, voiceCaller() );
 // 		voiceDialog->show();
 // 	}
-#else
+//#else
 	Q_UNUSED(jid);
-#endif
 }
+#endif
 
+#ifdef SUPPORT_JINGLE
 void JabberAccount::slotIncomingJingleSession( const QString &sessionType, JingleSession *session )
 {
-#ifdef SUPPORT_JINGLE
 	if(sessionType == "http://www.google.com/session/phone")
 	{
 		QString from = ((XMPP::Jid)session->peers().first()).full();
@@ -1728,11 +1698,11 @@ void JabberAccount::slotIncomingJingleSession( const QString &sessionType, Jingl
 		JingleVoiceSessionDialog *foodialog = new JingleVoiceSessionDialog( static_cast<JingleVoiceSession*>(session) );
 		foodialog->show();
 	}
-#else
+//#else
 	Q_UNUSED( sessionType );
 	Q_UNUSED( session );
-#endif
 }
+#endif
 
 
 void JabberAccount::addTransport( JabberTransport * tr, const QString &jid )
@@ -1823,7 +1793,6 @@ void JabberMoodAction::triggered()
 {
 	emit triggered(mType);
 }*/
-
 
 #include "jabberaccount.moc"
 

@@ -17,6 +17,8 @@
  *
  */
 
+#include <stdio.h>
+
 #include <QTimer>
 #include <qplatformdefs.h>
 

@@ -10,21 +10,19 @@
 
 #include <QObject>
 
-#include "xmpp_client.h"
-#include "xmpp_jid.h"
+#include "im.h"
 
-#include "jinglesessionmanager.h"
-#include "jingleaudiomanager.h"
-
-using namespace XMPP;
-
-//friend class Client;
+class JabberAccount;
+namespace XMPP
+{
+	class JingleSession;
+}
 
 class JingleCallsManager : public QObject
 {
 	Q_OBJECT
 public:
-	JingleCallsManager(Client*);
+	JingleCallsManager(JabberAccount*);
 	~JingleCallsManager();
 
 	enum Reason {
@@ -32,18 +30,21 @@ public:
 		Other,
 		Unknown
 	};
-	void newSession(Jid*);
+	void startNewSession(const XMPP::Jid&);
 
-//public slots:
-
+public slots:
+	void slotNewSession(XMPP::JingleSession*);
+	void slotUserAccepted();
+	void slotUserRejected();
 
 signals:
 	void newSessionCreated();
 	void sessionTerminated(Reason);
 
 private:
-	Client *m_client;
-	QList<JingleSessionManager*> m_sessionList;
+	class Private;
+	Private *d;
+	void init();
 
 };
 

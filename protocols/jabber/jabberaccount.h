@@ -45,6 +45,7 @@ class JabberContactPool;
 class JabberProtocol;
 class JabberTransport;
 class JabberBookmarks;
+class JingleCallsManager;
 
 namespace Kopete
 {
@@ -52,11 +53,11 @@ namespace Kopete
 	class StatusMessage;
 }
 
-#ifdef SUPPORT_JINGLE
-class JingleSessionManager;
-class JingleSession;
-class VoiceCaller;
-#endif
+//#ifdef SUPPORT_JINGLE
+//class JingleSessionManager;
+//class JingleSession;
+//class VoiceCaller;
+//#endif
 
 
 /* @author Daniel Stone, Till Gerken */
@@ -96,7 +97,7 @@ public:
 		return m_privacyManager;
 	}
 
-#ifdef SUPPORT_JINGLE
+/*#ifdef SUPPORT_JINGLE
 	VoiceCaller *voiceCaller() const
 	{
 		return m_voiceCaller;
@@ -106,7 +107,7 @@ public:
  	{
  		return m_jingleSessionManager;
  	}
-#endif
+#endif*/
 
 	// change the default S5B server port
 	void setS5BServerPort ( int port );
@@ -143,6 +144,8 @@ public:
 	 * called when the account is removed in the config ui
 	*/
 	virtual bool removeAccount();
+	
+	JingleCallsManager *jingleCallsManager() const {return m_jcm;}
 
 public slots:
 	/* Connects to the server. */
@@ -197,10 +200,10 @@ private:
 	JabberResourcePool *m_resourcePool;
 	JabberContactPool *m_contactPool;
 
-#ifdef SUPPORT_JINGLE
+/*#ifdef SUPPORT_JINGLE
 	VoiceCaller *m_voiceCaller;
 	JingleSessionManager *m_jingleSessionManager;
-#endif
+#endif*/
 
 	JabberBookmarks *m_bookmarks;
 
@@ -230,6 +233,8 @@ private:
 	/* keep track if we told the user we were not able to bind the
 	   jabber transfer port, to avoid popup insanity */
 	bool m_notifiedUserCannotBindTransferPort;
+	
+	JingleCallsManager *m_jcm;
 private slots:
 	/* Connects to the server. */
 	void slotConnect ();
@@ -309,12 +314,12 @@ private slots:
 	void slotGetServices ();
 
 	/* we received a voice invitation */
-	void slotIncomingVoiceCall(const Jid&);
+	//void slotIncomingVoiceCall(const Jid&);
 
 	/* the unregister task finished */
 	void slotUnregisterFinished();
 
-	void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
+	//void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
 };
 
 /*class JabberMoodAction : public KAction

@@ -5,12 +5,11 @@
 
 #include "im.h"
 #include "xmpp_task.h"
-
+#include "jinglesession.h"
 
 namespace XMPP
 {
 	class JingleSession;
-
 	class IRIS_EXPORT JingleContent/* : public QObject*/
 	{
 		/*Q_OBJECT*/
@@ -24,7 +23,7 @@ namespace XMPP
 		};*/
 
 		void addPayloadType(const QDomElement& pl);
-		void addTransportNS(const QString& t);
+		void addTransportNS(const QDomElement& t);
 		//void setType(Type);
 		void setCreator(const QString& c);
 		void setName(const QString& n);
@@ -32,15 +31,22 @@ namespace XMPP
 		void setProfile(const QString& p);
 
 		QList<QDomElement> payloadTypes() const;
-		QStringList transportNS() const;
+		QList<QDomElement> transports() const;
+		void fromElement(const QDomElement& e);
 		QDomElement contentElement();
-		//Type type();
+		QString name() const;
+		QString descriptionNS() const;
+		QString dataType();
+		void addTransportInfo(const QDomElement& e);
+		QString iceUdpPassword();
+		QString iceUdpUFrag();
 
 	private:
 		class Private;
 		Private *d;
 	};
 	
+	// This class will be renamed to JT_PushJingleAction
 	class IRIS_EXPORT JT_PushJingleSession : public Task
 	{
 		Q_OBJECT
@@ -49,13 +55,21 @@ namespace XMPP
 		~JT_PushJingleSession();
 
 		void onGo();
-		bool take(const QDomElement &);
+		bool take(const QDomElement&);
+		JingleSession *takeNextIncomingSession();
+	signals:
+		void newSessionIncoming();
+		void removeContent(const QString&, const QStringList&);
+		void transportInfo(const QDomElement&);
 	
 	private:
 		class Private;
 		Private *d;
+		void ack();
+		void jingleError(const QDomElement&);
 	};
-	
+
+	// This class will be replaced by JT_JingleAction.
 	class IRIS_EXPORT JT_JingleSession : public Task
 	{
 		Q_OBJECT
@@ -66,7 +80,7 @@ namespace XMPP
 		void start(JingleSession*);
 
 		void onGo();
-		bool take(const QDomElement &);
+		bool take(const QDomElement&);
 		enum Errors {
 			ServiceUnavailable = 0,
 			Redirect,
@@ -79,15 +93,41 @@ namespace XMPP
 	private:
 		enum State {
 			Initiation = 0,
-			WaitContentAccept
+			WaitContentAccept,
+			StartNegotiation,
+			Active
 		};
 		class Private;
 		Private *d;
-		QDomElement iq;
-		QString sid;
 		QString redirectTo;
+		/*JingleSession::JingleAction*/int jingleAction(const QDomElement&);
+		void sendCandidate();
 	};
-
+	
+	class IRIS_EXPORT JT_JingleAction : public Task
+	{
+		Q_OBJECT
+	public:
+		JT_JingleAction(Task*);
+		~JT_JingleAction();
+		
+		void onGo();
+		bool take(const QDomElement&);
+		
+		void setSession(JingleSession*);
+		
+		void terminate(int);
+		void contentAccept();
+		void removeContent(const QString&);
+		void ringing();
+		
+	private :
+		class Private;
+		Private *d;
+	signals :
+		void finished();
+	
+	};
 }
 
 #endif

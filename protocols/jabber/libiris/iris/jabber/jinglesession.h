@@ -2,21 +2,31 @@
 #define JINGLE_SESSION
 
 #include <QObject>
+#include <QString>
 #include <QDomElement>
 
-#include "xmpp_client.h"
-#include "xmpp_jid.h"
+#include "im.h"
+//#include "xmpp_client.h"
+//#include "xmpp_jid.h"
 #include "jingletasks.h"
 
 namespace XMPP
 {
+	class JingleContent;
+	class JT_JingleSession;
+	class JT_PushJingleSession;
+
 	class IRIS_EXPORT JingleSession : public QObject
 	{
+		Q_OBJECT
 	public:
-		JingleSession() {}
+		JingleSession();
 		JingleSession(Task*, const Jid&);
 		~JingleSession();
 
+		typedef enum {
+			Decline = 0
+		} Reason;
 		/**
 		 * Adds a content to the session.
 		 * Currently, the content is just added in the contents list.
@@ -24,11 +34,60 @@ namespace XMPP
 		 * is in ACTIVE state so the session is modified with a content-add action.
 		 */
 		void addContent(const JingleContent&);
+		void addContent(const QDomElement&);
+		void acceptContent();
+		void acceptSession();
+		void removeContent(const QString&);
+		void terminate(Reason);
+		void end(const QString&, const QString&);
+		void ring();
 		/*TODO: there should also be removeContent, modifyContent,...*/
+		
+		void sendIceUdpCandidates();
+		void sendRawUdpCandidates();
 
 		Jid to() const;
+		//Jid from() const;
 		QList<JingleContent> contents() const;
 		void start();
+		void setSid(const QString&);
+		//void setFrom(const QString&);
+		void setTo(const Jid&);
+		void setInitiator(const QString&); //Or const Jid& ??
+
+		QString initiator() const;
+		
+		void startNegotiation();
+		
+		JingleContent *contentWithName(const QString& n);
+
+		QString sid() const;
+
+		typedef enum {
+			SessionInitiate = 0,
+			SessionTerminate,
+			SessionAccept,
+			SessionInfo,
+			ContentAdd,
+			ContentRemove,
+			ContentModify,
+			ContentReplace,
+			ContentAccept,
+			TransportInfo,
+			NoAction
+		} JingleAction;
+		
+		typedef enum {
+			Pending = 0,
+			Active,
+			Ended
+		} State;
+
+	signals:
+		void deleteMe();
+	public slots:
+		void slotRemoveAcked();
+		void slotSessTerminated();
 
 	private:
 		class Private;

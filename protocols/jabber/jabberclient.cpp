@@ -28,6 +28,7 @@
 
 #include <bsocket.h>
 #include <filetransfer.h>
+#include <jinglesessionmanager.h>
 #include <xmpp_tasks.h>
 
 #include "jabberconnector.h"
@@ -711,6 +712,17 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 					   this, SLOT ( slotIncomingFileTransfer () ) );
 		}
 	}
+
+	/*if (jingleEnabled())
+	{*/
+		d->jabberClient->setJingleEnabled(true);
+		
+		{
+			using namespace XMPP;
+			QObject::connect ( d->jabberClient->jingleSessionManager(), SIGNAL ( incomingSession() ),
+					   this, SLOT ( slotIncomingJingleSession () ) );
+		}
+	/*}*/
 
 	/* This should only be done here to connect the signals, otherwise it is a
 	 * bad idea.

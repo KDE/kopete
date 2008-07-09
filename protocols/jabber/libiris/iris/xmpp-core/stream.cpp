@@ -67,7 +67,7 @@
 using namespace XMPP;
 
 static Debug *debug_ptr = 0;
-void XMPP::setDebug(Debug *p)
+void IRIS_EXPORT XMPP::setDebug(Debug *p)
 {
 	debug_ptr = p;
 }
@@ -722,7 +722,7 @@ void ClientStream::sasl_nextStep(const QByteArray &stepData)
 void ClientStream::sasl_needParams(const QCA::SASL::Params& p) 
 {
 #ifdef XMPP_DEBUG
-	printf("need params: %d,%d,%d,%d\n", p.user, p.authzid, p.pass, p.realm);
+	//printf("need params: %d,%d,%d,%d\n", p.user, p.authzid, p.pass, p.realm);
 #endif
 	/*if(p.authzid && !p.user) {
 		d->sasl->setAuthzid(d->jid.bare());
@@ -1349,31 +1349,37 @@ TD::~TD()
 
 void TD::msg(const QString &s)
 {
-	if(debug_ptr)
-		debug_ptr->msg(s);
+	printf("Msg : %s\n", s.toLatin1().constData());
+//	if(debug_ptr)
+//		debug_ptr->msg(s);
 }
 
 void TD::outgoingTag(const QString &s)
 {
-	if(debug_ptr)
-		debug_ptr->outgoingTag(s);
+	printf("Outgoing tag : %s\n", s.toLatin1().constData());
+//	if(debug_ptr)
+//		debug_ptr->outgoingTag(s);
 }
 
 void TD::incomingTag(const QString &s)
 {
-	if(debug_ptr)
-		debug_ptr->incomingTag(s);
+	printf("Incoming tag : %s\n", s.toLatin1().constData());
+//	if(debug_ptr)
+//		debug_ptr->incomingTag(s);
 }
 
 void TD::outgoingXml(const QDomElement &e)
 {
-	if(debug_ptr)
-		debug_ptr->outgoingXml(e);
+	printf("Outgoing XML : %s\n", Stream::xmlToString(e, true).toLatin1().constData());
+//	if(debug_ptr)
+//		debug_ptr->outgoingXml(e);
 }
 
 void TD::incomingXml(const QDomElement &e)
 {
-	if(debug_ptr)
-		debug_ptr->incomingXml(e);
+	printf("Incoming XML : %s\n", Stream::xmlToString(e, true).toLatin1().constData());
+//	printf("Incoming XML : %s\n", s.toLatin1().constData());
+//	if(debug_ptr)
+//		debug_ptr->incomingXml(e);
 }
 #endif

@@ -2,6 +2,8 @@
 #add_subdirectory( cutestuff ) 
 #add_subdirectory( iris ) 
 
+add_definitions(-DXMPP_TEST -DXMPP_DEBUG)
+
 FIND_PACKAGE(ZLIB REQUIRED)
 
 include_directories( 
@@ -33,6 +35,7 @@ cutestuff/util/bytestream.cpp
 
 set(iris_SRCS 
 iris/jabber/filetransfer.cpp
+iris/jabber/jinglesessionmanager.cpp
 iris/jabber/s5b.cpp
 iris/jabber/xmpp_ibb.cpp
 iris/jabber/jinglesession.cpp
@@ -100,6 +103,7 @@ kde4_moc_headers(iris_kopete
 #	iris/xmpp-im/xmpp_discoinfotask.h
 	iris/jabber/jinglesession.h
 	iris/jabber/jingletasks.h
+	iris/jabber/jinglesessionmanager.h
 )
 
 #set(testapp_SRCS
@@ -113,6 +117,7 @@ kde4_moc_headers(iris_kopete
 #kde4_moc_headers(testapp
 #xmpptest/xmpptest.cpp
 #)
+
 
 kde4_add_library(iris_kopete SHARED ${libiris_SRCS})
 

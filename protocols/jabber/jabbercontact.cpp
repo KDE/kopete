@@ -21,6 +21,7 @@
 
 #include "xmpp_tasks.h"
 #include "im.h"
+//#include "td.h"
 #include "tasks/jt_getlastactivity.h"
 
 #include <qtimer.h>
@@ -66,8 +67,9 @@
 	#include "jinglevoicesession.h"
 	#include "jinglevoicesessiondialog.h"
 #endif
-#include "jinglesession.h"
-#include "jingletasks.h"
+//#include "jinglesession.h"
+//#include "jingletasks.h"
+#include "jinglecallsmanager.h"
 
 /**
  * JabberContact constructor
@@ -75,9 +77,11 @@
 JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc, const QString &legacyId)
 	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , mDiscoDone(false), m_syncTimer(0L)
 {
+	///*account()->client()->clientStream()->*/XMPP::setDebug((Debug*) new TD());
 	kDebug(JABBER_DEBUG_GLOBAL) << contactId() << "  is created  - " << this;
 	// this contact is able to transfer files
 	setFileCapable ( true );
+	
 
 	/*
 	 * Catch when we're going online for the first time to
@@ -1357,8 +1361,9 @@ void JabberContact::startJingleAudioCall()
 	//jingleSessionManager->newSession(to);
 	
 	//--Test purpose--
-	XMPP::JingleSession *session = new XMPP::JingleSession(account()->client()->rootTask(), XMPP::Jid(fullAddress()));
 	
+	account()->jingleCallsManager()->startNewSession(/*to*/fullAddress());
+	/*
 	QDomDocument doc;
 	QDomElement payload = doc.createElement("payload-type");
 	payload.setAttribute("id", "96");
@@ -1371,11 +1376,15 @@ void JabberContact::startJingleAudioCall()
 	content.setProfile("RTP/AVP");
 	content.setName("ContentTest");
 	content.setCreator("initiator");
-	content.addTransportNS("urn:xmpp:tmp:jingle:transports:ice-udp");
+	
+	QDomElement trans = doc.createElement("transport");
+	trans.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:ice-udp");
+	
+	content.addTransportNS(trans);
 	
 	session->addContent(content);
-
-	session->start();
+	*///--> ALL THIS MUST BE DONE BY THE JINGLECALLSMANAGER AT ITS CREATION.
+	//session->start();
 }
 
 void JabberContact::startJingleVideoCall()
