@@ -79,8 +79,14 @@ void URLPicPreviewPlugin::aboutToDisplay ( Kopete::Message& message )
 	{
 		// reread configuration
 		URLPicPreviewConfig::self()->readConfig();
-		// prepare parsed message body
-		message.setHtmlBody ( prepareBody ( message.parsedBody() ) );
+
+		QRegExp ex ( "(<a href=\")([^\"]*)(\" )?([^<]*)(</a>)(.*)$" );
+		QString myParsedBody = message.parsedBody();		
+		if ( ex.indexIn ( myParsedBody ) != -1 )
+		{
+			// Only change message if it contains urls
+			message.setHtmlBody ( prepareBody ( myParsedBody ) );
+		}
 	}
 }
 
