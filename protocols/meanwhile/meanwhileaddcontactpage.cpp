@@ -15,36 +15,29 @@
     *************************************************************************
 */
 #include "meanwhileaddcontactpage.h"
-#include <qpushbutton.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
 #include <kopeteaccount.h>
 #include <kopetemetacontact.h>
-#include <qlineedit.h>
 
 #include "meanwhileprotocol.h"
 #include "meanwhileaccount.h"
 #include "meanwhileplugin.h"
 
-MeanwhileAddContactPage::MeanwhileAddContactPage( 
-                                QWidget* parent, 
+MeanwhileAddContactPage::MeanwhileAddContactPage(
+                                QWidget* parent,
                                 Kopete::Account *_account)
-        : AddContactPage(parent, 0L), theAccount(_account),
-            theParent(parent)
+        : AddContactPage(parent), theAccount(_account),
+          theParent(parent)
 {
-	( new Q3VBoxLayout( this ) )->setAutoAdd( true );
-    theDialog = new MeanwhileAddContactBase(this);
-    MeanwhileAccount *account = 
-        static_cast<MeanwhileAccount *>(_account);
-    if (account->infoPlugin->canProvideMeanwhileId())
-    {
-        QObject::connect(theDialog->btnFindUser, SIGNAL(clicked()),
-                        SLOT(slotFindUser()));
+    QDialog *dialog = new QDialog(this);
+    ui.setupUi(dialog);
+
+    MeanwhileAccount *account = static_cast<MeanwhileAccount *>(_account);
+    if (account->infoPlugin->canProvideMeanwhileId()) {
+        connect(ui.btnFindUser, SIGNAL(clicked()), SLOT(slotFindUser()));
+    } else {
+        ui.btnFindUser->setDisabled(true);
     }
-    else
-        theDialog->btnFindUser->setDisabled(true);
-    theDialog->show();
+    dialog->show();
 }
 
 MeanwhileAddContactPage::~MeanwhileAddContactPage()
@@ -53,24 +46,22 @@ MeanwhileAddContactPage::~MeanwhileAddContactPage()
 
 void MeanwhileAddContactPage::slotFindUser()
 {
-    MeanwhileAccount *account = 
-        static_cast<MeanwhileAccount *>(theAccount);
-    account->infoPlugin->getMeanwhileId(theParent,
-                    theDialog->contactID);
+    MeanwhileAccount *account = static_cast<MeanwhileAccount *>(theAccount);
+    account->infoPlugin->getMeanwhileId(theParent, ui.contactID);
 }
 
-bool MeanwhileAddContactPage::apply( 
-                    Kopete::Account* a, 
+bool MeanwhileAddContactPage::apply(
+                    Kopete::Account* a,
                     Kopete::MetaContact* m )
 {
-    QString displayName = theDialog->contactID->text();
+    QString displayName = ui.contactID->text();
     MeanwhileAccount* myAccount = static_cast<MeanwhileAccount*>(a);
     return myAccount->addContact(displayName, m, Kopete::Account::ChangeKABC );
 }
 
 bool MeanwhileAddContactPage::validateData()
 {
-    return ! theDialog->contactID->text().isEmpty();
+    return !ui.contactID->text().isEmpty();
 }
 
 #include "meanwhileaddcontactpage.moc"

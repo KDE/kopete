@@ -28,39 +28,41 @@
 K_PLUGIN_FACTORY( MeanwhileProtocolFactory, registerPlugin<MeanwhileProtocol>(); )
 K_EXPORT_PLUGIN( MeanwhileProtocolFactory( "kopete_meanwhile" ) )
 
-MeanwhileProtocol::MeanwhileProtocol(QObject* parent, const QStringList &/*args*/)
+MeanwhileProtocol::MeanwhileProtocol(QObject* parent, const QVariantList &/*args*/)
 : Kopete::Protocol(MeanwhileProtocolFactory::componentData(), parent),
 
-    statusOffline(Kopete::OnlineStatus::Offline, 25, this, 0, QString(),
+    statusOffline(Kopete::OnlineStatus::Offline, 25, this, 0, QStringList(),
             i18n("Offline"), i18n("Offline"),
             Kopete::OnlineStatusManager::Offline,
 	    Kopete::OnlineStatusManager::DisabledIfOffline),
 
     statusOnline(Kopete::OnlineStatus::Online, 25, this, mwStatus_ACTIVE,
-            QString(), i18n("Online"), i18n("Online"),
+            QStringList(), i18n("Online"), i18n("Online"),
             Kopete::OnlineStatusManager::Online, 0),
 
     statusAway(Kopete::OnlineStatus::Away, 20, this, mwStatus_AWAY,
-            "meanwhile_away", i18n("Away"), i18n("Away"),
+            QStringList(QLatin1String("meanwhile_away")), i18n("Away"), i18n("Away"),
             Kopete::OnlineStatusManager::Away,
-	    Kopete::OnlineStatusManager::HasAwayMessage),
+	    Kopete::OnlineStatusManager::HasStatusMessage),
 
     statusBusy(Kopete::OnlineStatus::Away, 25, this, mwStatus_BUSY,
-            "meanwhile_dnd", i18n("Busy"), i18n("Busy"),
+            QStringList(QLatin1String("meanwhile_dnd")), i18n("Busy"), i18n("Busy"),
           Kopete::OnlineStatusManager::Busy,
-	  Kopete::OnlineStatusManager::HasAwayMessage),
+	  Kopete::OnlineStatusManager::HasStatusMessage),
 
     statusIdle(Kopete::OnlineStatus::Away, 30, this, mwStatus_AWAY,
-            "meanwhile_idle", i18n("Idle"), i18n("Idle"),
+            QStringList(QLatin1String("meanwhile_idle")), i18n("Idle"), i18n("Idle"),
             Kopete::OnlineStatusManager::Idle, 0),
 
     statusAccountOffline(Kopete::OnlineStatus::Offline, 0, this, 0,
-            QString(), i18n("Account Offline")),
+            QStringList(), i18n("Account Offline"))
 
+    /* ### TODO
     statusMessage(QString::fromLatin1("statusMessage"),
         i18n("Status Message"), QString(), false, true),
 
     awayMessage(Kopete::Global::Properties::self()->awayMessage())
+    */
 {
     HERE;
 
@@ -85,7 +87,7 @@ KopeteEditAccountWidget * MeanwhileProtocol::createEditAccountWidget(
 
 Kopete::Account *MeanwhileProtocol::createNewAccount(const QString &accountId)
 {
-	return new MeanwhileAccount(this, accountId, accountId.ascii());
+	return new MeanwhileAccount(this, accountId);
 }
 
 Kopete::Contact *MeanwhileProtocol::deserializeContact( 
@@ -117,7 +119,7 @@ const Kopete::OnlineStatus MeanwhileProtocol::accountOfflineStatus()
 }
 
 const Kopete::OnlineStatus MeanwhileProtocol::lookupStatus(
-            enum Kopete::OnlineStatusManager::Categories cats)
+            Kopete::OnlineStatusManager::Categories cats)
 {
     return Kopete::OnlineStatusManager::self()->onlineStatus(this, cats);
 }
