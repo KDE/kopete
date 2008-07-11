@@ -1356,35 +1356,10 @@ void JabberContact::slotDiscoFinished( )
 
 void JabberContact::startJingleAudioCall()
 {
-	startJingleVideoCall();
-	//TODO: implement me.
-	//jingleSessionManager->newSession(to);
-	
-	//--Test purpose--
-	
+	startJingleVideoCall(); //Only to show the message.
+
+	//There should also have a list of jingle features supported by the responder client.
 	account()->jingleCallsManager()->startNewSession(/*to*/fullAddress());
-	/*
-	QDomDocument doc;
-	QDomElement payload = doc.createElement("payload-type");
-	payload.setAttribute("id", "96");
-	payload.setAttribute("name", "speex");
-	payload.setAttribute("clockrate", "16000");
-	
-	XMPP::JingleContent content;
-	content.addPayloadType(payload);
-	content.setDesriptionNS("urn:xmpp:tmp:jingle:apps:audio-rtp");
-	content.setProfile("RTP/AVP");
-	content.setName("ContentTest");
-	content.setCreator("initiator");
-	
-	QDomElement trans = doc.createElement("transport");
-	trans.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:ice-udp");
-	
-	content.addTransportNS(trans);
-	
-	session->addContent(content);
-	*///--> ALL THIS MUST BE DONE BY THE JINGLECALLSMANAGER AT ITS CREATION.
-	//session->start();
 }
 
 void JabberContact::startJingleVideoCall()

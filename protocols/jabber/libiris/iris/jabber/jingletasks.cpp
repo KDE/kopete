@@ -71,7 +71,9 @@ class JingleContent::Private
 {
 public:
 	QList<QDomElement> payloads;
+	//FIXME:Only 1 transport per content.
 	QList<QDomElement> transports;
+	QList<QDomElement> candidates;
 	QString creator;
 	QString name;
 	QString profile;
@@ -205,7 +207,31 @@ QString JingleContent::dataType()
 
 void JingleContent::addTransportInfo(const QDomElement& e)
 {
-	
+	// From Now on, I consider only 1 transport per content !.
+	// TODO: ask.
+	QDomElement transport = e.firstChildElement();
+	if (transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
+	{
+		if (d->transports[0].attribute("pwd") != transport.attribute("pwd"))
+		{
+			qDebug() << "Bad ICE Password !";
+			return;
+		}
+		
+		if (d->transports[0].attribute("ufrag") != transport.attribute("ufrag"))
+		{
+			qDebug() << "Bad ICE User Fragment !";
+			return;
+		}
+		QDomElement child = transport.firstChildElement();
+		//FIXME:Is it possible to have more than one candidate per transport-info ?
+		//	See Thread "Jingle: multiple candidates per transport-info?" on xmpp-standards.
+		if (child.tagName() == "candidate")
+		{
+			// Just adding the Xml Element.
+			d->candidates << child;
+		}
+	}
 }
 
 QString JingleContent::iceUdpPassword()
@@ -670,7 +696,7 @@ void JT_JingleAction::removeContent(const QString& c)
 	
 	QDomElement jingle = doc()->createElement("jingle");
 	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
-	jingle.setAttribute("action", "session-terminate");
+	jingle.setAttribute("action", "content-remove");
 	jingle.setAttribute("initiator", d->session->initiator());
 	jingle.setAttribute("sid", d->session->sid());
 	//---------This par should be in another method (createJingleIQ(...))

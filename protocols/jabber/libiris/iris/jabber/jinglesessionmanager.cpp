@@ -118,10 +118,8 @@ void JingleSessionManager::slotTransportInfo(const QDomElement& x)
 		//unknownSession();
 		return;
 	}
-	sess->contentWithName(x.firstChildElement().attribute("name"))->addTransportInfo(x.firstChildElement().firstChildElement());
-
-	
-
+	//sess->contentWithName(x.firstChildElement().attribute("name"))->addTransportInfo(x.firstChildElement().firstChildElement());
+	sess->addTransportInfo(x.firstChildElement().firstChildElement());
 }
 
 void JingleSessionManager::slotDeleteSession()

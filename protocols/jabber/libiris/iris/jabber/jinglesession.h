@@ -35,12 +35,14 @@ namespace XMPP
 		 */
 		void addContent(const JingleContent&);
 		void addContent(const QDomElement&);
+		void addTransportInfo(const QDomElement&);
+
 		void acceptContent();
 		void acceptSession();
 		void removeContent(const QString&);
 		void terminate(Reason);
-		void end(const QString&, const QString&);
 		void ring();
+		
 		/*TODO: there should also be removeContent, modifyContent,...*/
 		
 		void sendIceUdpCandidates();

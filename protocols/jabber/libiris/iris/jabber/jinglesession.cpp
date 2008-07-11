@@ -155,11 +155,6 @@ void JingleSession::slotRemoveAcked()
 	//	emit stopSending(d->contentToRemove);
 }
 
-void JingleSession::end(const QString& cond, const QString& text) //DEPRECATED, Use JingleSession::terminate(Reason)
-{
-
-}
-
 void JingleSession::ring()
 {
 	JT_JingleAction *jtRing = new JT_JingleAction(d->rootTask);
@@ -247,21 +242,35 @@ void JingleSession::setTo(const Jid& to)
 void JingleSession::sendIceUdpCandidates()
 {
 	qDebug() << "Sending ice-udp candidates";
-	JT_JingleAction *cAction = new JT_JingleAction(d->rootTask)
+	/*JT_JingleAction *cAction = new JT_JingleAction(d->rootTask);
 	cAction->setSession(this);
 	QDomDocument doc("");
-	QDomElement candidate = doc.createElement();
+	QDomElement candidate = doc.createElement("candidate");
 	candidate.setAttribute("foo", "bar");
-	cAction->sendCandidate(candidate);
-	// --> Or better : sendTransportInfo(QDomElement transport);
+	//cAction->sendCandidate(candidate);
+	// --> Or better : sendTransportInfo(QDomElement transport);*/
 }
 
 void JingleSession::sendRawUdpCandidates()
 {
-	qDebug() << "Sending raw-udp candidates";
+	qDebug() << "Sending raw-udp candidates (still 'TODO')";
 }
 
 void JingleSession::slotSessTerminated()
 {
 	emit deleteMe();
 }
+
+void JingleSession::addTransportInfo(const QDomElement& e)
+{
+	contentWithName(e.attribute("name"))->addTransportInfo(e);
+	
+	//If it is a candidate, we try to connect.
+	//FIXME:is a transport-info always a candidate ?
+	//TODO:There should be a JingleTransport Class as the transport will be used everywhere
+	//	Also, we could manipulate the QDomElement
+	QDomElement c = e.firstChildElement().firstChildElement(); //This is the candidate.
+//	if (transport)
+
+}
+
