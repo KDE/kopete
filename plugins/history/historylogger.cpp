@@ -427,9 +427,9 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
 	if(c && !m_metaContact->contacts().contains(const_cast<Kopete::Contact*>(c)) )
 		return messages;
 
-	if(sens ==0 )  //if no sens are selected, just continue in the previous sens
+	if(sens == Default )  //if no sens are selected, just continue in the previous sens
 		sens = m_oldSens ;
-	if( m_oldSens != 0 && sens != m_oldSens )
+	if( m_oldSens != Default && sens != m_oldSens )
 	{ //we changed our sens! so retrieve the old position to fly in the other way
 		m_currentElements= m_oldElements;
 		m_currentMonth=m_oldMonth;
