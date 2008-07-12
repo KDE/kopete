@@ -17,7 +17,7 @@
 #ifndef BONJOURADDCONTACTPAGE_H
 #define BONJOURADDCONTACTPAGE_H
 
-#include <kopete/ui/addcontactpage.h>
+#include <ui/addcontactpage.h>
 #include "ui_bonjouraddui.h"
 
 namespace Kopete { class Account; }

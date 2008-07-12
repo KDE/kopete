@@ -23,7 +23,7 @@
 #include <QByteArray>
 #include <QXmlStreamReader>
 
-#include <kopete/kopetemessage.h>
+#include <kopetemessage.h>
 
 /**
  * @brief This Represents a connection to a contact

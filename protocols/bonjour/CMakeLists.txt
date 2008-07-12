@@ -6,10 +6,9 @@ find_package(Kopete)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
-MESSAGE(STATUS "kopete include ${KOPETE_INCLUDE_DIR}")
+MESSAGE(STATUS "kopete include ${KOPETE_INCLUDES}")
 
-include_directories(${KOPETE_INCLUDE_DIR})
-include_directories(${KOPETE_INCLUDE_DIR}/kopete/)
+include_directories(${KOPETE_INCLUDES})
 
 add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=14220)

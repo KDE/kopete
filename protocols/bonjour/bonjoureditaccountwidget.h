@@ -19,7 +19,7 @@
 #define BONJOUREDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
-#include <kopete/ui/editaccountwidget.h>
+#include <ui/editaccountwidget.h>
 #include <KConfigGroup>
 
 namespace Kopete { class Account; }

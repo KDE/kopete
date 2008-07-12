@@ -18,7 +18,7 @@
 #ifndef BONJOURPROTOCOL_H
 #define BONJOURPROTOCOL_H
 
-#include <kopete/kopeteprotocol.h>
+#include <kopeteprotocol.h>
 
 
 /**

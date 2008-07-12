@@ -22,7 +22,7 @@
 #include <QTcpServer>
 #include <QList>
 
-#include <kopete/kopeteaccount.h>
+#include <kopeteaccount.h>
 
 #include <dnssd/publicservice.h>
 #include <dnssd/servicebrowser.h>
