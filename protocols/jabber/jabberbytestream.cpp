@@ -19,9 +19,8 @@
 
 #include <qobject.h>
 #include <kdebug.h>
+#include <ksocketfactory.h>
 #include "jabberbytestream.h"
-#include <k3bufferedsocket.h>
-#include <k3resolver.h>
 #include "jabberprotocol.h"
 
 JabberByteStream::JabberByteStream ( QObject *parent )
@@ -32,28 +31,22 @@ JabberByteStream::JabberByteStream ( QObject *parent )
 	// reset close tracking flag
 	mClosing = false;
 
-	mSocket = new KNetwork::KBufferedSocket;
-
-	// make sure we get a signal whenever there's data to be read
-	mSocket->enableRead ( true );
-
-	// connect signals and slots
-	QObject::connect ( mSocket, SIGNAL ( gotError ( int ) ), this, SLOT ( slotError ( int ) ) );
-	QObject::connect ( mSocket, SIGNAL ( connected ( const KNetwork::KResolverEntry& ) ), this, SLOT ( slotConnected () ) );
-	QObject::connect ( mSocket, SIGNAL ( closed () ), this, SLOT ( slotConnectionClosed () ) );
-	QObject::connect ( mSocket, SIGNAL ( readyRead () ), this, SLOT ( slotReadyRead () ) );
-	QObject::connect ( mSocket, SIGNAL ( bytesWritten ( qint64 ) ), this, SLOT ( slotBytesWritten ( qint64 ) ) );
-
+	mSocket = NULL;
 }
 
-bool JabberByteStream::connect ( QString host, QString service )
+void JabberByteStream::connect ( QString host, int port )
 {
-	kDebug ( JABBER_DEBUG_GLOBAL ) << "Connecting to " << host << ", service " << service;
+	kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to " << host << ", port " << port << endl;
 
 	mClosing = false;
 
-	return socket()->connect ( host, service );
+	mSocket = KSocketFactory::connectToHost("xmpp", host, port);
 
+	QObject::connect ( mSocket, SIGNAL ( QAbstractSocket::SocketError ), this, SLOT ( slotError ( QAbstractSocket::SocketError ) ) );
+	QObject::connect ( mSocket, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
+	QObject::connect ( mSocket, SIGNAL ( closed () ), this, SLOT ( slotConnectionClosed () ) );
+	QObject::connect ( mSocket, SIGNAL ( readyRead () ), this, SLOT ( slotReadyRead () ) );
+	QObject::connect ( mSocket, SIGNAL ( bytesWritten ( qint64 ) ), this, SLOT ( slotBytesWritten ( qint64 ) ) );
 }
 
 bool JabberByteStream::isOpen () const
@@ -70,8 +63,13 @@ void JabberByteStream::close ()
 
 	// close the socket and set flag that we are closing it ourselves
 	mClosing = true;
-	socket()->close();
-
+        if (mSocket) {
+             kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "socket is not null" << endl;
+	     mSocket->close();
+             kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "socket closed" << endl;
+             delete mSocket;
+             mSocket=NULL;
+        }
 }
 
 int JabberByteStream::tryWrite ()
@@ -85,7 +83,7 @@ int JabberByteStream::tryWrite ()
 
 }
 
-KNetwork::KBufferedSocket *JabberByteStream::socket () const
+QTcpSocket *JabberByteStream::socket () const
 {
 
 	return mSocket;
@@ -143,8 +141,7 @@ void JabberByteStream::slotBytesWritten ( qint64 bytes )
 void JabberByteStream::slotError ( int code )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << "Socket error '" <<  mSocket->errorString() <<  "' - Code : " << code;
-	if(KNetwork::KSocketBase::isFatalError( code ))
-		emit error ( code );
+	emit error ( code );
 }
 
 #include "jabberbytestream.moc"

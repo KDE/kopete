@@ -987,7 +987,7 @@ void JabberClient::slotCSAuthenticated ()
 		JabberByteStream *kdeByteStream = dynamic_cast<JabberByteStream*>(d->jabberClientConnector->stream());
 		if ( kdeByteStream )
 		{
-			d->localAddress = kdeByteStream->socket()->localAddress().nodeName ();
+			d->localAddress = kdeByteStream->socket()->peerName();
 		}
 	}
 

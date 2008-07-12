@@ -38,6 +38,7 @@
 #include <qstring.h>
 #include <qregexp.h>
 #include <qtimer.h>
+#include <QAbstractSocket>
 
 #include <kcomponentdata.h>
 #include <kconfig.h>
@@ -45,7 +46,6 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kaboutdata.h>
-#include <k3socketbase.h>
 #include <kpassworddialog.h>
 #include <kinputdialog.h>
 #include <kicon.h>
@@ -854,55 +854,28 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 		case XMPP::ClientStream::ErrConnection:
 			switch(connectorCode)
 			{
- 				case KNetwork::KSocketBase::LookupFailure:
+ 				case QAbstractSocket::HostNotFoundError:
 					errorClass = Kopete::Account::InvalidHost;
 					errorCondition = i18n("Host not found.");
 					break;
-				case KNetwork::KSocketBase::AddressInUse:
+				case QAbstractSocket::AddressInUseError:
 					errorCondition = i18n("Address is already in use.");
 					break;
-				case KNetwork::KSocketBase::AlreadyCreated:
-					errorCondition = i18n("Cannot recreate the socket.");
-					break;
-				case KNetwork::KSocketBase::AlreadyBound:
-					errorCondition = i18n("Cannot bind the socket again.");
-					break;
-				case KNetwork::KSocketBase::AlreadyConnected:
-					errorCondition = i18n("Socket is already connected.");
-					break;
-				case KNetwork::KSocketBase::NotConnected:
-					errorCondition = i18n("Socket is not connected.");
-					break;
-				case KNetwork::KSocketBase::NotBound:
-					errorCondition = i18n("Socket is not bound.");
-					break;
-				case KNetwork::KSocketBase::NotCreated:
-					errorCondition = i18n("Socket has not been created.");
-					break;
-				case KNetwork::KSocketBase::WouldBlock:
-					errorCondition = i18n("The socket operation would block. You should not see this error: please use \"Report Bug\" from the Help menu.");
-					break;
-				case KNetwork::KSocketBase::ConnectionRefused:
+				case QAbstractSocket::ConnectionRefusedError:
 					errorCondition = i18n("Connection refused.");
 					break;
-				case KNetwork::KSocketBase::ConnectionTimedOut:
-					errorCondition = i18n("Connection timed out.");
-					break;
-				case KNetwork::KSocketBase::InProgress:
+				case QAbstractSocket::UnfinishedSocketOperationError:
 					errorCondition = i18n("Connection attempt already in progress.");
 					break;
-				case KNetwork::KSocketBase::NetFailure:
+				case QAbstractSocket::NetworkError:
 					errorCondition = i18n("Network failure.");
 					break;
-				case KNetwork::KSocketBase::NotSupported:
-					errorCondition = i18n("Operation is not supported.");
-					break;
-				case KNetwork::KSocketBase::Timeout:
+				case QAbstractSocket::SocketTimeoutError:
 					errorCondition = i18n("Socket timed out.");
 					break;
 				default:
 					errorClass = Kopete::Account::ConnectionReset;
-					//errorCondition = i18n("Sorry, something unexpected happened that I do not know more about.");
+					errorCondition = i18n("Sorry, something unexpected happened that I do not know more about.");
 					break;
 			}
 			if(!errorCondition.isEmpty())
