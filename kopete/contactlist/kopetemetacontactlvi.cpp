@@ -887,8 +887,8 @@ void KopeteMetaContactLVI::slotContactAdded( Kopete::Contact *c )
 
 	updateContactIcon( c );
 
-	slotContactPropertyChanged( c, QLatin1String("awayMessage"),
-		QVariant(), c->property( QLatin1String("awayMessage") ).value() );
+	slotContactPropertyChanged( c, QLatin1String("statusMessage"),
+		QVariant(), c->property( QLatin1String("statusMessage") ).value() );
 }
 
 void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
@@ -902,8 +902,8 @@ void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
 	if ( ListView::Component *comp = contactComponent( c ) )
 		delete comp;
 
-	slotContactPropertyChanged( c, QLatin1String("awayMessage"),
-		c->property( QLatin1String("awayMessage") ).value(), QVariant() );
+	slotContactPropertyChanged( c, QLatin1String("statusMessage"),
+		c->property( QLatin1String("statusMessage") ).value(), QVariant() );
 }
 
 void KopeteMetaContactLVI::updateContactIcons()
