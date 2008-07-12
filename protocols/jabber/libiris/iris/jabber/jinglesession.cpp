@@ -4,6 +4,14 @@
 
 using namespace XMPP;
 
+static QString genSid()
+{
+	QString s;
+	int id_seed = rand() % 0xffff;
+	s.sprintf("a%x", id_seed);
+	return s;
+}
+
 class JingleSession::Private
 {
 public:
@@ -14,6 +22,7 @@ public:
 	QString initiator;
 	JT_JingleSession *jt;
 	State state;
+	QStringList contentsToRemove;
 };
 
 JingleSession::JingleSession(Task *t, const Jid &j)
@@ -46,13 +55,11 @@ QList<JingleContent> JingleSession::contents() const
 
 void JingleSession::start()
 {
-	/* FIXME:
-	 * 	Use a JT_JingleAction instead.
-	 */
-	d->jt = new JT_JingleSession(d->rootTask);
-	d->jt->start(this);
-	d->jt->go();
-	startNegotiation();
+	d->sid = genSid();
+	JT_JingleAction *iAction = new JT_JingleAction(d->rootTask);
+	iAction->setSession(this);
+	iAction->initiate();
+	//startNegotiation();-->sendCandidates();
 }
 
 void JingleSession::acceptSession()
@@ -100,7 +107,30 @@ void JingleSession::acceptContent()
 	tAction->contentAccept();
 }
 
-void JingleSession::removeContent(const QString& c) //FIXME:Is it possible to have more than 1 content in a remove-content action ?
+void JingleSession::removeContent(const QStringList& c)
+{
+	// Removing only existing contents.
+	for (int i = 0; i < c.count(); i++)
+	{
+		for (int j = 0; j < contents().count(); j++)
+		{
+			if (c.at(i) == contents()[j].name())
+			{
+				d->contentsToRemove << c[i];
+			}
+		}
+	}
+	if (d->contentsToRemove.count() <= 0)
+		return;
+	
+	//d->contents.removeAt(i); //Or do it in the slotRemoveAcked() ?? --> Yes, we will remove all contents in d->contentsToRemove from d->contents when acked.
+	JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
+	connect(rAction, SIGNAL(acked()), this, SLOT(slotRemoveAcked()));
+	rAction->setSession(this);
+	rAction->removeContents(d->contentsToRemove);
+}
+
+void JingleSession::removeContent(const QString& c) // Provided for convenience, may disappear.
 {
 /*
  * From Jingle Specification : 
@@ -131,14 +161,11 @@ void JingleSession::removeContent(const QString& c) //FIXME:Is it possible to ha
 			qDebug() << "This content does not exists for this session (" << c << ")";
 			return;
 		}
-		d->contents.removeAt(i); //Or do it in the slotRemoveAcked() ??
-		//FIXME:We must use a JT_JingleAction here, d->jt might be deleted.
-		//	In the future, everything will be started with a JT_JingleAction
-		//	as everything is an Action in Jingle.
 		JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
 		connect(rAction, SIGNAL(acked()), this, SLOT(slotRemoveAcked()));
 		rAction->setSession(this);
-		rAction->removeContent(c);
+		d->contentsToRemove << c;
+		rAction->removeContents(d->contentsToRemove);
 	}
 }
 
@@ -149,8 +176,22 @@ void JingleSession::slotRemoveAcked()
 		delete rAction;
 	else
 		return;
+	// Remove contents from the d->contents
+	for (int i = 0; i < d->contentsToRemove.count(); i++)
+	{
+		for (int j = 0; j < contents().count(); j++)
+		{
+			if (d->contentsToRemove[i] == contents()[j].name())
+			{
+				d->contents.removeAt(j);
+				break;
+			}
+		}
+	}
+	d->contentsToRemove.clear();
+
 	if (d->state == Pending)
-		acceptSession();
+		acceptSession(); //FIXME:Should be contentAccept...
 	//else if (d->state == Active)
 	//	emit stopSending(d->contentToRemove);
 }
@@ -214,13 +255,10 @@ void JingleSession::startNegotiation()
 	 */
 	for (int i = 0; i < d->contents.count(); i++)
 	{
-		for (int j = 0; j < d->contents[i].transports().count(); j++)
-		{
-			if (d->contents[i].transports()[j].attribute("name") == "ice-udp")
-				sendIceUdpCandidates();
-			else if (d->contents[i].transports()[j].attribute("name") == "raw-udp")
-				sendRawUdpCandidates();
-		}
+		if (d->contents[i].transport().attribute("name") == "ice-udp")
+			sendIceUdpCandidates();
+		else if (d->contents[i].transport().attribute("name") == "raw-udp")
+			sendRawUdpCandidates();
 	}
 }
 
@@ -258,7 +296,7 @@ void JingleSession::sendRawUdpCandidates()
 
 void JingleSession::slotSessTerminated()
 {
-	emit deleteMe();
+	emit terminated();
 }
 
 void JingleSession::addTransportInfo(const QDomElement& e)
@@ -270,7 +308,6 @@ void JingleSession::addTransportInfo(const QDomElement& e)
 	//TODO:There should be a JingleTransport Class as the transport will be used everywhere
 	//	Also, we could manipulate the QDomElement
 	QDomElement c = e.firstChildElement().firstChildElement(); //This is the candidate.
-//	if (transport)
 
 }
 

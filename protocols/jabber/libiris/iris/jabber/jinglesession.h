@@ -40,6 +40,7 @@ namespace XMPP
 		void acceptContent();
 		void acceptSession();
 		void removeContent(const QString&);
+		void removeContent(const QStringList&);
 		void terminate(Reason);
 		void ring();
 		
@@ -86,7 +87,7 @@ namespace XMPP
 		} State;
 
 	signals:
-		void deleteMe();
+		void terminated();
 	public slots:
 		void slotRemoveAcked();
 		void slotSessTerminated();

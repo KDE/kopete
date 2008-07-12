@@ -103,11 +103,7 @@ void JingleCallsManager::slotUserAccepted()
 	else
 	{
 		qDebug() << "Accept only some contents, removing some unaccepted.";
-		QStringList c = cd->unChecked();
-		// Not a good Idea !!!!!!!!!!!!!!!!!!!!!!!!
-		// DIRECTLY REMOVE THE LIST OF CONTENTS TO REMOVE !
-		for (int i = 0; i < c.count(); i++)
-			cd->session()->removeContent(c[i]);
+		cd->session()->removeContent(cd->unChecked());
 	}
 }
 

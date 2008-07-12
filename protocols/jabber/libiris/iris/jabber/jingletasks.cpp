@@ -8,27 +8,6 @@
 
 using namespace XMPP;
 
-QString genSid()
-{
-	QString s;
-	int id_seed = rand() % 0xffff;
-	s.sprintf("a%x", id_seed);
-	return s;
-}
-
-bool iqJingleVerify(const QDomElement *x, const Jid& from, const QString& id, const QString& sid)
-{
-	if (x->attribute("from") != from.full())
-		return false;
-	if (x->attribute("id") != id)
-	{
-		// If the id has changed, we must check if the sid is the same.
-		QDomElement jingle = x->firstChildElement();
-		if (jingle.tagName() != "jingle" || jingle.attribute("sid") != sid)
-			return false;
-	}
-	return true;
-}
 
 JingleSession::JingleAction jingleAction(const QDomElement& x)
 {
@@ -72,7 +51,7 @@ class JingleContent::Private
 public:
 	QList<QDomElement> payloads;
 	//FIXME:Only 1 transport per content.
-	QList<QDomElement> transports;
+	QDomElement transport;
 	QList<QDomElement> candidates;
 	QString creator;
 	QString name;
@@ -96,9 +75,9 @@ void JingleContent::addPayloadType(const QDomElement& pl)
 	d->payloads << pl;
 }
 
-void JingleContent::addTransportNS(const QDomElement& t)
+void JingleContent::setTransport(const QDomElement& t)
 {
-	d->transports << t;
+	d->transport = t;
 }
 
 QList<QDomElement> JingleContent::payloadTypes() const
@@ -106,9 +85,9 @@ QList<QDomElement> JingleContent::payloadTypes() const
 	return d->payloads;
 }
 
-QList<QDomElement> JingleContent::transports() const
+QDomElement JingleContent::transport() const
 {
-	return d->transports;
+	return d->transport;
 }
 
 void JingleContent::setCreator(const QString& c)
@@ -133,6 +112,7 @@ void JingleContent::setProfile(const QString& p)
 
 void JingleContent::fromElement(const QDomElement& e)
 {
+	// FIXME:tag order may not always be the same !!!
 	if (e.tagName() != "content")
 		return;
 	d->creator = e.attribute("creator");
@@ -148,12 +128,7 @@ void JingleContent::fromElement(const QDomElement& e)
 		payload = payload.nextSiblingElement();
 	}
 	QDomElement transport = desc.nextSiblingElement();
-
-	while (!transport.isNull())
-	{
-		d->transports << transport;
-		transport = transport.nextSiblingElement();
-	}
+	d->transport = transport;
 }
 
 QDomElement JingleContent::contentElement()
@@ -175,10 +150,7 @@ QDomElement JingleContent::contentElement()
 		description.appendChild(d->payloads.at(i));
 	}
 	content.appendChild(description);
-	for (int i = 0; i < d->transports.count(); i++)
-	{
-		content.appendChild(d->transports.at(i));
-	}
+	content.appendChild(d->transport);
 
 	return content;
 }
@@ -207,18 +179,16 @@ QString JingleContent::dataType()
 
 void JingleContent::addTransportInfo(const QDomElement& e)
 {
-	// From Now on, I consider only 1 transport per content !.
-	// TODO: ask.
 	QDomElement transport = e.firstChildElement();
 	if (transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
 	{
-		if (d->transports[0].attribute("pwd") != transport.attribute("pwd"))
+		if (d->transport.attribute("pwd") != transport.attribute("pwd"))
 		{
 			qDebug() << "Bad ICE Password !";
 			return;
 		}
 		
-		if (d->transports[0].attribute("ufrag") != transport.attribute("ufrag"))
+		if (d->transport.attribute("ufrag") != transport.attribute("ufrag"))
 		{
 			qDebug() << "Bad ICE User Fragment !";
 			return;
@@ -236,29 +206,23 @@ void JingleContent::addTransportInfo(const QDomElement& e)
 
 QString JingleContent::iceUdpPassword()
 {
-	for (int i = 0; i < d->transports.count(); i++)
-	{
-		if (d->transports[i].attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
-			return d->transports[i].attribute("pwd");
-	}
+	if (d->transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
+		return d->transport.attribute("pwd");
 	return "";
 }
 
 QString JingleContent::iceUdpUFrag()
 {
-	for (int i = 0; i < d->transports.count(); i++)
-	{
-		if (d->transports[i].attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
-			return d->transports[i].attribute("ufrag");
-	}
+	if (d->transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
+		return d->transport.attribute("ufrag");
 	return "";
 }
 
 //------------------------
-// JT_PushJingleSession
+// JT_PushJingleAction
 //------------------------
 //RECEIVES THE ACTIONS
-class JT_PushJingleSession::Private
+class JT_PushJingleAction::Private
 {
 public:
 	JingleSession *incomingSession;
@@ -268,23 +232,23 @@ public:
 	Jid from;
 };
 
-JT_PushJingleSession::JT_PushJingleSession(Task *parent)
+JT_PushJingleAction::JT_PushJingleAction(Task *parent)
 : Task(parent), d(new Private)
 {
-	printf("\n\nCreating the PushJingleSession task....\n\n");
+	qDebug() << "Creating the PushJingleSession task....";
 }
 
-JT_PushJingleSession::~JT_PushJingleSession()
+JT_PushJingleAction::~JT_PushJingleAction()
 {
-	printf("Deleting the PushJingleSession task....\n");
+	qDebug() << "Deleting the PushJingleSession task....";
 }
 
-void JT_PushJingleSession::onGo()
+void JT_PushJingleAction::onGo()
 {
 //	send(d->iq);
 }
 
-bool JT_PushJingleSession::take(const QDomElement &x)
+bool JT_PushJingleAction::take(const QDomElement &x)
 {
 	/*
 	 * We take this stanza when it is a session-initiate stanza for sure.
@@ -293,8 +257,8 @@ bool JT_PushJingleSession::take(const QDomElement &x)
 	 * 	* A new JT_JingleSession is used by the JingleSession to established the connection
 	 * I'd rather use the second one, see later...
 	 */
-	printf("JT_PushJingleSession::take\n");
-	//printf("tagName : %s\n", x.firstChildElement().tagName().toLatin1().constData());
+	qDebug() << "JT_PushJingleAction::take\n";
+	// qDebug() << "tagName : %s\n", x.firstChildElement().tagName().toLatin1().constData();
 	if (x.firstChildElement().tagName() != "jingle")
 		return false;
 	
@@ -380,187 +344,25 @@ bool JT_PushJingleSession::take(const QDomElement &x)
 
 		break;
 	default:
-		printf("There are some troubles with the Jingle Implementation. Be carefull that this is still low performances software.\n");
+		qDebug() << "There are some troubles with the Jingle Implementation. Be carefull that this is still low performances software.";
 	}
 	return true;
 }
 
-JingleSession *JT_PushJingleSession::takeNextIncomingSession()
+JingleSession *JT_PushJingleAction::takeNextIncomingSession()
 {
 	return d->incomingSessions.takeLast();
 }
 
-void JT_PushJingleSession::ack()
+void JT_PushJingleAction::ack()
 {
 	d->iq = createIQ(doc(), "result", d->from.full(), d->id);
 	send(d->iq);
 }
 
-void JT_PushJingleSession::jingleError(const QDomElement& x)
+void JT_PushJingleAction::jingleError(const QDomElement& x)
 {
 	qDebug() << "There was an error from the responder. Not supported yet.";
-}
-
-//------------------------
-// JT_JingleSession
-//------------------------
-//Used until the session is in ACTIVE state.
-class JT_JingleSession::Private
-{
-public:
-	State state;
-	JingleSession *session;
-	QList<JingleContent> contents;
-	QDomElement iq;
-	QString id;
-};
-
-JT_JingleSession::JT_JingleSession(Task *parent)
-: Task(parent), d(new Private())
-{
-	d->state = Initiation;
-	d->session->setSid("a" + genSid());
-}
-
-JT_JingleSession::~JT_JingleSession()
-{
-
-}
-
-void JT_JingleSession::start(JingleSession *s)
-{
-	d->session = s;
-	d->contents = s->contents();
-	
-	qDebug() << id();
-	d->iq = createIQ(doc(), "set", d->session->to().full(), id());
-	d->iq.setAttribute("from", client()->jid().full());
-	QDomElement jingle = doc()->createElement("jingle");
-	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
-	jingle.setAttribute("action", "session-initiate");
-	jingle.setAttribute("initiator", client()->jid().full());
-	qDebug() << d->session->sid();
-	jingle.setAttribute("sid", d->session->sid());
-
-	for (int i = 0; i < d->contents.count(); i++)
-	{
-		jingle.appendChild(d->contents[i].contentElement());
-	}
-
-	d->iq.appendChild(jingle);
-}
-
-void JT_JingleSession::onGo()
-{
-	//send(d->iq);
-	//if (d->state == StartNegotiation)
-	//{
-		// Now we start negotiating a candidate, trying to connect, etc... using RAW-UDP or ICE-UDP.
-		// WARNING : We should already have agreed on a transport method.
-		// If the responder does not support the proposed transport, what should he answer ?
-		//sendCandidate();
-	//}
-}
-
-bool JT_JingleSession::take(const QDomElement &x)
-{
-	//return false; //Now, JT_PushJingleTask takes all incoming stanzas
-	/* FIXME:
-	 * JingleSession's methods used to end the session, remove content,...
-	 * should have other names (wantToEnd(), wantToRemoveContent(), ...)
-	 * because end(), removeContent(),.. are used by the application when
-	 * the user wants to execute the action.
-	 */
-	/* FIXME:
-	 * Another problem is the one of the Tasks : to stick to the Iris policy,
-	 * a different instance should be used for each possible different id.
-	 * As a consequence, JT_PushJingleTask takes all incoming stanzas and emits
-	 * signals with the sid so the application know what session it is for.
-	 * Also, a task which sends an action is destroyed as soon
-	 * as the action is terminated (either success or failure) :
-	 * 	* JT_JingleAction (sends and manages 1 action then is destroyed);
-	 * 	* JT_JingleSession (start the session : negotiation,  all incoming
-	 * 	  stanzas will be taken by the JT_PushJingleSession and then emitted
-	 * 	  to the application.)
-	 */
-	if (!iqVerify(x, d->session->to(), id()))
-		return false;
-
-	QString condition;
-	QString text;
-/*	switch (jingleAction(x))
-	{
-	case JingleSession::ContentAccept :
-		* FIXME:
-		 * 	After Example 39 of XEP-0167, shoudn't the responder send a content-accept ?
-		 * 	Maybe not, as soon as the responder asked to remove something, he accepts the proposed content without the removed element(s(?))
-		 *
-		//Ack content-accept
-		d->id = x.attribute("id");
-		//ack();
-		
-		// That's accepted, we should now start the stream... see later.
-		// content-accept is used if no modifications are done to the stream.
-		* QDomElement info = x.firstChildElement().firstChildElement();
-		if ()*
-		// State changes in function of the transport.
-		//d->state = StartNegotiation;
-		break;
-	case JingleSession::ContentRemove : 
-	case JingleSession::SessionTerminate :
-		// Ack end of session
-		d->id = x.attribute("id");
-		//ack();
-		
-		d->session->end(condition, text);
-		break;
-	case JingleSession::SessionInfo :
-		// Ack ringing
-		d->id = x.attribute("id");
-		//ack();
-		
-		if (x.firstChild().firstChildElement().tagName() == "ringing")
-		{
-			d->session->ringing();
-		}
-		break;
-	case JingleSession::NoAction :
-		if (d->state == Initiation)
-		{
-			if (x.attribute("type") == "result")
-			{
-				qDebug() << "JT_JingleSession::take : switching to WaitContentAccept state.";
-				d->state = WaitContentAccept;
-			}
-			else if (x.attribute("type") == "error")
-			{
-				QDomElement errorElem = x.firstChildElement();
-				if (errorElem.attribute("type") == "cancel")
-				{
-					if (errorElem.firstChildElement().tagName() == "service-unavailable")
-						emit error(ServiceUnavailable);
-					if (errorElem.firstChildElement().tagName() == "redirect")
-					{
-						redirectTo = errorElem.firstChild().firstChild().toText().data();
-						emit error(Redirect);
-					}
-					if (errorElem.firstChildElement().tagName() == "bad-request")
-						emit error(BadRequest);
-				}
-				else if (errorElem.attribute("type") == "wait")
-				{
-					if (errorElem.firstChildElement().tagName() == "resource-constraint")
-						emit error(ResourceConstraint);
-				}
-			}
-		
-		}
-		break;
-	default :
-		break;
-	}*/
-
-	return true;
 }
 
 //-----------------------
@@ -591,6 +393,28 @@ void JT_JingleAction::setSession(JingleSession *sess)
 {
 	d->session = sess;
 }
+
+void JT_JingleAction::initiate()
+{
+	qDebug() << id();
+	d->iq = createIQ(doc(), "set", d->session->to().full(), id());
+	d->iq.setAttribute("from", client()->jid().full());
+	QDomElement jingle = doc()->createElement("jingle");
+	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
+	jingle.setAttribute("action", "session-initiate");
+	jingle.setAttribute("initiator", client()->jid().full());
+	qDebug() << d->session->sid();
+	jingle.setAttribute("sid", d->session->sid());
+
+	for (int i = 0; i < d->session->contents().count(); i++)
+	{
+		jingle.appendChild(d->session->contents()[i].contentElement());
+	}
+
+	d->iq.appendChild(jingle);
+	send(d->iq);
+}
+
 
 void JT_JingleAction::contentAccept()
 {
@@ -681,7 +505,7 @@ void JT_JingleAction::terminate(int r)
 	send(d->iq);
 }
 
-void JT_JingleAction::removeContent(const QString& c)
+void JT_JingleAction::removeContents(const QStringList& c)
 {
 	// ----------------------------
 	if (d->session == 0)
@@ -701,11 +525,14 @@ void JT_JingleAction::removeContent(const QString& c)
 	jingle.setAttribute("sid", d->session->sid());
 	//---------This par should be in another method (createJingleIQ(...))
 	
-	QDomElement content = doc()->createElement("content");
-	content.setAttribute("name", c);
+	for (int i = 0; i < c.count(); i++)
+	{
+		QDomElement content = doc()->createElement("content");
+		content.setAttribute("name", c[i]);
+		jingle.appendChild(content);
+	}
 	//FIXME:MUST the 'creator' tag be there ?
 	
-	jingle.appendChild(content);
 	d->iq.appendChild(jingle);
 
 	send(d->iq);

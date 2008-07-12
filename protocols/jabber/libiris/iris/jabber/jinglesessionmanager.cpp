@@ -6,7 +6,7 @@ using namespace XMPP;
 class JingleSessionManager::Private
 {
 public:
-	JT_PushJingleSession *pjs;
+	JT_PushJingleAction *pjs;
 	Client *client;
 	QList<JingleSession*> sessions;
 	QStringList supportedTransports;
@@ -22,7 +22,7 @@ JingleSessionManager::JingleSessionManager(Client* c)
 {
 	qDebug() << "JingleSessionManager::JingleSessionManager created.";
 	d->client = c;
-	d->pjs = new JT_PushJingleSession(d->client->rootTask());
+	d->pjs = new JT_PushJingleAction(d->client->rootTask());
 	connect(d->pjs, SIGNAL(newSessionIncoming()), this, SLOT(slotSessionIncoming()));
 	connect(d->pjs, SIGNAL(removeContent(const QString&, const QStringList&)), this, SLOT(slotRemoveContent(const QString&, const QStringList&)));
 	connect(d->pjs, SIGNAL(transportInfo(const QDomElement&)), this, SLOT(slotTransportInfo(const QDomElement&)));
@@ -61,7 +61,7 @@ void JingleSessionManager::startNewSession(const Jid& toJid)
 {
 	XMPP::JingleSession *session = new XMPP::JingleSession(d->client->rootTask(), toJid.full());
 	d->sessions << session;
-	connect(session, SIGNAL(deleteMe()), this, SLOT(slotDeleteSession()));
+	connect(session, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
 	session->start();
 }
 
@@ -122,9 +122,12 @@ void JingleSessionManager::slotTransportInfo(const QDomElement& x)
 	sess->addTransportInfo(x.firstChildElement().firstChildElement());
 }
 
-void JingleSessionManager::slotDeleteSession()
+void JingleSessionManager::slotSessionTerminated()
 {
 	JingleSession* sess = (JingleSession*) sender();
+	//TODO: Before we delete the session, we must stop sending data and close connection.
+	//	I dont know if we stop sending data before or after sending the stanza (I don't think it matters as it a UDP socket).
+	//	A signal should be sent anyway.
 	if (sess != 0)
 		delete sess;
 }

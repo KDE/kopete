@@ -23,7 +23,7 @@ namespace XMPP
 		};*/
 
 		void addPayloadType(const QDomElement& pl);
-		void addTransportNS(const QDomElement& t);
+		void setTransport(const QDomElement& t);
 		//void setType(Type);
 		void setCreator(const QString& c);
 		void setName(const QString& n);
@@ -31,7 +31,7 @@ namespace XMPP
 		void setProfile(const QString& p);
 
 		QList<QDomElement> payloadTypes() const;
-		QList<QDomElement> transports() const;
+		QDomElement transport() const;
 		void fromElement(const QDomElement& e);
 		QDomElement contentElement();
 		QString name() const;
@@ -46,13 +46,12 @@ namespace XMPP
 		Private *d;
 	};
 	
-	// This class will be renamed to JT_PushJingleAction
-	class IRIS_EXPORT JT_PushJingleSession : public Task
+	class IRIS_EXPORT JT_PushJingleAction : public Task
 	{
 		Q_OBJECT
 	public:
-		JT_PushJingleSession(Task*);
-		~JT_PushJingleSession();
+		JT_PushJingleAction(Task*);
+		~JT_PushJingleAction();
 
 		void onGo();
 		bool take(const QDomElement&);
@@ -69,41 +68,6 @@ namespace XMPP
 		void jingleError(const QDomElement&);
 	};
 
-	// This class will be replaced by JT_JingleAction.
-	class IRIS_EXPORT JT_JingleSession : public Task
-	{
-		Q_OBJECT
-	public:
-		JT_JingleSession(Task*);
-		~JT_JingleSession();
-		
-		void start(JingleSession*);
-
-		void onGo();
-		bool take(const QDomElement&);
-		enum Errors {
-			ServiceUnavailable = 0,
-			Redirect,
-			BadRequest,
-			ResourceConstraint
-		};
-
-	signals:
-		void error(int);
-	private:
-		enum State {
-			Initiation = 0,
-			WaitContentAccept,
-			StartNegotiation,
-			Active
-		};
-		class Private;
-		Private *d;
-		QString redirectTo;
-		/*JingleSession::JingleAction*/int jingleAction(const QDomElement&);
-		void sendCandidate();
-	};
-	
 	class IRIS_EXPORT JT_JingleAction : public Task
 	{
 		Q_OBJECT
@@ -116,9 +80,10 @@ namespace XMPP
 		
 		void setSession(JingleSession*);
 		
+		void initiate();
 		void terminate(int);
 		void contentAccept();
-		void removeContent(const QString&);
+		void removeContents(const QStringList&);
 		void ringing();
 		
 	private :

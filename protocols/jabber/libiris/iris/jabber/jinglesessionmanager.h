@@ -32,7 +32,7 @@ namespace XMPP
 		void slotSessionIncoming();
 		void slotRemoveContent(const QString&, const QStringList&);
 		void slotTransportInfo(const QDomElement&);
-		void slotDeleteSession();
+		void slotSessionTerminated();
 
 	private: // FIXME: must go in JingleSessionManager::Private
 		class Private;
