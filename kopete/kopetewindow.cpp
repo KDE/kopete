@@ -523,11 +523,13 @@ void KopeteWindow::slotToggleAway()
 
 void KopeteWindow::initSystray()
 {
-	d->tray = KopeteSystemTray::systemTray ( this );
+	if ( Kopete::BehaviorSettings::self()->showSystemTray() ) {
+		d->tray = KopeteSystemTray::systemTray ( this );
 
-	QObject::connect ( d->tray, SIGNAL ( aboutToShowMenu ( KMenu * ) ),
-	                   this, SLOT ( slotTrayAboutToShowMenu ( KMenu * ) ) );
-	QObject::connect ( d->tray, SIGNAL ( quitSelected() ), this, SLOT ( slotQuit() ) );
+		QObject::connect ( d->tray, SIGNAL ( aboutToShowMenu ( KMenu * ) ),
+						   this, SLOT ( slotTrayAboutToShowMenu ( KMenu * ) ) );
+		QObject::connect ( d->tray, SIGNAL ( quitSelected() ), this, SLOT ( slotQuit() ) );
+	}
 }
 
 KopeteWindow::~KopeteWindow()
