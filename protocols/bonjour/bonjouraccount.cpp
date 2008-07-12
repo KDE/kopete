@@ -245,8 +245,11 @@ void BonjourAccount::goingOffline(DNSSD::RemoteService::Ptr pointer)
 {
 	pointer->resolve();
 
+	// In case we have lost connection, this may return NULL
 	Kopete::Contact *c = contacts()[pointer->serviceName()];
-	c->setOnlineStatus(Kopete::OnlineStatus::Offline);
+
+	if (c)
+		c->setOnlineStatus(Kopete::OnlineStatus::Offline);
 }
 
 void BonjourAccount::wipeOutContact(Kopete::Contact *c)
