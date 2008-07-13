@@ -757,16 +757,22 @@ QString AIMAccount::addQuotesAroundAttributes( QString message ) const
 	sIndex = message.indexOf( "<", eIndex );
 	eIndex = message.indexOf( ">", sIndex );
 	
+	if ( sIndex == -1 || eIndex == -1 )
+		return message;
+	
 	while ( attrRegExp.indexIn( message, searchIndex ) != -1 )
 	{
 		int startReplace = message.indexOf( "=", attrRegExp.pos() ) + 1;
 		int replaceLength = attrRegExp.pos() + attrRegExp.matchedLength() - startReplace;
 		
-		while ( startReplace + replaceLength > eIndex )
+		while ( eIndex != -1 && sIndex != -1 && startReplace + replaceLength > eIndex )
 		{
 			sIndex = message.indexOf( "<", eIndex );
 			eIndex = message.indexOf( ">", sIndex );
 		}
+		
+		if ( sIndex == -1 || eIndex == -1 )
+			return message;
 		
 		searchIndex = attrRegExp.pos() + attrRegExp.matchedLength();
 		if ( startReplace <= sIndex )
