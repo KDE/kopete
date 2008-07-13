@@ -1,7 +1,8 @@
 /*
-    kopetegroupviewitem.h  -  description
-                             -------------------
-    Copyright (c) 2002      by Olivier Goffart <ogoffart@kde.org>
+    Model view item class for Kopete::Group
+
+    Copyright (c) 2002 by Olivier Goffart <ogoffart@kde.org>
+    Copyright (c) 2007 by Matt Rogers     <mattr@kde.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -18,8 +19,7 @@
 #ifndef KOPETEGROUPVIEWITEM_H
 #define KOPETEGROUPVIEWITEM_H
 
-#include "kopetelistviewitem.h"
-#include <qpixmap.h>
+#include <QtGui/QStandardItem>
 
 #define KOPETE_GROUP_DEFAULT_OPEN_ICON "folder-open"
 #define KOPETE_GROUP_DEFAULT_CLOSED_ICON "folder"
@@ -32,51 +32,21 @@ class Group;
 /**
  * @author Olivier Goffart
  */
-class KopeteGroupViewItem : public Kopete::UI::ListView::Item
+class KopeteGroupViewItem : public QStandardItem, public QObject
 {
 	Q_OBJECT
 public:
-	KopeteGroupViewItem( Kopete::Group *group , Q3ListView *parent );
-	KopeteGroupViewItem( Kopete::Group *group , Q3ListViewItem *parent );
+	explicit KopeteGroupViewItem( Kopete::Group *group );
 	~KopeteGroupViewItem();
 
+	void setGroup( Kopete::Group* group );
 	Kopete::Group * group() const;
 
-	virtual void startRename( int col );
+public Q_SLOTS:
 
-	/**
-	 * reimplemented from K3ListViewItem to take into account our alternate text storage
-	 */
-	virtual QString text( int column ) const;
-	virtual void setText( int column, const QString &text );
-
-	QString toolTip() const;
-
-public slots:
-	void refreshDisplayName();
-	void updateIcon();
-	void updateVisibility();
-
-protected:
-	virtual void okRename( int col );
-	virtual void cancelRename( int col );
-
+	void groupNameChanged( Kopete::Group*, const QString& );
 private:
-	void initLVI();
-
-	Kopete::Group *m_group;
-	QPixmap open, closed;
-
-	QString key( int column, bool ascending ) const;
-
-	unsigned int onlineMemberCount;
-	unsigned int totalMemberCount;
-
-	class Private;
-	Private *d;
-
-private slots:
-	void slotConfigChanged();
+	Kopete::Group* m_group;
 };
 
 #endif
