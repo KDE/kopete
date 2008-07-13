@@ -152,7 +152,7 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 				if ( format.fontUnderline() != defaultCharFormat.fontUnderline() )
 					s += ( format.hasProperty(QTextFormat::FontUnderline) ) ? "<U>" : "</U>";
 				
-				s += currentFragment.text();
+				s += Qt::escape(currentFragment.text());
 				defaultCharFormat = format;
 			}
 		}
