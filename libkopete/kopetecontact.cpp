@@ -97,6 +97,8 @@ Contact::Contact( Account *account, const QString &contactId,
 	d->account = account;
 	d->idleTime = 0;
 	d->icon = icon;
+	setText( d->contactId );
+	setIcon( d->icon );
 
 	// If can happend that a MetaContact may be used without a account
 	// (ex: for unit tests or chat window style preview)

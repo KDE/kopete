@@ -267,7 +267,10 @@ void MetaContact::setDisplayNameSource(PropertySource source)
 	d->displayNameSource = source;
 	QString newName = displayName();
 	if ( oldName != newName)
+	{
+		setText( newName ); //update the model item
 		emit displayNameChanged( oldName, newName );
+	}
 }
 
 void MetaContact::setDisplayNameSource( const QString &nameSourcePID, const QString &nameSourceAID, const QString &nameSourceCID )
@@ -602,6 +605,7 @@ void MetaContact::setDisplayName( const QString &name )
 		while (  it.hasNext() )
 			( it.next() )->sync(Contact::DisplayNameChanged);
 	}
+	setText(d->displayName); //update the model item
 
 }
 
