@@ -278,7 +278,11 @@ QString AIMAccount::sanitizedMessage( const QString& message ) const
 	QDomDocument doc;
 	QString domError;
 	int errLine = 0, errCol = 0;
-	doc.setContent( addQuotesAroundAttributes(message), false, &domError, &errLine, &errCol );
+	
+	QString msg = addQuotesAroundAttributes(message);
+	msg.replace( "<BR>", "<BR/>", Qt::CaseInsensitive );
+	
+	doc.setContent( msg, false, &domError, &errLine, &errCol );
 	if ( !domError.isEmpty() ) //error parsing, do nothing
 	{
 		kDebug(OSCAR_AIM_DEBUG) << "error from dom document conversion: "
