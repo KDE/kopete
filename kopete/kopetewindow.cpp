@@ -36,6 +36,7 @@
 #include <QSignalMapper>
 #include <QTextEdit>
 #include <QTreeView>
+#include <QHeaderView>
 
 #include <khbox.h>
 #include <kvbox.h>
@@ -344,7 +345,9 @@ void KopeteWindow::initView()
 	QVBoxLayout *l = new QVBoxLayout ( w );
 // 	d->contactlist = new KopeteContactListView ( w );
 	d->contactlist = new QTreeView(this);
+	d->contactlist->header()->hide();
 	d->contactlist->setModel( Kopete::ContactList::self() );
+	d->contactlist->setAlternatingRowColors( true );
 	l->addWidget ( d->contactlist );
 	l->setSpacing ( 0 );
 	l->setContentsMargins ( 0,0,0,0 );
