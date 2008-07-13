@@ -22,31 +22,31 @@
 #include <KIcon>
 #include "kopetegroup.h"
 
-KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group )
+KopeteGroupItem::KopeteGroupItem( Kopete::Group *group )
  : QObject(0), QStandardItem()
 {
 	m_group = group;
 }
 
-KopeteGroupViewItem::~KopeteGroupViewItem()
+KopeteGroupItem::~KopeteGroupItem()
 {
 	m_group = 0;
 }
 }
 
-void KopeteGroupViewItem::setGroup( Kopete::Group* group )
+void KopeteGroupItem::setGroup( Kopete::Group* group )
 {
 	m_group = group;
 	setText( group->displayName() );
 	setIcon( KIcon("folder") );
 }
 
-Kopete::Group* KopeteGroupViewItem::group() const
+Kopete::Group* KopeteGroupItem::group() const
 {
 	return m_group;
 }
 
-void KopeteGroupViewItem::groupNameChanged( Kopete::Group* group, const QString& )
+void KopeteGroupItem::groupNameChanged( Kopete::Group* group, const QString& )
 {
 	if ( group == m_group )
 		setText( m_group->displayName() );

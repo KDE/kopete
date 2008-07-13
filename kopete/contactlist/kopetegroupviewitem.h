@@ -32,12 +32,12 @@ class Group;
 /**
  * @author Olivier Goffart
  */
-class KopeteGroupViewItem : public QObject, QStandardItem 
+class KopeteGroupItem : public QObject, QStandardItem 
 {
 	Q_OBJECT
 public:
-	explicit KopeteGroupViewItem( Kopete::Group *group );
-	~KopeteGroupViewItem();
+	explicit KopeteGroupItem( Kopete::Group *group );
+	~KopeteGroupItem();
 
 	void setGroup( Kopete::Group* group );
 	Kopete::Group * group() const;

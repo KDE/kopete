@@ -39,20 +39,20 @@ class Group;
 class MessageEvent;
 }
 
-class KopeteGroupViewItem;
+class KopeteGroupItem;
 
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
  * @author Matt Rogers <mattr@kde.org>
  */
-class KopeteMetaContactViewItem : public QObject, QStandardItem
+class KopeteMetaContactItem : public QObject, QStandardItem
 {
 	Q_OBJECT
 
 public:
-	explicit KopeteMetaContactViewItem( Kopete::MetaContact *contact );
-	~KopeteMetaContactViewItem();
+	explicit KopeteMetaContactItem( Kopete::MetaContact *contact );
+	~KopeteMetaContactItem();
 
 	/**
 	 * metacontact this visual item represents
