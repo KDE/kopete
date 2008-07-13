@@ -46,7 +46,7 @@ class Contact;
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  */
-class KOPETE_EXPORT ContactList : public QStandardItemModel
+class KOPETE_EXPORT ContactList : public QObject
 {
 	Q_OBJECT
 

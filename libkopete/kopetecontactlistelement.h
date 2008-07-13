@@ -44,7 +44,7 @@ class Plugin;
  * It also allow to store an icon for this element.
  */
 class KOPETE_EXPORT ContactListElement
-	: public PropertyContainer, public QStandardItem
+	: public PropertyContainer
 {
 	Q_OBJECT
 

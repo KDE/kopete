@@ -87,7 +87,7 @@ public:
 	/**
 	 * \return the group type
 	 */
-	GroupType groupType() const;
+	GroupType type() const;
 
 	/**
 	 * \brief Set the group type

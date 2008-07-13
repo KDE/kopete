@@ -83,10 +83,6 @@ void MetaContact::addContact( Contact *c )
 		const QString oldDisplayName = displayName();
 
 		d->contacts.append( c );
-		appendRow( c );
-		d->contactRowMap.insert( c, c->row() );
-		QStandardItem::setIcon( KIcon(c->icon()) );
-
 		connect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 
@@ -160,8 +156,6 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		QString currDisplayName = displayName();
 
 		d->contacts.removeAll( c );
-		removeRow( d->contactRowMap[c] );
-		d->contactRowMap.remove( c );
 
 		// if the contact was a source of property data, clean
 		if (displayNameSourceContact() == c)
@@ -268,10 +262,7 @@ void MetaContact::setDisplayNameSource(PropertySource source)
 	d->displayNameSource = source;
 	QString newName = displayName();
 	if ( oldName != newName)
-	{
-		setText( newName ); //update the model item
 		emit displayNameChanged( oldName, newName );
-	}
 }
 
 void MetaContact::setDisplayNameSource( const QString &nameSourcePID, const QString &nameSourceAID, const QString &nameSourceCID )
@@ -606,8 +597,6 @@ void MetaContact::setDisplayName( const QString &name )
 		while (  it.hasNext() )
 			( it.next() )->sync(Contact::DisplayNameChanged);
 	}
-	setText(d->displayName); //update the model item
-
 }
 
 QString MetaContact::customDisplayName() const
@@ -785,10 +774,7 @@ void MetaContact::setDisplayNameSourceContact( Contact *contact )
 	Contact *old = d->displayNameSourceContact;
 	d->displayNameSourceContact = contact;
 	if ( displayNameSource() == SourceContact )
-	{
-		setText( nameFromContact( contact ) );
 		emit displayNameChanged( nameFromContact(old), nameFromContact(contact));
-	}
 }
 
 void MetaContact::setPhotoSourceContact( Contact *contact )

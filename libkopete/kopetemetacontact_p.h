@@ -69,8 +69,6 @@ class  MetaContact::Private
 	// The photo cache. Reduce disk access and CPU usage.
 	Picture customPicture, contactPicture, kabcPicture;
 
-	// Row number to item map. needed in removeContact for now
-	QMap<Contact*, int> contactRowMap;
 };
 
 } //END namespace Kopete

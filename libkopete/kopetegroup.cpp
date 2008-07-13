@@ -57,7 +57,6 @@ Group::Group( const QString &_name, GroupType _type )
 	d->type = _type;
 	d->expanded = true;
 	d->groupId = 0;
-	QStandardItem::setIcon( KIcon("folder") );
 }
 
 Group::Group()
@@ -67,7 +66,6 @@ Group::Group()
 	d->expanded = true;
 	d->type = Normal;
 	d->groupId = 0;
-	QStandardItem::setIcon( KIcon("folder") );
 }
 
 Group::~Group()
@@ -97,7 +95,6 @@ void Group::setDisplayName( const QString &s )
 	{
 		QString oldname = d->displayName;
 		d->displayName = s;
-		setText( d->displayName );
 		// Don't emit the signal in loading state
 		if( !loading() )
 			emit displayNameChanged( this, oldname );
@@ -109,7 +106,7 @@ QString Group::displayName() const
 	return d->displayName;
 }
 
-Group::GroupType Group::groupType() const
+Group::GroupType Group::type() const
 {
 	return d->type;
 }
