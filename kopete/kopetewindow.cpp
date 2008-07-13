@@ -35,6 +35,7 @@
 #include <QLineEdit>
 #include <QSignalMapper>
 #include <QTextEdit>
+#include <QTreeView>
 
 #include <khbox.h>
 #include <kvbox.h>
@@ -165,7 +166,8 @@ class KopeteWindow::Private
 		~Private()
 		{}
 
-		KopeteContactListView *contactlist;
+		//KopeteContactListView *contactlist;
+		QTreeView* contactlist;
 
 		IdentityStatusWidget *identitywidget;
 		InfoEventWidget *infoEventWidget;
@@ -282,7 +284,7 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	// --------------------------------------------------------------------------------
 	initView();
 	initActions();
-	d->contactlist->initActions ( actionCollection() );
+	//d->contactlist->initActions ( actionCollection() );
 	initSystray();
 	// --------------------------------------------------------------------------------
 
@@ -340,7 +342,9 @@ void KopeteWindow::initView()
 {
 	QWidget *w = new QWidget ( this );
 	QVBoxLayout *l = new QVBoxLayout ( w );
-	d->contactlist = new KopeteContactListView ( w );
+// 	d->contactlist = new KopeteContactListView ( w );
+	d->contactlist = new QTreeView(this);
+	d->contactlist->setModel( Kopete::ContactList::self() );
 	l->addWidget ( d->contactlist );
 	l->setSpacing ( 0 );
 	l->setContentsMargins ( 0,0,0,0 );
@@ -455,6 +459,7 @@ void KopeteWindow::initActions()
     */
 
 	// quick search bar
+	/* disabled for now. it'll be hooked up to a QSortFilterProxyModel later
 	QLabel *searchLabel = new QLabel ( i18n ( "Se&arch:" ), 0 );
 	searchLabel->setObjectName ( QLatin1String ( "kde toolbar widget" ) );
 	QWidget *searchBar = new Kopete::UI::ListView::SearchLine ( 0, d->contactlist );
@@ -464,7 +469,8 @@ void KopeteWindow::initActions()
 	quickSearch->setDefaultWidget ( searchBar );
 	KAction *searchLabelAction = new KAction ( i18n ( "Search:" ), this );
 	actionCollection()->addAction ( "quicksearch_label", searchLabelAction );
-	searchLabelAction->setDefaultWidget ( searchLabel );
+	searchLabelAction->setDefaultWidget ( searchLabel ); 
+	*/
 
 	// sync actions, config and prefs-dialog
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL ( configChanged() ), this, SLOT ( slotConfigChanged() ) );
