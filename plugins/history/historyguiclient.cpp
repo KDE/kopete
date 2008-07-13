@@ -142,8 +142,8 @@ void HistoryGUIClient::slotQuote()
 	                                  HistoryLogger::AntiChronological, true );
 
 	Kopete::Message msg = m_manager->view()->currentMessage();
-	QString body = msgs.last().plainBody();
-	kDebug(14310) << "Quoting last message" << body;
+	QString body = msgs.isEmpty() ? "" : msgs.last().plainBody();
+	kDebug(14310) << "Quoting last message " << body;
 
 	body = body.replace(QRegExp("\n"), "\n> ");
 	body.prepend ("> ");
