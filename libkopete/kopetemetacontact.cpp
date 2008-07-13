@@ -85,6 +85,7 @@ void MetaContact::addContact( Contact *c )
 		d->contacts.append( c );
 		appendRow( c );
 		d->contactRowMap.insert( c, c->row() );
+		QStandardItem::setIcon( KIcon(c->icon()) );
 
 		connect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
