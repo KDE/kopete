@@ -21,16 +21,16 @@
 #include "kopetemetacontact.h"
 
 KopeteMetaContactViewItem::KopeteMetaContactViewItem( Kopete::MetaContact* contact )
-: QStandardItem()
+: QObject(0), QStandardItem()
 {
 	m_metaContact = contact;
 }
 
-KopeteMetaContactLVI::~KopeteMetaContactLVI()
+KopeteMetaContactViewItem::~KopeteMetaContactViewItem()
 {
 }
 
-KopeteMetaContactViewItem::metaContact() const
+Kopete::MetaContact* KopeteMetaContactViewItem::metaContact() const
 {
 	return m_metaContact;
 }

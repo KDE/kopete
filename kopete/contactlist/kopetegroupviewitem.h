@@ -32,7 +32,7 @@ class Group;
 /**
  * @author Olivier Goffart
  */
-class KopeteGroupViewItem : public QStandardItem, public QObject
+class KopeteGroupViewItem : public QObject, QStandardItem 
 {
 	Q_OBJECT
 public:
