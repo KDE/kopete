@@ -731,7 +731,7 @@ void ChatView::saveChatSettings()
 	                           mc->metaContactId();
     KConfigGroup config = KGlobal::config()->group(contactListGroup);
 	config.writeEntry( "EnableRichText", editPart()->isRichTextEnabled() );
-	config.writeEntry( "EnableAutoSpellCheck", editPart()->autoSpellCheckEnabled() );
+	config.writeEntry( "EnableAutoSpellCheck", editPart()->checkSpellingEnabled() );
 	config.sync();
 }
 
@@ -748,7 +748,7 @@ void ChatView::loadChatSettings()
 	bool enableRichText = config.readEntry( "EnableRichText", true );
 	editPart()->setRichTextEnabled( enableRichText );
 	emit rtfEnabled( this, editPart()->isRichTextEnabled() );
-	bool enableAutoSpell = config.readEntry( "EnableAutoSpellCheck", false );
+	bool enableAutoSpell = config.readEntry( "EnableAutoSpellCheck", Kopete::BehaviorSettings::self()->spellCheck() );
 	emit autoSpellCheckEnabled( this, enableAutoSpell );
 }
 

@@ -85,18 +85,6 @@ public:
 	 */
 	bool isTyping();
 
-	/** 
-	 * Enable or Disable the automatic spell checking
-	 * @param enabled the state that auto spell checking should beee
-	 */
-	void toggleAutoSpellCheck( bool enabled );
-
-	/**
-	 * Get the state of auto spell checking
-	 * @return true if auto spell checking is turned on, false otherwise
-	 */
-	bool autoSpellCheckEnabled() const;
-	
 public slots:
 	/**
 	 * Go up an entry in the message history.
@@ -181,7 +169,6 @@ private slots:
 	void slotPropertyChanged( Kopete::PropertyContainer *, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 private:
-	Sonnet::Highlighter* spellHighlighter();
 	void setProtocolRichTextSupport();
 
 private:
@@ -203,8 +190,6 @@ private:
 	
 	QTimer *m_typingRepeatTimer;
 	QTimer *m_typingStopTimer;
-	bool m_autoSpellCheckEnabled;
-	Sonnet::Highlighter *m_highlighter;
 };
 
 #endif
