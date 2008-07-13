@@ -109,7 +109,6 @@ KRichTextEditPart::KRichTextEditPart(QWidget *wparent, QObject*, const QStringLi
     setComponentData( KRichTextEditPartFactory::componentData() );
 
     d->editor = new KopeteTextEdit( wparent );
-
     setWidget( d->editor );
 
     createActions();
@@ -154,6 +153,16 @@ bool KRichTextEditPart::isRichTextAvailable() const
             d->richTextSupport & SupportTextColor);
 }
 
+void KRichTextEditPart::setCheckSpellingEnabled( bool enabled )
+{
+    d->editor->setCheckSpellingEnabled( enabled );
+}
+
+bool KRichTextEditPart::checkSpellingEnabled() const
+{
+    return d->editor->checkSpellingEnabled();
+}
+
 bool KRichTextEditPart::useRichText() const
 {
     return isRichTextEnabled() && isRichTextAvailable();
@@ -166,11 +175,6 @@ void KRichTextEditPart::setRichTextEnabled( bool enable )
 
     // Emit toolbarToggled signal
     checkToolbarEnabled();
-
-    // Spellchecking disabled when using rich text because the
-    // text we were getting from widget was coloured HTML!
-    d->editor->setCheckSpellingEnabled( !isRichTextEnabled() );
-    d->checkSpelling->setEnabled( !isRichTextEnabled() );
 
     //Enable / disable buttons
     updateActions();
