@@ -21,12 +21,13 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
+#include <QtGui/QStandardItemModel>
 
-#include <kurl.h>
+#include <KUrl>
 
 #include "kopete_export.h"
 
-namespace Kopete 
+namespace Kopete
 {
 
 class MetaContact;
@@ -45,7 +46,7 @@ class Contact;
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  */
-class KOPETE_EXPORT ContactList : public QObject
+class KOPETE_EXPORT ContactList : public QStandardItemModel
 {
 	Q_OBJECT
 
@@ -69,7 +70,7 @@ public:
 	 * changing those *will* have the expected result :-)
 	 */
 	QList<MetaContact *> metaContacts() const;
-	
+
 	/**
 	 * @return all groups
 	 */
@@ -85,8 +86,8 @@ public:
 	 * return the group with the given unique id. if none is found return 0L
 	 */
 	Group * group(unsigned int groupId) const;
-	
-	
+
+
 	/**
 	 * @brief find a contact in the contact list.
 	 * Browse in each metacontact of the list to find the contact with the given ID.
@@ -198,7 +199,7 @@ signals:
 	 * the newly added contacts.
 	 */
 	void metaContactAdded( Kopete::MetaContact *mc );
-	
+
 	/**
 	 * A metacontact has just been removed.  and will be soon deleted
 	 */
@@ -208,12 +209,12 @@ signals:
 	 * A group has just been added
 	 */
 	void groupAdded( Kopete::Group * );
-	
+
 	/**
 	 * A group has just been removed
 	 */
 	void groupRemoved( Kopete::Group * );
-	
+
 	/**
 	 * A group has just been renamed
 	 */
