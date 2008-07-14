@@ -187,7 +187,7 @@ void IncomingTransfer::processMessage(const Message& message)
 		// Data preparation message.
 		m_tempFile = new KTemporaryFile();
 		m_tempFile->setPrefix("msnpicture--");
-		m_tempFile->setSuffix(".png");
+// 		m_tempFile->setSuffix(".png");
 		m_tempFile->open();
 		m_file = m_tempFile;
 		m_state = DataTransfer;
