@@ -394,6 +394,8 @@ QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 							.arg( dt.toString(Qt::LocalDate), msg.escapedBody() ));
 					msg.setTimestamp( dt );
 					msg.setDirection( dir );
+
+					messages.append(msg);
 				}
 			}
 
