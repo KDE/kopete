@@ -13,13 +13,14 @@
 namespace XMPP
 {
 	class JingleSession;
+	class JingleContent;
 	class IRIS_EXPORT JingleSessionManager : public QObject
 	{
 		Q_OBJECT
 	public:
 		JingleSessionManager(Client*);
 		~JingleSessionManager();
-		void startNewSession(const Jid&);
+		void startNewSession(const Jid&, const QList<JingleContent*>&);
 		void setSupportedTransports(const QStringList&);
 		void setSupportedAudioPayloads(const QList<QDomElement>&);
 		void setSupportedVideoPayloads(const QList<QDomElement>&); // FIXME:a class name QNodeList does exists in Qt.

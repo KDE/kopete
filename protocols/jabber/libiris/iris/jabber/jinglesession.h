@@ -33,8 +33,9 @@ namespace XMPP
 		 * TODO: addContent should add a content even when the session
 		 * is in ACTIVE state so the session is modified with a content-add action.
 		 */
-		void addContent(const JingleContent&);
+		void addContent(JingleContent*);
 		void addContent(const QDomElement&);
+		void addContents(const QList<JingleContent*>&);
 		void addTransportInfo(const QDomElement&);
 
 		void acceptContent();
@@ -47,11 +48,11 @@ namespace XMPP
 		/*TODO: there should also be removeContent, modifyContent,...*/
 		
 		void sendIceUdpCandidates();
-		void sendRawUdpCandidates();
+		void startRawUdpConnection(const JingleContent&);
 
 		Jid to() const;
 		//Jid from() const;
-		QList<JingleContent> contents() const;
+		QList<JingleContent*> contents() const;
 		void start();
 		void setSid(const QString&);
 		//void setFrom(const QString&);

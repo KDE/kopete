@@ -11,8 +11,6 @@ public:
 	QList<JingleSession*> sessions;
 	QStringList supportedTransports;
 	QList<QDomElement> supportedAudioPayloads;
-	bool audioSupported;
-	bool videoSupported;
 	QList<QDomElement> supportedVideoPayloads;
 	QStringList supportedProfiles;
 };
@@ -26,8 +24,16 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	connect(d->pjs, SIGNAL(newSessionIncoming()), this, SLOT(slotSessionIncoming()));
 	connect(d->pjs, SIGNAL(removeContent(const QString&, const QStringList&)), this, SLOT(slotRemoveContent(const QString&, const QStringList&)));
 	connect(d->pjs, SIGNAL(transportInfo(const QDomElement&)), this, SLOT(slotTransportInfo(const QDomElement&)));
-	d->audioSupported = false;
-	d->videoSupported = false;
+
+	Features f = d->client->features();
+	
+	f.addFeature("urn:xmpp:tmp:jingle");
+	f.addFeature("urn:xmpp:tmp:jingle:transports:ice-udp");
+	f.addFeature("urn:xmpp:tmp:jingle:transports:raw-udp");
+//	f.addFeature("urn:xmpp:tmp:jingle:apps:audio-rtp");
+	f.addFeature("urn:xmpp:tmp:jingle:apps:video-rtp");
+
+	d->client->setFeatures(f);
 }
 
 JingleSessionManager::~JingleSessionManager()
@@ -42,13 +48,11 @@ void JingleSessionManager::setSupportedTransports(const QStringList& transports)
 
 void JingleSessionManager::setSupportedAudioPayloads(const QList<QDomElement>& payloads)
 {
-	d->audioSupported = true;
 	d->supportedAudioPayloads = payloads;
 }
 
 void JingleSessionManager::setSupportedVideoPayloads(const QList<QDomElement>& payloads)
 {
-	d->videoSupported = true;
 	d->supportedVideoPayloads = payloads;
 }
 
@@ -57,9 +61,11 @@ void JingleSessionManager::setSupportedProfiles(const QStringList& profiles)
 	d->supportedProfiles = profiles;
 }
 
-void JingleSessionManager::startNewSession(const Jid& toJid)
+// const QStringList& transports are the transports supported by the responder.
+void JingleSessionManager::startNewSession(const Jid& toJid, const QList<JingleContent*>& contents)
 {
 	XMPP::JingleSession *session = new XMPP::JingleSession(d->client->rootTask(), toJid.full());
+	session->addContents(contents);
 	d->sessions << session;
 	connect(session, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
 	session->start();
@@ -76,9 +82,6 @@ void JingleSessionManager::slotSessionIncoming()
 	// FIXME:
 	// 	QList<T>.last() should be called only if the list is not empty.
 	// 	Could it happen here as we just append an element to the list ?
-	
-
-
 	d->sessions.last()->ring();
 	d->sessions.last()->startNegotiation();
 	emit newJingleSession(d->sessions.last());

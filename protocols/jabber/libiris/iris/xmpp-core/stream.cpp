@@ -637,10 +637,10 @@ void ClientStream::ss_readyRead()
 {
 	QByteArray a = d->ss->read();
 
-#ifdef XMPP_DEBUG
+//#ifdef XMPP_DEBUG
 	Q3CString cs(a.data(), a.size()+1);
 	fprintf(stderr, "ClientStream: recv: %d [%s]\n", a.size(), cs.data());
-#endif
+//#endif
 
 	if(d->mode == Client)
 		d->client.addIncomingData(a);
@@ -1349,37 +1349,31 @@ TD::~TD()
 
 void TD::msg(const QString &s)
 {
-	printf("Msg : %s\n", s.toLatin1().constData());
-//	if(debug_ptr)
-//		debug_ptr->msg(s);
+	if(debug_ptr)
+		debug_ptr->msg(s);
 }
 
 void TD::outgoingTag(const QString &s)
 {
-	printf("Outgoing tag : %s\n", s.toLatin1().constData());
-//	if(debug_ptr)
-//		debug_ptr->outgoingTag(s);
+	if(debug_ptr)
+		debug_ptr->outgoingTag(s);
 }
 
 void TD::incomingTag(const QString &s)
 {
-	printf("Incoming tag : %s\n", s.toLatin1().constData());
-//	if(debug_ptr)
-//		debug_ptr->incomingTag(s);
+	if(debug_ptr)
+		debug_ptr->incomingTag(s);
 }
 
 void TD::outgoingXml(const QDomElement &e)
 {
-	printf("Outgoing XML : %s\n", Stream::xmlToString(e, true).toLatin1().constData());
-//	if(debug_ptr)
-//		debug_ptr->outgoingXml(e);
+	if(debug_ptr)
+		debug_ptr->outgoingXml(e);
 }
 
 void TD::incomingXml(const QDomElement &e)
 {
-	printf("Incoming XML : %s\n", Stream::xmlToString(e, true).toLatin1().constData());
-//	printf("Incoming XML : %s\n", s.toLatin1().constData());
-//	if(debug_ptr)
-//		debug_ptr->incomingXml(e);
+	if(debug_ptr)
+		debug_ptr->incomingXml(e);
 }
 #endif

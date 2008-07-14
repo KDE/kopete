@@ -30,7 +30,11 @@ public:
 		Other,
 		Unknown
 	};
-	void startNewSession(const XMPP::Jid&);
+	// Returns true if the session is possible to start, false otherwise.
+	// False is returned only if the responder has no compatible transports.
+	// That may not be necessary, it should simply show a message or write it in
+	// the Jingle calls GUI if it is not possible to start a session.
+	bool startNewSession(const XMPP::Jid&);
 
 public slots:
 	void slotNewSession(XMPP::JingleSession*);

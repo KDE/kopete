@@ -10,7 +10,7 @@ class ContentDialog : public QDialog
 public:
 	ContentDialog();
 	~ContentDialog();
-	void setContents(QList<XMPP::JingleContent> c);
+	void setContents(QList<XMPP::JingleContent*> c);
 	void setSession(XMPP::JingleSession *s);
 	XMPP::JingleSession *session();
 	QStringList checked();

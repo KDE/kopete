@@ -17,18 +17,18 @@ ContentDialog::~ContentDialog()
 	}
 }
 
-void ContentDialog::setContents(QList<JingleContent> c)
+void ContentDialog::setContents(QList<JingleContent*> c)
 {
 	for (int i = 0; i < c.count(); i++)
 	{
-		QCheckBox *cb = new QCheckBox(c[i].dataType(), this);
+		QCheckBox *cb = new QCheckBox(c[i]->dataType(), this);
 		cb->setChecked(true);
-		if (c[i].dataType() == "Unknown Namespace. Join us on #kopete on irc.freenode.org .") //Ouch !
+		if (c[i]->dataType() == "Unknown")
 		{
 			cb->setChecked(false);
 			cb->setEnabled(false);
 		}
-		m_contentNames << c[i].name();
+		m_contentNames << c[i]->name();
 		ui.verticalLayout->insertWidget(0, cb);
 		m_checkBoxes << cb;
 	}

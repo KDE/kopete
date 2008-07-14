@@ -69,6 +69,11 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 #ifdef SUPPORT_JINGLE
 
+	KAction *jingleSession = new KAction(i18n("Start Jingle session" ), members().first());
+	connect(jingleSession, SIGNAL(triggered(bool)), SLOT (slotJingleSession() ));
+	setComponentData(protocol->componentData());
+	jingleSession->setEnabled( true ); //FIXME:Should be enabled only if supported.	
+	
 	KAction *jingleaudiocall = new KAction(i18n("Jingle Audio call" ), members().first());
 	connect(jingleaudiocall, SIGNAL(triggered(bool)), SLOT (slotJingleAudioCall() ));
 	setComponentData(protocol->componentData());
@@ -93,6 +98,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	//	  It should be corrected in trunk.
 	actionCollection()->addAction( "jabberJingleaudiocall", jingleaudiocall );
 	actionCollection()->addAction( "jabberJinglevideocall", jinglevideocall );
+	actionCollection()->addAction( "jabberSession", jingleSession );
 
 #endif
 
@@ -445,14 +451,20 @@ void JabberChatSession::slotSendFile()
 
 void JabberChatSession::slotJingleAudioCall()
 {
-	QList<Kopete::Contact*>contacts = members();
+	QList<Kopete::Contact*> contacts = members();
 	static_cast<JabberContact *>(contacts.first())->startJingleAudioCall();
 }
 
 void JabberChatSession::slotJingleVideoCall()
 {
-	QList<Kopete::Contact*>contacts = members();
+	QList<Kopete::Contact*> contacts = members();
 	static_cast<JabberContact *>(contacts.first())->startJingleVideoCall();
+}
+
+void JabberChatSession::slotJingleSession()
+{
+	QList<Kopete::Contact*> contacts = members();
+	static_cast<JabberContact *>(contacts.first())->startJingleSession();
 }
 
 #include "jabberchatsession.moc"

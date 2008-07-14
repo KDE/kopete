@@ -88,6 +88,7 @@ private slots:
 
 	void slotJingleAudioCall();
 	void slotJingleVideoCall();
+	void slotJingleSession();
 
 private:
 	enum  Event { Delivered, Displayed,

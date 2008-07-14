@@ -22,22 +22,23 @@ namespace XMPP
 			FileTransfer
 		};*/
 
-		void addPayloadType(const QDomElement& pl);
-		void setTransport(const QDomElement& t);
+		void addPayloadType(const QDomElement&);
+		void addPayloadTypes(const QList<QDomElement>&);
+		void setTransport(const QDomElement&);
 		//void setType(Type);
-		void setCreator(const QString& c);
-		void setName(const QString& n);
-		void setDesriptionNS(const QString& desc);
-		void setProfile(const QString& p);
+		void setCreator(const QString&);
+		void setName(const QString&);
+		void setDescriptionNS(const QString&);
+		void setProfile(const QString&);
 
 		QList<QDomElement> payloadTypes() const;
 		QDomElement transport() const;
-		void fromElement(const QDomElement& e);
+		void fromElement(const QDomElement&);
 		QDomElement contentElement();
 		QString name() const;
 		QString descriptionNS() const;
 		QString dataType();
-		void addTransportInfo(const QDomElement& e);
+		void addTransportInfo(const QDomElement&);
 		QString iceUdpPassword();
 		QString iceUdpUFrag();
 
@@ -85,6 +86,8 @@ namespace XMPP
 		void contentAccept();
 		void removeContents(const QStringList&);
 		void ringing();
+		void trying(const JingleContent&);
+		void transportInfo(const JingleContent&);
 		
 	private :
 		class Private;

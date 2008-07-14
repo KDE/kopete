@@ -520,7 +520,7 @@ void Client::streamReadyRead()
 
 		QString out = s.toString();
 		debug(QString("Client: incoming: [\n%1]\n").arg(out));
-		printf("Client: incoming:\n%s\n", out.toLatin1().constData());
+		//printf("Client: incoming:\n%s\n", out.toLatin1().constData());
 		xmlIncoming(out);
 
 		QDomElement x = oldStyleNS(s.element());

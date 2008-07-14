@@ -116,8 +116,9 @@ public slots:
 	  * This is the JabberContact level slot for starting a Jingle Video call.
 	  * See later for params...
 	  */
-	 void startJingleAudioCall();
-	 void startJingleVideoCall();
+	void startJingleSession();
+	void startJingleAudioCall();
+	void startJingleVideoCall();
 
 private slots:
 

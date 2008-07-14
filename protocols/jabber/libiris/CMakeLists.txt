@@ -2,8 +2,6 @@
 #add_subdirectory( cutestuff ) 
 #add_subdirectory( iris ) 
 
-add_definitions(-DXMPP_TEST -DXMPP_DEBUG)
-
 FIND_PACKAGE(ZLIB REQUIRED)
 
 include_directories( 

@@ -1,4 +1,5 @@
 #include <QString>
+#include <QUdpSocket>
 
 #include "jinglesession.h"
 
@@ -16,13 +17,14 @@ class JingleSession::Private
 {
 public:
 	Jid to;
-	QList<JingleContent> contents;
+	QList<JingleContent*> contents;
 	Task *rootTask;
 	QString sid;
 	QString initiator;
 	JT_JingleSession *jt;
 	State state;
 	QStringList contentsToRemove;
+	QStringList transports;
 };
 
 JingleSession::JingleSession(Task *t, const Jid &j)
@@ -38,9 +40,14 @@ JingleSession::~JingleSession()
 	delete d;
 }
 
-void JingleSession::addContent(const JingleContent& c)
+void JingleSession::addContent(JingleContent *c)
 {
 	d->contents << c;
+}
+
+void JingleSession::addContents(const QList<JingleContent*>& l)
+{
+	d->contents << l;
 }
 
 Jid JingleSession::to() const
@@ -48,14 +55,21 @@ Jid JingleSession::to() const
 	return d->to;
 }
 
-QList<JingleContent> JingleSession::contents() const
+QList<JingleContent*> JingleSession::contents() const
 {
 	return d->contents;
 }
 
+//void JingleSession::setResponderTransports(const QStringList& transports)
+//{
+//	d->transports << transports;
+//}
+
 void JingleSession::start()
 {
+	// Generate session ID
 	d->sid = genSid();
+
 	JT_JingleAction *iAction = new JT_JingleAction(d->rootTask);
 	iAction->setSession(this);
 	iAction->initiate();
@@ -114,7 +128,7 @@ void JingleSession::removeContent(const QStringList& c)
 	{
 		for (int j = 0; j < contents().count(); j++)
 		{
-			if (c.at(i) == contents()[j].name())
+			if (c.at(i) == contents()[j]->name())
 			{
 				d->contentsToRemove << c[i];
 			}
@@ -150,7 +164,7 @@ void JingleSession::removeContent(const QString& c) // Provided for convenience,
 		int i = 0;
 		for ( ; i < contents().count(); i++)
 		{
-			if (contents()[i].name() == c)
+			if (contents()[i]->name() == c)
 			{
 				found = true;
 				break;
@@ -181,7 +195,7 @@ void JingleSession::slotRemoveAcked()
 	{
 		for (int j = 0; j < contents().count(); j++)
 		{
-			if (d->contentsToRemove[i] == contents()[j].name())
+			if (d->contentsToRemove[i] == contents()[j]->name())
 			{
 				d->contents.removeAt(j);
 				break;
@@ -220,8 +234,8 @@ void JingleSession::setInitiator(const QString& init)
 
 void JingleSession::addContent(const QDomElement& content)
 {
-	JingleContent c;
-	c.fromElement(content);
+	JingleContent *c = new JingleContent();
+	c->fromElement(content);
 	d->contents << c;
 }
 
@@ -247,6 +261,7 @@ QString JingleSession::initiator() const
 	return d->initiator;
 }
 
+//TODO:maybe change the name of this function.
 void JingleSession::startNegotiation()
 {
 	/* TODO:
@@ -255,10 +270,10 @@ void JingleSession::startNegotiation()
 	 */
 	for (int i = 0; i < d->contents.count(); i++)
 	{
-		if (d->contents[i].transport().attribute("name") == "ice-udp")
+		if (d->contents[i]->transport().attribute("name") == "urn:xmpp:tmp:jingle:transports:ice-udp")
 			sendIceUdpCandidates();
-		else if (d->contents[i].transport().attribute("name") == "raw-udp")
-			sendRawUdpCandidates();
+		else if (d->contents[i]->transport().attribute("name") == "urn:xmpp:tmp:jingle:transports:raw-udp")
+			startRawUdpConnection(*(d->contents[i]));
 	}
 }
 
@@ -266,8 +281,8 @@ JingleContent *JingleSession::contentWithName(const QString& n)
 {
 	for (int i = 0; i < d->contents.count(); i++)
 	{
-		if (d->contents.at(i).name() == n)
-			return &(d->contents[i]);
+		if (d->contents.at(i)->name() == n)
+			return d->contents[i];
 	}
 	return 0;
 }
@@ -289,9 +304,28 @@ void JingleSession::sendIceUdpCandidates()
 	// --> Or better : sendTransportInfo(QDomElement transport);*/
 }
 
-void JingleSession::sendRawUdpCandidates()
+void JingleSession::startRawUdpConnection(const JingleContent& c)
 {
-	qDebug() << "Sending raw-udp candidates (still 'TODO')";
+	QDomElement e = c.transport();
+	qDebug() << "Start raw-udp connection (still 'TODO')";
+
+	//Sending data to the candidate.
+	QUdpSocket *rawUdpSocket = new QUdpSocket();
+	//connect(rawUdpSocket, SIGNAL(connected()), this, SLOT(rawUdpConnected));
+	//rawUdpSocket->connectToServer(e.attribute("ip"), e.attribute("port"));
+	QHostAddress address;
+	address.setAddress(e.attribute("ip"));
+	rawUdpSocket->writeDatagram("DATA", address, e.attribute("port").toInt());
+
+	//Sending my own candidate:
+	JT_JingleAction *cAction = new JT_JingleAction(d->rootTask);
+	cAction->setSession(this);
+	cAction->transportInfo(c);
+	
+	//Sending "trying" stanzas
+	JT_JingleAction *tAction = new JT_JingleAction(d->rootTask);
+	tAction->setSession(this);
+	tAction->trying(c);
 }
 
 void JingleSession::slotSessTerminated()

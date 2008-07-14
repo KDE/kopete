@@ -1354,11 +1354,19 @@ void JabberContact::slotDiscoFinished( )
 }
 
 
+void JabberContact::startJingleSession()
+{
+	startJingleVideoCall(); //Only to show the message.
+
+	account()->jingleCallsManager()->startNewSession(/*to*/fullAddress());
+}
+
 void JabberContact::startJingleAudioCall()
 {
 	startJingleVideoCall(); //Only to show the message.
 
 	//There should also have a list of jingle features supported by the responder client.
+	//--> Will be done in Iris as iris should now what feaetures are supported by the responder client.
 	account()->jingleCallsManager()->startNewSession(/*to*/fullAddress());
 }
 
