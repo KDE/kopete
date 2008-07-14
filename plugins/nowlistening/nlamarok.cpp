@@ -82,5 +82,5 @@ void NLamaroK::update()
 	m_album = metaData["album"].toString();
 
 	// Fetch artist
-	m_artist = metaData["artist"].toString;
+	m_artist = metaData["artist"].toString();
 }
