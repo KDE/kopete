@@ -27,7 +27,7 @@
 #include "kopeteappearancesettings.h"
 
 KopeteItemDelegate::KopeteItemDelegate( QAbstractItemView* parent )
-: QItemDelegate( parent )
+: QAbstractItemDelegate( parent )
 {
 }
 
@@ -38,40 +38,39 @@ KopeteItemDelegate::~KopeteItemDelegate()
 QSize KopeteItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                    const QModelIndex &index) const
 {
-    QVariant value = index.data(Qt::SizeHintRole);
-    if ( value.isValid() )
-        return qvariant_cast<QSize>(value);
-    return QItemDelegate::sizeHint( option, index );
+	return QSize(45, 20);
 }
 
 void KopeteItemDelegate::paint( QPainter* painter, 
                                 const QStyleOptionViewItem& option,
                                 const QModelIndex& index ) const
 {
-    //pull in contact settings: idleContactColor, greyIdleMetaContacts
-    //pull in contact list settings: contactListDisplayMode
-    QStyleOptionViewItem opt = option;
-
-    if ( index.data( Kopete::Items::TypeRole ) ==
-         Kopete::Items::MetaContact )
-    {
-        //check the idle state of the metacontact and apply the appropriate
-        //color
-        QVariant v = index.data( Kopete::Items::IdleTimeRole );
-        if ( Kopete::AppearanceSettings::self()->greyIdleMetaContacts() &&
-             v.toInt() > 0 )
-        {
-            QColor idleColor( Kopete::AppearanceSettings::self()->idleContactColor() );
-            opt.palette.setColor( QPalette::Text, idleColor );
-        }
-    }
-
-    if (  index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
-    {
-        QColor gc( Kopete::AppearanceSettings::self()->groupNameColor() );
-        opt.palette.setColor( QPalette::Text, gc );
-    }
-
-    QItemDelegate::paint( painter, opt, index );
+	//pull in contact settings: idleContactColor, greyIdleMetaContacts
+	//pull in contact list settings: contactListDisplayMode
+	QStyleOptionViewItem opt = option;
+	
+	if ( index.data( Kopete::Items::TypeRole ) ==
+		Kopete::Items::MetaContact )
+	{
+		//check the idle state of the metacontact and apply the appropriate
+		//color
+		QVariant v = index.data( Kopete::Items::IdleTimeRole );
+		if ( Kopete::AppearanceSettings::self()->greyIdleMetaContacts() &&
+		v.toInt() > 0 )
+		{
+		QColor idleColor( Kopete::AppearanceSettings::self()->idleContactColor() );
+		opt.palette.setColor( QPalette::Text, idleColor );
+		}
+	}
+	
+	if (  index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+	{
+		QColor gc( Kopete::AppearanceSettings::self()->groupNameColor() );
+		opt.palette.setColor( QPalette::Text, gc );
+	}
+	
+	painter->setPen(QColor(0,0,0));
+	painter->drawText(option.rect.bottomLeft(), index.model()->data(index).toString());
+	kDebug() << "delegating...";
 }
 

@@ -30,10 +30,10 @@ ${CMAKE_CURRENT_BINARY_DIR}/identity
 
 # Contact List
 set(kopetecontactlist_SRCS 
-contactlist/kopetemetacontactlvi.cpp 
-contactlist/kopetestatusgroupviewitem.cpp 
-contactlist/kopetegroupviewitem.cpp 
-#contactlist/kopetecontactlistview.cpp 
+#contactlist/kopetemetacontactitem.cpp 
+#contactlist/kopetestatusgroupviewitem.cpp 
+#contactlist/kopetegroupviewitem.cpp 
+contactlist/kopetecontactlistview.cpp 
 #contactlist/kopetelviprops.cpp 
 contactlist/kopeteaddrbookexport.cpp 
 contactlist/customnotificationprops.cpp 

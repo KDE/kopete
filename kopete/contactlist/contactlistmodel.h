@@ -1,7 +1,7 @@
 /*
     Kopete Contactlist Model
 
-    Copyright (c) 2007      by Matt Rogers            <mattr@kde.org>
+    Copyright (c) 2007      by Aleix Pol              <aleixpol@gmail.com>
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -34,6 +34,7 @@ namespace UI {
 class ContactListModel : public QAbstractItemModel
 {
 Q_OBJECT
+	enum KopeteRoles { MetaContact=Qt::UserRole+1, };
 	public:
 		ContactListModel(QObject* parent = 0);
 		~ContactListModel();
@@ -56,6 +57,7 @@ Q_OBJECT
 	
 	private:
 		int childCount(const QModelIndex& parent) const;
+		int countConnected(Kopete::Group* g) const;
 		
 		QList<Kopete::Group*> m_groups;
 		QMap<Kopete::Group*, QList<Kopete::MetaContact*> > m_contacts;
