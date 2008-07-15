@@ -41,16 +41,20 @@ public:
 	~KopeteGroupItem();
 
 	Kopete::Group * group() const;
-
+	bool shouldBeVisible() const;
 public Q_SLOTS:
-
 	void groupNameChanged( Kopete::Group*, const QString& );
+	
+	void refreshDisplayName();
+// 	void updateIcon();
 
 private:
 	void setGroup( Kopete::Group* group );
-
-private:
+	
 	Kopete::Group* m_group;
+	
+	unsigned int m_onlineMemberCount;
+	unsigned int m_totalMemberCount;
 };
 
 #endif
