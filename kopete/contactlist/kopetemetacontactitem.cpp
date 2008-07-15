@@ -20,10 +20,12 @@
 #include "kopetemetacontactitem.h"
 #include "kopeteitembase.h"
 #include <K3Icon>
+#include <KDebug>
 #include <KIconLoader>
 
 #include "kopetemetacontact.h"
 #include "kopetepicture.h"
+#include "kopeteonlinestatus.h"
 
 KopeteMetaContactItem::KopeteMetaContactItem( Kopete::MetaContact* contact )
 : QObject(0), QStandardItem()
@@ -62,7 +64,6 @@ void KopeteMetaContactItem::changeDisplayName( const QString&,
 
 void KopeteMetaContactItem::changePhoto()
 {
-
     QImage img = m_metaContact->picture().image();
     if ( img.isNull() )
     {
@@ -73,6 +74,19 @@ void KopeteMetaContactItem::changePhoto()
     {
         setData( m_metaContact->picture().image(), Qt::DecorationRole );
     }
+}
+
+void KopeteMetaContactItem::updateOnlineStatus( Kopete::MetaContact* metaContact,
+                                                Kopete::OnlineStatus::StatusType status )
+{
+	using namespace Kopete;
+	using namespace Kopete::Items;
+	if ( metaContact != m_metaContact )
+	{
+		return;
+	}
+
+	setData( status, OnlineStatusRole );
 }
 
 #include "kopetemetacontactlvi.moc"

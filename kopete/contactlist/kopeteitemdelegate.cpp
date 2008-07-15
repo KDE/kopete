@@ -2,7 +2,6 @@
     Kopete View Item Delegate
 
     Copyright (c) 2007 by Matt Rogers <mattr@kde.org>
-    Based on code by Trolltech.
 
     Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -18,10 +17,14 @@
 
 #include "kopeteitemdelegate.h"
 #include "kopeteitembase.h"
+
 #include <QPainter>
 #include <QStyleOptionViewItem>
 #include <QModelIndex>
 #include <QAbstractItemView>
+
+#include "kopetemetacontact.h"
+#include "kopeteappearancesettings.h"
 
 KopeteItemDelegate::KopeteItemDelegate( QAbstractItemView* parent )
 : QItemDelegate( parent )
@@ -38,16 +41,7 @@ QSize KopeteItemDelegate::sizeHint(const QStyleOptionViewItem &option,
     QVariant value = index.data(Qt::SizeHintRole);
     if ( value.isValid() )
         return qvariant_cast<QSize>(value);
-    
-    if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
-        return QItemDelegate::sizeHint( option, index );
-        
-    QSize hint;
-    
-    hint.setHeight(32); //hardcoded for now
-    hint.setWidth( option.rect.width() );
-    
-    return hint;
+    return QItemDelegate::sizeHint( option, index );
 }
 
 void KopeteItemDelegate::paint( QPainter* painter, 
@@ -57,9 +51,23 @@ void KopeteItemDelegate::paint( QPainter* painter,
     //pull in contact settings: idleContactColor, greyIdleMetaContacts
     //pull in contact list settings: contactListDisplayMode
     QStyleOptionViewItem opt = option;
-    if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
-        opt.decorationPosition = QStyleOptionViewItem::Right;
+
+    using namespace Kopete::Items;
+    if ( index.data( TypeRole ) == MetaContact )
+    {
+        //check the idle state of the metacontact and apply the appropriate
+        //color
+        QVariant v = index.data( ElementRole );
+        QObject* o = v.value<QObject*>();
+        Kopete::MetaContact* mc = qobject_cast<Kopete::MetaContact*>( o );
+        if ( mc && Kopete::AppearanceSettings::self()->greyIdleMetaContacts() &&
+             mc->idleTime() > 0 )
+        {
+            kDebug( 14000 ) << mc->displayName() << " is idle";
+            painter->setPen( Qt::lightGray );
+        }
+    }
 
     QItemDelegate::paint( painter, opt, index );
-}                            
+}
 
