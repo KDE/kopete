@@ -59,6 +59,9 @@ public:
 	 */
 	Kopete::MetaContact *metaContact() const
 
+public Q_SLOTS:
+	void changeDisplayName(const QString&, const QString&);
+
 private:
 	Kopete::MetaContact *m_metaContact;
 };

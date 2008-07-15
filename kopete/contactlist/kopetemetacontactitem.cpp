@@ -28,6 +28,11 @@ KopeteMetaContactItem::KopeteMetaContactItem( Kopete::MetaContact* contact )
 	setText( m_metaContact->displayName() );
 	QPixmap iconPixmap = QPixmap::fromImage( m_metaContact->picture().image() );
 	setIcon( QIcon( iconPixmap ) );
+
+	connect( m_metaContact,
+	         SIGNAL( displayNameChanged( const QString&, const QString& ) ),
+	         this, SLOT( changeDisplayName( const QString&, const QString ) ) );
+
 }
 
 KopeteMetaContactItem::~KopeteMetaContactItem()
@@ -38,6 +43,13 @@ KopeteMetaContactItem::~KopeteMetaContactItem()
 Kopete::MetaContact* KopeteMetaContactItem::metaContact() const
 {
 	return m_metaContact;
+}
+
+void KopeteMetaContactItem::changeDisplayName( const QString& oldName,
+                                               const QString& newName )
+{
+	if ( !newName.isEmpty() )
+		setText( newName );
 }
 
 #include "kopetemetacontactlvi.moc"
