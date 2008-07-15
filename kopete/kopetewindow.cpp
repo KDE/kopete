@@ -102,7 +102,6 @@
 #include "kopeteemoticons.h"
 #include "kopeteinfoeventmanager.h"
 #include "infoeventwidget.h"
-##include "contactlistmodel.h"
 
 
 //BEGIN GlobalStatusMessageIconLabel
@@ -347,7 +346,7 @@ void KopeteWindow::initView()
 // 	d->contactlist = new KopeteContactListView ( w );
 	d->contactlist = new QTreeView(this);
 	d->contactlist->header()->hide();
-	d->contactlist->setModel( new Kopete::UI::ContactListModel(this) );
+	//d->contactlist->setModel( Kopete::ContactList::self() );
 	d->contactlist->setAlternatingRowColors( true );
 	l->addWidget ( d->contactlist );
 	l->setSpacing ( 0 );

@@ -25,12 +25,13 @@
 KopeteGroupItem::KopeteGroupItem( Kopete::Group *group )
  : QObject(0), QStandardItem()
 {
-	setGroup( group );
+	m_group = group;
 }
 
 KopeteGroupItem::~KopeteGroupItem()
 {
 	m_group = 0;
+}
 }
 
 void KopeteGroupItem::setGroup( Kopete::Group* group )

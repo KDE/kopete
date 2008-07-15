@@ -46,7 +46,7 @@ class KopeteGroupItem;
  * @author Martijn Klingens <klingens@kde.org>
  * @author Matt Rogers <mattr@kde.org>
  */
-class KopeteMetaContactItem : public QObject, public QStandardItem
+class KopeteMetaContactItem : public QObject, QStandardItem
 {
 	Q_OBJECT
 
