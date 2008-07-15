@@ -103,6 +103,7 @@
 #include "kopeteinfoeventmanager.h"
 #include "infoeventwidget.h"
 #include "contactlistmodel.h"
+#include "kopeteitemdelegate.h"
 
 
 //BEGIN GlobalStatusMessageIconLabel
@@ -349,6 +350,7 @@ void KopeteWindow::initView()
 	d->contactlist->header()->hide();
 	d->contactlist->setModel( new Kopete::UI::ContactListModel(this) );
 	d->contactlist->setAlternatingRowColors( true );
+	d->contactlist->setItemDelegate( new KopeteItemDelegate( d->contactlist ) );
 	l->addWidget ( d->contactlist );
 	l->setSpacing ( 0 );
 	l->setContentsMargins ( 0,0,0,0 );

@@ -40,6 +40,7 @@ contactlist/customnotificationprops.cpp
 contactlist/kopetegrouplistaction.cpp 
 contactlist/kabcexport.cpp
 contactlist/contactlistmodel.cpp
+contactlist/kopeteitemdelegate.cpp
 )
 
 kde4_add_ui_files(kopetecontactlist_SRCS
@@ -91,5 +92,4 @@ install( FILES kopeterc DESTINATION ${CONFIG_INSTALL_DIR} )
 install( FILES org.kde.Kopete.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}   )
-
 

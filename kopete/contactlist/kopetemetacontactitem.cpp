@@ -28,6 +28,7 @@
 KopeteMetaContactItem::KopeteMetaContactItem( Kopete::MetaContact* contact )
 : QObject(0), QStandardItem()
 {
+    setData( 1, Qt::UserRole + 1 );
 	m_metaContact = contact;
 	setText( m_metaContact->displayName() );
     setData( m_metaContact->picture().image(), Qt::DecorationRole );
