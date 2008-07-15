@@ -26,8 +26,12 @@
 #include <QHeaderView>
 
 #include "kopeteuiglobal.h"
+#include "kopetecontactlistelement.h"
+#include "kopetemetacontact.h"
+
 #include "kopetegroupitem.h"
 #include "contactlistmodel.h"
+#include "kopeteitembase.h"
 #include "kopeteitemdelegate.h"
 #include "kopetemetacontactitem.h"
 
@@ -42,6 +46,9 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 	setAlternatingRowColors( true );
 	setItemDelegate( new KopeteItemDelegate( this ) );
 
+    connect( this, SIGNAL( activated(const QModelIndex&)),
+             this, SLOT( contactActivated(const QModelIndex&)));
+             
 	// Load in the user's initial settings
 	//slotSettingsChanged();
 }
@@ -114,6 +121,22 @@ KopeteContactListView::~KopeteContactListView()
 {
 	//delete d;
 }
+
+void KopeteContactListView::contactActivated( const QModelIndex& index )
+{
+	QVariant v = index.data( Kopete::Items::ElementRole );
+	
+	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
+	{
+		QObject* o = v.value<QObject*>();
+		Kopete::MetaContact* mc = qobject_cast<Kopete::MetaContact*>(o);
+		if ( mc )
+			mc->execute();
+	}
+
+
+}
+
 
 #include "kopetecontactlistview.moc"
 

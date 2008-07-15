@@ -62,6 +62,10 @@ public:
 	KopeteContactListView( QWidget *parent = 0 );
 	~KopeteContactListView();
 
+
+public Q_SLOTS:
+    void contactActivated( const QModelIndex& index );
+
 private:
 	typedef QList<KopeteMetaContactLVI*> MetaContactLVIList;
 	typedef QList<KopeteGroupViewItem*> GroupViewItemList;
