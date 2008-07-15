@@ -83,7 +83,6 @@
 #include "kopetebehaviorsettings.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
-#include "kopetecontactlistview.h"
 #include "kopetegroup.h"
 #include "kopeteidentity.h"
 #include "kopeteidentitymanager.h"
@@ -104,6 +103,7 @@
 #include "infoeventwidget.h"
 #include "contactlistmodel.h"
 #include "kopeteitemdelegate.h"
+#include "kopetemetacontact.h"
 
 
 //BEGIN GlobalStatusMessageIconLabel
