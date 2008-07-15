@@ -414,7 +414,7 @@ Contact *MetaContact::execute()
 	return 0L;
 }
 
-unsigned long int MetaContact::idleTime() const
+quint32 MetaContact::idleTime() const
 {
 	unsigned long int time = 0;
 	QListIterator<Contact *> it( d->contacts );
