@@ -38,7 +38,7 @@ void KopeteGroupItem::setGroup( Kopete::Group* group )
 {
 	m_group = group;
 	setText( group->displayName() );
-	setIcon( KIcon("folder") );
+	setIcon( KIcon(KOPETE_GROUP_DEFAULT_CLOSED_ICON) );
 }
 
 Kopete::Group* KopeteGroupItem::group() const
