@@ -35,8 +35,8 @@ namespace Kopete {
 
 namespace UI {
 
-ContactListModel::ContactListModel(QObject* parent)
- : QAbstractItemModel(parent)
+ContactListModel::ContactListModel( QObject* parent )
+ : QAbstractItemModel( parent )
 {
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
 	connect( kcl, SIGNAL( metaContactAdded( Kopete::MetaContact* ) ),
@@ -53,9 +53,8 @@ ContactListModel::~ContactListModel()
 
 void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
 {
-	foreach(Kopete::Group* g, contact->groups()) {
+	foreach( Kopete::Group* g, contact->groups() )
 		m_contacts[g].append(contact);
-	}
 	
 	connect( contact,
 	         SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
@@ -72,91 +71,106 @@ void ContactListModel::removeMetaContact( Kopete::MetaContact* contact )
 void ContactListModel::addGroup( Kopete::Group* group )
 {
 	kDebug(14001) << "addGroup" << group->displayName();
-	beginInsertRows (QModelIndex(), rowCount(), rowCount()+1);
-	m_groups.append(group);
-	m_contacts[group]=QList<Kopete::MetaContact*>();
+	beginInsertRows( QModelIndex(), rowCount(), rowCount() + 1 );
+	m_groups.append( group );
+	m_contacts[group] = QList<Kopete::MetaContact*>();
 	endInsertRows();
 }
 
 void ContactListModel::removeGroup( Kopete::Group* group )
 {
-	int pos=m_groups.indexOf(group);
-	beginRemoveRows(QModelIndex(), pos, pos);
-	m_groups.removeAt(m_groups.indexOf(group));
-	m_contacts.remove(group);
+	int pos = m_groups.indexOf( group );
+	beginRemoveRows( QModelIndex(), pos, pos );
+	m_groups.removeAt( m_groups.indexOf( group ) );
+	m_contacts.remove( group );
 	endRemoveRows();
 }
 
-int ContactListModel::childCount(const QModelIndex& parent) const
+int ContactListModel::childCount( const QModelIndex& parent ) const
 {
-	int cnt=0;
-	if(!parent.isValid()) { //Number of groups
+	int cnt = 0;
+	if ( !parent.isValid() )
+	{ //Number of groups
 		cnt = m_groups.count();
-	} else {
-		Kopete::ContactListElement *cle=static_cast<Kopete::ContactListElement*>(parent.internalPointer());
-		Kopete::Group *g=dynamic_cast<Kopete::Group*>(cle);
+	}
+	else
+	{
+		Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( parent.internalPointer() );
+		Kopete::Group *g = dynamic_cast<Kopete::Group*>( cle );
 		
-		cnt= m_contacts[g].count();
+		cnt = m_contacts[g].count();
 	}
+	
 	return cnt;
 }
 
-int ContactListModel::rowCount ( const QModelIndex & parent) const
+int ContactListModel::rowCount( const QModelIndex& parent ) const
 {
-	Kopete::ContactListElement *cle=static_cast<Kopete::ContactListElement*>(parent.internalPointer());
-	Kopete::Group *g=dynamic_cast<Kopete::Group*>(cle);
+	Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( parent.internalPointer() );
+	Kopete::Group *g = dynamic_cast<Kopete::Group*>( cle );
 	
-	int cnt=0;
-	if(!parent.isValid()) { //Number of groups and contacts
+	int cnt = 0;
+	if ( !parent.isValid() )
+	{ //Number of groups and contacts
 		cnt = m_groups.count();
-		foreach(QList<Kopete::MetaContact*> l, m_contacts.values()) {
-			cnt+=l.count();
-		}
-	} else if(g) {
-		cnt+= m_contacts[g].count();
+		foreach( QList<Kopete::MetaContact*> l, m_contacts.values() )
+			cnt += l.count();
 	}
+	else
+	{
+		if ( g )
+			cnt+= m_contacts[g].count();
+	}
+	
 	return cnt;
 }
 
-bool ContactListModel::hasChildren ( const QModelIndex & parent) const
+bool ContactListModel::hasChildren( const QModelIndex& parent ) const
 {
-	Kopete::ContactListElement *cle=static_cast<Kopete::ContactListElement*>(parent.internalPointer());
-	Kopete::Group *g=dynamic_cast<Kopete::Group*>(cle);
+	Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( parent.internalPointer() );
+	Kopete::Group *g = dynamic_cast<Kopete::Group*>( cle );
 	
-	bool res=false;
-	if(!parent.isValid()) {
+	bool res = false;
+	if ( !parent.isValid() )
 		res=!m_groups.isEmpty();
-	} else if(g) {
-		int row = parent.row();
-		Kopete::Group *g=m_groups[row];
-		res=!m_contacts[g].isEmpty();
+	else
+	{
+		if ( g )
+		{
+			int row = parent.row();
+			Kopete::Group *g = m_groups[row];
+			res = !m_contacts[g].isEmpty();
+		}
 	}
 	return res;
 }
 
-QModelIndex ContactListModel::index ( int row, int column, const QModelIndex & parent) const
+QModelIndex ContactListModel::index( int row, int column, const QModelIndex & parent ) const
 {
-	if(row<0 || row>=childCount(parent)) {
+	if ( row<0 || row>=childCount( parent ) )
+	{
 		return QModelIndex();
 	}
 	
-	Kopete::ContactListElement *cle=static_cast<Kopete::ContactListElement*>(parent.internalPointer());
-	Kopete::Group *g=dynamic_cast<Kopete::Group*>(cle);
+	Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( parent.internalPointer() );
+	Kopete::Group *g = dynamic_cast<Kopete::Group*>(cle);
 	
 	QModelIndex idx;
 	Kopete::ContactListElement *itemPtr=0;
-	if(!parent.isValid()) {
-		itemPtr=m_groups[row];
-	} else if(g) {
-		itemPtr=m_contacts[g][row];
+	if( !parent.isValid() )
+		itemPtr = m_groups[row];
+	else
+	{
+		if ( g )
+			itemPtr = m_contacts[g][row];
 	}
-	idx=createIndex(row, column, itemPtr);
+	idx = createIndex( row, column, itemPtr );
 	return idx;
 }
 
 int ContactListModel::countConnected(Kopete::Group* g) const
 {
-	int onlineCount=0;
+	int onlineCount = 0;
 	foreach( Kopete::MetaContact* mc, m_contacts[g] )
 	{
 	  if ( mc->isOnline() )
@@ -168,22 +182,23 @@ int ContactListModel::countConnected(Kopete::Group* g) const
 
 QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 {
-	if(!index.isValid())
+	if ( !index.isValid() )
 		return QVariant();
 	
 	using namespace Kopete;
 	
 	/* do all the casting up front. I need to profile to see how expensive this is though */
-	ContactListElement *cle = static_cast<ContactListElement*>(index.internalPointer());
-	Group *g = qobject_cast<Group*>(cle);
-	MetaContact *mc = qobject_cast<MetaContact*>(cle);
+	ContactListElement *cle = static_cast<ContactListElement*>( index.internalPointer() );
+	Group *g = qobject_cast<Group*>( cle );
+	MetaContact *mc = qobject_cast<MetaContact*>( cle );
 
-	if ( role == Qt::DisplayRole ) {
+	if ( role == Qt::DisplayRole )
+	{
 		QString display;
 		if ( g )
 		{
-			display = i18n("%1 (%2/%3)", g->displayName(), countConnected(g),
-			               m_contacts[g].count());
+			display = i18n( "%1 (%2/%3)", g->displayName(), countConnected( g ),
+			                m_contacts[g].count() );
 		}
 		else
 		{
@@ -202,14 +217,14 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 				if ( g->useCustomIcon() )
 					return g->icon();
 				else
-					return KIcon(KOPETE_GROUP_DEFAULT_OPEN_ICON);
+					return KIcon( KOPETE_GROUP_DEFAULT_OPEN_ICON );
 			}
 			else
 			{
 				if ( g->useCustomIcon() )
 					return g->icon();
 				else
-					return KIcon(KOPETE_GROUP_DEFAULT_CLOSED_ICON);
+					return KIcon( KOPETE_GROUP_DEFAULT_CLOSED_ICON );
 			}
 		}
 	}
@@ -253,14 +268,13 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 		else
 			return mc->status();
 	}
-	
 
 	return QVariant();
 }
 
-Qt::ItemFlags ContactListModel::flags(const QModelIndex &index) const
+Qt::ItemFlags ContactListModel::flags( const QModelIndex &index ) const
 {
-	if (!index.isValid())
+	if ( !index.isValid() )
 		return 0;
 	
 	return Qt::ItemIsEnabled;
@@ -269,12 +283,15 @@ Qt::ItemFlags ContactListModel::flags(const QModelIndex &index) const
 QModelIndex ContactListModel::parent(const QModelIndex & index) const
 {
 	QModelIndex parent;
-	if(index.isValid()) {
-		Kopete::ContactListElement *cle=static_cast<Kopete::ContactListElement*>(index.internalPointer());
-		Kopete::Group *g=dynamic_cast<Kopete::Group*>(cle);
-		if(!g) {
-			Kopete::MetaContact *mc=dynamic_cast<Kopete::MetaContact*>(cle);
-			parent=createIndex(0, 0, mc->groups().last());
+	
+	if(index.isValid())
+	{
+		Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( index.internalPointer() );
+		Kopete::Group *g = dynamic_cast<Kopete::Group*>( cle );
+		if ( !g )
+		{
+			Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>( cle );
+			parent = createIndex( 0, 0, mc->groups().last() );
 		}
 	}
 	return parent;
