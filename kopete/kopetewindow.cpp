@@ -347,6 +347,7 @@ void KopeteWindow::initView()
 	QWidget *w = new QWidget ( this );
 	QVBoxLayout *l = new QVBoxLayout ( w );
  	d->contactlist = new KopeteContactListView ( w );
+	d->contactlist->setSelectionMode( QAbstractItemView::ExtendedSelection );
 	d->model = new Kopete::UI::ContactListModel( this );
 	d->proxyModel = new Kopete::UI::ContactListProxyModel( this );
 	d->proxyModel->setSourceModel( d->model );
