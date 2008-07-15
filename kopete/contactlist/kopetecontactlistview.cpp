@@ -32,11 +32,9 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 
-#include "kopetegroupitem.h"
 #include "contactlistmodel.h"
 #include "kopeteitembase.h"
 #include "kopeteitemdelegate.h"
-#include "kopetemetacontactitem.h"
 
 
 KopeteContactListView::KopeteContactListView( QWidget *parent )
