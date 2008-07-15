@@ -51,7 +51,11 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 
 	connect( this, SIGNAL( activated(const QModelIndex&)),
 	         this, SLOT( contactActivated(const QModelIndex&)));
-
+	connect( this, SIGNAL(expanded(const QModelIndex&)),
+	         this, SLOT(itemExpanded(const QModelIndex&)));
+	connect( this, SIGNAL(collapsed(const QModelIndex&)),
+	         this, SLOT(itemCollapsed(const QModelIndex&)));
+	
 	setEditTriggers( NoEditTriggers );
 	// Load in the user's initial settings
 	//slotSettingsChanged();
@@ -143,6 +147,26 @@ void KopeteContactListView::contactActivated( const QModelIndex& index )
 	}
 
 
+}
+
+void KopeteContactListView::itemExpanded( const QModelIndex& index )
+{
+	Q_ASSERT(model());
+	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+	{
+		model()->setData( index, KIcon(KOPETE_GROUP_DEFAULT_OPEN_ICON),
+	                      Qt::DecorationRole );
+	}
+}
+
+void KopeteContactListView::itemCollapsed( const QModelIndex& index )
+{
+	Q_ASSERT(model());
+	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+	{
+		model()->setData( index, KIcon(KOPETE_GROUP_DEFAULT_CLOSED_ICON),
+		                  Qt::DecorationRole );
+	}
 }
 
 

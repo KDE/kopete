@@ -65,6 +65,8 @@ public:
 
 public Q_SLOTS:
     void contactActivated( const QModelIndex& index );
+	void itemExpanded( const QModelIndex& index );
+	void itemCollapsed( const QModelIndex& index );
 
 private:
 	Kopete::MetaContact* metaContactFromIndex( const QModelIndex& index );
