@@ -48,6 +48,8 @@ MetaContact::MetaContact()
 {
 	d = new Private;
 
+	d->metaContactId = QUuid::createUuid();
+	
 	connect( this, SIGNAL( pluginDataChanged() ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( iconChanged( Kopete::ContactListElement::IconState, const QString & ) ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( useCustomIconChanged( bool ) ), SIGNAL( persistentDataChanged() ) );
@@ -65,6 +67,7 @@ MetaContact::MetaContact()
 	addToGroup( Group::topLevel() );
 			 // I'm not sure this is correct -Olivier
 			 // we probably should do the check in groups() instead
+
 }
 
 MetaContact::~MetaContact()
