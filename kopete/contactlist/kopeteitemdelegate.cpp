@@ -61,7 +61,7 @@ void KopeteItemDelegate::paint( QPainter* painter,
         if ( Kopete::AppearanceSettings::self()->greyIdleMetaContacts() &&
              v.toInt() > 0 )
         {
-            painter->setPen( Qt::lightGray );
+            opt.palette.setColor( QPalette::Text, Qt::lightGray );
         }
     }
 
