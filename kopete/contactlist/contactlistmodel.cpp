@@ -230,6 +230,31 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 		else
 			return mc->metaContactId().toString();
 	}
+	
+	if ( role == Kopete::Items::TotalCountRole )
+	{
+		if ( g )
+			return g->members().count();
+		else
+			return 0;
+	}
+	
+	if ( role == Kopete::Items::ConnectedCountRole )
+	{
+		if ( g )
+			return countConnected( g );
+		else
+			return 0;
+	}
+	
+	if ( role == Kopete::Items::OnlineStatusRole )
+	{
+		if ( g )
+			return OnlineStatus::Unknown;
+		else
+			return mc->status();
+	}
+	
 
 	return QVariant();
 }

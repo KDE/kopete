@@ -348,9 +348,9 @@ void KopeteWindow::initView()
 	QVBoxLayout *l = new QVBoxLayout ( w );
  	d->contactlist = new KopeteContactListView ( w );
 	d->model = new Kopete::UI::ContactListModel( this );
-//	d->proxyModel = new Kopete::UI::ContactListProxyModel( this );
-//	d->proxyModel->setSourceModel( d->model );
-	d->contactlist->setModel( d->model );
+	d->proxyModel = new Kopete::UI::ContactListProxyModel( this );
+	d->proxyModel->setSourceModel( d->model );
+	d->contactlist->setModel( d->proxyModel );
 	l->addWidget ( d->contactlist );
 	l->setSpacing ( 0 );
 	l->setContentsMargins ( 0,0,0,0 );
