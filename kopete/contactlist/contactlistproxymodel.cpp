@@ -78,13 +78,15 @@ bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex 
 	{
 		int mcStatus = model->data( current,
 		                            Kopete::Items::OnlineStatusRole ).toInt();
-		if ( mcStatus == OnlineStatus::Offline &&
+		if ( mcStatus <= OnlineStatus::Offline &&
 		     !Kopete::AppearanceSettings::self()->showOfflineUsers() )
 		{
 			return false;
 		}
+		else
+			return true;
 	}
-	return true;
+	return false;
 }
 
 }
