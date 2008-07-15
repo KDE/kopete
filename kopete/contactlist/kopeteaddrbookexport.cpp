@@ -168,7 +168,7 @@ void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const 
 
 int KopeteAddressBookExport::showDialog()
 {
-	mAddressee = mAddressBook->findByUid( mMetaContact->metaContactId() );
+	mAddressee = mAddressBook->findByUid( mMetaContact->kabcId() );
 	if ( !mAddressee.isEmpty() )
 	{
 		numEmails = 0;

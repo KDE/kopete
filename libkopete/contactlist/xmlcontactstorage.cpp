@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QtCore/QFile>
+#include <QtCore/QUuid>
 #include <QtCore/QRegExp>
 #include <QtCore/QLatin1String>
 #include <QtCore/QTextCodec>
@@ -293,10 +294,14 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
     QString strContactId = element.attribute( QString::fromUtf8("contactId") );
     if( !strContactId.isEmpty() )
     {
-        metaContact->setMetaContactId( strContactId );
+        metaContact->setMetaContactId( QUuid( strContactId ) );
         // Set the KABC Picture
         //metaContact->slotUpdateAddressBookPicture(); moved to MetaContact::setMetaContactId
     }
+
+    QString strKabcId = element.attribute( QString::fromUtf8( "kabcId" ) );
+    if ( !strKabcId.isEmpty() )
+        metaContact->setKabcId( strKabcId );
 
     QDomElement contactElement = element.firstChild().toElement();
     while( !contactElement.isNull() )
@@ -439,7 +444,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
         {
             // lets do the best conversion for the old name tracking
             // if the custom display name is the same as kabc name, set the source to kabc
-            if ( !metaContact->metaContactId().isEmpty() && ( metaContact->customDisplayName() == nameFromKABC( metaContact->metaContactId() )) )
+            if ( !metaContact->kabcId().isEmpty() && ( metaContact->customDisplayName() == nameFromKABC( metaContact->kabcId() )) )
                 metaContact->setDisplayNameSource( Kopete::MetaContact::SourceKABC );
             else
                 metaContact->setDisplayNameSource( Kopete::MetaContact::SourceCustom );
@@ -455,7 +460,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
         }
         else
         {
-            if ( !metaContact->metaContactId().isEmpty() && !photoFromKABC( metaContact->metaContactId() ).isNull() )
+            if ( !metaContact->kabcId().isEmpty() && !photoFromKABC( metaContact->kabcId() ).isNull() )
                 metaContact->setPhotoSource( Kopete::MetaContact::SourceKABC );
             else
                 metaContact->setPhotoSource( Kopete::MetaContact::SourceCustom );
@@ -644,6 +649,7 @@ const QDomElement XmlContactStorage::storeMetaContact( Kopete::MetaContact *meta
     QDomDocument metaContactDoc;
     metaContactDoc.appendChild( metaContactDoc.createElement( QString::fromUtf8( "meta-contact" ) ) );
     metaContactDoc.documentElement().setAttribute( QString::fromUtf8( "contactId" ), metaContact->metaContactId() );
+    metaContactDoc.documentElement().setAttribute( QString::fromUtf8( "kabcId" ), metaContact->kabcId() );
 
     // the custom display name, used for the custom name source
     QDomElement displayName = metaContactDoc.createElement( QString::fromUtf8("display-name" ) );
@@ -675,7 +681,7 @@ const QDomElement XmlContactStorage::storeMetaContact( Kopete::MetaContact *meta
     // set the contact source for photo
     _photoSource.setAttribute( QString::fromUtf8("source"), sourceToString( metaContact->photoSource() ) );
 
-    if( !metaContact->metaContactId().isEmpty()  )
+    if( !metaContact->kabcId().isEmpty()  )
         photo.setAttribute( QString::fromUtf8("syncWithKABC") , QString::fromUtf8( metaContact->isPhotoSyncedWithKABC() ? "true" : "false" ) );
 
     if( metaContact->photoSourceContact() )

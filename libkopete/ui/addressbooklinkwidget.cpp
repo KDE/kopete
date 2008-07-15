@@ -81,7 +81,13 @@ void AddressBookLinkWidget::slotSelectAddressee()
  	else
 		message = i18n("Choose the corresponding entry in the address book" );
 
-	Kopete::UI::AddressBookSelectorDialog dialog( i18n("Addressbook Association"), message, ( mMetaContact ? mMetaContact->metaContactId() : QString::null ), this );	//krazy:exclude=nullstrassign for old broken gcc
+	QString assocDisplayText;
+	if ( mMetaContact )
+	{
+		assocDisplayText = mMetaContact->kabcId();
+	}
+	Kopete::UI::AddressBookSelectorDialog dialog( i18n("Addressbook Association"), message,
+	                                              assocDisplayText, this );
 	int result = dialog.exec();
 
 	KABC::Addressee addr;
@@ -91,7 +97,7 @@ void AddressBookLinkWidget::slotSelectAddressee()
 
 		edtAddressee->setText( addr.realName() );
 		btnClear->setEnabled( !addr.isEmpty() );
-		mSelectedUid = ( addr.isEmpty() ? QString::null : addr.uid() );	//krazy:exclude=nullstrassign for old broken gcc
+		mSelectedUid = ( addr.isEmpty() ? QString() : addr.uid() );
 		emit addresseeChanged( addr );
 	}
 }
