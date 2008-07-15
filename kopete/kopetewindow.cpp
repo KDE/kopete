@@ -1250,7 +1250,7 @@ void KopeteWindow::slotUpdateSize()
 
 	// desired height is height of full contents of contact list tree, as well as
 	// some buffer for other elements in the main window
-	int height = d->contactlist->contentsHeight();
+	int height = d->contactlist->contentsRect().height();
 	newGeometry.setHeight ( height + amountWindowBiggerThanContactList );
 
 	if ( height ) {
