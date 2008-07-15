@@ -126,14 +126,18 @@ KopeteContactListView::~KopeteContactListView()
 	//delete d;
 }
 
+Kopete::MetaContact* KopeteContactListView::metaContactFromIndex( const QModelIndex& index )
+{
+	QString mcUuid = index.data( Kopete::Items::UuidRole ).toString();
+	Kopete::MetaContact* mc = Kopete::ContactList::self()->metaContact( QUuid(mcUuid) );
+}
+
 void KopeteContactListView::contactActivated( const QModelIndex& index )
 {
 	QVariant v = index.data( Kopete::Items::ElementRole );
 	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
 	{
-		/* we store the UUIDs in the items as QStrings */
-		QStrin mcUuid = index.data( Kopete::Items::UuidRole ).toString();
-		Kopete::MetaContact* mc = Kopete::ContactList::self()->metaContact( QUuid(mcUuid) );
+		Kopete::MetaContact* mc = metaContactFromIndex( index );
 		if ( mc )
 			mc->execute();
 	}

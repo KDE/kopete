@@ -67,6 +67,9 @@ public Q_SLOTS:
     void contactActivated( const QModelIndex& index );
 
 private:
+	Kopete::MetaContact* metaContactFromIndex( const QModelIndex& index );
+
+private:
 	typedef QList<KopeteMetaContactLVI*> MetaContactLVIList;
 	typedef QList<KopeteGroupViewItem*> GroupViewItemList;
 
