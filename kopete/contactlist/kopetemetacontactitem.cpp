@@ -17,8 +17,8 @@
     *                                                                       *
     *************************************************************************
 */
-#include "kopetemetacontactlvi.h"
-
+#include "kopetemetacontactitem.h"
+#include "kopeteitembase.h"
 #include <K3Icon>
 #include <KIconLoader>
 
@@ -28,7 +28,7 @@
 KopeteMetaContactItem::KopeteMetaContactItem( Kopete::MetaContact* contact )
 : QObject(0), QStandardItem()
 {
-    setData( 1, Qt::UserRole + 1 );
+    setData( Kopete::Items::MetaContact, Kopete::Items::TypeRole );
 	m_metaContact = contact;
 	setText( m_metaContact->displayName() );
     setData( m_metaContact->picture().image(), Qt::DecorationRole );

@@ -17,7 +17,7 @@
 */
 
 #include "kopetegroupviewitem.h"
-
+#include "kopeteitembase.h"
 #include <QtCore/QString>
 #include <KIcon>
 #include "kopetegroup.h"
@@ -25,7 +25,7 @@
 KopeteGroupItem::KopeteGroupItem( Kopete::Group *group )
  : QObject(0), QStandardItem()
 {
-    setData( 0, Qt::UserRole + 1 );
+    setData( Kopete::Items::Group, Kopete::Items::TypeRole );
 	setGroup( group );
 }
 
