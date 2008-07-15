@@ -35,8 +35,6 @@
 #include <QLineEdit>
 #include <QSignalMapper>
 #include <QTextEdit>
-#include <QTreeView>
-#include <QHeaderView>
 
 #include <khbox.h>
 #include <kvbox.h>
@@ -104,6 +102,7 @@
 #include "contactlistmodel.h"
 #include "kopeteitemdelegate.h"
 #include "kopetemetacontact.h"
+#include "kopetecontactlistview.h"
 
 
 //BEGIN GlobalStatusMessageIconLabel
@@ -169,8 +168,7 @@ class KopeteWindow::Private
 		~Private()
 		{}
 
-		//KopeteContactListView *contactlist;
-		QTreeView* contactlist;
+		KopeteContactListView *contactlist;
 
 		IdentityStatusWidget *identitywidget;
 		InfoEventWidget *infoEventWidget;
@@ -345,12 +343,7 @@ void KopeteWindow::initView()
 {
 	QWidget *w = new QWidget ( this );
 	QVBoxLayout *l = new QVBoxLayout ( w );
-// 	d->contactlist = new KopeteContactListView ( w );
-	d->contactlist = new QTreeView(this);
-	d->contactlist->header()->hide();
-	d->contactlist->setModel( new Kopete::UI::ContactListModel(this) );
-	d->contactlist->setAlternatingRowColors( true );
-	d->contactlist->setItemDelegate( new KopeteItemDelegate( d->contactlist ) );
+ 	d->contactlist = new KopeteContactListView ( w );
 	l->addWidget ( d->contactlist );
 	l->setSpacing ( 0 );
 	l->setContentsMargins ( 0,0,0,0 );
