@@ -126,7 +126,7 @@ MetaContact *ContactList::metaContact( const QString &metaContactId ) const
 	while ( it.hasNext() )
 	{
 		MetaContact *mc = it.next();
-		if( mc->metaContactId() == metaContactId )
+		if( mc->metaContactId() == QUuid( metaContactId ) )
 			return mc;
 	}
 

@@ -30,6 +30,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetecontactlistelement.h"
 #include "kopetemetacontact.h"
+#include "kopetecontactlist.h"
 
 #include "kopetegroupitem.h"
 #include "contactlistmodel.h"
@@ -127,13 +128,12 @@ KopeteContactListView::~KopeteContactListView()
 
 void KopeteContactListView::contactActivated( const QModelIndex& index )
 {
-	kDebug(14010) << "contact activated";
 	QVariant v = index.data( Kopete::Items::ElementRole );
 	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
 	{
-		kDebug(14010) << "have a metacontact";
-		QObject* o = v.value<QObject*>();
-		Kopete::MetaContact* mc = qobject_cast<Kopete::MetaContact*>( o );
+		/* we store the UUIDs in the items as QStrings */
+		QStrin mcUuid = index.data( Kopete::Items::UuidRole ).toString();
+		Kopete::MetaContact* mc = Kopete::ContactList::self()->metaContact( QUuid(mcUuid) );
 		if ( mc )
 			mc->execute();
 	}

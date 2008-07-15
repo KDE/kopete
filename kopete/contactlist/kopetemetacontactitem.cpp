@@ -37,6 +37,7 @@ KopeteMetaContactItem::KopeteMetaContactItem( Kopete::MetaContact* contact )
 	setText( m_metaContact->displayName() );
     setData( m_metaContact->picture().image(), Qt::DecorationRole );
 	setData( m_metaContact->idleTime(), Kopete::Items::IdleTimeRole );
+    setData( m_metaContact->metaContactId().toString(), Kopete::Items::UuidRole );
 
 	connect( m_metaContact,
 	         SIGNAL( displayNameChanged( const QString&, const QString& ) ),
