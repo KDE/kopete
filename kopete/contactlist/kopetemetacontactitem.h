@@ -61,6 +61,7 @@ public:
 
 public Q_SLOTS:
 	void changeDisplayName(const QString&, const QString&);
+	void changePhoto();
 
 private:
 	Kopete::MetaContact *m_metaContact;
