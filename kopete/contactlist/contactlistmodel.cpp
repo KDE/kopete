@@ -20,6 +20,7 @@
 #include <QStandardItem>
 #include <QList>
 
+#include <KIcon>
 #include <KDebug>
 #include <KLocale>
 

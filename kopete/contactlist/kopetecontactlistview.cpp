@@ -26,6 +26,7 @@
 #include <QHeaderView>
 
 #include <KDebug>
+#include <KIcon>
 
 #include "kopeteuiglobal.h"
 #include "kopetecontactlistelement.h"
