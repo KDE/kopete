@@ -27,6 +27,7 @@
 #include <KLocale>
 
 #include "kopetegroup.h"
+#include "kopetepicture.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopeteitembase.h"
@@ -245,7 +246,7 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 			return display;
 			break;
 		case Qt::DecorationRole:
-			return QVariant();
+			return mc->picture().image();
 			break;
 		case Kopete::Items::TypeRole:
 			return Kopete::Items::MetaContact;
