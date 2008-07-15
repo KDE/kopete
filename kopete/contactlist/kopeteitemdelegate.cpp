@@ -70,7 +70,7 @@ void KopeteItemDelegate::paint( QPainter* painter,
 		opt.palette.setColor( QPalette::Text, gc );
 	}
 
-	QItemDelegate::paint( painter, option, index );
+	QItemDelegate::paint( painter, opt, index );
 	
 }
 
