@@ -155,7 +155,7 @@ class KopeteWindow::Private
 {
 	public:
 		Private()
-				: contactlist ( 0 ), identitywidget ( 0 ), infoEventWidget ( 0 ), actionAddContact ( 0 ), actionDisconnect ( 0 ),
+				: contactlist ( 0 ), model(0), identitywidget ( 0 ), infoEventWidget ( 0 ), actionAddContact ( 0 ), actionDisconnect ( 0 ),
 				actionExportContacts ( 0 ), actionStatusMenu ( 0 ), actionDockMenu ( 0 ), actionSetAway ( 0 ),
 				actionSetBusy ( 0 ), actionSetAvailable ( 0 ), actionSetInvisible ( 0 ), actionPrefs ( 0 ),
 				actionQuit ( 0 ), actionSave ( 0 ), menubarAction ( 0 ), statusbarAction ( 0 ),
@@ -169,6 +169,7 @@ class KopeteWindow::Private
 		{}
 
 		KopeteContactListView *contactlist;
+		Kopete::UI::ContactListModel* model;
 
 		IdentityStatusWidget *identitywidget;
 		InfoEventWidget *infoEventWidget;
@@ -344,6 +345,8 @@ void KopeteWindow::initView()
 	QWidget *w = new QWidget ( this );
 	QVBoxLayout *l = new QVBoxLayout ( w );
  	d->contactlist = new KopeteContactListView ( w );
+	d->model = new Kopete::UI::ContactListModel( this );
+	d->contactlist->setModel( d->model );
 	l->addWidget ( d->contactlist );
 	l->setSpacing ( 0 );
 	l->setContentsMargins ( 0,0,0,0 );

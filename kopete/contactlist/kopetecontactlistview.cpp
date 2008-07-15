@@ -45,7 +45,6 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 	//d = new KopeteContactListViewPrivate;
 	header()->hide();
 
-	setModel( new Kopete::UI::ContactListModel( this ) );
 	setAlternatingRowColors( true );
 	setItemDelegate( new KopeteItemDelegate( this ) );
 
