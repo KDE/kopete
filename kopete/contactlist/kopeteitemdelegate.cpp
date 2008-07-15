@@ -39,7 +39,7 @@ KopeteItemDelegate::~KopeteItemDelegate()
 QSize KopeteItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                    const QModelIndex &index) const
 {
-	return QSize(45, 20);
+	return QItemDelegate::sizeHint( option, index );
 }
 
 void KopeteItemDelegate::paint( QPainter* painter, 
