@@ -54,6 +54,12 @@ void KopeteItemDelegate::paint( QPainter* painter,
                                 const QStyleOptionViewItem& option,
                                 const QModelIndex& index ) const
 {
-    QItemDelegate::paint( painter, option, index );
+    //pull in contact settings: idleContactColor, greyIdleMetaContacts
+    //pull in contact list settings: contactListDisplayMode
+    QStyleOptionViewItem opt = option;
+    if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
+        opt.decorationPosition = QStyleOptionViewItem::Right;
+
+    QItemDelegate::paint( painter, opt, index );
 }                            
 
