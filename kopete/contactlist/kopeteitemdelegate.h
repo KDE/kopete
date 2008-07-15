@@ -35,6 +35,9 @@ public:
 	                     const QModelIndex & index ) const;
 	virtual QSize sizeHint ( const QStyleOptionViewItem & option,
 	                         const QModelIndex & index ) const;
+				 
+private:
+	QSize metaContactIconSize( const QModelIndex& index ) const;
 };
 
 #endif
