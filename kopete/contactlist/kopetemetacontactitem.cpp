@@ -36,6 +36,7 @@ KopeteMetaContactItem::KopeteMetaContactItem( Kopete::MetaContact* contact )
     setData( m_metaContact, Kopete::Items::ElementRole );
 	setText( m_metaContact->displayName() );
     setData( m_metaContact->picture().image(), Qt::DecorationRole );
+	setData( m_metaContact->idleTime(), Kopete::Items::IdleTimeRole );
 
 	connect( m_metaContact,
 	         SIGNAL( displayNameChanged( const QString&, const QString& ) ),
@@ -79,14 +80,9 @@ void KopeteMetaContactItem::changePhoto()
 void KopeteMetaContactItem::updateOnlineStatus( Kopete::MetaContact* metaContact,
                                                 Kopete::OnlineStatus::StatusType status )
 {
-	using namespace Kopete;
 	using namespace Kopete::Items;
-	if ( metaContact != m_metaContact )
-	{
-		return;
-	}
-
 	setData( status, OnlineStatusRole );
+	setData( metaContact->idleTime(), IdleTimeRole );
 }
 
 #include "kopetemetacontactlvi.moc"
