@@ -57,7 +57,7 @@ void KopeteItemDelegate::paint( QPainter* painter,
 		//color
 		QVariant v = index.data( Kopete::Items::IdleTimeRole );
 		if ( Kopete::AppearanceSettings::self()->greyIdleMetaContacts() &&
-		v.toInt() > 0 )
+		     v.toInt() > 0 )
 		{
 		QColor idleColor( Kopete::AppearanceSettings::self()->idleContactColor() );
 		opt.palette.setColor( QPalette::Text, idleColor );
