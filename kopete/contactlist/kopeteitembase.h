@@ -22,6 +22,10 @@
  * @file kopeteitembase.h
  * Contains definitions common between model items
  */ 
+
+#define KOPETE_GROUP_DEFAULT_OPEN_ICON "folder-open"
+#define KOPETE_GROUP_DEFAULT_CLOSED_ICON "folder"
+
 namespace Kopete
 {
     namespace Items

@@ -161,8 +161,12 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 	if(!index.isValid())
 		return QVariant();
 	
-	Kopete::ContactListElement *cle=static_cast<Kopete::ContactListElement*>(index.internalPointer());
-	Kopete::Group *g = qobject_cast<Kopete::Group*>(cle);
+	using namespace Kopete;
+	
+	/* do all the casting up front. I need to profile to see how expensive this is though */
+	ContactListElement *cle = static_cast<ContactListElement*>(index.internalPointer());
+	Group *g = qobject_cast<Group*>(cle);
+	MetaContact *mc = qobject_cast<MetaContact*>(cle);
 
 	if ( role == Qt::DisplayRole ) {
 		QString display;
@@ -173,11 +177,31 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 		}
 		else
 		{
-			Kopete::MetaContact *mc = qobject_cast<Kopete::MetaContact*>(cle);
 			if ( mc )
 				display = mc->displayName();
 		}
 		return display;
+	}
+
+	if ( role == Qt::DecorationRole )
+	{
+		if ( g )
+		{
+			if ( g->isExpanded() )
+			{
+				if ( g->useCustomIcon() )
+					return g->icon();
+				else
+					return KIcon(KOPETE_GROUP_DEFAULT_OPEN_ICON);
+			}
+			else
+			{
+				if ( g->useCustomIcon() )
+					return g->icon();
+				else
+					return KIcon(KOPETE_GROUP_DEFAULT_CLOSED_ICON);
+			}
+		}
 	}
 
 	if ( role == Kopete::Items::TypeRole )
