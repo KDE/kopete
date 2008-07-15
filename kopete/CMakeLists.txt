@@ -38,7 +38,8 @@ contactlist/kopetegroupviewitem.cpp
 contactlist/kopeteaddrbookexport.cpp 
 contactlist/customnotificationprops.cpp 
 contactlist/kopetegrouplistaction.cpp 
-contactlist/kabcexport.cpp 
+contactlist/kabcexport.cpp
+contactlist/contactlistmodel.cpp
 )
 
 kde4_add_ui_files(kopetecontactlist_SRCS
