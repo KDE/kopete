@@ -60,7 +60,7 @@ void ContactListModel::removeMetaContact( Kopete::MetaContact* contact )
 
 void ContactListModel::addGroup( Kopete::Group* group )
 {
-	kDebug() << "addGroup" << group->displayName();
+	kDebug(14001) << "addGroup" << group->displayName();
 	beginInsertRows (QModelIndex(), rowCount(), rowCount()+1);
 	m_groups.append(group);
 	m_contacts[group]=QList<Kopete::MetaContact*>();
@@ -125,7 +125,7 @@ bool ContactListModel::hasChildren ( const QModelIndex & parent) const
 
 QModelIndex ContactListModel::index ( int row, int column, const QModelIndex & parent) const
 {
-	qDebug() << "idx" << row << column << data(parent);
+	kDebug(14001) << "idx" << row << column << data(parent);
 	if(row<0 || row>=childCount(parent)) {
 		return QModelIndex();
 	}
