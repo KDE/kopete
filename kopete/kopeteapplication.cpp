@@ -55,14 +55,15 @@ KopeteApplication::KopeteApplication()
 {
 	setQuitOnLastWindowClosed( false );
 	m_isShuttingDown = false;
+
+	//Create the identity manager
+	Kopete::IdentityManager::self()->load();
+
 	m_mainWindow = new KopeteWindow( 0 );
 
 	Kopete::PluginManager::self();
 
 	Kopete::UI::Global::setMainWidget( m_mainWindow );
-
-	//Create the identity manager
-	Kopete::IdentityManager::self()->load();
 
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:

@@ -614,6 +614,12 @@ void KopeteWindow::saveOptions()
 		cg.writeEntry ( "State", "Shown" );
 	}
 
+	Kopete::Identity *identity = d->identitywidget->identity();
+	if ( identity )
+		cg.writeEntry ( "ShownIdentityId", identity->id() );
+	else
+		cg.writeEntry ( "ShownIdentityId", QString() );
+
 	cg.sync();
 }
 
@@ -792,6 +798,15 @@ void KopeteWindow::slotAllPluginsLoaded()
 {
 //	actionConnect->setEnabled(true);
 	d->actionDisconnect->setEnabled ( true );
+
+	KConfigGroup cg( KGlobal::config(), "General Options" );
+	QString identityId = cg.readEntry( "ShownIdentityId", Kopete::IdentityManager::self()->defaultIdentity()->id() );
+	if ( !identityId.isEmpty() )
+	{
+		Kopete::Identity* identity = Kopete::IdentityManager::self()->findIdentity( identityId );
+		if ( identity )
+			slotIdentityStatusIconLeftClicked( identity, QPoint() );
+	}
 }
 
 void KopeteWindow::slotIdentityRegistered ( Kopete::Identity *identity )
