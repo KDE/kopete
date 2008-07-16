@@ -624,7 +624,7 @@ void KopeteWindow::saveOptions()
 	if ( identity )
 		cg.writeEntry ( "ShownIdentityId", identity->id() );
 	else
-		cg.deleteEntry( "ShownIdentityId" );
+		cg.writeEntry ( "ShownIdentityId", QString() );
 
 	cg.sync();
 }
@@ -856,7 +856,7 @@ void KopeteWindow::slotAllPluginsLoaded()
 
 	if ( d->showIdentityIcons )
 	{
-		QString identityId = cg.readEntry( "ShownIdentityId" );
+		QString identityId = cg.readEntry( "ShownIdentityId", Kopete::IdentityManager::self()->defaultIdentity()->id() );
 		if ( !identityId.isEmpty() )
 		{
 			Kopete::Identity* identity = Kopete::IdentityManager::self()->findIdentity( identityId );
