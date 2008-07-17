@@ -1,3 +1,7 @@
+/*
+ * This class defines a Jingle Session which contains all informations about the session.
+ * This is here that the state machine is and where almost everything is done for a session.
+ */
 #ifndef JINGLE_SESSION
 #define JINGLE_SESSION
 
@@ -36,6 +40,7 @@ namespace XMPP
 		void addContent(JingleContent*);
 		void addContent(const QDomElement&);
 		void addContents(const QList<JingleContent*>&);
+		void addSessionInfo(const QDomElement&);
 		void addTransportInfo(const QDomElement&);
 
 		void acceptContent();
@@ -48,7 +53,7 @@ namespace XMPP
 		/*TODO: there should also be removeContent, modifyContent,...*/
 		
 		void sendIceUdpCandidates();
-		void startRawUdpConnection(const JingleContent&);
+		void startRawUdpConnection(JingleContent*);
 
 		Jid to() const;
 		//Jid from() const;
@@ -89,9 +94,14 @@ namespace XMPP
 
 	signals:
 		void terminated();
+		// needData() is emitted once.
+		// Once it has been emitted, streaming must start on this socket until stopSending is emitted.
+		// FIXME:It would be best to give a JingleContent as an argument so we know for which content it is (the socket is in that content btw)
+		void needData(const QDomElement&); //QDomElement is a payload-type element, could be a QString containing a SDP (Session Description Protocol) string.
 	public slots:
 		void slotRemoveAcked();
 		void slotSessTerminated();
+		void slotRawUdpDataReady();
 
 	private:
 		class Private;

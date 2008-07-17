@@ -84,20 +84,20 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	setComponentData(protocol->componentData());
 	jinglevideocall->setEnabled( false );
 	
-	Kopete::ContactPtrList chatMembers = members ();
-	if ( chatMembers.first () )
-	{
+	//Kopete::ContactPtrList chatMembers = members ();
+	//if ( chatMembers.first () )
+	//{
 		// Check if the current contact support Audio calls, also honor lock by default.
 		// FIXME: we should use the active ressource
-		JabberResource *bestResource = account()->resourcePool()->bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
-		jingleaudiocall->setEnabled( bestResource->features().canJingleAudio() );
-		jinglevideocall->setEnabled( bestResource->features().canJingleVideo() );
-	}
+		//JabberResource *bestResource = account()->resourcePool()->bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
+		//jingleaudiocall->setEnabled( bestResource->features().canJingleAudio() );
+		//jinglevideocall->setEnabled( bestResource->features().canJingleVideo() );
+	//}
 	
 	//FIXME : Toolbar does not show any action (either for MSN or XMPP)
 	//	  It should be corrected in trunk.
-	actionCollection()->addAction( "jabberJingleaudiocall", jingleaudiocall );
-	actionCollection()->addAction( "jabberJinglevideocall", jinglevideocall );
+	//actionCollection()->addAction( "jabberJingleaudiocall", jingleaudiocall );
+	//actionCollection()->addAction( "jabberJinglevideocall", jinglevideocall );
 	actionCollection()->addAction( "jabberSession", jingleSession );
 
 #endif

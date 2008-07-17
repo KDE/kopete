@@ -2,6 +2,7 @@
 #define JINGLE_TASKS
 
 #include <QDomElement>
+#include <QUdpSocket>
 
 #include "im.h"
 #include "xmpp_task.h"
@@ -10,9 +11,13 @@
 namespace XMPP
 {
 	class JingleSession;
-	class IRIS_EXPORT JingleContent/* : public QObject*/
+	/*
+	 * This class contains all informations about a particular content in a jingle session.
+	 * It also has the socket that will be used for streaming.
+	 */
+	class IRIS_EXPORT JingleContent : public QObject
 	{
-		/*Q_OBJECT*/
+		Q_OBJECT
 	public:
 		JingleContent();
 		~JingleContent();
@@ -41,12 +46,24 @@ namespace XMPP
 		void addTransportInfo(const QDomElement&);
 		QString iceUdpPassword();
 		QString iceUdpUFrag();
+		void createUdpInSocket();
+		QUdpSocket *socket(); // FIXME:Is it socket for data IN or for data OUT ?
+				      //       Currently, it's data IN.
+		bool sending();
+		void setSending(bool);
+		bool receiving();
+		void setReceiving(bool);
+	signals:
+		void rawUdpDataReady();
 
 	private:
 		class Private;
 		Private *d;
 	};
 	
+	/*
+	 * This class is a Task that received all jingle actions and give them to the JingleSessionManager
+	 */
 	class IRIS_EXPORT JT_PushJingleAction : public Task
 	{
 		Q_OBJECT
@@ -60,6 +77,7 @@ namespace XMPP
 	signals:
 		void newSessionIncoming();
 		void removeContent(const QString&, const QStringList&);
+		void sessionInfo(const QDomElement&);
 		void transportInfo(const QDomElement&);
 	
 	private:
@@ -69,6 +87,9 @@ namespace XMPP
 		void jingleError(const QDomElement&);
 	};
 
+	/*
+	 * This class is a task which is used to send all possible jingle action to a contact, asked by a JingleAction
+	 */
 	class IRIS_EXPORT JT_JingleAction : public Task
 	{
 		Q_OBJECT
@@ -87,6 +108,7 @@ namespace XMPP
 		void removeContents(const QStringList&);
 		void ringing();
 		void trying(const JingleContent&);
+		void received();
 		void transportInfo(const JingleContent&);
 		
 	private :

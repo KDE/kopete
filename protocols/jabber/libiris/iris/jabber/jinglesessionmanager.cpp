@@ -23,14 +23,15 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	d->pjs = new JT_PushJingleAction(d->client->rootTask());
 	connect(d->pjs, SIGNAL(newSessionIncoming()), this, SLOT(slotSessionIncoming()));
 	connect(d->pjs, SIGNAL(removeContent(const QString&, const QStringList&)), this, SLOT(slotRemoveContent(const QString&, const QStringList&)));
+	connect(d->pjs, SIGNAL(sessionInfo(const QDomElement&)), this, SLOT(slotSessionInfo(const QDomElement&)));
 	connect(d->pjs, SIGNAL(transportInfo(const QDomElement&)), this, SLOT(slotTransportInfo(const QDomElement&)));
 
 	Features f = d->client->features();
 	
 	f.addFeature("urn:xmpp:tmp:jingle");
-	f.addFeature("urn:xmpp:tmp:jingle:transports:ice-udp");
+//	f.addFeature("urn:xmpp:tmp:jingle:transports:ice-udp");
 	f.addFeature("urn:xmpp:tmp:jingle:transports:raw-udp");
-//	f.addFeature("urn:xmpp:tmp:jingle:apps:audio-rtp");
+	f.addFeature("urn:xmpp:tmp:jingle:apps:audio-rtp");
 	f.addFeature("urn:xmpp:tmp:jingle:apps:video-rtp");
 
 	d->client->setFeatures(f);
@@ -61,14 +62,15 @@ void JingleSessionManager::setSupportedProfiles(const QStringList& profiles)
 	d->supportedProfiles = profiles;
 }
 
-// const QStringList& transports are the transports supported by the responder.
-void JingleSessionManager::startNewSession(const Jid& toJid, const QList<JingleContent*>& contents)
+JingleSession *JingleSessionManager::startNewSession(const Jid& toJid, const QList<JingleContent*>& contents)
 {
 	XMPP::JingleSession *session = new XMPP::JingleSession(d->client->rootTask(), toJid.full());
 	session->addContents(contents);
 	d->sessions << session;
 	connect(session, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
+	//connect(others);
 	session->start();
+	return session;
 }
 
 void JingleSessionManager::slotSessionIncoming()
@@ -82,7 +84,9 @@ void JingleSessionManager::slotSessionIncoming()
 	// FIXME:
 	// 	QList<T>.last() should be called only if the list is not empty.
 	// 	Could it happen here as we just append an element to the list ?
+	qDebug() << "SEND RINGING.";
 	d->sessions.last()->ring();
+	qDebug() << "START NEGOTIATION";
 	d->sessions.last()->startNegotiation();
 	emit newJingleSession(d->sessions.last());
 }
@@ -103,9 +107,8 @@ void JingleSessionManager::slotRemoveContent(const QString& sid, const QStringLi
 	 */
 }
 
-void JingleSessionManager::slotTransportInfo(const QDomElement& x)
+JingleSession *JingleSessionManager::session(const QString& sid)
 {
-	QString sid = x.attribute("sid");
 	JingleSession *sess;
 	sess = 0;
 	for (int i = 0; i < d->sessions.count(); i++)
@@ -116,6 +119,23 @@ void JingleSessionManager::slotTransportInfo(const QDomElement& x)
 			break;
 		}
 	}
+	return sess;
+}
+
+void JingleSessionManager::slotSessionInfo(const QDomElement& x)
+{
+	JingleSession *sess = session(x.attribute("sid"));
+	if (sess == 0)
+	{
+		//unknownSession();
+		return;
+	}
+	sess->addSessionInfo(x.firstChildElement());
+}
+
+void JingleSessionManager::slotTransportInfo(const QDomElement& x)
+{
+	JingleSession *sess = session(x.attribute("sid"));
 	if (sess == 0)
 	{
 		//unknownSession();

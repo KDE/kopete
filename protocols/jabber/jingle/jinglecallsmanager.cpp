@@ -1,10 +1,16 @@
+#include <QMessageBox>
+
+#include <ortp/ortp.h>
+
 #include "jinglecallsmanager.h"
+#include "jinglecallsgui.h"
 #include "contentdialog.h"
 #include "jinglesessionmanager.h"
 
 #include "jabberaccount.h"
 #include "jabberresource.h"
 #include "jabberresourcepool.h"
+#include "jabberjinglesession.h"
 
 //using namespace XMPP;
 
@@ -12,33 +18,35 @@ class JingleCallsManager::Private
 {
 public:
 	JabberAccount *jabberAccount;
+	JingleCallsGui *gui;
+	QList<JabberJingleSession*> sessions;
 	XMPP::Client *client;
-	QList<JingleSession*> sessions;
-	XMPP::JingleContent *rawAudio;
-	XMPP::JingleContent *iceAudio;
-	XMPP::JingleContent *rawVideo;
-	XMPP::JingleContent *iceVideo;
+	QList<QDomElement> audioPayloads;
+	QList<QDomElement> videoPayloads;
 };
 
 JingleCallsManager::JingleCallsManager(JabberAccount* acc)
 : d(new Private)
 {
-	qDebug() << " ********** JingleCallsManager::JingleCallsManager created. ************* ";
-
 	d->jabberAccount = acc;
 	d->client = d->jabberAccount->client()->client();
+	
 	init();
-
-	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(newJingleSession(XMPP::JingleSession*)), this, SLOT(slotNewSession(XMPP::JingleSession*)));
+	qDebug() << " ********** JingleCallsManager::JingleCallsManager created. ************* ";
 }
 
 JingleCallsManager::~JingleCallsManager()
 {
-
+	ortp_exit();
 }
 
 void JingleCallsManager::init()
 {
+	//Initialize oRTP library.
+	ortp_init();
+	ortp_scheduler_init(); // Check the utility of the scheduler.
+	
+	d->gui = 0L;
 	QStringList transports;
 	transports << "urn:xmpp:tmp:jingle:transports:ice-udp";
 	transports << "urn:xmpp:tmp:jingle:transports:raw-udp";
@@ -50,56 +58,25 @@ void JingleCallsManager::init()
 	
 	// The Media Manager should be able to give xml tags for the supported payloads.
 	// For example : d->client->jingleSessionManager()->setSupportedPayloads(m_mediaManager->payloads());
-	QList<QDomElement> audioPayloads;
-	QList<QDomElement> videoPayloads;
 	QDomDocument doc("");
+	
+	// Audio payloads
 	QDomElement payload = doc.createElement("payload-type");
 	payload.setAttribute("id", "97");
 	payload.setAttribute("name", "speex");
 	payload.setAttribute("clockrate", "8000");
-	audioPayloads << payload;
-	d->client->jingleSessionManager()->setSupportedAudioPayloads(audioPayloads);
-	// We must create possible contents :
-	// NOTE:Iris wil manage the other attributes and candidates
-	QDomElement iceTransport = doc.createElement("transport");
-	iceTransport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:ice-udp");
-	QDomElement rawTransport = doc.createElement("transport");
-	rawTransport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:raw-udp");
-	// rawAudio
-	d->rawAudio = new JingleContent();
-	d->rawAudio->setName("audio-content");
-	d->rawAudio->addPayloadTypes(audioPayloads);
-	d->rawAudio->setTransport(rawTransport);
-	d->rawAudio->setDescriptionNS("urn:xmpp:tmp:jingle:apps:audio-rtp");
-	d->rawAudio->setProfile("RTP/AVP");
-	d->rawAudio->setCreator(d->jabberAccount->client()->jid().full());
+	d->audioPayloads << payload;
+	d->client->jingleSessionManager()->setSupportedAudioPayloads(d->audioPayloads);
 	
-	// iceAudio
-	d->iceAudio = new JingleContent();
-	d->iceAudio->setName("audio-content");
-	d->iceAudio->addPayloadTypes(audioPayloads);
-	d->iceAudio->setTransport(iceTransport);
-	d->iceAudio->setDescriptionNS("urn:xmpp:tmp:jingle:apps:audio-rtp");
-	d->iceAudio->setProfile("RTP/AVP");
-	d->iceAudio->setCreator(d->jabberAccount->client()->jid().full());
+	//Video payloads
+	payload = doc.createElement("payload-type");
+	payload.setAttribute("id", "26");
+	payload.setAttribute("name", "JPEG");
+	payload.setAttribute("clockrate", "90000");
+	d->videoPayloads << payload;
+	d->client->jingleSessionManager()->setSupportedVideoPayloads(d->videoPayloads);
 	
-	// rawVideo
-	d->rawVideo = new JingleContent();
-	d->rawVideo->setName("video-content");
-	d->rawVideo->addPayloadTypes(videoPayloads);
-	d->rawVideo->setTransport(rawTransport);
-	d->rawVideo->setDescriptionNS("urn:xmpp:tmp:jingle:apps:video-rtp");
-	d->rawVideo->setProfile("RTP/AVP");
-	d->rawVideo->setCreator(d->jabberAccount->client()->jid().full());
-	
-	// iceVideo
-	d->iceVideo = new JingleContent();
-	d->iceVideo->setName("video-content");
-	d->iceVideo->addPayloadTypes(videoPayloads);
-	d->iceVideo->setTransport(iceTransport);
-	d->iceVideo->setDescriptionNS("urn:xmpp:tmp:jingle:apps:video-rtp");
-	d->iceVideo->setProfile("RTP/AVP");
-	d->iceVideo->setCreator(d->jabberAccount->client()->jid().full());
+	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(newJingleSession(XMPP::JingleSession*)), this, SLOT(slotNewSession(XMPP::JingleSession*)));
 }
 
 bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
@@ -110,6 +87,13 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 	//Here, we parse the features to have a list of which transports can be used with the responder.
 	bool iceUdp = false, rawUdp = false;
 	JabberResource *bestResource = d->jabberAccount->resourcePool()->bestJabberResource( toJid );
+	if (!bestResource)
+	{
+		// Would be better to show this message in the chat dialog.
+		//QMessageBox::warning((QWidget*)this, tr("Jingle Calls Manager"), tr("The contact is not online, unable to start a Jingle session"), QMessageBox::Ok);
+		qDebug() << "The contact is not online, unable to start a Jingle session";
+		return false;
+	}
 	QStringList fList = bestResource->features().list();
 	for (int i = 0; i < fList.count(); i++)
 	{
@@ -119,35 +103,90 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 			rawUdp = true;
 	}
 	QList<JingleContent*> contents;
+	QDomDocument doc("");
 	if (iceUdp)
 	{
-		contents << d->iceVideo << d->iceAudio;
+		// Create ice-udp contents.
+		QDomElement iceAudioTransport = doc.createElement("transport");
+		iceAudioTransport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:ice-udp");
+		JingleContent *iceAudio = new JingleContent();
+		iceAudio->setName("audio-content");
+		iceAudio->addPayloadTypes(d->audioPayloads);
+		iceAudio->setTransport(iceAudioTransport);
+		iceAudio->setDescriptionNS("urn:xmpp:tmp:jingle:apps:audio-rtp");
+		iceAudio->setProfile("RTP/AVP");
+		iceAudio->setCreator(d->jabberAccount->client()->jid().full());
+
+		QDomElement iceVideoTransport = doc.createElement("transport");
+		iceVideoTransport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:ice-udp");
+		JingleContent *iceVideo = new JingleContent();
+		iceVideo->setName("video-content");
+		iceVideo->addPayloadTypes(d->videoPayloads);
+		iceVideo->setTransport(iceVideoTransport);
+		iceVideo->setDescriptionNS("urn:xmpp:tmp:jingle:apps:video-rtp");
+		iceVideo->setProfile("RTP/AVP");
+		iceVideo->setCreator(d->jabberAccount->client()->jid().full());
+		
+		contents << iceAudio << iceVideo;
 		qDebug() << "ICE-UDP supported !!!!!!!!!!!!!!!!!!";
 	}
 	else if (rawUdp)
 	{
-		contents << d->rawVideo << d->rawAudio;
-		qDebug() << "ICE-UDP not supported, back-fall to RAW-UDP !!!!!!!!!!!!!";
+		// Create raw-udp contents.
+		QDomElement rawAudioTransport = doc.createElement("transport");
+		rawAudioTransport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:raw-udp");
+		JingleContent *rawAudio = new JingleContent();
+		rawAudio->setName("audio-content");
+		rawAudio->addPayloadTypes(d->audioPayloads);
+		rawAudio->setTransport(rawAudioTransport);
+		rawAudio->setDescriptionNS("urn:xmpp:tmp:jingle:apps:audio-rtp");
+		rawAudio->setProfile("RTP/AVP");
+		rawAudio->setCreator(d->jabberAccount->client()->jid().full());
+
+		QDomElement rawVideoTransport = doc.createElement("transport");
+		rawVideoTransport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:raw-udp");
+		JingleContent *rawVideo = new JingleContent();
+		rawVideo->setName("video-content");
+		rawVideo->addPayloadTypes(d->videoPayloads);
+		rawVideo->setTransport(rawVideoTransport);
+		rawVideo->setDescriptionNS("urn:xmpp:tmp:jingle:apps:video-rtp");
+		rawVideo->setProfile("RTP/AVP");
+		rawVideo->setCreator(d->jabberAccount->client()->jid().full());
+		
+		contents << rawAudio << rawVideo;
+		qDebug() << "ICE-UDP not supported, falling back to RAW-UDP !";
 	}
 	else
 	{
 		qDebug() << "No protocol supported, terminating.....";
+		// Would be better to show this message in the chat dialog.
+		//QMessageBox::warning((QWidget*) this, tr("Jingle Calls Manager"), tr("The contact does not support any transport method that kopete does."), QMessageBox::Ok);
+		qDebug() << "The contact does not support any transport method that kopete does.";
 		return false;
 	}
 	
-	d->client->jingleSessionManager()->startNewSession(toJid, contents);
+	JingleSession* newSession = d->client->jingleSessionManager()->startNewSession(toJid, contents);
+	// TODO:Connect all session signals here...
+	JabberJingleSession *jabberSess = new JabberJingleSession();
+	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
+	//jabberSess->setMediaManager(m_mediaManager); //Could be done directly in the constructor
+	d->sessions << jabberSess;
 	return true;
 }
 
-void JingleCallsManager::slotNewSession(XMPP::JingleSession *sess)
+void JingleCallsManager::slotNewSession(XMPP::JingleSession *newSession)
 {
 	qDebug() << "New session incoming, showing the dialog.";
 	
-	d->sessions << sess;
+	// TODO:Connect all session signals here...
+	JabberJingleSession *jabberSess = new JabberJingleSession();
+	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
+	//jabberSess->setMediaManager(m_mediaManager); //Could be done directly in the constructor
+	d->sessions << jabberSess;
 	
 	ContentDialog *cd = new ContentDialog();
 	//cd->setContents(sess->contents());
-	cd->setSession(sess);
+	cd->setSession(newSession);
 	connect(cd, SIGNAL(accepted()), this, SLOT(slotUserAccepted()));
 	connect(cd, SIGNAL(rejected()), this, SLOT(slotUserRejected()));
 	cd->show();
@@ -197,4 +236,17 @@ void JingleCallsManager::slotUserRejected()
 	cd->session()->terminate(JingleSession::Decline);
 }
 
+void JingleCallsManager::showCallsGui()
+{
+	if (d->gui == 0L)
+		d->gui = new JingleCallsGui(this);
+	d->gui->show();
+}
+
+void JingleCallsManager::hideCallsGui()
+{
+	if (d->gui == 0L)
+		return;
+	d->gui->hide();
+}
 #include "jinglecallsmanager.moc"

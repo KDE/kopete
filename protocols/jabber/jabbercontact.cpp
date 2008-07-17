@@ -1359,6 +1359,7 @@ void JabberContact::startJingleSession()
 	startJingleVideoCall(); //Only to show the message.
 
 	account()->jingleCallsManager()->startNewSession(/*to*/fullAddress());
+	account()->jingleCallsManager()->showCallsGui();
 }
 
 void JabberContact::startJingleAudioCall()
@@ -1366,7 +1367,7 @@ void JabberContact::startJingleAudioCall()
 	startJingleVideoCall(); //Only to show the message.
 
 	//There should also have a list of jingle features supported by the responder client.
-	//--> Will be done in Iris as iris should now what feaetures are supported by the responder client.
+	//--> Will be done in Iris as iris should now what features are supported by the responder client.
 	account()->jingleCallsManager()->startNewSession(/*to*/fullAddress());
 }
 
@@ -1374,13 +1375,28 @@ void JabberContact::startJingleVideoCall()
 {
 	kDebug() << "Start a Jingle Session";
 
-	XMPP::Jid jid = rosterItem().jid();
-	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( jid );
-	JabberChatSession *mManager = manager ( bestResource->resource().name(), Kopete::Contact::CanCreate );
-	Kopete::Message m = Kopete::Message ( this, mManager->members());
-	m.setPlainBody( i18n("Starting a Jingle video negotiation with %1", metaContact()->displayName()) );
-	m.setDirection( Kopete::Message::Internal );
-	mManager->appendMessage ( m, bestResource->resource().name() );
+	//JingleCallsManager should manage messages itself.
+	/*XMPP::Jid jid = rosterItem().jid();
+	JabberResource *bestResource;
+	XMPP::Resource resource = account()->resourcePool()->bestJabberResource( jid )->resource();
+	if (&resource)
+	{
+		JabberChatSession *mManager = manager ( resource.name(), Kopete::Contact::CanCreate );
+		Kopete::Message m = Kopete::Message ( this, mManager->members());
+		m.setPlainBody( i18n("Starting a Jingle session with %1", metaContact()->displayName()) );
+		m.setDirection( Kopete::Message::Internal );
+		mManager->appendMessage ( m, resource.name() );
+	}
+	else
+	{
+		if (!manager(CannotCreate))
+			return;
+		Kopete::Message msg;
+		msg.setPlainBody( "Failed to start a Jingle session, is your contact Online ?" );
+		manager(CannotCreate)->appendMessage( msg );
+		;
+		//FIXME:How to write a message in the chat dialog when contact is offline ?
+	}*/
 
 	//TODO:implement me !
 }

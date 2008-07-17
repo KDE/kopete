@@ -1,3 +1,11 @@
+/* 
+ * This class is a dialog asking what contents the user accepts for an
+ * incoming session.
+ * This class could also be used to ask the user what contents he wants
+ * to propose in the session-initiate jingle action
+ */
+#ifndef CONTENT_DIALOG_H
+#define CONTENT_DIALOG_H
 #include "ui_contentdialog.h"
 
 #include "jingletasks.h"
@@ -22,3 +30,5 @@ private:
 	QList<QCheckBox*> m_checkBoxes;
 	QStringList m_contentNames;
 };
+
+#endif

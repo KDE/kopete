@@ -1,5 +1,8 @@
 /*
- * Manages a Jingle session using iris library jingle implementation
+ * Manages all Jingle sessions.
+ * This class receives all incoming jingle actions and perform these
+ * actions on the right jingle session.
+ * It also keeps informations about protocols supported by the application (transports, payloads, profiles)
  */
 #ifndef JINGLE_SESSION_MANAGER
 #define JINGLE_SESSION_MANAGER
@@ -20,7 +23,7 @@ namespace XMPP
 	public:
 		JingleSessionManager(Client*);
 		~JingleSessionManager();
-		void startNewSession(const Jid&, const QList<JingleContent*>&);
+		XMPP::JingleSession *startNewSession(const Jid&, const QList<JingleContent*>&);
 		void setSupportedTransports(const QStringList&);
 		void setSupportedAudioPayloads(const QList<QDomElement>&);
 		void setSupportedVideoPayloads(const QList<QDomElement>&); // FIXME:a class name QNodeList does exists in Qt.
@@ -32,10 +35,12 @@ namespace XMPP
 	public slots:
 		void slotSessionIncoming();
 		void slotRemoveContent(const QString&, const QStringList&);
+		void slotSessionInfo(const QDomElement&);
 		void slotTransportInfo(const QDomElement&);
 		void slotSessionTerminated();
 
-	private: // FIXME: must go in JingleSessionManager::Private
+	private:
+		JingleSession *session(const QString& sid);
 		class Private;
 		Private *d;
 	};

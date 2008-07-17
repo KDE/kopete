@@ -25,6 +25,7 @@ public:
 	State state;
 	QStringList contentsToRemove;
 	QStringList transports;
+	bool responderTrying;
 };
 
 JingleSession::JingleSession(Task *t, const Jid &j)
@@ -33,6 +34,7 @@ JingleSession::JingleSession(Task *t, const Jid &j)
 	d->to = j;
 	d->rootTask = t;
 	d->state = Pending;
+	d->responderTrying = false;
 }
 
 JingleSession::~JingleSession()
@@ -60,20 +62,72 @@ QList<JingleContent*> JingleSession::contents() const
 	return d->contents;
 }
 
-//void JingleSession::setResponderTransports(const QStringList& transports)
-//{
-//	d->transports << transports;
-//}
-
 void JingleSession::start()
 {
 	// Generate session ID
 	d->sid = genSid();
 
+	/*qDebug() << "There are" << contents().count() << "contents : ";
+	for (int i = 0; i < contents().count(); i++)
+	{
+		qDebug() << i << ":";
+		qDebug() << d->rootTask->client()->stream().xmlToString(contents()[i]->contentElement(), true);
+	}*/
+
 	JT_JingleAction *iAction = new JT_JingleAction(d->rootTask);
 	iAction->setSession(this);
 	iAction->initiate();
-	//startNegotiation();-->sendCandidates();
+	for (int i = 0; i < contents().count(); i++)
+	{
+		if (contents()[i]->transport().attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
+		{
+			qDebug() << "Create IN socket for" << contents()[i]->name();
+			qDebug("Content Adress : %x\n", contents()[i]);
+			contents()[i]->createUdpInSocket();
+			connect(contents()[i], SIGNAL(rawUdpDataReady()), this, SLOT(slotRawUdpDataReady()));
+		}
+	}
+}
+
+void JingleSession::slotRawUdpDataReady()
+{
+	JingleContent *content = (JingleContent*) sender();
+	qDebug("Content Adress : %x\n", content);
+	if (content == NULL)
+	{
+		qDebug() << "Null Jingle content, there is a problem";
+		return;
+	}
+	if (d->state == Pending)
+	{
+		content->setReceiving(true);
+		// We check if each contents is receiving AND sending.
+		// In this case, the state can be changed to Active (should emit active() signal)
+		bool changeState = true;
+		for (int i = 0; i < contents().count(); i++)
+		{
+			if ((!contents()[i]->receiving()) || (!contents()[i]->sending()))
+			{
+				changeState = false;
+				break;
+			}
+		}
+		if (changeState)
+			d->state = Active;
+	}
+	QByteArray datagram;
+	QHostAddress address;
+	quint16 port;
+	datagram.resize(content->socket()->pendingDatagramSize());
+	content->socket()->readDatagram(datagram.data(), datagram.size(), &address, &port);
+	qDebug() << "Receiving data for content" << content->name() << "from" << address.toString() << ":" << port << ":";
+	qDebug() << datagram;
+
+	// Send "received" informationnal message. --> No, doesn't.
+	//JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
+	//connect(rAction, SIGNAL(acked()), this, SLOT(slotReceivedAcked()));
+	//rAction->setSession(this);
+	//rAction->received();
 }
 
 void JingleSession::acceptSession()
@@ -268,12 +322,19 @@ void JingleSession::startNegotiation()
 	 * 	For each transport in each contents, I must send all possible candidates.
 	 * 	Those candidates can be found without the help of the application.
 	 */
+	qDebug() << "Start Negotiation : ";
 	for (int i = 0; i < d->contents.count(); i++)
 	{
-		if (d->contents[i]->transport().attribute("name") == "urn:xmpp:tmp:jingle:transports:ice-udp")
+		if (d->contents[i]->transport().attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
+		{
+			qDebug() << "    ICE-UDP";
 			sendIceUdpCandidates();
-		else if (d->contents[i]->transport().attribute("name") == "urn:xmpp:tmp:jingle:transports:raw-udp")
-			startRawUdpConnection(*(d->contents[i]));
+		}
+		else if (d->contents[i]->transport().attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
+		{
+			qDebug() << d->contents[i]->name() << "    RAW-UDP";
+			startRawUdpConnection(d->contents[i]);
+		}
 	}
 }
 
@@ -294,7 +355,7 @@ void JingleSession::setTo(const Jid& to)
 
 void JingleSession::sendIceUdpCandidates()
 {
-	qDebug() << "Sending ice-udp candidates";
+	qDebug() << "Sending ice-udp candidates (Not Implemented Yet)";
 	/*JT_JingleAction *cAction = new JT_JingleAction(d->rootTask);
 	cAction->setSession(this);
 	QDomDocument doc("");
@@ -304,33 +365,54 @@ void JingleSession::sendIceUdpCandidates()
 	// --> Or better : sendTransportInfo(QDomElement transport);*/
 }
 
-void JingleSession::startRawUdpConnection(const JingleContent& c)
+void JingleSession::startRawUdpConnection(JingleContent *c)
 {
-	QDomElement e = c.transport();
-	qDebug() << "Start raw-udp connection (still 'TODO')";
+	QDomElement e = c->transport();
+	qDebug() << "Start raw-udp connection (still 'TODO') for content" << c->name();
 
 	//Sending data to the candidate.
+	//FIXME:Maybe that should also be done in JingleContent
 	QUdpSocket *rawUdpSocket = new QUdpSocket();
 	//connect(rawUdpSocket, SIGNAL(connected()), this, SLOT(rawUdpConnected));
 	//rawUdpSocket->connectToServer(e.attribute("ip"), e.attribute("port"));
 	QHostAddress address;
-	address.setAddress(e.attribute("ip"));
-	rawUdpSocket->writeDatagram("DATA", address, e.attribute("port").toInt());
+	address.setAddress(e.firstChildElement().attribute("ip"));
+	qDebug() << "Sending data to" << address.toString() << ":" << e.firstChildElement().attribute("port").toInt();
+	//needData() should be emitted here.
+	rawUdpSocket->writeDatagram("DATA", address, e.firstChildElement().attribute("port").toInt());
 
 	//Sending my own candidate:
 	JT_JingleAction *cAction = new JT_JingleAction(d->rootTask);
 	cAction->setSession(this);
-	cAction->transportInfo(c);
+	cAction->transportInfo(*c);
 	
 	//Sending "trying" stanzas
 	JT_JingleAction *tAction = new JT_JingleAction(d->rootTask);
 	tAction->setSession(this);
-	tAction->trying(c);
+	tAction->trying(*c);
 }
 
 void JingleSession::slotSessTerminated()
 {
 	emit terminated();
+}
+
+void JingleSession::addSessionInfo(const QDomElement& e)
+{
+	QString info = e.tagName();
+	if (info == "trying")
+	{
+		d->responderTrying = true;
+	}
+	else if (info == "received")
+	{
+		//stopTrying();
+		//sessionAccept();
+		//FIXME:For what Content do we receive that info ?
+		//How do I know all content's connections are established, in both directions ?
+		//What if it isn't the case ?
+		//d->state = Active; not now, wait for the ack of session-accept.
+	}
 }
 
 void JingleSession::addTransportInfo(const QDomElement& e)
@@ -344,4 +426,3 @@ void JingleSession::addTransportInfo(const QDomElement& e)
 	QDomElement c = e.firstChildElement().firstChildElement(); //This is the candidate.
 
 }
-

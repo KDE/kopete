@@ -1,12 +1,12 @@
-#include "jingleaudiomanager.h"
+#include "jinglemediamanager.h"
 #include <KDebug>
 
-JingleAudioManager::JingleAudioManager()
+JingleMediaManager::JingleMediaManager()
 {
 	findDevice();
 }
 
-JingleAudioManager::~JingleAudioManager()
+JingleMediaManager::~JingleMediaManager()
 {
 
 }
@@ -14,7 +14,7 @@ JingleAudioManager::~JingleAudioManager()
 /*
  * Find audio input and output devices.
  */
-int JingleAudioManager::findDevice()
+int JingleMediaManager::findDevice()
 {
 	m_inputDevice = 0L;
 	m_outputDevice = 0L;

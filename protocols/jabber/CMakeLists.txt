@@ -1,3 +1,4 @@
+#TODO: Jingle should not be compiled if LIBORTP_FOUND is false.
 add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 #add_subdirectory( ui ) 
@@ -20,6 +21,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/jingle/
 ${QCA2_INCLUDE_DIR}
+/usr/include/glib-2.0/
+/usr/lib/glib-2.0/include/
 )
 
 #link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libiris/ ${CMAKE_CURRENT_BINARY_DIR}/jingle/ )
@@ -48,6 +51,7 @@ set(kopete_jabber_ui_SRCS
     ui/privacyruledlg.cpp
 
     jingle/contentdialog.cpp
+    jingle/jinglecallsgui.cpp
 )
 
 kde4_add_ui_files(kopete_jabber_ui_SRCS 
@@ -66,6 +70,7 @@ kde4_add_ui_files(kopete_jabber_ui_SRCS
    ui/privacy.ui
 
    jingle/contentdialog.ui
+   jingle/jinglecallsgui.ui
 )
 
 set(kopete_jabber_PART_SRCS 
@@ -103,13 +108,15 @@ set(kopete_jabber_PART_SRCS
    jabberbytestream.cpp
 
    jingle/jinglecallsmanager.cpp
+   jingle/jabberjinglesession.cpp
+   jingle/rtpsession.cpp
 )
 
 
 kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
 
-target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete)
+target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete ortp)
 #target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete kopete_jabberjingle)
 
 

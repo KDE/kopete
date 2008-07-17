@@ -52,19 +52,23 @@ class JingleContent::Private
 {
 public:
 	QList<QDomElement> payloads;
-	//FIXME:Only 1 transport per content.
 	QDomElement transport;
 	QList<QDomElement> candidates;
 	QString creator;
 	QString name;
 	QString profile;
 	QString descriptionNS;
+	//The application will access this socket directly, Iris has not to deal with RTP.
+	QUdpSocket *socket; //Currently, this is the raw-udp socket for this content.
+	bool sending;
+	bool receiving;
 };
 
 JingleContent::JingleContent()
 : d(new Private())
 {
-
+	d->sending = false;
+	d->receiving = false;
 }
 
 JingleContent::~JingleContent()
@@ -146,7 +150,7 @@ QDomElement JingleContent::contentElement()
 	QDomElement content = doc.createElement("content");
 	content.setAttribute("creator", d->creator);
 	content.setAttribute("name", d->name);
-	content.setAttribute("sender", "both"); //Setting to default now, change it !
+	content.setAttribute("sender", "both"); //Setting to default currently, change it !
 	
 	QDomElement description = doc.createElement("description");
 	description.setAttribute("xmlns", d->descriptionNS);
@@ -225,6 +229,47 @@ QString JingleContent::iceUdpUFrag()
 	return "";
 }
 
+void JingleContent::createUdpInSocket()
+{
+	if (d->transport.attribute("xmlns") != "urn:xmpp:tmp:jingle:transports:raw-udp")
+		return;
+	qDebug() << "JingleContent::createUdpInSocket()";
+	d->socket = new QUdpSocket();
+	d->socket->bind(QHostAddress(d->transport.firstChildElement().attribute("ip")), d->transport.firstChildElement().attribute("port").toInt());
+	connect(d->socket, SIGNAL(readyRead()), this, SIGNAL(rawUdpDataReady()));
+}
+
+QUdpSocket *JingleContent::socket()
+{
+	qDebug() << "Getting socket from content" << name();
+	return d->socket;
+}
+
+bool JingleContent::sending()
+{
+	return d->sending;
+}
+
+void JingleContent::setSending(bool s)
+{
+	d->sending = s;
+}
+
+bool JingleContent::receiving()
+{
+	return d->receiving;
+}
+
+void JingleContent::setReceiving(bool r)
+{
+	d->receiving = r;
+}
+
+/*void JingleContent::slotRawUdpDataReady()
+{
+	
+}*/
+
 //------------------------
 // JT_PushJingleAction
 //------------------------
@@ -286,7 +331,7 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 		qDebug() << "New Incoming session : " << sid;
 		d->id = x.attribute("id");
 		ack();
-		
+
 		//Prepare the JingleSession instance.
 		d->incomingSession = new JingleSession(parent(), Jid());
 		d->incomingSession->setTo(x.attribute("from"));
@@ -300,12 +345,12 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 				d->incomingSession->addContent(content);
 			content = content.nextSiblingElement();
 		}
-		
+
 		d->incomingSessions << d->incomingSession;
 
 		emit newSessionIncoming();
 		 /* TODO : 
-		  * 	Continue to negotiate the contents to use --> Done by the JT_JingleSession.
+		  * 	Continue to negotiate the contents to use --> Done by the JingleSession.
 		  */
 		break;
 	case JingleSession::ContentRemove : 
@@ -339,11 +384,15 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 			 * ADVICE: Begin with RAW-UDP, it is simpler.
 			 *
 		}*/
+		break;
 	case JingleSession::SessionInfo :
 		qDebug() << "Session Info for session " << sid;
 		// Ack session-info
 		d->id = x.attribute("id");
 		ack();
+		
+		emit sessionInfo(x.firstChildElement());
+		break;
 	case JingleSession::TransportInfo :
 		qDebug() << "Transport Info for session " << sid;
 		d->id = x.attribute("id");
@@ -420,17 +469,18 @@ void JT_JingleAction::initiate()
 	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
 	jingle.setAttribute("action", "session-initiate");
 	jingle.setAttribute("initiator", client()->jid().full());
-	qDebug() << d->session->sid();
 	jingle.setAttribute("sid", d->session->sid());
 
 	for (int i = 0; i < d->session->contents().count(); i++)
 	{
 		QDomElement transport = d->session->contents()[i]->transport();
+		qDebug() << "Transport from the JingleContent is : " << client()->stream().xmlToString(transport, false);
 		if (transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
 		{
-			QDomElement candidate= doc()->createElement("candidate");
+			qDebug() << "Set raw-udp candidate for content" << i;
+			QDomElement candidate = doc()->createElement("candidate");
 
-			//Trying to get the adress with the most chances to succeed.
+			//Trying to get the address with the most chances to succeed.
 			QNetworkInterface *interface = new QNetworkInterface();
 			QList<QHostAddress> ips = interface->allAddresses();
 			qSort(ips.begin(), ips.end(), interfaceOrder);
@@ -442,14 +492,16 @@ void JT_JingleAction::initiate()
 				return;
 			}
 			candidate.setAttribute("ip", ips[0].toString()); // ips[0] is not 127.0.0.1 if there is other adresses.
-			candidate.setAttribute("port", "13540"); // Should be configured and fetched from the JingleSessionManager (client()->jingleSessionManager()->rawUdpPort())
+			candidate.setAttribute("port", QString("%1").arg(13540 + (rand() % 10))); // Should be configured and fetched from the JingleSessionManager (client()->jingleSessionManager()->rawUdpPort())
 			candidate.setAttribute("generation", "0"); // FIXME:I don't know yet what it is.
 			transport.appendChild(candidate);
+			qDebug() << client()->stream().xmlToString(transport, false);
 		}
 		else if (transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
 		{
 			//TODO:implement me.
 		}
+		//d->session->contents()[i]->setTransport(transport);
 		jingle.appendChild(d->session->contents()[i]->contentElement());
 	}
 
@@ -623,7 +675,7 @@ void JT_JingleAction::transportInfo(const JingleContent& c)
 		
 		QDomElement candidate = doc()->createElement("candidate");
 		candidate.setAttribute("ip", ips[0].toString()); // ips[0] is not 127.0.0.1 if there is other adresses.
-		candidate.setAttribute("port", "13540"); // Should be configured and fetched from the JingleSessionManager (client()->jingleSessionManager()->rawUdpPort())
+		candidate.setAttribute("port", QString("%1").arg(13540 + (rand() % 10))); // Should be configured and fetched from the JingleSessionManager (client()->jingleSessionManager()->rawUdpPort()) increment for each new socket.
 		candidate.setAttribute("generation", "0"); // FIXME:I don't know yet what it is.
 		transport.appendChild(candidate);
 		content.appendChild(transport);
@@ -682,6 +734,33 @@ void JT_JingleAction::trying(const JingleContent& c)
 
 	send(d->iq);
 	
+}
+
+void JT_JingleAction::received()
+{
+	// ----------------------------
+	if (d->session == 0)
+	{
+		qDebug() << "d->session is NULL, did you set it calling JT_JingleAction::setSession() ?";
+		return;
+	}
+	qDebug() << "Sending the session-info to : " << d->session->to().full();
+
+	d->iq = createIQ(doc(), "set", d->session->to().full(), id());
+	d->iq.setAttribute("from", client()->jid().full());
+
+	QDomElement jingle = doc()->createElement("jingle");
+	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
+	jingle.setAttribute("action", "session-info");
+	jingle.setAttribute("initiator", d->session->initiator());
+	jingle.setAttribute("sid", d->session->sid());
+	//---------This par should be in another method (createJingleIQ(...))
+	QDomElement received = doc()->createElement("received");
+	received.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:ice-udp:info");
+	jingle.appendChild(received);
+	d->iq.appendChild(jingle);
+
+	send(d->iq);
 }
 
 bool JT_JingleAction::take(const QDomElement &x)

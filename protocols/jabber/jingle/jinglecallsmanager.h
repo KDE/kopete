@@ -1,6 +1,5 @@
 /*
- * This Class manages all incoming and outgoing Jingle *audio* calls
- * (We'll see later for video management).
+ * This class manages all incoming and outgoing Jingle calls
  * This is an instance of this class that Kopete will keep to start
  * new Jingle sessions by calling for example manager->newSession(jid).
  */
@@ -25,6 +24,7 @@ public:
 	JingleCallsManager(JabberAccount*);
 	~JingleCallsManager();
 
+	// Would feel better in Iris
 	enum Reason {
 		Declined = 0,
 		Other,
@@ -35,6 +35,8 @@ public:
 	// That may not be necessary, it should simply show a message or write it in
 	// the Jingle calls GUI if it is not possible to start a session.
 	bool startNewSession(const XMPP::Jid&);
+	void showCallsGui();
+	void hideCallsGui();
 
 public slots:
 	void slotNewSession(XMPP::JingleSession*);
@@ -42,6 +44,7 @@ public slots:
 	void slotUserRejected();
 
 signals:
+	//FIXME:Those signals aren't used and I don't know what they are doing here.
 	void newSessionCreated();
 	void sessionTerminated(Reason);
 
