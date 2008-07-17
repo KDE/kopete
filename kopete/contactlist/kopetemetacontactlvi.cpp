@@ -1112,7 +1112,15 @@ void KopeteMetaContactLVI::slotEventDone( Kopete::MessageEvent *event )
 		}
 
 		if(d->metaContactIcon)
-			d->metaContactIcon->setPixmap( m_originalBlinkIcon );
+		{
+			// m_originalBlinkIcon can be null if slotEventDone is called
+			// right after catchEvent without slotBlink being executed.
+			if ( !m_originalBlinkIcon.isNull() )
+				d->metaContactIcon->setPixmap( m_originalBlinkIcon );
+			else
+				d->metaContactIcon->setPixmap( m_oldStatusIcon );
+		}
+
 		m_originalBlinkIcon=QPixmap(); //i hope this help to reduce memory consuption
 		mIsBlinkIcon = false;
 	}
