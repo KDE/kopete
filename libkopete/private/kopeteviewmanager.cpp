@@ -360,7 +360,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			view->raise();
 		}
 
-		if( appendMessageEvent && event )
+		if( (appendMessageEvent || !isActiveWindow) && event )
 			Kopete::ChatSessionManager::self()->postNewEvent(event);
 	}
 }
