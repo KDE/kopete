@@ -288,7 +288,7 @@ void ChatMessagePart::save()
 			stream << "[" << KGlobal::locale()->formatDateTime(tempMessage.timestamp()) << "] ";
 			if( tempMessage.from() && tempMessage.from()->metaContact() )
 			{
-				stream << formatName(tempMessage.from()->metaContact()->displayName());
+				stream << formatName(tempMessage.from()->metaContact()->displayName(), Qt::RichText);
 			}
 			stream << ": " << tempMessage.plainBody() << "\n";
 		}
@@ -812,7 +812,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 
 	if( message.from() )
 	{
-		nick = formatName(message.from());
+		nick = formatName(message.from(), Qt::RichText);
 		contactId = message.from()->contactId();
 		// protocol() returns NULL here in the style preview in appearance config.
 		// this isn't the right place to work around it, since contacts should never have
@@ -990,11 +990,11 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 			destinationName = remoteContact->nickName();
 
 		// Replace %chatName%, create a internal span to update it by DOM when asked.
-		resultHTML = resultHTML.replace( QLatin1String("%chatName%"), QString("<span id=\"KopeteHeaderChatNameInternal\">%1</span>").arg( formatName(d->manager->displayName()) ) );
+		resultHTML = resultHTML.replace( QLatin1String("%chatName%"), QString("<span id=\"KopeteHeaderChatNameInternal\">%1</span>").arg( formatName(d->manager->displayName(), Qt::RichText) ) );
 		// Replace %sourceName%
-		resultHTML = resultHTML.replace( QLatin1String("%sourceName%"), formatName(sourceName) );
+		resultHTML = resultHTML.replace( QLatin1String("%sourceName%"), formatName(sourceName, Qt::RichText) );
 		// Replace %destinationName%
-		resultHTML = resultHTML.replace( QLatin1String("%destinationName%"), formatName(destinationName) );
+		resultHTML = resultHTML.replace( QLatin1String("%destinationName%"), formatName(destinationName, Qt::RichText) );
 		// For %timeOpened%, display the date and time (also the seconds).
 		resultHTML = resultHTML.replace( QLatin1String("%timeOpened%"), KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), KLocale::ShortDate, true ) );
 
@@ -1062,11 +1062,9 @@ QString ChatMessagePart::formatTime(const QString &timeFormat, const QDateTime &
 	return QString(buffer);
 }
 
-QString ChatMessagePart::formatName(const QString &sourceName) const
+QString ChatMessagePart::formatName(const QString &sourceName, Qt::TextFormat format ) const
 {
 	QString formattedName = sourceName;
-	// Escape the name.
-	formattedName = Kopete::Message::escape(formattedName);
 
 	// Squeeze the nickname if the user want it
 	if( Kopete::BehaviorSettings::self()->truncateContactName() )
@@ -1074,10 +1072,15 @@ QString ChatMessagePart::formatName(const QString &sourceName) const
 		formattedName = KStringHandler::csqueeze( sourceName, Kopete::BehaviorSettings::self()->truncateContactNameLength() );
 	}
 
+	if ( format == Qt::RichText )
+	{ // Escape the name.
+		formattedName = Kopete::Message::escape(formattedName);
+	}
+
 	return formattedName;
 }
 
-QString ChatMessagePart::formatName( const Kopete::Contact* contact ) const
+QString ChatMessagePart::formatName( const Kopete::Contact* contact, Qt::TextFormat format ) const
 {
 	if (!contact)
 	{
@@ -1088,12 +1091,12 @@ QString ChatMessagePart::formatName( const Kopete::Contact* contact ) const
 	// Myself metacontact is not a reliable source.
 	if ( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
 	{
-		return formatName( contact->metaContact()->displayName() );
+		return formatName( contact->metaContact()->displayName(), format );
 	}
 	// Use contact nickname for no metacontact or myself.
 	else
 	{
-		return formatName( contact->nickName() );
+		return formatName( contact->nickName(), format );
 	}
 }
 
@@ -1117,7 +1120,7 @@ void ChatMessagePart::slotUpdateHeaderDisplayName()
 	kDebug(14000) ;
 	DOM::HTMLElement kopeteChatNameNode = document().getElementById( QString("KopeteHeaderChatNameInternal") );
 	if( !kopeteChatNameNode.isNull() )
-		kopeteChatNameNode.setInnerText( formatName(d->manager->displayName()) );
+		kopeteChatNameNode.setInnerText( formatName(d->manager->displayName(), Qt::RichText) );
 }
 
 void ChatMessagePart::slotUpdateHeaderPhoto()
