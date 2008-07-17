@@ -87,6 +87,8 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QVariantList &args) :
 	// "Away" TAB ===============================================================
 	connect( mPrfsAway->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
 		this, SLOT(slotValueChanged(int)));;
+	connect( mPrfsAway->mAutoAwayCustomMessage, SIGNAL(textChanged()),
+	         this, SLOT(slotTextChanged()) );
 }
 
 void BehaviorConfig::save()
@@ -97,6 +99,7 @@ void BehaviorConfig::save()
 
 	// "Away" TAB ===============================================================
 	Kopete::BehaviorSettings::self()->setAutoAwayTimeout( mPrfsAway->mAutoAwayTimeout->value() * 60 );
+	Kopete::BehaviorSettings::self()->setAutoAwayCustomMessage( mPrfsAway->mAutoAwayCustomMessage->toPlainText() );
 
 	// "Chat" TAB ===============================================================
 	if ( viewPlugins.size() > 0 )
@@ -119,6 +122,7 @@ void BehaviorConfig::load()
 
 	// "Away" TAB ===============================================================
 	mPrfsAway->mAutoAwayTimeout->setValue( Kopete::BehaviorSettings::self()->autoAwayTimeout() / 60 );
+	mPrfsAway->mAutoAwayCustomMessage->setPlainText( Kopete::BehaviorSettings::self()->autoAwayCustomMessage() );
 
 	// "Chat" TAB ===============================================================
 	mPrfsChat->viewPlugin->clear();
@@ -143,7 +147,7 @@ void BehaviorConfig::slotValueChanged(int)
 	emit changed( true );
 }
 
-void BehaviorConfig::slotTextChanged(const QString&)
+void BehaviorConfig::slotTextChanged()
 {
 	emit changed( true );
 }
