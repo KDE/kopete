@@ -423,7 +423,7 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 	for( it = m_remoteTypingMap.begin(); it != m_remoteTypingMap.end(); ++it )
 	{
 		const Kopete::Contact *c = it.key();
-		typingList.append( m_messagePart->formatName(c) );
+		typingList.append( m_messagePart->formatName(c, Qt::PlainText) );
 	}
 
 	// Update the status area
@@ -465,7 +465,7 @@ void ChatView::slotChatDisplayNameChanged()
 
 	foreach (const Kopete::Contact *c, msgManager()->members())
 	{
-		QString contactName = m_messagePart->formatName(c);
+		QString contactName = m_messagePart->formatName(c, Qt::PlainText);
 		if ( c->metaContact() )
 		{
 			chatName.replace( c->metaContact()->displayName(), contactName );
@@ -517,7 +517,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 		this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 	}
 
-	QString contactName = m_messagePart->formatName(contact);
+	QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
 	if( !suppress && m_manager->members().count() > 1 )
 		sendInternalMessage(  i18n("%1 has joined the chat.", contactName) );
 
@@ -556,7 +556,7 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 
 		if ( !suppressNotification )
 		{
-			QString contactName = m_messagePart->formatName(contact);
+			QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
 			if ( reason.isEmpty() )
 				sendInternalMessage( i18n( "%1 has left the chat.", contactName ), format ) ;
 			else
@@ -625,7 +625,7 @@ void ChatView::appendMessage(Kopete::Message &message)
 
 	if( message.direction() == Kopete::Message::Inbound )
 	{
-		unreadMessageFrom = m_messagePart->formatName ( message.from() );
+		unreadMessageFrom = m_messagePart->formatName ( message.from(), Qt::PlainText );
 		QTimer::singleShot( 1000, this, SLOT( slotMarkMessageRead() ) );
 	}
 	else
@@ -657,7 +657,7 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
 		}
 		else if ( !contact->account() || !contact->account()->suppressStatusNotification() )
 		{
-			QString contactName = m_messagePart->formatName(contact);
+			QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
 			sendInternalMessage( i18n( "%2 is now %1.",
 				newStatus.description(), contactName ) );
 		}
