@@ -574,11 +574,11 @@ void MSNSocket::handleError( uint code, uint /* id */ )
     case 402:
     case 403:
         msg = i18n ( "Error accessing contact list. Please try again later. "
-			"You could also check the <a href=\"%1\">MSN service status site</a> to see if this is a known problem.", msnServiceStatusUrl ) );
+			"You could also check the <a href=\"%1\">MSN service status site</a> to see if this is a known problem.", msnServiceStatusUrl );
         break;
 	case 500:
 		msg = i18n ( "An internal server error occurred. Please try again later. "
-			"You could also check the <a href=\"%1\">MSN service status site</a> to see if this is a known problem.", msnServiceStatusUrl ) );
+			"You could also check the <a href=\"%1\">MSN service status site</a> to see if this is a known problem.", msnServiceStatusUrl );
 		break;
 	case 502:
 		msg = i18n ( "It is no longer possible to perform this operation. The MSN server does not allow it anymore." );
@@ -588,7 +588,7 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 	case 912:
 	case 922:
 		msg = i18n ( "The MSN server is busy. Please try again later. "
-			"You could also check the <a href=\"%1\">MSN service status site</a> to see if this is a known problem.", msnServiceStatusUrl ) );
+			"You could also check the <a href=\"%1\">MSN service status site</a> to see if this is a known problem.", msnServiceStatusUrl );
 		break;
 	case 601:
 	case 604:
@@ -598,7 +598,7 @@ void MSNSocket::handleError( uint code, uint /* id */ )
 	case 916:
 	case 917:
 		msg = i18n ( "The server is not available at the moment. Please try again later. "
-			"You could also check the <a href=\"%1\">MSN service status site</a> to see if this is a known problem.", msnServiceStatusUrl ) );
+			"You could also check the <a href=\"%1\">MSN service status site</a> to see if this is a known problem.", msnServiceStatusUrl );
 		break;
 	default:
 		// FIXME: if the error causes a disconnect, it will crash, but we can't disconnect every time
