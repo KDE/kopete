@@ -318,7 +318,7 @@ void MSNSocket::slotDataReceived()
 				// Retrieve the X-MSN-Messenger header.
 				QString header = response.getHeaders()->getValue("X-MSN-Messenger");
 
-				QStringList parts = header.replace(' ', "").split( ';', QString::SkipEmptyParts );
+				QStringList parts = header.remove(' ').split( ';', QString::SkipEmptyParts );
 				if(!header.isNull() && (parts.count() >= 2))
 				{
 					if(parts[0].indexOf("SessionID", 0) != -1)
@@ -452,7 +452,7 @@ void MSNSocket::slotReadLine()
 		if ( index != -1 )
 		{
 			QString command = QString::fromUtf8( m_buffer.take( index + 2 ), index );
-			command.replace( "\r\n", "" );
+			command.remove( "\r\n" );
 			//kDebug( 14141 ) << command;
 
 			// Don't block the GUI while parsing data, only do a single line!
@@ -508,7 +508,7 @@ bool MSNSocket::pollReadBlock()
 void MSNSocket::parseLine( const QString &str )
 {
 	QString cmd  = str.section( ' ', 0, 0 );
-	QString data = str.section( ' ', 2 ).replace( "\r\n" , "" );
+	QString data = str.section( ' ', 2 ).remove( "\r\n" );
 
 	bool isNum;
 	uint id = str.section( ' ', 1, 1 ).toUInt( &isNum );
@@ -523,7 +523,7 @@ void MSNSocket::parseLine( const QString &str )
 
 	//kDebug( 14140 ) << "Parsing command " << cmd << " (ID " << id << "): '" << data << "'";
 
-	data.replace( "\r\n", "" );
+	data.remove( "\r\n" );
 	bool isError;
 	uint errorCode = cmd.toUInt( &isError );
 	if ( isError )
@@ -786,10 +786,10 @@ QString MSNSocket::unescape( const QString &str )
 {
         QString str2 = QUrl::fromPercentEncoding( str.toUtf8() );
 	//remove msn+ colors code
-	str2 = str2.replace( QRegExp("[\\x1-\\x8]"), "" ); // old msn+ colors
+	str2 = str2.remove( QRegExp("[\\x1-\\x8]") ); // old msn+ colors
 	// added by kaoul <erwin.kwolek at gmail.com>
-	str2 = str2.replace( QRegExp("\\xB7[&@\'#0]"),""); // dot ...
-	str2 = str2.replace( QRegExp("\\xB7\\$,?\\d{1,2}"),""); // dot dollar (comma)? 0-99
+	str2 = str2.remove( QRegExp("\\xB7[&@\'#0]")); // dot ...
+	str2 = str2.remove( QRegExp("\\xB7\\$,?\\d{1,2}")); // dot dollar (comma)? 0-99
 
 	return str2;
 }

@@ -224,7 +224,7 @@ void QQChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSess
 				{
 					kDebug ( 14140 ) << "waiting for server to create a conference, queuing message";
 					// the conference hasn't been instantiated on the server yet, so queue the message
-					m_guid = QString();
+					m_guid.clear();
 					createConference();
 					m_pendingOutgoingMessages.append( message );
 				}

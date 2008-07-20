@@ -126,7 +126,7 @@ QString URLPicPreviewPlugin::prepareBody ( const QString& parsedBody, uint previ
 	{
 		kDebug ( 14314 ) << "URL \"" << foundURL << "\" is valid.";
 
-		if ( ( tmpFile = createPreviewPicture ( url ) ) != QString::null )
+		if ( !( tmpFile = createPreviewPicture ( url ) ).isEmpty() )
 		{
 			if ( URLPicPreviewConfig::self()->scaling() )
 			{
@@ -185,14 +185,14 @@ void URLPicPreviewPlugin::readyForUnload()
  */
 QString URLPicPreviewPlugin::createPreviewPicture ( const KUrl& url )
 {
-	QString tmpFile = QString::null;
+	QString tmpFile;
 
-	if ( url.fileName ( ) != QString() &&
+	if ( !url.fileName ( ).isEmpty() &&
 	        KIO::NetAccess::mimetype ( url, Kopete::UI::Global::mainWidget() ).startsWith ( "image/" ) )
 	{
 		if ( !KIO::NetAccess::download ( url, tmpFile, Kopete::UI::Global::mainWidget() ) )
 		{
-			return QString::null;
+			return QString();
 		}
 	}
 	else

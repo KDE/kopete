@@ -254,7 +254,7 @@ public:
 		if ( mWallet && mWallet->writePassword( mPassword.d->configGroup, mNewPass ) == 0 )
 		{
 			mPassword.d->remembered = true;
-			mPassword.d->passwordFromKConfig = QString();
+			mPassword.d->passwordFromKConfig.clear();
 			mPassword.writeConfig();
 			return true;
 		}
@@ -305,7 +305,7 @@ public:
 		if ( clearPassword() )
 		{
 			mPassword.setWrong( true );
-			mPassword.d->cachedValue = QString();
+			mPassword.d->cachedValue.clear();
 		}
 
 		delete this;
@@ -315,7 +315,7 @@ public:
 		kDebug( 14010 ) << " clearing password";
 
 		mPassword.d->remembered = false;
-		mPassword.d->passwordFromKConfig = QString();
+		mPassword.d->passwordFromKConfig.clear();
 		mPassword.writeConfig();
 		if ( mWallet )
 			mWallet->removeEntry( mPassword.d->configGroup );
@@ -354,7 +354,7 @@ void Kopete::Password::readConfig()
 
 	QString passwordCrypted = config.readEntry( "Password", QString() );
 	if ( passwordCrypted.isNull() )
-		d->passwordFromKConfig = QString();
+		d->passwordFromKConfig.clear();
 	else
 		d->passwordFromKConfig = KStringHandler::obscure( passwordCrypted );
 
@@ -407,7 +407,7 @@ void Kopete::Password::setWrong( bool bWrong )
 	d->isWrong = bWrong;
 	writeConfig();
 
-	if ( bWrong ) d->cachedValue = QString();
+	if ( bWrong ) d->cachedValue.clear();
 }
 
 void Kopete::Password::requestWithoutPrompt( QObject *returnObj, const char *slot )

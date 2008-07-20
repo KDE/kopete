@@ -116,7 +116,7 @@ std::pair<QString,QRect> ComponentBase::toolTip( const QPoint &relativePos )
 		if ( n->rect().contains( relativePos ) )
 			return n->toolTip( relativePos );
 
-	return std::make_pair( QString::null, QRect() );
+	return std::make_pair( QString(), QRect() );
 }
 
 void ComponentBase::updateAnimationPosition( int p, int s )

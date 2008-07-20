@@ -225,15 +225,15 @@ bool OscarVersionUpdater::parseVersion( Oscar::ClientVersion& version, QDomEleme
 	kDebug(OSCAR_RAW_DEBUG) ;
 	
 	// clear structure
-	version.clientString = QString();
+	version.clientString.clear();
 	version.clientId = 0x0000;
 	version.major = 0x0000;
 	version.minor = 0x0000;
 	version.point = 0x0000;
 	version.build = 0x0000;
 	version.other = 0x00000000;
-	version.country = QString();
-	version.lang = QString();
+	version.country.clear();
+	version.lang.clear();
 	
 	QDomElement versionChild = element.firstChild().toElement();
 	while ( !versionChild.isNull() )

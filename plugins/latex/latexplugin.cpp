@@ -133,7 +133,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			if(!securityCheck(formul))
 				continue;
 			
-			QString fileName=handleLatex(formul.replace("$$",""));
+			QString fileName=handleLatex(formul.remove("$$"));
 			
 			// get the image and encode it with base64
 			#if ENCODED_IMAGE_MODE
