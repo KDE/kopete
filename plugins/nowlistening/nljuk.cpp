@@ -45,7 +45,11 @@ void NLJuk::update()
 {
 	m_playing = false;
 	QString newTrack;
-
+	if (!m_client->isValid())
+	{
+		delete m_client;
+		m_client = new QDBusInterface("org.kde.juk", "/Player");
+	}
 	// see if JuK is registered with DBUS
 	if( m_client->isValid() )
 	{
