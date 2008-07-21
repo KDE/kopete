@@ -1,3 +1,5 @@
+check_symbol_exists(va_copy "stdarg.h"   __GG_LIBGADU_HAVE_VA_COPY)
+check_symbol_exists(__va_copy "stdarg.h" __GG_LIBGADU_HAVE___VA_COPY)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libgadu-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/libgadu-config.h )
 
