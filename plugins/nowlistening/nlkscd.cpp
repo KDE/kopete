@@ -46,10 +46,13 @@ void NLKscd::update()
 {
 	m_playing = false;
 	QString newTrack;
-	
-	//TODO: Port to KSCD D-BUS Interface
 
-	// see if it's registered with DCOP
+	if (!m_client->isValid())
+	{
+		delete m_client;
+		m_client = new QDBusInterface("org.kde.kscd", "/CDPlayer");
+	}
+	// see if it's registered with D-BUS
 	if ( m_client->isValid() )
 	{
 		// see if it's playing

@@ -48,6 +48,11 @@ void NLamaroK::update()
 	QString newTrack;
 	QString result;
 
+	if (!m_client->isValid())
+	{
+		delete m_client;
+		m_client = new QDBusInterface("org.mpris.amarok", "/Player");
+	}
 	if( !m_client->isValid() )
 		return;
 
