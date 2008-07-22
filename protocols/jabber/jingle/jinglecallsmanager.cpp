@@ -6,6 +6,7 @@
 #include "jinglecallsgui.h"
 #include "contentdialog.h"
 #include "jinglesessionmanager.h"
+#include "jinglemediamanager.h"
 
 #include "jabberaccount.h"
 #include "jabberresource.h"
@@ -21,6 +22,7 @@ public:
 	JingleCallsGui *gui;
 	QList<JabberJingleSession*> sessions;
 	XMPP::Client *client;
+	JingleMediaManager *mediaManager;
 	QList<QDomElement> audioPayloads;
 	QList<QDomElement> videoPayloads;
 };
@@ -38,13 +40,17 @@ JingleCallsManager::JingleCallsManager(JabberAccount* acc)
 JingleCallsManager::~JingleCallsManager()
 {
 	ortp_exit();
+
+	delete d->mediaManager;
+
+	//TODO:delete the other fields in Private...
 }
 
 void JingleCallsManager::init()
 {
 	//Initialize oRTP library.
 	ortp_init();
-	ortp_scheduler_init(); // Check the utility of the scheduler.
+	//ortp_scheduler_init(); // Check the utility of the scheduler.
 	
 	d->gui = 0L;
 	QStringList transports;
@@ -61,19 +67,32 @@ void JingleCallsManager::init()
 	QDomDocument doc("");
 	
 	// Audio payloads
-	QDomElement payload = doc.createElement("payload-type");
-	payload.setAttribute("id", "97");
-	payload.setAttribute("name", "speex");
-	payload.setAttribute("clockrate", "8000");
-	d->audioPayloads << payload;
+	QDomElement aPayload = doc.createElement("payload-type");
+	aPayload.setAttribute("id", "97");
+	aPayload.setAttribute("name", "speex");
+	aPayload.setAttribute("clockrate", "8000");
+	d->audioPayloads << aPayload;
 	d->client->jingleSessionManager()->setSupportedAudioPayloads(d->audioPayloads);
 	
 	//Video payloads
-	payload = doc.createElement("payload-type");
-	payload.setAttribute("id", "26");
-	payload.setAttribute("name", "JPEG");
-	payload.setAttribute("clockrate", "90000");
-	d->videoPayloads << payload;
+	QDomElement vPayload = doc.createElement("payload-type");
+	vPayload.setAttribute("id", "96");
+	vPayload.setAttribute("name", "theora");
+	vPayload.setAttribute("clockrate", "90000");
+	QStringList pNames;
+	pNames  << "height" << "width" << "delivery-method" << "configuration" << "sampling";
+	QStringList pValues;
+	pValues << "288"    << "352"   << "inline"	    << "?" 	       << "YCbCr-4:2:0";// Thoses data are from the file http://www.polycrystal.org/lego/movies/Swim.ogg
+	for (int i = 0; i < pNames.count(); i++)
+	{
+		QDomElement parameter = doc.createElement("parameter");
+		parameter.setAttribute("name", pNames[i]);
+		parameter.setAttribute("value", pValues[i]);
+		vPayload.appendChild(parameter);
+	}
+
+	d->videoPayloads << vPayload;
+	d->mediaManager = new JingleMediaManager();
 	d->client->jingleSessionManager()->setSupportedVideoPayloads(d->videoPayloads);
 	
 	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(newJingleSession(XMPP::JingleSession*)), this, SLOT(slotNewSession(XMPP::JingleSession*)));
@@ -167,9 +186,9 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 	
 	JingleSession* newSession = d->client->jingleSessionManager()->startNewSession(toJid, contents);
 	// TODO:Connect all session signals here...
-	JabberJingleSession *jabberSess = new JabberJingleSession();
+	JabberJingleSession *jabberSess = new JabberJingleSession(this);
 	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
-	//jabberSess->setMediaManager(m_mediaManager); //Could be done directly in the constructor
+	jabberSess->setMediaManager(d->mediaManager); //Could be done directly in the constructor
 	d->sessions << jabberSess;
 	return true;
 }
@@ -179,9 +198,9 @@ void JingleCallsManager::slotNewSession(XMPP::JingleSession *newSession)
 	qDebug() << "New session incoming, showing the dialog.";
 	
 	// TODO:Connect all session signals here...
-	JabberJingleSession *jabberSess = new JabberJingleSession();
+	JabberJingleSession *jabberSess = new JabberJingleSession(this);
 	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
-	//jabberSess->setMediaManager(m_mediaManager); //Could be done directly in the constructor
+	jabberSess->setMediaManager(d->mediaManager); //Could be done directly in the constructor
 	d->sessions << jabberSess;
 	
 	ContentDialog *cd = new ContentDialog();

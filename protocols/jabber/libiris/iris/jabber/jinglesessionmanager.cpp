@@ -84,11 +84,11 @@ void JingleSessionManager::slotSessionIncoming()
 	// FIXME:
 	// 	QList<T>.last() should be called only if the list is not empty.
 	// 	Could it happen here as we just append an element to the list ?
+	emit newJingleSession(d->sessions.last());
 	qDebug() << "SEND RINGING.";
 	d->sessions.last()->ring();
 	qDebug() << "START NEGOTIATION";
 	d->sessions.last()->startNegotiation();
-	emit newJingleSession(d->sessions.last());
 }
 
 //void JingleSessionManager::removeContent(const QString& sid, const QString& cName)

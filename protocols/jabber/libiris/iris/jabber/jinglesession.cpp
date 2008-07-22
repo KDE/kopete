@@ -82,17 +82,17 @@ void JingleSession::start()
 		if (contents()[i]->transport().attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
 		{
 			qDebug() << "Create IN socket for" << contents()[i]->name();
-			qDebug("Content Adress : %x\n", contents()[i]);
+			//qDebug("Content Adress : %x\n", (unsigned int) contents()[i]);
 			contents()[i]->createUdpInSocket();
-			connect(contents()[i], SIGNAL(rawUdpDataReady()), this, SLOT(slotRawUdpDataReady()));
+			//connect(contents()[i], SIGNAL(rawUdpDataReady()), this, SLOT(slotRawUdpDataReady()));
 		}
 	}
 }
 
 void JingleSession::slotRawUdpDataReady()
-{
+{/*
 	JingleContent *content = (JingleContent*) sender();
-	qDebug("Content Adress : %x\n", content);
+	//qDebug("Content Adress : %x\n", (unsigned int) content);
 	if (content == NULL)
 	{
 		qDebug() << "Null Jingle content, there is a problem";
@@ -128,6 +128,7 @@ void JingleSession::slotRawUdpDataReady()
 	//connect(rAction, SIGNAL(acked()), this, SLOT(slotReceivedAcked()));
 	//rAction->setSession(this);
 	//rAction->received();
+*/
 }
 
 void JingleSession::acceptSession()
@@ -369,22 +370,15 @@ void JingleSession::startRawUdpConnection(JingleContent *c)
 {
 	QDomElement e = c->transport();
 	qDebug() << "Start raw-udp connection (still 'TODO') for content" << c->name();
-
-	//Sending data to the candidate.
-	//FIXME:Maybe that should also be done in JingleContent
-	QUdpSocket *rawUdpSocket = new QUdpSocket();
-	//connect(rawUdpSocket, SIGNAL(connected()), this, SLOT(rawUdpConnected));
-	//rawUdpSocket->connectToServer(e.attribute("ip"), e.attribute("port"));
-	QHostAddress address;
-	address.setAddress(e.firstChildElement().attribute("ip"));
-	qDebug() << "Sending data to" << address.toString() << ":" << e.firstChildElement().attribute("port").toInt();
-	//needData() should be emitted here.
-	rawUdpSocket->writeDatagram("DATA", address, e.firstChildElement().attribute("port").toInt());
+	
+	connect(c, SIGNAL(needData(XMPP::JingleContent*)), this, SIGNAL(needData(XMPP::JingleContent*)));
+	c->startSending();
 
 	//Sending my own candidate:
 	JT_JingleAction *cAction = new JT_JingleAction(d->rootTask);
 	cAction->setSession(this);
 	cAction->transportInfo(*c);
+	//TODO:after sending this, this content must be ready to receive data.
 	
 	//Sending "trying" stanzas
 	JT_JingleAction *tAction = new JT_JingleAction(d->rootTask);
@@ -424,5 +418,9 @@ void JingleSession::addTransportInfo(const QDomElement& e)
 	//TODO:There should be a JingleTransport Class as the transport will be used everywhere
 	//	Also, we could manipulate the QDomElement
 	QDomElement c = e.firstChildElement().firstChildElement(); //This is the candidate.
+}
 
+JingleSession::State JingleSession::state() const
+{
+	return d->state;
 }

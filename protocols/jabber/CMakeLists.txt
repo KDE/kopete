@@ -109,7 +109,9 @@ set(kopete_jabber_PART_SRCS
 
    jingle/jinglecallsmanager.cpp
    jingle/jabberjinglesession.cpp
+   jingle/jabberjinglecontent.cpp
    jingle/rtpsession.cpp
+   jingle/jinglemediamanager.cpp
 )
 
 

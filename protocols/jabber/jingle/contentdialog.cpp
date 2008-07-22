@@ -4,6 +4,26 @@
 
 using namespace XMPP;
 
+static QString typeToString(JingleContent::Type t)
+{
+	switch (t)
+	{
+	case JingleContent::Audio :
+		return "Audio";
+		break;
+	case JingleContent::Video :
+		return "Video";
+		break;
+	case JingleContent::FileTransfer :
+		return "File Transfer";
+		break;
+	case JingleContent::Unknown :
+		return "Unknown";
+		break;
+	}
+	return "";
+}
+
 ContentDialog::ContentDialog()
 {
 	ui.setupUi(this);
@@ -21,9 +41,9 @@ void ContentDialog::setContents(QList<JingleContent*> c)
 {
 	for (int i = 0; i < c.count(); i++)
 	{
-		QCheckBox *cb = new QCheckBox(c[i]->dataType(), this);
+		QCheckBox *cb = new QCheckBox(typeToString(c[i]->dataType()), this);
 		cb->setChecked(true);
-		if (c[i]->dataType() == "Unknown")
+		if (c[i]->dataType() == JingleContent::Unknown)
 		{
 			cb->setChecked(false);
 			cb->setEnabled(false);
@@ -75,3 +95,4 @@ JingleSession *ContentDialog::session()
 {
 	return m_session;
 }
+

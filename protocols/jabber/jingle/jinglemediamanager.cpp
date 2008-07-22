@@ -1,9 +1,13 @@
 #include "jinglemediamanager.h"
+
+#include <QList>
+#include <QDomElement>
 #include <KDebug>
 
 JingleMediaManager::JingleMediaManager()
 {
-	findDevice();
+	//findDevice();
+	timer = 0;
 }
 
 JingleMediaManager::~JingleMediaManager()
@@ -52,3 +56,28 @@ int JingleMediaManager::findDevice()
 	return ret;
 
 }
+
+QList<QDomElement> JingleMediaManager::payloads()
+{
+	QList<QDomElement> ret;
+	return ret;
+}
+
+void JingleMediaManager::startAudioStreaming()
+{
+	if (timer == 0)
+	{
+		timer = new QTimer();
+		timer->setInterval(100);
+		connect(timer, SIGNAL(timeout()), this, SIGNAL(audioReadyRead()));
+	}
+	if (!timer->isActive())
+		timer->start();
+	
+}
+
+QByteArray JingleMediaManager::data()
+{
+	return QByteArray("Data for 100 ms, you should not try to play this !!");
+}
+

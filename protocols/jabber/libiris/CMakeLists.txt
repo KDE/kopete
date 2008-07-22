@@ -38,6 +38,7 @@ iris/jabber/s5b.cpp
 iris/jabber/xmpp_ibb.cpp
 iris/jabber/jinglesession.cpp
 iris/jabber/jingletasks.cpp
+iris/jabber/jinglecontent.cpp
 
 iris/xmpp-core/compress.cpp
 iris/xmpp-core/compressionhandler.cpp
@@ -101,7 +102,9 @@ kde4_moc_headers(iris_kopete
 #	iris/xmpp-im/xmpp_discoinfotask.h
 	iris/jabber/jinglesession.h
 	iris/jabber/jingletasks.h
+	iris/jabber/jinglecontent.h
 	iris/jabber/jinglesessionmanager.h
+
 )
 
 #set(testapp_SRCS

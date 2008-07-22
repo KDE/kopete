@@ -28,9 +28,9 @@ namespace XMPP
 		JingleSession(Task*, const Jid&);
 		~JingleSession();
 
-		typedef enum {
+		enum Reason {
 			Decline = 0
-		} Reason;
+		};
 		/**
 		 * Adds a content to the session.
 		 * Currently, the content is just added in the contents list.
@@ -72,7 +72,7 @@ namespace XMPP
 
 		QString sid() const;
 
-		typedef enum {
+		enum JingleAction {
 			SessionInitiate = 0,
 			SessionTerminate,
 			SessionAccept,
@@ -84,20 +84,22 @@ namespace XMPP
 			ContentAccept,
 			TransportInfo,
 			NoAction
-		} JingleAction;
+		};
 		
-		typedef enum {
+		enum State {
 			Pending = 0,
 			Active,
 			Ended
-		} State;
+		};
+
+		State state() const;
 
 	signals:
 		void terminated();
 		// needData() is emitted once.
 		// Once it has been emitted, streaming must start on this socket until stopSending is emitted.
 		// FIXME:It would be best to give a JingleContent as an argument so we know for which content it is (the socket is in that content btw)
-		void needData(const QDomElement&); //QDomElement is a payload-type element, could be a QString containing a SDP (Session Description Protocol) string.
+		void needData(XMPP::JingleContent*); //QDomElement is a payload-type element, could be a QString containing a SDP (Session Description Protocol) string.
 	public slots:
 		void slotRemoveAcked();
 		void slotSessTerminated();
