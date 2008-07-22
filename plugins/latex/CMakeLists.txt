@@ -15,7 +15,7 @@ kde4_add_kcfg_files(kopete_latex_PART_SRCS latexconfig.kcfgc )
 kde4_add_plugin(kopete_latex ${kopete_latex_PART_SRCS})
 
 
-target_link_libraries(kopete_latex  ${KDE4_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_latex  ${KDE4_KDEUI_LIBS} kopete )
 
 install(TARGETS kopete_latex  DESTINATION ${PLUGIN_INSTALL_DIR})
 
