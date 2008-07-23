@@ -16,15 +16,25 @@
 
 namespace XMPP
 {
+	/*
+	 * This class defines a jingle reason used when sending
+	 * a session-terminate jingle action.
+	 */
 	class IRIS_EXPORT JingleReason
 	{
 	public:
+		/*
+		 * Default constructor : create a No Reason reason with no text.
+		 */
 		JingleReason();
 		enum Type {
 			Decline = 0,
 			Busy,
 			NoReason
 		};
+		/*
+		 * Creates a reason with a type and a text reason.
+		 */
 		JingleReason(JingleReason::Type, const QString& text = QString());
 		~JingleReason();
 		
@@ -51,7 +61,7 @@ namespace XMPP
 		JingleSession(Task*, const Jid&);
 		~JingleSession();
 
-		/**
+		/*
 		 * Adds a content to the session.
 		 * Currently, the content is just added in the contents list.
 		 * TODO: addContent should add a content even when the session
