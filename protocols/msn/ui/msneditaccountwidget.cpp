@@ -184,7 +184,7 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	
 	config->writeEntry( "exportCustomPicture", d->ui->m_useDisplayPicture->isChecked() );
 	if (d->ui->optionOverrideServer->isChecked() ) {
-		config->writeEntry( "serverName", d->ui->m_serverName->text() );
+		config->writeEntry( "serverName", d->ui->m_serverName->text().trimmed() );
 		config->writeEntry( "serverPort", d->ui->m_serverPort->value()  );
 	}
 	else {

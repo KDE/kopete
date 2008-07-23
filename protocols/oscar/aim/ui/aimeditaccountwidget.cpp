@@ -157,7 +157,7 @@ Kopete::Account *AIMEditAccountWidget::apply()
 	mAccount->setExcludeConnect( mGui->mAutoLogon->isChecked() ); // save the autologon choice
 	if ( mGui->optionOverrideServer->isChecked() )
 	{
-		static_cast<OscarAccount *>( mAccount )->setServerAddress( mGui->edtServerAddress->text() );
+		static_cast<OscarAccount *>( mAccount )->setServerAddress( mGui->edtServerAddress->text().trimmed() );
 		static_cast<OscarAccount *>( mAccount )->setServerPort( mGui->sbxServerPort->value() );
 	}
 	else

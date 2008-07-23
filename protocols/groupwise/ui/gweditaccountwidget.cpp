@@ -119,7 +119,7 @@ bool GroupWiseEditAccountWidget::validateData()
 void GroupWiseEditAccountWidget::writeConfig()
 {
 	kDebug() ;
-	account()->configGroup()->writeEntry( "Server", m_ui.server->text() );
+	account()->configGroup()->writeEntry( "Server", m_ui.server->text().trimmed() );
 	account()->configGroup()->writeEntry( "Port", QString::number( m_ui.port->value() ) );
 	account()->configGroup()->writeEntry( "AlwaysAcceptInvitations", 
 			m_ui.alwaysAccept->isChecked() ? "true" : "false" );

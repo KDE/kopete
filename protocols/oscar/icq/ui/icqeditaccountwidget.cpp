@@ -213,7 +213,7 @@ Kopete::Account *ICQEditAccountWidget::apply()
 
 	if ( mAccountSettings->optionOverrideServer->isChecked() )
 	{
-		mAccount->setServerAddress(mAccountSettings->edtServerAddress->text());
+		mAccount->setServerAddress(mAccountSettings->edtServerAddress->text().trimmed());
 		mAccount->setServerPort(mAccountSettings->edtServerPort->value());
 	}
 	else

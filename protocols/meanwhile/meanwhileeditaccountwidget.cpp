@@ -74,7 +74,7 @@ Kopete::Account* MeanwhileEditAccountWidget::apply()
 
     ui.mPasswordWidget->save(&static_cast<MeanwhileAccount*>(account())->password());
 
-    myAccount->setServerName(ui.mServerName->text());
+    myAccount->setServerName(ui.mServerName->text().trimmed());
     myAccount->setServerPort(ui.mServerPort->value());
 
     return myAccount;
