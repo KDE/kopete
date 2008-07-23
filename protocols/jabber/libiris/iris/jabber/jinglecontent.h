@@ -61,7 +61,13 @@ namespace XMPP
 		JingleContent& operator=(const JingleContent&);
 	signals:
 		void rawUdpDataReady();
+
+		// Emitted when the content is ready to send data to try to connect.
 		void needData(XMPP::JingleContent*);
+		
+		// Emitted when a socket is ready to receive data.
+		// Can be used to prepare a rtp session with the socket.
+		void socketReady();
 
 	private:
 		class Private;

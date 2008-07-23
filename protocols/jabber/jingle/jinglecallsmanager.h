@@ -16,7 +16,7 @@ namespace XMPP
 {
 	class JingleSession;
 }
-
+class JabberJingleSession;
 class JingleCallsManager : public QObject
 {
 	Q_OBJECT
@@ -37,9 +37,11 @@ public:
 	bool startNewSession(const XMPP::Jid&);
 	void showCallsGui();
 	void hideCallsGui();
+	QList<JabberJingleSession*> jabberSessions();
 
 public slots:
 	void slotNewSession(XMPP::JingleSession*);
+	void slotSessionTerminate(XMPP::JingleSession*);
 	void slotUserAccepted();
 	void slotUserRejected();
 

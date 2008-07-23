@@ -49,6 +49,24 @@ JingleSession::JingleAction jingleAction(const QDomElement& x)
 // JT_PushJingleAction
 //------------------------
 //RECEIVES THE ACTIONS
+
+static JingleReason::Type stringToType(const QString& str)
+{
+	if (str == "busy")
+	{
+		return JingleReason::Busy;
+	}
+	else if (str == "decline")
+	{
+		return JingleReason::Decline;
+	}
+	else
+	{
+		return JingleReason::NoReason;
+	}
+
+}
+
 class JT_PushJingleAction::Private
 {
 public:
@@ -100,6 +118,9 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 	d->from = Jid(x.attribute("from"));
 	QDomElement jingle;
 	QDomElement content;
+	QDomElement reason, e;
+	QString condition;
+	QString text;
 	switch(jingleAction(x))
 	{
 	case JingleSession::SessionInitiate :
@@ -176,6 +197,28 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 		emit transportInfo(x.firstChildElement());
 
 		break;
+	case JingleSession::SessionTerminate :
+		qDebug() << "Transport Info for session " << sid;
+		d->id = x.attribute("id");
+		ack();
+		
+		reason = x.firstChildElement().firstChildElement();
+		//if (reason.tagName() != "reason")
+			//emit error(BadStanza);
+		e = reason.firstChildElement();
+		while(!e.isNull())
+		{
+			if (e.tagName() == "condition")
+				condition = e.firstChildElement().tagName();
+			else if (e.tagName() == "text")
+				text = e.firstChildElement().toText().data();
+			//[...] TODO: more reason possible.
+		}
+		
+		emit sessionTerminate(sid, JingleReason(stringToType(condition), text));
+
+		break;
+		
 	default:
 		qDebug() << "There are some troubles with the Jingle Implementation. Be carefull that this is still low performances software.";
 	}
@@ -336,7 +379,7 @@ void JT_JingleAction::ringing()
 	send(d->iq);
 }
 
-void JT_JingleAction::terminate(int r)
+void JT_JingleAction::terminate(const JingleReason& r)
 {
 	if (d->session == 0)
 	{
@@ -358,10 +401,13 @@ void JT_JingleAction::terminate(int r)
 	QDomElement condition = doc()->createElement("condition");
 
 	QDomElement rReason;
-	switch(r)
+	switch(r.type())
 	{
-	case JingleSession::Decline :
+	case JingleReason::Decline :
 		rReason = doc()->createElement("decline");
+		break;
+	case JingleReason::NoReason :
+		rReason = doc()->createElement("no-error");
 		break;
 	default:
 		rReason = doc()->createElement("unknown");

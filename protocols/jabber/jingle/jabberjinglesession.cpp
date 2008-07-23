@@ -6,6 +6,8 @@
 #include "jinglesession.h"
 #include "jinglecontent.h"
 
+#include <KDebug>
+
 //using namespace XMPP;
 
 JabberJingleSession::JabberJingleSession(JingleCallsManager* parent)
@@ -17,7 +19,9 @@ JabberJingleSession::JabberJingleSession(JingleCallsManager* parent)
 
 JabberJingleSession::~JabberJingleSession()
 {
-
+	for (int i = 0; i < jabberJingleContents.count(); i++)
+		delete jabberJingleContents[i];
+	delete m_jingleSession;
 }
 
 void JabberJingleSession::setJingleSession(XMPP::JingleSession* sess)
@@ -25,10 +29,18 @@ void JabberJingleSession::setJingleSession(XMPP::JingleSession* sess)
 	qDebug() << "Setting JingleSession in the JabberJingleSession :" << (unsigned int) sess;
 	m_jingleSession = sess;
 	connect(sess, SIGNAL(needData(XMPP::JingleContent*)), this, SLOT(writeRtpData(XMPP::JingleContent*)));
+	//connect(sess, SIGNAL(destroyed()), this, SIGNAL(sessionTerminated()));
+	// Create Contents :
+	for (int i = 0; i < sess->contents().count(); i++)
+	{
+		JabberJingleContent *jContent = new JabberJingleContent(this, sess->contents()[i]);
+		jabberJingleContents << jContent;
+	}
 }
 
 void JabberJingleSession::setMediaManager(JingleMediaManager* mm)
 {
+	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Setting media manager. ( address =" << (int) mm << ")";
 	m_mediaManager = mm;
 }
 
@@ -39,7 +51,6 @@ void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)
 	if (jContent == 0)
 	{
 		jContent = new JabberJingleContent(this, content);
-		jContent->setContent(content);
 		jabberJingleContents << jContent;
 	}
 	jContent->startWritingRtpData();
@@ -55,3 +66,16 @@ JabberJingleContent *JabberJingleSession::contentWithName(const QString& name)
 	}
 	return 0;
 }
+
+JingleMediaManager *JabberJingleSession::mediaManager() const
+{
+	kDebug(KDE_DEFAULT_DEBUG_AREA) << "m_mediaManager is" << (m_mediaManager == 0 ? "Null" : "Valid");
+	return m_mediaManager;
+}
+
+QTime JabberJingleSession::upTime()
+{
+	//TODO:Implement me !
+	return QTime(0, 0);
+}
+

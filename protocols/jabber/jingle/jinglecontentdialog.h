@@ -6,18 +6,18 @@
  */
 #ifndef CONTENT_DIALOG_H
 #define CONTENT_DIALOG_H
-#include "ui_contentdialog.h"
+#include "ui_jinglecontentdialog.h"
 
 #include "jingletasks.h"
 
 #include <QCheckBox>
 
-class ContentDialog : public QDialog
+class JingleContentDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	ContentDialog();
-	~ContentDialog();
+	JingleContentDialog();
+	~JingleContentDialog();
 	void setContents(QList<XMPP::JingleContent*> c);
 	void setSession(XMPP::JingleSession *s);
 	XMPP::JingleSession *session();
@@ -25,7 +25,7 @@ public:
 	QStringList unChecked();
 
 private:
-	Ui::contentDialog ui;
+	Ui::jingleContentDialog ui;
 	XMPP::JingleSession *m_session;
 	QList<QCheckBox*> m_checkBoxes;
 	QStringList m_contentNames;

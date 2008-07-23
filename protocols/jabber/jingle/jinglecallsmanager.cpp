@@ -4,7 +4,7 @@
 
 #include "jinglecallsmanager.h"
 #include "jinglecallsgui.h"
-#include "contentdialog.h"
+#include "jinglecontentdialog.h"
 #include "jinglesessionmanager.h"
 #include "jinglemediamanager.h"
 
@@ -12,6 +12,8 @@
 #include "jabberresource.h"
 #include "jabberresourcepool.h"
 #include "jabberjinglesession.h"
+
+#include <KDebug>
 
 //using namespace XMPP;
 
@@ -25,6 +27,7 @@ public:
 	JingleMediaManager *mediaManager;
 	QList<QDomElement> audioPayloads;
 	QList<QDomElement> videoPayloads;
+	JingleContentDialog *contentDialog;
 };
 
 JingleCallsManager::JingleCallsManager(JabberAccount* acc)
@@ -63,7 +66,6 @@ void JingleCallsManager::init()
 	d->client->jingleSessionManager()->setSupportedProfiles(profiles);
 	
 	// The Media Manager should be able to give xml tags for the supported payloads.
-	// For example : d->client->jingleSessionManager()->setSupportedPayloads(m_mediaManager->payloads());
 	QDomDocument doc("");
 	
 	// Audio payloads
@@ -93,9 +95,13 @@ void JingleCallsManager::init()
 
 	d->videoPayloads << vPayload;
 	d->mediaManager = new JingleMediaManager();
+	kDebug(KDE_DEFAULT_DEBUG_AREA) << (d->mediaManager == 0 ? "mediamanager is still null" : "mediamanager not null");
 	d->client->jingleSessionManager()->setSupportedVideoPayloads(d->videoPayloads);
 	
-	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(newJingleSession(XMPP::JingleSession*)), this, SLOT(slotNewSession(XMPP::JingleSession*)));
+	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(newJingleSession(XMPP::JingleSession*)),
+		this, SLOT(slotNewSession(XMPP::JingleSession*)));
+	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(sessionTerminate(XMPP::JingleSession*)),
+		this, SLOT(slotSessionTerminate(XMPP::JingleSession*)));
 }
 
 bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
@@ -185,11 +191,12 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 	}
 	
 	JingleSession* newSession = d->client->jingleSessionManager()->startNewSession(toJid, contents);
-	// TODO:Connect all session signals here...
 	JabberJingleSession *jabberSess = new JabberJingleSession(this);
-	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
 	jabberSess->setMediaManager(d->mediaManager); //Could be done directly in the constructor
+	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
 	d->sessions << jabberSess;
+	if(d->gui)
+		d->gui->addSession(jabberSess);
 	return true;
 }
 
@@ -197,68 +204,64 @@ void JingleCallsManager::slotNewSession(XMPP::JingleSession *newSession)
 {
 	qDebug() << "New session incoming, showing the dialog.";
 	
-	// TODO:Connect all session signals here...
 	JabberJingleSession *jabberSess = new JabberJingleSession(this);
-	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
 	jabberSess->setMediaManager(d->mediaManager); //Could be done directly in the constructor
+	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
 	d->sessions << jabberSess;
+	if (d->gui)
+		d->gui->addSession(jabberSess);
 	
-	ContentDialog *cd = new ContentDialog();
-	//cd->setContents(sess->contents());
-	cd->setSession(newSession);
-	connect(cd, SIGNAL(accepted()), this, SLOT(slotUserAccepted()));
-	connect(cd, SIGNAL(rejected()), this, SLOT(slotUserRejected()));
-	cd->show();
+	d->contentDialog = new JingleContentDialog();
+	d->contentDialog->setSession(newSession);
+	connect(d->contentDialog, SIGNAL(accepted()), this, SLOT(slotUserAccepted()));
+	connect(d->contentDialog, SIGNAL(rejected()), this, SLOT(slotUserRejected()));
+	d->contentDialog->show();
 }
 
 void JingleCallsManager::slotUserAccepted()
 {
 	qDebug() << "The user accepted the session, checking accepted contents :";
-	ContentDialog *cd = (ContentDialog*) sender();
-	if (cd == NULL)
+	JingleContentDialog *contentDialog = (JingleContentDialog*) sender();
+	if (contentDialog == NULL)
 	{
 		qDebug() << "Fatal Error : sender is NULL !!!!";
 		return;
 	}
-	/*
-	 * TODO:
-	 *	Check the contents not accepted (cd->child() or sth like that)
-	 *	If no contents are removed, cd->session()->contentAccept().
-	 *	If contents are removed, cd->session()->contentRemove(contents).
-	 *	If all contents are removed, slotUserRejected() (or so)
-	 */
-	if (cd->unChecked().count() == 0)
+	if (contentDialog->unChecked().count() == 0)
 	{
 		qDebug() << "Accept all contents !";
-		cd->session()->acceptSession();
+		contentDialog->session()->acceptSession();
 	}
-	else if (cd->checked().count() == 0)
+	else if (contentDialog->checked().count() == 0)
 	{
 		qDebug() << "Terminate the session, no contents accepted.";
-		cd->session()->terminate(JingleSession::Decline);
+		contentDialog->session()->terminate(JingleReason(JingleReason::Decline));
 	}
 	else
 	{
 		qDebug() << "Accept only some contents, removing some unaccepted.";
-		cd->session()->removeContent(cd->unChecked());
+		contentDialog->session()->removeContent(contentDialog->unChecked());
 	}
 }
 
 void JingleCallsManager::slotUserRejected()
 {
-	ContentDialog *cd = (ContentDialog*) sender();
-	if (cd == NULL)
+	JingleContentDialog *contentDialog = (JingleContentDialog*) sender();
+	if (contentDialog == NULL)
 	{
 		qDebug() << "Fatal Error : sender is NULL !!!!";
 		return;
 	}
-	cd->session()->terminate(JingleSession::Decline);
+	contentDialog->session()->terminate(JingleReason(JingleReason::Decline));
 }
 
 void JingleCallsManager::showCallsGui()
 {
 	if (d->gui == 0L)
+	{
 		d->gui = new JingleCallsGui(this);
+		d->gui->setSessions(d->sessions);
+	}
 	d->gui->show();
 }
 
@@ -268,4 +271,24 @@ void JingleCallsManager::hideCallsGui()
 		return;
 	d->gui->hide();
 }
+
+QList<JabberJingleSession*> JingleCallsManager::jabberSessions()
+{
+	return d->sessions;
+}
+
+void JingleCallsManager::slotSessionTerminate(XMPP::JingleSession* sess)
+{
+	for (int i = 0; i < d->sessions.count(); i++)
+	{
+		if (d->sessions[i]->jingleSession() == sess)
+		{
+			d->gui->removeSession(d->sessions[i]);
+			delete d->sessions[i];
+			d->sessions.removeAt(i);
+		}
+	}
+
+}
+
 #include "jinglecallsmanager.moc"

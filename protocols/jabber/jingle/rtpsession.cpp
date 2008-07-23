@@ -11,13 +11,17 @@
 
 JingleRtpSession::JingleRtpSession()
 {
+	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Creating JingleRtpSession";
 	/*
 	 * The RtpSession objects represent a RTP session:
 	 * once it is configured with local and remote network addresses and a payload type is given,
 	 * it let you send and recv a media stream.
 	 */
 	rtpSocket = new QUdpSocket();
+	connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
+	connect(rtpSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)));
 	rtcpSocket = new QUdpSocket();
+	connect(rtcpSocket, SIGNAL(readyRead()), this, SLOT(rtcpDataReady())); // FIXME:Not sure I must do this, oRTP will manage that, I don't care about this signal.
 	m_rtpSession = rtp_session_new(RTP_SESSION_SENDRECV);
 	payloadID = -1;
 	payloadName = "";
@@ -51,11 +55,8 @@ void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 void JingleRtpSession::bind(int rtpPort, int rtcpPort)
 {
 	rtpSocket->bind(rtpPort);
-	connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
-	connect(rtpSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)));
 
 	rtcpSocket->bind(rtcpPort == 0 ? rtpPort + 1 : rtcpPort);
-	connect(rtcpSocket, SIGNAL(readyRead()), this, SLOT(rtcpDataReady())); // FIXME:Not sure I must do this, oRTP will manage that, I don't care about this signal.
 }
 
 void JingleRtpSession::send(const QByteArray& data) //TODO:There should be overloaded methods to support other data type (QString, const *char).
@@ -82,7 +83,7 @@ void JingleRtpSession::rtpDataReady()
 	data.data() = (char*) packet->b_cont->b_rptr;*/
 	QByteArray data((const char*)rtp_session_get_data(m_rtpSession), 80);
 	//char* = unsigned char*
-	qDebug() << "Received (" << ") : " << data;
+	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Received (80 bytes) : " << data;
 	receivingTS += payloadTS; //FIXME:What is the increment ? It depends on the payload.
 }
 
@@ -97,7 +98,7 @@ void JingleRtpSession::setPayload(const QString&)
 	//payloadTS must be set here.
 	payloadName = "theora";
 	payloadID = 96;
-	payloadTS = 100; // For testing, data sent each 100 ms TODO:Change that !!!
+	payloadTS = 2000; // For testing, data sent each 2000 ms TODO:Change that !!!
 	RtpProfile *profile = rtp_profile_new(payloadName.toAscii());
 	rtp_profile_set_payload(profile, 96, &payload_type_theora);
 }

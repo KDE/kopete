@@ -16,6 +16,29 @@
 
 namespace XMPP
 {
+	class IRIS_EXPORT JingleReason
+	{
+	public:
+		JingleReason();
+		enum Type {
+			Decline = 0,
+			Busy,
+			NoReason
+		};
+		JingleReason(JingleReason::Type, const QString& text = QString());
+		~JingleReason();
+		
+		//static Type stringToType(const QString&);
+
+		void setType(Type);
+		void setText(const QString&);
+		Type type() const;
+		QString text() const;
+	private:
+		class Private;
+		Private *d;
+	};
+
 	class JingleContent;
 	class JT_JingleSession;
 	class JT_PushJingleSession;
@@ -28,9 +51,6 @@ namespace XMPP
 		JingleSession(Task*, const Jid&);
 		~JingleSession();
 
-		enum Reason {
-			Decline = 0
-		};
 		/**
 		 * Adds a content to the session.
 		 * Currently, the content is just added in the contents list.
@@ -47,7 +67,7 @@ namespace XMPP
 		void acceptSession();
 		void removeContent(const QString&);
 		void removeContent(const QStringList&);
-		void terminate(Reason);
+		void terminate(const JingleReason& r = JingleReason());
 		void ring();
 		
 		/*TODO: there should also be removeContent, modifyContent,...*/

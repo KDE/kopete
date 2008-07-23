@@ -294,7 +294,7 @@ void JingleSession::addContent(const QDomElement& content)
 	d->contents << c;
 }
 
-void JingleSession::terminate(JingleSession::Reason r)
+void JingleSession::terminate(const JingleReason& r)
 {
 /*
  * FIXME: Reason should be a class so we can add informations like the new
@@ -424,3 +424,56 @@ JingleSession::State JingleSession::state() const
 {
 	return d->state;
 }
+
+
+//--------------------------
+// JingleReason
+//--------------------------
+
+
+class JingleReason::Private
+{
+public:
+	QString reasonText;
+	Type type;
+};
+
+JingleReason::JingleReason()
+: d(new Private)
+{
+	d->reasonText = "";
+	d->type = NoReason;
+}
+
+JingleReason::JingleReason(JingleReason::Type type, const QString& text)
+: d(new Private)
+{
+	d->reasonText = text;
+	d->type = type;
+}
+
+JingleReason::~JingleReason()
+{
+
+}
+
+void JingleReason::setText(const QString& r)
+{
+	d->reasonText = r;
+}
+
+void JingleReason::setType(JingleReason::Type t)
+{
+	d->type = t;
+}
+
+QString JingleReason::text() const
+{
+	return d->reasonText;
+}
+
+JingleReason::Type JingleReason::type() const
+{
+	return d->type;
+}
+

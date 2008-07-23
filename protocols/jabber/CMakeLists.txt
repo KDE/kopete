@@ -50,7 +50,7 @@ set(kopete_jabber_ui_SRCS
     ui/privacydlg.cpp
     ui/privacyruledlg.cpp
 
-    jingle/contentdialog.cpp
+    jingle/jinglecontentdialog.cpp
     jingle/jinglecallsgui.cpp
 )
 
@@ -69,7 +69,7 @@ kde4_add_ui_files(kopete_jabber_ui_SRCS
    ui/privacyrule.ui
    ui/privacy.ui
 
-   jingle/contentdialog.ui
+   jingle/jinglecontentdialog.ui
    jingle/jinglecallsgui.ui
 )
 

@@ -17,6 +17,7 @@ namespace XMPP
 {
 	class JingleSession;
 	class JingleContent;
+	class JingleReason;
 	class IRIS_EXPORT JingleSessionManager : public QObject
 	{
 		Q_OBJECT
@@ -31,13 +32,15 @@ namespace XMPP
 
 	signals:
 		void newJingleSession(XMPP::JingleSession*);
+		void sessionTerminate(XMPP::JingleSession*);
 	
 	public slots:
 		void slotSessionIncoming();
 		void slotRemoveContent(const QString&, const QStringList&);
 		void slotSessionInfo(const QDomElement&);
 		void slotTransportInfo(const QDomElement&);
-		void slotSessionTerminated();
+		//void slotSessionTerminated();
+		void slotSessionTerminate(const QString&, const JingleReason&);
 
 	private:
 		JingleSession *session(const QString& sid);

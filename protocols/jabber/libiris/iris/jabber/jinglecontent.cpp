@@ -32,7 +32,7 @@ JingleContent::JingleContent()
 
 JingleContent::~JingleContent()
 {
-
+	delete d->socket;
 }
 
 void JingleContent::addPayloadType(const QDomElement& pl)
@@ -196,7 +196,8 @@ void JingleContent::createUdpInSocket()
 	if (!d->socket)
 		d->socket = new QUdpSocket();
 	d->socket->bind(QHostAddress(d->transport.firstChildElement().attribute("ip")), d->transport.firstChildElement().attribute("port").toInt());
-	connect(d->socket, SIGNAL(readyRead()), this, SIGNAL(rawUdpDataReady()));
+	//connect(d->socket, SIGNAL(readyRead()), this, SIGNAL(rawUdpDataReady()));
+	emit socketReady();
 }
 
 QUdpSocket *JingleContent::socket()

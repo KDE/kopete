@@ -21,10 +21,16 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	qDebug() << "JingleSessionManager::JingleSessionManager created.";
 	d->client = c;
 	d->pjs = new JT_PushJingleAction(d->client->rootTask());
-	connect(d->pjs, SIGNAL(newSessionIncoming()), this, SLOT(slotSessionIncoming()));
-	connect(d->pjs, SIGNAL(removeContent(const QString&, const QStringList&)), this, SLOT(slotRemoveContent(const QString&, const QStringList&)));
-	connect(d->pjs, SIGNAL(sessionInfo(const QDomElement&)), this, SLOT(slotSessionInfo(const QDomElement&)));
-	connect(d->pjs, SIGNAL(transportInfo(const QDomElement&)), this, SLOT(slotTransportInfo(const QDomElement&)));
+	connect(d->pjs, SIGNAL(newSessionIncoming()),
+		this, SLOT(slotSessionIncoming()));
+	connect(d->pjs, SIGNAL(removeContent(const QString&, const QStringList&)),
+		this, SLOT(slotRemoveContent(const QString&, const QStringList&)));
+	connect(d->pjs, SIGNAL(sessionInfo(const QDomElement&)),
+		this, SLOT(slotSessionInfo(const QDomElement&)));
+	connect(d->pjs, SIGNAL(transportInfo(const QDomElement&)),
+		this, SLOT(slotTransportInfo(const QDomElement&)));
+	connect(d->pjs, SIGNAL(sessionTerminate(const QString&, const JingleReason&)),
+		this, SLOT(slotSessionTerminate(const QString&, const JingleReason&)));
 
 	Features f = d->client->features();
 	
@@ -145,7 +151,7 @@ void JingleSessionManager::slotTransportInfo(const QDomElement& x)
 	sess->addTransportInfo(x.firstChildElement().firstChildElement());
 }
 
-void JingleSessionManager::slotSessionTerminated()
+/*void JingleSessionManager::slotSessionTerminated()
 {
 	JingleSession* sess = (JingleSession*) sender();
 	//TODO: Before we delete the session, we must stop sending data and close connection.
@@ -153,4 +159,27 @@ void JingleSessionManager::slotSessionTerminated()
 	//	A signal should be sent anyway.
 	if (sess != 0)
 		delete sess;
+}*/
+
+void JingleSessionManager::slotSessionTerminate(const QString& sid, const JingleReason& reason)
+{
+	JingleSession *sess = session(sid);
+	if (!sess)
+	{
+		//sendUnknownSession([need the stanza id]);
+		return;
+	}
+	//Remove the session from the sessions list (the session is not destroyed, it has to be done by the application.)
+	for (int i = 0; i < d->sessions.count(); i++)
+	{
+		if (sess == d->sessions[i])
+		{
+			d->sessions.removeAt(i);
+			break;
+		}
+	}
+	emit sessionTerminate(sess);
+	
 }
+
+

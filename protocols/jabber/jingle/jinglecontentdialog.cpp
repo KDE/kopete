@@ -1,4 +1,4 @@
-#include "contentdialog.h"
+#include "jinglecontentdialog.h"
 #include <QVBoxLayout>
 #include <QLabel>
 
@@ -24,12 +24,12 @@ static QString typeToString(JingleContent::Type t)
 	return "";
 }
 
-ContentDialog::ContentDialog()
+JingleContentDialog::JingleContentDialog()
 {
 	ui.setupUi(this);
 }
 
-ContentDialog::~ContentDialog()
+JingleContentDialog::~JingleContentDialog()
 {
 	for (int i = 0; i < m_checkBoxes.count(); i++)
 	{
@@ -37,7 +37,7 @@ ContentDialog::~ContentDialog()
 	}
 }
 
-void ContentDialog::setContents(QList<JingleContent*> c)
+void JingleContentDialog::setContents(QList<JingleContent*> c)
 {
 	for (int i = 0; i < c.count(); i++)
 	{
@@ -56,42 +56,42 @@ void ContentDialog::setContents(QList<JingleContent*> c)
 	ui.verticalLayout->insertWidget(0, label);
 }
 
-void ContentDialog::setSession(JingleSession *s)
+void JingleContentDialog::setSession(JingleSession *s)
 {
 	m_session = s;
 	setWindowTitle(QString("New Jingle session from ") + s->to().full());
 	setContents(s->contents());
 }
 
-QStringList ContentDialog::checked()
+QStringList JingleContentDialog::checked()
 {
 	QStringList ret;
 	for (int i = 0; i < m_checkBoxes.count(); i++)
 	{
 		if (m_checkBoxes[i]->checkState() == Qt::Checked)
 		{
-			qDebug() << "ContentDialog::checked() : checked : " << m_contentNames.at(i);
+			qDebug() << "JingleContentDialog::checked() : checked : " << m_contentNames.at(i);
 			ret << m_contentNames.at(i);
 		}
 	}
 	return ret;
 }
 
-QStringList ContentDialog::unChecked()
+QStringList JingleContentDialog::unChecked()
 {
 	QStringList ret;
 	for (int i = 0; i < m_checkBoxes.count(); i++)
 	{
 		if (m_checkBoxes[i]->checkState() == Qt::Unchecked)
 		{
-			qDebug() << "ContentDialog::unChecked() : unchecked : " << m_contentNames.at(i);
+			qDebug() << "JingleContentDialog::unChecked() : unchecked : " << m_contentNames.at(i);
 			ret << m_contentNames.at(i);
 		}
 	}
 	return ret;
 }
 
-JingleSession *ContentDialog::session()
+JingleSession *JingleContentDialog::session()
 {
 	return m_session;
 }

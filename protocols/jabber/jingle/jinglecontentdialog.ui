@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>contentDialog</class>
- <widget class="QDialog" name="contentDialog" >
+ <class>jingleContentDialog</class>
+ <widget class="QDialog" name="jinglContentDialog" >
   <property name="geometry" >
    <rect>
     <x>0</x>

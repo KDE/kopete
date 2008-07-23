@@ -12,6 +12,7 @@
 namespace XMPP
 {
 	class JingleSession;
+	class JingleReason;
 	
 	/*
 	 * This class is a Task that received all jingle actions and give them to the JingleSessionManager
@@ -31,6 +32,7 @@ namespace XMPP
 		void removeContent(const QString&, const QStringList&);
 		void sessionInfo(const QDomElement&);
 		void transportInfo(const QDomElement&);
+		void sessionTerminate(const QString&, const JingleReason&);
 	
 	private:
 		class Private;
@@ -55,7 +57,7 @@ namespace XMPP
 		void setSession(JingleSession*);
 		
 		void initiate();
-		void terminate(int);
+		void terminate(const JingleReason&);
 		void contentAccept();
 		void removeContents(const QStringList&);
 		void ringing();

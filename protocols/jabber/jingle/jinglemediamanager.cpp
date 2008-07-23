@@ -12,7 +12,7 @@ JingleMediaManager::JingleMediaManager()
 
 JingleMediaManager::~JingleMediaManager()
 {
-
+	kDebug() << "MEDIA MANAGER DESTROYED !!";
 }
 
 /*
@@ -68,7 +68,7 @@ void JingleMediaManager::startAudioStreaming()
 	if (timer == 0)
 	{
 		timer = new QTimer();
-		timer->setInterval(100);
+		timer->setInterval(2000);
 		connect(timer, SIGNAL(timeout()), this, SIGNAL(audioReadyRead()));
 	}
 	if (!timer->isActive())

@@ -12,24 +12,34 @@
 JabberJingleContent::JabberJingleContent(JabberJingleSession* parent, XMPP::JingleContent* c)
  : m_content(c), m_jabberSession(parent)
 {
-	qDebug() << "Created a new JabberJingleContent with" << c->name();
 	m_rtpSession = 0;
 	m_mediaManager = m_jabberSession->mediaManager();
+	if (!m_mediaManager)
+		kDebug(KDE_DEFAULT_DEBUG_AREA) << "m_mediaManager is Null !!!!!!!!!!!!!!!!!!!!!!!!!!";
+	if (c == 0)
+		return;
+	if (m_content->socket() == 0 || !m_content->socket()->isValid())
+		connect(c, SIGNAL(socketReady()), this, SLOT(slotPrepareRtpSession()));
+	else
+		slotPrepareRtpSession();
+	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Created a new JabberJingleContent with" << c->name();
 }
 
 JabberJingleContent::~JabberJingleContent()
 {
-
+	delete m_content;
+	delete m_rtpSession;
 }
 
 void JabberJingleContent::setContent(XMPP::JingleContent* content)
 {
 	m_content = content;
+	connect(m_content, SIGNAL(socketReady()), this, SLOT(slotPrepareRtpSession()));
 }
 
-void JabberJingleContent::startWritingRtpData()
+void JabberJingleContent::slotPrepareRtpSession()
 {
-	qDebug() << "Start Writing Rtp Data.";
+	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Prepare RTP session";
 	if (m_rtpSession == 0)
 	{
 		m_rtpSession = new JingleRtpSession();
@@ -40,7 +50,14 @@ void JabberJingleContent::startWritingRtpData()
 		}
 		m_rtpSession->setRtpSocket(m_content->socket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
 	}
+}
+
+void JabberJingleContent::startWritingRtpData()
+{
+	qDebug() << "Start Writing Rtp Data.";
 	
+	slotPrepareRtpSession();
+
 	if (m_jabberSession->session()->state() == XMPP::JingleSession::Pending)
 	{
 		m_rtpSession->setPayload(elementToSdp(bestPayload(m_content->payloadTypes(), m_mediaManager->payloads())));

@@ -1,8 +1,13 @@
 #ifndef JINGLE_CALLS_GUI_H
 #define JINGLE_CALLS_GUI_H
+
+#include <QAbstractItemModel>
+
 #include "ui_jinglecallsgui.h"
 
 class JingleCallsManager;
+class JabberJingleSession;
+class JabberJingleContent;
 class JingleCallsGui : public QMainWindow
 {
 	Q_OBJECT
@@ -10,9 +15,72 @@ public:
 	JingleCallsGui(JingleCallsManager*);
 	~JingleCallsGui();
 
+	void addSession(JabberJingleSession*);
+	void setSessions(const QList<JabberJingleSession*>&);
+	void removeSession(JabberJingleSession*);
+public slots:
+	void slotNewSession();
+	void slotAddContent();
+	void slotTerminate();
+	void slotRemove();
+	void slotClose();
+
 private:
 	void setupActions();
 	JingleCallsManager *m_callsManager;
 	Ui::jingleCallsGui ui;
 };
+
+
+class TreeItem;
+class JingleCallsModel : public QAbstractItemModel
+{
+public:
+	JingleCallsModel(const QList<JabberJingleSession*>&, QObject* parent = 0);
+	~JingleCallsModel();
+
+	QModelIndex index(int, int, const QModelIndex& parent = QModelIndex()) const;
+	QModelIndex parent(const QModelIndex&) const;
+	int rowCount(const QModelIndex& parent = QModelIndex()) const;
+	int columnCount(const QModelIndex& parent = QModelIndex()) const;
+	QVariant data(const QModelIndex&, int role = Qt::DisplayRole) const;
+	QVariant headerData(int, Qt::Orientation, int) const;
+
+private:
+	TreeItem *rootItem;
+	void setModelUp(const QList<JabberJingleSession*>&);
+
+};
+
+/*
+ * TreeItem's only contain data about what they represent (session or content)
+ * TODO:add a pointer ti the session or content to retreive it more easily. (Not sure it could work that way.)
+ */
+class TreeItem
+{
+public:
+	TreeItem(const QList<QVariant>& data, TreeItem *parent = 0);
+	~TreeItem();
+
+	void appendChild(TreeItem *child);
+	TreeItem *child(int row);
+	int childCount() const;
+	int columnCount() const;
+	QVariant data(int column) const;
+	int row() const;
+	TreeItem *parent();
+	void setContentPtr(JabberJingleContent*);
+	void setSessionPtr(JabberJingleSession*);
+	JabberJingleContent* content() const {return contentPtr;}
+	JabberJingleSession* session() const {return sessionPtr;}
+
+private:
+	QList<TreeItem*> childItems;
+	QList<QVariant> itemData;
+	TreeItem *parentItem;
+	JabberJingleContent *contentPtr;
+	JabberJingleSession *sessionPtr;
+
+};
+
 #endif

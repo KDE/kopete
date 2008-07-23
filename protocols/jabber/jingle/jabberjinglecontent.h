@@ -30,6 +30,7 @@ public:
 
 public slots:
 	void slotSendRtpData();
+	void slotPrepareRtpSession();
 
 private:
 	XMPP::JingleContent *m_content;
