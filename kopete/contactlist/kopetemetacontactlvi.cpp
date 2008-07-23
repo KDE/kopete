@@ -365,7 +365,6 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 	{
 		m_metaContact->setDisplayNameSource( Kopete::MetaContact::SourceCustom );
 		m_metaContact->setDisplayName( newName );
-		slotDisplayNameChanged();
 	}
 
 	kDebug( 14000 ) << "newName=" << newName;
