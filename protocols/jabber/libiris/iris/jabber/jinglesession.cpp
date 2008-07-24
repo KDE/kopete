@@ -431,13 +431,16 @@ void JingleSession::addSessionInfo(const QDomElement& e)
 
 void JingleSession::addTransportInfo(const QDomElement& e)
 {
-	contentWithName(e.attribute("name"))->addTransportInfo(e);
+	// this should really depend on the transport used...
+	JingleContent *content = contentWithName(e.attribute("name"));
+	connect(content, SIGNAL(needData(XMPP::JingleContent*)), this, SIGNAL(needData(XMPP::JingleContent*)));
+	content->addTransportInfo(e);
 	
 	//If it is a candidate, we try to connect.
-	//FIXME:is a transport-info always a candidate ?
+	//FIXME:is a transport-info always a candidate ? --> Currently, we consider this can only a candidate.
 	//TODO:There should be a JingleTransport Class as the transport will be used everywhere
 	//	Also, we could manipulate the QDomElement
-	QDomElement c = e.firstChildElement().firstChildElement(); //This is the candidate.
+	QDomElement candidate = e.firstChildElement().firstChildElement(); //This is the candidate.
 }
 
 JingleSession::State JingleSession::state() const

@@ -108,12 +108,11 @@ void JingleCallsManager::init()
 		parameter.setAttribute("value", pValues[i]);
 		vPayload.appendChild(parameter);
 	}
-
 	d->videoPayloads << vPayload;
+
 	d->mediaManager = new JingleMediaManager();
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << (d->mediaManager == 0 ? "mediamanager is still null" : "mediamanager not null");
-	d->client->jingleSessionManager()->setSupportedVideoPayloads(d->videoPayloads);
 	
+	d->client->jingleSessionManager()->setSupportedVideoPayloads(d->videoPayloads);
 	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(newJingleSession(XMPP::JingleSession*)),
 		this, SLOT(slotNewSession(XMPP::JingleSession*)));
 	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(sessionTerminate(XMPP::JingleSession*)),

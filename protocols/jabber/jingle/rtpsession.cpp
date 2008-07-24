@@ -17,7 +17,7 @@ JingleRtpSession::JingleRtpSession()
 	 * once it is configured with local and remote network addresses and a payload type is given,
 	 * it let you send and recv a media stream.
 	 */
-	rtpSocket = new QUdpSocket();
+	rtpSocket = new QUdpSocket(); //Should it really be created and connected here ???
 	connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
 	connect(rtpSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)));
 	rtcpSocket = new QUdpSocket();
@@ -47,9 +47,13 @@ void JingleRtpSession::connectToHost(const QString& address, int rtpPort, int rt
 void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 {
 	kDebug(KDE_DEFAULT_DEBUG_AREA) << (socket->isValid() ? "Socket ready" : "Socket not ready");
-	rtcpSocket = new QUdpSocket();
-	rtcpSocket->connectToHost(socket->peerAddress(), rtcpPort == 0 ? socket->localPort() + 1 : rtcpPort, QIODevice::ReadWrite);
-	rtp_session_set_sockets(m_rtpSession, socket->socketDescriptor(), rtcpSocket->socketDescriptor());
+	delete rtpSocket;
+	rtpSocket = (QUdpSocket*) socket;
+	connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
+	connect(rtpSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)));
+	
+	rtcpSocket->connectToHost(rtpSocket->peerAddress(), rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort, QIODevice::ReadWrite);
+	rtp_session_set_sockets(m_rtpSession, rtpSocket->socketDescriptor(), rtcpSocket->socketDescriptor());
 }
 
 void JingleRtpSession::bind(int rtpPort, int rtcpPort)

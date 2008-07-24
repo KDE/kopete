@@ -7,6 +7,7 @@
 
 #include "im.h"
 
+class QHostAddress;
 namespace XMPP
 {
 	/*
@@ -68,6 +69,7 @@ namespace XMPP
 		void setReceiving(bool);
 
 		void startSending();
+		void startSending(const QHostAddress&, int);
 		
 		JingleContent& operator=(const JingleContent&);
 	signals:

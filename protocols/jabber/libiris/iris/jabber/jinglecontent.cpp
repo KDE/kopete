@@ -107,7 +107,6 @@ void JingleContent::fromElement(const QDomElement& e)
 		return;
 	d->creator = e.attribute("creator");
 	d->name = e.attribute("name");
-	//d->sender = e.attribute("sender");
 	QDomElement desc = e.firstChildElement();
 	d->descriptionNS = desc.attribute("xmlns");
 	d->profile = desc.attribute("profile");
@@ -192,6 +191,19 @@ void JingleContent::addTransportInfo(const QDomElement& e)
 			d->candidates << child;
 		}
 	}
+	else if (transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
+	{
+		qDebug() << "Adding responder's candidates and connecting to it";
+		d->candidates << transport.firstChildElement();
+		//TODO : Start connection to this candidate.
+		//WARNING : as Jingle specification is not clear,
+		//	    the connexion will be considered as established
+		//	    even without receiving the "received" informational
+		//	    message.
+		startSending(QHostAddress(transport.firstChildElement().attribute("ip")),
+			     transport.firstChildElement().attribute("port").toInt());
+		
+	}
 }
 
 QString JingleContent::iceUdpPassword()
@@ -251,12 +263,23 @@ void JingleContent::startSending()
 	//Create udp OUT socket
 	if (!d->socket)
 		d->socket = new QUdpSocket();
-	d->socket->connectToHost(d->transport.firstChildElement().attribute("ip"), d->transport.firstChildElement().attribute("port").toInt());
+	d->socket->connectToHost(transport().firstChildElement().attribute("ip"), transport().firstChildElement().attribute("port").toInt());
 	QHostAddress address;
 	address.setAddress(transport().firstChildElement().attribute("ip"));
 	qDebug() << "Sending data to" << address.toString() << ":" << transport().firstChildElement().attribute("port").toInt();
 	qDebug() << "EMIT needData(c) SIGNAL";
 	emit needData(this);
+}
+
+void JingleContent::startSending(const QHostAddress& address, int port)
+{
+	//Create udp OUT socket
+	if (!d->socket)
+		d->socket = new QUdpSocket();
+	d->socket->connectToHost(address, port);
+	qDebug() << "Sending data to" << address.toString() << ":" << port;
+	qDebug() << "EMIT needData(c) SIGNAL";
+	emit needData(this); //FIXME:We can Use sender to know which content sent the signal.
 }
 
 QList<QDomElement> JingleContent::candidates() const
