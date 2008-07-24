@@ -26,8 +26,19 @@ namespace XMPP
 			Unknown
 		};
 
+		/*
+		 * Adds a payload type to this content.
+		 */
 		void addPayloadType(const QDomElement&);
+		
+		/*
+		 * Adds a payload type list to this content.
+		 */
 		void addPayloadTypes(const QList<QDomElement>&);
+
+		/*
+		 * Sets the transport for this content.
+		 */
 		void setTransport(const QDomElement&);
 		void setType(Type);
 		void setCreator(const QString&);
