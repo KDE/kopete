@@ -50,6 +50,21 @@ namespace XMPP
 		 * Set supported profiles for jingle sessions.
 		 */
 		void setSupportedProfiles(const QStringList&);
+
+		/*
+		 * Provides the next usable port for a raw-udp session.
+		 * As the application should create a rtcp port with the
+		 * provided rtp socket port + 1, this method will always
+		 * give a port incremented by 2.
+		 * The first port will be 9000 by default but it can be modified
+		 * with setFirstPort().
+		 * Also, this method will share a list of used ports with the
+		 * iceUdpPort method.
+		 * It would be nice to be informed of the ports which are freed
+		 * when a session is terminated so we can reuse them.
+		 */
+		int nextRawUdpPort();
+		void setFirstPort(int);
 	signals:
 		
 		/*

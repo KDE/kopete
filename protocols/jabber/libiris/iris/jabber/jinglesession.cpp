@@ -361,6 +361,7 @@ void JingleSession::startNegotiation()
 
 JingleContent *JingleSession::contentWithName(const QString& n)
 {
+	qDebug() << "There are" << d->contents.count() << "contents";
 	for (int i = 0; i < d->contents.count(); i++)
 	{
 		if (d->contents.at(i)->name() == n)
@@ -397,7 +398,7 @@ void JingleSession::startRawUdpConnection(JingleContent *c)
 	//Sending my own candidate:
 	JT_JingleAction *cAction = new JT_JingleAction(d->rootTask);
 	cAction->setSession(this);
-	cAction->transportInfo(*c);
+	cAction->transportInfo(c);
 	//TODO:after sending this, this content must be ready to receive data.
 	
 	//Sending "trying" stanzas
@@ -432,7 +433,12 @@ void JingleSession::addSessionInfo(const QDomElement& e)
 void JingleSession::addTransportInfo(const QDomElement& e)
 {
 	// this should really depend on the transport used...
+	qDebug() << "Transport info for content named" << e.attribute("name");
+	
 	JingleContent *content = contentWithName(e.attribute("name"));
+	
+	qDebug() << "Found content with address" << (int) content;
+	
 	connect(content, SIGNAL(needData(XMPP::JingleContent*)), this, SIGNAL(needData(XMPP::JingleContent*)));
 	content->addTransportInfo(e);
 	

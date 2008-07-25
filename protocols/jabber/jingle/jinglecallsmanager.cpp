@@ -67,6 +67,11 @@ JingleCallsManager::~JingleCallsManager()
 
 void JingleCallsManager::init()
 {
+	//Setting temporary random first port so 2 instances can be launched on the same machine.
+	//TODO : This must be removed !!!
+	
+	d->client->jingleSessionManager()->setFirstPort(9000 + (rand() % 1000));
+
 	//Initialize oRTP library.
 	ortp_init();
 	//ortp_scheduler_init(); // Check the utility of the scheduler.

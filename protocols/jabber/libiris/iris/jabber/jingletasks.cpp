@@ -23,6 +23,8 @@
 #include <QUdpSocket>
 #include <stdio.h>
 
+#include "jinglesessionmanager.h"
+
 #include "jingletasks.h"
 #include "protocol.h"
 #include "xmpp_xmlcommon.h"
@@ -329,10 +331,14 @@ void JT_JingleAction::initiate()
 				return;
 			}
 			candidate.setAttribute("ip", ips[0].toString()); // ips[0] is not 127.0.0.1 if there is other adresses.
-			candidate.setAttribute("port", QString("%1").arg(13540 + (rand() % 10))); // Should be configured and fetched from the JingleSessionManager (client()->jingleSessionManager()->rawUdpPort())
+			int port = client()->jingleSessionManager()->nextRawUdpPort();
+			//qDebug() << "Port =" << port;
+			//qDebug() << "Port =" << QString("%1").arg(port);
+			candidate.setAttribute("port", QString("%1").arg(port));
 			candidate.setAttribute("generation", "0"); // FIXME:I don't know yet what it is.
 			transport.appendChild(candidate);
-			qDebug() << client()->stream().xmlToString(transport, false);
+			d->session->contents()[i]->bind(ips[0], port);
+			//qDebug() << client()->stream().xmlToString(transport, false);
 		}
 		else if (transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
 		{
@@ -472,9 +478,9 @@ void JT_JingleAction::removeContents(const QStringList& c)
 	send(d->iq);
 }
 
-void JT_JingleAction::transportInfo(const JingleContent& c)
+void JT_JingleAction::transportInfo(JingleContent *c)
 {
-	QDomElement e = c.transport();
+	QDomElement e = c->transport();
 	// ----------------------------
 	if (d->session == 0)
 	{
@@ -495,7 +501,7 @@ void JT_JingleAction::transportInfo(const JingleContent& c)
 	if (e.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
 	{
 		QDomElement content = doc()->createElement("content");
-		content.setAttribute("name", c.name());
+		content.setAttribute("name", c->name());
 		content.setAttribute("creator", d->session->initiator() == d->session->to().full() ? d->session->to().full() : "initiator");
 
 		QDomElement transport = doc()->createElement("transport");
@@ -515,8 +521,12 @@ void JT_JingleAction::transportInfo(const JingleContent& c)
 		
 		QDomElement candidate = doc()->createElement("candidate");
 		candidate.setAttribute("ip", ips[0].toString()); // ips[0] is not 127.0.0.1 if there is other adresses.
-		candidate.setAttribute("port", QString("%1").arg(13540 + (rand() % 10))); // Should be configured and fetched from the JingleSessionManager (client()->jingleSessionManager()->rawUdpPort()) increment for each new socket.
+		int port = client()->jingleSessionManager()->nextRawUdpPort();
+		//qDebug() << "Port =" << port;
+		//qDebug() << "Port =" << QString("%1").arg(port);
+		candidate.setAttribute("port", QString("%1").arg(port));
 		candidate.setAttribute("generation", "0"); // FIXME:I don't know yet what it is.
+		c->bind(ips[0], port);
 		transport.appendChild(candidate);
 		content.appendChild(transport);
 		jingle.appendChild(content);

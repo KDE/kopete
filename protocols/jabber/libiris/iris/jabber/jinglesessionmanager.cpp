@@ -33,6 +33,8 @@ public:
 	QList<QDomElement> supportedAudioPayloads;
 	QList<QDomElement> supportedVideoPayloads;
 	QStringList supportedProfiles;
+	QList<int> usedPorts;
+	int firstPort;
 };
 
 JingleSessionManager::JingleSessionManager(Client* c)
@@ -61,6 +63,8 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	f.addFeature("urn:xmpp:tmp:jingle:apps:video-rtp");
 
 	d->client->setFeatures(f);
+
+	d->firstPort = 9000;
 }
 
 JingleSessionManager::~JingleSessionManager()
@@ -164,11 +168,12 @@ void JingleSessionManager::slotTransportInfo(const QDomElement& x)
 	JingleSession *sess = session(x.attribute("sid"));
 	if (sess == 0)
 	{
+		qDebug() << "Session is null, We have a proble here...";
 		//unknownSession();
 		return;
 	}
 	//sess->contentWithName(x.firstChildElement().attribute("name"))->addTransportInfo(x.firstChildElement().firstChildElement());
-	sess->addTransportInfo(x.firstChildElement().firstChildElement());
+	sess->addTransportInfo(x.firstChildElement());
 }
 
 /*void JingleSessionManager::slotSessionTerminated()
@@ -202,4 +207,20 @@ void JingleSessionManager::slotSessionTerminate(const QString& sid, const Jingle
 	
 }
 
+int JingleSessionManager::nextRawUdpPort()
+{
+	int lastUsed;
+	if (d->usedPorts.count() == 0)
+		lastUsed = d->firstPort - 1;
+	else
+		lastUsed = d->usedPorts.last();
+	d->usedPorts << lastUsed + 1 << lastUsed + 2;
+	qDebug() << "JingleSessionManager::nextRawUdpPort() returns" << (lastUsed + 1);
+	return (lastUsed + 1);
+}
+
+void JingleSessionManager::setFirstPort(int f)
+{
+	d->firstPort = f;
+}
 

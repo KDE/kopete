@@ -119,6 +119,8 @@ namespace XMPP
 		 * There is no argument as the JingleSession set
 		 * sooner must have all necessary informations
 		 * (to, contents and sid)
+		 * In contents list, contents with raw-udp transport
+		 * must have a candidate set.
 		 */
 		void initiate();
 
@@ -171,7 +173,7 @@ namespace XMPP
 		 * Currently, this class sends candidate(s) for
 		 * the content's transport.
 		 */
-		void transportInfo(const JingleContent&);
+		void transportInfo(JingleContent *c);
 		
 	private :
 		class Private;

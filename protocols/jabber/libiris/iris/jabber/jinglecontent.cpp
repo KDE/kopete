@@ -53,6 +53,12 @@ JingleContent::JingleContent()
 JingleContent::~JingleContent()
 {
 	delete d->socket;
+	delete d;
+}
+
+void JingleContent::addCandidate(const QDomElement& c)
+{
+	d->candidates << c;
 }
 
 void JingleContent::addPayloadType(const QDomElement& pl)
@@ -227,9 +233,17 @@ void JingleContent::createUdpInSocket()
 	qDebug() << "JingleContent::createUdpInSocket()";
 	if (!d->socket)
 		d->socket = new QUdpSocket();
-	d->socket->bind(QHostAddress(d->transport.firstChildElement().attribute("ip")), d->transport.firstChildElement().attribute("port").toInt());
-	//connect(d->socket, SIGNAL(readyRead()), this, SIGNAL(rawUdpDataReady()));
+	//FIXME:socket is not bound.
+	//	The problem can be a bad IP, a bad port or the fact that a socket cannot be Bound _and_ connected at the same time.
+	if (d->socket->bind(QHostAddress(d->transport.firstChildElement().attribute("ip")), d->transport.firstChildElement().attribute("port").toInt()))
+		qDebug() << "Socket bound to" << d->transport.firstChildElement().attribute("ip") << ":" << d->transport.firstChildElement().attribute("port");
+	connect(d->socket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
 	emit socketReady();
+}
+
+void JingleContent::slotRawUdpDataReady()
+{
+	qDebug() << "Data arrived on the socket.";
 }
 
 QUdpSocket *JingleContent::socket()
@@ -297,6 +311,15 @@ QString JingleContent::profile() const
 	return d->profile;
 }
 
+void JingleContent::bind(const QHostAddress& address, int port)
+{
+	//FIXME:QNativeSocketEngine::bind() was not called in QAbstractSocket::UnconnectedState
+	if (!d->socket)
+		d->socket = new QUdpSocket();
+	if (d->socket->bind(address, port))
+		qDebug() << "Socket bound to" << address.toString() << ":" << port;
+}
+
 JingleContent& JingleContent::operator=(const JingleContent &other)
 {
 	d->payloads = other.payloadTypes();
@@ -309,3 +332,4 @@ JingleContent& JingleContent::operator=(const JingleContent &other)
 	
 	return *this;
 }
+

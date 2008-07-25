@@ -52,6 +52,7 @@ namespace XMPP
 		void fromElement(const QDomElement&);
 		QDomElement contentElement();
 		QList<QDomElement> candidates() const;
+		void addCandidate(const QDomElement&);
 		QString creator() const;
 		QString profile() const;
 		QString name() const;
@@ -70,10 +71,13 @@ namespace XMPP
 
 		void startSending();
 		void startSending(const QHostAddress&, int);
+
+		void bind(const QHostAddress&, int);
 		
 		JingleContent& operator=(const JingleContent&);
+	public slots:
+		void slotRawUdpDataReady();
 	signals:
-		void rawUdpDataReady();
 
 		// Emitted when the content is ready to send data to try to connect.
 		void needData(XMPP::JingleContent*);
