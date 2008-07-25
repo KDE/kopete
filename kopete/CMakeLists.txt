@@ -73,7 +73,9 @@ set_target_properties(kopete_bin PROPERTIES OUTPUT_NAME kopete)
 
 target_link_libraries(kopete_bin 
 	${KDE4_KTEXTEDITOR_LIBS} 
-	${KDE4_KNOTIFYCONFIG_LIBS} 
+	${KDE4_KNOTIFYCONFIG_LIBS}
+	${KDE4_KDE3SUPPORT_LIBS}
+	${KDE4_KABC_LIBS}
 	${BLITZ_LIBRARIES}
 	kopete 
 	kopeteaddaccountwizard
