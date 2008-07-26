@@ -114,7 +114,7 @@
            <item>
             <widget class="QLabel" name="standardLabel" >
              <property name="text" >
-              <string>Standard:</string>
+	      <string comment="Label of a combo box containing video standards like PAL-B, NTSC-M, etc" >Standard:</string>
              </property>
             </widget>
            </item>
