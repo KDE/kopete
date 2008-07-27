@@ -30,8 +30,8 @@
 namespace Kopete { class Transfer; }
 namespace Kopete { class FileTransferInfo; }
 namespace P2P { class Dispatcher; }
-namespace KNetwork { class KBufferedSocket; }
 class QFile;
+class QTcpSocket;
 
 /**
 @author Kopete Developers
@@ -139,7 +139,7 @@ namespace P2P{
 			P2P::MessageFormatter m_messageFormatter;
 			QString m_recipient;
 			QString m_sender;
-			KNetwork::KBufferedSocket *m_socket;
+			QTcpSocket *m_socket;
    			CommunicationState m_state;
    			TransferType m_type;
 	};

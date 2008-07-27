@@ -26,19 +26,16 @@
 #include <QRegExp>
 #include <QTimer>
 #include <QByteArray>
+#include <QTcpSocket>
+#include <QTcpServer>
 
 #include <kdebug.h>
 #include <kconfig.h>
-#include <k3bufferedsocket.h>
-#include <k3serversocket.h>
-#include <k3resolver.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kurl.h>
 
 #include "kopeteuiglobal.h"
-
-using namespace KNetwork;
 
 class MimeMessage
 {
@@ -101,24 +98,12 @@ void MSNSocket::connect( const QString &server, uint port )
 	m_server = server;
 	m_port = port;
 
-	if(!m_useHttp)
-		m_socket = new KBufferedSocket( server, QString::number(port) );
-	else {
-		m_socket = new KBufferedSocket( m_gateway, "80" );
-	}
+	m_socket = new QTcpSocket();
 
-	m_socket->enableRead( true );
-
-	// enableWrite eats the CPU, and we only need it when the queue is
-	// non-empty, so disable it until we have actual data in the queue
-	m_socket->enableWrite( false );
-
-	QObject::connect( m_socket, SIGNAL( readyRead() ),             this, SLOT( slotDataReceived() ) );
-	QObject::connect( m_socket, SIGNAL( readyWrite() ),            this, SLOT( slotReadyWrite() ) );
-	QObject::connect( m_socket, SIGNAL( hostFound() ),	       this, SLOT( slotHostFound() ) );
-	QObject::connect( m_socket, SIGNAL( connected( const KNetwork::KResolverEntry &) ), this, SLOT( slotConnectionSuccess() ) );
-	QObject::connect( m_socket, SIGNAL( gotError( int ) ),         this, SLOT( slotSocketError( int ) ) );
-	QObject::connect( m_socket, SIGNAL( closed( ) ),               this, SLOT( slotSocketClosed( ) ) );
+	QObject::connect( m_socket, SIGNAL( readyRead() ), this, SLOT( slotDataReceived() ) );
+	QObject::connect( m_socket, SIGNAL( connected() ), this, SLOT( slotConnectionSuccess() ) );
+	QObject::connect( m_socket, SIGNAL( error(QAbstractSocket::SocketError) ), this, SLOT( slotSocketError(QAbstractSocket::SocketError) ) );
+	QObject::connect( m_socket, SIGNAL( disconnected() ), this, SLOT( slotSocketClosed( ) ) );
 
 	if(m_useHttp)
 	{
@@ -134,7 +119,11 @@ void MSNSocket::connect( const QString &server, uint port )
 	aboutToConnect();
 
 	// start the asynchronous connection
-	m_socket->connect();
+	if(!m_useHttp)
+		m_socket->connectToHost( server, port );
+	else {
+		m_socket->connectToHost( m_gateway, 80 );
+	}
 }
 
 void MSNSocket::disconnect()
@@ -145,8 +134,8 @@ void MSNSocket::disconnect()
 			m_timer->stop();
 		}
 
-	if ( m_socket )
-		m_socket->closeNow();
+	if ( m_socket->isOpen() )
+		m_socket->disconnectFromHost();
 	else
 		slotSocketClosed();
 }
@@ -175,19 +164,20 @@ void MSNSocket::setOnlineStatus( MSNSocket::OnlineStatus status )
 	emit onlineStatusChanged( status );
 }
 
-void MSNSocket::slotSocketError( int error )
+void MSNSocket::slotSocketError( QAbstractSocket::SocketError error )
 {
 	kWarning( 14140 ) << "Error: " << error << " (" << m_socket->errorString() << ')';
 
-	if(!KSocketBase::isFatalError(error))
-		return;
-		//we only care about fatal error
-
 	QString errormsg = i18n( "There was an error while connecting to the MSN server.\nError message:\n" );
-	if ( error == KSocketBase::LookupFailure )
-		errormsg += i18n( "Unable to lookup %1", m_socket->peerResolver().nodeName() );
+	if ( error == QAbstractSocket::HostNotFoundError )
+		errormsg += i18n( "Unable to lookup %1", m_socket->peerName() );
 	else
 		errormsg +=  m_socket->errorString() ;
+
+	if ( error == QAbstractSocket::RemoteHostClosedError )
+		m_socket->abort();
+	else
+		m_socket->close();
 
 	//delete m_socket;
 	m_socket->deleteLater();
@@ -641,14 +631,15 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args, bool addId,
 
 	// Add the request to the queue.
 	m_sendQueue.append(data);
-	m_socket->enableWrite(true);
 
 	if ( addId )
 	{
 		++m_id;
+		slotReadyWrite();
 		return m_id - 1;
 	}
 
+	slotReadyWrite();
 	return 0;
 }
 
@@ -706,15 +697,13 @@ void MSNSocket::slotReadyWrite()
 				kDebug( 14141 ) << "Sending http command: " << QString(*it).trimmed();
 
 				// Write the request bytes to the socket.
-				m_socket->write(bytes.data(), bytes.size());
+				m_socket->write(bytes);
 
 				// Remove the request from the request queue.
 				m_sendQueue.erase(it);
 
 				if(m_sendQueue.isEmpty())
 				{
-					// Disable sending requests.
-					m_socket->enableWrite(false);
 					// If the request queue is empty, poll the server.
 					m_bCanPoll = true;
 				}
@@ -730,19 +719,12 @@ void MSNSocket::slotReadyWrite()
 				QRegExp( "(P2P-Dest:.[a-zA-Z@.]*).*" ), "\\1\n\n(Stripped binary data)" );
 			kDebug( 14141 ) << "Sending command: " << debugData;
 
-			m_socket->write( *it, ( *it ).size() );
+			m_socket->write( *it );
 			m_sendQueue.erase( it );
-
-			// If the queue is empty agalin stop waiting for readyWrite signals
-			// because of the CPU usage
-			if ( m_sendQueue.isEmpty() )
-				m_socket->enableWrite( false );
 		}
 	}
 	else
 	{
-		m_socket->enableWrite( false );
-
 		if(m_useHttp)
 		{
 			// If the request queue is empty, poll the server.
@@ -816,11 +798,6 @@ void MSNSocket::slotConnectionSuccess()
 	doneConnect();
 }
 
-void MSNSocket::slotHostFound()
-{
-        // nothing to do
-}
-
 void MSNSocket::slotSocketClosed()
 {
     kDebug( 14140 ) << "Socket closed. ";
@@ -850,10 +827,9 @@ void MSNSocket::slotHttpPoll()
 
 	// Create the http request headers.
 	const QByteArray headers = makeHttpRequestString(m_gwip, "Action=poll&SessionID=" + m_sessionId, 0).toUtf8();
-	m_socket->write(headers, headers.length());
+	m_socket->write(headers);
 	// Wait for the response.
 	m_pending = true;
-	m_socket->enableWrite(true);
 }
 
 // Used in MSNFileTransferSocket
@@ -871,8 +847,7 @@ void MSNSocket::sendBytes( const QByteArray &data )
 		return;
 	}
 
-	m_socket->write( data, data.size() );
-	m_socket->enableWrite( true );
+	m_socket->write( data );
 }
 
 bool MSNSocket::setUseHttpMethod( bool useHttp )
@@ -912,7 +887,7 @@ bool MSNSocket::useHttpMethod() const
 	return m_useHttp;
 }
 
-bool MSNSocket::accept( KServerSocket *server )
+bool MSNSocket::accept( QTcpServer *server )
 {
 	if ( m_socket )
 	{
@@ -920,7 +895,7 @@ bool MSNSocket::accept( KServerSocket *server )
 		return false;
 	}
 
-	m_socket = static_cast<KBufferedSocket*>(server->accept());
+	m_socket = server->nextPendingConnection();
 
 	if ( !m_socket )
 	{
@@ -936,14 +911,9 @@ bool MSNSocket::accept( KServerSocket *server )
 	//m_lastId = 0;
 	m_waitBlockSize = 0;
 
-	m_socket->setBlocking( false );
-	m_socket->enableRead( true );
-	m_socket->enableWrite( true );
-
-	QObject::connect( m_socket, SIGNAL( readyRead() ),             this, SLOT( slotDataReceived() ) );
-	QObject::connect( m_socket, SIGNAL( readyWrite() ),            this, SLOT( slotReadyWrite() ) );
-	QObject::connect( m_socket, SIGNAL( closed() ),                this, SLOT( slotSocketClosed() ) );
-	QObject::connect( m_socket, SIGNAL( gotError( int ) ),         this, SLOT( slotSocketError( int ) ) );
+	QObject::connect( m_socket, SIGNAL( readyRead() ), this, SLOT( slotDataReceived() ) );
+	QObject::connect( m_socket, SIGNAL( disconnected() ), this, SLOT( slotSocketClosed() ) );
+	QObject::connect( m_socket, SIGNAL( error( QAbstractSocket::SocketError ) ), this, SLOT( slotSocketError( QAbstractSocket::SocketError ) ) );
 
 	doneConnect();
 	return true;
@@ -954,9 +924,7 @@ QString MSNSocket::getLocalIP()
 	if ( !m_socket )
 		return QString();
 
-	const KSocketAddress address = m_socket->localAddress();
-
-	QString ip = address.nodeName();
+	QString ip = m_socket->localAddress().toString();
 
 	kDebug( 14140 ) << "IP: " << ip;
 	//delete address;

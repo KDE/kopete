@@ -27,11 +27,11 @@ using P2P::TransferType;
 #include <stdlib.h>
 
 // Kde includes
-#include <k3bufferedsocket.h>
 #include <kdebug.h>
 // Qt includes
 #include <QFile>
 #include <QByteArray>
+#include <QTcpSocket>
 
 // Kopete includes
 #include <kopetetransfermanager.h>
@@ -130,7 +130,7 @@ void TransferContext::acknowledge(const Message& message)
 	else
 	{
 		// Send acknowledge message directly.
-		m_socket->write(stream.data(), stream.size());
+		m_socket->write(stream);
 	}
 }
 
@@ -180,7 +180,7 @@ void TransferContext::sendData(const QByteArray& bytes)
  	else
  	{
  		// Send data directly.
- 		m_socket->write(stream.data(), stream.size());
+ 		m_socket->write(stream);
  	}
 }
 
@@ -360,7 +360,7 @@ void TransferContext::sendMessage(Message& outbound, const QByteArray& body)
 		else
 		{
 			// Send outbound message directly.
-			m_socket->write(stream.data(), stream.size());
+			m_socket->write(stream);
 		}
 	}
 }

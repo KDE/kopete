@@ -22,6 +22,7 @@
 #include "p2p.h"
 #include "dispatcher.h"
 #include <qstringlist.h>
+#include <qabstractsocket.h>
 
 /**
 @author Kopete Developers
@@ -39,7 +40,7 @@ namespace P2P{
 			void slotConnected();
 			void slotRead();
 			void slotSendData();
-			void slotSocketError(int);
+			void slotSocketError(QAbstractSocket::SocketError);
 			void slotSocketClosed();
 			
 		private:
@@ -49,7 +50,7 @@ namespace P2P{
 
 			QStringList m_peerEndpoints;
 			QStringList::Iterator m_endpointIterator;
-			QString m_remotePort;
+			uint m_remotePort;
 			QString m_nonce;
 			char m_handshake;
 
