@@ -16,6 +16,20 @@ set(kopete_private_SRCS
   private/kopeteviewmanager.cpp
 )
 
+if (Q_WS_X11)
+ if (X11_Xss_FOUND)
+  set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_x11.cpp )
+ else (X11_Xss_FOUND)
+  set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_dummy.cpp )
+ endif (X11_Xss_FOUND)
+endif (Q_WS_X11)
+if (Q_WS_MAC)
+ set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_mac.cpp )
+endif (Q_WS_MAC)
+if (Q_WS_WIN)
+ set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_win.cpp )
+endif (Q_WS_WIN)
+
 set(kopete_ui_SRCS
   ui/accountselector.cpp
   ui/addcontactpage.cpp
