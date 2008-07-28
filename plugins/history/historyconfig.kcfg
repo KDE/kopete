@@ -9,7 +9,7 @@
 	<group name="History Plugin">
 		<entry name="Auto_chatwindow" type="Bool">
 			<label>Show previous messages in new chats.</label>
-			<default>false</default>
+			<default>true</default>
 		</entry>
 
 		<entry name="Number_Auto_chatwindow" type="UInt">
