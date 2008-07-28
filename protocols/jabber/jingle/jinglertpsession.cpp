@@ -1,5 +1,5 @@
 /*WARNING : needs oRTP 0.13.1*/
-#include "rtpsession.h"
+#include "jinglertpsession.h"
 
 #include <ortp/payloadtype.h>
 

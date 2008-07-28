@@ -16,7 +16,6 @@
   */
 #include "jabberjinglesession.h"
 #include "jabberjinglecontent.h"
-#include "rtpsession.h"
 #include "jinglemediamanager.h"
 
 #include "jinglesession.h"
