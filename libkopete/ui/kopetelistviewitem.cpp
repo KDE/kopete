@@ -1188,12 +1188,9 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 	// PASTED FROM KLISTVIEWITEM:
 	// set the alternate cell background colour if necessary
 	QColorGroup _cg = cg;
-	if (isAlternate())
-		if (listView()->viewport()->backgroundMode()==Qt::FixedColor)
-			_cg.setColor(QPalette::Background, static_cast< K3ListView* >(listView())->alternateBackground());
-		else
-			_cg.setColor(QPalette::Base, static_cast< K3ListView* >(listView())->alternateBackground());
-	// PASTED FROM QLISTVIEWITEM
+	_cg.setColor( listView()->backgroundRole(), backgroundColor(column) );
+
+// PASTED FROM QLISTVIEWITEM
 	{
 		QPainter *p = &paint;
 
