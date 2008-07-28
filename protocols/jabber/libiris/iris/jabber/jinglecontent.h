@@ -62,8 +62,8 @@ namespace XMPP
 		QString iceUdpPassword();
 		QString iceUdpUFrag();
 		void createUdpInSocket();
-		QUdpSocket *socket(); // FIXME:Is it socket for data IN or for data OUT ?
-				      //       Currently, it's data IN.
+		QUdpSocket *inSocket();
+		QUdpSocket *outSocket();
 		bool sending();
 		void setSending(bool);
 		bool receiving();
@@ -82,9 +82,13 @@ namespace XMPP
 		// Emitted when the content is ready to send data to try to connect.
 		void needData(XMPP::JingleContent*);
 		
-		// Emitted when a socket is ready to receive data.
+		// Emitted when the IN socket is ready to receive data (it is bound).
 		// Can be used to prepare a rtp session with the socket.
-		void socketReady();
+		void inSocketReady();
+		
+		// Emitted when the OUT socket is ready to send data (it is connected).
+		// Can be used to prepare a rtp session with the socket.
+		void outSocketReady();
 
 	private:
 		class Private;

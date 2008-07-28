@@ -9,8 +9,9 @@
 #include <KDebug>
 //#include <>
 
-JingleRtpSession::JingleRtpSession()
+JingleRtpSession::JingleRtpSession(Direction d)
 {
+	m_direction = d;
 	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Creating JingleRtpSession";
 	/*
 	 * The RtpSession objects represent a RTP session:
@@ -22,7 +23,7 @@ JingleRtpSession::JingleRtpSession()
 	connect(rtpSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)));
 	rtcpSocket = new QUdpSocket();
 	connect(rtcpSocket, SIGNAL(readyRead()), this, SLOT(rtcpDataReady())); // FIXME:Not sure I must do this, oRTP will manage that, I don't care about this signal.
-	m_rtpSession = rtp_session_new(RTP_SESSION_SENDRECV);
+	m_rtpSession = rtp_session_new(m_direction == In ? RTP_SESSION_RECVONLY : RTP_SESSION_SENDONLY);
 	payloadID = -1;
 	payloadName = "";
 	receivingTS = 0;
@@ -37,7 +38,7 @@ JingleRtpSession::~JingleRtpSession()
 
 void JingleRtpSession::connectToHost(const QString& address, int rtpPort, int rtcpPort)
 {
-	rtpSocket->connectToHost(address, rtpPort, QIODevice::ReadWrite);
+	rtpSocket->connectToHost(address, rtpPort, m_direction == In ? QIODevice::ReadOnly : QIODevice::WriteOnly);
 	
 	rtcpSocket->connectToHost(address, rtcpPort == 0 ? rtpPort + 1 : rtcpPort, QIODevice::ReadWrite);
 
@@ -49,10 +50,17 @@ void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 	kDebug(KDE_DEFAULT_DEBUG_AREA) << (socket->isValid() ? "Socket ready" : "Socket not ready");
 	delete rtpSocket;
 	rtpSocket = (QUdpSocket*) socket;
-	connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
-	connect(rtpSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)));
 	
-	rtcpSocket->connectToHost(rtpSocket->peerAddress(), rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort, QIODevice::ReadWrite);
+	if (m_direction == In)
+	{
+		connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
+		//bind --> socket already bound.
+	}
+	else if (m_direction == Out)
+	{
+		connect(rtpSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)));
+		rtcpSocket->connectToHost(rtpSocket->peerAddress(), rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort, QIODevice::ReadWrite);
+	}
 	rtp_session_set_sockets(m_rtpSession, rtpSocket->socketDescriptor(), rtcpSocket->socketDescriptor());
 }
 
@@ -66,8 +74,8 @@ void JingleRtpSession::bind(int rtpPort, int rtcpPort)
 void JingleRtpSession::send(const QByteArray& data) //TODO:There should be overloaded methods to support other data type (QString, const *char).
 {
 	qDebug() << "JingleRtpSession::send (" << data << ")";
-	if (payloadID == -1)
-		return;
+	//if (payloadID == -1)
+	//	return;
 	state = SendingData;
 	mblk_t *packet = rtp_session_create_packet_with_data(m_rtpSession, (uint8_t*)data.data(), data.size(), /*freefn*/ NULL); //the free function is managed by the bytesWritten signal
 	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, sendingTS);
@@ -79,15 +87,22 @@ void JingleRtpSession::send(const QByteArray& data) //TODO:There should be overl
 void JingleRtpSession::rtpDataReady()
 {
 	qDebug() << "JingleRtpSession::rtpDataReady";
-	if (payloadID == -1)
-		return;
-	/*mblk_t *packet = rtp_session_recvm_with_ts(m_rtpSession, receivingTS);
+	//if (payloadID == -1)
+	//	return;
+	//int haveMore;
+	//uint8_t *buf = new uint8_t[50];
+	//int size = rtp_session_recv_with_ts(m_rtpSession, buf, 50, receivingTS, &haveMore);
+
+	//kDebug() << "Received" << size << "bytes : " << (char*) buf << "and" << haveMore << "more left";
+
+	//mblk_t *packet = rtp_session_recvm_with_ts(m_rtpSession, receivingTS);
 	//data is : packet->b_cont->b_rptr
-	//of length : len=mp->b_cont->b_wptr - mp->b_cont->b_rptr;
-	data.data() = (char*) packet->b_cont->b_rptr;*/
-	QByteArray data((const char*)rtp_session_get_data(m_rtpSession), 80);
+	//of length : len=packet->b_cont->b_wptr - packet->b_cont->b_rptr;
+	//data.data() = (char*) packet->b_cont->b_rptr;
+	//kDebug(KDE_DEFAULT_DEBUG_AREA) << "Received" << packet->b_cont->b_wptr - packet->b_cont->b_rptr << "bytes"; // CRASH HERE
+	//QByteArray data((char*) packet->b_cont->b_rptr, packet->b_cont->b_wptr - packet->b_cont->b_rptr);
 	//char* = unsigned char*
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Received (80 bytes) : " << data;
+	//kDebug(KDE_DEFAULT_DEBUG_AREA) << "Received (" << packet->b_cont->b_wptr - packet->b_cont->b_rptr << "bytes) : " << data;
 	receivingTS += payloadTS; //FIXME:What is the increment ? It depends on the payload.
 }
 
@@ -109,6 +124,7 @@ void JingleRtpSession::setPayload(const QString&)
 
 void JingleRtpSession::slotBytesWritten(qint64 size)
 {
+	kDebug() << size << "bytes written";
 	if (state != SendingData)
 		return;
 	emit dataSent();

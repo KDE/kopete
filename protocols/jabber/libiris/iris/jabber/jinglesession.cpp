@@ -393,6 +393,7 @@ void JingleSession::startRawUdpConnection(JingleContent *c)
 	qDebug() << "Start raw-udp connection (still 'TODO') for content" << c->name();
 	
 	connect(c, SIGNAL(needData(XMPP::JingleContent*)), this, SIGNAL(needData(XMPP::JingleContent*)));
+	//FIXME:This signal should not go trough JingleSession and be used directly with the JingleContent by the application.
 	c->startSending();
 
 	//Sending my own candidate:

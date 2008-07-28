@@ -58,12 +58,12 @@ void JingleCallsGui::setupActions()
 	// Create a new session
 	QAction *newSession = new QAction(tr("Add Content"), this);
 	ui.toolBar->addAction(newSession);
-	connect(newSession, SIGNAL(triggered()), this, SLOT(slotNewSession()));
+	connect(newSession, SIGNAL(triggered()), this, SLOT(slotAddContent()));
 
 	// Adds a content to the session.
 	QAction *addContent = new QAction(tr("New Session"), this);
 	ui.toolBar->addAction(addContent);
-	connect(addContent, SIGNAL(triggered()), this, SLOT(slotAddContent()));
+	connect(addContent, SIGNAL(triggered()), this, SLOT(slotNewSession()));
 
 	// Terminate the whole session.
 	QAction *terminate = new QAction(tr("Terminate"), this);
@@ -89,6 +89,7 @@ void JingleCallsGui::setupActions()
 
 void JingleCallsGui::slotNewSession()
 {
+	addSession((JabberJingleSession*)0L);
 	//TODO:Implement me !
 }
 
@@ -122,34 +123,51 @@ void JingleCallsGui::slotClose()
 void JingleCallsGui::addSession(JabberJingleSession* sess)
 {
 	kDebug() << "Add session" << (int) sess;
-	QModelIndex rootIndex = ui.treeView->rootIndex().child(0, 0);
-	TreeItem *rootItem = static_cast<TreeItem*>(rootIndex.internalPointer());
-	if (!rootItem)
-	{
-		kDebug() << "Root item is Null :s";
+	if (!sess)
 		return;
+	
+	// Insert Session
+	QAbstractItemModel *model = ui.treeView->model();
+	QModelIndex index = model->index(model->rowCount() - 1, 0);
+
+	if (!model->insertRow(model->rowCount(), index.parent()))
+		return;
+
+	//kDebug() << "Session inserted in the model !";
+
+
+	QVector<QVariant> sessData;
+	sessData << sess->session()->to().full();
+	sessData << stateToString(sess->session()->state());
+	sessData << sess->upTime().toString("HH:mm"); //FIXME:find a better formatting : don't show 0 at the begining (no 00:03)
+
+	for (int column = 0; column < model->columnCount(index.parent()); ++column)
+	{
+		QModelIndex child = model->index(index.row() + 1, column, index.parent());
+		model->setData(child, sessData[column], Qt::EditRole);
 	}
 
-	QList<QVariant> sessData;
-	sessData << sess->jingleSession()->to().full();
-	sessData << stateToString(sess->jingleSession()->state());
-	sessData << sess->upTime().toString("HH:mm"); //FIXME:find a better formatting : don't show 0 at the begining (no 00:03)
-	TreeItem *sessItem = new TreeItem(sessData, rootItem);
-	sessItem->setSessionPtr(sess);
+	// Insert Contents
+	index = model->index(model->rowCount() - 1, 0);
+	
+	if (!model->insertRows(model->rowCount(), sess->contents().count(), index))
+		return;
+
+	//kDebug() << "Contents inserted in the model !";
 
 	for (int i = 0; i < sess->contents().count(); i++)
 	{
-		QList<QVariant> contData;
+		QVector<QVariant> contData;
 		contData << sess->contents()[i]->contentName();
-		TreeItem *contItem = new TreeItem(contData, sessItem);
-		contItem->setContentPtr(sess->contents()[i]);
-		sessItem->appendChild(contItem);
+		contData << "[?]";
+		contData << "[?]";
+		
+		for (int column = 0; column < model->columnCount(index.parent()); ++column)
+		{
+			QModelIndex child = model->index(i, column, index);
+			model->setData(child, contData[column], Qt::EditRole);
+		}
 	}
-
-	rootItem->appendChild(sessItem);
-	ui.treeView->update(ui.treeView->model()->index(rootItem->childCount(), 0));
-	ui.treeView->update(ui.treeView->model()->index(rootItem->childCount(), 1));
-	ui.treeView->update(ui.treeView->model()->index(rootItem->childCount(), 2));
 }
 
 void JingleCallsGui::removeSession(JabberJingleSession* sess)
@@ -171,7 +189,7 @@ JingleCallsModel::JingleCallsModel(const QList<JabberJingleSession*> &data, QObj
  : QAbstractItemModel(parent)
 {
 	kDebug() << "Create Model";
-	QList<QVariant> rootData;
+	QVector<QVariant> rootData;
 	rootData << "Session with" << "State" << "Time";
 	rootItem = new TreeItem(rootData);
 	setModelUp(data);
@@ -180,10 +198,10 @@ JingleCallsModel::JingleCallsModel(const QList<JabberJingleSession*> &data, QObj
 void JingleCallsModel::setModelUp(const QList<JabberJingleSession*> &sessions)
 {
 	//FIXME:Later, each TreeItem could keep a pointer on the session or content it is linked to so edition is more easy.
-	kDebug() << "Setting Model up with" << sessions.count() << "sessions";
+	//kDebug() << "Setting Model up with" << sessions.count() << "sessions";
 	for (int i = 0; i < sessions.count(); i++)
 	{
-		QList<QVariant> sessData;
+		QVector<QVariant> sessData;
 		sessData << sessions[i]->session()->to().full();
 		sessData << stateToString(sessions[i]->session()->state());
 		sessData << sessions[i]->upTime().toString("HH:mm"); //FIXME:find a better formatting : don't show 0 at the begining (no 00:03)
@@ -191,7 +209,7 @@ void JingleCallsModel::setModelUp(const QList<JabberJingleSession*> &sessions)
 		sessItem->setSessionPtr(sessions[i]);
 		for (int j = 0; j < sessions[i]->contents().count(); j++)
 		{
-			QList<QVariant> contData;
+			QVector<QVariant> contData;
 			contData << sessions[i]->contents()[j]->contentName();
 			TreeItem *contItem = new TreeItem(contData, sessItem);
 			contItem->setContentPtr(sessions[i]->contents()[j]);
@@ -266,7 +284,7 @@ QVariant JingleCallsModel::data(const QModelIndex& index, int role) const
 	if (!index.isValid())
 		return QVariant();
 
-	if (role != Qt::DisplayRole)
+	if ((role != Qt::DisplayRole) && (role != Qt::EditRole))
 		return QVariant();
 
 	TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
@@ -283,10 +301,92 @@ QVariant JingleCallsModel::headerData(int section, Qt::Orientation orientation,
 	return QVariant();
 }
 
+Qt::ItemFlags JingleCallsModel::flags(const QModelIndex& index) const
+{
+	if (!index.isValid())
+		return Qt::ItemIsEnabled;
+	
+	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+}
+
+bool JingleCallsModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+	if (role != Qt::EditRole && role != Qt::DisplayRole)
+		return false;
+
+	TreeItem *item = getItem(index);
+
+	bool ret = item->setData(index.column(), value);
+	if (ret)
+		emit dataChanged(this->index(0, 0), this->index(rootItem->childCount(), 3));
+		//FIXME: decrease the number of items in the interval.
+	
+	return ret;
+}
+
+bool JingleCallsModel::insertRows(int position, int rows, const QModelIndex& parent)
+{
+	TreeItem *parentItem = getItem(parent);
+	bool success = true;
+
+	beginInsertRows(parent, position, position + rows - 1);
+	for (int i = 0; i < rows; i++)
+	{
+		if (!parentItem->appendChild(rootItem->columnCount()))
+		{
+			success = false;
+			break;
+		}
+	}
+	endInsertRows();
+
+	return success;
+}
+
+void JingleCallsModel::printTree()
+{
+	kDebug() << "|-(rootItem)" << rootItem->data(0) << "|" << rootItem->data(1) << "|" << rootItem->data(2);
+	for (int i = 0; i < rootItem->childCount(); i++)
+	{
+		TreeItem *sessItem = rootItem->child(i);
+		kDebug() << " |-" << sessItem->data(0) << "|" << sessItem->data(1) << "|" << sessItem->data(2);
+		for (int j = 0; j < sessItem->childCount(); j++)
+		{
+			TreeItem *contItem = sessItem->child(j);
+			kDebug() << "  |-" << contItem->data(0);
+		}
+
+	}
+}
+
+bool JingleCallsModel::removeRows(int position, int rows, const QModelIndex& parent)
+{
+	TreeItem *parentItem = getItem(parent);
+	bool success = true;
+
+	beginRemoveRows(parent, position, position + rows - 1);
+	success = parentItem->removeChildren(position, rows);
+	endRemoveRows();
+
+	return success;
+}
+
+TreeItem *JingleCallsModel::getItem(const QModelIndex& index) const
+{
+	if (index.isValid())
+	{
+		TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
+		if (item)
+			return item;
+	}
+	//kDebug() << "Return ROOT Item";
+	return rootItem;
+}
+
 
 // TreeItem
 
-TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
+TreeItem::TreeItem(const QVector<QVariant> &data, TreeItem *parent)
 {
 	parentItem = parent;
 	itemData = data;
@@ -317,6 +417,37 @@ void TreeItem::appendChild(TreeItem* child)
 TreeItem *TreeItem::child(int row)
 {
 	return childItems.value(row);
+}
+
+bool TreeItem::removeChildren(int pos, int count)
+{
+	if (pos < 0 || pos + count > childItems.size())
+		return false;
+
+	for (int row = 0; row < count; ++row)
+		delete childItems.takeAt(pos);
+
+	return true;
+}
+
+bool TreeItem::appendChild(int columns)
+{
+	//kDebug() << "Adding a TreeItem with" << columns << "columns";
+	QVector<QVariant> data(columns);
+	TreeItem *item = new TreeItem(data, this);
+	childItems.append(item);
+
+	return true;	
+}
+
+bool TreeItem::setData(int column, const QVariant &val)
+{
+	if (column < 0 || column >= itemData.size())
+		return false;
+
+	//kDebug() << "Set value" << val << "in column" << column;
+	itemData[column] = val;
+	return true;
 }
 
 int TreeItem::childCount() const

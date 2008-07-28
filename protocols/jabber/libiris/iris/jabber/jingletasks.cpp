@@ -35,11 +35,6 @@ using namespace XMPP;
 JingleSession::JingleAction jingleAction(const QDomElement& x)
 {
 	QString action = x.firstChildElement().attribute("action");
-	qDebug() << x.tagName();
-	qDebug() << x.firstChildElement().attribute("action");
-	qDebug() << "There are " << x.firstChildElement().attributes().count() << " attributes.";
-	qDebug() << x.firstChildElement().firstChildElement().tagName();
-	qDebug() << action;
 	if (action == "session-initiate")
 		return JingleSession::SessionInitiate;
 	else if (action == "session-terminate")

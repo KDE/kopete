@@ -37,7 +37,8 @@ public:
 	QString profile;
 	QString descriptionNS;
 	//The application will access this socket directly, Iris has not to deal with RTP.
-	QUdpSocket *socket; //Currently, this is the raw-udp socket for this content.
+	QUdpSocket *inSocket; //Currently, this is the IN raw-udp socket for this content.
+	QUdpSocket *outSocket; //Currently, this is the OUT raw-udp socket for this content.
 	bool sending;
 	bool receiving;
 };
@@ -47,12 +48,14 @@ JingleContent::JingleContent()
 {
 	d->sending = false;
 	d->receiving = false;
-	d->socket = 0L;
+	d->inSocket = 0L;
+	d->outSocket = 0L;
 }
 
 JingleContent::~JingleContent()
 {
-	delete d->socket;
+	delete d->inSocket;
+	delete d->outSocket;
 	delete d;
 }
 
@@ -231,14 +234,19 @@ void JingleContent::createUdpInSocket()
 	if (d->transport.attribute("xmlns") != "urn:xmpp:tmp:jingle:transports:raw-udp")
 		return;
 	qDebug() << "JingleContent::createUdpInSocket()";
-	if (!d->socket)
-		d->socket = new QUdpSocket();
-	//FIXME:socket is not bound.
-	//	The problem can be a bad IP, a bad port or the fact that a socket cannot be Bound _and_ connected at the same time.
-	if (d->socket->bind(QHostAddress(d->transport.firstChildElement().attribute("ip")), d->transport.firstChildElement().attribute("port").toInt()))
-		qDebug() << "Socket bound to" << d->transport.firstChildElement().attribute("ip") << ":" << d->transport.firstChildElement().attribute("port");
-	connect(d->socket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
-	emit socketReady();
+	
+	if (!d->inSocket)
+		d->inSocket = new QUdpSocket();
+	
+	//The problem is the fact that a socket cannot be Bound _and_ connected at the same time --> there is now a IN socket an a OUT socket
+	QHostAddress address(d->transport.firstChildElement().attribute("ip"));
+	int port = d->transport.firstChildElement().attribute("port").toInt();
+	if (d->inSocket->bind(address, port))
+		qDebug() << "Socket bound to" << address.toString() << ":" << port;
+	
+	connect(d->inSocket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
+	
+	emit inSocketReady();
 }
 
 void JingleContent::slotRawUdpDataReady()
@@ -246,10 +254,16 @@ void JingleContent::slotRawUdpDataReady()
 	qDebug() << "Data arrived on the socket.";
 }
 
-QUdpSocket *JingleContent::socket()
+QUdpSocket *JingleContent::inSocket()
 {
-	qDebug() << "Getting socket from content" << name();
-	return d->socket;
+	qDebug() << "Getting IN socket from content" << name();
+	return d->inSocket;
+}
+
+QUdpSocket *JingleContent::outSocket()
+{
+	qDebug() << "Getting OUT socket from content" << name();
+	return d->outSocket;
 }
 
 bool JingleContent::sending()
@@ -274,23 +288,18 @@ void JingleContent::setReceiving(bool r)
 
 void JingleContent::startSending()
 {
-	//Create udp OUT socket
-	if (!d->socket)
-		d->socket = new QUdpSocket();
-	d->socket->connectToHost(transport().firstChildElement().attribute("ip"), transport().firstChildElement().attribute("port").toInt());
-	QHostAddress address;
-	address.setAddress(transport().firstChildElement().attribute("ip"));
-	qDebug() << "Sending data to" << address.toString() << ":" << transport().firstChildElement().attribute("port").toInt();
-	qDebug() << "EMIT needData(c) SIGNAL";
-	emit needData(this);
+	QHostAddress address(transport().firstChildElement().attribute("ip"));
+	int port = transport().firstChildElement().attribute("port").toInt();
+	startSending(address, port);
 }
 
 void JingleContent::startSending(const QHostAddress& address, int port)
 {
 	//Create udp OUT socket
-	if (!d->socket)
-		d->socket = new QUdpSocket();
-	d->socket->connectToHost(address, port);
+	if (!d->outSocket)
+		d->outSocket = new QUdpSocket();
+	d->outSocket->connectToHost(address, port);
+	emit outSocketReady();
 	qDebug() << "Sending data to" << address.toString() << ":" << port;
 	qDebug() << "EMIT needData(c) SIGNAL";
 	emit needData(this); //FIXME:We can Use sender to know which content sent the signal.
@@ -313,11 +322,12 @@ QString JingleContent::profile() const
 
 void JingleContent::bind(const QHostAddress& address, int port)
 {
-	//FIXME:QNativeSocketEngine::bind() was not called in QAbstractSocket::UnconnectedState
+/*	//FIXME:QNativeSocketEngine::bind() was not called in QAbstractSocket::UnconnectedState
 	if (!d->socket)
 		d->socket = new QUdpSocket();
 	if (d->socket->bind(address, port))
 		qDebug() << "Socket bound to" << address.toString() << ":" << port;
+*/
 }
 
 JingleContent& JingleContent::operator=(const JingleContent &other)

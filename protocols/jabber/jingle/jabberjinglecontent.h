@@ -30,13 +30,15 @@ public:
 
 public slots:
 	void slotSendRtpData();
-	void slotPrepareRtpSession();
+	void slotPrepareRtpInSession();
+	void slotPrepareRtpOutSession();
 
 private:
 	XMPP::JingleContent *m_content;
 	XMPP::JingleSession *m_jingleSession;
 	JingleMediaManager *m_mediaManager;
-	JingleRtpSession *m_rtpSession;
+	JingleRtpSession *m_rtpInSession;
+	JingleRtpSession *m_rtpOutSession;
 	JabberJingleSession *m_jabberSession;
 };
 

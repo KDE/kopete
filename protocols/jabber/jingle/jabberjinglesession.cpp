@@ -30,7 +30,6 @@ JabberJingleSession::JabberJingleSession(JingleCallsManager* parent)
 : m_callsManager(parent)
 {
 	qDebug() << "Created a new JabberJingleSession";
-	m_rtpSession = 0;
 }
 
 JabberJingleSession::~JabberJingleSession()
@@ -58,6 +57,7 @@ void JabberJingleSession::setMediaManager(JingleMediaManager* mm)
 {
 	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Setting media manager. ( address =" << (int) mm << ")";
 	m_mediaManager = mm;
+	//FIXME:Could be accessed with m_callsManager.
 }
 
 void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)

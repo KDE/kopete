@@ -12,7 +12,8 @@ class JingleRtpSession : public QObject
 {
 	Q_OBJECT
 public:
-	JingleRtpSession();
+	enum Direction {In = 0, Out};
+	JingleRtpSession(Direction);
 	~JingleRtpSession();
 	
 	/*
@@ -64,6 +65,7 @@ private:
 	QString payloadName;
 	void wrapJpegData(char*, int);
 	enum State {SendingData = 0} state;
+	Direction m_direction;
 };
 
 #endif

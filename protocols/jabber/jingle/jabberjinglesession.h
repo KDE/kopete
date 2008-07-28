@@ -42,7 +42,7 @@ private:
 	JingleCallsManager *m_callsManager;
 	JingleMediaManager *m_mediaManager;
 	QList<JabberJingleContent*> jabberJingleContents;
-	JingleRtpSession *m_rtpSession;
+//	JingleRtpSession *m_rtpSession;
 };
 
 #endif

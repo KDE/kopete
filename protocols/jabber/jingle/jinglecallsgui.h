@@ -46,10 +46,16 @@ public:
 	QVariant data(const QModelIndex&, int role = Qt::DisplayRole) const;
 	QVariant headerData(int, Qt::Orientation, int) const;
 
+	Qt::ItemFlags flags(const QModelIndex& index) const;
+	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
+	bool insertRows(int position, int rows, const QModelIndex& parent = QModelIndex());
+	bool removeRows(int position, int rows, const QModelIndex& parent = QModelIndex());
+	void printTree();
+
 private:
 	TreeItem *rootItem;
+	TreeItem *getItem(const QModelIndex& index) const;
 	void setModelUp(const QList<JabberJingleSession*>&);
-
 };
 
 /*
@@ -59,7 +65,7 @@ private:
 class TreeItem
 {
 public:
-	TreeItem(const QList<QVariant>& data, TreeItem *parent = 0);
+	TreeItem(const QVector<QVariant>& data, TreeItem *parent = 0);
 	~TreeItem();
 
 	void appendChild(TreeItem *child);
@@ -67,6 +73,12 @@ public:
 	int childCount() const;
 	int columnCount() const;
 	QVariant data(int column) const;
+	
+	//bool insertChildren(int pos, int count, int columns);
+	bool appendChild(int columns);
+	bool removeChildren(int pos, int count);
+	bool setData(int column, const QVariant& val);
+
 	int row() const;
 	TreeItem *parent();
 	void setContentPtr(JabberJingleContent*);
@@ -76,7 +88,7 @@ public:
 
 private:
 	QList<TreeItem*> childItems;
-	QList<QVariant> itemData;
+	QVector<QVariant> itemData;
 	TreeItem *parentItem;
 	JabberJingleContent *contentPtr;
 	JabberJingleSession *sessionPtr;

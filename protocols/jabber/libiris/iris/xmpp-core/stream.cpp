@@ -637,10 +637,10 @@ void ClientStream::ss_readyRead()
 {
 	QByteArray a = d->ss->read();
 
-//#ifdef XMPP_DEBUG
+#ifdef XMPP_DEBUG
 	Q3CString cs(a.data(), a.size()+1);
 	fprintf(stderr, "ClientStream: recv: %d [%s]\n", a.size(), cs.data());
-//#endif
+#endif
 
 	if(d->mode == Client)
 		d->client.addIncomingData(a);

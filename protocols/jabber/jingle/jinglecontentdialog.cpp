@@ -40,7 +40,8 @@ static QString typeToString(JingleContent::Type t)
 	return "";
 }
 
-JingleContentDialog::JingleContentDialog()
+JingleContentDialog::JingleContentDialog(QWidget *parent)
+ : QDialog(parent)
 {
 	ui.setupUi(this);
 }

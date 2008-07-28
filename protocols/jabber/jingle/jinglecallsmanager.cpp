@@ -53,7 +53,7 @@ JingleCallsManager::JingleCallsManager(JabberAccount* acc)
 	d->client = d->jabberAccount->client()->client();
 	
 	init();
-	qDebug() << " ********** JingleCallsManager::JingleCallsManager created. ************* ";
+	kDebug() << " ********** JingleCallsManager::JingleCallsManager created. ************* ";
 }
 
 JingleCallsManager::~JingleCallsManager()
@@ -61,6 +61,9 @@ JingleCallsManager::~JingleCallsManager()
 	ortp_exit();
 
 	delete d->mediaManager;
+	delete d->gui;
+	//delete d->sessions;
+	delete d->contentDialog;
 
 	//TODO:delete the other fields in Private...
 }
@@ -127,7 +130,7 @@ void JingleCallsManager::init()
 bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 {
 	//TODO:There should be a way to start a video-only or audio-only session.
-	qDebug() << "Starting Jingle session for : " << toJid.full();
+	kDebug() << "Starting Jingle session for : " << toJid.full();
 	
 	//Here, we parse the features to have a list of which transports can be used with the responder.
 	bool iceUdp = false, rawUdp = false;
@@ -136,7 +139,7 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 	{
 		// Would be better to show this message in the chat dialog.
 		//QMessageBox::warning((QWidget*)this, tr("Jingle Calls Manager"), tr("The contact is not online, unable to start a Jingle session"), QMessageBox::Ok);
-		qDebug() << "The contact is not online, unable to start a Jingle session";
+		kDebug() << "The contact is not online, unable to start a Jingle session";
 		return false;
 	}
 	QStringList fList = bestResource->features().list();
@@ -173,7 +176,7 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		iceVideo->setCreator(d->jabberAccount->client()->jid().full());
 		
 		contents << iceAudio << iceVideo;
-		qDebug() << "ICE-UDP supported !!!!!!!!!!!!!!!!!!";
+		kDebug() << "ICE-UDP supported !!!!!!!!!!!!!!!!!!";
 	}
 	else if (rawUdp)
 	{
@@ -199,14 +202,14 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		rawVideo->setCreator(d->jabberAccount->client()->jid().full());
 		
 		contents << rawAudio << rawVideo;
-		qDebug() << "ICE-UDP not supported, falling back to RAW-UDP !";
+		kDebug() << "ICE-UDP not supported, falling back to RAW-UDP !";
 	}
 	else
 	{
-		qDebug() << "No protocol supported, terminating.....";
+		kDebug() << "No protocol supported, terminating.....";
 		// Would be better to show this message in the chat dialog.
 		//QMessageBox::warning((QWidget*) this, tr("Jingle Calls Manager"), tr("The contact does not support any transport method that kopete does."), QMessageBox::Ok);
-		qDebug() << "The contact does not support any transport method that kopete does.";
+		kDebug() << "The contact does not support any transport method that kopete does.";
 		return false;
 	}
 	
@@ -222,7 +225,8 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 
 void JingleCallsManager::slotNewSession(XMPP::JingleSession *newSession)
 {
-	qDebug() << "New session incoming, showing the dialog.";
+	showCallsGui();
+	kDebug() << "New session incoming, showing the dialog.";
 	
 	JabberJingleSession *jabberSess = new JabberJingleSession(this);
 	jabberSess->setMediaManager(d->mediaManager); //Could be done directly in the constructor
@@ -231,7 +235,7 @@ void JingleCallsManager::slotNewSession(XMPP::JingleSession *newSession)
 	if (d->gui)
 		d->gui->addSession(jabberSess);
 	
-	d->contentDialog = new JingleContentDialog();
+	d->contentDialog = new JingleContentDialog(d->gui);
 	d->contentDialog->setSession(newSession);
 	connect(d->contentDialog, SIGNAL(accepted()), this, SLOT(slotUserAccepted()));
 	connect(d->contentDialog, SIGNAL(rejected()), this, SLOT(slotUserRejected()));
@@ -240,28 +244,31 @@ void JingleCallsManager::slotNewSession(XMPP::JingleSession *newSession)
 
 void JingleCallsManager::slotUserAccepted()
 {
-	qDebug() << "The user accepted the session, checking accepted contents :";
+	kDebug() << "The user accepted the session, checking accepted contents :";
 	JingleContentDialog *contentDialog = (JingleContentDialog*) sender();
 	if (contentDialog == NULL)
 	{
-		qDebug() << "Fatal Error : sender is NULL !!!!";
+		kDebug() << "Fatal Error : sender is NULL !!!!";
 		return;
 	}
 	if (contentDialog->unChecked().count() == 0)
 	{
-		qDebug() << "Accept all contents !";
+		kDebug() << "Accept all contents !";
 		contentDialog->session()->acceptSession();
 	}
 	else if (contentDialog->checked().count() == 0)
 	{
-		qDebug() << "Terminate the session, no contents accepted.";
+		kDebug() << "Terminate the session, no contents accepted.";
 		contentDialog->session()->terminate(JingleReason(JingleReason::Decline));
 	}
 	else
 	{
-		qDebug() << "Accept only some contents, removing some unaccepted.";
+		kDebug() << "Accept only some contents, removing some unaccepted.";
 		contentDialog->session()->removeContent(contentDialog->unChecked());
 	}
+	kDebug() << "end";
+	contentDialog->close();
+	delete contentDialog;
 }
 
 void JingleCallsManager::slotUserRejected()
@@ -269,10 +276,13 @@ void JingleCallsManager::slotUserRejected()
 	JingleContentDialog *contentDialog = (JingleContentDialog*) sender();
 	if (contentDialog == NULL)
 	{
-		qDebug() << "Fatal Error : sender is NULL !!!!";
+		kDebug() << "Fatal Error : sender is NULL !!!!";
 		return;
 	}
 	contentDialog->session()->terminate(JingleReason(JingleReason::Decline));
+	kDebug() << "end";
+	contentDialog->close();
+	delete contentDialog;
 }
 
 void JingleCallsManager::showCallsGui()
