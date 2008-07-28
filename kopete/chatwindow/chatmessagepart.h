@@ -258,6 +258,12 @@ private:
 	 */
 	QString adjustStyleVariantForChatSession( const QString & styleVariant ) const;
 
+	/**
+	 * Find photo for given contact.
+	 * @return the photo path or base64 photo data
+	 */
+	QString photoForContact( const Kopete::Contact *contact ) const;
+
 	class Private;
 	Private *d;
 };

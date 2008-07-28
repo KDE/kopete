@@ -884,28 +884,13 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	// Replace userIconPath
 	if( message.from() )
 	{
-		QString photoPath;
-#if 0
-		photoPath = message.from()->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
-		// If the photo path is empty, set the default buddy icon for the theme
+		QString photoPath = photoForContact( message.from() );
 		if( photoPath.isEmpty() )
 		{
 			if(message.direction() == Kopete::Message::Inbound)
-				photoPath = QLatin1String("Incoming/buddy_icon.png");
+				photoPath = d->currentChatStyle->getStyleBaseHref() + QLatin1String("Incoming/buddy_icon.png");
 			else if(message.direction() == Kopete::Message::Outbound)
-				photoPath = QLatin1String("Outgoing/buddy_icon.png");
-		}
-#endif
-		if( !message.from()->metaContact()->picture().isNull() )
-		{
-			photoPath = QString( "data:image/png;base64," ) + message.from()->metaContact()->picture().base64();
-		}
-		else
-		{
-			if(message.direction() == Kopete::Message::Inbound)
-				photoPath = QLatin1String("Incoming/buddy_icon.png");
-			else if(message.direction() == Kopete::Message::Outbound)
-				photoPath = QLatin1String("Outgoing/buddy_icon.png");
+				photoPath = d->currentChatStyle->getStyleBaseHref() + QLatin1String("Outgoing/buddy_icon.png");
 		}
 		resultHTML = resultHTML.replace(QLatin1String("%userIconPath%"), photoPath);
 	}
@@ -1007,40 +992,19 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 			resultHTML = resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
 		}
 		// Get contact image paths
-#if 0
-		QString photoIncomingPath, photoOutgoingPath;
-		photoIncomingPath = remoteContact->property( Kopete::Global::Properties::self()->photo().key()).value().toString();
-		photoOutgoingPath = d->manager->myself()->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
-
-		if( photoIncomingPath.isEmpty() )
-			photoIncomingPath = QLatin1String("Incoming/buddy_icon.png");
-		if( photoOutgoingPath.isEmpty() )
-			photoOutgoingPath = QLatin1String("Outgoing/buddy_icon.png");
-
-		resultHTML = resultHTML.replace( QLatin1String("%incomingIconPath%"), photoIncomingPath);
-		resultHTML = resultHTML.replace( QLatin1String("%outgoingIconPath%"), photoOutgoingPath);
-#endif
-		QString photoIncoming, photoOutgoing;
-		if( remoteContact->metaContact() && !remoteContact->metaContact()->picture().isNull() )
+		QString photoIncoming = photoForContact( remoteContact );
+		QString photoOutgoing = photoForContact( d->manager->myself() );
+		if( photoIncoming.isEmpty() )
 		{
-			photoIncoming = QString("data:image/png;base64,%1").arg( remoteContact->metaContact()->picture().base64() );
-		}
-		else
-		{
-			photoIncoming = QLatin1String("Incoming/buddy_icon.png");
+			photoIncoming = d->currentChatStyle->getStyleBaseHref() + QLatin1String("Incoming/buddy_icon.png");
 		}
 
-		if( d->manager->myself()->metaContact() && !d->manager->myself()->metaContact()->picture().isNull() )
+		if( photoOutgoing.isEmpty() )
 		{
-			photoOutgoing =  QString("data:image/png;base64,%1").arg( d->manager->myself()->metaContact()->picture().base64() );
-		}
-		else
-		{
-			photoOutgoing = QLatin1String("Outgoing/buddy_icon.png");
+			photoOutgoing = d->currentChatStyle->getStyleBaseHref() + QLatin1String("Outgoing/buddy_icon.png");
 		}
 
-
-		resultHTML = resultHTML.replace( QLatin1String("%incomingIconPath%"), photoIncoming);
+		resultHTML = resultHTML.replace( QLatin1String("%incomingIconPath%"), photoIncoming );
 		resultHTML = resultHTML.replace( QLatin1String("%outgoingIconPath%"), photoOutgoing );
 	}
 
@@ -1219,6 +1183,25 @@ QString ChatMessagePart::adjustStyleVariantForChatSession( const QString & style
 	}
 	return styleVariant;
 }
+
+QString ChatMessagePart::photoForContact( const Kopete::Contact *contact ) const
+{
+	QString photo;
+	if ( !contact )
+		return photo;
+	
+	if( contact->metaContact() == Kopete::ContactList::self()->myself() )
+	{ // all myself contacts have the same metaContact so take photo directly from contact otherwise the photo could be wrong.
+		photo = contact->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
+	}
+	else if( !contact->metaContact()->picture().isNull() )
+	{
+		photo = QString( "data:image/png;base64," ) + contact->metaContact()->picture().base64();
+	}
+	
+	return photo;
+}
+
 #include "chatmessagepart.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
