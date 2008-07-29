@@ -32,7 +32,7 @@ JabberJingleContent::JabberJingleContent(JabberJingleSession* parent, XMPP::Jing
 	m_rtpOutSession = 0;
 	m_mediaManager = m_jabberSession->mediaManager();
 	if (!m_mediaManager)
-		kDebug(KDE_DEFAULT_DEBUG_AREA) << "m_mediaManager is Null !!!!!!!!!!!!!!!!!!!!!!!!!!";
+		kDebug(KDE_DEFAULT_DEBUG_AREA) << "m_mediaManager is Null !";
 	if (c == 0)
 		return;
 	
@@ -75,6 +75,7 @@ void JabberJingleContent::slotPrepareRtpInSession()
 		}
 		m_rtpInSession->setRtpSocket(m_content->inSocket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
 		m_rtpInSession->setPayload(elementToSdp(bestPayload(m_content->payloadTypes(), m_mediaManager->payloads())));
+		connect(m_rtpInSession, SIGNAL(readyRead(const QByteArray&)), this, SLOT(slotIncomingData(const QByteArray&)));
 	}
 }
 
@@ -91,6 +92,16 @@ void JabberJingleContent::slotPrepareRtpOutSession()
 		}
 		m_rtpOutSession->setRtpSocket(m_content->outSocket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
 	}
+}
+
+void JabberJingleSession::slotIncomingData(const QByteArray& data)
+{	
+	/*
+	 * TODO:
+	 * 	Media manager should have a pointer to each JabberJingleSession
+	 * 	so it knows what content it should expect for a given content/session.
+	 */
+	m_mediaManager->processData();
 }
 
 void JabberJingleContent::startWritingRtpData()

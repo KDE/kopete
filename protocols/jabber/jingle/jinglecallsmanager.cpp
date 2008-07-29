@@ -77,7 +77,7 @@ void JingleCallsManager::init()
 
 	//Initialize oRTP library.
 	ortp_init();
-	//ortp_scheduler_init(); // Check the utility of the scheduler.
+	ortp_scheduler_init();
 	
 	d->gui = 0L;
 	QStringList transports;

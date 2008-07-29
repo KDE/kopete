@@ -53,6 +53,7 @@ private slots:
 
 signals:
 	void dataSent();
+	void readyRead(const QByteArray&);
 
 private:
 	QUdpSocket *rtpSocket;

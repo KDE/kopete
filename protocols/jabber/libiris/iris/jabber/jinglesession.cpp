@@ -397,15 +397,15 @@ void JingleSession::startRawUdpConnection(JingleContent *c)
 	c->startSending();
 
 	//Sending my own candidate:
-	JT_JingleAction *cAction = new JT_JingleAction(d->rootTask);
-	cAction->setSession(this);
-	cAction->transportInfo(c);
+	//JT_JingleAction *cAction = new JT_JingleAction(d->rootTask);
+	//cAction->setSession(this);
+	//cAction->transportInfo(c);
 	//TODO:after sending this, this content must be ready to receive data.
 	
 	//Sending "trying" stanzas
-	JT_JingleAction *tAction = new JT_JingleAction(d->rootTask);
-	tAction->setSession(this);
-	tAction->trying(*c);
+	//JT_JingleAction *tAction = new JT_JingleAction(d->rootTask);
+	//tAction->setSession(this);
+	//tAction->trying(*c);
 }
 
 void JingleSession::slotSessTerminated()

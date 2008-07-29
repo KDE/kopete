@@ -94,6 +94,6 @@ void JingleMediaManager::startAudioStreaming()
 
 QByteArray JingleMediaManager::data()
 {
-	return QByteArray("Data for 100 ms, you should not try to play this !!");
+	return QByteArray("Data for 2000 ms, you should not try to play this !!");
 }
 
