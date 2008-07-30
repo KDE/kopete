@@ -279,7 +279,11 @@ QString AIMAccount::sanitizedMessage( const QString& message ) const
 	QDomDocument doc;
 	QString domError;
 	int errLine = 0, errCol = 0;
-	doc.setContent( addQuotesAroundAttributes(message), false, &domError, &errLine, &errCol );
+	
+	QString msg = addQuotesAroundAttributes(message);
+	msg.replace( "<BR>", "<BR/>", Qt::CaseInsensitive );
+	
+	doc.setContent( msg, false, &domError, &errLine, &errCol );
 	if ( !domError.isEmpty() ) //error parsing, do nothing
 	{
 		kDebug(OSCAR_AIM_DEBUG) << "error from dom document conversion: "
@@ -759,16 +763,22 @@ QString AIMAccount::addQuotesAroundAttributes( QString message ) const
 	sIndex = message.indexOf( "<", eIndex );
 	eIndex = message.indexOf( ">", sIndex );
 	
+	if ( sIndex == -1 || eIndex == -1 )
+		return message;
+	
 	while ( attrRegExp.indexIn( message, searchIndex ) != -1 )
 	{
 		int startReplace = message.indexOf( "=", attrRegExp.pos() ) + 1;
 		int replaceLength = attrRegExp.pos() + attrRegExp.matchedLength() - startReplace;
 		
-		while ( startReplace + replaceLength > eIndex )
+		while ( eIndex != -1 && sIndex != -1 && startReplace + replaceLength > eIndex )
 		{
 			sIndex = message.indexOf( "<", eIndex );
 			eIndex = message.indexOf( ">", sIndex );
 		}
+		
+		if ( sIndex == -1 || eIndex == -1 )
+			return message;
 		
 		searchIndex = attrRegExp.pos() + attrRegExp.matchedLength();
 		if ( startReplace <= sIndex )

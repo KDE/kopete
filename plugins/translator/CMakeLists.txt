@@ -15,7 +15,7 @@ set(kopete_translator_PART_SRCS
 kde4_add_plugin(kopete_translator ${kopete_translator_PART_SRCS})
 
 
-target_link_libraries(kopete_translator  ${KDE4_KIO_LIBS} kopete )
+target_link_libraries(kopete_translator  ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} kopete )
 
 install(TARGETS kopete_translator  DESTINATION ${PLUGIN_INSTALL_DIR})
 

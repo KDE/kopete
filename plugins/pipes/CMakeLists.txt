@@ -17,7 +17,7 @@ set (kopete_pipes_PART_SRCS
 
 kde4_add_plugin( kopete_pipes ${kopete_pipes_PART_SRCS})
 
-target_link_libraries( kopete_pipes ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} kopete )
+target_link_libraries( kopete_pipes ${KDE4_KIO_LIBS} ${KDE4_KDEUI_LIBS} kopete )
 
 install( TARGETS kopete_pipes DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -34,7 +34,7 @@ kde4_add_ui_files( kcm_kopete_pipes_PART_SRCS pipesprefsbase.ui )
 
 kde4_add_plugin( kcm_kopete_pipes ${kcm_kopete_pipes_PART_SRCS} )
 
-target_link_libraries( kcm_kopete_pipes ${KDE4_KUTILS_LIBS} kopete )
+target_link_libraries( kcm_kopete_pipes ${KDE4_KUTILS_LIBS} ${KDE4_KIO_LIBS} kopete )
 
 install( TARGETS kcm_kopete_pipes  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

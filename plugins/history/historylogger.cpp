@@ -39,6 +39,11 @@
 #include "kopetemetacontact.h"
 #include "kopetechatsession.h"
 
+bool messageTimestampLessThan(const Kopete::Message &m1, const Kopete::Message &m2)
+{
+	return m1.timestamp() < m2.timestamp();
+}
+
 // -----------------------------------------------------------------------------
 HistoryLogger::HistoryLogger( Kopete::MetaContact *m,  QObject *parent )
  : QObject(parent)
@@ -346,8 +351,6 @@ QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 {
 	QRegExp rxTime("(\\d+) (\\d+):(\\d+)($|:)(\\d*)"); //(with a 0.7.x compatibility)
 	QList<Kopete::Message> messages;
-
-
 	QList<Kopete::Contact*> ct=m_metaContact->contacts();
 
 	foreach(Kopete::Contact* contact, ct)
@@ -391,24 +394,17 @@ QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 							.arg( dt.toString(Qt::LocalDate), msg.escapedBody() ));
 					msg.setTimestamp( dt );
 					msg.setDirection( dir );
-				
 
-					// We insert it at the good place, given its date
- 					QList<Kopete::Message>::Iterator msgIt;
-					
-					for (msgIt = messages.begin(); msgIt != messages.end(); ++msgIt)
-					{
-						if ((*msgIt).timestamp() > msg.timestamp())
-							break;
-					}
-					messages.insert(msgIt, msg);
+					messages.append(msg);
 				}
 			}
 
 			n = n.nextSibling();
 		} // end while on messages
-		
+
 	}
+
+	qSort(messages.begin(), messages.end(), messageTimestampLessThan);
 	return messages;
 }
 
@@ -433,9 +429,9 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
 	if(c && !m_metaContact->contacts().contains(const_cast<Kopete::Contact*>(c)) )
 		return messages;
 
-	if(sens ==0 )  //if no sens are selected, just continue in the previous sens
+	if(sens == Default )  //if no sens are selected, just continue in the previous sens
 		sens = m_oldSens ;
-	if( m_oldSens != 0 && sens != m_oldSens )
+	if( m_oldSens != Default && sens != m_oldSens )
 	{ //we changed our sens! so retrieve the old position to fly in the other way
 		m_currentElements= m_oldElements;
 		m_currentMonth=m_oldMonth;
@@ -468,7 +464,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
 	{
 		return messages;
 	}
-	
+
 	while(messages.count() < lines)
 	{
 		timeLimit=QDateTime();
@@ -675,7 +671,7 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
 
 QString HistoryLogger::getFileName(const Kopete::Contact* c, QDate date)
 {
-	
+
 	QString name = c->protocol()->pluginId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
 		QString::fromLatin1( "/" ) +
 		c->account()->accountId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
@@ -846,7 +842,7 @@ QList<int> HistoryLogger::getDaysForMonth(QDate date)
 		{
 			pos += rxTime.matchedLength();
 			int day=rxTime.capturedTexts()[1].toInt();
-			
+
 			if ( day !=lastDay && dayList.indexOf(day) == -1) // avoid duplicates
 			{
 				dayList.append(rxTime.capturedTexts()[1].toInt());

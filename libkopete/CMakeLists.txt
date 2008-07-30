@@ -16,6 +16,20 @@ set(kopete_private_SRCS
   private/kopeteviewmanager.cpp
 )
 
+if (Q_WS_X11)
+ if (X11_Xss_FOUND)
+  set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_x11.cpp )
+ else (X11_Xss_FOUND)
+  set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_dummy.cpp )
+ endif (X11_Xss_FOUND)
+endif (Q_WS_X11)
+if (Q_WS_MAC)
+ set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_mac.cpp )
+endif (Q_WS_MAC)
+if (Q_WS_WIN)
+ set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_win.cpp )
+endif (Q_WS_WIN)
+
 set(kopete_ui_SRCS
   ui/accountselector.cpp
   ui/addcontactpage.cpp
@@ -131,7 +145,8 @@ kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC
 
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 
-target_link_libraries(kopete ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS})
+target_link_libraries(kopete ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS} ${KDE4_SOLID_LIBS} ${X11_LIBRARIES})
+
 if(Q_WS_X11 AND X11_Xss_FOUND)
    target_link_libraries(kopete ${X11_Xss_LIB})
 endif(Q_WS_X11 AND X11_Xss_FOUND)
@@ -139,6 +154,7 @@ endif(Q_WS_X11 AND X11_Xss_FOUND)
 set_target_properties(kopete PROPERTIES
     VERSION ${GENERIC_LIB_VERSION}
     SOVERSION ${GENERIC_LIB_SOVERSION}
+    ${KDE4_DISABLE_PROPERTY_}LINK_INTERFACE_LIBRARIES "kdeui"
     )
 if(MSVC)
   set_target_properties(kopete PROPERTIES

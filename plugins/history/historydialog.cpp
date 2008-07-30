@@ -329,7 +329,8 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 		QString::fromLatin1("ltr"));
 
 	QString accountLabel;
-	QString resultHTML = "<b><font color=\"red\">" + msgs.front().timestamp().date().toString() + "</font></b><br/>";
+	QString date = msgs.isEmpty() ? "" : msgs.front().timestamp().date().toString();
+	QString resultHTML = "<b><font color=\"red\">" + date + "</font></b><br/>";
 
 	DOM::HTMLElement newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
 	newNode.setAttribute(QString::fromLatin1("dir"), dir);

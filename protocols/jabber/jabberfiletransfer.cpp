@@ -92,15 +92,16 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 
 	mAccount = account;
 	mLocalFile.setFileName ( file );
-	mLocalFile.open ( QIODevice::ReadOnly );
-
+	bool canOpen=mLocalFile.open ( QIODevice::ReadOnly );
+	
 	mKopeteTransfer = Kopete::TransferManager::transferManager()->addTransfer ( contact,
 																			  mLocalFile.fileName (),
 																			  mLocalFile.size (),
 																			  contact->contactId (),
 																			  Kopete::FileTransferInfo::Outgoing );
 
- 	connect ( mKopeteTransfer, SIGNAL ( result ( KJob * ) ), this, SLOT ( slotTransferResult () ) );
+
+	connect ( mKopeteTransfer, SIGNAL ( result ( KJob * ) ), this, SLOT ( slotTransferResult () ) );
 
 	mXMPPTransfer = mAccount->client()->fileTransferManager()->createTransfer ();
 
@@ -122,7 +123,11 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 		preview= KCodecs::base64Encode( ba  , true  );
 	}
 
-	mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), KUrl(file).fileName (), mLocalFile.size (), "" , preview);
+	  
+	if(canOpen)
+		mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), KUrl(file).fileName (), mLocalFile.size (), "" , preview);
+	else
+		mKopeteTransfer->slotError ( KIO::ERR_CANNOT_OPEN_FOR_READING, file );
 
 }
 

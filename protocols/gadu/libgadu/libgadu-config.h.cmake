@@ -11,10 +11,10 @@
 #undef __GG_LIBGADU_HAVE_C99_VSNPRINTF
 
 /* Defined if this machine has va_copy(). */
-#undef __GG_LIBGADU_HAVE_VA_COPY
+#cmakedefine __GG_LIBGADU_HAVE_VA_COPY
 
 /* Defined if this machine has __va_copy(). */
-#undef __GG_LIBGADU_HAVE___VA_COPY
+#cmakedefine __GG_LIBGADU_HAVE___VA_COPY
 
 /* Defined if this machine supports long long. */
 #undef __GG_LIBGADU_HAVE_LONG_LONG

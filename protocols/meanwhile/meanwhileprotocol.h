@@ -56,7 +56,7 @@ public:
     const Kopete::OnlineStatus accountOfflineStatus();
 
     const Kopete::OnlineStatus lookupStatus(
-            enum Kopete::OnlineStatusManager::Categories cats);
+            Kopete::OnlineStatusManager::Categories cats);
 
     const Kopete::OnlineStatus statusOffline;
     const Kopete::OnlineStatus statusOnline;
@@ -65,8 +65,9 @@ public:
     const Kopete::OnlineStatus statusIdle;
     const Kopete::OnlineStatus statusAccountOffline;
 
-    Kopete::ContactPropertyTmpl statusMessage;
-    Kopete::ContactPropertyTmpl awayMessage;
+// TODO
+//    Kopete::ContactPropertyTmpl statusMessage;
+//    Kopete::ContactPropertyTmpl awayMessage;
 
 };
 

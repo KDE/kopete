@@ -63,17 +63,19 @@ public:
 	 * Format contact's nickname/displayname according to preferences.
 	 *
 	 * @param contact Contact to format.
+	 * @param format text format, only PlainText and RichText are supported
 	 * @return the formatted name.
 	 */
-	QString formatName( const Kopete::Contact* contact ) const;
+	QString formatName( const Kopete::Contact* contact, Qt::TextFormat format ) const;
 
 	/**
 	 * Format a nickname/displayname according to preferences.
 	 *
 	 * @param sourceName Source name to format.
+	 * @param format text format, only PlainText and RichText are supported
 	 * @return the formatted name.
 	 */
-	QString formatName( const QString &sourceName ) const;
+	QString formatName( const QString &sourceName, Qt::TextFormat format ) const;
 
 public slots:
 	/**
@@ -255,6 +257,12 @@ private:
 	 * @return the munged path, eg variant_compact.css
 	 */
 	QString adjustStyleVariantForChatSession( const QString & styleVariant ) const;
+
+	/**
+	 * Find photo for given contact.
+	 * @return the photo path or base64 photo data
+	 */
+	QString photoForContact( const Kopete::Contact *contact ) const;
 
 	class Private;
 	Private *d;

@@ -17,7 +17,6 @@
 
 #include "meanwhileaccount.h"
 #include "meanwhilecontact.h"
-#include <kextendedsocket.h>
 
 #include <mw_session.h>
 #include <mw_service.h>
@@ -26,6 +25,8 @@
 #include <mw_srvc_resolve.h>
 //Added by qt3to4:
 #include <Q3ValueList>
+
+class QTcpSocket;
 
 /**
  * A class to handle libmeanwhile session management.
@@ -67,7 +68,7 @@ public:
      * @param msg a custom message to use, if required
      */
     void setStatus(Kopete::OnlineStatus status,
-            const QString msg = QString());
+            const Kopete::StatusMessage &msg = Kopete::StatusMessage());
 
     /**
      * Add a single contact to be registered for status updates
@@ -79,7 +80,7 @@ public:
      * Add a list of contacts to be registered for status updates
      * @param contact The list of contacts to register
      */
-    void addContacts(const Q3Dict<Kopete::Contact>& contacts);
+    void addContacts(const QHash<QString, Kopete::Contact *> &contacts);
 
     /**
      * Send a message (with recipient specified).
@@ -159,7 +160,7 @@ private:
     MeanwhileAccount *account;
 
     /** socket to the server */
-    KExtendedSocket *socket;
+    QTcpSocket *socket;
 
     /* These structures are stored in the libmeanwhile 'ClientData' fields */
 
@@ -237,10 +238,9 @@ private slots:
     void slotSocketDataAvailable();
 
     /**
-     * Notify the library that the socket has been closed
-     * @param reason the reason for closing
+     * Notify the library that the socket is about to be closed
      */
-    void slotSocketClosed(int reason);
+    void slotSocketAboutToClose();
 
 private:
     /* ugly callbacks for libmeanwhile interface. These declare a static method

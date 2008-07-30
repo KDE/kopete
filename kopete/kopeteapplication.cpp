@@ -55,14 +55,15 @@ KopeteApplication::KopeteApplication()
 {
 	setQuitOnLastWindowClosed( false );
 	m_isShuttingDown = false;
+
+	//Create the identity manager
+	Kopete::IdentityManager::self()->load();
+
 	m_mainWindow = new KopeteWindow( 0 );
 
 	Kopete::PluginManager::self();
 
 	Kopete::UI::Global::setMainWidget( m_mainWindow );
-
-	//Create the identity manager
-	Kopete::IdentityManager::self()->load();
 
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:
@@ -222,13 +223,17 @@ void KopeteApplication::slotAllPluginsLoaded()
 		Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Online, QString(), Kopete::AccountManager::ConnectIfOffline );
 
 	QStringList connectArgs = args->getOptionList( "autoconnect" );
-	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
+
+	// toConnect will contain all the protocols to connect to
+	QStringList toConnect;
+
+	for ( QStringList::ConstIterator i = connectArgs.constBegin(); i != connectArgs.constEnd(); ++i )
 	{
 		foreach ( const QString connectArg, (*i).split(','))
-			connectArgs.append( connectArg );
+			toConnect.append( connectArg );
 	}
 
-	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
+	for ( QStringList::ConstIterator i = toConnect.constBegin(); i != toConnect.constEnd(); ++i )
 	{
 		QRegExp rx( QLatin1String( "([^\\|]*)\\|\\|(.*)" ) );
 		rx.indexIn( *i );

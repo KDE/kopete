@@ -273,6 +273,10 @@ void PluginManager::loadAllPlugins()
 		QList<KPluginInfo>::ConstIterator end = plugins.end();
 		for ( ; it2 != end; ++it2 )
 		{
+			// Protocols are loaded automatically so they aren't always in Plugins group. (fixes bug 167113)
+			if ( it2->category() == QLatin1String( "Protocols" ) )
+				continue;
+
 			QString pluginName = it2->pluginName();
 			if ( pluginsMap.value( pluginName, it2->isPluginEnabledByDefault() ) )
 			{
