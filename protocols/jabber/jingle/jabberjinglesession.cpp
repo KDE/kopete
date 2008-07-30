@@ -40,7 +40,7 @@ JabberJingleSession::~JabberJingleSession()
 
 void JabberJingleSession::setJingleSession(XMPP::JingleSession* sess)
 {
-	qDebug() << "Setting JingleSession in the JabberJingleSession :" << (unsigned int) sess;
+	qDebug() << "Setting JingleSession in the JabberJingleSession :" << (int*) sess;
 	m_jingleSession = sess;
 	connect(sess, SIGNAL(needData(XMPP::JingleContent*)), this, SLOT(writeRtpData(XMPP::JingleContent*)));
 	//connect(sess, SIGNAL(destroyed()), this, SIGNAL(sessionTerminated()));
@@ -54,7 +54,7 @@ void JabberJingleSession::setJingleSession(XMPP::JingleSession* sess)
 
 void JabberJingleSession::setMediaManager(JingleMediaManager* mm)
 {
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Setting media manager. ( address =" << (int) mm << ")";
+	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Setting media manager. ( address =" << (int*) mm << ")";
 	m_mediaManager = mm;
 	//FIXME:Could be accessed with m_callsManager.
 }

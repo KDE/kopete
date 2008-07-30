@@ -122,7 +122,7 @@ void JingleCallsGui::slotClose()
 
 void JingleCallsGui::addSession(JabberJingleSession* sess)
 {
-	kDebug() << "Add session" << (int) sess;
+	kDebug() << "Add session" << (int*) sess;
 	if (!sess)
 		return;
 	
@@ -172,7 +172,7 @@ void JingleCallsGui::addSession(JabberJingleSession* sess)
 
 void JingleCallsGui::removeSession(JabberJingleSession* sess)
 {
-	kDebug() << "Remove session" << (int) sess;
+	kDebug() << "Remove session" << (int*) sess;
 	//Don't delete it, just remove it from the QTreeView.
 }
 

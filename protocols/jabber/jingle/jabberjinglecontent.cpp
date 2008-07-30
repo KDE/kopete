@@ -94,14 +94,14 @@ void JabberJingleContent::slotPrepareRtpOutSession()
 	}
 }
 
-void JabberJingleSession::slotIncomingData(const QByteArray& data)
+void JabberJingleContent::slotIncomingData(const QByteArray& data)
 {	
 	/*
 	 * TODO:
 	 * 	Media manager should have a pointer to each JabberJingleSession
 	 * 	so it knows what content it should expect for a given content/session.
 	 */
-	m_mediaManager->processData();
+//	m_mediaManager->processData();
 }
 
 void JabberJingleContent::startWritingRtpData()

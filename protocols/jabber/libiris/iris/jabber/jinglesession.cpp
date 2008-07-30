@@ -438,7 +438,7 @@ void JingleSession::addTransportInfo(const QDomElement& e)
 	
 	JingleContent *content = contentWithName(e.attribute("name"));
 	
-	qDebug() << "Found content with address" << (int) content;
+	qDebug() << "Found content with address" << (int*) content;
 	
 	connect(content, SIGNAL(needData(XMPP::JingleContent*)), this, SIGNAL(needData(XMPP::JingleContent*)));
 	content->addTransportInfo(e);
