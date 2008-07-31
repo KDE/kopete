@@ -6,7 +6,7 @@ set(kopete_webpresence_PART_SRCS webpresenceplugin.cpp )
 
 kde4_add_plugin(kopete_webpresence ${kopete_webpresence_PART_SRCS})
 
-target_link_libraries(kopete_webpresence  ${KDE4_KDECORE_LIBS} kopete ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} )
+target_link_libraries(kopete_webpresence  ${KDE4_KIO_LIBS} kopete ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${QT_QTXML_LIBRARY})
 
 install(TARGETS kopete_webpresence  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -18,7 +18,7 @@ set(kcm_kopete_webpresence_PART_SRCS webpresencepreferences.cpp )
 kde4_add_ui_files(kcm_kopete_webpresence_PART_SRCS webpresenceprefs.ui )
 kde4_add_plugin(kcm_kopete_webpresence ${kcm_kopete_webpresence_PART_SRCS})
 
-target_link_libraries(kcm_kopete_webpresence  ${KDE4_KUTILS_LIBS} kopete )
+target_link_libraries(kcm_kopete_webpresence  ${KDE4_KUTILS_LIBS} ${KDE4_KIO_LIBS} kopete )
 
 install(TARGETS kcm_kopete_webpresence  DESTINATION ${PLUGIN_INSTALL_DIR})
 

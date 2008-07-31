@@ -81,7 +81,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		mMainWidget->lblAwayMessage->hide();
 
 		userInfoView=0L;
-		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
+		mMainWidget->userInfoFrame->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
 		l->setContentsMargins( 0, 0, 0, 0 );
 		userInfoEdit = new KTextEdit(QString(), mMainWidget->userInfoFrame);
@@ -99,7 +99,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 	else
 	{
 		userInfoEdit=0L;
-		mMainWidget->userInfoFrame->setFrameStyle(Q3Frame::NoFrame | Q3Frame::Plain);
+		mMainWidget->userInfoFrame->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
 		l->setContentsMargins( 0, 0, 0, 0 );
 		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame);

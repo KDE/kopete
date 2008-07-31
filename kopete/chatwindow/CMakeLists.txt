@@ -21,7 +21,7 @@ kopetechatwindowstyle.cpp )
 
 kde4_add_kcfg_files(kopetechatwindow_shared_SRCS GENERATE_MOC kopetechatwindowsettings.kcfgc )
 kde4_add_library(kopetechatwindow_shared SHARED ${kopetechatwindow_shared_SRCS})
-target_link_libraries(kopetechatwindow_shared kopete ${KDE4_KHTML_LIBS} )
+target_link_libraries(kopetechatwindow_shared kopete ${KDE4_KHTML_LIBS} ${KDE4_KUTILS_LIBS} )
 set_target_properties(kopetechatwindow_shared PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kopetechatwindow_shared ${INSTALL_TARGETS_DEFAULT_ARGS})
 
@@ -31,8 +31,7 @@ set(krichtexteditpart_PART_SRCS krichtexteditpart.cpp )
 
 kde4_add_plugin(krichtexteditpart WITH_PREFIX ${krichtexteditpart_PART_SRCS})
 
-
-target_link_libraries(krichtexteditpart  kopete ${KDE4_KPARTS_LIBS})
+target_link_libraries(krichtexteditpart kopete ${KDE4_KPARTS_LIBS} )
 
 install(TARGETS krichtexteditpart  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -45,7 +44,7 @@ set(kopete_chatwindow_PART_SRCS chatview.cpp kopetechatwindow.cpp chatmemberslis
 kde4_add_plugin(kopete_chatwindow ${kopete_chatwindow_PART_SRCS})
 
 
-target_link_libraries(kopete_chatwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared)
+target_link_libraries(kopete_chatwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared ${KDE4_KHTML_LIBS} ${QT_QT3SUPPORT_LIBRARY})
 
 install(TARGETS kopete_chatwindow  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -58,7 +57,7 @@ set(kopete_emailwindow_PART_SRCS kopeteemailwindow.cpp )
 kde4_add_plugin(kopete_emailwindow ${kopete_emailwindow_PART_SRCS})
 
 
-target_link_libraries(kopete_emailwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared)
+target_link_libraries(kopete_emailwindow  ${KDE4_KDEUI_LIBS} ${KDE4_KPARTS_LIBS} ${KDE4_KHTML_LIBS} kopete kopetechatwindow_shared)
 
 install(TARGETS kopete_emailwindow  DESTINATION ${PLUGIN_INSTALL_DIR})
 

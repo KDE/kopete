@@ -11,7 +11,7 @@ set(kopete_addbookmarks_PART_SRCS addbookmarksplugin.cpp addbookmarksprefssettin
 kde4_add_plugin(kopete_addbookmarks ${kopete_addbookmarks_PART_SRCS})
 
 
-target_link_libraries(kopete_addbookmarks  ${KDE4_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_addbookmarks  ${KDE4_KIO_LIBS} kopete )
 
 install(TARGETS kopete_addbookmarks  DESTINATION ${PLUGIN_INSTALL_DIR})
 
