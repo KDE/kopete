@@ -20,12 +20,6 @@
 #include <QtCore/QLibrary>
 #include <windows.h>
 
-typedef struct tagLASTINPUTINFO
-{
-	UINT cbSize;
-	DWORD dwTime;
-} LASTINPUTINFO, *PLASTINPUTINFO;
-
 class Kopete::IdlePlatform::Private
 {
 public:
