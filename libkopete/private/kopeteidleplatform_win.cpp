@@ -18,7 +18,7 @@
 #include "kopeteidleplatform_p.h"
 
 #include <QtCore/QLibrary>
-#include< windows.h>
+#include <windows.h>
 
 typedef struct tagLASTINPUTINFO
 {
