@@ -49,10 +49,10 @@ JingleSession::JingleAction jingleAction(const QDomElement& x)
 		return JingleSession::ContentRemove;
 	else if (action == "content-modify")
 		return JingleSession::ContentModify;
-	else if (action == "content-replace")
-		return JingleSession::ContentReplace;
-	else if (action == "content-accept")
-		return JingleSession::ContentAccept;
+	else if (action == "transport-replace")
+		return JingleSession::TransportReplace;
+	else if (action == "transport-accept")
+		return JingleSession::TransportAccept;
 	else if (action == "transport-info")
 		return JingleSession::TransportInfo;
 	else
@@ -255,6 +255,7 @@ void JT_PushJingleAction::ack()
 void JT_PushJingleAction::jingleError(const QDomElement& x)
 {
 	qDebug() << "There was an error from the responder. Not supported yet.";
+	Q_UNUSED(x)
 	//emit error(???);
 }
 
@@ -289,6 +290,7 @@ void JT_JingleAction::setSession(JingleSession *sess)
 
 bool interfaceOrder(const QHostAddress& a1, const QHostAddress& a2)
 {
+	Q_UNUSED(a2)
 	if ((a1 != QHostAddress::LocalHost) && (a1 != QHostAddress::Null))
 		return true;
 	return false;

@@ -209,8 +209,8 @@ namespace XMPP
 			ContentAdd,
 			ContentRemove,
 			ContentModify,
-			ContentReplace,
-			ContentAccept,
+			TransportReplace,
+			TransportAccept,
 			TransportInfo,
 			NoAction
 		};

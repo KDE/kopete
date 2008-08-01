@@ -178,6 +178,7 @@ void JingleCallsGui::removeSession(JabberJingleSession* sess)
 
 /*DEPRECATED(sessions retrieved from m_callsManager)*/void JingleCallsGui::setSessions(const QList<JabberJingleSession*>& sessions)
 {
+	Q_UNUSED(sessions)
 
 }
 

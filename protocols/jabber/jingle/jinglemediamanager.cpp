@@ -17,60 +17,103 @@
 #include "jinglemediamanager.h"
 
 #include <QList>
+#include <QStringList>
 #include <QDomElement>
 #include <KDebug>
 
+/*********************
+ * JingleMediaSession
+ *********************/
+
+JingleMediaSession::JingleMediaSession()
+{
+
+}
+
+JingleMediaSession::~JingleMediaSession()
+{
+
+}
+
+void JingleMediaSession::setPayloadType(const QDomElement& payload)
+{
+	int pID = payload.attribute("id").toInt();
+	if (pID >= 0 && pID <= 23) // This is audio payload.
+		m_type = Audio;
+	else /*if (pID >= 24 && pID <= 34)*/// Let's say other ones are video... // This is video payload.
+		m_type = Video;
+	
+	m_payload = payload;
+}
+
+void JingleMediaSession::setInputDevice(const Solid::DeviceInterface* device)
+{
+	Q_UNUSED(device)
+	if (m_type == Audio)
+	{
+		
+	}
+}
+
+void JingleMediaSession::setOutputDevice(const Solid::DeviceInterface* device)
+{
+	Q_UNUSED(device)
+}
+
+/*********************
+ * JingleMediaManager
+ *********************/
+
 JingleMediaManager::JingleMediaManager()
 {
-	//findDevice();
+	findDevices();
 	timer = 0;
 }
 
 JingleMediaManager::~JingleMediaManager()
 {
-	kDebug() << "MEDIA MANAGER DESTROYED !!";
+	kDebug() << "Media manager destroyed";
 }
 
 /*
  * Find audio input and output devices.
  */
-int JingleMediaManager::findDevice()
+void JingleMediaManager::findDevices()
 {
-	m_inputDevice = 0L;
-	m_outputDevice = 0L;
-	QList<Solid::Device> devicesList = Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface, QString());
-        int i = 0, ret = 0;
-        while (i <= devicesList.count())
+	QList<Solid::Device> deviceList = Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface, QString());
+	for (int i = 0; i < deviceList.count(); i++)
         {
-                Solid::AudioInterface *device = devicesList[i].as<Solid::AudioInterface>();
+                Solid::AudioInterface *device = deviceList[i].as<Solid::AudioInterface>();
                 if (device->deviceType() == Solid::AudioInterface::AudioInput)
-                {
-			if (m_inputDevice != 0L)
-				delete m_inputDevice;
+		{
 			kDebug() << "Microphone found. The driver used is " << device->driver();
-			m_inputDevice = device;
-                	i++;
-			ret++;
-			continue;
-                }
-                
+			m_microphones << device;
+		}
+
 		if (device->deviceType() == Solid::AudioInterface::AudioOutput)
-                {
-			if (m_outputDevice != 0L)
-				delete m_outputDevice;
+		{
 			kDebug() << "Sound card found. The driver used is " << device->driver();
-			m_outputDevice = device;
-                	i++;
-			ret++;
-			continue;
-                }
-                
-		delete device;
-                i++;
-        }
+			m_audioOutputs << device;
+		}
+	}
 
-	return ret;
+	deviceList = Solid::Device::listFromType(Solid::DeviceInterface::Video, QString());
+	for (int i = 0; i < deviceList.count(); i++)
+		m_videoInputs << deviceList[i].as<Solid::Video>();
+}
 
+void JingleMediaManager::startVideoStreaming()
+{
+
+}
+
+QList<Solid::Video*> JingleMediaManager::videoDevices()
+{
+	// TODO:returns a list with devices
+	//	The content of each item should be the name of the device (/dev/video0)
+	//	But it could also be Phonon objects (I still don't know which ones)
+	//	But it could also be Solid objects (I still don't know which ones) <-- This one will be used.
+	return m_videoInputs;
 }
 
 QList<QDomElement> JingleMediaManager::payloads()
@@ -81,7 +124,7 @@ QList<QDomElement> JingleMediaManager::payloads()
 
 void JingleMediaManager::startAudioStreaming()
 {
-	if (timer == 0)
+/*	if (timer == 0)
 	{
 		timer = new QTimer();
 		timer->setInterval(2000);
@@ -89,7 +132,7 @@ void JingleMediaManager::startAudioStreaming()
 	}
 	if (!timer->isActive())
 		timer->start();
-	
+*/	
 }
 
 QByteArray JingleMediaManager::data()
@@ -97,3 +140,29 @@ QByteArray JingleMediaManager::data()
 	return QByteArray("Data for 2000 ms, you should not try to play this !!");
 }
 
+JingleMediaSession *JingleMediaManager::createNewSession(const QDomElement& payload, const Solid::DeviceInterface *inputDevice, const Solid::DeviceInterface *outputDevice)
+{
+	if ((!payload.isNull()) || (payload.tagName() != "payload-type"))
+		return NULL;
+	
+	JingleMediaSession *mediaSession = new JingleMediaSession();
+	
+	mediaSession->setPayloadType(payload);
+	mediaSession->setInputDevice(inputDevice);
+	mediaSession->setOutputDevice(outputDevice);
+
+	connect(mediaSession, SIGNAL(incomingData()), this, SLOT(slotIncomingData()));
+	connect(mediaSession, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
+	
+	m_sessions << mediaSession;
+
+	return mediaSession;
+}
+
+void JingleMediaManager::slotSessionTerminated()
+{
+	JingleMediaSession *session = (JingleMediaSession*) sender();
+
+	m_sessions.removeOne(session);
+	delete session; //This will delete signals to and from this session.
+}

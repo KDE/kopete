@@ -188,6 +188,7 @@ void JingleSessionManager::slotTransportInfo(const QDomElement& x)
 
 void JingleSessionManager::slotSessionTerminate(const QString& sid, const JingleReason& reason)
 {
+	Q_UNUSED(reason)
 	JingleSession *sess = session(sid);
 	if (!sess)
 	{

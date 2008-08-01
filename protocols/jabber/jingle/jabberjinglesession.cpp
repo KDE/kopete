@@ -29,6 +29,10 @@ JabberJingleSession::JabberJingleSession(JingleCallsManager* parent)
 : m_callsManager(parent)
 {
 	qDebug() << "Created a new JabberJingleSession";
+	m_timeUp = QTime(0, 0);
+	QTimer *uptime = new QTimer(this);
+	connect(uptime, SIGNAL(timeout()), this, SLOT(slotUptimeOut()));
+	uptime->start(1000);
 }
 
 JabberJingleSession::~JabberJingleSession()
@@ -38,9 +42,14 @@ JabberJingleSession::~JabberJingleSession()
 	delete m_jingleSession;
 }
 
+void JabberJingleSession::slotUptimeOut()
+{
+	m_timeUp.addSecs(1);
+}
+
 void JabberJingleSession::setJingleSession(XMPP::JingleSession* sess)
 {
-	qDebug() << "Setting JingleSession in the JabberJingleSession :" << (int*) sess;
+	qDebug() << "Setting JingleSession in the JabberJingleSession :" << sess;
 	m_jingleSession = sess;
 	connect(sess, SIGNAL(needData(XMPP::JingleContent*)), this, SLOT(writeRtpData(XMPP::JingleContent*)));
 	//connect(sess, SIGNAL(destroyed()), this, SIGNAL(sessionTerminated()));
@@ -54,7 +63,7 @@ void JabberJingleSession::setJingleSession(XMPP::JingleSession* sess)
 
 void JabberJingleSession::setMediaManager(JingleMediaManager* mm)
 {
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Setting media manager. ( address =" << (int*) mm << ")";
+	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Setting media manager. ( address =" << mm << ")";
 	m_mediaManager = mm;
 	//FIXME:Could be accessed with m_callsManager.
 }
@@ -91,6 +100,6 @@ JingleMediaManager *JabberJingleSession::mediaManager() const
 QTime JabberJingleSession::upTime()
 {
 	//TODO:Implement me !
-	return QTime(0, 0);
+	return m_timeUp;
 }
 

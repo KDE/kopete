@@ -34,7 +34,6 @@ public:
 	QList<QDomElement> candidates;
 	QString creator;
 	QString name;
-	QString profile;
 	QString descriptionNS;
 	//The application will access this socket directly, Iris has not to deal with RTP.
 	QUdpSocket *inSocket; //Currently, this is the IN raw-udp socket for this content.
@@ -104,11 +103,6 @@ void JingleContent::setDescriptionNS(const QString& desc)
 	d->descriptionNS = desc;
 }
 
-void JingleContent::setProfile(const QString& p)
-{
-	d->profile = p;
-}
-
 void JingleContent::fromElement(const QDomElement& e)
 {
 	// FIXME:tag order may not always be the same !!!
@@ -118,7 +112,6 @@ void JingleContent::fromElement(const QDomElement& e)
 	d->name = e.attribute("name");
 	QDomElement desc = e.firstChildElement();
 	d->descriptionNS = desc.attribute("xmlns");
-	d->profile = desc.attribute("profile");
 	QDomElement payload = desc.firstChildElement();
 	while (!payload.isNull())
 	{
@@ -141,7 +134,6 @@ QDomElement JingleContent::contentElement()
 	
 	QDomElement description = doc.createElement("description");
 	description.setAttribute("xmlns", d->descriptionNS);
-	description.setAttribute("profile", d->profile);
 
 	for (int i = 0; i < d->payloads.count(); i++)
 	{
@@ -315,13 +307,10 @@ QString JingleContent::creator() const
 	return d->creator;
 }
 
-QString JingleContent::profile() const
-{
-	return d->profile;
-}
-
 void JingleContent::bind(const QHostAddress& address, int port)
 {
+	Q_UNUSED(address)
+	Q_UNUSED(port)
 /*	//FIXME:QNativeSocketEngine::bind() was not called in QAbstractSocket::UnconnectedState
 	if (!d->socket)
 		d->socket = new QUdpSocket();
@@ -337,7 +326,6 @@ JingleContent& JingleContent::operator=(const JingleContent &other)
 	d->candidates = other.candidates();
 	d->creator = other.creator();
 	d->name = other.name();
-	d->profile = other.profile();
 	d->descriptionNS = other.descriptionNS();
 	
 	return *this;

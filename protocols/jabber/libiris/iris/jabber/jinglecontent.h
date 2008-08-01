@@ -45,7 +45,6 @@ namespace XMPP
 		void setCreator(const QString&);
 		void setName(const QString&);
 		void setDescriptionNS(const QString&);
-		void setProfile(const QString&);
 
 		QList<QDomElement> payloadTypes() const;
 		QDomElement transport() const;
@@ -54,7 +53,6 @@ namespace XMPP
 		QList<QDomElement> candidates() const;
 		void addCandidate(const QDomElement&);
 		QString creator() const;
-		QString profile() const;
 		QString name() const;
 		QString descriptionNS() const;
 		Type dataType();

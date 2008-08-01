@@ -33,6 +33,8 @@ public:
 
 public slots:
 	void writeRtpData(XMPP::JingleContent*);
+	void slotUptimeOut();
+
 
 signals:
 	void sessionTerminated();
@@ -42,6 +44,7 @@ private:
 	JingleCallsManager *m_callsManager;
 	JingleMediaManager *m_mediaManager;
 	QList<JabberJingleContent*> jabberJingleContents;
+	QTime m_timeUp;
 //	JingleRtpSession *m_rtpSession;
 };
 

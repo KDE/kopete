@@ -95,7 +95,8 @@ void JabberJingleContent::slotPrepareRtpOutSession()
 }
 
 void JabberJingleContent::slotIncomingData(const QByteArray& data)
-{	
+{
+	Q_UNUSED(data)
 	/*
 	 * TODO:
 	 * 	Media manager should have a pointer to each JabberJingleSession
@@ -123,6 +124,7 @@ void JabberJingleContent::startWritingRtpData()
 
 QString JabberJingleContent::elementToSdp(const QDomElement& elem)
 {
+	Q_UNUSED(elem)
 	return QString();
 }
 
