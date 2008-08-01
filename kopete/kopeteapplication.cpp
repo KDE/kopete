@@ -104,7 +104,6 @@ KopeteApplication::~KopeteApplication()
 
 	delete m_fileEngineHandler;
 	delete m_emoticonHandler;
-	delete m_mainWindow;
 	//kDebug( 14000 ) << "Done";
 }
 
@@ -310,6 +309,12 @@ void KopeteApplication::quitKopete()
 			m_isShuttingDown = false;
 			break;
 		}
+	}
+
+	if ( m_isShuttingDown && m_mainWindow )
+	{
+		m_mainWindow->deleteLater();
+		m_mainWindow = 0;
 	}
 }
 
