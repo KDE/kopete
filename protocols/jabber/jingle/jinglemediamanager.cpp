@@ -25,7 +25,8 @@
  * JingleMediaSession
  *********************/
 
-JingleMediaSession::JingleMediaSession()
+JingleMediaSession::JingleMediaSession(JingleMediaManager *parent)
+ : m_mediaManager(parent)
 {
 
 }
@@ -46,16 +47,16 @@ void JingleMediaSession::setPayloadType(const QDomElement& payload)
 	m_payload = payload;
 }
 
-void JingleMediaSession::setInputDevice(const Solid::DeviceInterface* device)
+void JingleMediaSession::setInputDevice(Solid::Device& device)
 {
-	Q_UNUSED(device)
 	if (m_type == Audio)
 	{
-		
+		audioInputDevice = device.as<Solid::AudioInterface>();
+		kDebug() << "Using" << audioInputDevice->name() << "audio card for INPUT";
 	}
 }
 
-void JingleMediaSession::setOutputDevice(const Solid::DeviceInterface* device)
+void JingleMediaSession::setOutputDevice(Solid::Device& device)
 {
 	Q_UNUSED(device)
 }
@@ -87,19 +88,19 @@ void JingleMediaManager::findDevices()
                 if (device->deviceType() == Solid::AudioInterface::AudioInput)
 		{
 			kDebug() << "Microphone found. The driver used is " << device->driver();
-			m_microphones << device;
+			m_microphones << deviceList[i];
 		}
 
 		if (device->deviceType() == Solid::AudioInterface::AudioOutput)
 		{
 			kDebug() << "Sound card found. The driver used is " << device->driver();
-			m_audioOutputs << device;
+			m_audioOutputs << deviceList[i];
 		}
 	}
 
 	deviceList = Solid::Device::listFromType(Solid::DeviceInterface::Video, QString());
 	for (int i = 0; i < deviceList.count(); i++)
-		m_videoInputs << deviceList[i].as<Solid::Video>();
+		m_videoInputs << deviceList[i];
 }
 
 void JingleMediaManager::startVideoStreaming()
@@ -107,7 +108,7 @@ void JingleMediaManager::startVideoStreaming()
 
 }
 
-QList<Solid::Video*> JingleMediaManager::videoDevices()
+QList<Solid::Device> JingleMediaManager::videoDevices()
 {
 	// TODO:returns a list with devices
 	//	The content of each item should be the name of the device (/dev/video0)
@@ -140,12 +141,12 @@ QByteArray JingleMediaManager::data()
 	return QByteArray("Data for 2000 ms, you should not try to play this !!");
 }
 
-JingleMediaSession *JingleMediaManager::createNewSession(const QDomElement& payload, const Solid::DeviceInterface *inputDevice, const Solid::DeviceInterface *outputDevice)
+JingleMediaSession *JingleMediaManager::createNewSession(const QDomElement& payload, Solid::Device inputDevice, Solid::Device outputDevice)
 {
 	if ((!payload.isNull()) || (payload.tagName() != "payload-type"))
 		return NULL;
 	
-	JingleMediaSession *mediaSession = new JingleMediaSession();
+	JingleMediaSession *mediaSession = new JingleMediaSession(this);
 	
 	mediaSession->setPayloadType(payload);
 	mediaSession->setInputDevice(inputDevice);

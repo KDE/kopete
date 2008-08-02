@@ -37,11 +37,12 @@
 /*
  * TODO:Move me in my own source file.
  */
+class JingleMediaManager;
 class JingleMediaSession : public QObject
 {
 	Q_OBJECT
 public:
-	JingleMediaSession();
+	JingleMediaSession(JingleMediaManager *parent);
 	~JingleMediaSession();
 
 	enum Type {
@@ -60,13 +61,13 @@ public:
 	 * @brief sets the output device to use to show remote data
 	 * @param the device to used as one of the list returned by JingleMediaManager::[video|audio]Devices()
 	 */
-	void setOutputDevice(const Solid::DeviceInterface* device);
+	void setOutputDevice(Solid::Device& device);
 	
 	/**
 	 * @brief sets the input device to use to take data from
 	 * @param the device to used as one of the list returned by JingleMediaManager::[video|audio]Devices()
 	 */
-	void setInputDevice(const Solid::DeviceInterface* device);
+	void setInputDevice(Solid::Device& device);
 
 signals:
 	/**
@@ -75,6 +76,9 @@ signals:
 	void incomingData();
 private:
 	QDomElement m_payload;
+	JingleMediaManager *m_mediaManager;
+	Solid::AudioInterface *audioInputDevice;
+	Solid::AudioInterface *audioOutputDevice;
 };
 
 class JingleMediaManager : public QObject
@@ -97,7 +101,7 @@ public:
 	 * @brief returns the list of available video devices
 	 * @return a list of available devices.
 	 */
-	QList<Solid::Video*> videoDevices();
+	QList<Solid::Device> videoDevices();
 
 	/**
 	 * @brief creates a new media session
@@ -106,7 +110,7 @@ public:
 	 * @param outputDevice the device which wil be used to display video or play audio received from the othe peer
 	 * @return returns a new JingleMediaSession
 	 */
-	JingleMediaSession* createNewSession(const QDomElement& payload, const Solid::DeviceInterface* inputDevice = 0, const Solid::DeviceInterface* outputDevice = 0);
+	JingleMediaSession* createNewSession(const QDomElement& payload, Solid::Device inputDevice = Solid::Device(), Solid::Device outputDevice = Solid::Device());
 
 	/**
 	 * @brief switch on the multimedia device (webcam)
@@ -123,9 +127,9 @@ public slots:
 	void slotSessionTerminated();
 
 private:
-	QList<Solid::AudioInterface*> m_microphones;
-	QList<Solid::AudioInterface*> m_audioOutputs;
-	QList<Solid::Video*> m_videoInputs;
+	QList<Solid::Device> m_microphones;
+	QList<Solid::Device> m_audioOutputs;
+	QList<Solid::Device> m_videoInputs;
 	QTimer *timer;
 	QList<JingleMediaSession*> m_sessions;
 
