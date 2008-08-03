@@ -278,10 +278,22 @@ performs a menu item function, the default shortcut is listed with the menu item
 <varlistentry>
 <term>
 <menuchoice>
+<guimenu>Settings</guimenu>
+<guisubmenu>Toolbars</guisubmenu>
+</menuchoice>
+</term>
+<listitem>
+<para>Shows/hides the <guimenuitem>Main Toolbar</guimenuitem> and the <guimenuitem>Quick Search Bar</guimenuitem>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
 <shortcut><keycombo action="simul">&Ctrl;<keycap>M</keycap></keycombo>
 </shortcut>
 <guimenu>Settings</guimenu>
-<guimenuitem>View Menubar</guimenuitem>
+<guimenuitem>Show Menubar</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
@@ -293,19 +305,7 @@ performs a menu item function, the default shortcut is listed with the menu item
 <term>
 <menuchoice>
 <guimenu>Settings</guimenu>
-<guimenuitem>View Toolbar</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>Shows/hides the tool bar.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guimenuitem>View Statusbar</guimenuitem>
+<guimenuitem>Show Statusbar</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
@@ -316,8 +316,6 @@ performs a menu item function, the default shortcut is listed with the menu item
 <varlistentry>
 <term>
 <menuchoice>
-<shortcut><keycombo action="simul">&Ctrl;<keycap>U</keycap></keycombo>
-</shortcut>
 <guimenu>Settings</guimenu>
 <guimenuitem>Show Offline Users</guimenuitem>
 </menuchoice>
@@ -345,11 +343,19 @@ performs a menu item function, the default shortcut is listed with the menu item
 <term>
 <menuchoice>
 <guimenu>Settings</guimenu>
-<guimenuitem>Configure Shortcuts...</guimenuitem>
+<guimenuitem>Configure Toolbars...</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
-<para>Shows the &kde; standard Configure Shortcuts dialog, where you can change keyboard shortcuts that work in the Contact List's windows.</para>
+<para>Displays the &kde; standard Configure Toolbars dialog, which lets you customize the Contact List's toolbars.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice><guimenuitem>Configure Notifications...</guimenuitem></menuchoice></term>
+<listitem><para>In the dialog displayed by this menu entry, you can
+change the notifications (sounds, error messages, &etc;)  used by &kopete;.
+</para>
 </listitem>
 </varlistentry>
 
@@ -369,11 +375,11 @@ performs a menu item function, the default shortcut is listed with the menu item
 <term>
 <menuchoice>
 <guimenu>Settings</guimenu>
-<guimenuitem>Configure Toolbars...</guimenuitem>
+<guimenuitem>Configure Shortcuts...</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
-<para>Displays the &kde; standard Configure Toolbars dialog, which lets you customize the Contact List's toolbars.</para>
+<para>Shows the &kde; standard Configure Shortcuts dialog, where you can change keyboard shortcuts that work in the Contact List's windows.</para>
 </listitem>
 </varlistentry>
 
@@ -381,7 +387,7 @@ performs a menu item function, the default shortcut is listed with the menu item
 <term>
 <menuchoice>
 <guimenu>Settings</guimenu>
-<guimenuitem>Configure Kopete...</guimenuitem>
+<guimenuitem>Configure...</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
