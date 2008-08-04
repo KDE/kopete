@@ -274,3 +274,9 @@ QString GroupWise::errorCodeToString( int errorCode )
 	}
 	return errorString;
 }
+
+GroupWise::FolderItem::FolderItem()
+: id(0), sequence(0), parentId(0)
+{
+
+}

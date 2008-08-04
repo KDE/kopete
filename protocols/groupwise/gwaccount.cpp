@@ -454,11 +454,13 @@ void GroupWiseAccount::cleanup()
 	delete m_clientStream;
 	delete m_QCATLS;
 	delete m_connector;
+	delete m_qcaInit;
 
 	m_connector = 0;
 	m_QCATLS = 0;
 	m_clientStream = 0;
 	m_client = 0;
+	m_qcaInit = 0;
 }
 
 void GroupWiseAccount::createConference( const int clientId, const QStringList& invitees )
