@@ -11,7 +11,7 @@ check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
 
 macro_optional_find_package(Xmms)
 macro_bool_to_01(XMMS_FOUND HAVE_XMMS)
-macro_log_feature(XMMS_FOUND "XMMS" "X MultiMedia System developement libraries" "http://www.xmms.org" FALSE "" "Used by the Kopete nowlistening plugin to support the XMMS player.")
+macro_log_feature(XMMS_FOUND "XMMS" "X MultiMedia System development libraries" "http://www.xmms.org" FALSE "" "Used by the Kopete nowlistening plugin to support the XMMS player.")
 
 if(XMMS_FOUND)
   # GLIB2_INCLUDE_DIR needed for Xmms
