@@ -6,7 +6,7 @@ find_package(Kopete)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
-MESSAGE(STATUS "kopete include ${KOPETE_INCLUDES}")
+#MESSAGE(STATUS "kopete include ${KOPETE_INCLUDES}")
 
 include_directories(${KOPETE_INCLUDES})
 
