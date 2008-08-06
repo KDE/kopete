@@ -28,7 +28,7 @@
 JingleMediaSession::JingleMediaSession(JingleMediaManager *parent)
  : m_mediaManager(parent)
 {
-
+	ts = 0;
 }
 
 JingleMediaSession::~JingleMediaSession()
@@ -38,6 +38,7 @@ JingleMediaSession::~JingleMediaSession()
 
 void JingleMediaSession::setPayloadType(const QDomElement& payload)
 {
+	//Maybe we will use it, maybe we won't...
 	int pID = payload.attribute("id").toInt();
 	if (pID >= 0 && pID <= 23) // This is audio payload.
 		m_type = Audio;
@@ -61,6 +62,30 @@ void JingleMediaSession::setOutputDevice(Solid::Device& device)
 	Q_UNUSED(device)
 }
 
+void JingleMediaSession::setMediaPlugin(AlsaALaw *p)
+{
+	//Here we should be able to configure the plugin and tell it which souncard it should use.
+	plugin = p;
+	tsValue = plugin->timeStamp();
+	connect(plugin, SIGNAL(readyRead()), this, SLOT(slotInReadyRead()));
+}
+
+void JingleMediaSession::start()
+{
+	plugin->start();
+}
+
+void JingleMediaSession::slotInReadyRead()
+{
+	emit readyRead(ts);
+	ts += tsValue;
+}
+
+QByteArray JingleMediaSession::data()
+{
+	return plugin->data();
+}
+
 /*********************
  * JingleMediaManager
  *********************/
@@ -69,6 +94,7 @@ JingleMediaManager::JingleMediaManager()
 {
 	findDevices();
 	timer = 0;
+	alaw = 0;
 }
 
 JingleMediaManager::~JingleMediaManager()
@@ -120,10 +146,16 @@ QList<Solid::Device> JingleMediaManager::videoDevices()
 QList<QDomElement> JingleMediaManager::payloads()
 {
 	QList<QDomElement> ret;
+	QDomDocument doc("");
+	QDomElement pcma = doc.createElement("payload-type");
+	pcma.setAttribute("name", "PCMA");
+	pcma.setAttribute("id", "8");
+	//pcma.setAttribute("");
+	ret << pcma;
 	return ret;
 }
 
-void JingleMediaManager::startAudioStreaming()
+void JingleMediaManager::startStreaming(const QDomElement& payloadType)
 {
 /*	if (timer == 0)
 	{
@@ -143,21 +175,50 @@ QByteArray JingleMediaManager::data()
 
 JingleMediaSession *JingleMediaManager::createNewSession(const QDomElement& payload, Solid::Device inputDevice, Solid::Device outputDevice)
 {
-	if ((!payload.isNull()) || (payload.tagName() != "payload-type"))
+	kDebug() << (payload.isNull() ? "Payload is NULL !! tagname =" : "payload tagname =") << payload.tagName();
+	if (payload.isNull() || (payload.tagName() != "payload-type"))
 		return NULL;
 	
 	JingleMediaSession *mediaSession = new JingleMediaSession(this);
 	
 	mediaSession->setPayloadType(payload);
-	mediaSession->setInputDevice(inputDevice);
-	mediaSession->setOutputDevice(outputDevice);
+	if (!inputDevice.isValid())
+		; //set default device depending on the payload-type
+	else
+		mediaSession->setInputDevice(inputDevice);
+	if (!outputDevice.isValid())
+		; //set default device depending on the payload-type
+	else
+		mediaSession->setOutputDevice(outputDevice);
+	
+	if (payload.attribute("id") == "8")
+	{
+		if ((payload.hasAttribute("name") && payload.attribute("name") == "PCMA") || !payload.hasAttribute("name"))
+		{
+			//Start a-law streaming. Currently, it is the only one supported, more to come.
+			//The problem is that Phonon does not support audio input yet...
+			if (alaw == 0)
+			{
+				alaw = new AlsaALaw();
+			}
+			mediaSession->setMediaPlugin(alaw);
+			//FIXME:I call it a Media Plugin, maybe those can be loaded as plugins for each formats.
+			//	It Depends on what Phonon will provide (will I have to encode audio or will Phonon take care of that ?)
+		}
+	}
 
 	connect(mediaSession, SIGNAL(incomingData()), this, SLOT(slotIncomingData()));
-	connect(mediaSession, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
+	//connect(mediaSession, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
 	
 	m_sessions << mediaSession;
 
+	qDebug() << "Returning media session" << mediaSession;
 	return mediaSession;
+}
+
+void JingleMediaManager::slotIncomingData()
+{
+
 }
 
 void JingleMediaManager::slotSessionTerminated()

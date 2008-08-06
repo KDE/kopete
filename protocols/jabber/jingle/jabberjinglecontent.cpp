@@ -74,7 +74,7 @@ void JabberJingleContent::slotPrepareRtpInSession()
 			return;
 		}
 		m_rtpInSession->setRtpSocket(m_content->inSocket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
-		m_rtpInSession->setPayload(elementToSdp(bestPayload(m_content->payloadTypes(), m_mediaManager->payloads())));
+		m_rtpInSession->setPayload(bestPayload(m_content->payloadTypes(), m_mediaManager->payloads()));
 		connect(m_rtpInSession, SIGNAL(readyRead(const QByteArray&)), this, SLOT(slotIncomingData(const QByteArray&)));
 	}
 }
@@ -113,13 +113,26 @@ void JabberJingleContent::startWritingRtpData()
 
 	if (m_jabberSession->session()->state() == XMPP::JingleSession::Pending)
 	{
-		m_rtpOutSession->setPayload(elementToSdp(bestPayload(m_content->payloadTypes(), m_mediaManager->payloads())));
+		m_rtpOutSession->setPayload(bestPayload(m_content->payloadTypes(), m_mediaManager->payloads()));
 	}
 	if (m_content->dataType() == XMPP::JingleContent::Audio)
 	{
-		connect(m_mediaManager, SIGNAL(audioReadyRead()), this, SLOT(slotSendRtpData()));
-		m_mediaManager->startAudioStreaming();
+		m_mediaSession = m_mediaManager->createNewSession(bestPayload(m_content->payloadTypes(), m_mediaManager->payloads())/*left to default now.*/ );
+		if (m_mediaSession == 0)
+		{
+			qDebug() << "Media Session is NULL!";
+			return;
+		}
+		connect(m_mediaSession, SIGNAL(readyRead(int)), this, SLOT(slotReadyRead(int)));
+		m_mediaSession->start();
+		/*connect(m_mediaManager, SIGNAL(audioReadyRead()), this, SLOT(slotSendRtpData()));
+		m_mediaManager->startAudioStreaming();*/
 	}
+}
+
+void JabberJingleContent::slotReadyRead(int ts)
+{
+	m_rtpOutSession->send(m_mediaSession->data(), ts);
 }
 
 QString JabberJingleContent::elementToSdp(const QDomElement& elem)
@@ -128,7 +141,7 @@ QString JabberJingleContent::elementToSdp(const QDomElement& elem)
 	return QString();
 }
 
-void JabberJingleContent::slotSendRtpData()
+/*DEPRECATED*/void JabberJingleContent::slotSendRtpData()
 {
 	kDebug() << "Send RTP data.";
 	m_rtpOutSession->send(m_mediaManager->data());

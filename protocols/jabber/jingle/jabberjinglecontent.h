@@ -12,6 +12,7 @@ namespace XMPP
 }
 class JabberJingleSession;
 class JingleMediaManager;
+class JingleMediaSession;
 class JingleRtpSession;
 
 class JabberJingleContent : public QObject
@@ -33,11 +34,13 @@ public slots:
 	void slotPrepareRtpInSession();
 	void slotPrepareRtpOutSession();
 	void slotIncomingData(const QByteArray&);
+	void slotReadyRead(int);
 
 private:
 	XMPP::JingleContent *m_content;
 	XMPP::JingleSession *m_jingleSession;
 	JingleMediaManager *m_mediaManager;
+	JingleMediaSession *m_mediaSession;
 	JingleRtpSession *m_rtpInSession;
 	JingleRtpSession *m_rtpOutSession;
 	JabberJingleSession *m_jabberSession;

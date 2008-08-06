@@ -7,6 +7,7 @@
 #include <QImage>
 #include <QByteArray>
 #include <KDebug>
+#include <QDomElement>
 //#include <>
 
 JingleRtpSession::JingleRtpSession(Direction d)
@@ -80,14 +81,22 @@ void JingleRtpSession::bind(int rtpPort, int rtcpPort)
 	rtcpSocket->bind(rtcpPort == 0 ? rtpPort + 1 : rtcpPort);
 }
 
-void JingleRtpSession::send(const QByteArray& data) //TODO:There should be overloaded methods to support other data type (QString, const *char).
+void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should be overloaded methods to support other data type (QString, const *char).
 {
-	qDebug() << "JingleRtpSession::send (" << data << ")";
+	qDebug() << "JingleRtpSession::send ts =" << ts;
+	
+	for (int i = 0; i < data.count(); i++)
+		printf("'%c' ", data[i]);
+	printf("\n");
+	fflush(stdout);
+	
 	//if (payloadID == -1)
 	//	return;
-	state = SendingData;
+	
 	mblk_t *packet = rtp_session_create_packet_with_data(m_rtpSession, (uint8_t*)data.data(), data.size(), /*freefn*/ NULL); //the free function is managed by the bytesWritten signal
-	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, sendingTS);
+	
+	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, ts == -1 ? sendingTS : ts);
+	
 	qDebug() << "Bytes sent :" << size;
 
 	sendingTS += payloadTS;
@@ -108,7 +117,11 @@ void JingleRtpSession::rtpDataReady()
 	//data is : packet->b_cont->b_rptr
 	//of length : len=packet->b_cont->b_wptr - packet->b_cont->b_rptr;
 	QByteArray data((char*) packet->b_cont->b_rptr, packet->b_cont->b_wptr - packet->b_cont->b_rptr);
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Received (" << packet->b_cont->b_wptr - packet->b_cont->b_rptr << "bytes) : " << data;
+	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Received (" << packet->b_cont->b_wptr - packet->b_cont->b_rptr << "bytes) : ";
+	for (int i = 0; i < data.count(); i++)
+		printf("'%1x' ", data.at(i));
+	printf("\n");
+	fflush(stdout);
 	
 	// Seems we should empty the socket...
 	QByteArray buf;
@@ -123,15 +136,16 @@ void JingleRtpSession::rtcpDataReady()
 
 }
 
-void JingleRtpSession::setPayload(const QString&)
+void JingleRtpSession::setPayload(const QDomElement& payload)
 {
+	Q_UNUSED(payload)
 	// Parse SDP string here and store data.
 	//payloadTS must be set here.
-	payloadName = "theora";
-	payloadID = 96;
+	payloadName = "PCMA";
+	payloadID = 8;
 	payloadTS = 2000; // For testing, data sent each 2000 ms TODO:Change that !!!
 	RtpProfile *profile = rtp_profile_new(payloadName.toAscii());
-	rtp_profile_set_payload(profile, 96, &payload_type_theora);
+	rtp_profile_set_payload(profile, 96, &payload_type_pcma8000);
 	rtp_session_set_profile(m_rtpSession, profile);
 	rtp_session_set_payload_type(m_rtpSession, 96);
 }

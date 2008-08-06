@@ -37,6 +37,7 @@
 /*
  * TODO:Move me in my own source file.
  */
+class AlsaALaw;
 class JingleMediaManager;
 class JingleMediaSession : public QObject
 {
@@ -69,16 +70,29 @@ public:
 	 */
 	void setInputDevice(Solid::Device& device);
 
+	void setMediaPlugin(AlsaALaw *plugin);
+
+	void start();
+
+	QByteArray data();
+
+public slots:
+	void slotInReadyRead();
+
 signals:
 	/**
 	 * @brief emitted when new data is coming from outside on this session
 	 */
 	void incomingData();
+	void readyRead(int);
 private:
 	QDomElement m_payload;
 	JingleMediaManager *m_mediaManager;
 	Solid::AudioInterface *audioInputDevice;
 	Solid::AudioInterface *audioOutputDevice;
+	AlsaALaw *plugin;
+	int ts;
+	int tsValue;
 };
 
 class JingleMediaManager : public QObject
@@ -89,12 +103,17 @@ public:
 	~JingleMediaManager();
 	
 	void findDevices();
+
+	/**
+	 * @return a list of the supported payloads by this media manager
+	 */
 	QList<QDomElement> payloads();
 
 	/**
-	 * @brief starts audio streaming if not already started
+	 * @brief starts streaming for the @payloadType payload type if not already started
+	 * @param payload-type payload type to start the stream with
 	 */
-	void startAudioStreaming(); //--> FIXME:No, This should be in JingleMediaSession.
+	void startStreaming(const QDomElement& payloadType);
 	QByteArray data(); //--> FIXME:No, This should be in JingleMediaSession.
 	
 	/**
@@ -111,11 +130,12 @@ public:
 	 * @return returns a new JingleMediaSession
 	 */
 	JingleMediaSession* createNewSession(const QDomElement& payload, Solid::Device inputDevice = Solid::Device(), Solid::Device outputDevice = Solid::Device());
-
+	
 	/**
 	 * @brief switch on the multimedia device (webcam)
 	 * @description starts the necessary devices for the existing sessions
-	 * TODO:Should be a slot called by sessions maybe...
+	 * this method is deprecated, use startStreaming()
+	 * @see startStreaming()
 	 */
 	void startVideoStreaming();
 
@@ -125,6 +145,7 @@ signals:
 
 public slots:
 	void slotSessionTerminated();
+	void slotIncomingData();
 
 private:
 	QList<Solid::Device> m_microphones;
@@ -132,7 +153,192 @@ private:
 	QList<Solid::Device> m_videoInputs;
 	QTimer *timer;
 	QList<JingleMediaSession*> m_sessions;
+	AlsaALaw *alaw;
 
+};
+
+#include <alsa/asoundlib.h>
+
+#include <QObject>
+#include <QSocketNotifier>
+#include <QDebug>
+#include <KDebug>
+
+class AlsaALaw : public QObject
+{
+	Q_OBJECT
+public:
+	AlsaALaw()
+	{
+		ready = false;
+		int err;
+		snd_pcm_hw_params_t *hwParams;
+
+		if ((err = snd_pcm_open(&captureHandle, "default", SND_PCM_STREAM_CAPTURE, SND_PCM_NONBLOCK)) < 0)
+		{
+			kDebug() << "cannot open audio device default";
+			return;
+		}
+
+		if ((err = snd_pcm_hw_params_malloc(&hwParams)) < 0)
+		{
+			kDebug() << "cannot allocate hardware parameter structure" ;
+			return;
+		}
+
+		if ((err = snd_pcm_hw_params_any(captureHandle, hwParams)) < 0)
+		{
+			kDebug() << "cannot initialize hardware parameter structure" ;
+			return;
+		}
+
+		if ((err = snd_pcm_hw_params_set_access(captureHandle, hwParams, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0)
+		{
+			kDebug() << "cannot set access type" ;
+			return;
+		}
+
+		if ((err = snd_pcm_hw_params_set_format(captureHandle, hwParams, SND_PCM_FORMAT_A_LAW)) < 0)	//A-Law format can be sent directly with oRTP (format supported)
+		{
+			kDebug() << "cannot set sample format" ;
+			return;
+		}
+
+		samplingRate = 64000;
+		if ((err = snd_pcm_hw_params_set_rate_near(captureHandle, hwParams, &samplingRate, 0)) < 0)
+		{
+			kDebug() << "cannot set sample rate" ;
+			return;
+		}
+		kDebug() << "Set rate" << samplingRate;
+
+		if ((err = snd_pcm_hw_params_set_channels(captureHandle, hwParams, 1)) < 0) //Only 1 channel for ALaw RTP
+		{
+			kDebug() << "cannot set channel count" ;
+			return;
+		}
+		
+		pTime = 20000;
+		if ((err = snd_pcm_hw_params_set_period_time_near(captureHandle, hwParams, &pTime, 0)) < 0) // Set 20000 µs (20ms) before letting us know that there is data.
+		{
+			kDebug() << "Unable to set period time! Error" << err;
+			return;
+		}
+		kDebug() << "Period time =" << pTime;
+
+		if ((err = snd_pcm_hw_params(captureHandle, hwParams)) < 0)
+		{
+			kDebug() << "cannot set parameters" ;
+			return;
+		}
+
+		snd_pcm_hw_params_free(hwParams);
+
+		if ((err = snd_pcm_prepare(captureHandle)) < 0)
+		{
+			kDebug() << "cannot prepare audio interface for use" ;
+			return;
+		}
+		ready = true;
+	}
+	//~AlsaALaw();
+	
+	void start()
+	{
+		kDebug() << "start()";
+		if (!ready)
+		{
+			kDebug() << "Not Ready.";
+			return;
+		}
+		int count = snd_pcm_poll_descriptors_count(captureHandle);
+		if (count <= 0)
+		{
+			kDebug() << "No poll fd... WEIRD!";
+			return;
+		}
+
+		pollfd *ufds;
+		ufds = new pollfd[count];
+		int err = snd_pcm_poll_descriptors(captureHandle, ufds, count);
+		if (err < 0)
+		{
+			kDebug() << "Error retrieving fd.";
+			return;
+		}
+		
+		kDebug() << "Retreived" << count << "file descriptors.";
+
+		int fd = ufds[0].fd;
+
+		notifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
+		if (!notifier->isEnabled())
+			notifier->setEnabled(true);
+		
+		snd_pcm_start(captureHandle);
+		
+		connect(notifier, SIGNAL(activated(int)), this, SLOT(slotActivated(int)));
+			
+	}
+	/**
+	 * @return period time in milisecond
+	 */
+	unsigned int periodTime() const
+	{
+		return pTime / 1000;
+	}
+	/**
+	 * @return sampling rate.
+	 */
+	unsigned int sRate() const
+	{
+		return samplingRate;
+	}
+
+	QByteArray data()
+	{
+		QByteArray data = buf;
+		buf.clear();
+		return data;
+	}
+	
+	unsigned int timeStamp()
+	{
+		int wps = (int) samplingRate/8;	// Bytes per second
+		int wpms = wps/1000;		// Bytes per milisecond
+		int ts = wpms * periodTime();		// Time stamp
+		return ts;
+	}
+
+public slots:
+	void slotActivated(int socket)
+	{
+		kDebug() << "Data arrived. (Alsa told me !)";
+		size_t size;
+		//while (EAGAIN == size)
+		{
+			QByteArray tmpBuf;
+			tmpBuf.resize(1024);
+			size = read(socket, tmpBuf.data(), 1024);
+			tmpBuf.resize(size);
+			buf.append(tmpBuf);
+		}
+		emit readyRead();
+		/*kDebug() << "Read" << buf.count() << "bytes";
+		for(int i = 0; i < buf.count(); i++)
+		{
+			printf("0x%02x ", (int) buf.at(i));
+		}*/
+	}
+private:
+	snd_pcm_t *captureHandle;
+	QSocketNotifier *notifier;
+	bool ready;
+	QByteArray buf;
+	unsigned int pTime;
+	unsigned int samplingRate;
+signals:
+	void readyRead();
 };
 
 #endif //JABBER_MEDIA_MANAGER

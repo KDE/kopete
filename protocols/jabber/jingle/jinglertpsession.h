@@ -7,6 +7,7 @@
 
 class QAbstractSocket;
 class QUdpSocket;
+class QDomElement;
 
 class JingleRtpSession : public QObject
 {
@@ -38,13 +39,13 @@ public:
 	 * Sends data to the remote host after wrapping it in a RTP packet.
 	 * TODO:There should be overloaded methods to support other data type (QString, const *char).
 	 */
-	void send(const QByteArray&);
+	void send(const QByteArray& data, int ts = -1);
 
 	/*
 	 * Sets the payload type used for this session.
-	 * The argument is the payload type in SDP format.
+	 * The argument is the payload type in a payload-type XML tag.
 	 */
-	void setPayload(const QString&);
+	void setPayload(const QDomElement& payload);
 
 private slots:
 	void rtpDataReady();

@@ -92,16 +92,16 @@ void JingleCallsManager::init()
 	// The Media Manager should be able to give xml tags for the supported payloads.
 	QDomDocument doc("");
 	
-	// Audio payloads
+	// Audio payloads -- Supports only A-Law currently.
 	QDomElement aPayload = doc.createElement("payload-type");
-	aPayload.setAttribute("id", "97");
-	aPayload.setAttribute("name", "speex");
-	aPayload.setAttribute("clockrate", "8000");
+	aPayload.setAttribute("id", "8");
+	aPayload.setAttribute("name", "PCMA");
+	//aPayload.setAttribute("clockrate", "8000");
 	d->audioPayloads << aPayload;
 	d->client->jingleSessionManager()->setSupportedAudioPayloads(d->audioPayloads);
 	
 	//Video payloads
-	QDomElement vPayload = doc.createElement("payload-type");
+	/*QDomElement vPayload = doc.createElement("payload-type");
 	vPayload.setAttribute("id", "96");
 	vPayload.setAttribute("name", "theora");
 	vPayload.setAttribute("clockrate", "90000");
@@ -116,7 +116,7 @@ void JingleCallsManager::init()
 		parameter.setAttribute("value", pValues[i]);
 		vPayload.appendChild(parameter);
 	}
-	d->videoPayloads << vPayload;
+	d->videoPayloads << vPayload;*/
 
 	d->mediaManager = new JingleMediaManager();
 	
@@ -173,7 +173,8 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		iceVideo->setDescriptionNS("urn:xmpp:tmp:jingle:apps:video-rtp");
 		iceVideo->setCreator(d->jabberAccount->client()->jid().full());
 		
-		contents << iceAudio << iceVideo;
+		//contents << iceAudio << iceVideo;
+		contents << iceAudio;
 		kDebug() << "ICE-UDP supported !!!!!!!!!!!!!!!!!!";
 	}
 	else if (rawUdp)
@@ -197,7 +198,8 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		rawVideo->setDescriptionNS("urn:xmpp:tmp:jingle:apps:video-rtp");
 		rawVideo->setCreator(d->jabberAccount->client()->jid().full());
 		
-		contents << rawAudio << rawVideo;
+		//contents << rawAudio << rawVideo;
+		contents << rawAudio;
 		kDebug() << "ICE-UDP not supported, falling back to RAW-UDP !";
 	}
 	else
@@ -264,7 +266,7 @@ void JingleCallsManager::slotUserAccepted()
 	}
 	kDebug() << "end";
 	contentDialog->close();
-	delete contentDialog;
+	contentDialog->deleteLater();
 }
 
 void JingleCallsManager::slotUserRejected()
