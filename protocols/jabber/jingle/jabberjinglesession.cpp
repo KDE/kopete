@@ -52,13 +52,23 @@ void JabberJingleSession::setJingleSession(XMPP::JingleSession* sess)
 	qDebug() << "Setting JingleSession in the JabberJingleSession :" << sess;
 	m_jingleSession = sess;
 	connect(sess, SIGNAL(needData(XMPP::JingleContent*)), this, SLOT(writeRtpData(XMPP::JingleContent*)));
-	//connect(sess, SIGNAL(destroyed()), this, SIGNAL(sessionTerminated()));
+	connect(sess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
 	// Create Contents :
 	for (int i = 0; i < sess->contents().count(); i++)
 	{
 		JabberJingleContent *jContent = new JabberJingleContent(this, sess->contents()[i]);
 		jabberJingleContents << jContent;
 	}
+}
+
+void JabberJingleSession::slotSessionTerminated()
+{
+	for (int i = 0; i < jabberJingleContents.count(); i++)
+		delete jabberJingleContents[i];
+	
+	jabberJingleContents.clear();
+
+	emit terminated();
 }
 
 void JabberJingleSession::setMediaManager(JingleMediaManager* mm)

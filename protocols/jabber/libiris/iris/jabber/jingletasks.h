@@ -174,6 +174,12 @@ namespace XMPP
 		 * the content's transport.
 		 */
 		void transportInfo(JingleContent *c);
+
+		/*
+		 * Sends a session-accept jingle action.
+		 * Once acked, this will mean the session is in the ACTIVE state
+		 */
+		void sessionAccept(const QList<JingleContent*>&);
 		
 	private :
 		class Private;

@@ -313,7 +313,7 @@ public:
 public slots:
 	void slotActivated(int socket)
 	{
-		kDebug() << "Data arrived. (Alsa told me !)";
+		//kDebug() << "Data arrived. (Alsa told me !)";
 		size_t size;
 		//while (EAGAIN == size)
 		{

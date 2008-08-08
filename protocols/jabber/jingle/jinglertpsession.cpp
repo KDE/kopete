@@ -41,6 +41,7 @@ JingleRtpSession::JingleRtpSession(Direction d)
 
 JingleRtpSession::~JingleRtpSession()
 {
+	rtp_session_bye(m_rtpSession, "Ended");
 	rtp_session_destroy(m_rtpSession);
 }
 
@@ -83,12 +84,12 @@ void JingleRtpSession::bind(int rtpPort, int rtcpPort)
 
 void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should be overloaded methods to support other data type (QString, const *char).
 {
-	qDebug() << "JingleRtpSession::send ts =" << ts;
+	//qDebug() << "JingleRtpSession::send ts =" << ts;
 	
-	for (int i = 0; i < data.count(); i++)
-		printf("'%c' ", data[i]);
-	printf("\n");
-	fflush(stdout);
+	//for (int i = 0; i < data.count(); i++)
+	//	printf("'%c' ", data[i]);
+	//printf("\n");
+	//fflush(stdout);
 	
 	//if (payloadID == -1)
 	//	return;
@@ -97,31 +98,31 @@ void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should 
 	
 	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, ts == -1 ? sendingTS : ts);
 	
-	qDebug() << "Bytes sent :" << size;
+	//qDebug() << "Bytes sent :" << size;
 
 	sendingTS += payloadTS;
 }
 
 void JingleRtpSession::rtpDataReady()
 {
-	qDebug() << "JingleRtpSession::rtpDataReady";
+	//qDebug() << "JingleRtpSession::rtpDataReady";
 	
-	kDebug() << "receivingTS =" << receivingTS;
+	//kDebug() << "receivingTS =" << receivingTS;
 
 	mblk_t *packet;
 	while ((packet = rtp_session_recvm_with_ts(m_rtpSession, receivingTS)) == NULL)
 	{
-		kDebug() << "Packet is Null, retrying.";
+		//kDebug() << "Packet is Null, retrying.";
 		receivingTS += payloadTS; //FIXME:What is the increment ? It depends on the payload.
 	}
 	//data is : packet->b_cont->b_rptr
 	//of length : len=packet->b_cont->b_wptr - packet->b_cont->b_rptr;
 	QByteArray data((char*) packet->b_cont->b_rptr, packet->b_cont->b_wptr - packet->b_cont->b_rptr);
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Received (" << packet->b_cont->b_wptr - packet->b_cont->b_rptr << "bytes) : ";
-	for (int i = 0; i < data.count(); i++)
-		printf("'%1x' ", data.at(i));
-	printf("\n");
-	fflush(stdout);
+	//kDebug(KDE_DEFAULT_DEBUG_AREA) << "Received (" << packet->b_cont->b_wptr - packet->b_cont->b_rptr << "bytes) : ";
+	//for (int i = 0; i < data.count(); i++)
+	//	printf("'%1x' ", data.at(i));
+	//printf("\n");
+	//fflush(stdout);
 	
 	// Seems we should empty the socket...
 	QByteArray buf;

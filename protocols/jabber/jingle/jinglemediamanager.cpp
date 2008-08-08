@@ -14,6 +14,9 @@
   * *                                                                       *
   * *************************************************************************
   */
+
+#warning you need KDE svn trunk of revision 843263 or above.
+
 #include "jinglemediamanager.h"
 
 #include <QList>

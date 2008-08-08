@@ -40,6 +40,7 @@ public:
 	QUdpSocket *outSocket; //Currently, this is the OUT raw-udp socket for this content.
 	bool sending;
 	bool receiving;
+	Type type;
 };
 
 JingleContent::JingleContent()
@@ -71,6 +72,12 @@ void JingleContent::addPayloadType(const QDomElement& pl)
 void JingleContent::addPayloadTypes(const QList<QDomElement>& pl)
 {
 	d->payloads << pl;
+}
+
+void JingleContent::setPayloadTypes(const QList<QDomElement>& pl)
+{
+	d->payloads.clear();
+	d->payloads = pl;
 }
 
 void JingleContent::setTransport(const QDomElement& t)
@@ -112,6 +119,7 @@ void JingleContent::fromElement(const QDomElement& e)
 	d->name = e.attribute("name");
 	QDomElement desc = e.firstChildElement();
 	d->descriptionNS = desc.attribute("xmlns");
+	d->type = stringToType(desc.attribute("media"));
 	QDomElement payload = desc.firstChildElement();
 	while (!payload.isNull())
 	{
@@ -134,6 +142,7 @@ QDomElement JingleContent::contentElement()
 	
 	QDomElement description = doc.createElement("description");
 	description.setAttribute("xmlns", d->descriptionNS);
+	description.setAttribute("media", typeToString(d->type));
 
 	for (int i = 0; i < d->payloads.count(); i++)
 	{
@@ -153,18 +162,6 @@ QString JingleContent::name() const
 QString JingleContent::descriptionNS() const
 {
 	return d->descriptionNS;
-}
-
-JingleContent::Type JingleContent::dataType()
-{
-	if (d->descriptionNS == "urn:xmpp:tmp:jingle:apps:audio-rtp")
-		return Audio;
-	else if (d->descriptionNS == "urn:xmpp:tmp:jingle:apps:video-rtp")
-		return Video;
-	else if (d->descriptionNS == "urn:xmpp:tmp:jingle:apps:file-transfer")
-		return FileTransfer;
-	else
-		return Unknown;
 }
 
 void JingleContent::addTransportInfo(const QDomElement& e)
@@ -243,6 +240,7 @@ void JingleContent::createUdpInSocket()
 
 void JingleContent::slotRawUdpDataReady()
 {
+	setReceiving(true);
 	qDebug() << "Data arrived on the socket.";
 }
 
@@ -266,6 +264,8 @@ bool JingleContent::sending()
 void JingleContent::setSending(bool s)
 {
 	d->sending = s;
+	if (d->sending && d->receiving)
+		emit established();
 }
 
 bool JingleContent::receiving()
@@ -276,6 +276,8 @@ bool JingleContent::receiving()
 void JingleContent::setReceiving(bool r)
 {
 	d->receiving = r;
+	if (d->sending && d->receiving)
+		emit established();
 }
 
 void JingleContent::startSending()
@@ -295,6 +297,7 @@ void JingleContent::startSending(const QHostAddress& address, int port)
 	qDebug() << "Sending data to" << address.toString() << ":" << port;
 	qDebug() << "EMIT needData(c) SIGNAL";
 	emit needData(this); //FIXME:We can Use sender to know which content sent the signal.
+	setSending(true);
 }
 
 QList<QDomElement> JingleContent::candidates() const
@@ -319,6 +322,8 @@ void JingleContent::bind(const QHostAddress& address, int port)
 */
 }
 
+
+
 JingleContent& JingleContent::operator=(const JingleContent &other)
 {
 	d->payloads = other.payloadTypes();
@@ -331,3 +336,39 @@ JingleContent& JingleContent::operator=(const JingleContent &other)
 	return *this;
 }
 
+void JingleContent::setType(JingleContent::Type t)
+{
+	d->type = t;
+}
+
+JingleContent::Type JingleContent::type() const
+{
+	return d->type;
+}
+
+QString JingleContent::typeToString(JingleContent::Type t)
+{
+	switch(t)
+	{
+	case Video :
+		return "video";
+	case Audio :
+		return "audio";
+	case FileTransfer :
+		return "file transfer";
+	default:
+		return "unknown";
+	}
+}
+
+JingleContent::Type JingleContent::stringToType(const QString& s)
+{
+	if (s == "video")
+		return Video;
+	else if (s == "audio")
+		return Audio;
+	else if (s == "file transfer")
+		return FileTransfer;
+	else
+		return Unknown;
+}

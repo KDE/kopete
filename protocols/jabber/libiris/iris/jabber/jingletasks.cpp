@@ -228,6 +228,8 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 				condition = e.firstChildElement().tagName();
 			else if (e.tagName() == "text")
 				text = e.firstChildElement().toText().data();
+
+			e = e.nextSiblingElement();
 			//[...] TODO: more reason possible.
 		}
 		
@@ -565,7 +567,7 @@ void JT_JingleAction::trying(const JingleContent& c)
 	if (e.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
 	{
 		QDomElement trying = doc()->createElement("trying");
-		trying.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:ice-udp:info");
+		trying.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:raw-udp:info");
 		jingle.appendChild(trying);
 		d->iq.appendChild(jingle);
 	}
@@ -605,6 +607,36 @@ void JT_JingleAction::received()
 	QDomElement received = doc()->createElement("received");
 	received.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:ice-udp:info");
 	jingle.appendChild(received);
+	d->iq.appendChild(jingle);
+
+	send(d->iq);
+}
+
+void JT_JingleAction::sessionAccept(const QList<JingleContent*>& contents)
+{
+	// ----------------------------
+	if (d->session == 0)
+	{
+		qDebug() << "d->session is NULL, did you set it calling JT_JingleAction::setSession() ?";
+		return;
+	}
+	qDebug() << "Sending the session-accept to : " << d->session->to().full();
+
+	d->iq = createIQ(doc(), "set", d->session->to().full(), id());
+	d->iq.setAttribute("from", client()->jid().full());
+
+	QDomElement jingle = doc()->createElement("jingle");
+	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
+	jingle.setAttribute("action", "session-accept");
+	jingle.setAttribute("initiator", d->session->initiator());
+	jingle.setAttribute("sid", d->session->sid());
+	//---------This par should be in another method (createJingleIQ(...))
+	
+	for (int i = 0; i < contents.count(); i++)
+	{
+		jingle.appendChild(contents[i]->contentElement());
+	}
+
 	d->iq.appendChild(jingle);
 
 	send(d->iq);

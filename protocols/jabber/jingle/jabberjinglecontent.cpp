@@ -115,7 +115,7 @@ void JabberJingleContent::startWritingRtpData()
 	{
 		m_rtpOutSession->setPayload(bestPayload(m_content->payloadTypes(), m_mediaManager->payloads()));
 	}
-	if (m_content->dataType() == XMPP::JingleContent::Audio)
+	if (m_content->type() == XMPP::JingleContent::Audio)
 	{
 		m_mediaSession = m_mediaManager->createNewSession(bestPayload(m_content->payloadTypes(), m_mediaManager->payloads())/*left to default now.*/ );
 		if (m_mediaSession == 0)
@@ -143,7 +143,7 @@ QString JabberJingleContent::elementToSdp(const QDomElement& elem)
 
 /*DEPRECATED*/void JabberJingleContent::slotSendRtpData()
 {
-	kDebug() << "Send RTP data.";
+	//kDebug() << "Send RTP data.";
 	m_rtpOutSession->send(m_mediaManager->data());
 }
 

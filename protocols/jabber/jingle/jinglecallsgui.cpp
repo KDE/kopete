@@ -122,7 +122,7 @@ void JingleCallsGui::slotClose()
 
 void JingleCallsGui::addSession(JabberJingleSession* sess)
 {
-	kDebug() << "Add session" << (int*) sess;
+	kDebug() << "Add session" << sess;
 	if (!sess)
 		return;
 	
@@ -159,8 +159,8 @@ void JingleCallsGui::addSession(JabberJingleSession* sess)
 	{
 		QVector<QVariant> contData;
 		contData << sess->contents()[i]->contentName();
-		contData << "[?]";
-		contData << "[?]";
+		contData << "[?]"; //FIXME:set good value.
+		contData << "[?]"; //FIXME:set good value.
 		
 		for (int column = 0; column < model->columnCount(index.parent()); ++column)
 		{
@@ -172,7 +172,7 @@ void JingleCallsGui::addSession(JabberJingleSession* sess)
 
 void JingleCallsGui::removeSession(JabberJingleSession* sess)
 {
-	kDebug() << "Remove session" << (int*) sess;
+	kDebug() << "Remove session" << sess;
 	//Don't delete it, just remove it from the QTreeView.
 }
 

@@ -40,11 +40,21 @@ namespace XMPP
 		 * Set supported audio payloads for jingle sessions.
 		 */
 		void setSupportedAudioPayloads(const QList<QDomElement>&);
+
+		/*
+		 * Returns the supported audio payloads.
+		 */
+		QList<QDomElement> supportedAudioPayloads() const;
 		
 		/*
 		 * Set supported video payloads for jingle sessions.
 		 */
 		void setSupportedVideoPayloads(const QList<QDomElement>&); // FIXME:a class name QNodeList does exists in Qt.
+
+		/*
+		 * Returns the supported video payloads.
+		 */
+		QList<QDomElement> supportedVideoPayloads() const;
 		
 		/*
 		 * Set supported profiles for jingle sessions.

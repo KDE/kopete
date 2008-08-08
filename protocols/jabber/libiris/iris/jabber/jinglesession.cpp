@@ -22,6 +22,7 @@
 #include <QUdpSocket>
 
 #include "jinglesession.h"
+#include "jinglesessionmanager.h"
 
 using namespace XMPP;
 
@@ -39,6 +40,7 @@ public:
 	Jid to;
 	QList<JingleContent*> contents;
 	Task *rootTask;
+	JingleSessionManager *jingleSessionManager;
 	QString sid;
 	QString initiator;
 	JT_JingleSession *jt;
@@ -53,6 +55,7 @@ JingleSession::JingleSession(Task *t, const Jid &j)
 {
 	d->to = j;
 	d->rootTask = t;
+	d->jingleSessionManager = t->client()->jingleSessionManager();
 	d->state = Pending;
 	d->responderTrying = false;
 }
@@ -104,9 +107,54 @@ void JingleSession::start()
 			qDebug() << "Create IN socket for" << contents()[i]->name();
 			//qDebug("Content Adress : %x\n", (unsigned int) contents()[i]);
 			contents()[i]->createUdpInSocket();
-			//connect(contents()[i], SIGNAL(rawUdpDataReady()), this, SLOT(slotRawUdpDataReady()));
+			connect(contents()[i], SIGNAL(established()), this, SLOT(slotContentConnected()));
 		}
 	}
+}
+
+void JingleSession::slotContentConnected()
+{
+	bool allOk = true;
+	// Checking if all contents are connected.
+	for (int i = 0; i < contents().count(); i++)
+	{
+		if (!contents()[i]->sending() || !contents()[i]->receiving())
+		{
+			allOk = false;
+			break;
+		}
+	}
+	
+	if (!allOk)
+		return;
+	
+	qDebug() << initiator() << "=?=" << d->to.full();
+	if (initiator() != d->to.full())
+	{
+		// In this case, we must not send session-accept and wait for it.
+		return;
+	}
+	
+	// Create all contents to send in the session-accept.
+	for (int i = 0; i < contents().count(); i++)
+	{
+		// First, set our supported payload-types.
+		if (contents()[i]->type() == JingleContent::Audio)
+			contents()[i]->setPayloadTypes(d->jingleSessionManager->supportedAudioPayloads());
+		else if (contents()[i]->type() == JingleContent::Video)
+			contents()[i]->setPayloadTypes(d->jingleSessionManager->supportedVideoPayloads());
+
+		// Then, set the corresponding candidate for ICE-UDP (let's see later)
+		// TODO:implement me !
+	}
+
+	JT_JingleAction *sAction = new JT_JingleAction(d->rootTask);
+	sAction->setSession(this);
+	sAction->sessionAccept(contents());
+
+	//Not now, first, wait or send session-accept
+	//d->state = Active;
+	//emit stateChanged();
 }
 
 void JingleSession::slotRawUdpDataReady()
@@ -403,9 +451,10 @@ void JingleSession::startRawUdpConnection(JingleContent *c)
 	//TODO:after sending this, this content must be ready to receive data.
 	
 	//Sending "trying" stanzas
-	//JT_JingleAction *tAction = new JT_JingleAction(d->rootTask);
-	//tAction->setSession(this);
-	//tAction->trying(*c);
+	JT_JingleAction *tAction = new JT_JingleAction(d->rootTask);
+	tAction->setSession(this);
+	tAction->trying(*c);
+	//TODO:Delete me when I'm finished.
 }
 
 void JingleSession::slotSessTerminated()

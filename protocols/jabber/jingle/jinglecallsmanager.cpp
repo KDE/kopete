@@ -161,7 +161,7 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		iceAudio->setName("audio-content");
 		iceAudio->addPayloadTypes(d->audioPayloads);
 		iceAudio->setTransport(iceAudioTransport);
-		iceAudio->setDescriptionNS("urn:xmpp:tmp:jingle:apps:audio-rtp");
+		iceAudio->setDescriptionNS("urn:xmpp:tmp:jingle:apps:rtp");
 		iceAudio->setCreator(d->jabberAccount->client()->jid().full());
 
 		QDomElement iceVideoTransport = doc.createElement("transport");
@@ -170,7 +170,7 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		iceVideo->setName("video-content");
 		iceVideo->addPayloadTypes(d->videoPayloads);
 		iceVideo->setTransport(iceVideoTransport);
-		iceVideo->setDescriptionNS("urn:xmpp:tmp:jingle:apps:video-rtp");
+		iceVideo->setDescriptionNS("urn:xmpp:tmp:jingle:apps:rtp");
 		iceVideo->setCreator(d->jabberAccount->client()->jid().full());
 		
 		//contents << iceAudio << iceVideo;
@@ -229,6 +229,8 @@ void JingleCallsManager::slotNewSession(XMPP::JingleSession *newSession)
 	JabberJingleSession *jabberSess = new JabberJingleSession(this);
 	jabberSess->setMediaManager(d->mediaManager); //Could be done directly in the constructor
 	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
+	connect(jabberSess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
+
 	d->sessions << jabberSess;
 	if (d->gui)
 		d->gui->addSession(jabberSess);
@@ -238,6 +240,21 @@ void JingleCallsManager::slotNewSession(XMPP::JingleSession *newSession)
 	connect(d->contentDialog, SIGNAL(accepted()), this, SLOT(slotUserAccepted()));
 	connect(d->contentDialog, SIGNAL(rejected()), this, SLOT(slotUserRejected()));
 	d->contentDialog->show();
+}
+
+void JingleCallsManager::slotSessionTerminated()
+{
+	JabberJingleSession *sess = (JabberJingleSession*) sender();
+	d->gui->removeSession(sess);
+	
+	for (int i = 0; i < d->sessions.count(); i++)
+	{
+		if (sess == d->sessions[i])
+			d->sessions.removeAt(i);
+	}
+
+	delete sess;
+
 }
 
 void JingleCallsManager::slotUserAccepted()

@@ -34,10 +34,11 @@ public:
 public slots:
 	void writeRtpData(XMPP::JingleContent*);
 	void slotUptimeOut();
+	void slotSessionTerminated();
 
 
 signals:
-	void sessionTerminated();
+	void terminated();
 
 private:
 	XMPP::JingleSession *m_jingleSession;

@@ -42,6 +42,7 @@ public:
 public slots:
 	void slotNewSession(XMPP::JingleSession*);
 	void slotSessionTerminate(XMPP::JingleSession*);
+	void slotSessionTerminated();
 	void slotUserAccepted();
 	void slotUserRejected();
 

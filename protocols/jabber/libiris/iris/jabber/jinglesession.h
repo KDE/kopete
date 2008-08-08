@@ -235,10 +235,16 @@ namespace XMPP
 		void terminated();
 		
 		/* 
-		 * needData() is emitted once.
+		 * needData() is emitted once for each content.
 		 * Once it has been emitted, streaming must start on this socket until stopSending is emitted.
+		 * FIXME: Shouldn't pass by here, should stay in JingleContent.
 		 */
 		void needData(XMPP::JingleContent*);
+
+		/**
+		 * Emitted when the session state has changed (Pending --> Active)
+		 */
+		void stateChanged();
 	public slots:
 		
 		/*
@@ -255,6 +261,11 @@ namespace XMPP
 		 * This slot is called when data is received on the raw udp socket.
 		 */
 		void slotRawUdpDataReady();
+
+		/*
+		 * Called when a content has been established.
+		 */
+		void slotContentConnected();
 
 	private:
 		class Private;

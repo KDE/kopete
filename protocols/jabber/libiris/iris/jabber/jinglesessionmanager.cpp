@@ -82,9 +82,19 @@ void JingleSessionManager::setSupportedAudioPayloads(const QList<QDomElement>& p
 	d->supportedAudioPayloads = payloads;
 }
 
+QList<QDomElement> JingleSessionManager::supportedAudioPayloads() const
+{
+	return d->supportedAudioPayloads;
+}
+
 void JingleSessionManager::setSupportedVideoPayloads(const QList<QDomElement>& payloads)
 {
 	d->supportedVideoPayloads = payloads;
+}
+
+QList<QDomElement> JingleSessionManager::supportedVideoPayloads() const
+{
+	return d->supportedVideoPayloads;
 }
 
 void JingleSessionManager::setSupportedProfiles(const QStringList& profiles)
@@ -175,16 +185,6 @@ void JingleSessionManager::slotTransportInfo(const QDomElement& x)
 	//sess->contentWithName(x.firstChildElement().attribute("name"))->addTransportInfo(x.firstChildElement().firstChildElement());
 	sess->addTransportInfo(x.firstChildElement());
 }
-
-/*void JingleSessionManager::slotSessionTerminated()
-{
-	JingleSession* sess = (JingleSession*) sender();
-	//TODO: Before we delete the session, we must stop sending data and close connection.
-	//	I dont know if we stop sending data before or after sending the stanza (I don't think it matters as it a UDP socket).
-	//	A signal should be sent anyway.
-	if (sess != 0)
-		delete sess;
-}*/
 
 void JingleSessionManager::slotSessionTerminate(const QString& sid, const JingleReason& reason)
 {
