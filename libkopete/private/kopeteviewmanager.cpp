@@ -328,7 +328,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			notify->setPixmap( QPixmap::fromImage(msg.from()->metaContact()->picture().image()) );
 			notify->setActions(( QStringList() <<  i18n( "View" )  <<   i18n( "Ignore" )) );
 
-			foreach(QString cl , msg.classes())
+			foreach(const QString& cl , msg.classes())
 				notify->addContext( qMakePair( QString::fromLatin1("class") , cl ) );
 
 			Kopete::MetaContact *mc= msg.from()->metaContact();

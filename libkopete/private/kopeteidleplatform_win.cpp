@@ -18,13 +18,7 @@
 #include "kopeteidleplatform_p.h"
 
 #include <QtCore/QLibrary>
-#include< windows.h>
-
-typedef struct tagLASTINPUTINFO
-{
-	UINT cbSize;
-	DWORD dwTime;
-} LASTINPUTINFO, *PLASTINPUTINFO;
+#include <windows.h>
 
 class Kopete::IdlePlatform::Private
 {

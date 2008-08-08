@@ -67,7 +67,7 @@ void PipesConfig::load ()
 	PipesPlugin::PipeOptions pipeOptions;
 	PipesPlugin::PipeOptionsList pipesList;
 	mPipesList.clear();
-	foreach (QString uid, uidList){
+	foreach (const QString& uid, uidList){
 		pipeOptions.uid = uid;
 		pipeOptions.enabled = config.readEntry ( uid + "enabled", true );
 		pipeOptions.path = config.readEntry ( uid + "path", QString() );

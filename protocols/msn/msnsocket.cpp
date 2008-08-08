@@ -174,6 +174,9 @@ void MSNSocket::slotSocketError( QAbstractSocket::SocketError error )
 	else
 		errormsg +=  m_socket->errorString() ;
 
+	// Disconnect signals as we don't want to emit close signal twice.
+	QObject::disconnect( m_socket, 0, 0, 0 );
+
 	if ( error == QAbstractSocket::RemoteHostClosedError )
 		m_socket->abort();
 	else

@@ -54,7 +54,7 @@ void EmoticonThemeDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 		int middle = (maxHeight / 2) + top.y();
 		QStringList emotes = qvariant_cast<QStringList>(index.data(Qt::UserRole));
 		int count = 0;
-		foreach(QString emote, emotes)
+		foreach(const QString &emote, emotes)
 		{
 			QPixmap pix;
 
