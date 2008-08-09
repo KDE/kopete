@@ -8,6 +8,7 @@
 class JingleCallsManager;
 class JabberJingleSession;
 class JabberJingleContent;
+class JingleCallsModel;
 class JingleCallsGui : public QMainWindow
 {
 	Q_OBJECT
@@ -29,6 +30,7 @@ private:
 	void setupActions();
 	JingleCallsManager *m_callsManager;
 	Ui::jingleCallsGui ui;
+	JingleCallsModel *model;
 };
 
 

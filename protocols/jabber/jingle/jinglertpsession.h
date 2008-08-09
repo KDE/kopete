@@ -65,7 +65,6 @@ private:
 	int payloadTS;
 	int payloadID;
 	QString payloadName;
-	void wrapJpegData(char*, int);
 	enum State {SendingData = 0} state;
 	Direction m_direction;
 };

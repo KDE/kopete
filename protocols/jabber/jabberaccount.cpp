@@ -135,7 +135,9 @@ void JabberAccount::cleanup ()
 
 	delete m_contactPool;
 	m_contactPool = 0L;
-	
+
+	delete m_jcm;
+
 #ifdef SUPPORT_JINGLE
 	//delete m_voiceCaller;
 	//m_voiceCaller = 0L;

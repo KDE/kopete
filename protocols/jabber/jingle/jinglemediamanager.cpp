@@ -36,7 +36,7 @@ JingleMediaSession::JingleMediaSession(JingleMediaManager *parent)
 
 JingleMediaSession::~JingleMediaSession()
 {
-
+	kDebug() << "deleted";
 }
 
 void JingleMediaSession::setPayloadType(const QDomElement& payload)
@@ -211,7 +211,7 @@ JingleMediaSession *JingleMediaManager::createNewSession(const QDomElement& payl
 	}
 
 	connect(mediaSession, SIGNAL(incomingData()), this, SLOT(slotIncomingData()));
-	//connect(mediaSession, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
+	connect(mediaSession, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
 	
 	m_sessions << mediaSession;
 

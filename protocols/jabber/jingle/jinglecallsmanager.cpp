@@ -63,7 +63,7 @@ JingleCallsManager::~JingleCallsManager()
 	delete d->mediaManager;
 	delete d->gui;
 	//delete d->sessions;
-	delete d->contentDialog;
+	//delete d->contentDialog; --> Will be deleted when necessary.
 
 	//TODO:delete the other fields in Private...
 }
@@ -297,7 +297,7 @@ void JingleCallsManager::slotUserRejected()
 	contentDialog->session()->terminate(JingleReason(JingleReason::Decline));
 	kDebug() << "end";
 	contentDialog->close();
-	delete contentDialog;
+	contentDialog->deleteLater();
 }
 
 void JingleCallsManager::showCallsGui()

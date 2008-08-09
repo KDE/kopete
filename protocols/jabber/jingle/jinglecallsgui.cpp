@@ -44,13 +44,14 @@ JingleCallsGui::JingleCallsGui(JingleCallsManager* parent)
 	ui.setupUi(this);
 	setupActions();
 
-	JingleCallsModel *model = new JingleCallsModel(m_callsManager->jabberSessions());
+	model = new JingleCallsModel(m_callsManager->jabberSessions());
 	ui.treeView->setModel(model);
 }
 
 JingleCallsGui::~JingleCallsGui()
 {
-
+	kDebug() << "deleted";
+	delete model;
 }
 
 void JingleCallsGui::setupActions()
@@ -144,6 +145,8 @@ void JingleCallsGui::addSession(JabberJingleSession* sess)
 	for (int column = 0; column < model->columnCount(index.parent()); ++column)
 	{
 		QModelIndex child = model->index(index.row() + 1, column, index.parent());
+		TreeItem *item = static_cast<TreeItem*>(child.internalPointer());
+		item->setSessionPtr(sess);
 		model->setData(child, sessData[column], Qt::EditRole);
 	}
 
@@ -173,6 +176,29 @@ void JingleCallsGui::addSession(JabberJingleSession* sess)
 void JingleCallsGui::removeSession(JabberJingleSession* sess)
 {
 	kDebug() << "Remove session" << sess;
+	int i = 0;
+
+//Looking for the QModelIndex with the session sess.
+	//root QModelIndex
+	QAbstractItemModel *model = ui.treeView->model();
+	QModelIndex child = model->index(0, 0);
+	//QModelIndex child = rootIndex.child(0, 0);
+
+	while (child.isValid())
+	{
+		kDebug() << child.data();
+		TreeItem *childItem = static_cast<TreeItem*>(child.internalPointer());
+		if (childItem == 0)
+			kDebug() << "childItem is NULL";
+		kDebug() << "Compare" << childItem->session() << "to" << sess;
+		if (childItem->session() == sess)
+		{
+			//Children of this line will be automatically removed.
+			model->removeRow(i, child.parent());
+		}
+		child = model->index(++i, 0);
+	}
+
 	//Don't delete it, just remove it from the QTreeView.
 }
 
@@ -198,8 +224,6 @@ JingleCallsModel::JingleCallsModel(const QList<JabberJingleSession*> &data, QObj
 
 void JingleCallsModel::setModelUp(const QList<JabberJingleSession*> &sessions)
 {
-	//FIXME:Later, each TreeItem could keep a pointer on the session or content it is linked to so edition is more easy.
-	//kDebug() << "Setting Model up with" << sessions.count() << "sessions";
 	for (int i = 0; i < sessions.count(); i++)
 	{
 		QVector<QVariant> sessData;
@@ -397,7 +421,10 @@ TreeItem::TreeItem(const QVector<QVariant> &data, TreeItem *parent)
 
 TreeItem::~TreeItem()
 {
-
+	for (int i = 0; i < childItems.count(); i++)
+	{
+		delete childItems.takeAt(i);
+	}
 }
 
 void TreeItem::setContentPtr(JabberJingleContent* c)
@@ -426,7 +453,9 @@ bool TreeItem::removeChildren(int pos, int count)
 		return false;
 
 	for (int row = 0; row < count; ++row)
+	{
 		delete childItems.takeAt(pos);
+	}
 
 	return true;
 }

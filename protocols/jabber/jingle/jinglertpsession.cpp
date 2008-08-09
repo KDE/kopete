@@ -144,33 +144,17 @@ void JingleRtpSession::setPayload(const QDomElement& payload)
 	//payloadTS must be set here.
 	payloadName = "PCMA";
 	payloadID = 8;
-	payloadTS = 2000; // For testing, data sent each 2000 ms TODO:Change that !!!
+	payloadTS = 168; // For testing, data sent each 168 ms for PCMA TODO:Change that !!!
 	RtpProfile *profile = rtp_profile_new(payloadName.toAscii());
-	rtp_profile_set_payload(profile, 96, &payload_type_pcma8000);
+	rtp_profile_set_payload(profile, 8, &payload_type_pcma8000);
 	rtp_session_set_profile(m_rtpSession, profile);
-	rtp_session_set_payload_type(m_rtpSession, 96);
+	rtp_session_set_payload_type(m_rtpSession, 8);
 }
 
 void JingleRtpSession::slotBytesWritten(qint64 size)
 {
-	kDebug() << size << "bytes written";
+	//kDebug() << size << "bytes written";
 	if (state != SendingData)
 		return;
 	emit dataSent();
-}
-
-void JingleRtpSession::wrapJpegData(char *data, int size)
-{
-	QImage img;
-	img.loadFromData((const uchar*)data, size, "JPEG");
-	unsigned char header[8];
-	header[0] = 0;
-	header[1] = 0;
-	header[2] = 0;
-	header[3] = 0;
-	header[4] = 0;
-	header[5] = 0;
-	header[6] = img.width() / 8;
-	header[7] = img.height() / 8;
-	
 }
