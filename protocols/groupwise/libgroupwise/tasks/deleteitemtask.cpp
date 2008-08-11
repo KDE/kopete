@@ -33,7 +33,7 @@ void DeleteItemTask::item( const int parentFolder, const int objectId )
 {
 	if ( objectId == 0 )
 	{
-		setError( 1, "Can't delete the root folder" );
+		setError( 1, "Cannot delete the root folder" );
 		return;
 	}
 	Field::FieldList lst;

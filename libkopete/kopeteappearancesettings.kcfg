@@ -11,13 +11,13 @@
 
 	<!-- Define the available signals to emit -->
 	<signal name="appearanceChanged">
-		<label>Emited when the font and colors settings has changed.</label>
+		<label>Emitted when the font and colors settings has changed.</label>
 	</signal>
 	<signal name="messageOverridesChanged">
-		<label>Emited when the message overrides settings has changed.</label>
+		<label>Emitted when the message overrides settings has changed.</label>
 	</signal>
 	<signal name="contactListAppearanceChanged">
-		<label>Emited when the contact list appearance has changed.</label>
+		<label>Emitted when the contact list appearance has changed.</label>
 	</signal>
 
 	<group name="Appearance">
@@ -126,7 +126,7 @@
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<entry key="contactListIndentContact" type="Bool">
-			<label>Indent contacts if you don't show tree lines.</label>
+			<label>Indent contacts if you do not show tree lines.</label>
 			<default>false</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>

@@ -170,7 +170,7 @@ void QQChatSession::slotCreationFailed( const int failedId, const int statusCode
 {
 	if ( failedId == mmId() )
 	{
-		kDebug ( 14140 ) << " couldn't start a chat, no GUID.\n";
+		kDebug ( 14140 ) << " could not start a chat, no GUID.\n";
 		//emit creationFailed();
 		Kopete::Message failureNotify( myself(), members() );
 		failureNotify.setPlainBody( i18n("An error occurred when trying to start a chat: %1", statusCode ) );

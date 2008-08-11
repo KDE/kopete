@@ -139,13 +139,13 @@ QString URLPicPreviewPlugin::prepareBody ( const QString& parsedBody, uint previ
 					{
 						if ( ! ( (*m_pic = m_pic->scaledToWidth ( width ) ) ).save ( tmpFile, "PNG" ) )
 						{
-							kWarning ( 14314 ) << "Couldn't save scaled image" << tmpFile;
+							kWarning ( 14314 ) << "Could not save scaled image" << tmpFile;
 						}
 					}
 				}
 				else
 				{
-					kWarning ( 14314 ) << "Couldn't load image " << tmpFile;
+					kWarning ( 14314 ) << "Could not load image " << tmpFile;
 				}
 			}
 

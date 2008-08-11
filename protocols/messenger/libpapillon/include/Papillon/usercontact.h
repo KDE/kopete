@@ -68,12 +68,12 @@ public:
 
 	/**
 	 * @brief Set the authentication cookie obtained during login process.
-	 * @param cookie Authentification cookie
+	 * @param cookie Authentication cookie
 	 */
 	void setLoginCookie(const QString &cookie);
 	/**
 	 * @brief Get the login cookie
-	 * @return Authentification cookie
+	 * @return Authentication cookie
 	 */
 	QString loginCookie() const;
 

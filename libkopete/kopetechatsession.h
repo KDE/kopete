@@ -394,7 +394,7 @@ protected:
 	ChatSession( const Contact *user, ContactPtrList others, Protocol *protocol, Form form = Small );
 
 	/**
-	 * Set wether or not contact from this account may be invited in this chat.
+	 * Set whether or not contact from this account may be invited in this chat.
 	 * By default, it is set to false
 	 * @see inviteContact()
 	 * @see mayInvite()

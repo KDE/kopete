@@ -13,7 +13,7 @@
    <item>
     <widget class="QCheckBox" name="fastLearner" >
      <property name="text" >
-      <string>I'm a fast learner</string>
+      <string>I am a fast learner</string>
      </property>
     </widget>
    </item>

@@ -286,7 +286,7 @@ void PluginManager::loadAllPlugins()
 			else
 			{
 				//This happens if the user unloaded plugins with the config plugin page.
-				// No real need to be assync because the user usualy unload few plugins
+				// No real need to be assync because the user usually unload few plugins
 				// compared tto the number of plugin to load in a cold start. - Olivier
 				if ( plugin( pluginName ) )
 					unloadPlugin( pluginName );

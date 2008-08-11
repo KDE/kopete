@@ -646,7 +646,7 @@ void MSNChatSession::receivedTypingMsg( const QString &contactId, bool b )
 	MSNContact *c = dynamic_cast<MSNContact *>( account()->contacts()[ contactId ] );
 	if(c && m_newSession &&  !view(false))
 	{
-		//this was originaly in MSNAccount::slotCreateChat
+		//this was originally in MSNAccount::slotCreateChat
         KConfigGroup *config=account()->configGroup();
         if (  config->readEntry( "NotifyNewChat", false )  )
 		{

@@ -192,7 +192,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 			kWarning (JABBER_DEBUG_GLOBAL) << "the contact is not in the list   : " <<  message.from().full();
 			return;
 			/**
-			 * We couldn't find the contact for this message. That most likely means
+			 * We could not find the contact for this message. That most likely means
 			 * that it originated from a history backlog or something similar and
 			 * the sending person is not in the channel anymore. We need to create
 			 * a new contact for this which does not show up in the manager.
@@ -270,7 +270,7 @@ void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 
 	if ( !subContact )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Subcontact couldn't be located!";
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Subcontact could not be located!";
 		return;
 	}
 	

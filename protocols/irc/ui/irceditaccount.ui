@@ -108,7 +108,7 @@
           <item row="0" column="0" >
            <widget class="QLabel" name="m_nickNamesLabel" >
             <property name="whatsThis" >
-             <string>This is the name that everyone will see everytime you say something</string>
+             <string>This is the name that everyone will see every time you say something</string>
             </property>
             <property name="text" >
              <string>N&amp;icknames:</string>
@@ -188,10 +188,10 @@
              </sizepolicy>
             </property>
             <property name="toolTip" >
-             <string>This is the name that everyone will see everytime you say something</string>
+             <string>This is the name that everyone will see every time you say something</string>
             </property>
             <property name="whatsThis" >
-             <string>The alias you would like to use on IRC.  Once you're online, you can change it with the /nick command.</string>
+             <string>The alias you would like to use on IRC.  Once you are online, you can change it with the /nick command.</string>
             </property>
            </widget>
           </item>
