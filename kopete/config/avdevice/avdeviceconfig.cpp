@@ -242,6 +242,16 @@ void AVDeviceConfig::deviceRegistered( const QString & udi )
 	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+
+	// update the mVideoImageLabel to show the camera frames
+	mVideoDevicePool->open();
+	mVideoDevicePool->setSize(320, 240);
+	mVideoDevicePool->startCapturing();
+
+	setVideoInputParameters();
+
+	qtimer.start(40);
+	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
 }
 
 
