@@ -596,7 +596,7 @@ bool OscarAccount::addContactToSSI( const QString& contactName, const QString& g
 		if ( !autoAddGroup )
 			return false;
 
-		kDebug(OSCAR_GEN_DEBUG) << "adding non-existant group "
+		kDebug(OSCAR_GEN_DEBUG) << "adding non-existent group "
 			<< groupName << endl;
 
 		d->contactAddQueue[Oscar::normalize( contactName )] = groupName;
@@ -618,7 +618,7 @@ bool OscarAccount::changeContactGroupInSSI( const QString& contact, const QStrin
 		if ( !autoAddGroup )
 			return false;
 		
-		kDebug(OSCAR_GEN_DEBUG) << "adding non-existant group " 
+		kDebug(OSCAR_GEN_DEBUG) << "adding non-existent group " 
 				<< newGroupName << endl;
 			
 		d->contactChangeQueue[Oscar::normalize( contact )] = newGroupName;
@@ -1040,8 +1040,8 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 		reason = i18n("Could not sign on to %1 with account %2 because the " \
 		              "password was incorrect.", acctType, accountId() );
 		break;
-	case 0x0007: // non-existant ICQ#
-	case 0x0008: // non-existant ICQ#
+	case 0x0007: // non-existent ICQ#
+	case 0x0008: // non-existent ICQ#
 		reason = i18n("Could not sign on to %1 with nonexistent account %2.",
 			  acctType, accountId() );
 		break;

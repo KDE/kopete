@@ -205,7 +205,7 @@ void GroupWiseChatSession::slotCreationFailed( const int failedId, const int sta
 {
 	if ( failedId == mmId() )
 	{
-		kDebug () << " couldn't start a chat, no GUID.\n";
+		kDebug () << " could not start a chat, no GUID.\n";
 		//emit creationFailed();
 		Kopete::Message failureNotify( myself(), members());
 		failureNotify.setPlainBody( i18n("An error occurred when trying to start a chat: %1", statusCode ) );

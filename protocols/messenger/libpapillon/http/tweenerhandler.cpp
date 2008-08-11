@@ -1,5 +1,5 @@
 /*
-   tweenerhandler.cpp - Negociation with Passport to get the login ticket.
+   tweenerhandler.cpp - Negotiation with Passport to get the login ticket.
 
    Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 

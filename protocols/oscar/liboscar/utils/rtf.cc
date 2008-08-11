@@ -925,7 +925,7 @@ static int yy_get_next_buffer()
 			{ /* Not enough room in the buffer - grow it. */
 #ifdef YY_USES_REJECT
 			YY_FATAL_ERROR(
-"input buffer overflow, can't enlarge buffer because scanner uses REJECT" );
+"input buffer overflow, cannot enlarge buffer because scanner uses REJECT" );
 #else
 
 			/* just a shorter name for the current buffer */

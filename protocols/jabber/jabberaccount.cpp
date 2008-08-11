@@ -1369,7 +1369,7 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 		if(metaContact->isTemporary())
 			return;
 		kDebug (JABBER_DEBUG_GLOBAL) << c->contactId() << 
-				" is on the contact list while it shouldn't.  we are removing it.  - " << c << endl;
+				" is on the contact list while it should not.  we are removing it.  - " << c << endl;
 		delete c;
 		if(metaContact->contacts().isEmpty())
 			Kopete::ContactList::self()->removeMetaContact( metaContact );
@@ -1409,7 +1409,7 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 		 */
 		if ( !contactFrom )
 		{
-			kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Received a groupchat message but couldn't find room contact. Ignoring message.";
+			kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Received a groupchat message but could not find room contact. Ignoring message.";
 			return;
 		}
 	}
@@ -1535,7 +1535,7 @@ void JabberAccount::slotGroupChatPresence (const XMPP::Jid & jid, const XMPP::St
 
 	if ( !groupContact )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Groupchat presence signalled, but we don't have a room contact?";
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Groupchat presence signalled, but we do not have a room contact?";
 		return;
 	}
 

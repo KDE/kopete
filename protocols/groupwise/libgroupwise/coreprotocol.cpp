@@ -163,7 +163,7 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 		debug( " - message was incomplete, waiting for more..." );
 	if ( m_eventProtocol->state() == EventProtocol::OutOfSync )
 	{	
-		debug( " - protocol thinks it's out of sync, discarding the rest of the buffer and hoping the server regains sync soon..." );
+		debug( " - protocol thinks it is out of sync, discarding the rest of the buffer and hoping the server regains sync soon..." );
 		m_in.truncate( 0 );
 	}
 	debug( " - done processing chunk" );
