@@ -1,7 +1,7 @@
 /*
     kopeteidleplatform_x11.cpp  -  Kopete Idle Platform
 
-    Copyright (C) 2003      by Justin Karneges       (from KVIrc source code)
+    Copyright (C) 2003      by Justin Karneges       <justin@affinix.com>       (from KVIrc source code)
     Copyright (c) 2008      by Roman Jarosz          <kedgedev@centrum.cz>
     Kopete    (c) 2008      by the Kopete developers <kopete-devel@kde.org>
 

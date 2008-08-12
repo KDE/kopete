@@ -400,7 +400,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	//BEGIN TIMEZONE INFORMATION
 	//
 	// Set timezone information (code from Psi)
-	// Copyright (C) 2001-2003  Justin Karneges
+	// Copyright (C) 2001-2003  Justin Karneges <justin@affinix.com>
 	//
 	time_t x;
 	time(&x);

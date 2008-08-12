@@ -5,7 +5,7 @@
 	Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
 	
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
-	Based on Iris, Copyright (C) 2003  Justin Karneges
+	Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 	
 	Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 	

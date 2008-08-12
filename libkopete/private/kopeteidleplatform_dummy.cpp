@@ -34,3 +34,4 @@ int Kopete::IdlePlatform::secondsIdle()
 {
 	return 0;
 }
+

@@ -4,7 +4,7 @@
 
     Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
 
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
