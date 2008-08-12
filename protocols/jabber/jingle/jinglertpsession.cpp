@@ -57,6 +57,7 @@ void JingleRtpSession::connectToHost(const QString& address, int rtpPort, int rt
 void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 {
 	kDebug(KDE_DEFAULT_DEBUG_AREA) << (socket->isValid() ? "Socket ready" : "Socket not ready");
+	// The socket has already been created but we set another one here.
 	delete rtpSocket;
 	rtpSocket = (QUdpSocket*) socket;
 	
@@ -65,10 +66,12 @@ void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 		connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
 		rtcpSocket->bind(rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
 		kDebug() << "RTCP socket bound to" << rtcpSocket->localPort();
-		//bind --> socket already bound.
+		//RTP socket : bind --> socket already bound.
 	}
 	else if (m_direction == Out)
 	{
+		kDebug() << "Given socket is connected to" << rtpSocket->peerAddress() << ":" << rtpSocket->peerPort();
+		kDebug() << "RTCP socket will be connected to" << rtpSocket->peerAddress() << ":" << (rtcpPort == 0 ? rtpSocket->peerPort() + 1 : rtcpPort);
 		connect(rtpSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)));
 		rtcpSocket->connectToHost(rtpSocket->peerAddress(), rtcpPort == 0 ? rtpSocket->peerPort() + 1 : rtcpPort, QIODevice::ReadWrite);
 	}
@@ -110,6 +113,7 @@ void JingleRtpSession::rtpDataReady()
 	//kDebug() << "receivingTS =" << receivingTS;
 
 	mblk_t *packet;
+	// Risk of infinite loop ?
 	while ((packet = rtp_session_recvm_with_ts(m_rtpSession, receivingTS)) == NULL)
 	{
 		//kDebug() << "Packet is Null, retrying.";

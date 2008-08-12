@@ -41,6 +41,7 @@ public:
 	bool sending;
 	bool receiving;
 	Type type;
+	bool isInitiator;
 };
 
 JingleContent::JingleContent()
@@ -50,6 +51,7 @@ JingleContent::JingleContent()
 	d->receiving = false;
 	d->inSocket = 0L;
 	d->outSocket = 0L;
+	d->isInitiator = false;
 }
 
 JingleContent::~JingleContent()
@@ -230,18 +232,19 @@ void JingleContent::createUdpInSocket()
 	//The problem is the fact that a socket cannot be Bound _and_ connected at the same time --> there is now a IN socket an a OUT socket
 	QHostAddress address(d->transport.firstChildElement().attribute("ip"));
 	int port = d->transport.firstChildElement().attribute("port").toInt();
+	qDebug() << "Bind socket to" << address << ":" << port;
 	if (d->inSocket->bind(address, port))
 		qDebug() << "Socket bound to" << address.toString() << ":" << port;
 	
 	connect(d->inSocket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
-	
 	emit inSocketReady();
 }
 
 void JingleContent::slotRawUdpDataReady()
 {
-	setReceiving(true);
 	qDebug() << "Data arrived on the socket.";
+	setReceiving(true);
+	disconnect(sender(), 0, this, 0);
 }
 
 QUdpSocket *JingleContent::inSocket()
@@ -263,9 +266,14 @@ bool JingleContent::sending()
 
 void JingleContent::setSending(bool s)
 {
+	if (d->sending == s)
+		return;
 	d->sending = s;
 	if (d->sending && d->receiving)
+	{
+		qDebug() << "setSending : emit established() SIGNAL";
 		emit established();
+	}
 }
 
 bool JingleContent::receiving()
@@ -275,9 +283,14 @@ bool JingleContent::receiving()
 
 void JingleContent::setReceiving(bool r)
 {
+	if (d->receiving == r)
+		return;
 	d->receiving = r;
 	if (d->sending && d->receiving)
+	{
+		qDebug() << "setReceiving : emit established() SIGNAL";
 		emit established();
+	}
 }
 
 void JingleContent::startSending()
@@ -296,8 +309,8 @@ void JingleContent::startSending(const QHostAddress& address, int port)
 	emit outSocketReady();
 	qDebug() << "Sending data to" << address.toString() << ":" << port;
 	qDebug() << "EMIT needData(c) SIGNAL";
-	emit needData(this); //FIXME:We can Use sender to know which content sent the signal.
 	setSending(true);
+	emit needData(this); //FIXME:We can Use sender to know which content sent the signal.
 }
 
 QList<QDomElement> JingleContent::candidates() const
@@ -312,14 +325,15 @@ QString JingleContent::creator() const
 
 void JingleContent::bind(const QHostAddress& address, int port)
 {
-	Q_UNUSED(address)
-	Q_UNUSED(port)
-/*	//FIXME:QNativeSocketEngine::bind() was not called in QAbstractSocket::UnconnectedState
-	if (!d->socket)
-		d->socket = new QUdpSocket();
-	if (d->socket->bind(address, port))
+	qDebug() << "Trying to bind socket to" << address.toString() << ":" << port;
+	if (!d->inSocket)
+		d->inSocket = new QUdpSocket();
+	if (d->inSocket->bind(address, port))
 		qDebug() << "Socket bound to" << address.toString() << ":" << port;
-*/
+	
+	connect(d->inSocket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
+	
+	emit inSocketReady();
 }
 
 

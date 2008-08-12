@@ -162,7 +162,8 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		iceAudio->addPayloadTypes(d->audioPayloads);
 		iceAudio->setTransport(iceAudioTransport);
 		iceAudio->setDescriptionNS("urn:xmpp:tmp:jingle:apps:rtp");
-		iceAudio->setCreator(d->jabberAccount->client()->jid().full());
+		iceAudio->setType(JingleContent::Audio);
+		iceAudio->setCreator("initiator");
 
 		QDomElement iceVideoTransport = doc.createElement("transport");
 		iceVideoTransport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:ice-udp");
@@ -171,7 +172,8 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		iceVideo->addPayloadTypes(d->videoPayloads);
 		iceVideo->setTransport(iceVideoTransport);
 		iceVideo->setDescriptionNS("urn:xmpp:tmp:jingle:apps:rtp");
-		iceVideo->setCreator(d->jabberAccount->client()->jid().full());
+		iceVideo->setType(JingleContent::Video);
+		iceVideo->setCreator("initiator");
 		
 		//contents << iceAudio << iceVideo;
 		contents << iceAudio;
@@ -187,7 +189,8 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		rawAudio->addPayloadTypes(d->audioPayloads);
 		rawAudio->setTransport(rawAudioTransport);
 		rawAudio->setDescriptionNS("urn:xmpp:tmp:jingle:apps:audio-rtp");
-		rawAudio->setCreator(d->jabberAccount->client()->jid().full());
+		rawAudio->setType(JingleContent::Audio);
+		rawAudio->setCreator("initiator");
 
 		QDomElement rawVideoTransport = doc.createElement("transport");
 		rawVideoTransport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:raw-udp");
@@ -196,7 +199,8 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		rawVideo->addPayloadTypes(d->videoPayloads);
 		rawVideo->setTransport(rawVideoTransport);
 		rawVideo->setDescriptionNS("urn:xmpp:tmp:jingle:apps:video-rtp");
-		rawVideo->setCreator(d->jabberAccount->client()->jid().full());
+		rawVideo->setType(JingleContent::Video);
+		rawVideo->setCreator("initiator");
 		
 		//contents << rawAudio << rawVideo;
 		contents << rawAudio;

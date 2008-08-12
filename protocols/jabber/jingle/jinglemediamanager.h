@@ -91,8 +91,8 @@ private:
 	Solid::AudioInterface *audioInputDevice;
 	Solid::AudioInterface *audioOutputDevice;
 	AlsaALaw *plugin;
-	int ts;
-	int tsValue;
+	unsigned int ts;
+	unsigned int tsValue;
 };
 
 class JingleMediaManager : public QObject
@@ -148,9 +148,9 @@ public slots:
 	void slotIncomingData();
 
 private:
-	QList<Solid::Device> m_microphones;
-	QList<Solid::Device> m_audioOutputs;
-	QList<Solid::Device> m_videoInputs;
+	QList<Solid::Device> m_microphones; //FIXME:switch to Phonon audio devices
+	QList<Solid::Device> m_audioOutputs; // "
+	QList<Solid::Device> m_videoInputs; // "
 	QTimer *timer;
 	QList<JingleMediaSession*> m_sessions;
 	AlsaALaw *alaw;
@@ -241,14 +241,28 @@ public:
 		}
 		ready = true;
 	}
-	//~AlsaALaw();
+	~AlsaALaw()
+	{
+		//TODO:Close alsa stuff !!!
+		snd_pcm_close (captureHandle);
+		close(notifier->socket());
+		
+		delete notifier;
+		delete timer;
+	}
 	
 	void start()
 	{
 		kDebug() << "start()";
 		if (!ready)
 		{
-			kDebug() << "Not Ready.";
+			kDebug() << "Not Ready, sending 44 bytes of zeros every 168 second.";
+			kDebug() << "This could probably be caused by an innacessible audio device or simply because there is no audio device.";
+			
+			timer = new QTimer(this);
+			timer->setInterval(168);
+			connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeOut()));
+			timer->start();
 			return;
 		}
 		int count = snd_pcm_poll_descriptors_count(captureHandle);
@@ -304,9 +318,12 @@ public:
 	
 	unsigned int timeStamp()
 	{
-		int wps = (int) samplingRate/8;	// Bytes per second
-		int wpms = wps/1000;		// Bytes per milisecond
-		int ts = wpms * periodTime();		// Time stamp
+		unsigned int wps = sRate()/8;	// Bytes per second
+		kDebug() << "Bytes per second =" << wps;
+		unsigned int wpms = wps/1000;		// Bytes per milisecond
+		kDebug() << "Bytes per millisecond =" << wpms;
+		unsigned int ts = wpms * periodTime();		// Time stamp
+		kDebug() << "Time stamp =" << ts;
 		return ts;
 	}
 
@@ -330,6 +347,13 @@ public slots:
 			printf("0x%02x ", (int) buf.at(i));
 		}*/
 	}
+	void timerTimeOut()
+	{
+		// With a period time of 21333 µs and the A-Law format, we always have 44 bytes.
+		// Here, this is 44 bytes which are all zeros.
+		buf.fill('\0', 44);
+		emit readyRead();
+	}
 private:
 	snd_pcm_t *captureHandle;
 	QSocketNotifier *notifier;
@@ -337,6 +361,7 @@ private:
 	QByteArray buf;
 	unsigned int pTime;
 	unsigned int samplingRate;
+	QTimer *timer;
 signals:
 	void readyRead();
 };

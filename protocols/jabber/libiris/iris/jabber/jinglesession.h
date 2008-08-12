@@ -267,6 +267,17 @@ namespace XMPP
 		 */
 		void slotContentConnected();
 
+		/*
+		 * This slot is called when a JT_JingleAction has been acknowledged
+		 * and we just have to delete it.
+		 */
+		void slotAcked();
+
+		/*
+		 * This slot is called when the session has been accepted by the responder.
+		 */
+		void slotSessionAcceptAcked();
+
 	private:
 		class Private;
 		Private *d;

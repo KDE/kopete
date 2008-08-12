@@ -105,6 +105,7 @@ void JingleSessionManager::setSupportedProfiles(const QStringList& profiles)
 JingleSession *JingleSessionManager::startNewSession(const Jid& toJid, const QList<JingleContent*>& contents)
 {
 	XMPP::JingleSession *session = new XMPP::JingleSession(d->client->rootTask(), toJid.full());
+	session->setInitiator(d->client->jid().full());
 	session->addContents(contents);
 	d->sessions << session;
 	connect(session, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));

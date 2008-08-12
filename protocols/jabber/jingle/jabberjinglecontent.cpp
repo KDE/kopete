@@ -97,12 +97,8 @@ void JabberJingleContent::slotPrepareRtpOutSession()
 void JabberJingleContent::slotIncomingData(const QByteArray& data)
 {
 	Q_UNUSED(data)
-	/*
-	 * TODO:
-	 * 	Media manager should have a pointer to each JabberJingleSession
-	 * 	so it knows what content it should expect for a given content/session.
-	 */
-//	m_mediaManager->processData();
+	kDebug() << "Receiving !";
+	//m_content->setReceiving(true);
 }
 
 void JabberJingleContent::startWritingRtpData()
@@ -128,6 +124,7 @@ void JabberJingleContent::startWritingRtpData()
 		/*connect(m_mediaManager, SIGNAL(audioReadyRead()), this, SLOT(slotSendRtpData()));
 		m_mediaManager->startAudioStreaming();*/
 	}
+	//m_content->setSending(true);
 }
 
 void JabberJingleContent::slotReadyRead(int ts)
@@ -164,6 +161,7 @@ QDomElement JabberJingleContent::bestPayload(const QList<QDomElement>& payload1,
 				return payload1[i];
 		}
 	}
+	kDebug() << "Returns QDomElement !";
 	return QDomElement();
 }
 

@@ -312,7 +312,7 @@ void JT_JingleAction::initiate()
 	for (int i = 0; i < d->session->contents().count(); i++)
 	{
 		QDomElement transport = d->session->contents()[i]->transport();
-		qDebug() << "Transport from the JingleContent is : " << client()->stream().xmlToString(transport, false);
+		//qDebug() << "Transport from the JingleContent is : " << client()->stream().xmlToString(transport, false);
 		if (transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
 		{
 			qDebug() << "Set raw-udp candidate for content" << i;
@@ -525,11 +525,12 @@ void JT_JingleAction::transportInfo(JingleContent *c)
 		//qDebug() << "Port =" << QString("%1").arg(port);
 		candidate.setAttribute("port", QString("%1").arg(port));
 		candidate.setAttribute("generation", "0"); // FIXME:I don't know yet what it is.
-		c->bind(ips[0], port);
 		transport.appendChild(candidate);
 		content.appendChild(transport);
 		jingle.appendChild(content);
 		d->iq.appendChild(jingle);
+		
+		c->bind(ips[0], port);
 	}
 	else if (e.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
 	{
@@ -638,6 +639,8 @@ void JT_JingleAction::sessionAccept(const QList<JingleContent*>& contents)
 	}
 
 	d->iq.appendChild(jingle);
+	qDebug() << "Prepare to send :";
+	client()->stream().xmlToString(d->iq, false);
 
 	send(d->iq);
 }
@@ -648,6 +651,8 @@ bool JT_JingleAction::take(const QDomElement &x)
 		return false;
 	
 	emit finished();
+	setSuccess();
+
 	return true;
 }
 
