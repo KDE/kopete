@@ -79,8 +79,8 @@ QByteArray Message::unquote(const QByteArray &buffer)
 }
 
 static KIrc::ByteArrayEscaper IrcCtcpEscaper('\\', KIrc::ByteArrayEscaper::EscapeList()
-		<< KIrc::ByteArrayEscaper::Escape((char)1, '1')
-	);
+	<< KIrc::ByteArrayEscaper::Escape((char)1, '1')
+);
 
 QByteArray Message::quoteCtcp(const QByteArray &buffer)
 {

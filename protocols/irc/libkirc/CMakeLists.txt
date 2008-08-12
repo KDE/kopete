@@ -6,8 +6,6 @@ include_directories(
 )
 
 set(libkirc_SRCS
-	kernel/kcmdline.cpp
-
 	kernel/kircbytearrayescaper.cpp
 #	kernel/kirccommand.cpp
 	kernel/kircconst.cpp 
@@ -31,7 +29,9 @@ set_target_properties(kirc PROPERTIES VERSION 1.0.0 SOVERSION 1)
 install(TARGETS kirc ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 set(libkirc_client_SRCS
-	client/kircclienthandler.cpp
+#	client/kircclienthandler.cpp
+
+	client/kircclientlisthandler.cpp
 	client/kircclientwhohandler.cpp
 
 	client/kircclientsocket.cpp 
