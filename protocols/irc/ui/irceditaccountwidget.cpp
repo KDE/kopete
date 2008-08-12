@@ -27,7 +27,6 @@
 
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <k3listview.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>
