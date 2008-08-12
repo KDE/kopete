@@ -61,6 +61,7 @@ public:
 	static bool isChannel( const QByteArray &name );
 	static bool isUser( const QByteArray &name );
 */
+	Entity(KIrc::Context *context);
 	virtual ~Entity();
 
 public: // Read attributes accessors
@@ -99,7 +100,6 @@ signals:
 private:
 	static QByteArray userInfo(const QByteArray &s, int num_cap);
 
-	Entity(KIrc::Context *context);
 	Q_DISABLE_COPY(Entity)
 
 	class Private;

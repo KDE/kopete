@@ -35,6 +35,7 @@ public:
 //	explicit CommandEvent();
 
 private:
+
 };
 
 class KIRC_EXPORT MessageEvent

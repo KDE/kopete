@@ -67,7 +67,9 @@ void ClientSocketPrivate::socketStateChanged(QAbstractSocket::SocketState newsta
 ClientSocket::ClientSocket(Context *context)
 	: Socket(context, new ClientSocketPrivate(this))
 {
-//	d->entities << d->server << d->self;
+	Q_D(ClientSocket);
+
+	d->server = new Entity(context);
 
 //	d->versionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
 //	d->userString = QString::fromLatin1("Response not supplied by user.");
