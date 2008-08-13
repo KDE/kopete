@@ -288,7 +288,10 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			showNotification = showNotification || d->eventList.isEmpty(); // may happen for internal messages
 			event = new Kopete::MessageEvent(msg,manager);
 			d->eventList.append( event );
-			connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
+
+			// Don't call readMessages twice. We call it later in this method. Fixes bug 168978.
+			if ( d->useQueueOrStack )
+				connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
 		}
 
 		if ( showNotification )
@@ -350,7 +353,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		if (!d->useQueueOrStack)
 		{
 			// "Open messages instantly" setting
-			readMessages(manager, outgoingMessage, true);
+			readMessages(manager, outgoingMessage);
 		}
 
 		KopeteView *view = manager->view(false);
