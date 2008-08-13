@@ -55,7 +55,6 @@
 #include <kstatusbar.h>
 #include <kpushbutton.h>
 #include <ktabwidget.h>
-#include <kstandarddirs.h>
 #include <kdialog.h>
 #include <kstringhandler.h>
 #include <ksqueezedtextlabel.h>
@@ -108,7 +107,7 @@ namespace
 KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 {
 	bool windowCreated = false;
-	KopeteChatWindow *myWindow;
+	KopeteChatWindow *myWindow = 0;
 
 	//Take the first and the first? What else?
 	Kopete::Group *group = 0L;

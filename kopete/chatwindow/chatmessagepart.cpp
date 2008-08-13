@@ -65,7 +65,6 @@
 #include <kstringhandler.h>
 #include <ktemporaryfile.h>
 #include <kio/copyjob.h>
-#include <kstandarddirs.h>
 #include <kstandardaction.h>
 #include <kiconloader.h>
 #include <kcodecs.h>
@@ -1189,7 +1188,7 @@ QString ChatMessagePart::photoForContact( const Kopete::Contact *contact ) const
 	QString photo;
 	if ( !contact )
 		return photo;
-	
+
 	if( contact->metaContact() == Kopete::ContactList::self()->myself() )
 	{ // all myself contacts have the same metaContact so take photo directly from contact otherwise the photo could be wrong.
 		photo = contact->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
@@ -1198,7 +1197,7 @@ QString ChatMessagePart::photoForContact( const Kopete::Contact *contact ) const
 	{
 		photo = QString( "data:image/png;base64," ) + contact->metaContact()->picture().base64();
 	}
-	
+
 	return photo;
 }
 
