@@ -15,8 +15,6 @@
   * *************************************************************************
   */
 
-#warning you need KDE svn trunk of revision 843263 or above.
-
 #include "jinglemediamanager.h"
 
 #include <QList>
@@ -31,7 +29,9 @@
 JingleMediaSession::JingleMediaSession(JingleMediaManager *parent)
  : m_mediaManager(parent)
 {
+	kDebug() << "created";
 	ts = 0;
+	tsValue = 0;
 }
 
 JingleMediaSession::~JingleMediaSession()
@@ -41,6 +41,7 @@ JingleMediaSession::~JingleMediaSession()
 
 void JingleMediaSession::setPayloadType(const QDomElement& payload)
 {
+	kDebug() << "called";
 	//Maybe we will use it, maybe we won't...
 	int pID = payload.attribute("id").toInt();
 	if (pID >= 0 && pID <= 23) // This is audio payload.
@@ -65,17 +66,36 @@ void JingleMediaSession::setOutputDevice(Solid::Device& device)
 	Q_UNUSED(device)
 }
 
-void JingleMediaSession::setMediaPlugin(AlsaALaw *p)
+void JingleMediaSession::setCaptureMediaPlugin(AlsaALaw *p)
 {
-	//Here we should be able to configure the plugin and tell it which souncard it should use.
-	plugin = p;
-	tsValue = plugin->timeStamp();
-	connect(plugin, SIGNAL(readyRead()), this, SLOT(slotInReadyRead()));
+	kDebug() << "Setting the capturePlugin";
+	//Here we should be able to configure the capturePlugin and tell it which souncard it should use.
+	capturePlugin = p;
+
+	if (capturePlugin->isReady())
+		tsValue = capturePlugin->timeStamp();
+	else
+		tsValue = 168;
+		// This value should be set to the default depending on the "blank" stream that will be sent.
+		// In this case, it will be blank ALaw (only zeros) with a timestamp increment of 168.
+	connect(capturePlugin, SIGNAL(readyRead()), this, SLOT(slotInReadyRead()));
+}
+
+void JingleMediaSession::setPlaybackMediaPlugin(AlsaALaw *p)
+{
+	kDebug() << "Setting playbackPlugin";
+	playbackPlugin = p;
 }
 
 void JingleMediaSession::start()
 {
-	plugin->start();
+	capturePlugin->start();
+	playbackPlugin->start();
+}
+
+void JingleMediaSession::playData(const QByteArray& data)
+{
+	playbackPlugin->write(data);
 }
 
 void JingleMediaSession::slotInReadyRead()
@@ -86,7 +106,7 @@ void JingleMediaSession::slotInReadyRead()
 
 QByteArray JingleMediaSession::data()
 {
-	return plugin->data();
+	return capturePlugin->data();
 }
 
 /*********************
@@ -95,14 +115,22 @@ QByteArray JingleMediaSession::data()
 
 JingleMediaManager::JingleMediaManager()
 {
+	kDebug() << "Created";
 	findDevices();
 	timer = 0;
-	alaw = 0;
+	alawCapture = 0;
+	alawPlayback = 0;
 }
 
 JingleMediaManager::~JingleMediaManager()
 {
 	kDebug() << "Media manager destroyed";
+	if (alawCapture)
+		delete alawCapture;
+	if (alawPlayback)
+		delete alawPlayback;
+	if (timer)
+		delete timer;
 }
 
 /*
@@ -160,6 +188,7 @@ QList<QDomElement> JingleMediaManager::payloads()
 
 void JingleMediaManager::startStreaming(const QDomElement& payloadType)
 {
+	Q_UNUSED(payloadType)
 /*	if (timer == 0)
 	{
 		timer = new QTimer();
@@ -200,11 +229,18 @@ JingleMediaSession *JingleMediaManager::createNewSession(const QDomElement& payl
 		{
 			//Start a-law streaming. Currently, it is the only one supported, more to come.
 			//The problem is that Phonon does not support audio input yet...
-			if (alaw == 0)
+			if (alawCapture == 0)
 			{
-				alaw = new AlsaALaw();
+				alawCapture = new AlsaALaw(AlsaALaw::Capture);
 			}
-			mediaSession->setMediaPlugin(alaw);
+			mediaSession->setCaptureMediaPlugin(alawCapture);
+			
+			if (alawPlayback == 0)
+			{
+				alawPlayback = new AlsaALaw(AlsaALaw::Playback);
+			}
+			mediaSession->setPlaybackMediaPlugin(alawPlayback);
+
 			//FIXME:I call it a Media Plugin, maybe those can be loaded as plugins for each formats.
 			//	It Depends on what Phonon will provide (will I have to encode audio or will Phonon take care of that ?)
 		}

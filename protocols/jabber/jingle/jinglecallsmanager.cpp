@@ -217,6 +217,7 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 	
 	JingleSession* newSession = d->client->jingleSessionManager()->startNewSession(toJid, contents);
 	JabberJingleSession *jabberSess = new JabberJingleSession(this);
+	connect(jabberSess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
 	jabberSess->setMediaManager(d->mediaManager); //Could be done directly in the constructor
 	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
 	d->sessions << jabberSess;
@@ -273,6 +274,10 @@ void JingleCallsManager::slotUserAccepted()
 	if (contentDialog->unChecked().count() == 0)
 	{
 		kDebug() << "Accept all contents !";
+		//We must not actually accept the session, we must accept the session if everything has been established
+		//if not, we must wait for everything to be established.
+		//For Raw-UDP, as soon as a content is connected, stream must be terminated and we must wait for the user
+		//to accept the session before we actually send multimedia stream and play it.
 		contentDialog->session()->acceptSession();
 	}
 	else if (contentDialog->checked().count() == 0)

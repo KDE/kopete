@@ -27,22 +27,28 @@ JingleRtpSession::JingleRtpSession(Direction d)
 		connect(rtpSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)));
 	
 	rtcpSocket = new QUdpSocket(this);
-	connect(rtcpSocket, SIGNAL(readyRead()), this, SLOT(rtcpDataReady())); // FIXME:Not sure I must do this, oRTP will manage that, I don't care about this signal.
+	//connect(rtcpSocket, SIGNAL(readyRead()), this, SLOT(rtcpDataReady())); // FIXME:Not sure I must do this, oRTP will manage that, I don't care about this signal.
+	
 	m_rtpSession = rtp_session_new(m_direction == In ? RTP_SESSION_RECVONLY : RTP_SESSION_SENDONLY);
 	rtp_session_set_connected_mode(m_rtpSession, true);
+	
 	payloadID = -1;
 	payloadName = "";
 	receivingTS = 0;
 	sendingTS = 0;
-	rtp_session_set_scheduling_mode(m_rtpSession,1);
-	rtp_session_set_blocking_mode(m_rtpSession,1);
+	
+	rtp_session_set_scheduling_mode(m_rtpSession, 1);
+	rtp_session_set_blocking_mode(m_rtpSession, 1);
 	//rtp_session_set_recv_buf_size(m_rtpSession, 80); // ?????????
+	kDebug() << "Created";
 }
 
 JingleRtpSession::~JingleRtpSession()
 {
 	rtp_session_bye(m_rtpSession, "Ended");
 	rtp_session_destroy(m_rtpSession);
+	delete rtpSocket;
+	delete rtcpSocket;
 }
 
 void JingleRtpSession::connectToHost(const QString& address, int rtpPort, int rtcpPort)
@@ -99,7 +105,7 @@ void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should 
 	
 	mblk_t *packet = rtp_session_create_packet_with_data(m_rtpSession, (uint8_t*)data.data(), data.size(), /*freefn*/ NULL); //the free function is managed by the bytesWritten signal
 	
-	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, ts == -1 ? sendingTS : ts);
+	/*int size = */rtp_session_sendm_with_ts(m_rtpSession, packet, ts == -1 ? sendingTS : ts);
 	
 	//qDebug() << "Bytes sent :" << size;
 
@@ -111,22 +117,20 @@ void JingleRtpSession::rtpDataReady()
 	//qDebug() << "JingleRtpSession::rtpDataReady";
 	
 	//kDebug() << "receivingTS =" << receivingTS;
-
 	mblk_t *packet;
-	// Risk of infinite loop ?
+	/*if ((packet = rtp_session_recvm_with_ts(m_rtpSession, receivingTS)) == NULL)
+	{
+		//We skip this time, packet is NULL, that's not interresting....
+		kDebug() << "Packet is Null, Skip !";
+		return;
+	}*/
+	//This is the only way I found to get data once in a while, sometimes, it just hangs...
 	while ((packet = rtp_session_recvm_with_ts(m_rtpSession, receivingTS)) == NULL)
 	{
 		//kDebug() << "Packet is Null, retrying.";
-		receivingTS += payloadTS; //FIXME:What is the increment ? It depends on the payload.
+		receivingTS += payloadTS;
 	}
-	//data is : packet->b_cont->b_rptr
-	//of length : len=packet->b_cont->b_wptr - packet->b_cont->b_rptr;
 	QByteArray data((char*) packet->b_cont->b_rptr, packet->b_cont->b_wptr - packet->b_cont->b_rptr);
-	//kDebug(KDE_DEFAULT_DEBUG_AREA) << "Received (" << packet->b_cont->b_wptr - packet->b_cont->b_rptr << "bytes) : ";
-	//for (int i = 0; i < data.count(); i++)
-	//	printf("'%1x' ", data.at(i));
-	//printf("\n");
-	//fflush(stdout);
 	
 	// Seems we should empty the socket...
 	QByteArray buf;
@@ -157,6 +161,7 @@ void JingleRtpSession::setPayload(const QDomElement& payload)
 
 void JingleRtpSession::slotBytesWritten(qint64 size)
 {
+	Q_UNUSED(size)
 	//kDebug() << size << "bytes written";
 	if (state != SendingData)
 		return;

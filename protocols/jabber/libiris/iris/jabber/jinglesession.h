@@ -50,7 +50,7 @@ namespace XMPP
 	};
 
 	class JingleContent;
-	class JT_JingleSession;
+	class JT_JingleAction;
 	class JT_PushJingleSession;
 
 	class IRIS_EXPORT JingleSession : public QObject
@@ -292,6 +292,11 @@ namespace XMPP
 		 * (Create socket, ask to start sending data on it)
 		 */
 		void startRawUdpConnection(JingleContent*);
+		
+		/*
+		 * Deletes an action when it is not used anymore.
+		 */
+		void deleteAction(JT_JingleAction*);
 	};
 }
 

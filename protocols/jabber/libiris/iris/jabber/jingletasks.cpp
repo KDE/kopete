@@ -236,7 +236,17 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 		emit sessionTerminate(sid, JingleReason(stringToType(condition), text));
 
 		break;
-		
+	case JingleSession::SessionAccept :
+		qDebug() << "Transport Info for session " << sid;
+		d->id = x.attribute("id");
+		ack();
+
+		//FIXME:Must get supported contents List.
+		// simply give the jingle element with it's children (the contents containing description, containing supported payloads).
+
+		emit sessionAccepted(x.firstChildElement());
+
+		break;
 	default:
 		qDebug() << "There are some troubles with the Jingle Implementation. Be carefull that this is still low performances software.";
 	}
@@ -277,6 +287,7 @@ public :
 JT_JingleAction::JT_JingleAction(Task *parent)
 : Task(parent), d(new Private())
 {
+	qDebug() << "Creating JT_JingleAction";
 	d->session = 0;
 }
 
@@ -650,8 +661,8 @@ bool JT_JingleAction::take(const QDomElement &x)
 	if (!iqVerify(x, d->session->to().full(), id()))
 		return false;
 	
-	emit finished();
 	setSuccess();
+	emit finished();
 
 	return true;
 }

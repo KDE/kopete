@@ -41,6 +41,7 @@ static QString stateToString(XMPP::JingleSession::State s)
 JingleCallsGui::JingleCallsGui(JingleCallsManager* parent)
 : m_callsManager(parent)
 {
+	kDebug() << "Created";
 	ui.setupUi(this);
 	setupActions();
 

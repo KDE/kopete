@@ -64,10 +64,8 @@ void JabberJingleSession::setJingleSession(XMPP::JingleSession* sess)
 void JabberJingleSession::slotSessionTerminated()
 {
 	for (int i = 0; i < jabberJingleContents.count(); i++)
-		delete jabberJingleContents[i];
+		delete jabberJingleContents.takeAt(i);
 	
-	jabberJingleContents.clear();
-
 	emit terminated();
 }
 

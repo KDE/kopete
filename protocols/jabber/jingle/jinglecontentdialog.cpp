@@ -17,6 +17,7 @@
 #include "jinglecontentdialog.h"
 #include <QVBoxLayout>
 #include <QLabel>
+#include <KDebug>
 
 using namespace XMPP;
 
@@ -43,6 +44,7 @@ static QString typeToString(JingleContent::Type t)
 JingleContentDialog::JingleContentDialog(QWidget *parent)
  : QDialog(parent)
 {
+	kDebug() << "Created";
 	ui.setupUi(this);
 }
 

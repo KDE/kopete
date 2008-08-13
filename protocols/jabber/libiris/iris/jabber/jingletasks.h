@@ -72,6 +72,11 @@ namespace XMPP
 		 * Arguments are the session ID and the Reason of the termination.
 		 */
 		void sessionTerminate(const QString&, const JingleReason&);
+
+		/*
+		 * Signal emitted when a session-accept jingle action has been received.
+		 */
+		void sessionAccepted(const QDomElement&);
 	
 	private:
 		class Private;

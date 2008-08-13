@@ -96,9 +96,9 @@ void JabberJingleContent::slotPrepareRtpOutSession()
 
 void JabberJingleContent::slotIncomingData(const QByteArray& data)
 {
-	Q_UNUSED(data)
-	kDebug() << "Receiving !";
-	//m_content->setReceiving(true);
+	//kDebug() << "Receiving ! (" << data.size() << "bytes)";
+	m_mediaSession->playData(data);
+
 }
 
 void JabberJingleContent::startWritingRtpData()

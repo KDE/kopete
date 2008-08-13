@@ -47,6 +47,7 @@ public:
 JingleContent::JingleContent()
 : d(new Private())
 {
+	qDebug() << "Creating JingleContent";
 	d->sending = false;
 	d->receiving = false;
 	d->inSocket = 0L;
@@ -56,8 +57,8 @@ JingleContent::JingleContent()
 
 JingleContent::~JingleContent()
 {
-	delete d->inSocket;
-	delete d->outSocket;
+	//delete d->inSocket;
+	//delete d->outSocket;
 	delete d;
 }
 

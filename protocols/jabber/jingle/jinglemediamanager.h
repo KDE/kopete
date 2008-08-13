@@ -34,6 +34,8 @@
 #include <solid/audiointerface.h>
 #include <solid/video.h>
 
+#include <errno.h>
+
 /*
  * TODO:Move me in my own source file.
  */
@@ -53,8 +55,8 @@ public:
 	} m_type;
 
 	/**
-	 * @brief sets the payload type for this media session
-	 * @param payload the XML payload-type tag with it's children so we have all informations on the stream
+	 * @brief sets the payload m_type for this media session
+	 * @param payload the XML payload-m_type tag with it's children so we have all informations on the stream
 	 */
 	void setPayloadType(const QDomElement& payload);
 
@@ -70,9 +72,13 @@ public:
 	 */
 	void setInputDevice(Solid::Device& device);
 
-	void setMediaPlugin(AlsaALaw *plugin);
+	void setCaptureMediaPlugin(AlsaALaw *plugin);
+
+	void setPlaybackMediaPlugin(AlsaALaw *plugin);
 
 	void start();
+
+	void playData(const QByteArray& data);
 
 	QByteArray data();
 
@@ -90,9 +96,10 @@ private:
 	JingleMediaManager *m_mediaManager;
 	Solid::AudioInterface *audioInputDevice;
 	Solid::AudioInterface *audioOutputDevice;
-	AlsaALaw *plugin;
-	unsigned int ts;
-	unsigned int tsValue;
+	AlsaALaw *playbackPlugin;
+	AlsaALaw *capturePlugin;
+	unsigned int ts; // Current timestamp.
+	unsigned int tsValue; // Increment time stamp value
 };
 
 class JingleMediaManager : public QObject
@@ -110,8 +117,8 @@ public:
 	QList<QDomElement> payloads();
 
 	/**
-	 * @brief starts streaming for the @payloadType payload type if not already started
-	 * @param payload-type payload type to start the stream with
+	 * @brief starts streaming for the @payloadType payload m_type if not already started
+	 * @param payload-m_type payload m_type to start the stream with
 	 */
 	void startStreaming(const QDomElement& payloadType);
 	QByteArray data(); //--> FIXME:No, This should be in JingleMediaSession.
@@ -124,7 +131,7 @@ public:
 
 	/**
 	 * @brief creates a new media session
-	 * @param payload the XML payload-type tag with it's children so we have all informations on the stream
+	 * @param payload the XML payload-m_type tag with it's children so we have all informations on the stream
 	 * @param inputDevice the device from which the media data will be taken (which webcam, which audio card) to send to the other peer
 	 * @param outputDevice the device which wil be used to display video or play audio received from the othe peer
 	 * @return returns a new JingleMediaSession
@@ -153,7 +160,8 @@ private:
 	QList<Solid::Device> m_videoInputs; // "
 	QTimer *timer;
 	QList<JingleMediaSession*> m_sessions;
-	AlsaALaw *alaw;
+	AlsaALaw *alawCapture;
+	AlsaALaw *alawPlayback;
 
 };
 
@@ -168,13 +176,22 @@ class AlsaALaw : public QObject
 {
 	Q_OBJECT
 public:
-	AlsaALaw()
+	enum StreamType {
+		Capture = 0,
+		Playback
+	};
+	
+	AlsaALaw(StreamType t)
+	: m_type(t)
 	{
+		fd = 0;
 		ready = false;
 		int err;
 		snd_pcm_hw_params_t *hwParams;
+		timer = 0;
+		notifier = 0;
 
-		if ((err = snd_pcm_open(&captureHandle, "default", SND_PCM_STREAM_CAPTURE, SND_PCM_NONBLOCK)) < 0)
+		if ((err = snd_pcm_open(&handle, "default", m_type == Capture ? SND_PCM_STREAM_CAPTURE : SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK)) < 0)
 		{
 			kDebug() << "cannot open audio device default";
 			return;
@@ -186,47 +203,48 @@ public:
 			return;
 		}
 
-		if ((err = snd_pcm_hw_params_any(captureHandle, hwParams)) < 0)
+		if ((err = snd_pcm_hw_params_any(handle, hwParams)) < 0)
 		{
 			kDebug() << "cannot initialize hardware parameter structure" ;
 			return;
 		}
 
-		if ((err = snd_pcm_hw_params_set_access(captureHandle, hwParams, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0)
+		if ((err = snd_pcm_hw_params_set_access(handle, hwParams, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0)
 		{
 			kDebug() << "cannot set access type" ;
 			return;
 		}
 
-		if ((err = snd_pcm_hw_params_set_format(captureHandle, hwParams, SND_PCM_FORMAT_A_LAW)) < 0)	//A-Law format can be sent directly with oRTP (format supported)
+		if ((err = snd_pcm_hw_params_set_format(handle, hwParams, SND_PCM_FORMAT_A_LAW)) < 0)	//A-Law format can be sent directly with oRTP (format supported)
 		{
 			kDebug() << "cannot set sample format" ;
 			return;
 		}
 
 		samplingRate = 64000;
-		if ((err = snd_pcm_hw_params_set_rate_near(captureHandle, hwParams, &samplingRate, 0)) < 0)
+		if ((err = snd_pcm_hw_params_set_rate_near(handle, hwParams, &samplingRate, 0)) < 0)
 		{
 			kDebug() << "cannot set sample rate" ;
 			return;
 		}
 		kDebug() << "Set rate" << samplingRate;
 
-		if ((err = snd_pcm_hw_params_set_channels(captureHandle, hwParams, 1)) < 0) //Only 1 channel for ALaw RTP
+		if ((err = snd_pcm_hw_params_set_channels(handle, hwParams, 1)) < 0) //Only 1 channel for ALaw RTP (see RFC specification)
 		{
 			kDebug() << "cannot set channel count" ;
 			return;
 		}
 		
+		//FIXME : is period time needed when we are in playback mode ?
 		pTime = 20000;
-		if ((err = snd_pcm_hw_params_set_period_time_near(captureHandle, hwParams, &pTime, 0)) < 0) // Set 20000 µs (20ms) before letting us know that there is data.
+		if ((err = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &pTime, 0)) < 0) // Set 20000 µs (20ms) before letting us know that there is data.
 		{
 			kDebug() << "Unable to set period time! Error" << err;
 			return;
 		}
 		kDebug() << "Period time =" << pTime;
 
-		if ((err = snd_pcm_hw_params(captureHandle, hwParams)) < 0)
+		if ((err = snd_pcm_hw_params(handle, hwParams)) < 0)
 		{
 			kDebug() << "cannot set parameters" ;
 			return;
@@ -234,7 +252,7 @@ public:
 
 		snd_pcm_hw_params_free(hwParams);
 
-		if ((err = snd_pcm_prepare(captureHandle)) < 0)
+		if ((err = snd_pcm_prepare(handle)) < 0)
 		{
 			kDebug() << "cannot prepare audio interface for use" ;
 			return;
@@ -244,28 +262,48 @@ public:
 	~AlsaALaw()
 	{
 		//TODO:Close alsa stuff !!!
-		snd_pcm_close (captureHandle);
-		close(notifier->socket());
-		
-		delete notifier;
-		delete timer;
+		snd_pcm_drain(handle);
+		snd_pcm_close(handle);
+		if (notifier)
+		{
+			close(notifier->socket());
+			delete notifier;
+		}
+
+		if (timer)
+			delete timer;
+		if (fd)
+			close(fd);
 	}
-	
+
+	StreamType type() const
+	{
+		return m_type;
+	}
+
 	void start()
 	{
 		kDebug() << "start()";
 		if (!ready)
 		{
-			kDebug() << "Not Ready, sending 44 bytes of zeros every 168 second.";
-			kDebug() << "This could probably be caused by an innacessible audio device or simply because there is no audio device.";
-			
-			timer = new QTimer(this);
-			timer->setInterval(168);
-			connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeOut()));
-			timer->start();
-			return;
+			if (m_type == Capture)
+			{
+				kDebug() << "Not Ready, sending 32 bytes of zeros every 168 second.";
+				kDebug() << "This could probably be caused by an innacessible audio device or simply because there is no audio device.";
+
+				timer = new QTimer(this);
+				timer->setInterval(168);
+				connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeOut()));
+				timer->start();
+				return;
+			}
+			else if (m_type == Playback)
+			{
+				kDebug() << "Device is not ready, we will simply drop packets.";
+				return;
+			}
 		}
-		int count = snd_pcm_poll_descriptors_count(captureHandle);
+		int count = snd_pcm_poll_descriptors_count(handle);
 		if (count <= 0)
 		{
 			kDebug() << "No poll fd... WEIRD!";
@@ -274,7 +312,7 @@ public:
 
 		pollfd *ufds;
 		ufds = new pollfd[count];
-		int err = snd_pcm_poll_descriptors(captureHandle, ufds, count);
+		int err = snd_pcm_poll_descriptors(handle, ufds, count);
 		if (err < 0)
 		{
 			kDebug() << "Error retrieving fd.";
@@ -283,16 +321,56 @@ public:
 		
 		kDebug() << "Retreived" << count << "file descriptors.";
 
-		int fd = ufds[0].fd;
+		fd = ufds[0].fd;
+		
+		kDebug() << "fd =" << fd;
 
-		notifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
-		if (!notifier->isEnabled())
-			notifier->setEnabled(true);
+		if (m_type == Capture)
+		{
+			notifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
+			if (!notifier->isEnabled())
+				notifier->setEnabled(true);
+			connect(notifier, SIGNAL(activated(int)), this, SLOT(slotActivated(int)));
+		}
+		else if (m_type == Playback)
+		{
+			//Trying with a QFile... That may not be the best idea as The file descriptor might be an already opened file.
+			//No, we will simply write in the file using standard file functions.
+			//Does not seem to work either....
+			//Maybe try jack ??? --> Trying writei();
+		}
 		
-		snd_pcm_start(captureHandle);
-		
-		connect(notifier, SIGNAL(activated(int)), this, SLOT(slotActivated(int)));
-			
+		snd_pcm_start(handle);
+	}
+	
+	void write(const QByteArray& data)
+	{
+		if (!ready || m_type != Playback)
+		{
+			//kDebug() << "Packet dropped";
+			return; // Must delete the data before ?
+		}
+
+		int ret;
+		if ((ret = ::write(fd, (const void*)data.data(), data.size())) < 0)
+		{
+			kDebug() << "fd =" << fd;
+			kDebug() << "There was an error writing on the audio device." << ret;
+			kDebug() << "errno =" << errno;
+			kDebug() << "Trying writei()";
+			ret = snd_pcm_writei(handle, data.data(), data.size());
+			if (ret < 0)
+				kDebug() << "You are not lucky :-( writei did not work either... :" << snd_strerror(ret);
+			else
+				kDebug() << "Written" << ret << "bytes on the audio device. You hear anything ? don't forget to unmute !!!!";
+			return;
+		}
+		kDebug() << "Written" << ret << "bytes on the audio device. You hear anything ? don't forget to unmute !!!!";
+	}
+
+	bool isReady()
+	{
+		return ready;
 	}
 	/**
 	 * @return period time in milisecond
@@ -312,6 +390,7 @@ public:
 	QByteArray data()
 	{
 		QByteArray data = buf;
+		kDebug() << "data.size() =" << data.size();
 		buf.clear();
 		return data;
 	}
@@ -349,19 +428,21 @@ public slots:
 	}
 	void timerTimeOut()
 	{
-		// With a period time of 21333 µs and the A-Law format, we always have 44 bytes.
-		// Here, this is 44 bytes which are all zeros.
-		buf.fill('\0', 44);
+		// With a period time of 21333 µs and the A-Law format, we always have 32 bytes.
+		// Here, this is 32 bytes which are all zeros.
+		buf.fill('\0', 32);
 		emit readyRead();
 	}
 private:
-	snd_pcm_t *captureHandle;
+	StreamType m_type;
+	snd_pcm_t *handle;
 	QSocketNotifier *notifier;
 	bool ready;
 	QByteArray buf;
 	unsigned int pTime;
 	unsigned int samplingRate;
 	QTimer *timer;
+	int fd;
 signals:
 	void readyRead();
 };

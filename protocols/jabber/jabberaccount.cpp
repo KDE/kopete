@@ -79,8 +79,6 @@
 
 #include <sys/utsname.h>
 
-#undef SUPPORT_JINGLE //Jingle support Hardly disabled
-
 #define KOPETE_CAPS_NODE "http://kopete.kde.org/jabber/caps"
 
 
@@ -137,14 +135,6 @@ void JabberAccount::cleanup ()
 	m_contactPool = 0L;
 
 	delete m_jcm;
-
-#ifdef SUPPORT_JINGLE
-	//delete m_voiceCaller;
-	//m_voiceCaller = 0L;
-
-	delete m_jingleSessionManager;
-	m_jingleSessionManager = 0L;
-#endif
 }
 
 void JabberAccount::setS5BServerPort ( int port )
@@ -1642,43 +1632,6 @@ void JabberAccount::slotGetServices ()
 	dialog->show ();
 	dialog->raise ();
 }
-
-#ifdef SUPPORT_JINGLE
-void JabberAccount::slotIncomingVoiceCall( const Jid &jid )
-{
-	kDebug(JABBER_DEBUG_GLOBAL) ;
-// 	if(voiceCaller())
-// 	{
-// 		kDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Showing voice dialog." << endl;
-// 		JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog( jid, voiceCaller() );
-// 		voiceDialog->show();
-// 	}
-//#else
-	Q_UNUSED(jid);
-}
-#endif
-
-#ifdef SUPPORT_JINGLE
-void JabberAccount::slotIncomingJingleSession( const QString &sessionType, JingleSession *session )
-{
-	if(sessionType == "http://www.google.com/session/phone")
-	{
-		QString from = ((XMPP::Jid)session->peers().first()).full();
-		//KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, QString("Received a voice session invitation from %1.").arg(from) );
-		JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog( static_cast<JingleVoiceSession*>(session) );
-		voiceDialog->show();
-	}else if(sessionType == "foo")
-	{
-		QString from = ((XMPP::Jid)session->peers().first()).full();
-		JingleVoiceSessionDialog *foodialog = new JingleVoiceSessionDialog( static_cast<JingleVoiceSession*>(session) );
-		foodialog->show();
-	}
-//#else
-	Q_UNUSED( sessionType );
-	Q_UNUSED( session );
-}
-#endif
-
 
 void JabberAccount::addTransport( JabberTransport * tr, const QString &jid )
 {

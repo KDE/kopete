@@ -29,6 +29,9 @@
 #include "jinglesession.h"
 #include "jinglesessionmanager.h"
 
+//TODO:all JT_JingleActions pointers should be kept in a list so we can delete all non-acknowledged
+//     actions when terminating the session.
+
 using namespace XMPP;
 
 static QString genSid()
@@ -48,21 +51,26 @@ public:
 	JingleSessionManager *jingleSessionManager;
 	QString sid;
 	QString initiator;
-	JT_JingleSession *jt;
 	State state;
 	QStringList contentsToRemove;
 	QStringList transports;
 	bool responderTrying;
+	QList<JT_JingleAction*> actions;
+	bool allContentsConnected;
+	bool userAcceptedSession;
 };
 
 JingleSession::JingleSession(Task *t, const Jid &j)
 : d(new Private)
 {
+	qDebug() << "Creating XMPP::JingleSession";
 	d->to = j;
 	d->rootTask = t;
 	d->jingleSessionManager = t->client()->jingleSessionManager();
 	d->state = Pending;
 	d->responderTrying = false;
+	d->allContentsConnected = false;
+	d->userAcceptedSession = false;
 }
 
 JingleSession::~JingleSession()
@@ -108,6 +116,7 @@ void JingleSession::start()
 	}*/
 
 	JT_JingleAction *iAction = new JT_JingleAction(d->rootTask);
+	d->actions << iAction;
 	iAction->setSession(this);
 	connect(iAction, SIGNAL(finished()), this, SLOT(slotAcked()));
 	iAction->initiate();
@@ -124,13 +133,28 @@ void JingleSession::start()
 
 void JingleSession::slotAcked()
 {
-	if (sender())
-		sender()->deleteLater(); // delete later because we are in it's own slot.
+	if (!sender())
+	{
+		qDebug() << "Sender is NULL !";
+		return;
+	}
+	deleteAction(static_cast<JT_JingleAction*>(sender()));
+}
+
+void JingleSession::deleteAction(JT_JingleAction* a)
+{
+	for (int i = 0; i < d->actions.count(); i++)
+	{
+		if (d->actions[i] == a)
+		{
+			delete d->actions.takeAt(i);
+			break;
+		}
+	}
 }
 
 void JingleSession::slotContentConnected()
 {
-	
 	qDebug() << "---------------- void JingleSession::slotContentConnected() : called";
 	bool allOk = true;
 	// Checking if all contents are connected.
@@ -141,6 +165,16 @@ void JingleSession::slotContentConnected()
 			allOk = false;
 			break;
 		}
+	}
+	
+	if (!d->userAcceptedSession)
+	{
+		qDebug() << "User did not accept the session yet.";
+		if (allOk)
+			d->allContentsConnected = true;
+		disconnect(sender(), 0, this, 0);
+		return;
+
 	}
 
 	if (!allOk)
@@ -159,7 +193,7 @@ void JingleSession::slotContentConnected()
 		return;
 	}
 	
-	qDebug() << "Ok, all contens connected and we are responder ! let's accept the session.";
+	qDebug() << "Ok, all contents connected and we are responder ! let's accept the session.";
 	// Create all contents to send in the session-accept.
 	QList<JingleContent*> contentList;
 	for (int i = 0; i < contents().count(); i++)
@@ -183,6 +217,7 @@ void JingleSession::slotContentConnected()
 
 	qDebug() << "Sending session-accept action.";
 	JT_JingleAction *sAction = new JT_JingleAction(d->rootTask);
+	d->actions << sAction;
 	sAction->setSession(this);
 	connect(sAction, SIGNAL(finished()), this, SLOT(slotSessionAcceptAcked()));
 	sAction->sessionAccept(contentList);
@@ -197,7 +232,7 @@ void JingleSession::slotSessionAcceptAcked()
 	emit stateChanged();
 
 	if (sender())
-		sender()->deleteLater();
+		deleteAction(static_cast<JT_JingleAction*>(sender()));
 }
 
 void JingleSession::slotRawUdpDataReady()
@@ -246,34 +281,12 @@ void JingleSession::acceptSession()
 {
 	qDebug() << "Starting payloads and transport negotiation.";
 
-/*
- * That won't be done here : the negotiation must be done while ringing for
- * example and even as soon as the session-initiate is received.
- */
-	
+	if (d->allContentsConnected)
+	{
+		//Accept session.
+	}
 
-	/*
-	 * Here, it becomes a bit complicated (well, not so much) :
-	 * 	If we are in pending state, we must start negotiation but *NOT* send a session-accept action now !
-	 * 	Also, at this point, JingleSession MUST know what payloads we wanna use for what content
-	 * 	and if the transport is supported. 
-	 * 	Also, This should be known from the very start of the application : what transport are supported and
-	 * 	what payloads to use for a particular content (RTP/AVP,...).
-	 * 	That is done in the JingleSessionManager which knows what transports and contents are supported.
-	 * 	Access it by rootTask->client()->jingleSessionManager()
-	 */
-	// RAW UDP :
-	//	Why should I start sending data as soon as I received the session-initiate action ?
-	//		That does not make sense with Audio via RTP specification (I won't "immediately negotiate connectivity over the ICE transport by exchanging XML-formatted candidate transports for the channel" as I first negotiate contents...)
-	//	Seeing the specification (XEP-0177), I can't tell the responder which contents I accept and which I don't.
-	//
-	
-	// ICE-UDP :
-	//	Why should I start sending data as soon as I received the session-initiate action ?
-	//	Seeing the specification (XEP-0176), I can't tell the responder which contents I accept and which I don't.
-	
-	/*Maybe yes : do both things at the same time...*/
-
+	d->userAcceptedSession = true;
 }
 
 void JingleSession::acceptContent()
@@ -302,6 +315,7 @@ void JingleSession::removeContent(const QStringList& c)
 	
 	//d->contents.removeAt(i); //Or do it in the slotRemoveAcked() ?? --> Yes, we will remove all contents in d->contentsToRemove from d->contents when acked.
 	JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
+	d->actions << rAction;
 	rAction->setSession(this);
 	connect(rAction, SIGNAL(acked()), this, SLOT(slotRemoveAcked()));
 	rAction->removeContents(d->contentsToRemove);
@@ -339,6 +353,7 @@ void JingleSession::removeContent(const QString& c) // Provided for convenience,
 			return;
 		}
 		JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
+		d->actions << rAction;
 		connect(rAction, SIGNAL(finished()), this, SLOT(slotRemoveAcked()));
 		rAction->setSession(this);
 		d->contentsToRemove << c;
@@ -350,7 +365,7 @@ void JingleSession::slotRemoveAcked()
 {
 	JT_JingleAction *rAction = (JT_JingleAction*) sender();
 	if (rAction != 0)
-		rAction->deleteLater();
+		deleteAction(static_cast<JT_JingleAction*>(sender()));
 	else
 		return;
 	// Remove contents from the d->contents
@@ -374,6 +389,7 @@ void JingleSession::slotRemoveAcked()
 void JingleSession::ring()
 {
 	JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
+	d->actions << rAction;
 	connect(rAction, SIGNAL(finished()), this, SLOT(slotAcked()));
 	rAction->setSession(this);
 	rAction->ringing();
@@ -408,6 +424,7 @@ void JingleSession::terminate(const JingleReason& r)
 //FIXME:should Take an QDomElement as argument, the application should implement this
 //class itself and be able to return the right QDomElement when calling this method
 	JT_JingleAction *tAction = new JT_JingleAction(d->rootTask);
+	d->actions << tAction;
 	tAction->setSession(this);
 	connect(tAction, SIGNAL(finished()), this, SLOT(slotSessTerminated()));
 	tAction->terminate(r);
@@ -480,6 +497,7 @@ void JingleSession::startRawUdpConnection(JingleContent *c)
 
 	//Sending my own candidate:
 	JT_JingleAction *cAction = new JT_JingleAction(d->rootTask);
+	d->actions << cAction;
 	connect(cAction, SIGNAL(finished()), this, SLOT(slotAcked()));
 	cAction->setSession(this);
 	cAction->transportInfo(c);
@@ -491,15 +509,20 @@ void JingleSession::startRawUdpConnection(JingleContent *c)
 	//     This is done by the task which sets the socket.
 	
 	//Sending "trying" stanzas
-	JT_JingleAction *tAction = new JT_JingleAction(d->rootTask);
+	/*JT_JingleAction *tAction = new JT_JingleAction(d->rootTask);
+	d->actions << tAction;
 	connect(tAction, SIGNAL(finished()), this, SLOT(slotAcked()));
 	tAction->setSession(this);
-	tAction->trying(*c);
+	tAction->trying(*c);*/ //--> Not used currently
 	//TODO:Delete me when I'm finished.
 }
 
 void JingleSession::slotSessTerminated()
 {
+	qDebug() << "JingleSession::slotSessTerminated() called !";
+	if (sender())
+		deleteAction(static_cast<JT_JingleAction*>(sender()));
+	qDebug() << "Emit terminated() signal";
 	emit terminated();
 }
 
