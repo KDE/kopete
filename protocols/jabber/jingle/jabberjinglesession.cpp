@@ -17,6 +17,7 @@
 #include "jabberjinglesession.h"
 #include "jabberjinglecontent.h"
 #include "jinglemediamanager.h"
+#include "jinglecallsmanager.h"
 
 #include "jinglesession.h"
 #include "jinglecontent.h"
@@ -28,6 +29,7 @@
 JabberJingleSession::JabberJingleSession(JingleCallsManager* parent)
 : m_callsManager(parent)
 {
+	m_mediaManager = m_callsManager->mediaManager();
 	qDebug() << "Created a new JabberJingleSession";
 	m_timeUp = QTime(0, 0);
 	QTimer *uptime = new QTimer(this);
@@ -51,7 +53,7 @@ void JabberJingleSession::setJingleSession(XMPP::JingleSession* sess)
 {
 	qDebug() << "Setting JingleSession in the JabberJingleSession :" << sess;
 	m_jingleSession = sess;
-	connect(sess, SIGNAL(needData(XMPP::JingleContent*)), this, SLOT(writeRtpData(XMPP::JingleContent*)));
+	connect(sess, SIGNAL(stateChanged()), this, SLOT(slotStateChanged()));
 	connect(sess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
 	// Create Contents :
 	for (int i = 0; i < sess->contents().count(); i++)
@@ -61,19 +63,32 @@ void JabberJingleSession::setJingleSession(XMPP::JingleSession* sess)
 	}
 }
 
+void JabberJingleSession::slotStateChanged()
+{
+	if (m_jingleSession->state() != XMPP::JingleSession::Active)
+		return;
+
+	for (int i = 0; i < m_jingleSession->contents().count(); i++)
+	{
+		JabberJingleContent *jContent = contentWithName(m_jingleSession->contents()[i]->name());
+		if (jContent == 0)
+		{
+			jContent = new JabberJingleContent(this, m_jingleSession->contents()[i]);
+			jabberJingleContents << jContent;
+		}
+		jContent->prepareRtpInSession();
+		jContent->prepareRtpOutSession();
+		jContent->startWritingRtpData();
+		//FIXME:Those 3 methods should be set in a method like startStreaming()
+	}
+}
+
 void JabberJingleSession::slotSessionTerminated()
 {
 	for (int i = 0; i < jabberJingleContents.count(); i++)
 		delete jabberJingleContents.takeAt(i);
 	
 	emit terminated();
-}
-
-void JabberJingleSession::setMediaManager(JingleMediaManager* mm)
-{
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Setting media manager. ( address =" << mm << ")";
-	m_mediaManager = mm;
-	//FIXME:Could be accessed with m_callsManager.
 }
 
 void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)

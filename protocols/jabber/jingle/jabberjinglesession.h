@@ -24,7 +24,6 @@ public:
 	void setJingleSession(XMPP::JingleSession*);
 	XMPP::JingleSession *jingleSession() {return m_jingleSession;}
 	
-	void setMediaManager(JingleMediaManager*);
 	JabberJingleContent *contentWithName(const QString&);
 	XMPP::JingleSession *session() const {return m_jingleSession;} //FIXME:Use jingleSession()
 	JingleMediaManager *mediaManager() const;
@@ -35,6 +34,7 @@ public slots:
 	void writeRtpData(XMPP::JingleContent*);
 	void slotUptimeOut();
 	void slotSessionTerminated();
+	void slotStateChanged();
 
 
 signals:

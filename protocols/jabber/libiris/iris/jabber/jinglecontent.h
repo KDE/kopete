@@ -2,12 +2,12 @@
 #define JINGLE_CONTENT_H
 
 #include <QObject>
-#include <QDomElement>
-#include <QUdpSocket>
 
 #include "im.h"
 
 class QHostAddress;
+class QDomElement;
+class QUdpSocket;
 namespace XMPP
 {
 	/*
@@ -87,8 +87,15 @@ namespace XMPP
 		QString typeToString(Type);
 		Type stringToType(const QString& s);
 
+		void setResponderPayloads(const QList<QDomElement>&);
+
+		QDomElement bestPayload() const;
+
 	public slots:
 		void slotRawUdpDataReady();
+
+		void slotTrySending();
+
 	signals:
 
 		// Emitted when the content is ready to send data to try to connect.
@@ -107,9 +114,14 @@ namespace XMPP
 		 */
 		void established();
 
+		void dataReceived();
+
 	private:
 		class Private;
 		Private *d;
+		
+		QDomElement bestPayload(const QList<QDomElement>&, const QList<QDomElement>&);
+		bool samePayload(const QDomElement&, const QDomElement&);
 	};
 }
 

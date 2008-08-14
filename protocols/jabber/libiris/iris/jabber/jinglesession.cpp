@@ -81,7 +81,9 @@ JingleSession::~JingleSession()
 void JingleSession::addContent(JingleContent *c)
 {
 	d->contents << c;
-	connect(c, SIGNAL(established()), this, SLOT(slotContentConnected()));
+	connect(c, SIGNAL(dataReceived()), this, SLOT(slotReceivingData()));
+	if (initiator() != d->rootTask->client()->jid().full())
+		connect(c, SIGNAL(established()), this, SLOT(slotContentConnected())); //Only do that if we are not the initiator.
 }
 
 void JingleSession::addContents(const QList<JingleContent*>& l)
@@ -89,7 +91,9 @@ void JingleSession::addContents(const QList<JingleContent*>& l)
 	for (int i = 0; i < l.count(); i++)
 	{
 		d->contents << l[i];
-		connect(l[i], SIGNAL(established()), this, SLOT(slotContentConnected()));
+		connect(l[i], SIGNAL(dataReceived()), this, SLOT(slotReceivingData()));
+		if (initiator() != d->rootTask->client()->jid().full())
+			connect(l[i], SIGNAL(established()), this, SLOT(slotContentConnected()));
 	}
 }
 
@@ -167,72 +171,72 @@ void JingleSession::slotContentConnected()
 		}
 	}
 	
-	if (!d->userAcceptedSession)
-	{
-		qDebug() << "User did not accept the session yet.";
-		if (allOk)
-			d->allContentsConnected = true;
-		disconnect(sender(), 0, this, 0);
-		return;
-
-	}
-
 	if (!allOk)
 	{
 		qDebug() << "Not All ok !!! --> Not switching to ACTIVE state.";
 		disconnect(sender(), 0, this, 0);
 		return;
 	}
+	else
+		d->allContentsConnected = true;
 	
-	qDebug() << initiator() << "=?=" << d->rootTask->client()->jid().full();
+	if (!d->userAcceptedSession)
+	{
+		qDebug() << "User did not accept the session yet.";
+		disconnect(sender(), 0, this, 0);
+		return;
+	}
+	
+	/*qDebug() << initiator() << "=?=" << d->rootTask->client()->jid().full();
 	if (initiator() == d->rootTask->client()->jid().full())
 	{
 		// In this case, we must not send session-accept and wait for it.
 		qDebug() << "I'm the initiator, it's not me who must accept the session.";
 		disconnect(sender(), 0, this, 0);
 		return;
-	}
-	
-	qDebug() << "Ok, all contents connected and we are responder ! let's accept the session.";
-	// Create all contents to send in the session-accept.
-	QList<JingleContent*> contentList;
-	for (int i = 0; i < contents().count(); i++)
-	{
-		qDebug() << "setting right informations in the content" << contents()[i]->name();
-		// First, set our supported payload-types.
-		JingleContent *c = new JingleContent();
-		c->setType(contents()[i]->type());
-		c->setPayloadTypes(c->type() == JingleContent::Audio ?
-					d->jingleSessionManager->supportedAudioPayloads() :
-					d->jingleSessionManager->supportedVideoPayloads());
-		c->setDescriptionNS(contents()[i]->descriptionNS());
-		c->setName(contents()[i]->name());
-		c->setCreator(contents()[i]->creator());
-		c->setTransport(contents()[i]->transport().cloneNode(false).toElement()); //We don't need the child nodes.
-		contentList << c;
+	}*/
 
-		// Then, set the corresponding candidate for ICE-UDP (let's see later)
-		// TODO:implement me !
-	}
-
-	qDebug() << "Sending session-accept action.";
-	JT_JingleAction *sAction = new JT_JingleAction(d->rootTask);
-	d->actions << sAction;
-	sAction->setSession(this);
-	connect(sAction, SIGNAL(finished()), this, SLOT(slotSessionAcceptAcked()));
-	sAction->sessionAccept(contentList);
+	acceptSession();
 
 	disconnect(sender(), 0, this, 0);
 
 }
 
+void JingleSession::sessionAccepted(const QDomElement& x)
+{
+	qDebug() << "void JingleSession::sessionAccepted(const QDomElement& x) called";
+	QDomElement content = x.firstChildElement();
+	
+	while (!content.isNull())
+	{
+		JingleContent *c = contentWithName(content.attribute("name"));
+		QList<QDomElement> payloads;
+		QDomElement pType = content.firstChildElement().firstChildElement();
+		//		    content    description         payload-type
+		while (!pType.isNull())
+		{
+			payloads << pType;
+			pType = pType.nextSiblingElement();
+		}
+		c->setResponderPayloads(payloads);
+		qDebug() << "Best payload name :" << c->bestPayload().attribute("name");
+		content = content.nextSiblingElement();
+	}
+	d->state = Active;
+
+	qDebug() << "Ok, we switched to ACTIVE state, starting to stream.";
+	
+	emit stateChanged();
+}
+
 void JingleSession::slotSessionAcceptAcked()
 {
 	d->state = Active;
-	emit stateChanged();
 
 	if (sender())
 		deleteAction(static_cast<JT_JingleAction*>(sender()));
+	qDebug() << "Ok, we switched to ACTIVE state, starting to stream.";
+	emit stateChanged();
 }
 
 void JingleSession::slotRawUdpDataReady()
@@ -271,7 +275,7 @@ void JingleSession::slotRawUdpDataReady()
 
 	// Send "received" informationnal message. --> No, doesn't.
 	//JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
-	//connect(rAction, SIGNAL(acked()), this, SLOT(slotReceivedAcked()));
+	//connect(rAction, SIGNAL(finished()), this, SLOT(slotReceivedAcked()));
 	//rAction->setSession(this);
 	//rAction->received();
 */
@@ -279,11 +283,39 @@ void JingleSession::slotRawUdpDataReady()
 
 void JingleSession::acceptSession()
 {
-	qDebug() << "Starting payloads and transport negotiation.";
+	qDebug() << "JingleSession::acceptSession() : called";
 
 	if (d->allContentsConnected)
 	{
 		//Accept session.
+		qDebug() << "Ok, all contents connected and session accepted by the user ! let's accept the session.";
+		// Create all contents to send in the session-accept.
+		QList<JingleContent*> contentList;
+		for (int i = 0; i < contents().count(); i++)
+		{
+			qDebug() << "setting right informations in the content" << contents()[i]->name();
+			// First, set our supported payload-types.
+			JingleContent *c = new JingleContent();
+			c->setType(contents()[i]->type());
+			c->setPayloadTypes(c->type() == JingleContent::Audio ?
+						d->jingleSessionManager->supportedAudioPayloads() :
+						d->jingleSessionManager->supportedVideoPayloads());
+			c->setDescriptionNS(contents()[i]->descriptionNS());
+			c->setName(contents()[i]->name());
+			c->setCreator(contents()[i]->creator());
+			c->setTransport(contents()[i]->transport().cloneNode(false).toElement()); //We don't need the child nodes.
+			contentList << c;
+	
+			// Then, set the corresponding candidate for ICE-UDP (let's see later)
+			// TODO:implement me !
+		}
+	
+		qDebug() << "Sending session-accept action.";
+		JT_JingleAction *sAction = new JT_JingleAction(d->rootTask);
+		d->actions << sAction;
+		sAction->setSession(this);
+		connect(sAction, SIGNAL(finished()), this, SLOT(slotSessionAcceptAcked()));
+		sAction->sessionAccept(contentList);
 	}
 
 	d->userAcceptedSession = true;
@@ -317,7 +349,7 @@ void JingleSession::removeContent(const QStringList& c)
 	JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
 	d->actions << rAction;
 	rAction->setSession(this);
-	connect(rAction, SIGNAL(acked()), this, SLOT(slotRemoveAcked()));
+	connect(rAction, SIGNAL(finished()), this, SLOT(slotRemoveAcked()));
 	rAction->removeContents(d->contentsToRemove);
 }
 
@@ -416,7 +448,9 @@ void JingleSession::addContent(const QDomElement& content)
 	c->fromElement(content);
 	d->contents << c;
 	
-	connect(c, SIGNAL(established()), this, SLOT(slotContentConnected()));
+	if (initiator() != d->rootTask->client()->jid().full())
+		connect(c, SIGNAL(established()), this, SLOT(slotContentConnected()));
+	connect(c, SIGNAL(dataReceived()), this, SLOT(slotReceivingData()));
 }
 
 void JingleSession::terminate(const JingleReason& r)
@@ -535,12 +569,16 @@ void JingleSession::addSessionInfo(const QDomElement& e)
 	}
 	else if (info == "received")
 	{
-		//stopTrying();
-		//sessionAccept();
 		//FIXME:For what Content do we receive that info ?
 		//How do I know all content's connections are established, in both directions ?
 		//What if it isn't the case ?
-		//d->state = Active; not now, wait for the ack of session-accept.
+
+		// We consider every ports are opened, no firewall (that's the specification that tells us that.)
+		for (int i = 0; i < contents().count(); i++)
+		{
+			//We tell the content that it is able to send data.
+			contents()[i]->setSending(true);
+		}
 	}
 }
 
@@ -620,3 +658,14 @@ JingleReason::Type JingleReason::type() const
 	return d->type;
 }
 
+void JingleSession::slotReceivingData()
+{
+	// Whatever the sender content is, we send the same received informational message.
+	// That's from the raw-udp specification, later, we will have to do fifferent things
+	// here depending on the transport method used in the sender content.
+	
+	JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
+	connect(rAction, SIGNAL(finished()), this, SLOT(slotAcked()));
+	rAction->setSession(this);
+	rAction->received();
+}

@@ -25,14 +25,12 @@ public:
 	void setContent(XMPP::JingleContent*);
 	void startWritingRtpData();
 	QString contentName();
-	QDomElement bestPayload(const QList<QDomElement>&, const QList<QDomElement>&);
-	bool samePayload(const QDomElement&, const QDomElement&);
 	QString elementToSdp(const QDomElement&);
+	void prepareRtpInSession();
+	void prepareRtpOutSession();
 
 public slots:
 	void slotSendRtpData();
-	void slotPrepareRtpInSession();
-	void slotPrepareRtpOutSession();
 	void slotIncomingData(const QByteArray&);
 	void slotReadyRead(int);
 

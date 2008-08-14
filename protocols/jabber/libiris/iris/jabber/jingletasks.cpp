@@ -102,6 +102,7 @@ JT_PushJingleAction::JT_PushJingleAction(Task *parent)
 JT_PushJingleAction::~JT_PushJingleAction()
 {
 	qDebug() << "Deleting the PushJingleSession task....";
+	delete d;
 }
 
 void JT_PushJingleAction::onGo()
@@ -179,11 +180,6 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 			content = content.nextSiblingElement();
 		}
 		emit removeContent(sid, cName);
-		/*
-		 * JingleSessionManager will receive this signal and then tell the right session
-		 * (given the session ID) to remove the correct content
-		 */
-		
 		/*if (d->state == WaitContentAccept)
 		{
 			d->state = StartNegotiation;
@@ -219,8 +215,6 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 		ack();
 		
 		reason = x.firstChildElement().firstChildElement();
-		//if (reason.tagName() != "reason")
-			//emit error(BadStanza);
 		e = reason.firstChildElement();
 		while(!e.isNull())
 		{
@@ -230,7 +224,6 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 				text = e.firstChildElement().toText().data();
 
 			e = e.nextSiblingElement();
-			//[...] TODO: more reason possible.
 		}
 		
 		emit sessionTerminate(sid, JingleReason(stringToType(condition), text));
@@ -241,11 +234,7 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 		d->id = x.attribute("id");
 		ack();
 
-		//FIXME:Must get supported contents List.
-		// simply give the jingle element with it's children (the contents containing description, containing supported payloads).
-
 		emit sessionAccepted(x.firstChildElement());
-
 		break;
 	default:
 		qDebug() << "There are some troubles with the Jingle Implementation. Be carefull that this is still low performances software.";
@@ -293,7 +282,7 @@ JT_JingleAction::JT_JingleAction(Task *parent)
 
 JT_JingleAction::~JT_JingleAction()
 {
-
+	delete d;
 }
 
 void JT_JingleAction::setSession(JingleSession *sess)

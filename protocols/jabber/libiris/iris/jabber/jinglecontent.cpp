@@ -20,6 +20,10 @@
 
 #include "jinglecontent.h"
 
+#include <QTimer>
+#include <QDomElement>
+#include <QUdpSocket>
+
 //----------------------
 // JingleContent
 //----------------------
@@ -29,7 +33,10 @@ using namespace XMPP;
 class JingleContent::Private
 {
 public:
-	QList<QDomElement> payloads;
+	QList<QDomElement> payloads; // My payloads.
+	QList<QDomElement> rPayloads; // Responder's payloads.
+	QDomElement bestPayload;
+
 	QDomElement transport;
 	QList<QDomElement> candidates;
 	QString creator;
@@ -42,6 +49,8 @@ public:
 	bool receiving;
 	Type type;
 	bool isInitiator;
+	QTimer *outTimer;
+	int tries;
 };
 
 JingleContent::JingleContent()
@@ -53,6 +62,7 @@ JingleContent::JingleContent()
 	d->inSocket = 0L;
 	d->outSocket = 0L;
 	d->isInitiator = false;
+	d->tries = 0;
 }
 
 JingleContent::~JingleContent()
@@ -60,6 +70,11 @@ JingleContent::~JingleContent()
 	//delete d->inSocket;
 	//delete d->outSocket;
 	delete d;
+}
+
+QDomElement JingleContent::bestPayload() const
+{
+	return d->bestPayload;
 }
 
 void JingleContent::addCandidate(const QDomElement& c)
@@ -126,7 +141,9 @@ void JingleContent::fromElement(const QDomElement& e)
 	QDomElement payload = desc.firstChildElement();
 	while (!payload.isNull())
 	{
-		d->payloads << payload;
+		// This content is created from XML data, that means that it comes from the outside.
+		// So, pyloads are added as responder payloads
+		d->rPayloads << payload;
 		payload = payload.nextSiblingElement();
 	}
 	QDomElement transport = desc.nextSiblingElement();
@@ -230,7 +247,6 @@ void JingleContent::createUdpInSocket()
 	if (!d->inSocket)
 		d->inSocket = new QUdpSocket();
 	
-	//The problem is the fact that a socket cannot be Bound _and_ connected at the same time --> there is now a IN socket an a OUT socket
 	QHostAddress address(d->transport.firstChildElement().attribute("ip"));
 	int port = d->transport.firstChildElement().attribute("port").toInt();
 	qDebug() << "Bind socket to" << address << ":" << port;
@@ -238,12 +254,13 @@ void JingleContent::createUdpInSocket()
 		qDebug() << "Socket bound to" << address.toString() << ":" << port;
 	
 	connect(d->inSocket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
-	emit inSocketReady();
+	//emit inSocketReady(); --> also no need of this.
 }
 
 void JingleContent::slotRawUdpDataReady()
 {
 	qDebug() << "Data arrived on the socket.";
+	emit dataReceived();
 	setReceiving(true);
 	disconnect(sender(), 0, this, 0);
 }
@@ -270,6 +287,12 @@ void JingleContent::setSending(bool s)
 	if (d->sending == s)
 		return;
 	d->sending = s;
+	
+	// We do not need to try sending anymore, we have proof that data sending is OK.
+	d->outTimer->stop();
+	delete d->outTimer;
+
+	// If we are also receiving, that's ok, this content is established.
 	if (d->sending && d->receiving)
 	{
 		qDebug() << "setSending : emit established() SIGNAL";
@@ -303,15 +326,33 @@ void JingleContent::startSending()
 
 void JingleContent::startSending(const QHostAddress& address, int port)
 {
+	//This correspond to the trying phase.
 	//Create udp OUT socket
 	if (!d->outSocket)
 		d->outSocket = new QUdpSocket();
 	d->outSocket->connectToHost(address, port);
-	emit outSocketReady();
+	//emit outSocketReady(); --> This signal has no sense anymore, we must prepare rtp sessions when the sockets are both ready.
+	
 	qDebug() << "Sending data to" << address.toString() << ":" << port;
-	qDebug() << "EMIT needData(c) SIGNAL";
-	setSending(true);
-	emit needData(this); //FIXME:We can Use sender to know which content sent the signal.
+	//We will start sending "SYN" every 5 seconds for 1 minute until we receive a received informationnal message.
+	slotTrySending();
+	d->outTimer = new QTimer();
+	d->outTimer->setInterval(5000);
+	connect(d->outTimer, SIGNAL(timeout()), this, SLOT(slotTrySending()));
+	//setSending(true); --> set it when the received informationnal message has been received.
+}
+
+void JingleContent::slotTrySending()
+{
+	d->tries++;
+	if (d->tries == 13)
+	{
+		//This content cannot connect, what do we do ?
+		d->outTimer->stop();
+		qDebug() << "JingleContent::slotTrySending : Unable to establish the connection for content" << name();
+	}
+
+	d->outSocket->write(QByteArray("SYN"));
 }
 
 QList<QDomElement> JingleContent::candidates() const
@@ -376,6 +417,18 @@ QString JingleContent::typeToString(JingleContent::Type t)
 	}
 }
 
+void JingleContent::setResponderPayloads(const QList<QDomElement>& payloads)
+{
+	qDebug() << "*******Setting responder payloads**********";
+	d->rPayloads = payloads;
+	if (d->payloads.count() != 0)
+	{
+		//Store the best payload to use for this content.
+		//The application will just have to get it from this content.
+		d->bestPayload = bestPayload(d->rPayloads, d->payloads);
+	}
+}
+
 JingleContent::Type JingleContent::stringToType(const QString& s)
 {
 	if (s == "video")
@@ -386,4 +439,55 @@ JingleContent::Type JingleContent::stringToType(const QString& s)
 		return FileTransfer;
 	else
 		return Unknown;
+}
+
+QDomElement JingleContent::bestPayload(const QList<QDomElement>& payload1, const QList<QDomElement>& payload2)
+{
+	//FIXME : this is not the best algorithm to determine which one is the better.
+	// |-------|
+	// | a | c |
+	// +---+---+
+	// | b | b |
+	// +---+---+
+	// | d | e |
+	// +---+---+
+	// | c | a |
+	// |-------|
+	//  --> In that case, payload a will be chosen but payload b would be the best choice.
+	for (int i = 0; i < payload1.count(); i++)
+	{
+		for (int j = 0; j < payload2.count(); j++)
+		{
+			if (samePayload(payload1[i], payload2[j]))
+				return payload1[i];
+		}
+	}
+	qDebug() << "Returns QDomElement !";
+	return QDomElement();
+}
+
+bool JingleContent::samePayload(const QDomElement& p1, const QDomElement& p2)
+{
+	// Checking payload-type attributes
+	if (!p1.hasAttribute("id") || !p2.hasAttribute("id"))
+		return false;
+	if (p1.attribute("id") != p2.attribute("id"))
+		return false;
+	int id = p1.attribute("id").toInt();
+	if ((id >= 96) && (id <= 127)) //dynamic payloads, "name" attribute must be there
+	{
+		if (!p1.hasAttribute("name") || !p2.hasAttribute("name"))
+			return false;
+		if (p1.attribute("name") != p2.attribute("name"))
+			return false;
+	}
+	if (p1.hasAttribute("channels") && p2.hasAttribute("channels"))
+		if (p1.attribute("channels") != p2.attribute("channels"))
+			return false;
+	if (p1.hasAttribute("clockrate") && p2.hasAttribute("clockrate"))
+		if (p1.attribute("clockrate") != p2.attribute("clockrate"))
+			return false;
+	// Parameters are informative, even if they differ, the payload is stil the same.
+	qDebug() << "Payloads are the same.";
+	return true;
 }

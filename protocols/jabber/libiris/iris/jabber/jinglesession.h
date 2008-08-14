@@ -200,6 +200,12 @@ namespace XMPP
 		 */
 		QString sid() const;
 
+		/*
+		 * Call this function when a session-accept jingle action has been received for it.
+		 * More... (what will happen ? looooooooots of things with contents,...)
+		 */
+		void sessionAccepted(const QDomElement&);
+
 		// Jingle actions
 		enum JingleAction {
 			SessionInitiate = 0,
@@ -277,6 +283,12 @@ namespace XMPP
 		 * This slot is called when the session has been accepted by the responder.
 		 */
 		void slotSessionAcceptAcked();
+
+		/*
+		 * This slot is called when a "receive" informational message has been received.
+		 * Currently, this slot simply calls setSending() on all contents.
+		 */
+		void slotReceivingData();
 
 	private:
 		class Private;

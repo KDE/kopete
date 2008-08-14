@@ -78,6 +78,7 @@ void JingleCallsManager::init()
 	//Initialize oRTP library.
 	ortp_init();
 	ortp_scheduler_init();
+	ortp_set_log_file(0);
 	
 	d->gui = 0L;
 	QStringList transports;
@@ -218,7 +219,6 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 	JingleSession* newSession = d->client->jingleSessionManager()->startNewSession(toJid, contents);
 	JabberJingleSession *jabberSess = new JabberJingleSession(this);
 	connect(jabberSess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
-	jabberSess->setMediaManager(d->mediaManager); //Could be done directly in the constructor
 	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
 	d->sessions << jabberSess;
 	if(d->gui)
@@ -232,7 +232,6 @@ void JingleCallsManager::slotNewSession(XMPP::JingleSession *newSession)
 	kDebug() << "New session incoming, showing the dialog.";
 	
 	JabberJingleSession *jabberSess = new JabberJingleSession(this);
-	jabberSess->setMediaManager(d->mediaManager); //Could be done directly in the constructor
 	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
 	connect(jabberSess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
 
@@ -343,6 +342,11 @@ void JingleCallsManager::slotSessionTerminate(XMPP::JingleSession* sess)
 		}
 	}
 
+}
+
+JingleMediaManager* JingleCallsManager::mediaManager()
+{
+	return d->mediaManager;
 }
 
 #include "jinglecallsmanager.moc"

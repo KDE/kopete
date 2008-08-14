@@ -53,6 +53,8 @@ JingleSessionManager::JingleSessionManager(Client* c)
 		this, SLOT(slotTransportInfo(const QDomElement&)));
 	connect(d->pjs, SIGNAL(sessionTerminate(const QString&, const JingleReason&)),
 		this, SLOT(slotSessionTerminate(const QString&, const JingleReason&)));
+	connect(d->pjs, SIGNAL(sessionAccepted(const QDomElement&)),
+		this, SLOT(slotSessionAccepted(const QDomElement&)));
 
 	Features f = d->client->features();
 	
@@ -226,3 +228,16 @@ void JingleSessionManager::setFirstPort(int f)
 	d->firstPort = f;
 }
 
+void JingleSessionManager::slotSessionAccepted(const QDomElement& x)
+{
+	JingleSession *sess = session(x.attribute("sid"));
+	if (sess == 0)
+	{
+		qDebug() << "Session is null, We have a proble here...";
+		//unknownSession();
+		return;
+	}
+	
+	qDebug() << "JingleSessionManager::slotSessionAccept(const QDomElement& x) : call sess->sessionAccepted(x);";
+	sess->sessionAccepted(x);
+}

@@ -96,6 +96,7 @@ namespace XMPP
 		void slotSessionInfo(const QDomElement&);
 		void slotTransportInfo(const QDomElement&);
 		void slotSessionTerminate(const QString&, const JingleReason&);
+		void slotSessionAccepted(const QDomElement&);
 
 	private:
 		class Private;
