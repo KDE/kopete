@@ -119,19 +119,41 @@ JingleSession *JingleSessionManager::startNewSession(const Jid& toJid, const QLi
 void JingleSessionManager::slotSessionIncoming()
 {
 	qDebug() << "JingleSessionManager::slotSessionIncoming() called.";
-	d->sessions << d->pjs->takeNextIncomingSession();
+	JingleSession *sess = d->pjs->takeNextIncomingSession();
+	d->sessions << sess;
 
-	// TODO:Check if at least one payload is supported.
 	// 	Check if the Transport method is supported.
+	for (int i = 0; i < sess->contents().count(); i++)
+	{
+		JingleContent *c = sess->contents()[i];
 
-	// FIXME:
-	// 	QList<T>.last() should be called only if the list is not empty.
-	// 	Could it happen here as we just append an element to the list ?
-	emit newJingleSession(d->sessions.last());
+		// Check payloads for the content c
+		if (!checkSupportedPayloads(c))
+		{
+			//Do what ever is necessary.
+			//I think we have to send a no payload supported stanza.
+			return;
+		}
+
+		//Check transport
+		//TODO
+
+		//Set supported payloads for this content.
+		
+		c->setPayloadTypes(c->type() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
+	}
+	emit newJingleSession(sess);
 	qDebug() << "SEND RINGING.";
 	d->sessions.last()->ring();
 	qDebug() << "START NEGOTIATION";
 	d->sessions.last()->startNegotiation();
+}
+
+bool JingleSessionManager::checkSupportedPayloads(JingleContent *c)
+{
+	Q_UNUSED(c)
+	//TODO:Implement me !
+	return true;
 }
 
 //void JingleSessionManager::removeContent(const QString& sid, const QString& cName)

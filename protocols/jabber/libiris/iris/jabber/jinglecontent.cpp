@@ -72,8 +72,13 @@ JingleContent::~JingleContent()
 	delete d;
 }
 
-QDomElement JingleContent::bestPayload() const
+QDomElement JingleContent::bestPayload()
 {
+	if (d->bestPayload.isNull())
+	{
+		//Trying to update the best payload.
+		d->bestPayload = bestPayload(d->rPayloads, d->payloads);
+	}
 	return d->bestPayload;
 }
 
@@ -139,13 +144,16 @@ void JingleContent::fromElement(const QDomElement& e)
 	d->descriptionNS = desc.attribute("xmlns");
 	d->type = stringToType(desc.attribute("media"));
 	QDomElement payload = desc.firstChildElement();
+	// This content is created from XML data, that means that it comes from the outside.
+	// So, pyloads are added as responder payloads
+	QList<QDomElement> payloads;
 	while (!payload.isNull())
 	{
-		// This content is created from XML data, that means that it comes from the outside.
-		// So, pyloads are added as responder payloads
-		d->rPayloads << payload;
+		payloads << payload;
 		payload = payload.nextSiblingElement();
 	}
+	setResponderPayloads(payloads);
+
 	QDomElement transport = desc.nextSiblingElement();
 	d->transport = transport;
 }
@@ -375,10 +383,8 @@ void JingleContent::bind(const QHostAddress& address, int port)
 	
 	connect(d->inSocket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
 	
-	emit inSocketReady();
+	//emit inSocketReady();
 }
-
-
 
 JingleContent& JingleContent::operator=(const JingleContent &other)
 {
@@ -421,12 +427,17 @@ void JingleContent::setResponderPayloads(const QList<QDomElement>& payloads)
 {
 	qDebug() << "*******Setting responder payloads**********";
 	d->rPayloads = payloads;
-	if (d->payloads.count() != 0)
+	if (d->payloads.count() != 0) //No, if payloads is empty, we should get the list from the supported payloads. Actually, those payloads should be always set when creating the content.
 	{
 		//Store the best payload to use for this content.
 		//The application will just have to get it from this content.
 		d->bestPayload = bestPayload(d->rPayloads, d->payloads);
 	}
+}
+
+QList<QDomElement> JingleContent::responderPayloads() const
+{
+	return d->rPayloads;
 }
 
 JingleContent::Type JingleContent::stringToType(const QString& s)

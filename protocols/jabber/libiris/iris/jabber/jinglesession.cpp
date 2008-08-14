@@ -199,7 +199,6 @@ void JingleSession::slotContentConnected()
 	acceptSession();
 
 	disconnect(sender(), 0, this, 0);
-
 }
 
 void JingleSession::sessionAccepted(const QDomElement& x)

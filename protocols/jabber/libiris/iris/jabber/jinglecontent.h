@@ -88,8 +88,9 @@ namespace XMPP
 		Type stringToType(const QString& s);
 
 		void setResponderPayloads(const QList<QDomElement>&);
+		QList<QDomElement> responderPayloads() const;
 
-		QDomElement bestPayload() const;
+		QDomElement bestPayload();
 
 	public slots:
 		void slotRawUdpDataReady();

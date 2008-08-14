@@ -95,7 +95,7 @@ void JabberJingleContent::slotIncomingData(const QByteArray& data)
 
 void JabberJingleContent::startWritingRtpData()
 {
-	qDebug() << "Start Writing Rtp Data.";
+	kDebug() << "Start Writing Rtp Data.";
 	
 	//slotPrepareRtpOutSession(); --> That should already be done...
 
@@ -108,7 +108,9 @@ void JabberJingleContent::startWritingRtpData()
 		m_mediaSession = m_mediaManager->createNewSession(m_content->bestPayload());
 		if (m_mediaSession == 0)
 		{
-			qDebug() << "Media Session is NULL!";
+			kDebug() << "Media Session is NULL!";
+			kDebug() << "Number of payloads :" << m_content->payloadTypes().count();
+			kDebug() << "Number of responder payloads :" << m_content->responderPayloads().count();
 			return;
 		}
 		connect(m_mediaSession, SIGNAL(readyRead(int)), this, SLOT(slotReadyRead(int)));

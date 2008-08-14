@@ -105,6 +105,12 @@ namespace XMPP
 		 * Returns the session with the SID sid.
 		 */
 		JingleSession *session(const QString& sid);
+
+		/*
+		 * Check if this content has supported contents.
+		 * If yes, returns true, returns false if not.
+		 */
+		bool checkSupportedPayloads(JingleContent *c);
 	};
 }
 
