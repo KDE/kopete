@@ -261,7 +261,6 @@ public:
 	}
 	~AlsaALaw()
 	{
-		//TODO:Close alsa stuff !!!
 		snd_pcm_drain(handle);
 		snd_pcm_close(handle);
 		if (notifier)
@@ -288,11 +287,13 @@ public:
 		{
 			if (m_type == Capture)
 			{
-				kDebug() << "Not Ready, sending 32 bytes of zeros every 168 second.";
+				//FIXME : should I send nothing in this case ????
+				//The time stamp is 168 but the period time is 21 millisecond
+				kDebug() << "Not Ready, sending 32 bytes of zeros every 21 millisecond.";
 				kDebug() << "This could probably be caused by an innacessible audio device or simply because there is no audio device.";
 
 				timer = new QTimer(this);
-				timer->setInterval(168);
+				timer->setInterval(21);
 				connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeOut()));
 				timer->start();
 				return;
