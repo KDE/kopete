@@ -309,6 +309,8 @@ void JT_JingleAction::initiate()
 	jingle.setAttribute("initiator", client()->jid().full());
 	jingle.setAttribute("sid", d->session->sid());
 
+	QString eip = client()->jingleSessionManager()->externalIP();
+
 	for (int i = 0; i < d->session->contents().count(); i++)
 	{
 		QDomElement transport = d->session->contents()[i]->transport();
@@ -317,26 +319,35 @@ void JT_JingleAction::initiate()
 		{
 			qDebug() << "Set raw-udp candidate for content" << i;
 			QDomElement candidate = doc()->createElement("candidate");
+			QString ip;
 
 			//Trying to get the address with the most chances to succeed.
-			QNetworkInterface *interface = new QNetworkInterface();
-			QList<QHostAddress> ips = interface->allAddresses();
-			qSort(ips.begin(), ips.end(), interfaceOrder);
-
-			if (ips.count() == 0)
+			if (eip != "" && 0) //deos not seem to work...
 			{
-				qDebug() << "No Internet address found. Are you connected ?";
-				//emit error(NoNetwork);
-				return;
+				ip = eip;
 			}
-			candidate.setAttribute("ip", ips[0].toString()); // ips[0] is not 127.0.0.1 if there is other adresses.
+			else
+			{
+				QNetworkInterface *interface = new QNetworkInterface();
+				QList<QHostAddress> ips = interface->allAddresses();
+				qSort(ips.begin(), ips.end(), interfaceOrder);
+	
+				if (ips.count() == 0)
+				{
+					qDebug() << "No Internet address found. Are you connected ?";
+					//emit error(NoNetwork);
+					return;
+				}
+				ip = ips[0].toString();
+			}
+			candidate.setAttribute("ip", ip); // ips[0] is not 127.0.0.1 if there is other adresses.
 			int port = client()->jingleSessionManager()->nextRawUdpPort();
 			//qDebug() << "Port =" << port;
 			//qDebug() << "Port =" << QString("%1").arg(port);
 			candidate.setAttribute("port", QString("%1").arg(port));
 			candidate.setAttribute("generation", "0"); // FIXME:I don't know yet what it is.
 			transport.appendChild(candidate);
-			d->session->contents()[i]->bind(ips[0], port);
+			d->session->contents()[i]->bind(QHostAddress(ip), port);
 			//qDebug() << client()->stream().xmlToString(transport, false);
 		}
 		else if (transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
@@ -348,7 +359,7 @@ void JT_JingleAction::initiate()
 	}
 
 	d->iq.appendChild(jingle);
-	send(d->iq);
+	//send(d->iq);
 }
 
 
@@ -372,7 +383,7 @@ void JT_JingleAction::contentAccept()
 	jingle.setAttribute("sid", d->session->sid());
 
 	d->iq.appendChild(jingle);
-	send(d->iq);
+	//send(d->iq);
 }
 
 void JT_JingleAction::ringing()
@@ -400,7 +411,7 @@ void JT_JingleAction::ringing()
 	jingle.appendChild(ring);
 	d->iq.appendChild(jingle);
 
-	send(d->iq);
+	//send(d->iq);
 }
 
 void JT_JingleAction::terminate(const JingleReason& r)
@@ -441,7 +452,7 @@ void JT_JingleAction::terminate(const JingleReason& r)
 	jingle.appendChild(reason);
 	reason.appendChild(condition);
 	condition.appendChild(rReason);
-	send(d->iq);
+	//send(d->iq);
 }
 
 void JT_JingleAction::removeContents(const QStringList& c)
@@ -474,7 +485,7 @@ void JT_JingleAction::removeContents(const QStringList& c)
 	
 	d->iq.appendChild(jingle);
 
-	send(d->iq);
+	//send(d->iq);
 }
 
 void JT_JingleAction::transportInfo(JingleContent *c)
@@ -497,6 +508,8 @@ void JT_JingleAction::transportInfo(JingleContent *c)
 	jingle.setAttribute("initiator", d->session->initiator());
 	jingle.setAttribute("sid", d->session->sid());
 	//---------This part should be in another method (createJingleIQ(...))
+	QString eip = client()->jingleSessionManager()->externalIP();
+
 	if (e.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
 	{
 		QDomElement content = doc()->createElement("content");
@@ -505,21 +518,30 @@ void JT_JingleAction::transportInfo(JingleContent *c)
 
 		QDomElement transport = doc()->createElement("transport");
 		transport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:raw-udp");
-
-		//Trying to get the adress with the most chances to succeed.
-		QNetworkInterface *interface = new QNetworkInterface();
-		QList<QHostAddress> ips = interface->allAddresses();
-		qSort(ips.begin(), ips.end(), interfaceOrder);
-
-		if (ips.count() == 0)
-		{
-			qDebug() << "No Internet address found. Are you connected ?";
-			//emit error(NoNetwork);
-			return;
-		}
 		
 		QDomElement candidate = doc()->createElement("candidate");
-		candidate.setAttribute("ip", ips[0].toString()); // ips[0] is not 127.0.0.1 if there is other adresses.
+		QString ip;
+
+		//Trying to get the address with the most chances to succeed.
+		if (eip != "" && 0) //does not seem to work.
+		{
+			ip = eip;
+		}
+		else
+		{
+			QNetworkInterface *interface = new QNetworkInterface();
+			QList<QHostAddress> ips = interface->allAddresses();
+			qSort(ips.begin(), ips.end(), interfaceOrder);
+
+			if (ips.count() == 0)
+			{
+				qDebug() << "No Internet address found. Are you connected ?";
+				//emit error(NoNetwork);
+				return;
+			}
+			ip = ips[0].toString();
+		}
+		candidate.setAttribute("ip", ip); // ips[0] is not 127.0.0.1 if there is other adresses.
 		int port = client()->jingleSessionManager()->nextRawUdpPort();
 		//qDebug() << "Port =" << port;
 		//qDebug() << "Port =" << QString("%1").arg(port);
@@ -530,7 +552,7 @@ void JT_JingleAction::transportInfo(JingleContent *c)
 		jingle.appendChild(content);
 		d->iq.appendChild(jingle);
 		
-		c->bind(ips[0], port);
+		c->bind(QHostAddress(ip), port);
 	}
 	else if (e.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
 	{
@@ -542,7 +564,7 @@ void JT_JingleAction::transportInfo(JingleContent *c)
 		return;
 	}
 
-	send(d->iq);
+	//send(d->iq);
 }
 
 void JT_JingleAction::trying(const JingleContent& c)
@@ -582,7 +604,7 @@ void JT_JingleAction::trying(const JingleContent& c)
 		return;
 	}
 
-	send(d->iq);
+	//send(d->iq);
 	
 }
 
@@ -610,7 +632,7 @@ void JT_JingleAction::received()
 	jingle.appendChild(received);
 	d->iq.appendChild(jingle);
 
-	send(d->iq);
+	//send(d->iq);
 }
 
 void JT_JingleAction::sessionAccept(const QList<JingleContent*>& contents)
@@ -642,7 +664,7 @@ void JT_JingleAction::sessionAccept(const QList<JingleContent*>& contents)
 	qDebug() << "Prepare to send :";
 	client()->stream().xmlToString(d->iq, false);
 
-	send(d->iq);
+	//send(d->iq);
 }
 
 bool JT_JingleAction::take(const QDomElement &x)
@@ -658,6 +680,6 @@ bool JT_JingleAction::take(const QDomElement &x)
 
 void JT_JingleAction::onGo()
 {
-//	send(d->iq);
+	send(d->iq);
 }
 

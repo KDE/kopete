@@ -52,7 +52,7 @@ JabberJingleContent::~JabberJingleContent()
 void JabberJingleContent::setContent(XMPP::JingleContent* content)
 {
 	m_content = content;
-	connect(m_content, SIGNAL(socketReady()), this, SLOT(slotPrepareRtpSession()));
+//	connect(m_content, SIGNAL(socketReady()), this, SLOT(slotPrepareRtpSession()));
 }
 
 void JabberJingleContent::prepareRtpInSession()
@@ -66,8 +66,8 @@ void JabberJingleContent::prepareRtpInSession()
 			kDebug() << "Fatal : Invalid Socket !";
 			return;
 		}
-		m_rtpInSession->setRtpSocket(m_content->inSocket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
 		m_rtpInSession->setPayload(m_content->bestPayload());
+		m_rtpInSession->setRtpSocket(m_content->inSocket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
 		connect(m_rtpInSession, SIGNAL(readyRead(const QByteArray&)), this, SLOT(slotIncomingData(const QByteArray&)));
 	}
 }
@@ -89,7 +89,7 @@ void JabberJingleContent::prepareRtpOutSession()
 
 void JabberJingleContent::slotIncomingData(const QByteArray& data)
 {
-	//kDebug() << "Receiving ! (" << data.size() << "bytes)";
+	kDebug() << "Receiving ! (" << data.size() << "bytes)";
 	m_mediaSession->playData(data);
 }
 

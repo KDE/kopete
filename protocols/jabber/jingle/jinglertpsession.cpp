@@ -20,7 +20,7 @@ JingleRtpSession::JingleRtpSession(Direction d)
 	 * it let you send and recv a media stream.
 	 */
 	
-	rtpSocket = new QUdpSocket(this); //Should it really be created and connected here ???
+/*	rtpSocket = new QUdpSocket(this); //Should it really be created and connected here ???
 	if (d == In)
 		connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
 	else if (d == Out)
@@ -28,18 +28,19 @@ JingleRtpSession::JingleRtpSession(Direction d)
 	
 	rtcpSocket = new QUdpSocket(this);
 	//connect(rtcpSocket, SIGNAL(readyRead()), this, SLOT(rtcpDataReady())); // FIXME:Not sure I must do this, oRTP will manage that, I don't care about this signal.
-	
+*/	
 	m_rtpSession = rtp_session_new(m_direction == In ? RTP_SESSION_RECVONLY : RTP_SESSION_SENDONLY);
 	rtp_session_set_connected_mode(m_rtpSession, true);
-	
+
 	payloadID = -1;
 	payloadName = "";
 	receivingTS = 0;
 	sendingTS = 0;
-	
+	rtpSocket = 0;
+	rtcpSocket = 0;
+
 	rtp_session_set_scheduling_mode(m_rtpSession, 1);
 	rtp_session_set_blocking_mode(m_rtpSession, 1);
-	//rtp_session_set_recv_buf_size(m_rtpSession, 80); // ?????????
 	kDebug() << "Created";
 }
 
@@ -47,32 +48,38 @@ JingleRtpSession::~JingleRtpSession()
 {
 	rtp_session_bye(m_rtpSession, "Ended");
 	rtp_session_destroy(m_rtpSession);
-	delete rtpSocket;
-	delete rtcpSocket;
+	
+	if (rtpSocket)
+		delete rtpSocket;
+
+	if (rtcpSocket)
+		delete rtcpSocket;
 }
 
-void JingleRtpSession::connectToHost(const QString& address, int rtpPort, int rtcpPort)
+/*void JingleRtpSession::connectToHost(const QString& address, int rtpPort, int rtcpPort)
 {
+	kDebug() << "redo connect to port" << rtpPort << "and host" << address;
 	rtpSocket->connectToHost(address, rtpPort, m_direction == In ? QIODevice::ReadOnly : QIODevice::WriteOnly);
 	
 	rtcpSocket->connectToHost(address, rtcpPort == 0 ? rtpPort + 1 : rtcpPort, QIODevice::ReadWrite);
 
 	rtp_session_set_sockets(m_rtpSession, rtpSocket->socketDescriptor(), rtcpSocket->socketDescriptor());
-}
+}*/
 
 void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 {
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << (socket->isValid() ? "Socket ready" : "Socket not ready");
+	kDebug() << (socket->isValid() ? "Socket ready" : "Socket not ready");
 	// The socket has already been created but we set another one here.
 	delete rtpSocket;
 	rtpSocket = (QUdpSocket*) socket;
+	rtcpSocket = new QUdpSocket(this);
 	
 	if (m_direction == In)
 	{
+		kDebug() << "Given socket is bound to :" << rtpSocket->localPort();
+		kDebug() << "RTCP socket will be bound to :" << (rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
 		connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
 		rtcpSocket->bind(rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
-		kDebug() << "RTCP socket bound to" << rtcpSocket->localPort();
-		//RTP socket : bind --> socket already bound.
 	}
 	else if (m_direction == Out)
 	{
@@ -84,16 +91,17 @@ void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 	rtp_session_set_sockets(m_rtpSession, rtpSocket->socketDescriptor(), rtcpSocket->socketDescriptor());
 }
 
-void JingleRtpSession::bind(int rtpPort, int rtcpPort)
+/*void JingleRtpSession::bind(int rtpPort, int rtcpPort)
 {
+	kDebug() << "redo bind to port" << rtpPort;
 	rtpSocket->bind(rtpPort);
 
 	rtcpSocket->bind(rtcpPort == 0 ? rtpPort + 1 : rtcpPort);
-}
+}*/
 
 void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should be overloaded methods to support other data type (QString, const *char).
 {
-	//qDebug() << "JingleRtpSession::send ts =" << ts;
+	//kDebug() << data.size() << "bytes";
 	
 	//for (int i = 0; i < data.count(); i++)
 	//	printf("'%c' ", data[i]);
@@ -107,14 +115,14 @@ void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should 
 	
 	/*int size = */rtp_session_sendm_with_ts(m_rtpSession, packet, ts == -1 ? sendingTS : ts);
 	
-	//qDebug() << "Bytes sent :" << size;
+	//kDebug() << "Bytes sent :" << size;
 
 	sendingTS += payloadTS;
 }
 
 void JingleRtpSession::rtpDataReady()
 {
-	//qDebug() << "JingleRtpSession::rtpDataReady";
+	kDebug() << "JingleRtpSession::rtpDataReady";
 	
 	//kDebug() << "receivingTS =" << receivingTS;
 	mblk_t *packet;
@@ -148,7 +156,7 @@ void JingleRtpSession::rtcpDataReady()
 void JingleRtpSession::setPayload(const QDomElement& payload)
 {
 	Q_UNUSED(payload)
-	// Parse SDP string here and store data.
+	// Parse QDomElement here and store data.
 	//payloadTS must be set here.
 	payloadName = "PCMA";
 	payloadID = 8;

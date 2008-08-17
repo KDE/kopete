@@ -112,6 +112,7 @@ set(kopete_jabber_PART_SRCS
    jingle/jabberjinglecontent.cpp
    jingle/jinglertpsession.cpp
    jingle/jinglemediamanager.cpp
+   jingle/alsaio.cpp
 )
 
 

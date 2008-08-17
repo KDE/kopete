@@ -75,6 +75,7 @@ JingleSession::JingleSession(Task *t, const Jid &j)
 
 JingleSession::~JingleSession()
 {
+	qDebug() << "still" << d->actions.count() << "actions in the list";
 	delete d;
 }
 
@@ -124,6 +125,7 @@ void JingleSession::start()
 	iAction->setSession(this);
 	connect(iAction, SIGNAL(finished()), this, SLOT(slotAcked()));
 	iAction->initiate();
+	iAction->go(true);
 	/*for (int i = 0; i < contents().count(); i++)
 	{
 		if (contents()[i]->transport().attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
@@ -137,12 +139,13 @@ void JingleSession::start()
 
 void JingleSession::slotAcked()
 {
-	if (!sender())
+	//Should be autamtically deleted by Iris.
+	/*if (!sender())
 	{
 		qDebug() << "Sender is NULL !";
 		return;
 	}
-	deleteAction(static_cast<JT_JingleAction*>(sender()));
+	deleteAction(static_cast<JT_JingleAction*>(sender()));*/
 }
 
 void JingleSession::deleteAction(JT_JingleAction* a)
@@ -315,6 +318,7 @@ void JingleSession::acceptSession()
 		sAction->setSession(this);
 		connect(sAction, SIGNAL(finished()), this, SLOT(slotSessionAcceptAcked()));
 		sAction->sessionAccept(contentList);
+		sAction->go(true);
 	}
 
 	d->userAcceptedSession = true;
@@ -350,6 +354,7 @@ void JingleSession::removeContent(const QStringList& c)
 	rAction->setSession(this);
 	connect(rAction, SIGNAL(finished()), this, SLOT(slotRemoveAcked()));
 	rAction->removeContents(d->contentsToRemove);
+	rAction->go(true);
 }
 
 void JingleSession::removeContent(const QString& c) // Provided for convenience, may disappear.
@@ -389,6 +394,7 @@ void JingleSession::removeContent(const QString& c) // Provided for convenience,
 		rAction->setSession(this);
 		d->contentsToRemove << c;
 		rAction->removeContents(d->contentsToRemove);
+		rAction->go(true);
 	}
 }
 
@@ -424,6 +430,7 @@ void JingleSession::ring()
 	connect(rAction, SIGNAL(finished()), this, SLOT(slotAcked()));
 	rAction->setSession(this);
 	rAction->ringing();
+	rAction->go(true);
 }
 
 void JingleSession::setSid(const QString& s)
@@ -461,6 +468,7 @@ void JingleSession::terminate(const JingleReason& r)
 	tAction->setSession(this);
 	connect(tAction, SIGNAL(finished()), this, SLOT(slotSessTerminated()));
 	tAction->terminate(r);
+	tAction->go(true);
 }
 
 QString JingleSession::initiator() const
@@ -534,20 +542,7 @@ void JingleSession::startRawUdpConnection(JingleContent *c)
 	connect(cAction, SIGNAL(finished()), this, SLOT(slotAcked()));
 	cAction->setSession(this);
 	cAction->transportInfo(c);
-	// getting ready to receive data
-	//qDebug() << "Create IN socket for" << c->name();
-	//qDebug("Content Adress : %x\n", (unsigned int) contents()[i]);
-	//c->createUdpInSocket();
-	//TODO:after sending this, this content must be ready to receive data.
-	//     This is done by the task which sets the socket.
-	
-	//Sending "trying" stanzas
-	/*JT_JingleAction *tAction = new JT_JingleAction(d->rootTask);
-	d->actions << tAction;
-	connect(tAction, SIGNAL(finished()), this, SLOT(slotAcked()));
-	tAction->setSession(this);
-	tAction->trying(*c);*/ //--> Not used currently
-	//TODO:Delete me when I'm finished.
+	cAction->go(true);
 }
 
 void JingleSession::slotSessTerminated()
@@ -664,6 +659,7 @@ void JingleSession::slotReceivingData()
 	// here depending on the transport method used in the sender content.
 	
 	JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
+	d->actions << rAction;
 	connect(rAction, SIGNAL(finished()), this, SLOT(slotAcked()));
 	rAction->setSession(this);
 	rAction->received();

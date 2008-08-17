@@ -21,6 +21,8 @@
 #include "jinglesessionmanager.h"
 #include "jingletasks.h"
 
+#include <QHttp>
+
 using namespace XMPP;
 
 class JingleSessionManager::Private
@@ -35,6 +37,8 @@ public:
 	QStringList supportedProfiles;
 	QList<int> usedPorts;
 	int firstPort;
+	QString ip;
+	QHttp *http;
 };
 
 JingleSessionManager::JingleSessionManager(Client* c)
@@ -67,6 +71,35 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	d->client->setFeatures(f);
 
 	d->firstPort = 9000;
+	
+	//Get External IP address, This is not Standard and might not work but let's try it before we have ICE support
+	d->http = new QHttp(this);
+	d->http->setHost("www.swlink.net");
+	connect(d->http, SIGNAL(done(bool)), this, SLOT(slotExternalIPDone(bool)));
+	d->http->get("/~styma/REMOTE_ADDR.shtml");
+}
+
+void JingleSessionManager::slotExternalIPDone(bool err)
+{
+	d->ip = "";
+	if (err)
+	{
+		delete d->http;
+		return;
+	}
+
+	QByteArray data = d->http->readAll();
+	// Parse XML here...
+	// We know that the ip is on the 5th line.
+	d->ip = data.split('\n').at(4);
+	qDebug() << "Received External IP :" << d->ip;
+	
+	delete d->http;
+}
+
+QString JingleSessionManager::externalIP() const
+{
+	return d->ip;
 }
 
 JingleSessionManager::~JingleSessionManager()
@@ -114,6 +147,17 @@ JingleSession *JingleSessionManager::startNewSession(const Jid& toJid, const QLi
 	//connect(others);
 	session->start();
 	return session;
+}
+
+void JingleSessionManager::slotSessionTerminated()
+{
+	JingleSession* sess = static_cast<JingleSession*>(sender());
+
+	for (int i = 0; i < d->sessions.count(); i++)
+	{
+		if (d->sessions[i] == sess)
+			d->sessions.removeAt(i);
+	}
 }
 
 void JingleSessionManager::slotSessionIncoming()
@@ -220,6 +264,7 @@ void JingleSessionManager::slotSessionTerminate(const QString& sid, const Jingle
 		//sendUnknownSession([need the stanza id]);
 		return;
 	}
+
 	//Remove the session from the sessions list (the session is not destroyed, it has to be done by the application.)
 	for (int i = 0; i < d->sessions.count(); i++)
 	{

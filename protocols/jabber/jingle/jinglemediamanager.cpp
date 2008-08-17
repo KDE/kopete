@@ -16,6 +16,7 @@
   */
 
 #include "jinglemediamanager.h"
+#include "alsaio.h"
 
 #include <QList>
 #include <QStringList>
@@ -66,7 +67,7 @@ void JingleMediaSession::setOutputDevice(Solid::Device& device)
 	Q_UNUSED(device)
 }
 
-void JingleMediaSession::setCaptureMediaPlugin(AlsaALaw *p)
+void JingleMediaSession::setCaptureMediaPlugin(AlsaIO *p)
 {
 	kDebug() << "Setting the capturePlugin";
 	//Here we should be able to configure the capturePlugin and tell it which souncard it should use.
@@ -81,7 +82,7 @@ void JingleMediaSession::setCaptureMediaPlugin(AlsaALaw *p)
 	connect(capturePlugin, SIGNAL(readyRead()), this, SLOT(slotInReadyRead()));
 }
 
-void JingleMediaSession::setPlaybackMediaPlugin(AlsaALaw *p)
+void JingleMediaSession::setPlaybackMediaPlugin(AlsaIO *p)
 {
 	kDebug() << "Setting playbackPlugin";
 	playbackPlugin = p;
@@ -231,13 +232,13 @@ JingleMediaSession *JingleMediaManager::createNewSession(const QDomElement& payl
 			//The problem is that Phonon does not support audio input yet...
 			if (alawCapture == 0)
 			{
-				alawCapture = new AlsaALaw(AlsaALaw::Capture);
+				alawCapture = new AlsaIO(AlsaIO::Capture);
 			}
 			mediaSession->setCaptureMediaPlugin(alawCapture);
 			
 			if (alawPlayback == 0)
 			{
-				alawPlayback = new AlsaALaw(AlsaALaw::Playback);
+				alawPlayback = new AlsaIO(AlsaIO::Playback);
 			}
 			mediaSession->setPlaybackMediaPlugin(alawPlayback);
 
