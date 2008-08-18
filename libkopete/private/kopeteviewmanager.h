@@ -58,6 +58,12 @@ public:
     * Provide access to the list of KopeteChatWindow the class maintains.
     */
     KopeteView *activeView() const;
+    
+    /**
+     * Returns unread messages for the given contact
+     * @param contact Message sender
+     */
+    QList<Kopete::MessageEvent*> pendingMessages( Kopete::Contact *contact );
 
 public slots:
     /**

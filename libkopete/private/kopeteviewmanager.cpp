@@ -484,6 +484,23 @@ KopeteView* KopeteViewManager::activeView() const
 }
 
 
+QList<Kopete::MessageEvent*> KopeteViewManager::pendingMessages( Kopete::Contact *contact )
+{
+	QList<Kopete::MessageEvent*> pending;
+    foreach (Kopete::MessageEvent *event, d->eventList)
+    {
+    	const Kopete::Message &message = event->message();
+        if ( event->state() == Kopete::MessageEvent::Nothing
+        		&& message.direction() == Kopete::Message::Inbound
+        		&& message.from() == contact )
+        {
+        	pending << event;
+        }
+    }
+    
+    return pending;
+}
+
 #include "kopeteviewmanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

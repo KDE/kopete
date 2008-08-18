@@ -59,6 +59,7 @@ set(kopete_SRCS
    kopeteidentitystatusbaricon.cpp
    kopeteaccountstatusbaricon.cpp
    kopetedbusinterface.cpp
+   kopetedbusinterface_p.cpp
    infoeventwidget.cpp
    )
 
