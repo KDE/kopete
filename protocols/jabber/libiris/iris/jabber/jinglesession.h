@@ -202,7 +202,8 @@ namespace XMPP
 
 		/*
 		 * Call this function when a session-accept jingle action has been received for it.
-		 * More... (what will happen ? looooooooots of things with contents,...)
+		 * Once the session is accepted, we will get the supported payloads of the initiator
+		 * and switch to Active state, Media can begin to flow on each content's socket.
 		 */
 		void sessionAccepted(const QDomElement&);
 
