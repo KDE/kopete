@@ -70,19 +70,37 @@ JingleRtpSession::~JingleRtpSession()
 void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 {
 	kDebug() << (socket->isValid() ? "Socket ready" : "Socket not ready");
-	//delete rtpSocket;
-	rtpSocket = (QUdpSocket*) socket;
+	
+	//rtpSocket = (QUdpSocket*) socket;
+	
+	// WARNING, this is a workaround, that's not clean code.
+	// What I do here is that I create a new socket for RTP with information which are in the old one.
+	// that means we have to re-bind or re-connect it.
+	// As long as we are here, the connection is possible with that socket and
+	// UDP policy does not prevent me to do that.
+	
+	rtpSocket = new QUdpSocket(this); //Part of the workaround
 	rtcpSocket = new QUdpSocket(this);
 	
 	if (m_direction == In)
 	{
+		int localPort = socket->localPort();
+		delete socket;
+		rtpSocket->bind(localPort); // ^ Part of the workaround
+
 		kDebug() << "Given socket is bound to :" << rtpSocket->localPort();
 		kDebug() << "RTCP socket will be bound to :" << (rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
 		connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
+		connect(rtcpSocket, SIGNAL(readyRead()), this, SLOT(rtcpDataReady()));
 		rtcpSocket->bind(/*rtpSocket->localAddress(), */rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
 	}
 	else if (m_direction == Out)
 	{
+		int peerPort = socket->peerPort();
+		QHostAddress peerAddress = socket->peerAddress();
+		delete socket;
+		rtpSocket->connectToHost(peerAddress, peerPort); //Part of the workaround
+
 		kDebug() << "Given socket is connected to" << rtpSocket->peerAddress() << ":" << rtpSocket->peerPort();
 		kDebug() << "RTCP socket will be connected to" << rtpSocket->peerAddress() << ":" << (rtcpPort == 0 ? rtpSocket->peerPort() + 1 : rtcpPort);
 		connect(rtpSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)));
@@ -127,35 +145,30 @@ void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should 
 
 void JingleRtpSession::rtpDataReady()
 {
-	kDebug() << "JingleRtpSession::rtpDataReady";
-	
-	//kDebug() << "receivingTS =" << receivingTS;
 	mblk_t *packet;
-	/*if ((packet = rtp_session_recvm_with_ts(m_rtpSession, receivingTS)) == NULL)
-	{
-		//We skip this time, packet is NULL, that's not interresting....
-		kDebug() << "Packet is Null, Skip !";
-		return;
-	}*/
+	
 	//This is the only way I found to get data once in a while, sometimes, it just hangs...
 	while ((packet = rtp_session_recvm_with_ts(m_rtpSession, receivingTS)) == NULL)
 	{
 		//kDebug() << "Packet is Null, retrying.";
 		receivingTS += payloadTS;
 	}
+	
 	QByteArray data((char*) packet->b_cont->b_rptr, packet->b_cont->b_wptr - packet->b_cont->b_rptr);
 	
 	// Seems we should empty the socket...
 	QByteArray buf;
 	buf.resize(rtpSocket->pendingDatagramSize());
 	rtpSocket->readDatagram(buf.data(), rtpSocket->pendingDatagramSize());
+
+	kDebug() << "Data size =" << data.size();
 	
 	emit readyRead(data);
 }
 
 void JingleRtpSession::rtcpDataReady()
 {
-
+	//kDebug() << "Received :" << rtcpSocket->readAll();
 }
 
 void JingleRtpSession::setPayload(const QDomElement& payload)

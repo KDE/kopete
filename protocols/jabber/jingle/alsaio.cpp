@@ -1,3 +1,19 @@
+ /*
+  * alsaio.cpp - An alsa I/O manager (works in Capture or in Playback mode but not both at a time.)
+  *
+  * Copyright (c) 2008 by Detlev Casanova <detlev.casanova@gmail.com>
+  *
+  * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
+  *
+  * *************************************************************************
+  * *                                                                       *
+  * * This program is free software; you can redistribute it and/or modify  *
+  * * it under the terms of the GNU General Public License as published by  *
+  * * the Free Software Foundation; either version 2 of the License, or     *
+  * * (at your option) any later version.                                   *
+  * *                                                                       *
+  * *************************************************************************
+  */
 #include <alsa/asoundlib.h>
 
 #include <QObject>
@@ -190,25 +206,8 @@ void AlsaIO::write(const QByteArray& data)
 		return; // Must delete the data before ?
 	}
 
-	kDebug() << "Appending received data";
+	kDebug() << "Appending received data (" << data.size() << "bytes)";
 	buf.append(data);
-
-	/*int ret;
-	if ((ret = ::write(ufds[0].fd, (const void*)data.data(), data.size())) < 0)
-	{
-		kDebug() << "fd =" << ufds[0].fd;
-		kDebug() << "There was an error writing on the audio device." << ret;
-		kDebug() << "errno =" << errno;
-		kDebug() << "Trying writei()";
-		ret = snd_pcm_writei(handle, data.data(), data.size());
-		if (ret < 0)
-			kDebug() << "You are not lucky :-( writei did not work either... :" << snd_strerror(ret);
-		else
-			kDebug() << "Written" << ret << "bytes on the audio device. You hear anything ? don't forget to unmute !!!!";
-		return;
-	}
-	kDebug() << "Written" << ret << "bytes on the audio device. You hear anything ? don't forget to unmute !!!!";
-	*/
 }
 
 bool AlsaIO::isReady()
@@ -249,7 +248,7 @@ unsigned int AlsaIO::timeStamp()
 	return ts;
 }
 
-void AlsaIO::slotActivated(int)
+void AlsaIO::slotActivated(int) //Rename this slot
 {
 	//kDebug() << "Data arrived. (Alsa told me !)";
 	size_t size;
@@ -270,7 +269,7 @@ void AlsaIO::checkAlsaPoll(int)
 	snd_pcm_poll_descriptors_revents(handle, ufds, fdCount, &revents);
 
 	if (revents & POLLOUT)
-		writeData();//This should write data which have been bufed when the application called "write".
+		writeData();
 	else
 		kDebug() << "poll returned no event (" << revents << ", " << ufds[0].revents << ") ?";	
 }
@@ -281,7 +280,7 @@ void AlsaIO::writeData()
 	//kDebug() << "Buffer size =" << buf.size();
 	if (buf.size() <= 0)
 	{
-	//	kDebug() << "No Data in the buffer.";
+		kDebug() << "No Data in the buffer.";
 		return;
 	}
 
