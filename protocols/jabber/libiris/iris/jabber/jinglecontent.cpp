@@ -258,8 +258,8 @@ void JingleContent::createUdpInSocket()
 	QHostAddress address(d->transport.firstChildElement().attribute("ip"));
 	int port = d->transport.firstChildElement().attribute("port").toInt();
 	qDebug() << "Bind socket to" << address << ":" << port;
-	if (d->inSocket->bind(address, port))
-		qDebug() << "Socket bound to" << address.toString() << ":" << port;
+	if (d->inSocket->bind(/*address, */port))
+		qDebug() << "Socket bound to" << /*address.toString() << ":" <<*/ port;
 	
 	connect(d->inSocket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
 	//emit inSocketReady(); --> also no need of this.
@@ -270,7 +270,7 @@ void JingleContent::slotRawUdpDataReady()
 	qDebug() << "Data arrived on the socket.";
 	emit dataReceived();
 	setReceiving(true);
-	disconnect(sender(), 0, this, 0);
+	//disconnect(sender(), 0, this, 0);
 }
 
 QUdpSocket *JingleContent::inSocket()
@@ -378,8 +378,8 @@ void JingleContent::bind(const QHostAddress& address, int port)
 	qDebug() << "Trying to bind socket to" << address.toString() << ":" << port;
 	if (!d->inSocket)
 		d->inSocket = new QUdpSocket();
-	if (d->inSocket->bind(address, port))
-		qDebug() << "Socket bound to" << address.toString() << ":" << port;
+	if (d->inSocket->bind(/*address, */port))
+		qDebug() << "Socket bound to" << /*address.toString() << ":" << */port;
 	
 	connect(d->inSocket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
 	

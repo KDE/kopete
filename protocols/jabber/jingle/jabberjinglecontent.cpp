@@ -44,6 +44,7 @@ JabberJingleContent::JabberJingleContent(JabberJingleSession* parent, XMPP::Jing
 
 JabberJingleContent::~JabberJingleContent()
 {
+	kDebug() << "destroyed";
 	delete m_content;
 	delete m_rtpInSession;
 	delete m_rtpOutSession;
@@ -52,7 +53,6 @@ JabberJingleContent::~JabberJingleContent()
 void JabberJingleContent::setContent(XMPP::JingleContent* content)
 {
 	m_content = content;
-//	connect(m_content, SIGNAL(socketReady()), this, SLOT(slotPrepareRtpSession()));
 }
 
 void JabberJingleContent::prepareRtpInSession()
@@ -60,16 +60,19 @@ void JabberJingleContent::prepareRtpInSession()
 	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Prepare RTP IN session";
 	if (m_rtpInSession == 0)
 	{
-		m_rtpInSession = new JingleRtpSession(JingleRtpSession::In);
 		if (!m_content->inSocket())
 		{
 			kDebug() << "Fatal : Invalid Socket !";
 			return;
 		}
+		m_rtpInSession = new JingleRtpSession(JingleRtpSession::In);
 		m_rtpInSession->setPayload(m_content->bestPayload());
 		m_rtpInSession->setRtpSocket(m_content->inSocket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
+		kDebug() << "Connecting m_rtpInSession readyRead signal.";
 		connect(m_rtpInSession, SIGNAL(readyRead(const QByteArray&)), this, SLOT(slotIncomingData(const QByteArray&)));
 	}
+	else
+		kDebug() << "RTP IN session already set !";
 }
 
 void JabberJingleContent::prepareRtpOutSession()
@@ -77,14 +80,17 @@ void JabberJingleContent::prepareRtpOutSession()
 	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Prepare RTP OUT session";
 	if (m_rtpOutSession == 0)
 	{
-		m_rtpOutSession = new JingleRtpSession(JingleRtpSession::Out);
 		if (!m_content->outSocket())
 		{
 			kDebug() << "Fatal : Invalid Socket !";
 			return;
 		}
+		m_rtpOutSession = new JingleRtpSession(JingleRtpSession::Out);
+		m_rtpOutSession->setPayload(m_content->bestPayload());
 		m_rtpOutSession->setRtpSocket(m_content->outSocket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
 	}
+	else
+		kDebug() << "RTP OUT session already set !";
 }
 
 void JabberJingleContent::slotIncomingData(const QByteArray& data)
@@ -109,8 +115,6 @@ void JabberJingleContent::startWritingRtpData()
 		if (m_mediaSession == 0)
 		{
 			kDebug() << "Media Session is NULL!";
-			kDebug() << "Number of payloads :" << m_content->payloadTypes().count();
-			kDebug() << "Number of responder payloads :" << m_content->responderPayloads().count();
 			return;
 		}
 		connect(m_mediaSession, SIGNAL(readyRead(int)), this, SLOT(slotReadyRead(int)));

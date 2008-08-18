@@ -39,6 +39,7 @@ JabberJingleSession::JabberJingleSession(JingleCallsManager* parent)
 
 JabberJingleSession::~JabberJingleSession()
 {
+	kDebug() << "destroyed";
 	for (int i = 0; i < jabberJingleContents.count(); i++)
 		delete jabberJingleContents[i];
 	delete m_jingleSession;
@@ -73,6 +74,7 @@ void JabberJingleSession::slotStateChanged()
 		JabberJingleContent *jContent = contentWithName(m_jingleSession->contents()[i]->name());
 		if (jContent == 0)
 		{
+			qDebug() << "Create JabberJingleContent for content" << m_jingleSession->contents()[i]->name();
 			jContent = new JabberJingleContent(this, m_jingleSession->contents()[i]);
 			jabberJingleContents << jContent;
 		}

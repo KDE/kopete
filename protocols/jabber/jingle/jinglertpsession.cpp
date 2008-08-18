@@ -13,7 +13,7 @@
 JingleRtpSession::JingleRtpSession(Direction d)
 {
 	m_direction = d;
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Creating JingleRtpSession";
+	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Creating" << (d == In ? "IN" : "OUT") << "JingleRtpSession";
 	/*
 	 * The RtpSession objects represent a RTP session:
 	 * once it is configured with local and remote network addresses and a payload type is given,
@@ -46,6 +46,7 @@ JingleRtpSession::JingleRtpSession(Direction d)
 
 JingleRtpSession::~JingleRtpSession()
 {
+	kDebug() << "destroyed";
 	rtp_session_bye(m_rtpSession, "Ended");
 	rtp_session_destroy(m_rtpSession);
 	
@@ -69,8 +70,7 @@ JingleRtpSession::~JingleRtpSession()
 void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 {
 	kDebug() << (socket->isValid() ? "Socket ready" : "Socket not ready");
-	// The socket has already been created but we set another one here.
-	delete rtpSocket;
+	//delete rtpSocket;
 	rtpSocket = (QUdpSocket*) socket;
 	rtcpSocket = new QUdpSocket(this);
 	
@@ -79,7 +79,7 @@ void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 		kDebug() << "Given socket is bound to :" << rtpSocket->localPort();
 		kDebug() << "RTCP socket will be bound to :" << (rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
 		connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
-		rtcpSocket->bind(rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
+		rtcpSocket->bind(/*rtpSocket->localAddress(), */rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
 	}
 	else if (m_direction == Out)
 	{
@@ -169,9 +169,8 @@ void JingleRtpSession::setPayload(const QDomElement& payload)
 
 void JingleRtpSession::slotBytesWritten(qint64 size)
 {
-	Q_UNUSED(size)
-	//kDebug() << size << "bytes written";
-	if (state != SendingData)
-		return;
-	emit dataSent();
+	kDebug() << size << "bytes written";
+	//if (state != SendingData)
+	//	return;
+	//emit dataSent();
 }

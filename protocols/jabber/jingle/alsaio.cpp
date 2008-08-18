@@ -249,13 +249,13 @@ unsigned int AlsaIO::timeStamp()
 	return ts;
 }
 
-void AlsaIO::slotActivated(int socket)
+void AlsaIO::slotActivated(int)
 {
 	//kDebug() << "Data arrived. (Alsa told me !)";
 	size_t size;
 	QByteArray tmpBuf;
-	tmpBuf.resize(1024);
-	size = read(socket, tmpBuf.data(), 1024); //Maybe use readi which is more adapted...
+	tmpBuf.resize(pSize);
+	size = snd_pcm_readi(handle, tmpBuf.data(), pSize); //Maybe use readi which is more adapted...
 	tmpBuf.resize(size);
 	buf.append(tmpBuf);
 

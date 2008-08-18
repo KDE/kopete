@@ -75,7 +75,6 @@ JingleSession::JingleSession(Task *t, const Jid &j)
 
 JingleSession::~JingleSession()
 {
-	qDebug() << "still" << d->actions.count() << "actions in the list";
 	delete d;
 }
 
@@ -150,14 +149,15 @@ void JingleSession::slotAcked()
 
 void JingleSession::deleteAction(JT_JingleAction* a)
 {
-	for (int i = 0; i < d->actions.count(); i++)
+	//Don't delete tasks, iris will take care of it.
+	/*for (int i = 0; i < d->actions.count(); i++)
 	{
 		if (d->actions[i] == a)
 		{
 			delete d->actions.takeAt(i);
 			break;
 		}
-	}
+	}*/
 }
 
 void JingleSession::slotContentConnected()
@@ -319,6 +319,10 @@ void JingleSession::acceptSession()
 		connect(sAction, SIGNAL(finished()), this, SLOT(slotSessionAcceptAcked()));
 		sAction->sessionAccept(contentList);
 		sAction->go(true);
+	}
+	else
+	{
+		qDebug() << "d->allContentsConnected is FALSE !!!";
 	}
 
 	d->userAcceptedSession = true;
@@ -663,4 +667,6 @@ void JingleSession::slotReceivingData()
 	connect(rAction, SIGNAL(finished()), this, SLOT(slotAcked()));
 	rAction->setSession(this);
 	rAction->received();
+	rAction->go(true);
 }
+
