@@ -14,6 +14,8 @@
     *************************************************************************
 */
 
+#include "kopeteviewmanager.h"
+
 #include <QList>
 #include <QTextDocument>
 #include <QtAlgorithms>
@@ -39,8 +41,6 @@
 #include "kopetegroup.h"
 #include "kopetepicture.h"
 #include "kopeteemoticons.h"
-
-#include "kopeteviewmanager.h"
 
 /**
  * Used to exrtract the message that will be shown in the notification popup.

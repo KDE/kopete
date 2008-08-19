@@ -16,6 +16,7 @@
  *************************************************************************
  */
 #include "kopetedbusinterface.h"
+#include "kopetedbusinterface_p.h"
 
 // Qt includes
 #include <QtCore/QStringList>
@@ -46,7 +47,6 @@
 
 // Local includes
 #include "kopeteadaptor.h"
-#include "kopetedbusinterface_p.h"
 
 KopeteDBusInterface::KopeteDBusInterface(QObject *parent) :
 	QObject(parent), d(new KopeteDBusInterfacePrivate())

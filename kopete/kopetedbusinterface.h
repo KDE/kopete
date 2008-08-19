@@ -225,7 +225,7 @@ Q_SIGNALS:
     void contactChanged(QString contactId);
     
 private:
-    KopeteDBusInterfacePrivate *d;    
+    KopeteDBusInterfacePrivate * const d;    
 };
 
 #endif

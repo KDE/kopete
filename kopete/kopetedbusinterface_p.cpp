@@ -162,8 +162,8 @@ Kopete::MetaContact *KopeteDBusInterfacePrivate::findContact(
 {
     Kopete::MetaContact *contact = 0L;
 
-    if ( nameOrId.count(":") == 2 ) {
-        QStringList tokens = nameOrId.split(":");
+    if ( nameOrId.count(':') == 2 ) {
+        QStringList tokens = nameOrId.split(':');
         Q_ASSERT(tokens.size() == 3);
         Kopete::Contact *candidate = Kopete::ContactList::self()->findContact(
                 tokens.at(0), tokens.at(1), tokens.at(2));
