@@ -4,7 +4,7 @@
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
     Copyright (c) 2005      by Michaël Larouche      <larouche@kde.org>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -156,6 +156,7 @@ signals:
 
 private slots:
 	void slotOpenURLRequest( const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & );
+	void slotFileTransferIncomingDone( unsigned int id );
 	void slotScrollView();
 	void slotAppearanceChanged();
 
@@ -263,6 +264,10 @@ private:
 	 * @return the photo path or base64 photo data
 	 */
 	QString photoForContact( const Kopete::Contact *contact ) const;
+
+	void addFileTransferButtonsEventListener( unsigned int id );
+
+	void disableFileTransferButtons( unsigned int id );
 
 	class Private;
 	Private *d;
