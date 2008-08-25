@@ -99,9 +99,6 @@ AlsaIO::AlsaIO(StreamType t)
 
 AlsaIO::~AlsaIO()
 {
-	//snd_pcm_drain(handle); --> Crash here...
-	kDebug() << "DESTROYED";
-	snd_pcm_close(handle);
 	if (notifier)
 	{
 		close(notifier->socket());
@@ -110,6 +107,11 @@ AlsaIO::~AlsaIO()
 
 	if (timer)
 		delete timer;
+	
+	snd_pcm_drain(handle);
+	snd_pcm_close(handle);
+	
+	kDebug() << "DESTROYED";
 }
 
 AlsaIO::StreamType AlsaIO::type() const
@@ -208,6 +210,7 @@ void AlsaIO::write(const QByteArray& data)
 
 	kDebug() << "Appending received data (" << data.size() << "bytes)";
 	buf.append(data);
+	kDebug() << "Buffer size is now" << buf.size() << "bytes";
 }
 
 bool AlsaIO::isReady()
@@ -276,11 +279,19 @@ void AlsaIO::checkAlsaPoll(int)
 
 void AlsaIO::writeData()
 {
+	/* We should empty buffer each time this function is called
+	 * (each time Alsa tells us we can write on the device)
+	 * To do so, we need 2 buffers (one for incoming data (A) and one
+	 * for writing on the device (B))
+	 * we begin by writing A on the device, while B is being filled,
+	 * once this method is called, we can empty A and write B on the device, etc...
+	 */
+	
 	//written += buf.size();
 	//kDebug() << "Buffer size =" << buf.size();
-	if (buf.size() <= 0)
+	if (buf.size() < pSize)
 	{
-		kDebug() << "No Data in the buffer.";
+		kDebug() << "No enough Data in the buffer.";
 		return;
 	}
 
@@ -288,8 +299,10 @@ void AlsaIO::writeData()
 
 	//written += size;
 
-	if (size < 0) {
-		if (size == -EPIPE) {
+	if (size < 0)
+	{
+		if (size == -EPIPE)
+		{
 			kDebug() << "buffer underrun";
 			prepare();
 			return;
@@ -318,6 +331,7 @@ void AlsaIO::timerTimeOut()
 {
 	// With a period time of 21333 µs and the A-Law format, we always have 32 bytes.
 	// Here, this is 32 bytes which are all zeros.
+	//buf.fill(static_cast<char>(rand()), 32);
 	buf.fill('\0', 32);
 	emit readyRead();
 }

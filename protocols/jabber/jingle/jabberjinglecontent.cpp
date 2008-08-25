@@ -48,6 +48,7 @@ JabberJingleContent::~JabberJingleContent()
 	delete m_content;
 	delete m_rtpInSession;
 	delete m_rtpOutSession;
+	delete m_mediaSession;
 }
 
 void JabberJingleContent::setContent(XMPP::JingleContent* content)

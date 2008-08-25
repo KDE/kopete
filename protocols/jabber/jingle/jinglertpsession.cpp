@@ -187,7 +187,7 @@ void JingleRtpSession::setPayload(const QDomElement& payload)
 
 void JingleRtpSession::slotBytesWritten(qint64 size)
 {
-	kDebug() << size << "bytes written";
+	//kDebug() << size << "bytes written";
 	//if (state != SendingData)
 	//	return;
 	//emit dataSent();
