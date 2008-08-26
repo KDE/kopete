@@ -10,7 +10,7 @@ kde4_add_kcfg_files(kopete_otr_PART_SRCS kopete_otr.kcfgc)
 
 kde4_add_plugin(kopete_otr ${kopete_otr_PART_SRCS})
 
-target_link_libraries(kopete_otr kopete kopete_otr_shared otr)
+target_link_libraries(kopete_otr ${KDE4_KDEUI_LIBS} kopete kopete_otr_shared otr)
 
 install(TARGETS kopete_otr DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -24,7 +24,7 @@ kde4_add_kcfg_files(kcm_kopete_otr_PART_SRCS ${kotr_PART_SRCS} kopete_otr.kcfgc)
 
 kde4_add_plugin(kcm_kopete_otr ${kcm_kopete_otr_PART_SRCS})
 
-target_link_libraries(kcm_kopete_otr kopete kopete_otr_shared otr)
+target_link_libraries(kcm_kopete_otr ${KDE4_KDEUI_LIBS} kopete kopete_otr_shared otr)
 
 install(TARGETS kcm_kopete_otr DESTINATION ${PLUGIN_INSTALL_DIR})
 
