@@ -74,11 +74,12 @@ target_link_libraries(kopete_bin
 	${KDE4_KTEXTEDITOR_LIBS} 
 	${KDE4_KNOTIFYCONFIG_LIBS} 
 	${BLITZ_LIBRARIES}
+    ${KDE4_KABC_LIBRARY} 
+    ${KDE4_KDE3SUPPORT_LIBRARY}
 	kopete 
 	kopeteaddaccountwizard
 	kopetestatusmenu
 	kopeteidentity)
-
 install(TARGETS kopete_bin  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 

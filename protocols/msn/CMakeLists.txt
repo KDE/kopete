@@ -60,11 +60,10 @@ set(kopete_msn_shared_LIB_SRCS
 
 kde4_add_library(kopete_msn_shared SHARED ${kopete_msn_shared_LIB_SRCS})
 
-if(WIN32)
-  target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete)
-else(WIN32)
-  target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete kopete_videodevice ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KUTILS_LIBS})
-endif(WIN32)
+target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete  ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KUTILS_LIBS})
+if(NOT WIN32)
+  target_link_libraries(kopete_msn_shared kopete_videodevice)
+endif(NOT WIN32)
 
 set_target_properties(kopete_msn_shared PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS kopete_msn_shared ${INSTALL_TARGETS_DEFAULT_ARGS})
