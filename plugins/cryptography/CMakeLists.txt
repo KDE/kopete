@@ -62,7 +62,16 @@ kde4_add_kcfg_files(kcm_kopete_cryptography_PART_SRCS
 
 kde4_add_plugin(kcm_kopete_cryptography ${kcm_kopete_cryptography_PART_SRCS})
 
-target_link_libraries(kcm_kopete_cryptography ${KDE4_KUTILS_LIBS} kopete kleo )
+target_link_libraries(
+    kcm_kopete_cryptography
+    kopete
+    kleo
+    ${KDE4_KDECORE_LIBS}
+    ${KDE4_KDEUI_LIBS}
+    ${KDE4_KUTILS_LIBS}
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTGUI_LIBRARY}
+    )
 
 install(TARGETS kcm_kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
 
