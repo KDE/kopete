@@ -292,7 +292,7 @@ void AlsaIO::writeData()
 
 	if (buf.size() < pSize)
 	{
-		kDebug() << "No enough Data in the buffer.";
+		//kDebug() << "No enough Data in the buffer.";
 		return;
 	}
 

@@ -136,9 +136,9 @@ void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should 
 	
 	mblk_t *packet = rtp_session_create_packet_with_data(m_rtpSession, (uint8_t*)data.data(), data.size(), /*freefn*/ NULL); //the free function is managed by the bytesWritten signal
 	
-	/*int size = */rtp_session_sendm_with_ts(m_rtpSession, packet, ts == -1 ? sendingTS : ts);
+	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, ts == -1 ? sendingTS : ts);
 	
-	//kDebug() << "Bytes sent :" << size;
+	kDebug() << "Bytes sent :" << size;
 
 	sendingTS += payloadTS;
 }
