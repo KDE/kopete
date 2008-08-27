@@ -289,6 +289,7 @@ void AlsaIO::writeData()
 	
 	//written += buf.size();
 	//kDebug() << "Buffer size =" << buf.size();
+
 	if (buf.size() < pSize)
 	{
 		kDebug() << "No enough Data in the buffer.";
@@ -311,6 +312,8 @@ void AlsaIO::writeData()
 	}
 
 	kDebug() << "Wrote" << size << "frames on the device.";// (" << written << "bytes since the beginning)";
+
+	buf.clear();
 }
 
 bool AlsaIO::prepare()
@@ -336,3 +339,28 @@ void AlsaIO::timerTimeOut()
 	emit readyRead();
 }
 
+void AlsaIO::incRef()
+{
+	ref++;
+}
+
+void AlsaIO::decRef()
+{
+	ref--;
+	if (ref == 0)
+	{
+		stop();
+	}
+}
+
+void AlsaIO::stop()
+{
+	if (notifier)
+	{
+		close(notifier->socket());
+		delete notifier;
+	}
+
+	if (timer)
+		delete timer;
+}

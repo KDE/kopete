@@ -43,6 +43,8 @@ public:
 	unsigned int timeStamp();
 	void writeData();
 	bool prepare();
+	void decRef();
+	void incRef();
 
 public slots:
 	void slotActivated(int socket);
@@ -65,6 +67,8 @@ private:
 	int fdCount;
 	struct pollfd *ufds;
 	unsigned int written;
+	int ref;
+	void stop();
 };
 
 #endif //ALSA_IO

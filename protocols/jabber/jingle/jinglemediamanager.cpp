@@ -37,6 +37,8 @@ JingleMediaSession::JingleMediaSession(JingleMediaManager *parent)
 
 JingleMediaSession::~JingleMediaSession()
 {
+	playbackPlugin->decRef();
+	capturePlugin->decRef();
 	kDebug() << "deleted";
 }
 
@@ -72,6 +74,7 @@ void JingleMediaSession::setCaptureMediaPlugin(AlsaIO *p)
 	kDebug() << "Setting the capturePlugin";
 	//Here we should be able to configure the capturePlugin and tell it which souncard it should use.
 	capturePlugin = p;
+	capturePlugin->incRef();
 
 	if (capturePlugin->isReady())
 		tsValue = capturePlugin->timeStamp();
@@ -86,6 +89,7 @@ void JingleMediaSession::setPlaybackMediaPlugin(AlsaIO *p)
 {
 	kDebug() << "Setting playbackPlugin";
 	playbackPlugin = p;
+	playbackPlugin->incRef();
 }
 
 void JingleMediaSession::start()
