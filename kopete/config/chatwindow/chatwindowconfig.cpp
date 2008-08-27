@@ -603,6 +603,21 @@ void ChatWindowConfig::createPreviewMessages()
 	msgHigh.setDirection( Kopete::Message::Inbound );
 	msgHigh.setImportance( Kopete::Message::Highlight );
 
+	Kopete::Message msgFTRequest( m_jack, m_myself );
+	msgFTRequest.setPlainBody( i18n( "Hello, this is an incoming file transfer request" ) );
+	msgFTRequest.setDirection( Kopete::Message::Inbound );
+	msgFTRequest.setType( Kopete::Message::TypeFileTransferRequest );
+	msgFTRequest.setFileName( "data.pdf" );
+	msgFTRequest.setFileSize( 10000000 );
+
+	Kopete::Message msgFTRequestDisabled( m_jack, m_myself );
+	msgFTRequestDisabled.setPlainBody( i18n( "Hello, this is a disabled incoming file transfer request" ) );
+	msgFTRequestDisabled.setDirection( Kopete::Message::Inbound );
+	msgFTRequestDisabled.setType( Kopete::Message::TypeFileTransferRequest );
+	msgFTRequestDisabled.setFileName( "data.pdf" );
+	msgFTRequestDisabled.setFileSize( 10000000 );
+	msgFTRequestDisabled.setFileTransferDisabled( true );
+
 	// This is a UTF-8 string btw.
 	Kopete::Message msgRightToLeft( m_myself, m_jack );
 	msgRightToLeft.setPlainBody( i18nc("This special UTF-8 string is to test if the style supports Right-to-Left language display.", "הודעות טקסט") );
@@ -621,6 +636,8 @@ void ChatWindowConfig::createPreviewMessages()
 	m_preview->appendMessage(msgInt);
 	m_preview->appendMessage(msgAct);
 	m_preview->appendMessage(msgHigh);
+	m_preview->appendMessage(msgFTRequest);
+	m_preview->appendMessage(msgFTRequestDisabled);
 	m_preview->appendMessage(msgRightToLeft);
 	m_preview->appendMessage(msgBye);
 }
