@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QSocketNotifier>
+#include <QFile>
 #include <QDebug>
 #include <KDebug>
 #include <QTimer>
@@ -69,6 +70,7 @@ private:
 	unsigned int written;
 	int ref;
 	void stop();
+	QFile *testFile;
 };
 
 #endif //ALSA_IO

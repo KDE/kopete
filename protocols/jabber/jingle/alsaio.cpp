@@ -143,6 +143,10 @@ void AlsaIO::start()
 		else if (m_type == Playback)
 		{
 			kDebug() << "Device is not ready, we will simply drop packets. --> NO PLAYBACK";
+			
+			testFile = new QFile("kopete-test.alaw");
+			testFile->open(QIODevice::WriteOnly);
+
 			return;
 		}
 	}
@@ -196,18 +200,24 @@ void AlsaIO::start()
 		notifier = new QSocketNotifier(ufds[0].fd, type);
 		notifier->setEnabled(true);
 		connect(notifier, SIGNAL(activated(int)), this, SLOT(checkAlsaPoll(int)));
+
+		testFile = new QFile("kopete-test.alaw");
+		testFile->open(QIODevice::WriteOnly);
+
 	}
 	kDebug() << "After start, fdCount =" << fdCount;
 }
 
 void AlsaIO::write(const QByteArray& data)
 {
+	testFile->write(data);
+
 	if (!ready || m_type != Playback)
 	{
 		kDebug() << "Packet dropped";
 		return; // Must delete the data before ?
 	}
-
+	
 	kDebug() << "Appending received data (" << data.size() << "bytes)";
 	buf.append(data);
 	kDebug() << "Buffer size is now" << buf.size() << "bytes";

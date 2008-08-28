@@ -92,7 +92,8 @@ void JingleSessionManager::slotExternalIPDone(bool err)
 	// Parse XML here...
 	// We know that the ip is on the 5th line.
 	d->ip = data.split('\n').at(4);
-	qDebug() << "Received External IP :" << d->ip << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_";
+	qDebug() << "Received External IP :" << d->ip;
+	d->ip= "";
 	
 	delete d->http;
 }
