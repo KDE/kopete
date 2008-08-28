@@ -23,7 +23,7 @@
 #include "irctransferhandler.h"
 #include "ksparser.h"
 
-//#include "networkconfigwidget.h"
+#include "networkconfigwidget.h"
 //#include "channellist.h"
 #include "ircaddcontactpage.h"
 //#include "ircguiclient.h"
@@ -538,10 +538,10 @@ void IRCProtocol::slotRawCommand( const QString &args, ChatSession *manager )
 
 void IRCProtocol::editNetworks(const QString &networkName)
 {
-/*
-	IRCNetworkConfigWidget *netConf = new IRCNetworkConfigWidget(UI::Global::mainWidget(), Qt::WDestructiveClose);
+
+	IRCNetworkConfigWidget *netConf = new IRCNetworkConfigWidget(UI::Global::mainWidget() );
+	netConf->setAttribute( Qt::WA_DeleteOnClose );
 	netConf->editNetworks(networkName);
 	netConf->show();
-*/
 }
 

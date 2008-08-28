@@ -15,7 +15,7 @@ set(kopeteirc_ui_SRCS
   ui/ircaddcontactpage.cpp 
 #  ui/ircdialogs.cpp 
   ui/irceditaccountwidget.cpp 
-#  ui/networkconfigwidget.cpp 
+  ui/networkconfigwidget.cpp 
 )
 
 kde4_add_ui_files(kopeteirc_ui_SRCS 
@@ -42,7 +42,7 @@ set(kopete_irc_SRCS
 
 kde4_add_plugin(kopete_irc ${kopete_irc_SRCS})
 
-target_link_libraries(kopete_irc ${KDE4_KIO_LIBS} kopete kirc_client kirc )
+target_link_libraries(kopete_irc ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} kopete kirc_client kirc )
 
 install(TARGETS kopete_irc  DESTINATION ${PLUGIN_INSTALL_DIR})
 
