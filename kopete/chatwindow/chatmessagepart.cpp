@@ -97,28 +97,6 @@
 
 class ToolTip;
 
-
-class FileTransferEventListener: public QObject, public DOM::EventListener
-{
-public:
-	virtual void handleEvent( DOM::Event &event )
-	{
-		DOM::HTMLInputElement element = event.currentTarget();
-		if ( !element.isNull() )
-		{
-			QString idType = element.id().string().left(4);
-			unsigned int messageId = element.id().string().mid(4).toUInt();
-
-			if ( idType == QLatin1String( "ftSV" ) )
-				Kopete::TransferManager::transferManager()->saveIncomingTransfer( messageId );
-			else if ( idType == QLatin1String( "ftSA" ) )
-				Kopete::TransferManager::transferManager()->saveIncomingTransfer( messageId );
-			else if ( idType == QLatin1String( "ftCC" ) )
-				Kopete::TransferManager::transferManager()->cancelIncomingTransfer( messageId );
-		}
-	}
-};
-
 class ChatMessagePart::Private
 {
 public:
@@ -127,7 +105,7 @@ public:
 	   copyAction(0), saveAction(0), printAction(0),
 	   closeAction(0),copyURLAction(0), currentChatStyle(0),
 	   latestDirection(Kopete::Message::Inbound), latestType(Kopete::Message::TypeNormal),
-	   fileTransferEventListener(0)
+	   htmlEventListener(0)
 	{}
 
 	~Private()
@@ -161,8 +139,8 @@ public:
 	// to enable on-the-fly style changing.
 	QList<Kopete::Message> allMessages;
 	
-	// No need to delete, FileTransferEventListener is ref counted.
-	QPointer<FileTransferEventListener> fileTransferEventListener;
+	// No need to delete, HTMLEventListener is ref counted.
+	QPointer<HTMLEventListener> htmlEventListener;
 };
 /*
 class ChatMessagePart::ToolTip : public Q3ToolTip
@@ -256,6 +234,9 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	// Refresh the style if the display name change.
 	connect( d->manager, SIGNAL(displayNameChanged()), this, SLOT(slotUpdateHeaderDisplayName()) );
 	connect( d->manager, SIGNAL(photoChanged()), this, SLOT(slotUpdateHeaderPhoto()) );
+
+	connect( d->manager, SIGNAL(messageStateChanged(uint, Kopete::Message::MessageState)),
+	         this, SLOT(messageStateChanged(uint, Kopete::Message::MessageState)) );
 
 	connect ( browserExtension(), SIGNAL( openUrlRequestDelayed( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ),
 	          this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ) );
@@ -432,6 +413,21 @@ void ChatMessagePart::setStyleVariant( const QString &variantPath )
 		variantNode.setInnerText( QString("@import url(\"%1\");").arg( adjustStyleVariantForChatSession( variantPath) ) );
 }
 
+void ChatMessagePart::messageStateChanged( uint messageId, Kopete::Message::MessageState state )
+{
+	QList<Kopete::Message>::Iterator it = d->allMessages.end();
+	while ( it != d->allMessages.begin() )
+	{
+		--it;
+		if ( (*it).id() == messageId )
+		{
+			(*it).setState( state );
+			changeMessageStateElement( messageId, state );
+			break;
+		}
+	}
+}
+
 void ChatMessagePart::slotAppearanceChanged()
 {
 	readOverrides();
@@ -567,14 +563,18 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		chatNode.appendChild(newMessageNode);
 	}
 
-	if ( message.type() == Kopete::Message::TypeFileTransferRequest )
+	if ( message.type() == Kopete::Message::TypeNormal ) 
+	{
+		if ( message.direction() == Kopete::Message::Outbound )
+			changeMessageStateElement( message.id(), message.state() );
+	}
+	else if ( message.type() == Kopete::Message::TypeFileTransferRequest )
 	{
 		if ( message.fileTransferDisabled() )
 			disableFileTransferButtons( message.id() );
 		else
 			addFileTransferButtonsEventListener( message.id() );
 	}
-	
 
 	// Keep the direction to see on next message
 	// if it's a consecutive message
@@ -1062,6 +1062,9 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 		resultHTML.replace( QLatin1String("%saveFileAsHandlerId%"), QString( "ftSA%1" ).arg( message.id() ) );
 		resultHTML.replace( QLatin1String("%cancelRequestHandlerId%"), QString( "ftCC%1" ).arg( message.id() ) );
 	}
+	
+	if ( message.type() == Kopete::Message::TypeNormal && message.direction() == Kopete::Message::Outbound )
+		resultHTML.replace( QLatin1String( "%stateElementId%" ), QString( "msST%1" ).arg( message.id() ) );
 
 	// Replace message at the end, maybe someone could put a Adium keyword in his message :P
 	resultHTML.replace( QLatin1String("%message%"), formatMessageBody(message) );
@@ -1291,6 +1294,46 @@ void ChatMessagePart::writeTemplate()
 #endif
 }
 
+void ChatMessagePart::resendMessage( uint messageId )
+{
+	QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
+	for ( it = d->allMessages.constBegin(); it != itEnd; ++it )
+	{
+		if ( (*it).id() == messageId )
+		{
+			if ( !( d->manager->protocol()->capabilities() & Kopete::Protocol::CanSendOffline ) )
+			{
+				bool reachableContactFound = false;
+				foreach ( Kopete::Contact* c, (*it).to() )
+				{
+					if ( c->isReachable() )
+					{
+						reachableContactFound = true;
+						break;
+					}
+				}
+
+				// no online contact found and can't send offline? can't send.
+				if ( !reachableContactFound )
+					return;
+			}
+
+			Kopete::Message msg( (*it).from(), (*it).to() );
+			msg.setDirection( Kopete::Message::Outbound );
+			if ( (*it).format() == Qt::RichText )
+				msg.setHtmlBody( (*it).body()->toPlainText() );
+			else
+				msg.setPlainBody( (*it).body()->toHtml() );
+
+// 			msg.setBackgroundColor( (*it).backgroundColor() );
+			msg.setForegroundColor( (*it).foregroundColor() );
+			msg.setFont( (*it).font() );
+			d->manager->sendMessage( msg );
+			break;
+		}
+	}
+}
+
 QString ChatMessagePart::adjustStyleVariantForChatSession( const QString & styleVariant ) const
 {
 	if ( d->manager->form() == Kopete::ChatSession::Chatroom
@@ -1320,23 +1363,14 @@ QString ChatMessagePart::photoForContact( const Kopete::Contact *contact ) const
 
 void ChatMessagePart::addFileTransferButtonsEventListener( unsigned int id )
 {
-	if ( !d->fileTransferEventListener )
-		d->fileTransferEventListener = new FileTransferEventListener();
-
 	QString elementId = QString( "ftSV%1" ).arg( id );
-	DOM::HTMLElement element = document().getElementById( elementId );
-	if ( !element.isNull() )
-		element.addEventListener( "click", d->fileTransferEventListener, false );
-	
+	registerClickEventListener( document().getElementById( elementId ) );
+
 	elementId = QString( "ftSA%1" ).arg( id );
-	element = document().getElementById( elementId );
-	if ( !element.isNull() )
-		element.addEventListener( "click", d->fileTransferEventListener, false );
-	
+	registerClickEventListener( document().getElementById( elementId ) );
+
 	elementId = QString( "ftCC%1" ).arg( id );
-	element = document().getElementById( elementId );
-	if ( !element.isNull() )
-		element.addEventListener( "click", d->fileTransferEventListener, false );
+	registerClickEventListener( document().getElementById( elementId ) );
 }
 
 void ChatMessagePart::disableFileTransferButtons( unsigned int id )
@@ -1355,6 +1389,69 @@ void ChatMessagePart::disableFileTransferButtons( unsigned int id )
 	element = document().getElementById( elementId );
 	if ( !element.isNull() )
 		element.setDisabled( true );
+}
+
+void ChatMessagePart::changeMessageStateElement( uint id, Kopete::Message::MessageState state )
+{
+	QString elementId = QString( "msST%1" ).arg( id );
+	DOM::HTMLElement element = document().getElementById( elementId );
+	if ( element.isNull() )
+		return;
+	
+	QString statusHTML;
+	switch ( state )
+	{
+	case Kopete::Message::StateUnknown:
+		statusHTML = d->currentChatStyle->getOutgoingStateUnknownHtml();
+		break;
+	case Kopete::Message::StateSending:
+		statusHTML = d->currentChatStyle->getOutgoingStateSendingHtml();
+		break;
+	case Kopete::Message::StateSent:
+		statusHTML = d->currentChatStyle->getOutgoingStateSentHtml();
+		break;
+	case Kopete::Message::StateError:
+		statusHTML = d->currentChatStyle->getOutgoingStateErrorHtml();
+		break;
+	}
+
+	QString resendId = QString( "msRS%1" ).arg( id );
+	statusHTML.replace( QLatin1String( "%resendHandlerId%" ), resendId );
+	element.setInnerHTML( statusHTML );
+
+	registerClickEventListener( document().getElementById( resendId ) );
+}
+
+void ChatMessagePart::registerClickEventListener( DOM::HTMLElement element )
+{
+	if ( element.isNull() )
+		return;
+	
+	if ( !d->htmlEventListener )
+	{
+		d->htmlEventListener = new HTMLEventListener();
+		connect( d->htmlEventListener, SIGNAL(resendMessage(uint)), this, SLOT(resendMessage(uint)) );
+	}
+	element.addEventListener( "click", d->htmlEventListener, false );
+}
+
+void HTMLEventListener::handleEvent( DOM::Event &event )
+{
+	DOM::HTMLInputElement element = event.currentTarget();
+	if ( !element.isNull() )
+	{
+		QString idType = element.id().string().left(4);
+		unsigned int messageId = element.id().string().mid(4).toUInt();
+
+		if ( idType == QLatin1String( "ftSV" ) )
+			Kopete::TransferManager::transferManager()->saveIncomingTransfer( messageId );
+		else if ( idType == QLatin1String( "ftSA" ) )
+			Kopete::TransferManager::transferManager()->saveIncomingTransfer( messageId );
+		else if ( idType == QLatin1String( "ftCC" ) )
+			Kopete::TransferManager::transferManager()->cancelIncomingTransfer( messageId );
+		else if ( idType == QLatin1String( "msRS" ) )
+			emit resendMessage( messageId );
+	}
 }
 
 #include "chatmessagepart.moc"

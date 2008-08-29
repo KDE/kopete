@@ -112,6 +112,14 @@ public:
 		Highlight = 2 ///< Highlight notification, for most important messages, which require particular attentions.
 	};
 
+	enum MessageState
+	{
+		StateUnknown = 0, ///< state of message isn't known (e.g. protocol doesn't support message acknowledgment)
+		StateSending = 1, ///< message was sent but not yet delivered.
+		StateSent = 2, ///< message was delivered
+		StateError = 3 ///< message has not been delivered
+	};
+
 	/**
 	 * Constructs a new empty message
 	 */
@@ -292,6 +300,19 @@ public:
 	 * @param importance The message importance to set
 	 */
 	void setImportance(MessageImportance importance);
+
+	/**
+	 * @brief Accessor method for the state
+	 * @return The message state (unknown/sending/sent/error)
+	 */
+	MessageState state() const;
+
+	/**
+	 * @brief Set the state of message.
+	 * @see MessageState
+	 * @param state The message state to set
+	 */
+	void setState(MessageState state);
 
 	/**
 	 * @brief Sets the foreground color for the message

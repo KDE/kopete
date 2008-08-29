@@ -262,6 +262,12 @@ signals:
 	void eventNotification( const QString& notificationText);
 
 	/**
+	 * Signals that a message has changed its state.
+	 * The chat window connects to this signal to update the message in chat view.
+	 */
+	void messageStateChanged( uint messageId, Kopete::Message::MessageState state );
+
+	/**
 	 * @brief A contact within the chat session changed his photo.
 	 * Used to update the contacts photo in chat window.
 	 */
@@ -287,6 +293,13 @@ public slots:
 	 */
 	void receivedEventNotification(  const QString& notificationText );
 
+	/**
+	 * @brief Change state of message.
+	 * It will emit the signal messageStateChanged(). Use this slot in your protocols
+	 * and plugins to change message state.
+	 */
+	void receivedMessageState( uint messageId, Kopete::Message::MessageState state );
+	
 	/**
 	 * Show a message to the chatwindow, or append it to the queue.
 	 * This is the function protocols HAVE TO call for both incoming and outgoing messages

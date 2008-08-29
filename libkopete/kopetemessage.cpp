@@ -48,9 +48,9 @@ class Message::Private
 {
 public:
 	Private() //assign next message id, it can't be changed later
-		: id(nextId++), direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), backgroundOverride(false),
-		  foregroundOverride(false), richTextOverride(false), isRightToLeft(false), timeStamp( QDateTime::currentDateTime() ),
-		  body(new QTextDocument), escapedBodyDirty(true), fileTransfer(0)
+		: id(nextId++), direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), state(StateUnknown),
+		  backgroundOverride(false), foregroundOverride(false), richTextOverride(false), isRightToLeft(false),
+		  timeStamp( QDateTime::currentDateTime() ), body(new QTextDocument), escapedBodyDirty(true), fileTransfer(0)
 	{}
 	Private (const Private &other);
 	~Private();
@@ -65,6 +65,7 @@ public:
 	MessageType type;
 	QString requestedPlugin;
 	MessageImportance importance;
+	MessageState state;
 	bool backgroundOverride;
 	bool foregroundOverride;
 	bool richTextOverride;
@@ -97,7 +98,8 @@ public:
 	static uint nextId;
 };
 
-uint Message::Private::nextId = 0;
+// Start with 1 as 0 is reserved for invalid id;
+uint Message::Private::nextId = 1;
 
 Message::Private::Private (const Message::Private &other)
 	: QSharedData (other), id(other.id)
@@ -111,6 +113,7 @@ Message::Private::Private (const Message::Private &other)
 	type = other.type;
 	requestedPlugin = other.requestedPlugin;
 	importance = other.importance;
+	state = other.state;
 	backgroundOverride = other.backgroundOverride;
 	foregroundOverride = other.foregroundOverride;
 	richTextOverride = other.richTextOverride;
@@ -544,6 +547,16 @@ void Message::setDirection(MessageDirection direction)
 Message::MessageImportance Message::importance() const
 {
 	return d->importance;
+}
+
+Message::MessageState Message::state() const
+{
+	return d->state;
+}
+
+void Message::setState(MessageState state)
+{
+	d->state = state;
 }
 
 ChatSession *Message::manager() const

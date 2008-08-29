@@ -21,8 +21,10 @@
 
 #include <khtml_part.h>
 #include <dom/html_element.h>
+#include <dom/dom2_events.h>
 
 #include <kmenu.h>
+#include <kopetemessage.h>
 
 #include <kopete_export.h>
 
@@ -143,6 +145,8 @@ public slots:
 	 */
 	void setStyleVariant( const QString &variantPath );
 
+	void messageStateChanged( uint messageId, Kopete::Message::MessageState state );
+
 signals:
 	/**
 	 * Emits before the context menu is about to show
@@ -183,6 +187,8 @@ private slots:
 	 * Upda the photo in the header.
 	 */
 	void slotUpdateHeaderPhoto();
+	
+	void resendMessage( uint messageId );
 
 protected:
 	virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
@@ -269,8 +275,21 @@ private:
 
 	void disableFileTransferButtons( unsigned int id );
 
+	void changeMessageStateElement( uint id, Kopete::Message::MessageState state );
+
+	void registerClickEventListener( DOM::HTMLElement element );
+
 	class Private;
 	Private *d;
+};
+
+class HTMLEventListener: public QObject, public DOM::EventListener
+{
+	Q_OBJECT
+public:
+	virtual void handleEvent( DOM::Event &event );
+Q_SIGNALS:
+	void resendMessage( uint messageId );
 };
 
 #endif

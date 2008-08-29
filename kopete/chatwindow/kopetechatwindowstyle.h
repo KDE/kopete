@@ -98,6 +98,11 @@ public:
 
 	QString getFileTransferIncomingHtml() const;
 
+	QString getOutgoingStateSendingHtml() const;
+	QString getOutgoingStateSentHtml() const;
+	QString getOutgoingStateErrorHtml() const;
+	QString getOutgoingStateUnknownHtml() const;
+
 	/**
 	 * Check if the style has the support for Kopete Action template (Kopete extension)
 	 * @return true if the style has Action template.
