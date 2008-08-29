@@ -93,6 +93,7 @@ void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* ses
 		msgPosition += msgChunk.length();
 
 		Oscar::Message message;
+		message.setId( msg.id() );
 		message.setText( Oscar::Message::encodingForText( msgChunk, allowUCS2 ), msgChunk, codec );
 		message.setChannel( messageChannel );
 		message.setTimestamp( msg.timestamp() );
@@ -101,6 +102,7 @@ void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* ses
 		mAccount->engine()->sendMessage( message );
 	} while ( msgPosition < msgText.length() );
 
+	msg.setState( Kopete::Message::StateSending );
 	manager(Kopete::Contact::CanCreate)->appendMessage(msg);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }

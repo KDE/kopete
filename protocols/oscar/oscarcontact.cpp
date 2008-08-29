@@ -72,6 +72,10 @@ OscarContact::OscarContact( Kopete::Account* account, const QString& name,
 	                  this, SLOT(requestBuddyIcon()) );
 	QObject::connect( mAccount->engine(), SIGNAL(receivedAwayMessage(const QString&, const QString& )),
 	                  this, SLOT(receivedStatusMessage(const QString&, const QString&)) );
+	QObject::connect( mAccount->engine(), SIGNAL(messageAck(const QString&, uint)),
+	                  this, SLOT(messageAck(const QString&, uint)) );
+	QObject::connect( mAccount->engine(), SIGNAL(messageError(const QString&, uint)),
+	                  this, SLOT(messageError(const QString&, uint)) );
 }
 
 OscarContact::~OscarContact()
@@ -269,6 +273,26 @@ void OscarContact::slotTyping( bool typing )
 {
 	if ( this != account()->myself() )
 		account()->engine()->sendTyping( contactId(), typing );
+}
+
+void OscarContact::messageAck( const QString& contact, uint messageId )
+{
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
+		return;
+	
+	Kopete::ChatSession* chatSession = manager();
+	if ( chatSession )
+		chatSession->receivedMessageState( messageId, Kopete::Message::StateSent );
+}
+
+void OscarContact::messageError( const QString& contact, uint messageId )
+{
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
+		return;
+	
+	Kopete::ChatSession* chatSession = manager();
+	if ( chatSession )
+		chatSession->receivedMessageState( messageId, Kopete::Message::StateError );
 }
 
 QTextCodec* OscarContact::contactCodec() const
