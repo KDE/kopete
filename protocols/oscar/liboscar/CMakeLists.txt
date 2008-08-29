@@ -64,6 +64,7 @@ set(liboscar_SRCS
     tasks/onlinenotifiertask.cpp
     tasks/ssimodifytask.cpp
     tasks/messagereceivertask.cpp
+    tasks/messageacktask.cpp
     tasks/sendmessagetask.cpp
     tasks/icqtask.cpp
     tasks/offlinemessagestask.cpp

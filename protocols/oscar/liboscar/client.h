@@ -480,6 +480,12 @@ signals:
 	/** we've received a message */
 	void messageReceived( const Oscar::Message& );
 
+	/** a message was delivered */
+	void messageAck( const QString& contact, uint messageId );
+
+	/** a message wasn't delivered */
+	void messageError( const QString& contact, uint messageId );
+
 	/** we've received an authorization request */
 	void authRequestReceived( const QString& contact, const QString& reason );
 

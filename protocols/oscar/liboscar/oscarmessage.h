@@ -239,6 +239,12 @@ public:
 	 */
 	void setPlugin( MessagePlugin* plugin );
 
+	/** Get the id of the message */
+	uint id() const;
+
+	/** Set the id of the message */
+	void setId( uint id );
+
 	operator bool() const;
 
 private:

@@ -26,10 +26,14 @@ Handles OSCAR protocol errors received from the server on snac subtype 0x01
 */
 class ErrorTask : public Task
 {
+	Q_OBJECT
 public:
     ErrorTask( Task* parent );
     ~ErrorTask();
     bool take( Transfer* transfer );
+
+signals:
+	void messageError( const QString& contact, uint messageId );
 
 protected:
     bool forMe( const Transfer* transfer ) const;

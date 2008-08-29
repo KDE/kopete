@@ -42,6 +42,7 @@
 #include "logintask.h"
 #include "connection.h"
 #include "messagereceivertask.h"
+#include "messageacktask.h"
 #include "onlinenotifiertask.h"
 #include "oscarclientstream.h"
 #include "oscarsettings.h"
@@ -118,6 +119,7 @@ public:
 	OnlineNotifierTask* onlineNotifier;
 	OwnUserInfoTask* ownStatusTask;
 	MessageReceiverTask* messageReceiverTask;
+	MessageAckTask* messageAckTask;
 	SSIAuthTask* ssiAuthTask;
 	ICQUserInfoRequestTask* icqInfoTask;
 	ICQTlvInfoRequestTask* icqTlvInfoTask;
@@ -180,6 +182,7 @@ Client::Client( QObject* parent )
 	d->onlineNotifier = 0L;
 	d->ownStatusTask = 0L;
 	d->messageReceiverTask = 0L;
+	d->messageAckTask = 0L;
 	d->ssiAuthTask = 0L;
 	d->icqInfoTask = 0L;
 	d->icqTlvInfoTask = 0L;
@@ -240,7 +243,13 @@ void Client::close()
 {
 	QList<Connection*> cList = d->connections.connections();
 	for ( int i = 0; i < cList.size(); i++ )
-		(new CloseConnectionTask( cList.at(i)->rootTask() ))->go( Task::AutoDelete );
+	{
+		Connection* c = cList.at(i);
+		(new CloseConnectionTask( c->rootTask() ))->go( Task::AutoDelete );
+		
+		foreach ( Oscar::MessageInfo info, c->messageInfoList() )
+			emit messageError( info.contact, info.id );
+	}
 
 	d->active = false;
 	d->awayMsgRequestTimer->stop();
@@ -782,6 +791,7 @@ void Client::initializeStaticTasks()
 	d->onlineNotifier = new OnlineNotifierTask( c->rootTask() );
 	d->ownStatusTask = new OwnUserInfoTask( c->rootTask() );
 	d->messageReceiverTask = new MessageReceiverTask( c->rootTask() );
+	d->messageAckTask = new MessageAckTask( c->rootTask() );
 	d->ssiAuthTask = new SSIAuthTask( c->rootTask() );
 	d->icqInfoTask = new ICQUserInfoRequestTask( c->rootTask() );
 	d->icqTlvInfoTask = new ICQTlvInfoRequestTask( c->rootTask() );
@@ -803,6 +813,11 @@ void Client::initializeStaticTasks()
 	connect( d->messageReceiverTask, SIGNAL( fileMessage( int, const QString, const QByteArray, Buffer ) ),
 	         this, SLOT( gotFileMessage( int, const QString, const QByteArray, Buffer ) ) );
 
+	connect( d->messageAckTask, SIGNAL(messageAck(const QString&, uint)),
+	         this, SIGNAL(messageAck(const QString&, uint)) );
+	connect( d->errorTask, SIGNAL(messageError(const QString&, uint)),
+	         this, SIGNAL(messageError(const QString&, uint)) );
+	
 	connect( d->ssiAuthTask, SIGNAL( authRequested( const QString&, const QString& ) ),
 	         this, SIGNAL( authRequestReceived( const QString&, const QString& ) ) );
 	connect( d->ssiAuthTask, SIGNAL( authReplied( const QString&, const QString&, bool ) ),
@@ -1631,6 +1646,9 @@ void Client::determineDisconnection( int code, const QString& string )
 		emit socketError( code, string );
 	}
 
+	foreach ( Oscar::MessageInfo info, c->messageInfoList() )
+		emit messageError( info.contact, info.id );
+
     //connection is deleted. deleteLater() is used
     d->connections.remove( c );
     c = 0;
@@ -1697,6 +1715,7 @@ void Client::deleteStaticTasks()
 	delete d->onlineNotifier;
 	delete d->ownStatusTask;
 	delete d->messageReceiverTask;
+	delete d->messageAckTask;
 	delete d->ssiAuthTask;
 	delete d->icqInfoTask;
 	delete d->icqTlvInfoTask;
@@ -1708,6 +1727,7 @@ void Client::deleteStaticTasks()
 	d->onlineNotifier = 0;
 	d->ownStatusTask = 0;
 	d->messageReceiverTask = 0;
+	d->messageAckTask = 0;
 	d->ssiAuthTask = 0;
 	d->icqInfoTask = 0;
 	d->icqTlvInfoTask = 0;
