@@ -306,10 +306,14 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			if (message.containsEvent ( XMPP::DisplayedEvent ) )
 				mManager->receivedEventNotification ( i18n("Message has been displayed") );
 			else if (message.containsEvent ( XMPP::DeliveredEvent ) )
+			{
 				mManager->receivedEventNotification ( i18n("Message has been delivered") );
+				mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateSent );
+			}
 			else if (message.containsEvent ( XMPP::OfflineEvent ) )
 			{
-	        	mManager->receivedEventNotification( i18n("Message stored on the server, contact offline") );
+				mManager->receivedEventNotification( i18n("Message stored on the server, contact offline") );
+				mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateSent );
 			}
 			else if (message.chatState() == XMPP::StateGone )
 			{
@@ -352,6 +356,8 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	// check for errors
 	if ( message.type () == "error" )
 	{
+		mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateError );
+
 		newMessage = new Kopete::Message( this, contactList );
 		newMessage->setTimestamp( message.timeStamp() );
 		newMessage->setPlainBody( i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 

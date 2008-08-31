@@ -329,6 +329,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 		jabberMessage.setTo ( toJid );
 
+		jabberMessage.setId( QString::number( message.id() ) );
 		jabberMessage.setSubject ( message.subject () );
 		jabberMessage.setTimeStamp ( message.timestamp () );
 
@@ -411,6 +412,8 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
         // send the message
 		account()->client()->sendMessage ( jabberMessage );
+
+		message.setState( Kopete::Message::StateSending );
 
 		// append the message to the manager
 		Kopete::ChatSession::appendMessage ( message );
