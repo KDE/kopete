@@ -29,6 +29,7 @@
 #include <QSharedData>
 #include <QTextCodec>
 
+
 //QRegExp Message::sd->("^()\\r\\n$")
 /*
 #ifndef _IRC_STRICTNESS_
@@ -137,13 +138,37 @@ Message Message::fromLine(const QByteArray &line, bool *ok)
 	QList<QByteArray> args;
 	QByteArray suffix;
 
+
 	// Match a regexp instead of the replace ...
-//	remove the trailling \r\n if any(there must be in fact)
-//	d->line.replace("\r\n","");
- 
-#ifdef __GNUC__
-	#warning implement me: parsing
-#endif
+	QList<QByteArray> parts=line.split(' ');
+
+	//	remove the trailling \r\n if any(there must be in fact)
+	parts.last()=parts.last().replace("\r\n","");
+	
+	QList<QByteArray>::const_iterator it=parts.begin();
+	if((*it).startsWith(":"))
+	{
+		prefix=(*it).mid(1);
+		++it;
+	}
+
+	for(;!(*it).startsWith(":")&&it!=parts.end();++it)
+	{
+		if(!(*it).isEmpty())
+			args.append((*it));
+	}
+	
+	if(it!=parts.end())
+	{
+		for(;it!=parts.end();++it)
+		{
+			suffix=suffix+" "+(*it);
+		}
+		//remove " :"
+		suffix=suffix.mid(2);
+	}
+
+
 /*
 	int token_start = 0;
 	int token_end;
