@@ -132,7 +132,7 @@ Message &Message::operator=(const Message &o)
 
 Message Message::fromLine(const QByteArray &line, bool *ok)
 {
-	bool success = false;
+	bool success = true;
 
 	QByteArray prefix;
 	QList<QByteArray> args;
