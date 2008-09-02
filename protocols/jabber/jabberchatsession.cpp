@@ -49,6 +49,8 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 											 : Kopete::ChatSession ( user, others, protocol )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << "New message manager for " << user->contactId ();
+	
+	setComponentData(protocol->componentData());
 
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );
