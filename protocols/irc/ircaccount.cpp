@@ -26,6 +26,7 @@
 #include "kircclientsocket.h"
 #include "kircevent.h"
 #include "kircstdmessages.h"
+#include "kircconst.h"
 
 #include "kopeteaccountmanager.h"
 #include "kopetechatsessionmanager.h"
@@ -50,6 +51,7 @@
 
 
 #include <qtextcodec.h>
+#include <QTimer>
 
 using namespace IRC;
 using namespace Kopete;
@@ -98,8 +100,8 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 	d->autoConnect = autoChan;
 	d->currentHost = 0;
 
-	QObject::connect(d->client, SIGNAL(connectionStateChanged(KIrc::ConnectionState)),
-			 this, SLOT(clientConnectionStateChanged(KIrc::ConnectionState)));
+	QObject::connect(d->client, SIGNAL(connectionStateChanged(KIrc::Socket::ConnectionState)),
+			 this, SLOT(clientConnectionStateChanged(KIrc::Socket::ConnectionState)));
 
 	QObject::connect(d->client, SIGNAL(receivedMessage(KIrc::MessageType, const KIrc::Entity::Ptr &, const KIrc::Entity::List &, const QString &)),
 			 this, SLOT(receivedMessage(KIrc::MessageType, const KIrc::Entity::Ptr &, const KIrc::Entity::List &, const QString &)));
@@ -109,9 +111,14 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 	d->server = new IRCContact(this, d->client->server());
 	d->self = new IRCContact(this, d->client->owner());
 	setMyself(d->self);
-/*
-	QString accountId = this->accountId();
-	if (networkName.isEmpty() && QRegExp( "[^#+&\\s]+@[\\w-\\.]+:\\d+" ).exactMatch(accountId))
+
+	kDebug()<<"accId="<<accountId<<" autoChan="<<autoChan<<" netName="<<netName<<" nickname="<<nickName;
+	
+	QString networkName=netName;
+	if(networkName.isEmpty())
+		networkName=this->networkName();
+	
+	if ( networkName.isEmpty() && QRegExp( "[^#+&\\s]+@[\\w-\\.]+:\\d+" ).exactMatch( accountId ) )
 	{
 		kDebug(14120) << "Creating account from " << accountId;
 
@@ -119,15 +126,14 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 		QString serverInfo = accountId.section('@',1);
 		QString hostName = serverInfo.section(':',0,0);
 
-		QValueList<IRCNetwork> networks = IRCNetworkList::self()->networks();
-		for (QValueList<IRCNetwork>::Iterator it = networks.begin(); it != networks.end(); ++it)
+		IRC::NetworkList networks = IRC::Networks::self()->networks();
+		foreach(const IRC::Network &net, networks)
 		{
-			IRCNetwork net = *it;
-			for (QValueList<IRCHost>::iterator it2 = net.hosts.begin(); it2 != net.hosts.end(); ++it2)
+			foreach(const IRC::Host& host, net.hosts)
 			{
-				if( (*it2).host == hostName )
+				if( host.host == hostName )
 				{
-					setNetwork(net.name);
+					setNetworkByName(net.name);
 					break;
 				}
 			}
@@ -140,11 +146,10 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 		{
 			// Could not find this host. Add it to the networks structure
 
-			d->network = IRCNetwork();
 			d->network.name = i18n("Temporary Network - %1", hostName );
 			d->network.description = i18n("Network imported from previous version of Kopete, or an IRC URI");
 
-			IRCHost host;
+			IRC::Host host;
 			host.host = hostName;
 			host.port = serverInfo.section(':',1).toInt();
 			if (!password().cachedValue().isEmpty())
@@ -154,21 +159,22 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 			d->network.hosts.append( host );
 //			d->protocol->addNetwork( d->network );
 
-			config->writeEntry(Config::NETWORKNAME, d->network.name);
+			setNetworkByName(networkName);
 //			config->writeEntry(Config::NICKNAME, mNickName);
 		}
 	}
 	else if( !networkName.isEmpty() )
 	{
-		setNetwork(networkName);
+		setNetworkByName(networkName);
 	}
 	else
 	{
 		kError() << "No network name defined, and could not import network information from ID" << endl;
 	}
-*/
+
 
 //	setAccountLabel( QString::fromLatin1("%1@%2").arg(mNickName,networkName) );
+
 
 #ifdef __GNUC__
 	#warning spurus slot calls for now
@@ -190,14 +196,14 @@ IRCAccount::~IRCAccount()
 
 void IRCAccount::clientSetup()
 {
+	//d->client->setDefaultCodec(codec());
 /*
-	d->client->setDefaultCodec(codec());
-
 	// Build the URL instead
 	KUrl url;
 	url.setUser(userName());
 //	url.setPass(password());
-
+*/
+/*
 	d->client->setNickName(nickName());
 	url.addQuery(URL_REALNAME, realName());
 	d->client->setVersionString(IRC::Version);
@@ -207,29 +213,33 @@ void IRCAccount::clientSetup()
 		d->client->addCustomCtcp(it.key(), it.data());
 */
 
-//	d->network = IRCNetworkList::self()->network(networkName());
-/*
+	d->network = IRC::Networks::self()->network(networkName());
+
 	// if prefer SSL is set, sort by SSL first
 	if (configGroup()->readEntry("PreferSSL",false))
 	{
-		IRCHostList sslFirst;
+		QList<IRC::Host> sslFirst;
+		QList<IRC::Host> noSSL;
 
-		IRCHostList::iterator it = host.begin();
-		IRCHostList::iterator end = host.end();
-		for ( it = host.begin(); it != end; ++it )
+		foreach(const IRC::Host &host,d->network.hosts)
 		{
-			if ( (*it)->ssl == true )
+			if ( host.ssl == true )
 			{
-				sslFirst.append( *it );
-				it = hosts.remove( it );
+				sslFirst.append( host );
+			}else
+			{
+				noSSL.append( host );
 			}
 		}
-		for ( it = hosts.begin(); it != hosts.end(); ++it )
-			sslFirst.append( *it );
+		//Now append the non ssl servers
+		foreach(const IRC::Host &host,noSSL)
+		{
+			sslFirst.append(host);
+		}
 
 		d->network.hosts = sslFirst;
 	}
-*/
+
 }
 
 void IRCAccount::clientConnect()
@@ -268,19 +278,23 @@ void IRCAccount::clientConnect()
 		const IRC::Host& host = d->network.hosts[ d->currentHost++ ];
 		//appendInternalMessage( i18n("Connecting to %1...", host.host ) );
 
-		QString url;
+		QString urlString;
 
 		if (host.ssl) {
 			//appendInternalMessage( i18n("Using SSL") );
-			url = "ircs://";
+			urlString = "ircs://";
 		} else {
-			url = "irc://";
+			urlString = "irc://";
 		}
 
-		url += nickName() + '@' + host.host + ':' + host.port;
+		urlString += nickName() + "@" + host.host+":"+QString::number(host.port);
 
+		KUrl url(urlString);
+		//TODO use the constants in kircconst.h
+		url.addQueryItem("realname",realName());
+		url.addQueryItem("nickname",nickName());
 		//d->client->connectToServer( host->host, host->port, mNickName, host->ssl );
-		d->client->connectToServer(KUrl(url));
+		d->client->connectToServer(url);
 	}
 }
 
@@ -460,8 +474,9 @@ void IRCAccount::fillActionMenu( KActionMenu *actionMenu )
 
 void IRCAccount::connectWithPassword(const QString &password)
 {
-	kDebug(14120) ;
-//	d->client->setPassword(password);
+	//	d->client->setPassword(password);
+
+	kDebug(14120) << "Connecting with password.";
 	clientConnect();
 }
 
@@ -475,11 +490,15 @@ void IRCAccount::clientConnectionStateChanged(KIrc::Socket::ConnectionState news
 	{
 	case KIrc::Socket::Connecting:
 		// d->expectedOnlineStatus check and use it
+		mySelf()->setOnlineStatus(Kopete::OnlineStatus::Connecting);
+
 		if (autoShowServerWindow())
 			myServer()->startChat();
 		break;
-/*
-	case KIrc::Socket::Open:
+
+	case KIrc::Socket::Authentified:
+		mySelf()->setOnlineStatus(Kopete::OnlineStatus::Online);
+
 		//Reset the host so re-connection will start over at first server
 		d->currentHost = 0;
 //		d->contactManager->addToNotifyList( d->client->nickName() );
@@ -488,8 +507,9 @@ void IRCAccount::clientConnectionStateChanged(KIrc::Socket::ConnectionState news
 		// after the 001 is sent, you need to wait until all the init junk is done.
 		// Unfortunately, there is no way for us to know when it is done (it could be
 		// spewing out any number of replies), so just try delaying it
-//		QTimer::singleShot( 250, this, SLOT( slotPerformOnConnectCommands() ) );
+		QTimer::singleShot( 250, this, SLOT( slotPerformOnConnectCommands() ) );
 		break;
+/*
 	case KIrc::Socket::Closing:
 //		mySelf()->setOnlineStatus( protocol->m_UserStatusOffline );
 //		d->contactManager->removeFromNotifyList( d->client->nickName() );

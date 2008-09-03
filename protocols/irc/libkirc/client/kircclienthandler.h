@@ -36,16 +36,23 @@ class KIRCCLIENT_EXPORT ClientEventHandler
 	Q_DECLARE_PRIVATE(KIrc::ClientEventHandler)
 
 public:
-	explicit ClientEventHandler(Context *context);
+	explicit ClientEventHandler(Context *context,QObject* parent=0);
 	~ClientEventHandler();
 
+
+public Q_SLOTS:
+	virtual KIrc::Handler::Handled onMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+
 private:
+#if 0
 	void postEvent(QEvent *event);
 
 	bool postEvent(MessageEvent *ev, const QByteArray &eventId, Entity::Ptr &from, QString &text = QString());
 	bool postEvent(MessageEvent *ev, const QByteArray &eventId, Entity::Ptr &from, Entity::List &to, QString &text = QString());
 	bool postEvent(MessageEvent *ev, const QByteArray &eventId, Entity::Ptr &from, Entity::List &to, Entity::List &victims, QString &text = QString());
+#endif
 
+	void receivedServerMessage(const KIrc::Message& msg);
 private:
 	void error(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	void join(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);

@@ -57,6 +57,7 @@ public:
 public slots:
 	virtual void connectToServer(const QUrl &url);
 
+
 protected:
 	void connectToServer(const QUrl &url, QAbstractSocket *socket);
 

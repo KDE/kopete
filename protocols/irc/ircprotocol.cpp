@@ -344,7 +344,7 @@ void IRCProtocol::initOnlineStatus()
 OnlineStatus IRCProtocol::onlineStatusFor(const KIrc::Entity::Ptr &entity)
 {
 //	return onlineStatusFor(entity, 0);
-	return OnlineStatus::Unknown;
+		return OnlineStatus::Unknown;
 }
 /*
 OnlineStatus IRCProtocol::onlineStatusFor(const KIrc::Entity::Ptr &entity, unsigned categories)

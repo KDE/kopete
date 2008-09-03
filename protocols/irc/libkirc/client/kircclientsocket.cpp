@@ -21,8 +21,13 @@
 
 #include "kircentity.h"
 #include "kircstdmessages.h"
+#include "kircconst.h"
+#include "kircclienthandler.h"
 
 #include <QtNetwork/QSslSocket>
+
+#include <kdebug.h>
+
 
 using namespace KIrc;
 
@@ -30,31 +35,31 @@ ClientSocketPrivate::ClientSocketPrivate(ClientSocket *socket)
 	: SocketPrivate(socket)
 	, failedNickOnLogin(false)
 {
-	connect(this, SIGNAL(receivedMessage(KIrc::Message &)),
-		this, SLOT(onReceivedMessage(KIrc::Message &)));
+	
 }
 
 void ClientSocketPrivate::socketStateChanged(QAbstractSocket::SocketState newstate)
 {
 	Q_Q(Socket);
 
+	kDebug(14120)<<"state changed to "<<newstate;
+
 	switch(newstate)
 	{
 	case QAbstractSocket::ConnectedState:
-		setConnectionState(Socket::Authentifying);
-/* 
-		// If password is given for this server, send it now, and don't expect a reply
-		const KUrl &url = this->url();
+		q->setConnectionState(Socket::Authentifying);
 
-		if (url.hasPass())
-			StdMessage::pass(this, url.pass());
+		// If password is given for this server, send it now, and don't expect a reply
+
+		//if (url.hasPass())
+			//StdMessage::pass(this, url.pass());
 
 #ifdef __GNUC__
 		#warning make the following string arguments static const
 #endif
-		StdMessage::user(this, url.user(), StdCommands::Normal, url.queryItem(URL_REALNAME));
-		StdMessage::nick(this, url.queryItem(URL_NICKNAME));
-*/
+		q->writeMessage( StdMessages::user( url.userName().toLatin1(), "127.0.0.1", url.host().toLatin1(), url.queryItemValue("realname").toLatin1() ) );
+		q->writeMessage( StdMessages::nick( url.queryItemValue("nickname").toLatin1() ) );
+
 		break;
 	default:
 		SocketPrivate::socketStateChanged(newstate);
@@ -62,6 +67,11 @@ void ClientSocketPrivate::socketStateChanged(QAbstractSocket::SocketState newsta
 	}
 }
 
+void ClientSocketPrivate::onReceivedMessage(const KIrc::Message &msg)
+{
+	//kDebug(14121)<<"Got message "<<msg.toLine();
+
+}
 
 
 ClientSocket::ClientSocket(Context *context)
@@ -70,6 +80,11 @@ ClientSocket::ClientSocket(Context *context)
 	Q_D(ClientSocket);
 
 	d->server = new Entity(context);
+
+	addEventHandler( new ClientEventHandler(context) );
+
+	connect(this, SIGNAL(receivedMessage(const KIrc::Message &)),
+		d, SLOT(onReceivedMessage(const KIrc::Message &)));
 
 //	d->versionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
 //	d->userString = QString::fromLatin1("Response not supplied by user.");
@@ -99,6 +114,8 @@ void ClientSocket::connectToServer(const QUrl &url)
 {
 	Q_D(Socket);
 
+	kDebug()<<"connectiong to "<<url;
+
 	QTcpSocket *socket;
 
 	if ( url.scheme() == "irc" )
@@ -122,6 +139,7 @@ void ClientSocket::connectToServer(const QUrl &url)
 void ClientSocket::connectToServer(const QUrl &url, QAbstractSocket *socket)
 {
 	Q_D(Socket);
+
 
 	close();
 
@@ -152,5 +170,6 @@ void ClientSocket::connectToServer(const QUrl &url, QAbstractSocket *socket)
 #endif
 
 	socket->connectToHost(host, port);
+
 }
 

@@ -18,18 +18,18 @@ set(libkirc_SRCS
 	kernel/kircmessage.cpp
 	kernel/kircmessageutil.cpp 
 	kernel/kircsocket.cpp 
-#	kernel/kircstdmessages.cpp 
+	kernel/kircstdmessages.cpp 
 )
 
 kde4_add_library(kirc SHARED ${libkirc_SRCS})
 
-target_link_libraries(kirc ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(kirc ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${KDE4_KDECORE_LIBS})
 set_target_properties(kirc PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
 install(TARGETS kirc ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 set(libkirc_client_SRCS
-#	client/kircclienthandler.cpp
+	client/kircclienthandler.cpp
 
 	client/kircclientlisthandler.cpp
 	client/kircclientwhohandler.cpp

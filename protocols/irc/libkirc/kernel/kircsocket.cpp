@@ -21,9 +21,13 @@
 #include "kircsocket_p.moc"
 
 #include "kirccontext.h"
+#include "kirchandler.h"
+
+#include <kdebug.h>
 
 #include <qtextcodec.h>
 #include <qtimer.h>
+
 
 using namespace KIrc;
 
@@ -36,24 +40,14 @@ SocketPrivate::SocketPrivate(KIrc::Socket *socket)
 
 void SocketPrivate::setSocket(QAbstractSocket *socket)
 {
-	connect(socket, SIGNAL(readyRead()), SLOT(onReadyRead()));
+	connect(socket, SIGNAL(readyRead()), SLOT(socketReadyRead()));
 	connect(socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
 		SLOT(socketStateChanged(QAbstractSocket::SocketState)));
 	connect(socket, SIGNAL(error(QAbstractSocket::SocketError)),
 		SLOT(socketGotError(QAbstractSocket::SocketError)));
+
+	this->socket=socket;
 }
-
-void SocketPrivate::setConnectionState(Socket::ConnectionState newstate)
-{
-	Q_Q(Socket);
-
-	if (state != newstate)
-	{
-		state = newstate;
-		emit q->connectionStateChanged(newstate);
-	}
-}
-
 
 void SocketPrivate::socketGotError(QAbstractSocket::SocketError)
 {
@@ -90,13 +84,20 @@ void SocketPrivate::socketReadyRead()
 		Message msg = Message::fromLine(raw, &ok);
 //		msg.setDirection(Message::InGoing);
 
+
 		if (ok)
+		{
 			emit q->receivedMessage(msg);
+			foreach( KIrc::Handler * handler, eventHandlers)
+			{
+				if(handler->onMessage(0,msg,q)) break;
+			}
+		}
 //		else
 //			postErrorEvent(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
 
 		// FIXME: post events instead of reschudeling.
-		QTimer::singleShot( 0, this, SLOT( onReadyRead() ) );
+		QTimer::singleShot( 0, this, SLOT( socketReadyRead() ) );
 	}
 
 //	if(d->socket->socketStatus() != KExtendedSocket::connected)
@@ -109,20 +110,20 @@ void SocketPrivate::socketStateChanged(QAbstractSocket::SocketState newstate)
 
 	switch (newstate) {
 	case QAbstractSocket::UnconnectedState:
-		setConnectionState(Socket::Idle);
+		q->setConnectionState(Socket::Idle);
 		break;
 	case QAbstractSocket::HostLookupState:
-		setConnectionState(Socket::HostLookup);
+		q->setConnectionState(Socket::HostLookup);
 		break;
 	case QAbstractSocket::ConnectingState:
-		setConnectionState(Socket::Connecting);
+		q->setConnectionState(Socket::Connecting);
 		break;
 //	MUST BE HANDLED BY CHILDREN
 //	case QAbstractSocket::ConnectedState:
 //		setConnectionState(Socket::Open);
 //		break;
 	case QAbstractSocket::ClosingState:
-		setConnectionState(Socket::Closing);
+		q->setConnectionState(Socket::Closing);
 		break;
 	default:
 //		postErrorEvent(i18n("Unknown SocketState value:%1", newstate));
@@ -151,6 +152,17 @@ Socket::ConnectionState Socket::connectionState() const
 	return d->state;
 }
 
+void Socket::setConnectionState(Socket::ConnectionState newstate)
+{
+	Q_D(Socket);
+
+	if (d->state != newstate)
+	{
+		d->state = newstate;
+		emit connectionStateChanged(newstate);
+	}
+}
+
 QAbstractSocket *Socket::socket()
 {
 	Q_D(Socket);
@@ -165,6 +177,19 @@ Entity::Ptr Socket::owner() const
 	return d->owner;
 }
 
+void Socket::addEventHandler(KIrc::Handler *handler)
+{
+	Q_D(Socket);
+	d->eventHandlers.append(handler);
+}
+
+void Socket::removeEventHandler(KIrc::Handler *handler)
+{
+	Q_D(Socket);
+	d->eventHandlers.removeAll(handler);
+}
+
+
 void Socket::writeMessage(const Message &msg)
 {
 	Q_D(Socket);
@@ -173,18 +198,19 @@ void Socket::writeMessage(const Message &msg)
 	#warning Check message validity before sending it
 #endif
 
-//	if (!d->socket || d->socket->state() != QAbstractSocket::ConnectedState)
+	if (!d->socket || d->socket->state() != QAbstractSocket::ConnectedState)
 	{
+		kDebug(14121)<<"Error sending message "<<msg.toLine();
 //		postErrorEvent(i18n("Attempting to send while not connected: %1", msg.data()));
 		return;
 	}
 
-//	qint64 wrote = d->socket->write(msg.toLine());
+	qint64 wrote = d->socket->write(msg.toLine());
 
-//	if (wrote == -1)
-//		kDebug(14121) << "Socket write failed!";
+	if (wrote == -1)
+		kDebug(14121) << "Socket write failed!";
 
-//	kDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg);
+	//kDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(QString(msg.toLine()));
 }
 
 void Socket::close()

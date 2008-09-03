@@ -23,11 +23,13 @@
 #include "kircsocket.h"
 
 #include <QtNetwork/QAbstractSocket>
+#include <QList>
 
 namespace KIrc
 {
 
 class Context;
+class Handler;
 
 class KIRC_EXPORT SocketPrivate
 	: public QObject
@@ -39,7 +41,6 @@ public:
 	explicit SocketPrivate(KIrc::Socket *socket);
 
 	void setSocket(QAbstractSocket *socket);
-	void setConnectionState(Socket::ConnectionState newstate);
 
 public slots:
 	void socketGotError(QAbstractSocket::SocketError);
@@ -53,6 +54,7 @@ public:
 	QAbstractSocket *socket;
 	KIrc::Socket::ConnectionState state;
 	KIrc::Entity::Ptr owner;
+	QList<KIrc::Handler*> eventHandlers;
 };
 
 }

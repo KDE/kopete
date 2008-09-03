@@ -93,7 +93,7 @@ QByteArray Message::unquoteCtcp(const QByteArray &buffer)
 	return IrcCtcpEscaper.unescape(buffer);
 }
 
-Message::Message()
+Message::Message() : d(new KIrc::MessagePrivate())
 {
 }
 
@@ -140,21 +140,21 @@ Message Message::fromLine(const QByteArray &line, bool *ok)
 
 
 	// Match a regexp instead of the replace ...
-	QList<QByteArray> parts=line.split(' ');
+	QList<QByteArray> parts=line.trimmed().split(' ');
 
 	//	remove the trailling \r\n if any(there must be in fact)
 	parts.last()=parts.last().replace("\r\n","");
 	
 	QList<QByteArray>::const_iterator it=parts.begin();
+
 	if((*it).startsWith(":"))
 	{
 		prefix=(*it).mid(1);
 		++it;
 	}
 
-	for(;!(*it).startsWith(":")&&it!=parts.end();++it)
+	for(;it!=parts.end()&&!(*it).startsWith(":");++it)
 	{
-		if(!(*it).isEmpty())
 			args.append((*it));
 	}
 	
@@ -167,7 +167,6 @@ Message Message::fromLine(const QByteArray &line, bool *ok)
 		//remove " :"
 		suffix=suffix.mid(2);
 	}
-
 
 /*
 	int token_start = 0;
@@ -224,6 +223,11 @@ QString Message::prefix(QTextCodec *codec) const
 }
 #endif
 
+void Message::setPrefix(const QByteArray & prefix)
+{
+	d->prefix=prefix;
+}
+
 Message &Message::operator << (const QByteArray &arg)
 {
 	d->args << arg;
@@ -267,6 +271,11 @@ QString Message::suffix(QTextCodec *codec) const
 	return codec->toUnicode(d->suffix);
 }
 #endif
+
+void Message::setSuffix(const QByteArray& suffix)
+{
+	d->suffix=suffix;
+}
 
 bool Message::isNumericReply() const
 {

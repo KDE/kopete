@@ -109,7 +109,7 @@ private:
 	void initOnlineStatus();
 	void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
 
-//	QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
+	//QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
 //	const Kopete::OnlineStatus m_connecting;
 	const Kopete::OnlineStatus m_StatusUnknown;
 

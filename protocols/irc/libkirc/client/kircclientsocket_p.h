@@ -34,6 +34,7 @@ public:
 
 public slots:
 	void socketStateChanged(QAbstractSocket::SocketState newstate);
+	void onReceivedMessage(const KIrc::Message &msg);
 
 public:
 	KIrc::Entity::Ptr server;

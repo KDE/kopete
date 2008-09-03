@@ -75,6 +75,7 @@ public:
 public:
 	QByteArray prefix() const;
 //	QString prefix(QTextCodec *codec) const;
+	void setPrefix(const QByteArray & prefix);
 
 	KIrc::Message &operator << (const QByteArray &arg);
 	KIrc::Message &operator << (const KIrc::OptArg &arg);
@@ -86,6 +87,7 @@ public:
 
 	QByteArray suffix() const;
 //	QString suffix(QTextCodec *codec) const;
+	void setSuffix(const QByteArray& suffix);
 
 public:
 	bool isNumericReply() const;

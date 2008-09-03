@@ -31,6 +31,7 @@ namespace KIrc
 
 class Context;
 class SocketPrivate;
+class Handler;
 
 /**
  * @author Michel Hermier <michel.hermier@gmail.com>
@@ -70,6 +71,10 @@ public: // READ properties accessors.
 	KIrc::Entity::Ptr owner() const;
 
 public:
+	void addEventHandler(KIrc::Handler *handler);
+	void removeEventHandler(KIrc::Handler *handler);
+
+	void setConnectionState(Socket::ConnectionState newstate);
 
 public slots:
 	void writeMessage(const Message &message);
