@@ -51,7 +51,7 @@
 		<Action name="settings_show_all_offline_empty"/>
 	</ToolBar>
 
-        <ToolBar fullWidth="true" newline="false" name="quickSearchBar" noMerge="1" newline="false"><text>Quick Search Bar</text>
+        <ToolBar fullWidth="true" name="quickSearchBar" noMerge="1" newline="false"><text>Quick Search Bar</text>
 		<Action name="quicksearch_reset"/>
 		<Action name="quicksearch_label"/>
 		<Action name="quicksearch_bar"/>
