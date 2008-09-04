@@ -27,6 +27,7 @@
 
 #undef KDE_NO_COMPAT
 #include <kaction.h>
+#include <KActionCollection>
 #include <kdebug.h>
 #include <kfiledialog.h>
 #include <klineedit.h>
@@ -132,7 +133,7 @@ Kopete::ChatSession *MSNContact::manager( Kopete::Contact::CanCreateFlags canCre
 
 QList<KAction*> *MSNContact::customContextMenuActions()
 {
-	QList<KAction*> *m_actionCollection = new QList<KAction*>;
+	QList<KAction*> *actions = new QList<KAction*>;
 
 	// Block/unblock Contact
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
@@ -167,14 +168,21 @@ QList<KAction*> *MSNContact::customContextMenuActions()
 
 	actionSendMail->setEnabled( static_cast<MSNAccount*>(account())->isHotmail());
 
-	m_actionCollection->append( actionBlock );
-	m_actionCollection->append( actionShowProfile );
-	m_actionCollection->append( actionSendMail );
-	m_actionCollection->append( actionWebcamReceive );
-	m_actionCollection->append( actionWebcamSend );
+	actions->append( actionBlock );
+	actions->append( actionShowProfile );
+	actions->append( actionSendMail );
+	actions->append( actionWebcamReceive );
+	actions->append( actionWebcamSend );
 
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("contactBlock"), actionBlock);
+	tempCollection.addAction(QLatin1String("contactViewProfile"), actionShowProfile);
+	tempCollection.addAction(QLatin1String("contactMail"), actionSendMail);
+	tempCollection.addAction(QLatin1String("contactInviteToViewWebcam"), actionWebcamSend);
+	tempCollection.addAction(QLatin1String("contactViewWebcam"), actionWebcamReceive);
 
-	return m_actionCollection;
+	return actions;
 }
 
 void MSNContact::slotBlockUser()

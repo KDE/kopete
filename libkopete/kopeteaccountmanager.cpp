@@ -344,12 +344,13 @@ void AccountManager::load()
 	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
 	{
 		KConfigGroup cg( config, *it );
+		KConfigGroup pluginConfig( config, QLatin1String("Plugins") );
 
 		QString protocol = cg.readEntry( "Protocol", QString() );
 		if ( protocol.endsWith( QString::fromLatin1( "Protocol" ) ) )
 			protocol = QString::fromLatin1( "kopete_" ) + protocol.toLower().remove( QString::fromLatin1( "protocol" ) );
 
-		if ( cg.readEntry( "Enabled", true ) )
+		if ( cg.readEntry( "Enabled", true ) && pluginConfig.readEntry(protocol + QLatin1String("Enabled"), true) )
 			PluginManager::self()->loadPlugin( protocol, PluginManager::LoadAsync );
 	}
 }

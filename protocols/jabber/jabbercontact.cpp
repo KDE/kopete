@@ -31,6 +31,7 @@
 #include <qbuffer.h>
 #include <QList>
 
+#include <KActionCollection>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -132,7 +133,7 @@ JabberContact::~JabberContact()
 QList<KAction*> *JabberContact::customContextMenuActions ()
 {
 
-	QList<KAction*> *actionCollection = new QList<KAction*>();
+	QList<KAction*> *actions = new QList<KAction*>();
 
 	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("network-connect"), i18n ("Authorization"), this);
 
@@ -241,16 +242,16 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 	}
 
-	actionCollection->append( actionAuthorization );
-	actionCollection->append( actionSetAvailability );
-	actionCollection->append( actionSelectResource );
+	actions->append( actionAuthorization );
+	actions->append( actionSetAvailability );
+	actions->append( actionSelectResource );
 	
 	
 #ifdef SUPPORT_JINGLE
 	KAction *actionVoiceCall = new KAction( (i18n ("Voice call"), "voicecall", 0, this, SLOT (voiceCall ()), 0, "jabber_voicecall");
 	actionVoiceCall->setEnabled( false );
 
-	actionCollection->append( actionVoiceCall );
+	actions->append( actionVoiceCall );
 
 	// Check if the current contact support Voice calls, also honor lock by default.
 	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( mRosterItem.jid() );
@@ -259,8 +260,16 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 		actionVoiceCall->setEnabled( true );
 	}
 #endif
-	
-	return actionCollection;
+
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("jabberContactAuthorizationMenu"), actionAuthorization);
+	tempCollection.addAction(QLatin1String("contactSendAuth"), resendAuthAction);
+	tempCollection.addAction(QLatin1String("contactRequestAuth"), requestAuthAction);
+	tempCollection.addAction(QLatin1String("contactRemoveAuth"), removeAuthAction);
+	tempCollection.addAction(QLatin1String("jabberContactSetAvailabilityMenu"), actionSetAvailability);
+	tempCollection.addAction(QLatin1String("jabberContactSelectResource"), actionSelectResource);
+	return actions;
 }
 
 void JabberContact::handleIncomingMessage (const XMPP::Message & message)
