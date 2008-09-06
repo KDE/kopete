@@ -83,6 +83,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 {
 	setAttribute (Qt::WA_DeleteOnClose, true);
 	setCaption( i18n("History for %1", mc->displayName()) );
+	setButtons(KDialog::Close);
 	QString fontSize;
 	QString htmlCode;
 	QString fontStyle;
@@ -103,7 +104,6 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mMainWidget->setupUi( w );
 	mMainWidget->searchLine->setFocus();
 	mMainWidget->searchLine->setTrapReturnKey (true);
-	mMainWidget->searchLine->setTrapReturnKey(true);
 	mMainWidget->searchLine->setClearButtonShown(true);
 
 	mMainWidget->contactComboBox->addItem(i18n("All"));
