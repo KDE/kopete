@@ -32,11 +32,7 @@ YahooChatSelectorDialog::YahooChatSelectorDialog( QWidget *parent )
 	showButtonSeparator( true );
 	mUi = new Ui_YahooChatSelectorWidgetBase();
 
-	QBoxLayout *layout = new QVBoxLayout(this);
-	QWidget *widget = new QWidget(this);
-	mUi->setupUi(widget);
-	layout->addWidget(widget);
-	setMainWidget(widget);
+	mUi->setupUi( mainWidget() );
 
 	mUi->treeCategories->header()->hide();
 	mUi->treeRooms->header()->hide();
