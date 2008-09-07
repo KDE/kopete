@@ -298,7 +298,14 @@ void OscarContact::messageError( const QString& contact, uint messageId )
 QTextCodec* OscarContact::contactCodec() const
 {
 	if ( hasProperty( "contactEncoding" ) )
-		return QTextCodec::codecForMib( property( "contactEncoding" ).value().toInt() );
+	{
+		QTextCodec* codec = QTextCodec::codecForMib( property( "contactEncoding" ).value().toInt() );
+
+		if ( codec )
+			return codec;
+		else
+			return QTextCodec::codecForMib( 4 );
+	}
 	else
 		return mAccount->defaultCodec();
 }

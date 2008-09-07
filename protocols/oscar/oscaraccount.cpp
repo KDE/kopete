@@ -537,7 +537,12 @@ void OscarAccount::setServerPort(int port)
 
 QTextCodec* OscarAccount::defaultCodec() const
 {
-	return QTextCodec::codecForMib( configGroup()->readEntry( "DefaultEncoding", 4 ) );
+	QTextCodec* codec = QTextCodec::codecForMib( configGroup()->readEntry( "DefaultEncoding", 4 ) );
+
+	if ( codec )
+		return codec;
+	else
+		return QTextCodec::codecForMib( 4 );
 }
 
 QTextCodec* OscarAccount::contactCodec( const OscarContact* contact ) const
