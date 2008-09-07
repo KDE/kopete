@@ -67,8 +67,14 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	         this, SLOT( slotContactRemoved(const Kopete::Contact*) ) );
 	connect( session, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+
+	connect( Kopete::AppearanceSettings::self(), SIGNAL( appearanceChanged() ),
+	         this, SLOT( slotAppearanceChanged() ) );
 	
-	setFont( Kopete::AppearanceSettings::self()->chatFont() );
+	connect( KGlobalSettings::self(), SIGNAL( kdisplayFontChanged() ),
+	         this, SLOT( slotAppearanceChanged() ) );
+
+	slotAppearanceChanged();
 
 	slotContactAdded( session->myself() );
 
@@ -408,6 +414,17 @@ void ChatTextEditPart::slotStoppedTypingTimer()
 	m_typingRepeatTimer->stop();
 	m_typingStopTimer->stop();
 	emit typing( false );
+}
+
+void ChatTextEditPart::slotAppearanceChanged()
+{
+	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
+
+	QFont chatFont = KGlobalSettings::generalFont();
+	if ( settings->chatFontSelection() == 1 )
+		chatFont = settings->chatFont();
+
+	setFont( chatFont );
 }
 
 void ChatTextEditPart::setProtocolRichTextSupport()

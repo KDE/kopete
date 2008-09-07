@@ -141,6 +141,8 @@ public:
 	
 	// No need to delete, HTMLEventListener is ref counted.
 	QPointer<HTMLEventListener> htmlEventListener;
+
+	QFont chatFont;
 };
 /*
 class ChatMessagePart::ToolTip : public Q3ToolTip
@@ -224,6 +226,8 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( Kopete::AppearanceSettings::self(), SIGNAL(messageOverridesChanged()),
 	         this, SLOT( slotAppearanceChanged() ) );
+	connect( Kopete::AppearanceSettings::self(), SIGNAL(appearanceChanged()),
+	         this, SLOT( slotRefreshView() ) );
 	connect( KopeteChatWindowSettings::self(), SIGNAL(chatwindowAppearanceChanged()),
 	         this, SLOT( slotRefreshView() ) );
 	connect( KopeteChatWindowSettings::self(), SIGNAL(styleChanged(const QString &)),
@@ -248,6 +252,9 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( Kopete::TransferManager::transferManager(), SIGNAL(askIncomingDone(unsigned int)),
 	         this, SLOT(slotFileTransferIncomingDone(unsigned int)) );
+
+	connect( KGlobalSettings::self(), SIGNAL(kdisplayFontChanged()),
+	         this, SLOT( slotRefreshView() ) );
 	
 	//initActions
 	d->copyAction = KStandardAction::copy( this, SLOT(copy()), actionCollection() );
@@ -260,6 +267,9 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	// read formatting override flags
 	readOverrides();
+
+	// read the font for the chat
+	readChatFont();
 }
 
 ChatMessagePart::~ChatMessagePart()
@@ -609,6 +619,9 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 
 void ChatMessagePart::slotRefreshView()
 {
+	// refresh the chat font
+	readChatFont();
+
 	DOM::HTMLElement kopeteNode = document().getElementById( QString("KopeteStyle") );
 	if( !kopeteNode.isNull() )
 		kopeteNode.setInnerText( styleHTML() );
@@ -637,14 +650,14 @@ const QString ChatMessagePart::styleHTML() const
 		".KopeteLink{cursor:pointer;}.KopeteLink:hover{text-decoration:underline}"
 		".KopeteMessageBody > p:first-child{margin:0;padding:0;display:inline;}" /* some html messages are encapsuled into a <p> */ )
 		.arg( settings->chatBackgroundColor().name() )
-		.arg( settings->chatFont().family() )
-		.arg( settings->chatFont().pointSize() )
+		.arg( d->chatFont.family() )
+		.arg( d->chatFont.pointSize() )
 		.arg( settings->chatTextColor().name() )
-		.arg( settings->chatFont().family() )
-		.arg( settings->chatFont().pointSize() )
+		.arg( d->chatFont.family() )
+		.arg( d->chatFont.pointSize() )
 		.arg( settings->chatTextColor().name() )
-		.arg( settings->chatFont().family() )
-		.arg( settings->chatFont().pointSize() )
+		.arg( d->chatFont.family() )
+		.arg( d->chatFont.pointSize() )
 		.arg( settings->chatTextColor().name() )
 		.arg( settings->chatLinkColor().name() )
 		.arg( settings->chatLinkColor().name() );
@@ -785,7 +798,7 @@ QString ChatMessagePart::textUnderMouse()
 		cPos = 0,
 		dataLen = data.length();
 
-	QFontMetrics metrics( Kopete::AppearanceSettings::self()->chatFont() );
+	QFontMetrics metrics( d->chatFont );
 	QString buffer;
 	while( cPos < dataLen && nodeLeft < mouseLeft )
 	{
@@ -1433,6 +1446,15 @@ void ChatMessagePart::registerClickEventListener( DOM::HTMLElement element )
 		connect( d->htmlEventListener, SIGNAL(resendMessage(uint)), this, SLOT(resendMessage(uint)) );
 	}
 	element.addEventListener( "click", d->htmlEventListener, false );
+}
+
+void ChatMessagePart::readChatFont()
+{
+	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
+
+	d->chatFont = KGlobalSettings::generalFont();
+	if ( settings->chatFontSelection() == 1 )
+		d->chatFont = settings->chatFont();
 }
 
 void HTMLEventListener::handleEvent( DOM::Event &event )

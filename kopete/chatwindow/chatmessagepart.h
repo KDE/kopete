@@ -279,6 +279,8 @@ private:
 
 	void registerClickEventListener( DOM::HTMLElement element );
 
+	void readChatFont();
+
 	class Private;
 	Private *d;
 };
