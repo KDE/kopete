@@ -87,6 +87,8 @@ private:
 	void initOrganizations();
 	void initAffiliations();
 
+	void addEncoding( const QSet<int> &availableMibs, int mib, const QString &name );
+
 private:
 	static ICQProtocol* protocolStatic_;
 	ICQStatusManager* statusManager_;
