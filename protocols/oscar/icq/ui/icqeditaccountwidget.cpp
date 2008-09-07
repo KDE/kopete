@@ -18,8 +18,8 @@
 #include "ui_icqeditaccountui.h"
 
 #include <QLayout>
-#include <QCheckbox>
-#include <QLineedit>
+#include <QCheckBox>
+#include <QLineEdit>
 #include <QSpinBox>
 #include <QPushButton>
 #include <QValidator>
