@@ -137,27 +137,16 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	}
 	else
 	{
-		int encodingId=4; //see icqprotocol.cpp for mappings
+		int encodingId=4; //see ../icqprotocol.* for mappings
 		switch (QLocale::system().language())
 		{
 			case QLocale::Russian:
 			case QLocale::Ukrainian:
 			case QLocale::Byelorussian:
 			case QLocale::Bulgarian:
-				encodingId=2251;
+				encodingId=CP1251;
 				break;
-			case QLocale::Hebrew:
-				encodingId=2255;
-				break;
-			case QLocale::Turkish:
-				encodingId=2254;
-				break;
-			case QLocale::Greek:
-				encodingId=2253;
-				break;
-			case QLocale::Arabic:
-				encodingId=2256;
-				break;
+			case QLocale::English:
 			case QLocale::German:
 			case QLocale::Italian:
 			case QLocale::Spanish:
@@ -168,7 +157,19 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 			case QLocale::Swedish:
 			case QLocale::Norwegian:
 			case QLocale::Icelandic:
-				encodingId=2252;
+				encodingId=CP1252;
+				break;
+			case QLocale::Greek:
+				encodingId=CP1253;
+				break;
+			case QLocale::Turkish:
+				encodingId=CP1254;
+				break;
+			case QLocale::Hebrew:
+				encodingId=CP1255;
+				break;
+			case QLocale::Arabic:
+				encodingId=CP1256;
 				break;
 			default:
 				encodingId=4;

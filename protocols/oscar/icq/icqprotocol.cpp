@@ -564,15 +564,15 @@ void ICQProtocol::initEncodings()
 	addEncoding( availableMibs, 110, i18n("ISO-8859-14") );
 	addEncoding( availableMibs, 111, i18n("ISO-8859-15 Western") );
 
-	addEncoding( availableMibs, 2250, i18n("Windows-1250 Central European") );
-	addEncoding( availableMibs, 2251, i18n("Windows-1251 Cyrillic") );
-	addEncoding( availableMibs, 2252, i18n("Windows-1252 Western") );
-	addEncoding( availableMibs, 2253, i18n("Windows-1253 Greek") );
-	addEncoding( availableMibs, 2254, i18n("Windows-1254 Turkish") );
-	addEncoding( availableMibs, 2255, i18n("Windows-1255 Hebrew") );
-	addEncoding( availableMibs, 2256, i18n("Windows-1256 Arabic") );
-	addEncoding( availableMibs, 2257, i18n("Windows-1257 Baltic") );
-	addEncoding( availableMibs, 2258, i18n("Windows-1258 Viet Nam") );
+	addEncoding( availableMibs, CP1250, i18n("Windows-1250 Central European") );
+	addEncoding( availableMibs, CP1251, i18n("Windows-1251 Cyrillic") );
+	addEncoding( availableMibs, CP1252, i18n("Windows-1252 Western") );
+	addEncoding( availableMibs, CP1253, i18n("Windows-1253 Greek") );
+	addEncoding( availableMibs, CP1254, i18n("Windows-1254 Turkish") );
+	addEncoding( availableMibs, CP1255, i18n("Windows-1255 Hebrew") );
+	addEncoding( availableMibs, CP1256, i18n("Windows-1256 Arabic") );
+	addEncoding( availableMibs, CP1257, i18n("Windows-1257 Baltic") );
+	addEncoding( availableMibs, CP1258, i18n("Windows-1258 Viet Nam") );
 
 	addEncoding( availableMibs, 2009, i18n("IBM 850") );
 	addEncoding( availableMibs, 2085, i18n("IBM 866") );

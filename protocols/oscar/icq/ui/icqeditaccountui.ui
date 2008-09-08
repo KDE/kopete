@@ -35,7 +35,7 @@
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
-       <string>&amp;Basic Setup</string>
+       <string comment="@title:tab">&amp;Basic Setup</string>
       </attribute>
       <layout class="QVBoxLayout" >
        <property name="spacing" >
@@ -268,7 +268,7 @@ If you do not currently have an ICQ account, please click the button to create o
      </widget>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
-       <string>Accou&amp;nt Preferences</string>
+       <string comment="@title:tab">Accou&amp;nt Preferences</string>
       </attribute>
       <layout class="QVBoxLayout" >
        <property name="spacing" >
@@ -730,7 +730,7 @@ If you do not currently have an ICQ account, please click the button to create o
      </widget>
      <widget class="QWidget" name="tabVisible" >
       <attribute name="title" >
-       <string>Visible</string>
+       <string comment="@title:tab">Visible</string>
       </attribute>
       <layout class="QGridLayout" >
        <property name="leftMargin" >
@@ -796,7 +796,7 @@ If you do not currently have an ICQ account, please click the button to create o
      </widget>
      <widget class="QWidget" name="tabInvisible" >
       <attribute name="title" >
-       <string>Invisible</string>
+       <string comment="@title:tab">Invisible</string>
       </attribute>
       <layout class="QGridLayout" >
        <property name="leftMargin" >
@@ -862,7 +862,7 @@ If you do not currently have an ICQ account, please click the button to create o
      </widget>
      <widget class="QWidget" name="tabIgnore" >
       <attribute name="title" >
-       <string>Ignore</string>
+       <string comment="@title:tab">Ignore</string>
       </attribute>
       <layout class="QGridLayout" >
        <property name="leftMargin" >
