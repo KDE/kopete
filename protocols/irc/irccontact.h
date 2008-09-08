@@ -57,7 +57,7 @@ class IRCContact
 public:
 	typedef QList<IRCContact *> List;
 
-	IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity,
+	IRCContact(IRCAccount *account, KIrc::Entity *entity,
 		Kopete::MetaContact *metac = 0, const QString& icon = QString());
 	~IRCContact();
 

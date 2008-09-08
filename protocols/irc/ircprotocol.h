@@ -87,7 +87,7 @@ public:
 
 //	virtual QList<KAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
 
-	Kopete::OnlineStatus onlineStatusFor(const KIrc::Entity::Ptr &entity);
+	Kopete::OnlineStatus onlineStatusFor(KIrc::Entity *entity);
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }

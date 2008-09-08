@@ -18,27 +18,29 @@
 #ifndef KIRCCONTEXT_H
 #define KIRCCONTEXT_H
 
-#include "kircentity.h"
-
-class QByteArray;
+#include "kirchandler.h"
 
 namespace KIrc
 {
 
-class ContextPrivate;
 class Event;
+class Entity;
+
+class ContextPrivate;
 
 /**
  * @author Michel Hermier <michel.hermier@gmail.com>
  */
 class KIRC_EXPORT Context
-	: public QObject
-//	, public KIrc::Handler
+	: public KIrc::Handler
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(KIrc::Context)
 
-//	Q_INTERFACES(Kirc::CommandHandlerInterface Kirc::MessageHandlerInterface)
+//	Q_INTERFACES(KIrc::CommandHandlerInterface KIrc::MessageHandlerInterface)
+
+private:
+	Q_DISABLE_COPY(Context)
 
 public:
 	explicit Context(QObject *parent = 0);
@@ -50,28 +52,19 @@ public:
 
 //	Entity::List anonymous();
 
-	Entity::List entities() const;
+	QList<KIrc::Entity *> entities() const;
 //	Entity::List entitiesByHost(...) const;
 //	Entity::List entitiesByServer(...) const;
 //	Entity::List entitiesByType(...) const;
 
-	Entity::Ptr entityFromName(const QByteArray &name);
+	KIrc::Entity *entityFromName(const QByteArray &name);
 
-	Entity::List entitiesFromNames(const QList<QByteArray> &names);
+	QList<KIrc::Entity *> entitiesFromNames(const QList<QByteArray> &names);
 
-	Entity::List entitiesFromNames(const QByteArray &names, char sep = ',');
+	QList<KIrc::Entity *> entitiesFromNames(const QByteArray &names, char sep = ',');
 
 public:
 	void postEvent(KIrc::Event *event);
-
-#if 0
-protected:
-	void add(Entity *entity);
-//	void add(const QList<Entity *> &entities);
-
-	void remove(Entity *entity);
-//	void remove(const QList<Entity *> &entities);
-#endif
 
 public:
 	/* This command allow to set and get values.
@@ -81,8 +74,8 @@ public:
 
 //	Status execute();
 
-private:
-	Q_DISABLE_COPY(Context)
+protected:
+	ContextPrivate * const d_ptr;
 };
 
 }

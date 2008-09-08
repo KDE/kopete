@@ -22,7 +22,6 @@
 #include "kircclientsocket.h"
 
 #include "kirccontext.h"
-#include "kircevent.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -264,8 +263,7 @@ void ClientEventHandler::notice(KIrc::Context *context, const KIrc::Message &mes
 {
 	CHECK_ARGS(1, 1);
 
-	Entity::Ptr from;
-	Entity::List to;
+//	Entity::Ptr from; Entity::List to;
 	QString text;
 
 //	postEvent(ev, "Notice", from, to, text);
@@ -321,8 +319,7 @@ void ClientEventHandler::privmsg(KIrc::Context *context, const KIrc::Message &me
 
 	CHECK_ARGS(1, 1);
 
-	Entity::Ptr from;
-	Entity::List to;
+//	Entity::Ptr from; Entity::List to;
 	QString text;
 
 //	postEvent(ev, "PrivMsg", from, to, text);
@@ -411,16 +408,13 @@ void ClientEventHandler::numericReply_001(KIrc::Context *context, const KIrc::Me
 {
 	CHECK_ARGS(1, 1);
 
-	kDebug(14121) ;
-
-	socket->setConnectionState(Socket::Authentified);
-
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
 	 */
 	receivedServerMessage(message);
 
-//	message->client->setConnectionState(Socket::Open);
+//	socket->setConnectionState(Socket::Authentified);
+//	socket->owner()->setEnabled
 }
 
 /* 002: ":Your host is <servername>, running version <ver>"
@@ -496,7 +490,7 @@ void ClientEventHandler::numericReply_252(KIrc::Context *context, const KIrc::Me
 	CHECK_ARGS(2, 2);
 
 	bool ok = false;
-	Entity::Ptr from; Entity::Ptr to;
+//	Entity::Ptr from; Entity::Ptr to;
 // 	QString text = i18np("There is %1 operator online.", "There are %1 operators online.", ev->message().argAt(1).toULong(&ok));
 
 // 	if (ok)
@@ -511,7 +505,7 @@ void ClientEventHandler::numericReply_253(KIrc::Context *context, const KIrc::Me
 	CHECK_ARGS(2, 2);
 
 	bool ok = false;
-	Entity::Ptr from; Entity::List to;
+//	Entity::Ptr from; Entity::List to;
 // 	QString text = i18np("There is %1 unknown connection.", "There are %1 unknown connections.", ev->message().argAt(1).toULong(&ok));
 
 // 	if (ok)
@@ -526,7 +520,7 @@ void ClientEventHandler::numericReply_254(KIrc::Context *context, const KIrc::Me
 	CHECK_ARGS(2, 2);
 
 	bool ok = false;
-	Entity::Ptr from; Entity::List to;
+//	Entity::Ptr from; Entity::List to;
 // 	QString text = i18np("There has been %1 channel formed.", "There have been %1 channels formed.", ev->message().argAt(1).toULong(&ok));
 
 // 	if (ok)
@@ -546,7 +540,7 @@ void ClientEventHandler::numericReply_255(KIrc::Context *context, const KIrc::Me
  */
 void ClientEventHandler::numericReply_263(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
-	Entity::Ptr from; Entity::List to;
+//	Entity::Ptr from; Entity::List to;
 //	QString text = i18n("Server was too busy to execute %1.", ev->message().argAt(1));
 
 //	postEvent(ev, "ServerTooBusy", from, to, text);
@@ -617,7 +611,7 @@ void ClientEventHandler::numericReply_305(KIrc::Context *context, const KIrc::Me
  */
 void ClientEventHandler::numericReply_306(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
-	Entity::Ptr from; Entity::List to;
+//	Entity::Ptr from; Entity::List to;
 
 // 	if (postEvent(ev, "YouAreAway", from, to, i18n("You have been marked as being away."))) {
 //		self->setModes("+a");
@@ -882,7 +876,7 @@ void ClientEventHandler::numericReply_464(KIrc::Context *context, const KIrc::Me
 	CHECK_ARGS(1, 1)
 
 	/* Server need pass.. Call disconnect*/
-	Entity::Ptr from; Entity::List to;
+//	Entity::Ptr from; Entity::List to;
 	QString text = i18n("Password Incorect");
 
 //	postEvent(ev, "PasswordIncorrect", from, to, text);

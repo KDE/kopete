@@ -33,19 +33,20 @@ class Context;
 
 class KIRC_EXPORT Entity
 	: public QObject
-	, public QSharedData
 {
 	Q_OBJECT
 
-//	Q_PROPERTY(QByteArray modes READ modes write setModes)
+//	Q_PROPERTY(QTextCodec *codec READ codec WRITE setCodec)
+
+//	Q_PROPERTY(QByteArray awayMessage READ awayMessage WRITE setAwayMessage)
+//	Q_PROPERTY(QByteArray name READ name WRITE setName)
+//	Q_PROPERTY(QByteArray modes READ modes WRITE setModes)
+//	Q_PROPERTY(QByteArray topic READ topic WRITE setTopic)
 
 //	Q_ENUMS(Type)
 
 public:
 	friend class KIrc::Context;
-
-	typedef QExplicitlySharedDataPointer<Entity> Ptr;
-	typedef QList<Entity::Ptr> List;
 
 	enum Type
 	{

@@ -44,7 +44,7 @@ using namespace Kopete;
 class IRCContact::Private
 {
 public:
-	KIrc::Entity::Ptr entity;
+	KIrc::Entity *entity; // QPointer ?
 
 	QMap<ChatSessionType, ChatSession *> chatSessions;
 
@@ -59,7 +59,7 @@ public:
 	QList<KAction *> userActions;
 };
 
-IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, MetaContact *metac, const QString& icon)
+IRCContact::IRCContact(IRCAccount *account, KIrc::Entity *entity, MetaContact *metac, const QString& icon)
 	: Contact(account, entity->name(), metac, icon)
 	, d (new IRCContact::Private)
 {

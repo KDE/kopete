@@ -24,7 +24,6 @@
 
 #include "kirccontext.h"
 #include "kircclientsocket.h"
-#include "kircevent.h"
 #include "kircstdmessages.h"
 #include "kircconst.h"
 
@@ -488,6 +487,8 @@ void IRCAccount::clientConnectionStateChanged(KIrc::Socket::ConnectionState news
 
 	switch (newstate)
 	{
+	case KIrc::Socket::HostLookup:
+	case KIrc::Socket::HostFound:
 	case KIrc::Socket::Connecting:
 		// d->expectedOnlineStatus check and use it
 		mySelf()->setOnlineStatus(Kopete::OnlineStatus::Connecting);
@@ -653,7 +654,7 @@ IRCContact *IRCAccount::getContact(const QByteArray &name, MetaContact *metac)
 	return 0;
 }
 
-IRCContact *IRCAccount::getContact(const KIrc::Entity::Ptr &entity, MetaContact *metac)
+IRCContact *IRCAccount::getContact(KIrc::Entity *entity, MetaContact *metac)
 {
 	IRCContact *contact = 0;
 

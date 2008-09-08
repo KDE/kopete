@@ -38,36 +38,14 @@ SocketPrivate::SocketPrivate(KIrc::Socket *socket)
 {
 }
 
-void SocketPrivate::setSocket(QAbstractSocket *socket)
+void SocketPrivate::socketGotError(QAbstractSocket::SocketError error)
 {
-	connect(socket, SIGNAL(readyRead()), SLOT(socketReadyRead()));
-	connect(socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
-		SLOT(socketStateChanged(QAbstractSocket::SocketState)));
-	connect(socket, SIGNAL(error(QAbstractSocket::SocketError)),
-		SLOT(socketGotError(QAbstractSocket::SocketError)));
-
-	this->socket=socket;
-}
-
-void SocketPrivate::socketGotError(QAbstractSocket::SocketError)
-{
-	/*
-	KBufferedSocket::SocketError err = d->socket->error();
-
-	// Ignore spurious error
-	if (err == KBufferedSocket::NoError)
-		return;
-
-	QString errStr = d->socket->errorString();
-	kDebug(14121) << "Socket error: " << errStr;
+	Q_Q(Socket);
+//	QString errStr = d->socket->errorString();
+	kDebug(14121) << "Socket error: " << error;
 //	postErrorEvent(errStr);
 
-	// ignore non-fatal error
-	if (!KBufferedSocket::isFatalError(err))
-		return;
-
-	close();
-	*/
+	q->close();
 }
 
 void SocketPrivate::socketReadyRead()
@@ -84,19 +62,15 @@ void SocketPrivate::socketReadyRead()
 		Message msg = Message::fromLine(raw, &ok);
 //		msg.setDirection(Message::InGoing);
 
-
 		if (ok)
 		{
 			emit q->receivedMessage(msg);
-			foreach( KIrc::Handler * handler, eventHandlers)
-			{
-				if(handler->onMessage(0,msg,q)) break;
-			}
+			context->onMessage(context, msg, q);
 		}
 //		else
 //			postErrorEvent(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
 
-		// FIXME: post events instead of reschudeling.
+		// FIXME: post events instead of reschudeling ?
 		QTimer::singleShot( 0, this, SLOT( socketReadyRead() ) );
 	}
 
@@ -104,39 +78,12 @@ void SocketPrivate::socketReadyRead()
 //		error();
 }
 
-void SocketPrivate::socketStateChanged(QAbstractSocket::SocketState newstate)
-{
-	Q_Q(Socket);
-
-	switch (newstate) {
-	case QAbstractSocket::UnconnectedState:
-		q->setConnectionState(Socket::Idle);
-		break;
-	case QAbstractSocket::HostLookupState:
-		q->setConnectionState(Socket::HostLookup);
-		break;
-	case QAbstractSocket::ConnectingState:
-		q->setConnectionState(Socket::Connecting);
-		break;
-//	MUST BE HANDLED BY CHILDREN
-//	case QAbstractSocket::ConnectedState:
-//		setConnectionState(Socket::Open);
-//		break;
-	case QAbstractSocket::ClosingState:
-		q->setConnectionState(Socket::Closing);
-		break;
-	default:
-//		postErrorEvent(i18n("Unknown SocketState value:%1", newstate));
-		q->close();
-	}
-}
-
 Socket::Socket(Context *context, SocketPrivate *socketp)
 	: QObject(context)
 	, d_ptr(socketp)
 {
 	Q_D(Socket);
-
+	d->context = context;
 	d->owner = new Entity(context);
 }
 
@@ -148,14 +95,12 @@ Socket::~Socket()
 Socket::ConnectionState Socket::connectionState() const
 {
 	Q_D(const Socket);
-
 	return d->state;
 }
 
 void Socket::setConnectionState(Socket::ConnectionState newstate)
 {
 	Q_D(Socket);
-
 	if (d->state != newstate)
 	{
 		d->state = newstate;
@@ -166,29 +111,28 @@ void Socket::setConnectionState(Socket::ConnectionState newstate)
 QAbstractSocket *Socket::socket()
 {
 	Q_D(Socket);
-
 	return d->socket;
 }
 
-Entity::Ptr Socket::owner() const
+void Socket::setSocket(QAbstractSocket *socket)
+{
+	Q_D(Socket);
+	d->socket = socket;
+
+	connect(socket, SIGNAL(error(QAbstractSocket::SocketError)),
+		d,	SLOT(socketGotError(QAbstractSocket::SocketError)));
+	connect(socket, SIGNAL(readyRead()),
+		d,	SLOT(socketReadyRead()));
+
+	connect(socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
+			SLOT(socketStateChanged(QAbstractSocket::SocketState)));
+}
+
+Entity *Socket::owner() const
 {
 	Q_D(const Socket);
-
 	return d->owner;
 }
-
-void Socket::addEventHandler(KIrc::Handler *handler)
-{
-	Q_D(Socket);
-	d->eventHandlers.append(handler);
-}
-
-void Socket::removeEventHandler(KIrc::Handler *handler)
-{
-	Q_D(Socket);
-	d->eventHandlers.removeAll(handler);
-}
-
 
 void Socket::writeMessage(const Message &msg)
 {
@@ -221,6 +165,34 @@ void Socket::close()
 	d->socket = 0;
 
 	d->url = "";
+}
+
+void Socket::socketStateChanged(QAbstractSocket::SocketState newstate)
+{
+	Q_D(Socket);
+
+	switch (newstate)
+	{
+	case QAbstractSocket::UnconnectedState:
+		setConnectionState(Socket::Idle);
+		break;
+	case QAbstractSocket::HostLookupState:
+		setConnectionState(Socket::HostLookup);
+		break;
+	case QAbstractSocket::ConnectingState:
+		setConnectionState(Socket::Connecting);
+		break;
+//	MUST BE HANDLED BY CHILDREN
+//	case QAbstractSocket::ConnectedState:
+//		setConnectionState(Socket::Open);
+//		break;
+	case QAbstractSocket::ClosingState:
+		setConnectionState(Socket::Closing);
+		break;
+	default:
+//		postErrorEvent(i18n("Unknown SocketState value:%1", newstate));
+		close();
+	}
 }
 
 #if 0

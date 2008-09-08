@@ -15,12 +15,11 @@
 
 #include "kirchandler.moc"
 
-#include "kircevent.h"
-
 class KIrc::HandlerPrivate
 {
 public:
 	bool enabled;
+	QList<KIrc::Handler*> eventHandlers;
 };
 
 using namespace KIrc;
@@ -39,17 +38,27 @@ Handler::~Handler()
 	delete d_ptr;
 }
 
+void Handler::addEventHandler(Handler *handler)
+{
+	Q_D(Handler);
+	d->eventHandlers.append(handler);
+}
+
+void Handler::removeEventHandler(Handler *handler)
+{
+	Q_D(Handler);
+	d->eventHandlers.removeAll(handler);
+}
+
 bool Handler::isEnabled() const
 {
 	Q_D(const Handler);
-
 	return d->enabled;
 }
 
 void Handler::setEnabled(bool enabled)
 {
 	Q_D(Handler);
-
 	d->enabled = enabled;
 }
 
@@ -74,16 +83,24 @@ Command *Handler::registerCommand(const QString &name, QObject *object, const ch
 //	return registerCommand(name, new Command);
 }
 
+void Handler::unregisterCommand(Command *command)
+{
+}
 #endif
 
 Handler::Handled Handler::onCommand(KIrc::Context *context, const QList<QByteArray> &command/*, KIrc::Entity::Ptr from*/)
 {
 	Q_D(Handler);
-
 	Handled handled = NotHandled;
 
 	if (isEnabled())
 	{
+		foreach(KIrc::Handler * handler, d->eventHandlers)
+		{
+			handled = handler->onCommand(context, command/*, from*/);
+			if (handled != NotHandled)
+				return handled;
+		}
 #if 0
 		QMetaObject::invokeMethod(this, message->args(0)->upper(), Qt::DirectConnection,
 			Q_RETURN_ARG(KIrc::Handler::Handled, handled),
@@ -96,23 +113,29 @@ Handler::Handled Handler::onCommand(KIrc::Context *context, const QList<QByteArr
 }
 
 #if 0
-void Handler::unregisterCommand(Command *command)
+void Handler::registerMessage()
 {
 }
-#endif
 
-#if 0
-void Handler::registerMessage()
+void Handler::unregisterMessage(Message msg)
 {
 }
 #endif
 
 Handler::Handled Handler::onMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
+	Q_D(Handler);
 	Handled handled = NotHandled;
 
 	if (isEnabled())
 	{
+		foreach(KIrc::Handler * handler, d->eventHandlers)
+		{
+			handled = handler->onMessage(context, message, socket);
+			if (handled != NotHandled)
+				return handled;
+		}
+
 #if 0
 		QMetaObject::invokeMethod(this, message->args(0)->upper(), Qt::DirectConnection,
 			Q_RETURN_ARG(KIrc::Handler::Handled, handled),
@@ -124,24 +147,3 @@ Handler::Handled Handler::onMessage(KIrc::Context *context, const KIrc::Message 
 	return handled;
 }
 
-#if 0
-void Handler::unregisterMessage()
-{
-}
-#endif
-/*
-void Handler::handleMessage(Message msg)
-{
-	QList<Command *> commands = m_commands.values(msg.command());
-	if (commands.isEmpty())
-	{
-		// emit unhandledMessage(msg);
-	}
-	else
-	{
-		foreach(Command *command, commands)
-			command->handleMessage(msg);
-	}
-}
-
-*/

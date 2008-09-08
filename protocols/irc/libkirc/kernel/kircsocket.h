@@ -19,17 +19,17 @@
 #ifndef KIRCSOCKET_H
 #define KIRCSOCKET_H
 
-#include "kircentity.h"
 #include "kircmessage.h"
 
-#include <QtCore/QUrl>
+#include <QtNetwork/QAbstractSocket>
 
-class QAbstractSocket;
+#include <QtCore/QUrl>
 
 namespace KIrc
 {
 
 class Context;
+class Entity;
 class SocketPrivate;
 class Handler;
 
@@ -43,11 +43,11 @@ class KIRC_EXPORT Socket
 	Q_DECLARE_PRIVATE(KIrc::Socket)
 
 	Q_PROPERTY(ConnectionState connectionState READ connectionState)
-	Q_PROPERTY(KIrc::Entity::Ptr owner READ owner)
+//	Q_PROPERTY(KIrc::Entity *owner READ owner)
 	Q_ENUMS(ConnectionState)
 
-protected:
-	KIrc::SocketPrivate * const d_ptr;
+private:
+	Q_DISABLE_COPY(Socket)
 
 public:
 	enum ConnectionState
@@ -68,20 +68,14 @@ public:
 public: // READ properties accessors.
 	KIrc::Socket::ConnectionState connectionState() const;
 
-	KIrc::Entity::Ptr owner() const;
+	KIrc::Entity *owner() const;
 
-public:
-	void addEventHandler(KIrc::Handler *handler);
-	void removeEventHandler(KIrc::Handler *handler);
-
-	void setConnectionState(Socket::ConnectionState newstate);
-
-public slots:
+public Q_SLOTS:
 	void writeMessage(const Message &message);
 
 	void close();
 
-signals:
+Q_SIGNALS:
 	void connectionStateChanged(KIrc::Socket::ConnectionState newState);
 
 	void receivedMessage(const KIrc::Message &message);
@@ -89,11 +83,16 @@ signals:
 protected:
 	Socket(KIrc::Context *context, KIrc::SocketPrivate *socketp);
 
-	void setSocket(QAbstractSocket *socket);
 	QAbstractSocket *socket();
+	void setSocket(QAbstractSocket *socket);
 
-private:
-	Q_DISABLE_COPY(Socket)
+	void setConnectionState(Socket::ConnectionState newstate);
+
+protected Q_SLOTS:
+	virtual void socketStateChanged(QAbstractSocket::SocketState newstate);
+
+protected:
+	KIrc::SocketPrivate * const d_ptr;
 };
 
 }

@@ -3,9 +3,9 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
-    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2003-2008 by Michel Hermier <michel.hermier@gmail.com>
 
-    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -37,16 +37,18 @@ class KIRCCLIENT_EXPORT ClientSocket
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(ClientSocket)
-
 	Q_PROPERTY(QUrl url READ url)
-	Q_PROPERTY(KIrc::Entity::Ptr server READ server)
+//	Q_PROPERTY(KIrc::Entity *server READ server)
+
+private:
+	Q_DISABLE_COPY(ClientSocket)
 
 public:
 	explicit ClientSocket(Context *context = 0);
 	~ClientSocket();
 
 public: // READ properties accessors.
-	Entity::Ptr server();
+	KIrc::Entity *server();
 
 	QUrl url() const;
 
@@ -54,15 +56,17 @@ public slots: // WRITE properties accessors.
 
 public:
 
-public slots:
+public Q_SLOTS:
 	virtual void connectToServer(const QUrl &url);
-
 
 protected:
 	void connectToServer(const QUrl &url, QAbstractSocket *socket);
 
-private:
-	Q_DISABLE_COPY(ClientSocket)
+protected Q_SLOTS:
+	void socketStateChanged(QAbstractSocket::SocketState newstate);
+
+protected:
+//	KIrc::ClientSocketPrivate * const d_ptr;
 };
 
 }

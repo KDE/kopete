@@ -2,9 +2,9 @@
     kircclient.cpp - IRC Client
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
-    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2003-2008 by Michel Hermier <michel.hermier@gmail.com>
 
-    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,13 +21,13 @@
 
 #include "kircentity.h"
 #include "kircstdmessages.h"
-#include "kircconst.h"
 #include "kircclienthandler.h"
+
+#include "kirccontext.h"
 
 #include <QtNetwork/QSslSocket>
 
 #include <kdebug.h>
-
 
 using namespace KIrc;
 
@@ -35,56 +35,15 @@ ClientSocketPrivate::ClientSocketPrivate(ClientSocket *socket)
 	: SocketPrivate(socket)
 	, failedNickOnLogin(false)
 {
-	
 }
-
-void ClientSocketPrivate::socketStateChanged(QAbstractSocket::SocketState newstate)
-{
-	Q_Q(Socket);
-
-	kDebug(14120)<<"state changed to "<<newstate;
-
-	switch(newstate)
-	{
-	case QAbstractSocket::ConnectedState:
-		q->setConnectionState(Socket::Authentifying);
-
-		// If password is given for this server, send it now, and don't expect a reply
-
-		//if (url.hasPass())
-			//StdMessage::pass(this, url.pass());
-
-#ifdef __GNUC__
-		#warning make the following string arguments static const
-#endif
-		q->writeMessage( StdMessages::user( url.userName().toLatin1(), "127.0.0.1", url.host().toLatin1(), url.queryItemValue("realname").toLatin1() ) );
-		q->writeMessage( StdMessages::nick( url.queryItemValue("nickname").toLatin1() ) );
-
-		break;
-	default:
-		SocketPrivate::socketStateChanged(newstate);
-		break;
-	}
-}
-
-void ClientSocketPrivate::onReceivedMessage(const KIrc::Message &msg)
-{
-	//kDebug(14121)<<"Got message "<<msg.toLine();
-
-}
-
 
 ClientSocket::ClientSocket(Context *context)
 	: Socket(context, new ClientSocketPrivate(this))
 {
 	Q_D(ClientSocket);
-
 	d->server = new Entity(context);
 
-	addEventHandler( new ClientEventHandler(context) );
-
-	connect(this, SIGNAL(receivedMessage(const KIrc::Message &)),
-		d, SLOT(onReceivedMessage(const KIrc::Message &)));
+	context->addEventHandler( new ClientEventHandler(context) );
 
 //	d->versionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
 //	d->userString = QString::fromLatin1("Response not supplied by user.");
@@ -96,24 +55,21 @@ ClientSocket::~ClientSocket()
 //	StdCommands::quit(this, QLatin1String("KIRC Deleted"));
 }
 
-Entity::Ptr ClientSocket::server()
+Entity *ClientSocket::server()
 {
 	Q_D(ClientSocket);
-
 	return d->server;
 }
 
 QUrl ClientSocket::url() const
 {
 	Q_D(const ClientSocket);
-
 	return d->url;
 }
 
 void ClientSocket::connectToServer(const QUrl &url)
 {
 	Q_D(Socket);
-
 	kDebug()<<"connectiong to "<<url;
 
 	QTcpSocket *socket;
@@ -140,7 +96,6 @@ void ClientSocket::connectToServer(const QUrl &url, QAbstractSocket *socket)
 {
 	Q_D(Socket);
 
-
 	close();
 
 	if (!socket)
@@ -163,13 +118,41 @@ void ClientSocket::connectToServer(const QUrl &url, QAbstractSocket *socket)
 
 //	the given url is now validated
 	d->url = url;
-	d->setSocket(socket);
+	setSocket(socket);
 
 #ifdef __GNUC__
 	#warning FIXME: send an event here to reflect connection state
 #endif
 
 	socket->connectToHost(host, port);
-
 }
 
+void ClientSocket::socketStateChanged(QAbstractSocket::SocketState newstate)
+{
+	Q_D(Socket);
+	QUrl url = d->url;
+
+	kDebug(14120)<<"state changed to "<<newstate;
+
+	switch(newstate)
+	{
+	case QAbstractSocket::ConnectedState:
+		setConnectionState(Socket::Authentifying);
+
+		// If password is given for this server, send it now, and don't expect a reply
+
+		//if (url.hasPass())
+			//StdMessage::pass(this, url.pass());
+
+#ifdef __GNUC__
+		#warning make the following string arguments static const
+#endif
+		writeMessage( StdMessages::user( url.userName().toLatin1(), "127.0.0.1", url.host().toLatin1(), url.queryItemValue("realname").toLatin1() ) );
+		writeMessage( StdMessages::nick( url.queryItemValue("nickname").toLatin1() ) );
+
+		break;
+	default:
+		Socket::socketStateChanged(newstate);
+		break;
+	}
+}

@@ -34,31 +34,29 @@ public:
 };
 
 Context::Context(QObject *parent)
-	: QObject(parent)
-//	, d(new Private)
+	: Handler(parent)
+	, d_ptr(new ContextPrivate)
 {
 }
 
 Context::~Context()
 {
-//	delete d;
+	delete d_ptr;
+}
+/*
+QList<KIrc::Entity *> Context::anonymous() const
+{
+	
+}
+*/
+QList<KIrc::Entity *> Context::entities() const
+{
+	return findChildren<Entity *>();
 }
 
-Entity::List Context::entities() const
+KIrc::Entity *Context::entityFromName(const QByteArray &name)
 {
-	Q_D(const Context);
-
-	Entity::List entities;
-
-	foreach(Entity *entity, d->entities)
-		entities.append(Entity::Ptr(entity));
-
-	return entities;
-}
-
-Entity::Ptr Context::entityFromName(const QByteArray &name)
-{
-	Entity::Ptr entity;
+	Entity *entity = 0;
 
 	if (name.isEmpty())
 		return entity;
@@ -71,23 +69,30 @@ Entity::Ptr Context::entityFromName(const QByteArray &name)
 	{
 		entity = new Entity(this);
 		entity->setName(name);
-//		add(entity);
 	}
 
 	return entity;
 }
 
-Entity::List Context::entitiesFromNames(const QList<QByteArray> &names)
+QList<KIrc::Entity *> Context::entitiesFromNames(const QList<QByteArray> &names)
 {
-	Entity::List entities;
+	QList<Entity *> entities;
+	Entity *entity;
 
+	// This is slow and can easily be optimised with sorted lists
 	foreach (const QByteArray &name, names)
-		entities.append(entityFromName(name));
+	{
+		entity = entityFromName(name);
+		if (entity)
+			entities.append(entity);
+//		else
+//			warn the user
+	}
 
 	return entities;
 }
 
-Entity::List Context::entitiesFromNames(const QByteArray &names, char sep)
+QList<KIrc::Entity *> Context::entitiesFromNames(const QByteArray &names, char sep)
 {
 	return entitiesFromNames(names.split(sep));
 }
