@@ -32,6 +32,9 @@
          <property name="alternatingRowColors" >
           <bool>true</bool>
          </property>
+         <property name="rootIsDecorated" >
+          <bool>false</bool>
+         </property>
          <property name="headerHidden" >
           <bool>true</bool>
          </property>
@@ -148,7 +151,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>splitter</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
