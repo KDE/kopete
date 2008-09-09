@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget3" >
      <property name="currentIndex" >
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tab_connection" >
       <attribute name="title" >
@@ -772,20 +772,14 @@
          <property name="spacing" >
           <number>6</number>
          </property>
-         <item row="0" column="2" >
+         <item row="0" column="4" >
           <widget class="QLabel" name="textLabel2" >
            <property name="text" >
-            <string>Bloc&amp;ked contacts:</string>
-           </property>
-           <property name="buddy" >
-            <cstring>m_BL</cstring>
+            <string>Blocked contacts:</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0" >
-          <widget class="Q3ListBox" name="m_AL" />
-         </item>
-         <item row="1" column="1" >
+         <item row="2" column="2" >
           <layout class="QVBoxLayout" >
            <property name="spacing" >
             <number>6</number>
@@ -796,14 +790,14 @@
            <item>
             <widget class="QPushButton" name="m_blockButton" >
              <property name="text" >
-              <string>&amp;></string>
+              <string/>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="m_allowButton" >
              <property name="text" >
-              <string>&amp;&lt;</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -828,15 +822,15 @@
          <item row="0" column="0" >
           <widget class="QLabel" name="textLabel1" >
            <property name="text" >
-            <string>Allo&amp;wed contacts:</string>
-           </property>
-           <property name="buddy" >
-            <cstring>m_AL</cstring>
+            <string>Allowed contacts:</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="2" >
-          <widget class="Q3ListBox" name="m_BL" />
+         <item row="2" column="0" >
+          <widget class="QListWidget" name="m_AL" />
+         </item>
+         <item row="2" column="4" >
+          <widget class="QListWidget" name="m_BL" />
          </item>
         </layout>
        </item>
@@ -870,7 +864,7 @@
             <string>Checking this box will block all users not explicitly shown in the allowed list here, including any contacts not on your contact list.</string>
            </property>
            <property name="text" >
-            <string/>
+            <string>Block all users not in 'Allowed' list</string>
            </property>
           </widget>
          </item>
@@ -1223,11 +1217,6 @@ Only check this option if the normal connection does not work.</string>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <customwidgets>
-  <customwidget>
-   <class>Q3ListBox</class>
-   <extends>Q3Frame</extends>
-   <header>q3listbox.h</header>
-  </customwidget>
   <customwidget>
    <class>KComboBox</class>
    <extends>QComboBox</extends>

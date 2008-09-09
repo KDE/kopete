@@ -114,6 +114,9 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		d->ui->m_allowButton->setEnabled( connected );
 		d->ui->m_blockButton->setEnabled( connected );
 
+		d->ui->m_allowButton->setIcon( KIcon( "arrow-left" ) );
+		d->ui->m_blockButton->setIcon( KIcon( "arrow-right" ) );
+
 		MSNAccount *m_account = static_cast<MSNAccount*>( account );
 		d->ui->m_serverName->setText( m_account->serverName() );
 		d->ui->m_serverPort->setValue( m_account->serverPort() );
@@ -123,10 +126,10 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		//QStringList reverseList =  config->readListEntry("reverseList" );
 
 		for ( QStringList::Iterator it = blockList.begin(); it != blockList.end(); ++it )
-			d->ui->m_BL->insertItem( *it );
+			d->ui->m_BL->addItem( *it );
 
 		for ( QStringList::Iterator it = allowList.begin(); it != allowList.end(); ++it )
-			d->ui->m_AL->insertItem( *it );
+			d->ui->m_AL->addItem( *it );
 
 		d->ui->m_blp->setChecked( config->readEntry( "BLP" ) == "BL" );
 
@@ -241,9 +244,9 @@ bool MSNEditAccountWidget::validateData()
 void MSNEditAccountWidget::slotAllow()
 {
 	//TODO: play with multiple selection
-	Q3ListBoxItem *item = d->ui->m_BL->selectedItem();
-	if ( !item )
+	if ( d->ui->m_BL->selectedItems().isEmpty() )
 		return;
+	QListWidgetItem *item = d->ui->m_BL->selectedItems().at(0);
 
 	QString handle = item->text();
 
@@ -252,16 +255,16 @@ void MSNEditAccountWidget::slotAllow()
 		return;
 	notify->removeContact( handle, MSNProtocol::BL, QString(), QString() );
 
-	d->ui->m_BL->takeItem( item );
-	d->ui->m_AL->insertItem( item );
+	d->ui->m_BL->takeItem( d->ui->m_BL->row( item ) );
+	d->ui->m_AL->addItem( item );
 }
 
 void MSNEditAccountWidget::slotBlock()
 {
 	//TODO: play with multiple selection
-	Q3ListBoxItem *item = d->ui->m_AL->selectedItem();
-	if ( !item )
+	if ( d->ui->m_AL->selectedItems().isEmpty() )
 		return;
+	QListWidgetItem *item = d->ui->m_AL->selectedItems().at(0);
 
 	QString handle = item->text();
 
@@ -271,8 +274,8 @@ void MSNEditAccountWidget::slotBlock()
 
 	notify->removeContact( handle, MSNProtocol::AL, QString(), QString() );
 
-	d->ui->m_AL->takeItem( item );
-	d->ui->m_BL->insertItem( item );
+	d->ui->m_AL->takeItem( d->ui->m_AL->row( item ) );
+	d->ui->m_BL->addItem( item );
 }
 
 void MSNEditAccountWidget::slotShowReverseList()
