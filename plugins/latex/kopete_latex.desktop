@@ -15,6 +15,7 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=KopeteTeX
 Name[pt_BR]=KopeteTex
+Name[ru]=KopeTeX
 Name[sv]=KopeteTex
 Comment=Render Latex formulas in the chatwindow
 Comment[bg]=Показване на формули на Latex в прозореца за чат
