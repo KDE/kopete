@@ -1047,7 +1047,7 @@
             <string>Checking this box will block all users not explicitly shown in the allowed list here, including any contacts not on your contact list.</string>
            </property>
            <property name="text" >
-            <string/>
+            <string>Block all users not in 'Allowed' list</string>
            </property>
           </widget>
          </item>
