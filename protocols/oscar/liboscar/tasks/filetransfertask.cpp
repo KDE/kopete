@@ -26,6 +26,7 @@
 #include <QtNetwork/QHostAddress>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
+#include <QtXml/QDomDocument>
 
 #include <ksocketfactory.h>
 #include <krandom.h>
@@ -217,7 +218,7 @@ void FileTransferTask::parseReq( Buffer b )
 			kDebug(OSCAR_RAW_DEBUG) << "port " << m_port;
 			break;
 		 case 0x0c:
-			m_desc = tlv.data; //FIXME: what codec?
+			m_desc = parseDescription( tlv.data ); //FIXME: what codec?
 			kDebug(OSCAR_RAW_DEBUG) << "user message: " << tlv.data;
 			break;
 		 case 0x0d:
@@ -851,6 +852,29 @@ Oscar::Message FileTransferTask::makeFTMsg()
 	msg.setIcbmCookie( m_oftRendezvous.cookie );
 	msg.setReceiver( m_contactName );
 	return msg;
+}
+
+QString FileTransferTask::parseDescription( const QByteArray &description ) const
+{
+	QString xmlDesc = QString::fromUtf8( description );
+	xmlDesc.replace( QLatin1String( "&gt;" ), QLatin1String( ">" ) );
+	xmlDesc.replace( QLatin1String( "&lt;" ), QLatin1String( "<" ) );
+	xmlDesc.replace( QLatin1String( "&quot;" ), QLatin1String( "\"" ) );
+	xmlDesc.replace( QLatin1String( "&nbsp;" ), QLatin1String( " " ) );
+	xmlDesc.replace( QLatin1String( "&amp;" ), QLatin1String( "&" ) );
+	
+	QDomDocument xmlDocument;
+	if ( !xmlDocument.setContent( xmlDesc ) )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << "Cannot parse description!";
+		return QString::fromUtf8( description );
+	}
+	
+	QDomNodeList descList = xmlDocument.elementsByTagName( "DESC" );
+	if ( descList.count() == 1 )
+		return descList.at( 0 ).toElement().text();
+	else
+		return QString::fromUtf8( description );
 }
 
 #include "filetransfertask.moc"

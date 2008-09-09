@@ -107,6 +107,7 @@ private:
 	void doneConnect();
 	void connectFailed(); //tries another method of connecting
 	void doOft();
+	QString parseDescription( const QByteArray &description ) const;
 
 	Oscar::OFTRendezvous m_oftRendezvous;
 
