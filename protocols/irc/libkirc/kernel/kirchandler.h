@@ -60,11 +60,15 @@ public:
 #if 0
 	bool registerCommand();
 	bool unregisterCommand();
+#endif
+	void registerCommandAlias(const QByteArray &alias, const QByteArray &command);
 
+#if 0
 	bool registerMessage();
-	bool registerMessageAlias();
 	bool unregisterMessage();
 #endif
+
+	void registerMessageAlias(const QByteArray &alias, const QByteArray &message);
 
 public Q_SLOTS:
 	virtual KIrc::Handler::Handled onCommand(KIrc::Context *context, const QList<QByteArray> &command/*, KIrc::Entity::Ptr from*/);

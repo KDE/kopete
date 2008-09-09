@@ -15,11 +15,15 @@
 
 #include "kirchandler.moc"
 
+#include <QtCore/QMultiHash>
+
 class KIrc::HandlerPrivate
 {
 public:
 	bool enabled;
 	QList<KIrc::Handler*> eventHandlers;
+	QMultiHash<QByteArray, QByteArray> commandAliases;
+	QMultiHash<QByteArray, QByteArray> messageAliases;
 };
 
 using namespace KIrc;
@@ -88,26 +92,47 @@ void Handler::unregisterCommand(Command *command)
 }
 #endif
 
+void Handler::registerCommandAlias(const QByteArray &alias, const QByteArray &command)
+{
+	Q_D(Handler);
+	d->commandAliases.insert(alias.toUpper(), command.toUpper());
+}
+
 Handler::Handled Handler::onCommand(KIrc::Context *context, const QList<QByteArray> &command/*, KIrc::Entity::Ptr from*/)
 {
+	if (!isEnabled())
+		return NotHandled;
+
 	Q_D(Handler);
 	Handled handled = NotHandled;
 
-	if (isEnabled())
+	foreach(KIrc::Handler * handler, d->eventHandlers)
 	{
-		foreach(KIrc::Handler * handler, d->eventHandlers)
+		handled = handler->onCommand(context, command/*, from*/);
+		if (handled != NotHandled)
+			return handled;
+	}
+
+	QGenericReturnArgument ret = Q_RETURN_ARG(KIrc::Handler::Handled, handled);
+	QGenericArgument arg0 = Q_ARG(KIrc::Context *, context);
+	QGenericArgument arg1 = Q_ARG(QList<QByteArray>, command); // Should be implemented as (const QList<QByteArray> &)
+//	QGenericArgument arg2 = Q_ARG(KIrc::Entity *);
+
+	QByteArray cmd = command.value(0).toUpper();
+	QMetaObject::invokeMethod(this, cmd, Qt::DirectConnection,
+		ret, arg0, arg1/*, arg2*/);
+
+	if (handled != NotHandled)
+		return handled;
+
+	foreach(const QByteArray &alias, d->commandAliases.values(cmd))
+	{
+		if (QMetaObject::invokeMethod(this, alias, Qt::DirectConnection,
+			ret, arg0, arg1/*, arg2*/))
 		{
-			handled = handler->onCommand(context, command/*, from*/);
 			if (handled != NotHandled)
 				return handled;
 		}
-#if 0
-		QMetaObject::invokeMethod(this, message->args(0)->upper(), Qt::DirectConnection,
-			Q_RETURN_ARG(KIrc::Handler::Handled, handled),
-			Q_ARG(KIrc::Contect *, context),
-			Q_ARG(QList<QByteArray>, command));
-//			Q_ARG(KIrc::Entity::Ptr, from));
-#endif
 	}
 	return handled;
 }
@@ -122,27 +147,47 @@ void Handler::unregisterMessage(Message msg)
 }
 #endif
 
+void Handler::registerMessageAlias(const QByteArray &alias, const QByteArray &message)
+{
+	Q_D(Handler);
+	d->messageAliases.insert(alias.toUpper(), message.toUpper());
+}
+
 Handler::Handled Handler::onMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
+	if (!isEnabled())
+		return NotHandled;
+
 	Q_D(Handler);
 	Handled handled = NotHandled;
 
-	if (isEnabled())
+	foreach(KIrc::Handler * handler, d->eventHandlers)
 	{
-		foreach(KIrc::Handler * handler, d->eventHandlers)
+		handled = handler->onMessage(context, message, socket);
+		if (handled != NotHandled)
+			return handled;
+	}
+
+	QGenericReturnArgument ret = Q_RETURN_ARG(KIrc::Handler::Handled, handled);
+	QGenericArgument arg0 = Q_ARG(KIrc::Context *, context);
+	QGenericArgument arg1 = Q_ARG(KIrc::Message, message); // Should be implemented as (const KIrc::Message &)
+	QGenericArgument arg2 = Q_ARG(KIrc::Socket *, socket);
+
+	QByteArray msg = message.argAt(0).toUpper();
+	QMetaObject::invokeMethod(this, msg, Qt::DirectConnection,
+		ret, arg0, arg1, arg2);
+
+	if (handled != NotHandled)
+		return handled;
+
+	foreach(const QByteArray &alias, d->messageAliases.values(msg))
+	{
+		if (QMetaObject::invokeMethod(this, alias, Qt::DirectConnection,
+			ret, arg0, arg1, arg2))
 		{
-			handled = handler->onMessage(context, message, socket);
 			if (handled != NotHandled)
 				return handled;
 		}
-
-#if 0
-		QMetaObject::invokeMethod(this, message->args(0)->upper(), Qt::DirectConnection,
-			Q_RETURN_ARG(KIrc::Handler::Handled, handled),
-			Q_ARG(KIrc::Contect *, context),
-			Q_ARG(const KIrc::Message &, message),
-			Q_ARG(KIrc::Socket *, socket));
-#endif
 	}
 	return handled;
 }
