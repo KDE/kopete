@@ -22,6 +22,7 @@
 
 #include "kircentity.h"
 
+#include <QtCore/QMetaType>
 #include <QtCore/QSharedDataPointer>
 #include <QtCore/QStringList>
 
@@ -98,6 +99,6 @@ private:
 
 }
 
-//Q_DECLARE_METATYPE(KIrc::Message)
+Q_DECLARE_METATYPE(KIrc::Message)
 
 #endif
