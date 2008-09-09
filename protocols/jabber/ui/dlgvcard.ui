@@ -23,14 +23,6 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="tab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>362</width>
-        <height>433</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>&amp;General</string>
       </attribute>
@@ -91,14 +83,6 @@
             <number>0</number>
            </property>
            <widget class="QWidget" name="page_2" >
-            <property name="geometry" >
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>279</width>
-              <height>29</height>
-             </rect>
-            </property>
             <layout class="QHBoxLayout" name="horizontalLayout" >
              <property name="margin" >
               <number>0</number>
@@ -109,14 +93,6 @@
             </layout>
            </widget>
            <widget class="QWidget" name="page_3" >
-            <property name="geometry" >
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>279</width>
-              <height>29</height>
-             </rect>
-            </property>
             <layout class="QVBoxLayout" name="verticalLayout_3" >
              <property name="margin" >
               <number>0</number>
@@ -266,21 +242,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>362</width>
-        <height>433</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>&amp;Home Address</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_4" >
-       <property name="fieldGrowthPolicy" >
-        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-       </property>
        <item row="0" column="0" >
         <widget class="QLabel" name="lblStreet" >
          <property name="text" >
@@ -353,14 +318,6 @@
           <number>0</number>
          </property>
          <widget class="QWidget" name="page_4" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>278</width>
-            <height>29</height>
-           </rect>
-          </property>
           <layout class="QVBoxLayout" name="verticalLayout_4" >
            <property name="margin" >
             <number>0</number>
@@ -371,14 +328,6 @@
           </layout>
          </widget>
          <widget class="QWidget" name="page_5" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>278</width>
-            <height>37</height>
-           </rect>
-          </property>
           <layout class="QVBoxLayout" name="verticalLayout_5" >
            <property name="margin" >
             <number>0</number>
@@ -393,21 +342,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>362</width>
-        <height>433</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>&amp;Work Address</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_3" >
-       <property name="fieldGrowthPolicy" >
-        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-       </property>
        <item row="0" column="0" >
         <widget class="QLabel" name="lblStreet_2" >
          <property name="text" >
@@ -474,14 +412,6 @@
           <number>0</number>
          </property>
          <widget class="QWidget" name="page_6" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>278</width>
-            <height>29</height>
-           </rect>
-          </property>
           <layout class="QVBoxLayout" name="verticalLayout_6" >
            <property name="margin" >
             <number>0</number>
@@ -492,14 +422,6 @@
           </layout>
          </widget>
          <widget class="QWidget" name="page_7" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>278</width>
-            <height>29</height>
-           </rect>
-          </property>
           <layout class="QVBoxLayout" name="verticalLayout_7" >
            <property name="margin" >
             <number>0</number>
@@ -514,21 +436,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>362</width>
-        <height>433</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Wor&amp;k Information</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_2" >
-       <property name="fieldGrowthPolicy" >
-        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-       </property>
        <item row="0" column="0" >
         <widget class="QLabel" name="lblCompany" >
          <property name="text" >
@@ -572,21 +483,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>362</width>
-        <height>433</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Phone &amp;Numbers</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout" >
-       <property name="fieldGrowthPolicy" >
-        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-       </property>
        <item row="0" column="0" >
         <widget class="QLabel" name="lblPhoneHome" >
          <property name="text" >
@@ -630,14 +530,6 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>362</width>
-        <height>433</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>A&amp;bout</string>
       </attribute>
