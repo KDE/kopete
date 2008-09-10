@@ -39,7 +39,7 @@ namespace Ui
 class WlmAddContactPage:public AddContactPage
 {
   Q_OBJECT public:
-    WlmAddContactPage (QWidget * parent = 0, const char *name = 0);
+    WlmAddContactPage (QWidget * parent = 0);
      ~WlmAddContactPage ();
 
     /**

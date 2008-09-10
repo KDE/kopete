@@ -19,8 +19,7 @@
 #include <QLayout>
 #include <QRadioButton>
 #include <QLineEdit>
-//Added by qt3to4:
-#include <QVBoxLayout>
+
 #include <kdebug.h>
 
 #include "kopeteaccount.h"
@@ -28,7 +27,7 @@
 
 #include "ui_wlmaddui.h"
 
-WlmAddContactPage::WlmAddContactPage (QWidget * parent, const char *name):
+WlmAddContactPage::WlmAddContactPage (QWidget * parent):
 AddContactPage (parent)
 {
     kDebug (14210) << k_funcinfo;

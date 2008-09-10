@@ -68,7 +68,7 @@ WlmServer::WlmDisconnect ()
         a->sock->enableRead (false);
         a->sock->enableWrite (false);
         a->sock->disconnect ();
-        cb.socketList.remove (a);
+        cb.socketList.removeAll (a);
     }
     cb.socketList.clear ();
 }

@@ -188,7 +188,7 @@ void
 WlmChatSession::slotInviteContact (Kopete::Contact * contact)
 {
     if (isReady ())
-        getChatService ()->inviteUser (contact->contactId ().latin1 ());
+        getChatService ()->inviteUser (contact->contactId ().toLatin1 ().data ());
 }
 
 void
@@ -581,7 +581,7 @@ WlmChatSession::startSendKeepAlive()
 {
     // send keepalive each 50 seconds.
     if(m_keepalivetimer && isReady())
-        m_keepalivetimer->start (50 * 1000, FALSE);
+        m_keepalivetimer->start (50 * 1000);
 }
 
 void 

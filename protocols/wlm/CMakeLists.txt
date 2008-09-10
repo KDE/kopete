@@ -9,8 +9,6 @@ find_package(Kopete REQUIRED)
 include_directories(${KDE4_INCLUDES})
 add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 
-add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
-
 #ADD_SUBDIRECTORY(ui)
 ADD_SUBDIRECTORY(icons)
 
@@ -44,7 +42,7 @@ set(kopete_wlm_PART_SRCS
 
 kde4_add_plugin(kopete_wlm ${kopete_wlm_PART_SRCS})
 
-target_link_libraries(kopete_wlm ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KIO_LIBRARY} kopete kopete_videodevice msn)
+target_link_libraries(kopete_wlm ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBRARY} kopete kopete_videodevice msn)
 
 install(TARGETS kopete_wlm  DESTINATION ${PLUGIN_INSTALL_DIR})
 

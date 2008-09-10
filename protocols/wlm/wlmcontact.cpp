@@ -72,7 +72,7 @@ WlmContact::sendFile (const KUrl & sourceURL, const QString & fileName,
 
     if (!filePath.isEmpty ())
     {
-        Q_UINT32 fileSize = QFileInfo (filePath).size ();
+        quint32 fileSize = QFileInfo (filePath).size ();
         //Send the file
         static_cast <WlmChatSession *>
 			(manager (Kopete::Contact::CanCreate))->sendFile (filePath,
@@ -140,8 +140,8 @@ WlmContact::deleteContact ()
     if (account ()->isConnected ())
     {
         dynamic_cast <WlmAccount *>(account ())->server ()->mainConnection->
-            delFromAddressBook (m_contactSerial.latin1 (),
-                                contactId ().latin1 ());
+            delFromAddressBook (m_contactSerial.toLatin1 ().data (),
+                                contactId ().toLatin1 ().data ());
         deleteLater ();
     }
     else

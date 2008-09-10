@@ -52,8 +52,7 @@ class WlmAccount:public
 {
     Q_OBJECT
   public:
-    WlmAccount (WlmProtocol * parent, const QString & accountID,
-                const char *name = 0);
+    WlmAccount (WlmProtocol * parent, const QString & accountID);
      ~
     WlmAccount ();
         /**

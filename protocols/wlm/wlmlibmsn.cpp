@@ -43,7 +43,6 @@
 #include <QApplication>
 #include <QPushButton>
 #include <QList>
-#include <Q3PtrList>
 #include <QEventLoop>
 
 #include "kopetemessage.h"
@@ -91,7 +90,7 @@ Callbacks::closeSocket (int s)
         if (a->sock->socketDevice ()->socket () == s)
         {
             a->sock->close ();
-            socketList.remove (a);
+            socketList.removeAll (a);
             return;
         }
     }

@@ -48,9 +48,8 @@
 #include "wlmprotocol.h"
 #include "wlmchatsession.h"
 
-WlmAccount::WlmAccount (WlmProtocol * parent, const QString & accountID,
-                        const char *name):
-Kopete::PasswordedAccount (parent, accountID.lower (), name),
+WlmAccount::WlmAccount (WlmProtocol * parent, const QString & accountID):
+Kopete::PasswordedAccount (parent, accountID.toLower ()),
 m_server (NULL),
 m_transferManager (NULL),
 m_chatManager (NULL),
@@ -503,7 +502,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                     metacontact =
                         addContact (b->userName.c_str (),
                                     QString (b->friendlyName.c_str ()).
-                                    ascii (), 0L,
+                                    toAscii (), 0L,
                                     Kopete::Account::DontChangeKABC);
 
                 if (metacontact)
@@ -529,7 +528,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
             {
                 Kopete::Group * g =
                     Kopete::ContactList::self ()->
-                    findGroup (QString ((*i)->name.c_str ()).ascii ());
+                    findGroup (QString ((*i)->name.c_str ()).toAscii ());
                 if (g)
                     metacontact =
                         addContact (b->userName.c_str (),
