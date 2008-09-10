@@ -30,12 +30,8 @@
 WlmAddContactPage::WlmAddContactPage (QWidget * parent):
 AddContactPage (parent)
 {
-    kDebug (14210) << k_funcinfo;
-    (new QVBoxLayout (this));
-    QWidget *w = new QWidget (this);
-    layout ()->addWidget (w);
     m_wlmAddUI = new Ui::WlmAddUI ();
-    m_wlmAddUI->setupUi (w);
+    m_wlmAddUI->setupUi (this);
 }
 
 WlmAddContactPage::~WlmAddContactPage ()

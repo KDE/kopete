@@ -17,7 +17,6 @@
 #ifndef WLMCHATMANAGER_H
 #define WLMCHATMANAGER_H
 
-#include <Q3ValueList>
 #include <QMap>
 
 #include "kopetechatsession.h"

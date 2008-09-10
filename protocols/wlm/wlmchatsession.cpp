@@ -89,7 +89,7 @@ m_tries (0)
         setReady (true);
     }
 
-    m_actionNudge = new KAction (KIcon ("bell"), i18n ("Send Nudge"), this);
+    m_actionNudge = new KAction (KIcon ("preferences-desktop-notification-bell"), i18n ("Send Nudge"), this);
     actionCollection ()->addAction ("wlmSendNudge", m_actionNudge);
     connect (m_actionNudge, SIGNAL (triggered (bool)), this,
              SLOT (sendNudge ()));
