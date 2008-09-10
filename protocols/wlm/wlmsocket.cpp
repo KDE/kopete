@@ -14,10 +14,9 @@
     *************************************************************************
 */
 
-#include <QObject>
-#include <k3streamsocket.h>
-#include <k3socketdevice.h>
 #include "wlmsocket.h"
+
+#include <QObject>
 
 void
 WlmSocket::canWriteData ()

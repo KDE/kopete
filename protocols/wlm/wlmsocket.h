@@ -16,8 +16,11 @@
 
 #ifndef WLMSOCKET_H
 #define WLMSOCKET_H
+
 #include <QObject>
+
 #include <k3streamsocket.h>
+#include <k3socketdevice.h>
 
 #include <msn/msn.h>
 

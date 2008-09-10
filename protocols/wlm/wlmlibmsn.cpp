@@ -34,8 +34,6 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <fcntl.h>
-#include <k3streamsocket.h>
-#include <k3socketdevice.h>
 
 #include <msn/msn.h>
 #include <string>
@@ -61,8 +59,10 @@ void
 Callbacks::registerSocket (int s, int reading, int writing)
 {
     WlmSocket *a = 0;
-    for (a = socketList.first (); a; a = socketList.next ())
+    QListIterator<WlmSocket *> i(socketList);
+    while (i.hasNext())
     {
+        a = i.next();
         if (a->sock && a->sock->socketDevice ()->socket () == s)
         {
             a->sock->enableRead (false);
@@ -84,8 +84,10 @@ void
 Callbacks::closeSocket (int s)
 {
     WlmSocket *a;
-    for (a = socketList.first (); a; a = socketList.next ())
+    QListIterator<WlmSocket *> i(socketList);
+    while (i.hasNext())
     {
+        a = i.next();
         if (a->sock->socketDevice ()->socket () == s)
         {
             a->sock->close ();
@@ -99,8 +101,10 @@ void
 Callbacks::unregisterSocket (int s)
 {
     WlmSocket *a;
-    for (a = socketList.first (); a; a = socketList.next ())
+    QListIterator<WlmSocket *> i(socketList);
+    while (i.hasNext())
     {
+        a = i.next();
         if (a->sock->socketDevice ()->socket () == s)
         {
             a->sock->enableRead (false);

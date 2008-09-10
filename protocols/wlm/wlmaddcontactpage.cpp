@@ -31,7 +31,7 @@
 WlmAddContactPage::WlmAddContactPage (QWidget * parent, const char *name):
 AddContactPage (parent)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     (new QVBoxLayout (this));
     QWidget *w = new QWidget (this);
     layout ()->addWidget (w);

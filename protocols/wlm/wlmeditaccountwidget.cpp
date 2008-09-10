@@ -32,7 +32,7 @@ KopeteEditAccountWidget
 (account)
 {
     (new QVBoxLayout (this));
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     QWidget *
         w = new QWidget (this);
     layout ()->addWidget (w);

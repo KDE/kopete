@@ -18,8 +18,6 @@
 #define WLMLIBMSN_H
 
 #include <QObject>
-#include <Q3PtrList>
-#include <k3streamsocket.h>
 #include "wlmsocket.h"
 #include "kopetemessage.h"
 
@@ -269,7 +267,7 @@ class Callbacks:public QObject,
   public:
     WlmServer * m_server;
     unsigned int sessionID;
-    Q3PtrList <WlmSocket> socketList;
+    QList <WlmSocket*> socketList;
     MSN::NotificationServerConnection * mainConnection;
 
   signals:

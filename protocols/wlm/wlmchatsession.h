@@ -18,7 +18,6 @@
 #define WLMCHATSESSION_H
 
 #include <QLinkedList>
-#include <Q3PtrList>
 #include <QMap>
 #include <QTimer>
 
@@ -102,7 +101,7 @@ class KOPETE_EXPORT WlmChatSession: public Kopete::ChatSession
     KAction * m_actionNudge;
     KAction * m_actionFile;
     KActionMenu * m_actionInvite;
-    Q3PtrList < KAction > m_inviteactions;
+    QList < KAction* > m_inviteactions;
     QTimer * m_keepalivetimer;
 };
 

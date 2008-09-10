@@ -21,7 +21,6 @@
 #include <QToolTip>
 #include <QFile>
 #include <QIcon>
-#include <Q3PtrList>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -29,7 +28,6 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kmenu.h>
-#include <k3tempfile.h>
 #include <kmainwindow.h>
 #include <ktoolbar.h>
 #include <krun.h>
@@ -142,7 +140,7 @@ void
 WlmChatManager::leftConversation (MSN::SwitchboardServerConnection * conn,
                                   const QString & passport)
 {
-    kdDebug (14210) << k_funcinfo << " " << conn << endl;
+    kDebug (14210) << k_funcinfo << " " << conn;
     WlmChatSession *chat = chatSessions[conn];
 
     if (chat)
@@ -173,7 +171,7 @@ void
 WlmChatManager::createChat (MSN::SwitchboardServerConnection * conn)
 {
     Kopete::ContactPtrList chatmembers;
-    kdDebug (14210) << k_funcinfo << " " << conn << endl;
+    kDebug (14210) << k_funcinfo << " " << conn;
 
     if (chatSessions[conn])
         return;
@@ -271,7 +269,7 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
                                  const QString & from,
                                  const Kopete::Message & message)
 {
-    kdDebug (14210) << k_funcinfo << " " << conn << endl;
+    kDebug (14210) << k_funcinfo << " " << conn;
 
     createChat (conn);
 
@@ -297,7 +295,7 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
     else
     {
         kdWarning (14210) << k_funcinfo <<
-            "unable to look up contact for delivery" << endl;
+            "unable to look up contact for delivery";
     }
 }
 
@@ -338,7 +336,7 @@ WlmChatManager::gotNewSwitchboard (MSN::SwitchboardServerConnection * conn,
     conn->inviteUser (ctx->first);
     delete ctx;
     conn->auth.tag = NULL;
-    kdDebug (14210) << k_funcinfo << " " << conn << endl;
+    kDebug (14210) << k_funcinfo << " " << conn;
 }
 
 void

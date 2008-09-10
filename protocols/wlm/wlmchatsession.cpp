@@ -23,12 +23,8 @@
 #include <QIcon>
 #include <QTextCodec>
 #include <QRegExp>
-//Added by qt3to4:
-#include <Q3ValueList>
 #include <QDomDocument>
 #include <QFileInfo>
-#include <Q3DictIterator>
-#include <QLinkedList>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -39,7 +35,6 @@
 #include <kaction.h>
 #include <kactionmenu.h>
 #include <kactioncollection.h>
-#include <k3tempfile.h>
 #include <kmainwindow.h>
 #include <ktoolbar.h>
 #include <krun.h>
@@ -346,7 +341,7 @@ WlmChatSession::setReady (bool value)
         }
 
         // invite pending contacts
-        Q3ValueList < QString >::iterator it;
+        QLinkedList < QString >::iterator it;
         for (it = m_pendingInvitations.begin ();
              it != m_pendingInvitations.end (); ++it)
         {
@@ -357,7 +352,7 @@ WlmChatSession::setReady (bool value)
         m_pendingInvitations.clear ();
 
         // send queued messages first
-        Q3ValueList < Kopete::Message >::iterator it2;
+        QLinkedList < Kopete::Message >::iterator it2;
         for (it2 = m_messagesQueue.begin (); it2 != m_messagesQueue.end ();
              ++it2)
         {
@@ -385,7 +380,7 @@ WlmChatSession::setReady (bool value)
         m_messagesQueue.clear ();
 
         // send pending files
-        Q3ValueList < QString >::iterator it3;
+        QLinkedList < QString >::iterator it3;
         for (it3 = m_pendingFiles.begin (); it3 != m_pendingFiles.end ();
              ++it3)
         {

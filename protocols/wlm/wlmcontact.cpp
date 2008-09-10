@@ -38,8 +38,8 @@ WlmContact::WlmContact (Kopete::Account * _account,
                         Kopete::MetaContact * parent):
 Kopete::Contact (_account, uniqueName, parent)
 {
-    kdDebug (14210) << k_funcinfo << " uniqueName: " << uniqueName <<
-        ", displayName: " << displayName << endl;
+    kDebug (14210) << k_funcinfo << " uniqueName: " << uniqueName <<
+        ", displayName: " << displayName;
     m_msgManager = 0L;
     setFileCapable (true);
     setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
@@ -127,7 +127,7 @@ WlmContact::showContactSettings ()
 void
 WlmContact::sendMessage (Kopete::Message & message)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     // give it back to the manager to display
     manager ()->appendMessage (message);
     // tell the manager it was sent successfully

@@ -71,7 +71,7 @@ wlmConnecting (Kopete::OnlineStatus::Connecting, 2, this, 10,
 personalMessage ("personalMessage", i18n ("Personal Message")),
 currentSong ("currentSong", i18n ("Listening To"))
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
 
     s_protocol = this;
 
@@ -126,7 +126,7 @@ AddContactPage *
 WlmProtocol::createAddContactWidget (QWidget * parent,
                                      Kopete::Account * /* account */ )
 {
-    kdDebug (14210) << "Creating Add Contact Page" << endl;
+    kDebug (14210) << "Creating Add Contact Page";
     return new WlmAddContactPage (parent);
 }
 
@@ -134,7 +134,7 @@ KopeteEditAccountWidget *
 WlmProtocol::createEditAccountWidget (Kopete::Account * account,
                                       QWidget * parent)
 {
-    kdDebug (14210) << "Creating Edit Account Page" << endl;
+    kDebug (14210) << "Creating Edit Account Page";
     return new WlmEditAccountWidget (parent, account);
 }
 

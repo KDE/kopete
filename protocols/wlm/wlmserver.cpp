@@ -26,6 +26,7 @@ m_accountID (accountID), m_password (password), mainConnection (NULL)
 WlmServer::~WlmServer ()
 {
     WlmDisconnect ();
+    qDeleteAll(cb.socketList);
 }
 
 void
@@ -38,7 +39,6 @@ WlmServer::WlmConnect ()
                                                m_password.toLatin1 ().data (),
                                                cb);
     cb.mainConnection = mainConnection;
-    cb.socketList.setAutoDelete (true);
 
     if (mainConnection)
         mainConnection->connect ("messenger.hotmail.com", 1863);
@@ -59,8 +59,10 @@ WlmServer::WlmDisconnect ()
         }
     }
 
-    for (a = cb.socketList.first (); a; a = cb.socketList.next ())
+    QListIterator<WlmSocket *> i(cb.socketList);
+    while (i.hasNext())
     {
+        a = i.next();
         QObject::disconnect (a, 0, 0, 0);
         QObject::disconnect (a->sock, 0, 0, 0);
         a->sock->enableRead (false);

@@ -114,7 +114,7 @@ WlmAccount::createContact (const QString & contactId,
 void
 WlmAccount::setPersonalMessage (const QString & reason)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     myself ()->setProperty (WlmProtocol::protocol ()->personalMessage,
                             reason);
     if (isConnected ())
@@ -138,7 +138,7 @@ void
 WlmAccount::setOnlineStatus (const Kopete::OnlineStatus & status,
                              const Kopete::StatusMessage & reason)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
 
     setPersonalMessage (reason.message ());
 
@@ -166,7 +166,7 @@ WlmAccount::setStatusMessage (const Kopete::StatusMessage & statusMessage)
 void
 WlmAccount::connectWithPassword (const QString & pass)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     if (myself ()->onlineStatus () != WlmProtocol::protocol ()->wlmOffline)
         return;
 
@@ -261,7 +261,7 @@ WlmAccount::slotContactAddedNotifyDialogClosed (const QString & contactId)
 void
 WlmAccount::wrongPassword ()
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     password ().setWrong (true);
 }
 
@@ -275,7 +275,7 @@ void
 WlmAccount::gotDisplayPicture (const QString & contactId,
                                const QString & filename)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     Kopete::Contact * contact = contacts ()[contactId];
     if (contact)
     {
@@ -306,7 +306,7 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
 void
 WlmAccount::gotDisplayName (const QString & displayName)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     myself ()->setProperty (Kopete::Global::Properties::self ()->nickName (),
                             displayName);
 }
@@ -315,7 +315,7 @@ void
 WlmAccount::gotContactPersonalInfo (const MSN::Passport & fromPassport,
                                     const MSN::personalInfo & pInfo)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     Kopete::Contact * contact = contacts ()[fromPassport.c_str ()];
     if (contact)
     {
@@ -350,7 +350,7 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
                                   const unsigned int &clientID,
                                   const std::string & msnobject)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     Kopete::Contact * contact = contacts ()[buddy.c_str ()];
     if (contact)
     {
@@ -426,7 +426,7 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
 void
 WlmAccount::contactDisconnected (const MSN::Passport & buddy)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     Kopete::Contact * contact = contacts ()[buddy.c_str ()];
     if (contact)
     {
@@ -438,7 +438,7 @@ void
 WlmAccount::groupListReceivedFromServer (std::map < std::string,
                                          MSN::Group > &list)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     // add server groups on local list
     std::map < std::string, MSN::Group >::iterator it;
     for (it = list.begin (); it != list.end (); ++it)   // groups from server
@@ -478,7 +478,7 @@ void
 WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                                            MSN::Buddy * >&list)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     // local contacts which dont exist on server should be deleted
     std::map < std::string, MSN::Buddy * >::iterator it;
     for (it = list.begin (); it != list.end (); ++it)
@@ -515,8 +515,8 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                         if (contact)
                         {
                             contact->setContactSerial (b->properties["contactId"].c_str ());
-                            kdDebug (14210) << "ContactID: " << b->
-                                properties["contactId"].c_str () << endl;
+                            kDebug (14210) << "ContactID: " << b->
+                                properties["contactId"].c_str ();
                         }
                         metacontact->setDisplayNameSourceContact (c);
                         metacontact->setDisplayNameSource (Kopete::MetaContact::SourceContact);
@@ -556,8 +556,8 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                                                        properties
                                                        ["contactId"].
                                                        c_str ());
-                            kdDebug (14210) << "ContactID: " << b->
-                                properties["contactId"].c_str () << endl;
+                            kDebug (14210) << "ContactID: " << b->
+                                properties["contactId"].c_str ();
                         }
                         metacontact->setDisplayNameSourceContact (c);
                         metacontact->setDisplayNameSource (Kopete::MetaContact::SourceContact);
@@ -573,7 +573,7 @@ WlmAccount::slotGlobalIdentityChanged (Kopete::PropertyContainer *,
                                        const QString & key, const QVariant &,
                                        const QVariant & newValue)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     if (key == Kopete::Global::Properties::self ()->photo ().key ())
     {
         m_pictureFilename = newValue.toString ();
@@ -597,7 +597,7 @@ WlmAccount::slotGlobalIdentityChanged (Kopete::PropertyContainer *,
         entry.contact = myself();
         entry = Kopete::AvatarManager::self()->add(entry);
 
-        kdDebug (14140) << k_funcinfo << m_pictureFilename << endl;
+        kDebug (14140) << k_funcinfo << m_pictureFilename;
         if(!entry.path.isNull())
         {
             if(m_server)
@@ -627,7 +627,7 @@ WlmAccount::slotGlobalIdentityChanged (Kopete::PropertyContainer *,
 void
 WlmAccount::changedStatus (MSN::BuddyStatus & state)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     if (state == MSN::STATUS_AWAY)
         myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmAway);
     else if (state == MSN::STATUS_AVAILABLE)
@@ -647,7 +647,7 @@ WlmAccount::changedStatus (MSN::BuddyStatus & state)
 void
 WlmAccount::connectionFailed ()
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     Kopete::Utils::notifyCannotConnect (this);
 }
@@ -655,7 +655,7 @@ WlmAccount::connectionFailed ()
 void
 WlmAccount::connectionCompleted ()
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     if (identity ()->
         hasProperty (Kopete::Global::Properties::self ()->photo ().key()))
     {
@@ -784,7 +784,7 @@ WlmAccount::NotificationServerConnectionTerminated (MSN::
                                                     NotificationServerConnection
                                                     * conn)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
 
     if (myself ()->onlineStatus () == WlmProtocol::protocol ()->wlmConnecting
         && !password ().isWrong ())
@@ -807,7 +807,7 @@ WlmAccount::NotificationServerConnectionTerminated (MSN::
 void
 WlmAccount::disconnect ()
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     if (m_server)
         m_server->WlmDisconnect ();
 
@@ -843,7 +843,7 @@ WlmAccount::server ()
 void
 WlmAccount::slotGoOnline ()
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
 
     if (!isConnected ())
         connect (WlmProtocol::protocol ()->wlmOnline);
@@ -855,7 +855,7 @@ WlmAccount::slotGoOnline ()
 void
 WlmAccount::slotGoInvisible ()
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
 
     if (!isConnected ())
         connect (WlmProtocol::protocol ()->wlmInvisible);
@@ -867,7 +867,7 @@ WlmAccount::slotGoInvisible ()
 void
 WlmAccount::slotGoAway (const Kopete::OnlineStatus & status)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
 
     if (!isConnected ())
         connect (status);
@@ -894,7 +894,7 @@ WlmAccount::slotGoAway (const Kopete::OnlineStatus & status)
 void
 WlmAccount::slotGoOffline ()
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
 
     if (isConnected ()
         || myself ()->onlineStatus ().status () ==
@@ -906,7 +906,7 @@ WlmAccount::slotGoOffline ()
 void
 WlmAccount::slotShowVideo ()
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
 
     if (isConnected ())
         WlmWebcamDialog *wlmWebcamDialog = new WlmWebcamDialog (0, 0);
@@ -920,7 +920,7 @@ WlmAccount::updateContactStatus ()
 void
 WlmAccount::receivedOIMList (std::vector < MSN::eachOIM > &oimlist)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     std::vector < MSN::eachOIM >::iterator i = oimlist.begin ();
     for (; i != oimlist.end (); i++)
     {
@@ -932,7 +932,7 @@ WlmAccount::receivedOIMList (std::vector < MSN::eachOIM > &oimlist)
 void
 WlmAccount::receivedOIM (const QString & id, const QString & message)
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     QString contactId = m_oimList[id];
     Kopete::Contact * contact = contacts ()[contactId];
 

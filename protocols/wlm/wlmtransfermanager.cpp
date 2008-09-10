@@ -259,7 +259,7 @@ WlmTransferManager::gotFileTransferSucceeded (const unsigned int &sessionID)
 void
 WlmTransferManager::slotCanceled ()
 {
-    kdDebug (14210) << k_funcinfo << endl;
+    kDebug (14210) << k_funcinfo;
     Kopete::Transfer * ft = dynamic_cast < Kopete::Transfer * >(sender ());
     if (!ft)
         return;
