@@ -160,7 +160,7 @@ WlmChatManager::removeChatSession (QObject * obj)
     {
         if (it.value () == obj)
         {
-            delete it.value ();
+            it.value ()->deleteLater();
             chatSessions.remove (it.key ());
             return;
         }

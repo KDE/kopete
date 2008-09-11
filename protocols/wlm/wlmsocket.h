@@ -38,7 +38,6 @@ class WlmSocket:public QObject
      ~WlmSocket ();
     public slots:void incomingData ();
     void canWriteData ();
-    void connected1 ();
     void disconnected ();
 };
 #endif

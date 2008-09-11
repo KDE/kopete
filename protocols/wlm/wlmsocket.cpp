@@ -28,8 +28,7 @@ WlmSocket::canWriteData ()
     // Retrieve the connection associated with the
     // socket's file handle on which the event has
     // occurred.
-    c = mainConnection->connectionWithSocket (sock->socketDevice ()->
-                                              socket ());
+    c = mainConnection->connectionWithSocket ((void*)this);
 
     // if this is a libmsn socket
     if (c != NULL)
@@ -55,20 +54,6 @@ WlmSocket::disconnected ()
 }
 
 void
-WlmSocket::connected1 ()
-{
-/*   MSN::Connection *c;
-   // Retrieve the connection associated with the
-   // socket's file handle on which the event has
-   // occurred.
-   c = mainConnection->connectionWithSocket(sock->socketDevice()->socket());
-   c->socketConnectionCompleted();
-   QSocket::connect(sock, SIGNAL(readyRead()), this, SLOT(incomingData()));
-   QSocket::connect(sock, SIGNAL(readyWrite()), this, SLOT(canWriteData()));
-   */
-}
-
-void
 WlmSocket::incomingData ()
 {
     MSN::Connection * c;
@@ -79,8 +64,7 @@ WlmSocket::incomingData ()
     // Retrieve the connection associated with the
     // socket's file handle on which the event has
     // occurred.
-    c = mainConnection->connectionWithSocket (sock->socketDevice ()->
-                                              socket ());
+    c = mainConnection->connectionWithSocket ((void*)this);
 
     // if this is a libmsn socket
     if (c != NULL)
@@ -92,7 +76,6 @@ WlmSocket::incomingData ()
         // If this event is due to new data becoming available 
         c->dataArrivedOnSocket ();
     }
-    //handle_command(mainConnection);
 }
 
 WlmSocket::~WlmSocket ()

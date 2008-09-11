@@ -55,19 +55,13 @@
 #include "wlmaccount.h"
 
 void
-Callbacks::registerSocket (int s, int reading, int writing)
+Callbacks::registerSocket (void *s, int reading, int writing)
 {
-    WlmSocket *a = 0;
-    QListIterator<WlmSocket *> i(socketList);
-    while (i.hasNext())
+    WlmSocket *a = (WlmSocket*)s;
+    if (a && a->sock)
     {
-        a = i.next();
-        if (a->sock && a->sock->socketDevice ()->socket () == s)
-        {
-            a->sock->enableRead (false);
-            a->sock->enableWrite (false);
-            break;
-        }
+        a->sock->enableRead (false);
+        a->sock->enableWrite (false);
     }
 
     if (!a)
@@ -80,36 +74,24 @@ Callbacks::registerSocket (int s, int reading, int writing)
 }
 
 void
-Callbacks::closeSocket (int s)
+Callbacks::closeSocket (void *s)
 {
-    WlmSocket *a;
-    QListIterator<WlmSocket *> i(socketList);
-    while (i.hasNext())
+    WlmSocket *a = (WlmSocket*)s;
+    if (a && a->sock)
     {
-        a = i.next();
-        if (a->sock->socketDevice ()->socket () == s)
-        {
-            a->sock->close ();
-            socketList.removeAll (a);
-            return;
-        }
+        a->sock->close ();
+        socketList.removeAll (a);
     }
 }
 
 void
-Callbacks::unregisterSocket (int s)
+Callbacks::unregisterSocket (void *s)
 {
-    WlmSocket *a;
-    QListIterator<WlmSocket *> i(socketList);
-    while (i.hasNext())
+    WlmSocket *a = (WlmSocket*)s;
+    if (a && a->sock)
     {
-        a = i.next();
-        if (a->sock->socketDevice ()->socket () == s)
-        {
-            a->sock->enableRead (false);
-            a->sock->enableWrite (false);
-            return;
-        }
+        a->sock->enableRead (false);
+        a->sock->enableWrite (false);
     }
 }
 
@@ -122,8 +104,7 @@ Callbacks::gotFriendlyName (MSN::NotificationServerConnection * conn,
 }
 
 void
-Callbacks::fileTransferInviteResponse (MSN::FileTransferInvitation * inv,
-                                       unsigned int sessionID, bool response)
+Callbacks::fileTransferInviteResponse (unsigned int sessionID, bool response)
 {
     emit slotfileTransferInviteResponse (sessionID, response);
 }
@@ -556,19 +537,7 @@ Callbacks::gotNewEmailNotification (MSN::NotificationServerConnection * conn,
 }
 
 void
-Callbacks::gotFileTransferInvitation (MSN::Connection * conn,
-                                      MSN::Passport username,
-                                      std::string friendlyname,
-                                      MSN::FileTransferInvitation * inv)
-{
-//    printf ("Got file transfer invitation from %s (%s)\n",
-//            friendlyname.c_str (), username.c_str ());
-//    inv->acceptTransfer ("tmp.out");
-}
-
-void
-Callbacks::fileTransferProgress (MSN::FileTransferInvitation * inv,
-                                 unsigned int sessionID, std::string status,
+Callbacks::fileTransferProgress (unsigned int sessionID, std::string status,
                                  unsigned long long transferred,
                                  unsigned long long total)
 {
@@ -578,8 +547,7 @@ Callbacks::fileTransferProgress (MSN::FileTransferInvitation * inv,
 }
 
 void
-Callbacks::fileTransferFailed (MSN::FileTransferInvitation * inv,
-                               unsigned int sessionID, int error,
+Callbacks::fileTransferFailed (unsigned int sessionID, int error,
                                std::string message)
 {
     //printf ("File transfer failed: %s\n", message.c_str ());
@@ -587,8 +555,7 @@ Callbacks::fileTransferFailed (MSN::FileTransferInvitation * inv,
 }
 
 void
-Callbacks::fileTransferSucceeded (MSN::FileTransferInvitation * inv,
-                                  unsigned int sessionID)
+Callbacks::fileTransferSucceeded (unsigned int sessionID)
 {
     //printf ("File transfer successfully completed. session: %d\n", sessionID);
     emit gotFileTransferSucceeded (sessionID);
@@ -644,17 +611,15 @@ Callbacks::changedStatus (MSN::NotificationServerConnection * conn,
 */
 }
 
-int
+void *
 Callbacks::connectToServer (std::string hostname, int port, bool * connected)
 {
     WlmSocket *b = 0;
     WlmSocket *a = new WlmSocket (mainConnection);
 
     a->sock = new KNetwork::KStreamSocket ();
-    a->sock->setBlocking (true);
     a->sock->setTimeout (10000);
     a->sock->connect (hostname.c_str (), QString::number (port));
-    a->sock->setBlocking (false);
 
     QObject::connect (a->sock, SIGNAL (readyRead ()), a,
                       SLOT (incomingData ()));
@@ -664,7 +629,7 @@ Callbacks::connectToServer (std::string hostname, int port, bool * connected)
 
     *connected = false;
     socketList.append (a);
-    return a->sock->socketDevice ()->socket ();
+    return (void*)a;
 }
 
 int
@@ -706,6 +671,15 @@ void
 Callbacks::log (int i, const char *s)
 {
 
+}
+
+int
+Callbacks::getSocketFileDescriptor (void *sock)
+{
+    WlmSocket *a = (WlmSocket*)sock;
+    if(!a || !a->sock)
+        return -1;
+    return a->sock->socketDevice ()->socket();
 }
 
 std::string Callbacks::getSecureHTTPProxy ()

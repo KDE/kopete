@@ -35,13 +35,13 @@ class Callbacks:public QObject,
         myFriendlyName;
 
     virtual void
-    registerSocket (int s, int read, int write);
+    registerSocket (void *s, int read, int write);
 
     virtual void
-    unregisterSocket (int s);
+    unregisterSocket (void *s);
 
     virtual void
-    closeSocket (int s);
+    closeSocket (void *s);
 
     virtual void
     showError (MSN::Connection * conn, std::string msg);
@@ -129,8 +129,7 @@ class Callbacks:public QObject,
                                    std::string passport);
 
     virtual void
-    fileTransferInviteResponse (MSN::FileTransferInvitation * inv,
-                                unsigned int sessionID, bool response);
+    fileTransferInviteResponse (unsigned int sessionID, bool response);
 
     virtual void
     enabledContactOnAddressBook (MSN::NotificationServerConnection * conn,
@@ -198,24 +197,16 @@ class Callbacks:public QObject,
                              std::string from, std::string subject);
 
     virtual void
-    gotFileTransferInvitation (MSN::Connection * conn, MSN::Passport buddy,
-                               std::string friendlyname,
-                               MSN::FileTransferInvitation * inv);
-
-    virtual void
-    fileTransferProgress (MSN::FileTransferInvitation * inv,
-                          unsigned int sessionID, std::string status,
+    fileTransferProgress (unsigned int sessionID, std::string status,
                           long long unsigned transferred,
                           long long unsigned total);
 
     virtual void
-    fileTransferFailed (MSN::FileTransferInvitation * inv,
-                        unsigned int sessionID, int error,
+    fileTransferFailed (unsigned int sessionID, int error,
                         std::string message);
 
     virtual void
-    fileTransferSucceeded (MSN::FileTransferInvitation * inv,
-                           unsigned int sessionID);
+    fileTransferSucceeded (unsigned int sessionID);
 
     virtual void
     gotNewConnection (MSN::Connection * conn);
@@ -243,7 +234,7 @@ class Callbacks:public QObject,
     changedStatus (MSN::NotificationServerConnection * conn,
                    MSN::BuddyStatus state);
 
-    virtual int
+    virtual void * 
     connectToServer (std::string server, int port, bool * connected);
 
     virtual void
@@ -255,6 +246,8 @@ class Callbacks:public QObject,
 
     virtual int
     listenOnPort (int port);
+
+    int getSocketFileDescriptor (void *sock);
 
     virtual
         std::string
