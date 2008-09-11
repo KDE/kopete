@@ -21,9 +21,9 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QTabWidget" name="tabWidget3" >
+    <widget class="QTabWidget" name="mainTabWidget" >
      <property name="currentIndex" >
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_connection" >
       <attribute name="title" >
@@ -1229,7 +1229,7 @@ Only check this option if the normal connection does not work.</string>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>tabWidget3</tabstop>
+  <tabstop>mainTabWidget</tabstop>
   <tabstop>m_login</tabstop>
   <tabstop>m_autologin</tabstop>
   <tabstop>buttonRegister</tabstop>

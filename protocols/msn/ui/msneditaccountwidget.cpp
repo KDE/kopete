@@ -19,19 +19,13 @@
 #include "msneditaccountwidget.h"
 
 #include <qcheckbox.h>
-#include <q3groupbox.h>
 #include <qimage.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <q3listbox.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
 #include <qspinbox.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include <QVBoxLayout>
-#include <QLatin1String>
 
 #include <kfiledialog.h>
 #include <klocale.h>
@@ -75,6 +69,8 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 	d->ui = new Ui::MSNEditAccountUI();
 	d->ui->setupUi( this );
+
+	d->ui->mainTabWidget->setCurrentIndex(0);
 
 	// FIXME: actually, I don't know how to set fonts for qlistboxitem - Olivier
 	d->ui->label_font->hide();
