@@ -84,8 +84,6 @@ void
 WlmContact::serialize (QMap < QString, QString > &serializedData,
                        QMap < QString, QString > & /* addressBookData */ )
 {
-    QString value;
-    serializedData["contactType"] = value;
     serializedData["displayPicture"] =
         property (Kopete::Global::Properties::self ()->photo ()).value ().
         toString ();

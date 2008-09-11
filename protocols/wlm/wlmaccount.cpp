@@ -499,11 +499,20 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
             {
                 // only add users in forward list
                 if (b->lists & MSN::LST_AB)
+                {
                     metacontact =
                         addContact (b->userName.c_str (),
-                                    QString (b->friendlyName.c_str ()).
-                                    toAscii (), 0L,
+                                    QString(),
+                                    0L,
                                     Kopete::Account::DontChangeKABC);
+
+                    Kopete::Contact * newcontact = contacts ()[b->userName.c_str ()];
+                    if(!newcontact)
+                        return;
+
+                    newcontact->setProperty (Kopete::Global::Properties::self ()->
+                              nickName (), QString (b->friendlyName.c_str ()));
+                }
 
                 if (metacontact)
                 {
@@ -517,8 +526,6 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                             kDebug (14210) << "ContactID: " << b->
                                 properties["contactId"].c_str ();
                         }
-                        metacontact->setDisplayNameSourceContact (c);
-                        metacontact->setDisplayNameSource (Kopete::MetaContact::SourceContact);
                     }
                 }
                 continue;
@@ -532,25 +539,27 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                 if (g)
                     metacontact =
                         addContact (b->userName.c_str (),
-                                    QString (b->friendlyName.c_str ()).
-                                    toAscii ().data (), g,
+                                    QString(), g,
                                     Kopete::Account::DontChangeKABC);
                 else
                     metacontact =
                         addContact (b->userName.c_str (),
-                                    QString (b->friendlyName.c_str ()).
-                                    toAscii ().data (),
+                                    QString(),
                                     Kopete::Group::topLevel (),
                                     Kopete::Account::DontChangeKABC);
 
                 if (metacontact)
                 {
                     Kopete::Contact * c = contacts ()[(*it).first.c_str ()];
+
                     if (c)
                     {
                         WlmContact *contact = dynamic_cast <WlmContact *>(c);
                         if (contact)
                         {
+                            c->setProperty (Kopete::Global::Properties::self ()->
+                                nickName (), QString (b->friendlyName.c_str ()));
+
                             contact->setContactSerial (b->
                                                        properties
                                                        ["contactId"].
@@ -558,8 +567,6 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                             kDebug (14210) << "ContactID: " << b->
                                 properties["contactId"].c_str ();
                         }
-                        metacontact->setDisplayNameSourceContact (c);
-                        metacontact->setDisplayNameSource (Kopete::MetaContact::SourceContact);
                     }
                 }
             }
@@ -768,9 +775,17 @@ WlmAccount::gotAddedContactToAddressBook (const bool & added,
     if (added)
     {
         addContact (QString (passport.c_str ()),
-                    QString (displayName.c_str ()).toAscii ().data (),
+                    QString(),
                     Kopete::Group::topLevel (),
                     Kopete::Account::DontChangeKABC);
+
+        Kopete::Contact * newcontact = contacts ()[passport.c_str ()];
+        if(!newcontact)
+            return;
+
+        newcontact->setProperty (Kopete::Global::Properties::self ()->
+                  nickName (), QString (displayName.c_str ()));
+
     }
     else
     {
