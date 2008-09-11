@@ -90,7 +90,7 @@ public:
 	/**
 	 * @brief Adds incoming file transfer request to the Kopete::TransferManager.
 	 **/
-	int askIncomingTransfer( Contact *contact, const QString& file, const unsigned long size, const QString& description=QString(), QString internalId=QString(), const QPixmap &preview=QPixmap());
+	unsigned int askIncomingTransfer( Contact *contact, const QString& file, const unsigned long size, const QString& description=QString(), QString internalId=QString(), const QPixmap &preview=QPixmap());
 
 	/**
 	 * @brief Shows save file dialog and accepts/rejects incoming file transfer request.

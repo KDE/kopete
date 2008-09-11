@@ -218,7 +218,7 @@ Kopete::Transfer* Kopete::TransferManager::addTransfer(  Kopete::Contact *contac
 	return trans;
 }
 
-int Kopete::TransferManager::askIncomingTransfer( Kopete::Contact *contact, const QString& file, const unsigned long size, const QString& description, QString internalId, const QPixmap &preview )
+unsigned int Kopete::TransferManager::askIncomingTransfer( Kopete::Contact *contact, const QString& file, const unsigned long size, const QString& description, QString internalId, const QPixmap &preview )
 {
 	Kopete::ChatSession *cs = contact->manager( Kopete::Contact::CanCreate );
 	if ( !cs )
