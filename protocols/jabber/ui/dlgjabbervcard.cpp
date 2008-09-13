@@ -475,7 +475,13 @@ void dlgJabberVCard::slotGotVCard()
 
 void dlgJabberVCard::slotSelectPhoto()
 {
-	QString path = Kopete::UI::AvatarDialog::getAvatar(this, m_photoPath);
+	bool ok = false;
+	QString path = Kopete::UI::AvatarDialog::getAvatar(this, m_photoPath, &ok);
+	if ( !ok )
+	{
+		return;
+	}
+
 	QPixmap pix( path );
 
 	if( !pix.isNull() ) 
