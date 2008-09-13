@@ -4,7 +4,8 @@
     Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
     Copyright (c) 2002 by Chris TenHarmsel <tenharmsel@staticmethod.net>
     Copyright (c) 2004 by Matt Rogers <mattr@kde.org>
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2008 by Roman Jarosz <kedgedev@centrum.cz>
+    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -58,6 +59,7 @@
 #include "kopetetransfermanager.h"
 #include "kopeteversion.h"
 #include "oscarversionupdater.h"
+#include "filetransferhandler.h"
 
 class OscarAccountPrivate : public Client::CodecProvider
 {
@@ -77,7 +79,8 @@ public:
 	//contacts waiting on their group to be added
 	QMap<QString, QString> contactAddQueue;
 	QMap<QString, QString> contactChangeQueue;
-
+	QMap<uint, FileTransferHandler*> fileTransferHandlerMap;
+	
     OscarListNonServerContacts* olnscDialog;
 	
 	unsigned int versionUpdaterStamp;
@@ -141,10 +144,14 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	                  this, SLOT( userStoppedTyping( const QString& ) ) );
 	QObject::connect( d->engine, SIGNAL( iconNeedsUploading() ),
 	                  this, SLOT( slotSendBuddyIcon() ) );
-	QObject::connect( d->engine, SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ),
-	                  this, SLOT( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ) );
-	QObject::connect( d->engine, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
-	                  this, SLOT( getTransferManager( Kopete::TransferManager ** ) ) );
+	QObject::connect( d->engine, SIGNAL(incomingFileTransfer(FileTransferHandler*)),
+	                  this, SLOT(incomingFileTransfer(FileTransferHandler*)) );
+
+	Kopete::TransferManager *tm = Kopete::TransferManager::transferManager();
+	QObject::connect( tm, SIGNAL(refused(const Kopete::FileTransferInfo&)),
+	                  this, SLOT(fileTransferRefused(const Kopete::FileTransferInfo&)) );
+	QObject::connect( tm, SIGNAL(accepted(Kopete::Transfer*, const QString&)),
+	                  this, SLOT(fileTransferAccept(Kopete::Transfer*, const QString&)) );
 }
 
 OscarAccount::~OscarAccount()
@@ -427,22 +434,79 @@ void OscarAccount::nonServerAddContactDialogClosed()
     d->olnscDialog = 0L;
 }
 
-void OscarAccount::askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i )
+void OscarAccount::incomingFileTransfer( FileTransferHandler* ftHandler )
 {
-	QString sender = Oscar::normalize( c );
+	QString sender = Oscar::normalize( ftHandler->contact() );
 	if ( !contacts()[sender] )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "Adding '" << sender << "' as temporary contact";
 		addContact( sender, QString(), 0,  Kopete::Account::Temporary );
 	}
 	Kopete::Contact * ct = contacts()[ sender ];
-	Kopete::TransferManager::transferManager()->askIncomingTransfer( ct, f, s, d, i);
+
+	Kopete::TransferManager* tm = Kopete::TransferManager::transferManager();
+	uint ftId = tm->askIncomingTransfer( ct, ftHandler->fileName(), ftHandler->totalSize(), ftHandler->description(), ftHandler->internalId() );
+	QObject::connect( ftHandler, SIGNAL(destroyed(QObject*)), this, SLOT(fileTransferDestroyed(QObject*)) );
+	QObject::connect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
+
+	d->fileTransferHandlerMap.insert( ftId, ftHandler );
 }
 
-//this is because the filetransfer task can't call the function itself.
-void OscarAccount::getTransferManager( Kopete::TransferManager **t )
+void OscarAccount::fileTransferDestroyed( QObject* object )
 {
-	*t = Kopete::TransferManager::transferManager();
+	FileTransferHandler* ftHandler = qobject_cast<FileTransferHandler*>(object);
+	if ( !ftHandler )
+		return;
+
+	uint key = d->fileTransferHandlerMap.key( ftHandler, 0 );
+	if ( key > 0 )
+		d->fileTransferHandlerMap.remove( key );
+	else
+		kDebug(OSCAR_GEN_DEBUG) << "FileTransferHandler not in the map!!!";
+}
+
+void OscarAccount::fileTransferCancelled()
+{
+	FileTransferHandler* ftHandler = qobject_cast<FileTransferHandler*>(sender());
+	if ( !ftHandler )
+		return;
+
+	uint key = d->fileTransferHandlerMap.key( ftHandler, 0 );
+	if ( key == 0 )
+	{
+		kDebug(OSCAR_GEN_DEBUG) << "FileTransferHandler not in the map!!!";
+		return;
+	}
+
+	QObject::disconnect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
+	Kopete::TransferManager::transferManager()->cancelIncomingTransfer( key );
+}
+
+void OscarAccount::fileTransferRefused( const Kopete::FileTransferInfo& info )
+{
+	FileTransferHandler* ftHandler = d->fileTransferHandlerMap.value( info.transferId(), 0 );
+	if ( !ftHandler )
+		return;
+
+	QObject::disconnect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
+	ftHandler->cancel();
+}
+
+void OscarAccount::fileTransferAccept( Kopete::Transfer* transfer, const QString& fileName )
+{
+	FileTransferHandler* ftHandler = d->fileTransferHandlerMap.value( transfer->info().transferId(), 0 );
+	if ( !ftHandler )
+		return;
+
+	QObject::disconnect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
+
+	QObject::connect( transfer, SIGNAL(transferCanceled()), ftHandler, SLOT(cancel()) );
+	QObject::connect( ftHandler, SIGNAL(transferCancelled()), transfer, SLOT(slotCancelled()) );
+	QObject::connect( ftHandler, SIGNAL(transferError(int, const QString&)), transfer, SLOT(slotError(int, const QString&)) );
+	QObject::connect( ftHandler, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
+	QObject::connect( ftHandler, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
+
+	ftHandler->accept( fileName );
 }
 
 void OscarAccount::kopeteGroupRemoved( Kopete::Group* group )

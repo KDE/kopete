@@ -2,12 +2,12 @@
 	client.cpp - Kopete Oscar Protocol
 
 	Copyright (c) 2004-2005 Matt Rogers <mattr@kde.org>
-    Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
+    Copyright (c) 2008 Roman Jarosz <kedgedev@centrum.cz>
 
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
 	Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
-	Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+	Kopete (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
 	*************************************************************************
 	*                                                                       *
@@ -72,6 +72,7 @@
 #include "closeconnectiontask.h"
 #include "icqtlvinforequesttask.h"
 #include "icqtlvinfoupdatetask.h"
+#include "filetransferhandler.h"
 
 
 namespace
@@ -1742,16 +1743,17 @@ bool Client::hasIconConnection( ) const
 	return c;
 }
 
-void Client::sendFiles( const QString& contact, const QStringList& files, Kopete::Transfer *t )
+FileTransferHandler* Client::createFileTransfer( const QString& contact, const QStringList& files )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0004 );
 	if ( !c )
-		return;
+		return 0;
 
-	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), files, t );
+	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), files );
 	connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 	         this, SLOT( fileMessage( const Oscar::Message& ) ) );
-	ft->go( Task::AutoDelete );
+
+	return new FileTransferHandler(ft);
 }
 
 void Client::gotFileMessage( int type, const QString from, const QByteArray cookie, Buffer buf)
@@ -1773,14 +1775,11 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 	{
 		kDebug(14151) << "new request :)";
 		FileTransferTask *ft = new FileTransferTask( c->rootTask(), from, ourInfo().userId(), cookie, buf );
-		connect( ft, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
-				SIGNAL( getTransferManager( Kopete::TransferManager ** ) ) );
-		connect( ft, SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ),
-				SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ) );
 		connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 				this, SLOT( fileMessage( const Oscar::Message& ) ) );
 		ft->go( Task::AutoDelete );
-		return;
+		
+		emit incomingFileTransfer( new FileTransferHandler(ft) );
 	}
 
 	kDebug(14151) << "nobody wants it :(";

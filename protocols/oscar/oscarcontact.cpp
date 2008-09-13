@@ -2,7 +2,7 @@
   oscarcontact.cpp  -  Oscar Protocol Plugin
 
   Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-  Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -51,6 +51,7 @@
 #include "oscarprotocol.h"
 #include "oscarencodingselectiondialog.h"
 #include "oscarstatusmanager.h"
+#include "filetransferhandler.h"
 
 #include <assert.h>
 
@@ -357,8 +358,19 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 	}
 	kDebug(OSCAR_GEN_DEBUG) << "files: '" << files << "' ";
 
-	Kopete::Transfer *t = Kopete::TransferManager::transferManager()->addTransfer( this, files.at(0), QFile( files.at(0) ).size(), mName, Kopete::FileTransferInfo::Outgoing);
-	mAccount->engine()->sendFiles( mName, files, t );
+	FileTransferHandler *ftHandler = mAccount->engine()->createFileTransfer( mName, files );
+
+	Kopete::TransferManager *transferManager = Kopete::TransferManager::transferManager();
+	Kopete::Transfer *transfer = transferManager->addTransfer( this, files.at(0), ftHandler->totalSize(), mName, Kopete::FileTransferInfo::Outgoing);
+
+	connect( transfer, SIGNAL(transferCanceled()), ftHandler, SLOT(cancel()) );
+
+	connect( ftHandler, SIGNAL(transferCancelled()), transfer, SLOT(slotCancelled()) );
+	connect( ftHandler, SIGNAL(transferError(int, const QString&)), transfer, SLOT(slotError(int, const QString&)) );
+	connect( ftHandler, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
+	connect( ftHandler, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
+
+	ftHandler->send();
 }
 
 void OscarContact::setAwayMessage( const QString &message )

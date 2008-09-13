@@ -45,13 +45,9 @@ public slots:
 	void doCancel(); //one of the users is cancelling us
 
 signals:
-	void fileIncoming( const QString& fileName, unsigned int fileSize );
-	void fileReceived( const QString& fileName, unsigned int bytesSent );
-
-	void fileOutgoing( const QString& fileName, unsigned int fileSize );
-	void fileSent( const QString& fileName, unsigned int fileSize );
-
+	void fileStarted( const QString& fileName, unsigned int fileSize );
 	void fileProcessed( unsigned int bytesSent, unsigned int fileSize );
+	void fileFinished( const QString& fileName, unsigned int fileSize );
 
 	void transferCompleted();
 	void transferError( int errorCode, const QString &error );

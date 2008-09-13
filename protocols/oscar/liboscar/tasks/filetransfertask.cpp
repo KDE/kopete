@@ -4,8 +4,9 @@
 
     Copyright 2006 Chani Armitage <chanika@gmail.com>
     Copyright 2007 Matt Rogers <mattr@kde.org>
+    Copyright 2008 Roman Jarosz <kedgedev@centrum.cz>
 
-    Kopete ( c ) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete ( c ) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
     based on ssidata.h and ssidata.cpp ( c ) 2002 Tom Linsky <twl6@po.cwru.edu>
 
@@ -30,6 +31,7 @@
 
 #include <ksocketfactory.h>
 #include <krandom.h>
+#include <kio/global.h>
 
 #include <klocale.h>
 #include <kdebug.h>
@@ -40,8 +42,6 @@
 #include "connection.h"
 #include "oscarsettings.h"
 #include "oftmetatransfer.h"
-
-#include "kopetetransfermanager.h"
 
 //receive
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
@@ -58,8 +58,7 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
 
 //send
 FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
-                                    const QString& self, const QStringList& files,
-                                    Kopete::Transfer *transfer )
+                                    const QString& self, const QStringList& files )
 :Task( parent ), m_contactName( contact ),
  m_selfName( self ), m_timer( this )
 {
@@ -86,18 +85,6 @@ FileTransferTask::FileTransferTask( Task* parent, const QString& contact,
 	cookie = KRandom::random();
 	b.addDWord( cookie );
 	m_oftRendezvous.cookie = b.buffer();
-
-	//hook up ui cancel
-	connect( transfer, SIGNAL(result(KJob*)), this, SLOT(transferResult(KJob*)) );
-#ifdef __GNUC__
-#warning Remove connection below when transferResult correctly sends cancel from cancel button. (Kedge)
-#endif
-	connect( transfer, SIGNAL(finished(KJob*)), this, SLOT(doCancel()) );
-	//hook up our ui signals
-	connect( this, SIGNAL(transferCancelled()), transfer, SLOT(slotCancelled()) );
-	connect( this, SIGNAL(transferError(int, const QString&)), transfer, SLOT(slotError(int, const QString&)) );
-	connect( this, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
-	connect( this, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
 }
 
 void FileTransferTask::init( Action act )
@@ -109,6 +96,7 @@ void FileTransferTask::init( Action act )
 	m_proxy = false;
 	m_proxyRequester = false;
 	m_state = Default;
+	m_fileFinishedBytes = 0;
 }
 
 FileTransferTask::~FileTransferTask()
@@ -128,20 +116,36 @@ FileTransferTask::~FileTransferTask()
 	kDebug(OSCAR_RAW_DEBUG) << "done";
 }
 
+QString FileTransferTask::internalId() const
+{
+	return QString( m_oftRendezvous.cookie.toHex() );
+}
+
+QString FileTransferTask::contactName() const
+{
+	return m_contactName;
+}
+
+QString FileTransferTask::fileName() const
+{
+	return m_oftRendezvous.fileName;
+}
+
+Oscar::DWORD FileTransferTask::totalSize() const
+{
+	return m_oftRendezvous.totalSize;
+}
+
+QString FileTransferTask::description() const
+{
+	return m_desc;
+}
+
 void FileTransferTask::onGo()
 {
 	if ( m_action == Receive )
-	{
-		//we have to send a signal because liboscar isn't supposed to know about OscarContact.
-
-		Kopete::TransferManager *tm = 0;
-		emit getTransferManager( &tm );
-		connect( tm, SIGNAL(refused(const Kopete::FileTransferInfo&)), this, SLOT(doCancel(const Kopete::FileTransferInfo&)) );
-		connect( tm, SIGNAL(accepted(Kopete::Transfer*, const QString&)), this, SLOT(doAccept(Kopete::Transfer*, const QString&)) );
-
-		emit askIncoming( m_contactName, m_oftRendezvous.fileName, m_oftRendezvous.totalSize, m_desc, m_oftRendezvous.cookie.toHex() );
 		return;
-	}
+
 	//else, send
 	if ( m_contactName.isEmpty() )
 	{
@@ -451,8 +455,13 @@ void FileTransferTask::doOft()
 
 	m_connection = 0; //it's not ours any more
 	//might be a good idea to hook up some signals&slots.
+	connect( oft, SIGNAL(fileStarted(const QString&, unsigned int)),
+	         this, SIGNAL(nextFile(const QString&, unsigned int)) );
 	connect( oft, SIGNAL(fileProcessed(unsigned int, unsigned int)),
-	         this, SIGNAL(transferProcessed(unsigned int)) );
+	         this, SLOT(fileProcessedOft(unsigned int, unsigned int)) );
+	connect( oft, SIGNAL(fileFinished(const QString&, unsigned int)),
+	         this, SLOT(fileFinishedOft(const QString&, unsigned int)) );
+
 	connect( oft, SIGNAL(transferError(int, const QString&)),
 	         this, SLOT(errorOft(int, const QString&)) );
 	connect( oft, SIGNAL(transferCompleted()), this, SLOT(doneOft()) );
@@ -460,6 +469,18 @@ void FileTransferTask::doOft()
 	//now we can finally send the first OFT packet.
 	if ( m_action == Send )
 		oft->start();
+}
+
+void FileTransferTask::fileProcessedOft( unsigned int bytesSent, unsigned int fileSize )
+{
+	unsigned int bytesSentTotal = m_fileFinishedBytes + bytesSent;
+	emit fileProcessed( bytesSent, fileSize );
+	emit transferProcessed( bytesSentTotal );
+}
+
+void FileTransferTask::fileFinishedOft( const QString& fileName, unsigned int fileSize )
+{
+	m_fileFinishedBytes += fileSize;
 }
 
 void FileTransferTask::errorOft( int errorCode, const QString &error )
@@ -472,12 +493,6 @@ void FileTransferTask::doneOft()
 {
 	emit transferFinished();
 	setSuccess( true );
-}
-
-void FileTransferTask::transferResult( KJob* job )
-{
-	if( job->error() == KIO::ERR_USER_CANCELED )
-		doCancel();
 }
 
 void FileTransferTask::socketError( QAbstractSocket::SocketError e )
@@ -584,39 +599,8 @@ void FileTransferTask::doCancel()
 }
 
 
-void FileTransferTask::doCancel( const Kopete::FileTransferInfo &info )
+void FileTransferTask::doAccept( const QString & localName )
 {
-	kDebug(OSCAR_RAW_DEBUG) ;
-	//check that it's really for us
-	if ( info.internalId() == QString( m_oftRendezvous.cookie.toHex() ) )
-		doCancel();
-	else
-		kDebug(OSCAR_RAW_DEBUG) << "ID mismatch";
-}
-
-void FileTransferTask::doAccept( Kopete::Transfer *t, const QString & localName )
-{
-	kDebug(OSCAR_RAW_DEBUG) ;
-	//check that it's really for us
-	if ( t->info().internalId() != QString( m_oftRendezvous.cookie.toHex() ) )
-	{
-		kDebug(OSCAR_RAW_DEBUG) << "ID mismatch";
-		return;
-	}
-
-	//TODO: we should unhook the old transfermanager signals now
-	//hook up the ones for the transfer
-	connect( t, SIGNAL(result(KJob*)), this, SLOT(transferResult(KJob*)) );
-#ifdef __GNUC__
-#warning Remove connection below when transferResult correctly sends cancel from cancel button. (Kedge)
-#endif
-	connect( t, SIGNAL(finished(KJob*)), this, SLOT(doCancel()) );
-	connect( this, SIGNAL(transferCancelled()), t, SLOT(slotCancelled()) );
-	connect( this, SIGNAL(transferError(int, const QString&)), t, SLOT(slotError(int, const QString&)) );
-	connect( this, SIGNAL(transferProcessed(unsigned int)), t, SLOT(slotProcessed(unsigned int)) );
-	connect( this, SIGNAL(transferFinished()), t, SLOT(slotComplete()) );
-	//and save the chosen filename
-
 	/*FIXME: Should we prompt for a file name if we receive one file or only for a directory like the official
 	         icq and aim clients (if we have multiple files we don't know their names at this stage) */
 #ifdef __GNUC__
