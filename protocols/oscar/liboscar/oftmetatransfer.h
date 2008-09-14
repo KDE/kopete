@@ -31,8 +31,11 @@ class OftMetaTransfer : public QObject
 {
 Q_OBJECT
 public:
-	/** Receive constructor */
-	OftMetaTransfer( const QByteArray& cookie, const QString& dir, QTcpSocket *socket );
+	/** Receive constructor
+	 * @param files list of file names with path.
+	 * @param dir default directory if @p files list isn't big enough.
+	 */
+	OftMetaTransfer( const QByteArray& cookie, const QStringList &files, const QString& dir, QTcpSocket *socket );
 
 	/** Send constructor */
 	OftMetaTransfer( const QByteArray& cookie, const QStringList& files, QTcpSocket *socket );

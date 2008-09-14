@@ -445,7 +445,8 @@ void OscarAccount::incomingFileTransfer( FileTransferHandler* ftHandler )
 	Kopete::Contact * ct = contacts()[ sender ];
 
 	Kopete::TransferManager* tm = Kopete::TransferManager::transferManager();
-	uint ftId = tm->askIncomingTransfer( ct, ftHandler->fileName(), ftHandler->totalSize(), ftHandler->description(), ftHandler->internalId() );
+	uint ftId = tm->askIncomingTransfer( ct, ftHandler->fileName(), ftHandler->totalSize(), ftHandler->description(),
+	                                     ftHandler->internalId(), QPixmap(), ( ftHandler->fileCount() > 1 ) );
 	QObject::connect( ftHandler, SIGNAL(destroyed(QObject*)), this, SLOT(fileTransferDestroyed(QObject*)) );
 	QObject::connect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
 
@@ -506,7 +507,10 @@ void OscarAccount::fileTransferAccept( Kopete::Transfer* transfer, const QString
 	QObject::connect( ftHandler, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
 	QObject::connect( ftHandler, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
 
-	ftHandler->accept( fileName );
+	if ( transfer->info().saveToDirectory() )
+		ftHandler->save( fileName );
+	else
+		ftHandler->saveAs( QStringList() << fileName );
 }
 
 void OscarAccount::kopeteGroupRemoved( Kopete::Group* group )

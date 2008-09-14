@@ -44,7 +44,7 @@ public:
 	enum KopeteTransferDirection { Incoming, Outgoing };
 
 	FileTransferInfo();
-	FileTransferInfo( Contact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString(), const QPixmap &preview=QPixmap() );
+	FileTransferInfo( Contact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString(), const QPixmap &preview=QPixmap(), bool saveToDirectory = false );
 	~FileTransferInfo() {}
 
 	bool isValid() const { return (mContact && mId > 0); }
@@ -56,6 +56,7 @@ public:
 	QString internalId() const { return m_intId; }
 	KopeteTransferDirection direction() const { return mDirection; }
 	QPixmap preview() const { return mPreview; }
+	bool saveToDirectory() const { return mSaveToDirectory; }
 
 private:
 	unsigned long mSize;
@@ -66,6 +67,7 @@ private:
 	QString m_intId;
 	KopeteTransferDirection mDirection;
 	QPixmap mPreview;
+	bool mSaveToDirectory;
 };
 
 /**
@@ -90,7 +92,7 @@ public:
 	/**
 	 * @brief Adds incoming file transfer request to the Kopete::TransferManager.
 	 **/
-	unsigned int askIncomingTransfer( Contact *contact, const QString& file, const unsigned long size, const QString& description=QString(), QString internalId=QString(), const QPixmap &preview=QPixmap());
+	unsigned int askIncomingTransfer( Contact *contact, const QString& file, const unsigned long size, const QString& description=QString(), QString internalId=QString(), const QPixmap &preview=QPixmap(), bool saveToDirectory = false );
 
 	/**
 	 * @brief Shows save file dialog and accepts/rejects incoming file transfer request.
@@ -146,6 +148,9 @@ private:
 	TransferManager( QObject *parent );
 
 	void removeTransfer( unsigned int id );
+
+	KUrl getSaveFile( const KUrl& startDir ) const;
+	KUrl getSaveDir( const KUrl& startDir ) const;
 
 	QMap<unsigned int, Transfer *> mTransfersMap;
 	QMap<unsigned int, FileTransferInfo> mTransferRequestInfoMap;

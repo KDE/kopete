@@ -41,9 +41,10 @@ Kopete::FileTransferInfo::FileTransferInfo()
 	mId = 0;
 	mContact = 0;
 	mSize = 0;
+	mSaveToDirectory = false;
 }
 
-Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QString& file, const unsigned long size, const QString &recipient, KopeteTransferDirection di, const unsigned int id, QString internalId, const QPixmap &preview)
+Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QString& file, const unsigned long size, const QString &recipient, KopeteTransferDirection di, const unsigned int id, QString internalId, const QPixmap &preview, bool saveToDirectory )
 {
 	mContact = contact;
 	mFile = file;
@@ -53,6 +54,7 @@ Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QSt
 	m_intId= internalId;
 	mDirection= di;
 	mPreview = preview;
+	mSaveToDirectory = saveToDirectory;
 }
 
 /***************************
@@ -218,7 +220,7 @@ Kopete::Transfer* Kopete::TransferManager::addTransfer(  Kopete::Contact *contac
 	return trans;
 }
 
-unsigned int Kopete::TransferManager::askIncomingTransfer( Kopete::Contact *contact, const QString& file, const unsigned long size, const QString& description, QString internalId, const QPixmap &preview )
+unsigned int Kopete::TransferManager::askIncomingTransfer( Kopete::Contact *contact, const QString& file, const unsigned long size, const QString& description, QString internalId, const QPixmap &preview, bool saveToDirectory )
 {
 	Kopete::ChatSession *cs = contact->manager( Kopete::Contact::CanCreate );
 	if ( !cs )
@@ -234,7 +236,7 @@ unsigned int Kopete::TransferManager::askIncomingTransfer( Kopete::Contact *cont
 	msg.setFileSize( size );
 	msg.setFilePreview( preview );
 	
-	Kopete::FileTransferInfo info( contact, file, size, dn, Kopete::FileTransferInfo::Incoming, msg.id(), internalId, preview );
+	Kopete::FileTransferInfo info( contact, file, size, dn, Kopete::FileTransferInfo::Incoming, msg.id(), internalId, preview, saveToDirectory );
 	mTransferRequestInfoMap.insert( msg.id(), info );
 	
 	cs->appendMessage( msg );
@@ -252,34 +254,20 @@ void Kopete::TransferManager::saveIncomingTransfer( unsigned int id )
 	const QString defaultPath = cg.readEntry( "defaultPath", QDir::homePath() );
 	KUrl url = defaultPath + QLatin1String( "/" ) + info.file();
 
-	for ( ;; )
-	{
-		url = KFileDialog::getSaveUrl( url, QLatin1String( "*" ), 0, i18n( "File Transfer" ) );
-		if ( !url.isValid() )
-		{
-			emit askIncomingDone( id );
-			emit refused( info );
-			mTransferRequestInfoMap.remove( id );
-			return;
-		}
-		
-		if ( !url.isLocalFile() )
-		{
-			KMessageBox::queuedMessageBox( 0, KMessageBox::Sorry, i18n( "You must provide a valid local filename" ) );
-			continue;
-		}
+	if ( info.saveToDirectory() )
+		url = getSaveDir( url );
+	else
+		url = getSaveFile( url );
 
-		if ( QFile::exists( url.path() ) )
-		{
-			int ret = KMessageBox::warningContinueCancel( 0, i18n( "The file '%1' already exists.\nDo you want to overwrite it ?", url.path() ),
-			                                              i18n( "Overwrite File" ), KStandardGuiItem::save() );
-			if ( ret == KMessageBox::Cancel )
-				continue;
-		}
-		break;
+	if ( !url.isValid() )
+	{
+		emit askIncomingDone( id );
+		emit refused( info );
+		mTransferRequestInfoMap.remove( id );
+		return;
 	}
 
-	const QString directory = url.directory();
+	const QString directory = ( info.saveToDirectory() ) ? url.path() : url.directory();
 	if( !directory.isEmpty() )
 		cg.writeEntry( "defaultPath", directory );
 
@@ -367,6 +355,86 @@ void Kopete::TransferManager::removeTransfer( unsigned int id )
 {
 	mTransfersMap.remove(id);
 	//we don't need to delete the job, the job get deleted itself
+}
+
+KUrl Kopete::TransferManager::getSaveFile( const KUrl& startDir ) const
+{
+	KUrl url = startDir;
+	for ( ;; )
+	{
+		url = KFileDialog::getSaveUrl( url, QLatin1String( "*" ), 0, i18n( "File Transfer" ) );
+		if ( !url.isValid() )
+			return url;
+
+		if ( !url.isLocalFile() )
+		{
+			KMessageBox::messageBox( 0, KMessageBox::Sorry, i18n( "You must provide a valid local filename" ) );
+			continue;
+		}
+
+		QFileInfo fileInfo( url.path() );
+		if ( fileInfo.exists() )
+		{
+			if ( !fileInfo.isWritable() )
+			{
+				KMessageBox::messageBox( 0, KMessageBox::Sorry, i18n( "You do not have permission to write to selected file" ) );
+				continue;
+			}
+
+			int ret = KMessageBox::warningContinueCancel( 0, i18n( "The file '%1' already exists.\nDo you want to overwrite it ?", url.path() ),
+			                                              i18n( "Overwrite File" ), KStandardGuiItem::save() );
+			if ( ret == KMessageBox::Cancel )
+				continue;
+		}
+		else
+		{
+			QFileInfo dirInfo( url.directory() );
+			if ( !dirInfo.isDir() || !dirInfo.exists() )
+			{
+				KMessageBox::messageBox( 0, KMessageBox::Sorry, i18n( "The directory %1 does not exist", dirInfo.fileName() ) );
+				continue;
+			}
+			else if ( !dirInfo.isWritable() )
+			{
+				KMessageBox::messageBox( 0, KMessageBox::Sorry, i18n( "You do not have permission to write to selected directory" ) );
+				continue;
+			}
+			
+		}
+		break;
+	}
+	return url;
+}
+
+KUrl Kopete::TransferManager::getSaveDir( const KUrl& startDir ) const
+{
+	KUrl url = startDir;
+	for ( ;; )
+	{
+		url = KFileDialog::getExistingDirectoryUrl( url, 0, i18n( "File Transfer" ) );
+		if ( !url.isValid() )
+			return url;
+
+		if ( !url.isLocalFile() )
+		{
+			KMessageBox::messageBox( 0, KMessageBox::Sorry, i18n( "You must provide a valid local directory" ) );
+			continue;
+		}
+
+		QFileInfo dirInfo( url.path() );
+		if ( !dirInfo.isDir() || !dirInfo.exists() )
+		{
+			KMessageBox::messageBox( 0, KMessageBox::Sorry, i18n( "The directory %1 does not exist", dirInfo.filePath() ) );
+			continue;
+		}
+		else if ( !dirInfo.isWritable() )
+		{
+			KMessageBox::messageBox( 0, KMessageBox::Sorry, i18n( "You do not have permission to write to selected directory" ) );
+			continue;
+		}
+		break;
+	}
+	return url;
 }
 
 #include "kopetetransfermanager.moc"

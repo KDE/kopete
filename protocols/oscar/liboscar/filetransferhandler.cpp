@@ -51,6 +51,11 @@ QString FileTransferHandler::fileName() const
 	return mFileTransferTask->fileName();
 }
 
+Oscar::WORD FileTransferHandler::fileCount() const
+{
+	return mFileTransferTask->fileCount();
+}
+
 Oscar::DWORD FileTransferHandler::totalSize() const
 {
 	return mFileTransferTask->totalSize();
@@ -66,9 +71,14 @@ void FileTransferHandler::cancel()
 	mFileTransferTask->doCancel();
 }
 
-void FileTransferHandler::accept( const QString &path )
+void FileTransferHandler::save( const QString &directory )
 {
-	mFileTransferTask->doAccept( path );
+	mFileTransferTask->doAccept( directory );
+}
+
+void FileTransferHandler::saveAs( const QStringList &fileNames )
+{
+	mFileTransferTask->doAccept( fileNames );
 }
 
 #include "filetransferhandler.moc"

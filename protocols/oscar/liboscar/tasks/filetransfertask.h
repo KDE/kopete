@@ -52,6 +52,7 @@ public:
 	QString internalId() const;
 	QString contactName() const;
 	QString fileName() const;
+	Oscar::WORD fileCount() const;
 	Oscar::DWORD totalSize() const;
 	QString description() const;
 
@@ -63,7 +64,8 @@ public:
 
 public slots:
 	void doCancel();
-	void doAccept( const QString &fileName );
+	void doAccept( const QString &localDirecotry );
+	void doAccept( const QStringList &localFileNames );
 	void timeout();
 
 signals:

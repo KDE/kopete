@@ -29,7 +29,7 @@
 
 #define BUFFER_SIZE 32768
 
-OftMetaTransfer::OftMetaTransfer( const QByteArray& cookie, const QString &dir, QTcpSocket *socket )
+OftMetaTransfer::OftMetaTransfer( const QByteArray& cookie, const QStringList &files, const QString &dir, QTcpSocket *socket )
 : m_file( this ), m_socket( socket ), m_state( SetupReceive )
 {
 	//filetransfertask is responsible for hooking us up to the ui
@@ -40,6 +40,7 @@ OftMetaTransfer::OftMetaTransfer( const QByteArray& cookie, const QString &dir, 
 
 	initOft();
 	m_oft.cookie = cookie;
+	m_files = files;
 	m_dir = dir;
 }
 
@@ -224,7 +225,12 @@ void OftMetaTransfer::handleReceiveSetup( const OFT &oft )
 
 	emit fileStarted( m_oft.fileName, m_oft.fileSize );
 
-	m_file.setFileName( m_dir + oft.fileName );
+	int currentFileIndex = oft.fileCount - oft.filesLeft;
+	if ( currentFileIndex < m_files.count() )
+		m_file.setFileName( m_files.at( currentFileIndex ) );
+	else
+		m_file.setFileName( m_dir + oft.fileName );
+
 	if ( m_file.size() > 0 && m_file.size() <= oft.fileSize )
 	{
 		m_oft.sentChecksum = fileChecksum( m_file );

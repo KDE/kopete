@@ -34,12 +34,14 @@ public:
 	QString internalId() const;
 	QString contact() const;
 	QString fileName() const;
+	Oscar::WORD fileCount() const;
 	Oscar::DWORD totalSize() const;
 	QString description() const;
 
 public Q_SLOTS:
 	void cancel();
-	void accept( const QString &path );
+	void save( const QString &directory );
+	void saveAs( const QStringList &fileNames );
 
 Q_SIGNALS:
 	void transferCancelled();

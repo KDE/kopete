@@ -131,6 +131,11 @@ QString FileTransferTask::fileName() const
 	return m_oftRendezvous.fileName;
 }
 
+Oscar::WORD FileTransferTask::fileCount() const
+{
+	return m_oftRendezvous.fileCount;
+}
+
 Oscar::DWORD FileTransferTask::totalSize() const
 {
 	return m_oftRendezvous.totalSize;
@@ -449,7 +454,7 @@ void FileTransferTask::doOft()
 	OftMetaTransfer *oft;
 
 	if ( m_action == Receive )
-		oft = new OftMetaTransfer( m_oftRendezvous.cookie, m_oftRendezvous.dir, m_connection );
+		oft = new OftMetaTransfer( m_oftRendezvous.cookie, m_oftRendezvous.files, m_oftRendezvous.dir, m_connection );
 	else
 		oft = new OftMetaTransfer( m_oftRendezvous.cookie, m_oftRendezvous.files, m_connection );
 
@@ -478,12 +483,12 @@ void FileTransferTask::fileProcessedOft( unsigned int bytesSent, unsigned int fi
 	emit transferProcessed( bytesSentTotal );
 }
 
-void FileTransferTask::fileFinishedOft( const QString& fileName, unsigned int fileSize )
+void FileTransferTask::fileFinishedOft( const QString& /*fileName*/, unsigned int fileSize )
 {
 	m_fileFinishedBytes += fileSize;
 }
 
-void FileTransferTask::errorOft( int errorCode, const QString &error )
+void FileTransferTask::errorOft( int /*errorCode*/, const QString &error )
 {
 	emit transferError( KIO::ERR_USER_CANCELED, error );
 	doCancel();
@@ -599,20 +604,50 @@ void FileTransferTask::doCancel()
 }
 
 
-void FileTransferTask::doAccept( const QString & localName )
+void FileTransferTask::doAccept( const QString &localDirecotry )
 {
-	/*FIXME: Should we prompt for a file name if we receive one file or only for a directory like the official
-	         icq and aim clients (if we have multiple files we don't know their names at this stage) */
-#ifdef __GNUC__
-#warning Hack, this will be removed as soon as I add a function into Kopete::TransferManager that will prompt for a directory (Kedge)
-#endif
-	QFileInfo fileInfo( localName );
-	m_oftRendezvous.dir = fileInfo.absolutePath() + '/';
+	kDebug(OSCAR_RAW_DEBUG) << "directory: " << localDirecotry;
+	m_oftRendezvous.files.clear();
+	m_oftRendezvous.dir = localDirecotry + '/';
 
-	if( validDir( m_oftRendezvous.dir ) )
+	if ( validDir( m_oftRendezvous.dir ) )
 		doConnect();
 	else
 		doCancel();
+}
+
+void FileTransferTask::doAccept( const QStringList &localFileNames )
+{
+	kDebug(OSCAR_RAW_DEBUG) << "file names: " << localFileNames;
+	if ( localFileNames.isEmpty() )
+	{
+		doCancel();
+		return;
+	}
+
+	m_oftRendezvous.files = localFileNames;
+
+	// Set default path from first file name in case we get more
+	// files then we have in localFileNames.
+	QFileInfo fileInfo( m_oftRendezvous.files.first() );
+	m_oftRendezvous.dir = fileInfo.absolutePath() + '/';
+
+	for ( int i = 0; i < m_oftRendezvous.files.count(); ++i )
+	{
+		if ( !validFile( m_oftRendezvous.files.at(i) ) )
+		{
+			doCancel();
+			return;
+		}
+	}
+
+	if ( m_oftRendezvous.files.count() < m_oftRendezvous.fileCount && !validDir( m_oftRendezvous.dir ) )
+	{
+		doCancel();
+		return;
+	}
+
+	doConnect();
 }
 
 void FileTransferTask::doConnect()
