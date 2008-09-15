@@ -19,9 +19,7 @@
 
 #ifndef GWSEARCH_H
 #define GWSEARCH_H
-#include <q3listview.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 #include "ui_gwcontactsearch.h"
 
 
@@ -42,7 +40,7 @@ public:
 	GroupWiseContactSearch( GroupWiseAccount * account, QAbstractItemView::SelectionMode mode, bool onlineOnly, 
 			QWidget *parent = 0 );
 	virtual ~GroupWiseContactSearch();
-	Q3ValueList< GroupWise::ContactDetails > selectedResults();
+	QList< GroupWise::ContactDetails > selectedResults();
 signals:
 	void selectionValidates( bool );
 protected:
@@ -59,6 +57,7 @@ private:
 	GroupWiseContactSearchModel * m_model;
 	GroupWiseContactSearchSortProxyModel * m_proxyModel;
 	GroupWiseAccount * m_account;
+	QList< GroupWise::ContactDetails > m_lastSearchResults;
 };
 
 #endif

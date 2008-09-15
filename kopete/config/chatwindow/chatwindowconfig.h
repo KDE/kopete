@@ -52,19 +52,16 @@ public:
 private slots:
 	//----- Style TAB ---------------------
 	void slotInstallChatStyle();
+	int installChatStyle(const KUrl &styleToInstall);
 	void slotDeleteChatStyle();
-	void slotChatStyleSelected();
+	void slotChatStyleSelected(const QString &styleName);
 	void slotChatStyleVariantSelected(const QString &variantName);
 	void emitChanged();
 	void slotGetChatStyles();
 	void slotLoadChatStyles();
 	void slotUpdateChatPreview();
 	//----- Emoticons TAB ---------------------
-	void slotSelectedEmoticonsThemeChanged();
-	void slotInstallEmoticonTheme();
-	void slotRemoveEmoticonTheme();
-	void slotGetEmoticonThemes();
-	void slotUpdateEmoticonsButton(bool);
+	void slotManageEmoticonThemes();
 
 private:
 	//----- Style TAB ---------------------
@@ -83,7 +80,6 @@ private:
 	ChatWindowStyle::StyleVariants m_currentVariantMap;
 	ChatWindowStyle *m_currentStyle;
 	bool m_loading;
-	bool m_styleChanged;
 	bool m_allowDownloadTheme;
 	// For style preview
 	FakeProtocol *m_previewProtocol;

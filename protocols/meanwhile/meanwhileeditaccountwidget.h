@@ -18,33 +18,35 @@
 #define MEANWHILEEDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
 #include <editaccountwidget.h>
-#include "meanwhileeditaccountbase.h"
+#include "ui_meanwhileeditaccount.h"
 
-class Q3VBoxLayout;
 namespace Kopete { class Account; }
 
-class MeanwhileEditAccountWidget : 
-          public MeanwhileEditAccountBase,
+class MeanwhileEditAccountWidget :
+          public QWidget,
           public KopeteEditAccountWidget
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    MeanwhileEditAccountWidget( QWidget* parent, 
-                                Kopete::Account* account,
-                                MeanwhileProtocol *protocol);
+    MeanwhileEditAccountWidget(QWidget* parent,
+                               Kopete::Account* account,
+                               MeanwhileProtocol *protocol);
 
     virtual ~MeanwhileEditAccountWidget();
 
     virtual Kopete::Account* apply();
 
     virtual bool validateData();
+
 protected slots:
     void slotSetServer2Default();
+
 protected:
     MeanwhileProtocol *protocol;
+
+private:
+    Ui::MeanwhileEditAccount ui;
 };
 
 #endif

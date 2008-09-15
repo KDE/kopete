@@ -53,7 +53,7 @@ void SendFileTask::initiateUpload()
 	kDebug(YAHOO_RAW_DEBUG) ;
 	m_socket = new KStreamSocket( "filetransfer.msg.yahoo.com", QString::number(80) );
 	m_socket->setBlocking( true );
-	connect( m_socket, SIGNAL( connected( const KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
+	connect( m_socket, SIGNAL( connected( const KNetwork::KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
 	connect( m_socket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
 
 	m_socket->connect();
@@ -129,7 +129,7 @@ void SendFileTask::transmitData()
 
 	m_socket->enableWrite( false );
 	read = m_file.read( buf, 1024 );
-	written = m_socket->write( buf );
+	written = m_socket->write( buf, read );
 	kDebug(YAHOO_RAW_DEBUG) << "read:" << read << " written: " << written;
 
 	m_transmitted += read;

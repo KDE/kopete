@@ -27,7 +27,7 @@ JabberConnector::JabberConnector ( QObject *parent )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << "New Jabber connector.";
 
-	mErrorCode = KNetwork::KSocketBase::NoError;
+	mErrorCode = 0;
 
 	mByteStream = new JabberByteStream ( this );
 
@@ -54,14 +54,9 @@ void JabberConnector::connectToServer ( const QString &server )
 	 * For XMPP 1.0, we need to enable this!
 	 */
 
-	mErrorCode = KNetwork::KSocketBase::NoError;
+	mErrorCode = 0;
 
-	if ( !mByteStream->connect ( mHost, QString::number ( mPort ) ) )
-	{
-		// Houston, we have a problem
-		mErrorCode = mByteStream->socket()->error ();
-		emit error ();
-	}
+	mByteStream->connect ( mHost, mPort );
 
 }
 

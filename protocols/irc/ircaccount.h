@@ -134,7 +134,7 @@ public:
 	Kopete::ChatSession *currentCommandSource();
 
 	IRCContact *getContact(const QByteArray &name, Kopete::MetaContact *metac=0);
-	IRCContact *getContact(const KIrc::Entity::Ptr &entity, Kopete::MetaContact *metac=0);
+	IRCContact *getContact(KIrc::Entity *entity, Kopete::MetaContact *metac=0);
 
 	virtual void fillActionMenu( KActionMenu *actionMenu );
 

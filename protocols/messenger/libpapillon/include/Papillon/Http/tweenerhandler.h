@@ -1,5 +1,5 @@
 /*
-   tweenerhandler.h - Negociation with Passport to get the login ticket.
+   tweenerhandler.h - Negotiation with Passport to get the login ticket.
 
    Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
@@ -24,7 +24,7 @@ namespace Papillon
 
 /**
  * @class TweenerHandler tweenerhandler.h <Papillon/Http/TweenerHandler>
- * @brief Negociation of the Tweener ticket with Passport login server.
+ * @brief Negotiation of the Tweener ticket with Passport login server.
  *
  * Using TweenerHandler:
  * Use setLoginInformation() to set required login information and start() to begin negotiation of the tweener.

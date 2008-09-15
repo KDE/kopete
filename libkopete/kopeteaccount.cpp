@@ -90,7 +90,7 @@ public:
 	KConfigGroup *configGroup;
 	QString customIcon;
 	Kopete::OnlineStatus restoreStatus;
-	QString restoreMessage;
+	Kopete::StatusMessage restoreMessage;
 };
 
 Account::Account( Protocol *parent, const QString &accountId )
@@ -104,7 +104,7 @@ Account::Account( Protocol *parent, const QString &accountId )
 	d->priority = d->configGroup->readEntry( "Priority", 0 );
 
 	d->restoreStatus = Kopete::OnlineStatus::Online;
-	d->restoreMessage = "";
+	d->restoreMessage = Kopete::StatusMessage();
 
 	QObject::connect( &d->suppressStatusTimer, SIGNAL( timeout() ),
 		this, SLOT( slotStopSuppression() ) );
@@ -128,7 +128,9 @@ Account::~Account()
 
 void Account::reconnect()
 {
-	kDebug( 14010 ) << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage;
+	kDebug( 14010 ) << "account " << d->id << " restoreStatus " << d->restoreStatus.status()
+	                << " restoreTitle " << d->restoreMessage.title()
+	                << " restoreMessage " << d->restoreMessage.message();
 	setOnlineStatus( d->restoreStatus, d->restoreMessage );
 }
 
@@ -487,8 +489,8 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 	if ( !isOffline )
 	{
 		d->restoreStatus = newStatus;
-		d->restoreMessage = identity()->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString();
-//		kDebug( 14010 ) << "account " << d->id << " restoreStatus " << d->restoreStatus.status() << " restoreMessage " << d->restoreMessage;
+		d->restoreMessage.setTitle( identity()->property( Kopete::Global::Properties::self()->statusTitle() ).value().toString() );
+		d->restoreMessage.setMessage( identity()->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString() );
 	}
 
 /*	kDebug(14010) << "account " << d->id << " changed status. was "
@@ -515,11 +517,10 @@ void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 void Account::slotContactPropertyChanged( PropertyContainer * /* contact */,
 	const QString &key, const QVariant &old, const QVariant &newVal )
 {
-	if ( key == Kopete::Global::Properties::self()->statusMessage().key() && old != newVal && isConnected() )
-	{
-		d->restoreMessage = newVal.toString();
-//		kDebug( 14010 ) << "account " << d->id << " restoreMessage " << d->restoreMessage;
-	}
+	if ( key == Kopete::Global::Properties::self()->statusTitle().key() && old != newVal && isConnected() )
+		d->restoreMessage.setTitle( newVal.toString() );
+	else if ( key == Kopete::Global::Properties::self()->statusMessage().key() && old != newVal && isConnected() )
+		d->restoreMessage.setMessage( newVal.toString() );
 }
 
 void Account::slotStopSuppression()

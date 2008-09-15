@@ -69,7 +69,7 @@
                <string>The hostname under which you want to send WinPopup messages.</string>
               </property>
               <property name="whatsThis" >
-               <string>The host name under which you want to send WinPopup messages. Note that you don't have to specify the true hostname in order to send messages, but you do if you want to receive them.</string>
+               <string>The host name under which you want to send WinPopup messages. Note that you do not have to specify the true hostname in order to send messages, but you do if you want to receive them.</string>
               </property>
               <property name="text" >
                <string>Hos&amp;tname:</string>
@@ -85,7 +85,7 @@
                <string>The hostname under which you want to send WinPopup messages.</string>
               </property>
               <property name="whatsThis" >
-               <string>The host name under which you want to send WinPopup messages. Note that you don't have to specify the true hostname in order to send messages, but you do if you want to receive them.</string>
+               <string>The host name under which you want to send WinPopup messages. Note that you do not have to specify the true hostname in order to send messages, but you do if you want to receive them.</string>
               </property>
              </widget>
             </item>

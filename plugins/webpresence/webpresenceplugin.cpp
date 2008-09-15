@@ -278,7 +278,7 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 					: notKnown ) ;
 			accStatus.appendChild( statusText );
 
-			// Dont add these if we're shutting down, because the result
+			// Do not add these if we're shutting down, because the result
 			// would be quite weird.
 			if ( !shuttingDown ) {
 
@@ -459,7 +459,7 @@ QString WebPresencePlugin::statusAsString( const Kopete::OnlineStatus &newStatus
 
 void WebPresencePlugin::aboutToUnload()
 {
-	// Stop timer. Dont need it anymore.
+	// Stop timer. Do not need it anymore.
 	m_writeScheduler->stop();
 
 	// Force statusAsString() report all accounts as OFFLINE.

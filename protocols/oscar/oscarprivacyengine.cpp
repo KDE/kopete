@@ -165,7 +165,7 @@ void OscarPrivacyEngine::addContacts( const ContactMap& contacts, const QSet<QSt
 	m_contactsModel.insertRows( 0, idSet.size() );
 	
 	int i = 0;
-	foreach ( QString id, idSet )
+	foreach ( const QString& id, idSet )
 	{
 		QModelIndex index = m_contactsModel.index( i++, 0 );
 		

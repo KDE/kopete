@@ -110,14 +110,8 @@ GaduContact::sendFile( const KUrl &sourceURL, const QString &/*fileName*/, uint 
 void
 GaduContact::changedStatus( KGaduNotify* newstatus )
 {
-	if ( newstatus->description.isNull() ) {
-		setOnlineStatus( GaduProtocol::protocol()->convertStatus( newstatus->status ) );
-		removeProperty( GaduProtocol::protocol()->propAwayMessage );
-	}
-	else {
-		setOnlineStatus( GaduProtocol::protocol()->convertStatus( newstatus->status ) );
-		setProperty( GaduProtocol::protocol()->propAwayMessage, newstatus->description );
-	}
+	setOnlineStatus( GaduProtocol::protocol()->convertStatus( newstatus->status ) );
+	setStatusMessage( newstatus->description );
 
 	remote_ip	= newstatus->remote_ip;
 	remote_port	= newstatus->remote_port;

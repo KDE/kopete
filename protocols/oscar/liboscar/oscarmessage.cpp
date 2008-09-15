@@ -47,6 +47,7 @@ public:
 		fileSize = 0;
 		fileCount = 0;
 		plugin = 0;
+		id = 0;
 	}
 	MessagePrivate( const MessagePrivate &other )
 		: QSharedData( other )
@@ -71,6 +72,7 @@ public:
 		fileName = other.fileName;
 		fileSize = other.fileSize;
 		fileCount = other.fileCount;
+		id = other.id;
 
 		if ( other.plugin )
 			plugin = new MessagePlugin(*other.plugin);
@@ -104,6 +106,7 @@ public:
 	DWORD fileSize;
 	WORD fileCount;
 	MessagePlugin* plugin;
+	uint id;
 };
 
 Message::Message()
@@ -177,6 +180,10 @@ QString Message::text( QTextCodec *codec ) const
 	{
 	case Message::UserDefined:
 		return codec->toUnicode( d->textArray );
+	case Message::ASCII:
+		return QString::fromAscii( d->textArray.data(), d->textArray.size() );
+	case Message::LATIN1:
+		return QString::fromLatin1( d->textArray.data(), d->textArray.size() );
 	case Message::UTF8:
 		return QString::fromUtf8( d->textArray.data(), d->textArray.size() );
 	case Message::UCS2:
@@ -204,6 +211,28 @@ QString Message::text( QTextCodec *codec ) const
 	//FIXME: warn at least with kdWarning if an unrecognised encoding style was seen.
 }
 
+Message::Encoding Message::encodingForText( const QString& newText, bool allowUCS2 )
+{
+	Message::Encoding encoding = Message::ASCII;
+	const QChar *ch = newText.constData();
+	const int len = newText.length();
+
+	for ( int i = 0; i < len; ++i )
+	{
+		if ( ch[i] > 0xff )
+		{
+			encoding = ( allowUCS2 ) ? Message::UCS2 : Message::UserDefined;
+			break;
+		}
+		else if ( encoding == Message::ASCII && ch[i] > 0x7f )
+		{
+			encoding = Message::LATIN1;
+		}
+	}
+
+	return encoding;
+}
+
 void Message::setText( Message::Encoding newEncoding, const QString& newText, QTextCodec* codec )
 {
 	uint len;
@@ -213,6 +242,12 @@ void Message::setText( Message::Encoding newEncoding, const QString& newText, QT
 		// Message::setTextArray( const QCString& )
 		// strips trailing null byte automatically.
 		setTextArray( codec->fromUnicode( newText ) );
+		break;
+	case Message::ASCII:
+		setTextArray( newText.toAscii() );
+		break;
+	case Message::LATIN1:
+		setTextArray( newText.toLatin1() );
 		break;
 	case Message::UTF8:
 		// Message::setTextArray( const QCString& )
@@ -436,6 +471,16 @@ void Message::setPlugin( MessagePlugin* plugin )
 		delete d->plugin;
 
 	d->plugin = plugin;
+}
+
+uint Message::id() const
+{
+	return d->id;
+}
+
+void Message::setId( uint id )
+{
+	d->id = id;
 }
 
 Message::operator bool() const

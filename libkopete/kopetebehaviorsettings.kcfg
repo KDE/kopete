@@ -36,9 +36,16 @@
 			<label>Reconnect on disconnect.</label>
 			<default>true</default>
 		</entry>
-		<entry key="autoConnect" type="Bool">
-			<label>Auto connect on Kopete load.</label>
-			<default>false</default>
+		<entry key="initialStatus" type="Enum">
+			<label>Initial Status</label>
+			<choices>
+				<choice name="Offline" />
+				<choice name="Online" />
+				<choice name="Away" />
+				<choice name="Busy" />
+				<choice name="Invisible" />
+			</choices>
+			<default>Offline</default>
 		</entry>
 		<!-- Event Behavior -->
 		<entry key="raiseMessageWindow" type="Bool">
@@ -49,10 +56,6 @@
 			<label>Show events in chat window.</label>
 			<default>true</default>
 		</entry>
-		<entry key="showEventsIfActive" type="Bool">
-			<label>Show events in active chat window.</label>
-			<default>true</default>
-		</entry>
 		<entry key="queueOnlyHighlightedMessagesInGroupChats" type="Bool">
 			<label>Queue only highlighted messages in group chats</label>
 			<default>false</default>
@@ -61,21 +64,9 @@
 			<label>Queue Only Messages On Another Desktop</label>
 			<default>false</default>
 		</entry>
-		<entry key="balloonNotify" type="Bool">
-			<label>Use Balloon notification.</label>
-			<default>true</default>
-		</entry>
 		<entry key="balloonNotifyIgnoreClosesChatView" type="Bool">
 			<label>Balloon Notification Ignore Closes Chat View</label>
 			<default>false</default>
-		</entry>
-		<entry key="balloonClose" type="Bool">
-			<label>Balloon Autoclose</label>
-			<default>false</default>
-		</entry>
-		<entry key="balloonCloseDelay" type="Int">
-			<label>Balloon Autoclose Delay</label>
-			<default>30</default>
 		</entry>
 		<entry key="trayflashNotify" type="Bool">
 			<label>Trayflash Notification</label>

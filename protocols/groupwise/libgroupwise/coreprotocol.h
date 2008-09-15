@@ -4,7 +4,7 @@
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
@@ -21,6 +21,7 @@
 #ifndef GW_CORE_PROTOCOL_H
 #define GW_CORE_PROTOCOL_H
 
+#include <QLatin1Char>
 #include <q3cstring.h>
 #include <qobject.h>
 
@@ -186,7 +187,7 @@ protected:
 	/**
 	 * encodes a method number (usually supplied as a #defined symbol) to a char
 	 */
-	QChar encode_method( quint8 method );
+	QLatin1Char encode_method( quint8 method );
 private:
 	QByteArray m_in;	// buffer containing unprocessed bytes we received
 	QDataStream* m_din; // contains the packet currently being parsed

@@ -102,7 +102,7 @@ Message StdMessages::join(const QByteArray &name, const QByteArray &key)
 	Message msg;
 	msg << JOIN << name;
 	if (!key.isEmpty())
-		msg.appendArg(key);
+		msg<<key;
 	return msg;
 }
 
@@ -133,7 +133,7 @@ Message StdMessages::motd(const QByteArray &server)
 	Message msg;
 	msg << MOTD;
 	if (!server.isNull())
-		msg.appendArg(server);
+		msg<<server;
 	return msg;
 }
 
@@ -198,7 +198,7 @@ Message StdMessages::topic(const QByteArray &channel, const QByteArray &topic)
 /* RFC1459: "<username> <hostname> <servername> <realname>"
  * The USER command is used at the beginning of connection to specify
  * the username, hostname and realname of a new user.
- * hostname is usualy set to "127.0.0.1"
+ * hostname is usually set to "127.0.0.1"
  */
 Message StdMessages::user(const QByteArray &user, const QByteArray &hostName, const QByteArray &serverName, const QByteArray &realName)
 {
@@ -206,7 +206,7 @@ Message StdMessages::user(const QByteArray &user, const QByteArray &hostName, co
 //	if (realName.isEmpty()) realName = KUser().fullName();
 
 	Message msg;
-	msg << USER << hostName << serverName;
+	msg << USER <<user << hostName << serverName;
 	msg.setSuffix(realName);
 	return msg;
 }
@@ -217,7 +217,7 @@ Message StdMessages::user(const QByteArray &user, UserMode mode, const QByteArra
 //      if (realName.isEmpty()) realName = KUser().fullName();
 
 	Message msg;
-	msg << USER << user << QByteArray::number(mode) << QChar('*');
+	msg << USER << user << QByteArray::number(mode) << "*";
 	msg.setSuffix(realName);
 	return msg;
 }

@@ -5,7 +5,7 @@
 	Copyright (c) 2004-2005 by Matt Rogers <mattr@kde.org>
 
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
-	Based on Iris, Copyright (C) 2003  Justin Karneges
+	Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
 	Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
@@ -45,6 +45,7 @@ public:
 	Client* client;
 
 	Task* root;
+	QHash<Oscar::DWORD, Oscar::MessageInfo> snacSequenceToMessageInfo;
 };
 
 
@@ -185,6 +186,21 @@ QHostAddress Connection::localAddress() const
 	return d->clientStream->localAddress();
 }
 
+void Connection::addMessageInfo( Oscar::DWORD snacSequence, const Oscar::MessageInfo& messageInfo )
+{
+	d->snacSequenceToMessageInfo.insert( snacSequence, messageInfo );
+}
+
+Oscar::MessageInfo Connection::takeMessageInfo( Oscar::DWORD snacSequence )
+{
+	return d->snacSequenceToMessageInfo.take( snacSequence );
+}
+
+QList<Oscar::MessageInfo> Connection::messageInfoList() const
+{
+	return d->snacSequenceToMessageInfo.values();
+}
+
 RateClassManager* Connection::rateManager() const
 {
 	return d->rateClassManager;
@@ -231,6 +247,7 @@ void Connection::reset()
 	//clear the family list
 	d->familyList.clear();
 	d->rateClassManager->reset();
+	d->snacSequenceToMessageInfo.clear();
 }
 
 void Connection::streamReadyRead()

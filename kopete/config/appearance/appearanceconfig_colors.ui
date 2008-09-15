@@ -5,11 +5,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>421</width>
-    <height>391</height>
+    <width>405</width>
+    <height>321</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
     <widget class="QGroupBox" name="kcfg_contactListUseCustomFont" >
      <property name="title" >
@@ -21,12 +21,12 @@
      <property name="checked" >
       <bool>false</bool>
      </property>
-     <layout class="QGridLayout" >
+     <layout class="QGridLayout" name="gridLayout_2" >
       <item row="0" column="0" >
        <widget class="QLabel" name="mNormalFontLabel" >
         <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-          <horstretch>3</horstretch>
+         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+          <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
@@ -38,8 +38,8 @@
       <item row="0" column="1" >
        <widget class="KFontRequester" name="kcfg_contactListNormalFont" >
         <property name="sizePolicy" >
-         <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
-          <horstretch>5</horstretch>
+         <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
@@ -47,6 +47,12 @@
       </item>
       <item row="1" column="0" >
        <widget class="QLabel" name="mSmallFontLabel" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text" >
          <string>Small font:</string>
         </property>
@@ -55,7 +61,7 @@
       <item row="1" column="1" >
        <widget class="KFontRequester" name="kcfg_contactListSmallFont" >
         <property name="sizePolicy" >
-         <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
+         <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -70,68 +76,77 @@
      <property name="title" >
       <string>Colors</string>
      </property>
-     <layout class="QHBoxLayout" >
-      <item>
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
-         <widget class="QCheckBox" name="kcfg_greyIdleMetaContacts" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-            <horstretch>3</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text" >
-           <string>Tint &amp;Idle Contacts:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" >
-         <widget class="KColorButton" name="kcfg_idleContactColor" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
-            <horstretch>5</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text" >
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" >
-         <widget class="QLabel" name="textLabel1_4" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-            <horstretch>3</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text" >
-           <string>&amp;Group Names:</string>
-          </property>
-          <property name="buddy" >
-           <cstring>kcfg_groupNameColor</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" >
-         <widget class="KColorButton" name="kcfg_groupNameColor" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-            <horstretch>5</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text" >
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
+     <layout class="QGridLayout" name="gridLayout" >
+      <item row="0" column="0" colspan="2" >
+       <widget class="QCheckBox" name="kcfg_greyIdleMetaContacts" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string>Tint &amp;Idle Contacts:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="KColorButton" name="kcfg_idleContactColor" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+          <horstretch>5</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <spacer name="horizontalSpacer" >
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0" >
+         <size>
+          <width>38</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLabel" name="textLabel1_4" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string>&amp;Group Names:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>kcfg_groupNameColor</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <widget class="KColorButton" name="kcfg_groupNameColor" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+          <horstretch>5</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -141,7 +156,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>397</width>
        <height>111</height>

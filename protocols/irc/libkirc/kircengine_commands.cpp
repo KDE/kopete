@@ -63,7 +63,7 @@ void Client::away(bool isAway, const QString &awayMessage)
 		if (!awayMessage.isEmpty())
 			msg.setSuffix(awayMessage);
 		else
-			msg.setSuffix(QString::fromLatin1("I'm away."));
+			msg.setSuffix(QString::fromLatin1("I am away."));
 	}
 
 	writeMessage(msg);
@@ -412,7 +412,7 @@ void Engine::topic(Message &msg)
 /* RFC1459: "<username> <hostname> <servername> <realname>"
  * The USER command is used at the beginning of connection to specify
  * the username, hostname and realname of a new user.
- * hostname is usualy set to "127.0.0.1"
+ * hostname is usually set to "127.0.0.1"
  */
 void Engine::user(const QString &newUserName, const QString &hostname, const QString &newRealName)
 {

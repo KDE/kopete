@@ -84,6 +84,8 @@ public:
 
 	enum Encoding {
 		UserDefined,
+		ASCII,
+		LATIN1,
 		UTF8,
 		UCS2
 	};
@@ -111,6 +113,9 @@ public:
 
 	/** get the message text */
 	QString text( QTextCodec* codec ) const;
+
+	/** get best encoding for text */
+	static Message::Encoding encodingForText( const QString& newText, bool allowUCS2 = false );
 
 	/** set the message text */
 	void setText( Encoding newEncoding, const QString& newText, QTextCodec* codec  = 0);
@@ -233,6 +238,12 @@ public:
 	 *  The message deletes old plugin when a new plugin is set.
 	 */
 	void setPlugin( MessagePlugin* plugin );
+
+	/** Get the id of the message */
+	uint id() const;
+
+	/** Set the id of the message */
+	void setId( uint id );
 
 	operator bool() const;
 

@@ -97,6 +97,7 @@ public:
 	/**
 	 * @brief Get the local user in the session
 	 * @return the local user in the session, same as account()->myself()
+	 * @note Can be 0 if local user was already deleted during account destruction
 	 */
 	const Contact* myself() const;
 
@@ -109,6 +110,7 @@ public:
 	/**
 	 * @brief get the account
 	 * @return the account
+	 * @note Can be 0 if account was already deleted
 	 */
 	Account *account() const ;
 
@@ -260,6 +262,12 @@ signals:
 	void eventNotification( const QString& notificationText);
 
 	/**
+	 * Signals that a message has changed its state.
+	 * The chat window connects to this signal to update the message in chat view.
+	 */
+	void messageStateChanged( uint messageId, Kopete::Message::MessageState state );
+
+	/**
 	 * @brief A contact within the chat session changed his photo.
 	 * Used to update the contacts photo in chat window.
 	 */
@@ -285,6 +293,13 @@ public slots:
 	 */
 	void receivedEventNotification(  const QString& notificationText );
 
+	/**
+	 * @brief Change state of message.
+	 * It will emit the signal messageStateChanged(). Use this slot in your protocols
+	 * and plugins to change message state.
+	 */
+	void receivedMessageState( uint messageId, Kopete::Message::MessageState state );
+	
 	/**
 	 * Show a message to the chatwindow, or append it to the queue.
 	 * This is the function protocols HAVE TO call for both incoming and outgoing messages
@@ -381,6 +396,7 @@ private slots:
 	void slotViewDestroyed();
 	void slotOnlineStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
 	void slotContactDestroyed( Kopete::Contact *contact );
+	void slotMyselfDestroyed( Kopete::Contact *contact );
 
 protected:
 	/**
@@ -391,7 +407,7 @@ protected:
 	ChatSession( const Contact *user, ContactPtrList others, Protocol *protocol, Form form = Small );
 
 	/**
-	 * Set wether or not contact from this account may be invited in this chat.
+	 * Set whether or not contact from this account may be invited in this chat.
 	 * By default, it is set to false
 	 * @see inviteContact()
 	 * @see mayInvite()

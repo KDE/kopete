@@ -4,7 +4,7 @@
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
@@ -32,7 +32,7 @@ UpdateItemTask::~UpdateItemTask()
 void UpdateItemTask::item( Field::FieldList updateItemFields )
 {
 	Field::FieldList lst;
-	lst.append( new Field::MultiField( NM_A_FA_CONTACT_LIST, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, updateItemFields ) );
+	lst.append( new Field::MultiField( Field::NM_A_FA_CONTACT_LIST, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, updateItemFields ) );
 	createTransfer( "updateitem", lst );
 }
 

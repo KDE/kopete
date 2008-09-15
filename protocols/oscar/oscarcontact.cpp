@@ -2,7 +2,7 @@
   oscarcontact.cpp  -  Oscar Protocol Plugin
 
   Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-  Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+  Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -51,6 +51,7 @@
 #include "oscarprotocol.h"
 #include "oscarencodingselectiondialog.h"
 #include "oscarstatusmanager.h"
+#include "filetransferhandler.h"
 
 #include <assert.h>
 
@@ -62,7 +63,6 @@ OscarContact::OscarContact( Kopete::Account* account, const QString& name,
 	mName = name;
 	mMsgManager = 0L;
 	m_buddyIconDirty = false;
-	m_haveAwayMessage = false;
 	m_oesd = 0;
 
 	setFileCapable( true );
@@ -73,6 +73,10 @@ OscarContact::OscarContact( Kopete::Account* account, const QString& name,
 	                  this, SLOT(requestBuddyIcon()) );
 	QObject::connect( mAccount->engine(), SIGNAL(receivedAwayMessage(const QString&, const QString& )),
 	                  this, SLOT(receivedStatusMessage(const QString&, const QString&)) );
+	QObject::connect( mAccount->engine(), SIGNAL(messageAck(const QString&, uint)),
+	                  this, SLOT(messageAck(const QString&, uint)) );
+	QObject::connect( mAccount->engine(), SIGNAL(messageError(const QString&, uint)),
+	                  this, SLOT(messageError(const QString&, uint)) );
 }
 
 OscarContact::~OscarContact()
@@ -272,10 +276,37 @@ void OscarContact::slotTyping( bool typing )
 		account()->engine()->sendTyping( contactId(), typing );
 }
 
+void OscarContact::messageAck( const QString& contact, uint messageId )
+{
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
+		return;
+	
+	Kopete::ChatSession* chatSession = manager();
+	if ( chatSession )
+		chatSession->receivedMessageState( messageId, Kopete::Message::StateSent );
+}
+
+void OscarContact::messageError( const QString& contact, uint messageId )
+{
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
+		return;
+	
+	Kopete::ChatSession* chatSession = manager();
+	if ( chatSession )
+		chatSession->receivedMessageState( messageId, Kopete::Message::StateError );
+}
+
 QTextCodec* OscarContact::contactCodec() const
 {
 	if ( hasProperty( "contactEncoding" ) )
-		return QTextCodec::codecForMib( property( "contactEncoding" ).value().toInt() );
+	{
+		QTextCodec* codec = QTextCodec::codecForMib( property( "contactEncoding" ).value().toInt() );
+
+		if ( codec )
+			return codec;
+		else
+			return QTextCodec::codecForMib( 4 );
+	}
 	else
 		return mAccount->defaultCodec();
 }
@@ -327,8 +358,19 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 	}
 	kDebug(OSCAR_GEN_DEBUG) << "files: '" << files << "' ";
 
-	Kopete::Transfer *t = Kopete::TransferManager::transferManager()->addTransfer( this, files.at(0), QFile( files.at(0) ).size(), mName, Kopete::FileTransferInfo::Outgoing);
-	mAccount->engine()->sendFiles( mName, files, t );
+	FileTransferHandler *ftHandler = mAccount->engine()->createFileTransfer( mName, files );
+
+	Kopete::TransferManager *transferManager = Kopete::TransferManager::transferManager();
+	Kopete::Transfer *transfer = transferManager->addTransfer( this, files.at(0), ftHandler->totalSize(), mName, Kopete::FileTransferInfo::Outgoing);
+
+	connect( transfer, SIGNAL(transferCanceled()), ftHandler, SLOT(cancel()) );
+
+	connect( ftHandler, SIGNAL(transferCancelled()), transfer, SLOT(slotCancelled()) );
+	connect( ftHandler, SIGNAL(transferError(int, const QString&)), transfer, SLOT(slotError(int, const QString&)) );
+	connect( ftHandler, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
+	connect( ftHandler, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
+
+	ftHandler->send();
 }
 
 void OscarContact::setAwayMessage( const QString &message )
@@ -340,6 +382,8 @@ void OscarContact::setAwayMessage( const QString &message )
 		setProperty( static_cast<OscarProtocol*>( protocol() )->statusMessage, filterAwayMessage( message ) );
 	else
 		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusMessage );
+
+	emit statusMessageChanged();
 }
 
 void OscarContact::changeContactEncoding()
@@ -427,7 +471,6 @@ void OscarContact::receivedStatusMessage( const QString& contact, const QString&
 		return;
 	
 	setAwayMessage( message );
-	m_haveAwayMessage = true;
 }
 
 QString OscarContact::filterAwayMessage( const QString &message ) const

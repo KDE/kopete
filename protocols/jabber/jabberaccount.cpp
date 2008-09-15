@@ -38,6 +38,7 @@
 #include <qstring.h>
 #include <qregexp.h>
 #include <qtimer.h>
+#include <QAbstractSocket>
 
 #include <kcomponentdata.h>
 #include <kconfig.h>
@@ -45,7 +46,6 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kaboutdata.h>
-#include <k3socketbase.h>
 #include <kpassworddialog.h>
 #include <kinputdialog.h>
 #include <kicon.h>
@@ -59,7 +59,7 @@
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
-#include "contactaddednotifydialog.h"
+#include "kopeteaddedinfoevent.h"
 
 #include "jabberconnector.h"
 #include "jabberclient.h"
@@ -101,7 +101,6 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	m_protocol = parent;
 
 	m_jabberClient = 0L;
-	m_privacyManager = 0L;
 	
 	m_resourcePool = 0L;
 	m_contactPool = 0L;
@@ -401,7 +400,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	//BEGIN TIMEZONE INFORMATION
 	//
 	// Set timezone information (code from Psi)
-	// Copyright (C) 2001-2003  Justin Karneges
+	// Copyright (C) 2001-2003  Justin Karneges <justin@affinix.com>
 	//
 	time_t x;
 	time(&x);
@@ -453,9 +452,6 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 			break;
 	}
-	
-	m_privacyManager = new PrivacyManager (client()->rootTask());
-
 }
 
 void JabberAccount::slotClientDebugMessage ( const QString &msg )
@@ -717,9 +713,6 @@ void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 	// in the process of connecting
 	setPresence ( XMPP::Status ("", "", 0, false) );
 	m_initialPresence = XMPP::Status ("", "", 5, true);
-	
-	delete m_privacyManager;
-	m_privacyManager = 0L;
 
 	/* FIXME:
 	 * We should delete the JabberClient instance here,
@@ -861,55 +854,28 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 		case XMPP::ClientStream::ErrConnection:
 			switch(connectorCode)
 			{
- 				case KNetwork::KSocketBase::LookupFailure:
+ 				case QAbstractSocket::HostNotFoundError:
 					errorClass = Kopete::Account::InvalidHost;
 					errorCondition = i18n("Host not found.");
 					break;
-				case KNetwork::KSocketBase::AddressInUse:
+				case QAbstractSocket::AddressInUseError:
 					errorCondition = i18n("Address is already in use.");
 					break;
-				case KNetwork::KSocketBase::AlreadyCreated:
-					errorCondition = i18n("Cannot recreate the socket.");
-					break;
-				case KNetwork::KSocketBase::AlreadyBound:
-					errorCondition = i18n("Cannot bind the socket again.");
-					break;
-				case KNetwork::KSocketBase::AlreadyConnected:
-					errorCondition = i18n("Socket is already connected.");
-					break;
-				case KNetwork::KSocketBase::NotConnected:
-					errorCondition = i18n("Socket is not connected.");
-					break;
-				case KNetwork::KSocketBase::NotBound:
-					errorCondition = i18n("Socket is not bound.");
-					break;
-				case KNetwork::KSocketBase::NotCreated:
-					errorCondition = i18n("Socket has not been created.");
-					break;
-				case KNetwork::KSocketBase::WouldBlock:
-					errorCondition = i18n("The socket operation would block. You should not see this error: please use \"Report Bug\" from the Help menu.");
-					break;
-				case KNetwork::KSocketBase::ConnectionRefused:
+				case QAbstractSocket::ConnectionRefusedError:
 					errorCondition = i18n("Connection refused.");
 					break;
-				case KNetwork::KSocketBase::ConnectionTimedOut:
-					errorCondition = i18n("Connection timed out.");
-					break;
-				case KNetwork::KSocketBase::InProgress:
+				case QAbstractSocket::UnfinishedSocketOperationError:
 					errorCondition = i18n("Connection attempt already in progress.");
 					break;
-				case KNetwork::KSocketBase::NetFailure:
+				case QAbstractSocket::NetworkError:
 					errorCondition = i18n("Network failure.");
 					break;
-				case KNetwork::KSocketBase::NotSupported:
-					errorCondition = i18n("Operation is not supported.");
-					break;
-				case KNetwork::KSocketBase::Timeout:
+				case QAbstractSocket::SocketTimeoutError:
 					errorCondition = i18n("Socket timed out.");
 					break;
 				default:
 					errorClass = Kopete::Account::ConnectionReset;
-					//errorCondition = i18n("Sorry, something unexpected happened that I do not know more about.");
+					errorCondition = i18n("Sorry, something unexpected happened that I do not know more about.");
 					break;
 			}
 			if(!errorCondition.isEmpty())
@@ -1191,16 +1157,19 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 		Kopete::MetaContact *metaContact=0L;
 		if(contact)
 			metaContact=contact->metaContact();
-		
-		Kopete::UI::ContactAddedNotifyDialog::HideWidgetOptions hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
-		if( metaContact && !metaContact->isTemporary() )
-			hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
-		
-		Kopete::UI::ContactAddedNotifyDialog *dialog=
-				new Kopete::UI::ContactAddedNotifyDialog( jid.full() ,QString(),this, hideFlags );
-		QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
-						this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
-		dialog->show();
+
+		Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+		actions |= Kopete::AddedInfoEvent::BlockAction;
+
+		if( !metaContact || metaContact->isTemporary() )
+			actions |= Kopete::AddedInfoEvent::AddAction;
+
+		Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent( jid.full(), this );
+		QObject::connect( event, SIGNAL(actionActivated(uint)),
+		                  this, SLOT(slotAddedInfoEventActionActivated(uint)) );
+
+		event->showActions( actions );
+		event->sendEvent();
 	}
 	else if (type == "unsubscribed")
 	{
@@ -1244,41 +1213,36 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 	}
 }
 
-void JabberAccount::slotContactAddedNotifyDialogClosed( const QString & contactid )
-{	// the dialog that asked the authorisation is closed. (it was shown in slotSubscrition)
-	
-	XMPP::JT_Presence *task;
-	XMPP::Jid jid(contactid);
+void JabberAccount::slotAddedInfoEventActionActivated ( uint actionId )
+{
+	const Kopete::AddedInfoEvent *event =
+		dynamic_cast<const Kopete::AddedInfoEvent *>(sender());
 
-	const Kopete::UI::ContactAddedNotifyDialog *dialog =
-			dynamic_cast<const Kopete::UI::ContactAddedNotifyDialog *>(sender());
-	if(!dialog || !isConnected())
+	if ( !event || !isConnected() )
 		return;
 
-	if ( dialog->authorized() )
+	XMPP::Jid jid(event->contactId());
+	if ( actionId == Kopete::AddedInfoEvent::AuthorizeAction )
 	{
 		/*
 		* Authorize user.
 		*/
-
-		task = new XMPP::JT_Presence ( client()->rootTask () );
+		XMPP::JT_Presence *task = new XMPP::JT_Presence ( client()->rootTask () );
 		task->sub ( jid, "subscribed" );
 		task->go ( true );
 	}
-	else
+	else if ( actionId == Kopete::AddedInfoEvent::BlockAction )
 	{
 		/*
 		* Reject subscription.
 		*/
-		task = new XMPP::JT_Presence ( client()->rootTask () );
+		XMPP::JT_Presence *task = new XMPP::JT_Presence ( client()->rootTask () );
 		task->sub ( jid, "unsubscribed" );
 		task->go ( true );
 	}
-
-
-	if(dialog->added())
+	else if( actionId == Kopete::AddedInfoEvent::AddContactAction )
 	{
-		Kopete::MetaContact *parentContact=dialog->addContact();
+		Kopete::MetaContact *parentContact=event->addContact();
 		if(parentContact)
 		{
 			QStringList groupNames;
@@ -1287,7 +1251,6 @@ void JabberAccount::slotContactAddedNotifyDialogClosed( const QString & contacti
 				groupNames += group->displayName();
 
 			XMPP::RosterItem item;
-//			XMPP::Jid jid ( contactId );
 
 			item.setJid ( jid );
 			item.setName ( parentContact->displayName() );
@@ -1406,7 +1369,7 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 		if(metaContact->isTemporary())
 			return;
 		kDebug (JABBER_DEBUG_GLOBAL) << c->contactId() << 
-				" is on the contact list while it shouldn't.  we are removing it.  - " << c << endl;
+				" is on the contact list while it should not.  we are removing it.  - " << c << endl;
 		delete c;
 		if(metaContact->contacts().isEmpty())
 			Kopete::ContactList::self()->removeMetaContact( metaContact );
@@ -1446,7 +1409,7 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 		 */
 		if ( !contactFrom )
 		{
-			kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Received a groupchat message but couldn't find room contact. Ignoring message.";
+			kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Received a groupchat message but could not find room contact. Ignoring message.";
 			return;
 		}
 	}
@@ -1572,7 +1535,7 @@ void JabberAccount::slotGroupChatPresence (const XMPP::Jid & jid, const XMPP::St
 
 	if ( !groupContact )
 	{
-		kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Groupchat presence signalled, but we don't have a room contact?";
+		kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Groupchat presence signalled, but we do not have a room contact?";
 		return;
 	}
 

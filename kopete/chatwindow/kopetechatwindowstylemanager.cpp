@@ -84,6 +84,9 @@ ChatWindowStyleManager::~ChatWindowStyleManager()
 
 void ChatWindowStyleManager::loadStyles()
 {
+	// Make sure there exists a directory where chat styles can be installed to and it will be watched for changes
+	KStandardDirs::locateLocal( "appdata", QLatin1String( "styles/" ) );
+
         QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QLatin1String( "styles" ) );
 	foreach(const QString &styleDir, chatStyles)
 	{
@@ -156,7 +159,7 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 	// Each time we found a correspondance to a theme bundle, we add a point to validResult.
 	// A valid style bundle must have:
 	// -a Contents, Contents/Resources, Co/Res/Incoming, Co/Res/Outgoing dirs
-	// main.css, Footer.html, Header.html, Status.html files in Contents/Ressources.
+	// main.css, Footer.html, Header.html, Status.html files in Contents/Resources.
 	// So for a style bundle to be valid, it must have a result greather than 8, because we test for 8 required entry.
 	int validResult = 0;
 	QStringList entries = rootDir->entries();

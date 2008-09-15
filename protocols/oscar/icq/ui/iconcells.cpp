@@ -31,7 +31,6 @@ public:
 
 	QList<QIcon> icons;
 	int selected;
-	QSize iconSize;
 };
 
 IconCells::IconCells( QWidget *parent )
@@ -44,12 +43,20 @@ IconCells::IconCells( QWidget *parent )
 	horizontalHeader()->hide();
 
 	d->selected = 0;
+	int pm = style()->pixelMetric( QStyle::PM_SmallIconSize, 0, this );
+	setIconSize( QSize( pm, pm ) );
 
 	setSelectionMode( QAbstractItemView::SingleSelection );
 	setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 	setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 	viewport()->setBackgroundRole( QPalette::Background );
 	setBackgroundRole( QPalette::Background );
+
+	// HACK: Looks like any antialiased font brakes grid and icon painting.
+	// We only have icons so we can set the font to one which isn't antialiased.
+	QFont timesFont( "Times", 10, QFont::Normal );
+	setFont( timesFont );
+
 	connect( this, SIGNAL(cellActivated( int, int )), this, SLOT(selected(int, int)) );
 	connect( this, SIGNAL(cellPressed( int, int )), this, SLOT(selected(int, int)) );
 }
@@ -87,8 +94,8 @@ int IconCells::selectedIndex() const
 
 QSize IconCells::sizeHint () const
 {
-	int width = columnCount() * (d->iconSize.width() + 8) + 2 * frameWidth();
-	int height = rowCount() * (d->iconSize.height() + 8) + 2 * frameWidth();
+	int width = columnCount() * (iconSize().width() + 8) + 2 * frameWidth();
+	int height = rowCount() * (iconSize().height() + 8) + 2 * frameWidth();
 	return QSize( width, height );
 }
 
@@ -114,11 +121,11 @@ void IconCells::setIcons( const QList<QIcon> &icons )
 			if ( index < d->icons.count() )
 			{
 				QIcon icon = d->icons.at(index);
-				d->iconSize = QSize(16,16); /*d->iconSize.expandedTo( icon.size() );*/
 				tableItem->setData( Qt::DecorationRole, icon );
 			}
 		}
 	}
+	setMinimumSize( sizeHint() );
 }
 
 void IconCells::selected( int row, int column )
@@ -151,12 +158,12 @@ void IconCells::resizeEvent( QResizeEvent* )
 
 int IconCells::sizeHintForColumn(int /*column*/) const
 {
-	return (width() - 2 * frameWidth()) / columnCount() ;
+	return (int)floor((double)(width() - 2 * frameWidth()) / columnCount());
 }
 
 int IconCells::sizeHintForRow(int /*row*/) const
 {
-	return (height() - 2 * frameWidth()) / rowCount() ;
+	return (int)floor((double)(height() - 2 * frameWidth()) / rowCount());
 }
 
 int IconCells::rowFromIndex( int index ) const

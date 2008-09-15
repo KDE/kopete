@@ -36,6 +36,7 @@
 #include <QToolTip>
 
 #include <kdebug.h>
+#include <kde_file.h>
 
 #include <utility>
 #include <memory>

@@ -49,9 +49,9 @@ set(kopete_yahoo_PART_SRCS
 kde4_add_plugin(kopete_yahoo ${kopete_yahoo_PART_SRCS})
 
 if(WIN32)
-  target_link_libraries(kopete_yahoo ${KDE4_KDEUI_LIBS} kopete kyahoo)
+  target_link_libraries(kopete_yahoo ${KDE4_KIO_LIBS} kopete kyahoo ${QT_QT3SUPPORT_LIBS})
 else(WIN32)
-  target_link_libraries(kopete_yahoo ${KDE4_KDEUI_LIBS} kopete_videodevice kopete kyahoo)
+  target_link_libraries(kopete_yahoo ${KDE4_KIO_LIBS} kopete_videodevice kopete kyahoo ${QT_QT3SUPPORT_LIBS})
 endif(WIN32)
 
 install(TARGETS kopete_yahoo  DESTINATION ${PLUGIN_INSTALL_DIR})

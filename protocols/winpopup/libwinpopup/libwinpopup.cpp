@@ -156,7 +156,7 @@ void WinPopupLib::startReadProcess(const QString &Host)
 {
 	currentHosts.clear();
 	currentGroups.clear();
-	currentGroup = QString();
+	currentGroup.clear();
 
 	// for Samba 3
 	readGroupsProcess = new QProcess;

@@ -5,8 +5,9 @@
     Copyright (c) 2002-2006 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2006-2007 by Charles Connell        <charles@connells.org>
     Copyright (c) 2007      by Michaël Larouche      <larouche@kde.org>
+    Copyright (c) 2008      by Roman Jarosz           <kedgedev@centrum.cz>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -46,14 +47,15 @@ class Message::Private
 	: public QSharedData
 {
 public:
-	Private()
-		: direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), backgroundOverride(false),
-		  foregroundOverride(false), richTextOverride(false), isRightToLeft(false), timeStamp( QDateTime::currentDateTime() ),
-		  body(new QTextDocument), escapedBodyDirty(true)
+	Private() //assign next message id, it can't be changed later
+		: id(nextId++), direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), state(StateUnknown),
+		  backgroundOverride(false), foregroundOverride(false), richTextOverride(false), isRightToLeft(false),
+		  timeStamp( QDateTime::currentDateTime() ), body(new QTextDocument), escapedBodyDirty(true), fileTransfer(0)
 	{}
 	Private (const Private &other);
 	~Private();
 
+	const uint id;
 	QPointer<Contact> from;
 	ContactPtrList to;
 	QPointer<ChatSession> manager;
@@ -63,6 +65,7 @@ public:
 	MessageType type;
 	QString requestedPlugin;
 	MessageImportance importance;
+	MessageState state;
 	bool backgroundOverride;
 	bool foregroundOverride;
 	bool richTextOverride;
@@ -78,10 +81,28 @@ public:
 	QTextDocument* body;
 	mutable QString escapedBody;
 	mutable bool escapedBodyDirty;
+
+	class FileTransferInfo
+	{
+	public:
+		FileTransferInfo() : disabled(false), fileSize(0)
+		{}
+
+		bool disabled;
+		QString fileName;
+		unsigned long fileSize;
+		QPixmap filePreview;
+	};
+	FileTransferInfo* fileTransfer;
+
+	static uint nextId;
 };
 
+// Start with 1 as 0 is reserved for invalid id;
+uint Message::Private::nextId = 1;
+
 Message::Private::Private (const Message::Private &other)
-	: QSharedData (other)
+	: QSharedData (other), id(other.id)
 {
 	from = other.from;
 	to = other.to;
@@ -92,6 +113,7 @@ Message::Private::Private (const Message::Private &other)
 	type = other.type;
 	requestedPlugin = other.requestedPlugin;
 	importance = other.importance;
+	state = other.state;
 	backgroundOverride = other.backgroundOverride;
 	foregroundOverride = other.foregroundOverride;
 	richTextOverride = other.richTextOverride;
@@ -107,10 +129,18 @@ Message::Private::Private (const Message::Private &other)
 	body = other.body->clone();
 	escapedBody = other.escapedBody;
 	escapedBodyDirty = other.escapedBodyDirty;
+
+	if ( other.fileTransfer )
+		fileTransfer = new FileTransferInfo( *other.fileTransfer );
+	else
+		fileTransfer = 0;
 }
 
 Message::Private::~Private ()
 {
+	if ( fileTransfer )
+		delete fileTransfer;
+
 	delete body;
 }
 
@@ -149,6 +179,16 @@ Message& Message::operator=( const Message &other )
 
 Message::~Message()
 {
+}
+
+uint Message::id() const
+{
+	return d->id;
+}
+
+uint Message::nextId()
+{
+	return Message::Private::nextId++;
 }
 
 void Message::setBackgroundOverride( bool enabled )
@@ -316,13 +356,13 @@ QString Message::escapedBody() const
 	else {
 		QString html;
 		if ( d->format == Qt::PlainText )
-			html = Qt::convertFromPlainText( d->body->toPlainText() );
+			html = Qt::convertFromPlainText( d->body->toPlainText(), Qt::WhiteSpaceNormal );
 		else
 			html = d->body->toHtml();
 
 //		all this regex business is to take off the outer HTML document provided by QTextDocument
 //		remove the head
-		QRegExp badStuff ("<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>|</?p[^<>]*>");
+		QRegExp badStuff ("<![^<>]*>|<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>");
 		html = html.remove (badStuff);
 //		remove newlines that may be present, since they end up being displayed in the chat window. real newlines are represented with <br>, so we know \n's are meaningless
 		html = html.remove ("\n");
@@ -509,6 +549,16 @@ Message::MessageImportance Message::importance() const
 	return d->importance;
 }
 
+Message::MessageState Message::state() const
+{
+	return d->state;
+}
+
+void Message::setState(MessageState state)
+{
+	d->state = state;
+}
+
 ChatSession *Message::manager() const
 {
 	return d->manager;
@@ -556,6 +606,58 @@ QString Message::getHtmlStyleAttribute() const
 	styleAttribute += QString::fromUtf8("\"");
 
 	return styleAttribute;
+}
+
+void Message::setFileTransferDisabled( bool disabled )
+{
+	if ( !d->fileTransfer )
+		d->fileTransfer = new Message::Private::FileTransferInfo();
+
+	d->fileTransfer->disabled = disabled;
+}
+
+bool Message::fileTransferDisabled() const
+{
+	return ( d->fileTransfer ) ? d->fileTransfer->disabled : false;
+}
+
+void Message::setFileName( const QString &fileName )
+{
+	if ( !d->fileTransfer )
+		d->fileTransfer = new Message::Private::FileTransferInfo();
+	
+	d->fileTransfer->fileName = fileName;
+}
+
+QString Message::fileName() const
+{
+	return ( d->fileTransfer ) ? d->fileTransfer->fileName : QString();
+}
+
+void Message::setFileSize( unsigned long size )
+{
+	if ( !d->fileTransfer )
+		d->fileTransfer = new Message::Private::FileTransferInfo();
+	
+	d->fileTransfer->fileSize = size;
+}
+
+unsigned long Message::fileSize() const
+{
+	return ( d->fileTransfer ) ? d->fileTransfer->fileSize : 0;
+}
+
+void Message::setFilePreview( const QPixmap &preview )
+{
+	if ( !d->fileTransfer )
+		d->fileTransfer = new Message::Private::FileTransferInfo();
+	
+	d->fileTransfer->filePreview = preview;
+}
+
+QPixmap Message::filePreview() const
+{
+	return ( d->fileTransfer ) ? d->fileTransfer->filePreview : QPixmap();
 }
 
 // prime candidate for removal

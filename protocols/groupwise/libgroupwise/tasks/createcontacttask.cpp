@@ -4,7 +4,7 @@
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
@@ -130,7 +130,7 @@ void CreateContactTask::slotContactAdded( const ContactItem & addedContact )
 	
 	if ( m_folders.isEmpty() && !m_topLevel )
 	{
-		client()->debug( "CreateContactTask::slotContactAdded() - All contacts were created on the server, we're finished!" );
+		client()->debug( "CreateContactTask::slotContactAdded() - All contacts were created on the server, we are finished!" );
 		setSuccess(); 
 	}
 }

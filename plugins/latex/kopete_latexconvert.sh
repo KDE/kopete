@@ -94,9 +94,7 @@ done
 #
 
 if test -n "`type -p mktemp`" ; then
-	tmpdir="`mktemp /tmp/tex2imXXXXXX`"
-	rm $tmpdir
-	mkdir $tmpdir
+	tmpdir="`mktemp -d /tmp/tex2imXXXXXX`"
 else
 	tmpdir=/tmp/tex2im$$
 	if [ -e $tmpdir ] ; then
@@ -172,7 +170,7 @@ fi
 #if [ -e "$infile" ]; then
 #	cat $infile >> $tmpdir/out.tex
 #else
-	echo "$infile" >> $tmpdir/out.tex
+	printf '%s' "$infile" >> $tmpdir/out.tex
 #fi
 
 if [ $noformula -eq 1 ]; then
@@ -194,7 +192,8 @@ cd $tmpdir
 for f in $homedir/*.eps; do
     test -f ${f##*/} || ln -s $f . # multi-processing!
 done
-latex -interaction=batchmode out.tex > /dev/null
+latex -interaction=batchmode -halt-on-error out.tex > /dev/null
+[ ! -e out.dvi ] && exit 1;
 cd "$homedir"
 dvips -o $tmpdir/out.eps -E $tmpdir/out.dvi 2> /dev/null
 
@@ -223,7 +222,7 @@ else
 	mv $tmpdir/out.$format.0 $outfile
 fi
 
-let OPTIND=$OPTIND+1
+OPTIND=$((${OPTIND}+1))
 outfile=""
 done
 

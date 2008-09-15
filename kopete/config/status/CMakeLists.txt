@@ -16,7 +16,7 @@ kde4_add_ui_files(kcm_kopete_statusconfig_PART_SRCS
 
 kde4_add_plugin(kcm_kopete_statusconfig ${kcm_kopete_statusconfig_PART_SRCS})
 
-target_link_libraries(kcm_kopete_statusconfig  ${KDE4_KUTILS_LIBS} kopete)
+target_link_libraries(kcm_kopete_statusconfig  ${KDE4_KUTILS_LIBS} ${QT_QTXML_LIBRARY} kopete)
 
 install(TARGETS kcm_kopete_statusconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 

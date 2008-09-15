@@ -5,7 +5,7 @@
 	Copyright (c) 2004 by Kopete Developers <kopete-devel@kde.org>
 
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
-	Based on Iris, Copyright (C) 2003  Justin Karneges
+	Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
 	Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
@@ -374,7 +374,7 @@ void SSIModifyTask::changeGroupOnServer()
 	FLAP f1 = { 0x02, 0, 0 };
 	SNAC s1 = { 0x0013,  0x000A, 0x0000, client()->snacSequence() };
 	Buffer* b1 = new Buffer;
-	b1->addBSTR( m_oldItem.name().toLatin1() );
+	b1->addBSTR( m_oldItem.name().toUtf8() );
 	b1->addWord( m_oldItem.gid() );
 	b1->addWord( m_oldItem.bid() );
 	b1->addWord( m_oldItem.type() );
@@ -553,7 +553,7 @@ void SSIModifyTask::sendEditEnd()
 
 void SSIModifyTask::addItemToBuffer( OContact item, Buffer* buffer )
 {
-	buffer->addBSTR( item.name().toLatin1() );
+	buffer->addBSTR( item.name().toUtf8() );
 	buffer->addWord( item.gid() );
 	buffer->addWord( item.bid() );
 	buffer->addWord( item.type() );

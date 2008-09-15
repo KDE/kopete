@@ -183,7 +183,7 @@ protected slots:
 	void slotAuthorizationAccepted( const QString &who );
 	void slotAuthorizationRejected( const QString &who, const QString &msg );
 	void slotgotAuthorizationRequest( const QString &, const QString &, const QString & );
-	void slotContactAddedNotifyDialogClosed( const QString & );
+	void slotAddedInfoEventActionActivated( uint actionId );
 	void slotGotIgnore(const QStringList &);
 	void slotGotIdentities(const QStringList &);
 	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away, int idle, int pictureChecksum);

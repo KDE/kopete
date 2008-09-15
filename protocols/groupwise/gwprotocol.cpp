@@ -71,7 +71,6 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QVariantList &/*arg
 	  propGivenName( Kopete::Global::Properties::self()->firstName() ),
 	  propLastName( Kopete::Global::Properties::self()->lastName() ),
 	  propFullName( Kopete::Global::Properties::self()->fullName() ),
-	  propAwayMessage( Kopete::Global::Properties::self()->statusMessage() ),
 	  propAutoReply( "groupwiseAutoReply", i18n( "Auto Reply Message" ), QString() ),
 	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString(), Kopete::PropertyTmpl::PersistentProperty ),
 	  propPhoneWork( Kopete::Global::Properties::self()->workPhone() ),
@@ -79,7 +78,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QVariantList &/*arg
 	  propEmail( Kopete::Global::Properties::self()->emailAddress() )
 {
 	// ^^ That is all member initialiser syntax, not broken indentation!
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 
 	s_protocol = this;
 
@@ -107,7 +106,7 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 
 	if ( !account )
 	{
-		kDebug(GROUPWISE_DEBUG_GLOBAL) << "Account doesn't exist, skipping";
+		kDebug() << "Account doesn't exist, skipping";
 		return 0;
 	}
 
@@ -117,13 +116,13 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 
 AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, Kopete::Account *  account )
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << "Creating Add Contact Page";
+	kDebug() << "Creating Add Contact Page";
 	return new GroupWiseAddContactPage( account, parent );
 }
 
 KopeteEditAccountWidget * GroupWiseProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
-	kDebug(GROUPWISE_DEBUG_GLOBAL) << "Creating Edit Account Page";
+	kDebug() << "Creating Edit Account Page";
 	return new GroupWiseEditAccountWidget( parent, account );
 }
 
@@ -165,7 +164,7 @@ Kopete::OnlineStatus GroupWiseProtocol::gwStatusToKOS( const int gwInternal )
 			break;
 		default:
 			status = groupwiseInvalid;
-			kWarning( GROUPWISE_DEBUG_GLOBAL ) << "Got unrecognised status value" << gwInternal;
+			kWarning() << "Got unrecognised status value" << gwInternal;
 	}
 	return status;
 }
@@ -253,13 +252,13 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 			}
 			else
 			{
-				kDebug( GROUPWISE_DEBUG_GLOBAL ) << "bogus utf-8 lead byte: 0x" << Q3TextStream::hex << current;
+				kDebug() << "bogus utf-8 lead byte: 0x" << Q3TextStream::hex << current;
 				ucs4Char = 0x003F;
 				bytesEncoded = 1;
 			}
 			index += bytesEncoded;
 			escapedUnicodeChar = QString("\\u%1?").arg( ucs4Char );
-			kDebug( GROUPWISE_DEBUG_GLOBAL ) << "unicode escaped char: " << escapedUnicodeChar;
+			kDebug() << "unicode escaped char: " << escapedUnicodeChar;
 			outputText.append( escapedUnicodeChar );
 		}
 	}

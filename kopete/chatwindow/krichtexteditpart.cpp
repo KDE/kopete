@@ -59,11 +59,22 @@ public:
         if ( event->type() == QEvent::ShortcutOverride )
         {
             QKeyEvent *keyEvent = dynamic_cast<QKeyEvent*>(event);
-            if (keyEvent && ( keyEvent->key() ==  Qt::Key_Return || keyEvent->key() == Qt::Key_Enter ) )
+            if (keyEvent)
             {
+		if( keyEvent->key() ==  Qt::Key_Return || keyEvent->key() == Qt::Key_Enter )
+		{
                     // Enter is the default shortcut for sending a message,
                     // therefore it should not be handled by a textedit
                     return QWidget::event(event);
+		}
+		if ( keyEvent->matches(QKeySequence::Copy))
+		{
+			// The copy shortcut has to be handled outside of
+			// the textedit because otherwise you cannot use it 
+			// to copy a selection in the chatmessagepart
+			// see bug: #163535
+			return QWidget::event(event);
+		}
             }
         }
 
@@ -109,7 +120,6 @@ KRichTextEditPart::KRichTextEditPart(QWidget *wparent, QObject*, const QStringLi
     setComponentData( KRichTextEditPartFactory::componentData() );
 
     d->editor = new KopeteTextEdit( wparent );
-
     setWidget( d->editor );
 
     createActions();
@@ -154,6 +164,16 @@ bool KRichTextEditPart::isRichTextAvailable() const
             d->richTextSupport & SupportTextColor);
 }
 
+void KRichTextEditPart::setCheckSpellingEnabled( bool enabled )
+{
+    d->editor->setCheckSpellingEnabled( enabled );
+}
+
+bool KRichTextEditPart::checkSpellingEnabled() const
+{
+    return d->editor->checkSpellingEnabled();
+}
+
 bool KRichTextEditPart::useRichText() const
 {
     return isRichTextEnabled() && isRichTextAvailable();
@@ -166,11 +186,6 @@ void KRichTextEditPart::setRichTextEnabled( bool enable )
 
     // Emit toolbarToggled signal
     checkToolbarEnabled();
-
-    // Spellchecking disabled when using rich text because the
-    // text we were getting from widget was coloured HTML!
-    d->editor->setCheckSpellingEnabled( !isRichTextEnabled() );
-    d->checkSpelling->setEnabled( !isRichTextEnabled() );
 
     //Enable / disable buttons
     updateActions();

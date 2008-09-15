@@ -3,7 +3,7 @@
 
     Copyright (c) 2005      by Michaël Larouche     <larouche@kde.org>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -34,7 +34,7 @@ public:
 	 * StyleVariants is a typedef to a QMap
 	 * key = Variant Name
 	 * value = Path to variant CSS file.
-	 * Path is relative to Ressources directory.
+	 * Path is relative to Resources directory.
 	 */
 	typedef QHash<QString,QString> StyleVariants;
 
@@ -73,15 +73,15 @@ public:
 	QString getStyleName() const;
 
 	/**
-	 * Get the style ressource directory.
-	 * Ressources directory is the base where all CSS, HTML and images are located.
+	 * Get the style resource directory.
+	 * Resources directory is the base where all CSS, HTML and images are located.
 	 *
 	 * Adium(and now Kopete too) style directories are disposed like this:
 	 * StyleName/
 	 *          Contents/
 	 *            Resources/
 	 *
-	 * @return the path to the the ressource directory.
+	 * @return the path to the the resource directory.
 	 */
 	QString getStyleBaseHref() const;
 
@@ -95,6 +95,13 @@ public:
 
 	QString getActionIncomingHtml() const;
 	QString getActionOutgoingHtml() const;
+
+	QString getFileTransferIncomingHtml() const;
+
+	QString getOutgoingStateSendingHtml() const;
+	QString getOutgoingStateSentHtml() const;
+	QString getOutgoingStateErrorHtml() const;
+	QString getOutgoingStateUnknownHtml() const;
 
 	/**
 	 * Check if the style has the support for Kopete Action template (Kopete extension)

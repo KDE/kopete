@@ -174,7 +174,7 @@ void
 GaduRegisterAccount::registrationError(  const QString& title,  const QString& what )
 {
 	updateStatus( i18n( "Registration failed: %1", what ) );
-	KMessageBox::sorry( this, "Registration was unsucessful, please try again.", title );
+	KMessageBox::sorry( this, i18n("Registration was unsucessful, please try again."), title );
 
 	disconnect( this, SLOT( displayToken( QPixmap, QString ) ) );
 	disconnect( this, SLOT( registrationDone(  const QString&,  const QString& ) ) );

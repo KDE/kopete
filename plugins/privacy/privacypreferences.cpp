@@ -83,8 +83,6 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QVariantList &args
 
 	connect(m_whiteListModel, SIGNAL(rowsInserted(const QModelIndex &,int,int)), this, SLOT(slotSetupViews()));
 	connect(m_blackListModel, SIGNAL(rowsInserted(const QModelIndex &,int,int)), this, SLOT(slotSetupViews()));
-
-	load();
 }
 
 PrivacyPreferences::~PrivacyPreferences()

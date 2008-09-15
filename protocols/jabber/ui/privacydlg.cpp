@@ -20,7 +20,7 @@
  */
  
 #include <QListView>
-#include <QInputDialog>
+#include <KInputDialog>
 #include <KMessageBox>
 
 #include "privacydlg.h"
@@ -40,7 +40,7 @@ PrivacyDlg::PrivacyDlg(JabberAccount* acc, QWidget* parent) : KDialog(parent), a
 	setButtons (KDialog::Close);
 	ui_.lv_rules->setFocus (Qt::PopupFocusReason);
 
-	PrivacyManager* manager = acc->privacyManager();
+	PrivacyManager* manager = acc->client()->privacyManager();
 	connect(manager,SIGNAL(listsReceived(const QString&, const QString&, const QStringList&)),SLOT(updateLists(const QString&, const QString&, const QStringList&)));
 	connect(manager,SIGNAL(listReceived(const PrivacyList&)),SLOT(refreshList(const PrivacyList&)));
 	connect(manager,SIGNAL(listError()),SLOT(list_failed()));
@@ -67,6 +67,15 @@ PrivacyDlg::PrivacyDlg(JabberAccount* acc, QWidget* parent) : KDialog(parent), a
 	connect(ui_.pb_up,SIGNAL(clicked()),SLOT(moveCurrentRuleUp()));
 	connect(ui_.pb_down,SIGNAL(clicked()),SLOT(moveCurrentRuleDown()));
 	connect(ui_.pb_apply,SIGNAL(clicked()),SLOT(applyList()));
+	
+	ui_.pb_newList->setIcon(KIcon("list-add"));
+	ui_.pb_deleteList->setIcon(KIcon("list-remove"));
+	ui_.pb_add->setIcon(KIcon("list-add"));
+	ui_.pb_remove->setIcon(KIcon("list-remove"));
+	ui_.pb_up->setIcon(KIcon("arrow-up"));
+	ui_.pb_down->setIcon(KIcon("arrow-down"));
+	ui_.pb_edit->setIcon(KIcon("edit-rename"));
+	ui_.pb_apply->setIcon(KIcon("dialog-ok-apply"));
 
 	setWidgetsEnabled(false);
 
@@ -134,9 +143,9 @@ void PrivacyDlg::applyList()
 {
 	if (!model_.list().isEmpty()) {
 		setWidgetsEnabled(false);
-		acc_->privacyManager()->changeList(model_.list());
+		acc_->client()->privacyManager()->changeList(model_.list());
 		if (newList_)
-			acc_->privacyManager()->requestListNames();
+			acc_->client()->privacyManager()->requestListNames();
 	}
 }
 
@@ -180,7 +189,7 @@ void PrivacyDlg::updateLists(const QString& defaultList, const QString& activeLi
 				ui_.cb_lists->setCurrentIndex(names.indexOf(currentList));
 			}
 		}
-		acc_->privacyManager()->requestList(ui_.cb_lists->currentText());
+		acc_->client()->privacyManager()->requestList(ui_.cb_lists->currentText());
 	}
 	else {
 		setWidgetsEnabled(true);
@@ -196,7 +205,7 @@ void PrivacyDlg::listChanged()
 		rememberSettings();
 	}
 	setWidgetsEnabled(false);
-	acc_->privacyManager()->requestList(ui_.cb_lists->currentText());
+	acc_->client()->privacyManager()->requestList(ui_.cb_lists->currentText());
 }
 
 void PrivacyDlg::refreshList(const PrivacyList& list)
@@ -212,7 +221,7 @@ void PrivacyDlg::active_selected(int i)
 {
 	if (i != previousActive_) {
 		setWidgetsEnabled(false);
-		acc_->privacyManager()->changeActiveList((i == 0 ? "" : ui_.cb_active->itemText(i)));
+		acc_->client()->privacyManager()->changeActiveList((i == 0 ? "" : ui_.cb_active->itemText(i)));
 	}
 }
 
@@ -220,7 +229,7 @@ void PrivacyDlg::default_selected(int i)
 {
 	if (i != previousDefault_) {
 		setWidgetsEnabled(false);
-		acc_->privacyManager()->changeDefaultList((i == 0 ? "" : ui_.cb_active->itemText(i)));
+		acc_->client()->privacyManager()->changeDefaultList((i == 0 ? "" : ui_.cb_active->itemText(i)));
 	}
 }
 
@@ -299,7 +308,7 @@ void PrivacyDlg::newList()
 	bool ok = false;
 	QString name;
 	while (!done) {
-		name = QInputDialog::getText(this, i18n("New List"), i18n("Enter the name of the new list:"), QLineEdit::Normal, "", &ok);
+		name = KInputDialog::getText(i18n("New List"), i18n("Enter the name of the new list:"), QString(), &ok, this);
 		if (!ok) {
 			done = true;
 		}
@@ -326,6 +335,6 @@ void PrivacyDlg::newList()
 void PrivacyDlg::removeList()
 {
 	model_.list().clear();
-	acc_->privacyManager()->changeList(model_.list());
-	acc_->privacyManager()->requestListNames();
+	acc_->client()->privacyManager()->changeList(model_.list());
+	acc_->client()->privacyManager()->requestListNames();
 }

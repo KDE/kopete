@@ -116,7 +116,7 @@ void Kopete::WalletManager::slotWalletChangedStatus()
 
 		if ( d->wallet->setFolder( QString::fromLatin1( "Kopete" ) ) )
 		{
-			kDebug(14010) << "Succesfully opened the wallet !";
+			kDebug(14010) << "Successfully opened the wallet !";
 			// success!
 			QObject::connect( d->wallet, SIGNAL( walletClosed() ), this, SLOT( closeWallet() ) );
 		}

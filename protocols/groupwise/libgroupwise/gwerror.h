@@ -121,8 +121,10 @@ namespace GroupWise
 		QString message;
 	};
 	
-	struct FolderItem
+	struct LIBGROUPWISE_EXPORT FolderItem
 	{
+	public:
+		FolderItem();
 		uint id; 
 		uint sequence;
 		uint parentId;
@@ -161,7 +163,7 @@ namespace GroupWise
 
 	struct UserSearchQueryTerm
 	{
-		QString field;
+		QByteArray field;
 		QString argument;
 		int operation;
 	};

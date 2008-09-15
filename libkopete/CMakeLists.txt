@@ -19,6 +19,20 @@ set(kopete_private_SRCS
   private/kopeteviewmanager.cpp
 )
 
+if (Q_WS_X11)
+ if (X11_Xss_FOUND)
+  set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_x11.cpp )
+ else (X11_Xss_FOUND)
+  set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_dummy.cpp )
+ endif (X11_Xss_FOUND)
+endif (Q_WS_X11)
+if (Q_WS_MAC)
+ set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_mac.cpp )
+endif (Q_WS_MAC)
+if (Q_WS_WIN)
+ set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_win.cpp )
+endif (Q_WS_WIN)
+
 set(kopete_ui_SRCS
   ui/accountselector.cpp
   ui/addcontactpage.cpp
@@ -32,7 +46,6 @@ set(kopete_ui_SRCS
   ui/collapsiblewidget.cpp
   ui/editaccountwidget.cpp
   ui/kopetecontactaction.cpp
-  ui/kopetefileconfirmdialog.cpp
   ui/kopeteinfodialog.cpp
   ui/kopetelistview.cpp
   ui/kopetelistviewitem.cpp
@@ -118,6 +131,9 @@ set(kopete_LIB_SRCS
    kopetestatusmanager.cpp
    kopetestatusitems.cpp
    kopeteidletimer.cpp
+   kopeteinfoeventmanager.cpp
+   kopeteinfoevent.cpp
+   kopeteaddedinfoevent.cpp
 # REMOVED FOR NOW
 #   connectionmanager.cpp
 #   managedconnectionaccount.cpp
@@ -129,7 +145,6 @@ kde4_add_ui_files(kopete_LIB_SRCS
  ui/addressbookselectorwidget_base.ui
  ui/avatarselectorwidget.ui
  ui/contactaddednotifywidget.ui
- ui/fileconfirmbase.ui
  ui/kopeteawaydialogbase.ui
  ui/kopetepasswordwidgetbase.ui
  ui/metacontactselectorwidget_base.ui
@@ -143,7 +158,8 @@ kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC
 
 kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
 
-target_link_libraries(kopete ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS} ${UPNP_LIBRARY} ${IXML_LIBRARY})
+target_link_libraries(kopete ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS} ${UPNP_LIBRARY} ${IXML_LIBRARY} ${KDE4_SOLID_LIBS} ${X11_LIBRARIES})
+
 if(Q_WS_X11 AND X11_Xss_FOUND)
    target_link_libraries(kopete ${X11_Xss_LIB})
 endif(Q_WS_X11 AND X11_Xss_FOUND)
@@ -151,19 +167,19 @@ endif(Q_WS_X11 AND X11_Xss_FOUND)
 set_target_properties(kopete PROPERTIES
     VERSION ${GENERIC_LIB_VERSION}
     SOVERSION ${GENERIC_LIB_SOVERSION}
+    ${KDE4_DISABLE_PROPERTY_}LINK_INTERFACE_LIBRARIES "kdeui"
     )
 if(MSVC)
   set_target_properties(kopete PROPERTIES
       OUTPUT_NAME libkopete
       )
 endif(MSVC)
-install(TARGETS kopete DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS kopete ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 ########### install files ###############
 
 install(FILES
- ${CMAKE_CURRENT_BINARY_DIR}/ui_fileconfirmbase.h
  ${CMAKE_CURRENT_BINARY_DIR}/ui_kopeteawaydialogbase.h
  ${CMAKE_CURRENT_BINARY_DIR}/ui_kopetepasswordwidgetbase.h
  ui/accountselector.h
@@ -174,7 +190,6 @@ install(FILES
  ui/avatarselectorwidget.h
  ui/editaccountwidget.h
  ui/kopetecontactaction.h
- ui/kopetefileconfirmdialog.h
  ui/kopeteinfodialog.h
  ui/kopetelistview.h
  ui/kopetelistviewitem.h
@@ -183,7 +198,7 @@ install(FILES
  ui/kopetestdaction.h
  ui/kopeteview.h
  ui/kopeteviewplugin.h
-DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui )
+DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui COMPONENT Devel )
 
 install(FILES
   upnp/action.h
@@ -251,6 +266,6 @@ install( FILES
   tasks/kopetetask.h
   tasks/kopetecontacttaskbase.h
   tasks/kopetedeletecontacttask.h
-DESTINATION ${INCLUDE_INSTALL_DIR}/kopete )
+DESTINATION ${INCLUDE_INSTALL_DIR}/kopete COMPONENT Devel)
 
 install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )

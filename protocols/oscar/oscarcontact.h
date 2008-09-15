@@ -141,8 +141,13 @@ public slots:
 
 	void requestAuthorization();
 
+signals:
+	void statusMessageChanged();
+
 protected slots:
 	void slotTyping( bool typing );
+	void messageAck( const QString& contact, uint messageId );
+	void messageError( const QString& contact, uint messageId );
 
 protected:
 	OscarAccount *mAccount;
@@ -152,8 +157,7 @@ protected:
 	OContact m_ssiItem;
 	int m_warningLevel;
 	QString m_clientFeatures;
-	bool m_haveAwayMessage;
-	
+
 private:
 	void initActions();
 

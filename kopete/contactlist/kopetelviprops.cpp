@@ -602,7 +602,7 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 
 void KopeteMetaLVIProps::slotClearPhotoClicked()
 {
-	m_photoPath = QString();
+	m_photoPath.clear();
 	item->metaContact()->setPhoto( KUrl() );
 
 	slotEnableAndDisableWidgets();

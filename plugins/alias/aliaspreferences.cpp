@@ -1,6 +1,7 @@
 /*
- 
- Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
+ aliaspreferences.cpp  -  Alias Plugin Preferences
+
+ Copyright (c) 2003-2004      by the Kopete developers  <kopete-devel@kde.org>
 
  ***************************************************************************
  *                                                                         *
@@ -141,8 +142,6 @@ AliasPreferences::AliasPreferences( QWidget *parent, const QVariantList &args )
 
 	connect( preferencesDialog->aliasList, SIGNAL(selectionChanged()),
 		this, SLOT( slotCheckAliasSelected() ) );
-
-	load();
 }
 
 AliasPreferences::~AliasPreferences()

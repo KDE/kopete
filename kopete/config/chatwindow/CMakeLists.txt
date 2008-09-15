@@ -21,7 +21,7 @@ kde4_add_ui_files(kcm_kopete_chatwindowconfig_PART_SRCS
 kde4_add_plugin(kcm_kopete_chatwindowconfig ${kcm_kopete_chatwindowconfig_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_chatwindowconfig ${KDE4_KUTILS_LIBS} kopete kopetechatwindow_shared ${KDE4_KNEWSTUFF_LIBS} )
+target_link_libraries(kcm_kopete_chatwindowconfig ${KDE4_KUTILS_LIBS} kopete kopetechatwindow_shared ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KHTML_LIBS})
 
 install(TARGETS kcm_kopete_chatwindowconfig DESTINATION ${PLUGIN_INSTALL_DIR})
 

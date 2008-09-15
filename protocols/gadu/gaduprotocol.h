@@ -77,7 +77,6 @@ public:
 	const Kopete::PropertyTmpl propFirstName;
 	const Kopete::PropertyTmpl propLastName;
 	const Kopete::PropertyTmpl propEmail;
-	const Kopete::PropertyTmpl propAwayMessage;
 	const Kopete::PropertyTmpl propPhoneNr;
 	//const Kopete::PropertyTmpl propIgnore;
 

@@ -36,6 +36,8 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
+#include "kopeteidentity.h"
+#include "kopeteidentitymanager.h"
 
 class AddAccountWizard::Private
 {
@@ -43,6 +45,7 @@ public:
 	Private()
 		: accountPage(0)
 		, proto(0)
+		, identity(0L)
 		{
 		}
 
@@ -57,6 +60,7 @@ public:
 	Ui::AddAccountWizardPage2 uiFinish;
 	Kopete::Protocol *proto;
 	KPageWidgetItem *selectServiceItem;
+	Kopete::Identity *identity;
 };
 
 AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
@@ -208,8 +212,26 @@ void AddAccountWizard::accept()
 	// registeredAccount shouldn't probably be called here. Anyway, if the account is already registered, 
 	// it won't be registered twice
 	Kopete::AccountManager *manager = Kopete::AccountManager::self();
-	Kopete::Account        *account = manager->registerAccount(d->accountPage->apply());
+	Kopete::Account        *account = d->accountPage->apply();
 
+	// if the account wasn't created correctly then leave
+	if (!account)
+	{
+		reject();
+		return;
+	}
+
+	// Set a valid identity before registering the account
+	if (!d->identity)
+	{
+		account->setIdentity(Kopete::IdentityManager::self()->defaultIdentity());
+	}
+	else
+	{
+		account->setIdentity(d->identity);
+	}
+
+	account = manager->registerAccount(account);
 	// if the account wasn't created correctly then leave
 	if (!account)
 	{
@@ -264,6 +286,12 @@ AddAccountWizard::~AddAccountWizard()
 {
 	delete d;
 }
+
+void AddAccountWizard::setIdentity( Kopete::Identity *identity )
+{
+	d->identity = identity;
+}
+
 
 #include "addaccountwizard.moc"
 

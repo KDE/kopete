@@ -31,6 +31,7 @@
 #include <qbuffer.h>
 #include <QList>
 
+#include <KActionCollection>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -132,7 +133,7 @@ JabberContact::~JabberContact()
 QList<KAction*> *JabberContact::customContextMenuActions ()
 {
 
-	QList<KAction*> *actionCollection = new QList<KAction*>();
+	QList<KAction*> *actions = new QList<KAction*>();
 
 	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("network-connect"), i18n ("Authorization"), this);
 
@@ -241,16 +242,16 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 	}
 
-	actionCollection->append( actionAuthorization );
-	actionCollection->append( actionSetAvailability );
-	actionCollection->append( actionSelectResource );
+	actions->append( actionAuthorization );
+	actions->append( actionSetAvailability );
+	actions->append( actionSelectResource );
 	
 	
 #ifdef SUPPORT_JINGLE
 	KAction *actionVoiceCall = new KAction( (i18n ("Voice call"), "voicecall", 0, this, SLOT (voiceCall ()), 0, "jabber_voicecall");
 	actionVoiceCall->setEnabled( false );
 
-	actionCollection->append( actionVoiceCall );
+	actions->append( actionVoiceCall );
 
 	// Check if the current contact support Voice calls, also honor lock by default.
 	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( mRosterItem.jid() );
@@ -259,8 +260,16 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 		actionVoiceCall->setEnabled( true );
 	}
 #endif
-	
-	return actionCollection;
+
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("jabberContactAuthorizationMenu"), actionAuthorization);
+	tempCollection.addAction(QLatin1String("contactSendAuth"), resendAuthAction);
+	tempCollection.addAction(QLatin1String("contactRequestAuth"), requestAuthAction);
+	tempCollection.addAction(QLatin1String("contactRemoveAuth"), removeAuthAction);
+	tempCollection.addAction(QLatin1String("jabberContactSetAvailabilityMenu"), actionSetAvailability);
+	tempCollection.addAction(QLatin1String("jabberContactSelectResource"), actionSelectResource);
+	return actions;
 }
 
 void JabberContact::handleIncomingMessage (const XMPP::Message & message)
@@ -306,10 +315,14 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			if (message.containsEvent ( XMPP::DisplayedEvent ) )
 				mManager->receivedEventNotification ( i18n("Message has been displayed") );
 			else if (message.containsEvent ( XMPP::DeliveredEvent ) )
+			{
 				mManager->receivedEventNotification ( i18n("Message has been delivered") );
+				mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateSent );
+			}
 			else if (message.containsEvent ( XMPP::OfflineEvent ) )
 			{
-	        	mManager->receivedEventNotification( i18n("Message stored on the server, contact offline") );
+				mManager->receivedEventNotification( i18n("Message stored on the server, contact offline") );
+				mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateSent );
 			}
 			else if (message.chatState() == XMPP::StateGone )
 			{
@@ -352,6 +365,8 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	// check for errors
 	if ( message.type () == "error" )
 	{
+		mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateError );
+
 		newMessage = new Kopete::Message( this, contactList );
 		newMessage->setTimestamp( message.timeStamp() );
 		newMessage->setPlainBody( i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
@@ -610,7 +625,7 @@ void JabberContact::slotGotLastActivity ()
 		setProperty ( protocol()->propLastSeen, QDateTime::currentDateTime().addSecs ( -task->seconds () ) );
 		if( !task->message().isEmpty() )
 		{
-			setProperty( protocol()->propAwayMessage, task->message() );
+			setStatusMessage( task->message() );
 		}
 	}
 
@@ -1337,6 +1352,8 @@ void JabberContact::slotDiscoFinished( )
 		JabberTransport *transport = new JabberTransport( parentAccount , ri , tr_type );
 		if(!Kopete::AccountManager::self()->registerAccount( transport ))
 			return;
+		
+		transport->setIdentity( parentAccount->identity() );
 		transport->myself()->setOnlineStatus( status ); //push back the online status
 		return;
 	}

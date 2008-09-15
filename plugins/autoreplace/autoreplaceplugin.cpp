@@ -20,6 +20,7 @@
 #include <kopetecontact.h>
 
 #include "kopetechatsessionmanager.h"
+#include "kopetesimplemessagehandler.h"
 
 #include "autoreplaceplugin.h"
 #include "autoreplaceconfig.h"
@@ -38,8 +39,12 @@ AutoReplacePlugin::AutoReplacePlugin( QObject *parent, const QVariantList & )
 
 	m_prefs = new AutoReplaceConfig;
 
+	// intercept inbound messages
+	mInboundHandler = new Kopete::SimpleMessageHandlerFactory ( Kopete::Message::Inbound,
+	        Kopete::MessageHandlerFactory::InStageToDesired, this, SLOT ( slotInterceptMessage ( Kopete::Message& ) ) );
+
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToSend( Kopete::Message & ) ),
-		this, SLOT( slotAboutToSend( Kopete::Message & ) ) );
+		this, SLOT( slotInterceptMessage( Kopete::Message & ) ) );
 
 	connect( this, SIGNAL( settingsChanged() ), this, SLOT( slotSettingsChanged() ) );
 }
@@ -48,6 +53,7 @@ AutoReplacePlugin::~AutoReplacePlugin()
 {
 	pluginStatic_ = 0L;
 
+	delete mInboundHandler;
 	delete m_prefs;
 }
 
@@ -61,7 +67,7 @@ void AutoReplacePlugin::slotSettingsChanged()
 	m_prefs->load();
 }
 
-void AutoReplacePlugin::slotAboutToSend( Kopete::Message &msg )
+void AutoReplacePlugin::slotInterceptMessage( Kopete::Message &msg )
 {
 	if ( ( msg.direction() == Kopete::Message::Outbound && m_prefs->autoReplaceOutgoing() ) ||
 		( msg.direction() == Kopete::Message::Inbound && m_prefs->autoReplaceIncoming() ) )
@@ -86,34 +92,25 @@ void AutoReplacePlugin::slotAboutToSend( Kopete::Message &msg )
 			}
 		}
 
-		// the message is now the one with replaced words
-		if(isReplaced)
-			msg.setPlainBody( replaced_message );
-	}
-
-	if( msg.direction() == Kopete::Message::Outbound )
-	{
 		if ( m_prefs->dotEndSentence() )
 		{
-			QString replaced_message = msg.plainBody();
 			// eventually add . at the end of the lines, sent lines only
 			replaced_message.replace( QRegExp( "([a-z])$" ), "\\1." );
 			// replaced_message.replace(QRegExp( "([\\w])$" ), "\\1." );
-			
-			// the message is now the one with replaced words
-			msg.setPlainBody( replaced_message );
+			isReplaced=true;
 		}
 
 		if( m_prefs->capitalizeBeginningSentence() )
 		{
-			QString replaced_message = msg.plainBody();
 			// eventually start each sent line with capital letter
 			// TODO 	". "	 "? "	 "! " 
 			replaced_message[ 0 ] = replaced_message.at( 0 ).toUpper();
-			
-			// the message is now the one with replaced words
-			msg.setPlainBody( replaced_message );
+			isReplaced=true;
 		}
+
+		// the message is now the one with replaced words
+		if(isReplaced)
+			msg.setPlainBody( replaced_message );
 	}
 }
 

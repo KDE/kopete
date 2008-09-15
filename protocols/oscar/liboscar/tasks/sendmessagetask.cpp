@@ -71,6 +71,14 @@ void SendMessageTask::onGo()
 	SNAC s = { 0x0004, snacSubfamily, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer();
 
+	if ( m_message.id() > 0 )
+	{
+		Oscar::MessageInfo info;
+		info.contact = m_message.receiver();
+		info.id = m_message.id();
+		client()->addMessageInfo( s.id, info );
+	}
+
 	if ( snacSubfamily == 0x0006 && m_message.messageType() != Oscar::MessageType::File )
 	{
 		Oscar::DWORD cookie1 = KRandom::random();
@@ -122,7 +130,7 @@ void SendMessageTask::onGo()
 			b->addDWord( 0x00030000 ); //empty TLV 3 to get an ack from the server
 		}
 
-		if ( client()->isIcq() && m_message.channel() != 2 && ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
+		if ( m_message.channel() != 2 && ! m_message.hasProperty( Oscar::Message::StatusMessageRequest ) )
 			b->addDWord( 0x00060000 ); //empty TLV 6 to store message on the server if not online
 	}
 	else
@@ -164,19 +172,25 @@ void SendMessageTask::addChannel1Data( Buffer* b )
 	tlv2buffer.addWord( 0x0101 ); //add TLV(0x0101) also known as TLV(257)
 	tlv2buffer.addWord( m_message.textArray().size() + 4 ); // add TLV length
 
-	if ( m_message.encoding() == Oscar::Message::UserDefined )
+	switch ( m_message.encoding() )
 	{
-		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message in "
-			<< "per-contact encoding" << endl;
+	case Oscar::Message::UserDefined:
+	case Oscar::Message::ASCII:
+		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message in per-contact encoding or as ASCII";
 		tlv2buffer.addWord( 0x0000 );
 		tlv2buffer.addWord( 0x0000 );
-	}
-	else
-	{
-		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message as "
-			<< "UCS-2" << endl;
+		break;
+	case Oscar::Message::LATIN1:
+		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message as LATIN1";
+		tlv2buffer.addWord( 0x0003 );
+		tlv2buffer.addWord( 0x0000 );
+		break;
+	case Oscar::Message::UCS2:
+	default:
+		kDebug(OSCAR_RAW_DEBUG) << "Sending outgoing message as UCS-2";
 		tlv2buffer.addWord( 0x0002 );
 		tlv2buffer.addWord( 0x0000 );
+		break;
 	}
 	tlv2buffer.addString( m_message.textArray() );
 

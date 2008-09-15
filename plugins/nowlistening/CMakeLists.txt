@@ -10,7 +10,7 @@ endif(XMMS_FOUND)
 set(kopete_nowlistening_PART_SRCS 
    nowlisteningplugin.cpp 
    nlkscd.cpp 
-   nlnoatun.cpp 
+   #nlnoatun.cpp 
    nlxmms.cpp 
    nowlisteningguiclient.cpp 
    nljuk.cpp 
@@ -23,7 +23,7 @@ kde4_add_kcfg_files(kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
 kde4_add_plugin(kopete_nowlistening ${kopete_nowlistening_PART_SRCS})
 
 
-target_link_libraries(kopete_nowlistening  ${KDE4_KDECORE_LIBS} kopete)
+target_link_libraries(kopete_nowlistening  ${KDE4_KIO_LIBS} kopete)
 
 if(XMMS_FOUND)
    target_link_libraries( kopete_nowlistening ${XMMS_LDFLAGS} )

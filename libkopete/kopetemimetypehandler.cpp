@@ -27,7 +27,8 @@
 #include <kmimetype.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <ktar.h>
+#include <kemoticons.h>
+#include <kopeteemoticons.h>
 
 namespace Kopete
 {
@@ -205,7 +206,7 @@ EmoticonMimeTypeHandler::EmoticonMimeTypeHandler()
 
 void EmoticonMimeTypeHandler::handleURL( const QString &, const KUrl &url ) const
 {
-	Global::installEmoticonTheme( url.path() );
+	Emoticons::self()->installTheme( url.path() );
 }
 
 } // END namespace Kopete

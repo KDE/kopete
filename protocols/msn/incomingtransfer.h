@@ -22,9 +22,9 @@
 #include "p2p.h"
 #include "dispatcher.h"
 
-namespace KNetwork{
-	class KServerSocket;
-}
+#include <qabstractsocket.h>
+
+class QTcpServer;
 class KTemporaryFile;
 /**
 @author Kopete Developers
@@ -37,11 +37,10 @@ namespace P2P{
 			virtual ~IncomingTransfer();
 
 		private slots:
-			void slotListenError(int errorCode);
 			void slotAccept();
 			void slotSocketRead();
 			void slotSocketClosed();
-			void slotSocketError(int errorCode);
+			void slotSocketError(QAbstractSocket::SocketError errorCode);
 			
 			void slotTransferAccepted(Kopete::Transfer* transfer, const QString& fileName);
 			void slotTransferRefused(const Kopete::FileTransferInfo& info);
@@ -52,7 +51,7 @@ namespace P2P{
 			virtual void processMessage(const Message& message);
 
 			KTemporaryFile *m_tempFile;
-			KNetwork::KServerSocket   *m_listener;
+			QTcpServer   *m_listener;
 	};
 }
 

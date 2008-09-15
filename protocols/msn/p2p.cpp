@@ -27,11 +27,11 @@ using P2P::TransferType;
 #include <stdlib.h>
 
 // Kde includes
-#include <k3bufferedsocket.h>
 #include <kdebug.h>
 // Qt includes
 #include <QFile>
 #include <QByteArray>
+#include <QTcpSocket>
 
 // Kopete includes
 #include <kopetetransfermanager.h>
@@ -130,7 +130,7 @@ void TransferContext::acknowledge(const Message& message)
 	else
 	{
 		// Send acknowledge message directly.
-		m_socket->write(stream.data(), stream.size());
+		m_socket->write(stream);
 	}
 }
 
@@ -180,7 +180,7 @@ void TransferContext::sendData(const QByteArray& bytes)
  	else
  	{
  		// Send data directly.
- 		m_socket->write(stream.data(), stream.size());
+ 		m_socket->write(stream);
  	}
 }
 
@@ -199,8 +199,7 @@ void TransferContext::sendDataPreparation()
 	outbound.header.ackUniqueIdentifier  = 0;
 	outbound.header.ackDataSize   = 0l;
 	QByteArray bytes;
-	bytes.reserve(4);
-	bytes.fill('\0');
+	bytes.fill('\0', 4);
 	outbound.body = bytes;
 	outbound.applicationIdentifier = 1;
 	outbound.destination = m_recipient;
@@ -313,8 +312,7 @@ void TransferContext::sendMessage(MessageType type, const QString& content, qint
 		content).toUtf8();
 
 	// NOTE The body must have a null character at the end.
-	// QCString by chance automatically adds a \0 to the
-	// end of the string.
+	body.append('\0');
 
 	outbound.header.totalDataSize = body.size();
 	// Send the outbound message.
@@ -362,7 +360,7 @@ void TransferContext::sendMessage(Message& outbound, const QByteArray& body)
 		else
 		{
 			// Send outbound message directly.
-			m_socket->write(stream.data(), stream.size());
+			m_socket->write(stream);
 		}
 	}
 }

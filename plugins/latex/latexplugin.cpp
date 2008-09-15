@@ -130,10 +130,14 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			pos += rg.matchedLength();
 
 			QString formul=match;
-			if(!securityCheck(formul))
+			// first remove the $$ delimiters on start and end
+			formul.remove("$$");
+			// then trim the result, so we can skip totally empty/whitespace-only formulas
+			formul = formul.trimmed();
+			if (formul.isEmpty() || !securityCheck(formul))
 				continue;
 			
-			QString fileName=handleLatex(formul.replace("$$",""));
+			QString fileName = handleLatex(formul);
 			
 			// get the image and encode it with base64
 			#if ENCODED_IMAGE_MODE
@@ -169,7 +173,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 		imagePxWidth = theImage.width();
 		imagePxHeight = theImage.height();
 		QString escapedLATEX=Qt::escape(it.key()).replace("\"","&quot;");  //we need  the escape quotes because that string will be in a title="" argument, but not the \n
-		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
+		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" align=\"middle\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
 	msg.setHtmlBody( messageText );

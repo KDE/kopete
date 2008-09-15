@@ -82,6 +82,7 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	for ( i = 0; others.size() != i; i++ )
 		addContact( others[i], true );
 
+	connect( user, SIGNAL(contactDestroyed(Kopete::Contact*)), this, SLOT(slotMyselfDestroyed(Kopete::Contact*)) );
 	connect( user, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ), this,
 		SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 
@@ -424,6 +425,11 @@ void Kopete::ChatSession::receivedEventNotification( const QString& notification
 	emit eventNotification( notificationText );
 }
 
+void Kopete::ChatSession::receivedMessageState( uint messageId, Kopete::Message::MessageState state )
+{
+	emit messageStateChanged( messageId, state );
+}
+
 void Kopete::ChatSession::setCanBeDeleted ( bool b )
 {
 	d->mCanBeDeleted = b;
@@ -470,14 +476,14 @@ void Kopete::ChatSession::slotViewDestroyed()
 
 Kopete::Account *Kopete::ChatSession::account() const
 {
+	if ( !myself() )
+		return 0;
+
 	return myself()->account();
 }
 
 void Kopete::ChatSession::slotContactDestroyed( Kopete::Contact *contact )
 {
-	if(contact == myself())
-		deleteLater();
-		
 	if( !contact || !d->mContactList.contains( contact ) )
 		return;
 
@@ -489,6 +495,12 @@ void Kopete::ChatSession::slotContactDestroyed( Kopete::Contact *contact )
 
 	if ( d->mContactList.isEmpty() )
 		deleteLater();
+}
+
+void Kopete::ChatSession::slotMyselfDestroyed( Kopete::Contact *contact )
+{
+	d->mUser = 0;
+	deleteLater();
 }
 
 bool Kopete::ChatSession::mayInvite() const

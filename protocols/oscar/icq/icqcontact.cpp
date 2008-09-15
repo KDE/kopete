@@ -20,6 +20,7 @@
 #include "icqcontact.h"
 
 #include <qtimer.h>
+#include <KActionCollection>
 #include <klocale.h>
 #include <knotification.h>
 #include <kinputdialog.h>
@@ -140,6 +141,11 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 	else if ( !m_statusDescription.isEmpty() )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
+		setProperty( mProtocol->statusTitle, m_statusDescription );
+	}
+	else
+	{
+		removeProperty( mProtocol->statusTitle );
 	}
 
 	setPresenceTarget( presence );
@@ -382,13 +388,8 @@ void ICQContact::receivedTlvInfo( const QString& contact )
 		setNickName( QString::fromUtf8( info.nickName.get() ) );
 
 	m_statusDescription = QString::fromUtf8( info.statusDescription.get() );
-	if ( !m_statusDescription.isEmpty() )
-		setProperty( mProtocol->statusTitle, m_statusDescription );
-	else
-		removeProperty( mProtocol->statusTitle );
-
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( onlineStatus() );
-	
+
 	refreshStatus( m_details, presence );
 }
 
@@ -552,7 +553,7 @@ bool ICQContact::isReachable()
 
 QList<KAction*> *ICQContact::customContextMenuActions()
 {
-	QList<KAction*> *actionCollection = new QList<KAction*>();
+	QList<KAction*> *actions = new QList<KAction*>();
 
 	actionRequestAuth = new KAction( i18n("&Request Authorization"), this );
         //, "actionRequestAuth");
@@ -597,15 +598,23 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 	m_actionVisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_VISIBLE ));
 	m_actionInvisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_INVISIBLE ));
 
-	actionCollection->append(actionRequestAuth);
-	actionCollection->append(actionSendAuth);
-    actionCollection->append( m_selectEncoding );
+	actions->append(actionRequestAuth);
+	actions->append(actionSendAuth);
+    actions->append( m_selectEncoding );
 
-	actionCollection->append(m_actionIgnore);
-	actionCollection->append(m_actionVisibleTo);
-	actionCollection->append(m_actionInvisibleTo);
+	actions->append(m_actionIgnore);
+	actions->append(m_actionVisibleTo);
+	actions->append(m_actionInvisibleTo);
 
-	return actionCollection;
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("contactRequestAuth"), actionRequestAuth);
+	tempCollection.addAction(QLatin1String("contactSendAuth"), actionSendAuth);
+	tempCollection.addAction(QLatin1String("contactSelectEncoding"), m_selectEncoding);
+	tempCollection.addAction(QLatin1String("contactIgnore"), m_actionIgnore);
+	tempCollection.addAction(QLatin1String("oscarContactAlwaysVisibleTo"), m_actionVisibleTo);
+	tempCollection.addAction(QLatin1String("oscarContactAlwaysInvisibleTo"), m_actionInvisibleTo);
+	return actions;
 }
 
 

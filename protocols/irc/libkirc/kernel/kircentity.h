@@ -20,8 +20,7 @@
 
 #include "kircglobal.h"
 
-#include <kshareddata.h>
-
+#include <QExplicitlySharedDataPointer>
 #include <QList>
 #include <QObject>
 
@@ -34,19 +33,20 @@ class Context;
 
 class KIRC_EXPORT Entity
 	: public QObject
-	, public KSharedData
 {
 	Q_OBJECT
 
-//	Q_PROPERTY(QByteArray modes READ modes write setModes)
+//	Q_PROPERTY(QTextCodec *codec READ codec WRITE setCodec)
+
+//	Q_PROPERTY(QByteArray awayMessage READ awayMessage WRITE setAwayMessage)
+//	Q_PROPERTY(QByteArray name READ name WRITE setName)
+//	Q_PROPERTY(QByteArray modes READ modes WRITE setModes)
+//	Q_PROPERTY(QByteArray topic READ topic WRITE setTopic)
 
 //	Q_ENUMS(Type)
 
 public:
 	friend class KIrc::Context;
-
-	typedef KExplicitlySharedDataPointer<Entity> Ptr;
-	typedef QList<Entity::Ptr> List;
 
 	enum Type
 	{
@@ -62,6 +62,7 @@ public:
 	static bool isChannel( const QByteArray &name );
 	static bool isUser( const QByteArray &name );
 */
+	Entity(KIrc::Context *context);
 	virtual ~Entity();
 
 public: // Read attributes accessors
@@ -100,7 +101,6 @@ signals:
 private:
 	static QByteArray userInfo(const QByteArray &s, int num_cap);
 
-	Entity(KIrc::Context *context);
 	Q_DISABLE_COPY(Entity)
 
 	class Private;

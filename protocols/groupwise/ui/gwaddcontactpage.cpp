@@ -43,7 +43,7 @@
 #include "client.h"
 #include "gwaccount.h"
 #include "gwerror.h"
-//#include "gwprotocol.h"
+#include "gwprotocol.h"
 #include "gwsearch.h"
 #include "ui_gwaddui.h"
 #include "userdetailsmanager.h"
@@ -52,7 +52,7 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 		: AddContactPage(parent)
 {
 	m_account = static_cast<GroupWiseAccount *>( owner );
-	kDebug(GROUPWISE_DEBUG_GLOBAL) ;
+	kDebug() ;
 	QVBoxLayout * layout = new QVBoxLayout( this );
 	if (owner->isConnected ())
 	{
@@ -85,20 +85,18 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 	if ( validateData() )
 	{
 		QString contactId;
-		QString displayName;
 
-		Q3ValueList< ContactDetails > selected = m_searchUI->selectedResults();
+		ContactDetails dt;
+		QList< ContactDetails > selected = m_searchUI->selectedResults();
 		if ( selected.count() == 1 )
 		{
-			ContactDetails dt = selected.first();
+			dt = selected.first();
 			m_account->client()->userDetailsManager()->addDetails( dt );
-			contactId = dt.dn;
-			displayName = dt.givenName + ' ' + dt.surname;
 		}
 		else
 			return false;
 
-		return ( account->addContact ( contactId, parentContact, Kopete::Account::ChangeKABC ) );
+		return ( account->addContact ( dt.dn, parentContact, Kopete::Account::ChangeKABC ) );
 	}
 	else
 		return false;

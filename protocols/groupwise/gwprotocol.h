@@ -98,7 +98,6 @@ public:
 	const Kopete::PropertyTmpl propGivenName;
 	const Kopete::PropertyTmpl propLastName;
 	const Kopete::PropertyTmpl propFullName;
-	const Kopete::PropertyTmpl propAwayMessage;
 	const Kopete::PropertyTmpl propAutoReply;
 	const Kopete::PropertyTmpl propCN;
 	const Kopete::PropertyTmpl propPhoneWork;

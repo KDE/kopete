@@ -48,7 +48,6 @@
 #include <kmessagebox.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
-#include <kurl.h> // KNewStuff
 #include <kurlrequesterdialog.h>
 #include <krun.h>
 #include <kfiledialog.h>
@@ -120,6 +119,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QVariantList &args )
 	QWidget *advancedWidget = new QWidget(d->mAppearanceTabCtl);
 	d->mPrfsAdvanced.setupUi(advancedWidget);
 	addConfig( Kopete::AppearanceSettings::self(), advancedWidget );
+	connect ( d->mPrfsAdvanced.kcfg_contactListResizeAnchor, SIGNAL (toggled(bool)), this, SLOT (emitChanged()));
 
 	d->mAppearanceTabCtl->addTab(advancedWidget, i18n("Advanced"));
 
@@ -139,6 +139,7 @@ void AppearanceConfig::save()
 //	kDebug(14000) << "called.";
 
 	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
+	settings->setContactListAutoResize (d->mPrfsAdvanced.kcfg_contactListResizeAnchor->isChecked());
 
 	settings->writeConfig();
 
@@ -148,6 +149,7 @@ void AppearanceConfig::save()
 void AppearanceConfig::load()
 {
 	KCModule::load();
+	d->mPrfsAdvanced.kcfg_contactListResizeAnchor->setChecked(Kopete::AppearanceSettings::contactListAutoResize ());
 
 //	kDebug(14000) << "called";
 }

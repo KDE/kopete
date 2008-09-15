@@ -5,7 +5,7 @@
     Copyright (c) 2001-2002 by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -59,6 +59,7 @@ protected:
 	virtual void closeEvent( QCloseEvent *ev );
 	virtual void leaveEvent( QEvent* ev );
 	virtual void showEvent( QShowEvent* ev );
+	virtual void hideEvent( QHideEvent* ev );
 
 private slots:
 	void slotToggleShowAllOfflineEmpty( bool toggled );
@@ -82,6 +83,13 @@ private slots:
 	 * If not, the window will be hidden.
 	 */
 	void slotAutoHide();
+	
+	/**
+	 * Resize window to fit size of contact list nicely.
+	 */
+	void slotUpdateSize();
+
+	void slotStartAutoResizeTimer();
 
 	/**
 	 * This slot will apply settings that change the
@@ -110,7 +118,7 @@ private slots:
 	/**
 	 * Get a notification when an identity is created, so we can add a status bar
 	 * icon
-	 * @param identity the registered identity 
+	 * @param identity the registered identity
 	 */
 	void slotIdentityRegistered( Kopete::Identity *identity );
 
@@ -119,6 +127,12 @@ private slots:
 	 * @param identity the unregistered identity
 	 */
 	void slotIdentityUnregistered( const Kopete::Identity *identity );
+
+	/**
+	 * The tooltip got changed, update it.
+	 * @param identity the identity that has changed
+	 */
+	void slotIdentityToolTipChanged( Kopete::Identity *identity );
 
 	/**
 	 * The status icon got changed, update it.
@@ -168,6 +182,16 @@ private slots:
 	void slotGlobalStatusMessageIconClicked( const QPoint &position );
 
 	/**
+	 * Show Info Event widget and if necessary raise the Kopete window.
+	 */
+	void slotShowInfoEventWidget();
+
+	/**
+	 * Show/hide Info Event widget.
+	 */
+	void slotInfoIconClicked();
+
+	/**
 	 * Extracts protocolId and accountId from the single QString argument signalled by a QSignalMapper,
 	 * get the account, and call showAddContactDialog.
 	 * @param accountIdentifer QString of protocolId and accountId, concatenated with QChar( 0xE000 )
@@ -207,6 +231,23 @@ protected:
 
 signals:
       void iconClicked(const QPoint &position);
+
+};
+
+class InfoEventIconLabel : public QLabel
+{
+	Q_OBJECT
+public:
+	InfoEventIconLabel( QWidget *parent = 0 );
+
+protected:
+	void mouseReleaseEvent( QMouseEvent *event );
+
+signals:
+	void clicked();
+
+private slots:
+	void updateIcon();
 
 };
 

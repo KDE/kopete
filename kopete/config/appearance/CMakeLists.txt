@@ -20,7 +20,7 @@ kde4_add_ui_files(kcm_kopete_appearanceconfig_PART_SRCS
 kde4_add_plugin(kcm_kopete_appearanceconfig ${kcm_kopete_appearanceconfig_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_appearanceconfig ${KDE4_KUTILS_LIBS} kopete ${KDE4_KNEWSTUFF_LIBS} )
+target_link_libraries(kcm_kopete_appearanceconfig ${KDE4_KUTILS_LIBS} kopete )
 
 install(TARGETS kcm_kopete_appearanceconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 

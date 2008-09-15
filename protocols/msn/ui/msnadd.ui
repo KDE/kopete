@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>msnAddUI</class>
  <widget class="QWidget" name="msnAddUI" >
   <property name="geometry" >
@@ -12,53 +9,37 @@
     <height>347</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>0</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
+  <layout class="QFormLayout" name="formLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="TextLabel1" >
+     <property name="toolTip" >
+      <string>The user ID of the MSN contact you would like to add.</string>
      </property>
-     <property name="spacing" >
-      <number>6</number>
+     <property name="whatsThis" >
+      <string>The user ID of the MSN contact you would like to add.  This should be in the form of a valid E-mail address.</string>
      </property>
-     <item>
-      <widget class="QLabel" name="TextLabel1" >
-       <property name="toolTip" >
-        <string>The user ID of the MSN contact you would like to add.</string>
-       </property>
-       <property name="whatsThis" >
-        <string>The user ID of the MSN contact you would like to add.  This should be in the form of a valid E-mail address.</string>
-       </property>
-       <property name="text" >
-        <string>&amp;MSN Passport ID:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignTop</set>
-       </property>
-       <property name="buddy" >
-        <cstring>addID</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="addID" >
-       <property name="toolTip" >
-        <string>The user ID of the MSN contact you would like to add.</string>
-       </property>
-       <property name="whatsThis" >
-        <string>The user ID of the MSN contact you would like to add.  This should be in the form of a valid E-mail address.</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+     <property name="text" >
+      <string>&amp;MSN Passport ID:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignTop</set>
+     </property>
+     <property name="buddy" >
+      <cstring>addID</cstring>
+     </property>
+    </widget>
    </item>
-   <item>
+   <item row="0" column="1" >
+    <widget class="QLineEdit" name="addID" >
+     <property name="toolTip" >
+      <string>The user ID of the MSN contact you would like to add.</string>
+     </property>
+     <property name="whatsThis" >
+      <string>The user ID of the MSN contact you would like to add.  This should be in the form of a valid E-mail address.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
     <widget class="QLabel" name="textLabel2" >
      <property name="text" >
       <string>&lt;i>(for example: joe@hotmail.com)&lt;/i></string>
@@ -67,22 +48,6 @@
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
-   </item>
-   <item>
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>20</width>
-       <height>160</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

@@ -45,8 +45,7 @@ void ParseEmoticonTask::start()
 
 void ParseEmoticonTask::parseEmoticon(const QString &value)
 {
-	Kopete::Emoticons emo;
-	m_parsed = emo.parse(value, Kopete::Emoticons::RelaxedParse | Kopete::Emoticons::SkipHTML);
+	m_parsed = Kopete::Emoticons::parseEmoticons(value, KEmoticonsTheme::RelaxedParse | KEmoticonsTheme::SkipHTML);
 
 	if(m_parsed.isEmpty())
 	{

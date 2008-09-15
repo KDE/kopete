@@ -92,7 +92,7 @@ public:
 	/**
 	 * Returns the number of chat views attached to this window
 	 */
-	const int chatViewCount() { return chatViewList.count(); }
+	int chatViewCount() { return chatViewList.count(); }
 
 	/**
 	 * Returns the chatview in the currently active tab, or the only chat view
@@ -213,7 +213,6 @@ private slots:
 	void slotEnableUpdateBg() { updateBg = true; }
 
 	void toggleAutoSpellChecking();
-	void slotRTFEnabled( ChatView*, bool );
 	void slotAutoSpellCheckEnabled( ChatView*, bool );
 
 	void slotSetCaption( bool );
@@ -229,12 +228,15 @@ private slots:
 	void updateChatTooltip( ChatView* cv );
 	void updateChatLabel();
 
+	void enableSpellCheckAction(bool enable);
+
 private:
 	void updateSpellCheckAction();
 
 protected:
 	virtual void closeEvent( QCloseEvent *e );
 	virtual void changeEvent( QEvent *e );
+	virtual void resizeEvent( QResizeEvent *e);
 };
 
 #endif

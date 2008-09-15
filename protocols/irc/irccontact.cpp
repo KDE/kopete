@@ -44,7 +44,7 @@ using namespace Kopete;
 class IRCContact::Private
 {
 public:
-	KIrc::Entity::Ptr entity;
+	KIrc::Entity *entity; // QPointer ?
 
 	QMap<ChatSessionType, ChatSession *> chatSessions;
 
@@ -59,13 +59,13 @@ public:
 	QList<KAction *> userActions;
 };
 
-IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, MetaContact *metac, const QString& icon)
+IRCContact::IRCContact(IRCAccount *account, KIrc::Entity *entity, MetaContact *metac, const QString& icon)
 	: Contact(account, entity->name(), metac, icon)
 	, d (new IRCContact::Private)
 {
 	Q_ASSERT(entity);
 
-	kDebug(14120) << entity->name();
+	kDebug(14120) <<"Entity name: "<< entity->name();
 
 	d->entity = entity;
 
@@ -82,7 +82,7 @@ IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, Met
 //	mMyself.append( static_cast<Contact*>( this ) );
 
 	// KIRC stuff
-	connect(client, SIGNAL(connectionStateChanged(KIrc::ConnectionState)),
+	connect(client, SIGNAL(connectionStateChanged(KIrc::Socket::ConnectionState)),
 		this, SLOT(updateStatus()));
 /*
 	connect(entity, SIGNAL(updated()),
@@ -188,7 +188,8 @@ QString IRCContact::caption() const
 
 void IRCContact::updateStatus()
 {
-	setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity));
+	//setOnlineStatus(Kopete::OnlineStatus::Online);
+	//setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity));
 }
 
 bool IRCContact::isReachable()

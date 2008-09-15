@@ -39,6 +39,11 @@ public:
 	bool dotEndSentence() const;
 	bool capitalizeBeginningSentence() const;
 
+	void setAutoReplaceIncoming(bool enabled);
+	void setAutoReplaceOutgoing(bool enabled);
+	void setDotEndSentence(bool enabled);
+	void setCapitalizeBeginningSentence(bool enabled);
+
 	void setMap( const WordsToReplace &w );
     QStringList defaultAutoReplaceList();
     void loadDefaultAutoReplaceList();

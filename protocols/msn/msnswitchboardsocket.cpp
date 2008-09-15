@@ -30,6 +30,7 @@
 #include <QTextDocument>
 #include <qregexp.h>
 #include <qimage.h>
+#include <qimagereader.h>
 #include <qtimer.h>
 #include <qfile.h>
 #include <qfileinfo.h>
@@ -46,6 +47,7 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <KComponentData>
+#include <kemoticons.h>
 
 // for the display picture
 #include <msncontact.h>
@@ -255,7 +257,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	{
 		QString message;
 		message = msg.right( msg.length() - msg.lastIndexOf( ' ' ) - 1 );
-		message = message.replace(  "\r\n" ,"" );
+		message = message.remove(  "\r\n" );
 		emit receivedTypingMsg( message.toLower(), true );
 	}
 	else if(type == "text/x-msnmsgr-datacast")
@@ -352,7 +354,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 
 		//Stupid MSN PLUS colors code. message with incorrect charactere are not showed correctly in the chat window.
 		//TODO: parse theses one to show the color too in Kopete
-		message.replace("\3","").replace("\4","").replace("\2","").replace("\5","").replace("\6","").replace("\7","");
+		message.remove('\3').remove('\4').remove('\2').remove('\5').remove('\6').remove('\7');
 
 		if(!m_account->contacts()[m_msgHandle])
 		{
@@ -410,8 +412,8 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 	{
 		// TODO remove Displatcher.
 		bool useEmoticons( Kopete::AppearanceSettings::self()->useEmoticons() );
-		KConfigGroup msnConfig(KGlobal::config(), "MSN");
-		bool useCustomEmoticons( msnConfig.readEntry( "useCustomEmoticons", true ) );
+        KConfigGroup *msnConfig=m_account->configGroup();
+		bool useCustomEmoticons( msnConfig->readEntry( "useCustomEmoticons", true ) );
 
 		if ( useEmoticons && useCustomEmoticons )
 		{
@@ -684,13 +686,13 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	}
 #endif
 
-	KConfigGroup config(KGlobal::config(), "MSN");
-	if ( config.readEntry( "exportEmoticons", false ) )
+    KConfigGroup *config=m_account->configGroup();
+	if ( config->readEntry( "exportEmoticons", false ) )
 	{
-		QMap<QString, QStringList> emap = Kopete::Emoticons::self()->emoticonAndPicList();
+		QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
 
 		// Check the list for any custom emoticons
-		for (QMap<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
+		for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
 		{
 			for ( QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2 )
 			{
@@ -713,7 +715,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 
 	// User-Agent is not a official flag, but GAIM has it
 	QString UA;
-	if( config.readEntry("SendClientInfo", true) )
+	if( config->readEntry("SendClientInfo", true) )
 	{
 		UA="User-Agent: Kopete/"+escape(KGlobal::mainComponent().aboutData()->version())+"\r\n";
 	}
@@ -780,7 +782,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		int futurmessages_size=1400;  //1400 is a common good size
 		//int futurmessages_size=1664-len_H;
 
-		int nb=(int)ceil((float)(len_M)/(float)(futurmessages_size));
+		int nb=(int)std::ceil((float)(len_M)/(float)(futurmessages_size));
 
 		if(KMessageBox::warningContinueCancel(0L /* FIXME: we should try to find a parent somewere*/ ,
 			i18n("The message you are trying to send is too long; it will be split into %1 messages.", nb) ,
@@ -935,9 +937,11 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTemporaryFile *file, const QS
 	}
 	else if(msnObj == "inkformatgif")
 	{
+		file->open(); // Open otherwise fileName will be empty!
 		QString msg=i18n("<img src=\"%1\" alt=\"Typed message\" />", file->fileName() );
 
 		kDebug(14140) << file->fileName();
+		file->close();
 
 		m_typewrited.append(file);
 
@@ -1032,8 +1036,10 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 		KTemporaryFile *f=it.value().second;
 		if(message.contains(es) && f)
 		{
+			f->open(); // Open otherwise fileName will be empty!
 			QString imgPath = f->fileName();
-			QImage iconImage(imgPath);
+			QImage iconImage = QImageReader(f).read();
+			f->close();
 			/* We don't use a comple algoritm (like the one in the #if)  because the msn client shows
 		     * emoticons like that. So, in that case, we show like the MSN client */
 			#if 0

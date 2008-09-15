@@ -6,43 +6,13 @@
     <x>0</x>
     <y>0</y>
     <width>641</width>
-    <height>702</height>
+    <height>389</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <property name="leftMargin" >
-    <number>9</number>
-   </property>
-   <property name="topMargin" >
-    <number>9</number>
-   </property>
-   <property name="rightMargin" >
-    <number>9</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>9</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
+    <layout class="QFormLayout" name="formLayout" >
+     <item row="0" column="0" >
       <widget class="QLabel" name="TextLabel2_2" >
        <property name="sizePolicy" >
         <sizepolicy vsizetype="Maximum" hsizetype="Maximum" >
@@ -55,33 +25,14 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="1" >
       <widget class="QLineEdit" name="m_id" >
        <property name="readOnly" >
         <bool>true</bool>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
+     <item row="1" column="0" >
       <widget class="QLabel" name="TextLabel2_2_2" >
        <property name="sizePolicy" >
         <sizepolicy vsizetype="Maximum" hsizetype="Maximum" >
@@ -94,40 +45,21 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="1" column="1" >
       <widget class="QLineEdit" name="m_displayName" >
        <property name="readOnly" >
         <bool>true</bool>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
+     <item row="2" column="0" >
       <widget class="QLabel" name="textLabel1" >
        <property name="text" >
         <string>Personal message:</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="2" column="1" >
       <widget class="QLineEdit" name="m_personalMessage" >
        <property name="readOnly" >
         <bool>true</bool>
@@ -141,36 +73,11 @@
      <property name="title" >
       <string>Phones</string>
      </property>
-     <layout class="QGridLayout" >
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
-       <number>6</number>
-      </property>
+     <layout class="QFormLayout" name="formLayout_2" >
       <item row="0" column="0" >
        <widget class="QLabel" name="TextLabel6" >
         <property name="text" >
          <string>Work:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="TextLabel7" >
-        <property name="text" >
-         <string>Mobile:</string>
         </property>
        </widget>
       </item>
@@ -188,15 +95,22 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="m_phm" >
+      <item row="1" column="1" >
+       <widget class="QLineEdit" name="m_phh" >
         <property name="readOnly" >
          <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="QLineEdit" name="m_phh" >
+      <item row="2" column="0" >
+       <widget class="QLabel" name="TextLabel7" >
+        <property name="text" >
+         <string>Mobile:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QLineEdit" name="m_phm" >
         <property name="readOnly" >
          <bool>true</bool>
         </property>
@@ -227,7 +141,7 @@ If not, the user has not added you to their list, or has removed you.</string>
      <property name="sizeType" >
       <enum>QSizePolicy::Expanding</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
        <height>40</height>

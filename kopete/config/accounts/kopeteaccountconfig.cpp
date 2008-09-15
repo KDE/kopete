@@ -94,6 +94,7 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QVariantList &a
 	connect( mAccountList,  SIGNAL( itemSelectionChanged() ), this, SLOT( slotItemSelected() ) );
 	connect( mAccountList,  SIGNAL( itemDoubleClicked(QTreeWidgetItem*, int) ), this, SLOT( slotModify() ) );
 	connect( mAccountList,  SIGNAL( itemChanged ( QTreeWidgetItem * , int )), this, SLOT( slotItemChanged(QTreeWidgetItem*) ) );
+	connect( mAccountList,  SIGNAL( itemClicked ( QTreeWidgetItem * , int )), this, SLOT( slotItemClicked(QTreeWidgetItem*, int) ) );
 
 	// this ensures that newly created accounts are assigned to the selected identity
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account *)), this, SLOT(slotAccountAdded(Kopete::Account *)) );
@@ -166,6 +167,7 @@ void KopeteAccountConfig::load()
 			QFont font = identityItem->font( 0 );
 			font.setBold( true );
 			identityItem->setFont( 0, font );
+			identityItem->setSelected( true );
 		}
 		//identityItem->setSizeHint( 0, QSize(0, 42) );
 		
@@ -189,8 +191,9 @@ void KopeteAccountConfig::load()
 		lvi->setText( 1, i->myself()->onlineStatus().statusTypeToString(i->myself()->onlineStatus().status()) );
 		lvi->setTextAlignment( 1, Qt::AlignRight | Qt::AlignVCenter );
 		lvi->setFont( 1, font );
-		
-		lvi->setFlags( lvi->flags() & ~Qt::ItemIsDropEnabled );
+	
+		lvi->setFlags( (lvi->flags() & ~Qt::ItemIsDropEnabled) | Qt::ItemIsUserCheckable );
+		lvi->setCheckState ( 0, i->excludeConnect() ? Qt::Unchecked : Qt::Checked );
 
 		connect( i->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
 				 this, SLOT(slotOnlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)));
@@ -210,6 +213,7 @@ void KopeteAccountConfig::slotItemSelected()
 
 	bool identitySelected = selectedIdentity();
 	bool isDefaultIdentity = (identitySelected && Kopete::IdentityManager::self()->defaultIdentity() == selectedIdentity()->identity());
+	mButtonAccountAdd->setEnabled( identitySelected );
 	mButtonIdentityCopy->setEnabled( identitySelected );
 	mButtonIdentityModify->setEnabled( identitySelected );
 	m_actionIdentityRemove->setEnabled( identitySelected && !isDefaultIdentity );
@@ -221,6 +225,11 @@ void KopeteAccountConfig::slotItemSelected()
 void KopeteAccountConfig::slotAddAccount()
 {
 	AddAccountWizard *addwizard = new AddAccountWizard( this, true );
+	KopeteIdentityLVI *ilvi = selectedIdentity();
+	if (ilvi)
+	{
+		addwizard->setIdentity( ilvi->identity() );
+	}
 	addwizard->show();
 }
 
@@ -324,7 +333,7 @@ void KopeteAccountConfig::removeIdentity()
 		{
 			// if there are any accounts linked to this identity, need to change them before removing the identity
 			if ( AccountIdentityDialog::changeAccountIdentity( this, i->accounts(), i, 
-						i18n("Before removing the identity %1, the following accounts must be" 
+						i18n("Before removing the identity %1, the following accounts must be " 
 							"assigned to another identity:", i->label())) )
 			{
 				Kopete::IdentityManager::self()->removeIdentity( i );
@@ -449,12 +458,6 @@ void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,
 
 void KopeteAccountConfig::slotAccountAdded( Kopete::Account * account )
 {
-	KopeteIdentityLVI *i = selectedIdentity();
-	if ( i ) {
-		account->setIdentity( i->identity() );
-	} else {
-		account->setIdentity( Kopete::IdentityManager::self()->defaultIdentity() );
-	}
 	save();
 	load();
 }
@@ -576,6 +579,13 @@ void KopeteAccountConfig::configureMenus()
 	m_identityContextMenu->addAction( m_actionIdentityModify );
 	m_identityContextMenu->addAction( m_actionIdentityRemove );
 	m_identityContextMenu->addAction( m_actionIdentitySetDefault );
+}
+
+void KopeteAccountConfig::slotItemClicked( QTreeWidgetItem * item, int /*column*/ )
+{
+	KopeteAccountLVI *account = static_cast<KopeteAccountLVI*>( item );
+	if ( account &&  account->parent() )
+		account->account()->setExcludeConnect ( account->checkState(0) == Qt::Unchecked ? true : false );
 }
 
 

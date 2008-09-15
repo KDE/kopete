@@ -11,13 +11,13 @@
 
 	<!-- Define the available signals to emit -->
 	<signal name="chatwindowAppearanceChanged">
-		<label>Emited when the font and colors settings has changed.</label>
+		<label>Emitted when the font and colors settings has changed.</label>
 	</signal>
 	<signal name="messageOverridesChanged">
-		<label>Emited when the message overrides settings has changed.</label>
+		<label>Emitted when the message overrides settings has changed.</label>
 	</signal>
 	<signal name="styleChanged">
-		<label>Emited when the chat window style change.</label>
+		<label>Emitted when the chat window style change.</label>
 		<argument type="String">styleName</argument>
 	</signal>
 	<signal name="styleVariantChanged">

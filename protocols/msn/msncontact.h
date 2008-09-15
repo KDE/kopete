@@ -185,7 +185,7 @@ private:
 	 */
 	Kopete::OnlineStatus m_currentStatus;
 
-	//MSNProtocol::deserializeContact need to acess some contact insternals
+	//MSNProtocol::deserializeContact needs to access some contact insternals
 	friend class MSNProtocol;
 };
 

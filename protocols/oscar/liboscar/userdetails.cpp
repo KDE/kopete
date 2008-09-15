@@ -51,6 +51,7 @@ UserDetails::UserDetails()
 	m_userClassSpecified = false;
 	m_memberSinceSpecified = false;
 	m_onlineSinceSpecified = false;
+	m_awaySinceSpecified = false;
 	m_numSecondsOnlineSpecified = false;
 	m_idleTimeSpecified = false;
 	m_extendedStatusSpecified = false;
@@ -104,6 +105,11 @@ Oscar::WORD UserDetails::dcProtoVersion() const
 QDateTime UserDetails::onlineSinceTime() const
 {
 	return m_onlineSince;
+}
+
+QDateTime UserDetails::awaySinceTime() const
+{
+	return m_awaySince;
 }
 
 QDateTime UserDetails::memberSinceTime() const
@@ -397,6 +403,13 @@ void UserDetails::fill( Buffer * buffer )
 				}
 				break;
 			}
+			case 0x0029:
+				m_awaySince.setTime_t( b.getDWord() );
+				m_awaySinceSpecified = true;
+#ifdef OSCAR_USERINFO_DEBUG
+				kDebug(OSCAR_RAW_DEBUG) << "Away since " << m_awaySince;
+#endif
+				break;
 			default:
 				kDebug(OSCAR_RAW_DEBUG) << "Unknown TLV, type=" << t.type << ", length=" << t.length
 					<< " in userinfo" << endl;
@@ -763,6 +776,11 @@ void UserDetails::merge( const UserDetails& ud )
 	{
 		m_onlineSince = ud.m_onlineSince;
 		m_onlineSinceSpecified = true;
+	}
+	if ( ud.m_awaySinceSpecified )
+	{
+		m_awaySince = ud.m_awaySince;
+		m_awaySinceSpecified = true;
 	}
 	if ( ud.m_numSecondsOnlineSpecified )
 	{

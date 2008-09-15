@@ -4,7 +4,7 @@
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
@@ -42,7 +42,7 @@ void PrivacyItemTask::allow( const QString & dn )
 {
 	m_dn = dn;
 	Field::FieldList lst;
-	lst.append( new Field::SingleField( NM_A_SZ_BLOCKING_ALLOW_ITEM, NMFIELD_METHOD_ADD, 0, NMFIELD_TYPE_UTF8, dn ) );
+	lst.append( new Field::SingleField( Field::NM_A_SZ_BLOCKING_ALLOW_ITEM, NMFIELD_METHOD_ADD, 0, NMFIELD_TYPE_UTF8, dn ) );
 	createTransfer( "createblock", lst );
 }
 
@@ -50,7 +50,7 @@ void PrivacyItemTask::deny( const QString & dn )
 {
 	m_dn = dn;
 	Field::FieldList lst;
-	lst.append( new Field::SingleField( NM_A_SZ_BLOCKING_DENY_ITEM, NMFIELD_METHOD_ADD, 0, NMFIELD_TYPE_UTF8, dn ) );
+	lst.append( new Field::SingleField( Field::NM_A_SZ_BLOCKING_DENY_ITEM, NMFIELD_METHOD_ADD, 0, NMFIELD_TYPE_UTF8, dn ) );
 	createTransfer( "createblock", lst );
 }
 
@@ -58,7 +58,7 @@ void PrivacyItemTask::removeAllow( const QString & dn )
 {
 	m_dn = dn;
 	Field::FieldList lst;
-	lst.append( new Field::SingleField( NM_A_BLOCKING_ALLOW_LIST, NMFIELD_METHOD_DELETE, 0, NMFIELD_TYPE_UTF8, dn ) );
+	lst.append( new Field::SingleField( Field::NM_A_BLOCKING_ALLOW_LIST, NMFIELD_METHOD_DELETE, 0, NMFIELD_TYPE_UTF8, dn ) );
 	createTransfer( "updateblocks", lst );
 
 }
@@ -67,7 +67,7 @@ void PrivacyItemTask::removeDeny( const QString & dn )
 {
 	m_dn = dn;
 	Field::FieldList lst;
-	lst.append( new Field::SingleField( NM_A_BLOCKING_DENY_LIST, NMFIELD_METHOD_DELETE, 0, NMFIELD_TYPE_UTF8, dn ) );
+	lst.append( new Field::SingleField( Field::NM_A_BLOCKING_DENY_LIST, NMFIELD_METHOD_DELETE, 0, NMFIELD_TYPE_UTF8, dn ) );
 	createTransfer( "updateblocks", lst );
 }
 	
@@ -75,7 +75,7 @@ void PrivacyItemTask::defaultPolicy( bool defaultDeny )
 {
 	m_default = defaultDeny;
 	Field::FieldList lst;
-	lst.append( new Field::SingleField( NM_A_BLOCKING, NMFIELD_METHOD_UPDATE, 0, NMFIELD_TYPE_UTF8, ( defaultDeny ? "1" :"0" ) ) );
+	lst.append( new Field::SingleField( Field::NM_A_BLOCKING, NMFIELD_METHOD_UPDATE, 0, NMFIELD_TYPE_UTF8, ( defaultDeny ? "1" :"0" ) ) );
 	createTransfer( "updateblocks", lst );
 }
 

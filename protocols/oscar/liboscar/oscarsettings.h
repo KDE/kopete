@@ -42,8 +42,6 @@ public:
 	/* Authorization settings */
 	void setRequireAuth( bool require );
 	bool requireAuth() const;
-	void setRespectRequireAuth( bool require );
-	bool respectRequireAuth() const;
 	
 	/* Hide IP Settings */
 	void setHideIP( bool hide );
@@ -67,7 +65,6 @@ private:
 	
 	bool m_webAware;
 	bool m_requireAuth;
-	bool m_respectRequireAuth;
 	bool m_hideIP;
 	bool m_fileProxy;
 	int  m_firstPort;

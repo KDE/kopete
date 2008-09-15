@@ -286,6 +286,11 @@ Status::StatusGroup *StatusManager::defaultStatuses() const
 	group->appendChild( status );
 
 	status = new Status::Status();
+	status->setTitle( i18n( "Invisible" ) );
+	status->setCategory( OnlineStatusManager::Invisible );
+	group->appendChild( status );
+
+	status = new Status::Status();
 	status->setTitle( i18n( "Offline" ) );
 	status->setCategory( OnlineStatusManager::Offline );
 	group->appendChild( status );

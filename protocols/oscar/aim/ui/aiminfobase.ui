@@ -160,7 +160,7 @@
     </widget>
    </item>
    <item row="6" column="0" colspan="4" >
-    <widget class="Q3Frame" native="1" name="userInfoFrame" >
+    <widget class="QFrame" native="1" name="userInfoFrame" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
        <horstretch>0</horstretch>
@@ -183,12 +183,6 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3Frame</class>
-   <extends></extends>
-   <header>Qt3Support/Q3Frame</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>KTextBrowser</class>
    <extends></extends>

@@ -16,8 +16,6 @@
 
 #include "xtrazstatusaction.h"
 
-#include <kopetestatusmessage.h>
-
 namespace Xtraz
 {
 
@@ -34,14 +32,7 @@ StatusAction::StatusAction( const Xtraz::Status &status, QObject *parent )
 
 void StatusAction::triggered()
 {
-	Oscar::Presence presence( Oscar::Presence::Online, Oscar::Presence::XStatus );
-	presence.setXtrazStatus( mStatus.status() );
-
-	Kopete::StatusMessage statusMessage;
-	statusMessage.setTitle( mStatus.description() );
-	statusMessage.setMessage( mStatus.message() );
-
-	emit triggered( presence, statusMessage );
+	emit triggered( mStatus );
 }
 
 }

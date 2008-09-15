@@ -747,14 +747,13 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 					title = title.left( 40 ) + QLatin1String( "..." );
 
 				// HACK: Used to update the KMenu title -DarkShock
-				if( !d->menuTitleMap.contains(popup) )
+				if( d->menuTitleMap.contains(popup) )
 				{
-					d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
+					QAction *action = d->menuTitleMap[popup];
+					popup->removeAction( action );
+					delete action;
 				}
-				else
-				{
-					d->menuTitleMap[popup]->setText( title );
-				}
+				d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
 
 				// Submenus for separate contact actions
 				bool sep = false;  //FIXME: find if there is already a separator in the end - Olivier
@@ -795,15 +794,13 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 				title = title.left( 30 ) + QLatin1String( "..." );
 
 			// HACK: Used to update the KMenu title -DarkShock
- 			if( !d->menuTitleMap.contains(popup) )
+			if( d->menuTitleMap.contains(popup) )
 			{
-				d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
+				QAction *action = d->menuTitleMap[popup];
+				popup->removeAction( action );
+				delete action;
 			}
-			else
-			{
-				d->menuTitleMap[popup]->setText( title );
-			}
-
+			d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
 
 			popup->popup( point );
 		}
@@ -822,14 +819,13 @@ void KopeteContactListView::slotContextMenu( K3ListView * /*listview*/,
 		if ( popup )
 		{
 			// HACK: Used to update the KMenu title -DarkShock
-			if( !d->menuTitleMap.contains(popup) )
+			if( d->menuTitleMap.contains(popup) )
 			{
-				d->menuTitleMap.insert( popup, popup->addTitle(i18n( "Kopete" ), popup->actions().first()) );
+				QAction *action = d->menuTitleMap[popup];
+				popup->removeAction( action );
+				delete action;
 			}
-			else
-			{
-				d->menuTitleMap[popup]->setText( i18n( "Kopete" ) );
-			}
+			d->menuTitleMap.insert( popup, popup->addTitle(i18n( "Kopete" ), popup->actions().first()) );
 
 			popup->popup( point );
 		}

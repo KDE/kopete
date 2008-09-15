@@ -17,6 +17,7 @@
 
 #include "aimcontact.h"
 
+#include <KActionCollection>
 #include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
@@ -64,7 +65,7 @@ bool AIMContact::isReachable()
 QList<KAction*> *AIMContact::customContextMenuActions()
 {
 
-	QList<KAction*> *actionCollection = new QList<KAction*>();
+	QList<KAction*> *actions = new QList<KAction*>();
 	if ( !m_warnUserAction )
 	{
 		m_warnUserAction = new KAction( i18n( "&Warn User" ), this );
@@ -90,12 +91,18 @@ QList<KAction*> *AIMContact::customContextMenuActions()
 	m_actionVisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_VISIBLE ));
 	m_actionInvisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_INVISIBLE ));
 
-	actionCollection->append( m_warnUserAction );
+	actions->append( m_warnUserAction );
 
-	actionCollection->append(m_actionVisibleTo);
-	actionCollection->append(m_actionInvisibleTo);
+	actions->append(m_actionVisibleTo);
+	actions->append(m_actionInvisibleTo);
 
-	return actionCollection;
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("aimContactWarn"), m_warnUserAction);
+	tempCollection.addAction(QLatin1String("oscarContactAlwaysVisibleTo"), m_actionVisibleTo);
+	tempCollection.addAction(QLatin1String("oscarContactAlwaysInvisibleTo"), m_actionInvisibleTo);
+
+	return actions;
 }
 
 int AIMContact::warningLevel() const
@@ -156,14 +163,12 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	if ( presence.type() == Oscar::Presence::Online )
 	{
 		removeProperty( mProtocol->statusMessage );
-		m_haveAwayMessage = false;
 	}
 	else
 	{
-		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
+		if ( m_details.awaySinceTime() < details.awaySinceTime() ) //prevent cyclic away message requests
 		{
 			mAccount->engine()->requestAIMAwayMessage( contactId() );
-			m_haveAwayMessage = true;
 		}
 	}
 

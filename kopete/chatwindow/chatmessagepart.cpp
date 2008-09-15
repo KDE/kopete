@@ -5,8 +5,9 @@
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
     Copyright (c) 2005-2006 by Michaël Larouche     <larouche@kde.org>
+    Copyright (c) 2008      by Roman Jarosz          <kedgedev@centrum.cz>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -35,6 +36,7 @@
 #include <QtCore/QTextCodec>
 #include <QtCore/QTextStream>
 #include <QtCore/QTimer>
+#include <QtCore/QBuffer>
 #include <QtGui/QClipboard>
 #include <QtGui/QCursor>
 #include <QtGui/QPixmap>
@@ -50,6 +52,8 @@
 #include <dom/html_base.h>
 #include <dom/html_document.h>
 #include <dom/html_inline.h>
+#include <dom/html_form.h>
+#include <dom/dom2_events.h>
 
 
 // KDE includes
@@ -65,7 +69,6 @@
 #include <kstringhandler.h>
 #include <ktemporaryfile.h>
 #include <kio/copyjob.h>
-#include <kstandarddirs.h>
 #include <kstandardaction.h>
 #include <kiconloader.h>
 #include <kcodecs.h>
@@ -87,6 +90,7 @@
 #include "kopeteappearancesettings.h"
 #include "kopetebehaviorsettings.h"
 #include "kopetechatwindowsettings.h"
+#include "kopetetransfermanager.h"
 
 #include "kopetechatwindowstyle.h"
 #include "kopetechatwindowstylemanager.h"
@@ -100,7 +104,8 @@ public:
 	 : /*tt(0L),*/ scrollPressed(false), manager(0),
 	   copyAction(0), saveAction(0), printAction(0),
 	   closeAction(0),copyURLAction(0), currentChatStyle(0),
-	   latestDirection(Kopete::Message::Inbound), latestType(Kopete::Message::TypeNormal)
+	   latestDirection(Kopete::Message::Inbound), latestType(Kopete::Message::TypeNormal),
+	   htmlEventListener(0)
 	{}
 
 	~Private()
@@ -133,6 +138,11 @@ public:
 	// Yep I know it will take memory, but I don't have choice
 	// to enable on-the-fly style changing.
 	QList<Kopete::Message> allMessages;
+	
+	// No need to delete, HTMLEventListener is ref counted.
+	QPointer<HTMLEventListener> htmlEventListener;
+
+	QFont chatFont;
 };
 /*
 class ChatMessagePart::ToolTip : public Q3ToolTip
@@ -216,6 +226,8 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( Kopete::AppearanceSettings::self(), SIGNAL(messageOverridesChanged()),
 	         this, SLOT( slotAppearanceChanged() ) );
+	connect( Kopete::AppearanceSettings::self(), SIGNAL(appearanceChanged()),
+	         this, SLOT( slotRefreshView() ) );
 	connect( KopeteChatWindowSettings::self(), SIGNAL(chatwindowAppearanceChanged()),
 	         this, SLOT( slotRefreshView() ) );
 	connect( KopeteChatWindowSettings::self(), SIGNAL(styleChanged(const QString &)),
@@ -227,6 +239,9 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	connect( d->manager, SIGNAL(displayNameChanged()), this, SLOT(slotUpdateHeaderDisplayName()) );
 	connect( d->manager, SIGNAL(photoChanged()), this, SLOT(slotUpdateHeaderPhoto()) );
 
+	connect( d->manager, SIGNAL(messageStateChanged(uint, Kopete::Message::MessageState)),
+	         this, SLOT(messageStateChanged(uint, Kopete::Message::MessageState)) );
+
 	connect ( browserExtension(), SIGNAL( openUrlRequestDelayed( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ),
 	          this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ) );
 
@@ -235,6 +250,12 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	connect( view()->verticalScrollBar(), SIGNAL(sliderMoved(int)),
 	         this, SLOT(slotScrollingTo(int)) );
 
+	connect( Kopete::TransferManager::transferManager(), SIGNAL(askIncomingDone(unsigned int)),
+	         this, SLOT(slotFileTransferIncomingDone(unsigned int)) );
+
+	connect( KGlobalSettings::self(), SIGNAL(kdisplayFontChanged()),
+	         this, SLOT( slotRefreshView() ) );
+	
 	//initActions
 	d->copyAction = KStandardAction::copy( this, SLOT(copy()), actionCollection() );
 	d->saveAction = KStandardAction::saveAs( this, SLOT(save()), actionCollection() );
@@ -246,11 +267,25 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	// read formatting override flags
 	readOverrides();
+
+	// read the font for the chat
+	readChatFont();
 }
 
 ChatMessagePart::~ChatMessagePart()
 {
 	kDebug(14000) ;
+
+	// Cancel all pending file transfer requests
+	QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
+	for ( it = d->allMessages.constBegin(); it != itEnd; ++it )
+	{
+		if ( (*it).type() == Kopete::Message::TypeFileTransferRequest && !(*it).fileTransferDisabled() )
+		{
+			Kopete::TransferManager::transferManager()->cancelIncomingTransfer( (*it).id() );
+		}
+	}
+
 	//delete d->tt;
 	delete d;
 }
@@ -288,7 +323,7 @@ void ChatMessagePart::save()
 			stream << "[" << KGlobal::locale()->formatDateTime(tempMessage.timestamp()) << "] ";
 			if( tempMessage.from() && tempMessage.from()->metaContact() )
 			{
-				stream << formatName(tempMessage.from()->metaContact()->displayName());
+				stream << formatName(tempMessage.from()->metaContact()->displayName(), Qt::RichText);
 			}
 			stream << ": " << tempMessage.plainBody() << "\n";
 		}
@@ -333,9 +368,24 @@ void ChatMessagePart::slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlA
 	}
 	else
 	{
-		KRun *runner = new KRun( url, 0, false ); // false = non-local files
+		KRun *runner = new KRun( url, 0, 0, false ); // false = non-local files
 		runner->setRunExecutables( false ); //security
 		//KRun autodeletes itself by default when finished.
+	}
+}
+
+void ChatMessagePart::slotFileTransferIncomingDone( unsigned int id )
+{
+	QList<Kopete::Message>::Iterator it = d->allMessages.end();
+	while ( it != d->allMessages.begin() )
+	{
+		--it;
+		if ( (*it).id() == id )
+		{
+			(*it).setFileTransferDisabled( true );
+			disableFileTransferButtons( id );
+			break;
+		}
 	}
 }
 
@@ -371,6 +421,21 @@ void ChatMessagePart::setStyleVariant( const QString &variantPath )
 	DOM::HTMLElement variantNode = document().getElementById( QString("mainStyle") );
 	if( !variantNode.isNull() )
 		variantNode.setInnerText( QString("@import url(\"%1\");").arg( adjustStyleVariantForChatSession( variantPath) ) );
+}
+
+void ChatMessagePart::messageStateChanged( uint messageId, Kopete::Message::MessageState state )
+{
+	QList<Kopete::Message>::Iterator it = d->allMessages.end();
+	while ( it != d->allMessages.begin() )
+	{
+		--it;
+		if ( (*it).id() == messageId )
+		{
+			(*it).setState( state );
+			changeMessageStateElement( messageId, state );
+			break;
+		}
+	}
 }
 
 void ChatMessagePart::slotAppearanceChanged()
@@ -415,7 +480,9 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	// Group only if the user want it.
 	if( KopeteChatWindowSettings::self()->groupConsecutiveMessages() )
 	{
-		isConsecutiveMessage = (message.direction() == d->latestDirection && !d->latestContact.isNull() && d->latestContact == message.from() && message.type() == d->latestType);
+		isConsecutiveMessage = (message.direction() == d->latestDirection && !d->latestContact.isNull()
+		                        && d->latestContact == message.from() && message.type() == d->latestType
+		                        && message.type() != Kopete::Message::TypeFileTransferRequest );
 	}
 
 	// Don't test it in the switch to don't break consecutive messages.
@@ -441,6 +508,10 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		{
 			formattedMessageHtml = d->currentChatStyle->getStatusHtml();
 		}
+	}
+	else if(message.type() == Kopete::Message::TypeFileTransferRequest)
+	{
+		formattedMessageHtml = d->currentChatStyle->getFileTransferIncomingHtml();
 	}
 	else
 	{
@@ -502,6 +573,19 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		chatNode.appendChild(newMessageNode);
 	}
 
+	if ( message.type() == Kopete::Message::TypeNormal ) 
+	{
+		if ( message.direction() == Kopete::Message::Outbound )
+			changeMessageStateElement( message.id(), message.state() );
+	}
+	else if ( message.type() == Kopete::Message::TypeFileTransferRequest )
+	{
+		if ( message.fileTransferDisabled() )
+			disableFileTransferButtons( message.id() );
+		else
+			addFileTransferButtonsEventListener( message.id() );
+	}
+
 	// Keep the direction to see on next message
 	// if it's a consecutive message
 	// Keep also the from() contact.
@@ -535,6 +619,9 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 
 void ChatMessagePart::slotRefreshView()
 {
+	// refresh the chat font
+	readChatFont();
+
 	DOM::HTMLElement kopeteNode = document().getElementById( QString("KopeteStyle") );
 	if( !kopeteNode.isNull() )
 		kopeteNode.setInnerText( styleHTML() );
@@ -556,17 +643,21 @@ const QString ChatMessagePart::styleHTML() const
 	QString style = QString(
 		"body{background-color:%1;font-family:%2;font-size:%3pt;color:%4}"
 		"td{font-family:%5;font-size:%6pt;color:%7}"
-		"a{color:%8}a.visited{color:%9}"
+		"input{font-family:%8;font-size:%9pt;color:%10}"
+		"a{color:%11}a.visited{color:%12}"
 		"a.KopeteDisplayName{text-decoration:none;color:inherit;}"
 		"a.KopeteDisplayName:hover{text-decoration:underline;color:inherit}"
 		".KopeteLink{cursor:pointer;}.KopeteLink:hover{text-decoration:underline}"
 		".KopeteMessageBody > p:first-child{margin:0;padding:0;display:inline;}" /* some html messages are encapsuled into a <p> */ )
 		.arg( settings->chatBackgroundColor().name() )
-		.arg( settings->chatFont().family() )
-		.arg( settings->chatFont().pointSize() )
+		.arg( d->chatFont.family() )
+		.arg( d->chatFont.pointSize() )
 		.arg( settings->chatTextColor().name() )
-		.arg( settings->chatFont().family() )
-		.arg( settings->chatFont().pointSize() )
+		.arg( d->chatFont.family() )
+		.arg( d->chatFont.pointSize() )
+		.arg( settings->chatTextColor().name() )
+		.arg( d->chatFont.family() )
+		.arg( d->chatFont.pointSize() )
 		.arg( settings->chatTextColor().name() )
 		.arg( settings->chatLinkColor().name() )
 		.arg( settings->chatLinkColor().name() );
@@ -581,6 +672,17 @@ void ChatMessagePart::clear()
 
 	// Reset consecutive messages
 	d->latestContact = 0;
+
+	// Cancel all pending file transfer requests
+	QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
+	for ( it = d->allMessages.constBegin(); it != itEnd; ++it )
+	{
+		if ( (*it).type() == Kopete::Message::TypeFileTransferRequest && !(*it).fileTransferDisabled() )
+		{
+			Kopete::TransferManager::transferManager()->cancelIncomingTransfer( (*it).id() );
+		}
+	}
+
 	// Remove all stored messages.
 	d->allMessages.clear();
 }
@@ -696,7 +798,7 @@ QString ChatMessagePart::textUnderMouse()
 		cPos = 0,
 		dataLen = data.length();
 
-	QFontMetrics metrics( Kopete::AppearanceSettings::self()->chatFont() );
+	QFontMetrics metrics( d->chatFont );
 	QString buffer;
 	while( cPos < dataLen && nodeLeft < mouseLeft )
 	{
@@ -812,17 +914,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 
 	if( message.from() )
 	{
-		// Use metacontact display name if the metacontact exists and if its not the myself metacontact.
-		if( message.from()->metaContact() && message.from()->metaContact() != Kopete::ContactList::self()->myself() )
-		{
-			nick = message.from()->metaContact()->displayName();
-		}
-		// Use contact nickname for no metacontact or myself.
-		else
-		{
-			nick = message.from()->nickName();
-		}
-		nick = formatName(nick);
+		nick = formatName(message.from(), Qt::RichText);
 		contactId = message.from()->contactId();
 		// protocol() returns NULL here in the style preview in appearance config.
 		// this isn't the right place to work around it, since contacts should never have
@@ -852,18 +944,18 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 
 
 	// Replace sender (contact nick)
-	resultHTML = resultHTML.replace( QLatin1String("%sender%"), nickLink+nick+"</a>" );
+	resultHTML.replace( QLatin1String("%sender%"), nickLink+nick+"</a>" );
 	// Replace time, by default display only time and display seconds(that was true means).
 	if ( Kopete::BehaviorSettings::showDates() )
-		resultHTML = resultHTML.replace( QLatin1String("%time%"), KGlobal::locale()->formatDateTime(message.timestamp(), KLocale::ShortDate, true) );
+		resultHTML.replace( QLatin1String("%time%"), KGlobal::locale()->formatDateTime(message.timestamp(), KLocale::ShortDate, true) );
 	else
-		resultHTML = resultHTML.replace( QLatin1String("%time%"), KGlobal::locale()->formatTime(message.timestamp().time(), true) );
+		resultHTML.replace( QLatin1String("%time%"), KGlobal::locale()->formatTime(message.timestamp().time(), true) );
 	// Replace %screenName% (contact ID)
-	resultHTML = resultHTML.replace( QLatin1String("%senderScreenName%"), nickLink+Qt::escape(contactId)+"</a>" );
+	resultHTML.replace( QLatin1String("%senderScreenName%"), nickLink+Qt::escape(contactId)+"</a>" );
 	// Replace service name (protocol name)
-	resultHTML = resultHTML.replace( QLatin1String("%service%"), Qt::escape(service) );
+	resultHTML.replace( QLatin1String("%service%"), Qt::escape(service) );
 	// Replace protocolIcon (sender statusIcon)
-	resultHTML = resultHTML.replace( QLatin1String("%senderStatusIcon%"), Qt::escape(protocolIcon).replace('"',"&quot;") );
+	resultHTML.replace( QLatin1String("%senderStatusIcon%"), Qt::escape(protocolIcon).replace('"',"&quot;") );
 
 	// Look for %time{X}%
 	QRegExp timeRegExp("%time\\{([^}]*)\\}%");
@@ -871,7 +963,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	while( (pos=timeRegExp.indexIn(resultHTML , pos) ) != -1 )
 	{
 		QString timeKeyword = formatTime( timeRegExp.cap(1), message.timestamp() );
-		resultHTML = resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
+		resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
 	}
 
 	// Look for %textbackgroundcolor{X}%
@@ -888,36 +980,21 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	int textPos=0;
 	while( (textPos=textBackgroundRegExp.indexIn(resultHTML, textPos) ) != -1 )
 	{
-		resultHTML = resultHTML.replace( textPos , textBackgroundRegExp.cap(0).length() , bgColor );
+		resultHTML.replace( textPos , textBackgroundRegExp.cap(0).length() , bgColor );
 	}
 
 	// Replace userIconPath
 	if( message.from() )
 	{
-		QString photoPath;
-#if 0
-		photoPath = message.from()->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
-		// If the photo path is empty, set the default buddy icon for the theme
+		QString photoPath = photoForContact( message.from() );
 		if( photoPath.isEmpty() )
 		{
 			if(message.direction() == Kopete::Message::Inbound)
-				photoPath = QLatin1String("Incoming/buddy_icon.png");
+				photoPath = d->currentChatStyle->getStyleBaseHref() + QLatin1String("Incoming/buddy_icon.png");
 			else if(message.direction() == Kopete::Message::Outbound)
-				photoPath = QLatin1String("Outgoing/buddy_icon.png");
+				photoPath = d->currentChatStyle->getStyleBaseHref() + QLatin1String("Outgoing/buddy_icon.png");
 		}
-#endif
-		if( !message.from()->metaContact()->picture().isNull() )
-		{
-			photoPath = QString( "data:image/png;base64," ) + message.from()->metaContact()->picture().base64();
-		}
-		else
-		{
-			if(message.direction() == Kopete::Message::Inbound)
-				photoPath = QLatin1String("Incoming/buddy_icon.png");
-			else if(message.direction() == Kopete::Message::Outbound)
-				photoPath = QLatin1String("Outgoing/buddy_icon.png");
-		}
-		resultHTML = resultHTML.replace(QLatin1String("%userIconPath%"), photoPath);
+		resultHTML.replace(QLatin1String("%userIconPath%"), photoPath);
 	}
 
 	// Replace messages.
@@ -932,7 +1009,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	}
 
 	// Set message direction("rtl"(Right-To-Left) or "ltr"(Left-to-right))
-	resultHTML = resultHTML.replace( QLatin1String("%messageDirection%"), message.isRightToLeft() ? "rtl" : "ltr" );
+	resultHTML.replace( QLatin1String("%messageDirection%"), message.isRightToLeft() ? "rtl" : "ltr" );
 
 	// These colors are used for coloring nicknames. I tried to use
 	// colors both visible on light and dark background.
@@ -968,12 +1045,42 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 		if ( doLight && lightColorName.isNull() )
 			lightColorName = QColor( colorName ).light( light ).name();
 
-		resultHTML = resultHTML.replace( textPos , senderColorRegExp.cap(0).length(),
+		resultHTML.replace( textPos , senderColorRegExp.cap(0).length(),
 			doLight ? lightColorName : colorName );
 	}
 
+	if ( message.type() == Kopete::Message::TypeFileTransferRequest )
+	{
+		QString fileIcon;
+		if ( !message.filePreview().isNull() )
+		{
+			QByteArray tempArray;
+			QBuffer tempBuffer( &tempArray );
+			tempBuffer.open( QIODevice::WriteOnly );
+			if( message.filePreview().save( &tempBuffer, "PNG" ) )
+				fileIcon = QString( "data:image/png;base64," ) + tempArray.toBase64();
+		}
+
+		if ( fileIcon.isEmpty() )
+		{
+			QString iconName = KMimeType::iconNameForUrl( message.fileName() );
+			fileIcon = KIconLoader::global()->iconPath( iconName, -KIconLoader::SizeMedium );
+		}
+
+		resultHTML.replace( QLatin1String("%fileName%"), Qt::escape( message.fileName() ).replace('"',"&quot;") );
+		resultHTML.replace( QLatin1String("%fileSize%"), KGlobal::locale()->formatByteSize( message.fileSize() / 8 ).replace('"',"&quot;") );
+		resultHTML.replace( QLatin1String("%fileIconPath%"), fileIcon );
+
+		resultHTML.replace( QLatin1String("%saveFileHandlerId%"), QString( "ftSV%1" ).arg( message.id() ) );
+		resultHTML.replace( QLatin1String("%saveFileAsHandlerId%"), QString( "ftSA%1" ).arg( message.id() ) );
+		resultHTML.replace( QLatin1String("%cancelRequestHandlerId%"), QString( "ftCC%1" ).arg( message.id() ) );
+	}
+	
+	if ( message.type() == Kopete::Message::TypeNormal && message.direction() == Kopete::Message::Outbound )
+		resultHTML.replace( QLatin1String( "%stateElementId%" ), QString( "msST%1" ).arg( message.id() ) );
+
 	// Replace message at the end, maybe someone could put a Adium keyword in his message :P
-	resultHTML = resultHTML.replace( QLatin1String("%message%"), formatMessageBody(message) );
+	resultHTML.replace( QLatin1String("%message%"), formatMessageBody(message) );
 
 	// TODO: %status
 //	resultHTML = addNickLinks( resultHTML );
@@ -1000,13 +1107,13 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 			destinationName = remoteContact->nickName();
 
 		// Replace %chatName%, create a internal span to update it by DOM when asked.
-		resultHTML = resultHTML.replace( QLatin1String("%chatName%"), QString("<span id=\"KopeteHeaderChatNameInternal\">%1</span>").arg( formatName(d->manager->displayName()) ) );
+		resultHTML.replace( QLatin1String("%chatName%"), QString("<span id=\"KopeteHeaderChatNameInternal\">%1</span>").arg( formatName(d->manager->displayName(), Qt::RichText) ) );
 		// Replace %sourceName%
-		resultHTML = resultHTML.replace( QLatin1String("%sourceName%"), formatName(sourceName) );
+		resultHTML.replace( QLatin1String("%sourceName%"), formatName(sourceName, Qt::RichText) );
 		// Replace %destinationName%
-		resultHTML = resultHTML.replace( QLatin1String("%destinationName%"), formatName(destinationName) );
+		resultHTML.replace( QLatin1String("%destinationName%"), formatName(destinationName, Qt::RichText) );
 		// For %timeOpened%, display the date and time (also the seconds).
-		resultHTML = resultHTML.replace( QLatin1String("%timeOpened%"), KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), KLocale::ShortDate, true ) );
+		resultHTML.replace( QLatin1String("%timeOpened%"), KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), KLocale::ShortDate, true ) );
 
 		// Look for %timeOpened{X}%
 		QRegExp timeRegExp("%timeOpened\\{([^}]*)\\}%");
@@ -1014,44 +1121,23 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 		while( (pos=timeRegExp.indexIn(resultHTML, pos) ) != -1 )
 		{
 			QString timeKeyword = formatTime( timeRegExp.cap(1), QDateTime::currentDateTime() );
-			resultHTML = resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
+			resultHTML.replace( pos , timeRegExp.cap(0).length() , timeKeyword );
 		}
 		// Get contact image paths
-#if 0
-		QString photoIncomingPath, photoOutgoingPath;
-		photoIncomingPath = remoteContact->property( Kopete::Global::Properties::self()->photo().key()).value().toString();
-		photoOutgoingPath = d->manager->myself()->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
-
-		if( photoIncomingPath.isEmpty() )
-			photoIncomingPath = QLatin1String("Incoming/buddy_icon.png");
-		if( photoOutgoingPath.isEmpty() )
-			photoOutgoingPath = QLatin1String("Outgoing/buddy_icon.png");
-
-		resultHTML = resultHTML.replace( QLatin1String("%incomingIconPath%"), photoIncomingPath);
-		resultHTML = resultHTML.replace( QLatin1String("%outgoingIconPath%"), photoOutgoingPath);
-#endif
-		QString photoIncoming, photoOutgoing;
-		if( remoteContact->metaContact() && !remoteContact->metaContact()->picture().isNull() )
+		QString photoIncoming = photoForContact( remoteContact );
+		QString photoOutgoing = photoForContact( d->manager->myself() );
+		if( photoIncoming.isEmpty() )
 		{
-			photoIncoming = QString("data:image/png;base64,%1").arg( remoteContact->metaContact()->picture().base64() );
-		}
-		else
-		{
-			photoIncoming = QLatin1String("Incoming/buddy_icon.png");
+			photoIncoming = d->currentChatStyle->getStyleBaseHref() + QLatin1String("Incoming/buddy_icon.png");
 		}
 
-		if( d->manager->myself()->metaContact() && !d->manager->myself()->metaContact()->picture().isNull() )
+		if( photoOutgoing.isEmpty() )
 		{
-			photoOutgoing =  QString("data:image/png;base64,%1").arg( d->manager->myself()->metaContact()->picture().base64() );
-		}
-		else
-		{
-			photoOutgoing = QLatin1String("Outgoing/buddy_icon.png");
+			photoOutgoing = d->currentChatStyle->getStyleBaseHref() + QLatin1String("Outgoing/buddy_icon.png");
 		}
 
-
-		resultHTML = resultHTML.replace( QLatin1String("%incomingIconPath%"), photoIncoming);
-		resultHTML = resultHTML.replace( QLatin1String("%outgoingIconPath%"), photoOutgoing );
+		resultHTML.replace( QLatin1String("%incomingIconPath%"), photoIncoming );
+		resultHTML.replace( QLatin1String("%outgoingIconPath%"), photoOutgoing );
 	}
 
 	return resultHTML;
@@ -1072,11 +1158,9 @@ QString ChatMessagePart::formatTime(const QString &timeFormat, const QDateTime &
 	return QString(buffer);
 }
 
-QString ChatMessagePart::formatName(const QString &sourceName)
+QString ChatMessagePart::formatName(const QString &sourceName, Qt::TextFormat format ) const
 {
 	QString formattedName = sourceName;
-	// Escape the name.
-	formattedName = Kopete::Message::escape(formattedName);
 
 	// Squeeze the nickname if the user want it
 	if( Kopete::BehaviorSettings::self()->truncateContactName() )
@@ -1084,7 +1168,32 @@ QString ChatMessagePart::formatName(const QString &sourceName)
 		formattedName = KStringHandler::csqueeze( sourceName, Kopete::BehaviorSettings::self()->truncateContactNameLength() );
 	}
 
+	if ( format == Qt::RichText )
+	{ // Escape the name.
+		formattedName = Kopete::Message::escape(formattedName);
+	}
+
 	return formattedName;
+}
+
+QString ChatMessagePart::formatName( const Kopete::Contact* contact, Qt::TextFormat format ) const
+{
+	if (!contact)
+	{
+		return QString();
+	}
+
+	// Use metacontact display name if the metacontact exists and if its not the myself metacontact.
+	// Myself metacontact is not a reliable source.
+	if ( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
+	{
+		return formatName( contact->metaContact()->displayName(), format );
+	}
+	// Use contact nickname for no metacontact or myself.
+	else
+	{
+		return formatName( contact->nickName(), format );
+	}
 }
 
 QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
@@ -1107,7 +1216,7 @@ void ChatMessagePart::slotUpdateHeaderDisplayName()
 	kDebug(14000) ;
 	DOM::HTMLElement kopeteChatNameNode = document().getElementById( QString("KopeteHeaderChatNameInternal") );
 	if( !kopeteChatNameNode.isNull() )
-		kopeteChatNameNode.setInnerText( formatName(d->manager->displayName()) );
+		kopeteChatNameNode.setInnerText( formatName(d->manager->displayName(), Qt::RichText) );
 }
 
 void ChatMessagePart::slotUpdateHeaderPhoto()
@@ -1198,6 +1307,46 @@ void ChatMessagePart::writeTemplate()
 #endif
 }
 
+void ChatMessagePart::resendMessage( uint messageId )
+{
+	QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
+	for ( it = d->allMessages.constBegin(); it != itEnd; ++it )
+	{
+		if ( (*it).id() == messageId )
+		{
+			if ( !( d->manager->protocol()->capabilities() & Kopete::Protocol::CanSendOffline ) )
+			{
+				bool reachableContactFound = false;
+				foreach ( Kopete::Contact* c, (*it).to() )
+				{
+					if ( c->isReachable() )
+					{
+						reachableContactFound = true;
+						break;
+					}
+				}
+
+				// no online contact found and can't send offline? can't send.
+				if ( !reachableContactFound )
+					return;
+			}
+
+			Kopete::Message msg( (*it).from(), (*it).to() );
+			msg.setDirection( Kopete::Message::Outbound );
+			if ( (*it).format() == Qt::RichText )
+				msg.setHtmlBody( (*it).body()->toPlainText() );
+			else
+				msg.setPlainBody( (*it).body()->toHtml() );
+
+// 			msg.setBackgroundColor( (*it).backgroundColor() );
+			msg.setForegroundColor( (*it).foregroundColor() );
+			msg.setFont( (*it).font() );
+			d->manager->sendMessage( msg );
+			break;
+		}
+	}
+}
+
 QString ChatMessagePart::adjustStyleVariantForChatSession( const QString & styleVariant ) const
 {
 	if ( d->manager->form() == Kopete::ChatSession::Chatroom
@@ -1206,6 +1355,127 @@ QString ChatMessagePart::adjustStyleVariantForChatSession( const QString & style
 	}
 	return styleVariant;
 }
+
+QString ChatMessagePart::photoForContact( const Kopete::Contact *contact ) const
+{
+	QString photo;
+	if ( !contact )
+		return photo;
+
+	if( contact->metaContact() == Kopete::ContactList::self()->myself() )
+	{ // all myself contacts have the same metaContact so take photo directly from contact otherwise the photo could be wrong.
+		photo = contact->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
+	}
+	else if( !contact->metaContact()->picture().isNull() )
+	{
+		photo = QString( "data:image/png;base64," ) + contact->metaContact()->picture().base64();
+	}
+
+	return photo;
+}
+
+void ChatMessagePart::addFileTransferButtonsEventListener( unsigned int id )
+{
+	QString elementId = QString( "ftSV%1" ).arg( id );
+	registerClickEventListener( document().getElementById( elementId ) );
+
+	elementId = QString( "ftSA%1" ).arg( id );
+	registerClickEventListener( document().getElementById( elementId ) );
+
+	elementId = QString( "ftCC%1" ).arg( id );
+	registerClickEventListener( document().getElementById( elementId ) );
+}
+
+void ChatMessagePart::disableFileTransferButtons( unsigned int id )
+{
+	QString elementId = QString( "ftSV%1" ).arg( id );
+	DOM::HTMLInputElement element = document().getElementById( elementId );
+	if ( !element.isNull() )
+		element.setDisabled( true );
+
+	elementId = QString( "ftSA%1" ).arg( id );
+	element = document().getElementById( elementId );
+	if ( !element.isNull() )
+		element.setDisabled( true );
+
+	elementId = QString( "ftCC%1" ).arg( id );
+	element = document().getElementById( elementId );
+	if ( !element.isNull() )
+		element.setDisabled( true );
+}
+
+void ChatMessagePart::changeMessageStateElement( uint id, Kopete::Message::MessageState state )
+{
+	QString elementId = QString( "msST%1" ).arg( id );
+	DOM::HTMLElement element = document().getElementById( elementId );
+	if ( element.isNull() )
+		return;
+	
+	QString statusHTML;
+	switch ( state )
+	{
+	case Kopete::Message::StateUnknown:
+		statusHTML = d->currentChatStyle->getOutgoingStateUnknownHtml();
+		break;
+	case Kopete::Message::StateSending:
+		statusHTML = d->currentChatStyle->getOutgoingStateSendingHtml();
+		break;
+	case Kopete::Message::StateSent:
+		statusHTML = d->currentChatStyle->getOutgoingStateSentHtml();
+		break;
+	case Kopete::Message::StateError:
+		statusHTML = d->currentChatStyle->getOutgoingStateErrorHtml();
+		break;
+	}
+
+	QString resendId = QString( "msRS%1" ).arg( id );
+	statusHTML.replace( QLatin1String( "%resendHandlerId%" ), resendId );
+	element.setInnerHTML( statusHTML );
+
+	registerClickEventListener( document().getElementById( resendId ) );
+}
+
+void ChatMessagePart::registerClickEventListener( DOM::HTMLElement element )
+{
+	if ( element.isNull() )
+		return;
+	
+	if ( !d->htmlEventListener )
+	{
+		d->htmlEventListener = new HTMLEventListener();
+		connect( d->htmlEventListener, SIGNAL(resendMessage(uint)), this, SLOT(resendMessage(uint)) );
+	}
+	element.addEventListener( "click", d->htmlEventListener, false );
+}
+
+void ChatMessagePart::readChatFont()
+{
+	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
+
+	d->chatFont = KGlobalSettings::generalFont();
+	if ( settings->chatFontSelection() == 1 )
+		d->chatFont = settings->chatFont();
+}
+
+void HTMLEventListener::handleEvent( DOM::Event &event )
+{
+	DOM::HTMLInputElement element = event.currentTarget();
+	if ( !element.isNull() )
+	{
+		QString idType = element.id().string().left(4);
+		unsigned int messageId = element.id().string().mid(4).toUInt();
+
+		if ( idType == QLatin1String( "ftSV" ) )
+			Kopete::TransferManager::transferManager()->saveIncomingTransfer( messageId );
+		else if ( idType == QLatin1String( "ftSA" ) )
+			Kopete::TransferManager::transferManager()->saveIncomingTransfer( messageId );
+		else if ( idType == QLatin1String( "ftCC" ) )
+			Kopete::TransferManager::transferManager()->cancelIncomingTransfer( messageId );
+		else if ( idType == QLatin1String( "msRS" ) )
+			emit resendMessage( messageId );
+	}
+}
+
 #include "chatmessagepart.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

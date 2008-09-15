@@ -29,6 +29,7 @@
 #include <qmap.h>
 
 #include <kaction.h>
+#include <KActionCollection>
 #include <kdebug.h>
 #include <kicon.h>
 #include <klocale.h>
@@ -80,34 +81,34 @@ QString GroupWiseContact::dn() const
 
 void GroupWiseContact::updateDetails( const ContactDetails & details )
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 	if ( !details.cn.isNull() )
-		setProperty( protocol()->propCN, details.cn );
+		setProperty( protocol()->propCN, QVariant(details.cn) );
 	if ( !details.dn.isNull() )
 		m_dn = details.dn;
 	if ( !details.givenName.isNull() )
-		setProperty( protocol()->propGivenName, details.givenName );
+		setProperty( protocol()->propGivenName, QVariant(details.givenName) );
 	if ( !details.surname.isNull() )
-		setProperty( protocol()->propLastName, details.surname );
+		setProperty( protocol()->propLastName, QVariant(details.surname) );
 	if ( !details.fullName.isNull() )
-		setProperty( protocol()->propFullName, details.fullName );
+		setProperty( protocol()->propFullName, QVariant(details.fullName) );
 	m_archiving = details.archive;
 	if ( !details.awayMessage.isNull() )
-		setProperty( protocol()->propAwayMessage, details.awayMessage );
+		setStatusMessage( details.awayMessage );
 	
 	m_serverProperties = details.properties;
 	
 	// work phone number
 	if ( m_serverProperties.contains( "telephoneNumber" ) )
-		setProperty( protocol()->propPhoneWork, m_serverProperties.value( "telephoneNumber" ) );
+		setProperty( protocol()->propPhoneWork, QVariant(m_serverProperties.value( "telephoneNumber" )) );
 	
 	// mobile phone number
 	if ( m_serverProperties.contains( "mobile" ) )
-		setProperty( protocol()->propPhoneMobile, m_serverProperties.value( "mobile" ) );
+		setProperty( protocol()->propPhoneMobile, QVariant(m_serverProperties.value( "mobile" )) );
 	
 	// email
 	if ( m_serverProperties.contains( "Internet EMail Address" ) )
-		setProperty( protocol()->propEmail, m_serverProperties.value( "Internet EMail Address" ) );
+		setProperty( protocol()->propEmail, QVariant(m_serverProperties.value( "Internet EMail Address" )) );
 		
 	if ( details.status != GroupWise::Invalid )
 	{	
@@ -149,7 +150,7 @@ void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap
 
 Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
-	//kDebug( GROUPWISE_DEBUG_GLOBAL ) << "called, canCreate: " << canCreate;
+	//kDebug() << "called, canCreate: " << canCreate;
 
 	Kopete::ContactPtrList chatMembers;
 	chatMembers.append( this );
@@ -159,7 +160,7 @@ Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags
 
 QList<KAction*> *GroupWiseContact::customContextMenuActions()
 {
-	QList<KAction *> * actionCollection = new QList<KAction *>;
+	QList<KAction *> * actions = new QList<KAction *>;
 
 	// Block/unblock contact
 	QString label = account()->isContactBlocked( m_dn ) ? i18n( "Unblock User" ) : i18n( "Block User" );
@@ -172,9 +173,12 @@ QList<KAction*> *GroupWiseContact::customContextMenuActions()
 		m_actionBlock->setText( label );
 	m_actionBlock->setEnabled( account()->isConnected() );
 
-	actionCollection->append( m_actionBlock );
+	actions->append( m_actionBlock );
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("contactBlock"), m_actionBlock);
 
-	return actionCollection;
+	return actions;
 }
 
 void GroupWiseContact::slotUserInfo()
@@ -190,7 +194,7 @@ QMap< QString, QVariant > GroupWiseContact::serverProperties()
 
 void GroupWiseContact::sendMessage( Kopete::Message &message )
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 	manager()->appendMessage( message );
 	// tell the manager it was sent successfully
 	manager()->messageSucceeded();
@@ -208,7 +212,7 @@ void GroupWiseContact::sync( unsigned int)
 
 void GroupWiseContact::slotBlock()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 	if ( account()->isConnected() )
 	{
 		if ( account()->isContactBlocked( m_dn ) )
@@ -298,7 +302,7 @@ void GroupWiseContact::renamedOnServer()
 			setProperty( Kopete::Global::Properties::self()->nickName(), uct->displayName() );
 	}
 	else
-		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "rename failed, return code: " << uct->statusCode();
+		kDebug() << "rename failed, return code: " << uct->statusCode();
 }
 
 void GroupWiseContact::setMessageReceivedOffline( bool on )

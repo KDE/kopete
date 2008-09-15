@@ -4,7 +4,8 @@
     Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
     Copyright (c) 2002 by Chris TenHarmsel <tenharmsel@staticmethod.net>
     Copyright (c) 2004 by Matt Rogers <mattr@kde.org>
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2008 by Roman Jarosz <kedgedev@centrum.cz>
+    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -58,6 +59,7 @@
 #include "kopetetransfermanager.h"
 #include "kopeteversion.h"
 #include "oscarversionupdater.h"
+#include "filetransferhandler.h"
 
 class OscarAccountPrivate : public Client::CodecProvider
 {
@@ -77,7 +79,8 @@ public:
 	//contacts waiting on their group to be added
 	QMap<QString, QString> contactAddQueue;
 	QMap<QString, QString> contactChangeQueue;
-
+	QMap<uint, FileTransferHandler*> fileTransferHandlerMap;
+	
     OscarListNonServerContacts* olnscDialog;
 	
 	unsigned int versionUpdaterStamp;
@@ -141,10 +144,14 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	                  this, SLOT( userStoppedTyping( const QString& ) ) );
 	QObject::connect( d->engine, SIGNAL( iconNeedsUploading() ),
 	                  this, SLOT( slotSendBuddyIcon() ) );
-	QObject::connect( d->engine, SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ),
-	                  this, SLOT( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ) );
-	QObject::connect( d->engine, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
-	                  this, SLOT( getTransferManager( Kopete::TransferManager ** ) ) );
+	QObject::connect( d->engine, SIGNAL(incomingFileTransfer(FileTransferHandler*)),
+	                  this, SLOT(incomingFileTransfer(FileTransferHandler*)) );
+
+	Kopete::TransferManager *tm = Kopete::TransferManager::transferManager();
+	QObject::connect( tm, SIGNAL(refused(const Kopete::FileTransferInfo&)),
+	                  this, SLOT(fileTransferRefused(const Kopete::FileTransferInfo&)) );
+	QObject::connect( tm, SIGNAL(accepted(Kopete::Transfer*, const QString&)),
+	                  this, SLOT(fileTransferAccept(Kopete::Transfer*, const QString&)) );
 }
 
 OscarAccount::~OscarAccount()
@@ -277,6 +284,18 @@ void OscarAccount::processSSIList()
 		{
 			OContact item = ( *bit );
 			oc->setSSIItem( item );
+
+			//only synchronizes group if metacontact is a member of
+			//a single group
+			if ( oc->metaContact()->groups().size() == 1 )
+			{
+				Kopete::Group* oldGrp = oc->metaContact()->groups().first();
+				if ( oldGrp->displayName() != group->displayName() &&
+				     oc->metaContact()->contacts().count() == 1 )
+				{
+					oc->metaContact()->moveToGroup( oldGrp, group );
+				}
+			}
 		}
 		else
 			addContact( ( *bit ).name(), QString(), group, Kopete::Account::DontChangeKABC );
@@ -294,6 +313,13 @@ void OscarAccount::processSSIList()
 	                  this, SLOT( ssiGroupUpdated( const OContact& ) ) );
 	QObject::connect( listManager, SIGNAL( contactUpdated( const OContact& ) ),
 	                  this, SLOT( ssiContactUpdated( const OContact& ) ) );
+
+	// TODO: Synchronize groups.
+	// Currently groups that have been removed from the server do not get
+	// removed from the client's list.  The problem is that a group can hold
+	// contacts from other protocols.  Perhaps groups should store which
+	// protocols are using it.  Asking the user for which account to create
+	// a group, similar to how contact addition, could work.
 
     const QHash<QString, Kopete::Contact*> &nonServerContacts = contacts();
     QHash<QString, Kopete::Contact*>::ConstIterator it = nonServerContacts.constBegin();
@@ -325,7 +351,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
     if ( !d->olnscDialog )
         return;
 
-    if ( d->olnscDialog->result() == QDialog::Accepted )
+    if ( d->olnscDialog->result() == KDialog::Yes )
     {
         //start adding contacts
         kDebug(OSCAR_GEN_DEBUG) << "adding non server contacts to the contact list";
@@ -339,32 +365,66 @@ void OscarAccount::nonServerAddContactDialogClosed()
             OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *it )] );
             if ( !oc )
             {
-                kDebug(OSCAR_GEN_DEBUG) << "no OscarContact object available for"
-                                         << ( *it ) << endl;
+                kDebug(OSCAR_GEN_DEBUG) << "no OscarContact object available for" << ( *it );
                 continue;
             }
 
             Kopete::MetaContact* mc = oc->metaContact();
             if ( !mc )
             {
-                kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for"
-                                         << ( oc->contactId() ) << endl;
+                kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for" << oc->contactId();
                 continue;
             }
 
             Kopete::Group* group = mc->groups().first();
             if ( !group )
             {
-                kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for"
-                                         << ( oc->contactId() ) << endl;
+                kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for" << oc->contactId();
                 continue;
             }
 
 	    addContactToSSI( ( *it ), group->displayName(), true );
         }
-
-
     }
+
+	else if ( d->olnscDialog->result() == KDialog::No )
+	{
+		//remove contacts
+		kDebug( OSCAR_GEN_DEBUG ) << "removing non server contacts from the "
+			                         "contact list";
+		Kopete::ContactList* kcl = Kopete::ContactList::self();
+		QStringList offliners = d->olnscDialog->nonServerContactList();
+		QStringList::iterator it, itEnd = offliners.end();
+		for ( it = offliners.begin(); it != itEnd; ++it )
+		{
+			OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[(*it)] );
+			if ( !oc )
+			{
+				kDebug( OSCAR_GEN_DEBUG ) << "no OscarContact object available "
+				                             "for" << ( *it ) << endl;
+				continue;
+			}
+
+			Kopete::MetaContact* mc = oc->metaContact();
+			if ( !mc )
+			{
+				kDebug( OSCAR_GEN_DEBUG ) << "no metacontact object available "
+				                             "for" << ( oc->contactId() )
+				                             << endl;
+				continue;
+			}
+
+			if ( oc->metaContact()->contacts().count() <= 1 )
+			{
+				kcl->removeMetaContact( oc->metaContact() );
+			}
+			else
+			{
+				kDebug( OSCAR_GEN_DEBUG ) << oc->contactId() << " metacontact "
+			                                 "contains multiple contacts.";
+			}
+		}
+	}
 
 	bool showOnce = d->olnscDialog->onlyShowOnce();
 	configGroup()->writeEntry( QString::fromLatin1("ShowMissingContactsDialog") , !showOnce);
@@ -374,22 +434,83 @@ void OscarAccount::nonServerAddContactDialogClosed()
     d->olnscDialog = 0L;
 }
 
-void OscarAccount::askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i )
+void OscarAccount::incomingFileTransfer( FileTransferHandler* ftHandler )
 {
-	QString sender = Oscar::normalize( c );
+	QString sender = Oscar::normalize( ftHandler->contact() );
 	if ( !contacts()[sender] )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "Adding '" << sender << "' as temporary contact";
 		addContact( sender, QString(), 0,  Kopete::Account::Temporary );
 	}
 	Kopete::Contact * ct = contacts()[ sender ];
-	Kopete::TransferManager::transferManager()->askIncomingTransfer( ct, f, s, d, i);
+
+	Kopete::TransferManager* tm = Kopete::TransferManager::transferManager();
+	uint ftId = tm->askIncomingTransfer( ct, ftHandler->fileName(), ftHandler->totalSize(), ftHandler->description(),
+	                                     ftHandler->internalId(), QPixmap(), ( ftHandler->fileCount() > 1 ) );
+	QObject::connect( ftHandler, SIGNAL(destroyed(QObject*)), this, SLOT(fileTransferDestroyed(QObject*)) );
+	QObject::connect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
+
+	d->fileTransferHandlerMap.insert( ftId, ftHandler );
 }
 
-//this is because the filetransfer task can't call the function itself.
-void OscarAccount::getTransferManager( Kopete::TransferManager **t )
+void OscarAccount::fileTransferDestroyed( QObject* object )
 {
-	*t = Kopete::TransferManager::transferManager();
+	FileTransferHandler* ftHandler = qobject_cast<FileTransferHandler*>(object);
+	if ( !ftHandler )
+		return;
+
+	uint key = d->fileTransferHandlerMap.key( ftHandler, 0 );
+	if ( key > 0 )
+		d->fileTransferHandlerMap.remove( key );
+	else
+		kDebug(OSCAR_GEN_DEBUG) << "FileTransferHandler not in the map!!!";
+}
+
+void OscarAccount::fileTransferCancelled()
+{
+	FileTransferHandler* ftHandler = qobject_cast<FileTransferHandler*>(sender());
+	if ( !ftHandler )
+		return;
+
+	uint key = d->fileTransferHandlerMap.key( ftHandler, 0 );
+	if ( key == 0 )
+	{
+		kDebug(OSCAR_GEN_DEBUG) << "FileTransferHandler not in the map!!!";
+		return;
+	}
+
+	QObject::disconnect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
+	Kopete::TransferManager::transferManager()->cancelIncomingTransfer( key );
+}
+
+void OscarAccount::fileTransferRefused( const Kopete::FileTransferInfo& info )
+{
+	FileTransferHandler* ftHandler = d->fileTransferHandlerMap.value( info.transferId(), 0 );
+	if ( !ftHandler )
+		return;
+
+	QObject::disconnect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
+	ftHandler->cancel();
+}
+
+void OscarAccount::fileTransferAccept( Kopete::Transfer* transfer, const QString& fileName )
+{
+	FileTransferHandler* ftHandler = d->fileTransferHandlerMap.value( transfer->info().transferId(), 0 );
+	if ( !ftHandler )
+		return;
+
+	QObject::disconnect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
+
+	QObject::connect( transfer, SIGNAL(transferCanceled()), ftHandler, SLOT(cancel()) );
+	QObject::connect( ftHandler, SIGNAL(transferCancelled()), transfer, SLOT(slotCancelled()) );
+	QObject::connect( ftHandler, SIGNAL(transferError(int, const QString&)), transfer, SLOT(slotError(int, const QString&)) );
+	QObject::connect( ftHandler, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
+	QObject::connect( ftHandler, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
+
+	if ( transfer->info().saveToDirectory() )
+		ftHandler->save( fileName );
+	else
+		ftHandler->saveAs( QStringList() << fileName );
 }
 
 void OscarAccount::kopeteGroupRemoved( Kopete::Group* group )
@@ -484,7 +605,12 @@ void OscarAccount::setServerPort(int port)
 
 QTextCodec* OscarAccount::defaultCodec() const
 {
-	return QTextCodec::codecForMib( configGroup()->readEntry( "DefaultEncoding", 4 ) );
+	QTextCodec* codec = QTextCodec::codecForMib( configGroup()->readEntry( "DefaultEncoding", 4 ) );
+
+	if ( codec )
+		return codec;
+	else
+		return QTextCodec::codecForMib( 4 );
 }
 
 QTextCodec* OscarAccount::contactCodec( const OscarContact* contact ) const
@@ -543,7 +669,7 @@ bool OscarAccount::addContactToSSI( const QString& contactName, const QString& g
 		if ( !autoAddGroup )
 			return false;
 
-		kDebug(OSCAR_GEN_DEBUG) << "adding non-existant group "
+		kDebug(OSCAR_GEN_DEBUG) << "adding non-existent group "
 			<< groupName << endl;
 
 		d->contactAddQueue[Oscar::normalize( contactName )] = groupName;
@@ -565,7 +691,7 @@ bool OscarAccount::changeContactGroupInSSI( const QString& contact, const QStrin
 		if ( !autoAddGroup )
 			return false;
 		
-		kDebug(OSCAR_GEN_DEBUG) << "adding non-existant group " 
+		kDebug(OSCAR_GEN_DEBUG) << "adding non-existent group " 
 				<< newGroupName << endl;
 			
 		d->contactChangeQueue[Oscar::normalize( contact )] = newGroupName;
@@ -987,8 +1113,8 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 		reason = i18n("Could not sign on to %1 with account %2 because the " \
 		              "password was incorrect.", acctType, accountId() );
 		break;
-	case 0x0007: // non-existant ICQ#
-	case 0x0008: // non-existant ICQ#
+	case 0x0007: // non-existent ICQ#
+	case 0x0008: // non-existent ICQ#
 		reason = i18n("Could not sign on to %1 with nonexistent account %2.",
 			  acctType, accountId() );
 		break;

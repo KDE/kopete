@@ -102,6 +102,27 @@ bool AutoReplaceConfig::capitalizeBeginningSentence() const
 	return m_upper;
 }
 
+void AutoReplaceConfig::setAutoReplaceIncoming(bool enabled)
+{
+	m_autoreplaceIncoming = enabled;
+}
+
+void AutoReplaceConfig::setAutoReplaceOutgoing(bool enabled)
+{
+	m_autoreplaceOutgoing = enabled;
+}
+
+void AutoReplaceConfig::setDotEndSentence(bool enabled)
+{
+	m_addDot = enabled;
+}
+
+void AutoReplaceConfig::setCapitalizeBeginningSentence(bool enabled)
+{
+	m_upper = enabled;
+}
+
+
 void AutoReplaceConfig::setMap( const WordsToReplace &w )
 {
 	m_map = w;
@@ -125,6 +146,12 @@ void AutoReplaceConfig::save()
 	}
 
 	config.writeEntry( "WordsToReplace", newWords );
+
+	config.writeEntry( "AutoReplaceIncoming" , m_autoreplaceIncoming );
+	config.writeEntry( "AutoReplaceOutgoing" , m_autoreplaceOutgoing );
+	config.writeEntry( "DotEndSentence" , m_addDot );
+	config.writeEntry( "CapitalizeBeginningSentence" , m_upper );
+
 	config.sync();
 }
 

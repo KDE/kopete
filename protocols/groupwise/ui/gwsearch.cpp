@@ -23,9 +23,7 @@
 #include <QPainter>
 #include <q3listview.h>
 #include <qpushbutton.h>
-//Added by qt3to4:
 #include <QPixmap>
-#include <Q3ValueList>
 #include <QHeaderView>
 #include <QHeaderView>
 #include <QAbstractItemModel>
@@ -37,6 +35,7 @@
 #include <kopetemetacontact.h>
 
 #include "client.h"
+#include "gwfield.h"
 #include "gwaccount.h"
 #include "gwcontact.h"
 #include "gwcontactproperties.h"
@@ -45,21 +44,32 @@
 
 #include "gwsearch.h"
 
+//#include "../modeltest.h"
+
 class GroupWiseContactSearchModel : public QAbstractItemModel
 {
 public:
-	enum ContactDetailsRole { CnRole = Qt::UserRole+1, DnRole, GivenNameRole, SurnameRole, FullNameRole, AwayMessageRole, AuthAttributeRole, StatusRole, StatusOrderedRole, ArchiveRole, PropertiesRole };
-	GroupWiseContactSearchModel( QList<GroupWise::ContactDetails const *> contents, GroupWiseAccount * account, QObject * parent )
-	: QAbstractItemModel( parent ), m_account( account ), m_contents ( contents )
+	enum ContactDetailsRole { CnRole = Qt::UserRole+1, DnRole, GivenNameRole,
+		SurnameRole, FullNameRole, AwayMessageRole, AuthAttributeRole,
+		StatusRole, StatusOrderedRole, ArchiveRole, PropertiesRole };
+	GroupWiseContactSearchModel( QList<GroupWise::ContactDetails> contents, GroupWiseAccount * account, QObject * parent )
+	: QAbstractItemModel( parent ), m_account( account ), m_contents( contents )
 	{
 	}
 	~GroupWiseContactSearchModel()
 	{
-		qDeleteAll( m_contents );
 	}
-	QModelIndex index( int row, int column, const QModelIndex& ) const
+	QModelIndex index( int row, int column, const QModelIndex& index ) const
 	{
-		return createIndex( row, column );
+		if ( row >= 0 && column >= 0 &&
+				row < rowCount() &&
+				column < columnCount()
+				&& !index.isValid() ) {
+			return createIndex( row, column );
+		}
+		else {
+			return QModelIndex();
+		}
 	}
 	QModelIndex parent( const QModelIndex & index ) const
 	{
@@ -114,12 +124,12 @@ public:
 	QVariant data( const QModelIndex & index, int role = Qt::DisplayRole ) const
 	{
 		if ( !index.isValid() ) return QVariant();
-		GroupWise::ContactDetails const * const contactDetails = m_contents.at( index.row() );
+		GroupWise::ContactDetails contactDetails = m_contents.at( index.row() );
 		switch ( role )
 		{
 			case Qt::DecorationRole:
 				if ( index.column() == 0 ) {
-					return QVariant( GroupWiseProtocol::protocol()->gwStatusToKOS( contactDetails->status ).iconFor( m_account ) );
+					return QVariant( GroupWiseProtocol::protocol()->gwStatusToKOS( contactDetails.status ).iconFor( m_account ) );
 				}
 				else {
 					return QVariant();
@@ -127,7 +137,7 @@ public:
 				break;
 			case StatusOrderedRole:
 				int statusOrdered;
-				switch ( contactDetails->status )
+				switch ( contactDetails.status )
 				{
 					case 0: //unknown
 						statusOrdered = 0;
@@ -157,46 +167,46 @@ public:
 				switch ( index.column() )
 				{
 					case 0:
-						return QVariant();
+						return QVariant( GroupWiseProtocol::protocol()->gwStatusToKOS( contactDetails.status ).description() );
 						break;
 					case 1:
-						return QVariant( contactDetails->givenName );
+						return QVariant( contactDetails.givenName );
 					case 2:
-						return QVariant( contactDetails->surname );
+						return QVariant( contactDetails.surname );
 					case 3:
-						return QVariant(GroupWiseProtocol::protocol()->dnToDotted( contactDetails->dn ) );
+						return QVariant(GroupWiseProtocol::protocol()->dnToDotted( contactDetails.dn ) );
 				}
 				return QVariant();
 				break;
 			case CnRole:
-				return QVariant( contactDetails->cn );
+				return QVariant( contactDetails.cn );
 				break;
 			case DnRole:
-				return QVariant( contactDetails->dn );
+				return QVariant( contactDetails.dn );
 				break;
 			case GivenNameRole:
-				return QVariant( contactDetails->givenName );
+				return QVariant( contactDetails.givenName );
 				break;
 			case SurnameRole:
-				return QVariant( contactDetails->surname );
+				return QVariant( contactDetails.surname );
 				break;
 			case FullNameRole:
-				return QVariant( contactDetails->fullName );
+				return QVariant( contactDetails.fullName );
 				break;
 			case AwayMessageRole:
-				return QVariant( contactDetails->awayMessage );
+				return QVariant( contactDetails.awayMessage );
 				break;
 			case AuthAttributeRole:
-				return QVariant( contactDetails->authAttribute );
+				return QVariant( contactDetails.authAttribute );
 				break;
 			case StatusRole:
-				return QVariant( contactDetails->status );
+				return QVariant( contactDetails.status );
 				break;
 			case ArchiveRole:
-				return QVariant( contactDetails->archive );
+				return QVariant( contactDetails.archive );
 				break;
 			case PropertiesRole:
-				return QVariant( contactDetails->properties );
+				return QVariant( contactDetails.properties );
 				break;
 			default:
 				return QVariant();
@@ -204,7 +214,7 @@ public:
 		return QVariant();
 	}
 	GroupWiseAccount * m_account;
-	QList<GroupWise::ContactDetails const *> m_contents;
+	QList<GroupWise::ContactDetails> m_contents;
 };
 
 class GroupWiseContactSearchSortProxyModel : public QSortFilterProxyModel
@@ -272,12 +282,12 @@ void GroupWiseContactSearch::slotClear()
 void GroupWiseContactSearch::slotDoSearch()
 {
 	// build a query
-	Q3ValueList< GroupWise::UserSearchQueryTerm > searchTerms;
+	QList< GroupWise::UserSearchQueryTerm > searchTerms;
 	if ( !m_firstName->text().isEmpty() )
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_firstName->text();
-		arg.field = "Given Name";
+		arg.field = Field::KOPETE_NM_USER_DETAILS_GIVEN_NAME;
 		arg.operation = searchOperation( m_firstNameOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
@@ -285,7 +295,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_lastName->text();
-		arg.field = "Surname";
+		arg.field = Field::KOPETE_NM_USER_DETAILS_SURNAME;
 		arg.operation = searchOperation( m_lastNameOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
@@ -293,7 +303,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_userId->text();
-		arg.field = NM_A_SZ_USERID;
+		arg.field = Field::NM_A_SZ_USERID;
 		arg.operation = searchOperation( m_userIdOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
@@ -301,7 +311,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_title->text();
-		arg.field = NM_A_SZ_TITLE;
+		arg.field = Field::NM_A_SZ_TITLE;
 		arg.operation = searchOperation( m_titleOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
@@ -309,7 +319,7 @@ void GroupWiseContactSearch::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_dept->text();
-		arg.field = NM_A_SZ_DEPARTMENT;
+		arg.field = Field::NM_A_SZ_DEPARTMENT;
 		arg.operation = searchOperation( m_deptOperation->currentIndex() );
 		searchTerms.append( arg );
 	}
@@ -326,14 +336,14 @@ void GroupWiseContactSearch::slotDoSearch()
 	}
 	else
 	{
-		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "no query to perform!";
+		kDebug() << "no query to perform!";
 	}
 	
 }
 
 void GroupWiseContactSearch::slotShowDetails()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 	// get the first selected result
 	QModelIndexList selected = m_results->selectionModel()->selectedIndexes();
 	if ( !selected.empty() )
@@ -371,16 +381,13 @@ GroupWise::ContactDetails GroupWiseContactSearch::detailsAtIndex( const QModelIn
 }
 void GroupWiseContactSearch::slotGotSearchResults()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 	SearchUserTask * st = ( SearchUserTask * ) sender();
-	QList< GroupWise::ContactDetails const *> searchResults;
-	foreach (GroupWise::ContactDetails dt, st->results() )
-	{
-		GroupWise::ContactDetails const * dtp = new GroupWise::ContactDetails(dt);
-		searchResults.append( dtp );
-	}
+	m_lastSearchResults.clear();
+	m_lastSearchResults = st->results();
 
-	m_model = new GroupWiseContactSearchModel( searchResults, m_account, this );
+	m_model = new GroupWiseContactSearchModel( m_lastSearchResults, m_account, this );
+	//new ModelTest( m_model, this );
 	m_proxyModel->setSourceModel( m_model );
 	m_results->setModel( m_proxyModel );
 	m_results->resizeColumnToContents( 0 );
@@ -388,18 +395,23 @@ void GroupWiseContactSearch::slotGotSearchResults()
 
 	m_matchCount->setText( i18np( "1 matching user found", "%1 matching users found", m_proxyModel->rowCount() ) );
 	// if there was only one hit, select it
-	if ( searchResults.count() == 1 )
+	if ( m_lastSearchResults.count() == 1 )
 	{
 		QItemSelectionModel * selectionModel = m_results->selectionModel();
 		QItemSelection rowSelection;
 		rowSelection.select( m_model->index( 0, 0, QModelIndex() ), m_model->index(0, 3, QModelIndex() ) );
 		selectionModel->select( rowSelection, QItemSelectionModel::Select );
 	}
+	kDebug() << "selectionModel is " << m_results->selectionModel();
+	m_results->selectionModel()->selectedRows();
+	kDebug() << "selectionModel is still valid.";
 }
 
-Q3ValueList< GroupWise::ContactDetails > GroupWiseContactSearch::selectedResults()
+QList< GroupWise::ContactDetails > GroupWiseContactSearch::selectedResults()
 {
-	Q3ValueList< GroupWise::ContactDetails> lst;
+	kDebug() << "selectionModel is " << m_results->selectionModel();
+	QList< GroupWise::ContactDetails> lst;
+	Q_ASSERT(m_results->selectionModel());
 	foreach( QModelIndex index, m_results->selectionModel()->selectedRows() )
 	{
 		lst.append( detailsAtIndex( index ) );

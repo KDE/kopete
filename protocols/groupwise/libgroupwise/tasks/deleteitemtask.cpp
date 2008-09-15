@@ -4,7 +4,7 @@
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
@@ -33,13 +33,13 @@ void DeleteItemTask::item( const int parentFolder, const int objectId )
 {
 	if ( objectId == 0 )
 	{
-		setError( 1, "Can't delete the root folder" );
+		setError( 1, "Cannot delete the root folder" );
 		return;
 	}
 	Field::FieldList lst;
-	lst.append( new Field::SingleField( NM_A_SZ_PARENT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( parentFolder ) ) );
+	lst.append( new Field::SingleField( Field::NM_A_SZ_PARENT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( parentFolder ) ) );
 	// this is either a user Id or a DN
-	lst.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( objectId ) ) );
+	lst.append( new Field::SingleField( Field::NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( objectId ) ) );
 	createTransfer( "deletecontact", lst );
 }
 

@@ -100,6 +100,7 @@ private slots:
 	void slotOnlineStatusChanged( Kopete::Contact *contact,
 			                      const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
 	void slotItemChanged(QTreeWidgetItem*);
+	void slotItemClicked ( QTreeWidgetItem * item, int column );
 };
 #endif
 

@@ -20,6 +20,9 @@
 
 #include "kircglobal.h"
 
+#include "kircentity.h"
+
+#include <QtCore/QMetaType>
 #include <QtCore/QSharedDataPointer>
 #include <QtCore/QStringList>
 
@@ -29,6 +32,8 @@ namespace KIrc
 {
 
 class Context;
+class EntityManager;
+
 class MessagePrivate;
 
 /*
@@ -68,8 +73,10 @@ public:
 	QByteArray toLine() const;
 //	QString toLine(QTextCodec *codec) const;
 
+public:
 	QByteArray prefix() const;
 //	QString prefix(QTextCodec *codec) const;
+	void setPrefix(const QByteArray & prefix);
 
 	KIrc::Message &operator << (const QByteArray &arg);
 	KIrc::Message &operator << (const KIrc::OptArg &arg);
@@ -81,13 +88,17 @@ public:
 
 	QByteArray suffix() const;
 //	QString suffix(QTextCodec *codec) const;
+	void setSuffix(const QByteArray& suffix);
 
 public:
 	bool isNumericReply() const;
 
+private:
 	QSharedDataPointer<KIrc::MessagePrivate> d;
 };
 
 }
+
+Q_DECLARE_METATYPE(KIrc::Message)
 
 #endif

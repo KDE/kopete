@@ -36,6 +36,7 @@ TextEffectPlugin::TextEffectPlugin( QObject *parent, const QVariantList &/*args*
 		pluginStatic_=this;
 
 	m_config = new TextEffectConfig;
+	m_config->load();
 
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 

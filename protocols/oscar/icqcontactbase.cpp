@@ -57,7 +57,6 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusTitle );
 
 	setAwayMessage( message );
-	m_haveAwayMessage = true;
 }
 
 void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )
@@ -68,16 +67,12 @@ void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* ses
 	QTextCodec* codec = contactCodec();
 
 	int messageChannel = 0x01;
-	Oscar::Message::Encoding messageEncoding;
-
-	if ( isOnline() && m_details.hasCap( CAP_UTF8 ) )
-		messageEncoding = Oscar::Message::UCS2;
-	else
-		messageEncoding = Oscar::Message::UserDefined;
+	// Allow UCS2 because official AIM client doesn't sets the CAP_UTF8 anymore!
+	bool allowUCS2 = !isOnline() || !(m_details.userClass() & Oscar::CLASS_ICQ) || m_details.hasCap( CAP_UTF8 );
 
 	QString msgText( msg.plainBody() );
 	// TODO: More intelligent handling of message length.
-	int chunk_length = !isOnline() ? 450 : 4096;
+	const int chunk_length = 1274;
 	int msgPosition = 0;
 
 	do
@@ -98,7 +93,8 @@ void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* ses
 		msgPosition += msgChunk.length();
 
 		Oscar::Message message;
-		message.setText( messageEncoding, msgChunk, codec );
+		message.setId( msg.id() );
+		message.setText( Oscar::Message::encodingForText( msgChunk, allowUCS2 ), msgChunk, codec );
 		message.setChannel( messageChannel );
 		message.setTimestamp( msg.timestamp() );
 		message.setSender( mAccount->accountId() );
@@ -106,6 +102,7 @@ void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* ses
 		mAccount->engine()->sendMessage( message );
 	} while ( msgPosition < msgText.length() );
 
+	msg.setState( Kopete::Message::StateSending );
 	manager(Kopete::Contact::CanCreate)->appendMessage(msg);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }

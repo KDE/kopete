@@ -450,7 +450,7 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 	 */
 	generalHTMLPart->write ( QString ( "<div class=\"statgroup\">" ) );
 	generalHTMLPart->write ( QString ( "<table width=\"100%\"><tr><td colspan=\"3\">" )
-	                         + i18nc ( "TRANSLATOR: please reverse 'left' and 'right' as approriate for your language",
+	                         + i18nc ( "TRANSLATOR: please reverse 'left' and 'right' as appropriate for your language",
 	                                   "When was this contact visible?<br />All charts are in 24 blocks, "
 	                                   "one per hour, encompassing one day. %1 is on the left, "
 	                                   "and %2 is on the right.", KGlobal::locale()->formatTime ( QTime ( 0, 0 ) ),

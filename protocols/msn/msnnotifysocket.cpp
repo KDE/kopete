@@ -402,7 +402,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 		// UUX is sended to acknowledge that the server has received and processed the personal Message.
 		// if the result is 0, set the myself() contact personalMessage.
 		if( data.section(' ', 0, 0) == QString::fromUtf8("0") )
-			m_account->myself()->setProperty(MSNProtocol::protocol()->propPersonalMessage, m_propertyPersonalMessage);
+			m_account->myself()->setStatusMessage( m_propertyPersonalMessage );
 	}
 	else if( cmd == "FLN" )
 	{

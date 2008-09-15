@@ -24,8 +24,6 @@
 
 #include "chatcountstask.h"
 
-using namespace GroupWise;
-
 ChatCountsTask::ChatCountsTask(Task* parent): RequestTask(parent)
 {
 	Field::FieldList lst;
@@ -51,17 +49,17 @@ bool ChatCountsTask::take( Transfer * transfer )
 	}
 	
 	Field::FieldList responseFields = response->fields();
-	Field::MultiField * resultsArray = responseFields.findMultiField( NM_A_FA_RESULTS );
+	Field::MultiField * resultsArray = responseFields.findMultiField( Field::NM_A_FA_RESULTS );
 	if ( !resultsArray )
 	{
-		setError( Protocol );
+		setError( GroupWise::Protocol );
 		return true;
 	}
 	Field::FieldList counts = resultsArray->fields();
 	const Field::FieldListIterator end = counts.end();
-	for ( Field::FieldListIterator it = counts.find( NM_A_FA_CHAT );
+	for ( Field::FieldListIterator it = counts.find( Field::NM_A_FA_CHAT );
 			 it != end;
-			 it = counts.find( ++it, NM_A_FA_CHAT ) )
+			 it = counts.find( ++it, Field::NM_A_FA_CHAT ) )
 	{
 		Field::MultiField * mf = static_cast<Field::MultiField *>( *it );
 		Field::FieldList chat = mf->fields();
@@ -69,9 +67,9 @@ bool ChatCountsTask::take( Transfer * transfer )
 		int participants;
 		// read the supplied fields, set metadata and status.
 		Field::SingleField * sf;
-		if ( ( sf = chat.findSingleField ( NM_A_DISPLAY_NAME ) ) )
+		if ( ( sf = chat.findSingleField ( Field::NM_A_DISPLAY_NAME ) ) )
 			roomName = sf->value().toString();
-		if ( ( sf = chat.findSingleField ( NM_A_UD_PARTICIPANTS ) ) )
+		if ( ( sf = chat.findSingleField ( Field::NM_A_UD_PARTICIPANTS ) ) )
 			participants = sf->value().toInt();
 		
 		m_results.insert( roomName, participants );

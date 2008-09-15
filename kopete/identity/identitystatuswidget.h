@@ -20,6 +20,7 @@
 #define IDENTITYSTATUSWIDGET_H
 
 #include <QWidget>
+#include <QListWidgetItem>
 #include <kopete_export.h>
 
 namespace Kopete
@@ -66,6 +67,7 @@ private slots:
 	void slotAnimate(qreal amount);
 
 	void showAccountContextMenu( const QPoint & );
+	void slotAccountClicked( QListWidgetItem * item );
 	void slotPhotoClicked();
 	void slotAccountRegistered( Kopete::Account *account );
 	void slotAccountUnregistered( const Kopete::Account *account );
