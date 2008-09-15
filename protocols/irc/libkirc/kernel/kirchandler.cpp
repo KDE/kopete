@@ -16,6 +16,7 @@
 #include "kirchandler.moc"
 
 #include <QtCore/QMultiHash>
+#include <kdebug.h>
 
 class KIrc::HandlerPrivate
 {
@@ -168,12 +169,19 @@ Handler::Handled Handler::onMessage(KIrc::Context *context, const KIrc::Message 
 			return handled;
 	}
 
-	QGenericReturnArgument ret = Q_RETURN_ARG(KIrc::Handler::Handled, handled);
+	QGenericReturnArgument ret = Q_RETURN_ARG(Handler::Handled, handled);
 	QGenericArgument arg0 = Q_ARG(KIrc::Context *, context);
 	QGenericArgument arg1 = Q_ARG(KIrc::Message, message); // Should be implemented as (const KIrc::Message &)
 	QGenericArgument arg2 = Q_ARG(KIrc::Socket *, socket);
 
 	QByteArray msg = message.argAt(0).toUpper();
+
+	//Check if it's a numeric reply
+	bool isNumeric=false;
+	int reply=msg.toInt( &isNumeric );
+	if ( isNumeric )
+		msg.prepend( "numericReply_" ); //add a prefix, because a slot name cannot be just a number
+
 	QMetaObject::invokeMethod(this, msg, Qt::DirectConnection,
 		ret, arg0, arg1, arg2);
 

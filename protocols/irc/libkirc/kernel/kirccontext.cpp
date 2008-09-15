@@ -46,7 +46,7 @@ Context::~Context()
 /*
 QList<KIrc::Entity *> Context::anonymous() const
 {
-	
+
 }
 */
 QList<KIrc::Entity *> Context::entities() const
