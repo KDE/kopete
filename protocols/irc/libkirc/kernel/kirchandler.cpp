@@ -177,6 +177,8 @@ Handler::Handled Handler::onMessage(KIrc::Context *context, const KIrc::Message 
 	QByteArray msg = message.argAt(0).toUpper();
 
 	//Check if it's a numeric reply
+	// FIXME: This is an old temporary solution that was backported for simplicity. One should port such 
+	//        code to use the alias system to use named numbers that can found in RFC and servers implementations
 	bool isNumeric=false;
 	int reply=msg.toInt( &isNumeric );
 	if ( isNumeric )
