@@ -19,7 +19,7 @@
 #include <QObject>
 
 void
-WlmSocket::canWriteData ()
+WlmSocket::connected ()
 {
     MSN::Connection * c;
 

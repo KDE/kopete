@@ -61,7 +61,6 @@ Callbacks::registerSocket (void *s, int reading, int writing)
     if (a && a->sock)
     {
         a->sock->enableRead (false);
-        a->sock->enableWrite (false);
     }
 
     if (!a)
@@ -69,8 +68,6 @@ Callbacks::registerSocket (void *s, int reading, int writing)
 
     if (reading)
         a->sock->enableRead (true);
-    if (writing)
-        a->sock->enableWrite (true);
 }
 
 void
@@ -91,7 +88,6 @@ Callbacks::unregisterSocket (void *s)
     if (a && a->sock)
     {
         a->sock->enableRead (false);
-        a->sock->enableWrite (false);
     }
 }
 
@@ -614,17 +610,17 @@ Callbacks::changedStatus (MSN::NotificationServerConnection * conn,
 void *
 Callbacks::connectToServer (std::string hostname, int port, bool * connected)
 {
-    WlmSocket *b = 0;
     WlmSocket *a = new WlmSocket (mainConnection);
 
     a->sock = new KNetwork::KStreamSocket ();
     a->sock->setTimeout (10000);
     a->sock->connect (hostname.c_str (), QString::number (port));
+    a->sock->enableWrite (false);
 
     QObject::connect (a->sock, SIGNAL (readyRead ()), a,
                       SLOT (incomingData ()));
-    QObject::connect (a->sock, SIGNAL (readyWrite ()), a,
-                      SLOT (canWriteData ()));
+    QObject::connect (a->sock, SIGNAL (connected (const KNetwork::KResolverEntry &)), a,
+                      SLOT (connected ()));
     QObject::connect (a->sock, SIGNAL (closed ()), a, SLOT (disconnected ()));
 
     *connected = false;

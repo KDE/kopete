@@ -24,9 +24,10 @@
 
 #include <msn/msn.h>
 
-class WlmSocket:public QObject
+class WlmSocket : public QObject
 {
-  Q_OBJECT public:
+  Q_OBJECT 
+public:
     KNetwork::KStreamSocket * sock;
     MSN::NotificationServerConnection * mainConnection;
     bool main;
@@ -36,8 +37,9 @@ class WlmSocket:public QObject
         this->mainConnection = mainConnection;
     }
      ~WlmSocket ();
-    public slots:void incomingData ();
-    void canWriteData ();
+public slots:
+    void incomingData ();
+    void connected ();
     void disconnected ();
 };
 #endif
