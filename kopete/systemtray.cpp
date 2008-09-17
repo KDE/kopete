@@ -55,7 +55,7 @@ KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent )
 }
 
 KopeteSystemTray::KopeteSystemTray(QWidget* parent)
-	: KAnimatedSystemTrayIcon(parent)
+	: KSystemTrayIcon(parent)
 	, mMovie(0)
 {
 	kDebug(14010) ;
@@ -170,7 +170,7 @@ void KopeteSystemTray::startBlink()
 	
 	if (!movie())
 		setMovie( mMovie );
-	startMovie();
+	mMovie->start();
 }
 
 void KopeteSystemTray::stopBlink()
