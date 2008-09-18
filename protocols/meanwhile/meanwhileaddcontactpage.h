@@ -18,26 +18,27 @@
 #define MEANWHILEADDCONTACTPAGE_H
 
 #include <addcontactpage.h>
-#include "meanwhileaddcontactbase.h"
+#include "ui_meanwhileaddcontact.h"
 
 namespace Kopete { class Account; }
 namespace Kopete { class MetaContact; }
 
 class MeanwhileAddContactPage : public AddContactPage
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-    MeanwhileAddContactPage( QWidget* parent = 0, 
+    MeanwhileAddContactPage( QWidget* parent = 0,
                              Kopete::Account *account=0);
     ~MeanwhileAddContactPage();
-	
+
     virtual bool apply(Kopete::Account* a, Kopete::MetaContact* m);
     virtual bool validateData();
 
 protected:
-	MeanwhileAddContactBase *theDialog;
+    Ui::AddContactDialog ui;
     Kopete::Account *theAccount;
     QWidget *theParent;
+
 public slots:
     void slotFindUser();
 };

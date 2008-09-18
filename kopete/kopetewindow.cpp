@@ -68,7 +68,6 @@
 #include <kstandardaction.h>
 #include <solid/networking.h>
 #include <kstatusbarofflineindicator.h>
-#include <kemoticons.h>
 
 #include "addcontactpage.h"
 #include "addressbooklinkwidget.h"
@@ -78,6 +77,7 @@
 #include "kopeteapplication.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
+#include "kopeteaccountstatusbaricon.h"
 #include "kopeteidentitystatusbaricon.h"
 #include "kopetebehaviorsettings.h"
 #include "kopetecontact.h"
@@ -127,7 +127,7 @@ InfoEventIconLabel::InfoEventIconLabel( QWidget *parent )
 	setFixedSize( 16, 16 );
 	setPixmap( SmallIcon( "flag-black" ) );
 	setToolTip( i18n( "Service messages" ) );
-	
+
 	connect( Kopete::InfoEventManager::self(), SIGNAL(changed()), this, SLOT(updateIcon()) );
 }
 
@@ -160,6 +160,7 @@ class KopeteWindow::Private
 				actionShowOfflineUsers ( 0 ), actionShowEmptyGroups ( 0 ), docked ( 0 ), deskRight ( 0 ),
 				statusBarWidget ( 0 ), tray ( 0 ), hidden ( false ), autoHide ( false ),
 				autoHideTimeout ( 0 ), autoHideTimer ( 0 ), addContactMapper ( 0 ),
+				showIdentityIcons( Kopete::AppearanceSettings::self()->showIdentityIcons() ),
 				globalStatusMessage ( 0 )
 		{}
 
@@ -206,7 +207,9 @@ class KopeteWindow::Private
 		QTimer *autoResizeTimer;
 		QSignalMapper *addContactMapper;
 
+		bool showIdentityIcons;
 		QHash<const Kopete::Identity*, KopeteIdentityStatusBarIcon*> identityStatusBarIcons;
+		QHash<const Kopete::Account*, KopeteAccountStatusBarIcon*> accountStatusBarIcons;
 		KSqueezedTextLabel *globalStatusMessage;
 };
 
@@ -354,7 +357,7 @@ void KopeteWindow::initView()
 	d->infoEventWidget->setVisible ( false );
 	connect ( d->infoEventWidget, SIGNAL(showRequest()), this, SLOT(slotShowInfoEventWidget()) );
 	l->addWidget ( d->infoEventWidget );
-	
+
 	setCentralWidget ( w );
 	d->contactlist->setFocus();
 }
@@ -427,6 +430,7 @@ void KopeteWindow::initActions()
 	actionCollection()->addAction ( "settings_keys", act );
 
 	KAction *configureGlobalShortcutsAction = new KAction ( KIcon ( "configure-shortcuts" ), i18n ( "Configure &Global Shortcuts..." ), this );
+	configureGlobalShortcutsAction->setMenuRole( QAction::NoRole ); //OS X: prevent Qt heuristics to move action to app menu->"Preferences"
 	actionCollection()->addAction ( "settings_global", configureGlobalShortcutsAction );
 	connect ( configureGlobalShortcutsAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotConfGlobalKeys() ) );
 
@@ -499,16 +503,12 @@ void KopeteWindow::slotShowHide()
 	else
 	{
 		show();
-		//raise() and show() should normaly deIconify the window. but it doesn't do here due
-		// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
-		if ( isMinimized() )
-			KWindowSystem::unminimizeWindow ( winId() );
 #ifdef Q_WS_X11
 		if ( !KWindowSystem::windowInfo ( winId(),NET::WMDesktop ).onAllDesktops() )
 			KWindowSystem::setOnDesktop ( winId(), KWindowSystem::currentDesktop() );
 #endif
 		raise();
-		activateWindow();
+		KWindowSystem::forceActiveWindow( winId() );
 	}
 }
 
@@ -523,11 +523,13 @@ void KopeteWindow::slotToggleAway()
 
 void KopeteWindow::initSystray()
 {
-	d->tray = KopeteSystemTray::systemTray ( this );
+	if ( Kopete::BehaviorSettings::self()->showSystemTray() ) {
+		d->tray = KopeteSystemTray::systemTray ( this );
 
-	QObject::connect ( d->tray, SIGNAL ( aboutToShowMenu ( KMenu * ) ),
-	                   this, SLOT ( slotTrayAboutToShowMenu ( KMenu * ) ) );
-	QObject::connect ( d->tray, SIGNAL ( quitSelected() ), this, SLOT ( slotQuit() ) );
+		QObject::connect ( d->tray, SIGNAL ( aboutToShowMenu ( KMenu * ) ),
+						   this, SLOT ( slotTrayAboutToShowMenu ( KMenu * ) ) );
+		QObject::connect ( d->tray, SIGNAL ( quitSelected() ), this, SLOT ( slotQuit() ) );
+	}
 }
 
 KopeteWindow::~KopeteWindow()
@@ -618,6 +620,12 @@ void KopeteWindow::saveOptions()
 		cg.writeEntry ( "State", "Shown" );
 	}
 
+	Kopete::Identity *identity = d->identitywidget->identity();
+	if ( identity )
+		cg.writeEntry ( "ShownIdentityId", identity->id() );
+	else
+		cg.writeEntry ( "ShownIdentityId", QString() );
+
 	cg.sync();
 }
 
@@ -650,6 +658,53 @@ void KopeteWindow::slotConfigChanged()
 	d->actionShowAllOfflineEmpty->setChecked ( Kopete::AppearanceSettings::self()->showOfflineUsers() && Kopete::AppearanceSettings::self()->showEmptyGroups() );
 	d->actionShowOfflineUsers->setChecked ( Kopete::AppearanceSettings::self()->showOfflineUsers() );
 	d->actionShowEmptyGroups->setChecked ( Kopete::AppearanceSettings::self()->showEmptyGroups() );
+
+	if ( d->showIdentityIcons != Kopete::AppearanceSettings::self()->showIdentityIcons() )
+	{
+		// Delete status bar icons
+		if ( d->showIdentityIcons )
+		{
+			if ( d->identitywidget->isVisible() )
+			{
+				d->identitywidget->setIdentity( 0 );
+				d->identitywidget->setVisible( false );
+			}
+
+			qDeleteAll( d->identityStatusBarIcons );
+			d->identityStatusBarIcons.clear();
+		}
+		else
+		{
+			qDeleteAll( d->accountStatusBarIcons );
+			d->accountStatusBarIcons.clear();
+		}
+
+		// Add new status bar icons
+		d->showIdentityIcons = Kopete::AppearanceSettings::self()->showIdentityIcons();
+		if ( d->showIdentityIcons )
+		{
+			Kopete::Identity::List identityList = Kopete::IdentityManager::self()->identities();
+			foreach ( Kopete::Identity *identity, identityList )
+			{
+				KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon ( identity, d->statusBarWidget );
+				connect ( sbIcon, SIGNAL(leftClicked(Kopete::Identity*, const QPoint&)), this,
+				          SLOT(slotIdentityStatusIconLeftClicked(Kopete::Identity*, const QPoint&)) );
+
+				d->identityStatusBarIcons.insert ( identity, sbIcon );
+				slotIdentityStatusIconChanged ( identity );
+				slotIdentityToolTipChanged ( identity );
+			}
+		}
+		else
+		{
+			QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
+			foreach ( Kopete::Account *account, accountList )
+			{
+				KopeteAccountStatusBarIcon *sbIcon = new KopeteAccountStatusBarIcon ( account, d->statusBarWidget );
+				d->accountStatusBarIcons.insert ( account, sbIcon );
+			}
+		}
+	}
 }
 
 void KopeteWindow::slotContactListAppearanceChanged()
@@ -796,6 +851,19 @@ void KopeteWindow::slotAllPluginsLoaded()
 {
 //	actionConnect->setEnabled(true);
 	d->actionDisconnect->setEnabled ( true );
+
+	KConfigGroup cg( KGlobal::config(), "General Options" );
+
+	if ( d->showIdentityIcons )
+	{
+		QString identityId = cg.readEntry( "ShownIdentityId", Kopete::IdentityManager::self()->defaultIdentity()->id() );
+		if ( !identityId.isEmpty() )
+		{
+			Kopete::Identity* identity = Kopete::IdentityManager::self()->findIdentity( identityId );
+			if ( identity )
+				slotIdentityStatusIconLeftClicked( identity, QPoint() );
+		}
+	}
 }
 
 void KopeteWindow::slotIdentityRegistered ( Kopete::Identity *identity )
@@ -810,11 +878,15 @@ void KopeteWindow::slotIdentityRegistered ( Kopete::Identity *identity )
 	connect ( identity, SIGNAL(toolTipChanged(Kopete::Identity*)),
 	          this, SLOT(slotIdentityToolTipChanged(Kopete::Identity*)) );
 
-	KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon ( identity, d->statusBarWidget );
-	connect ( sbIcon, SIGNAL ( leftClicked ( Kopete::Identity *, const QPoint & ) ),
-	          SLOT ( slotIdentityStatusIconLeftClicked ( Kopete::Identity *, const QPoint & ) ) );
+	if ( d->showIdentityIcons )
+	{
+		KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon ( identity, d->statusBarWidget );
+		connect ( sbIcon, SIGNAL ( leftClicked ( Kopete::Identity *, const QPoint & ) ),
+		          SLOT ( slotIdentityStatusIconLeftClicked ( Kopete::Identity *, const QPoint & ) ) );
 
-	d->identityStatusBarIcons.insert ( identity, sbIcon );
+		d->identityStatusBarIcons.insert ( identity, sbIcon );
+	}
+
 	slotIdentityStatusIconChanged ( identity );
 	slotIdentityToolTipChanged( identity );
 }
@@ -823,13 +895,15 @@ void KopeteWindow::slotIdentityUnregistered ( const Kopete::Identity *identity )
 {
 	kDebug ( 14000 ) ;
 
-	KopeteIdentityStatusBarIcon *sbIcon = d->identityStatusBarIcons[identity];
-
-	if ( !sbIcon )
-		return;
-
-	d->identityStatusBarIcons.remove ( identity );
-	delete sbIcon;
+	if ( d->showIdentityIcons )
+	{
+		KopeteIdentityStatusBarIcon *sbIcon = d->identityStatusBarIcons.value ( identity, 0 );
+		if ( sbIcon )
+		{
+			d->identityStatusBarIcons.remove ( identity );
+			delete sbIcon;
+		}
+	}
 
 	makeTrayToolTip();
 
@@ -839,7 +913,7 @@ void KopeteWindow::slotIdentityToolTipChanged ( Kopete::Identity *identity )
 {
 	// Adds tooltip for each status icon, useful in case you have many accounts
 	// over one protocol
-	KopeteIdentityStatusBarIcon *i = d->identityStatusBarIcons[ identity ];
+	KopeteIdentityStatusBarIcon *i = d->identityStatusBarIcons.value ( identity, 0 );
 	if ( i )
 		i->setToolTip ( identity->toolTip() );
 
@@ -866,7 +940,7 @@ void KopeteWindow::slotIdentityStatusIconChanged ( Kopete::Identity *identity )
 		//Kopete::StatusManager::self()->setGlobalStatusMessage( identity->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString() );
 	}
 
-	KopeteIdentityStatusBarIcon *i = d->identityStatusBarIcons[ identity ];
+	KopeteIdentityStatusBarIcon *i = d->identityStatusBarIcons.value ( identity, 0 );
 	if ( !i )
 		return;
 
@@ -987,6 +1061,11 @@ void KopeteWindow::slotAccountRegistered ( Kopete::Account *account )
 	d->addContactMapper->setMapping ( action, account->protocol()->pluginId() + QChar ( 0xE000 ) + account->accountId() );
 	d->actionAddContact->addAction ( action );
 
+	if ( !d->showIdentityIcons )
+	{
+		KopeteAccountStatusBarIcon *sbIcon = new KopeteAccountStatusBarIcon ( account, d->statusBarWidget );
+		d->accountStatusBarIcons.insert ( account, sbIcon );
+	}
 }
 
 void KopeteWindow::slotAccountUnregistered ( const Kopete::Account *account )
@@ -1006,6 +1085,16 @@ void KopeteWindow::slotAccountUnregistered ( const Kopete::Account *account )
 		kDebug ( 14000 ) << " found KAction " << action << " with name: " << action->objectName();
 		d->addContactMapper->removeMappings ( action );
 		d->actionAddContact->removeAction ( action );
+	}
+
+	if ( !d->showIdentityIcons )
+	{
+		KopeteAccountStatusBarIcon *sbIcon = d->accountStatusBarIcons.value ( account, 0 );
+		if ( sbIcon )
+		{
+			d->accountStatusBarIcons.remove ( account );
+			delete sbIcon;
+		}
 	}
 }
 
@@ -1114,10 +1203,10 @@ void KopeteWindow::globalStatusChanged()
 
 	QString toolTip;
 	toolTip += i18nc("@label:textbox formatted status title", "<b>Status&nbsp;Title:</b>&nbsp;%1",
-	                 Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape(statusTitle) ) );
+	                 Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusTitle) ) );
 
 	toolTip += i18nc("@label:textbox formatted status message", "<br /><b>Status&nbsp;Message:</b>&nbsp;%1",
-	                 Kopete::Emoticons::self()->theme().parseEmoticons( Kopete::Message::escape(statusMessage) ) );
+	                 Kopete::Emoticons::parseEmoticons( Kopete::Message::escape(statusMessage) ) );
 
 	d->globalStatusMessage->setToolTip( toolTip );
 }

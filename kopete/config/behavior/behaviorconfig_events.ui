@@ -129,7 +129,7 @@
         </property>
         <property name="whatsThis" >
          <string>If activated, events for chat windows that are on the current desktop will be handled like events in the active chat window: The system tray icon and the sender icon in the contact list are not animated and the "Incoming Message for Active Chat" event is used for the notification. Chat windows on other desktops will trigger notifications.
-If not activated, all chat windows except the active one will notify you that an event has occured using animations (if activated) and the "Incoming Message" event.</string>
+If not activated, all chat windows except the active one will notify you that an event has occurred using animations (if activated) and the "Incoming Message" event.</string>
         </property>
         <property name="text" >
          <string>Treat all chats on the current des&amp;ktop like active chats</string>

@@ -316,7 +316,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 				}
 				else
 				{
-					advert = advert.replace(statusSong, "");
+					advert = advert.remove(statusSong);
 				}
 			}
 			else

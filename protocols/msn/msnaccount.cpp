@@ -33,6 +33,7 @@
 #include <klocale.h>
 #include <kicon.h>
 #include <kconfiggroup.h>
+#include <krun.h>
 
 #include <QtCore/QFile>
 #include <QtCore/QRegExp>
@@ -89,6 +90,9 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
 	m_startChatAction = new KAction( KIcon("mail-message-new"), i18n( "&Start Chat..." ), this );
         //, "startChatAction" );
 	QObject::connect( m_startChatAction, SIGNAL(triggered(bool)), this, SLOT(slotStartChat()) );
+    
+	m_openStatusAction = new KAction( i18n( "Open MS&N service status site..." ), this );
+	QObject::connect( m_openStatusAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenStatus()) );
 
 	KConfigGroup *config=configGroup();
 
@@ -271,6 +275,7 @@ void MSNAccount::fillActionMenu( KActionMenu *actionMenu )
 //	actionMenu->menu()->insertSeparator();
 
 	actionMenu->addAction( m_openInboxAction );
+	actionMenu->addAction( m_openStatusAction );
 
 #if !defined NDEBUG
 	KActionMenu *debugMenu = new KActionMenu( "Debug", this );
@@ -411,6 +416,10 @@ void MSNAccount::slotOpenInbox()
 		m_notifySocket->slotOpenInbox();
 }
 
+void MSNAccount::slotOpenStatus()
+{
+	KRun::runUrl( KUrl( QLatin1String( "http://messenger.msn.com/Status.aspx" ) ), "text/html", Kopete::UI::Global::mainWidget() );
+}
 
 void MSNAccount::slotNotifySocketClosed()
 {
@@ -1302,7 +1311,7 @@ void MSNAccount::slotErrorMessageReceived( int type, const QString &msg )
 
 	kDebug(14140) << msg;
 	// Display the error
-	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), msgBoxType, msg, caption );
+	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), msgBoxType, msg, caption, KMessageBox::AllowLink | KMessageBox::Notify );
 
 }
 

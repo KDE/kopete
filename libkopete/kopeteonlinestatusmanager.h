@@ -120,6 +120,13 @@ public:
 	 */
 	static KIcon pixmapForCategory( Categories category );
 
+	/**
+	 * This returns status from config as Kopete::OnlineStatusManager::Category
+	 *
+	 * @return the desired initial status
+	 */
+	Kopete::OnlineStatusManager::Category initialStatus() const;
+
 private:
 	friend class OnlineStatus;
 	friend class OnlineStatusIconEngine;

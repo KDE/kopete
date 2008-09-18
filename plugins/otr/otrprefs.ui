@@ -208,7 +208,7 @@
          </column>
          <column>
           <property name="text" >
-           <string>Veryfied</string>
+           <string>Verified</string>
           </property>
          </column>
          <column>

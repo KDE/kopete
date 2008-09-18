@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>578</width>
-    <height>546</height>
+    <height>471</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -459,13 +459,6 @@ If you do not currently have an ICQ account, please click the button to create o
             </property>
             <property name="text" >
              <string>&amp;Require authorization before someone can add you to their contact list</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="chkRespectRequireAuth" >
-            <property name="text" >
-             <string>Respect other contacts' authori&amp;zation requirement</string>
             </property>
            </widget>
           </item>
@@ -965,7 +958,6 @@ If you do not currently have an ICQ account, please click the button to create o
   <tabstop>edtServerAddress</tabstop>
   <tabstop>edtServerPort</tabstop>
   <tabstop>chkRequireAuth</tabstop>
-  <tabstop>chkRespectRequireAuth</tabstop>
   <tabstop>chkHideIP</tabstop>
   <tabstop>chkWebAware</tabstop>
   <tabstop>sbxFirstPort</tabstop>

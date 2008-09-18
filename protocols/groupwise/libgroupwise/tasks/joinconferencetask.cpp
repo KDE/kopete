@@ -4,7 +4,7 @@
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
@@ -137,7 +137,7 @@ void JoinConferenceTask::slotReceiveUserDetails( const ContactDetails & details 
 		client()->debug( QString( " - can we remove %1?" ).arg(current ) );
 		if ( current == details.dn )
 		{
-			client()->debug( " - it's gone!" );
+			client()->debug( " - it is gone!" );
 			m_unknowns.erase( it );
 			break;
 		}

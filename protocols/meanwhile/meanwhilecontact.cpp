@@ -107,10 +107,9 @@ void MeanwhileContact::slotSendTyping(bool isTyping)
 
 void MeanwhileContact::receivedMessage(const QString &message)
 {
-	Kopete::ContactPtrList contactList;
-	contactList.append(account()->myself());
-	Kopete::Message kmessage(this, contactList, message,
-			Kopete::Message::Inbound);
+	Kopete::Message kmessage(this, account()->myself());
+	kmessage.setPlainBody(message);
+	kmessage.setDirection(Kopete::Message::Inbound);
 
 	manager(Kopete::Contact::CanCreate)->appendMessage(kmessage);
 }

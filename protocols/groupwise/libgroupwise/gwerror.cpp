@@ -146,7 +146,7 @@ QString GroupWise::errorCodeToString( int errorCode )
 			errorString = i18n( "Chat has been removed from server" );
 			break;
 		default:
-			errorString = i18n("Unrecognized error code: %s").arg( errorCode );
+			errorString = i18n("Unrecognized error code: %1", errorCode );
 #else
 		case NMERR_ACCESS_DENIED:
 			errorString = "Access denied";
@@ -273,4 +273,10 @@ QString GroupWise::errorCodeToString( int errorCode )
 #endif
 	}
 	return errorString;
+}
+
+GroupWise::FolderItem::FolderItem()
+: id(0), sequence(0), parentId(0)
+{
+
 }

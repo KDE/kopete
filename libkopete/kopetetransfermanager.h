@@ -1,10 +1,11 @@
 /*
     kopetetransfermanager.h
 
-    Copyright (c) 2002-2003 by Nick Betcher <nbetcher@kde.org>
-    Copyright (c) 2002-2003 by Richard Smith <kopete@metafoo.co.uk>
+    Copyright (c) 2002-2003 by Nick Betcher           <nbetcher@kde.org>
+    Copyright (c) 2002-2003 by Richard Smith          <kopete@metafoo.co.uk>
+    Copyright (c) 2008      by Roman Jarosz           <kedgedev@centrum.cz>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -42,8 +43,11 @@ class KOPETE_EXPORT FileTransferInfo
 public:
 	enum KopeteTransferDirection { Incoming, Outgoing };
 
+	FileTransferInfo();
 	FileTransferInfo( Contact *, const QString&, const unsigned long size, const QString &, KopeteTransferDirection di, const unsigned int id, QString internalId=QString(), const QPixmap &preview=QPixmap() );
 	~FileTransferInfo() {}
+
+	bool isValid() const { return (mContact && mId > 0); }
 	unsigned int transferId() const { return mId; }
 	Contact* contact() const { return mContact; }
 	QString file() const { return mFile; }
@@ -82,8 +86,21 @@ public:
 	 * @brief Adds a file transfer to the Kopete::TransferManager
 	 */
 	Transfer *addTransfer( Contact *contact, const QString& file, const unsigned long size, const QString &recipient , FileTransferInfo::KopeteTransferDirection di);
+
+	/**
+	 * @brief Adds incoming file transfer request to the Kopete::TransferManager.
+	 **/
 	int askIncomingTransfer( Contact *contact, const QString& file, const unsigned long size, const QString& description=QString(), QString internalId=QString(), const QPixmap &preview=QPixmap());
-	void removeTransfer( unsigned int id );
+
+	/**
+	 * @brief Shows save file dialog and accepts/rejects incoming file transfer request.
+	 **/
+	void saveIncomingTransfer( unsigned int id );
+
+	/**
+	 * @brief Cancels incoming file transfer request.
+	 **/
+	void cancelIncomingTransfer( unsigned int id );
 
 	/**
 	 * @brief Ask the user which file to send when they click Send File.
@@ -116,18 +133,22 @@ signals:
 	/** @brief Signals the transfer has been rejected */
 	void refused(const Kopete::FileTransferInfo& );
 
+	/** @brief Signals the incoming transfer has been rejected or accepted */
+	void askIncomingDone( unsigned int id );
+
 	/** @brief Send a file */
 	void sendFile(const KUrl &file, const QString &localFile, unsigned int fileSize);
 
 private slots:
-	void slotAccepted(const Kopete::FileTransferInfo&, const QString&);
 	void slotComplete(KJob*);
 
 private:
 	TransferManager( QObject *parent );
 
-	int nextID;
+	void removeTransfer( unsigned int id );
+
 	QMap<unsigned int, Transfer *> mTransfersMap;
+	QMap<unsigned int, FileTransferInfo> mTransferRequestInfoMap;
 };
 
 /**

@@ -71,7 +71,6 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QVariantList &/*arg
 	  propGivenName( Kopete::Global::Properties::self()->firstName() ),
 	  propLastName( Kopete::Global::Properties::self()->lastName() ),
 	  propFullName( Kopete::Global::Properties::self()->fullName() ),
-	  propAwayMessage( Kopete::Global::Properties::self()->statusMessage() ),
 	  propAutoReply( "groupwiseAutoReply", i18n( "Auto Reply Message" ), QString() ),
 	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString(), Kopete::PropertyTmpl::PersistentProperty ),
 	  propPhoneWork( Kopete::Global::Properties::self()->workPhone() ),

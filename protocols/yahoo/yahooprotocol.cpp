@@ -55,7 +55,6 @@ YahooProtocol::YahooProtocol( QObject *parent, const QVariantList & )
 	Custom( Kopete::OnlineStatus::Away,         25, this, 99, QStringList(QString::fromUtf8("contact_busy_overlay")), i18n( "Custom" ),       i18n( "Custom" ),	0, Kopete::OnlineStatusManager::HideFromMenu ),
 	Idle( Kopete::OnlineStatus::Away,           15, this, 999, QStringList(QString::fromUtf8("yahoo_idle")),          i18n( "Idle" ),         i18n( "Idle" ),         Kopete::OnlineStatusManager::Idle ),
 	Connecting( Kopete::OnlineStatus::Connecting,2, this, 555, QStringList(QString::fromUtf8("yahoo_connecting")),    i18n( "Connecting" ), i18n("Connecting"), 0, Kopete::OnlineStatusManager::HideFromMenu ),
-	awayMessage(Kopete::Global::Properties::self()->statusMessage()),
 	iconCheckSum("iconCheckSum", i18n("Buddy Icon Checksum"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty),
 	iconExpire("iconExpire", i18n("Buddy Icon Expires"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty),
 	iconRemoteUrl("iconRemoteUrl", i18n("Buddy Icon Remote URL"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty),

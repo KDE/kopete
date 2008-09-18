@@ -142,7 +142,7 @@ private:
 
 ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args ),
-		m_currentStyle (0L), m_loading(false), m_styleChanged(false),
+		m_currentStyle (0L), m_loading(false),
 		m_previewProtocol(0L), m_previewAccount(0L), m_myselfMetaContact(0L),
 		m_jackMetaContact(0L), m_myself(0L), m_jack(0L)
 {
@@ -265,9 +265,14 @@ void ChatWindowConfig::save()
 	if (item)
 		KEmoticons::setTheme( item->text() );
 
+	// Ugly hacks, this will emit the kcfg signals
+	appearanceSettings->setChatTextColor(m_colorsUi.kcfg_chatTextColor->color());
+	appearanceSettings->setUseEmoticons(m_emoticonsUi.kcfg_useEmoticons->isChecked());
+	settings->setHighlightForegroundColor(m_colorsUi.kcfg_highlightForegroundColor->color());
+	settings->setChatBgOverride(m_colorsUi.kcfg_chatBgOverride->isChecked());
+
 	appearanceSettings->writeConfig();
 	settings->writeConfig();
-	m_styleChanged = false;
 
 	load();
 }
@@ -303,16 +308,19 @@ void ChatWindowConfig::slotLoadChatStyles()
 	{
 		// Insert style name into the listbox
 		m_styleUi.styleList->insertItem( 0, styleName );
-
-		if( styleName == KopeteChatWindowSettings::self()->styleName() )
-		{
-			kDebug(14000) << "Restoring saved style: " << styleName;
-
-			m_styleUi.styleList->setCurrentItem( m_styleUi.styleList->item( 0 ) );
-		}
 	}
 
 	m_styleUi.styleList->setSortingEnabled( true );
+
+	QString currentStyle = KopeteChatWindowSettings::self()->styleName();
+	QList<QListWidgetItem *> items = m_styleUi.styleList->findItems( currentStyle, Qt::MatchFixedString | Qt::MatchCaseSensitive );
+	if( items.count() > 0 )
+	{
+		kDebug(14000) << "Restoring saved style: " << currentStyle;
+
+		m_styleUi.styleList->setCurrentItem( items[0] );
+		m_styleUi.styleList->scrollToItem( items[0] );
+	}
 }
 
 
@@ -468,6 +476,11 @@ void ChatWindowConfig::slotGetChatStyles()
 	KNS::Engine *engine = new KNS::Engine();
 	engine->init(configGrp.config()->name());
 	
+	// FIXME: Upon closing the Settings KCMultiDialog all KCMs are deleted and when reopening
+	// the settings dialog there is no active valid KComponentData, which KNS2 relies on.
+	// Forcing an active one below works around bug 163382, but the problem is somewhere else.
+	KGlobal::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
+
 	KNS::Entry::List entries = engine->downloadDialogModal(this);
 
 	if ( entries.size() > 0 )
@@ -549,7 +562,7 @@ void ChatWindowConfig::createPreviewChatSession()
 	contactList.append(m_jack);
 	// Create fakeChatSession
 	m_previewChatSession = Kopete::ChatSessionManager::self()->create(m_myself, contactList, m_previewProtocol);
-	m_previewChatSession->setDisplayName("Preview Session");
+	m_previewChatSession->setDisplayName(i18nc("preview of a chat session", "Preview Session"));
 }
 
 void ChatWindowConfig::createPreviewMessages()
@@ -590,6 +603,21 @@ void ChatWindowConfig::createPreviewMessages()
 	msgHigh.setDirection( Kopete::Message::Inbound );
 	msgHigh.setImportance( Kopete::Message::Highlight );
 
+	Kopete::Message msgFTRequest( m_jack, m_myself );
+	msgFTRequest.setPlainBody( i18n( "Hello, this is an incoming file transfer request" ) );
+	msgFTRequest.setDirection( Kopete::Message::Inbound );
+	msgFTRequest.setType( Kopete::Message::TypeFileTransferRequest );
+	msgFTRequest.setFileName( "data.pdf" );
+	msgFTRequest.setFileSize( 10000000 );
+
+	Kopete::Message msgFTRequestDisabled( m_jack, m_myself );
+	msgFTRequestDisabled.setPlainBody( i18n( "Hello, this is a disabled incoming file transfer request" ) );
+	msgFTRequestDisabled.setDirection( Kopete::Message::Inbound );
+	msgFTRequestDisabled.setType( Kopete::Message::TypeFileTransferRequest );
+	msgFTRequestDisabled.setFileName( "data.pdf" );
+	msgFTRequestDisabled.setFileSize( 10000000 );
+	msgFTRequestDisabled.setFileTransferDisabled( true );
+
 	// This is a UTF-8 string btw.
 	Kopete::Message msgRightToLeft( m_myself, m_jack );
 	msgRightToLeft.setPlainBody( i18nc("This special UTF-8 string is to test if the style supports Right-to-Left language display.", "הודעות טקסט") );
@@ -608,6 +636,8 @@ void ChatWindowConfig::createPreviewMessages()
 	m_preview->appendMessage(msgInt);
 	m_preview->appendMessage(msgAct);
 	m_preview->appendMessage(msgHigh);
+	m_preview->appendMessage(msgFTRequest);
+	m_preview->appendMessage(msgFTRequestDisabled);
 	m_preview->appendMessage(msgRightToLeft);
 	m_preview->appendMessage(msgBye);
 }
@@ -664,6 +694,11 @@ void ChatWindowConfig::updateEmoticonList()
 
 void ChatWindowConfig::slotManageEmoticonThemes()
 {
+	// FIXME: Upon closing the Settings KCMultiDialog all KCMs are deleted and when reopening
+	// the settings dialog there is no active valid KComponentData, which KNS2 relies on.
+	// Forcing an active one below works around bug 165919, but the problem is somewhere else.
+	KGlobal::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
+
 	KCMultiDialog *kcm = new KCMultiDialog( this );
 	kcm->setCaption( i18n( "Configure Emoticon Themes" ) );
 	kcm->addModule( "emoticons" );

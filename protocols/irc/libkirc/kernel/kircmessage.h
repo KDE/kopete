@@ -72,6 +72,7 @@ public:
 	QByteArray toLine() const;
 //	QString toLine(QTextCodec *codec) const;
 
+public:
 	QByteArray prefix() const;
 //	QString prefix(QTextCodec *codec) const;
 
@@ -89,9 +90,12 @@ public:
 public:
 	bool isNumericReply() const;
 
+private:
 	QSharedDataPointer<KIrc::MessagePrivate> d;
 };
 
 }
+
+//Q_DECLARE_METATYPE(KIrc::Message)
 
 #endif

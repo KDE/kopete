@@ -21,8 +21,6 @@
 #include "jabberaddcontactpage.h"
 
 #include <qlayout.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kopeteaccount.h>
@@ -41,7 +39,7 @@ JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * p
  : AddContactPage (parent),
    jabData( 0 )
 {
-	(new Q3VBoxLayout (this))->setAutoAdd (true);
+	QVBoxLayout *layout = new QVBoxLayout(this);
 	
 	JabberTransport *transport=dynamic_cast<JabberTransport*>(owner);
 	JabberAccount *jaccount= transport ? transport->account() : dynamic_cast<JabberAccount*>(owner);
@@ -51,7 +49,7 @@ JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * p
 		QWidget*w = new QWidget( this );
 		jabData = new Ui::dlgAddContact;
 		jabData->setupUi( w );
-		w->show ();
+		layout->addWidget(w);
 		
 		if(transport)
 		{
@@ -66,7 +64,9 @@ JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * p
 	else
 	{
 		noaddMsg1 = new QLabel (i18n ("You need to be connected to be able to add contacts."), this);
+		layout->addWidget(noaddMsg1);
 		noaddMsg2 = new QLabel (i18n ("Connect to the Jabber network and try again."), this);
+		layout->addWidget(noaddMsg2);
 		canadd = false;
 	}
 

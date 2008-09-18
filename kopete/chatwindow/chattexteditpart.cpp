@@ -27,7 +27,6 @@
 #include <kcompletion.h>
 #include <kdebug.h>
 #include <ktextedit.h>
-#include <sonnet/highlighter.h>
 
 #include <QtCore/QTimer>
 #include <QtCore/QRegExp>
@@ -38,7 +37,6 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	// Set rich support in the part
 	setProtocolRichTextSupport();
 
-	m_autoSpellCheckEnabled = true;
 	historyPos = -1;
 	
 	mComplete = new KCompletion();
@@ -51,7 +49,6 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 //	textEdit()->setWrapPolicy( Q3TextEdit::AtWhiteSpace );
 //	textEdit()->setAutoFormatting( Q3TextEdit::AutoNone );
 
-	m_highlighter = new Sonnet::Highlighter( textEdit() );
 	// some signals and slots connections
 	connect( textEdit(), SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
 
@@ -82,30 +79,6 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 ChatTextEditPart::~ChatTextEditPart()
 {
 	delete mComplete;
-}
-
-void ChatTextEditPart::toggleAutoSpellCheck( bool enabled )
-{
-	if ( useRichText() )
-		enabled = false;
-
-	m_autoSpellCheckEnabled = enabled;
-	if ( spellHighlighter() )
-	{
-		spellHighlighter()->setAutomatic( enabled );
-		spellHighlighter()->setActive( enabled );
-	}
-	textEdit()->setCheckSpellingEnabled( enabled );
-}
-
-bool ChatTextEditPart::autoSpellCheckEnabled() const
-{
-	return m_autoSpellCheckEnabled;
-}
-
-Sonnet::Highlighter* ChatTextEditPart::spellHighlighter()
-{
-	return m_highlighter;
 }
 
 // NAUGHTY, BAD AND WRONG! (but needed to fix nick complete bugs)

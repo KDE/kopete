@@ -454,11 +454,13 @@ void GroupWiseAccount::cleanup()
 	delete m_clientStream;
 	delete m_QCATLS;
 	delete m_connector;
+	delete m_qcaInit;
 
 	m_connector = 0;
 	m_QCATLS = 0;
 	m_clientStream = 0;
 	m_client = 0;
+	m_qcaInit = 0;
 }
 
 void GroupWiseAccount::createConference( const int clientId, const QStringList& invitees )
@@ -1111,7 +1113,7 @@ void GroupWiseAccount::receiveStatus( const QString & contactId, quint16 status,
 		kDebug() << " - their KOS is: " << protocol()->gwStatusToKOS( status ).description();
 		Kopete::OnlineStatus kos = protocol()->gwStatusToKOS( status );
 		c->setOnlineStatus( kos );
-		c->setProperty( protocol()->propAwayMessage, awayMessage );
+		c->setStatusMessage( awayMessage );
 	}
 	else
 		kDebug() << " couldn't find " << contactId;
@@ -1123,7 +1125,7 @@ void GroupWiseAccount::changeOurStatus( GroupWise::Status status, const QString 
 		myself()->setOnlineStatus( protocol()->groupwiseAppearOffline );
 	else
 		myself()->setOnlineStatus( protocol()->gwStatusToKOS( status ) );
-	myself()->setProperty( protocol()->propAwayMessage, awayMessage );
+	myself()->setStatusMessage( awayMessage );
 	myself()->setProperty( protocol()->propAutoReply, autoReply );
 }
 

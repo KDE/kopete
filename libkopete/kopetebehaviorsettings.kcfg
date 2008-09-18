@@ -36,9 +36,16 @@
 			<label>Reconnect on disconnect.</label>
 			<default>true</default>
 		</entry>
-		<entry key="autoConnect" type="Bool">
-			<label>Auto connect on Kopete load.</label>
-			<default>false</default>
+		<entry key="initialStatus" type="Enum">
+			<label>Initial Status</label>
+			<choices>
+				<choice name="Offline" />
+				<choice name="Online" />
+				<choice name="Away" />
+				<choice name="Busy" />
+				<choice name="Invisible" />
+			</choices>
+			<default>Offline</default>
 		</entry>
 		<!-- Event Behavior -->
 		<entry key="raiseMessageWindow" type="Bool">

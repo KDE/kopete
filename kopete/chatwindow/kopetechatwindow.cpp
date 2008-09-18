@@ -55,7 +55,6 @@
 #include <kstatusbar.h>
 #include <kpushbutton.h>
 #include <ktabwidget.h>
-#include <kstandarddirs.h>
 #include <kdialog.h>
 #include <kstringhandler.h>
 #include <ksqueezedtextlabel.h>
@@ -108,7 +107,7 @@ namespace
 KopeteChatWindow *KopeteChatWindow::window( Kopete::ChatSession *manager )
 {
 	bool windowCreated = false;
-	KopeteChatWindow *myWindow;
+	KopeteChatWindow *myWindow = 0;
 
 	//Take the first and the first? What else?
 	Kopete::Group *group = 0L;
@@ -540,8 +539,8 @@ void KopeteChatWindow::toggleAutoSpellChecking()
 	if ( !m_activeView )
 		return;
 
-	bool currentSetting = m_activeView->editPart()->autoSpellCheckEnabled();
-	m_activeView->editPart()->toggleAutoSpellCheck( !currentSetting );
+	bool currentSetting = m_activeView->editPart()->checkSpellingEnabled();
+	m_activeView->editPart()->setCheckSpellingEnabled( !currentSetting );
 	updateSpellCheckAction();
 }
 
@@ -550,28 +549,13 @@ void KopeteChatWindow::updateSpellCheckAction()
 	if ( !m_activeView )
 		return;
 
-	if ( m_activeView->editPart()->isRichTextEnabled() )
-	{
-		toggleAutoSpellCheck->setEnabled( false );
-		toggleAutoSpellCheck->setChecked( false );
-		m_activeView->editPart()->toggleAutoSpellCheck( false );
-	}
-	else
-	{
-		toggleAutoSpellCheck->setEnabled( true );
-		if ( Kopete::BehaviorSettings::self()->spellCheck() )
-		{
-			kDebug(14000) << "spell check enabled";
-			toggleAutoSpellCheck->setChecked( true );
-			m_activeView->editPart()->toggleAutoSpellCheck(true);
-		}
-		else
-		{
-			kDebug(14000) << "spell check disabled";
-			toggleAutoSpellCheck->setChecked( false );
-			m_activeView->editPart()->toggleAutoSpellCheck(false);
-		}
-	}
+	bool currentSetting = m_activeView->editPart()->checkSpellingEnabled();
+	toggleAutoSpellCheck->setChecked( currentSetting );
+}
+
+void KopeteChatWindow::enableSpellCheckAction(bool enable)
+{
+	toggleAutoSpellCheck->setChecked( enable );
 }
 
 void KopeteChatWindow::slotHistoryUp()
@@ -757,7 +741,6 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	KCursor::setAutoHideCursor( newView->editWidget(), true, true );
 	connect( newView, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
 	connect( newView, SIGNAL(messageSuccess( ChatView* )), this, SLOT(slotStopAnimation( ChatView* )) );
-	connect( newView, SIGNAL(rtfEnabled( ChatView*, bool ) ), this, SLOT( slotRTFEnabled( ChatView*, bool ) ) );
 	connect( newView, SIGNAL(updateStatusIcon( ChatView* ) ), this, SLOT(slotUpdateCaptionIcons( ChatView* ) ) );
 	connect( newView, SIGNAL(updateChatState( ChatView*, int ) ), this, SLOT( updateChatState( ChatView*, int ) ) );
 
@@ -905,6 +888,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	if(m_activeView)
 	{
+		disconnect( m_activeView->editWidget(), SIGNAL( checkSpellingChanged(bool) ), this, SLOT( enableSpellCheckAction(bool) ) );
 		disconnect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
 		guiFactory()->removeClient(m_activeView->msgManager());
 		m_activeView->saveChatSettings();
@@ -925,6 +909,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	if( chatViewList.indexOf( view ) == -1)
 		attachChatView( view );
 
+	connect( m_activeView->editWidget(), SIGNAL( checkSpellingChanged(bool) ), this, SLOT( enableSpellCheckAction(bool) ) );
 	connect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
 
 	//Tell it it is active
@@ -1152,23 +1137,13 @@ void KopeteChatWindow::slotSmileyActivated(const QString &sm)
 	//we are adding space around the emoticon becasue our parser only display emoticons not in a word.
 }
 
-void KopeteChatWindow::slotRTFEnabled( ChatView* cv, bool enabled)
-{
-	if ( cv != m_activeView )
-		return;
-
-	toolBar( "formatToolBar" )->setVisible(enabled);
-	updateSpellCheckAction();
-}
-
 void KopeteChatWindow::slotAutoSpellCheckEnabled( ChatView* view, bool isEnabled )
 {
 	if ( view != m_activeView )
 		return;
 
-	toggleAutoSpellCheck->setEnabled( isEnabled );
 	toggleAutoSpellCheck->setChecked( isEnabled );
-	m_activeView->editPart()->toggleAutoSpellCheck( isEnabled );
+	m_activeView->editPart()->setCheckSpellingEnabled( isEnabled );
 }
 
 bool KopeteChatWindow::queryClose()

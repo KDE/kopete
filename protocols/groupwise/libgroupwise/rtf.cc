@@ -1732,11 +1732,11 @@ void ParStyle::clearFormatting()
 QString RTF2HTML::quoteString(const QString &_str, quoteMode mode)
 {
     QString str = _str;
-    str.replace(QRegExp("&"), "&amp;");
-    str.replace(QRegExp("<"), "&lt;");
-    str.replace(QRegExp(">"), "&gt;");
-    str.replace(QRegExp("\""), "&quot;");
-    str.replace(QRegExp("\r"), "");
+    str.replace('&',  "&amp;");
+    str.replace('<',  "&lt;");
+    str.replace('>',  "&gt;");
+    str.replace('\"', "&quot;");
+    str.remove('\r');
     switch (mode){
     case quoteHTML:
         str.replace(QRegExp("\n"), "<br>\n");

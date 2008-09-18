@@ -35,23 +35,20 @@ public:
      * Create a new Meanwhile account
      * @param protocol  The MeanwhileProtocol that this acccount is for
      * @param accountID The (meanwhile) account id of this account
-     * @param name      The name of this account
      */
-    MeanwhileAccount(MeanwhileProtocol *protocol, const QString &accountID,
-            const char *name = 0L);
+    MeanwhileAccount(MeanwhileProtocol *protocol, const QString &accountID);
 
     ~MeanwhileAccount();
 
-    virtual bool createContact(const QString &contactId,
-                        Kopete::MetaContact *parentContact);
+    bool createContact(const QString &contactId,
+                       Kopete::MetaContact *parentContact);
 
-    virtual void connectWithPassword(const QString &password);
+    void connectWithPassword(const QString &password);
 
-    virtual void disconnect();
+    void disconnect();
+    void disconnect(Kopete::Account::DisconnectReason reason);
 
-    virtual void disconnect(Kopete::Account::DisconnectReason reason);
-
-	virtual void fillActionMenu( KActionMenu *actionMenu );
+    void fillActionMenu( KActionMenu *actionMenu );
 
     /** Get the server host name */
     QString getServerName();
@@ -93,10 +90,13 @@ public slots:
      */
     void slotServerNotification(const QString &mesg);
 
+    /** \reimp */
+    void setStatusMessage(const Kopete::StatusMessage &statusMessage);
+
     /** Reimplemented from Kopete::Account */
     void setOnlineStatus(const Kopete::OnlineStatus& status,
-            const QString &reason = QString());
-    void setAway(bool away, const QString&reason = QString());
+            const Kopete::StatusMessage &reason = Kopete::StatusMessage());
+    void setAway(bool away, const QString &reason = QString());
 
 private:
     /** Current online status */

@@ -45,7 +45,6 @@
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
-#include <kemoticons.h>
 
 
 #include "addcontactpage.h"
@@ -93,8 +92,8 @@ public:
 
         toolTip += QLatin1String("<tr><td>");
 
-// 		if ( ! metaContact->picture().isNull() )
-        {
+		if ( !metaContact->picture().isNull() )
+		{
 #ifdef __GNUC__
 #warning Currently using metaContact->picture().path() but should use replacement of KopeteMimeSourceFactory
 #endif
@@ -104,13 +103,12 @@ public:
 			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( photoName );
 #endif
 			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( metaContact->picture().path() );
-        }
+		}
 
 		toolTip += QLatin1String("</td><td>");
 
 		QString displayName;
-		KEmoticonsTheme e = Kopete::Emoticons::self()->theme();
-		QList<KEmoticonsTheme::Token> t = e.tokenize( metaContact->displayName());
+		QList<KEmoticonsTheme::Token> t = Kopete::Emoticons::tokenize( metaContact->displayName());
 		QList<KEmoticonsTheme::Token>::iterator it;
 		for( it = t.begin(); it != t.end(); ++it )
 		{
@@ -147,7 +145,7 @@ public:
 
 			toolTip += i18nc("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
 							"<tr><td><img src=\"%1\">&nbsp;<nobr><b>%2</b></nobr>&nbsp;<nobr>(%3)</nobr></td><td align=\"right\"><nobr>%4</nobr></td></tr>",
-						iconName, Kopete::Emoticons::self()->theme().parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
+						iconName, Kopete::Emoticons::parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
 		}
 
 		return toolTip + QLatin1String("</table></td></tr></table></qt>");
@@ -299,7 +297,7 @@ void KopeteMetaContactLVI::movedToDifferentGroup()
 	// I assume that the safety property that allows the delete in slotConfigChanged holds here - Will
 	delete d->spacerBox->component( 0 );
 	if ( K3ListViewItem::parent() && Kopete::AppearanceSettings::self()->contactListIndentContact() &&
-	                !Kopete::AppearanceSettings::self()->contactListTreeView() )
+	                Kopete::AppearanceSettings::self()->contactListTreeView() )
 	{
 		new ListView::SpacerComponent( d->spacerBox, 20, 0 );
 	}
@@ -367,7 +365,6 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 	{
 		m_metaContact->setDisplayNameSource( Kopete::MetaContact::SourceCustom );
 		m_metaContact->setDisplayName( newName );
-		slotDisplayNameChanged();
 	}
 
 	kDebug( 14000 ) << "newName=" << newName;
@@ -454,23 +451,22 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 				case noChange:
 					break;
 				case signedIn:
-					notify=new KNotification( QString("kopete_contact_online") , 0l /*KopeteSystemTray::systemTray()*/ );
+					notify=new KNotification( QString("kopete_contact_online"), Kopete::UI::Global::mainWidget() );
 					notify->setActions(QStringList(i18n( "Chat" )));
 					break;
 				case changedStatus:
-					notify=new KNotification( QString("kopete_contact_status_change") , 0l /*KopeteSystemTray::systemTray()*/ );
+					notify=new KNotification( QString("kopete_contact_status_change"), Kopete::UI::Global::mainWidget() );
 					notify->setActions(QStringList(i18n( "Chat" )));
 					break;
 				case signedOut:
-					notify=new KNotification( QString("kopete_contact_offline") , 0l /*KopeteSystemTray::systemTray()*/ );
-					//notify->setActions(QStringList(i18n( "Chat" )));
+					notify=new KNotification( QString("kopete_contact_offline"), Kopete::UI::Global::mainWidget() );
 					break;
 			}
 
 			if(notify)
 			{
 				QString text = i18n( "<qt><i>%1</i> is now %2.</qt>",
-									 Kopete::Emoticons::self()->theme().parseEmoticons( Qt::escape(m_metaContact->displayName()) ) ,
+									 Kopete::Emoticons::parseEmoticons( Qt::escape(m_metaContact->displayName()) ) ,
 									 Qt::escape(c->onlineStatus().description()));
 
 				notify->setText(text);
@@ -699,7 +695,7 @@ void KopeteMetaContactLVI::slotConfigChanged()
 	// create a spacer if wanted
 	delete d->spacerBox->component( 0 );
 	if ( K3ListViewItem::parent() && Kopete::AppearanceSettings::self()->contactListIndentContact() &&
-	                !Kopete::AppearanceSettings::self()->contactListTreeView() )
+	                Kopete::AppearanceSettings::self()->contactListTreeView() )
 	{
 		new ListView::SpacerComponent( d->spacerBox, 20, 0 );
 	}
@@ -890,8 +886,8 @@ void KopeteMetaContactLVI::slotContactAdded( Kopete::Contact *c )
 
 	updateContactIcon( c );
 
-	slotContactPropertyChanged( c, QLatin1String("awayMessage"),
-		QVariant(), c->property( QLatin1String("awayMessage") ).value() );
+	slotContactPropertyChanged( c, QLatin1String("statusMessage"),
+		QVariant(), c->property( QLatin1String("statusMessage") ).value() );
 }
 
 void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
@@ -905,8 +901,8 @@ void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
 	if ( ListView::Component *comp = contactComponent( c ) )
 		delete comp;
 
-	slotContactPropertyChanged( c, QLatin1String("awayMessage"),
-		c->property( QLatin1String("awayMessage") ).value(), QVariant() );
+	slotContactPropertyChanged( c, QLatin1String("statusMessage"),
+		c->property( QLatin1String("statusMessage") ).value(), QVariant() );
 }
 
 void KopeteMetaContactLVI::updateContactIcons()
@@ -1115,7 +1111,15 @@ void KopeteMetaContactLVI::slotEventDone( Kopete::MessageEvent *event )
 		}
 
 		if(d->metaContactIcon)
-			d->metaContactIcon->setPixmap( m_originalBlinkIcon );
+		{
+			// m_originalBlinkIcon can be null if slotEventDone is called
+			// right after catchEvent without slotBlink being executed.
+			if ( !m_originalBlinkIcon.isNull() )
+				d->metaContactIcon->setPixmap( m_originalBlinkIcon );
+			else
+				d->metaContactIcon->setPixmap( m_oldStatusIcon );
+		}
+
 		m_originalBlinkIcon=QPixmap(); //i hope this help to reduce memory consuption
 		mIsBlinkIcon = false;
 	}

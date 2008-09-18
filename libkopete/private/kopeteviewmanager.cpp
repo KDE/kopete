@@ -14,6 +14,8 @@
     *************************************************************************
 */
 
+#include "kopeteviewmanager.h"
+
 #include <QList>
 #include <QTextDocument>
 #include <QtAlgorithms>
@@ -25,7 +27,6 @@
 #include <knotification.h>
 #include <kglobal.h>
 #include <kwindowsystem.h>
-#include <kemoticons.h>
 
 #include "kopetebehaviorsettings.h"
 #include "kopeteaccount.h"
@@ -40,8 +41,6 @@
 #include "kopetegroup.h"
 #include "kopetepicture.h"
 #include "kopeteemoticons.h"
-
-#include "kopeteviewmanager.h"
 
 /**
  * Used to exrtract the message that will be shown in the notification popup.
@@ -64,7 +63,7 @@ static QString squashMessage( const Kopete::Message& msg )
 		msgText =msg.plainBody() ;
 		if( msgText.length() > 30 )
 			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
-		msgText=Kopete::Emoticons::self()->theme().parseEmoticons(Qt::escape(msgText));
+		msgText=Kopete::Emoticons::parseEmoticons(Qt::escape(msgText));
 	}
 	else
 	{
@@ -284,12 +283,15 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		}
 		
 		Kopete::MessageEvent *event = 0L;
-		if ( (appendMessageEvent && !outgoingMessage) )
+		if ( (appendMessageEvent && !outgoingMessage) || showNotification )
 		{
 			showNotification = showNotification || d->eventList.isEmpty(); // may happen for internal messages
 			event = new Kopete::MessageEvent(msg,manager);
 			d->eventList.append( event );
-			connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
+
+			// Don't call readMessages twice. We call it later in this method. Fixes bug 168978.
+			if ( d->useQueueOrStack )
+				connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
 		}
 
 		if ( showNotification )
@@ -329,7 +331,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			notify->setPixmap( QPixmap::fromImage(msg.from()->metaContact()->picture().image()) );
 			notify->setActions(( QStringList() <<  i18n( "View" )  <<   i18n( "Ignore" )) );
 
-			foreach(QString cl , msg.classes())
+			foreach(const QString& cl , msg.classes())
 				notify->addContext( qMakePair( QString::fromLatin1("class") , cl ) );
 
 			Kopete::MetaContact *mc= msg.from()->metaContact();
@@ -347,7 +349,21 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			connect(event, SIGNAL(done(Kopete::MessageEvent*)) , notify , SLOT(close() ));
 			notify->sendEvent();
 		}
-		if( event )
+
+		if (!d->useQueueOrStack)
+		{
+			// "Open messages instantly" setting
+			readMessages(manager, outgoingMessage);
+		}
+
+		KopeteView *view = manager->view(false);
+		if ( d->raiseWindow && view && view->isVisible() )
+		{
+			// "Raise window on incoming message" setting
+			view->raise();
+		}
+
+		if( (appendMessageEvent || !isActiveWindow) && event )
 			Kopete::ChatSessionManager::self()->postNewEvent(event);
 	}
 }
@@ -467,6 +483,23 @@ KopeteView* KopeteViewManager::activeView() const
     return d->activeView;
 }
 
+
+QList<Kopete::MessageEvent*> KopeteViewManager::pendingMessages( Kopete::Contact *contact )
+{
+	QList<Kopete::MessageEvent*> pending;
+    foreach (Kopete::MessageEvent *event, d->eventList)
+    {
+    	const Kopete::Message &message = event->message();
+        if ( event->state() == Kopete::MessageEvent::Nothing
+        		&& message.direction() == Kopete::Message::Inbound
+        		&& message.from() == contact )
+        {
+        	pending << event;
+        }
+    }
+    
+    return pending;
+}
 
 #include "kopeteviewmanager.moc"
 

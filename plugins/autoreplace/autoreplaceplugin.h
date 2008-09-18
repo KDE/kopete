@@ -26,9 +26,12 @@
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
 
-namespace Kopete { class Message; }
-namespace Kopete { class MetaContact; }
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+	class Message;
+	class MetaContact;
+	class ChatSession;
+	class SimpleMessageHandlerFactory;
+}
 class AutoReplaceConfig;
 
 class AutoReplacePlugin : public Kopete::Plugin
@@ -42,7 +45,7 @@ public:
 	~AutoReplacePlugin();
 
 private slots:
-	void slotAboutToSend( Kopete::Message &msg );
+	void slotInterceptMessage( Kopete::Message &msg );
 
 	void slotSettingsChanged();
 
@@ -50,6 +53,8 @@ private:
 	static AutoReplacePlugin * pluginStatic_;
 
 	AutoReplaceConfig *m_prefs;
+
+	Kopete::SimpleMessageHandlerFactory * mInboundHandler;
 };
 
 #endif

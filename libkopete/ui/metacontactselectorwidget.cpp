@@ -206,6 +206,7 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
 
 	d->widget->kListViewSearchLine->setListView(d->widget->metaContactListView);
+	d->widget->kListViewSearchLine->setFocus();
 	d->widget->metaContactListView->setFullWidth( true );
 	d->widget->metaContactListView->addColumn( i18n( "Contacts" ), 0 );
 	d->widget->metaContactListView->header()->hide();

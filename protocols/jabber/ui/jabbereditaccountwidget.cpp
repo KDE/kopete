@@ -183,7 +183,7 @@ void JabberEditAccountWidget::writeConfig ()
 	//account()->setAccountId(mID->text());
 
 	account()->configGroup()->writeEntry("AllowPlainTextPassword", cbAllowPlainTextPassword->isChecked());
-	account()->configGroup()->writeEntry("Server", mServer->text ());
+	account()->configGroup()->writeEntry("Server", mServer->text().trimmed ());
 	account()->configGroup()->writeEntry("Resource", mResource->text ());
 	account()->configGroup()->writeEntry("Priority", QString::number (mPriority->value ()));
 	account()->configGroup()->writeEntry("Port", QString::number (mPort->value ()));

@@ -87,7 +87,10 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	// now it is time to switch to Right Page(tm)
 	rs.uin = searchFor;
 	
-	fName	= fSurname = fNick = fCity = QString();
+	fName.clear();
+  fSurname.clear();
+  fNick.clear();
+  fCity.clear();
 	fUin	= searchFor;
 	fGender	= fAgeFrom = fAgeTo = 0;
 	fOnlyOnline = false;
@@ -231,7 +234,7 @@ GaduPublicDir::validateData()
 		CHECK_INT( fAgeTo );
 	}
 	else {
-		fSurname = QString();
+		fSurname.clear();
 		CHECK_INT( fUin );
 	}
 	return false;

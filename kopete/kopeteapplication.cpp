@@ -55,14 +55,15 @@ KopeteApplication::KopeteApplication()
 {
 	setQuitOnLastWindowClosed( false );
 	m_isShuttingDown = false;
+
+	//Create the identity manager
+	Kopete::IdentityManager::self()->load();
+
 	m_mainWindow = new KopeteWindow( 0 );
 
 	Kopete::PluginManager::self();
 
 	Kopete::UI::Global::setMainWidget( m_mainWindow );
-
-	//Create the identity manager
-	Kopete::IdentityManager::self()->load();
 
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:
@@ -103,7 +104,6 @@ KopeteApplication::~KopeteApplication()
 
 	delete m_fileEngineHandler;
 	delete m_emoticonHandler;
-	delete m_mainWindow;
 	//kDebug( 14000 ) << "Done";
 }
 
@@ -210,25 +210,38 @@ void KopeteApplication::slotLoadPlugins()
 	}
 }
 
+
 void KopeteApplication::slotAllPluginsLoaded()
 {
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
 	//FIXME: this should probably ask for the identities to connect instead of all accounts
 	// --noconnect not specified?
-	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() &&
+
+	Kopete::OnlineStatusManager::Category initStatus = Kopete::OnlineStatusManager::self()->initialStatus();
+
+	if ( args->isSet( "connect" )  &&  initStatus != Kopete::OnlineStatusManager::Offline &&
 			( Solid::Networking::status() == Solid::Networking::Unknown ||
-			  Solid::Networking::status() == Solid::Networking::Connected ) )
-		Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Online, QString(), Kopete::AccountManager::ConnectIfOffline );
+			  Solid::Networking::status() == Solid::Networking::Connected ) ){
+
+		Kopete::AccountManager::self()->setOnlineStatus( initStatus, QString(), Kopete::AccountManager::ConnectIfOffline );
+
+	 }
+
+ 	kDebug(14000)<< "initial status set in config: " << initStatus;
 
 	QStringList connectArgs = args->getOptionList( "autoconnect" );
-	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
+
+	// toConnect will contain all the protocols to connect to
+	QStringList toConnect;
+
+	for ( QStringList::ConstIterator i = connectArgs.constBegin(); i != connectArgs.constEnd(); ++i )
 	{
 		foreach ( const QString connectArg, (*i).split(','))
-			connectArgs.append( connectArg );
+			toConnect.append( connectArg );
 	}
 
-	for ( QStringList::ConstIterator i = connectArgs.begin(); i != connectArgs.end(); ++i )
+	for ( QStringList::ConstIterator i = toConnect.constBegin(); i != toConnect.constEnd(); ++i )
 	{
 		QRegExp rx( QLatin1String( "([^\\|]*)\\|\\|(.*)" ) );
 		rx.indexIn( *i );
@@ -263,6 +276,8 @@ void KopeteApplication::slotAllPluginsLoaded()
 	handleURLArgs();
 }
 
+
+
 int KopeteApplication::newInstance()
 {
 //	kDebug(14000) ;
@@ -289,6 +304,7 @@ void KopeteApplication::handleURLArgs()
 	} // END args->count() > 0
 }
 
+
 void KopeteApplication::quitKopete()
 {
 	kDebug( 14000 ) ;
@@ -305,6 +321,12 @@ void KopeteApplication::quitKopete()
 			m_isShuttingDown = false;
 			break;
 		}
+	}
+
+	if ( m_isShuttingDown && m_mainWindow )
+	{
+		m_mainWindow->deleteLater();
+		m_mainWindow = 0;
 	}
 }
 

@@ -18,10 +18,7 @@
 */
 
 #include "kopeteemoticons.h"
-
-#include <kemoticons.h>
-
-
+#include "kopeteappearancesettings.h"
 /*
  * Testcases can be found in the kopeteemoticontest app in the tests/ directory.
  */
@@ -29,13 +26,34 @@
 
 namespace Kopete {
 
-KEmoticons *Emoticons::s_self = 0L;
+K_GLOBAL_STATIC(KEmoticons, s_self)
 
 KEmoticons *Emoticons::self()
 {
-	if( !s_self )
-		s_self = new KEmoticons;
 	return s_self;
+}
+
+QString Emoticons::parseEmoticons(const QString &text, KEmoticonsTheme::ParseMode mode, const QStringList &exclude)
+{
+	if ( Kopete::AppearanceSettings::self()->useEmoticons() )
+	{
+		return Kopete::Emoticons::self()->theme().parseEmoticons(text, mode, exclude);
+	} else
+	{
+		return text;
+	}
+}
+QList<KEmoticonsTheme::Token> Emoticons::tokenize(const QString &message, KEmoticonsTheme::ParseMode mode)
+{
+	if ( Kopete::AppearanceSettings::self()->useEmoticons() )
+	{
+		return Kopete::Emoticons::self()->theme().tokenize(message, mode);
+	} else
+	{
+		QList<KEmoticonsTheme::Token> result;
+		result.append( KEmoticonsTheme::Token( KEmoticonsTheme::Text, message ) );
+		return result;
+	}
 }
 
 } //END namesapce Kopete

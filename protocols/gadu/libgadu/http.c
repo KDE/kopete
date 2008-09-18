@@ -323,7 +323,7 @@ int gg_http_watch_fd(struct gg_http *h)
 			if (strlen(h->header) < 16 || strncmp(h->header + 9, "200", 3)) {
 				gg_debug(GG_DEBUG_MISC, "=> -----BEGIN-HTTP-HEADER-----\n%s\n=> -----END-HTTP-HEADER-----\n", h->header);
 
-				gg_debug(GG_DEBUG_MISC, "=> http, didn't get 200 OK -- no results\n");
+				gg_debug(GG_DEBUG_MISC, "=> http, did not get 200 OK -- no results\n");
 				free(h->header);
 				h->header = NULL;
 				gg_http_error(GG_ERROR_CONNECTING);
@@ -393,7 +393,7 @@ int gg_http_watch_fd(struct gg_http *h)
 
 		if (!res) {
 			if (h->body_done >= h->body_size) {
-				gg_debug(GG_DEBUG_MISC, "=> http, we're done, closing socket\n");
+				gg_debug(GG_DEBUG_MISC, "=> http, we are done, closing socket\n");
 				h->state = GG_STATE_PARSING;
 				close(h->fd);
 				h->fd = -1;

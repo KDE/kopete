@@ -896,10 +896,10 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 		if( newStatus == m_protocol->Custom ) {
 			if( away == 0 )
 				newStatus =m_protocol->Online;
-			kc->setProperty( m_protocol->awayMessage, msg);
+			kc->setStatusMessage( msg );
 		}
 		else
-			kc->removeProperty( m_protocol->awayMessage );
+			kc->setStatusMessage( Kopete::StatusMessage() );
 
 		//if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Idle ) {
 		if( newStatus == m_protocol->Idle )

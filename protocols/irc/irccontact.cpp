@@ -65,7 +65,7 @@ IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, Met
 {
 	Q_ASSERT(entity);
 
-	kDebug(14120) << entity->name();
+	kDebug(14120) <<"Entity name: "<< entity->name();
 
 	d->entity = entity;
 

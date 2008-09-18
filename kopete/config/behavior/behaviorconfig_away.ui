@@ -19,16 +19,7 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
       <item>
@@ -43,16 +34,7 @@
         <property name="spacing" >
          <number>6</number>
         </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
+        <property name="margin" >
          <number>0</number>
         </property>
         <item>
@@ -87,7 +69,7 @@
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>40</width>
             <height>20</height>
@@ -138,7 +120,11 @@
        </widget>
       </item>
       <item row="2" column="1" >
-       <widget class="KLineEdit" name="kcfg_autoAwayCustomTitle" />
+       <widget class="KLineEdit" name="kcfg_autoAwayCustomTitle" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item row="3" column="0" >
        <widget class="QLabel" name="label_4" >
@@ -148,7 +134,14 @@
        </widget>
       </item>
       <item row="3" column="1" >
-       <widget class="QTextEdit" name="kcfg_autoAwayCustomMessage" />
+       <widget class="QTextEdit" name="mAutoAwayCustomMessage" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="acceptRichText" >
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -158,7 +151,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>437</width>
        <height>0</height>
@@ -192,12 +185,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>88</x>
-     <y>119</y>
+     <x>106</x>
+     <y>67</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>105</x>
-     <y>143</y>
+     <x>124</x>
+     <y>104</y>
     </hint>
    </hints>
   </connection>
@@ -208,12 +201,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>142</x>
-     <y>115</y>
+     <x>160</x>
+     <y>67</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>174</x>
-     <y>148</y>
+     <x>228</x>
+     <y>104</y>
     </hint>
    </hints>
   </connection>
@@ -224,12 +217,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>212</x>
-     <y>117</y>
+     <x>230</x>
+     <y>67</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>246</x>
-     <y>154</y>
+     <x>377</x>
+     <y>104</y>
     </hint>
    </hints>
   </connection>
@@ -240,12 +233,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>72</x>
-     <y>120</y>
+     <x>90</x>
+     <y>67</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>65</x>
-     <y>177</y>
+     <x>83</x>
+     <y>134</y>
     </hint>
    </hints>
   </connection>
@@ -256,8 +249,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>42</x>
-     <y>116</y>
+     <x>60</x>
+     <y>67</y>
     </hint>
     <hint type="destinationlabel" >
      <x>44</x>
@@ -272,12 +265,28 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>103</x>
-     <y>271</y>
+     <x>116</x>
+     <y>242</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>106</x>
-     <y>352</y>
+     <x>190</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_useCustomAwayMessage</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>mAutoAwayCustomMessage</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>249</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>261</x>
+     <y>333</y>
     </hint>
    </hints>
   </connection>

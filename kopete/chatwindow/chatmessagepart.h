@@ -4,7 +4,7 @@
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
     Copyright (c) 2005      by Michaël Larouche      <larouche@kde.org>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -58,6 +58,24 @@ public:
 	 * use
 	 */
 	void keepScrolledDown();
+
+	/**
+	 * Format contact's nickname/displayname according to preferences.
+	 *
+	 * @param contact Contact to format.
+	 * @param format text format, only PlainText and RichText are supported
+	 * @return the formatted name.
+	 */
+	QString formatName( const Kopete::Contact* contact, Qt::TextFormat format ) const;
+
+	/**
+	 * Format a nickname/displayname according to preferences.
+	 *
+	 * @param sourceName Source name to format.
+	 * @param format text format, only PlainText and RichText are supported
+	 * @return the formatted name.
+	 */
+	QString formatName( const QString &sourceName, Qt::TextFormat format ) const;
 
 public slots:
 	/**
@@ -138,6 +156,7 @@ signals:
 
 private slots:
 	void slotOpenURLRequest( const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & );
+	void slotFileTransferIncomingDone( unsigned int id );
 	void slotScrollView();
 	void slotAppearanceChanged();
 
@@ -219,14 +238,6 @@ private:
 	QString formatTime(const QString &timeFormat, const QDateTime &dateTime);
 
 	/**
-	 * Format a nickname/displayname according to preferences.
-	 *
-	 * @param sourceName Source name to format.
-	 * @return the formatted name.
-	 */
-	QString formatName( const QString &sourceName );
-
-	/**
 	 * Format a message body according to the style included
 	 * in the message.
 	 *
@@ -247,6 +258,16 @@ private:
 	 * @return the munged path, eg variant_compact.css
 	 */
 	QString adjustStyleVariantForChatSession( const QString & styleVariant ) const;
+
+	/**
+	 * Find photo for given contact.
+	 * @return the photo path or base64 photo data
+	 */
+	QString photoForContact( const Kopete::Contact *contact ) const;
+
+	void addFileTransferButtonsEventListener( unsigned int id );
+
+	void disableFileTransferButtons( unsigned int id );
 
 	class Private;
 	Private *d;

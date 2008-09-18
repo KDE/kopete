@@ -128,7 +128,7 @@ Kopete::Account *YahooEditAccount::apply()
 
 	if ( optionOverrideServer->isChecked() )
 	{
-		yahooAccount->setServer( editServerAddress->text() );
+		yahooAccount->setServer( editServerAddress->text().trimmed() );
 		yahooAccount->setPort( sbxServerPort->value() );
 	}
 	else

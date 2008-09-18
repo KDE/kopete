@@ -305,7 +305,7 @@ bool ResponseProtocol::readGroupWiseLine( QByteArray & line )
 	line = QByteArray();
 	while ( true )
 	{
-		quint8 c;
+		quint8 c = 0;
 		
 		if (! okToProceed() )
 			return false;

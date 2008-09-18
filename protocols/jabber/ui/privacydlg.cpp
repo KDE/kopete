@@ -20,7 +20,7 @@
  */
  
 #include <QListView>
-#include <QInputDialog>
+#include <KInputDialog>
 #include <KMessageBox>
 
 #include "privacydlg.h"
@@ -74,8 +74,8 @@ PrivacyDlg::PrivacyDlg(JabberAccount* acc, QWidget* parent) : KDialog(parent), a
 	ui_.pb_remove->setIcon(KIcon("list-remove"));
 	ui_.pb_up->setIcon(KIcon("arrow-up"));
 	ui_.pb_down->setIcon(KIcon("arrow-down"));
-	ui_.pb_edit->setIcon(KIcon("edit"));
-	ui_.pb_apply->setIcon(KIcon("dialog-apply"));
+	ui_.pb_edit->setIcon(KIcon("edit-rename"));
+	ui_.pb_apply->setIcon(KIcon("dialog-ok-apply"));
 
 	setWidgetsEnabled(false);
 
@@ -308,7 +308,7 @@ void PrivacyDlg::newList()
 	bool ok = false;
 	QString name;
 	while (!done) {
-		name = QInputDialog::getText(this, i18n("New List"), i18n("Enter the name of the new list:"), QLineEdit::Normal, "", &ok);
+		name = KInputDialog::getText(i18n("New List"), i18n("Enter the name of the new list:"), QString(), &ok, this);
 		if (!ok) {
 			done = true;
 		}

@@ -149,13 +149,15 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	// add contacts
 	slotContactAdded( mgr->myself(), true );
 	for ( i = 0; i != mgr->members().size(); i++ )
+	{
 		slotContactAdded( mgr->members()[i], true );
+	}
 
 	setFocusProxy( editPart()->widget() );
 	m_messagePart->widget()->setFocusProxy( editPart()->widget() );
 	editPart()->widget()->setFocus();
 
-	setCaption( m_manager->displayName(), false );
+	slotChatDisplayNameChanged();
 
 	// restore docking positions
 	readOptions();
@@ -421,16 +423,7 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 	for( it = m_remoteTypingMap.begin(); it != m_remoteTypingMap.end(); ++it )
 	{
 		const Kopete::Contact *c = it.key();
-		QString nick;
-		if( c->metaContact() && c->metaContact() != Kopete::ContactList::self()->myself() )
-		{
-			nick = c->metaContact()->displayName();
-		}
-		else
-		{
-			nick = c->nickName();
-		}
-		typingList.append( nick );
+		typingList.append( m_messagePart->formatName(c, Qt::PlainText) );
 	}
 
 	// Update the status area
@@ -469,6 +462,21 @@ void ChatView::slotChatDisplayNameChanged()
 	// update the caption if it changed to avoid unneeded updates that
 	// could cause flickering
 	QString chatName = m_manager->displayName();
+
+	foreach (const Kopete::Contact *c, msgManager()->members())
+	{
+		QString contactName = m_messagePart->formatName(c, Qt::PlainText);
+		if ( c->metaContact() )
+		{
+			chatName.replace( c->metaContact()->displayName(), contactName );
+		}
+		else
+		{
+			chatName.replace( c->nickName(), contactName );
+		}
+	}
+
+
 	if ( chatName != d->captionText )
 		setCaption( chatName, true );
 }
@@ -498,17 +506,6 @@ void ChatView::slotDisplayNameChanged( const QString &oldValue, const QString &n
 
 void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 {
-	QString contactName;
-	// Myself metacontact is not a reliable source.
-	if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
-	{
-		contactName = contact->metaContact()->displayName();
-	}
-	else
-	{
-		contactName = contact->nickName();
-	}
-
 	if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
 	{
 		connect( contact->metaContact(), SIGNAL( displayNameChanged(const QString&, const QString&) ),
@@ -520,6 +517,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 		this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 	}
 
+	QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
 	if( !suppress && m_manager->members().count() > 1 )
 		sendInternalMessage(  i18n("%1 has joined the chat.", contactName) );
 
@@ -541,16 +539,6 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 			m_remoteTypingMap.remove( contact );
 		}
 
-		QString contactName;
-		if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
-		{
-			contactName = contact->metaContact()->displayName();
-		}
-		else
-		{
-			contactName = contact->nickName();
-		}
-
 		// When the last person leaves, don't disconnect the signals, since we're in a one-to-one chat
 		if ( m_manager->members().count() > 0 )
 		{
@@ -568,6 +556,7 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 
 		if ( !suppressNotification )
 		{
+			QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
 			if ( reason.isEmpty() )
 				sendInternalMessage( i18n( "%1 has left the chat.", contactName ), format ) ;
 			else
@@ -636,14 +625,7 @@ void ChatView::appendMessage(Kopete::Message &message)
 
 	if( message.direction() == Kopete::Message::Inbound )
 	{
-		if( message.from()->metaContact() && message.from()->metaContact() != Kopete::ContactList::self()->myself() )
-		{
-			unreadMessageFrom = message.from()->metaContact()->displayName();
-		}
-		else
-		{
-			unreadMessageFrom = message.from()->nickName();
-		}
+		unreadMessageFrom = m_messagePart->formatName ( message.from(), Qt::PlainText );
 		QTimer::singleShot( 1000, this, SLOT( slotMarkMessageRead() ) );
 	}
 	else
@@ -675,18 +657,9 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
 		}
 		else if ( !contact->account() || !contact->account()->suppressStatusNotification() )
 		{
-			// Don't send notifications when we just connected ourselves, i.e. when suppressions are still active
-			if ( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
-			{
-				sendInternalMessage( i18n( "%2 is now %1.",
-					newStatus.description(), contact->metaContact()->displayName() ) );
-			}
-			else
-			{
-				QString nick=contact->nickName();
-				sendInternalMessage( i18n( "%2 is now %1.",
-					newStatus.description(), nick ) );
-			}
+			QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
+			sendInternalMessage( i18n( "%2 is now %1.",
+				newStatus.description(), contactName ) );
 		}
 	}
 
@@ -758,7 +731,7 @@ void ChatView::saveChatSettings()
 	                           mc->metaContactId();
     KConfigGroup config = KGlobal::config()->group(contactListGroup);
 	config.writeEntry( "EnableRichText", editPart()->isRichTextEnabled() );
-	config.writeEntry( "EnableAutoSpellCheck", editPart()->autoSpellCheckEnabled() );
+	config.writeEntry( "EnableAutoSpellCheck", editPart()->checkSpellingEnabled() );
 	config.sync();
 }
 
@@ -775,7 +748,7 @@ void ChatView::loadChatSettings()
 	bool enableRichText = config.readEntry( "EnableRichText", true );
 	editPart()->setRichTextEnabled( enableRichText );
 	emit rtfEnabled( this, editPart()->isRichTextEnabled() );
-	bool enableAutoSpell = config.readEntry( "EnableAutoSpellCheck", false );
+	bool enableAutoSpell = config.readEntry( "EnableAutoSpellCheck", Kopete::BehaviorSettings::self()->spellCheck() );
 	emit autoSpellCheckEnabled( this, enableAutoSpell );
 }
 

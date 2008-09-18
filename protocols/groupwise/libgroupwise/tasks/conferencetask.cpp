@@ -4,7 +4,7 @@
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
@@ -158,7 +158,7 @@ bool ConferenceTask::take( Transfer * transfer )
 				emit systemBroadcast( event );
 				break;
 			default:
-				client()->debug( QString( "WARNING: didn't handle registered event %1, on conference %2" ).arg( incomingEvent->eventType() ).arg( event.guid ) );
+				client()->debug( QString( "WARNING: did not handle registered event %1, on conference %2" ).arg( incomingEvent->eventType() ).arg( event.guid ) );
 		}
 		dumpConferenceEvent( event );
 
@@ -201,7 +201,7 @@ void ConferenceTask::slotReceiveUserDetails( const GroupWise::ContactDetails & d
 					emit otherInvited( *current );
 					break;
 				default:
-					client()->debug( "Queued an event while waiting for more data, but didn't write a handler for the dequeue!" );
+					client()->debug( "Queued an event while waiting for more data, but did not write a handler for the dequeue!" );
 			}
 			m_pendingEvents.remove( current );
 			client()->debug( QString( "Event handled - now %1 pending events" ).arg

@@ -83,6 +83,7 @@ void InfoDialog::initialize()
 
 InfoDialog::~InfoDialog()
 {
+    delete d;
 }
 
 void InfoDialog::slotSave()

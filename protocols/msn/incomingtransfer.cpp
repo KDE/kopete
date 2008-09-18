@@ -24,17 +24,16 @@ using P2P::IncomingTransfer;
 using P2P::Message;
 
 // Kde includes
-#include <k3bufferedsocket.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <k3serversocket.h>
 #include <kstandarddirs.h>
 #include <ktemporaryfile.h>
-using namespace KNetwork;
 
 // Qt includes
 #include <qfile.h>
 #include <qregexp.h>
+#include <qtcpserver.h>
+#include <qtcpsocket.h>
 
 // Kopete includes
 #include <kopetetransfermanager.h>
@@ -143,6 +142,9 @@ void IncomingTransfer::processMessage(const Message& message)
 {
 	if(m_file && (message.header.flag == 0x20 || message.header.flag == 0x01000030))
 	{
+		if(m_state == Finished) {
+			return;
+		}
 		// UserDisplayIcon data or File data is in this message.
 		// Write the received data to the file.
 		kDebug(14140) << QString("Received, %1 bytes").arg(message.header.dataSize);
@@ -178,12 +180,13 @@ void IncomingTransfer::processMessage(const Message& message)
 			}
 		}
 	}
-	else if(message.header.dataSize == 4 && message.applicationIdentifier == 1)
+	//pidgin is probably broken since it sends 0 as appid but we don't need this check anyway
+	else if(message.header.dataSize == 4 /*&& message.applicationIdentifier == 1*/)
 	{
 		// Data preparation message.
 		m_tempFile = new KTemporaryFile();
 		m_tempFile->setPrefix("msnpicture--");
-		m_tempFile->setSuffix(".png");
+// 		m_tempFile->setSuffix(".png");
 		m_tempFile->open();
 		m_file = m_tempFile;
 		m_state = DataTransfer;
@@ -243,23 +246,20 @@ void IncomingTransfer::processMessage(const Message& message)
 			if(wouldListen)
 			{
 				// Create a listening socket for direct file transfer.
-				m_listener = new KServerSocket("", "");
-				m_listener->setResolutionEnabled(true);
+				m_listener = new QTcpServer();
 				// Create the callback that will try to accept incoming connections.
-				QObject::connect(m_listener, SIGNAL(readyAccept()), SLOT(slotAccept()));
-				QObject::connect(m_listener, SIGNAL(gotError(int)), this, SLOT(slotListenError(int)));
+				QObject::connect(m_listener, SIGNAL(newConnection()), SLOT(slotAccept()));
+
 				// Listen for incoming connections.
-				bool isListening = m_listener->listen(1);
+				bool isListening = m_listener->listen();
 				kDebug(14140) << (isListening ? "listening" : "not listening");
-				kDebug(14140) 
-					<< "local endpoint, " << m_listener->localAddress().nodeName()
-					<< endl;
+				kDebug(14140) << "local endpoint, " << m_listener->serverAddress().toString();
 				
 				content = "Bridge: TCPv1\r\n"
 					"Listening: true\r\n" +
 					QString("Hashed-Nonce: {%1}\r\n").arg(P2P::Uid::createUid()) +
-					QString("IPv4Internal-Addrs: %1\r\n").arg(m_listener->localAddress().nodeName())   +
-					QString("IPv4Internal-Port: %1\r\n").arg(m_listener->localAddress().serviceName()) +
+					QString("IPv4Internal-Addrs: %1\r\n").arg(m_listener->serverAddress().toString())   +
+					QString("IPv4Internal-Port: %1\r\n").arg(m_listener->serverPort()) +
 					"\r\n";
 			}
 			else
@@ -321,15 +321,10 @@ void IncomingTransfer::processMessage(const Message& message)
 	}
 }
 
-void IncomingTransfer::slotListenError(int /*errorCode*/)
-{
-	kDebug(14140) << m_listener->errorString();
-}
-
 void IncomingTransfer::slotAccept()
 {
 	// Try to accept an incoming connection from the sending client.
-	m_socket = static_cast<KBufferedSocket*>(m_listener->accept());
+	m_socket = m_listener->nextPendingConnection();
 	if(!m_socket)
 	{
 		// NOTE If direct connection fails, the sending
@@ -343,20 +338,12 @@ void IncomingTransfer::slotAccept()
 
 	kDebug(14140) << "Direct connection established.";
 
-	// Set the socket to non blocking,
-	// enable the ready read signal and disable
-	// ready write signal.
-	// NOTE readyWrite consumes too much cpu usage.
-	m_socket->setBlocking(false);
-	m_socket->enableRead(true);
-	m_socket->enableWrite(false);
-
 	// Create the callback that will try to read bytes from the accepted socket.
 	QObject::connect(m_socket, SIGNAL(readyRead()),   this, SLOT(slotSocketRead()));
 	// Create the callback that will try to handle the socket close event.
-	QObject::connect(m_socket, SIGNAL(closed()),      this, SLOT(slotSocketClosed()));
+	QObject::connect(m_socket, SIGNAL(disconnected()),      this, SLOT(slotSocketClosed()));
 	// Create the callback that will try to handle the socket error event.
-	QObject::connect(m_socket, SIGNAL(gotError(int)), this, SLOT(slotSocketError(int)));
+	QObject::connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(slotSocketError(QAbstractSocket::SocketError)));
 }
 
 void IncomingTransfer::slotSocketRead()
@@ -377,7 +364,7 @@ void IncomingTransfer::slotSocketClosed()
 	kDebug(14140) ;
 }
 
-void IncomingTransfer::slotSocketError(int errorCode)
+void IncomingTransfer::slotSocketError(QAbstractSocket::SocketError errorCode)
 {
 	kDebug(14140) << errorCode;
 }

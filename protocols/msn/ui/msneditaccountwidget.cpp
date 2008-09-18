@@ -136,7 +136,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		d->ui->m_useDisplayPicture->setChecked( config->readEntry( "exportCustomPicture", false ));
 
 		d->ui->NotifyNewChat->setChecked( config->readEntry( "NotifyNewChat", false ));
-		d->ui->DownloadPicture->setCurrentIndex( config->readEntry( "DownloadPicture", 1 ));
+		d->ui->DownloadPicture->setCurrentIndex( config->readEntry( "DownloadPicture", 2 ));
 		d->ui->useCustomEmoticons->setChecked( config->readEntry( "useCustomEmoticons", true ));
 		d->ui->exportEmoticons->setChecked( config->readEntry( "exportEmoticons", false ));
 		d->ui->SendClientInfo->setChecked( config->readEntry( "SendClientInfo", true ));
@@ -184,7 +184,7 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	
 	config->writeEntry( "exportCustomPicture", d->ui->m_useDisplayPicture->isChecked() );
 	if (d->ui->optionOverrideServer->isChecked() ) {
-		config->writeEntry( "serverName", d->ui->m_serverName->text() );
+		config->writeEntry( "serverName", d->ui->m_serverName->text().trimmed() );
 		config->writeEntry( "serverPort", d->ui->m_serverPort->value()  );
 	}
 	else {

@@ -323,14 +323,7 @@ void JabberBaseContact::reevaluateStatus ()
 	 * Set away message property.
 	 * We just need to read it from the current resource.
 	 */
-	if ( !resource.status ().status ().isEmpty () )
-	{
-		setProperty ( protocol()->propAwayMessage, resource.status().status () );
-	}
-	else
-	{
-		removeProperty ( protocol()->propAwayMessage );
-	}
+	setStatusMessage( resource.status().status() );
 
 }
 
@@ -423,6 +416,10 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		if ( !vCard.nickName().isEmpty () )
 		{
 			setProperty ( protocol()->propNickName, vCard.nickName () );
+		}
+		else if ( !vCard.fullName().isEmpty () ) // google talk contacts for example do not have a nickname; better show fullname instead of jabber id
+		{
+			setProperty ( protocol()->propNickName, vCard.fullName () );
 		}
 		else
 		{

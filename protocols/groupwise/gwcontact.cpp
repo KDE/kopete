@@ -82,32 +82,32 @@ void GroupWiseContact::updateDetails( const ContactDetails & details )
 {
 	kDebug() ;
 	if ( !details.cn.isNull() )
-		setProperty( protocol()->propCN, details.cn );
+		setProperty( protocol()->propCN, QVariant(details.cn) );
 	if ( !details.dn.isNull() )
 		m_dn = details.dn;
 	if ( !details.givenName.isNull() )
-		setProperty( protocol()->propGivenName, details.givenName );
+		setProperty( protocol()->propGivenName, QVariant(details.givenName) );
 	if ( !details.surname.isNull() )
-		setProperty( protocol()->propLastName, details.surname );
+		setProperty( protocol()->propLastName, QVariant(details.surname) );
 	if ( !details.fullName.isNull() )
-		setProperty( protocol()->propFullName, details.fullName );
+		setProperty( protocol()->propFullName, QVariant(details.fullName) );
 	m_archiving = details.archive;
 	if ( !details.awayMessage.isNull() )
-		setProperty( protocol()->propAwayMessage, details.awayMessage );
+		setStatusMessage( details.awayMessage );
 	
 	m_serverProperties = details.properties;
 	
 	// work phone number
 	if ( m_serverProperties.contains( "telephoneNumber" ) )
-		setProperty( protocol()->propPhoneWork, m_serverProperties.value( "telephoneNumber" ) );
+		setProperty( protocol()->propPhoneWork, QVariant(m_serverProperties.value( "telephoneNumber" )) );
 	
 	// mobile phone number
 	if ( m_serverProperties.contains( "mobile" ) )
-		setProperty( protocol()->propPhoneMobile, m_serverProperties.value( "mobile" ) );
+		setProperty( protocol()->propPhoneMobile, QVariant(m_serverProperties.value( "mobile" )) );
 	
 	// email
 	if ( m_serverProperties.contains( "Internet EMail Address" ) )
-		setProperty( protocol()->propEmail, m_serverProperties.value( "Internet EMail Address" ) );
+		setProperty( protocol()->propEmail, QVariant(m_serverProperties.value( "Internet EMail Address" )) );
 		
 	if ( details.status != GroupWise::Invalid )
 	{	

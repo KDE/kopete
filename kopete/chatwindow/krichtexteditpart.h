@@ -97,6 +97,18 @@ public:
 
     bool isRichTextAvailable() const;
 
+    /** 
+     * Enable or Disable the automatic spell checking
+     * @param enabled the state that auto spell checking should beee
+     */
+    void setCheckSpellingEnabled( bool enabled );
+
+    /**
+     * Get the state of auto spell checking
+     * @return true if auto spell checking is turned on, false otherwise
+     */
+    bool checkSpellingEnabled() const;
+
     static KAboutData *createAboutData();
 
     /**

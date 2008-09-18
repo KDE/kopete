@@ -49,6 +49,11 @@ void NLKaffeine::update()
 
 	// TODO: Port to Kaffeine D-BUS Interface
 	// see if kaffeine is  registered with D-BUS
+	if (!m_client->isValid())
+	{
+		delete m_client;
+		m_client = new QDBusInterface("org.kde.Kaffeine", "/KaffeineIface");
+	}
 	if ( m_client->isValid() )
 	{
 

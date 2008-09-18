@@ -82,9 +82,7 @@ signals:
 	void receivedMessage(const KIrc::Message &message);
 
 protected:
-	Socket(KIrc::Context *context,
-		KIrc::SocketPrivate *socketp,
-		KIrc::Entity::Ptr owner = KIrc::Entity::Ptr());
+	Socket(KIrc::Context *context, KIrc::SocketPrivate *socketp);
 
 	void setSocket(QAbstractSocket *socket);
 	QAbstractSocket *socket();

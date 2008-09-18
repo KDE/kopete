@@ -3,7 +3,7 @@
 
     Copyright (c) 2005      by Michaël Larouche     <larouche@kde.org>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -27,6 +27,7 @@
 
 // KDE includes
 #include <kdebug.h>
+#include <klocale.h>
 #include <kstandarddirs.h>
 
 class ChatWindowStyle::Private
@@ -46,6 +47,7 @@ public:
 	QString statusHtml;
 	QString actionIncomingHtml;
 	QString actionOutgoingHtml;
+	QString fileTransferIncomingHtml;
 	QHash<QString, bool> compactVariants;
 };
 
@@ -153,6 +155,11 @@ QString ChatWindowStyle::getActionOutgoingHtml() const
 	return d->actionOutgoingHtml;
 }
 
+QString ChatWindowStyle::getFileTransferIncomingHtml() const
+{
+	return d->fileTransferIncomingHtml;
+}
+
 bool ChatWindowStyle::hasActionTemplate() const
 {
 	return ( !d->actionIncomingHtml.isEmpty() && !d->actionOutgoingHtml.isEmpty() );
@@ -199,6 +206,7 @@ void ChatWindowStyle::readStyleFiles()
 	QString statusFile = d->baseHref + QString("Status.html");
 	QString actionIncomingFile = d->baseHref + QString("Incoming/Action.html");
 	QString actionOutgoingFile = d->baseHref + QString("Outgoing/Action.html");
+	QString fileTransferIncomingFile = d->baseHref + QString("Incoming/FileTransferRequest.html");
 
 	QFile fileAccess;
 	// First load header file.
@@ -300,6 +308,39 @@ void ChatWindowStyle::readStyleFiles()
 		d->actionOutgoingHtml = headerStream.readAll();
 		kDebug(14000) << "ActionOutgoing HTML: " << d->actionOutgoingHtml;
 		fileAccess.close();
+	}
+	// Load FileTransfer Incoming file
+	if( QFile::exists(fileTransferIncomingFile) )
+	{
+		fileAccess.setFileName(fileTransferIncomingFile);
+		fileAccess.open(QIODevice::ReadOnly);
+		QTextStream headerStream(&fileAccess);
+		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
+		d->fileTransferIncomingHtml = headerStream.readAll();
+		kDebug(14000) << "fileTransferIncoming HTML: " << d->fileTransferIncomingHtml;
+		fileAccess.close();
+	}
+	
+	if ( d->fileTransferIncomingHtml.isEmpty() ||
+	     ( !d->fileTransferIncomingHtml.contains( "saveFileHandlerId" ) &&
+	       !d->fileTransferIncomingHtml.contains( "saveFileAsHandlerId" ) ) )
+	{	// Create default html
+		d->fileTransferIncomingHtml = d->incomingHtml;
+		QString message = QString( "%message%\n"
+		                           "<div>\n"
+		                           " <div style=\"width:37px; float:left;\">\n"
+		                           "  <img src=\"%fileIconPath%\" style=\"width:32px; height:32px; vertical-align:middle;\" />\n"
+		                           " </div>\n"
+		                           " <div>\n"
+		                           "  <span><b>%fileName%</b> (%fileSize%)</span><br>\n"
+		                           "  <span>\n"
+		                           "   <input id=\"%saveFileAsHandlerId%\" type=\"button\" value=\"%1\">\n"
+		                           "   <input id=\"%cancelRequestHandlerId%\" type=\"button\" value=\"%2\">\n"
+		                           "  </span>\n"
+		                           " </div>\n"
+		                           "</div>" )
+		                           .arg( i18n( "Download" ), i18n( "Cancel" ) );
+		d->fileTransferIncomingHtml.replace( QLatin1String("%message%"), message );
 	}
 }
 

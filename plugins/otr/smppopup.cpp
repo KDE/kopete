@@ -74,7 +74,7 @@ void SMPPopup::manualAuth(){
 	this->close();
 }
 
-// Overriding closeEvent to prevent cancelling SMP on pressuing "Manual Auth"
+// Overriding closeEvent to prevent cancelling SMP on pressing "Manual Auth"
 void SMPPopup::closeEvent( QCloseEvent *event )
 {
 	QDialog::closeEvent( event );

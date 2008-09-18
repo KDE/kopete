@@ -6,8 +6,8 @@
     Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
     Kopete
 	Copyright (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
-	
-	Purpose: 
+
+	Purpose:
 	This class abstracts the interface to amaroK by
 	implementing NLMediaPlayer
 
@@ -33,7 +33,7 @@ NLamaroK::NLamaroK() : NLMediaPlayer()
 {
 	m_type = Audio;
 	m_name = "amaroK";
-	m_client = new QDBusInterface("org.kde.amarok", "/Player");
+	m_client = new QDBusInterface("org.mpris.amarok", "/Player");
 }
 
 NLamaroK::~NLamaroK()
@@ -48,11 +48,16 @@ void NLamaroK::update()
 	QString newTrack;
 	QString result;
 
+	if (!m_client->isValid())
+	{
+		delete m_client;
+		m_client = new QDBusInterface("org.mpris.amarok", "/Player");
+	}
 	if( !m_client->isValid() )
 		return;
 
-	// See if amaroK is currently playing.
-	QDBusReply<int> statusReply = m_client->call("status");
+	// See if amarok is currently playing.
+	QDBusReply<int> statusReply = m_client->call("PositionGet");
 	if( statusReply.isValid() )
 	{
 		if( statusReply.value() )
@@ -61,12 +66,16 @@ void NLamaroK::update()
 		}
 	}
 
-	// Fetch title
-	QDBusReply<QString> newTrackReply = m_client->call("title");
-	if( newTrackReply.isValid() )
+	QDBusReply<QVariantMap> metaDataReply = m_client->call("GetMetadata");
+	if (!metaDataReply.isValid())
 	{
-		newTrack = newTrackReply.value();
+		return;
 	}
+
+	const QVariantMap &metaData = metaDataReply.value();
+
+	// Fetch title
+	newTrack = metaData["title"].toString();
 
 	if ( newTrack != m_track )
 	{
@@ -75,17 +84,8 @@ void NLamaroK::update()
 	}
 
 	// Fetch album
-	QDBusReply<QString> albumReply = m_client->call("album");
-	if( albumReply.isValid() )
-	{
-		m_album = albumReply.value();
-	}
+	m_album = metaData["album"].toString();
 
 	// Fetch artist
-	QDBusReply<QString> artistReply = m_client->call("artist");
-	if( artistReply.isValid() )
-	{
-		m_artist = artistReply.value();
-	}
+	m_artist = metaData["artist"].toString();
 }
-

@@ -83,7 +83,10 @@ void BLMLimitsTask::onGo()
 	kDebug(OSCAR_RAW_DEBUG) << "Sending BLM limits request";
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0003, 0x0002, 0x0000, client()->snacSequence() };
+
 	Buffer* buffer = new Buffer();
+	buffer->addTLV16( 0x0005, 0x0003 );
+
 	Transfer *t = createTransfer( f, s, buffer );
 	send( t );
 }

@@ -15,39 +15,19 @@
     *                                                                       *
     *************************************************************************
 */
-#include <config-kopete.h>
 
 #include "kopeteidletimer.h"
+#include "kopeteidleplatform_p.h"
 
 #include <QtCore/QTimer>
-#include <QtCore/QTime>
-#include <QtDBus/QtDBus>
+#include <QtCore/QDateTime>
+#include <QtGui/QCursor>
 
 #include <kdebug.h>
-
-#ifdef Q_WS_X11
-  #include <X11/Xlib.h>
-  #include <X11/Xatom.h>
-  #include <X11/Xresource.h>
-  // The following include is to make --enable-final work
-  #include <X11/Xutil.h>
-
-  #ifdef HAVE_XSCREENSAVER
-    #define HasScreenSaver
-    #include <X11/extensions/scrnsaver.h>
-  #endif
-  
-  #include <QX11Info>
-#endif // Q_WS_X11
-
-// As this is an untested X extension we better leave it off
-#undef HAVE_XIDLE
-#undef HasXidle
 
 class Kopete::IdleTimer::Private
 {
 public:
-	QTime idleTime;
 	struct TimeoutReceiver {
 		bool active;
 		int msec;
@@ -56,19 +36,12 @@ public:
 		const char * memberIdle;
 	};
 	QList<TimeoutReceiver> receiverList;
-	QTimer *timer;
+	QTimer timer;
 
-	int mouse_x;
-	int mouse_y;
-	unsigned int mouse_mask;
-#ifdef Q_WS_X11
-	Window    root;               /* root window the pointer is on */
-	Screen*   screen;             /* screen the pointer is on      */
-	
-	Time xIdleTime;
-#endif
-	bool useXidle;
-	bool useMit;
+	QPoint lastMousePos;
+	QDateTime idleSince;
+
+	Kopete::IdlePlatform *platform;
 };
 
 Kopete::IdleTimer *Kopete::IdleTimer::instance = 0L;
@@ -76,70 +49,64 @@ Kopete::IdleTimer *Kopete::IdleTimer::instance = 0L;
 Kopete::IdleTimer::IdleTimer()
 : QObject(), d( new Private )
 {
-	int dummy = 0;	
+	d->platform = 0;
 
-	// set the XAutoLock info
-#ifdef Q_WS_X11
-	Display *dsp = QX11Info::display();
-#endif
-	d->mouse_x = d->mouse_y=0;
-	d->mouse_mask = 0;
-#ifdef Q_WS_X11
-	d->root = DefaultRootWindow (dsp);
-	d->screen = ScreenOfDisplay (dsp, DefaultScreen (dsp));
-#endif
-	d->useXidle = false;
-	d->useMit = false;
-#ifdef HasXidle
-	d->useXidle = XidleQueryExtension(QX11Info::display(), &dummy, &dummy);
-#endif
-#ifdef HasScreenSaver
-	if(!d->useXidle)
-		d->useMit = XScreenSaverQueryExtension(QX11Info::display(), &dummy, &dummy);
-#endif
-#ifdef Q_WS_X11
-	d->xIdleTime = 0;
-#endif
-	kDebug(14010) << k_funcinfo << "Idle detection methods:";
-	kDebug(14010) << k_funcinfo << "\tKScreensaverIface::isBlanked()";
-#ifdef Q_WS_X11
-	kDebug(14010) << k_funcinfo << "\tX11 XQueryPointer()";
-#endif
-	if (d->useXidle)
+	Kopete::IdlePlatform *p = new Kopete::IdlePlatform();
+	if ( p->init() )
 	{
-		kDebug(14010) << k_funcinfo << "\tX11 Xidle extension";
+		kDebug() << "Using platform idle timer";
+		d->platform = p;
 	}
-	if (d->useMit)
+	else
 	{
-		kDebug(14010) << k_funcinfo << "\tX11 MIT Screensaver extension";
+		kWarning() << "Using dummy idle timer";
+		delete p;
+
+		d->lastMousePos = QCursor::pos();
+		d->idleSince = QDateTime::currentDateTime();
 	}
 
 	// init the timer
-	d->timer = new QTimer(this);
-	connect(d->timer, SIGNAL(timeout()), this, SLOT(slotTimerTimeout()));
-	d->timer->start(4000);
-
-	d->idleTime.start();
+	connect(&d->timer, SIGNAL(timeout()), this, SLOT(updateIdleTime()));
+	d->timer.start(4000);
 }
 
 Kopete::IdleTimer *Kopete::IdleTimer::self()
 {
 	if ( !instance )
 		instance = new IdleTimer;
-	
+
 	return instance;
 }
 
 Kopete::IdleTimer::~IdleTimer()
 {
+	if ( d->platform )
+		delete d->platform;
+
 	delete d;
 }
 
 int Kopete::IdleTimer::idleTime()
 {
-	//FIXME: the time is reset to zero if more than 24 hours are elapsed
-	// we can imagine someone who leave his PC for several weeks
-	return (d->idleTime.elapsed() / 1000);
+	int idle;
+	if ( d->platform )
+	{
+		idle = d->platform->secondsIdle();
+	}
+	else
+	{
+		QPoint curMousePos = QCursor::pos();
+		QDateTime curDateTime = QDateTime::currentDateTime();
+		if ( d->lastMousePos != curMousePos )
+		{
+			d->lastMousePos = curMousePos;
+			d->idleSince = curDateTime;
+		}
+		idle = d->idleSince.secsTo(curDateTime);
+	}
+
+	return idle;
 }
 
 void Kopete::IdleTimer::registerTimeout( int idleSeconds, QObject *receiver,
@@ -164,24 +131,15 @@ void Kopete::IdleTimer::unregisterTimeout( QObject *receiver )
 	}
 }
 
-void Kopete::IdleTimer::slotTimerTimeout()
+void Kopete::IdleTimer::updateIdleTime()
 {
-#ifdef __GNUC__
-#warning verify dcop call
-#endif
-	QDBusInterface caller("org.freedesktop.ScreenSaver", "/ScreenSaver", "org.freedesktop.ScreenSaver");
-	QDBusReply<bool> reply = caller.call("GetActive");
-	
-	bool activity = ( !reply.isValid() || !reply.value() ) ? isActivity() : true;
-
-	//kDebug(14010) << "idle: " << idleTime() << " active:" << activity;
-	if ( activity )
-		d->idleTime.start();
+	int idle = idleTime() * 1000;
+	bool activity = ( idle < 10 );
 
 	for ( int i = 0; i < d->receiverList.size(); i++ )
 	{
 		Private::TimeoutReceiver item = d->receiverList.at(i);
-		if ( item.active != activity && (activity == true || d->idleTime.elapsed() > item.msec ) )
+		if ( item.active != activity && (activity == true || idle > item.msec ) )
 		{
 			d->receiverList[i].active = activity;
 			if ( activity )
@@ -190,101 +148,6 @@ void Kopete::IdleTimer::slotTimerTimeout()
 				QTimer::singleShot( 0, item.receiver, item.memberIdle );
 		}
 	}
-}
-
-bool Kopete::IdleTimer::isActivity()
-{
-	// Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
-	//
-	// KDE screensaver engine
-	//
-	// This module is a heavily modified xautolock.
-	// In fact as of KDE 2.0 this code is practically unrecognisable as xautolock.
-	
-	bool activity = false;
-	
-#ifdef Q_WS_X11
-	Display *dsp = QX11Info::display();
-	Window           dummy_w;
-	int              dummy_c;
-	unsigned int     mask;               /* modifier mask                 */
-	int              root_x;
-	int              root_y;
-	
-	/*
-	*  Find out whether the pointer has moved. Using XQueryPointer for this
-	*  is gross, but it also is the only way never to mess up propagation
-	*  of pointer events.
-	*
-	*  Remark : Unlike XNextEvent(), XPending () doesn't notice if the
-	*           connection to the server is lost. For this reason, earlier
-	*           versions of xautolock periodically called XNoOp (). But
-	*           why not let XQueryPointer () do the job for us, since
-	*           we now call that periodically anyway?
-	*/
-	if (!XQueryPointer (dsp, d->root, &(d->root), &dummy_w, &root_x, &root_y,
-	                    &dummy_c, &dummy_c, &mask))
-	{
-		/*
-		*  Pointer has moved to another screen, so let's find out which one.
-		*/
-		for (int i = 0; i < ScreenCount(dsp); i++)
-		{
-			if (d->root == RootWindow(dsp, i))
-			{
-				d->screen = ScreenOfDisplay (dsp, i);
-				break;
-			}
-		}
-	}
-	
-	// =================================================================================
-	
-	Time xIdleTime = 0; // millisecs since last input event
-	
-#ifdef HasXidle
-	if (d->useXidle)
-	{
-		XGetIdleTime(dsp, &xIdleTime);
-	}
-	else
-#endif /* HasXIdle */
-		
-	{
-#ifdef HasScreenSaver
-		if(d->useMit)
-		{
-			static XScreenSaverInfo* mitInfo = 0;
-			if (!mitInfo) mitInfo = XScreenSaverAllocInfo();
-			XScreenSaverQueryInfo (dsp, d->root, mitInfo);
-			xIdleTime = mitInfo->idle;
-		}
-#endif /* HasScreenSaver */
-	}
-	
-	// =================================================================================
-	
-	// Only check idle time if we have some way of measuring it, otherwise if
-	// we've neither Mit nor Xidle it'll still be zero and we'll always appear active.
-	// FIXME: what problem does the 2000ms fudge solve?
-	if (root_x != d->mouse_x || root_y != d->mouse_y || mask != d->mouse_mask
-	    || ((d->useXidle || d->useMit) && xIdleTime < d->xIdleTime + 2000))
-	{
-		// -1 => just gone autoaway, ignore apparent activity this time round
-		// anything else => genuine activity
-		// See setAutoAway().
-		if (d->mouse_x != -1)
-		{
-			activity = true;
-		}
-		d->mouse_x = root_x;
-		d->mouse_y = root_y;
-		d->mouse_mask = mask;
-		d->xIdleTime = xIdleTime;
-	}
-#endif // Q_WS_X11
-
-	return activity;
 }
 
 #include "kopeteidletimer.moc"

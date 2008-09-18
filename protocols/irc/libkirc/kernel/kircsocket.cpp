@@ -130,22 +130,13 @@ void SocketPrivate::socketStateChanged(QAbstractSocket::SocketState newstate)
 	}
 }
 
-
-
-
-
-Socket::Socket(Context *context, SocketPrivate *socketp, Entity::Ptr owner)
+Socket::Socket(Context *context, SocketPrivate *socketp)
 	: QObject(context)
 	, d_ptr(socketp)
 {
 	Q_D(Socket);
 
-#if 0
-	// FIXME: create an anonymous as owner.
-	if ( owner.isNull() )
-		owner = context->anonymous();
-#endif
-	d->owner = owner;
+	d->owner = new Entity(context);
 }
 
 Socket::~Socket()

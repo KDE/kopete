@@ -141,7 +141,7 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 			// Could not find this host. Add it to the networks structure
 
 			d->network = IRCNetwork();
-			d->network.name = i18n("Temporary Network - %1").arg( hostName );
+			d->network.name = i18n("Temporary Network - %1", hostName );
 			d->network.description = i18n("Network imported from previous version of Kopete, or an IRC URI");
 
 			IRCHost host;
@@ -266,7 +266,7 @@ void IRCAccount::clientConnect()
 	else
 	{
 		const IRC::Host& host = d->network.hosts[ d->currentHost++ ];
-		//appendInternalMessage( i18n("Connecting to %1...").arg( host.host ) );
+		//appendInternalMessage( i18n("Connecting to %1...", host.host ) );
 
 		QString url;
 
@@ -699,7 +699,7 @@ void IRCContact::slotUserDisconnected(const QString &user, const QString &reason
 		Contact *c = locateUser( nickname );
 		if ( c )
 		{
-			d->chatSession->removeContact(c, i18n("Quit: \"%1\" ").arg(reason), Message::RichText);
+			d->chatSession->removeContact(c, i18n("Quit: \"%1\" ",reason), Message::RichText);
 //			c->setOnlineStatus(IRCProtocol::self()->m_UserStatusOffline);
 		}
 	}

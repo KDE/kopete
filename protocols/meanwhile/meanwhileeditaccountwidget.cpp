@@ -14,16 +14,12 @@
     *                                                                       *
     *************************************************************************
 */
-#include <qlayout.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qspinbox.h>
 #include <kdebug.h>
 #include <kopeteaccount.h>
 #include <kopetepasswordwidget.h>
 #include <kmessagebox.h>
 #include <klocale.h>
+
 #include "meanwhileprotocol.h"
 #include "meanwhileaccount.h"
 #include "meanwhileeditaccountwidget.h"
@@ -31,34 +27,35 @@
 #define DEFAULT_SERVER "messaging.opensource.ibm.com"
 #define DEFAULT_PORT 1533
 
-MeanwhileEditAccountWidget::MeanwhileEditAccountWidget( 
-                                QWidget* parent, 
+MeanwhileEditAccountWidget::MeanwhileEditAccountWidget(
+                                QWidget* parent,
                                 Kopete::Account* theAccount,
                                 MeanwhileProtocol *theProtocol)
-    : MeanwhileEditAccountBase(parent),
+    : QWidget(parent),
       KopeteEditAccountWidget( theAccount )
 {
     protocol = theProtocol;
 
+    ui.setupUi(this);
+
     if (account())
     {
-        mScreenName->setText(account()->accountId());
-        mScreenName->setReadOnly(true); 
-        mPasswordWidget->load(&static_cast<MeanwhileAccount*>(account())->password());
-        mAutoConnect->setChecked(account()->excludeConnect());
+        ui.mScreenName->setText(account()->accountId());
+        ui.mScreenName->setReadOnly(true);
+        ui.mPasswordWidget->load(&static_cast<MeanwhileAccount*>(account())->password());
+        ui.mAutoConnect->setChecked(account()->excludeConnect());
         MeanwhileAccount *myAccount = static_cast<MeanwhileAccount *>(account());
-        mServerName->setText(myAccount->getServerName());
-        mServerPort->setValue(myAccount->getServerPort());
+        ui.mServerName->setText(myAccount->getServerName());
+        ui.mServerPort->setValue(myAccount->getServerPort());
     }
     else
     {
         slotSetServer2Default();
     }
 
-    QObject::connect(btnServerDefaults, SIGNAL(clicked()),
-            SLOT(slotSetServer2Default()));
+    connect(ui.btnServerDefaults, SIGNAL(clicked()), SLOT(slotSetServer2Default()));
 
-    show();
+ // ### TODO?   show();
 }
 
 MeanwhileEditAccountWidget::~MeanwhileEditAccountWidget()
@@ -69,44 +66,44 @@ MeanwhileEditAccountWidget::~MeanwhileEditAccountWidget()
 Kopete::Account* MeanwhileEditAccountWidget::apply()
 {
     if(!account())
-        setAccount(new MeanwhileAccount(protocol, mScreenName->text()));
+        setAccount(new MeanwhileAccount(protocol, ui.mScreenName->text()));
 
     MeanwhileAccount *myAccount = static_cast<MeanwhileAccount *>(account());
 
-    myAccount->setExcludeConnect(mAutoConnect->isChecked());
+    myAccount->setExcludeConnect(ui.mAutoConnect->isChecked());
 
-    mPasswordWidget->save(&static_cast<MeanwhileAccount*>(account())->password());
+    ui.mPasswordWidget->save(&static_cast<MeanwhileAccount*>(account())->password());
 
-    myAccount->setServerName(mServerName->text());
-    myAccount->setServerPort(mServerPort->value());
+    myAccount->setServerName(ui.mServerName->text().trimmed());
+    myAccount->setServerPort(ui.mServerPort->value());
 
     return myAccount;
 }
 
 bool MeanwhileEditAccountWidget::validateData()
 {
-    if(mScreenName->text().isEmpty())
+    if (ui.mScreenName->text().isEmpty())
     {
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>You must enter a valid screen name.</qt>"), 
             i18n("Meanwhile Plugin"));
         return false;
     }
-    if( !mPasswordWidget->validate() )
+    if (!ui.mPasswordWidget->validate())
     {
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>You must deselect password remembering or enter a valid password.</qt>"), 
             i18n("Meanwhile Plugin"));
         return false;
     }
-    if (mServerName->text().isEmpty())
+    if (ui.mServerName->text().isEmpty())
     {
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>You must enter the server's hostname/ip address.</qt>"), 
             i18n("Meanwhile Plugin"));
         return false;
     }
-    if (mServerPort->text() == 0)
+    if (ui.mServerPort->text() == 0)
     {
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>0 is not a valid port number.</qt>"), 
@@ -118,8 +115,8 @@ bool MeanwhileEditAccountWidget::validateData()
 
 void MeanwhileEditAccountWidget::slotSetServer2Default()
 {
-    mServerName->setText(DEFAULT_SERVER);
-    mServerPort->setValue(DEFAULT_PORT);
+    ui.mServerName->setText(DEFAULT_SERVER);
+    ui.mServerPort->setValue(DEFAULT_PORT);
 }
 
 #include "meanwhileeditaccountwidget.moc"

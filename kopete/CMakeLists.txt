@@ -51,13 +51,15 @@ kde4_add_ui_files(kopetecontactlist_SRCS
 
 set(kopete_SRCS 
    ${kopetecontactlist_SRCS}
-   main.cpp 
-   kopeteapplication.cpp 
+   main.cpp
+   kopeteapplication.cpp
    kanimatedsystemtrayicon.cpp
-   systemtray.cpp 
-   kopetewindow.cpp 
-   kopeteidentitystatusbaricon.cpp 
+   systemtray.cpp
+   kopetewindow.cpp
+   kopeteidentitystatusbaricon.cpp
+   kopeteaccountstatusbaricon.cpp
    kopetedbusinterface.cpp
+   kopetedbusinterface_p.cpp
    infoeventwidget.cpp
    )
 
@@ -72,7 +74,10 @@ set_target_properties(kopete_bin PROPERTIES OUTPUT_NAME kopete)
 
 target_link_libraries(kopete_bin 
 	${KDE4_KTEXTEDITOR_LIBS} 
-	${KDE4_KNOTIFYCONFIG_LIBS} 
+	${KDE4_KNOTIFYCONFIG_LIBS}
+	${KDE4_KDE3SUPPORT_LIBS}
+	${KDE4_KABC_LIBS}
+	${KDE4_SOLID_LIBRARY}
 	${BLITZ_LIBRARIES}
 	kopete 
 	kopeteaddaccountwizard

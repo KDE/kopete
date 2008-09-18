@@ -65,18 +65,10 @@ public Q_SLOTS:
 	void unregisterTimeout( QObject *receiver );
 
 private slots:
-	void slotTimerTimeout();
+	void updateIdleTime();
 
 private:
 	IdleTimer();
-
-	/**
-	 * @brief Check for activity using X11 methods
-	 * @return true if activity was detected, otherwise false
-	 *
-	 * Attempt to detect activity using a variety of X11 methods.
-	 */
-	bool isActivity();
 
 	static IdleTimer *instance;
 

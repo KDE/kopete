@@ -195,7 +195,7 @@ void TelepathyEditAccountWidget::writeConfig()
 	QString selectedProtocol = d->ui.treeProtocol->selectedItems().first()->text(0);
 	QString accountId = account()->accountId();
 
-	KMessageBox::information(this, QString("ConnectionManager: %1\nProtocol: %2\nAccount: %3").arg(selectedConnectionManager).arg(selectedProtocol).arg(accountId) );
+	KMessageBox::information(this, i18n("ConnectionManager: %1\nProtocol: %2\nAccount: %3",selectedConnectionManager,selectedProtocol,accountId) );
 
 	// Write config not related to ConnectionManager Parameters
 	KConfigGroup *accountConfig = account()->configGroup();

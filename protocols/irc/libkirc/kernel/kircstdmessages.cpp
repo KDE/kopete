@@ -198,7 +198,7 @@ Message StdMessages::topic(const QByteArray &channel, const QByteArray &topic)
 /* RFC1459: "<username> <hostname> <servername> <realname>"
  * The USER command is used at the beginning of connection to specify
  * the username, hostname and realname of a new user.
- * hostname is usualy set to "127.0.0.1"
+ * hostname is usually set to "127.0.0.1"
  */
 Message StdMessages::user(const QByteArray &user, const QByteArray &hostName, const QByteArray &serverName, const QByteArray &realName)
 {

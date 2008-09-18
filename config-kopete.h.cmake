@@ -20,9 +20,6 @@
 /* Define to 1 if you want IDN support. */
 #define LIBIDN 1
 
-/* Defines the executable of xmllint */
-#define XMLLINT "/usr/bin/xmllint"
-
 /* Jingle support is enabled */
 #define SUPPORT_JINGLE
 

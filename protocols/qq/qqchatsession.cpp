@@ -170,7 +170,7 @@ void QQChatSession::slotCreationFailed( const int failedId, const int statusCode
 {
 	if ( failedId == mmId() )
 	{
-		kDebug ( 14140 ) << " couldn't start a chat, no GUID.\n";
+		kDebug ( 14140 ) << " could not start a chat, no GUID.\n";
 		//emit creationFailed();
 		Kopete::Message failureNotify( myself(), members() );
 		failureNotify.setPlainBody( i18n("An error occurred when trying to start a chat: %1", statusCode ) );
@@ -224,7 +224,7 @@ void QQChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSess
 				{
 					kDebug ( 14140 ) << "waiting for server to create a conference, queuing message";
 					// the conference hasn't been instantiated on the server yet, so queue the message
-					m_guid = QString();
+					m_guid.clear();
 					createConference();
 					m_pendingOutgoingMessages.append( message );
 				}
