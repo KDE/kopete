@@ -90,15 +90,24 @@ void JingleCallsManager::init()
 	profiles << "RTP/AVP";
 	d->client->jingleSessionManager()->setSupportedProfiles(profiles);
 	
-	// The Media Manager should be able to give xml tags for the supported payloads.
+	// The Media Manager should be able to give xml elements for the supported payloads.
 	QDomDocument doc("");
 	
-	// Audio payloads -- Supports only A-Law currently.
+	// Audio payloads
+	//Speex
+	QDomElement sPayload = doc.createElement("payload-type");
+	sPayload.setAttribute("id", "96");
+	sPayload.setAttribute("name", "speex");
+	sPayload.setAttribute("clockrate", "16000");
+	d->audioPayloads << sPayload;
+	
+	//A-Law
 	QDomElement aPayload = doc.createElement("payload-type");
 	aPayload.setAttribute("id", "8");
 	aPayload.setAttribute("name", "PCMA");
 	//aPayload.setAttribute("clockrate", "8000");
 	d->audioPayloads << aPayload;
+
 	d->client->jingleSessionManager()->setSupportedAudioPayloads(d->audioPayloads);
 	
 	//Video payloads

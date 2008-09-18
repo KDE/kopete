@@ -113,6 +113,8 @@ set(kopete_jabber_PART_SRCS
    jingle/jinglertpsession.cpp
    jingle/jinglemediamanager.cpp
    jingle/alsaio.cpp
+   jingle/speexio.cpp
+   jingle/abstractio.cpp
 )
 
 
@@ -120,7 +122,7 @@ kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
 
 target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES}
-	${KDE4_SOLID_LIBS} kopete iris_kopete ortp asound)
+	${KDE4_SOLID_LIBS} kopete iris_kopete ortp asound speex)
 #target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} kopete iris_kopete kopete_jabberjingle)
 
 

@@ -33,12 +33,17 @@ JingleMediaSession::JingleMediaSession(JingleMediaManager *parent)
 	kDebug() << "created";
 	ts = 0;
 	tsValue = 0;
+	playbackPlugin = 0;
+	capturePlugin = 0;
+	plugin = 0;
 }
 
 JingleMediaSession::~JingleMediaSession()
 {
-	playbackPlugin->decRef();
-	capturePlugin->decRef();
+	if (playbackPlugin)
+		playbackPlugin->decRef();
+	if (capturePlugin)
+		capturePlugin->decRef();
 	kDebug() << "deleted";
 }
 
@@ -69,6 +74,12 @@ void JingleMediaSession::setOutputDevice(Solid::Device& device)
 	Q_UNUSED(device)
 }
 
+void JingleMediaSession::setMediaPlugin(AbstractIO *p)
+{
+	plugin = p;
+	connect(plugin, SIGNAL(readyRead()), this, SLOT(slotInReadyRead()));
+}
+
 void JingleMediaSession::setCaptureMediaPlugin(AlsaIO *p)
 {
 	kDebug() << "Setting the capturePlugin";
@@ -94,13 +105,20 @@ void JingleMediaSession::setPlaybackMediaPlugin(AlsaIO *p)
 
 void JingleMediaSession::start()
 {
-	capturePlugin->start();
-	playbackPlugin->start();
+	if (capturePlugin)
+		capturePlugin->start();
+	if (playbackPlugin)
+		playbackPlugin->start();
+	if (plugin)
+		plugin->start();
 }
 
 void JingleMediaSession::playData(const QByteArray& data)
 {
-	playbackPlugin->write(data);
+	if (playbackPlugin)
+		playbackPlugin->write(data);
+	if (plugin)
+		plugin->write(data);
 }
 
 void JingleMediaSession::slotInReadyRead()
@@ -111,7 +129,11 @@ void JingleMediaSession::slotInReadyRead()
 
 QByteArray JingleMediaSession::data()
 {
-	return capturePlugin->data();
+	if (capturePlugin)
+		return capturePlugin->data();
+	if (plugin)
+		return plugin->read();
+	return QByteArray();
 }
 
 /*********************
@@ -125,6 +147,7 @@ JingleMediaManager::JingleMediaManager()
 	timer = 0;
 	alawCapture = 0;
 	alawPlayback = 0;
+	speexPlugin = 0;
 }
 
 JingleMediaManager::~JingleMediaManager()
@@ -228,10 +251,12 @@ JingleMediaSession *JingleMediaManager::createNewSession(const QDomElement& payl
 	else
 		mediaSession->setOutputDevice(outputDevice);
 	
-	if (payload.attribute("id") == "8")
+	switch (payload.attribute("id").toInt())
 	{
+	case 8 :
 		if ((payload.hasAttribute("name") && payload.attribute("name") == "PCMA") || !payload.hasAttribute("name"))
 		{
+			//FIXME:alaw shoud be as other plugin : one instance for capture and playback.
 			//Start a-law streaming. Currently, it is the only one supported, more to come.
 			//The problem is that Phonon does not support audio input yet...
 			if (alawCapture == 0)
@@ -248,6 +273,16 @@ JingleMediaSession *JingleMediaManager::createNewSession(const QDomElement& payl
 
 			//FIXME:I call it a Media Plugin, maybe those can be loaded as plugins for each formats.
 			//	It Depends on what Phonon will provide (will I have to encode audio or will Phonon take care of that ?)
+		}
+		break;
+	default : // Dynamic or not supported format.
+		if (payload.hasAttribute("name") && payload.attribute("name") == "speex")
+		{
+			//Speex format.
+			if (!speexPlugin)
+				speexPlugin = new SpeexIO();
+
+			mediaSession->setMediaPlugin(speexPlugin);
 		}
 	}
 

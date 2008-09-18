@@ -1,4 +1,5 @@
 #ifndef ALSA_IO
+#define ALSA_IO
 
 #include <alsa/asoundlib.h>
 
@@ -13,6 +14,28 @@ class AlsaIO : public QObject
 {
 	Q_OBJECT
 public:
+	/** PCM sample format */
+	enum Format {
+		/** Unknown */
+		Unknown = -1,
+		/** Signed 8 bit */
+		Signed8 = 0,
+		/** Unsigned 8 bit */
+		Unsigned8 = SND_PCM_FORMAT_U8,
+		/** Signed 16 bit Little Endian */
+		Signed16Le = SND_PCM_FORMAT_S16_LE,
+		/** Signed 16 bit Big Endian */
+		Signed16Be = SND_PCM_FORMAT_S16_BE,
+		/** Unsigned 16 bit Little Endian */
+		Unsigned16Le = SND_PCM_FORMAT_U16_LE,
+		/** Unsigned 16 bit Big Endian */
+		Unsigned16Be = SND_PCM_FORMAT_U16_BE,
+		/** Mu-Law */
+		MuLaw = SND_PCM_FORMAT_MU_LAW,
+		/** A-Law */
+		ALaw = SND_PCM_FORMAT_A_LAW
+	};
+
 	enum StreamType {
 		Capture = 0,
 		Playback
@@ -38,6 +61,13 @@ public:
 	 * @return sampling rate.
 	 */
 	unsigned int sRate() const;
+
+	/**
+	 * @return used format in snd_pcm_format_t (this should change)
+	 */
+
+	Format format() const {return m_format;}
+	void setFormat(Format f);
 
 	QByteArray data();
 	
@@ -71,6 +101,8 @@ private:
 	int ref;
 	void stop();
 	QFile *testFile;
+	Format m_format;
+	snd_pcm_hw_params_t *hwParams;
 };
 
 #endif //ALSA_IO

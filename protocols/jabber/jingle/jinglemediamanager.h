@@ -36,6 +36,8 @@
 
 #include <errno.h>
 
+#include <speexio.h>
+
 /*
  * TODO:Move me in my own source file.
  */
@@ -72,6 +74,8 @@ public:
 	 */
 	void setInputDevice(Solid::Device& device);
 
+	void setMediaPlugin(AbstractIO *plugin);
+
 	void setCaptureMediaPlugin(AlsaIO *plugin);
 
 	void setPlaybackMediaPlugin(AlsaIO *plugin);
@@ -98,6 +102,7 @@ private:
 	Solid::AudioInterface *audioOutputDevice;
 	AlsaIO *playbackPlugin;
 	AlsaIO *capturePlugin;
+	AbstractIO *plugin;
 	unsigned int ts; // Current timestamp.
 	unsigned int tsValue; // Increment time stamp value
 };
@@ -162,6 +167,7 @@ private:
 	QList<JingleMediaSession*> m_sessions;
 	AlsaIO *alawCapture;
 	AlsaIO *alawPlayback;
+	SpeexIO *speexPlugin;
 
 };
 

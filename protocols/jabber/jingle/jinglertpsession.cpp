@@ -148,7 +148,6 @@ void JingleRtpSession::rtpDataReady()
 {
 	mblk_t *packet;
 	
-	//This is the only way I found to get data once in a while, sometimes, it just hangs...
 	while ((packet = rtp_session_recvm_with_ts(m_rtpSession, receivingTS)) == NULL)
 	{
 		//kDebug() << "Packet is Null, retrying.";

@@ -30,7 +30,6 @@ AlsaIO::AlsaIO(StreamType t)
 	ready = false;
 	written = 0;
 	int err;
-	snd_pcm_hw_params_t *hwParams;
 	timer = 0;
 	notifier = 0;
 
@@ -58,42 +57,38 @@ AlsaIO::AlsaIO(StreamType t)
 		return;
 	}
 
-	if ((err = snd_pcm_hw_params_set_format(handle, hwParams, SND_PCM_FORMAT_A_LAW)) < 0)	//A-Law format can be sent directly with oRTP (format supported)
+	//FIXME:A-Law format is too big for actual audio streaming (128 kB/s). Soon, this class will be used to get RAW audio data which should be converted into SPEEX data.
+	snd_pcm_format_t f;
+	if ((err = snd_pcm_hw_params_set_format_first(handle, hwParams, &f)) < 0)	//A-Law format can be sent directly with oRTP (format supported)
 	{
-		kDebug() << "cannot set sample format" ;
+		kDebug() << "cannot set sample format";
 		return;
 	}
+
+	m_format = static_cast<Format>(f);
 
 	samplingRate = 64000;
 	if ((err = snd_pcm_hw_params_set_rate_near(handle, hwParams, &samplingRate, 0)) < 0)
 	{
-		kDebug() << "cannot set sample rate" ;
+		kDebug() << "cannot set sample rate";
 		return;
 	}
 
 	if ((err = snd_pcm_hw_params_set_channels(handle, hwParams, 1)) < 0) //Only 1 channel for ALaw RTP (see RFC specification)
 	{
-		kDebug() << "cannot set channel 1" ;
+		kDebug() << "cannot set channel 1";
 		return;
 	}
 
 	if ((err = snd_pcm_hw_params(handle, hwParams)) < 0)
 	{
-		kDebug() << "cannot set parameters" ;
+		kDebug() << "cannot set parameters";
 		return;
 	}
 	
 	snd_pcm_hw_params_get_period_size(hwParams, &pSize, 0);
 	snd_pcm_hw_params_get_period_time(hwParams, &pTime, 0);
 	
-	snd_pcm_hw_params_free(hwParams);
-
-	if ((err = snd_pcm_prepare(handle)) < 0)
-	{
-		kDebug() << "cannot prepare audio interface for use" ;
-		return;
-	}
-
 	ready = true;
 }
 
@@ -122,6 +117,17 @@ AlsaIO::StreamType AlsaIO::type() const
 void AlsaIO::start()
 {
 	kDebug() << "start()";
+	if (ready)
+	{
+		snd_pcm_hw_params_free(hwParams);
+
+		if (snd_pcm_prepare(handle) < 0)
+		{
+			kDebug() << "cannot prepare audio interface for use" ;
+			ready = false;
+		}
+	}
+
 	if (!ready)
 	{
 		if (m_type == Capture)
@@ -150,6 +156,7 @@ void AlsaIO::start()
 			return;
 		}
 	}
+	
 	fdCount = snd_pcm_poll_descriptors_count(handle);
 	
 	if (fdCount <= 0)
@@ -200,12 +207,7 @@ void AlsaIO::start()
 		notifier = new QSocketNotifier(ufds[0].fd, type);
 		notifier->setEnabled(true);
 		connect(notifier, SIGNAL(activated(int)), this, SLOT(checkAlsaPoll(int)));
-
-		testFile = new QFile("kopete-test.alaw");
-		testFile->open(QIODevice::WriteOnly);
-
 	}
-	kDebug() << "After start, fdCount =" << fdCount;
 }
 
 void AlsaIO::write(const QByteArray& data)
@@ -217,10 +219,7 @@ void AlsaIO::write(const QByteArray& data)
 		kDebug() << "Packet dropped";
 		return; // Must delete the data before ?
 	}
-	
-	kDebug() << "Appending received data (" << data.size() << "bytes)";
 	buf.append(data);
-	kDebug() << "Buffer size is now" << buf.size() << "bytes";
 }
 
 bool AlsaIO::isReady()
@@ -266,9 +265,11 @@ void AlsaIO::slotActivated(int) //Rename this slot
 	//kDebug() << "Data arrived. (Alsa told me !)";
 	size_t size;
 	QByteArray tmpBuf;
-	tmpBuf.resize(pSize);
-	size = snd_pcm_readi(handle, tmpBuf.data(), pSize); //Maybe use readi which is more adapted...
-	tmpBuf.resize(size);
+	
+	tmpBuf.resize(snd_pcm_frames_to_bytes(handle, pSize));
+	size = snd_pcm_readi(handle, tmpBuf.data(), pSize);
+	tmpBuf.resize(snd_pcm_frames_to_bytes(handle, size));
+	
 	buf.append(tmpBuf);
 
 	emit readyRead();
@@ -300,7 +301,7 @@ void AlsaIO::writeData()
 	//written += buf.size();
 	//kDebug() << "Buffer size =" << buf.size();
 
-	if (buf.size() < pSize)
+	if (buf.size() < snd_pcm_frames_to_bytes(handle, pSize))
 	{
 		//kDebug() << "No enough Data in the buffer.";
 		return;
@@ -373,4 +374,17 @@ void AlsaIO::stop()
 
 	if (timer)
 		delete timer;
+}
+
+void AlsaIO::setFormat(Format f)
+{
+	snd_pcm_format_t format = static_cast<snd_pcm_format_t>(f);
+
+	if (snd_pcm_hw_params_set_format(handle, hwParams, format) < 0)
+	{
+		kDebug() << "cannot set sample format";
+		return;
+	}
+
+	m_format = f;
 }
