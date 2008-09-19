@@ -71,23 +71,23 @@ public:
 		Debug
 	};
 */
-	TextEvent(const QString &eventId, const KIrc::Entity::Ptr &from, const KIrc::Entity::Ptr &to, const QString &text)
-		: QEvent(Type), m_eventId(eventId), m_from(from), m_to(KIrc::Entity::List() << to), m_text(text)
+	TextEvent(const QString &eventId, KIrc::Entity* from, KIrc::Entity* to, const QString &text)
+		: QEvent(Type), m_eventId(eventId), m_from(from), m_to(QList<KIrc::Entity*>() << to), m_text(text)
 	{ }
 
-	TextEvent(const QString &eventId, const KIrc::Entity::Ptr &from, const KIrc::Entity::List &to, const QString &text)
+	TextEvent(const QString &eventId, KIrc::Entity* &from, const QList<KIrc::Entity*> &to, const QString &text)
 		: QEvent(Type), m_eventId(eventId), m_from(from), m_to(to), m_text(text)
 	{ }
 
 	QString eventId() const { return m_eventId; }
-	KIrc::Entity::Ptr from() const { return m_from; }
-	KIrc::Entity::List to() const { return m_to; }
+	KIrc::Entity* from() const { return m_from; }
+	QList<KIrc::Entity*> to() const { return m_to; }
 	QString text() const { return m_text; }
 
 private:
 	QString m_eventId;
-	KIrc::Entity::Ptr m_from;
-	KIrc::Entity::List m_to;
+	KIrc::Entity* m_from;
+	QList<KIrc::Entity*> m_to;
 	QString m_text;
 };
 

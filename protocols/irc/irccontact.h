@@ -66,6 +66,8 @@ public:
 
 	QString caption() const;
 
+	KIrc::Entity * entity() const;
+
 	/**
 	 * This function attempts to find the nickname specified within the current chat
 	 * session. Returns a pointer to that IRCUserContact, or 0L if the user does not

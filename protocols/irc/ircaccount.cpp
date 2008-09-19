@@ -26,6 +26,7 @@
 #include "kircclientsocket.h"
 #include "kircstdmessages.h"
 #include "kircconst.h"
+#include "kircevent.h"
 
 #include "kopeteaccountmanager.h"
 #include "kopetechatsessionmanager.h"
@@ -102,21 +103,24 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 	QObject::connect(d->client, SIGNAL(connectionStateChanged(KIrc::Socket::ConnectionState)),
 			 this, SLOT(clientConnectionStateChanged(KIrc::Socket::ConnectionState)));
 
-	QObject::connect(d->client, SIGNAL(receivedMessage(KIrc::MessageType, const KIrc::Entity::Ptr &, const KIrc::Entity::List &, const QString &)),
-			 this, SLOT(receivedMessage(KIrc::MessageType, const KIrc::Entity::Ptr &, const KIrc::Entity::List &, const QString &)));
+	QObject::connect(d->clientContext,SIGNAL( ircEvent( QEvent* ) ),
+			 this, SLOT( receivedEvent( QEvent* ) ) );
 
 //	loadProperties();
 
 	d->server = new IRCContact(this, d->client->server());
 	d->self = new IRCContact(this, d->client->owner());
+	d->contacts.append( d->server );
+	d->contacts.append( d->self );
+
 	setMyself(d->self);
 
 	kDebug()<<"accId="<<accountId<<" autoChan="<<autoChan<<" netName="<<netName<<" nickname="<<nickName;
-	
+
 	QString networkName=netName;
 	if(networkName.isEmpty())
 		networkName=this->networkName();
-	
+
 	if ( networkName.isEmpty() && QRegExp( "[^#+&\\s]+@[\\w-\\.]+:\\d+" ).exactMatch( accountId ) )
 	{
 		kDebug(14120) << "Creating account from " << accountId;
@@ -658,9 +662,17 @@ IRCContact *IRCAccount::getContact(KIrc::Entity *entity, MetaContact *metac)
 {
 	IRCContact *contact = 0;
 
-#ifdef __GNUC__
-	#warning Do the search code here.
-#endif
+	kDebug( 14120)<<"finding contact for name "<<entity->name();
+
+	//TODO: use hash or something to speed up searching?
+	foreach( IRCContact *tmp, d->contacts )
+	{
+		if ( tmp->entity()==entity )
+		{
+			contact=tmp;
+			break;
+		}
+	}
 
 	if (!contact)
 	{
@@ -675,38 +687,70 @@ IRCContact *IRCAccount::getContact(KIrc::Entity *entity, MetaContact *metac)
 	return contact;
 }
 
+QList<Kopete::Contact*> IRCAccount::getContacts( const QList<KIrc::Entity*> &entities )
+{
+	QList<Kopete::Contact*> contacts;
+	foreach( KIrc::Entity * e, entities )
+		contacts<<getContact( e );
+
+	return contacts;
+}
+
 void IRCAccount::destroyed(IRCContact *contact)
 {
 	kDebug(14120) ;
 	d->contacts.removeAll(contact);
 }
 
-void IRCAccount::receivedEvent(KIrc::Event *event)
+void IRCAccount::receivedEvent(QEvent *event)
 {
-/*
-	IRCContact *from = getContact(event->from());
-	QList<IRCContact*> to = getContacts(event->to());
-	QList<IRCContact*> cc = getContacts(event->cc());
+	kDebug(14120)<<"received event";
+	if ( event->type()==KIrc::TextEvent::Type )
+	{
+		KIrc::TextEvent* txtEvent=static_cast< KIrc::TextEvent* >( event );
+		kDebug(14120)<<"from: "<<txtEvent->from()->name();
+		kDebug(14120)<<"message:"<<txtEvent->text();
 
-	Kopete::Message::MessageDirection msgDirection =
-		event->from() == mySelf ? Kopete::Message::OutBound : Kopete::Message::Indound;
+		IRCContact *from = getContact( txtEvent->from() );
+		QList<Kopete::Contact*> to = getContacts( txtEvent->to() );
+
+	   	Kopete::Message::MessageDirection msgDirection =
+			from == mySelf() ? Kopete::Message::Outbound : Kopete::Message::Inbound;
+
+		Kopete::Message msg(from, to);
+		msg.setDirection( msgDirection );
+		msg.setPlainBody( txtEvent->text() );
+		msg.setType( Kopete::Message::TypeAction );
+
+		foreach( Kopete::Contact* c, to )
+		{
+			dynamic_cast<IRCContact*> ( c )->appendMessage( msg );
+		}
+
+	}
+   	/*
+	QList<Kopete::Contact*> to = getContacts(txtEvent->to());
+	//QList<IRCContact*> cc = getContacts(txtEvent->cc());
 
 	Kopete::Message::MessageType msgType;
-	switch (type)
+	if ( txtEvent->eventId()=="ServerMessage" )
+	{
+		msgType = Kopete::Message::TypeAction;
+	}
+
+	switch ( type)
 	{
 	case KIrc::????: // Action
 		msgType = Kopete::Message::TypeAction;
 		break;
 	default:
 		msgType = Kopete::Message::????;
-	}
+	}*/
 
-//	make a notification if needed, istead of posting the message to the toContact.
-//	toContact may be the wrong contact where to post in case of private user chat
+	//	make a notification if needed, istead of posting the message to the toContact.
+	//	toContact may be the wrong contact where to post in case of private user chat
 
-	Message msg(event->from(), manager()->members(), message, msgDirection,
-		    Kopete::Message::RichText, CHAT_VIEW, msgType);
-
+	/*
 	foreach
 		postContact->appendMessage(msg);
 */

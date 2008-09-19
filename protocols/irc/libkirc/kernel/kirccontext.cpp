@@ -56,19 +56,27 @@ QList<KIrc::Entity *> Context::entities() const
 
 KIrc::Entity *Context::entityFromName(const QByteArray &name)
 {
+	Q_D(Context);
 	Entity *entity = 0;
 
 	if (name.isEmpty())
 		return entity;
 
-#ifdef __GNUC__
-	#warning Do the searching code here.
-#endif
+	//TODO: optimize this using Hash or something
+	foreach( Entity* e, d->entities )
+	{
+		if ( e->name()==name )
+		{
+			entity=e;
+			break;
+		}
+	}
 
 	if (!entity)
 	{
 		entity = new Entity(this);
 		entity->setName(name);
+		add( entity );
 	}
 
 	return entity;
@@ -111,14 +119,15 @@ void Context::setDefaultCodec(QTextCodec *defaultCodec)
 	d->defaultCodec = defaultCodec;
 }
 
-void Context::postEvent(Event *event)
+void Context::postEvent(QEvent *event)
 {
-#warning CODE ME
 //	delete event;
+	emit ircEvent( event );
 }
-#if 0
+
 void Context::add(Entity *entity)
 {
+	Q_D(Context);
 	if (!d->entities.contains(entity))
 	{
 		d->entities.append(entity);
@@ -129,10 +138,11 @@ void Context::add(Entity *entity)
 
 void Context::remove(Entity *entity)
 {
+	Q_D(Context);
 	d->entities.removeAll(entity);
 //	disconnect(entity);
 }
-#endif
+
 
 #if 0
 Status Context::SET()

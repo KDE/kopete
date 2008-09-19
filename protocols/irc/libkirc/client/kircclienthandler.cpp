@@ -22,6 +22,7 @@
 #include "kircclientsocket.h"
 
 #include "kirccontext.h"
+#include "kircevent.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -33,6 +34,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
 
 // For now lets define it to be empty
 #define CHECK_ARGS(min, max)
@@ -139,22 +141,22 @@ void ClientEventHandler::postEvent(const MessageEvent *&message, Event::MessageT
 }
 */
 
-void ClientEventHandler::receivedServerMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-//	receivedServerMessage(message, message.suffix());
-}
-
 void ClientEventHandler::receivedServerMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket, const QString &message)
 {
-//	emit receivedMessage(InfoMessage, message.prefix(), Entity::List(), message);
 }
 
 #endif
 
-void ClientEventHandler::receivedServerMessage(const KIrc::Message& message)
+void ClientEventHandler::receivedServerMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
-	kDebug(14121)<<"received server message";
+	KIrc::TextEvent *event=new KIrc::TextEvent( "ServerInfo",
+												 static_cast<KIrc::ClientSocket*>( socket )->server(),
+												 static_cast<KIrc::ClientSocket*>( socket )->server() ,
+												 message.suffix()
+											   );
+	context->postEvent( event );
 }
+
 
 // FIXME: Really handle this message
 KIrc::Handler::Handled ClientEventHandler::error(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
@@ -319,9 +321,6 @@ KIrc::Handler::Handled ClientEventHandler::privmsg(KIrc::Context *context, const
 
 	CHECK_ARGS(1, 1);
 
-//	Entity::Ptr from; Entity::List to;
-	QString text;
-
 //	postEvent(ev, "PrivMsg", from, to, text);
 	return KIrc::Handler::NotHandled;
 }
@@ -410,14 +409,15 @@ void ClientEventHandler::bindNumericReplies()
 KIrc::Handler::Handled ClientEventHandler::numericReply_001(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
-	kDebug( 14121 )<<"***********numeric reply 001*********";
 
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
 	 */
-	receivedServerMessage(message);
+	//socket->setConnectionState(Socket::Authentified);
+	static_cast<KIrc::ClientSocket*>( socket )->server()->setName( message.prefix() );
 
-//	socket->setConnectionState(Socket::Authentified);
+	receivedServerMessage(context, message, socket);
+
 //	socket->owner()->setEnabled
 	return KIrc::Handler::CoreHandled;
 }
@@ -429,7 +429,7 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_002(KIrc::Context *conte
 {
 	CHECK_ARGS(1, 1);
 
-	receivedServerMessage(message);
+	receivedServerMessage(context, message, socket);
 
 	return KIrc::Handler::CoreHandled;
 }
@@ -442,7 +442,7 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_003(KIrc::Context *conte
 {
 	CHECK_ARGS(1, 1);
 
-	receivedServerMessage(message);
+	receivedServerMessage(context, message, socket);
 	return KIrc::Handler::NotHandled;
 }
 
@@ -453,6 +453,7 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_004(KIrc::Context *conte
 {
 	CHECK_ARGS(5, 5);
 
+	receivedServerMessage(context, message, socket);
 //	emit incomingHostInfo(message.arg(1),message.arg(2),message.arg(3),message.arg(4));
 	return KIrc::Handler::NotHandled;
 }
@@ -464,7 +465,6 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_005(KIrc::Context *conte
 {
 //	CHECK_ARGS(?, ?);
 
-//	receivedServerMessage(message);
 	return KIrc::Handler::NotHandled;
 }
 
@@ -478,6 +478,7 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_250(KIrc::Context *conte
 //	CHECK_ARGS(1, 1);
 
 // 	postServerInfoEvent(ev);
+	receivedServerMessage(context, message, socket);
 	return KIrc::Handler::NotHandled;
 }
 
@@ -489,6 +490,7 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_251(KIrc::Context *conte
 //	CHECK_ARGS(1, 1);
 
 // 	postServerInfoEvent(ev);
+	receivedServerMessage(context, message, socket);
 	return KIrc::Handler::NotHandled;
 }
 

@@ -23,7 +23,6 @@
 namespace KIrc
 {
 
-class Event;
 class Entity;
 
 class ContextPrivate;
@@ -63,8 +62,15 @@ public:
 
 	QList<KIrc::Entity *> entitiesFromNames(const QByteArray &names, char sep = ',');
 
+public Q_SLOTS:
+	void add(Entity* entity);
+	void remove(Entity* entity);
+
 public:
-	void postEvent(KIrc::Event *event);
+	void postEvent(QEvent *event);
+
+Q_SIGNALS:
+	void ircEvent(QEvent *event);
 
 public:
 	/* This command allow to set and get values.
