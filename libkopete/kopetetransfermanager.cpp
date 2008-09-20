@@ -20,6 +20,7 @@
 #include <QtCore/QTimerEvent>
 
 #include <klocale.h>
+#include <kdebug.h>
 #include <kfiledialog.h>
 #include <kfileitem.h>
 #include <kmessagebox.h>
@@ -46,10 +47,10 @@ Kopete::FileTransferInfo::FileTransferInfo()
 	mSaveToDirectory = false;
 }
 
-Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QString& file, const unsigned long size, const QString &recipient, KopeteTransferDirection di, const unsigned int id, QString internalId, const QPixmap &preview, bool saveToDirectory )
+Kopete::FileTransferInfo::FileTransferInfo(  Kopete::Contact *contact, const QStringList& files, const unsigned long size, const QString &recipient, KopeteTransferDirection di, const unsigned int id, QString internalId, const QPixmap &preview, bool saveToDirectory )
 {
 	mContact = contact;
-	mFile = file;
+	mFiles = files;
 	mId = id;
 	mSize = size;
 	mRecipient = recipient;
@@ -108,6 +109,7 @@ Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const Kopete::
 void Kopete::Transfer::init( const KUrl &target, bool showProgressInfo )
 {
 	d->target = target;
+	setTotalAmount( KJob::Files, d->info.files().count() );
 	setTotalAmount( KJob::Bytes, d->info.size() );
 
 	if( showProgressInfo )
@@ -148,6 +150,31 @@ KUrl Kopete::Transfer::displayURL( const Kopete::Contact *contact, const QString
 
 	url.setFileName( file );
 	return url;
+}
+
+void Kopete::Transfer::slotNextFile( const QString &sourceFile, const QString &destinationFile )
+{
+	KUrl src;
+	KUrl dest;
+
+	kDebug() << "source: " << sourceFile << " destination: " << destinationFile;
+	if( d->info.direction() == Kopete::FileTransferInfo::Incoming )
+	{
+		KUrl url( sourceFile );
+		src = displayURL( d->info.contact(), url.fileName() );
+		dest.setPath( destinationFile );
+	}
+	else
+	{
+		src.setPath( sourceFile );
+		KUrl url( destinationFile );
+		dest = displayURL( d->info.contact(), url.fileName() );
+	}
+
+	setProcessedAmount( KJob::Files, processedAmount(KJob::Files) + 1 );
+	emit description(this, i18n("Copying"),
+	                 qMakePair(i18n("Source"), src.prettyUrl()),
+	                 qMakePair(i18n("Destination"), dest.prettyUrl()));
 }
 
 // TODO: add possibility of network file transfers;
@@ -282,18 +309,28 @@ Kopete::TransferManager::TransferManager( QObject *parent ) : QObject( parent )
 {
 }
 
-Kopete::Transfer* Kopete::TransferManager::addTransfer(  Kopete::Contact *contact, const QString& file, const unsigned long size, const QString &recipient , Kopete::FileTransferInfo::KopeteTransferDirection di)
+Kopete::Transfer* Kopete::TransferManager::addTransfer( Kopete::Contact *contact, const QString& file, const unsigned long size, const QString &recipient, Kopete::FileTransferInfo::KopeteTransferDirection di)
+{
+	return addTransfer( contact, QStringList(file), size, recipient, di );
+}
+
+Kopete::Transfer* Kopete::TransferManager::addTransfer( Kopete::Contact *contact, const QStringList& files, const unsigned long size, const QString &recipient, Kopete::FileTransferInfo::KopeteTransferDirection di)
 {
 	// Use message id to make file transfer id unique because we already use it for incoming file transfer.
 	uint id = Kopete::Message::nextId();
-	Kopete::FileTransferInfo info(contact, file, size, recipient, di, id);
+	Kopete::FileTransferInfo info(contact, files, size, recipient, di, id);
 	Kopete::Transfer *trans = new Kopete::Transfer(info, contact);
 	connect(trans, SIGNAL(result(KJob *)), this, SLOT(slotComplete(KJob *)));
 	mTransfersMap.insert(id, trans);
 	return trans;
 }
 
-unsigned int Kopete::TransferManager::askIncomingTransfer( Kopete::Contact *contact, const QString& file, const unsigned long size, const QString& description, QString internalId, const QPixmap &preview, bool saveToDirectory )
+unsigned int Kopete::TransferManager::askIncomingTransfer( Kopete::Contact *contact, const QString& file, const unsigned long size, const QString& description, QString internalId, const QPixmap &preview )
+{
+	return askIncomingTransfer( contact, QStringList( file ), size, description, internalId, preview );
+}
+
+unsigned int Kopete::TransferManager::askIncomingTransfer( Kopete::Contact *contact, const QStringList& files, const unsigned long size, const QString& description, QString internalId, const QPixmap &preview )
 {
 	Kopete::ChatSession *cs = contact->manager( Kopete::Contact::CanCreate );
 	if ( !cs )
@@ -301,15 +338,28 @@ unsigned int Kopete::TransferManager::askIncomingTransfer( Kopete::Contact *cont
 	
 	QString dn = contact ? (contact->metaContact() ? contact->metaContact()->displayName() : contact->contactId()) : i18n("<unknown>");
 	
+	QString msgFileName;
+	foreach ( QString file, files )
+	{
+		QString trimmedFile = file.trimmed();
+		if ( !trimmedFile.isEmpty() )
+			msgFileName += trimmedFile + ", ";
+	}
+
+	// Remove ", " from end
+	if ( msgFileName.size() >= 2 )
+		msgFileName = msgFileName.left( msgFileName.size() - 2 );
+
 	Kopete::Message msg( contact, cs->myself() );
 	msg.setType( Kopete::Message::TypeFileTransferRequest );
 	msg.setDirection( Kopete::Message::Inbound );
 	msg.setPlainBody( description );
-	msg.setFileName( file );
+	msg.setFileName( msgFileName );
 	msg.setFileSize( size );
 	msg.setFilePreview( preview );
 	
-	Kopete::FileTransferInfo info( contact, file, size, dn, Kopete::FileTransferInfo::Incoming, msg.id(), internalId, preview, saveToDirectory );
+	Kopete::FileTransferInfo info( contact, files, size, dn, Kopete::FileTransferInfo::Incoming,
+	                               msg.id(), internalId, preview, (files.count() > 1) );
 	mTransferRequestInfoMap.insert( msg.id(), info );
 	
 	cs->appendMessage( msg );

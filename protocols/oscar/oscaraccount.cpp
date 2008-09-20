@@ -444,9 +444,15 @@ void OscarAccount::incomingFileTransfer( FileTransferHandler* ftHandler )
 	}
 	Kopete::Contact * ct = contacts()[ sender ];
 
+	// Fill the fileNameList with empty filenames if we have more files so the kopete transfer knows about them
+	QStringList fileNameList;
+	fileNameList << ftHandler->fileName();
+	for ( int i = 1; i < ftHandler->fileCount(); i++ )
+		fileNameList << "";
+
 	Kopete::TransferManager* tm = Kopete::TransferManager::transferManager();
-	uint ftId = tm->askIncomingTransfer( ct, ftHandler->fileName(), ftHandler->totalSize(), ftHandler->description(),
-	                                     ftHandler->internalId(), QPixmap(), ( ftHandler->fileCount() > 1 ) );
+	uint ftId = tm->askIncomingTransfer( ct, fileNameList, ftHandler->totalSize(), ftHandler->description(),
+	                                     ftHandler->internalId(), QPixmap() );
 	QObject::connect( ftHandler, SIGNAL(destroyed(QObject*)), this, SLOT(fileTransferDestroyed(QObject*)) );
 	QObject::connect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
 
@@ -506,6 +512,8 @@ void OscarAccount::fileTransferAccept( Kopete::Transfer* transfer, const QString
 	QObject::connect( ftHandler, SIGNAL(transferError(int, const QString&)), transfer, SLOT(slotError(int, const QString&)) );
 	QObject::connect( ftHandler, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
 	QObject::connect( ftHandler, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
+	QObject::connect( ftHandler, SIGNAL(transferNextFile(const QString&, const QString&)),
+	                  transfer, SLOT(slotNextFile(const QString&, const QString&)) );
 
 	if ( transfer->info().saveToDirectory() )
 		ftHandler->save( fileName );
