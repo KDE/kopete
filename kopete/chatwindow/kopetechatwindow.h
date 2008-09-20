@@ -147,7 +147,7 @@ private:
 	QVBoxLayout *mainLayout;
 	QFrame *mainArea;
 	QLabel *anim;
-	QMovie animIcon;
+	QMovie* animIcon;
 	QPixmap normalIcon;
 
 	KAction *chatSend;
