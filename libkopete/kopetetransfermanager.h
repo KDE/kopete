@@ -181,7 +181,7 @@ public:
 	~Transfer();
 
 	/** @brief Get the info for this file transfer */
-	const FileTransferInfo &info() const { return mInfo; }
+	const FileTransferInfo &info() const;
 
 	/**
 	 * Retrieve a URL indicating where the file is being copied from.
@@ -196,7 +196,9 @@ public:
 	 */
 	KUrl destinationURL();
 protected:
-        void emitCopying(const KUrl &src, const KUrl &dest);
+	void emitCopying(const KUrl &src, const KUrl &dest);
+
+	virtual void timerEvent ( QTimerEvent * event );
 
 public slots:
 
@@ -237,10 +239,10 @@ private:
 
 	static KUrl displayURL( const Contact *contact, const QString &file );
 
-	FileTransferInfo mInfo;
-	KUrl mTarget;
-	int mPercent;
+	void stopTransferRateTimer();
 
+	class Private;
+	Private* d;
 private slots:
 	void slotResultEmitted();
 };
