@@ -44,6 +44,7 @@
 #include <QPushButton>
 #include <QList>
 #include <QEventLoop>
+#include <QSslSocket>
 
 #include "kopetemessage.h"
 #include "kopetecontact.h"
@@ -55,19 +56,18 @@
 #include "wlmaccount.h"
 
 void
-Callbacks::registerSocket (void *s, int reading, int writing)
+Callbacks::registerSocket (void *s, int reading, int writing, bool isSSL)
 {
     WlmSocket *a = (WlmSocket*)s;
-    if (a && a->sock)
-    {
-        a->sock->enableRead (false);
-    }
-
-    if (!a)
+    if (!a || !a->sock)
         return;
 
     if (reading)
-        a->sock->enableRead (true);
+    {
+        QObject::disconnect(a->sock, SIGNAL (readyRead ()),0,0);
+        QObject::connect (a->sock, SIGNAL (readyRead ()), a,
+                  SLOT (incomingData ()));
+    }
 }
 
 void
@@ -78,6 +78,7 @@ Callbacks::closeSocket (void *s)
     {
         a->sock->close ();
         socketList.removeAll (a);
+        a->sock = NULL;
     }
 }
 
@@ -87,7 +88,7 @@ Callbacks::unregisterSocket (void *s)
     WlmSocket *a = (WlmSocket*)s;
     if (a && a->sock)
     {
-        a->sock->enableRead (false);
+        QObject::disconnect(a->sock, SIGNAL (readyRead ()),0,0);
     }
 }
 
@@ -607,21 +608,48 @@ Callbacks::changedStatus (MSN::NotificationServerConnection * conn,
 */
 }
 
+size_t 
+Callbacks::getDataFromSocket (void *sock, char *data, size_t size)
+{
+    WlmSocket *a = (WlmSocket*)sock;
+    if (!a && !a->sock)
+        return 0;
+
+    return a->sock->read(data, size);
+}
+
+size_t 
+Callbacks::writeDataToSocket (void *sock, char *data, size_t size)
+{
+    WlmSocket *a = (WlmSocket*)sock;
+    if (!a && !a->sock)
+        return 0;
+
+    return a->sock->write(data, size);
+}
+
 void *
-Callbacks::connectToServer (std::string hostname, int port, bool * connected)
+Callbacks::connectToServer (std::string hostname, int port, bool * connected, bool isSSL)
 {
     WlmSocket *a = new WlmSocket (mainConnection);
+    if(!a)
+        return NULL;
 
-    a->sock = new KNetwork::KStreamSocket ();
-    a->sock->setTimeout (10000);
-    a->sock->connect (hostname.c_str (), QString::number (port));
-    a->sock->enableWrite (false);
+    a->sock = new QSslSocket();
+    if(!a->sock)
+        return NULL;
+    connect( a->sock, SIGNAL( sslErrors(const QList<QSslError> &) ), a->sock, SLOT(
+                      ignoreSslErrors() ) );
 
-    QObject::connect (a->sock, SIGNAL (readyRead ()), a,
-                      SLOT (incomingData ()));
-    QObject::connect (a->sock, SIGNAL (connected (const KNetwork::KResolverEntry &)), a,
+    if(!isSSL)
+        a->sock->connectToHost (hostname.c_str (), port);
+    else
+        a->sock->connectToHostEncrypted (hostname.c_str (), port);
+
+    QObject::connect (a->sock, SIGNAL (connected ()), a,
                       SLOT (connected ()));
-    QObject::connect (a->sock, SIGNAL (closed ()), a, SLOT (disconnected ()));
+    QObject::connect (a->sock, SIGNAL (disconnected ()), a, 
+                      SLOT (disconnected ()));
 
     *connected = false;
     socketList.append (a);
@@ -675,7 +703,7 @@ Callbacks::getSocketFileDescriptor (void *sock)
     WlmSocket *a = (WlmSocket*)sock;
     if(!a || !a->sock)
         return -1;
-    return a->sock->socketDevice ()->socket();
+    return a->sock->socketDescriptor();
 }
 
 std::string Callbacks::getSecureHTTPProxy ()

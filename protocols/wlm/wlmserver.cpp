@@ -65,8 +65,6 @@ WlmServer::WlmDisconnect ()
         a = i.next();
         QObject::disconnect (a, 0, 0, 0);
         QObject::disconnect (a->sock, 0, 0, 0);
-        a->sock->enableRead (false);
-        a->sock->enableWrite (false);
         a->sock->disconnect ();
         cb.socketList.removeAll (a);
     }

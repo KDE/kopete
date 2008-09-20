@@ -19,8 +19,7 @@
 
 #include <QObject>
 
-#include <k3streamsocket.h>
-#include <k3socketdevice.h>
+#include <QSslSocket>
 
 #include <msn/msn.h>
 
@@ -28,7 +27,7 @@ class WlmSocket : public QObject
 {
   Q_OBJECT 
 public:
-    KNetwork::KStreamSocket * sock;
+    QSslSocket * sock;
     MSN::NotificationServerConnection * mainConnection;
     bool main;
       WlmSocket (MSN::NotificationServerConnection * mainConnection)

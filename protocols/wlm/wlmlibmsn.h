@@ -35,7 +35,7 @@ class Callbacks:public QObject,
         myFriendlyName;
 
     virtual void
-    registerSocket (void *s, int read, int write);
+    registerSocket (void *s, int read, int write, bool isSSL);
 
     virtual void
     unregisterSocket (void *s);
@@ -235,7 +235,11 @@ class Callbacks:public QObject,
                    MSN::BuddyStatus state);
 
     virtual void * 
-    connectToServer (std::string server, int port, bool * connected);
+    connectToServer (std::string server, int port, bool * connected, bool isSSL);
+
+    virtual size_t getDataFromSocket (void *sock, char *data, size_t size);
+
+    virtual size_t writeDataToSocket (void *sock, char *data, size_t size);
 
     virtual void
     connectionReady (MSN::Connection * conn);
