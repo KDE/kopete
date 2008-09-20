@@ -49,7 +49,7 @@ private:
 	bool postEvent(MessageEvent *ev, const QByteArray &eventId, Entity::Ptr &from, Entity::List &to, Entity::List &victims, QString &text = QString());
 #endif
 
-	void receivedServerMessage(const KIrc::Message& msg);
+	void receivedServerMessage(KIrc::Context *context, const KIrc::Message& msg, KIrc::Socket *socket);
 private Q_SLOTS:
 	Handler::Handled error(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled join(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);

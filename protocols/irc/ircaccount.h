@@ -135,6 +135,7 @@ public:
 
 	IRCContact *getContact(const QByteArray &name, Kopete::MetaContact *metac=0);
 	IRCContact *getContact(KIrc::Entity *entity, Kopete::MetaContact *metac=0);
+	QList<Kopete::Contact*> getContacts( const QList<KIrc::Entity*>& entities);
 
 	virtual void fillActionMenu( KActionMenu *actionMenu );
 
@@ -168,7 +169,7 @@ private slots:
 
 	void destroyed(IRCContact *contact);
 
-	void receivedEvent(KIrc::Event *event);
+	void receivedEvent(QEvent *event);
 
 	void slotPerformOnConnectCommands();
 

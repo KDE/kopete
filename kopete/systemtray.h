@@ -54,7 +54,7 @@ public:
 	void startBlink();
 
 	void stopBlink();
-	bool isBlinking() const { return mIsBlinking || movie()->state() == QMovie::Running; }
+	bool isBlinking() const { return mIsBlinking || (movie() &&  movie()->state() == QMovie::Running); }
 
 Q_SIGNALS:
 	void aboutToShowMenu(KMenu *am);

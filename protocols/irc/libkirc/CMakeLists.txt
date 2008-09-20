@@ -11,7 +11,7 @@ set(libkirc_SRCS
 	kernel/kircconst.cpp 
 	kernel/kirccontext.cpp
 	kernel/kircentity.cpp
-#	kernel/kircevent.cpp 
+	kernel/kircevent.cpp 
 	kernel/kirchandler.cpp
 	kernel/kirchandlerfactory.cpp
 	kernel/kirchandlerplugin.cpp

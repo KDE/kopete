@@ -158,7 +158,7 @@ void Protocol::aboutToUnload()
 		}
 	}
 
-	if( accountcountcount > 0 )
+	if( accountcountcount == 0 )
 	{
 		//no accounts in there anymore ,   we can unload safelly
 		emit readyForUnload();

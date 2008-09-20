@@ -129,6 +129,11 @@ KIrc::ClientSocket *IRCContact::kircClient() const
 	return ircAccount()->client();
 }
 
+KIrc::Entity* IRCContact::entity() const
+{
+	return d->entity;
+}
+
 void IRCContact::entityUpdated()
 {
 	Global::Properties *prop = Global::Properties::self();
@@ -243,14 +248,16 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 {
 	IRCAccount *account = ircAccount();
 	KIrc::ClientSocket *engine = kircClient();
-/*
-	Kopete::ChatSession *chatSession = d->chatSessions.get();
+
+	Kopete::ChatSession *chatSession = d->chatSessions.value(type);
 	if (!chatSession)
 	{
 //		if (engine->status() == KIrc::ClientSocket::Idle && dynamic_cast<IRCServerContact*>(this) == 0)
 //			account->connect();
 
-		chatSession = ChatSessionManager::self()->create(account->myself(), mMyself, account->protocol());
+		kDebug(14120)<<"creating new ChatSession";
+
+		chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) , account->protocol());
 		chatSession->setDisplayName(caption());
 
 		connect(chatSession, SIGNAL(messageSent(Message&, ChatSession *)),
@@ -258,12 +265,10 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 		connect(chatSession, SIGNAL(closing(ChatSession *)),
 			this, SLOT(chatSessionDestroyed(ChatSession *)));
 
-		d->chatSessions.add(type, chatSession);
+		d->chatSessions.insert(type, chatSession);
 	}
 
 	return chatSession;
-*/
-	return 0;
 }
 
 void IRCContact::chatSessionDestroyed(ChatSession *chatSession)
@@ -413,7 +418,7 @@ bool IRCContact::isChatting(ChatSession *avoid) const
 
 void IRCContact::appendMessage(Message &msg)
 {
-//	manager(Contact::CanCreate)->appendMessage(msg);
+	manager(Contact::CanCreate)->appendMessage(msg);
 }
 /*
 void IRCServerContact::appendMessage(Kopete::Message &msg)
