@@ -43,7 +43,11 @@ ClientSocket::ClientSocket(Context *context)
 	Q_D(ClientSocket);
 	d->server = new Entity(context);
 
-	context->addEventHandler( new ClientEventHandler(context) );
+	ClientEventHandler *clientHandler=new ClientEventHandler( context );
+	context->addEventHandler( clientHandler );
+	clientHandler->setEnabled( true );
+
+	context->setEnabled( true );
 
 //	d->versionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
 //	d->userString = QString::fromLatin1("Response not supplied by user.");

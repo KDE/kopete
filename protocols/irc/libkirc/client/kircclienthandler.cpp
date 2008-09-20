@@ -59,14 +59,6 @@ ClientEventHandler::~ClientEventHandler()
 	delete d_ptr;
 }
 
-
-KIrc::Handler::Handled ClientEventHandler::onMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	if(message.argAt(0)=="001") { numericReply_001(context,message,socket); return Handler::CoreHandled; }
-	else return Handler::NotHandled;
-}
-
-
 #if 0
 void ClientEventHandler::postEvent(QEvent *event)
 {
@@ -165,11 +157,12 @@ void ClientEventHandler::receivedServerMessage(const KIrc::Message& message)
 }
 
 // FIXME: Really handle this message
-void ClientEventHandler::error(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::error(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(0, 0);
 
 //	message->client->close();
+	return KIrc::Handler::NotHandled;
 }
 
 /* RFC say: "( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0""
@@ -178,7 +171,7 @@ void ClientEventHandler::error(KIrc::Context *context, const KIrc::Message &mess
  * This is the response of someone joining a channel.
  * Remember that this will be emitted when *you* /join a room for the first time
  */
-void ClientEventHandler::join(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::join(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 /*
@@ -203,12 +196,13 @@ void ClientEventHandler::join(KIrc::Context *context, const KIrc::Message &messa
 		}
 	}
 */
+	return KIrc::Handler::NotHandled;
 }
 
 /* The given user is kicked.
  * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
  */
-void ClientEventHandler::kick(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::kick(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 
 	Q_D(ClientEventHandler);
@@ -223,12 +217,13 @@ void ClientEventHandler::kick(KIrc::Context *context, const KIrc::Message &messa
 //			channel->remove(users);
 	}
 */
+	return KIrc::Handler::NotHandled;
 }
 
 /* Change the mode of a user.
  * "<nickname> *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )"
  */
-void ClientEventHandler::mode(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::mode(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 /*
@@ -236,18 +231,19 @@ void ClientEventHandler::mode(KIrc::Context *context, const KIrc::Message &messa
 
 	Entity::Ptr from;
 	Entity::List to;
-	QString modeDelta; // = message.argAt(2); 
+	QString modeDelta; // = message.argAt(2);
 
 	if (postEvent(ev, "Mode", from, to, modeDelta)) {
 //		to->setMode(modeDelta);
 	}
 */
+	return KIrc::Handler::NotHandled;
 }
 
 /* Nick name of a user changed
  * "<nickname>"
  */
-void ClientEventHandler::nick(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::nick(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 
@@ -259,7 +255,7 @@ void ClientEventHandler::nick(KIrc::Context *context, const KIrc::Message &messa
 
 /* Do not support CTCP here, just do the simple message handling.
  */
-void ClientEventHandler::notice(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::notice(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 
@@ -267,12 +263,13 @@ void ClientEventHandler::notice(KIrc::Context *context, const KIrc::Message &mes
 	QString text;
 
 //	postEvent(ev, "Notice", from, to, text);
+	return KIrc::Handler::NotHandled;
 }
 
 /* This signal emits when a user parts a channel
  * "<channel> *( "," <channel> ) [ <Part Message> ]"
  */
-void ClientEventHandler::part(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::part(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 /*
@@ -285,9 +282,10 @@ void ClientEventHandler::part(KIrc::Context *context, const KIrc::Message &messa
 //			channel->remove(from);
 	}
 */
+	return KIrc::Handler::NotHandled;
 }
 
-void ClientEventHandler::ping(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::ping(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 
@@ -301,19 +299,21 @@ void ClientEventHandler::ping(KIrc::Context *context, const KIrc::Message &messa
 
 //	message->client->writeMessage(reply);
 #endif
+	return KIrc::Handler::NotHandled;
 }
 
-void ClientEventHandler::pong(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::pong(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 
 	CHECK_ARGS(0, 0);
 
+	return KIrc::Handler::NotHandled;
 }
 
 /* Do not support CTCP here, just do the simple message handling.
  */
-void ClientEventHandler::privmsg(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::privmsg(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 
@@ -323,9 +323,10 @@ void ClientEventHandler::privmsg(KIrc::Context *context, const KIrc::Message &me
 	QString text;
 
 //	postEvent(ev, "PrivMsg", from, to, text);
+	return KIrc::Handler::NotHandled;
 }
 
-void ClientEventHandler::quit(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::quit(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 /*
@@ -338,10 +339,11 @@ void ClientEventHandler::quit(KIrc::Context *context, const KIrc::Message &messa
 //		d->context->remove(from);
 	}
 */
+	return KIrc::Handler::NotHandled;
 }
 
 /*
-void CLientCommands::squit(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled CLientCommands::squit(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 }
@@ -350,7 +352,7 @@ void CLientCommands::squit(KIrc::Context *context, const KIrc::Message &message,
 /* "<channel> [ <topic> ]"
  * The topic of a channel changed. emit the channel, new topic, and the person who changed it.
  */
-void ClientEventHandler::topic(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::topic(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 /*
@@ -362,6 +364,7 @@ void ClientEventHandler::topic(KIrc::Context *context, const KIrc::Message &mess
 //		channel->set(Topic, topic);
 	}
 */
+	return KIrc::Handler::NotHandled;
 }
 
 
@@ -404,9 +407,10 @@ void ClientEventHandler::bindNumericReplies()
 /* 001: "Welcome to the Internet Relay Network <nick>!<user>@<host>"
  * Gives a welcome message in the form of:
  */
-void ClientEventHandler::numericReply_001(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_001(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
+	kDebug( 14121 )<<"***********numeric reply 001*********";
 
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
@@ -415,47 +419,53 @@ void ClientEventHandler::numericReply_001(KIrc::Context *context, const KIrc::Me
 
 //	socket->setConnectionState(Socket::Authentified);
 //	socket->owner()->setEnabled
+	return KIrc::Handler::CoreHandled;
 }
 
 /* 002: ":Your host is <servername>, running version <ver>"
  * Gives information about the host. The given information are close to 004.
  */
-void ClientEventHandler::numericReply_002(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_002(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 
 	receivedServerMessage(message);
+
+	return KIrc::Handler::CoreHandled;
 }
 
 /* 003: "This server was created <date>"
  * Gives the date that this server was created.
  * NOTE: This is useful for determining the uptime of the server).
  */
-void ClientEventHandler::numericReply_003(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_003(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 
 	receivedServerMessage(message);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 004: "<servername> <version> <available user modes> <available channel modes>"
  * Gives information about the servername, version, available modes, etc.
  */
-void ClientEventHandler::numericReply_004(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_004(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(5, 5);
 
 //	emit incomingHostInfo(message.arg(1),message.arg(2),message.arg(3),message.arg(4));
+	return KIrc::Handler::NotHandled;
 }
 
 /* 005:
  * Gives capability information. TODO: This is important!
  */
-void ClientEventHandler::numericReply_005(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_005(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	CHECK_ARGS(?, ?);
 
 //	receivedServerMessage(message);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 250: ":Highest connection count: <integer> (<integer> clients)
@@ -463,27 +473,29 @@ void ClientEventHandler::numericReply_005(KIrc::Context *context, const KIrc::Me
  * Tells connections statistics about the server for the uptime activity.
  * NOT IN RFC1459 NOR RFC2812
  */
-void ClientEventHandler::numericReply_250(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_250(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	CHECK_ARGS(1, 1);
 
 // 	postServerInfoEvent(ev);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 251: ":There are <integer> users and <integer> services on <integer> servers"
  * Tells how many user there are on all the different servers in the form of:
  */
-void ClientEventHandler::numericReply_251(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_251(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	CHECK_ARGS(1, 1);
 
 // 	postServerInfoEvent(ev);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 252: "<integer> :operator(s) online"
  * Issues a number of operators on the server in the form of:
  */
-void ClientEventHandler::numericReply_252(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_252(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 
@@ -495,12 +507,13 @@ void ClientEventHandler::numericReply_252(KIrc::Context *context, const KIrc::Me
 
 // 	if (ok)
 //		postEvent(ev, "OperatorsOnline", from, to, text);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 253: "<integer> :unknown connection(s)"
  * Tells how many unknown connections the server has in the form of:
  */
-void ClientEventHandler::numericReply_253(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_253(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
@@ -510,12 +523,13 @@ void ClientEventHandler::numericReply_253(KIrc::Context *context, const KIrc::Me
 
 // 	if (ok)
 //		postEvent(ev, "UnkownConnections", from, to, text);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 254: "<integer> :channels formed"
  * Tells how many total channels there are on this network.
  *  */
-void ClientEventHandler::numericReply_254(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_254(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
@@ -524,48 +538,53 @@ void ClientEventHandler::numericReply_254(KIrc::Context *context, const KIrc::Me
 // 	QString text = i18np("There has been %1 channel formed.", "There have been %1 channels formed.", ev->message().argAt(1).toULong(&ok));
 
 // 	if (ok)
-//		postEvent(ev, "ChannelsFormed", from, to, text);	
+//		postEvent(ev, "ChannelsFormed", from, to, text);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
  * Tells how many clients and servers *this* server handles.
  */
-void ClientEventHandler::numericReply_255(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_255(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 // 	postServerInfoEvent(ev);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 263: "<command> :Please wait a while and try again."
  * Server is too busy.
  */
-void ClientEventHandler::numericReply_263(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_263(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	Entity::Ptr from; Entity::List to;
 //	QString text = i18n("Server was too busy to execute %1.", ev->message().argAt(1));
 
 //	postEvent(ev, "ServerTooBusy", from, to, text);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 265: ":Current local  users: <integer>  Max: <integer>"
  * Tells statistics about the current local server state.
  * NOT IN RFC2812
  */
-void ClientEventHandler::numericReply_265(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_265(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 // 	postServerInfoEvent(ev);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 266: ":Current global users: <integer>  Max: <integer>"
  * Tells statistics about the current global(the whole irc server chain) server state:
  */
-void ClientEventHandler::numericReply_266(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_266(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 // 	postServerInfoEvent(ev);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 301: "<nick> :<away message>"
  */
-void ClientEventHandler::numericReply_301(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_301(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
@@ -576,11 +595,12 @@ void ClientEventHandler::numericReply_301(KIrc::Context *context, const KIrc::Me
 
 	receivedServerMessage(message);
 */
+	return KIrc::Handler::NotHandled;
 }
 
 /* 303: ":*1<nick> *(" " <nick> )"
  */
-void ClientEventHandler::numericReply_303(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_303(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 
@@ -592,11 +612,12 @@ void ClientEventHandler::numericReply_303(KIrc::Context *context, const KIrc::Me
 			emit incomingUserOnline(*it);
 	}
 */
+	return KIrc::Handler::NotHandled;
 }
 
 /* 305: ":You are no longer marked as being away"
  */
-void ClientEventHandler::numericReply_305(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_305(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 /*
 	Entity::Ptr self = this->self();
@@ -604,34 +625,38 @@ void ClientEventHandler::numericReply_305(KIrc::Context *context, const KIrc::Me
 //	self->setModes("-a");
 	postInfoEvent(message, i18n("You are no longer marked as being away."));
 */
+	return KIrc::Handler::NotHandled;
 }
 
 
 /* 306: ":You have been marked as being away"
  */
-void ClientEventHandler::numericReply_306(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_306(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	Entity::Ptr from; Entity::List to;
 
 // 	if (postEvent(ev, "YouAreAway", from, to, i18n("You have been marked as being away."))) {
 //		self->setModes("+a");
 // 	}
+	return KIrc::Handler::NotHandled;
 }
 
 /* 319: "<nick> :{[@|+]<channel><space>}"
  * Show info a channel a user is logged in (part of a /whois) in the form of:
  */
-void ClientEventHandler::numericReply_319(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_319(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit incomingWhoIsChannels(message.arg(1), message.suffix());
+	return KIrc::Handler::NotHandled;
 }
 
 /* 320:
  * Indicates that this user is identified with NICSERV on FREENODE.
  */
-void ClientEventHandler::numericReply_320(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_320(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit incomingWhoIsIdentified(message.arg(1));
+	return KIrc::Handler::NotHandled;
 }
 
 /* 321: "<channel> :Users  Name" ("Channel :Users  Name")
@@ -642,61 +667,68 @@ void ClientEventHandler::numericReply_320(KIrc::Context *context, const KIrc::Me
 /* 322: "<channel> <# visible> :<topic>"
  * Received one channel from the LIST command.
  */
-void ClientEventHandler::numericReply_322(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_322(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit incomingListedChan(message.arg(1), message.arg(2).toUInt(), message.suffix());
+	return KIrc::Handler::NotHandled;
 }
 
 /* 323: ":End of LIST"
  * End of the LIST command.
  */
-void ClientEventHandler::numericReply_323(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_323(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit receivedServerMessage(message);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 324: "<channel> <mode> <mode params>"
  */
-void ClientEventHandler::numericReply_324(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_324(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit incomingChannelMode(message.arg(1), message.arg(2), message.arg(3));
+	return KIrc::Handler::NotHandled;
 }
 
 /* 328:
  */
-void ClientEventHandler::numericReply_328(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_328(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit incomingChannelHomePage(message.arg(1), message.suffix());
+	return KIrc::Handler::NotHandled;
 }
 
 /* 329: "%s %lu"
  * NOTE: What is the meaning of this arguments. DAL-ircd say it's a RPL_CREATIONTIME
  * NOT IN RFC1459 NOR RFC2812
  */
-void ClientEventHandler::numericReply_329(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_329(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
+	return KIrc::Handler::NotHandled;
 }
 
 /* 331: "<channel> :No topic is set"
  * Gives the existing topic for a channel after a join.
  */
-void ClientEventHandler::numericReply_331(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_331(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit incomingExistingTopic(message.arg(1), suffix);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 332: "<channel> :<topic>"
  * Gives the existing topic for a channel after a join.
  */
-void ClientEventHandler::numericReply_332(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_332(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit incomingExistingTopic(message.arg(1), message.suffix());
+	return KIrc::Handler::NotHandled;
 }
 
 /* 333:
  * Gives the nickname and time who changed the topic
  */
-void ClientEventHandler::numericReply_333(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_333(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(4, 4);
 
@@ -705,12 +737,13 @@ void ClientEventHandler::numericReply_333(KIrc::Context *context, const KIrc::Me
 	d.setTime_t( message.arg(3).toLong() );
 	emit incomingTopicUser(message.arg(1), message.arg(2), d );
 */
+	return KIrc::Handler::NotHandled;
 }
 
 /* 352:
  * WHO Reply
  */
-void ClientEventHandler::numericReply_352(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_352(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 /*
 	QStringList suffix = QStringList::split( ' ', message.suffix() );
@@ -727,118 +760,129 @@ void ClientEventHandler::numericReply_352(KIrc::Context *context, const KIrc::Me
 		message.suffix().section(' ', 1 )
 	);
 */
+	return KIrc::Handler::NotHandled;
 }
 
 
 /* 353:
  * NAMES list
  */
-void ClientEventHandler::numericReply_353(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_353(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(3, 3);
 
 //	emit incomingNamesList(message.arg(2), QStringList::split(' ', message.suffix()));
+	return KIrc::Handler::NotHandled;
 }
 
 /* 366: "<channel> :End of NAMES list"
  * Gives a signal to indicate that the NAMES list has ended for channel.
  */
-void ClientEventHandler::numericReply_366(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_366(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
 //	emit receivedServerMessage(message);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 369: "<nick> :End of WHOWAS"
  * End of WHOWAS Request
  */
-void ClientEventHandler::numericReply_369(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_369(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
 //	emit receivedServerMessage(message);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 372: ":- <text>"
  * Part of the MOTD.
  */
-void ClientEventHandler::numericReply_372(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_372(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 
 	#warning FIXME remove the "- " in front.
 //	postMOTDEvent(message);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 375: ":- <server> MessageEvent *of the day - "
  * Beginging the motd. This isn't emitted because the MOTD is sent out line by line.
  */
-void ClientEventHandler::numericReply_375(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_375(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 
 //	postMOTDEvent(message);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 376: ":End of MOTD command"
  * End of the motd.
  */
-void ClientEventHandler::numericReply_376(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_376(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 
 //	postMOTDEvent(message);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 401: "<nickname> :No such nick/channel"
  * Gives a signal to indicate that the command issued failed because the person/channel not being on IRC.
  *  - Used to indicate the nickname parameter supplied to a command is currently unused.
  */
-void ClientEventHandler::numericReply_401(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_401(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
 //	i18n("The channel \"%1\" does not exist").arg(nick)
 //	i18n("The nickname \"%1\" does not exist").arg(nick)
+	return KIrc::Handler::NotHandled;
 }
 
 /* 404: "<channel name> :Cannot send to channel"
  */
-void ClientEventHandler::numericReply_404(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_404(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
 //	postErrorEvent(message, i18n("You cannot send message to channel %1.", message.arg(2)));
+	return KIrc::Handler::NotHandled;
 }
 
 /* 406: "<nickname> :There was no such nickname"
  * Like case 401, but when there *was* no such nickname.
  */
-void ClientEventHandler::numericReply_406(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_406(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
 	#warning FIXME 406 MEANS *NEVER*, unlike 401
 //	i18n("The channel \"%1\" does not exist").arg(nick)
 //	i18n("The nickname \"%1\" does not exist").arg(nick)
+	return KIrc::Handler::NotHandled;
 }
 
 /* 422: ":MOTD File is missing"
  *
  * Server's MOTD file could not be opened by the server.
  */
-void ClientEventHandler::numericReply_422(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_422(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 
 //	postErrorEvent(message);
+	return KIrc::Handler::NotHandled;
 }
 
 /* 433: "<nick> :Nickname is already in use"
  * Tells us that our nickname is already in use.
  */
-void ClientEventHandler::numericReply_433(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_433(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
@@ -857,21 +901,23 @@ void ClientEventHandler::numericReply_433(KIrc::Context *context, const KIrc::Me
 //		emit incomingNickInUse(message.arg(1));
 //	}
 //	postErrorEvent(message, i18n("Nickname %1 is already in use.", message.arg(1)));
+	return KIrc::Handler::NotHandled;
 }
 
 /* 442: "<channel> :You're not on that channel"
  */
-void ClientEventHandler::numericReply_442(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_442(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
 //	postErrorEvent(message, i18n("You are not on channel %1.", message.arg(1)));
+	return KIrc::Handler::NotHandled;
 }
 
 /* 464: ":Password Incorrect"
  * Bad server password
  */
-void ClientEventHandler::numericReply_464(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_464(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1)
 
@@ -882,6 +928,7 @@ void ClientEventHandler::numericReply_464(KIrc::Context *context, const KIrc::Me
 //	postEvent(ev, "PasswordIncorrect", from, to, text);
 
 //	emit incomingFailedServerPassword();
+	return KIrc::Handler::NotHandled;
 }
 
 /* 465: ":You are banned from this server"
@@ -890,11 +937,12 @@ void ClientEventHandler::numericReply_464(KIrc::Context *context, const KIrc::Me
 /* 471: "<channel> :Cannot join channel (+l)"
  * Channel is Full
  */
-void ClientEventHandler::numericReply_471(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_471(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2)
 
 //	postErrorEvent(message, i18n("Cannot join %1, channel is full.", message.arg(2)) );
+	return KIrc::Handler::NotHandled;
 }
 
 /* 472: "<char> :is unknown mode char to me for <channel>"
@@ -903,31 +951,34 @@ void ClientEventHandler::numericReply_471(KIrc::Context *context, const KIrc::Me
 /* 473: "<channel> :Cannot join channel (+i)"
  * Invite Only.
  */
-void ClientEventHandler::numericReply_473(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_473(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2)
 
 //	postErrorEvent(message, i18n("Cannot join %1, channel is invite only.", message.arg(2)) );
+	return KIrc::Handler::NotHandled;
 }
 
 /* 474: "<channel> :Cannot join channel (+b)"
  * Banned.
  */
-void ClientEventHandler::numericReply_474(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_474(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2)
 
 //	postErrorEvent(message, i18n("Cannot join %1, you are banned from that channel.", message.arg(2)) );
+	return KIrc::Handler::NotHandled;
 }
 
 /* 475: "<channel> :Cannot join channel (+k)"
  * Wrong Chan-key.
  */
-void ClientEventHandler::numericReply_475(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::numericReply_475(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2)
 
 //	postErrorEvent(message, i18n("Cannot join %1, wrong channel key was given.", message.arg(2)) );
+	return KIrc::Handler::NotHandled;
 }
 
 /* 476: "<channel> :Bad Channel Mask"

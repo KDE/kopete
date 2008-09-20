@@ -53,7 +53,6 @@ set(kopete_SRCS
    ${kopetecontactlist_SRCS}
    main.cpp
    kopeteapplication.cpp
-   kanimatedsystemtrayicon.cpp
    systemtray.cpp
    kopetewindow.cpp
    kopeteidentitystatusbaricon.cpp
