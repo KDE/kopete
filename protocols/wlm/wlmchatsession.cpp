@@ -61,11 +61,11 @@ WlmChatSession::WlmChatSession (Kopete::Protocol * protocol,
                                 MSN::SwitchboardServerConnection * conn):
 Kopete::ChatSession (user, others, protocol),
 m_chatService (conn),
-m_oimid (1),
-sessionID (12345),
 m_downloadDisplayPicture (false),
 m_sendNudge (false),
-m_tries (0)
+m_tries (0),
+m_oimid (1),
+sessionID (12345)
 {
     Kopete::ChatSessionManager::self ()->registerChatSession (this);
 

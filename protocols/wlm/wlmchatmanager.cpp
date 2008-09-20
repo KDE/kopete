@@ -294,7 +294,7 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
     }
     else
     {
-        kdWarning (14210) << k_funcinfo <<
+        kWarning (14210) << k_funcinfo <<
             "unable to look up contact for delivery";
     }
 }
