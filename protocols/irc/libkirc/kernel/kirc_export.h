@@ -1,9 +1,9 @@
 /*
-    Kopete Export macors
+    libkirc export macors
 
-    Copyright (c) 2007      by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2007-2008 by Michel Hermier <michel.hermier@gmail.com>
 
-    Kopete    (c) 2007      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2007-2008 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,29 +15,34 @@
     *************************************************************************
 */
 
-#ifndef KIRCGLOBAL_H
-#define KIRCGLOBAL_H
+#ifndef KIRC_EXPORT_H
+#define KIRC_EXPORT_H
 
-#include <QtCore/QByteArray>
-#include <QtCore/QList>
+#include <kdemacros.h>
 
-namespace KIrc
-{
+#if defined Q_OS_WIN
 
-typedef struct
-{
-	QByteArray value;
-} OptArg;
+#ifndef KIRC_EXPORT
+# ifdef MAKE_KIRC_LIB
+#  define KIRC_EXPORT KDE_EXPORT
+# else
+#  define KIRC_EXPORT KDE_IMPORT
+# endif
+#endif
 
-static inline
-KIrc::OptArg optArg(const QByteArray &arg)
-{ KIrc::OptArg r; r.value = arg; return r; }
+#ifndef KIRCCLIENT_EXPORT
+# ifdef MAKE_KIRC_CLIENT_LIB
+#  define KIRCCLIENT_EXPORT KDE_EXPORT
+# else
+#  define KIRCCLIENT_EXPORT KDE_IMPORT
+# endif
+#endif
 
-// The isNull test is intented.
-static inline
-QList<QByteArray> &operator << (QList<QByteArray> &list, const KIrc::OptArg &optArg)
-{ if (!optArg.value.isNull()) list.append(optArg.value); return list; }
+#else
 
-};
+#define KIRC_EXPORT KDE_EXPORT
+#define KIRCCLIENT_EXPORT KDE_EXPORT
 
 #endif
+
+#endif // KIRC_EXPORT_H

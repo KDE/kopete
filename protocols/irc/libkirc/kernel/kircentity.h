@@ -18,7 +18,7 @@
 #ifndef KIRCENTITY_H
 #define KIRCENTITY_H
 
-#include "kircglobal.h"
+#include "kirc_export.h"
 
 #include <QExplicitlySharedDataPointer>
 #include <QList>

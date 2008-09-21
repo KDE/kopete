@@ -15,9 +15,10 @@
     *************************************************************************
 */
 
-#ifndef KIRC_MESSAGE_H
-#define KIRC_MESSAGE_H
+#ifndef KIRCMESSAGE_H
+#define KIRCMESSAGE_H
 
+#include "kirc_export.h"
 #include "kircglobal.h"
 
 #include "kircentity.h"
