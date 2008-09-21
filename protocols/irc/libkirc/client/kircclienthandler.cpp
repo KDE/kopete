@@ -149,11 +149,8 @@ void ClientEventHandler::receivedServerMessage(KIrc::Context *context, const KIr
 
 void ClientEventHandler::receivedServerMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
-	KIrc::TextEvent *event=new KIrc::TextEvent( "ServerInfo",
-												 static_cast<KIrc::ClientSocket*>( socket )->server(),
-												 static_cast<KIrc::ClientSocket*>( socket )->server() ,
-												 message.suffix()
-											   );
+	KIrc::Entity *server = static_cast<KIrc::ClientSocket*>( socket )->server();
+	KIrc::TextEvent *event=new KIrc::TextEvent( "ServerInfo", server, server, message.suffix() );
 	context->postEvent( event );
 }
 
