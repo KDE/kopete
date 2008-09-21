@@ -248,7 +248,7 @@ public slots:
 	void slotInfo( int type, const QString &text ); */
 
 	/** display a message in the chatwindow if it exists */
-	bool showMessage( QString text );
+	bool showMessage( QString text ) const;
 
 signals:
 	/**
@@ -260,6 +260,9 @@ private:
 	void init( const KUrl &, bool );
 
 	static KUrl displayURL( const Contact *contact, const QString &file );
+
+	bool showHtmlMessage( QString text ) const;
+	QString fileForMessage() const;
 
 	void stopTransferRateTimer();
 

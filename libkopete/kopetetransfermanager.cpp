@@ -18,6 +18,7 @@
 */
 
 #include <QtCore/QTimerEvent>
+#include <QtGui/QTextDocument>
 
 #include <klocale.h>
 #include <kdebug.h>
@@ -79,6 +80,9 @@ public:
 	FileTransferInfo info;
 	KUrl target;
 
+	//if ft has one file then localUrl is file otherwise it's directory
+	KUrl localUrl;
+
 	int transferRate[TransferRateWindowLength];
 	int transferRateTimer;
 };
@@ -91,6 +95,7 @@ Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const QString 
 		KIO::getJobTracker()->registerJob(this);
 
 	KUrl targ; targ.setPath( localFile );
+	d->localUrl = targ;
 	init( targ, showProgressInfo );
 }
 
@@ -242,7 +247,7 @@ void Kopete::Transfer::timerEvent( QTimerEvent *event )
 void Kopete::Transfer::slotComplete()
 {
 	stopTransferRateTimer();
-	showMessage( i18n("File transfer %1 completed. :)", d->info.file() ) );
+	showHtmlMessage( i18n("File transfer %1 completed.", fileForMessage() ) );
 	emitResult();
 }
 
@@ -252,7 +257,7 @@ void Kopete::Transfer::slotError( int error, const QString &errorText )
 	setError(error);
 	setErrorText(errorText);
 
-	showMessage( i18n("File transfer %1 failed. :(", d->info.file() ) );
+	showHtmlMessage( i18n("File transfer %1 failed.", fileForMessage() ) );
 	emitResult();
 }
 
@@ -261,7 +266,7 @@ void Kopete::Transfer::slotResultEmitted()
 	if( error() == KIO::ERR_USER_CANCELED )
 	{
 		stopTransferRateTimer();
-		showMessage( i18n("You cancelled file transfer %1", d->info.file() ) );
+		showHtmlMessage( i18n("You cancelled file transfer %1", fileForMessage() ) );
 		emit transferCanceled();
 	}
 }
@@ -269,12 +274,12 @@ void Kopete::Transfer::slotResultEmitted()
 void Kopete::Transfer::slotCancelled()
 {
 	stopTransferRateTimer();
-	showMessage( i18n("File transfer %1 cancelled.", d->info.file() ) );
+	showHtmlMessage( i18n("File transfer %1 cancelled.", fileForMessage() ) );
 	emitResult();
 	//slotError( KIO::ERR_ABORTED, i18n("File transfer cancelled.") );
 }
 
-bool Kopete::Transfer::showMessage( QString text )
+bool Kopete::Transfer::showMessage( QString text ) const
 {
 	Kopete::ChatSession *cs = d->info.contact()->manager();
 	if (! cs)
@@ -284,6 +289,26 @@ bool Kopete::Transfer::showMessage( QString text )
 	msg.setPlainBody( text );
 	cs->appendMessage( msg );
 	return true;
+}
+
+bool Kopete::Transfer::showHtmlMessage( QString text ) const
+{
+	Kopete::ChatSession *cs = d->info.contact()->manager();
+	if (! cs)
+		return false;
+	
+	Kopete::Message msg;
+	msg.setHtmlBody( text );
+	cs->appendMessage( msg );
+	return true;
+}
+
+QString Kopete::Transfer::fileForMessage() const
+{
+	if( d->info.direction() == Kopete::FileTransferInfo::Incoming )
+		return QString( "<a href=\"%1\">%2</a>" ).arg( d->localUrl.url(), Qt::escape( d->localUrl.path() ) );
+	else
+		return Qt::escape( d->info.file() );
 }
 
 void Kopete::Transfer::stopTransferRateTimer()
