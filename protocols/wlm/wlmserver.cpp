@@ -33,7 +33,6 @@ void
 WlmServer::WlmConnect ()
 {
     cb.m_server = this;
-    cb.sessionID = 123456;
     mainConnection =
         new MSN::NotificationServerConnection (m_accountID.toLatin1 ().data (),
                                                m_password.toLatin1 ().data (),
@@ -64,8 +63,11 @@ WlmServer::WlmDisconnect ()
     {
         a = i.next();
         QObject::disconnect (a, 0, 0, 0);
-        QObject::disconnect (a->sock, 0, 0, 0);
-        a->sock->disconnect ();
+        if(a->sock)
+        {
+            QObject::disconnect (a->sock, 0, 0, 0);
+            a->sock->disconnect ();
+        }
         cb.socketList.removeAll (a);
     }
     cb.socketList.clear ();

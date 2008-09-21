@@ -64,8 +64,7 @@ m_chatService (conn),
 m_downloadDisplayPicture (false),
 m_sendNudge (false),
 m_tries (0),
-m_oimid (1),
-sessionID (12345)
+m_oimid (1)
 {
     Kopete::ChatSessionManager::self ()->registerChatSession (this);
 
@@ -131,13 +130,21 @@ WlmChatSession::inviteContact (const QString & passport)
         slotInviteContact (c);
 }
 
+unsigned int
+WlmChatSession::generateSessionID()
+{
+    QTime midnight(0, 0, 0);
+    qsrand(midnight.secsTo(QTime::currentTime()));
+    return (unsigned int)(qrand() % 4294967295);
+}
+
 void
 WlmChatSession::sendFile (const QString & fileLocation,
                           long unsigned int fileSize)
 {
     MSN::fileTransferInvite ft;
     ft.type = MSN::FILE_TRANSFER_WITHOUT_PREVIEW;
-    ft.sessionId = sessionID++;
+    ft.sessionId = generateSessionID();
     ft.filename = fileLocation.toLatin1 ().data ();
     ft.friendlyname =
         QFileInfo (fileLocation).fileName ().toLatin1 ().data ();
@@ -160,7 +167,7 @@ WlmChatSession::sendFile (const QString & fileLocation,
 
         connect (transf, SIGNAL (transferCanceled ()),
                  acc->transferManager (), SLOT (slotCanceled ()));
-        acc->transferManager ()->addTransferSession (sessionID - 1, transf,
+        acc->transferManager ()->addTransferSession (ft.sessionId, transf,
                                                      account ()->myself ()->
                                                      contactId (),
                                                      members ().first ()->
@@ -658,7 +665,7 @@ WlmChatSession::requestDisplayPicture ()
     }
     if (isReady ())
     {
-        getChatService ()->requestDisplayPicture (sessionID++,
+        getChatService ()->requestDisplayPicture (generateSessionID(),
                                               newlocation.toLatin1 ().data (),
                                               contact->getMsnObj ().
                                               toAscii ().data ());

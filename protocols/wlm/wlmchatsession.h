@@ -75,7 +75,7 @@ class KOPETE_EXPORT WlmChatSession: public Kopete::ChatSession
     void startSendKeepAlive();
     void stopSendKeepAlive();
 
-    private slots:
+  private slots:
     void slotMessageSent (Kopete::Message & message, Kopete::ChatSession * kmm);
     void sendTypingMsg (bool istyping);
     void sendNudge ();
@@ -97,12 +97,12 @@ class KOPETE_EXPORT WlmChatSession: public Kopete::ChatSession
     QMap < unsigned int, Kopete::Message > m_messagesSentQueue;
     QLinkedList < QString > m_pendingInvitations;
     QLinkedList < QString > m_pendingFiles;
-    unsigned int sessionID;
     KAction * m_actionNudge;
     KAction * m_actionFile;
     KActionMenu * m_actionInvite;
     QList < KAction* > m_inviteactions;
     QTimer * m_keepalivetimer;
+	unsigned int generateSessionID();
 };
 
 #endif

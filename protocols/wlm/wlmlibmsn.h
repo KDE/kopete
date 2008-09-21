@@ -263,7 +263,6 @@ class Callbacks:public QObject,
 
   public:
     WlmServer * m_server;
-    unsigned int sessionID;
     QList <WlmSocket*> socketList;
     MSN::NotificationServerConnection * mainConnection;
 

@@ -915,6 +915,12 @@ WlmAccount::slotGoOffline ()
         Kopete::OnlineStatus::Connecting)
         disconnect ();
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
+
+    foreach ( Kopete::Contact *kc , contacts() )
+    {
+        WlmContact *c = static_cast<WlmContact *>( kc );
+        c->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
+    }
 }
 
 void

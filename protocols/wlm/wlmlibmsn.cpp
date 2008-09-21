@@ -442,7 +442,7 @@ Callbacks::gotEmoticonNotification (MSN::SwitchboardServerConnection * conn,
                                     MSN::Passport username, std::string alias,
                                     std::string msnobject)
 {
-    std::string filename2 ("/tmp/emoticon.bin" + MSN::toStr (sessionID));
+//    std::string filename2 ("/tmp/emoticon.bin" + MSN::toStr (sessionID));
     //printf ("--- Emoticon '%s' from %s -> %s\n", alias.c_str (),
     //        username.c_str (), msnobject.c_str ());
     //conn->requestFile (sessionID++, filename2, msnobject);
@@ -477,8 +477,8 @@ Callbacks::gotVoiceClip (MSN::SwitchboardServerConnection * conn,
                          MSN::Passport username, std::string msnobject)
 {
     //printf ("\t%s sent you a voice clip...\n", username.c_str ());
-    std::string filename2 ("/tmp/voiceclip.bin" + MSN::toStr (sessionID));
-    conn->requestFile (sessionID++, filename2, msnobject);
+//    std::string filename2 ("/tmp/voiceclip.bin" + MSN::toStr (sessionID));
+//    conn->requestFile (sessionID++, filename2, msnobject);
 }
 
 void
@@ -486,9 +486,9 @@ Callbacks::gotWink (MSN::SwitchboardServerConnection * conn,
                     MSN::Passport username, std::string msnobject)
 {
     //printf ("\t%s sent you a Wink...\n", username.c_str ());
-    std::string filename2 ("/tmp/wink.bin" + MSN::toStr (sessionID));
+//    std::string filename2 ("/tmp/wink.bin" + MSN::toStr (sessionID));
     // you should generate a random sessionID number
-    conn->requestFile (sessionID++, filename2, msnobject);
+//    conn->requestFile (sessionID++, filename2, msnobject);
 }
 
 void
