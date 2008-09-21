@@ -149,8 +149,8 @@ void ClientEventHandler::receivedServerMessage(KIrc::Context *context, const KIr
 
 void ClientEventHandler::receivedServerMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
-	KIrc::Entity *server = static_cast<KIrc::ClientSocket*>( socket )->server();
-	KIrc::TextEvent *event=new KIrc::TextEvent( "ServerInfo", server, server, message.suffix() );
+	KIrc::ClientSocket *client = static_cast<KIrc::ClientSocket*>( socket );
+	KIrc::TextEvent *event=new KIrc::TextEvent( "ServerInfo", client->server(), client->owner(), message.suffix() );
 	context->postEvent( event );
 }
 
@@ -803,9 +803,17 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_372(KIrc::Context *conte
 {
 	CHECK_ARGS(1, 1);
 
-	#warning FIXME remove the "- " in front.
-//	postMOTDEvent(message);
-	return KIrc::Handler::NotHandled;
+	//remove the "- " in front.
+	QByteArray text=message.suffix();
+	if ( text.startsWith( '-' ) )
+		text.remove( 0, 2 );
+
+
+	KIrc::ClientSocket *client = static_cast<KIrc::ClientSocket*>( socket );
+	KIrc::TextEvent *event=new KIrc::TextEvent( "MOTD", client->server(), client->owner(), text );
+	context->postEvent( event );
+
+	return KIrc::Handler::CoreHandled;
 }
 
 /* 375: ":- <server> MessageEvent *of the day - "
@@ -815,8 +823,11 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_375(KIrc::Context *conte
 {
 	CHECK_ARGS(1, 1);
 
-//	postMOTDEvent(message);
-	return KIrc::Handler::NotHandled;
+	KIrc::ClientSocket *client = static_cast<KIrc::ClientSocket*>( socket );
+	KIrc::TextEvent *event=new KIrc::TextEvent( "MOTD_START", client->server(), client->owner(), message.suffix() );
+	context->postEvent( event );
+
+	return KIrc::Handler::CoreHandled;
 }
 
 /* 376: ":End of MOTD command"
@@ -827,7 +838,11 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_376(KIrc::Context *conte
 	CHECK_ARGS(1, 1);
 
 //	postMOTDEvent(message);
-	return KIrc::Handler::NotHandled;
+	KIrc::ClientSocket *client = static_cast<KIrc::ClientSocket*>( socket );
+	KIrc::TextEvent *event=new KIrc::TextEvent( "MOTD_END", client->server(), client->owner(), message.suffix() );
+	context->postEvent( event );
+
+	return KIrc::Handler::CoreHandled;
 }
 
 /* 401: "<nickname> :No such nick/channel"

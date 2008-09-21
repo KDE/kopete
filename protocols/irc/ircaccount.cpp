@@ -89,6 +89,8 @@ public:
 
 	KAction *joinChannelAction;
 	KAction *searchChannelAction;
+
+	QString motd;
 };
 
 IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const QString& netName, const QString &nickName)
@@ -714,18 +716,24 @@ void IRCAccount::receivedEvent(QEvent *event)
 		IRCContact *from = getContact( txtEvent->from() );
 		QList<Kopete::Contact*> to = getContacts( txtEvent->to() );
 
-	   	Kopete::Message::MessageDirection msgDirection =
-			from == mySelf() ? Kopete::Message::Outbound : Kopete::Message::Inbound;
-
-		Kopete::Message msg(from, to);
-		msg.setDirection( msgDirection );
-		msg.setPlainBody( txtEvent->text() );
-		msg.setType( Kopete::Message::TypeAction );
-
-		foreach( Kopete::Contact* c, to )
+		if ( txtEvent->eventId()=="MOTD_START" )
 		{
-			dynamic_cast<IRCContact*> ( c )->appendMessage( msg );
+			d->motd.clear();
 		}
+		else if ( txtEvent->eventId()=="MOTD" )
+		{
+			if ( !d->motd.isEmpty() ) d->motd+="\n" ;
+
+			d->motd+=txtEvent->text();
+		}
+		else if ( txtEvent->eventId()=="MOTD_END" )
+		{
+			appendMessage( from, to, d->motd );
+		}else
+		{
+			appendMessage( from, to, txtEvent->text() );
+		}
+
 
 	}
    	/*
@@ -755,6 +763,26 @@ void IRCAccount::receivedEvent(QEvent *event)
 		postContact->appendMessage(msg);
 */
 }
+
+void IRCAccount::appendMessage(IRCContact* from, QList<Contact*> to,const QString& text)
+{
+	Kopete::Message::MessageDirection msgDirection =
+		from == mySelf() ? Kopete::Message::Outbound : Kopete::Message::Inbound;
+
+	Kopete::Message msg(from, to);
+	msg.setDirection( msgDirection );
+	msg.setPlainBody( text );
+	msg.setType( Kopete::Message::TypeAction );
+
+	foreach( Kopete::Contact* c, to )
+	{
+		if ( c==myself() ) //If we are the target of the message, append it to the chatsession of the origin
+			from->appendMessage( msg );
+		else
+			dynamic_cast<IRCContact*> ( c )->appendMessage( msg );
+	}
+}
+
 /*
 void IRCContact::slotUserDisconnected(const QString &user, const QString &reason)
 {
