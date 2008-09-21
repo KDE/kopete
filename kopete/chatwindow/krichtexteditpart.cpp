@@ -59,11 +59,22 @@ public:
         if ( event->type() == QEvent::ShortcutOverride )
         {
             QKeyEvent *keyEvent = dynamic_cast<QKeyEvent*>(event);
-            if (keyEvent && ( keyEvent->key() ==  Qt::Key_Return || keyEvent->key() == Qt::Key_Enter ) )
+            if (keyEvent)
             {
+                if( keyEvent->key() ==  Qt::Key_Return || keyEvent->key() == Qt::Key_Enter )
+                {
                     // Enter is the default shortcut for sending a message,
                     // therefore it should not be handled by a textedit
                     return QWidget::event(event);
+                }
+                if ( keyEvent->matches(QKeySequence::Copy) && !textCursor().hasSelection() )
+                {
+                    // The copy shortcut has to be handled outside of
+                    // the textedit because otherwise you cannot use it 
+                    // to copy a selection in the chatmessagepart
+                    // see bug: #163535
+                    return QWidget::event(event);
+                }
             }
         }
 
