@@ -14,18 +14,10 @@
 */
 
 #include "kirchandler.moc"
+#include "kirchandler_p.h"
 
 #include <QtCore/QMultiHash>
 #include <kdebug.h>
-
-class KIrc::HandlerPrivate
-{
-public:
-	bool enabled;
-	QList<KIrc::Handler*> eventHandlers;
-	QMultiHash<QByteArray, QByteArray> commandAliases;
-	QMultiHash<QByteArray, QByteArray> messageAliases;
-};
 
 using namespace KIrc;
 
@@ -34,8 +26,12 @@ Handler::Handler(QObject *parent)
 	: QObject(parent)
 	, d_ptr(new HandlerPrivate)
 {
-	Q_D(Handler);
-	d->enabled = false;
+}
+
+Handler::Handler(HandlerPrivate *d, QObject *parent)
+	: QObject(parent)
+	, d_ptr(d)
+{
 }
 
 Handler::~Handler()

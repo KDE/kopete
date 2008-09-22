@@ -24,6 +24,7 @@
 #include "kirccontext.h"
 #include "kircentity.h"
 #include "kircevent.h"
+#include "kirchandler_p.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -41,25 +42,20 @@
 #define CHECK_ARGS(min, max)
 
 class KIrc::ClientEventHandlerPrivate
+	: public KIrc::HandlerPrivate
 {
 public:
-	KIrc::Context *context;
 };
 
 using namespace KIrc;
 
-ClientEventHandler::ClientEventHandler(Context *context, QObject* parent)
-	: Handler(parent)
-	, d_ptr(new ClientEventHandlerPrivate)
+ClientEventHandler::ClientEventHandler(QObject* parent)
+	: Handler(new ClientEventHandlerPrivate, parent)
 {
-	Q_D(ClientEventHandler);
-
-	d->context = context;
 }
 
 ClientEventHandler::~ClientEventHandler()
 {
-	delete d_ptr;
 }
 
 #if 0
@@ -251,6 +247,7 @@ KIrc::Handler::Handled ClientEventHandler::nick(KIrc::Context *context, const KI
 	Entity::Ptr from = d->context->entityFromName(message.prefix());
 //	QString newNick/oldNick = message.arg(1);
 */
+	return KIrc::Handler::NotHandled;
 }
 
 /* Do not support CTCP here, just do the simple message handling.
@@ -795,55 +792,6 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_369(KIrc::Context *conte
 	return KIrc::Handler::NotHandled;
 }
 
-/* 372: ":- <text>"
- * Part of the MOTD.
- */
-KIrc::Handler::Handled ClientEventHandler::numericReply_372(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(1, 1);
-
-	//remove the "- " in front.
-	QByteArray text=message.suffix();
-	if ( text.startsWith( '-' ) )
-		text.remove( 0, 2 );
-
-
-	KIrc::ClientSocket *client = static_cast<KIrc::ClientSocket*>( socket );
-	KIrc::TextEvent *event=new KIrc::TextEvent( "MOTD", client->server(), client->owner(), text );
-	context->postEvent( event );
-
-	return KIrc::Handler::CoreHandled;
-}
-
-/* 375: ":- <server> MessageEvent *of the day - "
- * Beginging the motd. This isn't emitted because the MOTD is sent out line by line.
- */
-KIrc::Handler::Handled ClientEventHandler::numericReply_375(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(1, 1);
-
-	KIrc::ClientSocket *client = static_cast<KIrc::ClientSocket*>( socket );
-	KIrc::TextEvent *event=new KIrc::TextEvent( "MOTD_START", client->server(), client->owner(), message.suffix() );
-	context->postEvent( event );
-
-	return KIrc::Handler::CoreHandled;
-}
-
-/* 376: ":End of MOTD command"
- * End of the motd.
- */
-KIrc::Handler::Handled ClientEventHandler::numericReply_376(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(1, 1);
-
-//	postMOTDEvent(message);
-	KIrc::ClientSocket *client = static_cast<KIrc::ClientSocket*>( socket );
-	KIrc::TextEvent *event=new KIrc::TextEvent( "MOTD_END", client->server(), client->owner(), message.suffix() );
-	context->postEvent( event );
-
-	return KIrc::Handler::CoreHandled;
-}
-
 /* 401: "<nickname> :No such nick/channel"
  * Gives a signal to indicate that the command issued failed because the person/channel not being on IRC.
  *  - Used to indicate the nickname parameter supplied to a command is currently unused.
@@ -877,18 +825,6 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_406(KIrc::Context *conte
 	#warning FIXME 406 MEANS *NEVER*, unlike 401
 //	i18n("The channel \"%1\" does not exist").arg(nick)
 //	i18n("The nickname \"%1\" does not exist").arg(nick)
-	return KIrc::Handler::NotHandled;
-}
-
-/* 422: ":MOTD File is missing"
- *
- * Server's MOTD file could not be opened by the server.
- */
-KIrc::Handler::Handled ClientEventHandler::numericReply_422(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(1, 1);
-
-//	postErrorEvent(message);
 	return KIrc::Handler::NotHandled;
 }
 

@@ -35,10 +35,12 @@ class KIRCCLIENT_EXPORT ClientEventHandler
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(KIrc::ClientEventHandler)
 
-public:
-	explicit ClientEventHandler(Context *context,QObject* parent=0);
-	~ClientEventHandler();
+private:
+	Q_DISABLE_COPY(ClientEventHandler)
 
+public:
+	explicit ClientEventHandler(QObject* parent=0);
+	~ClientEventHandler();
 
 private:
 #if 0
@@ -105,14 +107,10 @@ private Q_SLOTS:
 	Handler::Handled numericReply_353(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_366(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_369(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_372(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_375(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_376(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 	Handler::Handled numericReply_401(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_404(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_406(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_422(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_433(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_442(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_464(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
@@ -120,11 +118,6 @@ private Q_SLOTS:
 	Handler::Handled numericReply_473(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_474(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_475(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-
-private:
-	Q_DISABLE_COPY(ClientEventHandler)
-
-	ClientEventHandlerPrivate * const d_ptr;
 };
 
 }
