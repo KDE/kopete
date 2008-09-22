@@ -408,7 +408,7 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_001(KIrc::Context *conte
 	/* At this point we are connected and the server is ready for us to being taking commands
 	 * although the MOTD comes *after* this.
 	 */
-	//socket->setConnectionState(Socket::Authentified);
+	static_cast<KIrc::ClientSocket*>( socket )->setAuthentified();
 	static_cast<KIrc::ClientSocket*>( socket )->server()->setName( message.prefix() );
 
 	receivedServerMessage(context, message, socket);

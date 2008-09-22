@@ -34,7 +34,7 @@ class KIRCCLIENT_EXPORT ClientEventHandler
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(KIrc::ClientEventHandler)
-
+	
 private:
 	Q_DISABLE_COPY(ClientEventHandler)
 

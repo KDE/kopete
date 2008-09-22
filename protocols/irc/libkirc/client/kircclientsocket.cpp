@@ -160,3 +160,17 @@ void ClientSocket::socketStateChanged(QAbstractSocket::SocketState newstate)
 		break;
 	}
 }
+
+void ClientSocket::setAuthentified()
+{
+	setConnectionState( Socket::Authentified );
+}
+
+KIrc::EntityPtr ClientSocket::joinChannel( const QByteArray & channelName )
+{
+	Q_D( ClientSocket );
+	writeMessage( KIrc::StdMessages::join( channelName ) );
+    KIrc::EntityPtr channel=KIrc::EntityPtr( d->context->entityFromName( channelName ) );
+
+	return channel;
+}

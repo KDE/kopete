@@ -55,6 +55,8 @@ public: // READ properties accessors.
 	QUrl url() const;
 
 public slots: // WRITE properties accessors.
+	void setAuthentified();
+	KIrc::EntityPtr joinChannel(const QByteArray& channelName);
 
 public:
 

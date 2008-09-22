@@ -50,6 +50,7 @@
 #include <kmessagebox.h>
 
 
+
 #include <qtextcodec.h>
 #include <QTimer>
 
@@ -573,6 +574,31 @@ void IRCAccount::setAway(bool isAway, const QString &awayMessage)
 void IRCAccount::slotShowServerWindow()
 {
 	d->server->startChat();
+}
+
+void IRCAccount::slotJoinChannel()
+{
+	if (!isConnected())
+		return;
+
+	QStringList chans = configGroup()->readEntry( "Recent Channel list", QStringList() );
+	//kdDebug(14120) << "Recent channel list from config: " << chans << endl;
+	QString channelName=KInputDialog::getText( i18n( "Join Channel" ),
+			i18n("Please enter name of the channel you want to join:"),
+			QString::null, 0,
+			Kopete::UI::Global::mainWidget(),
+			0, QString(), 0, chans
+		);
+
+	if ( !channelName.isNull() )
+	{
+		kDebug( 14120 )<<"joining channel"<<channelName;
+		chans.prepend( channelName );
+		configGroup()->writeEntry( "Recent Channel list", chans );
+
+		KIrc::EntityPtr channel=d->client->joinChannel( channelName.toUtf8() );
+		getContact( channel )->startChat();
+	}
 }
 
 void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus)
