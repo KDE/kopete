@@ -285,7 +285,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		Kopete::MessageEvent *event = 0L;
 		if ( (appendMessageEvent && !outgoingMessage) || showNotification )
 		{
-			showNotification = showNotification || d->eventList.isEmpty(); // may happen for internal messages
+			showNotification = showNotification || (msg.from() && d->eventList.isEmpty()); // may happen for internal messages
 			event = new Kopete::MessageEvent(msg,manager);
 			d->eventList.append( event );
 
