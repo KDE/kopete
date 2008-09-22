@@ -310,14 +310,23 @@ KIrc::Handler::Handled ClientEventHandler::pong(KIrc::Context *context, const KI
 
 /* Do not support CTCP here, just do the simple message handling.
  */
-KIrc::Handler::Handled ClientEventHandler::privmsg(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::PRIVMSG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 
 	CHECK_ARGS(1, 1);
 
-//	postEvent(ev, "PrivMsg", from, to, text);
-	return KIrc::Handler::NotHandled;
+	kDebug( 14120 )<<"privmsg: "<<message.suffix();
+
+	KIrc::TextEvent *event=new KIrc::TextEvent( "PRIVMSG",
+												 context->entityFromName( message.prefix() ) ,
+												 context->entitiesFromNames( message.argAt( 1 ) ),
+												 message.suffix()
+											  );
+
+	context->postEvent( event );
+
+	return KIrc::Handler::CoreHandled;
 }
 
 KIrc::Handler::Handled ClientEventHandler::quit(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)

@@ -61,13 +61,18 @@ KIrc::EntityPtr Context::entityFromName(const QByteArray &name)
 	Q_D(Context);
 	EntityPtr entity;
 
-	if (name.isEmpty())
+	QByteArray nick=name;
+
+	if (nick.isEmpty())
 		return entity;
+
+	if (nick.contains( '!' ) ) //Its the extended format, containing hostname and stuff. only search for the nick
+	  nick=name.left( nick.indexOf( '!' ) );
 
 	//TODO: optimize this using Hash or something
 	foreach( EntityPtr e, d->entities )
 	{
-		if ( e->name()==name )
+		if ( e->name()==nick )
 		{
 			entity=e;
 			break;
@@ -77,7 +82,7 @@ KIrc::EntityPtr Context::entityFromName(const QByteArray &name)
 	if (!entity)
 	{
 		entity = new Entity(this);
-		entity->setName(name);
+		entity->setName(nick);
 		add( entity );
 	}
 

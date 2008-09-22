@@ -25,6 +25,7 @@
 #include "kircsocket.h"
 
 #include "kopetepasswordedaccount.h"
+#include "kopetemessage.h"
 
 class IRCContact;
 
@@ -179,7 +180,7 @@ private slots:
 private:
 	void clientSetup();
 	void clientConnect();
-	void appendMessage(IRCContact* from, QList<Kopete::Contact*> to,const QString& text);
+	void appendMessage(IRCContact* from, QList<Kopete::Contact*> to,const QString& text, Kopete::Message::MessageType type);
 private:
 	Q_DISABLE_COPY(IRCAccount)
 

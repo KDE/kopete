@@ -62,7 +62,7 @@ private Q_SLOTS:
 	Handler::Handled part(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled ping(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled pong(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled privmsg(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled PRIVMSG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 //	Handler::Handled squit(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled quit(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled topic(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);

@@ -754,10 +754,13 @@ void IRCAccount::receivedEvent(QEvent *event)
 		}
 		else if ( txtEvent->eventId()=="MOTD_END" )
 		{
-			appendMessage( from, to, d->motd );
+			appendMessage( from, to, d->motd , Kopete::Message::TypeAction );
+		}else if ( txtEvent->eventId()=="PRIVMSG" )
+		{
+			appendMessage( from, to, txtEvent->text(), Kopete::Message::TypeNormal );
 		}else
 		{
-			appendMessage( from, to, txtEvent->text() );
+			appendMessage( from, to, txtEvent->text(), Kopete::Message::TypeAction );
 		}
 
 
@@ -790,7 +793,7 @@ void IRCAccount::receivedEvent(QEvent *event)
 */
 }
 
-void IRCAccount::appendMessage(IRCContact* from, QList<Contact*> to,const QString& text)
+void IRCAccount::appendMessage(IRCContact* from, QList<Contact*> to,const QString& text, Kopete::Message::MessageType type)
 {
 	Kopete::Message::MessageDirection msgDirection =
 		from == mySelf() ? Kopete::Message::Outbound : Kopete::Message::Inbound;
@@ -798,7 +801,7 @@ void IRCAccount::appendMessage(IRCContact* from, QList<Contact*> to,const QStrin
 	Kopete::Message msg(from, to);
 	msg.setDirection( msgDirection );
 	msg.setPlainBody( text );
-	msg.setType( Kopete::Message::TypeAction );
+	msg.setType( type );
 
 	foreach( Kopete::Contact* c, to )
 	{
