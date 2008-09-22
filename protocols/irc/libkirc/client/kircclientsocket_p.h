@@ -33,7 +33,8 @@ public:
 	ClientSocketPrivate(ClientSocket *socket);
 
 public:
-	KIrc::Entity *server;
+	QUrl url;
+	KIrc::EntityPtr server;
 
 	bool failedNickOnLogin : 1;
 };

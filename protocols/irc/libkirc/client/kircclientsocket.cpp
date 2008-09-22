@@ -59,9 +59,9 @@ ClientSocket::~ClientSocket()
 //	StdCommands::quit(this, QLatin1String("KIRC Deleted"));
 }
 
-Entity *ClientSocket::server()
+EntityPtr ClientSocket::server() const
 {
-	Q_D(ClientSocket);
+	Q_D(const ClientSocket);
 	return d->server;
 }
 
@@ -98,7 +98,7 @@ void ClientSocket::connectToServer(const QUrl &url)
 
 void ClientSocket::connectToServer(const QUrl &url, QAbstractSocket *socket)
 {
-	Q_D(Socket);
+	Q_D(ClientSocket);
 
 	close();
 
@@ -133,7 +133,7 @@ void ClientSocket::connectToServer(const QUrl &url, QAbstractSocket *socket)
 
 void ClientSocket::socketStateChanged(QAbstractSocket::SocketState newstate)
 {
-	Q_D(Socket);
+	Q_D(ClientSocket);
 	QUrl url = d->url;
 
 	kDebug(14120)<<"state changed to "<<newstate;

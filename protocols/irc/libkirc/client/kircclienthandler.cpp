@@ -22,6 +22,7 @@
 #include "kircclientsocket.h"
 
 #include "kirccontext.h"
+#include "kircentity.h"
 #include "kircevent.h"
 
 #include <kdebug.h>
@@ -354,7 +355,7 @@ KIrc::Handler::Handled ClientEventHandler::topic(KIrc::Context *context, const K
 /*
 	Entity::Ptr from;
 	Entity::List channel;
-	QString topic;
+	QByteArray topic;
 
 	if (postEvent(ev, "Topic", from, channel, topic)) {
 //		channel->set(Topic, topic);
@@ -427,7 +428,6 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_002(KIrc::Context *conte
 	CHECK_ARGS(1, 1);
 
 	receivedServerMessage(context, message, socket);
-
 	return KIrc::Handler::CoreHandled;
 }
 
@@ -462,6 +462,7 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_005(KIrc::Context *conte
 {
 //	CHECK_ARGS(?, ?);
 
+	receivedServerMessage(context, message, socket);
 	return KIrc::Handler::NotHandled;
 }
 
@@ -474,7 +475,6 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_250(KIrc::Context *conte
 {
 //	CHECK_ARGS(1, 1);
 
-// 	postServerInfoEvent(ev);
 	receivedServerMessage(context, message, socket);
 	return KIrc::Handler::NotHandled;
 }
@@ -486,7 +486,6 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_251(KIrc::Context *conte
 {
 //	CHECK_ARGS(1, 1);
 
-// 	postServerInfoEvent(ev);
 	receivedServerMessage(context, message, socket);
 	return KIrc::Handler::NotHandled;
 }

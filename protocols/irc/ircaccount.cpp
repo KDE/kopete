@@ -660,7 +660,7 @@ IRCContact *IRCAccount::getContact(const QByteArray &name, MetaContact *metac)
 	return 0;
 }
 
-IRCContact *IRCAccount::getContact(KIrc::Entity *entity, MetaContact *metac)
+IRCContact *IRCAccount::getContact(const KIrc::EntityPtr &entity, MetaContact *metac)
 {
 	IRCContact *contact = 0;
 
@@ -689,10 +689,10 @@ IRCContact *IRCAccount::getContact(KIrc::Entity *entity, MetaContact *metac)
 	return contact;
 }
 
-QList<Kopete::Contact*> IRCAccount::getContacts( const QList<KIrc::Entity*> &entities )
+QList<Kopete::Contact*> IRCAccount::getContacts( const KIrc::EntityList &entities )
 {
 	QList<Kopete::Contact*> contacts;
-	foreach( KIrc::Entity * e, entities )
+	foreach( const KIrc::EntityPtr &e, entities )
 		contacts<<getContact( e );
 
 	return contacts;

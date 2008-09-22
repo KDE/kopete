@@ -19,10 +19,15 @@
 #define KIRCGLOBAL_H
 
 #include <QtCore/QByteArray>
+#include <QtCore/QExplicitlySharedDataPointer>
 #include <QtCore/QList>
 
 namespace KIrc
 {
+
+class Entity;
+typedef QExplicitlySharedDataPointer<KIrc::Entity> EntityPtr;
+typedef QList<EntityPtr> EntityList;
 
 typedef struct
 {

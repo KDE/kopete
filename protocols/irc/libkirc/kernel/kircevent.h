@@ -18,6 +18,7 @@
 #ifndef KIRC_EVENTS_H
 #define KIRC_EVENTS_H
 
+#include "kircentity.h"
 #include "kircmessage.h"
 
 #include <QtCore/QEvent>
@@ -71,23 +72,23 @@ public:
 		Debug
 	};
 */
-	TextEvent(const QString &eventId, KIrc::Entity* from, KIrc::Entity* to, const QString &text)
-		: QEvent(Type), m_eventId(eventId), m_from(from), m_to(QList<KIrc::Entity*>() << to), m_text(text)
+	TextEvent(const QString &eventId, const KIrc::EntityPtr from, const KIrc::EntityPtr to, const QString &text)
+		: QEvent(Type), m_eventId(eventId), m_from(from), m_to(KIrc::EntityList() << to), m_text(text)
 	{ }
 
-	TextEvent(const QString &eventId, KIrc::Entity* &from, const QList<KIrc::Entity*> &to, const QString &text)
+	TextEvent(const QString &eventId, const KIrc::EntityPtr &from, const KIrc::EntityList &to, const QString &text)
 		: QEvent(Type), m_eventId(eventId), m_from(from), m_to(to), m_text(text)
 	{ }
 
 	QString eventId() const { return m_eventId; }
-	KIrc::Entity* from() const { return m_from; }
-	QList<KIrc::Entity*> to() const { return m_to; }
+	KIrc::EntityPtr from() const { return m_from; }
+	KIrc::EntityList to() const { return m_to; }
 	QString text() const { return m_text; }
 
 private:
 	QString m_eventId;
-	KIrc::Entity* m_from;
-	QList<KIrc::Entity*> m_to;
+	KIrc::EntityPtr m_from;
+	KIrc::EntityList m_to;
 	QString m_text;
 };
 
