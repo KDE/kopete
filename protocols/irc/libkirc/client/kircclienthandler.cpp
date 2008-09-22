@@ -153,7 +153,7 @@ void ClientEventHandler::receivedServerMessage(KIrc::Context *context, const KIr
 
 
 // FIXME: Really handle this message
-KIrc::Handler::Handled ClientEventHandler::error(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::ERROR(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(0, 0);
 
@@ -167,7 +167,7 @@ KIrc::Handler::Handled ClientEventHandler::error(KIrc::Context *context, const K
  * This is the response of someone joining a channel.
  * Remember that this will be emitted when *you* /join a room for the first time
  */
-KIrc::Handler::Handled ClientEventHandler::join(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::JOIN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 /*
@@ -198,7 +198,7 @@ KIrc::Handler::Handled ClientEventHandler::join(KIrc::Context *context, const KI
 /* The given user is kicked.
  * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
  */
-KIrc::Handler::Handled ClientEventHandler::kick(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::KICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 
 	Q_D(ClientEventHandler);
@@ -219,7 +219,7 @@ KIrc::Handler::Handled ClientEventHandler::kick(KIrc::Context *context, const KI
 /* Change the mode of a user.
  * "<nickname> *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )"
  */
-KIrc::Handler::Handled ClientEventHandler::mode(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::MODE(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 /*
@@ -239,7 +239,7 @@ KIrc::Handler::Handled ClientEventHandler::mode(KIrc::Context *context, const KI
 /* Nick name of a user changed
  * "<nickname>"
  */
-KIrc::Handler::Handled ClientEventHandler::nick(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::NICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 
@@ -252,7 +252,7 @@ KIrc::Handler::Handled ClientEventHandler::nick(KIrc::Context *context, const KI
 
 /* Do not support CTCP here, just do the simple message handling.
  */
-KIrc::Handler::Handled ClientEventHandler::notice(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::NOTICE(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 
@@ -266,7 +266,7 @@ KIrc::Handler::Handled ClientEventHandler::notice(KIrc::Context *context, const 
 /* This signal emits when a user parts a channel
  * "<channel> *( "," <channel> ) [ <Part Message> ]"
  */
-KIrc::Handler::Handled ClientEventHandler::part(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::PART(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 /*
@@ -282,7 +282,7 @@ KIrc::Handler::Handled ClientEventHandler::part(KIrc::Context *context, const KI
 	return KIrc::Handler::NotHandled;
 }
 
-KIrc::Handler::Handled ClientEventHandler::ping(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::PING(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 
@@ -299,7 +299,7 @@ KIrc::Handler::Handled ClientEventHandler::ping(KIrc::Context *context, const KI
 	return KIrc::Handler::NotHandled;
 }
 
-KIrc::Handler::Handled ClientEventHandler::pong(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::PONG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 
@@ -329,7 +329,7 @@ KIrc::Handler::Handled ClientEventHandler::PRIVMSG(KIrc::Context *context, const
 	return KIrc::Handler::CoreHandled;
 }
 
-KIrc::Handler::Handled ClientEventHandler::quit(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::QUIT(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientEventHandler);
 /*
@@ -355,7 +355,7 @@ KIrc::Handler::Handled CLientCommands::squit(KIrc::Context *context, const KIrc:
 /* "<channel> [ <topic> ]"
  * The topic of a channel changed. emit the channel, new topic, and the person who changed it.
  */
-KIrc::Handler::Handled ClientEventHandler::topic(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientEventHandler::TOPIC(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(1, 1);
 /*

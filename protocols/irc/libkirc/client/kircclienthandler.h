@@ -53,19 +53,19 @@ private:
 
 	void receivedServerMessage(KIrc::Context *context, const KIrc::Message& msg, KIrc::Socket *socket);
 private Q_SLOTS:
-	Handler::Handled error(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled join(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled kick(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled mode(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled nick(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled notice(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled part(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled ping(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled pong(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled ERROR(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled JOIN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled KICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled MODE(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled NICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled NOTICE(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled PART(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled PING(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled PONG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled PRIVMSG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 //	Handler::Handled squit(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled quit(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled topic(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled QUIT(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled TOPIC(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 	Handler::Handled numericReply_001(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_002(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
