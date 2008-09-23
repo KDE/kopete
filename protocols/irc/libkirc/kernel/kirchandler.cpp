@@ -28,6 +28,13 @@ Handler::Handler(QObject *parent)
 {
 }
 
+Handler::Handler(Handler *parent)
+	: QObject(parent)
+	, d_ptr(new HandlerPrivate)
+{
+	parent->addEventHandler(this);
+}
+
 Handler::Handler(HandlerPrivate *d, QObject *parent)
 	: QObject(parent)
 	, d_ptr(d)

@@ -21,6 +21,8 @@
 
 #include "kircclientsocket.h"
 
+#include "kircclientmotdhandler.h"
+
 #include "kirccontext.h"
 #include "kircentity.h"
 #include "kircevent.h"
@@ -45,6 +47,7 @@ class KIrc::ClientEventHandlerPrivate
 	: public KIrc::HandlerPrivate
 {
 public:
+	KIrc::ClientMotdHandler *motdHandler;
 };
 
 using namespace KIrc;
@@ -52,6 +55,8 @@ using namespace KIrc;
 ClientEventHandler::ClientEventHandler(QObject* parent)
 	: Handler(new ClientEventHandlerPrivate, parent)
 {
+	Q_D(ClientEventHandler);
+	d->motdHandler = new KIrc::ClientMotdHandler(this);
 }
 
 ClientEventHandler::~ClientEventHandler()

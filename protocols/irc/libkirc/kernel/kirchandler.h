@@ -49,6 +49,7 @@ public:
 	};
 
 	explicit Handler(QObject *parent = 0);
+	Handler(Handler *parent);
 	virtual ~Handler();
 
 	void addEventHandler(KIrc::Handler *handler);
