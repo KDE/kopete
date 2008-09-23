@@ -319,8 +319,7 @@ KopeteChatWindow::~KopeteChatWindow()
 
 	delete backgroundFile;
 	delete anim;
-	if ( animIcon )
-		delete animIcon;
+	delete animIcon;
 }
 
 void KopeteChatWindow::windowListChanged()
