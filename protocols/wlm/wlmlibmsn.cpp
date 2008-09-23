@@ -59,13 +59,13 @@ void
 Callbacks::registerSocket (void *s, int reading, int writing, bool isSSL)
 {
     WlmSocket *a = (WlmSocket*)s;
-    if (!a || !a->sock)
+    if (!a)
         return;
 
     if (reading)
     {
-        QObject::disconnect(a->sock, SIGNAL (readyRead ()),0,0);
-        QObject::connect (a->sock, SIGNAL (readyRead ()), a,
+        QObject::disconnect(a, SIGNAL (readyRead ()),0,0);
+        QObject::connect (a, SIGNAL (readyRead ()), a,
                   SLOT (incomingData ()));
     }
 }
@@ -74,11 +74,10 @@ void
 Callbacks::closeSocket (void *s)
 {
     WlmSocket *a = (WlmSocket*)s;
-    if (a && a->sock)
+    if (a)
     {
-        a->sock->close ();
+        a->close ();
         socketList.removeAll (a);
-        a->sock = NULL;
     }
 }
 
@@ -86,9 +85,9 @@ void
 Callbacks::unregisterSocket (void *s)
 {
     WlmSocket *a = (WlmSocket*)s;
-    if (a && a->sock)
+    if (a)
     {
-        QObject::disconnect(a->sock, SIGNAL (readyRead ()),0,0);
+        QObject::disconnect(a, SIGNAL (readyRead ()),0,0);
     }
 }
 
@@ -202,7 +201,10 @@ Callbacks::gotOIMDeleteConfirmation (MSN::NotificationServerConnection * conn,
                                      bool success, std::string id)
 {
     if (success)
+    {
+        emit deletedOIM (id.c_str (), success);
         std::cout << "OIM " << id << " removed sucessfully." << std::endl;
+    }
     else
         std::cout << "OIM " << id << " not removed sucessfully." << std::endl;
 
@@ -612,44 +614,36 @@ size_t
 Callbacks::getDataFromSocket (void *sock, char *data, size_t size)
 {
     WlmSocket *a = (WlmSocket*)sock;
-    if (!a && !a->sock)
+    if (!a)
         return 0;
 
-    return a->sock->read(data, size);
+    return a->read(data, size);
 }
 
 size_t 
 Callbacks::writeDataToSocket (void *sock, char *data, size_t size)
 {
     WlmSocket *a = (WlmSocket*)sock;
-    if (!a && !a->sock)
+    if (!a)
         return 0;
 
-    return a->sock->write(data, size);
+    return a->write(data, size);
 }
 
 void *
 Callbacks::connectToServer (std::string hostname, int port, bool * connected, bool isSSL)
 {
-    WlmSocket *a = new WlmSocket (mainConnection);
+    WlmSocket *a = new WlmSocket (mainConnection, isSSL);
     if(!a)
         return NULL;
 
-    a->sock = new QSslSocket();
-    if(!a->sock)
-        return NULL;
-    connect( a->sock, SIGNAL( sslErrors(const QList<QSslError> &) ), a->sock, SLOT(
+    connect( a, SIGNAL( sslErrors(const QList<QSslError> &) ), a, SLOT(
                       ignoreSslErrors() ) );
 
     if(!isSSL)
-        a->sock->connectToHost (hostname.c_str (), port);
+        a->connectToHost (hostname.c_str (), port);
     else
-        a->sock->connectToHostEncrypted (hostname.c_str (), port);
-
-    QObject::connect (a->sock, SIGNAL (connected ()), a,
-                      SLOT (connected ()));
-    QObject::connect (a->sock, SIGNAL (disconnected ()), a, 
-                      SLOT (disconnected ()));
+        a->connectToHostEncrypted (hostname.c_str (), port);
 
     *connected = false;
     socketList.append (a);
@@ -701,9 +695,9 @@ int
 Callbacks::getSocketFileDescriptor (void *sock)
 {
     WlmSocket *a = (WlmSocket*)sock;
-    if(!a || !a->sock)
+    if(!a)
         return -1;
-    return a->sock->socketDescriptor();
+    return a->socketDescriptor();
 }
 
 std::string Callbacks::getSecureHTTPProxy ()

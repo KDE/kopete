@@ -18,12 +18,56 @@
 
 #include <QObject>
 
+WlmSocket::WlmSocket (MSN::NotificationServerConnection * mainConnection, bool isSSL) :
+    m_isSSL(isSSL)
+{
+    main = false;
+    this->mainConnection = mainConnection;
+
+    QObject::connect (this, SIGNAL (connected ()), this,
+                      SLOT (connectionReady ()));
+    QObject::connect (this, SIGNAL (disconnected ()), this, 
+                      SLOT (connectionFinished ()));
+    QObject::connect (this, SIGNAL (encrypted ()), this, 
+                      SLOT (connectionEncryptedReady()));
+
+}
+
 void
-WlmSocket::connected ()
+WlmSocket::connectionEncryptedReady()
 {
     MSN::Connection * c;
+    
+    if (!mainConnection)
+        return;
+    // Retrieve the connection associated with the
+    // socket's file handle on which the event has
+    // occurred.
+    c = mainConnection->connectionWithSocket ((void*)this);
 
-    if (!sock || !mainConnection)
+    // if this is a libmsn socket
+    if (c != NULL)
+    {
+        if (c->isConnected () == false)
+        {
+            c->socketConnectionCompleted ();
+        }
+        // If this event is due to new data becoming available 
+        c->socketIsWritable ();
+    }
+
+}
+
+void
+WlmSocket::connectionReady ()
+{
+    MSN::Connection * c;
+    
+    // ssl is connected when encrypted() is raised
+    if(isSSL())
+        return;
+
+    if (!mainConnection)
         return;
     // Retrieve the connection associated with the
     // socket's file handle on which the event has
@@ -43,14 +87,8 @@ WlmSocket::connected ()
 }
 
 void
-WlmSocket::disconnected ()
+WlmSocket::connectionFinished ()
 {
-    if (sock)
-    {
-        sock->deleteLater ();
-        sock = NULL;
-    }
-    deleteLater ();
 }
 
 void
@@ -58,7 +96,7 @@ WlmSocket::incomingData ()
 {
     MSN::Connection * c;
 
-    if (!sock || !mainConnection)
+    if (!mainConnection)
         return;
 
     // Retrieve the connection associated with the
@@ -80,11 +118,6 @@ WlmSocket::incomingData ()
 
 WlmSocket::~WlmSocket ()
 {
-    if (sock)
-    {
-        sock->deleteLater ();
-        sock = NULL;
-    }
 }
 
 #include "wlmsocket.moc"

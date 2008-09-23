@@ -335,6 +335,9 @@ class Callbacks:public QObject,
     receivedOIM (const QString & id, const QString & message);
 
     void
+    deletedOIM (const QString & id, const bool & deleted);
+
+    void
     contactChangedStatus (const MSN::Passport & buddy,
                           const std::string & friendlyname,
                           const MSN::BuddyStatus & status,

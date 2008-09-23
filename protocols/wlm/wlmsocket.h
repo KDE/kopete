@@ -23,22 +23,22 @@
 
 #include <msn/msn.h>
 
-class WlmSocket : public QObject
+class WlmSocket : public QSslSocket
 {
   Q_OBJECT 
 public:
     QSslSocket * sock;
     MSN::NotificationServerConnection * mainConnection;
     bool main;
-      WlmSocket (MSN::NotificationServerConnection * mainConnection)
-    {
-        main = false;
-        this->mainConnection = mainConnection;
-    }
-     ~WlmSocket ();
+    bool m_isSSL;
+    WlmSocket(MSN::NotificationServerConnection * mainConnection, bool isSSL = false);
+    ~WlmSocket ();
+    bool isSSL(){ return m_isSSL; } 
 public slots:
     void incomingData ();
-    void connected ();
-    void disconnected ();
+    void connectionReady ();
+    void connectionFinished ();
+    void connectionEncryptedReady();
+
 };
 #endif

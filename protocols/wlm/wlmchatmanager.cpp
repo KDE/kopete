@@ -251,7 +251,6 @@ WlmChatManager::joinedConversation (MSN::SwitchboardServerConnection * conn,
             chatSessions.remove (conn_current);
             chatSessions[conn] = _manager;
             chatSessions[conn]->setChatService(conn);
-            conn_current->disconnect();
             delete conn_current;
             return;
         }

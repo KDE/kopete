@@ -186,6 +186,8 @@ class WlmAccount:public
                                   const std::string & displayName,
                                   const std::string & guid);
 
+    void
+    deletedOIM(const QString& id, const bool deleted);
   protected:
         /**
 	 * This simulates contacts going on and offline in sync with the account's status changes

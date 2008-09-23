@@ -50,6 +50,15 @@ WlmServer::WlmDisconnect ()
 
     if (mainConnection)
     {
+        QListIterator<WlmSocket *> i(cb.socketList);
+        while (i.hasNext())
+        {
+            a = i.next();
+            QObject::disconnect (a, 0, 0, 0);
+            cb.socketList.removeAll (a);
+        }
+        cb.socketList.clear ();
+
         if (mainConnection->connectionState () !=
             MSN::NotificationServerConnection::NS_DISCONNECTED)
         {
@@ -57,20 +66,6 @@ WlmServer::WlmDisconnect ()
             mainConnection = NULL;
         }
     }
-
-    QListIterator<WlmSocket *> i(cb.socketList);
-    while (i.hasNext())
-    {
-        a = i.next();
-        QObject::disconnect (a, 0, 0, 0);
-        if(a->sock)
-        {
-            QObject::disconnect (a->sock, 0, 0, 0);
-            a->sock->disconnect ();
-        }
-        cb.socketList.removeAll (a);
-    }
-    cb.socketList.clear ();
 }
 
 #include "wlmserver.moc"
