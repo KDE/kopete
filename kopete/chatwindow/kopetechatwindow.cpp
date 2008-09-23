@@ -319,7 +319,8 @@ KopeteChatWindow::~KopeteChatWindow()
 
 	delete backgroundFile;
 	delete anim;
-	delete animIcon;
+	if ( animIcon )
+		delete animIcon;
 }
 
 void KopeteChatWindow::windowListChanged()
@@ -485,7 +486,8 @@ void KopeteChatWindow::initActions(void)
 	anim->setPixmap( normalIcon );
 	
 	animIcon = KIconLoader::global()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Toolbar);
-	animIcon->setPaused(true);
+	if ( animIcon )
+		animIcon->setPaused(true);
 
 	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll );
         coll->addAction( "toolbar_animation", animAction );
@@ -515,7 +517,7 @@ void KopeteChatWindow::slotStopAnimation( ChatView* view )
 	if( view == m_activeView )
 	{
 		anim->setPixmap( normalIcon );
-		if( animIcon->state() == QMovie::Running )
+		if( animIcon && animIcon->state() == QMovie::Running )
 			animIcon->setPaused( true );
 	}
 }
