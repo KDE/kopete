@@ -609,7 +609,8 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <title>Styles</title>
 <para>The style of the chat view can be altered to look like other clients. Installed styles are shown in the list on the left and are previewed in the main panel. See <link linkend="chatwindowstyleguide">Chat Window Style guide</link> for a document how to make your own style.</para>
 <para>Third party styles are available at <ulink url="http://kde-look.org">http://kde-look.org</ulink>. &kopete; 0.12 now supports styles from Adium(an &im; program on &Mac; OS X). So you can download styles from Adium here: <ulink url="http://www.adiumxtras.com/">Adium Xtras</ulink> and select Message View Styles.</para>
-<para>To install a style, click<guibutton>Instal...</guibutton>. Select a archive file containing the style. To delete a style, select a style in the list and click <guibutton>Delete</guibutton>.</para>
+<para>To install a style, click<guibutton>Install...</guibutton>. Select a archive file containing the style. To delete a style, select a style in the list and click 
+<guibutton>Delete</guibutton>.</para>
 <para><guilabel>Group consecutive messages</guilabel> is a useful option to make your chats more readable.  If you receive several messages in a row from teh same contact, they are grouped without repeating the sender name.</para>
 </sect4>
 </sect3>
