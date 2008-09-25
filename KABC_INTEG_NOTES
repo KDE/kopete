@@ -451,7 +451,7 @@ It would be cool if theses information about the users itself could be obtained 
 
 see also Bug 63297: "meta-contact" global(local) display nickname for all accounts
 
-Notes: some user might don't want to export their info the the server.
+Notes: some user might not want to export their info to the server.
 
 Yes this would be cool.  I think we need a general UI to control the flow of contact information between kabc and kopete.  The myself issue is the same as the metacontacts issue.
 
