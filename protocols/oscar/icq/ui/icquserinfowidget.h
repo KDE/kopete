@@ -36,14 +36,15 @@ namespace Ui
 	class ICQOrgAffInfoWidget;
 }
 class ICQContact;
+class ICQAccount;
 
 class ICQUserInfoWidget : public KPageDialog
 {
 Q_OBJECT
 public:
-	explicit ICQUserInfoWidget( QWidget* parent = 0, bool ownInfo = false );
+	ICQUserInfoWidget( ICQAccount* account, const QString& contactId, QWidget* parent = 0, bool ownInfo = false );
+	ICQUserInfoWidget( ICQContact* contact, QWidget* parent = 0, bool ownInfo = false );
 	~ICQUserInfoWidget();
-	void setContact( ICQContact* contact );
 	
 	QList<ICQInfoBase*> getInfoData() const;
 	QString getAlias() const;
@@ -58,6 +59,8 @@ public slots:
 	void fillOrgAffInfo( const ICQOrgAffInfo& info);
 
 private slots:
+	void receivedLongInfo( const QString& contact );
+
 	void slotUpdateDay();
 	void slotUpdateAge();
 
@@ -80,6 +83,7 @@ private slots:
 	void slotEmailSelectionChanged( const QItemSelection& selected );
 
 private:
+	void init();
 	void swapEmails( int r1, int r2 );
 
 	ICQGeneralUserInfo* storeBasicInfo() const;
@@ -91,6 +95,7 @@ private:
 	ICQEmailInfo* storeEmailInfo() const;
 	
 	QMap<QString, int> reverseMap( const QMap<int, QString>& map ) const;
+	QTextCodec* getTextCodec() const;
 
 	Ui::ICQGeneralInfoWidget* m_genInfoWidget;
 	Ui::ICQWorkInfoWidget* m_workInfoWidget;
@@ -98,10 +103,13 @@ private:
 	Ui::ICQOtherInfoWidget* m_otherInfoWidget;
 	Ui::ICQInterestInfoWidget * m_interestInfoWidget;
 	Ui::ICQOrgAffInfoWidget* m_orgAffInfoWidget;
+
 	ICQContact* m_contact;
-	
-	QStandardItemModel* m_emailModel;
+	ICQAccount* m_account;
+	QString m_contactId;
 	bool m_ownInfo;
+
+	QStandardItemModel* m_emailModel;
 
 	ICQGeneralUserInfo m_generalUserInfo;
 	ICQMoreUserInfo m_moreUserInfo;
