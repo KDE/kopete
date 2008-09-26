@@ -63,6 +63,17 @@ ClientEventHandler::~ClientEventHandler()
 {
 }
 
+KIrc::Handler::Handled ClientEventHandler::onMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+{
+	if ( Handler::onMessage(context, message, socket) == NotHandled )
+	{
+		KIrc::ClientSocket *client = static_cast<KIrc::ClientSocket*>( socket );
+		KIrc::TextEvent *event=new KIrc::TextEvent( "NOTHANDLED", client->server(), client->owner(), message.toLine() );
+		context->postEvent( event );
+	}
+	return CoreHandled;
+}
+
 #if 0
 void ClientEventHandler::postEvent(QEvent *event)
 {

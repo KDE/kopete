@@ -42,6 +42,9 @@ public:
 	explicit ClientEventHandler(QObject* parent=0);
 	~ClientEventHandler();
 
+public Q_SLOTS:
+	virtual KIrc::Handler::Handled onMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+
 private:
 #if 0
 	void postEvent(QEvent *event);
