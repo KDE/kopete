@@ -736,34 +736,31 @@ void IRCAccount::receivedEvent(QEvent *event)
 	if ( event->type()==KIrc::TextEvent::Type )
 	{
 		KIrc::TextEvent* txtEvent=static_cast< KIrc::TextEvent* >( event );
-		kDebug(14120)<<"from: "<<txtEvent->from()->name();
-		kDebug(14120)<<"message:"<<txtEvent->text();
+		kDebug(14120)<<"type: " << txtEvent->eventId();
+		kDebug(14120)<<"from: " << txtEvent->from()->name();
+		kDebug(14120)<<"message:" << txtEvent->text();
 
 		IRCContact *from = getContact( txtEvent->from() );
 		QList<Kopete::Contact*> to = getContacts( txtEvent->to() );
+		Kopete::Message::MessageType msgType = Kopete::Message::TypeNormal;
+		Kopete::Message::MessageImportance msgImportance = Kopete::Message::Low;
 
-		if ( txtEvent->eventId()=="MOTD_START" )
+		if ( txtEvent->eventId()=="PRIVMSG" )
 		{
-			d->motd.clear();
+//			if ( !to->isChannel() )
+//				importance = Kopete::Message::Normal;
 		}
-		else if ( txtEvent->eventId()=="MOTD" )
+		else if ( txtEvent->eventId() == "DCC_ACTION" )
 		{
-			if ( !d->motd.isEmpty() ) d->motd+="\n" ;
-
-			d->motd+=txtEvent->text();
+			msgType = Kopete::Message::TypeAction;
 		}
-		else if ( txtEvent->eventId()=="MOTD_END" )
+#if 0 
+		else if ( txtEvent->eventId().startWith("ERR_") )
 		{
-			appendMessage( from, to, d->motd , Kopete::Message::TypeAction );
-		}else if ( txtEvent->eventId()=="PRIVMSG" )
-		{
-			appendMessage( from, to, txtEvent->text(), Kopete::Message::TypeNormal );
-		}else
-		{
-			appendMessage( from, to, txtEvent->text(), Kopete::Message::TypeAction );
+			msgImportance = Kopete::Message::Highlight;
 		}
-
-
+#endif
+		appendMessage( from, to, txtEvent->text(), msgType );
 	}
    	/*
 	QList<Kopete::Contact*> to = getContacts(txtEvent->to());
