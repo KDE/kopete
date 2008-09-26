@@ -611,13 +611,10 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 
 void ICQContact::slotUserInfo()
 {
-	m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
+	m_infoWidget = new ICQUserInfoWidget( this, Kopete::UI::Global::mainWidget() );
 	QObject::connect( m_infoWidget, SIGNAL(finished()), this, SLOT(closeUserInfoDialog()) );
 	QObject::connect( m_infoWidget, SIGNAL(okClicked()), this, SLOT(storeUserInfoDialog()) );
-	m_infoWidget->setContact( this );
 	m_infoWidget->show();
-	if ( account()->isConnected() )
-		mAccount->engine()->requestFullInfo( contactId() );
 }
 
 void ICQContact::storeUserInfoDialog()
