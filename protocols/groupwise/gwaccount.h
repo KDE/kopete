@@ -337,7 +337,7 @@ private:
 	KAction * m_actionJoinChatRoom;
 	// Network code
 	KNetworkConnector * m_connector;
-	QCA::Initializer * m_qcaInit;
+	QCA::Initializer m_qcaInit;
 	QCA::TLS * m_QCATLS;
 	QCATLSHandler *	m_tlsHandler;
 	ClientStream * m_clientStream;

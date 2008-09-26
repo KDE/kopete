@@ -58,6 +58,7 @@ private:
 	GroupWiseContactSearchSortProxyModel * m_proxyModel;
 	GroupWiseAccount * m_account;
 	QList< GroupWise::ContactDetails > m_lastSearchResults;
+	bool m_onlineOnly;
 };
 
 #endif

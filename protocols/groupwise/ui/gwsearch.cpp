@@ -246,19 +246,12 @@ public:
 };
 
 GroupWiseContactSearch::GroupWiseContactSearch( GroupWiseAccount * account, QAbstractItemView::SelectionMode mode, bool onlineOnly,  QWidget *parent )
- : QWidget( parent ), m_account( account )
+ : QWidget( parent ), m_account( account ), m_model(0), m_proxyModel(0), m_onlineOnly(onlineOnly)
 {
 	setupUi( this );
 	connect( m_details, SIGNAL( clicked() ), SLOT( slotShowDetails() ) );
 	connect( m_search, SIGNAL( clicked() ), SLOT( slotDoSearch() ) );
 	connect( m_clear, SIGNAL( clicked() ), SLOT( slotClear() ) );
-	if ( onlineOnly ) {
-		m_proxyModel = new OnlineOnlyGroupWiseContactSearchSortProxyModel( this );
-	} else {
-		m_proxyModel = new GroupWiseContactSearchSortProxyModel( this );
-	}
-	m_proxyModel->setDynamicSortFilter(true);
-
 	m_results->header()->setClickable( true );
 	m_results->header()->setSortIndicator( 0, Qt::DescendingOrder );
 	m_results->header()->setSortIndicatorShown( true );
@@ -368,17 +361,20 @@ void GroupWiseContactSearch::slotShowDetails()
 GroupWise::ContactDetails GroupWiseContactSearch::detailsAtIndex( const QModelIndex & index ) const
 {
 	GroupWise::ContactDetails dt;
-	dt.dn = m_proxyModel->data( index, GroupWiseContactSearchModel::DnRole ).toString();
-	dt.givenName = m_proxyModel->data( index, GroupWiseContactSearchModel::GivenNameRole ).toString();
-	dt.surname = m_proxyModel->data( index, GroupWiseContactSearchModel::SurnameRole ).toString();
-	dt.fullName = m_proxyModel->data( index, GroupWiseContactSearchModel::FullNameRole ).toString();
-	dt.awayMessage = m_proxyModel->data( index, GroupWiseContactSearchModel::AwayMessageRole ).toString();
-	dt.authAttribute = m_proxyModel->data( index, GroupWiseContactSearchModel::AuthAttributeRole ).toString();
-	dt.status = m_proxyModel->data( index, GroupWiseContactSearchModel::StatusRole ).toInt();
-	dt.archive = m_proxyModel->data( index, GroupWiseContactSearchModel::ArchiveRole ).toBool();
-	dt.properties = m_proxyModel->data( index, GroupWiseContactSearchModel::PropertiesRole ).toMap();
+	if (m_proxyModel) {
+		dt.dn = m_proxyModel->data( index, GroupWiseContactSearchModel::DnRole ).toString();
+		dt.givenName = m_proxyModel->data( index, GroupWiseContactSearchModel::GivenNameRole ).toString();
+		dt.surname = m_proxyModel->data( index, GroupWiseContactSearchModel::SurnameRole ).toString();
+		dt.fullName = m_proxyModel->data( index, GroupWiseContactSearchModel::FullNameRole ).toString();
+		dt.awayMessage = m_proxyModel->data( index, GroupWiseContactSearchModel::AwayMessageRole ).toString();
+		dt.authAttribute = m_proxyModel->data( index, GroupWiseContactSearchModel::AuthAttributeRole ).toString();
+		dt.status = m_proxyModel->data( index, GroupWiseContactSearchModel::StatusRole ).toInt();
+		dt.archive = m_proxyModel->data( index, GroupWiseContactSearchModel::ArchiveRole ).toBool();
+		dt.properties = m_proxyModel->data( index, GroupWiseContactSearchModel::PropertiesRole ).toMap();
+	}
 	return dt;
 }
+
 void GroupWiseContactSearch::slotGotSearchResults()
 {
 	kDebug() ;
@@ -386,7 +382,15 @@ void GroupWiseContactSearch::slotGotSearchResults()
 	m_lastSearchResults.clear();
 	m_lastSearchResults = st->results();
 
+	delete m_proxyModel;
+	delete m_model;
 	m_model = new GroupWiseContactSearchModel( m_lastSearchResults, m_account, this );
+	if ( m_onlineOnly ) {
+		m_proxyModel = new OnlineOnlyGroupWiseContactSearchSortProxyModel( this );
+	} else {
+		m_proxyModel = new GroupWiseContactSearchSortProxyModel( this );
+	}
+	m_proxyModel->setDynamicSortFilter(true);
 	//new ModelTest( m_model, this );
 	m_proxyModel->setSourceModel( m_model );
 	m_results->setModel( m_proxyModel );

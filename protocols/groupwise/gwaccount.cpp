@@ -92,7 +92,6 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 										 SLOT( slotPrivacy() ) );
 			
 	m_connector = 0;
-    m_qcaInit = new QCA::Initializer;
 	m_QCATLS = 0;
 	m_tlsHandler = 0;
 	m_clientStream = 0;
@@ -266,10 +265,8 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	}
 	// set up network classes
 	m_connector = new KNetworkConnector( 0 );
-	//myConnector->setOptHostPort( "localhost", 8300 );
 	m_connector->setOptHostPort( server(), port() );
 	m_connector->setOptSSL( true );
-	Q_ASSERT( QCA::isSupported("tls") );
 	m_QCATLS = new QCA::TLS;
 	m_tlsHandler = new QCATLSHandler( m_QCATLS );
 	if( QCA::haveSystemStore() )
@@ -302,7 +299,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	// not implemented: error
 	QObject::connect( m_clientStream, SIGNAL( error(int) ), SLOT( slotCSError(int) ) );
 
-	m_client = new Client( this, CMSGPRES_GW_6_5 );
+	m_client = new Client( 0, CMSGPRES_GW_6_5 );
 
 	// NB these are prefixed with QObject:: to avoid any chance of a clash with our connect() methods.
 	// we connected successfully
@@ -454,13 +451,11 @@ void GroupWiseAccount::cleanup()
 	delete m_clientStream;
 	delete m_QCATLS;
 	delete m_connector;
-	delete m_qcaInit;
 
 	m_connector = 0;
 	m_QCATLS = 0;
 	m_clientStream = 0;
 	m_client = 0;
-	m_qcaInit = 0;
 }
 
 void GroupWiseAccount::createConference( const int clientId, const QStringList& invitees )
