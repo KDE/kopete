@@ -341,7 +341,7 @@ void ICQAccount::userReadsStatusMessage( const QString& contact )
 {
 	QString name;
 
-	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
+	Kopete::Contact * ct = contacts().value( Oscar::normalize( contact ) );
 	if ( ct )
 		name = ct->nickName();
 	else
@@ -491,7 +491,7 @@ void ICQAccount::slotGotAuthRequest( const QString& contact, const QString& reas
 	actions |= Kopete::AddedInfoEvent::BlockAction;
 	actions |= Kopete::AddedInfoEvent::InfoAction;
 
-	Kopete::Contact * ct = contacts()[contactId];
+	Kopete::Contact * ct = contacts().value( contactId );
 	if( !ct || !ct->metaContact() || ct->metaContact()->isTemporary() )
 		actions |= Kopete::AddedInfoEvent::AddAction;
 
