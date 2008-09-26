@@ -375,18 +375,26 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id, const QString &
 	else if( cmd == "ILN" ||  cmd == "NLN" )
 	{
 		// status handle publicName strangeNumber MSNOBJECT
-		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 1, 1 ) ] );
-		if( c && c->contactId() != m_account->accountId() )
+		QString contactIdString = data.section( ' ', 1, 1 );
+		if ( m_account->contacts().contains(contactIdString) )
 		{
-			QString publicName=unescape( data.section( ' ', 2, 2 ) );
-			if ( (publicName!=c->contactId() ||  c->hasProperty(Kopete::Global::Properties::self()->nickName().key())  ) &&
-						 publicName!=c->property( Kopete::Global::Properties::self()->nickName()).value().toString() )
+			MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ contactIdString ] );
+			if( c && c->contactId() != m_account->accountId() )
+			{
+				QString publicName=unescape( data.section( ' ', 2, 2 ) );
+				if ( (publicName!=c->contactId() ||  c->hasProperty(Kopete::Global::Properties::self()->nickName().key())  ) &&
+						publicName!=c->property( Kopete::Global::Properties::self()->nickName()).value().toString() )
 
-				changePublicName(publicName,c->contactId());
-			QString obj=unescape(data.section( ' ', 4, 4 ));
-			c->setObject( obj );
-			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
-			c->setClientFlags(data.section( ' ', 3, 3 ).toUInt());
+					changePublicName(publicName,c->contactId());
+				QString obj=unescape(data.section( ' ', 4, 4 ));
+				c->setObject( obj );
+				c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
+				c->setClientFlags(data.section( ' ', 3, 3 ).toUInt());
+			}
+		}
+		else
+		{
+			kDebug(14140) << "Unrecognised contact id found in LST:" << contactIdString;
 		}
 	}
 	else if( cmd == "UBX" )
