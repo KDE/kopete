@@ -294,7 +294,7 @@ void GroupWiseAccount::performConnectWithPassword( const QString &password )
 	// not implemented: error
 	QObject::connect( m_clientStream, SIGNAL( error(int) ), SLOT( slotCSError(int) ) );
 
-	m_client = new Client( this, CMSGPRES_GW_6_5 );
+	m_client = new Client( 0, CMSGPRES_GW_6_5 );
 
 	// NB these are prefixed with QObject:: to avoid any chance of a clash with our connect() methods.
 	// we connected successfully
