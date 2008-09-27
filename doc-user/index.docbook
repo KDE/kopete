@@ -233,7 +233,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 	<para>You can send files from the <interface>Contact List</interface>, using the context menu on the person you want to send to.  If &kopete; supports file transfer on their &im; system, there will be a <menuchoice><guimenuitem>Send File...</guimenuitem></menuchoice> item.  Alternatively, you can drag a file from anywhere else in &kde; onto their name to start a file transfer.</para>
 </sect2>
 <sect2 id="organise-contacts">
-<title>Organising Contacts</title>
+<title>Organizing Contacts</title>
 <sect3 id="organise-contacts-metacontacts">
 <title>A Word about Metacontacts</title>
 <para>One of the principles behind &kopete; is that it offers a standardized way to use &im; systems.  Differences between &im; systems are smoothed over, making it easier to communicate.  We follow this principle in the way contacts are organized.  When you use &kopete; you just find contacts by name; the actual &im; system used is less important.  Some people have more than one &im; account - &kopete; puts the person using the account first.</para>
@@ -254,7 +254,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <listitem><para>Select Display Name and Group.  Here you can enter a Display Name (the name used for this person inside &kopete;), and choose the <link linkend="organise-contacts-grouping">groups</link> they are a member of.</para></listitem>
 <listitem><para>Select &im; Accounts.  Here you can choose which accounts you want to use to chat to the new contact.  If you only have one &im; account, you won't see this screen.</para></listitem>
 <listitem><para>Account-specific Add Contact Pages.  For each account, you'll get one page where you can enter the <acronym>UIN</acronym>, buddy name or Email address, depending on the &im; system in use.</para></listitem>
-<listitem><para>Finish Screen.  All done.  Except if the &im; system requires authorisation (such as <trademark>ICQ</trademark>) to add a contact to your list - in which case, you'll be prompted after the wizard exits.</para></listitem>
+<listitem><para>Finish Screen.  All done.  Except if the &im; system requires authorization (such as <trademark>ICQ</trademark>) to add a contact to your list - in which case, you'll be prompted after the wizard exits.</para></listitem>
 </orderedlist>
 
 <para>You can add contacts to an existing Metacontact using its context menu.</para>
@@ -527,7 +527,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>Sounds, flashing taskbar entries, passive popups and more exotic notifications are supported in &kopete; using the &kde; notification system.  Type <userinput>help:/kcontrol/kcmnotify</userinput>  in &konqueror; or select the Help tab in the <guilabel>System Notifications</guilabel> section of the &kcontrolcenter; for more information.</para>
 <para>To add custom notifications for a contact, right click that contact in the Contact List and select Properties. This lets you start chats, play a custom sound effect, or display a message for that contact or group. Otherwise you can use the <quote>Execute a program</quote> notification to perform custom notifications.  As an example, if you have <application>XOSD</application> (X On-Screen Display) installed, you can get OSD online notifications by executing the following command when the <quote>User goes online</quote> event takes place:</para>
 <para><userinput>echo %s | osd_cat -o 100 -p bottom -A center -f -*-helvetica-*-r-*-*-24-*-*-*-*-*-*-* -O 2 -c gold</userinput></para>
-<para>OhReally at the &kde; Forum suggests having your online notifications read out by a speech synthesiser, using <ulink url="http://mambo.ucsc.edu/psl/mbrola">MBROLA</ulink> like so:</para>
+<para>OhReally at the &kde; Forum suggests having your online notifications read out by a speech synthesizer, using <ulink url="http://mambo.ucsc.edu/psl/mbrola">MBROLA</ulink> like so:</para>
 <para><userinput>echo %s | sed -e 's/online/onlaain/i' | /usr/local/bin/mbrdico.dutch.female</userinput></para>
 <para>The 'sed' in the middle phoneticises &kopete;'s output to so the synthesizer has a better Dutch pronunciation.</para>
 </listitem>
@@ -609,9 +609,9 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <title>Styles</title>
 <para>The style of the chat view can be altered to look like other clients. Installed styles are shown in the list on the left and are previewed in the main panel. See <link linkend="chatwindowstyleguide">Chat Window Style guide</link> for a document how to make your own style.</para>
 <para>Third party styles are available at <ulink url="http://kde-look.org">http://kde-look.org</ulink>. &kopete; 0.12 now supports styles from Adium(an &im; program on &Mac; OS X). So you can download styles from Adium here: <ulink url="http://www.adiumxtras.com/">Adium Xtras</ulink> and select Message View Styles.</para>
-<para>To install a style, click<guibutton>Install...</guibutton>. Select a archive file containing the style. To delete a style, select a style in the list and click 
+<para>To install a style, click <guibutton>Install...</guibutton>. Select an archive file containing the style. To delete a style, select a style in the list and click 
 <guibutton>Delete</guibutton>.</para>
-<para><guilabel>Group consecutive messages</guilabel> is a useful option to make your chats more readable.  If you receive several messages in a row from teh same contact, they are grouped without repeating the sender name.</para>
+<para><guilabel>Group consecutive messages</guilabel> is a useful option to make your chats more readable.  If you receive several messages in a row from the same contact, they are grouped without repeating the sender name.</para>
 </sect4>
 </sect3>
 <sect3 id="configuring-behavior-general-contactlist">
@@ -650,7 +650,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <varlistentry>
 <term><guilabel>Change Tooltip Contents...</guilabel></term>
 <listitem>
-	<para>You have a lot of control over how much or how little detail appears inthe tooltips shown on the contact list using this dialog.</para>
+	<para>You have a lot of control over how much or how little detail appears in the tooltips shown on the contact list using this dialog.</para>
 </listitem>
 </varlistentry>
 </variablelist>
@@ -707,7 +707,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 		</sect2>
 		<sect2 id="protocols-msn">
 			<title>MSN</title> 
-			<para>MSN supports the sending and receiving of webcams, if your camera is supported by the Video4Linux 2 (v4l2) standard.  To view someone's webcam, right click on their MSN buttefly icon and select <menuchoice><guimenuitem>View Contact's Webcam</guimenuitem></menuchoice>.  File transfer and multi user chats work.  To transfer a file,  drag the file from &konqueror; or the desktop into the chat window.  To invite someone else into a chat, drag them from the Contact List into the chat window.  The <menuchoice><guimenu>File</guimenu></menuchoice> menu also contains these commands.  In addition, MSN supports custom emoticons.</para>
+			<para>MSN supports the sending and receiving of webcams, if your camera is supported by the Video4Linux 2 (v4l2) standard.  To view someones webcam, right click on their MSN butterfly icon and select <menuchoice><guimenuitem>View Contact's Webcam</guimenuitem></menuchoice>.  File transfer and multi user chats work.  To transfer a file,  drag the file from &konqueror; or the desktop into the chat window.  To invite someone else into a chat, drag them from the Contact List into the chat window.  The <menuchoice><guimenu>File</guimenu></menuchoice> menu also contains these commands.  In addition, MSN supports custom emoticons.</para>
 			<para>To use file transfer or a webcam, make sure port 6891 is forwarded to your computer.</para>
 		</sect2>
 		<sect2 id="protocols-yahoo">
@@ -749,7 +749,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <title>Plugins</title>
 <sect2 id="plugins-alias">
 <title>Alias</title>
-<para><guilabel>Alias</guilabel> lets you define your own commands, eg /hello, in &kopete; that run scripts and output the result in the chat window.  If you know how the alias Unix command works, this is just the same</para>
+<para><guilabel>Alias</guilabel> lets you define your own commands, &eg; /hello, in &kopete; that run scripts and output the result in the chat window.  If you know how the alias Unix command works, this is just the same</para>
 </sect2>
 <sect2 id="plugins-auto-replace">
 <title>Auto Replace</title>
@@ -831,7 +831,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect2>
 <sect2 id="plugins-otr">
 <title>OTR</title>
-<para>The <guilabel>OTR</guilabel> plugin allows you to encrypt conversations using the Off-The-Record encryption method. This encryption method basically works like the PGP encryption but it is optimized for instant messaging and handles the key excange on its own. The only thing you have to do, is to make sure that you really are writing to the person you expect by using one of OTR's authentication mechanisms.</para>
+<para>The <guilabel>OTR</guilabel> plugin allows you to encrypt conversations using the Off-The-Record encryption method. This encryption method basically works like the PGP encryption but it is optimized for instant messaging and handles the key exchange on its own. The only thing you have to do, is to make sure that you really are writing to the person you expect by using one of OTR's authentication mechanisms.</para>
 <sect3 id="plugins-otr-menus">
 <title>Menu items</title>
 <para>The following item is added to the Contact List's menus:</para>
@@ -890,7 +890,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect3>
 <sect3 id="plugins-otr-setup">
 <title>The settings dialog</title>
-<para>In the setting dialog you have various options to set the modules behaviour during your chatsessions. The most important of them ist the default policy configuration. Set the policy to "Opportunistic" if you wish &kopete; to check if you contacts support OTR and establish an encrypted session on its own or to "Manual" if you wish to control each encryption state on your own. The options "Always" and "Never" are recommended only for experienced users that wish to set the policy on a per-contact base. In the "Private Keys" Pane you have the possibility to create you personal keypair for each account. You don't need to do this manually. If an account does not have a keypair it will be generated automatically the first time it is required. In the "Known Fingerprints" tab you have the possibility to see, verify and delete known public fingerprints of your contacts.</para>
+<para>In the setting dialog you have various options to set the modules behaviour during your chatsessions. The most important of them is the default policy configuration. Set the policy to "Opportunistic" if you wish &kopete; to check if you contacts support OTR and establish an encrypted session on its own or to "Manual" if you wish to control each encryption state on your own. The options "Always" and "Never" are recommended only for experienced users that wish to set the policy on a per-contact base. In the "Private Keys" Pane you have the possibility to create you personal keypair for each account. You don't need to do this manually. If an account does not have a keypair it will be generated automatically the first time it is required. In the "Known Fingerprints" tab you have the possibility to see, verify and delete known public fingerprints of your contacts.</para>
 </sect3>
 <sect3 id="plugins-otr-auth">
 <title>Authentication</title>
@@ -953,7 +953,7 @@ A better way to pick a secret would be something like this:</para>
 </sect4>
 <sect4 id="plugins-otr-auth-results">
 <title>What the results mean</title>
-<para>When you have entered your secret and hit OK, the message "Authenticatig contact..." appears in the chatwindow. After a few seconds the result should show up in the chatwindow and display one of the following messages:</para>
+<para>When you have entered your secret and hit OK, the message "Authenticate contact..." appears in the chatwindow. After a few seconds the result should show up in the chatwindow and display one of the following messages:</para>
 <screenshot>
   <mediaobject>
     <imageobject>
@@ -1038,7 +1038,7 @@ A better way to pick a secret would be something like this:</para>
 </sect2>
 <sect2 id="plugins-pipes">
 <title>Pipes</title>
-<para>Pipes allows you to pipe incoming or outgoing messages through an external script or executable. An incoming message will be piped through the executable before it reaches your chat window, while outgoing messages will be piped through the executable before they are sent over the internet. Pipes can recieve text in one of three forms:
+<para>Pipes allows you to pipe incoming or outgoing messages through an external script or executable. An incoming message will be piped through the executable before it reaches your chat window, while outgoing messages will be piped through the executable before they are sent over the Internet. Pipes can receive text in one of three forms:
 <variablelist>
 <varlistentry>
 <term>Plain text body</term>
@@ -1104,7 +1104,7 @@ $KDEDIR/share/apps/kopete/pics/emoticons (or $KDEHOME, for example, in /home/joe
 </orderedlist>
 <para>To replace the protocol icons, you'll have to replace the icons in
 $KDEDIR/share/apps/kopete/icons, or provide replacements to override them in
-the same dir under $KDEHOME.  At present there aren't any complete replacement
+the same folder under $KDEHOME.  At present there aren't any complete replacement
 sets that you can simply extract there.</para>
 </answer>
 </qandaentry>
