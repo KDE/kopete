@@ -104,10 +104,27 @@ ContactDetails GetDetailsTask::extractUserDetails(Field::MultiField * details )
 		const Field::FieldListIterator end = fl.end();
 		for ( Field::FieldListIterator it = fl.begin(); it != end; ++it )
 		{
-			Field::SingleField * propField = static_cast<Field::SingleField *>( *it );
-			QString propName = propField->tag();
-			QString propValue = propField->value().toString();
-			propMap.insert( propName, propValue );
+			Field::SingleField * propField = dynamic_cast<Field::SingleField *>( *it );
+			if ( propField ) {
+				QString propName = propField->tag();
+				QString propValue = propField->value().toString();
+				propMap.insert( propName, propValue );
+			} else {
+				Field::MultiField * mf2;
+				if ( ( mf2 = dynamic_cast<Field::MultiField *>( *it ) ) ) {
+					Field::FieldList fl2 = mf2->fields();
+					const Field::FieldListIterator end = fl2.end();
+					for ( Field::FieldListIterator it2 = fl2.begin(); it2 != end; ++it2 )
+					{
+						propField = dynamic_cast<Field::SingleField *>( *it2 );
+						if ( propField ) {
+							QString propName = propField->tag();
+							QString propValue = propField->value().toString();
+							propMap.insert( propName, propValue );
+						}
+					}
+				}
+			}
 		}
 	}
 	if ( !propMap.empty() )
