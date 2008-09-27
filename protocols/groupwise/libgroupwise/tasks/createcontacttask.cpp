@@ -130,7 +130,7 @@ void CreateContactTask::slotContactAdded( const ContactItem & addedContact )
 	
 	if ( m_folders.isEmpty() && !m_topLevel )
 	{
-		client()->debug( "CreateContactTask::slotContactAdded() - All contacts were created on the server, we're finished!" );
+		client()->debug( "CreateContactTask::slotContactAdded() - All contacts were created on the server, we are finished!" );
 		setSuccess(); 
 	}
 }

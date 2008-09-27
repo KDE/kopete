@@ -137,7 +137,7 @@ void JoinConferenceTask::slotReceiveUserDetails( const ContactDetails & details 
 		client()->debug( QString( " - can we remove %1?" ).arg(current ) );
 		if ( current == details.dn )
 		{
-			client()->debug( " - it's gone!" );
+			client()->debug( " - it is gone!" );
 			m_unknowns.erase( it );
 			break;
 		}
