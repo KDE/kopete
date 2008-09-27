@@ -17,6 +17,7 @@
 
 #include "aimcontact.h"
 
+#include <KActionCollection>
 #include <klocale.h>
 #include <ktoggleaction.h>
 #include <kicon.h>
@@ -88,6 +89,12 @@ QList<KAction*> *AIMContact::customContextMenuActions()
 	actionCollection->append(m_actionVisibleTo);
 	actionCollection->append(m_actionInvisibleTo);
 
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("contactSelectEncoding"), m_selectEncoding);
+	tempCollection.addAction(QLatin1String("contactIgnore"), m_actionIgnore);
+	tempCollection.addAction(QLatin1String("oscarContactAlwaysVisibleTo"), m_actionVisibleTo);
+	tempCollection.addAction(QLatin1String("oscarContactAlwaysInvisibleTo"), m_actionInvisibleTo);
 	return actionCollection;
 }
 

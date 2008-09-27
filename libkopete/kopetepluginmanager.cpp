@@ -124,7 +124,7 @@ QList<KPluginInfo> PluginManager::availablePlugins( const QString &category ) co
 	QList<KPluginInfo>::ConstIterator it;
 	for ( it = _kpmp->plugins.begin(); it != _kpmp->plugins.end(); ++it )
 	{
-		if ( it->category() == category )
+		if ( it->category() == category && !(*it).service()->noDisplay() )
 			result.append( *it );
 	}
 

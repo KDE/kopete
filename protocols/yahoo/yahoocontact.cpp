@@ -46,6 +46,7 @@
 // KDE Includes
 #include <kdebug.h>
 #include <kaction.h>
+#include <KActionCollection>
 #include <kdialog.h>
 #include <klocale.h>
 #include <krun.h>
@@ -374,7 +375,7 @@ void YahooContact::slotChatSessionDestroyed()
 
 QList<KAction*> *YahooContact::customContextMenuActions()
 {
-	QList<KAction*> *actionCollection = new QList<KAction*>();
+	QList<KAction*> *actions = new QList<KAction*>();
 	if ( !m_webcamAction )
 	{
 		m_webcamAction = new KAction( KIcon("webcamreceive"), i18n( "View &Webcam" ), this );
@@ -384,8 +385,8 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 		m_webcamAction->setEnabled( true );
 	else
 		m_webcamAction->setEnabled( false );
-	//actionCollection->addAction( "view_webcam", m_webcamAction );
-        actionCollection->append( m_webcamAction );
+	//actions->addAction( "view_webcam", m_webcamAction );
+        actions->append( m_webcamAction );
 
 	if( !m_inviteWebcamAction )
 	{
@@ -396,8 +397,8 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 		m_inviteWebcamAction->setEnabled( true );
 	else
 		m_inviteWebcamAction->setEnabled( false );
-	//actionCollection->addAction( "invite_webcam", m_inviteWebcamAction );
-        actionCollection->append( m_inviteWebcamAction );
+	//actions->addAction( "invite_webcam", m_inviteWebcamAction );
+        actions->append( m_inviteWebcamAction );
 
 	if ( !m_buzzAction )
 	{
@@ -408,8 +409,8 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 		m_buzzAction->setEnabled( true );
 	else
 		m_buzzAction->setEnabled( false );
-	//actionCollection->addAction( "buzz_contact", m_buzzAction );
-        actionCollection->append( m_buzzAction );
+	//actions->addAction( "buzz_contact", m_buzzAction );
+        actions->append( m_buzzAction );
 
 	if ( !m_stealthAction )
 	{
@@ -420,8 +421,8 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 		m_stealthAction->setEnabled( true );
 	else
 		m_stealthAction->setEnabled( false );
-	//actionCollection->addAction( "stealth_contact", m_stealthAction );
-        actionCollection->append( m_stealthAction );
+	//actions->addAction( "stealth_contact", m_stealthAction );
+        actions->append( m_stealthAction );
 
 	if ( !m_inviteConferenceAction )
 	{
@@ -432,8 +433,8 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 		m_inviteConferenceAction->setEnabled( true );
 	else
 		m_inviteConferenceAction->setEnabled( false );
-	//actionCollection->addAction( "invite_conference", m_inviteConferenceAction );
-        actionCollection->append( m_inviteConferenceAction );
+	//actions->addAction( "invite_conference", m_inviteConferenceAction );
+        actions->append( m_inviteConferenceAction );
 
 	if ( !m_profileAction )
 	{
@@ -441,10 +442,18 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 		connect( m_profileAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserProfile() ) );
 	}
 	m_profileAction->setEnabled( true );
-	//actionCollection->addAction( "profile_contact", m_profileAction );
-        actionCollection->append( m_profileAction );
+	//actions->addAction( "profile_contact", m_profileAction );
+        actions->append( m_profileAction );
 
-	return actionCollection;
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("contactViewWebcam"), m_webcamAction);
+	tempCollection.addAction(QLatin1String("contactInviteToViewWebcam"), m_inviteWebcamAction);
+	tempCollection.addAction(QLatin1String("contactBuzz"), m_buzzAction);
+	tempCollection.addAction(QLatin1String("yahooContactStealth"), m_stealthAction);
+	tempCollection.addAction(QLatin1String("yahooContactInviteConference"), m_inviteConferenceAction);
+	tempCollection.addAction(QLatin1String("contactViewProfile"), m_profileAction);
+	return actions;
 }
 
 void YahooContact::slotUserInfo()
