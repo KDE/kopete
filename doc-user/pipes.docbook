@@ -4,7 +4,7 @@
 <appendix id="pipes">
 <title>&kopete; Pipes Plugin Implementation Guide</title>
 <para>
-Beginning with &kopete; 1.0, &kopete; ships with a plugin called Pipes. Pipes allows you to pipe incoming or outgoing messages through an external script or executable. An incoming message will be piped through the executable before it reaches your chat window, while outgoing messages will be piped through the executable before they are sent over the internet. Pipes can recieve text in one of three forms:
+Beginning with &kopete; 1.0, &kopete; ships with a plugin called Pipes. Pipes allows you to pipe incoming or outgoing messages through an external script or executable. An incoming message will be piped through the executable before it reaches your chat window, while outgoing messages will be piped through the executable before they are sent over the internet. Pipes can receive text in one of three forms:
 <variablelist>
 <varlistentry>
 <term>Plain text body</term>
@@ -79,7 +79,7 @@ There are a few things to note:
 <sect1 id="xml-input">
 <title>&xml; Input</title>
 <para>
-Your program will recieve &xml; in its standard input stream, it will have the oppurtunity to modify it, and then it must hand it back to &kopete; by way of its standard ouput stream. If your program modifies the following elements, the internal knowledge that &kopete; has of the message will be modified to reflect your changes.
+Your program will recieve &xml; in its standard input stream, it will have the opportunity to modify it, and then it must hand it back to &kopete; by way of its standard output stream. If your program modifies the following elements, the internal knowledge that &kopete; has of the message will be modified to reflect your changes.
 <itemizedlist>
 <listitem><para>"message" attribute "timestamp" but not other time attributes</para></listitem>
 <listitem><para>"message" attribute "subject"</para></listitem>

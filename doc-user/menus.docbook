@@ -653,7 +653,7 @@ clipboard is pasted at the current cursor position.</para>
 <term>
 <menuchoice>
 <guimenu>Tabs</guimenu>
-<guisubmenu>Move Chat to Window</guisubmenu>
+<guisubmenu>Move Tab to Window</guisubmenu>
 </menuchoice>
 </term>
 <listitem>
@@ -689,7 +689,7 @@ clipboard is pasted at the current cursor position.</para>
 <menuchoice>
 <guimenu>Settings</guimenu>
 <guisubmenu>Toolbars</guisubmenu>
-<guimenuitem>Show Main Toolbar (Kopete)</guimenuitem></menuchoice>
+<guimenuitem>Main Toolbar (Kopete)</guimenuitem></menuchoice>
 </term>
 <listitem>
 <para>Shows/hides the main toolbar.</para>
@@ -701,7 +701,7 @@ clipboard is pasted at the current cursor position.</para>
 <menuchoice>
 <guimenu>Settings</guimenu>
 <guisubmenu>Toolbars</guisubmenu>
-<guimenuitem>Show Status (Kopete)</guimenuitem></menuchoice>
+<guimenuitem>Status (Kopete)</guimenuitem></menuchoice>
 </term>
 <listitem>
 <para>Shows/hides &kopete;'s status bar.  This is where buddy pictures appear.</para>
@@ -713,7 +713,7 @@ clipboard is pasted at the current cursor position.</para>
 <menuchoice>
 <guimenu>Settings</guimenu>
 <guisubmenu>Toolbars</guisubmenu>
-<guimenuitem>Show Format Toolbar (Kopete)</guimenuitem></menuchoice>
+<guimenuitem>Format Toolbar (Kopete)</guimenuitem></menuchoice>
 </term>
 <listitem>
 <para>Shows/hides the text formatting toolbar.</para>

@@ -460,7 +460,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect2>
 <sect2 id="global-identity">
 <title>Global Identity</title>
-<para>&kopete;'s Global Identity lets you set your own nickname and photo once for all your &im; accounts.  You can read these details from the &kde; address book entry for yourself, from a single one of your contacts, or add a completely new nickname or photo.  If you have an exciting dual life, you can create multiple identites and switch between them in the <guilabel>Identity</guilabel> section.</para>
+<para>&kopete;'s Global Identity lets you set your own nickname and photo once for all your &im; accounts.  You can read these details from the &kde; address book entry for yourself, from a single one of your contacts, or add a completely new nickname or photo.  If you have an exciting dual life, you can create multiple identities and switch between them in the <guilabel>Identity</guilabel> section.</para>
 </sect2>
 <sect2 id="configuring-behavior">
 <title>Behavior</title>

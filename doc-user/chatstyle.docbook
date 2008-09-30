@@ -9,16 +9,16 @@
 Beginning with &kopete; 0.12, we are now using <ulink
 url="http://www.adiumx.com/">Adium</ulink> format for our
 Chat Window style. The theme format is based on <acronym>HTML</acronym> templates and <acronym>CSS</acronym>. They
-are easier to make and develop, only a knowledge of <acronym>HTML</acronym> and <acronym>CSS</acronym> is needed. Also, styles can have variants (defined as <acronym>CSS</acronym> file) which add more customisation value :).
+are easier to make and develop, only a knowledge of <acronym>HTML</acronym> and <acronym>CSS</acronym> is needed. Also, styles can have variants (defined as <acronym>CSS</acronym> file) which add more customization value :).
 </para>
 
 <sect2 id="chatstyle-reference-guide">
 	<title>Reference guide.</title>
 <para>
-Adium format consist of a directory structure, <acronym>HTML</acronym> templates, <acronym>CSS</acronym> files and keywords that are replaced each time the template is processed. The final conversation is a <acronym>XHTML</acronym> page where messages are added with <acronym>DOM</acronym> operations. The central element is a div element named <filename>Chat</filename>. Before and after this div element goes the Header and Footer template. Messages are childs of the <filename>Chat</filename> div element.
+Adium format consist of a directory structure, <acronym>HTML</acronym> templates, <acronym>CSS</acronym> files and keywords that are replaced each time the template is processed. The final conversation is a <acronym>XHTML</acronym> page where messages are added with <acronym>DOM</acronym> operations. The central element is a div element named <filename>Chat</filename>. Before and after this div element goes the Header and Footer template. Messages are children of the <filename>Chat</filename> div element.
 </para>
 
-<sect3 id="chatstyle-refrerence-directory">
+<sect3 id="chatstyle-reference-directory">
 	<title>Directory Structure</title>
 <para>A style must respect this directory structure. Code in &kopete; are thinking around this directory structure. When archiving the style, archive the <filename>styleName</filename> directory. The directory structure is a structure of a <application>Mac OS X</application> bundle for those familiar with that operating system. Also you must respect the case displayed here, because a <acronym>UNIX</acronym> system is case-sensitive.</para>
 <programlisting>
@@ -55,7 +55,7 @@ styleName\ (can have .adiumMessageStyle as suffix, because in Mac OS X it is a b
 <varlistentry><term><filename>Header.html</filename> (Required)</term>
 <listitem>
 <para>
-Use the Header template to display a nice header to the conversation. This template is insered before <filename>Chat</filename> div element. If you don't use it, just put an empty file.
+Use the Header template to display a nice header to the conversation. This template is inserted before <filename>Chat</filename> div element. If you don't use it, just put an empty file.
 </para>
 </listitem>
 </varlistentry>
@@ -63,7 +63,7 @@ Use the Header template to display a nice header to the conversation. This templ
 <varlistentry><term><filename>Footer.html</filename> (Required)</term>
 <listitem>
 <para>
-This is mostly the same as Header but it is for the fotter of a conversation. This template is insered after <filename>Chat</filename> div element.  If you don't use it, just put an empty file.
+This is mostly the same as Header but it is for the footer of a conversation. This template is inserted after <filename>Chat</filename> div element.  If you don't use it, just put an empty file.
 </para>
 </listitem>
 </varlistentry>
@@ -71,7 +71,7 @@ This is mostly the same as Header but it is for the fotter of a conversation. Th
 <varlistentry><term><filename>Status.html</filename> (Required)</term>
 <listitem>
 <para>
-This template is used to display a internal message. Internal messages such as status change, message from Kopete(ex: Incoming File Transfert). When the style do not supply a Action template, it is used to display Action message.
+This template is used to display a internal message. Internal messages such as status change, message from Kopete (&eg; Incoming File Transfert). When the style do not supply a Action template, it is used to display Action message.
 </para>
 </listitem>
 </varlistentry>
@@ -80,7 +80,7 @@ This template is used to display a internal message. Internal messages such as s
               <term><filename>Outgoing/Content.html</filename> (Required)</term>
 <listitem>
 <para>
-The content template is the message core. Think it as a block that will hold messages.. Make sure it is ready to receive consecutive messages, don't design it to only display one message. Consecutive messages will be inserted at the div insert element.
+The content template is the message core. Think it as a block that will hold messages. Make sure it is ready to receive consecutive messages, don't design it to only display one message. Consecutive messages will be inserted at the div insert element.
 </para>
 </listitem>
 </varlistentry>
@@ -110,7 +110,7 @@ This template is a &kopete; extension to the Adium format. It is available for I
               <term><filename>Outgoing/NextContext.html</filename> (Optional)</term>
 <listitem>
 <para>
-These templates are not used in Kopete. In Adium, they are used to display history. It is mostly the same thing as Content and NextContent but with some differences to distinguist from normal messages.
+These templates are not used in Kopete. In Adium, they are used to display history. It is mostly the same thing as Content and NextContent but with some differences to distinguish from normal messages.
 </para>
 </listitem>
 </varlistentry>
@@ -121,12 +121,12 @@ These templates are not used in Kopete. In Adium, they are used to display histo
 
 <sect3 id="chatstyle-reference-css">
 	<title>About CSS styles and Variants</title>
-	<para>HTML template are used to describe how the structure is made. But all the style is described in <acronym>CSS</acronym> files. <filename>main.css</filename> is the main style, where variants are just alterations of the main style. Examples of variants are differents colors, no display of user photo. Both <filename>main.css</filename> and variants and imported in final <acronym>XHTML</acronym> page.</para>
+	<para>HTML template are used to describe how the structure is made. But all the style is described in <acronym>CSS</acronym> files. <filename>main.css</filename> is the main style, where variants are just alterations of the main style. Examples of variants are different colors, no display of user photo. Both <filename>main.css</filename> and variants and imported in final <acronym>XHTML</acronym> page.</para>
 	<sect4 id="chatstyle-reference-css-main">
 		<title>-<filename>main.css</filename></title>
 		<para>This is the main <acronym>CSS</acronym> file which is common for all variants. This file should contain all the main description of the style.</para>
 	</sect4>
-	<sect4 id="chatstyle-refrence-css-variants">
+	<sect4 id="chatstyle-reference-css-variants">
 		<title>-Variants</title>
 		<para>Variants are <acronym>CSS</acronym> files located in <filename>Variants/</filename> directory. Each variant is a single <acronym>CSS</acronym> file that include the <filename>main.css</filename> and do alteration to the main style.</para>
 	</sect4>
@@ -153,7 +153,7 @@ disableStyleCache=true
 
 <sect2 id="chatstyle-reference-keywords">
 	<title>Keywords reference</title>
-	<para>Keywords are likes holes to fill with details. On each new message, they are replaced with the correct value corresponding to their context. To fully support all features of Kopete, we added some keywords extentions to the Adium. Also some keywords are only available in certain context.</para>
+	<para>Keywords are likes holes to fill with details. On each new message, they are replaced with the correct value corresponding to their context. To fully support all features of Kopete, we added some keywords extensions to the Adium. Also some keywords are only available in certain context.</para>
 
 <variablelist><title>Keywords list for Header and Footer templates. </title>
 <para>There keywords are processed at the beginning of the chat.</para>
@@ -252,7 +252,7 @@ Generate a color from the sender contact id. Can be used to display a different 
 </para>
 <para>
 <filename>%senderColor{N}%</filename> where N is a positive number. If N is greater than 100, it represent a lighter color than the contact's color.
-If N equal 150 it is a color which is 50% brighter. If N is less than 100 then it is a darker color.  Usefull for having a background coloured differently for each contact.
+If N equal 150 it is a color which is 50% brighter. If N is less than 100 then it is a darker color.  Useful for having a background coloured differently for each contact.
 </para>
 <para>
 If you want to use theses colors in a variant, but not in the main style, you have to workaround.
@@ -261,7 +261,7 @@ If you want to use theses colors in a variant, but not in the main style, you ha
 <div style="color:%senderColor%;border:none;border-color:%senderColor{40}%;"><p class="message">...</p></div>
 ]]>
 </programlisting>
-you can apply color ro the p.message element in your <filename>main.css</filename> file, and in your varient put something like
+you can apply color to the p.message element in your <filename>main.css</filename> file, and in your variant put something like
 <programlisting>
 	p.message { color:inherit; border-color:inherit; }
 </programlisting>
@@ -305,10 +305,10 @@ Represent the message direction, if the message must be displayed right-to-left 
 
 <sect1 id="chatstyle-guideline">
 	<title>&kopete; Chat Window Style Guideline</title>
-<para>The &kopete; Chat Window Style Guideline is a set of things that your Chat Window style must support to be compilant with Kopete.</para>
+<para>The &kopete; Chat Window Style Guideline is a set of things that your Chat Window style must support to be compliant with Kopete.</para>
 <sect2 id="chatstyle-guideline-highlight">
 	<title>Support highlight</title>
-	<para>Your style must show hightlight. In Kopete and Adium, the <filename>%textbackgroundcolor{}%</filename> is replaced with the hightlight color. Add this style attribute: <userinput>background-color: %textbackgroundcolor{}%</userinput> to the HTML element that display the message.</para>
+	<para>Your style must show highlight. In Kopete and Adium, the <filename>%textbackgroundcolor{}%</filename> is replaced with the highlight color. Add this style attribute: <userinput>background-color: %textbackgroundcolor{}%</userinput> to the HTML element that display the message.</para>
 </sect2>
 <sect2 id="chatstyle-guideline-consecutive">
 	<title>Consecutive message templates are required.</title>
@@ -357,7 +357,7 @@ Represent the message direction, if the message must be displayed right-to-left 
 
 <sect2 id="chatstyle-guideline-direction">
 	<title>Support right-to-left languages with <filename>%messageDirection%</filename> keyword.</title>
-	<para><filename>%messageDirection%</filename> keyword is present for languages in the world that write right-to-left. It define the message direction, if it is "rtl"(right-to-left) or "ltr"(left-to-right). Add this style attribute to the HTML element that display the message: <userinput>direction: %messageDirection%</userinput>. Style preview in appearance config include a right-to-left to check if your style display it correctly. It should begin the string from the right.</para>
+	<para><filename>%messageDirection%</filename> keyword is present for languages in the world that write right-to-left. It define the message direction, if it is "rtl" (right-to-left) or "ltr" (left-to-right). Add this style attribute to the HTML element that display the message: <userinput>direction: %messageDirection%</userinput>. Style preview in appearance config include a right-to-left to check if your style display it correctly. It should begin the string from the right.</para>
 </sect2>
 </sect1>
 </appendix>
