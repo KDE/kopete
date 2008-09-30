@@ -26,9 +26,11 @@
 
 class WlmContact;
 
-class KOPETE_EXPORT WlmChatManager:public QObject
+class KOPETE_EXPORT WlmChatManager : public QObject
 {
-  Q_OBJECT public:
+    Q_OBJECT
+
+  public:
     WlmChatManager (WlmAccount * account);
     ~WlmChatManager ();
     WlmAccount *account ()
@@ -36,43 +38,78 @@ class KOPETE_EXPORT WlmChatManager:public QObject
         return m_account;
     }
     QMap < MSN::SwitchboardServerConnection *, WlmChatSession * >chatSessions;
+
+    QMap < QString, QString > emoticonsList;
+
+    // messages waiting for emoticons to be received
+    QMap < MSN::SwitchboardServerConnection *, QLinkedList<Kopete::Message *> > pendingMessages;
+
     void requestDisplayPicture (QString contactId);
+
     void createChat (MSN::SwitchboardServerConnection * conn);
 
-    private slots:void receivedMessage (MSN::SwitchboardServerConnection *
-                                        conn, const QString & from,
-                                        const Kopete::Message & message);
+  private slots:
+    
+    void receivedMessage (MSN::SwitchboardServerConnection * conn, 
+                                    const QString & from,
+                                    const Kopete::Message & message);
 
     void joinedConversation (MSN::SwitchboardServerConnection * conn,
-                             const QString & passport,
-                             const QString & friendlyname);
+                                    const QString & passport,
+                                    const QString & friendlyname);
 
     void leftConversation (MSN::SwitchboardServerConnection * conn,
-                           const QString & passport);
+                                    const QString & passport);
 
     void removeChatSession (QObject * obj);
 
     void gotNewSwitchboard (MSN::SwitchboardServerConnection * conn,
-                            const void *tag);
+                                    const void *tag);
 
-    void SwitchboardServerConnectionTerminated (MSN::
-                                                SwitchboardServerConnection *
-                                                conn);
+    void SwitchboardServerConnectionTerminated (
+                                    MSN::SwitchboardServerConnection * conn);
 
     void messageSentACK (MSN::SwitchboardServerConnection * conn,
-                         const unsigned int &trID);
+                                    const unsigned int &trID);
 
     void receivedNudge (MSN::SwitchboardServerConnection * conn,
-                        const QString & passport);
+                                    const QString & passport);
 
     void receivedTypingNotification (MSN::SwitchboardServerConnection * conn,
-                                     const QString & contactId);
+                                    const QString & contactId);
 
+    void slotGotVoiceClipNotification (MSN::SwitchboardServerConnection * conn, 
+                                    const MSN::Passport & from,
+                                    const QString & msnobject);
+
+    void slotGotWinkNotification (MSN::SwitchboardServerConnection * conn, 
+                                    const MSN::Passport & from,
+                                    const QString & msnobject);
+
+    void slotGotInk (MSN::SwitchboardServerConnection * conn, 
+                                    const MSN::Passport & from,
+                                    const QString & image);
+
+    void slotGotVoiceClipFile(MSN::SwitchboardServerConnection * conn, 
+                                    const unsigned int & sessionID, 
+                                    const QString & file);
+    
+    void slotGotEmoticonFile(MSN::SwitchboardServerConnection * conn, 
+                                    const unsigned int & sessionID,
+                                    const QString & alias,
+                                    const QString & file);
+
+    void slotGotWinkFile(MSN::SwitchboardServerConnection * conn, 
+                                    const unsigned int & sessionID, 
+                                    const QString & file);
+
+    void slotGotEmoticonNotification (MSN::SwitchboardServerConnection * conn,
+                                    const MSN::Passport & buddy, 
+                                    const QString & alias,
+                                    const QString & msnobject);
 
   private:
     WlmAccount * m_account;
 };
 
 #endif
-
-// vim: set noet ts=4 sts=4 tw=4:

@@ -25,17 +25,18 @@
 
 class WlmTransferManager:public QObject
 {
-  Q_OBJECT public:
+  Q_OBJECT 
+  public:
     struct transferSessionData
     {
         QString from;
         QString to;
         bool incoming;
-          Kopete::Transfer * ft;
+        Kopete::Transfer * ft;
     };
 
-      WlmTransferManager (WlmAccount * account);
-     ~WlmTransferManager ();
+    WlmTransferManager (WlmAccount * account);
+    ~WlmTransferManager ();
     WlmAccount *account ()
     {
         return m_account;
@@ -55,22 +56,34 @@ class WlmTransferManager:public QObject
         transferSessions[sessionID] = tsd;
     }
 
-    public slots:void incomingFileTransfer (MSN::SwitchboardServerConnection *
-                                            conn,
+  public slots:
+
+    void incomingFileTransfer (MSN::SwitchboardServerConnection * conn,
                                             const MSN::
                                             fileTransferInvite & ft);
-    void gotFileTransferProgress (const unsigned int &sessionID,
+
+    void gotFileTransferProgress (MSN::SwitchboardServerConnection * conn,
+                                  const unsigned int &sessionID,
                                   const unsigned long long &transferred);
-    void gotFileTransferFailed (const unsigned int &sessionID);
-    void gotFileTransferSucceeded (const unsigned int &sessionID);
+
+    void gotFileTransferFailed (MSN::SwitchboardServerConnection * conn,
+                                  const unsigned int &sessionID);
+
+    void gotFileTransferSucceeded (MSN::SwitchboardServerConnection * conn,
+                                  const unsigned int &sessionID);
+
     void slotAccepted (Kopete::Transfer * ft, const QString & filename);
+
     void slotRefused (const Kopete::FileTransferInfo & fti);
+
     void slotCanceled ();
-    void fileTransferInviteResponse (const unsigned int &sessionID,
-                                     const bool & response);
+
+    void fileTransferInviteResponse (MSN::SwitchboardServerConnection * conn,
+                                  const unsigned int &sessionID,
+                                  const bool & response);
+
   private:
-    QMap < unsigned int,
-      transferSessionData > transferSessions;
+    QMap < unsigned int, transferSessionData > transferSessions;
     WlmAccount *m_account;
     unsigned int nextID;
 };

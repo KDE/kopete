@@ -100,9 +100,10 @@ Callbacks::gotFriendlyName (MSN::NotificationServerConnection * conn,
 }
 
 void
-Callbacks::fileTransferInviteResponse (unsigned int sessionID, bool response)
+Callbacks::fileTransferInviteResponse (MSN::SwitchboardServerConnection * conn, 
+                            unsigned int sessionID, bool response)
 {
-    emit slotfileTransferInviteResponse (sessionID, response);
+    emit slotfileTransferInviteResponse (conn, sessionID, response);
 }
 
 void
@@ -328,8 +329,8 @@ Callbacks::buddyChangedStatus (MSN::NotificationServerConnection * conn,
                                MSN::BuddyStatus status, unsigned int clientID,
                                std::string msnobject)
 {
-    emit contactChangedStatus (buddy, friendlyname, status, clientID,
-                               msnobject);
+    emit contactChangedStatus (buddy, QString(friendlyname.c_str()), status, clientID,
+                               QString(msnobject.c_str()));
 }
 
 void
@@ -444,10 +445,7 @@ Callbacks::gotEmoticonNotification (MSN::SwitchboardServerConnection * conn,
                                     MSN::Passport username, std::string alias,
                                     std::string msnobject)
 {
-//    std::string filename2 ("/tmp/emoticon.bin" + MSN::toStr (sessionID));
-    //printf ("--- Emoticon '%s' from %s -> %s\n", alias.c_str (),
-    //        username.c_str (), msnobject.c_str ());
-    //conn->requestFile (sessionID++, filename2, msnobject);
+    emit slotGotEmoticonNotification(conn, username, QString(alias.c_str()), QString(msnobject.c_str()));
 }
 
 void
@@ -475,33 +473,24 @@ Callbacks::gotNudge (MSN::SwitchboardServerConnection * conn,
 }
 
 void
-Callbacks::gotVoiceClip (MSN::SwitchboardServerConnection * conn,
+Callbacks::gotVoiceClipNotification (MSN::SwitchboardServerConnection * conn,
                          MSN::Passport username, std::string msnobject)
 {
-    //printf ("\t%s sent you a voice clip...\n", username.c_str ());
-//    std::string filename2 ("/tmp/voiceclip.bin" + MSN::toStr (sessionID));
-//    conn->requestFile (sessionID++, filename2, msnobject);
+    emit slotGotVoiceClipNotification(conn, username, QString(msnobject.c_str()));
 }
 
 void
-Callbacks::gotWink (MSN::SwitchboardServerConnection * conn,
+Callbacks::gotWinkNotification (MSN::SwitchboardServerConnection * conn,
                     MSN::Passport username, std::string msnobject)
 {
-    //printf ("\t%s sent you a Wink...\n", username.c_str ());
-//    std::string filename2 ("/tmp/wink.bin" + MSN::toStr (sessionID));
-    // you should generate a random sessionID number
-//    conn->requestFile (sessionID++, filename2, msnobject);
+    emit slotGotWinkNotification(conn, username, QString(msnobject.c_str()));
 }
 
 void
 Callbacks::gotInk (MSN::SwitchboardServerConnection * conn,
                    MSN::Passport username, std::string image)
 {
-    // image variable is the base64 encoded gif file
-    //printf ("\t%s sent you an Ink...\n", username.c_str ());
-//  std::string filename2("/tmp/ink.bin"+MSN::toStr(sessionID));
-    // you should generate a random sessionID number
-//  conn->requestFile(sessionID++, filename2, msnobject);
+    emit slotGotInk(conn, username, QString(image.c_str()));
 }
 
 void
@@ -536,28 +525,28 @@ Callbacks::gotNewEmailNotification (MSN::NotificationServerConnection * conn,
 }
 
 void
-Callbacks::fileTransferProgress (unsigned int sessionID, std::string status,
+Callbacks::fileTransferProgress (MSN::SwitchboardServerConnection * conn,
+                                 unsigned int sessionID, std::string status,
                                  unsigned long long transferred,
                                  unsigned long long total)
 {
-   // printf ("File transfer: session %d\t(%llu/%llu bytes sent/received)\n",
-   //         sessionID, transferred, total);
-    emit gotFileTransferProgress (sessionID, transferred);
+    emit gotFileTransferProgress (conn, sessionID, transferred);
 }
 
 void
-Callbacks::fileTransferFailed (unsigned int sessionID, int error,
+Callbacks::fileTransferFailed (MSN::SwitchboardServerConnection * conn,
+                               unsigned int sessionID, int error,
                                std::string message)
 {
-    //printf ("File transfer failed: %s\n", message.c_str ());
-    emit gotFileTransferFailed (sessionID);
+    emit gotFileTransferFailed (conn, sessionID);
 }
 
 void
-Callbacks::fileTransferSucceeded (unsigned int sessionID)
+Callbacks::fileTransferSucceeded (MSN::SwitchboardServerConnection * conn,
+                               unsigned int sessionID)
 {
     //printf ("File transfer successfully completed. session: %d\n", sessionID);
-    emit gotFileTransferSucceeded (sessionID);
+    emit gotFileTransferSucceeded (conn, sessionID);
 }
 
 void
@@ -565,8 +554,6 @@ Callbacks::gotNewConnection (MSN::Connection * conn)
 {
     if (dynamic_cast < MSN::NotificationServerConnection * >(conn))
         dynamic_cast <MSN::NotificationServerConnection *>(conn)->synchronizeContactList ();
-//    if(dynamic_cast<MSN::SwitchboardServerConnection *>(conn))
-    //    emit gotNewSwitchboard(dynamic_cast<MSN::SwitchboardServerConnection *>(conn),0);
 }
 
 void
@@ -583,7 +570,6 @@ Callbacks::buddyChangedPersonalInfo (MSN::NotificationServerConnection * conn,
 void
 Callbacks::closingConnection (MSN::Connection * conn)
 {
-    //printf ("Closed connection with socket %d\n", conn->sock);
     if (dynamic_cast < MSN::SwitchboardServerConnection * >(conn))
         emit SwitchboardServerConnectionTerminated (
                 dynamic_cast <MSN::SwitchboardServerConnection* >(conn));
@@ -654,35 +640,11 @@ int
 Callbacks::listenOnPort (int port)
 {
     int s;
-/*    struct sockaddr_in addr;
-    
-    if ((s = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
-        return -1;
-    }
-    
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(port);
-    
-    if (bind(s, (sockaddr *)(&addr), sizeof(addr)) < 0 || listen(s, 1) < 0)
-    {
-        close(s);
-        return -1;
-    }
-    */
     return s;
 }
 
 std::string Callbacks::getOurIP (void)
 {
-    struct hostent * hn;
-    char buf2[1024];
-
-//    gethostname(buf2,1024);
-//    hn = gethostbyname(buf2);
-
-//    return inet_ntoa( *((struct in_addr*)hn->h_addr));
 }
 
 void
@@ -709,8 +671,6 @@ void
 Callbacks::askFileTransfer (MSN::SwitchboardServerConnection * conn,
                             MSN::fileTransferInvite ft)
 {
-    std::string filename2 ("/tmp/" + ft.filename);
-
     emit incomingFileTransfer (conn, ft);
 /*
 	switch(ft.type)
@@ -780,7 +740,8 @@ Callbacks::addedContactToAddressBook (MSN::NotificationServerConnection *
         printf ("User (%s - %s) NOT added to AddressBook.\n",
                 passport.c_str (), displayName.c_str ());
 */
-    emit gotAddedContactToAddressBook (added, passport, displayName, guid);
+    emit gotAddedContactToAddressBook (added, QString(passport.c_str()), 
+            QString(displayName.c_str()), QString(guid.c_str()));
 }
 
 void
@@ -831,6 +792,21 @@ Callbacks::disabledContactOnAddressBook (MSN::NotificationServerConnection *
         printf ("User NOT disabled on AddressBook. Guid (%s)\n",
                 contactId.c_str ());
 */
+}
+
+void Callbacks::gotVoiceClipFile(MSN::SwitchboardServerConnection * conn, unsigned int sessionID, std::string file)
+{
+    emit slotGotVoiceClipFile(conn, sessionID, QString(file.c_str()));
+}
+
+void Callbacks::gotEmoticonFile(MSN::SwitchboardServerConnection * conn, unsigned int sessionID, std::string alias, std::string file)
+{
+    emit slotGotEmoticonFile(conn, sessionID, QString(alias.c_str()), QString(file.c_str()));
+}
+
+void Callbacks::gotWinkFile(MSN::SwitchboardServerConnection * conn, unsigned int sessionID, std::string file)
+{
+    emit slotGotWinkFile(conn, sessionID, QString(file.c_str()));
 }
 
 #include "wlmlibmsn.moc"

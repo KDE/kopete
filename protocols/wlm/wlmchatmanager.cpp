@@ -18,9 +18,13 @@
 
 #include <QLabel>
 #include <QImage>
+#include <QImageReader>
 #include <QToolTip>
 #include <QFile>
 #include <QIcon>
+#include <QRegExp>
+#include <QDomDocument>
+#include <QTextDocument>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -31,6 +35,7 @@
 #include <kmainwindow.h>
 #include <ktoolbar.h>
 #include <krun.h>
+#include <kstandarddirs.h>
 
 #include "kopetecontactaction.h"
 #include "kopetemetacontact.h"
@@ -110,6 +115,64 @@ m_account (account1)
                       SLOT (receivedTypingNotification
                             (MSN::SwitchboardServerConnection *,
                              const QString &)));
+
+    QObject::connect (&account ()->server ()->cb,
+                      SIGNAL (slotGotEmoticonNotification (MSN::SwitchboardServerConnection *,
+                               const MSN::Passport &, const QString &,
+                               const QString &)), this,
+                      SLOT (slotGotEmoticonNotification (MSN::SwitchboardServerConnection *,
+                               const MSN::Passport &, const QString &,
+                               const QString &)));
+
+    QObject::connect (&account ()->server ()->cb,
+                      SIGNAL (slotGotVoiceClipNotification (MSN::SwitchboardServerConnection *,
+                                const MSN::Passport &,
+                                const QString &)), this,
+                      SLOT(slotGotVoiceClipNotification (MSN::SwitchboardServerConnection *,
+                                 const MSN::Passport &,
+                                 const QString &)));
+
+    QObject::connect (&account ()->server ()->cb,
+                      SIGNAL(slotGotWinkNotification (MSN::SwitchboardServerConnection *,
+                                const MSN::Passport &,
+                                const QString &)), this,
+                      SLOT(slotGotWinkNotification (MSN::SwitchboardServerConnection *,
+                                const MSN::Passport &,
+                                const QString &)));
+
+    QObject::connect (&account ()->server ()->cb,
+                      SIGNAL(slotGotInk (MSN::SwitchboardServerConnection *,
+                                    const MSN::Passport &,
+                                    const QString &)), this,
+                      SLOT(slotGotInk (MSN::SwitchboardServerConnection *,
+                                    const MSN::Passport &,
+                                    const QString &)));
+
+    QObject::connect (&account ()->server ()->cb,
+                      SIGNAL(slotGotVoiceClipFile(MSN::SwitchboardServerConnection *,
+                                const unsigned int &,
+                                const QString &)), this,
+                      SLOT(slotGotVoiceClipFile(MSN::SwitchboardServerConnection *,
+                                const unsigned int &,
+                                const QString &)));
+
+    QObject::connect (&account ()->server ()->cb,
+                      SIGNAL(slotGotEmoticonFile(MSN::SwitchboardServerConnection *,
+                                const unsigned int &,
+                                const QString &,
+                                const QString &)), this,
+                      SLOT(slotGotEmoticonFile(MSN::SwitchboardServerConnection *,
+                                const unsigned int &,
+                                const QString &,
+                                const QString &)));
+
+    QObject::connect (&account ()->server ()->cb,
+                      SIGNAL(slotGotWinkFile(MSN::SwitchboardServerConnection *,
+                                    const unsigned int &,
+                                    const QString &)), this,
+                      SLOT(slotGotWinkFile(MSN::SwitchboardServerConnection *,
+                                    const unsigned int &,
+                                    const QString &)));
 }
 
 WlmChatManager::~WlmChatManager ()
@@ -278,12 +341,51 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
     if (chat)
     {
         Kopete::Contact * contact = account ()->contacts ()[from];
+        if(!contact)
+        {
+            account ()->addContact (from, QString::null, 0L,
+                                            Kopete::Account::Temporary);
+            contact = account ()->contacts ()[from];
+        }
         Kopete::Message * newMessage =
             new Kopete::Message (contact, chat->members ());
-        newMessage->setFont (message.font ());
         newMessage->setPlainBody (message.plainBody ());
+        newMessage->setFont (message.font ());
         newMessage->setForegroundColor (message.foregroundColor ());
         newMessage->setDirection (Kopete::Message::Inbound);
+
+        // stolen from msn plugin
+        QMap<QString,QString>::iterator it = emoticonsList.begin();
+        for(;it!=emoticonsList.end(); ++it)
+        {
+            QString es=Qt::escape(it.key());
+            QString message1=newMessage->escapedBody();
+            if(message1.contains(es))
+            {
+                QFile f(it.value());
+                if(!f.exists())
+                {
+                    // an emoticon is still missing, so wait for it
+                    QLinkedList<Kopete::Message*> msgs = pendingMessages[conn];
+                    newMessage->setHtmlBody(message1);
+                    msgs.append(newMessage);
+                    pendingMessages[conn] = msgs;
+                    return;
+                }
+                QImage iconImage = QImageReader(it.value()).read();
+
+                message1.replace( QRegExp(QString::fromLatin1("%1(?![^><]*>)").arg(QRegExp::escape(es))),
+                        QString::fromLatin1("<img align=\"center\" width=\"") +
+                        QString::number(iconImage.width()) +
+                        QString::fromLatin1("\" height=\"") +
+                        QString::number(iconImage.height()) +
+                        QString::fromLatin1("\" src=\"") + it.value() +
+                        QString::fromLatin1("\" title=\"") + es +
+                        QString::fromLatin1("\" alt=\"") + es +
+                        QString::fromLatin1( "\"/>" ) ); 
+                newMessage->setHtmlBody(message1);
+            }
+        }
         // Add it to the manager
         chat->appendMessage (*newMessage);
 
@@ -379,6 +481,142 @@ WlmChatManager::receivedTypingNotification (MSN::SwitchboardServerConnection *
     {
         chat->receivedTypingMsg (contact, true);
     }
+}
+
+void
+WlmChatManager::slotGotVoiceClipNotification (MSN::SwitchboardServerConnection * conn, 
+                                const MSN::Passport & from,
+                                const QString & msnobject)
+{
+}
+
+void
+WlmChatManager::slotGotWinkNotification (MSN::SwitchboardServerConnection * conn, 
+                                const MSN::Passport & from,
+                                const QString & msnobject)
+{
+}
+
+void
+WlmChatManager::slotGotInk (MSN::SwitchboardServerConnection * conn, 
+                                    const MSN::Passport & from,
+                                    const QString & image)
+{
+}
+
+void 
+WlmChatManager::slotGotVoiceClipFile(MSN::SwitchboardServerConnection * conn, 
+                                const unsigned int & sessionID, 
+                                const QString & file)
+{
+}
+void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnection * conn,
+                                const MSN::Passport & buddy, 
+                                const QString & alias,
+                                const QString & msnobject)
+{
+    WlmChatSession *chat = chatSessions[conn];
+    if(!chat)
+        return;
+
+    unsigned int sessionID = chat->generateSessionID();
+
+    QDomDocument xmlobj;
+    xmlobj.setContent (msnobject);
+
+    // track display pictures by SHA1D field
+    QString SHA1D = xmlobj.documentElement ().attribute ("SHA1D");
+
+    if (SHA1D.isEmpty ())
+        return;
+
+    QString newlocation =
+        KGlobal::dirs ()->locateLocal ("appdata",
+                                       "wlmpictures/" +
+                                       QString (SHA1D.replace ("/", "_")));
+    if (QFile (newlocation).exists () && QFile (newlocation).size ())
+    {
+        emoticonsList[alias] = newlocation;
+        return;
+    }
+
+    // pending emoticon
+    emoticonsList[alias] = "";
+
+    conn->requestEmoticon(sessionID, newlocation.toAscii().data(),
+            msnobject.toAscii().data(), alias.toAscii().data());
+}
+
+void 
+WlmChatManager::slotGotEmoticonFile(MSN::SwitchboardServerConnection * conn, 
+                                const unsigned int & sessionID,
+                                const QString & alias,
+                                const QString & file)
+{
+    emoticonsList[alias] = file;
+
+    if(pendingMessages[conn].isEmpty())
+        return;
+
+    if(!chatSessions[conn])
+        return;
+
+    // duplicate to avoid crashes when removing items in the next loop
+    QLinkedList<Kopete::Message *> pendingMessages1 = pendingMessages[conn];
+
+    QLinkedList<Kopete::Message *>::iterator it = pendingMessages1.begin();
+    for(;it!=pendingMessages1.end(); ++it)
+    {
+        Kopete::Message *message = (*it);
+        QMap<QString,QString>::iterator it2 = emoticonsList.begin();
+        bool ok = true;
+        // for each emoticon in our list
+        for(;it2!=emoticonsList.end(); ++it2)
+        {
+            QString es=Qt::escape(it2.key());
+            QString message1=message->escapedBody();
+            if(message1.contains(es))
+            {
+                QFile f(it2.value());
+                if(!f.exists())
+                {
+                    // an emoticon is still missing, so wait for it
+                    QLinkedList<Kopete::Message*> pmsgs = pendingMessages[conn];
+                    message->setHtmlBody(message1);
+                    pmsgs.removeOne((*it));
+                    pmsgs.append((*it));
+                    pendingMessages[conn] = pmsgs;
+                    ok = false;
+                    break;
+                }
+                QImage iconImage = QImageReader(it2.value()).read();
+
+                message1.replace( QRegExp(QString::fromLatin1("%1(?![^><]*>)").arg(QRegExp::escape(es))),
+                        QString::fromLatin1("<img align=\"center\" width=\"") +
+                        QString::number(iconImage.width()) +
+                        QString::fromLatin1("\" height=\"") +
+                        QString::number(iconImage.height()) +
+                        QString::fromLatin1("\" src=\"") + it2.value() +
+                        QString::fromLatin1("\" title=\"") + es +
+                        QString::fromLatin1("\" alt=\"") + es +
+                        QString::fromLatin1( "\"/>" ) ); 
+                message->setHtmlBody(message1);
+            }
+        }
+        if(ok)
+        {
+            chatSessions[conn]->appendMessage (*message);
+            pendingMessages[conn].removeOne(message);
+            delete message;
+        }
+    }
+}
+
+void 
+WlmChatManager::slotGotWinkFile(MSN::SwitchboardServerConnection * conn, 
+                                    const unsigned int & sessionID, 
+                                    const QString & file)
+{
 }
 
 #include "wlmchatmanager.moc"

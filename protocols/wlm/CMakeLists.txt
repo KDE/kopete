@@ -42,7 +42,7 @@ set(kopete_wlm_PART_SRCS
 
 kde4_add_plugin(kopete_wlm ${kopete_wlm_PART_SRCS})
 
-target_link_libraries(kopete_wlm ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBRARY} kopete kopete_videodevice msn)
+target_link_libraries(kopete_wlm ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTNETWORK_LIBRARY} kopete kopete_videodevice msn)
 
 install(TARGETS kopete_wlm  DESTINATION ${PLUGIN_INSTALL_DIR})
 

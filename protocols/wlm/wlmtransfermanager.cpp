@@ -39,27 +39,35 @@ nextID (1)
 
     QObject::connect (&account ()->server ()->cb,
                       SIGNAL (gotFileTransferProgress
-                              (const unsigned int &,
+                              (MSN::SwitchboardServerConnection *, 
+                               const unsigned int &,
                                const unsigned long long &)), this,
                       SLOT (gotFileTransferProgress
-                            (const unsigned int &,
+                            (MSN::SwitchboardServerConnection *,
+                             const unsigned int &,
                              const unsigned long long &)));
 
     QObject::connect (&account ()->server ()->cb,
-                      SIGNAL (gotFileTransferFailed (const unsigned int &)),
+                      SIGNAL (gotFileTransferFailed (MSN::SwitchboardServerConnection *,
+                              const unsigned int &)),
                       this,
-                      SLOT (gotFileTransferFailed (const unsigned int &)));
+                      SLOT (gotFileTransferFailed (MSN::SwitchboardServerConnection *,
+                              const unsigned int &)));
 
     QObject::connect (&account ()->server ()->cb,
                       SIGNAL (gotFileTransferSucceeded
-                              (const unsigned int &)), this,
-                      SLOT (gotFileTransferSucceeded (const unsigned int &)));
+                              (MSN::SwitchboardServerConnection *,
+                               const unsigned int &)), this,
+                      SLOT (gotFileTransferSucceeded (MSN::SwitchboardServerConnection *,
+                              const unsigned int &)));
 
     QObject::connect (&account ()->server ()->cb,
                       SIGNAL (slotfileTransferInviteResponse
-                              (const unsigned int &, const bool &)), this,
+                              (MSN::SwitchboardServerConnection *,
+                               const unsigned int &, const bool &)), this,
                       SLOT (fileTransferInviteResponse
-                            (const unsigned int &, const bool &)));
+                            (MSN::SwitchboardServerConnection * ,
+                             const unsigned int &, const bool &)));
 
     connect (Kopete::TransferManager::transferManager (),
              SIGNAL (accepted (Kopete::Transfer *, const QString &)),
@@ -71,7 +79,8 @@ nextID (1)
 }
 
 void
-WlmTransferManager::fileTransferInviteResponse (const unsigned int &sessionID,
+WlmTransferManager::fileTransferInviteResponse (MSN::SwitchboardServerConnection * conn,
+                                                const unsigned int &sessionID,
                                                 const bool & response)
 {
     if (response)
@@ -101,8 +110,7 @@ WlmTransferManager::~WlmTransferManager ()
 }
 
 void
-WlmTransferManager::incomingFileTransfer (MSN::SwitchboardServerConnection *
-                                          conn,
+WlmTransferManager::incomingFileTransfer (MSN::SwitchboardServerConnection * conn,
                                           const MSN::fileTransferInvite & ft)
 {
     Kopete::Contact * contact =
@@ -143,7 +151,8 @@ WlmTransferManager::incomingFileTransfer (MSN::SwitchboardServerConnection *
 }
 
 void
-WlmTransferManager::gotFileTransferProgress (const unsigned int &sessionID,
+WlmTransferManager::gotFileTransferProgress (MSN::SwitchboardServerConnection * conn,
+                                             const unsigned int &sessionID,
                                              const unsigned long long
                                              &transferred)
 {
@@ -217,7 +226,8 @@ WlmTransferManager::slotRefused (const Kopete::FileTransferInfo & fti)
 }
 
 void
-WlmTransferManager::gotFileTransferFailed (const unsigned int &sessionID)
+WlmTransferManager::gotFileTransferFailed (MSN::SwitchboardServerConnection * conn,
+                                            const unsigned int &sessionID)
 {
     Kopete::Transfer * transfer = transferSessions[sessionID].ft;
     if (transfer)
@@ -228,7 +238,8 @@ WlmTransferManager::gotFileTransferFailed (const unsigned int &sessionID)
 }
 
 void
-WlmTransferManager::gotFileTransferSucceeded (const unsigned int &sessionID)
+WlmTransferManager::gotFileTransferSucceeded (MSN::SwitchboardServerConnection * conn,
+                                            const unsigned int &sessionID)
 {
     Kopete::Transfer * transfer = transferSessions[sessionID].ft;
     if (transfer)

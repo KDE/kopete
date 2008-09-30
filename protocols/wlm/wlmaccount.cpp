@@ -344,17 +344,17 @@ WlmAccount::gotContactPersonalInfo (const MSN::Passport & fromPassport,
 
 void
 WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
-                                  const std::string & friendlyname,
+                                  const QString & friendlyname,
                                   const MSN::BuddyStatus & state,
                                   const unsigned int &clientID,
-                                  const std::string & msnobject)
+                                  const QString & msnobject)
 {
     kDebug (14210) << k_funcinfo;
     Kopete::Contact * contact = contacts ()[buddy.c_str ()];
     if (contact)
     {
         contact->setProperty (Kopete::Global::Properties::self ()->
-                              nickName (), QString (friendlyname.c_str ()));
+                              nickName (), friendlyname);
 
         if (state == MSN::STATUS_AWAY)
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmAway);
@@ -376,10 +376,9 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
         else if (state == MSN::STATUS_IDLE)
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmIdle);
 
-        QString a = QString (msnobject.c_str ());
-        dynamic_cast <WlmContact *>(contact)->setMsnObj (msnobject.c_str ());
+        dynamic_cast <WlmContact *>(contact)->setMsnObj (msnobject.toAscii().data());
 
-        if (a.isEmpty () || a == "0")   // no picture
+        if (msnobject.isEmpty () || msnobject == "0")   // no picture
         {
             contact->removeProperty (Kopete::Global::Properties::self ()->
                                      photo ());
@@ -387,7 +386,7 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
         }
 
         QDomDocument xmlobj;
-        xmlobj.setContent (a);
+        xmlobj.setContent (msnobject);
 
         // track display pictures by SHA1D field
         QString SHA1D = xmlobj.documentElement ().attribute ("SHA1D");
@@ -688,13 +687,13 @@ WlmAccount::connectionCompleted ()
 
     QObject::connect (&m_server->cb,
                       SIGNAL (contactChangedStatus
-                              (const MSN::Passport &, const std::string &,
+                              (const MSN::Passport &, const QString &,
                                const MSN::BuddyStatus &, const unsigned int &,
-                               const std::string &)), this,
+                               const QString &)), this,
                       SLOT (contactChangedStatus
-                            (const MSN::Passport &, const std::string &,
+                            (const MSN::Passport &, const QString &,
                              const MSN::BuddyStatus &, const unsigned int &,
-                             const std::string &)));
+                             const QString &)));
 
     QObject::connect (&m_server->cb,
                       SIGNAL (contactDisconnected (const MSN::Passport &)),
@@ -733,11 +732,11 @@ WlmAccount::connectionCompleted ()
 
     QObject::connect (&m_server->cb,
                       SIGNAL (gotAddedContactToAddressBook
-                              (const bool &, const std::string &,
-                               const std::string &, const std::string &)),
+                              (const bool &, const QString &,
+                               const QString &, const QString &)),
                       SLOT (gotAddedContactToAddressBook
-                            (const bool &, const std::string &,
-                             const std::string &, const std::string &)));
+                            (const bool &, const QString &,
+                             const QString &, const QString &)));
 
     MSN::BuddyStatus state = MSN::STATUS_AVAILABLE;
 
@@ -768,23 +767,23 @@ WlmAccount::connectionCompleted ()
 
 void
 WlmAccount::gotAddedContactToAddressBook (const bool & added,
-                                          const std::string & passport,
-                                          const std::string & displayName,
-                                          const std::string & guid)
+                                          const QString & passport,
+                                          const QString & displayName,
+                                          const QString & guid)
 {
     if (added)
     {
-        addContact (QString (passport.c_str ()),
+        addContact (passport,
                     QString(),
                     Kopete::Group::topLevel (),
                     Kopete::Account::DontChangeKABC);
 
-        Kopete::Contact * newcontact = contacts ()[passport.c_str ()];
+        Kopete::Contact * newcontact = contacts ()[passport];
         if(!newcontact)
             return;
 
         newcontact->setProperty (Kopete::Global::Properties::self ()->
-                  nickName (), QString (displayName.c_str ()));
+                  nickName (), displayName);
 
     }
     else

@@ -64,6 +64,7 @@ m_chatService (conn),
 m_downloadDisplayPicture (false),
 m_sendNudge (false),
 m_tries (0),
+m_sessionID(1),
 m_oimid (1)
 {
     Kopete::ChatSessionManager::self ()->registerChatSession (this);
@@ -133,9 +134,11 @@ WlmChatSession::inviteContact (const QString & passport)
 unsigned int
 WlmChatSession::generateSessionID()
 {
+    m_sessionID++;
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
-    return (unsigned int)(qrand() % 4294967295);
+    return (unsigned int)(qrand() % 4294967295)+m_sessionID;
+
 }
 
 void

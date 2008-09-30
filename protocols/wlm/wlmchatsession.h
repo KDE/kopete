@@ -74,6 +74,7 @@ class KOPETE_EXPORT WlmChatSession: public Kopete::ChatSession
     virtual void inviteContact (const QString &);
     void startSendKeepAlive();
     void stopSendKeepAlive();
+    unsigned int generateSessionID();
 
   private slots:
     void slotMessageSent (Kopete::Message & message, Kopete::ChatSession * kmm);
@@ -90,8 +91,9 @@ class KOPETE_EXPORT WlmChatSession: public Kopete::ChatSession
     MSN::SwitchboardServerConnection * m_chatService;
     bool m_downloadDisplayPicture;
     bool m_sendNudge;
-    int  m_tries;
-    int  m_oimid;
+    int m_tries;
+    int m_oimid;
+    int m_sessionID;
     QString m_lastMsnObj;
     QLinkedList < Kopete::Message > m_messagesQueue;
     QMap < unsigned int, Kopete::Message > m_messagesSentQueue;
@@ -102,7 +104,6 @@ class KOPETE_EXPORT WlmChatSession: public Kopete::ChatSession
     KActionMenu * m_actionInvite;
     QList < KAction* > m_inviteactions;
     QTimer * m_keepalivetimer;
-	unsigned int generateSessionID();
 };
 
 #endif

@@ -129,7 +129,8 @@ class Callbacks:public QObject,
                                    std::string passport);
 
     virtual void
-    fileTransferInviteResponse (unsigned int sessionID, bool response);
+    fileTransferInviteResponse (MSN::SwitchboardServerConnection * conn,
+                                   unsigned int sessionID, bool response);
 
     virtual void
     enabledContactOnAddressBook (MSN::NotificationServerConnection * conn,
@@ -172,11 +173,11 @@ class Callbacks:public QObject,
     gotNudge (MSN::SwitchboardServerConnection * conn, MSN::Passport from);
 
     virtual void
-    gotVoiceClip (MSN::SwitchboardServerConnection * conn, MSN::Passport from,
+    gotVoiceClipNotification (MSN::SwitchboardServerConnection * conn, MSN::Passport from,
                   std::string msnobject);
 
     virtual void
-    gotWink (MSN::SwitchboardServerConnection * conn, MSN::Passport from,
+    gotWinkNotification (MSN::SwitchboardServerConnection * conn, MSN::Passport from,
              std::string msnobject);
 
     virtual void
@@ -197,16 +198,19 @@ class Callbacks:public QObject,
                              std::string from, std::string subject);
 
     virtual void
-    fileTransferProgress (unsigned int sessionID, std::string status,
+    fileTransferProgress (MSN::SwitchboardServerConnection * conn,
+                          unsigned int sessionID, std::string status,
                           long long unsigned transferred,
                           long long unsigned total);
 
     virtual void
-    fileTransferFailed (unsigned int sessionID, int error,
+    fileTransferFailed (MSN::SwitchboardServerConnection * conn,
+                        unsigned int sessionID, int error,
                         std::string message);
 
     virtual void
-    fileTransferSucceeded (unsigned int sessionID);
+    fileTransferSucceeded (MSN::SwitchboardServerConnection * conn,
+                        unsigned int sessionID);
 
     virtual void
     gotNewConnection (MSN::Connection * conn);
@@ -233,6 +237,21 @@ class Callbacks:public QObject,
     virtual void
     changedStatus (MSN::NotificationServerConnection * conn,
                    MSN::BuddyStatus state);
+
+    virtual void 
+    gotVoiceClipFile(MSN::SwitchboardServerConnection * conn, 
+                    unsigned int sessionID, 
+                    std::string file);
+    
+    virtual void 
+    gotEmoticonFile(MSN::SwitchboardServerConnection * conn, 
+                    unsigned int sessionID, 
+                    std::string alias, 
+                    std::string file);
+
+    virtual void gotWinkFile(MSN::SwitchboardServerConnection * conn, 
+                    unsigned int sessionID, 
+                    std::string file);
 
     virtual void * 
     connectToServer (std::string server, int port, bool * connected, bool isSSL);
@@ -292,13 +311,16 @@ class Callbacks:public QObject,
     incomingFileTransfer (MSN::SwitchboardServerConnection * conn,
                           const MSN::fileTransferInvite & ft);
     void
-    gotFileTransferProgress (const unsigned int &sessionID,
+    gotFileTransferProgress (MSN::SwitchboardServerConnection * conn,
+                             const unsigned int &sessionID,
                              const unsigned long long &transferred);
     void
-    gotFileTransferFailed (const unsigned int &sessionID);
+    gotFileTransferFailed (MSN::SwitchboardServerConnection * conn,
+                            const unsigned int &sessionID);
 
     void
-    gotFileTransferSucceeded (const unsigned int &sessionID);
+    gotFileTransferSucceeded (MSN::SwitchboardServerConnection * conn,
+                            const unsigned int &sessionID);
 
     void
     gotDisplayName (const QString & displayName);
@@ -312,9 +334,9 @@ class Callbacks:public QObject,
 
     void
     gotAddedContactToAddressBook (const bool & added,
-                                  const std::string & passport,
-                                  const std::string & displayName,
-                                  const std::string & guid);
+                                  const QString & passport,
+                                  const QString & displayName,
+                                  const QString & guid);
 
     void
     receivedNudge (MSN::SwitchboardServerConnection * conn,
@@ -339,10 +361,10 @@ class Callbacks:public QObject,
 
     void
     contactChangedStatus (const MSN::Passport & buddy,
-                          const std::string & friendlyname,
+                          const QString & friendlyname,
                           const MSN::BuddyStatus & status,
                           const unsigned int &clientID,
-                          const std::string & msnobject);
+                          const QString & msnobject);
 
     void
     contactDisconnected (const MSN::Passport & buddy);
@@ -357,8 +379,45 @@ class Callbacks:public QObject,
     changedStatus (MSN::BuddyStatus & state);
 
     void
-    slotfileTransferInviteResponse (const unsigned int &sessionID,
+    slotfileTransferInviteResponse (MSN::SwitchboardServerConnection * conn,
+                                    const unsigned int &sessionID,
                                     const bool & response);
+    void
+    slotGotEmoticonNotification (MSN::SwitchboardServerConnection * conn,
+                                    const MSN::Passport & buddy, 
+                                    const QString & alias,
+                                    const QString & msnobject);
+
+    void
+    slotGotVoiceClipNotification (MSN::SwitchboardServerConnection * conn, 
+                                    const MSN::Passport & from,
+                                    const QString & msnobject);
+
+    void
+    slotGotWinkNotification (MSN::SwitchboardServerConnection * conn, 
+                                    const MSN::Passport & from,
+                                    const QString & msnobject);
+
+    void
+    slotGotInk (MSN::SwitchboardServerConnection * conn, 
+                                    const MSN::Passport & from,
+                                    const QString & image);
+
+    void 
+    slotGotVoiceClipFile(MSN::SwitchboardServerConnection * conn, 
+                    const unsigned int & sessionID, 
+                    const QString & file);
+    
+    void 
+    slotGotEmoticonFile(MSN::SwitchboardServerConnection * conn, 
+                    const unsigned int & sessionID,
+                    const QString & alias,
+                    const QString & file);
+
+    void 
+    slotGotWinkFile(MSN::SwitchboardServerConnection * conn, 
+                    const unsigned int & sessionID, 
+                    const QString & file);
 
     void
     wrongPassword ();

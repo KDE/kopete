@@ -114,10 +114,10 @@ class WlmAccount:public
 	 */
         void
     contactChangedStatus (const MSN::Passport & buddy,
-                          const std::string & friendlyname,
+                          const QString & friendlyname,
                           const MSN::BuddyStatus & status,
                           const unsigned int &clientID,
-                          const std::string & msnobject);
+                          const QString & msnobject);
 
     void
     contactDisconnected (const MSN::Passport & buddy);
@@ -182,9 +182,9 @@ class WlmAccount:public
 
     void
     gotAddedContactToAddressBook (const bool & added,
-                                  const std::string & passport,
-                                  const std::string & displayName,
-                                  const std::string & guid);
+                                  const QString & passport,
+                                  const QString & displayName,
+                                  const QString & guid);
 
     void
     deletedOIM(const QString& id, const bool deleted);
