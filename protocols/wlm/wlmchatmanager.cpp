@@ -36,6 +36,7 @@
 #include <ktoolbar.h>
 #include <krun.h>
 #include <kstandarddirs.h>
+#include <ktemporaryfile.h>
 
 #include "kopetecontactaction.h"
 #include "kopetemetacontact.h"
@@ -502,6 +503,38 @@ WlmChatManager::slotGotInk (MSN::SwitchboardServerConnection * conn,
                                     const MSN::Passport & from,
                                     const QString & image)
 {
+    QByteArray ink;
+    WlmChatSession *chat = chatSessions[conn];
+    if (!chat)
+    {
+        return;
+    }
+    Kopete::Contact * contact = account ()->contacts ()[from.c_str()];
+    if(!contact)
+    {
+        account ()->addContact (from.c_str(), QString::null, 0L,
+                                        Kopete::Account::Temporary);
+        contact = account ()->contacts ()[from.c_str()];
+    }
+    if(!contact)
+        return;
+ 
+    ink = QByteArray::fromBase64(image.toUtf8());
+    KTemporaryFile *inkImage = new KTemporaryFile();
+    inkImage->setPrefix("inkformatgif-");
+    inkImage->setSuffix(".gif");
+    inkImage->open();
+    inkImage->write(ink.data(), ink.size());
+    QString msg=i18n("<img src=\"%1\" />", inkImage->fileName() );
+    inkImage->close();
+
+    Kopete::Message kmsg( contact, chat->members() );
+    kmsg.setHtmlBody( msg );
+    kmsg.setDirection( Kopete::Message::Inbound );
+    chat->appendMessage ( kmsg );
+
+    inkImage = 0l;
+
 }
 
 void 
