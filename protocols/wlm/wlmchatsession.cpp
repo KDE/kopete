@@ -40,6 +40,7 @@
 #include <krun.h>
 #include <kstandarddirs.h>
 #include <kcomponentdata.h>
+#include <kemoticons.h>
 
 #include "kopetecontactaction.h"
 #include "kopeteonlinestatus.h"
@@ -49,6 +50,7 @@
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopeteview.h"
+#include "private/kopeteemoticons.h"
 
 #include "wlmcontact.h"
 #include "wlmprotocol.h"
@@ -485,6 +487,22 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
         mmsg.setFontEffects (fontEffects);
         QColor color = msg.foregroundColor ();
         mmsg.setColor (color.red (), color.green (), color.blue ());
+
+        // stolen from msn plugin
+        QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
+
+        // Check the list for any custom emoticons
+        for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
+        {
+            for ( QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2 )
+            {
+                if ( msg.plainBody().contains( *itr2 ) )
+                {
+                    getChatService ()->sendEmoticon((*itr2).toAscii().data(), itr.key().toAscii().data());
+                }
+            }
+        }
+
         int trid = getChatService ()->sendMessage (&mmsg);
         m_messagesSentQueue[trid] = msg;
         return;
