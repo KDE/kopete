@@ -33,6 +33,7 @@ namespace Xtraz { class Status; }
 class ICQProtocol;
 class ICQAccount;
 class ICQUserInfoWidget;
+class ICQContact;
 
 class ICQMyselfContact : public OscarMyselfContact
 {
@@ -110,6 +111,7 @@ private:
 	bool mHideIP;
 	Kopete::StatusMessage mInitialStatusMessage;
 	ICQUserInfoWidget* mInfoWidget;
+	ICQContact* mInfoContact;
 
 	KAction* mEditInfoAction;
 	KToggleAction* mActionInvisible;

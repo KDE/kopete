@@ -279,7 +279,7 @@ void OscarAccount::processSSIList()
 
 		kDebug( OSCAR_GEN_DEBUG ) << "Adding contact '" << ( *bit ).name() << "' to kopete list in group " <<
 			group->displayName() << endl;
-		OscarContact* oc = dynamic_cast<OscarContact*>( contacts().value( ( *bit ).name() ) );
+		OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *bit ).name()] );
 		if ( oc )
 		{
 			OContact item = ( *bit );
@@ -362,7 +362,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
         QStringList::iterator it, itEnd = offliners.end();
         for ( it = offliners.begin(); it != itEnd; ++it )
         {
-	        OscarContact* oc = dynamic_cast<OscarContact*>( contacts().value( ( *it ) ) );
+            OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *it )] );
             if ( !oc )
             {
                 kDebug(OSCAR_GEN_DEBUG) << "no OscarContact object available for" << ( *it );
@@ -397,7 +397,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
 		QStringList::iterator it, itEnd = offliners.end();
 		for ( it = offliners.begin(); it != itEnd; ++it )
 		{
-			OscarContact* oc = dynamic_cast<OscarContact*>( contacts().value( (*it) ) );
+			OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[(*it)] );
 			if ( !oc )
 			{
 				kDebug( OSCAR_GEN_DEBUG ) << "no OscarContact object available "
@@ -437,22 +437,16 @@ void OscarAccount::nonServerAddContactDialogClosed()
 void OscarAccount::incomingFileTransfer( FileTransferHandler* ftHandler )
 {
 	QString sender = Oscar::normalize( ftHandler->contact() );
-	if ( !contacts().value( sender ) )
+	if ( !contacts()[sender] )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "Adding '" << sender << "' as temporary contact";
 		addContact( sender, QString(), 0,  Kopete::Account::Temporary );
 	}
-	Kopete::Contact * ct = contacts().value( sender );
-
-	// Fill the fileNameList with empty filenames if we have more files so the kopete transfer knows about them
-	QStringList fileNameList;
-	fileNameList << ftHandler->fileName();
-	for ( int i = 1; i < ftHandler->fileCount(); i++ )
-		fileNameList << "";
+	Kopete::Contact * ct = contacts()[ sender ];
 
 	Kopete::TransferManager* tm = Kopete::TransferManager::transferManager();
-	uint ftId = tm->askIncomingTransfer( ct, fileNameList, ftHandler->totalSize(), ftHandler->description(),
-	                                     ftHandler->internalId(), QPixmap() );
+	uint ftId = tm->askIncomingTransfer( ct, ftHandler->fileName(), ftHandler->totalSize(), ftHandler->description(),
+	                                     ftHandler->internalId(), QPixmap(), ( ftHandler->fileCount() > 1 ) );
 	QObject::connect( ftHandler, SIGNAL(destroyed(QObject*)), this, SLOT(fileTransferDestroyed(QObject*)) );
 	QObject::connect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
 
@@ -512,8 +506,6 @@ void OscarAccount::fileTransferAccept( Kopete::Transfer* transfer, const QString
 	QObject::connect( ftHandler, SIGNAL(transferError(int, const QString&)), transfer, SLOT(slotError(int, const QString&)) );
 	QObject::connect( ftHandler, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
 	QObject::connect( ftHandler, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
-	QObject::connect( ftHandler, SIGNAL(transferNextFile(const QString&, const QString&)),
-	                  transfer, SLOT(slotNextFile(const QString&, const QString&)) );
 
 	if ( transfer->info().saveToDirectory() )
 		ftHandler->save( fileName );
@@ -556,13 +548,13 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	 * Append to the chat window
 	 */
 	QString sender = Oscar::normalize( message.sender() );
-	if ( !contacts().value( sender ) )
+	if ( !contacts()[sender] )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "Adding '" << sender << "' as temporary contact";
 		addContact( sender, QString(), 0,  Kopete::Account::Temporary );
 	}
 
-	OscarContact* ocSender = static_cast<OscarContact *> ( contacts().value( sender ) ); //should exist now
+	OscarContact* ocSender = static_cast<OscarContact *> ( contacts()[sender] ); //should exist now
 
 	if ( !ocSender )
 	{
@@ -633,7 +625,7 @@ QTextCodec* OscarAccount::contactCodec( const QString& contactName ) const
 {
 	// XXX  Need const_cast because Kopete::Account::contacts()
 	// XXX  method is not const for some strange reason.
-	OscarContact* contact = static_cast<OscarContact *> ( const_cast<OscarAccount *>(this)->contacts().value( contactName ) );
+	OscarContact* contact = static_cast<OscarContact *> ( const_cast<OscarAccount *>(this)->contacts()[contactName] );
 	return contactCodec( contact );
 }
 
@@ -758,10 +750,10 @@ bool OscarAccount::createContact(const QString &contactId,
 	if ( ssiItem )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << "Have new SSI entry. Finding contact";
-		if ( contacts().value( ssiItem.name() ) )
+		if ( contacts()[ssiItem.name()] )
 		{
 			kDebug(OSCAR_GEN_DEBUG) << "Found contact in list. Updating SSI item";
-			OscarContact* oc = static_cast<OscarContact*>( contacts().value( ssiItem.name() ) );
+			OscarContact* oc = static_cast<OscarContact*>( contacts()[ssiItem.name()] );
 			oc->setSSIItem( ssiItem );
 			return true;
 		}
@@ -826,10 +818,10 @@ void OscarAccount::ssiContactAdded( const OContact& item )
 		if ( oc && oc->ssiItem().waitingAuth() )
 			QTimer::singleShot( 1, oc, SLOT(requestAuthorization()) );
 	}
-	else if ( contacts().value( item.name() ) )
+	else if ( contacts()[item.name()] )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << "Received confirmation from server. modifying " << item.name();
-		OscarContact* oc = static_cast<OscarContact*>( contacts().value( item.name() ) );
+		OscarContact* oc = static_cast<OscarContact*>( contacts()[item.name()] );
 		oc->setSSIItem( item );
 	}
 	else
@@ -869,7 +861,7 @@ void OscarAccount::ssiGroupAdded( const OContact& item )
 
 void OscarAccount::ssiContactUpdated( const OContact& item )
 {
-	Kopete::Contact* contact = contacts().value( item.name() );
+	Kopete::Contact* contact = contacts()[item.name()];
 	if ( !contact )
 		return;
 	else
@@ -882,7 +874,7 @@ void OscarAccount::ssiContactUpdated( const OContact& item )
 
 void OscarAccount::userStartedTyping( const QString & contact )
 {
-	Kopete::Contact * ct = contacts().value( Oscar::normalize( contact ) );
+	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
 	if ( ct && contact != accountId() )
 	{
 		OscarContact * oc = static_cast<OscarContact *>( ct );
@@ -892,7 +884,7 @@ void OscarAccount::userStartedTyping( const QString & contact )
 
 void OscarAccount::userStoppedTyping( const QString & contact )
 {
-	Kopete::Contact * ct = contacts().value( Oscar::normalize( contact ) );
+	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
 	if ( ct && contact != accountId() )
 	{
 		OscarContact * oc = static_cast<OscarContact *>( ct );

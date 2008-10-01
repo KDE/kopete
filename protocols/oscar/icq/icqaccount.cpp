@@ -123,6 +123,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	QString nickName = configGroup()->readEntry("NickName", QString() );
 	mWebAware = configGroup()->readEntry( "WebAware", false );
 	mHideIP = configGroup()->readEntry( "HideIP", true );
+	mInfoContact = 0L;
 	mInfoWidget = 0L;
 
 	QObject::connect( engine(), SIGNAL(userReadsStatusMessage(const QString&)),
@@ -316,10 +317,14 @@ void ICQAccount::slotUserInfo()
 		if ( !this->isConnected() )
 			return;
 
-		mInfoWidget = new ICQUserInfoWidget( this, engine()->userId(), Kopete::UI::Global::mainWidget(), true );
+		mInfoContact = new ICQContact( this, engine()->userId(), NULL );
+
+		mInfoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget(), true );
 		QObject::connect( mInfoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfoDialog() ) );
 		QObject::connect( mInfoWidget, SIGNAL( okClicked() ), this, SLOT( storeUserInfoDialog() ) );
+		mInfoWidget->setContact( mInfoContact );
 		mInfoWidget->show();
+		engine()->requestFullInfo( engine()->userId() );
 	}
 }
 
@@ -334,6 +339,8 @@ void ICQAccount::closeUserInfoDialog()
 {
 	QObject::disconnect( this, 0, mInfoWidget, 0 );
 	mInfoWidget->delayedDestruct();
+	delete mInfoContact;
+	mInfoContact = 0L;
 	mInfoWidget = 0L;
 }
 
@@ -341,7 +348,7 @@ void ICQAccount::userReadsStatusMessage( const QString& contact )
 {
 	QString name;
 
-	Kopete::Contact * ct = contacts().value( Oscar::normalize( contact ) );
+	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
 	if ( ct )
 		name = ct->nickName();
 	else
@@ -491,7 +498,7 @@ void ICQAccount::slotGotAuthRequest( const QString& contact, const QString& reas
 	actions |= Kopete::AddedInfoEvent::BlockAction;
 	actions |= Kopete::AddedInfoEvent::InfoAction;
 
-	Kopete::Contact * ct = contacts().value( contactId );
+	Kopete::Contact * ct = contacts()[contactId];
 	if( !ct || !ct->metaContact() || ct->metaContact()->isTemporary() )
 		actions |= Kopete::AddedInfoEvent::AddAction;
 
@@ -523,15 +530,15 @@ void ICQAccount::addedInfoEventActionActivated( uint actionId )
 		break;
 	case Kopete::AddedInfoEvent::InfoAction:
 		{
-			ICQUserInfoWidget* info = 0;
-			ICQContact *ct = dynamic_cast<ICQContact*>(contacts().value( event->contactId(), 0 ));
-			if ( ct )
-				info = new ICQUserInfoWidget( ct, Kopete::UI::Global::mainWidget() );
-			else
-				info = new ICQUserInfoWidget( this, event->contactId(), Kopete::UI::Global::mainWidget() );
-
+			ICQContact* c = new ICQContact( this, event->contactId(), NULL );
+			ICQUserInfoWidget* info = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
+			QObject::connect( info, SIGNAL(finished()), c, SLOT(deleteLater()) );
 			QObject::connect( info, SIGNAL(finished()), info, SLOT(delayedDestruct()) );
 			QObject::connect( event, SIGNAL(eventClosed(Kopete::InfoEvent*)), info, SLOT(delayedDestruct()) );
+
+			info->setContact( c );
+			engine()->requestFullInfo( c->contactId() );
+
 			info->setModal( false );
 			info->show();
 		}

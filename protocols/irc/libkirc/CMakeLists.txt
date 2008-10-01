@@ -32,7 +32,6 @@ set(libkirc_client_SRCS
 	client/kircclienthandler.cpp
 
 	client/kircclientlisthandler.cpp
-	client/kircclientmotdhandler.cpp
 	client/kircclientwhohandler.cpp
 
 	client/kircclientsocket.cpp 

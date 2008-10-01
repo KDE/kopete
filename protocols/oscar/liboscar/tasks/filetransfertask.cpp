@@ -462,8 +462,6 @@ void FileTransferTask::doOft()
 	//might be a good idea to hook up some signals&slots.
 	connect( oft, SIGNAL(fileStarted(const QString&, unsigned int)),
 	         this, SIGNAL(nextFile(const QString&, unsigned int)) );
-	connect( oft, SIGNAL(fileStarted(const QString&, const QString&)),
-	         this, SIGNAL(nextFile(const QString&, const QString&)) );
 	connect( oft, SIGNAL(fileProcessed(unsigned int, unsigned int)),
 	         this, SLOT(fileProcessedOft(unsigned int, unsigned int)) );
 	connect( oft, SIGNAL(fileFinished(const QString&, unsigned int)),

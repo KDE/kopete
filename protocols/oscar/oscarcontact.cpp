@@ -361,7 +361,7 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 	FileTransferHandler *ftHandler = mAccount->engine()->createFileTransfer( mName, files );
 
 	Kopete::TransferManager *transferManager = Kopete::TransferManager::transferManager();
-	Kopete::Transfer *transfer = transferManager->addTransfer( this, files, ftHandler->totalSize(), mName, Kopete::FileTransferInfo::Outgoing);
+	Kopete::Transfer *transfer = transferManager->addTransfer( this, files.at(0), ftHandler->totalSize(), mName, Kopete::FileTransferInfo::Outgoing);
 
 	connect( transfer, SIGNAL(transferCanceled()), ftHandler, SLOT(cancel()) );
 
@@ -369,8 +369,6 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 	connect( ftHandler, SIGNAL(transferError(int, const QString&)), transfer, SLOT(slotError(int, const QString&)) );
 	connect( ftHandler, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
 	connect( ftHandler, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
-	connect( ftHandler, SIGNAL(transferNextFile(const QString&, const QString&)),
-	         transfer, SLOT(slotNextFile(const QString&, const QString&)) );
 
 	ftHandler->send();
 }

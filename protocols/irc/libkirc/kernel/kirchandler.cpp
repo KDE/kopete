@@ -14,10 +14,18 @@
 */
 
 #include "kirchandler.moc"
-#include "kirchandler_p.h"
 
 #include <QtCore/QMultiHash>
 #include <kdebug.h>
+
+class KIrc::HandlerPrivate
+{
+public:
+	bool enabled;
+	QList<KIrc::Handler*> eventHandlers;
+	QMultiHash<QByteArray, QByteArray> commandAliases;
+	QMultiHash<QByteArray, QByteArray> messageAliases;
+};
 
 using namespace KIrc;
 
@@ -26,19 +34,8 @@ Handler::Handler(QObject *parent)
 	: QObject(parent)
 	, d_ptr(new HandlerPrivate)
 {
-}
-
-Handler::Handler(Handler *parent)
-	: QObject(parent)
-	, d_ptr(new HandlerPrivate)
-{
-	parent->addEventHandler(this);
-}
-
-Handler::Handler(HandlerPrivate *d, QObject *parent)
-	: QObject(parent)
-	, d_ptr(d)
-{
+	Q_D(Handler);
+	d->enabled = false;
 }
 
 Handler::~Handler()
@@ -123,15 +120,20 @@ Handler::Handled Handler::onCommand(KIrc::Context *context, const QList<QByteArr
 //	QGenericArgument arg2 = Q_ARG(KIrc::Entity *);
 
 	QByteArray cmd = command.value(0).toUpper();
-	if (QMetaObject::invokeMethod(this, cmd, Qt::DirectConnection, ret, arg0, arg1/*, arg2*/))
-		if (handled != NotHandled)
-			return handled;
+	QMetaObject::invokeMethod(this, cmd, Qt::DirectConnection,
+		ret, arg0, arg1/*, arg2*/);
+
+	if (handled != NotHandled)
+		return handled;
 
 	foreach(const QByteArray &alias, d->commandAliases.values(cmd))
 	{
-		if (QMetaObject::invokeMethod(this, alias, Qt::DirectConnection, ret, arg0, arg1/*, arg2*/))
+		if (QMetaObject::invokeMethod(this, alias, Qt::DirectConnection,
+			ret, arg0, arg1/*, arg2*/))
+		{
 			if (handled != NotHandled)
 				return handled;
+		}
 	}
 	return handled;
 }
@@ -182,15 +184,20 @@ Handler::Handled Handler::onMessage(KIrc::Context *context, const KIrc::Message 
 	if ( isNumeric )
 		msg.prepend( "numericReply_" ); //add a prefix, because a slot name cannot be just a number
 
-	if (QMetaObject::invokeMethod(this, msg, Qt::DirectConnection, ret, arg0, arg1, arg2))
-		if (handled != NotHandled)
-			return handled;
+	QMetaObject::invokeMethod(this, msg, Qt::DirectConnection,
+		ret, arg0, arg1, arg2);
+
+	if (handled != NotHandled)
+		return handled;
 
 	foreach(const QByteArray &alias, d->messageAliases.values(msg))
 	{
-		if (QMetaObject::invokeMethod(this, alias, Qt::DirectConnection, ret, arg0, arg1, arg2))
+		if (QMetaObject::invokeMethod(this, alias, Qt::DirectConnection,
+			ret, arg0, arg1, arg2))
+		{
 			if (handled != NotHandled)
 				return handled;
+		}
 	}
 	return handled;
 }

@@ -140,7 +140,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 		"', firstname = '" << first << "', lastname = '" << last <<"'" << endl;
 	if (account->addContact(uin, nick, 0L, Kopete::Account::Temporary))
 	{
-		Kopete::Contact *contact = account->contacts().value( uin );
+		Kopete::Contact *contact = account->contacts()[uin];
 		if (!first.isEmpty())
 			contact->setProperty(Kopete::Global::Properties::self()->firstName(), first);
 		if (!last.isEmpty())

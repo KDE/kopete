@@ -19,18 +19,17 @@
 #ifndef KIRCSOCKET_H
 #define KIRCSOCKET_H
 
-#include "kirc_export.h"
-#include "kircglobal.h"
+#include "kircmessage.h"
 
 #include <QtNetwork/QAbstractSocket>
+
+#include <QtCore/QUrl>
 
 namespace KIrc
 {
 
 class Context;
 class Entity;
-class Handler;
-class Message;
 class SocketPrivate;
 class Handler;
 
@@ -69,7 +68,7 @@ public:
 public: // READ properties accessors.
 	KIrc::Socket::ConnectionState connectionState() const;
 
-	KIrc::EntityPtr owner() const;
+	KIrc::Entity *owner() const;
 
 public Q_SLOTS:
 	void writeMessage(const Message &message);

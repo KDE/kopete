@@ -1068,7 +1068,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 		}
 
 		resultHTML.replace( QLatin1String("%fileName%"), Qt::escape( message.fileName() ).replace('"',"&quot;") );
-		resultHTML.replace( QLatin1String("%fileSize%"), KGlobal::locale()->formatByteSize( message.fileSize() ).replace('"',"&quot;") );
+		resultHTML.replace( QLatin1String("%fileSize%"), KGlobal::locale()->formatByteSize( message.fileSize() / 8 ).replace('"',"&quot;") );
 		resultHTML.replace( QLatin1String("%fileIconPath%"), fileIcon );
 
 		resultHTML.replace( QLatin1String("%saveFileHandlerId%"), QString( "ftSV%1" ).arg( message.id() ) );

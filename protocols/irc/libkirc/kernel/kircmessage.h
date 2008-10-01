@@ -15,11 +15,12 @@
     *************************************************************************
 */
 
-#ifndef KIRCMESSAGE_H
-#define KIRCMESSAGE_H
+#ifndef KIRC_MESSAGE_H
+#define KIRC_MESSAGE_H
 
-#include "kirc_export.h"
 #include "kircglobal.h"
+
+#include "kircentity.h"
 
 #include <QtCore/QMetaType>
 #include <QtCore/QSharedDataPointer>
@@ -31,6 +32,7 @@ namespace KIrc
 {
 
 class Context;
+class EntityManager;
 
 class MessagePrivate;
 

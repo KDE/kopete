@@ -51,20 +51,20 @@ public:
 
 //	Entity::List anonymous();
 
-	KIrc::EntityList entities() const;
+	QList<KIrc::Entity *> entities() const;
 //	Entity::List entitiesByHost(...) const;
 //	Entity::List entitiesByServer(...) const;
 //	Entity::List entitiesByType(...) const;
 
-	KIrc::EntityPtr entityFromName(const QByteArray &name);
+	KIrc::Entity *entityFromName(const QByteArray &name);
 
-	KIrc::EntityList entitiesFromNames(const QList<QByteArray> &names);
+	QList<KIrc::Entity *> entitiesFromNames(const QList<QByteArray> &names);
 
-	KIrc::EntityList entitiesFromNames(const QByteArray &names, char sep = ',');
+	QList<KIrc::Entity *> entitiesFromNames(const QByteArray &names, char sep = ',');
 
 public Q_SLOTS:
-	void add(EntityPtr entity);
-	void remove(EntityPtr entity);
+	void add(Entity* entity);
+	void remove(Entity* entity);
 
 public:
 	void postEvent(QEvent *event);

@@ -74,7 +74,6 @@ signals:
 	void transferProcessed( unsigned int totalSent );
 	void transferFinished();
 
-	void nextFile( const QString& sourceFile, const QString& destinationFile );
 	void nextFile( const QString& fileName, unsigned int fileSize );
 	void fileProcessed( unsigned int bytesSent, unsigned int fileSize );
 

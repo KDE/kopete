@@ -49,7 +49,6 @@ Q_SIGNALS:
 	void transferFinished();
 	void transferProcessed( unsigned int totalSent );
 
-	void transferNextFile( const QString& sourceFile, const QString& destinationFile );
 	void transferNextFile( const QString& fileName, unsigned int fileSize );
 	void transferFileProcessed(unsigned int bytesSent, unsigned int fileSize );
 

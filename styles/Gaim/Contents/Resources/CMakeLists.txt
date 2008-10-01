@@ -1,4 +1,3 @@
-add_subdirectory(images)
 add_subdirectory(Incoming)
 add_subdirectory(Outgoing)
 add_subdirectory(Variants)

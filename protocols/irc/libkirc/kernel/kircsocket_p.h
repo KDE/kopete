@@ -22,6 +22,8 @@
 
 #include "kircsocket.h"
 
+#include <QList>
+
 namespace KIrc
 {
 
@@ -44,10 +46,11 @@ public Q_SLOTS:
 public:
 	KIrc::Socket *q_ptr;
 
+	QUrl url;
 	KIrc::Context *context;
 	QAbstractSocket *socket;
 	KIrc::Socket::ConnectionState state;
-	KIrc::EntityPtr owner;
+	KIrc::Entity *owner;
 };
 
 }

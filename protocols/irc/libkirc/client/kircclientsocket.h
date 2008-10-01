@@ -22,8 +22,6 @@
 
 #include "kircsocket.h"
 
-#include <QtCore/QUrl>
-
 namespace KIrc
 {
 
@@ -50,13 +48,11 @@ public:
 	~ClientSocket();
 
 public: // READ properties accessors.
-	KIrc::EntityPtr server() const;
+	KIrc::Entity *server();
 
 	QUrl url() const;
 
 public slots: // WRITE properties accessors.
-	void setAuthentified();
-	KIrc::EntityPtr joinChannel(const QByteArray& channelName);
 
 public:
 
@@ -68,6 +64,9 @@ protected:
 
 protected Q_SLOTS:
 	void socketStateChanged(QAbstractSocket::SocketState newstate);
+
+protected:
+//	KIrc::ClientSocketPrivate * const d_ptr;
 };
 
 }

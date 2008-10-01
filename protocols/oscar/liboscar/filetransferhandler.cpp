@@ -25,8 +25,6 @@ FileTransferHandler::FileTransferHandler( FileTransferTask* fileTransferTask )
 	connect( mFileTransferTask, SIGNAL(transferError(int, const QString&)), this, SIGNAL(transferError(int, const QString&)) );
 	connect( mFileTransferTask, SIGNAL(transferProcessed(unsigned int)), this, SIGNAL(transferProcessed(unsigned int)) );
 
-	connect( mFileTransferTask, SIGNAL(nextFile(const QString&, const QString&)),
-	         this, SIGNAL(transferNextFile(const QString&, const QString&)) );
 	connect( mFileTransferTask, SIGNAL(nextFile(const QString&, unsigned int)),
 	         this, SIGNAL(transferNextFile(const QString&, unsigned int)) );
 	connect( mFileTransferTask, SIGNAL(fileProcessed(unsigned int, unsigned int)),

@@ -81,7 +81,7 @@ public:
 	 *          Contents/
 	 *            Resources/
 	 *
-	 * @return the path to the resource directory.
+	 * @return the path to the the resource directory.
 	 */
 	QString getStyleBaseHref() const;
 

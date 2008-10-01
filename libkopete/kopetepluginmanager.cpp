@@ -62,17 +62,14 @@ public:
 		if ( shutdownMode != DoneShutdown )
 			kWarning( 14010 ) << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kBacktrace();
 
-		// Clean up loadedPlugins manually, because PluginManager can't access our global
-		// static once this destructor has started.
+		// Quick cleanup of the remaining plugins, hope it helps
+		// Note that deleting it.value() causes slotPluginDestroyed to be called, which
+		// removes the plugin from the list of loaded plugins.
 		while ( !loadedPlugins.empty() )
 		{
 			InfoToPluginMap::ConstIterator it = loadedPlugins.begin();
 			kWarning( 14010 ) << "Deleting stale plugin '" << it.value()->objectName() << "'";
-			KPluginInfo info = it.key();
-			Plugin *plugin = it.value();
-			loadedPlugins.remove(info);
-			plugin->disconnect(&instance, SLOT(slotPluginDestroyed(QObject*)));
-			delete plugin;
+			delete it.value();
 		}
 	}
 

@@ -91,7 +91,7 @@ ContactDetails GetDetailsTask::extractUserDetails(Field::MultiField * details )
 		cd.surname = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( Field::KOPETE_NM_USER_DETAILS_ARCHIVE_FLAG ) ) )
 		cd.archive = ( sf->value().toInt() == 1 );
-	if ( ( sf = fields.findSingleField ( Field::KOPETE_NM_USER_DETAILS_FULL_NAME ) ) )
+// 	if ( ( sf = fields.findSingleField ( Field::KOPETE_NM_USER_DETAILS_FULL_NAME ) ) )
 		cd.fullName = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( Field::NM_A_SZ_STATUS ) ) )
 		cd.status = sf->value().toInt();
