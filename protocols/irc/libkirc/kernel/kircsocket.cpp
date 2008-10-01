@@ -21,6 +21,7 @@
 #include "kircsocket_p.moc"
 
 #include "kirccontext.h"
+#include "kircentity.h"
 #include "kirchandler.h"
 
 #include <kdebug.h>
@@ -128,7 +129,7 @@ void Socket::setSocket(QAbstractSocket *socket)
 			SLOT(socketStateChanged(QAbstractSocket::SocketState)));
 }
 
-Entity *Socket::owner() const
+EntityPtr Socket::owner() const
 {
 	Q_D(const Socket);
 	return d->owner;
@@ -163,8 +164,6 @@ void Socket::close()
 
 	delete d->socket;
 	d->socket = 0;
-
-	d->url = "";
 }
 
 void Socket::socketStateChanged(QAbstractSocket::SocketState newstate)

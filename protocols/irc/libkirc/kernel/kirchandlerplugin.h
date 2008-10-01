@@ -16,7 +16,7 @@
 #ifndef KIRCHANDLERPLUGIN_H
 #define KIRCHANDLERPLUGIN_H
 
-#include "kircglobal.h"
+#include "kirc_export.h"
 
 #include <QtCore/QList>
 #include <QtCore/QtPlugin>

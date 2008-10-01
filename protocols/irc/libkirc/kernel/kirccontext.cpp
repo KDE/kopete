@@ -28,7 +28,7 @@ public:
 		: defaultCodec(0)
 	{ }
 
-	QList<Entity *> entities;
+	KIrc::EntityList entities;
 
 	QTextCodec *defaultCodec;
 };
@@ -49,23 +49,30 @@ QList<KIrc::Entity *> Context::anonymous() const
 
 }
 */
-QList<KIrc::Entity *> Context::entities() const
+KIrc::EntityList Context::entities() const
 {
-	return findChildren<Entity *>();
+	#warning implement me
+	//return findChildren<EntityPtr>();
+	return EntityList();
 }
 
-KIrc::Entity *Context::entityFromName(const QByteArray &name)
+KIrc::EntityPtr Context::entityFromName(const QByteArray &name)
 {
 	Q_D(Context);
-	Entity *entity = 0;
+	EntityPtr entity;
 
-	if (name.isEmpty())
+	QByteArray nick=name;
+
+	if (nick.isEmpty())
 		return entity;
 
+	if (nick.contains( '!' ) ) //Its the extended format, containing hostname and stuff. only search for the nick
+	  nick=name.left( nick.indexOf( '!' ) );
+
 	//TODO: optimize this using Hash or something
-	foreach( Entity* e, d->entities )
+	foreach( EntityPtr e, d->entities )
 	{
-		if ( e->name()==name )
+		if ( e->name()==nick )
 		{
 			entity=e;
 			break;
@@ -75,17 +82,17 @@ KIrc::Entity *Context::entityFromName(const QByteArray &name)
 	if (!entity)
 	{
 		entity = new Entity(this);
-		entity->setName(name);
+		entity->setName(nick);
 		add( entity );
 	}
 
 	return entity;
 }
 
-QList<KIrc::Entity *> Context::entitiesFromNames(const QList<QByteArray> &names)
+KIrc::EntityList Context::entitiesFromNames(const QList<QByteArray> &names)
 {
-	QList<Entity *> entities;
-	Entity *entity;
+	EntityList entities;
+	EntityPtr entity;
 
 	// This is slow and can easily be optimised with sorted lists
 	foreach (const QByteArray &name, names)
@@ -100,7 +107,7 @@ QList<KIrc::Entity *> Context::entitiesFromNames(const QList<QByteArray> &names)
 	return entities;
 }
 
-QList<KIrc::Entity *> Context::entitiesFromNames(const QByteArray &names, char sep)
+KIrc::EntityList Context::entitiesFromNames(const QByteArray &names, char sep)
 {
 	return entitiesFromNames(names.split(sep));
 }
@@ -125,18 +132,18 @@ void Context::postEvent(QEvent *event)
 	emit ircEvent( event );
 }
 
-void Context::add(Entity *entity)
+void Context::add(EntityPtr entity)
 {
 	Q_D(Context);
 	if (!d->entities.contains(entity))
 	{
 		d->entities.append(entity);
-		connect(entity, SIGNAL(destroyed(KIrc::Entity *)),
+		connect(entity.data(), SIGNAL(destroyed(KIrc::Entity *)),
 			this, SLOT(remove(KIrc::Entity *)));
 	}
 }
 
-void Context::remove(Entity *entity)
+void Context::remove(EntityPtr entity)
 {
 	Q_D(Context);
 	d->entities.removeAll(entity);

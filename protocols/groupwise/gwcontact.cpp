@@ -67,11 +67,6 @@ GroupWiseContact::GroupWiseContact( Kopete::Account* account, const QString &dn,
 
 GroupWiseContact::~GroupWiseContact()
 {
-	// This is necessary because otherwise the userDetailsManager 
-	// would not fetch details for this contact if they contact you
-	// again from off-contact-list.
-	if ( metaContact()->isTemporary() )
-		account()->client()->userDetailsManager()->removeContact( contactId() );
 }
 
 QString GroupWiseContact::dn() const
@@ -203,6 +198,7 @@ void GroupWiseContact::sendMessage( Kopete::Message &message )
 void GroupWiseContact::deleteContact()
 {
 	account()->deleteContact( this );
+	Kopete::Contact::deleteContact();
 }
 
 void GroupWiseContact::sync( unsigned int)

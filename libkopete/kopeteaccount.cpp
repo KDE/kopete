@@ -244,6 +244,12 @@ bool Account::excludeConnect() const
 
 void Account::registerContact( Contact *c )
 {
+	if ( d->contacts.value( c->contactId(), 0 ) )
+	{
+		kWarning(14010) << "Contact already exists!!! accountId: " << c->account() << " contactId: " << c->contactId();
+		return;
+	}
+
 	d->contacts.insert( c->contactId(), c );
 	QObject::connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
 		SLOT( contactDestroyed( Kopete::Contact * ) ) );

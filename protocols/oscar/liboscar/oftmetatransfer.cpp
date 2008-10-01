@@ -223,14 +223,14 @@ void OftMetaTransfer::handleReceiveSetup( const OFT &oft )
 	m_oft.bytesSent = oft.bytesSent;
 	m_oft.fileSize = oft.fileSize;
 
-	emit fileStarted( m_oft.fileName, m_oft.fileSize );
-
 	int currentFileIndex = oft.fileCount - oft.filesLeft;
 	if ( currentFileIndex < m_files.count() )
 		m_file.setFileName( m_files.at( currentFileIndex ) );
 	else
 		m_file.setFileName( m_dir + oft.fileName );
 
+	emit fileStarted( m_oft.fileName, m_file.fileName() );
+	emit fileStarted( m_file.fileName(), m_oft.fileSize );
 	if ( m_file.size() > 0 && m_file.size() <= oft.fileSize )
 	{
 		m_oft.sentChecksum = fileChecksum( m_file );
@@ -289,7 +289,8 @@ void OftMetaTransfer::handleSendSetup( const OFT &oft )
 		return;
 
 	kDebug(OSCAR_RAW_DEBUG) << "ack";
-	emit fileStarted( oft.fileName, oft.fileSize );
+	emit fileStarted( m_file.fileName(), oft.fileName );
+	emit fileStarted( m_file.fileName(), oft.fileSize );
 
 	//time to send real data
 	//TODO: validate file again, just to be sure
@@ -342,7 +343,7 @@ void OftMetaTransfer::handleSendResumeRequest( const OFT &oft )
 void OftMetaTransfer::handleSendDone( const OFT &oft )
 {
 	kDebug(OSCAR_RAW_DEBUG) << "done";
-	emit fileFinished( oft.fileName, oft.bytesSent );
+	emit fileFinished( m_file.fileName(), oft.bytesSent );
 
 	disconnect( m_socket, SIGNAL(bytesWritten(qint64)), this, SLOT(write()) );
 	if ( oft.sentChecksum != m_oft.checksum )
@@ -482,7 +483,7 @@ void OftMetaTransfer::done()
 	if ( m_oft.sentChecksum != m_oft.checksum )
 		kDebug(OSCAR_RAW_DEBUG) << "checksums do not match!";
 
-	emit fileFinished( m_oft.fileName, m_oft.bytesSent );
+	emit fileFinished( m_file.fileName(), m_oft.bytesSent );
 	if ( m_oft.filesLeft == 1 )
 		m_oft.flags = 1;
 

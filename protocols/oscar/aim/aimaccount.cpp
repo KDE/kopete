@@ -527,7 +527,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 		if( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
 		{
 			QString sender = Oscar::normalize( message.sender() );
-			AIMContact* aimSender = dynamic_cast<AIMContact *> ( contacts()[sender] ); //should exist now
+			AIMContact* aimSender = dynamic_cast<AIMContact *> ( contacts().value( sender ) ); //should exist now
 			if ( !aimSender )
 			{
 				kWarning(OSCAR_RAW_DEBUG) << "For some reason, could not get the contact "
@@ -569,7 +569,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 					Oscar::normalize( message.chatRoom() ) )
 			{
 				kDebug(OSCAR_AIM_DEBUG) << "found chat session for chat room";
-				OscarContact* ocSender = static_cast<OscarContact*>(contacts()[Oscar::normalize( message.sender() )]);
+				OscarContact* ocSender = static_cast<OscarContact*>(contacts().value( Oscar::normalize( message.sender() ) ));
 				//sanitize;
 				QString sanitizedMsg = sanitizedMessage( message.text( defaultCodec() ) );
 
@@ -616,10 +616,8 @@ void AIMAccount::userJoinedChat( Oscar::WORD exchange, const QString& room, cons
 		if ( session->exchange() == exchange && session->roomName() == room )
 		{
 			kDebug(OSCAR_AIM_DEBUG) << "found correct chat session";
-			Kopete::Contact* c;
-			if ( contacts()[Oscar::normalize( contact )] )
-				c = contacts()[Oscar::normalize( contact )];
-			else
+			Kopete::Contact* c = contacts().value( Oscar::normalize( contact ) );
+			if ( !c )
 			{
 				Kopete::MetaContact* mc = addContact( Oscar::normalize( contact ),
 						contact, 0, Kopete::Account::Temporary );
@@ -654,7 +652,7 @@ void AIMAccount::userLeftChat( Oscar::WORD exchange, const QString& room, const 
 		if ( session->exchange() == exchange && session->roomName() == room )
 		{
 			//delete temp contact
-			Kopete::Contact* c = contacts()[Oscar::normalize( contact )];
+			Kopete::Contact* c = contacts().value( Oscar::normalize( contact ) );
 			if ( !c )
 			{
 				kWarning(OSCAR_AIM_DEBUG) << "couldn't find the contact that's left the chat!";
