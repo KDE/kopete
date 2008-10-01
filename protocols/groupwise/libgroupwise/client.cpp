@@ -98,7 +98,6 @@ Client::~Client()
 {
 	delete d->root;
 	delete d->requestFactory;
-	delete d->userDetailsMgr;
 	delete d;
 }
 

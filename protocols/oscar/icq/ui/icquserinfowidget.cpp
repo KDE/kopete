@@ -32,18 +32,65 @@
 #include <klocale.h>
 
 #include "ui_icqgeneralinfo.h"
-#include "icqcontact.h"
-#include "icqprotocol.h"
 #include "ui_icqhomeinfowidget.h"
 #include "ui_icqworkinfowidget.h"
 #include "ui_icqotherinfowidget.h"
 #include "ui_icqinterestinfowidget.h"
 #include "ui_icqorgaffinfowidget.h"
 
+#include "oscarutils.h"
+#include "icqcontact.h"
+#include "icqaccount.h"
+#include "icqprotocol.h"
+
 #undef timezone
 
-ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool ownInfo )
-: KPageDialog( parent ), m_ownInfo( ownInfo )
+ICQUserInfoWidget::ICQUserInfoWidget( ICQAccount* account, const QString& contactId, QWidget * parent, bool ownInfo )
+: KPageDialog( parent ), m_contact( 0 ), m_account( account ), m_contactId( contactId ), m_ownInfo( ownInfo )
+{
+	init();
+
+	QObject::connect( m_account->engine(), SIGNAL(receivedIcqLongInfo(const QString&)),
+	                  this, SLOT(receivedLongInfo(const QString&)) );
+
+	m_genInfoWidget->uinEdit->setText( contactId );
+
+	if ( m_account->isConnected() )
+		m_account->engine()->requestFullInfo( m_contactId );
+}
+
+ICQUserInfoWidget::ICQUserInfoWidget( ICQContact* contact, QWidget * parent, bool ownInfo )
+: KPageDialog( parent ), m_contact( contact ), m_account( static_cast<ICQAccount*>(contact->account()) ),
+  m_contactId( contact->contactId() ), m_ownInfo( ownInfo )
+{
+	init();
+
+	QObject::connect( contact, SIGNAL(haveBasicInfo(const ICQGeneralUserInfo&)),
+	                  this, SLOT(fillBasicInfo(const ICQGeneralUserInfo&)) );
+	QObject::connect( contact, SIGNAL(haveWorkInfo(const ICQWorkUserInfo&)),
+	                  this, SLOT(fillWorkInfo(const ICQWorkUserInfo&)) );
+	QObject::connect( contact, SIGNAL(haveEmailInfo(const ICQEmailInfo&)),
+	                  this, SLOT(fillEmailInfo(const ICQEmailInfo&)) );
+	QObject::connect( contact, SIGNAL(haveNotesInfo(const ICQNotesInfo&)),
+	                  this, SLOT(fillNotesInfo(const ICQNotesInfo&)) );
+	QObject::connect( contact, SIGNAL(haveMoreInfo(const ICQMoreUserInfo&)),
+	                  this, SLOT(fillMoreInfo(const ICQMoreUserInfo&)) );
+	QObject::connect( contact, SIGNAL(haveInterestInfo(const ICQInterestInfo&)),
+	                  this, SLOT(fillInterestInfo(const ICQInterestInfo&)) );
+	QObject::connect( contact, SIGNAL(haveOrgAffInfo(const ICQOrgAffInfo&)),
+	                  this, SLOT(fillOrgAffInfo(const ICQOrgAffInfo&)) );
+
+	ICQProtocol* icqProtocol = static_cast<ICQProtocol*>( m_contact->protocol() );
+
+	m_genInfoWidget->uinEdit->setText( m_contact->contactId() );
+	m_genInfoWidget->aliasEdit->setText( m_contact->ssiItem().alias() );
+	m_genInfoWidget->ipEdit->setText( m_contact->property( icqProtocol->ipAddress ).value().toString() );
+
+	if ( m_account->isConnected() )
+		m_account->engine()->requestFullInfo( m_contactId );
+}
+
+void ICQUserInfoWidget::init()
 {
 	setFaceType( KPageDialog::List );
 	setModal( false );
@@ -55,7 +102,7 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool ownInfo )
 	else
 		setDefaultButton( KDialog::Cancel );
 	
-	kDebug(14153) << "Creating new icq user info widget";
+	kDebug(OSCAR_ICQ_DEBUG) << "Creating new icq user info widget";
 	
 	QWidget *genInfo = new QWidget(this);
 	m_genInfoWidget = new Ui::ICQGeneralInfoWidget;
@@ -214,38 +261,8 @@ ICQUserInfoWidget::ICQUserInfoWidget( QWidget * parent, bool ownInfo )
 		m_interestInfoWidget->topic4Combo->setReadOnly( true );
 		m_genInfoWidget->timezoneCombo->setReadOnly( true );
 	}
-}
 
-ICQUserInfoWidget::~ ICQUserInfoWidget()
-{
-	delete m_genInfoWidget;
-	delete m_homeInfoWidget;
-	delete m_workInfoWidget;
-	delete m_otherInfoWidget;
-	delete m_interestInfoWidget;
-	delete m_orgAffInfoWidget;
-	delete m_emailModel;
-}
-
-void ICQUserInfoWidget::setContact( ICQContact* contact )
-{
-	m_contact = contact;
-	QObject::connect( contact, SIGNAL( haveBasicInfo( const ICQGeneralUserInfo& ) ),
-	                  this, SLOT( fillBasicInfo( const ICQGeneralUserInfo& ) ) );
-	QObject::connect( contact, SIGNAL( haveWorkInfo( const ICQWorkUserInfo& ) ),
-	                  this, SLOT( fillWorkInfo( const ICQWorkUserInfo& ) ) );
-	QObject::connect( contact, SIGNAL( haveEmailInfo( const ICQEmailInfo& ) ),
-	                  this, SLOT( fillEmailInfo( const ICQEmailInfo& ) ) );
-	QObject::connect( contact, SIGNAL( haveNotesInfo( const ICQNotesInfo& ) ),
-	                  this, SLOT( fillNotesInfo( const ICQNotesInfo& ) ) );
-	QObject::connect( contact, SIGNAL( haveMoreInfo( const ICQMoreUserInfo& ) ),
-	                  this, SLOT( fillMoreInfo( const ICQMoreUserInfo& ) ) );
-	QObject::connect( contact, SIGNAL( haveInterestInfo( const ICQInterestInfo& ) ),
-	                  this, SLOT( fillInterestInfo( const ICQInterestInfo& ) ) );
-	QObject::connect( contact, SIGNAL( haveOrgAffInfo( const ICQOrgAffInfo& ) ),
-	                  this, SLOT( fillOrgAffInfo( const ICQOrgAffInfo& ) ) );
-
-	ICQProtocol* icqProtocol = static_cast<ICQProtocol*>( m_contact->protocol() );
+	ICQProtocol* icqProtocol = static_cast<ICQProtocol*>( m_account->protocol() );
 
 	//Countries
 	QMap<QString, int> sortedMap( reverseMap( icqProtocol->countries() ) );
@@ -339,13 +356,20 @@ void ICQUserInfoWidget::setContact( ICQContact* contact )
 			.arg( ( zone > 0 ) ? "-" : "" )
 			.arg( qAbs( zone ) / 2, 2, 10, QLatin1Char('0') )
 			.arg( ( qAbs( zone ) % 2 ) * 30, 2, 10, QLatin1Char('0')  );
-		
+
 		m_genInfoWidget->timezoneCombo->addItem( timezone, zone );
 	}
+}
 
-	m_genInfoWidget->uinEdit->setText( m_contact->contactId() );
-	m_genInfoWidget->aliasEdit->setText( m_contact->ssiItem().alias() );
-	m_genInfoWidget->ipEdit->setText( m_contact->property( icqProtocol->ipAddress ).value().toString() );
+ICQUserInfoWidget::~ ICQUserInfoWidget()
+{
+	delete m_genInfoWidget;
+	delete m_homeInfoWidget;
+	delete m_workInfoWidget;
+	delete m_otherInfoWidget;
+	delete m_interestInfoWidget;
+	delete m_orgAffInfoWidget;
+	delete m_emailModel;
 }
 
 QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
@@ -373,7 +397,7 @@ QString ICQUserInfoWidget::getAlias() const
 
 void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 	
 	if ( m_ownInfo )
 		m_generalUserInfo = ui;
@@ -414,7 +438,7 @@ void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 
 void ICQUserInfoWidget::fillWorkInfo( const ICQWorkUserInfo& ui )
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 
 	if ( m_ownInfo )
 		m_workUserInfo = ui;
@@ -436,7 +460,7 @@ void ICQUserInfoWidget::fillWorkInfo( const ICQWorkUserInfo& ui )
 
 void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& info )
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 
 	if ( m_ownInfo )
 		m_emailInfo = info;
@@ -461,7 +485,7 @@ void ICQUserInfoWidget::fillEmailInfo( const ICQEmailInfo& info )
 
 void ICQUserInfoWidget::fillNotesInfo( const ICQNotesInfo& info )
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 
 	if ( m_ownInfo )
 		m_notesInfo = info;
@@ -471,7 +495,7 @@ void ICQUserInfoWidget::fillNotesInfo( const ICQNotesInfo& info )
 
 void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info )
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 
 	if ( m_ownInfo )
 		m_interestInfo = info;
@@ -495,7 +519,7 @@ void ICQUserInfoWidget::fillInterestInfo( const ICQInterestInfo& info )
 
 void ICQUserInfoWidget::fillOrgAffInfo( const ICQOrgAffInfo& info )
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 
 	if ( m_ownInfo )
 		m_orgAffUserInfo = info;
@@ -529,7 +553,7 @@ void ICQUserInfoWidget::fillOrgAffInfo( const ICQOrgAffInfo& info )
 
 void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 
 	if ( m_ownInfo )
 		m_moreUserInfo = ui;
@@ -550,6 +574,20 @@ void ICQUserInfoWidget::fillMoreInfo( const ICQMoreUserInfo& ui )
 	m_otherInfoWidget->sendInfoCheck->setChecked( ui.sendInfo.get() );
 }
 
+void ICQUserInfoWidget::receivedLongInfo( const QString& contact )
+{
+	if ( Oscar::normalize( contact ) != Oscar::normalize( m_contactId ) )
+		return;
+
+	kDebug(OSCAR_ICQ_DEBUG) << "received long info from engine";	
+	fillBasicInfo( m_account->engine()->getGeneralInfo( contact ) );
+	fillWorkInfo( m_account->engine()->getWorkInfo( contact ) );
+	fillEmailInfo( m_account->engine()->getEmailInfo( contact ) );
+	fillNotesInfo( m_account->engine()->getNotesInfo( contact ) );
+	fillMoreInfo( m_account->engine()->getMoreInfo( contact ) );
+	fillInterestInfo( m_account->engine()->getInterestInfo( contact ) );
+	fillOrgAffInfo( m_account->engine()->getOrgAffInfo( contact ) );
+}
 
 void ICQUserInfoWidget::slotUpdateDay()
 {
@@ -767,7 +805,7 @@ void ICQUserInfoWidget::swapEmails( int r1, int r2 )
 
 ICQGeneralUserInfo* ICQUserInfoWidget::storeBasicInfo() const
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 	ICQGeneralUserInfo* info = new ICQGeneralUserInfo( m_generalUserInfo );
 
 	//Email is stored in storeEmailInfo(), because if we change primary email we have to update all emails.
@@ -793,7 +831,7 @@ ICQGeneralUserInfo* ICQUserInfoWidget::storeBasicInfo() const
 
 ICQMoreUserInfo* ICQUserInfoWidget::storeMoreInfo() const
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 	ICQMoreUserInfo* info = new ICQMoreUserInfo( m_moreUserInfo );
 
 	info->age.set( m_genInfoWidget->ageEdit->text().toInt() );
@@ -831,7 +869,7 @@ ICQMoreUserInfo* ICQUserInfoWidget::storeMoreInfo() const
 
 ICQWorkUserInfo* ICQUserInfoWidget::storeWorkInfo() const
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 	ICQWorkUserInfo* info = new ICQWorkUserInfo( m_workUserInfo );
 
 	info->city.set( codec->fromUnicode( m_workInfoWidget->cityEdit->text() ) );
@@ -856,7 +894,7 @@ ICQWorkUserInfo* ICQUserInfoWidget::storeWorkInfo() const
 
 ICQOrgAffInfo* ICQUserInfoWidget::storeOrgAffInfo() const
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 	ICQOrgAffInfo* info = new ICQOrgAffInfo( m_orgAffUserInfo );
 
 	info->org1Keyword.set( codec->fromUnicode( m_orgAffInfoWidget->org1KeywordEdit->text() ) );
@@ -890,7 +928,7 @@ ICQOrgAffInfo* ICQUserInfoWidget::storeOrgAffInfo() const
 
 ICQInterestInfo* ICQUserInfoWidget::storeInterestInfo() const
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 	ICQInterestInfo* info = new ICQInterestInfo( m_interestInfo );
 
 	int index = m_interestInfoWidget->topic1Combo->currentIndex();
@@ -914,7 +952,7 @@ ICQInterestInfo* ICQUserInfoWidget::storeInterestInfo() const
 
 ICQNotesInfo* ICQUserInfoWidget::storeNotesInfo() const
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 	ICQNotesInfo* info = new ICQNotesInfo( m_notesInfo );
 
 	info->notes.set( codec->fromUnicode( m_otherInfoWidget->notesEdit->toPlainText() ) );
@@ -924,7 +962,7 @@ ICQNotesInfo* ICQUserInfoWidget::storeNotesInfo() const
 
 ICQEmailInfo* ICQUserInfoWidget::storeEmailInfo() const
 {
-	QTextCodec* codec = m_contact->contactCodec();
+	QTextCodec* codec = getTextCodec();
 	ICQEmailInfo* info = new ICQEmailInfo( m_emailInfo );
 
 	//Prepend primary email to emails
@@ -975,6 +1013,11 @@ QMap<QString, int> ICQUserInfoWidget::reverseMap( const QMap<int, QString>& map 
 	}
 
 	return revMap;
+}
+
+QTextCodec* ICQUserInfoWidget::getTextCodec() const
+{
+	return (m_contact) ? m_contact->contactCodec() : m_account->defaultCodec();
 }
 
 #include "icquserinfowidget.moc"

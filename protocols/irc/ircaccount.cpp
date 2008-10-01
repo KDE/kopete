@@ -50,6 +50,7 @@
 #include <kmessagebox.h>
 
 
+
 #include <qtextcodec.h>
 #include <QTimer>
 
@@ -89,6 +90,8 @@ public:
 
 	KAction *joinChannelAction;
 	KAction *searchChannelAction;
+
+	QString motd;
 };
 
 IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const QString& netName, const QString &nickName)
@@ -573,6 +576,31 @@ void IRCAccount::slotShowServerWindow()
 	d->server->startChat();
 }
 
+void IRCAccount::slotJoinChannel()
+{
+	if (!isConnected())
+		return;
+
+	QStringList chans = configGroup()->readEntry( "Recent Channel list", QStringList() );
+	//kdDebug(14120) << "Recent channel list from config: " << chans << endl;
+	QString channelName=KInputDialog::getText( i18n( "Join Channel" ),
+			i18n("Please enter name of the channel you want to join:"),
+			QString::null, 0,
+			Kopete::UI::Global::mainWidget(),
+			0, QString(), 0, chans
+		);
+
+	if ( !channelName.isNull() )
+	{
+		kDebug( 14120 )<<"joining channel"<<channelName;
+		chans.prepend( channelName );
+		configGroup()->writeEntry( "Recent Channel list", chans );
+
+		KIrc::EntityPtr channel=d->client->joinChannel( channelName.toUtf8() );
+		getContact( channel )->startChat();
+	}
+}
+
 void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus)
 {
 	kDebug(14120) ;
@@ -658,7 +686,7 @@ IRCContact *IRCAccount::getContact(const QByteArray &name, MetaContact *metac)
 	return 0;
 }
 
-IRCContact *IRCAccount::getContact(KIrc::Entity *entity, MetaContact *metac)
+IRCContact *IRCAccount::getContact(const KIrc::EntityPtr &entity, MetaContact *metac)
 {
 	IRCContact *contact = 0;
 
@@ -687,10 +715,10 @@ IRCContact *IRCAccount::getContact(KIrc::Entity *entity, MetaContact *metac)
 	return contact;
 }
 
-QList<Kopete::Contact*> IRCAccount::getContacts( const QList<KIrc::Entity*> &entities )
+QList<Kopete::Contact*> IRCAccount::getContacts( const KIrc::EntityList &entities )
 {
 	QList<Kopete::Contact*> contacts;
-	foreach( KIrc::Entity * e, entities )
+	foreach( const KIrc::EntityPtr &e, entities )
 		contacts<<getContact( e );
 
 	return contacts;
@@ -708,25 +736,31 @@ void IRCAccount::receivedEvent(QEvent *event)
 	if ( event->type()==KIrc::TextEvent::Type )
 	{
 		KIrc::TextEvent* txtEvent=static_cast< KIrc::TextEvent* >( event );
-		kDebug(14120)<<"from: "<<txtEvent->from()->name();
-		kDebug(14120)<<"message:"<<txtEvent->text();
+		kDebug(14120)<<"type: " << txtEvent->eventId();
+		kDebug(14120)<<"from: " << txtEvent->from()->name();
+		kDebug(14120)<<"message:" << txtEvent->text();
 
 		IRCContact *from = getContact( txtEvent->from() );
 		QList<Kopete::Contact*> to = getContacts( txtEvent->to() );
+		Kopete::Message::MessageType msgType = Kopete::Message::TypeNormal;
+		Kopete::Message::MessageImportance msgImportance = Kopete::Message::Low;
 
-	   	Kopete::Message::MessageDirection msgDirection =
-			from == mySelf() ? Kopete::Message::Outbound : Kopete::Message::Inbound;
-
-		Kopete::Message msg(from, to);
-		msg.setDirection( msgDirection );
-		msg.setPlainBody( txtEvent->text() );
-		msg.setType( Kopete::Message::TypeAction );
-
-		foreach( Kopete::Contact* c, to )
+		if ( txtEvent->eventId()=="PRIVMSG" )
 		{
-			dynamic_cast<IRCContact*> ( c )->appendMessage( msg );
+//			if ( !to->isChannel() )
+//				importance = Kopete::Message::Normal;
 		}
-
+		else if ( txtEvent->eventId() == "DCC_ACTION" )
+		{
+			msgType = Kopete::Message::TypeAction;
+		}
+#if 0 
+		else if ( txtEvent->eventId().startWith("ERR_") )
+		{
+			msgImportance = Kopete::Message::Highlight;
+		}
+#endif
+		appendMessage( from, to, txtEvent->text(), msgType );
 	}
    	/*
 	QList<Kopete::Contact*> to = getContacts(txtEvent->to());
@@ -755,6 +789,26 @@ void IRCAccount::receivedEvent(QEvent *event)
 		postContact->appendMessage(msg);
 */
 }
+
+void IRCAccount::appendMessage(IRCContact* from, QList<Contact*> to,const QString& text, Kopete::Message::MessageType type)
+{
+	Kopete::Message::MessageDirection msgDirection =
+		from == mySelf() ? Kopete::Message::Outbound : Kopete::Message::Inbound;
+
+	Kopete::Message msg(from, to);
+	msg.setDirection( msgDirection );
+	msg.setPlainBody( text );
+	msg.setType( type );
+
+	foreach( Kopete::Contact* c, to )
+	{
+		if ( c==myself() ) //If we are the target of the message, append it to the chatsession of the origin
+			from->appendMessage( msg );
+		else
+			dynamic_cast<IRCContact*> ( c )->appendMessage( msg );
+	}
+}
+
 /*
 void IRCContact::slotUserDisconnected(const QString &user, const QString &reason)
 {

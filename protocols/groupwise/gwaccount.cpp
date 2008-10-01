@@ -92,7 +92,6 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 										 SLOT( slotPrivacy() ) );
 			
 	m_connector = 0;
-    m_qcaInit = new QCA::Initializer;
 	m_QCATLS = 0;
 	m_tlsHandler = 0;
 	m_clientStream = 0;
@@ -221,7 +220,7 @@ GroupWiseContact * GroupWiseAccount::contactForDN( const QString & dn )
 			return candidate;
 	}
 	// we might have just added the contact with a user ID, try the first section of the dotted dn
-	return static_cast< GroupWiseContact * >( contacts()[ protocol()->dnToDotted( dn ).section( '.', 0, 0 ) ] );
+	return static_cast< GroupWiseContact * >( contacts().value( protocol()->dnToDotted( dn ).section( '.', 0, 0 ) ));
 }
 
 void GroupWiseAccount::setAway( bool away, const QString & reason )
@@ -266,10 +265,8 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	}
 	// set up network classes
 	m_connector = new KNetworkConnector( 0 );
-	//myConnector->setOptHostPort( "localhost", 8300 );
 	m_connector->setOptHostPort( server(), port() );
 	m_connector->setOptSSL( true );
-	Q_ASSERT( QCA::isSupported("tls") );
 	m_QCATLS = new QCA::TLS;
 	m_tlsHandler = new QCATLSHandler( m_QCATLS );
 	if( QCA::haveSystemStore() )
@@ -302,7 +299,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	// not implemented: error
 	QObject::connect( m_clientStream, SIGNAL( error(int) ), SLOT( slotCSError(int) ) );
 
-	m_client = new Client( this, CMSGPRES_GW_6_5 );
+	m_client = new Client( 0, CMSGPRES_GW_6_5 );
 
 	// NB these are prefixed with QObject:: to avoid any chance of a clash with our connect() methods.
 	// we connected successfully
@@ -454,13 +451,11 @@ void GroupWiseAccount::cleanup()
 	delete m_clientStream;
 	delete m_QCATLS;
 	delete m_connector;
-	delete m_qcaInit;
 
 	m_connector = 0;
 	m_QCATLS = 0;
 	m_clientStream = 0;
 	m_client = 0;
-	m_qcaInit = 0;
 }
 
 void GroupWiseAccount::createConference( const int clientId, const QStringList& invitees )
@@ -1079,10 +1074,20 @@ void GroupWiseAccount::receiveContactUserDetails( const ContactDetails & details
 GroupWiseContact * GroupWiseAccount::createTemporaryContact( const QString & dn )
 {
 	ContactDetails details = client()->userDetailsManager()->details( dn );
-	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ details.dn.toLower() ] );
-	if ( !c && details.dn != accountId() )
+	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts().value(details.dn.toLower() ));
+	if ( !c && ( details.dn != accountId() ) )
 	{
 		kDebug() << "Got a temporary contact DN: " << details.dn;
+		kDebug() 
+		<< "  Auth attribute: " << details.authAttribute
+		<< "  , Away message: " << details.awayMessage
+		<< "  , CN" << details.cn
+		<< "  , DN" << details.dn
+		<< "  , fullName" << details.fullName
+		<< "  , surname" << details.surname
+		<< "  , givenname" << details.givenName
+		<< "  , status" << details.status
+		<< endl;
 		// the client is telling us about a temporary contact we need to know about so add them
 		Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 		metaContact->setTemporary (true);
@@ -1100,7 +1105,9 @@ GroupWiseContact * GroupWiseAccount::createTemporaryContact( const QString & dn 
 			m_client->requestStatus( details.dn );
 	}
 	else
+	{
 		kDebug() << "Notified of existing temporary contact DN: " << details.dn;
+	}
 	return c;
 }
 
@@ -1252,7 +1259,7 @@ void GroupWiseAccount::receiveContactCreated()
 	else
 	{
 		// delete the contact created optimistically using the supplied userid;
-		Kopete::Contact * c = contacts()[ protocol()->dnToDotted( cct->userId() ) ];
+		Kopete::Contact * c = contacts().value(protocol()->dnToDotted( cct->userId()) );
 		if ( c )
 		{
 			// if the contact creation failed because it already exists on the server, don't delete it
@@ -1264,7 +1271,6 @@ void GroupWiseAccount::receiveContactCreated()
 					delete c;
 			}
 		}
-
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Error,
 							i18n ("The contact %1 could not be added to the contact list, with error message: %2", 
 							cct->userId(), cct->statusString() ),

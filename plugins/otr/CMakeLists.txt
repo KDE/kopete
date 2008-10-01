@@ -33,11 +33,10 @@ install(TARGETS kcm_kopete_otr DESTINATION ${PLUGIN_INSTALL_DIR})
 set(kopete_otr_shared_LIB_SRCS
     otrlchatinterface.cpp
     otrlconfinterface.cpp
-    smppopup.cpp
-    verifydialog.cpp
+    authenticationwizard.cpp
     privkeypopup.cpp)
 
-kde4_add_ui_files(kopete_otr_shared_LIB_SRCS smppopup.ui privkeypopup.ui verifydialog.ui)
+kde4_add_ui_files(kopete_otr_shared_LIB_SRCS privkeypopup.ui)
 
 kde4_add_library(kopete_otr_shared SHARED ${kopete_otr_shared_LIB_SRCS})
 

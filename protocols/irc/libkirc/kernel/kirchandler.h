@@ -49,6 +49,7 @@ public:
 	};
 
 	explicit Handler(QObject *parent = 0);
+	Handler(Handler *parent);
 	virtual ~Handler();
 
 	void addEventHandler(KIrc::Handler *handler);
@@ -79,6 +80,8 @@ Q_SIGNALS:
 	(QString eventId, KIrc::Entity::Ptr from, KIrc::Entity::List to, QString text);
 */
 protected:
+	Handler(HandlerPrivate *d, QObject *parent = 0);
+
 	HandlerPrivate * const d_ptr;
 };
 

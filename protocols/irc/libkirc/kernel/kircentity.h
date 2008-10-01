@@ -18,11 +18,11 @@
 #ifndef KIRCENTITY_H
 #define KIRCENTITY_H
 
-#include "kircglobal.h"
+#include "kirc_export.h"
 
-#include <QExplicitlySharedDataPointer>
-#include <QList>
-#include <QObject>
+#include <QtCore/QList>
+#include <QtCore/QObject>
+#include <QtCore/QSharedData>
 
 class QTextCodec;
 
@@ -30,11 +30,14 @@ namespace KIrc
 {
 
 class Context;
+class EntityPrivate;
 
 class KIRC_EXPORT Entity
 	: public QObject
+	, public QSharedData
 {
 	Q_OBJECT
+	Q_DECLARE_PRIVATE(Entity)
 
 //	Q_PROPERTY(QTextCodec *codec READ codec WRITE setCodec)
 
@@ -103,8 +106,7 @@ private:
 
 	Q_DISABLE_COPY(Entity)
 
-	class Private;
-	Private * const d;
+	EntityPrivate * const d_ptr;
 };
 
 }

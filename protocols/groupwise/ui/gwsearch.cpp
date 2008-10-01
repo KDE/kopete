@@ -399,7 +399,7 @@ void GroupWiseContactSearch::slotGotSearchResults()
 	{
 		QItemSelectionModel * selectionModel = m_results->selectionModel();
 		QItemSelection rowSelection;
-		rowSelection.select( m_model->index( 0, 0, QModelIndex() ), m_model->index(0, 3, QModelIndex() ) );
+		rowSelection.select( m_proxyModel->index( 0, 0, QModelIndex() ), m_proxyModel->index(0, 3, QModelIndex() ) );
 		selectionModel->select( rowSelection, QItemSelectionModel::Select );
 	}
 	kDebug() << "selectionModel is " << m_results->selectionModel();

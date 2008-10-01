@@ -38,3 +38,9 @@ a:active { text-decoration: none; }
 	color: #9400d3;
 }
 
+.outState
+{
+	overflow: hidden;
+	float: right;
+	height: 16px;
+}

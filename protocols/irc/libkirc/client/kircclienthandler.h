@@ -34,11 +34,16 @@ class KIRCCLIENT_EXPORT ClientEventHandler
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(KIrc::ClientEventHandler)
+	
+private:
+	Q_DISABLE_COPY(ClientEventHandler)
 
 public:
-	explicit ClientEventHandler(Context *context,QObject* parent=0);
+	explicit ClientEventHandler(QObject* parent=0);
 	~ClientEventHandler();
 
+public Q_SLOTS:
+	virtual KIrc::Handler::Handled onMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 private:
 #if 0
@@ -51,19 +56,19 @@ private:
 
 	void receivedServerMessage(KIrc::Context *context, const KIrc::Message& msg, KIrc::Socket *socket);
 private Q_SLOTS:
-	Handler::Handled error(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled join(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled kick(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled mode(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled nick(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled notice(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled part(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled ping(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled pong(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled privmsg(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled ERROR(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled JOIN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled KICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled MODE(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled NICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled NOTICE(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled PART(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled PING(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled PONG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled PRIVMSG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 //	Handler::Handled squit(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled quit(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled topic(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled QUIT(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled TOPIC(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 	Handler::Handled numericReply_001(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_002(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
@@ -105,14 +110,10 @@ private Q_SLOTS:
 	Handler::Handled numericReply_353(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_366(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_369(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_372(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_375(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_376(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 	Handler::Handled numericReply_401(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_404(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_406(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_422(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_433(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_442(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_464(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
@@ -120,11 +121,6 @@ private Q_SLOTS:
 	Handler::Handled numericReply_473(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_474(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_475(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-
-private:
-	Q_DISABLE_COPY(ClientEventHandler)
-
-	ClientEventHandlerPrivate * const d_ptr;
 };
 
 }

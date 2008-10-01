@@ -287,7 +287,6 @@ private:
 	public:
 		Buffer( unsigned size = 0 );
 		~Buffer();
-		void add( char *str, unsigned size );
 		QByteArray take( int size );
 	};
 

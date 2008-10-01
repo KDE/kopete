@@ -330,7 +330,7 @@ void JabberGroupContact::slotChatSessionDeleted ()
 		account()->client()->leaveGroupChat ( mRosterItem.jid().host (), mRosterItem.jid().user () );
 	}
 	
-	//deleteLater(); //we will be deleted later when the the account will know we have left
+	//deleteLater(); //we will be deleted later when the account will know we have left
 
 }
 
