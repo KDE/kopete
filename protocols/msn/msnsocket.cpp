@@ -134,7 +134,7 @@ void MSNSocket::disconnect()
 			m_timer->stop();
 		}
 
-	if ( m_socket->isOpen() )
+	if ( m_socket && m_socket->isOpen() )
 		m_socket->disconnectFromHost();
 	else
 		slotSocketClosed();
