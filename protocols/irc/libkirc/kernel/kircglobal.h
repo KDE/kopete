@@ -21,6 +21,7 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QExplicitlySharedDataPointer>
 #include <QtCore/QList>
+#include <QtCore/QSet>
 
 namespace KIrc
 {
@@ -28,6 +29,7 @@ namespace KIrc
 class Entity;
 typedef QExplicitlySharedDataPointer<KIrc::Entity> EntityPtr;
 typedef QList<EntityPtr> EntityList;
+typedef QSet<EntityPtr> EntitySet;
 
 typedef struct
 {
@@ -42,6 +44,11 @@ KIrc::OptArg optArg(const QByteArray &arg)
 static inline
 QList<QByteArray> &operator << (QList<QByteArray> &list, const KIrc::OptArg &optArg)
 { if (!optArg.value.isNull()) list.append(optArg.value); return list; }
+
+template <class T>
+static inline
+QSet<T> &operator << (QSet<T> &set, const QList<T> &list)
+{ Q_FOREACH(const T &item, list) set << item; return set; }
 
 };
 
