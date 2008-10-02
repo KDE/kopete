@@ -157,6 +157,7 @@ private:
 
 	KToggleAction *mStatusbarAction;
 
+	KAction *tabActive;
 	KAction *tabLeft;
 	KAction *tabRight;
 	KAction *tabDetach;
@@ -207,6 +208,7 @@ private slots:
 
 	void slotPreviousTab();
 	void slotNextTab();
+	void slotNextActiveTab();
 	void slotDetachChat(QAction* = 0);
 	void slotPlaceTabs( QAction* );
 

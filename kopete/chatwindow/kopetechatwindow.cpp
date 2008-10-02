@@ -379,6 +379,12 @@ void KopeteChatWindow::initActions(void)
 	tabClose = KStandardAction::close ( this, SLOT(slotChatClosed()), coll );
         coll->addAction( "tabs_close", tabClose );
 
+	tabActive=new KAction( i18n( "&Activate Next Active Tab" ), coll );
+	coll->addAction( "tabs_active", tabActive );
+// 	tabActive->setShortcut( KStandardShortcut::tabNext() );
+	tabActive->setEnabled( false );
+	connect( tabActive, SIGNAL(triggered(bool)), this, SLOT(slotNextActiveTab()) );
+		
 	tabRight=new KAction( i18n( "&Activate Next Tab" ), coll );
         coll->addAction( "tabs_right", tabRight );
 	tabRight->setShortcut( KStandardShortcut::tabNext() );
@@ -754,6 +760,7 @@ void KopeteChatWindow::checkDetachEnable()
 	tabDetach->setEnabled( haveTabs );
 	tabLeft->setEnabled( haveTabs );
 	tabRight->setEnabled( haveTabs );
+	tabActive->setEnabled( haveTabs );
 	actionTabPlacementMenu->setEnabled( m_tabBar != 0 );
 
 	bool otherWindows = (windows.count() > 1);
@@ -848,6 +855,20 @@ void KopeteChatWindow::slotNextTab()
 		m_tabBar->setCurrentIndex( 0 );
 	else
 		m_tabBar->setCurrentIndex( curPage + 1 );
+}
+
+void KopeteChatWindow::slotNextActiveTab()
+{
+	int curPage = m_tabBar->currentIndex();
+	for(int i=(curPage+1) % m_tabBar->count(); i!=curPage; i = (i+1) % m_tabBar->count())
+	{
+		ChatView *v = static_cast<ChatView*>(m_tabBar->widget(i)); //We assume we only have ChatView's
+		if(v->tabState()==ChatView::Highlighted || v->tabState()==ChatView::Message)
+		{
+			m_tabBar->setCurrentIndex( i );
+			break;
+		}
+	}
 }
 
 void KopeteChatWindow::slotSetCaption( bool active )

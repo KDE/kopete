@@ -244,6 +244,9 @@ public slots:
 	virtual void messageSentSuccessfully();
 
 	virtual bool closeView( bool force = false );
+	
+	/** Retrieves the tab state. */
+	KopeteTabState tabState() const;
 
 signals:
 	/**
@@ -370,6 +373,8 @@ private:
 	void readOptions();
 
 	void sendInternalMessage( const QString &msg, Qt::TextFormat format = Qt::PlainText );
+	
+	KopeteTabState currentState() const;
 
 	KopeteChatViewPrivate *d;
 };

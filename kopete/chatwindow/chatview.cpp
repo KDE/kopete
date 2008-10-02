@@ -371,6 +371,11 @@ bool ChatView::closeView( bool force )
 	return false;
 }
 
+ChatView::KopeteTabState ChatView::tabState() const
+{
+	return m_tabState;
+}
+
 void ChatView::updateChatState( KopeteTabState newState )
 {
 	if ( newState == Undefined )
