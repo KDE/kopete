@@ -81,6 +81,8 @@ protected:
 	 */
 	void addEvent( Kopete::InfoEvent* event );
 
+	using QObject::event;
+
 private Q_SLOTS:
 	void eventClosed( Kopete::InfoEvent* event );
 
