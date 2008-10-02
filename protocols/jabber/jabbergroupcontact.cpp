@@ -207,6 +207,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 		newMessage->setPlainBody( body );
 		newMessage->setRequestedPlugin( viewType );
 		newMessage->setImportance( Kopete::Message::Low );
+		newMessage->setDelayed( message.spooled() );
 	}
 
 	// append message to manager
