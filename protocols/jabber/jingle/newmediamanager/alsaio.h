@@ -6,8 +6,6 @@
 #include <QObject>
 #include <QSocketNotifier>
 #include <QFile>
-#include <QDebug>
-#include <KDebug>
 #include <QTimer>
 
 class AlsaIO : public QObject
@@ -46,7 +44,7 @@ public:
 
 	StreamType type() const;
 
-	void start();
+	bool start();
 	
 	void write(const QByteArray& data);
 
@@ -65,7 +63,6 @@ public:
 	/**
 	 * @return used format in snd_pcm_format_t (this should change)
 	 */
-
 	Format format() const {return m_format;}
 	void setFormat(Format f);
 
@@ -74,13 +71,10 @@ public:
 	unsigned int timeStamp();
 	void writeData();
 	bool prepare();
-	void decRef();
-	void incRef();
 	int frameSizeBytes();
 
 public slots:
 	void slotActivated(int socket);
-	void timerTimeOut();
 	void checkAlsaPoll(int);
 
 signals:
@@ -96,17 +90,15 @@ private:
 	unsigned int pTime;
 	snd_pcm_uframes_t pSize;
 	unsigned int samplingRate;
-	QTimer *timer;
 	int fdCount;
 	struct pollfd *ufds;
 	unsigned int written;
-	int ref;
 	void stop();
 	QFile *testFile;
 	Format m_format;
 	snd_pcm_hw_params_t *hwParams;
 	int pSizeBytes;
-	int times;
+	QByteArray tmpBuf;
 };
 
 #endif //ALSA_IO

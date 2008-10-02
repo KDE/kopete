@@ -8,18 +8,28 @@ class SpeexIO : public AbstractIO
 {
 	Q_OBJECT
 public :
-	SpeexIO();
+	SpeexIO(int samplingRate);
 	~SpeexIO();
 
 	virtual void write(const QByteArray& data);
 	virtual QByteArray read();
+	virtual int start();
 
 private slots:
 	void slotReadyRead();
+	void slotBytesWritten();
 
 private :
-	SpeexBits bits;
+	SpeexBits encodeBits;
+	SpeexBits decodeBits;
 	void *speexEncoder;
+	void *speexDecoder;
+	int decoderFrameSize;
+	QByteArray speexData;
+	QByteArray rawData;
+
+	AlsaIO *m_alsaIn;
+	AlsaIO *m_alsaOut;
 };
 
 #endif

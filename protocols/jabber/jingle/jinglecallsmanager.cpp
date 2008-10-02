@@ -98,7 +98,7 @@ void JingleCallsManager::init()
 	QDomElement sPayload = doc.createElement("payload-type");
 	sPayload.setAttribute("id", "96");
 	sPayload.setAttribute("name", "speex");
-	sPayload.setAttribute("clockrate", "16000");
+	sPayload.setAttribute("clockrate", "8000");
 	d->audioPayloads << sPayload;
 	
 	//A-Law

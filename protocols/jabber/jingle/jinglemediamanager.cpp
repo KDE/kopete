@@ -76,8 +76,12 @@ void JingleMediaSession::setOutputDevice(Solid::Device& device)
 
 void JingleMediaSession::setMediaPlugin(AbstractIO *p)
 {
+	kDebug() << "setting plugin, calling connect :";
 	plugin = p;
+	//FIXME:set tsValue.
+	tsValue = 160;
 	connect(plugin, SIGNAL(readyRead()), this, SLOT(slotInReadyRead()));
+	kDebug() << "Done";
 }
 
 void JingleMediaSession::setCaptureMediaPlugin(AlsaIO *p)
@@ -105,32 +109,39 @@ void JingleMediaSession::setPlaybackMediaPlugin(AlsaIO *p)
 
 void JingleMediaSession::start()
 {
-	if (capturePlugin)
+	kDebug() << "called";
+	
+	/*if (capturePlugin)
 		capturePlugin->start();
 	if (playbackPlugin)
-		playbackPlugin->start();
+		playbackPlugin->start();*/
 	if (plugin)
+	{
+		kDebug() << "Start plugin...";
 		plugin->start();
+		kDebug() << "Done.";
+	}
 }
 
 void JingleMediaSession::playData(const QByteArray& data)
 {
-	if (playbackPlugin)
-		playbackPlugin->write(data);
+/*	if (playbackPlugin)
+		playbackPlugin->write(data);*/
 	if (plugin)
 		plugin->write(data);
 }
 
 void JingleMediaSession::slotInReadyRead()
 {
+	kDebug() << tsValue;
 	emit readyRead(ts);
 	ts += tsValue;
 }
 
 QByteArray JingleMediaSession::data()
 {
-	if (capturePlugin)
-		return capturePlugin->data();
+/*	if (capturePlugin)
+		return capturePlugin->data();*/
 	if (plugin)
 		return plugin->read();
 	return QByteArray();
@@ -259,17 +270,17 @@ JingleMediaSession *JingleMediaManager::createNewSession(const QDomElement& payl
 			//FIXME:alaw shoud be as other plugin : one instance for capture and playback.
 			//Start a-law streaming. Currently, it is the only one supported, more to come.
 			//The problem is that Phonon does not support audio input yet...
-			if (alawCapture == 0)
+			/*if (alawCapture == 0)
 			{
-				alawCapture = new AlsaIO(AlsaIO::Capture);
+				alawCapture = new AlsaIO(AlsaIO::Capture, AlsaIO::ALaw);
 			}
 			mediaSession->setCaptureMediaPlugin(alawCapture);
 			
 			if (alawPlayback == 0)
 			{
-				alawPlayback = new AlsaIO(AlsaIO::Playback);
+				alawPlayback = new AlsaIO(AlsaIO::Playback, AlsaIO::ALaw);
 			}
-			mediaSession->setPlaybackMediaPlugin(alawPlayback);
+			mediaSession->setPlaybackMediaPlugin(alawPlayback);*/
 
 			//FIXME:I call it a Media Plugin, maybe those can be loaded as plugins for each formats.
 			//	It Depends on what Phonon will provide (will I have to encode audio or will Phonon take care of that ?)
@@ -279,8 +290,8 @@ JingleMediaSession *JingleMediaManager::createNewSession(const QDomElement& payl
 		if (payload.hasAttribute("name") && payload.attribute("name") == "speex")
 		{
 			//Speex format.
-			if (!speexPlugin)
-				speexPlugin = new SpeexIO();
+			if (speexPlugin == 0)
+				speexPlugin = new SpeexIO(/*set clock-rate here*/payload.attribute("clockrate").toInt());
 
 			mediaSession->setMediaPlugin(speexPlugin);
 		}

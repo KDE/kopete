@@ -10,8 +10,13 @@
 #include <QDomElement>
 //#include <>
 
+int JingleRtpSession::refCount = 0;
+
 JingleRtpSession::JingleRtpSession(Direction d)
 {
+	refCount++;
+	kDebug() << "Reference counter =" << refCount;
+
 	m_direction = d;
 	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Creating" << (d == In ? "IN" : "OUT") << "JingleRtpSession";
 	/*
@@ -138,6 +143,11 @@ void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should 
 	mblk_t *packet = rtp_session_create_packet_with_data(m_rtpSession, (uint8_t*)data.data(), data.size(), /*freefn*/ NULL); //the free function is managed by the bytesWritten signal
 	
 	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, ts == -1 ? sendingTS : ts);
+	if (size == -1)
+	{
+		kDebug() << "Error sending packet";
+		return;
+	}
 	
 	kDebug() << "Bytes sent :" << size;
 
@@ -176,13 +186,13 @@ void JingleRtpSession::setPayload(const QDomElement& payload)
 	Q_UNUSED(payload)
 	// Parse QDomElement here and store data.
 	//payloadTS must be set here.
-	payloadName = "PCMA";
-	payloadID = 8;
-	payloadTS = 168; // For testing, data sent each 168 ms for PCMA TODO:Change that !!!
+	payloadName = "speex";
+	payloadID = 96;
+	payloadTS = 160;
 	RtpProfile *profile = rtp_profile_new(payloadName.toAscii());
-	rtp_profile_set_payload(profile, 8, &payload_type_pcma8000);
+	rtp_profile_set_payload(profile, 96, &payload_type_speex_nb);
 	rtp_session_set_profile(m_rtpSession, profile);
-	rtp_session_set_payload_type(m_rtpSession, 8);
+	rtp_session_set_payload_type(m_rtpSession, 96);
 }
 
 void JingleRtpSession::slotBytesWritten(qint64 size)

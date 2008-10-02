@@ -73,10 +73,10 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	d->firstPort = 9000;
 	
 	//Get External IP address, This is not Standard and might not work but let's try it before we have ICE support
-	d->http = new QHttp(this);
-	d->http->setHost("www.swlink.net");
-	connect(d->http, SIGNAL(done(bool)), this, SLOT(slotExternalIPDone(bool)));
-	d->http->get("/~styma/REMOTE_ADDR.shtml");
+	//d->http = new QHttp(this);
+	//d->http->setHost("www.swlink.net");
+	//connect(d->http, SIGNAL(done(bool)), this, SLOT(slotExternalIPDone(bool)));
+	//d->http->get("/~styma/REMOTE_ADDR.shtml");
 }
 
 void JingleSessionManager::slotExternalIPDone(bool err)
@@ -84,7 +84,8 @@ void JingleSessionManager::slotExternalIPDone(bool err)
 	d->ip = "";
 	if (err)
 	{
-		delete d->http;
+		qDebug() << "err =" << err;
+		d->http->deleteLater();
 		return;
 	}
 

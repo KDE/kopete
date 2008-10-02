@@ -17,20 +17,15 @@ public :
 
 	virtual void write(const QByteArray& data);
 	virtual QByteArray read();
+	virtual int start();
 
-	int start();
-
-	AlsaIO *alsaIn() const {return m_alsaIn;}
-	AlsaIO *alsaOut() const {return m_alsaOut;}
+//	AlsaIO *alsaIn() const {return m_alsaIn;}
+//	AlsaIO *alsaOut() const {return m_alsaOut;}
 
 	void setFormat(AlsaIO::Format f);
 
 signals:
 	void readyRead();
-
-private:
-	AlsaIO *m_alsaIn;
-	AlsaIO *m_alsaOut;
 };
 
 #endif
