@@ -116,7 +116,7 @@ struct KopeteViewManagerPrivate
     EventList eventList;
     KopeteView *activeView;
 
-    bool useQueueOrStack;
+    bool useQueue;
     bool raiseWindow;
     bool queueUnreadMessages;
     bool queueOnlyHighlightedMessagesInGroupChats;
@@ -168,7 +168,7 @@ KopeteViewManager::~KopeteViewManager()
 
 void KopeteViewManager::slotPrefsChanged()
 {
-	d->useQueueOrStack = Kopete::BehaviorSettings::self()->useMessageQueue() || Kopete::BehaviorSettings::self()->useMessageStack();
+	d->useQueue = Kopete::BehaviorSettings::self()->useMessageQueue();
     d->raiseWindow = Kopete::BehaviorSettings::self()->raiseMessageWindow();
     d->queueUnreadMessages = Kopete::BehaviorSettings::self()->queueUnreadMessages();
     d->queueOnlyHighlightedMessagesInGroupChats = Kopete::BehaviorSettings::self()->queueOnlyHighlightedMessagesInGroupChats();
@@ -242,7 +242,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		manager->view(true,msg.requestedPlugin())->appendMessage( msg );
 		d->foreignMessage=false; //the view is created, reset the flag
 
-		bool appendMessageEvent = d->useQueueOrStack;
+		bool appendMessageEvent = d->useQueue;
 		bool chatIsOnCurrentDesktop = true;
 
 		QWidget *w = dynamic_cast<QWidget*>(view( manager ));
@@ -290,7 +290,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			d->eventList.append( event );
 
 			// Don't call readMessages twice. We call it later in this method. Fixes bug 168978.
-			if ( d->useQueueOrStack )
+			if ( d->useQueue )
 				connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
 		}
 
@@ -353,7 +353,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			notify->sendEvent();
 		}
 
-		if (!d->useQueueOrStack)
+		if (!d->useQueue)
 		{
 			// "Open messages instantly" setting
 			readMessages(manager, outgoingMessage);
