@@ -44,7 +44,7 @@ enum TransportBridgeType
 	Tcp = 1,
 	Udp = 2
 };
-	
+
 /**
  @author Gregg Edghill <gregg.edghill@gmail.com> */
 /** @brief Represents the protocol used to send and receive message between peers. */
@@ -59,7 +59,7 @@ public:
     TransportBridge* getBridge(const QString& address, quint16 port, TransportBridgeType type, const QString& identifier);
     /** @brief Sets the default transport bridge. */
 	void setDefaultBridge(MSNSwitchBoardSocket* mss);
-	
+
 private slots:
 	/** @brief Invokes when a message is received on a transport bridge. */
 // 	void slotOnReceive(Message& message);
@@ -109,9 +109,9 @@ signals:
 	void bridgeDisconnect();
 	void bridgeError(const QString& e);
 	void bytesReceived(const QByteArray&);
-	
+
 protected:
-	
+
 	KNetwork::KInetSocketAddress mAddress;
 	bool mConnected;
 	MessageFormatter *mFormatter;
@@ -124,14 +124,14 @@ class TcpTransportBridge : public TransportBridge
 {
 	Q_OBJECT
 	friend class Transport;
-	
+
 public:
 	virtual ~TcpTransportBridge();
 
 private:
 	TcpTransportBridge(const KNetwork::KInetSocketAddress& to, MessageFormatter* formatter, QObject* parent);
 	TcpTransportBridge(KNetwork::KClientSocketBase* socket, MessageFormatter* formatter, QObject* parent);
-	
+
 protected slots:
 	virtual void slotOnConnect();
 	virtual void slotOnDisconnect();
@@ -139,30 +139,28 @@ protected slots:
 	virtual void slotOnSocketClose();
 	virtual void slotOnSocketConnect();
 	virtual void slotOnSocketReceive();
-	
+
 private slots:
 	void slotOnSocketConnectTimeout();
 
 signals:
 	void bridgeConnectTimeout();
-	
+
 private:
 	class Buffer : public QByteArray
 	{
 	public:
 		Buffer(quint32 length = 0);
 		~Buffer();
-		
+
 	public:
 		void write(const QByteArray& bytes);
 		QByteArray read(quint32 length);
 	};
-	
+
 	Buffer mBuffer;
 	quint32 mLength;
 };
-
-
 }
 
 #endif

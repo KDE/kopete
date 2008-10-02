@@ -75,7 +75,7 @@ TransportBridge* Transport::getBridge (const QString& to, quint16 port, Transpor
 	{
 		QObject::connect(bridge, SIGNAL(readyRead(const QByteArray&)), SLOT(slotOnReceive(const QByteArray&)));
 	}
-	
+
 	return 0l;
 }
 
@@ -169,7 +169,7 @@ void TransportBridge::slotOnSocketReceive()
 
 TcpTransportBridge::TcpTransportBridge(const KNetwork::KInetSocketAddress& to, MessageFormatter* formatter, QObject* parent)
 : TransportBridge(to, formatter, parent)
-{	
+{
 	mSocket = new KStreamSocket(mAddress.ipAddress().toString(), QString::number(mAddress.port()), this);
 	mSocket->setBlocking(false);
 	QObject::connect(mSocket, SIGNAL(connected(const KResolverEntry&)), SLOT(slotOnSocketConnect()));
@@ -254,7 +254,7 @@ void TcpTransportBridge::slotOnSocketConnect()
 void TcpTransportBridge::slotOnSocketReceive()
 {
 	kDebug (14140) << "Bridge (" << name() << ") RECEIVED " << mSocket->bytesAvailable() << " bytes.";
-	
+
 	QByteArray bytes(mSocket->bytesAvailable());
 	mSocket->read(bytes.data(), bytes.size());
 	// Write the data to the buffer.
@@ -345,12 +345,11 @@ QByteArray TcpTransportBridge::Buffer::read(quint32 length)
 
 	duplicate(bytes, size() - length);
 	delete[] bytes;
-	
+
 	return buffer;
 }
 
 //END
-
 }
 
 #include "transport.moc"
