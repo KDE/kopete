@@ -62,7 +62,7 @@ class Contact;
  *
  * Message have a direction from where the message come from. By default, the direction
  * is Internal but it is strongly advised to set the direction explicitly.
- * 
+ *
  * @section plainMessage Creating a plain text message
  * @code
 Kopete::Message newMessage(sourceContact, destionationContact);
@@ -181,6 +181,20 @@ public:
 	 * @param timestamp timestamp as QDateTime. By default the current date and time.
 	 */
 	void setTimestamp(const QDateTime &timestamp);
+
+	/**
+	 * @brief Accessor method for the "delayed" attribute of the message
+	 * @return true if the message was delayed (for example because it has
+	 * been stored on a server while the intended recipient was offline or
+	 * because the message is contained in the history of a group chat room).
+	 */
+	bool delayed() const;
+
+	/**
+	 * @brief Set the "delayed" attribute of the message
+	 * @param delay whether the message was delayed, see delayed()
+	 */
+	void setDelayed(bool delay);
 
 	/**
 	 * @brief Accessor method for the Contact that sent this message
@@ -469,17 +483,17 @@ public:
 
 	/**
 	 * @return The list of classes
-	 * Class are used to give different notification on a message. They are also used in the chatwindow as an HTML class 
+	 * Class are used to give different notification on a message. They are also used in the chatwindow as an HTML class
 	 */
 	QStringList classes() const;
-	
+
 	/**
 	 * @brief Add a class
 	 * @see classes
 	 * @param class class to add
 	 */
 	void addClass(const QString& classe);
-	
+
 	/**
 	 * @brief Set the classes
 	 * @see classes
@@ -504,7 +518,7 @@ public:  /* static helpers */
 	 */
 	static QString escape( const QString & );
 
-#if 0 
+#if 0
 	//candidate for removal!
 	/**
 	 * Helper function to decode a string. Whatever returned here is *nearly guaranteed* to

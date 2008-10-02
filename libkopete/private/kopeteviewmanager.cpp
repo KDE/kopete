@@ -44,7 +44,7 @@
 
 /**
  * Used to exrtract the message that will be shown in the notification popup.
- * 
+ *
  * Was in KopeteSystemTray::squashMessage in KDE3
  */
 
@@ -93,7 +93,7 @@ static QString squashMessage( const Kopete::Message& msg )
 						fullUrl.length(), shorterUrl );
 		}
 	}
- 	kDebug(14000) << msgText;	
+ 	kDebug(14000) << msgText;
 	return msgText;
 }
 
@@ -258,7 +258,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			// append msg event to queue if chat window is active but not the chat view in it...
 			appendMessageEvent = appendMessageEvent && !(w->isActiveWindow() && manager->view() == d->activeView);
 			// ...and chat window is on another desktop
-			appendMessageEvent = appendMessageEvent && (!d->queueOnlyMessagesOnAnotherDesktop 
+			appendMessageEvent = appendMessageEvent && (!d->queueOnlyMessagesOnAnotherDesktop
 					||!chatIsOnCurrentDesktop);
 		}
 		else
@@ -281,7 +281,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			isActiveWindow =  manager->view(false) && viewWidget && manager->view() == d->activeView && viewWidget->isActiveWindow();
 			showNotification = ( msg.from() );
 		}
-		
+
 		Kopete::MessageEvent *event = 0L;
 		if ( (appendMessageEvent && !outgoingMessage) || showNotification )
 		{
@@ -293,6 +293,9 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			if ( d->useQueueOrStack )
 				connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
 		}
+
+		if ( msg.delayed() )
+			showNotification = false;
 
 		if ( showNotification )
 		{
@@ -315,7 +318,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					body = ki18n( "<qt>A highlighted message arrived from %1<br />\"%2\"</qt>" );
 					break;
 				default:
-					if ( isActiveWindow || (d->queueOnlyMessagesOnAnotherDesktop 
+					if ( isActiveWindow || (d->queueOnlyMessagesOnAnotherDesktop
 						&& chatIsOnCurrentDesktop ) )
 					{
 						eventId = QLatin1String( "kopete_contact_incoming_active_window" );
@@ -497,7 +500,7 @@ QList<Kopete::MessageEvent*> KopeteViewManager::pendingMessages( Kopete::Contact
         	pending << event;
         }
     }
-    
+
     return pending;
 }
 
