@@ -59,7 +59,9 @@ JabberResource::JabberResource ( JabberAccount *account, const XMPP::Jid &jid, c
 
 	if ( account->isConnected () )
 	{
+#if 0  //disabled because that flood the server, specially bad with the irc gateway
 		QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedClientVersion () ) );
+#endif
 		if(!d->capsEnabled)
 		{
 			QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetDiscoCapabilties () ) );
