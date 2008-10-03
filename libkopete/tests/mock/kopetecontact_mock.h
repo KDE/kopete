@@ -20,9 +20,12 @@
 
 #include "kopetecontact.h"
 
-class Kopete::MetaContact;
-class Kopete::Account;
-class Kopete::ChatSession;
+namespace Kopete
+{
+class MetaContact;
+class Account;
+class ChatSession;
+}
 class QString;
 
 namespace Kopete
