@@ -16,8 +16,8 @@ public:
 MediaManager::MediaManager()
  : d(new Private)
 {
-	d->alsaIn = new AlsaIO(AlsaIO::Capture, AlsaIO::Signed8);
-	d->alsaOut = new AlsaIO(AlsaIO::Playback, AlsaIO::Signed8);
+	d->alsaIn = new AlsaIO(AlsaIO::Capture, AlsaIO::Signed16Le);
+	d->alsaOut = new AlsaIO(AlsaIO::Playback, AlsaIO::Signed16Le);
 
 	d->started = false;
 

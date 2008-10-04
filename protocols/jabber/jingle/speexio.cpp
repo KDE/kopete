@@ -34,9 +34,9 @@ SpeexIO::SpeexIO()
 SpeexIO::~SpeexIO()
 {
 	speex_bits_destroy(&d->encBits);
-	speex_encoder_destroy(&d->encoder);
+	speex_encoder_destroy(d->encoder);
 	
-	speex_bits_destroy(d->decBits);
+	speex_bits_destroy(&d->decBits);
 	speex_decoder_destroy(d->decoder);
 }
 
@@ -174,7 +174,7 @@ QByteArray SpeexIO::decodedData() const
 
 int SpeexIO::tsValue()
 {
-	return (samplingRate() / 1000) * 20;
+	return (d->samplingRate / 1000) * 20;
 	return 160; //FIXME:Is that the right value ?
 }
 
