@@ -240,7 +240,7 @@ QString StatisticsContact::mainStatusDate(const QDate& date)
 	QStringList values = m_db->query(request);
 	
 	unsigned int online = 0, offline = 0, away = 0;
-	for(uint i=0; i<values.count(); i+=4)
+	for(int i=0; i<values.count(); i+=4)
 	{
 		unsigned int datetimebegin = values[i+1].toInt(), datetimeend = values[i+2].toInt();
 		kDebug(14315) << "statistics: id "<< values[i+3]<< " status " << values[i] << " datetimeend " << QString::number(datetimeend) << " datetimebegin " << QString::number(datetimebegin);
@@ -291,7 +291,7 @@ Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Sta
 	
 	// Only select the events for which the previous is not Unknown AND the status is status.
 	QStringList values;
-	for (uint i=0; i<buffer.count(); i += 3)
+	for (int i=0; i<buffer.count(); i += 3)
 	{
 		if (buffer[i+2] == Kopete::OnlineStatus::statusTypeToString(status)
 			&& abs(buffer[i+1].toInt()-buffer[i].toInt()) > 120)
@@ -314,7 +314,7 @@ Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Sta
 	
 	// We want to work on hours
 	Q3ValueList<int> hoursValues;
-	for (uint i=0; i<values.count(); i++)
+	for (int i=0; i<values.count(); i++)
 	{
 		QDateTime dt;
 		dt.setTime_t(values[i].toInt());
@@ -328,7 +328,7 @@ Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Sta
 	Q3ValueList<int> centroids;
 	int incr=qRound((double)hoursValues.count()/(double)avEventsPerDay);
 	incr = incr ? incr : 1;
-	for (uint i=0; i<hoursValues.count(); i+=incr)
+	for (int i=0; i<hoursValues.count(); i+=incr)
 	{
 		centroids.push_back(hoursValues[i]);
 		kDebug(14315) << "statistics: add a centroid : " << centroids[centroids.count()-1];
@@ -339,7 +339,7 @@ Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Sta
 	centroids = computeCentroids(centroids, hoursValues);
 	
 	// Convert to QDateTime
-	for (uint i=0; i<centroids.count(); i++)
+	for (int i=0; i<centroids.count(); i++)
 	{
 		kDebug(14315) << "statistics: new centroid : " << centroids[i];
 
@@ -358,13 +358,13 @@ Q3ValueList<int> StatisticsContact::computeCentroids(const Q3ValueList<int>& cen
 
 	Q3ValueList<int> whichCentroid; // whichCentroid[i] = j <=> values[i] has centroid j for closest one
 	Q3ValueList<int> newCentroids;
-	for (uint i=0; i<values.count(); i++)
+	for (int i=0; i<values.count(); i++)
 	// Iterates over the values. For each one we need to get the closest centroid.
 	{
 		int value = values[i];
 		int distanceToNearestCentroid = abs(centroids[0]-value);
 		int nearestCentroid = 0;
-		for (uint j=1; j<centroids.count(); j++)
+		for (int j=1; j<centroids.count(); j++)
 		{
 			if (abs(centroids[j]-value) < distanceToNearestCentroid)
 			{
@@ -378,11 +378,11 @@ Q3ValueList<int> StatisticsContact::computeCentroids(const Q3ValueList<int>& cen
 	// Recompute centroids
 	newCentroids = centroids;
 	
-	for (uint i=0; i<newCentroids.count(); i++)
+	for (int i=0; i<newCentroids.count(); i++)
 	{
 		kDebug(14315) << "statistics: compute new centroids"<< i;
 		int weight = 0;
-		for (uint j=0; j<values.count(); j++)
+		for (int j=0; j<values.count(); j++)
 		{
 			int value = values[j];
 			if (whichCentroid[j] == i)
@@ -398,7 +398,7 @@ Q3ValueList<int> StatisticsContact::computeCentroids(const Q3ValueList<int>& cen
 	
 	// Should we recompute or are we OK ?
 	int dist = 0;
-	for (uint i=0; i < newCentroids.count(); i++)
+	for (int i=0; i < newCentroids.count(); i++)
 		dist += abs(newCentroids[i]-centroids[i]);
 	
 	if (dist > 10) 

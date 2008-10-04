@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003  Justin Karneges
+ * Copyright (C) 2003  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -24,9 +24,6 @@
 #include "xmpp_task.h"
 #include "xmpp_client.h"
 #include "xmpp_xmlcommon.h"
-
-#include <stdio.h>
-
 
 using namespace XMPP;
 
@@ -117,7 +114,15 @@ void Task::go(bool autoDelete)
 {
 	d->autoDelete = autoDelete;
 
-	onGo();
+	if (!client() || !&client()->stream()) {
+		qWarning("Task::go(): attempted to send a task over the broken connection.");
+		if (autoDelete) {
+			deleteLater();
+		}
+	}
+	else {
+		onGo();
+	}
 }
 
 bool Task::take(const QDomElement &x)
@@ -232,7 +237,7 @@ void Task::debug(const char *fmt, ...)
 		buf = new char[size];
 		va_list ap;
 		va_start(ap, fmt);
-		r = QT_VSNPRINTF(buf, size, fmt, ap);
+		r = qvsnprintf(buf, size, fmt, ap);
 		va_end(ap);
 
 		if(r != -1)
@@ -250,6 +255,21 @@ void Task::debug(const QString &str)
 {
 	client()->debug(QString("%1: ").arg(metaObject()->className()) + str);
 }
+
+
+/**
+ * \brief verifiys a stanza is a IQ reply for this task
+ *
+ * it checks that the stanze is form the jid the request was send to and the id and the namespace (if given) match.
+ *
+ * it further checks that the sender jid is not empty (except if \a to is our server), it's not from
+ * our bare jid (except if send to one of our resources or our server)
+ * \param x the stanza to test
+ * \param to the Jid this task send a IQ to
+ * \param id the id of the send IQ
+ * \param xmlns the expected namespace if the reply (if non empty)
+ * \return true if it's a valid reply
+*/
 
 bool Task::iqVerify(const QDomElement &x, const Jid &to, const QString &id, const QString &xmlns)
 {

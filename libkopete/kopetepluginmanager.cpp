@@ -62,14 +62,17 @@ public:
 		if ( shutdownMode != DoneShutdown )
 			kWarning( 14010 ) << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kBacktrace();
 
-		// Quick cleanup of the remaining plugins, hope it helps
-		// Note that deleting it.value() causes slotPluginDestroyed to be called, which
-		// removes the plugin from the list of loaded plugins.
+		// Clean up loadedPlugins manually, because PluginManager can't access our global
+		// static once this destructor has started.
 		while ( !loadedPlugins.empty() )
 		{
 			InfoToPluginMap::ConstIterator it = loadedPlugins.begin();
 			kWarning( 14010 ) << "Deleting stale plugin '" << it.value()->objectName() << "'";
-			delete it.value();
+			KPluginInfo info = it.key();
+			Plugin *plugin = it.value();
+			loadedPlugins.remove(info);
+			plugin->disconnect(&instance, SLOT(slotPluginDestroyed(QObject*)));
+			delete plugin;
 		}
 	}
 
@@ -124,7 +127,7 @@ QList<KPluginInfo> PluginManager::availablePlugins( const QString &category ) co
 	QList<KPluginInfo>::ConstIterator it;
 	for ( it = _kpmp->plugins.begin(); it != _kpmp->plugins.end(); ++it )
 	{
-		if ( it->category() == category )
+		if ( it->category() == category && !(*it).service()->noDisplay() )
 			result.append( *it );
 	}
 
@@ -273,6 +276,10 @@ void PluginManager::loadAllPlugins()
 		QList<KPluginInfo>::ConstIterator end = plugins.end();
 		for ( ; it2 != end; ++it2 )
 		{
+			// Protocols are loaded automatically so they aren't always in Plugins group. (fixes bug 167113)
+			if ( it2->category() == QLatin1String( "Protocols" ) )
+				continue;
+
 			QString pluginName = it2->pluginName();
 			if ( pluginsMap.value( pluginName, it2->isPluginEnabledByDefault() ) )
 			{
@@ -282,7 +289,7 @@ void PluginManager::loadAllPlugins()
 			else
 			{
 				//This happens if the user unloaded plugins with the config plugin page.
-				// No real need to be assync because the user usualy unload few plugins
+				// No real need to be assync because the user usually unload few plugins
 				// compared tto the number of plugin to load in a cold start. - Olivier
 				if ( plugin( pluginName ) )
 					unloadPlugin( pluginName );

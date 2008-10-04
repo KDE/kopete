@@ -21,6 +21,7 @@
 
 // KDE includes
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmenu.h>
@@ -88,24 +89,22 @@ TelepathyAccount::~TelepathyAccount()
 	delete d;
 }
 
-KActionMenu *TelepathyAccount::actionMenu()
+void TelepathyAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *actionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
 	// FIXME: Maybe we should cache the action.
-	KAction *changeAliasAction = new KAction( KIcon("userconfig"), i18n("&Change Alias..."), 0 );
+	KAction *changeAliasAction = new KAction( KIcon("edit-rename"), i18n("&Change Alias..."), 0 );
 	changeAliasAction->setEnabled( isConnected() );
 	QObject::connect(changeAliasAction, SIGNAL(triggered(bool)), this, SLOT(slotSetAlias()));
 
-	KAction *changeAvatarAction = new KAction( KIcon("user"), i18n("Change &Avatar..."), 0 );
+	KAction *changeAvatarAction = new KAction( KIcon("user-properties"), i18n("Change &Avatar..."), 0 );
 	changeAvatarAction->setEnabled( isConnected() );
 	QObject::connect(changeAvatarAction, SIGNAL(triggered(bool)), this, SLOT(slotChangeAvatar()));
 
 	actionMenu->addSeparator();
 	actionMenu->addAction( changeAliasAction );
 	actionMenu->addAction( changeAvatarAction );
-
-	return actionMenu;
 }
 
 TelepathyContact *TelepathyAccount::myself()
@@ -117,7 +116,7 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 {
 	if( readConfig() )
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << "Succesfully read config.";
+		kDebug(TELEPATHY_DEBUG_AREA) << "Successfully read config.";
 		kDebug(TELEPATHY_DEBUG_AREA) << "Connecting to connection manager " << connectionManager() << " on protocol " << connectionProtocol();
 		ConnectionManager *connectionManager = d->getConnectionManager();
 		

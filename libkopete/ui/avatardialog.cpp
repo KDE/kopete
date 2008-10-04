@@ -64,29 +64,35 @@ QString AvatarDialog::selectedAvatarPath() const
 	return d->selectedPath;
 }
 
-QString AvatarDialog::getAvatar(QWidget *parent, const QString &currentAvatar)
+QString AvatarDialog::getAvatar(QWidget *parent, const QString &currentAvatar, bool * ok )
 {
 	AvatarDialog dialog(parent);
 	dialog.d->mainWidget->setCurrentAvatar(currentAvatar);
 	dialog.d->currentPath = currentAvatar;
-	dialog.exec();
-
+	if ( dialog.exec() == QDialog::Accepted )
+	{
+		if ( ok ) {
+			*ok = true;
+		}
+	}
+	else
+	{
+		if ( ok ) {
+			*ok = false;
+		}
+	}
 	return dialog.selectedAvatarPath();
 }
 
 void AvatarDialog::slotButtonClicked(int button)
 {
-
 	if (button == KDialog::Ok)
 	{
 		Kopete::AvatarManager::AvatarEntry selectedEntry = d->mainWidget->selectedEntry();
 
 		d->selectedPath = selectedEntry.path;
+		emit result();
 	}
-	else
-		d->selectedPath = d->currentPath;
-
-	emit result(this);
 
 	KDialog::slotButtonClicked(button);
 }

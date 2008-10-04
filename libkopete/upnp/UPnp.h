@@ -64,26 +64,12 @@ class UPnp
 		QList<QUrl> devicesSettingUrl();
 
 		/**
-		* Returns list of routers detected
-		*
-		* @return list of routers detected
-		*/
-// 		QList<Router> routers();
-		/**
 		* Return the url of a list of the devices has a given position
 		*
 		* @param i position number
 		* @return url device
 		*/
-		QUrl deviceSettingUrlAt(int i);
-
-		/**
-		* Return the router of a list of the devices has a given position
-		*
-		* @param i position number
-		* @return router device
-		*/
-/*		Router routerAt(int i);	*/	
+		QUrl deviceSettingUrlAt(int i);	
 
 		/**
 		* Check if the URL exists in the list
@@ -92,6 +78,13 @@ class UPnp
 		* @return true if url exist, false otherwise
 		*/
 		bool settingUrlExist(QUrl &url);
+
+		/**
+		* Check if the upnp is valid
+		*
+		* @return true if upnp is valid, false otherwise
+		*/
+		bool isValid();
 
 		/**
 		* Check if the URL is valid
@@ -127,7 +120,6 @@ class UPnp
 		
 		UpnpClient_Handle m_device_handle;
 		QList<QUrl> m_devicesSettingUrl;
-		/*QList<Router> m_routers;*/
 					
 		UPnp();
 };

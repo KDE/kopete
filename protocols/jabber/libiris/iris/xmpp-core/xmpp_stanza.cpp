@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003  Justin Karneges
+ * Copyright (C) 2003  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -74,6 +74,7 @@ Stanza::Error::Error(int _type, int _condition, const QString &_text, const QDom
 	condition = _condition;
 	text = _text;
 	appSpec = _appSpec;
+	originalCode = 0;
 }
 
 
@@ -461,6 +462,7 @@ Stanza::Stanza()
 
 Stanza::Stanza(Stream *s, Kind k, const Jid &to, const QString &type, const QString &id)
 {
+	Q_ASSERT(s);
 	d = new Private;
 
 	Kind kind;
@@ -470,7 +472,8 @@ Stanza::Stanza(Stream *s, Kind k, const Jid &to, const QString &type, const QStr
 		kind = Message;
 
 	d->s = s;
-	d->e = d->s->doc().createElementNS(s->baseNS(), Private::kindToString(kind));
+	if(d->s)
+		d->e = d->s->doc().createElementNS(s->baseNS(), Private::kindToString(kind));
 	if(to.isValid())
 		setTo(to);
 	if(!type.isEmpty())
@@ -481,6 +484,7 @@ Stanza::Stanza(Stream *s, Kind k, const Jid &to, const QString &type, const QStr
 
 Stanza::Stanza(Stream *s, const QDomElement &e)
 {
+	Q_ASSERT(s);
 	d = 0;
 	if(e.namespaceURI() != s->baseNS())
 		return;
@@ -537,6 +541,16 @@ QString Stanza::baseNS() const
 	return d->s->baseNS();
 }
 
+QString Stanza::xhtmlImNS() const
+{
+	return d->s->xhtmlImNS();
+}
+
+QString Stanza::xhtmlNS() const
+{
+	return d->s->xhtmlNS();
+}
+
 QDomElement Stanza::createElement(const QString &ns, const QString &tagName)
 {
 	return d->s->doc().createElementNS(ns, tagName);
@@ -547,6 +561,14 @@ QDomElement Stanza::createTextElement(const QString &ns, const QString &tagName,
 	QDomElement e = d->s->doc().createElementNS(ns, tagName);
 	e.appendChild(d->s->doc().createTextNode(text));
 	return e;
+}
+
+QDomElement Stanza::createXHTMLElement(const QString &xHTML)
+{
+	QDomDocument doc;
+	doc.setContent(xHTML, true);
+	QDomElement root = doc.documentElement();
+	return root;
 }
 
 void Stanza::appendChild(const QDomElement &e)

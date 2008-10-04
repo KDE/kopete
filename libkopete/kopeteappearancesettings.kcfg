@@ -11,31 +11,19 @@
 
 	<!-- Define the available signals to emit -->
 	<signal name="appearanceChanged">
-		<label>Emited when the font and colors settings has changed.</label>
+		<label>Emitted when the font and colors settings has changed.</label>
 	</signal>
 	<signal name="messageOverridesChanged">
-		<label>Emited when the message overrides settings has changed.</label>
+		<label>Emitted when the message overrides settings has changed.</label>
 	</signal>
 	<signal name="contactListAppearanceChanged">
-		<label>Emited when the contact list appearance has changed.</label>
+		<label>Emitted when the contact list appearance has changed.</label>
 	</signal>
 
 	<group name="Appearance">
 		<!-- Emoticon config -->
-		<entry key="emoticonTheme" type="String">
-			<label>Current emoticon theme.</label>
-			<default>kde4</default>
-			<emit signal="contactListAppearanceChanged" />
-			<emit signal="messageOverridesChanged" />
-		</entry>
 		<entry key="useEmoticons" type="Bool"> 
 			<label>Enable emoticon support in Kopete.</label>
-			<default>true</default>
-			<emit signal="contactListAppearanceChanged" />
-			<emit signal="messageOverridesChanged" />
-		</entry>
-		<entry key="emoticonsRequireSpace" type="Bool">
-			<label>Use strict mode in emoticon parsing.</label>
 			<default>true</default>
 			<emit signal="contactListAppearanceChanged" />
 			<emit signal="messageOverridesChanged" />
@@ -87,8 +75,14 @@
 			<default code="true">KColorScheme(QPalette::Active, KColorScheme::Window).foreground(KColorScheme::LinkText).color()</default>
 			<emit signal="appearanceChanged" />
 		</entry>
+		<entry key="chatFontSelection" type="Int">
+			<label>Whether using the system font for the chat window.</label>
+			<default>0</default>
+			<emit signal="appearanceChanged" />
+		</entry>
 		<entry key="chatFont" type="Font">
 			<label>Chat font.</label>
+			<default code="true">KGlobalSettings::generalFont()</default>
 			<emit signal="appearanceChanged" />
 		</entry>
 		
@@ -107,7 +101,7 @@
 		<!-- Tooltip content -->
 		<entry key="toolTipContents" type="StringList">
 			<label>Contact properties that contact tooltip will show.</label>
-			<default>FormattedName,userInfo,server,channels,FormattedIdleTime,channelMembers,channelTopic,emailAddress,homePage,onlineSince,lastOnline,statusMessage</default>
+			<default>FormattedName,userInfo,server,channels,FormattedIdleTime,channelMembers,channelTopic,emailAddress,homePage,onlineSince,lastOnline,statusTitle,statusMessage</default>
 		</entry>
 	</group>
 	
@@ -138,7 +132,7 @@
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<entry key="contactListIndentContact" type="Bool">
-			<label>Indent contacts if you don't show tree lines.</label>
+			<label>Indent contacts if you do not show tree lines.</label>
 			<default>false</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
@@ -155,6 +149,20 @@
 		<entry key="contactListUseCustomFont" type="Bool">
 			<label>Use custom fonts for contact list.</label>
 			<default>false</default>
+			<emit signal="contactListAppearanceChanged" />
+		</entry>
+		<entry key="contactListAutoResize" type="Bool">
+			<label>Automatically resize the main window.</label>
+			<default>false</default>
+			<emit signal="contactListAppearanceChanged" />
+		</entry>
+		<entry key="contactListResizeAnchor" type="Enum">
+			<label>Corner at which to anchor main window when auto-resizing.</label>
+			<choices>
+				<choice name="Top"/> <!-- order is significant! -->
+				<choice name="Bottom"/>
+			</choices>
+			<default>Bottom</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<!-- Contact list font preferences -->
@@ -215,13 +223,18 @@
 		<!-- Contact list appearance config -->
 		<entry key="showOfflineUsers" type="Bool">
 			<label>Show offline users in contact list.</label>
-			<default>false</default>
+			<default>true</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<entry key="showEmptyGroups" type="Bool">
 			<label>Show empty groups in contact list.</label>
 			<default>false</default>
 			<emit signal="contactListAppearanceChanged" />
+		</entry>
+
+		<entry key="showIdentityIcons" type="Bool">
+			<label>Show identities in status bar instead of accounts.</label>
+			<default>true</default>
 		</entry>
 	</group>
 </kcfg>

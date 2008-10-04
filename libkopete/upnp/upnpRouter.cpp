@@ -19,25 +19,31 @@
 #include "upnpRouter.h"
 
 
-//TODO Possible Evolution: many routers
-// QList<UPnpRouter> UPnpRouter::allRouters()
-// {
-// 	QList<UPnpRouter> routers;
-// 	QList<UpnpRouterPrivate> listRouters = UpnpRouterPrivate::listRouterPrivate();
-// 	foreach (UpnpRouterPrivate rt, listRouters)
-// 	{
-// 		QUrl urlsetting = rt.router->routerSettingUrl();	
-// // 		UPnpRouter upnpRouter = UPnpRouter(urlsetting);
-// // 		routers.push_back(upnpRouter);
-// 	}
-// 	return routers;
-// }
+QList<UPnpRouter> UPnpRouter::allRouters()
+{
+	QList<UPnpRouter> routers;
+	UPnp *d = UPnp::upnp();
+	d->searchDevices();
+	foreach (QUrl url, d->devicesSettingUrl())
+	{
+		qDebug()<<"rentre";
+		UPnpRouter upnpRouter = UPnpRouter(url);
+		routers.push_back(upnpRouter);
+	}
+
+	return routers;
+}
 
 
 UPnpRouter UPnpRouter::defaultRouter()
 {
-	UpnpRouterPrivate routerP = UpnpRouterPrivate::defaultRouter();
-	UPnpRouter router = UPnpRouter(routerP.router->routerSettingUrl());
+	UPnp *u = UPnp::upnp();
+	UPnpRouter router;
+	u->searchDevices();
+	if(u->isValid())
+	{
+		router = UPnpRouter(u->devicesSettingUrl().first());
+	}
 	return router;
 }
 
@@ -46,7 +52,10 @@ UPnpRouter::UPnpRouter(const QUrl &url)
 	d = UpnpRouterPrivate::upnpRouterPrivate(url);
 }
 
-UPnpRouter::UPnpRouter(){}
+UPnpRouter::UPnpRouter()
+{
+	d = UpnpRouterPrivate();
+}
 
 //TODO constructor by copy
 UPnpRouter::UPnpRouter(const UPnpRouter &router)
@@ -62,7 +71,7 @@ UPnpRouter &UPnpRouter::operator=(const UPnpRouter &router)
 }
 
 bool UPnpRouter::isValid() const
-{
+{		
 	return d.isValid();
 }
 
@@ -71,14 +80,10 @@ QString UPnpRouter::routerDescription() const
 	return d.routerDescription();
 }
 
-// QUrl UPnpRouter::url() const
-// {
-// 	return d.routerSettingsUrl;
-// }
-// void UPnpRouter::setUrl(const QUrl &url)
-// {
-// 	d.routerSettingsUrl = url;
-// }
+QUrl UPnpRouter::url() const
+{
+	return d.router->routerSettingUrl();
+}
 
 bool UPnpRouter::openPort(quint16 port, const QString &typeProtocol, const QString &protocol)
 {

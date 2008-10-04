@@ -22,6 +22,7 @@
 
 #include <QHash>
 #include <QObject>
+#include "ui_gwcontactprops.h"
 
 namespace Ui { class GroupWiseContactPropsWidget; }
 class KDialog;
@@ -47,13 +48,12 @@ public:
 	explicit GroupWiseContactProperties( GroupWise::ContactDetails contactDetails, QWidget *parent = 0 );
 	~GroupWiseContactProperties();
 protected:
-	void setupProperties( QHash< QString, QString > serverProps );
+	void setupProperties( QMap< QString, QVariant > serverProps );
 	void init();
 protected slots:
-	void slotShowContextMenu( Q3ListViewItem *, const QPoint & );
-	void slotCopy();
+	void copy();
 private:
-	Ui::GroupWiseContactPropsWidget * m_propsWidget;
+	Ui::GroupWiseContactProps m_ui;
 	KAction * m_copyAction;
 	KDialog * m_dialog;
 };

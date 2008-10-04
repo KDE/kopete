@@ -5,7 +5,7 @@
     Copyright (c) 2006,2007 Novell, Inc			 http://www.opensuse.org
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
     
     Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
  
@@ -79,7 +79,7 @@ int LayerTracker::finished(int encoded)
 
 		encoded -= i.encoded;
 		plain += i.plain;
-		it = list.remove(it);
+		it = list.erase(it);
 	}
 	return plain;
 }

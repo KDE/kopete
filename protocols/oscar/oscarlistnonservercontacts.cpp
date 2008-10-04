@@ -28,15 +28,16 @@ OscarListNonServerContacts::OscarListNonServerContacts(QWidget* parent)
     : KDialog( parent )
 {
     setCaption( i18n( "Add Contacts to Server List" ) );
-    setButtons( KDialog::Ok | KDialog::Cancel );
+    setButtons( KDialog::Yes | KDialog::Cancel | KDialog::No );
 
     QWidget* w = new QWidget( this );
     m_contactsList = new Ui::OscarListContactsBase;
     m_contactsList->setupUi( w );
     setMainWidget( w );
 
-    setButtonText( Ok, i18n( "&Add" ) );
+    setButtonText( Yes, i18n( "&Add" ) );
     setButtonText( Cancel, i18n( "Do &Not Add" ) );
+    setButtonText( No, i18n( "&Delete" ) );
 }
 
 OscarListNonServerContacts::~OscarListNonServerContacts()
@@ -65,7 +66,9 @@ void OscarListNonServerContacts::slotButtonClicked( int buttonCode )
 {
 	KDialog::slotButtonClicked(buttonCode);
 
-	if( buttonCode == KDialog::Cancel || buttonCode == KDialog::Ok )
+	if( buttonCode == KDialog::Cancel ||
+	    buttonCode == KDialog::Yes ||
+	    buttonCode == KDialog::No )
     	emit closing();
 }
 

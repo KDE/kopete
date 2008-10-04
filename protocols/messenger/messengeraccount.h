@@ -40,7 +40,7 @@ public:
 	MessengerAccount(MessengerProtocol *parent, const QString &accountId);
 	~MessengerAccount();
 
-	virtual KActionMenu *actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 public slots:
 	virtual void connectWithPassword(const QString &password);

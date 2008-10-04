@@ -82,7 +82,7 @@
    <item>
     <widget class="QListWidget" name="accounts" >
      <property name="selectionMode" >
-      <enum>QAbstractItemView::NoSelection</enum>
+      <enum>QAbstractItemView::SingleSelection</enum>
      </property>
      <property name="resizeMode" >
       <enum>QListView::Adjust</enum>

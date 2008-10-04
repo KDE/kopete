@@ -18,12 +18,14 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
 
 #include "jabberaccount.h"
 #include "jabberclient.h"
-#include "dlgjabberchatroomslist.h"
+
+#include "xmpp_tasks.h"
 
 #include "dlgjabberchatjoin.h"
 
@@ -31,9 +33,8 @@ dlgJabberChatJoin::dlgJabberChatJoin(JabberAccount *account, QWidget* parent)
 : KDialog(parent), m_account(account)
 {
 	setCaption( i18n("Join Jabber Groupchat") );
-	setButtons( KDialog::User1 | KDialog::User2 );
+	setButtons( KDialog::Cancel | KDialog::User1 );
 	setButtonGuiItem( KDialog::User1, KGuiItem( i18n("Join") ) );
-	setButtonGuiItem( KDialog::User2, KGuiItem( i18n("Browser") ) );
 	
 	QWidget *mainWidget = new QWidget(this);
 	m_ui.setupUi(mainWidget);
@@ -43,7 +44,13 @@ dlgJabberChatJoin::dlgJabberChatJoin(JabberAccount *account, QWidget* parent)
 	checkDefaultChatroomServer();
 
 	connect(this, SIGNAL(user1Clicked()), this, SLOT(slotJoin()));
-	connect(this, SIGNAL(user2Clicked()), this, SLOT(slotBowse()));
+	connect(m_ui.pbQuery, SIGNAL(clicked()), this, SLOT(slotQuery()));
+	connect(m_ui.tblChatRoomsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(slotDoubleClick(QTreeWidgetItem *)));
+	connect(m_ui.leServer, SIGNAL(textChanged(QString)), this, SLOT(slotCheckData()));
+	connect(m_ui.leRoom, SIGNAL(textChanged(QString)), this, SLOT(slotCheckData()));
+	connect(m_ui.leNick, SIGNAL(textChanged(QString)), this, SLOT(slotCheckData()));
+
+	slotCheckData();
 }
 
 dlgJabberChatJoin::~dlgJabberChatJoin()
@@ -59,20 +66,7 @@ void dlgJabberChatJoin::slotJoin()
 		return;
 	}
 
-	m_account->client()->joinGroupChat(m_ui.leServer->text(), m_ui.leRoom->text(), m_ui.leNick->text());
-	accept();
-}
-
-void dlgJabberChatJoin::slotBowse()
-{
-	if(!m_account->isConnected())
-	{
-		m_account->errorConnectFirst();
-		return;
-	}
-
-	dlgJabberChatRoomsList *crl = new dlgJabberChatRoomsList(m_account, m_ui.leServer->text() , m_ui.leNick->text());
-	crl->show();
+	m_account->client()->joinGroupChat(m_ui.leServer->currentText(), m_ui.leRoom->text(), m_ui.leNick->text());
 	accept();
 }
 
@@ -86,7 +80,7 @@ void dlgJabberChatJoin::slotBowse()
 
 void dlgJabberChatJoin::checkDefaultChatroomServer()
 {
-	XMPP::JT_GetServices *serviceTask = new XMPP::JT_GetServices(m_account->client()->rootTask());
+	XMPP::JT_DiscoItems *serviceTask = new JT_DiscoItems(m_account->client()->rootTask());
 	connect(serviceTask, SIGNAL (finished()), this, SLOT (slotQueryFinished()));
 
 	serviceTask->get(m_account->server());
@@ -95,16 +89,12 @@ void dlgJabberChatJoin::checkDefaultChatroomServer()
 
 void dlgJabberChatJoin::slotQueryFinished()
 {
-	XMPP::JT_GetServices *task = (XMPP::JT_GetServices*)sender();
-	if (!task->success ())
+	XMPP::JT_DiscoItems *task = (JT_DiscoItems *)sender();
+	if (!task->success())
 		return;
-	
-	if(!m_ui.leServer->text().isEmpty())
-	{  //the user already started to type the server manyally. abort auto-detect
-		return;
-	}
 
-	for (XMPP::AgentList::const_iterator it = task->agents().begin(); it != task->agents().end(); ++it)
+	const XMPP::DiscoList &list = task->items();
+	for (XMPP::DiscoList::ConstIterator it = list.begin(); it != list.end(); ++it)
 	{
 		XMPP::JT_DiscoInfo *discoTask = new XMPP::JT_DiscoInfo(m_account->client()->rootTask());
 		connect(discoTask, SIGNAL (finished()), this, SLOT (slotDiscoFinished()));
@@ -121,16 +111,66 @@ void dlgJabberChatJoin::slotDiscoFinished()
 	if (!task->success())
 		return;
 	
-	if(!m_ui.leServer->text().isEmpty())
-	{  //the user already started to type the server manyally. abort auto-detect
+	if (task->item().features().canGroupchat() && !task->item().features().isGateway())
+	{
+		const QString text = m_ui.leServer->currentText();
+		const bool wasEmpty = m_ui.leServer->count() == 0;
+		m_ui.leServer->addItem(task->item().jid().full());
+		// the combobox was empty, and the edit text was not empty,
+		// so restore the previous edit text
+		if (wasEmpty && !text.isEmpty())
+		{
+			m_ui.leServer->setEditText(text);
+		}
+	}
+}
+
+void dlgJabberChatJoin::slotQuery()
+{
+	XMPP::JT_DiscoItems *discoTask = new XMPP::JT_DiscoItems(m_account->client()->rootTask());
+	connect (discoTask, SIGNAL(finished()), this, SLOT(slotChatRooomsQueryFinished()));
+
+	m_ui.tblChatRoomsList->clear();
+
+	discoTask->get(m_ui.leServer->currentText());
+	discoTask->go(true);
+}
+
+void dlgJabberChatJoin::slotChatRooomsQueryFinished()
+{
+	XMPP::JT_DiscoItems *task = (XMPP::JT_DiscoItems*)sender();
+	if (!task->success())
+	{
+		KMessageBox::queuedMessageBox(this, KMessageBox::Error, i18n("Unable to retrieve the list of chat rooms."),  i18n("Jabber Error"));
 		return;
 	}
 
+	const XMPP::DiscoList& items = task->items();
 
-	if (task->item().features().canGroupchat() && !task->item().features().isGateway())
+	for (XMPP::DiscoList::const_iterator it = items.begin(); it != items.end(); ++it)
 	{
-		m_ui.leServer->setText(task->item().jid().full());
+		const XMPP::DiscoItem &di = *it;
+		QTreeWidgetItem *item = new QTreeWidgetItem();
+		item->setText(0, di.jid().user());
+		item->setText(1, di.name());
+		m_ui.tblChatRoomsList->addTopLevelItem(item);
 	}
+	m_ui.tblChatRoomsList->sortItems(0, Qt::AscendingOrder);
+}
+
+void dlgJabberChatJoin::slotDoubleClick(QTreeWidgetItem *item)
+{
+	m_ui.leRoom->setText(item->text(0));
+	if (!(m_ui.leServer->currentText().isEmpty() || m_ui.leNick->text().isEmpty()))
+	{
+		slotJoin();
+	}
+}
+
+void dlgJabberChatJoin::slotCheckData()
+{
+	bool enableJoinButton = !(m_ui.leServer->currentText().isEmpty() || m_ui.leRoom->text().isEmpty() || m_ui.leNick->text().isEmpty());
+	enableButton(User1, enableJoinButton);
 }
 
 // end todo

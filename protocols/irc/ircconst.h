@@ -18,7 +18,7 @@
 #ifndef IRCCONST_H
 #define IRCCONST_H
 
-#include "kopetecontactproperty.h"
+#include "kopeteproperty.h"
 
 namespace IRC {
 
@@ -45,18 +45,18 @@ extern const QLatin1String REALNAME;
 namespace Properties {
 
 // irc channnel-contact properties
-extern const Kopete::ContactPropertyTmpl ChannelHomepage;
-extern const Kopete::ContactPropertyTmpl ChannelMembers;
-extern const Kopete::ContactPropertyTmpl ChannelTopic;
+extern const Kopete::PropertyTmpl ChannelHomepage;
+extern const Kopete::PropertyTmpl ChannelMembers;
+extern const Kopete::PropertyTmpl ChannelTopic;
 
 // irc user-contact properties
 //extern const Kopete::ContactPropertyTmpl LastSeen;
-extern const Kopete::ContactPropertyTmpl UserInfo;
-extern const Kopete::ContactPropertyTmpl Server;
-extern const Kopete::ContactPropertyTmpl Channels;
-extern const Kopete::ContactPropertyTmpl Hops;
-extern const Kopete::ContactPropertyTmpl FullName;
-extern const Kopete::ContactPropertyTmpl IsIdentified;
+extern const Kopete::PropertyTmpl UserInfo;
+extern const Kopete::PropertyTmpl Server;
+extern const Kopete::PropertyTmpl Channels;
+extern const Kopete::PropertyTmpl Hops;
+extern const Kopete::PropertyTmpl FullName;
+extern const Kopete::PropertyTmpl IsIdentified;
 
 } // namespace IRC::Properties
 

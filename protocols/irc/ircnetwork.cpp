@@ -53,6 +53,23 @@ const NetworkList &Networks::networks() const
 	return d->networks;
 }
 
+void Networks::setNetworks( const IRC::NetworkList& networks )
+{
+	d->networks=networks;
+}
+
+const IRC::Network& Networks::network(const QString &name)
+{
+	foreach(const Network& net,d->networks)
+	{
+		if(net.name==name)
+		{
+			return net;
+		}
+	}
+	return Network();
+}
+
 void Networks::slotReadNetworks()
 {
 	d->networks.clear();
@@ -60,6 +77,8 @@ void Networks::slotReadNetworks()
 	QFile xmlFile( KStandardDirs::locate( "appdata", "ircnetworks.xml" ) );
 	xmlFile.open( QIODevice::ReadOnly );
 
+
+	// FIXME
 	QDomDocument doc;
 	doc.setContent( &xmlFile );
 	QDomElement networkNode = doc.documentElement().firstChild().toElement();
@@ -105,6 +124,7 @@ void Networks::slotReadNetworks()
 		d->networks.append(network);
 		networkNode = networkNode.nextSibling().toElement();
 	}
+
 
 	xmlFile.close();
 }

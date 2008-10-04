@@ -52,7 +52,7 @@ public:
 	/**
 	 * Object constructor and destructor
 	 */
-	 JabberProtocol (QObject * parent, const QStringList &);
+	 JabberProtocol (QObject * parent, const QVariantList &);
 	 ~JabberProtocol ();
 
 	/**
@@ -81,7 +81,6 @@ public:
 	const Kopete::OnlineStatus JabberKOSConnecting;
 
 	const Kopete::PropertyTmpl propLastSeen;
-	const Kopete::PropertyTmpl propAwayMessage;
 	const Kopete::PropertyTmpl propFirstName;
 	const Kopete::PropertyTmpl propLastName;
 	const Kopete::PropertyTmpl propFullName;

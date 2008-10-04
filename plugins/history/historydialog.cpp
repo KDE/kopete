@@ -35,10 +35,12 @@
 
 #include <QDir>
 #include <QClipboard>
+#include <QTextOStream>
 
 #include <kdebug.h>
 #include <krun.h>
 #include <kmenu.h>
+#include <kaction.h>
 #include <kactioncollection.h>
 
 class KListViewDateItem : public QTreeWidgetItem
@@ -81,6 +83,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 {
 	setAttribute (Qt::WA_DeleteOnClose, true);
 	setCaption( i18n("History for %1", mc->displayName()) );
+	setButtons(KDialog::Close);
 	QString fontSize;
 	QString htmlCode;
 	QString fontStyle;
@@ -101,8 +104,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mMainWidget->setupUi( w );
 	mMainWidget->searchLine->setFocus();
 	mMainWidget->searchLine->setTrapReturnKey (true);
-	mMainWidget->searchLine->setTrapReturnKey(true);
-	mMainWidget->searchErase->setIcon( QIcon(BarIcon("edit-clear-locationbar")) );
+	mMainWidget->searchLine->setClearButtonShown(true);
 
 	mMainWidget->contactComboBox->addItem(i18n("All"));
 	mMetaContactList = Kopete::ContactList::self()->metaContacts();
@@ -139,9 +141,10 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mHtmlView->setFocusPolicy(Qt::NoFocus);
 	mHtmlView->setSizePolicy(
 	QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+	l->setMargin(0);
 	l->addWidget(mHtmlView);
 
-	QTextOStream( &fontSize ) << Kopete::AppearanceSettings::self()->chatFont().pointSize();
+	QTextStream( &fontSize ) << Kopete::AppearanceSettings::self()->chatFont().pointSize();
 	fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + Kopete::AppearanceSettings::self()->chatFont().family() + "; color: " + Kopete::AppearanceSettings::self()->chatTextColor().name() + "; }</style>";
 
 	mHtmlPart->begin();
@@ -156,7 +159,6 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	connect(mMainWidget->searchButton, SIGNAL(clicked()), this, SLOT(slotSearch()));
 	connect(mMainWidget->searchLine, SIGNAL(returnPressed()), this, SLOT(slotSearch()));
 	connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
-	connect(mMainWidget->searchErase, SIGNAL(clicked()), this, SLOT(slotSearchErase()));
 	connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
 	connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
 	connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)));
@@ -327,7 +329,8 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 		QString::fromLatin1("ltr"));
 
 	QString accountLabel;
-	QString resultHTML = "<b><font color=\"red\">" + msgs.front().timestamp().date().toString() + "</font></b><br/>";
+	QString date = msgs.isEmpty() ? "" : msgs.front().timestamp().date().toString();
+	QString resultHTML = "<b><font color=\"red\">" + date + "</font></b><br/>";
 
 	DOM::HTMLElement newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
 	newNode.setAttribute(QString::fromLatin1("dir"), dir);
@@ -360,11 +363,29 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 				body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", Qt::CaseInsensitive);
 			}
 
-			resultHTML += "(<b>" + msg.timestamp().time().toString() + "</b>) "
-				+ (msg.direction() == Kopete::Message::Outbound ?
-				"<font color=\"" + Kopete::AppearanceSettings::self()->chatTextColor().dark().name() + "\"><b>&gt;</b></font> "
-				: "<font color=\"" + Kopete::AppearanceSettings::self()->chatTextColor().light(200).name() + "\"><b>&lt;</b></font> ")
-				+ body + "<br/>";
+			QString name;
+			if ( msg.from()->metaContact() && msg.from()->metaContact() != Kopete::ContactList::self()->myself() )
+			{
+				name = msg.from()->metaContact()->displayName();
+			}
+			else
+			{
+				name = msg.from()->nickName();
+			}
+
+			QString fontColor;
+			if (msg.direction() == Kopete::Message::Outbound)
+			{
+				fontColor = Kopete::AppearanceSettings::self()->chatTextColor().dark().name();
+			}
+			else
+			{
+				fontColor = Kopete::AppearanceSettings::self()->chatTextColor().light(200).name();
+			}
+
+			QString messageTemplate = "<b>%1&nbsp;<font color=\"%2\">%3</font></b>&nbsp;%4";
+			resultHTML += messageTemplate.arg( msg.timestamp().time().toString(),
+				fontColor, name, body );
 
 			newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
 			newNode.setAttribute(QString::fromLatin1("dir"), dir);
@@ -392,7 +413,7 @@ void HistoryDialog::slotSearchTextChanged(const QString& searchText)
 	if (searchText.isEmpty())
 	{
 		mMainWidget->searchButton->setEnabled(false);
-		slotSearchErase();
+		treeWidgetHideElements(false);
 	}
 	else
 	{
@@ -409,14 +430,6 @@ void HistoryDialog::treeWidgetHideElements(bool s)
 		if ( item )
 			item->setHidden(s);
 	}
-}
-
-// Erase the search line, show all date/metacontacts items in the list (accordint to the
-// metacontact selected in the combobox)
-void HistoryDialog::slotSearchErase()
-{
-	mMainWidget->searchLine->clear();
-	treeWidgetHideElements(false);
 }
 
 // Search initialization

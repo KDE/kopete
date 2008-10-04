@@ -1,6 +1,6 @@
 /*
  * bytestream.cpp - base class for bytestreams
- * Copyright (C) 2003  Justin Karneges
+ * Copyright (C) 2003  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,7 @@
 
 //! \class ByteStream bytestream.h <Papillon/Base/ByteStream>
 //! \brief Base class for "bytestreams"
-//! \author Justin Karneges
+//! \author Justin Karneges <justin@affinix.com>
 //!
 //! This class provides a basic framework for a "bytestream", here defined
 //! as a bi-directional, asynchronous pipe of data.  It can be used to create

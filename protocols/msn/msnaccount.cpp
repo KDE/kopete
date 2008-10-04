@@ -33,6 +33,7 @@
 #include <klocale.h>
 #include <kicon.h>
 #include <kconfiggroup.h>
+#include <krun.h>
 
 #include <QtCore/QFile>
 #include <QtCore/QRegExp>
@@ -51,7 +52,7 @@
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopetechatsessionmanager.h"
-#include "contactaddednotifydialog.h"
+#include "kopeteaddedinfoevent.h"
 
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
@@ -78,7 +79,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ),
 		SLOT( slotKopeteGroupRemoved( Kopete::Group * ) ) );
 
-	m_openInboxAction = new KAction( KIcon("mail"), i18n( "Open Inbo&x..." ), this );
+	m_openInboxAction = new KAction( KIcon("mail-folder-inbox"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect( m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()) );
 
@@ -86,9 +87,12 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID )
         //, "renameAction" );
 	QObject::connect( m_changeDNAction, SIGNAL(triggered(bool)), this, SLOT(slotChangePublicName()) );
 
-	m_startChatAction = new KAction( KIcon("mail"), i18n( "&Start Chat..." ), this );
+	m_startChatAction = new KAction( KIcon("mail-message-new"), i18n( "&Start Chat..." ), this );
         //, "startChatAction" );
 	QObject::connect( m_startChatAction, SIGNAL(triggered(bool)), this, SLOT(slotStartChat()) );
+    
+	m_openStatusAction = new KAction( i18n( "Open MS&N service status site..." ), this );
+	QObject::connect( m_openStatusAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenStatus()) );
 
 	KConfigGroup *config=configGroup();
 
@@ -247,9 +251,9 @@ void MSNAccount::disconnect()
 		m_notifySocket->disconnect();
 }
 
-KActionMenu * MSNAccount::actionMenu()
+void MSNAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *m_actionMenu=Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 	if ( isConnected() )
 	{
 		m_openInboxAction->setEnabled( true );
@@ -263,14 +267,15 @@ KActionMenu * MSNAccount::actionMenu()
 		m_changeDNAction->setEnabled( false );
 	}
 
-	m_actionMenu->addSeparator();
+	actionMenu->addSeparator();
 
-	m_actionMenu->addAction( m_changeDNAction );
-	m_actionMenu->addAction( m_startChatAction );
+	actionMenu->addAction( m_changeDNAction );
+	actionMenu->addAction( m_startChatAction );
 
-//	m_actionMenu->menu()->insertSeparator();
+//	actionMenu->menu()->insertSeparator();
 
-	m_actionMenu->addAction( m_openInboxAction );
+	actionMenu->addAction( m_openInboxAction );
+	actionMenu->addAction( m_openStatusAction );
 
 #if !defined NDEBUG
 	KActionMenu *debugMenu = new KActionMenu( "Debug", this );
@@ -280,11 +285,9 @@ KActionMenu * MSNAccount::actionMenu()
 	QObject::connect( rawCmd, SIGNAL(triggered()), this, SLOT(slotDebugRawCommand()) );
 	debugMenu->addAction(rawCmd);
 
-	m_actionMenu->addSeparator();
-	m_actionMenu->addAction( debugMenu );
+	actionMenu->addSeparator();
+	actionMenu->addAction( debugMenu );
 #endif
-
-	return m_actionMenu;
 }
 
 MSNNotifySocket *MSNAccount::notifySocket()
@@ -413,6 +416,10 @@ void MSNAccount::slotOpenInbox()
 		m_notifySocket->slotOpenInbox();
 }
 
+void MSNAccount::slotOpenStatus()
+{
+	KRun::runUrl( KUrl( QLatin1String( "http://messenger.msn.com/Status.aspx" ) ), "text/html", Kopete::UI::Global::mainWidget() );
+}
 
 void MSNAccount::slotNotifySocketClosed()
 {
@@ -1004,12 +1011,17 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& list, c
 				QString nick;			//in most case, the public name is not know
 				if(publicName!=handle)  // so we don't whos it if it is not know
 					nick=publicName;
-				Kopete::UI::ContactAddedNotifyDialog *dialog=
-						new Kopete::UI::ContactAddedNotifyDialog(  handle,nick,this,
-								Kopete::UI::ContactAddedNotifyDialog::InfoButton );
-				QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
-								 this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
-				dialog->show();
+
+				Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+				actions |= Kopete::AddedInfoEvent::BlockAction | Kopete::AddedInfoEvent::AddAction;
+
+				Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent( handle, this );
+				QObject::connect( event, SIGNAL(actionActivated(uint)),
+				                  this, SLOT(slotAddedInfoEventActionActivated(uint)) );
+
+				event->showActions( actions );
+				event->setContactNickname( nick );
+				event->sendEvent();
 			}
 		}
 		else
@@ -1222,42 +1234,43 @@ void MSNAccount::slotStartChatSession( const QString& handle )
 	}
 }
 
-void MSNAccount::slotContactAddedNotifyDialogClosed(const QString& handle)
+void MSNAccount::slotAddedInfoEventActionActivated( uint actionId )
 {
-	const Kopete::UI::ContactAddedNotifyDialog *dialog =
-			dynamic_cast<const Kopete::UI::ContactAddedNotifyDialog *>(sender());
-	if(!dialog || !m_notifySocket)
+	const Kopete::AddedInfoEvent *event = dynamic_cast<const Kopete::AddedInfoEvent *>(sender());
+	if( !event || !m_notifySocket )
 		return;
 
-	if(dialog->added())
+	QString handle = event->contactId();
+	if ( actionId == Kopete::AddedInfoEvent::AddContactAction )
 	{
-		Kopete::MetaContact *mc=dialog->addContact();
-		if(mc)
+		Kopete::MetaContact *mc = event->addContact();
+		if ( mc )
 		{ //if the contact has been added this way, it's because the other user added us.
 		  // don't forgot to set the reversed flag  (Bug 114400)
-			MSNContact *c=dynamic_cast<MSNContact*>(mc->contacts().first());
-			if(c && c->contactId() == handle )
+			if ( !mc->contacts().isEmpty() )
 			{
-				c->setReversed( true );
+				MSNContact *c=dynamic_cast<MSNContact*>(mc->contacts().first());
+				if(c && c->contactId() == handle )
+				{
+					c->setReversed( true );
+				}
 			}
 		}
 	}
-
-	if ( !dialog->authorized() )
+	else if ( actionId == Kopete::AddedInfoEvent::BlockAction )
 	{
 		if ( m_allowList.contains( handle ) )
 			m_notifySocket->removeContact( handle, MSNProtocol::AL, QString(), QString() );
 		else if ( !m_blockList.contains( handle ) )
 			m_notifySocket->addContact( handle, MSNProtocol::BL, QString(), QString(), QString() );
 	}
-	else
+	else if ( actionId == Kopete::AddedInfoEvent::AuthorizeAction )
 	{
 		if ( m_blockList.contains( handle ) )
 			m_notifySocket->removeContact( handle, MSNProtocol::BL, QString(), QString() );
 		else if ( !m_allowList.contains( handle ) )
 			m_notifySocket->addContact( handle, MSNProtocol::AL, QString(), QString(), QString() );
 	}
-
 
 }
 
@@ -1298,7 +1311,7 @@ void MSNAccount::slotErrorMessageReceived( int type, const QString &msg )
 
 	kDebug(14140) << msg;
 	// Display the error
-	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), msgBoxType, msg, caption );
+	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), msgBoxType, msg, caption, KMessageBox::AllowLink | KMessageBox::Notify );
 
 }
 

@@ -30,11 +30,11 @@
 #include <knuminput.h>
 #include <qcheckbox.h>
 
-typedef KGenericFactory<HistoryPreferences> HistoryConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_history, HistoryConfigFactory( "kcm_kopete_history" ) )
+K_PLUGIN_FACTORY( HistoryPreferencesFactory, registerPlugin<HistoryPreferences>(); )
+K_EXPORT_PLUGIN( HistoryPreferencesFactory( "kcm_kopete_history" ) )
 
-HistoryPreferences::HistoryPreferences(QWidget *parent, const QStringList &args)
-	: KCModule(HistoryConfigFactory::componentData(), parent, args)
+HistoryPreferences::HistoryPreferences(QWidget *parent, const QVariantList &args)
+	: KCModule(HistoryPreferencesFactory::componentData(), parent, args)
 {
 	kDebug(14310) << "called.";
 	
@@ -51,7 +51,6 @@ HistoryPreferences::HistoryPreferences(QWidget *parent, const QStringList &args)
 		this, SLOT(slotModified()));
 	connect(p->History_color, SIGNAL(changed(const QColor&)),
 		this, SLOT(slotModified()));
-	load();
 }
 
 HistoryPreferences::~HistoryPreferences()

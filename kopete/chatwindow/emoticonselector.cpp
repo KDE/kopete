@@ -32,6 +32,7 @@
 #include <QShowEvent>
 
 #include <kdebug.h>
+#include <kemoticons.h>
 
 EmoticonItem::EmoticonItem(const QString &emoticonText, const QString &pixmapPath, QListWidget *parent)
 	: QListWidgetItem(parent)
@@ -72,7 +73,7 @@ EmoticonSelector::EmoticonSelector(QWidget *parent)
 	m_emoticonList->setMouseTracking(true);
 	m_emoticonList->setDragEnabled(false);
 
-	QLabel *m_currentEmoticon  = new QLabel( this );
+	m_currentEmoticon = new QLabel( this );
 	m_currentEmoticon->setFrameShape( QFrame::Box );
 	m_currentEmoticon->setMinimumSize(QSize(128,128));
 	m_currentEmoticon->setAlignment( Qt::AlignCenter );
@@ -85,9 +86,6 @@ EmoticonSelector::EmoticonSelector(QWidget *parent)
 			this, SLOT(mouseOverItem(QListWidgetItem*)));
 	connect(m_emoticonList, SIGNAL(itemSelectionChanged()),
 			this, SLOT(currentChanged()));
-	connect(m_emoticonList, SIGNAL(itemClicked(QListWidgetItem*)),
-			this, SLOT(emoticonClicked(QListWidgetItem*)));
-
 	connect(m_emoticonList, SIGNAL(itemActivated(QListWidgetItem*)),
 			this, SLOT(emoticonClicked(QListWidgetItem*)));
 
@@ -97,9 +95,9 @@ void EmoticonSelector::prepareList(void)
 {
 	m_emoticonList->clear();
 //	kDebug(14000) << "called.";
-	QMap<QString, QStringList> list = Kopete::Emoticons::self()->emoticonAndPicList();
+	QHash<QString, QStringList> list = Kopete::Emoticons::self()->theme().emoticonsMap();
 
-	for (QMap<QString, QStringList>::const_iterator it = list.constBegin(); it != list.constEnd(); ++it )
+	for (QHash<QString, QStringList>::const_iterator it = list.constBegin(); it != list.constEnd(); ++it )
 		(void) new EmoticonItem(it.value().first(), it.key(), m_emoticonList);
 
 	m_emoticonList->setIconSize(QSize(32,32));
@@ -137,10 +135,12 @@ void EmoticonSelector::currentChanged()
 	if (!item)
 		return;
 
-	// FIXME: the label is not correctly cleared when changing from a bigger movie to a smaller one
 	m_currentMovie->stop();
 	m_currentMovie->setFileName(item->pixmapPath());
 	m_currentMovie->start();
+	// schedule a full update of the label, so there are no glitches of the previous emoticon
+	// (Qt bug?)
+	m_currentEmoticon->update();
 }
 
 void EmoticonSelector::hideEvent( QHideEvent* )

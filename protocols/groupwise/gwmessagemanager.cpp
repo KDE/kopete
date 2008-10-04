@@ -22,8 +22,10 @@
 #include <qlabel.h>
 #include <qvalidator.h>
 #include <QList>
+#include <QPainter>
 
 #include <kactioncollection.h>
+#include <kactionmenu.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
@@ -56,7 +58,7 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 	static uint s_id=0;
 	m_mmId=++s_id;
 
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "New message manager for " << user->contactId();
+	kDebug () << "New message manager for " << user->contactId();
 
 	// Needed because this is (indirectly) a KXMLGuiClient, so it can find the gui description .rc file
 	setComponentData( protocol->componentData() );
@@ -81,7 +83,7 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 	QObject::connect( m_secure, SIGNAL( triggered( bool ) ), SLOT( slotShowSecurity() ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
 
-	m_logging = new KAction( KIcon( "logchat" ), i18n( "Archiving Status" ), 0 ); // "gwLoggingChat"
+	m_logging = new KAction( KIcon( "utilities-log-viewer" ), i18n( "Archiving Status" ), 0 ); // "gwLoggingChat"
 	QObject::connect( m_secure, SIGNAL( triggered( bool ) ),  SLOT( slotShowArchiving() ) );
 	updateArchiving();
 
@@ -106,11 +108,11 @@ void GroupWiseChatSession::setGuid( const GroupWise::ConferenceGuid & guid )
 {
 	if ( m_guid.isEmpty() )
 	{
-		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "setting GUID to: " << guid;
+		kDebug() << "setting GUID to: " << guid;
 		m_guid = guid;
 	}
 	else
-		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "attempted to change the conference's GUID when already set!";
+		kDebug() << "attempted to change the conference's GUID when already set!";
 }
 
 bool GroupWiseChatSession::closed()
@@ -130,7 +132,7 @@ bool GroupWiseChatSession::secure()
 
 void GroupWiseChatSession::setClosed()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) << " Conference " << m_guid << " is now Closed ";
+	kDebug() << " Conference " << m_guid << " is now Closed ";
 	m_guid.clear();
 	m_flags = m_flags | GroupWise::Closed;
 }
@@ -160,7 +162,7 @@ void GroupWiseChatSession::createConference()
 {
 	if ( m_guid.isEmpty() )
 	{
-		kDebug ( GROUPWISE_DEBUG_GLOBAL ) ;
+		kDebug () ;
 		// form a list of invitees
 		QStringList invitees;
 		foreach ( Kopete::Contact * contact, members() )
@@ -175,14 +177,14 @@ void GroupWiseChatSession::createConference()
 		account()->createConference( mmId(), invitees );
 	}
 	else
-		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << " tried to create conference on the server when it was already instantiated";
+		kDebug () << " tried to create conference on the server when it was already instantiated";
 }
 
 void GroupWiseChatSession::receiveGuid( const int newMmId, const GroupWise::ConferenceGuid & guid )
 {
 	if ( newMmId == mmId() )
 	{
-		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << " got GUID from server";
+		kDebug () << " got GUID from server";
 		m_memberCount = members().count();
 		setGuid( guid );
 		// re-add all the members.  This is because when the last member leaves the conference,
@@ -203,7 +205,7 @@ void GroupWiseChatSession::slotCreationFailed( const int failedId, const int sta
 {
 	if ( failedId == mmId() )
 	{
-		kDebug ( GROUPWISE_DEBUG_GLOBAL ) << " couldn't start a chat, no GUID.\n";
+		kDebug () << " could not start a chat, no GUID.\n";
 		//emit creationFailed();
 		Kopete::Message failureNotify( myself(), members());
 		failureNotify.setPlainBody( i18n("An error occurred when trying to start a chat: %1", statusCode ) );
@@ -222,7 +224,7 @@ void GroupWiseChatSession::slotSendTypingNotification( bool typing )
 
 void GroupWiseChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSession * )
 {
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug () ;
 	if( account()->isConnected() )
 	{
 		/*if ( closed() )
@@ -252,7 +254,7 @@ void GroupWiseChatSession::slotMessageSent( Kopete::Message & message, Kopete::C
 				}
 				else
 				{
-					kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "waiting for server to create a conference, queuing message";
+					kDebug () << "waiting for server to create a conference, queuing message";
 					// the conference hasn't been instantiated on the server yet, so queue the message
 					m_guid = ConferenceGuid();
 					createConference();
@@ -261,7 +263,7 @@ void GroupWiseChatSession::slotMessageSent( Kopete::Message & message, Kopete::C
 			}
 			else
 			{
-				kDebug ( GROUPWISE_DEBUG_GLOBAL ) << "sending message";
+				kDebug () << "sending message";
 				account()->sendMessage( guid(), message );
 				// we could wait until the server acks our send,
 				// but we'd need a UID for outgoing messages and a list to track them
@@ -286,7 +288,7 @@ void GroupWiseChatSession::slotGotNotTypingNotification( const ConferenceEvent& 
 
 void GroupWiseChatSession::dequeueMessagesAndInvites()
 {
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug () ;
 	for ( QList< Kopete::Message >::Iterator it = m_pendingOutgoingMessages.begin();
 		  it != m_pendingOutgoingMessages.end();
 		  ++it )
@@ -308,7 +310,7 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 	qDeleteAll(m_inviteActions);
 	m_inviteActions.clear();
 
-	m_actionInvite->popupMenu()->clear();
+	m_actionInvite->menu()->clear();
 
 
 	foreach( Kopete::Contact * contact, account()->contacts() )
@@ -318,6 +320,8 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 			KAction *a = new Kopete::UI::ContactAction( contact,
 			                                            actionCollection() );
 			m_actionInvite->addAction( a );
+			QObject::connect( a, SIGNAL(triggered(Kopete::Contact*,bool)),
+					this, SLOT(slotInviteContact(Kopete::Contact*)) );
 			m_inviteActions.append( a ) ;
 		}
 	}
@@ -356,7 +360,7 @@ void GroupWiseChatSession::slotInviteContact( Kopete::Contact * contact )
 
 void GroupWiseChatSession::inviteContact( const QString &contactId )
 {
-	Kopete::Contact * contact = account()->contacts()[ contactId ];
+	Kopete::Contact * contact = account()->contacts().value(contactId);
 	if ( contact )
 		slotInviteContact( contact );
 }
@@ -372,7 +376,7 @@ void GroupWiseChatSession::slotInviteOtherContact()
 		m_searchDlg->setCaption(i18n( "Search for Contact to Invite" ));
 		m_searchDlg->setButtons(KDialog::Ok|KDialog::Cancel );
 		m_searchDlg->setDefaultButton(KDialog::Ok);
-		m_search = new GroupWiseContactSearch( account(), Q3ListView::Single, true, m_searchDlg );
+		m_search = new GroupWiseContactSearch( account(), QAbstractItemView::SingleSelection, true, m_searchDlg );
 		m_searchDlg->setMainWidget( m_search );
 		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOk( bool ) ) );
 		m_searchDlg->enableButtonOk( false );
@@ -404,7 +408,7 @@ void GroupWiseChatSession::slotSearchedForUsers()
 void GroupWiseChatSession::addInvitee( const Kopete::Contact * c )
 {
 	// create a placeholder contact for each invitee
-	kDebug ( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug () ;
 	QString pending = i18nc("label attached to contacts who have been invited but are yet to join a chat", "(pending)");
 	Kopete::MetaContact * inviteeMC = new Kopete::MetaContact();
 	inviteeMC->setDisplayName( c->metaContact()->displayName() + pending );
@@ -442,7 +446,7 @@ void GroupWiseChatSession::joined( GroupWiseContact * c )
 
 void GroupWiseChatSession::left( GroupWiseContact * c )
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 	removeContact( c );
 	--m_memberCount;
 

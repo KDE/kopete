@@ -36,7 +36,6 @@
 #include <klineedit.h>
 
 #include "kopetebehaviorsettings.h"
-#include "kopeteaway.h"
 #include "kopetepluginmanager.h"
 
 #include <qtabwidget.h>
@@ -88,6 +87,8 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QVariantList &args) :
 	// "Away" TAB ===============================================================
 	connect( mPrfsAway->mAutoAwayTimeout, SIGNAL(valueChanged(int)),
 		this, SLOT(slotValueChanged(int)));;
+	connect( mPrfsAway->mAutoAwayCustomMessage, SIGNAL(textChanged()),
+	         this, SLOT(slotTextChanged()) );
 }
 
 void BehaviorConfig::save()
@@ -98,9 +99,13 @@ void BehaviorConfig::save()
 
 	// "Away" TAB ===============================================================
 	Kopete::BehaviorSettings::self()->setAutoAwayTimeout( mPrfsAway->mAutoAwayTimeout->value() * 60 );
+	Kopete::BehaviorSettings::self()->setAutoAwayCustomMessage( mPrfsAway->mAutoAwayCustomMessage->toPlainText() );
 
 	// "Chat" TAB ===============================================================
-	Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()].pluginName() );
+	if ( viewPlugins.size() > 0 )
+	{
+		Kopete::BehaviorSettings::self()->setViewPlugin(viewPlugins[mPrfsChat->viewPlugin->currentIndex()].pluginName() );
+	}
 
 	Kopete::BehaviorSettings::self()->writeConfig();
 
@@ -109,12 +114,15 @@ void BehaviorConfig::save()
 
 void BehaviorConfig::load()
 {
-//	kDebug(14000);
-	awayInstance = Kopete::Away::getInstance();
-
 	KCModule::load();
+	// "General" TAB ===============================================================
+	if(!mPrfsGeneral->kcfg_useMessageQueue->isChecked() && !mPrfsGeneral->kcfg_useMessageStack->isChecked()) {
+		mPrfsGeneral->mInstantMessageOpeningChk->setChecked(true);
+	}
+
 	// "Away" TAB ===============================================================
 	mPrfsAway->mAutoAwayTimeout->setValue( Kopete::BehaviorSettings::self()->autoAwayTimeout() / 60 );
+	mPrfsAway->mAutoAwayCustomMessage->setPlainText( Kopete::BehaviorSettings::self()->autoAwayCustomMessage() );
 
 	// "Chat" TAB ===============================================================
 	mPrfsChat->viewPlugin->clear();
@@ -139,7 +147,7 @@ void BehaviorConfig::slotValueChanged(int)
 	emit changed( true );
 }
 
-void BehaviorConfig::slotTextChanged(const QString&)
+void BehaviorConfig::slotTextChanged()
 {
 	emit changed( true );
 }

@@ -37,12 +37,9 @@ ChatroomManager::~ChatroomManager()
 {
 }
 
-void ChatroomManager::update()
+void ChatroomManager::updateRooms()
 {
-	if ( m_rooms.isEmpty() )
-		getChatrooms( false );
-	else
-		updateCounts();
+	getChatrooms( !m_rooms.isEmpty() );
 }
 
 GroupWise::ChatroomMap ChatroomManager::rooms()
@@ -61,7 +58,7 @@ void ChatroomManager::getChatrooms( bool refresh )
 
 void ChatroomManager::slotGotChatroomList()
 {
-//	kDebug ( GROUPWISE_DEBUG_GLOBAL ) ;
+//	kDebug () ;
 	SearchChatTask * sct = (SearchChatTask *)sender();
 	if ( sct )
 	{
@@ -118,7 +115,7 @@ void ChatroomManager::requestProperties( const QString & displayName )
 
 void ChatroomManager::slotGotChatProperties()
 {
-//	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+//	kDebug() ;
 	ChatPropertiesTask * cpt = (ChatPropertiesTask *)sender();
 	if ( cpt )
 	{

@@ -1,6 +1,6 @@
 /*
  * im.h - XMPP "IM" library API
- * Copyright (C) 2003  Justin Karneges
+ * Copyright (C) 2003  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -24,6 +24,8 @@
 #include <qdatetime.h>
 //Added by qt3to4:
 #include <QList>
+
+#include <iris_export.h>
 
 #include "xmpp.h"
 #include "xmpp_jid.h"
@@ -51,29 +53,10 @@
 #include "xmpp_pubsubitem.h"
 #include "xmpp_pubsubretraction.h"
 
-
-
-#include <iris_export.h>
-
-#ifdef IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
-# define IRIS_DUMMY_COMPARISON_OPERATOR(C) \
-    bool operator==(const C&) const { \
-        qWarning(#C"::operator==(const "#C"&) was called"); \
-        return false; \
-    }
-# define IRIS_DUMMY_QHASH_FUNCTION(C) \
-    inline uint qHash(const C) { \
-        qWarning("inline uint qHash(const "#C") was called"); \
-        return 0; \
-    }
-#else
-# define IRIS_DUMMY_COMPARISON_OPERATOR(C)
-# define IRIS_DUMMY_QHASH_FUNCTION(C)
-#endif
-
 namespace XMPP
 {
 	typedef QMap<QString, QString> StringMap;
+	
 	typedef QList<AgentItem> AgentList;
 	typedef QList<DiscoItem> DiscoList;
 
@@ -93,8 +76,6 @@ namespace XMPP
 		bool setType(const QString &);
 		void setValue(const QString &);
 
-		IRIS_DUMMY_COMPARISON_OPERATOR(FormField)
-
 	private:
 		int tagNameToType(const QString &) const;
 		QString typeToTagName(int) const;
@@ -104,8 +85,20 @@ namespace XMPP
 
 		class Private;
 		Private *d;
+#ifdef IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
+    public:
+        bool operator==(const FormField&) const {
+            qWarning("FormField::operator==(const FormField&) was called");
+            return false;
+        }
+#endif
 	};
-	IRIS_DUMMY_QHASH_FUNCTION(FormField)
+#ifdef IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
+    inline uint qHash(const FormField&) {
+        qWarning("inline uint qHash(const FormField&) was called");
+        return 0;
+    }
+#endif
 
 	class IRIS_EXPORT Form : public QList<FormField>
 	{

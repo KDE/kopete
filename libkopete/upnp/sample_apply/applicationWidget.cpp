@@ -20,15 +20,32 @@
 
 #include "applicationWidget.h"
 #include <QList> 
+#include <QMessageBox>
 
 ApplicationWidget::ApplicationWidget(QWidget *parent): QMainWindow(parent)
 {
 	setupUi(this);
-	router = UPnpRouter::defaultRouter();
 	connect(btOpen, SIGNAL(clicked()),this, SLOT(openPort()));
 	connect(btDelete, SIGNAL(clicked()),this, SLOT(deletePort()));
-}
+	connect(bt_search, SIGNAL(clicked()),this, SLOT(search()));
+	router = UPnpRouter::allRouters();
 
+}
+void ApplicationWidget::search()
+{
+	
+	qDebug()<<"avant router isValid";
+	if(!router.isEmpty())
+	{
+		foreach(UPnpRouter r,router)
+			text_mess->append("Router Url : "+r.url().toString());
+	}
+	else
+	{
+		qDebug()<<"message";
+		int box = QMessageBox::warning(this, "UPnp Probleme", "No upnp device found");
+	}
+}
 
 void ApplicationWidget::openPort()
 {
@@ -42,11 +59,14 @@ void ApplicationWidget::openPort()
 	{
 		port=l_port->text().toInt(&val, 10);
 		if(val==true)
-		{ 
-			if(router.isValid())
-			{
-				router.openPort(port, QString("TCP"), QString("test"));
-				text_mess->append("Port open : "+l_port->text());
+		{
+			foreach(UPnpRouter r, router)
+			{ 
+				if(r.isValid())
+				{
+					r.openPort(port, QString("TCP"), QString("test"));
+					text_mess->append("Port open : "+l_port->text());
+				}
 			}
 		}
 		else
@@ -69,10 +89,13 @@ void ApplicationWidget::deletePort()
 		port=l_port->text().toInt(&val, 10);
 		if(val==true)
 		{ 
-			if (router.isValid())
-			{
-				router.closePort(port, QString("TCP"));
-				text_mess->append("Port delete : "+l_port->text());
+			foreach(UPnpRouter r, router)
+			{ 
+				if (r.isValid())
+				{
+					r.closePort(port, QString("TCP"));
+					text_mess->append("Port delete : "+l_port->text());
+				}
 			}
 		}
 		else

@@ -22,9 +22,8 @@
 #define GWBYTESTREAM_H
 
 #include <bytestream.h>
-#include <k3bufferedsocket.h>
+#include <QTcpSocket>
 #include <kopete_export.h>
-
 
 /**
  * Low level socket class, using KDE's KNetwork socket classes
@@ -45,7 +44,7 @@ public:
 	virtual bool isOpen () const;
 	virtual void close ();
 
-	KNetwork::KBufferedSocket *socket () const;
+	QTcpSocket *socket () const;
 
 signals:
 	void connected ();
@@ -58,10 +57,10 @@ private slots:
 	void slotConnectionClosed ();
 	void slotReadyRead ();
 	void slotBytesWritten ( qint64 );
-	void slotError ( int );
+	void slotError ( QAbstractSocket::SocketError );
 
 private:
-	KNetwork::KBufferedSocket *mSocket;
+	QTcpSocket *mSocket;
 	bool mClosing;
 
 };

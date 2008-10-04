@@ -1,17 +1,17 @@
-/*  *************************************************************************
-    *   copyright: (C) 2003 Richard L�k�g <nouseforaname@home.se>         *
-    *   copyright: (C) 2003 Gav Wood <gav@kde.org>                          *
-    *************************************************************************
-*/
+/*
+  smsaccount.cpp  -  SMS Plugin Account
 
-/*  *************************************************************************
-    *                                                                       *
-    * This program is free software; you can redistribute it and/or modify  *
-    * it under the terms of the GNU General Public License as published by  *
-    * the Free Software Foundation; either version 2 of the License, or     *
-    * (at your option) any later version.                                   *
-    *                                                                       *
-    *************************************************************************
+  Copyright (c) 2003      by Richard Lärkäng        <nouseforaname@home.se>
+  Copyright (c) 2003      by Gav Wood               <gav@kde.org>
+
+  *************************************************************************
+  *                                                                       *
+  * This program is free software; you can redistribute it and/or modify  *
+  * it under the terms of the GNU General Public License as published by  *
+  * the Free Software Foundation; either version 2 of the License, or     *
+  * (at your option) any later version.                                   *
+  *                                                                       *
+  *************************************************************************
 */
 
 #undef KDE_NO_COMPAT
@@ -181,10 +181,9 @@ bool SMSAccount::createContact( const QString &contactId,
 		return false;
 }
 
-KActionMenu* SMSAccount::actionMenu()
+void SMSAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
-	return theActionMenu;
+	Kopete::Account::fillActionMenu( actionMenu );
 }
 
 void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const Kopete::StatusMessage &reason)

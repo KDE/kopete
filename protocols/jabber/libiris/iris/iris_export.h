@@ -15,4 +15,8 @@
 # endif
 #endif
 
+#ifdef Q_OS_WIN
+# define IRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
+#endif
+
 #endif

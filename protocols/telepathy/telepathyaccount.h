@@ -52,7 +52,7 @@ public:
 	TelepathyAccount(TelepathyProtocol *parent, const QString &accountId);
 	~TelepathyAccount();
 
-	virtual KActionMenu *actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/**
 	 * @brief Get the casted instance of myself contact

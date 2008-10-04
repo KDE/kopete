@@ -1,17 +1,14 @@
+add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 #add_subdirectory( ui ) 
 add_subdirectory( icons ) 
 add_subdirectory( libiris ) 
 
-# we can't use KDE_FULL_TEMPLATE_EXPORT_INSTANTIATION because libiris is an external lib
-if(MSVC)
-  add_definitions(-DIRIS_FULL_TEMPLATE_EXPORT_INSTANTIATION)
-endif(MSVC)
-
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(JINGLE)")
 include_directories( 
 ${KOPETE_INCLUDES} 
-${CMAKE_CURRENT_SOURCE_DIR}/ui/ 
+${CMAKE_CURRENT_SOURCE_DIR}/ui/
+${CMAKE_CURRENT_SOURCE_DIR}/tasks/
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/include/
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/jabber/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/xmpp-core/ 
@@ -28,38 +25,53 @@ link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libiris/ )
 ########### next target ###############
 
 set(kopete_jabber_ui_SRCS 
-    ui/dlgjabbersendraw.cpp 
+    ui/dlgxmppconsole.cpp
     ui/jabberaddcontactpage.cpp 
     ui/dlgjabbervcard.cpp 
     ui/dlgjabberservices.cpp 
-    ui/dlgjabberregister.cpp 
-    ui/dlgjabberbrowse.cpp 
+    ui/dlgregister.cpp 
+    ui/dlgsearch.cpp 
+    ui/dlgahcommand.cpp 
+    ui/dlgahclist.cpp 
     ui/jabbereditaccountwidget.cpp 
     ui/jabberregisteraccount.cpp 
     ui/jabberchooseserver.cpp 
     ui/dlgjabberchangepassword.cpp
     ui/dlgjabberchatroomslist.cpp
     ui/dlgjabberchatjoin.cpp 
+    ui/privacylistblockedmodel.cpp
+    ui/privacylistmodel.cpp
+    ui/privacydlg.cpp
+    ui/privacyruledlg.cpp
 )
 
 kde4_add_ui_files(kopete_jabber_ui_SRCS 
-   ui/dlgsendraw.ui  
+   ui/dlgxmppconsole.ui
    ui/dlgjabberregisteraccount.ui 
    ui/dlgjabberchooseserver.ui 
    ui/dlgvcard.ui 
    ui/dlgservices.ui 
    ui/dlgaddcontact.ui 
-   ui/dlgregister.ui 
-   ui/dlgbrowse.ui 
+   ui/dlgsearch.ui 
    ui/dlgchangepassword.ui 
    ui/dlgjabbereditaccountwidget.ui
    ui/dlgchatjoin.ui 
    ui/dlgchatroomslist.ui 
+   ui/privacyrule.ui
+   ui/privacy.ui
 )
 
 set(kopete_jabber_PART_SRCS 
    tasks/jt_getlastactivity.cpp
    tasks/jt_privatestorage.cpp
+   tasks/jt_ahcommand.cpp
+   tasks/jt_xsearch.cpp
+   tasks/jt_xregister.cpp
+   tasks/jt_pubsub.cpp
+   tasks/mood.cpp
+   tasks/privacylistitem.cpp
+   tasks/privacylist.cpp
+   tasks/privacymanager.cpp
    ${kopete_jabber_ui_SRCS} 
    jabberprotocol.cpp 
    jabberaccount.cpp 
@@ -71,6 +83,7 @@ set(kopete_jabber_PART_SRCS
    jabbergroupmembercontact.cpp 
    jabbercontactpool.cpp 
    jabberformtranslator.cpp 
+   jabberxdatawidget.cpp 
    jabberformlineedit.cpp 
    jabberchatsession.cpp 
    jabbergroupchatmanager.cpp 

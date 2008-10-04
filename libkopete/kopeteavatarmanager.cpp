@@ -24,6 +24,7 @@
 #include <QtCore/QPointer>
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
+#include <QtGui/QPainter>
 
 // KDE includes
 #include <kdebug.h>
@@ -232,35 +233,34 @@ void AvatarManager::Private::createDirectory(const KUrl &directory)
 
 QImage AvatarManager::Private::scaleImage(const QImage &source)
 {
-	// Maybe the image doesn't need to be scaled
-	QImage result = source;
+	if (source.isNull())
+	{
+		return QImage();
+	}
 
-	if( result.width() > 96 || result.height() > 96 )
+	//make an empty image and fill with transparent color
+	QImage result(96, 96, QImage::Format_ARGB32);
+	result.fill(0);
+
+	QPainter paint(&result);
+	float x = 0, y = 0;
+
+	// scale and center the image
+	if( source.width() > 96 || source.height() > 96 )
 	{
-		// Scale and crop the picture.
-		result = result.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
-		// crop image if not square
-		if( result.width() < result.height() )
-			result = result.copy( (result.width()-result.height())/2, 0, 96, 96 );
-		else if( result.width() > result.height() )
-			result = result.copy( 0, (result.height()-result.width())/2, 96, 96 );
-	}
-	else if( result.width() < 32 || result.height() < 32 )
-	{
-		// Scale and crop the picture.
-		result = result.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
-		// crop image if not square
-		if( result.width() < result.height() )
-			result = result.copy( (result.width()-result.height())/2, 0, 32, 32 );
-		else if( result.width() > result.height() )
-			result = result.copy( 0, (result.height()-result.width())/2, 32, 32 );
-	}
-	else if( result.width() != result.height() )
-	{
-		if(result.width() < result.height())
-			result = result.copy((result.width()-result.height())/2, 0, result.height(), result.height());
-		else if (result.width() > result.height())
-			result = result.copy(0, (result.height()-result.width())/2, result.height(), result.height());
+		QImage scaled = source.scaled( 96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation );
+
+		x = (96 - scaled.width()) / 2.0;
+		y = (96 - scaled.height()) / 2.0;
+
+		paint.translate(x, y);
+		paint.drawImage(QPoint(0, 0), scaled);
+	} else {
+		x = (96 - source.width()) / 2.0;
+		y = (96 - source.height()) / 2.0;
+
+		paint.translate(x, y);
+		paint.drawImage(QPoint(0, 0), source);
 	}
 
 	return result;
@@ -362,6 +362,7 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 
 			avatarList << listedEntry;
 		}
+                delete avatarConfig;
 	}
 }
 

@@ -430,7 +430,7 @@ void Webcam::makeSIPMessage(const QString &message, quint8 XX, quint8 YY , quint
 {
 	QByteArray dataMessage; //(12+message.length()*2);
 	QDataStream writer( &dataMessage,QIODevice::WriteOnly);
-	writer.setVersion(QDataStream::Qt_3_1);
+	writer.setVersion(QDataStream::Qt_3_3);
 	writer.setByteOrder(QDataStream::LittleEndian);
 	writer << (quint8)0x80;
 	writer << (quint8)XX;
@@ -831,7 +831,7 @@ void Webcam::timerEvent( QTimerEvent *e )
 	videoDevice->getImage(&img);
 	
 	if(m_widget)
-		m_widget->newImage(QPixmap::fromImage(img));
+		m_widget->newImage(QPixmap::fromImage(img.mirrored(VideoDevice->getImageAsMirror(),false)));
 	
 	if(img.width()!=320 || img.height()!=240)
 	{
@@ -859,7 +859,7 @@ void Webcam::timerEvent( QTimerEvent *e )
 	QByteArray header;
 	
 	QDataStream writer( &header,QIODevice::WriteOnly);
-	writer.setVersion(QDataStream::Qt_3_1);
+	writer.setVersion(QDataStream::Qt_3_3);
 	writer.setByteOrder(QDataStream::LittleEndian);
 	writer << (quint16)24;  // header size
 	writer << (quint16)img.width();

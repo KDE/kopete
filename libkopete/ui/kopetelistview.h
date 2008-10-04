@@ -1,6 +1,6 @@
 /*
     kopetelistview.h - List View providing extra support for ListView::Items
-    
+
     Copyright (c) 2005      by Engin AYDOGAN <engin@bzzzt.biz>
     Copyright (c) 2004      by Richard Smith <kde@metafoo.co.uk>
 
@@ -86,7 +86,7 @@ public:
 	 * @see setVScrollBarMode( ScrollBarMode )
 	 */
 	void setScrollAutoHide( bool b );
-	
+
 	/**
 	 * Gets scroll auto hide feature status
 	 */
@@ -97,7 +97,7 @@ public:
 	 * Note: If not called, default value 10 will be used.
 	 */
 	void setScrollAutoHideTimeout( int );
-	
+
 	/**
 	 * Gets the scroll bar auto-hide timeout value.
 	 */
@@ -141,12 +141,15 @@ protected:
 	 * This will manage the smooth scrolling animation, continuous presses to the scrollbars.
 	 */
 	virtual void timerEvent( QTimerEvent *e );
-	
+
 	/**
 	 * To make smooth scrolling work well, we need extensive event intercepting.
 	 * This event filter is suppposed to achieve that.
 	 */
 	virtual bool eventFilter( QObject *o, QEvent *e );
+
+signals:
+	void visibleSizeChanged ();
 
 private slots:
 	void slotContextMenu(K3ListView*,Q3ListViewItem *item, const QPoint &point );

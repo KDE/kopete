@@ -36,7 +36,7 @@ UserDetails::UserDetails()
 	m_userClass = 0;
 	m_idleTime = 0;
 	m_extendedStatus = 0;
-	m_xtrazStatus = 0;
+	m_xtrazStatus = -1;
 	m_dcPort = 0;
 	m_dcType = 0;
 	m_dcProtoVersion = 0;
@@ -51,6 +51,7 @@ UserDetails::UserDetails()
 	m_userClassSpecified = false;
 	m_memberSinceSpecified = false;
 	m_onlineSinceSpecified = false;
+	m_awaySinceSpecified = false;
 	m_numSecondsOnlineSpecified = false;
 	m_idleTimeSpecified = false;
 	m_extendedStatusSpecified = false;
@@ -106,6 +107,11 @@ QDateTime UserDetails::onlineSinceTime() const
 	return m_onlineSince;
 }
 
+QDateTime UserDetails::awaySinceTime() const
+{
+	return m_awaySince;
+}
+
 QDateTime UserDetails::memberSinceTime() const
 {
 	return m_memberSince;
@@ -124,6 +130,11 @@ Oscar::DWORD UserDetails::extendedStatus() const
 int UserDetails::xtrazStatus() const
 {
 	return m_xtrazStatus;
+}
+
+Oscar::WORD UserDetails::iconType() const
+{
+	return m_iconType;
 }
 
 Oscar::BYTE UserDetails::iconCheckSumType() const
@@ -315,7 +326,7 @@ void UserDetails::fill( Buffer * buffer )
 			case 0x000D: //capability info
 				parseCapabilities(b, m_xtrazStatus);
 				m_capabilitiesSpecified = true;
-				m_xtrazStatusSpecified = (m_xtrazStatus > -1) ? true : false;
+				m_xtrazStatusSpecified = true;
 				break;
 			case 0x0010:
 			case 0x000F: //online time
@@ -347,11 +358,15 @@ void UserDetails::fill( Buffer * buffer )
 					case 0x0000:
 						b.skipBytes(length);
 						break;
-					case 0x0001:
-						if ( length > 0 && ( number == 0x01 || number == 0x00 ) )
+					case 0x0001: // AIM/ICQ avatar hash
+					case 0x000C: // ICQ contact photo 
+					//case 0x0008: // ICQ Flash avatar hash
+						if ( length > 0 && ( number == 0x01 || number == 0x00 ) &&
+						     ( m_iconSpecified == false || m_iconType < type2 ) ) // Check priority
 						{
+							m_iconType = type2;
 							m_iconChecksumType = number;
- 							m_md5IconHash = b.getBlock( length );
+							m_md5IconHash = b.getBlock( length );
 							m_iconSpecified = true;
 #ifdef OSCAR_USERINFO_DEBUG
 							kDebug(OSCAR_RAW_DEBUG) << "checksum:" << m_md5IconHash.toHex();
@@ -374,18 +389,27 @@ void UserDetails::fill( Buffer * buffer )
 							if ( b.bytesAvailable() >= 4 && b.getWord() == 0x0001 )
 							{
 								b.skipBytes( 2 );
-								kDebug(OSCAR_RAW_DEBUG) << "Encoding:" << b.getBSTR();
+								QByteArray encoding = b.getBSTR();
+								kDebug(OSCAR_RAW_DEBUG) << "Encoding:" << encoding;
 							}
 						}
 						else
 							kDebug(OSCAR_RAW_DEBUG) << "not enough bytes for available message";
 						break;
 					default:
+						b.skipBytes( length );
 						break;
 					}
 				}
 				break;
 			}
+			case 0x0029:
+				m_awaySince.setTime_t( b.getDWord() );
+				m_awaySinceSpecified = true;
+#ifdef OSCAR_USERINFO_DEBUG
+				kDebug(OSCAR_RAW_DEBUG) << "Away since " << m_awaySince;
+#endif
+				break;
 			default:
 				kDebug(OSCAR_RAW_DEBUG) << "Unknown TLV, type=" << t.type << ", length=" << t.length
 					<< " in userinfo" << endl;
@@ -753,6 +777,11 @@ void UserDetails::merge( const UserDetails& ud )
 		m_onlineSince = ud.m_onlineSince;
 		m_onlineSinceSpecified = true;
 	}
+	if ( ud.m_awaySinceSpecified )
+	{
+		m_awaySince = ud.m_awaySince;
+		m_awaySinceSpecified = true;
+	}
 	if ( ud.m_numSecondsOnlineSpecified )
 	{
 		m_numSecondsOnline = ud.m_numSecondsOnline;
@@ -801,6 +830,7 @@ void UserDetails::merge( const UserDetails& ud )
 	}
 	if ( ud.m_iconSpecified )
 	{
+		m_iconType = ud.m_iconType;
 		m_iconChecksumType = ud.m_iconChecksumType;
 		m_md5IconHash = ud.m_md5IconHash;
 		m_iconSpecified = true;

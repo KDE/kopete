@@ -19,6 +19,12 @@
 #include "router.h"
 #include "util_Xml.h"
 #include <upnp/upnp.h>
+
+Router::Router()
+{
+
+}
+
 /**
 * Constructor UpnpRouterPrivate
 *
@@ -36,128 +42,130 @@ Router::Router(const QUrl &url)
 	
 	//Load document XML
 	IXML_Document * xmlRouter = NULL; 
-	UpnpDownloadXmlDoc(m_routerSettingUrl.toString().toLatin1().data(),&xmlRouter);
-
-	IXML_NodeList * devicesList = ixmlDocument_getElementsByTagName(xmlRouter,(DOMString)"deviceType");
-	
-	if(ixmlNodeList_length(devicesList) > 0)
+	if(UpnpDownloadXmlDoc(m_routerSettingUrl.toString().toLatin1().data(),&xmlRouter)==UPNP_E_SUCCESS)
 	{
-		int posDevice=0;
-		for(unsigned int i = 0;i<ixmlNodeList_length(devicesList);i++)
-		{
-			if(strcmp(util_Xml_nodeValue(ixmlNodeList_item(devicesList,i)),"urn:schemas-upnp-org:device:WANConnectionDevice:1")==0)
-			{
-				//nodeDevice = ixmlNodeList_item(devicesList,i);
-				posDevice = i;
-			}
-		}
+
+		IXML_NodeList * devicesList = ixmlDocument_getElementsByTagName(xmlRouter,(DOMString)"deviceType");
 		
-		//get the first devicelist
-		IXML_Node* node_router = ixmlNodeList_item(devicesList,posDevice);
-		//getting all devices from the devicelist
-		IXML_NodeList* router_Child = ixmlNode_getChildNodes(ixmlNode_getParentNode(node_router));
-		for(int j = 0;j<(int)ixmlNodeList_length(router_Child);j++)
+		if(ixmlNodeList_length(devicesList) > 0)
 		{
-			//getting all data list from device
-			IXML_Node* child = ixmlNodeList_item(router_Child,j);
-			if(strcmp(ixmlNode_getNodeName(child),"deviceType")==0)
+			int posDevice=0;
+			for(unsigned int i = 0;i<ixmlNodeList_length(devicesList);i++)
 			{
-				m_routerType=QString(util_Xml_nodeValue(child));
-			}
-			if(strcmp(ixmlNode_getNodeName(child),"friendlyName")==0)
-			{
-				m_friendlyName = QString(util_Xml_nodeValue(child));
-			}
-			if(strcmp(ixmlNode_getNodeName(child),"manufacturer")==0)
-			{
-				m_manufacturer =QString(util_Xml_nodeValue(child));
-			}
-			if(strcmp(ixmlNode_getNodeName(child),"manufacturerURL")==0)
-			{
-				m_manufacturerURL = QString(util_Xml_nodeValue(child));
-			}
-			if(strcmp(ixmlNode_getNodeName(child),"modelName")==0)
-			{
-				m_modelName = QString(util_Xml_nodeValue(child));
-			}
-			if(strcmp(ixmlNode_getNodeName(child),"UDN")==0)
-			{
-				m_UDN = QString(util_Xml_nodeValue(child));
-			}
-			if(strcmp(ixmlNode_getNodeName(child),"modelDescription")==0)
-			{
-				m_modelDescription = QString(util_Xml_nodeValue(child));
-			}
-			if(strcmp(ixmlNode_getNodeName(child),"modelNumber")==0)
-			{
-				m_modelNumber = QString(util_Xml_nodeValue(child));
-			}
-			if(strcmp(ixmlNode_getNodeName(child),"serialNumber")==0)
-			{
-				m_serialNumber = QString(util_Xml_nodeValue(child));
-			}
-			if(strcmp(ixmlNode_getNodeName(child),"presentationURL")==0)
-			{
-				m_presentationURL = QString(util_Xml_nodeValue(child));
-			}
-			if(strcmp(ixmlNode_getNodeName(child),"UPC")==0)
-			{
-				m_UPC = QString(util_Xml_nodeValue(child));
-			}
-			if(strcmp(ixmlNode_getNodeName(child),"serviceList")==0)
-			{
-				IXML_NodeList* service_list = ixmlNode_getChildNodes(child);
-				IXML_Node* nService = ixmlNodeList_item(service_list,0);
-				
-				if(strcmp(ixmlNode_getNodeName(nService),"service")==0)
+				if(strcmp(util_Xml_nodeValue(ixmlNodeList_item(devicesList,i)),"urn:schemas-upnp-org:device:WANConnectionDevice:1")==0)
 				{
-					IXML_NodeList* service_description = ixmlNode_getChildNodes(nService);
-					for(int m=0;m<(int)ixmlNodeList_length(service_description);m++)
+					//nodeDevice = ixmlNodeList_item(devicesList,i);
+					posDevice = i;
+				}
+			}
+			
+			//get the first devicelist
+			IXML_Node* node_router = ixmlNodeList_item(devicesList,posDevice);
+			//getting all devices from the devicelist
+			IXML_NodeList* router_Child = ixmlNode_getChildNodes(ixmlNode_getParentNode(node_router));
+			for(int j = 0;j<(int)ixmlNodeList_length(router_Child);j++)
+			{
+				//getting all data list from device
+				IXML_Node* child = ixmlNodeList_item(router_Child,j);
+				if(strcmp(ixmlNode_getNodeName(child),"deviceType")==0)
+				{
+					m_routerType=QString(util_Xml_nodeValue(child));
+				}
+				if(strcmp(ixmlNode_getNodeName(child),"friendlyName")==0)
+				{
+					m_friendlyName = QString(util_Xml_nodeValue(child));
+				}
+				if(strcmp(ixmlNode_getNodeName(child),"manufacturer")==0)
+				{
+					m_manufacturer =QString(util_Xml_nodeValue(child));
+				}
+				if(strcmp(ixmlNode_getNodeName(child),"manufacturerURL")==0)
+				{
+					m_manufacturerURL = QString(util_Xml_nodeValue(child));
+				}
+				if(strcmp(ixmlNode_getNodeName(child),"modelName")==0)
+				{
+					m_modelName = QString(util_Xml_nodeValue(child));
+				}
+				if(strcmp(ixmlNode_getNodeName(child),"UDN")==0)
+				{
+					m_UDN = QString(util_Xml_nodeValue(child));
+				}
+				if(strcmp(ixmlNode_getNodeName(child),"modelDescription")==0)
+				{
+					m_modelDescription = QString(util_Xml_nodeValue(child));
+				}
+				if(strcmp(ixmlNode_getNodeName(child),"modelNumber")==0)
+				{
+					m_modelNumber = QString(util_Xml_nodeValue(child));
+				}
+				if(strcmp(ixmlNode_getNodeName(child),"serialNumber")==0)
+				{
+					m_serialNumber = QString(util_Xml_nodeValue(child));
+				}
+				if(strcmp(ixmlNode_getNodeName(child),"presentationURL")==0)
+				{
+					m_presentationURL = QString(util_Xml_nodeValue(child));
+				}
+				if(strcmp(ixmlNode_getNodeName(child),"UPC")==0)
+				{
+					m_UPC = QString(util_Xml_nodeValue(child));
+				}
+				if(strcmp(ixmlNode_getNodeName(child),"serviceList")==0)
+				{
+					IXML_NodeList* service_list = ixmlNode_getChildNodes(child);
+					IXML_Node* nService = ixmlNodeList_item(service_list,0);
+					
+					if(strcmp(ixmlNode_getNodeName(nService),"service")==0)
 					{
-						IXML_Node* service_Item = ixmlNodeList_item(service_description,m);
-						if(strcmp(ixmlNode_getNodeName(service_Item),"serviceType")==0)
+						IXML_NodeList* service_description = ixmlNode_getChildNodes(nService);
+						for(int m=0;m<(int)ixmlNodeList_length(service_description);m++)
 						{
-							serviceType = QString(util_Xml_nodeValue(service_Item));
-						}
-						if(strcmp(ixmlNode_getNodeName(service_Item),"serviceId")==0)
-						{
-							serviceId = QString(util_Xml_nodeValue(service_Item));
-						}
-						if(strcmp(ixmlNode_getNodeName(service_Item),"controlURL")==0)
-						{
-							controlURL = QString(util_Xml_nodeValue(service_Item));
-						}
-						if(strcmp(ixmlNode_getNodeName(service_Item),"eventSubURL")==0)
-						{
-							eventSubURL = QString(util_Xml_nodeValue(service_Item));
-						}
-						if(strcmp(ixmlNode_getNodeName(service_Item),"SCPDURL")==0)
-						{
-							int indice = m_routerSettingUrl.toString().lastIndexOf (QString('/'),-1, Qt::CaseSensitive) ;
-							
-							QString ssUrl = m_routerSettingUrl.toString().left(indice);
-							
-							if(QString(util_Xml_nodeValue(service_Item)).at(0)!=QChar('/'))
+							IXML_Node* service_Item = ixmlNodeList_item(service_description,m);
+							if(strcmp(ixmlNode_getNodeName(service_Item),"serviceType")==0)
 							{
-								ssUrl.push_back('/');
+								serviceType = QString(util_Xml_nodeValue(service_Item));
 							}
-							ssUrl.append(util_Xml_nodeValue(service_Item));
-							serviceSettingsUrl = QUrl(ssUrl);
+							if(strcmp(ixmlNode_getNodeName(service_Item),"serviceId")==0)
+							{
+								serviceId = QString(util_Xml_nodeValue(service_Item));
+							}
+							if(strcmp(ixmlNode_getNodeName(service_Item),"controlURL")==0)
+							{
+								controlURL = QString(util_Xml_nodeValue(service_Item));
+							}
+							if(strcmp(ixmlNode_getNodeName(service_Item),"eventSubURL")==0)
+							{
+								eventSubURL = QString(util_Xml_nodeValue(service_Item));
+							}
+							if(strcmp(ixmlNode_getNodeName(service_Item),"SCPDURL")==0)
+							{
+								int indice = m_routerSettingUrl.toString().lastIndexOf (QString('/'),-1, Qt::CaseSensitive) ;
+								
+								QString ssUrl = m_routerSettingUrl.toString().left(indice);
+								
+								if(QString(util_Xml_nodeValue(service_Item)).at(0)!=QChar('/'))
+								{
+									ssUrl.push_back('/');
+								}
+								ssUrl.append(util_Xml_nodeValue(service_Item));
+								serviceSettingsUrl = QUrl(ssUrl);
+							}
 						}
 					}
+					
 				}
-				
 			}
+	
+			//adding device service
+			m_service = Service();
+			m_service.setServiceType(serviceType);
+			m_service.setServiceId(serviceId);
+			m_service.setControlURL(controlURL);
+			m_service.setEventSubURL(eventSubURL);
+			m_service.setXmlDocService(serviceSettingsUrl.toString());
+			m_service.addAllActions();
 		}
-
-		//adding device service
-		m_service = Service();
-		m_service.setServiceType(serviceType);
-		m_service.setServiceId(serviceId);
-		m_service.setControlURL(controlURL);
-		m_service.setEventSubURL(eventSubURL);
-		m_service.setXmlDocService(serviceSettingsUrl.toString());
-		m_service.addAllActions();
 	}
 }
 
@@ -166,11 +174,6 @@ QUrl Router::routerSettingUrl() const
 	return m_routerSettingUrl;
 }
 
-/**
-* Description of router
-*
-* @return description of router
-*/
 QString Router::routerDescription()
 {
 	QString desc;
@@ -190,25 +193,23 @@ QString Router::routerDescription()
 	return desc;
 }
 
-/**
-* Check if router is valid
-*
-* @return true if router is valid, false otherwise
-*/
-bool Router::isValid()
+bool Router::isValid() const
 {
-	bool valid = false; 
+	bool valid = false;
+ 
 	IXML_Document * xmlRouter = NULL;
-	UpnpDownloadXmlDoc(m_routerSettingUrl.toString().toLatin1().data(),&xmlRouter);
-
-	IXML_NodeList * devicesList = ixmlDocument_getElementsByTagName(xmlRouter,(DOMString)"deviceType");
-	if(ixmlNodeList_length(devicesList) > 0)
+	if(UpnpDownloadXmlDoc(m_routerSettingUrl.toString().toLatin1().data(),&xmlRouter)==UPNP_E_SUCCESS)
 	{
-		for(unsigned int i = 0;i<ixmlNodeList_length(devicesList) && !valid;i++)
+
+		IXML_NodeList * devicesList = ixmlDocument_getElementsByTagName(xmlRouter,(DOMString)"deviceType");
+		if(ixmlNodeList_length(devicesList) > 0)
 		{
-			if(strcmp(util_Xml_nodeValue(ixmlNodeList_item(devicesList,i)),"urn:schemas-upnp-org:device:WANConnectionDevice:1")==0)
+			for(unsigned int i = 0;i<ixmlNodeList_length(devicesList) && !valid;i++)
 			{
-				valid = true;
+				if(strcmp(util_Xml_nodeValue(ixmlNodeList_item(devicesList,i)),"urn:schemas-upnp-org:device:WANConnectionDevice:1")==0)
+				{
+					valid = true;
+				}
 			}
 		}
 	}
@@ -220,9 +221,13 @@ bool Router::isValid()
 *
 * @return true if router is empty, false otherwise
 */
-bool Router::isEmpty()
+bool Router::isEmpty() const
 {
 	bool empty = true;
+	if(this->m_routerSettingUrl.isEmpty()==false)
+	{
+		empty = false;
+	}	
 	if(this->m_routerType.isEmpty()==false)
 	{
 		empty = false;
@@ -267,7 +272,7 @@ bool Router::isEmpty()
 	{
 		empty = false;
 	}
-
+	
 	return empty;
 }
 

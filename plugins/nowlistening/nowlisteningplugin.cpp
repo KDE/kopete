@@ -20,11 +20,12 @@
 
 #include <QTimer>
 #include <QStringList>
+#include <QVariantList>
 #include <QList>
 #include <QRegExp>
 
 #include <kdebug.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include <kaction.h>
 
 #include "config-kopete.h"
@@ -41,7 +42,7 @@
 #include "nowlisteningplugin.h"
 #include "nlmediaplayer.h"
 #include "nlkscd.h"
-#include "nlnoatun.h"
+//#include "nlnoatun.h"
 #include "nljuk.h"
 #include "nlamarok.h"
 #include "nlkaffeine.h"
@@ -79,10 +80,10 @@ public:
 	QTimer *advertTimer;
 };
 
-typedef KGenericFactory<NowListeningPlugin> NowListeningPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_nowlistening, NowListeningPluginFactory( "kopete_nowlistening" )  )
+K_PLUGIN_FACTORY( NowListeningPluginFactory, registerPlugin<NowListeningPlugin>(); )
+K_EXPORT_PLUGIN( NowListeningPluginFactory( "kopete_nowlistening" ) )
 
-NowListeningPlugin::NowListeningPlugin( QObject *parent, const QStringList& /*args*/ )
+NowListeningPlugin::NowListeningPlugin( QObject *parent, const QVariantList& /*args*/ )
 : Kopete::Plugin( NowListeningPluginFactory::componentData(), parent )
 {
 	if ( pluginStatic_ )
@@ -111,7 +112,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const QStringList& /*ar
 
 	// set up known media players
 	d->m_mediaPlayerList.append( new NLKscd() );
-	d->m_mediaPlayerList.append( new NLNoatun() );
+	//d->m_mediaPlayerList.append( new NLNoatun() );
 	d->m_mediaPlayerList.append( new NLJuk() );
 	d->m_mediaPlayerList.append( new NLamaroK() );
 	d->m_mediaPlayerList.append( new NLKaffeine() );
@@ -315,7 +316,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 				}
 				else
 				{
-					advert = advert.replace(statusSong, "");
+					advert = advert.remove(statusSong);
 				}
 			}
 			else

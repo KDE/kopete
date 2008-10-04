@@ -106,7 +106,7 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 	d->mainWidget.setupUi(this);
 
 	// use icons on buttons
-	d->mainWidget.buttonAddAvatar->setIcon( KIcon("edit-add") );
+	d->mainWidget.buttonAddAvatar->setIcon( KIcon("list-add") );
 	d->mainWidget.buttonRemoveAvatar->setIcon( KIcon("edit-delete") );
 
 	// Connect signals/slots
@@ -182,8 +182,12 @@ void AvatarSelectorWidget::buttonAddAvatarClicked()
 		if( !imageUrl.isLocalFile() )
 			return;
 
+		QPixmap pixmap( imageUrl.path() );
+		if ( pixmap.isNull() )
+			return;
+
 		// Crop the image
-		QImage avatar = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap(imageUrl.path()), 96, 96, this );
+		QImage avatar = KPixmapRegionSelectorDialog::getSelectedImage( pixmap, 96, 96, this );
 
 		QString imageName = imageUrl.fileName();
 
@@ -256,6 +260,7 @@ void AvatarSelectorWidget::queryJobFinished(KJob *job)
 void AvatarSelectorWidget::avatarAdded(Kopete::AvatarManager::AvatarEntry newEntry)
 {
 	d->addItem(newEntry);
+	setCurrentAvatar(newEntry.path);
 }
 
 void AvatarSelectorWidget::avatarRemoved(Kopete::AvatarManager::AvatarEntry entryRemoved)

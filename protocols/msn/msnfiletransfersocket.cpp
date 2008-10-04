@@ -20,15 +20,11 @@
 #include <stdlib.h>
 #include <math.h>
 
-//qt
-#include <qtimer.h>
-//Added by qt3to4:
+#include <QTimer>
 #include <QByteArray>
+#include <QTcpServer>
 
-// kde
 #include <kdebug.h>
-#include <k3serversocket.h>
-#include <k3bufferedsocket.h>
 #include <kfiledialog.h>
 #include <klocale.h>
 
@@ -39,8 +35,6 @@
 #include "msnswitchboardsocket.h"
 #include "msnnotifysocket.h"
 #include "msnaccount.h"
-
-using namespace KNetwork;
 
 MSNFileTransferSocket::MSNFileTransferSocket(const QString &handle, Kopete::Contact *c,bool incoming, QObject* parent)
 	: MSNSocket(parent) , MSNInvitation(incoming, MSNFileTransferSocket::applicationID() , i18n("File Transfer - MSN Plugin"))
@@ -194,13 +188,12 @@ void MSNFileTransferSocket::setKopeteTransfer(Kopete::Transfer *kt)
 
 void MSNFileTransferSocket::listen(int port)
 {
-	m_server = new KServerSocket();
+	m_server = new QTcpServer();
 
-	QObject::connect( m_server, SIGNAL(readyAccept()), this,  SLOT(slotAcceptConnection()));
-	m_server->setAddress(QString::number(port));
+	QObject::connect( m_server, SIGNAL(newConnection()), this,  SLOT(slotAcceptConnection()));
 
 	kDebug(14140) << "MSNFileTransferSocket::listen: about to listen";
-	bool listenResult = m_server->listen(1);
+	bool listenResult = m_server->listen(QHostAddress::Any, port);
 	kDebug(14140) << "MSNFileTransferSocket::listen: result: "<<  listenResult;
 	QTimer::singleShot( 60000, this, SLOT(slotTimer()) );
 	kDebug(14140) << "MSNFileTransferSocket::listen done";

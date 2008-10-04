@@ -20,6 +20,7 @@
 #include <kdialog.h>
 #include <klocale.h>
 #include <kmenu.h>
+#include <kactionmenu.h>
 #include <kmessagebox.h>
 #include <ktoggleaction.h>
 #include <kicon.h>
@@ -68,8 +69,8 @@ void AIMMyselfContact::userInfoUpdated()
 	AIMProtocol* p = static_cast<AIMProtocol *>(protocol());
 	Oscar::Presence presence = p->statusManager()->presenceOf( extendedStatus, details().userClass() );
 
-	setProperty( Kopete::Global::Properties::self()->statusMessage(), static_cast<AIMAccount*>( account() )->engine()->statusMessage() );
 	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
+	setStatusMessage( static_cast<AIMAccount*>( account() )->engine()->statusMessage() );
 }
 
 void AIMMyselfContact::setOwnProfile( const QString& newProfile )
@@ -231,7 +232,7 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 	mJoinChatAction = new KAction( i18n( "Join Chat..." ), this );
 	QObject::connect( mJoinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChat()) );
 	
-	mEditInfoAction = new KAction( KIcon("identity"), i18n( "Edit User Info..." ), this );
+	mEditInfoAction = new KAction( KIcon("user-properties"), i18n( "Edit User Info..." ), this );
 	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()) );
 	
 	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );
@@ -256,10 +257,8 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 {
 	if ( QRegExp("[\\d]+").exactMatch( contactId ) )
 	{
-		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString(), ssiItem );
-
-		if ( !ssiItem.alias().isEmpty() )
-			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+		ICQContact* contact = new ICQContact( this, contactId, parentContact, QString() );
+		contact->setSSIItem( ssiItem );
 
 		if ( engine()->isActive() )
 			contact->loggedIn();
@@ -268,10 +267,8 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::Me
 	}
 	else
 	{
-		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString(), ssiItem );
-
-		if ( !ssiItem.alias().isEmpty() )
-			contact->setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
+		AIMContact* contact = new AIMContact( this, contactId, parentContact, QString() );
+		contact->setSSIItem( ssiItem );
 
 		return contact;
 	}
@@ -282,7 +279,11 @@ QString AIMAccount::sanitizedMessage( const QString& message ) const
 	QDomDocument doc;
 	QString domError;
 	int errLine = 0, errCol = 0;
-	doc.setContent( addQuotesAroundAttributes(message), false, &domError, &errLine, &errCol );
+	
+	QString msg = addQuotesAroundAttributes(message);
+	msg.replace( "<BR>", "<BR/>", Qt::CaseInsensitive );
+	
+	doc.setContent( msg, false, &domError, &errLine, &errCol );
 	if ( !domError.isEmpty() ) //error parsing, do nothing
 	{
 		kDebug(OSCAR_AIM_DEBUG) << "error from dom document conversion: "
@@ -327,21 +328,22 @@ QString AIMAccount::sanitizedMessage( const QString& message ) const
 	return doc.toString();
 }
 
-KActionMenu* AIMAccount::actionMenu()
+void AIMAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
-	mActionMenu->addSeparator();
+	actionMenu->addSeparator();
 
-	mActionMenu->addAction( mJoinChatAction );
-	mActionMenu->addAction( mEditInfoAction );
+	mJoinChatAction->setEnabled( isConnected() );
+	actionMenu->addAction( mJoinChatAction );
+
+	mEditInfoAction->setEnabled( isConnected() );
+	actionMenu->addAction( mEditInfoAction );
 
 	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );
 	mActionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
 	mActionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
-	mActionMenu->addAction( mActionInvisible );
-
-	return mActionMenu;
+	actionMenu->addAction( mActionInvisible );
 }
 
 void AIMAccount::setPresenceFlags( Oscar::Presence::Flags flags, const QString &message )
@@ -525,7 +527,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 		if( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
 		{
 			QString sender = Oscar::normalize( message.sender() );
-			AIMContact* aimSender = dynamic_cast<AIMContact *> ( contacts()[sender] ); //should exist now
+			AIMContact* aimSender = dynamic_cast<AIMContact *> ( contacts().value( sender ) ); //should exist now
 			if ( !aimSender )
 			{
 				kWarning(OSCAR_RAW_DEBUG) << "For some reason, could not get the contact "
@@ -567,7 +569,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 					Oscar::normalize( message.chatRoom() ) )
 			{
 				kDebug(OSCAR_AIM_DEBUG) << "found chat session for chat room";
-				OscarContact* ocSender = static_cast<OscarContact*>(contacts()[Oscar::normalize( message.sender() )]);
+				OscarContact* ocSender = static_cast<OscarContact*>(contacts().value( Oscar::normalize( message.sender() ) ));
 				//sanitize;
 				QString sanitizedMsg = sanitizedMessage( message.text( defaultCodec() ) );
 
@@ -614,10 +616,8 @@ void AIMAccount::userJoinedChat( Oscar::WORD exchange, const QString& room, cons
 		if ( session->exchange() == exchange && session->roomName() == room )
 		{
 			kDebug(OSCAR_AIM_DEBUG) << "found correct chat session";
-			Kopete::Contact* c;
-			if ( contacts()[Oscar::normalize( contact )] )
-				c = contacts()[Oscar::normalize( contact )];
-			else
+			Kopete::Contact* c = contacts().value( Oscar::normalize( contact ) );
+			if ( !c )
 			{
 				Kopete::MetaContact* mc = addContact( Oscar::normalize( contact ),
 						contact, 0, Kopete::Account::Temporary );
@@ -652,7 +652,7 @@ void AIMAccount::userLeftChat( Oscar::WORD exchange, const QString& room, const 
 		if ( session->exchange() == exchange && session->roomName() == room )
 		{
 			//delete temp contact
-			Kopete::Contact* c = contacts()[Oscar::normalize( contact )];
+			Kopete::Contact* c = contacts().value( Oscar::normalize( contact ) );
 			if ( !c )
 			{
 				kWarning(OSCAR_AIM_DEBUG) << "couldn't find the contact that's left the chat!";
@@ -746,35 +746,7 @@ void AIMAccount::setPrivacySettings( int privacy )
 			break;
 	}
 
-	this->setPrivacyTLVs( privacyByte, userClasses );
-}
-
-void AIMAccount::setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses )
-{
-	ContactManager* ssi = engine()->ssiManager();
-	OContact item = ssi->findItem( QString(), ROSTER_VISIBILITY );
-
-	QList<Oscar::TLV> tList;
-
-	tList.append( TLV( 0x00CA, 1, (char *)&privacy ) );
-	tList.append( TLV( 0x00CB, sizeof(userClasses), (char *)&userClasses ) );
-
-	if ( !item )
-	{
-		kDebug(OSCAR_AIM_DEBUG) << "Adding new privacy TLV item";
-		OContact s( QString(), 0, ssi->nextContactId(), ROSTER_VISIBILITY, tList );
-		engine()->modifyContactItem( item, s );
-	}
-	else
-	{ //found an item
-		OContact s(item);
-
-		if ( Oscar::updateTLVs( s, tList ) == true )
-		{
-			kDebug(OSCAR_AIM_DEBUG) << "Updating privacy TLV item";
-			engine()->modifyContactItem( item, s );
-		}
-	}
+	engine()->setPrivacyTLVs( privacyByte, userClasses );
 }
 
 QString AIMAccount::addQuotesAroundAttributes( QString message ) const
@@ -789,16 +761,22 @@ QString AIMAccount::addQuotesAroundAttributes( QString message ) const
 	sIndex = message.indexOf( "<", eIndex );
 	eIndex = message.indexOf( ">", sIndex );
 	
+	if ( sIndex == -1 || eIndex == -1 )
+		return message;
+	
 	while ( attrRegExp.indexIn( message, searchIndex ) != -1 )
 	{
 		int startReplace = message.indexOf( "=", attrRegExp.pos() ) + 1;
 		int replaceLength = attrRegExp.pos() + attrRegExp.matchedLength() - startReplace;
 		
-		while ( startReplace + replaceLength > eIndex )
+		while ( eIndex != -1 && sIndex != -1 && startReplace + replaceLength > eIndex )
 		{
 			sIndex = message.indexOf( "<", eIndex );
 			eIndex = message.indexOf( ">", sIndex );
 		}
+		
+		if ( sIndex == -1 || eIndex == -1 )
+			return message;
 		
 		searchIndex = attrRegExp.pos() + attrRegExp.matchedLength();
 		if ( startReplace <= sIndex )

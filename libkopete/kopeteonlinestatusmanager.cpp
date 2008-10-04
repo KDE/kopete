@@ -18,22 +18,16 @@
 
 #include "kopeteonlinestatusmanager.h"
 
-#include "kopeteawayaction.h"
 #include "kopeteprotocol.h"
-#include "kopeteaccount.h"
-#include "kopetecontact.h"
+#include "kopetebehaviorsettings.h"
 
 #include <kiconloader.h>
 #include <kiconeffect.h>
 #include <kglobalsettings.h>
 #include <kdebug.h>
-#include <klocale.h>
 #include <kicon.h>
 
 #include <algorithm> // for min
-#include <QPixmap>
-#include <QByteArray>
-#include <QHash>
 
 namespace Kopete {
 
@@ -41,17 +35,14 @@ namespace Kopete {
 class OnlineStatusManager::Private
 {
 public:
-	struct RegisteredStatusStruct
+	struct QMapDummyValue
 	{
-		QString caption;
-		OnlineStatusManager::Categories categories;
-		OnlineStatusManager::Options options;
 	};
 
-	typedef QMap< OnlineStatus , RegisteredStatusStruct >  ProtocolMap ;
+	typedef QMap< OnlineStatus , QMapDummyValue >  RegisteredStatusMap;
 
 	QPixmap *nullPixmap;
-	QMap<Protocol* , ProtocolMap > registeredStatus;
+	QMap< Protocol* , RegisteredStatusMap > registeredStatus;
 	QHash< QString, QPixmap* > iconCache;
 };
 
@@ -90,13 +81,9 @@ void OnlineStatusManager::slotIconsChanged()
 	emit iconsChanged();
 }
 
-void OnlineStatusManager::registerOnlineStatus( const OnlineStatus &status, const QString & caption, Categories categories, Options options)
+void OnlineStatusManager::registerOnlineStatus( const OnlineStatus &status )
 {
-	Private::RegisteredStatusStruct s;
-	s.caption=caption;
-	s.categories=categories;
-	s.options=options;
-	d->registeredStatus[status.protocol()].insert(status, s );
+	d->registeredStatus[status.protocol()].insert( status, Private::QMapDummyValue() );
 }
 
 OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories category) const
@@ -113,7 +100,7 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 	 *  To get the parent of a key, one just divide per two the number
 	 */
 
-	Private::ProtocolMap protocolMap=d->registeredStatus[protocol];
+	Private::RegisteredStatusMap protocolMap=d->registeredStatus[protocol];
 
 	int categ_nb=-1;  //the logaritm of category
 	uint category_=category;
@@ -125,10 +112,10 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 
 	do
 	{
-		Private::ProtocolMap::Iterator it;
+		Private::RegisteredStatusMap::Iterator it;
 		for ( it = protocolMap.begin(); it != protocolMap.end(); it++ )
 		{
-			unsigned int catgs=it.value().categories;
+			unsigned int catgs=it.key().categories();
 			if(catgs & (1<<(categ_nb)))
 				return it.key();
 		}
@@ -138,6 +125,31 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 
 	kWarning() << "No status in the category " << category << " for the protocol " << protocol->displayName();
 	return OnlineStatus();
+}
+
+OnlineStatusManager::Category OnlineStatusManager::initialStatus() const
+{
+    Kopete::OnlineStatusManager::Category statusValue;
+		switch( Kopete::BehaviorSettings::self()->initialStatus() )
+		{
+		  case Kopete::BehaviorSettings::EnumInitialStatus::Offline:
+			statusValue = Kopete::OnlineStatusManager::Offline;
+		  break;
+		  case Kopete::BehaviorSettings::EnumInitialStatus::Online:
+			statusValue = Kopete::OnlineStatusManager::Online;
+		  break;
+		  case Kopete::BehaviorSettings::EnumInitialStatus::Away:
+			statusValue = Kopete::OnlineStatusManager::Away;
+		  break;
+		  case Kopete::BehaviorSettings::EnumInitialStatus::Busy:
+			statusValue = Kopete::OnlineStatusManager::Busy;
+		  break;
+		  case Kopete::BehaviorSettings::EnumInitialStatus::Invisible:
+			statusValue = Kopete::OnlineStatusManager::Invisible;
+		  break;
+		}
+
+    return statusValue;
 }
 
 QString OnlineStatusManager::fingerprint( const OnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle)
@@ -325,7 +337,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	if ( !statusFor.overlayIcons().empty() && baseIcon == statusFor.overlayIcons().first() )
 		kWarning( 14010 ) << "Base and overlay icons are the same - icon effects will not be visible.";
 
-	QPixmap* basis = new QPixmap( SmallIcon( baseIcon ) );
+	QPixmap* basis = new QPixmap( KIcon(baseIcon).pixmap(size) );
 
 	// Colorize
 	if ( color.isValid() )
@@ -347,7 +359,7 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 		int i = 0;
 		for( QStringList::iterator it = overlays.begin(), end = overlays.end(); it != end; ++it )
 		{
-			QPixmap overlay = loader->loadIcon(*it, KIconLoader::Small, 0 ,
+			QPixmap overlay = loader->loadIcon(*it, KIconLoader::NoGroup, size,
 				KIconLoader::DefaultState, QStringList(), 0L, /*canReturnNull=*/ true );
 
 			if ( !overlay.isNull() )
@@ -386,80 +398,33 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	return basis;
 }
 
-void OnlineStatusManager::createAccountStatusActions( Account *account , KActionMenu *parent)
+QList<OnlineStatus> OnlineStatusManager::registeredStatusList( Protocol *protocol ) const
 {
-	Private::ProtocolMap protocolMap=d->registeredStatus[account->protocol()];
-	Private::ProtocolMap::Iterator it;
-	for ( it = --protocolMap.end(); it != protocolMap.end(); --it )
+	return d->registeredStatus.value( protocol ).keys();
+}
+
+KIcon OnlineStatusManager::pixmapForCategory( Categories category )
+{
+	switch ( category )
 	{
-		unsigned int options=it.value().options;
-		if(options & OnlineStatusManager::HideFromMenu)
-			continue;
-
-		OnlineStatus status=it.key();
-		QString caption=it.value().caption;
-		KAction *action;
-
-		// Any existing actions owned by the account are reused by recovering them
-		// from the parent's child list.
-		// The description of the onlinestatus is used as the qobject name
-		// This is safe as long as OnlineStatus are immutable
-		QByteArray actionName = status.description().toAscii();
-		if ( !( action = account->findChild<KAction*>( actionName ) ) )
-		{
-			if(options & OnlineStatusManager::HasStatusMessage)
-			{
-				action = new AwayAction( status, caption, status.iconFor(account), KShortcut(), account, account,
-							 SLOT( setOnlineStatus( const Kopete::OnlineStatus&, const Kopete::StatusMessage& ) ));
-			}
-			else
-			{
-				action = new OnlineStatusAction( status, caption, status.iconFor(account), account );
-				connect(action, SIGNAL(activated(const Kopete::OnlineStatus&)) ,
-                                        account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
-			}
-			action->setObjectName( actionName ); // for the lookup by name above
-		}
-
-		if( options & OnlineStatusManager::DisabledIfOffline )
-			action->setEnabled( account->isConnected() );
-
-		if(parent)
-			parent->addAction(action);
-
+	case Kopete::OnlineStatusManager::Online:
+		return KIcon("user-online");
+	case Kopete::OnlineStatusManager::FreeForChat:
+		return KIcon("user-online");
+	case Kopete::OnlineStatusManager::Away:
+		return KIcon("user-away");
+	case Kopete::OnlineStatusManager::ExtendedAway:
+		return KIcon("user-away-extended");
+	case Kopete::OnlineStatusManager::Busy:
+		return KIcon("user-busy");
+	case Kopete::OnlineStatusManager::Invisible:
+		return KIcon("user-invisible");
+	case Kopete::OnlineStatusManager::Offline:
+		return KIcon("user-offline");
+	default:
+		return KIcon("user-identity");
 	}
 }
-
-
-class OnlineStatusAction::Private
-{
-public:
-	Private( const OnlineStatus& t_status )
-	 : status(t_status)
-	{}
-
-	OnlineStatus status;
-};
-OnlineStatusAction::OnlineStatusAction( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent )
-	: KAction( KIcon(pix), text, parent) , d( new Private(status) )
-{
-	setShortcut( KShortcut() );
-
-	connect(this, SIGNAL(triggered(bool)), this, SLOT(slotActivated()));
-
-	connect(parent,SIGNAL(destroyed()),this,SLOT(deleteLater()));
-}
-
-OnlineStatusAction::~OnlineStatusAction()
-{
-	delete d;
-}
-
-void OnlineStatusAction::slotActivated()
-{
-	emit activated(d->status);
-}
-
 
 } //END namespace Kopete
 

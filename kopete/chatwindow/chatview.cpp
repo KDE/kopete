@@ -31,7 +31,6 @@
 #include "kopeteviewmanager.h"
 #include "kopetebehaviorsettings.h"
 
-#include <kactioncollection.h>
 #include <kconfig.h>
 #include <ktabwidget.h>
 #include <kdebug.h>
@@ -43,24 +42,15 @@
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
-#include <kstandardaction.h>
-//#include <ksyntaxhighlighter.h>
-
 
 #include <QTimer>
 #include <QSplitter>
-
-//Added by qt3to4:
-#include <QPixmap>
-#include <QDropEvent>
-#include <QDragEnterEvent>
 #include <Q3UriDrag>
-#include <QObject>
 
-typedef KGenericFactory<ChatWindowPlugin> ChatWindowPluginFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ChatWindowPluginFactory( "kopete_chatwindow" )  )
+K_PLUGIN_FACTORY( ChatWindowPluginFactory, registerPlugin<ChatWindowPlugin>(); )
+K_EXPORT_PLUGIN( ChatWindowPluginFactory( "kopete_chatwindow" ) )
 
-ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const QStringList &) :
+ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const QVariantList &) :
 	Kopete::ViewPlugin( ChatWindowPluginFactory::componentData(), parent )
 {}
 
@@ -77,6 +67,7 @@ public:
 	bool isActive;
 	bool sendInProgress;
 	bool visibleMembers;
+	QSplitter * splitter;
 };
 
 ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
@@ -98,7 +89,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	//FIXME: don't widgets start off hidden anyway?
 	hide();
 
-	QSplitter *splitter = new QSplitter( Qt::Vertical, vbox );
+	d->splitter = new QSplitter( Qt::Vertical, vbox );
 
 	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)
 	m_messagePart = new ChatMessagePart( mgr , this );
@@ -106,10 +97,12 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	//Create the bottom dock widget, with the edit area, statusbar and send button
 	m_editPart = new ChatTextEditPart( mgr, vbox );
 
-	splitter->addWidget(m_messagePart->view());
-	splitter->addWidget(m_editPart->widget());
-	splitter->setStretchFactor(0, 3);
-	splitter->setStretchFactor(1, 0);
+	d->splitter->addWidget(m_messagePart->view());
+	d->splitter->addWidget(m_editPart->widget());
+	d->splitter->setChildrenCollapsible( false );
+	QList<int> sizes;
+	sizes << 240 << 40;
+	d->splitter->setSizes( sizes ); 
 
 	// FIXME: is this used these days? it seems totally unnecessary
 	connect( editPart(), SIGNAL( toolbarToggled(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
@@ -156,12 +149,15 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	// add contacts
 	slotContactAdded( mgr->myself(), true );
 	for ( i = 0; i != mgr->members().size(); i++ )
+	{
 		slotContactAdded( mgr->members()[i], true );
+	}
 
 	setFocusProxy( editPart()->widget() );
+	m_messagePart->widget()->setFocusProxy( editPart()->widget() );
 	editPart()->widget()->setFocus();
 
-	setCaption( m_manager->displayName(), false );
+	slotChatDisplayNameChanged();
 
 	// restore docking positions
 	readOptions();
@@ -257,7 +253,14 @@ void ChatView::setFont( const QFont &font )
 
 void ChatView::setFgColor( const QColor &newColor )
 {
-	editPart()->setTextColor( newColor );
+    if ( newColor.isValid() )
+	{
+		editPart()->setTextColor( newColor );
+    }
+	else
+	{
+		editPart()->setTextColor();
+    }
 }
 
 void ChatView::raise( bool activate )
@@ -278,20 +281,12 @@ void ChatView::raise( bool activate )
 #endif
 	if(m_mainWindow->isMinimized())
 	{
-		m_mainWindow->showNormal();
+		KWindowSystem::unminimizeWindow( m_mainWindow->winId());
 	}
 
 
 	m_mainWindow->raise();
 
-	/* Removed Nov 2003
-	According to Zack, the user double-clicking a contact is not valid reason for a non-pager
-	to grab window focus. While I don't agree with this, and it runs contradictory to every other
-	IM out there, commenting this code out to agree with KWin policy.
-
-	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
-		- Jason K
-	*/
 	//Will not activate window if user was typing
 	if ( activate )
 		KWindowSystem::activateWindow( m_mainWindow->winId() );
@@ -401,10 +396,6 @@ void ChatView::updateChatState( KopeteTabState newState )
 void ChatView::setMainWindow( KopeteChatWindow* parent )
 {
 	m_mainWindow = parent;
-
-	// init actions
-	KStandardAction::copy( this, SLOT(copy()), m_mainWindow->actionCollection());
-	KStandardAction::close( this, SLOT(closeView()), m_mainWindow->actionCollection());
 }
 
 void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
@@ -432,16 +423,7 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 	for( it = m_remoteTypingMap.begin(); it != m_remoteTypingMap.end(); ++it )
 	{
 		const Kopete::Contact *c = it.key();
-		QString nick;
-		if( c->metaContact() && c->metaContact() != Kopete::ContactList::self()->myself() )
-		{
-			nick = c->metaContact()->displayName();
-		}
-		else
-		{
-			nick = c->nickName();
-		}
-		typingList.append( nick );
+		typingList.append( m_messagePart->formatName(c, Qt::PlainText) );
 	}
 
 	// Update the status area
@@ -480,6 +462,21 @@ void ChatView::slotChatDisplayNameChanged()
 	// update the caption if it changed to avoid unneeded updates that
 	// could cause flickering
 	QString chatName = m_manager->displayName();
+
+	foreach (const Kopete::Contact *c, msgManager()->members())
+	{
+		QString contactName = m_messagePart->formatName(c, Qt::PlainText);
+		if ( c->metaContact() )
+		{
+			chatName.replace( c->metaContact()->displayName(), contactName );
+		}
+		else
+		{
+			chatName.replace( c->nickName(), contactName );
+		}
+	}
+
+
 	if ( chatName != d->captionText )
 		setCaption( chatName, true );
 }
@@ -509,17 +506,6 @@ void ChatView::slotDisplayNameChanged( const QString &oldValue, const QString &n
 
 void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 {
-	QString contactName;
-	// Myself metacontact is not a reliable source.
-	if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
-	{
-		contactName = contact->metaContact()->displayName();
-	}
-	else
-	{
-		contactName = contact->nickName();
-	}
-
 	if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
 	{
 		connect( contact->metaContact(), SIGNAL( displayNameChanged(const QString&, const QString&) ),
@@ -531,6 +517,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 		this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 	}
 
+	QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
 	if( !suppress && m_manager->members().count() > 1 )
 		sendInternalMessage(  i18n("%1 has joined the chat.", contactName) );
 
@@ -552,16 +539,6 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 			m_remoteTypingMap.remove( contact );
 		}
 
-		QString contactName;
-		if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
-		{
-			contactName = contact->metaContact()->displayName();
-		}
-		else
-		{
-			contactName = contact->nickName();
-		}
-
 		// When the last person leaves, don't disconnect the signals, since we're in a one-to-one chat
 		if ( m_manager->members().count() > 0 )
 		{
@@ -579,6 +556,7 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 
 		if ( !suppressNotification )
 		{
+			QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
 			if ( reason.isEmpty() )
 				sendInternalMessage( i18n( "%1 has left the chat.", contactName ), format ) ;
 			else
@@ -647,14 +625,7 @@ void ChatView::appendMessage(Kopete::Message &message)
 
 	if( message.direction() == Kopete::Message::Inbound )
 	{
-		if( message.from()->metaContact() && message.from()->metaContact() != Kopete::ContactList::self()->myself() )
-		{
-			unreadMessageFrom = message.from()->metaContact()->displayName();
-		}
-		else
-		{
-			unreadMessageFrom = message.from()->nickName();
-		}
+		unreadMessageFrom = m_messagePart->formatName ( message.from(), Qt::PlainText );
 		QTimer::singleShot( 1000, this, SLOT( slotMarkMessageRead() ) );
 	}
 	else
@@ -676,7 +647,7 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
  	kDebug(14000) << contact;
 	bool inhibitNotification = ( newStatus.status() == Kopete::OnlineStatus::Unknown ||
 	                             oldStatus.status() == Kopete::OnlineStatus::Unknown );
-	if ( contact && Kopete::BehaviorSettings::self() && !inhibitNotification )
+	if ( contact && Kopete::BehaviorSettings::self()->showEvents() && !inhibitNotification )
 	{
 		if ( contact->account() && contact == contact->account()->myself() )
 		{
@@ -686,18 +657,9 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
 		}
 		else if ( !contact->account() || !contact->account()->suppressStatusNotification() )
 		{
-			// Don't send notifications when we just connected ourselves, i.e. when suppressions are still active
-			if ( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
-			{
-				sendInternalMessage( i18n( "%2 is now %1.",
-					newStatus.description(), contact->metaContact()->displayName() ) );
-			}
-			else
-			{
-				QString nick=contact->nickName();
-				sendInternalMessage( i18n( "%2 is now %1.",
-					newStatus.description(), nick ) );
-			}
+			QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
+			sendInternalMessage( i18n( "%2 is now %1.",
+				newStatus.description(), contactName ) );
 		}
 	}
 
@@ -744,8 +706,8 @@ void ChatView::messageSentSuccessfully()
 void ChatView::saveOptions()
 {
 	KSharedConfig::Ptr config = KGlobal::config();
-
-//	writeDockConfig ( config, QLatin1String( "ChatViewDock" ) );
+	KConfigGroup kopeteChatWindowMainWinSettings( config, ( msgManager()->form() == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
+	kopeteChatWindowMainWinSettings.writeEntry( QLatin1String("ChatViewSplitter"), d->splitter->saveState().toBase64() );
 	saveChatSettings();
 	config->sync();
 }
@@ -769,7 +731,7 @@ void ChatView::saveChatSettings()
 	                           mc->metaContactId();
     KConfigGroup config = KGlobal::config()->group(contactListGroup);
 	config.writeEntry( "EnableRichText", editPart()->isRichTextEnabled() );
-	config.writeEntry( "EnableAutoSpellCheck", editPart()->autoSpellCheckEnabled() );
+	config.writeEntry( "EnableAutoSpellCheck", editPart()->checkSpellingEnabled() );
 	config.sync();
 }
 
@@ -786,39 +748,17 @@ void ChatView::loadChatSettings()
 	bool enableRichText = config.readEntry( "EnableRichText", true );
 	editPart()->setRichTextEnabled( enableRichText );
 	emit rtfEnabled( this, editPart()->isRichTextEnabled() );
-	bool enableAutoSpell = config.readEntry( "EnableAutoSpellCheck", false );
+	bool enableAutoSpell = config.readEntry( "EnableAutoSpellCheck", Kopete::BehaviorSettings::self()->spellCheck() );
 	emit autoSpellCheckEnabled( this, enableAutoSpell );
 }
 
 void ChatView::readOptions()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
-
-	/** THIS IS BROKEN !!! */
-	//dockManager->readConfig ( config, QLatin1String("ChatViewDock") );
-#if 0
-	//Work-around to restore dock widget positions
-	config->setGroup( QLatin1String( "ChatViewDock" ) );
-
-	membersDockPosition = static_cast<K3DockWidget::DockPosition>(
-		config->readEntry( QLatin1String( "membersDockPosition" ), K3DockWidget::DockRight ) );
-
-	QString dockKey = QLatin1String( "viewDock" );
-	if ( d->visibleMembers )
-	{
-		if( membersDockPosition == K3DockWidget::DockLeft )
-			dockKey.prepend( QLatin1String( "membersDock," ) );
-		else if( membersDockPosition == K3DockWidget::DockRight )
-			dockKey.append( QLatin1String( ",membersDock" ) );
-	}
-
-	dockKey.append( QLatin1String( ",editDock:sepPos" ) );
+	KConfigGroup kopeteChatWindowMainWinSettings( KGlobal::config(), ( msgManager()->form() == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
 	//kDebug(14000) << "reading splitterpos from key: " << dockKey;
-	int splitterPos = config->readEntry( dockKey, 70 );
-	editDock->manualDock( viewDock, K3DockWidget::DockBottom, splitterPos );
-	viewDock->setDockSite( K3DockWidget::DockLeft | K3DockWidget::DockRight );
-	editDock->setEnableDocking( K3DockWidget::DockNone );
-#endif
+	QByteArray state;
+	state = kopeteChatWindowMainWinSettings.readEntry( QLatin1String("ChatViewSplitter"), state );
+	d->splitter->restoreState( QByteArray::fromBase64( state ) );
 }
 
 void ChatView::setActive( bool value )

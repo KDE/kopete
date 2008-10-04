@@ -65,7 +65,8 @@ void Kopete::UI::PasswordWidget::setValidationProtocol( Kopete::Protocol * proto
 void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
 {
 	disconnect( mRemembered, SIGNAL( stateChanged( int ) ), this, SLOT( slotRememberChanged() ) );
-	disconnect( mPassword, SIGNAL( textChanged( const QString & ) ), this, SIGNAL( changed() ) );
+	disconnect( mPassword, SIGNAL( textChanged( const QString & ) ),
+			this, SLOT( passwordTextChanged() ) );
 	disconnect( mRemembered, SIGNAL( stateChanged( int ) ), this, SIGNAL( changed() ) );
 
 	if ( source && source->remembered() )
@@ -83,7 +84,8 @@ void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
 	}
 
 	connect( mRemembered, SIGNAL( stateChanged( int ) ), this, SLOT( slotRememberChanged() ) );
-	connect( mPassword, SIGNAL( textChanged( const QString & ) ), this, SIGNAL( changed() ) );
+	connect( mPassword, SIGNAL( textChanged( const QString & ) ),
+			this, SLOT( passwordTextChanged() ) );
 	connect( mRemembered, SIGNAL( stateChanged( int ) ), this, SIGNAL( changed() ) );
 
 	emit changed();
@@ -149,6 +151,19 @@ void Kopete::UI::PasswordWidget::setPassword( const QString &pass )
 	mPassword->clear();
 	mPassword->setText( pass );
 	mPassword->setEnabled( remember() );
+}
+
+void Kopete::UI::PasswordWidget::passwordTextChanged()
+{
+	if ( mRemembered->checkState() == Qt::PartiallyChecked )
+	{
+		disconnect( mRemembered, SIGNAL( stateChanged( int ) ), this, SIGNAL( changed() ) );
+		// switch out of 'waiting for wallet' mode if we're in it
+		mRemembered->setTristate( false );
+		mRemembered->setChecked(true);
+		connect( mRemembered, SIGNAL( stateChanged( int ) ), this, SIGNAL( changed() ) );
+	}
+	emit changed();
 }
 
 #include "kopetepasswordwidget.moc"

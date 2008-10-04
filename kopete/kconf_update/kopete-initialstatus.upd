@@ -1,0 +1,3 @@
+Id=kopete0.60.80/r1
+File=kopeterc
+Script=kopete-initialstatus.pl,perl

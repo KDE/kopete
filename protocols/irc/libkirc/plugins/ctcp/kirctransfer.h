@@ -136,7 +136,7 @@ signals:
 
 	void abort(QString);
 
-	/* Emited when the transfer is complete.
+	/* Emitted when the transfer is complete.
 	 * Usually it means that the file transfer has successfully finished.
 	 */
 	void complete();

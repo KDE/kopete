@@ -44,10 +44,12 @@ public:
 	Oscar::DWORD dcPort() const; //! DC port number    
     Oscar::WORD dcProtoVersion() const;
 	QDateTime onlineSinceTime() const; //! Online since accessor
+	QDateTime awaySinceTime() const; //! Away since accessor
 	QDateTime memberSinceTime() const; //! Member since accessor
 	int userClass() const; //! User class accessor
 	Oscar::DWORD extendedStatus() const; //!User status accessor
 	int xtrazStatus() const;
+	Oscar::WORD iconType() const; //!Buddy icon type
 	Oscar::BYTE iconCheckSumType() const; //!Buddy icon hash type
 	QByteArray buddyIconHash() const; //! Buddy icon md5 hash accessor
 	QString clientName() const; //! Client name and version
@@ -69,6 +71,7 @@ public:
 	bool userClassSpecified() const { return m_userClassSpecified; }
 	bool memberSinceSpecified() const { return m_memberSinceSpecified; }
 	bool onlineSinceSpecified() const { return m_onlineSinceSpecified; }
+	bool awaySinceSpecified() const { return m_awaySinceSpecified; }
 	bool numSecondsOnlineSpecified() const { return m_numSecondsOnlineSpecified; }
 	bool idleTimeSpecified() const { return m_idleTimeSpecified; }
 	bool extendedStatusSpecified() const { return m_extendedStatusSpecified; }
@@ -103,6 +106,7 @@ private:
 	int m_userClass; /// the class of the user - TLV 0x01
 	QDateTime m_memberSince; /// how long the user's been a member - TLV 0x05
 	QDateTime m_onlineSince; /// how long the contact's been online - TLV 0x03
+	QDateTime m_awaySince; /// how long the contact's been away - TLV 0x29
 	Oscar::DWORD m_numSecondsOnline; /// how long the contact's been online in seconds
 	Oscar::WORD m_idleTime; /// the idle time of the contact - TLV 0x0F
 	Oscar::DWORD m_extendedStatus; /// the extended status of the contact - TLV 0x06
@@ -121,6 +125,7 @@ private:
 	Oscar::DWORD m_dcLastInfoUpdateTime; /// DC last info update time - TLV 0x0C
 	Oscar::DWORD m_dcLastExtInfoUpdateTime; /// DC last exteneded info update time - TLV 0x0C
 	Oscar::DWORD m_dcLastExtStatusUpdateTime; /// DC last extended status update time - TLV 0x0C
+	Oscar::WORD m_iconType; /// The OSCAR icon type for the buddy icon TLV 0x1D
 	Oscar::BYTE m_iconChecksumType; /// The OSCAR checksum type for the buddy icon TLV 0x1D
 	QByteArray m_md5IconHash; /// Buddy Icon MD5 Hash - TLV 0x1D
 	QString m_availableMessage; /// Message a person can have when available - TLV 0x0D
@@ -130,6 +135,7 @@ private:
 	bool m_userClassSpecified;
 	bool m_memberSinceSpecified;
 	bool m_onlineSinceSpecified;
+	bool m_awaySinceSpecified;
 	bool m_numSecondsOnlineSpecified;
 	bool m_idleTimeSpecified;
 	bool m_extendedStatusSpecified;

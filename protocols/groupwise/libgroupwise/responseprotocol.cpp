@@ -18,6 +18,7 @@
 
 #include <QBuffer>
 #include <QByteArray>
+#include <QDebug>
 #include <QStringList>
 
 #include "response.h"
@@ -57,12 +58,12 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 		return 0;
 	// pull out the HTTP return code
 	int firstSpace = headerFirst.indexOf( ' ' );
-	QString rtnField = headerFirst.mid( firstSpace, headerFirst.indexOf( ' ', firstSpace + 1 ) );
+	QByteArray rtnField = headerFirst.mid( firstSpace + 1, 3 );
 	bool ok = true;
 	int rtnCode;
 	int packetState = -1;
 	rtnCode = rtnField.toInt( &ok );
-	debug( "CoreProtocol::readResponse() got HTTP return code " );
+	debug( QString("CoreProtocol::readResponse() got HTTP return code '%1'").arg( rtnCode) );
 	// read rest of header
 	QStringList headerRest;
 	QByteArray line;
@@ -116,10 +117,10 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 	}
 	// find transaction id field and create Response object if nonzero
 	int tId = 0;
-	int resultCode = 0;
+	int resultCode = -1;
 	Field::FieldListIterator it;
 	Field::FieldListIterator end = m_collatingFields.end();
-	it = m_collatingFields.find( NM_A_SZ_TRANSACTION_ID );
+	it = m_collatingFields.find( Field::NM_A_SZ_TRANSACTION_ID );
 	if ( it != end )
 	{
 		Field::SingleField * sf = dynamic_cast<Field::SingleField*>( *it );
@@ -131,7 +132,7 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 			delete sf;
 		}
 	}
-	it = m_collatingFields.find( NM_A_SZ_RESULT_CODE );
+	it = m_collatingFields.find( Field::NM_A_SZ_RESULT_CODE );
 	if ( it != end )
 	{
 		Field::SingleField * sf = dynamic_cast<Field::SingleField*>( *it );
@@ -155,6 +156,9 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 	else
 	{
 		debug( "- WARNING - NO TRANSACTION ID FOUND!" );
+		if ( resultCode == -1 ) {
+			debug( "- WARNING - NO RESULT CODE FOUND!" );
+		}
 		m_state = ProtocolError;
 		m_din.unsetDevice();
 		m_collatingFields.purge();
@@ -170,7 +174,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 	// so when we're done reading it, add it to the MultiList element
 	// that is the last element in the top list in m_collatingFields.
 	// if we find the beginning of a new nested list, push the current list onto m_collatingFields
-	debug( "ResponseProtocol::readFields()" );
+	debug("");
 	if ( fieldCount > 0 )
 		debug( QString( "reading %1 fields" ).arg( fieldCount ) );
 	Field::FieldList currentList;
@@ -227,7 +231,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 
 			// create multifield
 			debug( QString( " multi field containing: %1" ).arg( val ) );
-			Field::MultiField* m = new Field::MultiField( tag, method, 0, type );
+			Field::MultiField* m = new Field::MultiField( tag.constData(), method, 0, type );
 			currentList.append( m );
 			if ( !readFields( val, &currentList) )
 			{
@@ -235,7 +239,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				return false;
 			}
 		}
-		else 
+		else
 		{
 		
 			if ( type == NMFIELD_TYPE_UTF8 || type == NMFIELD_TYPE_DN )
@@ -255,7 +259,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				QString fieldValue = QString::fromUtf8( rawData.data(), val - 1 );
 				debug( QString( "- utf/dn single field: %1" ).arg( fieldValue ) );
 				// create singlefield
-				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, fieldValue );
+				Field::SingleField* s = new Field::SingleField( tag.constData(), method, 0, type, fieldValue );
 				currentList.append( s );
 			}
 			else
@@ -270,7 +274,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				m_din >> val;
 				m_bytes += sizeof( quint32 );
 				debug( QString( "- numeric field: %1" ).arg( val ) );
-				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, val );
+				Field::SingleField* s = new Field::SingleField( tag.constData(), method, 0, type, val );
 				currentList.append( s );
 			}
 		}
@@ -301,7 +305,7 @@ bool ResponseProtocol::readGroupWiseLine( QByteArray & line )
 	line = QByteArray();
 	while ( true )
 	{
-		quint8 c;
+		quint8 c = 0;
 		
 		if (! okToProceed() )
 			return false;
@@ -311,7 +315,7 @@ bool ResponseProtocol::readGroupWiseLine( QByteArray & line )
 		if ( c == '\n' )
 			break;
 	}
-	return true;	
+	return true;
 }
 
 #include "responseprotocol.moc"

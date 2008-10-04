@@ -21,6 +21,7 @@
 
 #include <qtimer.h>
 
+#include <KActionCollection>
 #include <klocale.h>
 #include <krandom.h>
 #include <ktoggleaction.h>
@@ -35,15 +36,12 @@
 #include "oscarstatusmanager.h"
 
 ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::MetaContact *parent,
-						const QString& icon, const OContact& ssiItem )
-: ICQContactBase( account, name, parent, icon, ssiItem )
+						const QString& icon )
+: ICQContactBase( account, name, parent, icon )
 {
 	mProtocol = static_cast<AIMProtocol *>(protocol());
 
-	if ( ssiItem.waitingAuth() )
-		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
-	else
-		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
+	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
 
 	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
 	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
@@ -80,7 +78,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	// invalidate old away message if user was offline
 	if ( !isOnline() )
-		removeProperty( mProtocol->awayMessage );
+		removeProperty( mProtocol->statusMessage );
 
 	kDebug( OSCAR_AIM_DEBUG ) << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
@@ -88,15 +86,13 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	if ( presence.type() == Oscar::Presence::Online )
 	{
-		removeProperty( mProtocol->awayMessage );
-		m_haveAwayMessage = false;
+		removeProperty( mProtocol->statusMessage );
 	}
 	else
 	{
-		if ( !m_haveAwayMessage ) //prevent cyclic away message requests
+		if ( m_details.awaySinceTime() < details.awaySinceTime() ) //prevent cyclic away message requests
 		{
 			mAccount->engine()->requestAIMAwayMessage( contactId() );
-			m_haveAwayMessage = true;
 		}
 	}
 
@@ -135,7 +131,7 @@ void ICQContact::userOffline( const QString& userId )
 	else
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
 
-	removeProperty( mProtocol->awayMessage );
+	removeProperty( mProtocol->statusMessage );
 }
 
 void ICQContact::loggedIn()
@@ -154,7 +150,7 @@ bool ICQContact::isReachable()
 
 QList<KAction*> *ICQContact::customContextMenuActions()
 {
-	QList<KAction*> *actionCollection = new QList<KAction*>();
+	QList<KAction*> *actions = new QList<KAction*>();
 
 	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), this );
         //, "actionVisibleTo");
@@ -173,10 +169,15 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 	m_actionVisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_VISIBLE ));
 	m_actionInvisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_INVISIBLE ));
 
-	actionCollection->append(m_actionVisibleTo);
-	actionCollection->append(m_actionInvisibleTo);
+	actions->append(m_actionVisibleTo);
+	actions->append(m_actionInvisibleTo);
 
-	return actionCollection;
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("oscarContactAlwaysVisibleTo"), m_actionVisibleTo);
+	tempCollection.addAction(QLatin1String("oscarContactAlwaysInvisibleTo"), m_actionInvisibleTo);
+
+	return actions;
 }
 
 

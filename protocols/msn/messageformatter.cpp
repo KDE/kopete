@@ -74,7 +74,7 @@ Message MessageFormatter::readMessage(const QByteArray& stream, bool compact)
 	
 	QByteArray tempStream = stream;
 	QDataStream reader( &tempStream,QIODevice::ReadOnly);
-	reader.setVersion(QDataStream::Qt_3_1);
+	reader.setVersion(QDataStream::Qt_3_3);
 	reader.setByteOrder(QDataStream::LittleEndian);
 	// Seek to the start position of the message
 	// transport header.
@@ -128,7 +128,7 @@ void MessageFormatter::writeMessage(const Message& message, QByteArray& stream, 
 //	kDebug(14140) ;
 
 	QDataStream writer( &stream,QIODevice::WriteOnly);
-	writer.setVersion(QDataStream::Qt_3_1);
+	writer.setVersion(QDataStream::Qt_3_3);
 	writer.setByteOrder(QDataStream::LittleEndian);
 
 	if(compact == false)

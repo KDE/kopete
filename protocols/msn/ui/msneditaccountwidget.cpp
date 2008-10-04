@@ -19,19 +19,13 @@
 #include "msneditaccountwidget.h"
 
 #include <qcheckbox.h>
-#include <q3groupbox.h>
 #include <qimage.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <q3listbox.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
 #include <qspinbox.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include <QVBoxLayout>
-#include <QLatin1String>
 
 #include <kfiledialog.h>
 #include <klocale.h>
@@ -76,6 +70,8 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 	d->ui = new Ui::MSNEditAccountUI();
 	d->ui->setupUi( this );
 
+	d->ui->mainTabWidget->setCurrentIndex(0);
+
 	// FIXME: actually, I don't know how to set fonts for qlistboxitem - Olivier
 	d->ui->label_font->hide();
 
@@ -90,12 +86,12 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		//remove me after we can change account ids (Matt)
 		d->ui->m_login->setReadOnly( true );
 		d->ui->m_autologin->setChecked( account->excludeConnect()  );
-		if ( ( static_cast<MSNAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<MSNAccount*>(account)->serverPort() != 1863) ) {
+		if ( ( static_cast<MSNAccount*>(account)->serverName() != "messenger.hotmail.com" ) || ( static_cast<MSNAccount*>(account)->serverPort() != 1863) || ( static_cast<MSNAccount*>(account)->useHttpMethod() ) ) {
 			d->ui->optionOverrideServer->setChecked( true );
 		}
 
 		d->ui->optionUseHttpMethod->setChecked( static_cast<MSNAccount*>(account)->useHttpMethod() );
-		
+
 		MSNContact *myself = static_cast<MSNContact *>( account->myself() );
 
 		d->ui->m_displayName->setText( myself->property( Kopete::Global::Properties::self()->nickName()).value().toString() );
@@ -114,6 +110,9 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		d->ui->m_allowButton->setEnabled( connected );
 		d->ui->m_blockButton->setEnabled( connected );
 
+		d->ui->m_allowButton->setIcon( KIcon( "arrow-left" ) );
+		d->ui->m_blockButton->setIcon( KIcon( "arrow-right" ) );
+
 		MSNAccount *m_account = static_cast<MSNAccount*>( account );
 		d->ui->m_serverName->setText( m_account->serverName() );
 		d->ui->m_serverPort->setValue( m_account->serverPort() );
@@ -123,10 +122,10 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 		//QStringList reverseList =  config->readListEntry("reverseList" );
 
 		for ( QStringList::Iterator it = blockList.begin(); it != blockList.end(); ++it )
-			d->ui->m_BL->insertItem( *it );
+			d->ui->m_BL->addItem( *it );
 
 		for ( QStringList::Iterator it = allowList.begin(); it != allowList.end(); ++it )
-			d->ui->m_AL->insertItem( *it );
+			d->ui->m_AL->addItem( *it );
 
 		d->ui->m_blp->setChecked( config->readEntry( "BLP" ) == "BL" );
 
@@ -135,6 +134,12 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, Kopete::Account 
 
 		d->ui->m_useDisplayPicture->setChecked( config->readEntry( "exportCustomPicture", false ));
 
+		d->ui->NotifyNewChat->setChecked( config->readEntry( "NotifyNewChat", false ));
+		d->ui->DownloadPicture->setCurrentIndex( config->readEntry( "DownloadPicture", 2 ));
+		d->ui->useCustomEmoticons->setChecked( config->readEntry( "useCustomEmoticons", true ));
+		d->ui->exportEmoticons->setChecked( config->readEntry( "exportEmoticons", false ));
+		d->ui->SendClientInfo->setChecked( config->readEntry( "SendClientInfo", true ));
+		d->ui->SendTypingNotification->setChecked( config->readEntry( "SendTypingNotification", true ));
 	}
 	else
 	{
@@ -169,9 +174,16 @@ Kopete::Account * MSNEditAccountWidget::apply()
 	account()->setExcludeConnect( d->ui->m_autologin->isChecked() );
 	d->ui->m_password->save( &static_cast<MSNAccount *>(account())->password() );
 
+	config->writeEntry( "NotifyNewChat", d->ui->NotifyNewChat->isChecked() );
+	config->writeEntry( "DownloadPicture", d->ui->DownloadPicture->currentIndex() );
+	config->writeEntry( "useCustomEmoticons", d->ui->useCustomEmoticons->isChecked() );
+	config->writeEntry( "exportEmoticons", d->ui->exportEmoticons->isChecked() );
+	config->writeEntry( "SendClientInfo", d->ui->SendClientInfo->isChecked() );
+	config->writeEntry( "SendTypingNotification", d->ui->SendTypingNotification->isChecked() );
+	
 	config->writeEntry( "exportCustomPicture", d->ui->m_useDisplayPicture->isChecked() );
 	if (d->ui->optionOverrideServer->isChecked() ) {
-		config->writeEntry( "serverName", d->ui->m_serverName->text() );
+		config->writeEntry( "serverName", d->ui->m_serverName->text().trimmed() );
 		config->writeEntry( "serverPort", d->ui->m_serverPort->value()  );
 	}
 	else {
@@ -228,9 +240,9 @@ bool MSNEditAccountWidget::validateData()
 void MSNEditAccountWidget::slotAllow()
 {
 	//TODO: play with multiple selection
-	Q3ListBoxItem *item = d->ui->m_BL->selectedItem();
-	if ( !item )
+	if ( d->ui->m_BL->selectedItems().isEmpty() )
 		return;
+	QListWidgetItem *item = d->ui->m_BL->selectedItems().at(0);
 
 	QString handle = item->text();
 
@@ -239,16 +251,16 @@ void MSNEditAccountWidget::slotAllow()
 		return;
 	notify->removeContact( handle, MSNProtocol::BL, QString(), QString() );
 
-	d->ui->m_BL->takeItem( item );
-	d->ui->m_AL->insertItem( item );
+	d->ui->m_BL->takeItem( d->ui->m_BL->row( item ) );
+	d->ui->m_AL->addItem( item );
 }
 
 void MSNEditAccountWidget::slotBlock()
 {
 	//TODO: play with multiple selection
-	Q3ListBoxItem *item = d->ui->m_AL->selectedItem();
-	if ( !item )
+	if ( d->ui->m_AL->selectedItems().isEmpty() )
 		return;
+	QListWidgetItem *item = d->ui->m_AL->selectedItems().at(0);
 
 	QString handle = item->text();
 
@@ -258,8 +270,8 @@ void MSNEditAccountWidget::slotBlock()
 
 	notify->removeContact( handle, MSNProtocol::AL, QString(), QString() );
 
-	d->ui->m_AL->takeItem( item );
-	d->ui->m_BL->insertItem( item );
+	d->ui->m_AL->takeItem( d->ui->m_AL->row( item ) );
+	d->ui->m_BL->addItem( item );
 }
 
 void MSNEditAccountWidget::slotShowReverseList()
@@ -271,7 +283,10 @@ void MSNEditAccountWidget::slotShowReverseList()
 
 void MSNEditAccountWidget::slotSelectImage()
 {
-	QString path = Kopete::UI::AvatarDialog::getAvatar(this, d->pictureUrl);
+	bool ok;
+	QString path = Kopete::UI::AvatarDialog::getAvatar(this, d->pictureUrl,&ok);
+	if( !ok )
+		return;
 	QImage img( path );
 	if(!img.isNull()) 
 	{

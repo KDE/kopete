@@ -4,7 +4,7 @@
 
     Copyright (c) 2005      SUSE Linux Products GmbH	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
  

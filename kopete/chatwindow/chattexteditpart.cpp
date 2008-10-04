@@ -27,7 +27,6 @@
 #include <kcompletion.h>
 #include <kdebug.h>
 #include <ktextedit.h>
-#include <sonnet/highlighter.h>
 
 #include <QtCore/QTimer>
 #include <QtCore/QRegExp>
@@ -38,7 +37,6 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	// Set rich support in the part
 	setProtocolRichTextSupport();
 
-	m_autoSpellCheckEnabled = true;
 	historyPos = -1;
 	
 	mComplete = new KCompletion();
@@ -51,7 +49,6 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 //	textEdit()->setWrapPolicy( Q3TextEdit::AtWhiteSpace );
 //	textEdit()->setAutoFormatting( Q3TextEdit::AutoNone );
 
-	m_highlighter = new Sonnet::Highlighter( textEdit() );
 	// some signals and slots connections
 	connect( textEdit(), SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
 
@@ -70,8 +67,14 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	         this, SLOT( slotContactRemoved(const Kopete::Contact*) ) );
 	connect( session, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+
+	connect( Kopete::AppearanceSettings::self(), SIGNAL( appearanceChanged() ),
+	         this, SLOT( slotAppearanceChanged() ) );
 	
-	setFont( Kopete::AppearanceSettings::self()->chatFont() );
+	connect( KGlobalSettings::self(), SIGNAL( kdisplayFontChanged() ),
+	         this, SLOT( slotAppearanceChanged() ) );
+
+	slotAppearanceChanged();
 
 	slotContactAdded( session->myself() );
 
@@ -82,30 +85,6 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 ChatTextEditPart::~ChatTextEditPart()
 {
 	delete mComplete;
-}
-
-void ChatTextEditPart::toggleAutoSpellCheck( bool enabled )
-{
-	if ( useRichText() )
-		enabled = false;
-
-	m_autoSpellCheckEnabled = enabled;
-	if ( spellHighlighter() )
-	{
-		spellHighlighter()->setAutomatic( enabled );
-		spellHighlighter()->setActive( enabled );
-	}
-	textEdit()->setCheckSpellingEnabled( enabled );
-}
-
-bool ChatTextEditPart::autoSpellCheckEnabled() const
-{
-	return m_autoSpellCheckEnabled;
-}
-
-Sonnet::Highlighter* ChatTextEditPart::spellHighlighter()
-{
-	return m_highlighter;
 }
 
 // NAUGHTY, BAD AND WRONG! (but needed to fix nick complete bugs)
@@ -384,8 +363,7 @@ void ChatTextEditPart::historyDown()
 // 	textEdit()->setTextFormat(AutoText); //workaround bug 115690
 	textEdit()->setText( newText );
 // 	textEdit()->setTextFormat(format);
-	// TODO: Port to Qt4
-	textEdit()->moveCursor( QTextEdit::MoveEnd, false );
+	textEdit()->moveCursor( QTextCursor::End );
 }
 
 void ChatTextEditPart::addText( const QString &text )
@@ -402,8 +380,12 @@ void ChatTextEditPart::addText( const QString &text )
 
 void ChatTextEditPart::setContents( const Kopete::Message &message )
 {
-	textEdit()->setText( useRichText() ? message.escapedBody() : message.plainBody() );
-
+	if ( useRichText() )
+		textEdit()->setHtml ( message.escapedBody() );
+	else
+		textEdit()->setPlainText ( message.plainBody() );
+	textEdit()->moveCursor ( QTextCursor::End );
+	
 	setFont( message.font() );
 	setTextColor( message.foregroundColor() );
 // 	setBackgroundColorColor( message.backgroundColor() );
@@ -432,6 +414,17 @@ void ChatTextEditPart::slotStoppedTypingTimer()
 	m_typingRepeatTimer->stop();
 	m_typingStopTimer->stop();
 	emit typing( false );
+}
+
+void ChatTextEditPart::slotAppearanceChanged()
+{
+	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
+
+	QFont chatFont = KGlobalSettings::generalFont();
+	if ( settings->chatFontSelection() == 1 )
+		chatFont = settings->chatFont();
+
+	setFont( chatFont );
 }
 
 void ChatTextEditPart::setProtocolRichTextSupport()

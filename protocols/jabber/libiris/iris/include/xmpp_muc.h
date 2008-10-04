@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -22,14 +22,13 @@
 #define XMPP_MUC_H
 
 #include <QDomElement>
-
+#include <QString>
 
 #include "xmpp_jid.h"
-#include <iris_export.h>
 
 namespace XMPP
 {
-	class IRIS_EXPORT MUCItem
+	class MUCItem
 	{
 	public:
 		enum Affiliation { UnknownAffiliation, Outcast, NoAffiliation, Member, Admin, Owner };
@@ -65,7 +64,7 @@ namespace XMPP
 		QString reason_;
 	};
 	
-	class IRIS_EXPORT MUCInvite
+	class MUCInvite
 	{
 	public:
 		MUCInvite();
@@ -92,7 +91,7 @@ namespace XMPP
 		bool cont_;
 	};
 	
-	class IRIS_EXPORT MUCDecline
+	class MUCDecline
 	{
 	public:
 		MUCDecline();
@@ -115,7 +114,7 @@ namespace XMPP
 		QString reason_;
 	};
 	
-	class IRIS_EXPORT MUCDestroy
+	class MUCDestroy
 	{
 	public:
 		MUCDestroy();

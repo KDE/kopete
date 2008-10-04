@@ -1,3 +1,6 @@
+add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
+
+KDE4_NO_ENABLE_FINAL(kopete)
 
 add_subdirectory( icons ) 
 add_subdirectory( libgadu )
@@ -43,7 +46,7 @@ set(kopete_gadu_PART_SRCS
 kde4_add_plugin(kopete_gadu ${kopete_gadu_PART_SRCS})
 
 
-target_link_libraries(kopete_gadu ${KDE4_KDEUI_LIBS} ${QT_QTNETWORK_LIBRARY} gadu_kopete kopete )
+target_link_libraries(kopete_gadu ${KDE4_KIO_LIBS} ${QT_QTNETWORK_LIBRARY} ${KDE4_KDE3SUPPORT_LIBS} gadu_kopete kopete )
 
 install(TARGETS kopete_gadu  DESTINATION ${PLUGIN_INSTALL_DIR})
 

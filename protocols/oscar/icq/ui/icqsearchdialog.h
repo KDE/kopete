@@ -23,10 +23,9 @@
 #include "icquserinfo.h"
 
 class ICQAccount;
-class ICQContact;
 class ICQUserInfoWidget;
 class QStandardItemModel;
-class QModelIndex;
+class QItemSelection;
 
 namespace Ui
 {
@@ -46,15 +45,13 @@ public:
 private slots:
 	void startSearch();
 	void stopSearch();
-	void addContact();
 	void clearResults();
-	void closeDialog();
 	void userInfo();
 	void closeUserInfo();
-	void newSearch();
+	void clear();
 
 	/// Enable/disable buttons when the selection changes
-	void resultRowChanged( const QModelIndex& current );
+	void selectionChanged( const QItemSelection& selected );
 	
 	/// Add a search result to the listview
 	void newResult( const ICQSearchResult& info );
@@ -62,10 +59,12 @@ private slots:
 	/// The search is finished
 	void searchFinished( int numLeft );
 
+protected slots:
+	virtual void slotButtonClicked( int button );
+
 private:
 	ICQAccount* m_account;
 	Ui::ICQSearchBase* m_searchUI;
-	ICQContact* m_contact;
 	ICQUserInfoWidget* m_infoWidget;
 	QStandardItemModel* m_searchResultsModel;
 	

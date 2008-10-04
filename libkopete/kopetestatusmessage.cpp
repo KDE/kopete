@@ -27,6 +27,7 @@ public:
 	Private()
 	{}
 
+	QString statusTitle;
 	QString statusMessage;
 	QHash<QString, QVariant> metaData;
 };	
@@ -38,6 +39,13 @@ StatusMessage::StatusMessage()
 StatusMessage::StatusMessage(const QString &message)
  : d(new Private)
 {
+	d->statusMessage = message;
+}
+
+StatusMessage::StatusMessage(const QString &title, const QString &message)
+	: d(new Private)
+{
+	d->statusTitle = title;
 	d->statusMessage = message;
 }
 
@@ -56,7 +64,7 @@ StatusMessage &StatusMessage::operator=(const StatusMessage &other)
 
 bool StatusMessage::isEmpty() const
 {
-	return d->statusMessage.isEmpty() && d->metaData.isEmpty();
+	return d->statusTitle.isEmpty() && d->statusMessage.isEmpty() && d->metaData.isEmpty();
 }
 
 void StatusMessage::setMessage(const QString &message)
@@ -91,6 +99,16 @@ bool StatusMessage::hasMetaData(const QString &key) const
 QVariant StatusMessage::metaData(const QString &key) const
 {
 	return d->metaData[key];
+}
+
+void StatusMessage::setTitle(const QString &title)
+{
+	d->statusTitle = title;
+}
+
+QString StatusMessage::title() const
+{
+	return d->statusTitle;
 }
 
 }

@@ -27,16 +27,15 @@ using P2P::Message;
 #include <stdlib.h>
 
 // Kde includes
-#include <k3bufferedsocket.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kcodecs.h>
-using namespace KNetwork;
 
 // Qt includes
 #include <qfile.h>
 #include <qregexp.h>
 #include <qtimer.h>
+#include <qtcpsocket.h>
 
 // Kopete includes
 #include <kopetetransfermanager.h>
@@ -94,7 +93,7 @@ void OutgoingTransfer::slotSendData()
 {
 	qint32 bytesRead = 0;
 	QByteArray buffer;
-	buffer.reserve(1202);
+	buffer.resize(1202);
 
 	if(!m_file)
 		return;
@@ -129,21 +128,6 @@ void OutgoingTransfer::slotSendData()
 			m_file->close();
 		}
 	}
-
-		if((m_offset + bytesRead) < m_file->size())
-		{
-			sendData(buffer);
-			m_offset += bytesRead;
-		}
-		else
-		{
-			m_isComplete = true;
-			// Send the last chunk of the file.
-			sendData(buffer);
-			m_offset += buffer.size();
-			// Close the file.
-			m_file->close();
-		}
 
 	if(m_transfer){
 		m_transfer->slotProcessed(m_offset);
@@ -318,7 +302,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 				// Retrieve the listening port of the receiving client.
 				regex = QRegExp("IPv4Internal-Port: ([^\r\n]+)\r\n");
 				regex.indexIn(body);
-				m_remotePort = regex.cap(1);
+				m_remotePort = regex.cap(1).toUInt();
 
 				// Try to connect to the receiving client's
 				// listening endpoint.
@@ -364,30 +348,25 @@ void OutgoingTransfer::readyToSend()
 
 void OutgoingTransfer::connectToEndpoint(const QString& hostName)
 {
-	m_socket = new KBufferedSocket(hostName, m_remotePort);
-	m_socket->setBlocking(false);
-	m_socket->enableRead(true);
-	// Disable write signal for now.  Only enable
-	// when we are ready to sent data.
-	// NOTE readyWrite consumes too much cpu usage.
-	m_socket->enableWrite(false);
+	m_socket = new QTcpSocket();
+
 	QObject::connect(m_socket, SIGNAL(readyRead()), this, SLOT(slotRead()));
-	QObject::connect(m_socket, SIGNAL(connected(const KResolverEntry&)), this, SLOT(slotConnected()));
-	QObject::connect(m_socket, SIGNAL(gotError(int)), this, SLOT(slotSocketError(int)));
-	QObject::connect(m_socket, SIGNAL(closed()), this, SLOT(slotSocketClosed()));
+	QObject::connect(m_socket, SIGNAL(connected()), this, SLOT(slotConnected()));
+	QObject::connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(slotSocketError(QAbstractSocket::SocketError)));
+	QObject::connect(m_socket, SIGNAL(disconnected()), this, SLOT(slotSocketClosed()));
 	// Try to connect to the endpoint.
-	m_socket->connect();
+	m_socket->connectToHost(hostName, m_remotePort);
 }
 
 void OutgoingTransfer::slotConnected()
 {
 	kDebug(14140) ;
 	// Check if connection is ok.
-	quint32 bytesWritten = m_socket->write(QByteArray("foo").data(), 4);
+	quint32 bytesWritten = m_socket->write(QByteArray("foo"));
 	if(bytesWritten != 4)
 	{
 		// Not all data was written, close the socket.
-		m_socket->closeNow();
+		m_socket->close();
 		// Schedule the data to be sent through the existing session.
 		QTimer::singleShot(2000, this, SLOT(slotSendData()));
 		return;
@@ -416,7 +395,7 @@ void OutgoingTransfer::slotConnected()
 	// Write the message to the memory stream.
 	m_messageFormatter.writeMessage(handshake, stream, true);
 	// Send the byte stream over the wire.
-	m_socket->write(stream.data(), stream.size());
+	m_socket->write(stream);
 }
 
 void OutgoingTransfer::slotRead()
@@ -425,14 +404,14 @@ void OutgoingTransfer::slotRead()
 	kDebug(14140) << bytesAvailable << ", bytes available.";
 }
 
-void OutgoingTransfer::slotSocketError(int)
+void OutgoingTransfer::slotSocketError(QAbstractSocket::SocketError)
 {
 	kDebug(14140) << m_socket->errorString();
 	// If an error has occurred, try to connect
 	// to another available peer endpoint.
 	// If there are no more available endpoints,
 	// send the data through the session.
-	m_socket->closeNow();
+	m_socket->close();
 
 	// Move to the next available endpoint.
 	m_endpointIterator++;

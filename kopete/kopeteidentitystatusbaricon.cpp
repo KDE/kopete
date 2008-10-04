@@ -18,16 +18,10 @@
 
 #include "kopeteidentitystatusbaricon.h"
 #include <kopeteidentity.h>
+#include <kopetestatusmessage.h>
+#include <kopetestatusrootaction.h>
+#include <kactionmenu.h>
 
-#include <KDebug>
-#include <QMouseEvent>
-#include <QLabel>
-#include <QEvent>
-#include <QCursor>
-#include <KAction>
-#include <KActionMenu>
-#include <KIcon>
-#include <KLocale>
 #include <KMenu>
 
 KopeteIdentityStatusBarIcon::KopeteIdentityStatusBarIcon( Kopete::Identity *identity, QWidget *parent )
@@ -39,43 +33,6 @@ KopeteIdentityStatusBarIcon::KopeteIdentityStatusBarIcon( Kopete::Identity *iden
 
 	m_identity = identity;
 
-	// initialize actions
-	m_actionSetOnline = new KAction( KIcon("kopeteavailable"), i18n("&Online"), this );
-	m_actionSetOnline->setData((uint)Kopete::OnlineStatusManager::Online);
-
-	m_actionSetAway = new KAction( KIcon("kopeteaway"), i18n("&Away"), this );
-	m_actionSetAway->setData((uint)Kopete::OnlineStatusManager::Away);
-
-	m_actionSetBusy = new KAction( KIcon("kopeteaway"), i18n("&Busy"), this );
-	m_actionSetBusy->setData((uint)Kopete::OnlineStatusManager::Busy);
-
-	m_actionSetInvisible = new KAction( KIcon("kopeteavailable"), i18n( "&Invisible" ), this );
-	m_actionSetInvisible->setData((uint)Kopete::OnlineStatusManager::Invisible);
-
-	m_actionSetOffline = new KAction( KIcon("connect-no"), i18n( "Offline" ), this );
-	m_actionSetOffline->setData((uint)Kopete::OnlineStatusManager::Offline);
-
-	// create the actionGroup
-	m_statusGroup = new QActionGroup(this);
-	m_statusGroup->addAction(m_actionSetOnline);
-	m_statusGroup->addAction(m_actionSetAway);
-	m_statusGroup->addAction(m_actionSetBusy);
-	m_statusGroup->addAction(m_actionSetInvisible);
-	m_statusGroup->addAction(m_actionSetOffline);
-
-	connect(m_statusGroup, SIGNAL(triggered(QAction*)), 
-			this, SLOT(slotChangeStatus(QAction *)));
-
-}
-
-KopeteIdentityStatusBarIcon::~KopeteIdentityStatusBarIcon()
-{
-	delete m_actionSetOnline;
-	delete m_actionSetAway;
-	delete m_actionSetBusy;
-	delete m_actionSetInvisible;
-	delete m_actionSetOffline;
-	delete m_statusGroup;
 }
 
 void KopeteIdentityStatusBarIcon::mousePressEvent( QMouseEvent *me )
@@ -93,19 +50,26 @@ void KopeteIdentityStatusBarIcon::mousePressEvent( QMouseEvent *me )
 		// add a title to the popup menu before the online action
 		statusMenu->menu()->addTitle(m_identity->label());
 
-		// add the status actions to the menu
-		foreach(QAction *action, m_statusGroup->actions())
-			statusMenu->addAction(action);
+		// Will be automatically deleted when the statusMenu is deleted.
+		Kopete::StatusRootAction* statusAction = new Kopete::StatusRootAction( statusMenu );
+
+		connect( statusAction, SIGNAL(changeStatus(uint, const Kopete::StatusMessage&)),
+		         m_identity, SLOT(setOnlineStatus(uint, const Kopete::StatusMessage&)) );
+		connect( statusAction, SIGNAL(updateMessage(Kopete::StatusRootAction*)),
+		         this, SLOT(updateMessage(Kopete::StatusRootAction*)) );
+		connect( statusAction, SIGNAL(changeMessage(const Kopete::StatusMessage&)),
+		         m_identity, SLOT(setStatusMessage(const Kopete::StatusMessage&)) );
 
 		connect( statusMenu->menu(), SIGNAL( aboutToHide() ), statusMenu, SLOT( deleteLater() ) );
 		statusMenu->menu()->popup( me->globalPos() );
 	}
 }
 
-void KopeteIdentityStatusBarIcon::slotChangeStatus(QAction *a)
+void KopeteIdentityStatusBarIcon::updateMessage( Kopete::StatusRootAction *statusRootAction )
 {
-	m_identity->setOnlineStatus(a->data().toUInt(), m_identity->statusMessage());
+	statusRootAction->setCurrentMessage( m_identity->statusMessage() );
 }
+
 #include "kopeteidentitystatusbaricon.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

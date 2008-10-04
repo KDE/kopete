@@ -24,10 +24,7 @@
 #include "msninvitation.h"
 
 class QFile;
-
-namespace KNetwork {
-  class KServerSocket;
-}
+class QTcpServer;
 
 namespace Kopete { class Transfer; }
 namespace Kopete { class FileTransferInfo; }
@@ -107,7 +104,7 @@ private:
 	QString m_fileName;
 	Kopete::Transfer* m_kopeteTransfer;
 	QFile *m_file ;
-	KNetwork::KServerSocket *m_server;
+	QTcpServer *m_server;
 
 	bool ready;
 

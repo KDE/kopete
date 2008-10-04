@@ -33,6 +33,7 @@
 namespace Kopete
 {
 class Protocol;
+class Identity;
 }
 
 
@@ -46,6 +47,11 @@ class KOPETEADDACCOUNTWIZARD_EXPORT AddAccountWizard : public KAssistantDialog
 public:
 	explicit AddAccountWizard( QWidget *parent = 0, bool firstRun = false );
 	~AddAccountWizard();
+
+	/**
+	 * Set the identity assigned to the account
+	 */
+	void setIdentity( Kopete::Identity *identity );
 
 private slots:
 	void slotProtocolListClicked();

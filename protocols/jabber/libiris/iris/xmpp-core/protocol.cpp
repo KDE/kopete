@@ -1,6 +1,6 @@
 /*
  * protocol.cpp - XMPP-Core protocol state machine
- * Copyright (C) 2004  Justin Karneges
+ * Copyright (C) 2004  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -1174,6 +1174,16 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 			}
 		}
 		else {
+			// already authed?  then ignore last client step
+			//   (this happens if "additional data with success"
+			//   is used)
+			if(sasl_authed)
+			{
+				event = ESASLSuccess;
+				step = HandleSASLSuccess;
+				return true;
+			}
+
 			QByteArray stepData = sasl_step;
 #ifdef XMPP_TEST
 			TD::msg(QString("SASL OUT: [%1]").arg(printArray(sasl_step)));
@@ -1421,6 +1431,18 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 				return false;
 			}
 			else if(e.tagName() == "success") {
+				QString str = e.text();
+				// "additional data with success" ?
+				if(!str.isEmpty())
+				{
+					QByteArray a = QCA::Base64().stringToArray(str).toByteArray();
+					sasl_step = a;
+					sasl_authed = true;
+					need = NSASLNext;
+					step = GetSASLNext;
+					return false;
+				}
+
 				sasl_authed = true;
 				event = ESASLSuccess;
 				step = HandleSASLSuccess;

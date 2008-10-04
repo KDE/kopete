@@ -18,9 +18,9 @@
     *************************************************************************
 */
 
-#include <QAbstractItemDelegate>
+#include <QStyledItemDelegate>
 
-class EmoticonThemeDelegate : public QAbstractItemDelegate
+class EmoticonThemeDelegate : public QStyledItemDelegate
 {
 	Q_OBJECT
 public:

@@ -1,6 +1,6 @@
 /*
  * filetransfer.h - File Transfer
- * Copyright (C) 2004  Justin Karneges
+ * Copyright (C) 2004  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -47,6 +47,8 @@ namespace XMPP
 		enum { ErrReject, ErrNeg, ErrConnect, ErrProxy, ErrStream };
 		enum { Idle, Requesting, Connecting, WaitingForAccept, Active };
 		~FileTransfer();
+
+		FileTransfer *copy() const;
 
 		void setProxy(const Jid &proxy);
 
@@ -94,6 +96,7 @@ namespace XMPP
 
 		friend class FileTransferManager;
 		FileTransfer(FileTransferManager *, QObject *parent=0);
+		FileTransfer(const FileTransfer& other);
 		void man_waitForAccept(const FTRequest &req);
 		void takeConnection(S5BConnection *c);
 	};
@@ -104,6 +107,8 @@ namespace XMPP
 	public:
 		FileTransferManager(Client *);
 		~FileTransferManager();
+
+		bool isActive(const FileTransfer *ft) const;
 
 		Client *client() const;
 		FileTransfer *createTransfer();

@@ -29,6 +29,7 @@
 #include <qmap.h>
 
 #include <kaction.h>
+#include <KActionCollection>
 #include <kdebug.h>
 #include <kicon.h>
 #include <klocale.h>
@@ -53,7 +54,7 @@ GroupWiseContact::GroupWiseContact( Kopete::Account* account, const QString &dn,
 			Kopete::MetaContact *parent, 
 			const int objectId, const int parentId, const int sequence )
 : Kopete::Contact( account, GroupWiseProtocol::dnToDotted( dn ), parent ), m_objectId( objectId ), m_parentId( parentId ),
-  m_sequence( sequence ), m_actionBlock( 0 ), m_archiving( false ), m_deleting( false )
+  m_sequence( sequence ), m_actionBlock( 0 ), m_archiving( false ), m_deleting( false ), m_messageReceivedOffline( false )
 {
 	if ( dn.indexOf( '=' ) != -1 )
 	{
@@ -66,11 +67,6 @@ GroupWiseContact::GroupWiseContact( Kopete::Account* account, const QString &dn,
 
 GroupWiseContact::~GroupWiseContact()
 {
-	// This is necessary because otherwise the userDetailsManager 
-	// would not fetch details for this contact if they contact you
-	// again from off-contact-list.
-	if ( metaContact()->isTemporary() )
-		account()->client()->userDetailsManager()->removeContact( contactId() );
 }
 
 QString GroupWiseContact::dn() const
@@ -80,34 +76,34 @@ QString GroupWiseContact::dn() const
 
 void GroupWiseContact::updateDetails( const ContactDetails & details )
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 	if ( !details.cn.isNull() )
-		setProperty( protocol()->propCN, details.cn );
+		setProperty( protocol()->propCN, QVariant(details.cn) );
 	if ( !details.dn.isNull() )
 		m_dn = details.dn;
 	if ( !details.givenName.isNull() )
-		setProperty( protocol()->propGivenName, details.givenName );
+		setProperty( protocol()->propGivenName, QVariant(details.givenName) );
 	if ( !details.surname.isNull() )
-		setProperty( protocol()->propLastName, details.surname );
+		setProperty( protocol()->propLastName, QVariant(details.surname) );
 	if ( !details.fullName.isNull() )
-		setProperty( protocol()->propFullName, details.fullName );
+		setProperty( protocol()->propFullName, QVariant(details.fullName) );
 	m_archiving = details.archive;
 	if ( !details.awayMessage.isNull() )
-		setProperty( protocol()->propAwayMessage, details.awayMessage );
+		setStatusMessage( details.awayMessage );
 	
 	m_serverProperties = details.properties;
 	
 	// work phone number
 	if ( m_serverProperties.contains( "telephoneNumber" ) )
-		setProperty( protocol()->propPhoneWork, m_serverProperties.value( "telephoneNumber" ) );
+		setProperty( protocol()->propPhoneWork, QVariant(m_serverProperties.value( "telephoneNumber" )) );
 	
 	// mobile phone number
 	if ( m_serverProperties.contains( "mobile" ) )
-		setProperty( protocol()->propPhoneMobile, m_serverProperties.value( "mobile" ) );
+		setProperty( protocol()->propPhoneMobile, QVariant(m_serverProperties.value( "mobile" )) );
 	
 	// email
 	if ( m_serverProperties.contains( "Internet EMail Address" ) )
-		setProperty( protocol()->propEmail, m_serverProperties.value( "Internet EMail Address" ) );
+		setProperty( protocol()->propEmail, QVariant(m_serverProperties.value( "Internet EMail Address" )) );
 		
 	if ( details.status != GroupWise::Invalid )
 	{	
@@ -133,7 +129,7 @@ bool GroupWiseContact::isReachable()
 	// in GWChatSession
 	// (This is a GroupWise rule, not a problem in Kopete)
 
-	if ( account()->isConnected() && isOnline()/* && account()->myself()->onlineStatus() != protocol()->groupwiseAppearOffline */)
+	if ( account()->isConnected() && ( isOnline() || messageReceivedOffline() ) /* && account()->myself()->onlineStatus() != protocol()->groupwiseAppearOffline */)
 		return true;
 	if ( !account()->isConnected()/* || account()->myself()->onlineStatus() == protocol()->groupwiseAppearOffline*/ )
 		return false;
@@ -149,7 +145,7 @@ void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap
 
 Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
-	//kDebug( GROUPWISE_DEBUG_GLOBAL ) << "called, canCreate: " << canCreate;
+	//kDebug() << "called, canCreate: " << canCreate;
 
 	Kopete::ContactPtrList chatMembers;
 	chatMembers.append( this );
@@ -159,7 +155,7 @@ Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags
 
 QList<KAction*> *GroupWiseContact::customContextMenuActions()
 {
-	QList<KAction *> * actionCollection = new QList<KAction *>;
+	QList<KAction *> * actions = new QList<KAction *>;
 
 	// Block/unblock contact
 	QString label = account()->isContactBlocked( m_dn ) ? i18n( "Unblock User" ) : i18n( "Block User" );
@@ -172,9 +168,12 @@ QList<KAction*> *GroupWiseContact::customContextMenuActions()
 		m_actionBlock->setText( label );
 	m_actionBlock->setEnabled( account()->isConnected() );
 
-	actionCollection->append( m_actionBlock );
+	actions->append( m_actionBlock );
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("contactBlock"), m_actionBlock);
 
-	return actionCollection;
+	return actions;
 }
 
 void GroupWiseContact::slotUserInfo()
@@ -183,14 +182,14 @@ void GroupWiseContact::slotUserInfo()
 	p->setObjectName( "gwcontactproperties" );
 }
 
-QHash< QString, QString > GroupWiseContact::serverProperties()
+QMap< QString, QVariant > GroupWiseContact::serverProperties()
 {
 	return m_serverProperties;
 }
 
 void GroupWiseContact::sendMessage( Kopete::Message &message )
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 	manager()->appendMessage( message );
 	// tell the manager it was sent successfully
 	manager()->messageSucceeded();
@@ -199,6 +198,7 @@ void GroupWiseContact::sendMessage( Kopete::Message &message )
 void GroupWiseContact::deleteContact()
 {
 	account()->deleteContact( this );
+	Kopete::Contact::deleteContact();
 }
 
 void GroupWiseContact::sync( unsigned int)
@@ -208,7 +208,7 @@ void GroupWiseContact::sync( unsigned int)
 
 void GroupWiseContact::slotBlock()
 {
-	kDebug( GROUPWISE_DEBUG_GLOBAL ) ;
+	kDebug() ;
 	if ( account()->isConnected() )
 	{
 		if ( account()->isContactBlocked( m_dn ) )
@@ -227,6 +227,7 @@ void GroupWiseContact::receivePrivacyChanged( const QString & dn, bool allow )
 
 void GroupWiseContact::setOnlineStatus( const Kopete::OnlineStatus& status )
 {
+	setMessageReceivedOffline( false );
 	if ( status == protocol()->groupwiseAwayIdle && status != onlineStatus() )
 		setIdleTime( 1 );
 	else if ( onlineStatus() == protocol()->groupwiseAwayIdle && status != onlineStatus() )
@@ -297,8 +298,19 @@ void GroupWiseContact::renamedOnServer()
 			setProperty( Kopete::Global::Properties::self()->nickName(), uct->displayName() );
 	}
 	else
-		kDebug( GROUPWISE_DEBUG_GLOBAL ) << "rename failed, return code: " << uct->statusCode();
+		kDebug() << "rename failed, return code: " << uct->statusCode();
 }
+
+void GroupWiseContact::setMessageReceivedOffline( bool on )
+{
+	m_messageReceivedOffline = on;
+}
+
+bool GroupWiseContact::messageReceivedOffline() const
+{
+	return m_messageReceivedOffline;
+}
+
 #include "gwcontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

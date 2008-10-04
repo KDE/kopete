@@ -104,6 +104,7 @@ public slots:
 
 private slots:
 	void slotRememberChanged();
+	void passwordTextChanged();
 
 private:
 	class Private;

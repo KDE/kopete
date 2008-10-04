@@ -126,7 +126,7 @@ Kopete::Account * QQEditAccountWidget::apply()
 	d->ui->m_password->save( &static_cast<QQAccount *>(account())->password() );
 
 	if (d->ui->optionOverrideServer->isChecked() ) {
-		config->writeEntry( "serverName", d->ui->m_serverName->text() );
+		config->writeEntry( "serverName", d->ui->m_serverName->text().trimmed() );
 		config->writeEntry( "serverPort", d->ui->m_serverPort->value()  );
 	}
 	else {

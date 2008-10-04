@@ -66,8 +66,10 @@ void SSIParamsTask::onGo()
 {
 	FLAP f = { 0x02, 0, 0 };
 	SNAC s = { 0x0013, 0x0002, 0x0000, client()->snacSequence() };
+
 	Buffer* buffer = new Buffer();
-	
+	buffer->addTLV16( 0x000B, 0x000F );
+
 	Transfer* t = createTransfer( f, s, buffer );
 	send( t );
 }

@@ -49,7 +49,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  
 HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
 : Kopete::Plugin( HistoryPluginFactory::componentData(), parent ), m_loggerFactory( this )
 {
-	KAction *viewMetaContactHistory = new KAction( KIcon("history"), i18n("View &History" ), this );
+	KAction *viewMetaContactHistory = new KAction( KIcon("view-history"), i18n("View &History" ), this );
 	actionCollection()->addAction( "viewMetaContactHistory", viewMetaContactHistory );
 	connect(viewMetaContactHistory, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory()));
 	viewMetaContactHistory->setEnabled(
@@ -104,7 +104,8 @@ void HistoryMessageLogger::handleMessage( Kopete::MessageEvent *event )
 
 void HistoryPlugin::messageDisplayed(const Kopete::Message &m)
 {
-	if(m.direction()==Kopete::Message::Internal || !m.manager())
+	if(m.direction()==Kopete::Message::Internal || !m.manager() ||
+	   (m.type() == Kopete::Message::TypeFileTransferRequest && m.plainBody().isEmpty()) )
 		return;
 
 	if(!m_loggers.contains(m.manager()))

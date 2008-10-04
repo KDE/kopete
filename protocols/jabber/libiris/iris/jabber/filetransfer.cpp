@@ -1,6 +1,6 @@
 /*
  * filetransfer.cpp - File Transfer
- * Copyright (C) 2004  Justin Karneges
+ * Copyright (C) 2004  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -78,10 +78,29 @@ FileTransfer::FileTransfer(FileTransferManager *m, QObject *parent)
 	reset();
 }
 
+FileTransfer::FileTransfer(const FileTransfer& other)
+	: QObject(other.parent())
+{
+	d = new Private;
+	*d = *other.d;
+	d->m = other.d->m;
+	d->ft = 0;
+	d->c = 0;
+	reset();
+
+	if (d->m->isActive(&other))
+		d->m->link(this);
+}
+
 FileTransfer::~FileTransfer()
 {
 	reset();
 	delete d;
+}
+
+FileTransfer *FileTransfer::copy() const
+{
+	return new FileTransfer(*this);
 }
 
 void FileTransfer::reset()
@@ -382,6 +401,11 @@ FileTransfer *FileTransferManager::takeIncoming()
 	return ft;
 }
 
+bool FileTransferManager::isActive(const FileTransfer *ft) const
+{
+	return d->list.contains(ft) > 0;
+}
+
 void FileTransferManager::pft_incoming(const FTRequest &req)
 {
 	bool found = false;
@@ -568,7 +592,7 @@ bool JT_FT::take(const QDomElement &x)
 		if(!file.isNull()) {
 			QDomElement range = file.elementsByTagName("range").item(0).toElement();
 			if(!range.isNull()) {
-				int x;
+				qlonglong x;
 				bool ok;
 				if(range.hasAttribute("offset")) {
 					x = range.attribute("offset").toLongLong(&ok);

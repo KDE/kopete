@@ -102,17 +102,17 @@ void OscarStatusManager::setPresenceFlagsMask( Oscar::Presence::Flags mask )
 Kopete::OnlineStatus OscarStatusManager::onlineStatusOf( const Oscar::Presence &presence ) const
 {
 	Oscar::Presence pres( presence.internalStatus() & d->mask );
-	pres.setDescription( presence.description() );
 	
 	if ( (pres.flags() & Oscar::Presence::XStatus) == Oscar::Presence::XStatus )
 	{
 		kDebug() << "Creating Kopete::OnlineStatus for XStatus, internal status: " << pres.internalStatus();
 		// XStatus, we have to create new KOS
 		Oscar::PresenceOverlay overlay = pscOverlayForFlags( pres.flags() );
+		const Oscar::PresenceType &type = pscTypeForType( pres.type() );
 
 		QString desc = kosDescription( pres );
 		QString xtrazIcon = QString( "icq_xstatus%1" ).arg( pres.xtrazStatus() );
-		return Kopete::OnlineStatus( Kopete::OnlineStatus::Online, 0, d->protocol, pres.internalStatus(),
+		return Kopete::OnlineStatus( type.onlineStatusType(), 0, d->protocol, pres.internalStatus(),
 		                             QStringList( xtrazIcon ) + overlay.icons(), desc );
 	}
 	else if ( (pres.flags() & Oscar::Presence::ExtStatus) == Oscar::Presence::ExtStatus )
@@ -150,13 +150,7 @@ Oscar::Presence OscarStatusManager::presenceOf( const Kopete::OnlineStatus &stat
 {
 	if ( status.protocol() == d->protocol )
 	{
-		Oscar::Presence presence( status.internalStatus() );
-		if ( (presence.flags() & Oscar::Presence::XStatus) || (presence.flags() & Oscar::Presence::ExtStatus) )
-		{
-			// ExtStatus/XStatus, we have to filter out description
-			presence.setDescription( descriptionFromKOS( status ) );
-		}
-		return presence;
+		return Oscar::Presence( status.internalStatus() );
 	}
 	else
 	{
@@ -273,31 +267,9 @@ QString OscarStatusManager::kosDescription( const Oscar::Presence &presence ) co
 	const Oscar::PresenceType &type = pscTypeForType( presence.type() );
 	
 	QString desc = type.name();
-	if ( !presence.description().isEmpty() )
-		desc += QString(" - %1").arg( presence.description() );
 	
 	if ( !overlay.description().isEmpty() )
 		desc += QString(" (%1)").arg( overlay.description() );
 	
 	return desc;
-}
-
-QString OscarStatusManager::descriptionFromKOS( const Kopete::OnlineStatus &status ) const
-{
-	Oscar::Presence presence( status.internalStatus() );
-	Oscar::PresenceOverlay overlay = pscOverlayForFlags( presence.flags() );
-
-	QString desc = status.description();
-	if ( !overlay.description().isEmpty() )
-	{
-		QString overlayDesc = QString(" (%1)").arg( overlay.description() );
-		if ( desc.endsWith( overlayDesc ) )
-			desc.chop( overlayDesc.length() );
-	}
-
-	int idx = desc.indexOf( " - " );
-	if ( idx > -1 )
-		return desc.mid( idx + 3 );
-	else
-		return QString();
 }

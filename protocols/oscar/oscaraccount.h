@@ -3,7 +3,7 @@
 
     Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
     Copyright (c) 2002 by Chris TenHarmsel <tenharmsel@staticmethod.net>
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -31,6 +31,7 @@ namespace Kopete
 {
 class Contact;
 class Group;
+class FileTransferInfo;
 }
 
 class Client;
@@ -66,9 +67,14 @@ public:
 	bool passwordWasWrong();
 
 	/**
-	 * Accessor method for the action menu
+	 * Fill the menu for this account
 	 */
-	virtual KActionMenu* actionMenu() = 0;
+	virtual void fillActionMenu( KActionMenu *actionMenu ) = 0;
+
+	/**
+	 * Sets the identity this account belongs to
+	 */
+	virtual bool setIdentity( Kopete::Identity *ident );
 
 	/** Set the server address */
 	void setServerAddress( const QString& server );
@@ -90,6 +96,11 @@ public:
 	 * if contact has no encoding
 	 */
 	QTextCodec* contactCodec( const QString& contactName ) const;
+
+	/**
+	 * Updates buddy icon
+	 */
+	void updateBuddyIcon( const QString &path );
 
 	/**
 	 * Add a contact to the server site list
@@ -167,8 +178,12 @@ protected slots:
     void nonServerAddContactDialogClosed();
 
 	/** incoming filetransfer */
-	void askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i );
-	void getTransferManager( Kopete::TransferManager ** );
+	void incomingFileTransfer( FileTransferHandler* handler );
+
+	void fileTransferDestroyed( QObject* handler );
+	void fileTransferCancelled();
+	void fileTransferRefused( const Kopete::FileTransferInfo& info );
+	void fileTransferAccept( Kopete::Transfer* t , const QString& fileName );
 
 signals:
 
@@ -189,6 +204,10 @@ private slots:
 
 	/** Sends buddy icon to server */
 	void slotSendBuddyIcon();
+
+	/** Identity's property changed */
+	void slotIdentityPropertyChanged( Kopete::PropertyContainer *container, const QString &key,
+	                                  const QVariant &oldValue, const QVariant &newValue );
 
 private:
 	OscarAccountPrivate *d;

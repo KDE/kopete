@@ -31,7 +31,6 @@
 #include <solid/networking.h>
 
 #include "kopeteaccount.h"
-#include "kopeteaway.h"
 #include "kopetebehaviorsettings.h"
 #include "kopeteprotocol.h"
 #include "kopetecontact.h"
@@ -42,6 +41,8 @@
 #include "kopeteonlinestatusmanager.h"
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
+#include "kopetestatusmanager.h"
+
 
 namespace Kopete {
 
@@ -103,9 +104,9 @@ bool AccountManager::isAnyAccountConnected() const
 	return false;
 }
 
-void AccountManager::setOnlineStatus( uint category, const QString& awayMessage, uint flags )
+void AccountManager::setOnlineStatus( uint category, const Kopete::StatusMessage &statusMessage, uint flags )
 {
-	kDebug() << "category: " << category << ", Kopete::OnlineStatusManager::Away: " << Kopete::OnlineStatusManager::Away;
+	kDebug() << "category: " << category;
 	OnlineStatusManager::Categories categories
 		= (OnlineStatusManager::Categories)category;
 	bool onlyChangeConnectedAccounts = isAnyAccountConnected();
@@ -115,21 +116,21 @@ void AccountManager::setOnlineStatus( uint category, const QString& awayMessage,
 		Kopete::OnlineStatus status = OnlineStatusManager::self()->onlineStatus( account->protocol(), categories );
 		// Going offline is always respected
 		if ( category & Kopete::OnlineStatusManager::Offline ) {
-			account->setOnlineStatus( status, awayMessage );
+			account->setOnlineStatus( status, statusMessage );
 			continue;
 		}
 		
 		if ( onlyChangeConnectedAccounts ) {
 			if ( account->isConnected() || ( (flags & ConnectIfOffline) && !account->excludeConnect() ) )
-				account->setOnlineStatus( status, awayMessage );
+				account->setOnlineStatus( status, statusMessage );
 		}
 		else {
 			if ( !account->excludeConnect() )
-				account->setOnlineStatus( status, awayMessage );
+				account->setOnlineStatus( status, statusMessage );
 		}
 	}
 	// mark ourselves as globally away if appropriate
-	Away::setGlobalAway( category & Kopete::OnlineStatusManager::Away );
+	Kopete::StatusManager::self()->setGlobalStatus( category, statusMessage );
 }
 
 void AccountManager::setStatusMessage(const QString &message)
@@ -343,12 +344,13 @@ void AccountManager::load()
 	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
 	{
 		KConfigGroup cg( config, *it );
+		KConfigGroup pluginConfig( config, QLatin1String("Plugins") );
 
 		QString protocol = cg.readEntry( "Protocol", QString() );
 		if ( protocol.endsWith( QString::fromLatin1( "Protocol" ) ) )
 			protocol = QString::fromLatin1( "kopete_" ) + protocol.toLower().remove( QString::fromLatin1( "protocol" ) );
 
-		if ( cg.readEntry( "Enabled", true ) )
+		if ( cg.readEntry( "Enabled", true ) && pluginConfig.readEntry(protocol + QLatin1String("Enabled"), true) )
 			PluginManager::self()->loadPlugin( protocol, PluginManager::LoadAsync );
 	}
 }
@@ -399,7 +401,10 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 		// if the identity was not found, use the default one which will for sure exist
 		// FIXME: get rid of this, the account's identity should always exist at this point
 		if (!identity)
+		{
+			kWarning( 14010 ) << "No identity for account " << accountId << ": falling back to default";
 			identity = Kopete::IdentityManager::self()->defaultIdentity();
+		}
 		account->setIdentity( identity );
 	}
 }
@@ -417,9 +422,15 @@ void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 
 void AccountManager::networkConnected()
 {
-	if ( Kopete::BehaviorSettings::self()->autoConnect() )
-		setOnlineStatus( Kopete::OnlineStatusManager::Online, QString(), ConnectIfOffline );
+	Kopete::OnlineStatusManager::Category initStatus = Kopete::OnlineStatusManager::self()->initialStatus();
+	//we check for network availability here too
+	if ( Solid::Networking::status() == Solid::Networking::Unknown ||
+			  Solid::Networking::status() == Solid::Networking::Connected ){
+
+		Kopete::AccountManager::self()->setOnlineStatus( initStatus, QString(), Kopete::AccountManager::ConnectIfOffline );
+	}
 }
+
 
 void AccountManager::networkDisconnected()
 {

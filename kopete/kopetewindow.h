@@ -5,7 +5,7 @@
     Copyright (c) 2001-2002 by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -38,6 +38,8 @@ namespace Kopete
 	class Account;
 	class Contact;
 	class Plugin;
+	class StatusMessage;
+	class StatusRootAction;
 }
 
 /**
@@ -48,7 +50,7 @@ class KopeteWindow : public KXmlGuiWindow
 	Q_OBJECT
 
 public:
-	explicit KopeteWindow ( QWidget *parent = 0, const char *name = 0 );
+	explicit KopeteWindow ( QWidget *parent = 0 );
 	~KopeteWindow();
 
 	virtual bool eventFilter( QObject* o, QEvent* e );
@@ -57,6 +59,7 @@ protected:
 	virtual void closeEvent( QCloseEvent *ev );
 	virtual void leaveEvent( QEvent* ev );
 	virtual void showEvent( QShowEvent* ev );
+	virtual void hideEvent( QHideEvent* ev );
 
 private slots:
 	void slotToggleShowAllOfflineEmpty( bool toggled );
@@ -71,13 +74,22 @@ private slots:
 	void slotToggleAway();
 
 
-	void setStatusMessage( const QString & );
+	void setStatusMessage( const Kopete::StatusMessage& );
+
+	void globalStatusChanged();
 
 	/**
 	 * Checks if the mousecursor is in the contact list.
 	 * If not, the window will be hidden.
 	 */
 	void slotAutoHide();
+	
+	/**
+	 * Resize window to fit size of contact list nicely.
+	 */
+	void slotUpdateSize();
+
+	void slotStartAutoResizeTimer();
 
 	/**
 	 * This slot will apply settings that change the
@@ -106,7 +118,7 @@ private slots:
 	/**
 	 * Get a notification when an identity is created, so we can add a status bar
 	 * icon
-	 * @param identity the registered identity 
+	 * @param identity the registered identity
 	 */
 	void slotIdentityRegistered( Kopete::Identity *identity );
 
@@ -115,6 +127,12 @@ private slots:
 	 * @param identity the unregistered identity
 	 */
 	void slotIdentityUnregistered( const Kopete::Identity *identity );
+
+	/**
+	 * The tooltip got changed, update it.
+	 * @param identity the identity that has changed
+	 */
+	void slotIdentityToolTipChanged( Kopete::Identity *identity );
 
 	/**
 	 * The status icon got changed, update it.
@@ -159,16 +177,19 @@ private slots:
 	void slotAllPluginsLoaded();
 
 	/**
-	 * Protected slot to setup the Set Global Status Message menu.
-	 */
-	void slotBuildStatusMessageMenu();
-	void slotStatusMessageSelected( QAction *action );
-	void slotNewStatusMessageEntered();
-
-	/**
 	 * Show the set global status message menu when clicking on the icon in the status bar.
 	 */
 	void slotGlobalStatusMessageIconClicked( const QPoint &position );
+
+	/**
+	 * Show Info Event widget and if necessary raise the Kopete window.
+	 */
+	void slotShowInfoEventWidget();
+
+	/**
+	 * Show/hide Info Event widget.
+	 */
+	void slotInfoIconClicked();
 
 	/**
 	 * Extracts protocolId and accountId from the single QString argument signalled by a QSignalMapper,
@@ -177,6 +198,8 @@ private slots:
 	 * We need both to uniquely identify an account, but QSignalMapper only emits one QString.
 	 */
 	void slotAddContactDialogInternal( const QString & accountIdentifier );
+
+	void updateStatusMenuMessage( Kopete::StatusRootAction *statusRootAction );
 
 private:
 	void initView();
@@ -208,6 +231,23 @@ protected:
 
 signals:
       void iconClicked(const QPoint &position);
+
+};
+
+class InfoEventIconLabel : public QLabel
+{
+	Q_OBJECT
+public:
+	InfoEventIconLabel( QWidget *parent = 0 );
+
+protected:
+	void mouseReleaseEvent( QMouseEvent *event );
+
+signals:
+	void clicked();
+
+private slots:
+	void updateIcon();
 
 };
 

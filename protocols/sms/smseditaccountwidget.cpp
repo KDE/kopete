@@ -1,17 +1,17 @@
-/*  *************************************************************************
-    *   copyright: (C) 2003 Richard Lärkäng <nouseforaname@home.se>         *
-    *   copyright: (C) 2003 Gav Wood <gav@kde.org>                          *
-    *************************************************************************
-*/
+/*
+  smseditaccountwidget.cpp  -  SMS Plugin Edit Account Widget
 
-/*  *************************************************************************
-    *                                                                       *
-    * This program is free software; you can redistribute it and/or modify  *
-    * it under the terms of the GNU General Public License as published by  *
-    * the Free Software Foundation; either version 2 of the License, or     *
-    * (at your option) any later version.                                   *
-    *                                                                       *
-    *************************************************************************
+  Copyright (c) 2003      by Richard Lärkäng        <nouseforaname@home.se>
+  Copyright (c) 2003      by Gav Wood               <gav@kde.org>
+
+  *************************************************************************
+  *                                                                       *
+  * This program is free software; you can redistribute it and/or modify  *
+  * it under the terms of the GNU General Public License as published by  *
+  * the Free Software Foundation; either version 2 of the License, or     *
+  * (at your option) any later version.                                   *
+  *                                                                       *
+  *************************************************************************
 */
 
 #include <qlayout.h>
@@ -20,10 +20,6 @@
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
-#include <QGridLayout>
-#include <Q3BoxLayout>
 
 #include <kconfigbase.h>
 #include <klocale.h>
@@ -42,8 +38,7 @@
 SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Account *account, QWidget *parent)
 	: QWidget(parent), KopeteEditAccountWidget(account)
 {
-	Q3VBoxLayout *l = new Q3VBoxLayout(this);
-	l->setSpacing(Q3BoxLayout::Down);
+	QVBoxLayout *l = new QVBoxLayout(this);
 	preferencesDialog = new smsActPrefsUI(this);
 	l->addWidget(preferencesDialog);
 

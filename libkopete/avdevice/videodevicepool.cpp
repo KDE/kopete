@@ -60,6 +60,7 @@ VideoDevicePool* VideoDevicePool::self()
 }
 
 VideoDevicePool::VideoDevicePool()
+: m_current_device(0)
 {
 	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(deviceAdded(const QString &)) );
     connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(deviceRemoved(const QString &)) );
@@ -550,7 +551,7 @@ int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 	if (combobox != NULL)
 	{
 		combobox->clear();
-		if ( currentDevice() < m_videodevice.size() )
+		if ( !m_videodevice.isEmpty() && (currentDevice()>=0) && currentDevice() < m_videodevice.size() )
 		{
 			if(m_videodevice[currentDevice()].inputs()>0)
 			{
@@ -577,7 +578,7 @@ int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 	if (combobox != NULL)
 	{
 		combobox->clear();
-		if ( currentDevice() < m_videodevice.size() )
+		if ( !m_videodevice.isEmpty() && currentDevice() < m_videodevice.size() )
 		{
 			if(m_videodevice[currentDevice()].inputs()>0)
 			{
@@ -854,7 +855,7 @@ void VideoDevicePool::saveConfig()
 				config.writeEntry( brightness,             (double)(*vditerator).m_input[input].getBrightness());
 				config.writeEntry( contrast,               (double)(*vditerator).m_input[input].getContrast());
 				config.writeEntry( saturation,             (double)(*vditerator).m_input[input].getSaturation());
-				config.writeEntry( saturation,             (double)(*vditerator).m_input[input].getWhiteness());
+				config.writeEntry( whiteness,              (double)(*vditerator).m_input[input].getWhiteness());
 				config.writeEntry( hue,                    (double)(*vditerator).m_input[input].getHue());
 				config.writeEntry( autobrightnesscontrast, (*vditerator).m_input[input].getAutoBrightnessContrast());
 				config.writeEntry( autocolorcorrection,    (*vditerator).m_input[input].getAutoColorCorrection());
@@ -868,6 +869,7 @@ void VideoDevicePool::saveConfig()
 
 void VideoDevicePool::deviceAdded( const QString & udi )
 {
+	kDebug() << "("<< udi << ") called";
 	Solid::Device dev( udi );
 	if ( dev.is<Solid::Video>() )
 	{
@@ -878,6 +880,7 @@ void VideoDevicePool::deviceAdded( const QString & udi )
 
 void VideoDevicePool::deviceRemoved( const QString & udi )
 {
+	kDebug() << "("<< udi << ") called";
 	int i = 0;
 	foreach ( VideoDevice vd, m_videodevice ) {
 		

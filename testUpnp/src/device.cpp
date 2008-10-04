@@ -1,29 +1,42 @@
-/*
-    device.cpp -
-
-    Copyright (c) 2007-2008 by Romain Castan      <romaincastan@gmail.com>
-    Copyright (c) 2007-2008 by Bertrand Demay     <bertranddemay@gmail.com>
-    Copyright (c) 2007-2008 by Julien Hubatzeck   <reineur31@gmail.com>
-    Copyright (c) 2007-2008 by Michel Saliba      <msalibaba@gmail.com>
-
-    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
-
-    *************************************************************************
-    *                                                                       *
-    * This library is free software; you can redistribute it and/or         *
-    * modify it under the terms of the GNU Lesser General Public            *
-    * License as published by the Free Software Foundation; either          *
-    * version 2 of the License, or (at your option) any later version.      *
-    *                                                                       *
-    *************************************************************************
-*/
-
 #include "device.h"
 
 Device::Device()
 {
+	this->listDevice.erase(this->listDevice.begin(),this->listDevice.end());
+	this->listService.erase(this->listService.begin(),this->listService.end());
 }
 
+Device::Device(QString deviceType,
+QString friendlyName,
+QString manufacturer,
+QString manufacturerURL,
+QString modelName,
+QString UDN,
+QString modelDescription,
+QString modelNumber,
+QString serialNumber,
+QString presentationURL,
+QString UPC,
+QString DescDocURL)
+{
+	printf("CONSTRUCTEUR DEVICE\n");
+	
+	this->m_deviceType = deviceType;
+	this->m_friendlyName=friendlyName;
+	this->m_manufacturer=manufacturer;
+	this->m_manufacturerURL=manufacturerURL;
+	this->m_modelName=modelName;
+	this->m_UDN=UDN;
+	this->m_modelDescription=modelDescription;
+	this->m_modelNumber=modelNumber;
+	this->m_serialNumber=serialNumber;
+	this->m_presentationURL=presentationURL;
+	this->m_UPC=UPC;
+	this->m_DescDocURL=DescDocURL;	
+	
+	this->listDevice.erase(this->listDevice.begin(),this->listDevice.end());
+	this->listService.erase(this->listService.begin(),this->listService.end());	
+}
 
 QString Device::deviceType(){return this->m_deviceType;}
 QString Device::friendlyName(){return this->m_friendlyName;}

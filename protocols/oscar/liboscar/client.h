@@ -5,9 +5,9 @@
 	Copyright (c) 2004-2005 by Matt Rogers <mattr@kde.org>
 
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
-	Based on Iris, Copyright (C) 2003  Justin Karneges
+	Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
-	Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+	Kopete (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
 	*************************************************************************
 	*                                                                       *
@@ -44,6 +44,8 @@ class UserDetails;
 class QString;
 class Task;
 class QTextCodec;
+class FileTransferHandler;
+
 namespace Kopete
 {
 	class Transfer;
@@ -192,6 +194,13 @@ public:
 	 * \param alias the new alias
 	 */
 	void changeContactAlias( const QString& contact, const QString& alias );
+
+	/**
+	 * Set privacy settings
+	 * \param privacy the privacy settings
+	 * \param userClasses the bit mask which tells which class of users you want to be visible to
+	 */
+	void setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses = 0xFFFFFFFF );
 
 	/**
 	 * Send a message to a contact
@@ -348,7 +357,7 @@ public:
 	bool updateProfile( const QList<ICQInfoBase*>& infoList );
 
 	//! Get buddy icon information for a person
-	void requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::BYTE hashType );
+	void requestBuddyIcon( const QString& user, const QByteArray& hash, Oscar::WORD iconType, Oscar::BYTE hashType );
 
 	//! Start a server redirect for a different service
 	void requestServerRedirect( Oscar::WORD family, Oscar::WORD e = 0, QByteArray c = QByteArray(),
@@ -389,8 +398,10 @@ public:
 	/**	Set version capability */
 	void setVersionCap( const QByteArray &cap );
 
-	/** start a filetransfer task */
-	void sendFiles( const QString& contact, const QStringList& files, Kopete::Transfer *t );
+	/** create a filetransfer task
+	 * \return FileTransferHandler object;
+	 */
+	FileTransferHandler* createFileTransfer( const QString& contact, const QStringList& files );
 
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS
@@ -473,6 +484,12 @@ signals:
 	/** we've received a message */
 	void messageReceived( const Oscar::Message& );
 
+	/** a message was delivered */
+	void messageAck( const QString& contact, uint messageId );
+
+	/** a message wasn't delivered */
+	void messageError( const QString& contact, uint messageId );
+
 	/** we've received an authorization request */
 	void authRequestReceived( const QString& contact, const QString& reason );
 
@@ -528,9 +545,7 @@ signals:
 	void redirectionFinished( Oscar::WORD );
 
 	/** incoming filetransfer */
-	void askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i );
-
-	void getTransferManager( Kopete::TransferManager ** );
+	void incomingFileTransfer( FileTransferHandler* handler );
 
 protected slots:
 	// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //

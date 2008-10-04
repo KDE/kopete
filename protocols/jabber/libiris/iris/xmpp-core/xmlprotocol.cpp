@@ -1,6 +1,6 @@
 /*
  * xmlprotocol.cpp - state machine for 'jabber-like' protocols
- * Copyright (C) 2004  Justin Karneges
+ * Copyright (C) 2004  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -189,12 +189,13 @@ static QString sanitizeForStream(const QString &in)
 		}
 		else if(c == '>')
 		{
-			if(inquote)
+			if(inquote) {
 				escape = true;
-			else if(!intag)
+			} else if(!intag) {
 				escape = true;
-			else
+			} else {
 				intag = false;
+			}
 		}
 		else if(c == '\'' || c == '\"')
 		{
@@ -207,8 +208,9 @@ static QString sanitizeForStream(const QString &in)
 				}
 				else
 				{
-					if(quotechar == c)
+					if(quotechar == c) {
 						inquote = false;
+					}
 				}
 			}
 		}
@@ -261,7 +263,7 @@ XmlProtocol::TransferItem::TransferItem(const QDomElement &_elem, bool sent, boo
 }
 
 XmlProtocol::XmlProtocol()
-	: QObject(qApp)
+	: QObject()
 {
 	init();
 }

@@ -50,8 +50,11 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 	// add the general page
 	QWidget *w = new QWidget(this);
 	d->general.setupUi(w);
-	d->general.selectPhoto->setIcon(KIcon("fileview-preview"));
+	d->general.selectPhoto->setIcon(KIcon("view-preview"));
 	d->general.clearPhoto->setIcon(KIcon("edit-clear-locationbar-rtl"));
+	d->general.photo->setText( QString("<qt><a href=\"selectPhoto\">"
+											"<p align=\"center\">No Photo</p>"
+										"</a>").arg( i18n("No Photo") ));
 
 	connect(d->general.selectPhoto, SIGNAL(clicked(bool)),
 			this, SLOT(slotSelectPhoto()));
@@ -65,6 +68,8 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 	w = new QWidget(this);
 	d->detailed.setupUi(w);
 	addWidget(w, i18n("Detailed Information"));
+
+	setIcon(KIcon(d->identity->customIcon()));
 
 	load();
 }
@@ -118,7 +123,10 @@ void IdentityDialog::slotSave()
 {
 	//-------------- General Info ---------------------
 	d->identity->setLabel( d->general.label->text() );
-	d->identity->setProperty( d->props->photo(), d->photoPath );
+	if ( d->photoPath.isEmpty() )
+		d->identity->removeProperty( d->props->photo() );
+	else
+		d->identity->setProperty( d->props->photo(), d->photoPath );
 	d->identity->setProperty( d->props->nickName(), d->general.nickName->text() );
 	d->identity->setProperty( d->props->firstName(), d->general.firstName->text() );
 	d->identity->setProperty( d->props->lastName(), d->general.lastName->text() );
@@ -148,8 +156,10 @@ void IdentityDialog::setPhoto(QString path)
 
 void IdentityDialog::slotSelectPhoto()
 {
-	QString photo = Kopete::UI::AvatarDialog::getAvatar(this, d->photoPath);
-	setPhoto( photo );
+	bool ok;
+	QString photo = Kopete::UI::AvatarDialog::getAvatar(this, d->photoPath, &ok);
+	if ( ok )
+		setPhoto( photo );
 }
 
 void IdentityDialog::slotClearPhoto()

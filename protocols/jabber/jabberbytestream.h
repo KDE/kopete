@@ -21,7 +21,7 @@
 #define JABBERBYTESTREAM_H
 
 #include <bytestream.h>
-#include <k3bufferedsocket.h>
+#include <QTcpSocket>
 #include <kopete_export.h>
 
 
@@ -38,11 +38,11 @@ public:
 
 	virtual ~JabberByteStream ();
 
-	bool connect ( QString host, QString service );
+	void connect ( QString host, int port );
 	virtual bool isOpen () const;
 	virtual void close ();
 
-	KNetwork::KBufferedSocket *socket () const;
+	QTcpSocket *socket () const;
 
 signals:
 	void connected ();
@@ -58,7 +58,7 @@ private slots:
 	void slotError ( int );
 
 private:
-	KNetwork::KBufferedSocket *mSocket;
+	QTcpSocket *mSocket;
 	bool mClosing;
 
 };

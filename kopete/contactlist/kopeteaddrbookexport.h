@@ -40,6 +40,8 @@ class MetaContact;
 
 class KopeteAddressBookExport : public QObject, private Ui::AddressBookExportUI
 {
+Q_OBJECT
+
 public:
 	KopeteAddressBookExport( QWidget *parent, Kopete::MetaContact *mc );
 	~KopeteAddressBookExport();

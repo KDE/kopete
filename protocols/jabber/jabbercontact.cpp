@@ -31,11 +31,13 @@
 #include <qbuffer.h>
 #include <QList>
 
+#include <KActionCollection>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kicon.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
@@ -131,9 +133,9 @@ JabberContact::~JabberContact()
 QList<KAction*> *JabberContact::customContextMenuActions ()
 {
 
-	QList<KAction*> *actionCollection = new QList<KAction*>();
+	QList<KAction*> *actions = new QList<KAction*>();
 
-	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("connection-established"), i18n ("Authorization"), this);
+	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("network-connect"), i18n ("Authorization"), this);
 
 	KAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
 	
@@ -152,13 +154,13 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	actionAuthorization->addAction(requestAuthAction);
 	
 	removeAuthAction = new KAction( this );
-	removeAuthAction->setIcon( (KIcon("mail_delete") ) );
+	removeAuthAction->setIcon( (KIcon("edit-delete") ) );
 	removeAuthAction->setText( i18n ("Remove Authorization From") );
 	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
 	connect(removeAuthAction, SIGNAL(triggered(bool)), SLOT(slotRemoveAuth()));
 	actionAuthorization->addAction(removeAuthAction);
 
-	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("kopeteavailable"), i18n ("Set Availability"), this );
+	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n ("Set Availability"), this );
 
 #define KACTION(status, text, name, slot) \
 	{ KAction *tmp = new KAction(this); \
@@ -176,7 +178,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 #undef KACTION
 
-	KActionMenu *actionSelectResource = new KActionMenu ( KIcon("connect_no"), i18n ("Select Resource"), this );
+	KActionMenu *actionSelectResource = new KActionMenu ( i18n ("Select Resource"), this );
 
 	// if the contact is online, display the resources we have for it,
 	// otherwise disable the menu
@@ -240,16 +242,16 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 	}
 
-	actionCollection->append( actionAuthorization );
-	actionCollection->append( actionSetAvailability );
-	actionCollection->append( actionSelectResource );
+	actions->append( actionAuthorization );
+	actions->append( actionSetAvailability );
+	actions->append( actionSelectResource );
 	
 	
 #ifdef SUPPORT_JINGLE
 	KAction *actionVoiceCall = new KAction( (i18n ("Voice call"), "voicecall", 0, this, SLOT (voiceCall ()), 0, "jabber_voicecall");
 	actionVoiceCall->setEnabled( false );
 
-	actionCollection->append( actionVoiceCall );
+	actions->append( actionVoiceCall );
 
 	// Check if the current contact support Voice calls, also honor lock by default.
 	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( mRosterItem.jid() );
@@ -258,8 +260,16 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 		actionVoiceCall->setEnabled( true );
 	}
 #endif
-	
-	return actionCollection;
+
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("jabberContactAuthorizationMenu"), actionAuthorization);
+	tempCollection.addAction(QLatin1String("contactSendAuth"), resendAuthAction);
+	tempCollection.addAction(QLatin1String("contactRequestAuth"), requestAuthAction);
+	tempCollection.addAction(QLatin1String("contactRemoveAuth"), removeAuthAction);
+	tempCollection.addAction(QLatin1String("jabberContactSetAvailabilityMenu"), actionSetAvailability);
+	tempCollection.addAction(QLatin1String("jabberContactSelectResource"), actionSelectResource);
+	return actions;
 }
 
 void JabberContact::handleIncomingMessage (const XMPP::Message & message)
@@ -305,10 +315,14 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			if (message.containsEvent ( XMPP::DisplayedEvent ) )
 				mManager->receivedEventNotification ( i18n("Message has been displayed") );
 			else if (message.containsEvent ( XMPP::DeliveredEvent ) )
+			{
 				mManager->receivedEventNotification ( i18n("Message has been delivered") );
+				mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateSent );
+			}
 			else if (message.containsEvent ( XMPP::OfflineEvent ) )
 			{
-	        	mManager->receivedEventNotification( i18n("Message stored on the server, contact offline") );
+				mManager->receivedEventNotification( i18n("Message stored on the server, contact offline") );
+				mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateSent );
 			}
 			else if (message.chatState() == XMPP::StateGone )
 			{
@@ -351,6 +365,8 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	// check for errors
 	if ( message.type () == "error" )
 	{
+		mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateError );
+
 		newMessage = new Kopete::Message( this, contactList );
 		newMessage->setTimestamp( message.timeStamp() );
 		newMessage->setPlainBody( i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
@@ -609,7 +625,7 @@ void JabberContact::slotGotLastActivity ()
 		setProperty ( protocol()->propLastSeen, QDateTime::currentDateTime().addSecs ( -task->seconds () ) );
 		if( !task->message().isEmpty() )
 		{
-			setProperty( protocol()->propAwayMessage, task->message() );
+			setStatusMessage( task->message() );
 		}
 	}
 
@@ -733,7 +749,7 @@ void JabberContact::slotSendVCard()
 	XMPP::JT_VCard *task = new XMPP::JT_VCard (account()->client()->rootTask ());
 	// signal to ourselves when the vCard data arrived
 	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotSentVCard ()));
-	task->set (vCard);
+	task->set (rosterItem().jid(), vCard);
 	task->go (true);
 }
 
@@ -1336,6 +1352,8 @@ void JabberContact::slotDiscoFinished( )
 		JabberTransport *transport = new JabberTransport( parentAccount , ri , tr_type );
 		if(!Kopete::AccountManager::self()->registerAccount( transport ))
 			return;
+		
+		transport->setIdentity( parentAccount->identity() );
 		transport->myself()->setOnlineStatus( status ); //push back the online status
 		return;
 	}

@@ -106,7 +106,6 @@ public:
 	const Kopete::PropertyTmpl propPhoneMobile;
 	const Kopete::PropertyTmpl propClient;
 	const Kopete::PropertyTmpl propGuid;
-	const Kopete::PropertyTmpl propPersonalMessage; // it's the equivalent of away message.
 
 	enum List
 	{
@@ -172,7 +171,7 @@ signals:
 	 * @param msnMM is the message manager
 	 * @param c is the contact
 	 */
-	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNChatSession* msnMM , MSNContact* c );
+	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , unsigned long int cookie , MSNChatSession* msnMM , MSNContact* c );
 };
 
 #endif

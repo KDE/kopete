@@ -17,20 +17,22 @@
 #ifndef __MEANWHILE_PLUGIN_H__
 #define __MEANWHILE_PLUGIN_H__
 
-#include "qstring.h"
-#include <kaction.h>
+#include <kglobal.h>
 
 class QLineEdit;
+class QWidget;
+class QString;
+class KActionMenu;
 
 class MeanwhilePlugin
 {
 public:
-	virtual ~MeanwhilePlugin(){}
+    virtual ~MeanwhilePlugin() {}
     /* do something when the find button on add contact is hit
      *  - like do lookups in company databases
      *   when done fill 'fillThis' with the id of the contact
      */
-    virtual void getMeanwhileId(QWidget *parent,QLineEdit *fillThis);
+    virtual void getMeanwhileId(QWidget *parent, QLineEdit *fillThis);
     /* can this plugin provide the above functionality */
     virtual bool canProvideMeanwhileId();
 

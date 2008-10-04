@@ -81,9 +81,6 @@ TextEffectPreferences::TextEffectPreferences(QWidget *parent,
 			 this, SLOT( slotSettingChanged() ) );
 
 	//setMainWidget( preferencesDialog, "Text Effect Plugin" );
-
-	load();
-
 }
 
 TextEffectPreferences::~TextEffectPreferences()

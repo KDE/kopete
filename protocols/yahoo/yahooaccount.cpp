@@ -54,7 +54,7 @@
 #include <kopetecontactlist.h>
 #include <kopetetransfermanager.h>
 #include <kopeteview.h>
-#include <contactaddednotifydialog.h>
+#include <kopeteaddedinfoevent.h>
 
 // Yahoo
 #include "yahooaccount.h"
@@ -85,16 +85,16 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_webcam = 0;
 	m_chatChatSession = 0;
 
-	m_openInboxAction = new KAction( KIcon("mail"), i18n( "Open Inbo&x..." ), this );
+	m_openInboxAction = new KAction( KIcon("mail-folder-inbox"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect(m_openInboxAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenInbox() ) );
-	m_openYABAction = new KAction( KIcon("help-contents"), i18n( "Open &Addressbook..." ), this );
+	m_openYABAction = new KAction( KIcon("x-office-address-book"), i18n( "Open &Addressbook..." ), this );
         //, "m_openYABAction" );
 	QObject::connect(m_openYABAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenYAB() ) );
-	m_editOwnYABEntry = new KAction( KIcon("help-contents"), i18n( "&Edit my contact details..."), this );
+	m_editOwnYABEntry = new KAction( KIcon("document-properties"), i18n( "&Edit my contact details..."), this );
         //, "m_editOwnYABEntry" );
 	QObject::connect(m_editOwnYABEntry, SIGNAL( triggered(bool) ), this, SLOT( slotEditOwnYABEntry() ) );
-	m_joinChatAction = new KAction( KIcon("chat"), i18n( "&Join chat room..."), this );
+	m_joinChatAction = new KAction( KIcon("im-chat-room-join"), i18n( "&Join chat room..."), this );
         //, "m_joinChatAction" );
 	QObject::connect(m_joinChatAction, SIGNAL( triggered(bool) ), this, SLOT( slotJoinChatRoom() ) );
 
@@ -607,19 +607,17 @@ void YahooAccount::slotGoOffline()
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 }
 
-KActionMenu *YahooAccount::actionMenu()
+void YahooAccount::fillActionMenu( KActionMenu *actionMenu )
 {
 //	kDebug(YAHOO_GEN_DEBUG) ;
 
-	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
-	theActionMenu->addSeparator();
-	theActionMenu->addAction( m_openInboxAction );
-	theActionMenu->addAction( m_openYABAction );
-	theActionMenu->addAction( m_editOwnYABEntry );
-	theActionMenu->addAction( m_joinChatAction );
-
-	return theActionMenu;
+	actionMenu->addSeparator();
+	actionMenu->addAction( m_openInboxAction );
+	actionMenu->addAction( m_openYABAction );
+	actionMenu->addAction( m_editOwnYABEntry );
+	actionMenu->addAction( m_joinChatAction );
 }
 
 YahooContact *YahooAccount::contact( const QString &id )
@@ -839,29 +837,36 @@ void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QStri
 	if(kc)
 		metaContact=kc->metaContact();
 
-	Kopete::UI::ContactAddedNotifyDialog::HideWidgetOptions hideFlags=Kopete::UI::ContactAddedNotifyDialog::InfoButton;
-	if( metaContact && !metaContact->isTemporary() )
-		hideFlags |= Kopete::UI::ContactAddedNotifyDialog::AddCheckBox | Kopete::UI::ContactAddedNotifyDialog::AddGroupBox ;
+	Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+	actions |= Kopete::AddedInfoEvent::BlockAction;
+	if( !metaContact || metaContact->isTemporary() )
+		actions |= Kopete::AddedInfoEvent::AddAction;
 
-	Kopete::UI::ContactAddedNotifyDialog *dialog=
-		new Kopete::UI::ContactAddedNotifyDialog( user,QString(),this, hideFlags );
-	QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),
-	                 this,SLOT(slotContactAddedNotifyDialogClosed(const QString& )));
-	dialog->show();
+	Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent( user, this );
+	QObject::connect( event, SIGNAL(actionActivated(uint)),
+	                  this, SLOT(slotAddedInfoEventActionActivated(uint)) );
+	
+	event->showActions( actions );
+	event->sendEvent();
 }
 
-void YahooAccount::slotContactAddedNotifyDialogClosed( const QString &user )
+void YahooAccount::slotAddedInfoEventActionActivated( uint actionId )
 {
-	const Kopete::UI::ContactAddedNotifyDialog *dialog =
-		dynamic_cast<const Kopete::UI::ContactAddedNotifyDialog *>(sender());
-	if(!dialog || !isConnected())
+	const Kopete::AddedInfoEvent *event = dynamic_cast<const Kopete::AddedInfoEvent *>(sender());
+	if( !event || !isConnected() )
 		return;
 
-	m_session->sendAuthReply( user, dialog->authorized(), QString() );
-
-	if(dialog->added())
+	switch ( actionId )
 	{
-		dialog->addContact();
+	case Kopete::AddedInfoEvent::AuthorizeAction:
+		m_session->sendAuthReply( event->contactId(), true, QString() );
+		break;
+	case Kopete::AddedInfoEvent::BlockAction:
+		m_session->sendAuthReply( event->contactId(), false, QString() );
+		break;
+	case Kopete::AddedInfoEvent::AddContactAction:
+		event->addContact();
+		break;
 	}
 }
 
@@ -891,10 +896,10 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 		if( newStatus == m_protocol->Custom ) {
 			if( away == 0 )
 				newStatus =m_protocol->Online;
-			kc->setProperty( m_protocol->awayMessage, msg);
+			kc->setStatusMessage( msg );
 		}
 		else
-			kc->removeProperty( m_protocol->awayMessage );
+			kc->setStatusMessage( Kopete::StatusMessage() );
 
 		//if( newStatus == static_cast<YahooProtocol*>( m_protocol )->Idle ) {
 		if( newStatus == m_protocol->Idle )
@@ -1369,7 +1374,7 @@ void YahooAccount::slotModifyYABEntryError( YABEntry *entry, const QString &msg 
 	YahooContact* kc = contact( entry->yahooId );
 	if( kc )
 		kc->setYABEntry( entry, true );
-	KMessageBox::sorry( Kopete::UI::Global::mainWidget(), msg, i18n( "Yahoo Plugin" ) );
+	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "Yahoo Plugin" ) );
 }
 
 void YahooAccount::slotGotFile( const QString &  who, const QString &  url , long /* expires */, const QString &  msg , const QString &  fname, unsigned long  fesize, const QPixmap &preview )
@@ -1563,7 +1568,7 @@ void YahooAccount::slotGotWebcamInvite( const QString& who )
 }
 void YahooAccount::slotWebcamNotAvailable( const QString &who )
 {
-	KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n("Webcam for %1 is not available.", who), i18n( "Yahoo Plugin" ) );
+	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n("Webcam for %1 is not available.", who), i18n( "Yahoo Plugin" ) );
 }
 
 void YahooAccount::slotGotWebcamImage( const QString& who, const QPixmap& image )
@@ -1661,7 +1666,7 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 		uint expire = myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt();
 
 		if ( image.isNull() ) {
-			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n( "<qt>The selected buddy icon could not be opened. <br />Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n( "<qt>The selected buddy icon could not be opened. <br />Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
 			return;
 		}
 		image = image.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
@@ -1676,7 +1681,7 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 
 		if( !image.save( newlocation, "PNG" ) || !iconFile.open(QIODevice::ReadOnly) )
 		{
-			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), i18n( "An error occurred when trying to change the display picture." ), i18n( "Yahoo Plugin" ) );
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n( "An error occurred when trying to change the display picture." ), i18n( "Yahoo Plugin" ) );
 			return;
 		}
 

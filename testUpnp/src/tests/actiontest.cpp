@@ -1,19 +1,3 @@
-/*
-    actiontest.cpp -
-
-    Copyright (c) 2007-2008 by Bertrand Demay     <bertranddemay@gmail.com>
-
-    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
-
-    *************************************************************************
-    *                                                                       *
-    * This library is free software; you can redistribute it and/or         *
-    * modify it under the terms of the GNU Lesser General Public            *
-    * License as published by the Free Software Foundation; either          *
-    * version 2 of the License, or (at your option) any later version.      *
-    *                                                                       *
-    *************************************************************************
-*/
 
 #include "actiontest.h"
 #include "action.h"
@@ -35,11 +19,16 @@ void ActionTest::testAction()
 	QVERIFY(action.listArgument()->isEmpty());
 }
 
+void ActionTest::testAction_2()
+{
+	Action action(QString("action_name"));
+	QCOMPARE(action.name(),QString("action_name"));
+	QVERIFY(action.listArgument()->isEmpty());
+}
 
 void ActionTest::testAddArgument()
 {
-	Action action;
-	action.setName(QString("action_name"));
+	Action action(QString("action_name"));
 	QVERIFY(action.listArgument()->isEmpty());
 	action.addArgument(QString("argument_name"),QString("argument_direction"),QString("argument_relatedStateVariable"));
 	QVERIFY(action.listArgument()->isEmpty() == false);

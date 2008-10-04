@@ -1,3 +1,5 @@
+set( GROUPWISE_DEBUG_GLOBAL 14190 )
+add_definitions( -DKDE_DEFAULT_DEBUG_AREA=${GROUPWISE_DEBUG_GLOBAL} )
 
 add_subdirectory( icons ) 
 add_subdirectory( libgroupwise ) 
@@ -22,19 +24,19 @@ set( kopete_groupwise_ui_SRCS
 kde4_add_ui_files(kopete_groupwise_ui_SRCS
 	ui/gwaccountpreferences.ui
 	ui/gwaddui.ui
-	ui/gwchatpropswidget.ui
-	ui/gwchatsearchwidget.ui
+	ui/gwchatprops.ui
+	ui/gwchatsearch.ui
 	ui/gwshowinvitation.ui
-	ui/gwcontactpropswidget.ui
+	ui/gwcontactprops.ui
 	ui/gwprivacy.ui
-	ui/gwcustomstatuswidget.ui
+	ui/gwcustomstatus.ui
 	ui/gwcustomstatusedit.ui
-	ui/gwcontactpropswidget.ui
+	ui/gwcontactprops.ui
 	ui/gwcontactsearch.ui
-	ui/gwcustomstatuswidget.ui
+	ui/gwcustomstatus.ui
 	ui/gwcustomstatusedit.ui
 	ui/gwcontactsearch.ui
-	ui/gwchatsearchwidget.ui
+	ui/gwchatsearch.ui
 )
 
 ########### next target ###############
@@ -54,7 +56,7 @@ kde4_add_plugin(kopete_groupwise ${kopete_groupwise_PART_SRCS})
 
 link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libgroupwise )
 
-target_link_libraries(kopete_groupwise  ${KDE4_KDECORE_LIBS} qgroupwise kopete ${QCA2_LIBRARIES})
+target_link_libraries(kopete_groupwise  ${KDE4_KDECORE_LIBS} ${KDE4_KDE3SUPPORT_LIBS} qgroupwise kopete ${QCA2_LIBRARIES})
 
 install(TARGETS kopete_groupwise  DESTINATION ${PLUGIN_INSTALL_DIR})
 

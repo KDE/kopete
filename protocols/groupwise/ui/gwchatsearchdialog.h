@@ -21,9 +21,9 @@
 #define GWCHATSEARCHDIALOG_H
 
 class GroupWiseAccount;
-namespace Ui { class GroupWiseChatSearchWidget; }
 
 #include "gwchatrooms.h"
+#include "ui_gwchatsearch.h"
 
 #include <kdialog.h>
 
@@ -45,6 +45,6 @@ class GroupWiseChatSearchDialog : public KDialog
 	private:
 		GroupWiseAccount * m_account;
 		ChatroomManager * m_manager;
-		Ui::GroupWiseChatSearchWidget * m_widget;
+		Ui::GroupWiseChatSearch m_ui;
 };
 #endif

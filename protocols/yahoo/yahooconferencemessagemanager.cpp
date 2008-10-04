@@ -49,7 +49,7 @@ YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoo
 
 	m_yahooRoom = yahooRoom;
 
-	m_actionInvite = new KAction( KIcon("kontact_contacts"), i18n( "&Invite others" ), this );
+	m_actionInvite = new KAction( KIcon("x-office-contact"), i18n( "&Invite others" ), this ); // icon should probably be "contact-invite", but that doesn't exist... please request an icon on http://techbase.kde.org/index.php?title=Projects/Oxygen/Missing_Icons
         actionCollection()->addAction( "yahooInvite", m_actionInvite );
 	connect ( m_actionInvite, SIGNAL( triggered ( bool ) ), this, SLOT( slotInviteOthers() ) );
 

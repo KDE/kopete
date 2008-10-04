@@ -23,6 +23,7 @@
 #include <kxmlguiwindow.h>
 #include <kmessagebox.h>
 #include <kmenu.h>
+#include <kactionmenu.h>
 #include <kshortcut.h>
 #include <kicon.h>
 
@@ -64,7 +65,7 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 	// Set up the Invite menu
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), this );
         actionCollection()->addAction( "qqInvite", m_actionInvite );
-	connect( m_actionInvite->popupMenu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
+	connect( m_actionInvite->menu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
 
 	m_secure = actionCollection()->addAction( "qqSecureChat" );
 	m_secure->setText( i18n( "Security Status" ) );
@@ -74,7 +75,7 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 
 	m_logging = actionCollection()->addAction( "qqLoggingChat" );
 	m_logging->setText( i18n( "Archiving Status" ) );
-        m_logging->setIcon( KIcon( "logchat" ) );
+        m_logging->setIcon( KIcon( "utilities-log-viewer" ) );
         connect( m_logging, SIGNAL( triggered() ), this, SLOT( slotShowArchiving() ) );
 	updateArchiving();
 
@@ -169,7 +170,7 @@ void QQChatSession::slotCreationFailed( const int failedId, const int statusCode
 {
 	if ( failedId == mmId() )
 	{
-		kDebug ( 14140 ) << " couldn't start a chat, no GUID.\n";
+		kDebug ( 14140 ) << " could not start a chat, no GUID.\n";
 		//emit creationFailed();
 		Kopete::Message failureNotify( myself(), members() );
 		failureNotify.setPlainBody( i18n("An error occurred when trying to start a chat: %1", statusCode ) );
@@ -223,7 +224,7 @@ void QQChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSess
 				{
 					kDebug ( 14140 ) << "waiting for server to create a conference, queuing message";
 					// the conference hasn't been instantiated on the server yet, so queue the message
-					m_guid = QString();
+					m_guid.clear();
 					createConference();
 					m_pendingOutgoingMessages.append( message );
 				}
@@ -282,7 +283,7 @@ void QQChatSession::slotActionInviteAboutToShow()
 	qDeleteAll(m_inviteActions);
 	m_inviteActions.clear();
 
-	m_actionInvite->popupMenu()->clear();
+	m_actionInvite->menu()->clear();
 
 	QHash<QString, Kopete::Contact*>::const_iterator it;
 	for ( it = account()->contacts().begin(); it != account()->contacts().end(); it++ )

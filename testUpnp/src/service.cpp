@@ -1,23 +1,3 @@
-/*
-    service.cpp -
-
-    Copyright (c) 2007-2008 by Romain Castan      <romaincastan@gmail.com>
-    Copyright (c) 2007-2008 by Bertrand Demay     <bertranddemay@gmail.com>
-    Copyright (c) 2007-2008 by Julien Hubatzeck   <reineur31@gmail.com>
-    Copyright (c) 2007-2008 by Michel Saliba      <msalibaba@gmail.com>
-
-    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
-
-    *************************************************************************
-    *                                                                       *
-    * This library is free software; you can redistribute it and/or         *
-    * modify it under the terms of the GNU Lesser General Public            *
-    * License as published by the Free Software Foundation; either          *
-    * version 2 of the License, or (at your option) any later version.      *
-    *                                                                       *
-    *************************************************************************
-*/
-
 #include "service.h"
 
 Service::Service()
@@ -100,8 +80,7 @@ void Service::addActionList(IXML_Node * actionNode)
 	//creating action
 	IXML_NodeList * actionNodeList = ixmlNode_getChildNodes(actionNode);
 	IXML_Node * node = ixmlNodeList_item(actionNodeList,0);
-	Action action;
-	action.setName(QString(util_Xml_nodeValue(node)));
+	Action action = Action(QString(util_Xml_nodeValue(node)));
 
 	//test of the actionNodeList size
 	if (ixmlNodeList_length(actionNodeList) == 2)
@@ -156,7 +135,8 @@ bool Service::existAction(QString nameAction)
 	bool find = false;	
 	for(int i=0;i<this->actionList()->size(); i++)
 	{
-		if(this->getActionAt(i)->name() == nameAction)
+		Action action_tmp = this->actionList()->at(i);	
+		if(action_tmp.name() == nameAction)
 		{
 			find = true;
 		}
@@ -164,26 +144,20 @@ bool Service::existAction(QString nameAction)
 	return find;
 }
 
-Action* Service::actionByName(QString nameAction)
+Action Service::actionByName(QString nameAction)
 {
-	bool find = false;
-	Action* response = new Action();
-	response = NULL;	
-	for(int i=0;i<this->actionList()->size() && !find; i++)
-	{	
-		if(this->getActionAt(i)->name() == nameAction)
+	Action action_tmp = Action();
+	bool find = false;	
+	for(int i=0;i<this->m_actionList.size() && !find; i++)
+	{
+		action_tmp = this->m_actionList.at(i);	
+		if(action_tmp.name() == nameAction)
 		{
 			find = true;
-			response = this->getActionAt(i);
 			
 		}
 	}
-	return response;
-}
-
-Action* Service::getActionAt(int i)
-{
-	return &((*(this->actionList()))[i]);
+	return action_tmp;
 }
 
 void Service::viewActionList()
@@ -192,20 +166,7 @@ void Service::viewActionList()
 	for(int i =0; i < this->m_actionList.size(); i++)
 	{
 		Action action = this->m_actionList.at(i);
-		printf("##### Action %d ##### \n",i);
-		action.viewAction();
-		printf("##################### \n");
+		printf("%s \n",action.name().toLatin1().data());
+		//action.viewListArgument();
 	}
 }
-
-
-void Service::viewService()
-{
-	printf("Service type : %s \n",this->serviceType().toLatin1().data());
-	printf("Service id : %s \n",this->serviceId().toLatin1().data());
-	printf("ControlURL : %s \n",this->controlURL().toLatin1().data());
-	printf("EventSubURL : %s \n",this->eventSubURL().toLatin1().data());
-	printf("XMLDocService : %s \n",this->xmlDocService().toLatin1().data());
-	this->viewActionList();
-}
-

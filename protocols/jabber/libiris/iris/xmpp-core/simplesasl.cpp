@@ -1,6 +1,6 @@
 /*
  * simplesasl.cpp - Simple SASL implementation
- * Copyright (C) 2003  Justin Karneges
+ * Copyright (C) 2003  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -199,8 +199,8 @@ public:
 	QString mechanism_;
 	QString out_mech;
 
-	QCA::SASL::Params *need;
-	QCA::SASL::Params *have;
+	ParamsMutable need;
+	ParamsMutable have;
 	QString user, authz, realm;
 	QCA::SecureArray pass;
 	Result result_;
@@ -210,16 +210,12 @@ public:
 
 	SimpleSASLContext(QCA::Provider* p) : QCA::SASLContext(p)
 	{
-		need = 0;
-		have = 0;
 		reset();
 	}
 
 	~SimpleSASLContext()
 	{
 		reset();
-		delete need;
-		delete have;
 	}
 
 	void reset()
@@ -228,13 +224,14 @@ public:
 
 		capable = true;
 		allow_plain = false;
-
-		delete need;
-		need = new QCA::SASL::Params(false,false,false,false);
-
-		delete have;
-		have = new QCA::SASL::Params(false,false,false,false);
-
+		need.user = false;
+		need.authzid = false;
+		need.pass = false;
+		need.realm = false;
+		have.user = false;
+		have.authzid = false;
+		have.pass = false;
+		have.realm = false;
 		user = QString();
 		authz = QString();
 		pass = QCA::SecureArray();
@@ -283,12 +280,14 @@ public:
 				qWarning("simplesasl.cpp: Not enough capabilities");
 			if (mechanism_.isEmpty()) 
 				qWarning("simplesasl.cpp: No mechanism available");
+			QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 			return;
 		}
 
 		resetState();
 		result_ = Continue;
 		step = 0;
+		tryAgain();
 	}
 
 	virtual void nextStep(const QByteArray &from_net) {
@@ -297,31 +296,27 @@ public:
 	}
 
 	virtual void tryAgain() {
+		// All exits of the method must emit the ready signal
+		// so all exits go through a goto ready; 
 		if(step == 0) {
 			out_mech = mechanism_;
 			
 #ifdef SIMPLESASL_PLAIN
 			// PLAIN 
 			if (out_mech == "PLAIN") {
-				// Firnst, check if we have everything
-				if(need->needUsername() || need->needPassword()) {
+				// First, check if we have everything
+				if(need.user || need.pass) {
 					qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
 					result_ = Error;
-					return;
+					goto ready;
 				}
-				bool need_user = need->needUsername();
-				bool need_pass = need->needPassword();
-				bool need_authzid = need->canSendAuthzid();
-				bool need_realm = need->canSendRealm();
-				if(!have->needUsername())
-					need_user = true;
-				if(!have->needPassword())
-					need_pass = true;
-				delete need;
-				need = new QCA::SASL::Params(need_user,need_authzid,need_pass,need_realm);
-				if(need->needUsername() || need->needPassword()) {
+				if(!have.user)
+					need.user = true;
+				if(!have.pass)
+					need.pass = true;
+				if(need.user || need.pass) {
 					result_ = Params;
-					return;
+					goto ready;
 				}
 
 				// Continue with authentication
@@ -334,34 +329,29 @@ public:
 			}
 #endif
 			++step;
-			result_ = Continue;
+			if (out_mech == "PLAIN")
+				result_ = Success;
+			else
+				result_ = Continue;
 		}
 		else if(step == 1) {
 			// if we still need params, then the app has failed us!
-			if(need->needUsername() || need->canSendAuthzid() || need->needPassword() || need->canSendRealm()) {
+			if(need.user || need.authzid || need.pass || need.realm) {
 				qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
 				result_ = Error;
 				goto ready;
 			}
 
-			bool need_user = need->needUsername();
-			bool need_pass = need->needPassword();
-			bool need_authzid = need->canSendAuthzid();
-			bool need_realm = need->canSendRealm();
-
 			// see if some params are needed
-			if(!have->needUsername())
-				need_user = true;
+			if(!have.user)
+				need.user = true;
 			//if(!have.authzid)
 			//	need.authzid = true;
-			if(!have->needPassword())
-				need_pass = true;
-
-			delete need;
-			need = new QCA::SASL::Params(need_user,need_authzid,need_pass,need_realm);
-			if(need->needUsername() || need->canSendAuthzid() || need->needPassword()) {
+			if(!have.pass)
+				need.pass = true;
+			if(need.user || need.authzid || need.pass) {
 				result_ = Params;
-				return;
+				goto ready;
 			}
 
 			// get props
@@ -370,9 +360,9 @@ public:
 			if(!in.fromString(cs)) {
 				authCondition_ = QCA::SASL::BadProtocol;
 				result_ = Error;
-				return;
+				goto ready;
 			}
-			//qDebug(QString("simplesasl.cpp: IN: %1").arg(QString(in.toString())));
+			//qDebug() << (QString("simplesasl.cpp: IN: %1").arg(QString(in.toString())));
 
 			// make a cnonce
 			QByteArray a(32);
@@ -394,7 +384,7 @@ public:
 			QByteArray tmp = ':' + nonce + ':' + cnonce;
 			if (!authz.isEmpty())
 				tmp += ':' + authz.utf8();
-			//qDebug(QString(tmp));
+			//qDebug() << (QString(tmp));
 
 			QByteArray A1(Y + tmp);
 			QByteArray A2 = QByteArray("AUTHENTICATE:") + uri;
@@ -403,9 +393,9 @@ public:
 			Q3CString KD = HA1 + ':' + nonce + ':' + nc + ':' + cnonce + ':' + qop + ':' + HA2;
 			Q3CString Z = QCA::Hash("md5").hashToString(KD).latin1();
 			
-			//qDebug(QString("simplesasl.cpp: A1 = %1").arg(QString(A1)).toAscii());
-			//qDebug(QString("simplesasl.cpp: A2 = %1").arg(QString(A2)).toAscii());
-			//qDebug(QString("simplesasl.cpp: KD = %1").arg(QString(KD)).toAscii());
+			//qDebug() << (QString("simplesasl.cpp: A1 = %1").arg(QString(A1)).toAscii());
+			//qDebug() << (QString("simplesasl.cpp: A2 = %1").arg(QString(A2)).toAscii());
+			//qDebug() << (QString("simplesasl.cpp: KD = %1").arg(QString(KD)).toAscii());
 
 			// build output
 			PropList out;
@@ -432,11 +422,12 @@ public:
 			++step;
 			result_ = Continue;
 		}
-		else if (step == 2) {
+		/*else if (step == 2) {
+			//Commenting this out is Justin's fix for updated QCA.
 			out_buf.resize(0);
 			result_ = Continue;
 			++step;
-		}
+		}*/
 		else {
 			out_buf.resize(0);
 			result_ = Success;
@@ -448,7 +439,7 @@ ready:
 	virtual void update(const QByteArray &from_net, const QByteArray &from_app) {
 		result_to_app_ = from_net;
 		result_to_net_ = from_app;
-		encoded_ = 1;
+		encoded_ = from_app.size();
 		result_ = Success;
 		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 	}
@@ -457,7 +448,7 @@ ready:
 
 		// TODO: for now, all operations block anyway
 		Q_UNUSED(msecs);
-                return false;
+		return true;
 	}
 
 	virtual Result result() const {
@@ -501,44 +492,30 @@ ready:
 	}
 
 	virtual QCA::SASL::Params clientParams() const {
-		return *need;
+		return QCA::SASL::Params(need.user, need.authzid, need.pass, need.realm);
 	}
 	
 	virtual void setClientParams(const QString *_user, const QString *_authzid, const QCA::SecureArray *_pass, const QString *_realm) {
-		bool need_user = need->needUsername();
-		bool need_authzid = need->canSendAuthzid();
-		bool need_pass = need->needPassword();
-		bool need_realm = need->canSendRealm();
-
-		bool have_user = have->needUsername();
-		bool have_authzid = have->canSendAuthzid();
-		bool have_pass = have->needPassword();
-		bool have_realm = have->canSendRealm();
-
 		if(_user) {
 			user = *_user;
-			need_user = false;
-			have_user = true;
+			need.user = false;
+			have.user = true;
 		}
 		if(_authzid) {
 			authz = *_authzid;
-			need_authzid = false;
-			have_authzid = true;
+			need.authzid = false;
+			have.authzid = true;
 		}
 		if(_pass) {
 			pass = *_pass;
-			need_pass = false;
-			have_pass = true;
+			need.pass = false;
+			have.pass = true;
 		}
 		if(_realm) {
 			realm = *_realm;
-			need_realm = false;
-			have_realm = true;
+			need.realm = false;
+			have.realm = true;
 		}
-		delete need;
-		need = new QCA::SASL::Params(need_user,need_authzid,need_pass,need_realm);
-		delete have;
-		have = new QCA::SASL::Params(have_user,have_authzid,have_pass,have_realm);
 	}
 
 	virtual QStringList realmlist() const
@@ -546,8 +523,7 @@ ready:
 		// TODO
 		return QStringList();
 	}
-		
-	
+
 	virtual QString username() const {
 		return QString();
 	}
@@ -583,14 +559,6 @@ public:
 	{
 	}
 
-    int version() const {
-		return QCA_VERSION;
-    }
-
-    //FIXME: I'm not sure what are we supposed to do here 
-    int qcaVersion() const {
-		return QCA_VERSION;
-    }
 	QString name() const {
 		return "simplesasl";
 	}
@@ -604,6 +572,10 @@ public:
 		if(cap == "sasl")
 			return new SimpleSASLContext(this);
 		return 0;
+	}
+	int qcaVersion() const
+	{
+		return QCA_VERSION;
 	}
 };
 

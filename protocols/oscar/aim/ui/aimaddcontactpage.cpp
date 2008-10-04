@@ -20,12 +20,9 @@
 
 #include "kopeteaccount.h"
 
-#include <qlayout.h>
-#include <qlineedit.h>
-//Added by qt3to4:
-#include <QLabel>
-#include <klocale.h>
 #include <kmessagebox.h>
+
+#include "oscarutils.h"
 
 AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent)
 	: AddContactPage(parent)
@@ -92,12 +89,12 @@ bool AIMAddContactPage::apply(Kopete::Account *account,
 {
 	if ( m_gui->icqRadioButton->isChecked() )
 	{
-		QString contactId = m_gui->icqEdit->text();
+		QString contactId = Oscar::normalize( m_gui->icqEdit->text() );
 		return account->addContact( contactId, metaContact, Kopete::Account::ChangeKABC );
 	}
 	else if ( m_gui->aimRadioButton->isChecked() )
 	{
-		QString contactId = m_gui->aimEdit->text();
+		QString contactId = Oscar::normalize( m_gui->aimEdit->text() );
 		return account->addContact( contactId, metaContact, Kopete::Account::ChangeKABC );
 	}
 	return false;

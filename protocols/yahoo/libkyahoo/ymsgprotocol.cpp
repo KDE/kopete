@@ -364,16 +364,16 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	
         QString d = QString::fromAscii( packet.data() + pos, packet.size() - pos );
         QStringList list;
-        list = QStringList::split( "\xc0\x80", d );
-        for( uint i = 0; i+1 < list.size() && pos+1 < len+20; i += 2 ) {
+        list = d.split( "\xc0\x80" );
+        for( int i = 0; i+1 < list.size() && pos+1 < len+20; i += 2 ) {
                 QString key = list[i];
-                QString value = QString::fromUtf8( list[i+1].ascii() );
-                pos += key.utf8().length() + value.utf8().length() + 4;
-                t->setParam( QString(key).toInt(), value.utf8() );
-                kdDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Key: " << key << " Value: " << value << endl;
+                QString value = QString::fromUtf8( list[i+1].toAscii() );
+                pos += key.toUtf8().length() + value.toUtf8().length() + 4;
+                t->setParam( QString(key).toInt(), value.toUtf8() );
+                kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << "Key: " << key << " Value: " << value << endl;
         }
 
-        while( (uint)pos < packet.size() && packet.data()[pos] == '\x00' )
+        while( pos < packet.size() && packet.data()[pos] == '\x00' )
                 pos++;
 
 // 	kDebug(YAHOO_RAW_DEBUG) << " Returning transfer";

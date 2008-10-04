@@ -45,11 +45,11 @@ class KMenu;
 
 WPProtocol *WPProtocol::sProtocol = 0;
 
-typedef KGenericFactory<WPProtocol> WPProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_wp, WPProtocolFactory( "kopete_wp" )  )
+K_PLUGIN_FACTORY( WPProtocolFactory, registerPlugin<WPProtocol>(); )
+K_EXPORT_PLUGIN( WPProtocolFactory( "kopete_wp" ) )
 
 // WP Protocol
-WPProtocol::WPProtocol( QObject *parent, const QStringList & /* args */ )
+WPProtocol::WPProtocol( QObject *parent, const QVariantList & /* args */ )
 : Kopete::Protocol( WPProtocolFactory::componentData(), parent ),
 	WPOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QStringList(), i18n("Online"),  i18n("Online")),
 	WPAway(    Kopete::OnlineStatus::Away,    20, this, 1,  QStringList(QString::fromLatin1("wp_away")),     i18n("Away"),    i18n("Away")),

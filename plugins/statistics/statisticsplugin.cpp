@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#include <math.h>
+
 #include <qfile.h>
 //Added by qt3to4:
 #include <QList>
@@ -52,7 +54,7 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const QVariantList &/*args*
 	: Kopete::Plugin( StatisticsPluginFactory::componentData(), parent )
 {
 
-	KAction *viewMetaContactStatistics = new KAction( KIcon("log"), i18n("View &Statistics" ),
+	KAction *viewMetaContactStatistics = new KAction( KIcon("view-statistics"), i18n("View &Statistics" ),
 		this );
 	actionCollection()->addAction ( "viewMetaContactStatistics", viewMetaContactStatistics );
 	connect(viewMetaContactStatistics, SIGNAL(triggered(bool)), this, SLOT(slotViewStatistics()));

@@ -36,7 +36,7 @@ class GroupWiseProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
-	GroupWiseProtocol(QObject *parent, const QStringList &args);
+	GroupWiseProtocol(QObject *parent, const QVariantList &args);
     ~GroupWiseProtocol();
 	/**
 	 * Convert the serialised data back into a GroupWiseContact and add this
@@ -98,7 +98,6 @@ public:
 	const Kopete::PropertyTmpl propGivenName;
 	const Kopete::PropertyTmpl propLastName;
 	const Kopete::PropertyTmpl propFullName;
-	const Kopete::PropertyTmpl propAwayMessage;
 	const Kopete::PropertyTmpl propAutoReply;
 	const Kopete::PropertyTmpl propCN;
 	const Kopete::PropertyTmpl propPhoneWork;

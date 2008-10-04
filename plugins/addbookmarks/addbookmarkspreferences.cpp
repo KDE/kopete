@@ -22,11 +22,11 @@
 #include <QStringListModel>
 #include <kopetemetacontact.h>
 
+K_PLUGIN_FACTORY( BookmarksPreferencesFactory, registerPlugin<BookmarksPreferences>(); )
+K_EXPORT_PLUGIN( BookmarksPreferencesFactory( "kcm_kopete_addbookmarks" ) )
 
-typedef KGenericFactory<BookmarksPreferences> BookmarksPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_addbookmarks, BookmarksPreferencesFactory("kcm_kopete_addbookmarks") )
 
-BookmarksPreferences::BookmarksPreferences(QWidget *parent, const QStringList &args)
+BookmarksPreferences::BookmarksPreferences(QWidget *parent, const QVariantList &args)
  : KCModule(BookmarksPreferencesFactory::componentData(), parent, args)
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
@@ -40,13 +40,12 @@ BookmarksPreferences::BookmarksPreferences(QWidget *parent, const QStringList &a
 	p_buttonGroup->addButton( p_dialog->noButton, BookmarksPrefsSettings::Never );
 	p_buttonGroup->addButton( p_dialog->onlySelectedButton, BookmarksPrefsSettings::SelectedContacts );
 	p_buttonGroup->addButton( p_dialog->onlyNotSelectedButton, BookmarksPrefsSettings::UnselectedContacts );
-	
+
 	p_contactsListModel = new QStringListModel();
 	p_dialog->contactList->setModel( p_contactsListModel );
 
-	load();
 	connect( p_buttonGroup, SIGNAL( buttonClicked ( int ) ), this, SLOT( slotSetStatusChanged() ));
-	connect( p_dialog->contactList, SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ),
+	connect( p_dialog->contactList, SIGNAL( activated ( const QModelIndex &) ),
 	         this, SLOT( slotSetStatusChanged() ));
 	if(Kopete::PluginManager::self()->plugin("kopete_addbookmarks"))
            connect( this, SIGNAL(PreferencesChanged()), Kopete::PluginManager::self()->plugin("kopete_addbookmarks") , SLOT(slotReloadSettings()));
@@ -73,7 +72,7 @@ void BookmarksPreferences::save()
 		m_settings.setContactsList( list );
 	}
 	m_settings.save();
-	emit PreferencesChanged(); 
+	emit PreferencesChanged();
 	emit KCModule::changed(false);
 }
 
@@ -84,7 +83,7 @@ void BookmarksPreferences::slotSetStatusChanged()
 		p_dialog->contactList->setEnabled(false);
 	else
 		p_dialog->contactList->setEnabled(true);
-	
+
 	emit KCModule::changed(true);
 }
 

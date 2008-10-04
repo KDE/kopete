@@ -22,7 +22,7 @@
 
 #include <kdialog.h>
 
-namespace Ui { class ShowInvitationWidget; }
+#include "ui_gwshowinvitation.h"
 
 /**
 This is the dialog that is shown when you receive an invitation to chat.
@@ -43,7 +43,7 @@ protected slots:
 private:
 	GroupWiseAccount * m_account;
 	ConferenceGuid m_guid; // the conference we were invited to join.
-	Ui::ShowInvitationWidget * m_wid;
+	Ui::ShowInvitation m_ui;
 };
 
 #endif

@@ -86,8 +86,8 @@ public:
 
 	AIMProtocol *protocol() const;
 
-	// Accessor method for the action menu
-	virtual KActionMenu* actionMenu();
+	// fill the menu for this account
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	virtual void connectWithPassword( const QString &password );
 
@@ -132,9 +132,6 @@ private:
 	void setPresenceFlags( Oscar::Presence::Flags flags, const QString &message = QString() );
 	void setPresenceType( Oscar::Presence::Type, const QString &awayMessage = QString() );
 	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString() );
-
-	// Set privacy tlv item
-	void setPrivacyTLVs( Oscar::BYTE privacy, Oscar::DWORD userClasses );
 
 	QString addQuotesAroundAttributes( QString message ) const;
 

@@ -32,10 +32,7 @@ StatusAction::StatusAction( const Xtraz::Status &status, QObject *parent )
 
 void StatusAction::triggered()
 {
-	Oscar::Presence presence( Oscar::Presence::Online, Oscar::Presence::XStatus );
-	presence.setXtrazStatus( mStatus.status() );
-	presence.setDescription( mStatus.description() );
-	emit triggered( presence, mStatus.message() );
+	emit triggered( mStatus );
 }
 
 }

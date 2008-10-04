@@ -27,6 +27,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kicon.h>
+#include <kaction.h>
 #include <kactioncollection.h>
 #include "kopetechatsessionmanager.h"
 #include "kopetemessage.h"
@@ -48,6 +49,8 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 											 : Kopete::ChatSession ( user, others, protocol )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << "New message manager for " << user->contactId ();
+	
+	setComponentData(protocol->componentData());
 
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );
@@ -186,7 +189,7 @@ void JabberChatSession::sendNotification( Event event )
 	XMPP::MsgEvent msg_event;
 	XMPP::ChatState new_state;
 	bool send_msg_event=false;
-	bool send_state;
+	bool send_state=false;
 	
 	switch(event)
 	{
@@ -250,7 +253,7 @@ void JabberChatSession::sendNotification( Event event )
 		}
 	}*/
 	
-	if(send_state || send_msg_event )
+	if( !members().isEmpty() && (send_state || send_msg_event) )
 	{
 		// create JID for us as sender
 		XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
@@ -328,6 +331,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 		jabberMessage.setTo ( toJid );
 
+		jabberMessage.setId( QString::number( message.id() ) );
 		jabberMessage.setSubject ( message.subject () );
 		jabberMessage.setTimeStamp ( message.timestamp () );
 
@@ -364,7 +368,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 				{
 					QString xhtmlBody = message.escapedBody();
 					
-					// According to JEP-0071 8.9  it is only RECOMMANDED to replace \n with <br/>
+					// According to JEP-0071 8.9  it is only RECOMMENDED to replace \n with <br/>
 					//  which mean that some implementation (gaim 2 beta) may still think that \n are linebreak.  
 					// and considered the fact that KTextEditor generate a well indented XHTML, we need to remove all \n from it
 					//  see Bug 121627
@@ -410,6 +414,8 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
         // send the message
 		account()->client()->sendMessage ( jabberMessage );
+
+		message.setState( Kopete::Message::StateSending );
 
 		// append the message to the manager
 		Kopete::ChatSession::appendMessage ( message );

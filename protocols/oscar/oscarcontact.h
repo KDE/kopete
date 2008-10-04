@@ -70,7 +70,7 @@ Q_OBJECT
 
 public:
 	OscarContact( Kopete::Account* account, const QString& name,
-	              Kopete::MetaContact* parent, const QString& icon = QString(), const OContact& ssiItem = OContact() );
+	              Kopete::MetaContact* parent, const QString& icon = QString() );
 	
 	virtual ~OscarContact();
 	
@@ -107,6 +107,13 @@ public:
 	 */
 	void setPresenceTarget( const Oscar::Presence &presence );
 
+	/**
+	 * Set encoding for this contact
+	 * @param mib the MIBenum
+	 * @note If @p mib is 0 then default encoding will be used
+	 */
+	virtual void setEncoding( int mib );
+
 public slots:	
 	/** Remove this contact from the server. Reimplemented from Kopete::Contact */
 	virtual void deleteContact();
@@ -132,8 +139,15 @@ public slots:
 	/** change contact encoding */
 	void changeContactEncoding();
 
+	void requestAuthorization();
+
+signals:
+	void statusMessageChanged();
+
 protected slots:
 	void slotTyping( bool typing );
+	void messageAck( const QString& contact, uint messageId );
+	void messageError( const QString& contact, uint messageId );
 
 protected:
 	OscarAccount *mAccount;
@@ -143,8 +157,7 @@ protected:
 	OContact m_ssiItem;
 	int m_warningLevel;
 	QString m_clientFeatures;
-	bool m_haveAwayMessage;
-	
+
 private:
 	void initActions();
 
@@ -160,7 +173,6 @@ private slots:
 	
 private:
 	QString filterAwayMessage( const QString &message ) const;
-	bool cachedBuddyIcon( QByteArray hash );
 	bool m_buddyIconDirty;
 
 	OscarEncodingSelectionDialog* m_oesd;

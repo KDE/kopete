@@ -13,7 +13,6 @@ class UpnpRouterPrivate
 {
 
 	public:
-		UpnpRouterPrivate();
 		/**
 		* Return all router detected on network
 		*/
@@ -54,7 +53,7 @@ class UpnpRouterPrivate
 		* @param typeProtocol choose between TCP and UDP
 		* @param protocol name of protocol
 		*/
-		bool openPort(quint16 port, const QString &typeProtocol, const QString &protocol);
+		bool openPort(QHostAddress &hostAddress, quint16 port, const QString &typeProtocol, const QString &protocol);
 		
 		/**
 		* Delete port on the router default

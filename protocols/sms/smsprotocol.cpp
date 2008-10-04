@@ -1,17 +1,17 @@
-/*  *************************************************************************
-    *   copyright: (C) 2003 Richard Lärkäng <nouseforaname@home.se>         *
-    *   copyright: (C) 2003 Gav Wood <gav@kde.org>                          *
-    *************************************************************************
-*/
+/*
+  smsprotocol.cpp  -  SMS Plugin Protocol
 
-/*  *************************************************************************
-    *                                                                       *
-    * This program is free software; you can redistribute it and/or modify  *
-    * it under the terms of the GNU General Public License as published by  *
-    * the Free Software Foundation; either version 2 of the License, or     *
-    * (at your option) any later version.                                   *
-    *                                                                       *
-    *************************************************************************
+  Copyright (c) 2003      by Richard Lärkäng        <nouseforaname@home.se>
+  Copyright (c) 2003      by Gav Wood               <gav@kde.org>
+
+  *************************************************************************
+  *                                                                       *
+  * This program is free software; you can redistribute it and/or modify  *
+  * it under the terms of the GNU General Public License as published by  *
+  * the Free Software Foundation; either version 2 of the License, or     *
+  * (at your option) any later version.                                   *
+  *                                                                       *
+  *************************************************************************
 */
 
 #include <kgenericfactory.h>
@@ -27,12 +27,12 @@
 #include "smsaddcontactpage.h"
 #include "smsaccount.h"
 
-typedef KGenericFactory<SMSProtocol> SMSProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_sms, SMSProtocolFactory( "kopete_sms" )  )
+K_PLUGIN_FACTORY( SMSProtocolFactory, registerPlugin<SMSProtocol>(); )
+K_EXPORT_PLUGIN( SMSProtocolFactory( "kopete_sms" ) )
 
 SMSProtocol* SMSProtocol::s_protocol = 0L;
 
-SMSProtocol::SMSProtocol(QObject *parent, const QStringList &)
+SMSProtocol::SMSProtocol(QObject *parent, const QVariantList &)
 : Kopete::Protocol( SMSProtocolFactory::componentData(), parent ),
 	SMSOnline(  Kopete::OnlineStatus::Online,  25, this, 0,  QStringList(),   i18n( "Online" ), i18n( "Online" ), Kopete::OnlineStatusManager::Online ),
 	SMSOffline( Kopete::OnlineStatus::Offline, 0, this, 2,  QStringList(),   i18n( "Offline" ), i18n( "Offline" ), Kopete::OnlineStatusManager::Offline ),

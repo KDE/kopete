@@ -4,7 +4,7 @@
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
@@ -52,7 +52,7 @@ protected:
 	void extractPrivacy( Field::FieldList & fields );
 	QStringList readPrivacyItems( const QByteArray & tag, Field::FieldList & fields );
 	void extractCustomStatuses( Field::FieldList & fields );
-
+	void extractKeepalivePeriod( Field::FieldList & fields );
 signals:
 	void gotMyself( const GroupWise::ContactDetails & );
 	void gotFolder( const FolderItem & );
@@ -60,6 +60,7 @@ signals:
 	void gotContactUserDetails( const GroupWise::ContactDetails & );
 	void gotPrivacySettings( bool locked, bool defaultDeny, const QStringList & allowList, const QStringList & denyList );
 	void gotCustomStatus( const GroupWise::CustomStatus & );
+	void gotKeepalivePeriod( int );
 };
 
 #endif

@@ -31,6 +31,7 @@ namespace Kopete
 {
 
 class Account;
+class StatusMessage;
 
 /**
  * @author Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
@@ -90,15 +91,6 @@ public:
 	bool excludeConnect() const;
 
 	/**
-	 * @brief Sets the online status for this identity
-	 * Sets the online status for each account in this identity, except those which are set to 
-	 * 'Exclude from connect all' (Kopete::Account::excludeConnect()).
-	 * @param category generic OnlineStatusManager::Categories identifying status to set
-	 * @param awayMessage status message to use in this onlinestatus
-	 */
-	void setOnlineStatus( uint category, const QString &awayMessage );
-
-	/**
 	 * @brief Get the online status of the identity
 	 * @return the online status of the identity
 	 */
@@ -107,7 +99,7 @@ public:
 	/**
 	 * @brief Get the current status message of the identity
 	 */
-	QString statusMessage() const;
+	Kopete::StatusMessage statusMessage() const;
 	
 	/**
 	 * \brief Get the tooltip for this identity
@@ -150,6 +142,23 @@ public:
 
 public slots:
 	/**
+	 * @brief Sets the online status for this identity
+	 * Sets the online status for each account in this identity, except those which are set to
+	 * 'Exclude from connect all' (Kopete::Account::excludeConnect()).
+	 * @param category generic OnlineStatusManager::Categories identifying status to set
+	 * @param statusMessage is the new status message to use in this onlinestatus
+	 */
+	void setOnlineStatus( uint category, const Kopete::StatusMessage &statusMessage );
+
+	/**
+	 * @brief Sets the status message for this identity
+	 * Sets the status message for each account in this identity, except those which are set to
+	 * 'Exclude from connect all' (Kopete::Account::excludeConnect()).
+	 * @param statusMessage is the new status message to use
+	 */
+	void setStatusMessage( const Kopete::StatusMessage &statusMessage );
+	
+	/**
 	 * @brief Removes an account from the identity
 	 *
 	 * @param account the account to be removed
@@ -164,6 +173,7 @@ protected slots:
 
 signals:
 	void onlineStatusChanged( Kopete::Identity* );
+	void toolTipChanged( Kopete::Identity* );
 	void identityDestroyed( const Kopete::Identity *identity );
 	void identityChanged(Kopete::Identity *identity);
 

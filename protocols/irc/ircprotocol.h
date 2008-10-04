@@ -67,7 +67,7 @@ class IRCProtocol
 public:
 	static IRCProtocol *self();
 
-	IRCProtocol(QObject *parent, const QStringList &args);
+	IRCProtocol(QObject *parent, const QVariantList &args);
 	~IRCProtocol();
 
 	/**
@@ -87,7 +87,7 @@ public:
 
 //	virtual QList<KAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
 
-	Kopete::OnlineStatus onlineStatusFor(const KIrc::Entity::Ptr &entity);
+	Kopete::OnlineStatus onlineStatusFor(KIrc::Entity *entity);
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
@@ -109,9 +109,7 @@ private:
 	void initOnlineStatus();
 	void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
 
-	static IRCProtocol *s_protocol;
-
-//	QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
+	//QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
 //	const Kopete::OnlineStatus m_connecting;
 	const Kopete::OnlineStatus m_StatusUnknown;
 

@@ -116,7 +116,7 @@ std::pair<QString,QRect> ComponentBase::toolTip( const QPoint &relativePos )
 		if ( n->rect().contains( relativePos ) )
 			return n->toolTip( relativePos );
 
-	return std::make_pair( QString::null, QRect() );
+	return std::make_pair( QString(), QRect() );
 }
 
 void ComponentBase::updateAnimationPosition( int p, int s )
@@ -712,12 +712,12 @@ void DisplayNameComponent::redraw()
 		((TextComponent*)component(n))->color();
 	}
 
-	QList<Kopete::Emoticons::Token> tokens;
-	QList<Kopete::Emoticons::Token>::const_iterator token;
+	QList<KEmoticonsTheme::Token> tokens;
+	QList<KEmoticonsTheme::Token>::const_iterator token;
 
 	clear(); // clear childen
 
-	tokens = Kopete::Emoticons::tokenizeEmoticons( d->text );
+	tokens = Kopete::Emoticons::tokenize( d->text );
 	ImageComponent *ic;
 	TextComponent *t;
 
@@ -727,10 +727,10 @@ void DisplayNameComponent::redraw()
 	{
 		switch ( (*token).type )
 		{
-		case Kopete::Emoticons::Text:
+		case KEmoticonsTheme::Text:
 			t = new TextComponent( this,  d->font, (*token).text );
 		break;
-		case Kopete::Emoticons::Image:
+		case KEmoticonsTheme::Image:
 			ic = new ImageComponent( this );
 			ic->setPixmap( QPixmap( (*token).picPath ) );
 			ic->scale( INT_MAX, fontHeight, Qt::KeepAspectRatio );
@@ -961,13 +961,13 @@ bool Item::Private::foldVisibility = true;
 Item::Item( Q3ListViewItem *parent, QObject *owner )
  : QObject( owner ), K3ListViewItem( parent ), d( new Private(this) )
 {
-	initLVI();
+	initLVI(parent->listView());
 }
 
 Item::Item( Q3ListView *parent, QObject *owner )
  : QObject( owner ), K3ListViewItem( parent ), d( new Private(this) )
 {
-	initLVI();
+	initLVI(parent);
 }
 
 Item::~Item()
@@ -982,13 +982,14 @@ void Item::setEffects( bool animation, bool fading, bool folding )
 	Private::foldVisibility = folding;
 }
 
-void Item::initLVI()
+void Item::initLVI(QObject* parent)
 {
 	connect( listView()->header(), SIGNAL( sizeChange( int, int, int ) ), SLOT( slotColumnResized() ) );
 	connect( &d->layoutTimer, SIGNAL( timeout() ), SLOT( slotLayoutItems() ) );
+	connect (this, SIGNAL ( visibilityChanged(bool) ), parent, SIGNAL ( visibleSizeChanged () ) );
 	//connect( &d->layoutAnimateTimer, SIGNAL( timeout() ), SLOT( slotLayoutAnimateItems() ) );
 	//connect( &d->visibilityTimer, SIGNAL( timeout() ), SLOT( slotUpdateVisibility() ) );
-	setVisible( false );
+	mySetVisible( false );
 	setTargetVisibility( true );
 }
 
@@ -1072,15 +1073,15 @@ void Item::setSearchMatch( bool match )
 	d->searchMatch = match;
 
 	if ( !match )
-		setVisible( false );
+		mySetVisible( false );
 	else
 	{
 		kDebug(14000) << " match: " << match << ", vis timer active: " << d->visibilityTimer.isActive()
 		               << ", target visibility: " << targetVisibility() << endl;
 		if ( d->visibilityTimer.isActive() )
-			setVisible( true );
+			mySetVisible( true );
 		else
-			setVisible( targetVisibility() );
+			mySetVisible( targetVisibility() );
 	}
 }
 
@@ -1096,14 +1097,14 @@ void Item::setTargetVisibility( bool vis )
 		// in case we're getting called because our parent was shown and
 		// we need to be rehidden
 		if ( !d->visibilityTimer.isActive() )
-			setVisible( vis && d->searchMatch );
+			mySetVisible( vis && d->searchMatch );
 		return;
 	}
 	d->visibilityTarget = vis;
 	d->visibilityTimer.start();
 	//d->visibilityTimer.start( 40 );
 	if ( targetVisibility() )
-		setVisible( d->searchMatch );
+		mySetVisible( d->searchMatch );
 	slotUpdateVisibility();
 }
 
@@ -1130,7 +1131,7 @@ void Item::slotUpdateVisibility()
 	{
 		d->visibilityLevel = 0;
 		d->visibilityTimer.stop();
-		setVisible( false );
+		mySetVisible( false );
 	}
 	setHeight( 0 );
 	repaint();
@@ -1187,12 +1188,9 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 	// PASTED FROM KLISTVIEWITEM:
 	// set the alternate cell background colour if necessary
 	QColorGroup _cg = cg;
-	if (isAlternate())
-		if (listView()->viewport()->backgroundMode()==Qt::FixedColor)
-			_cg.setColor(QPalette::Background, static_cast< K3ListView* >(listView())->alternateBackground());
-		else
-			_cg.setColor(QPalette::Base, static_cast< K3ListView* >(listView())->alternateBackground());
-	// PASTED FROM QLISTVIEWITEM
+	_cg.setColor( listView()->backgroundRole(), backgroundColor(column) );
+
+// PASTED FROM QLISTVIEWITEM
 	{
 		QPainter *p = &paint;
 
@@ -1315,6 +1313,12 @@ void Item::componentResized( Component *component )
 {
 	ComponentBase::componentResized( component );
 	scheduleLayout();
+}
+
+void Item::mySetVisible ( bool b )
+{
+	setVisible (b);
+	emit visibilityChanged (b);
 }
 
 } // END namespace ListView

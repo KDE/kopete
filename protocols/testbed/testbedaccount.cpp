@@ -36,7 +36,7 @@ TestbedAccount::TestbedAccount( TestbedProtocol *parent, const QString& accountI
 : Kopete::Account ( parent, accountID )
 {
 	// Init the myself contact
-	setMyself( new TestbedContact( this, accountId(), TestbedContact::Null, accountId(), Kopete::ContactList::self()->myself() ) );
+	setMyself( new TestbedContact( this, accountId(), accountId(), Kopete::ContactList::self()->myself() ) );
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
 	m_server = new TestbedFakeServer();;
 }
@@ -46,26 +46,24 @@ TestbedAccount::~TestbedAccount()
 	delete m_server;
 }
 
-KActionMenu* TestbedAccount::actionMenu()
+void TestbedAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
-	mActionMenu->addSeparator();
+	actionMenu->addSeparator();
 
 	KAction *action;
 
-	action = new KAction (KIcon("testbed_showvideo"), i18n ("Show my own video..."), mActionMenu );
+	action = new KAction (KIcon("testbed_showvideo"), i18n ("Show my own video..."), actionMenu );
         //, "actionShowVideo");
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
-	mActionMenu->addAction(action);
+	actionMenu->addAction(action);
 	action->setEnabled( isConnected() );
-
-	return mActionMenu;
 }
 
 bool TestbedAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
 {
-	TestbedContact* newContact = new TestbedContact( this, contactId, TestbedContact::Echo, parentContact->displayName(), parentContact );
+	TestbedContact* newContact = new TestbedContact( this, contactId, parentContact->displayName(), parentContact );
 	return newContact != 0L;
 }
 

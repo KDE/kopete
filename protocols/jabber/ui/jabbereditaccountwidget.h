@@ -50,6 +50,7 @@ private slots:
 	void deleteClicked ();
 	void sslToggled (bool);
 	void updateServerField ();
+	void slotPrivacyListsClicked ();
 
 private:
 	JabberProtocol *m_protocol;

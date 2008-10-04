@@ -15,13 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 
+#define QT3_SUPPORT
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <q3groupbox.h>
 #include <q3header.h>
 #include <q3listview.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
 
 #include <klocale.h>
 #include <klineedit.h>
@@ -63,12 +61,18 @@ AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const QVariantL
 	connect( preferencesDialog->m_key, SIGNAL(textChanged ( const QString & )),
 		SLOT( slotEnableAddEdit( const QString & )) ); 
 
-	m_wordListChanged = false;
+	connect( preferencesDialog->AutoReplaceIncoming, SIGNAL(toggled ( bool )),
+		SLOT( slotWidgetModified()) ); 
+	connect( preferencesDialog->AutoReplaceOutgoing, SIGNAL(toggled ( bool )),
+		SLOT( slotWidgetModified()) ); 
+	connect( preferencesDialog->DotEndSentence, SIGNAL(toggled ( bool )),
+		SLOT( slotWidgetModified()) ); 
+	connect( preferencesDialog->CapitalizeBeginningSentence, SIGNAL(toggled ( bool )),
+		SLOT( slotWidgetModified()) ); 
 
 	//setMainWidget( preferencesDialog->gb_options, "AutoReplace Plugin" );
 
 	m_config = new AutoReplaceConfig;
-	load();
 }
 
 AutoReplacePreferences::~AutoReplacePreferences()
@@ -94,7 +98,10 @@ void AutoReplacePreferences::load()
 		new Q3ListViewItem( preferencesDialog->m_list, it.key(), it.value() );
 	}
 
-	m_wordListChanged = false;
+	preferencesDialog->AutoReplaceIncoming->setChecked(m_config->autoReplaceIncoming());
+	preferencesDialog->AutoReplaceOutgoing->setChecked(m_config->autoReplaceOutgoing());
+	preferencesDialog->DotEndSentence->setChecked(m_config->dotEndSentence());
+	preferencesDialog->CapitalizeBeginningSentence->setChecked(m_config->capitalizeBeginningSentence());
 }
 
 // save list to kopeterc and creates map out of it
@@ -107,9 +114,13 @@ void AutoReplacePreferences::save()
 
 	// save the words list
 	m_config->setMap( newWords );
-	m_config->save();
 
-	m_wordListChanged = false;
+	m_config->setAutoReplaceIncoming(preferencesDialog->AutoReplaceIncoming->isChecked());
+	m_config->setAutoReplaceOutgoing(preferencesDialog->AutoReplaceOutgoing->isChecked());
+	m_config->setDotEndSentence(preferencesDialog->DotEndSentence->isChecked());
+	m_config->setCapitalizeBeginningSentence(preferencesDialog->CapitalizeBeginningSentence->isChecked());
+
+	m_config->save();
 }
 
 // read m_key m_value, create a QListViewItem
@@ -132,7 +143,6 @@ void AutoReplacePreferences::slotAddCouple()
 		preferencesDialog->m_list->setSelected( lvi, true );
 	}
 
-	m_wordListChanged = true;
 	slotWidgetModified();
 }
 
@@ -147,7 +157,6 @@ void AutoReplacePreferences::slotEditCouple()
 		lvi->setText( 0, k );
 		lvi->setText( 1, v );
 		preferencesDialog->m_list->triggerUpdate();
-		m_wordListChanged = true;
 		slotWidgetModified();
 	}
 }
@@ -158,7 +167,6 @@ void AutoReplacePreferences::slotRemoveCouple()
 {
 	delete preferencesDialog->m_list->selectedItem();
 
-	m_wordListChanged = true;
 	slotWidgetModified();
 }
 
@@ -189,7 +197,7 @@ void AutoReplacePreferences::slotSelectionChanged()
 
 void AutoReplacePreferences::slotWidgetModified()
 {
-	emit KCModule::changed( m_wordListChanged );
+	emit KCModule::changed( true );
 }
 
 void AutoReplacePreferences::defaults()
@@ -203,7 +211,12 @@ void AutoReplacePreferences::defaults()
         // notice: insertItem is called automatically by the constructor
         new Q3ListViewItem( preferencesDialog->m_list, it.key(), it.value() );
     }
-    m_wordListChanged = true;
+
+	preferencesDialog->AutoReplaceIncoming->setChecked(false);
+	preferencesDialog->AutoReplaceOutgoing->setChecked(true);
+	preferencesDialog->DotEndSentence->setChecked(false);
+	preferencesDialog->CapitalizeBeginningSentence->setChecked(false);
+
     slotWidgetModified();
 }
 

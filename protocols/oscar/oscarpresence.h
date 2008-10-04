@@ -89,12 +89,6 @@ public:
 	bool operator!=( const Presence &other ) const { return !(*this == other); }
 
 	/**
-	 * Status description for XStatus and ExtStatus.
-	 */
-	void setDescription( const QString& desc ) { mDescription = desc; }
-	QString description() const { return mDescription; }
-
-	/**
 	 * Sets Xtraz status
 	 */
 	void setXtrazStatus( int xtraz );
@@ -110,9 +104,6 @@ private:
 	Presence( uint internalStatus );
 
 	uint mInternalStatus;
-
-	// For XStatus
-	QString mDescription;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(Presence::Flags)
 

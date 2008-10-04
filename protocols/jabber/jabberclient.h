@@ -38,6 +38,7 @@
 using namespace XMPP;
 
 class JabberConnector;
+namespace XMPP { class PrivacyManager; }
 
 /**
  * This class provides an interface to the Iris subsystem. The goal is to
@@ -356,6 +357,11 @@ public:
 	 * transfers.
 	 */
 	XMPP::FileTransferManager *fileTransferManager () const;
+	
+	/**
+	 * Returns the privacy lists manager
+	 */
+	PrivacyManager *privacyManager () const;
 
 	/**
 	 * Join a groupchat.
@@ -515,6 +521,8 @@ signals:
 	 * as well as internal status messages.
 	 */
 	void debugMessage ( const QString &message );
+	void incomingXML (const QString &msg);
+	void outgoingXML (const QString &msg);
 
 private:
 	class Private;

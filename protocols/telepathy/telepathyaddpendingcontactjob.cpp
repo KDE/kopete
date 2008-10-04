@@ -23,7 +23,7 @@
 #include <kdebug.h>
 
 // Kopete includes
-#include <contactaddednotifydialog.h>
+#include <kopeteaddedinfoevent.h>
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
 
@@ -76,60 +76,64 @@ void TelepathyAddPendingContactJob::start()
 
 	Q_ASSERT( !d->pendingContact.isNull() );
 
-	ContactAddedNotifyDialog::HideWidgetOptions hideOptions = ContactAddedNotifyDialog::InfoButton;
-	if( d->authorizationOnly )
+	Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+	if( !d->authorizationOnly )
 	{
-		hideOptions |= ContactAddedNotifyDialog::AddGroupBox | ContactAddedNotifyDialog::AddCheckBox;
+		actions |= Kopete::AddedInfoEvent::AddAction;
 	}
 
-	Kopete::UI::ContactAddedNotifyDialog *dialog = new Kopete::UI::ContactAddedNotifyDialog(d->pendingContact->uri(), d->pendingContact->alias(), d->account, hideOptions);
-	connect(dialog, SIGNAL(applyClicked(QString)), this, SLOT(contactDialogDone()));
+	Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent( d->pendingContact->uri(), d->account );
+	QObject::connect( event, SIGNAL(actionActivated(uint)),
+	                  this, SLOT(slotAddedInfoEventActionActivated(uint)) );
+	QObject::connect( event, SIGNAL(eventClosed(Kopete::InfoEvent*)),
+	                  this, SLOT(slotAddedInfoEventClosed()) );
 
-	dialog->show();
+	event->showActions( actions );
+	event->setContactNickname( d->pendingContact->alias() );
+	event->sendEvent();
 }
 
-void TelepathyAddPendingContactJob::contactDialogDone()
+void TelepathyAddPendingContactJob::slotAddedInfoEventActionActivated( uint actionId )
 {
-	// NOTE: sender() is evil. It kill kittens.
-	Kopete::UI::ContactAddedNotifyDialog *dialog = dynamic_cast<Kopete::UI::ContactAddedNotifyDialog *>( sender() );
-
-	if( dialog )
-	{
-		if( dialog->added() )
-		{
-			// Get the new metacontact
-			Kopete::MetaContact *newMetaContact = dialog->addContact();
-	
-			// Set internal contact pointer to new contact
-			QString contactUri = d->pendingContact->uri();
-			TelepathyContact *newContact = static_cast<TelepathyContact*>( d->account->contacts()[contactUri] );
-			if( newContact )
-			{
-				newContact->setInternalContact( d->pendingContact );
-				// Subscribe to contact presence.
-				d->pendingContact->subscribe(true);
-
-				// Add to contact list
-				Kopete::ContactList::self()->addMetaContact( newMetaContact );
-			}
-			else
-			{
-				kDebug(TELEPATHY_DEBUG_AREA) << "Could not find new Telepathy contact " << contactUri;
-				setError( KJob::UserDefinedError );
-			}
-		}
-
-		if( dialog->authorized() )
-		{
-			// Authorize new contact
-			d->pendingContact->authorize(true);
-		}
-	}
-	else
+	const Kopete::AddedInfoEvent *event = dynamic_cast<const Kopete::AddedInfoEvent *>(sender());
+	if( !event )
 	{
 		setError( KJob::UserDefinedError );
+		return;
 	}
 
+	if ( actionId == Kopete::AddedInfoEvent::AddContactAction )
+	{
+		// Get the new metacontact
+		Kopete::MetaContact *newMetaContact = event->addContact();
+
+		// Set internal contact pointer to new contact
+		QString contactUri = d->pendingContact->uri();
+		TelepathyContact *newContact = static_cast<TelepathyContact*>( d->account->contacts()[contactUri] );
+		if( newContact )
+		{
+			newContact->setInternalContact( d->pendingContact );
+			// Subscribe to contact presence.
+			d->pendingContact->subscribe(true);
+
+			// Add to contact list
+			Kopete::ContactList::self()->addMetaContact( newMetaContact );
+		}
+		else
+		{
+			kDebug(TELEPATHY_DEBUG_AREA) << "Could not find new Telepathy contact " << contactUri;
+			setError( KJob::UserDefinedError );
+		}
+	}
+	else if ( actionId == Kopete::AddedInfoEvent::AuthorizeAction )
+	{
+		// Authorize new contact
+		d->pendingContact->authorize(true);
+	}
+}
+
+void TelepathyAddPendingContactJob::slotAddedInfoEventClosed()
+{
 	emitResult();
 }
 

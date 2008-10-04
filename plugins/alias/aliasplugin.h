@@ -19,7 +19,7 @@ class AliasPlugin : public Kopete::Plugin
 	public:
 		static AliasPlugin *plugin();
 	
-		AliasPlugin( QObject *parent, const QStringList &args );
+		AliasPlugin( QObject *parent, const QVariantList &args );
 		~AliasPlugin();
 	
 	private:

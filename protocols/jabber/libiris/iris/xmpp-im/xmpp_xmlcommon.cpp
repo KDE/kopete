@@ -1,6 +1,6 @@
 /*
  * xmlcommon.cpp - helper functions for dealing with XML
- * Copyright (C) 2001, 2002  Justin Karneges
+ * Copyright (C) 2001, 2002  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -29,13 +29,10 @@
 #include <qstringlist.h>
 #include <qcolor.h>
 
-namespace XMPP
-{
-
-bool stamp2TS(const QString &ts, QDateTime *d)
+QDateTime stamp2TS(const QString &ts)
 {
 	if(ts.length() != 17)
-		return false;
+		return QDateTime();
 
 	int year  = ts.mid(0,4).toInt();
 	int month = ts.mid(4,2).toInt();
@@ -48,15 +45,23 @@ bool stamp2TS(const QString &ts, QDateTime *d)
 	QDate xd;
 	xd.setYMD(year, month, day);
 	if(!xd.isValid())
-		return false;
+		return QDateTime();
 
 	QTime xt;
 	xt.setHMS(hour, min, sec);
 	if(!xt.isValid())
+		return QDateTime();
+
+	return QDateTime(xd, xt);
+}
+
+bool stamp2TS(const QString &ts, QDateTime *d)
+{
+	QDateTime dateTime = stamp2TS(ts);
+	if (dateTime.isNull())
 		return false;
 
-	d->setDate(xd);
-	d->setTime(xt);
+	*d = dateTime;
 
 	return true;
 }
@@ -126,6 +131,15 @@ QDomElement findSubTag(const QDomElement &e, const QString &name, bool *found)
 	return tmp;
 }
 
+
+/**
+ * \brief create a new IQ stanza
+ * \param doc 
+ * \param type 
+ * \param to destination jid
+ * \param id stanza id
+ * \return the created stanza
+*/
 QDomElement createIQ(QDomDocument *doc, const QString &type, const QString &to, const QString &id)
 {
 	QDomElement iq = doc->createElement("iq");
@@ -247,13 +261,9 @@ QDomElement addCorrectNS(const QDomElement &e)
 	return i;
 }
 
-}
-
 //----------------------------------------------------------------------------
 // XMLHelper
 //----------------------------------------------------------------------------
-
-using namespace XMPP;
 
 namespace XMLHelper {
 
@@ -277,7 +287,7 @@ QString subTagText(const QDomElement &e, const QString &name)
 	QDomElement i = findSubTag(e, name, &found);
 	if ( found )
 		return i.text();
-	return QString();
+	return QString::null;
 }
 
 QDomElement textTag(QDomDocument &doc, const QString &name, const QString &content)

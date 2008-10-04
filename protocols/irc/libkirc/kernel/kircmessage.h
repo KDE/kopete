@@ -18,136 +18,85 @@
 #ifndef KIRCMESSAGE_H
 #define KIRCMESSAGE_H
 
-#include "kircentity.h"
-
+#include "kirc_export.h"
 #include "kircglobal.h"
 
-#include <QSharedDataPointer>
-#include <QStringList>
+#include <QtCore/QMetaType>
+#include <QtCore/QSharedDataPointer>
+#include <QtCore/QStringList>
 
 class QTextCodec;
 
 namespace KIrc
 {
 
-class Socket;
+class Context;
 
+class MessagePrivate;
+
+/*
+static inline
+_SetEnv setprefix(const QByteArray &prefix)
+{
+	return setenv("", prefix);
+}
+
+static inline
+_SetEnv setsuffix(const QByteArray &suffix)
+{
+	return setenv("", suffix);
+}
+*/
 class KIRC_EXPORT Message
 {
 public:
-	enum Direction
-	{
-		Undefined = 0,
-		OutGoing  = 1, // From the client to the network
-		InGoing	  = 2  // From the network to the client
-	};
+	static QByteArray quote(const QByteArray &buffer);
+	static QByteArray unquote(const QByteArray &buffer);
 
-	enum Type
-	{
-		Unknown           = 0,
-		Command           = 1, // Text command
-		ClientServerReply = 2, // Numeric reply in the 001-099 range
-		CommandReply      = 3, // Numeric reply in the 200-399 range
-		ErrorReply        = 4, // Numeric reply in the 400-599 range
-	};
+	static QByteArray quoteCtcp(const QByteArray &buffer);
+	static QByteArray unquoteCtcp(const QByteArray &buffer);
 
 public:
 	Message();
-//	Message(KIrc::Socket *socket, Direction direction, const QByteArray &text);
+	Message(const QByteArray &prefix,
+		const QList<QByteArray> &args,
+		const QByteArray &suffix);
 	Message(const KIrc::Message &o);
 	~Message();
 
 	Message &operator = (const Message &o);
 
 public:
-	bool isValid() const;
-
-	Socket *socket() const;
-	void setSocket(Socket *socket);
-
-	Direction direction() const;
-	void setDirection(Message::Direction direction);
-
-	QTextCodec *codec() const;
-	void setCodec(QTextCodec *codec);
-
-	QByteArray rawLine() const;
-	void setLine(const QByteArray &);
-
-	QByteArray rawPrefix() const;
-	void setPrefix(const QByteArray &);
-
-	QByteArray rawCommand() const;
-	void setCommand(const QByteArray &);
-
-	QList<QByteArray> rawArgs() const;
-	void setArgs(const QList<QByteArray> &);
-
-	QByteArray rawSuffix() const;
-	void setSuffix(const QByteArray &);
-
-//	QString line(QTextCodec *codec = 0) const;
-//	void setLine(const QString &, QTextCodec *codec = 0);
-
-	QString prefix(QTextCodec *codec = 0) const;
-	void setPrefix(const QString &, QTextCodec *codec = 0);
-
-	QString command(QTextCodec *codec = 0) const;
-	void setCommand(const QString &, QTextCodec *codec = 0);
-
-	QStringList args(QTextCodec *codec = 0) const;
-	void setArgs(const QStringList &, QTextCodec *codec = 0);
-
-	QString suffix(QTextCodec *codec = 0) const;
-	void setSuffix(const QString &, QTextCodec *codec = 0);
+	static Message fromLine(const QByteArray &line, bool *ok = 0);
+	QByteArray toLine() const;
+//	QString toLine(QTextCodec *codec) const;
 
 public:
-	size_t argsSize() const;
+	QByteArray prefix() const;
+//	QString prefix(QTextCodec *codec) const;
+	void setPrefix(const QByteArray & prefix);
 
-	QByteArray rawArg(size_t i) const;
-	void setArg(size_t i, const QByteArray &arg);
+	KIrc::Message &operator << (const QByteArray &arg);
+	KIrc::Message &operator << (const KIrc::OptArg &arg);
+	QList<QByteArray> args() const;
+//	QStringList args(QTextCodec *codec) const;
 
-	QString arg(size_t i, QTextCodec *codec = 0) const;
-	void setArg(size_t i, const QString &arg, QTextCodec *codec);
+	QByteArray argAt(int i) const;
+//	QString argAt(int i, QTextCodec *codec) const;
 
-	void appendArgs(const QList<QByteArray> &args);
-	void appendArgs(const QStringList &args, QTextCodec *codec = 0);
+	QByteArray suffix() const;
+//	QString suffix(QTextCodec *codec) const;
+	void setSuffix(const QByteArray& suffix);
 
-	void appendArg(const QByteArray &arg);
-	void appendArg(const QString &arg, QTextCodec *codec = 0);
-
-#if 0
-	QByteArray rawArgs(size_t from, size_t to) const;
-	QString args(size_t from, size_t to, QTextCodec *codec) const;
-#endif
-	Entity::Ptr entityFromPrefix() const;
-	Entity::Ptr entityFromArg(size_t i) const;
-
-	Entity::Ptr entityFromName(const QByteArray &name);
-
-	Entity::List entitiesFromNames(const QList<QByteArray> &names);
-
-	Entity::List entitiesFromNames(const QByteArray &names, char separator = ',');
-
+public:
 	bool isNumericReply() const;
 
-	Type type() const;
-
 private:
-	/**
-	 * Check the given codec.
-	 * @param codec the given codec to check. It can be a null pointer codec.
-	 * @return the same codec as the entry if not null, else the engine default codec.
-	 */
-	QTextCodec *checkCodec(QTextCodec *codec) const;
-
-	bool matchForIRCRegExp(QRegExp &regexp);
-
-	class Private;
-	QSharedDataPointer<Private> d;
+	QSharedDataPointer<KIrc::MessagePrivate> d;
 };
 
 }
 
-#endif
+Q_DECLARE_METATYPE(KIrc::Message)
 
+#endif

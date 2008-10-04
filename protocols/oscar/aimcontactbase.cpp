@@ -18,6 +18,11 @@
 
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomNodeList>
+
+#include <QtGui/QTextDocument>
+#include <QtGui/QTextCharFormat>
+#include <QtGui/QTextBlock>
+
 #include "kopetechatsession.h"
 
 #include "oscaraccount.h"
@@ -26,8 +31,8 @@
 #include "oscarutils.h"
 
 AIMContactBase::AIMContactBase( Kopete::Account* account, const QString& name, Kopete::MetaContact* parent,
-                        const QString& icon, const OContact& ssiItem )
-: OscarContact(account, name, parent, icon, ssiItem )
+                        const QString& icon )
+: OscarContact(account, name, parent, icon )
 {	
 	m_mobile = false;
 	// Set the last autoresponse time to the current time yesterday
@@ -99,7 +104,71 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 	//text-decoration:underline -> <u>
 	//font-family: -> <font face="">
 	//font-size:xxpt -> <font ptsize=xx>
-	
+
+	QTextDocument doc;
+	doc.setHtml( message.escapedBody() );
+
+	bool hasFontTag = false;
+	QTextCharFormat defaultCharFormat;
+	for ( QTextBlock it = doc.begin(); it != doc.end(); it = it.next() )
+	{
+		s += brMargin( it.blockFormat().topMargin(), defaultCharFormat.fontPointSize() );
+
+		for ( QTextBlock::iterator it2 = it.begin(); !(it2.atEnd()); ++it2 )
+		{
+			QTextFragment currentFragment = it2.fragment();
+			if ( currentFragment.isValid() )
+			{
+				QTextCharFormat format = currentFragment.charFormat();
+				if ( format.fontFamily() != defaultCharFormat.fontFamily() ||
+				     format.foreground() != defaultCharFormat.foreground() ||
+				     aimFontSize(format.fontPointSize()) != aimFontSize(defaultCharFormat.fontPointSize()) )
+				{
+					if ( hasFontTag )
+					{
+						s += "</FONT>";
+						hasFontTag = false;
+					}
+					
+					QString fontTag;
+					if ( !format.fontFamily().isEmpty() )
+						fontTag += QString( " FACE=\"%1\"" ).arg( format.fontFamily() );
+					if ( format.fontPointSize() > 0 )
+						fontTag += QString( " SIZE=%1" ).arg( aimFontSize( format.fontPointSize() ) );
+					if ( format.foreground().style() != Qt::NoBrush )
+						fontTag += QString( " COLOR=%1" ).arg( format.foreground().color().name() );
+					
+					if ( !fontTag.isEmpty() )
+					{
+						s += QString("<FONT%1>").arg( fontTag );
+						hasFontTag = true;
+					}
+				}
+				
+				if ( format.font().bold() != defaultCharFormat.font().bold() )
+					s += ( format.font().bold() ) ? "<B>" : "</B>";
+				if ( format.fontItalic() != defaultCharFormat.fontItalic() )
+					s += ( format.hasProperty(QTextFormat::FontItalic) ) ? "<I>" : "</I>";
+				if ( format.fontUnderline() != defaultCharFormat.fontUnderline() )
+					s += ( format.hasProperty(QTextFormat::FontUnderline) ) ? "<U>" : "</U>";
+				
+				s += Qt::escape(currentFragment.text());
+				defaultCharFormat = format;
+			}
+		}
+		s += brMargin( it.blockFormat().bottomMargin(), defaultCharFormat.fontPointSize(), true );
+	}
+
+	if ( hasFontTag )
+		s += "</FONT>";
+	if ( defaultCharFormat.font().bold() )
+		s += "</B>";
+	if ( defaultCharFormat.hasProperty( QTextFormat::FontItalic ) )
+		s += "</I>";
+	if ( defaultCharFormat.hasProperty( QTextFormat::FontUnderline ) )
+		s += "</U>";
+
+#if 0
 	s=message.escapedBody();
 	s.replace ( QRegExp( QString::fromLatin1("<span style=\"([^\"]*)\">([^<]*)</span>")),
 	            QString::fromLatin1("<style>\\1;\"\\2</style>"));
@@ -148,27 +217,65 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 	s.replace ( QRegExp ( QString::fromLatin1("<font ptsize=\"[^\"]*\">")),QString::fromLatin1("<font size=\"7\">"));
 	
 	s.replace ( QRegExp ( QString::fromLatin1("<br[ /]*>")), QString::fromLatin1("<br>") );
+#endif
 
-	s.remove ( QRegExp ( QString::fromLatin1("<br>$") ) ); 
+	s.replace( QChar::LineSeparator, "<BR>" );
+	s.remove ( QRegExp ( QString::fromLatin1("<BR>$") ) );
 	
 	kDebug(OSCAR_GEN_DEBUG) << "sending " << s;
 	
 	// XXX Need to check for message size?
 	
-	if ( m_details.hasCap( CAP_UTF8 ) )
-		msg.setText( Oscar::Message::UCS2, s );
-	else
-		msg.setText( Oscar::Message::UserDefined, s, contactCodec() );
+	// Allow UCS2 because official AIM client doesn't sets the CAP_UTF8 anymore!
+	bool allowUCS2 = !isOnline() || !(m_details.userClass() & Oscar::CLASS_ICQ) || m_details.hasCap( CAP_UTF8 );
+	msg.setText( Oscar::Message::encodingForText( s, allowUCS2 ), s, contactCodec() );
 	
+	msg.setId( message.id() );
 	msg.setReceiver(mName);
 	msg.setTimestamp(message.timestamp());
 	msg.setChannel(0x01);
 	
 	mAccount->engine()->sendMessage(msg);
 	
+	message.setState( Kopete::Message::StateSending );
 	// Show the message we just sent in the chat window
 	manager(Kopete::Contact::CanCreate)->appendMessage(message);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
+}
+
+int AIMContactBase::aimFontSize( int size ) const
+{
+	if ( size <= 0 )
+		return 0;
+	else if ( 1 <= size && size <= 9 )
+		return 1;
+	else if ( 10 <= size && size <= 11 )
+		return 2;
+	else if ( 12 <= size && size <= 13 )
+		return 3;
+	else if ( 14 <= size && size <= 16 )
+		return 4;
+	else if ( 17 <= size && size <= 22 )
+		return 5;
+	else if ( 23 <= size && size <= 29 )
+		return 6;
+	else
+		return 7;
+}
+
+QString AIMContactBase::brMargin( int margin, int fontPointSize, bool endBlock ) const
+{
+	int brHeight = ( fontPointSize == 0 ) ? 12 : fontPointSize;
+	int brCount = margin / brHeight;
+
+	if ( brCount <= 0 )
+		return ( endBlock ) ? "<BR>" : "";
+
+	QString s;
+	while ( brCount-- > 0 )
+		s += "<BR>";
+
+	return s;
 }
 
 #include "aimcontactbase.moc"

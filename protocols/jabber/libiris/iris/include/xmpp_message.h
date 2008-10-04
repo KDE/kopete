@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003  Justin Karneges
+ * Copyright (C) 2003  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,20 +13,22 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #ifndef XMPP_MESSAGE_H
 #define XMPP_MESSAGE_H
 
+#include <iris_export.h>
+
 #include "xmpp_stanza.h"
 #include "xmpp_url.h"
 #include "xmpp_chatstate.h"
+#include "xmpp_receipts.h"
 #include "xmpp_address.h"
 #include "xmpp_rosterx.h"
 #include "xmpp_muc.h"
-#include <iris_export.h>
 
 class QString;
 class QDateTime;
@@ -57,6 +59,7 @@ namespace XMPP {
 		QString lang() const;
 		QString subject(const QString &lang="") const;
 		QString body(const QString &lang="") const;
+		QString xHTMLBody(const QString &lang="") const;
 		QString thread() const;
 		Stanza::Error error() const;
 
@@ -67,6 +70,7 @@ namespace XMPP {
 		void setLang(const QString &s);
 		void setSubject(const QString &s, const QString &lang="");
 		void setBody(const QString &s, const QString &lang="");
+		void setXHTMLBody(const QString &s, const QString &lang="", const QString &attr="");
 		void setThread(const QString &s, bool send = false);
 		void setError(const Stanza::Error &err);
 
@@ -101,6 +105,10 @@ namespace XMPP {
 		ChatState chatState() const;
 		void setChatState(ChatState);
  
+		// XEP-0184
+		MessageReceipt messageReceipt() const;
+		void setMessageReceipt(MessageReceipt);
+
 		// JEP-0027
 		QString xencrypted() const;
 		void setXEncrypted(const QString &s);
@@ -128,9 +136,9 @@ namespace XMPP {
 		void setForm(const XData&);
 		const XData& getForm() const;
 
-		// JEP-xxxx Whiteboarding
-		void setWhiteboard(const QDomElement&);
-		const QDomElement& whiteboard() const;
+		// JEP-xxxx SXE
+		void setSxe(const QDomElement&);
+		const QDomElement& sxe() const;
 
 		// MUC
 		void setMUCStatus(int);

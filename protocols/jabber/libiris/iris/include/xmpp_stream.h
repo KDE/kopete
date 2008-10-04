@@ -1,6 +1,6 @@
 /*
  * xmpp.h - XMPP "core" library API
- * Copyright (C) 2003  Justin Karneges
+ * Copyright (C) 2003  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -24,15 +24,16 @@
 #include <QDomElement>
 #include <QObject>
 
+#include <iris_export.h>
+
 #include "xmpp_stanza.h"
 #include "xmpp_jid.h"
-#include <iris_export.h>
 
 class QDomDocument;
 
 namespace XMPP 
 {
-	class  IRIS_EXPORT Stream : public QObject
+	class IRIS_EXPORT Stream : public QObject
 	{
 		Q_OBJECT
 	public:
@@ -54,6 +55,8 @@ namespace XMPP
 
 		virtual QDomDocument & doc() const=0;
 		virtual QString baseNS() const=0;
+		virtual QString xhtmlImNS() const=0;
+		virtual QString xhtmlNS() const=0;
 		virtual bool old() const=0;
 
 		virtual void close()=0;

@@ -67,14 +67,15 @@ TransportBridge* Transport::getBridge (const QString& to, quint16 port, Transpor
 	}
 
 	if (PeerToPeer::Udp == type){
- 		bridge = new UdpTransportBridge(address, mFormatter, 	this, identifier.ascii());
+// TODO Add class UdpTransportBridge
+// 		bridge = new UdpTransportBridge(address, this, mFormatter, identifier.ascii());
 	}
 
 	if (bridge != 0l)
 	{
 		QObject::connect(bridge, SIGNAL(readyRead(const QByteArray&)), SLOT(slotOnReceive(const QByteArray&)));
 	}
-	
+
 	return 0l;
 }
 
@@ -168,7 +169,7 @@ void TransportBridge::slotOnSocketReceive()
 
 TcpTransportBridge::TcpTransportBridge(const KNetwork::KInetSocketAddress& to, MessageFormatter* formatter, QObject* parent)
 : TransportBridge(to, formatter, parent)
-{	
+{
 	mSocket = new KStreamSocket(mAddress.ipAddress().toString(), QString::number(mAddress.port()), this);
 	mSocket->setBlocking(false);
 	QObject::connect(mSocket, SIGNAL(connected(const KResolverEntry&)), SLOT(slotOnSocketConnect()));
@@ -253,7 +254,7 @@ void TcpTransportBridge::slotOnSocketConnect()
 void TcpTransportBridge::slotOnSocketReceive()
 {
 	kDebug (14140) << "Bridge (" << name() << ") RECEIVED " << mSocket->bytesAvailable() << " bytes.";
-	
+
 	QByteArray bytes(mSocket->bytesAvailable());
 	mSocket->read(bytes.data(), bytes.size());
 	// Write the data to the buffer.
@@ -309,6 +310,8 @@ void TcpTransportBridge::slotOnSocketConnectTimeout()
 //END
 
 
+
+
 TcpTransportBridge::Buffer::Buffer(quint32 length)
 : QByteArray(length)
 {
@@ -342,7 +345,7 @@ QByteArray TcpTransportBridge::Buffer::read(quint32 length)
 
 	duplicate(bytes, size() - length);
 	delete[] bytes;
-	
+
 	return buffer;
 }
 

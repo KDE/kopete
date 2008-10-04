@@ -10,32 +10,43 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>0</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
    </property>
+   <property name="margin" >
+    <number>0</number>
+   </property>
    <item>
     <widget class="QTabWidget" name="tabWidget3" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="tab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>381</width>
+        <height>318</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>&amp;Add Contact</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>6</number>
        </property>
-       <property name="spacing" >
+       <property name="margin" >
         <number>6</number>
        </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>6</number>
+         </property>
+         <property name="margin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="QLabel" name="TextLabel1" >
@@ -83,7 +94,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>110</height>
@@ -94,18 +105,26 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>381</width>
+        <height>318</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>&amp;Search Channels</string>
       </attribute>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
        </property>
+       <property name="margin" >
+        <number>0</number>
+       </property>
        <item>
-        <widget class="Q3HBox" name="hbox" />
+        <widget class="QWidget" native="1" name="hbox" />
        </item>
       </layout>
      </widget>
@@ -114,14 +133,6 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <customwidgets>
-  <customwidget>
-   <class>Q3HBox</class>
-   <extends>QWidget</extends>
-   <header>q3hbox.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>addID</tabstop>
   <tabstop>tabWidget3</tabstop>

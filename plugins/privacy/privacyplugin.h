@@ -21,6 +21,7 @@
 #include <QMap>
 
 #include "kopeteplugin.h"
+#include <QVariantList>
 
 namespace Kopete { 
 	class Message;
@@ -38,7 +39,7 @@ class PrivacyPlugin : public Kopete::Plugin
 public:
 	static PrivacyPlugin *plugin();
 
-	PrivacyPlugin( QObject *parent, const QStringList &args );
+	PrivacyPlugin( QObject *parent, const QVariantList &args );
 	~PrivacyPlugin();
 
 	void addContactsToWhiteList( QList< Kopete::Contact *> list );

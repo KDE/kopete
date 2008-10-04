@@ -24,12 +24,12 @@
 #include "qqaddcontactpage.h"
 #include "ui/qqeditaccountwidget.h"
 
-typedef KGenericFactory<QQProtocol> QQProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_qq, QQProtocolFactory( "kopete_qq" )  )
+K_PLUGIN_FACTORY( QQProtocolFactory, registerPlugin<QQProtocol>(); )
+K_EXPORT_PLUGIN( QQProtocolFactory( "kopete_qq" ) )
 
 QQProtocol *QQProtocol::s_protocol = 0L;
 
-QQProtocol::QQProtocol( QObject* parent, const QStringList &/*args*/ )
+QQProtocol::QQProtocol( QObject* parent, const QVariantList &/*args*/ )
 	: Kopete::Protocol( QQProtocolFactory::componentData(), parent ),
 	  qqOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),  
 			  i18n( "Online" ),   i18n( "O&nline" ) ),

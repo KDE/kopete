@@ -21,7 +21,7 @@
 #include <qregexp.h>
 #include <qdir.h>
 #include <qdom.h>
-//Added by qt3to4:
+#include <QTextCodec>
 #include <QTextStream>
 
 #include <ksavefile.h>
@@ -34,7 +34,6 @@
 
 HighlightConfig::HighlightConfig()
 {
-	load();
 }
 
 HighlightConfig::~HighlightConfig()

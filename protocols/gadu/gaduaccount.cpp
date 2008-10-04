@@ -1,3 +1,4 @@
+// vim: set noet ts=4 sts=4 sw=4 :
 // -*- Mode: c++; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003-2004 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
@@ -76,7 +77,6 @@ public:
 	KFileDialog*	saveListDialog;
 	KFileDialog*	loadListDialog;
 
-	KActionMenu*	actionMenu_;
 	KAction*	searchAction;
 	KAction*	listputAction;
 	KAction*	listToFileAction;
@@ -105,18 +105,21 @@ public:
 
 // FIXME: use dynamic cache please, i consider this as broken resolution of this problem
 static const char* const servers_ip[] = {
+	"217.17.41.88",
+	"217.17.41.85",
+	"217.17.45.143",
+	"217.17.45.144",
+	"217.17.45.145",
+	"217.17.45.146",
+	"217.17.45.147",
 	"217.17.41.82",
 	"217.17.41.83",
 	"217.17.41.84",
-	"217.17.41.85",
 	"217.17.41.86",
 	"217.17.41.87",
-	"217.17.41.88",
 	"217.17.41.92",
 	"217.17.41.93",
-	"217.17.45.133",
-	"217.17.45.143",
-	"217.17.45.144"
+	"217.17.45.133"
 };
 
 #define NUM_SERVERS (sizeof(servers_ip)/sizeof(char*))
@@ -256,14 +259,13 @@ GaduAccount::setAway( bool isAway, const QString& awayMessage )
 }
 
 
-KActionMenu*
-GaduAccount::actionMenu()
+void
+GaduAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	kDebug(14100) << "actionMenu() ";
+	kDebug(14100);
 
-	p->actionMenu_ = new KActionMenu( accountId(), this );
-        p->actionMenu_->setIcon( myself()->onlineStatus().iconFor( this ) );
-	p->actionMenu_->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> ",
+	actionMenu->setIcon( myself()->onlineStatus().iconFor( this ) );
+	actionMenu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> ",
 	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 
 	if ( p->session_->isConnected() ) {
@@ -303,50 +305,54 @@ GaduAccount::actionMenu()
 		i18n("Go O&nline"), this );
         //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOnline()));
-	p->actionMenu_->addAction( action );
+	actionMenu->addAction( action );
 
 	action = new KAction(
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ))),
 		i18n( "Set &Busy" ), this );
         //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoBusy()) );
-	p->actionMenu_->addAction( action );
+	actionMenu->addAction( action );
 
 	action = new KAction(
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ))),
 		i18n( "Set &Invisible" ), this );
         //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoInvisible()) );
-	p->actionMenu_->addAction( action );
+	actionMenu->addAction( action );
 
 	action = new KAction(
 		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ))),
 		i18n( "Go &Offline" ), this );
         //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOffline()) );
-	p->actionMenu_->addAction( action );
+	actionMenu->addAction( action );
 
-	action = new KAction( KIcon("document-properties"), i18n( "Set &Description..." ), this );
+	action = new KAction( KIcon("edit-rename"), i18n( "Set &Description..." ), this );
         //, "actionGaduDescription" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotDescription()) );
-	p->actionMenu_->addAction( action );
+	actionMenu->addAction( action );
 
-	p->actionMenu_->addAction( p->friendsModeAction );
+	actionMenu->addAction( p->friendsModeAction );
 
-	p->actionMenu_->addSeparator();
+	actionMenu->addSeparator();
 
-	p->actionMenu_->addAction( p->searchAction );
+	actionMenu->addAction( p->searchAction );
 
-	p->actionMenu_->addSeparator();
+	actionMenu->addSeparator();
 
-	p->actionMenu_->addAction( p->listputAction );
+	actionMenu->addAction( p->listputAction );
 
-	p->actionMenu_->addSeparator();
+	actionMenu->addSeparator();
 
-	p->actionMenu_->addAction( p->listToFileAction );
-	p->actionMenu_->addAction( p->listFromFileAction );
+	actionMenu->addAction( p->listToFileAction );
+	actionMenu->addAction( p->listFromFileAction );
+}
 
-	return p->actionMenu_;
+bool
+GaduAccount::hasCustomStatusMenu() const
+{
+	return true;
 }
 
 void
@@ -521,7 +527,7 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 			connectionFailed( GG_FAILURE_PASSWORD );
 		}
 		else {
-			p->loginInfo.password		= password().cachedValue();
+			p->loginInfo.password		= p->textcodec_->fromUnicode(password().cachedValue());
 			p->loginInfo.useTls		= p->connectWithSSL;
 			p->loginInfo.status		= status;
 			p->loginInfo.statusDescr	= dscr;

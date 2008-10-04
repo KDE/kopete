@@ -3,7 +3,7 @@
    
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
     
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
@@ -192,7 +192,10 @@ void Task::setError(int code, const QString &str)
 	if(!d->done) {
 		d->success = false;
 		d->statusCode = code;
-		d->statusString = str;
+		if ( str.isEmpty() )
+			d->statusString = GroupWise::errorCodeToString( code );
+		else
+			d->statusString = str;
 		done();
 	}
 }

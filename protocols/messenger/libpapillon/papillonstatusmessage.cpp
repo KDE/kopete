@@ -268,7 +268,7 @@ QString StatusMessage::toXml() const
 	smData.documentElement().appendChild( currentMedia );
 
 	// Do no ident and remove line breaks.
-	return smData.toString(0).replace("\n", "");
+	return smData.toString(0).remove('\n');
 }
 
 QString StatusMessage::Private::mediaTypeToString(Papillon::Presence::MediaType type)

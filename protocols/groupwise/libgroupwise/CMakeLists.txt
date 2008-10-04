@@ -1,3 +1,6 @@
+set( GROUPWISE_DEBUG_LIBGW 14191 )
+add_definitions( -DKDE_DEFAULT_DEBUG_AREA=${GROUPWISE_DEBUG_LIBGW} )
+
 find_package(ZLIB REQUIRED)
 
 add_subdirectory( tasks )
@@ -48,35 +51,36 @@ set( libqgroupwise_tasks_SRCS
 )
 
 set( libqgroupwise_SRCS
-	connector.cpp
 	bytestream.cpp
-	tlshandler.cpp
-	qcatlshandler.cpp
-	gwclientstream.cpp
-	securestream.cpp
-	stream.cpp
-	coreprotocol.cpp
-	gwfield.cpp
-	transferbase.cpp
-	usertransfer.cpp
-	eventtransfer.cpp
-	transfer.cpp
-	request.cpp
-	requestfactory.cpp
-	safedelete.cpp
-	response.cpp
-	client.cpp
-	task.cpp
-	rtf.cc
-	userdetailsmanager.cpp
-	eventprotocol.cpp
-	inputprotocolbase.cpp
-	responseprotocol.cpp
-	privacymanager.cpp
-	gwglobal.cpp
 	chatroommanager.cpp
+	client.cpp
 	compressionhandler.cpp
 	compress.cpp
+	connector.cpp
+	coreprotocol.cpp
+	eventprotocol.cpp
+	eventtransfer.cpp
+	gwclientstream.cpp
+	gwerror.cpp
+	gwfield.cpp
+	gwglobal.cpp
+	inputprotocolbase.cpp
+	privacymanager.cpp
+	qcatlshandler.cpp
+	request.cpp
+	requestfactory.cpp
+	response.cpp
+	responseprotocol.cpp
+	rtf.cc
+	safedelete.cpp
+	securestream.cpp
+	stream.cpp
+	task.cpp
+	tlshandler.cpp
+	transfer.cpp
+	transferbase.cpp
+	userdetailsmanager.cpp
+	usertransfer.cpp
 )
 
 
@@ -86,7 +90,7 @@ target_link_libraries( qgroupwise ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_
 
 ########### install files ###############
 
-install(TARGETS qgroupwise  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS qgroupwise ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 

@@ -1065,6 +1065,13 @@ If two resources have the same priority, the messages will be sent to the one mo
         </widget>
        </item>
        <item>
+        <widget class="KPushButton" name="privacyListsButton" >
+         <property name="text" >
+          <string>Privacy Lists</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
@@ -1088,6 +1095,11 @@ If two resources have the same priority, the messages will be sent to the one mo
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <customwidgets>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
    <extends></extends>

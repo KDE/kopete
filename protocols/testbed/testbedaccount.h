@@ -44,7 +44,7 @@ public:
 	/**
 	 * Construct the context menu used for the status bar icon
 	 */
-	virtual KActionMenu* actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/**
 	 * Creates a protocol specific Kopete::Contact subclass and adds it to the supplie
@@ -63,7 +63,7 @@ public:
 	/**
 	 * 'Connect' to the testbed server.  Only sets myself() online.
 	 */
-	virtual void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus::OnlineStatus() );
+	virtual void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus() );
 	/**
 	 * Disconnect from the server.  Only sets myself() offline.
 	 */

@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>368</width>
-    <height>310</height>
+    <width>463</width>
+    <height>430</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -16,49 +16,31 @@
    <property name="spacing" >
     <number>6</number>
    </property>
-   <property name="leftMargin" >
-    <number>9</number>
-   </property>
-   <property name="topMargin" >
-    <number>9</number>
-   </property>
-   <property name="rightMargin" >
-    <number>9</number>
-   </property>
-   <property name="bottomMargin" >
+   <property name="margin" >
     <number>9</number>
    </property>
    <item>
     <widget class="QGroupBox" name="notifyGroupBox" >
      <property name="title" >
-      <string>Tray Flash &amp;&amp; Bubble</string>
+      <string>Notifications</string>
      </property>
      <layout class="QVBoxLayout" >
       <property name="spacing" >
        <number>6</number>
       </property>
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
       <item>
        <widget class="QCheckBox" name="kcfg_trayflashNotify" >
         <property name="toolTip" >
-         <string>Flash the system tray icon on an incoming message</string>
+         <string>Animate the system tray icon on an incoming message</string>
         </property>
         <property name="whatsThis" >
-         <string>Flash the system tray icon whenever a message comes in.</string>
+         <string>Animate the system tray icon whenever a message comes in.</string>
         </property>
         <property name="text" >
-         <string>Flash s&amp;ystem tray</string>
+         <string>Animate s&amp;ystem tray icon</string>
         </property>
        </widget>
       </item>
@@ -67,16 +49,7 @@
         <property name="spacing" >
          <number>6</number>
         </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
+        <property name="margin" >
          <number>0</number>
         </property>
         <item>
@@ -87,7 +60,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Fixed</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>16</width>
             <height>16</height>
@@ -114,155 +87,25 @@
        </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="kcfg_balloonNotify" >
-        <property name="toolTip" >
-         <string>Show a bubble on an incoming message</string>
-        </property>
-        <property name="whatsThis" >
-         <string>Show a bubble whenever a message comes in.</string>
-        </property>
-        <property name="text" >
-         <string>Sho&amp;w bubble</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <layout class="QHBoxLayout" >
         <property name="spacing" >
          <number>6</number>
         </property>
-        <property name="leftMargin" >
+        <property name="margin" >
          <number>0</number>
         </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>0</number>
-        </property>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item>
          <widget class="QCheckBox" name="kcfg_balloonNotifyIgnoreClosesChatView" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
           <property name="toolTip" >
-           <string>The "Ignore" button of the bubble closes the chat window for the sender</string>
+           <string>The "Ignore" button of the new message popup closes the chat window for the sender</string>
           </property>
           <property name="whatsThis" >
-           <string>If there is already a chat window opened for the sender of the message displayed in the bubble the "Ignore" button will close this chat window.</string>
+           <string>If there is already a chat window opened for the sender of the message displayed in the new message popup the "Ignore" button will close this chat window.</string>
           </property>
           <property name="text" >
-           <string>Button "I&amp;gnore" closes chat</string>
+           <string>Button "I&amp;gnore" in new message popups closes chat</string>
           </property>
          </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
-         <number>6</number>
-        </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>0</number>
-        </property>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="kcfg_balloonClose" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="toolTip" >
-           <string>Automatically close bubble after fixed amount of time</string>
-          </property>
-          <property name="whatsThis" >
-           <string>Bubbles will automatically be closed after a fixed amount of time. A closed one will be replaced by a new one if another message is waiting.</string>
-          </property>
-          <property name="text" >
-           <string>Close &amp;bubble automatically after</string>
-          </property>
-          <property name="checked" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="kcfg_balloonCloseDelay" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="suffix" >
-           <string> Sec</string>
-          </property>
-          <property name="minimum" >
-           <number>1</number>
-          </property>
-          <property name="maximum" >
-           <number>120</number>
-          </property>
-          <property name="value" >
-           <number>30</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>70</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </item>
@@ -282,13 +125,14 @@
       <item>
        <widget class="QCheckBox" name="kcfg_queueOnlyMessagesOnAnotherDesktop" >
         <property name="toolTip" >
-         <string>Do not display notification for messages in chat windows on current desktop</string>
+         <string>Use the same notifications for events in the active chat window and other chat windows on the current desktop (usually less intrusive)</string>
         </property>
         <property name="whatsThis" >
-         <string>This option allows you to turn off the notification of events for chat windows that are on the current desktop. If this option is turned on, then only chat windows on different desktops than the current one will notify you that an event has occured. Otherwise, all chat windows will notify you that an event has occured.</string>
+         <string>If activated, events for chat windows that are on the current desktop will be handled like events in the active chat window: The system tray icon and the sender icon in the contact list are not animated and the "Incoming Message for Active Chat" event is used for the notification. Chat windows on other desktops will trigger notifications.
+If not activated, all chat windows except the active one will notify you that an event has occurred using animations (if activated) and the "Incoming Message" event.</string>
         </property>
         <property name="text" >
-         <string>Exclude messages in chats on current des&amp;ktop</string>
+         <string>Treat all chats on the current des&amp;ktop like active chats</string>
         </property>
        </widget>
       </item>
@@ -304,16 +148,7 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
       <item>
@@ -326,19 +161,6 @@
         </property>
         <property name="text" >
          <string>E&amp;nable events while away</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="kcfg_showEventsIfActive" >
-        <property name="toolTip" >
-         <string>Enable events for incoming messages if the chat window is active</string>
-        </property>
-        <property name="whatsThis" >
-         <string>Enable notification events for incoming messages even if the receiving chat window is active. Note: Neither the system tray icon flashes nor the bubble is shown.</string>
-        </property>
-        <property name="text" >
-         <string>Enable events for acti&amp;ve chat windows</string>
         </property>
        </widget>
       </item>
@@ -379,7 +201,7 @@
      <property name="sizeType" >
       <enum>QSizePolicy::Expanding</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
        <height>16</height>
@@ -394,14 +216,10 @@
  <tabstops>
   <tabstop>kcfg_trayflashNotify</tabstop>
   <tabstop>kcfg_trayflashNotifyLeftClickOpensMessage</tabstop>
-  <tabstop>kcfg_balloonNotify</tabstop>
   <tabstop>kcfg_balloonNotifyIgnoreClosesChatView</tabstop>
-  <tabstop>kcfg_balloonClose</tabstop>
-  <tabstop>kcfg_balloonCloseDelay</tabstop>
   <tabstop>kcfg_queueOnlyHighlightedMessagesInGroupChats</tabstop>
   <tabstop>kcfg_queueOnlyMessagesOnAnotherDesktop</tabstop>
   <tabstop>kcfg_enableEventsWhileAway</tabstop>
-  <tabstop>kcfg_showEventsIfActive</tabstop>
   <tabstop>kcfg_trayflashNotifySetCurrentDesktopToChatView</tabstop>
   <tabstop>kcfg_raiseMessageWindow</tabstop>
  </tabstops>
@@ -420,54 +238,6 @@
     <hint type="destinationlabel" >
      <x>129</x>
      <y>64</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>kcfg_balloonNotify</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>kcfg_balloonNotifyIgnoreClosesChatView</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>56</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>88</x>
-     <y>114</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>kcfg_balloonNotify</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>kcfg_balloonClose</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>174</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>181</x>
-     <y>132</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>kcfg_balloonClose</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>kcfg_balloonCloseDelay</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>58</x>
-     <y>129</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>252</x>
-     <y>133</y>
     </hint>
    </hints>
   </connection>

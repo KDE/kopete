@@ -51,9 +51,9 @@ public:
 	MSNAccount( MSNProtocol *parent, const QString &accountID );
 
 	/*
-	 * return the menu for this account
+	 * fill the menu for this account
 	 */
-	virtual KActionMenu* actionMenu();
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	//------ internal functions
 	/**
@@ -137,6 +137,7 @@ private slots:
 	void slotStartChat();
 	void slotOpenInbox();
 	void slotChangePublicName();
+	void slotOpenStatus();
 
 //#if !defined NDEBUG //(Stupid moc which don't see when he don't need to slot this slot)
 	/**
@@ -191,9 +192,9 @@ private slots:
 	void slotKopeteGroupRemoved( Kopete::Group* );
 
 	/**
-	 * add contact ui
+	 * added info event
 	 */
-	void slotContactAddedNotifyDialogClosed( const QString &handle);
+	void slotAddedInfoEventActionActivated( uint actionId );
 
 	/**
 	 * When the dispatch server sends us the notification server to use.
@@ -205,6 +206,7 @@ private:
 	KAction *m_openInboxAction;
 	KAction *m_startChatAction;
 	KAction *m_changeDNAction;
+	KAction *m_openStatusAction;
 
 	// status which will be using for connecting
 	Kopete::OnlineStatus m_connectstatus;

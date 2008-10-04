@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <qtcpsocket.h>
 
 #include <kopetepassword.h>
 #include <kopetechatsession.h>
@@ -50,13 +51,10 @@
 
 #define get_protocol() (static_cast<MeanwhileProtocol *>(account->protocol()))
 
-MeanwhileSession::MeanwhileSession(MeanwhileAccount *account)
+MeanwhileSession::MeanwhileSession(MeanwhileAccount *acc)
+    : session(0), state(mwSession_STOPPED), account(acc), socket(0)
 {
     HERE;
-    this->account = account;
-    session = 0L;
-    socket = 0L;
-    state = mwSession_STOPPED;
 
     /* set up main session hander */
     memset(&sessionHandler, 0, sizeof(sessionHandler));
@@ -141,9 +139,6 @@ MeanwhileSession::~MeanwhileSession()
     mwCipher_free(mwSession_getCipher(session, mwCipher_RC2_40));
 
     mwSession_free(session);
-
-    if (socket)
-        delete socket;
 }
 
 /* external interface called by meanwhileaccount */
@@ -152,10 +147,11 @@ void MeanwhileSession::connect(QString host, int port,
 {
     HERE;
 
-    KExtendedSocket *sock = new KExtendedSocket(host, port,
-            KExtendedSocket::bufferedSocket);
+    QTcpSocket *sock = new QTcpSocket(this);
+    sock->connectToHost(host, quint16(port));
 
-    if (sock->connect()) {
+    // TODO - make asynchronous
+    if (!sock->waitForConnected()) {
         KMessageBox::queuedMessageBox(0, KMessageBox::Error,
                 i18n( "Could not connect to server"), i18n("Meanwhile Plugin"),
                 KMessageBox::Notify);
@@ -164,11 +160,10 @@ void MeanwhileSession::connect(QString host, int port,
     }
     socket = sock;
     /* we want to receive signals when there is data to read */
-    sock->enableRead(true);
     QObject::connect(sock, SIGNAL(readyRead()), this,
                      SLOT(slotSocketDataAvailable()));
-    QObject::connect(sock, SIGNAL(closed(int)), this,
-                     SLOT(slotSocketClosed(int)));
+    QObject::connect(sock, SIGNAL(aboutToClose()), this,
+                     SLOT(slotSocketAboutToClose()));
 
     mwSession_setProperty(session, mwSession_AUTH_USER_ID,
                     g_strdup(account.toAscii()), g_free);
@@ -190,46 +185,45 @@ void MeanwhileSession::disconnect()
 
 bool MeanwhileSession::isConnected()
 {
-	return mwSession_isStarted(session);
+    return mwSession_isStarted(session);
 }
 
 bool MeanwhileSession::isConnecting()
 {
-	return mwSession_isStarting(session);
+    return mwSession_isStarting(session);
 }
 
 static void free_id_block(void *data, void *p)
 {
-    if (p != 0L || data == 0L)
+    if (p != 0 || data == 0)
         return;
-    struct mwAwareIdBlock *id = (struct mwAwareIdBlock *)data;
-    free(id->user);
+
+    struct mwAwareIdBlock *id = reinterpret_cast<struct mwAwareIdBlock *>(data);
+    delete [] id->user;
     free(id);
 }
 
-void MeanwhileSession::addContacts(const Q3Dict<Kopete::Contact>& contacts)
+void MeanwhileSession::addContacts(const QHash<QString, Kopete::Contact *> &contacts)
 {
     HERE;
-    Q3DictIterator<Kopete::Contact> it(contacts);
-    GList *buddies = 0L;
+    GList *buddies = 0;
+    QHash<QString, Kopete::Contact *>::const_iterator it = contacts.constBegin();
 
     /** Convert our QDict of kopete contact to a GList of meanwhile buddies */
-    for( ; it.current(); ++it) {
-        MeanwhileContact *contact =
-                static_cast<MeanwhileContact *>(it.current());
-        struct mwAwareIdBlock *id = (struct mwAwareIdBlock *)
-            malloc(sizeof(*id));
-        if (id == 0L)
+    for( ; it != contacts.constEnd(); ++it) {
+        MeanwhileContact *contact = static_cast<MeanwhileContact *>(it.value());
+        struct mwAwareIdBlock *id = reinterpret_cast<struct mwAwareIdBlock *>(malloc(sizeof(*id)));
+        if (!id)
             continue;
-        id->user = strdup(contact->meanwhileId().toAscii());
-        id->community = 0L;
+        id->user = qstrdup(contact->meanwhileId().toUtf8().constData());
+        id->community = 0;
         id->type = mwAware_USER;
         buddies = g_list_append(buddies, id);
     }
 
     mwAwareList_addAware(awareList, buddies);
 
-    g_list_foreach(buddies, free_id_block, 0L);
+    g_list_foreach(buddies, free_id_block, 0);
     g_list_free(buddies);
 }
 
@@ -311,7 +305,7 @@ void MeanwhileSession::sendTyping(MeanwhileContact *contact, bool isTyping)
 }
 
 void MeanwhileSession::setStatus(Kopete::OnlineStatus status,
-        const QString msg)
+        const Kopete::StatusMessage &msg)
 {
     HERE;
     mwDebug() << "setStatus: " << status.description() << '('
@@ -325,10 +319,10 @@ void MeanwhileSession::setStatus(Kopete::OnlineStatus status,
     free(stat.desc);
 
     stat.status = (mwStatusType)status.internalStatus();
-    if (msg.isNull() || msg.isEmpty())
-        stat.desc = strdup(status.description().toAscii());
+    if (msg.isEmpty())
+        stat.desc = ::strdup(status.description().toUtf8().constData());
     else
-        stat.desc = strdup(msg.toAscii());
+        stat.desc = ::strdup(msg.message().toUtf8().constData());
 
     mwSession_setUserStatus(session, &stat);
     /* will free stat.desc */
@@ -345,19 +339,20 @@ void MeanwhileSession::syncContactsToServer()
             mwSametimeGroup_DYNAMIC, "People");
     mwSametimeGroup_setOpen(topstgroup, true);
 
-    Q3DictIterator<Kopete::Contact> it(account->contacts());
-    for( ; it.current(); ++it ) {
-        MeanwhileContact *contact =
-            static_cast<MeanwhileContact *>(it.current());
+    const QHash<QString, Kopete::Contact *> contacts = account->contacts();
+   // Q3DictIterator<Kopete::Contact> it(account->contacts());
+    for(QHash<QString, Kopete::Contact *>::const_iterator it = contacts.constBegin();
+            it != contacts.constEnd(); ++it ) {
+        MeanwhileContact *contact = static_cast<MeanwhileContact *>(it.value());
 
         /* Find the group that the metacontact is in */
         Kopete::MetaContact *mc = contact->metaContact();
         /* myself doesn't have a metacontact */
-        if (mc == 0L)
+        if (!mc)
             continue;
 
-        Kopete::Group *contactgroup = mc->groups().getFirst();
-        if (contactgroup == 0L)
+        Kopete::Group *contactgroup = mc->groups().value(0);
+        if (!contactgroup)
             continue;
 
         if (contactgroup->type() == Kopete::Group::Temporary)
@@ -369,24 +364,24 @@ void MeanwhileSession::syncContactsToServer()
         } else  {
             /* find (or create) a matching sametime list group */
             stgroup = mwSametimeList_findGroup(list,
-                        contactgroup->displayName().toAscii());
-            if (stgroup == 0L) {
+                        contactgroup->displayName().toUtf8().constData());
+            if (!stgroup) {
                 stgroup = mwSametimeGroup_new(list, mwSametimeGroup_DYNAMIC,
-                        contactgroup->displayName().toAscii());
+                        contactgroup->displayName().toUtf8().constData());
             }
             mwSametimeGroup_setOpen(stgroup, contactgroup->isExpanded());
             mwSametimeGroup_setAlias(stgroup,
-                    contactgroup->pluginData(account->protocol(), "alias")
-                    .toAscii());
+                    contactgroup->pluginData(account->protocol(), "alias").toUtf8().constData());
         }
 
+        QByteArray tmpMeanwhileId = contact->meanwhileId().toUtf8();
         /* now add the user (by IDBlock) */
         struct mwIdBlock id =
-            { (gchar*)contact->meanwhileId().toAscii(), 0L };
+            { (gchar*)tmpMeanwhileId.constData(), 0 };
         struct mwSametimeUser *stuser = mwSametimeUser_new(stgroup,
                 mwSametimeUser_NORMAL, &id);
 
-        mwSametimeUser_setAlias(stuser, contact->nickName().toAscii());
+        mwSametimeUser_setAlias(stuser, contact->nickName().toUtf8().constData());
     }
 
     /* store! */
@@ -414,9 +409,9 @@ void MeanwhileSession::slotSocketDataAvailable()
 {
     HERE;
     guchar *buf;
-    Q_LONG bytesRead;
+    qint64 bytesRead;
 
-    if (socket == 0L)
+    if (!socket)
         return;
 
     if (!(buf = (guchar *)malloc(MEANWHILE_SESSION_BUFSIZ))) {
@@ -433,18 +428,15 @@ void MeanwhileSession::slotSocketDataAvailable()
     free(buf);
 }
 
-void MeanwhileSession::slotSocketClosed(int reason)
+void MeanwhileSession::slotSocketAboutToClose()
 {
     HERE;
 
+    /* TODO -error handling
     if (reason & KExtendedSocket::involuntary)
         emit serverNotification(
                 QString("Lost connection with Meanwhile server"));
-
-    if (socket) {
-        delete socket;
-        socket = 0L;
-    }
+    */
 
     mwSession_stop(session, 0x00);
 }
@@ -496,10 +488,10 @@ QString MeanwhileSession::getNickName(struct mwLoginInfo *logininfo)
 QString MeanwhileSession::getNickName(QString name)
 {
 
-    int index = name.find(" - ");
+    int index = name.indexOf(QLatin1String(" - "));
     if (index != -1)
-        name = name.remove(0, index + 3);
-    index = name.find('/');
+        name.remove(0, index + 3);
+    index = name.indexOf(QLatin1Char('/'));
     if (index != -1)
         name = name.left(index);
 
@@ -632,16 +624,14 @@ void MeanwhileSession::handleSessionIOClose()
 {
     HERE;
 
-    if (socket == 0L)
+    if (!socket)
         return;
 
-    QObject::disconnect(socket, SIGNAL(closed(int)),
-                     this, SLOT(slotSocketClosed(int)));
     socket->flush();
-    socket->closeNow();
+    socket->close();
 
     delete socket;
-    socket = 0L;
+    socket = 0;
 }
 
 void MeanwhileSession::handleSessionClear()
@@ -666,8 +656,10 @@ void MeanwhileSession::handleAwareListAware(struct mwAwareSnapshot *snapshot)
     if (contact == account->myself())
         return;
 
+    /* ### TODO!!
     contact->setProperty(get_protocol()->statusMessage, snapshot->status.desc);
     contact->setProperty(get_protocol()->awayMessage, snapshot->status.desc);
+    */
 
     Kopete::OnlineStatus onlinestatus;
     if (snapshot->online) {
@@ -793,8 +785,9 @@ void MeanwhileSession::handleImConvReceived(struct mwConversation *conv,
     switch (type) {
     case mwImSend_PLAIN:
         {
-            Kopete::Message message(convdata->contact, account->myself(),
-                    QString((char *)msg), Kopete::Message::Inbound);
+            Kopete::Message message(convdata->contact, account->myself());
+            message.setPlainBody(QString::fromUtf8((const char *)msg));
+            message.setDirection(Kopete::Message::Inbound);
             convdata->chat->appendMessage(message);
         }
         break;

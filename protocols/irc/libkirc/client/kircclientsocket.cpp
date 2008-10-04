@@ -2,9 +2,9 @@
     kircclient.cpp - IRC Client
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
-    Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2003-2008 by Michel Hermier <michel.hermier@gmail.com>
 
-    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -17,100 +17,160 @@
 */
 
 #include "kircclientsocket.moc"
+#include "kircclientsocket_p.moc"
 
-#include "kircclientcommandhandler.h"
 #include "kircentity.h"
 #include "kircstdmessages.h"
+#include "kircclienthandler.h"
 
-class KIrc::ClientSocket::Private
-{
-public:
-	Private()
-		: server(new Entity())
-		, failedNickOnLogin(false)
-	{ }
+#include "kirccontext.h"
 
-	KIrc::Entity::Ptr server;
+#include <QtNetwork/QSslSocket>
 
-	bool failedNickOnLogin : 1;
-};
+#include <kdebug.h>
 
 using namespace KIrc;
 
-ClientSocket::ClientSocket(QObject *parent)
-	: Socket(parent),
-	  d( new Private )
+ClientSocketPrivate::ClientSocketPrivate(ClientSocket *socket)
+	: SocketPrivate(socket)
+	, failedNickOnLogin(false)
 {
-//	setUserName(QString::null);
+}
 
-//	d->entities << d->server << d->self;
+ClientSocket::ClientSocket(Context *context)
+	: Socket(context, new ClientSocketPrivate(this))
+{
+	Q_D(ClientSocket);
+	d->server = new Entity(context);
+
+	ClientEventHandler *clientHandler=new ClientEventHandler( context );
+	context->addEventHandler( clientHandler );
+	clientHandler->setEnabled( true );
+
+	context->setEnabled( true );
 
 //	d->versionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
 //	d->userString = QString::fromLatin1("Response not supplied by user.");
-//	d->sourceString = QString::fromLatin1("Unknown client, known source.");
-
-/*
-	connect(this, SIGNAL(internalError(const QString &)),
-		this, SLOT());
-*/
-	connect(this, SIGNAL(connectionStateChanged(Socket::ConnectionState)),
-		this, SLOT(onConnectionStateChanged(Socket::ConnectionState)));
-
-	connect(this, SIGNAL(receivedMessage(KIrc::Message &)),
-		this, SLOT(onReceivedMessage(KIrc::Message &)));
+//	d->sourceString = QString::fromLatin1("Unknown client using the KIRC engine.");
 }
 
 ClientSocket::~ClientSocket()
 {
 //	StdCommands::quit(this, QLatin1String("KIRC Deleted"));
-
-	delete d;
 }
 
-bool ClientSocket::isDisconnected() const
+EntityPtr ClientSocket::server() const
 {
-	return connectionState() == Idle;
+	Q_D(const ClientSocket);
+	return d->server;
 }
 
-bool ClientSocket::isConnected() const
+QUrl ClientSocket::url() const
 {
-	return connectionState() == Open;
+	Q_D(const ClientSocket);
+	return d->url;
 }
 
-void ClientSocket::onConnectionStateChanged(Socket::ConnectionState newState)
+void ClientSocket::connectToServer(const QUrl &url)
 {
-	switch(newState)
+	Q_D(Socket);
+	kDebug()<<"connectiong to "<<url;
+
+	QTcpSocket *socket;
+
+	if ( url.scheme() == "irc" )
 	{
-	case Open:
-		setConnectionState(Authentifying);
-/* 
-		// If password is given for this server, send it now, and don't expect a reply
-		const KUrl &url = this->url();
+		socket = new QTcpSocket(this);
+//		socket->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
+		connectToServer(url, socket);
+	}
+	else if ( url.scheme() == "ircs" )
+	{
+		socket = new QSslSocket(this);
+//		socket->setSocketFlags( KExtendedSocket::inetSocket );
+		connectToServer(url, socket);
+	}
+	else
+	{
+//		#warning FIXME: send an event here to reflect the error
+	}
+}
 
-		if (url.hasPass())
-			StdMessage::pass(this, url.pass());
+void ClientSocket::connectToServer(const QUrl &url, QAbstractSocket *socket)
+{
+	Q_D(ClientSocket);
+
+	close();
+
+	if (!socket)
+	{
+//		#warning FIXME: send an event here to reflect the error
+	}
+
+	QString host = url.host();
+	if(host.isEmpty())
+		host = "localhost";
+
+	int port = url.port();
+
+	if (port == -1)
+	{
+		// Make the port being guessed by the socket (look into /etc/services)
+		//port = url.scheme();
+		;
+	}
+
+//	the given url is now validated
+	d->url = url;
+	setSocket(socket);
+
+#ifdef __GNUC__
+	#warning FIXME: send an event here to reflect connection state
+#endif
+
+	socket->connectToHost(host, port);
+}
+
+void ClientSocket::socketStateChanged(QAbstractSocket::SocketState newstate)
+{
+	Q_D(ClientSocket);
+	QUrl url = d->url;
+
+	kDebug(14120)<<"state changed to "<<newstate;
+
+	switch(newstate)
+	{
+	case QAbstractSocket::ConnectedState:
+		setConnectionState(Socket::Authentifying);
+
+		// If password is given for this server, send it now, and don't expect a reply
+
+		//if (url.hasPass())
+			//StdMessage::pass(this, url.pass());
 
 #ifdef __GNUC__
 		#warning make the following string arguments static const
 #endif
-		StdMessage::user(this, url.user(), StdCommands::Normal, url.queryItem(URL_REALNAME));
-		StdMessage::nick(this, url.queryItem(URL_NICKNAME));
-*/
+		writeMessage( StdMessages::user( url.userName().toLatin1(), "127.0.0.1", url.host().toLatin1(), url.queryItemValue("realname").toLatin1() ) );
+		writeMessage( StdMessages::nick( url.queryItemValue("nickname").toLatin1() ) );
+
 		break;
 	default:
-		//do nothing
+		Socket::socketStateChanged(newstate);
 		break;
 	}
 }
 
-Entity::Ptr ClientSocket::server()
+void ClientSocket::setAuthentified()
 {
-	return d->server;
+	setConnectionState( Socket::Authentified );
 }
 
-ClientCommandHandler *ClientSocket::clientCommandHandler()
+KIrc::EntityPtr ClientSocket::joinChannel( const QByteArray & channelName )
 {
-//	return dynamic_cast<ClientCommandHandler *>(commandHandler());
-	return 0;
-}
+	Q_D( ClientSocket );
+	writeMessage( KIrc::StdMessages::join( channelName ) );
+    KIrc::EntityPtr channel=KIrc::EntityPtr( d->context->entityFromName( channelName ) );
 
+	return channel;
+}

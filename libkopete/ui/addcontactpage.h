@@ -21,7 +21,7 @@
 #include <QtGui/QWidget>
 
 #include <kopeteprotocol.h>
-#include "kopete_export.h"
+#include <kopete_export.h>
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -50,7 +50,7 @@ public:
 	virtual bool validateData()=0;
 
 	/**
-	 * add the contact the the specified meta contact, with the given account
+	 * add the contact to the specified meta contact, with the given account
 	 * return false if the contact has not been added
 	 */
 	virtual bool apply(Kopete::Account * , Kopete::MetaContact *) = 0;

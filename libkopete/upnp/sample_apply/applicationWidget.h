@@ -27,7 +27,8 @@
 #include <QTextEdit>
 #include <QString>
 #include <QTreeWidget>
- #include <QLineEdit>
+#include <QLineEdit>
+#include <QList>
 
 #include "../upnpRouter.h"
 
@@ -37,11 +38,12 @@ class ApplicationWidget : public QMainWindow, private Ui::MainWindow
  
 public:
 	ApplicationWidget(QWidget *parent = 0);
-	UPnpRouter router;
+	QList<UPnpRouter> router;
 
 public slots:
 	void openPort();
 	void deletePort();
+	void search();
 
 };
 

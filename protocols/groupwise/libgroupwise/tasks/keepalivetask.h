@@ -4,7 +4,7 @@
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
@@ -21,9 +21,7 @@
 #ifndef KEEPALIVETASK_H
 #define KEEPALIVETASK_H
 
-#include <requesttask.h>
-
-class QTimer;
+#include "requesttask.h"
 
 /**
 @author Kopete Developers
@@ -34,10 +32,7 @@ Q_OBJECT
 public:
 	KeepAliveTask(Task* parent);
 	~KeepAliveTask();
-protected slots:
-	void slotSendKeepAlive();
-private:
-	QTimer * m_keepAliveTimer;
+	void setup();
 };
 
 #endif

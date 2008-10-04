@@ -1,4 +1,9 @@
 macro_optional_find_package(OpenSSL)
+macro_log_feature(OPENSSL_FOUND "OpenSSL" "A toolkit implementing the Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1) protocols" "http://openssl.org" FALSE "" "Required for the Kopete Gadu-Gadu protocol.")
+
+# On Solaris, some of the name resolution functions are in libnsl;
+# this needs to be linked in if found. Copied from kdelibs.
+check_library_exists(nsl gethostbyname "" HAVE_NSL_LIBRARY)
 
 option(WITH_testbed "Enable Kopete testbed protocol" ON)
 option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" OFF)
@@ -12,7 +17,8 @@ option(WITH_telepathy "Enable Telepathy testbed protocol" OFF)
 option(WITH_winpopup "Enable Kopete winpopup protocol" ON)
 option(WITH_gadu "Enable Kopete Gadu-Gadu protocol" ON)
 option(WITH_jabber "Enable Kopete Jabber protocol" ON)
-# option(WITH_irc "Enable Kopete IRC protocol" OFF)
+option(WITH_bonjour "Enable Kopete Bonjour protocol" ON)
+option(WITH_irc "Enable Kopete IRC protocol" OFF)
 
 include_directories(${KOPETE_INCLUDES})
 
@@ -28,9 +34,10 @@ endif(WITH_yahoo)
 if(WITH_qq)
   add_subdirectory( qq )
 endif(WITH_qq)
-# if(WITH_irc)
-#   add_subdirectory( irc )
-# endif(WITH_irc)
+if(WITH_irc)
+  message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: WARNING: Building the irc plugin, even if  it hasn't been completely ported yet")
+  add_subdirectory( irc )
+endif(WITH_irc)
 if(NOT WIN32)
   if(WITH_winpopup)
     add_subdirectory( winpopup )
@@ -69,5 +76,13 @@ endif(WITH_testbed)
 if(WITH_telepathy AND DECIBEL_FOUND)
   add_subdirectory( telepathy )
 endif(WITH_telepathy AND DECIBEL_FOUND)
+
+if(WITH_bonjour)
+  if(DNSSD_FOUND)
+    add_subdirectory( bonjour )
+  else(DNSSD_FOUND)
+    message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Disabled Bonjour Because KDNSSD was not found")
+  endif(DNSSD_FOUND)
+endif(WITH_bonjour)
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Meanwhile protocol has been disabled because it is not ported to KDE4 yet.")

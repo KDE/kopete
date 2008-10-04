@@ -5,7 +5,7 @@
     Copyright 2006 Chani Armitage <chanika@gmail.com>
     Copyright 2007 Matt Rogers <mattr@kde.org>
 
-    Kopete ( c ) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete ( c ) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
     based on ssidata.h and ssidata.cpp ( c ) 2002 Tom Linsky <twl6@po.cwru.edu>
 
@@ -39,13 +39,6 @@ namespace Oscar
 	class Message;
 }
 
-namespace Kopete
-{
-	class Transfer;
-	class FileTransferInfo;
-	class TransferManager;
-}
-
 class FileTransferTask : public Task
 {
 Q_OBJECT
@@ -53,8 +46,15 @@ public:
 	/** create an incoming filetransfer */
 	FileTransferTask( Task* parent, const QString& contact, const QString& self, QByteArray cookie, Buffer b );
 	/** create an outgoing filetransfer */
-	FileTransferTask( Task* parent, const QString& contact, const QString& self, const QStringList& files, Kopete::Transfer *transfer );
+	FileTransferTask( Task* parent, const QString& contact, const QString& self, const QStringList& files );
 	~FileTransferTask();
+
+	QString internalId() const;
+	QString contactName() const;
+	QString fileName() const;
+	Oscar::WORD fileCount() const;
+	Oscar::DWORD totalSize() const;
+	QString description() const;
 
 	//! Task implementation
 	void onGo();
@@ -64,20 +64,21 @@ public:
 
 public slots:
 	void doCancel();
-	void doCancel( const Kopete::FileTransferInfo &info );
-	void doAccept( Kopete::Transfer*, const QString & );
+	void doAccept( const QString &localDirecotry );
+	void doAccept( const QStringList &localFileNames );
 	void timeout();
 
 signals:
 	void transferCancelled();
 	void transferError( int errorCode, const QString &error );
+	void transferProcessed( unsigned int totalSent );
 	void transferFinished();
 
-	void transferProcessed( unsigned int bytesSent );
+	void nextFile( const QString& sourceFile, const QString& destinationFile );
+	void nextFile( const QString& fileName, unsigned int fileSize );
+	void fileProcessed( unsigned int bytesSent, unsigned int fileSize );
 
 	void sendMessage( const Oscar::Message &msg );
-	void askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i );
-	void getTransferManager( Kopete::TransferManager ** );
 	
 	void cancelOft();
 
@@ -87,10 +88,10 @@ private slots:
 	void proxyRead();
 	void socketConnected();
 
+	void fileProcessedOft( unsigned int bytesSent, unsigned int fileSize );
+	void fileFinishedOft( const QString& fileName, unsigned int fileSize );
 	void errorOft( int errorCode, const QString &error );
 	void doneOft(); //oft told us it's done
-
-	void transferResult( KJob* job );
 
 private:
 	enum Action { Send, Receive };
@@ -107,6 +108,7 @@ private:
 	void doneConnect();
 	void connectFailed(); //tries another method of connecting
 	void doOft();
+	QString parseDescription( const QByteArray &description ) const;
 
 	Oscar::OFTRendezvous m_oftRendezvous;
 
@@ -124,6 +126,7 @@ private:
 	bool m_proxyRequester; //did we choose to request the proxy?
 	enum State { Default, Listening, Connecting, ProxySetup, OFT, Done };
 	State m_state;
+	unsigned int m_fileFinishedBytes;
 };
 
 #endif

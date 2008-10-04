@@ -1,6 +1,6 @@
 /*
  * xmpp_features.h
- * Copyright (C) 2003  Justin Karneges
+ * Copyright (C) 2003  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -23,15 +23,14 @@
 
 #include <QStringList>
 
-
 #include <iris_export.h>
+class QString;
 
 namespace XMPP
 {
 	class IRIS_EXPORT Features
 	{
 	public:
-		class FeatureName;
 		Features();
 		Features(const QStringList &);
 		Features(const QString &);
@@ -48,9 +47,9 @@ namespace XMPP
 		bool canGroupchat() const;
 		bool canVoice() const;
 		bool canDisco() const;
+		bool canXHTML() const;
 		bool canChatState() const;
 		bool canCommand() const;
-		bool canXHTML() const;
 		bool isGateway() const;
 		bool haveVCard() const;
 
@@ -63,8 +62,8 @@ namespace XMPP
 			FID_Disco,
 			FID_Gateway,
 			FID_VCard,
+			FIX_Xhtml,
 			FID_AHCommand,
- 			FID_Xhtml,
 
 			// private Psi actions
 			FID_Add
@@ -81,7 +80,8 @@ namespace XMPP
 		static long id(const QString &feature);
 		static QString feature(long id);
 
-		private:
+		class FeatureName;
+	private:
 		QStringList _list;
 	};
 }

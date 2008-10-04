@@ -1,3 +1,4 @@
+add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 #add_subdirectory( ui )
 #add_subdirectory( services )
@@ -30,7 +31,7 @@ kde4_add_ui3_files( kopete_sms_PART_SRCS
 
 kde4_add_plugin(kopete_sms ${kopete_sms_PART_SRCS})
 
-target_link_libraries(kopete_sms  ${KDE4_KIO_LIBS} kopete )
+target_link_libraries(kopete_sms  ${KDE4_KIO_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kopete )
 
 install(TARGETS kopete_sms  DESTINATION ${PLUGIN_INSTALL_DIR})
 install( FILES kopete_sms.desktop  DESTINATION ${SERVICES_INSTALL_DIR})

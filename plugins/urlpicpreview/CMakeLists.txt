@@ -15,7 +15,7 @@ kde4_add_kcfg_files(kopete_urlpicpreview_PART_SRCS urlpicpreviewconfig.kcfgc )
 kde4_add_plugin(kopete_urlpicpreview ${kopete_urlpicpreview_PART_SRCS})
 
 
-target_link_libraries(kopete_urlpicpreview  ${KDE4_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_urlpicpreview  ${KDE4_KDECORE_LIBS} ${KDE4_KIO_LIBS} kopete )
 
 install(TARGETS kopete_urlpicpreview DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -32,7 +32,7 @@ kde4_add_kcfg_files(kcm_kopete_urlpicpreview_PART_SRCS urlpicpreviewconfig.kcfgc
 kde4_add_plugin(kcm_kopete_urlpicpreview ${kcm_kopete_urlpicpreview_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_urlpicpreview  ${KDE4_KUTILS_LIBS} kopete )
+target_link_libraries(kcm_kopete_urlpicpreview ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KUTILS_LIBS} kopete )
 
 install(TARGETS kcm_kopete_urlpicpreview  DESTINATION ${PLUGIN_INSTALL_DIR})
 

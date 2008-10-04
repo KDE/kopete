@@ -26,8 +26,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <QFileInfo>
-#include <QStringList>
+#include <QtCore/QDir>
+#include <QtCore/QFileInfo>
+#include <QtCore/QStringList>
 
 #include <KDebug>
 #include <KDirWatch>
@@ -85,15 +86,12 @@ void NLQuodLibet::update()
 
 QString NLQuodLibet::currentTrackPath() const
 {
-	const char * home = getenv("HOME");
-	QString path( home );
-	path += "/.quodlibet/current";
-	return path;
+	return QDir::homePath() + QLatin1String( "/.quodlibet/current" );
 }
 
 void NLQuodLibet::parseFile( QFile & file )
 {
-	if ( file.open( IO_ReadOnly ) ) {
+	if ( file.open( QIODevice::ReadOnly ) ) {
 		QTextStream stream( &file );
 		QString line;
 		while ( !stream.atEnd() ) {

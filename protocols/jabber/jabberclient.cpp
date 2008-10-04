@@ -31,6 +31,7 @@
 #include <xmpp_tasks.h>
 
 #include "jabberconnector.h"
+#include "privacymanager.h"
 
 #define JABBER_PENALTY_TIME	2
 
@@ -38,7 +39,8 @@ class JabberClient::Private
 {
 public:
 	Private()
-	 : jabberClient(0L), jabberClientStream(0L), jabberClientConnector(0L), jabberTLS(0L), jabberTLSHandler(0L)
+	: jabberClient(0L), jabberClientStream(0L), jabberClientConnector(0L), jabberTLS(0L),
+		       jabberTLSHandler(0L), privacyManager(0L)
 	{}
 	~Private()
 	{
@@ -52,6 +54,7 @@ public:
 		delete jabberClientConnector;
 		delete jabberTLSHandler;
 		delete jabberTLS;
+		// privacyManager will be deleted with jabberClient, its parent's parent
 	}
 
 	// connection details
@@ -65,6 +68,7 @@ public:
 	QCA::TLS *jabberTLS;
 	XMPP::QCATLSHandler *jabberTLSHandler;
 	QCA::Initializer qcaInit;
+	PrivacyManager *privacyManager;
 
 	// ignore TLS warnings
 	bool ignoreTLSWarnings;
@@ -149,12 +153,14 @@ void JabberClient::cleanUp ()
 	delete d->jabberClientConnector;
 	delete d->jabberTLSHandler;
 	delete d->jabberTLS;
+	// privacyManager will be deleted with jabberClient, its parent's parent
 
 	d->jabberClient = 0L;
 	d->jabberClientStream = 0L;
 	d->jabberClientConnector = 0L;
 	d->jabberTLSHandler = 0L;
 	d->jabberTLS = 0L;
+	d->privacyManager = 0L;
 
 	d->currentPenaltyTime = 0;
 
@@ -581,6 +587,11 @@ XMPP::FileTransferManager *JabberClient::fileTransferManager () const
 
 }
 
+PrivacyManager *JabberClient::privacyManager () const
+{
+	return d->privacyManager;
+}
+
 XMPP::Jid JabberClient::jid () const
 {
 
@@ -597,7 +608,6 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	{
 		d->jabberClient->close ();
 	}
-
 	d->jid = jid;
 	d->password = password;
 
@@ -606,6 +616,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	 */
 	if ( ( forceTLS () || useSSL () || probeSSL () ) && !QCA::isSupported ("tls" ) )
 	{
+		qDebug ("no TLS");
 		return NoTLS;
 	}
 
@@ -635,15 +646,11 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	if ( QCA::isSupported ("tls") )
 	{
 		d->jabberTLS = new QCA::TLS;
-		d->jabberTLSHandler = new XMPP::QCATLSHandler ( d->jabberTLS );
+		d->jabberTLS->setTrustedCertificates(QCA::systemStore());
+		d->jabberTLSHandler = new QCATLSHandler(d->jabberTLS);
+		d->jabberTLSHandler->setXMPPCertCheck(true);
 
-		{
-			using namespace XMPP;
-			QObject::connect ( d->jabberTLSHandler, SIGNAL ( tlsHandshaken() ), this, SLOT ( slotTLSHandshaken () ) );
-		}
-
-		if( QCA::haveSystemStore() )
-			d->jabberTLS->setTrustedCertificates( QCA::systemStore() );
+		QObject::connect ( d->jabberTLSHandler, SIGNAL ( tlsHandshaken() ), SLOT ( slotTLSHandshaken () ) );
 	}
 
 	/*
@@ -684,6 +691,11 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	 * Setup client layer.
 	 */
 	d->jabberClient = new XMPP::Client ( this );
+	
+	/*
+	 * Setup privacy manager
+	 */
+	d->privacyManager = new PrivacyManager ( rootTask() );
 
 	/*
 	 * Enable file transfer (IP and server will be set after connection
@@ -705,7 +717,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	 */
 	{
 		using namespace XMPP;
-		QObject::connect ( d->jabberClient, SIGNAL ( subscription (const Jid &, const QString &) ),
+		QObject::connect ( d->jabberClient, SIGNAL ( subscription (const Jid &, const QString &, const QString &) ),
 				   this, SLOT ( slotSubscription (const Jid &, const QString &) ) );
 		QObject::connect ( d->jabberClient, SIGNAL ( rosterRequestFinished ( bool, int, const QString & ) ),
 				   this, SLOT ( slotRosterRequestFinished ( bool, int, const QString & ) ) );
@@ -874,7 +886,7 @@ void JabberClient::slotIncomingXML ( const QString & _msg )
 	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
 
 	emit debugMessage ( "XML IN: " + msg );
-
+	emit incomingXML ( msg );
 }
 
 void JabberClient::slotOutgoingXML ( const QString & _msg )
@@ -885,7 +897,7 @@ void JabberClient::slotOutgoingXML ( const QString & _msg )
 	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
 
 	emit debugMessage ( "XML OUT: " + msg );
-
+	emit outgoingXML ( msg );
 }
 
 void JabberClient::slotTLSHandshaken ()
@@ -975,7 +987,7 @@ void JabberClient::slotCSAuthenticated ()
 		JabberByteStream *kdeByteStream = dynamic_cast<JabberByteStream*>(d->jabberClientConnector->stream());
 		if ( kdeByteStream )
 		{
-			d->localAddress = kdeByteStream->socket()->localAddress().nodeName ();
+			d->localAddress = kdeByteStream->socket()->peerName();
 		}
 	}
 

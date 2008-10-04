@@ -35,6 +35,7 @@ public:
 
 	void requestIconFor( const QString& user );
 	void setHash( const QByteArray& md5Hash );
+	void setIconType( Oscar::WORD iconType );
 	void setHashType( Oscar::BYTE type );
 
 	//! Task implementation
@@ -61,6 +62,7 @@ private:
 	QByteArray m_icon;
 	QString m_user;
 	QByteArray m_hash;
+	Oscar::WORD m_iconType;
 	Oscar::BYTE m_hashType;
 	Oscar::DWORD m_seq;
 };

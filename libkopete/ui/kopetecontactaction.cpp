@@ -22,6 +22,8 @@
 #include "kopeteonlinestatus.h"
 #include <kactioncollection.h>
 
+Q_DECLARE_METATYPE(Kopete::Contact*)
+
 namespace Kopete
 {
 namespace UI
@@ -31,7 +33,7 @@ ContactAction::ContactAction( Kopete::Contact *contact, KActionCollection* paren
 : KAction( KIcon( contact->onlineStatus().iconFor( contact ) ),
            contact->metaContact()->displayName(), parent )
 {
-	setData( contact );
+	setData( QVariant::fromValue( contact ) );
 	connect( this, SIGNAL( triggered( bool ) ),
 	         this, SLOT( slotTriggered( bool ) ) );
         parent->addAction( contact->contactId(), this );
@@ -39,7 +41,7 @@ ContactAction::ContactAction( Kopete::Contact *contact, KActionCollection* paren
 
 void ContactAction::slotTriggered( bool checked )
 {
-	Kopete::Contact* contact = reinterpret_cast<Kopete::Contact*>(data().value<void*>());
+	Kopete::Contact* contact = data().value<Kopete::Contact*>();
 	emit triggered( contact, checked );
 }
 

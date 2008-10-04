@@ -56,6 +56,8 @@ QList<AccountListEntry> ContactSelectorWidget::contacts()
 	if( mUi->radioAddExistingMetaContact->isChecked() )
 	{
 		QList<AccountListEntry> list;
+		if(!mUi->metaContactSelector->metaContact())
+			return list;
 		foreach( Kopete::Contact *contact, mUi->metaContactSelector->metaContact()->contacts() )
 		{
 			list.append( AccountListEntry( contact->contactId(), contact->protocol() ) );

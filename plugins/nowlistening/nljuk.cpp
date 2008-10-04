@@ -33,7 +33,7 @@ NLJuk::NLJuk() : NLMediaPlayer()
 {
 	m_type = Audio;
 	m_name = "JuK";
-	m_client = new QDBusInterface("org.kde.JuK", "/Player");
+	m_client = new QDBusInterface("org.kde.juk", "/Player");
 }
 
 NLJuk::~NLJuk()
@@ -45,14 +45,15 @@ void NLJuk::update()
 {
 	m_playing = false;
 	QString newTrack;
-
-	// TODO: Port to JuK D-BUS interface
-
-	// see if JuK is  registered with DCOP
+	if (!m_client->isValid())
+	{
+		delete m_client;
+		m_client = new QDBusInterface("org.kde.juk", "/Player");
+	}
+	// see if JuK is registered with DBUS
 	if( m_client->isValid() )
 	{
 		// see if it's playing
-
 		QDBusReply<bool> playingReply = m_client->call("playing");
 		if( playingReply.isValid() )
 		{

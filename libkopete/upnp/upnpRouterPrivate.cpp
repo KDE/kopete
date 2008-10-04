@@ -18,7 +18,10 @@
 
 #include "upnpRouterPrivate.h"
 
-UpnpRouterPrivate::UpnpRouterPrivate(){}
+UpnpRouterPrivate::UpnpRouterPrivate()
+{
+	router = new Router();
+}
 UpnpRouterPrivate::UpnpRouterPrivate(const QUrl &url)
 {
 	router = new Router(url);
@@ -72,55 +75,9 @@ QString UpnpRouterPrivate::routerDescription() const
 /**
 * TODO finish to implementation of isEmpty
 */
-bool UpnpRouterPrivate::isEmpty()
+bool UpnpRouterPrivate::isEmpty() const
 {
-	bool empty = true;
-	/*if(this->m_routerType.isEmpty()==false)
-	{
-		empty = false;
-	}
-	if(this->m_friendlyName.isEmpty()==false)
-	{
-		empty = false;
-	}
-	if(this->m_manufacturer.isEmpty()==false)
-	{
-		empty = false;
-	}
-	if(this->m_manufacturerURL.isEmpty()==false)
-	{
-		empty = false;
-	}
-	if(this->m_modelName.isEmpty()==false)
-	{
-		empty = false;
-	}
-	if(this->m_UDN.isEmpty()==false)
-	{
-		empty = false;
-	}
-	if(this->m_modelDescription.isEmpty()==false)
-	{
-		empty = false;
-	}
-	if(this->m_modelNumber.isEmpty()==false)
-	{
-		empty = false;
-	}
-	if(this->m_serialNumber.isEmpty()==false)
-	{
-		empty = false;
-	}
-	if(this->m_presentationURL.isEmpty()==false)
-	{
-		empty = false;
-	}
-	if(this->m_UPC.isEmpty()==false)
-	{
-		empty = false;
-	}*/
-
-	return empty;
+	return this->router->isEmpty();
 }
 
 bool UpnpRouterPrivate::isValid() const

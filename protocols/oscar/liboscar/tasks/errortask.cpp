@@ -19,6 +19,7 @@
 #include <kdebug.h>
 #include "oscartypes.h"
 #include "transfer.h"
+#include "connection.h"
 
 ErrorTask::ErrorTask( Task* parent )
 	: Task( parent )
@@ -48,19 +49,31 @@ bool ErrorTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
+		const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
+		if ( !st )
+			return false;
+
 		Buffer* buffer = transfer->buffer();
 		//get the error code
-		kDebug(OSCAR_RAW_DEBUG) << "Error code is " << buffer->getWord();
+		Oscar::WORD errorCode = buffer->getWord();
+		kDebug(OSCAR_RAW_DEBUG) << "Error code is " << errorCode;
 		TLV t = buffer->getTLV();
 		if ( t.type == 0x0008 && t.length > 0 )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "TLV error subcode is " 
 					<< t.data << endl;
 		}
+
+		Oscar::MessageInfo info = client()->takeMessageInfo( st->snacRequest() );
+		if ( info.isValid() )
+			emit messageError( info.contact, info.id );
+
 		return true;
 	}
 	else 
 		return false;
 }
+
+#include "errortask.moc"
 
 //kate indent-mode csands;

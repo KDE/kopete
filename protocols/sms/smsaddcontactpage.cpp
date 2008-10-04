@@ -1,16 +1,16 @@
-/*  *************************************************************************
-    *   copyright: (C) 2003 Richard Lärkäng <nouseforaname@home.se>         *
-    *************************************************************************
-*/
+/*
+  smsaddcontactpage.cpp  -  SMS Plugin
 
-/*  *************************************************************************
-    *                                                                       *
-    * This program is free software; you can redistribute it and/or modify  *
-    * it under the terms of the GNU General Public License as published by  *
-    * the Free Software Foundation; either version 2 of the License, or     *
-    * (at your option) any later version.                                   *
-    *                                                                       *
-    *************************************************************************
+  Copyright (c) 2003      by Richard Lärkäng        <nouseforaname@home.se>
+
+  *************************************************************************
+  *                                                                       *
+  * This program is free software; you can redistribute it and/or modify  *
+  * it under the terms of the GNU General Public License as published by  *
+  * the Free Software Foundation; either version 2 of the License, or     *
+  * (at your option) any later version.                                   *
+  *                                                                       *
+  *************************************************************************
 */
 
 #include "smsadd.h"
@@ -19,16 +19,15 @@
 
 #include <qlayout.h>
 #include <qlineedit.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
 
 
 
 SMSAddContactPage::SMSAddContactPage(QWidget *parent)
 				  : AddContactPage(parent)
 {
-	(new Q3VBoxLayout(this))->setAutoAdd(true);
+	QVBoxLayout* layout = new QVBoxLayout( this );
 	smsdata = new smsAddUI(this);
+	layout->addWidget( smsdata );
 }
 
 SMSAddContactPage::~SMSAddContactPage()

@@ -201,7 +201,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 			if(msgStr.dataOffset+msgStr.dataMessageSize >= msgStr.totalSize)
 			{ //whe have the whole
 
-				kDebug(14141) <<"Analyse the image message: " << fullContentMessage;
+				kDebug(14141) <<"Analyze the image message: " << fullContentMessage;
 
 				QString ext;
 				QRegExp rx("Content-Type: ([a-zA-Z0-9/]*)");

@@ -1,6 +1,6 @@
 /*
  * tasks.h - basic tasks
- * Copyright (C) 2001, 2002  Justin Karneges
+ * Copyright (C) 2001, 2002  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -170,7 +170,7 @@ namespace XMPP
 		Private *d;
 	};
 	
-	class JT_Session : public Task
+	class IRIS_EXPORT JT_Session : public Task
 	{
 	public:
 		JT_Session(Task *parent);
@@ -241,7 +241,7 @@ namespace XMPP
 		~JT_VCard();
 
 		void get(const Jid &);
-		void set(const VCard &);
+		void set(const Jid &, const VCard &);
 
 		const Jid & jid() const;
 		const VCard  & vcard() const;
@@ -381,7 +381,7 @@ namespace XMPP
 		JT_DiscoItems(Task *);
 		~JT_DiscoItems();
 	
-		void get(const Jid &, const QString &node = QString());
+		void get(const Jid &, const QString &node = QString::null);
 		void get(const DiscoItem &);
 	
 		const DiscoList &items() const;

@@ -42,11 +42,9 @@ MessengerAccount::~MessengerAccount()
 	
 }
 
-KActionMenu *MessengerAccount::actionMenu()
+void MessengerAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-	KActionMenu *messengerActionMenu = Kopete::Account::actionMenu();
-
-	return messengerActionMenu;
+	Kopete::Account::fillActionMenu( actionMenu );
 }
 
 void MessengerAccount::connectWithPassword(const QString &password)

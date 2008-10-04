@@ -38,7 +38,7 @@ class YahooProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 public:
-	YahooProtocol( QObject *parent, const QStringList &args );
+	YahooProtocol( QObject *parent, const QVariantList &args );
 	~YahooProtocol();
 
 	//Online Statuses
@@ -58,7 +58,6 @@ public:
 	const Kopete::OnlineStatus Idle;
 	const Kopete::OnlineStatus Connecting;
 
-	const Kopete::PropertyTmpl 	awayMessage;
 	const Kopete::PropertyTmpl 	iconCheckSum;
 	const Kopete::PropertyTmpl 	iconExpire;
 	const Kopete::PropertyTmpl 	iconRemoteUrl;

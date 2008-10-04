@@ -67,13 +67,13 @@ IdentityManager::~IdentityManager()
 	delete d;
 }
 
-void IdentityManager::setOnlineStatus( uint category , const QString& awayMessage, uint flags )
+void IdentityManager::setOnlineStatus( uint category , const Kopete::StatusMessage &statusMessage, uint flags )
 {
 	Q_UNUSED(flags);
 	foreach( Identity *identity ,  d->identities )
 	{
 		if ( !identity->excludeConnect() )
-				identity->setOnlineStatus( category , awayMessage );
+			identity->setOnlineStatus( category , statusMessage );
 	}
 }
 

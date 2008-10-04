@@ -1,28 +1,14 @@
-/*
-    action.cpp -
-
-    Copyright (c) 2007-2008 by Romain Castan      <romaincastan@gmail.com>
-    Copyright (c) 2007-2008 by Bertrand Demay     <bertranddemay@gmail.com>
-    Copyright (c) 2007-2008 by Julien Hubatzeck   <reineur31@gmail.com>
-    Copyright (c) 2007-2008 by Michel Saliba      <msalibaba@gmail.com>
-
-    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
-
-    *************************************************************************
-    *                                                                       *
-    * This library is free software; you can redistribute it and/or         *
-    * modify it under the terms of the GNU Lesser General Public            *
-    * License as published by the Free Software Foundation; either          *
-    * version 2 of the License, or (at your option) any later version.      *
-    *                                                                       *
-    *************************************************************************
-*/
-
 #include "action.h"
 
 // Constructor without parameter
 Action::Action()
 {
+}
+
+Action::Action(QString name)
+{
+	// Modify the action name
+	this->setName(name);
 }
 
 void Action::addArgument(QString name, QString direction, QString relatedStateVariable)
@@ -34,10 +20,13 @@ void Action::addArgument(QString name, QString direction, QString relatedStateVa
 	arg.setName(name);
 	arg.setDirection(direction);
 	arg.setRelatedStateVariable(relatedStateVariable);
+	
+	// To go a the list beginning
+	this->listArgument()->begin();
 	// We check if the argument is not already existing
 	for(int i=0;i<this->listArgument()->size() && !find;i++)
 	{
-		if(*(this->getArgumentAt(i)) == arg)
+		if(this->listArgument()->last().name() == name)
 		{
 			find=true;
 		}
@@ -71,17 +60,14 @@ void Action::setName(QString name)
 
 void Action::viewListArgument()
 {
-	Argument* arg = new Argument();
 	printf("## Displaying action arguments ##\n");
 	for(int i =0; i < this->listArgument()->size(); i++)
 	{
-		arg = this->getArgumentAt(i);
-		printf("##### Argument %d ##### \n",i);
+		Argument arg = this->listArgument()->at(i);
+		printf("# %d # \n",i);
 		// Show argument characteristics
-		(*arg).viewArgument();
-		printf("####################### \n");
+		arg.viewArgument();
 	}
-	delete(arg);
 }
 
 bool Action::operator==(const Action &act)
@@ -96,11 +82,10 @@ bool Action::operator==(const Action &act)
 	{
 		if(this->listArgument()->size() == action.listArgument()->size())
 		{
-			Argument* argument = new Argument();
 			for(int i =0; i < this->listArgument()->size(); i++)
 			{
-				argument = this->getArgumentAt(i);
-				if(((*argument) == (*(action.getArgumentAt(i))))==false)
+				Argument argument = this->listArgument()->at(i);
+				if((argument == action.listArgument()->at(i))==false)
 				{
 					equals = false;
 				}
@@ -114,13 +99,4 @@ bool Action::operator==(const Action &act)
 	return equals;
 }
 
-Argument* Action::getArgumentAt(int i)
-{
-	return &((*this->listArgument())[i]);
-}
 
-void Action::viewAction()
-{
-	printf("Action name : %s \n",this->name().toLatin1().data());
-	this->viewListArgument();
-}

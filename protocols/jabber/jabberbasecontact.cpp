@@ -111,7 +111,8 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	if( metaContact() != Kopete::ContactList::self()->myself() )
 	{
 		// only update the alias if its not empty
-		if ( !item.name().isEmpty () && item.name() != item.jid().bare() )
+		if ( !item.name().isEmpty () && item.name() != item.jid().bare() 
+			&& metaContact()->customDisplayName() != item.name () )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << "setting display name of " << contactId () << " to " << item.name();
 			metaContact()->setDisplayName ( item.name () );
@@ -322,14 +323,7 @@ void JabberBaseContact::reevaluateStatus ()
 	 * Set away message property.
 	 * We just need to read it from the current resource.
 	 */
-	if ( !resource.status ().status ().isEmpty () )
-	{
-		setProperty ( protocol()->propAwayMessage, resource.status().status () );
-	}
-	else
-	{
-		removeProperty ( protocol()->propAwayMessage );
-	}
+	setStatusMessage( resource.status().status() );
 
 }
 
@@ -422,6 +416,10 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		if ( !vCard.nickName().isEmpty () )
 		{
 			setProperty ( protocol()->propNickName, vCard.nickName () );
+		}
+		else if ( !vCard.fullName().isEmpty () ) // google talk contacts for example do not have a nickname; better show fullname instead of jabber id
+		{
+			setProperty ( protocol()->propNickName, vCard.fullName () );
 		}
 		else
 		{

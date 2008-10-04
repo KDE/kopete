@@ -19,13 +19,16 @@
 
 #include "identitystatuswidget.h"
 #include "ui_identitystatusbase.h"
+#include "addaccountwizard.h"
 
 #include <KIcon>
 #include <KMenu>
+#include <KActionMenu>
 #include <QTimeLine>
 #include <QToolTip>
 #include <QCursor>
 #include <QUrl>
+#include <QHelpEvent>
 #include <KColorScheme>
 #include <kopeteidentity.h>
 #include <kopeteidentitymanager.h>
@@ -36,6 +39,10 @@
 #include <kopetestdaction.h>
 #include <avatardialog.h>
 #include <KDebug>
+#include <kopeteuiglobal.h>
+#include <KCMultiDialog>
+
+#include "kopetestatusrootaction.h"
 
 class IdentityStatusWidget::Private
 {
@@ -45,6 +52,7 @@ public:
 	QTimeLine *timeline;
 	QString photoPath;
 	QHash<QListWidgetItem *,Kopete::Account *> accountHash;
+	bool dirty;
 };
 
 IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *parent)
@@ -68,6 +76,8 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 	// user input signals
 	connect( d->ui.accounts, SIGNAL(customContextMenuRequested(const QPoint &)),
 			this, SLOT(showAccountContextMenu(const QPoint &)) );
+	connect( d->ui.accounts, SIGNAL(itemClicked(QListWidgetItem *)),
+			this, SLOT(slotAccountClicked( QListWidgetItem *)) );
 	connect( d->ui.photo, SIGNAL(clicked()), 
 			 this, SLOT(slotPhotoClicked()));
 
@@ -78,6 +88,8 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 
 	connect( Kopete::IdentityManager::self(), SIGNAL(identityUnregistered(const Kopete::Identity*)),
 			this, SLOT(slotIdentityUnregistered(const Kopete::Identity*)));
+
+	d->ui.accounts->viewport()->installEventFilter( this );
 }
 
 IdentityStatusWidget::~IdentityStatusWidget()
@@ -87,15 +99,8 @@ IdentityStatusWidget::~IdentityStatusWidget()
 
 void IdentityStatusWidget::setIdentity(Kopete::Identity *identity)
 {
-	if (d->identity)
-	{
-		// TODO: Handle identity changes
-		//disconnect( d->identity, SIGNAL(identityChanged(Kopete::Identity*)), this, SLOT(slotUpdateAccountStatus()));
-		slotSave();
-	}
-
 	d->identity = identity;
-	slotLoad();
+	load();
 
 	if (d->identity)
 	{
@@ -112,10 +117,29 @@ Kopete::Identity *IdentityStatusWidget::identity() const
 
 void IdentityStatusWidget::setVisible( bool visible )
 {
+	if ( visible == isVisible() )
+		return;
+
 	// animate the widget disappearing
 	d->timeline->setDirection( visible ?  QTimeLine::Forward
 										: QTimeLine::Backward );
 	d->timeline->start();
+}
+
+bool IdentityStatusWidget::eventFilter( QObject *watched, QEvent *event )
+{
+	if( event->type() == QEvent::ToolTip && watched == d->ui.accounts->viewport() )
+	{
+		QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+		QListWidgetItem* item = d->ui.accounts->itemAt( helpEvent->pos() );
+		if ( item )
+		{
+			const Kopete::Account * account = d->accountHash.value( item, 0 );
+			if ( account )
+				item->setToolTip( account->myself()->toolTip() );
+		}
+	}
+	return QWidget::eventFilter( watched, event );
 }
 
 void IdentityStatusWidget::slotAnimate(qreal amount)
@@ -133,13 +157,13 @@ void IdentityStatusWidget::slotAnimate(qreal amount)
 		return;
 	}
 
+	setFixedHeight( sizeHint().height() * amount );
+
 	if (!isVisible())
 		QWidget::setVisible( true );
-
-	setFixedHeight( sizeHint().height() * amount );
 }
 
-void IdentityStatusWidget::slotLoad()
+void IdentityStatusWidget::load()
 {
 	// clear
 	d->ui.accounts->clear();
@@ -154,9 +178,9 @@ void IdentityStatusWidget::slotLoad()
 	if (d->identity->hasProperty(props->photo().key()))
 	{
 		d->photoPath = d->identity->property(props->photo()).value().toString();
-		d->ui.photo->setIcon( QIcon( d->identity->property(props->photo()).value().toString() ) );
+		d->ui.photo->setIcon( QIcon( d->photoPath ) );
 	} else {
-		d->ui.photo->setIcon( KIcon( "user" ) );
+		d->ui.photo->setIcon( KIcon( "user-identity" ) );
     }
 
 	d->ui.identityName->setText(d->identity->label());
@@ -165,29 +189,21 @@ void IdentityStatusWidget::slotLoad()
 		addAccountItem( a );
 	}
 	if ( d->identity->accounts().isEmpty() ) {
-		new QListWidgetItem( KIcon("configure" ), i18nc("Label to tell the user no accounts existed", "No accounts configured" ), d->ui.accounts );
+		new QListWidgetItem( KIcon("configure" ), i18nc("Button to open account configuration widget", "Click to add an account" ), d->ui.accounts );
 	}
 	resizeAccountListWidget();
 }
 
 void IdentityStatusWidget::slotAccountRegistered( Kopete::Account *account )
 {
-	// Kopete::Identity is poorly integrated as of Kopete 0.40.0.  As a result Kopete::Accounts are
-	// always created as belonging to the default Identity, which means that they are added to the
-	// wrong identity in the IdentityStatus widget.  To fix this properly it would be necessary to 
-	// initialise the identities before the accounts on startup and pass the identity into the
-	// account constructor.  I'm not making changes like that for KDE 4.0 so just hide this widget
-	// now.  See also slotAccountUnregistered()
+	if (account && account->identity() == d->identity && d->accountHash.isEmpty())
+	{
+		// Remove "Add account" placeholder
+		d->ui.accounts->clear();
+	}
 
-	// the following code can be reenabled when Accounts have the right Identity on
-	// accountRegistered()
-#if 0
 	addAccountItem( account );
 	resizeAccountListWidget();
-#else
-	Q_UNUSED( account )
-	QWidget::setVisible( false );
-#endif
 }
 
 void IdentityStatusWidget::slotAccountUnregistered( const Kopete::Account *account )
@@ -207,6 +223,10 @@ void IdentityStatusWidget::slotAccountUnregistered( const Kopete::Account *accou
 	d->ui.accounts->takeItem( d->ui.accounts->row( item ) );
 	d->accountHash.remove( item );
 	delete item;
+
+	if ( d->identity && d->identity->accounts().isEmpty() ) {
+		new QListWidgetItem( KIcon("configure" ), i18nc("Button to open account configuration widget", "Click to add an account" ), d->ui.accounts );
+	}
 	resizeAccountListWidget();
 }
 
@@ -224,7 +244,6 @@ void IdentityStatusWidget::addAccountItem( Kopete::Account *account )
 			this, SLOT(slotAccountStatusIconChanged(Kopete::Contact *)) );
 
 	QListWidgetItem * item = new QListWidgetItem( account->accountIcon(), account->accountLabel(), d->ui.accounts );
-	item->setToolTip( account->myself()->toolTip() );
 	d->accountHash.insert( item, account );
 
 	slotAccountStatusIconChanged( account->myself() );
@@ -246,28 +265,7 @@ void IdentityStatusWidget::slotAccountStatusIconChanged( Kopete::Contact *contac
 	if( !item )
 		return;
 
-	QPixmap pm = status.iconFor( contact->account() );
-	if( pm.isNull() )
-		item->setIcon( KIconLoader::unknown() );
-	else
-		item->setIcon( QIcon( pm ) );
-
-	item->setToolTip( contact->toolTip() );
-}
-
-void IdentityStatusWidget::slotSave()
-{
-	if (!d->identity)
-		return;
-
-	Kopete::Global::Properties *props = Kopete::Global::Properties::self();
-
-	// photo
-	if (!d->identity->hasProperty(props->photo().key()) ||
-		d->identity->property(props->photo()).value().toString() != d->photoPath)
-	{
-		d->identity->setProperty(props->photo(), d->photoPath);
-	}
+	item->setIcon ( status.iconFor( contact->account() ) );
 }
 
 void IdentityStatusWidget::showAccountContextMenu( const QPoint & point )
@@ -276,18 +274,54 @@ void IdentityStatusWidget::showAccountContextMenu( const QPoint & point )
 	if ( item && !d->accountHash.isEmpty() ) {
 		Kopete::Account * account = d->accountHash[ item ];
 		if ( account ) {
-			KActionMenu *actionMenu = account->actionMenu();
+			KActionMenu *actionMenu = new KActionMenu( account->accountId(), account );
+
+			if ( !account->hasCustomStatusMenu() )
+				Kopete::StatusRootAction::createAccountStatusActions( account, actionMenu );
+
+			account->fillActionMenu( actionMenu );
+
 			actionMenu->menu()->exec( d->ui.accounts->mapToGlobal( point ) );
 			delete actionMenu;
 		}
 	}
 }
 
+void IdentityStatusWidget::slotAccountClicked( QListWidgetItem * item )
+{
+	Q_UNUSED( item );
+
+	if ( d->identity->accounts().isEmpty() )
+	{
+		Q_ASSERT(d->accountHash.isEmpty());
+		// "Add an account" item
+		AddAccountWizard *addwizard = new AddAccountWizard( this, true );
+		addwizard->setIdentity(identity());
+		addwizard->show();
+	}
+}
+
 void IdentityStatusWidget::slotPhotoClicked()
 {
-    d->photoPath = Kopete::UI::AvatarDialog::getAvatar(this, d->photoPath);
-    slotSave();
-    slotLoad();
+	bool ok, changed = false;
+	const QString photoPath = Kopete::UI::AvatarDialog::getAvatar( this, d->photoPath, &ok);
+	if ( ok ) {
+		Kopete::Global::Properties *props = Kopete::Global::Properties::self();
+		if ( photoPath.isEmpty() ) {
+			d->identity->removeProperty( props->photo() );
+			d->photoPath.clear();
+			changed = true;
+		}
+		else if ( photoPath != d->photoPath ) {
+			d->identity->setProperty(props->photo(), photoPath);
+			d->photoPath = photoPath;
+			changed = true;
+		}
+
+		if ( changed ) {
+			load();
+		}
+	}
 }
 
 void IdentityStatusWidget::resizeAccountListWidget()

@@ -35,9 +35,11 @@ IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a )
 {
 	setupUi(this);
 
-	//(new Q3VBoxLayout(this))->setAutoAdd(true);
+// 	d->search = new ChannelList( hbox, a->client() );
+// 	QVBoxLayout *layout = new QVBoxLayout( hbox );
+// 	hbox->setLayout(layout);
+// 	layout->addWidget(d->search);
 
-//	d->search = new ChannelList( hbox, a->client() );
 	d->account = a;
 
 	connect( d->search, SIGNAL( channelSelected( const QString & ) ),
@@ -60,7 +62,7 @@ void IRCAddContactPage::slotChannelSelected( const QString &channel )
 void IRCAddContactPage::slotChannelDoubleClicked( const QString &channel )
 {
 	addID->setText( channel );
-	tabWidget3->setCurrentPage(0);
+	tabWidget3->setCurrentIndex(0);
 }
 
 bool IRCAddContactPage::apply(Kopete::Account *account , Kopete::MetaContact *m)

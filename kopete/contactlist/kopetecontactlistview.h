@@ -145,6 +145,7 @@ private slots:
 	void slotMetaContactAdded( Kopete::MetaContact *mc );
 	void slotMetaContactDeleted( Kopete::MetaContact *mc );
 	void slotMetaContactSelected( bool sel );
+	void slotUpdateMetaContactActions();
 
 	void slotGroupAdded(Kopete::Group *);
 
@@ -187,6 +188,8 @@ private:
 	// TODO: do we really need to store these?
 	MetaContactLVIList m_selectedContacts;
 	GroupViewItemList m_selectedGroups;
+
+	QPointer<Kopete::MetaContact> m_selectedMetaContact;
 
 	bool mSortByGroup;
 

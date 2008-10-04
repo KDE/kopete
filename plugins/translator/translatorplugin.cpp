@@ -78,7 +78,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const QStringList & /* args
 	for ( int k = 0; k <= m_languages->numLanguages(); k++ )
 		keys << m[ m_languages->languageKey( k ) ];
 
-	m_actionLanguage = new KSelectAction( KIcon("locale"), i18n( "Set &Language" ), this );
+	m_actionLanguage = new KSelectAction( KIcon("preferences-desktop-locale"), i18n( "Set &Language" ), this );
         actionCollection()->addAction( "contactLanguage", m_actionLanguage );
 	m_actionLanguage->setItems( keys );
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage() ) );

@@ -26,19 +26,17 @@
 #include "kopetepassword.h"
 
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kmenu.h>
 #include <klocale.h>
 #include <kconfigbase.h>
-#include "kopeteaway.h"
 #include <kinputdialog.h>
 #include <kmessagebox.h>
-#include <q3dict.h>
 
 MeanwhileAccount::MeanwhileAccount(
                         MeanwhileProtocol *parent,
-                        const QString &accountID,
-                        const char *name)
-    : Kopete::PasswordedAccount(parent, accountID, 0, name)
+                        const QString &accountID)
+    : Kopete::PasswordedAccount(parent, accountID)
 {
     HERE;
     m_meanwhileId = accountID;
@@ -106,9 +104,12 @@ void MeanwhileAccount::connectWithPassword(const QString &password)
         return;
     }
 
+   //     void connect(QString host, int port, QString account, QString password);
+
+
     if (!m_session->isConnected() && !m_session->isConnecting())
         m_session->connect(configGroup()->readEntry("Server"),
-                configGroup()->readEntry("Port"),
+                configGroup()->readEntry("Port").toInt(),
                 m_meanwhileId, password);
 
     m_session->setStatus(initialStatus());
@@ -133,19 +134,18 @@ void MeanwhileAccount::disconnect(Kopete::Account::DisconnectReason reason)
     m_session = 0L;
 }
 
-KActionMenu * MeanwhileAccount::actionMenu()
+void MeanwhileAccount::fillActionMenu( KActionMenu *actionMenu )
 {
-    KActionMenu *menu = Kopete::Account::actionMenu();
+	Kopete::Account::fillActionMenu( actionMenu );
 
-    menu->popupMenu()->insertSeparator();
+	actionMenu->menu()->addSeparator();
 
 #if 0
-    menu->insert(new KAction(i18n("&Change Status Message"), QString(), 0,
+    actionMenu->insert(new KAction(i18n("&Change Status Message"), QString(), 0,
                 this, SLOT(meanwhileChangeStatus()), this,
                 "meanwhileChangeStatus"));
     //infoPlugin->addCustomMenus(theMenu);
 #endif
-    return menu;
 }
 
 QString MeanwhileAccount::getServerName()
@@ -155,7 +155,7 @@ QString MeanwhileAccount::getServerName()
 
 int MeanwhileAccount::getServerPort()
 {
-    return configGroup()->readEntry("Port");
+    return configGroup()->readEntry("Port").toInt();
 }
 
 void MeanwhileAccount::setServerName(const QString &server)
@@ -185,8 +185,13 @@ void MeanwhileAccount::setAway(bool away, const QString &reason)
     setOnlineStatus(away ? p->statusIdle : p->statusOnline, reason);
 }
 
+void MeanwhileAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
+{
+    /* ### TODO ! */
+}
+
 void MeanwhileAccount::setOnlineStatus(const Kopete::OnlineStatus &status,
-        const QString &reason)
+        const Kopete::StatusMessage &reason)
 {
     HERE;
     Kopete::OnlineStatus oldstatus = myself()->onlineStatus();

@@ -23,9 +23,11 @@
 
 #include <qcheckbox.h>
 #include <QList>
+#include <QImageReader>
 
 #undef KDE_NO_COMPAT
 #include <kaction.h>
+#include <KActionCollection>
 #include <kdebug.h>
 #include <kfiledialog.h>
 #include <klineedit.h>
@@ -131,7 +133,7 @@ Kopete::ChatSession *MSNContact::manager( Kopete::Contact::CanCreateFlags canCre
 
 QList<KAction*> *MSNContact::customContextMenuActions()
 {
-	QList<KAction*> *m_actionCollection = new QList<KAction*>;
+	QList<KAction*> *actions = new QList<KAction*>;
 
 	// Block/unblock Contact
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
@@ -144,10 +146,10 @@ QList<KAction*> *MSNContact::customContextMenuActions()
 		//show profile
 		actionShowProfile = new KAction( i18n("Show Profile"), this );
                 //, "actionShowProfile" );
-		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
+		connect( actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
 
 		// Send mail (only available if it is an hotmail account)
-		actionSendMail = new KAction( KIcon("mail"), i18n("Send Email..."), this );
+		actionSendMail = new KAction( KIcon("mail-message-new"), i18n("Send Email..."), this );
                 //, "actionSendMail" );
 		connect( actionSendMail, SIGNAL(triggered(bool)), this, SLOT(slotSendMail()) );
 
@@ -166,14 +168,21 @@ QList<KAction*> *MSNContact::customContextMenuActions()
 
 	actionSendMail->setEnabled( static_cast<MSNAccount*>(account())->isHotmail());
 
-	m_actionCollection->append( actionBlock );
-	m_actionCollection->append( actionShowProfile );
-	m_actionCollection->append( actionSendMail );
-	m_actionCollection->append( actionWebcamReceive );
-	m_actionCollection->append( actionWebcamSend );
+	actions->append( actionBlock );
+	actions->append( actionShowProfile );
+	actions->append( actionSendMail );
+	actions->append( actionWebcamReceive );
+	actions->append( actionWebcamSend );
 
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("contactBlock"), actionBlock);
+	tempCollection.addAction(QLatin1String("contactViewProfile"), actionShowProfile);
+	tempCollection.addAction(QLatin1String("contactMail"), actionSendMail);
+	tempCollection.addAction(QLatin1String("contactInviteToViewWebcam"), actionWebcamSend);
+	tempCollection.addAction(QLatin1String("contactViewWebcam"), actionWebcamReceive);
 
-	return m_actionCollection;
+	return actions;
 }
 
 void MSNContact::slotBlockUser()
@@ -206,7 +215,7 @@ void MSNContact::slotUserInfo()
 	infoDialog->setButtons( KDialog::Close );
 	infoDialog->setDefaultButton( KDialog::Close );
 	QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
-	QString personalMessage=property( MSNProtocol::protocol()->propPersonalMessage).value().toString();
+	QString personalMessage=statusMessage().message();
 	QWidget* w=new QWidget( infoDialog );
 	Ui::MSNInfo info;
 	info.setupUi( w );
@@ -689,7 +698,10 @@ void MSNContact::setDisplayPicture(KTemporaryFile *f)
 	entry.name = contactId();
 	entry.category = Kopete::AvatarManager::Contact;
 	entry.contact = this;
-	entry.image = QImage(f->fileName());
+
+	f->open();
+	entry.image = QImageReader(f).read();
+	f->close();
 
 	entry = Kopete::AvatarManager::self()->add(entry);
 
@@ -713,8 +725,8 @@ void MSNContact::setObject(const QString &obj)
 	removeProperty( Kopete::Global::Properties::self()->photo()  ) ;
 	emit displayPictureChanged();
 
-	KConfigGroup config(KGlobal::config(), "MSN");
-	if ( config.readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
+    KConfigGroup *config=account()->configGroup();
+	if ( config->readEntry( "DownloadPicture", 2 ) >= 2 && !obj.isEmpty()
 			 && account()->myself()->onlineStatus().status() != Kopete::OnlineStatus::Invisible )
 		manager(Kopete::Contact::CanCreate); //create the manager which will download the photo automatically.
 }

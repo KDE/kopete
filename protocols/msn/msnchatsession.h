@@ -134,7 +134,7 @@ signals:
 	/*
 	 * This signal is relayed to the protocol and after, to plugins
 	 */
-	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , long unsigned int cookie , MSNChatSession* msnMM , MSNContact* c );
+	void invitation(MSNInvitation*& invitation,  const QString &bodyMSG , unsigned long int cookie , MSNChatSession* msnMM , MSNContact* c );
 };
 
 #endif // MSNCHATSESSION_H

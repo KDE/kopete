@@ -201,6 +201,11 @@ QByteArray OContact::iconHash( ) const
 	return m_hash;
 }
 
+void OContact::setMetaInfoId( const QByteArray& id )
+{
+	m_metaInfoId = id;
+}
+
 QByteArray OContact::metaInfoId() const
 {
 	return m_metaInfoId;

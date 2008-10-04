@@ -37,7 +37,7 @@ bool UPnp::searchDevices()
 	int error = UpnpSearchAsync( m_device_handle, 1, deviceType.toLatin1().data() , NULL );
     	if( error != UPNP_E_SUCCESS ) 
 	{
-        	printf("Error sending search request%d", error);
+        	qDebug("Error sending search request%d", error);
 		search = true;
 	}
 	return search;
@@ -58,24 +58,24 @@ QList<QUrl> UPnp::devicesSettingUrl()
 	return m_devicesSettingUrl;
 }
 
-// QList<Router> routers()
-// {
-// 	return m_routers;
-// }
-
 QUrl UPnp::deviceSettingUrlAt(int i)
 {
 	return m_devicesSettingUrl.at(i);
 }			
 
-// Router routerAt(int i)
-// {
-// 	return m_routers.at(i);
-// }
-
 bool UPnp::settingUrlExist(QUrl &url)
 {
 	return m_devicesSettingUrl.contains(url); 
+}
+
+bool UPnp::isValid()
+{
+	bool value = false;
+	if(!m_devicesSettingUrl.isEmpty())
+	{
+		value = true;
+	}
+	return value;
 }
 
 bool UPnp::isValidUrl(QUrl &url)
@@ -86,6 +86,7 @@ bool UPnp::isValidUrl(QUrl &url)
 		valid = true;
 	if( doc )
 		ixmlDocument_free( doc );
+
 	return valid;	
 }
 
@@ -107,37 +108,44 @@ UPnp::UPnp()
 	error = UpnpInit(NULL,this->m_port);
 	switch(error)
 	{
-		case UPNP_E_SUCCESS: printf("The operation UpnpInit completed successfully\n");break;
-		case UPNP_E_OUTOF_MEMORY: printf("Insufficient resources exist to initialize the SDK\n");
+		case UPNP_E_SUCCESS: qDebug("The operation UpnpInit completed successfully\n");break;
+		case UPNP_E_OUTOF_MEMORY: qDebug("Insufficient resources exist to initialize the SDK\n");
+					m_upnp=NULL;
 					UpnpFinish();break;
 		case UPNP_E_INIT: printf("The SDK is already initialized\n");
+					m_upnp=NULL;
 					UpnpFinish();break;
-		case UPNP_E_INIT_FAILED: printf("The SDK initialization failed for an unknown reason\n");
+		case UPNP_E_INIT_FAILED: qDebug("The SDK initialization failed for an unknown reason\n");
+					m_upnp=NULL;
 					UpnpFinish();break;
-		case UPNP_E_SOCKET_BIND: printf("An error occurred binding a socket\n");
+		case UPNP_E_SOCKET_BIND: qDebug("An error occurred binding a socket\n");
+					m_upnp=NULL;
 					UpnpFinish();break;
-		case UPNP_E_LISTEN: printf("An error occurred listening to a socket\n");
+		case UPNP_E_LISTEN: qDebug("An error occurred listening to a socket\n");
+					m_upnp=NULL;
 					UpnpFinish();break;
-		case UPNP_E_OUTOF_SOCKET: printf("An error ocurred creating a socket\n");
+		case UPNP_E_OUTOF_SOCKET: qDebug("An error ocurred creating a socket\n");
+					m_upnp=NULL;
 					UpnpFinish();break;
-		case UPNP_E_INTERNAL_ERROR: printf("An internal error ocurred\n");
+		case UPNP_E_INTERNAL_ERROR: qDebug("An internal error ocurred\n");
+					m_upnp=NULL;
 					UpnpFinish();break;
-		default: UpnpFinish();break;
+		default: UpnpFinish();m_upnp=NULL;break;
 	}
 	
 	this->m_hostAddress = QHostAddress(QString(UpnpGetServerIpAddress()));
 	this->m_port = UpnpGetServerPort();
-	printf("UPnP Initialized %s:%d\n",this->m_hostAddress.toString().toLatin1().data(),this->m_port);
+	qDebug("UPnP Initialized %s:%d\n",this->m_hostAddress.toString().toLatin1().data(),this->m_port);
 
-	printf("Registering Control Point\n");
+	qDebug("Registering Control Point\n");
     	error = UpnpRegisterClient(upnpCallbackEventHandler,&m_device_handle, &m_device_handle );
 
 	if( error != UPNP_E_SUCCESS )
 	{
-        	printf( "Error registering Control point: %d\n", error );
+        	qDebug( "Error registering Control point: %d\n", error );
         	UpnpFinish();
         }
-	printf("Control Point Registered\n");
+	qDebug("Control Point Registered\n");
 }
 
 
@@ -171,7 +179,7 @@ int UPnp::upnpCallbackEventHandler( Upnp_EventType EventType, void *Event, void 
 		case UPNP_DISCOVERY_SEARCH_TIMEOUT:
 		{
 			response = -1;
-			printf("UPNP_DISCOVERY_SEARCH_TIMEOUT\n");
+			qDebug("UPNP_DISCOVERY_SEARCH_TIMEOUT\n");
 			break;
 		}
 	}	
@@ -206,7 +214,7 @@ bool UPnp::sendAction(QUrl deviceSettingUrl, QString serviceType, QString servic
 					 
 					if( UpnpAddToAction( &actionNode, nameAction.toLatin1().data(), serviceType.toLatin1().data(),nameActionP.toLatin1().data(),valueActionP.toLatin1().data()) != UPNP_E_SUCCESS ) 
 					{
-						printf("Erreur UpnpAddToAction\n");
+						qDebug("Erreur UpnpAddToAction\n");
 					}
 				}
 		
@@ -218,7 +226,7 @@ bool UPnp::sendAction(QUrl deviceSettingUrl, QString serviceType, QString servic
 // 			qDebug () << "url" << relURL;
 			if( ret != UPNP_E_SUCCESS )		
 			{
-				printf("Erreur UpnpResolveURL : %d\n",ret);
+				qDebug("Erreur UpnpResolveURL : %d\n",ret);
 			}
 
 			ret = UpnpSendActionAsync( 
@@ -237,7 +245,7 @@ bool UPnp::sendAction(QUrl deviceSettingUrl, QString serviceType, QString servic
 						
 			if( ret != UPNP_E_SUCCESS ) 
 			{
-				printf("Erreur UpnpSendActionAsync\n");
+				qDebug("Erreur UpnpSendActionAsync\n");
 			}
 			//delete(relURL);
 			if( actionNode )

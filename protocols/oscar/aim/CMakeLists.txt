@@ -37,7 +37,7 @@ set(kopete_aim_PART_SRCS
 kde4_add_plugin(kopete_aim ${kopete_aim_PART_SRCS})
 
 
-target_link_libraries(kopete_aim  ${KDE4_KDECORE_LIBS} kopete_oscar kopete )
+target_link_libraries(kopete_aim  ${KDE4_KDECORE_LIBS} kopete_oscar oscar kopete ${QT_QTXML_LIBRARY} )
 
 install(TARGETS kopete_aim  DESTINATION ${PLUGIN_INSTALL_DIR})
 

@@ -50,7 +50,7 @@ class GaduProtocol : public Kopete::Protocol
 	Q_OBJECT
 
 public:
-	GaduProtocol( QObject* parent, const QStringList& str);
+	GaduProtocol( QObject* parent, const QVariantList& str);
 	~GaduProtocol();
 
 	static GaduProtocol *protocol();
@@ -77,7 +77,6 @@ public:
 	const Kopete::PropertyTmpl propFirstName;
 	const Kopete::PropertyTmpl propLastName;
 	const Kopete::PropertyTmpl propEmail;
-	const Kopete::PropertyTmpl propAwayMessage;
 	const Kopete::PropertyTmpl propPhoneNr;
 	//const Kopete::PropertyTmpl propIgnore;
 

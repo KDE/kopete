@@ -110,7 +110,7 @@ bool UpnpRouterPrivate::isValid() const
 	return this->router->isValid();
 }
 
-bool UpnpRouterPrivate::openPort(quint16 port, const QString &typeProtocol, const QString &protocol)
+bool UpnpRouterPrivate::openPort(QHostAddress &hostAddress, quint16 port, const QString &typeProtocol, const QString &protocol)
 {
 	UPnp *d = UPnp::upnp();
 	bool send = false;
@@ -135,7 +135,7 @@ bool UpnpRouterPrivate::openPort(quint16 port, const QString &typeProtocol, cons
 	paramValueAction.append(c_port);
 	paramValueAction.append(typeProtocol);
 	paramValueAction.append(c_port);
-	paramValueAction.append(d->hostAddress().toString());
+	paramValueAction.append(hostAddress.toString());
 	paramValueAction.append(QString("1"));
 	paramValueAction.append(protocol);
 	paramValueAction.append(QString("0"));

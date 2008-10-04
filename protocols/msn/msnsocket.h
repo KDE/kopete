@@ -27,16 +27,14 @@
 #include <qdatastream.h>
 #include <qstringlist.h>
 #include <qtimer.h>
+#include <qabstractsocket.h>
 #include <QList>
 
 #include "kopete_export.h"
 
-namespace KNetwork {
-  class KBufferedSocket;
-  class KServerSocket;
-}
-
 class MimeMessage;
+class QTcpSocket;
+class QTcpServer;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -201,7 +199,7 @@ protected:
 	 * Used in MSNFileTransferSocket
 	 */
 	virtual void bytesReceived( const QByteArray & );
-	bool accept( KNetwork::KServerSocket * );
+	bool accept( QTcpServer * );
 	void sendBytes( const QByteArray &data );
 
 	const QString &server() { return m_server; }
@@ -218,17 +216,12 @@ private slots:
 	 * If the socket emits a connectionFailed() then this slot is called
 	 * to handle the error.
 	 */
-	void slotSocketError( int error );
+	void slotSocketError( QAbstractSocket::SocketError error );
 
 	/*
 	 * Calls connectDone() when connection is successfully established.
 	 */
 	void slotConnectionSuccess();
-
-	/**
-	 * Sets m_lookupProgress to 'Finished' if count > 0 or 'Failed' if count = 0.
-	 */
-	void slotHostFound( );
 
 	/**
 	 * Check if new lines of data are available and process the first line
@@ -278,7 +271,7 @@ private:
 	 */
 	void parseLine( const QString &str );
 
-	KNetwork::KBufferedSocket *m_socket;
+	QTcpSocket *m_socket;
 	OnlineStatus m_onlineStatus;
 
 	QString m_server;
@@ -294,7 +287,6 @@ private:
 	public:
 		Buffer( unsigned size = 0 );
 		~Buffer();
-		void add( char *str, unsigned size );
 		QByteArray take( int size );
 	};
 
