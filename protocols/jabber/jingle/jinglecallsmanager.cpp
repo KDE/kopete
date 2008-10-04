@@ -22,7 +22,8 @@
 #include "jinglecallsgui.h"
 #include "jinglecontentdialog.h"
 #include "jinglesessionmanager.h"
-#include "jinglemediamanager.h"
+#include "mediamanager.h"
+#include "mediasession.h"
 
 #include "jabberaccount.h"
 #include "jabberresource.h"
@@ -40,7 +41,7 @@ public:
 	JingleCallsGui *gui;
 	QList<JabberJingleSession*> sessions;
 	XMPP::Client *client;
-	JingleMediaManager *mediaManager;
+	MediaManager *mediaManager;
 	QList<QDomElement> audioPayloads;
 	QList<QDomElement> videoPayloads;
 	JingleContentDialog *contentDialog;
@@ -128,7 +129,7 @@ void JingleCallsManager::init()
 	}
 	d->videoPayloads << vPayload;*/
 
-	d->mediaManager = new JingleMediaManager();
+	d->mediaManager = new MediaManager();
 	
 	d->client->jingleSessionManager()->setSupportedVideoPayloads(d->videoPayloads);
 	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(newJingleSession(XMPP::JingleSession*)),
@@ -353,7 +354,7 @@ void JingleCallsManager::slotSessionTerminate(XMPP::JingleSession* sess)
 
 }
 
-JingleMediaManager* JingleCallsManager::mediaManager()
+MediaManager* JingleCallsManager::mediaManager()
 {
 	return d->mediaManager;
 }

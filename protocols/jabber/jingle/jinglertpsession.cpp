@@ -8,15 +8,9 @@
 #include <QByteArray>
 #include <KDebug>
 #include <QDomElement>
-//#include <>
-
-int JingleRtpSession::refCount = 0;
 
 JingleRtpSession::JingleRtpSession(Direction d)
 {
-	refCount++;
-	kDebug() << "Reference counter =" << refCount;
-
 	m_direction = d;
 	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Creating" << (d == In ? "IN" : "OUT") << "JingleRtpSession";
 	/*
@@ -139,7 +133,7 @@ void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should 
 	//if (payloadID == -1)
 	//	return;
 	
-	kDebug() << "Prepare a packet with" << data.size() << "bytes.";
+	//kDebug() << "Prepare a packet with" << data.size() << "bytes.";
 	mblk_t *packet = rtp_session_create_packet_with_data(m_rtpSession, (uint8_t*)data.data(), data.size(), /*freefn*/ NULL); //the free function is managed by the bytesWritten signal
 	
 	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, ts == -1 ? sendingTS : ts);
@@ -156,13 +150,17 @@ void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should 
 
 void JingleRtpSession::rtpDataReady()
 {
+	kDebug() << "Incoming data ready to be read !";
 	mblk_t *packet;
 	
+	//This waits until the media data has been extracted from the received packet.
+	//It would work the same way if ortp was used in Blocking mode.
 	while ((packet = rtp_session_recvm_with_ts(m_rtpSession, receivingTS)) == NULL)
 	{
 		//kDebug() << "Packet is Null, retrying.";
-		receivingTS += payloadTS;
+		receivingTS += payloadTS; //Must be increased fo unknown reason.
 	}
+	
 	
 	QByteArray data((char*) packet->b_cont->b_rptr, packet->b_cont->b_wptr - packet->b_cont->b_rptr);
 	
@@ -171,7 +169,7 @@ void JingleRtpSession::rtpDataReady()
 	buf.resize(rtpSocket->pendingDatagramSize());
 	rtpSocket->readDatagram(buf.data(), rtpSocket->pendingDatagramSize());
 
-	kDebug() << "Data size =" << data.size();
+	//kDebug() << "Data size =" << data.size();
 	
 	emit readyRead(data);
 }

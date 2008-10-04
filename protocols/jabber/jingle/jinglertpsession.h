@@ -13,8 +13,21 @@ class JingleRtpSession : public QObject
 {
 	Q_OBJECT
 public:
+	/*
+	 * Directions :
+	 * 	In = for data coming in.
+	 * 	Out = for data going out.
+	 */
 	enum Direction {In = 0, Out};
-	JingleRtpSession(Direction);
+	
+	/*
+	 * Creates a new RTP session with direction dir.
+	 */
+	JingleRtpSession(Direction dir);
+
+	/*
+	 * Destroys the RTP sessions and frees all allocated memory.
+	 */
 	~JingleRtpSession();
 	
 	/*
@@ -48,6 +61,10 @@ public:
 	void setPayload(const QDomElement& payload);
 
 private slots:
+	/*
+	 * Called when rtp data is ready to be read from the socket, we then wait
+	 * for the media data to be extracted from the RTP packet by oRTP.
+	 */
 	void rtpDataReady();
 	void rtcpDataReady(); // Maybe not used.
 	void slotBytesWritten(qint64);
@@ -67,7 +84,6 @@ private:
 	QString payloadName;
 	enum State {SendingData = 0} state;
 	Direction m_direction;
-	static int refCount;
 };
 
 #endif

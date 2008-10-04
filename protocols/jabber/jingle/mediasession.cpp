@@ -12,6 +12,8 @@ public :
 	MediaManager *mediaManager;
 	QString codecName;
 	QByteArray encodedData;
+	int tsValue;
+	int ts;
 };
 
 MediaSession::MediaSession(MediaManager *mm, const QString& codecName)
@@ -22,6 +24,8 @@ MediaSession::MediaSession(MediaManager *mm, const QString& codecName)
 
 	if (d->codecName == "speex")
 		d->plugin = new SpeexIO();
+
+	d->ts = 0;
 
 	qDebug() << "Created Media Session for codec" << codecName;
 }
@@ -35,6 +39,7 @@ MediaSession::~MediaSession()
 void MediaSession::setSamplingRate(int sr)
 {
 	static_cast<SpeexIO*>(d->plugin)->setSamplingRate(sr);
+	d->tsValue = d->plugin->tsValue();
 }
 
 void MediaSession::setQuality(int q)
@@ -71,7 +76,7 @@ void MediaSession::slotEncoded()
 	
 	//qDebug() << "speexData =" << d->encodedData.toBase64() << "(" << d->encodedData.size() << "bytes)";
 	
-	emit readyRead(); // Encoded data is ready to be read and sent over the network.
+	emit readyRead(d->ts += d->tsValue); // Encoded data is ready to be read and sent over the network.
 }
 
 QByteArray MediaSession::read() const

@@ -17,7 +17,7 @@ namespace XMPP
 	class JingleSession;
 }
 class JabberJingleSession;
-class JingleMediaManager;
+class MediaManager;
 class JingleCallsManager : public QObject
 {
 	Q_OBJECT
@@ -39,7 +39,7 @@ public:
 	void showCallsGui();
 	void hideCallsGui();
 	QList<JabberJingleSession*> jabberSessions();
-	JingleMediaManager* mediaManager();
+	MediaManager* mediaManager();
 
 public slots:
 	void slotNewSession(XMPP::JingleSession*);

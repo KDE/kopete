@@ -2,6 +2,7 @@
 #define JABBER_JINGLE_SESSION_H
 #include <QObject>
 #include <QDomElement>
+#include <QTimer>
 #include <QTime>
 
 namespace XMPP
@@ -11,7 +12,8 @@ namespace XMPP
 }
 class JingleCallsManager;
 class JabberJingleContent;
-class JingleMediaManager;
+class MediaManager;
+class MediaSession;
 class JingleRtpSession;
 
 class JabberJingleSession : public QObject
@@ -26,7 +28,7 @@ public:
 	
 	JabberJingleContent *contentWithName(const QString&);
 	XMPP::JingleSession *session() const {return m_jingleSession;} //FIXME:Use jingleSession()
-	JingleMediaManager *mediaManager() const;
+	MediaManager *mediaManager() const;
 	QList<JabberJingleContent*> contents() const {return jabberJingleContents;}
 	QTime upTime();
 
@@ -43,7 +45,7 @@ signals:
 private:
 	XMPP::JingleSession *m_jingleSession;
 	JingleCallsManager *m_callsManager;
-	JingleMediaManager *m_mediaManager;
+	MediaManager *m_mediaManager;
 	QList<JabberJingleContent*> jabberJingleContents;
 	QTime m_timeUp;
 //	JingleRtpSession *m_rtpSession;

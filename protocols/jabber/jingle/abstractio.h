@@ -2,30 +2,27 @@
 #define ABSTRACT_IO_H
 
 #include <QObject>
-
-#include "alsaio.h"
+#include <QByteArray>
 
 class AbstractIO : public QObject
 {
 	Q_OBJECT
 public :
-	// This constructor prepares all necessary operations to use
-	// Alsa (Capture and Playback, there is no direction here,
-	// both directions will be managed by the same instance.)
 	AbstractIO();
-	~AbstractIO();
+	virtual ~AbstractIO();
 
-	virtual void write(const QByteArray& data);
-	virtual QByteArray read();
-	virtual int start();
+	virtual bool start() {return false;}
 
-//	AlsaIO *alsaIn() const {return m_alsaIn;}
-//	AlsaIO *alsaOut() const {return m_alsaOut;}
+	virtual void encode(const QByteArray& data);
+	virtual void decode(const QByteArray& data);
 
-	void setFormat(AlsaIO::Format f);
+	virtual QByteArray encodedData() const;
+	virtual QByteArray decodedData() const;
+	virtual int tsValue(); //FIXME:should it be const ?
 
 signals:
-	void readyRead();
+	void encoded();
+	void decoded();
 };
 
 #endif

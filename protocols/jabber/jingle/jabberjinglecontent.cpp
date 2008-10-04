@@ -18,7 +18,8 @@
 //Kopete
 #include "jabberjinglecontent.h"
 #include "jabberjinglesession.h"
-#include "jinglemediamanager.h"
+#include "mediamanager.h"
+#include "mediasession.h"
 #include "jinglertpsession.h"
 
 //Iris
@@ -96,8 +97,8 @@ void JabberJingleContent::prepareRtpOutSession()
 
 void JabberJingleContent::slotIncomingData(const QByteArray& data)
 {
-	kDebug() << "Receiving ! (" << data.size() << "bytes)";
-	m_mediaSession->playData(data);
+	//kDebug() << "Receiving ! (" << data.size() << "bytes)";
+	m_mediaSession->write(data);
 }
 
 void JabberJingleContent::startWritingRtpData()
@@ -112,13 +113,15 @@ void JabberJingleContent::startWritingRtpData()
 	}
 	if (m_content->type() == XMPP::JingleContent::Audio)
 	{
-		m_mediaSession = m_mediaManager->createNewSession(m_content->bestPayload());
+		m_mediaSession = new MediaSession(m_mediaManager, "speex"/*FIXME:use m_content->bestPayload()*/);
+		//m_mediaSession = m_mediaManager->createNewSession(m_content->bestPayload());
 		if (m_mediaSession == 0)
 		{
 			kDebug() << "Media Session is NULL!";
 			return;
 		}
 		connect(m_mediaSession, SIGNAL(readyRead(int)), this, SLOT(slotReadyRead(int)));
+		m_mediaSession->setSamplingRate(8000 /*FIXME:use m_content->bestPayload()*/);
 		m_mediaSession->start();
 		/*connect(m_mediaManager, SIGNAL(audioReadyRead()), this, SLOT(slotSendRtpData()));
 		m_mediaManager->startAudioStreaming();*/
@@ -128,7 +131,7 @@ void JabberJingleContent::startWritingRtpData()
 
 void JabberJingleContent::slotReadyRead(int ts)
 {
-	m_rtpOutSession->send(m_mediaSession->data(), ts);
+	m_rtpOutSession->send(m_mediaSession->read(), ts);
 }
 
 QString JabberJingleContent::elementToSdp(const QDomElement& elem)
@@ -140,7 +143,7 @@ QString JabberJingleContent::elementToSdp(const QDomElement& elem)
 /*DEPRECATED*/void JabberJingleContent::slotSendRtpData()
 {
 	//kDebug() << "Send RTP data.";
-	m_rtpOutSession->send(m_mediaManager->data());
+	m_rtpOutSession->send(m_mediaSession->read());
 }
 
 QString JabberJingleContent::contentName()

@@ -23,7 +23,7 @@ public slots:
 	void slotDecoded();
 
 signals:
-	void readyRead();
+	void readyRead(int);
 
 private:
 	class Private;

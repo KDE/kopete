@@ -2,8 +2,7 @@
 
 AbstractIO::AbstractIO()
 {
-	//Should open and configure Alsa device(s)
-	kDebug() << "Create AbstractIO";
+
 }
 
 AbstractIO::~AbstractIO()
@@ -11,26 +10,28 @@ AbstractIO::~AbstractIO()
 
 }
 
-int AbstractIO::start()
-{
-	return 0;
-}
 
-void AbstractIO::write(const QByteArray& data)
+void AbstractIO::encode(const QByteArray& data)
 {
 	Q_UNUSED(data)
 }
 
-QByteArray AbstractIO::read()
+void AbstractIO::decode(const QByteArray& data)
 {
-	kDebug() << "called";
-//	return m_alsaIn->data();
+	Q_UNUSED(data)
+}
+
+QByteArray AbstractIO::encodedData() const
+{
 	return QByteArray();
 }
 
-void AbstractIO::setFormat(AlsaIO::Format f)
+QByteArray AbstractIO::decodedData() const
 {
-	Q_UNUSED(f)
-//	m_alsaIn->setFormat(f);
-//	m_alsaOut->setFormat(f);
+	return QByteArray();
+}
+
+int AbstractIO::tsValue()
+{
+	return 0;
 }

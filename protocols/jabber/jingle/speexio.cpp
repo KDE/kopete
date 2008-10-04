@@ -1,169 +1,180 @@
 
-#include <speexio.h>
+#include "speexio.h"
+#include <QDebug>
 
-SpeexIO::SpeexIO(int samplingRate)
- : AbstractIO()
+class SpeexIO::Private
 {
-	//AlsaIO::Format format;
+public :
+	void *encoder;
+	void *decoder;
+	SpeexBits encBits;
+	SpeexBits decBits;
+	int samplingRate;
 
-	kDebug() << "sampling rate =" << samplingRate;
+	/*
+	 * FIXME:maybe change those names...
+	 */
+	QByteArray speexData; //encoded data
+	QByteArray rawData; //decoded date
 
-	kDebug() << "Create SpeexIO";
-	
-	speex_bits_init(&encodeBits);
-	speex_bits_init(&decodeBits);
-	
-	int encoder_frame_size;
-	int encoder_sampling_rate;
-	int encoder_bit_rate;
-	int decoder_sampling_rate;
-	int decoder_bit_rate;
-	int quality = 10;
-	
-	speexEncoder = speex_encoder_init(&speex_nb_mode);
-	speexDecoder = speex_decoder_init(&speex_nb_mode);
-	
-	// A frame is a bunch of samples
-	// FRAME_SIZE is the number of sample per frame.
-	// a sample is 20 ms
-	int setSR = samplingRate;
-	kDebug() << "setting sampling rate" << setSR; 
-	if (speex_encoder_ctl(speexEncoder, SPEEX_SET_SAMPLING_RATE, &setSR) != 0)
-	{
-		kDebug() << "Error setting encoder sampling rate !";
-	}
-	if (0 != speex_encoder_ctl(speexEncoder, SPEEX_GET_FRAME_SIZE, &encoder_frame_size))
-	{
-		kDebug() << "Error getting encoder frame size !";
-	}
-	if (0 != speex_encoder_ctl(speexEncoder, SPEEX_GET_SAMPLING_RATE, &encoder_sampling_rate))
-	{
-		kDebug() << "Error getting encoder sampling rate !";
-	}
-	if (0 != speex_encoder_ctl(speexEncoder, SPEEX_GET_BITRATE, &encoder_bit_rate))
-	{
-		kDebug() << "Error getting encoder bit rate !";
-	}
-	//Trying different quality/bitrate
-	/*for (int i = 0; i <= 10; i++)
-	{
-		quality = i;
-		if (0 != speex_encoder_ctl(speexEncoder, SPEEX_SET_QUALITY, &quality))
-		{
-			kDebug() << "Error setting encoder quality !";
-		}
-		if (0 != speex_encoder_ctl(speexEncoder, SPEEX_GET_BITRATE, &encoder_bit_rate))
-		{
-			kDebug() << "Error getting encoder bit rate !";
-		}
-		kDebug() << "Quality =" << quality << ", bitrate =" << encoder_bit_rate;
-	}*/
-	
-	setSR = samplingRate;
-	kDebug() << "setting sampling rate" << setSR; 
-	if (speex_decoder_ctl(speexDecoder, SPEEX_SET_SAMPLING_RATE, &setSR) != 0)
-		kDebug() << "Error setting decoder sampling rate";
-	if (speex_decoder_ctl(speexDecoder, SPEEX_GET_FRAME_SIZE, &decoderFrameSize) != 0)
-		kDebug() << "Error getting decoder frame size";
-	if (speex_decoder_ctl(speexDecoder, SPEEX_GET_SAMPLING_RATE, &decoder_sampling_rate) != 0)
-		kDebug() << "Error getting decoder sampling rate";
-	if (speex_decoder_ctl(speexDecoder, SPEEX_GET_BITRATE, &decoder_bit_rate) != 0)
-		kDebug() << "Error getting decoder bit rate";
-	
-	kDebug() << "Speex encoder framesize =" << encoder_frame_size;
-	kDebug() << "Speex encoder samplingrate =" << encoder_sampling_rate;
-	kDebug() << "Speex encoder bitrate =" << encoder_bit_rate;
-	
-	kDebug() << "Speex decoder framesize =" << decoderFrameSize;
-	kDebug() << "Speex decoder samplingrate =" << decoder_sampling_rate;
-	kDebug() << "Speex decoder bitrate =" << decoder_bit_rate;
+	int frameSize;
+};
 
-	m_alsaIn = new AlsaIO(AlsaIO::Capture, AlsaIO::Signed8);
-	//m_alsaIn->setSamplingRate(samplingRate);
-	//m_alsaIn->setFrameSize(encoder_frame_size);
-	//m_alsaIn->setBitRate(encoder_bit_rate);
-	//	-->FIXME:may have to do that
-	m_alsaOut = new AlsaIO(AlsaIO::Playback, AlsaIO::Signed8);
-	connect(m_alsaOut, SIGNAL(bytesWritten()), this, SLOT(slotBytesWritten()));
+SpeexIO::SpeexIO()
+ : AbstractIO(), d(new Private())
+{
+	speex_bits_init(&d->encBits);
+	speex_bits_init(&d->decBits);
 	
-	connect(m_alsaIn, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
+	d->samplingRate = -1;
+	d->frameSize = 0;
+	qDebug() << "SpeexIO : created.";
 }
 
 SpeexIO::~SpeexIO()
 {
-	speex_bits_destroy(&encodeBits); 
-	speex_bits_destroy(&decodeBits); 
-
-	speex_encoder_destroy(speexEncoder);
-	speex_decoder_destroy(speexDecoder);
+	speex_bits_destroy(&d->encBits);
+	speex_encoder_destroy(&d->encoder);
+	
+	speex_bits_destroy(d->decBits);
+	speex_decoder_destroy(d->decoder);
 }
 
-void SpeexIO::write(const QByteArray& data)
+void SpeexIO::setSamplingRate(int sr)
 {
-	//Decode speex data and give it to Alsa Out.
-	rawData.clear();
+	if (d->samplingRate != -1)
+	{
+		//FIXME:this should simply change the current sampling rate (SPEEX_SET_SAMPLING_RATE)
+		qDebug() << "Sampling rate already set... Abort";
+		return;
+	}
+	
+	SpeexMode *mode;
+	switch(sr)
+	{
+	case 8000 : 
+		d->encoder = speex_encoder_init(&speex_nb_mode);
+		d->decoder = speex_decoder_init(&speex_nb_mode);
+		break;
+	case 16000 :
+		d->encoder = speex_encoder_init(&speex_wb_mode);
+		d->decoder = speex_decoder_init(&speex_wb_mode);
+		break;
+	case 32000 :
+		d->encoder = speex_encoder_init(&speex_uwb_mode);
+		d->decoder = speex_decoder_init(&speex_uwb_mode);
+		break;
+	default :
+		return;
+	}
+	
+	d->samplingRate = sr;
 
-	kDebug() << "Data size :" << data.size();
-	
-	speex_bits_read_from(&decodeBits, (char*) data.data(), data.size());
-	
-	kDebug() << "bits_nbytes =" << speex_bits_nbytes(&decodeBits);
-	
-	kDebug() << "alsa framesizebytes =" << m_alsaOut->frameSizeBytes() << "speex framesizesample =" << decoderFrameSize;
-	
-	rawData.resize(m_alsaOut->frameSizeBytes());
-	
-	kDebug() << "rawData.size() =" << rawData.size();
-
-	//FIXME:A NULL value as the second argument indicates that we don't have the bits for the current frame. When a frame is lost,
-	//	the Speex decoder will do its best to "guess" the correct signal.
-	speex_decode_int(speexDecoder, &decodeBits, (short*) rawData.data());
-	
-	kDebug() << "rawData.size() =" << rawData.size();
-
-	m_alsaOut->write(rawData);
+	qDebug() << "encoder and decoder initiated.";
 }
 
-int SpeexIO::start()
+int SpeexIO::setQuality(int q)
 {
-	m_alsaIn->start();
-	m_alsaOut->start();
-	return 0;
-}
-
-QByteArray SpeexIO::read()
-{
-	kDebug() << "called";
-	return speexData;
-}
-
-void SpeexIO::slotReadyRead()
-{
-	speexData.clear();
-
-	QByteArray data = m_alsaIn->data();
+	if (d->samplingRate == -1)
+		return -1;
 	
-	kDebug() << "Read" << data.size() << "bytes";
-
-	data.resize(data.size() - 10);
+	int qualityEnc = q;
+	if (0 != speex_encoder_ctl(d->encoder, SPEEX_SET_QUALITY, &qualityEnc))
+		return -1;
 	
-	speex_bits_reset(&encodeBits);
-	speex_encode_int(speexEncoder, (short*) data.data(), &encodeBits);
-
-	int speex_byte_number = speex_bits_nbytes(&encodeBits);
-	speexData.resize(speex_byte_number);
-
-	int nbBytes = speex_bits_write(&encodeBits, speexData.data(), speex_byte_number);
-
-	speexData.resize(nbBytes);
-
-	emit readyRead();
+	int qualityDec = q;
+	if (0 != speex_decoder_ctl(d->decoder, SPEEX_SET_QUALITY, &qualityDec))
+		return -1;
+	
+	if (qualityEnc != qualityDec)
+		return -1;
+	
+	//d->quality = qualityDec;
+	return qualityDec;
 }
 
-void SpeexIO::slotBytesWritten()
+int SpeexIO::frameSize()
 {
-	//Data have been written, it is now ok to delete them.
-	//kDebug() << "Delete data !, Not done, check memory leak !";
-	//rawData.clear();
+	if (d->samplingRate == -1)
+		return -1;
+
+	if (d->frameSize != 0) //if frameSize != 0, we already got it, no need to get it again.
+		return d->frameSize;
+	
+	int fs;
+	//Encoder and decoder frame size are the same.
+	if (0 != speex_decoder_ctl(d->decoder, SPEEX_GET_FRAME_SIZE, &fs))
+		return -1;
+	
+	return (d->frameSize = (d->samplingRate / 8000) * fs); //FIXME:What is (d->samplingRate / 8000) ??
+}
+
+bool SpeexIO::start()
+{
+	if (d->samplingRate == -1)
+		return false;
+	return true;
+}
+
+void SpeexIO::encode(const QByteArray& rawData)
+{
+	d->speexData.clear();
+
+	if (d->samplingRate == -1 || rawData.size() == 0)
+		return;
+	
+	speex_bits_reset(&d->encBits);
+	int ret = speex_encode_int(d->encoder, (short*) rawData.data(), &d->encBits);
+	if (ret == 0)
+	{
+		qDebug() << "Error encoding speex data : frame needs not be transmitted";
+		return;
+	}
+	
+	int maxSize = speex_bits_nbytes(&d->encBits);
+	d->speexData.resize(maxSize);
+	
+	int nbBytes = speex_bits_write(&d->encBits, (char*) d->speexData.data(), maxSize);
+
+	emit encoded();
+}
+
+QByteArray SpeexIO::encodedData() const
+{
+	return d->speexData;
+}
+
+void SpeexIO::decode(const QByteArray& speexData)
+{
+	d->rawData.clear();
+
+	if (d->samplingRate == -1 || speexData.size() == 0)
+		return;
+	
+	speex_bits_read_from(&d->decBits, (char*) speexData.data(), speexData.size());
+
+	if (frameSize() == -1)
+		return;
+	
+	d->rawData.resize(frameSize() * sizeof (short));
+	int ret = speex_decode_int(d->decoder, &d->decBits, (short*) d->rawData.data());
+	if (ret != 0)
+	{
+		qDebug() << "Error decoding speex data :" << (ret == -1 ? "end of stream" : "corrupt stream");
+		return;
+	}
+
+	emit decoded();
+}
+
+QByteArray SpeexIO::decodedData() const
+{
+	return d->rawData;
+}
+
+int SpeexIO::tsValue()
+{
+	return (samplingRate() / 1000) * 20;
+	return 160; //FIXME:Is that the right value ?
 }
 

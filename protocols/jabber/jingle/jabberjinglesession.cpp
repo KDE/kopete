@@ -16,7 +16,8 @@
   */
 #include "jabberjinglesession.h"
 #include "jabberjinglecontent.h"
-#include "jinglemediamanager.h"
+#include "mediamanager.h"
+#include "mediasession.h"
 #include "jinglecallsmanager.h"
 
 #include "jinglesession.h"
@@ -116,7 +117,7 @@ JabberJingleContent *JabberJingleSession::contentWithName(const QString& name)
 	return 0;
 }
 
-JingleMediaManager *JabberJingleSession::mediaManager() const
+MediaManager *JabberJingleSession::mediaManager() const
 {
 	kDebug(KDE_DEFAULT_DEBUG_AREA) << "m_mediaManager is" << (m_mediaManager == 0 ? "Null" : "Valid");
 	return m_mediaManager;

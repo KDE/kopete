@@ -1,35 +1,59 @@
+/*
+ * "" <>
+ * speexio.h - Speex audio encoder and decoder.
+ * This class is able to encode and decode speex data. It works as an
+ * encoder-decoder expecting to have the same type of data (same bitrate,...)
+ * for encoding and decoding.
+ */
+
 #ifndef SPEEX_IO_H
 #define SPEEX_IO_H
 
-#include <abstractio.h>
-#include <speex/speex.h>
+#include "abstractio.h"
+#include "speex/speex.h"
 
 class SpeexIO : public AbstractIO
 {
-	Q_OBJECT
-public :
-	SpeexIO(int samplingRate);
-	~SpeexIO();
+public:
+	SpeexIO();
+	virtual ~SpeexIO();
 
-	virtual void write(const QByteArray& data);
-	virtual QByteArray read();
-	virtual int start();
+	//void setBitRate();
+	
+	/**
+	 * This is the speex sampling rate :
+	 * Possible different sampling rates: 8 kHz (8000), 16 kHz (16000), and 32 kHz (32000).
+	 * These are respectively refered to as narrowband, wideband and ultra-wideband.
+	 *
+	 * FIXME:should take an enum value instead of an int.
+	 */
+	void setSamplingRate(int sr);
 
-private slots:
-	void slotReadyRead();
-	void slotBytesWritten();
+	/**
+	 * Set the encoder-decoder output quality.
+	 * Returns the actual value set for encoding.
+	 * -1 means there was an error setting quality parameter which can either be an error
+	 * on the ctl or 2 different values for the decoder and encoder.
+	 */
+	int setQuality(int q);
 
-private :
-	SpeexBits encodeBits;
-	SpeexBits decodeBits;
-	void *speexEncoder;
-	void *speexDecoder;
-	int decoderFrameSize;
-	QByteArray speexData;
-	QByteArray rawData;
+	/**
+	 * Returns the size of a speex frame (in bytes)
+	 */
+	int frameSize();
 
-	AlsaIO *m_alsaIn;
-	AlsaIO *m_alsaOut;
+	virtual bool start();
+	
+	virtual void encode(const QByteArray& data);
+	virtual void decode(const QByteArray& data);
+	virtual QByteArray encodedData() const;
+	virtual QByteArray decodedData() const;
+	
+	virtual int tsValue();
+
+private:
+	class Private;
+	Private *d;
+
 };
-
 #endif
