@@ -17,6 +17,7 @@
 #include <QObject>
 #include <kmessagebox.h>
 #include <kcodecs.h>
+#include <klocale.h>
 
 #include <kdebug.h>
 
@@ -102,6 +103,11 @@ WlmTransferManager::fileTransferInviteResponse (MSN::SwitchboardServerConnection
         }
 
 //              Kopete::Transfer* transf = Kopete::TransferManager::transferManager()->addTransfer( Kopete::Contact *contact, const QString& file, const unsigned long size, const QString &recipient , Kopete::FileTransferInfo::KopeteTransferDirection di)
+    }
+    else
+    {
+        transferSessionData tfd = transferSessions[sessionID];
+        tfd.ft->slotError(KIO::ERR_ABORTED, i18n("File transfer cancelled."));
     }
 }
 

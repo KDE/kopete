@@ -25,6 +25,7 @@
 #include <QRegExp>
 #include <QDomDocument>
 #include <QFileInfo>
+#include <QBuffer>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -41,6 +42,7 @@
 #include <kstandarddirs.h>
 #include <kcomponentdata.h>
 #include <kemoticons.h>
+#include <kcodecs.h>
 
 #include "kopetecontactaction.h"
 #include "kopeteonlinestatus.h"
@@ -155,6 +157,18 @@ WlmChatSession::sendFile (const QString & fileLocation,
         QFileInfo (fileLocation).fileName ().toLatin1 ().data ();
     ft.filesize = QFile (fileLocation).size ();
     ft.userPassport = members ().first ()->contactId ().toLatin1 ().data ();
+
+    QImage tryImage( fileLocation );
+    if(tryImage.format() != QImage::Format_Invalid)
+    {
+        ft.type = MSN::FILE_TRANSFER_WITH_PREVIEW;
+        QByteArray ba;
+        QBuffer buffer(&ba);
+        buffer.open(QIODevice::WriteOnly);
+        tryImage.scaled(64,64, Qt::KeepAspectRatio).save(&buffer, "PNG");
+        ft.preview = QString::fromUtf8(KCodecs::base64Encode(ba)).toAscii().data();
+    }
+
     // TODO create a switchboard to send the file is one if not available.
     if (isReady ())
     {
@@ -489,7 +503,7 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
         mmsg.setColor (color.red (), color.green (), color.blue ());
 
         // stolen from msn plugin
-        QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
+        const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
 
         // Check the list for any custom emoticons
         for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)

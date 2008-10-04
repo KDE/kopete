@@ -297,8 +297,13 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
             if (QFile (file).exists () && file != filename)
                 QFile (file).remove ();
         }
-        contact->setProperty (Kopete::Global::Properties::self ()->photo (),
+        // check file integrity
+        QImage contactPhoto = QImage( filename );
+        if(contactPhoto.format()!=QImage::Format_Invalid)
+        {
+            contact->setProperty (Kopete::Global::Properties::self ()->photo (),
                               filename);
+        }
     }
 }
 
