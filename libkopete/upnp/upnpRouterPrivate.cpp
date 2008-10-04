@@ -22,38 +22,10 @@ UpnpRouterPrivate::UpnpRouterPrivate()
 {
 	router = new Router();
 }
+
 UpnpRouterPrivate::UpnpRouterPrivate(const QUrl &url)
 {
 	router = new Router(url);
-}
-
-UpnpRouterPrivate UpnpRouterPrivate::upnpRouterPrivate(const QUrl &url)
-{
-	UPnp::upnp();
-	UpnpRouterPrivate router = UpnpRouterPrivate(url);
-	return router;
-}
-
-QList<UpnpRouterPrivate> UpnpRouterPrivate::listRouterPrivate()
-{
-	UPnp *d = UPnp::upnp();
-	QList<UpnpRouterPrivate> routerPrivate;
-	d->searchDevices();
-	QList<QUrl> list = d->devicesSettingUrl();
-	foreach (QUrl url, list)
-	{
-		UpnpRouterPrivate router = UpnpRouterPrivate(url);
-		routerPrivate.push_back ( router );
-	}
-	return routerPrivate;
-}
-
-UpnpRouterPrivate UpnpRouterPrivate::defaultRouter()
-{
-	UPnp *d = UPnp::upnp();
-	d->searchDevices();
-	UpnpRouterPrivate router = UpnpRouterPrivate(d->devicesSettingUrl().first());
-	return router;
 }
 
 UpnpRouterPrivate::UpnpRouterPrivate(const UpnpRouterPrivate &router)

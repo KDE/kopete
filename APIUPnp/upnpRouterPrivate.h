@@ -13,10 +13,12 @@ class UpnpRouterPrivate
 {
 
 	public:
+		UpnpRouterPrivate();
+	
 		/**
 		* Return all router detected on network
 		*/
-		static QList<UpnpRouterPrivate> listRouterPrivate();
+		QList<UpnpRouterPrivate> listRouterPrivate();
 
 		static UpnpRouterPrivate defaultRouter();
 		
@@ -53,7 +55,7 @@ class UpnpRouterPrivate
 		* @param typeProtocol choose between TCP and UDP
 		* @param protocol name of protocol
 		*/
-		bool openPort(QHostAddress &hostAddress, quint16 port, const QString &typeProtocol, const QString &protocol);
+		bool openPort(quint16 port, const QString &typeProtocol, const QString &protocol);
 		
 		/**
 		* Delete port on the router default
@@ -65,8 +67,21 @@ class UpnpRouterPrivate
 
 // 		UpnpRouterPrivate &operator=(const UpnpRouterPrivate &router);
 		
-		Router *router;
-	private:
-		UpnpRouterPrivate(const QUrl &url);
+		QUrl m_routerSettingUrl;
+		QHostAddress routerAddress;
+		Service service;
+		
+		QString m_routerType;
+		QString m_friendlyName;
+		QString m_manufacturer;
+		QString m_manufacturerURL;
+		QString m_modelName;
+		QString m_UDN;
+		QString m_modelDescription;
+		QString m_modelNumber;
+		QString m_serialNumber;
+		QString m_presentationURL;
+		QString m_UPC;
+		static UPnp *d;
 };
 #endif

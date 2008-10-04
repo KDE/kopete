@@ -15,6 +15,10 @@
     *                                                                       *
     *************************************************************************
 */
+/**
+*	@author CASTAN Romain <romaincastan@gmail.com>
+*	@author DEMAY Bertrand <bertranddemay@gmail.com>
+*/
 
 #include <QtDebug>
 #include <QUrl>

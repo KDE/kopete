@@ -23,33 +23,25 @@ QList<UPnpRouter> UPnpRouter::allRouters()
 {
 	QList<UPnpRouter> routers;
 	UPnp *d = UPnp::upnp();
-	d->searchDevices();
 	foreach (QUrl url, d->devicesSettingUrl())
 	{
-		qDebug()<<"rentre";
 		UPnpRouter upnpRouter = UPnpRouter(url);
 		routers.push_back(upnpRouter);
 	}
-
 	return routers;
 }
-
 
 UPnpRouter UPnpRouter::defaultRouter()
 {
 	UPnp *u = UPnp::upnp();
-	UPnpRouter router;
 	u->searchDevices();
-	if(u->isValid())
-	{
-		router = UPnpRouter(u->devicesSettingUrl().first());
-	}
+	UPnpRouter router = UPnpRouter(u->devicesSettingUrl().first());
 	return router;
 }
 
 UPnpRouter::UPnpRouter(const QUrl &url)
 {
-	d = UpnpRouterPrivate::upnpRouterPrivate(url);
+	d = UpnpRouterPrivate(url);
 }
 
 UPnpRouter::UPnpRouter()
