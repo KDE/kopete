@@ -329,12 +329,6 @@ void KopeteChatWindow::windowListChanged()
 		(*it)->checkDetachEnable();
 }
 
-void KopeteChatWindow::slotNickComplete()
-{
-	if( m_activeView )
-		m_activeView->nickComplete();
-}
-
 void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
 {
 	m_popupView = static_cast<ChatView*>( tab );
@@ -384,7 +378,7 @@ void KopeteChatWindow::initActions(void)
 // 	tabActive->setShortcut( KStandardShortcut::tabNext() );
 	tabActive->setEnabled( false );
 	connect( tabActive, SIGNAL(triggered(bool)), this, SLOT(slotNextActiveTab()) );
-		
+
 	tabRight=new KAction( i18n( "&Activate Next Tab" ), coll );
         coll->addAction( "tabs_right", tabRight );
 	tabRight->setShortcut( KStandardShortcut::tabNext() );
@@ -397,9 +391,10 @@ void KopeteChatWindow::initActions(void)
 	tabLeft->setEnabled( false );
 	connect( tabLeft, SIGNAL(triggered(bool)), this, SLOT(slotPreviousTab()) );
 
+	// This action exists mostly so that the shortcut is configurable.
+	// The actual "slot" is the eventFilter.
 	nickComplete = new KAction( i18n( "Nic&k Completion" ), coll );
         coll->addAction( "nick_complete", nickComplete );
-	connect( nickComplete, SIGNAL(triggered(bool)), this, SLOT(slotNickComplete()));
 	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
 	tabDetach = new KAction( KIcon("tab-detach"), i18n( "&Detach Chat" ), coll );
@@ -489,7 +484,7 @@ void KopeteChatWindow::initActions(void)
 	anim->setObjectName( QLatin1String("kde toolbar widget") );
 	anim->setMargin(5);
 	anim->setPixmap( normalIcon );
-	
+
 	animIcon = KIconLoader::global()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Toolbar);
 	if ( animIcon )
 		animIcon->setPaused(true);
@@ -947,7 +942,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 		if( animIcon )
 			animIcon->setPaused(true);
 	}
-	
+
 	if ( m_alwaysShowTabs || chatViewList.count() > 1 )
 	{
 		if( !m_tabBar )
@@ -1290,8 +1285,18 @@ void KopeteChatWindow::resizeEvent( QResizeEvent *e )
 		m_activeView->messagePart()->keepScrolledDown();
 }
 
+bool KopeteChatWindow::eventFilter( QObject *obj, QEvent *event )
+{
+	if ( m_activeView && obj == m_activeView->editWidget() && event->type() == QEvent::KeyPress ) {
+		 QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+		 if (nickComplete->shortcut().primary() == QKeySequence(keyEvent->key())) {
+			 m_activeView->nickComplete();
+			 return true;
+		 }
+	}
+	return KXmlGuiWindow::eventFilter(obj, event);
+}
 
 #include "kopetechatwindow.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-
