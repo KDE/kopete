@@ -199,14 +199,13 @@ class Callbacks:public QObject,
 
     virtual void
     fileTransferProgress (MSN::SwitchboardServerConnection * conn,
-                          unsigned int sessionID, std::string status,
+                          unsigned int sessionID,
                           long long unsigned transferred,
                           long long unsigned total);
 
     virtual void
     fileTransferFailed (MSN::SwitchboardServerConnection * conn,
-                        unsigned int sessionID, int error,
-                        std::string message);
+                        unsigned int sessionID, MSN::fileTransferError error);
 
     virtual void
     fileTransferSucceeded (MSN::SwitchboardServerConnection * conn,
@@ -316,7 +315,8 @@ class Callbacks:public QObject,
                              const unsigned long long &transferred);
     void
     gotFileTransferFailed (MSN::SwitchboardServerConnection * conn,
-                            const unsigned int &sessionID);
+                            const unsigned int &sessionID,
+                            const MSN::fileTransferError & error);
 
     void
     gotFileTransferSucceeded (MSN::SwitchboardServerConnection * conn,

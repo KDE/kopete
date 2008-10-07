@@ -26,6 +26,7 @@
 #include <QDomDocument>
 #include <QFileInfo>
 #include <QBuffer>
+#include <QPainter>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -52,6 +53,7 @@
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopeteview.h"
+#include "kopeteutils.h"
 #include "private/kopeteemoticons.h"
 
 #include "wlmcontact.h"
@@ -158,15 +160,31 @@ WlmChatSession::sendFile (const QString & fileLocation,
     ft.filesize = QFile (fileLocation).size ();
     ft.userPassport = members ().first ()->contactId ().toLatin1 ().data ();
 
-    QImage tryImage( fileLocation );
-    if(tryImage.format() != QImage::Format_Invalid)
-    {
-        ft.type = MSN::FILE_TRANSFER_WITH_PREVIEW;
-        QByteArray ba;
-        QBuffer buffer(&ba);
-        buffer.open(QIODevice::WriteOnly);
-        tryImage.scaled(64,64, Qt::KeepAspectRatio).save(&buffer, "PNG");
-        ft.preview = QString::fromUtf8(KCodecs::base64Encode(ba)).toAscii().data();
+    // do not generate preview for big pictures
+    if(ft.filesize < 2097152)
+    {   
+        QImage tryImage( fileLocation );
+        if(tryImage.format() != QImage::Format_Invalid)
+        {
+            ft.type = MSN::FILE_TRANSFER_WITH_PREVIEW;
+            QByteArray ba;
+            QBuffer buffer(&ba);
+            buffer.open(QIODevice::WriteOnly);
+            tryImage = tryImage.scaled(64,64, Qt::KeepAspectRatio);
+            // some clients are stretching the image, so make sure it is really 64x64
+            if (tryImage.size() != QSize(64,64))
+            {
+                QImage temp(64,64, QImage::Format_ARGB32_Premultiplied);
+                temp.fill(Qt::transparent);
+                QRect r = tryImage.rect();
+                r.moveCenter(temp.rect().center());
+                QPainter p(&temp);
+                p.drawImage(r.topLeft(), tryImage);
+                tryImage = temp;
+            }
+            tryImage.save(&buffer, "PNG"); 
+            ft.preview = QString::fromUtf8(KCodecs::base64Encode(ba)).toAscii().data();
+        }
     }
 
     // TODO create a switchboard to send the file is one if not available.
@@ -460,10 +478,7 @@ WlmChatSession::switchboardConnectionTimeout ()
             requestChatService ();
             return;
         }
-        KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (),
-                                       KMessageBox::Information,
-                                       "Could not open conversation!",
-                                       "Information");
+        Kopete::Utils::notifyCannotConnect(account(), "Could not open switchboard connection");
         messageSucceeded ();
     }
 }
@@ -527,7 +542,6 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
         // request switchboard
         if (!requestChatService ())
         {
-//                      KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, "Send OIM", "Information" );
             MSN::Soap::OIM oim;
             oim.myFname =
                 myself ()->property (Kopete::Global::Properties::self ()->

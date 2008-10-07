@@ -33,6 +33,7 @@ class WlmTransferManager:public QObject
         QString to;
         bool incoming;
         Kopete::Transfer * ft;
+        unsigned int internalID;
     };
 
     WlmTransferManager (WlmAccount * account);
@@ -53,6 +54,7 @@ class WlmTransferManager:public QObject
         tsd.from = from;
         tsd.to = to;
         tsd.ft = ft;
+        tsd.internalID = 0;
         transferSessions[sessionID] = tsd;
     }
 
@@ -67,7 +69,8 @@ class WlmTransferManager:public QObject
                                   const unsigned long long &transferred);
 
     void gotFileTransferFailed (MSN::SwitchboardServerConnection * conn,
-                                  const unsigned int &sessionID);
+                                  const unsigned int &sessionID,
+                                  const MSN::fileTransferError &error);
 
     void gotFileTransferSucceeded (MSN::SwitchboardServerConnection * conn,
                                   const unsigned int &sessionID);

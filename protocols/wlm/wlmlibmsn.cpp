@@ -526,7 +526,7 @@ Callbacks::gotNewEmailNotification (MSN::NotificationServerConnection * conn,
 
 void
 Callbacks::fileTransferProgress (MSN::SwitchboardServerConnection * conn,
-                                 unsigned int sessionID, std::string status,
+                                 unsigned int sessionID,
                                  unsigned long long transferred,
                                  unsigned long long total)
 {
@@ -535,10 +535,9 @@ Callbacks::fileTransferProgress (MSN::SwitchboardServerConnection * conn,
 
 void
 Callbacks::fileTransferFailed (MSN::SwitchboardServerConnection * conn,
-                               unsigned int sessionID, int error,
-                               std::string message)
+                               unsigned int sessionID, MSN::fileTransferError error)
 {
-    emit gotFileTransferFailed (conn, sessionID);
+    emit gotFileTransferFailed (conn, sessionID, error);
 }
 
 void

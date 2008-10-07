@@ -283,7 +283,7 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
             QFile (filename).remove ();
             contact->removeProperty (Kopete::Global::Properties::self ()->
                                      photo ());
-            dynamic_cast < WlmContact * >(contact)->setMsnObj ("0");
+            //dynamic_cast < WlmContact * >(contact)->setMsnObj ("0");
             return;
         }
         // remove old picture
@@ -303,6 +303,12 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
         {
             contact->setProperty (Kopete::Global::Properties::self ()->photo (),
                               filename);
+        }
+        else
+        {
+            QFile (filename).remove();
+            contact->removeProperty (Kopete::Global::Properties::self ()->
+                                     photo ());
         }
     }
 }
@@ -385,8 +391,16 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
 
         if (msnobject.isEmpty () || msnobject == "0")   // no picture
         {
-            contact->removeProperty (Kopete::Global::Properties::self ()->
-                                     photo ());
+            if (contact && contact->
+                hasProperty (Kopete::Global::Properties::self()->photo ().key ()))
+            {
+                QString file = contact->property (
+                    Kopete::Global::Properties::self ()->
+                        photo()).value ().toString ();
+                contact->removeProperty (Kopete::Global::Properties::self ()->photo ());
+                if (QFile (file).exists ())
+                    QFile (file).remove ();
+            }
             return;
         }
 
