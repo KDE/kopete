@@ -5,16 +5,15 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <upnp/ixml.h>
-#include <upnp/FreeList.h>
-#include <upnp/iasnprintf.h>
-#include <upnp/ithread.h>
-#include <upnp/LinkedList.h>
-#include <upnp/ThreadPool.h>
-#include <upnp/TimerThread.h>
-#include <upnp/upnpconfig.h>
-#include <upnp/upnp.h>
-#include <upnp/upnptools.h>
+#include <ixml.h>
+#include <FreeList.h>
+#include <ithread.h>
+#include <LinkedList.h>
+#include <ThreadPool.h>
+#include <TimerThread.h>
+#include <upnpconfig.h>
+#include <upnp.h>
+#include <upnptools.h>
 
 #include <QList>
 #include <QString>

@@ -1,5 +1,7 @@
 #include "service.h"
 
+#include <stdlib.h>
+
 Service::Service()
 {
 }
@@ -57,7 +59,7 @@ void Service::addAllActions()
 	IXML_Document * doc ;
 	if((UpnpDownloadXmlDoc(this->m_xmlDocService.toLatin1().data(),&doc)) != UPNP_E_SUCCESS ) 
 	{
-		printf("Error \n");exit(1);
+		printf("Error with download xml parsing\n");
 	}
 	IXML_NodeList * nodelist = ixmlDocument_getElementsByTagName(doc,"action");
 	IXML_Node * actionNode;
