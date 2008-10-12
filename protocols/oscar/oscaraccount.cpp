@@ -28,6 +28,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetecontact.h"
 #include "kopetechatsession.h"
+#include "upnpRouter.h"
 
 #include <assert.h>
 
@@ -233,6 +234,18 @@ void OscarAccount::loginActions()
 
 	if ( d->buddyIconDirty )
 		updateBuddyIconInSSI();
+		
+		/* attempt to initialize UPnP
+	 * FIXME Adding more Kopete specific code here. Find a better way */
+	QList<UPnpRouter> routers = UPnpRouter::allRouters();
+	foreach (UPnpRouter r, routers)
+	{
+		if(r.isValid())
+		{
+			r.openPort(5901,"TCP","AIM and ICQ");
+			kWarning()<< "Open the port of router";
+		}
+	}
 }
 
 void OscarAccount::processSSIList()
