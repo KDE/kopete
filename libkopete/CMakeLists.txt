@@ -201,15 +201,15 @@ install(FILES
 DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui COMPONENT Devel )
 
 install(FILES
-  upnp/action.cpp
-  upnp/argument.cpp
-  upnp/router.cpp
-  upnp/service.cpp
-  upnp/UPnp.cpp
-  upnp/upnpRouter.cpp
-  upnp/upnpRouterPrivate.cpp
-  upnp/util_Xml.cpp
-DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/upnp)
+  upnp/action.h
+  upnp/argument.h
+  upnp/router.h
+  upnp/service.h
+  upnp/UPnp.h
+  upnp/upnpRouter.h
+  upnp/upnpRouterPrivate.h
+  upnp/util_Xml.h
+DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/upnp COMPONENT Devel )
 
 install( FILES
   kopeteappearancesettings.kcfg
