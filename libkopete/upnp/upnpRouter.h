@@ -25,9 +25,10 @@
 #include <QString>
 #include <QList>
 
+#include "kopete_export.h"
 #include "upnpRouterPrivate.h"
 
-class UPnpRouter
+class KOPETE_EXPORT UPnpRouter
 {
 public:
 	/**
