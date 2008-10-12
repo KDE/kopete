@@ -182,8 +182,8 @@ void dlgSearch::slotSentForm()
 		QStringList hdrs;
 		hdrs << i18n("JID");
 		hdrs << i18n("Nickname");
-		hdrs << i18n("First");
-		hdrs << i18n("Last");
+		hdrs << i18nc("First name", "First");
+		hdrs << i18nc("Last name", "Last");
 		hdrs << i18n("e-mail");
 		ui.tblResults->setHeaderLabels(hdrs);
 		for(QList<XMPP::SearchResult>::const_iterator it = task->results().begin(); it != task->results().end(); it++)
