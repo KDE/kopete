@@ -1,4 +1,4 @@
-#include <QDebug>
+#include <KDebug>
 
 #include "mediamanager.h"
 #include "alsaio.h"
@@ -55,6 +55,7 @@ QByteArray MediaManager::read()
 
 void MediaManager::write(const QByteArray& data)
 {
+	//kDebug() << "Writin on alsa device !";
 	alsaOut()->write(data);
 }
 

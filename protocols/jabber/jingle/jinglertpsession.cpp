@@ -29,17 +29,18 @@ JingleRtpSession::JingleRtpSession(Direction d)
 	//connect(rtcpSocket, SIGNAL(readyRead()), this, SLOT(rtcpDataReady())); // FIXME:Not sure I must do this, oRTP will manage that, I don't care about this signal.
 */	
 	m_rtpSession = rtp_session_new(m_direction == In ? RTP_SESSION_RECVONLY : RTP_SESSION_SENDONLY);
-	rtp_session_set_connected_mode(m_rtpSession, true);
+	//rtp_session_set_connected_mode(m_rtpSession, true);
 
 	payloadID = -1;
 	payloadName = "";
+	bufSize = 0;
 	receivingTS = 0;
 	sendingTS = 0;
 	rtpSocket = 0;
 	rtcpSocket = 0;
 
-	rtp_session_set_scheduling_mode(m_rtpSession, 1);
-	rtp_session_set_blocking_mode(m_rtpSession, 1);
+	rtp_session_set_scheduling_mode(m_rtpSession, 0);
+	rtp_session_set_blocking_mode(m_rtpSession, 0);
 	kDebug() << "Created";
 }
 
@@ -143,33 +144,36 @@ void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should 
 		return;
 	}
 	
-	kDebug() << "Bytes sent :" << size;
+//	kDebug() << "Bytes sent :" << size;
 
 	sendingTS += payloadTS;
 }
 
 void JingleRtpSession::rtpDataReady()
 {
-	kDebug() << "Incoming data ready to be read !";
-	mblk_t *packet;
+	//kDebug() << "Incoming data ready to be read !";
+	void *buf = new uint8_t[bufSize];
+	int more;
 	
-	//This waits until the media data has been extracted from the received packet.
-	//It would work the same way if ortp was used in Blocking mode.
-	while ((packet = rtp_session_recvm_with_ts(m_rtpSession, receivingTS)) == NULL)
+	while (rtp_session_recv_with_ts(m_rtpSession, static_cast<uint8_t*>(buf), bufSize, receivingTS, &more) == 0)
 	{
-		//kDebug() << "Packet is Null, retrying.";
-		receivingTS += payloadTS; //Must be increased fo unknown reason.
+	//	kDebug() << "No packet received.";
+		receivingTS += payloadTS; //Must be increased for unknown reason.
+		//return;
 	}
+
+	//if (more != 0)
+	//	kDebug() << "Still some data to read";
 	
 	
-	QByteArray data((char*) packet->b_cont->b_rptr, packet->b_cont->b_wptr - packet->b_cont->b_rptr);
+	QByteArray data(static_cast<char*>(buf), bufSize);
 	
 	// Seems we should empty the socket...
-	QByteArray buf;
-	buf.resize(rtpSocket->pendingDatagramSize());
-	rtpSocket->readDatagram(buf.data(), rtpSocket->pendingDatagramSize());
+	QByteArray b;
+	b.resize(rtpSocket->pendingDatagramSize());
+	rtpSocket->readDatagram(b.data(), rtpSocket->pendingDatagramSize());
 
-	//kDebug() << "Data size =" << data.size();
+	//kDebug() << "Data :" << data.toBase64() << "(" << data.size() << "bytes)";
 	
 	emit readyRead(data);
 }
@@ -185,6 +189,7 @@ void JingleRtpSession::setPayload(const QDomElement& payload)
 	// Parse QDomElement here and store data.
 	//payloadTS must be set here.
 	payloadName = "speex";
+	bufSize = 38;
 	payloadID = 96;
 	payloadTS = 160;
 	RtpProfile *profile = rtp_profile_new(payloadName.toAscii());
@@ -195,6 +200,7 @@ void JingleRtpSession::setPayload(const QDomElement& payload)
 
 void JingleRtpSession::slotBytesWritten(qint64 size)
 {
+	Q_UNUSED(size)
 	//kDebug() << size << "bytes written";
 	//if (state != SendingData)
 	//	return;

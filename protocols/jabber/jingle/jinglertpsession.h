@@ -84,6 +84,7 @@ private:
 	QString payloadName;
 	enum State {SendingData = 0} state;
 	Direction m_direction;
+	int bufSize;
 };
 
 #endif

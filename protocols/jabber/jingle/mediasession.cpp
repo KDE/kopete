@@ -1,4 +1,4 @@
-#include <QDebug>
+#include <KDebug>
 
 #include "mediasession.h"
 #include "mediamanager.h"
@@ -59,6 +59,7 @@ bool MediaSession::start()
 void MediaSession::write(const QByteArray& sData)
 {
 	//decoding speex data.
+	//kDebug() << "Receiving ! (" << sData.size() << "bytes)";
 	d->plugin->decode(sData);
 }
 
@@ -86,6 +87,8 @@ QByteArray MediaSession::read() const
 
 void MediaSession::slotDecoded()
 {
+	//kDebug() << "Decoded !";
+
 	QByteArray rawData = d->plugin->decodedData(); //FIXME:what about this QByteArray lifetime ?
 	if (rawData.isNull())
 	{

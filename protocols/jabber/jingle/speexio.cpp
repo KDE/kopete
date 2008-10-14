@@ -1,6 +1,6 @@
 
 #include "speexio.h"
-#include <QDebug>
+#include <KDebug>
 
 class SpeexIO::Private
 {
@@ -38,6 +38,7 @@ SpeexIO::~SpeexIO()
 	
 	speex_bits_destroy(&d->decBits);
 	speex_decoder_destroy(d->decoder);
+	kDebug() << "Destroyed SpeexIO";
 }
 
 void SpeexIO::setSamplingRate(int sr)
@@ -146,6 +147,7 @@ QByteArray SpeexIO::encodedData() const
 
 void SpeexIO::decode(const QByteArray& speexData)
 {
+	//kDebug() << "Decode ! (" << speexData.size() << "bytes)";
 	d->rawData.clear();
 
 	if (d->samplingRate == -1 || speexData.size() == 0)
@@ -163,6 +165,8 @@ void SpeexIO::decode(const QByteArray& speexData)
 		qDebug() << "Error decoding speex data :" << (ret == -1 ? "end of stream" : "corrupt stream");
 		return;
 	}
+	
+	//kDebug() << "Decoded !";
 
 	emit decoded();
 }

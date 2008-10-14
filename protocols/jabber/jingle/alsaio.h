@@ -99,6 +99,7 @@ private:
 	snd_pcm_hw_params_t *hwParams;
 	int pSizeBytes;
 	QByteArray tmpBuf;
+	int times;
 };
 
 #endif //ALSA_IO

@@ -19,17 +19,19 @@
 #include <QObject>
 #include <QSocketNotifier>
 
-#include <QDebug>
+#include <KDebug>
 
 #include "alsaio.h"
 
 AlsaIO::AlsaIO(StreamType t, Format f)
 : m_type(t)
 {
+	times = 0;
 	ready = false;
 	written = 0;
 	notifier = 0;
 	int err;
+	const char *device = (m_type == Capture ? "hw:0,0" : "default");
 
 	if ((err = snd_pcm_open(&handle, "default", m_type == Capture ? SND_PCM_STREAM_CAPTURE : SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK)) < 0)
 	{
@@ -223,8 +225,8 @@ bool AlsaIO::start()
 			return false;
 		}
 
-		notifier = new QSocketNotifier(ufds[0].fd, type); //FIXME:Taking 100% of CPU time...
-		notifier->setEnabled(true);
+		notifier = new QSocketNotifier(ufds[0].fd, type);
+		notifier->setEnabled(false); //Will be activated as soon as data comes in
 		connect(notifier, SIGNAL(activated(int)), this, SLOT(checkAlsaPoll(int)));
 		qDebug() << "Time stamp =" << timeStamp();
 	}
@@ -234,12 +236,20 @@ bool AlsaIO::start()
 
 void AlsaIO::write(const QByteArray& data)
 {
+	//kDebug() << "Buffered ! (" << data.size() << "bytes )";
 	if (!ready || m_type != Playback)
 	{
 		qDebug() << "Packet dropped";
 		return; // Must delete the data before ?
 	}
-	buf = data;
+
+	buf.append(data);
+	if (!notifier->isEnabled())
+	{
+		//kDebug() << "Reactivating notifier.";
+		notifier->setEnabled(true);
+	}
+	//kDebug() << "Buffer size is now" << buf.size() << "bytes )";
 }
 
 bool AlsaIO::isReady()
@@ -310,9 +320,11 @@ void AlsaIO::checkAlsaPoll(int)
 
 void AlsaIO::writeData()
 {
+	//kDebug() << "Preparing writing ! " << times++;
 	if (buf.size() < pSizeBytes)
 	{
-		//qDebug() << "No enough Data in the buffer.";
+		//kDebug() << "No enough Data in the buffer. Waiting for more...";
+		notifier->setEnabled(false);
 		//We don't write data now as it's an empty buffer and it would make weird noises only.
 		return;
 	}
@@ -320,6 +332,8 @@ void AlsaIO::writeData()
 	int size = snd_pcm_writei(handle, buf.data(), buf.size());
 
 	emit bytesWritten();
+
+	//kDebug() << "Written on alsa device !";
 	
 	buf.clear();
 
