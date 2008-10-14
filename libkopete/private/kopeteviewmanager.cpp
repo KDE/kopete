@@ -366,7 +366,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			view->raise();
 		}
 
-		if( (appendMessageEvent || !isActiveWindow) && event )
+		bool animateOnMessageWithOpenChat = Kopete::BehaviorSettings::self()->animateOnMessageWithOpenChat();
+		if ( event && ( appendMessageEvent || ( animateOnMessageWithOpenChat && !isActiveWindow ) ) )
 			Kopete::ChatSessionManager::self()->postNewEvent(event);
 	}
 }
