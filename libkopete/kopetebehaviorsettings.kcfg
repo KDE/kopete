@@ -69,6 +69,10 @@
 			<label>Trayflash Notification Left Click Opens Message.</label>
 			<default>true</default>
 		</entry>
+		<entry key="animateOnMessageWithOpenChat" type="Bool">
+			<label>Animate on message with open chat.</label>
+			<default>true</default>
+		</entry>
 		<entry key="trayflashNotifySetCurrentDesktopToChatView" type="Bool">
 			<label>Trayflash Notification Set Current Desktop To Chat View</label>
 			<default>false</default>
