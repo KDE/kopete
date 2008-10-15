@@ -234,6 +234,10 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 {
 	Q_UNUSED( host );
 	Q_UNUSED( port );
+
+	// Cleanup client
+	close();
+
 	d->user = userId;
 	d->pass = pass;
 	d->stage = ClientPrivate::StageOne;
@@ -256,6 +260,19 @@ void Client::close()
 	d->awayMsgRequestTimer->stop();
 	d->awayMsgRequestQueue.clear();
 	d->connections.clear();
+
+	if ( m_loginTask )
+	{
+		m_loginTask->deleteLater();
+		m_loginTask = 0;
+	}
+
+	if ( m_loginTaskTwo )
+	{
+		m_loginTaskTwo->deleteLater();
+		m_loginTaskTwo = 0;
+	}
+
 	deleteStaticTasks();
 
 	//don't clear the stored status between stage one and two
@@ -391,7 +408,6 @@ Guid Client::versionCap() const
 void Client::streamConnected()
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
-	d->stage = ClientPrivate::StageTwo;
 	if ( m_loginTaskTwo )
 		m_loginTaskTwo->go();
 }
@@ -427,15 +443,13 @@ void Client::lt_loginFinished()
 			d->cookie = m_loginTask->loginCookie();
 			close();
 			QTimer::singleShot( 100, this, SLOT(startStageTwo() ) );
+			d->stage = ClientPrivate::StageTwo;
 		}
 		else
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "errors reported. not moving to stage two";
 			close(); //deletes the connections for us
 		}
-
-		m_loginTask->deleteLater();
-		m_loginTask = 0;
 	}
 
 }
