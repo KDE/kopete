@@ -9,7 +9,7 @@ class MediaManager : public QObject
 {
 	Q_OBJECT
 public:
-	MediaManager();
+	MediaManager(QString, QString);
 	~MediaManager();
 	AlsaIO *alsaIn() const;
 	AlsaIO *alsaOut() const;

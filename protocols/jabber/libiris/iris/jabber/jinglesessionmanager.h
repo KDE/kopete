@@ -125,6 +125,13 @@ namespace XMPP
 		 * If yes, returns true, returns false if not.
 		 */
 		bool checkSupportedPayloads(JingleContent *c);
+		
+		/*
+		 * Check if this content has a supported transport.
+		 * If yes, returns true, returns false if not.
+		 */
+		bool checkSupportedTransport(JingleContent *c);
+
 	};
 }
 

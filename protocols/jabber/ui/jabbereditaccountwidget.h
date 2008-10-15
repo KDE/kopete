@@ -30,7 +30,7 @@
 /**
   *@author Till Gerken <till@tantalo.net>
   */
-
+class Item;
 class JabberEditAccountWidget: public QWidget, public Ui::DlgJabberEditAccountWidget, public KopeteEditAccountWidget
 {
 
@@ -55,6 +55,10 @@ private slots:
 private:
 	JabberProtocol *m_protocol;
 
+	QList<Item> outputDevices;
+	QList<Item> inputDevices;
+
+	void checkAudioDevices();
 	void reopen ();
 	void writeConfig ();
 

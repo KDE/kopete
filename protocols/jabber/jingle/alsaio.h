@@ -8,10 +8,43 @@
 #include <QFile>
 #include <QTimer>
 
+class Item
+{
+public:
+	enum Type
+	{
+		Audio,
+		Video
+	};
+
+	enum Direction
+	{
+		Input,
+		Output
+	};
+
+	Type type;      // Audio or Video
+	Direction dir;  // Input (mic) or Output (speaker)
+	QString name;   // friendly name
+	QString driver; // e.g. "oss", "alsa"
+	QString id;     // e.g. "/dev/dsp", "hw:0,0"
+};
+
+QList<Item> getAlsaItems();
+
+class AlsaItem
+{
+public:
+	int card, dev;
+	bool input;
+	QString name;
+};
+
 class AlsaIO : public QObject
 {
 	Q_OBJECT
 public:
+
 	/** PCM sample format */
 	enum Format {
 		/** Unknown */
@@ -39,7 +72,7 @@ public:
 		Playback
 	};
 	
-	AlsaIO(StreamType t, Format f);
+	AlsaIO(StreamType t, QString dev, Format f);
 	~AlsaIO();
 
 	StreamType type() const;

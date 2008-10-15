@@ -124,6 +124,7 @@ void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 
 void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should be overloaded methods to support other data type (QString, const *char).
 {
+	//kDebug() << "Send data";
 	//kDebug() << data.size() << "bytes";
 	
 	//for (int i = 0; i < data.count(); i++)
@@ -151,7 +152,7 @@ void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should 
 
 void JingleRtpSession::rtpDataReady()
 {
-	//kDebug() << "Incoming data ready to be read !";
+//	kDebug() << "Incoming data ready to be read !";
 	void *buf = new uint8_t[bufSize];
 	int more;
 	

@@ -66,7 +66,7 @@ JingleSessionManager::JingleSessionManager(Client* c)
 //	f.addFeature("urn:xmpp:tmp:jingle:transports:ice-udp");
 	f.addFeature("urn:xmpp:tmp:jingle:transports:raw-udp");
 	f.addFeature("urn:xmpp:tmp:jingle:apps:audio-rtp");
-	f.addFeature("urn:xmpp:tmp:jingle:apps:video-rtp");
+//	f.addFeature("urn:xmpp:tmp:jingle:apps:video-rtp");
 
 	d->client->setFeatures(f);
 
@@ -77,6 +77,7 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	//d->http->setHost("www.swlink.net");
 	//connect(d->http, SIGNAL(done(bool)), this, SLOT(slotExternalIPDone(bool)));
 	//d->http->get("/~styma/REMOTE_ADDR.shtml");
+	//FIXME:Crashes when www.swlink.net is not accessible. (down)
 }
 
 void JingleSessionManager::slotExternalIPDone(bool err)
@@ -168,7 +169,7 @@ void JingleSessionManager::slotSessionIncoming()
 	JingleSession *sess = d->pjs->takeNextIncomingSession();
 	d->sessions << sess;
 
-	// 	Check if the Transport method is supported.
+	// TODO:Check if the Transport method is supported.
 	for (int i = 0; i < sess->contents().count(); i++)
 	{
 		JingleContent *c = sess->contents()[i];
@@ -176,16 +177,23 @@ void JingleSessionManager::slotSessionIncoming()
 		// Check payloads for the content c
 		if (!checkSupportedPayloads(c))
 		{
-			//Do what ever is necessary.
 			//I think we have to send a no payload supported stanza.
+			//sess->terminate(UnsupportedApplications);
+			//--> no, only if all transports are unsupported
+			//in this case, a content-remove is more appropriate.
+			return;
+		}
+		
+		if (!checkSupportedTransport(c))
+		{
+			//I think we have to send a no payload supported stanza.
+			//sess->terminate(UnsupportedTransports);
+			//--> no, only if all applications are unsupported
+			//in this case, a content-remove is more appropriate.
 			return;
 		}
 
-		//Check transport
-		//TODO
-
 		//Set supported payloads for this content.
-		
 		c->setPayloadTypes(c->type() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
 	}
 	emit newJingleSession(sess);
@@ -197,8 +205,38 @@ void JingleSessionManager::slotSessionIncoming()
 
 bool JingleSessionManager::checkSupportedPayloads(JingleContent *c)
 {
-	Q_UNUSED(c)
-	//TODO:Implement me !
+	/*for (int i = 0; i < c->payloadTypes().count(); i++)
+	{
+		for (int j = 0; j < d->supportedAudioPayloads.count(); j++)
+		{
+			qDebug() << "compare" << c->payloadTypes().at(i).attribute("name") << "to" << d->supportedAudioPayloads.at(j).attribute("name");
+			if (c->payloadTypes().at(i).attribute("name") == d->supportedAudioPayloads.at(j).attribute("name"))
+			{
+				//This payload name is supported.
+				//A static method should be written to compare 2 payloads elements.
+				qDebug() << "return true";
+				return true;
+			}
+		}
+	}
+	qDebug() << "return false";*/
+
+	return true;
+}
+
+bool JingleSessionManager::checkSupportedTransport(JingleContent *c)
+{
+	/*for (int i = 0; i < d->supportedTransports.count(); i++)
+	{
+		qDebug() << "compare" << c->transport().attribute("xmlns") << "to" << d->supportedTransports.at(i);
+		if (c->transport().attribute("xmlns") == d->supportedTransports.at(i))
+		{
+			qDebug() << "return true";
+			return true;
+		}
+	}
+	qDebug() << "return false";*/
+
 	return true;
 }
 

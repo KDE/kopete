@@ -71,10 +71,7 @@ JingleCallsManager::~JingleCallsManager()
 
 void JingleCallsManager::init()
 {
-	//Setting temporary random first port so 2 instances can be launched on the same machine.
-	//TODO : This must be removed !!!
-	
-	d->client->jingleSessionManager()->setFirstPort(9000 + (rand() % 1000));
+	d->client->jingleSessionManager()->setFirstPort(d->jabberAccount->configGroup()->readEntry("JingleFirstPort", QString("9000")).toInt());
 
 	//Initialize oRTP library.
 	ortp_init();
@@ -83,7 +80,7 @@ void JingleCallsManager::init()
 	
 	d->gui = 0L;
 	QStringList transports;
-	transports << "urn:xmpp:tmp:jingle:transports:ice-udp";
+	//transports << "urn:xmpp:tmp:jingle:transports:ice-udp";
 	transports << "urn:xmpp:tmp:jingle:transports:raw-udp";
 	d->client->jingleSessionManager()->setSupportedTransports(transports);
 
@@ -129,7 +126,9 @@ void JingleCallsManager::init()
 	}
 	d->videoPayloads << vPayload;*/
 
-	d->mediaManager = new MediaManager();
+	QString inputDev = d->jabberAccount->configGroup()->readEntry("JingleInputDevice", QString());
+	QString outputDev = d->jabberAccount->configGroup()->readEntry("JingleOutputDevice", QString());
+	d->mediaManager = new MediaManager(inputDev, outputDev);
 	
 	d->client->jingleSessionManager()->setSupportedVideoPayloads(d->videoPayloads);
 	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(newJingleSession(XMPP::JingleSession*)),

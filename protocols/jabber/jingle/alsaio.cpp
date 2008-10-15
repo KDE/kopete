@@ -18,12 +18,168 @@
 
 #include <QObject>
 #include <QSocketNotifier>
+#include <QStringList>
 
 #include <KDebug>
 
 #include "alsaio.h"
 
-AlsaIO::AlsaIO(StreamType t, Format f)
+// taken from netinterface_unix (changed the split to KeepEmptyParts)
+static QStringList read_proc_as_lines(const char *procfile)
+{
+	QStringList out;
+
+	FILE *f = fopen(procfile, "r");
+	if(!f)
+		return out;
+
+	QByteArray buf;
+	while(!feof(f))
+	{
+		// max read on a proc is 4K
+		QByteArray block(4096, 0);
+		int ret = fread(block.data(), 1, block.size(), f);
+		if(ret <= 0)
+			break;
+		block.resize(ret);
+		buf += block;
+	}
+	fclose(f);
+
+	QString str = QString::fromLocal8Bit(buf);
+	out = str.split('\n', QString::KeepEmptyParts);
+	return out;
+}
+
+QList<Item> getAlsaItems()
+{
+#ifdef Q_OS_LINUX
+	QList<Item> out;
+
+	QList<AlsaItem> items;
+	QStringList devices_lines = read_proc_as_lines("/proc/asound/devices");
+	foreach(QString line, devices_lines)
+	{
+		// get the fields we care about
+		QString devbracket, devtype;
+		int x = line.indexOf(": ");
+		if(x == -1)
+			continue;
+		QString sub = line.mid(x + 2);
+		x = sub.indexOf(": ");
+		if(x == -1)
+			continue;
+		devbracket = sub.mid(0, x);
+		devtype = sub.mid(x + 2);
+
+		// skip all but playback and capture
+		bool input;
+		if(devtype == "digital audio playback")
+			input = false;
+		else if(devtype == "digital audio capture")
+			input = true;
+		else
+			continue;
+
+		// skip what isn't asked for
+		/*if(!(type & DIR_INPUT) && input)
+			continue;
+		if(!(type & DIR_OUTPUT) && !input)
+			continue;
+*/
+		// hack off brackets
+		if(devbracket[0] != '[' || devbracket[devbracket.length()-1] != ']')
+			continue;
+		devbracket = devbracket.mid(1, devbracket.length() - 2);
+
+		QString cardstr, devstr;
+		x = devbracket.indexOf('-');
+		if(x == -1)
+			continue;
+		cardstr = devbracket.mid(0, x);
+		devstr = devbracket.mid(x + 1);
+
+		AlsaItem ai;
+		bool ok;
+		ai.card = cardstr.toInt(&ok);
+		if(!ok)
+			continue;
+		ai.dev = devstr.toInt(&ok);
+		if(!ok)
+			continue;
+		ai.input = input;
+		ai.name.sprintf("ALSA Card %d, Device %d", ai.card, ai.dev);
+		items += ai;
+	}
+
+	// try to get the friendly names
+	QStringList pcm_lines = read_proc_as_lines("/proc/asound/pcm");
+	foreach(QString line, pcm_lines)
+	{
+		QString devnumbers, devname;
+		int x = line.indexOf(": ");
+		if(x == -1)
+			continue;
+		devnumbers = line.mid(0, x);
+		devname = line.mid(x + 2);
+		x = devname.indexOf(" :");
+		if(x != -1)
+			devname = devname.mid(0, x);
+		else
+			devname = devname.trimmed();
+
+		QString cardstr, devstr;
+		x = devnumbers.indexOf('-');
+		if(x == -1)
+			continue;
+		cardstr = devnumbers.mid(0, x);
+		devstr = devnumbers.mid(x + 1);
+
+		bool ok;
+		int cardnum = cardstr.toInt(&ok);
+		if(!ok)
+			continue;
+		int devnum = devstr.toInt(&ok);
+		if(!ok)
+			continue;
+
+		for(int n = 0; n < items.count(); ++n)
+		{
+			AlsaItem &ai = items[n];
+			if(ai.card == cardnum && ai.dev == devnum)
+				ai.name = devname;
+		}
+	}
+
+	for(int n = 0; n < items.count(); ++n)
+	{
+		AlsaItem &ai = items[n];
+
+		// make an item for both hw and plughw
+		Item i;
+		i.type = Item::Audio;
+		if(ai.input)
+			i.dir = Item::Input;
+		else
+			i.dir = Item::Output;
+		i.name = ai.name;
+		i.driver = "alsa";
+		i.id = QString().sprintf("plughw:%d,%d", ai.card, ai.dev);
+		out += i;
+
+		i.name = ai.name + " (Direct)";
+		i.id = QString().sprintf("hw:%d,%d", ai.card, ai.dev);
+		out += i;
+	}
+
+	return out;
+#else
+	// return empty list if non-linux
+	return QList<Item>();
+#endif
+}
+
+AlsaIO::AlsaIO(StreamType t, QString device, Format f)
 : m_type(t)
 {
 	times = 0;
@@ -31,9 +187,10 @@ AlsaIO::AlsaIO(StreamType t, Format f)
 	written = 0;
 	notifier = 0;
 	int err;
-	const char *device = (m_type == Capture ? "hw:0,0" : "default");
+	//const char *device = (m_type == Capture ? "hw:0,0" : "default");
+	printf("device = %s\n", device.toUtf8().data());
 
-	if ((err = snd_pcm_open(&handle, "default", m_type == Capture ? SND_PCM_STREAM_CAPTURE : SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK)) < 0)
+	if ((err = snd_pcm_open(&handle, device.toUtf8().data(), m_type == Capture ? SND_PCM_STREAM_CAPTURE : SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK)) < 0)
 	{
 		qDebug() << "cannot open audio device default";
 		return;
@@ -73,28 +230,6 @@ AlsaIO::AlsaIO(StreamType t, Format f)
 	
 	m_format = static_cast<Format>(fmt);
 
-	switch(m_format)
-	{
-	case Signed8:
-		qDebug() << "Signed 8";
-		break;
-	case Unsigned8:
-		qDebug() << "Unsigned 8";
-		break;
-	case Signed16Le:
-		qDebug() << "Signed 16 LE";
-		break;
-	case Signed16Be:
-		qDebug() << "Signed 16 BE";
-		break;
-	case Unsigned16Le:
-		qDebug() << "Unsigned 16 LE";
-		break;
-	case Unsigned16Be:
-		qDebug() << "Unsigned 16 BE";
-		break;
-	}
-
 	unsigned int p = 20000;
 	if ((err = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &p, 0)) < 0)
 	{
@@ -106,13 +241,13 @@ AlsaIO::AlsaIO(StreamType t, Format f)
 	if ((err = snd_pcm_hw_params_set_rate_near(handle, hwParams, &samplingRate, 0)) < 0)
 	{
 		qDebug() << "cannot set sample rate";
-		return;
+	//	return;
 	}
 	
 	if ((err = snd_pcm_hw_params_set_channels(handle, hwParams, 1)) < 0) //Only 1 channel for ALaw RTP (see RFC specification)
 	{
 		qDebug() << "cannot set channel 1";
-		return;
+		//return;
 	}
 
 	if ((err = snd_pcm_hw_params(handle, hwParams)) < 0)
@@ -140,7 +275,9 @@ AlsaIO::~AlsaIO()
 		delete notifier;
 	}
 
-	snd_pcm_drain(handle);
+	if (ready)
+		snd_pcm_drain(handle);
+
 	snd_pcm_close(handle);
 	
 	qDebug() << "DESTROYED";
@@ -230,6 +367,7 @@ bool AlsaIO::start()
 		connect(notifier, SIGNAL(activated(int)), this, SLOT(checkAlsaPoll(int)));
 		qDebug() << "Time stamp =" << timeStamp();
 	}
+	kDebug() << "started.";
 
 	return true;
 }
