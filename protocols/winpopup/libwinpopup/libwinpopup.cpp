@@ -323,8 +323,8 @@ void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 	QProcess *sender = new QProcess(this);
 	QStringList args;
 	args << "-M" << Destination << "-N" << "-";
-	sender->start(smbClientBin);
-	sender->write(Body.toLocal8Bit());
+	sender->start(smbClientBin, args);
+	sender->write(Body.trimmed().toLocal8Bit());
 	sender->closeWriteChannel();
 }
 
