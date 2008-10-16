@@ -143,25 +143,27 @@ signals:
 
 private:
 	StreamType m_type;
-	snd_pcm_t *handle;
-	QSocketNotifier *notifier;
-	bool ready;
-	QByteArray buf;
-	unsigned int pTime;
-	snd_pcm_uframes_t pSize;
-	unsigned int samplingRate;
-	int fdCount;
-	struct pollfd *ufds;
-	unsigned int written;
-	void stop();
-	QFile *testFile;
 	Format m_format;
-	snd_pcm_hw_params_t *hwParams;
-	int pSizeBytes;
+	
+	QSocketNotifier *notifier;
+	QByteArray buf;
 	QByteArray tmpBuf;
+
+	unsigned int pTime;
+	unsigned int samplingRate;
+	unsigned int written;
+	int fdCount;
+	int pSizeBytes;
 	int times;
+	bool ready;
+	
+	snd_pcm_uframes_t pSize;
+	snd_pcm_hw_params_t *hwParams;
+	snd_pcm_t *handle;
+	struct pollfd *ufds;
 	
 	bool prepare();
+	void stop();
 };
 
 #endif //ALSA_IO
