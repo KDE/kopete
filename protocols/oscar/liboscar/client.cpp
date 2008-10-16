@@ -2,12 +2,12 @@
 	client.cpp - Kopete Oscar Protocol
 
 	Copyright (c) 2004-2005 Matt Rogers <mattr@kde.org>
-    Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
+    Copyright (c) 2008 Roman Jarosz <kedgedev@centrum.cz>
 
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
 	Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
-	Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+	Kopete (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
 	*************************************************************************
 	*                                                                       *
@@ -42,6 +42,7 @@
 #include "logintask.h"
 #include "connection.h"
 #include "messagereceivertask.h"
+#include "messageacktask.h"
 #include "onlinenotifiertask.h"
 #include "oscarclientstream.h"
 #include "oscarsettings.h"
@@ -71,6 +72,7 @@
 #include "closeconnectiontask.h"
 #include "icqtlvinforequesttask.h"
 #include "icqtlvinfoupdatetask.h"
+#include "filetransferhandler.h"
 
 
 namespace
@@ -118,6 +120,7 @@ public:
 	OnlineNotifierTask* onlineNotifier;
 	OwnUserInfoTask* ownStatusTask;
 	MessageReceiverTask* messageReceiverTask;
+	MessageAckTask* messageAckTask;
 	SSIAuthTask* ssiAuthTask;
 	ICQUserInfoRequestTask* icqInfoTask;
 	ICQTlvInfoRequestTask* icqTlvInfoTask;
@@ -180,6 +183,7 @@ Client::Client( QObject* parent )
 	d->onlineNotifier = 0L;
 	d->ownStatusTask = 0L;
 	d->messageReceiverTask = 0L;
+	d->messageAckTask = 0L;
 	d->ssiAuthTask = 0L;
 	d->icqInfoTask = 0L;
 	d->icqTlvInfoTask = 0L;
@@ -230,6 +234,10 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 {
 	Q_UNUSED( host );
 	Q_UNUSED( port );
+
+	// Cleanup client
+	close();
+
 	d->user = userId;
 	d->pass = pass;
 	d->stage = ClientPrivate::StageOne;
@@ -240,12 +248,31 @@ void Client::close()
 {
 	QList<Connection*> cList = d->connections.connections();
 	for ( int i = 0; i < cList.size(); i++ )
-		(new CloseConnectionTask( cList.at(i)->rootTask() ))->go( Task::AutoDelete );
+	{
+		Connection* c = cList.at(i);
+		(new CloseConnectionTask( c->rootTask() ))->go( Task::AutoDelete );
+		
+		foreach ( Oscar::MessageInfo info, c->messageInfoList() )
+			emit messageError( info.contact, info.id );
+	}
 
 	d->active = false;
 	d->awayMsgRequestTimer->stop();
 	d->awayMsgRequestQueue.clear();
 	d->connections.clear();
+
+	if ( m_loginTask )
+	{
+		m_loginTask->deleteLater();
+		m_loginTask = 0;
+	}
+
+	if ( m_loginTaskTwo )
+	{
+		m_loginTaskTwo->deleteLater();
+		m_loginTaskTwo = 0;
+	}
+
 	deleteStaticTasks();
 
 	//don't clear the stored status between stage one and two
@@ -381,7 +408,6 @@ Guid Client::versionCap() const
 void Client::streamConnected()
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
-	d->stage = ClientPrivate::StageTwo;
 	if ( m_loginTaskTwo )
 		m_loginTaskTwo->go();
 }
@@ -417,15 +443,13 @@ void Client::lt_loginFinished()
 			d->cookie = m_loginTask->loginCookie();
 			close();
 			QTimer::singleShot( 100, this, SLOT(startStageTwo() ) );
+			d->stage = ClientPrivate::StageTwo;
 		}
 		else
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "errors reported. not moving to stage two";
 			close(); //deletes the connections for us
 		}
-
-		m_loginTask->deleteLater();
-		m_loginTask = 0;
 	}
 
 }
@@ -782,6 +806,7 @@ void Client::initializeStaticTasks()
 	d->onlineNotifier = new OnlineNotifierTask( c->rootTask() );
 	d->ownStatusTask = new OwnUserInfoTask( c->rootTask() );
 	d->messageReceiverTask = new MessageReceiverTask( c->rootTask() );
+	d->messageAckTask = new MessageAckTask( c->rootTask() );
 	d->ssiAuthTask = new SSIAuthTask( c->rootTask() );
 	d->icqInfoTask = new ICQUserInfoRequestTask( c->rootTask() );
 	d->icqTlvInfoTask = new ICQTlvInfoRequestTask( c->rootTask() );
@@ -803,6 +828,11 @@ void Client::initializeStaticTasks()
 	connect( d->messageReceiverTask, SIGNAL( fileMessage( int, const QString, const QByteArray, Buffer ) ),
 	         this, SLOT( gotFileMessage( int, const QString, const QByteArray, Buffer ) ) );
 
+	connect( d->messageAckTask, SIGNAL(messageAck(const QString&, uint)),
+	         this, SIGNAL(messageAck(const QString&, uint)) );
+	connect( d->errorTask, SIGNAL(messageError(const QString&, uint)),
+	         this, SIGNAL(messageError(const QString&, uint)) );
+	
 	connect( d->ssiAuthTask, SIGNAL( authRequested( const QString&, const QString& ) ),
 	         this, SIGNAL( authRequestReceived( const QString&, const QString& ) ) );
 	connect( d->ssiAuthTask, SIGNAL( authReplied( const QString&, const QString&, bool ) ),
@@ -1631,6 +1661,9 @@ void Client::determineDisconnection( int code, const QString& string )
 		emit socketError( code, string );
 	}
 
+	foreach ( Oscar::MessageInfo info, c->messageInfoList() )
+		emit messageError( info.contact, info.id );
+
     //connection is deleted. deleteLater() is used
     d->connections.remove( c );
     c = 0;
@@ -1697,6 +1730,7 @@ void Client::deleteStaticTasks()
 	delete d->onlineNotifier;
 	delete d->ownStatusTask;
 	delete d->messageReceiverTask;
+	delete d->messageAckTask;
 	delete d->ssiAuthTask;
 	delete d->icqInfoTask;
 	delete d->icqTlvInfoTask;
@@ -1708,6 +1742,7 @@ void Client::deleteStaticTasks()
 	d->onlineNotifier = 0;
 	d->ownStatusTask = 0;
 	d->messageReceiverTask = 0;
+	d->messageAckTask = 0;
 	d->ssiAuthTask = 0;
 	d->icqInfoTask = 0;
 	d->icqTlvInfoTask = 0;
@@ -1722,16 +1757,17 @@ bool Client::hasIconConnection( ) const
 	return c;
 }
 
-void Client::sendFiles( const QString& contact, const QStringList& files, Kopete::Transfer *t )
+FileTransferHandler* Client::createFileTransfer( const QString& contact, const QStringList& files )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0004 );
 	if ( !c )
-		return;
+		return 0;
 
-	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), files, t );
+	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), files );
 	connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 	         this, SLOT( fileMessage( const Oscar::Message& ) ) );
-	ft->go( Task::AutoDelete );
+
+	return new FileTransferHandler(ft);
 }
 
 void Client::gotFileMessage( int type, const QString from, const QByteArray cookie, Buffer buf)
@@ -1753,14 +1789,11 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 	{
 		kDebug(14151) << "new request :)";
 		FileTransferTask *ft = new FileTransferTask( c->rootTask(), from, ourInfo().userId(), cookie, buf );
-		connect( ft, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
-				SIGNAL( getTransferManager( Kopete::TransferManager ** ) ) );
-		connect( ft, SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ),
-				SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ) );
 		connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 				this, SLOT( fileMessage( const Oscar::Message& ) ) );
 		ft->go( Task::AutoDelete );
-		return;
+		
+		emit incomingFileTransfer( new FileTransferHandler(ft) );
 	}
 
 	kDebug(14151) << "nobody wants it :(";

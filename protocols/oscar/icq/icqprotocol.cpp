@@ -140,7 +140,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 		"', firstname = '" << first << "', lastname = '" << last <<"'" << endl;
 	if (account->addContact(uin, nick, 0L, Kopete::Account::Temporary))
 	{
-		Kopete::Contact *contact = account->contacts()[uin];
+		Kopete::Contact *contact = account->contacts().value( uin );
 		if (!first.isEmpty())
 			contact->setProperty(Kopete::Global::Properties::self()->firstName(), first);
 		if (!last.isEmpty())
@@ -533,52 +533,54 @@ void ICQProtocol::initLang()
 
 void ICQProtocol::initEncodings()
 {
-	mEncodings.insert(2026, i18n("Big5"));
-	mEncodings.insert(2101, i18n("Big5-HKSCS"));
-	mEncodings.insert(18, i18n("euc-JP Japanese"));
-	mEncodings.insert(38, i18n("euc-KR Korean"));
-	mEncodings.insert(57, i18n("GB-2312 Chinese"));
-	mEncodings.insert(113, i18n("GBK Chinese"));
-	mEncodings.insert(114, i18n("GB18030 Chinese"));
+	QSet<int> availableMibs = QSet<int>::fromList( QTextCodec::availableMibs() );
 
-	mEncodings.insert(16, i18n("JIS Japanese"));
-	mEncodings.insert(17, i18n("Shift-JIS Japanese"));
+	addEncoding( availableMibs, 2026, i18n("Big5") );
+	addEncoding( availableMibs, 2101, i18n("Big5-HKSCS") );
+	addEncoding( availableMibs, 18, i18n("euc-JP Japanese") );
+	addEncoding( availableMibs, 38, i18n("euc-KR Korean") );
+	addEncoding( availableMibs, 57, i18n("GB-2312 Chinese") );
+	addEncoding( availableMibs, 113, i18n("GBK Chinese") );
+	addEncoding( availableMibs, 114, i18n("GB18030 Chinese") );
 
-	mEncodings.insert(2084, i18n("KOI8-R Russian"));
-	mEncodings.insert(2088, i18n("KOI8-U Ukrainian"));
+	addEncoding( availableMibs, 16, i18n("JIS Japanese") );
+	addEncoding( availableMibs, 17, i18n("Shift-JIS Japanese") );
 
-	mEncodings.insert(4, i18n("ISO-8859-1 Western"));
-	mEncodings.insert(5, i18n("ISO-8859-2 Central European"));
-	mEncodings.insert(6, i18n("ISO-8859-3 Central European"));
-	mEncodings.insert(7, i18n("ISO-8859-4 Baltic"));
-	mEncodings.insert(8, i18n("ISO-8859-5 Cyrillic"));
-	mEncodings.insert(9, i18n("ISO-8859-6 Arabic"));
-	mEncodings.insert(10, i18n("ISO-8859-7 Greek"));
-	mEncodings.insert(11, i18n("ISO-8859-8 Hebrew, visually ordered"));
-	mEncodings.insert(85, i18n("ISO-8859-8-I Hebrew, logically ordered"));
-	mEncodings.insert(12, i18n("ISO-8859-9 Turkish"));
-	mEncodings.insert(13, i18n("ISO-8859-10"));
-	mEncodings.insert(109, i18n("ISO-8859-13"));
-	mEncodings.insert(110, i18n("ISO-8859-14"));
-	mEncodings.insert(111, i18n("ISO-8859-15 Western"));
+	addEncoding( availableMibs, 2084, i18n("KOI8-R Russian") );
+	addEncoding( availableMibs, 2088, i18n("KOI8-U Ukrainian") );
 
-	mEncodings.insert(2250, i18n("Windows-1250 Central European"));
-	mEncodings.insert(2251, i18n("Windows-1251 Cyrillic"));
-	mEncodings.insert(2252, i18n("Windows-1252 Western"));
-	mEncodings.insert(2253, i18n("Windows-1253 Greek"));
-	mEncodings.insert(2254, i18n("Windows-1254 Turkish"));
-	mEncodings.insert(2255, i18n("Windows-1255 Hebrew"));
-	mEncodings.insert(2256, i18n("Windows-1256 Arabic"));
-	mEncodings.insert(2257, i18n("Windows-1257 Baltic"));
-	mEncodings.insert(2258, i18n("Windows-1258 Viet Nam"));
+	addEncoding( availableMibs, 4, i18n("ISO-8859-1 Western") );
+	addEncoding( availableMibs, 5, i18n("ISO-8859-2 Central European") );
+	addEncoding( availableMibs, 6, i18n("ISO-8859-3 Central European") );
+	addEncoding( availableMibs, 7, i18n("ISO-8859-4 Baltic") );
+	addEncoding( availableMibs, 8, i18n("ISO-8859-5 Cyrillic") );
+	addEncoding( availableMibs, 9, i18n("ISO-8859-6 Arabic") );
+	addEncoding( availableMibs, 10, i18n("ISO-8859-7 Greek") );
+	addEncoding( availableMibs, 11, i18n("ISO-8859-8 Hebrew, visually ordered") );
+	addEncoding( availableMibs, 85, i18n("ISO-8859-8-I Hebrew, logically ordered") );
+	addEncoding( availableMibs, 12, i18n("ISO-8859-9 Turkish") );
+	addEncoding( availableMibs, 13, i18n("ISO-8859-10") );
+	addEncoding( availableMibs, 109, i18n("ISO-8859-13") );
+	addEncoding( availableMibs, 110, i18n("ISO-8859-14") );
+	addEncoding( availableMibs, 111, i18n("ISO-8859-15 Western") );
 
-	mEncodings.insert(2009, i18n("IBM 850"));
-	mEncodings.insert(2085, i18n("IBM 866"));
+	addEncoding( availableMibs, CP1250, i18n("Windows-1250 Central European") );
+	addEncoding( availableMibs, CP1251, i18n("Windows-1251 Cyrillic") );
+	addEncoding( availableMibs, CP1252, i18n("Windows-1252 Western") );
+	addEncoding( availableMibs, CP1253, i18n("Windows-1253 Greek") );
+	addEncoding( availableMibs, CP1254, i18n("Windows-1254 Turkish") );
+	addEncoding( availableMibs, CP1255, i18n("Windows-1255 Hebrew") );
+	addEncoding( availableMibs, CP1256, i18n("Windows-1256 Arabic") );
+	addEncoding( availableMibs, CP1257, i18n("Windows-1257 Baltic") );
+	addEncoding( availableMibs, CP1258, i18n("Windows-1258 Viet Nam") );
 
-	mEncodings.insert(2259, i18n("TIS-620 Thai"));
+	addEncoding( availableMibs, 2009, i18n("IBM 850") );
+	addEncoding( availableMibs, 2085, i18n("IBM 866") );
 
-	mEncodings.insert(106, i18n("UTF-8 Unicode"));
-	mEncodings.insert(1015, i18n("UTF-16 Unicode"));
+	addEncoding( availableMibs, 2259, i18n("TIS-620 Thai") );
+
+	addEncoding( availableMibs, 106, i18n("UTF-8 Unicode") );
+	addEncoding( availableMibs, 1015, i18n("UTF-16 Unicode") );
 
 /*
 Missing ones (copied from qtextcodec doc):
@@ -770,6 +772,13 @@ int ICQProtocol::getCodeForCombo(QComboBox *cmb, const QMap<int, QString> &map)
 	}
 	return 0; // unspecified is always first 0
 }
+
+void ICQProtocol::addEncoding( const QSet<int> &availableMibs, int mib, const QString &name )
+{
+	if ( availableMibs.contains( mib ) )
+		mEncodings.insert( mib, name );
+}
+
 #if 0
 
 void ICQProtocol::fillTZCombo(QComboBox *combo)

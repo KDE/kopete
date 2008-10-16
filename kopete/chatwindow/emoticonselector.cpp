@@ -73,7 +73,7 @@ EmoticonSelector::EmoticonSelector(QWidget *parent)
 	m_emoticonList->setMouseTracking(true);
 	m_emoticonList->setDragEnabled(false);
 
-	QLabel *m_currentEmoticon  = new QLabel( this );
+	m_currentEmoticon = new QLabel( this );
 	m_currentEmoticon->setFrameShape( QFrame::Box );
 	m_currentEmoticon->setMinimumSize(QSize(128,128));
 	m_currentEmoticon->setAlignment( Qt::AlignCenter );
@@ -135,10 +135,12 @@ void EmoticonSelector::currentChanged()
 	if (!item)
 		return;
 
-	// FIXME: the label is not correctly cleared when changing from a bigger movie to a smaller one
 	m_currentMovie->stop();
 	m_currentMovie->setFileName(item->pixmapPath());
 	m_currentMovie->start();
+	// schedule a full update of the label, so there are no glitches of the previous emoticon
+	// (Qt bug?)
+	m_currentEmoticon->update();
 }
 
 void EmoticonSelector::hideEvent( QHideEvent* )

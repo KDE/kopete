@@ -701,7 +701,7 @@ Q_OBJECT
 		void initTasks();
 
 		/**
-		 * remove static tasks and their singal connections
+		 * remove static tasks and their signal connections
 		 */
 		void deleteTasks();
 

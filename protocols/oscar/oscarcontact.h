@@ -146,6 +146,8 @@ signals:
 
 protected slots:
 	void slotTyping( bool typing );
+	void messageAck( const QString& contact, uint messageId );
+	void messageError( const QString& contact, uint messageId );
 
 protected:
 	OscarAccount *mAccount;

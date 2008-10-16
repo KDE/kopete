@@ -81,7 +81,7 @@ public:
 	 *          Contents/
 	 *            Resources/
 	 *
-	 * @return the path to the the resource directory.
+	 * @return the path to the resource directory.
 	 */
 	QString getStyleBaseHref() const;
 
@@ -97,6 +97,11 @@ public:
 	QString getActionOutgoingHtml() const;
 
 	QString getFileTransferIncomingHtml() const;
+
+	QString getOutgoingStateSendingHtml() const;
+	QString getOutgoingStateSentHtml() const;
+	QString getOutgoingStateErrorHtml() const;
+	QString getOutgoingStateUnknownHtml() const;
 
 	/**
 	 * Check if the style has the support for Kopete Action template (Kopete extension)

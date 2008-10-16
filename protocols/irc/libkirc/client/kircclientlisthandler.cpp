@@ -22,7 +22,6 @@
 #include "kircclientsocket.h"
 
 #include "kirccontext.h"
-#include "kircevent.h"
 
 #include <kdebug.h>
 #include <klocale.h>

@@ -68,7 +68,7 @@ Kopete::ChatSession *JabberGroupMemberContact::manager ( Kopete::Contact::CanCre
 
 	if ( mManager )
 		return mManager;
-		
+
 	if ( !mManager && !canCreate )
 		return 0;
 
@@ -118,7 +118,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	{
 		newMessage = new Kopete::Message( this, contactList );
 		newMessage->setTimestamp( message.timeStamp() );
-		newMessage->setPlainBody( i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
+		newMessage->setPlainBody( i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"",
 										  message.body (), message.error().text ) );
 		newMessage->setSubject( message.subject() );
 		newMessage->setDirection( Kopete::Message::Inbound );
@@ -140,6 +140,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 		newMessage->setPlainBody( body );
 		newMessage->setDirection( Kopete::Message::Inbound );
 		newMessage->setRequestedPlugin( viewType );
+		newMessage->setImportance( Kopete::Message::Low );
 	}
 
 	// append message to manager

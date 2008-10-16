@@ -23,7 +23,6 @@ BehaviorConfig_General::BehaviorConfig_General(QWidget *parent)
 	setupUi(this);
 
 	connect(kcfg_useMessageQueue, SIGNAL(toggled(bool)), this, SLOT(queueToggled(bool)));
-	connect(kcfg_useMessageStack, SIGNAL(toggled(bool)), this, SLOT(queueToggled(bool)));
 }
 
 void BehaviorConfig_General::queueToggled(bool checked)

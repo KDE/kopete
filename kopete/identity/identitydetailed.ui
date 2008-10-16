@@ -5,56 +5,52 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
-    <height>115</height>
+    <width>457</width>
+    <height>98</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Detailed Info</string>
   </property>
-  <layout class="QHBoxLayout" >
-   <item>
-    <layout class="QGridLayout" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="emailLabel" >
-       <property name="text" >
-        <string>E-mail: </string>
-       </property>
-       <property name="buddy" >
-        <cstring>email</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" >
-      <widget class="QLineEdit" name="email" />
-     </item>
-     <item row="1" column="0" >
-      <widget class="QLabel" name="phoneLabel" >
-       <property name="text" >
-        <string>Private Phone:</string>
-       </property>
-       <property name="buddy" >
-        <cstring>privatePhone</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" >
-      <widget class="QLineEdit" name="privatePhone" />
-     </item>
-     <item row="2" column="0" >
-      <widget class="QLabel" name="mobileLabel" >
-       <property name="text" >
-        <string>Mobile Phone:</string>
-       </property>
-       <property name="buddy" >
-        <cstring>mobilePhone</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" >
-      <widget class="QLineEdit" name="mobilePhone" />
-     </item>
-    </layout>
+  <layout class="QFormLayout" name="formLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="emailLabel" >
+     <property name="text" >
+      <string>E-mail: </string>
+     </property>
+     <property name="buddy" >
+      <cstring>email</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QLineEdit" name="email" />
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="phoneLabel" >
+     <property name="text" >
+      <string>Private Phone:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>privatePhone</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QLineEdit" name="privatePhone" />
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="mobileLabel" >
+     <property name="text" >
+      <string>Mobile Phone:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>mobilePhone</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QLineEdit" name="mobilePhone" />
    </item>
   </layout>
  </widget>

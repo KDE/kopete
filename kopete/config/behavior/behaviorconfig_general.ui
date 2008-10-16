@@ -94,23 +94,10 @@
          <string>Use a message queue to store incoming messages</string>
         </property>
         <property name="whatsThis" >
-         <string>Store new incoming messages in a message queue. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via chat window and system tray icon animations.</string>
+         <string>Store new incoming messages in a message queue. New messages are messages that cannot be displayed in an already open chat window. Only queued messages trigger notification via chat window and system tray icon animations.</string>
         </property>
         <property name="text" >
          <string>Use message &amp;queue</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="kcfg_useMessageStack" >
-        <property name="toolTip" >
-         <string>Use a message stack to store incoming messages</string>
-        </property>
-        <property name="whatsThis" >
-         <string>Store new incoming messages in a message stack. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via chat window and system tray icon animations.</string>
-        </property>
-        <property name="text" >
-         <string>Use message stac&amp;k</string>
         </property>
        </widget>
       </item>
@@ -120,13 +107,13 @@
          <bool>false</bool>
         </property>
         <property name="toolTip" >
-         <string>Also add unread messages to queue/stack</string>
+         <string>Also add unread messages to queue</string>
         </property>
         <property name="whatsThis" >
          <string>Unread messages are messages that will be displayed in an already opened but inactive chat window. Only incoming queued messages trigger notification via chat window and system tray icon animations. With this option disabled only new incoming messages are queued, i.e. messages that cannot be displayed in an already open chat window.</string>
         </property>
         <property name="text" >
-         <string>Queue/stack unrea&amp;d messages</string>
+         <string>Queue unrea&amp;d messages</string>
         </property>
        </widget>
       </item>

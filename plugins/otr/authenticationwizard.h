@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  *************************************************************************/ 
 
-#ifndef SMPPOPUP_H
-#define SMPPOPUP_H
+#ifndef AUTHENTICATIONWIZARD_H
+#define AUTHENTICATIONWIZARD_H
 
 /**
   * @author Michael Zanetti
@@ -32,29 +32,75 @@ extern "C"{
 #include "kopetechatsession.h"
 
 #include "otrlchatinterface.h"
-#include "ui_smppopup.h"
 
-class SMPPopup: public KDialog
+#include "klineedit.h"
+#include "kcombobox.h"
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QWizard>
+#include <QRadioButton>
+
+class AuthenticationWizard: public QWizard
 {
 	Q_OBJECT
 public:
-	explicit SMPPopup(QWidget *parent = 0, ConnContext *context = 0, Kopete::ChatSession *session = 0, bool initiate = true );
-	~SMPPopup();
+	explicit AuthenticationWizard(QWidget *parent = 0, ConnContext *context = 0, Kopete::ChatSession *session = 0, bool initiate = true, const QString &question = NULL );
+	~AuthenticationWizard();
+
+	static AuthenticationWizard *findWizard(Kopete::ChatSession *session);
+	void nextState();
+	void finished(bool success, bool trust);
 
 protected:
-	virtual void closeEvent( QCloseEvent *event );
 
-private slots:
-	void	cancelSMP();
-	void	respondSMP();
-	void	manualAuth();
+	virtual int nextId() const;
+	virtual bool validateCurrentPage();
 
 private:
-	Ui::SMPPopup ui;
+	enum { Page_SelectMethod, Page_QuestionAnswer, Page_SharedSecret, Page_ManualVerification, Page_Wait1, Page_Wait2, Page_Final };
+	
 	ConnContext *context;
 	Kopete::ChatSession *session;
+	QString question;
 	bool initiate;
 
+	QLabel *lQuestion;
+	QLabel *lAnswer;
+	QLabel *lSecret;
+	QLabel *infoLabel;
+	QLabel *lFinal;
+
+	QLineEdit *leQuestion;
+	QLineEdit *leAnswer;
+	QLineEdit *leSecret;
+
+	QRadioButton *rbQA;
+	QRadioButton *rbSS;
+	QRadioButton *rbMV;
+
+	QComboBox *cbManualAuth;
+
+	QWizardPage *createIntroPage();
+	QWizardPage *createQAPage();
+	QWizardPage *createSSPage();
+	QWizardPage *createMVPage();
+	QWizardPage *createFinalPage();
+
+private slots:
+	void cancelVerification();
+	void updateInfoBox();
 };
 
-#endif //SMPPOPUP_H
+
+class WaitPage: public QWizardPage
+{
+private:
+	bool canContinue;
+public:
+	WaitPage(const QString &text);
+	void ready(){canContinue = true;};
+protected:
+	virtual bool isComplete() const{return canContinue;};
+};
+
+#endif //AUTHENTICATIONWIZARD_H

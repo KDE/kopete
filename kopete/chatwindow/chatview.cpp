@@ -56,7 +56,7 @@ ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const QVariantList &) :
 
 KopeteView* ChatWindowPlugin::createView( Kopete::ChatSession *manager )
 {
-    return (KopeteView*)new ChatView(manager,this);
+    return new ChatView(manager,this);
 }
 
 class KopeteChatViewPrivate
@@ -102,7 +102,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	d->splitter->setChildrenCollapsible( false );
 	QList<int> sizes;
 	sizes << 240 << 40;
-	d->splitter->setSizes( sizes ); 
+	d->splitter->setSizes( sizes );
 
 	// FIXME: is this used these days? it seems totally unnecessary
 	connect( editPart(), SIGNAL( toolbarToggled(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
@@ -369,6 +369,11 @@ bool ChatView::closeView( bool force )
 	}
 
 	return false;
+}
+
+ChatView::KopeteTabState ChatView::tabState() const
+{
+	return m_tabState;
 }
 
 void ChatView::updateChatState( KopeteTabState newState )

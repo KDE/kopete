@@ -18,7 +18,7 @@
 #ifndef KBYTEARRAYESCAPER_H
 #define KBYTEARRAYESCAPER_H
 
-#include "kircglobal.h"
+#include "kirc_export.h"
 
 #include <QtCore/QByteArray>
 #include <QtCore/QList>

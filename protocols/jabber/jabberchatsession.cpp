@@ -49,6 +49,8 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 											 : Kopete::ChatSession ( user, others, protocol )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << "New message manager for " << user->contactId ();
+	
+	setComponentData(protocol->componentData());
 
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );
@@ -343,6 +345,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 		jabberMessage.setTo ( toJid );
 
+		jabberMessage.setId( QString::number( message.id() ) );
 		jabberMessage.setSubject ( message.subject () );
 		jabberMessage.setTimeStamp ( message.timestamp () );
 
@@ -425,6 +428,8 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
         // send the message
 		account()->client()->sendMessage ( jabberMessage );
+
+		message.setState( Kopete::Message::StateSending );
 
 		// append the message to the manager
 		Kopete::ChatSession::appendMessage ( message );

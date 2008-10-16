@@ -44,7 +44,7 @@ using namespace Kopete;
 class IRCContact::Private
 {
 public:
-	KIrc::Entity::Ptr entity;
+	KIrc::EntityPtr entity;
 
 	QMap<ChatSessionType, ChatSession *> chatSessions;
 
@@ -59,7 +59,7 @@ public:
 	QList<KAction *> userActions;
 };
 
-IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, MetaContact *metac, const QString& icon)
+IRCContact::IRCContact(IRCAccount *account, const KIrc::EntityPtr &entity, MetaContact *metac, const QString& icon)
 	: Contact(account, entity->name(), metac, icon)
 	, d (new IRCContact::Private)
 {
@@ -82,7 +82,7 @@ IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, Met
 //	mMyself.append( static_cast<Contact*>( this ) );
 
 	// KIRC stuff
-	connect(client, SIGNAL(connectionStateChanged(KIrc::ConnectionState)),
+	connect(client, SIGNAL(connectionStateChanged(KIrc::Socket::ConnectionState)),
 		this, SLOT(updateStatus()));
 /*
 	connect(entity, SIGNAL(updated()),
@@ -127,6 +127,11 @@ IRCAccount *IRCContact::ircAccount() const
 KIrc::ClientSocket *IRCContact::kircClient() const
 {
 	return ircAccount()->client();
+}
+
+KIrc::EntityPtr IRCContact::entity() const
+{
+	return d->entity;
 }
 
 void IRCContact::entityUpdated()
@@ -188,7 +193,8 @@ QString IRCContact::caption() const
 
 void IRCContact::updateStatus()
 {
-	setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity));
+	//setOnlineStatus(Kopete::OnlineStatus::Online);
+	//setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity));
 }
 
 bool IRCContact::isReachable()
@@ -242,14 +248,16 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 {
 	IRCAccount *account = ircAccount();
 	KIrc::ClientSocket *engine = kircClient();
-/*
-	Kopete::ChatSession *chatSession = d->chatSessions.get();
+
+	Kopete::ChatSession *chatSession = d->chatSessions.value(type);
 	if (!chatSession)
 	{
 //		if (engine->status() == KIrc::ClientSocket::Idle && dynamic_cast<IRCServerContact*>(this) == 0)
 //			account->connect();
 
-		chatSession = ChatSessionManager::self()->create(account->myself(), mMyself, account->protocol());
+		kDebug(14120)<<"creating new ChatSession";
+
+		chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) , account->protocol());
 		chatSession->setDisplayName(caption());
 
 		connect(chatSession, SIGNAL(messageSent(Message&, ChatSession *)),
@@ -257,12 +265,10 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 		connect(chatSession, SIGNAL(closing(ChatSession *)),
 			this, SLOT(chatSessionDestroyed(ChatSession *)));
 
-		d->chatSessions.add(type, chatSession);
+		d->chatSessions.insert(type, chatSession);
 	}
 
 	return chatSession;
-*/
-	return 0;
 }
 
 void IRCContact::chatSessionDestroyed(ChatSession *chatSession)
@@ -412,7 +418,7 @@ bool IRCContact::isChatting(ChatSession *avoid) const
 
 void IRCContact::appendMessage(Message &msg)
 {
-//	manager(Contact::CanCreate)->appendMessage(msg);
+	manager(Contact::CanCreate)->appendMessage(msg);
 }
 /*
 void IRCServerContact::appendMessage(Kopete::Message &msg)

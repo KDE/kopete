@@ -47,6 +47,7 @@ public:
 		fileSize = 0;
 		fileCount = 0;
 		plugin = 0;
+		id = 0;
 	}
 	MessagePrivate( const MessagePrivate &other )
 		: QSharedData( other )
@@ -71,6 +72,7 @@ public:
 		fileName = other.fileName;
 		fileSize = other.fileSize;
 		fileCount = other.fileCount;
+		id = other.id;
 
 		if ( other.plugin )
 			plugin = new MessagePlugin(*other.plugin);
@@ -104,6 +106,7 @@ public:
 	DWORD fileSize;
 	WORD fileCount;
 	MessagePlugin* plugin;
+	uint id;
 };
 
 Message::Message()
@@ -468,6 +471,16 @@ void Message::setPlugin( MessagePlugin* plugin )
 		delete d->plugin;
 
 	d->plugin = plugin;
+}
+
+uint Message::id() const
+{
+	return d->id;
+}
+
+void Message::setId( uint id )
+{
+	d->id = id;
 }
 
 Message::operator bool() const

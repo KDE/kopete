@@ -319,6 +319,7 @@ KopeteChatWindow::~KopeteChatWindow()
 
 	delete backgroundFile;
 	delete anim;
+	delete animIcon;
 }
 
 void KopeteChatWindow::windowListChanged()
@@ -326,12 +327,6 @@ void KopeteChatWindow::windowListChanged()
 	// update all windows' Move Tab to Window action
 	for ( WindowList::iterator it = windows.begin(); it != windows.end(); ++it )
 		(*it)->checkDetachEnable();
-}
-
-void KopeteChatWindow::slotNickComplete()
-{
-	if( m_activeView )
-		m_activeView->nickComplete();
 }
 
 void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
@@ -378,6 +373,12 @@ void KopeteChatWindow::initActions(void)
 	tabClose = KStandardAction::close ( this, SLOT(slotChatClosed()), coll );
         coll->addAction( "tabs_close", tabClose );
 
+	tabActive=new KAction( i18n( "&Activate Next Active Tab" ), coll );
+	coll->addAction( "tabs_active", tabActive );
+// 	tabActive->setShortcut( KStandardShortcut::tabNext() );
+	tabActive->setEnabled( false );
+	connect( tabActive, SIGNAL(triggered(bool)), this, SLOT(slotNextActiveTab()) );
+
 	tabRight=new KAction( i18n( "&Activate Next Tab" ), coll );
         coll->addAction( "tabs_right", tabRight );
 	tabRight->setShortcut( KStandardShortcut::tabNext() );
@@ -390,9 +391,10 @@ void KopeteChatWindow::initActions(void)
 	tabLeft->setEnabled( false );
 	connect( tabLeft, SIGNAL(triggered(bool)), this, SLOT(slotPreviousTab()) );
 
+	// This action exists mostly so that the shortcut is configurable.
+	// The actual "slot" is the eventFilter.
 	nickComplete = new KAction( i18n( "Nic&k Completion" ), coll );
         coll->addAction( "nick_complete", nickComplete );
-	connect( nickComplete, SIGNAL(triggered(bool)), this, SLOT(slotNickComplete()));
 	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
 	tabDetach = new KAction( KIcon("tab-detach"), i18n( "&Detach Chat" ), coll );
@@ -476,20 +478,16 @@ void KopeteChatWindow::initActions(void)
 
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QLatin1String( "kopete" ) ) );
-#if 0
-	animIcon = KGlobal::iconLoader()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Toolbar);
 
-	// Pause the animation because otherwise it's running even when we're not
-	// showing it. This eats resources, and also triggers a pixmap leak in
-	// QMovie in at least Qt 3.1, Qt 3.2 and the current Qt 3.3 beta
-	if( !animIcon.isNull() )  //and another QT bug:  it crash if we pause a null movie
-		animIcon.pause();
-#endif
 	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
 	anim = new QLabel( QString::null, 0L );	//krazy:exclude=nullstrassign for old broken gcc
 	anim->setObjectName( QLatin1String("kde toolbar widget") );
 	anim->setMargin(5);
 	anim->setPixmap( normalIcon );
+
+	animIcon = KIconLoader::global()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Toolbar);
+	if ( animIcon )
+		animIcon->setPaused(true);
 
 	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll );
         coll->addAction( "toolbar_animation", animAction );
@@ -519,8 +517,8 @@ void KopeteChatWindow::slotStopAnimation( ChatView* view )
 	if( view == m_activeView )
 	{
 		anim->setPixmap( normalIcon );
-		if( animIcon.state() == QMovie::Running )
-			animIcon.setPaused( true );
+		if( animIcon && animIcon->state() == QMovie::Running )
+			animIcon->setPaused( true );
 	}
 }
 
@@ -757,6 +755,7 @@ void KopeteChatWindow::checkDetachEnable()
 	tabDetach->setEnabled( haveTabs );
 	tabLeft->setEnabled( haveTabs );
 	tabRight->setEnabled( haveTabs );
+	tabActive->setEnabled( haveTabs );
 	actionTabPlacementMenu->setEnabled( m_tabBar != 0 );
 
 	bool otherWindows = (windows.count() > 1);
@@ -853,6 +852,20 @@ void KopeteChatWindow::slotNextTab()
 		m_tabBar->setCurrentIndex( curPage + 1 );
 }
 
+void KopeteChatWindow::slotNextActiveTab()
+{
+	int curPage = m_tabBar->currentIndex();
+	for(int i=(curPage+1) % m_tabBar->count(); i!=curPage; i = (i+1) % m_tabBar->count())
+	{
+		ChatView *v = static_cast<ChatView*>(m_tabBar->widget(i)); //We assume we only have ChatView's
+		if(v->tabState()==ChatView::Highlighted || v->tabState()==ChatView::Message)
+		{
+			m_tabBar->setCurrentIndex( i );
+			break;
+		}
+	}
+}
+
 void KopeteChatWindow::slotSetCaption( bool active )
 {
 	if( active && m_activeView )
@@ -918,19 +931,18 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	//Update icons to match
 	slotUpdateCaptionIcons( m_activeView );
 
-#if 0
-	if ( m_activeView->sendInProgress() && !animIcon.isNull() )
+	if ( m_activeView->sendInProgress() && animIcon )
 	{
-		anim->setMovie( &animIcon );
-		animIcon.unpause();
+		anim->setMovie( animIcon );
+		animIcon->setPaused(false);
 	}
 	else
 	{
 		anim->setPixmap( normalIcon );
-		if( !animIcon.isNull() )
-			animIcon.pause();
+		if( animIcon )
+			animIcon->setPaused(true);
 	}
-#endif
+
 	if ( m_alwaysShowTabs || chatViewList.count() > 1 )
 	{
 		if( !m_tabBar )
@@ -1003,13 +1015,11 @@ void KopeteChatWindow::slotSendMessage()
 {
 	if ( m_activeView && m_activeView->canSend() )
 	{
-#if 0
-		if( !animIcon.isNull() )
+		if( animIcon )
 		{
-			anim->setMovie( &animIcon );
-			animIcon.unpause();
+			anim->setMovie( animIcon );
+			animIcon->setPaused(false);
 		}
-#endif
 		m_activeView->sendMessage();
 	}
 }
@@ -1275,8 +1285,18 @@ void KopeteChatWindow::resizeEvent( QResizeEvent *e )
 		m_activeView->messagePart()->keepScrolledDown();
 }
 
+bool KopeteChatWindow::eventFilter( QObject *obj, QEvent *event )
+{
+	if ( m_activeView && obj == m_activeView->editWidget() && event->type() == QEvent::KeyPress ) {
+		 QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+		 if (nickComplete->shortcut().primary() == QKeySequence(keyEvent->key())) {
+			 m_activeView->nickComplete();
+			 return true;
+		 }
+	}
+	return KXmlGuiWindow::eventFilter(obj, event);
+}
 
 #include "kopetechatwindow.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

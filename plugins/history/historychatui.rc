@@ -10,7 +10,7 @@
 		</Menu>
 	</MenuBar>
 
-	<ToolBar name="chatToolBar" fullWidth="true">
+	<ToolBar name="mainToolBar" fullWidth="true">
 		<Action name="historyPrevious" />
 		<Action name="historyNext" />
 		<Action name="historyQuote" />

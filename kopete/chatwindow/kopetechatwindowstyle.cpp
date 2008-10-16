@@ -48,6 +48,11 @@ public:
 	QString actionIncomingHtml;
 	QString actionOutgoingHtml;
 	QString fileTransferIncomingHtml;
+	QString outgoingStateSendingHtml;
+	QString outgoingStateErrorHtml;
+	QString outgoingStateSentHtml;
+	QString outgoingStateUnknownHtml;
+
 	QHash<QString, bool> compactVariants;
 };
 
@@ -160,6 +165,26 @@ QString ChatWindowStyle::getFileTransferIncomingHtml() const
 	return d->fileTransferIncomingHtml;
 }
 
+QString ChatWindowStyle::getOutgoingStateSendingHtml() const
+{
+	return d->outgoingStateSendingHtml;
+}
+
+QString ChatWindowStyle::getOutgoingStateSentHtml() const
+{
+	return d->outgoingStateSentHtml;
+}
+
+QString ChatWindowStyle::getOutgoingStateErrorHtml() const
+{
+	return d->outgoingStateErrorHtml;
+}
+
+QString ChatWindowStyle::getOutgoingStateUnknownHtml() const
+{
+	return d->outgoingStateUnknownHtml;
+}
+
 bool ChatWindowStyle::hasActionTemplate() const
 {
 	return ( !d->actionIncomingHtml.isEmpty() && !d->actionOutgoingHtml.isEmpty() );
@@ -207,6 +232,10 @@ void ChatWindowStyle::readStyleFiles()
 	QString actionIncomingFile = d->baseHref + QString("Incoming/Action.html");
 	QString actionOutgoingFile = d->baseHref + QString("Outgoing/Action.html");
 	QString fileTransferIncomingFile = d->baseHref + QString("Incoming/FileTransferRequest.html");
+	QString outgoingStateUnknownFile = d->baseHref + QString("Outgoing/StateUnknown.html");
+	QString outgoingStateSendingFile = d->baseHref + QString("Outgoing/StateSending.html");
+	QString outgoingStateSentFile = d->baseHref + QString("Outgoing/StateSent.html");
+	QString outgoingStateErrorFile = d->baseHref + QString("Outgoing/StateError.html");
 
 	QFile fileAccess;
 	// First load header file.
@@ -341,6 +370,51 @@ void ChatWindowStyle::readStyleFiles()
 		                           "</div>" )
 		                           .arg( i18n( "Download" ), i18n( "Cancel" ) );
 		d->fileTransferIncomingHtml.replace( QLatin1String("%message%"), message );
+	}
+
+	// Load outgoing file
+	if( QFile::exists(outgoingStateUnknownFile) )
+	{
+		fileAccess.setFileName(outgoingStateUnknownFile);
+		fileAccess.open(QIODevice::ReadOnly);
+		QTextStream headerStream(&fileAccess);
+		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
+		d->outgoingStateUnknownHtml = headerStream.readAll();
+		kDebug(14000) << "Outgoing StateUnknown HTML: " << d->outgoingStateUnknownHtml;
+		fileAccess.close();
+	}
+
+	if( QFile::exists(outgoingStateSendingFile) )
+	{
+		fileAccess.setFileName(outgoingStateSendingFile);
+		fileAccess.open(QIODevice::ReadOnly);
+		QTextStream headerStream(&fileAccess);
+		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
+		d->outgoingStateSendingHtml = headerStream.readAll();
+		kDebug(14000) << "Outgoing StateSending HTML: " << d->outgoingStateSendingHtml;
+		fileAccess.close();
+	}
+
+	if( QFile::exists(outgoingStateSentFile) )
+	{
+		fileAccess.setFileName(outgoingStateSentFile);
+		fileAccess.open(QIODevice::ReadOnly);
+		QTextStream headerStream(&fileAccess);
+		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
+		d->outgoingStateSentHtml = headerStream.readAll();
+		kDebug(14000) << "Outgoing StateSent HTML: " << d->outgoingStateSentHtml;
+		fileAccess.close();
+	}
+
+	if( QFile::exists(outgoingStateErrorFile) )
+	{
+		fileAccess.setFileName(outgoingStateErrorFile);
+		fileAccess.open(QIODevice::ReadOnly);
+		QTextStream headerStream(&fileAccess);
+		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
+		d->outgoingStateErrorHtml = headerStream.readAll();
+		kDebug(14000) << "Outgoing StateError HTML: " << d->outgoingStateErrorHtml;
+		fileAccess.close();
 	}
 }
 

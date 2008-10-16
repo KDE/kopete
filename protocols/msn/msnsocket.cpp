@@ -134,7 +134,7 @@ void MSNSocket::disconnect()
 			m_timer->stop();
 		}
 
-	if ( m_socket->isOpen() )
+	if ( m_socket && m_socket->isOpen() )
 		m_socket->disconnectFromHost();
 	else
 		slotSocketClosed();
@@ -209,8 +209,8 @@ void MSNSocket::slotDataReceived()
 
 	// incoming data, plus an extra char where we pretend a NUL is so the conversion
 	// to QCString doesn't go over the end of the allocated memory.
-	char *buffer = new char[ avail + 1 ];
-	int ret = m_socket->read( buffer, avail );
+	QByteArray buffer(avail, '\0');
+	int ret = m_socket->read( buffer.data(), avail );
 
 	if ( ret < 0 )
 	{
@@ -244,7 +244,7 @@ void MSNSocket::slotDataReceived()
 			QByteArray bytes;
 
 			// Check if all data has arrived.
-			rawData = QString(QByteArray(buffer, avail + 1));
+			rawData = QString(buffer);
 			bool headers = (rawData.indexOf(QRegExp("HTTP/\\d\\.\\d (\\d+) ([^\r\n]+)")) != -1);
 
 			if(headers)
@@ -263,9 +263,8 @@ void MSNSocket::slotDataReceived()
 						{
 							// The packet contains the headers but does not contain the content data;
 							// buffer the data received and read again.
-							m_buffer.add(buffer, avail);
+							m_buffer.append(buffer);
 
-							delete[] buffer;
 							// Update how much data remains.
 							m_remaining = l;
 							return;
@@ -276,13 +275,12 @@ void MSNSocket::slotDataReceived()
 			else
 			{
 				// Write the received data to the buffer.
-				m_buffer.add(buffer, avail);
+				m_buffer.append(buffer);
 
 				m_remaining -= avail;
 				if(m_remaining != 0)
 				{
 					// We have not received all the content data, read again.
-					delete[] buffer;
 					return;
 				}
 
@@ -293,7 +291,7 @@ void MSNSocket::slotDataReceived()
 			if(bytes.size() == 0) 
 			{
 				// The response headers and the content came in one packet.
-				bytes = QByteArray( buffer, avail );
+				bytes = buffer;
 			}
 
 
@@ -301,7 +299,6 @@ void MSNSocket::slotDataReceived()
 			WebResponse response(bytes);
 
 			if(response.getStatusCode() == 100) {
-			    delete[] buffer;
 				return;
 			}
 
@@ -336,7 +333,6 @@ void MSNSocket::slotDataReceived()
 							kDebug(14140) << "Session closed.";
 							m_bCanPoll = false;
 							disconnect();
-						    delete [] buffer;
 							return;
 						}
 				}else
@@ -360,9 +356,9 @@ void MSNSocket::slotDataReceived()
 					{
 						// Otherwise, if the content length is greater than zero, get the web response stream.
 						QDataStream *stream = response.getResponseStream();
-						buffer = new char[length];
+						buffer.fill('\0', length);
 						// Read the web response content.
-						stream->readRawData(buffer, length);
+						stream->readRawData(buffer.data(), length);
 						ret = length;
 					}else
 						error = true;
@@ -380,7 +376,6 @@ void MSNSocket::slotDataReceived()
 				m_bCanPoll = false;
 				// Disconnect from the service.
 				disconnect();
-		        delete [] buffer;
 				return;
 			}
 		}
@@ -405,7 +400,7 @@ void MSNSocket::slotDataReceived()
 			kDebug( 14141 ) << rawData;
 
 		// fill the buffer with the received data
-		m_buffer.add( buffer, ret );
+		m_buffer.append(buffer);
 
 		slotReadLine();
 
@@ -416,7 +411,6 @@ void MSNSocket::slotDataReceived()
 	}
 
 	// Cleanup.
-	delete[] buffer;
 }
 
 void MSNSocket::slotReadLine()
@@ -944,19 +938,6 @@ MSNSocket::Buffer::~Buffer()
 {
 }
 
-void MSNSocket::Buffer::add( char *str, unsigned int sz )
-{
-	char *b = new char[ size() + sz ];
-	for ( int f = 0; f < size(); f++ )
-		b[ f ] = data()[ f ];
-	for ( uint f = 0; f < sz; f++ )
-		b[ size() + f ] = str[ f ];
-
-	QByteArray *that = this;
-	*that = QByteArray( b, size() + sz );
-	delete[] b;
-}
-
 QByteArray MSNSocket::Buffer::take( int blockSize )
 {
 	if ( size() < blockSize )
@@ -965,17 +946,11 @@ QByteArray MSNSocket::Buffer::take( int blockSize )
 		return QByteArray();
 	}
 
-	QByteArray rep;
-	rep.reserve( blockSize );	
-	for( int i = 0; i < blockSize; i++ )
-		rep[ i ] = data()[ i ];
+	QByteArray rep = left(blockSize);
 
-	char *str = new char[ size() - blockSize ];
-	for ( int i = 0; i < size() - blockSize; i++ )
-		str[ i ] = data()[ blockSize + i ];
+	QByteArray newThis = right( size() - blockSize );
 	QByteArray *that = this;
-	*that = QByteArray( str, size() - blockSize );
-	delete[] str;
+	*that = newThis;
 
 	return rep;
 }

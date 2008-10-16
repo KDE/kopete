@@ -41,6 +41,7 @@ set(liboscar_SRCS
     xtrazxservice.cpp
     xtrazxtraznotify.cpp
     xtrazxrandomizerservice.cpp
+    filetransferhandler.cpp
     tasks/task.cpp
     tasks/logintask.cpp
     tasks/oscarlogintask.cpp
@@ -64,6 +65,7 @@ set(liboscar_SRCS
     tasks/onlinenotifiertask.cpp
     tasks/ssimodifytask.cpp
     tasks/messagereceivertask.cpp
+    tasks/messageacktask.cpp
     tasks/sendmessagetask.cpp
     tasks/icqtask.cpp
     tasks/offlinemessagestask.cpp
@@ -89,7 +91,7 @@ set(liboscar_SRCS
 
 kde4_add_library( oscar SHARED ${liboscar_SRCS} )
 
-target_link_libraries( oscar ${KDE4_KDECORE_LIBS} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} kopete )
+target_link_libraries( oscar ${KDE4_KDECORE_LIBS} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY} )
 set_target_properties( oscar PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 
 

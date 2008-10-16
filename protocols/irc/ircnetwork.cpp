@@ -58,6 +58,18 @@ void Networks::setNetworks( const IRC::NetworkList& networks )
 	d->networks=networks;
 }
 
+const IRC::Network& Networks::network(const QString &name)
+{
+	foreach(const Network& net,d->networks)
+	{
+		if(net.name==name)
+		{
+			return net;
+		}
+	}
+	return Network();
+}
+
 void Networks::slotReadNetworks()
 {
 	d->networks.clear();

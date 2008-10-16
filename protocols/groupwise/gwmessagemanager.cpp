@@ -360,7 +360,7 @@ void GroupWiseChatSession::slotInviteContact( Kopete::Contact * contact )
 
 void GroupWiseChatSession::inviteContact( const QString &contactId )
 {
-	Kopete::Contact * contact = account()->contacts()[ contactId ];
+	Kopete::Contact * contact = account()->contacts().value(contactId);
 	if ( contact )
 		slotInviteContact( contact );
 }

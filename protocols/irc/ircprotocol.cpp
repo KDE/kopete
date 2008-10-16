@@ -341,13 +341,13 @@ void IRCProtocol::initOnlineStatus()
 */
 }
 
-OnlineStatus IRCProtocol::onlineStatusFor(const KIrc::Entity::Ptr &entity)
+OnlineStatus IRCProtocol::onlineStatusFor(KIrc::Entity *entity)
 {
 //	return onlineStatusFor(entity, 0);
 	return OnlineStatus::Unknown;
 }
 /*
-OnlineStatus IRCProtocol::onlineStatusFor(const KIrc::Entity::Ptr &entity, unsigned categories)
+OnlineStatus IRCProtocol::onlineStatusFor(KIrc::Entity *entity, unsigned categories)
 {
 	// Only copy the needed status
 	KIrc::EntityStatus status;

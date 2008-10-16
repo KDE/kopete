@@ -19,8 +19,6 @@
 #define MSNP2P_H
 
 #include <qobject.h>
-#include <q3strlist.h>
-
 
 #define MSN_NEWFILETRANSFER 0
 

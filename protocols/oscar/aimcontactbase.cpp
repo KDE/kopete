@@ -230,12 +230,14 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 	bool allowUCS2 = !isOnline() || !(m_details.userClass() & Oscar::CLASS_ICQ) || m_details.hasCap( CAP_UTF8 );
 	msg.setText( Oscar::Message::encodingForText( s, allowUCS2 ), s, contactCodec() );
 	
+	msg.setId( message.id() );
 	msg.setReceiver(mName);
 	msg.setTimestamp(message.timestamp());
 	msg.setChannel(0x01);
 	
 	mAccount->engine()->sendMessage(msg);
 	
+	message.setState( Kopete::Message::StateSending );
 	// Show the message we just sent in the chat window
 	manager(Kopete::Contact::CanCreate)->appendMessage(message);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();

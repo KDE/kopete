@@ -48,9 +48,9 @@ class Message::Private
 {
 public:
 	Private() //assign next message id, it can't be changed later
-		: id(nextId++), direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), backgroundOverride(false),
-		  foregroundOverride(false), richTextOverride(false), isRightToLeft(false), timeStamp( QDateTime::currentDateTime() ),
-		  body(new QTextDocument), escapedBodyDirty(true), fileTransfer(0)
+		: id(nextId++), direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), state(StateUnknown),
+		  delayed(false), backgroundOverride(false), foregroundOverride(false), richTextOverride(false), isRightToLeft(false),
+		  timeStamp( QDateTime::currentDateTime() ), body(new QTextDocument), escapedBodyDirty(true), fileTransfer(0)
 	{}
 	Private (const Private &other);
 	~Private();
@@ -65,6 +65,8 @@ public:
 	MessageType type;
 	QString requestedPlugin;
 	MessageImportance importance;
+	MessageState state;
+	bool delayed;
 	bool backgroundOverride;
 	bool foregroundOverride;
 	bool richTextOverride;
@@ -97,7 +99,8 @@ public:
 	static uint nextId;
 };
 
-uint Message::Private::nextId = 0;
+// Start with 1 as 0 is reserved for invalid id;
+uint Message::Private::nextId = 1;
 
 Message::Private::Private (const Message::Private &other)
 	: QSharedData (other), id(other.id)
@@ -111,6 +114,8 @@ Message::Private::Private (const Message::Private &other)
 	type = other.type;
 	requestedPlugin = other.requestedPlugin;
 	importance = other.importance;
+	state = other.state;
+	delayed = other.delayed;
 	backgroundOverride = other.backgroundOverride;
 	foregroundOverride = other.foregroundOverride;
 	richTextOverride = other.richTextOverride;
@@ -546,6 +551,16 @@ Message::MessageImportance Message::importance() const
 	return d->importance;
 }
 
+Message::MessageState Message::state() const
+{
+	return d->state;
+}
+
+void Message::setState(MessageState state)
+{
+	d->state = state;
+}
+
 ChatSession *Message::manager() const
 {
 	return d->manager;
@@ -559,7 +574,7 @@ void Message::setManager(ChatSession *kmm)
 QString Message::getHtmlStyleAttribute() const
 {
 	QString styleAttribute;
-	
+
 	styleAttribute = QString::fromUtf8("style=\"");
 
 	// Affect foreground(color) and background color to message.
@@ -571,7 +586,7 @@ QString Message::getHtmlStyleAttribute() const
 	{
 		styleAttribute += QString::fromUtf8("background-color: %1; ").arg(d->backgroundColor.name());
 	}
-	
+
 	// Affect font parameters.
 	if( !d->richTextOverride && d->font!=QFont() )
 	{
@@ -612,7 +627,7 @@ void Message::setFileName( const QString &fileName )
 {
 	if ( !d->fileTransfer )
 		d->fileTransfer = new Message::Private::FileTransferInfo();
-	
+
 	d->fileTransfer->fileName = fileName;
 }
 
@@ -625,7 +640,7 @@ void Message::setFileSize( unsigned long size )
 {
 	if ( !d->fileTransfer )
 		d->fileTransfer = new Message::Private::FileTransferInfo();
-	
+
 	d->fileTransfer->fileSize = size;
 }
 
@@ -638,7 +653,7 @@ void Message::setFilePreview( const QPixmap &preview )
 {
 	if ( !d->fileTransfer )
 		d->fileTransfer = new Message::Private::FileTransferInfo();
-	
+
 	d->fileTransfer->filePreview = preview;
 }
 
@@ -648,7 +663,7 @@ QPixmap Message::filePreview() const
 }
 
 // prime candidate for removal
-#if 0 
+#if 0
 QString Message::decodeString( const QByteArray &message, const QTextCodec *providedCodec, bool *success )
 {
 	/*
@@ -749,4 +764,14 @@ void Message::setClasses(const QStringList & classes)
 	d->classes = classes;
 }
 
+}
+
+bool Kopete::Message::delayed() const
+{
+	return d->delayed;
+}
+
+void Kopete::Message::setDelayed(bool delay)
+{
+	d->delayed = delay;
 }

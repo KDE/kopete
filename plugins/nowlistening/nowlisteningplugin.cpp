@@ -42,7 +42,7 @@
 #include "nowlisteningplugin.h"
 #include "nlmediaplayer.h"
 #include "nlkscd.h"
-#include "nlnoatun.h"
+//#include "nlnoatun.h"
 #include "nljuk.h"
 #include "nlamarok.h"
 #include "nlkaffeine.h"
@@ -112,7 +112,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const QVariantList& /*a
 
 	// set up known media players
 	d->m_mediaPlayerList.append( new NLKscd() );
-	d->m_mediaPlayerList.append( new NLNoatun() );
+	//d->m_mediaPlayerList.append( new NLNoatun() );
 	d->m_mediaPlayerList.append( new NLJuk() );
 	d->m_mediaPlayerList.append( new NLamaroK() );
 	d->m_mediaPlayerList.append( new NLKaffeine() );

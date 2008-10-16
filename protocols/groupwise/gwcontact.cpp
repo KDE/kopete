@@ -29,6 +29,7 @@
 #include <qmap.h>
 
 #include <kaction.h>
+#include <KActionCollection>
 #include <kdebug.h>
 #include <kicon.h>
 #include <klocale.h>
@@ -66,11 +67,6 @@ GroupWiseContact::GroupWiseContact( Kopete::Account* account, const QString &dn,
 
 GroupWiseContact::~GroupWiseContact()
 {
-	// This is necessary because otherwise the userDetailsManager 
-	// would not fetch details for this contact if they contact you
-	// again from off-contact-list.
-	if ( metaContact()->isTemporary() )
-		account()->client()->userDetailsManager()->removeContact( contactId() );
 }
 
 QString GroupWiseContact::dn() const
@@ -159,7 +155,7 @@ Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags
 
 QList<KAction*> *GroupWiseContact::customContextMenuActions()
 {
-	QList<KAction *> * actionCollection = new QList<KAction *>;
+	QList<KAction *> * actions = new QList<KAction *>;
 
 	// Block/unblock contact
 	QString label = account()->isContactBlocked( m_dn ) ? i18n( "Unblock User" ) : i18n( "Block User" );
@@ -172,9 +168,12 @@ QList<KAction*> *GroupWiseContact::customContextMenuActions()
 		m_actionBlock->setText( label );
 	m_actionBlock->setEnabled( account()->isConnected() );
 
-	actionCollection->append( m_actionBlock );
+	actions->append( m_actionBlock );
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("contactBlock"), m_actionBlock);
 
-	return actionCollection;
+	return actions;
 }
 
 void GroupWiseContact::slotUserInfo()
@@ -199,6 +198,7 @@ void GroupWiseContact::sendMessage( Kopete::Message &message )
 void GroupWiseContact::deleteContact()
 {
 	account()->deleteContact( this );
+	Kopete::Contact::deleteContact();
 }
 
 void GroupWiseContact::sync( unsigned int)

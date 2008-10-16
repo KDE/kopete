@@ -31,7 +31,7 @@
 #include <kactioncollection.h>
 #include <kaction.h>
 #include <kmenu.h>
-#include <klocale.h>	
+#include <klocale.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include "kopeteuiglobal.h"
@@ -55,7 +55,7 @@ KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent )
 }
 
 KopeteSystemTray::KopeteSystemTray(QWidget* parent)
-	: KAnimatedSystemTrayIcon(parent)
+	: KSystemTrayIcon(parent)
 	, mMovie(0)
 {
 	kDebug(14010) ;
@@ -167,10 +167,10 @@ void KopeteSystemTray::startBlink()
 		mMovie = KIconLoader::global()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Panel );
 	// KIconLoader already checked isValid()
 	if ( !mMovie) return;
-	
+
 	if (!movie())
 		setMovie( mMovie );
-	startMovie();
+	mMovie->start();
 }
 
 void KopeteSystemTray::stopBlink()
@@ -198,10 +198,7 @@ void KopeteSystemTray::slotBlink()
 
 void KopeteSystemTray::slotNewEvent( Kopete::MessageEvent *event )
 {
-	if( Kopete::BehaviorSettings::self()->useMessageStack() )
-		mEventList.prepend( event );
-	else
-		mEventList.append( event );
+	mEventList.append( event );
 
 	connect(event, SIGNAL(done(Kopete::MessageEvent*)),
 		this, SLOT(slotEventDone(Kopete::MessageEvent*)));

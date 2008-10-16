@@ -71,6 +71,14 @@ void SendMessageTask::onGo()
 	SNAC s = { 0x0004, snacSubfamily, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer();
 
+	if ( m_message.id() > 0 )
+	{
+		Oscar::MessageInfo info;
+		info.contact = m_message.receiver();
+		info.id = m_message.id();
+		client()->addMessageInfo( s.id, info );
+	}
+
 	if ( snacSubfamily == 0x0006 && m_message.messageType() != Oscar::MessageType::File )
 	{
 		Oscar::DWORD cookie1 = KRandom::random();

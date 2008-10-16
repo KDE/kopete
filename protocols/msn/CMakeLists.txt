@@ -1,5 +1,3 @@
-add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
-
 #add_subdirectory( ui ) 
 add_subdirectory( icons ) 
 
@@ -63,7 +61,7 @@ kde4_add_library(kopete_msn_shared SHARED ${kopete_msn_shared_LIB_SRCS})
 if(WIN32)
   target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KUTILS_LIBS})
 else(WIN32)
-  target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete kopete_videodevice ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KUTILS_LIBS})
+  target_link_libraries(kopete_msn_shared  ${KDE4_KIO_LIBS} kopete kopete_videodevice ${KDE4_KUTILS_LIBS})
 endif(WIN32)
 
 set_target_properties(kopete_msn_shared PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
