@@ -28,9 +28,9 @@ class Account;
 }
 
 /**
- * @author Gustavo Pichorim Boiko <gustavo.boiko@kemail.net>
- *
  * This dialog is used to set the identity of an account 
+ *
+ * @author Gustavo Pichorim Boiko <gustavo.boiko@kemail.net>
  */
 class KOPETE_IDENTITY_EXPORT AccountIdentityDialog : public KDialog
 {

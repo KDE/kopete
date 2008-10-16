@@ -252,7 +252,7 @@ public:
 	 * @brief Factory method to create a protocol Task
 	 *
 	 * Protocols Task are tasks needed for executing specific
-	 * commands for the given protocol. This method create the
+	 * commands for the given protocol. This method creates the
 	 * required task for the given task type.
 	 *
 	 * If a task type is not available in the protocol, just return

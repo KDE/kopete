@@ -332,7 +332,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 			KNotification *notify=new KNotification(eventId, viewWidget, isActiveWindow ? KNotification::CloseOnTimeout : KNotification::Persistent);
 			notify->setText(body.subs( Qt::escape(msgFrom) ).subs( squashedMessage ).toString());
 			notify->setPixmap( QPixmap::fromImage(msg.from()->metaContact()->picture().image()) );
-			notify->setActions(( QStringList() <<  i18n( "View" )  <<   i18n( "Ignore" )) );
+			notify->setActions(( QStringList() <<  i18nc("@action", "View" )  <<   i18nc("@action", "Ignore" )) );
 
 			foreach(const QString& cl , msg.classes())
 				notify->addContext( qMakePair( QString::fromLatin1("class") , cl ) );

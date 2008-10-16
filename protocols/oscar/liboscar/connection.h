@@ -51,6 +51,8 @@ public:
 }
 
 /**
+ * @brief a single independent connection to an OSCAR server
+ * 
  * This class encapsulates both the low level network layer code and the high
  * level OSCAR protocol code required to create a single independent
  * connection to an OSCAR server
