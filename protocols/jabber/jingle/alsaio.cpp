@@ -192,8 +192,13 @@ AlsaIO::AlsaIO(StreamType t, QString device, Format f)
 
 	if ((err = snd_pcm_open(&handle, device.toUtf8().data(), m_type == Capture ? SND_PCM_STREAM_CAPTURE : SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK)) < 0)
 	{
-		qDebug() << "cannot open audio device default";
-		return;
+		qDebug() << "cannot open audio device" << device;
+		qDebug() << "trying default";
+		if ((err = snd_pcm_open(&handle, "default", m_type == Capture ? SND_PCM_STREAM_CAPTURE : SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK)) < 0)
+		{
+			kDebug() << "cannot open audio device default";
+			return;
+		}
 	}
 
 	if ((err = snd_pcm_hw_params_malloc(&hwParams)) < 0)
@@ -234,20 +239,21 @@ AlsaIO::AlsaIO(StreamType t, QString device, Format f)
 	if ((err = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &p, 0)) < 0)
 	{
 		qDebug() << "cannot set period time near to 20 ms";
-		//return;
+		return;
 	}
 
 	samplingRate = 8000;
 	if ((err = snd_pcm_hw_params_set_rate_near(handle, hwParams, &samplingRate, 0)) < 0)
 	{
 		qDebug() << "cannot set sample rate";
-	//	return;
+		//Don't return now, could work without that.
+		//return;
 	}
 	
-	if ((err = snd_pcm_hw_params_set_channels(handle, hwParams, 1)) < 0) //Only 1 channel for ALaw RTP (see RFC specification)
+	if ((err = snd_pcm_hw_params_set_channels(handle, hwParams, 1)) < 0)
 	{
 		qDebug() << "cannot set channel 1";
-		//return;
+		return;
 	}
 
 	if ((err = snd_pcm_hw_params(handle, hwParams)) < 0)
@@ -260,6 +266,7 @@ AlsaIO::AlsaIO(StreamType t, QString device, Format f)
 	qDebug() << "Period size =" << pSize;
 	snd_pcm_hw_params_get_period_time(hwParams, &pTime, 0);
 	qDebug() << "Period time =" << pTime;
+	snd_pcm_hw_params_get_rate (hwParams, &samplingRate, 0);
 	qDebug() << "Sampling rate =" << samplingRate;
 
 	pSizeBytes = snd_pcm_frames_to_bytes(handle, pSize);
@@ -382,7 +389,7 @@ void AlsaIO::write(const QByteArray& data)
 	}
 
 	buf.append(data);
-	if (!notifier->isEnabled())
+	if (notifier && !notifier->isEnabled())
 	{
 		//kDebug() << "Reactivating notifier.";
 		notifier->setEnabled(true);
