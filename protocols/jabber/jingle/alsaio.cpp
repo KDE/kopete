@@ -300,6 +300,7 @@ bool AlsaIO::start()
 	qDebug() << "start()";
 	if (ready)
 	{
+		//This is done here so we can modify parameters before starting.
 		snd_pcm_hw_params_free(hwParams);
 
 		if (snd_pcm_prepare(handle) < 0)

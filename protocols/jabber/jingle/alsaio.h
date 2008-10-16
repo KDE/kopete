@@ -43,6 +43,8 @@ public:
 class AlsaIO : public QObject
 {
 	Q_OBJECT
+	Q_ENUMS(Format)
+	Q_ENUMS(StreamType)
 public:
 
 	/** PCM sample format */
@@ -67,20 +69,40 @@ public:
 		ALaw = SND_PCM_FORMAT_A_LAW
 	};
 
+	// Stream direction
 	enum StreamType {
 		Capture = 0,
 		Playback
 	};
 	
+	/*
+	 * create and configure the alsa handle for the stream type t, the device
+	 * dev and the sample format f
+	 */
 	AlsaIO(StreamType t, QString dev, Format f);
 	~AlsaIO();
 
+	/*
+	 * returns the stream type currently used.
+	 */
 	StreamType type() const;
 
+	/*
+	 * start streaming, this must be called before starting playback too.
+	 */
 	bool start();
 	
+	/*
+	 * writes raw audio data on the device.
+	 * Actually, it fills a temporary buffer and write it on the device
+	 * when the device is ready
+	 */
 	void write(const QByteArray& data);
 
+	/*
+	 * check if the device is ready. that means if it is correcly configured
+	 * and ready to start streaming.
+	 */
 	bool isReady();
 	
 	/**
@@ -89,21 +111,26 @@ public:
 	unsigned int periodTime() const;
 
 	/**
-	 * @return sampling rate.
+	 * @return sampling rate
 	 */
 	unsigned int sRate() const;
 
 	/**
-	 * @return used format in snd_pcm_format_t (this should change)
+	 * @return used format
 	 */
 	Format format() const {return m_format;}
 	void setFormat(Format f);
-
+	
+	/*
+	 * returns the data currently available.
+	 * each time readyRead() is emitted, those data are
+	 * dropped (if you have a reference on the data, it won't be dropped)
+	 * and the next sample is available.
+	 */
 	QByteArray data();
 	
 	unsigned int timeStamp();
 	void writeData();
-	bool prepare();
 	int frameSizeBytes();
 
 public slots:
@@ -133,6 +160,8 @@ private:
 	int pSizeBytes;
 	QByteArray tmpBuf;
 	int times;
+	
+	bool prepare();
 };
 
 #endif //ALSA_IO
