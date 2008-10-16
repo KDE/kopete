@@ -515,8 +515,10 @@ void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 	QHashIterator<QString, Contact*> it(d->contacts);
 	for (  ; it.hasNext(); ) {
 		it.next();
-		if ( it.value() != d->myself )
-			it.value()->setOnlineStatus( status );
+
+		Contact *c = it.value();
+		if ( c && c != d->myself )
+			c->setOnlineStatus( status );
 	}
 }
 
