@@ -356,7 +356,7 @@ void Transfer::checkFileTransferEnd(quint32 fileSizeAck)
 	emit fileSizeAcknowledge(m_fileSizeAck);
 
 	if(m_fileSizeAck > m_fileSize)
-		abort(i18n("Acknowledge size is greater then the expected file size"));
+		abort(i18n("Acknowledge size is greater than the expected file size"));
 
 	if(m_fileSizeAck == m_fileSize)
 		emit complete();
