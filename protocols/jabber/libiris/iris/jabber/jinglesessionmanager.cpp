@@ -166,8 +166,10 @@ void JingleSessionManager::slotSessionTerminated()
 void JingleSessionManager::slotSessionIncoming()
 {
 	qDebug() << "JingleSessionManager::slotSessionIncoming() called.";
+	
 	JingleSession *sess = d->pjs->takeNextIncomingSession();
 	d->sessions << sess;
+	connect(sess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
 
 	// TODO:Check if the Transport method is supported.
 	for (int i = 0; i < sess->contents().count(); i++)
@@ -180,26 +182,27 @@ void JingleSessionManager::slotSessionIncoming()
 			//I think we have to send a no payload supported stanza.
 			//sess->terminate(UnsupportedApplications);
 			//--> no, only if all transports are unsupported
-			//in this case, a content-remove is more appropriate.
+			//in this case, a content-remove MUST be sent.
 			return;
 		}
 		
 		if (!checkSupportedTransport(c))
 		{
-			//I think we have to send a no payload supported stanza.
+			//I think we have to send a no transport supported stanza.
 			//sess->terminate(UnsupportedTransports);
 			//--> no, only if all applications are unsupported
-			//in this case, a content-remove is more appropriate.
+			//in this case, a content-remove MUST be sent.
 			return;
 		}
 
 		//Set supported payloads for this content.
 		c->setPayloadTypes(c->type() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
 	}
+	
 	emit newJingleSession(sess);
-	qDebug() << "SEND RINGING.";
+	
 	d->sessions.last()->ring();
-	qDebug() << "START NEGOTIATION";
+	
 	d->sessions.last()->startNegotiation();
 }
 

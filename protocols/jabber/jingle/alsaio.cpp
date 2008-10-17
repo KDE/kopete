@@ -347,7 +347,7 @@ bool AlsaIO::start()
 		//Always use the first pollfd
 		notifier = new QSocketNotifier(ufds[0].fd, QSocketNotifier::Read, this);
 		notifier->setEnabled(true);
-		connect(notifier, SIGNAL(activated(int)), this, SLOT(slotActivated(int)));
+		connect(notifier, SIGNAL(activated(int)), this, SLOT(slotReadyRead(int)));
 		snd_pcm_start(handle);
 	}
 	else if (m_type == Playback)
@@ -372,7 +372,7 @@ bool AlsaIO::start()
 
 		notifier = new QSocketNotifier(ufds[0].fd, type);
 		notifier->setEnabled(false); //Will be activated as soon as data comes in
-		connect(notifier, SIGNAL(activated(int)), this, SLOT(checkAlsaPoll(int)));
+		connect(notifier, SIGNAL(activated(int)), this, SLOT(slotReadyWrite(int)));
 		qDebug() << "Time stamp =" << timeStamp();
 	}
 	kDebug() << "started.";
@@ -436,11 +436,10 @@ unsigned int AlsaIO::timeStamp()
 	return ts;
 }
 
-void AlsaIO::slotActivated(int) //Rename this slot
+void AlsaIO::slotReadyRead(int)
 {
 	//qDebug() << "Data arrived. (Alsa told me !)";
 	size_t size;
-	//buf.clear();
 	
 	buf.resize(pSizeBytes);
 	size = snd_pcm_readi(handle, buf.data(), pSize);
@@ -449,7 +448,7 @@ void AlsaIO::slotActivated(int) //Rename this slot
 	emit readyRead();
 }
 
-void AlsaIO::checkAlsaPoll(int)
+void AlsaIO::slotReadyWrite(int)
 {
 	//qDebug() << "started since" << (times * periodTime()) / 1000 << "sec.";
 	//times++;

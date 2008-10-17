@@ -628,11 +628,13 @@ void JT_JingleAction::received()
 	jingle.setAttribute("sid", d->session->sid());
 	//---------This par should be in another method (createJingleIQ(...))
 	QDomElement received = doc()->createElement("received");
-	received.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:ice-udp:info");
+	
+	//That depends of the session content's transport.
+	//Ice-udp does not need the "receive" informationnal message.
+	received.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:raw-udp:info");
+	
 	jingle.appendChild(received);
 	d->iq.appendChild(jingle);
-
-	//send(d->iq);
 }
 
 void JT_JingleAction::sessionAccept(const QList<JingleContent*>& contents)

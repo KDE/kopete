@@ -134,8 +134,8 @@ public:
 	int frameSizeBytes();
 
 public slots:
-	void slotActivated(int socket);
-	void checkAlsaPoll(int);
+	void slotReadyRead(int socket);
+	void slotReadyWrite(int socket);
 
 signals:
 	void readyRead();
