@@ -50,7 +50,8 @@ public:
 	Private() //assign next message id, it can't be changed later
 		: id(nextId++), direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), state(StateUnknown),
 		  delayed(false), backgroundOverride(false), foregroundOverride(false), richTextOverride(false), isRightToLeft(false),
-		  timeStamp( QDateTime::currentDateTime() ), body(new QTextDocument), escapedBodyDirty(true), fileTransfer(0)
+		  timeStamp( QDateTime::currentDateTime() ), body(new QTextDocument), parsedBodyDirty(true), escapedBodyDirty(true),
+		  fileTransfer(0)
 	{}
 	Private (const Private &other);
 	~Private();
@@ -80,6 +81,8 @@ public:
 	QString subject;
 
 	QTextDocument* body;
+	mutable QString parsedBody;
+	mutable bool parsedBodyDirty;
 	mutable QString escapedBody;
 	mutable bool escapedBodyDirty;
 
@@ -129,6 +132,8 @@ Message::Private::Private (const Message::Private &other)
 	subject = other.subject;
 
 	body = other.body->clone();
+	parsedBody = other.parsedBody;
+	parsedBodyDirty = other.parsedBodyDirty;
 	escapedBody = other.escapedBody;
 	escapedBodyDirty = other.escapedBodyDirty;
 
@@ -242,6 +247,7 @@ void Message::doSetBody (const QString &body, Qt::TextFormat f)
 	d->format = f;
 	d->isRightToLeft = d->body->toPlainText().isRightToLeft();
 	d->escapedBodyDirty = true;
+	d->parsedBodyDirty = true;
 }
 
 void Message::setBody (const QTextDocument *_body)
@@ -256,6 +262,7 @@ void Message::doSetBody (const QTextDocument *body, Qt::TextFormat f)
 	d->format = f;
 	d->isRightToLeft = d->body->toPlainText().isRightToLeft();
 	d->escapedBodyDirty = true;
+	d->parsedBodyDirty = true;
 }
 
 void Message::setImportance(Message::MessageImportance i)
@@ -377,8 +384,12 @@ QString Message::escapedBody() const
 QString Message::parsedBody() const
 {
 	//kDebug(14000) << "messageformat: " << d->format;
-
-	return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), Qt::RichText));
+	if ( !d->parsedBodyDirty )
+		return d->parsedBody;
+	
+	d->parsedBody = Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), Qt::RichText));
+	d->parsedBodyDirty = false;
+	return d->parsedBody;
 }
 
 static QString makeRegExp( const char *pattern )
