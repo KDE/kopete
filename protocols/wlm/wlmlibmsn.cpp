@@ -49,7 +49,6 @@
 #include "kopetemessage.h"
 #include "kopetecontact.h"
 #include "kopeteuiglobal.h"
-#include "private/kopeteemoticons.h"
 
 #include "wlmlibmsn.h"
 #include "wlmserver.h"

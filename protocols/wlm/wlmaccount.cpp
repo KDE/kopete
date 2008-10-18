@@ -90,12 +90,6 @@ WlmAccount::fillActionMenu (KActionMenu * actionMenu)
 
     KAction *action;
 
-    action =
-        new KAction (KIcon ("testbed_showvideo"),
-                     i18n ("Show my own video..."), actionMenu);
-    //, "actionShowVideo");
-    QObject::connect (action, SIGNAL (triggered (bool)), this,
-                      SLOT (slotShowVideo ()));
     actionMenu->addAction (action);
     action->setEnabled (isConnected ());
 }
@@ -939,15 +933,6 @@ WlmAccount::slotGoOffline ()
         WlmContact *c = static_cast<WlmContact *>( kc );
         c->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     }
-}
-
-void
-WlmAccount::slotShowVideo ()
-{
-    kDebug (14210) << k_funcinfo;
-
-    if (isConnected ())
-        WlmWebcamDialog *wlmWebcamDialog = new WlmWebcamDialog (0, 0);
 }
 
 void

@@ -9,10 +9,10 @@ find_package(Kopete REQUIRED)
 include_directories(${KDE4_INCLUDES})
 add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 
-#ADD_SUBDIRECTORY(ui)
 ADD_SUBDIRECTORY(icons)
 
-set(KOPETE_INCLUDES /opt/kde4/include/kopete/ /opt/kde4/include/kopete/ui/ /home/kde4/svn/KDE/kdenetwork/kopete/libkopete/ /home/kde4/svn/KDE/kdenetwork/kopete/libkopete/ui/ /home/kde4/build/KDE/kdenetwork/kopete/) ### FIXME
+# FIXME: the libkopete source directory is only needed because of private/kopeteemoticons.h
+set(KOPETE_INCLUDES ${KOPETE_INCLUDE_DIR}/kopete/ ${KOPETE_INCLUDE_DIR}/kopete/ui/ /home/kde4/kdenetwork/kopete/libkopete)
 
 include_directories(
     ${KOPETE_INCLUDES}
@@ -37,7 +37,6 @@ set(kopete_wlm_PART_SRCS
    wlmchatmanager.cpp
    wlmchatsession.cpp
    wlmtransfermanager.cpp
-   ui/wlmwebcamdialog.cpp
 )
 
 kde4_add_plugin(kopete_wlm ${kopete_wlm_PART_SRCS})

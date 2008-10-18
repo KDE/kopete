@@ -20,7 +20,6 @@
 #include <kopeteaccount.h>
 #include "kopetechatsessionmanager.h"
 #include "kopetepasswordedaccount.h"
-#include "wlmwebcamdialog.h"
 #include "wlmserver.h"
 #include "wlmchatsession.h"
 #include "wlmtransfermanager.h"
@@ -224,11 +223,6 @@ class WlmAccount:public
 
     void
     slotGoInvisible ();
-        /**
-	 * Show webcam.  Called by KActions and internally.
-	 */
-    void
-    slotShowVideo ();
 
     void
     disableInitialList ()
