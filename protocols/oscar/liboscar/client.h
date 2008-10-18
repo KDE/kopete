@@ -37,8 +37,6 @@
 #include "contact.h"
 
 class Connection;
-class StageOneLoginTask;
-class StageTwoLoginTask;
 class ContactManager;
 class UserDetails;
 class QString;
@@ -620,9 +618,6 @@ private:
 private:
 	class ClientPrivate;
 	ClientPrivate* d;
-
-	StageOneLoginTask* m_loginTask;
-	StageTwoLoginTask* m_loginTaskTwo;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(Client::ICQStatus)
 
