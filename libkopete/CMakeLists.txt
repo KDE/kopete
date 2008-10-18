@@ -173,7 +173,6 @@ install(FILES
  ui/addressbookselectorwidget.h
  ui/avatardialog.h
  ui/avatarselectorwidget.h
- ui/contactaddednotifydialog.h
  ui/editaccountwidget.h
  ui/kopetecontactaction.h
  ui/kopeteinfodialog.h
