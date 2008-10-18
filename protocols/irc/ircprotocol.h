@@ -20,6 +20,7 @@
 #define IRCPROTOCOL_H
 
 #include "kircentity.h"
+#include "kircglobal.h"
 
 #include "kopetemessage.h"
 #include "kopeteonlinestatus.h"
@@ -87,7 +88,7 @@ public:
 
 //	virtual QList<KAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
 
-	Kopete::OnlineStatus onlineStatusFor(KIrc::Entity *entity);
+	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityPtr entity);
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }

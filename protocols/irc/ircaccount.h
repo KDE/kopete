@@ -177,6 +177,7 @@ private slots:
 	void slotShowServerWindow();
 
 	void slotJoinChannel();
+
 private:
 	void clientSetup();
 	void clientConnect();

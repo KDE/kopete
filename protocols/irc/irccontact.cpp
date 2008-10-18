@@ -24,6 +24,8 @@
 
 #include "kircclientsocket.h"
 #include "kircentity.h"
+#include "kircmessage.h"
+#include "kircstdmessages.h"
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteglobal.h"
@@ -195,6 +197,12 @@ void IRCContact::updateStatus()
 {
 	//setOnlineStatus(Kopete::OnlineStatus::Online);
 	//setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity));
+
+	//TODO: temporary until the real status handling is resurrected
+	if(account()->isConnected())
+		setOnlineStatus(Kopete::OnlineStatus::Online);
+	else
+		setOnlineStatus(Kopete::OnlineStatus::Offline);
 }
 
 bool IRCContact::isReachable()
@@ -260,8 +268,8 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 		chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) , account->protocol());
 		chatSession->setDisplayName(caption());
 
-		connect(chatSession, SIGNAL(messageSent(Message&, ChatSession *)),
-			this, SLOT(slotSendMsg(Message&, ChatSession *)));
+		connect(chatSession, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession *)),
+			this, SLOT(slotSendMsg(Kopete::Message&, Kopete::ChatSession *)));
 		connect(chatSession, SIGNAL(closing(ChatSession *)),
 			this, SLOT(chatSessionDestroyed(ChatSession *)));
 
@@ -324,7 +332,7 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 
 	if (htmlString.indexOf('\n') > -1)
 	{
-		QStringList messages = htmlString.split('\n');
+		QStringList messages = htmlString.trimmed().split('\n');
 
 		for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
 		{
@@ -355,21 +363,23 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 
 QString IRCContact::sendMessage(const QString &msg)
 {
-/*
+	kDebug(14120)<<"sending "<<msg;
+
 	QString newMessage = msg;
-	uint trueLength = msg.length() + m_nickName.length() + 12;
+	uint trueLength = msg.length() + entity()->name().length() + 12;
 	if( trueLength > 512 )
 	{
 		//TODO: tell them it is truncated
 		kWarning() << "Message was to long (" << trueLength << "), it has been truncated to 512 characters";
-		newMessage.truncate( 512 - ( m_nickName.length() + 12 ) );
+		newMessage.truncate( 512 - ( entity()->name().length() + 12 ) );
 	}
 
-	kircClient()->privmsg(m_nickName, newMessage );
+	if(entity()->type()==KIrc::Entity::Server) //if its a server, send raw data
+		ircAccount()->client()->writeMessage( KIrc::Message::fromLine(codec()->fromUnicode(newMessage)) );
+	else
+		ircAccount()->client()->writeMessage( KIrc::StdMessages::privmsg(codec()->fromUnicode(entity()->name()),codec()->fromUnicode(newMessage)) );
 
 	return newMessage;
-*/
-	return QString();
 }
 
 Contact *IRCContact::locateUser(const QString &nick)
