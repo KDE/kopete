@@ -179,18 +179,15 @@ void IRCContact::entityUpdated()
 
 QString IRCContact::caption() const
 {
-/*
 	QString caption = QString::fromLatin1("%1 @ %2")
-		.arg(d->entity->name()) // nickName
-		.arg(ircAccount()->networkName());
+		.arg(QString(d->entity->name())) // nickName
+		.arg(QString(ircAccount()->networkName()));
 
 	QString topic = d->entity->topic();
 	if(!topic.isEmpty())
 		caption.append( QString::fromLatin1(" - %1").arg(Kopete::Message::unescape(topic)) );
 
 	return caption;
-*/
-	return QLatin1String("FIXME");
 }
 
 void IRCContact::updateStatus()
