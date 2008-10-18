@@ -173,6 +173,7 @@ install(FILES
  ui/addressbookselectorwidget.h
  ui/avatardialog.h
  ui/avatarselectorwidget.h
+ ui/contactaddednotifydialog.h
  ui/editaccountwidget.h
  ui/kopetecontactaction.h
  ui/kopeteinfodialog.h
@@ -236,6 +237,7 @@ install( FILES
   kopetestatusmessage.h
   kopetetransfermanager.h
   kopeteuiglobal.h
+  kopeteutils.h
   kopeteversion.h
   kopetestatusmanager.h
   tasks/kopetetask.h
