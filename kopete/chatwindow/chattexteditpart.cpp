@@ -369,8 +369,8 @@ void ChatTextEditPart::setContents( const Kopete::Message &message )
 		textEdit()->setPlainText ( message.plainBody() );
 	textEdit()->moveCursor ( QTextCursor::End );
 
-	setFont( message.font() );
-	setTextColor( message.foregroundColor() );
+// 	setFont( message.font() );
+// 	setTextColor( message.foregroundColor() );
 // 	setBackgroundColorColor( message.backgroundColor() );
 }
 
@@ -403,11 +403,8 @@ void ChatTextEditPart::slotAppearanceChanged()
 {
 	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
 
-	QFont chatFont = KGlobalSettings::generalFont();
-	if ( settings->chatFontSelection() == 1 )
-		chatFont = settings->chatFont();
-
-	setFont( chatFont );
+	setDefualtTextColor( settings->chatTextColor() );
+	setDefualtFont( ( settings->chatFontSelection() == 1 ) ? settings->chatFont() : KGlobalSettings::generalFont() );
 }
 
 void ChatTextEditPart::setProtocolRichTextSupport()

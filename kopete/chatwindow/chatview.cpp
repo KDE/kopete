@@ -251,6 +251,22 @@ void ChatView::setFont( const QFont &font )
 	editPart()->setFont( font );
 }
 
+void ChatView::resetFontAndColor()
+{
+	Kopete::ContactPtrList contacts = msgManager()->members();
+	if ( contacts.count() != 1 )
+		return;
+
+	Kopete::MetaContact* mc = contacts.first()->metaContact();
+	if ( !mc )
+		return;
+
+	QString contactListGroup = QLatin1String("chatwindow_") + mc->metaContactId();
+	KConfigGroup config = KGlobal::config()->group(contactListGroup);
+	editPart()->resetConfig( config );
+	config.sync();
+}
+
 void ChatView::setFgColor( const QColor &newColor )
 {
     if ( newColor.isValid() )
@@ -720,15 +736,10 @@ void ChatView::saveOptions()
 void ChatView::saveChatSettings()
 {
 	Kopete::ContactPtrList contacts = msgManager()->members();
-
-	if ( contacts.count() == 0 )
-		return;
-
+	if ( contacts.count() != 1 )
+		return; //can't save with more than one other person in the chat
+	
 	Kopete::MetaContact* mc = contacts.first()->metaContact();
-
-	if ( contacts.count() > 1 )
-		return; //can't save with more than one person in chatview
-
 	if ( !mc )
 		return;
 
@@ -737,13 +748,14 @@ void ChatView::saveChatSettings()
     KConfigGroup config = KGlobal::config()->group(contactListGroup);
 	config.writeEntry( "EnableRichText", editPart()->isRichTextEnabled() );
 	config.writeEntry( "EnableAutoSpellCheck", editPart()->checkSpellingEnabled() );
+	editPart()->writeConfig( config );
 	config.sync();
 }
 
 void ChatView::loadChatSettings()
 {
 	Kopete::ContactPtrList contacts = msgManager()->members();
-	if ( contacts.count() > 1 )
+	if ( contacts.count() != 1 )
 		return; //can't load with more than one other person in the chat
 
 	//read settings for metacontact
@@ -755,6 +767,7 @@ void ChatView::loadChatSettings()
 	emit rtfEnabled( this, editPart()->isRichTextEnabled() );
 	bool enableAutoSpell = config.readEntry( "EnableAutoSpellCheck", Kopete::BehaviorSettings::self()->spellCheck() );
 	emit autoSpellCheckEnabled( this, enableAutoSpell );
+	editPart()->readConfig( config );
 }
 
 void ChatView::readOptions()

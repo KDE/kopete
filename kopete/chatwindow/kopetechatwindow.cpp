@@ -359,19 +359,19 @@ void KopeteChatWindow::initActions(void)
 	createStandardStatusBarAction();
 
 	chatSend = new KAction( KIcon("mail-send"), i18n( "&Send Message" ), coll );
-        coll->addAction( "chat_send", chatSend );
+	coll->addAction( "chat_send", chatSend );
 	connect( chatSend, SIGNAL( triggered(bool) ), SLOT( slotSendMessage() ) );
 	//Default to 'Return' for sending messages
 	chatSend->setShortcut( QKeySequence(Qt::Key_Return) );
 	chatSend->setEnabled( false );
 
- 	KStandardAction::save ( this, SLOT(slotChatSave()), coll );
- 	KStandardAction::print ( this, SLOT(slotChatPrint()), coll );
+	KStandardAction::save ( this, SLOT(slotChatSave()), coll );
+	KStandardAction::print ( this, SLOT(slotChatPrint()), coll );
 	KAction* quitAction = KStandardAction::quit ( this, SLOT(close()), coll );
 	quitAction->setText( i18n("Close All Chats") );
 
 	tabClose = KStandardAction::close ( this, SLOT(slotChatClosed()), coll );
-        coll->addAction( "tabs_close", tabClose );
+	coll->addAction( "tabs_close", tabClose );
 
 	tabActive=new KAction( i18n( "&Activate Next Active Tab" ), coll );
 	coll->addAction( "tabs_active", tabActive );
@@ -380,13 +380,13 @@ void KopeteChatWindow::initActions(void)
 	connect( tabActive, SIGNAL(triggered(bool)), this, SLOT(slotNextActiveTab()) );
 
 	tabRight=new KAction( i18n( "&Activate Next Tab" ), coll );
-        coll->addAction( "tabs_right", tabRight );
+	coll->addAction( "tabs_right", tabRight );
 	tabRight->setShortcut( KStandardShortcut::tabNext() );
 	tabRight->setEnabled( false );
 	connect( tabRight, SIGNAL(triggered(bool)), this, SLOT(slotNextTab()) );
 
 	tabLeft=new KAction( i18n( "&Activate Previous Tab" ), coll );
-        coll->addAction( "tabs_left", tabLeft );
+	coll->addAction( "tabs_left", tabLeft );
 	tabLeft->setShortcut( KStandardShortcut::tabPrev() );
 	tabLeft->setEnabled( false );
 	connect( tabLeft, SIGNAL(triggered(bool)), this, SLOT(slotPreviousTab()) );
@@ -394,23 +394,23 @@ void KopeteChatWindow::initActions(void)
 	// This action exists mostly so that the shortcut is configurable.
 	// The actual "slot" is the eventFilter.
 	nickComplete = new KAction( i18n( "Nic&k Completion" ), coll );
-        coll->addAction( "nick_complete", nickComplete );
+	coll->addAction( "nick_complete", nickComplete );
 	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
 	tabDetach = new KAction( KIcon("tab-detach"), i18n( "&Detach Chat" ), coll );
-        coll->addAction( "tabs_detach", tabDetach );
+	coll->addAction( "tabs_detach", tabDetach );
 	tabDetach->setEnabled( false );
 	connect( tabDetach, SIGNAL(triggered(bool)), this, SLOT( slotDetachChat() ));
 
 	actionDetachMenu = new KActionMenu( KIcon("tab-detach"), i18n( "&Move Tab to Window" ), coll );
-        coll->addAction( "tabs_detachmove", actionDetachMenu );
+	coll->addAction( "tabs_detachmove", actionDetachMenu );
 	actionDetachMenu->setDelayed( false );
 
 	connect ( actionDetachMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareDetachMenu()) );
 	connect ( actionDetachMenu->menu(), SIGNAL(triggered(QAction*)), this, SLOT(slotDetachChat(QAction*)) );
 
 	actionTabPlacementMenu = new KActionMenu( i18n( "&Tab Placement" ), coll );
-        coll->addAction( "tabs_placement", actionTabPlacementMenu );
+	coll->addAction( "tabs_placement", actionTabPlacementMenu );
 	connect ( actionTabPlacementMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPreparePlacementMenu()) );
 	connect ( actionTabPlacementMenu->menu(), SIGNAL(triggered(QAction*)), this, SLOT(slotPlaceTabs(QAction*)) );
 
@@ -421,37 +421,41 @@ void KopeteChatWindow::initActions(void)
 	KStandardAction::paste( this, SLOT(slotPaste()), coll);
 
 	KAction* action;
-	action = new KAction( KIcon("preferences-desktop-font"), i18n( "Set Default &Font..." ), coll );
-        coll->addAction( "format_font", action );
+	action = new KAction( KIcon("preferences-desktop-font"), i18n( "Set &Font..." ), coll );
+	coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFont()) );
 
-	action = new KAction( KIcon("format-stroke-color"), i18n( "Set Default Text &Color..." ), coll );
-        coll->addAction( "format_fgcolor", action );
+	action = new KAction( KIcon("format-stroke-color"), i18n( "Reset Font And Color" ), coll );
+	coll->addAction( "format_font_reset", action );
+	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotResetFontAndColor()) );
+
+	action = new KAction( KIcon("format-text-color"), i18n( "Set Text &Color..." ), coll );
+	coll->addAction( "format_fgcolor", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFgColor()) );
 
 	action = new KAction( KIcon("format-fill-color"), i18n( "Set &Background Color..." ), coll );
-        coll->addAction( "format_bgcolor", action );
+	coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), this, SLOT(slotSetBgColor()) );
 
 	historyUp = new KAction( i18n( "Previous History" ), coll );
-        coll->addAction( "history_up", historyUp );
+	coll->addAction( "history_up", historyUp );
 	historyUp->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Up) );
 	connect( historyUp, SIGNAL(triggered(bool)), this, SLOT(slotHistoryUp()) );
 
 	historyDown = new KAction( i18n( "Next History" ), coll );
-        coll->addAction( "history_down", historyDown );
+	coll->addAction( "history_down", historyDown );
 	historyDown->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Down) );
 	connect( historyDown, SIGNAL(triggered(bool)), this, SLOT(slotHistoryDown()) );
 
 	action = KStandardAction::prior( this, SLOT( slotPageUp() ), coll );
-        coll->addAction( "scroll_up", action );
+	coll->addAction( "scroll_up", action );
 	action = KStandardAction::next( this, SLOT( slotPageDown() ), coll );
-        coll->addAction( "scroll_down", action );
+	coll->addAction( "scroll_down", action );
 
 	KStandardAction::showMenubar( menuBar(), SLOT(setVisible(bool)), coll );
 
 	toggleAutoSpellCheck = new KToggleAction( i18n( "Automatic Spell Checking" ), coll );
-        coll->addAction( "enable_auto_spell_check", toggleAutoSpellCheck );
+	coll->addAction( "enable_auto_spell_check", toggleAutoSpellCheck );
 	toggleAutoSpellCheck->setChecked( true );
 	connect( toggleAutoSpellCheck, SIGNAL(triggered(bool)), this, SLOT(toggleAutoSpellChecking()) );
 
@@ -462,12 +466,12 @@ void KopeteChatWindow::initActions(void)
 	coll->addAction ( "show_participants_widget", toggleParticipantsAction );
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll );
-        coll->addAction( "format_smiley", actionSmileyMenu );
+	coll->addAction( "format_smiley", actionSmileyMenu );
 	actionSmileyMenu->setDelayed( false );
 	connect(actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
 
 	actionContactMenu = new KActionMenu(i18n("Co&ntacts"), coll );
-        coll->addAction( "contacts_menu", actionContactMenu );
+	coll->addAction( "contacts_menu", actionContactMenu );
 	actionContactMenu->setDelayed( false );
 	connect ( actionContactMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareContactMenu()) );
 
@@ -599,6 +603,11 @@ void KopeteChatWindow::slotPaste()
 void KopeteChatWindow::slotSetFont()
 {
 	m_activeView->setFont();
+}
+
+void KopeteChatWindow::slotResetFontAndColor()
+{
+	m_activeView->resetFontAndColor();
 }
 
 void KopeteChatWindow::slotSetFgColor()
@@ -744,7 +753,6 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 
 	updateSpellCheckAction();
 	checkDetachEnable();
-	newView->loadChatSettings();
 	connect( newView, SIGNAL(autoSpellCheckEnabled( ChatView*, bool ) ),
 	         this, SLOT( slotAutoSpellCheckEnabled( ChatView*, bool ) ) );
 }
@@ -956,7 +964,6 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	m_activeView->setFocus();
 	updateSpellCheckAction();
 	slotUpdateSendEnabled();
-	m_activeView->editPart()->reloadConfig();
 	m_activeView->loadChatSettings();
 
 	emit chatSessionChanged(m_activeView->msgManager());

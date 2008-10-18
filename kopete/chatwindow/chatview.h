@@ -209,6 +209,11 @@ public slots:
 	QFont font();
 
 	/**
+	 * Reset font and color of the edit area and outgoing messages.
+	 */
+	void resetFontAndColor();
+
+	/**
 	 * Sets the background color of the entry area, and outgoing messages
 	 * @param newColor The new background color. If this is QColor(), then
 	 * a color chooser dialog is opened
