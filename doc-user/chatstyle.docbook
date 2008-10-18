@@ -252,7 +252,7 @@ Generate a color from the sender contact id. Can be used to display a different 
 </para>
 <para>
 <filename>%senderColor{N}%</filename> where N is a positive number. If N is greater than 100, it represent a lighter color than the contact's color.
-If N equal 150 it is a color which is 50% brighter. If N is less than 100 then it is a darker color.  Useful for having a background coloured differently for each contact.
+If N equal 150 it is a color which is 50% brighter. If N is less than 100 then it is a darker color.  Useful for having a background colored differently for each contact.
 </para>
 <para>
 If you want to use theses colors in a variant, but not in the main style, you have to workaround.
