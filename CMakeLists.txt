@@ -1,61 +1,108 @@
-project(kopete)
-KDE4_NO_ENABLE_FINAL(kopete)
+project(kdenetwork)
 
-FIND_PACKAGE(Blitz REQUIRED)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
 
-# Configure checks
-include (TestBigEndian)
-TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
-check_type_size("long" SIZEOF_LONG)
-check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
+# search packages used by KDE
+find_package(KDE4 REQUIRED)
+include (KDE4Defaults)
+include (MacroLibrary)
 
-macro_optional_find_package(Xmms)
-macro_bool_to_01(XMMS_FOUND HAVE_XMMS)
-macro_log_feature(XMMS_FOUND "XMMS" "X MultiMedia System development libraries" "http://www.xmms.org" FALSE "" "Used by the Kopete nowlistening plugin to support the XMMS player.")
+include(CheckIncludeFile)
+include(CheckIncludeFiles)
+include(CheckSymbolExists)
+include(CheckFunctionExists)
+include(CheckLibraryExists)
+include(CheckPrototypeExists)
+include(CheckTypeSize)
+include(MacroBoolTo01)
+include(MacroOptionalAddSubdirectory)
 
-if(XMMS_FOUND)
-  # GLIB2_INCLUDE_DIR needed for Xmms
-  macro_optional_find_package(GLIB2)
-endif(XMMS_FOUND)
+# If definitions like -D_GNU_SOURCE are needed for these checks they
+# should be added to _KDE4_PLATFORM_DEFINITIONS when it is originally
+# defined outside this file.  Here we include these definitions in
+# CMAKE_REQUIRED_DEFINITIONS so they will be included in the build of
+# checks below.
+set(CMAKE_REQUIRED_DEFINITIONS ${_KDE4_PLATFORM_DEFINITIONS})
+if (WIN32)
+   set(CMAKE_REQUIRED_LIBRARIES ${KDEWIN32_LIBRARIES} )
+   set(CMAKE_REQUIRED_INCLUDES  ${KDEWIN32_INCLUDES} )
+endif (WIN32)
 
-macro_optional_find_package(LibXml2)
-macro_log_feature(LIBXML2_FOUND "LibXML2" "Libraries used to develop XML applications" "http://xmlsoft.org" FALSE "" "Required for the Kopete webpresence plugin.")
+find_package(KdepimLibs REQUIRED)
+find_package(LiboRTP REQUIRED)
+find_package(QCA2)
+find_package(IW)
+find_package(JPEG)
+find_package(X11VidMode)
+find_package(Decibel)
+find_package(IDN)
+find_package(Plasma)
+find_package(LibVNCServer)
 
-macro_optional_find_package(LibXslt)
-macro_bool_to_01(LIBXSLT_FOUND HAVE_XSLT)
-macro_log_feature(LIBXSLT_FOUND "LibXSLT" "A library to transform XML files into other XML files" "http://xmlsoft.org/XSLT" FALSE "" "Required for the Kopete webpresence plugin.")
+macro_optional_find_package(DNSSD)
+macro_optional_find_package(SLP)
+macro_optional_find_package(IDN)
+macro_optional_find_package(LibVNCServer)
 
-macro_optional_find_package(LibOTR)
-macro_bool_to_01(LIBOTR_FOUND HAVE_LIBOTR)
-macro_log_feature(LIBOTR_FOUND "libotr" "A library to encrypt messages with Off-the-Record encryption" "http://www.cypherpunks.ca/otr" FALSE "3.1.0" "Required for the Kopete otr plugin.")
+macro_log_feature(LIBVNCSERVER_FOUND   "libvncserver" "VNC Server lib, needed to build krfb"       "http://libvncserver.sourceforge.net/")
+macro_log_feature(DNSSD_FOUND   "libdnssd" "Support for Zeroconf, needed to build dnssd"       "http://www.zeroconf.org")
+macro_log_feature(QCA2_FOUND    "libqca2"  "Qca2 is needed to build some parts of kopete"              "Module into kdesupport" FALSE "2.0")
+macro_log_feature(SLP_FOUND     "openslp"  "OpenSLP is needed to build krdc and krfb"         "http://www.openslp.org/")
+macro_log_feature(IW_FOUND      "libiw"    "Wireless Tools are needed to build wifi project" "http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux/Tools.html")
+macro_log_feature(DECIBEL_FOUND "Decibel"  "Decibel is the KDE framework for real-time communication" "HOWTO in kopete/protocols/telepathy")
+macro_log_feature(IDN_FOUND   "libidn" "libidn provides International Domain Name Support for Kopete's Jabber plugin"       "http://www.gnu.org/software/libidn")
+macro_log_feature(PLASMA_FOUND "Plasma" "Plasma is a really cool replacement for kicker, needed for KNewsTicker" "Part of kdebase")
+macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp")
 
-check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
-check_include_files(stdint.h HAVE_STDINT_H)
-check_include_files(inttypes.h HAVE_INTTYPES_H)
-macro_bool_to_01(X11_Xss_FOUND HAVE_XSCREENSAVER)
+macro_bool_to_01(SLP_FOUND HAVE_SLP) # for both krfb and krdc
 
-# Generate config-kopete.h
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kopete.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kopete.h )
+#add_definitions ( -DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
+add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS})
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 
-# For config-kopete.h
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+#macro_optional_add_subdirectory(doc)
+#macro_optional_add_subdirectory(kfile-plugins)
+#macro_optional_add_subdirectory(lanbrowsing)
+#macro_optional_add_subdirectory(kget)
+add_subdirectory(cmake)
 
-set(KOPETE_INCLUDES 
-	${KDE4_INCLUDES}
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/
-	${CMAKE_BINARY_DIR}/kopete/libkopete/
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/
-	${CMAKE_BINARY_DIR}/kopete/libkopete/ui/
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/private/
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/contactlist/
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/tasks/
-)
+if(Q_WS_X11)
 
-add_subdirectory( libkopete )
-add_subdirectory( kopete )
-add_subdirectory( protocols )
-add_subdirectory( plugins )
-add_subdirectory( icons )
-add_subdirectory( sounds )
-add_subdirectory( styles )
+  if(PLASMA_FOUND)
+  #  macro_optional_add_subdirectory(knewsticker)
+  endif(PLASMA_FOUND)
 
+  #macro_optional_add_subdirectory(kppp)
+
+  #add_subdirectory(kpf)
+  if(JPEG_FOUND AND SLP_FOUND)
+
+    if(X11VIDMODE_FOUND)
+     #  macro_optional_add_subdirectory(krdc)
+    endif(X11VIDMODE_FOUND)
+
+  endif(JPEG_FOUND AND SLP_FOUND)
+
+  if(LIBVNCSERVER_FOUND)
+  #  macro_optional_add_subdirectory(krfb)
+  endif(LIBVNCSERVER_FOUND)
+
+endif(Q_WS_X11)
+
+if (DNSSD_FOUND)
+ #  macro_optional_add_subdirectory(kdnssd)
+endif (DNSSD_FOUND)
+
+macro_optional_add_subdirectory(kopete)
+
+if (IW_FOUND)
+  # macro_optional_add_subdirectory(wifi)
+endif (IW_FOUND)
+
+message(STATUS "TODO: port kpf!")
+if(NOT WIN32)
+  #macro_optional_add_subdirectory(filesharing)
+  #macro_optional_add_subdirectory(kdict)
+endif(NOT WIN32)
+
+macro_display_feature_log()
