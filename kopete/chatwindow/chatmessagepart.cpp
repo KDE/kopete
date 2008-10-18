@@ -386,11 +386,6 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	message.setForegroundOverride( d->fgOverride );
 	message.setRichTextOverride( d->rtfOverride );
 
-	// parse emoticons and URL now.
-	// Do not reparse emoticons on restoring, because it cause very intensive CPU usage on long chats.
-	if( !restoring )
-		message.setHtmlBody( message.parsedBody() );
-
 #ifdef STYLE_TIMETEST
 	QTime beforeMessage = QTime::currentTime();
 #endif
