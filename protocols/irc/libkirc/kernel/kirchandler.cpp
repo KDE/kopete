@@ -35,6 +35,13 @@ Handler::Handler(Handler *parent)
 	parent->addEventHandler(this);
 }
 
+Handler::Handler(HandlerPrivate* d,Handler *parent)
+	: QObject(parent)
+	, d_ptr(d)
+{
+	parent->addEventHandler(this);	
+}
+
 Handler::Handler(HandlerPrivate *d, QObject *parent)
 	: QObject(parent)
 	, d_ptr(d)
@@ -68,6 +75,11 @@ void Handler::setEnabled(bool enabled)
 {
 	Q_D(Handler);
 	d->enabled = enabled;
+	//Enable/Disable also the children
+	foreach(Handler * handler, d->eventHandlers)
+	{
+		handler->setEnabled(enabled);
+	}
 }
 
 #if 0
@@ -177,12 +189,13 @@ Handler::Handled Handler::onMessage(KIrc::Context *context, const KIrc::Message 
 	//Check if it's a numeric reply
 	// FIXME: This is an old temporary solution that was backported for simplicity. One should port such 
 	//        code to use the alias system to use named numbers that can found in RFC and servers implementations
+	QByteArray msgToExecute=msg;
 	bool isNumeric=false;
 	int reply=msg.toInt( &isNumeric );
 	if ( isNumeric )
-		msg.prepend( "numericReply_" ); //add a prefix, because a slot name cannot be just a number
+		msgToExecute.prepend( "numericReply_" ); //add a prefix, because a slot name cannot be just a number
 
-	if (QMetaObject::invokeMethod(this, msg, Qt::DirectConnection, ret, arg0, arg1, arg2))
+	if (QMetaObject::invokeMethod(this, msgToExecute, Qt::DirectConnection, ret, arg0, arg1, arg2))
 		if (handled != NotHandled)
 			return handled;
 

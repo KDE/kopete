@@ -53,15 +53,26 @@ using namespace KIrc;
 ClientMotdHandler::ClientMotdHandler(QObject* parent)
 	: Handler(new ClientMotdHandlerPrivate, parent)
 {
+	registerAliases();
+}
+
+ClientMotdHandler::ClientMotdHandler(KIrc::Handler *parent)
+	: Handler(new ClientMotdHandlerPrivate, parent)
+{
+	registerAliases();
+}
+
+ClientMotdHandler::~ClientMotdHandler()
+{
+}
+
+void ClientMotdHandler::registerAliases()
+{
 	registerMessageAlias("375", "RPL_MOTDSTART");
 	registerMessageAlias("372", "RPL_MOTD");
 	registerMessageAlias("376", "RPL_ENDOFMOTD");
 	
 	registerMessageAlias("422", "ERR_NOMOTD");
-}
-
-ClientMotdHandler::~ClientMotdHandler()
-{
 }
 
 void ClientMotdHandler::receivedServerMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
