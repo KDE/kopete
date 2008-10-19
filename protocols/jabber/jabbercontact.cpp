@@ -365,7 +365,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	// check for errors
 	if ( message.type () == "error" )
 	{
-		mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateError );
+		mManager->receivedMessageState( message.id().toUInt(), Kopete::Message::StateError );
 
 		newMessage = new Kopete::Message( this, contactList );
 		newMessage->setTimestamp( message.timeStamp() );
