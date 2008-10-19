@@ -70,6 +70,16 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	
 #ifdef JINGLE_SUPPORT
 	checkAudioDevices();
+#else
+	/*Remove the Jingle tab*/
+	for (int i = 0; i < tabWidget10->count(); i++)
+	{
+		if (tabWidget10->tabText(i) == "&Jingle")
+		{
+			tabWidget10->removeTab(i);
+			break;
+		}
+	}
 #endif
 
 	if (account())

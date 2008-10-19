@@ -98,7 +98,7 @@ namespace XMPP
 		/*
 		 * Fill this content from a QDomElement.
 		 * The payloads in this QDomElement will be considered as the responder's
-		 * TODO:add an argument to telml the method if those payloads are ours or
+		 * TODO:add an argument to tell the method if those payloads are our's or
 		 * responder's payloads.
 		 */
 		void fromElement(const QDomElement&);

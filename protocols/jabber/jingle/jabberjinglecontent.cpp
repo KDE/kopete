@@ -15,6 +15,8 @@
   * *************************************************************************
   */
 #include <KDebug>
+#include <QMessageBox>
+
 //Kopete
 #include "jabberjinglecontent.h"
 #include "jabberjinglesession.h"
@@ -122,7 +124,8 @@ void JabberJingleContent::startWritingRtpData()
 		}
 		connect(m_mediaSession, SIGNAL(readyRead(int)), this, SLOT(slotReadyRead(int)));
 		m_mediaSession->setSamplingRate(8000 /*FIXME:use m_content->bestPayload()*/);
-		m_mediaSession->start();
+		if (!m_mediaSession->start())
+			QMessageBox::warning(0, tr("Jingle audio"), tr("Unable to start you audio device, the session will start anyway."));
 		/*connect(m_mediaManager, SIGNAL(audioReadyRead()), this, SLOT(slotSendRtpData()));
 		m_mediaManager->startAudioStreaming();*/
 	}

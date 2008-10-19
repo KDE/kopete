@@ -42,6 +42,7 @@ JingleCallsGui::JingleCallsGui(JingleCallsManager* parent)
 : m_callsManager(parent)
 {
 	kDebug() << "Created";
+	setWindowTitle("Jigle calls");
 	ui.setupUi(this);
 	setupActions();
 
@@ -91,7 +92,6 @@ void JingleCallsGui::setupActions()
 
 void JingleCallsGui::slotNewSession()
 {
-	addSession((JabberJingleSession*)0L);
 	//TODO:Implement me !
 }
 

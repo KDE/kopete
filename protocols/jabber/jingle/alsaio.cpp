@@ -314,6 +314,7 @@ bool AlsaIO::start()
 	{
 		if (m_type == Capture)
 		{
+			qDebug() << "Device is not ready, no packet will be sent.";
 			return false;
 		}
 		else if (m_type == Playback)

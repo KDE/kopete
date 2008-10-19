@@ -122,7 +122,7 @@ void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 	rtcpSocket->bind(rtcpPort == 0 ? rtpPort + 1 : rtcpPort);
 }*/
 
-void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should be overloaded methods to support other data type (QString, const *char).
+void JingleRtpSession::send(const QByteArray& outData, int ts) //TODO:There should be overloaded methods to support other data type (QString, const *char).
 {
 	//kDebug() << "Send data";
 	//kDebug() << data.size() << "bytes";
@@ -136,7 +136,7 @@ void JingleRtpSession::send(const QByteArray& data, int ts) //TODO:There should 
 	//	return;
 	
 	//kDebug() << "Prepare a packet with" << data.size() << "bytes.";
-	mblk_t *packet = rtp_session_create_packet_with_data(m_rtpSession, (uint8_t*)data.data(), data.size(), /*freefn*/ NULL); //the free function is managed by the bytesWritten signal
+	mblk_t *packet = rtp_session_create_packet_with_data(m_rtpSession, (uint8_t*)outData.data(), outData.size(), /*freefn*/ NULL); //the free function is managed by the bytesWritten signal
 	
 	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, ts == -1 ? sendingTS : ts);
 	if (size == -1)
@@ -167,7 +167,9 @@ void JingleRtpSession::rtpDataReady()
 	//	kDebug() << "Still some data to read";
 	
 	
-	QByteArray data(static_cast<char*>(buf), bufSize);
+	inData.resize(bufSize);
+	inData = static_cast<char*>(buf);
+	//QByteArray data(static_cast<char*>(buf), bufSize);
 	
 	// Seems we should empty the socket...
 	QByteArray b;
@@ -176,7 +178,7 @@ void JingleRtpSession::rtpDataReady()
 
 	//kDebug() << "Data :" << data.toBase64() << "(" << data.size() << "bytes)";
 	
-	emit readyRead(data);
+	emit readyRead(inData);
 }
 
 void JingleRtpSession::rtcpDataReady()
