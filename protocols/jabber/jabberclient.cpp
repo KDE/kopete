@@ -715,6 +715,8 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 
 	/*if (jingleEnabled())
 	{*/
+
+#ifdef JINGLE_SUPPORT
 		d->jabberClient->setJingleEnabled(true);
 		
 		{
@@ -722,6 +724,9 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 			QObject::connect ( d->jabberClient->jingleSessionManager(), SIGNAL ( incomingSession() ),
 					   this, SLOT ( slotIncomingJingleSession () ) );
 		}
+#else
+		d->jabberClient->setJingleEnabled(false);
+#endif
 	/*}*/
 
 	/* This should only be done here to connect the signals, otherwise it is a

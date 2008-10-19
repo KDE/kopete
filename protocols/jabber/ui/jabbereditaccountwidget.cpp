@@ -47,8 +47,10 @@
 #include "dlgjabberchangepassword.h"
 #include "privacydlg.h"
 
+#ifdef JINGLE_SUPPORT
 //FIXME:Should be replaced by Solid.
 #include "alsaio.h"
+#endif
 
 JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, JabberAccount * ident, QWidget * parent)
 						: QWidget(parent), DlgJabberEditAccountWidget(), KopeteEditAccountWidget (ident)
@@ -66,7 +68,9 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	
 	connect (privacyListsButton, SIGNAL ( clicked() ), this, SLOT ( slotPrivacyListsClicked() ) );
 	
+#ifdef JINGLE_SUPPORT
 	checkAudioDevices();
+#endif
 
 	if (account())
 	{
@@ -95,6 +99,8 @@ JabberEditAccountWidget::~JabberEditAccountWidget ()
 {
 }
 
+
+#ifdef JINGLE_SUPPORT
 void JabberEditAccountWidget::checkAudioDevices()
 {
 	kDebug() << "Start.";
@@ -125,6 +131,7 @@ void JabberEditAccountWidget::checkAudioDevices()
 	kDebug() << "End.";
 
 }
+#endif
 
 JabberAccount *JabberEditAccountWidget::account ()
 {
@@ -176,6 +183,7 @@ void JabberEditAccountWidget::reopen ()
 
 	leProxyJID->setText (account()->configGroup()->readEntry("ProxyJID", QString()));
 
+#ifdef JINGLE_SUPPORT
 	//Jingle
 	firstPortEdit->setValue(account()->configGroup()->readEntry("JingleFirstPort", QString("9000")).toInt());
 	
@@ -196,6 +204,7 @@ void JabberEditAccountWidget::reopen ()
 			break;
 		}
 	}
+#endif
 
 	// Privacy
 	cbSendEvents->setChecked( account()->configGroup()->readEntry("SendEvents", true) );
@@ -249,9 +258,11 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->configGroup()->writeEntry("Priority", QString::number (mPriority->value ()));
 	account()->configGroup()->writeEntry("Port", QString::number (mPort->value ()));
 
+#ifdef JINGLE_SUPPORT
 	account()->configGroup()->writeEntry("JingleFirstPort", QString::number(firstPortEdit->value()));
 	account()->configGroup()->writeEntry("JingleInputDevice", inputDevices.at(audioInputsCombo->currentIndex()).id);
 	account()->configGroup()->writeEntry("JingleOutputDevice", outputDevices.at(audioOutputsCombo->currentIndex()).id);
+#endif
 
 	account()->setExcludeConnect(cbAutoConnect->isChecked());
 

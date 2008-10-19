@@ -29,7 +29,9 @@ if (WIN32)
 endif (WIN32)
 
 find_package(KdepimLibs REQUIRED)
-find_package(LiboRTP REQUIRED)
+find_package(LiboRTP)
+find_package(Alsa)
+find_package(Speex)
 find_package(QCA2)
 find_package(IW)
 find_package(JPEG)
@@ -86,6 +88,12 @@ if(Q_WS_X11)
   if(LIBVNCSERVER_FOUND)
   #  macro_optional_add_subdirectory(krfb)
   endif(LIBVNCSERVER_FOUND)
+
+  if(NOT LIBORTP_FOUND OR NOT SPEEX_FOUND OR NOT ALSA_FOUND)
+    set(BUILD_JINGLE FALSE)
+  else(NOT LIBORTP_FOUND OR NOT SPEEX_FOUND OR NOT ALSA_FOUND)
+    set(BUILD_JINGLE TRUE)
+  endif(NOT LIBORTP_FOUND OR NOT SPEEX_FOUND OR NOT ALSA_FOUND)
 
 endif(Q_WS_X11)
 

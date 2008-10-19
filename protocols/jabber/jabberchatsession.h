@@ -86,9 +86,11 @@ private slots:
 
 	void slotSendFile();
 
+#ifdef JINGLE_SUPPORT
 	void slotJingleAudioCall();
 	void slotJingleVideoCall();
 	void slotJingleSession();
+#endif
 
 private:
 	enum  Event { Delivered, Displayed,

@@ -69,8 +69,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	mResource = jid.resource().isEmpty () ? resource : jid.resource ();
 	slotUpdateDisplayName ();
 
-#ifdef SUPPORT_JINGLE
-
+#ifdef JINGLE_SUPPORT
 	KAction *jingleSession = new KAction(i18n("Start Jingle session" ), members().first());
 	connect(jingleSession, SIGNAL(triggered(bool)), SLOT (slotJingleSession() ));
 	setComponentData(protocol->componentData());
@@ -454,6 +453,8 @@ void JabberChatSession::slotSendFile()
 	static_cast<JabberContact *>(contacts.first())->sendFile();
 }
 
+
+#ifdef JINGLE_SUPPORT
 void JabberChatSession::slotJingleAudioCall()
 {
 	QList<Kopete::Contact*> contacts = members();
@@ -471,6 +472,8 @@ void JabberChatSession::slotJingleSession()
 	QList<Kopete::Contact*> contacts = members();
 	static_cast<JabberContact *>(contacts.first())->startJingleSession();
 }
+
+#endif
 
 #include "jabberchatsession.moc"
 

@@ -45,7 +45,10 @@ class JabberContactPool;
 class JabberProtocol;
 class JabberTransport;
 class JabberBookmarks;
+
+#ifdef JINGLE_SUPPORT
 class JingleCallsManager;
+#endif
 
 namespace Kopete
 {
@@ -97,18 +100,6 @@ public:
 		return m_privacyManager;
 	}
 
-/*#ifdef SUPPORT_JINGLE
-	VoiceCaller *voiceCaller() const
-	{
-		return m_voiceCaller;
-	}
-
- 	JingleSessionManager *sessionManager()  const
- 	{
- 		return m_jingleSessionManager;
- 	}
-#endif*/
-
 	// change the default S5B server port
 	void setS5BServerPort ( int port );
 
@@ -145,7 +136,9 @@ public:
 	*/
 	virtual bool removeAccount();
 	
+#ifdef JINGLE_SUPPORT
 	JingleCallsManager *jingleCallsManager() const {return m_jcm;}
+#endif
 
 public slots:
 	/* Connects to the server. */
@@ -234,7 +227,9 @@ private:
 	   jabber transfer port, to avoid popup insanity */
 	bool m_notifiedUserCannotBindTransferPort;
 	
+#ifdef JINGLE_SUPPORT
 	JingleCallsManager *m_jcm;
+#endif
 private slots:
 	/* Connects to the server. */
 	void slotConnect ();

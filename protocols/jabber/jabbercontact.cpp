@@ -61,7 +61,9 @@
 #include "jabbertransport.h"
 #include "dlgjabbervcard.h"
 
+#ifdef JINGLE_SUPPORT
 #include "jinglecallsmanager.h"
+#endif
 
 /**
  * JabberContact constructor
@@ -1324,7 +1326,7 @@ void JabberContact::slotDiscoFinished( )
 	}
 }
 
-
+#ifdef JINGLE_SUPPORT
 void JabberContact::startJingleSession()
 {
 	startJingleVideoCall(); //Only to show the message.
@@ -1371,5 +1373,6 @@ void JabberContact::startJingleVideoCall()
 
 	//TODO:implement me !
 }
+#endif
 
 #include "jabbercontact.moc"

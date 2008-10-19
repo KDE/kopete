@@ -75,7 +75,10 @@
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
 #include "jt_pubsub.h"
+
+#ifdef JINGLE_SUPPORT
 #include "jinglecallsmanager.h"
+#endif
 
 #include <sys/utsname.h>
 
@@ -94,7 +97,10 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	
 	m_resourcePool = 0L;
 	m_contactPool = 0L;
+
+#ifdef JINGLE_SUPPORT
 	m_jcm = 0L;
+#endif
 	m_bookmarks = new JabberBookmarks(this);
 	m_removing=false;
 	m_notifiedUserCannotBindTransferPort = false;
@@ -134,7 +140,9 @@ void JabberAccount::cleanup ()
 	delete m_contactPool;
 	m_contactPool = 0L;
 
+#ifdef JINGLE_SUPPORT
 	delete m_jcm;
+#endif
 }
 
 void JabberAccount::setS5BServerPort ( int port )
@@ -590,8 +598,10 @@ void JabberAccount::slotConnected ()
 {
 	kDebug (JABBER_DEBUG_GLOBAL) << "Connected to Jabber server.";
 
+#ifdef JINGLE_SUPPORT
 	qDebug() << "Create JingleCallsManager";
 	m_jcm = new JingleCallsManager(this);
+#endif
 
 	kDebug (JABBER_DEBUG_GLOBAL) << "Requesting roster...";
 	m_jabberClient->requestRoster ();
@@ -746,9 +756,11 @@ void JabberAccount::slotCSDisconnected ()
 	/* It seems that we don't get offline notifications when going offline
 	 * with the protocol, so clear all resources manually. */
 	resourcePool()->clear();
-	
+
+#ifdef JINGLE_SUPPORT
 	if (m_jcm != 0)
 		delete m_jcm;
+#endif
 
 }
 
