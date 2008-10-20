@@ -49,6 +49,7 @@ MediaSession::MediaSession(MediaManager *mm, const QString& codecName)
 MediaSession::~MediaSession()
 {
 	delete d->plugin;
+        delete d;
 	qDebug() << "Deleted Media Session";
 }
 

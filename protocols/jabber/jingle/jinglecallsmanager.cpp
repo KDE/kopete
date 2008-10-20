@@ -67,6 +67,7 @@ JingleCallsManager::~JingleCallsManager()
 	//delete d->contentDialog; --> Will be deleted when necessary.
 
 	//TODO:delete the other fields in Private...
+        delete d;
 }
 
 void JingleCallsManager::init()

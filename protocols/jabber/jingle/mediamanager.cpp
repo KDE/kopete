@@ -43,6 +43,7 @@ MediaManager::~MediaManager()
 {
 	delete d->alsaIn;
 	delete d->alsaOut;
+        delete d;
 	qDebug() << "Deleted Media Manager.";
 }
 

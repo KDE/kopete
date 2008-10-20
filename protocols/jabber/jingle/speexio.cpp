@@ -54,6 +54,7 @@ SpeexIO::~SpeexIO()
 	
 	speex_bits_destroy(&d->decBits);
 	speex_decoder_destroy(d->decoder);
+        delete d;
 	kDebug() << "Destroyed SpeexIO";
 }
 
