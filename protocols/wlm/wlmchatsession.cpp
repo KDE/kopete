@@ -610,12 +610,8 @@ WlmChatSession::sendTypingMsg (bool istyping)
     // do not send notification if we 
     // are alone in the session
     if (!isReady ())
-    {
-        // request display picture when we start the session
-        setDownloadDisplayPicture (true);
-        requestChatService ();
         return;
-    }
+
     getChatService ()->sendTypingNotification ();
 
     startSendKeepAlive();
