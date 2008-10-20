@@ -23,10 +23,10 @@
 #include "kopetelistviewitem.h"
 #include "kopete_export.h"
 
-class Kopete::MetaContact;
-
 namespace Kopete
 {
+class MetaContact;
+
 namespace UI
 {
 
