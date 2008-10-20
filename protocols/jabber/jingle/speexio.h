@@ -1,9 +1,23 @@
 /*
- * "" <>
+ * speexio.cpp - A coder encoder for raw audio and speex.
+ *
  * speexio.h - Speex audio encoder and decoder.
  * This class is able to encode and decode speex data. It works as an
  * encoder-decoder expecting to have the same type of data (same bitrate,...)
  * for encoding and decoding.
+ * 
+ * Copyright (c) 2008 by Detlev Casanova <detlev.casanova@gmail.com>
+ *
+ * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
+ *
+ * *************************************************************************
+ * *                                                                       *
+ * * This program is free software; you can redistribute it and/or modify  *
+ * * it under the terms of the GNU General Public License as published by  *
+ * * the Free Software Foundation; either version 2 of the License, or     *
+ * * (at your option) any later version.                                   *
+ * *                                                                       *
+ * *************************************************************************
  */
 
 #ifndef SPEEX_IO_H

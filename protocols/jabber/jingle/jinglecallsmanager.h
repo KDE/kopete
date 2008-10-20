@@ -1,8 +1,23 @@
-/*
- * This class manages all incoming and outgoing Jingle calls
- * This is an instance of this class that Kopete will keep to start
- * new Jingle sessions by calling for example manager->newSession(jid).
- */
+ /*
+  * jinglecallsmanager.h - A manager which manages all Jingle sessions.
+  *
+  * This class manages all incoming and outgoing Jingle calls
+  * This is an instance of this class that Kopete will keep to start
+  * new Jingle sessions by calling for example manager->newSession(jid).
+  *
+  * Copyright (c) 2008 by Detlev Casanova <detlev.casanova@gmail.com>
+  *
+  * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
+  *
+  * *************************************************************************
+  * *                                                                       *
+  * * This program is free software; you can redistribute it and/or modify  *
+  * * it under the terms of the GNU General Public License as published by  *
+  * * the Free Software Foundation; either version 2 of the License, or     *
+  * * (at your option) any later version.                                   *
+  * *                                                                       *
+  * *************************************************************************
+  */
 
 #ifndef JINGLE_CALLS_MANAGER
 #define JINGLE_CALLS_MANAGER

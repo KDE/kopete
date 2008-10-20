@@ -1,6 +1,6 @@
 /*
  * jinglesessionmanager.cpp - Manager for Jingle sessions
- * Copyright (C) 2004  Justin Karneges
+ * Copyright (C) 2008 - Detlev Casanova <detlev.casanova@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
