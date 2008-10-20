@@ -76,7 +76,7 @@ void SMSAccount::translateNumber(QString &theNumber)
 		theNumber.replace(0, 1, theSubCode);
 }
 
-const bool SMSAccount::splitNowMsgTooLong(int msgLength)
+bool SMSAccount::splitNowMsgTooLong(int msgLength) const
 {
 	if( theService == NULL )
 		return false;

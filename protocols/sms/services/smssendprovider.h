@@ -44,7 +44,7 @@ public:
 	QString name(int i);
 	const QString& value(int i);
 	const QString& description(int i);
-	const bool isHidden(int i);
+	bool isHidden(int i) const;
 
 	void save(const QList<KLineEdit*>& args);
 	void send(const Kopete::Message& msg);

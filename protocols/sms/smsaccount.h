@@ -44,7 +44,7 @@ public:
 	 *
 	 * Only ever call in case of message being too long - may result in user interaction.
 	 */
-	const bool splitNowMsgTooLong(int msgLength);
+	bool splitNowMsgTooLong(int msgLength) const;
 
 	SMSService* service();
 
