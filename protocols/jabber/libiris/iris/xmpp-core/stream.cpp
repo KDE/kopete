@@ -67,7 +67,7 @@
 using namespace XMPP;
 
 static Debug *debug_ptr = 0;
-void XMPP::setDebug(Debug *p)
+void IRIS_EXPORT XMPP::setDebug(Debug *p)
 {
 	debug_ptr = p;
 }
@@ -722,7 +722,7 @@ void ClientStream::sasl_nextStep(const QByteArray &stepData)
 void ClientStream::sasl_needParams(const QCA::SASL::Params& p) 
 {
 #ifdef XMPP_DEBUG
-	printf("need params: %d,%d,%d,%d\n", p.user, p.authzid, p.pass, p.realm);
+	//printf("need params: %d,%d,%d,%d\n", p.user, p.authzid, p.pass, p.realm);
 #endif
 	/*if(p.authzid && !p.user) {
 		d->sasl->setAuthzid(d->jid.bare());

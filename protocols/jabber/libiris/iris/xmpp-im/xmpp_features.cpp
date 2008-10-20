@@ -138,6 +138,33 @@ bool Features::canVoice() const
 	return test(ns);
 }
 
+#define FID_JINGLE "urn:xmpp:tmp:jingle"
+bool Features::canJingle() const
+{
+       QStringList ns;
+       ns << FID_JINGLE;
+
+       return test(ns);
+}
+
+#define FID_JINGLEAUDIO "urn:xmpp:tmp:jingle:apps:audio-rtp"
+bool Features::canJingleAudio() const
+{
+       QStringList ns;
+       ns << FID_JINGLEAUDIO;
+
+       return test(ns);
+}
+
+#define FID_JINGLEVIDEO "urn:xmpp:tmp:jingle:apps:video-rtp"
+bool Features::canJingleVideo() const
+{
+       QStringList ns;
+       ns << FID_JINGLEVIDEO;
+
+       return test(ns);
+}
+
 #define FID_GATEWAY "jabber:iq:gateway"
 bool Features::isGateway() const
 {
