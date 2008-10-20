@@ -40,7 +40,7 @@ public:
 	const QString& languageName( const QString &key )
 	{ return m_langs[key]; }
 
-	const int languageIndex	( const QString &key )
+	int languageIndex	( const QString &key ) const
 	{ return m_langKeyIntMap[key]; }
 
 	const QString& languageKey( const int index )
@@ -55,7 +55,7 @@ public:
 	const QStringList& supported( const QString &servicekey )
 	{ return m_supported[servicekey]; }
 
-	const int serviceIndex	( const QString &key )
+	int serviceIndex	( const QString &key ) const
 	{ return m_servicesKeyIntMap[key]; }
 
 	const QString& serviceKey( const int index )
