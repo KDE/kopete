@@ -6,19 +6,19 @@ macro_log_feature(OPENSSL_FOUND "OpenSSL" "A toolkit implementing the Secure Soc
 check_library_exists(nsl gethostbyname "" HAVE_NSL_LIBRARY)
 
 option(WITH_testbed "Enable Kopete testbed protocol" ON)
-option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" ON)
+option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" OFF)
 option(WITH_msn "Enable Kopete MSN protocol" ON)
 option(WITH_oscar "Enable Kopete Oscar (ICQ and AIM) protocol" ON)
 option(WITH_yahoo "Enable Kopete Yahoo protocol" ON)
 option(WITH_qq "Enable Kopete QQ protocol" ON)
 option(WITH_sms "Enable Kopete SMS protocol" ON)
 option(WITH_groupwise "Enable Novell GroupWise Messenger protocol" ON)
-option(WITH_telepathy "Enable Telepathy testbed protocol" ON)
+option(WITH_telepathy "Enable Telepathy testbed protocol" OFF)
 option(WITH_winpopup "Enable Kopete winpopup protocol" ON)
 option(WITH_gadu "Enable Kopete Gadu-Gadu protocol" ON)
 option(WITH_jabber "Enable Kopete Jabber protocol" ON)
 option(WITH_bonjour "Enable Kopete Bonjour protocol" ON)
-option(WITH_irc "Enable Kopete IRC protocol" ON)
+option(WITH_irc "Enable Kopete IRC protocol" OFF)
 
 include_directories(${KOPETE_INCLUDES})
 
