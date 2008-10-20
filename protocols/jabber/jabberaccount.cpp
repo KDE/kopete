@@ -1617,21 +1617,21 @@ void JabberAccount::slotEditVCard ()
 	static_cast<JabberContact *>( myself() )->slotUserInfo ();
 }
 
-const QString JabberAccount::resource () const
+QString JabberAccount::resource () const
 {
 
 	return configGroup()->readEntry ( "Resource", "Kopete" );
 
 }
 
-const QString JabberAccount::server () const
+QString JabberAccount::server () const
 {
 
 	return configGroup()->readEntry ( "Server" );
 
 }
 
-const int JabberAccount::port () const
+int JabberAccount::port () const
 {
 
 	return configGroup()->readEntry ( "Port", 5222 );

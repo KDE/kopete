@@ -70,9 +70,9 @@ public:
 	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/* Return the resource of the client */
-	const QString resource () const;
-	const QString server () const;
-	const int port () const;
+	QString resource () const;
+	QString server () const;
+	int port () const;
 
 	JabberResourcePool *resourcePool ();
 	JabberContactPool *contactPool ();
