@@ -84,14 +84,15 @@ WlmAccount::~WlmAccount ()
 void
 WlmAccount::fillActionMenu (KActionMenu * actionMenu)
 {
+/*
     Kopete::Account::fillActionMenu (actionMenu);
-
     actionMenu->addSeparator ();
 
     KAction *action;
 
     actionMenu->addAction (action);
     action->setEnabled (isConnected ());
+*/
 }
 
 bool
