@@ -283,9 +283,10 @@ AlsaIO::~AlsaIO()
 	}
 
 	if (ready)
+	{
 		snd_pcm_drain(handle);
-
-	snd_pcm_close(handle);
+		snd_pcm_close(handle);
+	}
 	
 	qDebug() << "DESTROYED";
 }
@@ -461,7 +462,11 @@ void AlsaIO::slotReadyWrite(int)
 	if (revents & POLLOUT)
 		writeData();
 	else
+	{
+		notifier->setEnabled(false);
 		qDebug() << "poll returned no event (" << revents << ", " << ufds[0].revents << ") ?";	
+	}
+
 }
 
 void AlsaIO::writeData()

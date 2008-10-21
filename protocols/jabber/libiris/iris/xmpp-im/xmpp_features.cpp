@@ -138,7 +138,7 @@ bool Features::canVoice() const
 	return test(ns);
 }
 
-#define FID_JINGLE "urn:xmpp:tmp:jingle"
+#define FID_JINGLE "urn:xmpp:tmp:jingle:0"
 bool Features::canJingle() const
 {
        QStringList ns;
@@ -147,20 +147,28 @@ bool Features::canJingle() const
        return test(ns);
 }
 
-#define FID_JINGLEAUDIO "urn:xmpp:tmp:jingle:apps:audio-rtp"
-bool Features::canJingleAudio() const
+#define FID_JINGLERTP "urn:xmpp:tmp:jingle:apps:rtp:0"
+bool Features::canJingleRtp() const
 {
        QStringList ns;
-       ns << FID_JINGLEAUDIO;
+       ns << FID_JINGLERTP;
+
+       return test(ns);
+}
+#define FID_JINGLERAW "urn:xmpp:jingle:transports:raw-udp:0"
+bool Features::canJingleRaw() const
+{
+       QStringList ns;
+       ns << FID_JINGLERAW;
 
        return test(ns);
 }
 
-#define FID_JINGLEVIDEO "urn:xmpp:tmp:jingle:apps:video-rtp"
-bool Features::canJingleVideo() const
+#define FID_JINGLEICE "urn:xmpp:jingle:transports:ice-udp:0"
+bool Features::canJingleIce() const
 {
        QStringList ns;
-       ns << FID_JINGLEVIDEO;
+       ns << FID_JINGLEICE;
 
        return test(ns);
 }

@@ -81,8 +81,8 @@ void JingleCallsManager::init()
 	
 	d->gui = 0L;
 	QStringList transports;
-	//transports << "urn:xmpp:tmp:jingle:transports:ice-udp";
-	transports << "urn:xmpp:tmp:jingle:transports:raw-udp";
+	//transports << NS_JINGLE_TRANSPORTS_ICE;
+	transports << NS_JINGLE_TRANSPORTS_RAW;
 	d->client->jingleSessionManager()->setSupportedTransports(transports);
 
 	QStringList profiles;
@@ -156,66 +156,68 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 	QStringList fList = bestResource->features().list();
 	for (int i = 0; i < fList.count(); i++)
 	{
-		if (fList[i] == "urn:xmpp:tmp:jingle:transports:ice-udp")
+		if (fList[i] == NS_JINGLE_TRANSPORTS_ICE)
 			iceUdp = true;
-		if (fList[i] == "urn:xmpp:tmp:jingle:transports:raw-udp")
+		if (fList[i] == NS_JINGLE_TRANSPORTS_RAW)
 			rawUdp = true;
 	}
 	QList<JingleContent*> contents;
 	QDomDocument doc("");
 	if (iceUdp)
 	{
+		kDebug() << "ICE-UDP supported !!!!!!!!!!!!!!!!!!";
+
 		// Create ice-udp contents.
 		QDomElement iceAudioTransport = doc.createElement("transport");
-		iceAudioTransport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:ice-udp");
+		iceAudioTransport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_ICE);
 		JingleContent *iceAudio = new JingleContent();
 		iceAudio->setName("audio-content");
 		iceAudio->addPayloadTypes(d->audioPayloads);
 		iceAudio->setTransport(iceAudioTransport);
-		iceAudio->setDescriptionNS("urn:xmpp:tmp:jingle:apps:rtp");
+		iceAudio->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		iceAudio->setType(JingleContent::Audio);
 		iceAudio->setCreator("initiator");
 
 		QDomElement iceVideoTransport = doc.createElement("transport");
-		iceVideoTransport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:ice-udp");
+		iceVideoTransport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_ICE);
 		JingleContent *iceVideo = new JingleContent();
 		iceVideo->setName("video-content");
 		iceVideo->addPayloadTypes(d->videoPayloads);
 		iceVideo->setTransport(iceVideoTransport);
-		iceVideo->setDescriptionNS("urn:xmpp:tmp:jingle:apps:rtp");
+		iceVideo->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		iceVideo->setType(JingleContent::Video);
 		iceVideo->setCreator("initiator");
 		
 		//contents << iceAudio << iceVideo;
 		contents << iceAudio;
-		kDebug() << "ICE-UDP supported !!!!!!!!!!!!!!!!!!";
 	}
 	else if (rawUdp)
 	{
+		kDebug() << "ICE-UDP not supported, falling back to RAW-UDP !";
+
 		// Create raw-udp contents.
 		QDomElement rawAudioTransport = doc.createElement("transport");
-		rawAudioTransport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:raw-udp");
+		rawAudioTransport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_RAW);
 		JingleContent *rawAudio = new JingleContent();
 		rawAudio->setName("audio-content");
 		rawAudio->addPayloadTypes(d->audioPayloads);
 		rawAudio->setTransport(rawAudioTransport);
-		rawAudio->setDescriptionNS("urn:xmpp:tmp:jingle:apps:audio-rtp");
+		rawAudio->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		rawAudio->setType(JingleContent::Audio);
 		rawAudio->setCreator("initiator");
 
 		QDomElement rawVideoTransport = doc.createElement("transport");
-		rawVideoTransport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:raw-udp");
+		rawVideoTransport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_RAW);
 		JingleContent *rawVideo = new JingleContent();
 		rawVideo->setName("video-content");
 		rawVideo->addPayloadTypes(d->videoPayloads);
 		rawVideo->setTransport(rawVideoTransport);
-		rawVideo->setDescriptionNS("urn:xmpp:tmp:jingle:apps:video-rtp");
+		rawVideo->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		rawVideo->setType(JingleContent::Video);
 		rawVideo->setCreator("initiator");
 		
 		//contents << rawAudio << rawVideo;
 		contents << rawAudio;
-		kDebug() << "ICE-UDP not supported, falling back to RAW-UDP !";
 	}
 	else
 	{

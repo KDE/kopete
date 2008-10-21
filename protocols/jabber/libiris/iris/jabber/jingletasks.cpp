@@ -31,7 +31,6 @@
 
 using namespace XMPP;
 
-
 JingleSession::JingleAction jingleAction(const QDomElement& x)
 {
 	QString action = x.firstChildElement().attribute("action");
@@ -304,7 +303,7 @@ void JT_JingleAction::initiate()
 	d->iq = createIQ(doc(), "set", d->session->to().full(), id());
 	d->iq.setAttribute("from", client()->jid().full());
 	QDomElement jingle = doc()->createElement("jingle");
-	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
+	jingle.setAttribute("xmlns", NS_JINGLE);
 	jingle.setAttribute("action", "session-initiate");
 	jingle.setAttribute("initiator", client()->jid().full());
 	jingle.setAttribute("sid", d->session->sid());
@@ -315,7 +314,7 @@ void JT_JingleAction::initiate()
 	{
 		QDomElement transport = d->session->contents()[i]->transport();
 		//qDebug() << "Transport from the JingleContent is : " << client()->stream().xmlToString(transport, false);
-		if (transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
+		if (transport.attribute("xmlns") == NS_JINGLE_TRANSPORTS_RAW)
 		{
 			qDebug() << "Set raw-udp candidate for content" << i;
 			QDomElement candidate = doc()->createElement("candidate");
@@ -350,7 +349,7 @@ void JT_JingleAction::initiate()
 			d->session->contents()[i]->bind(QHostAddress(ip), port);
 			//qDebug() << client()->stream().xmlToString(transport, false);
 		}
-		else if (transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
+		else if (transport.attribute("xmlns") == NS_JINGLE_TRANSPORTS_ICE)
 		{
 			//TODO:implement me.
 		}
@@ -377,7 +376,7 @@ void JT_JingleAction::contentAccept()
 	d->iq.setAttribute("from", client()->jid().full());
 	
 	QDomElement jingle = doc()->createElement("jingle");
-	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
+	jingle.setAttribute("xmlns", NS_JINGLE);
 	jingle.setAttribute("action", "content-accept");
 	jingle.setAttribute("initiator", d->session->initiator());
 	jingle.setAttribute("sid", d->session->sid());
@@ -400,7 +399,7 @@ void JT_JingleAction::ringing()
 	d->iq.setAttribute("from", client()->jid().full());
 	
 	QDomElement jingle = doc()->createElement("jingle");
-	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
+	jingle.setAttribute("xmlns", NS_JINGLE);
 	jingle.setAttribute("action", "session-info");
 	jingle.setAttribute("initiator", d->session->initiator());
 	jingle.setAttribute("sid", d->session->sid());
@@ -427,7 +426,7 @@ void JT_JingleAction::terminate(const JingleReason& r)
 	d->iq.setAttribute("from", client()->jid().full());
 	
 	QDomElement jingle = doc()->createElement("jingle");
-	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
+	jingle.setAttribute("xmlns", NS_JINGLE);
 	jingle.setAttribute("action", "session-terminate");
 	jingle.setAttribute("initiator", d->session->initiator());
 	jingle.setAttribute("sid", d->session->sid());
@@ -469,7 +468,7 @@ void JT_JingleAction::removeContents(const QStringList& c)
 	d->iq.setAttribute("from", client()->jid().full());
 	
 	QDomElement jingle = doc()->createElement("jingle");
-	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
+	jingle.setAttribute("xmlns", NS_JINGLE);
 	jingle.setAttribute("action", "content-remove");
 	jingle.setAttribute("initiator", d->session->initiator());
 	jingle.setAttribute("sid", d->session->sid());
@@ -503,21 +502,21 @@ void JT_JingleAction::transportInfo(JingleContent *c)
 	d->iq.setAttribute("from", client()->jid().full());
 
 	QDomElement jingle = doc()->createElement("jingle");
-	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
+	jingle.setAttribute("xmlns", NS_JINGLE);
 	jingle.setAttribute("action", "transport-info");
 	jingle.setAttribute("initiator", d->session->initiator());
 	jingle.setAttribute("sid", d->session->sid());
 	//---------This part should be in another method (createJingleIQ(...))
 	QString eip = client()->jingleSessionManager()->externalIP();
 
-	if (e.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
+	if (e.attribute("xmlns") == NS_JINGLE_TRANSPORTS_RAW)
 	{
 		QDomElement content = doc()->createElement("content");
 		content.setAttribute("name", c->name());
 		content.setAttribute("creator", d->session->initiator() == d->session->to().full() ? d->session->to().full() : "initiator");
 
 		QDomElement transport = doc()->createElement("transport");
-		transport.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:raw-udp");
+		transport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_RAW);
 		
 		QDomElement candidate = doc()->createElement("candidate");
 		QString ip;
@@ -554,7 +553,7 @@ void JT_JingleAction::transportInfo(JingleContent *c)
 		
 		c->bind(QHostAddress(ip), port);
 	}
-	else if (e.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
+	else if (e.attribute("xmlns") == NS_JINGLE_TRANSPORTS_ICE)
 	{
 		qDebug() << "ICE-UDP is not implemented yet.";
 	}
@@ -582,19 +581,19 @@ void JT_JingleAction::trying(const JingleContent& c)
 	d->iq.setAttribute("from", client()->jid().full());
 
 	QDomElement jingle = doc()->createElement("jingle");
-	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
+	jingle.setAttribute("xmlns", NS_JINGLE);
 	jingle.setAttribute("action", "session-info");
 	jingle.setAttribute("initiator", d->session->initiator());
 	jingle.setAttribute("sid", d->session->sid());
 	//---------This par should be in another method (createJingleIQ(...))
-	if (e.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
+	if (e.attribute("xmlns") == NS_JINGLE_TRANSPORTS_RAW)
 	{
 		QDomElement trying = doc()->createElement("trying");
 		trying.setAttribute("xmlns", "urn:xmpp:tmp:jingle:transports:raw-udp:info");
 		jingle.appendChild(trying);
 		d->iq.appendChild(jingle);
 	}
-	else if (e.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
+	else if (e.attribute("xmlns") == NS_JINGLE_TRANSPORTS_ICE)
 	{
 		qDebug() << "ICE-UDP is not implemented yet. (is trying message used with ICE-UDP ??? )";
 	}
@@ -622,7 +621,7 @@ void JT_JingleAction::received()
 	d->iq.setAttribute("from", client()->jid().full());
 
 	QDomElement jingle = doc()->createElement("jingle");
-	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
+	jingle.setAttribute("xmlns", NS_JINGLE);
 	jingle.setAttribute("action", "session-info");
 	jingle.setAttribute("initiator", d->session->initiator());
 	jingle.setAttribute("sid", d->session->sid());
@@ -651,7 +650,7 @@ void JT_JingleAction::sessionAccept(const QList<JingleContent*>& contents)
 	d->iq.setAttribute("from", client()->jid().full());
 
 	QDomElement jingle = doc()->createElement("jingle");
-	jingle.setAttribute("xmlns", "urn:xmpp:tmp:jingle");
+	jingle.setAttribute("xmlns", NS_JINGLE);
 	jingle.setAttribute("action", "session-accept");
 	jingle.setAttribute("initiator", d->session->initiator());
 	jingle.setAttribute("sid", d->session->sid());

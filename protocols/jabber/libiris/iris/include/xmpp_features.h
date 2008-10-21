@@ -47,8 +47,9 @@ namespace XMPP
 		bool canGroupchat() const;
 		bool canVoice() const;
 		bool canJingle() const;
-		bool canJingleVideo() const;
-		bool canJingleAudio() const;
+		bool canJingleRtp() const;
+		bool canJingleRaw() const;
+		bool canJingleIce() const;
 		bool canDisco() const;
 		bool canXHTML() const;
 		bool canChatState() const;

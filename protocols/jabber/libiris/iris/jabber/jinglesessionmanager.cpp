@@ -62,10 +62,10 @@ JingleSessionManager::JingleSessionManager(Client* c)
 
 	Features f = d->client->features();
 	
-	f.addFeature("urn:xmpp:tmp:jingle");
-//	f.addFeature("urn:xmpp:tmp:jingle:transports:ice-udp");
-	f.addFeature("urn:xmpp:tmp:jingle:transports:raw-udp");
-	f.addFeature("urn:xmpp:tmp:jingle:apps:audio-rtp");
+	f.addFeature(NS_JINGLE);
+//	f.addFeature(NS_JINGLE_TRANSPORTS_ICE);
+	f.addFeature(NS_JINGLE_TRANSPORTS_RAW);
+	f.addFeature(NS_JINGLE_APPS_RTP);
 //	f.addFeature("urn:xmpp:tmp:jingle:apps:video-rtp");
 
 	d->client->setFeatures(f);

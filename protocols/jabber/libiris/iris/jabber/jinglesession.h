@@ -28,6 +28,11 @@
 #include <QString>
 #include <QDomElement>
 
+#define NS_JINGLE "urn:xmpp:tmp:jingle:0"
+#define NS_JINGLE_TRANSPORTS_RAW "urn:xmpp:tmp:jingle:transports:raw-udp:0"
+#define NS_JINGLE_TRANSPORTS_ICE "urn:xmpp:tmp:jingle:transports:ice-udp:0"
+#define NS_JINGLE_APPS_RTP "urn:xmpp:tmp:jingle:apps:rtp:0"
+
 #include "im.h"
 //#include "xmpp_client.h"
 //#include "xmpp_jid.h"

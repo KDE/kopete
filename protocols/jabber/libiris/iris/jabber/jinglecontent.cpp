@@ -20,6 +20,8 @@
 
 #include "jinglecontent.h"
 
+#include "jinglesession.h"
+
 #include <QTimer>
 #include <QDomElement>
 #include <QUdpSocket>
@@ -29,6 +31,7 @@
 //----------------------
 
 using namespace XMPP;
+
 
 class JingleContent::Private
 {
@@ -195,7 +198,7 @@ QString JingleContent::descriptionNS() const
 void JingleContent::addTransportInfo(const QDomElement& e)
 {
 	QDomElement transport = e.firstChildElement();
-	if (transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
+	if (transport.attribute("xmlns") == NS_JINGLE_TRANSPORTS_ICE)
 	{
 		if (d->transport.attribute("pwd") != transport.attribute("pwd"))
 		{
@@ -217,7 +220,7 @@ void JingleContent::addTransportInfo(const QDomElement& e)
 			d->candidates << child;
 		}
 	}
-	else if (transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
+	else if (transport.attribute("xmlns") == NS_JINGLE_TRANSPORTS_RAW)
 	{
 		qDebug() << "Adding responder's candidates and connecting to it";
 		d->candidates << transport.firstChildElement();
@@ -232,23 +235,25 @@ void JingleContent::addTransportInfo(const QDomElement& e)
 	}
 }
 
+/*FIXME:this as no sense, this content is for RAW UDP only*/
 QString JingleContent::iceUdpPassword()
 {
-	if (d->transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
+	if (d->transport.attribute("xmlns") == NS_JINGLE_TRANSPORTS_ICE)
 		return d->transport.attribute("pwd");
 	return "";
 }
 
+/*FIXME:this as no sense, this content is for RAW UDP only*/
 QString JingleContent::iceUdpUFrag()
 {
-	if (d->transport.attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
+	if (d->transport.attribute("xmlns") == NS_JINGLE_TRANSPORTS_ICE)
 		return d->transport.attribute("ufrag");
 	return "";
 }
 
 void JingleContent::createUdpInSocket()
 {
-	if (d->transport.attribute("xmlns") != "urn:xmpp:tmp:jingle:transports:raw-udp")
+	if (d->transport.attribute("xmlns") != NS_JINGLE_TRANSPORTS_RAW)
 		return;
 	qDebug() << "JingleContent::createUdpInSocket()";
 	

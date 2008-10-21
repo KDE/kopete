@@ -32,7 +32,7 @@ MediaManager::MediaManager(QString inputDev, QString outputDev)
  : d(new Private)
 {
 	d->alsaIn = new AlsaIO(AlsaIO::Capture, inputDev, AlsaIO::Signed16Le);
-	d->alsaOut = new AlsaIO(AlsaIO::Playback, "default", AlsaIO::Signed16Le);
+	d->alsaOut = new AlsaIO(AlsaIO::Playback, outputDev, AlsaIO::Signed16Le);
 
 	d->started = false;
 
@@ -61,7 +61,15 @@ bool MediaManager::start()
 {
 	if (d->started)
 		return true;
-	return (d->started = d->alsaIn->start() && d->alsaOut->start());
+	
+	bool in = false, out = false;
+	
+	if (d->alsaIn->start())
+		in = true;
+	if (d->alsaOut->start())
+		out = true;
+		
+	return (d->started = (in && out));
 }
 
 QByteArray MediaManager::read()

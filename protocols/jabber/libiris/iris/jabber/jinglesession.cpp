@@ -127,7 +127,7 @@ void JingleSession::start()
 	iAction->go(true);
 	/*for (int i = 0; i < contents().count(); i++)
 	{
-		if (contents()[i]->transport().attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
+		if (contents()[i]->transport().attribute("xmlns") == NS_JINGLE_TRANSPORTS_RAW)
 		{
 			qDebug() << "Create IN socket for" << contents()[i]->name();
 			//qDebug("Content Adress : %x\n", (unsigned int) contents()[i]);
@@ -490,12 +490,12 @@ void JingleSession::startNegotiation()
 	qDebug() << "Start Negotiation : ";
 	for (int i = 0; i < d->contents.count(); i++)
 	{
-		if (d->contents[i]->transport().attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:ice-udp")
+		if (d->contents[i]->transport().attribute("xmlns") == NS_JINGLE_TRANSPORTS_ICE)
 		{
 			qDebug() << "    ICE-UDP";
 			sendIceUdpCandidates();
 		}
-		else if (d->contents[i]->transport().attribute("xmlns") == "urn:xmpp:tmp:jingle:transports:raw-udp")
+		else if (d->contents[i]->transport().attribute("xmlns") == NS_JINGLE_TRANSPORTS_RAW)
 		{
 			qDebug() << d->contents[i]->name() << "    RAW-UDP";
 			startRawUdpConnection(d->contents[i]);
