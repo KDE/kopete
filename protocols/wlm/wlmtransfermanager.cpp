@@ -84,6 +84,9 @@ WlmTransferManager::fileTransferInviteResponse (MSN::SwitchboardServerConnection
                                                 const unsigned int &sessionID,
                                                 const bool & response)
 {
+    if(!transferSessions.count(sessionID))
+        return;
+ 
     if (response)
     {
         transferSessionData tfd = transferSessions[sessionID];
@@ -164,6 +167,9 @@ WlmTransferManager::gotFileTransferProgress (MSN::SwitchboardServerConnection * 
                                              const unsigned long long
                                              &transferred)
 {
+    if(!transferSessions.count(sessionID))
+        return;
+
     Kopete::Transfer * transfer = transferSessions[sessionID].ft;
     if (transfer)
         transfer->slotProcessed (transferred);
@@ -177,6 +183,10 @@ WlmTransferManager::slotAccepted (Kopete::Transfer * ft,
 
     // grab contactId from the sender
     unsigned int sessionID = ft->info ().internalId ().toUInt ();
+
+    if(!transferSessions.count(sessionID))
+        return;
+    
     QString from = transferSessions[sessionID].from;
 
     if (from.isEmpty ())
@@ -234,6 +244,9 @@ WlmTransferManager::gotFileTransferFailed (MSN::SwitchboardServerConnection * co
                                             const unsigned int &sessionID,
                                             const MSN::fileTransferError & error)
 {
+    if(!transferSessions.count(sessionID))
+        return;
+
     transferSessionData tsd = transferSessions[sessionID];
     if (tsd.internalID)
     {
