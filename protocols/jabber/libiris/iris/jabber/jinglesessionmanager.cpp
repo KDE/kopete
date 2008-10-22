@@ -73,11 +73,10 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	d->firstPort = 9000;
 	
 	//Get External IP address, This is not Standard and might not work but let's try it before we have ICE support
-	//d->http = new QHttp(this);
-	//d->http->setHost("www.swlink.net");
-	//connect(d->http, SIGNAL(done(bool)), this, SLOT(slotExternalIPDone(bool)));
-	//d->http->get("/~styma/REMOTE_ADDR.shtml");
-	//FIXME:Crashes when www.swlink.net is not accessible. (down)
+	d->http = new QHttp(this);
+	d->http->setHost("www.swlink.net");
+	connect(d->http, SIGNAL(done(bool)), this, SLOT(slotExternalIPDone(bool)));
+	d->http->get("/~styma/REMOTE_ADDR.shtml");
 }
 
 void JingleSessionManager::slotExternalIPDone(bool err)
@@ -86,16 +85,27 @@ void JingleSessionManager::slotExternalIPDone(bool err)
 	if (err)
 	{
 		qDebug() << "err =" << err;
-		d->http->deleteLater();
+		d->http->deleteLater(); //FIXME:Not Sure about that
 		return;
 	}
-
-	QByteArray data = d->http->readAll();
-	// Parse XML here...
-	// We know that the ip is on the 5th line.
-	d->ip = data.split('\n').at(4);
+		
+	QByteArray pageData = d->http->readAll();
+	//FIXME: must parse html, this page has tag mismatch...
+	d->ip = pageData.split('\n').at(4);
 	qDebug() << "Received External IP :" << d->ip;
-	d->ip= "";
+
+	QDomDocument *xmlPage = new QDomDocument();
+	QString errMess;
+	int line, col;
+	if (xmlPage->setContent(pageData, false, &errMess, &line, &col))
+	{
+		qDebug() << "Parsing Ok";
+		/*d->ip= "";*/
+	}
+	else
+	{
+		qDebug() << " JingleSessionManager::slotExternalIPDone : Unable to parse HTML document." << errMess << line << col;
+	}
 	
 	delete d->http;
 }
