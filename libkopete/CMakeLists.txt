@@ -261,6 +261,7 @@ install( FILES
   kopetestatusmessage.h
   kopetetransfermanager.h
   kopeteuiglobal.h
+  kopeteutils.h
   kopeteversion.h
   kopetestatusmanager.h
   tasks/kopetetask.h

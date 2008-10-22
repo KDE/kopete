@@ -31,8 +31,10 @@ install(TARGETS kirc ${INSTALL_TARGETS_DEFAULT_ARGS})
 set(libkirc_client_SRCS
 	client/kircclienthandler.cpp
 
+	client/kircclientchannelhandler.cpp
 	client/kircclientlisthandler.cpp
 	client/kircclientmotdhandler.cpp
+	client/kircclientpingponghandler.cpp
 	client/kircclientwhohandler.cpp
 
 	client/kircclientsocket.cpp 

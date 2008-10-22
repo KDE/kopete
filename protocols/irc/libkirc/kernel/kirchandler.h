@@ -81,6 +81,7 @@ Q_SIGNALS:
 */
 protected:
 	Handler(HandlerPrivate *d, QObject *parent = 0);
+	Handler(HandlerPrivate *d, Handler *parent = 0);
 
 	HandlerPrivate * const d_ptr;
 };

@@ -21,10 +21,11 @@
 
 #include "client.h"
 
-#include <qtimer.h>
+#include <QTimer>
 #include <QList>
 #include <QByteArray>
-#include <qtextcodec.h>
+#include <QPointer>
+#include <QTextCodec>
 #include <QtNetwork/QTcpSocket>
 
 #include <kdebug.h> //for kDebug()
@@ -106,6 +107,9 @@ public:
 	enum { StageOne, StageTwo };
 	int stage;
 
+	StageOneLoginTask* loginTask;
+	QPointer<StageTwoLoginTask> loginTaskTwo;
+
 	//Protocol specific data
 	bool isIcq;
 	bool redirectRequested;
@@ -164,8 +168,6 @@ Client::Client( QObject* parent )
 :QObject( parent )
 {
 	setObjectName( "oscarclient" );
-	m_loginTask = 0L;
-	m_loginTaskTwo = 0L;
 
 	d = new ClientPrivate;
 	d->tzoffset = 0;
@@ -189,6 +191,8 @@ Client::Client( QObject* parent )
 	d->icqTlvInfoTask = 0L;
 	d->userInfoTask = 0L;
 	d->stage = ClientPrivate::StageOne;
+	d->loginTask = 0L;
+	d->loginTaskTwo = 0L;
 	d->typingNotifyTask = 0L;
 	d->ssiModifyTask = 0L;
 	d->awayMsgRequestTimer = new QTimer();
@@ -222,8 +226,8 @@ void Client::connectToServer( Connection *c, const QString& host, quint16 port, 
 	d->connections.append( c );
 	if ( auth == true )
 	{
-		m_loginTask = new StageOneLoginTask( c->rootTask() );
-		connect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
+		d->loginTask = new StageOneLoginTask( c->rootTask() );
+		connect( d->loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	}
 
 	connect( c, SIGNAL( socketError( int, const QString& ) ), this, SLOT( determineDisconnection( int, const QString& ) ) );
@@ -234,6 +238,10 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 {
 	Q_UNUSED( host );
 	Q_UNUSED( port );
+
+	// Cleanup client
+	close();
+
 	d->user = userId;
 	d->pass = pass;
 	d->stage = ClientPrivate::StageOne;
@@ -256,6 +264,7 @@ void Client::close()
 	d->awayMsgRequestTimer->stop();
 	d->awayMsgRequestQueue.clear();
 	d->connections.clear();
+
 	deleteStaticTasks();
 
 	//don't clear the stored status between stage one and two
@@ -391,9 +400,8 @@ Guid Client::versionCap() const
 void Client::streamConnected()
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
-	d->stage = ClientPrivate::StageTwo;
-	if ( m_loginTaskTwo )
-		m_loginTaskTwo->go();
+	if ( d->loginTaskTwo )
+		d->loginTaskTwo->go( Task::AutoDelete );
 }
 
 void Client::lt_loginFinished()
@@ -409,33 +417,31 @@ void Client::lt_loginFinished()
 		ServiceSetupTask* ssTask = new ServiceSetupTask( d->connections.defaultConnection()->rootTask() );
 		connect( ssTask, SIGNAL( finished() ), this, SLOT( serviceSetupFinished() ) );
 		ssTask->go( Task::AutoDelete ); //fire and forget
-		m_loginTaskTwo->deleteLater();
-		m_loginTaskTwo = 0;
 	}
 	else if ( d->stage == ClientPrivate::StageOne )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "stage one login done";
-		disconnect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
+		disconnect( d->loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 
-		if ( m_loginTask->statusCode() == 0 ) //we can start stage two
+		if ( d->loginTask->statusCode() == 0 ) //we can start stage two
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "no errors from stage one. moving to stage two";
 
 			//cache these values since they'll be deleted when we close the connections (which deletes the tasks)
-			d->host = m_loginTask->bosServer();
-			d->port = m_loginTask->bosPort().toUInt();
-			d->cookie = m_loginTask->loginCookie();
+			d->host = d->loginTask->bosServer();
+			d->port = d->loginTask->bosPort().toUInt();
+			d->cookie = d->loginTask->loginCookie();
 			close();
 			QTimer::singleShot( 100, this, SLOT(startStageTwo() ) );
+			d->stage = ClientPrivate::StageTwo;
 		}
 		else
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "errors reported. not moving to stage two";
 			close(); //deletes the connections for us
 		}
-
-		m_loginTask->deleteLater();
-		m_loginTask = 0;
+		d->loginTask->deleteLater();
+		d->loginTask = 0;
 	}
 
 }
@@ -447,10 +453,9 @@ void Client::startStageTwo()
 	new CloseConnectionTask( c->rootTask() );
 
 	//create the new login task
-	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
-	m_loginTaskTwo->setCookie( d->cookie );
-	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
-
+	d->loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
+	d->loginTaskTwo->setCookie( d->cookie );
+	QObject::connect( d->loginTaskTwo, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 
 	//connect
 	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
@@ -1534,9 +1539,9 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 
 	Connection* c = createConnection();
 	//create the new login task
-	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
-	m_loginTaskTwo->setCookie( cookie );
-	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
+	d->loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
+	d->loginTaskTwo->setCookie( cookie );
+	QObject::connect( d->loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
 
 	//connect
 	connectToServer( c, realHost, realPort.toInt(), false );
@@ -1548,7 +1553,9 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 
 void Client::serverRedirectFinished()
 {
-	if ( m_loginTaskTwo &&  m_loginTaskTwo->statusCode() == 0 )
+	StageTwoLoginTask* loginTaskTwo = qobject_cast<StageTwoLoginTask*>( sender() );
+
+	if ( loginTaskTwo && loginTaskTwo->statusCode() == 0 )
 	{ //stage two was successful
 		Connection* c = d->connections.connectionForFamily( d->currentRedirect );
 		if ( !c )
@@ -1571,33 +1578,33 @@ void Client::serverRedirectFinished()
 		emit chatNavigationConnected();
 	}
 
-    if ( d->currentRedirect == 0x000E )
-    {
-        //HACK! such abuse! think of a better way
-        if ( !m_loginTaskTwo )
-        {
-            kWarning(OSCAR_RAW_DEBUG) << "no login task to get connection from!";
-            emit redirectionFinished( d->currentRedirect );
-            return;
-        }
-
-        Connection* c = m_loginTaskTwo->client();
-        QString roomName = d->connections.chatRoomForConnection( c );
-        Oscar::WORD exchange = d->connections.exchangeForConnection( c );
-        if ( c )
-        {
-            kDebug(OSCAR_RAW_DEBUG) << "setting up chat connection";
-            ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), exchange, roomName );
-            connect( cst, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
-                     this, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
-            connect( cst, SIGNAL( userLeftChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
-                     this, SIGNAL( userLeftChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
-            connect( cst, SIGNAL( newChatMessage( const Oscar::Message& ) ),
-                     this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
-        }
-        emit chatRoomConnected( exchange, roomName );
-    }
-
+	if ( d->currentRedirect == 0x000E )
+	{
+		//HACK! such abuse! think of a better way
+		if ( !loginTaskTwo )
+		{
+			kWarning(OSCAR_RAW_DEBUG) << "no login task to get connection from!";
+			emit redirectionFinished( d->currentRedirect );
+			return;
+		}
+	
+		Connection* c = loginTaskTwo->client();
+		QString roomName = d->connections.chatRoomForConnection( c );
+		Oscar::WORD exchange = d->connections.exchangeForConnection( c );
+		if ( c )
+		{
+			kDebug(OSCAR_RAW_DEBUG) << "setting up chat connection";
+			ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), exchange, roomName );
+			connect( cst, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
+			         this, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
+			connect( cst, SIGNAL( userLeftChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
+			         this, SIGNAL( userLeftChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
+			connect( cst, SIGNAL( newChatMessage( const Oscar::Message& ) ),
+			         this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
+		}
+		emit chatRoomConnected( exchange, roomName );
+	}
+	
 	emit redirectionFinished( d->currentRedirect );
 
 }

@@ -20,9 +20,12 @@
 
 #include "kopeteaccount.h"
 
-class Kopete::Protocol;
-class Kopete::OnlineStatus;
-class Kopete::StatusMessage;
+namespace Kopete
+{
+class Protocol;
+class OnlineStatus;
+class StatusMessage;
+}
 
 class QString;
 

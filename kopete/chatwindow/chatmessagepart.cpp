@@ -138,7 +138,7 @@ public:
 	// Yep I know it will take memory, but I don't have choice
 	// to enable on-the-fly style changing.
 	QList<Kopete::Message> allMessages;
-	
+
 	// No need to delete, HTMLEventListener is ref counted.
 	QPointer<HTMLEventListener> htmlEventListener;
 
@@ -255,7 +255,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( KGlobalSettings::self(), SIGNAL(kdisplayFontChanged()),
 	         this, SLOT( slotRefreshView() ) );
-	
+
 	//initActions
 	d->copyAction = KStandardAction::copy( this, SLOT(copy()), actionCollection() );
 	d->saveAction = KStandardAction::saveAs( this, SLOT(save()), actionCollection() );
@@ -451,11 +451,6 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	message.setForegroundOverride( d->fgOverride );
 	message.setRichTextOverride( d->rtfOverride );
 
-	// parse emoticons and URL now.
-	// Do not reparse emoticons on restoring, because it cause very intensive CPU usage on long chats.
-	if( !restoring )
-		message.setHtmlBody( message.parsedBody() );
-
 #ifdef STYLE_TIMETEST
 	QTime beforeMessage = QTime::currentTime();
 #endif
@@ -573,7 +568,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		chatNode.appendChild(newMessageNode);
 	}
 
-	if ( message.type() == Kopete::Message::TypeNormal ) 
+	if ( message.type() == Kopete::Message::TypeNormal )
 	{
 		if ( message.direction() == Kopete::Message::Outbound )
 			changeMessageStateElement( message.id(), message.state() );
@@ -946,7 +941,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	// Replace sender (contact nick)
 	resultHTML.replace( QLatin1String("%sender%"), nickLink+nick+"</a>" );
 	// Replace time, by default display only time and display seconds(that was true means).
-	if ( Kopete::BehaviorSettings::showDates() )
+	if ( Kopete::BehaviorSettings::showDates() && message.timestamp().date() != QDate::currentDate() )
 		resultHTML.replace( QLatin1String("%time%"), KGlobal::locale()->formatDateTime(message.timestamp(), KLocale::ShortDate, true) );
 	else
 		resultHTML.replace( QLatin1String("%time%"), KGlobal::locale()->formatTime(message.timestamp().time(), true) );
@@ -1029,7 +1024,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 		hash += contactId[f].unicode() * f;
 	const QString colorName = nameColors[ hash % nameColorsLen ];
 	QString lightColorName;	// Do not initialize, QColor::name() is expensive!
-	kDebug(14000) << "Hash " << hash << " has color " << colorName;
+	//kDebug(14000) << "Hash " << hash << " has color " << colorName;
 	QRegExp senderColorRegExp("%senderColor(?:\\{([^}]*)\\})?%");
 	textPos=0;
 	while( (textPos=senderColorRegExp.indexIn(resultHTML, textPos) ) != -1 )
@@ -1075,7 +1070,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 		resultHTML.replace( QLatin1String("%saveFileAsHandlerId%"), QString( "ftSA%1" ).arg( message.id() ) );
 		resultHTML.replace( QLatin1String("%cancelRequestHandlerId%"), QString( "ftCC%1" ).arg( message.id() ) );
 	}
-	
+
 	if ( message.type() == Kopete::Message::TypeNormal && message.direction() == Kopete::Message::Outbound )
 		resultHTML.replace( QLatin1String( "%stateElementId%" ), QString( "msST%1" ).arg( message.id() ) );
 
@@ -1147,12 +1142,10 @@ QString ChatMessagePart::formatTime(const QString &timeFormat, const QDateTime &
 {
 	char buffer[256];
 
-	time_t timeT;
-	struct tm *loctime;
 	// Get current time
-	timeT = dateTime.toTime_t();
+	time_t timeT = dateTime.toTime_t();
 	// Convert it to local time representation.
-	loctime = localtime (&timeT);
+	struct tm* loctime = localtime (&timeT);
 	strftime (buffer, 256, timeFormat.toAscii(), loctime);
 
 	return QString(buffer);
@@ -1333,10 +1326,7 @@ void ChatMessagePart::resendMessage( uint messageId )
 
 			Kopete::Message msg( (*it).from(), (*it).to() );
 			msg.setDirection( Kopete::Message::Outbound );
-			if ( (*it).format() == Qt::RichText )
-				msg.setHtmlBody( (*it).body()->toPlainText() );
-			else
-				msg.setPlainBody( (*it).body()->toHtml() );
+			msg.setBody( (*it).body() );
 
 // 			msg.setBackgroundColor( (*it).backgroundColor() );
 			msg.setForegroundColor( (*it).foregroundColor() );
@@ -1410,7 +1400,7 @@ void ChatMessagePart::changeMessageStateElement( uint id, Kopete::Message::Messa
 	DOM::HTMLElement element = document().getElementById( elementId );
 	if ( element.isNull() )
 		return;
-	
+
 	QString statusHTML;
 	switch ( state )
 	{
@@ -1439,7 +1429,7 @@ void ChatMessagePart::registerClickEventListener( DOM::HTMLElement element )
 {
 	if ( element.isNull() )
 		return;
-	
+
 	if ( !d->htmlEventListener )
 	{
 		d->htmlEventListener = new HTMLEventListener();

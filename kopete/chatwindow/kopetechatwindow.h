@@ -157,6 +157,7 @@ private:
 
 	KToggleAction *mStatusbarAction;
 
+	KAction *tabActive;
 	KAction *tabLeft;
 	KAction *tabRight;
 	KAction *tabDetach;
@@ -195,6 +196,7 @@ private slots:
 	void slotSetBgColor();
 	void slotSetFgColor();
 	void slotSetFont();
+	void slotResetFontAndColor();
 
 	void slotHistoryUp();
 	void slotHistoryDown();
@@ -207,6 +209,7 @@ private slots:
 
 	void slotPreviousTab();
 	void slotNextTab();
+	void slotNextActiveTab();
 	void slotDetachChat(QAction* = 0);
 	void slotPlaceTabs( QAction* );
 
@@ -220,7 +223,6 @@ private slots:
 	void slotChatClosed();
 	void slotTabContextMenu( QWidget*, const QPoint & );
 	void slotStopAnimation( ChatView* );
-	void slotNickComplete();
 	void slotCloseChat( QWidget* );
 
 	//slots for tabs from the chatview widget
@@ -237,6 +239,7 @@ protected:
 	virtual void closeEvent( QCloseEvent *e );
 	virtual void changeEvent( QEvent *e );
 	virtual void resizeEvent( QResizeEvent *e);
+	virtual bool eventFilter( QObject *obj, QEvent *event );
 };
 
 #endif

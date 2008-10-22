@@ -16,10 +16,6 @@
 			<label>Show Kopete in system tray.</label>
 			<default>true</default>
 		</entry>
-		<entry key="useMessageStack" type="Bool">
-			<label>Use message stack</label>
-			<default>false</default>
-		</entry>
 		<entry key="useMessageQueue" type="Bool">
 			<label>Use message queue.</label>
 			<default>true</default>
@@ -74,6 +70,10 @@
 		</entry>
 		<entry key="trayflashNotifyLeftClickOpensMessage" type="Bool">
 			<label>Trayflash Notification Left Click Opens Message.</label>
+			<default>true</default>
+		</entry>
+		<entry key="animateOnMessageWithOpenChat" type="Bool">
+			<label>Animate on message with open chat.</label>
 			<default>true</default>
 		</entry>
 		<entry key="trayflashNotifySetCurrentDesktopToChatView" type="Bool">

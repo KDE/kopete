@@ -1186,7 +1186,7 @@ void KopeteWindow::setStatusMessage ( const Kopete::StatusMessage& statusMessage
 	{
 		Kopete::Contact *self = account->myself();
 		bool isInvisible = self && self->onlineStatus().status() == Kopete::OnlineStatus::Invisible;
-		if ( account->isConnected() && !isInvisible )
+		if ( self && account->isConnected() && !isInvisible )
 		{
 			changed = true;
 			account->setOnlineStatus ( self->onlineStatus(), statusMessage );

@@ -36,58 +36,47 @@ public:
 	/**
 	 * Standard action to start a chat
 	 */
-	static KAction *chat( const QObject *recvr, const char *slot,
-		KActionCollection* parent, const char *name = 0 );
+	static KAction *chat( const QObject *recvr, const char *slot, QObject* parent );
 	/**
 	 * Standard action to send a single message
 	 */
-	static KAction *sendMessage(const QObject *recvr, const char *slot,
-		KActionCollection* parent, const char *name = 0);
+	static KAction *sendMessage(const QObject *recvr, const char *slot, QObject* parent );
 	/**
 	 * Standard action to open a user info dialog
 	 */
-	static KAction *contactInfo(const QObject *recvr, const char *slot,
-		KActionCollection* parent, const char *name = 0);
+	static KAction *contactInfo(const QObject *recvr, const char *slot, QObject* parent );
 	/**
 	 * Standard action to open a history dialog or something similar
 	 */
-	static KAction *viewHistory(const QObject *recvr, const char *slot,
-		KActionCollection* parent, const char *name = 0);
+	static KAction *viewHistory(const QObject *recvr, const char *slot, QObject* parent );
 	/**
 	 * Standard action to initiate sending a file to a contact
 	 */
-	static KAction *sendFile(const QObject *recvr, const char *slot,
-		KActionCollection* parent, const char *name = 0);
+	static KAction *sendFile(const QObject *recvr, const char *slot, QObject* parent );
 	/**
 	 * Standard action to change a contacts @ref Kopete::MetaContact
 	 */
-	static KAction *changeMetaContact(const QObject *recvr, const char *slot,
-		KActionCollection* parent, const char *name = 0);
+	static KAction *changeMetaContact(const QObject *recvr, const char *slot, QObject* parent );
 	/**
 	 * Standard action to add a group
 	 */
-	static KAction *addGroup(const QObject *recvr, const char *slot,
-		KActionCollection* parent, const char *name = 0);
+	static KAction *addGroup(const QObject *recvr, const char *slot, QObject* parent );
 	/**
 	 * Standard action to delete a contact
 	 */
-	static KAction *deleteContact(const QObject *recvr, const char *slot,
-		KActionCollection* parent, const char *name = 0);
+	static KAction *deleteContact(const QObject *recvr, const char *slot, QObject* parent );
 	/**
 	 * Standard action to change a contact alias/nickname in your contact list
 	 */
-	static KAction *changeAlias(const QObject *recvr, const char *slot,
-		KActionCollection* parent, const char *name = 0);
+	static KAction *changeAlias(const QObject *recvr, const char *slot, QObject* parent );
 	/**
 	 * Standard action to block a contact
 	 */
-	static KAction *blockContact(const QObject *recvr, const char *slot,
-		KActionCollection* parent, const char *name = 0);
+	static KAction *blockContact(const QObject *recvr, const char *slot, QObject* parent );
 	/**
 	 * Standard action to unblock a contact
 	 */
-	static KAction *unblockContact(const QObject *recvr, const char *slot,
-		KActionCollection* parent, const char *name = 0);
+	static KAction *unblockContact(const QObject *recvr, const char *slot, QObject* parent );
 
 	/**
 	 * Return an action to change the Kopete preferences.
@@ -100,7 +89,7 @@ private:
 	 * @internal
 	 * Helper method to create a action
 	 */
-	static KAction *createAction(const QString &text, const KIcon &icon, const QObject *receiver, const char *slot, KActionCollection* parent, const char *name);
+	static KAction *createAction(const QString &text, const KIcon &icon, const QObject *receiver, const char *slot, QObject* parent);
 };
 
 

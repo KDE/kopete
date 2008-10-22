@@ -33,8 +33,12 @@ cutestuff/util/bytestream.cpp
 
 set(iris_SRCS 
 iris/jabber/filetransfer.cpp
+iris/jabber/jinglesessionmanager.cpp
 iris/jabber/s5b.cpp
 iris/jabber/xmpp_ibb.cpp
+iris/jabber/jinglesession.cpp
+iris/jabber/jingletasks.cpp
+iris/jabber/jinglecontent.cpp
 
 iris/xmpp-core/compress.cpp
 iris/xmpp-core/compressionhandler.cpp
@@ -96,12 +100,33 @@ kde4_moc_headers(iris_kopete
 
 #	iris/xmpp-im/xmpp_tasks.h
 #	iris/xmpp-im/xmpp_discoinfotask.h
+	iris/jabber/jinglesession.h
+	iris/jabber/jingletasks.h
+	iris/jabber/jinglecontent.h
+	iris/jabber/jinglesessionmanager.h
+
 )
+
+#set(testapp_SRCS
+#xmpptest/xmpptest.cpp
+#)
+
+#qt4_wrap_ui(testapp_SRCS
+#xmpptest/ui_test.ui
+#)
+
+#kde4_moc_headers(testapp
+#xmpptest/xmpptest.cpp
+#)
+
 
 kde4_add_library(iris_kopete SHARED ${libiris_SRCS})
 
+#kde4_add_executable(testapp ${testapp_SRCS})
+
 set(iris_kopete_libs ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY}
                      ${IDN_LIBRARY} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES})
+
 if(WIN32)
   set(iris_kopete_libs ${iris_kopete_libs} ws2_32)
 endif(WIN32)
@@ -112,6 +137,12 @@ if(HAVE_NSL_LIBRARY)
   set(iris_kopete_libs ${iris_kopete_libs} nsl)
 endif(HAVE_NSL_LIBRARY)
 target_link_libraries(iris_kopete ${iris_kopete_libs})
+
+#set(iris_testapp_libs ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY}
+#                     ${IDN_LIBRARY} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES}
+#		     iris_kopete)
+
+#target_link_libraries(testapp ${iris_testapp_libs})
 
 set_target_properties(iris_kopete PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS iris_kopete ${INSTALL_TARGETS_DEFAULT_ARGS})

@@ -31,9 +31,11 @@ class KIRCCLIENT_EXPORT ClientMotdHandler
 
 public:
 	explicit ClientMotdHandler(QObject* parent=0);
+	explicit ClientMotdHandler(KIrc::Handler *handler);
 	~ClientMotdHandler();
 
 private:
+	void registerAliases();
 #if 0
 	void postEvent(QEvent *event);
 

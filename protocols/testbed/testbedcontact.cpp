@@ -139,7 +139,7 @@ void TestbedContact::receivedMessage( const QString &message )
 	newMessage.setDirection( Kopete::Message::Inbound );
 
 	// Add it to the manager
-	manager()->appendMessage (newMessage);
+	manager(CanCreate)->appendMessage (newMessage);
 }
 
 void TestbedContact::slotChatSessionDestroyed()

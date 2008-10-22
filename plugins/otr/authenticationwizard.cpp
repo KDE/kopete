@@ -79,6 +79,7 @@ AuthenticationWizard *AuthenticationWizard::findWizard(Kopete::ChatSession *sess
 			return wizardList.at(i);
 		}
 	}
+        return wizardList.at(0);
 }
 
 QWizardPage *AuthenticationWizard::createIntroPage(){

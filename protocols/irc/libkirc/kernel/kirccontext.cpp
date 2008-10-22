@@ -19,6 +19,8 @@
 
 #include "kircentity.h"
 
+#include <QtCore/QEvent>
+
 using namespace KIrc;
 
 class KIrc::ContextPrivate
@@ -128,8 +130,9 @@ void Context::setDefaultCodec(QTextCodec *defaultCodec)
 
 void Context::postEvent(QEvent *event)
 {
-//	delete event;
+	// FIXME: use the Qt event system here
 	emit ircEvent( event );
+	delete event;
 }
 
 void Context::add(EntityPtr entity)

@@ -170,7 +170,7 @@ void BonjourContact::setremotePort(const short int &nremotePort)
 	remotePort = nremotePort;
 }
 
-const short int BonjourContact::getremotePort() const
+short int BonjourContact::getremotePort() const
 {
 	return remotePort;
 }
@@ -195,7 +195,7 @@ const QMap <QString, QByteArray> BonjourContact::gettextdata() const
 	return textdata;
 }
 
-const bool BonjourContact::isRemoteAddress(const QHostAddress &host) const
+bool BonjourContact::isRemoteAddress(const QHostAddress &host) const
 {
 	if (remoteAddress == host)
 		return true;

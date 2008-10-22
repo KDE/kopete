@@ -160,8 +160,6 @@ GaduContact::slotChatSessionDestroyed()
 void
 GaduContact::initActions()
 {
-	actionSendMessage_	= KopeteStdAction::sendMessage( this, SLOT( execute() ), 0, "actionMessage" );
-	actionInfo_		= KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), 0, "actionInfo" );
 }
 
 void

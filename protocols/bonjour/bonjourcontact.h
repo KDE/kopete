@@ -103,7 +103,7 @@ public:
 
 	const QString getremoteHostName() const;
 	const QHostAddress getremoteAddress() const;
-	const short int getremotePort() const;
+	short int getremotePort() const;
 	const QString getusername() const;
 	const QMap <QString, QByteArray> gettextdata() const;
 
@@ -115,7 +115,7 @@ public:
 	 * @param host The Host To Be Compared With
 	 * @return @c true if it is the same, @false otherwise
 	 */
-	const bool isRemoteAddress(const QHostAddress &host) const;
+	bool isRemoteAddress(const QHostAddress &host) const;
 
 	/*
 	 * @brief This Sets the @ref connection

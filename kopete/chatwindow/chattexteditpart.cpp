@@ -38,11 +38,11 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	setProtocolRichTextSupport();
 
 	historyPos = -1;
-	
+
 	mComplete = new KCompletion();
 	mComplete->setIgnoreCase( true );
 	mComplete->setOrder( KCompletion::Weighted );
-	
+
 	// set params on the edit widget
 	textEdit()->setMinimumSize( QSize( 75, 20 ) );
 //	textEdit()->setWordWrap( Q3TextEdit::WidgetWidth );
@@ -70,7 +70,7 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 
 	connect( Kopete::AppearanceSettings::self(), SIGNAL( appearanceChanged() ),
 	         this, SLOT( slotAppearanceChanged() ) );
-	
+
 	connect( KGlobalSettings::self(), SIGNAL( kdisplayFontChanged() ),
 	         this, SLOT( slotAppearanceChanged() ) );
 
@@ -87,88 +87,71 @@ ChatTextEditPart::~ChatTextEditPart()
 	delete mComplete;
 }
 
-// NAUGHTY, BAD AND WRONG! (but needed to fix nick complete bugs)
-/*
-#include <private/qrichtext_p.h>
-class EvilTextEdit : public KTextEdit
-{
-public:
-	// grab the paragraph as plain text - very very evil.
-	QString plainText( int para )
-	{
-		QString str = document()->paragAt( para )->string()->toString();
-		// str includes an extra space on the end (from the newline character?) - remove it
-		return str.left( str.length() - 1 );
-	}
-};
-*/
 void ChatTextEditPart::complete()
 {
-#ifdef __GNUC__
-#warning disabled nick completion to make it compile
-#endif
-#if 0
-	int para = 1, parIdx = 1;
-	textEdit()->getCursorPosition( &para, &parIdx);
+	QTextCursor textCursor = textEdit()->textCursor();
+	QTextBlock block = textCursor.block();
 
-	// FIXME: strips out all formatting
-//QString txt = static_cast<EvilTextEdit*>(textEdit())->plainText( para );
-	QString txt = textEdit()->text(para);
+	QString txt = block.text();
+	const int blockLength = block.length() - 1; // block.length includes the '\n'
+	const int blockPosition = block.position();
+    int cursorPos = textCursor.position() - blockPosition;
 
-	if ( parIdx > 0 )
+	// TODO replace with textCursor.movePosition(QTextCursor::PreviousWord)?
+	const int startPos = txt.lastIndexOf( QRegExp( QLatin1String("\\s\\S+") ), cursorPos - 1 ) + 1;
+	int endPos = txt.indexOf( QRegExp( QLatin1String("[\\s\\:]") ), startPos );
+	if( endPos == -1 )
 	{
-		int firstSpace = txt.lastIndexOf( QRegExp( QLatin1String("\\s\\S+") ), parIdx - 1 ) + 1;
-		int lastSpace = txt.find( QRegExp( QLatin1String("[\\s\\:]") ), firstSpace );
-		if( lastSpace == -1 )
-			lastSpace = txt.length();
+		endPos = blockLength;
+	}
+	const QString word = txt.mid( startPos, endPos - startPos );
 
-		QString word = txt.mid( firstSpace, lastSpace - firstSpace );
-		QString match;
-
-		kDebug(14000) << word << " from '" << txt << "'";
-
-		if ( word != m_lastMatch )
-		{
-			match = mComplete->makeCompletion( word );
-			m_lastMatch.clear();
-			parIdx -= word.length();
-		}
-		else
-		{
-			match = mComplete->nextMatch();
-			parIdx -= m_lastMatch.length();
-		}
-
-		if ( !match.isNull() && !match.isEmpty() )
-		{
-			QString rightText = txt.right( txt.length() - lastSpace );
-
-			if ( para == 0 && firstSpace == 0 && rightText[0] != QChar(':') )
-			{
-				rightText = match + QLatin1String(": ") + rightText;
-				parIdx += 2;
-			}
-			else
-				rightText = match + rightText;
-
-			// insert *before* remove. this is becase Qt adds an extra blank line
-			// if the rich text control becomes empty (if you remove the only para).
-			// disable updates while we change the contents to eliminate flicker.
-			textEdit()->setUpdatesEnabled( false );
-			textEdit()->insertParagraph( txt.left(firstSpace) + rightText, para );
-			textEdit()->removeParagraph( para + 1 );
-			textEdit()->setCursorPosition( para, parIdx + match.length() );
-			textEdit()->setUpdatesEnabled( true );
-			// must call this rather than update because QTextEdit is broken :(
-			textEdit()->updateContents();
-			m_lastMatch = match;
-		}
-		else
-		{
-			kDebug(14000) << "No completions! Tried " << mComplete->items();
+	if ( endPos < txt.length() && txt[endPos] == ':') {
+		// Eat ':' and ' ' too, if they are there, so that after pressing Tab
+		// we are on the right side of them again.
+		++endPos;
+		if ( endPos < txt.length() && txt[endPos] == ' ') {
+			++endPos;
 		}
 	}
-#endif
+
+	//kDebug(14000) << word << "from" << txt
+	//			  << "cursor pos=" << cursorPos
+	//			  << "start pos=" << startPos << "end pos=" << endPos;
+
+	QString match;
+	if ( word != m_lastMatch )
+	{
+		match = mComplete->makeCompletion( word );
+		m_lastMatch.clear();
+	}
+	else
+	{
+		match = mComplete->nextMatch();
+	}
+
+	if ( !match.isEmpty() )
+	{
+		m_lastMatch = match;
+
+		if ( textCursor.blockNumber() == 0 && startPos == 0 )
+		{
+			match += QLatin1String(": ");
+		}
+
+		//kDebug(14000) << "Selecting from position" << cursorPos << "to position" << endPos;
+		// Select the text to remove
+		textCursor.setPosition( startPos + blockPosition );
+		textCursor.setPosition( endPos + blockPosition, QTextCursor::KeepAnchor );
+		//kDebug(14000) << "replacing selection:" << textCursor.selectedText() << "with match:" << match;
+		// Type the text to replace it
+		textCursor.insertText( match );
+		textEdit()->setTextCursor( textCursor );
+	}
+	else
+	{
+		//kDebug(14000) << "No completions! Tried" << mComplete->items();
+	}
 }
 
 void ChatTextEditPart::slotPropertyChanged( Kopete::PropertyContainer*, const QString &key,
@@ -185,7 +168,7 @@ void ChatTextEditPart::slotContactAdded( const Kopete::Contact *contact )
 {
 	connect( contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
 	         this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
-	
+
 	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	mComplete->addItem( contactName );
 }
@@ -194,7 +177,7 @@ void ChatTextEditPart::slotContactRemoved( const Kopete::Contact *contact )
 {
 	disconnect( contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
 	            this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
-	
+
 	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	mComplete->removeItem( contactName );
 }
@@ -202,7 +185,7 @@ void ChatTextEditPart::slotContactRemoved( const Kopete::Contact *contact )
 bool ChatTextEditPart::canSend()
 {
 	int i;
-	
+
 	if ( !m_session ) return false;
 
 	// can't send if there's nothing *to* send...
@@ -210,7 +193,7 @@ bool ChatTextEditPart::canSend()
 		return false;
 
 	Kopete::ContactPtrList members = m_session->members();
-	
+
 	// if we can't send offline, make sure we have a reachable contact...
 	if ( !( m_session->protocol()->capabilities() & Kopete::Protocol::CanSendOffline ) )
 	{
@@ -284,7 +267,7 @@ bool ChatTextEditPart::isTyping()
 
 	//Make sure the message is empty. QString::isEmpty()
 	//returns false if a message contains just whitespace
-	//which is the reason why we strip the whitespace	
+	//which is the reason why we strip the whitespace
 	return !txt.trimmed().isEmpty();
 }
 
@@ -312,10 +295,10 @@ void ChatTextEditPart::historyUp()
 {
 	if ( historyList.empty() || historyPos == historyList.count() - 1 )
 		return;
-	
+
 	QString text = this->text(Qt::PlainText);
 	bool empty = text.trimmed().isEmpty();
-	
+
 	// got text? save it
 	if ( !empty )
 	{
@@ -329,9 +312,9 @@ void ChatTextEditPart::historyUp()
 			historyList[historyPos] = text;
 		}
 	}
-	
+
 	historyPos++;
-	
+
 	QString newText = historyList[historyPos];
 // 	TextFormat format=textEdit()->textFormat();
 // 	textEdit()->setTextFormat(AutoText); //workaround bug 115690
@@ -344,21 +327,21 @@ void ChatTextEditPart::historyDown()
 {
 	if ( historyList.empty() || historyPos == -1 )
 		return;
-	
+
 	QString text = this->text(Qt::PlainText);
 	bool empty = text.trimmed().isEmpty();
-	
+
 	// got text? save it
 	if ( !empty )
 	{
 		historyList[historyPos] = text;
 	}
-	
+
 	historyPos--;
-	
+
 	QString newText = ( historyPos >= 0 ? historyList[historyPos] : QString() );
-	
-	
+
+
 // 	TextFormat format=textEdit()->textFormat();
 // 	textEdit()->setTextFormat(AutoText); //workaround bug 115690
 	textEdit()->setText( newText );
@@ -385,9 +368,9 @@ void ChatTextEditPart::setContents( const Kopete::Message &message )
 	else
 		textEdit()->setPlainText ( message.plainBody() );
 	textEdit()->moveCursor ( QTextCursor::End );
-	
-	setFont( message.font() );
-	setTextColor( message.foregroundColor() );
+
+// 	setFont( message.font() );
+// 	setTextColor( message.foregroundColor() );
 // 	setBackgroundColorColor( message.backgroundColor() );
 }
 
@@ -396,11 +379,11 @@ Kopete::Message ChatTextEditPart::contents()
 	Kopete::Message currentMsg( m_session->myself(), m_session->members() );
 	currentMsg.setDirection( Kopete::Message::Outbound );
 	useRichText() ? currentMsg.setHtmlBody( text() ) : currentMsg.setPlainBody( text() );
-	
+
 // 	currentMsg.setBackgroundColor( bgColor() );
 	currentMsg.setForegroundColor( textColor() );
 	currentMsg.setFont( font() );
-	
+
 	return currentMsg;
 }
 
@@ -420,11 +403,8 @@ void ChatTextEditPart::slotAppearanceChanged()
 {
 	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
 
-	QFont chatFont = KGlobalSettings::generalFont();
-	if ( settings->chatFontSelection() == 1 )
-		chatFont = settings->chatFont();
-
-	setFont( chatFont );
+	setDefualtTextColor( settings->chatTextColor() );
+	setDefualtFont( ( settings->chatFontSelection() == 1 ) ? settings->chatFont() : KGlobalSettings::generalFont() );
 }
 
 void ChatTextEditPart::setProtocolRichTextSupport()

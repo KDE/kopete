@@ -209,6 +209,11 @@ public slots:
 	QFont font();
 
 	/**
+	 * Reset font and color of the edit area and outgoing messages.
+	 */
+	void resetFontAndColor();
+
+	/**
 	 * Sets the background color of the entry area, and outgoing messages
 	 * @param newColor The new background color. If this is QColor(), then
 	 * a color chooser dialog is opened
@@ -244,6 +249,9 @@ public slots:
 	virtual void messageSentSuccessfully();
 
 	virtual bool closeView( bool force = false );
+	
+	/** Retrieves the tab state. */
+	KopeteTabState tabState() const;
 
 signals:
 	/**
@@ -370,6 +378,8 @@ private:
 	void readOptions();
 
 	void sendInternalMessage( const QString &msg, Qt::TextFormat format = Qt::PlainText );
+	
+	KopeteTabState currentState() const;
 
 	KopeteChatViewPrivate *d;
 };

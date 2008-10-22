@@ -118,7 +118,7 @@ void Entity::setType( Entity::Type type )
 	Q_D(Entity);
 	if ( d->type != type )
 	{
-//		d->status.type = type;
+		d->type = type;
 		emit updated();
 	}
 }

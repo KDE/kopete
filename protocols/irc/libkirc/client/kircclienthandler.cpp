@@ -177,61 +177,6 @@ KIrc::Handler::Handled ClientEventHandler::ERROR(KIrc::Context *context, const K
 	return KIrc::Handler::NotHandled;
 }
 
-/* RFC say: "( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0""
- * suspected: ":<channel> *(" "/"," <channel>)"
- * assumed ":<channel>"
- * This is the response of someone joining a channel.
- * Remember that this will be emitted when *you* /join a room for the first time
- */
-KIrc::Handler::Handled ClientEventHandler::JOIN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	Q_D(ClientEventHandler);
-/*
-	CHECK_ARGS(0, 0);
-
-	Message message = ev->message();
-	Entity::Ptr from = d->context->entityFromName(message.prefix());
-
-#if 0
-	if (message.prefix() == QLatin1String("0"))
-		// leave all the channels
-	else
-#endif
-	{
-		// For now lets forgot about the keys
-		Entity::List channels = d->context->entitiesFromNames(message.prefix());
-		foreach(Entity::Ptr channel, channels)
-		{
-//			Event e;
-
-//			channel->add(from);
-		}
-	}
-*/
-	return KIrc::Handler::NotHandled;
-}
-
-/* The given user is kicked.
- * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
- */
-KIrc::Handler::Handled ClientEventHandler::KICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-
-	Q_D(ClientEventHandler);
-/*
-//	CHECK_ARGS(2, 2);
-
-	Entity::Ptr from;
-	Entity::List channels, users;
-
-	if (postEvent(ev, "Kick", from, channels, users)) {
-//		foreach(channel, channels)
-//			channel->remove(users);
-	}
-*/
-	return KIrc::Handler::NotHandled;
-}
-
 /* Change the mode of a user.
  * "<nickname> *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )"
  */
@@ -279,51 +224,6 @@ KIrc::Handler::Handled ClientEventHandler::NOTICE(KIrc::Context *context, const 
 	return KIrc::Handler::NotHandled;
 }
 
-/* This signal emits when a user parts a channel
- * "<channel> *( "," <channel> ) [ <Part Message> ]"
- */
-KIrc::Handler::Handled ClientEventHandler::PART(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(1, 1);
-/*
-	Entity::Ptr from;
-	Entity::List channels;
-	QString text;
-
-	if (postEvent(ev, "Part", from, channels, text)) {
-//		foreach(channel, channels)
-//			channel->remove(from);
-	}
-*/
-	return KIrc::Handler::NotHandled;
-}
-
-KIrc::Handler::Handled ClientEventHandler::PING(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	Q_D(ClientEventHandler);
-
-	CHECK_ARGS(0, 0);
-
-#if 0
-	MessageEvent *reply;
-//	reply.setCommand(PONG);
-//	reply.setArgs(message.rawArg(0));
-	reply.setSuffix(message.rawSuffix());
-
-//	message->client->writeMessage(reply);
-#endif
-	return KIrc::Handler::NotHandled;
-}
-
-KIrc::Handler::Handled ClientEventHandler::PONG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	Q_D(ClientEventHandler);
-
-	CHECK_ARGS(0, 0);
-
-	return KIrc::Handler::NotHandled;
-}
-
 /* Do not support CTCP here, just do the simple message handling.
  */
 KIrc::Handler::Handled ClientEventHandler::PRIVMSG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
@@ -367,24 +267,6 @@ KIrc::Handler::Handled CLientCommands::squit(KIrc::Context *context, const KIrc:
 	CHECK_ARGS(1, 1);
 }
 */
-
-/* "<channel> [ <topic> ]"
- * The topic of a channel changed. emit the channel, new topic, and the person who changed it.
- */
-KIrc::Handler::Handled ClientEventHandler::TOPIC(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(1, 1);
-/*
-	Entity::Ptr from;
-	Entity::List channel;
-	QByteArray topic;
-
-	if (postEvent(ev, "Topic", from, channel, topic)) {
-//		channel->set(Topic, topic);
-	}
-*/
-	return KIrc::Handler::NotHandled;
-}
 
 
 /* IMPORTANT NOTE:
@@ -543,22 +425,6 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_253(KIrc::Context *conte
 
 // 	if (ok)
 //		postEvent(ev, "UnkownConnections", from, to, text);
-	return KIrc::Handler::NotHandled;
-}
-
-/* 254: "<integer> :channels formed"
- * Tells how many total channels there are on this network.
- *  */
-KIrc::Handler::Handled ClientEventHandler::numericReply_254(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(2, 2);
-
-	bool ok = false;
-//	Entity::Ptr from; Entity::List to;
-// 	QString text = i18np("There has been %1 channel formed.", "There have been %1 channels formed.", ev->message().argAt(1).toULong(&ok));
-
-// 	if (ok)
-//		postEvent(ev, "ChannelsFormed", from, to, text);
 	return KIrc::Handler::NotHandled;
 }
 
@@ -878,16 +744,6 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_433(KIrc::Context *conte
 	return KIrc::Handler::NotHandled;
 }
 
-/* 442: "<channel> :You're not on that channel"
- */
-KIrc::Handler::Handled ClientEventHandler::numericReply_442(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(2, 2);
-
-//	postErrorEvent(message, i18n("You are not on channel %1.", message.arg(1)));
-	return KIrc::Handler::NotHandled;
-}
-
 /* 464: ":Password Incorrect"
  * Bad server password
  */
@@ -908,80 +764,13 @@ KIrc::Handler::Handled ClientEventHandler::numericReply_464(KIrc::Context *conte
 /* 465: ":You are banned from this server"
  */
 
-/* 471: "<channel> :Cannot join channel (+l)"
- * Channel is Full
- */
-KIrc::Handler::Handled ClientEventHandler::numericReply_471(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(2, 2)
-
-//	postErrorEvent(message, i18n("Cannot join %1, channel is full.", message.arg(2)) );
-	return KIrc::Handler::NotHandled;
-}
-
-/* 472: "<char> :is unknown mode char to me for <channel>"
- */
-
-/* 473: "<channel> :Cannot join channel (+i)"
- * Invite Only.
- */
-KIrc::Handler::Handled ClientEventHandler::numericReply_473(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(2, 2)
-
-//	postErrorEvent(message, i18n("Cannot join %1, channel is invite only.", message.arg(2)) );
-	return KIrc::Handler::NotHandled;
-}
-
-/* 474: "<channel> :Cannot join channel (+b)"
- * Banned.
- */
-KIrc::Handler::Handled ClientEventHandler::numericReply_474(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(2, 2)
-
-//	postErrorEvent(message, i18n("Cannot join %1, you are banned from that channel.", message.arg(2)) );
-	return KIrc::Handler::NotHandled;
-}
-
-/* 475: "<channel> :Cannot join channel (+k)"
- * Wrong Chan-key.
- */
-KIrc::Handler::Handled ClientEventHandler::numericReply_475(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(2, 2)
-
-//	postErrorEvent(message, i18n("Cannot join %1, wrong channel key was given.", message.arg(2)) );
-	return KIrc::Handler::NotHandled;
-}
-
-/* 476: "<channel> :Bad Channel Mask"
- */
-
-/* 477: "<channel> :Channel doesn't support modes" RFC-2812
- * 477: "<channel> :You need a registered nick to join that channel." DALNET
- */
-// void ClientEventHandler::numericReply_477(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-// {
-// 	emit incomingChannelNeedRegistration(message.arg(2), message.suffix());
-// }
-
-/* 478: "<channel> <char> :Channel list is full"
- */
-
 /* 481: ":Permission Denied- You're not an IRC operator"
- */
-
-/* 482: "<channel> :You're not channel operator"
  */
 
 /* 483: ":You can't kill a server!"
  */
 
 /* 484: ":Your connection is restricted!"
- */
-
-/* 485: ":You're not the original channel operator"
  */
 
 /* 491: ":No O-lines for your host"

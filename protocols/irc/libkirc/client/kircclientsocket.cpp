@@ -42,6 +42,7 @@ ClientSocket::ClientSocket(Context *context)
 {
 	Q_D(ClientSocket);
 	d->server = new Entity(context);
+	d->server->setType(Entity::Server);
 
 	ClientEventHandler *clientHandler=new ClientEventHandler( context );
 	context->addEventHandler( clientHandler );

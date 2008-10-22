@@ -49,8 +49,9 @@ class Message::Private
 public:
 	Private() //assign next message id, it can't be changed later
 		: id(nextId++), direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), state(StateUnknown),
-		  backgroundOverride(false), foregroundOverride(false), richTextOverride(false), isRightToLeft(false),
-		  timeStamp( QDateTime::currentDateTime() ), body(new QTextDocument), escapedBodyDirty(true), fileTransfer(0)
+		  delayed(false), backgroundOverride(false), foregroundOverride(false), richTextOverride(false), isRightToLeft(false),
+		  timeStamp( QDateTime::currentDateTime() ), body(new QTextDocument), parsedBodyDirty(true), escapedBodyDirty(true),
+		  fileTransfer(0)
 	{}
 	Private (const Private &other);
 	~Private();
@@ -66,6 +67,7 @@ public:
 	QString requestedPlugin;
 	MessageImportance importance;
 	MessageState state;
+	bool delayed;
 	bool backgroundOverride;
 	bool foregroundOverride;
 	bool richTextOverride;
@@ -79,6 +81,8 @@ public:
 	QString subject;
 
 	QTextDocument* body;
+	mutable QString parsedBody;
+	mutable bool parsedBodyDirty;
 	mutable QString escapedBody;
 	mutable bool escapedBodyDirty;
 
@@ -114,6 +118,7 @@ Message::Private::Private (const Message::Private &other)
 	requestedPlugin = other.requestedPlugin;
 	importance = other.importance;
 	state = other.state;
+	delayed = other.delayed;
 	backgroundOverride = other.backgroundOverride;
 	foregroundOverride = other.foregroundOverride;
 	richTextOverride = other.richTextOverride;
@@ -127,6 +132,8 @@ Message::Private::Private (const Message::Private &other)
 	subject = other.subject;
 
 	body = other.body->clone();
+	parsedBody = other.parsedBody;
+	parsedBodyDirty = other.parsedBodyDirty;
 	escapedBody = other.escapedBody;
 	escapedBodyDirty = other.escapedBodyDirty;
 
@@ -240,6 +247,7 @@ void Message::doSetBody (const QString &body, Qt::TextFormat f)
 	d->format = f;
 	d->isRightToLeft = d->body->toPlainText().isRightToLeft();
 	d->escapedBodyDirty = true;
+	d->parsedBodyDirty = true;
 }
 
 void Message::setBody (const QTextDocument *_body)
@@ -254,6 +262,7 @@ void Message::doSetBody (const QTextDocument *body, Qt::TextFormat f)
 	d->format = f;
 	d->isRightToLeft = d->body->toPlainText().isRightToLeft();
 	d->escapedBodyDirty = true;
+	d->parsedBodyDirty = true;
 }
 
 void Message::setImportance(Message::MessageImportance i)
@@ -375,8 +384,12 @@ QString Message::escapedBody() const
 QString Message::parsedBody() const
 {
 	//kDebug(14000) << "messageformat: " << d->format;
-
-	return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), Qt::RichText));
+	if ( !d->parsedBodyDirty )
+		return d->parsedBody;
+	
+	d->parsedBody = Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), Qt::RichText));
+	d->parsedBodyDirty = false;
+	return d->parsedBody;
 }
 
 static QString makeRegExp( const char *pattern )
@@ -572,7 +585,7 @@ void Message::setManager(ChatSession *kmm)
 QString Message::getHtmlStyleAttribute() const
 {
 	QString styleAttribute;
-	
+
 	styleAttribute = QString::fromUtf8("style=\"");
 
 	// Affect foreground(color) and background color to message.
@@ -584,7 +597,7 @@ QString Message::getHtmlStyleAttribute() const
 	{
 		styleAttribute += QString::fromUtf8("background-color: %1; ").arg(d->backgroundColor.name());
 	}
-	
+
 	// Affect font parameters.
 	if( !d->richTextOverride && d->font!=QFont() )
 	{
@@ -625,7 +638,7 @@ void Message::setFileName( const QString &fileName )
 {
 	if ( !d->fileTransfer )
 		d->fileTransfer = new Message::Private::FileTransferInfo();
-	
+
 	d->fileTransfer->fileName = fileName;
 }
 
@@ -638,7 +651,7 @@ void Message::setFileSize( unsigned long size )
 {
 	if ( !d->fileTransfer )
 		d->fileTransfer = new Message::Private::FileTransferInfo();
-	
+
 	d->fileTransfer->fileSize = size;
 }
 
@@ -651,7 +664,7 @@ void Message::setFilePreview( const QPixmap &preview )
 {
 	if ( !d->fileTransfer )
 		d->fileTransfer = new Message::Private::FileTransferInfo();
-	
+
 	d->fileTransfer->filePreview = preview;
 }
 
@@ -661,7 +674,7 @@ QPixmap Message::filePreview() const
 }
 
 // prime candidate for removal
-#if 0 
+#if 0
 QString Message::decodeString( const QByteArray &message, const QTextCodec *providedCodec, bool *success )
 {
 	/*
@@ -762,4 +775,14 @@ void Message::setClasses(const QStringList & classes)
 	d->classes = classes;
 }
 
+}
+
+bool Kopete::Message::delayed() const
+{
+	return d->delayed;
+}
+
+void Kopete::Message::setDelayed(bool delay)
+{
+	d->delayed = delay;
 }

@@ -110,7 +110,17 @@ public slots:
 	/**
 	 * this will start a voice call to the contact
 	 */
-	void voiceCall();
+	//void voiceCall();
+	 
+	 /**
+	  * This is the JabberContact level slot for starting a Jingle Video call.
+	  * See later for params...
+	  */
+#ifdef JINGLE_SUPPORT
+	void startJingleSession();
+	void startJingleAudioCall();
+	void startJingleVideoCall();
+#endif
 
 private slots:
 

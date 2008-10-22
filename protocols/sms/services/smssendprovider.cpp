@@ -166,7 +166,7 @@ const QString& SMSSendProvider::description(int i)
 	return descriptions[i];
 }
 
-const bool SMSSendProvider::isHidden(int i)
+bool SMSSendProvider::isHidden(int i) const
 {
 	return isHiddens[i];
 }

@@ -24,7 +24,10 @@
 #include "libgroupwise_export.h"
 #include "tlshandler.h"
 
-class QCA::TLS;
+namespace QCA
+{
+class TLS;
+}
 
 class LIBGROUPWISE_EXPORT QCATLSHandler : public TLSHandler
 {

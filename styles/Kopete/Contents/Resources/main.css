@@ -150,10 +150,10 @@
 
 .OutgoingAction
 {
-	border-top: 2px solid fafafa #cfcfcf; 
-	border-right: 2px solid fafafa #afafaf;
-	border-bottom: 2px solid fafafa #afafaf;
-	border-left: 2px solid fafafa #cfcfcf;
+	border-top: 2px solid #fafafa #cfcfcf; 
+	border-right: 2px solid #fafafa #afafaf;
+	border-bottom: 2px solid #fafafa #afafaf;
+	border-left: 2px solid #fafafa #cfcfcf;
 	padding: 0.1em; 
 	vertical-align: middle;
 	background-color:#dedede;

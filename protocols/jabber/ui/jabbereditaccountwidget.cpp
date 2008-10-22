@@ -32,6 +32,10 @@
 #include <klineedit.h>
 #include <kopetepassword.h>
 #include <kopetepasswordedaccount.h>
+
+//#include <solid/devicenotifier.h>
+//#include <solid/device.h>
+
 #include "kopetecontact.h"
 
 #include "kopeteuiglobal.h"
@@ -42,6 +46,11 @@
 #include "jabberregisteraccount.h"
 #include "dlgjabberchangepassword.h"
 #include "privacydlg.h"
+
+#ifdef JINGLE_SUPPORT
+//FIXME:Should be replaced by Solid.
+#include "alsaio.h"
+#endif
 
 JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, JabberAccount * ident, QWidget * parent)
 						: QWidget(parent), DlgJabberEditAccountWidget(), KopeteEditAccountWidget (ident)
@@ -58,6 +67,20 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (btnChangePassword, SIGNAL ( clicked() ), this, SLOT ( slotChangePasswordClicked () ));
 	
 	connect (privacyListsButton, SIGNAL ( clicked() ), this, SLOT ( slotPrivacyListsClicked() ) );
+	
+#ifdef JINGLE_SUPPORT
+	checkAudioDevices();
+#else
+	/*Remove the Jingle tab*/
+	for (int i = 0; i < tabWidget10->count(); i++)
+	{
+		if (tabWidget10->tabText(i) == "&Jingle")
+		{
+			tabWidget10->removeTab(i);
+			break;
+		}
+	}
+#endif
 
 	if (account())
 	{
@@ -85,6 +108,40 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 JabberEditAccountWidget::~JabberEditAccountWidget ()
 {
 }
+
+
+#ifdef JINGLE_SUPPORT
+void JabberEditAccountWidget::checkAudioDevices()
+{
+	kDebug() << "Start.";
+	/*Solid::DeviceNotifier *notifier = Solid::DeviceNotifier::instance();
+	foreach (const Solid::Device &device, Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface, QString()))
+	//foreach (const Solid::Device &device, Solid::Device::allDevices())
+	{
+		kDebug() << "Found :";
+		kDebug() << device.udi().toLatin1().constData();
+	}*/
+	QList<Item> devices = getAlsaItems();
+	for (int i = 0; i < devices.count(); i++)
+	{
+		if (devices.at(i).dir == Item::Input)
+		{
+			kDebug() << "Microphone :" << devices.at(i).name << "(" << devices.at(i).id << ")";
+			audioInputsCombo->addItem(devices.at(i).name);
+			inputDevices << devices.at(i);
+		}
+		else if (devices.at(i).dir == Item::Output)
+		{
+			kDebug() << "Audio output :" << devices.at(i).name << "(" << devices.at(i).id << ")";
+			audioOutputsCombo->addItem(devices.at(i).name);
+			outputDevices << devices.at(i);
+		}
+
+	}
+	kDebug() << "End.";
+
+}
+#endif
 
 JabberAccount *JabberEditAccountWidget::account ()
 {
@@ -135,6 +192,29 @@ void JabberEditAccountWidget::reopen ()
 	sbLocalPort->setValue (config.readEntry("LocalPort", 8010));
 
 	leProxyJID->setText (account()->configGroup()->readEntry("ProxyJID", QString()));
+
+#ifdef JINGLE_SUPPORT
+	//Jingle
+	firstPortEdit->setValue(account()->configGroup()->readEntry("JingleFirstPort", QString("9000")).toInt());
+	
+	for (int i = 0; i < inputDevices.count(); i++)
+	{
+		if (inputDevices.at(i).id == account()->configGroup()->readEntry("JingleInputDevice", QString()))
+		{
+			audioInputsCombo->setCurrentIndex(i);
+			break;
+		}
+	}
+	
+	for (int i = 0; i < outputDevices.count(); i++)
+	{
+		if (outputDevices.at(i).id == account()->configGroup()->readEntry("JingleOutputDevice", QString()))
+		{
+			audioOutputsCombo->setCurrentIndex(i);
+			break;
+		}
+	}
+#endif
 
 	// Privacy
 	cbSendEvents->setChecked( account()->configGroup()->readEntry("SendEvents", true) );
@@ -187,6 +267,12 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->configGroup()->writeEntry("Resource", mResource->text ());
 	account()->configGroup()->writeEntry("Priority", QString::number (mPriority->value ()));
 	account()->configGroup()->writeEntry("Port", QString::number (mPort->value ()));
+
+#ifdef JINGLE_SUPPORT
+	account()->configGroup()->writeEntry("JingleFirstPort", QString::number(firstPortEdit->value()));
+	account()->configGroup()->writeEntry("JingleInputDevice", inputDevices.at(audioInputsCombo->currentIndex()).id);
+	account()->configGroup()->writeEntry("JingleOutputDevice", outputDevices.at(audioOutputsCombo->currentIndex()).id);
+#endif
 
 	account()->setExcludeConnect(cbAutoConnect->isChecked());
 

@@ -203,12 +203,13 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 		{
 			aimAccount->engine()->joinChatRoom( firstParam, secondParam.toInt() );
 		}
-		else
+		else if ( aimAccount )
+		{
 			KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
 			                    i18n( "Unable to connect to the chat room %1 because the account"
 			                          " for %2 is not connected.", firstParam, aimAccount->accountId() ),
 			                    QString() );
-
+		}
 	}
 
 	if ( mc && realCommand == "goim" )

@@ -21,6 +21,7 @@
 
 #include "xmpp_tasks.h"
 #include "im.h"
+//#include "td.h"
 #include "tasks/jt_getlastactivity.h"
 
 #include <qtimer.h>
@@ -60,10 +61,8 @@
 #include "jabbertransport.h"
 #include "dlgjabbervcard.h"
 
-#ifdef SUPPORT_JINGLE
-// #include "jinglesessionmanager.h"
-// #include "jinglevoicesession.h"
-#include "jinglevoicesessiondialog.h"
+#ifdef JINGLE_SUPPORT
+#include "jinglecallsmanager.h"
 #endif
 
 /**
@@ -72,9 +71,11 @@
 JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Account *_account, Kopete::MetaContact * mc, const QString &legacyId)
 	: JabberBaseContact ( rosterItem, _account, mc, legacyId)  , mDiscoDone(false), m_syncTimer(0L)
 {
+	///*account()->client()->clientStream()->*/XMPP::setDebug((Debug*) new TD());
 	kDebug(JABBER_DEBUG_GLOBAL) << contactId() << "  is created  - " << this;
 	// this contact is able to transfer files
 	setFileCapable ( true );
+	
 
 	/*
 	 * Catch when we're going online for the first time to
@@ -247,18 +248,24 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	actions->append( actionSelectResource );
 	
 	
-#ifdef SUPPORT_JINGLE
-	KAction *actionVoiceCall = new KAction( (i18n ("Voice call"), "voicecall", 0, this, SLOT (voiceCall ()), 0, "jabber_voicecall");
-	actionVoiceCall->setEnabled( false );
+#if 0
+	KAction *testAction = new KAction(i18n("Test action"), this);
+	actionJingleAudioCall->setEnabled( true );
+	actionCollection->append( testAction );
 
-	actions->append( actionVoiceCall );
+	KAction *actionJingleAudioCall = new KAction(i18n("Jingle Audio call"), this);
+	connect(actionJingleAudioCall, SIGNAL(triggered(bool)), SLOT(slotJingleAudioCall()));
+	
+	KAction *actionJingleVideoCall = new KAction(i18n("Jingle Video call"), this);
+	connect(actionJingleVideoCall, SIGNAL(triggered(bool)), SLOT(slotJingleVideoCall()));
 
-	// Check if the current contact support Voice calls, also honor lock by default.
+	// Check if the current contact support jingle calls, also honor lock by default.
 	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( mRosterItem.jid() );
-	if( bestResource && bestResource->features().canVoice() )
-	{
-		actionVoiceCall->setEnabled( true );
-	}
+	actionJingleAudioCall->setEnabled( bestResource->features().canJingleAudio() );
+	actionJingleVideoCall->setEnabled( bestResource->features().canJingleVideo() );
+	
+	actionCollection->append( actionJingleAudioCall );
+	actionCollection->append( actionJingleVideoCall );
 #endif
 
 	// temporary action collection, used to apply Kiosk policy to the actions
@@ -365,8 +372,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	// check for errors
 	if ( message.type () == "error" )
 	{
-		mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateError );
-
+		mManager->receivedMessageState( message.id().toUInt(), Kopete::Message::StateError );
 		newMessage = new Kopete::Message( this, contactList );
 		newMessage->setTimestamp( message.timeStamp() );
 		newMessage->setPlainBody( i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
@@ -1251,46 +1257,6 @@ QString JabberContact::lastReceivedMessageId () const
 	return mLastReceivedMessageId;
 }
 
-void JabberContact::voiceCall( )
-{
-#ifdef SUPPORT_JINGLE
-	Jid jid = mRosterItem.jid();
-	
-	// It's honor lock by default.
-	JabberResource *bestResource = account()->resourcePool()->bestJabberResource( jid );
-	if( bestResource )
-	{
-		if( jid.resource().isEmpty() )
-		{
-			// If the jid resource is empty, get the JID from best resource for this contact.
-			jid = bestResource->jid();
-		}
-	
-		// Check if the voice caller exist and the current resource support voice.
-		if( account()->voiceCaller() && bestResource->features().canVoice() )
-		{
-			JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog( jid, account()->voiceCaller() );
-			voiceDialog->show();
-			voiceDialog->start();
-		}
-#if 0
-		if( account()->sessionManager() && bestResource->features().canVoice() )
-		{
-			JingleVoiceSession *session = static_cast<JingleVoiceSession*>(account()->sessionManager()->createSession("http://www.google.com/session/phone", jid));
-
-			JingleVoiceSessionDialog *voiceDialog = new JingleVoiceSessionDialog(session);
-			voiceDialog->show();
-			voiceDialog->start();
-		}
-#endif
-	}
-	else
-	{
-		// Shouldn't never go there.
-	}
-#endif
-}
-
 void JabberContact::slotDiscoFinished( )
 {
 	mDiscoDone = true;
@@ -1311,7 +1277,7 @@ void JabberContact::slotDiscoFinished( )
 				is_transport=true;
 				tr_type=ident.type;
 				//name=ident.name;
-				
+		
 				break;  //(we currently only support gateway)
 			}
 			else if (ident.category == "service")
@@ -1359,6 +1325,53 @@ void JabberContact::slotDiscoFinished( )
 	}
 }
 
+#ifdef JINGLE_SUPPORT
+void JabberContact::startJingleSession()
+{
+	startJingleVideoCall(); //Only to show the message.
 
+	account()->jingleCallsManager()->startNewSession(/*to*/fullAddress());
+	account()->jingleCallsManager()->showCallsGui();
+}
+
+void JabberContact::startJingleAudioCall()
+{
+	startJingleVideoCall(); //Only to show the message.
+
+	//There should also have a list of jingle features supported by the responder client.
+	//--> Will be done in Iris as iris should now what features are supported by the responder client.
+	account()->jingleCallsManager()->startNewSession(/*to*/fullAddress());
+}
+
+void JabberContact::startJingleVideoCall()
+{
+	kDebug() << "Start a Jingle Session";
+
+	//JingleCallsManager should manage messages itself.
+	/*XMPP::Jid jid = rosterItem().jid();
+	JabberResource *bestResource;
+	XMPP::Resource resource = account()->resourcePool()->bestJabberResource( jid )->resource();
+	if (&resource)
+	{
+		JabberChatSession *mManager = manager ( resource.name(), Kopete::Contact::CanCreate );
+		Kopete::Message m = Kopete::Message ( this, mManager->members());
+		m.setPlainBody( i18n("Starting a Jingle session with %1", metaContact()->displayName()) );
+		m.setDirection( Kopete::Message::Internal );
+		mManager->appendMessage ( m, resource.name() );
+	}
+	else
+	{
+		if (!manager(CannotCreate))
+			return;
+		Kopete::Message msg;
+		msg.setPlainBody( "Failed to start a Jingle session, is your contact Online ?" );
+		manager(CannotCreate)->appendMessage( msg );
+		;
+		//FIXME:How to write a message in the chat dialog when contact is offline ?
+	}*/
+
+	//TODO:implement me !
+}
+#endif
 
 #include "jabbercontact.moc"

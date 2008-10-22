@@ -697,7 +697,7 @@
               </item>
               <item>
                <property name="text" >
-                <string>Ignore</string>
+                <string comment="@item:inlistbox">Ignore</string>
                </property>
               </item>
              </widget>
@@ -729,7 +729,7 @@
               </item>
               <item>
                <property name="text" >
-                <string>Ignore</string>
+                <string comment="@item:inlistbox">Ignore</string>
                </property>
               </item>
              </widget>
@@ -778,7 +778,7 @@
               </item>
               <item>
                <property name="text" >
-                <string>Ignore</string>
+                <string comment="@item:inlistbox">Ignore</string>
                </property>
               </item>
              </widget>
@@ -817,7 +817,7 @@
               </item>
               <item>
                <property name="text" >
-                <string>Ignore</string>
+                <string comment="@item:inlistbox">Ignore</string>
                </property>
               </item>
              </widget>

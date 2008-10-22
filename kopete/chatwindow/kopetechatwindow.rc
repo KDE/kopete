@@ -26,6 +26,7 @@
 			<Action name="tabs_detachmove"/>
 			<Action name="tabs_left"/>
 			<Action name="tabs_right"/>
+			<Action name="tabs_active"/>
 		</Menu>
 
 		<Menu name="settings">
