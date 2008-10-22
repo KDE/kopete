@@ -1,6 +1,7 @@
 In order to have Jingle support in Kopete, you must install 2 libraries :
 	* oRTP >= 0.13.1 (http://www.linphone.org/index.php/eng/code_review/ortp)
 	* libNice (http://nice.freedesktop.org/)
+	  NOTE : libNice is currently not used.
 
 * To compile and install oRTP :
 
