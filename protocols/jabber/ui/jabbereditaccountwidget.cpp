@@ -199,7 +199,7 @@ void JabberEditAccountWidget::reopen ()
 	
 	for (int i = 0; i < inputDevices.count(); i++)
 	{
-		if (inputDevices.at(i).id == account()->configGroup()->readEntry("JingleInputDevice", QString()))
+		if (inputDevices.at(i).id == account()->configGroup()->readEntry("JingleInputDevice", QString("default")))
 		{
 			audioInputsCombo->setCurrentIndex(i);
 			break;
@@ -208,7 +208,7 @@ void JabberEditAccountWidget::reopen ()
 	
 	for (int i = 0; i < outputDevices.count(); i++)
 	{
-		if (outputDevices.at(i).id == account()->configGroup()->readEntry("JingleOutputDevice", QString()))
+		if (outputDevices.at(i).id == account()->configGroup()->readEntry("JingleOutputDevice", QString("default")))
 		{
 			audioOutputsCombo->setCurrentIndex(i);
 			break;
