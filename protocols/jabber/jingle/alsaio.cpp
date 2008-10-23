@@ -172,6 +172,21 @@ QList<Item> getAlsaItems()
 		out += i;
 	}
 
+	Item outDef, inDef;
+	outDef.type = Item::Audio;
+	outDef.dir = Item::Output;
+	outDef.name = "Default device";
+	outDef.id = "default";
+	outDef.driver = "alsa";
+	
+	inDef.type = Item::Audio;
+	inDef.dir = Item::Input;
+	inDef.name = "Default device";
+	inDef.id = "default";
+	inDef.driver = "alsa";
+
+	out << outDef << inDef;
+
 	return out;
 #else
 	// return empty list if non-linux
