@@ -33,6 +33,7 @@ JabberJingleContent::JabberJingleContent(JabberJingleSession* parent, XMPP::Jing
 {
 	m_rtpInSession = 0;
 	m_rtpOutSession = 0;
+	m_mediaSession = 0;
 	m_mediaManager = m_jabberSession->mediaManager();
 	if (!m_mediaManager)
 		kDebug(KDE_DEFAULT_DEBUG_AREA) << "m_mediaManager is Null !";
@@ -48,10 +49,14 @@ JabberJingleContent::JabberJingleContent(JabberJingleSession* parent, XMPP::Jing
 JabberJingleContent::~JabberJingleContent()
 {
 	kDebug() << "destroyed";
-	delete m_content;
-	delete m_rtpInSession;
-	delete m_rtpOutSession;
-	delete m_mediaSession;
+	if (m_content)
+		delete m_content;
+	if (m_rtpInSession)
+		delete m_rtpInSession;
+	if (m_rtpOutSession)
+		delete m_rtpOutSession;
+	if (m_mediaSession)
+		delete m_mediaSession;
 }
 
 void JabberJingleContent::setContent(XMPP::JingleContent* content)

@@ -17,6 +17,7 @@
 #include <KDebug>
 
 #include "mediamanager.h"
+#include "mediasession.h"
 #include "alsaio.h"
 
 class MediaManager::Private
@@ -24,6 +25,10 @@ class MediaManager::Private
 public:
 	AlsaIO *alsaIn;
 	AlsaIO *alsaOut;
+	QString inputDev;
+	QString outputDev;
+
+	QList<MediaSession*> sessions;
 
 	bool started;
 };
@@ -31,8 +36,11 @@ public:
 MediaManager::MediaManager(QString inputDev, QString outputDev)
  : d(new Private)
 {
-	d->alsaIn = new AlsaIO(AlsaIO::Capture, inputDev, AlsaIO::Signed16Le);
-	d->alsaOut = new AlsaIO(AlsaIO::Playback, outputDev, AlsaIO::Signed16Le);
+	d->inputDev = inputDev;
+	d->outputDev = outputDev;
+
+	d->alsaIn = 0;
+	d->alsaOut = 0;
 
 	d->started = false;
 
@@ -41,8 +49,7 @@ MediaManager::MediaManager(QString inputDev, QString outputDev)
 
 MediaManager::~MediaManager()
 {
-	delete d->alsaIn;
-	delete d->alsaOut;
+	stop();
         delete d;
 	qDebug() << "Deleted Media Manager.";
 }
@@ -64,12 +71,32 @@ bool MediaManager::start()
 	
 	bool in = false, out = false;
 	
+	d->alsaIn = new AlsaIO(AlsaIO::Capture, d->inputDev, AlsaIO::Signed16Le);
+	d->alsaOut = new AlsaIO(AlsaIO::Playback, d->outputDev, AlsaIO::Signed16Le);
+
 	if (d->alsaIn->start())
 		in = true;
 	if (d->alsaOut->start())
 		out = true;
 		
 	return (d->started = (in && out));
+}
+
+void MediaManager::stop()
+{
+	if (d->alsaIn)
+	{
+		delete d->alsaIn;
+		d->alsaIn = 0;
+	}
+	
+	if (d->alsaOut)
+	{
+		delete d->alsaOut;
+		d->alsaOut = 0;
+	}
+
+	d->started = false;
 }
 
 QByteArray MediaManager::read()
@@ -83,3 +110,27 @@ void MediaManager::write(const QByteArray& data)
 	alsaOut()->write(data);
 }
 
+bool MediaManager::addSession(MediaSession *sess)
+{
+	bool ret = true;
+	if (d->sessions.count() == 0)
+		ret = start();
+	d->sessions << sess;
+
+	return ret;
+}
+
+void MediaManager::removeSession(MediaSession *sess)
+{
+	for (int i = 0; i < d->sessions.count(); i++)
+	{
+		if (d->sessions.at(i) == sess)
+		{
+			d->sessions.removeAt(i);
+			break;
+		}
+	}
+
+	if (d->sessions.count() == 0)
+		stop();
+}

@@ -21,6 +21,7 @@
 #include <QByteArray>
 
 class AlsaIO;
+class MediaSession;
 class MediaManager : public QObject
 {
 	Q_OBJECT
@@ -31,9 +32,13 @@ public:
 	AlsaIO *alsaOut() const;
 
 	bool start();
+	void stop();
 
 	QByteArray read();
 	void write(const QByteArray& data);
+
+	bool addSession(MediaSession*);
+	void removeSession(MediaSession*);
 
 private:
 	class Private;

@@ -48,6 +48,7 @@ MediaSession::MediaSession(MediaManager *mm, const QString& codecName)
 
 MediaSession::~MediaSession()
 {
+	d->mediaManager->removeSession(this);
 	delete d->plugin;
         delete d;
 	qDebug() << "Deleted Media Session";
@@ -66,11 +67,14 @@ void MediaSession::setQuality(int q)
 
 bool MediaSession::start()
 {
+	bool managerOk = d->mediaManager->addSession(this); //Tell the media manager te session is being started.
+	bool pluginOk = d->plugin->start();
+
 	connect((QObject*) d->mediaManager->alsaIn(), SIGNAL(readyRead()), (QObject*) this, SLOT(slotReadyRead()));
 	connect((QObject*) d->plugin, SIGNAL(encoded()), (QObject*) this, SLOT(slotEncoded()));
 	connect((QObject*) d->plugin, SIGNAL(decoded()), (QObject*) this, SLOT(slotDecoded()));
 
-	return d->mediaManager->start() && d->plugin->start();
+	return managerOk && pluginOk;
 }
 
 void MediaSession::write(const QByteArray& sData)
