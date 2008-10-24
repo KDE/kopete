@@ -651,21 +651,23 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		KIO::NetAccess::removeTempFile(  tempPhotoPath );
 	}
 
-	// add the entry using the avatar manager
-	Kopete::AvatarManager::AvatarEntry entry;
-	entry.name = contactId();
-	entry.image = contactPhoto;
-	entry.category = Kopete::AvatarManager::Contact;
-	entry.contact = this;	
-	entry = Kopete::AvatarManager::self()->add(entry);
-
-	// Save the image to the disk, then set the property.
-	if(!entry.path.isNull())
+	if ( !contactId().isEmpty() )
 	{
-		kDebug( JABBER_DEBUG_GLOBAL ) << "Setting photo for contact: " << contactId();
-		setProperty( protocol()->propPhoto, entry.path );
-	}
+		// add the entry using the avatar manager
+		Kopete::AvatarManager::AvatarEntry entry;
+		entry.name = contactId();
+		entry.image = contactPhoto;
+		entry.category = Kopete::AvatarManager::Contact;
+		entry.contact = this;	
+		entry = Kopete::AvatarManager::self()->add(entry);
 
+		// Save the image to the disk, then set the property.
+		if(!entry.path.isNull())
+		{
+			kDebug( JABBER_DEBUG_GLOBAL ) << "Setting photo for contact: " << contactId();
+			setProperty( protocol()->propPhoto, entry.path );
+		}
+	}
 }
 
 
