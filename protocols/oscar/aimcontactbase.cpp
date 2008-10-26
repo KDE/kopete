@@ -160,7 +160,9 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 	}
 
 	s.replace( QChar::LineSeparator, "<BR>" );
-	s.remove ( QRegExp ( QString::fromLatin1("<BR>$") ) );
+
+	if ( s.endsWith( "<BR>" ) )
+		s.chop(4);
 
 	if ( hasFontTag )
 		s += "</FONT>";
