@@ -379,7 +379,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 	// Set caps node information
 	m_jabberClient->setCapsNode(KOPETE_CAPS_NODE);
-	m_jabberClient->setCapsVersion(KGlobal::mainComponent().aboutData()->version() + QString("soc-jingle"));
+	m_jabberClient->setCapsVersion(KGlobal::mainComponent().aboutData()->version());
 	
 	// Set Disco Identity information
 	DiscoItem::Identity identity;
