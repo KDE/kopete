@@ -55,7 +55,7 @@ private slots:
 	void slotHostPortChanged( int value );
 	// end of network list specific code
 	
-	//copies the altered informations to the global IRCNetworks List
+	// copies the altered information to the global IRCNetworks List
 	void slotSaveNetworkConfig();
 
 private:

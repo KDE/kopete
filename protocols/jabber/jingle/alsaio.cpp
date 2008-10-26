@@ -356,7 +356,7 @@ bool AlsaIO::start()
 		return false;
 	}
 	
-	qDebug() << "Retreived" << fdCount << "file descriptors.";
+	qDebug() << "Retrieved" << fdCount << "file descriptors.";
 
 	if (m_type == Capture)
 	{
@@ -511,7 +511,7 @@ void AlsaIO::writeData()
 			prepare();
 			return;
 		}
-		qDebug() << "An error occured while writing data on the device. (" << snd_strerror(size) << ")";
+		qDebug() << "An error occurred while writing data on the device. (" << snd_strerror(size) << ")";
 	}
 }
 

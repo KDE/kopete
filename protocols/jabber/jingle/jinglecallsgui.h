@@ -78,7 +78,7 @@ private:
 
 /*
  * TreeItem's only contain data about what they represent (session or content)
- * TODO:add a pointer ti the session or content to retreive it more easily. (Not sure it could work that way.)
+ * TODO:add a pointer ti the session or content to retrieve it more easily. (Not sure it could work that way.)
  */
 class TreeItem
 {

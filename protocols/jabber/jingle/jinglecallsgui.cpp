@@ -141,7 +141,7 @@ void JingleCallsGui::addSession(JabberJingleSession* sess)
 	QVector<QVariant> sessData;
 	sessData << sess->session()->to().full();
 	sessData << stateToString(sess->session()->state());
-	sessData << sess->upTime().toString("HH:mm"); //FIXME:find a better formatting : don't show 0 at the begining (no 00:03)
+	sessData << sess->upTime().toString("HH:mm"); // FIXME: find a better formatting : don't show 0 at the beginning (no 00:03)
 
 	for (int column = 0; column < model->columnCount(index.parent()); ++column)
 	{
@@ -230,7 +230,7 @@ void JingleCallsModel::setModelUp(const QList<JabberJingleSession*> &sessions)
 		QVector<QVariant> sessData;
 		sessData << sessions[i]->session()->to().full();
 		sessData << stateToString(sessions[i]->session()->state());
-		sessData << sessions[i]->upTime().toString("HH:mm"); //FIXME:find a better formatting : don't show 0 at the begining (no 00:03)
+		sessData << sessions[i]->upTime().toString("HH:mm"); // FIXME: find a better formatting : don't show 0 at the beginning (no 00:03)
 		TreeItem *sessItem = new TreeItem(sessData, rootItem);
 		sessItem->setSessionPtr(sessions[i]);
 		for (int j = 0; j < sessions[i]->contents().count(); j++)
