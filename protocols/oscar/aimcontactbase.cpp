@@ -159,6 +159,9 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 		s += brMargin( it.blockFormat().bottomMargin(), defaultCharFormat.fontPointSize(), true );
 	}
 
+	s.replace( QChar::LineSeparator, "<BR>" );
+	s.remove ( QRegExp ( QString::fromLatin1("<BR>$") ) );
+
 	if ( hasFontTag )
 		s += "</FONT>";
 	if ( defaultCharFormat.font().bold() )
@@ -219,9 +222,6 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 	s.replace ( QRegExp ( QString::fromLatin1("<br[ /]*>")), QString::fromLatin1("<br>") );
 #endif
 
-	s.replace( QChar::LineSeparator, "<BR>" );
-	s.remove ( QRegExp ( QString::fromLatin1("<BR>$") ) );
-	
 	kDebug(OSCAR_GEN_DEBUG) << "sending " << s;
 	
 	// XXX Need to check for message size?
