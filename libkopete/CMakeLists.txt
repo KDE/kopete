@@ -173,6 +173,7 @@ install(FILES
  ui/addressbookselectorwidget.h
  ui/avatardialog.h
  ui/avatarselectorwidget.h
+ ui/contactaddednotifydialog.h
  ui/editaccountwidget.h
  ui/kopetecontactaction.h
  ui/kopeteinfodialog.h
@@ -242,6 +243,7 @@ install( FILES
   tasks/kopetetask.h
   tasks/kopetecontacttaskbase.h
   tasks/kopetedeletecontacttask.h
+  private/kopeteemoticons.h
 DESTINATION ${INCLUDE_INSTALL_DIR}/kopete COMPONENT Devel)
 
 install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
