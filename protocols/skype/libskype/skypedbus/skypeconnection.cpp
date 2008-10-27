@@ -5,12 +5,14 @@
 //
 //
 // Author: Kopete Developers <kopete-devel@kde.org>, (C) 2005
+//         Pali Rohár <pali.rohar@gmail.com>
 //
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#define DBUS_API_SUBJECT_TO_CHANGE
+
 #include "skypeconnection.h"
+#include "clientadaptor.h"
 
 ///@todo When QT 4 is used, the signal-slot wrapper will be better, replace it
 #include <QtDBus>
@@ -40,8 +42,6 @@ class SkypeConnectionPrivate {
 		QString appName;
 		///What is the protocol version used (wanted if not connected yet)
 		int protocolVer;
-		///The connection to DBus
-		QDBusConnection *conn;
 		///This timer will keep trying until Skype starts
 		QTimer *startTimer;
 		///How much time rest? (until I say starting skype did not work)
@@ -55,9 +55,7 @@ SkypeConnection::SkypeConnection() {
 
 	d = new SkypeConnectionPrivate;//create the d pointer
 	d->fase = cfNotConnected;//not connected yet
-	d->conn = 0L;//No connetion created
 	d->startTimer = 0L;
-
 	connect(this, SIGNAL(received(const QString&)), this, SLOT(parseMessage(const QString&)));//look into all messages
 }
 
@@ -91,34 +89,6 @@ void SkypeConnection::startLogOn() {
 
 	d->fase = cfNameSent;
 	send(QString("NAME %1").arg(d->appName));
-}
-
-void SkypeConnection::gotMessage(const QDBusMessage &message) {
-	kDebug() << k_funcinfo << endl;//some debug info
-
-	if (message.member() == "Ping") {//Skype wants to know if we are alive
-		kDebug() << "Skype sent us ping, responding" << endl;
-		QDBusMessage reply(message);//Create the reply
-		reply << getpid();//respond with our PID
-		d->conn->send(reply);//send it
-		//d->conn->flush();
-		return;//It is enough
-	}
-
-	if (message.member() == "Notify") {//Something importatnt?
-		QStringList messagelist = message.arguments().at(0).toStringList();
-		for (QStringList::iterator it = messagelist.begin(); it != messagelist.end(); ++it) {//run trough the whole message
-			emit received((*it));//Take out the string and use it
-		}
-
-		if (message.isReplyRequired()) {
-			kDebug() << "Message expects reply, sending a dummy one" << endl;
-			QDBusMessage *reply = new QDBusMessage(message);//generate a reply for that message
-			(*reply) << QString("ERROR 2");//write there seme error
-			d->conn->send(*reply);//send the message
-			//d->conn->flush();
-		}
-	}
 }
 
 void SkypeConnection::parseMessage(const QString &message) {
@@ -161,7 +131,12 @@ void SkypeConnection::parseMessage(const QString &message) {
 	}
 }
 
-void SkypeConnection::connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, bool startDBus, int launchTimeout, int waitBeforeConnect) {
+void SkypeConnection::Notify(const QString &request){
+	kDebug() << k_funcinfo << "Skype sent message" << request << endl;
+	emit received(request);
+}
+
+void SkypeConnection::connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, bool startDBus, int launchTimeout, int waitBeforeConnect, const QString &name, const QString &pass) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	if (d->fase != cfNotConnected)
@@ -169,12 +144,6 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 
 	d->appName = appName;
 	d->protocolVer = protocolVer;
-	d->conn = new QDBusConnection ("Skype");
-
-	if (bus == 0)
-		d->conn->connectToBus(QDBusConnection::SessionBus, "Skype");
-	else
-		d->conn->connectToBus(QDBusConnection::SystemBus, "Skype");
 
 	///TODO: Port to kde4
 	/*if ((!d->conn) || (!d->conn->isConnected())) {
@@ -194,35 +163,46 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 		return;
 	}*/
 
-	///TODO: Port to kde4
-	/*d->conn->registerObjectPath("org.kde.kopete.skype", "/com/Skype/Client");
-
-	connect(d->conn, SIGNAL(messageArrived(const DBusQt::Message&)), this, SLOT(gotMessage(const DBusQt::Message &)));*/
-
-	d->conn->registerObject("org.kde.kopete.skype" , this, QDBusConnection::ExportAllSlots );
-	d->conn->registerService("/com/Skype/Client");
-
+	new ClientAdaptor(this);
+	QDBusConnection::sessionBus().registerObject("/com/Skype/Client", this); //Register skype client to dbus for receiving messages to slot Notify
 
 	{
 		QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API");
 		QDBusMessage reply = interface.call("Invoke", "Ping");
 
 		QStringList replylist = reply.arguments().at(0).toStringList();
-		QStringList::iterator it = replylist.begin();
-		if ((it == replylist.end()) || (bool)((*it).toInt() != true)) {
+		//QStringList::iterator it = replylist.begin();
+		//if ((it == replylist.end()) || (bool)((*it).toInt() != true)) {
+		if ( replylist.isEmpty() || replylist.at(0) != QString("PONG") ) {
 			if (!start.isEmpty()) {//try starting Skype by the given command
-				KProcess sk;
-				QStringList args = start.split(' ');
-				for (QStringList::iterator i = args.begin(); i != args.end(); ++i) {
-					sk << (*i);
-				}
 				///TODO: Port to kde4
-				/*if (!sk.start(KProcess::DontCare, KProcess::NoCommunication)) {
+				QProcess * skype_process = new QProcess;
+				QStringList args = start.split(' ');
+				/*for (QStringList::iterator i = args.begin(); i != args.end(); ++i) {
+					sk << (*i);
+				}*/
+				QString skypeBin = args.takeFirst();
+				if ( !name.isEmpty() && !pass.isEmpty() ){
+					args << "--pipelogin";
+				}
+				kDebug() << k_funcinfo << "Starting skype with:" << skypeBin << args << endl;
+				skype_process->start(skypeBin, args);
+				if ( !name.isEmpty() && !pass.isEmpty() ){
+					kDebug() << k_funcinfo << "Sending login name:" << name << endl;
+					skype_process->write(name.trimmed().toLocal8Bit());
+					skype_process->write(" ");
+					kDebug() << k_funcinfo << "Sending password" << endl;
+					skype_process->write(pass.trimmed().toLocal8Bit());
+					skype_process->closeWriteChannel();
+				}
+				skype_process->waitForStarted();
+				kDebug() << k_funcinfo << "Skype state:" << skype_process->state() << "Skype error:" << skype_process->error() << endl;
+				if (skype_process->state() != QProcess::Running || skype_process->error() == QProcess::FailedToStart) {
 					emit error(i18n("Could not launch Skype"));
 					disconnectSkype(crLost);
 					emit connectionDone(seNoSkype, 0);
 					return;
-				}*/
+				}
 				d->fase = cfWaitingStart;
 				d->startTimer = new QTimer();
 				connect(d->startTimer, SIGNAL(timeout()), this, SLOT(tryConnect()));
@@ -244,12 +224,6 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 void SkypeConnection::disconnectSkype(skypeCloseReason reason) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
-	if (!d->conn) //nothing to disconnect
-		return;
-	d->conn->disconnectFromBus(QString("Skype"));//close the connection
-	///TODO: Port to kde4
-	//delete d->conn;//destroy it
-	d->conn = 0L;//andmark it as empty
 	if (d->startTimer) {
 		d->startTimer->stop();
 		d->startTimer->deleteLater();
@@ -286,7 +260,6 @@ void SkypeConnection::send(const QString &message) {
 	for (QStringList::iterator it = replylist.begin(); it != replylist.end(); ++it) {
 		emit received((*it));
 	}
-//	d->conn->send(m);
 }
 
 bool SkypeConnection::connected() const {
@@ -368,17 +341,17 @@ void SkypeConnection::setEnv(KProcess *, char *buffer, int length) {
 void SkypeConnection::tryConnect() {
 	kDebug() << k_funcinfo << endl;//some debug info
 
-	/*{
-		QDBusMessage m = QDBusMessage::createMethodCall("com.Skype.API", "/com/Skype", "com.Skype.API", "Invoke");
-		m << QString("Ping");
-		//QDBusMessage m("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ServiceExists");
-		//m << QString("com.Skype.API");
-		m.setAutoActivation(true);
+	{
+		QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API");
+		QDBusMessage reply = interface.call("Invoke", "Ping");
 
-		QDBusMessage reply = d->conn->call(m);
+		QStringList replylist = reply.arguments().at(0).toStringList();
+		QStringList::iterator it = replylist.begin();
 
-		QDBusMessage::iterator it = reply.begin();
-		if ((it == reply.end()) || ((*it).toBool() != true)) {
+		//QDBusMessage::iterator it = reply.begin();
+		//if ((it == replylist.end()) || ((bool)(*it).toInt() != true)) {
+		//kDebug() << k_funcinfo << "message is:" << replylist.at(0) << endl;
+		if ( replylist.isEmpty() || replylist.at(0) != QString("PONG") ) {
 			if (--d->timeRemaining == 0) {
 				d->startTimer->stop();
 				d->startTimer->deleteLater();
@@ -390,7 +363,7 @@ void SkypeConnection::tryConnect() {
 			}
 			return;//Maybe next time
 		}
-	}*/
+	}
 
 	d->startTimer->stop();
 	d->startTimer->deleteLater();

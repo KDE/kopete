@@ -1,20 +1,21 @@
-project(kopete_skype)
+project( kopete_skype )
 
-find_package(KDE4 REQUIRED)
-include (KDE4Defaults)
-include (MacroLibrary)
+find_package( KDE4 REQUIRED )
+find_package( KdepimLibs REQUIRED )
+include ( KDE4Defaults )
+include ( MacroLibrary )
 
-include(CheckIncludeFile)
-include(CheckIncludeFiles)
-include(CheckSymbolExists)
-include(CheckFunctionExists)
-include(CheckLibraryExists)
-include(CheckPrototypeExists)
-include(CheckTypeSize)
-include(MacroBoolTo01)
-include(MacroOptionalAddSubdirectory)
+include( CheckIncludeFile )
+include( CheckIncludeFiles )
+include( CheckSymbolExists )
+include( CheckFunctionExists )
+include( CheckLibraryExists )
+include( CheckPrototypeExists )
+include( CheckTypeSize )
+include( MacroBoolTo01 )
+include( MacroOptionalAddSubdirectory )
 
-add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS})
+add_definitions ( ${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
 
 add_subdirectory( icons )
 
@@ -39,6 +40,14 @@ set(
 	skypedbus_SRCS
 
 	libskype/skypedbus/skypeconnection.cpp
+)
+
+QT4_ADD_DBUS_ADAPTOR(
+	skypedbus_SRCS
+
+	libskype/skypedbus/com.Skype.API.Client.xml
+	libskype/skypedbus/skypeconnection.h
+	SkypeConnection
 )
 
 set(
@@ -73,7 +82,6 @@ set(
 	skypecontact.cpp
 	skypedetails.cpp
 	skypeeditaccount.cpp
-#	skypeeditaccountwidget.cpp
 	skypechatsession.cpp
 	skypeprotocol.cpp
 )
@@ -91,7 +99,7 @@ target_link_libraries(
 	${KDE4_KDE3SUPPORT_LIBS}
 )
 
-install(TARGETS kopete_skype DESTINATION ${PLUGIN_INSTALL_DIR})
+install( TARGETS kopete_skype DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 

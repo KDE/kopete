@@ -5,6 +5,7 @@
 //
 //
 // Author: Kopete Developers <kopete-devel@kde.org>, (C) 2005
+//         Pali Rohár <pali.rohar@gmail.com>
 //
 // Copyright: See COPYING file that comes with this distribution
 //
@@ -50,12 +51,11 @@ class KProcess;
 class SkypeConnection : public QObject
 {
 	Q_OBJECT
+	Q_CLASSINFO("D-Bus Interface", "com.Skype.API.Client")
 	private:
 		///The D-pointer for internal things
 		SkypeConnectionPrivate *d;
 	private slots:
-		///This one listens for incoming messages
-		void gotMessage(const QDBusMessage &);
 		///This one takes care of incoming messages if they have some sence for the connection (protocol, pings and so on)
 		void parseMessage(const QString &message);
 		///Set environment variables set from dbus-launch command (private DBus session)
@@ -77,7 +77,7 @@ class SkypeConnection : public QObject
 		 * @param launchTimeout How long max. should wait to tell that launching skype did not work
 		 * @param waitBeforeConnect Do we need to wait a while after skype starts?
 		 */
-		void connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, bool startDBus, int launchTimeout, int waitBeforeConnect);
+		void connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, bool startDBus, int launchTimeout, int waitBeforeConnect, const QString &name = QString(), const QString &pass = QString());
 		/**
 		 * Disconnects from skype
 		 * @see connectionClosed
@@ -88,6 +88,8 @@ class SkypeConnection : public QObject
 		 * @param message Contains the message to send
 		 */
 		void send(const QString &message);
+		///This one listens for incoming messages
+		void Notify(const QString &request);
 	public:
 		/**
 		 * Constructor. Creates UNCONECTED connection (sounds oddly ?)
