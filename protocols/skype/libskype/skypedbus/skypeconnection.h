@@ -42,7 +42,6 @@ typedef enum {
 } skypeCloseReason;
 
 class SkypeConnectionPrivate;
-class KProcess;
 
 /**
  * This class is classs wrapping DBUS so it can be used easilly to connect to skype, disconnect send and receive messages from it.
@@ -58,8 +57,8 @@ class SkypeConnection : public QObject
 	private slots:
 		///This one takes care of incoming messages if they have some sence for the connection (protocol, pings and so on)
 		void parseMessage(const QString &message);
-		///Set environment variables set from dbus-launch command (private DBus session)
-		void setEnv(KProcess *, char *buff, int len);
+		///Set environment variables set from dbus-launch command (private DBus session) - Dont we need it?
+		//void setEnv(KProcess *, char *buff, int len);
 		///Starts logging into skype
 		void startLogOn();
 		///Another interval try to connect to just started Skype
@@ -137,6 +136,9 @@ class SkypeConnection : public QObject
 		 * @return The response from skype
 		 */
 		QString operator%(const QString &message);
+		/**
+		 * @return Skype state;
+		 */
 	signals:
 		/**
 		 * This signal is emitted when an attempt to connect to skype application is done. It is done in both cases, success or not.

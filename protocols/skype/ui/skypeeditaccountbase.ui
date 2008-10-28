@@ -28,7 +28,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex" >
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
@@ -98,7 +98,7 @@
              <number>0</number>
             </property>
             <property name="text" >
-             <string>&lt;p align="left">This is just a bridge to external running skype. This hase some consequences, like you need running instance of skype and thet only one skype account is possible&lt;/p></string>
+             <string>&lt;p align="left">This is just a bridge to external running skype. This hase some &lt;br />consequences, like you need running instance of skype and thet only &lt;br/>one skype account is possible&lt;/p></string>
             </property>
             <property name="textFormat" >
              <enum>Qt::AutoText</enum>
@@ -318,7 +318,7 @@
        <item>
         <widget class="QLabel" name="textLabel2" >
          <property name="text" >
-          <string>If you get error that Skype was not found and it is running, check instructions at http://www.skype.com/community/devzone/SkypeAPIforLinux.html or use session bus. (start skype with --use-session-dbus)</string>
+          <string>If you get error that Skype was not found and it is running, check instructions at http://www.skype.com/community/devzone/SkypeAPIforLinux.html or use session bus.</string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignVCenter</set>
@@ -405,6 +405,9 @@ By default, kopete provides kopete as its name, but if you suspect another appli
           </item>
           <item>
            <widget class="QRadioButton" name="radioButton5" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="text" >
              <string>S&amp;ystem</string>
             </property>
@@ -416,7 +419,8 @@ By default, kopete provides kopete as its name, but if you suspect another appli
        <item>
         <widget class="QLabel" name="textLabel1_2" >
          <property name="text" >
-          <string>Note that Kopete will freeze while Skype asks you if it can let Kopete in. This is usual and if you allow it for ever (check that "Remember" checkbox on the Skype's dialog), it will not happen again.</string>
+          <string>Note that Kopete will freeze while Skype asks you if it can let Kopete in. This is usual and if you allow it for ever (check that "Remember" checkbox on the Skype's dialog), it will not happen again. 
+System Bus is not supported.</string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignVCenter</set>
