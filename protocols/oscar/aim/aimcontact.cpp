@@ -188,6 +188,8 @@ void AIMContact::userOffline( const QString& userId )
 {
 	if ( Oscar::normalize( userId ) == Oscar::normalize( contactId() ) )
 	{
+		m_details.clear();
+
 		kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline";
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 		removeProperty( mProtocol->statusMessage );

@@ -35,6 +35,8 @@ class LIBOSCAR_EXPORT UserDetails
 public:
 	UserDetails();
 	~UserDetails();
+
+	void clear();
 	
 	QString userId() const; //! User ID accessor
 	int warningLevel() const; //! Warning level accessor
@@ -49,6 +51,7 @@ public:
 	int userClass() const; //! User class accessor
 	Oscar::DWORD extendedStatus() const; //!User status accessor
 	int xtrazStatus() const;
+	int statusMood() const;
 	Oscar::WORD iconType() const; //!Buddy icon type
 	Oscar::BYTE iconCheckSumType() const; //!Buddy icon hash type
 	QByteArray buddyIconHash() const; //! Buddy icon md5 hash accessor
@@ -76,6 +79,7 @@ public:
 	bool idleTimeSpecified() const { return m_idleTimeSpecified; }
 	bool extendedStatusSpecified() const { return m_extendedStatusSpecified; }
 	bool xtrazStatusSpecified() const { return m_xtrazStatusSpecified; }
+	bool statusMoodSpecified() const { return m_statusMoodSpecified; }
 	bool capabilitiesSpecified() const { return m_capabilitiesSpecified; }
 	bool dcOutsideSpecified() const { return m_dcOutsideSpecified; }
 	bool dcInsideSpecified() const { return m_dcInsideSpecified; }
@@ -111,6 +115,7 @@ private:
 	Oscar::WORD m_idleTime; /// the idle time of the contact - TLV 0x0F
 	Oscar::DWORD m_extendedStatus; /// the extended status of the contact - TLV 0x06
 	int m_xtrazStatus;
+	int m_statusMood;
 	QBitArray m_capabilities; //TLV 0x05
 	QString m_clientVersion; /// the version of client they're using
 	QString m_clientName; /// the name of the client they're using
@@ -140,6 +145,7 @@ private:
 	bool m_idleTimeSpecified;
 	bool m_extendedStatusSpecified;
 	bool m_xtrazStatusSpecified;
+	bool m_statusMoodSpecified;
 	bool m_capabilitiesSpecified;
 	bool m_dcOutsideSpecified;
 	bool m_dcInsideSpecified;

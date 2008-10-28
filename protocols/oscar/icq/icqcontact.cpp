@@ -116,8 +116,6 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	kDebug( OSCAR_ICQ_DEBUG ) << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
 
-	refreshStatus( details, presence );
-
 	if ( details.dcOutsideSpecified() )
 		setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );
 
@@ -125,6 +123,8 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		setProperty( mProtocol->clientFeatures, details.clientName() );
 
 	OscarContact::userInfoUpdated( contact, details );
+
+	refreshStatus( m_details, presence );
 }
 
 void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence presence )
@@ -132,16 +132,21 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 	// Filter our XStatus and ExtStatus
 	presence.setFlags( presence.flags() & ~Oscar::Presence::StatusTypeMask );
 
+	if ( details.statusMood() != -1 )
+	{
+		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus2 );
+		presence.setMood( details.statusMood() );
+	}
 	// XStatus don't support offline status so don't show it (xtrazStatusSpecified can be true if contact was online)
-	if ( details.xtrazStatus() != -1 && presence.type() != Oscar::Presence::Offline )
+	else if ( details.xtrazStatus() != -1 && presence.type() != Oscar::Presence::Offline )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
 		presence.setXtrazStatus( details.xtrazStatus() );
 	}
-	else if ( !m_statusDescription.isEmpty() )
+	else if ( !m_statusTitle.isEmpty() )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
-		setProperty( mProtocol->statusTitle, m_statusDescription );
+		setProperty( mProtocol->statusTitle, m_statusTitle );
 	}
 	else
 	{
@@ -222,6 +227,8 @@ void ICQContact::userOffline( const QString& userId )
 {
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
+
+	m_details.clear();
 
 	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline";
 	if ( m_ssiItem.waitingAuth() )
@@ -387,7 +394,7 @@ void ICQContact::receivedTlvInfo( const QString& contact )
 	if ( m_ssiItem.alias().isEmpty() && !info.nickName.get().isEmpty() )
 		setNickName( QString::fromUtf8( info.nickName.get() ) );
 
-	m_statusDescription = QString::fromUtf8( info.statusDescription.get() );
+	m_statusTitle = QString::fromUtf8( info.statusDescription.get() );
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( onlineStatus() );
 
 	refreshStatus( m_details, presence );

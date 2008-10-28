@@ -158,6 +158,8 @@ void AIMContact::userOffline( const QString& userId )
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
 
+	m_details.clear();
+
 	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline";
 	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::AIM ) );
 }

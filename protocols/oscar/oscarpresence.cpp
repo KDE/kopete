@@ -20,6 +20,8 @@
 namespace Oscar
 {
 
+const int Presence::moodToXtraz[] = { 17, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 0 };
+
 Presence::Presence( Type type, Flags flags )
 {
 	mInternalStatus = type | flags;
@@ -50,10 +52,36 @@ void Presence::setXtrazStatus( int xtraz )
 
 int Presence::xtrazStatus() const
 {
-	if ( mInternalStatus & Oscar::Presence::XStatus )
+	if ( (mInternalStatus & Oscar::Presence::XStatus) || (mInternalStatus & Oscar::Presence::ExtStatus2) )
 		return ((mInternalStatus & XtrazMask) >> 24);
 	else
 		return -1;
+}
+
+
+void Presence::setMood( int mood )
+{
+	if ( -1 < mood && mood <= 23 )
+	{
+		int xtraz = moodToXtraz[mood];
+		mInternalStatus &= ~XtrazMask; 
+		mInternalStatus |= (xtraz << 24);
+	}
+}
+
+int Presence::mood() const
+{
+	int xtraz = xtrazStatus();
+	if ( -1 < xtraz && xtraz <= 23 )
+	{
+		for ( int i = 0; i < 24; i++)
+		{
+			if ( moodToXtraz[i] == xtraz )
+				return i;
+		}
+	}
+
+	return -1;
 }
 
 }

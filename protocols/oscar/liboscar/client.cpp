@@ -146,7 +146,8 @@ public:
 		Oscar::DWORD status;
 		QString message;     // for away-,DND-message etc., and for Xtraz status
 		int xtraz;           // Xtraz status
-		QString description; // Xtraz description
+		int mood;            // Mood
+		QString title;       // Xtraz/Mood title
 		bool sent;
 	} status;
 
@@ -178,6 +179,7 @@ Client::Client( QObject* parent )
 	d->offlineMessagesRequested = false;
 	d->status.status = 0x0; // default to online
 	d->status.xtraz = -1; // default to no Xtraz
+	d->status.mood = -1;
 	d->status.sent = false;
 	d->ssiManager = new ContactManager( this );
 	d->settings = new Oscar::Settings();
@@ -272,9 +274,10 @@ void Client::close()
 	{
 		d->status.status = 0x0;
 		d->status.xtraz = -1;
+		d->status.mood = -1;
 		d->status.sent = false;
 		d->status.message.clear();
-		d->status.description.clear();
+		d->status.title.clear();
 	}
 
 	d->exchanges.clear();
@@ -285,17 +288,20 @@ void Client::close()
 	d->offlineMessagesRequested = false;
 }
 
-void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, const QString &description )
+void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, const QString &title, int mood )
 {
 	kDebug(OSCAR_RAW_DEBUG) << "Setting status message to "<< message;
 
 	// remember the values to reply with, when requested
 	bool xtrazChanged = (xtraz > -1 || d->status.xtraz != xtraz);
-	bool statusInfoChanged = ( !d->status.sent || message != d->status.message || description != d->status.description );
+	bool moodChanged = (mood > -1 || d->status.mood != mood);
+	bool titleChanged = (d->status.title != title);
+	bool statusInfoChanged = ( !d->status.sent || message != d->status.message || title != d->status.title );
 	d->status.status = status;
 	d->status.message = message;
 	d->status.xtraz = xtraz;
-	d->status.description = description;
+	d->status.mood = mood;
+	d->status.title = title;
 	d->status.sent = false;
 
 	if ( d->active )
@@ -325,7 +331,23 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 		if ( !c )
 			return;
 
+		if ( d->isIcq && statusInfoChanged )
+		{
+			ICQFullInfo info( false );
+			info.statusDescription.set( title.toUtf8() );
+			
+			ICQTlvInfoUpdateTask* infoUpdateTask = new ICQTlvInfoUpdateTask( c->rootTask() );
+			infoUpdateTask->setInfo( info );
+			infoUpdateTask->go( Task::AutoDelete );
+		}
+
 		SendDCInfoTask* sdcit = new SendDCInfoTask( c->rootTask(), status );
+		if ( d->isIcq && moodChanged )
+			sdcit->setIcqMood( mood );
+
+		if ( d->isIcq && statusInfoChanged )
+			sdcit->setIcqMessage( title );
+
 		sdcit->go( Task::AutoDelete ); //autodelete
 
 		QString msg;
@@ -352,15 +374,6 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 
 		pt->go( Task::AutoDelete );
 
-		if ( d->isIcq && statusInfoChanged )
-		{
-			ICQFullInfo info( false );
-			info.statusDescription.set( description.toUtf8() );
-
-			ICQTlvInfoUpdateTask* infoUpdateTask = new ICQTlvInfoUpdateTask( c->rootTask() );
-			infoUpdateTask->setInfo( info );
-			infoUpdateTask->go( Task::AutoDelete );
-		}
 		d->status.sent = true;
 	}
 }
@@ -467,7 +480,7 @@ void Client::serviceSetupFinished()
 {
 	d->active = true;
 
-	setStatus( d->status.status, d->status.message, d->status.xtraz, d->status.description );
+	setStatus( d->status.status, d->status.message, d->status.xtraz, d->status.title, d->status.mood );
 	d->ownStatusTask->go();
 
 	emit haveContactList();
@@ -548,9 +561,14 @@ int Client::statusXtraz() const
 	return d->status.xtraz;
 }
 
-QString Client::statusDescription() const
+int Client::statusMood() const
 {
-	return d->status.description;
+	return d->status.mood;
+}
+
+QString Client::statusTitle() const
+{
+	return d->status.title;
 }
 
 QString Client::statusMessage() const
@@ -640,7 +658,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 						{
 							XtrazNotify xNotifyResponse;
 							xNotifyResponse.setSenderUni( userId() );
-							response.setPlugin( xNotifyResponse.statusResponse( statusXtraz(), statusDescription(), statusMessage() ) );
+							response.setPlugin( xNotifyResponse.statusResponse( statusXtraz(), statusTitle(), statusMessage() ) );
 							emit userReadsStatusMessage( msg.sender() );
 						}
 					}

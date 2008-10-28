@@ -67,18 +67,23 @@ void ICQMyselfContact::userInfoUpdated()
 	Oscar::Presence presence = p->statusManager()->presenceOf( extendedStatus, details().userClass() );
 
 	ICQAccount* icqAccount = static_cast<ICQAccount*>( account() );
-	if ( details().xtrazStatus() != -1 )
+	if ( details().statusMood() != -1 )
+	{
+		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus2 );
+		presence.setMood( details().statusMood() );
+	}
+	else if ( details().xtrazStatus() != -1 )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
 		presence.setXtrazStatus( details().xtrazStatus() );
 	}
-	else if ( !icqAccount->engine()->statusDescription().isEmpty() )
+	else if ( !icqAccount->engine()->statusTitle().isEmpty() )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
 	}
 
 	Kopete::StatusMessage statusMessage;
-	statusMessage.setTitle( icqAccount->engine()->statusDescription() );
+	statusMessage.setTitle( icqAccount->engine()->statusTitle() );
 	statusMessage.setMessage( icqAccount->engine()->statusMessage() );
 	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
 	setStatusMessage( statusMessage );
@@ -254,7 +259,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 			status |= Oscar::StatusCode::WEBAWARE;
 
 		engine()->setStatus( status, mInitialStatusMessage.message(),
-		                     pres.xtrazStatus(), mInitialStatusMessage.title() );
+		                     pres.xtrazStatus(), mInitialStatusMessage.title(), pres.mood() );
 		updateVersionUpdaterStamp();
 
 		Connection* c = setupConnection();
@@ -404,7 +409,7 @@ void ICQAccount::setPresenceTarget( const Oscar::Presence &newPres, const Kopete
 	else
 	{
 		Oscar::DWORD status = protocol()->statusManager()->oscarStatusOf( newPres );
-		engine()->setStatus( status, reason.message(), newPres.xtrazStatus(), reason.title() );
+		engine()->setStatus( status, reason.message(), newPres.xtrazStatus(), reason.title(), newPres.mood() );
 	}
 }
 
