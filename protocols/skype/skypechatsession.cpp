@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
+    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -105,7 +106,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 
 	d->callAction = new KAction(this);
 	d->callAction->setText(i18n("Call"));
-	d->callAction->setIcon(KIcon("call"));
+	d->callAction->setIcon(KIcon("skype_call"));
 	connect(d->callAction, SIGNAL(triggered()), SLOT(callChatSession()));
 
 	connect(contact, SIGNAL(setCallPossible(bool )), d->callAction, SLOT(setEnabled(bool )));
@@ -134,7 +135,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 
 	d->callAction = new KAction(this);
 	d->callAction->setText(i18n("Call"));
-	d->callAction->setIcon(KIcon("call"));
+	d->callAction->setIcon(KIcon("skype_call"));
 	connect(d->callAction, SIGNAL(triggered()), SLOT(callChatSession()));
 
 	disallowCall();//TODO I hope it will not be needed in future

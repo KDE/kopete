@@ -3,7 +3,7 @@
 <node>
   <interface name="com.Skype.API.Client">
     <method name="Notify">
-      <arg name="request" type="s" direction="in"/>
+      <arg name="message" type="s" direction="in"/>
     </method>
   </interface>
 </node>

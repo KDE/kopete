@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
+    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -338,6 +339,14 @@ Q_OBJECT
 		 * @param reason Message to set. Ignored with skype as it does not support away messages. (Or I don't know about it))
 		 */
 		virtual void setAway(bool away, const QString &reason);
+		/**
+		 * Skype account has costum status menu
+		 */
+		virtual bool hasCustomStatusMenu() const;
+		/**
+		 * Per-protocol actions for the systray and the status bar
+		 */
+		virtual void fillActionMenu( KActionMenu *actionMenu );
 	public slots:
 		/**
 		 * Sets online status for the account.
@@ -394,6 +403,10 @@ Q_OBJECT
 		 * @param users comma separated list of user IDs
 		 */
 		void makeCall(const QString &users);
+		/**
+		 * Make Test Call - call contact echo123
+		 */
+		void makeTestCall();
 		/**
 		 * Set if a control window will be showed for calls.
 		 * @param value Is it enabled or disabled now?

@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
+    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -95,23 +96,23 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 
 	d->callContactAction = new KAction( this );
 	d->callContactAction->setText( i18n ("Call Contact") );
-	d->callContactAction->setIcon( (KIcon("call") ) );
+	d->callContactAction->setIcon( (KIcon("skype_call") ) );
 	connect(d->callContactAction, SIGNAL(triggered()), SLOT(call()));
 
 	d->authorizeAction = new KAction( this );
 	d->authorizeAction->setText( i18n ("(Re)send Authorization To") );
-	d->authorizeAction->setIcon( (KIcon("mail_forward") ) );
+	d->authorizeAction->setIcon( (KIcon("mail-forward") ) ); /// TODO: Add Skype icon
 	connect(d->authorizeAction, SIGNAL(triggered()), SLOT(authorize()));
 
-	d->authorizeAction = new KAction( this );
-	d->authorizeAction->setText( i18n ("Remove Authorization From") );
-	d->authorizeAction->setIcon( (KIcon("mail_delete") ) );
-	connect(d->authorizeAction, SIGNAL(triggered()), SLOT(disAuthor()));
+	d->disAuthorAction = new KAction( this );
+	d->disAuthorAction->setText( i18n ("Remove Authorization From") );
+	d->disAuthorAction->setIcon( (KIcon("edit-delete") ) );
+	connect(d->disAuthorAction, SIGNAL(triggered()), SLOT(disAuthor()));
 
-	d->authorizeAction = new KAction( this );
-	d->authorizeAction->setText( i18n("Block") );
-	d->authorizeAction->setIcon( (KIcon("cancel") ) );
-	connect(d->authorizeAction, SIGNAL(triggered()), SLOT(block()));
+	d->blockAction = new KAction( this );
+	d->blockAction->setText( i18n("Block Contact") );
+	d->blockAction->setIcon( (KIcon("skype_blockcontact") ) );
+	connect(d->blockAction, SIGNAL(triggered()), SLOT(block()));
 
 	statusChanged();//This one takes care of disabling/enabling this action depending on the user's status.
 
@@ -364,14 +365,12 @@ void SkypeContact::statusChanged() {
 	const Kopete::OnlineStatus &myStatus = (d->account->myself()) ? d->account->myself()->onlineStatus() : protocol->Offline;
 	if (d->account->canAlterAuth()) {
 		d->authorizeAction->setEnabled(true);
-		///TODO: Port to kde4, kopete crashed
-		//d->disAuthorAction->setEnabled(true);
-		//d->blockAction->setEnabled(true);
+		d->disAuthorAction->setEnabled(true);
+		d->blockAction->setEnabled(true);
 	} else {
 		d->authorizeAction->setEnabled(false);
-		///TODO: Port to kde4, kopete crashed
-		//d->disAuthorAction->setEnabled(false);
-		//d->blockAction->setEnabled(false);
+		d->disAuthorAction->setEnabled(false);
+		d->blockAction->setEnabled(false);
 	}
 	if (this == d->account->myself()) {
 		emit setCallPossible(false);

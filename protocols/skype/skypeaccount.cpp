@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
+    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -138,10 +139,6 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	setMyself(_myself);
 	//and set default online status (means offline)
 	myself()->setOnlineStatus(protocol->Offline);
-
-	/*Kopete::MetaContact *_myself = Kopete::ContactList::self()->myself();
-	setMyself( new SkypeContact(this, _myself->displayName(), _myself, false) );
-	myself()->setOnlineStatus(protocol->Offline);*/
 
 	//Now, connect the signals
 	QObject::connect(&d->skype, SIGNAL(wentOnline()), this, SLOT(wentOnline()));
@@ -347,7 +344,7 @@ void SkypeAccount::statusConnecting() {
 
 void SkypeAccount::newUser(const QString &name) {
 	kDebug() << k_funcinfo << QString("name = %1").arg(name) << endl;//some debug info
-	if (contacts().contains(name))
+	if (contacts().contains(name) || name == "echo123") // echo123 - Make Test Call has moved to Skype protocol toolbar
 		return;
 	addContact(name);
 }
@@ -448,6 +445,11 @@ void SkypeAccount::makeCall(SkypeContact *user) {
 void SkypeAccount::makeCall(const QString &users) {
 	startCall();
 	d->skype.makeCall(users);
+}
+
+void SkypeAccount::makeTestCall() {
+	startCall();
+	d->skype.makeCall("echo123");
 }
 
 bool SkypeAccount::getCallControl() const {
@@ -839,5 +841,63 @@ int SkypeAccount::getAuthor(const QString &contactId) {
 			return 2;
 	}
 }
+
+bool SkypeAccount::hasCustomStatusMenu() const
+{
+	kDebug() << k_funcinfo << endl;//some debug info
+	return true;
+}
+
+void SkypeAccount::fillActionMenu( KActionMenu *actionMenu )
+{
+	kDebug() << k_funcinfo << endl;//some debug info
+
+	actionMenu->setIcon( myself()->onlineStatus().iconFor(this) );
+	actionMenu->menu()->addTitle( QIcon(myself()->onlineStatus().iconFor(this)), i18n("Skype (%1)", accountId()));
+
+	if (d->protocol)
+	{
+		KAction *setOnline = new KAction( KIcon(QIcon(d->protocol->Online.iconFor(this))), i18n("Online"), this );
+		QObject::connect( setOnline, SIGNAL(triggered(bool)), &d->skype, SLOT(setOnline()) );
+		actionMenu->addAction(setOnline);
+
+		KAction *setOffline = new KAction( KIcon(QIcon(d->protocol->Offline.iconFor(this))), i18n("Offline"), this );
+		QObject::connect( setOffline, SIGNAL(triggered(bool)), &d->skype, SLOT(setOffline()) );
+		actionMenu->addAction(setOffline);
+
+		KAction *setAway = new KAction( KIcon(QIcon(d->protocol->Away.iconFor(this))), i18n("Away"), this );
+		QObject::connect( setAway, SIGNAL(triggered(bool)), &d->skype, SLOT(setAway()) );
+		actionMenu->addAction(setAway);
+
+		KAction *setNotAvailable = new KAction( KIcon(QIcon(d->protocol->NotAvailable.iconFor(this))), i18n("Not Available"), this );
+		QObject::connect( setNotAvailable, SIGNAL(triggered(bool)), &d->skype, SLOT(setNotAvailable()) );
+		actionMenu->addAction(setNotAvailable);
+
+		KAction *setDND = new KAction( KIcon(QIcon(d->protocol->DoNotDisturb.iconFor(this))), i18n("Do Not Disturb"), this );
+		QObject::connect( setDND, SIGNAL(triggered(bool)), &d->skype, SLOT(setDND()) );
+		actionMenu->addAction(setDND);
+
+		KAction *setInvisible = new KAction( KIcon(QIcon(d->protocol->Invisible.iconFor(this))), i18n("Invisible"), this );
+		QObject::connect( setInvisible, SIGNAL(triggered(bool)), &d->skype, SLOT(setInvisible()) );
+		actionMenu->addAction(setInvisible);
+
+		KAction *setSkypeMe = new KAction( KIcon(QIcon(d->protocol->SkypeMe.iconFor(this))), i18n("Skype Me"), this );
+		QObject::connect( setSkypeMe, SIGNAL(triggered(bool)), &d->skype, SLOT(setSkypeMe()) );
+		actionMenu->addAction(setSkypeMe);
+
+		actionMenu->addSeparator();
+
+		KAction *makeTestCall = new KAction( KIcon("skype_call"), i18n("Make Test Call"), this );
+		QObject::connect( makeTestCall, SIGNAL(triggered(bool)), this, SLOT(makeTestCall()) );
+		actionMenu->addAction(makeTestCall);
+
+		actionMenu->addSeparator();
+
+		KAction *properties = new KAction( i18n("Properties"), this );
+		QObject::connect( properties, SIGNAL(triggered(bool)), this, SLOT(editAccount()) );
+		actionMenu->addAction(properties);
+	}
+}
+
 
 #include "skypeaccount.moc"

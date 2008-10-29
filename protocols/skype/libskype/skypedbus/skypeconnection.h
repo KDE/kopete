@@ -1,15 +1,22 @@
-//
-// C++ Interface: skypeconnection
-//
-// Description:
-//
-//
-// Author: Kopete Developers <kopete-devel@kde.org>, (C) 2005
-//         Pali Rohár <pali.rohar@gmail.com>
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/*  This file is part of the KDE project
+    Copyright (C) 2005 Kopete Developers <kopete-devel@kde.org>
+    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License version 2 as published by the Free Software Foundation.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.
+
+*/
 #ifndef SKYPECONNECTION_H
 #define SKYPECONNECTION_H
 
@@ -57,8 +64,6 @@ class SkypeConnection : public QObject
 	private slots:
 		///This one takes care of incoming messages if they have some sence for the connection (protocol, pings and so on)
 		void parseMessage(const QString &message);
-		///Set environment variables set from dbus-launch command (private DBus session) - Dont we need it?
-		//void setEnv(KProcess *, char *buff, int len);
 		///Starts logging into skype
 		void startLogOn();
 		///Another interval try to connect to just started Skype
@@ -76,7 +81,7 @@ class SkypeConnection : public QObject
 		 * @param launchTimeout How long max. should wait to tell that launching skype did not work
 		 * @param waitBeforeConnect Do we need to wait a while after skype starts?
 		 */
-		void connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, bool startDBus, int launchTimeout, int waitBeforeConnect, const QString &name = QString(), const QString &pass = QString());
+		void connectSkype(const QString &start, const QString &appName, int protocolVer, int launchTimeout, int waitBeforeConnect, const QString &name = QString(), const QString &pass = QString());
 		/**
 		 * Disconnects from skype
 		 * @see connectionClosed
@@ -88,7 +93,7 @@ class SkypeConnection : public QObject
 		 */
 		void send(const QString &message);
 		///This one listens for incoming messages
-		void Notify(const QString &request);
+		void Notify(const QString &message);
 	public:
 		/**
 		 * Constructor. Creates UNCONECTED connection (sounds oddly ?)
